@@ -35,8 +35,9 @@ const actions = require( 'lib/posts/actions' ),
 import config from 'config';
 import { abtest } from 'lib/abtest';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
-import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
+import { getEditorPostId, getEditorPath, isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
 import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -86,6 +87,7 @@ export const PostEditor = React.createClass( {
 		return {
 			...this.getPostEditState(),
 			confirmationSidebar: 'closed',
+			confirmationSidebarPreference: true,
 			isSaving: false,
 			isPublishing: false,
 			notice: null,
@@ -211,6 +213,10 @@ export const PostEditor = React.createClass( {
 		}
 	},
 
+	handleConfirmationSidebarPreferenceChange: function( event ) {
+		this.setState( { confirmationSidebarPreference: event.target.checked } );
+	},
+
 	toggleSidebar: function() {
 		if ( this.props.layoutFocus === 'sidebar' ) {
 			this.props.setEditorSidebar( 'closed' );
@@ -230,6 +236,10 @@ export const PostEditor = React.createClass( {
 		const mode = this.getEditorMode();
 		const isInvalidURL = this.state.loadingError;
 		const siteURL = site ? site.URL + '/' : null;
+		const isConfirmationFeatureEnabled = (
+			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.props.isConfirmationSidebarEnabled
+		);
 
 		let isPage;
 		let isTrashed;
@@ -247,6 +257,7 @@ export const PostEditor = React.createClass( {
 			<div className={ classes }>
 				<QueryPreferences />
 				<EditorConfirmationSidebar
+					handlePreferenceChange={ this.handleConfirmationSidebarPreferenceChange }
 					onPrivatePublish={ this.onPublish }
 					onPublish={ this.onPublish }
 					post={ this.state.post }
@@ -262,6 +273,7 @@ export const PostEditor = React.createClass( {
 					<EditorGroundControl
 						setPostDate={ this.setPostDate }
 						hasContent={ this.state.hasContent }
+						isConfirmationSidebarEnabled={ isConfirmationFeatureEnabled }
 						isDirty={ this.state.isDirty || this.props.dirty }
 						isSaveBlocked={ this.isSaveBlocked() }
 						isPublishing={ this.state.isPublishing }
@@ -731,12 +743,23 @@ export const PostEditor = React.createClass( {
 			status: 'publish'
 		};
 
-		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) && false === isConfirmed ) {
+		const isConfirmationFeatureEnabled = (
+			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.props.isConfirmationSidebarEnabled
+		);
+
+		if (
+			isConfirmationFeatureEnabled &&
+			false === isConfirmed
+		) {
 			this.setConfirmationSidebar( { status: 'open' } );
 			return;
 		}
 
-		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) && 'open' === this.state.confirmationSidebar ) {
+		if (
+			isConfirmationFeatureEnabled &&
+			'open' === this.state.confirmationSidebar
+		) {
 			this.setConfirmationSidebar( { status: 'publishing' } );
 		}
 
@@ -768,7 +791,10 @@ export const PostEditor = React.createClass( {
 	onPublishFailure: function( error ) {
 		this.onSaveFailure( error, 'publishFailure' );
 
-		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+		if (
+			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.props.isConfirmationSidebarEnabled
+		) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_failure' } );
 		}
 	},
@@ -783,6 +809,10 @@ export const PostEditor = React.createClass( {
 			message = 'scheduled';
 		} else {
 			message = 'published';
+		}
+
+		if ( ! this.state.confirmationSidebarPreference ) {
+			this.props.saveConfirmationSidebarPreference( this.props.siteId, false );
 		}
 
 		this.onSaveSuccess( message, ( message === 'published' ? 'view' : 'preview' ), savedPost.URL );
@@ -854,7 +884,10 @@ export const PostEditor = React.createClass( {
 		const post = PostEditStore.get();
 		const isNotPrivateOrIsConfirmed = ( 'private' !== post.status ) || ( 'closed' !== this.state.confirmationSidebar );
 
-		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+		if (
+			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.props.isConfirmationSidebarEnabled
+		) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
 		}
 
@@ -959,6 +992,7 @@ export default connect(
 			layoutFocus: getCurrentLayoutFocus( state ),
 			hasBrokenPublicizeConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
 			isSitePreviewable: isSitePreviewable( state, siteId ),
+			isConfirmationSidebarEnabled: isConfirmationSidebarEnabled( state, siteId ),
 		};
 	},
 	( dispatch ) => {
@@ -971,6 +1005,7 @@ export default connect(
 			setEditorModePreference: savePreference.bind( null, 'editor-mode' ),
 			setEditorSidebar: savePreference.bind( null, 'editor-sidebar' ),
 			setLayoutFocus,
+			saveConfirmationSidebarPreference,
 		}, dispatch );
 	},
 	null,

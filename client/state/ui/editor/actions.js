@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { filter } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import {
@@ -9,6 +14,8 @@ import {
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setMediaModalView } from 'state/ui/media-modal/actions';
 import { withAnalytics, bumpStat } from 'state/analytics/actions';
+import { savePreference } from 'state/preferences/actions';
+import { getPreference } from 'state/preferences/selectors';
 
 /**
  * Constants
@@ -85,4 +92,27 @@ export function setEditorMediaModalView( view ) {
 	}
 
 	return action;
+}
+
+/**
+ * Returns an action object used in signalling that the confirmation sidebar
+ * preference has changed.
+ *
+ * @param  {Number}  siteId    Site ID
+ * @param  {?Bool}   isEnabled Whether or not the sidebar should be shown
+ * @return {Object}            Action object
+ */
+export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
+	return ( dispatch, getState ) => {
+		const disabledSites = getPreference( getState(), 'editorConfirmationDisabledSites' );
+
+		if ( isEnabled ) {
+			dispatch( savePreference( 'editorConfirmationDisabledSites', filter(
+				disabledSites,
+				_siteId => siteId !== _siteId
+			) ) );
+		} else {
+			dispatch( savePreference( 'editorConfirmationDisabledSites', [ ...disabledSites, siteId ] ) );
+		}
+	};
 }
