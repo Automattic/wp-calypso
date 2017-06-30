@@ -25,8 +25,7 @@ const getShippingZone = createSelector(
 		}
 		return find( getAPIShippingZones( state, siteId ), { id: zoneId } );
 	},
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+	( state, zoneId, siteId ) => {
 		const loaded = areShippingZonesLoaded( state, siteId );
 		return [
 			loaded,
@@ -116,8 +115,7 @@ export const getShippingZoneMethods = createSelector(
 
 		return overlayShippingZoneMethods( state, zone, siteId );
 	},
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+	( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
 		const loaded = areShippingZonesLoaded( state, siteId );
 		return [
 			loaded,
@@ -154,8 +152,7 @@ export const getCurrentlyEditingShippingZoneMethods = createSelector(
 		const currentMethodEdits = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.methods;
 		return overlayShippingZoneMethods( state, zone, siteId, currentMethodEdits );
 	},
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+	( state, siteId = getSelectedSiteId( state ) ) => {
 		const loaded = areShippingZonesLoaded( state, siteId );
 		const zone = loaded && getCurrentlyEditingShippingZone( state, siteId );
 		return [

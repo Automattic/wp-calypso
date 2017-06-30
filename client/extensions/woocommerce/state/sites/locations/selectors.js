@@ -51,7 +51,13 @@ export const getContinents = createSelector(
 		const continents = getRawLocations( state, siteId ).map( continent => omit( continent, 'countries' ) );
 		return sortBy( continents, 'name' );
 	},
-	[ areLocationsLoaded, getRawLocations ]
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const loaded = areLocationsLoaded( state, siteId );
+		return [
+			loaded,
+			loaded && getRawLocations( state, siteId ),
+		];
+	}
 );
 
 /**
@@ -72,7 +78,13 @@ export const getCountries = createSelector(
 		const countries = continent.countries.map( country => omit( country, 'states' ) );
 		return sortBy( countries, 'name' );
 	},
-	[ areLocationsLoaded, getRawLocations ]
+	( state, continentCode, siteId = getSelectedSiteId( state ) ) => {
+		const loaded = areLocationsLoaded( state, siteId );
+		return [
+			loaded,
+			loaded && getRawLocations( state, siteId ),
+		];
+	}
 );
 
 /**
@@ -92,7 +104,13 @@ export const getCountryName = createSelector(
 		}
 		return country.name;
 	},
-	[ areLocationsLoaded, getRawLocations ]
+	( state, countryCode, siteId = getSelectedSiteId( state ) ) => {
+		const loaded = areLocationsLoaded( state, siteId );
+		return [
+			loaded,
+			loaded && getRawLocations( state, siteId ),
+		];
+	}
 );
 
 /**
@@ -112,7 +130,13 @@ export const getStates = createSelector(
 		}
 		return sortBy( country.states, 'name' );
 	},
-	[ areLocationsLoaded, getRawLocations ]
+	( state, countryCode, siteId = getSelectedSiteId( state ) ) => {
+		const loaded = areLocationsLoaded( state, siteId );
+		return [
+			loaded,
+			loaded && getRawLocations( state, siteId ),
+		];
+	}
 );
 
 /**

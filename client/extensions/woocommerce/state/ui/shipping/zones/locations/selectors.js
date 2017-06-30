@@ -37,10 +37,8 @@ const getContinentsOwnedByOtherZone = createSelector(
 		} );
 		return continents;
 	},
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+	( state, siteId ) => {
 		return [
-			siteId,
 			getCurrentlyEditingShippingZone( state, siteId ),
 			getRawShippingZoneLocations( state, siteId ),
 		];
@@ -70,10 +68,8 @@ const getCountriesOwnedByOtherZone = createSelector(
 		} );
 		return countries;
 	},
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+	( state, siteId ) => {
 		return [
-			siteId,
 			getCurrentlyEditingShippingZone( state, siteId ),
 			getRawShippingZoneLocations( state, siteId ),
 		];
@@ -106,10 +102,8 @@ const getStatesOwnedByOtherZone = createSelector(
 		} );
 		return states;
 	},
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+	( state, siteId ) => {
 		return [
-			siteId,
 			getCurrentlyEditingShippingZone( state, siteId ),
 			getRawShippingZoneLocations( state, siteId ),
 		];
@@ -126,7 +120,6 @@ const getStatesOwnedByOtherZone = createSelector(
  */
 export const getShippingZoneLocationsWithEdits = createSelector(
 	( state, siteId = getSelectedSiteId( state ), overlayTemporalEdits = true ) => {
-		//console.log( 'yo' );
 		if ( ! areShippingZonesLoaded( state, siteId ) ) {
 			return null;
 		}
@@ -247,8 +240,7 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 			postcode: null === edits.postcode ? [] : [ edits.postcode ],
 		};
 	},
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+	( state, siteId = getSelectedSiteId( state ) ) => {
 		const loaded = areShippingZonesLoaded( state, siteId );
 		const zone = loaded && getCurrentlyEditingShippingZone( state, siteId );
 		return [
@@ -340,8 +332,7 @@ export const areLocationsFilteredByPostcode = createSelector(
 		}
 		return ! canLocationsBeFilteredByState( state, siteId ) && Boolean( getCurrentSelectedCountryZoneOwner( state, siteId ) );
 	},
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+	( state, siteId = getSelectedSiteId( state ) ) => {
 		const canFilter = canLocationsBeFiltered( state, siteId );
 		return [
 			canFilter,
@@ -377,8 +368,7 @@ export const areLocationsFilteredByState = createSelector(
 		}
 		return ! areLocationsFilteredByPostcode( state, siteId ) && Boolean( getCurrentSelectedCountryZoneOwner( state, siteId ) );
 	},
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+	( state, siteId = getSelectedSiteId( state ) ) => {
 		const canFilter = canLocationsBeFiltered( state, siteId );
 		return [
 			canFilter,
@@ -496,8 +486,7 @@ export const getCurrentlyEditingShippingZoneLocationsList = createSelector(
 
 		return result;
 	},
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+	( state, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
 		return [
 			getShippingZoneLocationsWithEdits( state, siteId, false ),
 		];
@@ -560,8 +549,7 @@ export const getCurrentlyEditingShippingZoneCountries = createSelector(
 		} );
 		return locationsList;
 	},
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+	( state, siteId = getSelectedSiteId( state ) ) => {
 		return [
 			getShippingZoneLocationsWithEdits( state, siteId ),
 			getContinentsOwnedByOtherZone( state, siteId ),
@@ -602,8 +590,7 @@ export const getCurrentlyEditingShippingZoneStates = createSelector(
 			ownerZoneId: forbiddenStates[ code ],
 		} ) );
 	},
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+	( state, siteId = getSelectedSiteId( state ) ) => {
 		return [
 			areLocationsFilteredByState( state, siteId ),
 			getShippingZoneLocationsWithEdits( state, siteId ),

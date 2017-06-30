@@ -77,8 +77,7 @@ export const getShippingZones = createSelector(
 		} );
 		return orderShippingZones( [ ...zones, ...creates ] );
 	},
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+	( state, siteId = getSelectedSiteId( state ) ) => {
 		const loaded = areShippingZonesLoaded( state, siteId );
 		return [
 			siteId,
@@ -110,8 +109,7 @@ export const getCurrentlyEditingShippingZone = createSelector(
 		}
 		return { ...zone, ...edits.currentlyEditingChanges };
 	},
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+	( state, siteId = getSelectedSiteId( state ) ) => {
 		const edits = getShippingZonesEdits( state, siteId );
 		return [
 			siteId,
