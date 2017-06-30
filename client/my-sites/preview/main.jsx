@@ -13,9 +13,13 @@ import {
 	getSelectedSite,
 	getSelectedSiteId,
 } from 'state/ui/selectors';
+import { isSitePreviewable } from 'state/sites/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
 
+import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
+import EmptyContent from 'components/empty-content';
+import Gridicon from 'gridicons';
 import Main from 'components/main';
 import WebPreviewContent from 'components/web-preview/content';
 
@@ -66,7 +70,31 @@ class PreviewMain extends React.Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, isPreviewable, site } = this.props;
+
+		if ( ! site ) {
+			// todo: some loading state?
+			return null;
+		}
+
+		if ( ! isPreviewable ) {
+			const action = (
+				<Button primary icon href={ site.URL } target="_blank">
+					{ translate( 'Open' ) }
+					<Gridicon icon="external" />
+				</Button>
+			);
+
+			return (
+				<EmptyContent
+					title={ translate( 'Unable to show your site here' ) }
+					line={ translate( 'To view your site, click the button below' ) }
+					action={ action }
+					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					illustrationWidth={ 350 }
+				/>
+			);
+		}
 
 		return (
 			<Main className="preview">
@@ -74,15 +102,20 @@ class PreviewMain extends React.Component {
 				<WebPreviewContent
 					showClose={ false }
 					previewUrl={ this.state.previewUrl }
+					externalUrl={ site.URL }
 				/>
 			</Main>
 		);
 	}
 }
 
-const mapState = ( state ) => ( {
-	site: getSelectedSite( state ),
-	siteId: getSelectedSiteId( state ),
-} );
+const mapState = ( state ) => {
+	const selectedSiteId = getSelectedSiteId( state );
+	return {
+		isPreviewable: isSitePreviewable( state, selectedSiteId ),
+		site: getSelectedSite( state ),
+		siteId: selectedSiteId,
+	};
+};
 
 export default connect( mapState )( localize( PreviewMain ) );
