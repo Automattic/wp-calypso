@@ -13,7 +13,7 @@ import {
 } from 'state/action-types';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setMediaModalView } from 'state/ui/media-modal/actions';
-import { withAnalytics, bumpStat } from 'state/analytics/actions';
+import { withAnalytics, bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 
@@ -114,5 +114,13 @@ export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 		} else {
 			dispatch( savePreference( 'editorConfirmationDisabledSites', [ ...disabledSites, siteId ] ) );
 		}
+
+		dispatch(
+			recordTracksEvent( isEnabled
+				? 'calypso_publish_confirmation_preference_enable'
+				: 'calypso_publish_confirmation_preference_disable' )
+		);
+
+		dispatch( bumpStat( 'calypso_publish_confirmation', isEnabled ? 'enabled' : 'disabled' ) );
 	};
 }

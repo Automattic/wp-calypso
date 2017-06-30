@@ -17,14 +17,12 @@ import { isFetchingPreferences } from 'state/preferences/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
-import analytics from 'lib/analytics';
 
 class PublishConfirmation extends Component {
 
 	constructor( props ) {
 		super( props );
 		this.state = { isToggleOn: props.publishConfirmationEnabled };
-
 		this.handleToggle = this.handleToggle.bind( this );
 	}
 
@@ -36,18 +34,9 @@ class PublishConfirmation extends Component {
 
 	handleToggle() {
 		const { siteId, savePublishConfirmationPreference } = this.props;
-
 		const isToggleOn = ! this.state.isToggleOn;
-
 		this.setState( { isToggleOn: isToggleOn } );
-
 		savePublishConfirmationPreference( siteId, isToggleOn );
-
-		analytics.mc.bumpStat( 'calypso_publish_confirmation', isToggleOn ? 'enabled' : 'disabled' );
-
-		analytics.tracks.recordEvent( isToggleOn
-			? 'calypso_publish_confirmation_preference_enable'
-			: 'calypso_publish_confirmation_preference_disable' );
 	}
 
 	render() {
