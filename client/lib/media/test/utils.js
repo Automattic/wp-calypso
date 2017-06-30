@@ -35,6 +35,16 @@ const EXPECTED = {
 	extension: 'jpg',
 	mime_type: 'image/jpeg',
 };
+const EXPECTED_FILE_OBJECT = {
+	'transient': true,
+	ID: UNIQUEID,
+	file: DUMMY_FILENAME,
+	title: 'test.jpg',
+	extension: 'jpg',
+	mime_type: 'image/jpeg',
+	guid: DUMMY_FILENAME,
+	URL: DUMMY_FILENAME,
+};
 
 describe( 'MediaUtils', function() {
 	let MediaUtils;
@@ -700,7 +710,7 @@ describe( 'MediaUtils', function() {
 		it( 'should return a transient for a file object', () => {
 			const actual = MediaUtils.createTransientMedia( DUMMY_FILE_OBJECT );
 
-			expect( actual ).to.eql( EXPECTED );
+			expect( actual ).to.eql( EXPECTED_FILE_OBJECT );
 		} );
 	} );
 } );
