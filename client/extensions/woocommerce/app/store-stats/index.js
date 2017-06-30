@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { moment } from 'i18n-calypso';
+import { moment, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,8 +16,9 @@ import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import Module from './store-stats-module';
 import List from './store-stats-list';
+import WidgetList from './store-stats-widget-list';
 import SectionHeader from 'components/section-header';
-import { topProducts, topCategories, topCoupons, UNITS } from 'woocommerce/app/store-stats/constants';
+import { sparkWidgetList1, sparkWidgetList2, topProducts, topCategories, topCoupons, UNITS } from 'woocommerce/app/store-stats/constants';
 
 class StoreStats extends Component {
 	static propTypes = {
@@ -58,8 +59,35 @@ class StoreStats extends Component {
 			date: unitSelectedDate,
 			limit: 10,
 		};
-		const widgets = [ topProducts, topCategories, topCoupons ];
+		const topWidgets = [ topProducts, topCategories, topCoupons ];
 		const widgetPath = `/${ unit }/${ slug }${ querystring ? '?' : '' }${ querystring || '' }`;
+
+		const widgetList1 = (
+			<div className="store-stats__widgets-column spark-widgets" key="sparkwidgets1">
+				<WidgetList
+					siteId={ siteId }
+					header={ null }
+					emptyMessage={ translate( 'No data found.' ) }
+					query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
+					selectedDate={ endSelectedDate }
+					statType="statsOrders"
+					widgets={ sparkWidgetList1 }
+				/>
+			</div>
+			);
+		const widgetList2 = (
+			<div className="store-stats__widgets-column spark-widgets" key="sparkwidgets2">
+				<WidgetList
+					siteId={ siteId }
+					header={ null }
+					emptyMessage={ translate( 'No data found.' ) }
+					query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
+					selectedDate={ endSelectedDate }
+					statType="statsOrders"
+					widgets={ sparkWidgetList2 }
+				/>
+			</div>
+		);
 
 		return (
 			<Main className="store-stats woocommerce" wideLayout={ true }>
@@ -90,31 +118,33 @@ class StoreStats extends Component {
 					/>
 				</StatsPeriodNavigation>
 				<div className="store-stats__widgets">
-				{ widgets.map( widget => {
-					const header = (
-						<SectionHeader href={ widget.basePath + widgetPath }>
-							{ widget.title }
-						</SectionHeader>
-					);
-					return (
-						<div className="store-stats__widgets-column" key={ widget.basePath }>
-							<Module
-								siteId={ siteId }
-								header={ header }
-								emptyMessage={ widget.empty }
-								query={ topQuery }
-								statType={ widget.statType }
-							>
-								<List
+					{ widgetList1 }
+					{ widgetList2 }
+					{ topWidgets.map( widget => {
+						const header = (
+							<SectionHeader href={ widget.basePath + widgetPath }>
+								{ widget.title }
+							</SectionHeader>
+						);
+						return (
+							<div className="store-stats__widgets-column" key={ widget.basePath }>
+								<Module
 									siteId={ siteId }
-									values={ widget.values }
+									header={ header }
+									emptyMessage={ widget.empty }
 									query={ topQuery }
 									statType={ widget.statType }
-								/>
-							</Module>
-						</div>
-					);
-				} ) }
+								>
+									<List
+										siteId={ siteId }
+										values={ widget.values }
+										query={ topQuery }
+										statType={ widget.statType }
+									/>
+								</Module>
+							</div>
+						);
+					} ) }
 				</div>
 			</Main>
 		);

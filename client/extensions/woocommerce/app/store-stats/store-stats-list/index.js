@@ -25,7 +25,9 @@ const StoreStatsList = ( { data, values } ) => {
 			{ data.map( ( row, i ) => (
 				<TableRow key={ i }>
 					{ values.map( ( value, j ) => (
-						<TableItem key={ value.key } isTitle={ 0 === j }>{ row[ value.key ] }</TableItem>
+						<TableItem key={ value.key } isTitle={ 0 === j }>
+							{ row[ value.key ] }
+						</TableItem>
 					) ) }
 				</TableRow>
 			) ) }
