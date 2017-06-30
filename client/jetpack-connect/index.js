@@ -20,7 +20,7 @@ export default function() {
 	page( '/jetpack/connect/:type(personal|premium|pro)/:interval(yearly|monthly)?', controller.connect );
 
 	page( '/jetpack/connect/:type(install)/:locale?',
-		controller.redirectWithoutLocaleifLoggedIn,
+		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.connect
 	);
 
@@ -30,14 +30,14 @@ export default function() {
 
 	page(
 		'/jetpack/connect/authorize/:localeOrInterval?',
-		controller.redirectWithoutLocaleifLoggedIn,
+		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.saveQueryObject,
 		controller.authorizeForm
 	);
 
 	page(
 		'/jetpack/connect/authorize/:interval/:locale',
-		controller.redirectWithoutLocaleifLoggedIn,
+		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.saveQueryObject,
 		controller.authorizeForm
 	);
@@ -53,7 +53,7 @@ export default function() {
 
 	page(
 		'/jetpack/connect/:locale?',
-		controller.redirectWithoutLocaleifLoggedIn,
+		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.connect
 	);
 

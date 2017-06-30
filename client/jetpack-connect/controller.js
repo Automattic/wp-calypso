@@ -64,10 +64,10 @@ const jetpackNewSiteSelector = ( context ) => {
 };
 
 export default {
-	redirectWithoutLocaleifLoggedIn( context, next ) {
+	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
 			const urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
-			debug( 'redirectWithoutLocaleifLoggedIn to %s', urlWithoutLocale );
+			debug( 'redirectWithoutLocaleIfLoggedIn to %s', urlWithoutLocale );
 			return page.redirect( urlWithoutLocale );
 		}
 
