@@ -23,7 +23,7 @@ export function handleProductCategoryCreate( store, action ) {
 		return;
 	}
 
-	const updatedAction = ( dispatch, getState, data ) => {
+	const updatedAction = ( dispatch, getState, { data } ) => {
 		dispatch( productCategoryUpdated( siteId, data, action ) );
 
 		const props = { sentData: action.category, receivedData: data };

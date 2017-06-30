@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import { isFunction, isObject } from 'lodash';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
+import { dispatchWithProps } from 'woocommerce/state/helpers';
 import request from 'woocommerce/state/sites/request';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 
@@ -29,14 +29,7 @@ export function handleRequest( { dispatch, getState }, action ) {
 				data,
 			} );
 
-			// TODO: Make this a utility function.
-			if ( isFunction( onSuccessAction ) ) {
-				// Dispatch with an extra data parameter.
-				return onSuccessAction( dispatch, getState, data );
-			} else if ( isObject( onSuccessAction ) ) {
-				// Append data and dispatch.
-				dispatch( { ...onSuccessAction, data } );
-			}
+			dispatchWithProps( dispatch, getState, onSuccessAction, { data } );
 		} )
 		.catch( error => {
 			debug( 'Caught error while handling request: ', error );
@@ -49,14 +42,7 @@ export function handleRequest( { dispatch, getState }, action ) {
 				error,
 			} );
 
-			// TODO: Make this a utility function.
-			if ( isFunction( onFailureAction ) ) {
-				// Dispatch with an extra error paramter.
-				return onFailureAction( dispatch, getState, error );
-			} else if ( isObject( onFailureAction ) ) {
-				// Append error and dispatch.
-				dispatch( { ...action.onFailureAction, error } );
-			}
+			dispatchWithProps( dispatch, getState, onFailureAction, { error } );
 		} );
 }
 

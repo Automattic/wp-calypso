@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { get, find, isNumber } from 'lodash';
+import { get, find, isObject } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getProduct } from '../../products/selectors';
+import { getProduct } from 'woocommerce/state/sites/products/selectors';
 
 export function getAllProductEdits( state, siteId ) {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'edits' ], {} );
@@ -23,7 +23,7 @@ export function getAllProductEdits( state, siteId ) {
  */
 export function getProductEdits( state, productId, siteId = getSelectedSiteId( state ) ) {
 	const edits = getAllProductEdits( state, siteId );
-	const bucket = isNumber( productId ) && 'updates' || 'creates';
+	const bucket = ( isObject( productId ) ? 'creates' : 'updates' );
 	const array = get( edits, bucket, [] );
 
 	return find( array, ( p ) => productId === p.id );
@@ -38,7 +38,7 @@ export function getProductEdits( state, productId, siteId = getSelectedSiteId( s
  * @return {Object} The product data merged between the fetched data and edits
  */
 export function getProductWithLocalEdits( state, productId, siteId = getSelectedSiteId( state ) ) {
-	const existing = isNumber( productId );
+	const existing = ! isObject( productId );
 
 	const product = existing && getProduct( state, productId );
 	const productEdits = getProductEdits( state, productId, siteId );

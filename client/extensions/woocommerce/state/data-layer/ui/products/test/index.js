@@ -8,12 +8,12 @@ import { spy, match } from 'sinon';
  * Internal dependencies
  */
 import { handleProductCategoryEdit, makeProductActionList, } from '../';
-import { actionListStepSuccess, actionListStepFailure } from 'woocommerce/state/action-list/actions';
-import { createProduct } from 'woocommerce/state/sites/products/actions';
+import { actionListStepFailure } from 'woocommerce/state/action-list/actions';
 import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
 import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
+	WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
 } from 'woocommerce/state/action-types';
 
@@ -126,12 +126,12 @@ describe( 'handlers', () => {
 			const dispatch = spy();
 			actionList.nextSteps[ 0 ].onStep( dispatch, actionList );
 
-			expect( dispatch ).to.have.been.calledWith( createProduct(
-				123,
-				product1,
-				actionListStepSuccess( actionList ),
-				actionListStepFailure( actionList )
-			) );
+			expect( dispatch ).to.have.been.calledWith( match( {
+				type: WOOCOMMERCE_PRODUCT_CREATE,
+				siteId: 123,
+				product: product1,
+				failureAction: actionListStepFailure( actionList ),
+			} ).and( match.has( 'successAction' ) ) );
 		} );
 
 		it( 'should return multiple product create requests', () => {
@@ -159,19 +159,19 @@ describe( 'handlers', () => {
 			actionList.nextSteps[ 0 ].onStep( dispatch, actionList );
 			actionList.nextSteps[ 1 ].onStep( dispatch, actionList );
 
-			expect( dispatch ).to.have.been.calledWith( createProduct(
-				123,
-				product1,
-				actionListStepSuccess( actionList ),
-				actionListStepFailure( actionList ),
-			) );
+			expect( dispatch ).to.have.been.calledWith( match( {
+				type: WOOCOMMERCE_PRODUCT_CREATE,
+				siteId: 123,
+				product: product1,
+				failureAction: actionListStepFailure( actionList ),
+			} ).and( match.has( 'successAction' ) ) );
 
-			expect( dispatch ).to.have.been.calledWith( createProduct(
-				123,
-				product2,
-				actionListStepSuccess( actionList ),
-				actionListStepFailure( actionList ),
-			) );
+			expect( dispatch ).to.have.been.calledWith( match( {
+				type: WOOCOMMERCE_PRODUCT_CREATE,
+				siteId: 123,
+				product: product2,
+				failureAction: actionListStepFailure( actionList ),
+			} ).and( match.has( 'successAction' ) ) );
 		} );
 
 		it( 'should create an action list with success/failure actions', () => {
@@ -266,6 +266,70 @@ describe( 'handlers', () => {
 				type: WOOCOMMERCE_PRODUCT_CREATE,
 				siteId: 123,
 				product: { ...product1, categories: [ { id: 66 } ] },
+			} ) );
+		} );
+
+		it( 'should create variations for a new product', () => {
+			const product1 = { id: { index: 0 }, name: 'Product #1', type: 'variable' };
+			const variationBlack = { id: { index: 4 }, attributes: [ { name: 'Color', options: 'Black' } ] };
+
+			const rootState = {
+				extensions: {
+					woocommerce: {
+						ui: {
+							products: {
+								123: {
+									edits: {
+										creates: [
+											product1,
+										]
+									},
+									variations: {
+										edits: [
+											{
+												productId: { index: 0 },
+												creates: [
+													variationBlack,
+												]
+											}
+										]
+									}
+								},
+							},
+						}
+					}
+				}
+			};
+
+			const productEdits = rootState.extensions.woocommerce.ui.products[ 123 ].edits;
+			const actionList = makeProductActionList( rootState, 123, productEdits );
+
+			expect( actionList.nextSteps.length ).to.equal( 2 );
+
+			const dispatch = spy();
+
+			// Create the product.
+			actionList.nextSteps[ 0 ].onStep( dispatch, actionList );
+
+			expect( dispatch ).to.have.been.calledWith( match( {
+				type: WOOCOMMERCE_PRODUCT_CREATE,
+				siteId: 123,
+				product: product1,
+			} ) );
+
+			// Add the mapping
+			actionList.productIdMapping = {
+				[ 0 ]: 42,
+			};
+
+			// Create the variation.
+			actionList.nextSteps[ 1 ].onStep( dispatch, actionList );
+
+			expect( dispatch ).to.have.been.calledWith( match( {
+				type: WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
+				siteId: 123,
+				productId: 42,
+				variation: variationBlack,
 			} ) );
 		} );
 	} );

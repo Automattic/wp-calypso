@@ -22,6 +22,7 @@ import {
 	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_DELETE,
 	WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
+	WOOCOMMERCE_PRODUCT_REQUEST,
 	WOOCOMMERCE_PRODUCT_UPDATED,
 } from 'woocommerce/state/action-types';
 
@@ -30,8 +31,8 @@ import {
  *
  * @param {Number} siteId The id of the site upon which to create the product.
  * @param {Object} product The complete product object (may include a placeholder id)
- * @param {String} [successAction=undefined] Optional action object to be dispatched upon success.
- * @param {String} [failureAction=undefined] Optional action object to be dispatched upon error.
+ * @param {Object|Function} [successAction] Action with extra props { sentData, receivedData }
+ * @param {Object|Function} [failureAction] Action with extra props { error }
  * @return {Object} Action object
  */
 export function createProduct( siteId, product, successAction, failureAction ) {
@@ -114,6 +115,16 @@ function deleteProductSuccess( siteId, data ) {
 		type: WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
 		siteId,
 		data,
+	};
+}
+
+export function fetchProduct( siteId, productId, successAction, failureAction ) {
+	return {
+		type: WOOCOMMERCE_PRODUCT_REQUEST,
+		siteId,
+		productId,
+		successAction,
+		failureAction,
 	};
 }
 
