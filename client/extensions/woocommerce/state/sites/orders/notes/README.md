@@ -26,6 +26,10 @@ This is saved on a per-site basis.
 			12: true
 		},
 		// Keyed by order ID
+		"isSaving": {
+			10: true,
+		}
+		// Keyed by order ID
 		"items": {
 			1: {
 				"id": 1,
