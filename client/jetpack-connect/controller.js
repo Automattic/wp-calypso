@@ -19,7 +19,7 @@ import JetpackNewSite from './jetpack-new-site/index';
 import JetpackConnectAuthorizeForm from './authorize-form';
 import { setSection } from 'state/ui/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
+import { JETPACK_CONNECT_QUERY_SET, JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE } from 'state/action-types';
 import userFactory from 'lib/user';
 import jetpackSSOForm from './sso';
 import i18nUtils from 'lib/i18n-utils';
@@ -81,6 +81,13 @@ export default {
 				type: JETPACK_CONNECT_QUERY_SET,
 				queryObject: context.query
 			} );
+			if ( 'woocommerce-services' === context.query.from ) {
+				context.store.dispatch( {
+					type: JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE,
+					plan: 'free',
+					site: '*',
+				} );
+			}
 			page.redirect( context.pathname );
 		}
 
