@@ -486,15 +486,17 @@ const EditorVisibility = React.createClass( {
 
 	render() {
 		const visibility = this.getVisibility();
+		const isDropdown = config.isEnabled( 'post-editor/delta-post-publish-flow' );
 		const classes = classNames( 'editor-visibility', {
 			'is-dialog-open': this.state.showPopover,
-			'is-touch': touchDetect.hasTouch()
+			'is-touch': touchDetect.hasTouch(),
+			'is-dropdown': isDropdown,
 		} );
 
 		return (
 			<div className={ classes }>
 				{
-					config.isEnabled( 'post-editor/delta-post-publish-flow' )
+					isDropdown
 						? this.renderPrivacyDropdown( visibility )
 						: this.renderPrivacyPopover( visibility )
 				}
