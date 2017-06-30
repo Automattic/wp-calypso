@@ -31,7 +31,7 @@ const loadingState = {
 								45: true,
 							},
 							isSaving: {
-								20: true,
+								45: true,
 							},
 							items: {},
 							orders: {},
