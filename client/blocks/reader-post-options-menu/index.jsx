@@ -22,6 +22,9 @@ import { getFeed } from 'state/reader/feeds/selectors';
 import { getSite } from 'state/reader/sites/selectors';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import QueryReaderSite from 'components/data/query-reader-site';
+import QueryReaderTeams from 'components/data/query-reader-teams';
+import { isAutomatticTeamMember } from 'reader/lib/teams';
+import { getReaderTeams, getBlogStickers } from 'state/selectors';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
@@ -56,7 +59,7 @@ class ReaderPostOptionsMenu extends React.Component {
 
 		window.open(
 			'https://wordpress.com/abuse/?report_url=' + encodeURIComponent( this.props.post.URL ),
-			'_blank'
+			'_blank',
 		);
 	};
 
@@ -71,7 +74,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		stats.recordGaEvent( isMenuVisible ? 'Open Post Options Menu' : 'Close Post Options Menu' );
 		stats.recordTrackForPost(
 			'calypso_reader_post_options_menu_' + ( isMenuVisible ? 'opened' : 'closed' ),
-			this.props.post
+			this.props.post,
 		);
 	};
 
@@ -102,7 +105,8 @@ class ReaderPostOptionsMenu extends React.Component {
 			isEditPossible = PostUtils.userCan( 'edit_post', post ),
 			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
 			followUrl = this.getFollowUrl();
-		const { site, feed } = this.props;
+		const { site, feed, teams /*, stickers*/ } = this.props;
+		const isTeamMember = isAutomatticTeamMember( teams );
 
 		let isBlockPossible = false;
 
@@ -127,11 +131,17 @@ class ReaderPostOptionsMenu extends React.Component {
 					! post.is_external &&
 					post.site_ID &&
 					<QueryReaderSite siteId={ +post.site_ID } /> }
+				{ ! teams && <QueryReaderTeams /> }
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
 					popoverClassName="reader-post-options-menu__popover"
 					onToggle={ this.onMenuToggle }
 				>
+					{ isTeamMember &&
+						<PopoverMenuItem icon="pencil">
+							Stickers!
+						</PopoverMenuItem> }
+
 					{ this.props.showFollow &&
 						<FollowButton tagName={ PopoverMenuItem } siteUrl={ followUrl } /> }
 
@@ -167,9 +177,11 @@ export default connect(
 		return {
 			feed: feedId && feedId > 0 ? getFeed( state, feedId ) : undefined,
 			site: siteId && siteId > 0 ? getSite( state, siteId ) : undefined,
+			stickers: siteId && siteId > 0 ? getBlogStickers( state, ownProps.blogId ) : undefined,
+			teams: getReaderTeams( state ),
 		};
 	},
 	{
 		requestSiteBlock,
-	}
+	},
 )( localize( ReaderPostOptionsMenu ) );
