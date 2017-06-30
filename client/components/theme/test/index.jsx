@@ -126,7 +126,7 @@ describe( 'Theme', function() {
 
 	context( 'when the theme has a price', function() {
 		beforeEach( function() {
-			this.props.theme.price = '$50';
+			this.props.price = '$50';
 			let themeElement = TestUtils.renderIntoDocument(
 				React.createElement( Theme, this.props )
 			);
