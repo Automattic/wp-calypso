@@ -143,7 +143,7 @@ class OrderRefundCard extends Component {
 			return (
 				<div className="order__refund-method">
 					<h3>{ translate( 'Manual Refund' ) }</h3>
-					<p>{ translate( 'This payment method doesn\'t support automated refunds' ) }</p>
+					<p>{ translate( 'This payment method doesn\'t support automated refunds and must be submitted manually.' ) }</p>
 				</div>
 			);
 		}
