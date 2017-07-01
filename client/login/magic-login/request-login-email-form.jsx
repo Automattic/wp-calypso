@@ -121,7 +121,7 @@ class RequestLoginEmailForm extends React.Component {
 						} ) }</p>
 				}
 				<LoggedOutForm onSubmit={ this.onSubmit }>
-					<FormFieldset>
+					<FormFieldset className="magic-login__emailfields">
 						<FormTextInput
 							autoCapitalize="off"
 							autoFocus="true"
