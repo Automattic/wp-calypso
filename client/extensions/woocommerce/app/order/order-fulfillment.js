@@ -1,13 +1,16 @@
 /**
  * External dependencies
  */
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -29,6 +32,7 @@ class OrderFulfillment extends Component {
 
 	state = {
 		errorMessage: false,
+		shouldEmail: true,
 		showDialog: false,
 		trackingNumber: '',
 	}
@@ -46,10 +50,34 @@ class OrderFulfillment extends Component {
 		} );
 	}
 
-	submit = () => {
+	updateCustomerEmail = () => {
 		this.setState( {
-			errorMessage: 'Testing, not saved yet.',
+			errorMessage: false,
+			shouldEmail: ! this.state.shouldEmail,
 		} );
+	}
+
+	submit = () => {
+		const { order, site, translate } = this.props;
+		const { shouldEmail, trackingNumber } = this.state;
+
+		if ( shouldEmail && ! trackingNumber ) {
+			this.setState( { errorMessage: translate( 'Please enter a tracking number.' ) } );
+			return;
+		}
+
+		// @todo set order to complete
+
+		this.toggleDialog();
+		const note = {
+			note: translate( 'Your order has been shipped. The tracking number is %(trackingNumber)s.', {
+				args: { trackingNumber }
+			} ),
+			customer_note: shouldEmail,
+		};
+		if ( trackingNumber ) {
+			this.props.createNote( site.ID, order.id, note );
+		}
 	}
 
 	render() {
@@ -67,7 +95,7 @@ class OrderFulfillment extends Component {
 					{ translate( 'Order needs to be fulfilled' ) }
 				</div>
 				<div className="order__details-fulfillment-action">
-					<Button primary onClick={ this.toggleDialog }>{ translate( 'Print label' ) }</Button>
+					<Button primary onClick={ this.toggleDialog }>{ translate( 'Fulfill' ) }</Button>
 				</div>
 				<Dialog isVisible={ showDialog } onClose={ this.toggleDialog } className={ dialogClass }>
 					<h1>{ translate( 'Fulfill order' ) }</h1>
@@ -84,7 +112,7 @@ class OrderFulfillment extends Component {
 								placeholder={ translate( 'Tracking Number' ) } />
 						</FormFieldset>
 						<FormLabel className="order__fulfillment-email">
-							<FormInputCheckbox checked disabled />
+							<FormInputCheckbox checked={ this.state.shouldEmail } onChange={ this.updateCustomerEmail } />
 							<span>{ translate( 'Email tracking number to customer' ) }</span>
 						</FormLabel>
 						<div className="order__fulfillment-actions">
@@ -99,4 +127,7 @@ class OrderFulfillment extends Component {
 	}
 }
 
-export default localize( OrderFulfillment );
+export default connect(
+	undefined,
+	dispatch => bindActionCreators( { createNote }, dispatch )
+)( localize( OrderFulfillment ) );
