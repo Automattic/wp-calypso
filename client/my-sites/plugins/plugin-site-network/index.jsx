@@ -30,7 +30,7 @@ export default React.createClass( {
 	},
 
 	renderInstallButton: function() {
-		if ( ! this.props.site.canManage() ) {
+		if ( ! this.props.site.canManage ) {
 			return this.renderManageWarning();
 		}
 		const installInProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, 'INSTALL_PLUGIN' );
@@ -71,7 +71,7 @@ export default React.createClass( {
 	},
 
 	renderPluginActions: function() {
-		if ( ! this.props.site.canManage() ) {
+		if ( ! this.props.site.canManage ) {
 			return this.renderManageWarning();
 		}
 
@@ -113,7 +113,7 @@ export default React.createClass( {
 	},
 
 	renderSecondarySiteActions: function( site ) {
-		if ( ! site.canManage() ) {
+		if ( ! site.canManage ) {
 			return (
 				<div className="plugin-site-network__secondary-site-actions">
 					<PluginSiteDisabledManage site={ site } plugin={ site.plugin } />
