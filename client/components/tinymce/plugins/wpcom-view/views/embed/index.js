@@ -2,8 +2,7 @@
  * External dependencies
  */
 import EventEmitter from 'events/';
-import defer from 'lodash/defer';
-
+import { defer, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -12,6 +11,10 @@ import EmbedsStore from 'lib/embeds/store';
 import actions from 'lib/embeds/actions';
 import EmbedView from './view';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	SELECTED_SITE_SUBSCRIBE,
+	SELECTED_SITE_UNSUBSCRIBE
+} from 'state/action-types';
 
 export default class EmbedViewManager extends EventEmitter {
 	constructor() {
@@ -25,8 +28,8 @@ export default class EmbedViewManager extends EventEmitter {
 		this.fetchSiteEmbeds();
 	}
 
-	updateSite() {
-		const siteId = getSelectedSiteId( this.store.getState() );
+	updateSite( selectedSiteId ) {
+		const siteId = selectedSiteId || getSelectedSiteId( this.store.getState() );
 
 		if ( ! this.hasOwnProperty( 'siteId' ) ) {
 			// First update (after adding initial listener) should trigger a
@@ -45,7 +48,12 @@ export default class EmbedViewManager extends EventEmitter {
 		super.addListener( event, listener );
 		if ( 'change' === event && 1 === this.listeners( event ).length ) {
 			this.store = store;
-			this.unsubscribeStore = store.subscribe( this.sitesListener );
+			this.selectedSiteSubscriberId = uniqueId();
+			store.dispatch( {
+				type: SELECTED_SITE_SUBSCRIBE,
+				subscriberId: this.selectedSiteSubscriberId,
+				listener: this.sitesListener,
+			} );
 			this.embedsListListener = EmbedsListStore.addListener( this.onChange.bind( this ) );
 			this.embedsListener = EmbedsStore.addListener( this.onChange.bind( this ) );
 			this.updateSite();
@@ -56,8 +64,10 @@ export default class EmbedViewManager extends EventEmitter {
 		super.removeListener( event, listener );
 
 		if ( 'change' === event && ! this.listeners( event ).length ) {
-			this.unsubscribeStore();
-
+			this.store.dispatch( {
+				type: SELECTED_SITE_UNSUBSCRIBE,
+				subscriberId: this.selectedSiteSubscriberId
+			} );
 			if ( this.embedsListListener ) {
 				this.embedsListListener.remove();
 			}
