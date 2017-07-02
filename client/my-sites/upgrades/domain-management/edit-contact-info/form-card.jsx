@@ -229,7 +229,7 @@ class EditContactInfoFormCard extends React.Component {
 	render() {
 		const { translate } = this.props,
 			saveButtonLabel = translate( 'Save Contact Info' ),
-			canUseDesignatedAgent = this.props.selectedDomain.canUseDesignatedAgent;
+			canUseDesignatedAgent = this.props.selectedDomain.transferLockOnWhoisUpdateOptional;
 
 		return (
 			<Card>

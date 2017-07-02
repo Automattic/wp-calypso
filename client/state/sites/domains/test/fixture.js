@@ -21,7 +21,6 @@ export const DOMAIN_PRIMARY = {
 	autoRenewing: true,
 	blogId: SITE_ID_FIRST,
 	canSetAsPrimary: true,
-	canUseDesignatedAgent: true,
 	currentUserCanManage: true,
 	domain: 'retronevergiveup.me',
 	pointsToWpcom: true,
@@ -48,6 +47,7 @@ export const DOMAIN_PRIMARY = {
 	registrar: '',
 	registrationDate: '2016-03-09T00:00:00+00:00',
 	type: 'MAPPED',
+	transferLockOnWhoisUpdateOptional: true,
 	isWPCOMDomain: false
 };
 
@@ -57,7 +57,6 @@ export const DOMAIN_NOT_PRIMARY = {
 	autoRenewing: false,
 	blogId: SITE_ID_SECOND,
 	canSetAsPrimary: true,
-	canUseDesignatedAgent: false,
 	currentUserCanManage: true,
 	domain: 'retronevergiveup.wordpress.me',
 	pointsToWpcom: true,
@@ -84,6 +83,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	registrar: '',
 	registrationDate: '',
 	type: 'WPCOM',
+	transferLockOnWhoisUpdateOptional: false,
 	isWPCOMDomain: true
 };
 
@@ -94,7 +94,6 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	auto_renewal_date: '2017-02-07T00:00:00+00:00',
 	auto_renewing: 1,
 	blog_id: SITE_ID_FIRST,
-	can_use_designated_agent: true,
 	can_set_as_primary: true,
 	domain: 'retronevergiveup.me',
 	points_to_wpcom: true,
@@ -121,6 +120,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	registrar: '',
 	registration_date: '2016-03-09T00:00:00+00:00',
 	type: 'mapping',
+	transfer_lock_on_whois_update_optional: true,
 	wpcom_domain: false
 };
 
