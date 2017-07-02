@@ -33,30 +33,16 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 			if ( includedDomainPurchase && isDomainMapping( includedDomainPurchase ) ) {
 				text = [
 					i18n.translate(
-						'This plan includes the custom domain mapping for %(mappedDomain)s, normally a %(mappingCost)s purchase. ' +
-							'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
+						'This plan includes the custom domain mapping for %(mappedDomain)s, the mapping will be removed ' +
+						'together with the plan, your domain %(mappedDomain)s will stop functioning and ' +
+						"you'll recieve refund of %(refundAmount)s.",
 						{
 							args: {
 								mappedDomain: includedDomainPurchase.meta,
-								mappingCost: includedDomainPurchase.priceText,
-							},
-						}
-					),
-					i18n.translate(
-						'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan minus ' +
-							'%(mappingCost)s for the domain mapping. To cancel the domain mapping with the ' +
-							'plan and ask for a full refund, please {{contactLink}}contact support{{/contactLink}}.',
-						{
-							args: {
-								planCost: purchase.priceText,
-								mappingCost: includedDomainPurchase.priceText,
 								refundAmount: purchase.refundText,
 							},
-							components: {
-								contactLink: <a href={ support.CALYPSO_CONTACT } />,
-							},
 						}
-					),
+					)
 				];
 
 				showSupportLink = false;
