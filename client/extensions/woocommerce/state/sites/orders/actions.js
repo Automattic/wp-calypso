@@ -14,6 +14,9 @@ import {
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
+	WOOCOMMERCE_ORDER_UPDATE,
+	WOOCOMMERCE_ORDER_UPDATE_FAILURE,
+	WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
 	WOOCOMMERCE_ORDERS_REQUEST,
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
@@ -87,6 +90,37 @@ export const fetchOrder = ( siteId, orderId, refresh = false ) => ( dispatch, ge
 		dispatch( setError( siteId, fetchAction, error ) );
 		dispatch( {
 			type: WOOCOMMERCE_ORDER_REQUEST_FAILURE,
+			siteId,
+			orderId,
+			error,
+		} );
+	} );
+};
+
+export const updateOrder = ( siteId, { id: orderId, ...order } ) => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+
+	const updateAction = {
+		type: WOOCOMMERCE_ORDER_UPDATE,
+		siteId,
+		orderId,
+	};
+	dispatch( updateAction );
+
+	return request( siteId ).post( `orders/${ orderId }`, order ).then( data => {
+		dispatch( {
+			type: WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
+			siteId,
+			orderId,
+			order: data,
+		} );
+	} ).catch( error => {
+		dispatch( setError( siteId, updateAction, error ) );
+		dispatch( {
+			type: WOOCOMMERCE_ORDER_UPDATE_FAILURE,
 			siteId,
 			orderId,
 			error,

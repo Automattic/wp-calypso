@@ -13,6 +13,10 @@ Fetch a single order from the remote site. Does not run if this order is loading
 
 Pull a page of orders from the remote site. Does not run if the orders are loading or already loaded.
 
+### `updateOrder( siteId: number, order: object )`
+
+Update a given order on the remote site.
+
 ## Reducer
 
 This is saved on a per-site basis. All orders are collected in `items`, and there is a query => ID mapping in `queries`. `isQueryLoading` indicates which queries are being requested. Currently this is only paged requests (but will allow for filtered queries in v2). `totalPages` tracks the number of pages of orders (this might update to a query mapping later). `isLoading` tracks whether single order requests have been requested/loaded. The order items example below is not a complete list. See the [API documentation for orders](http://woocommerce.github.io/woocommerce-rest-api-docs/#order-properties).
@@ -29,6 +33,10 @@ This is saved on a per-site basis. All orders are collected in `items`, and ther
 		"isQueryLoading": {
 			'{page:1}': false,
 			'{page:2}': true
+		},
+		// Keyed by order ID
+		"isUpdating": {
+			10: true
 		},
 		// Keyed by post ID
 		"items": {
