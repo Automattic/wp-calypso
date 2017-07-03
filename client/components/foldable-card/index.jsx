@@ -2,17 +2,14 @@
  * External Dependencies
  */
 import React from 'react';
-
-import { localize } from 'i18n-calypso';
-
 import classNames from 'classnames';
-import noop from 'lodash/noop';
+import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import Card from 'components/card';
-
 import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 
@@ -161,4 +158,4 @@ var FoldableCard = React.createClass( {
 	}
 } );
 
-module.exports = localize(FoldableCard);
+module.exports = localize( FoldableCard );
