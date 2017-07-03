@@ -117,7 +117,7 @@ class FoldableCard extends Component {
 			? <span className="foldable-card__summary">{ this.props.summary } </span>
 			: null;
 		const expandedSummary = this.props.expandedSummary
-			? <span className="foldable-card__summary_expanded">{ this.props.expandedSummary } </span>
+			? <span className="foldable-card__summary-expanded">{ this.props.expandedSummary } </span>
 			: null;
 		const headerClickAction = this.props.clickableHeader ? this.getClickAction() : null;
 		const headerClasses = classNames( 'foldable-card__header', {
