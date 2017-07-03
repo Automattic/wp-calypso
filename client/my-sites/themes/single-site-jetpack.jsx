@@ -97,7 +97,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 				{
 					( config.isEnabled( 'jetpack/pijp' ) && ! requestingSitePlans && ! hasUnlimitedPremiumThemes ) && <Banner
 						plan={ PLAN_JETPACK_PREMIUM }
-						title={ translate( 'Access all our premium themes with our Business plan!' ) }
+						title={ translate( 'Access all our premium themes with our Professional plan!' ) }
 						description={
 							translate( 'Get advanced customization, more storage space, and video support along with all your new themes.' )
 						}
