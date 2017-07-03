@@ -11,6 +11,7 @@ import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
+import { formatValue } from '../utils';
 
 const StoreStatsList = ( { data, values } ) => {
 	const titles = (
@@ -26,7 +27,7 @@ const StoreStatsList = ( { data, values } ) => {
 				<TableRow key={ i }>
 					{ values.map( ( value, j ) => (
 						<TableItem key={ value.key } isTitle={ 0 === j }>
-							{ row[ value.key ] }
+							{ formatValue( row[ value.key ], value.format ) }
 						</TableItem>
 					) ) }
 				</TableRow>

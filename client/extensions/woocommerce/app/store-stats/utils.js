@@ -9,6 +9,7 @@ import { moment } from 'i18n-calypso';
  * Internal dependencies
  */
 import { UNITS } from './constants';
+import formatCurrency from 'lib/format-currency';
 
 /**
  * @typedef {Object} Delta
@@ -103,4 +104,23 @@ export function getEndPeriod( date, unit ) {
 	return ( unit === 'week' )
 		? moment( date ).endOf( 'isoWeek' ).format( 'YYYY-MM-DD' )
 		: moment( date ).endOf( unit ).format( 'YYYY-MM-DD' );
+}
+
+/**
+ * Given a value and format option of 'text', 'number' and 'currency' return a formatted value.
+ *
+ * @param {(string|number)} value - string or number to be formatted
+ * @param {string} format - string of 'text', 'number' or 'currency'
+ * @return {string|number} - formatted number or string value
+*/
+export function formatValue( value, format ) {
+	switch ( format ) {
+		case 'currency':
+			return formatCurrency( value );
+		case 'number':
+			return Math.round( value * 100 ) / 100;
+		case 'text':
+		default:
+			return value;
+	}
 }
