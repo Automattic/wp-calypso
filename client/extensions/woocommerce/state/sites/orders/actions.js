@@ -10,6 +10,8 @@ import {
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
+import { translate } from 'i18n-calypso';
 import {
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
@@ -111,6 +113,7 @@ export const updateOrder = ( siteId, { id: orderId, ...order } ) => ( dispatch, 
 	dispatch( updateAction );
 
 	return request( siteId ).post( `orders/${ orderId }`, order ).then( data => {
+		dispatch( successNotice( translate( 'Order saved.' ), { duration: 5000 } ) );
 		dispatch( {
 			type: WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
 			siteId,
@@ -119,6 +122,7 @@ export const updateOrder = ( siteId, { id: orderId, ...order } ) => ( dispatch, 
 		} );
 	} ).catch( error => {
 		dispatch( setError( siteId, updateAction, error ) );
+		dispatch( errorNotice( translate( 'Unable to save order.' ), { duration: 5000 } ) );
 		dispatch( {
 			type: WOOCOMMERCE_ORDER_UPDATE_FAILURE,
 			siteId,
