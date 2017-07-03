@@ -234,7 +234,7 @@ class ActivityLog extends Component {
 		const logsGroupedByDay = map(
 			groupBy(
 				logsForMonth,
-				log => applySiteOffset( moment.utc( log.ts_utc ) ).format( 'LL' )
+				log => applySiteOffset( moment.utc( log.ts_utc ) ).format( 'YYYY-MM-DD' )
 			),
 			( daily_logs, day ) => (
 				<ActivityLogDay

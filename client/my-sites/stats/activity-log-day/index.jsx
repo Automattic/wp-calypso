@@ -30,10 +30,12 @@ class ActivityLogDay extends Component {
 
 	handleClickRestore = () => {
 		const {
+			applySiteOffset,
+			day,
+			moment,
 			requestRestore,
-			timestamp,
 		} = this.props;
-		requestRestore( timestamp );
+		requestRestore( applySiteOffset( moment.utc( day ) ).endOf( 'day' ).valueOf() );
 	};
 
 	/**
@@ -71,14 +73,16 @@ class ActivityLogDay extends Component {
 	 */
 	getEventsHeading() {
 		const {
+			applySiteOffset,
 			logs,
+			moment,
 			translate,
 			day,
 		} = this.props;
 
 		return (
 			<div>
-				<div className="activity-log-day__day">{ day }</div>
+				<div className="activity-log-day__day">{ applySiteOffset( moment.utc( day ) ).format( 'LL' ) }</div>
 				<div className="activity-log-day__events">{
 					translate( '%d Event', '%d Events', {
 						args: logs.length,
