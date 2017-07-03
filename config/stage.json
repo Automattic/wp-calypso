@@ -32,7 +32,6 @@
 		"manage/edit-user": true,
 		"manage/export": true,
 		"manage/import/medium": true,
-		"manage/jetpack": true,
 		"manage/media": true,
 		"manage/option_sync_non_public_post_stati": false,
 		"manage/pages": true,
