@@ -12,6 +12,9 @@ import Button from 'components/button';
 export default class FoldableCardExample extends PureComponent {
 	static displayName = 'FoldableCardExample';
 
+	handleClick = () => console.log( 'Clicked!' );
+	handleClose = () => console.log( 'Closed!' );
+	handleOpen = () => console.log( 'Opened!' );
 
 	render() {
 		return (
@@ -65,6 +68,16 @@ export default class FoldableCardExample extends PureComponent {
 						header={ <div><div>This is a multiline foldable card</div><div><small> with a summary component & a expanded summary component</small></div></div> }
 						summary={ <Button compact scary>Update</Button> }
 						expandedSummary={ <Button compact scary>Update</Button> }>
+						Nothing to see here. Keep walking!
+					</FoldableCard>
+				</div>
+				<div>
+					<FoldableCard
+						header="This card includes click, open and close actions. Check your console!"
+						onClick={ this.handleClick }
+						onClose={ this.handleClose }
+						onOpen={ this.handleOpen }
+					>
 						Nothing to see here. Keep walking!
 					</FoldableCard>
 				</div>
