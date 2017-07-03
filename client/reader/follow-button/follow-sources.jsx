@@ -10,6 +10,7 @@ const exported = {
 	READER_FOLLOWING_MANAGE_URL_INPUT: 'reader-following-manage-url-input',
 	READER_FOLLOWING_MANAGE_SEARCH_RESULT: 'reader-following-manage-search-result',
 	READER_FOLLOWING_MANAGE_RECOMMENDATION: 'reader-following-manage-recommendation',
+	TAG_PAGES: 'reader-tag-pages',
 };
 
 export default exported;
