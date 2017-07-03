@@ -12,7 +12,7 @@ import { fetchModuleList } from 'state/jetpack/modules/actions';
 
 class QueryJetpackModules extends Component {
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
 		requestingModules: PropTypes.bool,
 		fetchModuleList: PropTypes.func
 	};
@@ -28,11 +28,9 @@ class QueryJetpackModules extends Component {
 	}
 
 	request( props ) {
-		if ( props.requestingModules ) {
-			return;
+		if ( props.siteId !== null && ! props.requestingModules ) {
+			props.fetchModuleList( props.siteId );
 		}
-
-		props.fetchModuleList( props.siteId );
 	}
 
 	render() {
