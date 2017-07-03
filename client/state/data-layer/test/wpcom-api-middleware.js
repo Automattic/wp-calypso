@@ -34,7 +34,7 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( handlers )( store )( next )( action );
 
-		expect( store.dispatch ).to.not.have.been.called;
+		expect( store.dispatch ).to.not.have.beenCalled;
 		expect( next ).to.have.been.calledWith( action );
 	} );
 
@@ -48,7 +48,7 @@ describe( 'WordPress.com API Middleware', () => {
 		middleware( handlers )( store )( next )( action );
 
 		expect( next ).to.have.been.calledWith( action );
-		expect( adder ).to.not.have.been.called;
+		expect( adder ).to.not.have.beenCalled;
 	} );
 
 	it( 'should not pass along non-local actions with non data-layer meta', () => {
@@ -60,7 +60,7 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( handlers )( store )( next )( action );
 
-		expect( next ).to.not.have.been.called;
+		expect( next ).to.not.have.beenCalled;
 		expect( adder ).to.have.been.calledWith( store, action );
 	} );
 
@@ -73,7 +73,7 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( handlers )( store )( next )( action );
 
-		expect( next ).to.not.have.been.called;
+		expect( next ).to.not.have.beenCalled;
 		expect( adder ).to.have.been.calledWith( store, action );
 	} );
 
@@ -116,7 +116,7 @@ describe( 'WordPress.com API Middleware', () => {
 
 		expect( adder ).to.have.been.calledWith( store, action );
 		expect( doubler ).to.have.been.calledWith( store, action );
-		expect( next ).to.not.have.been.called;
+		expect( next ).to.not.have.beenCalled;
 	} );
 
 	it( 'should call all given handlers (different lists)', () => {
@@ -133,7 +133,7 @@ describe( 'WordPress.com API Middleware', () => {
 
 		expect( adder ).to.have.been.calledWith( store, action );
 		expect( doubler ).to.have.been.calledWith( store, action );
-		expect( next ).to.not.have.been.called;
+		expect( next ).to.not.have.beenCalled;
 	} );
 
 	describe( 'network response', () => {

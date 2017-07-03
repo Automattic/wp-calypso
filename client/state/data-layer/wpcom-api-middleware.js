@@ -17,12 +17,12 @@ const mergedHandlers = mergeHandlers(
 const shouldNext = action => {
 	const meta = action.meta;
 	if ( ! meta ) {
-		return false;
+		return true;
 	}
 
 	const data = meta.dataLayer;
 	if ( ! data ) {
-		return false;
+		return true;
 	}
 
 	// is a network response, don't reissue
