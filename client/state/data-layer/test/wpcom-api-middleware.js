@@ -135,4 +135,49 @@ describe( 'WordPress.com API Middleware', () => {
 		expect( doubler ).to.have.been.calledWith( store, action );
 		expect( next ).to.not.have.been.called;
 	} );
+
+	describe( 'network response', () => {
+		let adder;
+		let handlers;
+		const action = { type: 'ADD' };
+
+		beforeEach( () => {
+			adder = spy();
+			handlers = mergeHandlers( {
+				[ 'ADD' ]: [ adder ]
+			} );
+		} );
+
+		it( 'should not pass along actions for a network response that contains headers', () => {
+			const meta = { dataLayer: { headers: {} } };
+
+			middleware( handlers )( store )( next )( { ...action, meta } );
+
+			expect( next ).to.have.not.been.called;
+		} );
+
+		it( 'should not pass along actions for a network response that contains data', () => {
+			const meta = { dataLayer: { data: {} } };
+
+			middleware( handlers )( store )( next )( { ...action, meta } );
+
+			expect( next ).to.have.not.been.called;
+		} );
+
+		it( 'should not pass along actions for a network response that contains an error', () => {
+			const meta = { dataLayer: { error: {} } };
+
+			middleware( handlers )( store )( next )( { ...action, meta } );
+
+			expect( next ).to.have.not.been.called;
+		} );
+
+		it( 'should not pass along actions for a network response that contains a progress report', () => {
+			const meta = { dataLayer: { progress: { total: 1, loaded: 1 } } };
+
+			middleware( handlers )( store )( next )( { ...action, meta } );
+
+			expect( next ).to.have.not.been.called;
+		} );
+	} );
 } );

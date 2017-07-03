@@ -17,7 +17,7 @@ const mergedHandlers = mergeHandlers(
 const shouldNext = action => {
 	const meta = action.meta;
 	if ( ! meta ) {
-		return true;
+		return false;
 	}
 
 	const data = meta.dataLayer;
@@ -26,7 +26,7 @@ const shouldNext = action => {
 	}
 
 	// is a network response, don't reissue
-	if ( data.data || data.error || data.headers ) {
+	if ( data.data || data.error || data.headers || data.progress ) {
 		return false;
 	}
 
