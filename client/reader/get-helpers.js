@@ -59,7 +59,7 @@ export const getSiteName = ( { feed, site, post } = {} ) => {
 		siteName = site.title;
 	} else if ( ! isDefaultSiteTitle && feed && ( feed.name || feed.title ) ) {
 		siteName = feed.name || feed.title;
-	} else if ( post && post.site_name ) {
+	} else if ( ! isDefaultSiteTitle && post && post.site_name ) {
 		siteName = post.site_name;
 	} else if ( ( site && site.is_error ) || ( feed && feed.is_error && ! post ) ) {
 		siteName = translate( 'Error fetching feed' );
