@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { isEmpty, omit, some, xor } from 'lodash';
+import { flatten, isEmpty, omit, some, xor } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,6 +26,8 @@ import {
 } from 'woocommerce/state/action-types';
 import { getShippingZoneLocationsWithEdits } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 import { getRawShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
+import { getZoneLocationsPriority } from 'woocommerce/state/sites/shipping-zone-locations/helpers';
+import { getAPIShippingZones } from 'woocommerce/state/sites/shipping-zones/selectors';
 
 const createShippingZoneSuccess = ( actionList ) => ( dispatch, getState, { sentData, receivedData } ) => {
 	const zoneIdMapping = {
@@ -104,8 +106,22 @@ const getUpdateShippingZoneLocationsSteps = ( siteId, zoneId, locations, serverL
 	} ];
 };
 
+const getAutoOrderZonesSteps = ( siteId, zoneId, serverZones, allServerLocations ) => {
+	return flatten( serverZones.map( ( { id, order } ) => {
+		if ( id === zoneId || 0 === id ) {
+			return null;
+		}
+		const newOrder = getZoneLocationsPriority( allServerLocations[ id ] ) || 5; // Put zones with no locations at the end
+		if ( newOrder === order ) {
+			return null;
+		}
+		return getUpdateShippingZoneSteps( siteId, id, { order: newOrder } );
+	} ).filter( Boolean ) );
+};
+
 const getSaveZoneActionListSteps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
+	const serverZones = getAPIShippingZones( state );
 	const zoneEdits = getShippingZonesEdits( state, siteId );
 	const zoneId = zoneEdits.currentlyEditingId;
 	const zoneProperties = omit( zoneEdits.currentlyEditingChanges, 'methods', 'locations' );
@@ -113,12 +129,19 @@ const getSaveZoneActionListSteps = ( state ) => {
 	const getZoneStepsFunc = 'number' === typeof zoneId ? getUpdateShippingZoneSteps : getCreateShippingZoneSteps;
 
 	const locations = getShippingZoneLocationsWithEdits( state, siteId );
-	const serverLocations = getRawShippingZoneLocations( state, siteId )[ zoneId ];
+	const allServerLocations = getRawShippingZoneLocations( state, siteId );
+	const serverLocations = allServerLocations[ zoneId ];
+
+	const order = getZoneLocationsPriority( locations );
+	const serverZone = find( serverZones, { id: zoneId } );
+	if ( ! serverZone || serverZone.order !== order ) {
+		zoneProperties.order = order;
+	}
 
 	return [
 		...getZoneStepsFunc( siteId, zoneId, zoneProperties ),
+		...getAutoOrderZonesSteps( siteId, zoneId, serverZones, allServerLocations ),
 		...getUpdateShippingZoneLocationsSteps( siteId, zoneId, locations, serverLocations ),
-		// TODO: auto-order operations
 		// TODO: create methods
 		// TODO: update methods
 		// TODO: delete methods
