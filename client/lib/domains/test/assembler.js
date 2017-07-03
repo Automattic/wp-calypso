@@ -33,6 +33,7 @@ describe( 'assembler', () => {
 		} ),
 		redirectDomainObject = {
 			autoRenewalMoment: undefined,
+			canUseDesignatedAgent: undefined,
 			currentUserCanManage: undefined,
 			expirationMoment: undefined,
 			expired: undefined,
@@ -50,6 +51,7 @@ describe( 'assembler', () => {
 			pendingTransfer: undefined,
 			registrar: undefined,
 			registrationMoment: undefined,
+			transferLockOptional: undefined,
 			type: domainTypes.SITE_REDIRECT,
 			hasZone: undefined,
 			pointsToWpcom: undefined

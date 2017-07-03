@@ -22,6 +22,7 @@ function createDomainObjects( dataTransferObject ) {
 	domains = dataTransferObject.map( ( domain ) => {
 		return {
 			autoRenewalMoment: domain.auto_renewal_date && i18n.moment( domain.auto_renewal_date ),
+			canUseDesignatedAgent: domain.can_use_designated_agent,
 			currentUserCanManage: domain.current_user_can_manage,
 			expirationMoment: domain.expiry && i18n.moment( domain.expiry ),
 			expired: domain.expired,
@@ -41,6 +42,7 @@ function createDomainObjects( dataTransferObject ) {
 			registrationMoment: domain.registration_date && i18n.moment( domain.registration_date ),
 			hasZone: domain.has_zone,
 			pointsToWpcom: domain.points_to_wpcom,
+			transferLockOptional: domain.is_transfer_lock_optional,
 			type: getDomainType( domain )
 		};
 	} );

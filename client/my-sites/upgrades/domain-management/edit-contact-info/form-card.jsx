@@ -4,7 +4,6 @@
 import React from 'react';
 import {
 	endsWith,
-	includes,
 	omit
 } from 'lodash';
 import page from 'page';
@@ -228,10 +227,10 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	render() {
-		const { translate } = this.props,
-			saveButtonLabel = translate( 'Save Contact Info' ),
-			{ OPENHRS, OPENSRS } = registrarNames,
-			canUseDesignatedAgent = includes( [ OPENHRS, OPENSRS ], this.props.selectedDomain.registrar );
+		const { translate } = this.props;
+		const { canUseDesignatedAgent, transferLockOptional } = this.props.selectedDomain;
+		const canTransferLockOptOut = canUseDesignatedAgent && transferLockOptional;
+		const saveButtonLabel = translate( 'Save Contact Info' );
 
 		return (
 			<Card>
@@ -326,8 +325,8 @@ class EditContactInfoFormCard extends React.Component {
 						} ) }
 					</div>
 
-					{ canUseDesignatedAgent && this.renderTransferLockOptOut() }
-					{ canUseDesignatedAgent && <DesignatedAgentNotice saveButtonLabel={ saveButtonLabel } /> }
+					{ canTransferLockOptOut && this.renderTransferLockOptOut() }
+					{ canTransferLockOptOut && <DesignatedAgentNotice saveButtonLabel={ saveButtonLabel } /> }
 
 					<FormFooter>
 						<FormButton

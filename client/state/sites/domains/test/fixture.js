@@ -21,6 +21,7 @@ export const DOMAIN_PRIMARY = {
 	autoRenewing: true,
 	blogId: SITE_ID_FIRST,
 	canSetAsPrimary: true,
+	canUseDesignatedAgent: true,
 	currentUserCanManage: true,
 	domain: 'retronevergiveup.me',
 	pointsToWpcom: true,
@@ -46,6 +47,7 @@ export const DOMAIN_PRIMARY = {
 	isPrivate: false,
 	registrar: '',
 	registrationDate: '2016-03-09T00:00:00+00:00',
+	transferLockOptional: true,
 	type: 'MAPPED',
 	isWPCOMDomain: false
 };
@@ -56,6 +58,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	autoRenewing: false,
 	blogId: SITE_ID_SECOND,
 	canSetAsPrimary: true,
+	canUseDesignatedAgent: false,
 	currentUserCanManage: true,
 	domain: 'retronevergiveup.wordpress.me',
 	pointsToWpcom: true,
@@ -81,6 +84,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	isPrivate: false,
 	registrar: '',
 	registrationDate: '',
+	transferLockOptional: false,
 	type: 'WPCOM',
 	isWPCOMDomain: true
 };
@@ -93,6 +97,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	auto_renewing: 1,
 	blog_id: SITE_ID_FIRST,
 	can_set_as_primary: true,
+	can_use_designated_agent: true,
 	domain: 'retronevergiveup.me',
 	points_to_wpcom: true,
 	expired: false,
@@ -107,6 +112,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	has_zone: true,
 	current_user_can_manage: true,
 	is_pending_icann_verification: false,
+	is_transfer_lock_optional: true,
 	manual_transfer_required: false,
 	new_registration: false,
 	owner: 'John Doe',

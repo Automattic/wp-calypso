@@ -9,6 +9,7 @@ export const createSiteDomainObject = domain => {
 		autoRenewing: Boolean( domain.auto_renewing ),
 		blogId: Number( domain.blog_id ),
 		canSetAsPrimary: Boolean( domain.can_set_as_primary ),
+		canUseDesignatedAgent: Boolean( domain.can_use_designated_agent ),
 		currentUserCanManage: Boolean( domain.current_user_can_manage ),
 		domain: String( domain.domain ),
 		expired: Boolean( domain.expired ),
@@ -33,6 +34,7 @@ export const createSiteDomainObject = domain => {
 		pointsToWpcom: Boolean( domain.points_to_wpcom ),
 		registrar: String( domain.registrar ),
 		registrationDate: String( domain.registration_date ),
+		transferLockOptional: Boolean( domain.is_transfer_lock_optional ),
 		type: getDomainType( domain )
 	};
 };
