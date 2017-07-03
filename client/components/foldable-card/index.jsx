@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 
@@ -96,7 +98,7 @@ var FoldableCard = React.createClass( {
 		}
 		if ( this.props.children ) {
 			const iconSize = 24;
-			const screenReaderText = this.props.screenReaderText || this.translate( 'More' );
+			const screenReaderText = this.props.screenReaderText || this.props.translate( 'More' );
 			return (
 				<button
 					disabled={ this.props.disabled }
@@ -159,4 +161,4 @@ var FoldableCard = React.createClass( {
 	}
 } );
 
-module.exports = FoldableCard;
+module.exports = localize(FoldableCard);
