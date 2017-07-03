@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes, Component } from 'react';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import { connect } from 'react-redux';
@@ -117,13 +118,18 @@ class StatsDatePicker extends Component {
 		const today = moment();
 		const date = moment( queryDate );
 		const isToday = today.isSame( date, 'day' );
-		return translate( 'Last update: %(time)s', {
-			args: { time: isToday ? date.format( 'LT' ) : date.fromNow() }
-		} );
+		return (
+			<span>
+				{ translate( 'Last update: %(time)s', {
+					args: { time: isToday ? date.format( 'LT' ) : date.fromNow() }
+				} ) }
+				<Gridicon icon="info-outline" size={ 18 } />
+			</span>
+		);
 	}
 
-	bindPulsingDot = ( ref ) => {
-		this.pulsingDot = ref;
+	bindStatusIndicator = ( ref ) => {
+		this.statusIndicator = ref;
 	}
 
 	render() {
@@ -160,25 +166,23 @@ class StatsDatePicker extends Component {
 					: <div className="stats-section-title">
 							<h3>{ sectionTitle }</h3>
 							{ showQueryDate && isAutoRefreshAllowedForQuery( query ) &&
-								<div className="stats-date-picker__refresh-status">
+								<div
+									className="stats-date-picker__refresh-status"
+									ref={ this.bindStatusIndicator }
+									onMouseEnter={ this.showTooltip }
+									onMouseLeave={ this.hideTooltip }
+								>
 									<span className="stats-date-picker__update-date">
 										{ this.renderQueryDate() }
-									</span>
-									<div className="stats-date-picker__pulsing-dot-wrapper"
-										ref={ this.bindPulsingDot }
-										onMouseEnter={ this.showTooltip }
-										onMouseLeave={ this.hideTooltip }
-									>
-										<div className="stats-date-picker__pulsing-dot" />
 										<Tooltip
 											isVisible={ this.state.isTooltipVisible }
 											onClose={ this.hideTooltip }
 											position="bottom"
-											context={ this.pulsingDot }
+											context={ this.statusIndicator }
 										>
 											{ translate( 'Auto-refreshing every 3 minutes' )}
 										</Tooltip>
-									</div>
+									</span>
 								</div>
 							}
 						</div>
