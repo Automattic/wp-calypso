@@ -1,24 +1,80 @@
 /**
  * External dependencies
  */
-import { find, isEqual, uniqueId } from 'lodash';
+import { compact, find, isEqual, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
 import {
-	WOOCOMMERCE_PRODUCT_VARIATION_EDIT,
+	WOOCOMMERCE_PRODUCT_EDIT,
 	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
+	WOOCOMMERCE_PRODUCT_VARIATION_EDIT,
 } from 'woocommerce/state/action-types';
-import { getBucket } from '../../helpers';
+
 import { editProductAttribute } from '../edits-reducer';
-import generateVariations from '../../../../lib/generate-variations';
+import { getBucket } from 'woocommerce/state/ui/helpers';
+import generateVariations from 'woocommerce/lib/generate-variations';
 
 export default createReducer( null, {
+	[ WOOCOMMERCE_PRODUCT_EDIT ]: editProductAction,
 	[ WOOCOMMERCE_PRODUCT_VARIATION_EDIT ]: editProductVariationAction,
 	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: editProductAttributeAction,
 } );
+
+/**
+ * Updates an edits object for a specific product.
+ *
+ * The main edits state contains an array of edits object, one for each
+ * product to be edited. The edits object for a product is in this format:
+ *
+ * ```
+ * {
+ *   productId: <Number|Object>,
+ *   creates: [ {<new variation object>} ]
+ *   updated: [ {<variation props to update>} ]
+ *   deletes: [ <variation id> ]
+ * }
+ * ```
+ *
+ * @param {Object} edits The state at `woocommerce.ui.products.variations.edits`
+ * @param {Number|Object} productId The id of product edits object to be updating.
+ * @param {Function} doUpdate ( productEdits ) Called with previous product edits, takes return as new product edits.
+ * @return {Object} The new, updated product edits to be used in state.
+ */
+function updateProductEdits( edits, productId, doUpdate ) {
+	let found = false;
+
+	const newEdits = edits.map( ( productEdits ) => {
+		if ( isEqual( productId, productEdits.productId ) ) {
+			found = true;
+			return doUpdate( productEdits );
+		}
+		return productEdits;
+	} );
+
+	if ( ! found ) {
+		newEdits.push( doUpdate( undefined ) );
+	}
+
+	return newEdits;
+}
+
+function editProductAction( edits, action ) {
+	const { product, data, productVariations } = action;
+
+	if ( 'simple' === data.type ) {
+		// Ensure there are no variation edits for this product,
+		// and that any existing ones have deletes.
+		return updateProductEdits( edits, product.id, () => {
+			const deletes = ( productVariations ? productVariations.map( ( v ) => v.id ) : undefined );
+			return { deletes };
+		} );
+	}
+
+	return edits;
+}
 
 function editProductVariationAction( edits, action ) {
 	const { product, variation, data } = action;
@@ -85,63 +141,80 @@ function editProductVariation( array, variation, data ) {
 }
 
 function editProductAttributeAction( edits, action ) {
-	const prevEdits = edits || [];
-	const { product, attribute, data } = action;
+	const { product, attribute, data, productVariations } = action;
 	const attributes = editProductAttribute( product.attributes, attribute, data );
-	const variations = generateVariations( { ...product, attributes } );
-	let productEdits = null;
+	const calculatedVariations = generateVariations( { ...product, attributes } );
 
-	// Look for an existing product edits first.
-	edits = prevEdits.map( ( edit ) => {
-		if ( product.id === edit.productId ) {
-			productEdits = edit;
-		}
-		return edit;
-	} );
+	return updateProductEdits( edits, product.id, ( productEdits ) => {
+		const creates = ( productEdits ? productEdits.creates : [] );
+		const updates = ( productEdits ? productEdits.updates : [] );
+		const newCreates = updateVariationCreates( creates, calculatedVariations, productVariations );
+		const newUpdates = updateVariationUpdates( updates, calculatedVariations, productVariations );
+		const newDeletes = updateVariationDeletes( calculatedVariations, productVariations );
 
-	const creates = editProductVariations( productEdits, variations );
-
-	if ( null === productEdits ) {
-		edits.push( {
+		return {
+			...productEdits,
 			productId: product.id,
-			creates
-		} );
-		return edits;
-	}
+			creates: newCreates,
+			updates: newUpdates,
+			deletes: newDeletes,
+		};
+	} );
+}
 
-	return edits.map( ( edit ) => {
-		if ( product.id === edit.productId ) {
+function updateVariationCreates( creates, calculatedVariations, productVariations ) {
+	const newCreates = compact( calculatedVariations.map( ( calculatedVariation ) => {
+		const foundCreate = find( creates, { attributes: calculatedVariation.attributes } );
+
+		if ( foundCreate ) {
+			return foundCreate;
+		}
+
+		if ( ! find( productVariations, { attributes: calculatedVariation.attributes } ) ) {
+			// This calculated variation doesn't exist in server data, but it should now. Create it.
 			return {
-				...productEdits,
-				creates
+				// TODO: Replace this faux index with a proper placeholder.
+				id: { index: Number( uniqueId() ) },
+				attributes: calculatedVariation.attributes,
+				sku: calculatedVariation.sku,
+				status: 'publish',
 			};
 		}
-		return edit;
-	} );
+	} ) );
+
+	return ( newCreates.length ? newCreates : undefined );
 }
 
-// TODO Check against a product's existing variations (retrieved from the API) and deal with those in the checks below.
-function editProductVariations( productEdits, variations ) {
-	const creates = productEdits && productEdits.creates || [];
+function updateVariationUpdates( updates, calculatedVariations, productVariations ) {
+	const newUpdates = compact( calculatedVariations.map( ( calculatedVariation ) => {
+		const productVariation = find( productVariations, { attributes: calculatedVariation.attributes } );
 
-	// Add new variations that do not exist yet.
-	variations.forEach( ( variation ) => {
-		if ( ! find( creates, ( variationCreate ) => isEqual( variation.attributes, variationCreate.attributes ) ) ) {
-			creates.push( {
-				id: { index: Number( uniqueId() ) },
-				attributes: variation.attributes,
-				sku: variation.sku,
-				status: 'publish',
-			} );
+		if ( productVariation ) {
+			// If we've made it this far, it's valid to have updates on this product variation.
+			return find( updates, { id: productVariation.id } );
 		}
-	} );
+	} ) );
 
-	// Remove variations that are no longer valid.
-	return creates.filter( ( variationCreate ) => {
-		if ( variationCreate.attributes.length &&
-			! find( variations, ( variation ) => isEqual( variationCreate.attributes, variation.attributes ) ) ) {
-			return false;
-		}
-		return true;
-	} );
+	return ( newUpdates.length ? newUpdates : undefined );
 }
+
+function updateVariationDeletes( calculatedVariations, productVariations ) {
+	if ( productVariations ) {
+		const newDeletes = compact( productVariations.map( ( productVariation ) => {
+			const foundInCalculated = find( calculatedVariations, { attributes: productVariation.attributes } );
+
+			if ( ! foundInCalculated ) {
+				// We only delete those variations that don't show up in our calculated set.
+				// Even if it was supposed to be deleted before, but now our set includes it, we
+				// won't delete it.
+				//
+				// Note: This will not support the user deleting a variation that is valid within the
+				// calculated set of variations. It can't be done this way.
+				return productVariation.id;
+			}
+		} ) );
+
+		return ( newDeletes.length ? newDeletes : undefined );
+	}
+}
+
