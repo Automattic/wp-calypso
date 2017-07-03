@@ -12,6 +12,7 @@ import { noop } from 'lodash';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
+import ScreenReaderText from 'components/screen-reader-text';
 
 class FoldableCard extends Component {
 	static propTypes = {
@@ -97,7 +98,7 @@ class FoldableCard extends Component {
 					type="button"
 					className="foldable-card__action foldable-card__expand"
 					onClick={ clickAction }>
-					<span className="screen-reader-text">{ screenReaderText }</span>
+					<ScreenReaderText>{ screenReaderText }</ScreenReaderText>
 					<Gridicon icon={ this.props.icon } size={ iconSize } />
 				</button>
 			);
