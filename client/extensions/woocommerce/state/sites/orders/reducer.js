@@ -97,6 +97,9 @@ export function items( state = {}, action ) {
 		case WOOCOMMERCE_ORDER_REQUEST_SUCCESS:
 			orders = { [ action.orderId ]: action.order };
 			return Object.assign( {}, state, orders );
+		case WOOCOMMERCE_ORDER_UPDATE_SUCCESS:
+			orders = { [ action.orderId ]: action.order };
+			return Object.assign( {}, state, orders );
 		default:
 			return state;
 	}
