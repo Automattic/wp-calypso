@@ -13,6 +13,7 @@ import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions
 import { getAllProductEdits } from 'woocommerce/state/ui/products/selectors';
 import { getAllVariationEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { getAllProductCategoryEdits } from 'woocommerce/state/ui/product-categories/selectors';
+import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
 import { createProduct, updateProduct } from 'woocommerce/state/sites/products/actions';
 import { createProductVariation, updateProductVariation } from 'woocommerce/state/sites/product-variations/actions';
 import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
@@ -23,14 +24,25 @@ import {
 	actionListClear,
 } from 'woocommerce/state/action-list/actions';
 import {
+	WOOCOMMERCE_PRODUCT_EDIT,
+	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
 	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
 	WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE,
 } from 'woocommerce/state/action-types';
 
 export default {
+	[ WOOCOMMERCE_PRODUCT_EDIT ]: [ actionAppendProductVariations ],
+	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: [ actionAppendProductVariations ],
 	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT ]: [ handleProductCategoryEdit ],
 	[ WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE ]: [ handleProductActionListCreate ],
 };
+
+export function actionAppendProductVariations( { getState }, action ) {
+	const { siteId } = action;
+	const { id: productId } = action.product;
+
+	action.productVariations = getVariationsForProduct( getState(), productId, siteId );
+}
 
 export function handleProductCategoryEdit( { dispatch, getState }, action ) {
 	const rootState = getState();
