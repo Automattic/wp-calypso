@@ -21,6 +21,7 @@
 		"code-splitting": true,
 		"community-translator": true,
 		"desktop-promo": true,
+		"external-media": true,
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
