@@ -21,20 +21,31 @@ import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-place
 import CommentFaker from 'blocks/comment-detail/docs/comment-faker';
 import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
+import Pagination from 'my-sites/stats/pagination';
 import QuerySiteComments from 'components/data/query-site-comments';
 import { hasSiteComments } from 'state/selectors';
+
+const COMMENTS_PER_PAGE = 20;
 
 export class CommentList extends Component {
 	static propTypes = {
 		comments: PropTypes.array,
+		commentsCount: PropTypes.number,
+		commentsPage: PropTypes.number,
 		deleteCommentPermanently: PropTypes.func,
 		setBulkStatus: PropTypes.func,
 		setCommentLike: PropTypes.func,
+		setCommentsPage: PropTypes.func,
 		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 		translate: PropTypes.func,
 		undoBulkStatus: PropTypes.func,
+	};
+
+	static defaultProps = {
+		commentsCount: 0,
+		commentsPage: 1,
 	};
 
 	state = {
@@ -220,7 +231,10 @@ export class CommentList extends Component {
 	render() {
 		const {
 			comments,
+			commentsCount,
+			commentsPage,
 			isLoading,
+			setCommentsPage,
 			siteId,
 			siteSlug,
 			status,
@@ -279,6 +293,16 @@ export class CommentList extends Component {
 						line={ emptyMessageLine }
 						title={ emptyMessageTitle }
 					/> }
+
+					{ ! showPlaceholder && ! showEmptyContent &&
+						<Pagination
+							key="comment-list-pagination"
+							page={ commentsPage }
+							pageClick={ setCommentsPage }
+							perPage={ COMMENTS_PER_PAGE }
+							total={ commentsCount }
+						/>
+					}
 				</ReactCSSTransitionGroup>
 			</div>
 		);
