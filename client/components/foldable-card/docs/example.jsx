@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
@@ -10,12 +9,11 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import FoldableCard from 'components/foldable-card';
 import Button from 'components/button';
 
-export default React.createClass( {
-	displayName: 'FoldableCard',
+export default class FoldableCardExample extends PureComponent {
+	static displayName = 'FoldableCardExample';
 
-	mixins: [ PureRenderMixin ],
 
-	render: function() {
+	render() {
 		return (
 			<div>
 				<div>
@@ -73,4 +71,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
