@@ -28,12 +28,15 @@
 }
 
 .dialog.card {
-	max-width: 90%;
-	opacity: 1;
 	position: relative;
+	display: flex;
+	flex-direction: column;
+	max-width: 90%;
+	max-height: 100%;
+	margin: auto 0; // IE needs a horizontal margin values to properly center flex item
+	padding: 0;
+	opacity: 1;
 	transition: opacity .2s ease-in;
-	// IE needs a horizontal margin values to properly center flex item
-	margin: auto 0;
 
 	.dialog-enter &,
 	.dialog-leave.dialog-leave-active & {
@@ -49,6 +52,8 @@
 
 .dialog__content {
 	color: darken( $gray, 20% );
+	padding: 24px;
+	overflow-y: auto;
 
 	h1 {
 		color: $gray-dark;
@@ -61,23 +66,41 @@
 }
 
 .dialog__action-buttons {
-	overflow: hidden;
+	position: relative;
 	border-top: 1px solid lighten( $gray, 30% );
 	padding: 16px;
-	margin: 0 -24px -24px;
+	margin: 0;
 	text-align: right;
-}
 
-.dialog__action-buttons .button {
-	margin-left: 10px;
-	min-width: 80px;
+	&:before {
+		display: block;
+		content: "";
+		width: 100%;
+		height: 24px;
+		position: absolute;
+		background: linear-gradient(to bottom, transparent 0%, $white 100%);
+		border-bottom: 1px solid lighten( $gray, 30% );
+		bottom: 100%;
+		left: 0;
+		pointer-events: none;
+	}
+
+	.button {
+		margin-left: 10px;
+		min-width: 80px;
+
+		.is-left-aligned {
+			margin-left: 0;
+			margin-right: 10px;
+		}
+	}
 
 	.is-left-aligned {
-		margin-left: 0;
-		margin-right: 10px;
+		float: left;
 	}
+
 }
 
-.dialog__action-buttons .is-left-aligned {
-	float: left;
+.ReactModal__Body--open {
+	overflow: hidden;
 }
