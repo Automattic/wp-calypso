@@ -151,12 +151,8 @@ class EditorConfirmationSidebar extends React.Component {
 				'editor-confirmation-sidebar': true,
 				'is-active': isOverlayActive,
 			} ) } >
-				<div className={ classnames( {
-					'editor-confirmation-sidebar__overlay': true,
-					'is-active': isOverlayActive,
-				} ) } onClick={ this.getCloseOverlayHandler( 'dismiss_overlay' ) }>
-					{ this.renderPublishingBusyButton() }
-				</div>
+				{ this.renderPublishingBusyButton() }
+
 				<div className={ classnames( {
 					'editor-confirmation-sidebar__sidebar': true,
 					'is-active': isSidebarActive,
