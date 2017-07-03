@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Tooltip from 'components/tooltip';
 import { getSiteStatsQueryDate } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
@@ -36,14 +35,6 @@ class StatsDatePicker extends Component {
 
 	state = {
 		isTooltipVisible: false
-	};
-
-	showTooltip = () => {
-		this.setState( { isTooltipVisible: true } );
-	};
-
-	hideTooltip = () => {
-		this.setState( { isTooltipVisible: false } );
 	};
 
 	dateForSummarize() {
@@ -122,10 +113,6 @@ class StatsDatePicker extends Component {
 		} );
 	}
 
-	bindPulsingDot = ( ref ) => {
-		this.pulsingDot = ref;
-	}
-
 	render() {
 		const { summary, translate, query, showQueryDate, isActivity } = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
@@ -164,21 +151,6 @@ class StatsDatePicker extends Component {
 									<span className="stats-date-picker__update-date">
 										{ this.renderQueryDate() }
 									</span>
-									<div className="stats-date-picker__pulsing-dot-wrapper"
-										ref={ this.bindPulsingDot }
-										onMouseEnter={ this.showTooltip }
-										onMouseLeave={ this.hideTooltip }
-									>
-										<div className="stats-date-picker__pulsing-dot" />
-										<Tooltip
-											isVisible={ this.state.isTooltipVisible }
-											onClose={ this.hideTooltip }
-											position="bottom"
-											context={ this.pulsingDot }
-										>
-											{ translate( 'Auto-refreshing every 3 minutes' )}
-										</Tooltip>
-									</div>
 								</div>
 							}
 						</div>
