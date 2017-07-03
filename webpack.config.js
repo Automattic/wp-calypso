@@ -189,6 +189,7 @@ if ( calypsoEnv === 'desktop' ) {
 		new webpack.optimize.CommonsChunkPlugin( {
 			name: 'vendor',
 			filename: 'vendor.[chunkhash].js',
+			minChunks: Infinity,
 		} )
 	);
 
