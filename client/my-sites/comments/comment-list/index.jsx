@@ -25,7 +25,7 @@ import Pagination from 'my-sites/stats/pagination';
 import QuerySiteComments from 'components/data/query-site-comments';
 import { hasSiteComments } from 'state/selectors';
 
-const COMMENTS_PER_PAGE = 20;
+const COMMENTS_PER_PAGE = 2;
 
 export class CommentList extends Component {
 	static propTypes = {

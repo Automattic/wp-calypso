@@ -6,7 +6,7 @@ import { filter, isNil, keyBy, map, omit, slice } from 'lodash';
 
 import { createPlaceholderComment } from 'state/data-layer/wpcom/comments';
 
-const COMMENTS_PER_PAGE = 20;
+const COMMENTS_PER_PAGE = 2;
 
 /**
  * `CommentFaker` is a HOC to easily test the Comments Management without the necessity of real data or actions.
