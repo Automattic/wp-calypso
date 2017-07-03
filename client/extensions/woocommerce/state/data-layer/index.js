@@ -8,6 +8,7 @@ import products from './products';
 import productVariations from './product-variations';
 import productCategories from './product-categories';
 import request from './request';
+import shippingZoneLocations from './shipping-zone-locations';
 import shippingZones from './shipping-zones';
 import ui from './ui';
 import debugFactory from 'debug';
@@ -20,6 +21,7 @@ const handlers = mergeHandlers(
 	products,
 	productVariations,
 	request,
+	shippingZoneLocations,
 	shippingZones,
 	ui,
 );

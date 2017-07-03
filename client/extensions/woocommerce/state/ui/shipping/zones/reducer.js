@@ -13,6 +13,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_CLOSE,
 	WOOCOMMERCE_SHIPPING_ZONE_DELETED,
 	WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME,
+	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED,
 	WOOCOMMERCE_SHIPPING_ZONE_OPEN,
 	WOOCOMMERCE_SHIPPING_ZONE_REMOVE,
 	WOOCOMMERCE_SHIPPING_ZONE_UPDATED,
@@ -139,6 +140,18 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_DELETED ] = ( state, { originatingAction: { z
 
 	return { ...state,
 		currentlyEditingId: null,
+	};
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED ] = ( state, { originatingAction: { zoneId } } ) => {
+	if ( zoneId !== state.currentlyEditingId ) {
+		return state;
+	}
+
+	return { ...state,
+		currentlyEditingChanges: { ...state.currentlyEditingChanges,
+			locations: locationsInitialState,
+		}
 	};
 };
 
