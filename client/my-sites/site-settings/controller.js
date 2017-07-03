@@ -24,7 +24,6 @@ import titlecase from 'to-title-case';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser, isVipSite } from 'state/selectors';
-import ExportSettings from './section-export';
 import { SITES_ONCE_CHANGED } from 'state/action-types';
 
 function canDeleteSite( state, siteId ) {
@@ -128,7 +127,10 @@ const controller = {
 	},
 
 	exportSite( context ) {
-		renderPage( context, <ExportSettings /> );
+		renderPage(
+			context,
+			<AsyncLoad require="my-sites/site-settings/section-export" />
+		);
 	},
 
 	guidedTransfer( context ) {
