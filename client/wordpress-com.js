@@ -122,6 +122,13 @@ const sections = [
 		group: 'sites'
 	},
 	{
+		name: 'settings-export',
+		paths: [ '/settings/export' ],
+		module: 'my-sites/site-settings/settings-export',
+		secondary: true,
+		group: 'sites'
+	},
+	{
 		name: 'settings',
 		paths: [ '/settings' ],
 		module: 'my-sites/site-settings',

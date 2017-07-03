@@ -24,7 +24,6 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser, isVipSite } from 'state/selectors';
 import ImportSettings from './section-import';
-import ExportSettings from './section-export';
 import { SITES_ONCE_CHANGED } from 'state/action-types';
 
 function canDeleteSite( state, siteId ) {
@@ -122,17 +121,6 @@ const controller = {
 
 	importSite( context ) {
 		renderPage( context, <ImportSettings /> );
-	},
-
-	exportSite( context ) {
-		renderPage( context, <ExportSettings /> );
-	},
-
-	guidedTransfer( context ) {
-		renderPage(
-			context,
-			<SiteSettingsComponent section="guidedTransfer" hostSlug={ context.params.host_slug } />
-		);
 	},
 
 	deleteSite( context ) {

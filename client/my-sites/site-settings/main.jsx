@@ -13,7 +13,6 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import GeneralSettings from './section-general';
-import GuidedTransfer from 'my-sites/guided-transfer';
 import SiteSettingsNavigation from './navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
@@ -32,13 +31,11 @@ export class SiteSettingsComponent extends Component {
 	};
 
 	getSection() {
-		const { section, hostSlug } = this.props;
+		const { section } = this.props;
 
 		switch ( section ) {
 			case 'general':
 				return <GeneralSettings />;
-			case 'guidedTransfer':
-				return <GuidedTransfer hostSlug={ hostSlug } />;
 		}
 	}
 
