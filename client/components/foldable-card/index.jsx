@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
@@ -13,48 +13,43 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 
-var FoldableCard = React.createClass( {
+class FoldableCard extends Component {
+	static propTypes = {
+		actionButton: PropTypes.element,
+		actionButtonExpanded: PropTypes.element,
+		cardKey: PropTypes.string,
+		compact: PropTypes.bool,
+		disabled: PropTypes.bool,
+		expandedSummary: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		expanded: PropTypes.bool,
+		icon: PropTypes.string,
+		onClick: PropTypes.func,
+		onClose: PropTypes.func,
+		onOpen: PropTypes.func,
+		screenReaderText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		summary: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+	};
 
-	propTypes: {
-		actionButton: React.PropTypes.element,
-		actionButtonExpanded: React.PropTypes.element,
-		cardKey: React.PropTypes.string,
-		compact: React.PropTypes.bool,
-		disabled: React.PropTypes.bool,
-		expandedSummary: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.element ] ),
-		expanded: React.PropTypes.bool,
-		icon: React.PropTypes.string,
-		onClick: React.PropTypes.func,
-		onClose: React.PropTypes.func,
-		onOpen: React.PropTypes.func,
-		screenReaderText: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
-		summary: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.element ] )
-	},
+	static defaultProps = {
+		onOpen: noop,
+		onClose: noop,
+		cardKey: '',
+		icon: 'chevron-down',
+		expanded: false,
+		screenReaderText: false,
+	};
 
-	getInitialState: function() {
-		return {
-			expanded: this.props.expanded
-		};
-	},
+	state = {
+		expanded: this.props.expanded
+	};
 
-	getDefaultProps: function() {
-		return {
-			onOpen: noop,
-			onClose: noop,
-			cardKey: '',
-			icon: 'chevron-down',
-			expanded: false,
-			screenReaderText: false,
-		};
-	},
-
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.expanded !== this.props.expanded ) {
 			this.setState( { expanded: nextProps.expanded } );
 		}
-	},
+	}
 
-	onClick: function() {
+	onClick = () => {
 		if ( this.props.children ) {
 			this.setState( { expanded: ! this.state.expanded } );
 		}
@@ -68,28 +63,28 @@ var FoldableCard = React.createClass( {
 		} else {
 			this.props.onOpen( this.props.cardKey );
 		}
-	},
+	}
 
-	getClickAction: function() {
+	getClickAction() {
 		if ( this.props.disabled ) {
 			return;
 		}
 		return this.onClick;
-	},
+	}
 
-	getActionButton: function() {
+	getActionButton() {
 		if ( this.state.expanded ) {
 			return this.props.actionButtonExpanded || this.props.actionButton;
 		}
 		return this.props.actionButton;
-	},
+	}
 
-	renderActionButton: function() {
+	renderActionButton() {
 		const clickAction = ! this.props.clickableHeader ? this.getClickAction() : null;
 		if ( this.props.actionButton ) {
 			return (
 				<div className="foldable-card__action" onClick={ clickAction }>
-				{ this.getActionButton() }
+					{ this.getActionButton() }
 				</div>
 			);
 		}
@@ -107,17 +102,17 @@ var FoldableCard = React.createClass( {
 				</button>
 			);
 		}
-	},
+	}
 
-	renderContent: function() {
+	renderContent() {
 		return (
 			<div className="foldable-card__content">
 				{ this.props.children }
 			</div>
 		);
-	},
+	}
 
-	renderHeader: function() {
+	renderHeader() {
 		var summary = this.props.summary ? <span className="foldable-card__summary">{ this.props.summary } </span> : null,
 			expandedSummary = this.props.expandedSummary ? <span className="foldable-card__summary_expanded">{ this.props.expandedSummary } </span> : null,
 			headerClickAction = this.props.clickableHeader ? this.getClickAction() : null,
@@ -135,9 +130,9 @@ var FoldableCard = React.createClass( {
 				</span>
 			</div>
 		);
-	},
+	}
 
-	render: function() {
+	render() {
 		var Container = this.props.compact ? CompactCard : Card,
 			itemSiteClasses = classNames(
 				'foldable-card',
@@ -156,6 +151,6 @@ var FoldableCard = React.createClass( {
 			</Container>
 		);
 	}
-} );
+}
 
-module.exports = localize( FoldableCard );
+export default localize( FoldableCard );
