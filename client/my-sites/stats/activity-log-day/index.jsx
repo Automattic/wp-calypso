@@ -20,7 +20,7 @@ class ActivityLogDay extends Component {
 		logs: PropTypes.array.isRequired,
 		requestRestore: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
-		tsDayStart: PropTypes.number.isRequired,
+		tsEndOfSiteDay: PropTypes.number.isRequired,
 	};
 
 	static defaultProps = {
@@ -30,12 +30,10 @@ class ActivityLogDay extends Component {
 
 	handleClickRestore = () => {
 		const {
-			applySiteOffset,
-			tsDayStart,
-			moment,
+			tsEndOfSiteDay,
 			requestRestore,
 		} = this.props;
-		requestRestore( applySiteOffset( moment.utc( tsDayStart ) ).endOf( 'day' ).valueOf() );
+		requestRestore( tsEndOfSiteDay );
 	};
 
 	/**
@@ -77,12 +75,12 @@ class ActivityLogDay extends Component {
 			logs,
 			moment,
 			translate,
-			tsDayStart,
+			tsEndOfSiteDay,
 		} = this.props;
 
 		return (
 			<div>
-				<div className="activity-log-day__day">{ applySiteOffset( moment.utc( tsDayStart ) ).format( 'LL' ) }</div>
+				<div className="activity-log-day__day">{ applySiteOffset( moment.utc( tsEndOfSiteDay ) ).format( 'LL' ) }</div>
 				<div className="activity-log-day__events">{
 					translate( '%d Event', '%d Events', {
 						args: logs.length,
