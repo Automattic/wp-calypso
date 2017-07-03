@@ -71,7 +71,7 @@ const upgradePlan = config.isEnabled( 'upgrades/checkout' )
 		} ),
 		getUrl: ( state, themeId, siteId ) => getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
 		hideForTheme: ( state, themeId, siteId ) => (
-			( config.isEnabled( 'jetpack/pijp' ) && ! isJetpackSite( state, siteId ) ) ||
+			! isJetpackSite( state, siteId ) ||
 			! getCurrentUser( state ) ||
 			! isThemePremium( state, themeId ) ||
 			isThemeActive( state, themeId, siteId ) ||
