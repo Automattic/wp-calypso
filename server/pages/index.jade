@@ -60,7 +60,9 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 		link(href='//s1.wp.com/wp-includes/css/dashicons.css?v=20150727')&attributes( cssLinkAttrs )
 
 		if ! renderedLayout
-			//- Required CSS for the initial shell
+			//- Required CSS for the initial shell. Note that this has to be
+			//- loaded *after* noticons.css, otherwise the W logo on the
+			//- loading screen is the wrong size.
 			style(type="text/css")!= shellCss
 
 		if isRTL
