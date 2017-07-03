@@ -33,14 +33,31 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 			if ( includedDomainPurchase && isDomainMapping( includedDomainPurchase ) ) {
 				text = [
 					i18n.translate(
-						'This plan includes the custom domain mapping for %(mappedDomain)s, the mapping will be removed ' +
-						'together with the plan, your domain %(mappedDomain)s will stop functioning and ' +
-						"you'll recieve refund of %(refundAmount)s.",
+						'This plan includes mapping for the domain %(mappedDomain)s. ' +
+						"Cancelling will remove all the plan's features from your site, including the domain.",
 						{
 							args: {
 								mappedDomain: includedDomainPurchase.meta,
-								refundAmount: purchase.refundText,
+								wordpressSiteUrl: purchase.domain,
 							},
+						}
+					),
+					i18n.translate(
+						'Your site will no longer be available at %(mappedDomain)s. Instead, it will be at %(wordpressSiteUrl)s',
+						{
+							args: {
+								mappedDomain: includedDomainPurchase.meta,
+								wordpressSiteUrl: purchase.domain,
+							},
+						}
+					),
+					i18n.translate(
+						'The domain %(mappedDomain)s itself is not canceled. Only the connection between WordPress.com and ' +
+						'your domain is removed. %(mappedDomain)s is registered elsewhere and you can still use it with other sites.',
+						{
+							args: {
+								mappedDomain: includedDomainPurchase.meta,
+							}
 						}
 					)
 				];
