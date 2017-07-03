@@ -102,12 +102,6 @@ const controller = {
 			return;
 		}
 
-		// if user went directly to jetpack settings page, redirect
-		if ( isJetpackSite( state, siteId ) && ! config.isEnabled( 'manage/jetpack' ) ) {
-			window.location.href = '//wordpress.com/manage/' + siteId;
-			return;
-		}
-
 		renderPage(
 			context,
 			<SiteSettingsComponent section={ section } />
