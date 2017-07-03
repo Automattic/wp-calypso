@@ -130,7 +130,10 @@ const controller = {
 	guidedTransfer( context ) {
 		renderPage(
 			context,
-			<SiteSettingsComponent section="guidedTransfer" hostSlug={ context.params.host_slug } />
+			<AsyncLoad
+				require="my-sites/guided-transfer"
+				hostSlug={ context.params.host_slug }
+			/>
 		);
 	},
 
