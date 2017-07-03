@@ -13,14 +13,13 @@ import support from 'lib/url/support';
 
 function PendingWhoisUpdateCard( { translate } ) {
 	return (
-		<Card className="edit-contact-info__pending-whois-update-card">
+		<div className="edit-contact-info__pending-whois-update-card">
 			<Notice
 				status="is-warning"
-				showDismiss={ false }
-				isCompact={ false } >
-				<h2>{ translate( 'Domain is pending contact information update' ) }</h2>
+				showDismiss={ false }>
+				{ translate( 'Domain is pending contact information update' ) }
 			</Notice>
-			<p>
+			<Card>
 				{ translate(
 					'Your change will be reflected shortly. Please note that if you made a change to your name, ' +
 					'organization, or email address, you must confirm the change by clicking the confirmation ' +
@@ -28,7 +27,7 @@ function PendingWhoisUpdateCard( { translate } ) {
 					'{{supporta}}support page{{/supporta}} or {{a}}contact support{{/a}}.',
 					{
 						components: {
-							a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
+							a: <a href={ support.CALYPSO_CONTACT } rel="noopener noreferrer" />,
 							supporta: <a
 								href="https://en.support.wordpress.com/update-contact-information/#email-or-name-changes"
 								target="_blank"
@@ -36,8 +35,8 @@ function PendingWhoisUpdateCard( { translate } ) {
 						}
 					}
 				) }
-			</p>
-		</Card>
+			</Card>
+		</div>
 	);
 }
 
