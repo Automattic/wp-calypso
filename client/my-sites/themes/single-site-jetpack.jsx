@@ -139,7 +139,6 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								trackScrollPage={ props.trackScrollPage }
 								source="wpcom"
 								emptyContent={ emptyContent }
-								hasUnlimitedPremiumThemes={ config.isEnabled( 'jetpack/pijp' ) && hasUnlimitedPremiumThemes }
 							/>
 						</div>
 					}
@@ -150,7 +149,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 );
 
 export default connect(
-	( state, { siteId } ) => {
+	( state, { siteId, tier } ) => {
 		const isMultisite = isJetpackSiteMultiSite( state, siteId );
 		const showWpcomThemesList = config.isEnabled( 'manage/themes/upload' ) &&
 			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) && ! isMultisite;
@@ -165,6 +164,7 @@ export default connect(
 		return {
 			canManage: canJetpackSiteManage( state, siteId ),
 			hasJetpackThemes: hasJetpackSiteJetpackThemes( state, siteId ),
+			tier: config.isEnabled( 'jetpack/pijp' ) ? tier : 'free',
 			showWpcomThemesList,
 			emptyContent,
 			isMultisite,
