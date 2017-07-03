@@ -35,7 +35,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 
 		config.middleware( store )( next )( action );
 
-		expect( store.dispatch ).to.not.have.beenCalled;
+		expect( store.dispatch ).to.not.have.been.called;
 		expect( next ).to.have.been.calledWith( action );
 	} );
 
@@ -52,7 +52,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		config.middleware( store )( next )( action );
 
 		expect( next ).to.have.been.calledWith( action );
-		expect( adder ).to.not.have.beenCalled;
+		expect( adder ).to.not.have.been.called;
 	} );
 
 	it( 'should not pass along non-local actions with non data-layer meta', () => {
@@ -67,7 +67,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 
 		config.middleware( store )( next )( action );
 
-		expect( next ).to.not.have.beenCalled;
+		expect( next ).to.not.have.been.called;
 		expect( adder ).to.have.been.calledWith( store, action );
 	} );
 
@@ -83,7 +83,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 
 		config.middleware( store )( next )( action );
 
-		expect( next ).to.not.have.beenCalled;
+		expect( next ).to.not.have.been.called;
 		expect( adder ).to.have.been.calledWith( store, action );
 	} );
 
@@ -138,7 +138,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 
 		expect( adder ).to.have.been.calledWith( store, action );
 		expect( doubler ).to.have.been.calledWith( store, action );
-		expect( next ).to.not.have.beenCalled;
+		expect( next ).to.not.have.been.called;
 	} );
 
 	it( 'should call all given handlers (different lists)', () => {
@@ -162,7 +162,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 
 		expect( adder ).to.have.been.calledWith( store, action );
 		expect( doubler ).to.have.been.calledWith( store, action );
-		expect( next ).to.not.have.beenCalled;
+		expect( next ).to.not.have.been.called;
 	} );
 
 	it( 'should no longer call handlers that have been removed', () => {
@@ -182,7 +182,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		removeHandlers( 'my-extension', config );
 
 		config.middleware( store )( next )( action );
-		expect( adder ).to.not.have.beenCalled;
+		expect( adder ).to.not.have.been.called;
 	} );
 
 	it( 'should still call handlers even after some handlers have been removed', () => {
