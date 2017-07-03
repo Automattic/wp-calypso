@@ -83,9 +83,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 			// Compute the dirty fields by comparing the persisted and the current fields
 			const previousDirtyFields = this.props.dirtyFields;
-			/*eslint-disable eqeqeq*/
-			const nextDirtyFields = previousDirtyFields.filter( field => ! ( currentFields[ field ] == persistedFields[ field ] ) );
-			/*eslint-enable eqeqeq*/
+			const nextDirtyFields = previousDirtyFields.filter( field => ! isEqual( currentFields[ field ], persistedFields[ field ] ) );
 
 			// Update the dirty fields state without updating their values
 			if ( 0 === nextDirtyFields.length ) {
@@ -163,17 +161,18 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			} );
 		};
 
-		// Update a field that is stored as an array element.
-		setFieldArrayValue = ( name, index ) => event => {
+		// Delete an element from an array field.
+		deleteFieldArrayValue = ( name, index ) => () => {
 			const currentValue = this.props.fields[ name ];
 			const newValue = [
 				...currentValue.slice( 0, index ),
-				event.target.value,
 				...currentValue.slice( index + 1 ),
 			];
 
 			this.props.updateFields( {
 				[ name ]: newValue,
+			}, () => {
+				this.submitForm();
 			} );
 		};
 
@@ -200,6 +199,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 		render() {
 			const utils = {
+				deleteFieldArrayValue: this.deleteFieldArrayValue,
 				handleAutosavingToggle: this.handleAutosavingToggle,
 				handleChange: this.handleChange,
 				handleDeleteCache: this.handleDeleteCache,
@@ -208,7 +208,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				handleSubmitForm: this.handleSubmitForm,
 				handleToggle: this.handleToggle,
 				setFieldValue: this.setFieldValue,
-				setFieldArrayValue: this.setFieldArrayValue,
 			};
 
 			return (
