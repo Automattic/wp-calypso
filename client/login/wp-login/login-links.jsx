@@ -12,6 +12,7 @@ import page from 'page';
 import config, { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'gridicons';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { recordPageView, recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { login } from 'lib/paths';
@@ -88,6 +89,10 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
+		if ( this.props.currentUser ) {
+			return null;
+		}
+
 		return (
 			<a href="#" key="magic-login-link" onClick={ this.recordMagicLoginLinkClick }>
 				{ this.props.translate( 'Email me a login link' ) }
@@ -133,10 +138,14 @@ export class LoginLinks extends React.Component {
 	}
 }
 
+const mapState = ( state ) => ( {
+	currentUser: getCurrentUser( state ),
+} );
+
 const mapDispatch = {
 	recordPageView,
 	recordTracksEvent,
 	resetMagicLoginRequestForm,
 };
 
-export default connect( null, mapDispatch )( localize( LoginLinks ) );
+export default connect( mapState, mapDispatch )( localize( LoginLinks ) );
