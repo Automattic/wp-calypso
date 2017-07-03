@@ -12,7 +12,6 @@ const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
 const os = require( 'os' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
-const WebpackChunkHash = require( 'webpack-chunk-hash' );
 const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
 
 /**
@@ -155,6 +154,14 @@ const webpackConfig = {
 				babelLoader
 			] )
 		} ),
+		new NamedModulesPlugin(),
+		new webpack.NamedChunksPlugin( chunk => {
+			if ( chunk.name ) {
+				return chunk.name;
+			}
+			return chunk.modules.map( m => path.relative( m.context, m.request ) ).join( '_' );
+		} ),
+		new NameAllModulesPlugin(),
 	] ),
 	externals: [ 'electron' ]
 };
@@ -214,7 +221,6 @@ if ( calypsoEnv === 'desktop' ) {
 
 if ( calypsoEnv === 'development' ) {
 	webpackConfig.plugins = webpackConfig.plugins.concat( [
-		new NamedModulesPlugin(),
 		new webpack.HotModuleReplacementPlugin(),
 		new webpack.LoaderOptionsPlugin( { debug: true } ),
 	] );
@@ -223,7 +229,6 @@ if ( calypsoEnv === 'development' ) {
 		path.join( __dirname, 'client', 'boot', 'app' )
 	];
 	webpackConfig.devServer = { hot: true, inline: true };
-
 
 	if ( config.isEnabled( 'use-source-maps' ) ) {
 		webpackConfig.devtool = '#eval-cheap-module-source-map';
@@ -236,9 +241,6 @@ if ( calypsoEnv === 'development' ) {
 } else {
 	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
 	webpackConfig.plugins = webpackConfig.plugins.concat( [
-		new webpack.HashedModuleIdsPlugin(),
-		new WebpackChunkHash(),
-		new NameAllModulesPlugin(),
 	] );
 	webpackConfig.devtool = false;
 }
