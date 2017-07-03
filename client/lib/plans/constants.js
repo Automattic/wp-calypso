@@ -71,6 +71,7 @@ export const FEATURE_BUSINESS_ONBOARDING = 'business-onboarding';
 export const FEATURE_UPLOAD_PLUGINS = 'upload-plugins';
 export const FEATURE_UPLOAD_THEMES = 'upload-themes';
 export const FEATURE_REPUBLICIZE = 'republicize';
+export const FEATURE_SIMPLE_PAYMENTS = 'simple-payments';
 export const FEATURE_ALL_FREE_FEATURES = 'all-free-features';
 export const FEATURE_ALL_PERSONAL_FEATURES = 'all-personal-features';
 export const FEATURE_ALL_PREMIUM_FEATURES = 'all-premium-features';
@@ -301,6 +302,7 @@ export const PLANS_LIST = {
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING,
+			isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 		] ),
 		getPromotedFeatures: () => [
 			FEATURE_UNLIMITED_STORAGE,
@@ -775,6 +777,12 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Advanced Social Media' ),
 		getDescription: () => i18n.translate(
 			'Schedule your social media updates in advance and promote your posts when it\'s best for you.' ),
+	},
+	[ FEATURE_SIMPLE_PAYMENTS ]: {
+		getSlug: () => FEATURE_SIMPLE_PAYMENTS,
+		getTitle: () => i18n.translate( 'Simple Payments' ),
+		getDescription: () => i18n.translate(
+			'Sell anything with a simple PayPal button.' ),
 	},
 	[ FEATURE_NO_BRANDING ]: {
 		getSlug: () => FEATURE_NO_BRANDING,

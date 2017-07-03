@@ -141,6 +141,7 @@
 		"settings/theme-setup": true,
 		"signup/domain-first-flow": true,
 		"signup/social": true,
+		"simple-payments": true,
 		"standalone-site-preview": false,
 		"support-user": true,
 		"sync-handler": true,

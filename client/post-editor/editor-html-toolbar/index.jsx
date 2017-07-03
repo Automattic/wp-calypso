@@ -474,6 +474,24 @@ export class EditorHtmlToolbar extends Component {
 		);
 	}
 
+	renderSimplePaymentsButton() {
+		const { translate } = this.props;
+
+		if ( ! config.isEnabled( 'simple-payments' ) ) {
+			return null;
+		}
+
+		return (
+			<div
+				className="editor-html-toolbar__insert-content-dropdown-item"
+				onClick={ null }
+			>
+				<Gridicon icon="money" />
+				<span>{ translate( 'Add Payment Button' ) }</span>
+			</div>
+		);
+	}
+
 	render() {
 		const {
 			site,
@@ -595,6 +613,8 @@ export class EditorHtmlToolbar extends Component {
 								<Gridicon icon="mention" />
 								<span>{ translate( 'Add Contact Form' ) }</span>
 							</div>
+
+							{ this.renderSimplePaymentsButton() }
 						</div>
 					</div>
 				</div>
