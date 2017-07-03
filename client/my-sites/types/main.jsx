@@ -57,12 +57,11 @@ Types.propTypes = {
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const postType = getPostType( state, siteId, ownProps.query.type );
-	const capability = get( postType, [ 'capabilities', 'edit_posts' ], null );
 
 	return {
 		siteId,
 		postType,
 		postTypeSupported: isPostTypeSupported( state, siteId, ownProps.query.type ),
-		userCanEdit: canCurrentUser( state, siteId, capability )
+		userCanEdit: canCurrentUser( state, siteId, 'edit_posts' )
 	};
 } )( Types );

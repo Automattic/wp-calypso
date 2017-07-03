@@ -133,6 +133,8 @@ class PostTypeList extends Component {
 			'is-empty': isEmpty
 		} );
 
+		console.log( siteId, query );
+
 		return (
 			<div className={ classes }>
 				{ query && this.state.requestedPages.map( ( page ) => (
