@@ -41,6 +41,7 @@ function createDomainObjects( dataTransferObject ) {
 			registrationMoment: domain.registration_date && i18n.moment( domain.registration_date ),
 			hasZone: domain.has_zone,
 			pointsToWpcom: domain.points_to_wpcom,
+			transferLockOnWhoisUpdateOptional: domain.transfer_lock_on_whois_update_optional,
 			type: getDomainType( domain )
 		};
 	} );

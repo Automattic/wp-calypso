@@ -51,6 +51,7 @@ describe( 'assembler', () => {
 			registrar: undefined,
 			registrationMoment: undefined,
 			type: domainTypes.SITE_REDIRECT,
+			transferLockOnWhoisUpdateOptional: undefined,
 			hasZone: undefined,
 			pointsToWpcom: undefined
 		},

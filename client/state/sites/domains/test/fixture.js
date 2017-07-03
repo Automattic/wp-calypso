@@ -47,6 +47,7 @@ export const DOMAIN_PRIMARY = {
 	registrar: '',
 	registrationDate: '2016-03-09T00:00:00+00:00',
 	type: 'MAPPED',
+	transferLockOnWhoisUpdateOptional: true,
 	isWPCOMDomain: false
 };
 
@@ -82,6 +83,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	registrar: '',
 	registrationDate: '',
 	type: 'WPCOM',
+	transferLockOnWhoisUpdateOptional: false,
 	isWPCOMDomain: true
 };
 
@@ -118,6 +120,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	registrar: '',
 	registration_date: '2016-03-09T00:00:00+00:00',
 	type: 'mapping',
+	transfer_lock_on_whois_update_optional: true,
 	wpcom_domain: false
 };
 
