@@ -15,12 +15,12 @@ import ActivityLogItem from '../activity-log-item';
 class ActivityLogDay extends Component {
 	static propTypes = {
 		allowRestore: PropTypes.bool.isRequired,
+		applySiteOffset: PropTypes.func.isRequired,
 		isRewindActive: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
 		requestRestore: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
-		day: PropTypes.string.isRequired,
-		applySiteOffset: PropTypes.func.isRequired,
+		tsDayStart: PropTypes.number.isRequired,
 	};
 
 	static defaultProps = {
@@ -31,11 +31,11 @@ class ActivityLogDay extends Component {
 	handleClickRestore = () => {
 		const {
 			applySiteOffset,
-			day,
+			tsDayStart,
 			moment,
 			requestRestore,
 		} = this.props;
-		requestRestore( applySiteOffset( moment.utc( day ) ).endOf( 'day' ).valueOf() );
+		requestRestore( applySiteOffset( moment.utc( tsDayStart ) ).endOf( 'day' ).valueOf() );
 	};
 
 	/**
@@ -77,12 +77,12 @@ class ActivityLogDay extends Component {
 			logs,
 			moment,
 			translate,
-			day,
+			tsDayStart,
 		} = this.props;
 
 		return (
 			<div>
-				<div className="activity-log-day__day">{ applySiteOffset( moment.utc( day ) ).format( 'LL' ) }</div>
+				<div className="activity-log-day__day">{ applySiteOffset( moment.utc( tsDayStart ) ).format( 'LL' ) }</div>
 				<div className="activity-log-day__events">{
 					translate( '%d Event', '%d Events', {
 						args: logs.length,
