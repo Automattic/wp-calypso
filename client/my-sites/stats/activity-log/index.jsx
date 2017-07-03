@@ -291,6 +291,7 @@ class ActivityLog extends Component {
 			requestedRestoreTimestamp,
 			showRestoreConfirmDialog,
 		} = this.state;
+		const applySiteOffset = this.getSiteOffsetFunc();
 
 		return (
 			<Main wideLayout>
@@ -307,6 +308,7 @@ class ActivityLog extends Component {
 				{ this.renderErrorMessage() }
 				{ this.renderContent() }
 				<ActivityLogConfirmDialog
+					applySiteOffset={ applySiteOffset }
 					isVisible={ showRestoreConfirmDialog }
 					siteTitle={ siteTitle }
 					timestamp={ requestedRestoreTimestamp }
