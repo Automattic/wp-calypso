@@ -37,38 +37,44 @@ class DebugTab extends Component {
 				</SectionHeader>
 				<Card>
 					<form>
-						<FormToggle>
-							<span>
-								{ translate( 'Enable Debugging' ) }
-							</span>
-						</FormToggle>
 						<FormFieldset>
-							<FormLabel htmlFor="ipAddress">
-								{ translate( 'IP Address' ) }
-							</FormLabel>
-							<FormTextInput id="ipAddress">
-							</FormTextInput>
-							<FormSettingExplanation>
-								{ translate(
-									'(only log requests from this IP address. Your IP is %(ipAddress)s)',
-									{
-										args: { ipAddress: '1.2.3.4' },
-									}
-								) }
-							</FormSettingExplanation>
 							<FormToggle>
 								<span>
-									{ translate( 'Cache Status Messages' ) }
+									{ translate( 'Enable Debugging' ) }
 								</span>
 							</FormToggle>
-							<FormSettingExplanation>
-								{
-									translate(
-										'Display comments at the end of every page like this:'
-									)
-								}
-							</FormSettingExplanation>
 						</FormFieldset>
+						<div className="wp-super-cache__debug-fieldsets">
+							<FormFieldset>
+								<FormLabel htmlFor="ipAddress">
+									{ translate( 'IP Address' ) }
+								</FormLabel>
+								<FormTextInput id="ipAddress">
+								</FormTextInput>
+								<FormSettingExplanation>
+									{ translate(
+										'(only log requests from this IP address. Your IP is %(ipAddress)s)',
+										{
+											args: { ipAddress: '1.2.3.4' },
+										}
+									) }
+								</FormSettingExplanation>
+							</FormFieldset>
+							<FormFieldset>
+								<FormToggle>
+									<span>
+										{ translate( 'Cache Status Messages' ) }
+									</span>
+								</FormToggle>
+								<FormSettingExplanation>
+									{
+										translate(
+											'Display comments at the end of every page like this:'
+										)
+									}
+								</FormSettingExplanation>
+							</FormFieldset>
+						</div>
 					</form>
 				</Card>
 				<SectionHeader
