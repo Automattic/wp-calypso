@@ -45,50 +45,41 @@ const getZoneId = ( zoneId, { zoneIdMapping } ) => {
 	return 'number' === typeof zoneId ? zoneId : zoneIdMapping[ zoneId.index ];
 };
 
-const getSaveZoneActionListSteps = ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const zoneEdits = getShippingZonesEdits( state, siteId );
-	const steps = [];
-	const zoneId = zoneEdits.currentlyEditingId;
-
-	const zoneProperties = omit( zoneEdits.currentlyEditingChanges, 'methods', 'locations' );
-
-	const zoneData = { id: zoneId, ...zoneProperties };
-	if ( 'number' === typeof zoneId ) {
-		if ( ! isEmpty( zoneProperties ) ) {
-			steps.push( {
-				description: translate( 'Updating Shipping Zone' ),
-				onStep: ( dispatch, actionList ) => {
-					dispatch( updateShippingZone(
-						siteId,
-						zoneData,
-						actionListStepSuccess( actionList ),
-						actionListStepFailure( actionList ),
-					) );
-				},
-			} );
-		}
-	} else {
-		steps.push( {
-			description: translate( 'Creating Shipping Zone' ),
-			onStep: ( dispatch, actionList ) => {
-				dispatch( createShippingZone(
-					siteId,
-					zoneData,
-					createShippingZoneSuccess( actionList ),
-					actionListStepFailure( actionList ),
-				) );
-			},
-		} );
+const getUpdateShippingZoneSteps = ( siteId, zoneId, zoneProperties ) => {
+	if ( isEmpty( zoneProperties ) ) {
+		return [];
 	}
+	const zoneData = { id: zoneId, ...zoneProperties };
+	return [ {
+		description: translate( 'Updating Shipping Zone' ),
+		onStep: ( dispatch, actionList ) => {
+			dispatch( updateShippingZone(
+				siteId,
+				zoneData,
+				actionListStepSuccess( actionList ),
+				actionListStepFailure( actionList ),
+			) );
+		},
+	} ];
+};
 
-	const locations = getShippingZoneLocationsWithEdits( state, siteId );
-	const serverLocations = getRawShippingZoneLocations( state, siteId )[ zoneId ] || {
-		continent: [],
-		country: [],
-		state: [],
-		postcode: [],
-	};
+const getCreateShippingZoneSteps = ( siteId, zoneId, zoneProperties ) => {
+	const zoneData = { id: zoneId, ...zoneProperties };
+	return [ {
+		description: translate( 'Creating Shipping Zone' ),
+		onStep: ( dispatch, actionList ) => {
+			dispatch( createShippingZone(
+				siteId,
+				zoneData,
+				createShippingZoneSuccess( actionList ),
+				actionListStepFailure( actionList ),
+			) );
+		},
+	} ];
+};
+
+const getUpdateShippingZoneLocationsSteps = ( siteId, zoneId, locations, serverLocations ) => {
+	serverLocations = serverLocations || { continent: [], country: [], state: [], postcode: [] };
 	if ( ! isEmpty( locations.state ) ) {
 		locations.state = locations.state.map( st => locations.country[ 0 ] + ':' + st );
 		locations.country = [];
@@ -96,27 +87,42 @@ const getSaveZoneActionListSteps = ( state ) => {
 	const areLocationsDifferent = some( Object.keys( locations ).map( ( key ) => {
 		return ! isEmpty( xor( locations[ key ], serverLocations[ key ] ) );
 	} ) );
-	if ( areLocationsDifferent ) {
-		steps.push( {
-			description: translate( 'Updating Shipping Zone locations' ),
-			onStep: ( dispatch, actionList ) => {
-				dispatch( updateShippingZoneLocations(
-					siteId,
-					getZoneId( zoneId, actionList ),
-					locations,
-					actionListStepSuccess( actionList ),
-					actionListStepFailure( actionList ),
-				) );
-			},
-		} );
+	if ( ! areLocationsDifferent ) {
+		return [];
 	}
+	return [ {
+		description: translate( 'Updating Shipping Zone locations' ),
+		onStep: ( dispatch, actionList ) => {
+			dispatch( updateShippingZoneLocations(
+				siteId,
+				getZoneId( zoneId, actionList ),
+				locations,
+				actionListStepSuccess( actionList ),
+				actionListStepFailure( actionList ),
+			) );
+		},
+	} ];
+};
 
-	// TODO: auto-order operations
-	// TODO: create methods
-	// TODO: update methods
-	// TODO: delete methods
+const getSaveZoneActionListSteps = ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	const zoneEdits = getShippingZonesEdits( state, siteId );
+	const zoneId = zoneEdits.currentlyEditingId;
+	const zoneProperties = omit( zoneEdits.currentlyEditingChanges, 'methods', 'locations' );
 
-	return steps;
+	const getZoneStepsFunc = 'number' === typeof zoneId ? getUpdateShippingZoneSteps : getCreateShippingZoneSteps;
+
+	const locations = getShippingZoneLocationsWithEdits( state, siteId );
+	const serverLocations = getRawShippingZoneLocations( state, siteId )[ zoneId ];
+
+	return [
+		...getZoneStepsFunc( siteId, zoneId, zoneProperties ),
+		...getUpdateShippingZoneLocationsSteps( siteId, zoneId, locations, serverLocations ),
+		// TODO: auto-order operations
+		// TODO: create methods
+		// TODO: update methods
+		// TODO: delete methods
+	];
 };
 
 const getDeleteZoneActionListSteps = ( state ) => {
