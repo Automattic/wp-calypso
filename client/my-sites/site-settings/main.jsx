@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -17,48 +17,27 @@ import SiteSettingsNavigation from './navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
 
-export class SiteSettingsComponent extends Component {
+const SiteSettingsComponent = ( {
+	jetpackSettingsUiSupported,
+	siteId
+} ) => {
+	return (
+		<Main className="site-settings">
+			{ jetpackSettingsUiSupported && <JetpackDevModeNotice /> }
+			<SidebarNavigation />
+			{ siteId && <SiteSettingsNavigation section={ 'general' } /> }
+			<QueryProductsList />
+			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
+			{ siteId && <GeneralSettings /> }
+		</Main>
+	);
+};
 
-	static propTypes = {
-		section: PropTypes.string,
-		// Connected props
-		siteId: PropTypes.number,
-		jetpackSettingsUiSupported: PropTypes.bool
-	};
-
-	static defaultProps = {
-		section: 'general'
-	};
-
-	getSection() {
-		const { section } = this.props;
-
-		switch ( section ) {
-			case 'general':
-				return <GeneralSettings />;
-		}
-	}
-
-	render() {
-		const { siteId } = this.props;
-		const { jetpackSettingsUiSupported, section } = this.props;
-
-		return (
-			<Main className="site-settings">
-					{
-						jetpackSettingsUiSupported &&
-						<JetpackDevModeNotice />
-					}
-					<SidebarNavigation />
-					{ siteId && <SiteSettingsNavigation section={ section } /> }
-					<QueryProductsList />
-					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-					{ siteId && this.getSection() }
-			</Main>
-		);
-	}
-
-}
+SiteSettingsComponent.propTypes = {
+	// Connected props
+	siteId: PropTypes.number,
+	jetpackSettingsUiSupported: PropTypes.bool
+};
 
 export default connect(
 	( state ) => {
