@@ -48,12 +48,23 @@ export const isOrderLoaded = ( state, orderId, siteId = getSelectedSiteId( state
  * @param {Object} state Whole Redux state tree
  * @param {Number} orderId Order ID to check
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the orders list is currently being retrieved from the server
+ * @return {boolean} Whether this order is currently being retrieved from the server
  */
 export const isOrderLoading = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const isLoading = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'isLoading', orderId ] );
 	// Strict check because it could also be undefined.
 	return ( true === isLoading );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} orderId Order ID to check
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether this order is currently being updated on the server
+ */
+export const isOrderUpdating = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const isUpdating = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'isUpdating', orderId ] );
+	return !! isUpdating;
 };
 
 /**
