@@ -38,6 +38,10 @@ class OrderFulfillment extends Component {
 		trackingNumber: '',
 	}
 
+	isShippable = ( order ) => {
+		return ( -1 === [ 'completed', 'failed', 'cancelled', 'refunded' ].indexOf( order.status ) );
+	}
+
 	toggleDialog = () => {
 		this.setState( {
 			showDialog: ! this.state.showDialog,
@@ -84,6 +88,22 @@ class OrderFulfillment extends Component {
 		}
 	}
 
+	getFulfillmentStatus = () => {
+		const { order, translate } = this.props;
+		switch ( order.status ) {
+			case 'completed':
+				return translate( 'Order has been fulfilled' );
+			case 'cancelled':
+				return translate( 'Order has been cancelled' );
+			case 'refunded':
+				return translate( 'Order has been refunded' );
+			case 'failed':
+				return translate( 'Order has failed' );
+			default:
+				return translate( 'Order needs to be fulfilled' );
+		}
+	}
+
 	render() {
 		const { order, translate } = this.props;
 		const { errorMessage, showDialog, trackingNumber } = this.state;
@@ -96,11 +116,15 @@ class OrderFulfillment extends Component {
 			<div className="order__details-fulfillment">
 				<div className="order__details-fulfillment-label">
 					<Gridicon icon="shipping" />
-					{ translate( 'Order needs to be fulfilled' ) }
+					{ this.getFulfillmentStatus() }
 				</div>
 				<div className="order__details-fulfillment-action">
-					<Button primary onClick={ this.toggleDialog }>{ translate( 'Fulfill' ) }</Button>
+					{ ( this.isShippable( order ) )
+						? <Button primary onClick={ this.toggleDialog }>{ translate( 'Fulfill' ) }</Button>
+						: null
+					}
 				</div>
+
 				<Dialog isVisible={ showDialog } onClose={ this.toggleDialog } className={ dialogClass }>
 					<h1>{ translate( 'Fulfill order' ) }</h1>
 					<form>
