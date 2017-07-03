@@ -197,6 +197,7 @@ export isRequestingResetPassword from './is-requesting-reset-password';
 export isRequestingSharingButtons from './is-requesting-sharing-buttons';
 export isRequestingSiteConnectionStatus from './is-requesting-site-connection-status';
 export isRequestingSiteMonitorSettings from './is-requesting-site-monitor-settings';
+export isRequestingSimplePaymentsProductList from './is-requesting-simple-payments-product-list';
 export isRequestingTimezones from './is-requesting-timezones';
 export isRequestingWhois from './is-requesting-whois';
 export isRtl from './is-rtl';
