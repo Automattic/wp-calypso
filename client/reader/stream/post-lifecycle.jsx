@@ -18,7 +18,7 @@ import RecommendedPosts from './recommended-posts';
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
 import PostBlocked from 'blocks/reader-post-card/blocked';
 import Post from './post';
-import { IN_STREAM_RECOMMENDATION, COMBINED_CARD } from 'reader/follow-button/follow-sources';
+import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/follow-sources';
 import CombinedCard from 'blocks/reader-combined-card';
 import fluxPostAdapter from 'lib/reader-post-flux-adapter';
 import EmptySearchRecommendedPost from './empty-search-recommended-post';
@@ -82,7 +82,7 @@ export default class PostLifecycle extends React.PureComponent {
 
 	render() {
 		const post = this.state.post;
-		const { postKey, selectedPostKey, recStoreId } = this.props;
+		const { postKey, selectedPostKey, recStoreId, followSource } = this.props;
 
 		if ( postKey.isRecommendationBlock ) {
 			return (
@@ -100,7 +100,7 @@ export default class PostLifecycle extends React.PureComponent {
 					index={ this.props.index }
 					onClick={ this.props.handleClick }
 					selectedPostKey={ selectedPostKey }
-					followSource={ COMBINED_CARD }
+					followSource={ followSource }
 					showFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 				/>
 			);
