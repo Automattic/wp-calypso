@@ -18,6 +18,7 @@ import FormLabel from 'components/forms/form-label';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormTextInput from 'components/forms/form-text-input';
 import Notice from 'components/notice';
+import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 
 class OrderFulfillment extends Component {
 	static propTypes = {
@@ -66,7 +67,10 @@ class OrderFulfillment extends Component {
 			return;
 		}
 
-		// @todo set order to complete
+		this.props.updateOrder( site.ID, {
+			id: order.id,
+			status: 'completed',
+		} );
 
 		this.toggleDialog();
 		const note = {
@@ -129,5 +133,5 @@ class OrderFulfillment extends Component {
 
 export default connect(
 	undefined,
-	dispatch => bindActionCreators( { createNote }, dispatch )
+	dispatch => bindActionCreators( { createNote, updateOrder }, dispatch )
 )( localize( OrderFulfillment ) );
