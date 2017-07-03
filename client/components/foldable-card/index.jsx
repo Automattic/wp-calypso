@@ -1,16 +1,18 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	noop = require( 'lodash/noop' );
+import React from 'react';
+
+import classNames from 'classnames';
+import noop from 'lodash/noop';
 
 /**
  * Internal Dependencies
  */
-var Card = require( 'components/card' ),
-	CompactCard = require( 'components/card/compact' ),
-	Gridicon = require( 'gridicons' );
+import Card from 'components/card';
+
+import CompactCard from 'components/card/compact';
+import Gridicon from 'gridicons';
 
 var FoldableCard = React.createClass( {
 
