@@ -113,13 +113,17 @@ class FoldableCard extends Component {
 	}
 
 	renderHeader() {
-		var summary = this.props.summary ? <span className="foldable-card__summary">{ this.props.summary } </span> : null,
-			expandedSummary = this.props.expandedSummary ? <span className="foldable-card__summary_expanded">{ this.props.expandedSummary } </span> : null,
-			headerClickAction = this.props.clickableHeader ? this.getClickAction() : null,
-			headerClasses = classNames( 'foldable-card__header', {
-				'is-clickable': !! this.props.clickableHeader,
-				'has-border': !! this.props.summary
-			} );
+		const summary = this.props.summary
+			? <span className="foldable-card__summary">{ this.props.summary } </span>
+			: null;
+		const expandedSummary = this.props.expandedSummary
+			? <span className="foldable-card__summary_expanded">{ this.props.expandedSummary } </span>
+			: null;
+		const headerClickAction = this.props.clickableHeader ? this.getClickAction() : null;
+		const headerClasses = classNames( 'foldable-card__header', {
+			'is-clickable': !! this.props.clickableHeader,
+			'has-border': !! this.props.summary
+		} );
 		return (
 			<div className={ headerClasses } onClick={ headerClickAction }>
 				<span className="foldable-card__main">{ this.props.header } </span>
@@ -133,16 +137,16 @@ class FoldableCard extends Component {
 	}
 
 	render() {
-		var Container = this.props.compact ? CompactCard : Card,
-			itemSiteClasses = classNames(
-				'foldable-card',
-				this.props.className,
-				{
-					'is-disabled': !! this.props.disabled,
-					'is-expanded': !! this.state.expanded,
-					'has-expanded-summary': !! this.props.expandedSummary
-				}
-			);
+		const Container = this.props.compact ? CompactCard : Card;
+		const itemSiteClasses = classNames(
+			'foldable-card',
+			this.props.className,
+			{
+				'is-disabled': !! this.props.disabled,
+				'is-expanded': !! this.state.expanded,
+				'has-expanded-summary': !! this.props.expandedSummary,
+			}
+		);
 
 		return (
 			<Container className={ itemSiteClasses }>
