@@ -24,13 +24,6 @@ module.exports = function() {
 		settingsController.siteSettings
 	);
 
-	page(
-		'/settings/import/:site_id',
-		controller.siteSelection,
-		controller.navigation,
-		settingsController.importSite
-	);
-
 	if ( config.isEnabled( 'manage/export/guided-transfer' ) ) {
 		page(
 			'/settings/export/guided/:host_slug?/:site_id',

@@ -122,6 +122,13 @@ const sections = [
 		group: 'sites'
 	},
 	{
+		name: 'settings-import',
+		paths: [ '/settings/import' ],
+		module: 'my-sites/site-settings/settings-import',
+		secondary: true,
+		group: 'sites'
+	},
+	{
 		name: 'settings',
 		paths: [ '/settings' ],
 		module: 'my-sites/site-settings',
