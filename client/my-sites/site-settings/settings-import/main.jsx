@@ -113,10 +113,10 @@ class SiteSettingsImport extends Component {
 					<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
 					<CompactCard>
 						<header>
-							<h1 className="site-settings__importer-section-title importer__section-title">
+							<h1 className="settings-import__section-title site-settings__importer-section-title importer__section-title">
 								{ translate( 'Import Another Site' ) }
 							</h1>
-							<p className="importer__section-description">{ description }</p>
+							<p className="settings-import__section-description importer__section-description">{ description }</p>
 						</header>
 					</CompactCard>
 

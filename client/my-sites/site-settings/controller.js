@@ -23,7 +23,6 @@ import titlecase from 'to-title-case';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser, isVipSite } from 'state/selectors';
-import ImportSettings from './section-import';
 import ExportSettings from './section-export';
 import { SITES_ONCE_CHANGED } from 'state/action-types';
 
@@ -118,10 +117,6 @@ const controller = {
 			analyticsPageTitle += ' > ' + titlecase( section );
 		}
 		analytics.pageView.record( basePath + '/:site', analyticsPageTitle );
-	},
-
-	importSite( context ) {
-		renderPage( context, <ImportSettings /> );
 	},
 
 	exportSite( context ) {
