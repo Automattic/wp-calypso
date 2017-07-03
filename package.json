@@ -10,6 +10,7 @@
   },
   "main": "index.js",
   "dependencies": {
+    "ajv": "5.2.0",
     "async": "0.9.0",
     "autoprefixer": "6.3.5",
     "autosize": "3.0.15",
