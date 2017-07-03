@@ -11,7 +11,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import RootChild from 'components/root-child';
 import Button from 'components/button';
 import EditorVisibility from 'post-editor/editor-visibility';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -148,55 +147,53 @@ class EditorConfirmationSidebar extends React.Component {
 		const isOverlayActive = this.props.status !== 'closed';
 
 		return (
-			<RootChild>
+			<div className={ classnames( {
+				'editor-confirmation-sidebar': true,
+				'is-active': isOverlayActive,
+			} ) } >
 				<div className={ classnames( {
-					'editor-confirmation-sidebar': true,
+					'editor-confirmation-sidebar__overlay': true,
 					'is-active': isOverlayActive,
-				} ) } >
-					<div className={ classnames( {
-						'editor-confirmation-sidebar__overlay': true,
-						'is-active': isOverlayActive,
-					} ) } onClick={ this.getCloseOverlayHandler( 'dismiss_overlay' ) }>
-						{ this.renderPublishingBusyButton() }
-					</div>
-					<div className={ classnames( {
-						'editor-confirmation-sidebar__sidebar': true,
-						'is-active': isSidebarActive,
-					} ) }>
-						<div className="editor-confirmation-sidebar__ground-control">
-							<div className="editor-confirmation-sidebar__close">
-								<Button
-									borderless
-									onClick={ this.getCloseOverlayHandler( 'dismiss_x' ) }
-									title={ this.props.translate( 'Close sidebar' ) }
-									aria-label={ this.props.translate( 'Close sidebar' ) }>
-									<Gridicon icon="cross" />
-								</Button>
-							</div>
-							<div className="editor-confirmation-sidebar__action">
-								{ this.renderPublishButton() }
-							</div>
-						</div>
-						<div className="editor-confirmation-sidebar__content-wrap">
-							<div className="editor-confirmation-sidebar__header">
-								{
-									this.props.translate( '{{strong}}Ready to go?{{/strong}} Double-check and then confirm to publish.', {
-										comment: 'This string appears as the header for the confirmation sidebar ' +
-											'when a user publishes a post or page.',
-										components: {
-											strong: <strong />
-										},
-									} )
-								}
-							</div>
-							<div className="editor-confirmation-sidebar__privacy-control">
-								{ this.renderPrivacyControl() }
-							</div>
-						</div>
-						{ this.renderNoticeDisplayPreferenceCheckbox() }
-					</div>
+				} ) } onClick={ this.getCloseOverlayHandler( 'dismiss_overlay' ) }>
+					{ this.renderPublishingBusyButton() }
 				</div>
-			</RootChild>
+				<div className={ classnames( {
+					'editor-confirmation-sidebar__sidebar': true,
+					'is-active': isSidebarActive,
+				} ) }>
+					<div className="editor-confirmation-sidebar__ground-control">
+						<div className="editor-confirmation-sidebar__close">
+							<Button
+								borderless
+								onClick={ this.getCloseOverlayHandler( 'dismiss_x' ) }
+								title={ this.props.translate( 'Close sidebar' ) }
+								aria-label={ this.props.translate( 'Close sidebar' ) }>
+								<Gridicon icon="cross" />
+							</Button>
+						</div>
+						<div className="editor-confirmation-sidebar__action">
+							{ this.renderPublishButton() }
+						</div>
+					</div>
+					<div className="editor-confirmation-sidebar__content-wrap">
+						<div className="editor-confirmation-sidebar__header">
+							{
+								this.props.translate( '{{strong}}Ready to go?{{/strong}} Double-check and then confirm to publish.', {
+									comment: 'This string appears as the header for the confirmation sidebar ' +
+										'when a user publishes a post or page.',
+									components: {
+										strong: <strong />
+									},
+								} )
+							}
+						</div>
+						<div className="editor-confirmation-sidebar__privacy-control">
+							{ this.renderPrivacyControl() }
+						</div>
+					</div>
+					{ this.renderNoticeDisplayPreferenceCheckbox() }
+				</div>
+			</div>
 		);
 	}
 }
