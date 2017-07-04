@@ -19,6 +19,12 @@ export class CommentDetailReply extends Component {
 		hasFocus: false,
 	};
 
+	getTextareaPlaceholder = () => this.props.authorDisplayName
+		? this.props.translate( 'Reply to %(commentAuthor)s…', {
+			args: { commentAuthor: this.props.authorDisplayName }
+		} )
+		: 'Reply to comment…';
+
 	handleTextChange = event => this.setState( { commentText: event.target.value } );
 
 	setFocus = () => this.setState( { hasFocus: true } );
@@ -64,7 +70,7 @@ export class CommentDetailReply extends Component {
 	unsetFocus = () => this.setState( { hasFocus: false } );
 
 	render() {
-		const { authorDisplayName, translate } = this.props;
+		const { translate } = this.props;
 		const { commentText, hasFocus } = this.state;
 
 		const hasCommentText = commentText.trim().length > 0;
@@ -88,9 +94,7 @@ export class CommentDetailReply extends Component {
 							onChange={ this.handleTextChange }
 							onFocus={ this.setFocus }
 							onKeyDown={ this.submitCommentOnCtrlEnter }
-							placeholder={ translate( 'Reply to %(commentAuthor)s…', {
-								args: { commentAuthor: authorDisplayName }
-							} ) }
+							placeholder={ this.getTextareaPlaceholder() }
 							value={ commentText }
 						/>
 					</AutoDirection>
