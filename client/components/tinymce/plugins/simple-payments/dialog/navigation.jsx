@@ -26,6 +26,8 @@ export default localize( class SimplePaymentsDialogNavigation extends Component 
 		// TODO: Get from store/as a prop.
 		const paymentButtons = [ 1 ];
 
+		const classNames = 'editor-simple-payments-modal__navigation';
+
 		if ( activeTab === 'addNew' && ! paymentButtons.length ) {
 			// We are on "Add New" view without previously made payment buttons.
 
@@ -35,6 +37,7 @@ export default localize( class SimplePaymentsDialogNavigation extends Component 
 
 			return (
 				<HeaderCake
+					className={ classNames }
 					onClick={ this.onChangeTabs( 'paymentButtons') }
 					backText={ translate( 'Payment Buttons' ) }
 				>
@@ -44,7 +47,11 @@ export default localize( class SimplePaymentsDialogNavigation extends Component 
 			// We are on "Payment Buttons" view.
 
 			return (
-				<SectionHeader label={ translate( 'Payment Buttons' ) } count={ 2 }>
+				<SectionHeader
+					className={ classNames }
+					label={ translate( 'Payment Buttons' ) }
+					count={ 2 }
+				>
 					<Button
 						compact
 						onClick={ this.onChangeTabs( 'addNew' ) }
