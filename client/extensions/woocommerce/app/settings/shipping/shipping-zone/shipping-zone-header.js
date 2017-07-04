@@ -49,7 +49,7 @@ export default connect(
 		return {
 			site: getSelectedSite( state ),
 			zone,
-			canSave: areCurrentlyEditingShippingZoneLocationsValid( state ),
+			canSave: isRestOfTheWorld || areCurrentlyEditingShippingZoneLocationsValid( state ),
 			showDelete: zone && 'number' === typeof zone.id && ! isRestOfTheWorld,
 			isSaving: Boolean( getActionList( state ) ),
 		};
