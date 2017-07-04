@@ -243,6 +243,12 @@ input[type=radio].domain-management-list-item__radio {
 	}
 }
 
+.edit-contact-info__pending-whois-update-card {
+	.notice {
+		margin-bottom: 16px;
+	}
+}
+
 .domain-details-card {
 	.flag {
 		font-size: 11px;

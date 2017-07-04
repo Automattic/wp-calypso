@@ -31,6 +31,7 @@ function createDomainObjects( dataTransferObject ) {
 			isAutoRenewing: domain.auto_renewing,
 			isPendingIcannVerification: domain.is_pending_icann_verification,
 			isPrimary: domain.primary_domain,
+			isPendingWhoisUpdate: domain.pending_whois_update,
 			manualTransferRequired: domain.manual_transfer_required,
 			name: domain.domain,
 			owner: domain.owner,
