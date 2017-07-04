@@ -10,7 +10,8 @@ class DialogBase extends Component {
 		baseClassName: 'dialog',
 		isFullScreen: true,
 		autoFocus: true,
-		label: ''
+		label: '',
+		title: ''
 	}
 
 	render() {
@@ -28,10 +29,14 @@ class DialogBase extends Component {
 				onRequestClose={ this._close }
 				closeTimeoutMS= { this.props.leaveTimeout }
 				contentLabel={ this.props.label }
-				overlayClassName={ backdropClassName } // We use flex here which react-modal doesn't
+				title={ this.props.title }
+				overlayClassName={ backdropClassName } // We use flex here which react-modal doesnt
 				className={ dialogClassName }
 				role="dialog">
 				<div className={ classnames( this.props.className, contentClassName ) } ref="content" tabIndex="-1">
+					{ this.props.title && (
+						<h2 className="dialog__title">{ this.props.title }</h2>
+					)}
 					{ this.props.children }
 				</div>
 				{ this._renderButtonsBar() }
