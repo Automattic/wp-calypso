@@ -48,7 +48,11 @@ const StatsInsights = ( props ) => {
 		<Main wideLayout>
 			<StatsFirstView />
 			<SidebarNavigation />
-			<StatsNavigation section="insights" slug={ siteSlug } />
+			<StatsNavigation
+				isJetpack={ isJetpack }
+				section="insights"
+				slug={ siteSlug }
+			/>
 			<div>
 				<PostingActivity />
 				<SectionHeader label={ translate( 'All Time Views' ) } />
