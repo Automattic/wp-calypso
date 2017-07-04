@@ -34,6 +34,7 @@ import { getRawShippingZoneLocations } from 'woocommerce/state/sites/shipping-zo
 import { getShippingZoneMethod } from 'woocommerce/state/sites/shipping-zone-methods/selectors';
 import { getZoneLocationsPriority } from 'woocommerce/state/sites/shipping-zone-locations/helpers';
 import { getAPIShippingZones } from 'woocommerce/state/sites/shipping-zones/selectors';
+import analytics from 'lib/analytics';
 
 const createShippingZoneSuccess = ( actionList ) => ( dispatch, getState, { sentData, receivedData } ) => {
 	const zoneIdMapping = {
@@ -190,6 +191,9 @@ const getZoneMethodCreateSteps = ( siteId, zoneId, method, state ) => {
 	const steps = [ {
 		description: translate( 'Creating Shipping Method' ),
 		onStep: ( dispatch, actionList ) => {
+			analytics.tracks.recordEvent( 'calypso_woocommerce_shipping_method_created', {
+				shippingMethod: methodType,
+			} );
 			dispatch( createShippingZoneMethod(
 				siteId,
 				getZoneId( zoneId, actionList ),
