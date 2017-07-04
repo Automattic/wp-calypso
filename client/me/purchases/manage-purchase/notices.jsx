@@ -3,10 +3,12 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
+import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
 import {
 	creditCardExpiresBeforeSubscription,
@@ -24,6 +26,8 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { isMonthly } from 'lib/plans/constants';
 import TrackComponentView from 'lib/analytics/track-component-view';
+
+const eventProperties = ( warning ) => ( { warning, position: 'individual-purchase' } );
 
 class PurchaseNotice extends Component {
 	static propTypes = {
@@ -75,30 +79,35 @@ class PurchaseNotice extends Component {
 		} );
 	}
 
-	renderRenewNoticeAction() {
-		const { translate, handleRenew } = this.props;
+	renderRenewNoticeAction( onClick ) {
+		const { translate } = this.props;
 		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! getSelectedSite( this.props ) ) {
 			return null;
 		}
 
 		return (
-			<NoticeAction onClick={ handleRenew }>
+			<NoticeAction onClick={ onClick }>
 				{ translate( 'Renew Now' ) }
 			</NoticeAction>
 		);
 	}
 
 	trackImpression( warning ) {
-		const eventProperties = {
-			warning,
-			position: 'individual-purchase'
-		};
 		return (
 			<TrackComponentView
 				eventName="calypso_subscription_warning_impression"
-				eventProperties={ eventProperties }
+				eventProperties={ eventProperties( warning ) }
 			/>
 		);
+	}
+
+	trackClick( warning ) {
+		this.props.recordTracksEvent( 'calypso_subscription_warning_click', eventProperties( warning ) );
+	}
+
+	handleExpiringNoticeRenewal = () => {
+		this.trackClick( 'purchase-expiring' );
+		this.props.handleRenew();
 	}
 
 	renderPurchaseExpiringNotice() {
@@ -120,10 +129,14 @@ class PurchaseNotice extends Component {
 				status={ noticeStatus }
 				text={ this.getExpiringText( purchase ) }
 			>
-				{ this.renderRenewNoticeAction() }
+				{ this.renderRenewNoticeAction( this.handleExpiringNoticeRenewal ) }
 				{ this.trackImpression( 'purchase-expiring' ) }
 			</Notice>
 		);
+	}
+
+	onClickUpdateCreditCardDetails= () => {
+		this.trackClick( 'credit-card-expiring' );
 	}
 
 	renderCreditCardExpiringNotice() {
@@ -140,6 +153,9 @@ class PurchaseNotice extends Component {
 		}
 
 		if ( creditCardExpiresBeforeSubscription( purchase ) ) {
+			const linkComponent = editCardDetailsPath
+				? <a onClick={ this.onClickUpdateCreditCardDetails } href={ editCardDetailsPath } />
+				: <span />;
 			return (
 				<Notice
 					className="manage-purchase__expiring-credit-card-notice"
@@ -156,7 +172,7 @@ class PurchaseNotice extends Component {
 								cardExpiry: creditCard.expiryMoment.format( 'MMMM YYYY' ),
 							},
 							components: {
-								a: editCardDetailsPath ? <a href={ editCardDetailsPath } /> : <span />,
+								a: linkComponent,
 							},
 						}
 					) }
@@ -164,6 +180,11 @@ class PurchaseNotice extends Component {
 				</Notice>
 			);
 		}
+	}
+
+	handleExpiredNoticeRenewal = () => {
+		this.trackClick( 'purchase-expired' );
+		this.props.handleRenew();
 	}
 
 	renderExpiredRenewNotice() {
@@ -184,7 +205,7 @@ class PurchaseNotice extends Component {
 				status="is-error"
 				text={ translate( 'This purchase has expired and is no longer in use.' ) }
 			>
-				{ this.renderRenewNoticeAction() }
+				{ this.renderRenewNoticeAction( this.handleExpiredNoticeRenewal ) }
 				{ this.trackImpression( 'purchase-expired' ) }
 			</Notice>
 		);
@@ -214,4 +235,10 @@ class PurchaseNotice extends Component {
 	}
 }
 
-export default localize( PurchaseNotice );
+const mapStateToProps = null;
+const mapDispatchToProps = { recordTracksEvent };
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+)( localize( PurchaseNotice ) );
