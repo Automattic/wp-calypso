@@ -10,11 +10,13 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityLogBanner from './index';
 import Button from 'components/button';
+import { getSiteUrl } from 'state/selectors';
 import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'state/activity-log/actions';
 
 class SuccessBanner extends PureComponent {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
+		siteUrl: PropTypes.string.isRequired,
 		timestamp: PropTypes.number.isRequired,
 
 		// connect
@@ -30,6 +32,7 @@ class SuccessBanner extends PureComponent {
 	render() {
 		const {
 			moment,
+			siteUrl,
 			timestamp,
 			translate,
 		} = this.props;
@@ -45,8 +48,11 @@ class SuccessBanner extends PureComponent {
 					'We successfully restored your site back to %s!',
 					{ args: moment( timestamp ).format( 'LLLL' ) }
 				) }</p>
-				<Button primary>
-					{ /* FIXME: Link to site */ translate( 'View site' ) }
+				<Button
+					href={ siteUrl }
+					primary
+				>
+					{ translate( 'View site' ) }
 				</Button>
 				{ '  ' }
 				<Button onClick={ this.handleDismiss }>
@@ -57,6 +63,11 @@ class SuccessBanner extends PureComponent {
 	}
 }
 
-export default connect( null, {
-	dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
-} )( localize( SuccessBanner ) );
+export default connect(
+	( state, { siteId } ) => ( {
+		siteUrl: getSiteUrl( state, siteId ),
+	} ),
+	{
+		dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
+	}
+)( localize( SuccessBanner ) );
