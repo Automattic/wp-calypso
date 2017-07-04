@@ -18,6 +18,7 @@ import SectionHeader from 'components/section-header';
 
 class OrderDetails extends Component {
 	static propTypes = {
+		onUpdate: PropTypes.func,
 		order: PropTypes.object.isRequired,
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
@@ -31,6 +32,8 @@ class OrderDetails extends Component {
 
 	updateStatus = ( event ) => {
 		this.setState( { status: event.target.value } );
+		// Send the order back to the parent component
+		this.props.onUpdate( { status: event.target.value } );
 	}
 
 	renderStatus = () => {
