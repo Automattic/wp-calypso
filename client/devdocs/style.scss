@@ -17,6 +17,22 @@
 	margin-left: 0;
 }
 
+.layout__content {
+	.is-section-devdocs & {
+		padding-left: $sidebar-width-max + 32px;
+
+		// Tablets
+		@include breakpoint( "<960px" ) {
+			padding-left: $sidebar-width-min + 24px;
+		}
+
+		// Mobile (Full Width)
+		@include breakpoint( "<660px" ) {
+			padding-left: 0;
+		}
+	}
+}
+
 .devdocs__title {
 	color: darken( $gray, 20% );
 	font-weight: 300;
