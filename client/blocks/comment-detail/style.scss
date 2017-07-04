@@ -29,12 +29,13 @@
 		margin-right: 4px;
 		vertical-align: middle;
 	}
-}
 
-.comment-detail__author-avatar {
-	border-radius: 50%;
-	display: block;
-	flex-shrink: 0;
+
+	.gravatar {
+		border-radius: 50%;
+		display: block;
+		flex-shrink: 0;
+	}
 }
 
 .comment-detail__author-info {
@@ -224,7 +225,7 @@
 .comment-detail__site-icon-author-avatar {
 	position: relative;
 
-	.comment-detail__author-avatar-image {
+	.gravatar {
 		border: 2px solid $white;
 		border-radius: 50%;
 		position: absolute;
@@ -296,7 +297,7 @@
 	padding: 0 16px;
 	transition: padding-bottom .3s linear;
 
-	.comment-detail__author-avatar {
+	.gravatar {
 		height: 32px;
 		width: 32px;
 	}
@@ -362,6 +363,7 @@
 }
 
 .comment-detail__author-more-element {
+	align-items: center;
 	box-sizing: border-box;
 	display: block;
 	flex-shrink: 0;
@@ -392,7 +394,7 @@ a.comment-detail__author-more-element {
 	display: flex;
 	flex-flow: row nowrap;
 
-	.comment-detail__author-avatar {
+	.gravatar {
 		height: 24px;
 		width: 24px;
 	}
@@ -476,7 +478,7 @@ a.comment-detail__author-more-element {
 .comment-detail__placeholder {
 	@include placeholder();
 
-	.comment-detail__author-avatar,
+	.gravatar,
 	.comment-detail__comment-preview {
 		animation: loading-fade 1.6s ease-in-out infinite;
 		background-color: lighten( $gray, 30% );
@@ -492,7 +494,7 @@ a.comment-detail__author-more-element {
 		border: none;
 	}
 
-	.comment-detail__author-avatar {
+	.gravatar {
 		width: 32px;
 	}
 
