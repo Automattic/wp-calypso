@@ -179,7 +179,9 @@ const PlansSetup = React.createClass( {
 	},
 
 	renderNoJetpackSiteSelected() {
-		this.trackConfigFinished( 'calypso_plans_autoconfig_error_wordpresscom' );
+		this.trackConfigFinished( 'calypso_plans_autoconfig_error_wordpresscom', {
+			referrer: document.referrer
+		} );
 		return (
 			<JetpackManageErrorPage
 				siteId={ this.props.siteId }
