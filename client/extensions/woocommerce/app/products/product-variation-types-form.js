@@ -74,11 +74,11 @@ export default class ProductVariationTypesForm extends Component {
 		editProductAttribute( siteId, product, attribute, { options: values } );
 	}
 
-	renderInputs( attribute ) {
+	renderInputs( attribute, index ) {
 		const { attributeNames } = this.state;
 		const attributeName = attributeNames && attributeNames[ attribute.uid ] || attribute.name;
 		return (
-			<div key={ attribute.uid } className="products__variation-types-form-fieldset">
+			<div key={ index } className="products__variation-types-form-fieldset">
 				<FormTextInput
 					placeholder={ i18n.translate( 'Color' ) }
 					value={ attributeName }

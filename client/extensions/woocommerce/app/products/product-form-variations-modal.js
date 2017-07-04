@@ -53,7 +53,7 @@ class ProductFormVariationsModal extends React.Component {
 			editProductVariation( siteId, product, variation, { description } );
 		}, 200 );
 		return <CompactTinyMCE
-				value={ variation.description || '' }
+				initialValue={ variation.description || '' }
 				onContentsChange={ setDescription }
 			/>;
 	}

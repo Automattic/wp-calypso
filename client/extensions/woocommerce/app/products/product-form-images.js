@@ -41,6 +41,12 @@ class ProductFormImages extends Component {
 		};
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.images !== this.props.images ) {
+			this.setState( { images: nextProps.images } );
+		}
+	}
+
 	onUpload = ( file ) => {
 		const { onUpload } = this.props;
 		onUpload( file );
