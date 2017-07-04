@@ -120,10 +120,6 @@ export const FEATURE_SECURITY_ESSENTIALS_JETPACK = 'security-essentials-jetpack'
 export const FEATURE_PRIORITY_SUPPORT_JETPACK = 'priority-support-jetpack';
 export const FEATURE_TRAFFIC_TOOLS_JETPACK = 'seo-tools-jetpack';
 export const FEATURE_ADVANCED_TRAFFIC_TOOLS_JETPACK = 'seo-tools-jetpack';
-export const FEATURE_FREE_WORDPRESS_THEMES = 'free-wordpress-themes';
-export const FEATURE_VIDEO_CDN_LIMITED = 'video-cdn-limited';
-export const FEATURE_VIDEO_CDN_UNLIMITED = 'video-cdn-unlimited';
-export const FEATURE_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
 export const PLANS_LIST = {
@@ -352,13 +348,11 @@ export const PLANS_LIST = {
 			FEATURE_MANAGE
 		],
 		getSignupFeatures: () => [
-			FEATURE_FREE_WORDPRESS_THEMES,
-			FEATURE_SITE_STATS,
 			FEATURE_STANDARD_SECURITY_TOOLS,
+			FEATURE_SITE_STATS,
 			FEATURE_TRAFFIC_TOOLS
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
-		getSignupBillingTimeFrame: () => i18n.translate( 'for life' ),
 	},
 	[ PLAN_JETPACK_PREMIUM ]: {
 		getTitle: () => i18n.translate( 'Premium' ),
@@ -386,13 +380,11 @@ export const PLANS_LIST = {
 			FEATURE_MALWARE_SCANNING_DAILY,
 		] ),
 		getSignupFeatures: () => compact( [
-			FEATURE_MALWARE_SCANNING_DAILY,
-			FEATURE_VIDEO_CDN_LIMITED,
 			FEATURE_WORDADS_INSTANT,
+			FEATURE_MALWARE_SCANNING_DAILY,
 			FEATURE_ALL_PERSONAL_FEATURES,
 		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
 	},
 
 	[ PLAN_JETPACK_PREMIUM_MONTHLY ]: {
@@ -420,13 +412,11 @@ export const PLANS_LIST = {
 			FEATURE_MALWARE_SCANNING_DAILY,
 		] ),
 		getSignupFeatures: () => compact( [
-			FEATURE_MALWARE_SCANNING_DAILY,
-			FEATURE_VIDEO_CDN_LIMITED,
 			FEATURE_WORDADS_INSTANT,
+			FEATURE_MALWARE_SCANNING_DAILY,
 			FEATURE_ALL_PERSONAL_FEATURES,
 		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
-		getSignupBillingTimeFrame: () => 'per month', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ PLAN_JETPACK_PERSONAL ]: {
@@ -450,13 +440,11 @@ export const PLANS_LIST = {
 			FEATURE_PREMIUM_SUPPORT,
 		],
 		getSignupFeatures: () => [
-			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_PREMIUM_SUPPORT,
-			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP,
 			FEATURE_ALL_FREE_FEATURES,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
 	},
 
 	[ PLAN_JETPACK_PERSONAL_MONTHLY ]: {
@@ -480,13 +468,11 @@ export const PLANS_LIST = {
 			FEATURE_PREMIUM_SUPPORT,
 		],
 		getSignupFeatures: () => [
-			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_PREMIUM_SUPPORT,
-			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP,
 			FEATURE_ALL_FREE_FEATURES,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
-		getSignupBillingTimeFrame: () => 'per month', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ PLAN_JETPACK_BUSINESS ]: {
@@ -524,12 +510,10 @@ export const PLANS_LIST = {
 		] ),
 		getSignupFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-			FEATURE_VIDEO_CDN_UNLIMITED,
-			FEATURE_SEO_PREVIEW_TOOLS,
+			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 			FEATURE_ALL_PREMIUM_FEATURES
 		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
 	},
 	[ PLAN_JETPACK_BUSINESS_MONTHLY ]: {
 		getTitle: () => i18n.translate( 'Professional' ),
@@ -566,12 +550,10 @@ export const PLANS_LIST = {
 		] ),
 		getSignupFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-			FEATURE_VIDEO_CDN_UNLIMITED,
-			FEATURE_SEO_PREVIEW_TOOLS,
+			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 			FEATURE_ALL_PREMIUM_FEATURES
 		] ),
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
-		getSignupBillingTimeFrame: () => 'per month', //PLANS A/B TEST: Translate if test passes
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
 	}
 };
 
@@ -649,26 +631,6 @@ export const FEATURES_LIST = {
 	[ FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP ]: {
 		getSlug: () => FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP,
 		getTitle: () => 'Unlimited Backup Space', //PLANS A/B TEST: Translate if test passes
-	},
-
-	[ FEATURE_FREE_WORDPRESS_THEMES ]: {
-		getSlug: () => FEATURE_FREE_WORDPRESS_THEMES,
-		getTitle: () => 'Free WordPress Themes', //PLANS A/B TEST: Translate if test passes
-	},
-
-	[ FEATURE_VIDEO_CDN_LIMITED ]: {
-		getSlug: () => FEATURE_VIDEO_CDN_LIMITED,
-		getTitle: () => '13GB Video Storage', //PLANS A/B TEST: Translate if test passes
-	},
-
-	[ FEATURE_VIDEO_CDN_UNLIMITED ]: {
-		getSlug: () => FEATURE_VIDEO_CDN_UNLIMITED,
-		getTitle: () => 'Unlimited Video Storage', //PLANS A/B TEST: Translate if test passes
-	},
-
-	[ FEATURE_SEO_PREVIEW_TOOLS ]: {
-		getSlug: () => FEATURE_SEO_PREVIEW_TOOLS,
-		getTitle: () => 'SEO Preview Tools', //PLANS A/B TEST: Translate if test passes
 	},
 
 	[ FEATURE_GOOGLE_ANALYTICS ]: {

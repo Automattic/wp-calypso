@@ -122,7 +122,7 @@ class PlanFeatures extends Component {
 		// center plans
 		if ( isInSignupTest && plansWrapper ) {
 			displayJetpackPlans
-				? plansWrapper.scrollLeft = 190
+				? plansWrapper.scrollLeft = 150
 				: plansWrapper.scrollLeft = 495;
 		}
 	}
@@ -235,16 +235,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderPlanHeaders() {
-		const {
-			planProperties,
-			intervalType,
-			site,
-			basePlansPath,
-			isInSignup,
-			isInSignupTest,
-			siteType,
-			displayJetpackPlans
-		} = this.props;
+		const { planProperties, intervalType, site, basePlansPath, isInSignup, isInSignupTest, siteType } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -261,7 +252,6 @@ class PlanFeatures extends Component {
 			const { rawPrice, discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
 			let audience = planConstantObj.getAudience();
-			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
 			if ( isInSignupTest ) {
 				switch ( siteType ) {
@@ -276,10 +266,6 @@ class PlanFeatures extends Component {
 				}
 			}
 
-			if ( isInSignupTest && displayJetpackPlans ) {
-				billingTimeFrame = planConstantObj.getSignupBillingTimeFrame();
-			}
-
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesHeader
@@ -292,7 +278,7 @@ class PlanFeatures extends Component {
 						planType={ planName }
 						rawPrice={ rawPrice }
 						discountPrice={ discountPrice }
-						billingTimeFrame={ billingTimeFrame }
+						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
 						isPlaceholder={ isPlaceholder }
 						intervalType={ intervalType }
 						site={ site }
