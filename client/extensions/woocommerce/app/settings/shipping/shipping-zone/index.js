@@ -64,6 +64,11 @@ class Shipping extends Component {
 		if ( this.props.zone && ! zone ) {
 			page.redirect( getLink( '/store/settings/shipping/:site', site ) );
 		}
+
+		// If the zone didn't have a real ID before but it does now, change the URL from /zone/new to /zone/ID
+		if ( this.props.zone && isNaN( this.props.zone.id ) && zone && ! isNaN( zone.id ) ) {
+			page.replace( getLink( '/store/settings/shipping/:site/zone/' + zone.id, site ), null, false, false );
+		}
 	}
 
 	onSave() {
