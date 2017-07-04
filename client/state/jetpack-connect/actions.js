@@ -4,12 +4,14 @@
 const debug = require( 'debug' )( 'calypso:jetpack-connect:actions' );
 import pick from 'lodash/pick';
 import page from 'page';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { receiveDeletedSite, receiveSite } from 'state/sites/actions';
 import Dispatcher from 'dispatcher';
 import {
 	JETPACK_CONNECT_CHECK_URL,
@@ -34,7 +36,10 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
-	SITES_RECEIVE
+	SITES_RECEIVE,
+	SITE_REQUEST,
+	SITE_REQUEST_SUCCESS,
+	SITE_REQUEST_FAILURE
 } from 'state/action-types';
 import userFactory from 'lib/user';
 import config from 'config';
@@ -314,6 +319,37 @@ export default {
 					} );
 				}
 			);
+		};
+	},
+	isUserConnected( siteId, siteIsOnSitesList ) {
+		let accessibleSite;
+		return ( dispatch ) => {
+			dispatch( {
+				type: SITE_REQUEST,
+				siteId
+			} );
+			return wpcom.site( siteId ).get()
+			.then( ( site ) => {
+				accessibleSite = site;
+				return wpcom.undocumented().isUserConnected( siteId );
+			} )
+			.then( () => {
+				dispatch( receiveSite( omit( accessibleSite, '_headers' ) ) );
+				dispatch( {
+					type: SITE_REQUEST_SUCCESS,
+					siteId
+				} );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: SITE_REQUEST_FAILURE,
+					siteId,
+					error
+				} );
+				if ( siteIsOnSitesList ) {
+					dispatch( receiveDeletedSite( siteId ) );
+				}
+			} );
 		};
 	},
 	authorize( queryObject ) {
