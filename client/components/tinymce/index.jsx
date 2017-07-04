@@ -38,6 +38,7 @@ import touchScrollToolbarPlugin from './plugins/touch-scroll-toolbar/plugin';
 import editorButtonAnalyticsPlugin from './plugins/editor-button-analytics/plugin';
 import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
 import contactFormPlugin from './plugins/contact-form/plugin';
+import simplePaymentsPlugin from './plugins/simple-payments/plugin';
 import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
 import wptextpatternPlugin from './plugins/wptextpattern/plugin';
 import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
@@ -72,6 +73,7 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
 	embedReversalPlugin,
 	markdownPlugin,
 	wpEmojiPlugin,
+	simplePaymentsPlugin,
 ].forEach( ( initializePlugin ) => initializePlugin() );
 
 /**
@@ -142,6 +144,7 @@ const PLUGINS = [
 	'wpcom/trackpaste',
 	'wpcom/insertmenu',
 	'wpcom/markdown',
+	'wpcom/simplepayments',
 ];
 
 mentionsPlugin();
