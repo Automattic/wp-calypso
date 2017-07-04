@@ -228,6 +228,7 @@ function setUpLoggedInRoute( req, res, next ) {
 			if ( error ) {
 				if ( error.error === 'authorization_required' ) {
 					debug( 'User public API authorization required. Redirecting to %s', redirectUrl );
+					res.clearCookie( 'wordpress_logged_in', { path: '/', httpOnly: true, domain: '.wordpress.com' } );
 					res.redirect( redirectUrl );
 				} else {
 					if ( error.error ) {
