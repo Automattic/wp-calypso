@@ -15,7 +15,6 @@ import {
 	COMMENTS_LIKE,
 	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
-	COMMENTS_UNLIKE_REQUEST,
 	COMMENTS_REMOVE,
 	COMMENTS_REPLY_WRITE,
 	COMMENTS_WRITE,
@@ -119,7 +118,7 @@ export const likeComment = ( siteId, postId, commentId ) => ( {
  * @returns {Function} think that unlikes a comment
  */
 export const unlikeComment = ( siteId, postId, commentId ) => ( {
-	type: COMMENTS_UNLIKE_REQUEST,
+	type: COMMENTS_UNLIKE,
 	siteId,
 	postId,
 	commentId

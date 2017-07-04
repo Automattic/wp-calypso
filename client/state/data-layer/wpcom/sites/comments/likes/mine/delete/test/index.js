@@ -30,20 +30,12 @@ describe( '#unlikeComment()', () => {
 		postId: POST_ID,
 		commentId: 1
 	};
-	it( 'should dispatch a comment unlike action', () => {
-		const dispatch = spy();
-		unlikeComment( { dispatch }, action );
-
-		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWith( action );
-	} );
 
 	it( 'should dispatch a http action to remove a comment like', () => {
 		const dispatch = spy();
 		unlikeComment( { dispatch }, action );
 
-		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWith( action );
+		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( http( {
 			apiVersion: '1.1',
 			method: 'POST',

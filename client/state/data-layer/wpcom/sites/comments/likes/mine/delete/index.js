@@ -10,16 +10,12 @@ import {
 	COMMENTS_LIKE,
 	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
-	COMMENTS_UNLIKE_REQUEST
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 
 export const unlikeComment = ( { dispatch }, action ) => {
-	//optimistic update of comment like status and count
-	dispatch( { ...action, type: COMMENTS_UNLIKE } );
-
 	dispatch( http( {
 		method: 'POST',
 		apiVersion: '1.1',
@@ -49,5 +45,5 @@ export const handleUnlikeFailure = ( { dispatch }, { siteId, postId, commentId }
 };
 
 export default {
-	[ COMMENTS_UNLIKE_REQUEST ]: [ dispatchRequest( unlikeComment, updateCommentLikes, handleUnlikeFailure ) ]
+	[ COMMENTS_UNLIKE ]: [ dispatchRequest( unlikeComment, updateCommentLikes, handleUnlikeFailure ) ]
 };
