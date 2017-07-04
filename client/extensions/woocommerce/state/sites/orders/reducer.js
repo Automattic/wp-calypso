@@ -23,7 +23,7 @@ import refunds from './refunds/reducer';
 
 /**
  * Returns the updated order requests state after an action has been
- * dispatched. The state reflects a mapping of query (page number) to a
+ * dispatched. The state reflects a mapping of order ID to a
  * boolean reflecting whether a request for that page is in progress.
  *
  * @param  {Object} state  Current state
@@ -63,8 +63,8 @@ export function isQueryLoading( state = {}, action ) {
 
 /**
  * Returns the updated order requests state after an action has been
- * dispatched. The state reflects a mapping of query (page number) to a
- * boolean reflecting whether a request for that page is in progress.
+ * dispatched. The state reflects a mapping of order ID to a
+ * boolean reflecting whether there is a save in progress.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
@@ -95,8 +95,6 @@ export function items( state = {}, action ) {
 			orders = keyBy( action.orders, 'id' );
 			return Object.assign( {}, state, orders );
 		case WOOCOMMERCE_ORDER_REQUEST_SUCCESS:
-			orders = { [ action.orderId ]: action.order };
-			return Object.assign( {}, state, orders );
 		case WOOCOMMERCE_ORDER_UPDATE_SUCCESS:
 			orders = { [ action.orderId ]: action.order };
 			return Object.assign( {}, state, orders );
