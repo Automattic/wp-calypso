@@ -12,11 +12,13 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE,
+	WOOCOMMERCE_SHIPPING_ZONE_METHOD_DELETED,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED,
+	WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED,
 } from 'woocommerce/state/action-types';
 import { nextBucketIndex, getBucket } from 'woocommerce/state/ui/helpers';
 import flatRate from './flat-rate/reducer';
@@ -235,6 +237,36 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED ] = ( state, { methodId
 			methodState,
 			...state[ bucket ].slice( index + 1 ),
 		],
+	};
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED ] = ( state, { data, originatingAction: { methodId } } ) => {
+	const bucket = getBucket( { id: methodId } );
+	const newState = {
+		...state,
+		currentlyEditingId: null,
+	};
+
+	if ( 'creates' === bucket ) {
+		const createEdit = find( state.creates, { id: methodId } );
+		if ( createEdit ) {
+			newState.updates = [ ...state.updates, {
+				...createEdit,
+				id: data.id,
+			} ];
+		}
+	}
+
+	newState[ bucket ] = reject( state[ bucket ], { id: methodId } );
+	return newState;
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_DELETED ] = ( state, { originatingAction: { methodId } } ) => {
+	return { ...state,
+		creates: reject( state.creates, { id: methodId } ),
+		updates: reject( state.updates, { id: methodId } ),
+		deletes: reject( state.deletes, { id: methodId } ),
+		currentlyEditingId: null,
 	};
 };
 

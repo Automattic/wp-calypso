@@ -15,8 +15,10 @@ import Button from 'components/button';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
+import { getActionList } from 'woocommerce/state/action-list/selectors';
+import { areCurrentlyEditingShippingZoneLocationsValid } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 
-const ShippingZoneHeader = ( { zone, site, onSave, translate } ) => {
+const ShippingZoneHeader = ( { zone, site, onSave, onDelete, translate, canSave, isSaving, showDelete } ) => {
 	const currentCrumb = zone && isNumber( zone.id )
 		? ( <span>{ translate( 'Edit Shipping Zone' ) }</span> )
 		: ( <span>{ translate( 'Add New Shipping Zone' ) }</span> );
@@ -29,19 +31,27 @@ const ShippingZoneHeader = ( { zone, site, onSave, translate } ) => {
 
 	return (
 		<ActionHeader breadcrumbs={ breadcrumbs }>
-			<Button borderless><Gridicon icon="trash" /></Button>
-			<Button primary onClick={ onSave }>{ translate( 'Save' ) }</Button>
+			{ showDelete && <Button borderless onClick={ onDelete } disabled={ isSaving }><Gridicon icon="trash" /></Button> }
+			<Button primary onClick={ onSave } busy={ isSaving } disabled={ ! canSave || isSaving }>{ translate( 'Save' ) }</Button>
 		</ActionHeader>
 	);
 };
 
 ShippingZoneHeader.propTypes = {
 	onSave: PropTypes.func.isRequired,
+	onDelete: PropTypes.func.isRequired,
 };
 
 export default connect(
-	( state ) => ( {
-		site: getSelectedSite( state ),
-		zone: getCurrentlyEditingShippingZone( state ),
-	} ),
+	( state ) => {
+		const zone = getCurrentlyEditingShippingZone( state );
+		const isRestOfTheWorld = zone && 0 === Number( zone.id );
+		return {
+			site: getSelectedSite( state ),
+			zone,
+			canSave: areCurrentlyEditingShippingZoneLocationsValid( state ),
+			showDelete: zone && 'number' === typeof zone.id && ! isRestOfTheWorld,
+			isSaving: Boolean( getActionList( state ) ),
+		};
+	},
 )( localize( ShippingZoneHeader ) );
