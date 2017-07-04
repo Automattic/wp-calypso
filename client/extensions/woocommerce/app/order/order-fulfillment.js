@@ -34,7 +34,7 @@ class OrderFulfillment extends Component {
 
 	state = {
 		errorMessage: false,
-		shouldEmail: true,
+		shouldEmail: false,
 		showDialog: false,
 		trackingNumber: '',
 	}

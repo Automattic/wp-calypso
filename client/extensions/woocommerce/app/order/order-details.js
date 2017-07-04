@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { find } from 'lodash';
-import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 
