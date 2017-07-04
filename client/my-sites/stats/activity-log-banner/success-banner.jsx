@@ -51,7 +51,6 @@ class SuccessBanner extends PureComponent {
 				<Button
 					href={ siteUrl }
 					primary
-					rel="noopener noreferrer"
 				>
 					{ translate( 'View site' ) }
 				</Button>
