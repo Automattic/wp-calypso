@@ -41,7 +41,7 @@ const simplePayments = editor => {
 					isEdit,
 					onClose() {
 						editor.focus();
-						renderModal( 'hide' );
+						renderModal( 'hide', activeTab );
 					},
 					onChangeTabs( tab ) {
 						renderModal( 'show', tab );

@@ -3,12 +3,15 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
 import Navigation from './navigation';
+import Button from 'components/button';
 
 class SimplePaymentsDialog extends Component {
 	static propTypes = {
@@ -20,14 +23,20 @@ class SimplePaymentsDialog extends Component {
 	};
 
 	getActionButtons() {
+		const { translate, onClose } = this.props;
+
 		const actionButtons = [
-			// Cancel
+			<Button onClick={ onClose }>
+				{ translate( 'Cancel' ) }
+			</Button>
 		];
 
 		if ( this.props.activeTab === 'addNew' ) {
 			return [
-				// + Add
-				...actionButtons
+				...actionButtons,
+				<Button onClick={ noop } primary>
+					{ translate( 'Add' ) }
+				</Button>
 			];
 		}
 
@@ -62,4 +71,4 @@ class SimplePaymentsDialog extends Component {
 
 export default connect( state => {
 	return {};
-} )( SimplePaymentsDialog );
+} )( localize( SimplePaymentsDialog ) );
