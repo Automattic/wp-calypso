@@ -64,7 +64,6 @@ class Order extends Component {
 			( <a href={ getLink( '/store/orders/:site/', site ) }>{ translate( 'Orders' ) }</a> ),
 			( <span>{ translate( 'Order Details' ) }</span> ),
 		];
-		console.log( isSaving );
 		return (
 			<Main className={ className }>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
