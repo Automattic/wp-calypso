@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { flatten, isEmpty, isNil, omit, some, xor } from 'lodash';
+import { find, flatten, isEmpty, isNil, omit, some, xor } from 'lodash';
 
 /**
  * Internal dependencies
@@ -277,7 +277,7 @@ export default {
 			};
 			const nextSteps = ( deleteZone ? getDeleteZoneActionListSteps : getSaveZoneActionListSteps )( store.getState() );
 
-			store.dispatch( actionListStepNext( { nextSteps, onSuccess, onFailure } ) );
+			store.dispatch( isEmpty( nextSteps ) ? onSuccess : actionListStepNext( { nextSteps, onSuccess, onFailure } ) );
 		}
 	],
 };
