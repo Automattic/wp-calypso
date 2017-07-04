@@ -3,11 +3,13 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import SectionHeader from 'components/section-header';
+import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
 
 export default localize( class SimplePaymentsDialogNavigation extends Component {
@@ -31,7 +33,13 @@ export default localize( class SimplePaymentsDialogNavigation extends Component 
 		} else if ( activeTab === 'addNew' ) {
 			// We are on "Add New" view with previously made payment buttons.
 
-			return <div>something</div>;
+			return (
+				<HeaderCake
+					onClick={ this.onChangeTabs( 'paymentButtons') }
+					backText={ translate( 'Payment Buttons' ) }
+				>
+				</HeaderCake>
+			);
 		} else {
 			// We are on "Payment Buttons" view.
 
