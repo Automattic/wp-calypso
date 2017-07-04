@@ -23,7 +23,6 @@ import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
 import notices from 'notices';
-import siteList from 'lib/sites-list';
 import analytics from 'lib/analytics';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
@@ -35,8 +34,13 @@ import QueryTicketSupportConfiguration from 'components/data/query-ticket-suppor
 import HelpUnverifiedWarning from '../help-unverified-warning';
 import { sendChatMessage as sendHappychatMessage, sendUserInfo } from 'state/happychat/actions';
 import { openChat as openHappychat } from 'state/ui/happychat/actions';
-import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
+import {
+	getCurrentUser,
+	getCurrentUserLocale,
+	getCurrentUserSiteCount,
+} from 'state/current-user/selectors';
 import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } from 'state/help/directly/actions';
+import { isRequestingSites } from 'state/sites/selectors';
 import {
 	hasUserAskedADirectlyQuestion,
 	isDirectlyFailed,
@@ -48,7 +52,6 @@ import {
  * Module variables
  */
 const wpcom = wpcomLib.undocumented();
-const sites = siteList();
 let savedContactForm = null;
 
 const SUPPORT_DIRECTLY = 'SUPPORT_DIRECTLY';
@@ -68,8 +71,6 @@ const HelpContact = React.createClass( {
 		olarkEvents.on( 'api.chat.onCommandFromOperator', this.onCommandFromOperator );
 		olarkEvents.on( 'api.chat.onMessageToVisitor', this.onMessageToVisitor );
 		olarkEvents.on( 'api.chat.onMessageToOperator', this.onMessageToOperator );
-
-		sites.on( 'change', this.onSitesChanged );
 
 		olarkActions.updateDetails();
 
@@ -100,8 +101,6 @@ const HelpContact = React.createClass( {
 		if ( details.isConversing && ! isOperatorAvailable ) {
 			olarkActions.shrinkBox();
 		}
-
-		sites.removeListener( 'change', this.onSitesChanged );
 	},
 
 	getInitialState: function() {
@@ -110,16 +109,11 @@ const HelpContact = React.createClass( {
 			isSubmitting: false,
 			confirmation: null,
 			isChatEnded: false,
-			sitesInitialized: sites.initialized
 		};
 	},
 
 	updateOlarkState: function() {
 		this.setState( { olark: olarkStore.get() } );
-	},
-
-	onSitesChanged: function() {
-		this.setState( { sitesInitialized: sites.initialized } );
 	},
 
 	backToHelp: function() {
@@ -450,8 +444,7 @@ const HelpContact = React.createClass( {
 
 	getContactFormPropsVariation: function( variationSlug ) {
 		const { isSubmitting } = this.state;
-		const { translate } = this.props;
-		const hasMoreThanOneSite = sites.get().length > 1;
+		const { translate, hasMoreThanOneSite } = this.props;
 
 		switch ( variationSlug ) {
 			case SUPPORT_HAPPYCHAT:
@@ -576,10 +569,9 @@ const HelpContact = React.createClass( {
 	},
 
 	shouldShowPreloadForm: function() {
-		const { sitesInitialized } = this.state;
 		const waitingOnDirectly = this.getSupportVariation() === SUPPORT_DIRECTLY && ! this.props.isDirectlyReady;
 
-		return ! sitesInitialized || ! this.hasDataToDetermineVariation() || waitingOnDirectly;
+		return this.props.isRequestingSites || ! this.hasDataToDetermineVariation() || waitingOnDirectly;
 	},
 
 	/**
@@ -694,6 +686,8 @@ export default connect(
 			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
 			ticketSupportEligible: isTicketSupportEligible( state ),
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
+			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
+			isRequestingSites: isRequestingSites( state ),
 		};
 	},
 	{
