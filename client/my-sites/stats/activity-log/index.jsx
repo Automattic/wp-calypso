@@ -234,17 +234,17 @@ class ActivityLog extends Component {
 		const logsGroupedByDay = map(
 			groupBy(
 				logsForMonth,
-				log => applySiteOffset( moment.utc( log.ts_utc ) ).format( 'LL' )
+				log => applySiteOffset( moment.utc( log.ts_utc ) ).endOf( 'day' ).valueOf()
 			),
-			( daily_logs, day ) => (
+			( daily_logs, tsEndOfSiteDay ) => (
 				<ActivityLogDay
 					allowRestore={ !! isPressable }
 					isRewindActive={ isRewindActive }
-					key={ day }
+					key={ tsEndOfSiteDay }
 					logs={ daily_logs }
 					requestRestore={ this.handleRequestRestore }
 					siteId={ siteId }
-					day={ day }
+					tsEndOfSiteDay={ +tsEndOfSiteDay }
 					applySiteOffset={ applySiteOffset }
 				/>
 			)
@@ -291,6 +291,7 @@ class ActivityLog extends Component {
 			requestedRestoreTimestamp,
 			showRestoreConfirmDialog,
 		} = this.state;
+		const applySiteOffset = this.getSiteOffsetFunc();
 
 		return (
 			<Main wideLayout>
@@ -307,6 +308,7 @@ class ActivityLog extends Component {
 				{ this.renderErrorMessage() }
 				{ this.renderContent() }
 				<ActivityLogConfirmDialog
+					applySiteOffset={ applySiteOffset }
 					isVisible={ showRestoreConfirmDialog }
 					siteTitle={ siteTitle }
 					timestamp={ requestedRestoreTimestamp }
