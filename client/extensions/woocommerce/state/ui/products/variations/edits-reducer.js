@@ -144,7 +144,7 @@ function editProductVariation( array, variation, data ) {
 function editProductAttributeAction( edits, action ) {
 	const { product, attribute, data, productVariations } = action;
 	const attributes = editProductAttribute( product.attributes, attribute, data );
-	const calculatedVariations = generateVariations( { ...product, attributes } );
+	const calculatedVariations = generateVariations( { ...product, attributes }, productVariations );
 
 	return updateProductEdits( edits, product.id, ( productEdits ) => {
 		const creates = ( productEdits ? productEdits.creates : [] );
