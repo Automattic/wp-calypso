@@ -67,7 +67,7 @@ class ProductCreate extends React.Component {
 	}
 
 	onSave = () => {
-		const { product, translate } = this.props;
+		const { site, product, translate } = this.props;
 
 		const successAction = successNotice(
 			translate( '%(product)s successfully created.', {
@@ -82,12 +82,15 @@ class ProductCreate extends React.Component {
 			} )
 		);
 
+		if ( ! product.type ) {
+			// Product type was never switched, so set it before we save.
+			this.props.editProduct( site.ID, product, { type: 'simple' } );
+		}
 		this.props.createProductActionList( successAction, failureAction );
 	}
 
 	isProductValid( product = this.props.product ) {
 		return product &&
-			product.type &&
 			product.name && product.name.length > 0;
 	}
 
@@ -123,8 +126,8 @@ class ProductCreate extends React.Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	const productId = getCurrentlyEditingId( state, site.id );
-	const combinedProduct = getProductWithLocalEdits( state, productId, site.id );
+	const productId = getCurrentlyEditingId( state );
+	const combinedProduct = getProductWithLocalEdits( state, productId );
 	const product = combinedProduct || ( productId && { id: productId } );
 	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
 	const productCategories = getProductCategoriesWithLocalEdits( state );
