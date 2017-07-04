@@ -11,6 +11,7 @@ import { keyBy } from 'lodash';
 import {
 	isLoading,
 	isQueryLoading,
+	isUpdating,
 	items,
 	queries,
 	totalPages,
@@ -19,6 +20,9 @@ import {
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
+	WOOCOMMERCE_ORDER_UPDATE,
+	WOOCOMMERCE_ORDER_UPDATE_FAILURE,
+	WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
 	WOOCOMMERCE_ORDERS_REQUEST,
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
@@ -43,7 +47,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { 45: true } );
 		} );
 
-		it( 'should should show that request has loaded on success', () => {
+		it( 'should show that request has loaded on success', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
 				siteId: 123,
@@ -54,7 +58,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { 45: false } );
 		} );
 
-		it( 'should should show that request has loaded on failure', () => {
+		it( 'should show that request has loaded on failure', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 				siteId: 123,
@@ -82,7 +86,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { '{page:1}': true } );
 		} );
 
-		it( 'should should show that request has loaded on success', () => {
+		it( 'should show that request has loaded on success', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 				siteId: 123,
@@ -94,7 +98,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { '{page:1}': false } );
 		} );
 
-		it( 'should should show that request has loaded on failure', () => {
+		it( 'should show that request has loaded on failure', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 				siteId: 123,
@@ -103,6 +107,45 @@ describe( 'reducer', () => {
 			};
 			const newState = isQueryLoading( { '{page:1}': true }, action );
 			expect( newState ).to.eql( { '{page:1}': false } );
+		} );
+	} );
+
+	describe( 'isUpdating', () => {
+		it( 'should have no change by default', () => {
+			const newState = isUpdating( undefined, {} );
+			expect( newState ).to.eql( {} );
+		} );
+
+		it( 'should store that an order is being updated', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_UPDATE,
+				siteId: 123,
+				orderId: 45,
+			};
+			const newState = isUpdating( undefined, action );
+			expect( newState ).to.eql( { 45: true } );
+		} );
+
+		it( 'should show that an order is done updating after success', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
+				siteId: 123,
+				orderId: 45,
+				order,
+			};
+			const newState = isUpdating( { 45: true }, action );
+			expect( newState ).to.eql( { 45: false } );
+		} );
+
+		it( 'should show that an order is done updating after failure', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_UPDATE_FAILURE,
+				siteId: 123,
+				orderId: 45,
+				error: {},
+			};
+			const newState = isUpdating( { 45: true }, action );
+			expect( newState ).to.eql( { 45: false } );
 		} );
 	} );
 
