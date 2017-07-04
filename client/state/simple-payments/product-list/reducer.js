@@ -30,11 +30,11 @@ export const requesting = createReducer( {}, {
 /**
  * Edits existing product if one with matching ID found.
  * Otherwise inserts the new one at the beginning of the list.
- * @param {array} list of previous products
+ * @param {Array} list of previous products
  * @param {Object} newProduct to update list with
- * @returns {array} updated array of products
+ * @returns {Array} updated array of products
  */
-function addOrEditProduct( list, newProduct ) {
+function addOrEditProduct( list = [], newProduct ) {
 	let found = 0;
 	const products = list.map( product => {
 		if ( product.ID === newProduct.ID ) {

@@ -47,7 +47,7 @@ function customPostToProduct( product ) {
 	return Object.assign(
 		{
 			ID: product.ID,
-			content: product.content,
+			description: product.content,
 			title: product.title
 		},
 		product.metadata.reduce( reduceMetadata, {} )
@@ -92,7 +92,7 @@ export function requestSimplePaymentsProducts( { dispatch, getState }, { siteId 
 	}
 
 	dispatch( requestingProductList( siteId ) );
-	log( 'Request product list for site %d using query %o', siteId );
+	log( 'Request product list for site %d.', siteId );
 
 	return wpcom
 		.site( siteId )
@@ -131,7 +131,7 @@ export function requestSimplePaymentsProductAdd( { dispatch }, action ) {
 export function requestSimplePaymentsProductEdit( { dispatch }, action ) {
 	return wpcom
 		.site( action.siteId )
-		.post( action.postId )
+		.post( action.productId )
 		.update( productToCustomPost( action.product ) )
 		.then( ( newProduct ) => {
 			dispatch( receiveUpdateProduct( action.siteId, customPostToProduct( newProduct ) ) );
@@ -147,7 +147,7 @@ export function requestSimplePaymentsProductEdit( { dispatch }, action ) {
 export function requestSimplePaymentsProductDelete( { dispatch }, action ) {
 	return wpcom
 		.site( action.siteId )
-		.deletePost( action.postId )
+		.deletePost( action.productId )
 		.then( ( deletedProduct ) => {
 			dispatch( receiveDeleteProduct( action.siteId, deletedProduct.ID ) );
 		} );
