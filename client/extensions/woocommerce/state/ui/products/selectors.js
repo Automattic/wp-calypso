@@ -17,7 +17,7 @@ export function getAllProductEdits( state, siteId ) {
  * Gets the accumulated edits for a product, if any.
  *
  * @param {Object} state Global state tree
- * @param {any} productId The id of the product (or { index: # } )
+ * @param {any} productId The id of the product (or { placeholder: # } )
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object} The current accumulated edits
  */
@@ -33,7 +33,7 @@ export function getProductEdits( state, productId, siteId = getSelectedSiteId( s
  * Gets a product with local edits overlayed on top of fetched data.
  *
  * @param {Object} state Global state tree
- * @param {any} productId The id of the product (or { index: # } )
+ * @param {any} productId The id of the product (or { placeholder: # } )
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object} The product data merged between the fetched data and edits
  */

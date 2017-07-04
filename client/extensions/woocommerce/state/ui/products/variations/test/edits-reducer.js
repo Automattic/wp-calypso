@@ -20,7 +20,7 @@ const siteId = 123;
 
 describe( 'edits-reducer', () => {
 	const newVariableProduct1 = {
-		id: { index: 1 },
+		id: { placeholder: 'product_1' },
 		type: 'variable',
 		name: 'New Variable Product',
 		attributes: [
@@ -38,14 +38,14 @@ describe( 'edits-reducer', () => {
 	};
 
 	const variationBlack = {
-		id: { index: 4 },
+		id: { placeholder: 'product_variation_4' },
 		attributes: [
 			{ name: 'Color', option: 'Black' },
 		],
 	};
 
 	const variationBlue = {
-		id: { index: 5 },
+		id: { placeholder: 'product_variation_4' },
 		attributes: [
 			{ name: 'Color', option: 'Blue' },
 		],
@@ -337,7 +337,7 @@ describe( 'edits-reducer', () => {
 				{
 					productId: existingVariableProduct1.id,
 					updates: [ {
-						id: { index: 4 },
+						id: { placeholder: 'product_variation_4' },
 						regular_price: '5.99',
 					} ],
 				},
@@ -358,7 +358,7 @@ describe( 'edits-reducer', () => {
 			expect( variationEditsAfter[ 0 ].productId ).to.eql( existingVariableProduct1.id );
 			expect( variationEditsAfter[ 0 ].updates ).to.exist;
 			expect( variationEditsAfter[ 0 ].updates.length ).to.equal( 1 );
-			expect( variationEditsAfter[ 0 ].updates[ 0 ].id ).to.eql( { index: 4 } );
+			expect( variationEditsAfter[ 0 ].updates[ 0 ].id ).to.eql( { placeholder: 'product_variation_4' } );
 			expect( variationEditsAfter[ 0 ].updates[ 0 ].regular_price ).to.eql( '5.99' );
 			expect( variationEditsAfter[ 0 ].creates ).to.exist;
 			expect( variationEditsAfter[ 0 ].creates.length ).to.equal( 1 );
@@ -403,7 +403,7 @@ describe( 'edits-reducer', () => {
 				{
 					productId: existingVariableProduct1.id,
 					updates: [ {
-						id: { index: 4 },
+						id: { placeholder: 'product_variation_4' },
 						attributes: [
 							{ name: 'Color', option: 'Darker than Black' },
 						],
