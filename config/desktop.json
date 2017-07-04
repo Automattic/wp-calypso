@@ -19,6 +19,8 @@
 		"community-translator": true,
 		"desktop": true,
 		"desktop-promo": false,
+		"domains/cctlds": true,
+		"domains/cctlds/ca": true,
 		"fluid-width": true,
 		"help": true,
 		"help/courses": true,

@@ -21,6 +21,8 @@
 		"code-splitting": true,
 		"community-translator": true,
 		"desktop-promo": true,
+		"domains/cctlds": true,
+		"domains/cctlds/ca": true,
 		"external-media": true,
 		"happychat": true,
 		"help": true,
