@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { bindActionCreators } from 'redux';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
@@ -112,10 +113,15 @@ class OrderFulfillment extends Component {
 			return null;
 		}
 
+		const classes = classNames( {
+			'order__details-fulfillment': true,
+			'is-completed': 'completed' === order.status,
+		} );
+
 		return (
-			<div className="order__details-fulfillment">
+			<div className={ classes }>
 				<div className="order__details-fulfillment-label">
-					<Gridicon icon="shipping" />
+					<Gridicon icon={ 'completed' === order.status ? 'checkmark' : 'shipping' } />
 					{ this.getFulfillmentStatus() }
 				</div>
 				<div className="order__details-fulfillment-action">

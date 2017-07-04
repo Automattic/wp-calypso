@@ -217,6 +217,14 @@
 
 .order__details-fulfillment {
 	background: lighten( $blue-light, 25% );
+
+	&.is-completed {
+		background: transparent;
+
+		.order__details-fulfillment-label .gridicon {
+			color: $alert-green;
+		}
+	}
 }
 
 .order__customer-info {
