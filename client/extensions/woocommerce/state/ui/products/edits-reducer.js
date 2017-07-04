@@ -25,6 +25,14 @@ function editProductAction( edits, action ) {
 	const _product = product || { id: { placeholder: uniqueId( 'product_' ) } };
 	const _array = editProduct( prevEdits[ bucket ], _product, data );
 
+	if ( isEqual( {}, data ) ) {
+		// If data is empty, only set the currentlyEditingId.
+		return {
+			...prevEdits,
+			currentlyEditingId: _product.id,
+		};
+	}
+
 	return {
 		...prevEdits,
 		[ bucket ]: _array,

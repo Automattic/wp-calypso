@@ -244,4 +244,21 @@ describe( 'edits-reducer', () => {
 		} ) );
 		expect( edits1.currentlyEditingId ).to.eql( edits1.updates[ 0 ].id );
 	} );
+
+	it( 'should not add a create edit entry, only set currentlyEditingId, when data is empty', () => {
+		const edits1 = reducer( undefined, editProduct( siteId, null, {} ) );
+
+		expect( edits1.currentlyEditingId ).to.exist;
+		expect( edits1.currentlyEditingId.placeholder ).to.exist;
+		expect( edits1.creates ).to.not.exist;
+	} );
+
+	it( 'should not add an update edit entry, only set currentlyEditingId, when data is empty', () => {
+		const product1 = { id: 1 };
+		const edits1 = reducer( undefined, editProduct( siteId, product1, {} ) );
+
+		expect( edits1.currentlyEditingId ).to.exist;
+		expect( edits1.currentlyEditingId ).to.equal( 1 );
+		expect( edits1.updates ).to.not.exist;
+	} );
 } );

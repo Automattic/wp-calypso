@@ -15,7 +15,7 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import { editProduct, editProductAttribute, createProductActionList } from 'woocommerce/state/ui/products/actions';
 import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
-import { getCurrentlyEditingProduct } from 'woocommerce/state/ui/products/selectors';
+import { getCurrentlyEditingId, getProductWithLocalEdits } from 'woocommerce/state/ui/products/selectors';
 import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { editProductVariation } from 'woocommerce/state/ui/products/variations/actions';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
@@ -46,9 +46,7 @@ class ProductCreate extends React.Component {
 
 		if ( site && site.ID ) {
 			if ( ! product ) {
-				this.props.editProduct( site.ID, null, {
-					type: 'simple'
-				} );
+				this.props.editProduct( site.ID, null, {} );
 			}
 			this.props.fetchProductCategories( site.ID );
 		}
@@ -59,9 +57,7 @@ class ProductCreate extends React.Component {
 		const newSiteId = newProps.site && newProps.site.ID || null;
 		const oldSiteId = site && site.ID || null;
 		if ( oldSiteId !== newSiteId ) {
-			this.props.editProduct( newSiteId, null, {
-				type: 'simple'
-			} );
+			this.props.editProduct( newSiteId, null, {} );
 			this.props.fetchProductCategories( newSiteId );
 		}
 	}
@@ -127,7 +123,9 @@ class ProductCreate extends React.Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	const product = getCurrentlyEditingProduct( state );
+	const productId = getCurrentlyEditingId( state, site.id );
+	const combinedProduct = getProductWithLocalEdits( state, productId, site.id );
+	const product = combinedProduct || ( productId && { id: productId } );
 	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
 	const productCategories = getProductCategoriesWithLocalEdits( state );
 	const actionList = getActionList( state );
