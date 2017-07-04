@@ -21,6 +21,10 @@ import OrderCustomerInfo from './order-customer-info';
 import OrderDetails from './order-details';
 
 class Order extends Component {
+	state = {
+		order: {}
+	}
+
 	componentDidMount() {
 		const { siteId, orderId } = this.props;
 
@@ -33,6 +37,10 @@ class Order extends Component {
 		if ( newProps.orderId !== this.props.orderId || newProps.siteId !== this.props.siteId ) {
 			this.props.fetchOrder( newProps.siteId, newProps.orderId );
 		}
+	}
+
+	onUpdate = ( order ) => {
+		this.setState( { order } );
 	}
 
 	saveOrder = () => {}
@@ -54,7 +62,7 @@ class Order extends Component {
 				</ActionHeader>
 
 				<div className="order__container">
-					<OrderDetails order={ order } site={ site } />
+					<OrderDetails order={ order } onUpdate={ this.onUpdate } site={ site } />
 					<OrderActivityLog order={ order } />
 					<OrderCustomerInfo order={ order } />
 				</div>
