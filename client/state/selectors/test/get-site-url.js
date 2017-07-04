@@ -12,11 +12,25 @@ describe( 'getSiteUrl()', () => {
 	it( 'should return null if the site is unknown', () => {
 		const state = {
 			sites: {
-				items: {}
+				items: {
+					456: { URL: 'https://wordpress.com' }
+				}
 			}
 		};
 
 		expect( getSiteUrl( state ) ).to.be.null;
+		expect( getSiteUrl( state, 123 ) ).to.be.null;
+	} );
+
+	it( 'should return null if the Url is unknown', () => {
+		const state = {
+			sites: {
+				items: {
+					123: {},
+					456: { URL: 'https://wordpress.com' }
+				}
+			}
+		};
 		expect( getSiteUrl( state, 123 ) ).to.be.null;
 	} );
 
