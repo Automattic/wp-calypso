@@ -37,7 +37,7 @@ class EmailedLoginLinkExpired extends React.Component {
 					replaceCurrentLocation={ true }
 				/>
 				<EmptyContent
-					action={ translate( 'Return to WordPress.com' ) }
+					action={ translate( 'Back to WordPress.com' ) }
 					actionCallback={ goBackToWordPressDotCom }
 					actionURL="https://wordpress.com"
 					className="magic-login__link-expired"
