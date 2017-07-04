@@ -23,6 +23,7 @@ import { getPurchase, getSelectedSite } from '../utils';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { isMonthly } from 'lib/plans/constants';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 class PurchaseNotice extends Component {
 	static propTypes = {
@@ -87,6 +88,19 @@ class PurchaseNotice extends Component {
 		);
 	}
 
+	trackImpression( warning ) {
+		const eventProperties = {
+			warning,
+			position: 'individual-purchase'
+		};
+		return (
+			<TrackComponentView
+				eventName="calypso_subscription_warning_impression"
+				eventProperties={ eventProperties }
+			/>
+		);
+	}
+
 	renderPurchaseExpiringNotice() {
 		const { moment } = this.props;
 		const purchase = getPurchase( this.props );
@@ -107,6 +121,7 @@ class PurchaseNotice extends Component {
 				text={ this.getExpiringText( purchase ) }
 			>
 				{ this.renderRenewNoticeAction() }
+				{ this.trackImpression( 'purchase-expiring' ) }
 			</Notice>
 		);
 	}
@@ -145,6 +160,7 @@ class PurchaseNotice extends Component {
 							},
 						}
 					) }
+					{ this.trackImpression( 'credit-card-expiring' ) }
 				</Notice>
 			);
 		}
@@ -169,6 +185,7 @@ class PurchaseNotice extends Component {
 				text={ translate( 'This purchase has expired and is no longer in use.' ) }
 			>
 				{ this.renderRenewNoticeAction() }
+				{ this.trackImpression( 'purchase-expired' ) }
 			</Notice>
 		);
 	}
