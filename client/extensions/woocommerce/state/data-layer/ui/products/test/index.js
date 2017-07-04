@@ -14,8 +14,10 @@ import { editProduct, editProductAttribute, editProductRemoveCategory } from 'wo
 import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
+	WOOCOMMERCE_PRODUCT_UPDATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
+	WOOCOMMERCE_PRODUCT_VARIATION_DELETE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
 } from 'woocommerce/state/action-types';
 
@@ -189,18 +191,18 @@ describe( 'handlers', () => {
 		const variationBlackExisting = { id: 202, attributes: [ { name: 'Color', options: 'Black' } ], regular_price: '5.99' };
 		const variationBlackEdit = { id: 202, regular_price: '6.99' };
 
+		const existingVariableProduct = {
+			id: 42,
+			name: 'Product #1',
+			type: 'variable',
+			attributes: [
+				{ name: 'Color', options: [ 'Black' ], variation: true },
+			],
+		};
+
 		let rootState;
 
 		beforeEach( () => {
-			const existingVariableProduct = {
-				id: 42,
-				name: 'Product #1',
-				type: 'variable',
-				attributes: [
-					{ name: 'Color', options: [ 'Black' ], variation: true },
-				],
-			};
-
 			rootState = {
 				extensions: {
 					woocommerce: {
@@ -459,8 +461,8 @@ describe( 'handlers', () => {
 					productId: 42,
 					updates: [
 						variationBlackEdit,
-					]
-				}
+					],
+				},
 			];
 
 			set( rootState.extensions.woocommerce, [ 'ui', 'products', 123, 'variations', 'edits' ], variationEdits );
@@ -479,6 +481,51 @@ describe( 'handlers', () => {
 				siteId: 123,
 				productId: 42,
 				variation: variationBlackEdit,
+			} ) );
+		} );
+
+		it( 'should delete variations.', () => {
+			const productEdits = {
+				updates: [
+					{ id: 42, attributes: [] },
+				],
+			};
+
+			const variationEdits = [
+				{
+					productId: 42,
+					deletes: [
+						variationBlackExisting.id,
+					],
+				},
+			];
+
+			set( rootState.extensions.woocommerce, [ 'ui', 'products', 123, 'edits' ], productEdits );
+			set( rootState.extensions.woocommerce, [ 'ui', 'products', 123, 'variations', 'edits' ], variationEdits );
+
+			const actionList = makeProductActionList( rootState, 123, productEdits, variationEdits );
+
+			expect( actionList.nextSteps.length ).to.equal( 2 );
+
+			const dispatch = spy();
+
+			// Update the product.
+			actionList.nextSteps[ 0 ].onStep( dispatch, actionList );
+
+			expect( dispatch ).to.have.been.calledWith( match( {
+				type: WOOCOMMERCE_PRODUCT_UPDATE,
+				siteId: 123,
+				product: { id: 42, attributes: [] },
+			} ) );
+
+			// Delete the variation.
+			actionList.nextSteps[ 1 ].onStep( dispatch, actionList );
+
+			expect( dispatch ).to.have.been.calledWith( match( {
+				type: WOOCOMMERCE_PRODUCT_VARIATION_DELETE,
+				siteId: 123,
+				productId: 42,
+				variationId: 202,
 			} ) );
 		} );
 	} );

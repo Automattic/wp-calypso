@@ -84,7 +84,7 @@ export function editProductAttribute( attributes, attribute, data ) {
 	const _attributes = prevAttributes.map( ( a ) => {
 		if ( ( uid && isEqual( uid, a.uid ) ) || ( name && isEqual( name, a.name ) ) ) {
 			found = true;
-			return { ...a, ...data };
+			return { ...attribute, ...data, uid };
 		}
 
 		return a;

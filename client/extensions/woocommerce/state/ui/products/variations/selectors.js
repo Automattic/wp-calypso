@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, find, isNumber, isEqual } from 'lodash';
+import { compact, get, find, isNumber, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -81,11 +81,18 @@ export function getProductVariationsWithLocalEdits( state, productId, siteId = g
 	const edits = getVariationEditsStateForProduct( state, productId, siteId );
 	const creates = get( edits, 'creates', undefined );
 	const updates = get( edits, 'updates', undefined );
+	const deletes = get( edits, 'deletes', undefined );
 
-	const updatedVariations = ( variations || [] ).map( ( variation ) => {
+	const updatedVariations = compact( ( variations || [] ).map( ( variation ) => {
+		const isDeleted = Boolean( find( deletes, ( deletedId ) => variation.id === deletedId ) );
+
+		if ( isDeleted ) {
+			return undefined;
+		}
+
 		const update = find( updates, { id: variation.id } );
 		return { ...variation, ...update };
-	} );
+	} ) );
 
 	return ( creates || variations ? [ ...creates || [], ...updatedVariations || [] ] : undefined );
 }

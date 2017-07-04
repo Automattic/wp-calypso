@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { set } from 'lodash';
+import { find, set } from 'lodash';
 
 /**
  * Internal dependencies
@@ -175,6 +175,20 @@ describe( 'selectors', () => {
 			expect( variations[ 0 ].id ).to.equal( existingVariation.id );
 			expect( variations[ 0 ].sku ).to.equal( existingVariation.sku );
 			expect( variations[ 0 ].price ).to.equal( '9.00' );
+		} );
+
+		it( 'should omit variations that have been deleted in the edits', () => {
+			const variationsBefore = getProductVariationsWithLocalEdits( state, 15, 123 );
+			expect( variationsBefore ).to.exist;
+			expect( find( variationsBefore, { id: 733 } ) ).to.exist;
+
+			const uiProducts = state.extensions.woocommerce.ui.products;
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 15 );
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'deletes' ], [ 733 ] );
+
+			const variationsAfter = getProductVariationsWithLocalEdits( state, 15, 123 );
+			expect( variationsAfter ).to.exist;
+			expect( find( variationsAfter, { id: 733 } ) ).to.not.exist;
 		} );
 	} );
 } );
