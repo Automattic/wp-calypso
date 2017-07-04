@@ -38,7 +38,6 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 						{
 							args: {
 								mappedDomain: includedDomainPurchase.meta,
-								wordpressSiteUrl: purchase.domain,
 							},
 						}
 					),
