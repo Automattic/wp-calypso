@@ -10,6 +10,7 @@ import { moment } from 'i18n-calypso';
  */
 import Main from 'components/main';
 import Navigation from './store-stats-navigation';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Chart from './store-stats-chart';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
@@ -63,6 +64,7 @@ class StoreStats extends Component {
 
 		return (
 			<Main className="store-stats woocommerce" wideLayout={ true }>
+				<div className="store-stats__sidebar-nav"><SidebarNavigation /></div>
 				<Navigation unit={ unit } type="orders" slug={ slug } />
 				<Chart
 					path={ path }
