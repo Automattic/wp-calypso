@@ -87,7 +87,7 @@ export class EditorWordCount extends PureComponent {
 				return null;
 		}
 
-		const wordCount = countWords( ( this.props.selectedText || this.state.rawContent ) );
+		const wordCount = countWords( this.state.rawContent );
 
 		return (
 			<div className="editor-word-count">

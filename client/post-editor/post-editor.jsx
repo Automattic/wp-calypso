@@ -125,6 +125,7 @@ export const PostEditor = React.createClass( {
 		this.debouncedAutosave = debounce( this.throttledAutosave, 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
+		this.debouncedCopySelectedText = debounce( this.copySelectedText, 200 );
 		this.onPreviewClick = this.onPreview.bind( this, 'preview' );
 		this.onViewClick = this.onPreview.bind( this, 'view' );
 		this.useDefaultSidebarFocus();
@@ -164,6 +165,7 @@ export const PostEditor = React.createClass( {
 		this.debouncedAutosave.cancel();
 		this.throttledAutosave.cancel();
 		this.debouncedSaveRawContent.cancel();
+		this.debouncedCopySelectedText.cancel();
 		this._previewWindow = null;
 		clearTimeout( this._switchEditorTimeout );
 	},
@@ -215,7 +217,7 @@ export const PostEditor = React.createClass( {
 		}
 	},
 
-	getSelectedText: function() {
+	copySelectedText: function() {
 		const selectedText = tinyMce.activeEditor.selection.getContent() || null;
 		if ( this.state.selectedText !== selectedText ) {
 			this.setState( { selectedText: selectedText || null } );
@@ -223,7 +225,7 @@ export const PostEditor = React.createClass( {
 	},
 
 	onEditorKeyUp: function() {
-		this.getSelectedText();
+		this.debouncedCopySelectedText();
 		this.debouncedSaveRawContent();
 	},
 
@@ -379,8 +381,8 @@ export const PostEditor = React.createClass( {
 								onChange={ this.onEditorContentChange }
 								onKeyUp={ this.onEditorKeyUp }
 								onFocus={ this.onEditorFocus }
-								onMouseUp={ this.getSelectedText }
-								onBlur={ this.getSelectedText }
+								onMouseUp={ this.copySelectedText }
+								onBlur={ this.copySelectedText }
 								onTextEditorChange={ this.onEditorContentChange } />
 						</div>
 						<EditorWordCount
@@ -971,7 +973,9 @@ export const PostEditor = React.createClass( {
 			this.editor.setEditorContent( content );
 
 			if ( this.state.selectedText ) {
-				this.getSelectedText();
+				// Word count is not available in the HTML mode
+				// This resets the word count if it exists
+				this.copySelectedText();
 			}
 		}
 
