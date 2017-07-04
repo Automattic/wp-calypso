@@ -144,10 +144,15 @@ const getAutoOrderZonesSteps = ( siteId, zoneId, serverZones, allServerLocations
 	} ).filter( Boolean ) );
 };
 
-const getZoneMethodDeleteSteps = ( siteId, zoneId, method ) => {
+const getZoneMethodDeleteSteps = ( siteId, zoneId, method, state ) => {
+	const methodType = getShippingZoneMethod( state, method.id, siteId ).methodType;
+
 	return [ {
 		description: translate( 'Deleting Shipping Method' ),
 		onStep: ( dispatch, actionList ) => {
+			analytics.tracks.recordEvent( 'calypso_woocommerce_shipping_method_deleted', {
+				shippingMethod: methodType,
+			} );
 			dispatch( deleteShippingZoneMethod(
 				siteId,
 				zoneId,
@@ -159,14 +164,28 @@ const getZoneMethodDeleteSteps = ( siteId, zoneId, method ) => {
 	} ];
 };
 
-const getZoneMethodUpdateSteps = ( siteId, zoneId, method ) => {
-	const { id, ...methodProps } = omit( method, 'methodType' );
+const getZoneMethodUpdateSteps = ( siteId, zoneId, method, state ) => {
+	const { id, ...methodProps } = method;
+	const methodType = methodProps.methodType || getShippingZoneMethod( state, id, siteId ).methodType;
+	delete methodProps.methodType;
 	if ( isEmpty( methodProps ) ) {
 		return [];
 	}
+
+	const isNew = 'number' !== typeof id;
+	const wasEnabled = ! isNew && getShippingZoneMethod( state, id, siteId ).enabled;
+	const enabledChanged = ! isNil( methodProps.enabled ) && wasEnabled !== methodProps.enabled;
+
 	return [ {
 		description: translate( 'Updating Shipping Method' ),
 		onStep: ( dispatch, actionList ) => {
+			if ( isNew || enabledChanged ) {
+				const event = false !== methodProps.enabled
+					? 'calypso_woocommerce_shipping_method_enabled'
+					: 'calypso_woocommerce_shipping_method_disabled';
+				analytics.tracks.recordEvent( event, { shippingMethod: methodType } );
+			}
+
 			dispatch( updateShippingZoneMethod(
 				siteId,
 				getZoneId( zoneId, actionList ),
@@ -207,7 +226,18 @@ const getZoneMethodCreateSteps = ( siteId, zoneId, method, state ) => {
 	} ];
 
 	if ( ! isEmpty( methodProps ) ) {
-		steps.push.apply( steps, getZoneMethodUpdateSteps( siteId, zoneId, { id, ...methodProps } ) );
+		steps.push.apply( steps, getZoneMethodUpdateSteps( siteId, zoneId, { id, methodType, ...methodProps } ) );
+	} else {
+		// New methods are created "enabled" by default, so if there are no extra props, it means it was created enabled
+		steps.push.apply( steps, {
+			description: translate( 'Updating Shipping Method' ), // Better not tell the user we're just tracking at this point
+			onStep: ( dispatch, actionList ) => {
+				analytics.tracks.recordEvent( 'calypso_woocommerce_shipping_method_enabled', {
+					shippingMethod: methodType,
+				} );
+				dispatch( actionListStepSuccess( actionList ) );
+			},
+		} );
 	}
 	return steps;
 };
@@ -237,8 +267,8 @@ export const getSaveZoneActionListSteps = ( state ) => {
 		...getZoneStepsFunc( siteId, zoneId, zoneProperties ),
 		...getAutoOrderZonesSteps( siteId, zoneId, serverZones, allServerLocations ),
 		...getUpdateShippingZoneLocationsSteps( siteId, zoneId, locations, serverLocations ),
-		...flatten( methodEdits.deletes.map( method => getZoneMethodDeleteSteps( siteId, zoneId, method ) ) ),
-		...flatten( methodEdits.updates.map( method => getZoneMethodUpdateSteps( siteId, zoneId, method ) ) ),
+		...flatten( methodEdits.deletes.map( method => getZoneMethodDeleteSteps( siteId, zoneId, method, state ) ) ),
+		...flatten( methodEdits.updates.map( method => getZoneMethodUpdateSteps( siteId, zoneId, method, state ) ) ),
 		...flatten( methodEdits.creates.map( method => getZoneMethodCreateSteps( siteId, zoneId, method, state ) ) ),
 	];
 };
