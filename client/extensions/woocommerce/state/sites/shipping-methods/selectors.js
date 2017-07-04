@@ -6,6 +6,7 @@ import { find, get, isArray } from 'lodash';
 /**
  * Internal dependencies
  */
+import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
@@ -58,15 +59,18 @@ export const getShippingMethod = ( state, id, siteId = getSelectedSiteId( state 
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {Function} utility function taking method type as an argument and returning a matched type
  */
-export const getShippingMethodNameMap = ( state, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! areShippingMethodsLoaded( state, siteId ) ) {
-		return ( typeId ) => ( typeId );
-	}
+export const getShippingMethodNameMap = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! areShippingMethodsLoaded( state, siteId ) ) {
+			return ( typeId ) => ( typeId );
+		}
 
-	const map = getShippingMethods( state, siteId ).reduce( ( result, { id, title } ) => {
-		result[ id ] = title;
-		return result;
-	}, {} );
+		const map = getShippingMethods( state, siteId ).reduce( ( result, { id, title } ) => {
+			result[ id ] = title;
+			return result;
+		}, {} );
 
-	return ( typeId ) => ( map[ typeId ] || typeId );
-};
+		return ( typeId ) => ( map[ typeId ] || typeId );
+	},
+	[ areShippingMethodsLoaded, getShippingMethods ]
+);

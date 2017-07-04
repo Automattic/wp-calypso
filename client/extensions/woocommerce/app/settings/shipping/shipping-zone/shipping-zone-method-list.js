@@ -127,7 +127,6 @@ const ShippingZoneMethodList = ( {
 
 ShippingZoneMethodList.propTypes = {
 	siteId: PropTypes.number,
-	onChange: PropTypes.func.isRequired,
 	loaded: PropTypes.bool.isRequired,
 };
 
