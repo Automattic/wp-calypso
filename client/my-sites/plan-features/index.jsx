@@ -263,7 +263,7 @@ class PlanFeatures extends Component {
 			let audience = planConstantObj.getAudience();
 			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
-			if ( isInSignupTest ) {
+			if ( isInSignupTest && ! displayJetpackPlans ) {
 				switch ( siteType ) {
 					case 'blog':
 						audience = planConstantObj.getBlogAudience();
