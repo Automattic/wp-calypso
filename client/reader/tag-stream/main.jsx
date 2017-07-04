@@ -19,12 +19,12 @@ import { getReaderFollowedTags, getReaderTags } from 'state/selectors';
 import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
 import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
 import QueryReaderTag from 'components/data/query-reader-tag';
-import { TAG_PAGES } from 'reader/follow-button/follow-sources';
 
 class TagStream extends React.Component {
 	static propTypes = {
 		encodedTagSlug: React.PropTypes.string,
 		decodedTagSlug: React.PropTypes.string,
+		followSource: React.PropTypes.string.isRequired,
 	};
 
 	state = {
@@ -113,7 +113,6 @@ class TagStream extends React.Component {
 				listName={ this.state.title }
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
-				followSource={ TAG_PAGES }
 			>
 				<QueryReaderFollowedTags />
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />
