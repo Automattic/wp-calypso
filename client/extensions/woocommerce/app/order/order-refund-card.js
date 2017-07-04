@@ -10,8 +10,10 @@ import React, { Component, PropTypes } from 'react';
 /**
  * Internal dependencies
  */
+import { arePaymentMethodsLoaded, getPaymentMethod } from 'woocommerce/state/sites/payment-methods/selectors';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
+import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
 import formatCurrency from 'lib/format-currency';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -20,7 +22,6 @@ import Notice from 'components/notice';
 import OrderDetailsTable from './order-details-table';
 import PriceInput from 'woocommerce/components/price-input';
 import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
-import StoredCard from 'my-sites/upgrades/checkout/stored-card';
 
 class OrderRefundCard extends Component {
 	static propTypes = {
@@ -43,6 +44,24 @@ class OrderRefundCard extends Component {
 		refundTotal: 0,
 		refundNote: '',
 		showDialog: false,
+	}
+
+	componentDidMount = () => {
+		const { site } = this.props;
+
+		if ( site && site.ID ) {
+			this.props.fetchPaymentMethods( site.ID );
+		}
+	}
+
+	componentWillReceiveProps = ( newProps ) => {
+		const { site } = this.props;
+		const newSiteId = newProps.site && newProps.site.ID || null;
+		const oldSiteId = site && site.ID || null;
+
+		if ( oldSiteId !== newSiteId ) {
+			this.props.fetchPaymentMethods( newSiteId );
+		}
 	}
 
 	getRefundedTotal = ( order ) => {
@@ -96,7 +115,7 @@ class OrderRefundCard extends Component {
 	}
 
 	sendRefund = () => {
-		const { order, site, translate } = this.props;
+		const { order, paymentMethod, site, translate } = this.props;
 		const maxRefund = parseFloat( order.total ) + this.getRefundedTotal( order );
 		if ( this.state.refundTotal > maxRefund ) {
 			this.setState( { errorMessage: translate( 'Refund must be less than order total.' ) } );
@@ -109,30 +128,41 @@ class OrderRefundCard extends Component {
 		const refundObj = {
 			amount: this.state.refundTotal + '', // API expects a string
 			reason: this.state.refundNote,
-			// api_refund
+			api_refund: ( -1 !== paymentMethod.method_supports.indexOf( 'refunds' ) ),
 		};
 		this.props.sendRefund( site.ID, order.id, refundObj );
 	}
 
 	renderCreditCard = () => {
-		const { translate } = this.props;
-		const card = {
-			expiry: '',
-			card_type: 'VISA',
-			card: '4345',
-			name: 'John Smith',
-		};
+		const { isPaymentLoading, paymentMethod, translate } = this.props;
+		if ( isPaymentLoading ) {
+			return null;
+		}
+
+		if ( -1 === paymentMethod.method_supports.indexOf( 'refunds' ) ) {
+			return (
+				<div className="order__refund-method">
+					<h3>{ translate( 'Manual Refund' ) }</h3>
+					<p>{ translate( 'This payment method doesn\'t support automated refunds and must be submitted manually.' ) }</p>
+				</div>
+			);
+		}
 
 		return (
-			<div className="order__refund-credit-card">
-				<h3>{ translate( 'Refunding payment with:' ) }</h3>
-				<StoredCard card={ card } />
+			<div className="order__refund-method">
+				<h3>
+					{ translate( 'Refunding payment via %(method)s', {
+						args: {
+							method: paymentMethod.title,
+						}
+					} ) }
+				</h3>
 			</div>
 		);
 	}
 
 	render() {
-		const { order, site, translate } = this.props;
+		const { isPaymentLoading, order, site, translate } = this.props;
 		const { errorMessage, refundNote, showDialog } = this.state;
 		const dialogClass = 'woocommerce'; // eslint/css specificity hack
 		let refundTotal = formatCurrency( 0, order.currency );
@@ -154,7 +184,11 @@ class OrderRefundCard extends Component {
 					}
 				</div>
 
-				<Dialog isVisible={ showDialog } onClose={ this.toggleDialog } className={ dialogClass }>
+				<Dialog
+					isVisible={ showDialog }
+					onClose={ this.toggleDialog }
+					className={ dialogClass }
+					additionalClassNames="order__refund-dialog woocommerce">
 					<h1>{ translate( 'Refund order' ) }</h1>
 					<OrderDetailsTable order={ order } isEditable onChange={ this.recalculateRefund } site={ site } />
 					<form className="order__refund-container">
@@ -181,7 +215,7 @@ class OrderRefundCard extends Component {
 						<div className="order__refund-actions">
 							{ errorMessage && <Notice status="is-error" showDismiss={ false }>{ errorMessage }</Notice> }
 							<Button onClick={ this.toggleDialog }>{ translate( 'Cancel' ) }</Button>
-							<Button primary onClick={ this.sendRefund }>{ translate( 'Refund' ) }</Button>
+							<Button primary onClick={ this.sendRefund } disabled={ isPaymentLoading }>{ translate( 'Refund' ) }</Button>
 						</div>
 					</form>
 				</Dialog>
@@ -191,6 +225,13 @@ class OrderRefundCard extends Component {
 }
 
 export default connect(
-	undefined,
-	dispatch => bindActionCreators( { sendRefund }, dispatch )
+	( state, props ) => {
+		const paymentMethod = getPaymentMethod( state, props.order.payment_method );
+		const isPaymentLoading = ! arePaymentMethodsLoaded( state );
+		return {
+			isPaymentLoading,
+			paymentMethod,
+		};
+	},
+	dispatch => bindActionCreators( { fetchPaymentMethods, sendRefund }, dispatch )
 )( localize( OrderRefundCard ) );
