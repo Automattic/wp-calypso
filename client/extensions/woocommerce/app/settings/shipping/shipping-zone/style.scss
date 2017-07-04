@@ -1,6 +1,6 @@
-.shipping-zone__name-container {
+.sticky-panel + .shipping-zone__locations-container,
+.sticky-panel + .shipping-zone__methods-container {
 	margin-top: 58px;
-	padding: 11px 24px 11px 9px;
 }
 
 .shipping-zone__name {	
@@ -16,21 +16,11 @@
 		}
 
 		span {
-			height: 24px;
+			flex-grow: 1;
+			height: 40px;
 		}
 
 		pointer-events: none;
-	}
-
-	span {
-		flex-grow: 1;
-		font-size: 16px;
-		line-height: 1.5;
-		padding: 8px 15px;
-	}
-	
-	button {
-		margin-left: 8px;
 	}
 }
 
