@@ -78,7 +78,7 @@ class Shipping extends Component {
 		}
 
 		const successAction = successNotice(
-			translate( 'Shipping Zone saved.' ),
+			isNaN( zone.id ) ? translate( 'Shipping Zone added.' ) : translate( 'Shipping Zone saved.' ),
 			{ duration: 4000 }
 		);
 
