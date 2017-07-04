@@ -2,21 +2,20 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { pick, delay } from 'lodash';
+import { delay } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import {
-	REWIND_RESTORE_PROGRESS_REQUEST,
-} from 'state/action-types';
+import { createNotice } from 'state/notices/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { REWIND_RESTORE_PROGRESS_REQUEST } from 'state/action-types';
 import {
 	getRewindRestoreProgress,
 	updateRewindRestoreProgress,
-	rewindRestoreUpdateError
 } from 'state/activity-log/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
 
 const debug = debugFactory( 'calypso:data-layer:activity-log:rewind:restore-status' );
 
@@ -63,11 +62,12 @@ export const receiveRestoreProgress = ( { dispatch }, { siteId, timestamp, resto
 export const receiveRestoreError = ( { dispatch }, { siteId, timestamp, restoreId }, next, error ) => {
 	debug( 'Restore progress error', error );
 
-	dispatch( rewindRestoreUpdateError(
-		siteId,
-		timestamp,
-		restoreId,
-		pick( error, [ 'error', 'status', 'message' ] )
+	dispatch( createNotice(
+		'is-warning',
+		translate(
+			'There was a problem checking the status of your restore. ' +
+			'Try refreshing the page.'
+		),
 	) );
 };
 
