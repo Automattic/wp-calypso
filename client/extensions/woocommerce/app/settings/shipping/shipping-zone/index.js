@@ -73,7 +73,7 @@ class Shipping extends Component {
 		}
 
 		const successAction = successNotice(
-			translate( 'Shipping Zone saved correctly.' ),
+			translate( 'Shipping Zone saved.' ),
 			{ duration: 4000 }
 		);
 
@@ -88,7 +88,7 @@ class Shipping extends Component {
 		const { translate, actions } = this.props;
 
 		const successAction = successNotice(
-			translate( 'Shipping Zone deleted correctly.' ),
+			translate( 'Shipping Zone deleted.' ),
 			{ duration: 4000, displayOnNextPage: true }
 		);
 
