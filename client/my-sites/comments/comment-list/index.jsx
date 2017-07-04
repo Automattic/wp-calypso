@@ -59,6 +59,11 @@ export class CommentList extends Component {
 		}
 	}
 
+	changePage = page => {
+		this.setState( { selectedComments: {} } );
+		this.props.setCommentsPage( page );
+	}
+
 	deleteCommentPermanently = commentId => {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 		this.showNotice( commentId, 'delete', 'trash' );
@@ -234,7 +239,6 @@ export class CommentList extends Component {
 			commentsCount,
 			commentsPage,
 			isLoading,
-			setCommentsPage,
 			siteId,
 			siteSlug,
 			status,
@@ -298,7 +302,7 @@ export class CommentList extends Component {
 						<Pagination
 							key="comment-list-pagination"
 							page={ commentsPage }
-							pageClick={ setCommentsPage }
+							pageClick={ this.changePage }
 							perPage={ COMMENTS_PER_PAGE }
 							total={ commentsCount }
 						/>
