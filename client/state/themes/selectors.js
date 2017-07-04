@@ -732,7 +732,9 @@ export function getPremiumThemePrice( state, themeId, siteId ) {
 	}
 
 	if ( isJetpackSite( state, siteId ) && config.isEnabled( 'jetpack/pijp' ) ) {
-		return i18n.translate( 'Upgrade' );
+		return i18n.translate( 'Upgrade', {
+			comment: 'Used to indicate a premium theme is available to the user once they upgrade their plan'
+		} );
 	}
 
 	const theme = getTheme( state, 'wpcom', themeId );

@@ -136,7 +136,7 @@ export const Theme = React.createClass( {
 		} );
 
 		const priceClass = classNames( 'theme-badge__price', {
-			'theme-badge__price-plan': price === translate( 'Upgrade' )
+			'theme-badge__price-upgrade': ! /\d/g.test( price )
 		} );
 
 		// for performance testing

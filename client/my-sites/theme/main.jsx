@@ -485,7 +485,7 @@ const ThemeSheet = React.createClass( {
 		}
 
 		const className = classNames( 'theme__sheet-action-bar-cost', {
-			'theme__sheet-action-bar-cost-plan': this.props.price === i18n.translate( 'Upgrade' )
+			'theme__sheet-action-bar-cost-upgrade': ! /\d/g.test( this.props.price )
 		} );
 
 		return price ? <span className={ className }>{ price }</span> : '';
