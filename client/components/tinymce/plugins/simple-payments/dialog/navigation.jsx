@@ -37,29 +37,28 @@ export default localize( class SimplePaymentsDialogNavigation extends Component 
 			return (
 				<HeaderCake
 					className={ classNames }
-					onClick={ this.onChangeTabs( 'paymentButtons') }
+					onClick={ this.onChangeTabs( 'paymentButtons' ) }
 					backText={ translate( 'Payment Buttons' ) }
 				>
 				</HeaderCake>
 			);
-		} else {
-			// We are on "Payment Buttons" view.
-
-			return (
-				<SectionHeader
-					className={ classNames }
-					label={ translate( 'Payment Buttons' ) }
-					count={ 2 }
-				>
-					<Button
-						compact
-						onClick={ this.onChangeTabs( 'addNew' ) }
-					>
-						{ translate( '+ Add New' ) }
-					</Button>
-				</SectionHeader>
-			);
 		}
 
+		// We are on "Payment Buttons" view.
+
+		return (
+			<SectionHeader
+				className={ classNames }
+				label={ translate( 'Payment Buttons' ) }
+				count={ 2 }
+			>
+				<Button
+					compact
+					onClick={ this.onChangeTabs( 'addNew' ) }
+				>
+					{ translate( '+ Add New' ) }
+				</Button>
+			</SectionHeader>
+		);
 	}
 } );

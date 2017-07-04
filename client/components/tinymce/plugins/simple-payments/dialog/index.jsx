@@ -69,6 +69,4 @@ class SimplePaymentsDialog extends Component {
 	}
 }
 
-export default connect( state => {
-	return {};
-} )( localize( SimplePaymentsDialog ) );
+export default connect()( localize( SimplePaymentsDialog ) );
