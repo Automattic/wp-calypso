@@ -2168,6 +2168,9 @@ describe( 'themes selectors', () => {
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {
+						items: {
+							2916284: {}
+						},
 						plans: {
 							2916284: {
 								data: [ {
@@ -2197,6 +2200,9 @@ describe( 'themes selectors', () => {
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {
+						items: {
+							2916284: {}
+						},
 						plans: {
 							2916284: {
 								data: [ {
@@ -2226,6 +2232,9 @@ describe( 'themes selectors', () => {
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {
+						items: {
+							2916284: {}
+						},
 						plans: {
 							2916284: {
 								data: [ {
