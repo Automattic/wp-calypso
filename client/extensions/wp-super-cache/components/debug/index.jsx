@@ -91,6 +91,63 @@ class DebugTab extends Component {
 					label={ translate( 'Advanced' ) }>
 				</SectionHeader>
 				<Card>
+					<p>{ translate( 'In very rare cases two problems may arise on some blogs:' ) }</p>
+					<ol>
+						<li>{ translate( 'The front page may start downloading as a zip file.' ) }</li>
+						<li>{ translate(
+							'The wrong page is occasionally cached as the front page ' +
+							'if your blog uses a static front page and the permalink structure ' +
+							'is {{em}}%(permalinkStructure)s{{/em}}.',
+							{
+								args: { permalinkStructure: '/%category%/%postname%/' },
+								components: { em: <em /> }
+							}
+						 ) }</li>
+					</ol>
+					<p>
+						{ translate(
+							'I\'m 99% certain that they aren\'t bugs in WP Super Cache and they only ' +
+							'happen in very rare cases but you can run a simple check once every 5 minutes ' +
+							'to verify that your site is ok if you\'re worried. You will be emailed if ' +
+							'there is a problem.'
+						) }
+					</p>
+					<form>
+						<FormFieldset>
+							<FormToggle>
+								<span>
+									{ translate( 'Check front page every 5 minutes.' ) }
+								</span>
+							</FormToggle>
+						</FormFieldset>
+						<FormFieldset>
+							<FormLabel htmlFor="frontPageText">
+								{ translate( 'Front page text' ) }
+							</FormLabel>
+							<FormTextInput id="frontPageText">
+							</FormTextInput>
+							<FormSettingExplanation>
+								{ translate(
+									'Text to search for on your front page. If this text is missing, ' +
+									'the cache will be cleared. Leave blank to disable.'
+								) }
+							</FormSettingExplanation>
+						</FormFieldset>
+						<FormFieldset>
+							<FormToggle>
+								<span>
+									{ translate( 'Clear cache on error.' ) }
+								</span>
+							</FormToggle>
+						</FormFieldset>
+						<FormFieldset>
+							<FormToggle>
+								<span>
+									{ translate( 'Email the blog admin when checks are made. (useful for testing)' ) }
+								</span>
+							</FormToggle>
+						</FormFieldset>
+					</form>
 				</Card>
 			</div>
 		);
