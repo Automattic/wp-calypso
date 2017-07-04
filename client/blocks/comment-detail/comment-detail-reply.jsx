@@ -64,7 +64,7 @@ export class CommentDetailReply extends Component {
 	unsetFocus = () => this.setState( { hasFocus: false } );
 
 	render() {
-		const { translate } = this.props;
+		const { authorDisplayName, translate } = this.props;
 		const { commentText, hasFocus } = this.state;
 
 		const hasCommentText = commentText.trim().length > 0;
@@ -88,7 +88,9 @@ export class CommentDetailReply extends Component {
 							onChange={ this.handleTextChange }
 							onFocus={ this.setFocus }
 							onKeyDown={ this.submitCommentOnCtrlEnter }
-							placeholder={ translate( 'Enter your comment here…' ) }
+							placeholder={ translate( 'Reply to %(commentAuthor)s…', {
+								args: { commentAuthor: authorDisplayName }
+							} ) }
 							value={ commentText }
 						/>
 					</AutoDirection>

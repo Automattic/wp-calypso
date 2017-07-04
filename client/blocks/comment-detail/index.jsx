@@ -203,6 +203,7 @@ export class CommentDetail extends Component {
 							repliedToComment={ repliedToComment }
 						/>
 						<CommentDetailReply
+							authorDisplayName={ authorDisplayName }
 							commentId={ commentId }
 							postId={ postId }
 							postTitle={ postTitle }
