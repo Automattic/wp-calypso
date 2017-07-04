@@ -37,10 +37,11 @@ import { abtest } from 'lib/abtest';
 class PlansFeaturesMain extends Component {
 	isInSignupTest() {
 		const {
-			isInSignup
+			isInSignup,
+			displayJetpackPlans
 		} = this.props;
 
-		return ( ( isInSignup ) && ( abtest( 'signupPlansCopyChanges' ) === 'modified' ) );
+		return ( ( isInSignup && ! displayJetpackPlans ) && ( abtest( 'signupPlansCopyChanges' ) === 'modified' ) );
 	}
 
 	getPlanFeatures() {
@@ -374,7 +375,8 @@ class PlansFeaturesMain extends Component {
 		const {
 			site,
 			displayJetpackPlans,
-			isInSignup
+			isInSignup,
+			isInSignupTest
 		} = this.props;
 
 		const renderFAQ = () =>
@@ -389,7 +391,7 @@ class PlansFeaturesMain extends Component {
 
 		return (
 			<div className="plans-features-main">
-				{ ( displayJetpackPlans && this.isInSignupTest() ) ? this.getIntervalTypeToggle() : null }
+				{ ( displayJetpackPlans && isInSignupTest ) ? this.getIntervalTypeToggle() : null }
 				<QueryPlans />
 				<QuerySitePlans siteId={ get( site, 'ID' ) } />
 				{ this.getPlanFeatures() }
