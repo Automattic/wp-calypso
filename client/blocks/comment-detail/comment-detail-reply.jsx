@@ -13,26 +13,26 @@ import { get } from 'lodash';
 import AutoDirection from 'components/auto-direction';
 import { getCurrentUser } from 'state/current-user/selectors';
 
+const TEXTAREA_HEIGHT_COLLAPSED = 47; // 1 line
+const TEXTAREA_HEIGHT_FOCUSED = 68; // 2 lines
 const TEXTAREA_MAX_HEIGHT = 236; // 10 lines
-const TEXTAREA_MIN_HEIGHT_COLLAPSED = 47;
-const TEXTAREA_MIN_HEIGHT_FOCUSED = 68; // 2 lines
 const TEXTAREA_VERTICAL_BORDER = 2;
 
 export class CommentDetailReply extends Component {
 	state = {
 		commentText: '',
 		hasFocus: false,
-		textareaMinHeight: TEXTAREA_MIN_HEIGHT_COLLAPSED,
+		textareaHeight: TEXTAREA_HEIGHT_COLLAPSED,
 	};
 
 	bindTextareaRef = textarea => {
 		this.textarea = textarea;
 	}
 
-	calculateTextareaMinHeight = () => {
+	calculateTextareaHeight = () => {
 		const textareaScrollHeight = this.textarea.scrollHeight;
-		const textareaMinHeight = Math.min( TEXTAREA_MAX_HEIGHT, textareaScrollHeight + TEXTAREA_VERTICAL_BORDER );
-		return Math.max( TEXTAREA_MIN_HEIGHT_FOCUSED, textareaMinHeight );
+		const textareaHeight = Math.min( TEXTAREA_MAX_HEIGHT, textareaScrollHeight + TEXTAREA_VERTICAL_BORDER );
+		return Math.max( TEXTAREA_HEIGHT_FOCUSED, textareaHeight );
 	}
 
 	getTextareaPlaceholder = () => this.props.authorDisplayName
@@ -43,17 +43,17 @@ export class CommentDetailReply extends Component {
 
 	handleTextChange = event => {
 		const { value } = event.target;
-		const textareaMinHeight = this.calculateTextareaMinHeight();
+		const textareaHeight = this.calculateTextareaHeight();
 
 		this.setState( {
 			commentText: value,
-			textareaMinHeight,
+			textareaHeight,
 		} );
 	}
 
 	setFocus = () => this.setState( {
 		hasFocus: true,
-		textareaMinHeight: this.calculateTextareaMinHeight(),
+		textareaHeight: this.calculateTextareaHeight(),
 	} );
 
 	submit = () => {
@@ -96,7 +96,7 @@ export class CommentDetailReply extends Component {
 
 	unsetFocus = () => this.setState( {
 		hasFocus: false,
-		textareaMinHeight: TEXTAREA_MIN_HEIGHT_COLLAPSED,
+		textareaHeight: TEXTAREA_HEIGHT_COLLAPSED,
 	} );
 
 	render() {
@@ -104,13 +104,13 @@ export class CommentDetailReply extends Component {
 		const {
 			commentText,
 			hasFocus,
-			textareaMinHeight,
+			textareaHeight,
 		} = this.state;
 
 		const hasCommentText = commentText.trim().length > 0;
 
 		// Only show the scrollbar if the textarea content exceeds the max height
-		const hasScrollbar = textareaMinHeight === TEXTAREA_MAX_HEIGHT;
+		const hasScrollbar = textareaHeight === TEXTAREA_MAX_HEIGHT;
 
 		const buttonClasses = classNames( 'comment-detail__reply-submit', {
 			'has-scrollbar': hasScrollbar,
@@ -122,13 +122,10 @@ export class CommentDetailReply extends Component {
 			'has-scrollbar': hasScrollbar,
 		} );
 
+		// Without focus, force the textarea to collapse even if it was manually resized
 		const textareaStyle = {
-			minHeight: textareaMinHeight,
+			height: hasFocus ? textareaHeight : TEXTAREA_HEIGHT_COLLAPSED,
 		};
-		if ( ! hasFocus ) {
-			// Force the textarea to collapse even if it was manually resized
-			textareaStyle.height = TEXTAREA_MIN_HEIGHT_COLLAPSED;
-		}
 
 		return (
 			<form className="comment-detail__reply">
