@@ -7,7 +7,6 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import {
-	// COMMENTS_LIKE_REQUEST,
 	COMMENTS_LIKE_UPDATE,
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
@@ -17,9 +16,6 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 
 export const likeComment = ( { dispatch }, action ) => {
-	//optimistic update of the like status and count
-	// dispatch( { ...action, type: COMMENTS_LIKE } );
-
 	dispatch( http( {
 		method: 'POST',
 		apiVersion: '1.1',
