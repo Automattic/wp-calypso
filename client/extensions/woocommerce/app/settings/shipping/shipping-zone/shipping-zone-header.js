@@ -18,7 +18,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { areCurrentlyEditingShippingZoneLocationsValid } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 
-const ShippingZoneHeader = ( { zone, site, onSave, onDelete, translate, canSave, isSaving, isRestOfTheWorld } ) => {
+const ShippingZoneHeader = ( { zone, site, onSave, onDelete, translate, canSave, isSaving, showDelete } ) => {
 	const currentCrumb = zone && isNumber( zone.id )
 		? ( <span>{ translate( 'Edit Shipping Zone' ) }</span> )
 		: ( <span>{ translate( 'Add New Shipping Zone' ) }</span> );
@@ -31,7 +31,7 @@ const ShippingZoneHeader = ( { zone, site, onSave, onDelete, translate, canSave,
 
 	return (
 		<ActionHeader breadcrumbs={ breadcrumbs }>
-			{ ! isRestOfTheWorld && <Button borderless onClick={ onDelete } disabled={ isSaving }><Gridicon icon="trash" /></Button> }
+			{ showDelete && <Button borderless onClick={ onDelete } disabled={ isSaving }><Gridicon icon="trash" /></Button> }
 			<Button primary onClick={ onSave } busy={ isSaving } disabled={ ! canSave || isSaving }>{ translate( 'Save' ) }</Button>
 		</ActionHeader>
 	);
@@ -49,7 +49,6 @@ export default connect(
 		return {
 			site: getSelectedSite( state ),
 			zone,
-			isRestOfTheWorld,
 			canSave: areCurrentlyEditingShippingZoneLocationsValid( state ),
 			showDelete: zone && 'number' === typeof zone.id && ! isRestOfTheWorld,
 			isSaving: Boolean( getActionList( state ) ),
