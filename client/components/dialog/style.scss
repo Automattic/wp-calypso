@@ -79,6 +79,10 @@
 	bottom: 73px;
 	overflow: scroll;
 
+	&:last-child {
+		bottom: 0;
+	}
+
 	h1 {
 		color: $gray-dark;
 		font-size: 1.375em;
