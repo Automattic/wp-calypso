@@ -9,6 +9,8 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
+import ActionHeader from 'woocommerce/components/action-header';
+import Button from 'components/button';
 import { fetchOrder } from 'woocommerce/state/sites/orders/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -17,7 +19,6 @@ import Main from 'components/main';
 import OrderActivityLog from './order-activity-log';
 import OrderCustomerInfo from './order-customer-info';
 import OrderDetails from './order-details';
-import OrderHeader from '../orders/order-header';
 
 class Order extends Component {
 	componentDidMount() {
@@ -34,6 +35,8 @@ class Order extends Component {
 		}
 	}
 
+	saveOrder = () => {}
+
 	render() {
 		const { className, order, site, translate } = this.props;
 		if ( ! order ) {
@@ -46,7 +49,9 @@ class Order extends Component {
 		];
 		return (
 			<Main className={ className }>
-				<OrderHeader siteSlug={ site.slug } breadcrumbs={ breadcrumbs } />
+				<ActionHeader breadcrumbs={ breadcrumbs }>
+					<Button primary onClick={ this.saveOrder }>{ translate( 'Save Order' ) }</Button>
+				</ActionHeader>
 
 				<div className="order__container">
 					<OrderDetails order={ order } site={ site } />

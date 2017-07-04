@@ -8,17 +8,22 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
+import ActionHeader from 'woocommerce/components/action-header';
+import Button from 'components/button';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
-import OrderHeader from './order-header';
 import OrdersList from './orders-list';
 
 class Orders extends Component {
 	render() {
 		const { className, site, translate } = this.props;
+		const addLink = getLink( '/store/order/:site', site );
 		return (
 			<Main className={ className }>
-				<OrderHeader siteSlug={ site ? site.slug : false } breadcrumbs={ ( <span>{ translate( 'Orders' ) }</span> ) } />
+				<ActionHeader breadcrumbs={ ( <span>{ translate( 'Orders' ) }</span> ) }>
+					<Button primary href={ addLink }>{ translate( 'Add Order' ) }</Button>
+				</ActionHeader>
 				<OrdersList />
 			</Main>
 		);
