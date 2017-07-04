@@ -49,6 +49,7 @@ function getErrorMessageFromErrorCode( code ) {
 		invalid_two_step_code: translate( "Hmm, that's not a valid verification code. Please double-check your app and try again." ),
 		invalid_two_step_nonce: translate( 'Your session has expired, please go back to the login screen.' ),
 		invalid_username: translate( "We don't seem to have an account with that name. Double-check the spelling and try again!" ),
+		login_limit_exceeded: translate( "Slow down, you're trying to log in too fast." ),
 		push_authentication_throttled: translate( 'You can only request a code via the WordPress mobile app once every ' +
 			'two minutes. Please wait and try again.' ),
 		sms_code_throttled: translate( 'You can only request a code via text message once per minute. Please wait and try again.' ),
