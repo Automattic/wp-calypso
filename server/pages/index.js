@@ -22,6 +22,7 @@ import { serverRender } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
 import { DESERIALIZE } from 'state/action-types';
+import { login } from 'lib/paths';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -208,7 +209,8 @@ function setUpLoggedInRoute( req, res, next ) {
 
 		protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
 
-		redirectUrl = config( 'login_url' ) + '?' + qs.stringify( {
+		redirectUrl = login( {
+			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirect_to: protocol + '://' + config( 'hostname' ) + req.originalUrl
 		} );
 
