@@ -28,6 +28,7 @@
 		"dev/test-helper": true,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
+		"external-media": true,
 		"guided-tours/design-showcase-welcome": true,
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,

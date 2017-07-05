@@ -22,6 +22,7 @@
 		"devdocs": false,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
+		"external-media": true,
 		"happychat": false,
 		"help": true,
 		"help/courses": true,
