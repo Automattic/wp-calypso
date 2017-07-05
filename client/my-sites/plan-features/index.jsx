@@ -556,13 +556,21 @@ export default connect(
 				if ( isInSignupTest ) {
 					switch ( siteType ) {
 						case 'blog':
-							planFeatures = getPlanFeaturesObject( planConstantObj.getBlogSignupFeatures( abtest ) );
+							if ( planConstantObj.getBlogSignupFeatures ) {
+								planFeatures = getPlanFeaturesObject( planConstantObj.getBlogSignupFeatures( abtest ) );
+							}
+
 							break;
 						case 'grid':
-							planFeatures = getPlanFeaturesObject( planConstantObj.getPortfolioSignupFeatures( abtest ) );
+							if ( planConstantObj.getPortfolioSignupFeatures ) {
+								planFeatures = getPlanFeaturesObject( planConstantObj.getPortfolioSignupFeatures( abtest ) );
+							}
+
 							break;
 						default:
-							planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
+							if ( planConstantObj.getSignupFeatures ) {
+								planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
+							}
 					}
 				}
 
