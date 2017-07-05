@@ -12,7 +12,10 @@ import {
 	WOOCOMMERCE_PRODUCT_EDIT,
 	WOOCOMMERCE_PRODUCT_UPDATED,
 	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
+	WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_EDIT,
+	WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
+	WOOCOMMERCE_PRODUCT_VARIATION_UPDATED,
 } from 'woocommerce/state/action-types';
 
 import { editProductAttribute } from '../edits-reducer';
@@ -23,6 +26,7 @@ export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCT_EDIT ]: editProductAction,
 	[ WOOCOMMERCE_PRODUCT_UPDATED ]: productUpdatedAction,
 	[ WOOCOMMERCE_PRODUCT_VARIATION_EDIT ]: editProductVariationAction,
+	[ WOOCOMMERCE_PRODUCT_VARIATION_UPDATED ]: productVariationUpdatedAction,
 	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: editProductAttributeAction,
 } );
 
@@ -240,5 +244,57 @@ export function productUpdatedAction( edits, action ) {
 	}
 
 	return edits;
+}
+
+export function productVariationUpdatedAction( edits, action ) {
+	const { originatingAction } = action;
+	let bucket = null;
+
+	bucket = ( WOOCOMMERCE_PRODUCT_VARIATION_CREATE === originatingAction.type ? 'creates' : bucket );
+	bucket = ( WOOCOMMERCE_PRODUCT_VARIATION_UPDATE === originatingAction.type ? 'updates' : bucket );
+
+	if ( bucket ) {
+		const { productId } = originatingAction;
+		const variationId = originatingAction.variation.id;
+
+		return removeVariationEdit( edits, bucket, productId, variationId );
+	}
+
+	return edits;
+}
+
+function removeVariationEdit( edits, bucket, productId, variationId ) {
+	const prevEdits = edits || [];
+
+	const newEdits = compact( prevEdits.map( ( editsForProduct ) => {
+		if ( isEqual( productId, editsForProduct.productId ) ) {
+			return removeVariationEditFromEditsForProduct( editsForProduct, bucket, variationId );
+		}
+		return editsForProduct;
+	} ) );
+
+	return ( newEdits.length ? newEdits : null );
+}
+
+function removeVariationEditFromEditsForProduct( editsForProduct, bucket, variationId ) {
+	const prevBucketEdits = editsForProduct[ bucket ] || [];
+
+	const newBucketEdits = compact( prevBucketEdits.map( ( variationEdit ) => {
+		if ( isEqual( variationId, variationEdit.id ) ) {
+			return undefined;
+		}
+		return variationEdit;
+	} ) );
+
+	const newEditsForProduct = {
+		...editsForProduct,
+		[ bucket ]: ( newBucketEdits.length ? newBucketEdits : undefined ),
+	};
+
+	// Only send back something if we have a remaining edit somewhere.
+	if ( newEditsForProduct.creates || newEditsForProduct.updates || newEditsForProduct.deletes ) {
+		return newEditsForProduct;
+	}
+	return undefined;
 }
 
