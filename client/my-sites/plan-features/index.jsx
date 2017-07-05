@@ -54,10 +54,8 @@ class PlanFeatures extends Component {
 	render() {
 		const {
 			planProperties,
-			isInSignupTest,
-			showBigPlanIcon
+			isInSignupTest
 		} = this.props;
-
 		const tableClasses = classNames( 'plan-features__table',
 			`has-${ planProperties.length }-cols` );
 		const planClasses = classNames(
@@ -94,14 +92,14 @@ class PlanFeatures extends Component {
 			<div className={ planWrapperClasses } ref={ this.setScrollLeft }>
 				<div className={ planClasses }>
 					{ this.renderUpgradeDisabledNotice() }
-					<div className={ classNames( 'plan-features__content', { 'has-big-icon': showBigPlanIcon } ) }>
+					<div className="plan-features__content">
 						{ mobileView }
 						<table className={ tableClasses }>
 							<tbody>
 								<tr>
 									{ this.renderPlanHeaders() }
 								</tr>
-								{ ! showBigPlanIcon && planDescriptions }
+								{ planDescriptions }
 								<tr>
 									{ this.renderTopButtons() }
 								</tr>
@@ -148,7 +146,7 @@ class PlanFeatures extends Component {
 
 	renderMobileView() {
 		const {
-			canPurchase, translate, planProperties, isInSignup, isLandingPage, intervalType, site, basePlansPath, showBigPlanIcon
+			canPurchase, translate, planProperties, isInSignup, isLandingPage, intervalType, site, basePlansPath
 		} = this.props;
 
 		// move any free plan to last place in mobile view
@@ -179,7 +177,7 @@ class PlanFeatures extends Component {
 				relatedMonthlyPlan,
 				primaryUpgrade,
 				isPlaceholder,
-				hideMonthly,
+				hideMonthly
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
 			return (
@@ -200,16 +198,11 @@ class PlanFeatures extends Component {
 						site={ site }
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
-						showBigPlanIcon={ showBigPlanIcon }
-						isMobileView={ true }
 						isInSignup={ isInSignup }
 					/>
-					{
-						! showBigPlanIcon &&
-						<p className="plan-features__description">
-							{ planConstantObj.getDescription( abtest ) }
-						</p>
-					}
+					<p className="plan-features__description">
+						{ planConstantObj.getDescription( abtest ) }
+					</p>
 					<PlanFeaturesActions
 						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
@@ -225,7 +218,7 @@ class PlanFeatures extends Component {
 						planName ={ planConstantObj.getTitle() }
 					/>
 					<FoldableCard
-						header={ translate( 'View Details' ) }
+						header={ translate( 'Show features' ) }
 						clickableHeader
 						compact>
 						{ this.renderMobileFeatures( features ) }
@@ -242,7 +235,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { planProperties, intervalType, site, basePlansPath, isInSignup, isInSignupTest, siteType, showBigPlanIcon } = this.props;
+		const { planProperties, intervalType, site, basePlansPath, isInSignup, isInSignupTest, siteType } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -292,7 +285,6 @@ class PlanFeatures extends Component {
 						hideMonthly={ hideMonthly }
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
-						showBigPlanIcon={ showBigPlanIcon }
 						isInSignup={ isInSignup }
 						isInSignupTest= { isInSignupTest }
 					/>
@@ -502,9 +494,8 @@ PlanFeatures.propTypes = {
 	basePlansPath: PropTypes.string,
 	selectedFeature: PropTypes.string,
 	intervalType: PropTypes.string,
-	site: PropTypes.object,
-	showBigPlanIcon: PropTypes.bool,
 	isInSignupTest: PropTypes.bool,
+	site: PropTypes.object,
 	displayJetpackPlans: PropTypes.bool,
 };
 
@@ -515,7 +506,6 @@ PlanFeatures.defaultProps = {
 	basePlansPath: null,
 	intervalType: 'yearly',
 	site: {},
-	showBigPlanIcon: false,
 	displayJetpackPlans: false,
 };
 

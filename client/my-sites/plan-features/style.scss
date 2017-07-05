@@ -45,17 +45,6 @@ $plan-features-sidebar-width: 272px;
 		padding: 0;
 	}
 
-	.foldable-card__main {
-		display: block;
-		max-width: none;
-		margin-right: 0;
-		text-align: center;
-	}
-
-	.foldable-card__secondary {
-		display: none;
-	}
-
 	.plan-features__header-banner {
 		display: none;
 	}
@@ -67,47 +56,6 @@ $plan-features-sidebar-width: 272px;
 
 	.plan-features__item:last-child {
 		border-bottom: none;
-	}
-
-	.plan-features__header.has-big-icon {
-		.plan-features__header-figure {
-			width: 60px;
-			margin: 0 20px 10px 10px;
-		}
-		.plan-features__header-text {
-			position: relative;
-			padding-right: 155px;
-		}
-		.plan-features__header-title {
-			text-align: left;
-			font-size: 22px;
-			line-height: 1.2;
-		}
-		.plan-features__header-tagline {
-			text-align: left;
-			font-size: 14px;
-			line-height: 1.4;
-			margin-top: .5em;
-		}
-		.plan-features__header-meta {
-			display: flex;
-			flex-wrap: no-wrap;
-			position: absolute;
-			top: 0;
-			right: 15px;
-			max-width: 135px;
-		}
-		.plan-features__price {
-
-		}
-		.plan-features__header-timeframe {
-			flex-shrink: 1;
-			text-align: left;
-			line-height: 1;
-			white-space: normal;
-			align-self: flex-end;
-			margin: 0 0 5px 5px;
-		}
 	}
 }
 
@@ -123,7 +71,7 @@ $plan-features-sidebar-width: 272px;
 	font-size: 14px;
 	border: solid 1px lighten( $gray, 27% );
 	background-color: $white;
-	margin: 0 25px 25px;
+	margin-bottom: 24px;
 }
 
 .is-section-plans .plan-features__table {
@@ -248,46 +196,6 @@ $plan-features-sidebar-width: 272px;
 	&.is-business-plan {
 		border-bottom: solid 2px $alert-purple;
 	}
-
-	&.has-big-icon {
-		border-bottom-width: 0;
-		padding-top: 35px;
-
-		.plan-features__header-title {
-			text-align: center;
-			line-height: 1;
-		}
-		.plan-features__header-figure {
-			position: relative;
-			width: 90%;
-			height: auto;
-			margin: 30px auto 15px;
-			.plan-icon {
-				display: block;
-				width: 100%;
-				height: auto;
-			}
-		}
-
-		.plan-features__price,
-		.plan-features__header-price-group,
-		.plan-features__header-timeframe {
-			text-align: center;
-
-			&.is-placeholder {
-				margin-left: auto;
-				margin-right: auto;
-			}
-		}
-
-		.plan-features__header-price-group {
-			display: block;
-
-			.plan-price {
-				display: inline-block;
-			}
-		}
-	}
 }
 
 .plan-features__header-figure {
@@ -327,14 +235,6 @@ $plan-features-sidebar-width: 272px;
 	@include breakpoint( "<960px" ) {
 		font-size: 20px;
 	}
-}
-
-.plan-features__header-tagline {
-	font-size: 12px;
-	color: $blue-wordpress;
-	text-align: center;
-	line-height: 1;
-	margin: 1em 0 0;
 }
 
 .plan-features__header-price-group {
