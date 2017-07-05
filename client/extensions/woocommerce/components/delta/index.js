@@ -31,14 +31,20 @@ export default class Delta extends Component {
 		if ( icon ) {
 			deltaIcon = icon;
 		} else {
-			deltaIcon = ( includes( className, 'is-increase' ) ) ? 'arrow-up' : 'arrow-down';
-			deltaIcon = ( includes( className, 'is-neutral' ) ) ? 'minus-small' : deltaIcon;
+			deltaIcon = ( includes( className, 'is-increase' ) || includes( className, 'is-undefined-increase' ) )
+				? 'arrow-up'
+				: 'arrow-down';
+			deltaIcon = ( includes( className, 'is-neutral' ) )
+				? 'minus-small'
+				: deltaIcon;
 		}
 		return (
 			<div className={ deltaClasses }>
 				<Gridicon className="delta__icon" icon={ deltaIcon } size={ iconSize } />
 				<span className="delta__labels">
-					<span className="delta__value">{ value }</span>
+					<span className="delta__value">
+						{ value }
+					</span>
 					{ suffix &&
 						<span className="delta__suffix">{ suffix }</span>
 					}

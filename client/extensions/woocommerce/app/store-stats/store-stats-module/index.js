@@ -3,6 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
+import { isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,7 +37,7 @@ class StoreStatsModule extends Component {
 			this.setState( { loaded: true } );
 		}
 
-		if ( nextProps.query !== this.props.query && this.state.loaded ) {
+		if ( ! isEqual( nextProps.query, this.props.query ) && this.state.loaded ) {
 			this.setState( { loaded: false } );
 		}
 	}
