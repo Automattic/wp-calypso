@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import path from 'path';
 import Gridicon from 'gridicons';
@@ -17,7 +16,6 @@ import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import Dialog from 'components/dialog';
 import FilePicker from 'components/file-picker';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getToken as getOauthToken } from 'lib/oauth-token';
 import Gravatar from 'components/gravatar';
 import {
 	isCurrentUserUploadingGravatar,
@@ -40,11 +38,6 @@ import {
 	recordGoogleEvent,
 	composeAnalytics,
 } from 'state/analytics/actions';
-
-/**
- * Module dependencies
- */
-const debug = debugFactory( 'calypso:edit-gravatar' );
 
 export class EditGravatar extends Component {
 	state = {
@@ -124,24 +117,8 @@ export class EditGravatar extends Component {
 			return;
 		}
 
-		// check for bearerToken from desktop app
-		let bearerToken = getOauthToken();
-
-		// check for bearer token from local storage - for testing purposes
-		if ( ! bearerToken ) {
-			bearerToken = localStorage.getItem( 'bearerToken' );
-		}
-
 		// send gravatar request
-		if ( bearerToken ) {
-			debug( 'Got the bearerToken, sending request' );
-			uploadGravatarAction( imageBlob, bearerToken, user.email );
-		} else {
-			receiveGravatarImageFailedAction( {
-				errorMessage: translate( "Hmm, we can't save a new Gravatar now. Please try again later." ),
-				statName: 'no_bearer_token',
-			} );
-		}
+		uploadGravatarAction( imageBlob, user.email );
 	};
 
 	hideImageEditor = () => {
