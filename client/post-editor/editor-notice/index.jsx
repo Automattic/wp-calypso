@@ -33,7 +33,6 @@ export class EditorNotice extends Component {
 		link: PropTypes.string,
 		onViewClick: PropTypes.func,
 		isPreviewable: PropTypes.bool,
-		isFullScreenPreview: PropTypes.bool,
 		onDismissClick: PropTypes.func,
 		error: PropTypes.object
 	}
@@ -134,40 +133,11 @@ export class EditorNotice extends Component {
 				} );
 
 			case 'publishedPrivately':
-				if ( this.props.isFullScreenPreview ) {
-					return translate( '{{strong}}Published privately.{{/strong}} Only admins and editors can view.', {
-						components: {
-							strong: <strong />,
-						},
-						comment: 'Editor: Message displayed when a post is published privately.',
-					} );
-				}
-
-				if ( ! site ) {
-					if ( 'page' === type ) {
-						return translate( 'Page privately published!' );
-					}
-
-					return translate( 'Post privately published!' );
-				}
-
-				if ( 'page' === type ) {
-					return translate( 'Page privately published on {{siteLink/}}! {{a}}Add another page{{/a}}', {
-						components: {
-							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>,
-							a: <a href={ `/page/${ site.slug }` } />,
-						},
-						comment: 'Editor: Message displayed when a page is published privately,' +
-							' with a link to the site it was published on.'
-					} );
-				}
-
-				return translate( 'Post privately published on {{siteLink/}}!', {
+				return translate( '{{strong}}Published privately.{{/strong}} Only admins and editors can view.', {
 					components: {
-						siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
+						strong: <strong />,
 					},
-					comment: 'Editor: Message displayed when a post is published privately,' +
-						' with a link to the site it was published on.'
+					comment: 'Editor: Message displayed when a post is published privately.',
 				} );
 
 			case 'view':
@@ -237,12 +207,9 @@ export class EditorNotice extends Component {
 	render() {
 		const { siteId, message, status, onDismissClick } = this.props;
 		const text = this.getErrorMessage() || this.getText( message );
-		const classes = classNames( 'editor-notice', {
-			'is-global': this.props.isFullScreenPreview,
-		} );
 
 		return (
-			<div className={ classes }>
+			<div className={ classNames( 'editor-notice', { 'is-global': true } ) }>
 				{ siteId && <QueryPostTypes siteId={ siteId } /> }
 				{ text && (
 					<Notice
