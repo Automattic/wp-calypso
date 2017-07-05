@@ -10,8 +10,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import accept from 'lib/accept';
 import Main from 'components/main';
+import accept from 'lib/accept';
+import { ProtectFormGuard } from 'lib/protect-form';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { successNotice, errorNotice } from 'state/notices/actions';
@@ -23,12 +24,19 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
 	editProduct,
 	editProductAttribute,
-	createProductActionList
+	createProductActionList,
+	clearProductEdits,
 } from 'woocommerce/state/ui/products/actions';
 import { getProductEdits, getProductWithLocalEdits } from 'woocommerce/state/ui/products/selectors';
-import { editProductVariation } from 'woocommerce/state/ui/products/variations/actions';
+import {
+	editProductVariation,
+	clearProductVariationEdits,
+} from 'woocommerce/state/ui/products/variations/actions';
 import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
-import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
+import {
+	editProductCategory,
+	clearProductCategoryEdits,
+} from 'woocommerce/state/ui/product-categories/actions';
 import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
 import page from 'page';
 import ProductForm from './product-form';
@@ -78,7 +86,13 @@ class ProductUpdate extends React.Component {
 	}
 
 	componentWillUnmount() {
-		// TODO: Remove the product we added here from the edit state.
+		const { site } = this.props;
+
+		if ( site ) {
+			this.props.clearProductEdits( site.ID );
+			this.props.clearProductCategoryEdits( site.ID );
+			this.props.clearProductVariationEdits( site.ID );
+		}
 	}
 
 	// TODO: In v1, this deletes a product, as we don't have trash management.
@@ -156,6 +170,7 @@ class ProductUpdate extends React.Component {
 					onSave={ saveEnabled ? this.onSave : false }
 					isBusy={ isBusy }
 				/>
+				<ProtectFormGuard isChanged={ hasEdits } />
 				<ProductForm
 					siteId={ site && site.ID }
 					product={ product || { type: 'simple' } }
@@ -204,6 +219,9 @@ function mapDispatchToProps( dispatch ) {
 			fetchProduct,
 			fetchProductVariations,
 			fetchProductCategories,
+			clearProductEdits,
+			clearProductCategoryEdits,
+			clearProductVariationEdits,
 		},
 		dispatch
 	);

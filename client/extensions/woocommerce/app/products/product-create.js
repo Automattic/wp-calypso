@@ -5,24 +5,42 @@ import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
+import { ProtectFormGuard } from 'lib/protect-form';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import { editProduct, editProductAttribute, createProductActionList } from 'woocommerce/state/ui/products/actions';
-import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
+import {
+	clearProductEdits,
+	editProduct,
+	editProductAttribute,
+	createProductActionList,
+} from 'woocommerce/state/ui/products/actions';
+import {
+	clearProductCategoryEdits,
+	editProductCategory,
+} from 'woocommerce/state/ui/product-categories/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
-import { getCurrentlyEditingId, getProductWithLocalEdits } from 'woocommerce/state/ui/products/selectors';
+import {
+	getCurrentlyEditingId,
+	getProductWithLocalEdits,
+	getProductEdits
+} from 'woocommerce/state/ui/products/selectors';
 import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
-import { editProductVariation } from 'woocommerce/state/ui/products/variations/actions';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
+import {
+	clearProductVariationEdits,
+	editProductVariation,
+} from 'woocommerce/state/ui/products/variations/actions';
 import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
 import { createProduct } from 'woocommerce/state/sites/products/actions';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
+import { getLink } from 'woocommerce/lib/nav-utils';
 
 class ProductCreate extends React.Component {
 	static propTypes = {
@@ -63,23 +81,34 @@ class ProductCreate extends React.Component {
 	}
 
 	componentWillUnmount() {
-		// TODO: Remove the product we added here from the edit state.
+		const { site } = this.props;
+
+		if ( site ) {
+			this.props.clearProductEdits( site.ID );
+			this.props.clearProductCategoryEdits( site.ID );
+			this.props.clearProductVariationEdits( site.ID );
+		}
 	}
 
 	onSave = () => {
 		const { site, product, translate } = this.props;
 
-		const successAction = successNotice(
-			translate( '%(product)s successfully created.', {
-				args: { product: product.name },
-			} ),
-			{ duration: 4000 }
-		);
+		const successAction = () => {
+			page.redirect( getLink( '/store/products/:site', site ) );
+
+			return successNotice(
+				translate( '%(product)s successfully created.', {
+					args: { product: product.name },
+				} ),
+				{ duration: 4000, isPersistent: true }
+			);
+		};
 
 		const failureAction = errorNotice(
 			translate( 'There was a problem saving %(product)s. Please try again.', {
 				args: { product: product.name },
-			} )
+			} ),
+			{ isPersistent: true },
 		);
 
 		if ( ! product.type ) {
@@ -95,7 +124,7 @@ class ProductCreate extends React.Component {
 	}
 
 	render() {
-		const { site, product, className, variations, productCategories, actionList } = this.props;
+		const { site, product, hasEdits, className, variations, productCategories, actionList } = this.props;
 
 		const isValid = 'undefined' !== site && this.isProductValid();
 		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
@@ -109,6 +138,7 @@ class ProductCreate extends React.Component {
 					onSave={ saveEnabled ? this.onSave : false }
 					isBusy={ isBusy }
 				/>
+				<ProtectFormGuard isChanged={ hasEdits } />
 				<ProductForm
 					siteId={ site && site.ID }
 					product={ product || { type: 'simple' } }
@@ -129,6 +159,7 @@ function mapStateToProps( state ) {
 	const productId = getCurrentlyEditingId( state );
 	const combinedProduct = getProductWithLocalEdits( state, productId );
 	const product = combinedProduct || ( productId && { id: productId } );
+	const hasEdits = Boolean( getProductEdits( state, productId ) );
 	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
 	const productCategories = getProductCategoriesWithLocalEdits( state );
 	const actionList = getActionList( state );
@@ -136,6 +167,7 @@ function mapStateToProps( state ) {
 	return {
 		site,
 		product,
+		hasEdits,
 		variations,
 		productCategories,
 		actionList,
@@ -152,6 +184,9 @@ function mapDispatchToProps( dispatch ) {
 			editProductAttribute,
 			editProductVariation,
 			fetchProductCategories,
+			clearProductEdits,
+			clearProductCategoryEdits,
+			clearProductVariationEdits,
 		},
 		dispatch
 	);
