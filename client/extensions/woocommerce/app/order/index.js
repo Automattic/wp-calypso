@@ -9,17 +9,25 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
+import ActionHeader from 'woocommerce/components/action-header';
+import Button from 'components/button';
 import { fetchOrder } from 'woocommerce/state/sites/orders/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { getOrder } from 'woocommerce/state/sites/orders/selectors';
+import { isOrderUpdating, getOrder } from 'woocommerce/state/sites/orders/selectors';
 import Main from 'components/main';
 import OrderActivityLog from './order-activity-log';
 import OrderCustomerInfo from './order-customer-info';
 import OrderDetails from './order-details';
-import OrderHeader from '../orders/order-header';
+import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 
 class Order extends Component {
+	state = {
+		order: {
+			id: this.props.orderId,
+		}
+	}
+
 	componentDidMount() {
 		const { siteId, orderId } = this.props;
 
@@ -34,8 +42,20 @@ class Order extends Component {
 		}
 	}
 
+	onUpdate = ( order ) => {
+		// Merge the new order updates into the existing order updates
+		this.setState( ( prevState ) => {
+			const updatedOrder = { ...prevState.order, ...order };
+			return { order: updatedOrder };
+		} );
+	}
+
+	saveOrder = () => {
+		this.props.updateOrder( this.props.siteId, this.state.order );
+	}
+
 	render() {
-		const { className, order, site, translate } = this.props;
+		const { className, isSaving, order, site, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
@@ -46,10 +66,12 @@ class Order extends Component {
 		];
 		return (
 			<Main className={ className }>
-				<OrderHeader siteSlug={ site.slug } breadcrumbs={ breadcrumbs } />
+				<ActionHeader breadcrumbs={ breadcrumbs }>
+					<Button primary onClick={ this.saveOrder } disabled={ isSaving }>{ translate( 'Save Order' ) }</Button>
+				</ActionHeader>
 
 				<div className="order__container">
-					<OrderDetails order={ order } site={ site } />
+					<OrderDetails order={ order } onUpdate={ this.onUpdate } site={ site } />
 					<OrderActivityLog order={ order } />
 					<OrderCustomerInfo order={ order } />
 				</div>
@@ -64,13 +86,15 @@ export default connect(
 		const siteId = site ? site.ID : false;
 		const orderId = props.params.order;
 		const order = getOrder( state, orderId );
+		const isSaving = isOrderUpdating( state, orderId );
 
 		return {
-			siteId,
-			site,
+			isSaving,
+			order,
 			orderId,
-			order
+			site,
+			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { fetchOrder }, dispatch )
+	dispatch => bindActionCreators( { fetchOrder, updateOrder }, dispatch )
 )( localize( Order ) );

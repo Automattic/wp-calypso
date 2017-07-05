@@ -140,6 +140,7 @@ export function totalPages( state = 1, action ) {
 export default combineReducers( {
 	isQueryLoading,
 	isLoading,
+	isUpdating,
 	items,
 	queries,
 	refunds,
