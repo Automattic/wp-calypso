@@ -11,7 +11,7 @@ import {
 	WOOCOMMERCE_PRODUCT_EDIT,
 	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
 } from 'woocommerce/state/action-types';
-import { nextBucketIndex, getBucket } from '../helpers';
+import { getBucket } from '../helpers';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCT_EDIT ]: editProductAction,
@@ -22,8 +22,16 @@ function editProductAction( edits, action ) {
 	const { product, data } = action;
 	const prevEdits = edits || {};
 	const bucket = getBucket( product );
-	const _product = product || { id: nextBucketIndex( prevEdits[ bucket ] ) };
+	const _product = product || { id: { placeholder: uniqueId( 'product_' ) } };
 	const _array = editProduct( prevEdits[ bucket ], _product, data );
+
+	if ( isEqual( {}, data ) ) {
+		// If data is empty, only set the currentlyEditingId.
+		return {
+			...prevEdits,
+			currentlyEditingId: _product.id,
+		};
+	}
 
 	return {
 		...prevEdits,
@@ -39,7 +47,7 @@ function editProductAttributeAction( edits, action ) {
 	const prevEdits = edits || {};
 	const bucket = getBucket( product );
 	const _attributes = editProductAttribute( attributes, attribute, data );
-	const _product = product || { id: nextBucketIndex( prevEdits[ bucket ] ) };
+	const _product = product || { id: { placeholder: uniqueId( 'product_' ) } };
 	const _array = editProduct( prevEdits[ bucket ], _product, { attributes: _attributes } );
 
 	return {

@@ -71,7 +71,8 @@ describe( 'edits-reducer', () => {
 		expect( edits ).to.not.equal( null );
 		expect( edits.creates ).to.exist;
 		expect( edits.creates[ 0 ] ).to.exist;
-		expect( edits.creates[ 0 ].id ).to.eql( { index: 0 } );
+		expect( edits.creates[ 0 ].id ).to.exist;
+		expect( edits.creates[ 0 ].id.placeholder ).to.exist;
 		expect( edits.creates[ 0 ].name ).to.eql( 'A new product' );
 	} );
 
@@ -101,10 +102,14 @@ describe( 'edits-reducer', () => {
 			name: 'Second product',
 		} ) );
 
-		expect( edits2.creates[ 0 ].id ).to.eql( { index: 0 } );
+		expect( edits2.creates[ 0 ].id ).to.exist;
+		expect( edits2.creates[ 0 ].id.placeholder ).to.exist;
 		expect( edits2.creates[ 0 ].name ).to.eql( 'First product' );
-		expect( edits2.creates[ 1 ].id ).to.eql( { index: 1 } );
+		expect( edits2.creates[ 1 ].id ).to.exist;
+		expect( edits2.creates[ 1 ].id.placeholder ).to.exist;
 		expect( edits2.creates[ 1 ].name ).to.eql( 'Second product' );
+
+		expect( edits2.creates[ 1 ].id ).to.not.eql( edits2.creates[ 0 ].id );
 	} );
 
 	it( 'should create new product in "creates" when editing attribute the first time', () => {
@@ -238,5 +243,22 @@ describe( 'edits-reducer', () => {
 			name: 'First product',
 		} ) );
 		expect( edits1.currentlyEditingId ).to.eql( edits1.updates[ 0 ].id );
+	} );
+
+	it( 'should not add a create edit entry, only set currentlyEditingId, when data is empty', () => {
+		const edits1 = reducer( undefined, editProduct( siteId, null, {} ) );
+
+		expect( edits1.currentlyEditingId ).to.exist;
+		expect( edits1.currentlyEditingId.placeholder ).to.exist;
+		expect( edits1.creates ).to.not.exist;
+	} );
+
+	it( 'should not add an update edit entry, only set currentlyEditingId, when data is empty', () => {
+		const product1 = { id: 1 };
+		const edits1 = reducer( undefined, editProduct( siteId, product1, {} ) );
+
+		expect( edits1.currentlyEditingId ).to.exist;
+		expect( edits1.currentlyEditingId ).to.equal( 1 );
+		expect( edits1.updates ).to.not.exist;
 	} );
 } );

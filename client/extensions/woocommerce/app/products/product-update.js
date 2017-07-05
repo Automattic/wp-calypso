@@ -25,7 +25,7 @@ import {
 	editProductAttribute,
 	createProductActionList
 } from 'woocommerce/state/ui/products/actions';
-import { getCurrentlyEditingProduct } from 'woocommerce/state/ui/products/selectors';
+import { getProductEdits, getProductWithLocalEdits } from 'woocommerce/state/ui/products/selectors';
 import { editProductVariation } from 'woocommerce/state/ui/products/variations/actions';
 import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
@@ -139,11 +139,11 @@ class ProductUpdate extends React.Component {
 	}
 
 	render() {
-		const { site, product, className, variations, productCategories, actionList } = this.props;
+		const { site, product, hasEdits, className, variations, productCategories, actionList } = this.props;
 
 		const isValid = 'undefined' !== site && this.isProductValid();
 		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
-		const saveEnabled = isValid && ! isBusy;
+		const saveEnabled = isValid && ! isBusy && hasEdits;
 
 		return (
 			<Main className={ className }>
@@ -171,9 +171,12 @@ class ProductUpdate extends React.Component {
 	}
 }
 
-function mapStateToProps( state ) {
+function mapStateToProps( state, ownProps ) {
+	const productId = Number( ownProps.params.product );
+
 	const site = getSelectedSiteWithFallback( state );
-	const product = getCurrentlyEditingProduct( state );
+	const product = getProductWithLocalEdits( state, productId );
+	const hasEdits = Boolean( getProductEdits( state, productId ) );
 	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
 	const productCategories = getProductCategoriesWithLocalEdits( state );
 	const actionList = getActionList( state );
@@ -181,6 +184,7 @@ function mapStateToProps( state ) {
 	return {
 		site,
 		product,
+		hasEdits,
 		variations,
 		productCategories,
 		actionList,

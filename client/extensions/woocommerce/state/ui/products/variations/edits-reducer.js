@@ -88,7 +88,7 @@ function editProductVariationAction( edits, action ) {
 	const _edits = prevEdits.map( ( productEdits ) => {
 		if ( isEqual( productId, productEdits.productId ) ) {
 			found = true;
-			const variationId = variation && variation.id || { index: Number( uniqueId() ) };
+			const variationId = variation && variation.id || { placeholder: uniqueId( 'product_variation_' ) };
 			const _variation = variation || { id: variationId };
 			const _array = editProductVariation( productEdits[ bucket ], _variation, data );
 			return {
@@ -103,7 +103,7 @@ function editProductVariationAction( edits, action ) {
 
 	if ( ! found ) {
 		// product not in edits, so add it now.
-		const variationId = variation && variation.id || { index: Number( uniqueId() ) };
+		const variationId = variation && variation.id || { placeholder: uniqueId( 'product_variation_' ) };
 		const _variation = variation || { id: variationId };
 
 		const _array = editProductVariation( null, _variation, data );
@@ -174,8 +174,7 @@ function updateVariationCreates( creates, calculatedVariations, productVariation
 		if ( ! find( productVariations, { attributes: calculatedVariation.attributes } ) ) {
 			// This calculated variation doesn't exist in server data, but it should now. Create it.
 			return {
-				// TODO: Replace this faux index with a proper placeholder.
-				id: { index: Number( uniqueId() ) },
+				id: { placeholder: uniqueId( 'product_variation_' ) },
 				attributes: calculatedVariation.attributes,
 				sku: calculatedVariation.sku,
 				status: 'publish',
