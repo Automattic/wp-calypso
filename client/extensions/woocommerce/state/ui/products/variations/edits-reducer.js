@@ -8,7 +8,9 @@ import { compact, find, isEqual, uniqueId } from 'lodash';
  */
 import { createReducer } from 'state/utils';
 import {
+	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_EDIT,
+	WOOCOMMERCE_PRODUCT_UPDATED,
 	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
 	WOOCOMMERCE_PRODUCT_VARIATION_EDIT,
 } from 'woocommerce/state/action-types';
@@ -19,6 +21,7 @@ import generateVariations from 'woocommerce/lib/generate-variations';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCT_EDIT ]: editProductAction,
+	[ WOOCOMMERCE_PRODUCT_UPDATED ]: productUpdatedAction,
 	[ WOOCOMMERCE_PRODUCT_VARIATION_EDIT ]: editProductVariationAction,
 	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: editProductAttributeAction,
 } );
@@ -216,5 +219,26 @@ function updateVariationDeletes( calculatedVariations, productVariations ) {
 
 		return ( newDeletes.length ? newDeletes : undefined );
 	}
+}
+
+export function productUpdatedAction( edits, action ) {
+	const { data, originatingAction } = action;
+
+	if ( WOOCOMMERCE_PRODUCT_CREATE === originatingAction.type ) {
+		const prevEdits = edits || [];
+		const prevProductId = originatingAction.product.id;
+		const newProductId = data.id;
+
+		const newEdits = prevEdits.map( ( productEdits ) => {
+			if ( isEqual( prevProductId, productEdits.productId ) ) {
+				return { ...productEdits, productId: newProductId };
+			}
+			return productEdits;
+		} );
+
+		return newEdits;
+	}
+
+	return edits;
 }
 

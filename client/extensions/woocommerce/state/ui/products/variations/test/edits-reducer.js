@@ -12,8 +12,12 @@ import reducer from '../edits-reducer';
 import { editProductVariation } from '../actions';
 import {
 	editProduct,
-	editProductAttribute
+	editProductAttribute,
 } from '../../actions';
+import {
+	createProduct,
+	productUpdated,
+} from 'woocommerce/state/sites/products/actions';
 import { actionAppendProductVariations } from 'woocommerce/state/data-layer/ui/products';
 
 const siteId = 123;
@@ -466,6 +470,31 @@ describe( 'edits-reducer', () => {
 			const variationEditsAfter = reducer( variationEditsBefore, action );
 
 			expect( variationEditsAfter[ 0 ].deletes ).to.not.exist;
+		} );
+	} );
+
+	describe( '#productUpdatedAction', () => {
+		it( 'should update product placeholder ids to real ids when the product is created', () => {
+			const createdVariableProduct1 = { ...newVariableProduct1, id: 55 };
+
+			const productEditsBefore = {
+				creates: [ newVariableProduct1 ],
+			};
+			const variationEditsBefore = [
+				{
+					productId: newVariableProduct1.id,
+					creates: [ variationBlack ],
+				},
+			];
+			set( rootState.extensions.woocommerce.ui, [ 'products', siteId, 'edits' ], productEditsBefore );
+			set( rootState.extensions.woocommerce.ui, [ 'products', siteId, 'variations', 'edits' ], variationEditsBefore );
+
+			const originatingAction = createProduct( siteId, newVariableProduct1 );
+			const action = productUpdated( siteId, createdVariableProduct1, originatingAction );
+
+			const variationEditsAfter = reducer( variationEditsBefore, action );
+
+			expect( variationEditsAfter[ 0 ].productId ).to.eql( 55 );
 		} );
 	} );
 } );

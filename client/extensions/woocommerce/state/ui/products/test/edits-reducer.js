@@ -12,6 +12,11 @@ import {
 	editProductAttribute,
 } from '../actions';
 import {
+	createProduct,
+	updateProduct,
+	productUpdated,
+} from 'woocommerce/state/sites/products/actions';
+import {
 	createProductCategory,
 	productCategoryUpdated,
 } from 'woocommerce/state/sites/product-categories/actions';
@@ -301,5 +306,44 @@ describe( 'edits-reducer', () => {
 		expect( edits1.updates[ 0 ].categories[ 0 ].id ).to.eql( { placeholder: 'productCategory_1' } );
 		expect( edits2.creates[ 0 ].categories[ 0 ].id ).to.eql( 22 );
 		expect( edits2.updates[ 0 ].categories[ 0 ].id ).to.eql( 22 );
+	} );
+
+	it( 'should clear product from creates upon successful save', () => {
+		const product1 = {
+			id: { placeholder: 'product_1' },
+			name: 'Product 1',
+		};
+
+		const createdProduct1 = { ...product1, id: 27 };
+
+		const edits1 = {
+			creates: [ product1 ],
+		};
+
+		const originatingAction = createProduct( siteId, product1 );
+		const action = productUpdated( siteId, createdProduct1, originatingAction );
+
+		const edits2 = reducer( edits1, action );
+
+		expect( edits1.creates[ 0 ] ).to.eql( product1 );
+		expect( edits2.creates ).to.not.exist;
+	} );
+
+	it( 'should clear product from updates upon successful save', () => {
+		const product1 = { id: 27, name: 'Product 1', sku: 'product-1' };
+		const product1Update = { id: 27, name: 'Updated name' };
+		const updatedProduct1 = { ...product1, ...product1Update };
+
+		const edits1 = {
+			updates: [ { id: 27, name: 'Updated name' } ],
+		};
+
+		const originatingAction = updateProduct( siteId, updatedProduct1 );
+		const action = productUpdated( siteId, updatedProduct1, originatingAction );
+
+		const edits2 = reducer( edits1, action );
+
+		expect( edits1.updates[ 0 ] ).to.eql( product1Update );
+		expect( edits2.updates ).to.not.exist;
 	} );
 } );
