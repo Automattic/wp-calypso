@@ -67,7 +67,7 @@ describe( 'index', () => {
 
 			expect( ReactDom.findDOMNode( component ).textContent )
 				.to
-				.contain( 'If you are unable to access your site at {{strong}}%(domainName)s{{/strong}}' );
+				.contain( 'If you are unable to access your site at example.com' );
 		} );
 	} );
 
@@ -87,7 +87,7 @@ describe( 'index', () => {
 
 			expect( ReactDom.findDOMNode( component ).textContent )
 				.to
-				.contain( 'We are setting up {{strong}}%(domainName)s{{/strong}} for you' );
+				.contain( 'We are setting up example.com for you' );
 		} );
 
 		it( 'should render the multi version of the component if more than two domains match the same rule', () => {
