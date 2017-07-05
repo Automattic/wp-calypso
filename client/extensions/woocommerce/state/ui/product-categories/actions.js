@@ -8,6 +8,7 @@ import { uniqueId } from 'lodash';
  */
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
+	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT_CLEAR,
 } from 'woocommerce/state/action-types';
 
 /**
@@ -35,3 +36,17 @@ export function editProductCategory( siteId, category, data ) {
 		data,
 	};
 }
+
+/**
+ * Action Creator: Clear All Product Category Edits
+ *
+ * @param {Number} siteId The site for which to clear all product category edits.
+ * @return {Object} action
+ */
+export function clearProductCategoryEdits( siteId ) {
+	return {
+		type: WOOCOMMERCE_PRODUCT_CATEGORY_EDIT_CLEAR,
+		siteId,
+	};
+}
+

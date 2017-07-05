@@ -14,6 +14,7 @@ import {
 	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
 	WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_EDIT,
+	WOOCOMMERCE_PRODUCT_VARIATION_EDIT_CLEAR,
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATED,
 } from 'woocommerce/state/action-types';
@@ -26,6 +27,7 @@ export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCT_EDIT ]: editProductAction,
 	[ WOOCOMMERCE_PRODUCT_UPDATED ]: productUpdatedAction,
 	[ WOOCOMMERCE_PRODUCT_VARIATION_EDIT ]: editProductVariationAction,
+	[ WOOCOMMERCE_PRODUCT_VARIATION_EDIT_CLEAR ]: clearEditsAction,
 	[ WOOCOMMERCE_PRODUCT_VARIATION_UPDATED ]: productVariationUpdatedAction,
 	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: editProductAttributeAction,
 } );
@@ -82,6 +84,10 @@ function editProductAction( edits, action ) {
 	}
 
 	return edits;
+}
+
+function clearEditsAction() {
+	return null;
 }
 
 function editProductVariationAction( edits, action ) {

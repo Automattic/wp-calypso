@@ -9,7 +9,7 @@ import { set, isEqual } from 'lodash';
  */
 import reducer from '../edits-reducer';
 
-import { editProductVariation } from '../actions';
+import { editProductVariation, clearProductVariationEdits } from '../actions';
 import {
 	editProduct,
 	editProductAttribute,
@@ -542,6 +542,29 @@ describe( 'edits-reducer', () => {
 
 			const variationEditsAfter = reducer( variationEditsBefore, action );
 
+			expect( variationEditsAfter ).to.equal( null );
+		} );
+	} );
+
+	describe( '#clearProductVariationEdits', () => {
+		it( 'should clear all product variations edit data', () => {
+			const variationEditsBefore = [
+				{
+					productId: 42,
+					creates: [ { id: { placeholder: 'product_variation_9' }, attributes: { name: 'Color', option: 'Green' } } ],
+					updates: [ { id: 252, attributes: { name: 'Color', option: 'Black' } } ],
+					deletes: [ 525 ],
+				}
+			];
+
+			const action = clearProductVariationEdits( siteId );
+
+			const variationEditsAfter = reducer( variationEditsBefore, action );
+
+			expect( variationEditsBefore[ 0 ].productId ).to.equal( 42 );
+			expect( variationEditsBefore[ 0 ].creates ).to.exist;
+			expect( variationEditsBefore[ 0 ].updates ).to.exist;
+			expect( variationEditsBefore[ 0 ].deletes ).to.exist;
 			expect( variationEditsAfter ).to.equal( null );
 		} );
 	} );
