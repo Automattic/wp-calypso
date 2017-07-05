@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
+import { pick } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -15,6 +15,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
+import WrapSettingsForm from '../wrap-settings-form';
 
 class DebugTab extends Component {
 	static propTypes = {
@@ -28,6 +29,19 @@ class DebugTab extends Component {
 
 	render() {
 		const {
+			fields: {
+				wp_super_cache_debug,
+				wp_cache_debug_ip,
+				wp_super_cache_comments,
+				wp_super_cache_front_page_check,
+				wp_super_cache_front_page_clear,
+				wp_super_cache_front_page_text,
+				wp_super_cache_front_page_notification,
+			},
+			handleAutosavingToggle,
+			handleChange,
+			isRequesting,
+			isSaving,
 			translate,
 		} = this.props;
 
@@ -39,7 +53,10 @@ class DebugTab extends Component {
 				<Card>
 					<form>
 						<FormFieldset>
-							<FormToggle>
+							<FormToggle
+								checked={ !! wp_super_cache_debug }
+								disabled={ isRequesting || isSaving }
+								onChange={ handleAutosavingToggle( 'wp_super_cache_debug' ) }>
 								<span>
 									{ translate( 'Enable Debugging' ) }
 								</span>
@@ -50,8 +67,11 @@ class DebugTab extends Component {
 								<FormLabel htmlFor="ipAddress">
 									{ translate( 'IP Address' ) }
 								</FormLabel>
-								<FormTextInput id="ipAddress">
-								</FormTextInput>
+								<FormTextInput
+									disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
+									id="ipAddress"
+									onChange={ handleChange( 'wp_cache_debug_ip' ) }
+									value={ wp_cache_debug_ip || '' } />
 								<FormSettingExplanation>
 									{ translate(
 										'(only log requests from this IP address. Your IP is %(ipAddress)s)',
@@ -62,7 +82,10 @@ class DebugTab extends Component {
 								</FormSettingExplanation>
 							</FormFieldset>
 							<FormFieldset>
-								<FormToggle>
+								<FormToggle
+									checked={ !! wp_super_cache_comments }
+									disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
+									onChange={ handleAutosavingToggle( 'wp_super_cache_comments' ) }>
 									<span>
 										{ translate( 'Cache Status Messages' ) }
 									</span>
@@ -114,7 +137,10 @@ class DebugTab extends Component {
 					</p>
 					<form>
 						<FormFieldset>
-							<FormToggle>
+							<FormToggle
+								checked={ !! wp_super_cache_front_page_check }
+								disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
+								onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_check' ) }>
 								<span>
 									{ translate( 'Check front page every 5 minutes.' ) }
 								</span>
@@ -124,8 +150,11 @@ class DebugTab extends Component {
 							<FormLabel htmlFor="frontPageText">
 								{ translate( 'Front page text' ) }
 							</FormLabel>
-							<FormTextInput id="frontPageText">
-							</FormTextInput>
+							<FormTextInput
+								disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
+								id="frontPageText"
+								onChange={ handleChange( 'wp_super_cache_front_page_text' ) }
+								value={ wp_super_cache_front_page_text || '' } />
 							<FormSettingExplanation>
 								{ translate(
 									'Text to search for on your front page. If this text is missing, ' +
@@ -134,14 +163,20 @@ class DebugTab extends Component {
 							</FormSettingExplanation>
 						</FormFieldset>
 						<FormFieldset>
-							<FormToggle>
+							<FormToggle
+								checked={ !! wp_super_cache_front_page_clear }
+								disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
+								onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_clear' ) }>
 								<span>
 									{ translate( 'Clear cache on error.' ) }
 								</span>
 							</FormToggle>
 						</FormFieldset>
 						<FormFieldset>
-							<FormToggle>
+							<FormToggle
+								checked={ !! wp_super_cache_front_page_notification }
+								disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
+								onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_notification' ) }>
 								<span>
 									{ translate( 'Email the blog admin when checks are made. (useful for testing)' ) }
 								</span>
@@ -154,4 +189,16 @@ class DebugTab extends Component {
 	}
 }
 
-export default localize( DebugTab );
+const getFormSettings = settings => {
+	return pick( settings, [
+		'wp_super_cache_debug',
+		'wp_cache_debug_ip',
+		'wp_super_cache_comments',
+		'wp_super_cache_front_page_check',
+		'wp_super_cache_front_page_clear',
+		'wp_super_cache_front_page_text',
+		'wp_super_cache_front_page_notification',
+	] );
+};
+
+export default WrapSettingsForm( getFormSettings )( DebugTab );
