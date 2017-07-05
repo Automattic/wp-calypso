@@ -35,12 +35,12 @@ import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import ActivityLogRewindToggle from './activity-log-rewind-toggle';
 import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
 import {
-	getRewindStatusError,
 	getActivityLogs,
 	getRestoreProgress,
-	isRewindActive as isRewindActiveSelector,
+	getRewindStatusError,
 	getSiteGmtOffset,
 	getSiteTimezoneValue,
+	isRewindActive as isRewindActiveSelector,
 } from 'state/selectors';
 
 const debug = debugFactory( 'calypso:activity-log' );
