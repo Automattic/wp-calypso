@@ -10,6 +10,7 @@ import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_EDIT,
+	WOOCOMMERCE_PRODUCT_EDIT_CLEAR,
 	WOOCOMMERCE_PRODUCT_UPDATE,
 	WOOCOMMERCE_PRODUCT_UPDATED,
 	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
@@ -20,6 +21,7 @@ import { getBucket } from '../helpers';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCT_EDIT ]: editProductAction,
+	[ WOOCOMMERCE_PRODUCT_EDIT_CLEAR ]: clearEditsAction,
 	[ WOOCOMMERCE_PRODUCT_UPDATED ]: productUpdatedAction,
 	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: editProductAttributeAction,
 	[ WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED ]: productCategoryUpdatedAction,
@@ -82,6 +84,10 @@ function productCategoryUpdatedAction( edits, action ) {
 		};
 	}
 	return edits;
+}
+
+function clearEditsAction() {
+	return null;
 }
 
 function editProductAction( edits, action ) {

@@ -8,6 +8,7 @@ import { expect } from 'chai';
  */
 import reducer from '../edits-reducer';
 import {
+	clearProductEdits,
 	editProduct,
 	editProductAttribute,
 } from '../actions';
@@ -345,5 +346,22 @@ describe( 'edits-reducer', () => {
 
 		expect( edits1.updates[ 0 ] ).to.eql( product1Update );
 		expect( edits2.updates ).to.not.exist;
+	} );
+
+	it( 'should clear all product edit data', () => {
+		const edits1 = {
+			creates: [ { id: { placeholder: 'product_1' }, name: 'Product 1' } ],
+			updates: [ { id: 27, name: 'Updated name' } ],
+			deletes: [ 32 ],
+		};
+
+		const action = clearProductEdits( siteId );
+
+		const edits2 = reducer( edits1, action );
+
+		expect( edits1.creates ).to.exist;
+		expect( edits1.updates ).to.exist;
+		expect( edits1.deletes ).to.exist;
+		expect( edits2 ).to.equal( null );
 	} );
 } );
