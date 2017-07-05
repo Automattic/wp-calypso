@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { uniqueId } from 'lodash';
+import { isEqual, uniqueId } from 'lodash';
 import { createReducer } from 'state/utils';
 
 /**
@@ -57,7 +57,7 @@ function editProduct( array, product, data ) {
 
 	// Look for this object in the appropriate create or edit array first.
 	const _array = prevArray.map( ( p ) => {
-		if ( product.id === p.id ) {
+		if ( isEqual( product.id, p.id ) ) {
 			found = true;
 			return { ...p, ...data };
 		}
@@ -75,13 +75,14 @@ function editProduct( array, product, data ) {
 
 export function editProductAttribute( attributes, attribute, data ) {
 	const prevAttributes = attributes || [];
+	const name = attribute && attribute.name;
 	const uid = attribute && attribute.uid || uniqueId( 'edit_' ) + ( new Date().getTime() );
 
 	let found = false;
 
 	// Look for this attribute in the array of attributes first.
 	const _attributes = prevAttributes.map( ( a ) => {
-		if ( uid === a.uid ) {
+		if ( ( uid && isEqual( uid, a.uid ) ) || ( name && isEqual( name, a.name ) ) ) {
 			found = true;
 			return { ...a, ...data };
 		}

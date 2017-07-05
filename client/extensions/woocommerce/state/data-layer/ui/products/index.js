@@ -39,7 +39,7 @@ export default {
 
 export function actionAppendProductVariations( { getState }, action ) {
 	const { siteId } = action;
-	const { id: productId } = action.product;
+	const productId = action.product && action.product.id;
 
 	action.productVariations = getVariationsForProduct( getState(), productId, siteId );
 }

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { set } from 'lodash';
+import { set, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,7 +31,7 @@ describe( 'edits-reducer', () => {
 	const existingVariableProduct1 = {
 		id: 101,
 		type: 'variable',
-		name: 'Existing Simple Product',
+		name: 'Existing Variable Product',
 		attributes: [
 			{ uid: 'edit_1', name: 'Color', options: [ 'Black' ], variation: true },
 		],
@@ -45,7 +45,7 @@ describe( 'edits-reducer', () => {
 	};
 
 	const variationBlue = {
-		id: { index: 4 },
+		id: { index: 5 },
 		attributes: [
 			{ name: 'Color', option: 'Blue' },
 		],
@@ -174,7 +174,7 @@ describe( 'edits-reducer', () => {
 
 		const edits1 = reducer( undefined, editProductVariation( siteId, product, null, { regular_price: '1.99' } ) );
 		const productEdits1 = edits1.find( function( p ) {
-			if ( product.id === p.productId ) {
+			if ( isEqual( product.id, p.productId ) ) {
 				return p;
 			}
 		} );
@@ -183,7 +183,7 @@ describe( 'edits-reducer', () => {
 
 		const edits2 = reducer( edits1, editProductVariation( siteId, product, null, { regular_price: '2.99' } ) );
 		const productEdits2 = edits2.find( function( p ) {
-			if ( product.id === p.productId ) {
+			if ( isEqual( product.id, p.productId ) ) {
 				return p;
 			}
 		} );
@@ -197,7 +197,7 @@ describe( 'edits-reducer', () => {
 
 		const edits1 = reducer( undefined, editProductVariation( siteId, product, variation1, { regular_price: '1.99' } ) );
 		const _edits1 = edits1.find( function( p ) {
-			if ( product.id === p.productId ) {
+			if ( isEqual( product.id, p.productId ) ) {
 				return p;
 			}
 		} );

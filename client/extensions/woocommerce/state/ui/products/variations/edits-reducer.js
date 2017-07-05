@@ -44,9 +44,10 @@ export default createReducer( null, {
  * @return {Object} The new, updated product edits to be used in state.
  */
 function updateProductEdits( edits, productId, doUpdate ) {
+	const prevEdits = edits || [];
 	let found = false;
 
-	const newEdits = edits.map( ( productEdits ) => {
+	const newEdits = prevEdits.map( ( productEdits ) => {
 		if ( isEqual( productId, productEdits.productId ) ) {
 			found = true;
 			return doUpdate( productEdits );
@@ -64,7 +65,7 @@ function updateProductEdits( edits, productId, doUpdate ) {
 function editProductAction( edits, action ) {
 	const { product, data, productVariations } = action;
 
-	if ( 'simple' === data.type ) {
+	if ( product && 'simple' === data.type ) {
 		// Ensure there are no variation edits for this product,
 		// and that any existing ones have deletes.
 		return updateProductEdits( edits, product.id, () => {
@@ -85,7 +86,7 @@ function editProductVariationAction( edits, action ) {
 
 	// Look for an existing product edits first.
 	const _edits = prevEdits.map( ( productEdits ) => {
-		if ( productId === productEdits.productId ) {
+		if ( isEqual( productId, productEdits.productId ) ) {
 			found = true;
 			const variationId = variation && variation.id || { index: Number( uniqueId() ) };
 			const _variation = variation || { id: variationId };
@@ -124,7 +125,7 @@ function editProductVariation( array, variation, data ) {
 
 	// Look for this object in the appropriate create or edit array first.
 	const _array = prevArray.map( ( v ) => {
-		if ( variation.id === v.id ) {
+		if ( isEqual( variation.id, v.id ) ) {
 			found = true;
 			return { ...v, ...data };
 		}
