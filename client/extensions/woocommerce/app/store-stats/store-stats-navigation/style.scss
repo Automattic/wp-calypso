@@ -7,6 +7,16 @@
 		}
 	}
 }
+@include breakpoint( ">660px" ) {
+ 	&.store-stats {
+		.store-stats-navigation__container {
+			.section-nav {
+				margin-top: 0;
+			}
+		}
+	}
+}
+
 
 .segmented-control {
 	@include breakpoint( "<480px" ) {
