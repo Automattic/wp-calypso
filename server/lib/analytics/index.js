@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import http from 'http';
+import superagent from 'superagent';
 
 /**
  * Internal dependencies
@@ -16,7 +16,7 @@ const analytics = {
 		recordTiming: function( featureSlug, eventType, duration ) {
 			if ( isStatsdAnalyticsAllowed() ) {
 				const url = statsdUrl( featureSlug, eventType, duration );
-				http.get( url );
+				superagent.get( url ).end();
 			}
 		}
 	}

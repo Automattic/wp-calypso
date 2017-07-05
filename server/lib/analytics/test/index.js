@@ -13,15 +13,15 @@ const statsd = require( '../../../../client/lib/analytics/statsd' );
 
 describe( 'Server-Side Analytics', function() {
 	describe( 'statsd.recordTiming', function() {
-		let http;
+		let superagent;
 
 		beforeEach( function() {
-			http = require( 'http' );
-			sinon.stub( http, 'get' );
+			superagent = require( 'superagent' );
+			sinon.stub( superagent, 'get' ).returns( { end: () => {} } );
 		} );
 
 		afterEach( function() {
-			http.get.restore();
+			superagent.get.restore();
 		} );
 
 		it( 'sends an HTTP request to the statsd URL', function() {
@@ -31,7 +31,7 @@ describe( 'Server-Side Analytics', function() {
 			analytics.statsd.recordTiming( 'reader', 'page-render', 150 );
 
 			expect( statsd.statsdUrl ).to.have.been.calledWith( 'reader', 'page-render', 150 );
-			expect( http.get ).to.have.been.calledWith( 'http://example.com/boom.gif' );
+			expect( superagent.get ).to.have.been.calledWith( 'http://example.com/boom.gif' );
 
 			statsd.isStatsdAnalyticsAllowed.restore();
 			statsd.statsdUrl.restore();
@@ -44,7 +44,7 @@ describe( 'Server-Side Analytics', function() {
 			analytics.statsd.recordTiming( 'reader', 'page-render', 150 );
 
 			expect( statsd.statsdUrl ).not.to.have.been.called;
-			expect( http.get ).not.to.have.been.called;
+			expect( superagent.get ).not.to.have.been.called;
 
 			statsd.isStatsdAnalyticsAllowed.restore();
 			statsd.statsdUrl.restore();
