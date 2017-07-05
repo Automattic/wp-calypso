@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import needs, { readerTags } from 'lib/needs';
 
 /**
  * Internal Dependencies
@@ -14,7 +14,6 @@ import EmptyContent from './empty';
 import TagStreamHeader from './header';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import HeaderBack from 'reader/header-back';
-import { getReaderFollowedTags, getReaderTags } from 'state/selectors';
 import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
 import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
 import QueryReaderTag from 'components/data/query-reader-tag';
@@ -93,11 +92,11 @@ class TagStream extends React.Component {
 	};
 
 	render() {
-		const emptyContent = <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
-		const title = this.props.decodedTagSlug;
-		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
+		const { tag, decodedTagSlug, encodedTagSlug, translate, showBack } = this.props;
+		const emptyContent = <EmptyContent decodedTagSlug={ decodedTagSlug } />;
+		const title = decodedTagSlug;
 
-		let imageSearchString = this.props.encodedTagSlug;
+		let imageSearchString = encodedTagSlug;
 
 		// If the tag contains emoji, convert to text equivalent
 		if ( this.state.emojiText && this.state.isEmojiTitle ) {
@@ -114,8 +113,8 @@ class TagStream extends React.Component {
 				showFollowInHeader={ true }
 			>
 				<QueryReaderFollowedTags />
-				<QueryReaderTag tag={ this.props.decodedTagSlug } />
-				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
+				<QueryReaderTag tag={ decodedTagSlug } />
+				<DocumentHead title={ translate( '%s ‹ Reader', { args: title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
 				<TagStreamHeader
 					title={ title }
@@ -123,18 +122,17 @@ class TagStream extends React.Component {
 					showFollow={ !! ( tag && tag.id ) }
 					following={ this.isSubscribed() }
 					onFollowToggle={ this.toggleFollowing }
-					showBack={ this.props.showBack }
+					showBack={ showBack }
 				/>
 			</Stream>
 		);
 	}
 }
 
-export default connect(
-	state => ( {
-		followedTags: getReaderFollowedTags( state ),
-		tags: getReaderTags( state ),
-	} ),
+export default needs(
+	[
+		readerTags( { tag: { slug: 'encodedTagSlug' } } ),
+	],
 	{
 		followTag: requestFollowTag,
 		unfollowTag: requestUnfollowTag,
