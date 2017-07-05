@@ -7,6 +7,7 @@ import { filter, find, get, keyBy, last, first, map, size } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+import { getStateKey } from './reducer';
 
 /***
  * Gets comment items for post
@@ -109,11 +110,16 @@ export const haveMoreCommentsToFetch = createSelector(
 		const totalCommentsCount = getPostTotalCommentsCount( state, siteId, postId );
 		return items && totalCommentsCount ? size( items ) < totalCommentsCount : undefined;
 	},
-	( state, siteId, postId ) => [
-		getPostCommentItems( state, siteId, postId ),
-		getPostTotalCommentsCount( state, siteId, postId ),
-	],
+	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ), getPostTotalCommentsCount( state, siteId, postId ) ]
 );
+
+export const haveEarlierCommentsToFetch = ( state, siteId, postId ) =>
+	haveMoreCommentsToFetch( state, siteId, postId ) &&
+	!! get( state.comments.hasMoreComments, getStateKey( siteId, postId ), {} ).before;
+
+export const haveLaterCommentsToFetch = ( state, siteId, postId ) =>
+	haveMoreCommentsToFetch( state, siteId, postId ) &&
+	!! get( state.comments.hasMoreComments, getStateKey( siteId, postId ), {} ).after;
 
 /***
  * Gets likes stats for the comment

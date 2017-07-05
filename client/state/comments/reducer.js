@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isUndefined, orderBy, has, map, unionBy, reject } from 'lodash';
+import { isUndefined, orderBy, has, map, unionBy, reject, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,12 +17,12 @@ import {
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
 } from '../action-types';
-import { combineReducers } from 'state/utils';
-import { PLACEHOLDER_STATE } from './constants';
+import { combineReducers, createReducer } from 'state/utils';
+import { PLACEHOLDER_STATE, NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
 const getCommentDate = ( { date } ) => new Date( date );
 
-const getStateKey = ( siteId, postId ) => `${ siteId }-${ postId }`;
+export const getStateKey = ( siteId, postId ) => `${ siteId }-${ postId }`;
 
 const updateComment = ( commentId, newProperties ) => comment => {
 	if ( comment.ID !== commentId ) {
@@ -108,6 +108,38 @@ export function items( state = {}, action ) {
 }
 
 /***
+ * Stores whether or not there are more comments, and in which directions, for a particular post,
+ * Example state:
+ *  {
+ *     [ siteId-postId ]: {
+ *       before: true,
+ *       after: false,
+ *     }
+ *  }
+ *
+ * @param {Object} state redux state
+ * @param {Object} action redux action
+ * @returns {Object} new redux state
+ */
+export const hasMoreComments = createReducer(
+	{},
+	{
+		[ COMMENTS_RECEIVE ]: ( state, action ) => {
+			const { siteId, postId, direction } = action;
+			const stateKey = getStateKey( siteId, postId );
+			const nextState = {
+				...( state[ stateKey ] || { before: true, after: true } ),
+				[ direction ]: action.comments.length === NUMBER_OF_COMMENTS_PER_FETCH,
+			};
+
+			return isEqual( state[ stateKey ], nextState )
+				? state
+				: { ...state, [ stateKey ]: nextState };
+		},
+	},
+);
+
+/***
  * Stores latest comments count for post we've seen from the server
  * @param {Object} state redux state, prev totalCommentsCount
  * @param {Object} action redux action
@@ -135,5 +167,6 @@ export function totalCommentsCount( state = {}, action ) {
 
 export default combineReducers( {
 	items,
+	hasMoreComments,
 	totalCommentsCount,
 } );

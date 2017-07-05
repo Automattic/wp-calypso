@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { get, isDate, startsWith } from 'lodash';
+import { get, isDate, startsWith, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { createNotice, errorNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
-import { getPostOldestCommentDate } from 'state/comments/selectors';
+import { getPostOldestCommentDate, getPostNewestCommentDate } from 'state/comments/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
 
 /***
@@ -48,8 +48,21 @@ export function createPlaceholderComment( commentText, postId, parentCommentId )
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/posts/%24post_ID/replies/
 export const fetchPostComments = ( { dispatch, getState }, action ) => {
-	const { siteId, postId, query } = action;
-	const before = getPostOldestCommentDate( getState(), siteId, postId );
+	const { siteId, postId, query, direction } = action;
+	const oldestDate = getPostOldestCommentDate( getState(), siteId, postId );
+	const newestDate = getPostNewestCommentDate( getState(), siteId, postId );
+
+	const before =
+		direction === 'before' &&
+		isDate( oldestDate ) &&
+		oldestDate.toISOString &&
+		oldestDate.toISOString();
+
+	const after =
+		direction === 'after' &&
+		isDate( newestDate ) &&
+		newestDate.toISOString &&
+		newestDate.toISOString();
 
 	dispatch(
 		http(
@@ -57,14 +70,11 @@ export const fetchPostComments = ( { dispatch, getState }, action ) => {
 				method: 'GET',
 				path: `/sites/${ siteId }/posts/${ postId }/replies`,
 				apiVersion: '1.1',
-				query: {
+				query: pickBy( {
 					...query,
-					...( before &&
-					isDate( before ) &&
-					before.toISOString && {
-						before: before.toISOString(),
-					} ),
-				},
+					after,
+					before,
+				} ),
 			},
 			action,
 		),
@@ -105,12 +115,14 @@ export const writePostComment = ( { dispatch }, action ) => {
 	);
 };
 
-export const addComments = ( { dispatch }, { siteId, postId }, next, { comments, found } ) => {
+export const addComments = ( { dispatch }, action, next, { comments, found } ) => {
+	const { siteId, postId, direction } = action;
 	dispatch( {
 		type: COMMENTS_RECEIVE,
 		siteId,
 		postId,
 		comments,
+		direction,
 	} );
 
 	// if the api have returned comments count, dispatch it

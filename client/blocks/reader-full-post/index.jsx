@@ -6,7 +6,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get } from 'lodash';
+import { get, startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -93,6 +93,15 @@ export class FullPostView extends React.Component {
 		// If we have a comment anchor, scroll to comments
 		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
 			this.scrollToComments();
+		}
+
+		if ( startsWith( window.location.hash, '#comment-' ) ) {
+			this.checkForCommentInterval = setInterval( () => {
+				if ( this.shouldScrollToComment() ) {
+					this.scrollToComment();
+					clearInterval( this.checkForCommentInterval );
+				}
+			}, 200 );
 		}
 	}
 
@@ -187,6 +196,26 @@ export class FullPostView extends React.Component {
 		}
 	};
 
+	/**
+	 * Should we scroll down to a comment? Only if we have satisfied these three conditions: *
+	 * 1. there is a comment specified in the url via hash
+	 * 2. the comment has loaded and is on the DOM
+	 * 3. we haven't already scrolled to it yet
+	 *
+	 * @returns {boolean} - whether or not we should scroll to a comment
+	 */
+	shouldScrollToComment = () =>
+		startsWith( window.location.hash, '#comment-' ) &&
+		window.document.getElementsByName( window.location.hash.substring( 1 ) ).length > 0 &&
+		! this.hasScrolledToComment;
+
+	scrollToComment = () => {
+		const comment = window.document.getElementsByName( window.location.hash.substring( 1 ) )[ 0 ];
+		comment.scrollIntoView();
+		window.scrollBy( 0, -50 );
+		this.hasScrolledToComment = true;
+	};
+
 	// Scroll to the top of the comments section.
 	scrollToComments = () => {
 		if ( ! this.props.post ) {
@@ -198,6 +227,7 @@ export class FullPostView extends React.Component {
 		if ( this._scrolling ) {
 			return;
 		}
+
 		this._scrolling = true;
 		setTimeout( () => {
 			const commentsNode = ReactDom.findDOMNode( this.refs.commentsWrapper );

@@ -12,7 +12,8 @@ import { get, size, takeRight } from 'lodash';
 import {
 	getPostCommentsTree,
 	getPostTotalCommentsCount,
-	haveMoreCommentsToFetch,
+	haveEarlierCommentsToFetch,
+	haveLaterCommentsToFetch,
 } from 'state/comments/selectors';
 import { requestPostComments } from 'state/comments/actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
@@ -30,21 +31,23 @@ class PostCommentList extends React.Component {
 			site_ID: React.PropTypes.number.isRequired,
 		} ).isRequired,
 		onCommentsUpdate: React.PropTypes.func.isRequired,
-		pageSize: React.PropTypes.number,
 		initialSize: React.PropTypes.number,
+		pageSize: React.PropTypes.number,
 		showCommentCount: React.PropTypes.bool,
 
 		// connect()ed props:
 		commentsTree: React.PropTypes.object, //TODO: Find a lib that provides immutable shape
 		totalCommentsCount: React.PropTypes.number,
-		haveMoreCommentsToFetch: React.PropTypes.bool,
+		haveEarlierCommentsToFetch: React.PropTypes.bool,
+		haveLaterCommentsToFetch: React.PropTypes.bool,
 		requestPostComments: React.PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
 		pageSize: NUMBER_OF_COMMENTS_PER_FETCH,
 		initialSize: NUMBER_OF_COMMENTS_PER_FETCH,
-		haveMoreCommentsToFetch: false,
+		haveEarlierCommentsToFetch: false,
+		haveLaterCommentsToFetch: false,
 		showCommentCount: true,
 	};
 
@@ -56,9 +59,9 @@ class PostCommentList extends React.Component {
 	};
 
 	componentWillMount() {
-		const { post: { ID: postId, site_ID: siteId } } = this.props;
+		const { post: { ID: postId, site_ID: siteId }, commentsFilter: status } = this.props;
 
-		this.props.requestPostComments( siteId, postId, this.props.commentsFilter );
+		this.props.requestPostComments( { siteId, postId, status } );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -74,7 +77,11 @@ class PostCommentList extends React.Component {
 				this.props.post.ID !== nextPostId ||
 				this.props.commentsFilter !== nextCommentsFilter )
 		) {
-			this.props.requestPostComments( nextSiteId, nextPostId, this.props.commentsFilter );
+			this.props.requestPostComments( {
+				siteId: nextSiteId,
+				postId: nextPostId,
+				status: this.props.commentsFilter,
+			} );
 		}
 	}
 
@@ -200,18 +207,22 @@ class PostCommentList extends React.Component {
 	};
 
 	viewEarlierCommentsHandler = () => {
-		const { post: { ID: postId, site_ID: siteId } } = this.props;
+		const direction = this.props.haveEarlierCommentsToFetch ? 'before' : 'after';
+		this.loadMoreCommentsHandler( direction );
+	};
 
+	viewLaterCommentsHandler = () => {
+		const direction = this.props.haveLaterCommentsToFetch ? 'after' : 'before';
+		this.loadMoreCommentsHandler( direction );
+	}
+
+	loadMoreCommentsHandler = direction => {
+		const { post: { ID: postId, site_ID: siteId }, commentsFilter: status } = this.props;
 		const amountOfCommentsToTake = this.state.amountOfCommentsToTake + this.props.pageSize;
 
-		this.setState( {
-			amountOfCommentsToTake,
-		} );
-
-		if ( this.props.haveMoreCommentsToFetch ) {
-			this.props.requestPostComments( siteId, postId, this.props.commentsFilter );
-		}
-	};
+		this.setState( { amountOfCommentsToTake } );
+		this.props.requestPostComments( { siteId, postId, status, direction } );
+	}
 
 	handleFilterClick = commentsFilter => () => this.props.onFilterChange( commentsFilter );
 
@@ -231,26 +242,28 @@ class PostCommentList extends React.Component {
 
 		// Note: we might show fewer comments than totalCommentsCount because some comments might be
 		// orphans (parent deleted/unapproved), that comment will become unreachable but still counted.
-		const showViewEarlier =
-			size( commentsTree.children ) > amountOfCommentsToTake || this.props.haveMoreCommentsToFetch;
+		const showViewMoreComments =
+			size( commentsTree.children ) > amountOfCommentsToTake ||
+				( this.props.haveEarlierCommentsToFetch || this.props.haveLaterCommentsToFetch );
 
 		// If we're not yet fetched all comments from server, we can only rely on server's count.
 		// once we got all the comments tree, we can calculate the count of reachable comments
-		const actualTotalCommentsCount = this.props.haveMoreCommentsToFetch
+		const actualTotalCommentsCount = this.props.haveEarlierCommentsToFetch
 			? totalCommentsCount
 			: this.getCommentsCount( commentsTree.children );
 
 		return (
 			<div className="comments__comment-list">
-				{ ( this.props.showCommentCount || showViewEarlier ) &&
+				{ ( this.props.showCommentCount || showViewMoreComments ) &&
 					<div className="comments__info-bar">
+						{ }
 						{ this.props.showCommentCount && <CommentCount count={ actualTotalCommentsCount } /> }
-						{ showViewEarlier
+						{ showViewMoreComments
 							? <span
 									className="comments__view-earlier"
 									onClick={ this.viewEarlierCommentsHandler }
 								>
-									{ translate( 'View earlier comments (Showing %(shown)d of %(total)d)', {
+									{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 										args: {
 											shown: displayedCommentsCount,
 											total: actualTotalCommentsCount,
@@ -293,6 +306,20 @@ class PostCommentList extends React.Component {
 						</SegmentedControlItem>
 					</SegmentedControl> }
 				{ this.renderCommentsList( displayedComments ) }
+				{/* TODO: add this back in when we implement loading from the middle */}
+				{/* { showViewMoreComments && false &&
+					<span
+						className="comments__view-earlier"
+						onClick={ this.viewLaterCommentsHandler }
+					>
+						{ translate( 'Load More Comments (Showing %(shown)d of %(total)d)', {
+							args: {
+								shown: displayedCommentsCount,
+								total: actualTotalCommentsCount,
+							},
+						} ) }
+					</span>
+				} */}
 				{ this.renderCommentForm() }
 			</div>
 		);
@@ -308,11 +335,12 @@ export default connect(
 			ownProps.commentsFilter,
 		),
 		totalCommentsCount: getPostTotalCommentsCount( state, ownProps.post.site_ID, ownProps.post.ID ),
-		haveMoreCommentsToFetch: haveMoreCommentsToFetch(
+		haveEarlierCommentsToFetch: haveEarlierCommentsToFetch(
 			state,
 			ownProps.post.site_ID,
 			ownProps.post.ID,
 		),
+		haveLaterCommentsToFetch: haveLaterCommentsToFetch( state, ownProps.post.site_ID, ownProps.post.ID ),
 	} ),
 	{ requestPostComments },
 )( PostCommentList );

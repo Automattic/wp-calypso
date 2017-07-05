@@ -176,13 +176,16 @@ class PostComment extends Component {
 
 					{ authorUrl
 						? <a
-								href={ authorUrl }
-								className="comments__comment-username"
-								onClick={ this.handleAuthorClick }
+							href={ authorUrl }
+							className="comments__comment-username"
+							onClick={ this.handleAuthorClick }
+							name={ `comment-${ this.props.commentId }` }
 							>
 								{ comment.author.name }
 							</a>
-						: <strong className="comments__comment-username">
+						: <strong
+							className="comments__comment-username"
+							>
 								{ comment.author.name }
 							</strong> }
 					<div className="comments__comment-timestamp">
