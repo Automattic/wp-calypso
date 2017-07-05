@@ -70,7 +70,9 @@ export class Login extends React.Component {
 	}
 
 	render() {
-		const { translate, twoFactorAuthType } = this.props;
+		const { locale, translate, twoFactorAuthType } = this.props;
+
+		const canonicalUrl = `https://${ locale !== 'en' ? locale + '.' : '' }wordpress.com/login`;
 
 		return (
 			<div>
@@ -79,7 +81,7 @@ export class Login extends React.Component {
 
 					<DocumentHead
 						title={ translate( 'Log In', { textOnly: true } ) }
-						link={ [ { rel: 'canonical', href: 'https://wordpress.com/login' } ] } />
+						link={ [ { rel: 'canonical', href: canonicalUrl } ] } />
 
 					<GlobalNotices id="notices" notices={ notices.list } />
 
