@@ -14,6 +14,8 @@ import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } fr
 
 class ErrorBanner extends PureComponent {
 	static propTypes = {
+		errorCode: PropTypes.string.isRequired,
+		failureReason: PropTypes.string.isRequired,
 		requestRestore: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 		timestamp: PropTypes.number.isRequired,
@@ -23,6 +25,11 @@ class ErrorBanner extends PureComponent {
 
 		// localize
 		translate: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		errorCode: '',
+		failureReason: '',
 	};
 
 	handleClickRestore = () => this.props.requestRestore( this.props.timestamp );
