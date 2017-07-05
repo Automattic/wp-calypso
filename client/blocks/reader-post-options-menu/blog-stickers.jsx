@@ -10,10 +10,15 @@ import { connect } from 'react-redux';
  */
 import PopoverMenuItem from 'components/popover/menu-item';
 import { getBlogStickers } from 'state/selectors';
+import { addBlogSticker } from 'state/sites/blog-stickers/actions';
 
 class ReaderPostOptionsMenuBlogStickers extends React.Component {
 	static propTypes = {
 		siteId: React.PropTypes.number.isRequired,
+	};
+
+	addSticker = stickerName => {
+		this.props.addBlogSticker( this.props.siteId, stickerName );
 	};
 
 	render() {
@@ -30,6 +35,7 @@ class ReaderPostOptionsMenuBlogStickers extends React.Component {
 						icon="tag"
 						key={ blogStickerName }
 						className="reader-post-options-menu__blog-stickers-item"
+						onClick={ this.addSticker( blogStickerName ) }
 					>
 						{ blogStickerName }
 					</PopoverMenuItem>
@@ -39,10 +45,13 @@ class ReaderPostOptionsMenuBlogStickers extends React.Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	return {
-		stickers: ownProps.siteId && ownProps.siteId > 0
-			? getBlogStickers( state, ownProps.blogId )
-			: undefined,
-	};
-} )( ReaderPostOptionsMenuBlogStickers );
+export default connect(
+	( state, ownProps ) => {
+		return {
+			stickers: ownProps.siteId && ownProps.siteId > 0
+				? getBlogStickers( state, ownProps.blogId )
+				: undefined,
+		};
+	},
+	{ addBlogSticker }
+)( ReaderPostOptionsMenuBlogStickers );
