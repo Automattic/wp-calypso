@@ -151,7 +151,7 @@ const getZoneMethodDeleteSteps = ( siteId, zoneId, method, state ) => {
 		description: translate( 'Deleting Shipping Method' ),
 		onStep: ( dispatch, actionList ) => {
 			analytics.tracks.recordEvent( 'calypso_woocommerce_shipping_method_deleted', {
-				shippingMethod: methodType,
+				shipping_method: methodType,
 			} );
 			dispatch( deleteShippingZoneMethod(
 				siteId,
@@ -183,7 +183,7 @@ const getZoneMethodUpdateSteps = ( siteId, zoneId, method, state ) => {
 				const event = false !== methodProps.enabled
 					? 'calypso_woocommerce_shipping_method_enabled'
 					: 'calypso_woocommerce_shipping_method_disabled';
-				analytics.tracks.recordEvent( event, { shippingMethod: methodType } );
+				analytics.tracks.recordEvent( event, { shipping_method: methodType } );
 			}
 
 			dispatch( updateShippingZoneMethod(
@@ -211,7 +211,7 @@ const getZoneMethodCreateSteps = ( siteId, zoneId, method, state ) => {
 		description: translate( 'Creating Shipping Method' ),
 		onStep: ( dispatch, actionList ) => {
 			analytics.tracks.recordEvent( 'calypso_woocommerce_shipping_method_created', {
-				shippingMethod: methodType,
+				shipping_method: methodType,
 			} );
 			dispatch( createShippingZoneMethod(
 				siteId,
@@ -233,7 +233,7 @@ const getZoneMethodCreateSteps = ( siteId, zoneId, method, state ) => {
 			description: translate( 'Updating Shipping Method' ), // Better not tell the user we're just tracking at this point
 			onStep: ( dispatch, actionList ) => {
 				analytics.tracks.recordEvent( 'calypso_woocommerce_shipping_method_enabled', {
-					shippingMethod: methodType,
+					shipping_method: methodType,
 				} );
 				dispatch( actionListStepSuccess( actionList ) );
 			},
