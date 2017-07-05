@@ -41,6 +41,7 @@ import {
 } from 'woocommerce/state/ui/payments/methods/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import SetupTask from './setup-task';
+import { areAnyShippingMethodsEnabled } from 'woocommerce/state/ui/shipping/zones/selectors';
 
 class SetupTasks extends Component {
 	static propTypes = {
@@ -227,9 +228,8 @@ function mapStateToProps( state ) {
 		optedOutOfTaxesSetup: getOptedOutofTaxesSetup( state ),
 		triedCustomizer: getTriedCustomizerDuringInitialSetup( state ),
 		hasProducts: getTotalProducts( state ) > 0,
-		// TODO - connect the following to selectors when they become available
 		paymentsAreSetUp: arePaymentsSetup( state ),
-		shippingIsSetUp: false,
+		shippingIsSetUp: areAnyShippingMethodsEnabled( state ),
 		taxesAreSetUp: !! areTaxCalculationsEnabled( state ),
 	};
 }

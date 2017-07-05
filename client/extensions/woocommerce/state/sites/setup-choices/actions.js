@@ -88,6 +88,10 @@ export const setTriedCustomizerDuringInitialSetup = ( siteId, value ) => ( dispa
 	return updateSetupChoice( dispatch, siteId, 'tried_customizer_during_initial_setup', value );
 };
 
+export const setCreatedDefaultShippingZone = ( siteId, value ) => ( dispatch ) => {
+	return updateSetupChoice( dispatch, siteId, 'created_default_shipping_zone', value );
+};
+
 export const setFinishedInstallOfRequiredPlugins = ( siteId, value ) => ( dispatch ) => {
 	return updateSetupChoice( dispatch, siteId, 'finished_initial_install_of_required_plugins', value );
 };

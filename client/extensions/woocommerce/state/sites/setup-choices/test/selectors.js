@@ -16,6 +16,7 @@ import {
 	getOptedOutofTaxesSetup,
 	getSetStoreAddressDuringInitialSetup,
 	getTriedCustomizerDuringInitialSetup,
+	isDefaultShippingZoneCreated,
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
@@ -46,6 +47,7 @@ const loadedState = {
 						opted_out_of_shipping_setup: true,
 						opted_out_of_taxes_setup: true,
 						tried_customizer_during_initial_setup: true,
+						created_default_shipping_zone: true,
 						finished_initial_install_of_required_plugins: true,
 						set_store_address_during_initial_setup: true,
 					},
@@ -57,6 +59,7 @@ const loadedState = {
 						opted_out_of_shipping_setup: false,
 						opted_out_of_taxes_setup: false,
 						tried_customizer_during_initial_setup: false,
+						created_default_shipping_zone: false,
 						finished_initial_install_of_required_plugins: false,
 						set_store_address_during_initial_setup: false,
 					},
@@ -167,6 +170,20 @@ describe( 'selectors', () => {
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getTriedCustomizerDuringInitialSetup( loadedStateWithUi ) ).to.eql( true );
+		} );
+	} );
+
+	describe( '#isDefaultShippingZoneCreated', () => {
+		it( 'should get whether initial setup was completed from the state (123-true).', () => {
+			expect( isDefaultShippingZoneCreated( loadedState, 123 ) ).to.eql( true );
+		} );
+
+		it( 'should get whether initial setup was completed from the state (124-false).', () => {
+			expect( isDefaultShippingZoneCreated( loadedState, 124 ) ).to.eql( false );
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( isDefaultShippingZoneCreated( loadedStateWithUi ) ).to.eql( true );
 		} );
 	} );
 

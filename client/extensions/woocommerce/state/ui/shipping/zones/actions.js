@@ -6,6 +6,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE,
 	WOOCOMMERCE_SHIPPING_ZONE_CANCEL,
 	WOOCOMMERCE_SHIPPING_ZONE_CLOSE,
+	WOOCOMMERCE_SHIPPING_ZONE_DEFAULT_ACTION_LIST_CREATE,
 	WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME,
 	WOOCOMMERCE_SHIPPING_ZONE_OPEN,
 	WOOCOMMERCE_SHIPPING_ZONE_REMOVE,
@@ -86,5 +87,16 @@ export function createShippingZoneActionList( successAction, failureAction, dele
 		successAction,
 		failureAction,
 		deleteZone,
+	};
+}
+
+/**
+ * Creates an action list to create the default Shipping Zones settings for a new store.
+ *
+ * @return {Object} Action object.
+ */
+export function createAddDefultShippingZoneActionList() {
+	return {
+		type: WOOCOMMERCE_SHIPPING_ZONE_DEFAULT_ACTION_LIST_CREATE,
 	};
 }
