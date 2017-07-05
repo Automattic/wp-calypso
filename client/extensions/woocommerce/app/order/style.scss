@@ -227,6 +227,14 @@
 	}
 }
 
+.order__customer-info-container {
+	display: flex;
+}
+
+.order__customer-billing {
+	width: 50%;
+}
+
 .order__customer-info {
 	.order__billing-details,
 	.order__shipping-details {
