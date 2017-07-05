@@ -10,13 +10,50 @@ import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_PRODUCT_EDIT,
 	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
+	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
+	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
 } from 'woocommerce/state/action-types';
 import { getBucket } from '../helpers';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCT_EDIT ]: editProductAction,
 	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: editProductAttributeAction,
+	[ WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED ]: productCategoryUpdatedAction,
 } );
+
+function productCategoryUpdatedAction( edits, action ) {
+	const { data, originatingAction } = action;
+
+	if ( WOOCOMMERCE_PRODUCT_CATEGORY_CREATE === originatingAction.type ) {
+		const prevCategoryId = originatingAction.category.id;
+		const newCategoryId = data.id;
+		const prevEdits = edits || {};
+
+		const buckets = [ 'creates', 'updates' ].map( ( bucket ) => {
+			const prevBucket = prevEdits[ bucket ] || [];
+
+			const newBucket = prevBucket.map( ( product ) => {
+				const prevCategories = product.categories || [];
+				const newCategories = prevCategories.map( ( category ) => {
+					if ( isEqual( prevCategoryId, category.id ) ) {
+						return { ...category, id: newCategoryId };
+					}
+					return category;
+				} );
+				return { ...product, categories: newCategories };
+			} );
+
+			return ( newBucket.length ? newBucket : undefined );
+		} );
+
+		return {
+			...prevEdits,
+			creates: buckets[ 0 ],
+			updates: buckets[ 1 ],
+		};
+	}
+	return edits;
+}
 
 function editProductAction( edits, action ) {
 	const { product, data } = action;

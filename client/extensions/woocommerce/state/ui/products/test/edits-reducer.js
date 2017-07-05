@@ -7,11 +7,14 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../edits-reducer';
-
 import {
 	editProduct,
 	editProductAttribute,
 } from '../actions';
+import {
+	createProductCategory,
+	productCategoryUpdated,
+} from 'woocommerce/state/sites/product-categories/actions';
 
 const siteId = 123;
 
@@ -260,5 +263,43 @@ describe( 'edits-reducer', () => {
 		expect( edits1.currentlyEditingId ).to.exist;
 		expect( edits1.currentlyEditingId ).to.equal( 1 );
 		expect( edits1.updates ).to.not.exist;
+	} );
+
+	it( 'should update product category placeholder ids when they are updated', () => {
+		const category1 = {
+			id: { placeholder: 'productCategory_1' },
+			name: 'New Category',
+		};
+
+		const createdCategory1 = { ...category1, id: 22 };
+
+		const product1 = {
+			id: { placeholder: 'product_1' },
+			categories: [
+				{ id: { placeholder: 'productCategory_1' } },
+			],
+		};
+
+		const product2 = {
+			id: 42,
+			categories: [
+				{ id: { placeholder: 'productCategory_1' } },
+			],
+		};
+
+		const edits1 = {
+			creates: [ product1 ],
+			updates: [ product2 ],
+		};
+
+		const originatingAction = createProductCategory( siteId, category1 );
+		const action = productCategoryUpdated( siteId, createdCategory1, originatingAction );
+
+		const edits2 = reducer( edits1, action );
+
+		expect( edits1.creates[ 0 ].categories[ 0 ].id ).to.eql( { placeholder: 'productCategory_1' } );
+		expect( edits1.updates[ 0 ].categories[ 0 ].id ).to.eql( { placeholder: 'productCategory_1' } );
+		expect( edits2.creates[ 0 ].categories[ 0 ].id ).to.eql( 22 );
+		expect( edits2.updates[ 0 ].categories[ 0 ].id ).to.eql( 22 );
 	} );
 } );
