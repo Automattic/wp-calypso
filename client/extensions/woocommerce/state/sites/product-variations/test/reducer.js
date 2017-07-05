@@ -18,7 +18,7 @@ describe( 'reducer', () => {
 	describe( '#variationUpdated', () => {
 		it( 'should store a new variation via update', () => {
 			const variation1 = {
-				id: { placeholder: 'productVariation_1' },
+				id: 202,
 				attributes: [
 					{
 						id: 9,
@@ -34,7 +34,7 @@ describe( 'reducer', () => {
 
 		it( 'should overwrite an existing variation via update', () => {
 			const variation1Before = {
-				id: { placeholder: 'productVariation_1' },
+				id: 202,
 				attributes: [
 					{
 						id: 9,
@@ -44,7 +44,7 @@ describe( 'reducer', () => {
 			};
 
 			const variation1After = {
-				id: { placeholder: 'productVariation_1' },
+				id: 202,
 				attributes: [
 					{
 						id: 9,
@@ -60,6 +60,27 @@ describe( 'reducer', () => {
 
 			expect( state1[ 66 ] ).to.eql( [ variation1Before ] );
 			expect( state2[ 66 ] ).to.eql( [ variation1After ] );
+		} );
+
+		it( 'should remove an existing variation if passed "undefined" for a variation', () => {
+			const variation1Before = {
+				id: 202,
+				attributes: [
+					{
+						id: 9,
+						option: 'Black',
+					}
+				]
+			};
+
+			const actionBefore = productVariationUpdated( 123, 66, variation1Before );
+			const actionAfter = productVariationUpdated( 123, 66, 202 );
+
+			const state1 = variationUpdated( undefined, actionBefore );
+			const state2 = variationUpdated( state1, actionAfter );
+
+			expect( state1[ 66 ] ).to.eql( [ variation1Before ] );
+			expect( state2[ 66 ] ).to.eql( [] );
 		} );
 	} );
 } );

@@ -7,18 +7,20 @@ import { isNumber } from 'lodash';
  * Internal dependencies
  */
 import { dispatchWithProps } from 'woocommerce/state/helpers';
-import { get, post, put } from 'woocommerce/state/data-layer/request/actions';
+import { del, get, post, put } from 'woocommerce/state/data-layer/request/actions';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 import { productVariationUpdated } from 'woocommerce/state/sites/product-variations/actions';
 import {
 	WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
+	WOOCOMMERCE_PRODUCT_VARIATION_DELETE,
 	WOOCOMMERCE_PRODUCT_VARIATIONS_REQUEST,
 } from 'woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_PRODUCT_VARIATION_CREATE ]: [ handleProductVariationCreate ],
 	[ WOOCOMMERCE_PRODUCT_VARIATION_UPDATE ]: [ handleProductVariationUpdate ],
+	[ WOOCOMMERCE_PRODUCT_VARIATION_DELETE ]: [ handleProductVariationDelete ],
 	[ WOOCOMMERCE_PRODUCT_VARIATIONS_REQUEST ]: [ handleProductVariationsRequest ],
 };
 
@@ -86,4 +88,27 @@ export function handleProductVariationUpdate( store, action ) {
 
 	const endpoint = 'products/' + productId + '/variations/' + variation.id;
 	store.dispatch( put( siteId, endpoint, variation, updatedAction, failureAction ) );
+}
+
+export function handleProductVariationDelete( store, action ) {
+	const { siteId, productId, variationId, successAction, failureAction } = action;
+
+	// Ensure we have a valid id.
+	if ( ! isNumber( variationId ) ) {
+		store.dispatch( setError( siteId, action, {
+			message: 'Attempting to delete a variation without a valid id.',
+			variationId,
+		} ) );
+		return;
+	}
+
+	const updatedAction = ( dispatch, getState, data ) => {
+		dispatch( productVariationUpdated( siteId, productId, variationId, action ) );
+
+		const props = { productId, sentData: { id: variationId }, receivedData: data };
+		dispatchWithProps( dispatch, getState, successAction, props );
+	};
+
+	const endpoint = 'products/' + productId + '/variations/' + variationId;
+	store.dispatch( del( siteId, endpoint, updatedAction, failureAction ) );
 }
