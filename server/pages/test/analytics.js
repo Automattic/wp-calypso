@@ -19,9 +19,12 @@ describe( 'index', function() {
 	describe( 'logResponseTime middleware', function() {
 		// Stub request, response, and next
 		let request, response, next;
+		let request2, response2;
 		beforeEach( function() {
 			request = { context: {} };
+			request2 = { context: {} };
 			response = new events.EventEmitter();
+			response2 = new events.EventEmitter();
 			next = noop;
 		} );
 
@@ -38,6 +41,9 @@ describe( 'index', function() {
 			} );
 
 			it( 'logs response time analytics', function() {
+				// Clear throttling
+				this.clock.tick( TWO_SECONDS );
+
 				logSectionResponseTime( request, response, next );
 
 				// Move time forward and mock the "finish" event
@@ -47,6 +53,24 @@ describe( 'index', function() {
 				expect( analytics.statsd.recordTiming ).to.have.been.calledWith(
 					'reader', 'response-time', TWO_SECONDS
 				);
+			} );
+
+			it( 'throttles calls to log analytics', function() {
+				// Clear throttling
+				this.clock.tick( TWO_SECONDS );
+
+				logSectionResponseTime( request, response, next );
+				logSectionResponseTime( request2, response2, next );
+
+				response.emit( 'finish' );
+				response.emit( 'finish' );
+				response2.emit( 'finish' );
+				response2.emit( 'finish' );
+
+				expect( analytics.statsd.recordTiming ).to.have.been.calledOnce;
+
+				this.clock.tick( TWO_SECONDS );
+				expect( analytics.statsd.recordTiming ).to.have.been.calledTwice;
 			} );
 		} );
 

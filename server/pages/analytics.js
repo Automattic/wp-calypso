@@ -1,7 +1,24 @@
 /**
+ * External dependencies
+ */
+import throttle from 'lodash/throttle';
+
+/**
  * Internal dependencies
  */
+import config from 'config';
 import analytics from '../lib/analytics';
+
+// Compute the number of milliseconds between each call to recordTiming
+const THROTTLE_MILLIS = 1000 / config( 'max_request_time_logs_per_second' );
+
+const logAnalyticsThrottled = throttle( function( sectionName, duration ) {
+	analytics.statsd.recordTiming(
+		sectionName,
+		'response-time',
+		duration
+	);
+}, THROTTLE_MILLIS );
 
 /*
  * Middleware to log the response time of the node request for a
@@ -15,11 +32,7 @@ export function logSectionResponseTime( req, res, next ) {
 		const context = req.context || {};
 		if ( context.sectionName ) {
 			const duration = new Date() - startRenderTime;
-			analytics.statsd.recordTiming(
-				req.context.sectionName,
-				'response-time',
-				duration
-			);
+			logAnalyticsThrottled( context.sectionName, duration );
 		}
 	} );
 
