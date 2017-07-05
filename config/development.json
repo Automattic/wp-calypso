@@ -95,7 +95,7 @@
 		"manage/themes/logged-out": true,
 		"manage/themes/upload": true,
 		"me/account": true,
-		"me/edit-gravatar": false,
+		"me/edit-gravatar": true,
 		"me/find-friends": false,
 		"me/my-profile": true,
 		"me/next-steps": true,
