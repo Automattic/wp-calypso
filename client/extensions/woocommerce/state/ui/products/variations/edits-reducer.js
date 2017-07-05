@@ -8,9 +8,15 @@ import { compact, find, isEqual, uniqueId } from 'lodash';
  */
 import { createReducer } from 'state/utils';
 import {
+	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_EDIT,
+	WOOCOMMERCE_PRODUCT_UPDATED,
 	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
+	WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_EDIT,
+	WOOCOMMERCE_PRODUCT_VARIATION_EDIT_CLEAR,
+	WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
+	WOOCOMMERCE_PRODUCT_VARIATION_UPDATED,
 } from 'woocommerce/state/action-types';
 
 import { editProductAttribute } from '../edits-reducer';
@@ -19,7 +25,10 @@ import generateVariations from 'woocommerce/lib/generate-variations';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCT_EDIT ]: editProductAction,
+	[ WOOCOMMERCE_PRODUCT_UPDATED ]: productUpdatedAction,
 	[ WOOCOMMERCE_PRODUCT_VARIATION_EDIT ]: editProductVariationAction,
+	[ WOOCOMMERCE_PRODUCT_VARIATION_EDIT_CLEAR ]: clearEditsAction,
+	[ WOOCOMMERCE_PRODUCT_VARIATION_UPDATED ]: productVariationUpdatedAction,
 	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: editProductAttributeAction,
 } );
 
@@ -75,6 +84,10 @@ function editProductAction( edits, action ) {
 	}
 
 	return edits;
+}
+
+function clearEditsAction() {
+	return null;
 }
 
 function editProductVariationAction( edits, action ) {
@@ -216,5 +229,78 @@ function updateVariationDeletes( calculatedVariations, productVariations ) {
 
 		return ( newDeletes.length ? newDeletes : undefined );
 	}
+}
+
+export function productUpdatedAction( edits, action ) {
+	const { data, originatingAction } = action;
+
+	if ( WOOCOMMERCE_PRODUCT_CREATE === originatingAction.type ) {
+		const prevEdits = edits || [];
+		const prevProductId = originatingAction.product.id;
+		const newProductId = data.id;
+
+		const newEdits = prevEdits.map( ( productEdits ) => {
+			if ( isEqual( prevProductId, productEdits.productId ) ) {
+				return { ...productEdits, productId: newProductId };
+			}
+			return productEdits;
+		} );
+
+		return newEdits;
+	}
+
+	return edits;
+}
+
+export function productVariationUpdatedAction( edits, action ) {
+	const { originatingAction } = action;
+	let bucket = null;
+
+	bucket = ( WOOCOMMERCE_PRODUCT_VARIATION_CREATE === originatingAction.type ? 'creates' : bucket );
+	bucket = ( WOOCOMMERCE_PRODUCT_VARIATION_UPDATE === originatingAction.type ? 'updates' : bucket );
+
+	if ( bucket ) {
+		const { productId } = originatingAction;
+		const variationId = originatingAction.variation.id;
+
+		return removeVariationEdit( edits, bucket, productId, variationId );
+	}
+
+	return edits;
+}
+
+function removeVariationEdit( edits, bucket, productId, variationId ) {
+	const prevEdits = edits || [];
+
+	const newEdits = compact( prevEdits.map( ( editsForProduct ) => {
+		if ( isEqual( productId, editsForProduct.productId ) ) {
+			return removeVariationEditFromEditsForProduct( editsForProduct, bucket, variationId );
+		}
+		return editsForProduct;
+	} ) );
+
+	return ( newEdits.length ? newEdits : null );
+}
+
+function removeVariationEditFromEditsForProduct( editsForProduct, bucket, variationId ) {
+	const prevBucketEdits = editsForProduct[ bucket ] || [];
+
+	const newBucketEdits = compact( prevBucketEdits.map( ( variationEdit ) => {
+		if ( isEqual( variationId, variationEdit.id ) ) {
+			return undefined;
+		}
+		return variationEdit;
+	} ) );
+
+	const newEditsForProduct = {
+		...editsForProduct,
+		[ bucket ]: ( newBucketEdits.length ? newBucketEdits : undefined ),
+	};
+
+	// Only send back something if we have a remaining edit somewhere.
+	if ( newEditsForProduct.creates || newEditsForProduct.updates || newEditsForProduct.deletes ) {
+		return newEditsForProduct;
+	}
+	return undefined;
 }
 

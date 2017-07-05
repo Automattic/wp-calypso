@@ -5,6 +5,7 @@ import {
 	WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE,
 	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
 	WOOCOMMERCE_PRODUCT_EDIT,
+	WOOCOMMERCE_PRODUCT_EDIT_CLEAR,
 } from 'woocommerce/state/action-types';
 
 export function editProduct( siteId, product, data ) {
@@ -13,6 +14,19 @@ export function editProduct( siteId, product, data ) {
 		siteId,
 		product,
 		data,
+	};
+}
+
+/**
+ * Action Creator: Clear All Product Edits
+ *
+ * @param {Number} siteId The site for which to clear all product edits.
+ * @return {Object} action
+ */
+export function clearProductEdits( siteId ) {
+	return {
+		type: WOOCOMMERCE_PRODUCT_EDIT_CLEAR,
+		siteId,
 	};
 }
 

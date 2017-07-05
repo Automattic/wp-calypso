@@ -9,11 +9,20 @@ import { set, isEqual } from 'lodash';
  */
 import reducer from '../edits-reducer';
 
-import { editProductVariation } from '../actions';
+import { editProductVariation, clearProductVariationEdits } from '../actions';
 import {
 	editProduct,
-	editProductAttribute
+	editProductAttribute,
 } from '../../actions';
+import {
+	createProduct,
+	productUpdated,
+} from 'woocommerce/state/sites/products/actions';
+import {
+	createProductVariation,
+	updateProductVariation,
+	productVariationUpdated,
+} from 'woocommerce/state/sites/product-variations/actions';
 import { actionAppendProductVariations } from 'woocommerce/state/data-layer/ui/products';
 
 const siteId = 123;
@@ -37,8 +46,15 @@ describe( 'edits-reducer', () => {
 		],
 	};
 
-	const variationBlack = {
+	const variationBlackNew = {
 		id: { placeholder: 'product_variation_4' },
+		attributes: [
+			{ name: 'Color', option: 'Black' },
+		],
+	};
+
+	const variationBlackExisting = {
+		id: 224,
 		attributes: [
 			{ name: 'Color', option: 'Black' },
 		],
@@ -73,7 +89,7 @@ describe( 'edits-reducer', () => {
 						[ siteId ]: {
 							products: [ existingVariableProduct1 ],
 							productVariations: {
-								101: [ variationBlack ]
+								101: [ variationBlackExisting ]
 							},
 						},
 					},
@@ -213,7 +229,7 @@ describe( 'edits-reducer', () => {
 			const variationEditsBefore = [
 				{
 					productId: newVariableProduct1.id,
-					creates: [ variationBlack ],
+					creates: [ variationBlackNew ],
 				},
 			];
 			set( rootState.extensions.woocommerce.ui, [ 'products', siteId, 'edits' ], productEditsBefore );
@@ -234,7 +250,7 @@ describe( 'edits-reducer', () => {
 				{
 					productId: existingVariableProduct1.id,
 					updates: [
-						{ id: variationBlack.id, attributes: [ { name: 'Color', option: 'Black', sku: 'black' } ] },
+						{ id: variationBlackExisting.id, attributes: [ { name: 'Color', option: 'Black', sku: 'black' } ] },
 					],
 				},
 			];
@@ -256,7 +272,7 @@ describe( 'edits-reducer', () => {
 				{
 					productId: existingVariableProduct1.id,
 					updates: [
-						{ id: variationBlack.id, attributes: [ { name: 'Color', option: 'Black', sku: 'black' } ] },
+						{ id: variationBlackExisting.id, attributes: [ { name: 'Color', option: 'Black', sku: 'black' } ] },
 					],
 				},
 			];
@@ -268,7 +284,7 @@ describe( 'edits-reducer', () => {
 			const variationEditsAfter = reducer( variationEditsBefore, action );
 
 			expect( variationEditsAfter[ 0 ].deletes ).to.exist;
-			expect( variationEditsAfter[ 0 ].deletes[ 0 ] ).to.equal( variationBlack.id );
+			expect( variationEditsAfter[ 0 ].deletes[ 0 ] ).to.equal( variationBlackExisting.id );
 		} );
 
 		it( 'should add a variation create when a new variation type option is added', () => {
@@ -305,7 +321,7 @@ describe( 'edits-reducer', () => {
 			const variationEditsBefore = [
 				{
 					productId: newVariableProduct1.id,
-					creates: [ variationBlack ],
+					creates: [ variationBlackNew ],
 				},
 			];
 			set( rootState.extensions.woocommerce.ui, [ 'products', siteId, 'edits' ], productEditsBefore );
@@ -323,7 +339,7 @@ describe( 'edits-reducer', () => {
 
 			expect( variationEditsAfter[ 0 ].creates ).to.exist;
 			expect( variationEditsAfter[ 0 ].creates.length ).to.equal( 2 );
-			expect( variationEditsAfter[ 0 ].creates[ 0 ] ).to.eql( variationBlack );
+			expect( variationEditsAfter[ 0 ].creates[ 0 ] ).to.eql( variationBlackNew );
 			expect( variationEditsAfter[ 0 ].creates[ 1 ].id ).to.be.an.Object;
 			expect( variationEditsAfter[ 0 ].creates[ 1 ].attributes[ 0 ].name ).to.eql( 'Color' );
 			expect( variationEditsAfter[ 0 ].creates[ 1 ].attributes[ 0 ].option ).to.eql( 'Blue' );
@@ -337,7 +353,7 @@ describe( 'edits-reducer', () => {
 				{
 					productId: existingVariableProduct1.id,
 					updates: [ {
-						id: { placeholder: 'product_variation_4' },
+						id: 224,
 						regular_price: '5.99',
 					} ],
 				},
@@ -358,7 +374,7 @@ describe( 'edits-reducer', () => {
 			expect( variationEditsAfter[ 0 ].productId ).to.eql( existingVariableProduct1.id );
 			expect( variationEditsAfter[ 0 ].updates ).to.exist;
 			expect( variationEditsAfter[ 0 ].updates.length ).to.equal( 1 );
-			expect( variationEditsAfter[ 0 ].updates[ 0 ].id ).to.eql( { placeholder: 'product_variation_4' } );
+			expect( variationEditsAfter[ 0 ].updates[ 0 ].id ).to.eql( 224 );
 			expect( variationEditsAfter[ 0 ].updates[ 0 ].regular_price ).to.eql( '5.99' );
 			expect( variationEditsAfter[ 0 ].creates ).to.exist;
 			expect( variationEditsAfter[ 0 ].creates.length ).to.equal( 1 );
@@ -376,7 +392,7 @@ describe( 'edits-reducer', () => {
 			const variationEditsBefore = [
 				{
 					productId: newVariableProduct1.id,
-					creates: [ variationBlack, variationBlue ],
+					creates: [ variationBlackNew, variationBlue ],
 				},
 			];
 			set( rootState.extensions.woocommerce.ui, [ 'products', siteId, 'edits' ], productEditsBefore );
@@ -442,7 +458,7 @@ describe( 'edits-reducer', () => {
 
 			expect( variationEditsAfter[ 0 ].deletes ).to.exist;
 			expect( variationEditsAfter[ 0 ].deletes.length ).to.equal( 1 );
-			expect( variationEditsAfter[ 0 ].deletes[ 0 ] ).to.equal( variationBlack.id );
+			expect( variationEditsAfter[ 0 ].deletes[ 0 ] ).to.equal( variationBlackExisting.id );
 		} );
 
 		it( 'should not retain any deletes if they become valid within the calculated variations', () => {
@@ -466,6 +482,90 @@ describe( 'edits-reducer', () => {
 			const variationEditsAfter = reducer( variationEditsBefore, action );
 
 			expect( variationEditsAfter[ 0 ].deletes ).to.not.exist;
+		} );
+	} );
+
+	describe( '#productUpdatedAction', () => {
+		it( 'should update product placeholder ids to real ids when the product is created', () => {
+			const createdVariableProduct1 = { ...newVariableProduct1, id: 55 };
+
+			const productEditsBefore = {
+				creates: [ newVariableProduct1 ],
+			};
+			const variationEditsBefore = [
+				{
+					productId: newVariableProduct1.id,
+					creates: [ variationBlackNew ],
+				},
+			];
+			set( rootState.extensions.woocommerce.ui, [ 'products', siteId, 'edits' ], productEditsBefore );
+			set( rootState.extensions.woocommerce.ui, [ 'products', siteId, 'variations', 'edits' ], variationEditsBefore );
+
+			const originatingAction = createProduct( siteId, newVariableProduct1 );
+			const action = productUpdated( siteId, createdVariableProduct1, originatingAction );
+
+			const variationEditsAfter = reducer( variationEditsBefore, action );
+
+			expect( variationEditsAfter[ 0 ].productId ).to.eql( 55 );
+		} );
+	} );
+
+	describe( '#productVariationUpdatedAction', () => {
+		it( 'should clear variation from creates upon successful save', () => {
+			const variationEditsBefore = [
+				{
+					productId: 42,
+					creates: [ variationBlackNew ],
+				}
+			];
+			set( rootState.extensions.woocommerce.ui, [ 'products', siteId, 'variations', 'edits' ], variationEditsBefore );
+
+			const originatingAction = createProductVariation( siteId, 42, variationBlackNew );
+			const action = productVariationUpdated( siteId, 42, variationBlackExisting, originatingAction );
+
+			const variationEditsAfter = reducer( variationEditsBefore, action );
+
+			expect( variationEditsAfter ).to.equal( null );
+		} );
+
+		it( 'should clear variation from updates upon successful save', () => {
+			const variationEditsBefore = [
+				{
+					productId: 42,
+					updates: [ variationBlackExisting ],
+				}
+			];
+			set( rootState.extensions.woocommerce.ui, [ 'products', siteId, 'variations', 'edits' ], variationEditsBefore );
+
+			const originatingAction = updateProductVariation( siteId, 42, variationBlackExisting );
+			const action = productVariationUpdated( siteId, 42, variationBlackExisting, originatingAction );
+
+			const variationEditsAfter = reducer( variationEditsBefore, action );
+
+			expect( variationEditsAfter ).to.equal( null );
+		} );
+	} );
+
+	describe( '#clearProductVariationEdits', () => {
+		it( 'should clear all product variations edit data', () => {
+			const variationEditsBefore = [
+				{
+					productId: 42,
+					creates: [ { id: { placeholder: 'product_variation_9' }, attributes: { name: 'Color', option: 'Green' } } ],
+					updates: [ { id: 252, attributes: { name: 'Color', option: 'Black' } } ],
+					deletes: [ 525 ],
+				}
+			];
+
+			const action = clearProductVariationEdits( siteId );
+
+			const variationEditsAfter = reducer( variationEditsBefore, action );
+
+			expect( variationEditsBefore[ 0 ].productId ).to.equal( 42 );
+			expect( variationEditsBefore[ 0 ].creates ).to.exist;
+			expect( variationEditsBefore[ 0 ].updates ).to.exist;
+			expect( variationEditsBefore[ 0 ].deletes ).to.exist;
+			expect( variationEditsAfter ).to.equal( null );
 		} );
 	} );
 } );
