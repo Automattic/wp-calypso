@@ -7,9 +7,9 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import { handleProductCategoryEdit, makeProductActionList, } from '../';
+import { actionAppendProductVariations, handleProductCategoryEdit, makeProductActionList, } from '../';
 import { actionListStepFailure } from 'woocommerce/state/action-list/actions';
-import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
+import { editProduct, editProductAttribute, editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
 import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
@@ -19,12 +19,95 @@ import {
 } from 'woocommerce/state/action-types';
 
 describe( 'handlers', () => {
+	describe( '#actionAppendProductVariations', () => {
+		const newProduct = {
+			id: { index: 0 },
+			name: 'New Product',
+			attributes: [
+				{ name: 'Color', options: [ 'Black' ], variation: true },
+			],
+		};
+
+		const existingProduct = {
+			id: 202,
+			name: 'Existing product',
+			type: 'variable',
+			attributes: [
+				{ name: 'Color', options: [ 'Black' ], variation: true },
+			],
+		};
+
+		const variationBlack = {
+			id: 252,
+			attributes: [ { id: 0, name: 'Color', option: 'Black' } ],
+		};
+
+		const variationBlue = {
+			id: 253,
+			attributes: [ { id: 1, name: 'Color', option: 'Blue' } ],
+		};
+
+		const existingProductAttributes = [ variationBlack, variationBlue ];
+
+		const rootState = {
+			extensions: {
+				woocommerce: {
+					sites: {
+						123: {
+							productVariations: {
+								202: existingProductAttributes,
+							}
+						}
+					},
+				}
+			}
+		};
+
+		it( 'should append product variations to an editProduct action', () => {
+			const store = {
+				getState: () => rootState,
+			};
+
+			const action = editProduct( 123, existingProduct, { name: 'Updated name' } );
+			actionAppendProductVariations( store, action );
+
+			expect( action.productVariations ).to.equal( existingProductAttributes );
+		} );
+
+		it( 'should append product variations to an editProductAttribute action', () => {
+			const store = {
+				getState: () => rootState,
+			};
+
+			const action = editProductAttribute(
+				123,
+				existingProduct,
+				{ name: 'Color', options: [ 'Black' ], variation: true },
+				{ name: 'Color', options: [ 'Blacker' ], variation: true }
+			);
+			actionAppendProductVariations( store, action );
+
+			expect( action.productVariations ).to.equal( existingProductAttributes );
+		} );
+
+		it( 'should, for a newly created product edit, send undefined for the list of product variations', () => {
+			const store = {
+				getState: () => rootState,
+			};
+
+			const action = editProduct( 123, newProduct, { name: 'Updated name' } );
+			actionAppendProductVariations( store, action );
+
+			expect( action.productVariations ).to.be.undefined;
+		} );
+	} );
+
 	describe( '#handleProductCategoryEdit', () => {
 		const existingCategory = { id: 101, name: 'Existing Category' };
 		const newCategory1 = { id: { placeholder: 'productCategory_1' }, name: 'New Category' };
 		const newProduct = {
 			id: { index: 0 },
-			name: 'Existing Product',
+			name: 'New Product',
 			categories: [ existingCategory, newCategory1 ],
 		};
 

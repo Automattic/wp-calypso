@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, find, isObject } from 'lodash';
+import { get, find, isEqual, isObject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,7 +26,7 @@ export function getProductEdits( state, productId, siteId = getSelectedSiteId( s
 	const bucket = ( isObject( productId ) ? 'creates' : 'updates' );
 	const array = get( edits, bucket, [] );
 
-	return find( array, ( p ) => productId === p.id );
+	return find( array, ( p ) => isEqual( productId, p.id ) );
 }
 
 /**
@@ -82,7 +82,7 @@ export function getProductListProducts( state, siteId = getSelectedSiteId( state
 	const products = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ], {} );
 	const productIds = get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'productIds' ], [] );
 	if ( productIds.length ) {
-		return productIds.map( id => find( products, ( p ) => id === p.id ) );
+		return productIds.map( id => find( products, ( p ) => isEqual( id, p.id ) ) );
 	}
 	return false;
 }
@@ -120,7 +120,7 @@ export function getProductSearchResults( state, siteId = getSelectedSiteId( stat
 	const products = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ], {} );
 	const productIds = get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'search', 'productIds' ], [] );
 	if ( productIds.length ) {
-		return productIds.map( id => find( products, ( p ) => id === p.id ) );
+		return productIds.map( id => find( products, ( p ) => isEqual( id, p.id ) ) );
 	}
 	return false;
 }
