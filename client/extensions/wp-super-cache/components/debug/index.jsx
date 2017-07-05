@@ -85,10 +85,7 @@ class DebugTab extends Component {
 									value={ wp_cache_debug_ip || '' } />
 								<FormSettingExplanation>
 									{ translate(
-										'(only log requests from this IP address. Your IP is %(ipAddress)s)',
-										{
-											args: { ipAddress: '1.2.3.4' }
-										}
+										'(only log requests from this IP address)',
 									) }
 								</FormSettingExplanation>
 							</FormFieldset>
