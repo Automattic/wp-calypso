@@ -64,10 +64,7 @@ export const receiveRestoreError = ( { dispatch }, { siteId, timestamp, restoreI
 
 	dispatch( createNotice(
 		'is-warning',
-		translate(
-			'There was a problem checking the status of your restore. ' +
-			'Try refreshing the page.'
-		),
+		translate( "Hmm, we can't update the status of your restore. Please refresh this page." ),
 	) );
 };
 
