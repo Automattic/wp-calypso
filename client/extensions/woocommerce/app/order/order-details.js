@@ -26,8 +26,11 @@ class OrderDetails extends Component {
 		} ),
 	}
 
-	state = {
-		status: this.props.order.status || false,
+	constructor( props ) {
+		super( props );
+		this.state = {
+			status: this.props.order.status || false,
+		};
 	}
 
 	updateStatus = ( event ) => {
@@ -39,6 +42,7 @@ class OrderDetails extends Component {
 	renderStatus = () => {
 		const { order, translate } = this.props;
 		const classes = `order__status is-${ order.status }`;
+		// TODO: create a helper function for status labels
 		const statuses = [ {
 			value: 'pending',
 			name: translate( 'Pending payment' ),
