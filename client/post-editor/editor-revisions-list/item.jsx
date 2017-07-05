@@ -11,16 +11,14 @@ import React, { PureComponent, PropTypes } from 'react';
 import PostTime from 'reader/post-time';
 
 class EditorRevisionsListItem extends PureComponent {
-	selectRevision = event => {
-		const revisionId = parseInt( event.currentTarget.dataset.revisionId, 10 );
-		this.props.selectRevision( revisionId );
+	selectRevision = () => {
+		this.props.selectRevision( this.props.revision.id );
 	}
 
 	render() {
 		return (
 			<button
 				className="editor-revisions-list__button"
-				data-revision-id={ this.props.revision.id }
 				onClick={ this.selectRevision }
 				type="button"
 			>
