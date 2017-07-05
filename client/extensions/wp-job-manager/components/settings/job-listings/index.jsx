@@ -24,6 +24,7 @@ import SectionHeader from 'components/section-header';
 class JobListings extends Component {
 	static propTypes = {
 		handleSubmit: PropTypes.func,
+		isDisabled: PropTypes.bool,
 		isSaving: PropTypes.bool,
 		onSubmit: PropTypes.func,
 		translate: PropTypes.func,
@@ -32,7 +33,13 @@ class JobListings extends Component {
 	save = section => data => this.props.onSubmit( data[ section ] );
 
 	render() {
-		const { handleSubmit, isSaving, perPage, translate } = this.props;
+		const {
+			handleSubmit,
+			isDisabled,
+			isSaving,
+			perPage,
+			translate
+		} = this.props;
 
 		return (
 			<div>
@@ -40,6 +47,7 @@ class JobListings extends Component {
 					<FormSection name="listings">
 						<SectionHeader label={ translate( 'Listings' ) }>
 							<FormButton compact
+								disabled={ isDisabled }
 								isSubmitting={ isSaving }
 								onClick={ handleSubmit( this.save( 'listings' ) ) } />
 						</SectionHeader>
@@ -53,6 +61,7 @@ class JobListings extends Component {
 										components: {
 											listings:
 												<ReduxFormTextInput
+													disabled={ isDisabled }
 													min="0"
 													name="perPage"
 													step="1"
@@ -64,6 +73,7 @@ class JobListings extends Component {
 
 							<FormFieldset>
 								<ReduxFormToggle
+									disabled={ isDisabled }
 									name="hideFilledPositions"
 									text={ translate( 'Hide filled positions' ) } />
 								<FormSettingExplanation isIndented>
@@ -71,6 +81,7 @@ class JobListings extends Component {
 								</FormSettingExplanation>
 
 								<ReduxFormToggle
+									disabled={ isDisabled }
 									name="hideExpired"
 									text={ translate( 'Hide expired listings in job archives/search' ) } />
 								<FormSettingExplanation isIndented>
@@ -78,6 +89,7 @@ class JobListings extends Component {
 								</FormSettingExplanation>
 
 								<ReduxFormToggle
+									disabled={ isDisabled }
 									name="hideExpiredContent"
 									text={ translate( 'Hide content in expired single job listings' ) } />
 								<FormSettingExplanation isIndented>
@@ -94,12 +106,14 @@ class JobListings extends Component {
 					<FormSection name="categories">
 						<SectionHeader label={ translate( 'Categories' ) }>
 							<FormButton compact
+								disabled={ isDisabled }
 								isSubmitting={ isSaving }
 								onClick={ handleSubmit( this.save( 'categories' ) ) } />
 						</SectionHeader>
 						<Card>
 							<FormFieldset>
 								<ReduxFormToggle
+									disabled={ isDisabled }
 									name="enableCategories"
 									text={ translate( 'Enable listing categories' ) } />
 								<FormSettingExplanation isIndented>
@@ -108,6 +122,7 @@ class JobListings extends Component {
 								</FormSettingExplanation>
 
 								<ReduxFormToggle
+									disabled={ isDisabled }
 									name="enableDefaultCategory"
 									text={ translate( 'Default to category multiselect' ) } />
 								<FormSettingExplanation isIndented>
@@ -126,6 +141,7 @@ class JobListings extends Component {
 								</FormSettingExplanation>
 								<FormLabel>
 									<ReduxFormRadio
+										disabled={ isDisabled }
 										name="categoryFilterType"
 										value="any" />
 									<span>
@@ -135,6 +151,7 @@ class JobListings extends Component {
 
 								<FormLabel>
 									<ReduxFormRadio
+										disabled={ isDisabled }
 										name="categoryFilterType"
 										value="all" />
 									<span>
@@ -150,12 +167,14 @@ class JobListings extends Component {
 					<FormSection name="types">
 						<SectionHeader label={ translate( 'Types' ) }>
 							<FormButton compact
+								disabled={ isDisabled }
 								isSubmitting={ isSaving }
 								onClick={ handleSubmit( this.save( 'types' ) ) } />
 						</SectionHeader>
 						<Card>
 							<FormFieldset>
 								<ReduxFormToggle
+									disabled={ isDisabled }
 									name="enableTypes"
 									text={ translate( 'Enable listing types' ) } />
 								<FormSettingExplanation isIndented>
@@ -164,6 +183,7 @@ class JobListings extends Component {
 								</FormSettingExplanation>
 
 								<ReduxFormToggle
+									disabled={ isDisabled }
 									name="multiJobType"
 									text={ translate( 'Allow multiple types for listings' ) } />
 								<FormSettingExplanation isIndented>
@@ -180,6 +200,7 @@ class JobListings extends Component {
 					<FormSection name="format">
 						<SectionHeader label={ translate( 'Date Format' ) }>
 							<FormButton compact
+								disabled={ isDisabled }
 								isSubmitting={ isSaving }
 								onClick={ handleSubmit( this.save( 'format' ) ) } />
 						</SectionHeader>
@@ -190,6 +211,7 @@ class JobListings extends Component {
 								</FormSettingExplanation>
 								<FormLabel>
 									<ReduxFormRadio
+										disabled={ isDisabled }
 										name="dateFormat"
 										value="relative" />
 									<span>
@@ -199,6 +221,7 @@ class JobListings extends Component {
 
 								<FormLabel>
 									<ReduxFormRadio
+										disabled={ isDisabled }
 										name="dateFormat"
 										value="default" />
 									<span>
@@ -214,12 +237,15 @@ class JobListings extends Component {
 					<FormSection name="apiKey">
 						<SectionHeader label={ translate( 'Google Maps API Key' ) }>
 							<FormButton compact
+								disabled={ isDisabled }
 								isSubmitting={ isSaving }
 								onClick={ handleSubmit( this.save( 'apiKey' ) ) } />
 						</SectionHeader>
 						<Card>
 							<FormFieldset>
-								<ReduxFormTextInput name="googleMapsApiKey" />
+								<ReduxFormTextInput
+									disabled={ isDisabled }
+									name="googleMapsApiKey" />
 								<FormSettingExplanation>
 									{ translate(
 										'Google requires an API key to retrieve location information for job listings. ' +
