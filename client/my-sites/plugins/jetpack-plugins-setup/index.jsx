@@ -32,6 +32,7 @@ import utils from 'lib/site/utils';
 // Redux actions & selectors
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isRequestingSites, getRawSite } from 'state/sites/selectors';
+import { hasInitializedSites } from 'state/selectors';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { requestSites } from 'state/sites/actions';
@@ -178,7 +179,9 @@ const PlansSetup = React.createClass( {
 	},
 
 	renderNoJetpackSiteSelected() {
-		this.trackConfigFinished( 'calypso_plans_autoconfig_error_wordpresscom' );
+		this.trackConfigFinished( 'calypso_plans_autoconfig_error_wordpresscom', {
+			referrer: document.referrer
+		} );
 		return (
 			<JetpackManageErrorPage
 				siteId={ this.props.siteId }
@@ -473,10 +476,13 @@ const PlansSetup = React.createClass( {
 	},
 
 	render() {
-		const { translate } = this.props;
+		const {
+			sitesInitialized,
+			translate
+		} = this.props;
 		const site = this.props.selectedSite;
 
-		if ( ! site && this.props.isRequestingSites ) {
+		if ( ! site && ( this.props.isRequestingSites || ! sitesInitialized ) ) {
 			return this.renderPlaceholder();
 		}
 
@@ -560,6 +566,7 @@ export default connect(
 			nextPlugin: getNextPlugin( state, siteId, whitelist ),
 			selectedSite: selectedSite,
 			isRequestingSites: isRequestingSites( state ),
+			sitesInitialized: hasInitializedSites( state ),
 			siteId
 		};
 	},
