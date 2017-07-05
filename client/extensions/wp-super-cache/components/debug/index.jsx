@@ -8,6 +8,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -40,6 +41,7 @@ class DebugTab extends Component {
 			},
 			handleAutosavingToggle,
 			handleChange,
+			handleSubmitForm,
 			isRequesting,
 			isSaving,
 			translate,
@@ -47,8 +49,17 @@ class DebugTab extends Component {
 
 		return (
 			<div>
-				<SectionHeader
-					label={ translate( 'Debug' ) }>
+				<SectionHeader label={ translate( 'Debug' ) }>
+					<Button
+						compact
+						primary
+						disabled={ isRequesting || isSaving }
+						onClick={ handleSubmitForm }>
+						{ isSaving
+							? translate( 'Saving…' )
+							: translate( 'Save Settings' )
+						}
+					</Button>
 				</SectionHeader>
 				<Card>
 					<form>
@@ -110,8 +121,18 @@ class DebugTab extends Component {
 						</div>
 					</form>
 				</Card>
-				<SectionHeader
-					label={ translate( 'Advanced' ) }>
+
+				<SectionHeader label={ translate( 'Advanced' ) }>
+					<Button
+						compact
+						primary
+						disabled={ isRequesting || isSaving }
+						onClick={ handleSubmitForm }>
+						{ isSaving
+							? translate( 'Saving…' )
+							: translate( 'Save Settings' )
+						}
+					</Button>
 				</SectionHeader>
 				<Card>
 					<p>{ translate( 'In very rare cases two problems may arise on some blogs:' ) }</p>
