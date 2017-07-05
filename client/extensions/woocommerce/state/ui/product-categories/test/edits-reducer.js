@@ -10,6 +10,7 @@ import reducer from '../edits-reducer';
 
 import {
 	editProductCategory,
+	clearProductCategoryEdits,
 } from '../actions';
 import {
 	createProductCategory,
@@ -163,6 +164,23 @@ describe( 'edits-reducer', () => {
 
 		expect( edits1.creates[ 0 ] ).to.eql( category1 );
 		expect( edits2.creates ).to.not.exist;
+	} );
+
+	it( 'should clear all product category edit data', () => {
+		const edits1 = {
+			creates: [ { id: { placeholder: 'productCategory_1' }, name: 'New Category' } ],
+			updates: [ { id: 525, name: 'Updated name' } ],
+			deletes: [ 252 ],
+		};
+
+		const action = clearProductCategoryEdits( siteId );
+
+		const edits2 = reducer( edits1, action );
+
+		expect( edits1.creates ).to.exist;
+		expect( edits1.updates ).to.exist;
+		expect( edits1.deletes ).to.exist;
+		expect( edits2 ).to.equal( null );
 	} );
 } );
 
