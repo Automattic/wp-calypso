@@ -10,48 +10,11 @@ import {
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE,
-	SIMPLE_PAYMENTS_PRODUCTS_LIST_REQUESTING,
-	SIMPLE_PAYMENTS_PRODUCTS_LIST_SUCCESS,
-	SIMPLE_PAYMENTS_PRODUCTS_LIST_FAIL,
 } from 'state/action-types';
 
-import { items, requesting } from '../reducer';
+import { items } from '../reducer';
 
 describe( 'reducer', () => {
-	describe( 'requesting()', () => {
-		it( 'defaults to an empty object', () => {
-			const state = requesting( undefined, {} );
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'sets the site to true when requesting', () => {
-			const action = {
-				type: SIMPLE_PAYMENTS_PRODUCTS_LIST_REQUESTING,
-				siteId: 12345,
-			};
-			const state = requesting( {}, action );
-			expect( state ).to.eql( { 12345: true } );
-		} );
-
-		it( 'sets the site to false when successful', () => {
-			const action = {
-				type: SIMPLE_PAYMENTS_PRODUCTS_LIST_SUCCESS,
-				siteId: 12345,
-			};
-			const state = requesting( {}, action );
-			expect( state ).to.eql( { 12345: false } );
-		} );
-
-		it( 'sets the site to false when a failure occurs', () => {
-			const action = {
-				type: SIMPLE_PAYMENTS_PRODUCTS_LIST_FAIL,
-				siteId: 12345,
-			};
-			const state = requesting( {}, action );
-			expect( state ).to.eql( { 12345: false } );
-		} );
-	} );
-
 	describe( 'items()', () => {
 		it( 'defaults to an empty object', () => {
 			const state = items( undefined, {} );
