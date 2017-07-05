@@ -604,7 +604,7 @@ export function isThemePremium( state, themeId ) {
 export function isPremiumThemeAvailable( state, themeId, siteId ) {
 	return isThemePurchased( state, themeId, siteId ) || (
 			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) &&
-			( ! isJetpackSite( state, siteId ) || config.isEnabled( 'jetpack/pijp' ) )
+			! isJetpackSite( state, siteId )
 		);
 }
 
@@ -731,7 +731,7 @@ export function getPremiumThemePrice( state, themeId, siteId ) {
 		return '';
 	}
 
-	if ( isJetpackSite( state, siteId ) && config.isEnabled( 'jetpack/pijp' ) ) {
+	if ( isJetpackSite( state, siteId ) ) {
 		return i18n.translate( 'Upgrade', {
 			comment: 'Used to indicate a premium theme is available to the user once they upgrade their plan'
 		} );

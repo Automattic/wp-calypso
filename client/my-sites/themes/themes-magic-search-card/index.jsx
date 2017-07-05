@@ -296,7 +296,7 @@ class ThemesMagicSearchCard extends React.Component {
 							</div>
 						}
 						{
-							( isPremiumThemesEnabled && ( config.isEnabled( 'jetpack/pijp' ) || ! isJetpack ) ) &&
+							( isPremiumThemesEnabled && ! isJetpack ) &&
 								<SegmentedControl
 									initialSelected={ this.props.tier }
 									options={ tiers }
