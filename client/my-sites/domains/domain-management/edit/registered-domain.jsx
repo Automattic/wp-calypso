@@ -205,6 +205,9 @@ const RegisteredDomain = React.createClass( {
 			<div>
 				{ this.domainWarnings() }
 				<div className="domain-details-card">
+					{ domain.isPendingIcannVerification && domain.currentUserCanManage &&
+					<IcannVerificationCard selectedDomainName={ domain.name } selectedSite={ this.props.selectedSite } /> }
+
 					<Header { ...this.props } />
 
 					<Card>
@@ -227,7 +230,6 @@ const RegisteredDomain = React.createClass( {
 							onClick={ this.handlePaymentSettingsClick } />
 					</Card>
 
-					{ domain.isPendingIcannVerification && domain.currentUserCanManage && <IcannVerificationCard selectedDomainName={ domain.name } selectedSite={ this.props.selectedSite } /> }
 				</div>
 
 				{ this.getVerticalNav() }

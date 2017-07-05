@@ -41,7 +41,7 @@ let IcannVerificationCard = React.createClass( {
 
 	render() {
 		return (
-			<div className="icann-verification is-compact card">
+			<div className="icann-verification is-warning card">
 				<div className="icann-verification__explanation">
 					{ this.getExplanation() }
 				</div>

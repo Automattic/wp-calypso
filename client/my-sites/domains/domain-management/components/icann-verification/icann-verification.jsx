@@ -36,7 +36,7 @@ function createContainer( DecoratedComponent ) {
 					notices.error( error.message );
 				} else {
 					notices.info( this.translate(
-						'Verification email sent to [registrant contact email].'
+						'Verification sent to [registrant contact email]. Check your email.'
 					) );
 				}
 
