@@ -35,6 +35,7 @@ export const itemsSchema = {
 					pointsToWpcom: { type: 'boolean' },
 					registrar: { type: 'string' },
 					registrationDate: { type: 'string' },
+					subscriptionId: { type: [ 'null', 'string' ] },
 					type: { type: 'string' }
 				}
 			}
