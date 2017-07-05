@@ -9,7 +9,7 @@
 }
 @include breakpoint( ">660px" ) {
  	&.store-stats {
-		.store-stats-navigation__container {
+		.store-stats-navigation {
 			.section-nav {
 				margin-top: 0;
 			}

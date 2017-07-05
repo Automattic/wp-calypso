@@ -22,7 +22,7 @@ const StoreStatsNavigation = props => {
 		year: translate( 'Years' ),
 	};
 	return (
-		<div className="store-stats-navigation__container">
+		<div className="store-stats-navigation">
 			<SectionNav selectedText={ units[ unit ] }>
 				<NavTabs label={ translate( 'Stats' ) }>
 					{ Object.keys( units ).map( key => (
