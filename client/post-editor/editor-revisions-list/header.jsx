@@ -25,7 +25,7 @@ const EditorRevisionsListHeader = ( { loadRevision, selectedRevisionId, translat
 EditorRevisionsListHeader.propTypes = {
 	loadRevision: PropTypes.func,
 	selectedRevisionId: PropTypes.number,
-	translate: PropTypes.func,
+	translate: PropTypes.func.isRequired,
 };
 
 export default localize( EditorRevisionsListHeader );

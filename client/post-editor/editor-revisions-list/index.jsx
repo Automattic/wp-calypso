@@ -80,12 +80,12 @@ class EditorRevisionsList extends PureComponent {
 }
 
 EditorRevisionsList.propTypes = {
-	loadRevision: PropTypes.func,
+	loadRevision: PropTypes.func.isRequired,
 	postId: PropTypes.number,
-	revisions: PropTypes.array,
+	revisions: PropTypes.array.isRequired,
 	selectedRevision: PropTypes.object,
 	selectedRevisionId: PropTypes.number,
-	selectRevision: PropTypes.func,
+	selectRevision: PropTypes.func.isRequired,
 	siteId: PropTypes.number,
 };
 

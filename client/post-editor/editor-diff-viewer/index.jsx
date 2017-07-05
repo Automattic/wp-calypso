@@ -35,7 +35,7 @@ const EditorDiffViewer = ( { contentChanges, revision } ) => (
 );
 
 EditorDiffViewer.propTypes = {
-	contentChanges: PropTypes.array,
+	contentChanges: PropTypes.array.isRequired,
 	postId: PropTypes.number,
 	revision: PropTypes.object,
 	selectedRevisionId: PropTypes.number,

@@ -75,9 +75,9 @@ class EditorRevisionsListItem extends PureComponent {
 }
 
 EditorRevisionsListItem.propTypes = {
-	revision: PropTypes.object,
-	selectRevision: PropTypes.func,
-	translate: PropTypes.func,
+	revision: PropTypes.object.isRequired,
+	selectRevision: PropTypes.func.isRequired,
+	translate: PropTypes.func.isRequired,
 };
 
 export default localize( EditorRevisionsListItem );
