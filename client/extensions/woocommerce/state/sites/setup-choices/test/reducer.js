@@ -37,6 +37,7 @@ describe( 'reducers', () => {
 				opted_out_of_shipping_setup: true,
 				opted_out_of_taxes_setup: true,
 				tried_customizer_during_initial_setup: true,
+				created_default_shipping_zone: true,
 				finished_initial_install_of_required_plugins: true,
 				set_store_address_during_initial_setup: true,
 			};
@@ -61,6 +62,7 @@ describe( 'reducers', () => {
 				opted_out_of_shipping_setup: true,
 				opted_out_of_taxes_setup: true,
 				tried_customizer_during_initial_setup: true,
+				created_default_shipping_zone: true,
 				finished_initial_install_of_required_plugins: true,
 				set_store_address_during_initial_setup: true,
 			};
