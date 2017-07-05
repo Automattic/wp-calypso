@@ -333,10 +333,6 @@
 	&.is-disabled {
 		color: $gray-text-min;
 
-		span {
-			text-decoration: line-through;
-		}
-
 		img {
 			filter: grayscale(1);
 			opacity: .5;
@@ -368,9 +364,4 @@
 	&.is-country {
 		margin-left: 24px;
 	}
-}
-
-.shipping-zone__location-dialog-required {
-	font-weight: normal;
-	color: $alert-red;
 }

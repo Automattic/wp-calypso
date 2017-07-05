@@ -133,7 +133,7 @@ const ShippingZoneLocationDialogSettings = ( {
 
 			return (
 				<FormFieldSet>
-					<FormLabel>{ translate( 'Post codes' ) }<span className="shipping-zone__location-dialog-required">*</span></FormLabel>
+					<FormLabel required>{ translate( 'Post codes' ) }</FormLabel>
 					<FormTextInput
 						value={ postcode }
 						onChange={ onPostcodeChange } />
@@ -148,7 +148,7 @@ const ShippingZoneLocationDialogSettings = ( {
 		if ( filteredByState ) {
 			return (
 				<FormFieldSet>
-					<FormLabel>{ translate( 'States' ) }<span className="shipping-zone__location-dialog-required">*</span></FormLabel>
+					<FormLabel required>{ translate( 'States' ) }</FormLabel>
 					<FilteredList
 						items={ states }
 						filterBy="name"
