@@ -46,14 +46,14 @@ export const tagListing = context => {
 			postsStore={ tagStore }
 			encodedTagSlug={ encodedTag }
 			decodedTagSlug={ tagSlug }
-			trackScrollPage={ trackScrollPage.bind(
+			trackScrollPage={ trackScrollPage.bind( // eslint-disable-line
 				null,
 				basePath,
 				fullAnalyticsPageTitle,
 				analyticsPageTitle,
 				mcKey,
 			) }
-			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) } // eslint-disable-line
 			showBack={ !! context.lastRoute }
 			showPrimaryFollowButtonOnCards={ true }
 			followSource={ TAG_PAGE }
