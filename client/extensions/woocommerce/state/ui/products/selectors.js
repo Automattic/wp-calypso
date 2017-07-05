@@ -47,6 +47,20 @@ export function getProductWithLocalEdits( state, productId, siteId = getSelected
 }
 
 /**
+ * Gets the id of the currently editing product.
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Number|Object} Id of the currently editing product.
+ */
+export function getCurrentlyEditingId( state, siteId = getSelectedSiteId( state ) ) {
+	const edits = getAllProductEdits( state, siteId ) || {};
+	const { currentlyEditingId } = edits;
+
+	return currentlyEditingId;
+}
+
+/**
  * Gets the product being currently edited in the UI.
  *
  * @param {Object} state Global state tree
@@ -54,8 +68,7 @@ export function getProductWithLocalEdits( state, productId, siteId = getSelected
  * @return {Object} Product object that is merged between fetched data and edits
  */
 export function getCurrentlyEditingProduct( state, siteId = getSelectedSiteId( state ) ) {
-	const edits = getAllProductEdits( state, siteId ) || {};
-	const { currentlyEditingId } = edits;
+	const currentlyEditingId = getCurrentlyEditingId( state, siteId );
 
 	return getProductWithLocalEdits( state, currentlyEditingId, siteId );
 }
