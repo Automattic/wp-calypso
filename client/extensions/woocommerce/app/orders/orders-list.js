@@ -23,7 +23,6 @@ import {
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getOrdersCurrentPage } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getSiteAdminUrl } from 'state/sites/selectors';
 import humanDate from 'lib/human-date';
 import { setCurrentPage } from 'woocommerce/state/ui/orders/actions';
 import NavItem from 'components/section-nav/item';
@@ -146,14 +145,13 @@ class Orders extends Component {
 	}
 
 	render() {
-		const { createOrderLink, orders, translate } = this.props;
+		const { orders, translate } = this.props;
 		if ( ! orders.length ) {
 			return (
 				<div className="orders__container">
 					<EmptyContent
 						title={ translate( 'Your orders will appear here as they come in.' ) }
-						action={ translate( 'Manually add an order' ) }
-						actionURL={ createOrderLink } />
+					/>
 				</div>
 			);
 		}
@@ -188,7 +186,6 @@ export default connect(
 	state => {
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
-		const createOrderLink = getSiteAdminUrl( state, siteId, 'post-new.php?post_type=shop_order' );
 		const currentPage = getOrdersCurrentPage( state, siteId );
 		const orders = getOrders( state, currentPage, siteId );
 		const ordersLoading = areOrdersLoading( state, currentPage, siteId );
@@ -196,7 +193,6 @@ export default connect(
 		const totalPages = getTotalOrdersPages( state, siteId );
 
 		return {
-			createOrderLink,
 			currentPage,
 			orders,
 			ordersLoading,
