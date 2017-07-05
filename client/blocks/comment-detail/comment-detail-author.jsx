@@ -9,6 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import Gravatar from 'components/gravatar';
 import { urlToDomainAndPath } from 'lib/url';
 
 export class CommentDetailAuthor extends Component {
@@ -38,13 +39,17 @@ export class CommentDetailAuthor extends Component {
 		this.setState( { isExpanded: ! this.state.isExpanded } );
 	};
 
+	getAuthorObject = () => ( {
+		avatar_URL: this.props.authorAvatarUrl,
+		display_name: this.props.authorDisplayName,
+	} );
+
 	authorMoreInfo() {
 		if ( ! this.props.showAuthorInfo ) {
 			return null;
 		}
 
 		const {
-			authorAvatarUrl,
 			authorDisplayName,
 			authorEmail,
 			authorIp,
@@ -58,7 +63,7 @@ export class CommentDetailAuthor extends Component {
 			<div className="comment-detail__author-more-info">
 				<div className="comment-detail__author-more-actions">
 					<div className="comment-detail__author-more-element comment-detail__author-more-element-author">
-						<img className="comment-detail__author-avatar" src={ authorAvatarUrl } />
+						<Gravatar user={ this.getAuthorObject() } />
 						<div className="comment-detail__author-info">
 							<div className="comment-detail__author-name">
 								<strong>
@@ -110,7 +115,6 @@ export class CommentDetailAuthor extends Component {
 
 	render() {
 		const {
-			authorAvatarUrl,
 			authorDisplayName,
 			authorUrl,
 			commentDate,
@@ -128,7 +132,7 @@ export class CommentDetailAuthor extends Component {
 		return (
 			<div className={ classes }>
 				<div className="comment-detail__author-preview">
-					<img className="comment-detail__author-avatar" src={ authorAvatarUrl } />
+					<Gravatar user={ this.getAuthorObject() } />
 					<div className="comment-detail__author-info">
 						<div className="comment-detail__author-info-element comment-detail__author-name">
 							<strong>

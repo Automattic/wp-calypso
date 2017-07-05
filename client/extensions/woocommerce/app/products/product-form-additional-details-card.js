@@ -173,7 +173,7 @@ class ProductFormAdditionalDetailsCard extends Component {
 			>
 				<p>
 					{ translate( 'Include additional details about your products, like \‘fabric\’ or \‘type\’ ' +
-						'for apparel. This will help customers find the right products by' +
+						'for apparel. This will help customers find the right products by ' +
 						'filtering for their preferred options, like a cotton shirt in a women\’s cut.' ) }
 				</p>
 

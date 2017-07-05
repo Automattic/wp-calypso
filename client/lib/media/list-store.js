@@ -86,14 +86,18 @@ MediaListStore.ensureActiveQueryForSiteId = function( siteId ) {
 	}
 };
 
+function clearSite( siteId ) {
+	delete MediaListStore._media[ siteId ];
+	delete MediaListStore._activeQueries[ siteId ].nextPageHandle;
+	MediaListStore._activeQueries[ siteId ].isFetchingNextPage = false;
+}
+
 function updateActiveQuery( siteId, query ) {
 	query = omit( query, 'page_handle' );
 	MediaListStore.ensureActiveQueryForSiteId( siteId );
 
 	if ( ! isQuerySame( siteId, query ) ) {
-		delete MediaListStore._media[ siteId ];
-		delete MediaListStore._activeQueries[ siteId ].nextPageHandle;
-		MediaListStore._activeQueries[ siteId ].isFetchingNextPage = false;
+		clearSite( siteId );
 	}
 
 	MediaListStore._activeQueries[ siteId ].query = query;
@@ -188,11 +192,16 @@ MediaListStore.isFetchingNextPage = function( siteId ) {
 };
 
 MediaListStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	Dispatcher.waitFor( [ MediaStore.dispatchToken ] );
 
 	switch ( action.type ) {
+		case 'CHANGE_MEDIA_SOURCE':
+			clearSite( action.siteId );
+			MediaListStore.emit( 'change' );
+			break;
+
 		case 'SET_MEDIA_QUERY':
 			if ( action.siteId && action.query ) {
 				updateActiveQuery( action.siteId, action.query );

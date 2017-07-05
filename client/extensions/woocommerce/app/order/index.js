@@ -49,7 +49,7 @@ class Order extends Component {
 				<OrderHeader siteSlug={ site.slug } breadcrumbs={ breadcrumbs } />
 
 				<div className="order__container">
-					<OrderDetails order={ order } siteSlug={ site.slug } />
+					<OrderDetails order={ order } site={ site } />
 					<OrderActivityLog order={ order } />
 					<OrderCustomerInfo order={ order } />
 				</div>

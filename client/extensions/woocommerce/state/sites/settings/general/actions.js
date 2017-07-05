@@ -9,10 +9,10 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../../request';
 import { setError } from '../../status/wc-api/actions';
 import {
+	WOOCOMMERCE_TAXES_ENABLED_UPDATE,
+	WOOCOMMERCE_TAXES_ENABLED_UPDATE_SUCCESS,
 	WOOCOMMERCE_CURRENCY_UPDATE,
 	WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS,
-	WOOCOMMERCE_SETTINGS_GENERAL_BATCH_REQUEST,
-	WOOCOMMERCE_SETTINGS_GENERAL_BATCH_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
@@ -85,66 +85,37 @@ export const saveCurrency = (
 		} );
 };
 
-const updateStoreAddressSuccess = ( siteId, data ) => {
+// TODO - we probably only need on individual setter (not separate ones for currency, taxes enabled, etc)
+
+const updateTaxesEnabledSettingSuccess = ( siteId, data ) => {
 	return {
-		type: WOOCOMMERCE_SETTINGS_GENERAL_BATCH_REQUEST_SUCCESS,
+		type: WOOCOMMERCE_TAXES_ENABLED_UPDATE_SUCCESS,
 		siteId,
 		data,
 	};
 };
 
-export const updateStoreAddress = (
+export const updateTaxesEnabledSetting = (
 	siteId,
-	street,
-	street2,
-	city,
-	stateOrProvince,
-	postcode,
-	country,
-	successAction,
-	failureAction
+	taxesEnabled,
+	successAction = null,
+	failureAction = null
 ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
 	}
 	const updateAction = {
-		type: WOOCOMMERCE_SETTINGS_GENERAL_BATCH_REQUEST,
+		type: WOOCOMMERCE_TAXES_ENABLED_UPDATE,
 		siteId,
 	};
 
 	dispatch( updateAction );
 
-	// If a state is given (e.g. CT), combine it with the country (e.g. US)
-	// to create the appropriate value for woocommerce_default_country (e.g. US:CT)
-	const countryState = stateOrProvince ? country + ':' + stateOrProvince : country;
-
-	const update = [
-		{
-			id: 'woocommerce_store_address',
-			value: street,
-		},
-		{
-			id: 'woocommerce_store_address_2',
-			value: street2,
-		},
-		{
-			id: 'woocommerce_store_city',
-			value: city,
-		},
-		{
-			id: 'woocommerce_default_country',
-			value: countryState,
-		},
-		{
-			id: 'woocommerce_store_postcode',
-			value: postcode,
-		},
-	];
-
-	return request( siteId ).post( 'settings/general/batch', { update } )
+	const value = taxesEnabled ? 'yes' : 'no';
+	return request( siteId ).post( 'settings/general/woocommerce_calc_taxes', { value } )
 		.then( ( data ) => {
-			dispatch( updateStoreAddressSuccess( siteId, data ) );
+			dispatch( updateTaxesEnabledSettingSuccess( siteId, data ) );
 			if ( successAction ) {
 				dispatch( successAction( data ) );
 			}
@@ -156,3 +127,4 @@ export const updateStoreAddress = (
 			}
 		} );
 };
+

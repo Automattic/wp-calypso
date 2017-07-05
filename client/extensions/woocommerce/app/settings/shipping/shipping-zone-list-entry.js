@@ -16,7 +16,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 
-const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, site } ) => {
+const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, isValid, site } ) => {
 	if ( ! loaded ) {
 		return (
 			<div className="shipping__zones-row is-placeholder">
@@ -57,6 +57,12 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, si
 
 	const icon = 0 === id ? 'globe' : 'location';
 
+	const onEditClick = ( event ) => {
+		if ( ! isValid ) {
+			event.preventDefault();
+		}
+	};
+
 	return (
 		<div className="shipping__zones-row">
 			<div className="shipping__zones-row-icon">
@@ -70,7 +76,13 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, si
 				{ Object.keys( methods ).map( renderMethod ) }
 			</div>
 			<div className="shipping__zones-row-actions">
-				<Button compact href={ getLink( `/store/settings/shipping/:site/zone/${ id }`, site ) }>{ translate( 'Edit' ) }</Button>
+				<Button
+					compact
+					href={ getLink( `/store/settings/shipping/:site/zone/${ id }`, site ) }
+					disabled={ ! isValid }
+					onClick={ onEditClick }>
+					{ translate( 'Edit' ) }
+				</Button>
 			</div>
 		</div>
 	);
@@ -80,6 +92,7 @@ ShippingZoneEntry.propTypes = {
 	id: PropTypes.oneOfType( [ PropTypes.number, PropTypes.object ] ),
 	name: PropTypes.string,
 	loaded: PropTypes.bool.isRequired,
+	isValid: PropTypes.bool.isRequired,
 };
 
 export default connect(

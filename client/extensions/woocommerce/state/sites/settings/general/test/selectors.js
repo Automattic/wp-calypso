@@ -15,7 +15,15 @@ import { LOADING } from 'woocommerce/state/constants';
 
 const preInitializedState = {
 	extensions: {
-		woocommerce: {},
+		woocommerce: {
+			sites: {
+				123: {
+					settings: {
+						general: null,
+					}
+				},
+			},
+		},
 	},
 };
 const loadingState = {

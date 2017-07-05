@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import { find, isNumber } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -112,15 +112,13 @@ class ProductFormVariationsTable extends React.Component {
 		);
 	}
 
-	renderVariationRow( variation ) {
+	renderVariationRow = ( variation, index ) => {
 		const { siteId, product, variations, editProductVariation } = this.props;
-		const id = isNumber( variation.id ) && variation.id || 'index_' + variation.id.index;
 		const manageStock = ( find( variations, ( v ) => v.manage_stock ) ) ? true : false;
-
 		return (
 			<ProductFormVariationsRow
 				siteId={ siteId }
-				key={ id }
+				key={ index }
 				product={ product }
 				variation={ variation }
 				manageStock={ manageStock }
@@ -203,7 +201,7 @@ class ProductFormVariationsTable extends React.Component {
 						</thead>
 						<tbody>
 							{ this.renderBulkRow() }
-							{ variations.map( ( v ) => this.renderVariationRow( v ) ) }
+							{ variations.map( this.renderVariationRow ) }
 						</tbody>
 					</table>
 					{ this.renderModal() }

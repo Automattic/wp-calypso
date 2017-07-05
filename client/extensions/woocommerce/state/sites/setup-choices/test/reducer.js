@@ -33,6 +33,7 @@ describe( 'reducers', () => {
 			const siteId = 123;
 			const setupChoices = {
 				finished_initial_setup: true,
+				finished_page_setup: true,
 				opted_out_of_shipping_setup: true,
 				opted_out_of_taxes_setup: true,
 				tried_customizer_during_initial_setup: true,
@@ -56,6 +57,7 @@ describe( 'reducers', () => {
 			const siteId = 123;
 			const setupChoices = {
 				finished_initial_setup: true,
+				finished_page_setup: true,
 				opted_out_of_shipping_setup: true,
 				opted_out_of_taxes_setup: true,
 				tried_customizer_during_initial_setup: true,

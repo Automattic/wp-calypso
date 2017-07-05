@@ -11,7 +11,6 @@ import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
 import Button from 'components/button';
 import { localize } from 'i18n-calypso';
-import config from 'config';
 
 export const getPublishButtonStatus = ( site, post, savedPost ) => {
 	if (
@@ -54,7 +53,8 @@ export class EditorPublishButton extends Component {
 		isSaveBlocked: PropTypes.bool,
 		hasContent: PropTypes.bool,
 		needsVerification: PropTypes.bool,
-		busy: PropTypes.bool
+		busy: PropTypes.bool,
+		isConfirmationSidebarEnabled: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -88,13 +88,13 @@ export class EditorPublishButton extends Component {
 			case 'update':
 				return this.props.translate( 'Update' );
 			case 'schedule':
-				if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+				if ( this.props.isConfirmationSidebarEnabled ) {
 					return this.props.translate( 'Schedule…',
 						{ comment: 'Button label on the editor sidebar - a confirmation step will follow' } );
 				}
 				return this.props.translate( 'Schedule' );
 			case 'publish':
-				if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+				if ( this.props.isConfirmationSidebarEnabled ) {
 					return this.props.translate( 'Publish…',
 						{ context: 'Button label on the editor sidebar - a confirmation step will follow' } );
 				}

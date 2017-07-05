@@ -1,92 +1,104 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
+import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormTextInput from 'components/forms/form-text-input';
-import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
+import { decodeEntities } from 'lib/formatting';
 import { changeShippingZoneName } from 'woocommerce/state/ui/shipping/zones/actions';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 
-class ShippingZoneName extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			editing: false,
-		};
+export const getZoneName = ( zone, locations, translate, returnEmpty = false ) => {
+	if ( zone && zone.name ) {
+		return zone.name;
 	}
 
-	render() {
-		const { loaded, zone, actions, onChange } = this.props;
-		const { editing } = this.state;
+	if ( returnEmpty ) {
+		return '';
+	}
 
-		const startEditing = () => ( this.setState( { editing: true } ) );
-		const stopEditing = () => ( this.setState( { editing: false } ) );
-		const onNameChange = ( event ) => {
-			onChange();
-			actions.changeShippingZoneName( event.target.value );
-		};
+	if ( ! locations || ! locations.length ) {
+		return translate( 'New shipping zone' );
+	}
 
-		const renderContent = () => {
-			if ( ! loaded ) {
-				return (
-					<div className="shipping-zone__name is-placeholder">
-						<span />
-						<Button borderless>
-							<Gridicon icon="pencil" size={ 24 } />
-						</Button>
-					</div>
-				);
+	const locationNames = locations.map( ( { name, postcodeFilter } ) => (
+		postcodeFilter ? `${ name } (${ postcodeFilter })` : decodeEntities( name )
+	) );
+
+	if ( locationNames.length > 10 ) {
+		const remaining = locationNames.length - 10;
+		const listed = locationNames.slice( 0, 10 );
+		return ( translate(
+			'%(locationList)s and %(count)s other region',
+			'%(locationList)s and %(count)s other regions',
+			{
+				count: remaining,
+				args: {
+					locationList: listed.join( ', ' ),
+					count: remaining,
+				}
 			}
+		) );
+	}
 
-			if ( editing ) {
-				return (
-					<div className="shipping-zone__name">
-						<FormTextInput value={ zone.name } onChange={ onNameChange } />
-						<Button borderless onClick={ stopEditing }>
-							<Gridicon icon="checkmark" size={ 24 } />
-						</Button>
-					</div>
-				);
-			}
+	return locationNames.join( ', ' );
+};
 
+const ShippingZoneName = ( { loaded, zone, locations, actions, translate } ) => {
+	const onNameChange = ( event ) => {
+		actions.changeShippingZoneName( event.target.value );
+	};
+
+	const renderContent = () => {
+		if ( ! loaded ) {
 			return (
-				<div className="shipping-zone__name">
-					<span>{ zone.name }</span>
-					<Button borderless onClick={ startEditing }>
-						<Gridicon icon="pencil" size={ 24 } />
-					</Button>
+				<div className="shipping-zone__name is-placeholder">
+					<span />
 				</div>
 			);
-		};
+		}
+
+		const zoneName = getZoneName( zone, locations, translate, true );
 
 		return (
+			<div className="shipping-zone__name">
+				<FormTextInput
+					value={ zoneName }
+					onChange={ onNameChange }
+					placeholder={ getZoneName( zone, locations, translate ) } />
+			</div>
+		);
+	};
+
+	return (
+		<div>
+			<ExtendedHeader
+				label={ translate( 'Zone name' ) }
+				description={ translate( 'Give the zone a name of your choosing, or just use the one we created for you.' +
+					' This is not visible to customers.' ) } />
 			<Card className="shipping-zone__name-container">
 				{ renderContent() }
 			</Card>
-		);
-	}
-}
+		</div>
+	);
+};
 
 ShippingZoneName.PropTypes = {
 	siteId: PropTypes.number,
 	loaded: PropTypes.bool.isRequired,
-	onChange: PropTypes.func.isRequired,
+	zone: PropTypes.object,
+	locations: PropTypes.array,
 };
 
 export default connect(
-	( state ) => ( {
-		zone: getCurrentlyEditingShippingZone( state ),
-	} ),
+	null,
 	( dispatch, ownProps ) => ( {
 		actions: bindActionCreatorsWithSiteId( {
 			changeShippingZoneName,

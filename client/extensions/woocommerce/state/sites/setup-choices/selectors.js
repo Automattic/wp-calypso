@@ -108,6 +108,17 @@ export function getFinishedInstallOfRequiredPlugins( state, siteId = getSelected
 }
 
 /**
+ * Gets whether or not store pages were created during setup for this site
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether or not all store pages were created during setup for this site
+ */
+export function getFinishedPageSetup( state, siteId = getSelectedSiteId( state ) ) {
+	return isChoiceTrue( state, siteId, 'finished_page_setup' );
+}
+
+/**
  * Gets whether the merchant completed setting the store address during setup
  *
  * @param {Object} state Global state tree

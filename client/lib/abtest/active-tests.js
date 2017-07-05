@@ -84,12 +84,13 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
-	signupProgressIndicator: {
-		datestamp: '20170612',
+	postPublishPreview: {
+		datestamp: '20170627',
+		allowExistingUsers: true,
 		variations: {
-			original: 50,
-			wizardbar: 50,
+			showPostPublishPreview: 50,
+			noShowPostPublishPreview: 50,
 		},
-		defaultVariation: 'original',
+		defaultVariation: 'noShowPostPublishPreview',
 	},
 };

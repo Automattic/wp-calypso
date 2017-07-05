@@ -305,6 +305,22 @@ Undocumented.prototype.getJetpackConnectionStatus = function( siteId, fn ) {
 	}, fn );
 };
 
+/*
+ * Retrieve current user's connection data for a Jetpack site.
+ *
+ * @param {int}      [siteId]
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.getJetpackUserConnectionData = function( siteId, fn ) {
+	return this.wpcom.req.get( {
+		path: '/jetpack-blogs/' + siteId + '/rest-api/',
+		body: {
+			path: '/jetpack/v4/connection/data/'
+		}
+	}, fn );
+};
+
 Undocumented.prototype.jetpackLogin = function( siteId, _wp_nonce, redirect_uri, scope, state ) {
 	debug( '/jetpack-blogs/:site_id:/jetpack-login query' );
 	const endpointUrl = '/jetpack-blogs/' + siteId + '/jetpack-login';
@@ -2017,6 +2033,15 @@ Undocumented.prototype.getHelpLinks = function( searchQuery, fn ) {
 
 	return this.wpcom.req.get( '/help/search', {
 		query: searchQuery
+	}, fn );
+};
+
+Undocumented.prototype.getQandA = function( query, site, fn ) {
+	debug( 'help-contact-qanda/ searchQuery {query}' );
+
+	return this.wpcom.req.get( '/help/qanda', {
+		query,
+		site,
 	}, fn );
 };
 

@@ -10,11 +10,13 @@ import {
 	SITES_BLOG_STICKER_ADD,
 	SITES_BLOG_STICKER_REMOVE,
 	SITES_BLOG_STICKER_LIST,
+	SITES_BLOG_STICKER_LIST_RECEIVE,
 } from 'state/action-types';
 import {
 	addBlogSticker,
 	removeBlogSticker,
 	listBlogStickers,
+	receiveBlogStickers,
 } from 'state/sites/blog-stickers/actions';
 
 describe( 'actions', () => {
@@ -44,6 +46,16 @@ describe( 'actions', () => {
 			expect( action ).to.deep.equal( {
 				type: SITES_BLOG_STICKER_LIST,
 				payload: { blogId: 123 },
+			} );
+		} );
+	} );
+
+	describe( '#receiveBlogStickers', () => {
+		it( 'should return an action when a blog sticker list is received', () => {
+			const action = receiveBlogStickers( 123, [ 'dont-recommend' ] );
+			expect( action ).to.deep.equal( {
+				type: SITES_BLOG_STICKER_LIST_RECEIVE,
+				payload: { blogId: 123, stickers: [ 'dont-recommend' ] },
 			} );
 		} );
 	} );

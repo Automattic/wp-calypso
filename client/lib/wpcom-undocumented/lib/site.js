@@ -301,7 +301,7 @@ UndocumentedSite.prototype.statsOrders = function( query ) {
 };
 
 /**
- * Requests Store top-* lists
+ * Requests Store top-sellers stats
  *
  * @param {object} query query parameters
  * @return {Promise} A Promise to resolve when complete.
@@ -314,7 +314,7 @@ UndocumentedSite.prototype.statsTopSellers = function( query ) {
 };
 
 /**
- * Requests Store top-* lists
+ * Requests Store top earners
  *
  * @param {object} query query parameters
  * @return {Promise} A Promise to resolve when complete.
@@ -327,7 +327,7 @@ UndocumentedSite.prototype.statsTopEarners = function( query ) {
 };
 
 /**
- * Requests Store top-* lists
+ * Requests Store top categories
  *
  * @param {object} query query parameters
  * @return {Promise} A Promise to resolve when complete.

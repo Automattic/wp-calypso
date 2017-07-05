@@ -5,8 +5,12 @@ import { mergeHandlers } from 'state/action-watchers/utils';
 import { addHandlers } from 'state/data-layer/extensions-middleware';
 import actionList from './action-list';
 import products from './products';
+import productVariations from './product-variations';
 import productCategories from './product-categories';
 import request from './request';
+import shippingZoneLocations from './shipping-zone-locations';
+import shippingZoneMethods from './shipping-zone-methods';
+import shippingZones from './shipping-zones';
 import ui from './ui';
 import debugFactory from 'debug';
 
@@ -14,9 +18,13 @@ const debug = debugFactory( 'woocommerce:errors' );
 
 const handlers = mergeHandlers(
 	actionList,
-	products,
 	productCategories,
+	products,
+	productVariations,
 	request,
+	shippingZoneLocations,
+	shippingZoneMethods,
+	shippingZones,
 	ui,
 );
 

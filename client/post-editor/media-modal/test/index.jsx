@@ -30,7 +30,7 @@ const EMPTY_COMPONENT = React.createClass( {
 } );
 
 describe( 'EditorMediaModal', function() {
-	let spy, translate, deleteMedia, accept, EditorMediaModal, setLibrarySelectedItems;
+	let spy, translate, deleteMedia, accept, EditorMediaModal, setLibrarySelectedItems, onClose;
 
 	translate = require( 'i18n-calypso' ).translate;
 
@@ -42,6 +42,7 @@ describe( 'EditorMediaModal', function() {
 		spy = sandbox.spy();
 		setLibrarySelectedItems = sandbox.stub();
 		deleteMedia = sandbox.stub();
+		onClose = sandbox.stub();
 		accept = sandbox.stub().callsArgWithAsync( 1, true );
 	} );
 
@@ -214,5 +215,49 @@ describe( 'EditorMediaModal', function() {
 		const buttons = tree.getModalButtons();
 
 		expect( buttons[ 1 ].label ).to.be.equals( 'Insert' );
+	} );
+
+	describe( '#confirmSelection()', () => {
+		it( 'should close modal if viewing local media and button is pressed', done => {
+			const tree = shallow(
+				<EditorMediaModal
+					site={ DUMMY_SITE }
+					mediaLibrarySelectedItems={ DUMMY_MEDIA }
+					onClose={ onClose }
+					view={ ModalViews.DETAIL }
+					setView={ spy } />
+			).instance();
+
+			tree.confirmSelection();
+
+			process.nextTick( () => {
+				expect( onClose ).to.have.been.calledWith( {
+					items: DUMMY_MEDIA,
+					settings: undefined,
+					type: 'media',
+				} );
+
+				done();
+			} );
+		} );
+
+		it( 'should copy external media if viewing external media and button is pressed', done => {
+			const tree = shallow(
+				<EditorMediaModal
+					site={ DUMMY_SITE }
+					mediaLibrarySelectedItems={ DUMMY_MEDIA }
+					view={ ModalViews.DETAIL }
+					setView={ spy } />
+			).instance();
+
+			tree.setState( { source: 'external' } );
+			tree.copyExternal = onClose;
+			tree.confirmSelection();
+
+			process.nextTick( () => {
+				expect( onClose ).to.have.been.calledWith( DUMMY_MEDIA, 'external' );
+				done();
+			} );
+		} );
 	} );
 } );

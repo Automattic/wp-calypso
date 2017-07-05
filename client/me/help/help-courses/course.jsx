@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,13 +12,9 @@ import Card from 'components/card';
 import CourseScheduleItem from './course-schedule-item';
 import HelpTeaserButton from '../help-teaser-button';
 import CourseVideo from './course-video';
-import sitesList from 'lib/sites-list';
 import analytics from 'lib/analytics';
-
-/**
- * Module variables
- */
-const sites = sitesList();
+import { getPrimarySiteId } from 'state/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 class Course extends Component {
 	componentDidMount() {
@@ -40,8 +37,6 @@ class Course extends Component {
 			translate
 		} = this.props;
 
-		const { slug } = sites.getPrimary();
-
 		return (
 			<div className="help-courses__course">
 				{ isBusinessPlanUser && video && <CourseVideo { ...video } /> }
@@ -50,7 +45,7 @@ class Course extends Component {
 					<p className="help-courses__course-description">{ description }</p>
 					{ ! isBusinessPlanUser &&
 						<HelpTeaserButton
-							href={ `/plans/${ slug }` }
+							href={ `/plans/${ this.props.primarySiteSlug }` }
 							title={ translate( 'Join this course with the Business Plan.' ) }
 							description={
 								translate( 'Upgrade to access webinars and courses to learn how to make the most of your site' )
@@ -65,8 +60,12 @@ class Course extends Component {
 		);
 	}
 }
-
-export default localize( Course );
+export default connect(
+	state => {
+		return {
+			primarySiteSlug: getSiteSlug( state, getPrimarySiteId( state ) )
+		};
+	} )( localize( Course ) );
 
 export const CoursePlaceholder = () => {
 	return (

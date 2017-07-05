@@ -249,6 +249,13 @@
 	resize: vertical;
 }
 
+.products__product-form-tinymce-placeholder {
+	@include placeholder();
+	background: lighten( $gray, 35% );
+	height: 225px;
+	border: 1px solid lighten( $gray, 20% );
+}
+
 .products__product-form-details-basic-description.form-fieldset {
 	margin-bottom: 0;
 }
@@ -401,10 +408,6 @@
 	&.products__product-price {
 		width: 80px;
 	}
-}
-
-.products__product-dimensions-input {
-	display: flex;
 }
 
 .products__all-variations {
@@ -806,6 +809,7 @@
 	display: flex;
 	justify-content: flex-start;
 	flex-direction: column;
+	max-width: 440px;
 
 	.form-fieldset.products__product-dimensions-input {
 		margin-bottom: 12px;

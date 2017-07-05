@@ -16,6 +16,7 @@
   "google_analytics_enabled",
   "google_analytics_key",
   "happychat_url",
+  "happychat_support_blog",
   "hostname",
   "i18n_default_locale_slug",
   "jetpack_min_version",

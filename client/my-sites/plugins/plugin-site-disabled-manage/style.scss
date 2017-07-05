@@ -35,7 +35,8 @@
 }
 .plugin-site-disabled-manage__link {
 	@include breakpoint( "<480px" )  {
-		position: absolute;
+		margin: 18px 0 0 0;
+		position: relative;
 		right: 0;
 	}
 }

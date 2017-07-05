@@ -11,6 +11,7 @@ import {
 	areLocationsLoading,
 	getContinents,
 	getCountries,
+	getCountryName,
 	getStates,
 	hasStates,
 } from '../selectors';
@@ -192,6 +193,20 @@ describe( 'selectors', () => {
 				{ code: 'CA', name: 'Canada' },
 				{ code: 'US', name: 'United States' },
 			] );
+		} );
+	} );
+
+	describe( '#getCountryName', () => {
+		it( 'should fallback to the country code if the locations are not loaded', () => {
+			expect( getCountryName( emptyState, 'US' ) ).to.equal( 'US' );
+		} );
+
+		it( 'should fallback to the country code if the country does not exist', () => {
+			expect( getCountryName( loadedState, 'XX' ) ).to.equal( 'XX' );
+		} );
+
+		it( 'should return the country name', () => {
+			expect( getCountryName( loadedState, 'US' ) ).to.equal( 'United States' );
 		} );
 	} );
 

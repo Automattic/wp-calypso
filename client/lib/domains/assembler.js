@@ -31,6 +31,7 @@ function createDomainObjects( dataTransferObject ) {
 			isAutoRenewing: domain.auto_renewing,
 			isPendingIcannVerification: domain.is_pending_icann_verification,
 			isPrimary: domain.primary_domain,
+			isPendingWhoisUpdate: domain.pending_whois_update,
 			manualTransferRequired: domain.manual_transfer_required,
 			name: domain.domain,
 			owner: domain.owner,
@@ -41,6 +42,7 @@ function createDomainObjects( dataTransferObject ) {
 			registrationMoment: domain.registration_date && i18n.moment( domain.registration_date ),
 			hasZone: domain.has_zone,
 			pointsToWpcom: domain.points_to_wpcom,
+			transferLockOnWhoisUpdateOptional: domain.transfer_lock_on_whois_update_optional,
 			type: getDomainType( domain )
 		};
 	} );

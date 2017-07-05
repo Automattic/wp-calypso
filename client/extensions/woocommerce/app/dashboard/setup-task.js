@@ -45,12 +45,15 @@ class SetupTask extends Component {
 						// Only the last primary action gets to be a primary button
 						const primary = ( index === primaryActions.length - 1 ) && ! taskCompleted;
 						const target = '/' === action.path.substring( 0, 1 ) ? '_self' : '_blank';
-						const trackClick = () => {
+						const trackClick = ( e ) => {
 							this.track( action.analyticsProp );
 							if ( target === '_self' ) {
 								page.redirect( action.path );
 							} else {
 								window.open( action.path );
+							}
+							if ( action.onClick ) {
+								action.onClick( e );
 							}
 						};
 						return (

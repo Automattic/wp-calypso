@@ -31,9 +31,20 @@ describe( 'blog-sticker-add', () => {
 	} );
 
 	describe( 'receiveBlogStickerAdd', () => {
-		it( 'should do nothing if successful', () => {
+		it( 'should dispatch a success notice', () => {
+			const dispatch = spy();
 			const nextSpy = spy();
-			receiveBlogStickerAdd( null, null, nextSpy, { success: true } );
+			receiveBlogStickerAdd(
+				{ dispatch },
+				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
+				nextSpy,
+				{ success: true },
+			);
+			expect( dispatch ).to.have.been.calledWithMatch( {
+				notice: {
+					status: 'is-success',
+				},
+			} );
 			expect( nextSpy ).to.not.have.been.called;
 		} );
 
@@ -51,7 +62,7 @@ describe( 'blog-sticker-add', () => {
 			expect( nextSpy ).to.have.been.calledWith( removeBlogSticker( 123, 'broken-in-reader' ) );
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
-					text: 'Sorry, we had a problem adding that sticker. Please try again.',
+					status: 'is-error',
 				},
 			} );
 		} );
@@ -68,7 +79,7 @@ describe( 'blog-sticker-add', () => {
 			);
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
-					text: 'Sorry, we had a problem adding that sticker. Please try again.',
+					status: 'is-error',
 				},
 			} );
 			expect( nextSpy ).to.have.been.calledWith( removeBlogSticker( 123, 'broken-in-reader' ) );

@@ -6,6 +6,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import { dispatchWithProps } from 'woocommerce/state/helpers';
 import request from 'woocommerce/state/sites/request';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 
@@ -17,8 +18,8 @@ import {
 
 const debug = debugFactory( 'woocommerce:request' );
 
-export function handleRequest( { dispatch }, action ) {
-	const { method, siteId, path, body } = action;
+export function handleRequest( { dispatch, getState }, action ) {
+	const { method, siteId, path, body, onSuccessAction, onFailureAction } = action;
 
 	return request( siteId )[ method ]( path, body )
 		.then( data => {
@@ -28,10 +29,7 @@ export function handleRequest( { dispatch }, action ) {
 				data,
 			} );
 
-			if ( action.onSuccessAction ) {
-				// Append data and dispatch.
-				dispatch( { ...action.onSuccessAction, data } );
-			}
+			dispatchWithProps( dispatch, getState, onSuccessAction, { data } );
 		} )
 		.catch( error => {
 			debug( 'Caught error while handling request: ', error );
@@ -44,10 +42,7 @@ export function handleRequest( { dispatch }, action ) {
 				error,
 			} );
 
-			if ( action.onFailureAction ) {
-				// Append error and dispatch.
-				dispatch( { ...action.onFailureAction, error } );
-			}
+			dispatchWithProps( dispatch, getState, onFailureAction, { error } );
 		} );
 }
 

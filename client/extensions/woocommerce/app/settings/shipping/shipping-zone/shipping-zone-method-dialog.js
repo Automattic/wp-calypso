@@ -46,7 +46,6 @@ const ShippingZoneMethodDialog = ( {
 		isVisible,
 		isNew,
 		currency,
-		onChange,
 		actions
 	} ) => {
 	if ( ! isVisible ) {
@@ -58,11 +57,9 @@ const ShippingZoneMethodDialog = ( {
 		actions.cancelShippingZoneMethod();
 	};
 	const onClose = () => {
-		onChange();
 		actions.closeShippingZoneMethod();
 	};
 	const onDelete = () => {
-		onChange();
 		actions.removeMethodFromShippingZone( method.id );
 	};
 	const onMethodTitleChange = ( event ) => ( actions.changeShippingZoneMethodTitle( event.target.value ) );
@@ -115,13 +112,13 @@ const ShippingZoneMethodDialog = ( {
 				{ isNew ? translate( 'Add shipping method' ) : translate( 'Edit shipping method' ) }
 			</div>
 			<FormFieldSet className="shipping-zone__enable">
-				<FormLabel>
+				<span onClick={ onEnabledChange }>
 					{ translate( 'Enabled {{toggle/}}', {
 						components: {
-							toggle: <FormToggle checked={ enabled } onChange={ onEnabledChange } />
+							toggle: <FormToggle checked={ enabled } />
 						}
 					} ) }
-				</FormLabel>
+				</span>
 			</FormFieldSet>
 			<FormFieldSet>
 				<FormFieldSet>
@@ -148,7 +145,6 @@ const ShippingZoneMethodDialog = ( {
 
 ShippingZoneMethodDialog.propTypes = {
 	siteId: PropTypes.number,
-	onChange: PropTypes.func.isRequired,
 };
 
 export default connect(

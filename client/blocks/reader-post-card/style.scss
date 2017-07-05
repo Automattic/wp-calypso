@@ -272,13 +272,19 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 .reader-post-card__tags {
-	flex: 1 0 0;
-	position: relative;
+	color: $gray;
+	display: flex;
+	flex-direction: row;
 	height: 20px;
-	overflow: hidden;
 	white-space: nowrap;
 	margin-left: 10px;
-	color: $gray;
+	overflow: hidden;
+	position: relative;
+	width: calc( 100% - 100px );
+
+	@include breakpoint( "<480px" ) {
+		max-width: 230px;
+	}
 
 	&::after {
 		@include long-content-fade( $size: 10% );
@@ -287,6 +293,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 .reader-post-card__tag {
 	white-space: nowrap;
+	margin-right: 3px;
 
 	&::after {
 		content: ', '
@@ -299,11 +306,9 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 .reader-post-card__tags .gridicons-tag {
 	height: 18px;
-	margin: -4px 5px 0 0;
-	position: relative;
-		top: 5px;
-	width: 15px;
 	fill: $gray;
+	flex: 0 0 15px;
+	margin-right: 5px;
 }
 
 .reader-post-card__byline .reader-avatar {

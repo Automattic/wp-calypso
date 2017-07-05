@@ -41,7 +41,7 @@ class ShippingPackageList extends Component {
 			<div>
 				<ExtendedHeader
 					label={ translate( 'Packages' ) }
-					description={ translate( 'Add frequently used packages to make fulfillment easier.' ) }>
+					description={ translate( 'Add the boxes, envelopes, and other packages you use most frequently.' ) }>
 					<Button>{ translate( 'Add package' ) }</Button>
 				</ExtendedHeader>
 				<Card className="shipping__packages">

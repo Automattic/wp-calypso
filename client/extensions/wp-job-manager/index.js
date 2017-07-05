@@ -10,9 +10,9 @@ import { get } from 'lodash';
 import { navigation, sites, siteSelection } from 'my-sites/controller';
 import { renderTab } from './app/controller';
 import { Tabs } from './constants';
-import JobListings from './components/job-listings';
-import JobSubmission from './components/job-submission';
-import Pages from './components/pages';
+import JobListings from './components/settings/job-listings';
+import JobSubmission from './components/settings/job-submission';
+import Pages from './components/settings/pages';
 import installActionHandlers from './state/data-layer';
 
 function initExtension() {

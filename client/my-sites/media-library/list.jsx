@@ -209,7 +209,8 @@ export const MediaLibraryList = React.createClass( {
 			return React.createElement( this.props.search ? ListNoResults : ListNoContent, {
 				site: this.props.site,
 				filter: this.props.filter,
-				search: this.props.search
+				search: this.props.search,
+				source: this.props.source,
 			} );
 		}
 

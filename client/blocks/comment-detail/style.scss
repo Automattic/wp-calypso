@@ -20,7 +20,7 @@
 	// If the comment is unapproved and collapsed, color it yellow.
 	&.is-unapproved.is-collapsed {
 		.comment-detail__header {
-			background: rgba( $alert-yellow, 0.085 );
+			background: mix( $alert-yellow, $white, 8.5% );
 			box-shadow: inset 4px 0 0 0 $alert-yellow;
 		}
 	}
@@ -29,30 +29,13 @@
 		margin-right: 4px;
 		vertical-align: middle;
 	}
-}
 
-.comment-detail__transition-enter {
-	opacity: 0.01;
 
-	&.comment-detail__transition-enter-active {
-		opacity: 1;
-		transition: opacity .15s linear;
-		transition-delay: .15s;
+	.gravatar {
+		border-radius: 50%;
+		display: block;
+		flex-shrink: 0;
 	}
-}
-.comment-detail__transition-leave {
-	opacity: 1;
-
-	&.comment-detail__transition-leave-active {
-		opacity: 0.01;
-		transition: opacity .15s linear;
-	}
-}
-
-.comment-detail__author-avatar {
-	border-radius: 50%;
-	display: block;
-	flex-shrink: 0;
 }
 
 .comment-detail__author-info {
@@ -128,7 +111,11 @@
 	width: 60%;
 
 	&:after {
-		background: linear-gradient(to right, rgba( $white, 0 ), rgba( $white, 1 ) 50%);
+		background: linear-gradient(
+			to right,
+			rgba( $white, 0 ),
+			rgba( $white, 1 ) 50%
+		);
 		content: '';
 		height: 19px;
 		position: absolute;
@@ -143,6 +130,16 @@
 		&:after {
 			background: transparent;
 		}
+	}
+}
+.comment-detail.is-unapproved .comment-detail__comment-preview:after {
+	background: linear-gradient(
+		to right,
+		rgba( mix( $alert-yellow, $white, 8.5% ), 0 ),
+		rgba( mix( $alert-yellow, $white, 8.5% ), 1 ) 50%
+	);
+	@supports( -webkit-line-clamp: 2 ) {
+		background: transparent;
 	}
 }
 
@@ -228,7 +225,7 @@
 .comment-detail__site-icon-author-avatar {
 	position: relative;
 
-	.comment-detail__author-avatar-image {
+	.gravatar {
 		border: 2px solid $white;
 		border-radius: 50%;
 		position: absolute;
@@ -300,7 +297,7 @@
 	padding: 0 16px;
 	transition: padding-bottom .3s linear;
 
-	.comment-detail__author-avatar {
+	.gravatar {
 		height: 32px;
 		width: 32px;
 	}
@@ -366,6 +363,7 @@
 }
 
 .comment-detail__author-more-element {
+	align-items: center;
 	box-sizing: border-box;
 	display: block;
 	flex-shrink: 0;
@@ -396,7 +394,7 @@ a.comment-detail__author-more-element {
 	display: flex;
 	flex-flow: row nowrap;
 
-	.comment-detail__author-avatar {
+	.gravatar {
 		height: 24px;
 		width: 24px;
 	}
@@ -480,20 +478,23 @@ a.comment-detail__author-more-element {
 .comment-detail__placeholder {
 	@include placeholder();
 
-	.comment-detail__author-avatar,
+	.gravatar,
 	.comment-detail__comment-preview {
 		animation: loading-fade 1.6s ease-in-out infinite;
 		background-color: lighten( $gray, 30% );
 		color: transparent;
 		height: 32px;
 		margin: 0 8px;
+		&:after {
+			background: transparent;
+		}
 	}
 
 	&.is-expanded .comment-detail__header {
 		border: none;
 	}
 
-	.comment-detail__author-avatar {
+	.gravatar {
 		width: 32px;
 	}
 

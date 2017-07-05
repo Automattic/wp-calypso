@@ -21,6 +21,7 @@ export default class Sparkline extends Component {
 		highlightIndex: PropTypes.number,
 		highlightRadius: PropTypes.number,
 		margin: PropTypes.object,
+		maxHeight: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -59,9 +60,11 @@ export default class Sparkline extends Component {
 	};
 
 	handleResize = () => {
-		const { aspectRatio, data, margin } = this.props;
+		const { aspectRatio, data, margin, maxHeight } = this.props;
 		const newWidth = this.node.offsetWidth;
-		const newHeight = newWidth / aspectRatio;
+		const newHeight = ( maxHeight && maxHeight < ( newWidth / aspectRatio ) )
+			? maxHeight
+			: ( newWidth / aspectRatio );
 		this.setState( {
 			width: newWidth,
 			height: newHeight,

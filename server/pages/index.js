@@ -22,6 +22,7 @@ import { serverRender } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
 import { DESERIALIZE } from 'state/action-types';
+import { login } from 'lib/paths';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -96,7 +97,7 @@ function generateStaticUrls( request ) {
 		const name = asset.name;
 		urls[ name ] = asset.url;
 		if ( config( 'env' ) !== 'development' ) {
-			urls[ name + '-min' ] = asset.url.replace( '.js', '.min.js' );
+			urls[ name + '-min' ] = asset.url.replace( '.js', '.m.js' );
 		}
 	} );
 
@@ -208,7 +209,8 @@ function setUpLoggedInRoute( req, res, next ) {
 
 		protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
 
-		redirectUrl = config( 'login_url' ) + '?' + qs.stringify( {
+		redirectUrl = login( {
+			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirect_to: protocol + '://' + config( 'hostname' ) + req.originalUrl
 		} );
 
@@ -228,6 +230,7 @@ function setUpLoggedInRoute( req, res, next ) {
 			if ( error ) {
 				if ( error.error === 'authorization_required' ) {
 					debug( 'User public API authorization required. Redirecting to %s', redirectUrl );
+					res.clearCookie( 'wordpress_logged_in', { path: '/', httpOnly: true, domain: '.wordpress.com' } );
 					res.redirect( redirectUrl );
 				} else {
 					if ( error.error ) {

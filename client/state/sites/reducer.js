@@ -15,6 +15,7 @@ import vouchers from './vouchers/reducer';
 import updates from './updates/reducer';
 import sharingButtons from './sharing-buttons/reducer';
 import mediaStorage from './media-storage/reducer';
+import blogStickers from './blog-stickers/reducer';
 import {
 	MEDIA_DELETE,
 	SITE_DELETE,
@@ -269,4 +270,5 @@ export default combineReducers( {
 	updates,
 	requesting,
 	sharingButtons,
+	blogStickers,
 } );

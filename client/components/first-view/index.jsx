@@ -43,7 +43,9 @@ const FirstView = React.createClass( {
 	},
 
 	componentWillUnmount() {
-		this.updateDocumentStylesForHiddenFirstView();
+		process.nextTick( () => {
+			this.updateDocumentStylesForHiddenFirstView();
+		} );
 	},
 
 	render() {

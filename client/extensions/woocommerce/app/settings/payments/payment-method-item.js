@@ -180,6 +180,7 @@ class PaymentMethodItem extends Component {
 		if ( currentlyEditingId === method.id ) {
 			editButtonText = translate( 'Cancel' );
 		}
+		const methodTitle = 'payments__method-name payments__method-name-' + method.id;
 
 		return (
 			<ListItem>
@@ -192,7 +193,7 @@ class PaymentMethodItem extends Component {
 							</p>
 						)
 					}
-					<p className="payments__method-name">{ method.title }</p>
+					<p className={ methodTitle }>{ method.title }</p>
 				</ListItemField>
 				<ListItemField className="payments__method-method-information-container">
 					{ method.fees && (

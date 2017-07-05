@@ -456,9 +456,9 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack/install' )
+				.post( '/rest/v1.1/sites/2916284/plugins/jetpack/install' )
 				.reply( 200, jetpackUpdated )
-				.post( '/rest/v1.1/sites/2916284/plugins/fake%2Ffake/install' )
+				.post( '/rest/v1.1/sites/2916284/plugins/fake/install' )
 				.reply( 400, {
 					error: 'unknown_plugin',
 					message: 'Plugin file does not exist.'

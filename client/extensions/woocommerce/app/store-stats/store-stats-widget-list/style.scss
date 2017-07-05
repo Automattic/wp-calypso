@@ -1,0 +1,17 @@
+.store-stats-widget-list__table-row {
+	height: 100%;
+}
+.store-stats-widget-list__table-item {
+	height: 50px;
+	padding: 12px 8px;
+	&.title {
+		width: 40%;
+	}
+	&.sparkline {
+		padding: 8px 4px;
+		width: 25%;
+	}
+	&.value {
+		width: 20%;
+	}
+}

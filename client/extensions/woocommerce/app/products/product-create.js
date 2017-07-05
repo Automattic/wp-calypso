@@ -15,7 +15,6 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import { editProduct, editProductAttribute, createProductActionList } from 'woocommerce/state/ui/products/actions';
 import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
-import { actionListStepNext } from 'woocommerce/state/action-list/actions';
 import { getCurrentlyEditingProduct } from 'woocommerce/state/ui/products/selectors';
 import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { editProductVariation } from 'woocommerce/state/ui/products/variations/actions';
@@ -24,7 +23,6 @@ import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product
 import { createProduct } from 'woocommerce/state/sites/products/actions';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 class ProductCreate extends React.Component {
 	static propTypes = {
@@ -72,10 +70,6 @@ class ProductCreate extends React.Component {
 		// TODO: Remove the product we added here from the edit state.
 	}
 
-	onTrash = () => {
-		// TODO: Add action dispatch to trash this product.
-	}
-
 	onSave = () => {
 		const { product, translate } = this.props;
 
@@ -93,7 +87,6 @@ class ProductCreate extends React.Component {
 		);
 
 		this.props.createProductActionList( successAction, failureAction );
-		this.props.actionListStepNext();
 	}
 
 	isProductValid( product = this.props.product ) {
@@ -111,11 +104,9 @@ class ProductCreate extends React.Component {
 
 		return (
 			<Main className={ className }>
-				<SidebarNavigation />
 				<ProductHeader
 					site={ site }
 					product={ product }
-					onTrash={ this.onTrash }
 					onSave={ saveEnabled ? this.onSave : false }
 					isBusy={ isBusy }
 				/>
@@ -153,7 +144,6 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			actionListStepNext,
 			createProduct,
 			createProductActionList,
 			editProduct,

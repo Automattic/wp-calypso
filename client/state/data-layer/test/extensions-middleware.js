@@ -35,7 +35,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 
 		config.middleware( store )( next )( action );
 
-		expect( store.dispatch ).to.not.have.beenCalled;
+		expect( store.dispatch ).to.not.have.been.called;
 		expect( next ).to.have.been.calledWith( action );
 	} );
 
@@ -52,10 +52,10 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		config.middleware( store )( next )( action );
 
 		expect( next ).to.have.been.calledWith( action );
-		expect( adder ).to.not.have.beenCalled;
+		expect( adder ).to.not.have.been.called;
 	} );
 
-	it( 'should not pass along non-local actions with non data-layer meta', () => {
+	it( 'should pass along non-local actions with non data-layer meta', () => {
 		const adder = spy();
 		const handlers = {
 			[ 'ADD' ]: [ adder ],
@@ -67,11 +67,11 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 
 		config.middleware( store )( next )( action );
 
-		expect( next ).to.not.have.beenCalled;
+		expect( next ).to.have.been.calledOnce;
 		expect( adder ).to.have.been.calledWith( store, action );
 	} );
 
-	it( 'should not pass along non-local actions with data-layer meta but no bypass', () => {
+	it( 'should pass along non-local actions with data-layer meta but no bypass', () => {
 		const adder = spy();
 		const handlers = {
 			[ 'ADD' ]: [ adder ],
@@ -79,11 +79,11 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 
 		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
 		addHandlers( 'my-extension', handlers, config );
-		const action = { type: 'ADD', meta: { dataLayer: { data: 42 } } };
+		const action = { type: 'ADD', meta: { dataLayer: { groupoid: 42 } } };
 
 		config.middleware( store )( next )( action );
 
-		expect( next ).to.not.have.beenCalled;
+		expect( next ).to.have.been.called;
 		expect( adder ).to.have.been.calledWith( store, action );
 	} );
 
@@ -138,7 +138,6 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 
 		expect( adder ).to.have.been.calledWith( store, action );
 		expect( doubler ).to.have.been.calledWith( store, action );
-		expect( next ).to.not.have.beenCalled;
 	} );
 
 	it( 'should call all given handlers (different lists)', () => {
@@ -162,7 +161,6 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 
 		expect( adder ).to.have.been.calledWith( store, action );
 		expect( doubler ).to.have.been.calledWith( store, action );
-		expect( next ).to.not.have.beenCalled;
 	} );
 
 	it( 'should no longer call handlers that have been removed', () => {
@@ -181,8 +179,9 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 
 		removeHandlers( 'my-extension', config );
 
+		adder.reset();
 		config.middleware( store )( next )( action );
-		expect( adder ).to.not.have.beenCalled;
+		expect( adder ).to.not.have.been.called;
 	} );
 
 	it( 'should still call handlers even after some handlers have been removed', () => {

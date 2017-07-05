@@ -42,3 +42,7 @@ Whether the payment methods list is currently being retrieved from the server. O
 ### `getPaymentMethodsGroup( state, type, [siteId] )`
 
 Gets group of payment methods by type (offline, off-site, on-site). Optional `siteId`, will default to currently selected site.
+
+### `getPaymentMethod( state, methodId, [siteId] )`
+
+Get a single payment method by method name (bacs, cheque, etc). Returns false if no method found. Optional `siteId`, will default to currently selected site.
