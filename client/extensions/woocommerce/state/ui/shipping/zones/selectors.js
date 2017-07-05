@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, find, findIndex, isNumber, remove } from 'lodash';
+import { get, find, findIndex, flatten, isNumber, map, remove, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -9,6 +9,7 @@ import { get, find, findIndex, isNumber, remove } from 'lodash';
 import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getAPIShippingZones, areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
+import { getShippingZoneMethods } from './methods/selectors';
 
 export const getShippingZonesEdits = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'zones' ] );
@@ -126,6 +127,12 @@ export const getCurrentlyEditingShippingZone = createSelector(
  */
 export const isCurrentlyEditingShippingZone = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return Boolean( getCurrentlyEditingShippingZone( state, siteId ) );
+};
+
+export const areAnyShippingMethodsEnabled = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const zones = getShippingZones( state, siteId );
+	const methods = flatten( zones.map( ( { id } ) => getShippingZoneMethods( state, id, siteId ) ) );
+	return some( map( methods, 'enabled' ) );
 };
 
 /**
