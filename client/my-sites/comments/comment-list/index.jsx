@@ -22,7 +22,6 @@ import CommentFaker from 'blocks/comment-detail/docs/comment-faker';
 import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
 import QuerySiteComments from 'components/data/query-site-comments';
-import QuerySiteSettings from 'components/data/query-site-settings';
 import { hasSiteComments } from 'state/selectors';
 
 export class CommentList extends Component {
@@ -240,7 +239,6 @@ export class CommentList extends Component {
 		return (
 			<div className="comment-list">
 				<QuerySiteComments siteId={ siteId } status="all" />
-				<QuerySiteSettings siteId={ siteId } />
 
 				<CommentNavigation
 					isBulkEdit={ isBulkEdit }

@@ -12,6 +12,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
+import QuerySiteSettings from 'components/data/query-site-settings';
 import { urlToDomainAndPath } from 'lib/url';
 import {
 	defaultDateFormats,
@@ -154,6 +155,7 @@ export class CommentDetailAuthor extends Component {
 			authorUrl,
 			commentStatus,
 			showAuthorInfo,
+			siteId,
 			translate,
 		} = this.props;
 		const { isExpanded } = this.state;
@@ -164,6 +166,8 @@ export class CommentDetailAuthor extends Component {
 
 		return (
 			<div className={ classes }>
+				<QuerySiteSettings siteId={ siteId } />
+
 				<div className="comment-detail__author-preview">
 					<Gravatar user={ this.getAuthorObject() } />
 					<div className="comment-detail__author-info">
