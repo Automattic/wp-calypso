@@ -21,7 +21,7 @@ import { areCurrentlyEditingShippingZoneLocationsValid } from 'woocommerce/state
 const ShippingZoneHeader = ( { zone, site, onSave, onDelete, translate, canSave, isSaving, showDelete } ) => {
 	const currentCrumb = zone && isNumber( zone.id )
 		? ( <span>{ translate( 'Edit Shipping Zone' ) }</span> )
-		: ( <span>{ translate( 'Add New Shipping Zone' ) }</span> );
+		: ( <span>{ translate( 'Add new Shipping Zone' ) }</span> );
 
 	const breadcrumbs = [
 		( <a href={ getLink( '/store/settings/:site/', site ) }> { translate( 'Settings' ) } </a> ),

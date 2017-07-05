@@ -135,7 +135,7 @@ const ShippingZoneLocationDialogSettings = ( {
 				<FormFieldSet>
 					<FormLabel required>{ translate( 'Post codes' ) }</FormLabel>
 					<FormTextInput
-						value={ postcode }
+						value={ postcode || '' }
 						onChange={ onPostcodeChange } />
 					<p>
 						{ translate( 'Postcodes containing wildcards (e.g. CB23*) ' +
