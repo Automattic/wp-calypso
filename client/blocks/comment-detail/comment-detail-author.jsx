@@ -13,6 +13,10 @@ import { get } from 'lodash';
  */
 import Gravatar from 'components/gravatar';
 import { urlToDomainAndPath } from 'lib/url';
+import {
+	defaultDateFormats,
+	defaultTimeFormats,
+} from 'my-sites/site-settings/date-time-format/default-formats';
 import { phpToMomentDatetimeFormat } from 'my-sites/site-settings/date-time-format/utils';
 import { getSiteSettings } from 'state/site-settings/selectors';
 
@@ -59,6 +63,14 @@ export class CommentDetailAuthor extends Component {
 		} = this.props;
 
 		const momentDate = moment( commentDate );
+
+		if ( ! dateFormat || ! timeFormat ) {
+			return phpToMomentDatetimeFormat(
+				momentDate,
+				defaultDateFormats[ 0 ] + ' ' + defaultTimeFormats[ 0 ]
+			);
+		}
+
 		const date = phpToMomentDatetimeFormat( momentDate, dateFormat );
 		const time = phpToMomentDatetimeFormat( momentDate, timeFormat );
 
