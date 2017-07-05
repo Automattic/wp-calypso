@@ -14,7 +14,23 @@
 	}
 }
 
-.magic-login__request_link {
+@media ( max-height: 450px ) {
+	.magic-login__handle-link, .magic-login__check-email, .magic-login__link-expired {
+		img {
+			margin-top: -45px;
+			max-height: 180px;
+		}
+		.empty-content__title {
+			font-size: 90%;
+		}
+		.empty-content__line {
+			font-size: 60%;
+			margin-bottom: 20px;
+		}
+	}
+}
+
+.magic-login__request-link {
 	max-width: 400px;
 }
 
@@ -25,7 +41,7 @@
 	text-align: center;
 }
 
-.magic-login__emailfields {
+.magic-login__email-fields {
 	margin: 10px 0;
 }
 

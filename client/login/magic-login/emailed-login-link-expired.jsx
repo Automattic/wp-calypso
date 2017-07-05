@@ -42,6 +42,7 @@ class EmailedLoginLinkExpired extends React.Component {
 						page( '/' );
 					} }
 					actionURL={ '/' }
+					className="magic-login__link-expired"
 					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 					illustrationWidth={ 500 }
 					line={ translate( 'Maybe try resetting your password instead' ) }

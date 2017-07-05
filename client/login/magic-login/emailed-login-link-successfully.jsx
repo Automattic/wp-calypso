@@ -49,6 +49,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 						page( '/' );
 					} }
 					actionURL={ '/' }
+					className="magic-login__check-email"
 					illustration={ '/calypso/images/drake/drake-all-done.svg' }
 					illustrationWidth={ 500 }
 					line={ line }
