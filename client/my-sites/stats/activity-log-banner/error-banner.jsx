@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityLogBanner from './index';
 import Button from 'components/button';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'state/activity-log/actions';
 
 class ErrorBanner extends PureComponent {
@@ -37,7 +38,12 @@ class ErrorBanner extends PureComponent {
 	handleDismiss = () => this.props.dismissRewindRestoreProgress( this.props.siteId );
 
 	render() {
-		const { translate } = this.props;
+		const {
+			errorCode,
+			failureReason,
+			timestamp,
+			translate,
+		} = this.props;
 
 		return (
 			<ActivityLogBanner
@@ -46,6 +52,11 @@ class ErrorBanner extends PureComponent {
 				status="error"
 				title={ translate( 'Problem restoring your site' ) }
 			>
+				<TrackComponentView eventName="calypso_activity_log_error_banner_impression" eventProperties={ {
+					errorCode,
+					failureReason,
+					restoreTo: timestamp,
+				} } />
 				<p>{ translate( 'We came across a problem while trying to restore your site.' ) }</p>
 				<Button primary onClick={ this.handleClickRestore }>
 					{ translate( 'Try again' ) }
