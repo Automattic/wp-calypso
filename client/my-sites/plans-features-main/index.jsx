@@ -55,8 +55,7 @@ class PlansFeaturesMain extends Component {
 			basePlansPath,
 			selectedFeature,
 			displayJetpackPlans,
-			domainName,
-			showBigPlanIcon,
+			domainName
 		} = this.props;
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
@@ -82,7 +81,6 @@ class PlansFeaturesMain extends Component {
 						intervalType={ intervalType }
 						site={ site }
 						domainName={ domainName }
-						showBigPlanIcon={ showBigPlanIcon }
 						isInSignupTest = { this.isInSignupTest() }
 						displayJetpackPlans = { displayJetpackPlans }
 					/>
@@ -112,7 +110,6 @@ class PlansFeaturesMain extends Component {
 						intervalType={ intervalType }
 						site={ site }
 						domainName={ domainName }
-						showBigPlanIcon={ showBigPlanIcon }
 						isInSignupTest = { this.isInSignupTest() }
 						displayJetpackPlans = { displayJetpackPlans }
 					/>
@@ -142,7 +139,6 @@ class PlansFeaturesMain extends Component {
 					intervalType={ intervalType }
 					site={ site }
 					domainName={ domainName }
-					showBigPlanIcon={ showBigPlanIcon }
 					isInSignupTest = { this.isInSignupTest() }
 					displayJetpackPlans = { displayJetpackPlans }
 				/>
@@ -415,8 +411,7 @@ PlansFeaturesMain.propTypes = {
 	hideFreePlan: PropTypes.bool,
 	showFAQ: PropTypes.bool,
 	selectedFeature: PropTypes.string,
-	displayJetpackPlans: PropTypes.bool.isRequired,
-	showBigPlanIcon: PropTypes.bool,
+	displayJetpackPlans: PropTypes.bool.isRequired
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -424,8 +419,7 @@ PlansFeaturesMain.defaultProps = {
 	intervalType: 'yearly',
 	hideFreePlan: false,
 	site: {},
-	showFAQ: true,
-	showBigPlanIcon: false,
+	showFAQ: true
 };
 
 export default localize( PlansFeaturesMain );
