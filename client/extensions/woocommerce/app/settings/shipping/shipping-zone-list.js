@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -18,8 +19,24 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { getShippingZones } from 'woocommerce/state/ui/shipping/zones/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { areShippingZonesLocationsValid } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
+import { getActionList } from 'woocommerce/state/action-list/selectors';
+import {
+	createAddDefultShippingZoneActionList,
+} from 'woocommerce/state/ui/shipping/zones/actions';
 
 class ShippingZoneList extends Component {
+	componentWillMount() {
+		if ( this.props.loaded ) {
+			this.props.actions.createAddDefultShippingZoneActionList();
+		}
+	}
+
+	componentWillReceiveProps( { loaded } ) {
+		if ( ! this.props.loaded && loaded ) {
+			this.props.actions.createAddDefultShippingZoneActionList();
+		}
+	}
+
 	renderContent = () => {
 		const { siteId, loaded, shippingZones, isValid, translate } = this.props;
 
@@ -84,7 +101,7 @@ class ShippingZoneList extends Component {
 
 export default connect(
 	( state ) => {
-		const loaded = areShippingZonesFullyLoaded( state );
+		const loaded = areShippingZonesFullyLoaded( state ) && ! getActionList( state );
 
 		return {
 			site: getSelectedSite( state ),
@@ -93,5 +110,10 @@ export default connect(
 			loaded,
 			isValid: ! loaded || areShippingZonesLocationsValid( state ),
 		};
-	}
+	},
+	( dispatch ) => ( {
+		actions: bindActionCreators( {
+			createAddDefultShippingZoneActionList,
+		}, dispatch )
+	} )
 )( localize( ShippingZoneList ) );
