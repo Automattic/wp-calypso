@@ -84,8 +84,11 @@ class DocumentHead extends Component {
 
 	ensureTag( tagName, properties ) {
 		const propertiesSelector = map( properties, ( value, key ) => {
-			const escapedValueInSelector = value.replace( /([ #;?%&,.+*~\':"!^$[\]()=>|\/@])/g, '\\$1' );
-			return `[${ key }="${ escapedValueInSelector }"]`;
+			if ( value !== undefined && typeof value === 'string' ) {
+				const escapedValueInSelector = value.toString().replace( /([ #;?%&,.+*~\':"!^$[\]()=>|\/@])/g, '\\$1' );
+				return `[${ key }="${ escapedValueInSelector }"]`;
+			}
+			return `[${ key }]`;
 		} ).join( '' );
 		const element = document.querySelector( `${ tagName }${ propertiesSelector }` );
 		if ( ! element ) {
