@@ -28,6 +28,7 @@ import {
 } from 'woocommerce/state/action-list/actions';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE,
+	WOOCOMMERCE_SHIPPING_ZONE_DEFAULT_ACTION_LIST_CREATE,
 } from 'woocommerce/state/action-types';
 import { getShippingZoneLocationsWithEdits } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 import { getRawShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
@@ -35,6 +36,9 @@ import { getShippingZoneMethod } from 'woocommerce/state/sites/shipping-zone-met
 import { getZoneLocationsPriority } from 'woocommerce/state/sites/shipping-zone-locations/helpers';
 import { getAPIShippingZones } from 'woocommerce/state/sites/shipping-zones/selectors';
 import analytics from 'lib/analytics';
+import { getStoreLocation } from 'woocommerce/state/sites/settings/general/selectors';
+import { getActionList } from 'woocommerce/state/action-list/selectors';
+import { getCountryName } from 'woocommerce/state/sites/locations/selectors';
 
 const createShippingZoneSuccess = ( actionList ) => ( dispatch, getState, { sentData, receivedData } ) => {
 	const zoneIdMapping = {
@@ -296,6 +300,33 @@ const getDeleteZoneActionListSteps = ( state ) => {
 	];
 };
 
+/**
+ * Gets the list of steps needed to create the default Shipping Zones configuration. The default configuration will be
+ * a single Shipping Zone of the country where the merchant store is in, with a "Free Shipping" method enabled for everyone.
+ * @param {Object} state The whole Redux state tree
+ * @return {Array} List of steps
+ */
+export const getCreateDefaultZoneActionListSteps = ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	const serverZones = getAPIShippingZones( state );
+	if ( 1 < serverZones.length || ! isEmpty( serverZones[ 0 ].methodIds ) ) {
+		// Don't mess with the zones if there is something configured already
+		return [];
+	}
+
+	const zoneId = { index: 0 };
+	const storeCountry = getStoreLocation( state ).country;
+	const locations = { continent: [], country: [ storeCountry ], state: [], postcode: [] };
+	const zone = { name: getCountryName( state, storeCountry ), order: getZoneLocationsPriority( locations ) };
+	const method = { id: { index: 0 }, methodType: 'free_shipping' };
+
+	return [
+		...getCreateShippingZoneSteps( siteId, zoneId, zone ),
+		...getUpdateShippingZoneLocationsSteps( siteId, zoneId, locations ),
+		...getZoneMethodCreateSteps( siteId, zoneId, method ),
+	];
+};
+
 export default {
 	[ WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE ]: [
 		( store, action ) => {
@@ -312,6 +343,22 @@ export default {
 			const nextSteps = ( deleteZone ? getDeleteZoneActionListSteps : getSaveZoneActionListSteps )( store.getState() );
 
 			store.dispatch( isEmpty( nextSteps ) ? onSuccess : actionListStepNext( { nextSteps, onSuccess, onFailure } ) );
+		}
+	],
+
+	[ WOOCOMMERCE_SHIPPING_ZONE_DEFAULT_ACTION_LIST_CREATE ]: [
+		( store ) => {
+			if ( getActionList( store.getState() ) ) {
+				return;
+			}
+			const onComplete = ( dispatch ) => {
+				dispatch( actionListClear() );
+			};
+			store.dispatch( actionListStepNext( {
+				nextSteps: getCreateDefaultZoneActionListSteps( store.getState() ),
+				onSuccess: onComplete,
+				onFailure: onComplete,
+			} ) );
 		}
 	],
 };
