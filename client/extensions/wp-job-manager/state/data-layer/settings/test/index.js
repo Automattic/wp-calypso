@@ -160,7 +160,7 @@ describe( '#announceFailure()', () => {
 		expect( dispatch ).to.have.been.calledWith( saveError( '101010' ) );
 	} );
 
-	it( 'should dispatch `successNotice`', () => {
+	it( 'should dispatch `errorNotice`', () => {
 		const dispatch = sinon.spy();
 
 		announceFailure( { dispatch }, saveAction );
