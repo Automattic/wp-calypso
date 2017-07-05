@@ -32,7 +32,7 @@ class ShippingZoneList extends Component {
 	}
 
 	componentWillReceiveProps( { loaded } ) {
-		if ( ! this.props.loaded && loaded ) {
+		if ( ! this.props.loaded && loaded && ! this.props.savingZones ) {
 			this.props.actions.createAddDefultShippingZoneActionList();
 		}
 	}
@@ -101,12 +101,14 @@ class ShippingZoneList extends Component {
 
 export default connect(
 	( state ) => {
-		const loaded = areShippingZonesFullyLoaded( state ) && ! getActionList( state );
+		const savingZones = Boolean( getActionList( state ) );
+		const loaded = areShippingZonesFullyLoaded( state ) && ! savingZones;
 
 		return {
 			site: getSelectedSite( state ),
 			siteId: getSelectedSiteId( state ),
 			shippingZones: getShippingZones( state ),
+			savingZones,
 			loaded,
 			isValid: ! loaded || areShippingZonesLocationsValid( state ),
 		};
