@@ -35,10 +35,7 @@ const tracksDebug = debug( 'calypso:analytics:tracks' );
 
 import emitter from 'lib/mixins/emitter';
 
-import {
-	isStatsdAnalyticsAllowed,
-	statsdUrl
-} from 'lib/analytics/statsd';
+import { statsdUrl } from 'lib/analytics/statsd';
 
 // Load tracking scripts
 window._tkq = window._tkq || [];
@@ -289,7 +286,7 @@ const analytics = {
 		// ignore triggerName for now, it has no obvious place in statsd
 		/* eslint-enable no-unused-vars */
 
-			if ( isStatsdAnalyticsAllowed() ) {
+			if ( config( 'boom_analytics_enabled' ) ) {
 				const imgUrl = statsdUrl( pageUrl, eventType, duration, document.location.pathname );
 				new Image().src = imgUrl;
 			}

@@ -8,10 +8,6 @@ import startsWith from 'lodash/startsWith';
  */
 import config from 'config';
 
-export function isStatsdAnalyticsAllowed() {
-	return config( 'boom_analytics_enabled' );
-}
-
 export function statsdUrl( path, eventType, duration, currentPath = undefined ) {
 	let featureSlug = path === '/' ? 'homepage' : path.replace( /^\//, '' ).replace( /\.|\/|:/g, '_' );
 	let matched;

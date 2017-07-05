@@ -2,6 +2,7 @@
 	"env": "shared",
 	"env_id": "shared",
 	"boom_analytics_enabled": false,
+	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": false,
 	"client_slug": false,
 	"discover_blog_id": 53424024,
