@@ -12,8 +12,17 @@
 	margin-bottom: 15px;
 }
 
+.icann-verification__email {
+	color: 	darken( $gray, 20% );
+	font-size: 14px;
+}
+
 .domain-details-card {
 	.icann-verification {
 		margin-top: 16px;
 	}
+}
+
+.notice__text {
+	word-break: break-all;
 }

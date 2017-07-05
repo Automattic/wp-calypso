@@ -19,13 +19,23 @@ let IcannVerificationCard = React.createClass( {
 	getExplanation() {
 		if ( this.props.explanationContext === 'name-servers' ) {
 			return this.translate(
-					'You must verify your email address through the ICANN ' +
-					'verification email before you are able to update the name ' +
-					'servers for your domain.' );
+				'You have to verify the email address used to register this domain before you ' +
+				'are able to update the name servers for your domain. ' +
+				'Look for the verification message in your email inbox.'
+			);
 		}
 
 		return this.translate(
-			'Urgent. Please verify your address through the verification email as soon as possible, or your domain may be suspended.'
+			'You have to verify the email address used to register this domain before you can make changes. ' +
+			'Look for the verification message in your email inbox. ' +
+			'{{learnMoreLink}}Learn more.{{/learnMoreLink}}', {
+				components: {
+					learnMoreLink: <a href={ support.EMAIL_VALIDATION_AND_VERIFICATION }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				}
+			}
 		);
 	},
 
@@ -39,19 +49,17 @@ let IcannVerificationCard = React.createClass( {
 				<IcannVerification.Button submitting={ this.props.submitting }
 					onClick={ this.props.handleSubmit } />
 
-				<div className="icann-verification__explanation">
+				<div className="icann-verification__email">
 					{ this.translate(
-						'Use this button to resend the verification email. It contains a link to verify your address. ' +
-						'{{learnMoreLink}}Learn more{{/learnMoreLink}}.', {
+						'Verification email sent to: [registrant contact email]. ' +
+						'{{registrantEmail}}Change email address.{{/registrantEmail}}', {
 							components: {
-								learnMoreLink: <a href={ support.EMAIL_VALIDATION_AND_VERIFICATION }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
+								registrantEmail: <a href="#" />
 							}
 						}
-					) }
+					)}
 				</div>
+
 			</div>
 		);
 	}

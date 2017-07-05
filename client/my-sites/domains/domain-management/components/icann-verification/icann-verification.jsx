@@ -35,9 +35,8 @@ function createContainer( DecoratedComponent ) {
 				if ( error ) {
 					notices.error( error.message );
 				} else {
-					notices.success( this.translate(
-						'We successfully resent the ICANN verification email to your ' +
-						'email address on file.'
+					notices.info( this.translate(
+						'Verification email sent to [registrant contact email].'
 					) );
 				}
 
