@@ -18,8 +18,6 @@ import { SEARCH_RESULTS_SITES } from 'reader/follow-button/follow-sources';
 import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
 import withWidth from 'lib/with-width';
 
-const pickSort = sort => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
-
 class SiteResults extends React.Component {
 	static propTypes = {
 		query: PropTypes.string,
@@ -36,22 +34,18 @@ class SiteResults extends React.Component {
 			query: this.props.query,
 			offset,
 			excludeFollowed: false,
-			sort: pickSort( this.props.sort ),
+			sort: this.props.sort,
 		} );
 	};
 
 	hasNextPage = offset => offset < this.props.searchResultsCount;
 
 	render() {
-		const { query, searchResults, width, showLastUpdatedDate } = this.props;
+		const { query, searchResults, width, sort, showLastUpdatedDate } = this.props;
 
 		return (
 			<div>
-				<QueryReaderFeedsSearch
-					query={ query }
-					excludeFollowed={ false }
-					sort={ pickSort( this.props.sort ) }
-				/>
+				<QueryReaderFeedsSearch query={ query } excludeFollowed={ false } sort={ sort } />
 				<ReaderInfiniteStream
 					items={ searchResults || [ {}, {}, {}, {}, {} ] }
 					width={ width }
@@ -70,11 +64,11 @@ export default connect(
 	( state, ownProps ) => ( {
 		searchResults: getReaderFeedsForQuery(
 			state,
-			{ query: ownProps.query, excludeFollowed: false, sort: pickSort( ownProps.sort ) },
+			{ query: ownProps.query, excludeFollowed: false, sort: ownProps.sort },
 		),
 		searchResultsCount: getReaderFeedsCountForQuery(
 			state,
-			{ query: ownProps.query, excludeFollowed: false, sort: pickSort( ownProps.sort ) },
+			{ query: ownProps.query, excludeFollowed: false, sort: ownProps.sort },
 		),
 	} ),
 	{ requestFeedSearch },

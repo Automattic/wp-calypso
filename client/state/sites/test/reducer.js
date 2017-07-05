@@ -56,6 +56,7 @@ describe( 'reducer', () => {
 			'updates',
 			'requesting',
 			'sharingButtons',
+			'blogStickers',
 		] );
 	} );
 

@@ -771,6 +771,7 @@ export const SeoForm = React.createClass( {
 					showDeviceSwitcher={ false }
 					showExternal={ false }
 					defaultViewportDevice="seo"
+					frontPageMetaDescription={ this.state.frontPageMetaDescription || null }
 				/>
 			</div>
 		);

@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import reducer from 'woocommerce/state/sites/reducer';
 import { LOADING } from 'woocommerce/state/constants';
 import {
-	WOOCOMMERCE_SETTINGS_GENERAL_BATCH_REQUEST_SUCCESS,
+	WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
@@ -45,7 +45,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'addressUpdateRequest', () => {
+	describe( 'settings batch', () => {
 		it( 'should merge data from the action', () => {
 			const siteId = 123;
 			const emptyState = {
@@ -56,19 +56,22 @@ describe( 'reducer', () => {
 				}
 			};
 			const streetSetting = {
+				group_id: 'general',
 				id: 'woocommerce_store_address',
 				value: '311 Maple St',
 			};
 			const citySetting = {
+				group_id: 'general',
 				id: 'woocommerce_store_city',
 				value: 'Snohomish',
 			};
 			const updatedStreetSetting = {
+				group_id: 'general',
 				id: 'woocommerce_store_address',
 				value: '1206 First St',
 			};
 			const action = {
-				type: WOOCOMMERCE_SETTINGS_GENERAL_BATCH_REQUEST_SUCCESS,
+				type: WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
 				siteId,
 				data: { update: [ streetSetting, citySetting ] },
 			};
@@ -77,7 +80,7 @@ describe( 'reducer', () => {
 				citySetting,
 			];
 			const updateAction = {
-				type: WOOCOMMERCE_SETTINGS_GENERAL_BATCH_REQUEST_SUCCESS,
+				type: WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
 				siteId,
 				data: { update: [ updatedStreetSetting ] },
 			};

@@ -30,7 +30,7 @@ export class CommentDetail extends Component {
 		authorUsername: PropTypes.string,
 		commentContent: PropTypes.string,
 		commentDate: PropTypes.string,
-		commentId: PropTypes.number,
+		commentId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		commentIsLiked: PropTypes.bool,
 		commentIsSelected: PropTypes.bool,
 		commentStatus: PropTypes.string,
@@ -42,6 +42,7 @@ export class CommentDetail extends Component {
 		repliedToComment: PropTypes.bool,
 		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
+		submitComment: PropTypes.func,
 		toggleCommentLike: PropTypes.func,
 		toggleCommentSelected: PropTypes.func,
 	};
@@ -118,6 +119,7 @@ export class CommentDetail extends Component {
 			authorUsername,
 			commentContent,
 			commentDate,
+			commentId,
 			commentIsLiked,
 			commentIsSelected,
 			commentStatus,
@@ -127,10 +129,12 @@ export class CommentDetail extends Component {
 			parentCommentContent,
 			parentCommentUrl,
 			postAuthorDisplayName,
+			postId,
 			postTitle,
 			postUrl,
 			repliedToComment,
 			siteId,
+			submitComment,
 		} = this.props;
 
 		const {
@@ -198,7 +202,13 @@ export class CommentDetail extends Component {
 							commentStatus={ commentStatus }
 							repliedToComment={ repliedToComment }
 						/>
-						<CommentDetailReply />
+						<CommentDetailReply
+							authorDisplayName={ authorDisplayName }
+							commentId={ commentId }
+							postId={ postId }
+							postTitle={ postTitle }
+							submitComment={ submitComment }
+						/>
 					</div>
 				}
 			</Card>

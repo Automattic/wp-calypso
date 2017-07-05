@@ -7,12 +7,16 @@
 	@include breakpoint( "<660px" ) {
 		flex-direction: column;
 	}
+
+	.store-address.card {
+		margin: 0;
+		padding: 0;
+		box-shadow: none;
+	}
 }
 
-.payments__location-currency {
-	@include breakpoint( ">660px" ) {
-		margin-top: 58px;
-	}
+&.store-location__edit-dialog {
+	max-width: 600px;
 }
 
 .payments__currency-container {
@@ -52,6 +56,7 @@
 		font-size: 11px;
 		text-transform: uppercase;
 		color: $gray-text-min;
+		display: none;
 	}
 
 	p.payments__method-suggested,
@@ -66,12 +71,28 @@
 		font-size: 14px;
 	}
 
+	.payments__method-name-paypal,
+	.payments__method-name-stripe {
+		text-indent: -999em;
+		height: 24px;
+		width: 90px;
+		background: url( '/calypso/images/extensions/woocommerce/paypal.svg' );
+		background-repeat: no-repeat;
+		background-size: contain;
+	}
+
+	.payments__method-name-stripe {
+		background-image: url( '/calypso/images/extensions/woocommerce/stripe.svg' );
+		width: 58px;
+	}
+
 	.list-header + .list-item {
 		border-top: 0;
 	}
 
 	.list-item {
 		border-top: 1px solid $border-ultra-light-gray;
+		align-items: center;
 	}
 
 	.payments__method-information {
@@ -161,6 +182,10 @@
 
 	@include breakpoint( ">480px" ) {
 		padding: 24px;
+	}
+
+	.segmented-control {
+		max-width: 300px;
 	}
 }
 

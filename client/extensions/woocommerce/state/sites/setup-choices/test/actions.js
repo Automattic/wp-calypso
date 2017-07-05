@@ -15,6 +15,7 @@ import {
 	setOptedOutOfTaxesSetup,
 	setSetStoreAddressDuringInitialSetup,
 	setTriedCustomizerDuringInitialSetup,
+	setUpStorePages,
 } from '../actions';
 import { LOADING } from 'woocommerce/state/constants';
 import useNock from 'test/helpers/use-nock';
@@ -24,6 +25,7 @@ import {
 	WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETUP_CHOICES_REQUEST,
 	WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS,
+	WOOCOMMERCE_SETUP_STORE_PAGES_REQUEST,
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
@@ -356,6 +358,53 @@ describe( 'actions', () => {
 						finished_initial_install_of_required_plugins: true,
 						set_store_address_during_initial_setup: false,
 					}
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#setUpStorePages', () => {
+		const siteId = '123';
+
+		const data = {
+			id: 'install_pages',
+			name: 'Install WooCommerce pages',
+			action: 'Install pages',
+			description: 'This tool will install all the missing WooCommerce pages.',
+			success: true,
+			message: 'All missing WooCommerce pages successfully installed',
+		};
+
+		useSandbox();
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
+				.query( { path: '/wc/v3/system_status/tools/install_pages&_method=post', json: true } )
+				.reply( 200, { data } );
+		} );
+
+		it( 'should dispatch an action', () => {
+			const getState = () => ( {} );
+			const dispatch = spy();
+			setUpStorePages( siteId )( dispatch, getState );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_SETUP_STORE_PAGES_REQUEST,
+				siteId,
+			} );
+		} );
+
+		it( 'should dispatch a setup choice update request action with request completes', () => {
+			const getState = () => ( {} );
+			const dispatch = spy();
+			const response = setUpStorePages( siteId )( dispatch, getState );
+
+			return response.then( () => {
+				expect( dispatch ).to.have.been.calledWith( {
+					type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST,
+					siteId,
+					key: 'finished_page_setup',
+					value: true,
 				} );
 			} );
 		} );

@@ -56,23 +56,3 @@ export const UpgradeToPremiumNudge = props => {
 	);
 };
 
-export const UpgradeToPersonalNudge = props => {
-	const { translate, isJetpack } = props;
-
-	let description;
-	if ( isJetpack ) {
-		description = translate( 'Get easy monetization options, Videopress support and more.' );
-	} else {
-		description = translate( 'Get unlimited premium themes, video uploads, monetize your site and more.' );
-	}
-	return (
-		<Banner
-			className="post-share__upgrade-nudge"
-			feature="republicize"
-			title={ translate( 'Schedule your social messages in advance.' ) }
-			callToAction={ translate( 'Upgrade to Premium' ) }
-			description={ description }
-		/>
-	);
-};
-

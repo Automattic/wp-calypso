@@ -11,6 +11,7 @@ import Gridicon from 'gridicons';
 import PostSchedule from 'components/post-schedule';
 import Timezone from 'components/timezone';
 import Card from 'components/card';
+import EventsTooltip from 'components/date-picker/events-tooltip';
 
 /**
  * Date Picker Demo
@@ -54,7 +55,11 @@ export default React.createClass( {
 			],
 			gmtOffset: 1,
 			timezone: tz,
-			date: date
+			date: date,
+
+			eventsByDay: [],
+			showTooltip: false,
+			tooltipContext: null,
 		};
 	},
 
@@ -65,7 +70,7 @@ export default React.createClass( {
 	},
 
 	setDate( date ) {
-		console.log( `date: %s`, date.format() );
+		console.log( 'date: ', date.format() ); // eslint-disable-line no-console
 
 		this.setState( {
 			isFuture: +new Date() < +new Date( date ),
@@ -74,7 +79,7 @@ export default React.createClass( {
 	},
 
 	setMonth( date ) {
-		console.log( `month: %s`, date.format() );
+		console.log( 'month: %s', date.format() ); // eslint-disable-line no-console
 		this.setState( { month: date } );
 	},
 
@@ -95,6 +100,22 @@ export default React.createClass( {
 		this.setState( { [ state ]: null } );
 	},
 
+	handleDayMouseEnter( date, modifiers, event, eventsByDay ) {
+		this.setState( {
+			eventsByDay,
+			tooltipContext: event.target,
+			showTooltip: true,
+		} );
+	},
+
+	handleDayMouseLeave() {
+		this.setState( {
+			eventsByDay: [],
+			tooltipContext: null,
+			showTooltip: false,
+		} );
+	},
+
 	render() {
 		return (
 			<div>
@@ -110,7 +131,15 @@ export default React.createClass( {
 						onMonthChange={ this.setMonth }
 						gmtOffset={ this.state.gmtOffset }
 						timezone={ this.state.timezone }
+						onDayMouseEnter={ this.handleDayMouseEnter }
+						onDayMouseLeave={ this.handleDayMouseLeave }
 						selectedDay={ this.state.date } />
+
+					<EventsTooltip
+						events={ this.state.eventsByDay }
+						context={ this.state.tooltipContext }
+						isVisible={ this.state.showTooltip }
+					/>
 				</Card>
 
 				<div style={ {

@@ -10,15 +10,12 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import {
 	getRedirectTo,
-	getRequestError,
 	getRequestNotice,
-	getTwoFactorAuthRequestError,
 	getTwoFactorNotificationSent,
-	getCreateSocialAccountError,
-	getRequestSocialAccountError,
 	isTwoFactorEnabled,
 } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -35,10 +32,8 @@ class Login extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
-		requestError: PropTypes.object,
 		requestNotice: PropTypes.object,
 		twoFactorAuthType: PropTypes.string,
-		twoFactorAuthRequestError: PropTypes.object,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
 	};
@@ -51,12 +46,10 @@ class Login extends Component {
 	};
 
 	componentWillReceiveProps = ( nextProps ) => {
-		const hasLoginError = this.props.requestError !== nextProps.requestError;
-		const hasTwoFactorAuthError = this.props.twoFactorAuthRequestError !== nextProps.twoFactorAuthRequestError;
 		const hasNotice = this.props.requestNotice !== nextProps.requestNotice;
 		const isNewPage = this.props.twoFactorAuthType !== nextProps.twoFactorAuthType;
 
-		if ( isNewPage || hasLoginError || hasTwoFactorAuthError || hasNotice ) {
+		if ( isNewPage || hasNotice ) {
 			window.scrollTo( 0, 0 );
 		}
 	};
@@ -91,23 +84,6 @@ class Login extends Component {
 		window.location.href = url;
 	};
 
-	renderError() {
-		const error = this.props.requestError ||
-			this.props.twoFactorAuthRequestError ||
-			this.props.requestAccountError ||
-			this.props.createAccountError && this.props.createAccountError.code !== 'unknown_user' ? this.props.createAccountError : null;
-
-		if ( ! error || ( error.field && error.field !== 'global' ) || ! error.message ) {
-			return null;
-		}
-
-		return (
-			<Notice status={ 'is-error' } showDismiss={ false }>
-				{ error.message }
-			</Notice>
-		);
-	}
-
 	renderNotice() {
 		const { requestNotice } = this.props;
 
@@ -140,8 +116,7 @@ class Login extends Component {
 					{ poller }
 					<VerificationCodeForm
 						onSuccess={ this.rebootAfterLogin }
-						twoFactorAuthType={ twoFactorAuthType }
-					/>
+						twoFactorAuthType={ twoFactorAuthType } />
 				</div>
 			);
 		}
@@ -169,7 +144,7 @@ class Login extends Component {
 					{ twoStepNonce ? translate( 'Two-Step Authentication' ) : translate( 'Log in to your account.' ) }
 				</div>
 
-				{ this.renderError() }
+				<ErrorNotice />
 
 				{ this.renderNotice() }
 
@@ -182,11 +157,7 @@ class Login extends Component {
 export default connect(
 	( state ) => ( {
 		redirectTo: getRedirectTo( state ),
-		createAccountError: getCreateSocialAccountError( state ),
-		requestAccountError: getRequestSocialAccountError( state ),
-		requestError: getRequestError( state ),
 		requestNotice: getRequestNotice( state ),
-		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 	} ), {

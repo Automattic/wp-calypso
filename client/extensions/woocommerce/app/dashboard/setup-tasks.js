@@ -10,6 +10,9 @@ import React, { Component, PropTypes } from 'react';
  * Internal dependencies
  */
 import {
+	areTaxCalculationsEnabled,
+} from 'woocommerce/state/sites/settings/general/selectors';
+import {
 	areSetupChoicesLoading,
 	getOptedOutOfShippingSetup,
 	getOptedOutofTaxesSetup,
@@ -22,11 +25,20 @@ import {
 	fetchProducts
 } from 'woocommerce/state/sites/products/actions';
 import {
+	fetchPaymentMethods,
+} from 'woocommerce/state/sites/payment-methods/actions';
+import {
 	fetchSetupChoices,
 	setOptedOutOfShippingSetup,
 	setOptedOutOfTaxesSetup,
 	setTriedCustomizerDuringInitialSetup,
 } from 'woocommerce/state/sites/setup-choices/actions';
+import {
+	fetchSettingsGeneral,
+} from 'woocommerce/state/sites/settings/general/actions';
+import {
+	arePaymentsSetup
+} from 'woocommerce/state/ui/payments/methods/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import SetupTask from './setup-task';
 
@@ -50,8 +62,10 @@ class SetupTasks extends Component {
 		const { site } = this.props;
 
 		if ( site && site.ID ) {
-			this.props.fetchSetupChoices( site.ID );
+			this.props.fetchPaymentMethods( site.ID );
 			this.props.fetchProducts( site.ID, 1 );
+			this.props.fetchSettingsGeneral( site.ID );
+			this.props.fetchSetupChoices( site.ID );
 		}
 	}
 
@@ -62,6 +76,8 @@ class SetupTasks extends Component {
 		const oldSiteId = site && site.ID || null;
 
 		if ( oldSiteId !== newSiteId ) {
+			this.props.fetchProducts( newSiteId, 1 );
+			this.props.fetchSettingsGeneral( newSiteId );
 			this.props.fetchSetupChoices( newSiteId );
 		}
 	}
@@ -80,6 +96,10 @@ class SetupTasks extends Component {
 			showTaxesTask: false
 		} );
 		this.props.setOptedOutOfTaxesSetup( this.props.site.ID, true );
+	}
+
+	onClickOpenCustomizer = () => {
+		this.props.setTriedCustomizerDuringInitialSetup( this.props.site.ID, true );
 	}
 
 	getSetupTasks = () => {
@@ -167,7 +187,7 @@ class SetupTasks extends Component {
 					{
 						label: translate( 'Customize' ),
 						path: getLink( 'https://:site/wp-admin/customize.php?return=' + encodeURIComponent( '//' + site.slug ), site ),
-						// TODO use onClick here instead in order to hit setTriedCustomizerDuringInitialSetup,
+						onClick: this.onClickOpenCustomizer,
 						analyticsProp: 'view-and-customize',
 					}
 				]
@@ -208,16 +228,18 @@ function mapStateToProps( state ) {
 		triedCustomizer: getTriedCustomizerDuringInitialSetup( state ),
 		hasProducts: getTotalProducts( state ) > 0,
 		// TODO - connect the following to selectors when they become available
-		paymentsAreSetUp: false,
+		paymentsAreSetUp: arePaymentsSetup( state ),
 		shippingIsSetUp: false,
-		taxesAreSetUp: false,
+		taxesAreSetUp: !! areTaxCalculationsEnabled( state ),
 	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			fetchPaymentMethods,
 			fetchProducts,
+			fetchSettingsGeneral,
 			fetchSetupChoices,
 			setOptedOutOfShippingSetup,
 			setOptedOutOfTaxesSetup,

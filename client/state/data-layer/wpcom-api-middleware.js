@@ -26,7 +26,7 @@ const shouldNext = action => {
 	}
 
 	// is a network response, don't reissue
-	if ( data.data || data.error || data.headers ) {
+	if ( data.data || data.error || data.headers || data.progress ) {
 		return false;
 	}
 

@@ -7,9 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import {
-	getSiteStatsNormalizedData
-} from 'state/stats/lists/selectors';
+import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
@@ -27,7 +25,9 @@ const StoreStatsList = ( { data, values } ) => {
 			{ data.map( ( row, i ) => (
 				<TableRow key={ i }>
 					{ values.map( ( value, j ) => (
-						<TableItem key={ value.key } isTitle={ 0 === j }>{ row[ value.key ] }</TableItem>
+						<TableItem key={ value.key } isTitle={ 0 === j }>
+							{ row[ value.key ] }
+						</TableItem>
 					) ) }
 				</TableRow>
 			) ) }

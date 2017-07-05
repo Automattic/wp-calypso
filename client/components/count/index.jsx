@@ -1,20 +1,29 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 
-export const Count = ( { count, numberFormat, ...inheritProps } ) => (
+export const Count = ( { count, numberFormat, primary, ...inheritProps } ) => (
 	// Omit props passed from the `localize` higher-order component that we don't need.
-	<span className="count" { ...omit( inheritProps, [ 'translate', 'moment' ] ) }>
+	<span
+		className={ classnames( 'count', { 'is-primary': primary } ) }
+		{ ...omit( inheritProps, [ 'translate', 'moment' ] ) }
+	>
 		{ numberFormat( count ) }
 	</span>
 );
 
 Count.propTypes = {
-	count: React.PropTypes.number.isRequired,
-	numberFormat: React.PropTypes.func
+	count: PropTypes.number.isRequired,
+	numberFormat: PropTypes.func,
+	primary: PropTypes.bool,
+};
+
+Count.defaultProps = {
+	primary: false,
 };
 
 export default localize( Count );

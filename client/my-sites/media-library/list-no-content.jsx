@@ -15,7 +15,8 @@ export default React.createClass( {
 
 	propTypes: {
 		site: React.PropTypes.object,
-		filter: React.PropTypes.string
+		filter: React.PropTypes.string,
+		source: React.PropTypes.string,
 	},
 
 	getLabel() {
@@ -53,8 +54,9 @@ export default React.createClass( {
 	},
 
 	render() {
-		let line, action;
-		if ( userCan( 'upload_files', this.props.site ) ) {
+		let line = '', action = '';
+
+		if ( userCan( 'upload_files', this.props.site ) && ! this.props.source ) {
 			line = this.translate( 'Would you like to upload something?' );
 			action = (
 				<UploadButton className="button is-primary" site={ this.props.site }>

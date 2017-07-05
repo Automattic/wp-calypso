@@ -40,7 +40,6 @@ const ShippingZoneMethodList = ( {
 		newMethodTypeOptions,
 		currency,
 		translate,
-		onChange,
 		actions,
 	} ) => {
 	const renderMethod = ( method, index ) => {
@@ -76,10 +75,10 @@ const ShippingZoneMethodList = ( {
 					{ getMethodSummary( method, currency ) }
 				</ListItemField>
 				<ListItemField className="shipping-zone__enable-container">
-					<span>
+					<span onClick={ onEnabledToggle }>
 						{ translate( 'Enabled {{toggle/}}', {
 							components: {
-								toggle: <FormToggle checked={ method.enabled } onChange={ onEnabledToggle } />
+								toggle: <FormToggle checked={ method.enabled } />
 							}
 						} ) }
 					</span>
@@ -95,7 +94,6 @@ const ShippingZoneMethodList = ( {
 		if ( ! loaded ) {
 			return;
 		}
-		onChange();
 
 		const newType = newMethodTypeOptions[ 0 ];
 		actions.addMethodToShippingZone( newType, methodNamesMap( newType ) );
@@ -107,8 +105,8 @@ const ShippingZoneMethodList = ( {
 		<div className="shipping-zone__methods-container">
 			<ExtendedHeader
 				label={ translate( 'Shipping methods' ) }
-				description={ translate( 'Any customers that reside in the locations' +
-					' defined above will have access to these shipping methods' ) } >
+				description={ translate( 'These are the shipping methods available ' +
+					'to customers in the zone defined above.' ) } >
 				<Button onClick={ onAddMethod } disabled={ ! loaded } >{ translate( 'Add method' ) }</Button>
 			</ExtendedHeader>
 			<List>
@@ -117,19 +115,18 @@ const ShippingZoneMethodList = ( {
 						{ translate( 'Method' ) }
 					</ListItemField>
 					<ListItemField className="shipping-zone__methods-column-summary">
-						{ translate( 'Details' ) }
+						{ translate( 'Cost' ) }
 					</ListItemField>
 				</ListHeader>
 				{ methodsToRender.map( renderMethod ) }
 			</List>
-			<ShippingZoneMethodDialog siteId={ siteId } onChange={ onChange } />
+			<ShippingZoneMethodDialog siteId={ siteId } />
 		</div>
 	);
 };
 
 ShippingZoneMethodList.propTypes = {
 	siteId: PropTypes.number,
-	onChange: PropTypes.func.isRequired,
 	loaded: PropTypes.bool.isRequired,
 };
 

@@ -36,7 +36,6 @@ export const sanitizeSettings = settings => {
 			case 'cache_rejected_user_agent':
 				return setting.split( '\n' );
 			// Don't include read-only fields when saving.
-			case 'cache_direct_pages':
 			case 'cache_mobile_browsers':
 			case 'cache_mobile_prefixes':
 			case 'cache_mod_rewrite':

@@ -11,7 +11,6 @@ import { identity } from 'lodash';
  */
 import getThemes from 'lib/signup/themes';
 import ThemesList from 'components/themes-list';
-import { abtest } from 'lib/abtest';
 
 class SignupThemesList extends Component {
 
@@ -34,11 +33,7 @@ class SignupThemesList extends Component {
 	}
 
 	getComputedThemes() {
-		if ( abtest( 'reduceThemesInSignupTest' ) === 'modified' ) {
-			return getThemes( this.props.surveyQuestion, this.props.designType, 3 );
-		}
-
-		return getThemes( this.props.surveyQuestion, this.props.designType );
+		return getThemes( this.props.surveyQuestion, this.props.designType, 3 );
 	}
 
 	getScreenshotUrl( theme ) {

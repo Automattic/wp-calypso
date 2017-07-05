@@ -43,7 +43,8 @@ import {
 	getSite,
 	isJetpackMinimumVersion,
 	isJetpackModuleActive,
-	isJetpackSite
+	isJetpackSite,
+	isSitePreviewable
 } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route/path';
 import { abtest } from 'lib/abtest';
@@ -151,12 +152,14 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		const { site, isPreviewable } = this.props;
+
 		return (
 			<SidebarItem
 				tipTarget="sitePreview"
 				label={ this.props.translate( 'View Site' ) }
 				className={ this.itemLinkClass( [ '/view' ], 'preview' ) }
-				link={ '/view' + this.props.siteSuffix }
+				link={ isPreviewable ? '/view' + this.props.siteSuffix : site.URL }
 				onNavigate={ this.onNavigate }
 				icon="computer"
 				preloadSectionName="preview"
@@ -345,7 +348,7 @@ export class MySitesSidebar extends Component {
 		const { canUserManageOptions, isJetpack, site, siteSuffix, translate } = this.props;
 		const storeLink = '/store' + siteSuffix;
 		const showStoreLink = config.isEnabled( 'woocommerce/extension-dashboard' ) &&
-			site && isJetpack && canUserManageOptions;
+			site && isJetpack && canUserManageOptions && this.props.isSiteAutomatedTransfer;
 
 		return (
 			showStoreLink &&
@@ -353,11 +356,8 @@ export class MySitesSidebar extends Component {
 				label={ translate( 'Store (BETA)' ) }
 				link={ storeLink }
 				onNavigate={ this.trackStoreClick }
-				icon="cart" >
-				<SidebarButton href={ storeLink }>
-					{ translate( 'Set up' ) }
-				</SidebarButton>
-			</SidebarItem>
+				icon="cart"
+			/>
 		);
 	}
 
@@ -652,6 +652,7 @@ function mapStateToProps( state ) {
 		hasJetpackSites,
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
+		isPreviewable: isSitePreviewable( state, selectedSiteId ),
 		isPreviewShowing,
 		isSharingEnabledOnJetpackSite,
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),

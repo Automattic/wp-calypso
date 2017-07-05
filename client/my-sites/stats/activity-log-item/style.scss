@@ -6,9 +6,7 @@
 	align-content: flex-start;
 	align-items: center;
 	position: relative;
-	z-index: 2;
-	margin-left: 8px;
-	margin-bottom: 8px;
+	margin-top: 24px;
 
 	.card {
 		width: 300px;
@@ -17,16 +15,6 @@
 		flex-basis: 200px;
 		align-items: center;
 		background: $white;
-	}
-
-	&:first-child {
-		margin-top: 24px;
-	}
-
-	&.is-disabled {
-		.card {
-			opacity: .55;
-		}
 	}
 
 	.activity-log-item__card .foldable-card__content {
@@ -49,24 +37,18 @@
 }
 
 .activity-log-item__type {
-	flex-grow: 0;
-	flex-shrink: 0;
-	flex-basis: 0;
 	align-self: flex-start;
-	text-align:center;
-	margin-top: -5px;
-	margin-right: 24px;
+	background: $gray-light;
+	text-align: center;
+	margin: -2px 22px 0 10px;
+	padding: 4px 0 6px;
 }
 
 .activity-log-item__time {
-	width: 106%;
-	margin-left: -3%;
-	padding-top: 2px;
 	font-size: 11px;
 	color: $gray;
-	text-align:center;
 	text-transform: uppercase;
-	background: $gray-light;
+	white-space: nowrap;
 }
 
 .activity-log-item__icon {
@@ -75,10 +57,8 @@
 	color: $white;
 	display: flex;
 	border-radius: 50%;
-	height:32px;
-	width: 32px;
-	padding: 8px;
-	margin: 4px 0;
+	padding: 12px;
+	margin-top: 2px;
 
 	// Success
 	&.is-success {
@@ -93,10 +73,6 @@
 	// Error! OHNO!
 	&.is-error {
 		background: $alert-red;
-	}
-
-	.gridicon {
-		margin: auto;
 	}
 }
 
@@ -144,4 +120,13 @@
 .activity-log-item__action {
 	flex-basis: 25%;
 	text-align:right;
+}
+
+.activity-log-item__id {
+	float: right;
+	font-size: 11px;
+	color: lighten( $gray, 20% );
+	font-style: italic;
+	margin-bottom: 4px;
+	margin-right: -7px;
 }

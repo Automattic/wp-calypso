@@ -1,6 +1,7 @@
 .process-orders-widget__container {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
 
 	div {
 		min-width: 33%;
@@ -10,18 +11,14 @@
 			display: block;
 			font-size: 24px;
 		}
-		
+
 		.process-orders-widget__revenue-amount {
 			color: $alert-green;
 		}
-		
+
 		.process-orders-widget__revenue-label,
 		.process-orders-widget__order-label {
 			color: $gray-text-min;
-		}
-
-		a {
-			margin-top: 8px;
 		}
 	}
 }

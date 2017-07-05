@@ -35,6 +35,7 @@ export const DOMAIN_PRIMARY = {
 	hasRegistration: false,
 	hasZone: true,
 	isPendingIcannVerification: false,
+	isPendingWhoisUpdate: false,
 	manualTransferRequired: false,
 	newRegistration: false,
 	name: 'retronevergiveup.me',
@@ -47,6 +48,7 @@ export const DOMAIN_PRIMARY = {
 	registrar: '',
 	registrationDate: '2016-03-09T00:00:00+00:00',
 	type: 'MAPPED',
+	transferLockOnWhoisUpdateOptional: true,
 	isWPCOMDomain: false
 };
 
@@ -70,6 +72,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	hasRegistration: false,
 	hasZone: false,
 	isPendingIcannVerification: false,
+	isPendingWhoisUpdate: false,
 	manualTransferRequired: false,
 	newRegistration: false,
 	name: 'retronevergiveup.wordpress.me',
@@ -82,6 +85,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	registrar: '',
 	registrationDate: '',
 	type: 'WPCOM',
+	transferLockOnWhoisUpdateOptional: false,
 	isWPCOMDomain: true
 };
 
@@ -113,11 +117,13 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	partner_domain: false,
 	pending_registration: false,
 	pending_registration_time: '',
+	pending_whois_update: false,
 	primary_domain: true,
 	private_domain: false,
 	registrar: '',
 	registration_date: '2016-03-09T00:00:00+00:00',
 	type: 'mapping',
+	transfer_lock_on_whois_update_optional: true,
 	wpcom_domain: false
 };
 
@@ -145,6 +151,7 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	partner_domain: false,
 	pending_registration: false,
 	pending_registration_time: '',
+	pending_whois_update: false,
 	primary_domain: false,
 	private_domain: false,
 	registrar: '',

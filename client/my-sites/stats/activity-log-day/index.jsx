@@ -15,11 +15,12 @@ import ActivityLogItem from '../activity-log-item';
 class ActivityLogDay extends Component {
 	static propTypes = {
 		allowRestore: PropTypes.bool.isRequired,
+		applySiteOffset: PropTypes.func.isRequired,
 		isRewindActive: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
 		requestRestore: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
-		timestamp: PropTypes.number.isRequired,
+		tsEndOfSiteDay: PropTypes.number.isRequired,
 	};
 
 	static defaultProps = {
@@ -29,10 +30,10 @@ class ActivityLogDay extends Component {
 
 	handleClickRestore = () => {
 		const {
+			tsEndOfSiteDay,
 			requestRestore,
-			timestamp,
 		} = this.props;
-		requestRestore( timestamp );
+		requestRestore( tsEndOfSiteDay );
 	};
 
 	/**
@@ -50,6 +51,7 @@ class ActivityLogDay extends Component {
 
 		return (
 			<Button
+				className="activity-log-day__rewind-button"
 				compact
 				disabled={ ! this.props.isRewindActive }
 				onClick={ this.handleClickRestore }
@@ -69,15 +71,16 @@ class ActivityLogDay extends Component {
 	 */
 	getEventsHeading() {
 		const {
+			applySiteOffset,
 			logs,
 			moment,
-			timestamp,
 			translate,
+			tsEndOfSiteDay,
 		} = this.props;
 
 		return (
 			<div>
-				<div className="activity-log-day__day">{ moment( timestamp ).format( 'LL' ) }</div>
+				<div className="activity-log-day__day">{ applySiteOffset( moment.utc( tsEndOfSiteDay ) ).format( 'LL' ) }</div>
 				<div className="activity-log-day__events">{
 					translate( '%d Event', '%d Events', {
 						args: logs.length,
@@ -93,6 +96,8 @@ class ActivityLogDay extends Component {
 			allowRestore,
 			logs,
 			requestRestore,
+			siteId,
+			applySiteOffset,
 		} = this.props;
 
 		return (
@@ -106,18 +111,10 @@ class ActivityLogDay extends Component {
 						<ActivityLogItem
 							key={ index }
 							allowRestore={ allowRestore }
+							siteId={ siteId }
 							requestRestore={ requestRestore }
-
-							title={ log.name }
-							subTitle={ log.subTitle }
-							description={ log.description }
-							icon={ log.icon }
-							siteId={ this.props.siteId }
-							timestamp={ log.ts_site }
-							user={ log.user }
-							actionText={ log.actionText }
-							status={ log.status }
-							className={ log.className }
+							log={ log }
+							applySiteOffset={ applySiteOffset }
 						/>
 					) ) }
 				</FoldableCard>

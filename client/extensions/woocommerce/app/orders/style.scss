@@ -11,12 +11,19 @@
 			}
 		}
 	}
+
+	.table-row {
+		&:hover {
+			background: lighten( $gray, 35% );
+		}
+	}
 }
 
 .orders__item-link,
 .orders__item-name {
 	display: inline-block;
 	font-weight: normal;
+	color: $blue-wordpress;
 }
 
 .orders__item-link {
@@ -25,7 +32,7 @@
 
 .orders__item-status {
 	display: inline-flex;
-	padding: 0px 8px;
+	padding: 0px 12px;
 	line-height: 32px;
 	background: lighten( $gray, 20% );
 	border-radius: 4px;
@@ -39,12 +46,14 @@
 		}
 	}
 
-	&.is-cancelled {
+	&.is-cancelled,
+	&.is-refunded,
+	&.is-completed {
 		background: $gray-light;
 		color: $gray-dark;
 
 		span + span {
-			border-color: $gray-text-min;
+			border-color: lighten( $gray, 20% );
 		}
 	}
 
@@ -57,27 +66,9 @@
 		}
 	}
 
-	&.is-completed {
-		background: lighten( $alert-green, 20% );
-		color: darken( $alert-green, 30% );
-
-		span + span {
-			border-color: $alert-green;
-		}
-	}
-
-	&.is-refunded {
-		background: lighten( $alert-purple, 20% );
-		color: darken( $alert-purple, 30% );
-
-		span + span {
-			border-color: $alert-purple;
-		}
-	}
-
 	span + span {
-		margin-left: 8px;
-		padding-left: 8px;
+		margin-left: 12px;
+		padding-left: 12px;
 		border-left: 1px solid $gray;
 	}
 }

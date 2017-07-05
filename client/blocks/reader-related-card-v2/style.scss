@@ -404,7 +404,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 	// Wrapper for site title, thumbnail, excerpt
 	.reader-related-card-v2__post {
-		max-height: 206px;
+		max-height: 282px;
 
 		&::after {
 			@include long-content-fade( $size: 30% );
@@ -461,7 +461,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		margin-top: 40px;
 
 		.reader-related-card-v2__post {
-			max-height: 206px;
+			max-height: 282px;
 
 			@media #{$reader-related-card-v2-breakpoint-medium} {
 				max-height: 108px;
@@ -657,18 +657,20 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-related-card-v2__featured-image {
 	border: 1px solid lighten( $gray, 30% );
-	min-height: 78px;
+	min-height: 153px;
 
 	@media #{$reader-related-card-v2-breakpoint-small} {
 		flex: 1 1 0;
 		height: auto;
 		margin: 0 15px 0 0;
+		min-height: 78px;
 	}
 
 	@media #{$reader-related-card-v2-breakpoint-medium} {
 		height: auto;
 		flex: 1 1 0;
 		margin: 0 15px 0 0;
+		min-height: 78px;
 	}
 }
 
@@ -727,6 +729,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: initial;
 		word-wrap: break-word;
+		word-break: break-word; // Wrap long words in WebKit
 	}
 }
 

@@ -77,6 +77,67 @@ describe( 'handlers', () => {
 				);
 			} );
 		} );
+
+		useSandbox();
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
+				.query( { path: '/wc/v3/placeholder_endpoint&_method=get', json: true } )
+				.reply( 200, { data: getResponse } );
+		} );
+
+		it( 'should dispatch a function for success', () => {
+			const store = {
+				dispatch: spy(),
+			};
+
+			const onSuccess = ( dispatch, getState, data ) => {
+				dispatch( {
+					type: '%%ON_SUCCESS_FUNCTION%%',
+					data,
+				} );
+			};
+
+			const action = get( siteId, 'placeholder_endpoint', onSuccess );
+
+			return handleRequest( store, action ).then( () => {
+				expect( store.dispatch ).to.have.been.calledTwice;
+				expect( store.dispatch ).to.have.been.calledWith(
+					match( { type: WOOCOMMERCE_API_REQUEST_SUCCESS, action, data: getResponse } )
+				);
+				expect( store.dispatch ).to.have.been.calledWith(
+					match( { type: '%%ON_SUCCESS_FUNCTION%%' } )
+						.and( match.has( 'data' ) )
+				);
+			} );
+		} );
+
+		it( 'should dispatch a function for failure', () => {
+			const store = {
+				dispatch: spy(),
+			};
+
+			const onFailure = ( dispatch, getState, error ) => {
+				dispatch( {
+					type: '%%ON_FAILURE_FUNCTION%%',
+					error,
+				} );
+			};
+
+			const action = get( siteId, 'bad_placeholder_endpoint', null, onFailure );
+			return handleRequest( store, action ).then( () => {
+				expect( store.dispatch ).to.have.been.calledThrice;
+				expect( store.dispatch ).to.have.been.calledWith( match( { type: WOOCOMMERCE_ERROR_SET } ) );
+				expect( store.dispatch ).to.have.been.calledWith(
+					match( { type: WOOCOMMERCE_API_REQUEST_FAILURE, action: action } )
+						.and( match.has( 'error' ) )
+				);
+				expect( store.dispatch ).to.have.been.calledWith(
+					match( { type: '%%ON_FAILURE_FUNCTION%%' } )
+						.and( match.has( 'error' ) )
+				);
+			} );
+		} );
 	} );
 
 	describe( '#post', () => {

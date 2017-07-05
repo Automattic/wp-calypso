@@ -68,14 +68,6 @@ module.exports = {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	reduceThemesInSignupTest: {
-		datestamp: '20170518',
-		variations: {
-			original: 0,
-			modified: 100,
-		},
-		defaultVariation: 'original',
-	},
 	savingsInCheckoutSummary: {
 		datestamp: '20170516',
 		variations: {
@@ -84,12 +76,21 @@ module.exports = {
 		},
 		defaultVariation: 'show',
 	},
-	signupProgressIndicator: {
-		datestamp: '20170612',
+	signupPlansCopyChanges: {
+		datestamp: '20170623',
 		variations: {
 			original: 50,
-			wizardbar: 50,
+			modified: 50,
 		},
 		defaultVariation: 'original',
+	},
+	postPublishPreview: {
+		datestamp: '20170627',
+		allowExistingUsers: true,
+		variations: {
+			showPostPublishPreview: 50,
+			noShowPostPublishPreview: 50,
+		},
+		defaultVariation: 'noShowPostPublishPreview',
 	},
 };

@@ -3,7 +3,6 @@
  */
 import { parse as parseUrl } from 'url';
 import { startsWith } from 'lodash';
-import url from 'url';
 
 /**
  * Internal dependencies
@@ -130,11 +129,11 @@ function urlToDomainAndPath( urlToConvert ) {
  * @return {Boolean} Does it appear to be a URL?
  */
 function resemblesUrl( query ) {
-	let parsedUrl = url.parse( query );
+	let parsedUrl = parseUrl( query );
 
 	// Make sure the query has a protocol - hostname ends up blank otherwise
 	if ( ! parsedUrl.protocol ) {
-		parsedUrl = url.parse( 'http://' + query );
+		parsedUrl = parseUrl( 'http://' + query );
 	}
 
 	if ( ! parsedUrl.hostname || parsedUrl.hostname.indexOf( '.' ) === -1 ) {

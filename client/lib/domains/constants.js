@@ -22,6 +22,7 @@ const tlds = {
 	net: 'domain_reg',
 	org: 'domain_reg',
 	me: 'dotme_domain',
+	ca: 'dotca_domain',
 	co: 'dotco_domain',
 	'com.br': 'dotcomdotbr_domain',
 	info: 'dotinfo_domain',

@@ -220,6 +220,7 @@ class FollowingManage extends Component {
 							initialValue={ sitesQuery }
 							value={ sitesQuery }
 							maxLength={ 500 }
+							disableAutocorrect={ true }
 						/>
 					</CompactCard>
 

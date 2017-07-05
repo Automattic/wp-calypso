@@ -11,10 +11,12 @@
 
 	&:not( :disabled )::before {
 		@include long-content-fade( $size: 16px );
-		right: calc( 100% + 1px );
+		right: auto;
+		left: -17px;
 	}
 
 	&:focus::before {
-		right: calc( 100% + 3px );
+		right: auto;
+		left: -19px;
 	}
 }

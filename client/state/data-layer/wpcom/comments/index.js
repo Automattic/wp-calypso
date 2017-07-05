@@ -27,7 +27,7 @@ import { getPostOldestCommentDate } from 'state/comments/selectors';
  * @param {Number|undefined} parentCommentId parent comment identifier
  * @returns {Object} comment placeholder
  */
-function createPlaceholderComment( commentText, postId, parentCommentId ) {
+export function createPlaceholderComment( commentText, postId, parentCommentId ) {
 	// We need placehodler id to be unique in the context of siteId, postId for that specific user,
 	// date milliseconds will do for that purpose.
 	return {

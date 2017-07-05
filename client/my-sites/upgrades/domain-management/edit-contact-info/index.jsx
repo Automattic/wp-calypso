@@ -11,6 +11,7 @@ import { includes } from 'lodash';
 import DomainMainPlaceholder from 'my-sites/upgrades/domain-management/components/domain/main-placeholder';
 import EditContactInfoFormCard from './form-card';
 import EditContactInfoPrivacyEnabledCard from './privacy-enabled-card';
+import PendingWhoisUpdateCard from './pending-whois-update-card';
 import NonOwnerCard from 'my-sites/upgrades/domain-management/components/domain/non-owner-card';
 import Header from 'my-sites/upgrades/domain-management/components/header';
 import Main from 'components/main';
@@ -58,6 +59,10 @@ const EditContactInfo = React.createClass( {
 
 		if ( ! domain.currentUserCanManage ) {
 			return <NonOwnerCard { ...this.props } />;
+		}
+
+		if ( domain.isPendingWhoisUpdate ) {
+			return <PendingWhoisUpdateCard />;
 		}
 
 		if ( ! includes( [ OPENHRS, OPENSRS ], domain.registrar ) && domain.privateDomain ) {

@@ -10,11 +10,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import ActionHeader from 'woocommerce/components/action-header';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import {
 	areSetupChoicesLoading,
 	getFinishedInitialSetup,
-	getSetStoreAddressDuringInitialSetup
+	getSetStoreAddressDuringInitialSetup,
+	getFinishedInstallOfRequiredPlugins,
+	getFinishedPageSetup,
 } from 'woocommerce/state/sites/setup-choices/selectors';
 import { areOrdersLoading, getOrders } from 'woocommerce/state/sites/orders/selectors';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
@@ -23,6 +26,8 @@ import Main from 'components/main';
 import ManageNoOrdersView from './manage-no-orders-view';
 import ManageOrdersView from './manage-orders-view';
 import PreSetupView from './pre-setup-view';
+import RequiredPagesSetupView from './required-pages-setup-view';
+import RequiredPluginsInstallView from './required-plugins-install-view';
 import SetupTasksView from './setup-tasks-view';
 
 class Dashboard extends Component {
@@ -62,8 +67,51 @@ class Dashboard extends Component {
 		}
 	}
 
+	getBreadcrumb = () => {
+		const {
+			finishedInstallOfRequiredPlugins,
+			finishedPageSetup,
+			finishedInitialSetup,
+			setStoreAddressDuringInitialSetup,
+			translate
+		} = this.props;
+
+		if ( ! finishedInstallOfRequiredPlugins ) {
+			return translate( 'Installing Plugins' );
+		}
+
+		if ( ! finishedPageSetup ) {
+			return translate( 'Setting Up Store Pages' );
+		}
+
+		if ( ! setStoreAddressDuringInitialSetup ) {
+			return translate( 'Store Location' );
+		}
+
+		if ( ! finishedInitialSetup ) {
+			return translate( 'Store Setup' );
+		}
+
+		return translate( 'Dashboard' );
+	}
+
 	renderDashboardContent = () => {
-		const { finishedInitialSetup, hasOrders, selectedSite, setStoreAddressDuringInitialSetup } = this.props;
+		const {
+			finishedInstallOfRequiredPlugins,
+			finishedPageSetup,
+			finishedInitialSetup,
+			hasOrders,
+			selectedSite,
+			setStoreAddressDuringInitialSetup,
+		} = this.props;
+
+		if ( ! finishedInstallOfRequiredPlugins ) {
+			return ( <RequiredPluginsInstallView site={ selectedSite } /> );
+		}
+
+		if ( ! finishedPageSetup ) {
+			return ( <RequiredPagesSetupView site={ selectedSite } /> );
+		}
 
 		if ( ! setStoreAddressDuringInitialSetup ) {
 			return ( <PreSetupView site={ selectedSite } /> );
@@ -90,6 +138,7 @@ class Dashboard extends Component {
 
 		return (
 			<Main className={ classNames( 'dashboard', className ) }>
+				<ActionHeader breadcrumbs={ this.getBreadcrumb() } />
 				{ this.renderDashboardContent() }
 			</Main>
 		);
@@ -104,6 +153,8 @@ function mapStateToProps( state ) {
 	const finishedInitialSetup = getFinishedInitialSetup( state );
 	return {
 		finishedInitialSetup,
+		finishedInstallOfRequiredPlugins: getFinishedInstallOfRequiredPlugins( state ),
+		finishedPageSetup: getFinishedPageSetup( state ),
 		hasOrders,
 		loading,
 		selectedSite,

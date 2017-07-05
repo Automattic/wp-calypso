@@ -1,11 +1,13 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import shallowEqual from 'react-pure-render/shallowEqual';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,8 +18,8 @@ import PostControls from './post-controls';
 import PostHeader from './post-header';
 import PostImage from '../post/post-image';
 import PostExcerpt from 'components/post-excerpt';
+import updatePostStatus from 'components/update-post-status';
 import utils from 'lib/posts/utils';
-import updatePostStatus from 'lib/mixins/update-post-status';
 import analytics from 'lib/analytics';
 import config from 'config';
 import { setPreviewUrl } from 'state/ui/preview/actions';
@@ -28,7 +30,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 import Comments from 'blocks/comments';
-import AsyncLoad from 'components/async-load';
+import PostShare from 'blocks/post-share';
 import PostActions from 'blocks/post-actions';
 
 function recordEvent( eventAction ) {
@@ -46,14 +48,22 @@ function checkPropsChange( currentProps, nextProps, propArr ) {
 }
 
 const Post = React.createClass( {
-
 	displayName: 'Post',
 
-	mixins: [ updatePostStatus ],
+	propTypes: {
+		// connected via updatePostStatus
+		buildUpdateTemplate: PropTypes.func.isRequired,
+		togglePageActions: PropTypes.func.isRequired,
+		updatePostStatus: PropTypes.func.isRequired,
+		updated: PropTypes.bool.isRequired,
+		updatedStatus: PropTypes.string,
+		previousStatus: PropTypes.string,
+		showMoreOptions: PropTypes.bool.isRequired,
+		showPageActions: PropTypes.bool.isRequired,
+	},
 
 	getInitialState() {
 		return {
-			showMoreOptions: false,
 			showComments: false,
 			showShare: false,
 			commentsFilter: 'all'
@@ -61,17 +71,23 @@ const Post = React.createClass( {
 	},
 
 	shouldComponentUpdate( nextProps, nextState ) {
-		const propsToCheck = [ 'post', 'postImages', 'fullWidthPost', 'path' ];
-
-		if ( checkPropsChange( this.props, nextProps, propsToCheck ) ) {
+		if ( ! shallowEqual( this.state, nextState ) ) {
 			return true;
 		}
 
-		if ( nextState.showMoreOptions !== this.props.showMoreOptions ) {
-			return true;
-		}
+		const propsToCheck = [
+			'post',
+			'postImages',
+			'fullWidthPost',
+			'path',
 
-		return false;
+			// via updatePostStatus
+			'previousStatus',
+			'showMoreOptions',
+			'updated',
+			'updatedStatus',
+		];
+		return checkPropsChange( this.props, nextProps, propsToCheck );
 	},
 
 	analyticsEvents: {
@@ -112,41 +128,23 @@ const Post = React.createClass( {
 	},
 
 	publishPost() {
-		this.updatePostStatus( 'publish' );
+		this.props.updatePostStatus( 'publish' );
 		recordEvent( 'Clicked Publish Post' );
 	},
 
 	restorePost() {
-		this.updatePostStatus( 'restore' );
+		this.props.updatePostStatus( 'restore' );
 		recordEvent( 'Clicked Restore Post' );
 	},
 
 	deletePost() {
-		this.updatePostStatus( 'delete' );
+		this.props.updatePostStatus( 'delete' );
 		recordEvent( 'Clicked Delete Post' );
 	},
 
 	trashPost() {
-		this.updatePostStatus( 'trash' );
+		this.props.updatePostStatus( 'trash' );
 		recordEvent( 'Clicked Trash Post' );
-	},
-
-	componentWillMount() {
-		const { translate } = this.props;
-
-		this.strings = {
-			trashing: translate( 'Trashing Post' ),
-			deleting: translate( 'Deleting Post' ),
-			trashed: translate( 'Moved to Trash' ),
-			undo: translate( 'undo?' ),
-			deleted: translate( 'Post Deleted' ),
-			updating: translate( 'Updating Post' ),
-			error: translate( 'Error' ),
-			updated: translate( 'Updated' ),
-			deleteWarning: translate( 'Delete this post permanently?' ),
-			restoring: translate( 'Restoring' ),
-			restored: translate( 'Restored' )
-		};
 	},
 
 	canUserEditPost() {
@@ -158,7 +156,7 @@ const Post = React.createClass( {
 		return classNames( {
 			post: true,
 			'is-protected': ( this.props.post.password ) ? true : false,
-			'show-more-options': this.state.showMoreOptions
+			'show-more-options': this.props.showMoreOptions
 		} );
 	},
 
@@ -211,7 +209,12 @@ const Post = React.createClass( {
 		}
 
 		return (
-			<a href={ this.getContentLinkURL() } className="post__excerpt post__content-link" target={ this.getContentLinkTarget() } onClick={ this.analyticsEvents.postExcerptClick }>
+			<a
+				href={ this.getContentLinkURL() }
+				className="post__excerpt post__content-link"
+				target={ this.getContentLinkTarget() }
+				onClick={ this.analyticsEvents.postExcerptClick }
+			>
 				{ excerptElement }
 			</a>
 		);
@@ -262,12 +265,6 @@ const Post = React.createClass( {
 		return '_blank';
 	},
 
-	toggleMoreControls( visibility ) {
-		this.setState( {
-			showMoreOptions: ( visibility === 'show' )
-		} );
-	},
-
 	toggleComments() {
 		this.setState( {
 			showComments: ! this.state.showComments
@@ -277,6 +274,10 @@ const Post = React.createClass( {
 
 	toggleShare() {
 		this.setState( { showShare: ! this.state.showShare } );
+	},
+
+	setCommentsFilter( commentsFilter ) {
+		this.setState( { commentsFilter } );
 	},
 
 	viewPost( event ) {
@@ -312,8 +313,8 @@ const Post = React.createClass( {
 					post={ this.props.post }
 					editURL={ this.props.editUrl }
 					fullWidth={ this.props.fullWidthPost }
-					onShowMore={ this.toggleMoreControls.bind( this, 'show' ) }
-					onHideMore={ this.toggleMoreControls.bind( this, 'hide' ) }
+					onShowMore={ this.props.showMoreControls }
+					onHideMore={ this.props.hideMoreControls }
 					onPublish={ this.publishPost }
 					onTrash={ this.trashPost }
 					onDelete={ this.deletePost }
@@ -327,7 +328,7 @@ const Post = React.createClass( {
 					transitionName="updated-trans"
 					transitionEnterTimeout={ 300 }
 					transitionLeaveTimeout={ 300 }>
-					{ this.buildUpdateTemplate() }
+					{ this.props.buildUpdateTemplate() }
 				</ReactCSSTransitionGroup>
 				{ this.state.showComments &&
 					<Comments
@@ -336,16 +337,17 @@ const Post = React.createClass( {
 						showFilters={ isEnabled( 'comments/filters-in-posts' ) }
 						showModerationTools={ isEnabled( 'comments/moderation-tools-in-posts' ) }
 						commentsFilter={ config.isEnabled( 'comments/filters-in-posts' ) ? this.state.commentsFilter : 'approved' }
-						onFilterChange={ commentsFilter => this.setState( { commentsFilter } ) }
-						onCommentsUpdate={ () => {} } />
+						onFilterChange={ this.setCommentsFilter }
+						onCommentsUpdate={ noop }
+					/>
 				}
 				{
 					this.state.showShare &&
 					config.isEnabled( 'republicize' ) &&
-					<AsyncLoad
-						require="blocks/post-share"
+					<PostShare
 						post={ this.props.post }
-						siteId={ this.props.post.site_ID } />
+						siteId={ this.props.post.site_ID }
+					/>
 				}
 			</Card>
 		);
@@ -382,4 +384,4 @@ export default connect(
 		};
 	},
 	{ setPreviewUrl, setLayoutFocus }
-)( localize( Post ) );
+)( updatePostStatus( localize( Post ) ) );

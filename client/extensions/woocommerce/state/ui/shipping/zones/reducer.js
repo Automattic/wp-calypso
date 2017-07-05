@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { every, isEmpty, isEqual, omit, reject } from 'lodash';
+import { every, isEmpty, isEqual, omit, pick, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,12 +11,16 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_ADD,
 	WOOCOMMERCE_SHIPPING_ZONE_CANCEL,
 	WOOCOMMERCE_SHIPPING_ZONE_CLOSE,
+	WOOCOMMERCE_SHIPPING_ZONE_DELETED,
 	WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME,
+	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED,
 	WOOCOMMERCE_SHIPPING_ZONE_OPEN,
 	WOOCOMMERCE_SHIPPING_ZONE_REMOVE,
+	WOOCOMMERCE_SHIPPING_ZONE_UPDATED,
 } from 'woocommerce/state/action-types';
 import { nextBucketIndex, getBucket } from '../../helpers';
 import methodsReducer, { initialState as methodsInitialState } from './methods/reducer';
+import locationsReducer, { initialState as locationsInitialState } from './locations/reducer';
 import { mergeMethodEdits } from './methods/helpers';
 
 export const initialState = {
@@ -46,7 +50,9 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_CLOSE ] = ( state ) => {
 	if ( null === currentlyEditingId ) {
 		return state;
 	}
-	if ( isEmpty( omit( currentlyEditingChanges, 'methods' ) ) && every( currentlyEditingChanges.methods, isEmpty ) ) {
+	if ( isEmpty( omit( currentlyEditingChanges, 'methods', 'locations' ) ) &&
+		every( currentlyEditingChanges.methods, isEmpty ) &&
+		( ! currentlyEditingChanges.locations || currentlyEditingChanges.locations.pristine ) ) {
 		// Nothing to save, no need to go through the rest of the algorithm
 		return { ...state,
 			currentlyEditingId: null,
@@ -95,6 +101,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_OPEN ] = ( state, { id } ) => {
 		currentlyEditingId: id,
 		currentlyEditingChanges: { // Always reset the current changes
 			methods: methodsInitialState,
+			locations: locationsInitialState,
 		},
 	};
 };
@@ -115,6 +122,39 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_REMOVE ] = ( state, { id } ) => {
 	return newState;
 };
 
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_UPDATED ] = ( state, { data, originatingAction: { zone } } ) => {
+	if ( zone.id !== state.currentlyEditingId ) {
+		return state;
+	}
+
+	return { ...state,
+		currentlyEditingId: data.id,
+		currentlyEditingChanges: pick( state.currentlyEditingChanges, 'locations', 'methods' ),
+	};
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_DELETED ] = ( state, { originatingAction: { zone } } ) => {
+	if ( zone.id !== state.currentlyEditingId ) {
+		return state;
+	}
+
+	return { ...state,
+		currentlyEditingId: null,
+	};
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED ] = ( state, { originatingAction: { zoneId } } ) => {
+	if ( zoneId !== state.currentlyEditingId ) {
+		return state;
+	}
+
+	return { ...state,
+		currentlyEditingChanges: { ...state.currentlyEditingChanges,
+			locations: locationsInitialState,
+		}
+	};
+};
+
 const mainReducer = createReducer( initialState, reducer );
 
 export default ( state, action ) => {
@@ -123,13 +163,14 @@ export default ( state, action ) => {
 	if ( null !== newState.currentlyEditingId ) {
 		const methodsState = newState.currentlyEditingChanges.methods;
 		const newMethodsState = methodsReducer( methodsState, action );
-		if ( methodsState !== newMethodsState ) {
-			return { ...newState,
-				currentlyEditingChanges: { ...newState.currentlyEditingChanges,
-					methods: newMethodsState,
-				},
-			};
-		}
+		const locationsState = newState.currentlyEditingChanges.locations;
+		const newLocationsState = locationsReducer( locationsState, action );
+		return { ...newState,
+			currentlyEditingChanges: { ...newState.currentlyEditingChanges,
+				methods: newMethodsState,
+				locations: newLocationsState,
+			},
+		};
 	}
 
 	return newState;

@@ -1,53 +1,118 @@
-.get-apps__title {
-	font-size: 24px;
-	font-family: $serif;
-	font-weight: 700;
-	line-height: 32px;
-	margin-bottom: 8px;
-
-	@include breakpoint( ">480px" ) {
-		margin-top: 24px;
-	}
+.get-apps {
+	display: flex;
+	flex-direction: column;
 }
 
-.get-apps__subheading {
-	max-width: 500px;
-	margin: 16px auto;
-}
-
-.get-apps__app {
-	text-align: center;
-	float: left;
-}
-
-.get-apps__app-icon {
-	width: 96px;
-	height: 96px;
-	margin: 0 auto 16px auto;
-	border-radius: 8px;
-	background: lighten( $gray, 20% );
-}
-
-.get-apps__app {
+.get-apps > div {
 	width: 100%;
-	margin-bottom: 24px;
 }
 
-.get-apps__desktop .get-apps__app {
-	@include breakpoint( ">480px" ) {
-		width: 33%;
+.get-apps__card-title {
+	font-size: 15px;
+	margin-bottom: 4px;
+
+	@include breakpoint('>480px') {
+		font-size: 18px;
+	}
+}
+
+.get-apps__desktop,
+.get-apps__mobile {
+	margin-bottom: 0;
+
+	@include breakpoint('>480px') {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+}
+
+.get-apps__description {
+	font-size: 13px;
+	margin-bottom: 4px;
+
+	@include breakpoint('>480px') {
+		font-size: 15px;
+	}
+}
+
+.get-apps__also-available,
+.get-apps__description:last-child {
+	margin-bottom: 12px;
+
+	@include breakpoint('>480px') {
 		margin-bottom: 0;
 	}
 }
 
-.get-apps__mobile .get-apps__app {
-	a img {
-		width: auto;
+.get-apps__mobile {
+	@include breakpoint('>480px') {
+		order: 2;
+	}
+}
+
+.get-apps__illustration {
+	background-color: $white;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), 0.5 ),
+		0 1px 2px lighten( $gray, 30% );
+	box-sizing: border-box;
+	color: $blue-dark;
+	max-width: 980px;
+	overflow: hidden;
+	padding: 16px;
+	text-align: center;
+
+	@include breakpoint('>480px') {
+		padding: 24px;
+	}
+}
+
+.get-apps__illustration-heading {
+	font-size: 16px;
+	font-weight: 600;
+	padding: 0 24px;
+
+	@include breakpoint('>480px') {
+		font-size: 24px;
+	}
+}
+
+.get-apps__illustration-tagline {
+	font-size: 11px;
+	margin-bottom: 0;
+	padding: 0 24px;
+
+	@include breakpoint('>480px') {
+		font-size: 14px;
+	}
+}
+
+.get-apps__card-text {
+	@include breakpoint('>480px') {
+		flex: 1;
+	}
+}
+
+.get-apps__also-available {
+	color: $gray-text-min;
+	font-size: 13px;
+	font-style: italic;
+}
+
+.get-apps__desktop-button {
+	@include breakpoint('>480px') {
+		margin-left: 24px;
+	}
+}
+
+.get-apps__badges {
+	img {
 		height: 40px;
-	}
+		margin: 0 12px 0 0;
+		width: auto;
 
-	@include breakpoint( ">480px" ) {
-		width: 50%;
-		margin-bottom: 0;
-	}	
+		@include breakpoint('>480px') {
+			margin: 0 0 0 12px;
+		}
+	}
 }

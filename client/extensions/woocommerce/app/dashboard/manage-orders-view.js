@@ -117,7 +117,7 @@ class ManageOrdersView extends Component {
 					className="dashboard__reports-widget"
 				>
 					<div className="dashboard__reports-widget-content-wrapper">
-						<img src="/calypso/images/extensions/woocommerce/woocommerce-reports.svg" width="500" />
+						<img src="/calypso/images/extensions/woocommerce/woocommerce-reports.svg" />
 						<div className="dashboard__reports-widget-content">
 							<h2>
 								{ translate( 'Reports' ) }

@@ -122,6 +122,7 @@
     "react-redux": "5.0.3",
     "react-virtualized": "9.4.0",
     "redux": "3.0.4",
+    "redux-form": "6.8.0",
     "redux-thunk": "1.0.0",
     "rtlcss": "2.0.5",
     "sanitize-html": "1.11.1",

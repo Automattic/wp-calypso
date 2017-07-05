@@ -19,7 +19,7 @@ export default class ProductForm extends Component {
 		siteId: PropTypes.number,
 		product: PropTypes.shape( {
 			id: PropTypes.isRequired,
-			type: PropTypes.string.isRequired,
+			type: PropTypes.string,
 			name: PropTypes.string,
 		} ),
 		variations: PropTypes.array,
@@ -44,6 +44,7 @@ export default class ProductForm extends Component {
 	render() {
 		const { siteId, product, productCategories, variations } = this.props;
 		const { editProduct, editProductCategory, editProductVariation, editProductAttribute } = this.props;
+		const type = product.type || 'simple';
 
 		if ( ! siteId ) {
 			return this.renderPlaceholder();
@@ -79,7 +80,7 @@ export default class ProductForm extends Component {
 					editProductVariation={ editProductVariation }
 				/>
 
-				{ 'simple' === product.type && (
+				{ 'simple' === type && (
 					<div className="products__product-simple-cards">
 						<ProductFormSimpleCard
 							siteId={ siteId }

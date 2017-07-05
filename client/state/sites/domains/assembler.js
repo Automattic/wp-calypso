@@ -21,6 +21,7 @@ export const createSiteDomainObject = domain => {
 		hasZone: Boolean( domain.has_zone ),
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),
 		isPrimary: Boolean( domain.primary_domain ),
+		isPendingWhoisUpdate: Boolean( domain.pending_whois_update ),
 		isPrivate: Boolean( domain.private_domain ),
 		isWPCOMDomain: Boolean( domain.wpcom_domain ),
 		manualTransferRequired: Boolean( domain.manual_transfer_required ),
@@ -33,6 +34,7 @@ export const createSiteDomainObject = domain => {
 		pointsToWpcom: Boolean( domain.points_to_wpcom ),
 		registrar: String( domain.registrar ),
 		registrationDate: String( domain.registration_date ),
-		type: getDomainType( domain )
+		type: getDomainType( domain ),
+		transferLockOnWhoisUpdateOptional: Boolean( domain.transfer_lock_on_whois_update_optional )
 	};
 };

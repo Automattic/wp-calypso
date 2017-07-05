@@ -132,8 +132,6 @@
 }
 
 .table-row {
-	line-height: 36px;
-
 	&:hover {
 		background: $gray-light;
 
@@ -143,7 +141,8 @@
 	}
 
 	&.is-header {
-		color: $gray-text-min;
+		color: $gray-dark;
+		font-weight: 600;
 	}
 
 	&.has-action {
@@ -159,7 +158,7 @@
 .table-heading,
 .table-item {
 	font-size: 14px;
-	padding: 12px;
+	padding: 16px;
 	vertical-align: middle;
 
 	&:first-child {

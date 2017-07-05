@@ -13,6 +13,7 @@ import Gridicon from 'gridicons';
 
 class ActivityLogConfirmDialog extends Component {
 	static propTypes = {
+		applySiteOffset: PropTypes.func.isRequired,
 		isVisible: PropTypes.bool.isRequired,
 		onClose: PropTypes.func.isRequired,
 		onConfirm: PropTypes.func.isRequired,
@@ -48,6 +49,7 @@ class ActivityLogConfirmDialog extends Component {
 
 	render() {
 		const {
+			applySiteOffset,
 			isVisible,
 			moment,
 			siteTitle,
@@ -75,7 +77,7 @@ class ActivityLogConfirmDialog extends Component {
 					{
 						translate( 'Restoring to {{b}}%(time)s{{/b}}', {
 							args: {
-								time: moment( timestamp ).format( 'LLL' ),
+								time: applySiteOffset( moment.utc( timestamp ) ).format( 'LLL' ),
 							},
 							components: { b: <b /> },
 						} )
@@ -92,7 +94,7 @@ class ActivityLogConfirmDialog extends Component {
 
 				<a
 					className="activity-log-confirm-dialog__more-info-link"
-					href="#" // FIXME: real link
+					href="https://help.vaultpress.com/one-click-restore/"
 				>
 					{ translate( 'Read More about Site Restores' ) }
 				</a>

@@ -9,7 +9,8 @@ import { expect } from 'chai';
 import {
 	arePaymentMethodsLoaded,
 	arePaymentMethodsLoading,
-	getPaymentMethods
+	getPaymentMethods,
+	getPaymentMethod,
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
@@ -110,6 +111,28 @@ describe( 'selectors', () => {
 
 		it( 'should return undefined when given a pre-initialized state tree.', () => {
 			expect( getPaymentMethods( preInitializedState, 123 ) ).to.be.undefined;
+		} );
+	} );
+
+	describe( '#getPaymentMethod', () => {
+		it( 'should return the requested paymentMethod when given populated state tree.', () => {
+			expect( getPaymentMethod( loadedState, 'bacs', 123 ) ).to.eql( {
+				id: 'bacs',
+				title: 'Direct bank transfer',
+				description: 'Make your payment directly into our bank account.',
+				enabled: false,
+				method_title: 'BACS',
+				methodType: 'offline',
+				method_description: 'Allows payments by BACS, more commonly known as direct bank/wire transfer.',
+			} );
+		} );
+
+		it( 'should be false when given a loading state tree.', () => {
+			expect( getPaymentMethod( loadingState, 'bacs', 123 ) ).to.be.false;
+		} );
+
+		it( 'should be false when given a pre-initialized state tree.', () => {
+			expect( getPaymentMethod( preInitializedState, 'bacs', 123 ) ).to.be.false;
 		} );
 	} );
 } );
