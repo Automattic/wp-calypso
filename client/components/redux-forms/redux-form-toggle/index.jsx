@@ -17,6 +17,7 @@ class ReduxFormToggle extends Component {
 
 	renderToggle = text => ( { input: { onChange, value } } ) => (
 		<FormToggle
+			{ ...this.props }
 			checked={ value || false }
 			onChange={ this.updateToggle( value, onChange ) }>
 			{ text }

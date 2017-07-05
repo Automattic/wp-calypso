@@ -17,6 +17,7 @@ class ReduxFormRadio extends Component {
 
 	renderRadio = defaultValue => ( { input: { name, onChange, value } } ) => (
 		<FormRadio
+			{ ...this.props }
 			checked={ value === defaultValue }
 			name={ name }
 			onChange={ this.updateRadio( onChange ) }

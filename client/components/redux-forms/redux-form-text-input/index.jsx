@@ -24,7 +24,12 @@ class ReduxFormTextInput extends Component {
 	updateTextInput = onChange => event => onChange( event.target.value );
 
 	render() {
-		return <Field component={ this.renderTextInput } name={ this.props.name } />;
+		return (
+			<Field
+				{ ...this.props }
+				component={ this.renderTextInput }
+				name={ this.props.name } />
+		);
 	}
 }
 
