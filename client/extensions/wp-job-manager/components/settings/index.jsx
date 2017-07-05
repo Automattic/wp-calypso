@@ -13,22 +13,27 @@ import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import Navigation from '../navigation';
 import QuerySettings from '../data/query-settings';
+import { saveSettings } from '../../state/settings/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSettings } from '../../state/settings/selectors';
+import { getSettings, isSavingSettings } from '../../state/settings/selectors';
 
 class Settings extends Component {
 	static propTypes = {
 		children: PropTypes.element,
 		initialValues: PropTypes.object,
+		isSaving: PropTypes.bool,
 		siteId: PropTypes.number,
 		tab: PropTypes.string,
 		translate: PropTypes.func,
 	};
 
+	onSubmit = data => this.props.saveSettings( this.props.siteId, data );
+
 	render() {
 		const {
 			children,
 			initialValues,
+			isSaving,
 			siteId,
 			tab,
 			translate,
@@ -41,7 +46,11 @@ class Settings extends Component {
 				<DocumentHead title={ translate( 'WP Job Manager' ) } />
 				<Navigation activeTab={ tab } />
 				{
-					Children.map( children, child => cloneElement( child, { initialValues } ) )
+					Children.map( children, child => cloneElement( child, {
+						initialValues,
+						isSaving,
+						onSubmit: this.onSubmit,
+					} ) )
 				}
 			</Main>
 		);
@@ -54,9 +63,11 @@ const connectComponent = connect(
 
 		return {
 			initialValues: getSettings( state, siteId ),
+			isSaving: isSavingSettings( state, siteId ),
 			siteId,
 		};
-	}
+	},
+	{ saveSettings }
 );
 
 export default flowRight(
