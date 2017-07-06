@@ -50,7 +50,7 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.get( '/rest/v1.1/me/settings' )
+				.get( '/rest/v1.1/me/preferences' )
 				.reply( 200, responseShape );
 		} );
 
@@ -75,7 +75,7 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.get( '/rest/v1.1/me/settings' )
+				.get( '/rest/v1.1/me/preferences' )
 				.reply( 404 );
 		} );
 
@@ -102,14 +102,14 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/me/settings/', {
+				.post( '/rest/v1.1/me/preferences', {
 					[ USER_SETTING_KEY ]: { preferenceKey: 'preferenceValue' }
 				} )
 				.reply( 200, responseShape );
 
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/me/settings/', {
+				.post( '/rest/v1.1/me/preferences', {
 					[ USER_SETTING_KEY ]: { loggedOut: true }
 				} )
 				.reply( 403, {
