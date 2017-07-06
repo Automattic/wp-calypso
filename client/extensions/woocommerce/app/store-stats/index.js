@@ -29,6 +29,8 @@ import {
 	UNITS
 } from 'woocommerce/app/store-stats/constants';
 import { getUnitPeriod, getEndPeriod } from './utils';
+import { isJetpackSite } from 'state/sites/selectors';
+import { isPluginActive } from 'state/selectors';
 
 class StoreStats extends Component {
 	static propTypes = {
