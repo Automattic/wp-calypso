@@ -9,7 +9,6 @@ import { spy } from 'sinon';
  */
 import {
 	COMMENTS_LIKE,
-	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
 	NOTICE_CREATE,
 } from 'state/action-types';
@@ -55,7 +54,7 @@ describe( '#updateCommentLikes()', () => {
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( {
-			type: COMMENTS_LIKE_UPDATE,
+			type: COMMENTS_LIKE,
 			siteId: SITE_ID,
 			postId: POST_ID,
 			commentId: 1,
