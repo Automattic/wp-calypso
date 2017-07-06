@@ -60,11 +60,11 @@
 	}
 }
 
-.reader-post-options-menu__blog-stickers-item {
+.reader-post-options-menu__blog-sticker-menu-item {
 	width: 100%;
 }
 
-.reader-post-options-menu__blog-stickers-item.has-sticker {
+.reader-post-options-menu__blog-sticker-menu-item.has-sticker {
 	color: $alert-green;
 
 	.gridicon {
@@ -75,6 +75,7 @@
 	&:focus {
 		color: $white;
 		background: $alert-green;
+		cursor: default;
 
 		.gridicon {
 			fill: $white;
