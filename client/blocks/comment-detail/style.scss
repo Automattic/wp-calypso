@@ -69,10 +69,10 @@
 	align-items: center;
 	display: flex;
 	flex-flow: row nowrap;
-	padding: 12px 8px;
 
 	&.is-preview {
 		cursor: pointer;
+		padding: 12px 8px;
 	}
 
 	&.is-bulk-edit {
@@ -88,6 +88,21 @@
 			.external-link:focus {
 				outline: none;
 			}
+		}
+	}
+
+	.button.is-borderless {
+		padding: 12px 8px;
+
+		.gridicon {
+			margin-top: 0;
+			top: 0;
+		}
+
+		&.comment-detail__action-collapse {
+			flex-grow: 1;
+			padding-left: 12px;
+			text-align: left;
 		}
 	}
 
@@ -154,60 +169,54 @@
 
 .comment-detail__actions {
 	color: $gray;
+	padding-right: 4px;
 	user-select: none;
 
-	a {
-		color: $gray-text-min;
-		cursor: pointer;
-		padding: 8px;
-		white-space: nowrap;
-		&:focus,
-		&:hover {
-			color: $blue-wordpress;
-		}
-	}
-	span {
-		display: none;
+	.button.is-borderless {
+		span {
+			display: none;
+			font-weight: normal;
 
-		@include breakpoint( ">960px" ) {
-			display: inline;
+			@include breakpoint( ">960px" ) {
+				display: inline;
+			}
 		}
-	}
 
-	.comment-detail__action-like {
-		&:focus,
-		&:hover {
-			color: $orange-jazzy;
+		&.comment-detail__action-like {
+			&:focus,
+			&:hover {
+				color: $orange-jazzy;
+			}
 		}
-	}
 
-	.comment-detail__action-approve {
-		&:focus,
-		&:hover {
+		&.comment-detail__action-approve {
+			&:focus,
+			&:hover {
+				color: $alert-green;
+			}
+		}
+
+		&.comment-detail__action-spam,
+		&.comment-detail__action-trash,
+		&.comment-detail__action-delete {
+			&:focus,
+			&:hover {
+				color: $alert-red;
+			}
+		}
+
+		&.is-approved {
 			color: $alert-green;
 		}
-	}
-
-	.comment-detail__action-spam,
-	.comment-detail__action-trash,
-	.comment-detail__action-delete {
-		&:focus,
-		&:hover {
+		&.is-liked {
+			color: $orange-jazzy;
+		}
+		&.is-spam {
 			color: $alert-red;
 		}
-	}
-
-	.is-approved {
-		color: $alert-green;
-	}
-	.is-liked {
-		color: $orange-jazzy;
-	}
-	.is-spam {
-		color: $alert-red;
-	}
-	.is-trash {
-		color: $gray-dark;
+		&.is-trash {
+			color: $gray-dark;
+		}
 	}
 }
 
