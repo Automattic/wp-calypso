@@ -1,8 +1,6 @@
 /**
  * External dependencies
  */
-import nock from 'nock';
-import sinon from 'sinon';
 import { expect } from 'chai';
 
 /**
@@ -34,10 +32,6 @@ const SITE_ID = 91750058;
 const POST_ID = 287;
 
 describe( 'actions', () => {
-	after( () => {
-		nock.cleanAll();
-	} );
-
 	describe( '#requestPostComments()', () => {
 		useSandbox( ( sandbox ) => {
 			sandbox.stub( config, 'isEnabled' ).withArgs( 'comments/filters-in-posts' ).returns( true );
