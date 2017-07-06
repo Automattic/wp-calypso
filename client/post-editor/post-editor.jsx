@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import tinyMce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
@@ -21,7 +22,6 @@ const actions = require( 'lib/posts/actions' ),
 	EditorTitle = require( 'post-editor/editor-title' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
 	TinyMCE = require( 'components/tinymce' ),
-	EditorWordCount = require( 'post-editor/editor-word-count' ),
 	SegmentedControl = require( 'components/segmented-control' ),
 	SegmentedControlItem = require( 'components/segmented-control/item' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
@@ -47,6 +47,7 @@ import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import EditorForbidden from 'post-editor/editor-forbidden';
 import EditorNotice from 'post-editor/editor-notice';
+import EditorWordCount from 'post-editor/editor-word-count';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
@@ -91,6 +92,7 @@ export const PostEditor = React.createClass( {
 			isSaving: false,
 			isPublishing: false,
 			notice: null,
+			selectedText: null,
 			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
@@ -123,6 +125,7 @@ export const PostEditor = React.createClass( {
 		this.debouncedAutosave = debounce( this.throttledAutosave, 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
+		this.debouncedCopySelectedText = debounce( this.copySelectedText, 200 );
 		this.onPreviewClick = this.onPreview.bind( this, 'preview' );
 		this.onViewClick = this.onPreview.bind( this, 'view' );
 		this.useDefaultSidebarFocus();
@@ -162,6 +165,7 @@ export const PostEditor = React.createClass( {
 		this.debouncedAutosave.cancel();
 		this.throttledAutosave.cancel();
 		this.debouncedSaveRawContent.cancel();
+		this.debouncedCopySelectedText.cancel();
 		this._previewWindow = null;
 		clearTimeout( this._switchEditorTimeout );
 	},
@@ -211,6 +215,18 @@ export const PostEditor = React.createClass( {
 				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_open' );
 				break;
 		}
+	},
+
+	copySelectedText: function() {
+		const selectedText = tinyMce.activeEditor.selection.getContent() || null;
+		if ( this.state.selectedText !== selectedText ) {
+			this.setState( { selectedText: selectedText || null } );
+		}
+	},
+
+	onEditorKeyUp: function() {
+		this.debouncedCopySelectedText();
+		this.debouncedSaveRawContent();
 	},
 
 	handleConfirmationSidebarPreferenceChange: function( event ) {
@@ -363,11 +379,15 @@ export const PostEditor = React.createClass( {
 								onSetContent={ this.debouncedSaveRawContent }
 								onInit={ this.onEditorInitialized }
 								onChange={ this.onEditorContentChange }
-								onKeyUp={ this.debouncedSaveRawContent }
+								onKeyUp={ this.onEditorKeyUp }
 								onFocus={ this.onEditorFocus }
+								onMouseUp={ this.copySelectedText }
+								onBlur={ this.copySelectedText }
 								onTextEditorChange={ this.onEditorContentChange } />
 						</div>
-						<EditorWordCount />
+						<EditorWordCount
+							selectedText={ this.state.selectedText }
+						/>
 					</div>
 					<EditorSidebar
 						toggleSidebar={ this.toggleSidebar }
@@ -951,6 +971,12 @@ export const PostEditor = React.createClass( {
 
 		if ( mode === 'html' ) {
 			this.editor.setEditorContent( content );
+
+			if ( this.state.selectedText ) {
+				// Word count is not available in the HTML mode
+				// This resets the word count if it exists
+				this.copySelectedText();
+			}
 		}
 
 		this.props.setEditorModePreference( mode );
