@@ -124,6 +124,7 @@
 		"publicize-preview": true,
 		"push-notifications": true,
 		"reader": true,
+		"reader/conversations": true,
 		"reader/following-intro": true,
 		"reader/following-manage-refresh": true,
 		"reader/full-errors": true,
