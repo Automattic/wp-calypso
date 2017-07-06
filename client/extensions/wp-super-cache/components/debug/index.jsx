@@ -64,9 +64,7 @@ class DebugTab extends Component {
 								checked={ !! wp_super_cache_debug }
 								disabled={ isRequesting || isSaving }
 								onChange={ handleAutosavingToggle( 'wp_super_cache_debug' ) }>
-								<span>
-									{ translate( 'Enable Debugging' ) }
-								</span>
+								{ translate( 'Enable Debugging' ) }
 							</FormToggle>
 						</FormFieldset>
 						<div className="wp-super-cache__debug-fieldsets">
@@ -90,9 +88,7 @@ class DebugTab extends Component {
 									checked={ !! wp_super_cache_comments }
 									disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
 									onChange={ handleAutosavingToggle( 'wp_super_cache_comments' ) }>
-									<span>
-										{ translate( 'Cache Status Messages' ) }
-									</span>
+									{ translate( 'Cache Status Messages' ) }
 								</FormToggle>
 								<FormSettingExplanation>
 									{
@@ -130,9 +126,7 @@ class DebugTab extends Component {
 								checked={ !! wp_super_cache_front_page_check }
 								disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
 								onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_check' ) }>
-								<span>
-									{ translate( 'Check front page every 5 minutes.' ) }
-								</span>
+								{ translate( 'Check front page every 5 minutes.' ) }
 							</FormToggle>
 						</FormFieldset>
 						<FormFieldset>
@@ -156,9 +150,7 @@ class DebugTab extends Component {
 								checked={ !! wp_super_cache_front_page_clear }
 								disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
 								onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_clear' ) }>
-								<span>
-									{ translate( 'Clear cache on error.' ) }
-								</span>
+								{ translate( 'Clear cache on error.' ) }
 							</FormToggle>
 						</FormFieldset>
 						<FormFieldset>
@@ -166,9 +158,7 @@ class DebugTab extends Component {
 								checked={ !! wp_super_cache_front_page_notification }
 								disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
 								onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_notification' ) }>
-								<span>
-									{ translate( 'Email the blog admin when checks are made. (useful for testing)' ) }
-								</span>
+								{ translate( 'Email the blog admin when checks are made. (useful for testing)' ) }
 							</FormToggle>
 						</FormFieldset>
 					</Card>
