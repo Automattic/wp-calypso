@@ -131,12 +131,13 @@
 	a {
 		font-size: 13px;
 		position: relative;
-		padding: 14px 16px 14px 55px;
+		padding: 11px 16px 11px 18px;
 		color: $sidebar-text-color;
 		box-sizing: border-box;
 		white-space: nowrap;
 		overflow: hidden;
 		display: flex;
+		align-items: center;
 
 		&:focus {
 			outline: none;
@@ -166,12 +167,10 @@
 
 	.gridicon,
 	.jetpack-logo {
-		position: absolute;
-			top: 11px;
-			left: 20px;
 		fill: $gray;
 		height: 24px;
 		width: 24px;
+		margin-right: 6px;
 
 		@include breakpoint( "<660px" ) {
 				top: 15px;
