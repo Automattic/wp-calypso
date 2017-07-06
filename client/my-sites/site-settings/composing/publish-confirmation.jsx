@@ -55,8 +55,8 @@ class PublishConfirmation extends Component {
 
 				<FormSettingExplanation isIndented>
 					{ translate(
-						'This adds a confirmation step with helpful settings and tips for double' +
-						'checking your content before publishing.'
+						'This adds a confirmation step with helpful settings and tips ' +
+						'for double-checking your content before publishing.'
 					) }
 				</FormSettingExplanation>
 			</FormFieldset>
