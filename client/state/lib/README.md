@@ -72,3 +72,23 @@ case SITES_UPDATE:
 ```
 
 
+The library/code that used SitesList can also subscribe and unsubscribe to selected site changes. 
+To subscribe to selected site changes dispatch an action like this:
+```jsx
+{ type: SELECTED_SITE_SUBSCRIBE, listener }
+```
+
+Where listener is a function that receives the new selected site id as parameter 
+e.g:
+```jsx
+function setSelectedSiteId( siteId ) {
+	this.selectedSiteId = siteId;
+}
+```
+
+To unsubscribe from selected site changes dispatch the following action:
+```jsx
+{ type: SELECTED_SITE_UNSUBSCRIBE, listener }
+```
+
+Where listener is a reference to the same function used when subscribing.

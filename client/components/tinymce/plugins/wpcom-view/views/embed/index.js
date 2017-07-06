@@ -51,7 +51,6 @@ export default class EmbedViewManager extends EventEmitter {
 			this.selectedSiteSubscriberId = uniqueId();
 			store.dispatch( {
 				type: SELECTED_SITE_SUBSCRIBE,
-				subscriberId: this.selectedSiteSubscriberId,
 				listener: this.sitesListener,
 			} );
 			this.embedsListListener = EmbedsListStore.addListener( this.onChange.bind( this ) );
@@ -66,7 +65,7 @@ export default class EmbedViewManager extends EventEmitter {
 		if ( 'change' === event && ! this.listeners( event ).length ) {
 			this.store.dispatch( {
 				type: SELECTED_SITE_UNSUBSCRIBE,
-				subscriberId: this.selectedSiteSubscriberId
+				listener: this.sitesListener,
 			} );
 			if ( this.embedsListListener ) {
 				this.embedsListListener.remove();
