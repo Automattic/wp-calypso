@@ -456,6 +456,10 @@ a.comment-detail__author-more-element {
 			min-height: 68px; // 2 lines
 		}
 
+		&::placeholder {
+			color: $gray-text-min;
+		}
+
 		&.has-scrollbar {
 			overflow-y: auto;
 		}
