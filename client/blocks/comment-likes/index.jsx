@@ -10,6 +10,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import { likeComment, unlikeComment } from 'state/comments/actions';
 import { getCommentLike } from 'state/comments/selectors';
 
@@ -43,13 +44,14 @@ export const CommentLikes = ( {
 	const showLikeCount = ( i_like && like_count > 1 ) || ( ! i_like && like_count > 0 );
 
 	return (
-		<a
+		<Button
+			borderless
 			className={ classnames( 'comment-detail__action-like', { 'is-liked': i_like } ) }
 			onClick={ i_like ? dispatchUnlike : dispatchLike }
 		>
 			<Gridicon icon={ i_like ? 'star' : 'star-outline' } />
 			<span>{ showLikeCount ? like_count + ' ' : '' }{ likeLabel }</span>
-		</a>
+		</Button>
 	);
 };
 
