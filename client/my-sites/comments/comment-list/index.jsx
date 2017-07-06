@@ -257,6 +257,7 @@ export class CommentList extends Component {
 		return (
 			<div className="comment-list">
 				<QuerySiteComments siteId={ siteId } status="all" />
+
 				<CommentNavigation
 					isBulkEdit={ isBulkEdit }
 					isSelectedAll={ this.isSelectedAll() }

@@ -201,6 +201,7 @@ export class CommentDetail extends Component {
 							commentDate={ commentDate }
 							commentStatus={ commentStatus }
 							repliedToComment={ repliedToComment }
+							siteId={ siteId }
 						/>
 						<CommentDetailReply
 							authorDisplayName={ authorDisplayName }
