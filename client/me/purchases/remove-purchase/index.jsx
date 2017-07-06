@@ -27,7 +27,13 @@ import previousStep from 'components/marketing-survey/cancel-purchase-form/previ
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { getPurchase, isDataLoading } from '../utils';
-import { isDomainRegistration, isPlan, isGoogleApps, isJetpackPlan } from 'lib/products-values';
+import {
+	isDomainRegistration,
+	isPlan,
+	isBusiness,
+	isGoogleApps,
+	isJetpackPlan,
+} from 'lib/products-values';
 import notices from 'notices';
 import { purchasesRoot } from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
@@ -36,7 +42,7 @@ import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happ
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import userFactory from 'lib/user';
-import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
+import { isDomainOnlySite as isDomainOnly, isSiteAutomatedTransfer } from 'state/selectors';
 import { receiveDeletedSite } from 'state/sites/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -255,7 +261,7 @@ class RemovePurchase extends Component {
 		);
 	};
 
-	renderDomainDialog = () => {
+	renderDomainDialog() {
 		const { translate } = this.props;
 		const buttons = [
 			{
@@ -293,9 +299,9 @@ class RemovePurchase extends Component {
 				{ this.renderDomainDialogText() }
 			</Dialog>
 		);
-	};
+	}
 
-	renderDomainDialogText = () => {
+	renderDomainDialogText() {
 		const { translate } = this.props;
 		const purchase = getPurchase( this.props ),
 			productName = getName( purchase );
@@ -310,9 +316,9 @@ class RemovePurchase extends Component {
 				) }
 			</p>
 		);
-	};
+	}
 
-	renderPlanDialogs = () => {
+	renderPlanDialog() {
 		const { selectedPurchase, translate } = this.props;
 		const buttons = {
 			cancel: {
@@ -361,28 +367,26 @@ class RemovePurchase extends Component {
 		}
 
 		return (
-			<div>
-				<Dialog
-					buttons={ buttonsArr }
-					className="remove-purchase__dialog"
-					isVisible={ this.state.isDialogVisible }
-					onClose={ this.closeDialog }
-				>
-					<CancelPurchaseForm
-						chatInitiated={ this.chatInitiated }
-						productName={ getName( selectedPurchase ) }
-						surveyStep={ this.state.surveyStep }
-						showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
-						defaultContent={ this.renderPlanDialogsText() }
-						onInputChange={ this.onSurveyChange }
-						isJetpack={ isJetpackPlan( selectedPurchase ) }
-					/>
-				</Dialog>
-			</div>
+			<Dialog
+				buttons={ buttonsArr }
+				className="remove-purchase__dialog"
+				isVisible={ this.state.isDialogVisible }
+				onClose={ this.closeDialog }
+			>
+				<CancelPurchaseForm
+					chatInitiated={ this.chatInitiated }
+					productName={ getName( selectedPurchase ) }
+					surveyStep={ this.state.surveyStep }
+					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
+					defaultContent={ this.renderPlanDialogText() }
+					onInputChange={ this.onSurveyChange }
+					isJetpack={ isJetpackPlan( selectedPurchase ) }
+				/>
+			</Dialog>
 		);
-	};
+	}
 
-	renderPlanDialogsText = () => {
+	renderPlanDialogText() {
 		const { translate } = this.props;
 		const purchase = getPurchase( this.props ),
 			productName = getName( purchase ),
@@ -417,7 +421,52 @@ class RemovePurchase extends Component {
 				{ isPlan( purchase ) && hasIncludedDomain( purchase ) && includedDomainText }
 			</div>
 		);
-	};
+	}
+
+	renderAtomicDialog( purchase ) {
+		const { translate } = this.props;
+		const buttons = [
+			this.getChatButton(),
+			{
+				action: 'cancel',
+				disabled: this.state.isRemoving,
+				isPrimary: true,
+				label: translate( "I'll Keep It" ),
+			},
+		];
+		const productName = getName( purchase );
+
+		return (
+			<Dialog
+				buttons={ buttons }
+				className="remove-purchase__dialog"
+				isVisible={ this.state.isDialogVisible }
+				onClose={ this.closeDialog }
+			>
+				<FormSectionHeading>
+					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
+				</FormSectionHeading>
+				<p>
+					{ translate( 'One does not simply remove %(productName)s.', { args: { productName } } ) }
+				</p>
+			</Dialog>
+		);
+	}
+
+	renderDialog( purchase ) {
+		if (
+			this.props.isAutomatedTransferSite &&
+			( isDomainRegistration( purchase ) || isBusiness( purchase ) )
+		) {
+			return this.renderAtomicDialog( purchase );
+		}
+
+		if ( isDomainRegistration( purchase ) ) {
+			return this.renderDomainDialog();
+		}
+
+		return this.renderPlanDialog();
+	}
 
 	render() {
 		if ( isDataLoading( this.props ) || ! this.props.selectedSite ) {
@@ -432,7 +481,7 @@ class RemovePurchase extends Component {
 		return (
 			<span>
 				{ this.renderCard() }
-				{ isDomainRegistration( purchase ) ? this.renderDomainDialog() : this.renderPlanDialogs() }
+				{ this.renderDialog( purchase ) }
 			</span>
 		);
 	}
@@ -440,7 +489,8 @@ class RemovePurchase extends Component {
 
 export default connect(
 	( state, { selectedSite } ) => ( {
-		isDomainOnlySite: isDomainOnly( state, selectedSite && selectedSite.ID ),
+		isDomainOnlySite: selectedSite && isDomainOnly( state, selectedSite.ID ),
+		isAutomatedTransferSite: selectedSite && isSiteAutomatedTransfer( state, selectedSite.ID ),
 		isChatAvailable: isHappychatAvailable( state ),
 		isChatActive: hasActiveHappychatSession( state ),
 		purchasesError: getPurchasesError( state ),
