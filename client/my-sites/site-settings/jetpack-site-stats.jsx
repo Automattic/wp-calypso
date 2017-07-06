@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { includes } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -53,7 +54,7 @@ class JetpackSiteStats extends Component {
 			const { setFieldValue } = this.props;
 			let groupFields = this.getCurrentGroupFields( groupName );
 
-			if ( groupFields.includes( fieldName ) ) {
+			if ( includes( groupFields, fieldName ) ) {
 				groupFields = groupFields.filter( field => field !== fieldName );
 			} else {
 				groupFields.push( fieldName );
@@ -173,7 +174,7 @@ class JetpackSiteStats extends Component {
 								role => this.renderToggle(
 									'count_roles_' + role.name,
 									role.display_name,
-									this.getCurrentGroupFields( 'count_roles' ).includes( role.name ),
+									includes( this.getCurrentGroupFields( 'count_roles' ), role.name ),
 									this.onChangeToggleGroup( 'count_roles', role.name )
 								)
 							)
@@ -190,7 +191,7 @@ class JetpackSiteStats extends Component {
 								role => this.renderToggle(
 									'roles_' + role.name,
 									role.display_name,
-									this.getCurrentGroupFields( 'roles' ).includes( role.name ),
+									includes( this.getCurrentGroupFields( 'roles' ), role.name ),
 									this.onChangeToggleGroup( 'roles', role.name )
 								)
 							)
