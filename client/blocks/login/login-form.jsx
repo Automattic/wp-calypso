@@ -40,7 +40,7 @@ export class LoginForm extends Component {
 	};
 
 	componentDidMount() {
-		this.setState( { isDisabled: false } );
+		this.setState( { isDisabled: false } ); // eslint-disable-line react/no-did-mount-set-state
 	}
 
 	onChangeField = ( event ) => {
