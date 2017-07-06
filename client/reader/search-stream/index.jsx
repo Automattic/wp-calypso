@@ -204,7 +204,7 @@ class SearchStream extends React.Component {
 }
 
 /* eslint-disable */
-// wrapping with Main so that we can use withWidth helper to pass down whole width of Main
+// wrapping with Main so that we can use withDimensions helper to pass down whole width of Main
 const wrapWithMain = Component => props => (
 	<ReaderMain className="search-stream search-stream__with-sites" wideLayout>
 		<Component { ...props } />
