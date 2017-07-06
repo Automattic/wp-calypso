@@ -7,11 +7,11 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import {
-	COMMENTS_LIKE_UPDATE,
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { local } from 'state/data-layer/utils';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 
@@ -23,14 +23,14 @@ export const likeComment = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const updateCommentLikes = ( { dispatch }, { siteId, postId, commentId }, next, { i_like, like_count } ) => dispatch( {
-	type: COMMENTS_LIKE_UPDATE,
+export const updateCommentLikes = ( { dispatch }, { siteId, postId, commentId }, next, { i_like, like_count } ) => dispatch( local( {
+	type: COMMENTS_LIKE,
 	siteId,
 	postId,
 	commentId,
-	iLike: i_like,
-	likeCount: like_count
-} );
+	i_like,
+	like_count
+} ) );
 
 /***
  * dispatches a error notice if creating a new comment request failed
