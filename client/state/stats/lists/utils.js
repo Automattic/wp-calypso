@@ -9,6 +9,34 @@ import { moment, translate } from 'i18n-calypso';
  */
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
+
+/**
+ * Returns astring of the moment format for the period. Supports store stats
+ * isoWeek and shortened formats.
+ *
+ * @param  {String} period Stats query
+ * @param  {String} date   Stats date
+ * @return {Object}        Period range
+ */
+export function getPeriodFormat( period, date ) {
+	const strDate = date.toString();
+	switch ( period ) {
+		case 'week':
+			return ( strDate.length === 8 && strDate.substr( 4, 2 ) === '-W' )
+				? 'YYYY-[W]WW'
+				:	'YYYY-MM-DD';
+		case 'month':
+			return ( strDate.length === 7 && strDate.substr( 4, 1 ) === '-' )
+				? 'YYYY-MM'
+				: 'YYYY-MM-DD';
+		case 'year':
+			return ( strDate.length === 4 ) ? 'YYYY' : 'YYYY-MM-DD';
+		case 'day':
+		default:
+			return 'YYYY-MM-DD';
+	}
+}
+
 /**
  * Returns an object with the startOf and endOf dates
  * for the given stats period and date
@@ -18,7 +46,8 @@ import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
  * @return {Object}        Period range
  */
 export function rangeOfPeriod( period, date ) {
-	const momentDate = moment( date ).locale( 'en' );
+	const format = getPeriodFormat( period, date );
+	const momentDate = moment( date, format ).locale( 'en' );
 	const startOf = momentDate.clone().startOf( period );
 	const endOf = momentDate.clone().endOf( period );
 

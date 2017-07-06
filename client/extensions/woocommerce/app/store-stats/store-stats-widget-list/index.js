@@ -24,6 +24,7 @@ import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
 import Table from 'woocommerce/components/table';
 import TableItem from 'woocommerce/components/table/table-item';
 import TableRow from 'woocommerce/components/table/table-row';
+import { getPeriodFormat } from 'state/stats/lists/utils';
 
 class StoreStatsWidgetList extends Component {
 
@@ -52,9 +53,10 @@ class StoreStatsWidgetList extends Component {
 
 	getEndPeriod = ( date ) => {
 		const { unit } = this.props.query;
+		const periodFormat = getPeriodFormat( unit, date );
 		return ( unit === 'week' )
-			? moment( date ).endOf( 'isoWeek' ).format( 'YYYY-MM-DD' )
-			: moment( date ).endOf( unit ).format( 'YYYY-MM-DD' );
+			? moment( date, periodFormat ).endOf( 'isoWeek' ).format( 'YYYY-MM-DD' )
+			: moment( date, periodFormat ).endOf( unit ).format( 'YYYY-MM-DD' );
 	};
 
 	getDeltasBySelectedPeriod = () => {
@@ -85,6 +87,7 @@ class StoreStatsWidgetList extends Component {
 		if ( ! isLoading && ! hasEmptyData ) {
 			const firstRealKey = Object.keys( data.deltas[ selectedIndex ] ).filter( key => key !== 'period' )[ 0 ];
 			const sincePeriod = this.getDeltaByStat( firstRealKey );
+			const periodFormat = getPeriodFormat( query.unit, sincePeriod.reference_period );
 			values = [
 				{
 					key: 'title',
@@ -100,7 +103,7 @@ class StoreStatsWidgetList extends Component {
 				},
 				{
 					key: 'delta',
-					label: `${ translate( 'Since' ) } ${ moment( sincePeriod.reference_period ).format( 'MMM D' ) }`
+					label: `${ translate( 'Since' ) } ${ moment( sincePeriod.reference_period, periodFormat ).format( 'MMM D' ) }`
 				}
 			];
 
