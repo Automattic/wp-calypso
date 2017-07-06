@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { get, find, isNumber } from 'lodash';
+import { get, find, isEqual, isObject } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getProduct } from '../../products/selectors';
+import { getProduct } from 'woocommerce/state/sites/products/selectors';
 
 export function getAllProductEdits( state, siteId ) {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'edits' ], {} );
@@ -17,33 +17,47 @@ export function getAllProductEdits( state, siteId ) {
  * Gets the accumulated edits for a product, if any.
  *
  * @param {Object} state Global state tree
- * @param {any} productId The id of the product (or { index: # } )
+ * @param {any} productId The id of the product (or { placeholder: # } )
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object} The current accumulated edits
  */
 export function getProductEdits( state, productId, siteId = getSelectedSiteId( state ) ) {
 	const edits = getAllProductEdits( state, siteId );
-	const bucket = isNumber( productId ) && 'updates' || 'creates';
+	const bucket = ( isObject( productId ) ? 'creates' : 'updates' );
 	const array = get( edits, bucket, [] );
 
-	return find( array, ( p ) => productId === p.id );
+	return find( array, ( p ) => isEqual( productId, p.id ) );
 }
 
 /**
  * Gets a product with local edits overlayed on top of fetched data.
  *
  * @param {Object} state Global state tree
- * @param {any} productId The id of the product (or { index: # } )
+ * @param {any} productId The id of the product (or { placeholder: # } )
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object} The product data merged between the fetched data and edits
  */
 export function getProductWithLocalEdits( state, productId, siteId = getSelectedSiteId( state ) ) {
-	const existing = isNumber( productId );
+	const existing = ! isObject( productId );
 
 	const product = existing && getProduct( state, productId );
 	const productEdits = getProductEdits( state, productId, siteId );
 
 	return ( product || productEdits ) && { ...product, ...productEdits } || undefined;
+}
+
+/**
+ * Gets the id of the currently editing product.
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Number|Object} Id of the currently editing product.
+ */
+export function getCurrentlyEditingId( state, siteId = getSelectedSiteId( state ) ) {
+	const edits = getAllProductEdits( state, siteId ) || {};
+	const { currentlyEditingId } = edits;
+
+	return currentlyEditingId;
 }
 
 /**
@@ -54,8 +68,7 @@ export function getProductWithLocalEdits( state, productId, siteId = getSelected
  * @return {Object} Product object that is merged between fetched data and edits
  */
 export function getCurrentlyEditingProduct( state, siteId = getSelectedSiteId( state ) ) {
-	const edits = getAllProductEdits( state, siteId ) || {};
-	const { currentlyEditingId } = edits;
+	const currentlyEditingId = getCurrentlyEditingId( state, siteId );
 
 	return getProductWithLocalEdits( state, currentlyEditingId, siteId );
 }
@@ -82,7 +95,7 @@ export function getProductListProducts( state, siteId = getSelectedSiteId( state
 	const products = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ], {} );
 	const productIds = get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'productIds' ], [] );
 	if ( productIds.length ) {
-		return productIds.map( id => find( products, ( p ) => id === p.id ) );
+		return productIds.map( id => find( products, ( p ) => isEqual( id, p.id ) ) );
 	}
 	return false;
 }
@@ -120,7 +133,7 @@ export function getProductSearchResults( state, siteId = getSelectedSiteId( stat
 	const products = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ], {} );
 	const productIds = get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'search', 'productIds' ], [] );
 	if ( productIds.length ) {
-		return productIds.map( id => find( products, ( p ) => id === p.id ) );
+		return productIds.map( id => find( products, ( p ) => isEqual( id, p.id ) ) );
 	}
 	return false;
 }

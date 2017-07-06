@@ -25,6 +25,8 @@ export class CommentDetailComment extends Component {
 		commentContent: PropTypes.string,
 		commentDate: PropTypes.string,
 		commentStatus: PropTypes.string,
+		postUrl: PropTypes.string,
+		siteId: PropTypes.number,
 	};
 
 	render() {
@@ -40,7 +42,9 @@ export class CommentDetailComment extends Component {
 			commentContent,
 			commentDate,
 			commentStatus,
+			postUrl,
 			repliedToComment,
+			siteId,
 			translate,
 		} = this.props;
 
@@ -58,6 +62,8 @@ export class CommentDetailComment extends Component {
 						blockUser={ blockUser }
 						commentDate={ commentDate }
 						commentStatus={ commentStatus }
+						postUrl={ postUrl }
+						siteId={ siteId }
 					/>
 					<AutoDirection>
 						<div className="comment-detail__comment-body"

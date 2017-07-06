@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +22,7 @@ import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import { getCurrentlyEditingShippingZoneLocationsList } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 import { openEditLocations } from 'woocommerce/state/ui/shipping/zones/locations/actions';
 
-const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actions, onChange } ) => {
+const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actions } ) => {
 	const getLocationFlag = ( location ) => {
 		if ( 'continent' === location.type ) {
 			return null;
@@ -96,7 +97,6 @@ const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actio
 		if ( ! loaded ) {
 			return;
 		}
-		onChange();
 		actions.openEditLocations();
 	};
 
@@ -107,7 +107,9 @@ const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actio
 			<ExtendedHeader
 				label={ translate( 'Zone locations' ) }
 				description={ translate( 'Define the places that are included in this zone.' ) } >
-				<Button onClick={ onAddLocation } disabled={ ! loaded } >{ translate( 'Edit locations' ) }</Button>
+				<Button onClick={ onAddLocation } disabled={ ! loaded } >
+					{ isEmpty( locations ) ? translate( 'Add locations' ) : translate( 'Edit locations' ) }
+				</Button>
 			</ExtendedHeader>
 			<List>
 				<ListHeader>
@@ -120,7 +122,7 @@ const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actio
 				</ListHeader>
 				{ locationsToRender.map( renderLocation ) }
 			</List>
-			<ShippingZoneLocationDialog siteId={ siteId } onChange={ onChange } />
+			<ShippingZoneLocationDialog siteId={ siteId } />
 		</div>
 	);
 };
@@ -128,7 +130,6 @@ const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actio
 ShippingZoneLocationList.PropTypes = {
 	siteId: PropTypes.number,
 	loaded: PropTypes.bool.isRequired,
-	onChange: PropTypes.func.isRequired,
 };
 
 export default connect(

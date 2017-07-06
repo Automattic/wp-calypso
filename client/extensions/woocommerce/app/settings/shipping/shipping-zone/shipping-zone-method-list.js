@@ -40,7 +40,6 @@ const ShippingZoneMethodList = ( {
 		newMethodTypeOptions,
 		currency,
 		translate,
-		onChange,
 		actions,
 	} ) => {
 	const renderMethod = ( method, index ) => {
@@ -95,7 +94,6 @@ const ShippingZoneMethodList = ( {
 		if ( ! loaded ) {
 			return;
 		}
-		onChange();
 
 		const newType = newMethodTypeOptions[ 0 ];
 		actions.addMethodToShippingZone( newType, methodNamesMap( newType ) );
@@ -122,14 +120,13 @@ const ShippingZoneMethodList = ( {
 				</ListHeader>
 				{ methodsToRender.map( renderMethod ) }
 			</List>
-			<ShippingZoneMethodDialog siteId={ siteId } onChange={ onChange } />
+			<ShippingZoneMethodDialog siteId={ siteId } />
 		</div>
 	);
 };
 
 ShippingZoneMethodList.propTypes = {
 	siteId: PropTypes.number,
-	onChange: PropTypes.func.isRequired,
 	loaded: PropTypes.bool.isRequired,
 };
 

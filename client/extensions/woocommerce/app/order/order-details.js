@@ -1,170 +1,103 @@
 /**
  * External dependencies
  */
+import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
-import formatCurrency from 'lib/format-currency';
+import FormSelect from 'components/forms/form-select';
+import OrderDetailsTable from './order-details-table';
+import OrderFulfillment from './order-fulfillment';
+import OrderRefundCard from './order-refund-card';
 import SectionHeader from 'components/section-header';
-import Table from 'woocommerce/components/table';
-import TableRow from 'woocommerce/components/table/table-row';
-import TableItem from 'woocommerce/components/table/table-item';
 
 class OrderDetails extends Component {
 	static propTypes = {
-		order: PropTypes.shape( {
-			discount_total: PropTypes.string.isRequired,
-			line_items: PropTypes.array.isRequired,
-			payment_method_title: PropTypes.string.isRequired,
-			shipping_total: PropTypes.string.isRequired,
-			total: PropTypes.string.isRequired,
+		onUpdate: PropTypes.func,
+		order: PropTypes.object.isRequired,
+		site: PropTypes.shape( {
+			ID: PropTypes.number.isRequired,
+			slug: PropTypes.string.isRequired,
 		} ),
 	}
 
-	getRefundedTotal = ( order ) => {
-		return order.refunds.reduce( ( sum, i ) => sum + ( i.total * 1 ), 0 );
+	constructor( props ) {
+		super( props );
+		this.state = {
+			status: this.props.order.status || false,
+		};
 	}
 
-	renderTableHeader = () => {
-		const { translate } = this.props;
-		return (
-			<TableRow className="order__detail-header">
-				<TableItem isHeader className="order__detail-item-product">{ translate( 'Product' ) }</TableItem>
-				<TableItem isHeader className="order__detail-item-cost">{ translate( 'Cost' ) }</TableItem>
-				<TableItem isHeader className="order__detail-item-quantity">{ translate( 'Quantity' ) }</TableItem>
-				<TableItem isHeader className="order__detail-item-total">{ translate( 'Total' ) }</TableItem>
-			</TableRow>
-		);
+	updateStatus = ( event ) => {
+		this.setState( { status: event.target.value } );
+		// Send the order back to the parent component
+		this.props.onUpdate( { status: event.target.value } );
 	}
 
-	renderOrderItems = ( item, i ) => {
-		const { order, siteSlug } = this.props;
-		return (
-			<TableRow key={ i } className="order__detail-items">
-				<TableItem isRowHeader className="order__detail-item-product">
-					<a href={ `/store/product/${ siteSlug }/${ item.product_id }` } className="order__detail-item-link">
-						{ item.name }
-					</a>
-					<span className="order__detail-item-sku">{ item.sku }</span>
-				</TableItem>
-				<TableItem className="order__detail-item-cost">{ formatCurrency( item.price, order.currency ) || item.price }</TableItem>
-				<TableItem className="order__detail-item-quantity">{ item.quantity }</TableItem>
-				<TableItem className="order__detail-item-total">{ formatCurrency( item.total, order.currency ) || item.total }</TableItem>
-			</TableRow>
-		);
-	}
-
-	renderRefundValue = () => {
+	renderStatus = () => {
 		const { order, translate } = this.props;
-		const refundValue = order.refunds.length ? this.getRefundedTotal( order ) : false;
-		if ( ! refundValue ) {
-			return null;
+		const classes = `order__status is-${ order.status }`;
+		// TODO: create a helper function for status labels
+		const statuses = [ {
+			value: 'pending',
+			name: translate( 'Pending payment' ),
+		}, {
+			value: 'processing',
+			name: translate( 'Processing' ),
+		}, {
+			value: 'on-hold',
+			name: translate( 'On Hold' ),
+		}, {
+			value: 'completed',
+			name: translate( 'Completed' ),
+		}, {
+			value: 'cancelled',
+			name: translate( 'Cancelled' ),
+		}, {
+			value: 'refunded',
+			name: translate( 'Refunded' ),
+		}, {
+			value: 'failed',
+			name: translate( 'Payment Failed' ),
+		} ];
+
+		if ( 'pending' === order.status || 'on-hold' === order.status ) {
+			return (
+				<FormSelect id="select" value={ this.state.status } onChange={ this.updateStatus }>
+					{ statuses.map( ( status, i ) => {
+						return (
+							<option key={ i } value={ status.value }>{ status.name }</option>
+						);
+					} ) }
+				</FormSelect>
+			);
 		}
 
+		const statusLabel = find( statuses, { value: order.status } );
 		return (
-			<div className="order__details-total-refund">
-				<div className="order__details-totals-label">{ translate( 'Refunded' ) }</div>
-				<div className="order__details-totals-value">
-					{ formatCurrency( refundValue, order.currency ) || refundValue }
-				</div>
-			</div>
-		);
-	}
-
-	renderRefundCard = () => {
-		const { order, translate } = this.props;
-		let refundStatus = translate( 'Payment of %(total)s received via %(method)s', {
-			args: {
-				total: formatCurrency( order.total, order.currency ) || order.total,
-				method: order.payment_method_title,
-			}
-		} );
-
-		if ( 'refunded' === order.status ) {
-			refundStatus = translate( 'Payment of %(total)s has been refunded', {
-				args: {
-					total: formatCurrency( order.total, order.currency ) || order.total,
-				}
-			} );
-		} else if ( order.refunds.length ) {
-			const refund = this.getRefundedTotal( order );
-			refundStatus = translate( 'Payment of %(total)s has been partially refunded %(refund)s', {
-				args: {
-					total: formatCurrency( order.total, order.currency ) || order.total,
-					refund: formatCurrency( refund, order.currency ) || refund,
-				}
-			} );
-		}
-
-		return (
-			<div className="order__details-refund">
-				<div className="order__details-refund-label">
-					<Gridicon icon="checkmark" />
-					{ refundStatus }
-				</div>
-				<div className="order__details-refund-action">
-					{ ( 'refunded' !== order.status )
-						? <Button>{ translate( 'Submit Refund' ) }</Button>
-						: null
-					}
-				</div>
-			</div>
+			<span className={ classes }>{ statusLabel.name }</span>
 		);
 	}
 
 	render() {
-		const { order, translate } = this.props;
+		const { order, site, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
 
 		return (
 			<div className="order__details">
-				<SectionHeader label={ translate( 'Order Details' ) } />
+				<SectionHeader label={ translate( 'Order Details' ) }>
+					<span>{ this.renderStatus() }</span>
+				</SectionHeader>
 				<Card className="order__details-card">
-					<Table className="order__details-table" header={ this.renderTableHeader() }>
-						{ order.line_items.map( this.renderOrderItems ) }
-					</Table>
-
-					<div className="order__details-totals">
-						<div className="order__details-total-discount">
-							<div className="order__details-totals-label">{ translate( 'Discount' ) }</div>
-							<div className="order__details-totals-value">
-								{ formatCurrency( order.discount_total, order.currency ) || order.discount_total }
-							</div>
-						</div>
-						<div className="order__details-total-shipping">
-							<div className="order__details-totals-label">{ translate( 'Shipping' ) }</div>
-							<div className="order__details-totals-value">
-								{ formatCurrency( order.shipping_total, order.currency ) || order.shipping_total }
-							</div>
-						</div>
-						<div className="order__details-total">
-							<div className="order__details-totals-label">{ translate( 'Total' ) }</div>
-							<div className="order__details-totals-value">
-								{ formatCurrency( order.total, order.currency ) || order.total }
-							</div>
-						</div>
-						{ this.renderRefundValue() }
-					</div>
-
-					{ this.renderRefundCard() }
-
-					<div className="order__details-fulfillment">
-						<div className="order__details-fulfillment-label">
-							<Gridicon icon="shipping" />
-							{ translate( 'Order needs to be fulfilled' ) }
-						</div>
-						<div className="order__details-fulfillment-action">
-							<Button primary>{ translate( 'Print label' ) }</Button>
-						</div>
-					</div>
+					<OrderDetailsTable order={ order } site={ site } />
+					<OrderRefundCard order={ order } site={ site } />
+					<OrderFulfillment order={ order } site={ site } />
 				</Card>
 			</div>
 		);

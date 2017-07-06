@@ -58,6 +58,7 @@
 		"jetpack_core_inline_update": true,
 		"jetpack/api-cache": true,
 		"jetpack/activity-log": true,
+		"jetpack/pijp": true,
 		"keyboard-shortcuts": true,
 		"login/magic-login": true,
 		"login/native-login-links": true,
@@ -69,7 +70,6 @@
 		"manage/export": true,
 		"manage/export/guided-transfer": true,
 		"manage/import/medium": true,
-		"manage/jetpack": true,
 		"manage/media": true,
 		"manage/option_sync_non_public_post_stati": true,
 		"manage/pages": true,
@@ -124,6 +124,7 @@
 		"publicize-preview": true,
 		"push-notifications": true,
 		"reader": true,
+		"reader/conversations": true,
 		"reader/following-intro": true,
 		"reader/following-manage-refresh": true,
 		"reader/full-errors": true,
@@ -131,7 +132,6 @@
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
 		"reader/search": true,
-		"reader/sites-in-search": true,
 		"reader/tags-with-elasticsearch": false,
 		"resume-editing": true,
 		"republicize": true,
@@ -143,6 +143,7 @@
 		"settings/theme-setup": true,
 		"signup/domain-first-flow": true,
 		"signup/social": true,
+		"simple-payments": true,
 		"standalone-site-preview": false,
 		"support-user": true,
 		"sync-handler": true,
@@ -167,7 +168,7 @@
 		"woocommerce/extension-settings-payments": true,
 		"woocommerce/extension-settings-shipping": true,
 		"woocommerce/extension-settings-tax": true,
-		"woocommerce/extension-stats": false,
+		"woocommerce/extension-stats": true,
 		"wpcom-user-bootstrap": false
 	}
 }

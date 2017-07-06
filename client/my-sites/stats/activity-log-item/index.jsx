@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,23 +16,28 @@ import Gridicon from 'gridicons';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { addQueryArgs } from 'lib/route';
 
+const debug = debugFactory( 'calypso:activity-log:item' );
+
 class ActivityLogItem extends Component {
 
 	static propTypes = {
 		allowRestore: PropTypes.bool.isRequired,
 		siteId: PropTypes.number.isRequired,
 		requestRestore: PropTypes.func.isRequired,
-
+		applySiteOffset: PropTypes.func.isRequired,
 		log: PropTypes.shape( {
 			group: PropTypes.oneOf( [
 				'attachment',
 				'comment',
+				'core',
+				'plugin',
 				'post',
 				'term',
+				'theme',
 				'user',
+				'widget',
 			] ).isRequired,
 			name: PropTypes.string.isRequired,
-			ts_site: PropTypes.number.isRequired,
 			ts_utc: PropTypes.number.isRequired,
 
 			actor: PropTypes.shape( {
@@ -61,11 +67,33 @@ class ActivityLogItem extends Component {
 					id: PropTypes.number.isRequired,
 				} ),
 
+				core: PropTypes.shape( {
+					new_version: PropTypes.string,
+					old_version: PropTypes.string,
+				} ),
+
+				plugin: PropTypes.oneOfType( [
+					PropTypes.shape( {
+						name: PropTypes.string,
+						previous_version: PropTypes.string,
+						slug: PropTypes.string,
+						version: PropTypes.string,
+					} ),
+					PropTypes.arrayOf(
+						PropTypes.shape( {
+							name: PropTypes.string,
+							previous_version: PropTypes.string,
+							slug: PropTypes.string,
+							version: PropTypes.string,
+						} ),
+					),
+				] ),
+
 				post: PropTypes.shape( {
 					id: PropTypes.number.isRequired,
 					status: PropTypes.string.isRequired,
-					type: PropTypes.string.isRequired,
-					title: PropTypes.string.isRequired,
+					type: PropTypes.string,
+					title: PropTypes.string,
 				} ),
 
 				term: PropTypes.shape( {
@@ -74,11 +102,34 @@ class ActivityLogItem extends Component {
 					type: PropTypes.string.isRequired,
 				} ),
 
+				theme: PropTypes.oneOfType( [
+					PropTypes.arrayOf(
+						PropTypes.shape( {
+							name: PropTypes.string,
+							slug: PropTypes.string,
+							uri: PropTypes.string,
+							version: PropTypes.string,
+						} )
+					),
+					PropTypes.shape( {
+						name: PropTypes.string,
+						slug: PropTypes.string,
+						uri: PropTypes.string,
+						version: PropTypes.string,
+					} ),
+				] ),
+
 				user: PropTypes.shape( {
 					display_name: PropTypes.string,
-					login: PropTypes.string.isRequired,
-					external_user_id: PropTypes.number,
+					external_user_id: PropTypes.string,
+					login: PropTypes.string,
 					wpcom_user_id: PropTypes.number,
+				} ),
+
+				widget: PropTypes.shape( {
+					id: PropTypes.number,
+					name: PropTypes.string,
+					sidebar: PropTypes.string,
 				} ),
 			} ),
 		} ).isRequired,
@@ -98,6 +149,8 @@ class ActivityLogItem extends Component {
 		} = this.props;
 		requestRestore( log.ts_utc );
 	};
+
+	handleOpen = () => debug( 'opened log', this.props.log );
 
 	getIcon() {
 		const { log } = this.props;
@@ -126,6 +179,9 @@ class ActivityLogItem extends Component {
 			case 'term':
 				return 'folder';
 
+			case 'theme':
+				return 'themes';
+
 			case 'user':
 				return 'user';
 		}
@@ -140,12 +196,14 @@ class ActivityLogItem extends Component {
 		switch ( name ) {
 			case 'comment__trashed':
 			case 'post__trashed':
+			case 'theme__deleted':
 				return 'is-error';
 
 			case 'attachment__uploaded':
 			case 'comment__published':
 			case 'post__published':
 			case 'term__created':
+			case 'theme__installed':
 			case 'user__registered':
 				return 'is-success';
 
@@ -204,20 +262,24 @@ class ActivityLogItem extends Component {
 			log,
 			moment,
 			translate,
+			applySiteOffset,
 		} = this.props;
 		const {
 			name,
-			ts_site,
+			ts_utc,
 		} = log;
 
 		return (
 			<div>
-				{ translate( 'An event "%(eventName)s" occurred at %(date)s', {
-					args: {
-						date: moment( ts_site ).format( 'LLL' ),
-						eventName: name,
-					}
-				} ) }
+				<div>
+					{ translate( 'An event "%(eventName)s" occurred at %(date)s', {
+						args: {
+							date: applySiteOffset( moment.utc( ts_utc ) ).format( 'LLL' ),
+							eventName: name,
+						}
+					} ) }
+				</div>
+				<div className="activity-log-item__id">ID { ts_utc }</div>
 			</div>
 		);
 	}
@@ -270,11 +332,12 @@ class ActivityLogItem extends Component {
 		const {
 			moment,
 			log,
+			applySiteOffset,
 		} = this.props;
 
 		return (
 			<div className="activity-log-item__time">
-				{ moment( log.ts_site ).format( 'LT' ) }
+				{ applySiteOffset( moment.utc( log.ts_utc ) ).format( 'LT' ) }
 			</div>
 		);
 	}
@@ -297,6 +360,7 @@ class ActivityLogItem extends Component {
 					header={ this.renderHeader() }
 					summary={ this.renderSummary() }
 					expandedSummary={ this.renderSummary() }
+					onOpen={ this.handleOpen }
 				>
 					{ this.renderDescription() }
 				</FoldableCard>

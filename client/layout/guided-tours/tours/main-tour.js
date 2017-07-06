@@ -41,7 +41,7 @@ export const MainTour = makeTour(
 		<Step name="init" placement="right">
 			<p>
 				{
-					translate( "{{strong}}Need a hand?{{/strong}} We'd love to show you around the place," +
+					translate( "{{strong}}Need a hand?{{/strong}} We'd love to show you around the place, " +
 											'and give you some ideas for what to do next.',
 						{
 							components: {

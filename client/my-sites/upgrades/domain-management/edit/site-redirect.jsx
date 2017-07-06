@@ -42,19 +42,24 @@ const SiteRedirect = React.createClass( {
 	},
 
 	render() {
+		const { domain, translate } = this.props;
+
 		return (
 			<div>
 				<div className="domain-details-card">
 					<Header { ...this.props } />
 
 					<Card>
-						<Property label={ this.props.translate( 'Type', { context: 'A type of domain.' } ) }>
-							{ this.props.translate( 'Site Redirect' ) }
+						<Property label={ translate( 'Type', { context: 'A type of domain.' } ) }>
+							{ translate( 'Site Redirect' ) }
 						</Property>
 
 						{ this.getAutoRenewalOrExpirationDate() }
 
 						<SubscriptionSettings
+							type={ domain.type }
+							subscriptionId={ domain.subscriptionId }
+							siteSlug={ this.props.selectedSite.slug }
 							onClick={ this.handlePaymentSettingsClick } />
 					</Card>
 				</div>

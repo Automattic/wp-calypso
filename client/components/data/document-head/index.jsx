@@ -3,12 +3,16 @@
  */
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { isEqual } from 'lodash';
+import { forEach, isEqual, map } from 'lodash';
 
 /**
  * Internal dependencies.
  */
-import { getDocumentHeadFormattedTitle } from 'state/document-head/selectors';
+import {
+	getDocumentHeadFormattedTitle,
+	getDocumentHeadLink,
+	getDocumentHeadMeta
+} from 'state/document-head/selectors';
 import {
 	setDocumentHeadTitle as setTitle,
 	setDocumentHeadLink as setLink,
@@ -43,6 +47,8 @@ class DocumentHead extends Component {
 	componentDidMount() {
 		const { formattedTitle } = this.props;
 		document.title = formattedTitle;
+
+		this.refreshHeadTags();
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -65,6 +71,34 @@ class DocumentHead extends Component {
 		if ( nextProps.formattedTitle !== this.props.formattedTitle ) {
 			document.title = nextProps.formattedTitle;
 		}
+
+		this.refreshHeadTags( nextProps );
+	}
+
+	refreshHeadTags( props = this.props ) {
+		const { allLinks, allMeta } = props;
+
+		allLinks.forEach( tagProperties => this.ensureTag( 'link', tagProperties ) );
+		allMeta.forEach( tagProperties => this.ensureTag( 'meta', tagProperties ) );
+	}
+
+	ensureTag( tagName, properties ) {
+		const propertiesSelector = map( properties, ( value, key ) => {
+			if ( value !== undefined && typeof value === 'string' ) {
+				const escapedValueInSelector = value.toString().replace( /([ #;?%&,.+*~\':"!^$[\]()=>|\/@])/g, '\\$1' );
+				return `[${ key }="${ escapedValueInSelector }"]`;
+			}
+			return `[${ key }]`;
+		} ).join( '' );
+		const element = document.querySelector( `${ tagName }${ propertiesSelector }` );
+		if ( ! element ) {
+			const newTag = document.createElement( tagName );
+			forEach( properties, ( value, key ) => {
+				newTag[ key ] = value;
+			} );
+			const head = document.getElementsByTagName( 'head' )[ 0 ];
+			head.appendChild( newTag );
+		}
 	}
 
 	render() {
@@ -85,7 +119,9 @@ DocumentHead.propTypes = {
 
 export default connect(
 	state => ( {
-		formattedTitle: getDocumentHeadFormattedTitle( state )
+		formattedTitle: getDocumentHeadFormattedTitle( state ),
+		allLinks: getDocumentHeadLink( state ),
+		allMeta: getDocumentHeadMeta( state ),
 	} ),
 	{
 		setTitle,

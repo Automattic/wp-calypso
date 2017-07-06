@@ -9,6 +9,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../../request';
 import { setError } from '../../status/wc-api/actions';
 import {
+	WOOCOMMERCE_TAXES_ENABLED_UPDATE,
+	WOOCOMMERCE_TAXES_ENABLED_UPDATE_SUCCESS,
 	WOOCOMMERCE_CURRENCY_UPDATE,
 	WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
@@ -82,3 +84,47 @@ export const saveCurrency = (
 			}
 		} );
 };
+
+// TODO - we probably only need on individual setter (not separate ones for currency, taxes enabled, etc)
+
+const updateTaxesEnabledSettingSuccess = ( siteId, data ) => {
+	return {
+		type: WOOCOMMERCE_TAXES_ENABLED_UPDATE_SUCCESS,
+		siteId,
+		data,
+	};
+};
+
+export const updateTaxesEnabledSetting = (
+	siteId,
+	taxesEnabled,
+	successAction = null,
+	failureAction = null
+) => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+	const updateAction = {
+		type: WOOCOMMERCE_TAXES_ENABLED_UPDATE,
+		siteId,
+	};
+
+	dispatch( updateAction );
+
+	const value = taxesEnabled ? 'yes' : 'no';
+	return request( siteId ).post( 'settings/general/woocommerce_calc_taxes', { value } )
+		.then( ( data ) => {
+			dispatch( updateTaxesEnabledSettingSuccess( siteId, data ) );
+			if ( successAction ) {
+				dispatch( successAction( data ) );
+			}
+		} )
+		.catch( err => {
+			dispatch( setError( siteId, updateAction, err ) );
+			if ( failureAction ) {
+				dispatch( failureAction( err ) );
+			}
+		} );
+};
+

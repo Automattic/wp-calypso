@@ -10,9 +10,11 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import CommentDetailActions from './comment-detail-actions';
-import FormCheckbox from 'components/forms/form-checkbox';
 import AutoDirection from 'components/auto-direction';
+import Button from 'components/button';
+import CommentDetailActions from './comment-detail-actions';
+import Gravatar from 'components/gravatar';
+import FormCheckbox from 'components/forms/form-checkbox';
 import { stripHTML, decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
 
@@ -40,11 +42,14 @@ export const CommentDetailHeader = ( {
 	if ( isExpanded ) {
 		return (
 			<div className="comment-detail__header">
-				<div className="comment-detail__actions">
-					<a onClick={ toggleExpanded }>
-						<Gridicon icon="cross" />
-					</a>
-				</div>
+				<Button
+					borderless
+					className="comment-detail__action-collapse"
+					onClick={ toggleExpanded }
+				>
+					<Gridicon icon="cross" />
+				</Button>
+
 				<CommentDetailActions
 					edit={ edit }
 					commentIsLiked={ commentIsLiked }
@@ -59,6 +64,11 @@ export const CommentDetailHeader = ( {
 		);
 	}
 
+	const author = {
+		avatar_URL: authorAvatarUrl,
+		display_name: authorDisplayName,
+	};
+
 	return (
 		<div
 			className={ classNames( 'comment-detail__header', 'is-preview', { 'is-bulk-edit': isBulkEdit } ) }
@@ -70,7 +80,7 @@ export const CommentDetailHeader = ( {
 				</label>
 			}
 			<div className="comment-detail__author-preview">
-				<img className="comment-detail__author-avatar" src={ authorAvatarUrl } />
+				<Gravatar user={ author } />
 				<div className="comment-detail__author-info">
 					<div className="comment-detail__author-info-element">
 						<strong>

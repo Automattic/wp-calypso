@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import tinyMce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
@@ -21,7 +22,6 @@ const actions = require( 'lib/posts/actions' ),
 	EditorTitle = require( 'post-editor/editor-title' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
 	TinyMCE = require( 'components/tinymce' ),
-	EditorWordCount = require( 'post-editor/editor-word-count' ),
 	SegmentedControl = require( 'components/segmented-control' ),
 	SegmentedControlItem = require( 'components/segmented-control/item' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
@@ -35,8 +35,9 @@ const actions = require( 'lib/posts/actions' ),
 import config from 'config';
 import { abtest } from 'lib/abtest';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
-import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
+import { getEditorPostId, getEditorPath, isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
 import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -46,6 +47,7 @@ import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import EditorForbidden from 'post-editor/editor-forbidden';
 import EditorNotice from 'post-editor/editor-notice';
+import EditorWordCount from 'post-editor/editor-word-count';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
@@ -86,9 +88,11 @@ export const PostEditor = React.createClass( {
 		return {
 			...this.getPostEditState(),
 			confirmationSidebar: 'closed',
+			confirmationSidebarPreference: true,
 			isSaving: false,
 			isPublishing: false,
 			notice: null,
+			selectedText: null,
 			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
@@ -121,6 +125,7 @@ export const PostEditor = React.createClass( {
 		this.debouncedAutosave = debounce( this.throttledAutosave, 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
+		this.debouncedCopySelectedText = debounce( this.copySelectedText, 200 );
 		this.onPreviewClick = this.onPreview.bind( this, 'preview' );
 		this.onViewClick = this.onPreview.bind( this, 'view' );
 		this.useDefaultSidebarFocus();
@@ -160,6 +165,7 @@ export const PostEditor = React.createClass( {
 		this.debouncedAutosave.cancel();
 		this.throttledAutosave.cancel();
 		this.debouncedSaveRawContent.cancel();
+		this.debouncedCopySelectedText.cancel();
 		this._previewWindow = null;
 		clearTimeout( this._switchEditorTimeout );
 	},
@@ -211,6 +217,22 @@ export const PostEditor = React.createClass( {
 		}
 	},
 
+	copySelectedText: function() {
+		const selectedText = tinyMce.activeEditor.selection.getContent() || null;
+		if ( this.state.selectedText !== selectedText ) {
+			this.setState( { selectedText: selectedText || null } );
+		}
+	},
+
+	onEditorKeyUp: function() {
+		this.debouncedCopySelectedText();
+		this.debouncedSaveRawContent();
+	},
+
+	handleConfirmationSidebarPreferenceChange: function( event ) {
+		this.setState( { confirmationSidebarPreference: event.target.checked } );
+	},
+
 	toggleSidebar: function() {
 		if ( this.props.layoutFocus === 'sidebar' ) {
 			this.props.setEditorSidebar( 'closed' );
@@ -230,6 +252,10 @@ export const PostEditor = React.createClass( {
 		const mode = this.getEditorMode();
 		const isInvalidURL = this.state.loadingError;
 		const siteURL = site ? site.URL + '/' : null;
+		const isConfirmationFeatureEnabled = (
+			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.props.isConfirmationSidebarEnabled
+		);
 
 		let isPage;
 		let isTrashed;
@@ -247,6 +273,7 @@ export const PostEditor = React.createClass( {
 			<div className={ classes }>
 				<QueryPreferences />
 				<EditorConfirmationSidebar
+					handlePreferenceChange={ this.handleConfirmationSidebarPreferenceChange }
 					onPrivatePublish={ this.onPublish }
 					onPublish={ this.onPublish }
 					post={ this.state.post }
@@ -262,6 +289,7 @@ export const PostEditor = React.createClass( {
 					<EditorGroundControl
 						setPostDate={ this.setPostDate }
 						hasContent={ this.state.hasContent }
+						isConfirmationSidebarEnabled={ isConfirmationFeatureEnabled }
 						isDirty={ this.state.isDirty || this.props.dirty }
 						isSaveBlocked={ this.isSaveBlocked() }
 						isPublishing={ this.state.isPublishing }
@@ -351,11 +379,15 @@ export const PostEditor = React.createClass( {
 								onSetContent={ this.debouncedSaveRawContent }
 								onInit={ this.onEditorInitialized }
 								onChange={ this.onEditorContentChange }
-								onKeyUp={ this.debouncedSaveRawContent }
+								onKeyUp={ this.onEditorKeyUp }
 								onFocus={ this.onEditorFocus }
+								onMouseUp={ this.copySelectedText }
+								onBlur={ this.copySelectedText }
 								onTextEditorChange={ this.onEditorContentChange } />
 						</div>
-						<EditorWordCount />
+						<EditorWordCount
+							selectedText={ this.state.selectedText }
+						/>
 					</div>
 					<EditorSidebar
 						toggleSidebar={ this.toggleSidebar }
@@ -731,12 +763,23 @@ export const PostEditor = React.createClass( {
 			status: 'publish'
 		};
 
-		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) && false === isConfirmed ) {
+		const isConfirmationFeatureEnabled = (
+			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.props.isConfirmationSidebarEnabled
+		);
+
+		if (
+			isConfirmationFeatureEnabled &&
+			false === isConfirmed
+		) {
 			this.setConfirmationSidebar( { status: 'open' } );
 			return;
 		}
 
-		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) && 'open' === this.state.confirmationSidebar ) {
+		if (
+			isConfirmationFeatureEnabled &&
+			'open' === this.state.confirmationSidebar
+		) {
 			this.setConfirmationSidebar( { status: 'publishing' } );
 		}
 
@@ -768,7 +811,10 @@ export const PostEditor = React.createClass( {
 	onPublishFailure: function( error ) {
 		this.onSaveFailure( error, 'publishFailure' );
 
-		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
+		if (
+			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.props.isConfirmationSidebarEnabled
+		) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_failure' } );
 		}
 	},
@@ -783,6 +829,17 @@ export const PostEditor = React.createClass( {
 			message = 'scheduled';
 		} else {
 			message = 'published';
+		}
+
+		if ( ! this.state.confirmationSidebarPreference ) {
+			this.props.saveConfirmationSidebarPreference( this.props.siteId, false );
+		}
+
+		if (
+			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.props.isConfirmationSidebarEnabled
+		) {
+			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
 		}
 
 		this.onSaveSuccess( message, ( message === 'published' ? 'view' : 'preview' ), savedPost.URL );
@@ -854,10 +911,6 @@ export const PostEditor = React.createClass( {
 		const post = PostEditStore.get();
 		const isNotPrivateOrIsConfirmed = ( 'private' !== post.status ) || ( 'closed' !== this.state.confirmationSidebar );
 
-		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
-			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
-		}
-
 		if ( 'draft' === post.status ) {
 			this.props.setEditorLastDraft( post.site_ID, post.ID );
 		} else {
@@ -918,6 +971,12 @@ export const PostEditor = React.createClass( {
 
 		if ( mode === 'html' ) {
 			this.editor.setEditorContent( content );
+
+			if ( this.state.selectedText ) {
+				// Word count is not available in the HTML mode
+				// This resets the word count if it exists
+				this.copySelectedText();
+			}
 		}
 
 		this.props.setEditorModePreference( mode );
@@ -959,6 +1018,7 @@ export default connect(
 			layoutFocus: getCurrentLayoutFocus( state ),
 			hasBrokenPublicizeConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
 			isSitePreviewable: isSitePreviewable( state, siteId ),
+			isConfirmationSidebarEnabled: isConfirmationSidebarEnabled( state, siteId ),
 		};
 	},
 	( dispatch ) => {
@@ -971,6 +1031,7 @@ export default connect(
 			setEditorModePreference: savePreference.bind( null, 'editor-mode' ),
 			setEditorSidebar: savePreference.bind( null, 'editor-sidebar' ),
 			setLayoutFocus,
+			saveConfirmationSidebarPreference,
 		}, dispatch );
 	},
 	null,

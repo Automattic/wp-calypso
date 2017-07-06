@@ -130,8 +130,8 @@ export const applyDuplicatesHandlers = inboundData => {
 
 	if ( ! queued ) {
 		debug(
-			'applyDuplicatesHandler has entered an impossible state!' +
-			'A HTTP request is exiting the http pipeline without having entered it.' +
+			'applyDuplicatesHandler has entered an impossible state! ' +
+			'A HTTP request is exiting the http pipeline without having entered it. ' +
 			'There must be a bug somewhere'
 		);
 		return inboundData;

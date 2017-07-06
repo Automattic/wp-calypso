@@ -84,14 +84,6 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
-	signupProgressIndicator: {
-		datestamp: '20170612',
-		variations: {
-			original: 50,
-			wizardbar: 50,
-		},
-		defaultVariation: 'original',
-	},
 	postPublishPreview: {
 		datestamp: '20170627',
 		allowExistingUsers: true,

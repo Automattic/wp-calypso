@@ -3,11 +3,48 @@
  */
 import { translate } from 'i18n-calypso';
 
+export const sparkWidgetList1 = [
+	{
+		key: 'products',
+		title: translate( 'Products Purchased' ),
+		type: 'number'
+	},
+	{
+		key: 'avg_products_per_order',
+		title: translate( 'Products Per Order' ),
+		type: 'number'
+	},
+	{
+		key: 'coupons',
+		title: translate( 'Coupons Used' ),
+		type: 'number'
+	}
+];
+
+export const sparkWidgetList2 = [
+	{
+		key: 'total_refund',
+		title: translate( 'Refunds' ),
+		type: 'currency'
+	},
+	{
+		key: 'total_shipping',
+		title: translate( 'Shipping' ),
+		type: 'currency'
+	},
+	{
+		key: 'total_tax',
+		title: translate( 'Tax' ),
+		type: 'currency'
+	}
+];
+
 export const topProducts = {
-	title: translate( 'Products' ),
+	basePath: '/store/stats/products',
+	title: translate( 'Most Popular Products' ),
 	values: [
 		{ key: 'name', title: translate( 'Title' ) },
-		{ key: 'price', title: translate( 'Price' ) },
+		{ key: 'quantity', title: translate( 'Quantity' ) },
 		{ key: 'total', title: translate( 'Sales' ) },
 	],
 	empty: translate( 'No products found' ),
@@ -15,22 +52,24 @@ export const topProducts = {
 };
 
 export const topCategories = {
-	title: translate( 'Categories' ),
+	basePath: '/store/stats/categories',
+	title: translate( 'Top Categories' ),
 	values: [
 		{ key: 'name', title: translate( 'Title' ) },
 		{ key: 'quantity', title: translate( 'Quantity' ) },
-		{ key: 'total', title: translate( 'Total' ) },
+		{ key: 'total', title: translate( 'Sales' ) },
 	],
 	empty: translate( 'No categories found' ),
 	statType: 'statsTopCategories',
 };
 
 export const topCoupons = {
-	title: translate( 'Coupons' ),
+	basePath: '/store/stats/coupons',
+	title: translate( 'Most Used Coupons' ),
 	values: [
 		{ key: 'name', title: translate( 'Title' ) },
-		{ key: 'quantity', title: translate( 'Quantity' ) },
-		{ key: 'total', title: translate( 'Total' ) },
+		{ key: 'quantity', title: translate( 'Used' ) },
+		{ key: 'total', title: translate( 'Total Discount' ) },
 	],
 	empty: translate( 'No coupons found' ),
 	statType: 'statsTopCoupons',

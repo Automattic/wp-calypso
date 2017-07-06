@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, values } from 'lodash';
+import { find, flowRight, get, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,11 +14,13 @@ import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
 import sectionsModule from 'sections';
 import { Tabs } from '../../constants';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class Navigation extends Component {
 	static propTypes = {
 		activeTab: PropTypes.string,
-		site: PropTypes.object,
+		siteSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -32,8 +35,7 @@ class Navigation extends Component {
 	}
 
 	renderTabItem( { label, slug } ) {
-		const { activeTab, site } = this.props;
-		const siteSlug = get( site, 'slug' );
+		const { activeTab, siteSlug } = this.props;
 		let path = this.getSettingsPath();
 
 		if ( slug ) {
@@ -65,4 +67,17 @@ class Navigation extends Component {
 	}
 }
 
-export default localize( Navigation );
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			siteSlug: getSiteSlug( state, siteId ),
+		};
+	}
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+)( Navigation );

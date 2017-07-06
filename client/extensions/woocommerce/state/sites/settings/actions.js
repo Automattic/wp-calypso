@@ -139,6 +139,7 @@ export const setAddress = (
 	stateOrProvince,
 	postcode,
 	country,
+	successAction,
 	failureAction
 ) => ( dispatch, getState ) => {
 	const state = getState();
@@ -186,6 +187,9 @@ export const setAddress = (
 	return request( siteId ).post( 'settings/batch', { update } )
 		.then( ( data ) => {
 			dispatch( setAddressSuccess( siteId, data ) );
+			if ( successAction ) {
+				dispatch( successAction( data ) );
+			}
 		} )
 		.catch( err => {
 			dispatch( setError( siteId, updateAction, err ) );

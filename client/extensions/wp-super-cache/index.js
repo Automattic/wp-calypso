@@ -8,8 +8,8 @@ import { values } from 'lodash';
  * Internal dependencies
  */
 import { navigation, sites, siteSelection } from 'my-sites/controller';
-import { settings } from './controller';
-import { Tabs } from './constants';
+import { settings } from './app/controller';
+import { Tabs } from './app/constants';
 
 export default function() {
 	page( '/extensions/wp-super-cache', sites );

@@ -151,6 +151,7 @@ export default connect(
 				'activate',
 				'preview',
 				'purchase',
+				'upgradePlan',
 				'tryandcustomize',
 				'customize',
 				'separator',

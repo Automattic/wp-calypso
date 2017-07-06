@@ -3,48 +3,95 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { moment } from 'i18n-calypso';
+import { moment, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
 import Navigation from './store-stats-navigation';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Chart from './store-stats-chart';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import DatePicker from 'my-sites/stats/stats-date-picker';
-import { UNITS } from './constants';
+import Module from './store-stats-module';
+import List from './store-stats-list';
+import WidgetList from './store-stats-widget-list';
+import SectionHeader from 'components/section-header';
+import {
+	sparkWidgetList1,
+	sparkWidgetList2,
+	topProducts,
+	topCategories,
+	topCoupons,
+	UNITS
+} from 'woocommerce/app/store-stats/constants';
+import { getUnitPeriod, getEndPeriod } from './utils';
 
 class StoreStats extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		queryDate: PropTypes.string,
+		querystring: PropTypes.string,
 		selectedDate: PropTypes.string,
 		siteId: PropTypes.number,
 		unit: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const { path, queryDate, selectedDate, siteId, slug, unit } = this.props;
-		const unitQueryDate = ( unit === 'week' )
-			? `${ moment( queryDate ).format( UNITS[ unit ].format ) }-W${ moment( queryDate ).isoWeek() }`
-			: moment( queryDate ).format( UNITS[ unit ].format );
-		const unitSelectedDate = ( unit === 'week' )
-			? moment( selectedDate ).endOf( 'isoWeek' ).format( 'YYYY-MM-DD' )
-			: moment( selectedDate ).endOf( unit ).format( 'YYYY-MM-DD' );
+		const { path, queryDate, selectedDate, siteId, slug, unit, querystring } = this.props;
+		const unitQueryDate = getUnitPeriod( queryDate, unit );
+		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
+		const endSelectedDate = getEndPeriod( selectedDate, unit );
 		const ordersQuery = {
 			unit,
 			date: queryDate,
 			quantity: UNITS[ unit ].quantity,
 		};
+		const topQuery = {
+			unit,
+			date: unitSelectedDate,
+			limit: 10,
+		};
+		const topWidgets = [ topProducts, topCategories, topCoupons ];
+		const widgetPath = `/${ unit }/${ slug }${ querystring ? '?' : '' }${ querystring || '' }`;
+
+		const widgetList1 = (
+			<div className="store-stats__widgets-column spark-widgets" key="sparkwidgets1">
+				<WidgetList
+					siteId={ siteId }
+					header={ null }
+					emptyMessage={ translate( 'No data found.' ) }
+					query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
+					selectedDate={ endSelectedDate }
+					statType="statsOrders"
+					widgets={ sparkWidgetList1 }
+				/>
+			</div>
+			);
+		const widgetList2 = (
+			<div className="store-stats__widgets-column spark-widgets" key="sparkwidgets2">
+				<WidgetList
+					siteId={ siteId }
+					header={ null }
+					emptyMessage={ translate( 'No data found.' ) }
+					query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
+					selectedDate={ endSelectedDate }
+					statType="statsOrders"
+					widgets={ sparkWidgetList2 }
+				/>
+			</div>
+		);
+
 		return (
 			<Main className="store-stats woocommerce" wideLayout={ true }>
+				<div className="store-stats__sidebar-nav"><SidebarNavigation /></div>
 				<Navigation unit={ unit } type="orders" slug={ slug } />
 				<Chart
 					path={ path }
 					query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
-					selectedDate={ unitSelectedDate }
+					selectedDate={ endSelectedDate }
 					siteId={ siteId }
 					unit={ unit }
 				/>
@@ -66,6 +113,35 @@ class StoreStats extends Component {
 						showQueryDate
 					/>
 				</StatsPeriodNavigation>
+				<div className="store-stats__widgets">
+					{ widgetList1 }
+					{ widgetList2 }
+					{ topWidgets.map( widget => {
+						const header = (
+							<SectionHeader href={ widget.basePath + widgetPath }>
+								{ widget.title }
+							</SectionHeader>
+						);
+						return (
+							<div className="store-stats__widgets-column" key={ widget.basePath }>
+								<Module
+									siteId={ siteId }
+									header={ header }
+									emptyMessage={ widget.empty }
+									query={ topQuery }
+									statType={ widget.statType }
+								>
+									<List
+										siteId={ siteId }
+										values={ widget.values }
+										query={ topQuery }
+										statType={ widget.statType }
+									/>
+								</Module>
+							</div>
+						);
+					} ) }
+				</div>
 			</Main>
 		);
 	}

@@ -1,13 +1,15 @@
 /**
  * External dependencies
  */
-import { get, find, findIndex, isNumber, remove } from 'lodash';
+import { get, find, findIndex, flatten, isNumber, map, remove, some } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getAPIShippingZones, areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
+import { getShippingZoneMethods } from './methods/selectors';
 
 export const getShippingZonesEdits = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'zones' ] );
@@ -52,29 +54,40 @@ const orderShippingZones = ( zones ) => {
  * @return {Array} The list of shipping zones that the UI should show. That will be the list of zones returned by
  * the wc-api with the edits "overlayed" on top of them.
  */
-export const getShippingZones = ( state, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! areShippingZonesLoaded( state, siteId ) ) {
-		return [];
-	}
-	const zones = [ ...getAPIShippingZones( state, siteId ) ];
-
-	const edits = getShippingZonesEdits( state, siteId );
-	if ( ! edits ) {
-		return orderShippingZones( zones );
-	}
-
-	// Overlay the current edits on top of (a copy of) the wc-api zones
-	const { creates, updates, deletes } = edits;
-	deletes.forEach( ( { id } ) => remove( zones, { id } ) );
-	updates.forEach( ( update ) => {
-		const index = findIndex( zones, { id: update.id } );
-		if ( -1 === index ) {
-			return;
+export const getShippingZones = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! areShippingZonesLoaded( state, siteId ) ) {
+			return [];
 		}
-		zones[ index ] = { ...zones[ index ], ...update };
-	} );
-	return orderShippingZones( [ ...zones, ...creates ] );
-};
+		const zones = [ ...getAPIShippingZones( state, siteId ) ];
+
+		const edits = getShippingZonesEdits( state, siteId );
+		if ( ! edits ) {
+			return orderShippingZones( zones );
+		}
+
+		// Overlay the current edits on top of (a copy of) the wc-api zones
+		const { creates, updates, deletes } = edits;
+		deletes.forEach( ( { id } ) => remove( zones, { id } ) );
+		updates.forEach( ( update ) => {
+			const index = findIndex( zones, { id: update.id } );
+			if ( -1 === index ) {
+				return;
+			}
+			zones[ index ] = { ...zones[ index ], ...update };
+		} );
+		return orderShippingZones( [ ...zones, ...creates ] );
+	},
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const loaded = areShippingZonesLoaded( state, siteId );
+		return [
+			siteId,
+			loaded,
+			loaded && getAPIShippingZones( state, siteId ),
+			loaded && getShippingZonesEdits( state, siteId ),
+		];
+	}
+);
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -82,20 +95,30 @@ export const getShippingZones = ( state, siteId = getSelectedSiteId( state ) ) =
  * @return {Object|null} The shipping zone that's currently being edited, with all the edits
  * (including the non-committed changes). If no zone is being edited, this will return null.
  */
-export const getCurrentlyEditingShippingZone = ( state, siteId = getSelectedSiteId( state ) ) => {
-	const edits = getShippingZonesEdits( state, siteId );
-	if ( ! edits ) {
-		return null;
+export const getCurrentlyEditingShippingZone = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const edits = getShippingZonesEdits( state, siteId );
+		if ( ! edits ) {
+			return null;
+		}
+		if ( null === edits.currentlyEditingId ) {
+			return null;
+		}
+		const zone = find( getShippingZones( state, siteId ), { id: edits.currentlyEditingId } );
+		if ( ! zone ) {
+			return { id: edits.currentlyEditingId, ...edits.currentlyEditingChanges };
+		}
+		return { ...zone, ...edits.currentlyEditingChanges };
+	},
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const edits = getShippingZonesEdits( state, siteId );
+		return [
+			siteId,
+			edits,
+			edits && null !== edits.currentlyEditingId && getShippingZones( state, siteId ),
+		];
 	}
-	if ( null === edits.currentlyEditingId ) {
-		return null;
-	}
-	const zone = find( getShippingZones( state, siteId ), { id: edits.currentlyEditingId } );
-	if ( ! zone ) {
-		return { id: edits.currentlyEditingId, ...edits.currentlyEditingChanges };
-	}
-	return { ...zone, ...edits.currentlyEditingChanges };
-};
+);
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -104,6 +127,12 @@ export const getCurrentlyEditingShippingZone = ( state, siteId = getSelectedSite
  */
 export const isCurrentlyEditingShippingZone = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return Boolean( getCurrentlyEditingShippingZone( state, siteId ) );
+};
+
+export const areAnyShippingMethodsEnabled = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const zones = getShippingZones( state, siteId );
+	const methods = flatten( zones.map( ( { id } ) => getShippingZoneMethods( state, id, siteId ) ) );
+	return some( map( methods, 'enabled' ) );
 };
 
 /**

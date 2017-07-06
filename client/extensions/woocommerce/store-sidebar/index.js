@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { find, filter } from 'lodash';
@@ -9,6 +10,8 @@ import React, { Component, PropTypes } from 'react';
 /**
  * Internal dependencies
  */
+import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
+import { getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import Sidebar from 'layout/sidebar';
@@ -38,6 +41,25 @@ class StoreSidebar extends Component {
 		site: PropTypes.object,
 	}
 
+	componentDidMount = () => {
+		const { site } = this.props;
+
+		if ( site && site.ID ) {
+			this.props.fetchSetupChoices( site.ID );
+		}
+	}
+
+	componentWillReceiveProps = ( newProps ) => {
+		const { site } = this.props;
+
+		const newSiteId = newProps.site ? newProps.site.ID : null;
+		const oldSiteId = site ? site.ID : null;
+
+		if ( oldSiteId !== newSiteId ) {
+			this.props.fetchSetupChoices( newSiteId );
+		}
+	}
+
 	onNavigate = () => {
 		window.scrollTo( 0, 0 );
 	}
@@ -53,9 +75,12 @@ class StoreSidebar extends Component {
 	}
 
 	renderSidebarMenuItems = ( items, buttons, isDisabled ) => {
-		const { site } = this.props;
+		const { site, finishedInitialSetup, page } = this.props;
 
 		return items.map( function( item, index ) {
+			if ( ! item.showDuringSetup && ! finishedInitialSetup ) {
+				return null;
+			}
 			const isChild = ( 'undefined' !== typeof item.parentSlug );
 			const itemLink = getLink( item.path, site );
 			const itemButton = buttons.filter( button => button.parentSlug === item.slug ).map( button => {
@@ -94,13 +119,14 @@ class StoreSidebar extends Component {
 				childLinks.push( getLink( child.path, site ) );
 			} );
 
+			const selected = this.isItemLinkSelected( itemLink ) || page.parentPath === item.path;
 			// Build the classnames for the item
 			const itemClasses = classNames( item.slug,
 				{
 					'has-selected-child': this.isItemLinkSelected( childLinks ),
 					'is-child-item': isChild,
 					'is-placeholder': isDisabled,
-					selected: this.isItemLinkSelected( itemLink ),
+					selected,
 				}
 			);
 
@@ -140,9 +166,20 @@ class StoreSidebar extends Component {
 }
 
 function mapStateToProps( state ) {
+	const finishedInitialSetup = getFinishedInitialSetup( state );
 	return {
+		finishedInitialSetup,
 		site: getSelectedSiteWithFallback( state )
 	};
 }
 
-export default connect( mapStateToProps )( StoreSidebar );
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			fetchSetupChoices,
+		},
+		dispatch
+	);
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( StoreSidebar );

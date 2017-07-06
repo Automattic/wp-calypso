@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,7 +16,12 @@ import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import Module from './store-stats-module';
 import List from './store-stats-list';
-import { topProducts, topCategories, topCoupons } from 'woocommerce/app/store-stats/constants';
+import {
+	topProducts,
+	topCategories,
+	topCoupons
+} from 'woocommerce/app/store-stats/constants';
+import { getUnitPeriod } from './utils';
 
 const listType = {
 	products: topProducts,
@@ -25,17 +31,17 @@ const listType = {
 
 class StoreStatsListView extends Component {
 	static propTypes = {
-		context: PropTypes.object.isRequired,
 		path: PropTypes.string.isRequired,
 		selectedDate: PropTypes.string,
 		siteId: PropTypes.number,
-		unit: PropTypes.string.isRequired,
+		querystring: PropTypes.string,
 		type: PropTypes.string.isRequired,
+		unit: PropTypes.string.isRequired,
 	};
 
 	goBack = () => {
 		const pathParts = this.props.path.split( '/' );
-		const queryString = this.props.context.querystring ? '?' + this.props.context.querystring : '';
+		const queryString = this.props.querystring ? '?' + this.props.querystring : '';
 		const pathExtra = `${ pathParts[ pathParts.length - 2 ] }/${ pathParts[ pathParts.length - 1 ] }${ queryString }`;
 		const defaultBack = `/store/stats/orders/${ pathExtra }`;
 
@@ -46,9 +52,10 @@ class StoreStatsListView extends Component {
 
 	render() {
 		const { siteId, slug, selectedDate, type, unit } = this.props;
+		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
 		const listviewQuery = {
 			unit,
-			date: selectedDate,
+			date: unitSelectedDate,
 			limit: 100,
 		};
 		return (
@@ -61,7 +68,11 @@ class StoreStatsListView extends Component {
 				>
 					<DatePicker
 						period={ unit }
-						date={ selectedDate }
+						date={
+							( unit === 'week' )
+								? moment( selectedDate, 'YYYY-MM-DD' ).subtract( 1, 'days' ).format( 'YYYY-MM-DD' )
+								: selectedDate
+						}
 						query={ listviewQuery }
 						statsType={ listType[ type ].statType }
 						showQueryDate
@@ -75,7 +86,7 @@ class StoreStatsListView extends Component {
 				>
 					<List
 						siteId={ siteId }
-						values={ topProducts.values }
+						values={ listType[ type ].values }
 						query={ listviewQuery }
 						statType={ listType[ type ].statType }
 					/>

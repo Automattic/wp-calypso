@@ -9,7 +9,9 @@ import { moment } from 'i18n-calypso';
  */
 import {
 	calculateDelta,
-	getQueryDate
+	getQueryDate,
+	getUnitPeriod,
+	getEndPeriod
 } from '../utils';
 import { UNITS } from '../constants';
 
@@ -117,5 +119,51 @@ describe( 'getQueryDate', () => {
 		const queryDate = getQueryDate( context );
 		const todayShouldBe = moment().subtract( quantity * 2, 'weeks' ).format( 'YYYY-MM-DD' );
 		assert.strictEqual( queryDate, todayShouldBe );
+	} );
+} );
+
+describe( 'getUnitPeriod', () => {
+	it( 'should return a string', () => {
+		const queryDate = getUnitPeriod( '2017-07-05', 'week' );
+		assert.isString( queryDate );
+	} );
+	it( 'should return an isoWeek format for a week unit', () => {
+		const queryDate = getUnitPeriod( '2017-07-05', 'week' );
+		assert.strictEqual( queryDate, '2017-W27' );
+	} );
+	it( 'should return a well formatted period for a month unit', () => {
+		const queryDate = getUnitPeriod( '2017-07-05', 'month' );
+		assert.strictEqual( queryDate, '2017-07' );
+	} );
+	it( 'should return a well formatted period for a year unit', () => {
+		const queryDate = getUnitPeriod( '2017-07-05', 'year' );
+		assert.strictEqual( queryDate, '2017' );
+	} );
+	it( 'should return a well formatted period for a day unit', () => {
+		const queryDate = getUnitPeriod( '2017-07-05', 'day' );
+		assert.strictEqual( queryDate, '2017-07-05' );
+	} );
+} );
+
+describe( 'getEndPeriod', () => {
+	it( 'should return a string', () => {
+		const queryDate = getEndPeriod( '2017-07-05', 'week' );
+		assert.isString( queryDate );
+	} );
+	it( 'should return an the date for the end of the week', () => {
+		const queryDate = getEndPeriod( '2017-07-05', 'week' );
+		assert.strictEqual( queryDate, '2017-07-09' );
+	} );
+	it( 'should return an the date for the end of the month', () => {
+		const queryDate = getEndPeriod( '2017-07-05', 'month' );
+		assert.strictEqual( queryDate, '2017-07-31' );
+	} );
+	it( 'should return an the date for the end of the year', () => {
+		const queryDate = getEndPeriod( '2017-07-05', 'year' );
+		assert.strictEqual( queryDate, '2017-12-31' );
+	} );
+	it( 'should return an the date for the end of the day', () => {
+		const queryDate = getEndPeriod( '2017-07-05', 'day' );
+		assert.strictEqual( queryDate, '2017-07-05' );
 	} );
 } );

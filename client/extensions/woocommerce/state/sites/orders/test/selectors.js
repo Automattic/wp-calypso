@@ -15,6 +15,7 @@ import {
 	getTotalOrdersPages,
 	isOrderLoaded,
 	isOrderLoading,
+	isOrderUpdating,
 	getNewOrders,
 	getNewOrdersRevenue,
 } from '../selectors';
@@ -39,6 +40,9 @@ const loadingState = {
 						isQueryLoading: {
 							'{page:1}': true,
 						},
+						isUpdating: {
+							20: true,
+						},
 						items: {},
 						queries: {},
 						totalPages: 1
@@ -59,6 +63,9 @@ const loadedState = {
 						},
 						isQueryLoading: {
 							'{page:1}': false,
+						},
+						isUpdating: {
+							20: false,
 						},
 						items: keyBy( orders, 'id' ),
 						queries: {
@@ -168,6 +175,24 @@ describe( 'selectors', () => {
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( isOrderLoading( loadedStateWithUi, 35 ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#isOrderUpdating', () => {
+		it( 'should be false when woocommerce state is not available.', () => {
+			expect( isOrderUpdating( preInitializedState, 20, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be true when this order is currently being updated.', () => {
+			expect( isOrderUpdating( loadingState, 20, 123 ) ).to.be.true;
+		} );
+
+		it( 'should be false when this order is done updating.', () => {
+			expect( isOrderUpdating( loadedState, 20, 123 ) ).to.be.false;
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( isOrderUpdating( loadedStateWithUi, 20 ) ).to.be.false;
 		} );
 	} );
 

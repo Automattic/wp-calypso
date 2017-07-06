@@ -1,12 +1,17 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
+
+export const getProduct = ( state, productId, siteId = getSelectedSiteId( state ) ) => {
+	const allProducts = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ] );
+	return find( allProducts, { id: productId } );
+};
 
 /**
  * @param {Object} state Whole Redux state tree

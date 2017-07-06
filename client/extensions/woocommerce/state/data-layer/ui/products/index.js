@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { find } from 'lodash';
+import { find, isObject, isEqual, compact } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,17 +11,38 @@ import { find } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
 import { getAllProductEdits } from 'woocommerce/state/ui/products/selectors';
+import { getAllVariationEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { getAllProductCategoryEdits } from 'woocommerce/state/ui/product-categories/selectors';
-import { createProduct } from 'woocommerce/state/sites/products/actions';
+import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
+import { createProduct, updateProduct } from 'woocommerce/state/sites/products/actions';
+import { createProductVariation, updateProductVariation, deleteProductVariation } from 'woocommerce/state/sites/product-variations/actions';
+import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
 import {
-	actionListCreate,
+	actionListStepNext,
 	actionListStepSuccess,
-	actionListStepFailure
+	actionListStepFailure,
+	actionListClear,
 } from 'woocommerce/state/action-list/actions';
 import {
+	WOOCOMMERCE_PRODUCT_EDIT,
+	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
 	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
 	WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE,
 } from 'woocommerce/state/action-types';
+
+export default {
+	[ WOOCOMMERCE_PRODUCT_EDIT ]: [ actionAppendProductVariations ],
+	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: [ actionAppendProductVariations ],
+	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT ]: [ handleProductCategoryEdit ],
+	[ WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE ]: [ handleProductActionListCreate ],
+};
+
+export function actionAppendProductVariations( { getState }, action ) {
+	const { siteId } = action;
+	const productId = action.product && action.product.id;
+
+	action.productVariations = getVariationsForProduct( getState(), productId, siteId );
+}
 
 export function handleProductCategoryEdit( { dispatch, getState }, action ) {
 	const rootState = getState();
@@ -45,11 +66,26 @@ export function handleProductCategoryEdit( { dispatch, getState }, action ) {
 	}
 }
 
-export function handleProductActionListCreate( { dispatch, getState }, action ) {
+export function handleProductActionListCreate( store, action ) {
 	const { successAction, failureAction } = action;
-	const actionList = makeProductActionList( getState(), undefined, undefined, successAction, failureAction );
+	const rootState = store.getState();
+	const siteId = getSelectedSiteId( rootState );
 
-	dispatch( actionListCreate( actionList ) );
+	const onSuccess = ( dispatch ) => dispatch( successAction );
+	const onFailure = ( dispatch ) => {
+		dispatch( failureAction );
+		dispatch( actionListClear() );
+	};
+	const actionList = makeProductActionList(
+		rootState,
+		siteId,
+		getAllProductEdits( rootState, siteId ),
+		getAllVariationEdits( rootState, siteId ),
+		onSuccess,
+		onFailure
+	);
+
+	store.dispatch( actionListStepNext( actionList ) );
 }
 
 /**
@@ -66,54 +102,259 @@ export function handleProductActionListCreate( { dispatch, getState }, action ) 
  */
 export function makeProductActionList(
 	rootState,
-	siteId = getSelectedSiteId( rootState ),
-	productEdits = getAllProductEdits( rootState, siteId ),
-	successAction,
-	failureAction,
+	siteId,
+	productEdits,
+	variationEdits,
+	onSuccess,
+	onFailure,
 ) {
-	const steps = [];
+	return {
+		nextSteps: [
+			...makeProductCategorySteps( rootState, siteId, productEdits ),
+			...makeProductSteps( rootState, siteId, productEdits ),
+			...makeProductVariationSteps( rootState, siteId, productEdits, variationEdits ),
+		],
+		onSuccess: ( dispatch, actionList ) => {
+			dispatch( onSuccess( dispatch, actionList ) );
+			dispatch( actionListClear() );
+		},
+		onFailure,
+	};
+}
 
-	// TODO: sequentially go through edit state and create steps.
-	/* TODO: Add category API calls before product.
-	...categories.creates
-	...categories.updates
-	...categories.deletes
-	*/
+const categoryCreated = ( actionList ) => ( dispatch, getState, { sentData, receivedData } ) => {
+	const categoryIdMapping = {
+		...actionList.categoryIdMapping,
+		[ sentData.id.placeholder ]: receivedData.id,
+	};
 
-	if ( productEdits && productEdits.creates ) {
-		// Each create gets its own step.
+	const newActionList = {
+		...actionList,
+		categoryIdMapping,
+	};
+
+	dispatch( actionListStepSuccess( newActionList ) );
+};
+
+export function makeProductCategorySteps( rootState, siteId, productEdits ) {
+	if ( ! productEdits ) {
+		return [];
+	}
+
+	const creates = productEdits.creates || [];
+	const updates = productEdits.updates || [];
+	const categoryEdits = getAllProductCategoryEdits( rootState, siteId );
+
+	// Collect all the IDs of all new categories that are referenced by a product edit.
+	const newCategoryIds = getNewCategoryIdsForEdits( [ ...creates, ...updates ] );
+
+	// Construct a step for each new category to be created.
+	const createSteps = newCategoryIds.map( ( categoryId ) => {
+		const category = find( categoryEdits.creates, { id: categoryId } );
+
+		return {
+			description: translate( 'Creating product category: ' ) + category.name,
+			onStep: ( dispatch, actionList ) => {
+				dispatch( createProductCategory(
+					siteId,
+					category,
+					categoryCreated( actionList ),
+					actionListStepFailure( actionList ),
+				) );
+			},
+		};
+	} );
+
+	return [ ...createSteps ];
+}
+
+function getNewCategoryIdsForEdits( edits ) {
+	return edits.reduce( ( categoryIds, product ) => {
+		return getCategoryIdsForProduct( product ).filter( ( id ) => {
+			return isObject( id ) && categoryIds.indexOf( id ) === -1;
+		} );
+	}, [] );
+}
+
+function getCategoryIdsForProduct( product ) {
+	const categories = product.categories || [];
+
+	return categories.map( ( category ) => {
+		return category.id;
+	} );
+}
+
+const productSuccess = ( actionList ) => ( dispatch, getState, { sentData, receivedData } ) => {
+	const productIdMapping = {
+		...actionList.productIdMapping,
+		[ sentData.id.index ]: receivedData.id,
+	};
+
+	const newActionList = {
+		...actionList,
+		productIdMapping,
+	};
+
+	dispatch( actionListStepSuccess( newActionList ) );
+};
+
+export function makeProductSteps( rootState, siteId, productEdits ) {
+	if ( ! productEdits ) {
+		return [];
+	}
+
+	let createSteps = [];
+	let updateSteps = [];
+
+	if ( productEdits.creates ) {
 		// TODO: Consider making these parallel actions.
-		productEdits.creates.forEach( ( product ) => {
-			const stepIndex = steps.length;
-			const description = translate( 'Creating product: ' ) + product.name;
+		createSteps = productEdits.creates.map( ( product ) => {
+			return {
+				description: translate( 'Creating product' ),
+				onStep: ( dispatch, actionList ) => {
+					const { categoryIdMapping } = actionList;
 
-			const action = createProduct(
-				siteId,
-				product,
-				actionListStepSuccess( stepIndex ),
-				actionListStepFailure( stepIndex, 'UNKNOWN' ) // error will be set by request failure.
-			);
-
-			steps.push( { description, action } );
+					dispatch( createProduct(
+						siteId,
+						getCorrectedProduct( product, categoryIdMapping ),
+						productSuccess( actionList ),
+						actionListStepFailure( actionList ),
+					) );
+				},
+			};
 		} );
 	}
 
-	/* TODO: Add updates and deletes
-	...product.updates
-	...product.deletes
-	*/
+	if ( productEdits.updates ) {
+		updateSteps = compact( productEdits.updates.map( ( product ) => {
+			// TODO: When we no longer have to edit a product just to set
+			// the currently editing id, remove this.
+			if ( isEqual( { id: product.id }, product ) ) {
+				return undefined;
+			}
 
-	/* TODO: Add variation API calls after product.
-	...variation.creates
-	...variation.updates
-	...variation.deletes
-	*/
+			return {
+				description: translate( 'Updating product' ),
+				onStep: ( dispatch, actionList ) => {
+					const { categoryIdMapping } = actionList;
 
-	return { steps, successAction, failureAction, clearUponComplete: true };
+					dispatch( updateProduct(
+						siteId,
+						getCorrectedProduct( product, categoryIdMapping ),
+						productSuccess( actionList ),
+						actionListStepFailure( actionList ),
+					) );
+				},
+			};
+		} ) );
+	}
+
+	return [
+		...createSteps,
+		...updateSteps,
+	];
 }
 
-export default {
-	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT ]: [ handleProductCategoryEdit ],
-	[ WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE ]: [ handleProductActionListCreate ],
-};
+function getCorrectedProduct( product, categoryIdMapping ) {
+	const { categories } = product;
+
+	if ( categories ) {
+		const newCategories = categories.map(
+			( category ) => getCorrectedCategory( category, categoryIdMapping ) );
+
+		return {
+			...product,
+			categories: newCategories,
+		};
+	}
+
+	return product;
+}
+
+function getCorrectedCategory( category, categoryIdMapping ) {
+	const updatedId = isObject( category.id ) && categoryIdMapping[ category.id.placeholder ];
+
+	if ( updatedId ) {
+		return {
+			...category,
+			id: updatedId,
+		};
+	}
+	return category;
+}
+
+export function makeProductVariationSteps( rootState, siteId, productEdits, variationEdits ) {
+	if ( ! variationEdits ) {
+		return [];
+	}
+
+	let variationCreates = [];
+	let variationUpdates = [];
+	let variationDeletes = [];
+
+	variationEdits.map( ( { productId, creates, updates, deletes } ) => {
+		variationCreates = ( creates || [] ).map( ( variation ) => {
+			return variationCreateStep( siteId, productId, variation );
+		} );
+		variationUpdates = ( updates || [] ).map( ( variation ) => {
+			return variationUpdateStep( siteId, productId, variation );
+		} );
+		variationDeletes = ( deletes || [] ).map( ( variationId ) => {
+			return variationDeleteStep( siteId, productId, variationId );
+		} );
+	} );
+
+	return [
+		...variationCreates,
+		...variationUpdates,
+		...variationDeletes,
+	];
+}
+
+function variationCreateStep( siteId, productId, variation ) {
+	return {
+		description: translate( 'Creating variation' ),
+		onStep: ( dispatch, actionList ) => {
+			const newProduct = isObject( productId );
+
+			dispatch( createProductVariation(
+				siteId,
+				( newProduct ? actionList.productIdMapping[ productId.index ] : productId ),
+				variation,
+				actionListStepSuccess( actionList ),
+				actionListStepFailure( actionList ),
+			) );
+		},
+	};
+}
+
+function variationUpdateStep( siteId, productId, variation ) {
+	return {
+		description: translate( 'Updating variation' ),
+		onStep: ( dispatch, actionList ) => {
+			dispatch( updateProductVariation(
+				siteId,
+				productId,
+				variation,
+				actionListStepSuccess( actionList ),
+				actionListStepFailure( actionList ),
+			) );
+		},
+	};
+}
+
+function variationDeleteStep( siteId, productId, variationId ) {
+	return {
+		description: translate( 'Deleting variation' ),
+		onStep: ( dispatch, actionList ) => {
+			dispatch( deleteProductVariation(
+				siteId,
+				productId,
+				variationId,
+				actionListStepSuccess( actionList ),
+				actionListStepFailure( actionList ),
+			) );
+		},
+	};
+}
 

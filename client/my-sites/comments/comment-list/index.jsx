@@ -21,20 +21,31 @@ import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-place
 import CommentFaker from 'blocks/comment-detail/docs/comment-faker';
 import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
+import Pagination from 'my-sites/stats/pagination';
 import QuerySiteComments from 'components/data/query-site-comments';
 import { hasSiteComments } from 'state/selectors';
+
+const COMMENTS_PER_PAGE = 2;
 
 export class CommentList extends Component {
 	static propTypes = {
 		comments: PropTypes.array,
+		commentsCount: PropTypes.number,
+		commentsPage: PropTypes.number,
 		deleteCommentPermanently: PropTypes.func,
 		setBulkStatus: PropTypes.func,
 		setCommentLike: PropTypes.func,
+		setCommentsPage: PropTypes.func,
 		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 		translate: PropTypes.func,
 		undoBulkStatus: PropTypes.func,
+	};
+
+	static defaultProps = {
+		commentsCount: 0,
+		commentsPage: 1,
 	};
 
 	state = {
@@ -46,6 +57,11 @@ export class CommentList extends Component {
 		if ( this.props.status !== nextProps.status ) {
 			this.setState( { selectedComments: {} } );
 		}
+	}
+
+	changePage = page => {
+		this.setState( { selectedComments: {} } );
+		this.props.setCommentsPage( page );
 	}
 
 	deleteCommentPermanently = commentId => {
@@ -220,6 +236,8 @@ export class CommentList extends Component {
 	render() {
 		const {
 			comments,
+			commentsCount,
+			commentsPage,
 			isLoading,
 			siteId,
 			siteSlug,
@@ -239,6 +257,7 @@ export class CommentList extends Component {
 		return (
 			<div className="comment-list">
 				<QuerySiteComments siteId={ siteId } status="all" />
+
 				<CommentNavigation
 					isBulkEdit={ isBulkEdit }
 					isSelectedAll={ this.isSelectedAll() }
@@ -249,11 +268,11 @@ export class CommentList extends Component {
 					toggleBulkEdit={ this.toggleBulkEdit }
 					toggleSelectAll={ this.toggleSelectAll }
 				/>
-
 				<ReactCSSTransitionGroup
-					transitionEnterTimeout={ 300 }
+					className="comment-list__transition-wrapper"
+					transitionEnterTimeout={ 150 }
 					transitionLeaveTimeout={ 150 }
-					transitionName="comment-detail__transition"
+					transitionName="comment-list__transition"
 				>
 					{ map( comments, comment =>
 						<CommentDetail
@@ -269,14 +288,9 @@ export class CommentList extends Component {
 							toggleCommentSelected={ this.toggleCommentSelected }
 						/>
 					) }
-				</ReactCSSTransitionGroup>
-				<ReactCSSTransitionGroup
-					className="comment-list__transition-wrapper"
-					component="div"
-					transitionEnterTimeout={ 300 }
-					transitionLeaveTimeout={ 150 }
-					transitionName="comment-list__transition" >
+
 					{ showPlaceholder && <CommentDetailPlaceholder key="comment-detail-placeholder" /> }
+
 					{ showEmptyContent && <EmptyContent
 						illustration="/calypso/images/comments/illustration_comments_gray.svg"
 						illustrationWidth={ 150 }
@@ -284,6 +298,16 @@ export class CommentList extends Component {
 						line={ emptyMessageLine }
 						title={ emptyMessageTitle }
 					/> }
+
+					{ ! showPlaceholder && ! showEmptyContent &&
+						<Pagination
+							key="comment-list-pagination"
+							page={ commentsPage }
+							pageClick={ this.changePage }
+							perPage={ COMMENTS_PER_PAGE }
+							total={ commentsCount }
+						/>
+					}
 				</ReactCSSTransitionGroup>
 			</div>
 		);

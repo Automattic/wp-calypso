@@ -25,7 +25,7 @@ const MappedDomain = React.createClass( {
 
 		if ( domain.isAutoRenewing ) {
 			return (
-				<Property label={ translate( 'Mapping renews on' ) }>
+				<Property label={ translate( 'Mapping renews on', { comment: 'The corresponding date is in a different cell in the UI, the date is not included within the translated string' } ) }>
 					{ domain.autoRenewalMoment.format( 'LL' ) }
 				</Property>
 			);
@@ -35,7 +35,7 @@ const MappedDomain = React.createClass( {
 			<em>{ translate( 'Never Expires', { context: 'Expiration detail for a mapped domain' } ) }</em>;
 
 		return (
-			<Property label={ translate( 'Mapping expires on' ) }>
+			<Property label={ translate( 'Mapping expires on', { comment: 'The corresponding date is in a different cell in the UI, the date is not included within the translated string' } ) }>
 				{ expirationMessage }
 			</Property>
 		);
@@ -48,6 +48,7 @@ const MappedDomain = React.createClass( {
 	domainWarnings() {
 		return <DomainWarnings
 			domain={ this.props.domain }
+			position="mapped-domain"
 			selectedSite={ this.props.selectedSite }
 			ruleWhiteList={ [ 'wrongNSMappedDomains' ] } />;
 	},
@@ -63,18 +64,23 @@ const MappedDomain = React.createClass( {
 	},
 
 	getDomainDetailsCard() {
+		const { domain, selectedSite, translate } = this.props;
+
 		return (
 			<div className="domain-details-card">
 				<Header { ...this.props } />
 
 				<Card>
-					<Property label={ this.props.translate( 'Type', { context: 'A type of domain.' } ) }>
-						{ this.props.translate( 'Mapped Domain' ) }
+					<Property label={ translate( 'Type', { context: 'A type of domain.' } ) }>
+						{ translate( 'Mapped Domain' ) }
 					</Property>
 
 					{ this.getAutoRenewalOrExpirationDate() }
 
 					<SubscriptionSettings
+						type={ domain.type }
+						subscriptionId={ domain.subscriptionId }
+						siteSlug={ selectedSite.slug }
 						onClick={ this.handlePaymentSettingsClick } />
 				</Card>
 			</div>

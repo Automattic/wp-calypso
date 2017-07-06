@@ -109,12 +109,12 @@ class SharingServiceDescription extends Component {
 			},
 			google_photos: function() {
 				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate( 'Connected to your Google account.', {
+					return this.props.translate( 'Access photos stored in your connected Google account.', {
 						comment: 'Description for Google Photos when one or more accounts are connected'
 					} );
 				}
 
-				return this.props.translate( 'Connect to your Google account.', {
+				return this.props.translate( 'Access photos stored in your Google account.', {
 					comment: 'Description for Google Photos when no accounts are connected'
 				} );
 			}

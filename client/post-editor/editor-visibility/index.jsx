@@ -462,9 +462,6 @@ const EditorVisibility = React.createClass( {
 		return (
 			<div className="editor-visibility__dropdown">
 				<FormFieldset className="editor-fieldset">
-					<FormLegend className="editor-fieldset__legend">
-						{ this.props.translate( 'Post Visibility' ) }
-					</FormLegend>
 					<SelectDropdown
 						selectedText={ selectedItem ? selectedItem.label : this.props.translate( 'Select an option' ) }
 						selectedIcon={ selectedItem.icon }
@@ -489,15 +486,17 @@ const EditorVisibility = React.createClass( {
 
 	render() {
 		const visibility = this.getVisibility();
+		const isDropdown = config.isEnabled( 'post-editor/delta-post-publish-flow' );
 		const classes = classNames( 'editor-visibility', {
 			'is-dialog-open': this.state.showPopover,
-			'is-touch': touchDetect.hasTouch()
+			'is-touch': touchDetect.hasTouch(),
+			'is-dropdown': isDropdown,
 		} );
 
 		return (
 			<div className={ classes }>
 				{
-					config.isEnabled( 'post-editor/delta-post-publish-flow' )
+					isDropdown
 						? this.renderPrivacyDropdown( visibility )
 						: this.renderPrivacyPopover( visibility )
 				}

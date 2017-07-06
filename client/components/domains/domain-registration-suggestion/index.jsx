@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import React from 'react';
 import { includes, isNumber } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -12,10 +13,10 @@ import DomainSuggestion from 'components/domains/domain-suggestion';
 import Gridicon from 'gridicons';
 import DomainSuggestionFlag from 'components/domains/domain-suggestion-flag';
 import { shouldBundleDomainWithPlan, getDomainPriceRule, hasDomainInCart } from 'lib/cart-values/cart-items';
-import { tracks } from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 
-const DomainRegistrationSuggestion = React.createClass( {
-	propTypes: {
+class DomainRegistrationSuggestion extends React.Component {
+	static propTypes = {
 		isSignupStep: React.PropTypes.bool,
 		cart: React.PropTypes.object,
 		suggestion: React.PropTypes.shape( {
@@ -27,10 +28,11 @@ const DomainRegistrationSuggestion = React.createClass( {
 		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
 		selectedSite: React.PropTypes.object,
 		railcarId: React.PropTypes.string,
+		recordTracksEvent: React.PropTypes.func,
 		uiPosition: React.PropTypes.number,
 		fetchAlgo: React.PropTypes.string,
 		query: React.PropTypes.string
-	},
+	};
 
 	componentDidMount() {
 		if ( this.props.railcarId && isNumber( this.props.uiPosition ) ) {
@@ -41,7 +43,7 @@ const DomainRegistrationSuggestion = React.createClass( {
 				resultSuffix = '#best-alternative';
 			}
 
-			tracks.recordEvent( 'calypso_traintracks_render', {
+			this.props.recordTracksEvent( 'calypso_traintracks_render', {
 				railcar: this.props.railcarId,
 				ui_position: this.props.uiPosition,
 				fetch_algo: this.props.fetchAlgo,
@@ -49,30 +51,30 @@ const DomainRegistrationSuggestion = React.createClass( {
 				fetch_query: this.props.query
 			} );
 		}
-	},
+	}
 
-	onClick( event ) {
+	onButtonClick = () => {
 		if ( this.props.railcarId ) {
-			tracks.recordEvent( 'calypso_traintracks_interact', {
+			this.props.recordTracksEvent( 'calypso_traintracks_interact', {
 				railcar: this.props.railcarId,
 				action: 'domain_added_to_cart'
 			} );
 		}
 
-		this.props.onButtonClick( event );
-	},
+		this.props.onButtonClick( this.props.suggestion );
+	};
 
 	render() {
-		const { cart, domainsWithPlansOnly, isSignupStep, selectedSite, suggestion, translate } = this.props,
-			domain = suggestion.domain_name,
-			isAdded = hasDomainInCart( cart, domain ),
-			domainFlags = [];
+		const { cart, domainsWithPlansOnly, isSignupStep, selectedSite, suggestion, translate } = this.props;
+		const domain = suggestion.domain_name;
+		const isAdded = hasDomainInCart( cart, domain );
+		const domainFlags = [];
 
 		let buttonClasses, buttonContent;
 
 		if ( domain ) {
-			const newTLDs = [];
-			const testTLDs = [ '.ca', '.de', '.fr' ];
+			const newTLDs = [ '.rocks', '.site', '.cloud', '.club', '.today', '.tube', '.ca' ];
+			const testTLDs = [ '.de', '.fr' ];
 			// Grab everything after the first dot, so 'example.co.uk' will
 			// match '.co.uk' but not '.uk'
 			// This won't work if we add subdomains.
@@ -137,7 +139,7 @@ const DomainRegistrationSuggestion = React.createClass( {
 					buttonContent={ buttonContent }
 					cart={ cart }
 					domainsWithPlansOnly={ domainsWithPlansOnly }
-					onButtonClick={ this.onClick }>
+					onButtonClick={ this.onButtonClick }>
 				<h3>
 					{ domain }
 					{ domainFlags }
@@ -145,6 +147,9 @@ const DomainRegistrationSuggestion = React.createClass( {
 			</DomainSuggestion>
 		);
 	}
-} );
+}
 
-export default localize( DomainRegistrationSuggestion );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( localize( DomainRegistrationSuggestion ) );

@@ -13,15 +13,48 @@ import { get } from 'lodash';
 import AutoDirection from 'components/auto-direction';
 import { getCurrentUser } from 'state/current-user/selectors';
 
+const TEXTAREA_HEIGHT_COLLAPSED = 47; // 1 line
+const TEXTAREA_HEIGHT_FOCUSED = 68; // 2 lines
+const TEXTAREA_MAX_HEIGHT = 236; // 10 lines
+const TEXTAREA_VERTICAL_BORDER = 2;
+
 export class CommentDetailReply extends Component {
 	state = {
 		commentText: '',
 		hasFocus: false,
+		textareaHeight: TEXTAREA_HEIGHT_COLLAPSED,
 	};
 
-	handleTextChange = event => this.setState( { commentText: event.target.value } );
+	bindTextareaRef = textarea => {
+		this.textarea = textarea;
+	}
 
-	setFocus = () => this.setState( { hasFocus: true } );
+	calculateTextareaHeight = () => {
+		const textareaScrollHeight = this.textarea.scrollHeight;
+		const textareaHeight = Math.min( TEXTAREA_MAX_HEIGHT, textareaScrollHeight + TEXTAREA_VERTICAL_BORDER );
+		return Math.max( TEXTAREA_HEIGHT_FOCUSED, textareaHeight );
+	}
+
+	getTextareaPlaceholder = () => this.props.authorDisplayName
+		? this.props.translate( 'Reply to %(commentAuthor)s…', {
+			args: { commentAuthor: this.props.authorDisplayName }
+		} )
+		: 'Reply to comment…';
+
+	handleTextChange = event => {
+		const { value } = event.target;
+		const textareaHeight = this.calculateTextareaHeight();
+
+		this.setState( {
+			commentText: value,
+			textareaHeight,
+		} );
+	}
+
+	setFocus = () => this.setState( {
+		hasFocus: true,
+		textareaHeight: this.calculateTextareaHeight(),
+	} );
 
 	submit = () => {
 		const {
@@ -61,37 +94,55 @@ export class CommentDetailReply extends Component {
 		}
 	}
 
-	unsetFocus = () => this.setState( { hasFocus: false } );
+	unsetFocus = () => this.setState( {
+		hasFocus: false,
+		textareaHeight: TEXTAREA_HEIGHT_COLLAPSED,
+	} );
 
 	render() {
 		const { translate } = this.props;
-		const { commentText, hasFocus } = this.state;
+		const {
+			commentText,
+			hasFocus,
+			textareaHeight,
+		} = this.state;
 
 		const hasCommentText = commentText.trim().length > 0;
 
+		// Only show the scrollbar if the textarea content exceeds the max height
+		const hasScrollbar = textareaHeight === TEXTAREA_MAX_HEIGHT;
+
 		const buttonClasses = classNames( 'comment-detail__reply-submit', {
+			'has-scrollbar': hasScrollbar,
 			'is-active': hasCommentText,
-			'is-visible': hasFocus || hasCommentText,
 		} );
 
-		const expandingAreaClasses = classNames( 'is-expanding-area', {
-			'is-focused': hasFocus,
+		const textareaClasses = classNames( {
+			'has-focus': hasFocus,
+			'has-scrollbar': hasScrollbar,
 		} );
+
+		// Without focus, force the textarea to collapse even if it was manually resized
+		const textareaStyle = {
+			height: hasFocus ? textareaHeight : TEXTAREA_HEIGHT_COLLAPSED,
+		};
 
 		return (
 			<form className="comment-detail__reply">
-				<div className={ expandingAreaClasses }>
-					<pre><span>{ commentText }</span><br /></pre>
-					<AutoDirection>
-						<textarea
-							onBlur={ this.unsetFocus }
-							onChange={ this.handleTextChange }
-							onFocus={ this.setFocus }
-							onKeyDown={ this.submitCommentOnCtrlEnter }
-							placeholder={ translate( 'Reply to comment…' ) }
-							value={ commentText }
-						/>
-					</AutoDirection>
+				<AutoDirection>
+					<textarea
+						className={ textareaClasses }
+						onBlur={ this.unsetFocus }
+						onChange={ this.handleTextChange }
+						onFocus={ this.setFocus }
+						onKeyDown={ this.submitCommentOnCtrlEnter }
+						placeholder={ this.getTextareaPlaceholder() }
+						ref={ this.bindTextareaRef }
+						style={ textareaStyle }
+						value={ commentText }
+					/>
+				</AutoDirection>
+				{ ( hasFocus || hasCommentText ) &&
 					<button
 						className={ buttonClasses }
 						disabled={ ! hasCommentText }
@@ -99,7 +150,7 @@ export class CommentDetailReply extends Component {
 					>
 						{ translate( 'Send' ) }
 					</button>
-				</div>
+				}
 			</form>
 		);
 	}

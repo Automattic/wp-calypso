@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isArray } from 'lodash';
+import { find, get, isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,17 @@ import { LOADING } from 'woocommerce/state/constants';
  */
 export const getPaymentMethods = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'paymentMethods' ] );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {string} methodId Method to fetch (if exists)
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Object} Object with payment method data, false if no method found
+ */
+export const getPaymentMethod = ( state, methodId, siteId = getSelectedSiteId( state ) ) => {
+	const methods = getPaymentMethods( state, siteId );
+	return find( methods, { id: methodId } ) || false;
 };
 
 /**

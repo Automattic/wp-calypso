@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -18,9 +19,27 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { getShippingZones } from 'woocommerce/state/ui/shipping/zones/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { areShippingZonesLocationsValid } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
+import { getActionList } from 'woocommerce/state/action-list/selectors';
+import {
+	createAddDefultShippingZoneActionList,
+} from 'woocommerce/state/ui/shipping/zones/actions';
 
-const ShippingZoneList = ( { site, siteId, loaded, shippingZones, isValid, translate } ) => {
-	const renderContent = () => {
+class ShippingZoneList extends Component {
+	componentWillMount() {
+		if ( this.props.loaded ) {
+			this.props.actions.createAddDefultShippingZoneActionList();
+		}
+	}
+
+	componentWillReceiveProps( { loaded } ) {
+		if ( ! this.props.loaded && loaded && ! this.props.savingZones ) {
+			this.props.actions.createAddDefultShippingZoneActionList();
+		}
+	}
+
+	renderContent = () => {
+		const { siteId, loaded, shippingZones, isValid, translate } = this.props;
+
 		const renderShippingZone = ( zone, index ) => {
 			return ( <ShippingZoneEntry key={ index } siteId={ siteId } loaded={ loaded } isValid={ isValid } { ...zone } /> );
 		};
@@ -43,49 +62,60 @@ const ShippingZoneList = ( { site, siteId, loaded, shippingZones, isValid, trans
 				{ zonesToRender.map( renderShippingZone ) }
 			</div>
 		);
-	};
+	}
 
-	const addNewHref = loaded
-		? getLink( '/store/settings/shipping/:site/zone/new', site )
-		: '#';
-
-	const onAddNewClick = ( event ) => {
-		if ( ! loaded ) {
+	onAddNewClick = ( event ) => {
+		if ( ! this.props.loaded ) {
 			event.preventDefault();
 		}
-	};
+	}
 
-	return (
-		<div>
-			<QueryShippingZones siteId={ siteId } />
-			<ExtendedHeader
-				label={ translate( 'Shipping Zones' ) }
-				description={ translate( 'These are the regions you’ll ship to. ' +
-					'You can define different shipping methods for each region. ' ) }>
-				<Button
-					href={ addNewHref }
-					onClick={ onAddNewClick }
-					disabled={ ! isValid || ! loaded }>{
-					translate( 'Add zone' ) }
-				</Button>
-			</ExtendedHeader>
-			<Card className="shipping__zones">
-				{ renderContent() }
-			</Card>
-		</div>
-	);
-};
+	render() {
+		const { site, siteId, loaded, isValid, translate } = this.props;
+
+		const addNewHref = loaded
+			? getLink( '/store/settings/shipping/:site/zone/new', site )
+			: '#';
+
+		return (
+			<div>
+				<QueryShippingZones siteId={ siteId } />
+				<ExtendedHeader
+					label={ translate( 'Shipping Zones' ) }
+					description={ translate( 'These are the regions you’ll ship to. ' +
+						'You can define different shipping methods for each region. ' ) }>
+					<Button
+						href={ addNewHref }
+						onClick={ this.onAddNewClick }
+						disabled={ ! isValid || ! loaded }>{
+						translate( 'Add zone' ) }
+					</Button>
+				</ExtendedHeader>
+				<Card className="shipping__zones">
+					{ this.renderContent() }
+				</Card>
+			</div>
+		);
+	}
+}
 
 export default connect(
 	( state ) => {
-		const loaded = areShippingZonesFullyLoaded( state );
+		const savingZones = Boolean( getActionList( state ) );
+		const loaded = areShippingZonesFullyLoaded( state ) && ! savingZones;
 
 		return {
 			site: getSelectedSite( state ),
 			siteId: getSelectedSiteId( state ),
 			shippingZones: getShippingZones( state ),
+			savingZones,
 			loaded,
 			isValid: ! loaded || areShippingZonesLocationsValid( state ),
 		};
-	}
+	},
+	( dispatch ) => ( {
+		actions: bindActionCreators( {
+			createAddDefultShippingZoneActionList,
+		}, dispatch )
+	} )
 )( localize( ShippingZoneList ) );

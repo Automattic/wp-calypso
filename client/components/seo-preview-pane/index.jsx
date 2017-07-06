@@ -104,12 +104,13 @@ const ComingSoonMessage = translate => (
 	</div>
 );
 
-const ReaderPost = ( site, post ) => {
+const ReaderPost = ( site, post, frontPageMetaDescription ) => {
 	return (
 		<ReaderPreview
 			site={ site }
 			post={ post }
 			postExcerpt={ formatExcerpt(
+				frontPageMetaDescription ||
 				get( post, 'excerpt', false ) ||
 				get( post, 'content', false )
 			) }
@@ -118,59 +119,59 @@ const ReaderPost = ( site, post ) => {
 	);
 };
 
-const GoogleSite = site => (
+const GoogleSite = ( site, frontPageMetaDescription ) => (
 	<SearchPreview
 		title={ site.name }
 		url={ site.URL }
-		snippet={ getSeoExcerptForSite( site ) }
+		snippet={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
 	/>
 );
 
-const GooglePost = ( site, post ) => (
+const GooglePost = ( site, post, frontPageMetaDescription ) => (
 	<SearchPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
-		snippet={ getSeoExcerptForPost( post ) }
+		snippet={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 	/>
 );
 
-const FacebookSite = site => (
+const FacebookSite = ( site, frontPageMetaDescription ) => (
 	<FacebookPreview
 		title={ site.name }
 		url={ site.URL }
 		type="website"
-		description={ getSeoExcerptForSite( site ) }
+		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
 		image={ largeBlavatar( site ) }
 	/>
 );
 
-const FacebookPost = ( site, post ) => (
+const FacebookPost = ( site, post, frontPageMetaDescription ) => (
 	<FacebookPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
 		type="article"
-		description={ getSeoExcerptForPost( post ) }
+		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 		image={ getPostImage( post ) }
 		author={ get( post, 'author.name', '' ) }
 	/>
 );
 
-const TwitterSite = site => (
+const TwitterSite = ( site, frontPageMetaDescription ) => (
 	<TwitterPreview
 		title={ site.name }
 		url={ site.URL }
 		type="summary"
-		description={ getSeoExcerptForSite( site ) }
+		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
 		image={ largeBlavatar( site ) }
 	/>
 );
 
-const TwitterPost = ( site, post ) => (
+const TwitterPost = ( site, post, frontPageMetaDescription ) => (
 	<TwitterPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
 		type="large_image_summary"
-		description={ getSeoExcerptForPost( post ) }
+		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 		image={ getPostImage( post ) }
 	/>
 );
@@ -206,7 +207,8 @@ export class SeoPreviewPane extends PureComponent {
 			post,
 			site,
 			translate,
-			showNudge
+			showNudge,
+			frontPageMetaDescription,
 		} = this.props;
 
 		const { selectedService } = this.state;
@@ -247,15 +249,15 @@ export class SeoPreviewPane extends PureComponent {
 				<div className="seo-preview-pane__preview-area">
 					<div className="seo-preview-pane__preview">
 						{ post && get( {
-							wordpress: ReaderPost( site, post ),
-							facebook: FacebookPost( site, post ),
-							google: GooglePost( site, post ),
-							twitter: TwitterPost( site, post )
+							wordpress: ReaderPost( site, post, frontPageMetaDescription ),
+							facebook: FacebookPost( site, post, frontPageMetaDescription ),
+							google: GooglePost( site, post, frontPageMetaDescription ),
+							twitter: TwitterPost( site, post, frontPageMetaDescription )
 						}, selectedService, ComingSoonMessage( translate ) ) }
 						{ ! post && get( {
-							facebook: FacebookSite( site ),
-							google: GoogleSite( site ),
-							twitter: TwitterSite( site )
+							facebook: FacebookSite( site, frontPageMetaDescription ),
+							google: GoogleSite( site, frontPageMetaDescription ),
+							twitter: TwitterSite( site, frontPageMetaDescription )
 						}, selectedService, ComingSoonMessage( translate ) ) }
 					</div>
 				</div>

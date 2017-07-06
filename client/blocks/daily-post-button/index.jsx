@@ -7,6 +7,7 @@ import page from 'page';
 import qs from 'qs';
 import { get, defer } from 'lodash';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -17,11 +18,11 @@ import SitesPopover from 'components/sites-popover';
 import Button from 'components/button';
 import { markSeen as markPostSeen } from 'lib/feed-post-store/actions';
 
-import getSitesList from 'lib/sites-list';
 import { recordGaEvent, recordAction, recordTrackForPost } from 'reader/stats';
 import { getDailyPostType } from './helper';
-
-const sitesList = getSitesList();
+import { getPrimarySiteId } from 'state/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 function getPingbackAttributes( post ) {
 	const typeTitles = {
@@ -41,11 +42,7 @@ function preloadEditor() {
 	preload( 'post-editor' );
 }
 
-function onlyOneSite() {
-	return sitesList.data.length === 1;
-}
-
-class DailyPostButton extends React.Component {
+export class DailyPostButton extends React.Component {
 	constructor() {
 		super();
 		this.state = {
@@ -61,6 +58,9 @@ class DailyPostButton extends React.Component {
 		site: React.PropTypes.object.isRequired,
 		position: React.PropTypes.string,
 		tagName: React.PropTypes.string,
+		canParticipate: React.PropTypes.bool.isRequired,
+		primarySiteSlug: React.PropTypes.string,
+		onlyOneSite: React.PropTypes.bool.isRequired
 	};
 
 	static defaultProps = {
@@ -110,9 +110,8 @@ class DailyPostButton extends React.Component {
 			recordGaEvent( 'Opened Daily Post Challenge' );
 			recordTrackForPost( 'calypso_reader_daily_post_challenge_opened', this.props.post );
 
-			if ( onlyOneSite() ) {
-				const primarySlug = get( sitesList.getPrimary(), 'slug' );
-				return this.openEditorWithSite( primarySlug );
+			if ( this.props.onlyOneSite ) {
+				return this.openEditorWithSite( this.props.primarySiteSlug );
 			}
 		}
 		this.deferMenuChange( ! this.state.showingMenu );
@@ -132,7 +131,6 @@ class DailyPostButton extends React.Component {
 			<SitesPopover
 				key="menu"
 				header={ <div> { translate( 'Post on' ) } </div> }
-				sites={ sitesList }
 				context={ this.refs && this.refs.dailyPostButton }
 				visible={ this.state.showingMenu }
 				groups={ true }
@@ -145,7 +143,6 @@ class DailyPostButton extends React.Component {
 	};
 
 	render() {
-		const canParticipate = !! sitesList.getPrimary();
 		const title = get( this.props, 'post.title' );
 		const buttonClasses = classnames( {
 			'daily-post-button__button': true,
@@ -153,7 +150,7 @@ class DailyPostButton extends React.Component {
 			'is-active': this.state.showingMenu,
 		} );
 
-		if ( ! canParticipate ) {
+		if ( ! this.props.canParticipate ) {
 			return null;
 		}
 
@@ -176,4 +173,14 @@ class DailyPostButton extends React.Component {
 	}
 }
 
-export default DailyPostButton;
+export default connect(
+	state => {
+		const primarySiteId = getPrimarySiteId( state );
+		const user = getCurrentUser( state );
+		const visibleSiteCount = get( user, 'visible_site_count', 0 );
+		return {
+			canParticipate: !! primarySiteId,
+			primarySiteSlug: getSiteSlug( state, primarySiteId ),
+			onlyOneSite: visibleSiteCount === 1
+		};
+	} )( DailyPostButton );

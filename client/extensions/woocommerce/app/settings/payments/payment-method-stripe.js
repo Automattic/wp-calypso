@@ -16,6 +16,8 @@ import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 import SegmentedControl from 'components/segmented-control';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 class PaymentMethodStripe extends Component {
 
@@ -113,10 +115,12 @@ class PaymentMethodStripe extends Component {
 		return (
 			<div className="payments__method-edit-fields">
 				<FormFieldset className="payments__method-edit-field-container">
+					<Notice showDismiss={ false } text={ translate( 'To use Stripe you need to register an account' ) }>
+						<NoticeAction href="https://dashboard.stripe.com/register">{ translate( 'Sign up' ) }</NoticeAction>
+					</Notice>
 					<FormLabel>{ translate( 'Payment Mode' ) }</FormLabel>
 					<SegmentedControl
 						primary
-						compact
 					>
 						<ControlItem
 							selected={ method.settings.testmode.value === 'yes' }

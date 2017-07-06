@@ -8,6 +8,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
+import AsyncLoad from 'components/async-load';
 import analytics from 'lib/analytics';
 import config from 'config';
 import DeleteSite from './delete-site';
@@ -23,8 +24,6 @@ import titlecase from 'to-title-case';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser, isVipSite } from 'state/selectors';
-import ImportSettings from './section-import';
-import ExportSettings from './section-export';
 import { SITES_ONCE_CHANGED } from 'state/action-types';
 
 function canDeleteSite( state, siteId ) {
@@ -102,12 +101,6 @@ const controller = {
 			return;
 		}
 
-		// if user went directly to jetpack settings page, redirect
-		if ( isJetpackSite( state, siteId ) && ! config.isEnabled( 'manage/jetpack' ) ) {
-			window.location.href = '//wordpress.com/manage/' + siteId;
-			return;
-		}
-
 		renderPage(
 			context,
 			<SiteSettingsComponent section={ section } />
@@ -121,17 +114,26 @@ const controller = {
 	},
 
 	importSite( context ) {
-		renderPage( context, <ImportSettings /> );
+		renderPage(
+			context,
+			<AsyncLoad require="my-sites/site-settings/section-import" />
+		);
 	},
 
 	exportSite( context ) {
-		renderPage( context, <ExportSettings /> );
+		renderPage(
+			context,
+			<AsyncLoad require="my-sites/site-settings/section-export" />
+		);
 	},
 
 	guidedTransfer( context ) {
 		renderPage(
 			context,
-			<SiteSettingsComponent section="guidedTransfer" hostSlug={ context.params.host_slug } />
+			<AsyncLoad
+				require="my-sites/guided-transfer"
+				hostSlug={ context.params.host_slug }
+			/>
 		);
 	},
 

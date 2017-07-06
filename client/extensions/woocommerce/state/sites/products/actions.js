@@ -22,6 +22,8 @@ import {
 	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_DELETE,
 	WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
+	WOOCOMMERCE_PRODUCT_REQUEST,
+	WOOCOMMERCE_PRODUCT_UPDATE,
 	WOOCOMMERCE_PRODUCT_UPDATED,
 } from 'woocommerce/state/action-types';
 
@@ -30,13 +32,34 @@ import {
  *
  * @param {Number} siteId The id of the site upon which to create the product.
  * @param {Object} product The complete product object (may include a placeholder id)
- * @param {String} [successAction=undefined] Optional action object to be dispatched upon success.
- * @param {String} [failureAction=undefined] Optional action object to be dispatched upon error.
+ * @param {Object|Function} [successAction] Action with extra props { sentData, receivedData }
+ * @param {Object|Function} [failureAction] Action with extra props { error }
  * @return {Object} Action object
  */
 export function createProduct( siteId, product, successAction, failureAction ) {
 	const action = {
 		type: WOOCOMMERCE_PRODUCT_CREATE,
+		siteId,
+		product,
+		successAction,
+		failureAction,
+	};
+
+	return action;
+}
+
+/**
+ * Action Creator: Update an existing product
+ *
+ * @param {Number} siteId The id of the site upon which to create the product.
+ * @param {Object} product The complete product object (must have real id)
+ * @param {Object|Function} [successAction] Action with extra props { sentData, receivedData }
+ * @param {Object|Function} [failureAction] Action with extra props { error }
+ * @return {Object} Action object
+ */
+export function updateProduct( siteId, product, successAction, failureAction ) {
+	const action = {
+		type: WOOCOMMERCE_PRODUCT_UPDATE,
 		siteId,
 		product,
 		successAction,
@@ -53,15 +76,15 @@ export function createProduct( siteId, product, successAction, failureAction ) {
  *
  * @param {Number} siteId The id of the site to which the product belongs.
  * @param {Object} data The complete product object with which to update the state.
- * @param {Object} [completionAction] An action that is dispatched after the update is complete.
+ * @param {Object} originatingAction The action which precipitated this update.
  * @return {Object} Action object
  */
-export function productUpdated( siteId, data, completionAction ) {
+export function productUpdated( siteId, data, originatingAction ) {
 	return {
 		type: WOOCOMMERCE_PRODUCT_UPDATED,
 		siteId,
 		data,
-		completionAction,
+		originatingAction,
 	};
 }
 
@@ -95,7 +118,9 @@ export const deleteProduct = (
 
 	dispatch( deleteAction );
 
-	return request( siteId ).del( `products/${ productId }` )
+	// ?force=true deletes a product instead of trashing
+	// In v1, we don't have trash management. Later we can trash instead.
+	return request( siteId ).del( `products/${ productId }?force=true` )
 		.then( ( data ) => {
 			dispatch( deleteProductSuccess( siteId, data ) );
 			if ( successAction ) {
@@ -115,6 +140,16 @@ function deleteProductSuccess( siteId, data ) {
 		type: WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
 		siteId,
 		data,
+	};
+}
+
+export function fetchProduct( siteId, productId, successAction, failureAction ) {
+	return {
+		type: WOOCOMMERCE_PRODUCT_REQUEST,
+		siteId,
+		productId,
+		successAction,
+		failureAction,
 	};
 }
 

@@ -12,12 +12,16 @@
           "version": "0.9.11",
           "dev": true
         },
+        "esprima": {
+          "version": "4.0.0",
+          "dev": true
+        },
         "lodash": {
           "version": "4.17.4",
           "dev": true
         },
         "recast": {
-          "version": "0.12.5",
+          "version": "0.12.6",
           "dev": true
         },
         "source-map": {
@@ -105,15 +109,10 @@
           "version": "2.0.3"
         },
         "readable-stream": {
-          "version": "2.3.0"
+          "version": "2.3.3"
         },
         "string_decoder": {
-          "version": "1.0.2",
-          "dependencies": {
-            "safe-buffer": {
-              "version": "5.0.1"
-            }
-          }
+          "version": "1.0.3"
         }
       }
     },
@@ -617,7 +616,7 @@
       "version": "0.1.2"
     },
     "base64-js": {
-      "version": "1.2.0"
+      "version": "1.2.1"
     },
     "base64id": {
       "version": "0.1.0",
@@ -663,15 +662,10 @@
           "version": "2.0.3"
         },
         "readable-stream": {
-          "version": "2.3.0"
+          "version": "2.3.3"
         },
         "string_decoder": {
-          "version": "1.0.2",
-          "dependencies": {
-            "safe-buffer": {
-              "version": "5.0.1"
-            }
-          }
+          "version": "1.0.3"
         }
       }
     },
@@ -787,7 +781,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000692"
+      "version": "1.0.30000696"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -948,7 +942,7 @@
       "version": "1.1.0"
     },
     "collapse-white-space": {
-      "version": "1.0.2",
+      "version": "1.0.3",
       "dev": true
     },
     "color-convert": {
@@ -995,7 +989,7 @@
       "dev": true,
       "dependencies": {
         "commander": {
-          "version": "2.9.0",
+          "version": "2.10.0",
           "dev": true
         },
         "glob": {
@@ -1201,7 +1195,7 @@
       "version": "1.2.0"
     },
     "d3-collection": {
-      "version": "1.0.3"
+      "version": "1.0.4"
     },
     "d3-color": {
       "version": "1.0.3"
@@ -1262,8 +1256,7 @@
       }
     },
     "deep-equal": {
-      "version": "1.0.1",
-      "dev": true
+      "version": "1.0.1"
     },
     "deep-extend": {
       "version": "0.4.2"
@@ -1434,7 +1427,7 @@
           "dev": true
         },
         "readable-stream": {
-          "version": "2.3.0",
+          "version": "2.3.3",
           "dev": true,
           "dependencies": {
             "inherits": {
@@ -1444,14 +1437,8 @@
           }
         },
         "string_decoder": {
-          "version": "1.0.2",
-          "dev": true,
-          "dependencies": {
-            "safe-buffer": {
-              "version": "5.0.1",
-              "dev": true
-            }
-          }
+          "version": "1.0.3",
+          "dev": true
         }
       }
     },
@@ -1582,6 +1569,9 @@
     "es5-ext": {
       "version": "0.10.23",
       "dev": true
+    },
+    "es6-error": {
+      "version": "4.0.2"
     },
     "es6-iterator": {
       "version": "2.0.1",
@@ -1987,18 +1977,12 @@
           "dev": true
         },
         "readable-stream": {
-          "version": "2.3.0",
+          "version": "2.3.3",
           "dev": true
         },
         "string_decoder": {
-          "version": "1.0.2",
-          "dev": true,
-          "dependencies": {
-            "safe-buffer": {
-              "version": "5.0.1",
-              "dev": true
-            }
-          }
+          "version": "1.0.3",
+          "dev": true
         },
         "through2": {
           "version": "2.0.3",
@@ -2082,7 +2066,7 @@
       "dev": true
     },
     "flow-parser": {
-      "version": "0.47.0",
+      "version": "0.49.1",
       "dev": true
     },
     "flux": {
@@ -2731,18 +2715,12 @@
           "dev": true
         },
         "readable-stream": {
-          "version": "2.3.0",
+          "version": "2.3.3",
           "dev": true
         },
         "string_decoder": {
-          "version": "1.0.2",
-          "dev": true,
-          "dependencies": {
-            "safe-buffer": {
-              "version": "5.0.1",
-              "dev": true
-            }
-          }
+          "version": "1.0.3",
+          "dev": true
         },
         "through2": {
           "version": "2.0.3",
@@ -2836,7 +2814,7 @@
       "version": "1.0.0"
     },
     "hosted-git-info": {
-      "version": "2.4.2"
+      "version": "2.5.0"
     },
     "html": {
       "version": "1.0.0",
@@ -2927,7 +2905,7 @@
           "version": "1.5.2"
         },
         "commander": {
-          "version": "2.9.0"
+          "version": "2.10.0"
         }
       }
     },
@@ -3204,11 +3182,11 @@
       }
     },
     "istanbul-api": {
-      "version": "1.1.9",
+      "version": "1.1.10",
       "dev": true,
       "dependencies": {
         "async": {
-          "version": "2.4.1",
+          "version": "2.5.0",
           "dev": true
         }
       }
@@ -3222,7 +3200,7 @@
       "dev": true
     },
     "istanbul-lib-instrument": {
-      "version": "1.7.2",
+      "version": "1.7.3",
       "dev": true,
       "dependencies": {
         "semver": {
@@ -3593,7 +3571,7 @@
       "version": "1.0.2"
     },
     "js-tokens": {
-      "version": "3.0.1"
+      "version": "3.0.2"
     },
     "js-yaml": {
       "version": "3.8.4",
@@ -4054,15 +4032,10 @@
           "version": "2.0.3"
         },
         "readable-stream": {
-          "version": "2.3.0"
+          "version": "2.3.3"
         },
         "string_decoder": {
-          "version": "1.0.2",
-          "dependencies": {
-            "safe-buffer": {
-              "version": "5.0.1"
-            }
-          }
+          "version": "1.0.3"
         }
       }
     },
@@ -4220,7 +4193,7 @@
       "dev": true,
       "dependencies": {
         "qs": {
-          "version": "6.4.0",
+          "version": "6.5.0",
           "dev": true
         }
       }
@@ -4348,7 +4321,7 @@
       "version": "3.0.6"
     },
     "normalize-package-data": {
-      "version": "2.3.8"
+      "version": "2.4.0"
     },
     "normalize-path": {
       "version": "2.1.1"
@@ -4404,7 +4377,7 @@
       }
     },
     "npmlog": {
-      "version": "4.1.0"
+      "version": "4.1.2"
     },
     "nth-check": {
       "version": "1.0.1",
@@ -4704,8 +4677,8 @@
     },
     "prettier": {
       "version": "1.1.7",
-      "from": "git+https://github.com/Automattic/calypso-prettier.git#28be4a70ff31bd161c545de4fac66f8a9d094a48",
-      "resolved": "git+https://github.com/Automattic/calypso-prettier.git#28be4a70ff31bd161c545de4fac66f8a9d094a48",
+      "from": "git+https://github.com/Automattic/calypso-prettier.git#183198b79773dbe9bd6c64a45cf74d1e90d4db24",
+      "resolved": "git+https://github.com/Automattic/calypso-prettier.git#183198b79773dbe9bd6c64a45cf74d1e90d4db24",
       "dev": true,
       "dependencies": {
         "ast-types": {
@@ -4951,7 +4924,7 @@
           "version": "5.8.38"
         },
         "commander": {
-          "version": "2.9.0"
+          "version": "2.10.0"
         }
       }
     },
@@ -5032,18 +5005,12 @@
           "dev": true
         },
         "readable-stream": {
-          "version": "2.3.0",
+          "version": "2.3.3",
           "dev": true
         },
         "string_decoder": {
-          "version": "1.0.2",
-          "dev": true,
-          "dependencies": {
-            "safe-buffer": {
-              "version": "5.0.1",
-              "dev": true
-            }
-          }
+          "version": "1.0.3",
+          "dev": true
         }
       }
     },
@@ -5074,15 +5041,10 @@
           "version": "3.0.4"
         },
         "readable-stream": {
-          "version": "2.3.0"
+          "version": "2.3.3"
         },
         "string_decoder": {
-          "version": "1.0.2",
-          "dependencies": {
-            "safe-buffer": {
-              "version": "5.0.1"
-            }
-          }
+          "version": "1.0.3"
         }
       }
     },
@@ -5120,6 +5082,14 @@
     },
     "redux": {
       "version": "3.0.4"
+    },
+    "redux-form": {
+      "version": "6.8.0",
+      "dependencies": {
+        "lodash": {
+          "version": "4.17.4"
+        }
+      }
     },
     "redux-thunk": {
       "version": "1.0.0"
@@ -5347,7 +5317,7 @@
       "dev": true
     },
     "safe-buffer": {
-      "version": "5.1.0"
+      "version": "5.1.1"
     },
     "samsam": {
       "version": "1.1.2",
@@ -5385,7 +5355,7 @@
       }
     },
     "sax": {
-      "version": "1.2.2",
+      "version": "1.2.4",
       "dev": true
     },
     "scss-tokenizer": {
@@ -5779,7 +5749,7 @@
           "dev": true
         },
         "readable-stream": {
-          "version": "2.3.0",
+          "version": "2.3.3",
           "dev": true,
           "dependencies": {
             "inherits": {
@@ -5793,14 +5763,8 @@
           "dev": true
         },
         "string_decoder": {
-          "version": "1.0.2",
-          "dev": true,
-          "dependencies": {
-            "safe-buffer": {
-              "version": "5.0.1",
-              "dev": true
-            }
-          }
+          "version": "1.0.3",
+          "dev": true
         },
         "supports-color": {
           "version": "2.0.0",
@@ -5825,18 +5789,13 @@
           "version": "2.0.3"
         },
         "qs": {
-          "version": "6.4.0"
+          "version": "6.5.0"
         },
         "readable-stream": {
-          "version": "2.3.0"
+          "version": "2.3.3"
         },
         "string_decoder": {
-          "version": "1.0.2",
-          "dependencies": {
-            "safe-buffer": {
-              "version": "5.0.1"
-            }
-          }
+          "version": "1.0.3"
         }
       }
     },
@@ -5870,6 +5829,10 @@
       "version": "3.8.3",
       "dev": true,
       "dependencies": {
+        "ansi-regex": {
+          "version": "3.0.0",
+          "dev": true
+        },
         "chalk": {
           "version": "1.1.3",
           "dev": true
@@ -5879,8 +5842,14 @@
           "dev": true
         },
         "string-width": {
-          "version": "2.0.0",
-          "dev": true
+          "version": "2.1.0",
+          "dev": true,
+          "dependencies": {
+            "strip-ansi": {
+              "version": "4.0.0",
+              "dev": true
+            }
+          }
         },
         "supports-color": {
           "version": "2.0.0",
@@ -5904,15 +5873,10 @@
           "version": "2.0.3"
         },
         "readable-stream": {
-          "version": "2.3.0"
+          "version": "2.3.3"
         },
         "string_decoder": {
-          "version": "1.0.2",
-          "dependencies": {
-            "safe-buffer": {
-              "version": "5.0.1"
-            }
-          }
+          "version": "1.0.3"
         }
       }
     },
@@ -6071,7 +6035,7 @@
       "version": "0.0.6"
     },
     "ua-parser-js": {
-      "version": "0.7.12"
+      "version": "0.7.13"
     },
     "uglify-js": {
       "version": "2.7.0",
@@ -6276,7 +6240,7 @@
           "dev": true
         },
         "commander": {
-          "version": "2.9.0",
+          "version": "2.10.0",
           "dev": true
         },
         "content-disposition": {
@@ -6402,7 +6366,7 @@
           "dev": true
         },
         "commander": {
-          "version": "2.9.0",
+          "version": "2.10.0",
           "dev": true
         },
         "component-emitter": {
@@ -6587,7 +6551,7 @@
       "version": "0.0.2"
     },
     "worker-farm": {
-      "version": "1.3.1",
+      "version": "1.4.1",
       "dev": true
     },
     "wp-error": {

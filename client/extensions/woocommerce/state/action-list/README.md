@@ -20,107 +20,172 @@ created.)
 
 ## What is it?
 
-The Action List is a declarative JavaScript array (no functions or anything else
-that is not serializable). Structurally, it's a single array of "steps",
-which are objects that describe each sequential step in the list. Using the above
-example, this could look like:
+The action list is a structure that defines the steps needed to be executed.
+It is passed from one action to the next until it is all complete.
+The form of the action list is updated to denote current state as it is passed on.
+Note: Action list objects are copied from action to action and never mutated.
 
+### Lifecycle
+
+The action list starts out with a list of steps:
 ```
 {
-  steps: [
-    { description: "Creating product: super-awesome thing", action: { ... } },
-    { description: "Creating super-awesome thing variation: small", action: { ... } },
-    { description: "Creating super-awesome thing variation: large", action: { ... } }
-  ]
-  successAction: { type: 'MY_SUCCESS_ACTION' },
-  failureAction: { type: 'MY_FAILURE_ACTION' },
-  clearUponComplete: true,
+  nextSteps: [ step1, step2, step3, step4, step5 ],
 }
 ```
 
-Note: Actions in the action list should not contain functions or anything else not serializable,
-due to the fact that the action list is stored in state.
+As the first step starts, it is designated as the `currentStep`
+```
+{
+  currentStep: step1,
+  nextSteps: [ step2, step3, step4, step5 ],
+}
+```
+
+Then after it completes, it moves to the `prevSteps` array.
+Note that from this state, it becomes possible to continue the action list
+even after a step fails, although that will not automatically happen.
+```
+{
+  prevSteps: [ step1 ],
+  currentStep: null,
+  nextSteps: [ step2, step3, step4, step5 ],
+}
+```
+
+Then step2 is started.
+```
+{
+  prevSteps: [ step1 ],
+  currentStep: step2,
+  nextSteps: [ step3, step4, step5 ],
+}
+```
+
+And so on...
+```
+{
+  prevSteps: [ step1, step2 ],
+  currentStep: null,
+  nextSteps: [ step3, step4, step5 ],
+}
+```
+
+Until all steps are complete.
+```
+{
+  prevSteps: [ step1, step2, step3, step4, step5 ],
+  currentStep: null,
+  nextSteps: [],
+}
+```
+
+### Step objects
+
+Each step object consists initially of a description and an `onStep` event.
+
+```
+{ description: translate( 'Reticulating Splines' ), onStep: reticulateSplines }
+```
+
+Note that the description is designed for user display, so it should be translated.
+
+The `onStep` function has two parameters that are passed to it:
+```
+function onStep( dispatch, actionList ) {}
+```
+
+The `dispatch` function from the store. Can be used to send off actions to the system.
+
+The `actionList` parameter is the current state of the action list.
+
+Each `onStep` function can also return an action, that will be dispatched as well.
+
+Note that it's the responsibility of `onStep` to eventually dispatch either
+`actionListStepSuccess` or `actionListStepFailure`.
+
+If `actionListStepSuccess` is dispatched, the current step will be marked as
+complete, and the next step will be started automatically.
+
+If `actionListStepFailure` is dispatched, the current step will be marked as
+complete, but the next step will not be started automatically. If after resolving
+the error, the list is still valid, `actionListStepNext` can be called manually
+to continue the steps. (e.g. If an optional step fails, the user is
+presented with an option to "continue" or "abort". "continue" would dispatch
+`actionListStepNext` and "abort" would dispatch `actionListStepClear`.)
+
+After each step is started a `startTime` is assigned to it, and after the
+step is completed via a success or failure, an `endTime` is assigned. These
+timestamps are the local time in the browser, and can be used for informational
+purposes, or to determine acceptable timeouts for a step.
+The `getActionList` selector can be used to retrieve this data about the current
+action-list to show information to the user.
 
 
-## Action List Lifecycle
+### List Completion events
 
-### Create
+There are two completion events that can be used to send actions at the end
+of the action list. One for success, and one for failure.
 
-First the list is created. This is usually by helper methods that take in a given
-set of edit states and produce the action list object that is then stored in state.
-After this, the first step of the list can be started.
+```
+{
+  prevSteps: [ step1 ],
+  currentStep: step2,
+  nextSteps: [ step3, step4, step5 ],
 
-### Step Start
+  onSuccess: notifySuccess,
+  onFailure: notifyFailure,
+}
+```
 
-The next step of the action list is started, the action fired to do the work of this
-step, and then the step object is given a `startTime` field with a timestamp.
-This both tracks timing and denotes the current status of the step as "running".
+Each event uses the same function signature as the step event functions:
 
-#### Action
+```
+function onSuccess( dispatch, actionList ) {}
+function onFailure( dispatch, actionList ) {}
+```
 
-This part is simple. When the step is started, the associated action is dispatched.
-
-#### Asynchronous Response
-
-For asynchronous operations, it's recommended that a data-layer handler be set to
-listen for step actions and perform the asynchronous steps as necessary.
-
-It's the responsibility of such a handler to ensure that the appropriate success
-or failure action is dispatched at the conclusion of the asynchronous operation.
-
-This should map easily to any sort of promise situation by having the `then` dispatch
-success, and the `catch` dispatch failure.
-
-Assuming the action has a follow-up asynchronous response, it will be handled based on status:
-
-#### Edit State Updates
-
-It is also the responsibility of the handlers to ensure that the edit state is updated
-appropriately after each step. This means if an API object was created, the state
-should be updated accordingly, for example.
-
-#### Action List Updates
-
-For many cases, there will be placeholder ids for things that have not yet been created.
-It's important for each handler to update these placeholder ids with real ones as they
-become available each step along the way.
-
-#### Step End
-
-The step is given an `endTime` field with a timestamp. This tracks timing for the
-operation as well as status of the step as "complete" if successful, or "failed" if
-an `error` field is present. If there are more steps after this one, the next
-step is started. If this is the last step, then no further action is taken.
-
-#### Action List Complete
-
-The entire list is considered done either when all steps have been ended
-successfully, or when an error is logged on a step. When this occurs, if the
-`successAction` or `failureAction` is designated, the appropriate one will be
-dispatched at the end of action list processing.
-
-#### Action List Clear
-
-This action will clear the current action list from the application state.
-This happens automatically if `clearUponComplete` is set to true.
+Note that it's likely that you will want to dispatch `actionListClear()` from each
+of these functions. That is, unless you want the user to be able to review the
+action list results afterwards. Then you can just clear it when they're done.
 
 
-## Questions
+### Example
 
-### What happens if one of the API requests fail?
+#### Simple Example
 
-This is one of the things the action list is designed for. It's very important
-that each step updates the edit states from which it is derived. Every step,
-whether it fails or succeeds must do this. If this is done properly, the list can
-be discarded and a new action list can be generated upon error to pick up where
-this one left off.
+As a simple example to fit all of this together, we'll use a simple post/comments fetch.
+We'll start by creating the new action-list. Note the abbreviated `onStep` functions that
+just return actions.
 
-### What about multiple operations at the same time?
+```
+const actionList = {
+  nextSteps: [
+    { description: translate( 'Fetching post' ), onStep = () => fetchPost( siteId, postId ) }
+    { description: translate( 'Fetching comments' ), onStep = () => fetchComments( siteId, postId ) }
+  ],
+  onSuccess: ( dispatch ) => {
+    dispatch( successNotice( translate( 'Post fetched' ), { duration: 4000 } ) ),
+    dispatch( actionListClear() );
+  },
+  onFailure: ( dispatch ) => {
+    dispatch( errorNotice( translate( 'Oops, something went wrong.' ) ) );
+    dispatch( actionListClear() );
+  },
+};
+```
 
-It's true that some steps could be carried out at the same time. For example, it's
-possible to create more than one variation at a time by sending off multiple API
-requests at once. In the future, we could easily modify the `operations` field
-to accept an array, which would preserve the sequential dependency order of the
-steps, but allow asynchronous operations within each step. This is a good idea
-for a future performance enhancement.
+From there, all that is needed is to start the list. This is done by dispatching
+the `actionlistStepNext` action which starts the "next" (read: first) step of the list.
+
+```
+dispatch( actionListStepNext( actionList ) );
+```
+
+
+#### More Complex Example
+
+**TBD**
+
+Until then, take a look at the `makeProductActionList` function in `client/extensions/woocommerce/state/data-layer/ui/products`.
 

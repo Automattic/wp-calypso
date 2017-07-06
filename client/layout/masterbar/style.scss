@@ -392,3 +392,11 @@ $autobar-height: 20px;
 		display: none;
 	}
 }
+
+.masterbar__notifications {
+	flex: 1 1 auto;
+
+	@include breakpoint( '>480px' ) {
+		flex-grow: 0;
+	}
+}

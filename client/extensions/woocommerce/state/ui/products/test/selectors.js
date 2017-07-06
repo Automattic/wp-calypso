@@ -108,10 +108,15 @@ describe( 'selectors', () => {
 			ui: { selectedSiteId: 123 },
 			extensions: {
 				woocommerce: {
-					products: [
-						// TODO: After the product API code is in, add more fields here.
-						{ id: 1 },
-					],
+					sites: {
+						123: {
+							products: {
+								products: [
+									{ id: 1, type: 'simple', name: 'Product 1' },
+								]
+							},
+						},
+					},
 					ui: {
 						products: {
 							123: {
@@ -129,7 +134,7 @@ describe( 'selectors', () => {
 
 	describe( 'getProductEdits', () => {
 		it( 'should get a product from "creates"', () => {
-			const newProduct = { id: { index: 0 }, name: 'New Product' };
+			const newProduct = { id: { placeholder: 'product_0' }, name: 'New Product' };
 			const uiProducts = state.extensions.woocommerce.ui.products;
 			set( uiProducts, [ siteId, 'edits', 'creates' ], [ newProduct ] );
 
@@ -146,13 +151,13 @@ describe( 'selectors', () => {
 
 		it( 'should return undefined if no edits are found for productId', () => {
 			expect( getProductEdits( state, 1 ) ).to.not.exist;
-			expect( getProductEdits( state, { index: 9 } ) ).to.not.exist;
+			expect( getProductEdits( state, { placeholder: 'product_9' } ) ).to.not.exist;
 		} );
 	} );
 
 	describe( 'getProductWithLocalEdits', () => {
 		it( 'should get just edits for a product in "creates"', () => {
-			const newProduct = { id: { index: 0 }, name: 'New Product' };
+			const newProduct = { id: { placeholder: 'product_0' }, name: 'New Product' };
 			const uiProducts = state.extensions.woocommerce.ui.products;
 			set( uiProducts, [ siteId, 'edits', 'creates' ], [ newProduct ] );
 
@@ -160,13 +165,13 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should get just fetched data for a product that has no edits', () => {
-			const productsFromState = state.extensions.woocommerce.products;
-			expect( getProductWithLocalEdits( state, 1 ) ).to.eql( productsFromState[ 0 ] );
+			const productsFromState = state.extensions.woocommerce.sites[ 123 ].products.products;
+			expect( getProductWithLocalEdits( state, 1, 123 ) ).to.eql( productsFromState[ 0 ] );
 		} );
 
 		it( 'should get both fetched data and edits for a product in "updates"', () => {
 			const uiProducts = state.extensions.woocommerce.ui.products;
-			const productsFromState = state.extensions.woocommerce.products;
+			const productsFromState = state.extensions.woocommerce.sites[ 123 ].products.products;
 
 			const existingProduct = { id: 1, name: 'Existing Product' };
 			set( uiProducts, [ siteId, 'edits', 'updates' ], [ existingProduct ] );
@@ -177,7 +182,7 @@ describe( 'selectors', () => {
 
 		it( 'should return undefined if no product is found for productId', () => {
 			expect( getProductWithLocalEdits( state, 42 ) ).to.not.exist;
-			expect( getProductWithLocalEdits( state, { index: 42 } ) ).to.not.exist;
+			expect( getProductWithLocalEdits( state, { placeholder: 'product_42' } ) ).to.not.exist;
 		} );
 	} );
 
@@ -187,7 +192,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should get the last edited product', () => {
-			const newProduct = { id: { index: 0 }, name: 'New Product' };
+			const newProduct = { id: { placeholder: 'product_0' }, name: 'New Product' };
 			const uiProducts = state.extensions.woocommerce.ui.products;
 			set( uiProducts, [ siteId, 'edits', 'creates' ], [ newProduct ] );
 			set( uiProducts, [ siteId, 'edits', 'currentlyEditingId' ], newProduct.id );

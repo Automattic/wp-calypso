@@ -27,14 +27,23 @@
 }
 
 .action-header__actions {
-	width: 40%;
+	width: 52%;
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
 
+	.button.is-borderless span {
+		@include breakpoint( "<660px" ) {
+			display: none;
+		}
+	}
+
 	.button {
-		margin-left: 12px;
 		white-space: nowrap;
+		margin-left: 24px;
+		@include breakpoint( "<660px" ) {
+			margin-left: 18px;
+		}
 	}
 }
 
@@ -56,4 +65,8 @@
 	@include breakpoint( ">660px" ) {
 		margin-bottom: 58px;
 	}
+}
+
+& .sticky-panel.is-sticky .sticky-panel__content {
+	margin-top: 0;
 }

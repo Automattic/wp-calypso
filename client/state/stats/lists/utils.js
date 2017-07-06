@@ -112,37 +112,23 @@ export function getSerializedStatsQuery( query = {} ) {
  * @return {array} - Array of data objects
  */
 function parseOrderDeltas( payload ) {
-	if ( ! payload || ! payload.deltas || ! payload.delta_fields ) {
+	if ( ! payload || ! payload.deltas || ! payload.delta_fields || Object.keys( payload.deltas ).length === 0 ) {
 		return [];
 	}
 	const periodFieldIndex = findIndex( payload.delta_fields, ( field ) => field === 'period' );
+	const periods = payload.deltas[ Object.keys( payload.deltas )[ 0 ] ].map( row => row[ periodFieldIndex ] );
 
-	const response = [];
-
-	forEach( payload.deltas, ( values, stat ) => {
-		values.forEach( row => {
-			const periodIndex = findIndex( response, ( item ) => {
-				return item.period === parseUnitPeriods( payload.unit, row[ periodFieldIndex ] ).format( 'YYYY-MM-DD' );
+	return periods.map( period => {
+		const newRow = { period: parseUnitPeriods( payload.unit, period ).format( 'YYYY-MM-DD' ) };
+		forEach( payload.deltas, ( values, key ) => {
+			const newValues = values.filter( value => value[ periodFieldIndex ] === period )[ 0 ];
+			newRow[ key ] = {};
+			payload.delta_fields.forEach( ( field, i ) => {
+				newRow[ key ][ field ] = newValues[ i ];
 			} );
-			if ( periodIndex === -1 ) {
-				const newRow = {
-					period: parseUnitPeriods( payload.unit, row[ periodFieldIndex ] ).format( 'YYYY-MM-DD' )
-				};
-				newRow[ stat ] = {};
-				payload.delta_fields.forEach( ( value, index ) => {
-					newRow[ stat ][ value ] = row[ index ];
-				} );
-				response.push( newRow );
-			} else {
-				response[ periodIndex ][ stat ] = {};
-				payload.delta_fields.forEach( ( value, index ) => {
-					response[ periodIndex ][ stat ][ value ] = row[ index ];
-				} );
-			}
 		} );
+		return newRow;
 	} );
-
-	return response;
 }
 
 /**
@@ -244,7 +230,6 @@ function parseChartData( payload, nullAttributes = [] ) {
 				dataRecord.labelYear = localizedDate.format( 'YYYY' );
 			}
 		}
-
 		return dataRecord;
 	} );
 }
@@ -256,7 +241,7 @@ function parseChartData( payload, nullAttributes = [] ) {
  * @param {string} period - period in shortened store sting format, eg '2017-W26'
  * @return {Object} - moment date object
  */
-function parseUnitPeriods( unit, period ) {
+export function parseUnitPeriods( unit, period ) {
 	switch ( unit ) {
 		case 'week':
 			const splitYearWeek = period.split( '-W' );

@@ -84,11 +84,11 @@ class PaymentMethodItem extends Component {
 
 		if ( enabled ) {
 			analytics.tracks.recordEvent( 'calypso_woocommerce_payment_method_enabled', {
-				paymentMethod: method.id,
+				payment_method: method.id,
 			} );
 		} else {
 			analytics.tracks.recordEvent( 'calypso_woocommerce_payment_method_disabled', {
-				paymentMethod: method.id,
+				payment_method: method.id,
 			} );
 		}
 

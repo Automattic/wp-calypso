@@ -120,7 +120,7 @@ function getPressThisContent( query ) {
 // - (Redux) editPost: to set every other attribute (in particular, to update the Category Selector, terms can only be set via Redux);
 // - (Flux) edit: to reliably show the updated post attributes before (auto)saving.
 function startEditingPostCopy( siteId, postToCopyId, context ) {
-	wpcom.site( siteId ).post( postToCopyId ).get().then( postToCopy => {
+	wpcom.site( siteId ).post( postToCopyId ).get( { context: 'edit' } ).then( postToCopy => {
 		const postAttributes = pick(
 			postToCopy,
 			'canonical_image',

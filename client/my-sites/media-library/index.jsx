@@ -36,7 +36,6 @@ module.exports = React.createClass( {
 		onSearch: React.PropTypes.func,
 		onScaleChange: React.PropTypes.func,
 		onEditItem: React.PropTypes.func,
-		onSourceChange: React.PropTypes.func,
 		fullScreenDropZone: React.PropTypes.bool,
 		containerWidth: React.PropTypes.number,
 		single: React.PropTypes.bool,
@@ -48,7 +47,6 @@ module.exports = React.createClass( {
 			fullScreenDropZone: true,
 			onAddMedia: () => {},
 			onScaleChange: () => {},
-			onSourceChange: () => {},
 			scrollable: false,
 			source: '',
 		};
@@ -171,7 +169,6 @@ module.exports = React.createClass( {
 					search={ this.props.search }
 					onFilterChange={ this.props.onFilterChange }
 					source={ this.props.source }
-					onSourceChange={ this.props.onSourceChange }
 					onSearch={ this.doSearch } />
 				{ content }
 			</div>

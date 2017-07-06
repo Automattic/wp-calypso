@@ -7,6 +7,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
+import classNames from 'classnames';
 import titlecase from 'to-title-case';
 import Gridicon from 'gridicons';
 
@@ -41,6 +42,7 @@ import {
 	isThemePremium,
 	isPremiumThemeAvailable,
 	isWpcomTheme as isThemeWpcom,
+	getPremiumThemePrice,
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
 	getThemeForumUrl,
@@ -79,6 +81,7 @@ const ThemeSheet = React.createClass( {
 		isLoggedIn: React.PropTypes.bool,
 		isActive: React.PropTypes.bool,
 		isPurchased: React.PropTypes.bool,
+		isJetpack: React.PropTypes.bool,
 		siteId: React.PropTypes.number,
 		siteSlug: React.PropTypes.string,
 		backPath: React.PropTypes.string,
@@ -475,13 +478,17 @@ const ThemeSheet = React.createClass( {
 
 	renderPrice() {
 		let price = this.props.price;
-		if ( ! this.isLoaded() || this.props.isActive || this.props.isPurchased ) {
+		if ( ! this.isLoaded() || this.props.isActive ) {
 			price = '';
 		} else if ( ! this.props.isPremium ) {
 			price = i18n.translate( 'Free' );
 		}
 
-		return price ? <span className="theme__sheet-action-bar-cost">{ price }</span> : '';
+		const className = classNames( 'theme__sheet-action-bar-cost', {
+			'theme__sheet-action-bar-cost-upgrade': ! /\d/g.test( this.props.price )
+		} );
+
+		return price ? <span className={ className }>{ price }</span> : '';
 	},
 
 	renderButton() {
@@ -591,16 +598,24 @@ const ThemeSheetWithOptions = ( props ) => {
 		isLoggedIn,
 		isPremium,
 		isPurchased,
+		isJetpack
 	} = props;
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
+	const needsJetpackPlanUpgrade = isJetpack && isPremium && ! isPurchased;
+
+	if ( needsJetpackPlanUpgrade ) {
+		secondaryOption = '';
+	}
 
 	if ( ! isLoggedIn ) {
 		defaultOption = 'signup';
 		secondaryOption = null;
 	} else if ( isActive ) {
 		defaultOption = 'customize';
+	} else if ( needsJetpackPlanUpgrade ) {
+		defaultOption = 'upgradePlan';
 	} else if ( isPremium && ! isPurchased ) {
 		defaultOption = 'purchase';
 	} else {
@@ -631,6 +646,7 @@ export default connect(
 		return {
 			...theme,
 			id,
+			price: getPremiumThemePrice( state, id, siteId ),
 			error,
 			siteId,
 			siteSlug,
@@ -644,7 +660,8 @@ export default connect(
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
-			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ) // No siteId specified since we want the *canonical* URL :-)
+			// No siteId specified since we want the *canonical* URL :-)
+			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id )
 		};
 	},
 	{

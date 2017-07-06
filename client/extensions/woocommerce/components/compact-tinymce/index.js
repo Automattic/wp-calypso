@@ -26,13 +26,13 @@ class CompactTinyMCE extends Component {
 		onContentsChange: PropTypes.func.isRequired,
 		height: PropTypes.number,
 		className: PropTypes.string,
-		value: PropTypes.string,
+		initialValue: PropTypes.string,
 	}
 
 	static defaultProps = {
 		height: 250,
 		className: '',
-		value: '',
+		initialValue: '',
 		onContentsChange: noop,
 	}
 
@@ -56,9 +56,9 @@ class CompactTinyMCE extends Component {
 				return;
 			}
 
-			const { value, onContentsChange } = this.props;
+			const { initialValue, onContentsChange } = this.props;
 			editor.on( 'init', () => {
-				this.editor.setContent( wpautop( value ) );
+				this.editor.setContent( wpautop( initialValue ) );
 			} );
 			if ( onContentsChange ) {
 				editor.on( 'change', () => {

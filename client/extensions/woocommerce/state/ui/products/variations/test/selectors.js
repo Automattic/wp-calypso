@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { set } from 'lodash';
+import { find, set } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +13,8 @@ import {
 	getCurrentlyEditingVariation,
 	getProductVariationsWithLocalEdits,
 } from '../selectors';
+import products from 'woocommerce/state/sites/products/test/fixtures/products';
+import productVariations from 'woocommerce/state/sites/product-variations/test/fixtures/variations';
 
 const siteId = 123;
 
@@ -24,14 +26,14 @@ describe( 'selectors', () => {
 			ui: { selectedSiteId: 123 },
 			extensions: {
 				woocommerce: {
-					products: [
-						// TODO: After the product API code is in, add more fields here.
-						{ id: 2 },
-					],
-					variations: [
-						// TODO: After the variation API code is in, add more fields here.
-						{ id: 3 },
-					],
+					sites: {
+						123: {
+							products: {
+								products,
+							},
+							productVariations,
+						}
+					},
 					ui: {
 						products: {
 							123: {
@@ -47,8 +49,8 @@ describe( 'selectors', () => {
 
 	describe( 'getVariationEdits', () => {
 		it( 'should get a variation from "creates"', () => {
-			const newVariation = { id: { index: 1 }, name: 'New Variation' };
-			const productId = { index: 0 };
+			const newVariation = { id: { placeholder: 'product_variation_1' }, sku: 'new-variation' };
+			const productId = { placeholder: 'product_0' };
 			const uiProducts = state.extensions.woocommerce.ui.products;
 			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], productId );
 			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'creates' ], [ newVariation ] );
@@ -57,30 +59,30 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should get a variation from "updates"', () => {
-			const updateVariation = { id: 3, name: 'Existing Variation' };
+			const updateVariation = { id: 733, sku: 'updated-variation' };
 			const uiProducts = state.extensions.woocommerce.ui.products;
-			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 2 );
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 15 );
 			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'updates' ], [ updateVariation ] );
 
-			expect( getVariationEdits( state, 2, updateVariation.id ) ).to.equal( updateVariation );
+			expect( getVariationEdits( state, 15, updateVariation.id ) ).to.equal( updateVariation );
 		} );
 
 		it( 'should return undefined if no edits are found for productId', () => {
-			expect( getVariationEdits( state, 2, 3 ) ).to.not.exist;
-			expect( getVariationEdits( state, 2, { index: 9 } ) ).to.not.exist;
+			expect( getVariationEdits( state, 15, 102919 ) ).to.not.exist;
+			expect( getVariationEdits( state, 15, { placeholder: 'product_variation_9' } ) ).to.not.exist;
 		} );
 
 		it( 'should return undefined if no edits are found for variationId', () => {
 			const uiVariations = state.extensions.woocommerce.ui.products.variations;
-			set( uiVariations, 'edits[0].productId', 2 );
-			expect( getVariationEdits( state, 2, 3 ) ).to.not.exist;
-			expect( getVariationEdits( state, 2, { index: 9 } ) ).to.not.exist;
+			set( uiVariations, 'edits[0].productId', 15 );
+			expect( getVariationEdits( state, 15, 102919 ) ).to.not.exist;
+			expect( getVariationEdits( state, 15, { placeholder: 'product_variation_9' } ) ).to.not.exist;
 		} );
 	} );
 
 	describe( 'getVariationWithLocalEdits', () => {
 		it( 'should get just edits for a variation in "creates"', () => {
-			const newVariation = { id: { index: 0 }, name: 'New Variation' };
+			const newVariation = { id: { placeholder: 'product_variation_0' }, sku: 'new-variation' };
 			const uiProducts = state.extensions.woocommerce.ui.products;
 			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 2 );
 			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'creates' ], [ newVariation ] );
@@ -89,33 +91,33 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should get just fetched data for a variation that has no edits', () => {
-			const variations = state.extensions.woocommerce.variations;
+			const allVariations = state.extensions.woocommerce.sites[ 123 ].productVariations;
 
-			expect( getVariationWithLocalEdits( state, 2, 3 ) ).to.eql( variations[ 0 ] );
+			expect( getVariationWithLocalEdits( state, 15, 733 ) ).to.eql( allVariations[ 0 ] );
 		} );
 
 		it( 'should get both fetched data and edits for a variation in "updates"', () => {
 			const uiProducts = state.extensions.woocommerce.ui.products;
-			const variations = state.extensions.woocommerce.variations;
+			const allVariations = state.extensions.woocommerce.sites[ 123 ].productVariations;
 
-			const existingVariation = { id: 3, name: 'Existing Variation' };
-			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 2 );
+			const existingVariation = { id: 733, sku: 'updated-variation' };
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 15 );
 			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'updates' ], [ existingVariation ] );
 
-			const combinedVariation = { ...variations[ 0 ], ...existingVariation };
-			expect( getVariationWithLocalEdits( state, 2, 3 ) ).to.eql( combinedVariation );
+			const combinedVariation = { ...allVariations[ 0 ], ...existingVariation };
+			expect( getVariationWithLocalEdits( state, 15, 733 ) ).to.eql( combinedVariation );
 		} );
 
 		it( 'should return undefined if no variation is found for variationId', () => {
 			const uiVariations = state.extensions.woocommerce.ui.products.variations;
 			set( uiVariations, 'edits[0].productId', 42 );
-			expect( getVariationWithLocalEdits( state, 42, 43 ) ).to.not.exist;
-			expect( getVariationWithLocalEdits( state, 42, { index: 55 } ) ).to.not.exist;
+			expect( getVariationWithLocalEdits( state, 42, 201202 ) ).to.not.exist;
+			expect( getVariationWithLocalEdits( state, 42, { placeholder: 'product_variation_55' } ) ).to.not.exist;
 		} );
 
 		it( 'should return undefined if no product is found for productId', () => {
-			expect( getVariationWithLocalEdits( state, 42, 43 ) ).to.not.exist;
-			expect( getVariationWithLocalEdits( state, 42, { index: 55 } ) ).to.not.exist;
+			expect( getVariationWithLocalEdits( state, 42, 102382 ) ).to.not.exist;
+			expect( getVariationWithLocalEdits( state, 42, { placeholder: 'product_variation_55' } ) ).to.not.exist;
 		} );
 	} );
 
@@ -125,28 +127,68 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should get the last edited variation', () => {
-			const newVariation = { id: { index: 0 }, name: 'New Variation' };
+			const newVariation = { id: { placeholder: 'product_variation_0' }, sku: 'new-variation' };
 			const uiProducts = state.extensions.woocommerce.ui.products;
-			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 2 );
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 15 );
 			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'creates' ], [ newVariation ] );
 			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'currentlyEditingId' ], newVariation.id );
 
-			expect( getCurrentlyEditingVariation( state, 2 ) ).to.eql( newVariation );
+			expect( getCurrentlyEditingVariation( state, 15 ) ).to.eql( newVariation );
 		} );
 	} );
 
 	describe( 'getProductVariationsWithLocalEdits', () => {
 		it( 'should return undefined if no product is found for productId', () => {
-			expect( getProductVariationsWithLocalEdits( state, 4 ) ).to.not.exist;
+			expect( getProductVariationsWithLocalEdits( state, 4, 123 ) ).to.not.exist;
 		} );
+
 		it( 'should get variations from "creates"', () => {
-			const newVariation = { id: { index: 0 }, name: 'New Variation' };
+			const newVariation = { id: { placeholder: 'product_variation_0' }, sku: 'new-variation' };
 			const uiProducts = state.extensions.woocommerce.ui.products;
-			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 2 );
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 15 );
 			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'creates' ], [ newVariation ] );
 
-			expect( getProductVariationsWithLocalEdits( state, 2 ) ).to.eql( [ newVariation ] );
+			const variations = getProductVariationsWithLocalEdits( state, 15, 123 );
+			expect( variations ).to.exist;
+			expect( variations[ 0 ] ).to.exist;
+			expect( variations[ 0 ].id ).to.equal( newVariation.id );
+			expect( variations[ 0 ].sku ).to.equal( newVariation.sku );
 		} );
-		// TODO Tests for dealing with fetched/existing variations and combined (creates & existing).
+
+		it( 'should get API data by itself for a variation with no edits', () => {
+			const allVariations = state.extensions.woocommerce.sites[ 123 ].productVariations;
+
+			const variations = getProductVariationsWithLocalEdits( state, 15, 123 );
+			expect( variations ).to.exist;
+			expect( variations ).to.eql( allVariations[ 15 ] );
+		} );
+
+		it( 'should get both fetched data and edits for a variation in "updates"', () => {
+			const uiProducts = state.extensions.woocommerce.ui.products;
+
+			const existingVariation = { id: 733, sku: 'updated-variation' };
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 15 );
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'updates' ], [ existingVariation ] );
+
+			const variations = getProductVariationsWithLocalEdits( state, 15, 123 );
+			expect( variations ).to.exist;
+			expect( variations[ 0 ].id ).to.equal( existingVariation.id );
+			expect( variations[ 0 ].sku ).to.equal( existingVariation.sku );
+			expect( variations[ 0 ].price ).to.equal( '9.00' );
+		} );
+
+		it( 'should omit variations that have been deleted in the edits', () => {
+			const variationsBefore = getProductVariationsWithLocalEdits( state, 15, 123 );
+			expect( variationsBefore ).to.exist;
+			expect( find( variationsBefore, { id: 733 } ) ).to.exist;
+
+			const uiProducts = state.extensions.woocommerce.ui.products;
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 15 );
+			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'deletes' ], [ 733 ] );
+
+			const variationsAfter = getProductVariationsWithLocalEdits( state, 15, 123 );
+			expect( variationsAfter ).to.exist;
+			expect( find( variationsAfter, { id: 733 } ) ).to.not.exist;
+		} );
 	} );
 } );

@@ -22,27 +22,29 @@ const StoreStatsNavigation = props => {
 		year: translate( 'Years' ),
 	};
 	return (
-		<SectionNav selectedText={ units[ unit ] }>
-			<NavTabs label={ translate( 'Stats' ) }>
-				{ Object.keys( units ).map( key => (
-					<NavItem
-						key={ key }
-						path={ `/store/stats/${ type }/${ key }/${ slug }` }
-						selected={ unit === key }
-					>
-						{ units[ key ] }
-					</NavItem>
-				) ) }
-			</NavTabs>
-			<SegmentedControl
-				initialSelected="store"
-				options={ [
-					{ value: 'site', label: translate( 'Site' ), path: `/stats/${ unit }/${ slug }` },
-					{ value: 'store', label: translate( 'Store' ) },
-				] }
-			/>
-			<FollowersCount />
-		</SectionNav>
+		<div className="store-stats-navigation">
+			<SectionNav selectedText={ units[ unit ] }>
+				<NavTabs label={ translate( 'Stats' ) }>
+					{ Object.keys( units ).map( key => (
+						<NavItem
+							key={ key }
+							path={ `/store/stats/${ type }/${ key }/${ slug }` }
+							selected={ unit === key }
+						>
+							{ units[ key ] }
+						</NavItem>
+					) ) }
+				</NavTabs>
+				<SegmentedControl
+					initialSelected="store"
+					options={ [
+						{ value: 'site', label: translate( 'Site' ), path: `/stats/${ unit }/${ slug }` },
+						{ value: 'store', label: translate( 'Store' ) },
+					] }
+				/>
+				<FollowersCount />
+			</SectionNav>
+		</div>
 	);
 };
 

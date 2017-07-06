@@ -56,6 +56,7 @@ export const List = React.createClass( {
 		if ( this.props.domains.hasLoadedFromServer ) {
 			return <DomainWarnings
 				domains={ this.props.domains.list }
+				position="domain-list"
 				selectedSite={ this.props.selectedSite }
 				ruleWhiteList={ [
 					'newDomainsWithPrimary',
