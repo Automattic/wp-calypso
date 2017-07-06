@@ -11,6 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { urlToDomainAndPath } from 'lib/url';
@@ -33,6 +34,7 @@ export class CommentDetailAuthor extends Component {
 		blockUser: PropTypes.func,
 		commentDate: PropTypes.string,
 		commentStatus: PropTypes.string,
+		postUrl: PropTypes.string,
 		showAuthorInfo: PropTypes.bool,
 		siteId: PropTypes.number,
 	};
@@ -119,9 +121,9 @@ export class CommentDetailAuthor extends Component {
 					</div>
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="link" />
-						<span>
-							{ authorUrl }
-						</span>
+						<ExternalLink href={ authorUrl }>
+							{ urlToDomainAndPath( authorUrl ) }
+						</ExternalLink>
 					</div>
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="globe" />
@@ -154,6 +156,7 @@ export class CommentDetailAuthor extends Component {
 			authorDisplayName,
 			authorUrl,
 			commentStatus,
+			postUrl,
 			showAuthorInfo,
 			siteId,
 			translate,
@@ -175,13 +178,16 @@ export class CommentDetailAuthor extends Component {
 							<strong>
 								{ authorDisplayName }
 							</strong>
-							<span>
+							<ExternalLink href={ authorUrl }>
 								{ urlToDomainAndPath( authorUrl ) }
-							</span>
+							</ExternalLink>
 						</div>
-						<div className="comment-detail__author-info-element comment-detail__comment-date">
+						<ExternalLink
+							className="comment-detail__author-info-element comment-detail__comment-date"
+							href={ postUrl }
+						>
 							{ this.getFormattedDate() }
-						</div>
+						</ExternalLink>
 					</div>
 					{ 'unapproved' === commentStatus &&
 						<div className="comment-detail__status-label is-unapproved">
