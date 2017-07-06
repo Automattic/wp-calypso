@@ -8,8 +8,8 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
+import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -50,16 +50,12 @@ class DebugTab extends Component {
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Debug' ) }>
-					<Button
+					<FormButton
 						compact
 						primary
 						disabled={ isRequesting || isSaving }
-						onClick={ handleSubmitForm }>
-						{ isSaving
-							? translate( 'Saving…' )
-							: translate( 'Save Settings' )
-						}
-					</Button>
+						isSubmitting={ isSaving }
+						onClick={ handleSubmitForm } />
 				</SectionHeader>
 				<Card>
 					<form>
@@ -120,16 +116,12 @@ class DebugTab extends Component {
 				</Card>
 
 				<SectionHeader label={ translate( 'Advanced' ) }>
-					<Button
+					<FormButton
 						compact
 						primary
 						disabled={ isRequesting || isSaving }
-						onClick={ handleSubmitForm }>
-						{ isSaving
-							? translate( 'Saving…' )
-							: translate( 'Save Settings' )
-						}
-					</Button>
+						isSubmitting={ isSaving }
+						onClick={ handleSubmitForm } />
 				</SectionHeader>
 				<Card>
 					<form>
