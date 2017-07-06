@@ -72,13 +72,14 @@ case SITES_UPDATE:
 ```
 
 
-The library/code that used SitesList can also subscribe and unsubscribe to selected site changes. 
-To subscribe to selected site changes dispatch an action like this:
+### Sites Change Listeners
+
+If we have no other options, we can simulate subscribing to site changes by dispatching an action like this:
 ```jsx
 { type: SELECTED_SITE_SUBSCRIBE, listener }
 ```
 
-Where listener is a function that receives the new selected site id as parameter 
+Where listener is a function that receives the new selected site id as parameter.
 e.g:
 ```jsx
 function setSelectedSiteId( siteId ) {
@@ -91,4 +92,22 @@ To unsubscribe from selected site changes dispatch the following action:
 { type: SELECTED_SITE_UNSUBSCRIBE, listener }
 ```
 
-Where listener is a reference to the same function used when subscribing.
+Where listener is an exact reference to the same function used when subscribing.
+
+### Sites once changed
+
+In case there is a need to execute a function once (and only once) sites data arrives (SITES_RECEIVE action is dispatched), and no other option exists, we can do that by dispatching the following action:
+```jsx
+{ type: SITES_ONCE_CHANGED,	listener }
+```
+
+Where listener is a function that receives no parameters.
+e.g.
+```jsx
+function sitesReceived() {
+	this.hasJetpackSites = hasJetpackSites( this.store.getState() );
+}
+```
+
+As soon as sites are received the function is called. There is no need to do an unsubscribe operation because the listener function is called just one time.
+The most probable case where the need to use this approach may arise is when removing usages of SitesList.once().
