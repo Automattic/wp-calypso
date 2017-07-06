@@ -12,15 +12,11 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
 import { trackPageLoad } from 'reader/controller-helper';
 
-const ANALYTICS_PAGE_TITLE = 'Reader';
-
 export function conversations( context ) {
 	const basePath = route.sectionify( context.path );
-	const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Conversations';
-
 	const mcKey = 'conversations';
 
-	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	trackPageLoad( basePath, 'Reader > Conversations', mcKey );
 	recordTrack( 'calypso_reader_discover_viewed' );
 
 	renderWithReduxStore(
