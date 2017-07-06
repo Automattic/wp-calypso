@@ -28,7 +28,7 @@ And in fact, with a little bit of exposure it reveals a pattern that ends up sim
 ### Step A: Component needs to update data
 
 A React component wants to indicate that a given post ought to be marked as liked.
-It's API includes two functions for accomplishing this: `likePost( siteId, postId )` and `unlikePost( siteId, postId )`.
+Its API includes two functions for accomplishing this: `likePost( siteId, postId )` and `unlikePost( siteId, postId )`.
 It knows nothing about how those two functions work **and it doesn't need to know anything about how they work**, only that they are the names it uses to accomplish its goal.
 Because the component interacts with the data layer at this data-centric interface we have the ability to change the implementations for how we interact with synchronizing our data without demanding that the components themselves change.
 It calls `likePost` after the user clicks on the like button and that function dispatches a Redux action carrying that intention.
@@ -63,7 +63,7 @@ This `UNLIKE_POST` action will end up rolling back the first like, which in effe
 
 ### Step D: Reducers see action and update app state
 
-The actual `LIKE_POST` action (and possible the `UNLIKE_POST` as well) hit the reducers and the app state is updated.
+The actual `LIKE_POST` action (and possible the `UNLIKE_POST` as well) hits the reducers and the app state is updated.
 This will trigger a re-render on the post component which started the chain and we come full circle.
 
 ## Implementation
