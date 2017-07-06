@@ -277,7 +277,7 @@ const connectComponent = connect(
 		const selector = formValueSelector( 'jobListings', () => state.extensions.wpJobManager.form );
 
 		return {
-			perPage: selector( state, 'perPage' ),
+			perPage: selector( state, 'listings.perPage' ),
 		};
 	}
 );
