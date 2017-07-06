@@ -39,11 +39,8 @@ describe( '#likeComment()', () => {
 		expect( dispatch ).to.have.been.calledWith( http( {
 			apiVersion: '1.1',
 			method: 'POST',
-			path: `/sites/${ SITE_ID }/comments/1/likes/new`,
-			onSuccess: action,
-			onFailure: action,
-			onProgress: action,
-		} ) );
+			path: `/sites/${ SITE_ID }/comments/1/likes/new`
+		}, action ) );
 	} );
 } );
 
@@ -51,7 +48,7 @@ describe( '#updateCommentLikes()', () => {
 	it( 'should dispatch a comment like update action', () => {
 		const dispatch = spy();
 
-		updateCommentLikes( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 }, null, { i_like: true, like_count: 4 } );
+		updateCommentLikes( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 }, null, { like_count: 4 } );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( local( {
@@ -59,7 +56,6 @@ describe( '#updateCommentLikes()', () => {
 			siteId: SITE_ID,
 			postId: POST_ID,
 			commentId: 1,
-			i_like: true,
 			like_count: 4
 		} ) );
 	} );

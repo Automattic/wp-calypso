@@ -23,12 +23,11 @@ export const unlikeComment = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const updateCommentLikes = ( { dispatch }, { siteId, postId, commentId }, next, { i_like, like_count } ) => dispatch( local( {
-	type: COMMENTS_LIKE,
+export const updateCommentLikes = ( { dispatch }, { siteId, postId, commentId }, next, { like_count } ) => dispatch( local( {
+	type: COMMENTS_UNLIKE,
 	siteId,
 	postId,
 	commentId,
-	i_like,
 	like_count
 } ) );
 

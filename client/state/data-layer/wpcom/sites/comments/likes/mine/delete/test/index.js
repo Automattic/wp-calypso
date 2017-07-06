@@ -17,6 +17,7 @@ import {
 	updateCommentLikes,
 	handleUnlikeFailure,
 } from '../';
+import { local } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 const SITE_ID = 91750058;
@@ -38,11 +39,8 @@ describe( '#unlikeComment()', () => {
 		expect( dispatch ).to.have.been.calledWith( http( {
 			apiVersion: '1.1',
 			method: 'POST',
-			path: `/sites/${ SITE_ID }/comments/1/likes/mine/delete`,
-			onSuccess: action,
-			onFailure: action,
-			onProgress: action,
-		} ) );
+			path: `/sites/${ SITE_ID }/comments/1/likes/mine/delete`
+		}, action ) );
 	} );
 } );
 
@@ -50,17 +48,16 @@ describe( '#updateCommentLikes()', () => {
 	it( 'should dispatch a comment like update action', () => {
 		const dispatch = spy();
 
-		updateCommentLikes( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 }, null, { i_like: true, like_count: 4 } );
+		updateCommentLikes( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 }, null, { like_count: 4 } );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( {
-			type: COMMENTS_LIKE,
+		expect( dispatch ).to.have.been.calledWith( local( {
+			type: COMMENTS_UNLIKE,
 			siteId: SITE_ID,
 			postId: POST_ID,
 			commentId: 1,
-			iLike: true,
-			likeCount: 4
-		} );
+			like_count: 4
+		} ) );
 	} );
 } );
 
