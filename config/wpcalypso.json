@@ -43,7 +43,6 @@
 		"manage/customize": true,
 		"manage/custom-post-types": true,
 		"manage/edit-user": true,
-		"manage/export": true,
 		"manage/export/guided-transfer": true,
 		"manage/import/medium": true,
 		"manage/media": true,
