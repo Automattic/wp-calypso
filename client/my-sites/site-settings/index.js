@@ -9,6 +9,7 @@ import page from 'page';
 import config from 'config';
 import mySitesController from 'my-sites/controller';
 import controller from 'my-sites/site-settings/controller';
+import settingsController from 'my-sites/site-settings/settings-controller';
 
 module.exports = function() {
 	page(
@@ -20,8 +21,9 @@ module.exports = function() {
 		'/settings/general/:site_id',
 		mySitesController.siteSelection,
 		mySitesController.navigation,
-		controller.setScroll,
-		controller.siteSettings
+		settingsController.setScroll,
+		settingsController.siteSettings,
+		controller.general,
 	);
 
 	page(
@@ -53,21 +55,21 @@ module.exports = function() {
 		'/settings/delete-site/:site_id',
 		mySitesController.siteSelection,
 		mySitesController.navigation,
-		controller.setScroll,
+		settingsController.setScroll,
 		controller.deleteSite
 	);
 	page(
 		'/settings/start-over/:site_id',
 		mySitesController.siteSelection,
 		mySitesController.navigation,
-		controller.setScroll,
+		settingsController.setScroll,
 		controller.startOver
 	);
 	page(
 		'/settings/theme-setup/:site_id',
 		mySitesController.siteSelection,
 		mySitesController.navigation,
-		controller.setScroll,
+		settingsController.setScroll,
 		controller.themeSetup
 	);
 

@@ -3,11 +3,13 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
+import DocumentHead from 'components/data/document-head';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -19,10 +21,12 @@ import JetpackDevModeNotice from './jetpack-dev-mode-notice';
 
 const SiteSettingsComponent = ( {
 	jetpackSettingsUiSupported,
-	siteId
+	siteId,
+	translate
 } ) => {
 	return (
 		<Main className="site-settings">
+			<DocumentHead title={ translate( 'Site Settings' ) } />
 			{ jetpackSettingsUiSupported && <JetpackDevModeNotice /> }
 			<SidebarNavigation />
 			{ siteId && <SiteSettingsNavigation section={ 'general' } /> }
@@ -50,4 +54,4 @@ export default connect(
 			jetpackSettingsUiSupported: jetpackSite && jetpackUiSupported,
 		};
 	}
-)( SiteSettingsComponent );
+)( localize( SiteSettingsComponent ) );
