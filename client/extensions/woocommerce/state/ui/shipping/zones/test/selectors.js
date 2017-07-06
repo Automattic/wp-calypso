@@ -154,7 +154,7 @@ describe( 'selectors', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [
-						{ id: 0, methodIds: [], name: 'Rest of the world' },
+						{ id: 0, methodIds: [], name: 'Locations not covered by your other zones' },
 						{ id: 1, methodIds: [], name: 'Zone1' },
 						{ id: 2, methodIds: [], name: 'Zone2' },
 						{ id: 3, methodIds: [], name: 'Zone3', order: 2 },
@@ -176,7 +176,7 @@ describe( 'selectors', () => {
 				{ id: 2, methodIds: [], name: 'Zone2' },
 				{ id: 4, methodIds: [], name: 'Zone4', order: 1 },
 				{ id: 3, methodIds: [], name: 'Zone3', order: 2 },
-				{ id: 0, methodIds: [], name: 'Rest of the world' },
+				{ id: 0, methodIds: [], name: 'Locations not covered by your other zones' },
 			] );
 		} );
 
@@ -184,7 +184,7 @@ describe( 'selectors', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [
-						{ id: 0, methodIds: [], name: 'Rest of the world' },
+						{ id: 0, methodIds: [], name: 'Locations not covered by your other zones' },
 						{ id: 1, methodIds: [], name: 'Zone1' },
 						{ id: 2, methodIds: [], name: 'Zone2' },
 						{ id: 3, methodIds: [], name: 'Zone3', order: 2 },
@@ -222,7 +222,7 @@ describe( 'selectors', () => {
 				{ id: 2, methodIds: [], name: 'EditedZone2' },
 				{ id: 4, methodIds: [], name: 'Zone4', order: 1 },
 				{ id: 3, methodIds: [], name: 'Zone3', order: 2 },
-				{ id: 0, methodIds: [], name: 'Rest of the world' },
+				{ id: 0, methodIds: [], name: 'Locations not covered by your other zones' },
 			] );
 		} );
 	} );
@@ -335,7 +335,7 @@ describe( 'selectors', () => {
 			expect( canEditShippingZoneLocations( zoneId ) ).to.be.true;
 		} );
 
-		it( 'is NOT editable when it\'s the "Rest Of The World" zone', () => {
+		it( 'is NOT editable when it\'s the "Locations not covered by your other zones" zone', () => {
 			const zoneId = 0;
 			expect( canChangeShippingZoneTitle( zoneId ) ).to.be.false;
 			expect( canRemoveShippingZone( zoneId ) ).to.be.false;

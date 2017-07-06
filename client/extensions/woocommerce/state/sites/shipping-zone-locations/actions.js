@@ -20,7 +20,7 @@ export const fetchShippingZoneLocations = ( siteId, zoneId ) => ( dispatch, getS
 		return;
 	}
 
-	//0 is Rest of the World zone, skip fetching locations
+	//0 is Locations not covered by your other zones zone, skip fetching locations
 	if ( 0 === zoneId ) {
 		dispatch( {
 			type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS,

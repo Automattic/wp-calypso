@@ -54,7 +54,7 @@ export const areShippingZonesLocationsValid = ( reduxState, siteId = getSelected
 		if ( ! areShippingZoneLocationsLoaded( reduxState, zoneId, siteId ) ) {
 			continue;
 		}
-		if ( 0 === Number( zoneId ) ) { // The "Rest of the world" zone is always valid, it doesn't have any locations
+		if ( 0 === Number( zoneId ) ) { // The "Locations not covered by your other zones" zone is always valid, it doesn't have any locations
 			continue;
 		}
 
