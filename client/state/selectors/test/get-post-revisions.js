@@ -164,4 +164,39 @@ describe( 'getPostRevisions', () => {
 			}
 		] );
 	} );
+
+	it( 'should order revisions by date (recent first)', () => {
+		expect( getPostRevisions( {
+			posts: {
+				revisions: {
+					revisions: {
+						12345678: {
+							10: {
+								12: {
+									id: 12,
+									date: '2017-07-07T12:44:00Z',
+								},
+								11: {
+									id: 11,
+									date: '2017-07-06T12:44:00Z',
+								},
+							},
+						},
+					},
+				},
+			},
+			users: {
+				items: {},
+			},
+		}, 12345678, 10 ) ).to.eql( [
+			{
+				id: 12,
+				date: '2017-07-07T12:44:00Z',
+			},
+			{
+				id: 11,
+				date: '2017-07-06T12:44:00Z',
+			}
+		] );
+	} );
 } );

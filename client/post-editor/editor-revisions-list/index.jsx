@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { map, orderBy } from 'lodash';
+import { map } from 'lodash';
 import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -91,11 +91,7 @@ export default connect(
 		const postId = getEditorPostId( state );
 		return {
 			postId,
-			revisions: orderBy(
-				getPostRevisions( state, siteId, postId, 'display' ),
-				'date',
-				'desc'
-			),
+			revisions: getPostRevisions( state, siteId, postId, 'display' ),
 			selectedRevision: getPostRevision(
 				state, siteId, postId, ownProps.selectedRevisionId, 'editing'
 			),

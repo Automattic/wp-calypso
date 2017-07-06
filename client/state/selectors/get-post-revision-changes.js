@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { findIndex, get, isUndefined, map, omitBy, orderBy } from 'lodash';
+import { findIndex, get, isUndefined, map, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,10 +12,7 @@ import getPostRevisions from 'state/selectors/get-post-revisions';
 
 const getPostRevisionChanges = createSelector(
 	( state, siteId, postId, revisionId ) => {
-		const orderedRevisions = orderBy(
-			getPostRevisions( state, siteId, postId ),
-			'date', 'desc',
-		);
+		const orderedRevisions = getPostRevisions( state, siteId, postId );
 		const revisionIndex = findIndex( orderedRevisions, { id: revisionId } );
 		if ( revisionIndex === -1 ) {
 			return [];
