@@ -34,6 +34,7 @@ import Card from 'components/card';
 import utils from 'lib/site/utils';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
+import HappyChatButton from 'components/happychat/button';
 
 // Redux actions & selectors
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -70,7 +71,7 @@ import {
 	FEATURES_LIST,
 	getPlanClass
 } from 'lib/plans/constants';
-import { getPlan } from 'lib/plans';
+import { isFreePlan, getPlan } from 'lib/plans';
 
 const vpFeatures = {
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: true,
@@ -307,6 +308,23 @@ class JetpackThankYouCard extends Component {
 		return features;
 	}
 
+	onHappyChatButtonClick = () => {
+		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_chat_initiated' );
+	};
+
+	renderLiveChatButton() {
+		const { isJetpackPaidPlan } = this.props;
+		return isJetpackPaidPlan && (
+			<HappyChatButton
+				borderless={ false }
+				className="checkout-thank-you__happychat-button thank-you-card__button"
+				onClick={ this.onHappyChatButtonClick }
+			>
+				{ this.props.translate( 'Ask a question' ) }
+			</HappyChatButton>
+		);
+	}
+
 	renderErrorDetail() {
 		const { translate, selectedSite } = this.props;
 		if ( ! this.isErrored() ) {
@@ -527,6 +545,8 @@ class JetpackThankYouCard extends Component {
 	}
 
 	renderAction( progress = 0 ) {
+		const { selectedSite: site, translate } = this.props;
+		const buttonUrl = site && site.URL;
 		// We return an empty span for the error case becaue the default button will be displayed
 		// further down the tree if the action is falsey.
 		if ( this.isErrored() ) {
@@ -534,7 +554,16 @@ class JetpackThankYouCard extends Component {
 		}
 
 		if ( 100 === progress ) {
-			return null;
+			return (
+				<div>
+					{ this.renderLiveChatButton() }
+					<a
+						className={ classNames( 'thank-you-card__button', { 'is-placeholder': ! buttonUrl } ) }
+						href={ buttonUrl }>
+						{ translate( 'Visit Your Site' ) }
+					</a>
+				</div>
+			);
 		}
 
 		return (
@@ -591,6 +620,7 @@ export default connect(
 		const planClass = plan && plan.productSlug
 			? getPlanClass( plan.productSlug )
 			: '';
+		const isJetpackFreePlan = isJetpackSite( state, siteId ) && plan && plan.productSlug && isFreePlan( plan.productSlug );
 		if ( plan ) {
 			plan = getPlan( plan.productSlug );
 		}
@@ -602,13 +632,13 @@ export default connect(
 		const selectedSite = site && isJetpackSite( state, siteId )
 			? JetpackSite( getRawSite( state, siteId ) )
 			: site;
-
 		return {
 			wporg: state.plugins.wporg.items,
 			isRequesting: isRequesting( state, siteId ),
 			hasRequested: hasRequested( state, siteId ),
 			isInstalling: isInstalling( state, siteId, whitelist ),
 			isFinished: isFinished( state, siteId, whitelist ),
+			isJetpackPaidPlan: ! isJetpackFreePlan,
 			plugins: getPluginsForSite( state, siteId, whitelist ),
 			activePlugin: getActivePlugin( state, siteId, whitelist ),
 			nextPlugin: getNextPlugin( state, siteId, whitelist ),
