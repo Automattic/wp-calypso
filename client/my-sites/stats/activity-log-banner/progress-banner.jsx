@@ -18,8 +18,8 @@ function ProgressBanner( {
 	translate,
 } ) {
 	const restoreStatusDescription = status === 'queued'
-		? translate( 'Hold tight, your restore will begin soon.' )
-		: translate( 'Sit back and relax, your site is currently being restored.' );
+		? translate( 'Your restore will start in a moment.' )
+		: translate( 'We\'re on it! Your site is being restored.' );
 
 	return (
 		<ActivityLogBanner
