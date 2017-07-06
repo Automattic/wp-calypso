@@ -469,7 +469,7 @@ export class EditorHtmlToolbar extends Component {
 				onClick={ this.openGoogleModal }
 			>
 				<Gridicon icon="add-image" />
-				<span>{ translate( 'Add from Google' ) }</span>
+				<span data-e2e-insert-type="google-media">{ translate( 'Add from Google' ) }</span>
 			</div>
 		);
 	}
@@ -487,7 +487,7 @@ export class EditorHtmlToolbar extends Component {
 				onClick={ null }
 			>
 				<Gridicon icon="money" />
-				<span>{ translate( 'Add Payment Button' ) }</span>
+				<span data-e2e-insert-type="payment-button">{ translate( 'Add Payment Button' ) }</span>
 			</div>
 		);
 	}
@@ -601,7 +601,7 @@ export class EditorHtmlToolbar extends Component {
 								onClick={ this.openMediaModal }
 							>
 								<Gridicon icon="add-image" />
-								<span>{ translate( 'Add Media' ) }</span>
+								<span data-e2e-insert-type="media">{ translate( 'Add Media' ) }</span>
 							</div>
 
 							{ this.renderExternal() }
@@ -611,7 +611,7 @@ export class EditorHtmlToolbar extends Component {
 								onClick={ this.openContactFormDialog }
 							>
 								<Gridicon icon="mention" />
-								<span>{ translate( 'Add Contact Form' ) }</span>
+								<span data-e2e-insert-type="contact-form">{ translate( 'Add Contact Form' ) }</span>
 							</div>
 
 							{ this.renderSimplePaymentsButton() }
