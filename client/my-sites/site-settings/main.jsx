@@ -16,11 +16,16 @@ import GeneralSettings from './section-general';
 import SiteSettingsNavigation from './navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
+import Placeholder from 'my-sites/site-settings/placeholder';
 
 const SiteSettingsComponent = ( {
 	jetpackSettingsUiSupported,
 	siteId
 } ) => {
+	if ( ! siteId ) {
+		return <Placeholder />;
+	}
+
 	return (
 		<Main className="site-settings">
 			{ jetpackSettingsUiSupported && <JetpackDevModeNotice /> }
