@@ -26,19 +26,19 @@ export const onJetpackModuleActivationActionMessage = ( dispatch, { type, module
 
 	switch ( type ) {
 		case JETPACK_MODULE_ACTIVATE_SUCCESS:
-			message = message || translate( 'Turned on successfully.' );
+			message = message || translate( 'Settings saved successfully!' );
 			messageType = 'success';
 			break;
 		case JETPACK_MODULE_DEACTIVATE_SUCCESS:
-			message = message || translate( 'Turned off successfully.' );
+			message = message || translate( 'Settings saved successfully!' );
 			messageType = 'success';
 			break;
 		case JETPACK_MODULE_ACTIVATE_FAILURE:
-			message = message || translate( 'An error occurred during activation.' );
+			message = message || translate( 'There was a problem saving your changes. Please try again.' );
 			messageType = 'error';
 			break;
 		case JETPACK_MODULE_DEACTIVATE_FAILURE:
-			message = message || translate( 'An error occurred during deactivation.' );
+			message = message || translate( 'There was a problem saving your changes. Please try again.' );
 			messageType = 'error';
 			break;
 	}
