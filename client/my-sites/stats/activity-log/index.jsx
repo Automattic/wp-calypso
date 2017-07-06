@@ -160,18 +160,19 @@ class ActivityLog extends Component {
 			return (
 				<div>
 					<QueryActivityLog siteId={ siteId } />
-					{ errorCode && <ErrorBanner
-						errorCode={ errorCode }
-						failureReason={ failureReason }
-						requestRestore={ this.handleRequestRestore }
-						siteId={ siteId }
-						siteTitle={ siteTitle }
-						timestamp={ timestamp }
-					/> }
-					{ ! errorCode && <SuccessBanner
-						siteId={ siteId }
-						timestamp={ timestamp }
-					/> }
+					{ errorCode ? (
+						<ErrorBanner
+							errorCode={ errorCode }
+							failureReason={ failureReason }
+							requestRestore={ this.handleRequestRestore }
+							siteId={ siteId }
+							siteTitle={ siteTitle }
+							timestamp={ timestamp } />
+					) : (
+						<SuccessBanner
+							siteId={ siteId }
+							timestamp={ timestamp } />
+					) }
 				</div>
 			);
 		}
