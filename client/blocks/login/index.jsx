@@ -19,9 +19,7 @@ import {
 	isTwoFactorEnabled,
 	getLinkingSocialUser,
 	getLinkingSocialService,
-	isConnectingSocialService,
 } from 'state/login/selectors';
-import { connectSocialAccount } from 'state/login/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
@@ -44,8 +42,6 @@ class Login extends Component {
 		socialConnect: PropTypes.bool,
 		linkingSocialUser: PropTypes.string,
 		linkingSocialService: PropTypes.string,
-		connectingSocialService: PropTypes.bool,
-		connectSocialAccount: PropTypes.func,
 	};
 
 	componentDidMount = () => {
@@ -218,9 +214,7 @@ export default connect(
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		linkingSocialUser: getLinkingSocialUser( state ),
 		linkingSocialService: getLinkingSocialService( state ),
-		connectingSocialService: isConnectingSocialService( state ),
 	} ), {
 		recordTracksEvent,
-		connectSocialAccount,
 	}
 )( localize( Login ) );

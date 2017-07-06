@@ -222,5 +222,3 @@ export const getLinkingSocialUser = ( state ) => get( state, 'login.socialAccoun
  * @return {?String}         Service name of the social account.
  */
 export const getLinkingSocialService = ( state ) => get( state, 'login.socialAccount.service', null );
-
-export const isConnectingSocialService = ( state ) => get( state, 'login.socialAccount.connecting', null );
