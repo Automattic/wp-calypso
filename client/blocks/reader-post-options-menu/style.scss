@@ -70,4 +70,14 @@
 	.gridicon {
 		fill: $alert-green;
 	}
+
+	&:hover,
+	&:focus {
+		color: $white;
+		background: $alert-green;
+
+		.gridicon {
+			fill: $white;
+		}
+	}
 }
