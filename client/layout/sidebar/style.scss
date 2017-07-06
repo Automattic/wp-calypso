@@ -199,12 +199,13 @@
 a.sidebar__button, form.sidebar__button {
 	display: flex;
 	position: relative;
+	align-self: center;
 	box-sizing: border-box;
 	white-space: nowrap;
 	overflow: hidden;
 	padding: 2px 8px 3px 8px;
 	height: 24px;
-	margin: 11px 8px 0 0;
+	margin-right: 8px;
 	line-height: 18px;
 	background-color: $gray-light;
 	color: darken( $gray, 20% );
