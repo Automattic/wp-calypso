@@ -110,14 +110,16 @@ const ShippingZoneMethodList = ( {
 				<Button onClick={ onAddMethod } disabled={ ! loaded } >{ translate( 'Add method' ) }</Button>
 			</ExtendedHeader>
 			<List>
-				<ListHeader>
-					<ListItemField className="shipping-zone__methods-column-title">
-						{ translate( 'Method' ) }
-					</ListItemField>
-					<ListItemField className="shipping-zone__methods-column-summary">
-						{ translate( 'Cost' ) }
-					</ListItemField>
-				</ListHeader>
+				{ methodsToRender && methodsToRender.length
+					? <ListHeader>
+						<ListItemField className="shipping-zone__methods-column-title">
+							{ translate( 'Method' ) }
+						</ListItemField>
+						<ListItemField className="shipping-zone__methods-column-summary">
+							{ translate( 'Cost' ) }
+						</ListItemField>
+					</ListHeader>
+					: null }
 				{ methodsToRender.map( renderMethod ) }
 			</List>
 			<ShippingZoneMethodDialog siteId={ siteId } />
