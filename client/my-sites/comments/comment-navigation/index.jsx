@@ -9,7 +9,6 @@ import { includes, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import UrlSearch from 'lib/url-search';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import Count from 'components/count';
@@ -19,6 +18,8 @@ import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
+import UrlSearch from 'lib/url-search';
+import config from 'config';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],
@@ -51,9 +52,11 @@ export class CommentNavigation extends Component {
 			trash: {
 				label: translate( 'Trash' ),
 			},
-			all: {
-				label: translate( 'All' ),
-			},
+			...config.isEnabled( 'comments/management/all-list' ) && {
+				all: {
+					label: translate( 'All' ),
+				},
+			}
 		};
 	}
 

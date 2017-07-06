@@ -9,8 +9,9 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import route from 'lib/route';
 import CommentsManagement from './main';
+import config from 'config';
+import route from 'lib/route';
 
 const VALID_STATUSES = [ 'pending', 'approved', 'spam', 'trash', 'all' ];
 
@@ -46,6 +47,11 @@ export const redirect = function( context, next ) {
 export const comments = function( context ) {
 	const { status } = context.params;
 	const siteFragment = route.getSiteFragment( context.path );
+
+	if ( ! config.isEnabled( 'comments/management/all-list' ) && 'all' === status ) {
+		return page.redirect( `/comments/pending/${ siteFragment }` );
+	}
+
 	renderWithReduxStore(
 		<CommentsManagement
 			basePath={ context.path }
