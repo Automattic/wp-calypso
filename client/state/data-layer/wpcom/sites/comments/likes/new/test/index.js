@@ -17,6 +17,7 @@ import {
 	updateCommentLikes,
 	handleLikeFailure,
 } from '../';
+import { local } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 const SITE_ID = 91750058;
@@ -53,14 +54,14 @@ describe( '#updateCommentLikes()', () => {
 		updateCommentLikes( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 }, null, { i_like: true, like_count: 4 } );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( {
+		expect( dispatch ).to.have.been.calledWith( local( {
 			type: COMMENTS_LIKE,
 			siteId: SITE_ID,
 			postId: POST_ID,
 			commentId: 1,
-			iLike: true,
-			likeCount: 4
-		} );
+			i_like: true,
+			like_count: 4
+		} ) );
 	} );
 } );
 
