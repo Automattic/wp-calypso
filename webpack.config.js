@@ -18,7 +18,6 @@ const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
  * Internal dependencies
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
-const ChunkFileNamePlugin = require( './server/bundler/plugin' );
 const config = require( './server/config' );
 
 /**
@@ -209,10 +208,6 @@ if ( calypsoEnv === 'desktop' ) {
 			filename: 'manifest.[hash].js'
 		} )
 	);
-
-	// Somewhat badly named, this is our custom chunk loader that knows about sections
-	// and our loading notification infrastructure
-	webpackConfig.plugins.push( new ChunkFileNamePlugin() );
 
 	// jquery is only needed in the build for the desktop app
 	// see electron bug: https://github.com/atom/electron/issues/254
