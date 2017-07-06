@@ -21,16 +21,18 @@ import ReduxFormTextInput from 'components/redux-forms/redux-form-text-input';
 import ReduxFormToggle from 'components/redux-forms/redux-form-toggle';
 import SectionHeader from 'components/section-header';
 
-const JobSubmission = ( { duration, translate } ) => {
+const JobSubmission = ( { isDisabled, duration, translate } ) => {
 	return (
 		<div>
 			<form>
 				<SectionHeader label={ translate( 'Account' ) }>
-					<FormButton compact primary />
+					<FormButton compact
+						disabled={ isDisabled } />
 				</SectionHeader>
 				<Card>
 					<FormFieldset>
 						<ReduxFormToggle
+							disabled={ isDisabled }
 							name="job_manager_user_requires_account"
 							text={ translate( 'Require an account to submit listings' ) } />
 						<FormSettingExplanation isIndented>
@@ -38,6 +40,7 @@ const JobSubmission = ( { duration, translate } ) => {
 						</FormSettingExplanation>
 
 						<ReduxFormToggle
+							disabled={ isDisabled }
 							name="job_manager_enable_registration"
 							text={ translate( 'Enable account creation during submission' ) } />
 						<FormSettingExplanation isIndented>
@@ -46,6 +49,7 @@ const JobSubmission = ( { duration, translate } ) => {
 						</FormSettingExplanation>
 
 						<ReduxFormToggle
+							disabled={ isDisabled }
 							name="job_manager_generate_username_from_email"
 							text="Generate usernames from email addresses" />
 						<FormSettingExplanation isIndented>
@@ -58,7 +62,9 @@ const JobSubmission = ( { duration, translate } ) => {
 						<FormLabel>
 							{ translate( 'Role' ) }
 						</FormLabel>
-						<ReduxFormSelect name="job_manager_registration_role">
+						<ReduxFormSelect
+							disabled={ isDisabled }
+							name="job_manager_registration_role">
 							<option value="editor">{ translate( 'Editor' ) }</option>
 							<option value="author">{ translate( 'Author' ) }</option>
 							<option value="contributor">{ translate( 'Contributor' ) }</option>
@@ -77,11 +83,13 @@ const JobSubmission = ( { duration, translate } ) => {
 
 			<form>
 				<SectionHeader label={ translate( 'Approval' ) }>
-					<FormButton compact primary />
+					<FormButton compact
+						disabled={ isDisabled } />
 				</SectionHeader>
 				<Card>
 					<FormFieldset>
 						<ReduxFormToggle
+							disabled={ isDisabled }
 							name="job_manager_submission_requires_approval"
 							text={ translate( 'Require admin approval of all new listing submissions' ) } />
 						<FormSettingExplanation isIndented>
@@ -90,6 +98,7 @@ const JobSubmission = ( { duration, translate } ) => {
 						</FormSettingExplanation>
 
 						<ReduxFormToggle
+							disabled={ isDisabled }
 							name="job_manager_user_can_edit_pending_submissions"
 							text="Allow editing of pending listings" />
 						<FormSettingExplanation isIndented>
@@ -101,7 +110,8 @@ const JobSubmission = ( { duration, translate } ) => {
 
 			<form>
 				<SectionHeader label={ translate( 'Listing Duration' ) }>
-					<FormButton compact primary />
+					<FormButton compact
+						disabled={ isDisabled } />
 				</SectionHeader>
 				<Card>
 					<FormFieldset>
@@ -113,6 +123,7 @@ const JobSubmission = ( { duration, translate } ) => {
 								components: {
 									days:
 										<ReduxFormTextInput
+											disabled={ isDisabled }
 											min="0"
 											name="job_manager_submission_duration"
 											step="1"
@@ -130,7 +141,8 @@ const JobSubmission = ( { duration, translate } ) => {
 
 			<form>
 				<SectionHeader label={ translate( 'Application Method' ) }>
-					<FormButton compact primary />
+					<FormButton compact
+						disabled={ isDisabled } />
 				</SectionHeader>
 				<Card>
 					<FormFieldset>
@@ -139,6 +151,7 @@ const JobSubmission = ( { duration, translate } ) => {
 						</FormSettingExplanation>
 						<FormLabel>
 							<ReduxFormRadio
+								disabled={ isDisabled }
 								name="job_manager_allowed_application_method"
 								value="" />
 							<span>
@@ -148,6 +161,7 @@ const JobSubmission = ( { duration, translate } ) => {
 
 						<FormLabel>
 							<ReduxFormRadio
+								disabled={ isDisabled }
 								name="job_manager_allowed_application_method"
 								value="email" />
 							<span>
@@ -157,6 +171,7 @@ const JobSubmission = ( { duration, translate } ) => {
 
 						<FormLabel>
 							<ReduxFormRadio
+								disabled={ isDisabled }
 								name="job_manager_allowed_application_method"
 								value="url" />
 							<span>
@@ -171,6 +186,7 @@ const JobSubmission = ( { duration, translate } ) => {
 };
 
 JobSubmission.propTypes = {
+	isDisabled: PropTypes.bool,
 	translate: PropTypes.func,
 };
 
