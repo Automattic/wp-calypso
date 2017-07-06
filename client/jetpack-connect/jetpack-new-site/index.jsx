@@ -27,7 +27,7 @@ class JetpackNewSite extends Component {
 		this.handleBack = this.handleBack.bind( this );
 	}
 
-	state = { jetpackUrl: '' }
+	state = { jetpackUrl: '' };
 
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_view' );
@@ -42,7 +42,7 @@ class JetpackNewSite extends Component {
 	handleJetpackSubmit = () => {
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_connect_click' );
 		page( '/jetpack/connect?url=' + this.state.jetpackUrl );
-	}
+	};
 
 	handleOnClickTos() {
 		this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );

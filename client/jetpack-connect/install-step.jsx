@@ -37,12 +37,12 @@ class JetpackInstallStep extends Component {
 	confirmJetpackInstalled = ( event ) => {
 		event.preventDefault();
 		this.props.confirmJetpackInstallStatus( true );
-	}
+	};
 
 	confirmJetpackNotInstalled = ( event ) => {
 		event.preventDefault();
 		this.props.confirmJetpackInstallStatus( false );
-	}
+	};
 
 	renderAlreadyHaveJetpackButton() {
 		return (

@@ -136,7 +136,7 @@ class JetpackConnectMain extends Component {
 			currentUrl: this.cleanUrl( url ),
 			shownUrl: url,
 		} );
-	}
+	};
 
 	cleanUrl( inputUrl ) {
 		let url = inputUrl.trim().toLowerCase();
@@ -163,7 +163,7 @@ class JetpackConnectMain extends Component {
 		} else {
 			this.checkUrl( this.state.currentUrl );
 		}
-	}
+	};
 
 	installJetpack = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_instructions_click', {
@@ -172,7 +172,7 @@ class JetpackConnectMain extends Component {
 		} );
 
 		this.props.goToPluginInstall( this.state.currentUrl );
-	}
+	};
 
 	activateJetpack = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_instructions_click', {
@@ -180,7 +180,7 @@ class JetpackConnectMain extends Component {
 			type: 'activate_jetpack'
 		} );
 		this.props.goToPluginActivation( this.state.currentUrl );
-	}
+	};
 
 	checkProperty( propName ) {
 		return this.state.currentUrl &&

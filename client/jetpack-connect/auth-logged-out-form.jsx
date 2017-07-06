@@ -49,7 +49,7 @@ class LoggedOutForm extends Component {
 	handleSubmitSignup = ( form, userData ) => {
 		debug( 'submiting new account', form, userData );
 		this.props.createAccount( userData );
-	}
+	};
 
 	renderLoginUser() {
 		const { userData, bearerToken } = this.props.jetpackConnectAuthorize;

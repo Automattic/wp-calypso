@@ -83,23 +83,23 @@ class JetpackSsoForm extends Component {
 
 		debug( 'Approving sso' );
 		this.props.authorizeSSO( siteId, ssoNonce, siteUrl );
-	}
+	};
 
 	onCancelClick = ( event ) => {
 		debug( 'Clicked return to site link' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_return_to_site_link_click' );
 		this.returnToSiteFallback( event );
-	}
+	};
 
 	onTryAgainClick = ( event ) => {
 		debug( 'Clicked try again link' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_try_again_link_click' );
 		this.returnToSiteFallback( event );
-	}
+	};
 
 	onClickSignInDifferentUser = () => {
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_sign_in_different_user_link_click' );
-	}
+	};
 
 	onClickSharedDetailsModal = ( event ) => {
 		event.preventDefault();
@@ -107,13 +107,13 @@ class JetpackSsoForm extends Component {
 		this.setState( {
 			showTermsDialog: true
 		} );
-	}
+	};
 
 	closeTermsDialog = () => {
 		this.setState( {
 			showTermsDialog: false
 		} );
-	}
+	};
 
 	returnToSiteFallback = ( event ) => {
 		// If, for some reason, the API request failed and we do not have the admin URL,
@@ -123,7 +123,7 @@ class JetpackSsoForm extends Component {
 			event.preventDefault();
 			window.history.back();
 		}
-	}
+	};
 
 	isButtonDisabled() {
 		const user = this.props.userModule.get();
