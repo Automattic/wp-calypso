@@ -132,27 +132,6 @@ class DebugTab extends Component {
 					</Button>
 				</SectionHeader>
 				<Card>
-					<p>{ translate( 'In very rare cases two problems may arise on some blogs:' ) }</p>
-					<ol>
-						<li>{ translate( 'The front page may start downloading as a zip file.' ) }</li>
-						<li>{ translate(
-							'The wrong page is occasionally cached as the front page ' +
-							'if your blog uses a static front page and the permalink structure ' +
-							'is {{em}}%(permalinkStructure)s{{/em}}.',
-							{
-								args: { permalinkStructure: '/%category%/%postname%/' },
-								components: { em: <em /> }
-							}
-						 ) }</li>
-					</ol>
-					<p>
-						{ translate(
-							'I\'m 99% certain that they aren\'t bugs in WP Super Cache and they only ' +
-							'happen in very rare cases but you can run a simple check once every 5 minutes ' +
-							'to verify that your site is ok if you\'re worried. You will be emailed if ' +
-							'there is a problem.'
-						) }
-					</p>
 					<form>
 						<FormFieldset>
 							<FormToggle
