@@ -20,7 +20,6 @@ const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const ChunkFileNamePlugin = require( './server/bundler/plugin' );
 const config = require( './server/config' );
-const NamedModulesPlugin = require( './server/bundler/webpack-plugins/NamedModulesPlugin' );
 
 /**
  * Internal variables
@@ -154,7 +153,7 @@ const webpackConfig = {
 				babelLoader
 			] )
 		} ),
-		new NamedModulesPlugin(),
+		new webpack.NamedModulesPlugin(),
 		new webpack.NamedChunksPlugin( chunk => {
 			if ( chunk.name ) {
 				return chunk.name;
