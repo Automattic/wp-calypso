@@ -183,5 +183,5 @@
 	"woocommerce_blog_id": 113771570,
 	"wpcom_signup_id": false,
 	"wpcom_signup_key": false,
-	"max_request_time_logs_per_second": 50
+	"statsd_analytics_response_time_max_logs_per_second": 50
 }

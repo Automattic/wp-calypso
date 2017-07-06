@@ -10,7 +10,7 @@ import config from 'config';
 import analytics from '../lib/analytics';
 
 // Compute the number of milliseconds between each call to recordTiming
-const THROTTLE_MILLIS = 1000 / config( 'max_request_time_logs_per_second' );
+const THROTTLE_MILLIS = 1000 / config( 'statsd_analytics_response_time_max_logs_per_second' );
 
 const logAnalyticsThrottled = throttle( function( sectionName, duration ) {
 	analytics.statsd.recordTiming(
