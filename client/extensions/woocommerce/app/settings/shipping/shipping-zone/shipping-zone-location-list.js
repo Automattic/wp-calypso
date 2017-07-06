@@ -112,7 +112,7 @@ const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actio
 				</Button>
 			</ExtendedHeader>
 			<List>
-				{ locationsToRender && locationsToRender.length
+				{ locationsToRender.length
 				? <ListHeader>
 					<ListItemField className="shipping-zone__location-title">
 						{ translate( 'Location' ) }

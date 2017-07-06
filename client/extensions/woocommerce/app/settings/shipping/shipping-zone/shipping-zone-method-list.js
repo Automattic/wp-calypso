@@ -110,7 +110,7 @@ const ShippingZoneMethodList = ( {
 				<Button onClick={ onAddMethod } disabled={ ! loaded } >{ translate( 'Add method' ) }</Button>
 			</ExtendedHeader>
 			<List>
-				{ methodsToRender && methodsToRender.length
+				{ methodsToRender.length
 					? <ListHeader>
 						<ListItemField className="shipping-zone__methods-column-title">
 							{ translate( 'Method' ) }
