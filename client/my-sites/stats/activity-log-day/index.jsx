@@ -3,14 +3,16 @@
  */
 import React, { Component, PropTypes } from 'react';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
-import Button from 'components/button';
 import ActivityLogItem from '../activity-log-item';
+import Button from 'components/button';
+import FoldableCard from 'components/foldable-card';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 class ActivityLogDay extends Component {
 	static propTypes = {
@@ -34,6 +36,21 @@ class ActivityLogDay extends Component {
 			requestRestore,
 		} = this.props;
 		requestRestore( tsEndOfSiteDay, 'day' );
+	};
+
+	trackOpenDay = () => {
+		const {
+			logs,
+			moment,
+			recordTracksEvent,
+			tsEndOfSiteDay,
+		} = this.props;
+
+		recordTracksEvent( 'calypso_activity_log_day_expand', {
+			logCount: logs.length,
+			tsEndOfSiteDay,
+			utcDate: moment.utc( tsEndOfSiteDay ).format( 'YYYY-MM-DD' ),
+		} );
 	};
 
 	/**
@@ -103,9 +120,10 @@ class ActivityLogDay extends Component {
 		return (
 			<div className="activity-log-day">
 				<FoldableCard
-					header={ this.getEventsHeading() }
-					summary={ this.getRewindButton( 'primary' ) }
 					expandedSummary={ this.getRewindButton() }
+					header={ this.getEventsHeading() }
+					onOpen={ this.trackOpenDay }
+					summary={ this.getRewindButton( 'primary' ) }
 				>
 					{ logs.map( ( log, index ) => (
 						<ActivityLogItem
@@ -123,4 +141,6 @@ class ActivityLogDay extends Component {
 	}
 }
 
-export default localize( ActivityLogDay );
+export default connect( null, {
+	recordTracksEvent: recordTracksEventAction,
+} )( localize( ActivityLogDay ) );
