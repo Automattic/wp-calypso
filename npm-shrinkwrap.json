@@ -989,7 +989,7 @@
       "dev": true,
       "dependencies": {
         "commander": {
-          "version": "2.11.0",
+          "version": "2.10.0",
           "dev": true
         },
         "glob": {
@@ -2688,7 +2688,7 @@
       "version": "1.0.1"
     },
     "gridicons": {
-      "version": "2.0.0"
+      "version": "1.1.0"
     },
     "growl": {
       "version": "1.9.2",
@@ -2905,7 +2905,7 @@
           "version": "1.5.2"
         },
         "commander": {
-          "version": "2.11.0"
+          "version": "2.10.0"
         }
       }
     },
@@ -2989,7 +2989,7 @@
       "version": "1.0.5"
     },
     "irregular-plurals": {
-      "version": "1.3.0",
+      "version": "1.2.0",
       "dev": true
     },
     "is-arrayish": {
@@ -3075,7 +3075,7 @@
       "dev": true,
       "dependencies": {
         "isobject": {
-          "version": "3.0.1",
+          "version": "3.0.0",
           "dev": true
         }
       }
@@ -4924,7 +4924,7 @@
           "version": "5.8.38"
         },
         "commander": {
-          "version": "2.11.0"
+          "version": "2.10.0"
         }
       }
     },
@@ -6240,7 +6240,7 @@
           "dev": true
         },
         "commander": {
-          "version": "2.11.0",
+          "version": "2.10.0",
           "dev": true
         },
         "content-disposition": {
@@ -6366,7 +6366,7 @@
           "dev": true
         },
         "commander": {
-          "version": "2.11.0",
+          "version": "2.10.0",
           "dev": true
         },
         "component-emitter": {
