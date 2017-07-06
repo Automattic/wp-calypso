@@ -49,16 +49,16 @@ class DebugTab extends Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Debug' ) }>
-					<FormButton
-						compact
-						primary
-						disabled={ isRequesting || isSaving }
-						isSubmitting={ isSaving }
-						onClick={ handleSubmitForm } />
-				</SectionHeader>
-				<Card>
-					<form>
+				<form>
+					<SectionHeader label={ translate( 'Debug' ) }>
+						<FormButton
+							compact
+							primary
+							disabled={ isRequesting || isSaving }
+							isSubmitting={ isSaving }
+							onClick={ handleSubmitForm } />
+					</SectionHeader>
+					<Card>
 						<FormFieldset>
 							<FormToggle
 								checked={ !! wp_super_cache_debug }
@@ -112,19 +112,19 @@ class DebugTab extends Component {
 								</FormSettingExplanation>
 							</FormFieldset>
 						</div>
-					</form>
-				</Card>
+					</Card>
+				</form>
 
-				<SectionHeader label={ translate( 'Advanced' ) }>
-					<FormButton
-						compact
-						primary
-						disabled={ isRequesting || isSaving }
-						isSubmitting={ isSaving }
-						onClick={ handleSubmitForm } />
-				</SectionHeader>
-				<Card>
-					<form>
+				<form>
+					<SectionHeader label={ translate( 'Advanced' ) }>
+						<FormButton
+							compact
+							primary
+							disabled={ isRequesting || isSaving }
+							isSubmitting={ isSaving }
+							onClick={ handleSubmitForm } />
+					</SectionHeader>
+					<Card>
 						<FormFieldset>
 							<FormToggle
 								checked={ !! wp_super_cache_front_page_check }
@@ -171,8 +171,8 @@ class DebugTab extends Component {
 								</span>
 							</FormToggle>
 						</FormFieldset>
-					</form>
-				</Card>
+					</Card>
+				</form>
 			</div>
 		);
 	}
