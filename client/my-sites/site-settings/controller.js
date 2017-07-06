@@ -171,7 +171,7 @@ const controller = {
 
 		renderPage(
 			context,
-			<ThemeSetup activeSiteDomain={ context.params.site_id } />
+			<ThemeSetup />
 		);
 	},
 
