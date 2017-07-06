@@ -160,7 +160,7 @@ class SettingsTaxes extends Component {
 				<SettingsNavigation activeSection="taxes" />
 				<div className="taxes__nexus">
 					<ExtendedHeader
-						label={ translate( 'Store Address / Tax Nexus' ) }
+						label={ translate( 'Store Address' ) }
 						description={ translate( 'The address of where your business is located for tax purposes.' ) } />
 					<StoreAddress className="taxes__store-address" onSetAddress={ this.onAddressChange } />
 				</div>
