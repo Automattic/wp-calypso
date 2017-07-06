@@ -48,6 +48,15 @@
 		color: $gray-text;
 		margin-right: 8px;
 	}
+
+	a {
+		color: $gray-text-min;
+		cursor: pointer;
+		&:focus,
+		&:hover {
+			color: $blue-wordpress;
+		}
+	}
 }
 
 .comment-detail__author-info-element {
@@ -401,7 +410,9 @@ a.comment-detail__author-more-element {
 
 	.comment-detail__author-info {
 		line-height: 1.2;
+		overflow: hidden;
 		padding-left: 8px;
+		text-overflow: ellipsis;
 	}
 }
 
