@@ -12,6 +12,7 @@ import { COMMENTS_LIST_REQUEST, COMMENTS_RECEIVE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import replies from './replies';
+import likes from './likes';
 import { errorNotice } from 'state/notices/actions';
 import { getRawSite } from 'state/sites/selectors';
 
@@ -67,4 +68,5 @@ const fetchHandler = {
 export default mergeHandlers(
 	fetchHandler,
 	replies,
+	likes,
 );
