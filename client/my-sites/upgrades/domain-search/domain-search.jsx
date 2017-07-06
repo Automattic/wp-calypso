@@ -6,7 +6,6 @@ import page from 'page';
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -103,7 +102,7 @@ class DomainSearch extends Component {
 			} );
 		let content;
 
-		if ( ! this.state.domainRegistrationAvailable || isEmpty( this.props.productsList ) ) {
+		if ( ! this.state.domainRegistrationAvailable ) {
 			content = (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/illustration-500.svg"
