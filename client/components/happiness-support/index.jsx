@@ -2,6 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
+import localize from 'i18n-calypso';
 import React from 'react';
 import sample from 'lodash/sample';
 
@@ -38,7 +39,7 @@ const HappinessSupport = React.createClass( {
 
 		return (
 			<Button href={ url } target={ target }>
-				{ this.translate( 'Ask a question' ) }
+				{ this.props.translate( 'Ask a question' ) }
 			</Button>
 		);
 	},
@@ -63,7 +64,7 @@ const HappinessSupport = React.createClass( {
 
 		return (
 			<Button href={ url } target="_blank" rel="noopener noreferrer">
-				{ this.translate( 'Search our support site' ) }
+				{ this.props.translate( 'Search our support site' ) }
 			</Button>
 		);
 	},
@@ -79,11 +80,11 @@ const HappinessSupport = React.createClass( {
 				{ this.renderGravatar() }
 
 				<h3 className="happiness-support__heading">
-					{ this.translate( 'Enjoy priority support from our Happiness Engineers' ) }
+					{ this.props.translate( 'Enjoy priority support from our Happiness Engineers' ) }
 				</h3>
 
 				<p className="happiness-support__text">
-					{ this.translate(
+					{ this.props.translate(
 						'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site, your account or how to do just about anything.',
 						{
 							components: {
@@ -102,4 +103,4 @@ const HappinessSupport = React.createClass( {
 	}
 } );
 
-export default HappinessSupport;
+export default localize( HappinessSupport );
