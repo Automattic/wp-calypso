@@ -105,6 +105,11 @@ export const doInitialSetup = (
 			group_id: 'products',
 			id: 'woocommerce_weight_unit',
 			value: 'lbs',
+		},
+		{
+			group_id: 'general',
+			id: 'woocommerce_calc_taxes',
+			value: 'yes',
 		}
 	];
 

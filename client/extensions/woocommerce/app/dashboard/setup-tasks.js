@@ -10,13 +10,10 @@ import React, { Component, PropTypes } from 'react';
  * Internal dependencies
  */
 import {
-	areTaxCalculationsEnabled,
-} from 'woocommerce/state/sites/settings/general/selectors';
-import {
 	areSetupChoicesLoading,
 	getOptedOutOfShippingSetup,
-	getOptedOutofTaxesSetup,
 	getTriedCustomizerDuringInitialSetup,
+	getCheckedTaxSetup,
 } from 'woocommerce/state/sites/setup-choices/selectors';
 import {
 	getTotalProducts
@@ -30,8 +27,8 @@ import {
 import {
 	fetchSetupChoices,
 	setOptedOutOfShippingSetup,
-	setOptedOutOfTaxesSetup,
 	setTriedCustomizerDuringInitialSetup,
+	setCheckedTaxSetup,
 } from 'woocommerce/state/sites/setup-choices/actions';
 import {
 	fetchSettingsGeneral,
@@ -55,7 +52,6 @@ class SetupTasks extends Component {
 		super( props );
 		this.state = {
 			showShippingTask: props.loading || ! props.optedOutOfShippingSetup,
-			showTaxesTask: props.loading || ! props.optedOutOfTaxesSetup,
 		};
 	}
 
@@ -91,12 +87,8 @@ class SetupTasks extends Component {
 		this.props.setOptedOutOfShippingSetup( this.props.site.ID, true );
 	}
 
-	onClickNoTaxes = () => {
-		event.preventDefault();
-		this.setState( {
-			showTaxesTask: false
-		} );
-		this.props.setOptedOutOfTaxesSetup( this.props.site.ID, true );
+	onClickTaxSettings = () => {
+		this.props.setCheckedTaxSetup( this.props.site.ID, true );
 	}
 
 	onClickOpenCustomizer = () => {
@@ -164,18 +156,13 @@ class SetupTasks extends Component {
 				checked: taxesAreSetUp,
 				explanation: translate( 'Taxes. Everyone\'s favorite. We made it simple.' ),
 				label: translate( 'Set up taxes' ),
-				show: this.state.showTaxesTask,
+				show: true,
 				actions: [
 					{
 						label: translate( 'Set up taxes' ),
 						path: getLink( '/store/settings/taxes/:site', site ),
+						onClick: this.onClickTaxSettings,
 						analyticsProp: 'set-up-taxes',
-					},
-					{
-						label: translate( 'I won\'t be charging sales tax' ),
-						isSecondary: true,
-						onClick: this.onClickNoTaxes,
-						analyticsProp: 'no-taxes',
 					}
 				]
 			},
@@ -225,12 +212,11 @@ function mapStateToProps( state ) {
 	return {
 		loading: areSetupChoicesLoading( state ),
 		optedOutOfShippingSetup: getOptedOutOfShippingSetup( state ),
-		optedOutOfTaxesSetup: getOptedOutofTaxesSetup( state ),
 		triedCustomizer: getTriedCustomizerDuringInitialSetup( state ),
 		hasProducts: getTotalProducts( state ) > 0,
 		paymentsAreSetUp: arePaymentsSetup( state ),
 		shippingIsSetUp: areAnyShippingMethodsEnabled( state ),
-		taxesAreSetUp: !! areTaxCalculationsEnabled( state ),
+		taxesAreSetUp: getCheckedTaxSetup( state ),
 	};
 }
 
@@ -242,7 +228,7 @@ function mapDispatchToProps( dispatch ) {
 			fetchSettingsGeneral,
 			fetchSetupChoices,
 			setOptedOutOfShippingSetup,
-			setOptedOutOfTaxesSetup,
+			setCheckedTaxSetup,
 			setTriedCustomizerDuringInitialSetup,
 		},
 		dispatch

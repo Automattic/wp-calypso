@@ -9,6 +9,7 @@ import { spy } from 'sinon';
  */
 import {
 	fetchSetupChoices,
+	setCheckedTaxSetup,
 	setFinishedInitialSetup,
 	setFinishedInstallOfRequiredPlugins,
 	setOptedOutOfShippingSetup,
@@ -474,6 +475,64 @@ describe( 'actions', () => {
 					siteId,
 					key: 'finished_page_setup',
 					value: true,
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#setCheckedTaxSetup', () => {
+		const siteId = '123';
+
+		useSandbox();
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/sites/123/calypso-preferences/woocommerce', {
+					checked_tax_setup: true,
+				} )
+				.reply( 200, {
+					finished_initial_setup: false,
+					opted_out_of_shipping_setup: false,
+					opted_out_of_taxes_setup: false,
+					tried_customizer_during_initial_setup: false,
+					created_default_shipping_zone: false,
+					finished_initial_install_of_required_plugins: false,
+					set_store_address_during_initial_setup: false,
+					checked_tax_setup: true,
+				} );
+		} );
+
+		it( 'should dispatch an action', () => {
+			const getState = () => ( {} );
+			const dispatch = spy();
+			setCheckedTaxSetup( siteId, true )( dispatch, getState );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST,
+				siteId,
+				key: 'checked_tax_setup',
+				value: true
+			} );
+		} );
+
+		it( 'should dispatch a success action with setup choices when request completes', () => {
+			const getState = () => ( {} );
+			const dispatch = spy();
+			const response = setCheckedTaxSetup( siteId, true )( dispatch, getState );
+
+			return response.then( () => {
+				expect( dispatch ).to.have.been.calledWith( {
+					type: WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
+					siteId,
+					data: {
+						finished_initial_setup: false,
+						opted_out_of_shipping_setup: false,
+						opted_out_of_taxes_setup: false,
+						tried_customizer_during_initial_setup: false,
+						created_default_shipping_zone: false,
+						finished_initial_install_of_required_plugins: false,
+						set_store_address_during_initial_setup: false,
+						checked_tax_setup: true,
+					}
 				} );
 			} );
 		} );

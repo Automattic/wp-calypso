@@ -92,6 +92,10 @@ export const setCreatedDefaultShippingZone = ( siteId, value ) => ( dispatch ) =
 	return updateSetupChoice( dispatch, siteId, 'created_default_shipping_zone', value );
 };
 
+export const setCheckedTaxSetup = ( siteId, value ) => ( dispatch ) => {
+	return updateSetupChoice( dispatch, siteId, 'checked_tax_setup', value );
+};
+
 export const setFinishedInstallOfRequiredPlugins = ( siteId, value ) => ( dispatch ) => {
 	return updateSetupChoice( dispatch, siteId, 'finished_initial_install_of_required_plugins', value );
 };
