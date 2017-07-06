@@ -35,7 +35,7 @@ class SimplePaymentsDialog extends Component {
 			return [
 				...actionButtons,
 				<Button onClick={ noop } primary>
-					{ translate( 'Add' ) }
+					{ translate( 'Insert' ) }
 				</Button>
 			];
 		}

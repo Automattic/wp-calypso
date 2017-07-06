@@ -46,6 +46,8 @@ export default localize( class SimplePaymentsDialogNavigation extends Component 
 
 		// We are on "Payment Buttons" view.
 
+		// TODO: update the count={ 2 } magic number with real data
+
 		return (
 			<SectionHeader
 				className={ classNames }
