@@ -44,10 +44,15 @@ class AddressView extends Component {
 	renderEditable = () => {
 		const { onChange, translate } = this.props;
 		const { city, country, postcode, street, street2, state } = this.props.address;
-		const countryData = find( getCountries(), { code: country || 'US' } );
-		const foundCountry = Boolean( countryData );
-		const states = foundCountry ? countryData.states : [];
-		const statesLabel = foundCountry ? countryData.statesLabel : translate( 'State' );
+		let countryData = find( getCountries(), { code: country || 'US' } );
+
+		// If we still haven't found any country data, default to US.
+		// This will catch any case where `country` is defined, but not a supported country.
+		if ( ! Boolean( countryData ) ) {
+			countryData = find( getCountries(), { code: 'US' } );
+		}
+
+		const { states, statesLabel } = countryData;
 
 		return (
 			<div className="address-view__fields-editable">
@@ -78,7 +83,6 @@ class AddressView extends Component {
 					<FormFieldSet className="address-view__editable-state">
 						<FormLabel>{ statesLabel }</FormLabel>
 						<FormSelect
-							disabled={ ! foundCountry }
 							name="state"
 							onChange={ onChange }
 							value={ state }
