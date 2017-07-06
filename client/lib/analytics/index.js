@@ -35,7 +35,7 @@ const tracksDebug = debug( 'calypso:analytics:tracks' );
 
 import emitter from 'lib/mixins/emitter';
 
-import { statsdUrl } from 'lib/analytics/statsd';
+import { statsdTimingUrl } from 'lib/analytics/statsd';
 
 // Load tracking scripts
 window._tkq = window._tkq || [];
@@ -287,7 +287,7 @@ const analytics = {
 		/* eslint-enable no-unused-vars */
 
 			if ( config( 'boom_analytics_enabled' ) ) {
-				const imgUrl = statsdUrl( pageUrl, eventType, duration, document.location.pathname );
+				const imgUrl = statsdTimingUrl( pageUrl, eventType, duration, document.location.pathname );
 				new Image().src = imgUrl;
 			}
 		}

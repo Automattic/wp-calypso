@@ -7,13 +7,13 @@ import url from 'url';
 /**
  * Internal dependencies
  */
-import { statsdUrl } from '../statsd';
+import { statsdTimingUrl } from '../statsd';
 
 describe( 'StatsD Analytics', function() {
-	describe( 'statsdUrl', function() {
+	describe( 'statsdTimingUrl', function() {
 		it( 'returns a URL for recording timing data to statsd', function() {
 			const sdUrl = url.parse(
-				statsdUrl( '/post/mysite.com', 'page-load', 150 ),
+				statsdTimingUrl( '/post/mysite.com', 'page-load', 150 ),
 				true,
 				true
 			);

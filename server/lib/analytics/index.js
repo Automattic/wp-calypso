@@ -7,13 +7,13 @@ import superagent from 'superagent';
  * Internal dependencies
  */
 import config from 'config';
-import { statsdUrl } from '../../../client/lib/analytics/statsd';
+import { statsdTimingUrl } from '../../../client/lib/analytics/statsd';
 
 const analytics = {
 	statsd: {
 		recordTiming: function( featureSlug, eventType, duration ) {
 			if ( config( 'server_side_boom_analytics_enabled' ) ) {
-				const url = statsdUrl( featureSlug, eventType, duration );
+				const url = statsdTimingUrl( featureSlug, eventType, duration );
 				superagent.get( url ).end();
 			}
 		}

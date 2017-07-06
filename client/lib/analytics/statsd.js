@@ -8,7 +8,7 @@ import startsWith from 'lodash/startsWith';
  */
 import config from 'config';
 
-export function statsdUrl( path, eventType, duration, currentPath = undefined ) {
+export function statsdTimingUrl( path, eventType, duration, currentPath = undefined ) {
 	let featureSlug = path === '/' ? 'homepage' : path.replace( /^\//, '' ).replace( /\.|\/|:/g, '_' );
 	let matched;
 	// prevent explosion of read list metrics

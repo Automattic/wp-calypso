@@ -33,26 +33,26 @@ describe( 'Server-Side Analytics', function() {
 		} );
 
 		it( 'sends an HTTP request to the statsd URL', function() {
-			sinon.stub( statsd, 'statsdUrl' ).returns( 'http://example.com/boom.gif' );
+			sinon.stub( statsd, 'statsdTimingUrl' ).returns( 'http://example.com/boom.gif' );
 
 			analytics.statsd.recordTiming( 'reader', 'page-render', 150 );
 
-			expect( statsd.statsdUrl ).to.have.been.calledWith( 'reader', 'page-render', 150 );
+			expect( statsd.statsdTimingUrl ).to.have.been.calledWith( 'reader', 'page-render', 150 );
 			expect( superagent.get ).to.have.been.calledWith( 'http://example.com/boom.gif' );
 
-			statsd.statsdUrl.restore();
+			statsd.statsdTimingUrl.restore();
 		} );
 
 		it( 'does nothing if statsd analytics is not allowed', function() {
 			mockConfig.server_side_boom_analytics_enabled = false;
-			sinon.stub( statsd, 'statsdUrl' );
+			sinon.stub( statsd, 'statsdTimingUrl' );
 
 			analytics.statsd.recordTiming( 'reader', 'page-render', 150 );
 
-			expect( statsd.statsdUrl ).not.to.have.been.called;
+			expect( statsd.statsdTimingUrl ).not.to.have.been.called;
 			expect( superagent.get ).not.to.have.been.called;
 
-			statsd.statsdUrl.restore();
+			statsd.statsdTimingUrl.restore();
 		} );
 	} );
 } );
