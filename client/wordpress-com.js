@@ -312,6 +312,14 @@ sections.push( {
 } );
 
 sections.push( {
+	name: 'reader',
+	paths: [ '/read/conversations' ],
+	module: 'reader/conversations',
+	secondary: true,
+	group: 'reader'
+} );
+
+sections.push( {
 	name: 'help',
 	paths: [ '/help' ],
 	module: 'me/help',
