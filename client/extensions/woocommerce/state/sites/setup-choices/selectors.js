@@ -128,6 +128,17 @@ export function getFinishedPageSetup( state, siteId = getSelectedSiteId( state )
 }
 
 /**
+ * Gets whether the tax page was clicked through to during setup
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether or not all the tax page was clicked through to during setup
+ */
+export function getCheckedTaxSetup( state, siteId = getSelectedSiteId( state ) ) {
+	return isChoiceTrue( state, siteId, 'checked_tax_setup' );
+}
+
+/**
  * Gets whether the merchant completed setting the store address during setup
  *
  * @param {Object} state Global state tree
