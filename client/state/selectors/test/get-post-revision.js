@@ -102,4 +102,29 @@ describe( 'getPostRevision', () => {
 			author: 1,
 		} );
 	} );
+
+	it( 'should normalize the revision', () => {
+		expect( getPostRevision( {
+			posts: {
+				revisions: {
+					revisions: {
+						12345678: {
+							10: {
+								11: {
+									id: 11,
+									title: '&acute;',
+								},
+							},
+						},
+					},
+				},
+			},
+			users: {
+				items: {},
+			},
+		}, 12345678, 10, 11, 'editing' ) ).to.eql( {
+			id: 11,
+			title: '´',
+		} );
+	} );
 } );

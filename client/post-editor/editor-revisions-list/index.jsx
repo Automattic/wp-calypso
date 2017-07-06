@@ -14,10 +14,6 @@ import EditorRevisionsListItem from './item';
 import QueryPostRevisions from 'components/data/query-post-revisions';
 import getPostRevision from 'state/selectors/get-post-revision';
 import getPostRevisions from 'state/selectors/get-post-revisions';
-import {
-	normalizeForDisplay,
-	normalizeForEditing
-} from 'state/selectors/utils/revisions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import viewport from 'lib/viewport';
@@ -96,17 +92,12 @@ export default connect(
 		return {
 			postId,
 			revisions: orderBy(
-				map(
-					getPostRevisions( state, siteId, postId ),
-					normalizeForDisplay
-				),
+				getPostRevisions( state, siteId, postId, 'display' ),
 				'date',
 				'desc'
 			),
-			selectedRevision: normalizeForEditing(
-				getPostRevision(
-					state, siteId, postId, ownProps.selectedRevisionId
-				)
+			selectedRevision: getPostRevision(
+				state, siteId, postId, ownProps.selectedRevisionId, 'editing'
 			),
 			siteId,
 		};

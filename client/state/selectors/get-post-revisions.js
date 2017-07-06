@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import { get, map, partial } from 'lodash';
+import { get, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { hydrateRevision } from 'state/selectors/utils/revisions';
+import { hydrateRevision, normalizeRevision } from 'state/selectors/utils/revisions';
 
 const getPostRevisions = createSelector(
-	( state, siteId, postId ) => map(
+	( state, siteId, postId, normalizerName = null ) => map(
 		get( state.posts.revisions.revisions, [ siteId, postId ], {} ),
-		partial( hydrateRevision, state )
+		revision => normalizeRevision( normalizerName, hydrateRevision( state, revision ) )
 	),
 	( state ) => [ state.posts.revisions.revisions, state.users.items ]
 );

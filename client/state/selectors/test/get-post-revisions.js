@@ -129,4 +129,39 @@ describe( 'getPostRevisions', () => {
 			}
 		] );
 	} );
+
+	it( 'should normalize all revisions', () => {
+		expect( getPostRevisions( {
+			posts: {
+				revisions: {
+					revisions: {
+						12345678: {
+							10: {
+								11: {
+									id: 11,
+									title: '&acute;',
+								},
+								12: {
+									id: 12,
+									title: '&grave;',
+								}
+							},
+						},
+					},
+				},
+			},
+			users: {
+				items: {},
+			},
+		}, 12345678, 10, 'editing' ) ).to.eql( [
+			{
+				id: 11,
+				title: '´',
+			},
+			{
+				id: 12,
+				title: '`',
+			}
+		] );
+	} );
 } );
