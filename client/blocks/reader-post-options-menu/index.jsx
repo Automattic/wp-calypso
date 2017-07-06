@@ -138,7 +138,7 @@ class ReaderPostOptionsMenu extends React.Component {
 					popoverClassName="reader-post-options-menu__popover"
 					onToggle={ this.onMenuToggle }
 				>
-					{ isTeamMember && site && <ReaderPostOptionsMenuBlogStickers siteId={ +site.ID } /> }
+					{ isTeamMember && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
 
 					{ this.props.showFollow &&
 						<FollowButton tagName={ PopoverMenuItem } siteUrl={ followUrl } /> }

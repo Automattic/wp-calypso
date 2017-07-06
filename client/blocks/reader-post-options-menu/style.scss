@@ -63,3 +63,11 @@
 .reader-post-options-menu__blog-stickers-item {
 	width: 100%;
 }
+
+.reader-post-options-menu__blog-stickers-item.has-sticker {
+	color: $alert-green;
+
+	.gridicon {
+		fill: $alert-green;
+	}
+}

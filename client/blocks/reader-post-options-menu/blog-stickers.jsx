@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { map } from 'lodash';
+import { map, includes } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -11,35 +11,44 @@ import { connect } from 'react-redux';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { getBlogStickers } from 'state/selectors';
 import { addBlogSticker } from 'state/sites/blog-stickers/actions';
+import QueryBlogStickers from 'components/data/query-blog-stickers';
 
 class ReaderPostOptionsMenuBlogStickers extends React.Component {
 	static propTypes = {
-		siteId: React.PropTypes.number.isRequired,
+		blogId: React.PropTypes.number.isRequired,
 	};
 
 	addSticker = stickerName => {
-		this.props.addBlogSticker( this.props.siteId, stickerName );
+		this.props.addBlogSticker( this.props.blogId, stickerName );
 	};
 
 	render() {
 		const blogStickersOffered = [ 'dont-recommend', 'broken-in-reader' ];
+		const { blogId, stickers } = this.props;
 
-		// @todo
-		// - query blog stickers
-		// - highlighted state for stickers already set
-		// - onclick event for setting blog sticker
 		return (
 			<div className="reader-post-options-menu__blog-stickers">
-				{ map( blogStickersOffered, blogStickerName => (
-					<PopoverMenuItem
-						icon="tag"
-						key={ blogStickerName }
-						className="reader-post-options-menu__blog-stickers-item"
-						onClick={ this.addSticker( blogStickerName ) }
-					>
-						{ blogStickerName }
-					</PopoverMenuItem>
-				) ) }
+				{ map(
+					blogStickersOffered,
+					blogStickerName =>
+						( includes( blogStickerName, stickers )
+							? <PopoverMenuItem
+									icon="tag"
+									key={ blogStickerName }
+									className="reader-post-options-menu__blog-stickers-item has-sticker"
+								>
+									{ blogStickerName }
+								</PopoverMenuItem>
+							: <PopoverMenuItem
+									icon="tag"
+									key={ blogStickerName }
+									className="reader-post-options-menu__blog-stickers-item"
+									onClick={ this.addSticker( blogStickerName ) }
+								>
+									{ blogStickerName }
+								</PopoverMenuItem> )
+				) }
+				{ ! stickers && <QueryBlogStickers blogId={ blogId } /> }
 			</div>
 		);
 	}
@@ -48,7 +57,7 @@ class ReaderPostOptionsMenuBlogStickers extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
-			stickers: ownProps.siteId && ownProps.siteId > 0
+			stickers: ownProps.blogId && ownProps.blogId > 0
 				? getBlogStickers( state, ownProps.blogId )
 				: undefined,
 		};
