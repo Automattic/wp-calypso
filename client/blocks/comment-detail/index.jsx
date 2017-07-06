@@ -43,6 +43,7 @@ export class CommentDetail extends Component {
 		replyComment: PropTypes.func,
 		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
+		submitComment: PropTypes.func,
 		toggleCommentLike: PropTypes.func,
 		toggleCommentSelected: PropTypes.func,
 	};
@@ -159,21 +160,21 @@ export class CommentDetail extends Component {
 		return (
 			<Card className={ classes }>
 				<CommentDetailHeader
+					siteId={ siteId }
+					postId={ postId }
+					commentId={ commentId }
 					authorAvatarUrl={ authorAvatarUrl }
 					authorDisplayName={ authorDisplayName }
 					authorUrl={ authorUrl }
 					commentContent={ commentContent }
-					commentIsLiked={ commentIsLiked }
 					commentIsSelected={ commentIsSelected }
 					commentStatus={ commentStatus }
 					deleteCommentPermanently={ this.deleteCommentPermanently }
 					isBulkEdit={ isBulkEdit }
 					isExpanded={ isExpanded }
-					postId={ postId }
 					postTitle={ postTitle }
 					toggleApprove={ this.toggleApprove }
 					toggleExpanded={ this.toggleExpanded }
-					toggleLike={ this.toggleLike }
 					toggleSelected={ this.toggleSelected }
 					toggleSpam={ this.toggleSpam }
 					toggleTrash={ this.toggleTrash }
