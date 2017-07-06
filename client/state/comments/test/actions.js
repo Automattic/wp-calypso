@@ -14,7 +14,6 @@ import {
 	COMMENTS_REMOVE,
 	COMMENTS_REQUEST,
 	COMMENTS_LIKE,
-	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE,
 	COMMENTS_REPLY_WRITE,
@@ -33,7 +32,6 @@ import {
 
 const SITE_ID = 91750058;
 const POST_ID = 287;
-const API_DOMAIN = 'https://public-api.wordpress.com:443';
 
 describe( 'actions', () => {
 	after( () => {

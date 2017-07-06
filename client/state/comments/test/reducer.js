@@ -14,7 +14,6 @@ import {
 } from '../reducer';
 import {
 	COMMENTS_LIKE,
-	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
 	COMMENTS_ERROR,
 	COMMENTS_COUNT_INCREMENT,
@@ -108,24 +107,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( result[ '1-1' ][ 0 ].like_count ).to.equal( 99 );
-			expect( result[ '1-1' ][ 0 ].i_like ).to.equal( false );
-		} );
-
-		it( 'should update like for a comment', () => {
-			const state = deepFreeze( { '1-1': [
-				{ ID: 123, like_count: 100, i_like: true }
-			] } );
-
-			const result = items( state, {
-				type: COMMENTS_LIKE_UPDATE,
-				siteId: 1,
-				postId: 1,
-				commentId: 123,
-				iLike: false,
-				likeCount: 80
-			} );
-
-			expect( result[ '1-1' ][ 0 ].like_count ).to.equal( 80 );
 			expect( result[ '1-1' ][ 0 ].i_like ).to.equal( false );
 		} );
 
