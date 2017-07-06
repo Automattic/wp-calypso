@@ -107,7 +107,9 @@ class PurchaseNotice extends Component {
 
 	handleExpiringNoticeRenewal = () => {
 		this.trackClick( 'purchase-expiring' );
-		this.props.handleRenew();
+		if ( this.props.handleRenew ) {
+			this.props.handleRenew();
+		}
 	}
 
 	renderPurchaseExpiringNotice() {
@@ -184,7 +186,9 @@ class PurchaseNotice extends Component {
 
 	handleExpiredNoticeRenewal = () => {
 		this.trackClick( 'purchase-expired' );
-		this.props.handleRenew();
+		if ( this.props.handleRenew ) {
+			this.props.handleRenew();
+		}
 	}
 
 	renderExpiredRenewNotice() {
