@@ -162,7 +162,7 @@ class SettingsTaxes extends Component {
 					<ExtendedHeader
 						label={ translate( 'Store Address' ) }
 						description={ translate( 'The address of where your business is located for tax purposes.' ) } />
-					<StoreAddress className="taxes__store-address" onSetAddress={ this.onAddressChange } />
+					<StoreAddress className="taxes__store-address" onSetAddress={ this.onAddressChange } showLabel={ false } />
 				</div>
 				<TaxesRates
 					taxesEnabled={ this.state.taxesEnabled }
