@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { forIn, get } from 'lodash';
+import { get } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -51,7 +51,7 @@ if ( desktopEnabled ) {
 /*
  * Object holding functions that will be called once selected site changes.
  */
-const selectedSiteListeners = {};
+let selectedSiteChangeListeners = [];
 
 /**
  * Calls the listeners to selected site.
@@ -60,9 +60,7 @@ const selectedSiteListeners = {};
  * @param {number} siteId     - the selected site id
  */
 const updateSelectedSiteIdForSubscribers = ( dispatch, { siteId } ) => {
-	forIn( selectedSiteListeners, ( listener ) => {
-		listener( siteId );
-	} );
+	selectedSiteChangeListeners.forEach( listener => listener( siteId ) );
 };
 
 /**
@@ -73,7 +71,7 @@ const updateSelectedSiteIdForSubscribers = ( dispatch, { siteId } ) => {
  */
 const receiveSelectedSitesChangeListener = ( dispatch, action ) => {
 	debug( 'receiveSelectedSitesChangeListener' );
-	selectedSiteListeners[ action.subscriberId ] = action.listener;
+	selectedSiteChangeListeners.push( action.listener );
 };
 
 /**
@@ -84,7 +82,7 @@ const receiveSelectedSitesChangeListener = ( dispatch, action ) => {
  */
 const removeSelectedSitesChangeListener = ( dispatch, action ) => {
 	debug( 'removeSelectedSitesChangeListener' );
-	delete selectedSiteListeners[ action.subscriberId ];
+	selectedSiteChangeListeners = selectedSiteChangeListeners.filter( listener => listener !== action.listener );
 };
 
 /*
