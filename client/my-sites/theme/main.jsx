@@ -534,6 +534,13 @@ const ThemeSheet = React.createClass( {
 			} );
 		}
 
+		if ( this.props.retired ) {
+			metas.push( {
+				name: 'robots',
+				content: 'noindex'
+			} );
+		}
+
 		const links = [ { rel: 'canonical', href: canonicalUrl } ];
 
 		return (
