@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { restoreProgressSchema } from './schema';
 import {
 	REWIND_RESTORE,
 	REWIND_RESTORE_DISMISS_PROGRESS,
@@ -45,3 +46,4 @@ export const restoreProgress = keyedReducer( 'siteId', createReducer( {}, {
 	[ REWIND_RESTORE_DISMISS_PROGRESS ]: stubNull,
 	[ REWIND_RESTORE_UPDATE_PROGRESS ]: updateProgress,
 } ) );
+restoreProgress.schema = restoreProgressSchema;
