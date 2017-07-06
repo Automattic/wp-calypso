@@ -38,7 +38,7 @@ export const updateCommentLikes = ( { dispatch }, { siteId, postId, commentId },
  */
 export const handleLikeFailure = ( { dispatch }, { siteId, postId, commentId } ) => {
 	// revert optimistic updated on error
-	dispatch( { type: COMMENTS_UNLIKE, siteId, postId, commentId } );
+	dispatch( local( { type: COMMENTS_UNLIKE, siteId, postId, commentId } ) );
 	// dispatch a error notice
 	dispatch( errorNotice( translate( 'Could not like this comment' ) ) );
 };

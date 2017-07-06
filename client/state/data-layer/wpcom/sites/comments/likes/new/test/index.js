@@ -68,12 +68,12 @@ describe( '#handleLikeFailure()', () => {
 		handleLikeFailure( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
 
 		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWith( {
+		expect( dispatch ).to.have.been.calledWith( local( {
 			type: COMMENTS_UNLIKE,
 			siteId: SITE_ID,
 			postId: POST_ID,
 			commentId: 1
-		} );
+		} ) );
 	} );
 
 	it( 'should dispatch an error notice', () => {
