@@ -11,7 +11,7 @@ import React from 'react';
 import { deleteStoredCard } from 'state/stored-cards/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { isDeletingStoredCard } from 'state/stored-cards/selectors';
-import StoredCard from 'my-sites/upgrades/checkout/stored-card';
+import StoredCard from 'my-sites/checkout/checkout/stored-card';
 
 const CreditCardDelete = React.createClass( {
 	handleClick: function() {

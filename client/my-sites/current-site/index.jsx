@@ -18,7 +18,7 @@ import Site from 'blocks/site';
 import Gridicon from 'gridicons';
 import UpgradesActions from 'lib/upgrades/actions';
 import DomainsStore from 'lib/domains/store';
-import DomainWarnings from 'my-sites/upgrades/components/domain-warnings';
+import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import config from 'config';
 import SiteNotice from './notice';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';

@@ -180,9 +180,16 @@ const sections = [
 		title: 'Themes'
 	},
 	{
-		name: 'upgrades',
-		paths: [ '/domains', '/checkout' ],
-		module: 'my-sites/upgrades',
+		name: 'domains',
+		paths: [ '/domains' ],
+		module: 'my-sites/domains',
+		secondary: true,
+		group: 'sites'
+	},
+	{
+		name: 'checkout',
+		paths: [ '/checkout' ],
+		module: 'my-sites/checkout',
 		secondary: true,
 		group: 'sites'
 	},
@@ -380,7 +387,7 @@ sections.push( {
 sections.push( {
 	name: 'domain-connect-authorize',
 	paths: [ '/domain-connect' ],
-	module: 'my-sites/upgrades/domain-management/domain-connect',
+	module: 'my-sites/domains/domain-management/domain-connect',
 	enableLoggedOut: false,
 	secondary: false,
 	isomorphic: false
