@@ -33,7 +33,7 @@ class ActivityLogDay extends Component {
 			tsEndOfSiteDay,
 			requestRestore,
 		} = this.props;
-		requestRestore( tsEndOfSiteDay );
+		requestRestore( tsEndOfSiteDay, 'day' );
 	};
 
 	/**

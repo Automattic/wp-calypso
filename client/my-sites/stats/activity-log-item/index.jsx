@@ -141,13 +141,12 @@ class ActivityLogItem extends Component {
 
 	static defaultProps = { allowRestore: true };
 
-	// TODO: Add analytics
 	handleClickRestore = () => {
 		const {
 			requestRestore,
 			log,
 		} = this.props;
-		requestRestore( log.ts_utc );
+		requestRestore( log.ts_utc, 'item' );
 	};
 
 	handleOpen = () => debug( 'opened log', this.props.log );

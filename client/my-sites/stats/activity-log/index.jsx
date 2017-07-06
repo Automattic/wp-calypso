@@ -94,8 +94,9 @@ class ActivityLog extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	handleRequestRestore = ( requestedRestoreTimestamp ) => {
+	handleRequestRestore = ( requestedRestoreTimestamp, from ) => {
 		this.props.recordTracksEvent( 'calypso_activity_log_request_restore', {
+			from,
 			timestamp: requestedRestoreTimestamp,
 		} );
 		this.setState( {
