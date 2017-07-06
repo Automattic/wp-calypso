@@ -11,7 +11,7 @@ import React, { Component, PropTypes } from 'react';
  * Internal dependencies
  */
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
-import { getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
+import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import Sidebar from 'layout/sidebar';
@@ -75,10 +75,10 @@ class StoreSidebar extends Component {
 	}
 
 	renderSidebarMenuItems = ( items, buttons, isDisabled ) => {
-		const { site, finishedInitialSetup, page } = this.props;
+		const { site, finishedAddressSetup, page } = this.props;
 
 		return items.map( function( item, index ) {
-			if ( ! item.showDuringSetup && ! finishedInitialSetup ) {
+			if ( ! item.showDuringSetup && ! finishedAddressSetup ) {
 				return null;
 			}
 			const isChild = ( 'undefined' !== typeof item.parentSlug );
@@ -166,9 +166,9 @@ class StoreSidebar extends Component {
 }
 
 function mapStateToProps( state ) {
-	const finishedInitialSetup = getFinishedInitialSetup( state );
+	const finishedAddressSetup = getSetStoreAddressDuringInitialSetup( state );
 	return {
-		finishedInitialSetup,
+		finishedAddressSetup,
 		site: getSelectedSiteWithFallback( state )
 	};
 }
