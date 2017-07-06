@@ -57,7 +57,7 @@ class ErrorNotice extends Component {
 	render() {
 		const error = this.getError();
 
-		if ( ! error || ( error.field && error.field !== 'global' ) || ! error.message ) {
+		if ( ! error || ( error.field && error.field !== 'global' ) || ! error.message || error.code === 'existing_wpcom_user' ) {
 			return null;
 		}
 

@@ -135,23 +135,6 @@ class Login extends Component {
 		);
 	}
 
-	renderError() {
-		const error = this.props.requestError ||
-			this.props.twoFactorAuthRequestError ||
-			this.props.requestAccountError ||
-			this.props.createAccountError && this.props.createAccountError.code !== 'unknown_user' ? this.props.createAccountError : null;
-
-		if ( ! error || ( error.field && error.field !== 'global' ) || error.code === 'existing_wpcom_user' || ! error.message ) {
-			return null;
-		}
-
-		return (
-			<Notice status={ 'is-error' } showDismiss={ false }>
-				{ error.message }
-			</Notice>
-		);
-	}
-
 	renderNotice() {
 		const { requestNotice } = this.props;
 
