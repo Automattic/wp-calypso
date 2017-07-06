@@ -17,6 +17,10 @@ function ProgressBanner( {
 	timestamp,
 	translate,
 } ) {
+	const restoreStatusDescription = status === 'queued'
+		? translate( 'Hold tight, your restore will begin soon.' )
+		: translate( 'Sit back and relax, your site is currently being restored.' );
+
 	return (
 		<ActivityLogBanner
 			status="info"
@@ -29,14 +33,16 @@ function ProgressBanner( {
 			) }</p>
 
 			<div>
-				<em>{
-					/*
-					* FIXME: Do we have a detailed message or should this be removed?
-					* FIXME: Show a message for `queued` status before progress?
-					* */
-					translate( 'Currently restoring posts…' )
-				}</em>
-				<ProgressBar value={ percent } isPulsing={ status === 'running' } />
+				<em>{ restoreStatusDescription }</em>
+				<ProgressBar
+					className={
+						status === 'queued'
+							? 'activity-log-banner__progress-bar--queued'
+							: null
+					}
+					isPulsing
+					value={ status === 'queued' ? 100 : percent }
+				/>
 			</div>
 		</ActivityLogBanner>
 	);
