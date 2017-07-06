@@ -602,10 +602,7 @@ export function isThemePremium( state, themeId ) {
  * @return {Boolean}         True if the premium theme is available for the given site
  */
 export function isPremiumThemeAvailable( state, themeId, siteId ) {
-	return isThemePurchased( state, themeId, siteId ) || (
-			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) &&
-			! isJetpackSite( state, siteId )
-		);
+	return isThemePurchased( state, themeId, siteId ) || hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES );
 }
 
 /**

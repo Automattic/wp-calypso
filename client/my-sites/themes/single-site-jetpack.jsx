@@ -164,7 +164,7 @@ export default connect(
 		return {
 			canManage: canJetpackSiteManage( state, siteId ),
 			hasJetpackThemes: hasJetpackSiteJetpackThemes( state, siteId ),
-			tier: tier,
+			tier,
 			showWpcomThemesList,
 			emptyContent,
 			isMultisite,
