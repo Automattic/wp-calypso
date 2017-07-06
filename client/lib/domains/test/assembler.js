@@ -41,6 +41,7 @@ describe( 'assembler', () => {
 			hasPrivacyProtection: undefined,
 			isAutoRenewing: undefined,
 			isPendingIcannVerification: undefined,
+			isPendingWhoisUpdate: undefined,
 			isPrimary: false,
 			name: DOMAIN_NAME,
 			manualTransferRequired: undefined,
@@ -50,7 +51,9 @@ describe( 'assembler', () => {
 			pendingTransfer: undefined,
 			registrar: undefined,
 			registrationMoment: undefined,
+			subscriptionId: undefined,
 			type: domainTypes.SITE_REDIRECT,
+			transferLockOnWhoisUpdateOptional: undefined,
 			hasZone: undefined,
 			pointsToWpcom: undefined
 		},

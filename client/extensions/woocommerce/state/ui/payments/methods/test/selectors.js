@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	arePaymentsSetup,
 	getPaymentMethodEdits,
 	getPaymentMethodsWithEdits,
 	getCurrentlyEditingPaymentMethod,
@@ -118,6 +119,24 @@ describe( 'selectors', () => {
 				currentlyEditingChanges: { name: 'This name has not been saved yet' },
 			};
 			expect( getPaymentMethodsWithEdits( state ) ).to.deep.equal( [ { id: 1, name: 'Method1' } ] );
+		} );
+	} );
+
+	describe( 'arePaymentsSetup', () => {
+		it( 'should return false when there are no enabled payemnt methods', () => {
+			siteState.paymentMethods = [
+				{ id: 1, enabled: false },
+			];
+
+			expect( arePaymentsSetup( state ) ).to.be.false;
+		} );
+
+		it( 'should return true when there are is an enabled payemnt method', () => {
+			siteState.paymentMethods = [
+				{ id: 1, enabled: true },
+			];
+
+			expect( arePaymentsSetup( state ) ).to.be.true;
 		} );
 	} );
 

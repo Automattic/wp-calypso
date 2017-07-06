@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import i18n from 'i18n-calypso';
-import { trim, debounce } from 'lodash';
+import { trim, debounce, isNumber } from 'lodash';
 
 /**
  * Internal dependencies
@@ -86,6 +86,19 @@ export default class ProductFormDetailsCard extends Component {
 		editProduct( siteId, product, { images } );
 	}
 
+	renderTinyMCE = () => {
+		const { product } = this.props;
+
+		if ( ( isNumber( product.id ) && 'undefined' === typeof product.description ) || 'undefined' === typeof product.id ) {
+			return <div className="products__product-form-tinymce-placeholder"></div>;
+		}
+
+		return <CompactTinyMCE
+			initialValue={ product.description || '' }
+			onContentsChange={ this.debouncedSetDescription }
+		/>;
+	}
+
 	render() {
 		const { product } = this.props;
 		const images = product.images || [];
@@ -122,10 +135,7 @@ export default class ProductFormDetailsCard extends Component {
 						</FormFieldSet>
 						<FormFieldSet className="products__product-form-details-basic-description">
 							<FormLabel htmlFor="description">{ __( 'Description' ) }</FormLabel>
-							<CompactTinyMCE
-								value={ product.description || '' }
-								onContentsChange={ this.debouncedSetDescription }
-							/>
+							{ this.renderTinyMCE() }
 						</FormFieldSet>
 					</div>
 				</div>

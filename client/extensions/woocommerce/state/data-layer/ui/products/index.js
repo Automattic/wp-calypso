@@ -13,8 +13,9 @@ import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions
 import { getAllProductEdits } from 'woocommerce/state/ui/products/selectors';
 import { getAllVariationEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { getAllProductCategoryEdits } from 'woocommerce/state/ui/product-categories/selectors';
+import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
 import { createProduct, updateProduct } from 'woocommerce/state/sites/products/actions';
-import { createProductVariation, updateProductVariation } from 'woocommerce/state/sites/product-variations/actions';
+import { createProductVariation, updateProductVariation, deleteProductVariation } from 'woocommerce/state/sites/product-variations/actions';
 import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
 import {
 	actionListStepNext,
@@ -23,14 +24,25 @@ import {
 	actionListClear,
 } from 'woocommerce/state/action-list/actions';
 import {
+	WOOCOMMERCE_PRODUCT_EDIT,
+	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
 	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
 	WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE,
 } from 'woocommerce/state/action-types';
 
 export default {
+	[ WOOCOMMERCE_PRODUCT_EDIT ]: [ actionAppendProductVariations ],
+	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: [ actionAppendProductVariations ],
 	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT ]: [ handleProductCategoryEdit ],
 	[ WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE ]: [ handleProductActionListCreate ],
 };
+
+export function actionAppendProductVariations( { getState }, action ) {
+	const { siteId } = action;
+	const productId = action.product && action.product.id;
+
+	action.productVariations = getVariationsForProduct( getState(), productId, siteId );
+}
 
 export function handleProductCategoryEdit( { dispatch, getState }, action ) {
 	const rootState = getState();
@@ -278,19 +290,24 @@ export function makeProductVariationSteps( rootState, siteId, productEdits, vari
 
 	let variationCreates = [];
 	let variationUpdates = [];
+	let variationDeletes = [];
 
-	variationEdits.map( ( { productId, creates, updates } ) => {
+	variationEdits.map( ( { productId, creates, updates, deletes } ) => {
 		variationCreates = ( creates || [] ).map( ( variation ) => {
 			return variationCreateStep( siteId, productId, variation );
 		} );
 		variationUpdates = ( updates || [] ).map( ( variation ) => {
 			return variationUpdateStep( siteId, productId, variation );
 		} );
+		variationDeletes = ( deletes || [] ).map( ( variationId ) => {
+			return variationDeleteStep( siteId, productId, variationId );
+		} );
 	} );
 
 	return [
 		...variationCreates,
 		...variationUpdates,
+		...variationDeletes,
 	];
 }
 
@@ -319,6 +336,21 @@ function variationUpdateStep( siteId, productId, variation ) {
 				siteId,
 				productId,
 				variation,
+				actionListStepSuccess( actionList ),
+				actionListStepFailure( actionList ),
+			) );
+		},
+	};
+}
+
+function variationDeleteStep( siteId, productId, variationId ) {
+	return {
+		description: translate( 'Deleting variation' ),
+		onStep: ( dispatch, actionList ) => {
+			dispatch( deleteProductVariation(
+				siteId,
+				productId,
+				variationId,
 				actionListStepSuccess( actionList ),
 				actionListStepFailure( actionList ),
 			) );

@@ -8,6 +8,7 @@ import get from 'lodash/get';
  */
 import { getSiteSlug } from 'state/sites/selectors';
 import { getEditedPost } from 'state/posts/selectors';
+import { getPreference } from 'state/preferences/selectors';
 
 /**
  * Returns the current editor post ID, or `null` if a new post.
@@ -73,4 +74,15 @@ export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
 	}
 
 	return path;
+}
+
+/**
+ * Returns whether the confirmation sidebar is enabled for the given siteId
+ *
+ * @param  {Object}  state Global state tree
+ * @param  {Number}  siteId      Site ID
+ * @return {Boolean}             Whether or not the sidebar is enabled
+ */
+export function isConfirmationSidebarEnabled( state, siteId ) {
+	return getPreference( state, 'editorConfirmationDisabledSites' ).indexOf( siteId ) === -1;
 }

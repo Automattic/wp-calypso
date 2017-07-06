@@ -4,6 +4,7 @@
  */
 import {
 	WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
+	WOOCOMMERCE_PRODUCT_VARIATION_DELETE,
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATED,
 	WOOCOMMERCE_PRODUCT_VARIATIONS_REQUEST,
@@ -66,6 +67,27 @@ export function updateProductVariation( siteId, productId, variation, successAct
 		siteId,
 		productId,
 		variation,
+		successAction,
+		failureAction,
+	};
+}
+
+/**
+ * Action Creator: Delete an existing product variation.
+ *
+ * @param {Number} siteId The id of the site in which the variation's product exists.
+ * @param {Number} productId The id of the product to which this variation belongs.
+ * @param {Object} variationId The id of the variation to be deleted.
+ * @param {Object|Function} [successAction] Action with extra props { productId, sentData, receivedData }
+ * @param {Object|Function} [failureAction] Action with extra props { error }
+ * @return {Object} Action object
+ */
+export function deleteProductVariation( siteId, productId, variationId, successAction, failureAction ) {
+	return {
+		type: WOOCOMMERCE_PRODUCT_VARIATION_DELETE,
+		siteId,
+		productId,
+		variationId,
 		successAction,
 		failureAction,
 	};

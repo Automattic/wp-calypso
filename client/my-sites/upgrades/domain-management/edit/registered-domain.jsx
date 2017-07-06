@@ -27,14 +27,14 @@ const RegisteredDomain = React.createClass( {
 
 		if ( domain.isAutoRenewing ) {
 			return (
-				<Property label={ translate( 'Renews on' ) }>
+				<Property label={ translate( 'Renews on', { comment: 'The corresponding date is in a different cell in the UI, the date is not included within the translated string' } ) }>
 					{ domain.autoRenewalMoment.format( 'LL' ) }
 				</Property>
 			);
 		}
 
 		return (
-			<Property label={ translate( 'Expires on' ) }>
+			<Property label={ translate( 'Expires on', { comment: 'The corresponding date is in a different cell in the UI, the date is not included within the translated string' } ) }>
 				{ domain.expirationMoment.format( 'LL' ) }
 			</Property>
 		);
@@ -212,7 +212,7 @@ const RegisteredDomain = React.createClass( {
 							{ translate( 'Registered Domain' ) }
 						</Property>
 
-						<Property label={ translate( 'Registered on' ) }>
+						<Property label={ translate( 'Registered on', { comment: 'The corresponding date is in a different cell in the UI, the date is not included within the translated string' } ) }>
 							{ domain.registrationMoment.format( 'LL' ) }
 						</Property>
 
@@ -221,6 +221,9 @@ const RegisteredDomain = React.createClass( {
 						{ this.getPrivacyProtection() }
 
 						<SubscriptionSettings
+							type={ domain.type }
+							subscriptionId={ domain.subscriptionId }
+							siteSlug={ this.props.selectedSite.slug }
 							onClick={ this.handlePaymentSettingsClick } />
 					</Card>
 

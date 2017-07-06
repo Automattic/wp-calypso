@@ -7,11 +7,20 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../edits-reducer';
-
 import {
+	clearProductEdits,
 	editProduct,
 	editProductAttribute,
 } from '../actions';
+import {
+	createProduct,
+	updateProduct,
+	productUpdated,
+} from 'woocommerce/state/sites/products/actions';
+import {
+	createProductCategory,
+	productCategoryUpdated,
+} from 'woocommerce/state/sites/product-categories/actions';
 
 const siteId = 123;
 
@@ -71,7 +80,8 @@ describe( 'edits-reducer', () => {
 		expect( edits ).to.not.equal( null );
 		expect( edits.creates ).to.exist;
 		expect( edits.creates[ 0 ] ).to.exist;
-		expect( edits.creates[ 0 ].id ).to.eql( { index: 0 } );
+		expect( edits.creates[ 0 ].id ).to.exist;
+		expect( edits.creates[ 0 ].id.placeholder ).to.exist;
 		expect( edits.creates[ 0 ].name ).to.eql( 'A new product' );
 	} );
 
@@ -101,10 +111,14 @@ describe( 'edits-reducer', () => {
 			name: 'Second product',
 		} ) );
 
-		expect( edits2.creates[ 0 ].id ).to.eql( { index: 0 } );
+		expect( edits2.creates[ 0 ].id ).to.exist;
+		expect( edits2.creates[ 0 ].id.placeholder ).to.exist;
 		expect( edits2.creates[ 0 ].name ).to.eql( 'First product' );
-		expect( edits2.creates[ 1 ].id ).to.eql( { index: 1 } );
+		expect( edits2.creates[ 1 ].id ).to.exist;
+		expect( edits2.creates[ 1 ].id.placeholder ).to.exist;
 		expect( edits2.creates[ 1 ].name ).to.eql( 'Second product' );
+
+		expect( edits2.creates[ 1 ].id ).to.not.eql( edits2.creates[ 0 ].id );
 	} );
 
 	it( 'should create new product in "creates" when editing attribute the first time', () => {
@@ -238,5 +252,116 @@ describe( 'edits-reducer', () => {
 			name: 'First product',
 		} ) );
 		expect( edits1.currentlyEditingId ).to.eql( edits1.updates[ 0 ].id );
+	} );
+
+	it( 'should not add a create edit entry, only set currentlyEditingId, when data is empty', () => {
+		const edits1 = reducer( undefined, editProduct( siteId, null, {} ) );
+
+		expect( edits1.currentlyEditingId ).to.exist;
+		expect( edits1.currentlyEditingId.placeholder ).to.exist;
+		expect( edits1.creates ).to.not.exist;
+	} );
+
+	it( 'should not add an update edit entry, only set currentlyEditingId, when data is empty', () => {
+		const product1 = { id: 1 };
+		const edits1 = reducer( undefined, editProduct( siteId, product1, {} ) );
+
+		expect( edits1.currentlyEditingId ).to.exist;
+		expect( edits1.currentlyEditingId ).to.equal( 1 );
+		expect( edits1.updates ).to.not.exist;
+	} );
+
+	it( 'should update product category placeholder ids when they are updated', () => {
+		const category1 = {
+			id: { placeholder: 'productCategory_1' },
+			name: 'New Category',
+		};
+
+		const createdCategory1 = { ...category1, id: 22 };
+
+		const product1 = {
+			id: { placeholder: 'product_1' },
+			categories: [
+				{ id: { placeholder: 'productCategory_1' } },
+			],
+		};
+
+		const product2 = {
+			id: 42,
+			categories: [
+				{ id: { placeholder: 'productCategory_1' } },
+			],
+		};
+
+		const edits1 = {
+			creates: [ product1 ],
+			updates: [ product2 ],
+		};
+
+		const originatingAction = createProductCategory( siteId, category1 );
+		const action = productCategoryUpdated( siteId, createdCategory1, originatingAction );
+
+		const edits2 = reducer( edits1, action );
+
+		expect( edits1.creates[ 0 ].categories[ 0 ].id ).to.eql( { placeholder: 'productCategory_1' } );
+		expect( edits1.updates[ 0 ].categories[ 0 ].id ).to.eql( { placeholder: 'productCategory_1' } );
+		expect( edits2.creates[ 0 ].categories[ 0 ].id ).to.eql( 22 );
+		expect( edits2.updates[ 0 ].categories[ 0 ].id ).to.eql( 22 );
+	} );
+
+	it( 'should clear product from creates upon successful save', () => {
+		const product1 = {
+			id: { placeholder: 'product_1' },
+			name: 'Product 1',
+		};
+
+		const createdProduct1 = { ...product1, id: 27 };
+
+		const edits1 = {
+			creates: [ product1 ],
+		};
+
+		const originatingAction = createProduct( siteId, product1 );
+		const action = productUpdated( siteId, createdProduct1, originatingAction );
+
+		const edits2 = reducer( edits1, action );
+
+		expect( edits1.creates[ 0 ] ).to.eql( product1 );
+		expect( edits2.creates ).to.not.exist;
+	} );
+
+	it( 'should clear product from updates upon successful save', () => {
+		const product1 = { id: 27, name: 'Product 1', sku: 'product-1' };
+		const product1Update = { id: 27, name: 'Updated name' };
+		const updatedProduct1 = { ...product1, ...product1Update };
+
+		const edits1 = {
+			updates: [ { id: 27, name: 'Updated name' } ],
+		};
+
+		const originatingAction = updateProduct( siteId, updatedProduct1 );
+		const action = productUpdated( siteId, updatedProduct1, originatingAction );
+
+		const edits2 = reducer( edits1, action );
+
+		expect( edits1.updates[ 0 ] ).to.eql( product1Update );
+		expect( edits2.updates ).to.not.exist;
+	} );
+
+	it( 'should clear all product edit data', () => {
+		const edits1 = {
+			creates: [ { id: { placeholder: 'product_1' }, name: 'Product 1' } ],
+			updates: [ { id: 27, name: 'Updated name' } ],
+			deletes: [ 32 ],
+		};
+
+		const action = clearProductEdits( siteId );
+
+		const edits2 = reducer( edits1, action );
+
+		expect( edits1.creates ).to.exist;
+		expect( edits1.updates ).to.exist;
+		expect( edits1.deletes ).to.exist;
+		expect( edits2 ).to.equal( null );
 	} );
 } );

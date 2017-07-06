@@ -97,6 +97,15 @@ export function getTriedCustomizerDuringInitialSetup( state, siteId = getSelecte
 }
 
 /**
+ * @param {Object} state Global state tree
+ * @param {Number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether or not the local shipping zone was already automatically created
+ */
+export function isDefaultShippingZoneCreated( state, siteId = getSelectedSiteId( state ) ) {
+	return isChoiceTrue( state, siteId, 'created_default_shipping_zone' );
+}
+
+/**
  * Gets whether or not all required plugins were installed during setup for this site
  *
  * @param {Object} state Global state tree
@@ -105,6 +114,17 @@ export function getTriedCustomizerDuringInitialSetup( state, siteId = getSelecte
  */
 export function getFinishedInstallOfRequiredPlugins( state, siteId = getSelectedSiteId( state ) ) {
 	return isChoiceTrue( state, siteId, 'finished_initial_install_of_required_plugins' );
+}
+
+/**
+ * Gets whether or not store pages were created during setup for this site
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether or not all store pages were created during setup for this site
+ */
+export function getFinishedPageSetup( state, siteId = getSelectedSiteId( state ) ) {
+	return isChoiceTrue( state, siteId, 'finished_page_setup' );
 }
 
 /**

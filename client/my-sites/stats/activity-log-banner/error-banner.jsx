@@ -44,7 +44,7 @@ class ErrorBanner extends PureComponent {
 					{ translate( 'Try again' ) }
 				</Button>
 				{ '  ' }
-				<Button>
+				<Button href="https://help.vaultpress.com/restore-tips-troubleshooting-steps/">
 					{ translate( 'Get help' ) }
 				</Button>
 			</ActivityLogBanner>

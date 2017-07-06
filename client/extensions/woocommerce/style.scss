@@ -30,6 +30,7 @@
 	@import 'components/store-address/style';
 	@import 'app/store-stats/store-stats-chart/style';
 	@import 'app/store-stats/store-stats-navigation/style';
+	@import 'app/store-stats/store-stats-widget-list/style';
 	@import 'app/store-stats/style';
 	@import 'components/delta/style';
 
@@ -44,6 +45,12 @@
 
 		.button {
 			margin-left: 8px;
+		}
+	}
+
+	.section-nav {
+		@include breakpoint( ">660px" ) {
+			margin-top: 58px;
 		}
 	}
 }

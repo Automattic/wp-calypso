@@ -118,7 +118,9 @@ export const deleteProduct = (
 
 	dispatch( deleteAction );
 
-	return request( siteId ).del( `products/${ productId }` )
+	// ?force=true deletes a product instead of trashing
+	// In v1, we don't have trash management. Later we can trash instead.
+	return request( siteId ).del( `products/${ productId }?force=true` )
 		.then( ( data ) => {
 			dispatch( deleteProductSuccess( siteId, data ) );
 			if ( successAction ) {

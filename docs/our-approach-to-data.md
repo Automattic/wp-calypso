@@ -397,8 +397,8 @@ handlers to avoid data shape errors.
 If we choose not to use `createReducer` we can opt-in to persistence by adding a schema as a property on the reducer. 
 We do this by combining all of our reducers using `combineReducers` from `state/utils` at every level of the tree instead 
 of [combineReducers](http://redux.js.org/docs/api/combineReducers.html) from `redux`. Each reducer is then wrapped with 
-`withSchemaValidation` which returns a wrapped reducer that validates on `DESERIALZE` if a schema is present and 
-returns initial state on both `SERIALIZE` and `DESERIALZE` if a schema is not present.
+`withSchemaValidation` which returns a wrapped reducer that validates on `DESERIALIZE` if a schema is present and 
+returns initial state on both `SERIALIZE` and `DESERIALIZE` if a schema is not present.
 
 To opt-out of persistence we combine the reducers without any attached schema.
 ```javascript

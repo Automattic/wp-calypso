@@ -6,6 +6,7 @@ import { find, isEmpty, isNumber, isNil, map, pullAll } from 'lodash';
 /**
  * Internal dependencies
  */
+import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getAPIShippingZones, areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
 import { getShippingZoneMethod } from 'woocommerce/state/sites/shipping-zone-methods/selectors';
@@ -14,15 +15,32 @@ import { getBucket } from 'woocommerce/state/ui/helpers';
 import { builtInShippingMethods } from 'woocommerce/state/ui/shipping/zones/methods/reducer';
 import { mergeMethodEdits } from './helpers';
 
-const getShippingZone = ( state, zoneId, siteId ) => {
-	if ( ! areShippingZonesLoaded( state, siteId ) ) {
-		return null;
+const getShippingZone = createSelector(
+	( state, zoneId, siteId ) => {
+		if ( ! areShippingZonesLoaded( state, siteId ) ) {
+			return null;
+		}
+		if ( null === zoneId ) {
+			return getCurrentlyEditingShippingZone( state, siteId );
+		}
+		return find( getAPIShippingZones( state, siteId ), { id: zoneId } );
+	},
+	( state, zoneId, siteId ) => {
+		const loaded = areShippingZonesLoaded( state, siteId );
+		return [
+			loaded,
+			loaded && getCurrentlyEditingShippingZone( state, siteId ),
+			loaded && getAPIShippingZones( state, siteId ),
+		];
+	},
+	( state, zoneId, siteId ) => {
+		if ( ! isNumber( zoneId ) ) {
+			return `i${ zoneId.index }${ siteId }`;
+		}
+
+		return `${ zoneId }${ siteId }`;
 	}
-	if ( null === zoneId ) {
-		return getCurrentlyEditingShippingZone( state, siteId );
-	}
-	return find( getAPIShippingZones( state, siteId ), { id: zoneId } );
-};
+);
 
 const getShippingZoneMethodsEdits = ( state, zoneId, siteId ) => {
 	const zonesEdits = getShippingZonesEdits( state, siteId );
@@ -88,14 +106,31 @@ const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
  * @return {Array} The list of shipping methods included in the given shipping zone. On any failure, it will return
  * an empty Array
  */
-export const getShippingZoneMethods = ( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! areShippingZonesLoaded( state, siteId ) ) {
-		return [];
-	}
-	const zone = getShippingZone( state, zoneId, siteId ) || { id: zoneId, methodIds: [] };
+export const getShippingZoneMethods = createSelector(
+	( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! areShippingZonesLoaded( state, siteId ) ) {
+			return [];
+		}
+		const zone = getShippingZone( state, zoneId, siteId ) || { id: zoneId, methodIds: [] };
 
-	return overlayShippingZoneMethods( state, zone, siteId );
-};
+		return overlayShippingZoneMethods( state, zone, siteId );
+	},
+	( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
+		const loaded = areShippingZonesLoaded( state, siteId );
+		return [
+			loaded,
+			loaded && getShippingZone( state, siteId ),
+			loaded && getShippingZonesEdits( state, siteId ),
+		];
+	},
+	( state, zoneId, siteId ) => {
+		if ( ! isNumber( zoneId ) ) {
+			return `i${ zoneId.index }${ siteId }`;
+		}
+
+		return `${ zoneId }${ siteId }`;
+	}
+);
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -104,18 +139,29 @@ export const getShippingZoneMethods = ( state, zoneId, siteId = getSelectedSiteI
  * shipping methods that haven't yet been "committed" to the main state tree. On any failure, it will return
  * an empty Array
  */
-export const getCurrentlyEditingShippingZoneMethods = ( state, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! areShippingZonesLoaded( state, siteId ) ) {
-		return [];
-	}
-	const zone = getCurrentlyEditingShippingZone( state, siteId );
-	if ( ! zone ) {
-		return [];
-	}
+export const getCurrentlyEditingShippingZoneMethods = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! areShippingZonesLoaded( state, siteId ) ) {
+			return [];
+		}
+		const zone = getCurrentlyEditingShippingZone( state, siteId );
+		if ( ! zone ) {
+			return [];
+		}
 
-	const currentMethodEdits = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.methods;
-	return overlayShippingZoneMethods( state, zone, siteId, currentMethodEdits );
-};
+		const currentMethodEdits = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.methods;
+		return overlayShippingZoneMethods( state, zone, siteId, currentMethodEdits );
+	},
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const loaded = areShippingZonesLoaded( state, siteId );
+		const zone = loaded && getCurrentlyEditingShippingZone( state, siteId );
+		return [
+			loaded,
+			zone,
+			zone && getShippingZonesEdits( state, siteId ),
+		];
+	}
+);
 
 /**
  * @param {Object} state Whole Redux state tree

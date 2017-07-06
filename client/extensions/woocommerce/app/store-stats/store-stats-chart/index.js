@@ -19,6 +19,7 @@ import Legend from 'components/chart/legend';
 import Tabs from 'my-sites/stats/stats-tabs';
 import Tab from 'my-sites/stats/stats-tabs/tab';
 import Delta from 'woocommerce/components/delta';
+import formatCurrency from 'lib/format-currency';
 
 class StoreStatsChart extends Component {
 	static propTypes = {
@@ -68,7 +69,7 @@ class StoreStatsChart extends Component {
 		return this.getDeltasBySelectedPeriod()[ stat ];
 	};
 
-	getSelectedIndex = data => {
+	getSelectedIndex = ( data ) => {
 		return findIndex( data, d => d.period === this.props.selectedDate );
 	};
 
@@ -77,10 +78,10 @@ class StoreStatsChart extends Component {
 		const { selectedTabIndex } = this.state;
 		const orderData = data.data;
 		const tabs = [
-			{ label: 'Gross Sales', attr: 'gross_sales' },
-			{ label: 'Net Sales', attr: 'net_sales' },
-			{ label: 'Orders', attr: 'orders' },
-			{ label: 'Average Order Value', attr: 'avg_order_value' },
+			{ label: 'Gross Sales', attr: 'gross_sales', type: 'currency' },
+			{ label: 'Net Sales', attr: 'net_sales', type: 'currency' },
+			{ label: 'Orders', attr: 'orders', type: 'number' },
+			{ label: 'Average Order Value', attr: 'avg_order_value', type: 'currency' },
 		];
 		const selectedTab = tabs[ selectedTabIndex ];
 		const isLoading = ! orderData.length;
@@ -111,7 +112,11 @@ class StoreStatsChart extends Component {
 									selected={ tabIndex === selectedTabIndex }
 									tabClick={ this.tabClick }
 								>
-									<span className="store-stats-chart__value value">{ itemChartData.value }</span>
+									<span className="store-stats-chart__value value">
+										{ ( tab.type === 'currency' )
+											? formatCurrency( itemChartData.value )
+											:	Math.round( itemChartData.value * 100 ) / 100 }
+									</span>
 									<Delta
 										value={ `${ deltaValue }%` }
 										className={ `${ delta.favorable } ${ delta.direction }` }

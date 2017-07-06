@@ -242,7 +242,7 @@ Note for either of the above that because of the SCSS build process, if you're n
 
 You can also define specific values for RTL like so:
 ```scss
-  ..class {
+  .class {
     margin-right: 5px #{"/*rtl:2px*/"};;
   }
 ```

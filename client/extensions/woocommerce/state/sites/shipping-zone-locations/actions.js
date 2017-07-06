@@ -6,6 +6,8 @@ import { setError } from '../status/wc-api/actions';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS,
+	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATE,
+	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED,
 } from 'woocommerce/state/action-types';
 import {
 	areShippingZoneLocationsLoaded,
@@ -50,3 +52,23 @@ export const fetchShippingZoneLocations = ( siteId, zoneId ) => ( dispatch, getS
 			dispatch( setError( siteId, getAction, err ) );
 		} );
 };
+
+export function updateShippingZoneLocations( siteId, zoneId, locations, successAction, failureAction ) {
+	return {
+		type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATE,
+		siteId,
+		zoneId,
+		locations,
+		successAction,
+		failureAction,
+	};
+}
+
+export function shippingZoneLocationsUpdated( siteId, data, originatingAction ) {
+	return {
+		type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED,
+		siteId,
+		data,
+		originatingAction,
+	};
+}

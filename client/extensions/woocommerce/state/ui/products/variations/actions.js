@@ -3,6 +3,7 @@
  */
 import {
 	WOOCOMMERCE_PRODUCT_VARIATION_EDIT,
+	WOOCOMMERCE_PRODUCT_VARIATION_EDIT_CLEAR,
 } from 'woocommerce/state/action-types';
 
 /**
@@ -24,3 +25,17 @@ export function editProductVariation( siteId, product, variation, data ) {
 		data,
 	};
 }
+
+/**
+ * Action Creator: Clear All Product Variation Edits
+ *
+ * @param {Number} siteId The site for which to clear all product variation edits.
+ * @return {Object} action
+ */
+export function clearProductVariationEdits( siteId ) {
+	return {
+		type: WOOCOMMERCE_PRODUCT_VARIATION_EDIT_CLEAR,
+		siteId,
+	};
+}
+

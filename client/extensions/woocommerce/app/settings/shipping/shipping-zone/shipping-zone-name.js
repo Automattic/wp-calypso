@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
+import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormTextInput from 'components/forms/form-text-input';
 import { decodeEntities } from 'lib/formatting';
 import { changeShippingZoneName } from 'woocommerce/state/ui/shipping/zones/actions';
@@ -26,7 +25,7 @@ export const getZoneName = ( zone, locations, translate, returnEmpty = false ) =
 	}
 
 	if ( ! locations || ! locations.length ) {
-		return translate( 'Empty zone' );
+		return translate( 'New shipping zone' );
 	}
 
 	const locationNames = locations.map( ( { name, postcodeFilter } ) => (
@@ -52,72 +51,47 @@ export const getZoneName = ( zone, locations, translate, returnEmpty = false ) =
 	return locationNames.join( ', ' );
 };
 
-class ShippingZoneName extends Component {
-	constructor( props ) {
-		super( props );
+const ShippingZoneName = ( { loaded, zone, locations, actions, translate } ) => {
+	const onNameChange = ( event ) => {
+		actions.changeShippingZoneName( event.target.value );
+	};
 
-		this.state = {
-			editing: false,
-		};
-	}
-
-	render() {
-		const { loaded, isRestOfTheWorld, zone, locations, actions, translate } = this.props;
-		const { editing } = this.state;
-
-		const startEditing = () => ( this.setState( { editing: true } ) );
-		const stopEditing = () => ( this.setState( { editing: false } ) );
-		const onNameChange = ( event ) => {
-			actions.changeShippingZoneName( event.target.value );
-		};
-
-		const renderContent = () => {
-			if ( ! loaded ) {
-				return (
-					<div className="shipping-zone__name is-placeholder">
-						<span />
-						<Button borderless>
-							<Gridicon icon="pencil" size={ 24 } />
-						</Button>
-					</div>
-				);
-			}
-
-			if ( editing ) {
-				return (
-					<div className="shipping-zone__name">
-						<FormTextInput
-							value={ getZoneName( zone, locations, translate, true ) }
-							onChange={ onNameChange }
-							placeholder={ translate( 'Enter a new zone name or leave empty to automatically list locations' ) } />
-						<Button borderless onClick={ stopEditing }>
-							<Gridicon icon="checkmark" size={ 24 } />
-						</Button>
-					</div>
-				);
-			}
-
+	const renderContent = () => {
+		if ( ! loaded ) {
 			return (
-				<div className="shipping-zone__name">
-					<span>{ getZoneName( zone, locations, translate ) }</span>
-					{ isRestOfTheWorld
-						? null
-						: <Button borderless onClick={ startEditing }><Gridicon icon="pencil" size={ 24 } /></Button> }
+				<div className="shipping-zone__name is-placeholder">
+					<span />
 				</div>
 			);
-		};
+		}
+
+		const zoneName = getZoneName( zone, locations, translate, true );
 
 		return (
+			<div className="shipping-zone__name">
+				<FormTextInput
+					value={ zoneName }
+					onChange={ onNameChange }
+					placeholder={ getZoneName( zone, locations, translate ) } />
+			</div>
+		);
+	};
+
+	return (
+		<div>
+			<ExtendedHeader
+				label={ translate( 'Zone name' ) }
+				description={ translate( 'Give the zone a name of your choosing, or just use the one we created for you.' +
+					' This is not visible to customers.' ) } />
 			<Card className="shipping-zone__name-container">
 				{ renderContent() }
 			</Card>
-		);
-	}
-}
+		</div>
+	);
+};
 
 ShippingZoneName.PropTypes = {
 	siteId: PropTypes.number,
-	isRestOfTheWorld: PropTypes.bool.isRequired,
 	loaded: PropTypes.bool.isRequired,
 	zone: PropTypes.object,
 	locations: PropTypes.array,

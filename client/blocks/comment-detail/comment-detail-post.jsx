@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Gravatar from 'components/gravatar';
 import SiteIcon from 'blocks/site-icon';
 
 export const CommentDetailPost = ( {
@@ -21,11 +22,16 @@ export const CommentDetailPost = ( {
 	translate,
 } ) => {
 	if ( parentCommentContent ) {
+		const author = {
+			avatar_URL: parentCommentAuthorAvatarUrl,
+			display_name: parentCommentAuthorDisplayName,
+		};
+
 		return (
 			<div className="comment-detail__post">
 				<div className="comment-detail__site-icon-author-avatar">
 					<SiteIcon siteId={ siteId } size={ 24 } />
-					<img className="comment-detail__author-avatar-image" src={ parentCommentAuthorAvatarUrl } />
+					<Gravatar user={ author } />
 				</div>
 				<div className="comment-detail__post-info">
 					{ parentCommentAuthorDisplayName &&

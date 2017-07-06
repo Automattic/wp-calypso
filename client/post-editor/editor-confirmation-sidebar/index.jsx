@@ -14,6 +14,8 @@ import Gridicon from 'gridicons';
 import RootChild from 'components/root-child';
 import Button from 'components/button';
 import EditorVisibility from 'post-editor/editor-visibility';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -22,6 +24,7 @@ import { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 
 class EditorConfirmationSidebar extends React.Component {
 	static propTypes = {
+		handlePreferenceChange: React.PropTypes.func,
 		onPrivatePublish: React.PropTypes.func,
 		onPublish: React.PropTypes.func,
 		post: React.PropTypes.object,
@@ -43,9 +46,9 @@ class EditorConfirmationSidebar extends React.Component {
 			case 'update':
 				return this.props.translate( 'Update' );
 			case 'schedule':
-				return this.props.translate( 'Schedule' );
+				return this.props.translate( 'Schedule!' );
 			case 'publish':
-				return this.props.translate( 'Publish' );
+				return this.props.translate( 'Publish!' );
 			case 'requestReview':
 				return this.props.translate( 'Submit for Review' );
 		}
@@ -121,6 +124,25 @@ class EditorConfirmationSidebar extends React.Component {
 		);
 	}
 
+	renderNoticeDisplayPreferenceCheckbox() {
+		return (
+			<div className="editor-confirmation-sidebar__display-preference">
+				<FormLabel>
+					<FormCheckbox
+						onChange={ this.props.handlePreferenceChange }
+						defaultChecked
+						className="editor-confirmation-sidebar__display-preference-checkbox"
+						id="confirmation_sidebar_display_preference"
+						name="confirmation_sidebar_display_preference" />
+					<span>{ this.props.translate( 'Show this every time I publish', {
+						comment: 'This string appears in the bottom of a publish confirmation sidebar.' +
+							'There is limited space. Longer strings will wrap.'
+					} ) }</span>
+				</FormLabel>
+			</div>
+		);
+	}
+
 	render() {
 		const isSidebarActive = this.props.status === 'open';
 		const isOverlayActive = this.props.status !== 'closed';
@@ -156,10 +178,22 @@ class EditorConfirmationSidebar extends React.Component {
 							</div>
 						</div>
 						<div className="editor-confirmation-sidebar__content-wrap">
+							<div className="editor-confirmation-sidebar__header">
+								{
+									this.props.translate( '{{strong}}Ready to go?{{/strong}} Double-check and then confirm to publish.', {
+										comment: 'This string appears as the header for the confirmation sidebar ' +
+											'when a user publishes a post or page.',
+										components: {
+											strong: <strong />
+										},
+									} )
+								}
+							</div>
 							<div className="editor-confirmation-sidebar__privacy-control">
 								{ this.renderPrivacyControl() }
 							</div>
 						</div>
+						{ this.renderNoticeDisplayPreferenceCheckbox() }
 					</div>
 				</div>
 			</RootChild>

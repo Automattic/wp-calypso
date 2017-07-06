@@ -121,3 +121,12 @@
 	flex-basis: 25%;
 	text-align:right;
 }
+
+.activity-log-item__id {
+	float: right;
+	font-size: 11px;
+	color: lighten( $gray, 20% );
+	font-style: italic;
+	margin-bottom: 4px;
+	margin-right: -7px;
+}

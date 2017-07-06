@@ -89,7 +89,7 @@ export class MediaLibraryFilterBar extends Component {
 		const { translate } = this.props;
 
 		if ( this.props.source === 'google_photos' ) {
-			return <TitleItem>{ translate( 'Photos from Google' ) }</TitleItem>;
+			return <TitleItem>{ translate( 'Recent photos from Google' ) }</TitleItem>;
 		}
 
 		return null;

@@ -17,13 +17,14 @@
 		flex-direction: row;
 		flex-wrap: wrap;
 	}
-	.store-stats__widgets-column {
-		width: calc(50% - 4px);
-	}
 }
 
 @include breakpoint( ">1280px" ) {
 	.store-stats__widgets-column {
-		width: calc(33% - 3px);
+		width: calc( 33% - 3px );
+
+		&.spark-widgets {
+			width: calc( 50% - 3px );
+		}
 	}
 }

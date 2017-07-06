@@ -9,6 +9,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Main from 'components/main';
 import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import HeaderCake from 'components/header-cake';
 import HostCredentialsPage from './host-credentials-page';
@@ -75,7 +76,7 @@ export default React.createClass( {
 		const { siteId, siteSlug } = this.props;
 
 		return (
-			<div className="guided-transfer">
+			<Main className="guided-transfer__main site-settings">
 				<QuerySiteGuidedTransfer siteId={ siteId } />
 				<div className="guided-transfer__header-nav">
 					<HeaderCake
@@ -100,7 +101,7 @@ export default React.createClass( {
 					</div>
 					: <TransferUnavailableCard siteId={ siteId } siteSlug={ siteSlug } />
 				}
-			</div>
+			</Main>
 		);
 	}
 } );

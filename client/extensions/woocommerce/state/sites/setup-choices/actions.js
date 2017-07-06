@@ -5,12 +5,15 @@ import {
 	areSetupChoicesLoaded,
 	areSetupChoicesLoading,
 } from './selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import request from '../request';
 import { setError } from '../status/wc-api/actions';
 import {
 	WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST,
 	WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETUP_CHOICES_REQUEST,
 	WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS,
+	WOOCOMMERCE_SETUP_STORE_PAGES_REQUEST,
 } from 'woocommerce/state/action-types';
 import wp from 'lib/wp';
 
@@ -85,10 +88,36 @@ export const setTriedCustomizerDuringInitialSetup = ( siteId, value ) => ( dispa
 	return updateSetupChoice( dispatch, siteId, 'tried_customizer_during_initial_setup', value );
 };
 
+export const setCreatedDefaultShippingZone = ( siteId, value ) => ( dispatch ) => {
+	return updateSetupChoice( dispatch, siteId, 'created_default_shipping_zone', value );
+};
+
 export const setFinishedInstallOfRequiredPlugins = ( siteId, value ) => ( dispatch ) => {
 	return updateSetupChoice( dispatch, siteId, 'finished_initial_install_of_required_plugins', value );
 };
 
 export const setSetStoreAddressDuringInitialSetup = ( siteId, value ) => ( dispatch ) => {
 	return updateSetupChoice( dispatch, siteId, 'set_store_address_during_initial_setup', value );
+};
+
+export const setUpStorePages = ( siteId ) => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+
+	const action = {
+		type: WOOCOMMERCE_SETUP_STORE_PAGES_REQUEST,
+		siteId,
+	};
+
+	dispatch( action );
+
+	return request( siteId ).post( 'system_status/tools/install_pages' )
+		.then( () => {
+			updateSetupChoice( dispatch, siteId, 'finished_page_setup', true );
+		} )
+		.catch( err => {
+			dispatch( setError( siteId, action, err ) );
+		} );
 };

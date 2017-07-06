@@ -23,7 +23,7 @@ export const linkSchema = {
 	items: {
 		type: 'object',
 		properties: {
-			name: { type: 'string' },
+			href: { type: 'string' },
 			rel: { type: 'string' },
 		}
 	}

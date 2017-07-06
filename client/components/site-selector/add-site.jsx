@@ -15,10 +15,8 @@ import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
-import sitesFactory from 'lib/sites-list';
 import { abtest } from 'lib/abtest';
-
-const sites = sitesFactory();
+import { hasJetpackSites } from 'state/selectors';
 
 class SiteSelectorAddSite extends Component {
 	constructor() {
@@ -38,7 +36,7 @@ class SiteSelectorAddSite extends Component {
 	}
 
 	getAddNewSiteUrl() {
-		if ( sites.getJetpack().length ||
+		if ( this.props.hasJetpackSites ||
 			abtest( 'newSiteWithJetpack' ) === 'showNewJetpackSite' ) {
 			return '/jetpack/new/?ref=calypso-selector';
 		}
@@ -117,7 +115,9 @@ class SiteSelectorAddSite extends Component {
 }
 
 export default connect(
-	null,
+	state => ( {
+		hasJetpackSites: hasJetpackSites( state )
+	} ),
 	dispatch => bindActionCreators( {
 		recordTracksEvent
 	}, dispatch )

@@ -134,7 +134,7 @@ describe( 'selectors', () => {
 
 	describe( 'getProductEdits', () => {
 		it( 'should get a product from "creates"', () => {
-			const newProduct = { id: { index: 0 }, name: 'New Product' };
+			const newProduct = { id: { placeholder: 'product_0' }, name: 'New Product' };
 			const uiProducts = state.extensions.woocommerce.ui.products;
 			set( uiProducts, [ siteId, 'edits', 'creates' ], [ newProduct ] );
 
@@ -151,13 +151,13 @@ describe( 'selectors', () => {
 
 		it( 'should return undefined if no edits are found for productId', () => {
 			expect( getProductEdits( state, 1 ) ).to.not.exist;
-			expect( getProductEdits( state, { index: 9 } ) ).to.not.exist;
+			expect( getProductEdits( state, { placeholder: 'product_9' } ) ).to.not.exist;
 		} );
 	} );
 
 	describe( 'getProductWithLocalEdits', () => {
 		it( 'should get just edits for a product in "creates"', () => {
-			const newProduct = { id: { index: 0 }, name: 'New Product' };
+			const newProduct = { id: { placeholder: 'product_0' }, name: 'New Product' };
 			const uiProducts = state.extensions.woocommerce.ui.products;
 			set( uiProducts, [ siteId, 'edits', 'creates' ], [ newProduct ] );
 
@@ -182,7 +182,7 @@ describe( 'selectors', () => {
 
 		it( 'should return undefined if no product is found for productId', () => {
 			expect( getProductWithLocalEdits( state, 42 ) ).to.not.exist;
-			expect( getProductWithLocalEdits( state, { index: 42 } ) ).to.not.exist;
+			expect( getProductWithLocalEdits( state, { placeholder: 'product_42' } ) ).to.not.exist;
 		} );
 	} );
 
@@ -192,7 +192,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should get the last edited product', () => {
-			const newProduct = { id: { index: 0 }, name: 'New Product' };
+			const newProduct = { id: { placeholder: 'product_0' }, name: 'New Product' };
 			const uiProducts = state.extensions.woocommerce.ui.products;
 			set( uiProducts, [ siteId, 'edits', 'creates' ], [ newProduct ] );
 			set( uiProducts, [ siteId, 'edits', 'currentlyEditingId' ], newProduct.id );

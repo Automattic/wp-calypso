@@ -51,7 +51,7 @@ const WpcomDomain = React.createClass( {
 							{ this.translate( 'Included with Site' ) }
 						</Property>
 
-						<Property label={ this.translate( 'Renews on' ) }>
+						<Property label={ this.translate( 'Renews on', { comment: 'The corresponding date is in a different cell in the UI, the date is not included within the translated string' } ) }>
 							<em>{ this.translate( 'Never Expires' ) }</em>
 						</Property>
 					</Card>

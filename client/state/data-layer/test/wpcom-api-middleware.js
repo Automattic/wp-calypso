@@ -34,7 +34,7 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( handlers )( store )( next )( action );
 
-		expect( store.dispatch ).to.not.have.beenCalled;
+		expect( store.dispatch ).to.not.have.been.called;
 		expect( next ).to.have.been.calledWith( action );
 	} );
 
@@ -48,10 +48,10 @@ describe( 'WordPress.com API Middleware', () => {
 		middleware( handlers )( store )( next )( action );
 
 		expect( next ).to.have.been.calledWith( action );
-		expect( adder ).to.not.have.beenCalled;
+		expect( adder ).to.not.have.been.called;
 	} );
 
-	it( 'should not pass along non-local actions with non data-layer meta', () => {
+	it( 'should pass along non-local actions with non data-layer meta', () => {
 		const adder = spy();
 		const handlers = mergeHandlers( {
 			[ 'ADD' ]: [ adder ],
@@ -60,20 +60,20 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( handlers )( store )( next )( action );
 
-		expect( next ).to.not.have.beenCalled;
+		expect( next ).to.have.been.calledOnce;
 		expect( adder ).to.have.been.calledWith( store, action );
 	} );
 
-	it( 'should not pass along non-local actions with data-layer meta but no bypass', () => {
+	it( 'should pass non-local actions with data-layer meta but no bypass', () => {
 		const adder = spy();
 		const handlers = mergeHandlers( {
 			[ 'ADD' ]: [ adder ],
 		} );
-		const action = { type: 'ADD', meta: { dataLayer: { data: 42 } } };
+		const action = { type: 'ADD', meta: { dataLayer: { groupoid: 42 } } };
 
 		middleware( handlers )( store )( next )( action );
 
-		expect( next ).to.not.have.beenCalled;
+		expect( next ).to.have.been.calledOnce;
 		expect( adder ).to.have.been.calledWith( store, action );
 	} );
 
@@ -116,7 +116,7 @@ describe( 'WordPress.com API Middleware', () => {
 
 		expect( adder ).to.have.been.calledWith( store, action );
 		expect( doubler ).to.have.been.calledWith( store, action );
-		expect( next ).to.not.have.beenCalled;
+		expect( next ).to.have.been.calledOnce;
 	} );
 
 	it( 'should call all given handlers (different lists)', () => {
@@ -133,6 +133,51 @@ describe( 'WordPress.com API Middleware', () => {
 
 		expect( adder ).to.have.been.calledWith( store, action );
 		expect( doubler ).to.have.been.calledWith( store, action );
-		expect( next ).to.not.have.beenCalled;
+		expect( next ).to.have.been.calledOnce;
+	} );
+
+	describe( 'network response', () => {
+		let adder;
+		let handlers;
+		const action = { type: 'ADD' };
+
+		beforeEach( () => {
+			adder = spy();
+			handlers = mergeHandlers( {
+				[ 'ADD' ]: [ adder ]
+			} );
+		} );
+
+		it( 'should not pass along actions for a network response that contains headers', () => {
+			const meta = { dataLayer: { headers: {} } };
+
+			middleware( handlers )( store )( next )( { ...action, meta } );
+
+			expect( next ).to.have.not.been.called;
+		} );
+
+		it( 'should not pass along actions for a network response that contains data', () => {
+			const meta = { dataLayer: { data: {} } };
+
+			middleware( handlers )( store )( next )( { ...action, meta } );
+
+			expect( next ).to.have.not.been.called;
+		} );
+
+		it( 'should not pass along actions for a network response that contains an error', () => {
+			const meta = { dataLayer: { error: {} } };
+
+			middleware( handlers )( store )( next )( { ...action, meta } );
+
+			expect( next ).to.have.not.been.called;
+		} );
+
+		it( 'should not pass along actions for a network response that contains a progress report', () => {
+			const meta = { dataLayer: { progress: { total: 1, loaded: 1 } } };
+
+			middleware( handlers )( store )( next )( { ...action, meta } );
+
+			expect( next ).to.have.not.been.called;
+		} );
 	} );
 } );

@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -106,7 +107,9 @@ const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actio
 			<ExtendedHeader
 				label={ translate( 'Zone locations' ) }
 				description={ translate( 'Define the places that are included in this zone.' ) } >
-				<Button onClick={ onAddLocation } disabled={ ! loaded } >{ translate( 'Edit locations' ) }</Button>
+				<Button onClick={ onAddLocation } disabled={ ! loaded } >
+					{ isEmpty( locations ) ? translate( 'Add locations' ) : translate( 'Edit locations' ) }
+				</Button>
 			</ExtendedHeader>
 			<List>
 				<ListHeader>

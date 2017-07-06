@@ -103,7 +103,7 @@ export class EditorMediaModal extends Component {
 		if ( nextProps.visible ) {
 			this.setState( this.getDefaultState( nextProps ) );
 
-			if ( nextProps.source && this.state.source !== nextProps.source ) {
+			if ( nextProps.source && this.state.source !== nextProps.source && nextProps.site ) {
 				// Signal that we're coming from another data source
 				MediaActions.sourceChanged( nextProps.site.ID );
 			}

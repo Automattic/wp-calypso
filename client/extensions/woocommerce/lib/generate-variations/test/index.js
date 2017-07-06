@@ -174,4 +174,43 @@ describe( 'generateVariations', () => {
 		expect( variations[ 0 ].sku ).to.equal( 'red-small' );
 		expect( variations[ 1 ].sku ).to.equal( 'blue-small' );
 	} );
+
+	it( 'copies id and sku from existing product variations, where available', () => {
+		const product = { id: 2, attributes: [
+			{
+				name: 'Color',
+				options: [ 'Red', 'Blue' ],
+				variation: true,
+				uid: 'edit_0',
+			},
+			{
+				name: 'Size',
+				options: [ 'Small' ],
+				variation: true,
+				uid: 'edit_1',
+			},
+		] };
+
+		const productVariations = [
+			{ id: 25, sku: 'its-red-and-small', attributes: [
+				{ id: 0, name: 'Color', option: 'Red' },
+				{ id: 1, name: 'Size', option: 'Small' },
+			] },
+			{ sku: 'its-blue-and-small', attributes: [
+				{ id: 2, name: 'Color', option: 'Blue' },
+				{ id: 1, name: 'Size', option: 'Small' },
+			] },
+		];
+
+		const variations = generateVariations( product, productVariations );
+
+		expect( variations[ 0 ].id ).to.equal( 25 );
+		expect( variations[ 0 ].sku ).to.equal( 'its-red-and-small' );
+		expect( variations[ 0 ].attributes[ 0 ].id ).to.equal( 0 );
+		expect( variations[ 0 ].attributes[ 1 ].id ).to.equal( 1 );
+		expect( variations[ 1 ].id ).to.not.exist;
+		expect( variations[ 1 ].sku ).to.equal( 'its-blue-and-small' );
+		expect( variations[ 1 ].attributes[ 0 ].id ).to.equal( 2 );
+		expect( variations[ 1 ].attributes[ 1 ].id ).to.equal( 1 );
+	} );
 } );
