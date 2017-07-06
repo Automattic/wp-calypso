@@ -137,9 +137,9 @@ class CheckoutThankYouHeader extends React.Component {
 			<div className={ classNames( classes ) }>
 				<div className="checkout-thank-you__header-icon">
 					{
-						this.props.hasFailedPurchases ?
-							<img src="/calypso/images/upgrades/items-failed.svg" /> :
-							<img src="/calypso/images/upgrades/thank-you.svg" />
+						this.props.hasFailedPurchases
+							? <img src="/calypso/images/upgrades/items-failed.svg" />
+							: <img src="/calypso/images/upgrades/thank-you.svg" />
 					}
 				</div>
 				<div className="checkout-thank-you__header-content">
