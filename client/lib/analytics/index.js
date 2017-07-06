@@ -287,7 +287,32 @@ const analytics = {
 		/* eslint-enable no-unused-vars */
 
 			if ( config( 'boom_analytics_enabled' ) ) {
-				const imgUrl = statsdTimingUrl( pageUrl, eventType, duration, document.location.pathname );
+				let featureSlug = pageUrl === '/' ? 'homepage' : pageUrl.replace( /^\//, '' ).replace( /\.|\/|:/g, '_' );
+				let matched;
+				// prevent explosion of read list metrics
+				// this is a hack - ultimately we want to report this URLs in a more generic way to
+				// google analytics
+				if ( startsWith( featureSlug, 'read_list' ) ) {
+					featureSlug = 'read_list';
+				} else if ( startsWith( featureSlug, 'tag_' ) ) {
+					featureSlug = 'tag__id';
+				} else if ( startsWith( featureSlug, 'domains_add_suggestion_' ) ) {
+					featureSlug = 'domains_add_suggestion__suggestion__domain';
+				} else if ( startsWith( document.location.pathname, '/plugins/browse/' ) ) {
+					featureSlug = 'plugins_browse__site';
+				} else if ( featureSlug.match( /^plugins_[^_].*__/ ) ) {
+					featureSlug = 'plugins__site__plugin';
+				} else if ( featureSlug.match( /^plugins_[^_]/ ) ) {
+					featureSlug = 'plugins__site__unknown'; // fail safe because there seems to be some URLs we're not catching
+				} else if ( startsWith( featureSlug, 'read_post_feed_' ) ) {
+					featureSlug = 'read_post_feed__id';
+				} else if ( startsWith( featureSlug, 'read_post_id_' ) ) {
+					featureSlug = 'read_post_id__id';
+				} else if ( ( matched = featureSlug.match( /^start_(.*)_(..)$/ ) ) != null ) {
+					featureSlug = `start_${ matched[ 1 ] }`;
+				}
+
+				const imgUrl = statsdTimingUrl( featureSlug, eventType, duration );
 				new Image().src = imgUrl;
 			}
 		}
