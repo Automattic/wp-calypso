@@ -27,6 +27,7 @@ class ActivityLogDay extends Component {
 
 	static defaultProps = {
 		allowRestore: true,
+		disableRestore: false,
 		isRewindActive: true,
 	};
 
@@ -61,7 +62,10 @@ class ActivityLogDay extends Component {
 	 * @returns { object } Button to display.
 	 */
 	getRewindButton( type = '' ) {
-		const { allowRestore } = this.props;
+		const {
+			allowRestore,
+			disableRestore,
+		} = this.props;
 
 		if ( ! allowRestore ) {
 			return null;
@@ -71,7 +75,7 @@ class ActivityLogDay extends Component {
 			<Button
 				className="activity-log-day__rewind-button"
 				compact
-				disabled={ ! this.props.isRewindActive }
+				disabled={ disableRestore || ! this.props.isRewindActive }
 				onClick={ this.handleClickRestore }
 				primary={ 'primary' === type }
 			>
@@ -112,6 +116,7 @@ class ActivityLogDay extends Component {
 	render() {
 		const {
 			allowRestore,
+			disableRestore,
 			logs,
 			requestRestore,
 			siteId,
@@ -131,6 +136,7 @@ class ActivityLogDay extends Component {
 						<ActivityLogItem
 							key={ index }
 							allowRestore={ allowRestore }
+							disableRestore={ disableRestore }
 							siteId={ siteId }
 							requestRestore={ requestRestore }
 							log={ log }
