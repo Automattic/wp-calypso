@@ -41,7 +41,6 @@ export const CommentLikes = ( {
 	translate,
 } ) => {
 	const { i_like, like_count } = commentLike;
-	const likeLabel = getLabel( i_like, like_count, translate );
 
 	return (
 		<Button
@@ -50,7 +49,7 @@ export const CommentLikes = ( {
 			onClick={ i_like ? dispatchUnlike : dispatchLike }
 		>
 			<Gridicon icon={ i_like ? 'star' : 'star-outline' } />
-			<span>{ likeLabel }</span>
+			<span>{ getLabel( i_like, like_count, translate ) }</span>
 		</Button>
 	);
 };
