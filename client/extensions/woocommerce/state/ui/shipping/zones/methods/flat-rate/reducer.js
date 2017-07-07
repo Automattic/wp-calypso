@@ -9,7 +9,7 @@ import {
 
 const initialState = {
 	tax_status: 'none',
-	cost: 0,
+	cost: 5,
 };
 
 const reducer = {};
