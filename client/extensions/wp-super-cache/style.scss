@@ -198,7 +198,8 @@
 }
 
 .wp-super-cache__lock-down-container,
-.wp-super-cache__cdn-fieldsets {
+.wp-super-cache__cdn-fieldsets,
+.wp-super-cache__debug-fieldsets {
 	margin-left: 40px;
 }
 
@@ -220,4 +221,11 @@
 .wp-super-cache__main  .wp-super-cache__lock-down-code-block-button {
 	margin-right: 0;
 	float: right;
+}
+
+.wp-super-cache__main  .wp-super-cache__debug-cache-comment-snippet {
+	font-family: monospace, serif;
+	font-style: normal;
+	display: block;
+	white-space: pre;
 }
