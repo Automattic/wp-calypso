@@ -388,10 +388,10 @@ export const PostEditor = React.createClass( {
 							revision={ get( this.state, 'post.revisions.length', 0 ) }
 						/>
 						: null }
-						<EditorNotice
-							{ ...this.state.notice }
-							onDismissClick={ this.hideNotice }
-							onViewClick={ this.onPreview } />
+					<EditorNotice
+						{ ...this.state.notice }
+						onDismissClick={ this.hideNotice }
+						onViewClick={ this.onPreview } />
 				</div>
 				{ isTrashed
 					? <RestorePostDialog
