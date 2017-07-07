@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -12,11 +12,12 @@ import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import Gravatar from 'components/gravatar';
 import SectionHeader from 'components/section-header';
-import Site from 'blocks/site';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QueryJetpackUserConnection from 'components/data/query-jetpack-user-connection';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import {
 	isJetpackSiteConnected,
@@ -24,7 +25,7 @@ import {
 	isJetpackUserMaster,
 } from 'state/selectors';
 
-class SiteOwnership extends PureComponent {
+class SiteOwnership extends Component {
 	renderPlaceholder() {
 		return (
 			<Card className="manage-connection__card site-settings__card is-placeholder">
@@ -33,9 +34,24 @@ class SiteOwnership extends PureComponent {
 		);
 	}
 
+	renderCurrentUser() {
+		const { currentUser } = this.props;
+		if ( ! currentUser ) {
+			return;
+		}
+
+		return (
+			<div className="manage-connection__user">
+				<Gravatar user={ currentUser } size={ 24 } />
+				<span className="manage-connection__user-name">
+					{ currentUser.display_name }
+				</span>
+			</div>
+		);
+	}
+
 	renderConnectionDetails() {
 		const {
-			site,
 			siteIsConnected,
 			siteIsInDevMode,
 			translate,
@@ -63,7 +79,10 @@ class SiteOwnership extends PureComponent {
 							: translate( 'Somebody else owns this site\'s connection to WordPress.com.' )
 					}
 				</FormSettingExplanation>
-				<Site site={ site } indicator={ false } compact />
+				{
+					userIsMaster &&
+					this.renderCurrentUser()
+				}
 			</div>
 		);
 	}
@@ -110,7 +129,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			site: getSelectedSite( state ),
+			currentUser: getCurrentUser( state ),
 			siteId,
 			siteIsConnected: isJetpackSiteConnected( state, siteId ),
 			siteIsJetpack: isJetpackSite( state, siteId ),
