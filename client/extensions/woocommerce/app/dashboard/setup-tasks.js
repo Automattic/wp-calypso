@@ -122,20 +122,14 @@ class SetupTasks extends Component {
 			},
 			{
 				checked: shippingIsSetUp,
-				explanation: translate( 'Be ready to ship by the time your first order comes in.' ),
-				label: translate( 'Set up shipping' ),
+				explanation: translate( 'We\'ve set up shipping so that free shipping is available to customers in your country' ),
+				label: translate( 'Review shipping settings' ),
 				show: this.state.showShippingTask,
 				actions: [
 					{
 						label: translate( 'Set up shipping' ),
 						path: getLink( '/store/settings/shipping/:site', site ),
 						analyticsProp: 'set-up-shipping',
-					},
-					{
-						label: translate( 'I won\'t be shipping' ),
-						isSecondary: true,
-						onClick: this.onClickNoShip,
-						analyticsProp: 'not-shipping',
 					}
 				]
 			},
