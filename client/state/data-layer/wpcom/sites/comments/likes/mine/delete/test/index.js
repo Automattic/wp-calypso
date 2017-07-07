@@ -20,7 +20,7 @@ import {
 import { local } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-const SITE_ID = 91750058;
+const SITE_ID = 77203074;
 const POST_ID = 287;
 
 describe( '#unlikeComment()', () => {
