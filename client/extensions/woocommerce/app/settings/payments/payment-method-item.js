@@ -25,7 +25,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
-import PaymentMethodEdit from './payment-method-edit';
+import PaymentMethodEditDialog from './payment-method-edit-dialog';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 import PaymentMethodPaypal from './payment-method-paypal';
 import PaymentMethodStripe from './payment-method-stripe';
@@ -143,6 +143,7 @@ class PaymentMethodItem extends Component {
 			return (
 				<PaymentMethodPaypal
 					method={ currentlyEditingMethod }
+					onCancel={ this.onCancel }
 					onEditField={ this.onEditField }
 					onSave={ this.onSave } />
 			);
@@ -151,13 +152,15 @@ class PaymentMethodItem extends Component {
 			return (
 				<PaymentMethodStripe
 					method={ currentlyEditingMethod }
+					onCancel={ this.onCancel }
 					onEditField={ this.onEditField }
 					onSave={ this.onSave } />
 			);
 		}
 		return (
-			<PaymentMethodEdit
+			<PaymentMethodEditDialog
 				method={ currentlyEditingMethod }
+				onCancel={ this.onCancel }
 				onEditField={ this.onEditField }
 				onSave={ this.onSave } />
 		);

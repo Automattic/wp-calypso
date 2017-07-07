@@ -8,7 +8,7 @@ import { isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormPasswordInput from 'components/forms/form-password-input';
@@ -31,15 +31,13 @@ class PaymentMethodEdit extends Component {
 			} ),
 		} ),
 		translate: PropTypes.func.isRequired,
+		onCancel: PropTypes.func.isRequired,
 		onEditField: PropTypes.func.isRequired,
+		onSave: PropTypes.func.isRequired,
 	};
 
 	onEditFieldHandler = ( e ) => {
 		this.props.onEditField( e.target.name, e.target.value );
-	}
-
-	onSaveHandler = () => {
-		this.props.onSave( this.props.method );
 	}
 
 	renderEditCheckbox = ( setting ) => {
@@ -110,16 +108,20 @@ class PaymentMethodEdit extends Component {
 		);
 	}
 
+	buttons = [
+		{ action: 'cancel', label: this.props.translate( 'Cancel' ), onClick: this.props.onCancel },
+		{ action: 'add', label: this.props.translate( 'Save' ), onClick: this.props.onSave, isPrimary: true },
+	];
+
 	render() {
-		const { method, translate } = this.props;
+		const { method } = this.props;
 		const settingsFieldsKeys = method.settings && Object.keys( method.settings );
 		return (
-			<div className="payments__method-edit-fields">
+			<Dialog
+				buttons={ this.buttons }
+				isVisible="true">
 				{ settingsFieldsKeys.map( this.renderEditField ) }
-				<Button primary onClick={ this.onSaveHandler }>
-					{ translate( 'Save' ) }
-				</Button>
-			</div>
+			</Dialog>
 		);
 	}
 
