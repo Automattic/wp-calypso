@@ -44,6 +44,7 @@ class ThemesSelection extends Component {
 			PropTypes.oneOf( [ 'wpcom', 'wporg' ] )
 		] ),
 		themes: PropTypes.array,
+		excludeChild: PropTypes.bool,
 		themesCount: PropTypes.number,
 		isRequesting: PropTypes.bool,
 		isLastPage: PropTypes.bool,
@@ -54,6 +55,7 @@ class ThemesSelection extends Component {
 	}
 
 	static defaultProps = {
+		excludeChild: false,
 		emptyContent: null,
 		showUploadButton: true
 	}
@@ -168,7 +170,7 @@ class ThemesSelection extends Component {
 }
 
 const ConnectedThemesSelection = connect(
-	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
+	( state, { filter, page, search, tier, vertical, siteId, source, excludeChild } ) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		let sourceSiteId;
 		if ( source === 'wpcom' || source === 'wporg' ) {
@@ -189,6 +191,9 @@ const ConnectedThemesSelection = connect(
 			filter: compact( [ filter, vertical ] ).join( ',' ),
 			number
 		};
+		if ( 'undefined' !== typeof excludeChild && excludeChild ) {
+			query.exclude_child = excludeChild;
+		}
 
 		return {
 			query,

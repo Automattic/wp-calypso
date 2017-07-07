@@ -39,6 +39,7 @@ const ConnectedThemesSelection = connectOptions(
 	( props ) => {
 		return (
 			<ThemesSelection { ...props }
+				excludeChild={ true }
 				getOptions={ function( theme ) {
 					return pickBy(
 						addTracking( props.options ),
