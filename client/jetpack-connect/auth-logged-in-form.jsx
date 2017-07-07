@@ -131,7 +131,7 @@ class LoggedInForm extends Component {
 	}
 
 	renderFormHeader( isConnected ) {
-		const { translate } = this.props;
+		const { translate, isAlreadyOnSitesList } = this.props;
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const headerText = ( isConnected )
 			? translate( 'You are connected!' )
@@ -140,7 +140,7 @@ class LoggedInForm extends Component {
 			? translate( 'Thank you for flying with Jetpack' )
 			: translate( 'Jetpack is finishing up the connection process' );
 		const siteCard = versionCompare( queryObject.jp_version, '4.0.3', '>' )
-			? <SiteCard queryObject={ queryObject } />
+			? <SiteCard queryObject={ queryObject } isAlreadyOnSitesList={ isAlreadyOnSitesList } />
 			: null;
 
 		return (
@@ -284,8 +284,11 @@ class LoggedInForm extends Component {
 	}
 
 	renderNotices() {
-		const { authorizeError, queryObject, isAuthorizing, authorizeSuccess } = this.props.jetpackConnectAuthorize;
-		if ( queryObject.already_authorized && ! this.props.isFetchingSites && ! this.props.isAlreadyOnSitesList ) {
+		const { authorizeError, queryObject, isAuthorizing, authorizeSuccess, userAlreadyConnected } = this.props.jetpackConnectAuthorize;
+		if (
+			( queryObject.already_authorized && ! this.props.isFetchingSites && ! this.props.isAlreadyOnSitesList ) ||
+			( userAlreadyConnected )
+		) {
 			return <JetpackConnectNotices noticeType="alreadyConnectedByOtherUser" />;
 		}
 

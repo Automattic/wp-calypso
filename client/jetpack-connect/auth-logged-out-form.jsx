@@ -68,12 +68,12 @@ class LoggedOutForm extends Component {
 	}
 
 	renderFormHeader() {
-		const { translate } = this.props;
+		const { translate, isAlreadyOnSitesList } = this.props;
 		const headerText = translate( 'Create your account' );
 		const subHeaderText = translate( 'You are moments away from connecting your site.' );
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const siteCard = versionCompare( queryObject.jp_version, '4.0.3', '>' )
-			? <SiteCard queryObject={ queryObject } />
+			? <SiteCard queryObject={ queryObject } isAlreadyOnSitesList={ isAlreadyOnSitesList } />
 			: null;
 
 		return (

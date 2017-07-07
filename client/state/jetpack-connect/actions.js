@@ -36,6 +36,7 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
+	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
 	SITES_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_SUCCESS,
@@ -328,17 +329,28 @@ export default {
 				type: SITE_REQUEST,
 				siteId
 			} );
+			debug( 'checking that site is accessible', siteId );
 			return wpcom.site( siteId ).get()
 			.then( ( site ) => {
 				accessibleSite = site;
-				return wpcom.undocumented().isUserConnected( siteId );
+				debug( 'site is accessible! checking that user is connected', siteId );
+				return wpcom.undocumented().jetpackIsUserConnected( siteId );
 			} )
 			.then( () => {
-				dispatch( receiveSite( omit( accessibleSite, '_headers' ) ) );
+				debug( 'user is connected to site.', accessibleSite );
 				dispatch( {
 					type: SITE_REQUEST_SUCCESS,
 					siteId
 				} );
+				dispatch( {
+					type: JETPACK_CONNECT_USER_ALREADY_CONNECTED
+				} );
+				if ( ! siteIsOnSitesList ) {
+					debug( 'adding site to sites list' );
+					dispatch( receiveSite( omit( accessibleSite, '_headers' ) ) );
+				} else {
+					debug( 'site is already on sites list' );
+				}
 			} )
 			.catch( ( error ) => {
 				dispatch( {
@@ -346,7 +358,9 @@ export default {
 					siteId,
 					error
 				} );
+				debug( 'user is not connected from', error );
 				if ( siteIsOnSitesList ) {
+					debug( 'removing site from sites list', siteId );
 					dispatch( receiveDeletedSite( siteId ) );
 				}
 			} );

@@ -20,8 +20,9 @@ class SiteCard extends Component {
 			blogname: PropTypes.string.isRequired,
 			home_url: PropTypes.string.isRequired,
 			site_url: PropTypes.string.isRequired,
-			client_id: PropTypes.string.isRequired
+			client_id: PropTypes.string.isRequired,
 		} ).isRequired,
+		isAlreadyOnSitesList: PropTypes.bool
 	};
 
 	render() {
