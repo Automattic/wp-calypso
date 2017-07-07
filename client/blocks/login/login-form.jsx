@@ -81,8 +81,13 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		const { password, rememberMe, usernameOrEmail } = this.state;
+		const { password, usernameOrEmail } = this.state;
+		let { rememberMe } = this.state;
 		const { onSuccess, redirectTo } = this.props;
+
+		if ( this.state.linkingSocialUser ) {
+			rememberMe = true;
+		}
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 
@@ -191,16 +196,18 @@ export class LoginForm extends Component {
 						) }
 					</div>
 
-					<div className="login__form-remember-me">
-						<label>
-							<FormCheckbox
-								name="rememberMe"
-								checked={ this.state.rememberMe }
-								onChange={ this.onChangeRememberMe }
-								{ ...isDisabled } />
-							<span>{ this.props.translate( 'Keep me logged in' ) }</span>
-						</label>
-					</div>
+					{ ! this.state.linkingSocialUser && (
+						<div className="login__form-remember-me">
+							<label>
+								<FormCheckbox
+									name="rememberMe"
+									checked={ this.state.rememberMe }
+									onChange={ this.onChangeRememberMe }
+									{ ...isDisabled } />
+								<span>{ this.props.translate( 'Keep me logged in' ) }</span>
+							</label>
+						</div>
+					) }
 
 					<div className="login__form-action">
 						<FormsButton primary { ...isDisabled }>
