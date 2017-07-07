@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { PLUGIN_UPLOAD } from 'state/action-types';
+import { PLUGIN_UPLOAD, PLUGIN_INSTALL_REQUEST_SUCCESS } from 'state/action-types';
 import {
 	completePluginUpload,
 } from 'state/plugins/upload/actions';
@@ -20,8 +20,14 @@ const uploadPlugin = ( { dispatch }, action ) => {
 };
 
 const uploadComplete = ( { dispatch }, { siteId }, next, data ) => {
-	dispatch( completePluginUpload( siteId, data.pluginId ) );
-	// TODO (seear): save plugin details using existing action
+	const { pluginId } = data;
+	dispatch( completePluginUpload( siteId, pluginId ) );
+	dispatch( {
+		type: PLUGIN_INSTALL_REQUEST_SUCCESS,
+		siteId,
+		pluginId,
+		data
+	} );
 };
 
 export default {
