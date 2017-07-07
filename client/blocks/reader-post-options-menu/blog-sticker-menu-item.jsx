@@ -34,7 +34,7 @@ class ReaderPostOptionsMenuBlogStickerMenuItem extends React.Component {
 
 		return (
 			<PopoverMenuItem
-				icon="tag"
+				icon="flag"
 				key={ blogStickerName }
 				className={ classes }
 				onClick={ this.addSticker }
