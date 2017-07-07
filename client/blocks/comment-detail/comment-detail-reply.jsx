@@ -43,14 +43,14 @@ export class CommentDetailReply extends Component {
 				? translate( 'Approve and reply to %(commentAuthor)s…', {
 					args: { commentAuthor: authorDisplayName }
 				} )
-				: 'Approve and reply to comment…';
+				: translate( 'Approve and reply to comment…' );
 		}
 
 		return authorDisplayName
 			? translate( 'Reply to %(commentAuthor)s…', {
 				args: { commentAuthor: authorDisplayName }
 			} )
-			: 'Reply to comment…';
+			: translate( 'Reply to comment…' );
 	}
 
 	handleTextChange = event => {
