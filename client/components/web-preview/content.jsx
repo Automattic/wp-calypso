@@ -227,7 +227,7 @@ export class WebPreviewContent extends Component {
 						className={ classNames( 'web-preview__frame-wrapper', {
 							'is-resizable': ! this.props.isModalWindow
 						} ) }
-						style={ { display: ( 'seo' === this.state.device ? 'none' : 'inherit' ) } }
+						style={ { display: ( 'seo' === this.state.device ? 'none' : null ) } }
 					>
 						<div className="web-preview__device-mockup">
 							<iframe

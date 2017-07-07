@@ -264,15 +264,16 @@ a.web-preview__external.button {
 	}
 
 	.is-phone & {
-		max-width: 460px;
+		max-width: 360px;
+		max-height: 550px;
 	}
 
 	.is-with-device-mockup.is-tablet &,
 	.is-with-device-mockup.is-phone & {
 		background-color: darken( $gray, 10% );
-		margin: 2% auto;
-		border-radius: 24px;
-		height: 98%;
+	    margin: auto;
+	    border-radius: 24px;
+	    padding: 48px 24px;
 	}
 }
 
@@ -282,6 +283,10 @@ a.web-preview__external.button {
 		left: 0;
 	height: 100%;
 	width: 100%;
+	display: flex;
+	align-content: center;
+	flex-direction: column;
+	align-items: center;
 
 	&.is-resizable {
 		background: $gray-light;
