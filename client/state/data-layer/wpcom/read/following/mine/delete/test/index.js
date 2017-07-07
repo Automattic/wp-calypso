@@ -75,7 +75,7 @@ describe( 'following/mine/delete', () => {
 				subscribed: true,
 			};
 
-			receiveUnfollow( { dispatch, getState }, action, next, response );
+			receiveUnfollow( { dispatch, getState }, action, null, response );
 			expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
 			expect( dispatch ).to.be.calledWith( local( follow( 'http://example.com' ) ) );
 		} );

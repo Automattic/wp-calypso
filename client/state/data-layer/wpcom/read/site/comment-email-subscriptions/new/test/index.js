@@ -68,7 +68,7 @@ describe( 'comment-email-subscriptions', () => {
 					text: 'Sorry, we had a problem subscribing. Please try again.',
 				},
 			} );
-			expect( local ).to.have.been.calledWith( local( unsubscribeToNewCommentEmail( 1234 ) ) );
+			expect( dispatch ).to.have.been.calledWith( local( unsubscribeToNewCommentEmail( 1234 ) ) );
 		} );
 	} );
 } );
