@@ -15,6 +15,10 @@ import { likeComment, unlikeComment } from 'state/comments/actions';
 import { getCommentLike } from 'state/comments/selectors';
 
 const getLabel = ( i_like, like_count, translate ) => {
+	if ( i_like && like_count === 1 ) {
+		return translate( 'Liked', { comment: 'Displayed when a person "likes" a post.' } );
+	}
+
 	if ( like_count === 0 ) {
 		return translate( 'Like', {
 			context: 'verb: imperative',
@@ -22,12 +26,9 @@ const getLabel = ( i_like, like_count, translate ) => {
 		} );
 	}
 
-	if ( i_like && like_count === 1 ) {
-		return translate( 'Liked', { comment: 'Displayed when a person "likes" a post.' } );
-	}
-
-	return translate( 'Like', 'Likes', {
+	return translate( '%(like_count)d Like', '%(like_count)d Likes', {
 		count: like_count,
+		args: { like_count },
 		context: 'noun',
 		comment: 'Number of likes.',
 	} );
@@ -41,7 +42,6 @@ export const CommentLikes = ( {
 } ) => {
 	const { i_like, like_count } = commentLike;
 	const likeLabel = getLabel( i_like, like_count, translate );
-	const showLikeCount = ( i_like && like_count > 1 ) || ( ! i_like && like_count > 0 );
 
 	return (
 		<Button
@@ -50,7 +50,7 @@ export const CommentLikes = ( {
 			onClick={ i_like ? dispatchUnlike : dispatchLike }
 		>
 			<Gridicon icon={ i_like ? 'star' : 'star-outline' } />
-			<span>{ showLikeCount ? like_count + ' ' : '' }{ likeLabel }</span>
+			<span>{ likeLabel }</span>
 		</Button>
 	);
 };
