@@ -145,7 +145,7 @@ export const PostEditor = React.createClass( {
 			this.props.markSaved();
 		}
 
-		if ( nextState.isDirty && ! this.state.isDirty ) {
+		if ( ( nextState.isDirty && ! this.state.isDirty ) || ( nextProps.dirty && ! this.props.dirty ) ) {
 			this.setState( { confirmationSidebar: 'closed' } );
 		}
 	},
