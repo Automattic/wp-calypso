@@ -15,16 +15,16 @@ import { local } from 'state/data-layer/utils';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 
-export const likeComment = ( { dispatch }, action ) => {
+export const unlikeComment = ( { dispatch }, action ) => {
 	dispatch( http( {
 		method: 'POST',
 		apiVersion: '1.1',
-		path: `/sites/${ action.siteId }/comments/${ action.commentId }/likes/new`
+		path: `/sites/${ action.siteId }/comments/${ action.commentId }/likes/mine/delete`
 	}, action ) );
 };
 
 export const updateCommentLikes = ( { dispatch }, { siteId, postId, commentId }, next, { like_count } ) => dispatch( local( {
-	type: COMMENTS_LIKE,
+	type: COMMENTS_UNLIKE,
 	siteId,
 	postId,
 	commentId,
@@ -36,13 +36,13 @@ export const updateCommentLikes = ( { dispatch }, { siteId, postId, commentId },
  *
  * @param {Function} dispatch redux dispatcher
  */
-export const handleLikeFailure = ( { dispatch }, { siteId, postId, commentId } ) => {
-	// revert optimistic updated on error
-	dispatch( local( { type: COMMENTS_UNLIKE, siteId, postId, commentId } ) );
+export const handleUnlikeFailure = ( { dispatch }, { siteId, postId, commentId } ) => {
+	// revert optimistic update on error
+	dispatch( local( { type: COMMENTS_LIKE, siteId, postId, commentId } ) );
 	// dispatch a error notice
-	dispatch( errorNotice( translate( 'Could not like this comment' ) ) );
+	dispatch( errorNotice( translate( 'Could not unlike this comment' ) ) );
 };
 
 export default {
-	[ COMMENTS_LIKE ]: [ dispatchRequest( likeComment, updateCommentLikes, handleLikeFailure ) ]
+	[ COMMENTS_UNLIKE ]: [ dispatchRequest( unlikeComment, updateCommentLikes, handleUnlikeFailure ) ]
 };

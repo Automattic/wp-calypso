@@ -8,38 +8,38 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import {
-	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
+	COMMENTS_LIKE,
 	NOTICE_CREATE,
 } from 'state/action-types';
 import {
-	likeComment,
+	unlikeComment,
 	updateCommentLikes,
-	handleLikeFailure,
+	handleUnlikeFailure,
 } from '../';
 import { local } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-const SITE_ID = 91750058;
+const SITE_ID = 77203074;
 const POST_ID = 287;
-const action = {
-	type: COMMENTS_LIKE,
-	siteId: SITE_ID,
-	postId: POST_ID,
-	commentId: 1
-};
 
-describe( '#likeComment()', () => {
-	it( 'should dispatch a http action to create a new like', () => {
+describe( '#unlikeComment()', () => {
+	const action = {
+		type: COMMENTS_UNLIKE,
+		siteId: SITE_ID,
+		postId: POST_ID,
+		commentId: 1
+	};
+
+	it( 'should dispatch a http action to remove a comment like', () => {
 		const dispatch = spy();
-
-		likeComment( { dispatch }, action );
+		unlikeComment( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( http( {
 			apiVersion: '1.1',
 			method: 'POST',
-			path: `/sites/${ SITE_ID }/comments/1/likes/new`
+			path: `/sites/${ SITE_ID }/comments/1/likes/mine/delete`
 		}, action ) );
 	} );
 } );
@@ -52,7 +52,7 @@ describe( '#updateCommentLikes()', () => {
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( local( {
-			type: COMMENTS_LIKE,
+			type: COMMENTS_UNLIKE,
 			siteId: SITE_ID,
 			postId: POST_ID,
 			commentId: 1,
@@ -61,15 +61,15 @@ describe( '#updateCommentLikes()', () => {
 	} );
 } );
 
-describe( '#handleLikeFailure()', () => {
-	it( 'should dispatch an unlike action to rollback optimistic update', () => {
+describe( '#handleUnlikeFailure()', () => {
+	it( 'should dispatch an like action to rollback optimistic update', () => {
 		const dispatch = spy();
 
-		handleLikeFailure( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
+		handleUnlikeFailure( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
 
 		expect( dispatch ).to.have.been.calledTwice;
 		expect( dispatch ).to.have.been.calledWith( local( {
-			type: COMMENTS_UNLIKE,
+			type: COMMENTS_LIKE,
 			siteId: SITE_ID,
 			postId: POST_ID,
 			commentId: 1
@@ -79,14 +79,14 @@ describe( '#handleLikeFailure()', () => {
 	it( 'should dispatch an error notice', () => {
 		const dispatch = spy();
 
-		handleLikeFailure( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
+		handleUnlikeFailure( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
 
 		expect( dispatch ).to.have.been.calledTwice;
 		expect( dispatch ).to.have.been.calledWithMatch( {
 			type: NOTICE_CREATE,
 			notice: {
 				status: 'is-error',
-				text: 'Could not like this comment'
+				text: 'Could not unlike this comment'
 			}
 		} );
 	} );

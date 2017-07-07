@@ -15,7 +15,6 @@ import {
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_LIKE,
-	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
 } from '../action-types';
 import { combineReducers } from 'state/utils';
@@ -49,10 +48,10 @@ const updateComment = ( commentId, newProperties ) => comment => {
  * @returns {Object} new redux state
  */
 export function items( state = {}, action ) {
-	const { siteId, postId, commentId } = action;
+	const { type, siteId, postId, commentId, like_count } = action;
 	const stateKey = getStateKey( siteId, postId );
 
-	switch ( action.type ) {
+	switch ( type ) {
 		case COMMENTS_CHANGE_STATUS:
 			const { status } = action;
 			return {
@@ -78,21 +77,14 @@ export function items( state = {}, action ) {
 				[ stateKey ]: reject( state[ stateKey ], { ID: commentId } )
 			};
 		case COMMENTS_LIKE:
-			const { like_count } = action;
 			return {
 				...state,
 				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: true, like_count } ) )
 			};
-		case COMMENTS_LIKE_UPDATE:
-			const { iLike, likeCount } = action;
-			return {
-				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: iLike, like_count: likeCount } ) )
-			};
 		case COMMENTS_UNLIKE:
 			return {
 				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: false } ) )
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: false, like_count } ) )
 			};
 		case COMMENTS_ERROR:
 			const { error } = action;
