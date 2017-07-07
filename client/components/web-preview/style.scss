@@ -249,6 +249,31 @@ a.web-preview__external.button {
 	.is-loaded & {
 		opacity: 1;
 	}
+
+	.is-with-device-mockup.is-phone & {
+
+	}
+}
+
+.web-preview__device-mockup {
+	height: 100%;
+	width: 100%;
+
+	.is-tablet & {
+		max-width: 783px;
+	}
+
+	.is-phone & {
+		max-width: 460px;
+	}
+
+	.is-with-device-mockup.is-tablet &,
+	.is-with-device-mockup.is-phone & {
+		background-color: darken( $gray, 10% );
+		margin: 2% auto;
+		border-radius: 24px;
+		height: 98%;
+	}
 }
 
 .web-preview__frame-wrapper {
@@ -260,16 +285,6 @@ a.web-preview__external.button {
 
 	&.is-resizable {
 		background: $gray-light;
-
-		.web-preview__frame {
-			.is-tablet & {
-				max-width: 783px;
-			}
-
-			.is-phone & {
-				max-width: 460px;
-			}
-		}
 	}
 }
 
