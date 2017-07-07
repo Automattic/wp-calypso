@@ -57,10 +57,6 @@
 
 	-webkit-tap-highlight-color: rgba( $gray-dark, .2 );
 
-	@include breakpoint( "<660px" ) {
-		padding: 18px 16px;
-	}
-
 	.gridicon {
 		fill: $gray;
 	}
