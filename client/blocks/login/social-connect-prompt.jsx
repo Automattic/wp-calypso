@@ -12,14 +12,10 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import {
-	getLinkingSocialUser,
-	getLinkingSocialService,
-} from 'state/login/selectors';
+import { getLinkingSocialService } from 'state/login/selectors';
 
 class SocialConnectPrompt extends Component {
 	static propTypes = {
-		linkingSocialUser: PropTypes.string,
 		linkingSocialService: PropTypes.string,
 		onSuccess: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -64,7 +60,6 @@ class SocialConnectPrompt extends Component {
 
 export default connect(
 	( state ) => ( {
-		linkingSocialUser: getLinkingSocialUser( state ),
 		linkingSocialService: getLinkingSocialService( state ),
 	} )
 )( localize( SocialConnectPrompt ) );
