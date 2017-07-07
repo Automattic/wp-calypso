@@ -127,11 +127,14 @@ class DebugTab extends Component {
 								onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_check' ) }>
 								{ translate( 'Check front page every 5 minutes.' ) }
 							</FormToggle>
+							<FormSettingExplanation>
+								{ translate( ' If there are errors you\'ll receive an email.' ) }
+							</FormSettingExplanation>
 						</FormFieldset>
 						<div className="wp-super-cache__debug-fieldsets">
 							<FormFieldset>
 								<FormLabel htmlFor="frontPageText">
-									{ translate( 'Front page text' ) }
+									{ translate( 'Check text for automatic cache clearing' ) }
 								</FormLabel>
 								<FormTextInput
 									disabled={ isRequesting || isSaving || ! wp_super_cache_debug || ! wp_super_cache_front_page_check }
@@ -140,8 +143,8 @@ class DebugTab extends Component {
 									value={ wp_super_cache_front_page_text || '' } />
 								<FormSettingExplanation>
 									{ translate(
-										'Text to search for on your front page. If this text is missing, ' +
-										'the cache will be cleared. Leave blank to disable.'
+										'If the front page doesn\'t contain this text, the cache will be cleared automatically. ' +
+										'Leave this field blank to disable automatic cache clearing.'
 									) }
 								</FormSettingExplanation>
 							</FormFieldset>
