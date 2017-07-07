@@ -155,7 +155,10 @@ export class Notifications extends Component {
 		const customMiddleware = {
 			APP_RENDER_NOTES: [ ( store, { newNoteCount } ) => this.props.setIndicator( newNoteCount ) ],
 			OPEN_LINK: [ ( store, { href } ) => window.open( href, '_blank' ) ],
-			OPEN_POST: [ ( store, { href } ) => window.open( href, '_blank' ) ],
+			OPEN_POST: [ ( store, { siteId, postId } ) => {
+				this.props.checkToggle();
+				page( `/read/blogs/${ siteId }/posts/${ postId }` );
+			} ],
 			VIEW_SETTINGS: [ () => {
 				this.props.checkToggle();
 				page( '/me/notifications' );
