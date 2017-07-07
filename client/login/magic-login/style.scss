@@ -1,3 +1,19 @@
+.magic-login__description {
+	margin: 0 auto 1.5em;
+	max-width: 400px;
+	text-align: center;
+
+	@media ( max-width: 480px ) {
+		& {
+			font-size: 90%;
+			margin: auto;
+			max-width: 340px;
+			min-width: 110px;
+			padding: 0 16px 16px;
+		}
+	}
+}
+
 .magic-login__request_link {
 	max-width: 400px;
 }
@@ -7,6 +23,10 @@
 	margin-bottom: 24px;
 	margin-top: 16px;
 	text-align: center;
+}
+
+.magic-login__emailfields {
+	margin: 10px 0;
 }
 
 .magic-login__form-action {

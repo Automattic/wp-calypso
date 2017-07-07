@@ -16,7 +16,7 @@ import ReaderInfiniteStream from 'components/reader-infinite-stream';
 import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
 import { SEARCH_RESULTS_SITES } from 'reader/follow-button/follow-sources';
 import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
-import withWidth from 'lib/with-width';
+import withDimensions from 'lib/with-dimensions';
 
 class SiteResults extends React.Component {
 	static propTypes = {
@@ -72,4 +72,4 @@ export default connect(
 		),
 	} ),
 	{ requestFeedSearch },
-)( localize( withWidth( SiteResults ) ) );
+)( localize( withDimensions( SiteResults ) ) );

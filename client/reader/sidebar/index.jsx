@@ -125,6 +125,18 @@ export const ReaderSidebar = createReactClass( {
 									{ this.props.translate( 'Manage' ) }
 								</a>
 							</li>
+							{ config.isEnabled( 'reader/conversations' ) &&
+								<li
+									className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations', this.props.path, {
+										'sidebar-streams__conversations': true
+									} ) }
+									>
+									<a href="/read/conversations">
+										<Gridicon icon="comment" size={ 24 } />
+										<span className="menu-link-text">{ this.props.translate( 'Conversations' ) }</span>
+									</a>
+								</li>
+							}
 
 							<ReaderSidebarTeams teams={ this.props.teams } path={ this.props.path } />
 

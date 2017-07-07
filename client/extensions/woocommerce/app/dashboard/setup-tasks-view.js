@@ -21,6 +21,8 @@ import {
 import SetupFooter from './setup-footer';
 import SetupHeader from './setup-header';
 import SetupTasks from './setup-tasks';
+import QueryShippingZones from 'woocommerce/components/query-shipping-zones';
+import { areAnyShippingMethodsEnabled } from 'woocommerce/state/ui/shipping/zones/selectors';
 
 class SetupTasksView extends Component {
 	static propTypes = {
@@ -43,6 +45,7 @@ class SetupTasksView extends Component {
 
 		return (
 			<div className="card dashboard__setup-wrapper">
+				<QueryShippingZones siteId={ site.ID } />
 				<SetupHeader
 					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
 					imageWidth={ 160 }
@@ -63,11 +66,12 @@ class SetupTasksView extends Component {
 }
 
 function mapStateToProps( state ) {
-	// TODO - add test for hasProducts, paymentsAreSetUp, shippingIsSetUp and taxesAreSetUp
+	// TODO - add test for hasProducts, paymentsAreSetUp and taxesAreSetUp
 	// when those selectors become available
 	const allTasksCompleted = getOptedOutOfShippingSetup( state ) &&
 		getOptedOutofTaxesSetup( state ) &&
-		getTriedCustomizerDuringInitialSetup( state );
+		getTriedCustomizerDuringInitialSetup( state ) &&
+		areAnyShippingMethodsEnabled( state );
 
 	return {
 		allTasksCompleted,

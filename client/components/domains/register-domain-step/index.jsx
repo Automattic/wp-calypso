@@ -8,6 +8,7 @@ import {
 	find,
 	flatten,
 	includes,
+	isEmpty,
 	noop,
 	reject,
 	startsWith,
@@ -443,7 +444,7 @@ const RegisterDomainStep = React.createClass( {
 			domainMappingSuggestion,
 			suggestions;
 
-		if ( this.isLoadingSuggestions() ) {
+		if ( this.isLoadingSuggestions() || isEmpty( this.props.products ) ) {
 			domainRegistrationSuggestions = times( INITIAL_SUGGESTION_QUANTITY + 1, function( n ) {
 				return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
 			} );

@@ -70,14 +70,18 @@ export class Login extends React.Component {
 	}
 
 	render() {
-		const { translate, twoFactorAuthType } = this.props;
+		const { locale, translate, twoFactorAuthType } = this.props;
+
+		const canonicalUrl = `https://${ locale !== 'en' ? locale + '.' : '' }wordpress.com/login`;
 
 		return (
 			<div>
 				<Main className="wp-login__main">
 					{ this.renderLocaleSuggestions() }
 
-					<DocumentHead title={ translate( 'Log In', { textOnly: true } ) } />
+					<DocumentHead
+						title={ translate( 'Log In', { textOnly: true } ) }
+						link={ [ { rel: 'canonical', href: canonicalUrl } ] } />
 
 					<GlobalNotices id="notices" notices={ notices.list } />
 

@@ -16,7 +16,7 @@ import {
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { errorNotice } from 'state/notices/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
-import { getCountryData } from 'woocommerce/lib/countries';
+import { getCountryData, getCountries } from 'woocommerce/lib/countries';
 import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './setup-footer';
 import SetupHeader from './setup-header';
@@ -94,14 +94,27 @@ class PreSetupView extends Component {
 			return errorNotice( translate( 'There was a problem saving the store address. Please try again.' ) );
 		};
 
+		// Provides fallbacks if the country & state options were never changed/toggled,
+		// or if an unsupported country was set in state (like WC's default GB country)
+		let country = null;
+		let state = null;
+		if ( ! this.state.address.country || ! find( getCountries(), { code: this.state.address.country } ) ) {
+			country = 'US';
+			const countryData = getCountryData( country );
+			state = this.state.address.state ? this.state.address.state : countryData.defaultState;
+		} else {
+			country = this.state.address.country;
+			state = this.state.address.state;
+		}
+
 		this.props.doInitialSetup(
 			site.ID,
 			this.state.address.street,
 			this.state.address.street2,
 			this.state.address.city,
-			this.state.address.state,
+			state,
 			this.state.address.postcode,
-			this.state.address.country,
+			country,
 			onSuccess,
 			onFailure
 		);

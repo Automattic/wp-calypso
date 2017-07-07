@@ -10,6 +10,7 @@ import { moment, translate } from 'i18n-calypso';
  */
 import Main from 'components/main';
 import Navigation from './store-stats-navigation';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Chart from './store-stats-chart';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
@@ -18,7 +19,15 @@ import Module from './store-stats-module';
 import List from './store-stats-list';
 import WidgetList from './store-stats-widget-list';
 import SectionHeader from 'components/section-header';
-import { sparkWidgetList1, sparkWidgetList2, topProducts, topCategories, topCoupons, UNITS } from 'woocommerce/app/store-stats/constants';
+import {
+	sparkWidgetList1,
+	sparkWidgetList2,
+	topProducts,
+	topCategories,
+	topCoupons,
+	UNITS
+} from 'woocommerce/app/store-stats/constants';
+import { getUnitPeriod, getEndPeriod } from './utils';
 
 class StoreStats extends Component {
 	static propTypes = {
@@ -30,25 +39,11 @@ class StoreStats extends Component {
 		unit: PropTypes.string.isRequired,
 	};
 
-	getUnitPeriod = ( date ) => {
-		const { unit } = this.props;
-		return ( unit === 'week' )
-			? `${ moment( date ).format( UNITS[ unit ].format ) }-W${ moment( date ).isoWeek() }`
-			: moment( date ).format( UNITS[ unit ].format );
-	};
-
-	getEndPeriod = ( date ) => {
-		const { unit } = this.props;
-		return ( unit === 'week' )
-			? moment( date ).endOf( 'isoWeek' ).format( 'YYYY-MM-DD' )
-			: moment( date ).endOf( unit ).format( 'YYYY-MM-DD' );
-	};
-
 	render() {
 		const { path, queryDate, selectedDate, siteId, slug, unit, querystring } = this.props;
-		const unitQueryDate = this.getUnitPeriod( queryDate );
-		const unitSelectedDate = this.getUnitPeriod( selectedDate );
-		const endSelectedDate = this.getEndPeriod( selectedDate );
+		const unitQueryDate = getUnitPeriod( queryDate, unit );
+		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
+		const endSelectedDate = getEndPeriod( selectedDate, unit );
 		const ordersQuery = {
 			unit,
 			date: queryDate,
@@ -91,6 +86,7 @@ class StoreStats extends Component {
 
 		return (
 			<Main className="store-stats woocommerce" wideLayout={ true }>
+				<div className="store-stats__sidebar-nav"><SidebarNavigation /></div>
 				<Navigation unit={ unit } type="orders" slug={ slug } />
 				<Chart
 					path={ path }

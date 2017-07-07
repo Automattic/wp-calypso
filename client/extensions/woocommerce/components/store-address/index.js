@@ -15,6 +15,7 @@ import Card from 'components/card';
 import Dialog from 'components/dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
+import { getCountryData } from 'woocommerce/lib/countries';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getStoreLocation, areSettingsGeneralLoading } from 'woocommerce/state/sites/settings/general/selectors';
 import { setAddress } from 'woocommerce/state/sites/settings/actions';
@@ -53,7 +54,15 @@ class StoreAddress extends Component {
 
 	onChange = ( event ) => {
 		const addressEdits = { ...this.state.addressEdits };
-		addressEdits[ event.target.name ] = event.target.value;
+		const addressKey = event.target.name;
+		const newValue = event.target.value;
+		addressEdits[ addressKey ] = newValue;
+		// Did they change the country? Force an appropriate state default
+		if ( 'country' === addressKey ) {
+			const countryData = getCountryData( newValue );
+			addressEdits.state = countryData ? countryData.defaultState : '';
+		}
+
 		this.setState( { addressEdits } );
 	}
 

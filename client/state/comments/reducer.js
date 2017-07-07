@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { orderBy, has, map, unionBy, reject } from 'lodash';
+import { isUndefined, orderBy, has, map, unionBy, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,7 +31,7 @@ const updateComment = ( commentId, newProperties ) => comment => {
 	if ( comment.ID !== commentId ) {
 		return comment;
 	}
-	const updateLikeCount = has( newProperties, 'i_like' ) && ! has( newProperties, 'like_count' );
+	const updateLikeCount = has( newProperties, 'i_like' ) && isUndefined( newProperties.like_count );
 
 	return {
 		...comment,
@@ -78,9 +78,10 @@ export function items( state = {}, action ) {
 				[ stateKey ]: reject( state[ stateKey ], { ID: commentId } )
 			};
 		case COMMENTS_LIKE:
+			const { like_count } = action;
 			return {
 				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: true } ) )
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: true, like_count } ) )
 			};
 		case COMMENTS_LIKE_UPDATE:
 			const { iLike, likeCount } = action;

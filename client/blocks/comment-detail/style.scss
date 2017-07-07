@@ -48,6 +48,15 @@
 		color: $gray-text;
 		margin-right: 8px;
 	}
+
+	a {
+		color: $gray-text-min;
+		cursor: pointer;
+		&:focus,
+		&:hover {
+			color: $blue-wordpress;
+		}
+	}
 }
 
 .comment-detail__author-info-element {
@@ -60,10 +69,10 @@
 	align-items: center;
 	display: flex;
 	flex-flow: row nowrap;
-	padding: 12px 8px;
 
 	&.is-preview {
 		cursor: pointer;
+		padding: 12px 8px;
 	}
 
 	&.is-bulk-edit {
@@ -79,6 +88,21 @@
 			.external-link:focus {
 				outline: none;
 			}
+		}
+	}
+
+	.button.is-borderless {
+		padding: 12px 8px;
+
+		.gridicon {
+			margin-top: 0;
+			top: 0;
+		}
+
+		&.comment-detail__action-collapse {
+			flex-grow: 1;
+			padding-left: 12px;
+			text-align: left;
 		}
 	}
 
@@ -145,60 +169,54 @@
 
 .comment-detail__actions {
 	color: $gray;
+	padding-right: 4px;
 	user-select: none;
 
-	a {
-		color: $gray-text-min;
-		cursor: pointer;
-		padding: 8px;
-		white-space: nowrap;
-		&:focus,
-		&:hover {
-			color: $blue-wordpress;
-		}
-	}
-	span {
-		display: none;
+	.button.is-borderless {
+		span {
+			display: none;
+			font-weight: normal;
 
-		@include breakpoint( ">960px" ) {
-			display: inline;
+			@include breakpoint( ">960px" ) {
+				display: inline;
+			}
 		}
-	}
 
-	.comment-detail__action-like {
-		&:focus,
-		&:hover {
-			color: $orange-jazzy;
+		&.comment-detail__action-like {
+			&:focus,
+			&:hover {
+				color: $orange-jazzy;
+			}
 		}
-	}
 
-	.comment-detail__action-approve {
-		&:focus,
-		&:hover {
+		&.comment-detail__action-approve {
+			&:focus,
+			&:hover {
+				color: $alert-green;
+			}
+		}
+
+		&.comment-detail__action-spam,
+		&.comment-detail__action-trash,
+		&.comment-detail__action-delete {
+			&:focus,
+			&:hover {
+				color: $alert-red;
+			}
+		}
+
+		&.is-approved {
 			color: $alert-green;
 		}
-	}
-
-	.comment-detail__action-spam,
-	.comment-detail__action-trash,
-	.comment-detail__action-delete {
-		&:focus,
-		&:hover {
+		&.is-liked {
+			color: $orange-jazzy;
+		}
+		&.is-spam {
 			color: $alert-red;
 		}
-	}
-
-	.is-approved {
-		color: $alert-green;
-	}
-	.is-liked {
-		color: $orange-jazzy;
-	}
-	.is-spam {
-		color: $alert-red;
-	}
-	.is-trash {
-		color: $gray-dark;
+		&.is-trash {
+			color: $gray-dark;
+		}
 	}
 }
 
@@ -401,7 +419,9 @@ a.comment-detail__author-more-element {
 
 	.comment-detail__author-info {
 		line-height: 1.2;
+		overflow: hidden;
 		padding-left: 8px;
+		text-overflow: ellipsis;
 	}
 }
 
@@ -411,44 +431,35 @@ a.comment-detail__author-more-element {
 }
 
 .comment-detail__reply {
-	// The inner working of these styles is covered here:
-	// http://alistapart.com/article/expanding-text-areas-made-elegant
-	.is-expanding-area {
-		min-height: 33px;
+	line-height: 0;
+	position: relative;
+
+	textarea {
+		font-family: $serif;
+		font-size: 14px;
+		height: 47px;
+		line-height: 21px;
+		min-height: 47px;
+		overflow: hidden;
+		padding: 12px 70px 12px 16px;
 		position: relative;
-		transition: min-height 0.2s ease-in-out;
+		resize: vertical;
+		transition: min-height .15s linear;
+		white-space: pre-wrap;
+		word-wrap: break-word;
 
-		&.is-focused {
-			min-height: 70px;
-		}
-
-		pre,
-		textarea {
-			font-family: $serif;
-			font-size: 14px;
-			line-height: 21px;
-			margin: 0;
-			max-height: 400px;
-			min-height: 33px;
-			overflow: hidden;
-			padding: 12px 70px 12px 16px;
-			white-space: pre-wrap;
-			word-wrap: break-word;
-		}
-
-		pre {
-			box-sizing: border-box;
-			display: block;
-			visibility: hidden;
-		}
-
-		textarea {
-			border: none;
-			height: 100%;
-			position: absolute;
-				left: 0;
-				top: 0;
+		&:not( :focus ) {
+			border-color: $white;
 			resize: none;
+		}
+
+		&:focus,
+		&.has-focus {
+			min-height: 68px; // 2 lines
+		}
+
+		&.has-scrollbar {
+			overflow-y: auto;
 		}
 	}
 
@@ -456,21 +467,20 @@ a.comment-detail__author-more-element {
 		color: lighten( $gray, 10% );
 		font-size: 12px;
 		font-weight: 600;
-		opacity: 0;
 		padding: 4px;
 		position: absolute;
-			right: 24px;
-			top: 10px;
+			right: 18px;
+			top: 11px;
 		text-transform: uppercase;
 		transition: opacity 0.2s ease-in-out;
+
+		&.has-scrollbar {
+			right: 24px;
+		}
 
 		&.is-active {
 			color: $blue-medium;
 			cursor: pointer;
-		}
-
-		&.is-visible {
-			opacity: 1;
 		}
 	}
 }

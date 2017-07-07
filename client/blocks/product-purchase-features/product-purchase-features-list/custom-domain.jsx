@@ -7,7 +7,7 @@ import pick from 'lodash/pick';
 /**
  * Internal dependencies
  */
-import CustomDomainPurchaseDetail from 'my-sites/upgrades/checkout-thank-you/custom-domain-purchase-detail';
+import CustomDomainPurchaseDetail from 'my-sites/checkout/checkout-thank-you/custom-domain-purchase-detail';
 
 export default ( props ) => {
 	return (

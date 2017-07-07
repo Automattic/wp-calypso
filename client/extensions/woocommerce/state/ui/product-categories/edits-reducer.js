@@ -1,20 +1,55 @@
 /**
  * External dependencies
  */
-import { compact } from 'lodash';
+import { compact, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
 import {
+	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
+	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT_CLEAR,
+	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
 } from 'woocommerce/state/action-types';
 import { getBucket } from '../helpers';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT ]: editProductCategoryAction,
+	[ WOOCOMMERCE_PRODUCT_CATEGORY_EDIT_CLEAR ]: clearEditsAction,
+	[ WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED ]: productCategoryUpdatedAction,
 } );
+
+function productCategoryUpdatedAction( edits, action ) {
+	const { originatingAction } = action;
+
+	if ( WOOCOMMERCE_PRODUCT_CATEGORY_CREATE === originatingAction.type ) {
+		const prevCategoryId = originatingAction.category.id;
+		const prevEdits = edits || {};
+		const prevCreates = prevEdits.creates || [];
+
+		const newCreates = compact( prevCreates.map( ( category ) => {
+			if ( isEqual( prevCategoryId, category.id ) ) {
+				// Remove this create, it's no longer needed.
+				return undefined;
+			}
+			return category;
+		} ) );
+
+		return {
+			...prevEdits,
+			creates: ( newCreates.length ? newCreates : undefined ),
+		};
+	}
+	// TODO: Add support for update and delete.
+
+	return edits;
+}
+
+function clearEditsAction() {
+	return null;
+}
 
 function editProductCategoryAction( edits, action ) {
 	const { category, data } = action;

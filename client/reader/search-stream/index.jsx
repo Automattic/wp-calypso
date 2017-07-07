@@ -21,8 +21,8 @@ import PostResults from './post-results';
 import ReaderMain from 'components/reader-main';
 import { addQueryArgs } from 'lib/url';
 import SearchStreamHeader, { POSTS } from './search-stream-header';
-import withWidth from 'lib/with-width';
 import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
+import withDimensions from 'lib/with-dimensions';
 
 const WIDE_DISPLAY_CUTOFF = 660;
 
@@ -30,6 +30,15 @@ const updateQueryArg = params =>
 	page.replace( addQueryArgs( params, window.location.pathname + window.location.search ) );
 
 const pickSort = sort => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
+
+const SpacerDiv = withDimensions( ( { width, height } ) => (
+	<div
+		style={ {
+			width: `${ width }px`,
+			height: `${ height }px`,
+		} }
+	/>
+) );
 
 class SearchStream extends React.Component {
 	static propTypes = {
@@ -95,6 +104,8 @@ class SearchStream extends React.Component {
 		updateQueryArg( { sort } );
 	};
 
+	handleFixedAreaMounted = ref => this.fixedAreaRef = ref;
+
 	handleSearchTypeSelection = searchType => updateQueryArg( { show: searchType } );
 
 	render() {
@@ -130,7 +141,11 @@ class SearchStream extends React.Component {
 		return (
 			<div>
 				<DocumentHead title={ documentTitle } />
-				<div className="search-stream__fixed-area" style={ { width: this.props.width } }>
+				<div
+					className="search-stream__fixed-area"
+					style={ { width: this.props.width } }
+					ref={ this.handleFixedAreaMounted }
+				>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
 							onSearch={ this.updateQuery }
@@ -159,6 +174,7 @@ class SearchStream extends React.Component {
 							wideDisplay={ wideDisplay }
 						/> }
 				</div>
+				<SpacerDiv domTarget={ this.fixedAreaRef } />
 				{ wideDisplay &&
 					<div className={ searchStreamResultsClasses }>
 						<div className="search-stream__post-results">
@@ -196,4 +212,4 @@ const wrapWithMain = Component => props => (
 );
 /* eslint-enable */
 
-export default localize( wrapWithMain( withWidth( SearchStream ) ) );
+export default localize( wrapWithMain( withDimensions( SearchStream ) ) );

@@ -10,7 +10,12 @@ import reducer from '../edits-reducer';
 
 import {
 	editProductCategory,
+	clearProductCategoryEdits,
 } from '../actions';
+import {
+	createProductCategory,
+	productCategoryUpdated,
+} from 'woocommerce/state/sites/product-categories/actions';
 
 const siteId = 123;
 
@@ -135,6 +140,47 @@ describe( 'edits-reducer', () => {
 
 		expect( edits1.currentlyEditingId ).to.eql( edits1.creates[ 0 ].id );
 		expect( edits2.currentlyEditingId ).to.eql( edits2.creates[ 1 ].id );
+	} );
+
+	it( 'should clear category from creates upon successful save', () => {
+		const category1 = {
+			id: { placeholder: 'productCategory_1' },
+			name: 'Category 1',
+		};
+
+		const createdCategory1 = {
+			id: 22,
+			name: 'Category 1',
+		};
+
+		const edits1 = {
+			creates: [ category1 ],
+		};
+
+		const originatingAction = createProductCategory( siteId, category1 );
+		const action = productCategoryUpdated( siteId, createdCategory1, originatingAction );
+
+		const edits2 = reducer( edits1, action );
+
+		expect( edits1.creates[ 0 ] ).to.eql( category1 );
+		expect( edits2.creates ).to.not.exist;
+	} );
+
+	it( 'should clear all product category edit data', () => {
+		const edits1 = {
+			creates: [ { id: { placeholder: 'productCategory_1' }, name: 'New Category' } ],
+			updates: [ { id: 525, name: 'Updated name' } ],
+			deletes: [ 252 ],
+		};
+
+		const action = clearProductCategoryEdits( siteId );
+
+		const edits2 = reducer( edits1, action );
+
+		expect( edits1.creates ).to.exist;
+		expect( edits1.updates ).to.exist;
+		expect( edits1.deletes ).to.exist;
+		expect( edits2 ).to.equal( null );
 	} );
 } );
 

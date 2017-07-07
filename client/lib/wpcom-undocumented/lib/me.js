@@ -1,9 +1,15 @@
 /**
- * Module dependencies.
+ * External dependencies
  */
 import { Me } from 'wpcom';
 import inherits from 'inherits';
 import debugFactory from 'debug';
+
+/**
+ * Internal dependencies
+ */
+import MePreferences from './me-preferences.js';
+
 const debug = debugFactory( 'calypso:wpcom-undocumented:me' );
 
 /**
@@ -354,5 +360,7 @@ UndocumentedMe.prototype.deletePurchase = function( purchaseId, fn ) {
 		path: `/me/purchases/${purchaseId}/delete`
 	}, fn );
 };
+
+UndocumentedMe.prototype.preferences = MePreferences;
 
 module.exports = UndocumentedMe;

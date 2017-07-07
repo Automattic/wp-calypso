@@ -11,6 +11,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
+import Button from 'components/button';
 import CommentDetailActions from './comment-detail-actions';
 import Gravatar from 'components/gravatar';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -41,11 +42,14 @@ export const CommentDetailHeader = ( {
 	if ( isExpanded ) {
 		return (
 			<div className="comment-detail__header">
-				<div className="comment-detail__actions">
-					<a onClick={ toggleExpanded }>
-						<Gridicon icon="cross" />
-					</a>
-				</div>
+				<Button
+					borderless
+					className="comment-detail__action-collapse"
+					onClick={ toggleExpanded }
+				>
+					<Gridicon icon="cross" />
+				</Button>
+
 				<CommentDetailActions
 					edit={ edit }
 					commentIsLiked={ commentIsLiked }

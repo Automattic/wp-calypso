@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { getCreditCardType} from 'lib/credit-card-details';
-import Input from 'my-sites/upgrades/components/form/input';
+import Input from 'my-sites/domains/components/form/input';
 
 const CreditCardNumberInput = React.createClass( {
 	render() {

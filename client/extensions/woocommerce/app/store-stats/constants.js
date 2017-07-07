@@ -41,10 +41,10 @@ export const sparkWidgetList2 = [
 
 export const topProducts = {
 	basePath: '/store/stats/products',
-	title: translate( 'Products' ),
+	title: translate( 'Most Popular Products' ),
 	values: [
 		{ key: 'name', title: translate( 'Title' ) },
-		{ key: 'price', title: translate( 'Price' ) },
+		{ key: 'quantity', title: translate( 'Quantity' ) },
 		{ key: 'total', title: translate( 'Sales' ) },
 	],
 	empty: translate( 'No products found' ),
@@ -53,11 +53,11 @@ export const topProducts = {
 
 export const topCategories = {
 	basePath: '/store/stats/categories',
-	title: translate( 'Categories' ),
+	title: translate( 'Top Categories' ),
 	values: [
 		{ key: 'name', title: translate( 'Title' ) },
 		{ key: 'quantity', title: translate( 'Quantity' ) },
-		{ key: 'total', title: translate( 'Total' ) },
+		{ key: 'total', title: translate( 'Sales' ) },
 	],
 	empty: translate( 'No categories found' ),
 	statType: 'statsTopCategories',
@@ -65,11 +65,11 @@ export const topCategories = {
 
 export const topCoupons = {
 	basePath: '/store/stats/coupons',
-	title: translate( 'Coupons' ),
+	title: translate( 'Most Used Coupons' ),
 	values: [
 		{ key: 'name', title: translate( 'Title' ) },
-		{ key: 'quantity', title: translate( 'Quantity' ) },
-		{ key: 'total', title: translate( 'Total' ) },
+		{ key: 'quantity', title: translate( 'Used' ) },
+		{ key: 'total', title: translate( 'Total Discount' ) },
 	],
 	empty: translate( 'No coupons found' ),
 	statType: 'statsTopCoupons',

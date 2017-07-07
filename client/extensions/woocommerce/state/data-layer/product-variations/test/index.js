@@ -8,14 +8,16 @@ import { spy, match } from 'sinon';
  * Internal dependencies
  */
 import {
-	fetchProductVariations,
 	createProductVariation,
+	deleteProductVariation,
+	fetchProductVariations,
 	updateProductVariation,
 } from 'woocommerce/state/sites/product-variations/actions';
 import {
-	handleProductVariationsRequest,
 	handleProductVariationCreate,
+	handleProductVariationDelete,
 	handleProductVariationUpdate,
+	handleProductVariationsRequest,
 } from '../';
 import {
 	WOOCOMMERCE_API_REQUEST,
@@ -216,7 +218,7 @@ describe( 'handlers', () => {
 	} );
 
 	describe( '#handleProductVariationUpdate', () => {
-		it( 'should dispatch a post action', () => {
+		it( 'should dispatch a put action', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -313,6 +315,90 @@ describe( 'handlers', () => {
 					type: '%%success%%',
 					productId: 66,
 					sentData: variation1,
+					receivedData: 'RECEIVED_DATA',
+				} )
+			);
+		} );
+	} );
+
+	describe( '#handleProductVariationDelete', () => {
+		it( 'should dispatch a delete action', () => {
+			const store = {
+				dispatch: spy(),
+			};
+
+			const successAction = { type: '%%success%%' };
+			const failureAction = { type: '%%failure%%' };
+			const action = deleteProductVariation( 123, 66, 202, successAction, failureAction );
+
+			handleProductVariationDelete( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_API_REQUEST,
+					method: 'del',
+					siteId: 123,
+					path: 'products/66/variations/202',
+					onFailureAction: failureAction,
+				} ).and( match.has( 'onSuccessAction' ) )
+			);
+		} );
+
+		it( 'should dispatch a success action with extra properties', () => {
+			const store = {
+				dispatch: spy(),
+			};
+
+			const successAction = { type: '%%success%%' };
+			const action = deleteProductVariation( 123, 66, 202, successAction );
+
+			handleProductVariationDelete( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( { type: WOOCOMMERCE_API_REQUEST } )
+			);
+
+			const updatedSuccessAction = store.dispatch.firstCall.args[ 0 ].onSuccessAction;
+			expect( updatedSuccessAction ).to.be.a( 'function' );
+
+			updatedSuccessAction( store.dispatch, null, 'RECEIVED_DATA' );
+
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: '%%success%%',
+					productId: 66,
+					sentData: { id: 202 },
+					receivedData: 'RECEIVED_DATA',
+				} )
+			);
+		} );
+
+		it( 'should dispatch a success function with extra properties', () => {
+			const store = {
+				dispatch: spy(),
+			};
+
+			const successAction = ( dispatch, getState, { productId, sentData, receivedData } ) => {
+				return { type: '%%success%%', productId, sentData, receivedData };
+			};
+			const action = deleteProductVariation( 123, 66, 202, successAction );
+
+			handleProductVariationDelete( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( { type: WOOCOMMERCE_API_REQUEST } )
+			);
+
+			const updatedSuccessAction = store.dispatch.firstCall.args[ 0 ].onSuccessAction;
+			expect( updatedSuccessAction ).to.be.a( 'function' );
+
+			updatedSuccessAction( store.dispatch, null, 'RECEIVED_DATA' );
+
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: '%%success%%',
+					productId: 66,
+					sentData: { id: 202 },
 					receivedData: 'RECEIVED_DATA',
 				} )
 			);

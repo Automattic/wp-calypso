@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,6 +15,8 @@ import Gravatar from 'components/gravatar';
 import Gridicon from 'gridicons';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { addQueryArgs } from 'lib/route';
+
+const debug = debugFactory( 'calypso:activity-log:item' );
 
 class ActivityLogItem extends Component {
 
@@ -146,6 +149,8 @@ class ActivityLogItem extends Component {
 		} = this.props;
 		requestRestore( log.ts_utc );
 	};
+
+	handleOpen = () => debug( 'opened log', this.props.log );
 
 	getIcon() {
 		const { log } = this.props;
@@ -355,6 +360,7 @@ class ActivityLogItem extends Component {
 					header={ this.renderHeader() }
 					summary={ this.renderSummary() }
 					expandedSummary={ this.renderSummary() }
+					onOpen={ this.handleOpen }
 				>
 					{ this.renderDescription() }
 				</FoldableCard>

@@ -30,8 +30,9 @@ class OrderCustomerInfo extends Component {
 			<div className="order__customer-info">
 				<SectionHeader label={ translate( 'Customer Information' ) } />
 				<Card>
-					<h3 className="order__billing-details">{ translate( 'Billing Details' ) }</h3>
+					<div className="order__customer-info-container">
 					<div className="order__customer-billing">
+					<h3 className="order__billing-details">{ translate( 'Billing Details' ) }</h3>
 						<h4>{ translate( 'Address' ) }</h4>
 						<div className="order__billing-address">
 							<p>{ `${ billing.first_name } ${ billing.last_name }` }</p>
@@ -45,11 +46,11 @@ class OrderCustomerInfo extends Component {
 						<p>{ billing.email }</p>
 
 						<h4>{ translate( 'Phone' ) }</h4>
-						<p>{ billing.phone }</p>
+						<span>{ billing.phone }</span>
 					</div>
 
-					<h3 className="order__shipping-details">{ translate( 'Shipping Details' ) }</h3>
 					<div className="order__customer-shipping">
+					<h3 className="order__shipping-details">{ translate( 'Shipping Details' ) }</h3>
 						<h4>{ translate( 'Address' ) }</h4>
 						<div className="order__shipping-address">
 							<p>{ `${ shipping.first_name } ${ shipping.last_name }` }</p>
@@ -59,6 +60,7 @@ class OrderCustomerInfo extends Component {
 							<p>{ shipping.country }</p>
 						</div>
 					</div>
+				</div>
 				</Card>
 			</div>
 		);

@@ -157,22 +157,23 @@ class ActivityLog extends Component {
 		} = restoreProgress;
 
 		if ( status === 'finished' ) {
-			return ( errorCode
-				? (
-					<ErrorBanner
-						errorCode={ errorCode }
-						failureReason={ failureReason }
-						requestRestore={ this.handleRequestRestore }
-						siteId={ siteId }
-						siteTitle={ siteTitle }
-						timestamp={ timestamp }
-					/>
-				) : (
-					<SuccessBanner
-						siteId={ siteId }
-						timestamp={ timestamp }
-					/>
-				)
+			return (
+				<div>
+					<QueryActivityLog siteId={ siteId } />
+					{ errorCode ? (
+						<ErrorBanner
+							errorCode={ errorCode }
+							failureReason={ failureReason }
+							requestRestore={ this.handleRequestRestore }
+							siteId={ siteId }
+							siteTitle={ siteTitle }
+							timestamp={ timestamp } />
+					) : (
+						<SuccessBanner
+							siteId={ siteId }
+							timestamp={ timestamp } />
+					) }
+				</div>
 			);
 		}
 		return (

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEqual } from 'lodash';
+import { compact, isEqual, isNumber } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,14 +27,19 @@ export function variationUpdated( state, action ) {
 }
 
 function updateCachedVariation( variations, variation ) {
+	// If variation is just the numeric id, we should delete it.
+	const shouldDelete = isNumber( variation );
+	const variationId = ( shouldDelete ? variation : variation.id );
+	const newVariation = ! shouldDelete && variation;
+
 	let found = false;
-	const newVariations = variations.map( ( v ) => {
-		if ( isEqual( v.id, variation.id ) ) {
+	const newVariations = compact( variations.map( ( v ) => {
+		if ( isEqual( v.id, variationId ) ) {
 			found = true;
-			return variation;
+			return newVariation;
 		}
 		return v;
-	} );
+	} ) );
 
 	if ( ! found ) {
 		newVariations.push( variation );

@@ -287,7 +287,7 @@ export class MySitesSidebar extends Component {
 				link={ domainsLink }
 				onNavigate={ this.onNavigate }
 				icon="domains"
-				preloadSectionName="upgrades"
+				preloadSectionName="domains"
 			>
 				<SidebarButton href={ addDomainLink }>
 					{ this.props.translate( 'Add' ) }

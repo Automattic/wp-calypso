@@ -417,7 +417,7 @@ const navigateToSite = ( siteId, {
 	allSitesSingleUser,
 	siteBasePath,
 } ) => ( dispatch, getState ) => {
-	const pathname = getPathnameForSite( siteId );
+	const pathname = getPathnameForSite();
 	if ( pathname ) {
 		page( pathname );
 	}

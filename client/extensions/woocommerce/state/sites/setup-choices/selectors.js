@@ -97,6 +97,15 @@ export function getTriedCustomizerDuringInitialSetup( state, siteId = getSelecte
 }
 
 /**
+ * @param {Object} state Global state tree
+ * @param {Number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether or not the local shipping zone was already automatically created
+ */
+export function isDefaultShippingZoneCreated( state, siteId = getSelectedSiteId( state ) ) {
+	return isChoiceTrue( state, siteId, 'created_default_shipping_zone' );
+}
+
+/**
  * Gets whether or not all required plugins were installed during setup for this site
  *
  * @param {Object} state Global state tree
@@ -116,6 +125,17 @@ export function getFinishedInstallOfRequiredPlugins( state, siteId = getSelected
  */
 export function getFinishedPageSetup( state, siteId = getSelectedSiteId( state ) ) {
 	return isChoiceTrue( state, siteId, 'finished_page_setup' );
+}
+
+/**
+ * Gets whether the tax page was clicked through to during setup
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether or not all the tax page was clicked through to during setup
+ */
+export function getCheckedTaxSetup( state, siteId = getSelectedSiteId( state ) ) {
+	return isChoiceTrue( state, siteId, 'checked_tax_setup' );
 }
 
 /**

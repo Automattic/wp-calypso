@@ -285,9 +285,9 @@ const Post = React.createClass( {
 		const { isPreviewable, previewUrl, selectedSiteId } = this.props;
 
 		if ( this.props.post.status && this.props.post.status === 'future' ) {
-			this.analyticsEvents.previewPost;
+			this.analyticsEvents.previewPost();
 		} else {
-			this.analyticsEvents.viewPost;
+			this.analyticsEvents.viewPost();
 		}
 
 		if ( ! isPreviewable || ! selectedSiteId ) {

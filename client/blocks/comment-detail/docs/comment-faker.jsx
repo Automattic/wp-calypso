@@ -2,9 +2,11 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { filter, get, isNil, keyBy, keys, map, maxBy, omit } from 'lodash';
+import { filter, isNil, keyBy, map, omit, orderBy, slice } from 'lodash';
 
 import { createPlaceholderComment } from 'state/data-layer/wpcom/comments';
+
+const COMMENTS_PER_PAGE = 2;
 
 /**
  * `CommentFaker` is a HOC to easily test the Comments Management without the necessity of real data or actions.
@@ -18,6 +20,7 @@ import { createPlaceholderComment } from 'state/data-layer/wpcom/comments';
 export const CommentFaker = WrappedCommentList => class extends Component {
 	state = {
 		comments: {},
+		commentsPage: 1,
 	};
 
 	componentWillMount() {
@@ -29,6 +32,10 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 			this.props.siteId !== nextProps.siteId ) {
 				this.getCommentsFromProps( nextProps );
 		}
+
+		if ( this.props.status !== nextProps.status ) {
+			this.setState( { commentsPage: 1 } );
+		}
 	}
 
 	deleteCommentPermanently = commentId => this.setCommentStatusOrLike( [ commentId ], { status: 'delete' } );
@@ -38,6 +45,12 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 		: filter( this.state.comments, ( { status } ) => ( this.props.status === status ) );
 
 	getCommentsFromProps = ( { comments } ) => this.setState( { comments: keyBy( comments, 'ID' ) } );
+
+	getCommentsPage = comments => {
+		const startingIndex = ( this.state.commentsPage - 1 ) * COMMENTS_PER_PAGE;
+		const orderedComments = orderBy( comments, 'date', 'desc' );
+		return slice( orderedComments, startingIndex, startingIndex + COMMENTS_PER_PAGE );
+	}
 
 	setBulkStatus = ( commentIds, status ) => this.setCommentStatusOrLike( commentIds, { status } );
 
@@ -90,6 +103,8 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 			...editedComments,
 		} } );
 	}
+
+	setCommentsPage = commentsPage => this.setState( { commentsPage } );
 
 	submitComment = comment => {
 		const { comments } = this.state;
@@ -144,17 +159,28 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 
 	undoBulkStatus = comments => this.undoSetCommentStatusOrLike( comments );
 
-	render = () =>
-		<WrappedCommentList
-			{ ...this.props }
-			comments={ this.filterCommentsByStatus() }
-			deleteCommentPermanently={ this.deleteCommentPermanently }
-			setBulkStatus={ this.setBulkStatus }
-			setCommentLike={ this.setCommentLike }
-			setCommentStatus={ this.setCommentStatus }
-			submitComment={ this.submitComment }
-			undoBulkStatus={ this.undoBulkStatus }
-		/>;
+	render = () => {
+		const { commentsPage } = this.state;
+
+		const filteredComments = this.filterCommentsByStatus();
+		const pageOfComments = this.getCommentsPage( filteredComments );
+
+		return(
+			<WrappedCommentList
+				{ ...this.props }
+				comments={ pageOfComments }
+				commentsCount={ filteredComments.length }
+				commentsPage={ commentsPage }
+				deleteCommentPermanently={ this.deleteCommentPermanently }
+				setBulkStatus={ this.setBulkStatus }
+				setCommentLike={ this.setCommentLike }
+				setCommentsPage={ this.setCommentsPage }
+				setCommentStatus={ this.setCommentStatus }
+				submitComment={ this.submitComment }
+				undoBulkStatus={ this.undoBulkStatus }
+			/>
+		);
+	}
 };
 
 export default CommentFaker;

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, find, isNumber, isEqual } from 'lodash';
+import { compact, get, find, isNumber, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,8 +23,8 @@ export function getVariationEditsStateForProduct( state, productId, siteId = get
  * Gets the accumulated edits for a variation, if any.
  *
  * @param {Object} state Global state tree
- * @param {any} productId The id of the product (or { index: # } )
- * @param {any} variationId The id of the variation (or { index: # } )
+ * @param {any} productId The id of the product (or { placeholder: # } )
+ * @param {any} variationId The id of the variation (or { placeholder: # } )
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object} The current accumulated edits
  */
@@ -39,8 +39,8 @@ export function getVariationEdits( state, productId, variationId, siteId = getSe
  * Gets a variation with local edits overlayed on top of fetched data.
  *
  * @param {Object} state Global state tree
- * @param {any} productId The id of the product (or { index: # } )
- * @param {any} variationId The id of the variation (or { index: # } )
+ * @param {any} productId The id of the product (or { placeholder: # } )
+ * @param {any} variationId The id of the variation (or { placeholder: # } )
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object} The product data merged between the fetched data and edits
  */
@@ -57,7 +57,7 @@ export function getVariationWithLocalEdits( state, productId, variationId, siteI
  * Gets the variation being currently edited in the UI.
  *
  * @param {Object} state Global state tree
- * @param {any} productId The id of the product (or { index: # } )
+ * @param {any} productId The id of the product (or { placeholder: # } )
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object} Variation object that is merged between fetched data and edits
  */
@@ -72,7 +72,7 @@ export function getCurrentlyEditingVariation( state, productId, siteId = getSele
  * Gets an array of variation objects for a product, including new ones being edited in the UI.
  *
  * @param {Object} state Global state tree
- * @param {any} productId The id of the product (or { index: # } )
+ * @param {any} productId The id of the product (or { placeholder: # } )
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Array} Array of variation objects.
  */
@@ -81,11 +81,18 @@ export function getProductVariationsWithLocalEdits( state, productId, siteId = g
 	const edits = getVariationEditsStateForProduct( state, productId, siteId );
 	const creates = get( edits, 'creates', undefined );
 	const updates = get( edits, 'updates', undefined );
+	const deletes = get( edits, 'deletes', undefined );
 
-	const updatedVariations = ( variations || [] ).map( ( variation ) => {
+	const updatedVariations = compact( ( variations || [] ).map( ( variation ) => {
+		const isDeleted = Boolean( find( deletes, ( deletedId ) => isEqual( variation.id, deletedId ) ) );
+
+		if ( isDeleted ) {
+			return undefined;
+		}
+
 		const update = find( updates, { id: variation.id } );
 		return { ...variation, ...update };
-	} );
+	} ) );
 
 	return ( creates || variations ? [ ...creates || [], ...updatedVariations || [] ] : undefined );
 }

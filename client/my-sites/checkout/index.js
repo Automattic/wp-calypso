@@ -1,0 +1,60 @@
+/**
+ * External dependencies
+ */
+const page = require( 'page' );
+
+/**
+ * Internal dependencies
+ */
+const controller = require( 'my-sites/controller' ),
+	checkoutController = require( './controller' ),
+	SiftScience = require( 'lib/siftscience' );
+
+module.exports = function() {
+	SiftScience.recordUser();
+
+	page(
+		'/checkout/thank-you/no-site/:receiptId?',
+		controller.noSite,
+		checkoutController.checkoutThankYou
+	);
+
+	page(
+		'/checkout/thank-you/:site/:receiptId?',
+		controller.siteSelection,
+		checkoutController.checkoutThankYou
+	);
+
+	page(
+		'/checkout/features/:feature/:domain/:plan_name?',
+		controller.siteSelection,
+		checkoutController.checkout
+	);
+
+	page(
+		'/checkout/thank-you/features/:feature/:site/:receiptId?',
+		controller.siteSelection,
+		checkoutController.checkoutThankYou
+	);
+
+	page(
+		'/checkout/no-site',
+		controller.noSite,
+		checkoutController.sitelessCheckout
+	);
+
+	page(
+		'/checkout/:domain/:product?',
+		controller.siteSelection,
+		checkoutController.checkout
+	);
+
+	page(
+		'/checkout/:product/renew/:purchaseId/:domain',
+		controller.siteSelection,
+		checkoutController.checkout
+	);
+
+	// Visting /checkout without a plan or product should be redirected to /plans
+	page( '/checkout', '/plans' );
+};

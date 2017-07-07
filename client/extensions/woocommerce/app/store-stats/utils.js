@@ -76,3 +76,31 @@ export function getQueryDate( context ) {
 	const periods = Math.floor( validDuration / unitQuantity ) * unitQuantity;
 	return today.subtract( periods, unitConfig.label ).format( 'YYYY-MM-DD' );
 }
+
+/**
+ * Given a full date YYYY-MM-DD and unit ('day', 'week', 'month', 'year') return a shortened
+ * and contextually relevant date.
+ *
+ * @param {string} date - string date in YYYY-MM-DD format
+ * @param {string} unit - string representing unit required for API eg. ('day', 'week', 'month', 'year')
+ * @return {string} - as required by the API, eg for unit 'week', '2017-W27' isoWeek returned
+ */
+export function getUnitPeriod( date, unit ) {
+	return ( unit === 'week' )
+		? `${ moment( date ).format( UNITS[ unit ].format ) }-W${ moment( date ).isoWeek() }`
+		: moment( date ).format( UNITS[ unit ].format );
+}
+
+/**
+ * Given a full date YYYY-MM-DD and unit ('day', 'week', 'month', 'year') return the last date
+ * for the period formatted as YYYY-MM-DD
+ *
+ * @param {string} date - string date in YYYY-MM-DD format
+ * @param {string} unit - string representing unit required for API eg. ('day', 'week', 'month', 'year')
+ * @return {string} - YYYY-MM-DD format of the date to be queried
+ */
+export function getEndPeriod( date, unit ) {
+	return ( unit === 'week' )
+		? moment( date ).endOf( 'isoWeek' ).format( 'YYYY-MM-DD' )
+		: moment( date ).endOf( unit ).format( 'YYYY-MM-DD' );
+}
