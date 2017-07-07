@@ -1,0 +1,206 @@
+h1, h2, h3, h4, h5, p {
+	line-height: 1.2em;
+	margin-bottom: 15px;
+}
+
+h1 {
+	font-size: 30px;
+}
+
+h2 {
+	font-size: 24px;
+}
+
+h3 {
+	font-size: 18px;
+}
+
+p {
+	font-size: 16px;
+	line-height: 1.4em;
+}
+
+#content {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.pandance {
+	padding: 30px 15px;
+}
+
+.content-preview {
+	margin-left: -15px;
+	margin-right: -15px;
+	margin-top: -15px
+}
+
+.message {
+	background: #f3f6f8;
+	padding: 15px;
+}
+
+.message-inside {
+	margin: auto;
+	max-width: 800px;
+
+	@include breakpoint( ">660px" ) {
+		display: flex;
+		align-items: center;
+
+		.button {
+			margin-left: 20px;
+		}
+	}
+}
+
+.button-container {
+	padding: 10px 0 0;
+	text-align: right;
+}
+
+.layout__content {
+	padding-top: 47px;
+}
+
+.wrapper {
+	margin: 30px auto 0;
+	max-width: 600px;
+
+	> {
+		h2, p {
+			text-align: center;
+		}
+	}	
+}
+
+/* Blocks */
+
+.content-container {
+	border: 10px solid #333;
+
+	@include breakpoint( ">660px" ) {
+		border-width: 20px;
+	}
+}
+
+.options .card {
+	cursor: pointer;
+
+	@include breakpoint( ">660px" ) {
+		display: inline-block;
+    	width: 46%;
+    	margin: 2%;
+	}
+}
+
+.content-preview .card {
+	box-shadow: none;
+	margin-bottom: 0;
+}
+
+.section {
+	.card {
+		padding: 80px 30px;
+	}
+}
+
+.section-title {
+	font-size: 18px;
+	font-weight: bold;
+	text-transform: uppercase;
+	@include breakpoint( ">660px" ) {
+		font-size: 24px;
+	}
+}
+
+.site-header {
+	align-items: center;
+	background: url("/calypso/images/pandance/pizza-header-img.jpg") no-repeat center;
+	background-size: cover;
+	display: flex;
+	justify-content: center;
+	min-height: 350px;
+
+	@include breakpoint( ">660px" ) {
+		min-height: 600px;
+	}
+}
+
+.site-title {
+	border-bottom: 3px solid #f0b849;
+	color: #fff;
+	font-size: 32px;
+	font-weight: bold;
+	text-align: center;
+	text-shadow: 2px 2px 2px rgba(0,0,0, 0.25);
+
+	@include breakpoint( ">660px" ) {
+		font-size: 48px;
+		text-shadow: 2px 2px rgba(0,0,0, .35);
+	}
+}
+
+.hours {
+	text-align: center;
+}
+
+.contact-info {
+	text-align: center;
+
+	.card {
+		background: #333;
+		color: #fff;
+	}
+
+	pre {
+		color: #000;
+
+	}
+}
+
+.hours-table {
+	margin: auto;
+	max-width: 350px;
+
+	td:last-child {
+		text-align: right;
+	}
+}
+
+.image-editor__content {
+	background: transparent;
+
+	.is-placeholder {
+		display: none;
+	}
+}
+
+.image-editor__canvas-container {
+	    border: 1px solid #c8d7e1;
+}
+
+.image-editor__toolbar-button {
+	color: #2e4453;
+}
+
+.image-editor__buttons {
+	display: none;
+}
+
+.gm-style {
+	> div:first-child {
+		pointer-events: none;
+	}
+}
+
+.account-step {
+	.form-fieldset {
+		margin-bottom: 10px;
+	}
+
+	.button {
+		float: right;
+		margin-top: 10px;
+	}
+}

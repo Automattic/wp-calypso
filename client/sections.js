@@ -30,6 +30,14 @@ sections.push( {
 } );
 
 sections.push( {
+	name: 'pandance',
+	paths: [ '/pandance' ],
+	module: 'pandance',
+	secondary: true,
+	enableLoggedOut: true
+} );
+
+sections.push( {
 	name: 'devdocs',
 	paths: [ '/devdocs/start' ],
 	module: 'devdocs',

@@ -37,6 +37,7 @@ import media from './media/reducer';
 import notices from './notices/reducer';
 import npsSurvey from './nps-survey/reducer';
 import pageTemplates from './page-templates/reducer';
+import pandance from './pandance/reducer';
 import plans from './plans/reducer';
 import plugins from './plugins/reducer';
 import postFormats from './post-formats/reducer';
@@ -102,6 +103,7 @@ const reducers = {
 	notices,
 	npsSurvey,
 	pageTemplates,
+	pandance,
 	plugins,
 	plans,
 	postFormats,
