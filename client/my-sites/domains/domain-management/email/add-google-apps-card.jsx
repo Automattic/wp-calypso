@@ -32,13 +32,13 @@ const AddGoogleAppsCard = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'email' ) ],
 
 	render() {
-		const prices = get( this.props, 'products.gapps.prices', [] ),
+		const { currencyCode, translate } = this.props,
+			price = get( this.props, [ 'products', 'gapps', 'prices', currencyCode ], 0 ),
 			googleAppsSupportUrl = support.ADDING_GOOGLE_APPS_TO_YOUR_SITE,
-			selectedDomainName = this.props.selectedSite.domain,
-			{ currencyCode, translate } = this.props;
+			selectedDomainName = this.props.selectedSite.domain;
 
-		const annualPrice = getAnnualPrice( prices[ currencyCode ], currencyCode );
-		const monthlyPrice = getMonthlyPrice( prices[ currencyCode ], currencyCode );
+		const annualPrice = getAnnualPrice( price, currencyCode );
+		const monthlyPrice = getMonthlyPrice( price, currencyCode );
 
 		return (
 			<div>

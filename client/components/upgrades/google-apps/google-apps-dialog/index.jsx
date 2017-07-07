@@ -5,6 +5,7 @@ import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -51,11 +52,11 @@ class GoogleAppsDialog extends React.Component {
 	}
 
 	render() {
-		const gapps = this.props.productsList && this.props.productsList.get().gapps;
-		const prices = gapps && gapps.prices;
+		const productsList = this.props.productsList && this.props.productsList.get();
 		const { currencyCode } = this.props;
-		const annualPrice = getAnnualPrice( prices[ currencyCode ], currencyCode );
-		const monthlyPrice = getMonthlyPrice( prices[ currencyCode ], currencyCode );
+		const price = get( productsList, [ 'gapps', 'prices', currencyCode ], 0 );
+		const annualPrice = getAnnualPrice( price, currencyCode );
+		const monthlyPrice = getMonthlyPrice( price, currencyCode );
 
 		return (
 			<form className="google-apps-dialog" onSubmit={ this.handleFormSubmit }>
