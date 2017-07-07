@@ -129,38 +129,38 @@ class DebugTab extends Component {
 								{ translate( 'Check front page every 5 minutes.' ) }
 							</FormToggle>
 						</FormFieldset>
-						<FormFieldset>
-							<FormLabel htmlFor="frontPageText">
-								{ translate( 'Front page text' ) }
-							</FormLabel>
-							<FormTextInput
-								disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
-								id="frontPageText"
-								onChange={ handleChange( 'wp_super_cache_front_page_text' ) }
-								value={ wp_super_cache_front_page_text || '' } />
-							<FormSettingExplanation>
-								{ translate(
-									'Text to search for on your front page. If this text is missing, ' +
-									'the cache will be cleared. Leave blank to disable.'
-								) }
-							</FormSettingExplanation>
-						</FormFieldset>
-						<FormFieldset>
-							<FormToggle
-								checked={ !! wp_super_cache_front_page_clear }
-								disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
-								onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_clear' ) }>
-								{ translate( 'Clear cache on error.' ) }
-							</FormToggle>
-						</FormFieldset>
-						<FormFieldset>
-							<FormToggle
-								checked={ !! wp_super_cache_front_page_notification }
-								disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
-								onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_notification' ) }>
-								{ translate( 'Email the blog admin when checks are made. (useful for testing)' ) }
-							</FormToggle>
-						</FormFieldset>
+						<div className="wp-super-cache__debug-fieldsets">
+							<FormFieldset>
+								<FormLabel htmlFor="frontPageText">
+									{ translate( 'Front page text' ) }
+								</FormLabel>
+								<FormTextInput
+									disabled={ isRequesting || isSaving || ! wp_super_cache_debug || ! wp_super_cache_front_page_check }
+									id="frontPageText"
+									onChange={ handleChange( 'wp_super_cache_front_page_text' ) }
+									value={ wp_super_cache_front_page_text || '' } />
+								<FormSettingExplanation>
+									{ translate(
+										'Text to search for on your front page. If this text is missing, ' +
+										'the cache will be cleared. Leave blank to disable.'
+									) }
+								</FormSettingExplanation>
+							</FormFieldset>
+							<FormFieldset>
+								<FormToggle
+									checked={ !! wp_super_cache_front_page_clear }
+									disabled={ isRequesting || isSaving || ! wp_super_cache_debug || ! wp_super_cache_front_page_check }
+									onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_clear' ) }>
+									{ translate( 'Clear cache on error.' ) }
+								</FormToggle>
+								<FormToggle
+									checked={ !! wp_super_cache_front_page_notification }
+									disabled={ isRequesting || isSaving || ! wp_super_cache_debug || ! wp_super_cache_front_page_check }
+									onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_notification' ) }>
+									{ translate( 'Email the blog admin when checks are made. (useful for testing)' ) }
+								</FormToggle>
+							</FormFieldset>
+						</div>
 					</Card>
 				</form>
 			</div>
