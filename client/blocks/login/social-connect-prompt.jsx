@@ -13,14 +13,54 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { getLinkingSocialService } from 'state/login/selectors';
+import {
+	getLinkingSocialToken,
+	getLinkingSocialService,
+	getRedirectTo,
+} from 'state/login/selectors';
+import { connectSocialUser } from 'state/login/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class SocialConnectPrompt extends Component {
 	static propTypes = {
+		linkingSocialToken: PropTypes.string,
 		linkingSocialService: PropTypes.string,
 		onSuccess: PropTypes.func.isRequired,
+		redirectTo: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
+
+	constructor( props ) {
+		super( props );
+
+		this.handleClick = this.handleClick.bind( this );
+	}
+
+	handleClick( event ) {
+		const {
+			linkingSocialToken,
+			linkingSocialService,
+			onSuccess,
+			redirectTo,
+		} = this.props;
+
+		event.preventDefault();
+
+		this.props.connectSocialUser( linkingSocialService, linkingSocialToken, redirectTo )
+			.then(
+				() => {
+					this.recordEvent( 'calypso_login_social_connect_success' );
+
+					onSuccess();
+				},
+				error => {
+					this.recordEvent( 'calypso_login_social_connect_failure', {
+						error_code: error.code,
+						error_message: error.message
+					} );
+				}
+			);
+	}
 
 	render() {
 		return (
@@ -50,7 +90,7 @@ class SocialConnectPrompt extends Component {
 				</div>
 
 				<div className="login__social-connect-prompt-action">
-					<Button primary>
+					<Button primary onClick={ this.handleClick }>
 						{ this.props.translate( 'Connect' ) }
 					</Button>
 				</div>
@@ -62,5 +102,11 @@ class SocialConnectPrompt extends Component {
 export default connect(
 	( state ) => ( {
 		linkingSocialService: getLinkingSocialService( state ),
-	} )
+		linkingSocialToken: getLinkingSocialToken( state ),
+		redirectTo: getRedirectTo( state ),
+	} ),
+	{
+		connectSocialUser,
+		recordTracksEvent,
+	}
 )( localize( SocialConnectPrompt ) );

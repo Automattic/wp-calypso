@@ -222,3 +222,11 @@ export const getLinkingSocialUser = ( state ) => get( state, 'login.socialAccoun
  * @return {?String}         Service name of the social account.
  */
 export const getLinkingSocialService = ( state ) => get( state, 'login.socialAccount.service', null );
+
+/***
+ * Gets the token of the social account to be linked.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         Token of the social account.
+ */
+export const getLinkingSocialToken = ( state ) => get( state, 'login.socialAccount.token', null );

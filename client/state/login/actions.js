@@ -19,6 +19,9 @@ import {
 	SOCIAL_CREATE_ACCOUNT_REQUEST,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
+	SOCIAL_CONNECT_ACCOUNT_REQUEST,
+	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
+	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -242,6 +245,7 @@ export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 				type: SOCIAL_LOGIN_REQUEST_FAILURE,
 				error,
 				service: service,
+				token: token,
 			} );
 
 			return Promise.reject( error );
@@ -250,7 +254,6 @@ export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 
 /**
  * Attempt to create an account with a social service
- usersSocialNew( 'google', response.Zi.id_token, 'login', ( wpcomError, wpcomResponse ) => {
  *
  * @param  {String}    service    The external social service name.
  * @param  {String}    token      Authentication token provided by the external social service.
@@ -277,6 +280,39 @@ export const createSocialUser = ( service, token, flowName ) => dispatch => {
 
 		dispatch( {
 			type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+			error,
+		} );
+
+		return Promise.reject( error );
+	} );
+};
+
+/**
+ * Attempt to connect the current account with a social service
+ *
+ * @param  {String}    service    The external social service name.
+ * @param  {String}    token      Authentication token provided by the external social service.
+ * @param  {String}    redirectTo Url to redirect the user to upon successful login
+ * @return {Function}             Action thunk to trigger the login process.
+ */
+export const connectSocialUser = ( service, token, redirectTo ) => dispatch => {
+	dispatch( {
+		type: SOCIAL_CONNECT_ACCOUNT_REQUEST,
+		notice: {
+			message: translate( 'Creating your account' )
+		},
+	} );
+
+	return wpcom.undocumented().usersSocialConnect( service, token, redirectTo ).then( wpcomResponse => {
+		dispatch( {
+			type: SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
+			redirectTo: wpcomResponse.redirect_to,
+		} );
+	}, wpcomError => {
+		const error = getErrorFromWPCOMError( wpcomError );
+
+		dispatch( {
+			type: SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 			error,
 		} );
 
