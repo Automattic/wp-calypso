@@ -80,7 +80,7 @@ class DomainSearch extends Component {
 			cartItems.domainRegistration( { domain: suggestion.domain_name, productSlug: suggestion.product_slug } )
 		];
 
-		if ( cartItems.isNextDomainFree( this.props.cart ) ) {
+		if ( suggestion.supports_privacy && cartItems.isNextDomainFree( this.props.cart ) ) {
 			items.push( cartItems.domainPrivacyProtection( {
 				domain: suggestion.domain_name
 			} ) );
