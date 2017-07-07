@@ -1,12 +1,10 @@
 /**
  * External Dependencies
  */
-import page from 'page';
-import qs from 'qs';
 import i18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import React from 'react';
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -17,12 +15,7 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import productsFactory from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import { canCurrentUser } from 'state/selectors';
-import {
-	getSelectedSiteId,
-	getSelectedSite,
-} from 'state/ui/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Module variables

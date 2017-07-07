@@ -55,7 +55,7 @@ describe( 'mapped-domain', () => {
 	} );
 
 	it( 'should use selectedSite.slug for URLs', sinon.test( function() {
-		const paths = require( 'my-sites/upgrades/paths' );
+		const paths = require( 'my-sites/domains/paths' );
 		const dnsStub = this.stub( paths, 'domainManagementDns' );
 		const emailStub = this.stub( paths, 'domainManagementEmail' );
 
