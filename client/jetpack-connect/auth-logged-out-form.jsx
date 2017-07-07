@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import HelpButton from './help-button';
 import { login } from 'lib/paths';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
@@ -92,7 +93,7 @@ class LoggedOutForm extends Component {
 
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href={ login( { redirectTo } ) }>
+				<LoggedOutFormLinkItem href={ login( { isNative: config.isEnabled( 'login/native-login-links' ), redirectTo } ) }>
 					{ this.props.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
 				<HelpButton onClick={ this.clickHelpButton } />
