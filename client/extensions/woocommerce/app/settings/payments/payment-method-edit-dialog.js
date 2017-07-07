@@ -110,7 +110,7 @@ class PaymentMethodEdit extends Component {
 
 	buttons = [
 		{ action: 'cancel', label: this.props.translate( 'Cancel' ), onClick: this.props.onCancel },
-		{ action: 'add', label: this.props.translate( 'Save' ), onClick: this.props.onSave, isPrimary: true },
+		{ action: 'save', label: this.props.translate( 'Save' ), onClick: this.props.onSave, isPrimary: true },
 	];
 
 	render() {
@@ -119,7 +119,7 @@ class PaymentMethodEdit extends Component {
 		return (
 			<Dialog
 				buttons={ this.buttons }
-				isVisible="true">
+				isVisible>
 				{ settingsFieldsKeys.map( this.renderEditField ) }
 			</Dialog>
 		);
