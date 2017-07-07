@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { logItemsSchema } from './schema';
 import {
 	ACTIVITY_LOG_UPDATE,
 } from 'state/action-types';
@@ -15,3 +16,4 @@ export const logError = keyedReducer( 'siteId', state => state );
 export const logItems = keyedReducer( 'siteId', createReducer( [], {
 	[ ACTIVITY_LOG_UPDATE ]: ( state, { data } ) => data,
 } ) );
+logItems.schema = logItemsSchema;
