@@ -186,6 +186,8 @@
 				left: auto;
 			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
 			height: 18px;
+			margin-right: 0;
+
 
 			@include breakpoint( "<660px" ) {
 				top: 17px;
