@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import {
+	getPeriodFormat,
 	getSerializedStatsQuery,
 	normalizers,
 	rangeOfPeriod,
@@ -16,6 +17,48 @@ import {
 } from '../utils';
 
 describe( 'utils', () => {
+	describe( 'getPeriodFormat', () => {
+		it( 'should return correctly day format for long formats', () => {
+			const response = getPeriodFormat( 'day', '2017-07-07' );
+			assert.strictEqual( response, 'YYYY-MM-DD' );
+		} );
+
+		it( 'should return correctly week format for long formats', () => {
+			const response = getPeriodFormat( 'week', '2017-07-07' );
+			assert.strictEqual( response, 'YYYY-MM-DD' );
+		} );
+
+		it( 'should return correctly month format for long formats', () => {
+			const response = getPeriodFormat( 'month', '2017-07-07' );
+			assert.strictEqual( response, 'YYYY-MM-DD' );
+		} );
+
+		it( 'should return correctly year format for long formats', () => {
+			const response = getPeriodFormat( 'year', '2017-07-07' );
+			assert.strictEqual( response, 'YYYY-MM-DD' );
+		} );
+
+		it( 'should return correctly day format for short (new) formats', () => {
+			const response = getPeriodFormat( 'day', '2017-07-07' );
+			assert.strictEqual( response, 'YYYY-MM-DD' );
+		} );
+
+		it( 'should return correctly week format for short (new) formats', () => {
+			const response = getPeriodFormat( 'week', '2017-W27' );
+			assert.strictEqual( response, 'YYYY-[W]WW' );
+		} );
+
+		it( 'should return correctly month format for short (new) formats', () => {
+			const response = getPeriodFormat( 'month', '2017-07' );
+			assert.strictEqual( response, 'YYYY-MM' );
+		} );
+
+		it( 'should return correctly year format for short (new) formats', () => {
+			const response = getPeriodFormat( 'year', '2017' );
+			assert.strictEqual( response, 'YYYY' );
+		} );
+	} );
+
 	describe( 'buildExportArray()', () => {
 		it( 'should an empty array if data not supplied', () => {
 			const data = buildExportArray( {} );

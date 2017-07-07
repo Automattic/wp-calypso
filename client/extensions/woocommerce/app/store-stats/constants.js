@@ -86,7 +86,7 @@ export const UNITS = {
 		quantity: 30,
 		label: 'weeks',
 		durationFn: 'asWeeks',
-		format: 'YYYY',
+		format: 'YYYY-[W]WW',
 	},
 	month: {
 		quantity: 30,

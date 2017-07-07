@@ -87,9 +87,7 @@ export function getQueryDate( context ) {
  * @return {string} - as required by the API, eg for unit 'week', '2017-W27' isoWeek returned
  */
 export function getUnitPeriod( date, unit ) {
-	return ( unit === 'week' )
-		? `${ moment( date ).format( UNITS[ unit ].format ) }-W${ moment( date ).isoWeek() }`
-		: moment( date ).format( UNITS[ unit ].format );
+	return moment( date ).format( UNITS[ unit ].format );
 }
 
 /**
