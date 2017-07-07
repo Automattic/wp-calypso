@@ -8,9 +8,9 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
+import Button from 'components/button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { isMonthly, getYearlyPlanByMonthly } from 'lib/plans/constants';
 import { planItem } from 'lib/cart-values/cart-items';
@@ -27,16 +27,9 @@ class PlanBillingPeriod extends Component {
 		purchase: PropTypes.object,
 	};
 
-	handleBillingPeriodChange = ( event ) => {
-		if ( event.target.value === 'monthly' ) {
-			return;
-		}
-
+	handleMonthlyToYearlyButtonClick = () => {
 		const { purchase } = this.props;
 		const yearlyPlanSlug = getYearlyPlanByMonthly( purchase.productSlug );
-		if ( ! yearlyPlanSlug ) {
-			return;
-		}
 
 		addItem( planItem( yearlyPlanSlug ) );
 		page( '/checkout/' + purchase.domain );
@@ -73,7 +66,7 @@ class PlanBillingPeriod extends Component {
 		return translate( 'Billed yearly' );
 	}
 
-	renderBillingPeriodSelector() {
+	renderBillingPeriod() {
 		const { purchase, translate } = this.props;
 		if ( ! purchase ) {
 			return;
@@ -87,11 +80,18 @@ class PlanBillingPeriod extends Component {
 			);
 		}
 
+		const yearlyPlanSlug = getYearlyPlanByMonthly( purchase.productSlug );
+		if ( ! yearlyPlanSlug ) {
+			return;
+		}
+
 		return (
-			<FormSelect onChange={ this.handleBillingPeriodChange } defaultValue="monthly">
-				<option value="monthly">{ translate( 'Monthly' ) }</option>
-				<option value="yearly">{ translate( 'Yearly' ) }</option>
-			</FormSelect>
+			<Button
+				onClick={ this.handleMonthlyToYearlyButtonClick }
+				primary
+			>
+				{ translate( 'Upgrade to Yearly' ) }
+			</Button>
 		);
 	}
 
@@ -104,7 +104,7 @@ class PlanBillingPeriod extends Component {
 					{ translate( 'Billing period' ) }
 				</FormLabel>
 
-				{ this.renderBillingPeriodSelector() }
+				{ this.renderBillingPeriod() }
 			</FormFieldset>
 		);
 	}
