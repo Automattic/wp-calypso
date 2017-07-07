@@ -201,13 +201,6 @@ if ( calypsoEnv === 'development' ) {
 	webpackConfig.devtool = false;
 }
 
-if ( calypsoEnv === 'production' ) {
-	webpackConfig.plugins.push( new webpack.NormalModuleReplacementPlugin(
-		/^debug$/,
-		path.join( __dirname, 'client', 'lib', 'debug-noop' )
-	) );
-}
-
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push( new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' ) );
 }
