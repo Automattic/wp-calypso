@@ -705,7 +705,6 @@ export const PostEditor = React.createClass( {
 			showPreview: false,
 			isPostPublishPreview: false,
 			previewAction: null,
-			notice: null,
 		} );
 
 		return false;
@@ -719,7 +718,7 @@ export const PostEditor = React.createClass( {
 		const { post } = this.state;
 
 		if ( utils.isPublished( post ) ) {
-			this.onSaveSuccess( 'updated', 'view' );
+			this.onSaveSuccess( 'updated' );
 		} else {
 			this.onSaveSuccess();
 		}
@@ -810,7 +809,7 @@ export const PostEditor = React.createClass( {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
 		}
 
-		this.onSaveSuccess( message, ( message === 'published' ? 'view' : 'preview' ) );
+		this.onSaveSuccess( message );
 	},
 
 	onSaveFailure: function( error, message ) {
@@ -875,7 +874,7 @@ export const PostEditor = React.createClass( {
 		} );
 	},
 
-	onSaveSuccess: function( message, action ) {
+	onSaveSuccess: function( message ) {
 		const post = PostEditStore.get();
 		const isNotPrivateOrIsConfirmed = ( 'private' !== post.status ) || ( 'closed' !== this.state.confirmationSidebar );
 
@@ -900,8 +899,6 @@ export const PostEditor = React.createClass( {
 			nextState.notice = {
 				status: 'is-success',
 				message,
-				action,
-				link: null,
 			};
 
 			window.scrollTo( 0, 0 );

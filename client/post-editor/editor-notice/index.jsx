@@ -9,7 +9,6 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import NoticeAction from 'components/notice/notice-action';
 import Notice from 'components/notice';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -18,7 +17,6 @@ import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { isMobile } from 'lib/viewport';
-import { isSitePreviewable } from 'state/sites/selectors';
 
 export class EditorNotice extends Component {
 	static propTypes = {
@@ -29,10 +27,6 @@ export class EditorNotice extends Component {
 		typeObject: PropTypes.object,
 		message: PropTypes.string,
 		status: PropTypes.string,
-		action: PropTypes.string,
-		link: PropTypes.string,
-		onViewClick: PropTypes.func,
-		isPreviewable: PropTypes.bool,
 		onDismissClick: PropTypes.func,
 		error: PropTypes.object
 	}
@@ -180,30 +174,6 @@ export class EditorNotice extends Component {
 		}
 	}
 
-	renderNoticeAction() {
-		const {
-			action,
-			link,
-			isPreviewable,
-			onViewClick,
-		} = this.props;
-		if ( onViewClick && isPreviewable && link ) {
-			return (
-				<NoticeAction onClick={ onViewClick }>
-					{ this.getText( action ) }
-				</NoticeAction>
-			);
-		}
-
-		return (
-			link && (
-				<NoticeAction href={ link } external>
-					{ this.getText( action ) }
-				</NoticeAction>
-			)
-		);
-	}
-
 	render() {
 		const { siteId, message, status, onDismissClick } = this.props;
 		const text = this.getErrorMessage() || this.getText( message );
@@ -216,7 +186,6 @@ export class EditorNotice extends Component {
 						{ ...{ status, text, onDismissClick } }
 						showDismiss={ true }
 					>
-						{ this.renderNoticeAction() }
 					</Notice>
 				) }
 			</div>
@@ -236,6 +205,5 @@ export default connect( ( state ) => {
 		site: getSelectedSite( state ),
 		type: post.type,
 		typeObject: getPostType( state, siteId, post.type ),
-		isPreviewable: isSitePreviewable( state, siteId ),
 	};
 }, { setLayoutFocus } )( localize( EditorNotice ) );
