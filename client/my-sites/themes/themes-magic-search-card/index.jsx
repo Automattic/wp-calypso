@@ -19,8 +19,6 @@ import config from 'config';
 import { isMobile } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getThemeFilters, getThemeFilterToTermTable } from 'state/selectors';
 
 //We want those taxonomies if they are used to be presented in this order
@@ -334,8 +332,7 @@ ThemesMagicSearchCard.propTypes = {
 	siteId: PropTypes.number,
 	onSearch: PropTypes.func.isRequired,
 	search: PropTypes.string,
-	translate: PropTypes.func.isRequired,
-	isJetpack: PropTypes.bool
+	translate: PropTypes.func.isRequired
 };
 
 ThemesMagicSearchCard.defaultProps = {
@@ -344,7 +341,6 @@ ThemesMagicSearchCard.defaultProps = {
 
 export default connect(
 	( state ) => ( {
-		isJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
 		filters: getThemeFilters( state ),
 		allValidFilters: Object.keys( getThemeFilterToTermTable( state ) ),
 	} )
