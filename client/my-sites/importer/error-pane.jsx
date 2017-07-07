@@ -33,7 +33,7 @@ export default React.createClass( {
 					errorDescription: this.props.description
 				},
 				components: {
-					a: <a href="#" onClick={ this.retryImport }/>,
+					a: <a href="#" onClick={ this.retryImport } />,
 					br: <br />,
 					cs: <a href="#" onClick={ this.contactSupport } />
 				}
