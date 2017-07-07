@@ -11,6 +11,7 @@ import { NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { follow, unfollow } from 'state/reader/follows/actions';
 import { requestUnfollow, receiveUnfollow, unfollowError } from '../';
+import { local } from 'state/data-layer/utils';
 
 describe( 'following/mine/delete', () => {
 	describe( 'requestUnfollow', () => {
@@ -49,18 +50,16 @@ describe( 'following/mine/delete', () => {
 	describe( 'receiveUnfollow', () => {
 		it( 'should next the original action', () => {
 			const dispatch = spy();
-			const next = spy();
 			const action = unfollow( 'http://example.com' );
 			const response = {
 				subscribed: false,
 			};
-			receiveUnfollow( { dispatch }, action, next, response );
-			expect( next ).to.be.calledWith( action );
+			receiveUnfollow( { dispatch }, action, null, response );
+			expect( dispatch ).to.be.calledWith( local( action ) );
 		} );
 
 		it( 'should dispatch an error notice and refollow when subscribed is true', () => {
 			const dispatch = spy();
-			const next = spy();
 			const action = unfollow( 'http://example.com' );
 			const getState = () => ( {
 				reader: {
@@ -78,14 +77,13 @@ describe( 'following/mine/delete', () => {
 
 			receiveUnfollow( { dispatch, getState }, action, next, response );
 			expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
-			expect( next ).to.be.calledWith( follow( 'http://example.com' ) );
+			expect( dispatch ).to.be.calledWith( local( follow( 'http://example.com' ) ) );
 		} );
 	} );
 
 	describe( 'followError', () => {
 		it( 'should dispatch an error notice', () => {
 			const dispatch = spy();
-			const next = spy();
 			const action = unfollow( 'http://example.com' );
 			const getState = () => ( {
 				reader: {
@@ -98,9 +96,9 @@ describe( 'following/mine/delete', () => {
 				},
 			} );
 
-			unfollowError( { dispatch, getState }, action, next );
+			unfollowError( { dispatch, getState }, action );
 			expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
-			expect( next ).to.be.calledWith( follow( 'http://example.com' ) );
+			expect( dispatch ).to.be.calledWith( local( follow( 'http://example.com' ) ) );
 		} );
 	} );
 } );

@@ -15,6 +15,7 @@ import { follow } from 'state/reader/follows/actions';
 import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
 import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
 import { getSiteName } from 'reader/get-helpers';
+import { local } from 'state/data-layer/utils';
 
 export function requestUnfollow( { dispatch, getState }, action ) {
 	const { payload: { feedUrl } } = action;
@@ -49,13 +50,13 @@ export function requestUnfollow( { dispatch, getState }, action ) {
 
 export function receiveUnfollow( store, action, next, response ) {
 	if ( response && ! response.subscribed ) {
-		next( action );
+		store.dispatch( local( action ) );
 	} else {
-		unfollowError( store, action, next );
+		unfollowError( store, action );
 	}
 }
 
-export function unfollowError( { dispatch, getState }, action, next ) {
+export function unfollowError( { dispatch, getState }, action ) {
 	const feedUrl = action.payload.feedUrl;
 	const site = getSiteByFeedUrl( getState(), feedUrl );
 	const feed = getFeedByFeedUrl( getState(), feedUrl );
@@ -69,7 +70,7 @@ export function unfollowError( { dispatch, getState }, action, next ) {
 			} ),
 		),
 	);
-	next( follow( action.payload.feedUrl ) );
+	dispatch( local( follow( action.payload.feedUrl ) ) );
 }
 
 export default {

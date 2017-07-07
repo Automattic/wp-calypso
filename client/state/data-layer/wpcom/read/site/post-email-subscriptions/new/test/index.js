@@ -18,6 +18,7 @@ import {
 	updateNewPostEmailSubscription,
 } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { local } from 'state/data-layer/utils';
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestPostEmailSubscription', () => {
@@ -40,20 +41,19 @@ describe( 'comment-email-subscriptions', () => {
 
 	describe( 'receivePostEmailSubscription', () => {
 		it( 'should call next to update the subscription with the delivery frequency from the response', () => {
-			const nextSpy = spy();
-			receivePostEmailSubscription( null, subscribeToNewPostEmail( 1234 ), nextSpy, {
+			const dispatch = spy();
+			receivePostEmailSubscription( { dispatch }, subscribeToNewPostEmail( 1234 ), null, {
 				subscribed: true,
 				subscription: {
 					delivery_frequency: 'daily',
 				},
 			} );
-			expect( nextSpy ).to.have.been.calledWith( updateNewPostEmailSubscription( 1234, 'daily' ) );
+			expect( dispatch ).to.have.been.calledWith( local( updateNewPostEmailSubscription( 1234, 'daily' ) ) );
 		} );
 
 		it( 'should dispatch an unsubscribe if it fails using next', () => {
-			const nextSpy = spy();
 			const dispatch = spy();
-			receivePostEmailSubscription( { dispatch }, { payload: { blogId: 1234 } }, nextSpy, {
+			receivePostEmailSubscription( { dispatch }, { payload: { blogId: 1234 } }, null, {
 				subscribed: false,
 			} );
 			expect( dispatch ).to.have.been.calledWithMatch( {
@@ -61,21 +61,20 @@ describe( 'comment-email-subscriptions', () => {
 					text: 'Sorry, we had a problem subscribing. Please try again.',
 				},
 			} );
-			expect( nextSpy ).to.have.been.calledWith( unsubscribeToNewPostEmail( 1234 ) );
+			expect( dispatch ).to.have.been.calledWith( local( unsubscribeToNewPostEmail( 1234 ) ) );
 		} );
 	} );
 
 	describe( 'receivePostEmailSubscriptionError', () => {
 		it( 'should dispatch an error notice and unsubscribe action using next', () => {
 			const dispatch = spy();
-			const nextSpy = spy();
-			receivePostEmailSubscriptionError( { dispatch }, { payload: { blogId: 1234 } }, nextSpy );
+			receivePostEmailSubscriptionError( { dispatch }, { payload: { blogId: 1234 } }, null );
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					text: 'Sorry, we had a problem subscribing. Please try again.',
 				},
 			} );
-			expect( nextSpy ).to.have.been.calledWith( unsubscribeToNewPostEmail( 1234 ) );
+			expect( dispatch ).to.have.been.calledWith( local( unsubscribeToNewPostEmail( 1234 ) ) );
 		} );
 	} );
 } );

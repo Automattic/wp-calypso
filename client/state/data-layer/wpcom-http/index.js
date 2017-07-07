@@ -32,11 +32,11 @@ export const successMeta = ( data, headers ) => ( { meta: { dataLayer: { data, h
 export const failureMeta = ( error, headers ) => ( { meta: { dataLayer: { error, headers } } } );
 export const progressMeta = ( { total, loaded } ) => ( { meta: { dataLayer: { progress: { total, loaded } } } } );
 
-export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch }, rawAction, next ) => {
+export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch }, rawAction ) => {
 	const action = processOutbound( rawAction, dispatch );
 
 	if ( null === action ) {
-		return next( rawAction );
+		return;
 	}
 
 	const {
@@ -77,8 +77,6 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 	if ( 'POST' === method && onProgress ) {
 		request.upload.onprogress = event => dispatch( extendAction( onProgress, progressMeta( event ) ) );
 	}
-
-	return next( action );
 };
 
 export default {

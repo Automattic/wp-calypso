@@ -11,7 +11,6 @@ import * as analytics from 'state/analytics/actions';
 import * as directly from 'lib/directly';
 import {
 	DIRECTLY_ASK_QUESTION,
-	DIRECTLY_INITIALIZATION_START,
 	DIRECTLY_INITIALIZATION_SUCCESS,
 	DIRECTLY_INITIALIZATION_ERROR,
 } from 'state/action-types';
@@ -21,13 +20,11 @@ import {
 } from '..';
 
 describe( 'Directly data layer', () => {
-	let next;
 	let store;
 	let simulateInitializationSuccess;
 	let simulateInitializationError;
 
 	useSandbox( ( sandbox ) => {
-		next = sandbox.spy();
 		store = {
 			dispatch: sandbox.spy(),
 		};
@@ -60,41 +57,29 @@ describe( 'Directly data layer', () => {
 		} );
 
 		it( 'should invoke the corresponding Directly function', () => {
-			askQuestion( store, action, next );
+			askQuestion( store, action );
 			expect( directly.askQuestion ).to.have.been.calledWith( questionText, name, email );
 		} );
 
-		it( 'should pass the action through', () => {
-			askQuestion( store, action, next );
-			expect( next ).to.have.been.calledWith( action );
-		} );
-
 		it( 'should dispatch an analytics event', () => (
-			askQuestion( store, action, next )
+			askQuestion( store, action )
 				.then( () => expect( analytics.recordTracksEvent ).to.have.been.calledWith( 'calypso_directly_ask_question' ) )
 		) );
 	} );
 
 	describe( '#initialize', () => {
-		const action = { type: DIRECTLY_INITIALIZATION_START };
-
 		it( 'should invoke the corresponding Directly function', () => {
-			initialize( store, action, next );
+			initialize( store );
 			expect( directly.initialize ).to.have.been.calledOnce;
 		} );
 
-		it( 'should pass the action through', () => {
-			initialize( store, action, next );
-			expect( next ).to.have.been.calledWith( action );
-		} );
-
 		it( 'should dispatch an analytics event once initialization starts', () => {
-			initialize( store, action, next );
+			initialize( store );
 			expect( analytics.recordTracksEvent ).to.have.been.calledWith( 'calypso_directly_initialization_start' );
 		} );
 
 		it( 'should dispatch a success action if initialization completes', ( done ) => {
-			initialize( store, action, next )
+			initialize( store )
 				.then( () => expect( store.dispatch ).to.have.been.calledWithMatch( { type: DIRECTLY_INITIALIZATION_SUCCESS } ) )
 				.then( () => done() );
 
@@ -102,7 +87,7 @@ describe( 'Directly data layer', () => {
 		} );
 
 		it( 'should dispatch an analytics event if initialization completes', ( done ) => {
-			initialize( store, action, next )
+			initialize( store )
 				.then( () => expect( analytics.recordTracksEvent ).to.have.been.calledWith( 'calypso_directly_initialization_success' ) )
 				.then( () => done() );
 
@@ -110,7 +95,7 @@ describe( 'Directly data layer', () => {
 		} );
 
 		it( 'should dispatch an error action if initialization fails', ( done ) => {
-			initialize( store, action, next )
+			initialize( store )
 				.then( () => expect( store.dispatch ).to.have.been.calledWithMatch( { type: DIRECTLY_INITIALIZATION_ERROR } ) )
 				.then( () => done() );
 
@@ -118,7 +103,7 @@ describe( 'Directly data layer', () => {
 		} );
 
 		it( 'should dispatch an analytics event if initialization fails', ( done ) => {
-			initialize( store, action, next )
+			initialize( store )
 				.then( () => expect( analytics.recordTracksEvent ).to.have.been.calledWith(
 					'calypso_directly_initialization_error',
 					{ error: 'Error: Something went wrong' }

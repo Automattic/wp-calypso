@@ -46,9 +46,8 @@ describe( '#fetchUsers', () => {
 	it( 'should dispatch HTTP request to users endpoint', () => {
 		const action = requestUsers( 12345678, [ 10, 11 ] );
 		const dispatch = sinon.spy();
-		const next = sinon.spy();
 
-		fetchUsers( { dispatch }, action, next );
+		fetchUsers( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( http( {
@@ -68,9 +67,8 @@ describe( '#fetchUsers', () => {
 		action.page = 2;
 		action.perPage = 42;
 		const dispatch = sinon.spy();
-		const next = sinon.spy();
 
-		fetchUsers( { dispatch }, action, next );
+		fetchUsers( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( http( {
@@ -90,9 +88,8 @@ describe( '#receiveSuccess', () => {
 	it( 'should normalize the users and dispatch `receiveUser` for each one', () => {
 		const action = requestUsers( 12345678, [ 10, 11 ] );
 		const dispatch = sinon.spy();
-		const next = sinon.spy();
 
-		receiveSuccess( { dispatch }, action, next, [
+		receiveSuccess( { dispatch }, action, null, [
 			{ id: 10 },
 			{ id: 11 },
 		] );
@@ -114,7 +111,6 @@ describe( '#receiveSuccess', () => {
 
 		const action = requestUsers( 12345678, ids );
 		const dispatch = sinon.spy();
-		const next = sinon.spy();
 
 		receiveSuccess(
 			{ dispatch },
@@ -129,7 +125,7 @@ describe( '#receiveSuccess', () => {
 					},
 				},
 			},
-			next,
+			null,
 			usersChunks[ 0 ]
 		);
 
@@ -161,7 +157,6 @@ describe( '#receiveSuccess', () => {
 			perPage: perPage,
 		};
 		const dispatch = sinon.spy();
-		const next = sinon.spy();
 
 		receiveSuccess(
 			{ dispatch },
@@ -176,7 +171,7 @@ describe( '#receiveSuccess', () => {
 					},
 				},
 			},
-			next,
+			null,
 			usersChunks[ 0 ]
 		);
 

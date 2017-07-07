@@ -7,7 +7,7 @@ import { spy } from 'sinon';
 /**
  * Internal Dependencies
  */
-import { requestBlogStickerList, receiveBlogStickerList, receiveBlogStickerListError } from '../';
+import { requestBlogStickerList, receiveBlogStickerListError } from '../';
 import { listBlogStickers } from 'state/sites/blog-stickers/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
@@ -27,16 +27,6 @@ describe( 'blog-sticker-list', () => {
 					onFailure: action,
 				} ),
 			);
-		} );
-	} );
-
-	describe( 'receiveBlogStickerList', () => {
-		it( 'should not call the next function if successful', () => {
-			const dispatch = spy();
-			const nextSpy = spy();
-			const action = { payload: { blogId: 123 } };
-			receiveBlogStickerList( { dispatch }, action, nextSpy, [ 'broken-in-reader' ] );
-			expect( nextSpy ).to.not.have.been.called;
 		} );
 	} );
 

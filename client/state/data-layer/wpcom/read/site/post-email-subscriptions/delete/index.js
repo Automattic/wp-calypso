@@ -11,6 +11,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { subscribeToNewPostEmail } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
+import { local } from 'state/data-layer/utils';
 
 export function requestPostEmailUnsubscription( { dispatch }, action ) {
 	dispatch(
@@ -31,16 +32,16 @@ export function receivePostEmailUnsubscription( store, action, next, response ) 
 	const subscribed = !! ( response && response.subscribed );
 	if ( subscribed ) {
 		// shoot. something went wrong.
-		receivePostEmailUnsubscriptionError( store, action, next );
+		receivePostEmailUnsubscriptionError( store, action );
 		return;
 	}
 }
 
-export function receivePostEmailUnsubscriptionError( { dispatch }, action, next ) {
+export function receivePostEmailUnsubscriptionError( { dispatch }, action ) {
 	dispatch(
 		errorNotice( translate( 'Sorry, we had a problem unsubscribing. Please try again.' ) )
 	);
-	next( subscribeToNewPostEmail( action.payload.blogId ) );
+	dispatch( local( subscribeToNewPostEmail( action.payload.blogId ) ) );
 }
 
 export default {
