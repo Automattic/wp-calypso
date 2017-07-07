@@ -122,7 +122,7 @@ class SetupTasks extends Component {
 			},
 			{
 				checked: shippingIsSetUp,
-				explanation: translate( 'We\'ve set it up so that free shipping is available to customers in your country.' ),
+				explanation: translate( 'We\'ve set up shipping based on your store location.' ),
 				label: translate( 'Review shipping settings' ),
 				show: this.state.showShippingTask,
 				actions: [
