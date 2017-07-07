@@ -20,7 +20,8 @@ import ShippingZoneName, { getZoneName } from './shipping-zone-name';
 import {
 	addNewShippingZone,
 	openShippingZoneForEdit,
-	createShippingZoneActionList,
+	createShippingZoneSaveActionList,
+	createShippingZoneDeleteActionList,
 } from 'woocommerce/state/ui/shipping/zones/actions';
 import { changeShippingZoneName } from 'woocommerce/state/ui/shipping/zones/actions';
 import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
@@ -73,6 +74,7 @@ class Shipping extends Component {
 
 	onSave() {
 		const { siteId, zone, locations, translate, actions } = this.props;
+
 		if ( ! zone.name ) {
 			actions.changeShippingZoneName( siteId, getZoneName( zone, locations, translate ) );
 		}
@@ -86,7 +88,17 @@ class Shipping extends Component {
 			translate( 'There was a problem saving the Shipping Zone. Please try again.' )
 		);
 
-		actions.createShippingZoneActionList( successAction, failureAction );
+		const locationsFailAction = errorNotice(
+			translate( 'Add at least one location to this zone' ),
+			{ duration: 4000 }
+		);
+
+		const methodsFailAction = errorNotice(
+			translate( 'Add shipping methods to this zone' ),
+			{ duration: 4000 }
+		);
+
+		actions.createShippingZoneSaveActionList( successAction, failureAction, locationsFailAction, methodsFailAction );
 	}
 
 	onDelete() {
@@ -101,12 +113,11 @@ class Shipping extends Component {
 			translate( 'There was a problem deleting the Shipping Zone. Please try again.' )
 		);
 
-		actions.createShippingZoneActionList( successAction, failureAction, true );
+		actions.createShippingZoneDeleteActionList( successAction, failureAction );
 	}
 
 	render() {
-		const { siteId, className, loaded, zone, locations, params } = this.props;
-		const isRestOfTheWorld = 0 === Number( params.zone );
+		const { siteId, className, loaded, zone, locations, isRestOfTheWorld } = this.props;
 
 		return (
 			<Main className={ classNames( 'shipping', className ) }>
@@ -141,12 +152,15 @@ Shipping.propTypes = {
 export default connect(
 	( state ) => {
 		const loaded = areShippingZonesFullyLoaded( state );
+		const zone = loaded && getCurrentlyEditingShippingZone( state );
+		const isRestOfTheWorld = zone && 0 === zone.id;
 
 		return {
 			siteId: getSelectedSiteId( state ),
 			site: getSelectedSite( state ),
 			loaded,
-			zone: loaded && getCurrentlyEditingShippingZone( state ),
+			zone,
+			isRestOfTheWorld,
 			locations: loaded && getCurrentlyEditingShippingZoneLocationsList( state, 20 ),
 		};
 	},
@@ -156,7 +170,8 @@ export default connect(
 				addNewShippingZone,
 				openShippingZoneForEdit,
 				changeShippingZoneName,
-				createShippingZoneActionList,
+				createShippingZoneSaveActionList,
+				createShippingZoneDeleteActionList,
 			}, dispatch
 		)
 	} ) )( localize( Shipping ) );

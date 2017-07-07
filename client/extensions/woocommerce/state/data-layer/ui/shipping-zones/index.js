@@ -27,10 +27,16 @@ import {
 	actionListClear,
 } from 'woocommerce/state/action-list/actions';
 import {
-	WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE,
+	WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE_DELETE,
+	WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE_SAVE,
 	WOOCOMMERCE_SHIPPING_ZONE_DEFAULT_ACTION_LIST_CREATE,
 } from 'woocommerce/state/action-types';
-import { getShippingZoneLocationsWithEdits } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
+import {
+	getShippingZoneLocationsWithEdits,
+	areCurrentlyEditingShippingZoneLocationsValid,
+} from 'woocommerce/state/ui/shipping/zones/locations/selectors';
+import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
+import { getCurrentlyEditingShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 import { getRawShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
 import { getShippingZoneMethod } from 'woocommerce/state/sites/shipping-zone-methods/selectors';
 import { getZoneLocationsPriority } from 'woocommerce/state/sites/shipping-zone-locations/helpers';
@@ -341,10 +347,32 @@ export const getCreateDefaultZoneActionListSteps = ( state ) => {
 	return steps;
 };
 
+const validateZone = ( state, dispatch, locationsFailAction, methodsFailAction ) => {
+	const siteId = getSelectedSiteId( state );
+	//rest of the world can contain empty locations and methods
+	const zone = getCurrentlyEditingShippingZone( state, siteId );
+	if ( zone && 0 === zone.id ) {
+		return true;
+	}
+
+	if ( ! areCurrentlyEditingShippingZoneLocationsValid( state, siteId ) ) {
+		dispatch( locationsFailAction );
+		return false;
+	}
+
+	const methods = getCurrentlyEditingShippingZoneMethods( state, siteId );
+	if ( isEmpty( methods ) ) {
+		dispatch( methodsFailAction );
+		return false;
+	}
+
+	return true;
+};
+
 export default {
-	[ WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE ]: [
+	[ WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE_DELETE ]: [
 		( store, action ) => {
-			const { successAction, failureAction, deleteZone } = action;
+			const { successAction, failureAction } = action;
 
 			const onSuccess = ( dispatch ) => {
 				dispatch( successAction );
@@ -354,7 +382,36 @@ export default {
 				dispatch( failureAction );
 				dispatch( actionListClear() );
 			};
-			const nextSteps = ( deleteZone ? getDeleteZoneActionListSteps : getSaveZoneActionListSteps )( store.getState() );
+			const nextSteps = getDeleteZoneActionListSteps( store.getState() );
+
+			store.dispatch( isEmpty( nextSteps ) ? onSuccess : actionListStepNext( { nextSteps, onSuccess, onFailure } ) );
+		}
+	],
+
+	[ WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE_SAVE ]: [
+		( store, action ) => {
+			const {
+				successAction,
+				failureAction,
+				locationsFailAction,
+				methodsFailAction,
+			} = action;
+
+			const state = store.getState();
+			const isValid = validateZone( state, store.dispatch, locationsFailAction, methodsFailAction );
+			if ( ! isValid ) {
+				return;
+			}
+
+			const onSuccess = ( dispatch ) => {
+				dispatch( successAction );
+				dispatch( actionListClear() );
+			};
+			const onFailure = ( dispatch ) => {
+				dispatch( failureAction );
+				dispatch( actionListClear() );
+			};
+			const nextSteps = getSaveZoneActionListSteps( store.getState() );
 
 			store.dispatch( isEmpty( nextSteps ) ? onSuccess : actionListStepNext( { nextSteps, onSuccess, onFailure } ) );
 		}
