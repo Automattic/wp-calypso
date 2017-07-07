@@ -13,9 +13,11 @@ import { noop } from 'lodash';
 import Popover from 'components/popover';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { isRequesting } from 'state/login/selectors';
 
 class GoogleLoginButton extends Component {
 	static propTypes = {
+		isRequesting: PropTypes.bool.isRequired,
 		clientId: PropTypes.string.isRequired,
 		scope: PropTypes.string,
 		fetchBasicProfile: PropTypes.bool,
@@ -139,7 +141,7 @@ class GoogleLoginButton extends Component {
 
 	render() {
 		let classes = 'social-buttons__button button';
-		if ( this.state.error ) {
+		if ( this.state.error || this.props.isRequesting ) {
 			classes += ' disabled';
 		}
 
@@ -190,7 +192,9 @@ class GoogleLoginButton extends Component {
 }
 
 export default connect(
-	null,
+	( state ) => ( {
+		isRequesting: isRequesting( state ),
+	} ),
 	{
 		recordTracksEvent,
 	}

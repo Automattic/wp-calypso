@@ -36,6 +36,9 @@ export const isRequesting = createReducer( false, {
 	[ LOGIN_REQUEST ]: () => true,
 	[ LOGIN_REQUEST_FAILURE ]: () => false,
 	[ LOGIN_REQUEST_SUCCESS ]: () => false,
+	[ SOCIAL_LOGIN_REQUEST ]: () => true,
+	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => false,
+	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: () => false,
 } );
 
 export const redirectTo = createReducer( null, {
