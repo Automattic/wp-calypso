@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { capitalize } from 'lodash';
 import SocialLogo from 'social-logos';
 import Gridicon from 'gridicons';
 
@@ -43,7 +44,7 @@ class SocialConnectPrompt extends Component {
 					{ this.props.translate( 'Connect your WordPress.com account to your %(service)s profile. ' +
 					'You will be able to use %(service)s to log in to WordPress.com.', {
 						args: {
-							service: this.props.linkingSocialService,
+							service: capitalize( this.props.linkingSocialService ),
 						}
 					} ) }
 				</div>
