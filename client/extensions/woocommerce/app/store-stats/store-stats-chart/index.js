@@ -116,7 +116,7 @@ class StoreStatsChart extends Component {
 								>
 									<span className="store-stats-chart__value value">
 										{ ( tab.type === 'currency' )
-											? formatCurrency( itemChartData.value )
+											? formatCurrency( itemChartData.value, orderData[ selectedIndex ].currency )
 											:	Math.round( itemChartData.value * 100 ) / 100 }
 									</span>
 									<Delta
