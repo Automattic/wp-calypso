@@ -40,7 +40,7 @@ export const CommentDetailActions = ( {
 
 	return (
 		<div className="comment-detail__actions">
-			{ hasAction( commentStatus, 'like' ) && <CommentLikes { ...{ siteId, postId, commentId } } /> }
+			{ hasAction( commentStatus, 'like' ) && <CommentLikes { ...{ siteId, postId, commentId, commentStatus } } /> }
 
 			{ hasAction( commentStatus, 'approve' ) &&
 				<Button

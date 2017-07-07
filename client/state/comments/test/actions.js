@@ -104,13 +104,14 @@ describe( 'actions', () => {
 
 	describe( '#likeComment()', () => {
 		it( 'should return a like comment action', () => {
-			const action = likeComment( SITE_ID, POST_ID, 1 );
+			const action = likeComment( SITE_ID, POST_ID, 1, 'approved' );
 
 			expect( action ).to.eql( {
 				type: COMMENTS_LIKE,
 				siteId: SITE_ID,
 				postId: POST_ID,
 				commentId: 1,
+				status: 'approved'
 			} );
 		} );
 	} );

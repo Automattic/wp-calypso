@@ -58,8 +58,8 @@ const mapStateToProps = ( state, { siteId, postId, commentId } ) => ( {
 	commentLike: getCommentLike( state, siteId, postId, commentId )
 } );
 
-const mapDispatchToProps = ( dispatch, { siteId, postId, commentId } ) => ( {
-	dispatchLike: () => dispatch( likeComment( siteId, postId, commentId ) ),
+const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, commentStatus } ) => ( {
+	dispatchLike: () => dispatch( likeComment( siteId, postId, commentId, commentStatus ) ),
 	dispatchUnlike: () => dispatch( unlikeComment( siteId, postId, commentId ) )
 } );
 
