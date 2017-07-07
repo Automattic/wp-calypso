@@ -9,9 +9,15 @@ import { expect } from 'chai';
 import {
 	SELECTED_SITE_SET,
 	ROUTE_SET,
-	NOTIFICATIONS_PANEL_TOGGLE
+	NOTIFICATIONS_PANEL_TOGGLE,
+	VIEWPORT_WIDTH_SET,
 } from 'state/action-types';
-import { setSelectedSiteId, setRoute, toggleNotificationsPanel } from '../actions';
+import {
+	setSelectedSiteId,
+	setRoute,
+	toggleNotificationsPanel,
+	setViewportWidth,
+} from '../actions';
 
 describe( 'actions', () => {
 	describe( '#setSelectedSiteId()', () => {
@@ -41,6 +47,15 @@ describe( 'actions', () => {
 		it( 'should return an action object', () => {
 			expect( toggleNotificationsPanel() ).to.eql( {
 				type: NOTIFICATIONS_PANEL_TOGGLE,
+			} );
+		} );
+	} );
+
+	describe( 'setViewportWidth()', () => {
+		it( 'should return an action object', () => {
+			expect( setViewportWidth( 1234 ) ).to.eql( {
+				type: VIEWPORT_WIDTH_SET,
+				width: 1234,
 			} );
 		} );
 	} );

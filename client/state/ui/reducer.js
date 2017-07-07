@@ -8,6 +8,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 	NOTIFICATIONS_PANEL_TOGGLE,
+	VIEWPORT_WIDTH_SET,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 import editor from './editor/reducer';
@@ -74,6 +75,13 @@ export const isPreviewShowing = createReducer( false, {
 		isShowing !== undefined ? isShowing : state,
 } );
 
+// FIXME: We can't detect window size on the server, so until we have more intelligent detection,
+// use 769, which is just above the general maximum mobile screen width.
+export const viewportWidth = createReducer( 769, {
+	[ VIEWPORT_WIDTH_SET ]: ( state, { width } ) =>
+		! isNaN( width ) ? width : state,
+} );
+
 /**
  * Tracks if the notifications panel is open
  * @param  {Object} state  Current state
@@ -108,6 +116,7 @@ const reducer = combineReducers( {
 	themeSetup,
 	npsSurveyNotice,
 	isNotificationsOpen,
+	viewportWidth,
 } );
 
 const ui = function( state, action ) {
