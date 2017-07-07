@@ -4,6 +4,8 @@
 import { PLUGIN_UPLOAD, PLUGIN_INSTALL_REQUEST_SUCCESS } from 'state/action-types';
 import {
 	completePluginUpload,
+	pluginUploadError,
+	updatePluginUploadProgress,
 } from 'state/plugins/upload/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -30,7 +32,20 @@ const uploadComplete = ( { dispatch }, { siteId }, next, data ) => {
 	} );
 };
 
+const receiveError = ( { dispatch }, { siteId }, next, error ) => {
+	dispatch( pluginUploadError( siteId, error ) );
+};
+
+const updateUploadProgress = ( { dispatch }, { siteId }, next, { loaded, total } ) => {
+	dispatch( updatePluginUploadProgress( siteId, loaded, total ) );
+};
+
 export default {
-	[ PLUGIN_UPLOAD ]: [ dispatchRequest( uploadPlugin, uploadComplete ) ]
+	[ PLUGIN_UPLOAD ]: [ dispatchRequest(
+		uploadPlugin,
+		uploadComplete,
+		receiveError,
+		updateUploadProgress
+	) ]
 };
 
