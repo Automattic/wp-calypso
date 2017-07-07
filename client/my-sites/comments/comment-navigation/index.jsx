@@ -58,8 +58,8 @@ export class CommentNavigation extends Component {
 	}
 
 	getStatusPath = status => 'unapproved' !== status
-		? `/comments/${ status }/${ this.props.siteSlug }`
-		: `/comments/pending/${ this.props.siteSlug }`;
+		? `/comments/${ status }/${ this.props.siteFragment }`
+		: `/comments/pending/${ this.props.siteFragment }`;
 
 	statusHasAction = action => includes( bulkActions[ this.props.status ], action );
 

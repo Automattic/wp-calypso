@@ -13,13 +13,13 @@ import CommentsManagement from './main';
 import controller from 'my-sites/controller';
 
 export const comments = function( context ) {
-	const siteSlug = route.getSiteFragment( context.path );
+	const siteFragment = route.getSiteFragment( context.path );
 	const status = context.params.status === 'pending' ? 'unapproved' : context.params.status;
 
 	renderWithReduxStore(
 		<CommentsManagement
 			basePath={ context.path }
-			siteSlug={ siteSlug }
+			siteFragment={ siteFragment }
 			status={ status }
 		/>,
 		'primary',
@@ -29,10 +29,10 @@ export const comments = function( context ) {
 
 export const sites = function( context ) {
 	const { status } = context.params;
-	const siteSlug = route.getSiteFragment( context.path );
+	const siteFragment = route.getSiteFragment( context.path );
 
-	if ( status === siteSlug ) {
-		return page.redirect( `/comments/pending/${ siteSlug }` );
+	if ( status === siteFragment ) {
+		return page.redirect( `/comments/pending/${ siteFragment }` );
 	}
 	controller.sites( context );
 };
