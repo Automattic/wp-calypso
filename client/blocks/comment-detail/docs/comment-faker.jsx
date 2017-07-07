@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { filter, isNil, keyBy, map, omit, slice } from 'lodash';
+import { filter, isNil, keyBy, map, omit, orderBy, slice } from 'lodash';
 
 import { createPlaceholderComment } from 'state/data-layer/wpcom/comments';
 
@@ -48,7 +48,8 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 
 	getCommentsPage = comments => {
 		const startingIndex = ( this.state.commentsPage - 1 ) * COMMENTS_PER_PAGE;
-		return slice( comments, startingIndex, startingIndex + COMMENTS_PER_PAGE );
+		const orderedComments = orderBy( comments, 'date', 'desc' );
+		return slice( orderedComments, startingIndex, startingIndex + COMMENTS_PER_PAGE );
 	}
 
 	setBulkStatus = ( commentIds, status ) => this.setCommentStatusOrLike( commentIds, { status } );
