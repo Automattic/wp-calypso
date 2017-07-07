@@ -121,3 +121,29 @@
 	font-size: 11px;
 	padding: 1em 0;
 }
+
+.login__social-connect-prompt-logos {
+	text-align: center;
+}
+
+.login__social-connect-prompt-logo,
+.login__social-connect-prompt-arrow {
+	height: 72px;
+	width: 72px;
+}
+
+.login__social-connect-prompt-arrow {
+	color: $gray;
+}
+
+.login__social-connect-prompt-logo.wordpress {
+	color: $blue-wordpress;
+}
+
+.login__social-connect-prompt-message {
+	margin: 20px 0;
+}
+
+.login__social-connect-prompt-action .button {
+	width: 100%;
+}
