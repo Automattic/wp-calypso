@@ -122,20 +122,14 @@ class SetupTasks extends Component {
 			},
 			{
 				checked: shippingIsSetUp,
-				explanation: translate( 'Be ready to ship by the time your first order comes in.' ),
-				label: translate( 'Set up shipping' ),
+				explanation: translate( 'We\'ve set up shipping based on your store location.' ),
+				label: translate( 'Review shipping settings' ),
 				show: this.state.showShippingTask,
 				actions: [
 					{
-						label: translate( 'Set up shipping' ),
+						label: translate( 'Review settings' ),
 						path: getLink( '/store/settings/shipping/:site', site ),
 						analyticsProp: 'set-up-shipping',
-					},
-					{
-						label: translate( 'I won\'t be shipping' ),
-						isSecondary: true,
-						onClick: this.onClickNoShip,
-						analyticsProp: 'not-shipping',
 					}
 				]
 			},
@@ -154,12 +148,12 @@ class SetupTasks extends Component {
 			},
 			{
 				checked: taxesAreSetUp,
-				explanation: translate( 'Taxes. Everyone\'s favorite. We made it simple.' ),
-				label: translate( 'Set up taxes' ),
+				explanation: translate( 'We\'ve set up automatic tax calculations for you.' ),
+				label: translate( 'Review tax settings' ),
 				show: true,
 				actions: [
 					{
-						label: translate( 'Set up taxes' ),
+						label: translate( 'Review settings' ),
 						path: getLink( '/store/settings/taxes/:site', site ),
 						onClick: this.onClickTaxSettings,
 						analyticsProp: 'set-up-taxes',
