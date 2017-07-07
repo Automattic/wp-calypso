@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
+import { includes, capitalize } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
@@ -112,7 +112,7 @@ class Login extends Component {
 		} else if ( socialConnect ) {
 			headerText = translate( 'Connect your %(service)s account.', {
 				args: {
-					service: linkingSocialService,
+					service: capitalize( linkingSocialService ),
 				}
 			} );
 		} else {
