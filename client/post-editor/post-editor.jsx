@@ -206,9 +206,11 @@ export const PostEditor = React.createClass( {
 
 		switch ( confirmationSidebar ) {
 			case 'closed':
+				this.props.setLayoutFocus( 'content' );
 				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_close', { context } );
 				break;
 			case 'open':
+				this.props.setLayoutFocus( 'sidebar' );
 				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_open' );
 				break;
 		}
