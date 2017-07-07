@@ -202,15 +202,16 @@ export const PostEditor = React.createClass( {
 	setConfirmationSidebar: function( { status, context = null } ) {
 		const allowedStatuses = [ 'closed', 'open', 'publishing' ];
 		const confirmationSidebar = allowedStatuses.indexOf( status ) > -1 ? status : 'closed';
+		const editorSidebarPreference = this.props.editorSidebarPreference === 'open' ? 'sidebar' : 'content';
 		this.setState( { confirmationSidebar } );
 
 		switch ( confirmationSidebar ) {
 			case 'closed':
-				this.props.setLayoutFocus( 'content' );
+				this.props.setLayoutFocus( editorSidebarPreference );
 				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_close', { context } );
 				break;
 			case 'open':
-				this.props.setLayoutFocus( 'sidebar' );
+				this.props.setLayoutFocus( 'editor-confirmation-sidebar' );
 				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_open' );
 				break;
 		}
