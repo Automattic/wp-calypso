@@ -33,7 +33,7 @@ const simplePayments = editor => {
 			isEdit = true;
 		}
 
-		function renderModal( visibility = 'show', activeTab = 'paymentButtons' ) {
+		function renderModal( visibility = 'show', activeTab = 'addNew' ) {
 			renderWithReduxStore(
 				createElement( SimplePaymentsDialog, {
 					showDialog: visibility === 'show',
