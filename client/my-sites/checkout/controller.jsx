@@ -141,36 +141,5 @@ module.exports = {
 		);
 
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-	},
-
-	redirectIfNoSite: function( redirectTo ) {
-		return function( context, next ) {
-			const state = context.store.getState();
-			const siteId = getSelectedSiteId( state );
-			const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-			if ( ! userCanManageOptions ) {
-				const user = getCurrentUser( state );
-				const visibleSiteCount = get( user, 'visible_site_count', 0 );
-				//if only one site navigate to stats to avoid redirect loop
-				const redirect = visibleSiteCount > 1 ? redirectTo : '/stats';
-				return page.redirect( redirect );
-			}
-			next();
-		};
-	},
-
-	redirectToAddMappingIfVipSite: function() {
-		return function( context, next ) {
-			const state = context.store.getState();
-			const selectedSite = getSelectedSite( state ),
-				domain = context.params.domain ? `/${ context.params.domain }` : '',
-				query = qs.stringify( { initialQuery: context.params.suggestion } );
-
-			if ( selectedSite && selectedSite.is_vip ) {
-				return page.redirect( `/domains/add/mapping${ domain }?${ query }` );
-			}
-
-			next();
-		};
 	}
 };
