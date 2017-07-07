@@ -5,7 +5,6 @@ import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { translate } from 'i18n-calypso';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
