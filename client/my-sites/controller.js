@@ -56,7 +56,7 @@ import {
 	domainManagementTransfer,
 	domainManagementTransferOut,
 	domainManagementTransferToAnotherUser
-} from 'my-sites/upgrades/paths';
+} from 'my-sites/domains/paths';
 import SitesComponent from 'my-sites/sites';
 import { isATEnabled } from 'lib/automated-transfer';
 
@@ -146,7 +146,7 @@ function renderNoVisibleSites( context ) {
 }
 
 function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
-	const DomainOnly = require( 'my-sites/upgrades/domain-management/list/domain-only' );
+	const DomainOnly = require( 'my-sites/domains/domain-management/list/domain-only' );
 	const { store: reduxStore } = reactContext;
 
 	renderWithReduxStore( (

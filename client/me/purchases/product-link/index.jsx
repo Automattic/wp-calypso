@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
  * Internal Dependencies
  */
 import config from 'config';
-import { domainManagementEdit } from 'my-sites/upgrades/paths';
+import { domainManagementEdit } from 'my-sites/domains/paths';
 import { getThemeDetailsUrl } from 'state/themes/selectors';
 import { googleAppsSettingsUrl } from 'lib/google-apps';
 import {
