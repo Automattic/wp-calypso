@@ -427,3 +427,11 @@
 .site-settings__general-jetpack {
 	margin-bottom: 16px;
 }
+
+.site-settings__placeholder-item {
+	@include placeholder;
+
+	& + & {
+		margin-top: 24px;
+	}
+}
