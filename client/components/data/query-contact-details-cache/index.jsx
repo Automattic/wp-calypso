@@ -16,9 +16,15 @@ import { requestContactDetailsCache } from 'state/domains/management/actions';
 
 class QueryContactDetailsCache extends Component {
 	componentWillMount() {
-		if ( this.props.isRequesting || ! isEmpty( this.props.contactDetailsCache ) ) {
+		const {
+			isRequesting,
+			contactDetailsCacheIsEmpty,
+		} = this.props;
+
+		if ( isRequesting || ! contactDetailsCacheIsEmpty ) {
 			return;
 		}
+
 		this.props.requestContactDetailsCache();
 	}
 
@@ -29,12 +35,13 @@ class QueryContactDetailsCache extends Component {
 
 QueryContactDetailsCache.propTypes = {
 	isRequesting: PropTypes.bool.isRequired,
-	requestContactDetailsCache: PropTypes.func.isRequired
+	contactDetailsCacheIsEmpty: PropTypes.func.isRequired,
+	requestContactDetailsCache: PropTypes.func.isRequired,
 };
 
 export default connect(
 	( state ) => ( {
-		contactDetailsCache: getContactDetailsCache( state ),
+		contactDetailsCacheIsEmpty: isEmpty( getContactDetailsCache( state ) ),
 		isRequesting: isRequestingContactDetailsCache( state ),
 	} ),
 	{ requestContactDetailsCache }

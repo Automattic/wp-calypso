@@ -76,9 +76,8 @@ const DomainManagementData = React.createClass( {
 					context={ this.props.context }
 				/>
 				{ this.props.selectedSite &&
-					<QuerySitePlans siteId={ this.props.selectedSite.ID } /> &&
-					<QueryContactDetailsCache />
-				}
+					<QuerySitePlans siteId={ this.props.selectedSite.ID } /> }
+				{ this.props.selectedSite && <QueryContactDetailsCache /> }
 			</div>
 		);
 	}
