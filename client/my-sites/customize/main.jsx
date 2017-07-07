@@ -22,6 +22,7 @@ var notices = require( 'notices' ),
 import { getCustomizerFocus } from './panels';
 import { getMenusUrl } from 'state/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 var loadingTimer;
 
@@ -36,6 +37,8 @@ var Customize = React.createClass( {
 		query: React.PropTypes.object,
 		themeActivated: React.PropTypes.func.isRequired,
 		panel: React.PropTypes.string,
+		isJetpack: React.PropTypes.bool,
+		customizerUrl: React.PropTypes.string,
 	},
 
 	getDefaultProps: function() {
@@ -70,9 +73,12 @@ var Customize = React.createClass( {
 	},
 
 	redirectIfNeeded: function( pathname ) {
-		const { menusUrl } = this.props;
+		const { menusUrl, isJetpack, customizerUrl } = this.props;
 		if ( startsWith( pathname, '/customize/menus' ) && pathname !== menusUrl ) {
 			page( menusUrl );
+		}
+		if ( isJetpack ) {
+			page( customizerUrl );
 		}
 	},
 
@@ -318,9 +324,13 @@ var Customize = React.createClass( {
 export default connect(
 	( state ) => {
 		const site = getSelectedSite( state );
+		const siteId = get( site, 'ID' );
 		return {
 			site,
-			menusUrl: getMenusUrl( state, get( site, 'ID' ) )
+			menusUrl: getMenusUrl( state, siteId ),
+			isJetpack: isJetpackSite( state, siteId ),
+			// TODO: include panel from props?
+			customizerUrl: getCustomizerUrl( state, siteId ),
 		};
 	},
 	{ themeActivated }
