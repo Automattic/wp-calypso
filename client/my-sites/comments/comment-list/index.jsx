@@ -240,7 +240,7 @@ export class CommentList extends Component {
 			commentsPage,
 			isLoading,
 			siteId,
-			siteSlug,
+			siteFragment,
 			status,
 		} = this.props;
 		const {
@@ -263,7 +263,7 @@ export class CommentList extends Component {
 					isSelectedAll={ this.isSelectedAll() }
 					selectedCount={ size( selectedComments ) }
 					setBulkStatus={ this.setBulkStatus }
-					siteSlug={ siteSlug }
+					siteFragment={ siteFragment }
 					status={ status }
 					toggleBulkEdit={ this.toggleBulkEdit }
 					toggleSelectAll={ this.toggleSelectAll }
