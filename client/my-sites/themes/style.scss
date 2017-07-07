@@ -1,4 +1,4 @@
-.themes-thanks-modal  {
+.themes__thanks-modal  {
 	width: 300px;
 
 	@include breakpoint( "<480px" ) {
@@ -26,6 +26,17 @@
 		a {
 			white-space: nowrap;
 		}
+	}
+}
+
+.themes__thanks-modal-loading {
+	min-height: 50px;
+	display: flex;
+	align-items: center;
+
+	.pulsing-dot {
+		position: static;
+		margin: 0 auto;
 	}
 }
 
