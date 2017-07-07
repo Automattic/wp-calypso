@@ -55,12 +55,7 @@ class Login extends Component {
 
 	componentWillReceiveProps = ( nextProps ) => {
 		const hasNotice = this.props.requestNotice !== nextProps.requestNotice;
-		const isSocialConnectPage = this.props.socialConnect !== nextProps.socialConnect;
-		const isNewPage = this.props.twoFactorAuthType !== nextProps.twoFactorAuthType || isSocialConnectPage;
-
-		if ( isSocialConnectPage ) {
-			this.forceUpdate();
-		}
+		const isNewPage = this.props.twoFactorAuthType !== nextProps.twoFactorAuthType;
 
 		if ( isNewPage || hasNotice ) {
 			window.scrollTo( 0, 0 );
