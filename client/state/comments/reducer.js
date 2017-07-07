@@ -48,7 +48,7 @@ const updateComment = ( commentId, newProperties ) => comment => {
  * @returns {Object} new redux state
  */
 export function items( state = {}, action ) {
-	const { type, siteId, postId, commentId } = action;
+	const { type, siteId, postId, commentId, like_count } = action;
 	const stateKey = getStateKey( siteId, postId );
 
 	switch ( type ) {
@@ -77,11 +77,14 @@ export function items( state = {}, action ) {
 				[ stateKey ]: reject( state[ stateKey ], { ID: commentId } )
 			};
 		case COMMENTS_LIKE:
-		case COMMENTS_UNLIKE:
-			const { like_count } = action;
 			return {
 				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: type === COMMENTS_LIKE, like_count } ) )
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: true, like_count } ) )
+			};
+		case COMMENTS_UNLIKE:
+			return {
+				...state,
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: false, like_count } ) )
 			};
 		case COMMENTS_ERROR:
 			const { error } = action;
