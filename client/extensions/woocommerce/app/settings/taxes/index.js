@@ -48,7 +48,6 @@ class SettingsTaxes extends Component {
 			pricesIncludeTaxes: true,
 			shippingIsTaxable: true,
 			taxesEnabled: true,
-			userBeganEditing: false,
 		};
 	}
 
@@ -68,36 +67,14 @@ class SettingsTaxes extends Component {
 		}
 	}
 
-	componentWillReceiveProps = ( newProps ) => {
-		if ( ! this.state.userBeganEditing ) {
-			const { site } = this.props;
-			const newSiteId = newProps.site && newProps.site.ID || null;
-			const oldSiteId = site && site.ID || null;
-			if ( oldSiteId !== newSiteId ) {
-				this.props.fetchSettingsGeneral( newSiteId );
-				this.props.fetchTaxSettings( newSiteId );
-			}
-
-			this.setState( {
-				pricesIncludeTaxes: newProps.pricesIncludeTaxes,
-				shippingIsTaxable: newProps.shippingIsTaxable,
-				taxesEnabled: newProps.taxesEnabled,
-			} );
-		}
-	}
-
 	onEnabledChange = () => {
-		this.setState( { taxesEnabled: ! this.state.taxesEnabled, userBeganEditing: true } );
+		this.setState( { taxesEnabled: ! this.state.taxesEnabled } );
 	}
 
 	onCheckboxChange = ( event ) => {
 		const option = event.target.name;
 		const value = event.target.checked;
-		this.setState( { [ option ]: value, userBeganEditing: true } );
-	}
-
-	pageHasChanges = () => {
-		return this.state.userBeganEditing;
+		this.setState( { [ option ]: value } );
 	}
 
 	onSave = ( event ) => {
@@ -107,8 +84,8 @@ class SettingsTaxes extends Component {
 		this.setState( { isSaving: true } );
 
 		const onSuccess = () => {
-			this.setState( { isSaving: false, userBeganEditing: false } );
-			return successNotice( translate( 'Settings updated successfully.' ) );
+			this.setState( { isSaving: false } );
+			return successNotice( translate( 'Settings updated successfully.' ), { duration: 4000 } );
 		};
 
 		const onFailure = () => {
@@ -150,12 +127,10 @@ class SettingsTaxes extends Component {
 			( <span>{ translate( 'Taxes' ) }</span> ),
 		];
 
-		const saveButtonDisabled = this.state.isSaving || ! this.pageHasChanges();
-
 		return (
 			<Main className={ classNames( 'settings-taxes', className ) }>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
-					<Button disabled={ saveButtonDisabled } onClick={ this.onSave } primary>
+					<Button onClick={ this.onSave } primary>
 						{ translate( 'Save' ) }
 					</Button>
 				</ActionHeader>
