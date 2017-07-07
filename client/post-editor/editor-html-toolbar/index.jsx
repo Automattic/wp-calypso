@@ -39,6 +39,7 @@ import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
 import config from 'config';
+import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
 
 /**
  * Module constant
@@ -72,6 +73,8 @@ export class EditorHtmlToolbar extends Component {
 		showLinkDialog: false,
 		showMediaModal: false,
 		source: '',
+		showSimplePaymentsDialog: false,
+		simplePaymentsDialogTab: 'addNew'
 	};
 
 	componentDidMount() {
@@ -432,6 +435,24 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( { showMediaModal: false } );
 	}
 
+	openSimplePaymentsDialog = () => {
+		this.setState( {
+			simplePaymentsDialogTab: 'addNew',
+			showSimplePaymentsDialog: true,
+			showInsertContentMenu: false,
+		} );
+	};
+
+	closeSimplePaymentsDialog = () => {
+		this.setState( { showSimplePaymentsDialog: false } );
+	};
+
+	changeSimplePaymentsDialogTab = ( tab ) => {
+		this.setState( {
+			simplePaymentsDialogTab: tab,
+		} );
+	};
+
 	onFilesDrop = () => {
 		const { site } = this.props;
 		// Find selected images. Non-images will still be uploaded, but not
@@ -484,7 +505,7 @@ export class EditorHtmlToolbar extends Component {
 		return (
 			<div
 				className="editor-html-toolbar__insert-content-dropdown-item"
-				onClick={ null }
+				onClick={ this.openSimplePaymentsDialog }
 			>
 				<Gridicon icon="money" />
 				<span data-e2e-insert-type="payment-button">{ translate( 'Add Payment Button' ) }</span>
@@ -655,6 +676,14 @@ export class EditorHtmlToolbar extends Component {
 				<MediaLibraryDropZone
 					onAddMedia={ this.onFilesDrop }
 					site={ site }
+				/>
+
+				<SimplePaymentsDialog
+					showDialog={ this.state.showSimplePaymentsDialog }
+					activeTab={ this.state.simplePaymentsDialogTab }
+					isEdit={ false }
+					onClose={ this.closeSimplePaymentsDialog }
+					onChangeTabs={ this.changeSimplePaymentsDialogTab }
 				/>
 			</div>
 		);
