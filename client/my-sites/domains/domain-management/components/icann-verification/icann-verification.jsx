@@ -36,7 +36,7 @@ function createContainer( DecoratedComponent ) {
 					notices.error( error.message );
 				} else {
 					notices.info( this.translate(
-						'Verification sent to [registrant contact email]. Check your email.'
+						'Email sent to [registrant contact email]. Check your email.'
 					) );
 				}
 
@@ -57,7 +57,7 @@ const Button = React.createClass( {
 			<button disabled={ this.props.submitting }
 					className="button is-primary is-full-width"
 					onClick={ this.props.onClick }>
-				{ this.translate( 'Resend verification email' ) }
+				{ this.translate( 'Send Again' ) }
 			</button>
 		);
 	}

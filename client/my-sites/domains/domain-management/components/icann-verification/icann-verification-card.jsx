@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -26,8 +27,8 @@ let IcannVerificationCard = React.createClass( {
 		}
 
 		return this.translate(
-			'You have to verify the email address used to register this domain before you can make changes. ' +
-			'Look for the verification message in your email inbox. ' +
+			'We need to verify the email address you provided for this domain to ensure we can contact ' +
+			'you concerning your domain. Please verify your email address or your domain may be suspended. ' +
 			'{{learnMoreLink}}Learn more.{{/learnMoreLink}}', {
 				components: {
 					learnMoreLink: <a href={ support.EMAIL_VALIDATION_AND_VERIFICATION }
@@ -41,23 +42,33 @@ let IcannVerificationCard = React.createClass( {
 
 	render() {
 		return (
-			<div className="icann-verification is-warning card">
+			<div className="icann-verification is-warning card is-compact">
 				<div className="icann-verification__explanation">
+					<h1 className="icann-verification__heading">Important: Verify Your Email Address</h1>
 					{ this.getExplanation() }
 				</div>
 
-				<IcannVerification.Button submitting={ this.props.submitting }
+				<div className="icann-verification__status-container">
+					<div className="icann-verification__status waiting">
+						<Gridicon icon="notice-outline" size="36" />
+						{ this.translate(
+							'Check your email — we\'re waiting for you to verify.'
+						)}
+					</div>
+
+					<IcannVerification.Button submitting={ this.props.submitting }
 					onClick={ this.props.handleSubmit } />
 
-				<div className="icann-verification__email">
-					{ this.translate(
-						'Verification email sent to: [registrant contact email]. ' +
-						'{{registrantEmail}}Change email address.{{/registrantEmail}}', {
-							components: {
-								registrantEmail: <a href="#" />
+					<div className="icann-verification__sent-to">
+						{ this.translate(
+							'Sent to registrant@contactemail.com. ' +
+							'{{registrantEmail}}Change email address.{{/registrantEmail}}', {
+								components: {
+									registrantEmail: <a href="#" />
+								}
 							}
-						}
-					)}
+						)}
+					</div>
 				</div>
 
 			</div>
