@@ -146,7 +146,7 @@ export const PostEditor = React.createClass( {
 		}
 
 		if ( ( nextState.isDirty && ! this.state.isDirty ) || ( nextProps.dirty && ! this.props.dirty ) ) {
-			this.setState( { confirmationSidebar: 'closed' } );
+			this.setConfirmationSidebar( { status: 'closed', context: 'content_edit' } );
 		}
 	},
 
