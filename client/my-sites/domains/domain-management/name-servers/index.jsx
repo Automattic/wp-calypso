@@ -168,6 +168,7 @@ const NameServers = React.createClass( {
 		if ( this.needsVerification() ) {
 			return <IcannVerificationCard
 				selectedDomainName={ this.props.selectedDomainName }
+				selectedSiteSlug={ this.props.selectedSite.slug }
 				explanationContext="name-servers" />;
 		}
 

@@ -15,11 +15,13 @@ import Button from 'components/button';
 import Card from 'components/card';
 import upgradesActions from 'lib/upgrades/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
+import { domainManagementEditContactInfo } from 'my-sites/domains/paths';
 
 class IcannVerificationCard extends React.Component {
 	static propTypes = {
 		explanationContext: React.PropTypes.string,
 		selectedDomainName: React.PropTypes.string.isRequired,
+		selectedSiteSlug: React.PropTypes.string.isRequired,
 	};
 
 	state = {
@@ -69,7 +71,9 @@ class IcannVerificationCard extends React.Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, selectedDomainName, selectedSiteSlug } = this.props;
+		const changeEmailHref = domainManagementEditContactInfo( selectedSiteSlug, selectedDomainName );
+
 		return (
 			<Card compact highlight="warning" className="icann-verification__card">
 				<div className="icann-verification__explanation">
@@ -95,9 +99,9 @@ class IcannVerificationCard extends React.Component {
 					<div className="icann-verification__sent-to">
 						{ translate(
 							'Sent to registrant@contactemail.com. ' +
-							'{{registrantEmail}}Change email address.{{/registrantEmail}}', {
+							'{{changeEmail}}Change email address.{{/changeEmail}}', {
 								components: {
-									registrantEmail: <a href="#" />
+									changeEmail: <a href={ changeEmailHref } />
 								}
 							}
 						)}
