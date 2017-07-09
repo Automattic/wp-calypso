@@ -8,11 +8,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flow, once } from 'lodash';
+import { flow, get, once } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { getSite } from 'state/sites/selectors';
 import UpdateTemplate from './update-template';
 import PostActions from 'lib/posts/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -48,7 +49,15 @@ const getStrings = once( translate => ( {
 	},
 } ) );
 
-const enhance = flow( localize, connect( null, { recordGoogleEvent } ) );
+const enhance = flow(
+	localize,
+	connect(
+		( state, props ) => ( {
+			site: getSite( state, get( props, 'post.site_ID' ) ),
+		} ),
+		{ recordGoogleEvent }
+	)
+);
 
 const updatePostStatus = WrappedComponent =>
 	enhance(
@@ -95,6 +104,7 @@ const updatePostStatus = WrappedComponent =>
 			};
 
 			updatePostStatus = status => {
+				const { site } = this.props;
 				const post = this.props.post || this.props.page;
 				let previousStatus = null;
 
@@ -138,7 +148,7 @@ const updatePostStatus = WrappedComponent =>
 							updated: true,
 						} );
 						previousStatus = post.status;
-						PostActions.trash( post, setNewStatus );
+						PostActions.trash( post, setNewStatus, site );
 						return;
 
 					case 'restore':
@@ -148,7 +158,7 @@ const updatePostStatus = WrappedComponent =>
 							updated: true,
 						} );
 						previousStatus = 'trash';
-						PostActions.restore( post, setNewStatus );
+						PostActions.restore( post, setNewStatus, site );
 						return;
 
 					default:
@@ -157,12 +167,17 @@ const updatePostStatus = WrappedComponent =>
 							updatedStatus: 'updating',
 							updated: true,
 						} );
-						PostActions.update( post, { status }, ( error, resultPost ) => {
-							if ( ! setNewStatus( error, resultPost ) ) {
-								return;
-							}
-							setTimeout( this.resetState, RESET_TIMEOUT_MS );
-						} );
+						PostActions.update(
+							post,
+							{ status },
+							( error, resultPost ) => {
+								if ( ! setNewStatus( error, resultPost ) ) {
+									return;
+								}
+								setTimeout( this.resetState, RESET_TIMEOUT_MS );
+							},
+							site
+						);
 				}
 			};
 
