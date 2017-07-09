@@ -206,7 +206,7 @@ const RegisteredDomain = React.createClass( {
 				{ this.domainWarnings() }
 				<div className="domain-details-card">
 					{ domain.isPendingIcannVerification && domain.currentUserCanManage &&
-					<IcannVerificationCard selectedDomainName={ domain.name } selectedSite={ this.props.selectedSite } /> }
+					<IcannVerificationCard selectedDomainName={ domain.name } /> }
 
 					<Header { ...this.props } />
 

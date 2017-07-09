@@ -19,7 +19,7 @@ import { errorNotice, successNotice } from 'state/notices/actions';
 class IcannVerificationCard extends React.Component {
 	static propTypes = {
 		explanationContext: React.PropTypes.string,
-		selectedDomainName: React.PropTypes.string.isRequired
+		selectedDomainName: React.PropTypes.string.isRequired,
 	};
 
 	state = {
