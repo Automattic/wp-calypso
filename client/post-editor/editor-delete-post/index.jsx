@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import classnames from 'classnames';
+import { connect } from 'react-redux';
+import { get } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -17,6 +19,7 @@ import actions from 'lib/posts/actions';
 import accept from 'lib/accept';
 import utils from 'lib/posts/utils';
 import Button from 'components/button';
+import { getSite } from 'state/sites/selectors';
 
 class EditorDeletePost extends React.Component {
 	static displayName = 'EditorDeletePost';
@@ -39,13 +42,17 @@ class EditorDeletePost extends React.Component {
 		this.setState( { isTrashing: true } );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.trash( this.props.post, error => {
-			this.setState( { isTrashing: false } );
+		actions.trash(
+			this.props.post,
+			error => {
+				this.setState( { isTrashing: false } );
 
-			if ( this.props.onTrashingPost ) {
-				this.props.onTrashingPost( error );
-			}
-		} );
+				if ( this.props.onTrashingPost ) {
+					this.props.onTrashingPost( error );
+				}
+			},
+			this.props.site
+		);
 	};
 
 	onSendToTrash = () => {
@@ -101,4 +108,6 @@ class EditorDeletePost extends React.Component {
 	}
 }
 
-export default localize( EditorDeletePost );
+export default connect( ( state, props ) => ( {
+	site: getSite( state, get( props, 'post.site_ID' ) ),
+} ) )( localize( EditorDeletePost ) );

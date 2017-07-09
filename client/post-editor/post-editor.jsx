@@ -608,7 +608,7 @@ export const PostEditor = createReactClass( {
 		}
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.autosave( callback );
+		actions.autosave( callback, this.props.selectedSite );
 	},
 
 	onClose: function() {
@@ -699,7 +699,9 @@ export const PostEditor = createReactClass( {
 				if ( 'function' === typeof callback ) {
 					callback( error );
 				}
-			}.bind( this )
+			}.bind( this ),
+			null,
+			this.props.selectedSite
 		);
 
 		this.setState( { isSaving: true } );
@@ -759,7 +761,7 @@ export const PostEditor = createReactClass( {
 		if ( status === 'publish' ) {
 			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 			actions.edit( { content: this.editor.getContent() } );
-			actions.autosave( previewPost );
+			actions.autosave( previewPost, this.props.selectedSite );
 		} else {
 			this.onSave( null, previewPost );
 		}
@@ -861,7 +863,9 @@ export const PostEditor = createReactClass( {
 				} else {
 					this.onPublishSuccess();
 				}
-			}.bind( this )
+			}.bind( this ),
+			null,
+			this.props.selectedSite
 		);
 
 		this.setState( {
