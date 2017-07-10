@@ -3,8 +3,8 @@
 }
 
 .blog-stickers__list {
-	overflow-x: scroll;
-	max-height: 200px;
+	overflow-y: scroll;
+	max-height: 210px;
 }
 
 .blog-stickers__list-title {
@@ -13,19 +13,18 @@
 }
 
 .blog-stickers__list-ul {
+	list-style-type: none;
 	margin: 0;
-	list-style-type: square;
 }
 
 .blog-stickers__list-item {
-	display: inline;
+	padding-left: 15px;
+	position: relative;
+}
 
-	&:after {
-		content: " | ";
-	}
-
-
-	&:after:last-child {
-		content: "";
-	}
+.blog-stickers__list-item::before {
+	color: lighten( $gray, 10% );
+	content: " • ";
+	position: absolute;
+		left: 0;
 }
