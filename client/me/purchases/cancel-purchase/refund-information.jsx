@@ -33,30 +33,32 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 			if ( includedDomainPurchase && isDomainMapping( includedDomainPurchase ) ) {
 				text = [
 					i18n.translate(
-						'This plan includes the custom domain mapping for %(mappedDomain)s, normally a %(mappingCost)s purchase. ' +
-							'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
+						'This plan includes mapping for the domain %(mappedDomain)s. ' +
+						"Cancelling will remove all the plan's features from your site, including the domain.",
 						{
 							args: {
 								mappedDomain: includedDomainPurchase.meta,
-								mappingCost: includedDomainPurchase.priceText,
 							},
 						}
 					),
 					i18n.translate(
-						'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan minus ' +
-							'%(mappingCost)s for the domain mapping. To cancel the domain mapping with the ' +
-							'plan and ask for a full refund, please {{contactLink}}contact support{{/contactLink}}.',
+						'Your site will no longer be available at %(mappedDomain)s. Instead, it will be at %(wordpressSiteUrl)s',
 						{
 							args: {
-								planCost: purchase.priceText,
-								mappingCost: includedDomainPurchase.priceText,
-								refundAmount: purchase.refundText,
-							},
-							components: {
-								contactLink: <a href={ support.CALYPSO_CONTACT } />,
+								mappedDomain: includedDomainPurchase.meta,
+								wordpressSiteUrl: purchase.domain,
 							},
 						}
 					),
+					i18n.translate(
+						'The domain %(mappedDomain)s itself is not canceled. Only the connection between WordPress.com and ' +
+						'your domain is removed. %(mappedDomain)s is registered elsewhere and you can still use it with other sites.',
+						{
+							args: {
+								mappedDomain: includedDomainPurchase.meta,
+							}
+						}
+					)
 				];
 
 				showSupportLink = false;
