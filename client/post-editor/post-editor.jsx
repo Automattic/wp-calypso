@@ -146,7 +146,8 @@ export const PostEditor = React.createClass( {
 		}
 
 		if ( ( nextState.isDirty && ! this.state.isDirty ) || ( nextProps.dirty && ! this.props.dirty ) ) {
-			this.setConfirmationSidebar( { status: 'closed', context: 'content_edit' } );
+			this.setState( { confirmationSidebar: 'closed' } );
+			analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_close', { context: 'content_edit' } );
 		}
 	},
 
