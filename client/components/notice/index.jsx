@@ -31,6 +31,7 @@ export class Notice extends Component {
 			'is-info',
 			'is-success',
 			'is-warning',
+			'is-plain',
 		] ),
 		text: PropTypes.oneOfType( [
 			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) ),

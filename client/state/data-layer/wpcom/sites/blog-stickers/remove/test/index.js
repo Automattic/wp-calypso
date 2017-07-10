@@ -36,7 +36,7 @@ describe( 'blog-sticker-remove', () => {
 	} );
 
 	describe( 'receiveBlogStickerRemove', () => {
-		it( 'should dispatch a success notice', () => {
+		it( 'should dispatch a notice', () => {
 			const dispatch = spy();
 			receiveBlogStickerRemove(
 				{ dispatch },
@@ -46,7 +46,7 @@ describe( 'blog-sticker-remove', () => {
 			);
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
-					status: 'is-success',
+					status: 'is-plain',
 				},
 			} );
 		} );
