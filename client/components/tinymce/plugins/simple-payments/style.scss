@@ -1,12 +1,27 @@
 .editor-simple-payments-modal {
-	// TODO: temporary values until we get some content
-	width: 550px;
-	height: 450px;
-
 	&.dialog.card {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
 		padding: 0;
 		display: flex;
 		flex-direction: column;
+
+		@include breakpoint( ">660px" ) {
+			top: 5%;
+			bottom: 5%;
+			left: 5%;
+			right: 5%;
+			width: 90%;
+		}
+
+		@include breakpoint( ">960px" ) {
+			left: 12.5%;
+			right: 12.5%;
+			width: 75%;
+		}
 	}
 
 	.dialog__content {
@@ -24,12 +39,43 @@
 
 .editor-simple-payments-modal__navigation {
 	margin: 0;
+	flex: none;
 }
 
 .editor-simple-payments-modal__form {
 	padding: 16px;
+	flex: auto;
+	overflow-y: auto;
+
+	@include breakpoint( ">660px" ) {
+		display: flex;
+	}
+}
+
+.editor-simple-payments-modal__product-image {
+	width: 200px;
+	height: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 24px;
+	background-color: $gray-light;
+	box-shadow: inset 0 0 0 1px lighten( $gray, 25% );
+
+	@include breakpoint( ">660px" ) {
+		flex: none;
+		margin-right: 24px;
+	}
+}
+
+.editor-simple-payments-modal__form-fields {
+	@include breakpoint( ">660px" ) {
+		flex: auto;
+	}
 }
 
 .editor-simple-payments-modal__list {
 	padding: 8px 16px;
+	flex: auto;
+	overflow-y: auto;
 }
