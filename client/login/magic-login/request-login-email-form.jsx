@@ -49,6 +49,10 @@ class RequestLoginEmailForm extends React.Component {
 		this.setState( {
 			emailAddress: event.target.value,
 		} );
+
+		if ( this.props.requestError ) {
+			this.props.hideMagicLoginRequestNotice();
+		}
 	};
 
 	onNoticeDismiss = () => {
@@ -85,7 +89,6 @@ class RequestLoginEmailForm extends React.Component {
 		}
 
 		const submitEnabled = (
-			emailAddress.match( /^.+@.+/ ) &&
 			! isFetching &&
 			! emailRequested &&
 			! requestError
@@ -128,6 +131,7 @@ class RequestLoginEmailForm extends React.Component {
 							disabled={ isFetching || emailRequested }
 							name="emailAddress"
 							placeholder={ translate( 'Email address' ) }
+							type="email"
 							onChange={ this.onEmailAddressFieldChange }
 						/>
 
