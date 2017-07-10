@@ -41,8 +41,6 @@ class ReaderPostOptionsMenuBlogStickers extends React.Component {
 
 export default connect( ( state, ownProps ) => {
 	return {
-		stickers: ownProps.blogId && ownProps.blogId > 0
-			? getBlogStickers( state, ownProps.blogId )
-			: undefined,
+		stickers: ownProps.blogId ? getBlogStickers( state, ownProps.blogId ) : undefined,
 	};
 } )( ReaderPostOptionsMenuBlogStickers );
