@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { sortBy, toPairs, camelCase, mapKeys, isNumber, get, filter, findIndex, forEach, map, concat, flatten } from 'lodash';
+import { sortBy, toPairs, camelCase, mapKeys, isNumber, get, filter, map, concat, flatten } from 'lodash';
 import { moment, translate } from 'i18n-calypso';
 
 /**
@@ -144,17 +144,14 @@ function parseOrderDeltas( payload ) {
 	if ( ! payload || ! payload.deltas || ! payload.delta_fields || Object.keys( payload.deltas ).length === 0 ) {
 		return [];
 	}
-	const periodFieldIndex = findIndex( payload.delta_fields, ( field ) => field === 'period' );
-	const periods = payload.deltas[ Object.keys( payload.deltas )[ 0 ] ].map( row => row[ periodFieldIndex ] );
-
-	return periods.map( period => {
-		const newRow = { period: parseUnitPeriods( payload.unit, period ).format( 'YYYY-MM-DD' ) };
-		forEach( payload.deltas, ( values, key ) => {
-			const newValues = values.filter( value => value[ periodFieldIndex ] === period )[ 0 ];
-			newRow[ key ] = {};
-			payload.delta_fields.forEach( ( field, i ) => {
-				newRow[ key ][ field ] = newValues[ i ];
-			} );
+	return payload.deltasv2.map( row => { // will be renamed to deltas
+		const notPeriodKeys = Object.keys( row ).filter( key => key !== 'period' );
+		const newRow = { period: row.period };
+		notPeriodKeys.forEach( key => {
+			newRow[ key ] = row[ key ].reduce( ( acc, curr, i ) => {
+				acc[ payload.delta_fields[ i ] ] = curr;
+				return acc;
+			}, {} );
 		} );
 		return newRow;
 	} );
