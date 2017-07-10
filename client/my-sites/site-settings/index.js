@@ -72,6 +72,14 @@ module.exports = function() {
 	);
 
 	page(
+		'/settings/manage-connection/:site_id',
+		mySitesController.siteSelection,
+		mySitesController.navigation,
+		settingsController.setScroll,
+		controller.manageConnection
+	);
+
+	page(
 		'/settings/:section',
 		controller.legacyRedirects,
 		mySitesController.siteSelection,

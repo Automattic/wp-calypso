@@ -201,6 +201,10 @@
 		}
 	}
 
+	.site.is-compact .site__content {
+		padding: 0;
+	}
+
 	.composing__publish-confirmation .form-toggle__label-content {
 		font-weight: 600;
 	}
