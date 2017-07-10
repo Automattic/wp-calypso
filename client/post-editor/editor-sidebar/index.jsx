@@ -42,7 +42,7 @@ export default class EditorSidebar extends Component {
 		} = this.props;
 
 		return (
-			<div className="post-editor__sidebar">
+			<div className="editor-sidebar">
 				<EditorSidebarHeader toggleSidebar={ toggleSidebar } />
 				<EditorActionBar
 					isNew={ isNew }
