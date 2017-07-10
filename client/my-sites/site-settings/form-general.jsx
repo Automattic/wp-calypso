@@ -331,12 +331,33 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	netNeutralityOption() {
-		const { fields, isRequestingSettings, translate, handleToggle } = this.props;
+		const { fields, isRequestingSettings, translate, handleToggle, moment, handleSubmitForm, isSavingSettings } = this.props;
+
+		const today = moment(),
+			lastDay = moment( { year: 2017, month: 6, day: 13 } );
+
+		if ( today.isAfter( lastDay, 'day' ) ) {
+			return null;
+		}
 
 		return (
-			<FormFieldset>
-				<ul>
-					<li>
+			<div>
+				<SectionHeader label={ translate( 'Net Neutrality' ) }>
+					<Button
+						compact={ true }
+						onClick={ handleSubmitForm }
+						primary={ true }
+
+						type="submit"
+						disabled={ isRequestingSettings || isSavingSettings }>
+							{ isSavingSettings
+								? translate( 'Saving…' )
+								: translate( 'Save Settings' )
+							}
+					</Button>
+				</SectionHeader>
+				<Card>
+					<FormFieldset>
 						<CompactFormToggle
 							checked={ !! fields.net_neutrality }
 							disabled={ isRequestingSettings }
@@ -344,9 +365,9 @@ class SiteSettingsFormGeneral extends Component {
 						>
 							{ translate( 'Help save the internet by displaying a net-neutrality banner on your site.' ) }
 						</CompactFormToggle>
-					</li>
-				</ul>
-			</FormFieldset>
+					</FormFieldset>
+				</Card>
+			</div>
 		);
 	}
 
@@ -444,29 +465,7 @@ class SiteSettingsFormGeneral extends Component {
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
-				{ ! siteIsJetpack &&
-					<div>
-						<SectionHeader label={ translate( 'Net Neutrality' ) }>
-						<Button
-							compact={ true }
-							onClick={ handleSubmitForm }
-							primary={ true }
-
-							type="submit"
-							disabled={ isRequestingSettings || isSavingSettings }>
-								{ isSavingSettings
-									? translate( 'Saving…' )
-									: translate( 'Save Settings' )
-								}
-						</Button>
-						</SectionHeader>
-						<Card>
-							<form>
-								{ this.netNeutralityOption() }
-							</form>
-						</Card>
-					</div>
-				}
+				{ ! siteIsJetpack && this.netNeutralityOption() }
 
 				<SectionHeader label={ translate( 'Site Profile' ) }>
 					<Button
