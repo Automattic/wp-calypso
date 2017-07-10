@@ -12,6 +12,7 @@ import shortcodeUtils from 'lib/shortcode';
 import { deserialize } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
 import { getSimplePayments } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import formatCurrency from 'lib/format-currency';
 
 class SimplePaymentsView extends Component {
 	render() {
@@ -43,11 +44,11 @@ class SimplePaymentsView extends Component {
 						>
 						</div>
 						<div className="wpview-type-simple-payments__price-part">
-							{ price }
+							{ formatCurrency( price, currency ) }
 						</div>
 						<div className="wpview-type-simple-payments__pay-part">
 							<div className="wpview-type-simple-payments__pay-quantity">
-								<input type="text" value="1" />
+								<input type="text" value="1" readOnly />
 							</div>
 							<div className="wpview-type-simple-payments__pay-paypal-button">
 								Pay with PayPal
