@@ -46,11 +46,6 @@ class IcannVerificationCard extends React.Component {
 				this.props.errorNotice( error.message );
 			} else {
 				this.setState( { emailSent: true } );
-				this.props.successNotice( this.props.translate(
-					'Email sent to %(email)s. Check your email.', {
-						args: { email: this.props.contactDetails.email },
-					}
-				) );
 			}
 
 			this.setState( { submitting: false } );
@@ -69,7 +64,7 @@ class IcannVerificationCard extends React.Component {
 
 		return translate(
 			'We need to verify the email address you provided for this domain to ensure we can contact ' +
-			'you concerning your domain. Please verify your email address or your domain may be suspended. ' +
+			'you concerning your domain. Please verify your email address or your domain will stop working. ' +
 			'{{learnMoreLink}}Learn more.{{/learnMoreLink}}', {
 				components: {
 					learnMoreLink: <a href={ support.EMAIL_VALIDATION_AND_VERIFICATION }
@@ -91,10 +86,14 @@ class IcannVerificationCard extends React.Component {
 			sent: emailSent,
 		} );
 		let statusIcon = 'notice-outline';
-		let statusText = translate( 'Check your email — we\'re waiting for you to verify.' );
+		let statusText = translate( 'Check your email — verfication sent to %(email)s.', {
+			args: { email: this.props.contactDetails.email },
+		} );
 		if ( emailSent ) {
 			statusIcon = 'mail';
-			statusText = translate( 'Email sent - check your email to verify.' );
+			statusText = translate( 'Sent to %(email)s. Check your email to verify.', {
+				args: { email: this.props.contactDetails.email },
+			} );
 		}
 
 		return (
@@ -102,29 +101,27 @@ class IcannVerificationCard extends React.Component {
 				<div className="icann-verification__status">
 					<Gridicon icon={ statusIcon } size={ 36 } />
 					{ statusText }
+
+					{ ! emailSent &&
+						<div>
+							<Button
+								compact
+								busy={ submitting }
+								disabled={ submitting }
+								onClick={ this.handleSubmit }>
+								{ submitting ? translate( 'Sending…' ) : translate( 'Send Again' ) }
+							</Button>
+
+							<Button
+								compact
+								href={ changeEmailHref }
+								onClick={ this.props.onClick }>
+								{ this.props.translate( 'Change Email Address' ) }
+							</Button>
+						</div>
+					}
 				</div>
 
-				{ ! emailSent &&
-					<Button
-						primary
-						busy={ submitting }
-						disabled={ submitting }
-						onClick={ this.handleSubmit }>
-						{ submitting ? translate( 'Sending…' ) : translate( 'Send Again' ) }
-					</Button>
-				}
-
-				<div className="icann-verification__sent-to">
-					{ translate(
-						'Sent to %(email)s. ' +
-						'{{changeEmail}}Change email address.{{/changeEmail}}', {
-							args: { email: this.props.contactDetails.email },
-							components: {
-								changeEmail: <a href={ changeEmailHref } />
-							}
-						}
-					)}
-				</div>
 			</div>
 		);
 	}

@@ -1,10 +1,6 @@
 .icann-verification__card {
 	.button {
 		margin-bottom: 15px;
-
-		@include breakpoint( '<480px' ) {
-			width: 100%;
-		}
 	}
 }
 
@@ -15,11 +11,16 @@
 .icann-verification__status {
 	font-size: 16px;
 	font-weight: 600;
+	padding-left: 50px;
+	position: relative;
 
 	.gridicon {
 		display: block;
-		float: left;
-		padding: 0 15px 0 0;
+		margin: auto;
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
 	}
 }
 
@@ -40,21 +41,16 @@
 	margin: 25px -24px -16px -21px;
 	padding: 24px 24px 24px 21px;
 	position: relative;
+	overflow: hidden;
 
 	.button {
-		margin: 5px 0;
-		@include breakpoint( '>480px' ) {
-			position: absolute;
-			right: 24px;
-			top: 24px;
+		margin: 5px 10px 0 0;
+
+		&:last-child {
+			margin-right: 0;
 		}
-	}
-
-	@include breakpoint( '>480px' ) {
-		padding-right: 145px;
-
-		&.sent {
-			padding-right: inherit;
+		&.is-busy:disabled {
+			color: 	darken( $gray, 20% );
 		}
 	}
 
@@ -67,6 +63,11 @@
 	}
 }
 
+.sent .icann-verification__status {
+	position: relative;
+	animation: fadeIn 0.3s ease-out;
+}
+
 .domain-details-card {
 	.icann-verification__card {
 		margin-bottom: 16px;
@@ -75,4 +76,15 @@
 
 .notice__text {
 	word-break: break-word;
+}
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+		bottom: -50px;
+	}
+	100% {
+		opacity: 1;
+		bottom: 0;
+	}
 }
