@@ -10,6 +10,7 @@ import { spy } from 'sinon';
 import { requestBlogStickerAdd, receiveBlogStickerAdd, receiveBlogStickerAddError } from '../';
 import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { local } from 'state/data-layer/utils';
 
 describe( 'blog-sticker-add', () => {
 	describe( 'requestBlogStickerAdd', () => {
@@ -33,11 +34,10 @@ describe( 'blog-sticker-add', () => {
 	describe( 'receiveBlogStickerAdd', () => {
 		it( 'should dispatch a success notice', () => {
 			const dispatch = spy();
-			const nextSpy = spy();
 			receiveBlogStickerAdd(
 				{ dispatch },
 				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
-				nextSpy,
+				null,
 				{ success: true },
 			);
 			expect( dispatch ).to.have.been.calledWithMatch( {
@@ -45,21 +45,19 @@ describe( 'blog-sticker-add', () => {
 					status: 'is-success',
 				},
 			} );
-			expect( nextSpy ).to.not.have.been.called;
 		} );
 
 		it( 'should dispatch a sticker removal if it fails using next', () => {
-			const nextSpy = spy();
 			const dispatch = spy();
 			receiveBlogStickerAdd(
 				{ dispatch },
 				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
-				nextSpy,
+				null,
 				{
 					success: false,
 				},
 			);
-			expect( nextSpy ).to.have.been.calledWith( removeBlogSticker( 123, 'broken-in-reader' ) );
+			expect( dispatch ).to.have.been.calledWith( local( removeBlogSticker( 123, 'broken-in-reader' ) ) );
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					status: 'is-error',
@@ -71,18 +69,16 @@ describe( 'blog-sticker-add', () => {
 	describe( 'receiveBlogStickerAddError', () => {
 		it( 'should dispatch an error notice and remove sticker action using next', () => {
 			const dispatch = spy();
-			const nextSpy = spy();
 			receiveBlogStickerAddError(
 				{ dispatch },
 				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
-				nextSpy,
 			);
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					status: 'is-error',
 				},
 			} );
-			expect( nextSpy ).to.have.been.calledWith( removeBlogSticker( 123, 'broken-in-reader' ) );
+			expect( dispatch ).to.have.been.calledWith( local( removeBlogSticker( 123, 'broken-in-reader' ) ) );
 		} );
 	} );
 } );

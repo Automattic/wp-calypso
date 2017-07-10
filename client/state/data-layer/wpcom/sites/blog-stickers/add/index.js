@@ -12,6 +12,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { removeBlogSticker } from 'state/sites/blog-stickers/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
+import { local } from 'state/data-layer/utils';
 
 export function requestBlogStickerAdd( { dispatch }, action ) {
 	dispatch(
@@ -30,7 +31,7 @@ export function receiveBlogStickerAdd( store, action, next, response ) {
 	// validate that it worked
 	const isAdded = !! ( response && response.success );
 	if ( ! isAdded ) {
-		receiveBlogStickerAddError( store, action, next );
+		receiveBlogStickerAddError( store, action );
 		return;
 	}
 
@@ -46,11 +47,11 @@ export function receiveBlogStickerAdd( store, action, next, response ) {
 	);
 }
 
-export function receiveBlogStickerAddError( { dispatch }, action, next ) {
+export function receiveBlogStickerAddError( { dispatch }, action ) {
 	dispatch(
 		errorNotice( translate( 'Sorry, we had a problem adding that sticker. Please try again.' ) ),
 	);
-	next( removeBlogSticker( action.payload.blogId, action.payload.stickerName ) );
+	dispatch( local( removeBlogSticker( action.payload.blogId, action.payload.stickerName ) ) );
 }
 
 export default {

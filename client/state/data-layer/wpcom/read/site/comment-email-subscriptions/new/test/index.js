@@ -17,6 +17,7 @@ import {
 	unsubscribeToNewCommentEmail,
 } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { local } from 'state/data-layer/utils';
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestCommentEmailSubscription', () => {
@@ -39,18 +40,17 @@ describe( 'comment-email-subscriptions', () => {
 
 	describe( 'receiveCommentEmailSubscription', () => {
 		it( 'should do nothing if successful', () => {
-			const nextSpy = spy();
-			receiveCommentEmailSubscription( null, null, nextSpy, { subscribed: true } );
-			expect( nextSpy ).to.not.have.been.called;
+			const dispatch = spy();
+			receiveCommentEmailSubscription( { dispatch }, null, null, { subscribed: true } );
+			expect( dispatch ).to.not.have.been.called;
 		} );
 
 		it( 'should dispatch an unsubscribe if it fails using next', () => {
-			const nextSpy = spy();
 			const dispatch = spy();
-			receiveCommentEmailSubscription( { dispatch }, { payload: { blogId: 1234 } }, nextSpy, {
+			receiveCommentEmailSubscription( { dispatch }, { payload: { blogId: 1234 } }, null, {
 				subscribed: false,
 			} );
-			expect( nextSpy ).to.have.been.calledWith( unsubscribeToNewCommentEmail( 1234 ) );
+			expect( dispatch ).to.have.been.calledWith( local( unsubscribeToNewCommentEmail( 1234 ) ) );
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					text: 'Sorry, we had a problem subscribing. Please try again.',
@@ -62,14 +62,13 @@ describe( 'comment-email-subscriptions', () => {
 	describe( 'receiveCommentEmailSubscriptionError', () => {
 		it( 'should dispatch an error notice and unsubscribe action using next', () => {
 			const dispatch = spy();
-			const nextSpy = spy();
-			receiveCommentEmailSubscriptionError( { dispatch }, { payload: { blogId: 1234 } }, nextSpy );
+			receiveCommentEmailSubscriptionError( { dispatch }, { payload: { blogId: 1234 } }, null );
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					text: 'Sorry, we had a problem subscribing. Please try again.',
 				},
 			} );
-			expect( nextSpy ).to.have.been.calledWith( unsubscribeToNewCommentEmail( 1234 ) );
+			expect( dispatch ).to.have.been.calledWith( local( unsubscribeToNewCommentEmail( 1234 ) ) );
 		} );
 	} );
 } );

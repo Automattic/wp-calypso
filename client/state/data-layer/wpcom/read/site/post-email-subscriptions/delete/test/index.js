@@ -14,6 +14,7 @@ import {
 } from '../';
 import { subscribeToNewPostEmail, unsubscribeToNewPostEmail } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { local } from 'state/data-layer/utils';
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestPostEmailUnsubscription', () => {
@@ -36,15 +37,14 @@ describe( 'comment-email-subscriptions', () => {
 
 	describe( 'receivePostEmailUnsubscription', () => {
 		it( 'should do nothing if successful', () => {
-			const nextSpy = spy();
-			receivePostEmailUnsubscription( null, null, nextSpy, { subscribed: false } );
-			expect( nextSpy ).to.not.have.been.called;
+			const dispatch = spy();
+			receivePostEmailUnsubscription( { dispatch }, null, null, { subscribed: false } );
+			expect( dispatch ).to.not.have.been.called;
 		} );
 
 		it( 'should dispatch a subscribe if it fails using next', () => {
-			const nextSpy = spy();
 			const dispatch = spy();
-			receivePostEmailUnsubscription( { dispatch }, { payload: { blogId: 1234 } }, nextSpy, {
+			receivePostEmailUnsubscription( { dispatch }, { payload: { blogId: 1234 } }, null, {
 				subscribed: true,
 			} );
 
@@ -53,21 +53,20 @@ describe( 'comment-email-subscriptions', () => {
 					text: 'Sorry, we had a problem unsubscribing. Please try again.',
 				},
 			} );
-			expect( nextSpy ).to.have.been.calledWith( subscribeToNewPostEmail( 1234 ) );
+			expect( dispatch ).to.have.been.calledWith( local( subscribeToNewPostEmail( 1234 ) ) );
 		} );
 	} );
 
 	describe( 'receivePostEmailUnsubscriptionError', () => {
 		it( 'should dispatch an error notice and subscribe action using next', () => {
 			const dispatch = spy();
-			const nextSpy = spy();
-			receivePostEmailUnsubscriptionError( { dispatch }, { payload: { blogId: 1234 } }, nextSpy );
+			receivePostEmailUnsubscriptionError( { dispatch }, { payload: { blogId: 1234 } }, null );
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					text: 'Sorry, we had a problem unsubscribing. Please try again.',
 				},
 			} );
-			expect( nextSpy ).to.have.been.calledWith( subscribeToNewPostEmail( 1234 ) );
+			expect( dispatch ).to.have.been.calledWith( local( subscribeToNewPostEmail( 1234 ) ) );
 		} );
 	} );
 } );
