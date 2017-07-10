@@ -23,6 +23,7 @@ import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
 import { DESERIALIZE } from 'state/action-types';
 import { login } from 'lib/paths';
+import { logSectionResponseTime } from './analytics';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -306,6 +307,7 @@ module.exports = function() {
 
 	app.set( 'views', __dirname );
 
+	app.use( logSectionResponseTime );
 	app.use( cookieParser() );
 
 	// redirect homepage if the Reader is disabled
@@ -372,8 +374,10 @@ module.exports = function() {
 				const pathRegex = utils.pathToRegExp( path );
 
 				app.get( pathRegex, function( req, res, next ) {
+					req.context = Object.assign( {}, req.context, { sectionName: section.name } );
+
 					if ( config.isEnabled( 'code-splitting' ) ) {
-						req.context = Object.assign( {}, req.context, { chunk: section.name } );
+						req.context.chunk = section.name;
 					}
 
 					if ( section.secondary && req.context ) {

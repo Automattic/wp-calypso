@@ -35,6 +35,8 @@ const tracksDebug = debug( 'calypso:analytics:tracks' );
 
 import emitter from 'lib/mixins/emitter';
 
+import { statsdTimingUrl } from 'lib/analytics/statsd';
+
 // Load tracking scripts
 window._tkq = window._tkq || [];
 window.ga = window.ga || function() {
@@ -310,15 +312,8 @@ const analytics = {
 					featureSlug = `start_${ matched[ 1 ] }`;
 				}
 
-				const type = eventType.replace( '-', '_' );
-				const json = JSON.stringify( {
-					beacons: [
-						`calypso.${ config( 'boom_analytics_key' ) }.${ featureSlug }.${ type }:${ duration }|ms`
-					]
-				} );
-
-				const [ encodedUrl, jsonData ] = [ pageUrl, json ].map( encodeURIComponent );
-				new Image().src = `https://pixel.wp.com/boom.gif?v=calypso&u=${ encodedUrl }&json=${ jsonData }`;
+				const imgUrl = statsdTimingUrl( featureSlug, eventType, duration );
+				new Image().src = imgUrl;
 			}
 		}
 	},

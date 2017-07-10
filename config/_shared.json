@@ -2,6 +2,7 @@
 	"env": "shared",
 	"env_id": "shared",
 	"boom_analytics_enabled": false,
+	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": false,
 	"client_slug": false,
 	"discover_blog_id": 53424024,
@@ -181,5 +182,6 @@
 	"twemoji_cdn_url": "https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/",
 	"woocommerce_blog_id": 113771570,
 	"wpcom_signup_id": false,
-	"wpcom_signup_key": false
+	"wpcom_signup_key": false,
+	"statsd_analytics_response_time_max_logs_per_second": 50
 }

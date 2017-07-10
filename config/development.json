@@ -14,6 +14,7 @@
 	"wpcom_signup_key": "cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8",
 	"mc_analytics_enabled": false,
 	"boom_analytics_enabled": false,
+	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": "development",
 	"google_analytics_enabled": false,
 	"google_analytics_key": "UA-10673494-15",
