@@ -36,7 +36,7 @@ class SettingsPayments extends Component {
 		className: PropTypes.string,
 	};
 
-	onSave() {
+	onSave = () => {
 		const { translate, actions } = this.props;
 
 		const successAction = successNotice(
@@ -63,9 +63,14 @@ class SettingsPayments extends Component {
 			<Main
 				className={ classNames( 'settingsPayments', className ) }>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
-					<Button primary onClick={ this.onSave } busy={ isSaving } disabled={ isSaving }>{ translate( 'Save' ) }</Button>
+					<Button
+						primary
+						onClick={ this.onSave }
+						busy={ isSaving }
+						disabled={ isSaving }>
+						{ translate( 'Save' ) }
+					</Button>
 				</ActionHeader>
-				<ActionHeader breadcrumbs={ breadcrumbs } />
 				<SettingsNavigation activeSection="payments" />
 				<SettingsPaymentsLocationCurrency />
 				<SettingsPaymentsOnSite />

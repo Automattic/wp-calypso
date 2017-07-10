@@ -110,7 +110,7 @@ class PaymentMethodEdit extends Component {
 
 	buttons = [
 		{ action: 'cancel', label: this.props.translate( 'Cancel' ), onClick: this.props.onCancel },
-		{ action: 'save', label: this.props.translate( 'Save' ), onClick: this.props.onSave, isPrimary: true },
+		{ action: 'save', label: this.props.translate( 'Done' ), onClick: this.props.onSave, isPrimary: true },
 	];
 
 	render() {
