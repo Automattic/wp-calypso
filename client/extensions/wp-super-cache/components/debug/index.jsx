@@ -8,7 +8,9 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
+import ExternalLink from 'components/external-link';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -28,12 +30,18 @@ class DebugTab extends Component {
 		fields: {},
 	};
 
+	deleteLog = () => this.props.saveSettings( this.props.siteId, { wpsc_delete_log: true } );
+
 	render() {
 		const {
 			fields: {
-				wp_super_cache_debug,
+				cache_path,
+				cache_path_url,
 				wp_cache_debug_ip,
+				wp_cache_debug_log = '',
 				wp_super_cache_comments,
+				wp_super_cache_debug,
+				wp_cache_debug_username,
 				wp_super_cache_front_page_check,
 				wp_super_cache_front_page_clear,
 				wp_super_cache_front_page_text,
@@ -68,6 +76,42 @@ class DebugTab extends Component {
 							</FormToggle>
 						</FormFieldset>
 						<div className="wp-super-cache__debug-fieldsets">
+							{ wp_cache_debug_log &&
+								<table>
+									<tr>
+										<td>
+											{ wp_super_cache_debug
+												? translate( 'Currently logging to:' )
+												: translate( 'Last logged to:' )
+											}
+										</td>
+										<td>
+											<ExternalLink
+												href={ cache_path_url + wp_cache_debug_log }
+												target="_blank">
+												{ cache_path + wp_cache_debug_log }
+											</ExternalLink>
+										</td>
+										<td rowSpan="2">
+											<Button
+												compact
+												disabled={ isRequesting || isSaving }
+												onClick={ this.deleteLog }
+												scary>
+												{ translate( 'Delete' ) }
+											</Button>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											{ translate( 'Username and Password:' ) }
+										</td>
+										<td>
+											{ wp_cache_debug_username }
+										</td>
+									</tr>
+								</table>
+							}
 							<FormFieldset>
 								<FormLabel htmlFor="ipAddress">
 									{ translate( 'IP Address' ) }
@@ -172,9 +216,13 @@ class DebugTab extends Component {
 
 const getFormSettings = settings => {
 	return pick( settings, [
-		'wp_super_cache_debug',
+		'cache_path',
+		'cache_path_url',
 		'wp_cache_debug_ip',
+		'wp_cache_debug_log',
 		'wp_super_cache_comments',
+		'wp_super_cache_debug',
+		'wp_cache_debug_username',
 		'wp_super_cache_front_page_check',
 		'wp_super_cache_front_page_clear',
 		'wp_super_cache_front_page_text',
