@@ -21,16 +21,16 @@ export default function removeContentStyles( post, dom ) {
 		}
 	} );
 
-	// remove all style elements
+	// remove all style elements outside of galleries and embeds
 	forEach( dom.querySelectorAll( 'style' ), function( element ) {
 		if ( ! element.matches( whitelistSelector ) ) {
 			element.parentNode && element.parentNode.removeChild( element );
 		}
 	} );
 
-	// remove align from non images
+	// remove align from non images. Unlike above, img align is permitted anywhere.
 	forEach( dom.querySelectorAll( '[align]' ), element => {
-		if ( element.tagName !== 'IMG' && ! element.matches( whitelistSelector ) ) {
+		if ( element.tagName !== 'IMG' ) {
 			element.removeAttribute( 'align' );
 		}
 	} );
