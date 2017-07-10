@@ -14,7 +14,7 @@ import { find } from 'lodash';
  */
 export default function isPluginActive( state, siteId, pluginSlug ) {
 	const sitePlugins = state.plugins.installed.plugins[ siteId ];
-	const plugin = find( sitePlugins, { slug: pluginSlug } );
+	const plugin = find( sitePlugins, { slug: pluginSlug, active: true } );
 	if ( ! plugin ) {
 		return false;
 	}
