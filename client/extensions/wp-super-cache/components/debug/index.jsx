@@ -10,6 +10,7 @@ import moment from 'moment';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import ExternalLink from 'components/external-link';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -40,7 +41,7 @@ class DebugTab extends Component {
 			fields: {
 				cache_path,
 				wp_cache_debug_ip,
-				wp_cache_debug_log,
+				wp_cache_debug_log = '',
 				wp_super_cache_comments,
 				wp_super_cache_debug,
 				wp_cache_debug_username,
@@ -56,6 +57,8 @@ class DebugTab extends Component {
 			isSaving,
 			translate,
 		} = this.props;
+
+		const cacheFilename = wp_cache_debug_log.split( '/' ).pop();
 
 		return (
 			<div>
@@ -95,8 +98,15 @@ class DebugTab extends Component {
 						</FormFieldset>
 						<p>
 							{ translate(
-								'Currently logging to: %(location)s',
-								{ args: { location: cache_path + wp_cache_debug_log } }
+								'Currently logging to: {{ExternalLink}}%(location)s{{/ExternalLink}}',
+								{
+									args: { location: cache_path + cacheFilename },
+									components: {
+										ExternalLink: <ExternalLink
+											href={ wp_cache_debug_log }
+											target="_blank" />
+									}
+								}
 							) }
 						</p>
 						<p>
