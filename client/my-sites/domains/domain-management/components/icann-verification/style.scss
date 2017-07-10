@@ -21,10 +21,6 @@
 		float: left;
 		padding: 0 15px 0 0;
 	}
-
-	&.waiting .gridicon {
-		color: $alert-yellow;
-	}
 }
 
 .icann-verification__sent-to {
@@ -56,6 +52,18 @@
 
 	@include breakpoint( '>480px' ) {
 		padding-right: 145px;
+
+		&.sent {
+			padding-right: inherit;
+		}
+	}
+
+	&.waiting .gridicon {
+		color: $alert-yellow;
+	}
+
+	&.sent .gridicon {
+		color: $alert-green;
 	}
 }
 

@@ -6,6 +6,7 @@ import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -32,6 +33,7 @@ class IcannVerificationCard extends React.Component {
 
 	state = {
 		submitting: false,
+		emailSent: false,
 	};
 
 	handleSubmit = ( event ) => {
@@ -43,6 +45,7 @@ class IcannVerificationCard extends React.Component {
 			if ( error ) {
 				this.props.errorNotice( error.message );
 			} else {
+				this.setState( { emailSent: true } );
 				this.props.successNotice( this.props.translate(
 					'Email sent to %(email)s. Check your email.', {
 						args: { email: this.props.contactDetails.email },
@@ -78,15 +81,61 @@ class IcannVerificationCard extends React.Component {
 		);
 	}
 
-	render() {
+	renderStatus() {
 		const { translate, selectedDomainName, selectedSiteSlug } = this.props;
 		const changeEmailHref = domainManagementEditContactInfo( selectedSiteSlug, selectedDomainName );
+
+		const { emailSent, submitting } = this.state;
+		const statusClassNames = classNames( 'icann-verification__status-container', {
+			waiting: ! emailSent,
+			sent: emailSent,
+		} );
+		let statusIcon = 'notice-outline';
+		let statusText = translate( 'Check your email — we\'re waiting for you to verify.' );
+		if ( emailSent ) {
+			statusIcon = 'mail';
+			statusText = translate( 'Email sent - check your email to verify.' );
+		}
+
+		return (
+			<div className={ statusClassNames }>
+				<div className="icann-verification__status">
+					<Gridicon icon={ statusIcon } size={ 36 } />
+					{ statusText }
+				</div>
+
+				{ ! emailSent &&
+					<Button
+						primary
+						busy={ submitting }
+						disabled={ submitting }
+						onClick={ this.handleSubmit }>
+						{ submitting ? translate( 'Sending…' ) : translate( 'Send Again' ) }
+					</Button>
+				}
+
+				<div className="icann-verification__sent-to">
+					{ translate(
+						'Sent to %(email)s. ' +
+						'{{changeEmail}}Change email address.{{/changeEmail}}', {
+							args: { email: this.props.contactDetails.email },
+							components: {
+								changeEmail: <a href={ changeEmailHref } />
+							}
+						}
+					)}
+				</div>
+			</div>
+		);
+	}
+
+	render() {
+		const { selectedDomainName } = this.props;
 
 		if ( ! this.props.contactDetails ) {
 			return <QueryWhois domain={ selectedDomainName } />;
 		}
 
-		const { submitting } = this.state;
 		return (
 			<Card compact highlight="warning" className="icann-verification__card">
 				<QueryWhois domain={ selectedDomainName } />
@@ -95,34 +144,7 @@ class IcannVerificationCard extends React.Component {
 					{ this.getExplanation() }
 				</div>
 
-				<div className="icann-verification__status-container">
-					<div className="icann-verification__status waiting">
-						<Gridicon icon="notice-outline" size={ 36 } />
-						{ translate(
-							'Check your email — we\'re waiting for you to verify.'
-						)}
-					</div>
-
-					<Button
-						primary
-						busy={ submitting }
-						disabled={ submitting }
-						onClick={ this.handleSubmit }>
-						{ submitting ? translate( 'Sending…' ) : translate( 'Send Again' ) }
-					</Button>
-
-					<div className="icann-verification__sent-to">
-						{ translate(
-							'Sent to %(email)s. ' +
-							'{{changeEmail}}Change email address.{{/changeEmail}}', {
-								args: { email: this.props.contactDetails.email },
-								components: {
-									changeEmail: <a href={ changeEmailHref } />
-								}
-							}
-						)}
-					</div>
-				</div>
+				{ this.renderStatus() }
 			</Card>
 		);
 	}
