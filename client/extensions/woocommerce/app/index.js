@@ -3,7 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { findLast } from 'lodash';
 import page from 'page';
 
 /**
@@ -11,37 +10,33 @@ import page from 'page';
  */
 import { canCurrentUser } from 'state/selectors';
 import config from 'config';
-import { getActionLog } from 'state/ui/action-log/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import route from 'lib/route';
-import { ROUTE_SET } from 'state/action-types';
 
 class App extends Component {
 
 	static propTypes = {
 		canUserManageOptions: PropTypes.bool,
 		siteId: PropTypes.number,
-		component: PropTypes.node,
-		currentRoute: PropTypes.shape( {
-			path: PropTypes.string,
-		} ),
+		currentRoute: PropTypes.string,
 		isAutomatedTransfer: PropTypes.bool,
 	};
 
-	// TODO This is temporary, until we have a valid "all sites" path to show.
-	// Calypso will detect if a user doesn't have access to a site at all, and redirects to the 'all sites'
-	// version of that URL. We don't want to render anything right now, so continue redirecting to my-sites.
-	componentWillReceiveProps( newProps ) {
-		if ( this.props.currentRoute !== newProps.currentRoute ) {
-			if ( newProps.currentRoute && ! route.getSiteFragment( newProps.currentRoute.path ) ) {
-				return page.redirect( '/stats/day' );
-			}
-		}
+	redirect = () => {
+		window.location.href = '/stats/day';
 	}
 
 	render = () => {
-		const { siteId, component, canUserManageOptions, isAutomatedTransfer } = this.props;
+		const { siteId, children, canUserManageOptions, isAtomicSite, currentRoute } = this.props;
+
+		// TODO This is temporary, until we have a valid "all sites" path to show.
+		// Calypso will detect if a user doesn't have access to a site at all, and redirects to the 'all sites'
+		// version of that URL. We don't want to render anything right now, so continue redirecting to my-sites.
+		if ( ! route.getSiteFragment( currentRoute ) ) {
+			this.redirect();
+			return null;
+		}
 
 		if ( ! siteId ) {
 			return null;
@@ -49,13 +44,13 @@ class App extends Component {
 
 		if ( 'wpcalypso' !== config( 'env_id' ) && 'development' !== config( 'env_id' ) ) {
 			// Show stats page for non Atomic sites for now
-			if ( ! isAutomatedTransfer ) {
-				page.redirect( '/stats/day' );
+			if ( ! isAtomicSite ) {
+				this.redirect();
 				return null;
 			}
 
 			if ( ! canUserManageOptions ) {
-				page.redirect( '/stats/day' );
+				this.redirect();
 				return null;
 			}
 		}
@@ -63,7 +58,7 @@ class App extends Component {
 		const className = 'woocommerce';
 		return (
 			<div className={ className }>
-				{ component }
+				{ children }
 			</div>
 		);
 	}
@@ -73,13 +68,12 @@ class App extends Component {
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
 	const canUserManageOptions = siteId && canCurrentUser( state, siteId, 'manage_options' );
-	const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
-	const isAutomatedTransfer = siteId && !! isSiteAutomatedTransfer( state, siteId );
+	const isAtomicSite = siteId && !! isSiteAutomatedTransfer( state, siteId );
 	return {
 		siteId,
 		canUserManageOptions,
-		currentRoute,
-		isAutomatedTransfer,
+		isAtomicSite,
+		currentRoute: page.current,
 	};
 }
 

@@ -147,7 +147,7 @@ function addStorePage( storePage, storeNavigation ) {
 	page( storePage.path, siteSelection, storeNavigation, function( context ) {
 		const component = React.createElement( storePage.container, { params: context.params } );
 		renderWithReduxStore(
-			React.createElement( App, { component } ),
+			React.createElement( App, {}, component ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
