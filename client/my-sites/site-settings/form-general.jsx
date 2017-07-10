@@ -443,6 +443,31 @@ class SiteSettingsFormGeneral extends Component {
 		return (
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
+
+				{ ! siteIsJetpack &&
+					<div>
+						<SectionHeader label={ translate( 'Net Neutrality' ) }>
+						<Button
+							compact={ true }
+							onClick={ handleSubmitForm }
+							primary={ true }
+
+							type="submit"
+							disabled={ isRequestingSettings || isSavingSettings }>
+								{ isSavingSettings
+									? translate( 'Saving…' )
+									: translate( 'Save Settings' )
+								}
+						</Button>
+						</SectionHeader>
+						<Card>
+							<form>
+								{ this.netNeutralityOption() }
+							</form>
+						</Card>
+					</div>
+				}
+
 				<SectionHeader label={ translate( 'Site Profile' ) }>
 					<Button
 						compact={ true }
@@ -486,30 +511,6 @@ class SiteSettingsFormGeneral extends Component {
 						{ this.visibilityOptions() }
 					</form>
 				</Card>
-
-				{ ! siteIsJetpack &&
-					<div>
-						<SectionHeader label={ translate( 'Net Neutrality' ) }>
-						<Button
-							compact={ true }
-							onClick={ handleSubmitForm }
-							primary={ true }
-
-							type="submit"
-							disabled={ isRequestingSettings || isSavingSettings }>
-								{ isSavingSettings
-									? translate( 'Saving…' )
-									: translate( 'Save Settings' )
-								}
-						</Button>
-						</SectionHeader>
-						<Card>
-							<form>
-								{ this.netNeutralityOption() }
-							</form>
-						</Card>
-					</div>
-				}
 
 				{
 					! siteIsJetpack && <div className="site-settings__footer-credit-container">
