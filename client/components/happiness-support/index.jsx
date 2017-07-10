@@ -15,7 +15,8 @@ import support from 'lib/url/support';
 const HappinessSupport = React.createClass( {
 	propTypes: {
 		isJetpack: React.PropTypes.bool,
-		isPlaceholder: React.PropTypes.bool
+		isPlaceholder: React.PropTypes.bool,
+		useIcon: React.PropTypes.bool,
 	},
 
 	getInitialState() {
@@ -54,6 +55,16 @@ const HappinessSupport = React.createClass( {
 		);
 	},
 
+	renderIcon() {
+		/* eslint-disable max-len */
+		return (
+			<div className="happiness-support__icon">
+				<img src="/calypso/images/illustrations/happiness-support.svg" />
+			</div>
+		);
+		/* eslint-enable max-len */
+	},
+
 	renderSupportButton() {
 		let url = support.SUPPORT_ROOT;
 
@@ -69,6 +80,7 @@ const HappinessSupport = React.createClass( {
 	},
 
 	render() {
+		const useIcon = ! this.props.isJetpack && this.props.useIcon;
 		const classes = {
 			'happiness-support': true,
 			'is-placeholder': this.props.isPlaceholder
@@ -76,7 +88,7 @@ const HappinessSupport = React.createClass( {
 
 		return (
 			<div className={ classNames( classes ) }>
-				{ this.renderGravatar() }
+				{ useIcon ? this.renderIcon() : this.renderGravatar() }
 
 				<h3 className="happiness-support__heading">
 					{ this.translate( 'Enjoy priority support from our Happiness Engineers' ) }

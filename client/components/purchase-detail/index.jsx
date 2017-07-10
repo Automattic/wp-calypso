@@ -17,6 +17,7 @@ const PurchaseDetail = ( {
 	description,
 	href,
 	icon,
+	svgIcon,
 	id,
 	info,
 	isPlaceholder,
@@ -29,6 +30,7 @@ const PurchaseDetail = ( {
 	title
 } ) => {
 	const classes = classNames( 'purchase-detail', {
+		'with-svg-icon': svgIcon,
 		'is-placeholder': isPlaceholder
 	} );
 
@@ -56,7 +58,7 @@ const PurchaseDetail = ( {
 			<div className="purchase-detail__content">
 				{ icon && (
 					<div className="purchase-detail__icon">
-						<Gridicon icon={ icon } />
+						{ svgIcon || ( icon && <Gridicon icon={ icon } /> ) }
 						{ isRequired && <Gridicon className="purchase-detail__notice-icon" icon="notice" /> }
 					</div>
 				) }
@@ -87,6 +89,7 @@ PurchaseDetail.propTypes = {
 	] ),
 	href: PropTypes.string,
 	icon: PropTypes.string,
+	svgIcon: PropTypes.element,
 	isPlaceholder: PropTypes.bool,
 	isRequired: PropTypes.bool,
 	isSubmitting: PropTypes.bool,

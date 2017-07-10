@@ -10,10 +10,11 @@ import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
 import { hasCustomDomain } from 'lib/site/utils';
 
-const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate } ) => {
+const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, svgIcon, translate } ) => {
 	if ( hasDomainCredit && selectedSite.plan.user_is_owner ) {
 		return ( <PurchaseDetail
 				icon="globe"
+				svgIcon={ svgIcon }
 				title={ translate( 'Select your custom domain' ) }
 				description={
 					translate(
@@ -35,6 +36,7 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 		actionButton.href = `/domains/manage/${ selectedSite.slug }`;
 		return ( <PurchaseDetail
 			icon="globe"
+			svgIcon={ svgIcon }
 			title={ translate( 'Custom Domain' ) }
 			description={ translate(
 				'Your plan includes the custom domain {{em}}%(siteDomain)s{{/em}}, your own personal corner of the web.', {

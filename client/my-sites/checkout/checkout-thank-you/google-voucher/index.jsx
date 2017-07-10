@@ -205,7 +205,7 @@ class GoogleVoucherDetails extends Component {
 	}
 
 	render() {
-		const { selectedSite, translate } = this.props;
+		const { selectedSite, translate, svgIcon } = this.props;
 		const { step } = this.state;
 		let body;
 
@@ -227,6 +227,7 @@ class GoogleVoucherDetails extends Component {
 				<PurchaseDetails
 					id="google-credits"
 					icon="tag"
+					svgIcon={ svgIcon }
 					title={ translate( 'Google AdWords credit' ) }
 					description={ translate( 'Use your {{strong}}$100{{/strong}} in credit with Google to bring the right traffic to your most important Posts and Pages.', {
 						components: {

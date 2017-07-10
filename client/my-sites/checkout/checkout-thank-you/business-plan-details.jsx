@@ -25,6 +25,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
+				svgIcon={ <img src="/calypso/images/upgrades/customize-domain.svg" /> }
 			/>
 
 			<PurchaseDetail
@@ -40,6 +41,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 			{ ! selectedFeature &&
 				<PurchaseDetail
 					icon="customize"
+					svgIcon={ <img src="/calypso/images/upgrades/customize-theme.svg" /> }
 					title={ i18n.translate( 'Find a new theme' ) }
 					description={ i18n.translate( 'All our premium themes are now available at no extra cost. Try them out now.' ) }
 					buttonText={ i18n.translate( 'Browse premium themes' ) }
@@ -48,6 +50,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 
 			<PurchaseDetail
 				icon="stats-alt"
+				svgIcon={ <img src="/calypso/images/upgrades/adwords.svg" /> }
 				title={ i18n.translate( 'Stats from Google Analytics' ) }
 				description={ i18n.translate( 'Connect to Google Analytics for the perfect complement to WordPress.com stats.' ) }
 				buttonText={ i18n.translate( 'Connect Google Analytics' ) }

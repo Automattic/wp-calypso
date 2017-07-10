@@ -16,14 +16,16 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 	const plan = find( sitePlans.data, isPersonal );
 
 	return (
-		<div>
+		<div className="checkout-thank-you__use-svg-icon">
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
+				svgIcon={ <img src="/calypso/images/upgrades/custom-domain.svg" /> }
 			/>
 
 			<PurchaseDetail
 				icon="speaker"
+				svgIcon={ <img src="/calypso/images/upgrades/adwords.svg" /> }
 				title={ translate( 'Advertising Removed' ) }
 				description={ translate(
 					'With your plan, all WordPress.com advertising has been removed from your site. ' +

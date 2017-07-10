@@ -49,14 +49,10 @@
 	}
 
 	@at-root #{&}-image {
-		display: block;
-		width: 100%;
-		@include breakpoint( "<480px" ) {
-			display: none;
-		}
+		width: 85%;
+		margin: 30px auto 20px;
 
-		svg {
-			display: block;
+		img {
 			width: 100%;
 		}
 	}

@@ -29,10 +29,12 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
+				svgIcon={ <img src="/calypso/images/upgrades/custom-domain.svg" /> }
 			/>
 
 			<PurchaseDetail
 				icon="speaker"
+				svgIcon={ <img src="/calypso/images/upgrades/advertising-removed.svg" /> }
 				title={ i18n.translate( 'Advertising Removed' ) }
 				description={ isPremiumPlan
 					? i18n.translate( 'With your plan, all WordPress.com advertising has been removed from your site.' +
@@ -43,12 +45,16 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 
 			<QuerySiteVouchers siteId={ selectedSite.ID } />
 			<div>
-				<GoogleVoucherDetails selectedSite={ selectedSite } />
+				<GoogleVoucherDetails
+					selectedSite={ selectedSite }
+					svgIcon={ <img src="/calypso/images/upgrades/adwords.svg" /> }
+				/>
 			</div>
 
 			{ ! selectedFeature &&
 				<PurchaseDetail
 					icon="customize"
+					svgIcon={ <img src="/calypso/images/upgrades/customize-theme.svg" /> }
 					title={ i18n.translate( 'Customize your theme' ) }
 					description={
 						i18n.translate(
@@ -63,6 +69,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 
 			<PurchaseDetail
 				icon="image-multiple"
+				svgIcon={ <img src="/calypso/images/upgrades/media-post.svg" /> }
 				title={ i18n.translate( 'Video and audio posts' ) }
 				description={
 					i18n.translate(
@@ -76,6 +83,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 				isWordadsInstantActivationEligible( selectedSite ) &&
 				<PurchaseDetail
 					icon="speaker"
+					svgIcon={ <img src="/calypso/images/upgrades/word-ads.svg" /> }
 					title={ i18n.translate( 'Easily monetize your site' ) }
 					description={
 						i18n.translate(
