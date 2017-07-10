@@ -18,12 +18,11 @@ import ActionPanelBody from 'my-sites/site-settings/action-panel/body';
 import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
 import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
 import Button from 'components/button';
-import config from 'config';
 import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
 import Dialog from 'components/dialog';
 import { getSitePurchases, hasLoadedSitePurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSite, getSiteDomain, getSiteOption } from 'state/sites/selectors';
+import { getSite, getSiteDomain } from 'state/sites/selectors';
 import Notice from 'components/notice';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { deleteSite } from 'state/sites/actions';
@@ -128,11 +127,8 @@ class DeleteSite extends Component {
 	};
 
 	render() {
-		const { adminUrl, siteDomain, siteId, siteSlug, translate } = this.props;
-		const exportLink = config.isEnabled( 'manage/export' )
-			? '/settings/export/' + siteSlug
-			: adminUrl + 'tools.php?page=export-choices';
-		const exportTarget = config.isEnabled( 'manage/export' ) ? undefined : '_blank';
+		const { siteDomain, siteId, siteSlug, translate } = this.props;
+		const exportLink = '/settings/export/' + siteSlug;
 		const deleteDisabled =
 			typeof this.state.confirmDomain !== 'string' ||
 			this.state.confirmDomain.toLowerCase().replace( /\s/g, '' ) !== siteDomain;
@@ -188,8 +184,7 @@ class DeleteSite extends Component {
 							className="settings-action-panel__export-button"
 							disabled={ ! siteId }
 							onClick={ this._checkSiteLoaded }
-							href={ exportLink }
-							target={ exportTarget }>
+							href={ exportLink }>
 							{ strings.exportContent }
 							<Gridicon icon="external" />
 						</Button>
@@ -269,9 +264,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const siteDomain = getSiteDomain( state, siteId );
 		const siteSlug = getSelectedSiteSlug( state );
-		const adminUrl = getSiteOption( state, siteId, 'admin_url' );
 		return {
-			adminUrl,
 			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
 			siteDomain,
 			siteId,

@@ -42,14 +42,12 @@ module.exports = function() {
 		);
 	}
 
-	if ( config.isEnabled( 'manage/export' ) ) {
-		page(
-			'/settings/export/:site_id',
-			mySitesController.siteSelection,
-			mySitesController.navigation,
-			controller.exportSite
-		);
-	}
+	page(
+		'/settings/export/:site_id',
+		mySitesController.siteSelection,
+		mySitesController.navigation,
+		controller.exportSite
+	);
 
 	page(
 		'/settings/delete-site/:site_id',

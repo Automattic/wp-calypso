@@ -43,7 +43,6 @@
 		"keyboard-shortcuts": true,
 		"manage/customize": true,
 		"manage/edit-user": true,
-		"manage/export": true,
 		"manage/import/medium": true,
 		"manage/media": true,
 		"manage/option_sync_non_public_post_stati": true,
