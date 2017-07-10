@@ -10,6 +10,7 @@ import page from 'page';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryTheme from 'components/data/query-theme';
 import ThemeSetupCard from './theme-setup-card';
@@ -45,7 +46,7 @@ class ThemeSetup extends Component {
 		} = this.props;
 
 		return (
-			<div className="main theme-setup" role="main">
+			<Main className="theme-setup">
 				{ siteId && <QueryActiveTheme siteId={ siteId } /> }
 				{ themeId && <QueryTheme siteId="wpcom" themeId={ themeId } /> }
 
@@ -58,7 +59,7 @@ class ThemeSetup extends Component {
 						onClick={ this.props.toggleDialog }
 						theme={ theme } />
 					: <ThemeSetupPlaceholder /> }
-			</div>
+			</Main>
 		);
 	}
 }
