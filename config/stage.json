@@ -30,7 +30,6 @@
 		"jetpack/activity-log": true,
 		"jetpack/api-cache": true,
 		"jetpack_core_inline_update": true,
-		"jetpack/pijp": true,
 		"login/wp-login": true,
 		"manage/custom-post-types": true,
 		"manage/customize": true,

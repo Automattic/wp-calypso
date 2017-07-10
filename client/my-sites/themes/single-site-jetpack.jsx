@@ -95,7 +95,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 				<SidebarNavigation />
 				<CurrentTheme siteId={ siteId } />
 				{
-					( config.isEnabled( 'jetpack/pijp' ) && ! requestingSitePlans && ! hasUnlimitedPremiumThemes ) && <Banner
+					( ! requestingSitePlans && ! hasUnlimitedPremiumThemes ) && <Banner
 						plan={ PLAN_JETPACK_PREMIUM }
 						title={ translate( 'Access all our premium themes with our Professional plan!' ) }
 						description={
@@ -164,7 +164,7 @@ export default connect(
 		return {
 			canManage: canJetpackSiteManage( state, siteId ),
 			hasJetpackThemes: hasJetpackSiteJetpackThemes( state, siteId ),
-			tier: config.isEnabled( 'jetpack/pijp' ) ? tier : 'free',
+			tier,
 			showWpcomThemesList,
 			emptyContent,
 			isMultisite,

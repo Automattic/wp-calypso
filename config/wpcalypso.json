@@ -36,7 +36,6 @@
 		"help/courses": true,
 		"jetpack/api-cache": true,
 		"jetpack_core_inline_update": true,
-		"jetpack/pijp": true,
 		"login/magic-login": true,
 		"login/wp-login": true,
 		"keyboard-shortcuts": true,
