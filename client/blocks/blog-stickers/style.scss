@@ -20,11 +20,11 @@
 .blog-stickers__list-item {
 	padding-left: 15px;
 	position: relative;
-}
 
-.blog-stickers__list-item::before {
-	color: lighten( $gray, 10% );
-	content: " • ";
-	position: absolute;
-		left: 0;
+	&::before {
+		color: lighten( $gray, 10% );
+		content: " • ";
+		position: absolute;
+			left: 0;
+	}
 }
