@@ -30,7 +30,7 @@ export default function removeContentStyles( post, dom ) {
 
 	// remove align from non images
 	forEach( dom.querySelectorAll( '[align]' ), element => {
-		if ( element.tagName !== 'IMG' && !element.matches( whitelistSelector ) ) {
+		if ( element.tagName !== 'IMG' && ! element.matches( whitelistSelector ) ) {
 			element.removeAttribute( 'align' );
 		}
 	} );
