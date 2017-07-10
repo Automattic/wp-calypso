@@ -51,7 +51,7 @@ class PriceInput extends Component {
 			return (
 				<FormTextInput
 					value={ value }
-					{ ...omit( props, [ 'noWrap' ] ) } />
+					{ ...omit( props, [ 'noWrap', 'min' ] ) } />
 			);
 		}
 

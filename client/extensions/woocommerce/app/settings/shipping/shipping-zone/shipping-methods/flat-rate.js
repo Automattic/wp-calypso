@@ -39,7 +39,8 @@ const FreeShippingMethod = ( { id, cost, tax_status, currency, translate, action
 			<PriceInput
 				currency={ currency }
 				value={ cost }
-				onChange={ onCostChange } />
+				onChange={ onCostChange }
+				min={ 0.01 } />
 		);
 	};
 
