@@ -17,10 +17,11 @@ import route from 'lib/route';
 class App extends Component {
 
 	static propTypes = {
-		canUserManageOptions: PropTypes.bool,
 		siteId: PropTypes.number,
-		currentRoute: PropTypes.string,
-		isAutomatedTransfer: PropTypes.bool,
+		canUserManageOptions: PropTypes.bool.isRequired,
+		currentRoute: PropTypes.string.isRequired,
+		isAtomicSite: PropTypes.bool.isRequired,
+		children: PropTypes.element.isRequired,
 	};
 
 	redirect = () => {
@@ -67,8 +68,8 @@ class App extends Component {
 
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
-	const canUserManageOptions = siteId && canCurrentUser( state, siteId, 'manage_options' );
-	const isAtomicSite = siteId && !! isSiteAutomatedTransfer( state, siteId );
+	const canUserManageOptions = siteId && canCurrentUser( state, siteId, 'manage_options' ) || false;
+	const isAtomicSite = siteId && !! isSiteAutomatedTransfer( state, siteId ) || false;
 	return {
 		siteId,
 		canUserManageOptions,
