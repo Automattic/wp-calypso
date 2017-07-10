@@ -22,6 +22,8 @@ import {
 	topCoupons
 } from 'woocommerce/app/store-stats/constants';
 import { getUnitPeriod } from './utils';
+import { isJetpackSite } from 'state/sites/selectors';
+import { isPluginActive } from 'state/selectors';
 
 const listType = {
 	products: topProducts,
@@ -51,7 +53,12 @@ class StoreStatsListView extends Component {
 	};
 
 	render() {
-		const { siteId, slug, selectedDate, type, unit } = this.props;
+		const { isWooConnect, siteId, slug, selectedDate, type, unit } = this.props;
+		// TODO: this is to handle users switching sites while on store stats
+		// unfortunately, we can't access the path when changing sites
+		if ( ! isWooConnect ) {
+			page.redirect( `/stats/${ slug }` );
+		}
 		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
 		const listviewQuery = {
 			unit,
@@ -97,8 +104,13 @@ class StoreStatsListView extends Component {
 }
 
 export default connect(
-	state => ( {
-		slug: getSelectedSiteSlug( state ),
-		siteId: getSelectedSiteId( state ),
-	} )
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
+		return {
+			isWooConnect: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
+			slug: getSelectedSiteSlug( state ),
+			siteId: getSelectedSiteId( state ),
+		};
+	}
 )( StoreStatsListView );

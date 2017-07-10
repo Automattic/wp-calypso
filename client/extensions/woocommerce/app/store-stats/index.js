@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import page from 'page';
 import { moment, translate } from 'i18n-calypso';
 
 /**
@@ -28,9 +29,12 @@ import {
 	UNITS
 } from 'woocommerce/app/store-stats/constants';
 import { getUnitPeriod, getEndPeriod } from './utils';
+import { isJetpackSite } from 'state/sites/selectors';
+import { isPluginActive } from 'state/selectors';
 
 class StoreStats extends Component {
 	static propTypes = {
+		isWooConnect: PropTypes.bool.isRequired,
 		path: PropTypes.string.isRequired,
 		queryDate: PropTypes.string,
 		querystring: PropTypes.string,
@@ -40,7 +44,12 @@ class StoreStats extends Component {
 	};
 
 	render() {
-		const { path, queryDate, selectedDate, siteId, slug, unit, querystring } = this.props;
+		const { isWooConnect, path, queryDate, selectedDate, siteId, slug, unit, querystring } = this.props;
+		// TODO: this is to handle users switching sites while on store stats
+		// unfortunately, we can't access the path when changing sites
+		if ( ! isWooConnect ) {
+			page.redirect( `/stats/${ slug }` );
+		}
 		const unitQueryDate = getUnitPeriod( queryDate, unit );
 		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
 		const endSelectedDate = getEndPeriod( selectedDate, unit );
@@ -148,8 +157,13 @@ class StoreStats extends Component {
 }
 
 export default connect(
-	state => ( {
-		slug: getSelectedSiteSlug( state ),
-		siteId: getSelectedSiteId( state ),
-	} )
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
+		return {
+			isWooConnect: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
+			slug: getSelectedSiteSlug( state ),
+			siteId,
+		};
+	}
 )( StoreStats );
