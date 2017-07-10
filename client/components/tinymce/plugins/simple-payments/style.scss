@@ -2,8 +2,34 @@
 	// TODO: temporary values until we get some content
 	width: 550px;
 	height: 450px;
+
+	&.dialog.card {
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.dialog__content {
+		display: flex;
+		flex-direction: column;
+		flex: auto;
+		min-height: 0; // permits the to shrink below its min height and scroll
+	}
+
+	.dialog__action-buttons {
+		flex: none;
+		margin: 0;
+	}
 }
 
 .editor-simple-payments-modal__navigation {
-	// TODO: remove top, left and right borders, move to the top, remove left, right paddings
+	margin: 0;
+}
+
+.editor-simple-payments-modal__form {
+	padding: 16px;
+}
+
+.editor-simple-payments-modal__list {
+	padding: 8px 16px;
 }

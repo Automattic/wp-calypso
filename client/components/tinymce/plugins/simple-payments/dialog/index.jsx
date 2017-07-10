@@ -43,6 +43,16 @@ class SimplePaymentsDialog extends Component {
 		return actionButtons;
 	}
 
+	renderAddNewForm() {
+		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+		return <div className="editor-simple-payments-modal__form">Add new</div>;
+	}
+
+	renderList() {
+		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+		return <div className="editor-simple-payments-modal__list">Payment Buttons List</div>;
+	}
+
 	render() {
 		const {
 			activeTab,
@@ -50,10 +60,6 @@ class SimplePaymentsDialog extends Component {
 			onChangeTabs,
 			onClose,
 		} = this.props;
-
-		const content = activeTab === 'addNew'
-			? <div>Add new</div>
-			: <div>Payment Buttons list</div>;
 
 		return (
 			<Dialog
@@ -63,7 +69,7 @@ class SimplePaymentsDialog extends Component {
 				additionalClassNames="editor-simple-payments-modal"
 			>
 				<Navigation { ...{ activeTab, onChangeTabs } } />
-				{ content }
+				{ activeTab === 'addNew' ? this.renderAddNewForm() : this.renderList() }
 			</Dialog>
 		);
 	}
