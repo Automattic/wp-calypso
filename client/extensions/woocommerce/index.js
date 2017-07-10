@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import App from './app';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import installActionHandlers from './state/data-layer';
@@ -144,8 +145,9 @@ function getStoreSidebarItemButtons() {
 
 function addStorePage( storePage, storeNavigation ) {
 	page( storePage.path, siteSelection, storeNavigation, function( context ) {
+		const component = React.createElement( storePage.container, { params: context.params } );
 		renderWithReduxStore(
-			React.createElement( storePage.container, { className: 'woocommerce', params: context.params } ),
+			React.createElement( App, {}, component ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
