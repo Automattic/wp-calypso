@@ -10,14 +10,11 @@ import { spy } from 'sinon';
 import {
 	fetchPaymentMethods,
 	savePaymentMethod,
-	savePaymentMethodEnabled,
 } from '../actions';
 import { LOADING } from 'woocommerce/state/constants';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE,
-	WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE_SUCCESS,
 	WOOCOMMERCE_PAYMENT_METHOD_UPDATE,
 	WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS,
 	WOOCOMMERCE_PAYMENT_METHODS_REQUEST,
@@ -273,51 +270,6 @@ describe( 'actions', () => {
 							},
 						},
 						title: 'PayPal7',
-					}
-				} );
-			} );
-		} );
-	} );
-
-	describe( '#savePaymentMethodEnabled', () => {
-		const siteId = '789';
-
-		it( 'should dispatch an action', () => {
-			const getState = () => ( state );
-			const dispatch = spy();
-			savePaymentMethodEnabled( siteId, method.id, true )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith(
-				{
-					type: WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE,
-					siteId,
-					enabled: true,
-					methodId: 'paypal',
-				}
-			);
-		} );
-
-		it( 'should dispatch a success action with method complete', () => {
-			const getState = () => ( state );
-			const dispatch = spy();
-			const response = savePaymentMethodEnabled( siteId, method.id, true )( dispatch, getState );
-
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
-					type: WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE,
-					siteId,
-					enabled: true,
-					methodId: 'paypal',
-				} );
-				expect( dispatch ).to.have.been.calledWith( {
-					type: WOOCOMMERCE_PAYMENT_METHOD_ENABLED_UPDATE_SUCCESS,
-					siteId,
-					data: {
-						enabled: true,
-						fees: '2.9% + 30c per transaction',
-						id: 'paypal',
-						informationUrl: 'https://docs.woocommerce.com/document/paypal-standard/',
-						isSuggested: true,
-						methodType: 'off-site',
 					}
 				} );
 			} );

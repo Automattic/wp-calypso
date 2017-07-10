@@ -46,7 +46,10 @@ export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( s
 			return;
 		}
 
-		const method = { ...methods[ index ] };
+		const method = {
+			...methods[ index ],
+			settings: { ...methods[ index ].settings },
+		};
 		Object.keys( update ).map( function( updateKey ) {
 			if ( 'id' === updateKey ) {
 				return;
@@ -55,7 +58,10 @@ export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( s
 				method.enabled = update[ updateKey ];
 				return;
 			}
-			method.settings[ updateKey ].value = update[ updateKey ].value;
+			method.settings[ updateKey ] = {
+				...method.settings[ updateKey ],
+				value: update[ updateKey ].value,
+			};
 		} );
 		methods[ index ] = method;
 	} );
