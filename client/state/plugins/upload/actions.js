@@ -3,9 +3,9 @@
  */
 import {
 	PLUGIN_UPLOAD,
-	PLUGIN_UPLOAD_UPDATE_PROGRESS,
 	PLUGIN_UPLOAD_COMPLETE,
 	PLUGIN_UPLOAD_ERROR,
+	PLUGIN_UPLOAD_PROGRESS,
 } from 'state/action-types';
 
 /**
@@ -33,7 +33,7 @@ export function uploadPlugin( siteId, file ) {
  */
 export function updatePluginUploadProgress( siteId, loaded, total ) {
 	return {
-		type: PLUGIN_UPLOAD_UPDATE_PROGRESS,
+		type: PLUGIN_UPLOAD_PROGRESS,
 		siteId,
 		loaded,
 		total,
