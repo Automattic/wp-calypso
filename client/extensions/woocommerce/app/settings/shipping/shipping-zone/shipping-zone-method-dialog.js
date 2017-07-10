@@ -90,7 +90,7 @@ const ShippingZoneMethodDialog = ( {
 
 	const buttons = [
 		{ action: 'cancel', label: translate( 'Cancel' ) },
-		{ action: 'add', label: translate( 'Save' ), onClick: onClose, isPrimary: true },
+		{ action: 'add', label: isNew ? translate( 'Add' ) : translate( 'Done' ), onClick: onClose, isPrimary: true },
 	];
 
 	if ( ! isNew ) {

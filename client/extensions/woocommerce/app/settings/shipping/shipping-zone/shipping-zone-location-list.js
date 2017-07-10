@@ -122,7 +122,7 @@ const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actio
 				</ListHeader>
 				{ locationsToRender.map( renderLocation ) }
 			</List>
-			<ShippingZoneLocationDialog siteId={ siteId } />
+			<ShippingZoneLocationDialog siteId={ siteId } isAdding={ isEmpty( locations ) } />
 		</div>
 	);
 };
