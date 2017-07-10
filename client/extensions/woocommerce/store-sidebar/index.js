@@ -4,16 +4,18 @@
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { find, filter } from 'lodash';
 import React, { Component, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Count from 'components/count';
+import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
+import { getNewOrders } from 'woocommerce/state/sites/orders/selectors';
 import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getLink } from 'woocommerce/lib/nav-utils';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarItem from 'layout/sidebar/item';
@@ -24,20 +26,6 @@ import StoreGroundControl from './store-ground-control';
 class StoreSidebar extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
-		sidebarItems: PropTypes.arrayOf( PropTypes.shape( {
-			icon: PropTypes.string,
-			isPrimary: PropTypes.bool.isRequired,
-			label: PropTypes.string.isRequired,
-			parentSlug: PropTypes.string,
-			path: PropTypes.string.isRequired,
-			slug: PropTypes.string.isRequired,
-		} ) ),
-		sidebarItemButtons: PropTypes.arrayOf( PropTypes.shape( {
-			label: PropTypes.string.isRequired,
-			parentSlug: PropTypes.string.isRequired,
-			path: PropTypes.string.isRequired,
-			slug: PropTypes.string.isRequired,
-		} ) ),
 		site: PropTypes.object,
 	}
 
@@ -46,6 +34,7 @@ class StoreSidebar extends Component {
 
 		if ( site && site.ID ) {
 			this.props.fetchSetupChoices( site.ID );
+			this.props.fetchOrders( site.ID );
 		}
 	}
 
@@ -57,6 +46,7 @@ class StoreSidebar extends Component {
 
 		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchSetupChoices( newSiteId );
+			this.props.fetchOrders( newSiteId );
 		}
 	}
 
@@ -74,90 +64,120 @@ class StoreSidebar extends Component {
 		}, this );
 	}
 
-	renderSidebarMenuItems = ( items, buttons, isDisabled ) => {
-		const { site, finishedAddressSetup, page } = this.props;
+	dashboard = () => {
+		const { site, siteSuffix, translate } = this.props;
+		const link = '/store' + siteSuffix;
+		const selected = this.isItemLinkSelected( link );
+		const classes = classNames( {
+			dashboard: true,
+			'is-placeholder': ! site,
+			selected,
+		} );
 
-		return items.map( function( item, index ) {
-			if ( ! item.showDuringSetup && ! finishedAddressSetup ) {
-				return null;
-			}
-			const isChild = ( 'undefined' !== typeof item.parentSlug );
-			const itemLink = getLink( item.path, site );
-			const itemButton = buttons.filter( button => button.parentSlug === item.slug ).map( button => {
-				return (
-					<SidebarButton
-						disabled={ isDisabled }
-						href={ getLink( button.path, site ) }
-						key={ button.slug }
-					>
-						{ button.label }
-					</SidebarButton>
-				);
-			} );
+		return (
+			<SidebarItem
+				className={ classes }
+				icon="house"
+				label={ translate( 'Dashboard' ) }
+				link={ link }
+				onNavigate={ this.onNavigate }
+				preloadSectionName={ 'dashboard' } />
+		);
+	}
 
-			// If this item has a parentSlug, only render it if 1) the parent is
-			// currently selected, 2) it is currently selected, or 3) any of its
-			// siblings are selected
-			if ( 'undefined' !== typeof item.parentSlug ) {
-				const links = [];
-				const parentItem = find( items, { slug: item.parentSlug } );
-				links.push( getLink( parentItem.path, site ) );
+	products = () => {
+		const { site, siteSuffix, translate } = this.props;
+		const link = '/store/products' + siteSuffix;
+		const addLink = '/store/product' + siteSuffix;
+		const selected = this.isItemLinkSelected( [ link, addLink ] );
+		const classes = classNames( {
+			products: true,
+			'is-placeholder': ! site,
+			selected,
+		} );
 
-				filter( items, { parentSlug: item.parentSlug } ).map( child => {
-					links.push( getLink( child.path, site ) );
-				} );
+		return (
+			<SidebarItem
+				className={ classes }
+				icon="product"
+				label={ translate( 'Products' ) }
+				link={ link }
+				onNavigate={ this.onNavigate }
+				preloadSectionName={ 'products' } >
+				<SidebarButton disabled={ ! site } href={ addLink } >
+					{ translate( 'Add' ) }
+				</SidebarButton>
+			</SidebarItem>
+		);
+	}
 
-				if ( ! this.isItemLinkSelected( links ) ) {
-					return null;
+	orders = () => {
+		const { orders, site, siteSuffix, translate } = this.props;
+		const link = '/store/orders' + siteSuffix;
+		// We don't use the addLink yet, but this ensures the item is selected on single views
+		const addLink = '/store/order' + siteSuffix;
+		const selected = this.isItemLinkSelected( [ link, addLink ] );
+		const classes = classNames( {
+			orders: true,
+			'is-placeholder': ! site,
+			selected,
+		} );
+
+		return (
+			<SidebarItem
+				className={ classes }
+				icon="pages"
+				label={ translate( 'Orders' ) }
+				link={ link }
+				onNavigate={ this.onNavigate }
+				preloadSectionName={ 'orders' }>
+				{ orders.length
+					? <Count count={ orders.length } />
+					: null
 				}
-			}
+			</SidebarItem>
+		);
+	}
 
-			// If we reach this point, this is not a child item
-			// lets see if its children, if any, are selected
-			const childLinks = [];
-			filter( items, { parentSlug: item.slug } ).map( child => {
-				childLinks.push( getLink( child.path, site ) );
-			} );
+	settings = () => {
+		const { site, siteSuffix, translate } = this.props;
+		const link = '/store/settings' + siteSuffix;
+		const childLinks = [
+			'/store/settings/payments' + siteSuffix,
+			'/store/settings/shipping' + siteSuffix,
+			'/store/settings/taxes' + siteSuffix,
+		];
+		const selected = this.isItemLinkSelected( [ link, ...childLinks ] );
+		const classes = classNames( {
+			settings: true,
+			'is-placeholder': ! site,
+			selected,
+		} );
 
-			const selected = this.isItemLinkSelected( itemLink ) || page.parentPath === item.path;
-			// Build the classnames for the item
-			const itemClasses = classNames( item.slug,
-				{
-					'has-selected-child': this.isItemLinkSelected( childLinks ),
-					'is-child-item': isChild,
-					'is-placeholder': isDisabled,
-					selected,
-				}
-			);
-
-			// Render the item
-			return (
-				<SidebarItem
-					className={ itemClasses }
-					icon={ isChild ? '' : item.icon }
-					key={ index }
-					label={ item.label }
-					link={ itemLink }
-					onNavigate={ this.onNavigate }
-					preloadSectionName={ item.slug }
-				>
-				{ itemButton }
-				</SidebarItem>
-			);
-		}, this );
+		return (
+			<SidebarItem
+				className={ classes }
+				icon="cog"
+				label={ translate( 'Settings' ) }
+				link={ link }
+				onNavigate={ this.onNavigate }
+				preloadSectionName={ 'settings' } />
+		);
 	}
 
 	render = () => {
-		const { sidebarItems, sidebarItemButtons, site } = this.props;
+		const { finishedAddressSetup, site } = this.props;
 
 		return (
 			<Sidebar className="store-sidebar__sidebar">
 				<StoreGroundControl site={ site } />
 				<SidebarMenu>
 					<ul>
-						{ this.renderSidebarMenuItems( sidebarItems.filter( item => item.isPrimary ), sidebarItemButtons, ! site ) }
-						<SidebarSeparator />
-						{ this.renderSidebarMenuItems( sidebarItems.filter( item => ! item.isPrimary ), sidebarItemButtons, ! site ) }
+						{ this.dashboard() }
+						{ finishedAddressSetup && this.products() }
+						{ finishedAddressSetup && this.orders() }
+						{ finishedAddressSetup && <SidebarSeparator /> }
+						{ finishedAddressSetup && this.settings() }
 					</ul>
 				</SidebarMenu>
 			</Sidebar>
@@ -167,19 +187,25 @@ class StoreSidebar extends Component {
 
 function mapStateToProps( state ) {
 	const finishedAddressSetup = getSetStoreAddressDuringInitialSetup( state );
+	const site = getSelectedSiteWithFallback( state );
+	const orders = getNewOrders( state );
+
 	return {
 		finishedAddressSetup,
-		site: getSelectedSiteWithFallback( state )
+		orders,
+		site,
+		siteSuffix: site ? '/' + site.slug : '',
 	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			fetchOrders,
 			fetchSetupChoices,
 		},
 		dispatch
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( StoreSidebar );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( StoreSidebar ) );
