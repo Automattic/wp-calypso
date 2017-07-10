@@ -81,6 +81,10 @@ class JetpackConnectAuthorizeForm extends Component {
 		);
 	}
 
+	handleClickHelp = () => {
+		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
+	}
+
 	renderNoQueryArgsError() {
 		return (
 			<Main className="jetpack-connect__main-error">
@@ -93,7 +97,7 @@ class JetpackConnectAuthorizeForm extends Component {
 					actionURL="/jetpack/connect"
 				/>
 				<LoggedOutFormLinks>
-					<HelpButton onClick={ this.clickHelpButton } />
+					<HelpButton onClick={ this.handleClickHelp } />
 				</LoggedOutFormLinks>
 			</Main>
 		);
