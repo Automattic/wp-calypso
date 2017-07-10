@@ -330,6 +330,26 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	netNeutralityOption() {
+		const { fields, isRequestingSettings, translate, handleToggle } = this.props;
+
+		return (
+			<FormFieldset>
+				<ul>
+					<li>
+						<CompactFormToggle
+							checked={ !! fields.net_neutrality }
+							disabled={ isRequestingSettings }
+							onChange={ handleToggle( 'net_neutrality' ) }
+						>
+							{ translate( 'Help save the internet by displaying a net-neutrality banner on your site.' ) }
+						</CompactFormToggle>
+					</li>
+				</ul>
+			</FormFieldset>
+		);
+	}
+
 	Timezone() {
 		const { fields, isRequestingSettings, siteIsJetpack, translate } = this.props;
 		if ( siteIsJetpack ) {
@@ -467,6 +487,30 @@ class SiteSettingsFormGeneral extends Component {
 					</form>
 				</Card>
 
+				{ ! siteIsJetpack &&
+					<div>
+						<SectionHeader label={ translate( 'Net Neutrality' ) }>
+						<Button
+							compact={ true }
+							onClick={ handleSubmitForm }
+							primary={ true }
+
+							type="submit"
+							disabled={ isRequestingSettings || isSavingSettings }>
+								{ isSavingSettings
+									? translate( 'Saving…' )
+									: translate( 'Save Settings' )
+								}
+						</Button>
+						</SectionHeader>
+						<Card>
+							<form>
+								{ this.netNeutralityOption() }
+							</form>
+						</Card>
+					</div>
+				}
+
 				{
 					! siteIsJetpack && <div className="site-settings__footer-credit-container">
 						<SectionHeader label={ translate( 'Footer Credit' ) } />
@@ -577,6 +621,7 @@ const getFormSettings = settings => {
 		jetpack_sync_non_public_post_stati: false,
 		holidaysnow: false,
 		api_cache: false,
+		net_neutrality: false
 	};
 
 	if ( ! settings ) {
@@ -595,6 +640,7 @@ const getFormSettings = settings => {
 		holidaysnow: !! settings.holidaysnow,
 
 		api_cache: settings.api_cache,
+		net_neutrality: settings.net_neutrality,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
