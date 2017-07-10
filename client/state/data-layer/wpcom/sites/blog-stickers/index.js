@@ -12,6 +12,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import addBlogStickerHandler from 'state/data-layer/wpcom/sites/blog-stickers/add';
+import removeBlogStickerHandler from 'state/data-layer/wpcom/sites/blog-stickers/remove';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { receiveBlogStickers } from 'state/sites/blog-stickers/actions';
 
@@ -52,4 +53,8 @@ const listBlogStickersHandler = {
 	],
 };
 
-export default mergeHandlers( listBlogStickersHandler, addBlogStickerHandler );
+export default mergeHandlers(
+	listBlogStickersHandler,
+	addBlogStickerHandler,
+	removeBlogStickerHandler,
+);
