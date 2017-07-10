@@ -11,7 +11,7 @@ import { SITES_BLOG_STICKER_LIST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
-import { addBlogStickerHandler } from 'state/data-layer/wpcom/sites/blog-stickers/add';
+import addBlogStickerHandler from 'state/data-layer/wpcom/sites/blog-stickers/add';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { receiveBlogStickers } from 'state/sites/blog-stickers/actions';
 
