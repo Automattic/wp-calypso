@@ -10,33 +10,33 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 
-function EditorFeedbackRequest( { translate, onTrigger } ) {
+function EditorFeedbackInvitation( { translate, onTrigger } ) {
 	return (
-		<div className="editor-feedback-request">
-			<p className="editor-feedback-request__invitation">
+		<div className="editor-feedback-invitation">
+			<p className="editor-feedback-invitation__invitation">
 				{ translate(
 					'{{highlight}}Need another set of eyes?{{/highlight}} Ask a friend to review your post.',
 					{
 						components: {
-							highlight: <span className="editor-feedback-request__highlight" />
+							highlight: <span className="editor-feedback-invitation__highlight" />
 						}
 					}
 				) }
 			</p>
-			<Button className="editor-feedback-request__button" onClick={ onTrigger }>
+			<Button className="editor-feedback-invitation__button" onClick={ onTrigger }>
 				{ translate( 'Send to a Friend' ) }
 			</Button>
 		</div>
 	);
 }
 
-EditorFeedbackRequest.propTypes = {
+EditorFeedbackInvitation.propTypes = {
 	translate: PropTypes.func.isRequired,
 	onTrigger: PropTypes.func.isRequired
 };
 
-EditorFeedbackRequest.defaultProps = {
+EditorFeedbackInvitation.defaultProps = {
 	translate: identity
 };
 
-export default localize( EditorFeedbackRequest );
+export default localize( EditorFeedbackInvitation );

@@ -10,7 +10,7 @@ import EditorDrawer from 'post-editor/editor-drawer';
 import EditorSidebarHeader from './header';
 import SidebarFooter from 'layout/sidebar/footer';
 import EditorActionBar from 'post-editor/editor-action-bar';
-import EditorFeedbackRequest from 'post-editor/editor-feedback-request';
+import EditorFeedbackInvitation from 'post-editor/editor-feedback-invitation';
 import FeedbackSidebarHeader from './feedback-header';
 import FeedbackRequestForm from './feedback-request-form';
 import FeedbackList from './feedback-list';
@@ -89,7 +89,7 @@ export default class EditorSidebar extends Component {
 					onSave={ onSave }
 					isPostPrivate={ isPostPrivate }
 				/>
-				<EditorFeedbackRequest onTrigger={ this.openFeedbackPane } />
+				<EditorFeedbackInvitation onTrigger={ this.openFeedbackPane } />
 				<SidebarFooter>
 					<EditorDeletePost
 						post={ post }
