@@ -10,6 +10,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { canCurrentUser } from 'state/selectors';
+import config from 'config';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
@@ -46,15 +47,17 @@ class App extends Component {
 			return null;
 		}
 
-		// Don't show anything for non Atomic sites right now
-		if ( ! isAutomatedTransfer ) {
-			page.redirect( '/stats/day' );
-			return null;
-		}
+		if ( 'wpcalypso' !== config( 'env_id' ) && 'development' !== config( 'env_id' ) ) {
+			// Show stats page for non Atomic sites for now
+			if ( ! isAutomatedTransfer ) {
+				page.redirect( '/stats/day' );
+				return null;
+			}
 
-		if ( ! canUserManageOptions ) {
-			page.redirect( '/stats/day' );
-			return null;
+			if ( ! canUserManageOptions ) {
+				page.redirect( '/stats/day' );
+				return null;
+			}
 		}
 
 		const className = 'woocommerce';
