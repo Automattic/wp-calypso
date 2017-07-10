@@ -16,17 +16,13 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import { loginUserWithTwoFactorVerificationCode } from 'state/login/actions';
-import {
-	getTwoFactorAuthRequestError,
-	isRequestingTwoFactorAuth,
-} from 'state/login/selectors';
+import { getTwoFactorAuthRequestError } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { sendSmsCode } from 'state/login/actions';
 import TwoFactorActions from './two-factor-actions';
 
 class VerificationCodeForm extends Component {
 	static propTypes = {
-		isRequestingTwoFactorAuth: PropTypes.bool.isRequired,
 		loginUserWithTwoFactorVerificationCode: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -37,8 +33,13 @@ class VerificationCodeForm extends Component {
 	};
 
 	state = {
-		twoStepCode: ''
+		twoStepCode: '',
+		isDisabled: true,
 	};
+
+	componentDidMount() {
+		this.setState( { isDisabled: false } ); // eslint-disable-line react/no-did-mount-set-state
+	}
 
 	componentWillReceiveProps = ( nextProps ) => {
 		const hasError = this.props.twoFactorAuthRequestError !== nextProps.twoFactorAuthRequestError;
@@ -68,11 +69,14 @@ class VerificationCodeForm extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_submit' );
 
+		this.setState( { isDisabled: true } );
+
 		this.props.loginUserWithTwoFactorVerificationCode( twoStepCode, twoFactorAuthType ).then( () => {
 			this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_success' );
 
 			onSuccess();
 		} ).catch( ( error ) => {
+			this.setState( { isDisabled: false } );
 			this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_failure', {
 				error_code: error.code,
 				error_message: error.message
@@ -134,6 +138,7 @@ class VerificationCodeForm extends Component {
 							name="twoStepCode"
 							pattern="[0-9]*"
 							ref={ this.saveRef }
+							disabled={ this.state.isDisabled }
 							type="tel" />
 
 						{ requestError && requestError.field === 'twoStepCode' && (
@@ -144,7 +149,7 @@ class VerificationCodeForm extends Component {
 					<FormButton
 						className="two-factor-authentication__form-button"
 						primary
-						disabled={ this.props.isRequestingTwoFactorAuth }
+						disabled={ this.state.isDisabled }
 					>{ translate( 'Continue' ) }</FormButton>
 
 					{ smallPrint }
@@ -158,7 +163,6 @@ class VerificationCodeForm extends Component {
 
 export default connect(
 	( state ) => ( {
-		isRequestingTwoFactorAuth: isRequestingTwoFactorAuth( state ),
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
 	} ),
 	{
