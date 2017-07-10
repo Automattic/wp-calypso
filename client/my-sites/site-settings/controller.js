@@ -1,7 +1,6 @@
 /**
  * External Dependencies
  */
-import i18n from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
 
@@ -9,18 +8,13 @@ import React from 'react';
  * Internal Dependencies
  */
 import AsyncLoad from 'components/async-load';
-import analytics from 'lib/analytics';
 import config from 'config';
 import DeleteSite from './delete-site';
 import purchasesPaths from 'me/purchases/paths';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import route from 'lib/route';
-import { sectionify } from 'lib/route/path';
-import SiteSettingsComponent from 'my-sites/site-settings/main';
+import SiteSettingsMain from 'my-sites/site-settings/main';
 import StartOver from './start-over';
 import ThemeSetup from './theme-setup';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import titlecase from 'to-title-case';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser, isVipSite } from 'state/selectors';
@@ -85,32 +79,11 @@ const controller = {
 		}
 	},
 
-	siteSettings( context ) {
-		let analyticsPageTitle = 'Site Settings';
-		const basePath = route.sectionify( context.path );
-		const siteId = getSelectedSiteId( context.store.getState() );
-		const section = sectionify( context.path ).split( '/' )[ 2 ];
-		const state = context.store.getState();
-
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Site Settings', { textOnly: true } ) ) );
-
-		// if site loaded, but user cannot manage site, redirect
-		if ( siteId && ! canCurrentUser( state, siteId, 'manage_options' ) ) {
-			page.redirect( '/stats' );
-			return;
-		}
-
+	general( context ) {
 		renderPage(
 			context,
-			<SiteSettingsComponent section={ section } />
+			<SiteSettingsMain />
 		);
-
-		// analytics tracking
-		if ( 'undefined' !== typeof section ) {
-			analyticsPageTitle += ' > ' + titlecase( section );
-		}
-		analytics.pageView.record( basePath + '/:site', analyticsPageTitle );
 	},
 
 	importSite( context ) {
@@ -196,13 +169,6 @@ const controller = {
 		}
 		next();
 	},
-
-	setScroll( context, next ) {
-		window.scroll( 0, 0 );
-		next();
-	}
-
 };
 
 export default controller;
-
