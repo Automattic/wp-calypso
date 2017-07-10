@@ -92,6 +92,7 @@ export getScheduledPublicizeShareActionTime from './get-scheduled-publicize-shar
 export hasUserAskedADirectlyQuestion from './has-user-asked-a-directly-question';
 export isSchedulingPublicizeShareActionError from './is-scheduling-publicize-share-action-error';
 export getSharingButtons from './get-sharing-buttons';
+export getSimplePayments from './get-simple-payments';
 export getSiteComments from './get-site-comments';
 export getSiteConnectionStatus from './get-site-connection-status';
 export getSiteDefaultPostFormat from './get-site-default-post-format';
