@@ -6,11 +6,13 @@ import _debug from 'debug';
 import moment from 'moment';
 import { intersection, map, every, find, get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
 
+import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import PendingGappsTosNotice from './pending-gapps-tos-notice';
@@ -28,7 +30,12 @@ const allAboutDomainsLink = <a href={ support.ALL_ABOUT_DOMAINS } target="_blank
 	domainsLink = <a href={ support.DOMAINS } target="_blank" rel="noopener noreferrer" />,
 	pNode = <p />;
 
-class DomainWarnings extends React.PureComponent {
+const expiredDomainsCanManageWarning = 'expired-domains-can-manage';
+const expiredDomainsCannotManageWarning = 'expired-domains-cannot-manage';
+const expiringDomainsCanManageWarning = 'expiring-domains-can-manage';
+const expiringDomainsCannotManageWarning = 'expiring-domains-cannot-manage';
+
+export class DomainWarnings extends React.PureComponent {
 	static propTypes = {
 		domains: React.PropTypes.array,
 		ruleWhiteList: React.PropTypes.array,
@@ -55,7 +62,7 @@ class DomainWarnings extends React.PureComponent {
 		]
 	};
 
-	renewLink( domains ) {
+	renewLink( domains, onClick ) {
 		const count = domains.length;
 		const { selectedSite, translate } = this.props;
 		const fullMessage = translate(
@@ -71,7 +78,7 @@ class DomainWarnings extends React.PureComponent {
 			? purchasesPaths.managePurchase( selectedSite.slug, domains[ 0 ].subscriptionId )
 			: purchasesPaths.purchasesRoot();
 		return (
-			<NoticeAction href={ link }>
+			<NoticeAction href={ link } onClick={ onClick }>
 				{ this.props.isCompact ? compactMessage : fullMessage }
 			</NoticeAction>
 		);
@@ -108,6 +115,11 @@ class DomainWarnings extends React.PureComponent {
 				eventProperties={ { position, warning, count } }
 			/>
 		);
+	}
+
+	trackClick( warning ) {
+		const { position } = this.props;
+		this.props.recordTracksEvent( 'calypso_domain_warning_click', { position, warning } );
 	}
 
 	wrongNSMappedDomains = () => {
@@ -184,6 +196,10 @@ class DomainWarnings extends React.PureComponent {
 		return <Notice { ...noticeProps }>{ children }</Notice>;
 	}
 
+	onExpiredDomainsNoticeClick = () => {
+		this.trackClick( expiredDomainsCanManageWarning );
+	}
+
 	expiredDomainsCanManage = () => {
 		debug( 'Rendering expiredDomainsCanManage' );
 		const expiredDomains = this.getDomains()
@@ -194,7 +210,6 @@ class DomainWarnings extends React.PureComponent {
 		}
 
 		const { translate } = this.props;
-		const renewLink = this.renewLink( expiredDomains );
 		let text;
 		if ( expiredDomains.length === 1 ) {
 			text = translate( '{{strong}}%(domainName)s{{/strong}} expired %(timeSince)s.', {
@@ -209,17 +224,15 @@ class DomainWarnings extends React.PureComponent {
 			} );
 		}
 
-		const key = 'expired-domains-can-manage';
-
 		return (
 			<Notice
 				isCompact={ this.props.isCompact }
 				status="is-error"
 				showDismiss={ false }
-				key={ key }
+				key={ expiredDomainsCanManageWarning }
 				text={ text }>
-				{ renewLink }
-				{ this.trackImpression( key, expiredDomains.length ) }
+				{ this.renewLink( expiredDomains, this.onExpiredDomainsNoticeClick ) }
+				{ this.trackImpression( expiredDomainsCanManageWarning, expiredDomains.length ) }
 			</Notice>
 		);
 	}
@@ -252,17 +265,19 @@ class DomainWarnings extends React.PureComponent {
 			} );
 		}
 
-		const key = 'expired-domains-cannot-manage';
-
 		return (
 			<Notice
 			isCompact={ this.props.isCompact }
 			showDismiss={ false }
-			key={ key }
+			key={ expiredDomainsCannotManageWarning }
 			text={ text }>
-			{ this.trackImpression( key, expiredDomains.length ) }
+			{ this.trackImpression( expiredDomainsCannotManageWarning, expiredDomains.length ) }
 			</Notice>
 		);
+	}
+
+	onExpiringDomainsNoticeClick = () => {
+		this.trackClick( expiredDomainsCanManageWarning );
 	}
 
 	expiringDomainsCanManage = () => {
@@ -273,7 +288,6 @@ class DomainWarnings extends React.PureComponent {
 			return null;
 		}
 
-		const renewLink = this.renewLink( expiringDomains );
 		const { translate } = this.props;
 
 		let text;
@@ -293,17 +307,15 @@ class DomainWarnings extends React.PureComponent {
 			} );
 		}
 
-		const key = 'expiring-domains-can-manage';
-
 		return (
 			<Notice
 				isCompact={ this.props.isCompact }
 				status="is-error"
 				showDismiss={ false }
-				key={ key }
+				key={ expiringDomainsCanManageWarning }
 				text={ text }>
-				{ renewLink }
-				{ this.trackImpression( key, expiringDomains.length ) }
+				{ this.renewLink( expiringDomains, this.onExpiringDomainsNoticeClick ) }
+				{ this.trackImpression( expiringDomainsCanManageWarning, expiringDomains.length ) }
 			</Notice>
 		);
 	}
@@ -336,15 +348,13 @@ class DomainWarnings extends React.PureComponent {
 			} );
 		}
 
-		const key = 'expiring-domains-cannot-manage';
-
 		return (
 			<Notice
 				isCompact={ this.props.isCompact }
 				showDismiss={ false }
-				key={ key }
+				key={ expiringDomainsCannotManageWarning }
 				text={ text }>
-				{ this.trackImpression( key, expiringDomains.length ) }
+				{ this.trackImpression( expiringDomainsCannotManageWarning, expiringDomains.length ) }
 			</Notice>
 		);
 	}
@@ -670,5 +680,10 @@ class DomainWarnings extends React.PureComponent {
 	}
 }
 
-export { DomainWarnings };
-export default localize( DomainWarnings );
+const mapStateToProps = null;
+const mapDispatchToProps = { recordTracksEvent };
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+)( localize( DomainWarnings ) );
