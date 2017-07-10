@@ -108,7 +108,7 @@ class SettingsTaxes extends Component {
 
 		const onSuccess = () => {
 			this.setState( { isSaving: false, userBeganEditing: false } );
-			return successNotice( translate( 'Settings updated successfully.' ) );
+			return successNotice( translate( 'Settings updated successfully.' ), { duration: 4000 } );
 		};
 
 		const onFailure = () => {
@@ -150,12 +150,10 @@ class SettingsTaxes extends Component {
 			( <span>{ translate( 'Taxes' ) }</span> ),
 		];
 
-		const saveButtonDisabled = this.state.isSaving || ! this.pageHasChanges();
-
 		return (
 			<Main className={ classNames( 'settings-taxes', className ) }>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
-					<Button disabled={ saveButtonDisabled } onClick={ this.onSave } primary>
+					<Button onClick={ this.onSave } primary>
 						{ translate( 'Save' ) }
 					</Button>
 				</ActionHeader>
