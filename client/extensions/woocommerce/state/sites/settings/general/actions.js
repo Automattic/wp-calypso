@@ -56,7 +56,7 @@ export const fetchSettingsGeneral = ( siteId, retries = 0 ) => ( dispatch, getSt
 		} );
 };
 
-const saveCurrencySuccess = ( siteId, data ) => {
+export const saveCurrencySuccess = ( siteId, data ) => {
 	return {
 		type: WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS,
 		siteId,
@@ -69,31 +69,14 @@ export const saveCurrency = (
 	currency,
 	successAction = null,
 	failureAction = null
-) => ( dispatch, getState ) => {
-	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
-	}
-	const updateAction = {
+) => {
+	return {
 		type: WOOCOMMERCE_CURRENCY_UPDATE,
 		siteId,
+		currency,
+		successAction,
+		failureAction,
 	};
-
-	dispatch( updateAction );
-
-	return request( siteId ).put( 'settings/general/woocommerce_currency', { value: currency } )
-		.then( ( data ) => {
-			dispatch( saveCurrencySuccess( siteId, data ) );
-			if ( successAction ) {
-				dispatch( successAction( data ) );
-			}
-		} )
-		.catch( error => {
-			dispatch( setError( siteId, updateAction, error ) );
-			if ( failureAction ) {
-				dispatch( failureAction( error ) );
-			}
-		} );
 };
 
 // TODO - we probably only need on individual setter (not separate ones for currency, taxes enabled, etc)

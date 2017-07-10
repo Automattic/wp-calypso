@@ -12,14 +12,13 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import { decodeEntities } from 'lib/formatting';
-import { errorNotice, successNotice } from 'state/notices/actions';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import StoreAddress from 'woocommerce/components/store-address';
 import { changeCurrency } from 'woocommerce/state/ui/payments/currency/actions';
 import { fetchCurrencies } from 'woocommerce/state/sites/currencies/actions';
-import { fetchSettingsGeneral, saveCurrency } from 'woocommerce/state/sites/settings/general/actions';
+import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getCurrencies } from 'woocommerce/state/sites/currencies/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -32,7 +31,6 @@ class SettingsPaymentsLocationCurrency extends Component {
 		fetchCurrencies: PropTypes.func.isRequired,
 		fetchSettingsGeneral: PropTypes.func.isRequired,
 		getCurrencyWithEdits: PropTypes.func.isRequired,
-		saveCurrency: PropTypes.func.isRequired,
 		site: PropTypes.object,
 	};
 
@@ -70,30 +68,11 @@ class SettingsPaymentsLocationCurrency extends Component {
 	}
 
 	onChange = ( e ) => {
-		const { site, translate } = this.props;
+		const { site } = this.props;
 		const newCurrency = e.target.value;
 		this.props.changeCurrency(
 			site.ID,
 			newCurrency
-		);
-		const successAction = () => {
-			return successNotice(
-				translate( 'Site currency successfully saved.' ),
-				{ duration: 4000 }
-			);
-		};
-
-		const errorAction = () => {
-			return errorNotice(
-				translate( 'There was a problem saving the currency. Please try again.' )
-			);
-		};
-
-		this.props.saveCurrency(
-			site.ID,
-			newCurrency,
-			successAction,
-			errorAction
 		);
 	}
 
@@ -148,7 +127,6 @@ function mapDispatchToProps( dispatch ) {
 			fetchCurrencies,
 			fetchSettingsGeneral,
 			getCurrencyWithEdits,
-			saveCurrency,
 		},
 		dispatch
 	);

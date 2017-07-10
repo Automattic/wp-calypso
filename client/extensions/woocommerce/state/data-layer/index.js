@@ -8,6 +8,7 @@ import products from './products';
 import productVariations from './product-variations';
 import productCategories from './product-categories';
 import request from './request';
+import settingsGeneral from './settings-general';
 import shippingZoneLocations from './shipping-zone-locations';
 import shippingZoneMethods from './shipping-zone-methods';
 import shippingZones from './shipping-zones';
@@ -22,6 +23,7 @@ const handlers = mergeHandlers(
 	products,
 	productVariations,
 	request,
+	settingsGeneral,
 	shippingZoneLocations,
 	shippingZoneMethods,
 	shippingZones,

@@ -14,7 +14,7 @@ import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import {
 	createPaymentSettingsActionList,
-} from 'woocommerce/state/ui/shipping/zones/actions';
+} from 'woocommerce/state/ui/payments/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -40,12 +40,12 @@ class SettingsPayments extends Component {
 		const { translate, actions } = this.props;
 
 		const successAction = successNotice(
-			translate( 'Payment changes saved.' ),
+			translate( 'Payment settings saved.' ),
 			{ duration: 4000 }
 		);
 
 		const failureAction = errorNotice(
-			translate( 'There was a problem saving the payment changes. Please try again.' )
+			translate( 'There was a problem saving the payment settings. Please try again.' )
 		);
 
 		actions.createPaymentSettingsActionList( successAction, failureAction );
@@ -91,12 +91,13 @@ function mapStateToProps( state ) {
 }
 
 function mapDispatchToProps( dispatch ) {
-	return bindActionCreators(
-		{
-			createPaymentSettingsActionList,
-		},
-		dispatch
-	);
+	return {
+		actions: bindActionCreators(
+			{
+				createPaymentSettingsActionList,
+			}, dispatch
+		)
+	};
 }
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( SettingsPayments ) );
