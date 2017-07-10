@@ -20,7 +20,6 @@ import {
 } from 'woocommerce/state/ui/payments/methods/actions';
 import { getCurrentlyEditingPaymentMethod } from 'woocommerce/state/ui/payments/methods/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { errorNotice, successNotice } from 'state/notices/actions';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import ListItem from 'woocommerce/components/list/list-item';
@@ -29,7 +28,6 @@ import PaymentMethodEditDialog from './payment-method-edit-dialog';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 import PaymentMethodPaypal from './payment-method-paypal';
 import PaymentMethodStripe from './payment-method-stripe';
-import { savePaymentMethod, savePaymentMethodEnabled } from 'woocommerce/state/sites/payment-methods/actions';
 
 class PaymentMethodItem extends Component {
 	static propTypes = {
@@ -47,7 +45,6 @@ class PaymentMethodItem extends Component {
 			informationUrl: PropTypes.string,
 		} ),
 		openPaymentMethodForEdit: PropTypes.func.isRequired,
-		savePaymentMethod: PropTypes.func.isRequired,
 	};
 
 	onEditHandler = () => {
@@ -73,7 +70,7 @@ class PaymentMethodItem extends Component {
 	}
 
 	onChangeEnabled = ( e ) => {
-		const { method, site, translate } = this.props;
+		const { method, site } = this.props;
 
 		const enabled = 'yes' === e.target.value;
 		this.props.changePaymentMethodEnabled(
@@ -91,50 +88,11 @@ class PaymentMethodItem extends Component {
 				payment_method: method.id,
 			} );
 		}
-
-		const successAction = () => {
-			return successNotice(
-				translate( 'Payment method successfully saved.' ),
-				{ duration: 4000 }
-			);
-		};
-
-		const errorAction = () => {
-			this.props.changePaymentMethodEnabled(
-				site.ID,
-				method.id,
-				! enabled
-			);
-			return errorNotice(
-				translate( 'There was a problem saving the payment method. Please try again.' )
-			);
-		};
-		this.props.savePaymentMethodEnabled(
-			site.ID,
-			method.id,
-			e.target.value,
-			successAction,
-			errorAction
-		);
 	}
 
 	onSave = () => {
-		const { method, site, translate } = this.props;
-
-		const successAction = () => {
-			this.props.closeEditingPaymentMethod( site.ID, method.id );
-			return successNotice(
-				translate( 'Payment method successfully saved.' ),
-				{ duration: 4000 }
-			);
-		};
-
-		const errorAction = () => {
-			return errorNotice(
-				translate( 'There was a problem saving the payment method. Please try again.' )
-			);
-		};
-		this.props.savePaymentMethod( site.ID, method, successAction, errorAction );
+		const { method, site } = this.props;
+		this.props.closeEditingPaymentMethod( site.ID, method.id );
 	}
 
 	outputEditComponent = () => {
@@ -249,8 +207,6 @@ function mapDispatchToProps( dispatch ) {
 			changePaymentMethodField,
 			closeEditingPaymentMethod,
 			openPaymentMethodForEdit,
-			savePaymentMethod,
-			savePaymentMethodEnabled,
 		},
 		dispatch
 	);
