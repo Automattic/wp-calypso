@@ -66,7 +66,7 @@ class Order extends Component {
 		return (
 			<Main className={ className }>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
-					<Button primary onClick={ this.saveOrder } disabled={ isSaving }>{ translate( 'Save Order' ) }</Button>
+					<Button primary onClick={ this.saveOrder } busy={ isSaving }>{ translate( 'Save Order' ) }</Button>
 				</ActionHeader>
 
 				<div className="order__container">
