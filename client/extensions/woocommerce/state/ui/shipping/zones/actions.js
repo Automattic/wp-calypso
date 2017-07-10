@@ -3,7 +3,8 @@
  */
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_ADD,
-	WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE,
+	WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE_DELETE,
+	WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE_SAVE,
 	WOOCOMMERCE_SHIPPING_ZONE_CANCEL,
 	WOOCOMMERCE_SHIPPING_ZONE_CLOSE,
 	WOOCOMMERCE_SHIPPING_ZONE_DEFAULT_ACTION_LIST_CREATE,
@@ -76,17 +77,43 @@ export const deleteShippingZone = ( siteId, id ) => {
  * Creates an action list to save shipping-zone-related edits.
  *
  * Saves the shipping zone, its shipping methods and its locations.
- * @param {Object} [successAction] Action to be dispatched upon successful completion.
- * @param {Object} [failureAction] Action to be dispatched upon failure of execution.
- * @param {boolean} [deleteZone] Mark that the zone should be deleted instead of saved.
+ * @param {Function} [successAction] Action to be dispatched upon successful completion.
+ * @param {Function} [failureAction] Action to be dispatched upon failure of execution.
+ * @param {Function} [locationsFailAction] Action to be dispatched upon failure of execution.
+ * @param {Function} [methodsFailAction] Action to be dispatched upon failure of execution.
  * @return {Object} Action object.
  */
-export function createShippingZoneActionList( successAction, failureAction, deleteZone = false ) {
-	return {
-		type: WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE,
+export function createShippingZoneSaveActionList(
 		successAction,
 		failureAction,
-		deleteZone,
+		locationsFailAction,
+		methodsFailAction,
+	) {
+	return {
+		type: WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE_SAVE,
+		successAction,
+		failureAction,
+		locationsFailAction,
+		methodsFailAction,
+	};
+}
+
+/**
+ * Creates an action list to delete a shipping zone.
+ *
+ * Deletes the shipping zone, its shipping methods and its locations.
+ * @param {Function} [successAction] Action to be dispatched upon successful completion.
+ * @param {Function} [failureAction] Action to be dispatched upon failure of execution.
+ * @return {Object} Action object.
+ */
+export function createShippingZoneDeleteActionList(
+	successAction,
+	failureAction,
+) {
+	return {
+		type: WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE_DELETE,
+		successAction,
+		failureAction,
 	};
 }
 
