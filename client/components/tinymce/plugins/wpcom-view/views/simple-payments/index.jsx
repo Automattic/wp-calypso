@@ -10,15 +10,51 @@ import { localize } from 'i18n-calypso';
  */
 import shortcodeUtils from 'lib/shortcode';
 import { deserialize } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
+import { getSimplePayments } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class SimplePaymentsView extends Component {
 	render() {
-		const { id } = this.props;
+		const { id, product, content } = this.props;
+
+		if ( ! product ) {
+			return (
+				<div className="wpview-content wpview-type-simple-payments">
+					{ content }
+				</div>
+			);
+		}
+
+		const { title, description, price, currency } = product;
 
 		return (
 			<div className="wpview-content wpview-type-simple-payments">
-				Hello there!
-				{ id }
+				<div className="wpview-type-simple-payments__wrapper">
+					<div className="wpview-type-simple-payments__image-part">
+						Image here
+					</div>
+					<div className="wpview-type-simple-payments__text-part">
+						<div className="wpview-type-simple-payments__title">
+							{ title }
+						</div>
+						<div
+							className="wpview-type-simple-payments__description"
+							dangerouslySetInnerHTML={ { __html: description } }
+						>
+						</div>
+						<div className="wpview-type-simple-payments__price-part">
+							{ price }
+						</div>
+						<div className="wpview-type-simple-payments__pay-part">
+							<div className="wpview-type-simple-payments__pay-quantity">
+								<input type="text" value="1" />
+							</div>
+							<div className="wpview-type-simple-payments__pay-paypal-button">
+								Pay with PayPal
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		);
 	}
@@ -30,10 +66,13 @@ SimplePaymentsView = connect( ( state, props ) => {
 	const shortcodeData = deserialize( shortcode );
 
 	const { id = null } = shortcodeData;
+	const siteId = getSelectedSiteId( state );
 
 	return {
 		shortcodeData,
 		id,
+		siteId,
+		product: getSimplePayments( state, siteId, id ),
 	};
 } )( localize( SimplePaymentsView ) );
 
