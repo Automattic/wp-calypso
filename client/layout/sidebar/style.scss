@@ -145,9 +145,6 @@
 
 		-webkit-tap-highlight-color: rgba( $gray-dark, .2 );
 
-		@include breakpoint( "<660px" ) {
-			padding: 18px 16px 18px 53px;
-		}
 	}
 
 	a.plan-name {
@@ -157,11 +154,6 @@
 		color: darken( $gray, 20% );
 		font-weight: 600;
 		font-size: 12px;
-
-		@include breakpoint( "<660px" ) {
-			top: 16px;
-			right: 16px;
-		}
 	}
 
 	.gridicon,
@@ -189,9 +181,6 @@
 			margin-right: 0;
 
 
-			@include breakpoint( "<660px" ) {
-				top: 17px;
-			}
 		}
 	}
 }
@@ -216,6 +205,8 @@ a.sidebar__button, form.sidebar__button {
 
 	@include breakpoint( "<660px" ) {
 		font-size: 14px;
+		height: 30px;
+		line-height: 23px;
 	}
 }
 form.sidebar__button {
