@@ -75,10 +75,10 @@ module.exports = function() {
 
 	page(
 		'/settings/manage-connection/:site_id',
-		controller.siteSelection,
-		controller.navigation,
+		mySitesController.siteSelection,
+		mySitesController.navigation,
 		settingsController.setScroll,
-		settingsController.manageConnection
+		controller.manageConnection
 	);
 
 	page(
