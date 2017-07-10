@@ -52,6 +52,10 @@ class LoggedOutForm extends Component {
 		this.props.createAccount( userData );
 	};
 
+	handleClickHelp = () => {
+		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
+	}
+
 	renderLoginUser() {
 		const { userData, bearerToken } = this.props.jetpackConnectAuthorize;
 
@@ -96,7 +100,7 @@ class LoggedOutForm extends Component {
 				<LoggedOutFormLinkItem href={ login( { isNative: config.isEnabled( 'login/native-login-links' ), redirectTo } ) }>
 					{ this.props.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
-				<HelpButton onClick={ this.clickHelpButton } />
+				<HelpButton onClick={ this.handleClickHelp } />
 			</LoggedOutFormLinks>
 		);
 	}
