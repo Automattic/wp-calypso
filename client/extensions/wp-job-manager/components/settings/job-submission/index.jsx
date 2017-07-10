@@ -23,12 +23,23 @@ import SectionHeader from 'components/section-header';
 
 class JobSubmission extends Component {
 	static propTypes = {
+		handleSubmit: PropTypes.func,
 		isDisabled: PropTypes.bool,
+		isSaving: PropTypes.bool,
+		onSubmit: PropTypes.func,
 		translate: PropTypes.func,
 	};
 
+	save = section => data => this.props.onSubmit( data[ section ] );
+
 	render() {
-		const { isDisabled, submissionDuration, translate } = this.props;
+		const {
+			handleSubmit,
+			isDisabled,
+			isSaving,
+			submissionDuration,
+			translate,
+		} = this.props;
 
 		return (
 			<div>
@@ -36,13 +47,15 @@ class JobSubmission extends Component {
 					<FormSection name="account">
 						<SectionHeader label={ translate( 'Account' ) }>
 							<FormButton compact
-								disabled={ isDisabled } />
+								disabled={ isDisabled }
+								isSubmitting={ isSaving }
+								onClick={ handleSubmit( this.save( 'account' ) ) } />
 						</SectionHeader>
 						<Card>
 							<FormFieldset>
 								<ReduxFormToggle
 									disabled={ isDisabled }
-									name="isRequired"
+									name="isAccountRequired"
 									text={ translate( 'Require an account to submit listings' ) } />
 								<FormSettingExplanation isIndented>
 									{ translate( 'Limits job listing submissions to registered, logged-in users.' ) }
@@ -97,13 +110,15 @@ class JobSubmission extends Component {
 					<FormSection name="approval">
 						<SectionHeader label={ translate( 'Approval' ) }>
 							<FormButton compact
-								disabled={ isDisabled } />
+								disabled={ isDisabled }
+								isSubmitting={ isSaving }
+								onClick={ handleSubmit( this.save( 'approval' ) ) } />
 						</SectionHeader>
 						<Card>
 							<FormFieldset>
 								<ReduxFormToggle
 									disabled={ isDisabled }
-									name="isRequired"
+									name="isApprovalRequired"
 									text={ translate( 'Require admin approval of all new listing submissions' ) } />
 								<FormSettingExplanation isIndented>
 									{ translate( 'Sets all new submissions to "pending." They will not appear on your ' +
@@ -126,7 +141,9 @@ class JobSubmission extends Component {
 					<FormSection name="duration">
 						<SectionHeader label={ translate( 'Listing Duration' ) }>
 							<FormButton compact
-								disabled={ isDisabled } />
+								disabled={ isDisabled }
+								isSubmitting={ isSaving }
+								onClick={ handleSubmit( this.save( 'duration' ) ) } />
 						</SectionHeader>
 						<Card>
 							<FormFieldset>
@@ -159,7 +176,9 @@ class JobSubmission extends Component {
 					<FormSection name="method">
 						<SectionHeader label={ translate( 'Application Method' ) }>
 							<FormButton compact
-								disabled={ isDisabled } />
+								disabled={ isDisabled }
+								isSubmitting={ isSaving }
+								onClick={ handleSubmit( this.save( 'method' ) ) } />
 						</SectionHeader>
 						<Card>
 							<FormFieldset>
