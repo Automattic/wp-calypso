@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import Banner from 'components/banner';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
@@ -18,7 +19,12 @@ import InfoPopover from 'components/info-popover';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { hasFeature } from 'state/sites/plans/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
+import {
+	FEATURE_WORDADS_INSTANT,
+	PLAN_JETPACK_PREMIUM
+} from 'lib/plans/constants';
 
 class JetpackAds extends Component {
 	static defaultProps = {
@@ -41,6 +47,20 @@ class JetpackAds extends Component {
 		} = this.props;
 
 		return isRequestingSettings || isSavingSettings;
+	}
+
+	renderUpgradeBanner() {
+		const { translate } = this.props;
+
+		return (
+			<Banner
+				description={ translate( 'Add advertising to your site through our WordAds program and earn money from impressions.' ) }
+				event={ 'calypso_wordads_settings_upgrade_nudge' }
+				feature={ FEATURE_WORDADS_INSTANT }
+				plan={ PLAN_JETPACK_PREMIUM }
+				title={ translate( 'Enable WordAds by upgrading to Jetpack Premium' ) }
+			/>
+		);
 	}
 
 	renderToggle( name, isDisabled, label ) {
@@ -140,13 +160,20 @@ class JetpackAds extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const {
+			hasWordadsFeature,
+			translate
+		} = this.props;
 
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Ads' ) } />
 
-				{ this.renderSettings() }
+				{
+					hasWordadsFeature
+						? this.renderSettings()
+						: this.renderUpgradeBanner()
+				}
 			</div>
 		);
 	}
@@ -156,8 +183,10 @@ export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const selectedSiteSlug = getSelectedSiteSlug( state );
+		const hasWordadsFeature = hasFeature( state, selectedSiteId, FEATURE_WORDADS_INSTANT );
 
 		return {
+			hasWordadsFeature,
 			selectedSiteId,
 			selectedSiteSlug,
 			wordadsModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'wordads' ),
