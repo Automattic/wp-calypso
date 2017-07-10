@@ -38,9 +38,12 @@ class DebugTab extends Component {
 	render() {
 		const {
 			fields: {
-				wp_super_cache_debug,
+				cache_path,
 				wp_cache_debug_ip,
+				wp_cache_debug_log,
 				wp_super_cache_comments,
+				wp_super_cache_debug,
+				wp_cache_debug_username,
 				wp_super_cache_front_page_check,
 				wp_super_cache_front_page_clear,
 				wp_super_cache_front_page_text,
@@ -64,30 +67,44 @@ class DebugTab extends Component {
 								'It can log them to a file in your cache directory.'
 							) }
 						</p>
-						<Button
-							compact
-							primary
-							disabled={ isRequesting || isSaving }
-							onClick={ this.resetLog }
-							value="1">
-							{ translate( 'Reset Debug Log' ) }
-						</Button>
-						<Button
-							compact
-							primary
-							disabled={ isRequesting || isSaving }
-							onClick={ this.disableLog }
-							value="1">
-							{ translate( 'Disable Debug Log' ) }
-						</Button>
-						<Button
-							compact
-							primary
-							disabled={ isRequesting || isSaving }
-							onClick={ this.deleteLog }
-							value="1">
-							{ translate( 'Disable and Delete Debug Log' ) }
-						</Button>
+						<FormFieldset>
+							<Button
+								compact
+								primary
+								disabled={ isRequesting || isSaving }
+								onClick={ this.resetLog }
+								value="1">
+								{ translate( 'Reset Debug Log' ) }
+							</Button>
+							<Button
+								compact
+								primary
+								disabled={ isRequesting || isSaving }
+								onClick={ this.disableLog }
+								value="1">
+								{ translate( 'Disable Debug Log' ) }
+							</Button>
+							<Button
+								compact
+								primary
+								disabled={ isRequesting || isSaving }
+								onClick={ this.deleteLog }
+								value="1">
+								{ translate( 'Disable and Delete Debug Log' ) }
+							</Button>
+						</FormFieldset>
+						<p>
+							{ translate(
+								'Currently logging to: %(location)s',
+								{ args: { location: cache_path + wp_cache_debug_log } }
+							) }
+						</p>
+						<p>
+							{ translate(
+								'Username and Password: %(username)s',
+								{ args: { username: wp_cache_debug_username } }
+							) }
+						</p>
 					</Card>
 				}
 				<form>
@@ -213,9 +230,12 @@ class DebugTab extends Component {
 
 const getFormSettings = settings => {
 	return pick( settings, [
-		'wp_super_cache_debug',
+		'cache_path',
 		'wp_cache_debug_ip',
+		'wp_cache_debug_log',
 		'wp_super_cache_comments',
+		'wp_super_cache_debug',
+		'wp_cache_debug_username',
 		'wp_super_cache_front_page_check',
 		'wp_super_cache_front_page_clear',
 		'wp_super_cache_front_page_text',
