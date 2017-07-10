@@ -90,7 +90,7 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 			<div className="shipping__zones-row-actions">
 				<Button
 					compact
-					href={ getLink( `/store/settings/shipping/:site/zone/${ id }`, site ) }
+					href={ getLink( `/store/settings/shipping/zone/:site/${ id }`, site ) }
 					disabled={ ! isValid }
 					onClick={ onEditClick }>
 					{ translate( 'Edit' ) }

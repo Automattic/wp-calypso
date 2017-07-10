@@ -74,7 +74,7 @@ class ShippingZoneList extends Component {
 		const { site, siteId, loaded, isValid, translate } = this.props;
 
 		const addNewHref = loaded
-			? getLink( '/store/settings/shipping/:site/zone/new', site )
+			? getLink( '/store/settings/shipping/zone/:site/', site )
 			: '#';
 
 		return (
