@@ -20,6 +20,7 @@ import Tabs from 'my-sites/stats/stats-tabs';
 import Tab from 'my-sites/stats/stats-tabs/tab';
 import Delta from 'woocommerce/components/delta';
 import formatCurrency from 'lib/format-currency';
+import { getPeriodFormat } from 'state/stats/lists/utils';
 
 class StoreStatsChart extends Component {
 	static propTypes = {
@@ -74,7 +75,7 @@ class StoreStatsChart extends Component {
 	};
 
 	render() {
-		const { siteId, query, data } = this.props;
+		const { siteId, query, data, unit } = this.props;
 		const { selectedTabIndex } = this.state;
 		const orderData = data.data;
 		const tabs = [
@@ -104,6 +105,7 @@ class StoreStatsChart extends Component {
 							const itemChartData = this.buildChartData( orderData[ selectedIndex ], tabs[ tabIndex ] );
 							const delta = this.getDeltaByStat( tab.attr );
 							const deltaValue = Math.abs( Math.round( delta.percentage_change * 100 ) );
+							const periodFormat = getPeriodFormat( unit, delta.reference_period );
 							return (
 								<Tab
 									key={ tab.attr }
@@ -120,7 +122,7 @@ class StoreStatsChart extends Component {
 									<Delta
 										value={ `${ deltaValue }%` }
 										className={ `${ delta.favorable } ${ delta.direction }` }
-										suffix={ `since ${ moment( delta.reference_period ).format( 'MMM D' ) }` }
+										suffix={ `since ${ moment( delta.reference_period, periodFormat ).format( 'MMM D' ) }` }
 									/>
 								</Tab>
 							);
