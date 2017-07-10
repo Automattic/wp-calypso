@@ -235,8 +235,6 @@ if ( calypsoEnv === 'development' ) {
 	}
 } else {
 	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
-	webpackConfig.plugins = webpackConfig.plugins.concat( [
-	] );
 	webpackConfig.devtool = false;
 }
 
