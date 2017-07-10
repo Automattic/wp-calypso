@@ -60,7 +60,7 @@ class ReaderPostOptionsMenu extends React.Component {
 
 		window.open(
 			'https://wordpress.com/abuse/?report_url=' + encodeURIComponent( this.props.post.URL ),
-			'_blank'
+			'_blank',
 		);
 	};
 
@@ -75,7 +75,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		stats.recordGaEvent( isMenuVisible ? 'Open Post Options Menu' : 'Close Post Options Menu' );
 		stats.recordTrackForPost(
 			'calypso_reader_post_options_menu_' + ( isMenuVisible ? 'opened' : 'closed' ),
-			this.props.post
+			this.props.post,
 		);
 	};
 
@@ -180,5 +180,5 @@ export default connect(
 	},
 	{
 		requestSiteBlock,
-	}
+	},
 )( localize( ReaderPostOptionsMenu ) );

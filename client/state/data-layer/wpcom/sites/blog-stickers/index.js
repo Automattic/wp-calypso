@@ -24,7 +24,7 @@ export function requestBlogStickerList( { dispatch }, action ) {
 			apiVersion: '1.1',
 			onSuccess: action,
 			onFailure: action,
-		} )
+		} ),
 	);
 }
 
@@ -41,8 +41,8 @@ export function receiveBlogStickerList( store, action, next, response ) {
 export function receiveBlogStickerListError( { dispatch } ) {
 	dispatch(
 		errorNotice(
-			translate( 'Sorry, we had a problem retrieving blog stickers. Please try again.' )
-		)
+			translate( 'Sorry, we had a problem retrieving blog stickers. Please try again.' ),
+		),
 	);
 }
 
