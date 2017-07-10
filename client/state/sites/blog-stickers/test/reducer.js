@@ -26,8 +26,8 @@ describe( 'reducer', () => {
 					{
 						type: SITES_BLOG_STICKER_LIST_RECEIVE,
 						payload: { blogId: 123, stickers: [ 'dont-recommend' ] },
-					}
-				)
+					},
+				),
 			).to.deep.equal( { 123: [ 'dont-recommend' ] } );
 		} );
 
@@ -38,8 +38,8 @@ describe( 'reducer', () => {
 					{
 						type: SITES_BLOG_STICKER_LIST_RECEIVE,
 						payload: { blogId: 456, stickers: [ 'dont-recommend', 'broken-in-reader' ] },
-					}
-				)
+					},
+				),
 			).to.deep.equal( {
 				123: [ 'dont-recommend' ],
 				456: [ 'dont-recommend', 'broken-in-reader' ],
@@ -53,8 +53,8 @@ describe( 'reducer', () => {
 					{
 						type: SITES_BLOG_STICKER_LIST_RECEIVE,
 						payload: { blogId: 123, stickers: [ 'okapi-friendly', 'broken-in-reader' ] },
-					}
-				)
+					},
+				),
 			).to.deep.equal( { 123: [ 'okapi-friendly', 'broken-in-reader' ] } );
 		} );
 
@@ -65,8 +65,8 @@ describe( 'reducer', () => {
 					{
 						type: SITES_BLOG_STICKER_ADD,
 						payload: { blogId: 123, stickerName: 'okapi-friendly' },
-					}
-				)
+					},
+				),
 			).to.deep.equal( { 123: [ 'okapi-friendly' ], 456: [ 'dont-recommend' ] } );
 		} );
 
@@ -77,8 +77,8 @@ describe( 'reducer', () => {
 					{
 						type: SITES_BLOG_STICKER_ADD,
 						payload: { blogId: 123, stickerName: 'okapi-friendly' },
-					}
-				)[ 123 ]
+					},
+				)[ 123 ],
 			).to.have.members( [ 'okapi-friendly', 'dont-recommend' ] );
 		} );
 
@@ -89,8 +89,8 @@ describe( 'reducer', () => {
 					{
 						type: SITES_BLOG_STICKER_ADD,
 						payload: { blogId: 123, stickerName: 'dont-recommend' },
-					}
-				)
+					},
+				),
 			).to.deep.equal( { 123: [ 'dont-recommend' ] } );
 		} );
 
@@ -101,8 +101,8 @@ describe( 'reducer', () => {
 					{
 						type: SITES_BLOG_STICKER_REMOVE,
 						payload: { blogId: 123, stickerName: 'dont-recommend' },
-					}
-				)
+					},
+				),
 			).to.deep.equal( { 123: [] } );
 		} );
 
@@ -113,8 +113,8 @@ describe( 'reducer', () => {
 					{
 						type: SITES_BLOG_STICKER_REMOVE,
 						payload: { blogId: 123, stickerName: 'dont-recommend' },
-					}
-				)
+					},
+				),
 			).to.deep.equal( { 123: [ 'okapi-friendly' ] } );
 		} );
 	} );

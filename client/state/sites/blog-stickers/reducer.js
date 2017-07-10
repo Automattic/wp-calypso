@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { includes, concat, compact, filter } from 'lodash';
+import { includes, concat, compact, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -45,10 +45,10 @@ export const items = createReducer(
 
 			return {
 				...state,
-				[ blogId ]: compact( filter( state[ blogId ], sticker => sticker !== stickerName ) ),
+				[ blogId ]: reject( state[ blogId ], sticker => sticker === stickerName ),
 			};
 		},
-	}
+	},
 );
 
 export default combineReducers( {
