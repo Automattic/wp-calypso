@@ -30,7 +30,7 @@ export default createSelector(
 
 		const simplePaymentProduct = find( simplePaymentProducts, ( product ) => product.ID === simplePaymentId );
 
-		if ( typeof simplePaymentProduct === 'undefined' ) {
+		if ( ! simplePaymentProduct ) {
 			return null;
 		}
 
