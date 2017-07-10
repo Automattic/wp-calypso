@@ -86,12 +86,16 @@ class PlanBillingPeriod extends Component {
 		}
 
 		return (
-			<Button
-				onClick={ this.handleMonthlyToYearlyButtonClick }
-				primary
-			>
-				{ translate( 'Upgrade to Yearly' ) }
-			</Button>
+			<FormSettingExplanation>
+				{ translate( 'Billed monthly' ) }
+				<Button
+					onClick={ this.handleMonthlyToYearlyButtonClick }
+					primary
+					compact
+				>
+					{ translate( 'Upgrade to yearly billing' ) }
+				</Button>
+			</FormSettingExplanation>
 		);
 	}
 

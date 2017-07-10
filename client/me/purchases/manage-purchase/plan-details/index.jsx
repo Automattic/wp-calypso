@@ -68,7 +68,7 @@ class PurchasePlanDetails extends Component {
 		} );
 
 		return (
-			<div>
+			<div className="plan-details">
 				<QueryPluginKeys siteId={ selectedSite.ID } />
 				<SectionHeader label={ headerText } />
 				<Card>
