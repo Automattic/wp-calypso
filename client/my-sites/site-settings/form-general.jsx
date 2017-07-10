@@ -363,7 +363,7 @@ class SiteSettingsFormGeneral extends Component {
 							disabled={ isRequestingSettings }
 							onChange={ handleToggle( 'net_neutrality' ) }
 						>
-							{ translate( 'Help save the internet by displaying a net-neutrality banner on your site.' ) }
+							{ translate( 'The FCC wants to repeal Net Neutrality. Without Net Neutrality, big cable and telecom companies can divide the internet into fast and slow lanes. What would the Internet look like without net neutrality? Find out by enabling this banner on your site: it shows your support for real net neutrality rules by displaying a message on the bottom of your site and "slowing down" some of your posts.' ) }
 						</CompactFormToggle>
 					</FormFieldset>
 				</Card>
