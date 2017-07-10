@@ -51,6 +51,7 @@ class PaymentMethodPaypal extends Component {
 		const { method: { settings }, translate } = this.props;
 		return (
 			<Dialog
+				additionalClassNames="payments__dialog woocommerce"
 				buttons={ this.buttons }
 				isVisible>
 				<FormFieldset className="payments__method-edit-field-container">

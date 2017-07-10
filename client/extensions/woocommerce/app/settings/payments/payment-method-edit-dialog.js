@@ -118,6 +118,7 @@ class PaymentMethodEdit extends Component {
 		const settingsFieldsKeys = method.settings && Object.keys( method.settings );
 		return (
 			<Dialog
+				additionalClassNames="payments__dialog woocommerce"
 				buttons={ this.buttons }
 				isVisible>
 				{ settingsFieldsKeys.map( this.renderEditField ) }
