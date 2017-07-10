@@ -9,6 +9,7 @@ import { moment } from 'i18n-calypso';
  */
 import {
 	calculateDelta,
+	formatValue,
 	getQueryDate,
 	getUnitPeriod,
 	getEndPeriod
@@ -165,5 +166,23 @@ describe( 'getEndPeriod', () => {
 	it( 'should return an the date for the end of the day', () => {
 		const queryDate = getEndPeriod( '2017-07-05', 'day' );
 		assert.strictEqual( queryDate, '2017-07-05' );
+	} );
+} );
+
+describe( 'formatValue', () => {
+	it( 'should return a correctly formatted currency', () => {
+		const response = formatValue( 12.34, 'currency' );
+		assert.isString( response );
+		assert.strictEqual( response, '$12.34' );
+	} );
+	it( 'should return a correctly formatted number to 2 decimals', () => {
+		const response = formatValue( 12.3456, 'number' );
+		assert.isNumber( response );
+		assert.strictEqual( response, 12.35 );
+	} );
+	it( 'should return a correctly formatted string', () => {
+		const response = formatValue( 'string', 'text' );
+		assert.isString( response );
+		assert.strictEqual( response, 'string' );
 	} );
 } );
