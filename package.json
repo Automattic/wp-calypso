@@ -10,7 +10,6 @@
   },
   "main": "index.js",
   "dependencies": {
-    "ajv": "5.2.0",
     "async": "0.9.0",
     "autoprefixer": "6.3.5",
     "autosize": "3.0.15",
@@ -148,7 +147,7 @@
     "uuid": "2.0.1",
     "valid-url": "1.0.9",
     "walk": "2.3.4",
-    "webpack": "3.0.0",
+    "webpack": "3.1.0",
     "webpack-dashboard": "0.2.1",
     "webpack-dev-middleware": "1.11.0",
     "webpack-hot-middleware": "2.15.0",
