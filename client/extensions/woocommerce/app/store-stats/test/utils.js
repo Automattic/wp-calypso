@@ -170,7 +170,27 @@ describe( 'getEndPeriod', () => {
 } );
 
 describe( 'formatValue', () => {
-	it( 'should return a correctly formatted currency', () => {
+	it( 'should return a correctly formatted currency for NZD', () => {
+		const response = formatValue( 12.34, 'currency', 'NZD' );
+		assert.isString( response );
+		assert.strictEqual( response, 'NZ$12.34' );
+	} );
+	it( 'should return a correctly formatted currency for USD', () => {
+		const response = formatValue( 12.34, 'currency', 'USD' );
+		assert.isString( response );
+		assert.strictEqual( response, '$12.34' );
+	} );
+	it( 'should return a correctly formatted currency for ZAR', () => {
+		const response = formatValue( 12.34, 'currency', 'ZAR' );
+		assert.isString( response );
+		assert.strictEqual( response, 'R12,34' );
+	} );
+	it( 'should return a correctly formatted USD currency for unknown code', () => {
+		const response = formatValue( 12.34, 'currency', 'XXX' );
+		assert.isString( response );
+		assert.strictEqual( response, '$12.34' );
+	} );
+	it( 'should return a correctly formatted USD currency for missing code', () => {
 		const response = formatValue( 12.34, 'currency' );
 		assert.isString( response );
 		assert.strictEqual( response, '$12.34' );

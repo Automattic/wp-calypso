@@ -27,7 +27,7 @@ const StoreStatsList = ( { data, values } ) => {
 				<TableRow key={ i }>
 					{ values.map( ( value, j ) => (
 						<TableItem key={ value.key } isTitle={ 0 === j }>
-							{ formatValue( row[ value.key ], value.format ) }
+							{ formatValue( row[ value.key ], value.format, row.currency ) }
 						</TableItem>
 					) ) }
 				</TableRow>

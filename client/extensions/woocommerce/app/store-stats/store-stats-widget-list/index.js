@@ -25,6 +25,7 @@ import Table from 'woocommerce/components/table';
 import TableItem from 'woocommerce/components/table/table-item';
 import TableRow from 'woocommerce/components/table/table-row';
 import { getPeriodFormat } from 'state/stats/lists/utils';
+import { formatValue } from '../utils';
 
 class StoreStatsWidgetList extends Component {
 
@@ -129,9 +130,7 @@ class StoreStatsWidgetList extends Component {
 				const delta = this.getDeltaByStat( widget.key );
 				return {
 					title: widget.title,
-					value: ( widget.type === 'currency' )
-						? formatCurrency( timeSeries[ selectedIndex ], sincePeriod.currency )
-						:	Math.round( timeSeries[ selectedIndex ] * 100 ) / 100,
+					value: formatValue( timeSeries[ selectedIndex ], widget.format, sincePeriod.currency ),
 					sparkline: <Sparkline
 						aspectRatio={ 3 }
 						data={ timeSeries }
