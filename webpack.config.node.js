@@ -75,6 +75,11 @@ const webpackConfig = {
 				loader: path.join( __dirname, 'server', 'isomorphic-routing', 'loader' )
 			},
 			{
+				test: /\.tsx?$/,
+				exclude: /node_modules/,
+				loaders: [ 'babel-loader', 'awesome-typescript-laoder' ]
+			},
+			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs[\/\\]search-index)/,
 				loader: 'babel',
