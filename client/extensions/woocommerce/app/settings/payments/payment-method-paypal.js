@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
@@ -29,7 +29,9 @@ class PaymentMethodPaypal extends Component {
 			} ),
 		} ),
 		translate: PropTypes.func.isRequired,
+		onCancel: PropTypes.func.isRequired,
 		onEditField: PropTypes.func.isRequired,
+		onSave: PropTypes.func.isRequired,
 	};
 
 	onEditFieldHandler = ( e ) => {
@@ -40,10 +42,18 @@ class PaymentMethodPaypal extends Component {
 		this.props.onSave( this.props.method );
 	}
 
+	buttons = [
+		{ action: 'cancel', label: this.props.translate( 'Cancel' ), onClick: this.props.onCancel },
+		{ action: 'save', label: this.props.translate( 'Save' ), onClick: this.props.onSave, isPrimary: true },
+	];
+
 	render() {
 		const { method: { settings }, translate } = this.props;
 		return (
-			<div className="payments__method-edit-fields">
+			<Dialog
+				additionalClassNames="payments__dialog woocommerce"
+				buttons={ this.buttons }
+				isVisible>
 				<FormFieldset className="payments__method-edit-field-container">
 					<FormLabel>{ translate( 'Your Paypal ID' ) }</FormLabel>
 					<FormTextInput
@@ -78,10 +88,7 @@ class PaymentMethodPaypal extends Component {
 						<span>{ translate( 'Authorize the customers credit card but charge manually' ) }</span>
 					</FormLabel>
 				</FormFieldset>
-				<Button primary onClick={ this.onSaveHandler }>
-					{ translate( 'Save' ) }
-				</Button>
-			</div>
+			</Dialog>
 		);
 	}
 }
