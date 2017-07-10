@@ -4,12 +4,14 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { canCurrentUser } from 'state/selectors';
 import config from 'config';
+import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import route from 'lib/route';
@@ -18,6 +20,7 @@ class App extends Component {
 
 	static propTypes = {
 		siteId: PropTypes.number,
+		documentTitle: PropTypes.string,
 		canUserManageOptions: PropTypes.bool.isRequired,
 		currentRoute: PropTypes.string.isRequired,
 		isAtomicSite: PropTypes.bool.isRequired,
@@ -29,7 +32,7 @@ class App extends Component {
 	}
 
 	render = () => {
-		const { siteId, children, canUserManageOptions, isAtomicSite, currentRoute } = this.props;
+		const { siteId, children, canUserManageOptions, isAtomicSite, currentRoute, translate } = this.props;
 
 		// TODO This is temporary, until we have a valid "all sites" path to show.
 		// Calypso will detect if a user doesn't have access to a site at all, and redirects to the 'all sites'
@@ -56,9 +59,12 @@ class App extends Component {
 			}
 		}
 
+		const documentTitle = this.props.documentTitle || translate( 'Store' );
+
 		const className = 'woocommerce';
 		return (
 			<div className={ className }>
+				<DocumentHead title={ documentTitle } />
 				{ children }
 			</div>
 		);
@@ -78,4 +84,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps )( App );
+export default connect( mapStateToProps )( localize( App ) );
