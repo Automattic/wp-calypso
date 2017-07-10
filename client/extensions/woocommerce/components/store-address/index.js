@@ -130,9 +130,9 @@ class StoreAddress extends Component {
 		} else {
 			display = (
 				<div>
-					{ false != this.props.showLabel && (
+					{ this.props.showLabel && (
 						<FormLabel>{ translate( 'Store location' ) }</FormLabel>
-					)}
+					) }
 					<AddressView address={ this.state.address } />
 					<a onClick={ this.onShowDialog }>{ translate( 'Edit address' ) }</a>
 				</div>
