@@ -8,6 +8,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -27,6 +28,12 @@ class DebugTab extends Component {
 	static defaultProps = {
 		fields: {},
 	};
+
+	deleteLog = () => this.props.saveSettings( this.props.siteId, { wpsc_delete_log: true } );
+
+	disableLog = () => this.props.saveSettings( this.props.siteId, { wpsc_disable_log: true } );
+
+	resetLog = () => this.props.saveSettings( this.props.siteId, { wpsc_reset_log: true } );
 
 	render() {
 		const {
@@ -49,6 +56,40 @@ class DebugTab extends Component {
 
 		return (
 			<div>
+				{ !! wp_super_cache_debug &&
+					<Card>
+						<p>
+							{ translate(
+								'Fix problems with the plugin by debugging it here. ' +
+								'It can log them to a file in your cache directory.'
+							) }
+						</p>
+						<Button
+							compact
+							primary
+							disabled={ isRequesting || isSaving }
+							onClick={ this.resetLog }
+							value="1">
+							{ translate( 'Reset Debug Log' ) }
+						</Button>
+						<Button
+							compact
+							primary
+							disabled={ isRequesting || isSaving }
+							onClick={ this.disableLog }
+							value="1">
+							{ translate( 'Disable Debug Log' ) }
+						</Button>
+						<Button
+							compact
+							primary
+							disabled={ isRequesting || isSaving }
+							onClick={ this.deleteLog }
+							value="1">
+							{ translate( 'Disable and Delete Debug Log' ) }
+						</Button>
+					</Card>
+				}
 				<form>
 					<SectionHeader label={ translate( 'Debug' ) }>
 						<FormButton
