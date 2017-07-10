@@ -112,7 +112,8 @@ const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actio
 				</Button>
 			</ExtendedHeader>
 			<List>
-				<ListHeader>
+				{ locationsToRender.length
+				? <ListHeader>
 					<ListItemField className="shipping-zone__location-title">
 						{ translate( 'Location' ) }
 					</ListItemField>
@@ -120,6 +121,7 @@ const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actio
 						{ translate( 'Details' ) }
 					</ListItemField>
 				</ListHeader>
+				: null }
 				{ locationsToRender.map( renderLocation ) }
 			</List>
 			<ShippingZoneLocationDialog siteId={ siteId } isAdding={ isEmpty( locations ) } />
