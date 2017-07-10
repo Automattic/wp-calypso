@@ -94,7 +94,7 @@ describe( 'reducer', () => {
 					type: SITES_BLOG_STICKER_REMOVE,
 					payload: { blogId: 123, stickerName: 'dont-recommend' },
 				} ),
-			).to.deep.equal( initialState );
+			).to.equal( initialState );
 		} );
 	} );
 } );
