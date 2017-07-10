@@ -166,18 +166,18 @@ class LoggedInForm extends Component {
 
 	handleClickDisclaimer = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click' );
-	}
+	};
 
 	handleClickHelp = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
-	}
+	};
 
 	handleSignOut = () => {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const redirect = addQueryArgs( queryObject, window.location.href );
 		this.props.recordTracksEvent( 'calypso_jpc_signout_click' );
 		userUtilities.logout( redirect );
-	}
+	};
 
 	handleResolve = () => {
 		const { queryObject, authorizationCode } = this.props.jetpackConnectAuthorize;
@@ -195,7 +195,7 @@ class LoggedInForm extends Component {
 		// legacy functions on the client.
 		this.props.recordTracksEvent( 'calypso_jpc_resolve_xmlrpc_error_click' );
 		this.props.goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
-	}
+	};
 
 	handleSubmit = () => {
 		const {
@@ -232,7 +232,7 @@ class LoggedInForm extends Component {
 
 		this.props.recordTracksEvent( 'calypso_jpc_approve_click' );
 		return this.props.authorize( queryObject );
-	}
+	};
 
 	isAuthorizing() {
 		const { isAuthorizing } = this.props.jetpackConnectAuthorize;

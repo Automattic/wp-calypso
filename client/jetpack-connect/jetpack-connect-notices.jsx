@@ -33,7 +33,7 @@ class JetpackConnectNotices extends Component {
 		] ).isRequired,
 		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
-	}
+	};
 
 	getNoticeValues() {
 		const {

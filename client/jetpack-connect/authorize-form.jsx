@@ -63,7 +63,7 @@ class JetpackConnectAuthorizeForm extends Component {
 		retryAuth: PropTypes.func,
 		siteSlug: PropTypes.string,
 		user: PropTypes.object,
-	}
+	};
 
 	componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );

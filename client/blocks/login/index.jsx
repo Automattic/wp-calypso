@@ -43,6 +43,8 @@ class Login extends Component {
 			// Disallow access to the 2FA pages unless the user has 2FA enabled
 			page( login( { isNative: true } ) );
 		}
+
+		window.scrollTo( 0, 0 );
 	};
 
 	componentWillReceiveProps = ( nextProps ) => {
