@@ -21,8 +21,8 @@ const uploadPlugin = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-const uploadComplete = ( { dispatch }, { siteId }, next, data ) => {
-	const { pluginId } = data;
+export const uploadComplete = ( { dispatch }, { siteId }, next, data ) => {
+	const { id: pluginId } = data;
 	dispatch( completePluginUpload( siteId, pluginId ) );
 	dispatch( {
 		type: PLUGIN_INSTALL_REQUEST_SUCCESS,
@@ -32,11 +32,11 @@ const uploadComplete = ( { dispatch }, { siteId }, next, data ) => {
 	} );
 };
 
-const receiveError = ( { dispatch }, { siteId }, next, error ) => {
+export const receiveError = ( { dispatch }, { siteId }, next, error ) => {
 	dispatch( pluginUploadError( siteId, error ) );
 };
 
-const updateUploadProgress = ( { dispatch }, { siteId }, next, { loaded, total } ) => {
+export const updateUploadProgress = ( { dispatch }, { siteId }, next, { loaded, total } ) => {
 	dispatch( updatePluginUploadProgress( siteId, loaded, total ) );
 };
 
