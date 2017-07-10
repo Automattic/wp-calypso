@@ -7,7 +7,8 @@
 		"baseUrl": ".",
 		"paths": {
 			"*": [ "test/*", "server/*", "client/*" ]
-		}
+		},
+		"jsx": "react"
 	},
 	"exclude": [
 		"node_modules",
