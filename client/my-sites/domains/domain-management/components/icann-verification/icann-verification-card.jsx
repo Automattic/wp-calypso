@@ -86,6 +86,7 @@ class IcannVerificationCard extends React.Component {
 			return <QueryWhois domain={ selectedDomainName } />;
 		}
 
+		const { submitting } = this.state;
 		return (
 			<Card compact highlight="warning" className="icann-verification__card">
 				<QueryWhois domain={ selectedDomainName } />
@@ -104,9 +105,10 @@ class IcannVerificationCard extends React.Component {
 
 					<Button
 						primary
-						disabled={ this.state.submitting }
+						busy={ submitting }
+						disabled={ submitting }
 						onClick={ this.handleSubmit }>
-						{ translate( 'Send Again' ) }
+						{ submitting ? translate( 'Sending…' ) : translate( 'Send Again' ) }
 					</Button>
 
 					<div className="icann-verification__sent-to">
