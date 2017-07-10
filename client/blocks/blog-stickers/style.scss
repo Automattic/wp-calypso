@@ -2,6 +2,11 @@
 	display: inline;
 }
 
+.blog-stickers__list {
+	overflow-x: scroll;
+	max-height: 200px;
+}
+
 .blog-stickers__list-title {
 	font-weight: bold;
 	margin-bottom: 3px;
@@ -13,5 +18,14 @@
 }
 
 .blog-stickers__list-item {
-	margin-left: 16px;
+	display: inline;
+
+	&:after {
+		content: " | ";
+	}
+
+
+	&:after:last-child {
+		content: "";
+	}
 }
