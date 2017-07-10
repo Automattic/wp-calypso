@@ -14,6 +14,7 @@ import GalleryView from './gallery-view';
 import EmbedViewManager from './views/embed';
 import ContactFormView from './views/contact-form';
 import * as VideoView from './views/video';
+import SimplePaymentsView from './views/simple-payments';
 
 /**
  * Module variables
@@ -22,7 +23,8 @@ let views = {
 	gallery: GalleryView,
 	embed: new EmbedViewManager(),
 	contactForm: ContactFormView,
-	video: VideoView
+	video: VideoView,
+	simplePayments: SimplePaymentsView,
 };
 
 const components = mapValues( views, ( view ) => {
