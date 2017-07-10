@@ -13,7 +13,8 @@ import { moment, translate } from 'i18n-calypso';
 import Card from 'components/card';
 import Delta from 'woocommerce/components/delta';
 import ErrorPanel from 'my-sites/stats/stats-error';
-import formatCurrency from 'lib/format-currency';
+import { formatValue } from '../utils';
+import { getPeriodFormat } from 'state/stats/lists/utils';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData
@@ -24,8 +25,6 @@ import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
 import Table from 'woocommerce/components/table';
 import TableItem from 'woocommerce/components/table/table-item';
 import TableRow from 'woocommerce/components/table/table-row';
-import { getPeriodFormat } from 'state/stats/lists/utils';
-import { formatValue } from '../utils';
 
 class StoreStatsWidgetList extends Component {
 
