@@ -68,7 +68,9 @@ export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( s
  * @return {Boolean} Bool indicating if payments are setup
  */
 export const arePaymentsSetup = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return !! filter( getPaymentMethodsWithEdits( state, siteId ), { enabled: true } ).length;
+	return !! filter( getPaymentMethodsWithEdits( state, siteId ), function( method ) {
+		return method.enabled && 'cheque' !== method.id;
+	} ).length;
 };
 
 /**
