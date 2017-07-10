@@ -16,12 +16,18 @@ import Card from 'components/card';
 import upgradesActions from 'lib/upgrades/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { domainManagementEditContactInfo } from 'my-sites/domains/paths';
+import { getRegistrantWhois } from 'state/selectors';
+import QueryWhois from 'components/data/query-whois';
 
 class IcannVerificationCard extends React.Component {
 	static propTypes = {
 		explanationContext: React.PropTypes.string,
 		selectedDomainName: React.PropTypes.string.isRequired,
 		selectedSiteSlug: React.PropTypes.string.isRequired,
+		contactDetails: React.PropTypes.oneOfType( [
+			React.PropTypes.object,
+			React.PropTypes.bool
+		] ).isRequired,
 	};
 
 	state = {
@@ -38,7 +44,9 @@ class IcannVerificationCard extends React.Component {
 				this.props.errorNotice( error.message );
 			} else {
 				this.props.successNotice( this.props.translate(
-					'Email sent to [registrant contact email]. Check your email.'
+					'Email sent to %(email)s. Check your email.', {
+						args: { email: this.props.contactDetails.email },
+					}
 				) );
 			}
 
@@ -74,8 +82,13 @@ class IcannVerificationCard extends React.Component {
 		const { translate, selectedDomainName, selectedSiteSlug } = this.props;
 		const changeEmailHref = domainManagementEditContactInfo( selectedSiteSlug, selectedDomainName );
 
+		if ( ! this.props.contactDetails ) {
+			return <QueryWhois domain={ selectedDomainName } />;
+		}
+
 		return (
 			<Card compact highlight="warning" className="icann-verification__card">
+				<QueryWhois domain={ selectedDomainName } />
 				<div className="icann-verification__explanation">
 					<h1 className="icann-verification__heading">Important: Verify Your Email Address</h1>
 					{ this.getExplanation() }
@@ -98,8 +111,9 @@ class IcannVerificationCard extends React.Component {
 
 					<div className="icann-verification__sent-to">
 						{ translate(
-							'Sent to registrant@contactemail.com. ' +
+							'Sent to %(email)s. ' +
 							'{{changeEmail}}Change email address.{{/changeEmail}}', {
+								args: { email: this.props.contactDetails.email },
 								components: {
 									changeEmail: <a href={ changeEmailHref } />
 								}
@@ -113,6 +127,8 @@ class IcannVerificationCard extends React.Component {
 }
 
 export default connect(
-	null,
+	( state, ownProps ) => ( {
+		contactDetails: getRegistrantWhois( state, ownProps.selectedDomainName ),
+	} ),
 	dispatch => bindActionCreators( { errorNotice, successNotice }, dispatch )
 )( localize( IcannVerificationCard ) );
