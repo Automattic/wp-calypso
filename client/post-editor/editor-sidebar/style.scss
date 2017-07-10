@@ -1,3 +1,5 @@
+$editor-sidebar-font-size: 13px;
+
 .editor-sidebar {
 	@extend .sidebar;
 	z-index: z-index( 'root', '.editor-sidebar' );
@@ -44,7 +46,7 @@
 .editor-sidebar__header {
 	background: lighten( $gray, 30% );
 	display: none;
-	font-size: 13px;
+	font-size: $editor-sidebar-font-size;
 	color: $gray-dark;
 	font-weight: 500;
 
@@ -75,4 +77,12 @@
 	@include breakpoint( ">660px" ) {
 		display: none;
 	}
+}
+
+.editor-sidebar .editor-feedback-request {
+	font-size: $editor-sidebar-font-size;
+}
+
+.editor-sidebar .editor-feedback-request__button {
+	width: 100%;
 }

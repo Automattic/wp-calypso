@@ -10,6 +10,7 @@ import EditorDrawer from 'post-editor/editor-drawer';
 import EditorSidebarHeader from './header';
 import SidebarFooter from 'layout/sidebar/footer';
 import EditorActionBar from 'post-editor/editor-action-bar';
+import EditorFeedbackRequest from 'post-editor/editor-feedback-request';
 import EditorDeletePost from 'post-editor/editor-delete-post';
 
 export default class EditorSidebar extends Component {
@@ -26,6 +27,11 @@ export default class EditorSidebar extends Component {
 		setPostDate: PropTypes.func,
 		isPrivate: PropTypes.bool,
 	}
+
+	_viewFeedbackPane = () => {
+		// eslint-disable-next-line
+		console.log( 'view feedback pane' );
+	};
 
 	render() {
 		const { toggleSidebar,
@@ -62,6 +68,7 @@ export default class EditorSidebar extends Component {
 					onSave={ onSave }
 					isPostPrivate={ isPostPrivate }
 				/>
+				<EditorFeedbackRequest onTrigger={ this._viewFeedbackPane } />
 				<SidebarFooter>
 					<EditorDeletePost
 						post={ post }
