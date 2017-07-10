@@ -143,9 +143,9 @@ class StoreSidebar extends Component {
 		const { site, siteSuffix, translate } = this.props;
 		const link = '/store/settings' + siteSuffix;
 		const childLinks = [
-			'/store/settings/payments' + siteSuffix,
-			'/store/settings/shipping' + siteSuffix,
-			'/store/settings/taxes' + siteSuffix,
+			'/store/settings/payments',
+			'/store/settings/shipping',
+			'/store/settings/taxes',
 		];
 		const selected = this.isItemLinkSelected( [ link, ...childLinks ] );
 		const classes = classNames( {
