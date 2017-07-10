@@ -43,6 +43,18 @@ $editor-sidebar-font-size: 13px;
 	}
 }
 
+// TODO: Find better name than `view`
+.editor-sidebar__view {
+	display: flex;
+	flex-direction: column;
+
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+
 .editor-sidebar__header {
 	background: lighten( $gray, 30% );
 	display: none;
@@ -84,5 +96,18 @@ $editor-sidebar-font-size: 13px;
 }
 
 .editor-sidebar .editor-feedback-request__button {
+	width: 100%;
+}
+
+.editor-sidebar__feedback-header-image-box {
+	min-height: 100px;
+}
+
+.editor-sidebar__feedback-request-form {
+	background: $white;
+	padding: 16px;
+}
+
+.editor-sidebar__feedback-request-button {
 	width: 100%;
 }

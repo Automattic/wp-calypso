@@ -11,6 +11,9 @@ import EditorSidebarHeader from './header';
 import SidebarFooter from 'layout/sidebar/footer';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import EditorFeedbackRequest from 'post-editor/editor-feedback-request';
+import FeedbackSidebarHeader from './feedback-header';
+import FeedbackRequestForm from './feedback-request-form';
+import FeedbackList from './feedback-list';
 import EditorDeletePost from 'post-editor/editor-delete-post';
 
 export default class EditorSidebar extends Component {
@@ -28,13 +31,31 @@ export default class EditorSidebar extends Component {
 		isPrivate: PropTypes.bool,
 	}
 
-	_viewFeedbackPane = () => {
-		// eslint-disable-next-line
-		console.log( 'view feedback pane' );
+	constructor() {
+		super();
+		this.state = { showFeedback: false };
+	}
+
+	openFeedbackPane = () => {
+		this.setState( { showFeedback: true } );
+	};
+	closeFeedbackPane = () => {
+		this.setState( { showFeedback: false } );
 	};
 
 	render() {
-		const { toggleSidebar,
+		return (
+			<div className="editor-sidebar">
+				{ this.state.showFeedback
+					? this.renderFeedbackSidebar()
+					: this.renderMainSidebar() }
+			</div>
+		);
+	}
+
+	renderMainSidebar() {
+		const {
+			toggleSidebar,
 			isNew,
 			onTrashingPost,
 			onPublish,
@@ -48,7 +69,7 @@ export default class EditorSidebar extends Component {
 		} = this.props;
 
 		return (
-			<div className="editor-sidebar">
+			<div className="editor-sidebar__view">
 				<EditorSidebarHeader toggleSidebar={ toggleSidebar } />
 				<EditorActionBar
 					isNew={ isNew }
@@ -68,7 +89,7 @@ export default class EditorSidebar extends Component {
 					onSave={ onSave }
 					isPostPrivate={ isPostPrivate }
 				/>
-				<EditorFeedbackRequest onTrigger={ this._viewFeedbackPane } />
+				<EditorFeedbackRequest onTrigger={ this.openFeedbackPane } />
 				<SidebarFooter>
 					<EditorDeletePost
 						post={ post }
@@ -79,4 +100,15 @@ export default class EditorSidebar extends Component {
 		);
 	}
 
+	renderFeedbackSidebar() {
+		return (
+			<div className="editor-sidebar__view">
+				<FeedbackSidebarHeader closeFeedback={ this.closeFeedbackPane } />
+				<div className="editor-sidebar__feedback-header-image-box"></div>
+				<FeedbackRequestForm />
+				<FeedbackList />
+				<SidebarFooter />
+			</div>
+		);
+	}
 }
