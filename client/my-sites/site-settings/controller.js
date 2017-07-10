@@ -135,16 +135,16 @@ const controller = {
 	themeSetup( context ) {
 		const site = getSelectedSite( context.store.getState() );
 		if ( site && site.jetpack ) {
-			return page( '/settings/general/' + site.slug );
+			return page.redirect( '/settings/general/' + site.slug );
 		}
 
 		if ( ! config.isEnabled( 'settings/theme-setup' ) ) {
-			return page( '/settings/general/' + site.slug );
+			return page.redirect( '/settings/general/' + site.slug );
 		}
 
 		renderPage(
 			context,
-			<ThemeSetup activeSiteDomain={ context.params.site_id } />
+			<ThemeSetup />
 		);
 	},
 
