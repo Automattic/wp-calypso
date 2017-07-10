@@ -66,7 +66,7 @@ class ThemeSetup extends Component {
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const siteSlug = getSelectedSiteSlug( state );
+	const siteSlug = getSelectedSiteSlug( state ) || '';
 	const themeId = siteId && getActiveTheme( state, siteId );
 	const theme = themeId && getTheme( state, 'wpcom', themeId );
 	return {
