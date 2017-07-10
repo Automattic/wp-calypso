@@ -67,8 +67,10 @@ class DomainWarnings extends React.PureComponent {
 			}
 		);
 		const compactMessage = translate( 'Renew', { context: 'Call to action link for renewing an expiring/expired domain' } );
+		const domain = domains[ 0 ].name;
+		const subscriptionId = domains[ 0 ].subscriptionId;
 		const link = count === 1
-			? purchasesPaths.managePurchase( selectedSite.slug, domains[ 0 ].subscriptionId )
+			? `/checkout/domain_map:${ domain }/renew/${ subscriptionId }/${ selectedSite.slug }`
 			: purchasesPaths.purchasesRoot();
 		return (
 			<NoticeAction href={ link }>
