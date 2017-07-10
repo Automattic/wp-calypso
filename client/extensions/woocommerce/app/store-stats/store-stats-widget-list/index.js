@@ -127,6 +127,9 @@ class StoreStatsWidgetList extends Component {
 			widgetData = widgets.map( widget => {
 				const timeSeries = data.data.map( row => +row[ widget.key ] );
 				const delta = this.getDeltaByStat( widget.key );
+				const deltaValue = ( delta.direction === 'is-undefined-increase' )
+					? '-'
+					: Math.abs( Math.round( delta.percentage_change * 100 ) );
 				return {
 					title: widget.title,
 					value: ( widget.type === 'currency' )
@@ -139,7 +142,7 @@ class StoreStatsWidgetList extends Component {
 						maxHeight={ 50 }
 					/>,
 					delta: <Delta
-						value={ `${ Math.abs( Math.round( delta.percentage_change * 100 ) ) }%` }
+						value={ `${ deltaValue }%` }
 						className={ `${ delta.favorable } ${ delta.direction }` }
 					/>
 				};
