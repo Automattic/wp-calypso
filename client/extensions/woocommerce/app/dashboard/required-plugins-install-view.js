@@ -163,7 +163,7 @@ class RequiredPluginsInstallView extends Component {
 	setUpdateTimeout = () => {
 		this.updateTimeout = window.setTimeout( () => {
 			this.installPlugins( this.props.plugins );
-		}, 5000 );
+		}, 10000 );
 	}
 
 	render = () => {
