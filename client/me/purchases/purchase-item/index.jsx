@@ -24,8 +24,20 @@ import Notice from 'components/notice';
 import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'gridicons';
 import paths from '../paths';
+import TrackComponentView from 'lib/analytics/track-component-view';
+
+const eventProperties = ( warning ) => ( { warning, position: 'purchase-list' } );
 
 class PurchaseItem extends Component {
+	trackImpression( warning ) {
+		return (
+			<TrackComponentView
+				eventName="calypso_subscription_warning_impression"
+				eventProperties={ eventProperties( warning ) }
+			/>
+		);
+	}
+
 	renewsOrExpiresOn() {
 		const { purchase, translate, moment } = this.props;
 
@@ -33,6 +45,7 @@ class PurchaseItem extends Component {
 			return (
 				<Notice isCompact status="is-error" icon="notice">
 					{ translate( 'Credit card expiring soon' ) }
+					{ this.trackImpression( 'credit-card-expiring' ) }
 				</Notice>
 			);
 		}
@@ -53,6 +66,7 @@ class PurchaseItem extends Component {
 							},
 							context: 'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 						} ) }
+						{ this.trackImpression( 'purchase-expiring' ) }
 					</Notice>
 				);
 			}
@@ -76,6 +90,7 @@ class PurchaseItem extends Component {
 						},
 						context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 					} ) }
+					{ this.trackImpression( 'purchase-expired' ) }
 				</Notice>
 			);
 		}
