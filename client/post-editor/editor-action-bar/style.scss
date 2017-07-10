@@ -68,7 +68,7 @@
 	}
 }
 
-.post-editor__sidebar .editor-action-bar {
+.editor-sidebar .editor-action-bar {
 	@include breakpoint( ">660px" ) {
 		display: none;
 	}
