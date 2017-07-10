@@ -20,7 +20,6 @@ import {
 	getPricesIncludeTax,
 	getShippingIsTaxFree,
 } from 'woocommerce/state/sites/settings/tax/selectors';
-import Button from 'components/button';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import {
 	fetchSettingsGeneral,
@@ -34,6 +33,7 @@ import {
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
+import TaxSettingsSaveButton from './save-button';
 import SettingsNavigation from '../navigation';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import StoreAddress from 'woocommerce/components/store-address';
@@ -45,9 +45,9 @@ class SettingsTaxes extends Component {
 		super( props );
 		this.state = {
 			isSaving: false,
-			pricesIncludeTaxes: true,
-			shippingIsTaxable: true,
-			taxesEnabled: true,
+			pricesIncludeTaxes: props.pricesIncludeTaxes,
+			shippingIsTaxable: props.shippingIsTaxable,
+			taxesEnabled: props.taxesEnabled,
 			userBeganEditing: false,
 		};
 	}
@@ -100,7 +100,7 @@ class SettingsTaxes extends Component {
 		return this.state.userBeganEditing;
 	}
 
-	onSave = ( event ) => {
+	onSave = ( event, onSuccessExtra ) => {
 		const { site, translate } = this.props;
 
 		event.preventDefault();
@@ -108,7 +108,10 @@ class SettingsTaxes extends Component {
 
 		const onSuccess = () => {
 			this.setState( { isSaving: false, userBeganEditing: false } );
-			return successNotice( translate( 'Settings updated successfully.' ), { duration: 4000 } );
+			if ( onSuccessExtra ) {
+				onSuccessExtra();
+			}
+			return successNotice( translate( 'Settings updated successfully.' ), { duration: 4000, displayOnNextPage: true } );
 		};
 
 		const onFailure = () => {
@@ -153,9 +156,7 @@ class SettingsTaxes extends Component {
 		return (
 			<Main className={ classNames( 'settings-taxes', className ) }>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
-					<Button onClick={ this.onSave } primary>
-						{ translate( 'Save' ) }
-					</Button>
+					<TaxSettingsSaveButton onSave={ this.onSave } />
 				</ActionHeader>
 				<SettingsNavigation activeSection="taxes" />
 				<div className="taxes__nexus">
@@ -181,19 +182,11 @@ class SettingsTaxes extends Component {
 }
 
 function mapStateToProps( state ) {
-	let loading = true;
-	let pricesIncludeTaxes = false;
-	let shippingIsTaxable = false;
-	let taxesEnabled = false;
-
+	const loading = areTaxSettingsLoading( state ) || areSettingsGeneralLoading( state );
 	const site = getSelectedSiteWithFallback( state );
-
-	loading = areTaxSettingsLoading( state ) || areSettingsGeneralLoading( state );
-	if ( ! loading ) {
-		pricesIncludeTaxes = getPricesIncludeTax( state );
-		shippingIsTaxable = ! getShippingIsTaxFree( state ); // note the inversion
-		taxesEnabled = areTaxCalculationsEnabled( state );
-	}
+	const pricesIncludeTaxes = getPricesIncludeTax( state );
+	const shippingIsTaxable = ! getShippingIsTaxFree( state ); // note the inversion
+	const taxesEnabled = areTaxCalculationsEnabled( state );
 
 	return {
 		loading,
