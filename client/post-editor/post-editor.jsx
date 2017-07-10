@@ -146,8 +146,7 @@ export const PostEditor = React.createClass( {
 		}
 
 		if ( ( nextState.isDirty && ! this.state.isDirty ) || ( nextProps.dirty && ! this.props.dirty ) ) {
-			this.setState( { confirmationSidebar: 'closed' } );
-			analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_close', { context: 'content_edit' } );
+			this.setConfirmationSidebar( { status: 'closed', context: 'content_edit', nextProps } );
 		}
 	},
 
@@ -204,19 +203,20 @@ export const PostEditor = React.createClass( {
 		return this.props.setLayoutFocus( 'content' );
 	},
 
-	setConfirmationSidebar: function( { status, context = null } ) {
+	setConfirmationSidebar: function( { status, context = null, nextProps } ) {
+		const props = nextProps || this.props;
 		const allowedStatuses = [ 'closed', 'open', 'publishing' ];
 		const confirmationSidebar = allowedStatuses.indexOf( status ) > -1 ? status : 'closed';
-		const editorSidebarPreference = this.props.editorSidebarPreference === 'open' ? 'sidebar' : 'content';
+		const editorSidebarPreference = props.editorSidebarPreference === 'open' ? 'sidebar' : 'content';
 		this.setState( { confirmationSidebar } );
 
 		switch ( confirmationSidebar ) {
 			case 'closed':
-				this.props.setLayoutFocus( editorSidebarPreference );
+				props.setLayoutFocus( editorSidebarPreference );
 				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_close', { context } );
 				break;
 			case 'open':
-				this.props.setLayoutFocus( 'editor-confirmation-sidebar' );
+				props.setLayoutFocus( 'editor-confirmation-sidebar' );
 				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_open' );
 				break;
 		}
