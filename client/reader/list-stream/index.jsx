@@ -36,7 +36,7 @@ class ListStream extends React.Component {
 		recordAction( isFollowRequested ? 'followed_list' : 'unfollowed_list' );
 		recordGaEvent(
 			isFollowRequested ? 'Clicked Follow List' : 'Clicked Unfollow List',
-			list.owner + ':' + list.slug
+			list.owner + ':' + list.slug,
 		);
 		recordTrack(
 			isFollowRequested
@@ -45,7 +45,7 @@ class ListStream extends React.Component {
 			{
 				list_owner: list.owner,
 				list_slug: list.slug,
-			}
+			},
 		);
 	};
 
@@ -55,7 +55,8 @@ class ListStream extends React.Component {
 			shouldShowEdit = ! shouldShowFollow,
 			emptyContent = <EmptyContent />;
 
-		let editUrl = null, title = this.props.translate( 'Loading list' );
+		let editUrl = null,
+			title = this.props.translate( 'Loading list' );
 
 		if ( list ) {
 			title = list.title;
@@ -118,7 +119,7 @@ export default connect(
 				followList,
 				unfollowList,
 			},
-			dispatch
+			dispatch,
 		);
-	}
+	},
 )( localize( ListStream ) );

@@ -62,12 +62,8 @@ function AuthorAndSiteFollowPlaceholder() {
 		<div className="reader-related-card-v2__meta is-placeholder">
 			<Gravatar user={ null } />
 			<div className="reader-related-card-v2__byline">
-				<span className="reader-related-card-v2__byline-author">
-					Author name
-				</span>
-				<span className="reader-related-card-v2__byline-site">
-					Site title
-				</span>
+				<span className="reader-related-card-v2__byline-author">Author name</span>
+				<span className="reader-related-card-v2__byline-site">Site title</span>
 			</div>
 		</div>
 	);
@@ -151,7 +147,9 @@ export function RelatedPostCard( {
 				onClick={ postClickTracker }
 			>
 				<div className="reader-related-card-v2__site-info">
-					<h1 className="reader-related-card-v2__title">{ post.title }</h1>
+					<h1 className="reader-related-card-v2__title">
+						{ post.title }
+					</h1>
 					<div className="reader-related-card-v2__excerpt post-excerpt">
 						{ !! post.canonical_media ? post.short_excerpt : post.better_excerpt_no_html }
 					</div>

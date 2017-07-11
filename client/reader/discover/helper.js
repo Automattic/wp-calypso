@@ -33,8 +33,9 @@ export function isDiscoverEnabled() {
 }
 
 export function isDiscoverPost( post ) {
-	return !! ( get( post, 'discover_metadata' ) ||
-		get( post, 'site_ID' ) === config( 'discover_blog_id' ) );
+	return !! (
+		get( post, 'discover_metadata' ) || get( post, 'site_ID' ) === config( 'discover_blog_id' )
+	 );
 }
 
 export function isDiscoverSitePick( post ) {

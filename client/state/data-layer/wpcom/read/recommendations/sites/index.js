@@ -22,7 +22,7 @@ export const requestRecommendedSites = ( { dispatch }, action ) => {
 			apiVersion: '1.2',
 			onSuccess: action,
 			onFailure: action,
-		} )
+		} ),
 	);
 };
 
@@ -51,7 +51,7 @@ export const receiveRecommendedSitesResponse = ( store, action, next, response )
 			sites: fromApi( response ),
 			seed: action.payload.seed,
 			offset: action.payload.offset,
-		} )
+		} ),
 	);
 };
 

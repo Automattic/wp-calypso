@@ -59,7 +59,7 @@ describe( 'unfollow tag request', () => {
 					path: `/read/tags/${ slug }/mine/delete`,
 					onSuccess: action,
 					onFailure: action,
-				} )
+				} ),
 			);
 		} );
 	} );
@@ -75,7 +75,7 @@ describe( 'unfollow tag request', () => {
 			expect( dispatch ).to.have.been.calledWith(
 				receiveUnfollowAction( {
 					payload: successfulUnfollowResponse.removed_tag,
-				} )
+				} ),
 			);
 		} );
 

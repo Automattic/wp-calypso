@@ -35,8 +35,8 @@ describe( 'reducer', () => {
 							ID: 1,
 							name: 'my site',
 						},
-					}
-				)[ 1 ]
+					},
+				)[ 1 ],
 			).to.deep.equal( {
 				ID: 1,
 				name: 'my site',
@@ -54,8 +54,8 @@ describe( 'reducer', () => {
 							ID: 1,
 							URL: 'http://example.com/foo/bar',
 						},
-					}
-				)[ 1 ]
+					},
+				)[ 1 ],
 			).to.deep.equal( {
 				ID: 1,
 				URL: 'http://example.com/foo/bar',
@@ -76,8 +76,8 @@ describe( 'reducer', () => {
 							URL: 'http://example.com/foo/bar',
 							name: 'example!',
 						},
-					}
-				)[ 1 ]
+					},
+				)[ 1 ],
 			).to.deep.equal( {
 				ID: 1,
 				URL: 'http://example.com/foo/bar',
@@ -103,8 +103,8 @@ describe( 'reducer', () => {
 								unmapped_url: 'http://formerlyexample.com/foo/bar',
 							},
 						},
-					}
-				)[ 1 ]
+					},
+				)[ 1 ],
 			).to.deep.equal( {
 				ID: 1,
 				URL: 'http://example.com/foo/bar',
@@ -129,8 +129,8 @@ describe( 'reducer', () => {
 							ID: 1,
 							description: 'Apples&amp;Pears',
 						},
-					}
-				)[ 1 ]
+					},
+				)[ 1 ],
 			).to.have.a
 				.property( 'description' )
 				.that.equals( 'Apples&Pears' );
@@ -160,7 +160,7 @@ describe( 'reducer', () => {
 				const unvalidatedObject = deepFreeze( { hi: 'there' } );
 				this.stub( console, 'warn' ); // stub warn to suppress the warning that validation failure emits
 				expect( items( unvalidatedObject, { type: DESERIALIZE } ) ).to.deep.equal( {} );
-			} )
+			} ),
 		);
 
 		it( 'should deserialize good things', () => {
@@ -181,8 +181,8 @@ describe( 'reducer', () => {
 						type: READER_SITE_REQUEST_FAILURE,
 						error: new Error( 'request failed' ),
 						payload: { ID: 666 },
-					}
-				)
+					},
+				),
 			).to.deep.equal( { 666: { ID: 666, is_error: true } } );
 		} );
 
@@ -195,7 +195,7 @@ describe( 'reducer', () => {
 						ID: 666,
 						name: 'new',
 					},
-				} )
+				} ),
 			).to.deep.equal( { 666: { ID: 666, name: 'new', title: 'new' } } );
 		} );
 
@@ -206,7 +206,7 @@ describe( 'reducer', () => {
 					type: READER_SITE_REQUEST_FAILURE,
 					error: new Error( 'request failed' ),
 					payload: { ID: 666 },
-				} )
+				} ),
 			).to.deep.equal( startingState );
 		} );
 
@@ -223,7 +223,7 @@ describe( 'reducer', () => {
 						{ ID: 2, name: 'second' },
 						{ ID: 666, name: 'valid but updated' },
 					],
-				} )
+				} ),
 			).to.deep.equal( {
 				1: { ID: 1, name: 'first', title: 'first' },
 				2: { ID: 2, name: 'second', title: 'second' },
@@ -241,8 +241,8 @@ describe( 'reducer', () => {
 					{
 						type: READER_SITE_REQUEST,
 						payload: { ID: 1 },
-					}
-				)
+					},
+				),
 			).to.deep.equal( { 1: true } );
 		} );
 
@@ -251,7 +251,7 @@ describe( 'reducer', () => {
 				queuedRequests( deepFreeze( { 1: true } ), {
 					type: READER_SITE_REQUEST_SUCCESS,
 					payload: { ID: 1 },
-				} )
+				} ),
 			).to.deep.equal( {} );
 		} );
 	} );

@@ -28,7 +28,8 @@ export default localize(
 					return { post };
 				}
 
-				const source = this.getSourcePost( post ), url = this.getPostUrl( source || post );
+				const source = this.getSourcePost( post ),
+					url = this.getPostUrl( source || post );
 
 				return {
 					post,
@@ -91,7 +92,8 @@ export default localize(
 
 		renderPosts = () => {
 			return this.state.posts.map( postData => {
-				const post = postData.post, postState = post._state;
+				const post = postData.post,
+					postState = post._state;
 
 				switch ( postState ) {
 					case 'minimal':
@@ -100,9 +102,10 @@ export default localize(
 						break;
 					default:
 						let style = {
-							backgroundImage: post.canonical_image && post.canonical_image.uri
-								? 'url(' + cssSafeUrl( post.canonical_image.uri ) + ')'
-								: null,
+							backgroundImage:
+								post.canonical_image && post.canonical_image.uri
+									? 'url(' + cssSafeUrl( post.canonical_image.uri ) + ')'
+									: null,
 						};
 
 						return (
@@ -112,7 +115,9 @@ export default localize(
 								onClick={ this.handleClick.bind( this, postData ) }
 							>
 								<div className="reader__featured-post-image" style={ style } />
-								<h2 className="reader__featured-post-title">{ post.title }</h2>
+								<h2 className="reader__featured-post-title">
+									{ post.title }
+								</h2>
 							</div>
 						);
 				}
@@ -129,7 +134,9 @@ export default localize(
 			return (
 				<Card className="reader__featured-card">
 					<div className="reader__featured-header">
-						<div className="reader__featured-title">{ this.props.translate( 'Highlights' ) }</div>
+						<div className="reader__featured-title">
+							{ this.props.translate( 'Highlights' ) }
+						</div>
 						<div className="reader__featured-description">
 							{ this.props.translate( 'What we’re reading this week.' ) }
 						</div>
@@ -141,5 +148,5 @@ export default localize(
 				</Card>
 			);
 		}
-	}
+	},
 );

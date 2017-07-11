@@ -46,7 +46,8 @@ export const tagListing = context => {
 			postsStore={ tagStore }
 			encodedTagSlug={ encodedTag }
 			decodedTagSlug={ tagSlug }
-			trackScrollPage={ trackScrollPage.bind( // eslint-disable-line
+			trackScrollPage={ trackScrollPage.bind(
+				// eslint-disable-line
 				null,
 				basePath,
 				fullAnalyticsPageTitle,

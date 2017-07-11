@@ -40,10 +40,9 @@ export function requestFollow( { dispatch, getState }, action ) {
 	const feed = getFeedByFeedUrl( getState(), feedUrl );
 	const siteTitle = getSiteName( { feed, site } ) || feedUrl;
 	dispatch(
-		successNotice(
-			translate( "You're now following %(siteTitle)s", { args: { siteTitle } } ),
-			{ duration: 5000 },
-		),
+		successNotice( translate( "You're now following %(siteTitle)s", { args: { siteTitle } } ), {
+			duration: 5000,
+		} ),
 	);
 }
 
@@ -59,10 +58,9 @@ export function receiveFollow( store, action, next, response ) {
 export function followError( { dispatch }, action, next, response ) {
 	dispatch(
 		errorNotice(
-			translate(
-				'Sorry, there was a problem following %(url)s. Please try again.',
-				{ args: { url: action.payload.feedUrl } },
-			),
+			translate( 'Sorry, there was a problem following %(url)s. Please try again.', {
+				args: { url: action.payload.feedUrl },
+			} ),
 			{ duration: 5000 },
 		),
 	);

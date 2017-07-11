@@ -37,7 +37,7 @@ describe( 'actions', () => {
 						'feed_URL',
 						'capabilities',
 						'prefer_feed',
-						'options',  // have to include this to get options at all
+						'options', // have to include this to get options at all
 					].join( ',' ),
 					options: [ 'is_mapped_domain', 'unmapped_url', 'is_redirect' ].join( ',' ),
 				} )

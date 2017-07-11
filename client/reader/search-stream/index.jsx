@@ -31,14 +31,14 @@ const updateQueryArg = params =>
 
 const pickSort = sort => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
 
-const SpacerDiv = withDimensions( ( { width, height } ) => (
+const SpacerDiv = withDimensions( ( { width, height } ) =>
 	<div
 		style={ {
 			width: `${ width }px`,
 			height: `${ height }px`,
 		} }
-	/>
-) );
+	/>,
+);
 
 class SearchStream extends React.Component {
 	static propTypes = {
@@ -104,7 +104,7 @@ class SearchStream extends React.Component {
 		updateQueryArg( { sort } );
 	};
 
-	handleFixedAreaMounted = ref => this.fixedAreaRef = ref;
+	handleFixedAreaMounted = ref => ( this.fixedAreaRef = ref );
 
 	handleSearchTypeSelection = searchType => updateQueryArg( { show: searchType } );
 
@@ -206,11 +206,10 @@ class SearchStream extends React.Component {
 
 /* eslint-disable */
 // wrapping with Main so that we can use withWidth helper to pass down whole width of Main
-const wrapWithMain = Component => props => (
+const wrapWithMain = Component => props =>
 	<ReaderMain className="search-stream search-stream__with-sites" wideLayout>
 		<Component { ...props } />
-	</ReaderMain>
-);
+	</ReaderMain>;
 /* eslint-enable */
 
 export default localize( wrapWithMain( withDimensions( SearchStream ) ) );

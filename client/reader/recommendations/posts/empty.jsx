@@ -30,10 +30,14 @@ class RecommendedPostsEmptyContent extends React.Component {
 
 	render() {
 		var action = (
-			<a className="empty-content__action button is-primary" onClick={ this.recordAction } href="/">
-				{ this.props.translate( 'Back to Following' ) }
-			</a>
-		),
+				<a
+					className="empty-content__action button is-primary"
+					onClick={ this.recordAction }
+					href="/"
+				>
+					{ this.props.translate( 'Back to Following' ) }
+				</a>
+			),
 			secondaryAction = isDiscoverEnabled()
 				? <a
 						className="empty-content__action button"
@@ -48,7 +52,7 @@ class RecommendedPostsEmptyContent extends React.Component {
 			<EmptyContent
 				title={ this.props.translate( 'No Post Recommendations yet' ) }
 				line={ this.props.translate(
-					'Posts we recommend based on your WordPress.com activity will appear here.'
+					'Posts we recommend based on your WordPress.com activity will appear here.',
 				) }
 				action={ action }
 				secondaryAction={ secondaryAction }

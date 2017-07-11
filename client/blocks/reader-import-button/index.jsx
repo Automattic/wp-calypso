@@ -72,7 +72,7 @@ class ReaderImportButton extends React.Component {
 			{
 				args: { name: feedImport.fileName },
 				components: { em: <em /> },
-			}
+			},
 		);
 		this.props.successNotice( message );
 	};
@@ -86,7 +86,7 @@ class ReaderImportButton extends React.Component {
 			'Whoops, something went wrong. %(message)s Please try again.',
 			{
 				args: { message: error.message ? error.message + '.' : null },
-			}
+			},
 		);
 		this.props.errorNotice( message );
 	};

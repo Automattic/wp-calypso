@@ -62,7 +62,7 @@ describe( 'follow tag request', () => {
 					path: `/read/tags/${ slug }/mine/new`,
 					onSuccess: action,
 					onFailure: action,
-				} )
+				} ),
 			);
 		} );
 	} );
@@ -85,7 +85,7 @@ describe( 'follow tag request', () => {
 			expect( dispatch ).to.have.been.calledWith(
 				receiveTagsAction( {
 					payload: [ normalizedFollowedTag ],
-				} )
+				} ),
 			);
 		} );
 

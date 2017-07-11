@@ -11,13 +11,14 @@ import Gridicon from 'gridicons';
 import SidebarHeading from 'layout/sidebar/heading';
 import Count from 'components/count';
 
-const ExpandableSidebarHeading = ( { title, count, onClick } ) => (
+const ExpandableSidebarHeading = ( { title, count, onClick } ) =>
 	<SidebarHeading onClick={ onClick }>
 		<Gridicon icon="chevron-down" />
-		<span>{ title }</span>
+		<span>
+			{ title }
+		</span>
 		<Count count={ count } />
-	</SidebarHeading>
-);
+	</SidebarHeading>;
 
 ExpandableSidebarHeading.propTypes = {
 	title: React.PropTypes.string.isRequired,

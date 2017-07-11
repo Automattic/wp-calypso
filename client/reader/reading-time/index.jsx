@@ -14,7 +14,8 @@ class ReadingTime extends React.PureComponent {
 		if ( timeInMinutes > 1 ) {
 			approxTime = (
 				<span className="reading-time__approx">
-					( { this.props.translate( '~%d min', {
+					({' '}
+					{ this.props.translate( '~%d min', {
 						args: [ timeInMinutes ],
 						context: 'An approximate time to read something, in minutes',
 					} ) })
@@ -28,7 +29,11 @@ class ReadingTime extends React.PureComponent {
 			components: { Time: approxTime },
 		} );
 
-		return <span className="byline__reading-time reading-time">{ readingTime }</span>;
+		return (
+			<span className="byline__reading-time reading-time">
+				{ readingTime }
+			</span>
+		);
 	}
 }
 
