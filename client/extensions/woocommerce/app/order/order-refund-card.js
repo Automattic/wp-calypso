@@ -118,7 +118,7 @@ class OrderRefundCard extends Component {
 		const { order, paymentMethod, site, translate } = this.props;
 		const maxRefund = parseFloat( order.total ) + this.getRefundedTotal( order );
 		if ( this.state.refundTotal > maxRefund ) {
-			this.setState( { errorMessage: translate( 'Refund must be less than order total.' ) } );
+			this.setState( { errorMessage: translate( 'Refund must be less than or equal to the order total.' ) } );
 			return;
 		} else if ( this.state.refundTotal <= 0 ) {
 			this.setState( { errorMessage: translate( 'Refund must be greater than zero.' ) } );
