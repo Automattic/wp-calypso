@@ -8,13 +8,15 @@ import { forEach, groupBy } from 'lodash';
  * Internal dependencies
  */
 import { mergeHandlers } from 'state/action-watchers/utils';
-import { COMMENTS_LIST_REQUEST, COMMENTS_RECEIVE, LOAD_COMMENT } from 'state/action-types';
+import { COMMENTS_LIST_REQUEST, COMMENTS_RECEIVE, COMMENT_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import replies from './replies';
 import likes from './likes';
 import { errorNotice } from 'state/notices/actions';
 import { getRawSite } from 'state/sites/selectors';
+import { getSiteName as getReaderSiteName } from 'reader/get-helpers';
+import { getSite as getReaderSite } from 'state/reader/sites/selectors';
 
 export const requestComment = ( store, action ) => {
 	const { siteId, commentId } = action;
@@ -28,17 +30,25 @@ export const requestComment = ( store, action ) => {
 };
 
 export const receiveCommentSuccess = ( store, action, next, response ) => {
-	// @todo
-	dispatch( {
+	const { siteId } = action;
+	const postId = response && response.post && response.post.ID;
+	store.dispatch( {
 		type: COMMENTS_RECEIVE,
 		siteId,
-		postId: parseInt( postId, 10 ), // keyBy => object property names are strings
+		postId,
 		comments: [ response ],
 	} );
 };
 
-export const receiveCommentError = ( store, action, next, error ) => {
-	// todo
+export const receiveCommentError = store => {
+	const site = getReaderSite( store.getState() );
+	const siteName = getReaderSiteName( site );
+
+	store.dispatch(
+		translate( 'Failed to retrieve comment for site “%(siteName)s”', {
+			args: { siteName },
+		} ),
+	);
 };
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
@@ -82,18 +92,19 @@ export const addComments = ( { dispatch }, { query: { siteId } }, next, { commen
 
 const announceFailure = ( { dispatch, getState }, { query: { siteId } } ) => {
 	const site = getRawSite( getState(), siteId );
-	const error = site && site.name
-		? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
+	const error =
+		site && site.name
+			? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
 				args: { siteName: site.name },
 			} )
-		: translate( 'Failed to retrieve comments for your site' );
+			: translate( 'Failed to retrieve comments for your site' );
 
 	dispatch( errorNotice( error ) );
 };
 
 const fetchHandler = {
 	[ COMMENTS_LIST_REQUEST ]: [ dispatchRequest( fetchCommentsList, addComments, announceFailure ) ],
-	[ LOAD_COMMENT ]: [
+	[ COMMENT_REQUEST ]: [
 		dispatchRequest( requestComment, receiveCommentSuccess, receiveCommentError ),
 	],
 };
