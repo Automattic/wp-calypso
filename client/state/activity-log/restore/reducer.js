@@ -17,6 +17,7 @@ const stubNull = () => null;
 const startProgress = ( state, { timestamp } ) => ( {
 	errorCode: '',
 	failureReason: '',
+	freshness: -Infinity,
 	message: '',
 	percent: 0,
 	status: 'queued',
@@ -26,6 +27,7 @@ const startProgress = ( state, { timestamp } ) => ( {
 const updateProgress = ( state, {
 	errorCode,
 	failureReason,
+	freshness,
 	message,
 	percent,
 	restoreId,
@@ -34,6 +36,7 @@ const updateProgress = ( state, {
 } ) => ( {
 	errorCode,
 	failureReason,
+	freshness,
 	message,
 	percent,
 	restoreId,

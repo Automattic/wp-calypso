@@ -163,8 +163,9 @@ export function updateRewindRestoreProgress( siteId, timestamp, restoreId, progr
 	return {
 		type: REWIND_RESTORE_UPDATE_PROGRESS,
 		...progress,
-		siteId,
+		freshness: Date.now(),
 		restoreId,
+		siteId,
 		timestamp,
 	};
 }
