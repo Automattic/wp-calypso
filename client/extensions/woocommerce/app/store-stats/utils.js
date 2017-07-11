@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { includes } from 'lodash';
+import { find, includes } from 'lodash';
 import classnames from 'classnames';
 import { moment } from 'i18n-calypso';
 
@@ -122,4 +122,19 @@ export function formatValue( value, format, code ) {
 		default:
 			return value;
 	}
+}
+
+/**
+ * Given a date, return the delta object for a specific stat
+ *
+ * @param {array} deltas - an array of delta objects
+ * @param {string} selectedDate - string of date in 'YYYY-MM-DD'
+ * @param {string} stat - string of stat to be referenced
+ * @return {array} - array of delta objects matching selectedDate
+*/
+export function getDelta( deltas, selectedDate, stat ) {
+	const selectedDeltas = find( deltas, ( item ) =>
+		item.period === selectedDate
+	);
+	return selectedDeltas[ stat ];
 }

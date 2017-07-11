@@ -10,9 +10,10 @@ import { moment } from 'i18n-calypso';
 import {
 	calculateDelta,
 	formatValue,
+	getDelta,
+	getEndPeriod,
 	getQueryDate,
-	getUnitPeriod,
-	getEndPeriod
+	getUnitPeriod
 } from '../utils';
 import { UNITS } from '../constants';
 
@@ -204,5 +205,41 @@ describe( 'formatValue', () => {
 		const response = formatValue( 'string', 'text' );
 		assert.isString( response );
 		assert.strictEqual( response, 'string' );
+	} );
+} );
+
+const deltas = [
+	{
+		period: '2017-07-07',
+		right: {
+			right: true,
+			period: '2017-07-06'
+		},
+		wrong: {
+			right: false,
+			period: '2017-07-06'
+		}
+	},
+	{
+		period: '2017-07-06',
+		right: {
+			right: true,
+			period: '2017-07-06'
+		},
+		wrong: {
+			right: false,
+			period: '2017-07-06'
+		}
+	}
+];
+describe( 'getDelta', () => {
+	it( 'should return an Object', () => {
+		const delta = getDelta( deltas, '2017-07-06', 'right' );
+		assert.isObject( delta );
+	} );
+	it( 'should return the correct delta', () => {
+		const delta = getDelta( deltas, '2017-07-06', 'right' );
+		assert.strictEqual( delta.right, true );
+		assert.strictEqual( delta.period, '2017-07-06' );
 	} );
 } );

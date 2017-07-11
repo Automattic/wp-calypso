@@ -4,14 +4,14 @@
 import React, { PropTypes, Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { find, findIndex } from 'lodash';
+import { findIndex } from 'lodash';
 import { moment, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Delta from 'woocommerce/components/delta';
-import { formatValue } from '../utils';
+import { formatValue, getDelta } from '../utils';
 import { getPeriodFormat } from 'state/stats/lists/utils';
 import {
 	isRequestingSiteStatsForQuery,
@@ -27,38 +27,16 @@ class StoreStatsWidgetList extends Component {
 	static propTypes = {
 		data: PropTypes.array.isRequired,
 		deltas: PropTypes.array.isRequired,
-		selectedDate: PropTypes.string.isRequired,
 		query: PropTypes.object.isRequired,
+		selectedDate: PropTypes.string.isRequired,
 		widgets: PropTypes.array.isRequired,
 	};
 
-	getEndPeriod = ( date ) => {
-		const { unit } = this.props.query;
-		const periodFormat = getPeriodFormat( unit, date );
-		return ( unit === 'week' )
-			? moment( date, periodFormat ).endOf( 'isoWeek' ).format( 'YYYY-MM-DD' )
-			: moment( date, periodFormat ).endOf( unit ).format( 'YYYY-MM-DD' );
-	};
-
-	getDeltasBySelectedPeriod = () => {
-		return find( this.props.deltas, ( item ) =>
-			item.period === this.props.selectedDate
-		);
-	};
-
-	getDeltaByStat = ( stat ) => {
-		return this.getDeltasBySelectedPeriod()[ stat ];
-	};
-
-	getSelectedIndex = ( data ) => {
-		return findIndex( data, d => d.period === this.props.selectedDate );
-	};
-
 	render() {
-		const { data, deltas, query, widgets } = this.props;
-		const selectedIndex = this.getSelectedIndex( data );
+		const { data, deltas, query, selectedDate, widgets } = this.props;
+		const selectedIndex = findIndex( data, d => d.period === selectedDate );
 		const firstRealKey = Object.keys( deltas[ selectedIndex ] ).filter( key => key !== 'period' )[ 0 ];
-		const sincePeriod = this.getDeltaByStat( firstRealKey );
+		const sincePeriod = getDelta( deltas, selectedDate, firstRealKey );
 		const periodFormat = getPeriodFormat( query.unit, sincePeriod.reference_period );
 		const values = [
 			{
@@ -98,7 +76,7 @@ class StoreStatsWidgetList extends Component {
 
 		const widgetData = widgets.map( widget => {
 			const timeSeries = data.map( row => +row[ widget.key ] );
-			const delta = this.getDeltaByStat( widget.key );
+			const delta = getDelta( deltas, selectedDate, widget.key );
 			const deltaValue = ( delta.direction === 'is-undefined-increase' )
 				? '-'
 				: Math.abs( Math.round( delta.percentage_change * 100 ) );
