@@ -63,6 +63,10 @@ import domainsPaths from 'my-sites/domains/paths';
 import config from 'config';
 import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+} from 'lib/plans/constants';
 
 function getPurchases( props ) {
 	return ( props.receipt.data && props.receipt.data.purchases ) || [];
@@ -207,7 +211,7 @@ const CheckoutThankYou = React.createClass( {
 
 	isEligibleForLiveChat() {
 		const { planSlug } = this.props;
-		return planSlug === 'jetpack_business' || planSlug === 'jetpack_business_monthly';
+		return planSlug === PLAN_JETPACK_BUSINESS || planSlug === PLAN_JETPACK_BUSINESS_MONTHLY;
 	},
 
 	isNewUser() {

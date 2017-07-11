@@ -53,7 +53,7 @@ class CurrentPlanHeader extends Component {
 
 	isEligibleForLiveChat = () => {
 		const { currentPlanSlug: planSlug } = this.props;
-		return planSlug === 'jetpack_business' || planSlug === 'jetpack_business_monthly';
+		return planSlug === PLAN_JETPACK_BUSINESS || planSlug === PLAN_JETPACK_BUSINESS_MONTHLY;
 	};
 
 	renderPurchaseInfo() {
