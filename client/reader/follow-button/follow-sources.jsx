@@ -9,3 +9,4 @@ export const READER_FOLLOWING_MANAGE_URL_INPUT = 'reader-following-manage-url-in
 export const READER_FOLLOWING_MANAGE_SEARCH_RESULT = 'reader-following-manage-search-result';
 export const READER_FOLLOWING_MANAGE_RECOMMENDATION = 'reader-following-manage-recommendation';
 export const TAG_PAGE = 'reader-tag-page';
+export const DISCOVER_POST = 'reader-discover-post';
