@@ -48,6 +48,7 @@ const getStorePages = () => {
 			container: Products,
 			configKey: 'woocommerce/extension-products',
 			path: '/store/products/:site',
+			documentTitle: translate( 'Products' ),
 			sidebarItem: {
 				icon: 'product',
 				isPrimary: true,
@@ -61,6 +62,7 @@ const getStorePages = () => {
 			configKey: 'woocommerce/extension-products',
 			path: '/store/product/:site',
 			parentPath: '/store/products/:site',
+			documentTitle: translate( 'New Product' ),
 			sidebarItemButton: {
 				label: translate( 'Add' ),
 				parentSlug: 'products',
@@ -73,11 +75,13 @@ const getStorePages = () => {
 			configKey: 'woocommerce/extension-products',
 			path: '/store/product/:site/:product',
 			parentPath: '/store/products/:site',
+			documentTitle: translate( 'Edit Product' ),
 		},
 		{
 			container: Orders,
 			configKey: 'woocommerce/extension-orders',
 			path: '/store/orders/:site',
+			documentTitle: translate( 'Orders' ),
 			sidebarItem: {
 				icon: 'pages',
 				isPrimary: true,
@@ -91,11 +95,13 @@ const getStorePages = () => {
 			configKey: 'woocommerce/extension-orders',
 			path: '/store/order/:site/:order',
 			parentPath: '/store/orders/:site',
+			documentTitle: translate( 'Order Details' ),
 		},
 		{
 			container: SettingsPayments,
 			configKey: 'woocommerce/extension-settings',
 			path: '/store/settings/:site',
+			documentTitle: translate( 'Payment Settings' ),
 			sidebarItem: {
 				icon: 'cog',
 				isPrimary: false,
@@ -109,24 +115,28 @@ const getStorePages = () => {
 			configKey: 'woocommerce/extension-settings-payments',
 			path: '/store/settings/payments/:site',
 			parentPath: '/store/settings/:site',
+			documentTitle: translate( 'Payment Settings' ),
 		},
 		{
 			container: Shipping,
 			configKey: 'woocommerce/extension-settings-shipping',
 			path: '/store/settings/shipping/:site',
 			parentPath: '/store/settings/:site',
+			documentTitle: translate( 'Shipping Settings' ),
 		},
 		{
 			container: ShippingZone,
 			configKey: 'woocommerce/extension-settings-shipping',
 			path: '/store/settings/shipping/zone/:site/:zone?',
 			parentPath: '/store/settings/:site',
+			documentTitle: translate( 'Shipping Settings' ),
 		},
 		{
 			container: SettingsTaxes,
 			configKey: 'woocommerce/extension-settings-tax',
 			path: '/store/settings/taxes/:site',
 			parentPath: '/store/settings/:site',
+			documentTitle: translate( 'Tax Settings' ),
 		},
 	];
 };
@@ -146,8 +156,9 @@ function getStoreSidebarItemButtons() {
 function addStorePage( storePage, storeNavigation ) {
 	page( storePage.path, siteSelection, storeNavigation, function( context ) {
 		const component = React.createElement( storePage.container, { params: context.params } );
+		const appProps = storePage.documentTitle && { documentTitle: storePage.documentTitle } || {};
 		renderWithReduxStore(
-			React.createElement( App, {}, component ),
+			React.createElement( App, appProps, component ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
