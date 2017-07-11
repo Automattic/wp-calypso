@@ -19,8 +19,8 @@ class ReaderPostOptionsMenuBlogStickerMenuItem extends React.Component {
 	};
 
 	toggleSticker = () => {
-		const action = this.props.hasSticker ? 'removeBlogSticker' : 'addBlogSticker';
-		this.props[ action ]( this.props.blogId, this.props.blogStickerName );
+		const toggle = this.props.hasSticker ? this.props.removeBlogSticker : this.props.addBlogSticker;
+		toggle( this.props.blogId, this.props.blogStickerName );
 	};
 
 	render() {
