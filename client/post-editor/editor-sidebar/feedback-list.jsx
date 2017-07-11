@@ -50,7 +50,9 @@ class FeedbackList extends PureComponent {
 		return (
 			<ol>
 				{ comments.map(
-					comment => ( <li>{ comment }</li> )
+					// NOTE: It should be OK to use the index for `key` because
+					// the list is currently append-only
+					( comment, index ) => ( <li key={ index }>{ comment }</li> )
 				) }
 			</ol>
 		);
