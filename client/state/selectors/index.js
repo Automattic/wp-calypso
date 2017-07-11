@@ -46,6 +46,7 @@ export getJetpackSetting from './get-jetpack-setting';
 export getJetpackSettings from './get-jetpack-settings';
 export getJetpackSettingsSaveError from './get-jetpack-settings-save-error';
 export getJetpackSettingsSaveRequestStatus from './get-jetpack-settings-save-request-status';
+export getJetpackSites from './get-jetpack-sites';
 export getJetpackUserConnection from './get-jetpack-user-connection';
 export getReaderFollowsLastSyncTime from './get-reader-follows-last-sync-time';
 export getRestoreProgress from './get-restore-progress';
@@ -87,6 +88,8 @@ export getReaderRecommendedSitesPagingOffset from './get-reader-recommended-site
 export getReaderTags from './get-reader-tags';
 export getReaderTeams from './get-reader-teams';
 export getSelectedOrAllSites from './get-selected-or-all-sites';
+export getSelectedOrAllSitesJetpackCanManage from './get-selected-or-all-sites-jetpack-can-manage';
+export getSelectedOrAllSitesWithPlugins from './get-selected-or-all-sites-with-plugins';
 export getSelectedOrPrimarySiteId from './get-selected-or-primary-site-id';
 export getScheduledPublicizeShareActionTime from './get-scheduled-publicize-share-action-time';
 export hasUserAskedADirectlyQuestion from './has-user-asked-a-directly-question';
