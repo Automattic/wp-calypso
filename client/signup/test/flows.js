@@ -15,7 +15,7 @@ import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 import useMockery from 'test/helpers/use-mockery';
 import mockedFlows from './fixtures/flows';
 
-describe( 'Signup Flows Configuration', () => {
+describe.skip( 'Signup Flows Configuration', () => {
 	describe( 'getFlow', () => {
 		let flows, user;
 

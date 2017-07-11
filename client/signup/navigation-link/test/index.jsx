@@ -13,7 +13,7 @@ import { noop } from 'lodash';
 import useMockery from 'test/helpers/use-mockery';
 import EMPTY_COMPONENT from 'test/helpers/react/empty-component';
 
-describe( 'NavigationLink', () => {
+describe.skip( 'NavigationLink', () => {
 	const Gridicon = EMPTY_COMPONENT;
 	const submitSignupStep = stub();
 	const defaultProps = {

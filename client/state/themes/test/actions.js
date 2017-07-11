@@ -937,7 +937,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#tryAndCustomizeTheme', () => {
+	describe.skip( '#tryAndCustomizeTheme', () => {
 		const pageSpy = sinon.spy();
 		const isJetpackSiteSpy = ( state, siteId ) => {
 			if ( siteId === 2211667 ) {

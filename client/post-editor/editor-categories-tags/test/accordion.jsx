@@ -15,7 +15,7 @@ import { expect } from 'chai';
 import EmptyComponent from 'test/helpers/react/empty-component';
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'EditorCategoriesTagsAccordion', function() {
+describe.skip( 'EditorCategoriesTagsAccordion', function() {
 	let mount, i18n, accordion, EditorCategoriesTagsAccordion;
 
 	useMockery();

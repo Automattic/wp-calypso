@@ -9,7 +9,7 @@ import { stub } from 'sinon';
  */
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'isEligibleForFreeToPaidUpsell', () => {
+describe.skip( 'isEligibleForFreeToPaidUpsell', () => {
 	const state = 'state';
 	const moment = 'moment';
 	const siteId = 'siteId';

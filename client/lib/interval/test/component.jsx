@@ -20,12 +20,14 @@ const noop = () => null;
 const nudgeObject = ( o, v ) => () => ( o.counter += v );
 
 describe( 'Interval', function() {
+	let clock;
+
 	before( function() {
-		this.clock = sinon.useFakeTimers();
+		clock = sinon.useFakeTimers();
 	} );
 
 	after( function() {
-		this.clock.restore();
+		clock.restore();
 	} );
 
 	describe( 'Rendering and children', function() {
@@ -79,7 +81,7 @@ describe( 'Interval', function() {
 
 			assert( 1 === o.counter );
 
-			this.clock.tick( 1000 );
+			clock.tick( 1000 );
 
 			assert( 2 === o.counter );
 		} );
@@ -88,17 +90,17 @@ describe( 'Interval', function() {
 			const o = { counter: 0 };
 			const wrapper = mount( <Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }><div /></Interval> );
 
-			this.clock.tick( 1000 );
+			clock.tick( 1000 );
 			wrapper.setProps( { period: EVERY_MINUTE } );
 
-			this.clock.tick( 1000 );
+			clock.tick( 1000 );
 			assert( 3 === o.counter );
 
-			this.clock.tick( 1000 * 60 );
+			clock.tick( 1000 * 60 );
 			assert( 4 === o.counter );
 
 			wrapper.setProps( { onTick: noop } );
-			this.clock.tick( 1000 * 60 );
+			clock.tick( 1000 * 60 );
 			assert( 4 === o.counter );
 		} );
 
@@ -106,12 +108,12 @@ describe( 'Interval', function() {
 			const o = { counter: 0 };
 			mount( <div></div> );
 
-			this.clock.tick( 1000 );
+			clock.tick( 1000 );
 			assert( 0 === o.counter );
 
 			mount( <Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }><div /></Interval> );
 
-			this.clock.tick( 1000 );
+			clock.tick( 1000 );
 			assert( 2 === o.counter );
 		} );
 
@@ -119,12 +121,12 @@ describe( 'Interval', function() {
 			const o = { counter: 0 };
 			const wrapper = mount( <div><Interval onTick={ nudgeObject( o, 1 ) } period={ EVERY_SECOND }><div /></Interval></div> );
 
-			this.clock.tick( 1000 );
+			clock.tick( 1000 );
 			assert( 2 === o.counter );
 
 			wrapper.setProps( { children: null } );
 
-			this.clock.tick( 1000 );
+			clock.tick( 1000 );
 			assert( 2 === o.counter );
 		} );
 	} );

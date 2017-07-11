@@ -16,7 +16,7 @@ import { spy } from 'sinon';
 import useMockery from 'test/helpers/use-mockery';
 import paths from 'my-sites/domains/paths';
 
-describe( 'MapDomain component', () => {
+describe.skip( 'MapDomain component', () => {
 	const pageSpy = spy();
 	pageSpy.redirect = spy();
 	let MapDomain, MapDomainStep, HeaderCake;

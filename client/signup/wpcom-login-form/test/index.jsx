@@ -10,7 +10,7 @@ import { shallow } from 'enzyme';
  */
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'WpcomLoginForm', () => {
+describe.skip( 'WpcomLoginForm', () => {
 	let WpcomLoginForm, mockHostname;
 	const props = {
 		log: 'log_text',

@@ -15,9 +15,8 @@ import {
 	clearUnsavedUserSettings,
 } from 'state/user-settings/actions';
 
-describe( 'wpcom-api', () => {
+describe.skip( 'wpcom-api', () => {
 	let dispatch, settingsModule;
-
 	useSandbox( sandbox => {
 		dispatch = sandbox.spy();
 	} );

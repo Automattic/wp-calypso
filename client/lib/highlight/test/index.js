@@ -1,10 +1,10 @@
 /**
- * External dependencies
- */
-/**
  * @jest-environment jsdom
  */
 
+/**
+ * External dependencies
+ */
 var chai = require( 'chai' ),
 	expect = chai.expect;
 

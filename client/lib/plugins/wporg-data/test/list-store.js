@@ -12,7 +12,7 @@ import actionsData from './fixtures/actions';
 import actionsSpies from './mocks/actions';
 import localStorageSpies from './mocks/local-store';
 
-describe( 'WPORG Plugins Lists Store', () => {
+describe.skip( 'WPORG Plugins Lists Store', () => {
 	let Dispatcher, PluginsListsStore, pluginsList;
 	useMockery( mockery => {
 		mockery.registerMock( 'config', { isEnabled: () => true } );
@@ -62,7 +62,7 @@ describe( 'WPORG Plugins Lists Store', () => {
 		assert.isDefined( pluginsList.list );
 	} );
 
-	describe( 'short lists', () => {
+	describe.skip( 'short lists', () => {
 		it( 'should be empty if the list has not been fetched yet', () => {
 			const newPlugins = PluginsListsStore.getShortList( 'new' );
 			assert.lengthOf( newPlugins.list, 0 );
@@ -132,7 +132,7 @@ describe( 'WPORG Plugins Lists Store', () => {
 		} );
 	} );
 
-	describe( 'Full lists', () => {
+	describe.skip( 'Full lists', () => {
 		it( 'should be empty if the list has not been fetched yet', () => {
 			const newPlugins = PluginsListsStore.getFullList( 'new' );
 			assert.lengthOf( newPlugins.list, 0 );
@@ -186,7 +186,7 @@ describe( 'WPORG Plugins Lists Store', () => {
 		} );
 	} );
 
-	describe( 'Search lists', () => {
+	describe.skip( 'Search lists', () => {
 		it( 'should be empty if the search list has not been fetched yet', () => {
 			const newPlugins = PluginsListsStore.getSearchList( 'test' );
 			assert.lengthOf( newPlugins.list, 0 );

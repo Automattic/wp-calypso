@@ -1,33 +1,21 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
 
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import mockery from 'mockery';
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import EmptyComponent from 'test/helpers/react/empty-component';
-import useMockery from 'test/helpers/use-mockery';
+import PluginAction from '../plugin-action';
 
 describe( 'PluginAction', function() {
-	let mount, PluginAction;
-
-	useMockery();
-
-	before( () => {
-		mount = require( 'enzyme' ).mount;
-		mockery.registerMock( 'components/info-popover', EmptyComponent );
-
-		PluginAction = require( '../plugin-action' );
-	} );
-
 	describe( 'rendering with form toggle', function() {
 		it( 'should have plugin-action class', function() {
 			const wrapper = shallow( <PluginAction /> );

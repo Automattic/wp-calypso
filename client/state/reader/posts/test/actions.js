@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import { READER_POSTS_RECEIVE } from 'state/action-types';
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'actions', () => {
+describe.skip( 'actions', () => {
 	let actions;
 	const dispatchSpy = sinon.spy();
 	const trackingSpy = sinon.spy();

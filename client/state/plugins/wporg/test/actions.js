@@ -19,7 +19,7 @@ const testDispatch = ( test, testCallNumber ) => {
 	}
 };
 
-describe( 'WPorg Data Actions', function() {
+describe.skip( 'WPorg Data Actions', function() {
 	let WPorgActions;
 	before( function() {
 		mockery.enable( {

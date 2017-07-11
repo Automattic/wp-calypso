@@ -13,7 +13,7 @@ import { expect } from 'chai';
 
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'SingleDoc', () => {
+describe.skip( 'SingleDoc', () => {
 	let React, ReactDom, TestUtils, SingleDocClass;
 	let fetchResponse = '';
 

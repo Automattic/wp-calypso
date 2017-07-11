@@ -1,6 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'layout/guided-tours/config', () => {
+	return require( 'state/ui/guided-tours/test/fixtures/config' );
+} );
 
 /**
  * External dependencies
@@ -11,7 +14,12 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import {
+	hasAnalyticsEventFired,
+	hasUserPastedFromGoogleDocs,
+	hasUserRegisteredBefore,
+	isUserNewerThan
+} from '../contexts';
 import { EDITOR_PASTE_EVENT } from 'state/action-types';
 import {
 	SOURCE_GOOGLE_DOCS,
@@ -21,22 +29,9 @@ import {
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 
 describe( 'selectors', () => {
-	let isUserNewerThan;
-	let hasUserRegisteredBefore;
-	let hasUserPastedFromGoogleDocs;
-	let hasAnalyticsEventFired;
 	let hasUserClicked;
 
-	useMockery( mockery => {
-		mockery.registerSubstitute(
-				'layout/guided-tours/config',
-				'state/ui/guided-tours/test/fixtures/config' );
-
-		const contexts = require( '../contexts' );
-		isUserNewerThan = contexts.isUserNewerThan;
-		hasUserRegisteredBefore = contexts.hasUserRegisteredBefore;
-		hasUserPastedFromGoogleDocs = contexts.hasUserPastedFromGoogleDocs;
-		hasAnalyticsEventFired = contexts.hasAnalyticsEventFired;
+	before( () => {
 		hasUserClicked = hasAnalyticsEventFired( 'calypso_themeshowcase_theme_click' );
 	} );
 

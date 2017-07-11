@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'cancellation-effect', function() {
+describe.skip( 'cancellation-effect', function() {
 	const purchase = { domain: 'example.com' };
 	const purchases = {};
 	const productsValues = {};

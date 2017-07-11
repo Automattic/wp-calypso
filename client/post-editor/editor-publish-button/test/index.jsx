@@ -1,6 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'lib/posts/stats', () => ( {
+	recordEvent: () => {}
+} ) );
 
 /**
  * External dependencies
@@ -9,14 +12,13 @@ import { expect } from 'chai';
 import moment from 'moment';
 import React from 'react';
 import sinon from 'sinon';
-import mockery from 'mockery';
 import { shallow } from 'enzyme';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import { EditorPublishButton } from '../';
 
 /**
  * Module variables
@@ -29,17 +31,6 @@ const MOCK_SITE = {
 };
 
 describe( 'EditorPublishButton', function() {
-	let EditorPublishButton;
-
-	useMockery();
-
-	before( function() {
-		mockery.registerMock( 'lib/posts/stats', {
-			recordEvent: noop
-		} );
-		EditorPublishButton = require( '../' ).EditorPublishButton;
-	} );
-
 	describe( '#getButtonLabel()', function() {
 		it( 'should return Update if the post was originally published and is still slated to be published', function() {
 			const tree = shallow(

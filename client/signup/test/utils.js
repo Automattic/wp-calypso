@@ -23,7 +23,7 @@ const debug = debugModule( 'calypso:client:signup:controller-utils:test' );
 
 debug( 'start utils test' );
 
-describe( 'utils', function() {
+describe.skip( 'utils', function() {
 	let flows, utils;
 
 	useFilesystemMocks( __dirname );

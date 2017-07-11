@@ -9,7 +9,7 @@ import { stub } from 'sinon';
  */
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'isUserRegistrationDaysWithinRange()', () => {
+describe.skip( 'isUserRegistrationDaysWithinRange()', () => {
 	const state = 'state';
 	const registrationDate = 'registrationDate';
 	const moment = {

@@ -12,16 +12,11 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
+import AutoDirection from '..';
 import Emojify from 'components/emojify';
 
 describe( 'AutoDirection', function() {
-	let AutoDirection;
-
-	context( 'component rendering', () => {
-		before( () => {
-			AutoDirection = require( '..' );
-		} );
-
+	describe( 'component rendering', () => {
 		it( 'adds a direction to RTL text', () => {
 			const wrapper = shallow(
 				<AutoDirection><div>השנה היא 2017.</div></AutoDirection>

@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'components/plans/premium-popover', () => require( 'components/empty-component' ) );
 
 /**
  * External Dependencies
@@ -10,18 +11,9 @@ import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { identity, noop } from 'lodash';
 
-/**
- * Internal Dependencies
- */
-import useMockery from 'test/helpers/use-mockery';
-import EmptyComponent from 'test/helpers/react/empty-component';
 
 describe( 'Domain Suggestion', function() {
 	let DomainSuggestion;
-
-	useMockery( ( mockery ) => {
-		mockery.registerMock( 'components/plans/premium-popover', EmptyComponent );
-	} );
 
 	before( () => {
 		DomainSuggestion = require( 'components/domains/domain-suggestion' );

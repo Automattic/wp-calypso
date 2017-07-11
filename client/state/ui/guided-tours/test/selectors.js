@@ -1,6 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'layout/guided-tours/config', () => {
+	return require( 'state/ui/guided-tours/test/fixtures/config' );
+} );
 
 /**
  * External dependencies
@@ -11,29 +14,19 @@ import { constant, times } from 'lodash';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import {
+	findEligibleTour,
+	getGuidedTourState,
+	hasTourJustBeenVisible
+} from '../selectors';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
 describe( 'selectors', () => {
 	let clock;
-	let getGuidedTourState;
-	let findEligibleTour;
-	let hasTourJustBeenVisible;
 
 	useFakeTimers( fakeClock => {
 		clock = fakeClock;
-	} );
-
-	useMockery( mockery => {
-		mockery.registerSubstitute(
-				'layout/guided-tours/config',
-				'state/ui/guided-tours/test/fixtures/config' );
-
-		const selectors = require( '../selectors' );
-		getGuidedTourState = selectors.getGuidedTourState;
-		findEligibleTour = selectors.findEligibleTour;
-		hasTourJustBeenVisible = selectors.hasTourJustBeenVisible;
 	} );
 
 	describe( '#isConflictingWithFirstView', () => {

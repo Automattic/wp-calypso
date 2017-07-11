@@ -6,12 +6,13 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { shallow } from 'enzyme';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import fixtures from './fixtures';
 import photon from 'photon';
 import ListItemVideo from 'my-sites/media-library/list-item-video';
 
@@ -20,14 +21,7 @@ const WIDTH = 450;
 const styleUrl = url => `url(${ url })`;
 
 describe( 'MediaLibraryListItem video', function() {
-	let shallow, wrapper, fixtures;
-
-	useMockery();
-
-	before( function() {
-		shallow = require( 'enzyme' ).shallow;
-		fixtures = require( './fixtures' );
-	} );
+	let wrapper;
 
 	beforeEach( function() {
 		if ( wrapper ) {

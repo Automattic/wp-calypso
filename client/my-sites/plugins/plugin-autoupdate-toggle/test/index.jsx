@@ -19,7 +19,7 @@ import mockedActions from './mocks/actions';
 import mockedPluginAction from './mocks/plugin-action';
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'PluginAutoupdateToggle', function() {
+describe.skip( 'PluginAutoupdateToggle', function() {
 	const mockedProps = {
 		recordGoogleEvent: spy(),
 		recordTracksEvent: spy(),

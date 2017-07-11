@@ -1,11 +1,19 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'lib/posts/actions', () => ( {
+	recordEvent: () => {},
+	deleteMetadata: () => {},
+	updateMetadata: () => {}
+} ) );
+jest.mock( 'lib/posts/stats', () => ( {
+	recordEvent: () => {},
+	recordState: () => {}
+} ) );
 
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import { shallow } from 'enzyme';
 import React from 'react';
 import { expect } from 'chai';
@@ -13,7 +21,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import PublicizeConnection from '../publicize-connection';
 
 /**
  * Module variables
@@ -28,21 +36,6 @@ var CONNECTION = {
 };
 
 describe( 'PublicizeConnection', function() {
-	let PublicizeConnection;
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/posts/actions', {
-			deleteMetadata: noop,
-			updateMetadata: noop
-		} );
-		mockery.registerMock( 'lib/posts/stats', {
-			recordEvent: noop,
-			recordState: noop
-		} );
-
-		PublicizeConnection = require( '../publicize-connection' );
-	} );
-
 	describe( '#isConnectionSkipped()', function() {
 		it( 'should return true if connection is already skipped', function() {
 			var post, tree;

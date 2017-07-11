@@ -3,7 +3,7 @@
  */
 import { expect } from 'chai';
 
-describe( 'resizeImageUrl()', () => {
+describe.skip( 'resizeImageUrl()', () => {
 	const imageUrl = 'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?w=1000&h=1000&resize=foo&fit=meh';
 
 	let resizeImageUrl;

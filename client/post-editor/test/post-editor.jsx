@@ -16,7 +16,7 @@ import { noop } from 'lodash';
 import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'PostEditor', function() {
+describe.skip( 'PostEditor', function() {
 	let sandbox, TestUtils, PostEditor, PostEditStore;
 	const defaultProps = {
 		translate: string => string,

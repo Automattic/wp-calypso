@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'components/tooltip', () => require( 'components/empty-component' ) );
 
 /**
  * External dependencies
@@ -8,14 +9,14 @@
 import React from 'react';
 import { expect } from 'chai';
 import { filter, map } from 'lodash';
+import { mount } from 'enzyme';
 import { test } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import EmptyComponent from 'test/helpers/react/empty-component';
 import fixtures from './lib/fixtures';
-import useMockery from 'test/helpers/use-mockery';
+import TokenFieldWrapper from './lib/token-field-wrapper';
 
 /**
  * Module variables
@@ -37,7 +38,7 @@ const charCodes = {
 };
 
 describe( 'TokenField', function() {
-	let wrapper, tokenFieldNode, textInputNode, TokenFieldWrapper, mount;
+	let wrapper, tokenFieldNode, textInputNode;
 
 	function setText( text ) {
 		textInputNode.simulate( 'change', { target: { value: text } } );
@@ -99,12 +100,6 @@ describe( 'TokenField', function() {
 
 		return selectedSuggestions[ 0 ] || null;
 	}
-
-	useMockery( mockery => {
-		mount = require( 'enzyme' ).mount;
-		mockery.registerMock( 'components/tooltip', EmptyComponent );
-		TokenFieldWrapper = require( './lib/token-field-wrapper' );
-	} );
 
 	beforeEach( function() {
 		wrapper = mount( <TokenFieldWrapper /> );

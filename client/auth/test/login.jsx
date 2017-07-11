@@ -11,7 +11,7 @@ import { stub } from 'sinon';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'LoginTest', function() {
+describe.skip( 'LoginTest', function() {
 	let Login, loginStub, page, React, ReactDom, ReactClass, TestUtils;
 
 	useFakeDom.withContainer();

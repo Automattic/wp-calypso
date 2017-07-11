@@ -1,8 +1,23 @@
-// External dependencies
+jest.mock( 'lib/olark', () => ( {
+	updateOlarkGroupAndEligibility: () => {}
+} ) );
+
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
+import {
+	cancelPrivacyProtection,
+	clearPurchases,
+	fetchSitePurchases,
+	fetchUserPurchases,
+	removePurchase
+} from '../actions';
 import {
 	PRIVACY_PROTECTION_CANCEL,
 	PRIVACY_PROTECTION_CANCEL_COMPLETED,
@@ -14,7 +29,6 @@ import {
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASE_REMOVE_FAILED,
 } from 'state/action-types';
-import useMockery from 'test/helpers/use-mockery';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
@@ -22,25 +36,6 @@ describe( 'actions', () => {
 		userId = 1337,
 		siteId = 1234,
 		purchaseId = 31337;
-
-	let cancelPrivacyProtection,
-		clearPurchases,
-		fetchSitePurchases,
-		fetchUserPurchases,
-		removePurchase;
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/olark', {
-			updateOlarkGroupAndEligibility: () => {}
-		} );
-
-		const actions = require( '../actions' );
-
-		cancelPrivacyProtection = actions.cancelPrivacyProtection;
-		clearPurchases = actions.clearPurchases;
-		fetchSitePurchases = actions.fetchSitePurchases;
-		fetchUserPurchases = actions.fetchUserPurchases;
-		removePurchase = actions.removePurchase;
-	} );
 
 	const spy = sinon.spy();
 

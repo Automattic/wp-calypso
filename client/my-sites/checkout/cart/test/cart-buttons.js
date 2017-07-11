@@ -16,7 +16,7 @@ import { identity } from 'lodash';
 import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'cart-buttons', function() {
+describe.skip( 'cart-buttons', function() {
 	let recordStub, onKeepSearchingClickStub, CartButtons;
 
 	useSandbox( ( sandbox ) => {

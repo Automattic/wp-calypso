@@ -17,7 +17,7 @@ import TestUtils from 'react-addons-test-utils' ;
  */
 import useMockery from 'test/helpers/use-mockery' ;
 
-describe( '#signupStep User', () => {
+describe.skip( '#signupStep User', () => {
 	let User, testElement, rendered, EMPTY_COMPONENT;
 
 	useMockery( ( mockery ) => {

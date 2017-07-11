@@ -33,7 +33,7 @@ const EMPTY_COMPONENT = React.createClass( {
 	}
 } );
 
-describe( 'EditorMediaModal', function() {
+describe.skip( 'EditorMediaModal', function() {
 	let spy, translate, deleteMedia, accept, EditorMediaModal, setLibrarySelectedItems, onClose;
 
 	translate = require( 'i18n-calypso' ).translate;

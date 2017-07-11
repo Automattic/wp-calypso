@@ -224,7 +224,7 @@
     "pretest": "npm run -s install-if-deps-outdated",
     "reformat-files": "node bin/reformat-files.js",
     "test": "run-s -s test-client test-server test-test",
-    "test-client": "jest --projects test/client",
+    "test-client": "jest -c=test/client",
     "test-client:watch": "npm run -s test-client -- --watch",
     "test-integration": "cross-env NODE_ENV=test NODE_PATH=test:integration:client:client/extensions TEST_ROOT=integration test/runner.js",
     "test-integration:watch": "nodemon -e js,jsx --exec npm run -s test-integration",

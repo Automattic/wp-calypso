@@ -14,7 +14,7 @@ import { expect } from 'chai';
  */
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'reader utils', () => {
+describe.skip( 'reader utils', () => {
 	const pageSpy = sinon.spy();
 
 	beforeEach( () => {

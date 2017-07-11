@@ -25,7 +25,7 @@ const wpcomMock = {
 	bind: () => wpcomMock,
 };
 
-describe( 'Domain Details Form', () => {
+describe.skip( 'Domain Details Form', () => {
 	let DomainDetailsForm, DomainDetailsFormContainer;
 
 	useMockery( ( mockery ) => {

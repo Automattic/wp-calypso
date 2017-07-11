@@ -49,12 +49,14 @@ describe( 'progress-store', function() {
 	} );
 
 	describe( 'timestamps', function() {
+		let clock;
+
 		beforeEach( () => {
-			this.clock = sinon.useFakeTimers( 12345 );
+			clock = sinon.useFakeTimers( 12345 );
 		} );
 
 		afterEach( () => {
-			this.clock.restore();
+			clock.restore();
 		} );
 
 		it( 'should be updated at each step', function() {

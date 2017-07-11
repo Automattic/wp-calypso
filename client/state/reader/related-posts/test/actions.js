@@ -17,7 +17,7 @@ import {
 	READER_RELATED_POSTS_RECEIVE,
 } from 'state/action-types';
 
-describe( 'actions', () => {
+describe.skip( 'actions', () => {
 	let requestRelatedPosts;
 	useMockery( mockery => {
 		mockery.registerMock( 'state/reader/posts/actions', {

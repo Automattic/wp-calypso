@@ -42,7 +42,7 @@ const DUMMY_SITE_ID = 1,
 	},
 	DUMMY_QUERY = { mime_type: 'audio/' };
 
-describe( 'MediaActions', function() {
+describe.skip( 'MediaActions', function() {
 	let mediaGet, mediaList, mediaAdd, mediaAddUrls, mediaUpdate, mediaDelete, mediaListExternal,
 		MediaActions, sandbox, Dispatcher, PostEditStore, MediaListStore,
 		mediaAddExternal;

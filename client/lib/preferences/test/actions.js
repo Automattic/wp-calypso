@@ -18,7 +18,7 @@ import useNock from 'test/helpers/use-nock';
  */
 const DUMMY_PERSISTED_PREFERENCES = { saved: true };
 
-describe( 'PreferencesActions', function() {
+describe.skip( 'PreferencesActions', function() {
 	let sandbox, PreferencesActions, getSettings, postSettings;
 	const store = { get: noop, set: noop };
 	const Dispatcher = { handleViewAction: noop, handleServerAction: noop };
@@ -64,7 +64,7 @@ describe( 'PreferencesActions', function() {
 		postSettings = sandbox.stub().callsArgAsync( 1 );
 	} );
 
-	describe( '#fetch()', function() {
+	describe.skip( '#fetch()', function() {
 		it( 'should retrieve from localStorage and trigger a request to the REST API', function( done ) {
 			store.get.restore();
 			sandbox.stub( store, 'get' ).returns( DUMMY_PERSISTED_PREFERENCES );
@@ -118,7 +118,7 @@ describe( 'PreferencesActions', function() {
 		} );
 	} );
 
-	describe( '#set()', function() {
+	describe.skip( '#set()', function() {
 		it( 'should save to localStorage and trigger a request to the REST API', function( done ) {
 			PreferencesActions.set( 'one', 1 );
 
@@ -179,7 +179,7 @@ describe( 'PreferencesActions', function() {
 		} );
 	} );
 
-	describe( '#remove()', function() {
+	describe.skip( '#remove()', function() {
 		it( 'should remove from localStorage and trigger a request to the REST API', function( done ) {
 			PreferencesActions.set( 'one', 1 );
 			PreferencesActions.remove( 'one' );

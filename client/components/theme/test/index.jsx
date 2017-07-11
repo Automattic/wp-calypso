@@ -14,7 +14,7 @@ import { identity } from 'lodash';
  */
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'Theme', function() {
+describe.skip( 'Theme', function() {
 	let ReactDom, React, TestUtils, Theme, togglePopoverStub;
 
 	useMockery( mockery => {

@@ -1,3 +1,15 @@
+jest.mock( 'lib/abtest', () => ( {
+	abtest: () => ''
+} ) );
+jest.mock( 'lib/signup/step-actions', () => ( {} ) );
+jest.mock( 'lib/user', () => () => {
+	return {
+		get() {
+			return {};
+		}
+	};
+} );
+
 /**
  * External dependencies
  */
@@ -6,21 +18,10 @@ import { intersection, isEmpty, keys } from 'lodash';
 /**
  * Internal dependencies
  */
-import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
-import useMockery from 'test/helpers/use-mockery';
+import flows from '../flows';
+import steps from '../steps';
 
 describe( 'index', () => {
-	let flows, steps;
-
-	useFilesystemMocks( __dirname );
-	useMockery( ( mockery ) => {
-		mockery.registerMock( 'lib/abtest', {
-			abtest: () => ''
-		} );
-		flows = require( '../flows' );
-		steps = require( '../steps' );
-	} );
-
 	it( 'should not have overlapping step/flow names', () => {
 		const overlappingNames = intersection( keys( steps ), keys( flows.getFlows() ) );
 

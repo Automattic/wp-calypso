@@ -27,7 +27,7 @@ const MOCK_SITE = {
 	options: {}
 };
 
-describe( 'EditorGroundControl', function() {
+describe.skip( 'EditorGroundControl', function() {
 	let EditorGroundControl;
 
 	useMockery();

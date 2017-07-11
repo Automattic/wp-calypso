@@ -1,12 +1,17 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () => require( './mocks/plugin-action' ) );
+jest.mock( 'lib/plugins/actions', () => require( './mocks/actions' ) );
+jest.mock(
+	'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button',
+	() => require( 'components/empty-component' )
+);
 
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import mockery from 'mockery';
 import { mount } from 'enzyme';
 import React from 'react';
 import { spy } from 'sinon';
@@ -14,11 +19,9 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import EmptyComponent from 'test/helpers/react/empty-component';
 import fixtures from './fixtures';
 import mockedActions from './mocks/actions';
-import mockedPluginAction from './mocks/plugin-action';
-import useMockery from 'test/helpers/use-mockery';
+import { PluginActivateToggle } from 'my-sites/plugins/plugin-activate-toggle';
 
 describe( 'PluginActivateToggle', function() {
 	const analyticsMock = {
@@ -26,17 +29,6 @@ describe( 'PluginActivateToggle', function() {
 		recordTracksEvent: spy(),
 		translate: spy()
 	};
-	let PluginActivateToggle;
-
-	useMockery();
-
-	before( function() {
-		mockery.registerMock( 'my-sites/plugins/plugin-action/plugin-action', mockedPluginAction );
-		mockery.registerMock( 'lib/plugins/actions', mockedActions );
-		mockery.registerMock( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button', EmptyComponent );
-
-		PluginActivateToggle = require( 'my-sites/plugins/plugin-activate-toggle' ).PluginActivateToggle;
-	} );
 
 	afterEach( function() {
 		mockedActions.togglePluginActivation.reset();

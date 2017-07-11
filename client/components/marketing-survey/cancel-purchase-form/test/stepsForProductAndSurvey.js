@@ -16,7 +16,7 @@ const DEFAULT_STEPS_WITH_CONCIERGE = [ steps.INITIAL_STEP, steps.CONCIERGE_STEP,
 const DEFAULT_STEPS_WITH_UPGRADE_AT_STEP = [ steps.INITIAL_STEP, steps.UPGRADE_AT_STEP, steps.FINAL_STEP ];
 const DEFAULT_STEPS_WITH_BUSINESS_AT_STEP = [ steps.INITIAL_STEP, steps.BUSINESS_AT_STEP, steps.FINAL_STEP ];
 
-describe( 'stepsForProductAndSurvey', function() {
+describe.skip( 'stepsForProductAndSurvey', function() {
 	const abtests = {};
 
 	let stepsForProductAndSurvey;

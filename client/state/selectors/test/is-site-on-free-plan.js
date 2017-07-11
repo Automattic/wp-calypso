@@ -14,7 +14,7 @@ import {
 } from 'lib/plans/constants';
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'isSiteOnFreePlan', () => {
+describe.skip( 'isSiteOnFreePlan', () => {
 	const state = deepFreeze( {} );
 	let getCurrentPlan;
 	let isSiteOnFreePlan;

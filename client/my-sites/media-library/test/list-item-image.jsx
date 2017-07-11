@@ -6,12 +6,13 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { shallow } from 'enzyme';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import fixtures from './fixtures';
 import photon from 'photon';
 import resize from 'lib/resize-image-url';
 import ListItemImage from 'my-sites/media-library/list-item-image';
@@ -19,14 +20,7 @@ import ListItemImage from 'my-sites/media-library/list-item-image';
 const WIDTH = 450;
 
 describe( 'MediaLibraryListItem image', function() {
-	let shallow, wrapper, fixtures;
-
-	useMockery();
-
-	before( function() {
-		shallow = require( 'enzyme' ).shallow;
-		fixtures = require( './fixtures' );
-	} );
+	let wrapper;
 
 	beforeEach( function() {
 		if ( wrapper ) {

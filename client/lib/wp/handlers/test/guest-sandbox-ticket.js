@@ -25,7 +25,7 @@ const store = {
 	}
 };
 
-describe( 'guest-sandbox-ticket', () => {
+describe.skip( 'guest-sandbox-ticket', () => {
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'store', store );
 
@@ -40,7 +40,7 @@ describe( 'guest-sandbox-ticket', () => {
 		storeData = {};
 	} );
 
-	describe( '#deleteOldTicket', () => {
+	describe.skip( '#deleteOldTicket', () => {
 		it( 'should remove tickets older than two hours', () => {
 			store.set( GUEST_TICKET_LOCALFORAGE_KEY, {
 				value: 'foo',
@@ -66,7 +66,7 @@ describe( 'guest-sandbox-ticket', () => {
 		} );
 	} );
 
-	describe( '#injectGuestSandboxTicketHandler', () => {
+	describe.skip( '#injectGuestSandboxTicketHandler', () => {
 		it( 'should update `wpcom` to add the ticket param if present', ( done ) => {
 			const ticket = {
 				value: 'foo',

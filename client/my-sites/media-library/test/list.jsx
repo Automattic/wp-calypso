@@ -21,7 +21,7 @@ import useMockery from 'test/helpers/use-mockery';
  */
 const DUMMY_SITE_ID = 2916284;
 
-describe( 'MediaLibraryList item selection', function() {
+describe.skip( 'MediaLibraryList item selection', function() {
 	let mount, MediaLibrarySelectedData, MediaLibrarySelectedStore,
 		MediaActions, fixtures, Dispatcher, MediaList, wrapper, mediaList;
 

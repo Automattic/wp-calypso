@@ -21,7 +21,7 @@ import { THEMES_REQUEST_FAILURE } from 'state/action-types';
 import { receiveThemes } from 'state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 
-describe( 'logged-out', () => {
+describe.skip( 'logged-out', () => {
 	context( 'when calling renderToString()', function() {
 		useMockery( mockery => {
 			mockery.registerMock( 'lib/analytics', noop );

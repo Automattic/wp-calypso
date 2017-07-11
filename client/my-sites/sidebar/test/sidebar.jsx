@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import useMockery from 'test/helpers/use-mockery';
 import EmptyComponent from 'test/helpers/react/empty-component';
 
-describe( 'MySitesSidebar', () => {
+describe.skip( 'MySitesSidebar', () => {
 	let MySitesSidebar;
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'lib/abtest', {

@@ -10,7 +10,7 @@ import sinon from 'sinon';
  */
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'index', () => {
+describe.skip( 'index', () => {
 	let getCurrentUserLocaleMock, addLocaleQueryParam,
 		injectLocalization, bindState, setLocale, getLocale;
 

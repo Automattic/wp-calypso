@@ -17,7 +17,7 @@ import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'EditGravatar', function() {
+describe.skip( 'EditGravatar', function() {
 	let EditGravatar,
 		FilePicker,
 		Gravatar,
