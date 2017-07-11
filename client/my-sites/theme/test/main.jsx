@@ -40,7 +40,9 @@ describe( 'main', function() {
 			} );
 
 			// longer timeout for compilation of main.jsx
-			this.timeout( 10000 );
+			if ( this.timeout ) {
+				this.timeout( 10000 );
+			}
 			this.ThemeSheetComponent = require( '../main' );
 
 			this.themeData = {
