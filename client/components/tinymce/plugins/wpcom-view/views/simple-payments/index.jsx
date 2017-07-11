@@ -32,7 +32,11 @@ class SimplePaymentsView extends Component {
 
 		const { title, description, price, currency } = product;
 
+		// TODO: add from product.
 		const imageUrl = 'https://cldup.com/nKM0_KspYE.png';
+
+		// TODO: make proper icon and store on some proper place.
+		const paypalButtonImageUrl = 'https://cldup.com/DoIAwrACBs.png';
 
 		return (
 			<div className="wpview-content wpview-type-simple-payments">
@@ -66,8 +70,11 @@ class SimplePaymentsView extends Component {
 									readOnly
 								/>
 							</div>
-							<div className="wpview-type-simple-payments__pay-paypal-button">
-								Pay with PayPal
+							<div className="wpview-type-simple-payments__pay-paypal-button-wrapper">
+								<img
+									className="wpview-type-simple-payments__pay-paypal-button"
+									src={ paypalButtonImageUrl }
+								/>
 							</div>
 						</div>
 					</div>

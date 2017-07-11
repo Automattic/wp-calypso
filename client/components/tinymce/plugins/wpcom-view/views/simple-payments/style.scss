@@ -27,8 +27,12 @@
 	width: 70px;
 }
 
-.wpview-type-simple-payments__pay-paypal-button {
+.wpview-type-simple-payments__pay-paypal-button-wrapper {
 	margin-left: 10px;
+}
+
+.wpview-type-simple-payments__pay-paypal-button {
+	width: 150px;
 }
 
 .wpview-type-simple-payments__image-figure {
