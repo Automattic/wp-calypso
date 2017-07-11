@@ -96,6 +96,7 @@ export default class EditorSidebar extends Component {
 	renderFeedbackSidebar() {
 		return (
 			<FeedbackView
+				close={ this.closeFeedbackPane }
 				sharedLinks={ [
 					{
 						label: 'email1@share.test',

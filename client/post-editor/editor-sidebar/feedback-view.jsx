@@ -17,6 +17,7 @@ import SidebarFooter from 'layout/sidebar/footer';
 class FeedbackView extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
+		close: PropTypes.func,
 		sharedLinks: PropTypes.array
 	}
 
@@ -44,7 +45,7 @@ class FeedbackView extends PureComponent {
 	render() {
 		return (
 			<div className="editor-sidebar__view">
-				<FeedbackSidebarHeader closeFeedback={ this.closeFeedbackPane } />
+				<FeedbackSidebarHeader closeFeedback={ this.props.close } />
 				{ this.isAllFeedbackClosed() ? this.renderRequestForm() : null }
 				{ this.haveShares() ? this.renderFeedbackList() : null }
 				<SidebarFooter />
