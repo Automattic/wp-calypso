@@ -36,6 +36,18 @@ class IcannVerificationCard extends React.Component {
 		emailSent: false,
 	};
 
+	componentWillUnmount() {
+		if ( this.timer ) {
+			clearTimeout( this.timer );
+			this.timer = null;
+		}
+	}
+
+	revertToWaitingState = () => {
+		this.timer = null;
+		this.setState( { emailSent: false } );
+	};
+
 	handleSubmit = ( event ) => {
 		event.preventDefault();
 
@@ -45,6 +57,7 @@ class IcannVerificationCard extends React.Component {
 			if ( error ) {
 				this.props.errorNotice( error.message );
 			} else {
+				this.timer = setTimeout( this.revertToWaitingState, 5000 );
 				this.setState( { emailSent: true } );
 			}
 
