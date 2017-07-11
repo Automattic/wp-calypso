@@ -44,7 +44,7 @@ be requested.
 ### `productId`
 
 <table>
-	<tr><th>Type</th><td>Boolean</td></tr>
+	<tr><th>Type</th><td>Number</td></tr>
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 

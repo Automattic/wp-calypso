@@ -30,7 +30,7 @@ class QuerySimplePayments extends Component {
 			return;
 		}
 
-		if ( props.allProducts ) {
+		if ( props.allProducts && ! props.productId ) {
 			props.requestProducts( siteId );
 		}
 
@@ -46,13 +46,15 @@ class QuerySimplePayments extends Component {
 
 QuerySimplePayments.propTypes = {
 	allProducts: PropTypes.bool,
+	productId: PropTypes.number,
 	siteId: PropTypes.number.isRequired,
 	requestProduct: PropTypes.func,
 	requestProducts: PropTypes.func,
 };
 
 QuerySimplePayments.defaultProps = {
-	allProducts: false,
+	allProducts: true,
+	productId: null,
 	requestProduct: () => {},
 	requestProducts: () => {},
 };
