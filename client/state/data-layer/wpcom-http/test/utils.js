@@ -59,6 +59,9 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			const failure = { type: 'REFILL', meta: { dataLayer: { error } } };
 			const progress = { type: 'REFILL', meta: { dataLayer: { progress: progressInfo } } };
 			const both = { type: 'REFILL', meta: { dataLayer: { data, error } } };
+			const invalid = { type: 'REFILL', meta: { dataLayer: { data: { ...data, success: false } } } };
+			const valid = { type: 'REFILL', meta: { dataLayer: { data: { ...data, success: true } } } };
+			const validator = res => res && res.success;
 
 			let initiator;
 			let onSuccess;
@@ -111,6 +114,42 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				expect( initiator ).to.not.have.been.called;
 				expect( onSuccess ).to.not.have.been.called;
 				expect( onFailure ).to.have.been.calledWith( store, both, next, error );
+				expect( onProgress ).to.not.have.been.called;
+			} );
+
+			it( 'should call onSuccess if a validator is not provided', () => {
+				dispatcher( store, valid, next );
+				dispatcher( store, invalid, next );
+
+				expect( initiator ).to.not.have.been.called;
+				expect( onSuccess ).to.have.been.calledWith( store, valid, next, valid.meta.dataLayer.data );
+				expect( onSuccess ).to.have.been.calledWith( store, invalid, next, invalid.meta.dataLayer.data );
+				expect( onSuccess ).calledTwice;
+				expect( onFailure ).to.not.have.been.called;
+				expect( onProgress ).to.not.have.been.called;
+			} );
+
+			it( 'should call onSuccess if provided validator succeeds', () => {
+				dispatcher = dispatchRequest( initiator, onSuccess, onFailure, onProgress, {
+					validator
+				} );
+				dispatcher( store, valid, next );
+
+				expect( initiator ).to.not.have.been.called;
+				expect( onSuccess ).to.have.been.calledWith( store, valid, next, valid.meta.dataLayer.data );
+				expect( onFailure ).to.not.have.been.called;
+				expect( onProgress ).to.not.have.been.called;
+			} );
+
+			it( 'should call onFailure if provided validator fails', () => {
+				dispatcher = dispatchRequest( initiator, onSuccess, onFailure, onProgress, {
+					validator
+				} );
+				dispatcher( store, invalid, next );
+
+				expect( initiator ).to.not.have.been.called;
+				expect( onSuccess ).to.not.have.been.called;
+				expect( onFailure ).to.have.been.calledWith( store, invalid, next, invalid.meta.dataLayer.data );
 				expect( onProgress ).to.not.have.been.called;
 			} );
 
