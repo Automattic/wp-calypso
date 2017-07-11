@@ -20,7 +20,7 @@ import SiteResults from './site-results';
 import PostResults from './post-results';
 import ReaderMain from 'components/reader-main';
 import { addQueryArgs } from 'lib/url';
-import SearchStreamHeader, { POSTS } from './search-stream-header';
+import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
 import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
 import withDimensions from 'lib/with-dimensions';
 
@@ -65,7 +65,7 @@ class SearchStream extends React.Component {
 	};
 
 	state = {
-		selected: POSTS,
+		selected: SEARCH_TYPES.POSTS,
 		title: this.getTitle(),
 	};
 
@@ -135,7 +135,7 @@ class SearchStream extends React.Component {
 		} );
 
 		const singleColumnResultsClasses = classnames( 'search-stream__single-column-results', {
-			'is-post-results': searchType === POSTS && query,
+			'is-post-results': searchType === SEARCH_TYPES.POSTS && query,
 		} );
 
 		return (
@@ -191,7 +191,8 @@ class SearchStream extends React.Component {
 					</div> }
 				{ ! wideDisplay &&
 					<div className={ singleColumnResultsClasses }>
-						{ ( ( searchType === POSTS || ! query ) && <PostResults { ...this.props } /> ) ||
+						{ ( ( searchType === SEARCH_TYPES.POSTS || ! query ) &&
+							<PostResults { ...this.props } /> ) ||
 							<SiteResults
 								query={ query }
 								sort={ pickSort( sortOrder ) }
