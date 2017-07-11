@@ -1,0 +1,11 @@
+{
+	"modulePaths": [
+		"<rootDir>/test/",
+		"<rootDir>/client/"
+	],
+	"rootDir": "./../../",
+	"testEnvironment": "node",
+	"testMatch": [ "**/client/**/test/*.js?(x)" ],
+	"setupTestFrameworkScriptFile": "<rootDir>/test/jest/setup-test-framework.js",
+	"verbose": true
+}
