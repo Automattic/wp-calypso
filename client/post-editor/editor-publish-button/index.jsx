@@ -92,13 +92,20 @@ export class EditorPublishButton extends Component {
 					return this.props.translate( 'Schedule…',
 						{ comment: 'Button label on the editor sidebar - a confirmation step will follow' } );
 				}
+
 				return this.props.translate( 'Schedule' );
 			case 'publish':
-				if ( this.props.isConfirmationSidebarEnabled ) {
-					return this.props.translate( 'Publish…',
-						{ context: 'Button label on the editor sidebar - a confirmation step will follow' } );
+				if ( ! this.props.isConfirmationSidebarEnabled ) {
+					return this.props.translate( 'Publish' );
 				}
-				return this.props.translate( 'Publish' );
+
+				if ( this.props.isPublishing ) {
+					return this.props.translate( 'Publishing…',
+						{ comment: 'Button label on the editor sidebar while publishing is in progress' } );
+				}
+
+				return this.props.translate( 'Publish…',
+					{ comment: 'Button label on the editor sidebar - a confirmation step will follow' } );
 			case 'requestReview':
 				return this.props.translate( 'Submit for Review' );
 		}
