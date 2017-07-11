@@ -13,14 +13,14 @@ import { errorNotice, removeNotice, successNotice } from 'state/notices/actions'
 import {
 	announceFailure,
 	announceSuccess,
-	fetchExtensionError,
+	fetchExtensionSettingsError,
 	fetchExtensionSettings,
 	saveSettings,
 	updateExtensionSettings,
 } from '../';
 import {
-	fetchError,
 	fetchSettings,
+	fetchSettingsError,
 	saveError,
 	saveSuccess,
 	updateSettings,
@@ -96,6 +96,11 @@ describe( '#updateExtensionSettings', () => {
 				hideExpiredContent: undefined
 			},
 			method: { applicationMethod: undefined },
+			pages: {
+				dashboardPage: undefined,
+				listingsPage: undefined,
+				submitFormPage: undefined,
+			},
 			types: {
 				enableTypes: undefined,
 				multiJobType: undefined
@@ -104,15 +109,15 @@ describe( '#updateExtensionSettings', () => {
 	} );
 } );
 
-describe( '#fetchExtensionError', () => {
-	it( 'should dispatch `fetchError`', () => {
+describe( '#fetchExtensionSettingsError', () => {
+	it( 'should dispatch `fetchSettingsError`', () => {
 		const action = fetchSettings( 12345678 );
 		const dispatch = sinon.spy();
 
-		fetchExtensionError( { dispatch }, action );
+		fetchExtensionSettingsError( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( fetchError( 12345678 ) );
+		expect( dispatch ).to.have.been.calledWith( fetchSettingsError( 12345678 ) );
 	} );
 } );
 

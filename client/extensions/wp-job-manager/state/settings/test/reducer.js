@@ -8,8 +8,8 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	WP_JOB_MANAGER_FETCH_ERROR,
 	WP_JOB_MANAGER_FETCH_SETTINGS,
+	WP_JOB_MANAGER_FETCH_SETTINGS_ERROR,
 	WP_JOB_MANAGER_SAVE_ERROR,
 	WP_JOB_MANAGER_SAVE_SETTINGS,
 	WP_JOB_MANAGER_SAVE_SUCCESS,
@@ -77,7 +77,7 @@ describe( 'reducer', () => {
 
 		it( 'should set state to false if settings could not be fetched', () => {
 			const state = fetching( previousState, {
-				type: WP_JOB_MANAGER_FETCH_ERROR,
+				type: WP_JOB_MANAGER_FETCH_SETTINGS_ERROR,
 				siteId: primarySiteId,
 			} );
 

@@ -4,8 +4,8 @@
 import { combineReducers, createReducer } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
-	WP_JOB_MANAGER_FETCH_ERROR,
 	WP_JOB_MANAGER_FETCH_SETTINGS,
+	WP_JOB_MANAGER_FETCH_SETTINGS_ERROR,
 	WP_JOB_MANAGER_SAVE_ERROR,
 	WP_JOB_MANAGER_SAVE_SETTINGS,
 	WP_JOB_MANAGER_SAVE_SUCCESS,
@@ -23,7 +23,7 @@ import {
 export const fetching = createReducer( {}, {
 	[ WP_JOB_MANAGER_FETCH_SETTINGS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
 	[ WP_JOB_MANAGER_UPDATE_SETTINGS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-	[ WP_JOB_MANAGER_FETCH_ERROR ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	[ WP_JOB_MANAGER_FETCH_SETTINGS_ERROR ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
 } );
 
 /**
