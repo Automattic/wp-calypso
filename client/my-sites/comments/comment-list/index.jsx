@@ -35,8 +35,8 @@ export class CommentList extends Component {
 		likeComment: PropTypes.func, // real action
 		setBulkStatus: PropTypes.func,
 		setCommentLike: PropTypes.func, // CommentFaker
-		setCommentsPage: PropTypes.func, // CommentFaker
-		setCommentStatus: PropTypes.func,
+		setCommentsPage: PropTypes.func,
+		setCommentStatus: PropTypes.func, // CommentFaker
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 		translate: PropTypes.func,
