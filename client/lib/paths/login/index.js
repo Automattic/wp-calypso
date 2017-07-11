@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { addQueryArgs } from 'lib/url';
-import { addLocaleToPath } from 'lib/i18n-utils';
+import { addLocaleToPath, addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import config, { isEnabled } from 'config';
 
 export const login = ( { isNative, locale, redirectTo, twoFactorAuthType } = {} ) => {
@@ -20,7 +20,7 @@ export const login = ( { isNative, locale, redirectTo, twoFactorAuthType } = {} 
 		if ( isNative ) {
 			url = addLocaleToPath( url, locale );
 		} else {
-			url = url.replace( 'https://wordpress.com', 'https://' + locale + '.wordpress.com' );
+			url = addLocaleToWpcomUrl( url, locale );
 		}
 	}
 

@@ -10,6 +10,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { addQueryArgs } from 'lib/url';
+import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'gridicons';
@@ -56,6 +57,20 @@ export class LoginLinks extends React.Component {
 	recordResetPasswordLinkClick = () => {
 		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
 	};
+
+	renderBackToWpcomLink() {
+		return (
+			<a
+				href={ addLocaleToWpcomUrl( 'https://wordpress.com', this.props.locale ) }
+				key="return-to-wpcom-link"
+				onClick={ this.recordBackToWpcomLinkClick }
+				rel="external"
+			>
+				<Gridicon icon="arrow-left" size={ 18 } />
+				{ this.props.translate( 'Back to WordPress.com' ) }
+			</a>
+		);
+	}
 
 	renderHelpLink() {
 		if ( ! this.props.twoFactorAuthType ) {
@@ -125,16 +140,7 @@ export class LoginLinks extends React.Component {
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
-
-				<a
-					href="https://wordpress.com"
-					key="return-to-wpcom-link"
-					onClick={ this.recordBackToWpcomLinkClick }
-					rel="external"
-				>
-					<Gridicon icon="arrow-left" size={ 18 } />
-					{ this.props.translate( 'Back to WordPress.com' ) }
-				</a>
+				{ this.renderBackToWpcomLink() }
 			</div>
 		);
 	}
