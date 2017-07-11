@@ -10,6 +10,17 @@ import { connect } from 'react-redux';
 import { requestProduct, requestProducts } from 'state/simple-payments/product-list/actions';
 
 class QuerySimplePayments extends Component {
+	static propTypes = {
+		productId: PropTypes.number,
+		siteId: PropTypes.number.isRequired,
+		requestProduct: PropTypes.func,
+		requestProducts: PropTypes.func,
+	};
+
+	static defaultProps = {
+		productId: null,
+	};
+
 	componentWillMount() {
 		this.request( this.props );
 	}
@@ -24,39 +35,24 @@ class QuerySimplePayments extends Component {
 	}
 
 	request( props ) {
-		const { siteId } = props;
+		const { siteId, productId } = props;
 
-		if ( ! props.siteId ) {
+		if ( ! siteId ) {
 			return;
 		}
 
-		if ( props.allProducts && ! props.productId ) {
-			props.requestProducts( siteId );
+		if ( productId ) {
+			props.requestProduct( siteId, productId );
+
+			return;
 		}
 
-		if ( props.productId ) {
-			props.requestProduct( siteId, props.productId );
-		}
+		props.requestProducts( siteId );
 	}
 
 	render() {
 		return null;
 	}
 }
-
-QuerySimplePayments.propTypes = {
-	allProducts: PropTypes.bool,
-	productId: PropTypes.number,
-	siteId: PropTypes.number.isRequired,
-	requestProduct: PropTypes.func,
-	requestProducts: PropTypes.func,
-};
-
-QuerySimplePayments.defaultProps = {
-	allProducts: true,
-	productId: null,
-	requestProduct: () => {},
-	requestProducts: () => {},
-};
 
 export default connect( null, { requestProduct, requestProducts } )( QuerySimplePayments );
