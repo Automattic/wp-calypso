@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -10,63 +11,60 @@ import EmptyContent from 'components/empty-content';
 import UploadButton from './upload-button';
 import { userCan } from 'lib/site/utils';
 
-export default React.createClass( {
-	displayName: 'MediaLibraryListNoContent',
-
-	propTypes: {
+class MediaLibraryListNoContent extends Component {
+	static propTypes = {
 		site: React.PropTypes.object,
 		filter: React.PropTypes.string,
 		source: React.PropTypes.string,
-	},
+	};
 
 	getLabel() {
-		switch ( this.props.filter ) {
+		const {
+			filter,
+			translate,
+		} = this.props;
+
+		switch ( filter ) {
 			case 'this-post':
-				return this.translate( 'There are no media uploaded to this post.', {
-					textOnly: true,
+				return translate( 'There are no media uploaded to this post.', {
 					context: 'Media no results'
 				} );
 
 			case 'images':
-				return this.translate( 'You don\'t have any images.', {
-					textOnly: true,
+				return translate( 'You don\'t have any images.', {
 					context: 'Media no results'
 				} );
 
 			case 'videos':
-				return this.translate( 'You don\'t have any videos.', {
-					textOnly: true,
+				return translate( 'You don\'t have any videos.', {
 					context: 'Media no results'
 				} );
 
 			case 'audio':
-				return this.translate( 'You don\'t have any audio files.', {
-					textOnly: true,
+				return translate( 'You don\'t have any audio files.', {
 					context: 'Media no results'
 				} );
 
 			case 'documents':
-				return this.translate( 'You don\'t have any documents.', {
-					textOnly: true,
+				return translate( 'You don\'t have any documents.', {
 					context: 'Media no results'
 				} );
 
 			default:
-				return this.translate( 'You don\'t have any media.', {
-					textOnly: true,
+				return translate( 'You don\'t have any media.', {
 					context: 'Media no results'
 				} );
 		}
-	},
+	}
 
 	render() {
 		let line = '', action = '';
 
 		if ( userCan( 'upload_files', this.props.site ) && ! this.props.source ) {
-			line = this.translate( 'Would you like to upload something?' );
+			line = this.props.translate( 'Would you like to upload something?' );
 			action = (
 				<UploadButton className="button is-primary" site={ this.props.site }>
-					{ this.translate( 'Upload Media' ) }
+					{ this.props.translate( 'Upload Media' ) }
 				</UploadButton>
 			);
 		}
@@ -81,4 +79,6 @@ export default React.createClass( {
 			/>
 		);
 	}
-} );
+}
+
+export default localize( MediaLibraryListNoContent );
