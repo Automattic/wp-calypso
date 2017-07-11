@@ -21,7 +21,6 @@ import PostResults from './post-results';
 import ReaderMain from 'components/reader-main';
 import { addQueryArgs } from 'lib/url';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
-import withWidth from 'lib/with-width';
 import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
 import withDimensions from 'lib/with-dimensions';
 

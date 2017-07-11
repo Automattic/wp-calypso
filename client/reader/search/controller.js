@@ -18,7 +18,7 @@ import {
 } from 'reader/controller-helper';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
-import { SEARCH_TYPES } from './search-stream-header';
+import { SEARCH_TYPES } from 'reader/search-stream/search-stream-header';
 
 const analyticsPageTitle = 'Reader';
 
