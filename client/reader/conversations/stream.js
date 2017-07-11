@@ -3,6 +3,19 @@
  */
 import React from 'react';
 
-export default function() {
-	return <h1>Conversations</h1>;
+/**
+ * Internal Dependencies
+ */
+import Stream from 'reader/stream';
+
+export default function( props ) {
+	return (
+		<Stream
+			postsStore={ props.store }
+			key="conversations"
+			shouldCombineCards={ false }
+			className="conversations__stream"
+			followSource="conversations"
+		/>
+	);
 }

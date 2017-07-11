@@ -54,6 +54,27 @@ function buildNamedKeyMaker( property ) {
 	};
 }
 
+const conversationsKeyMaker = ( function() {
+	const baseMaker = buildNamedKeyMaker( 'last_comment_date_gmt' );
+	return function keyMaker( post ) {
+		const key = baseMaker( post );
+		key.comments = post.comments;
+		return key;
+	};
+} )();
+
+function conversationsPager( params ) {
+	delete params.meta;
+	delete params.orderBy;
+	if ( params.before ) {
+		delete params.before;
+	}
+	if ( params.after ) {
+		delete params.after;
+	}
+	params.page_handle = this.lastPageHandle;
+}
+
 function addMetaToNextPageFetch( params ) {
 	params.meta = 'post,discover_original_post';
 }
@@ -70,6 +91,11 @@ function limitSiteParamsForLikes( params ) {
 function limitSiteParamsForTags( params ) {
 	limitSiteParams( params );
 	params.fields += ',tagged_on';
+}
+
+function limitSiteParamsForConversations( params ) {
+	limitSiteParams( params );
+	params.fields += ',last_comment_date_gmt';
 }
 
 function trainTracksProxyForStream( stream, callback ) {
@@ -290,6 +316,15 @@ export default function feedStoreFactory( storeId ) {
 			keyMaker: feedKeyMaker,
 			onNextPageFetch: addMetaToNextPageFetch
 		} );
+	} else if ( storeId === 'conversations' ) {
+		store = new FeedStream( {
+			id: storeId,
+			fetcher: wpcomUndoc.readConversations.bind( wpcomUndoc ),
+			keyMaker: conversationsKeyMaker,
+			onNextPageFetch: conversationsPager,
+			onUpdateFetch: limitSiteParamsForConversations,
+			onGapFetch: limitSiteParamsForConversations,
+		} );
 	} else if ( storeId === 'a8c' ) {
 		store = new FeedStream( {
 			id: storeId,
@@ -312,17 +347,17 @@ export default function feedStoreFactory( storeId ) {
 		store = getStoreForRecommendedPosts( storeId );
 	} else if ( startsWith( storeId, 'custom_recs' ) ) {
 		store = getStoreForRecommendedPosts( storeId );
-	} else if ( storeId.indexOf( 'feed:' ) === 0 ) {
+	} else if ( startsWith( storeId, 'feed:' ) ) {
 		store = getStoreForFeed( storeId );
-	} else if ( storeId.indexOf( 'tag:' ) === 0 ) {
+	} else if ( startsWith( storeId, 'tag:' ) ) {
 		store = getStoreForTag( storeId );
-	} else if ( storeId.indexOf( 'list:' ) === 0 ) {
+	} else if ( startsWith( storeId, 'list:' ) ) {
 		store = getStoreForList( storeId );
-	} else if ( storeId.indexOf( 'site:' ) === 0 ) {
+	} else if ( startsWith( storeId, 'site:' ) ) {
 		store = getStoreForSite( storeId );
-	} else if ( storeId.indexOf( 'featured:' ) === 0 ) {
+	} else if ( startsWith( storeId, 'featured:' ) ) {
 		store = getStoreForFeatured( storeId );
-	} else if ( storeId.indexOf( 'search:' ) === 0 ) {
+	} else if ( startsWith( storeId, 'search:' ) ) {
 		store = getStoreForSearch( storeId );
 	} else {
 		throw new Error( 'Unknown feed store ID' );
