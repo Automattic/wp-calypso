@@ -40,7 +40,7 @@
 	transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
 
 	&.is-active {
-		transform: translateX( -$sidebar-width-min );
+		transform: translateX( -$sidebar-width-max );
 	}
 
 	@include breakpoint( ">960px" ) {
