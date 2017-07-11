@@ -151,8 +151,8 @@ class ActivityLog extends Component {
 			errorCode,
 			failureReason,
 			percent,
-			status,
 			siteTitle,
+			status,
 			timestamp,
 		} = restoreProgress;
 
@@ -179,6 +179,7 @@ class ActivityLog extends Component {
 		return (
 			<ProgressBanner
 				percent={ percent }
+				siteId={ siteId }
 				status={ status }
 				timestamp={ timestamp }
 			/>

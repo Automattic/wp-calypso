@@ -9,11 +9,13 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityLogBanner from './index';
 import ProgressBar from 'components/progress-bar';
+import PollRewindRestoreStatus from 'components/data/poll-rewind-restore-status';
 
 function ProgressBanner( {
 	moment,
 	percent,
 	status,
+	siteId,
 	timestamp,
 	translate,
 } ) {
@@ -26,6 +28,7 @@ function ProgressBanner( {
 			status="info"
 			title={ translate( 'Currently restoring your site' ) }
 		>
+			<PollRewindRestoreStatus siteId={ siteId } />
 			<p>{ translate(
 				"We're in the process of restoring your site back to %s. " +
 				"You'll be notified once it's complete.",
@@ -50,6 +53,7 @@ function ProgressBanner( {
 
 ProgressBanner.propTypes = {
 	percent: PropTypes.number.isRequired,
+	siteId: PropTypes.number,
 	status: PropTypes.oneOf( [
 		'queued',
 		'running',
