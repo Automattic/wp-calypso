@@ -1,5 +1,6 @@
 .wpview-type-simple-payments__wrapper {
 	display: flex;
+	margin: 10px;
 }
 
 .wpview-type-simple-payments__text-part {
@@ -18,4 +19,25 @@
 
 .wpview-type-simple-payments__pay-part {
 	display: flex;
+}
+
+.wpview-type-simple-payments__pay-quantity-input {
+	border: 1px solid lighten( $gray, 10% );
+	padding: 10px;
+	width: 70px;
+}
+
+.wpview-type-simple-payments__pay-paypal-button {
+	margin-left: 10px;
+}
+
+.wpview-type-simple-payments__image-figure {
+	margin: 0;
+	height: 100%;
+	border: 1px solid lighten( $gray, 10% );
+	background-color: lighten( $gray, 30% );
+}
+
+.wpview-type-simple-payments__image {
+	max-width: 200px;
 }

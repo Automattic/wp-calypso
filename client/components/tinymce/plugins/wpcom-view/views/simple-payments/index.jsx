@@ -32,11 +32,18 @@ class SimplePaymentsView extends Component {
 
 		const { title, description, price, currency } = product;
 
+		const imageUrl = 'https://cldup.com/nKM0_KspYE.png';
+
 		return (
 			<div className="wpview-content wpview-type-simple-payments">
 				<div className="wpview-type-simple-payments__wrapper">
 					<div className="wpview-type-simple-payments__image-part">
-						Image here
+						<figure className="wpview-type-simple-payments__image-figure">
+							<img
+								className="wpview-type-simple-payments__image"
+								src={ imageUrl }
+							/>
+						</figure>
 					</div>
 					<div className="wpview-type-simple-payments__text-part">
 						<div className="wpview-type-simple-payments__title">
@@ -52,7 +59,12 @@ class SimplePaymentsView extends Component {
 						</div>
 						<div className="wpview-type-simple-payments__pay-part">
 							<div className="wpview-type-simple-payments__pay-quantity">
-								<input type="text" value="1" readOnly />
+								<input
+									className="wpview-type-simple-payments__pay-quantity-input"
+									type="text"
+									value="1"
+									readOnly
+								/>
 							</div>
 							<div className="wpview-type-simple-payments__pay-paypal-button">
 								Pay with PayPal
