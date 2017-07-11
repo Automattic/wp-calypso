@@ -15,15 +15,17 @@ import { deserialize } from 'components/tinymce/plugins/simple-payments/shortcod
 import { getSimplePayments } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import formatCurrency from 'lib/format-currency';
+import QuerySimplePayments from 'components/data/query-simple-payments';
 
 class SimplePaymentsView extends Component {
 	render() {
-		const { id, product, content } = this.props;
+		const { productId, product, content, siteId } = this.props;
 
 		if ( ! product ) {
 			return (
 				<div className="wpview-content wpview-type-simple-payments">
 					{ content }
+					<QuerySimplePayments siteId={ siteId } productId={ productId } />
 				</div>
 			);
 		}
@@ -68,14 +70,14 @@ SimplePaymentsView = connect( ( state, props ) => {
 
 	const shortcodeData = deserialize( shortcode );
 
-	const { id = null } = shortcodeData;
+	const { id: productId = null } = shortcodeData;
 	const siteId = getSelectedSiteId( state );
 
 	return {
 		shortcodeData,
-		id,
+		productId,
 		siteId,
-		product: getSimplePayments( state, siteId, id ),
+		product: getSimplePayments( state, siteId, productId ),
 	};
 } )( localize( SimplePaymentsView ) );
 
