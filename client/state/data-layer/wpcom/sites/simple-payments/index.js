@@ -7,12 +7,14 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import {
+	SIMPLE_PAYMENTS_PRODUCT_GET,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_ADD,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_EDIT,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_DELETE,
 } from 'state/action-types';
 import {
+	receiveProduct,
 	receiveProductsList,
 	receiveUpdateProduct,
 	receiveDeleteProduct,
@@ -75,6 +77,21 @@ function productToCustomPost( product ) {
 			content: product.description,
 		}
 	);
+}
+
+/**
+ * Issues an API request to fetch a product by its ID for a site.
+ *
+ * @param  {Object}  store  Redux store
+ * @param  {Object}  action Action object
+ */
+export function requestSimplePaymentsProduct( { dispatch }, action ) {
+	const { siteId, productId } = action;
+
+	dispatch( http( {
+		method: 'GET',
+		path: `/sites/${ siteId }/posts/${ productId }`,
+	}, action ) );
 }
 
 /**
@@ -146,6 +163,9 @@ export const addProduct = ( { dispatch }, { siteId }, next, newProduct ) =>
 export const deleteProduct = ( { dispatch }, { siteId }, next, deletedProduct ) =>
 	dispatch( receiveDeleteProduct( siteId, deletedProduct.ID ) );
 
+export const listProduct = ( { dispatch }, { siteId }, next, product ) =>
+	dispatch( receiveProduct( siteId, customPostToProduct( product ) ) );
+
 export const listProducts = ( { dispatch }, { siteId }, next, { found: numOfProducts, posts: products } ) =>
 	dispatch( receiveProductsList( siteId, numOfProducts, products.map( customPostToProduct ) ) );
 
@@ -159,6 +179,8 @@ const announceListingProductsFailure = ( { dispatch, getState }, { siteId } ) =>
 };
 
 export default {
+	[ SIMPLE_PAYMENTS_PRODUCT_GET ]:
+		[ dispatchRequest( requestSimplePaymentsProduct, listProduct, announceListingProductsFailure ) ],
 	[ SIMPLE_PAYMENTS_PRODUCTS_LIST ]:
 		[ dispatchRequest( requestSimplePaymentsProducts, listProducts, announceListingProductsFailure ) ],
 	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_ADD ]: [ dispatchRequest( requestSimplePaymentsProductAdd, addProduct ) ],

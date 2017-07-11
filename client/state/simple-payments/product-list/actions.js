@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import {
+	SIMPLE_PAYMENTS_PRODUCT_RECEIVE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE,
@@ -12,6 +13,14 @@ export function receiveProductsList( siteId, numOfProducts, posts ) {
 		type: SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE,
 		siteId,
 		products: posts,
+	};
+}
+
+export function receiveProduct( siteId, product ) {
+	return {
+		siteId,
+		product,
+		type: SIMPLE_PAYMENTS_PRODUCT_RECEIVE,
 	};
 }
 
