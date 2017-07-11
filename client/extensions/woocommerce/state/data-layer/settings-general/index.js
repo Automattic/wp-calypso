@@ -1,18 +1,17 @@
 /**
  * Internal dependencies
  */
-import {
-	WOOCOMMERCE_CURRENCY_UPDATE,
-} from 'woocommerce/state/action-types';
-/**
- * Internal dependencies
- */
-import { saveCurrencySuccess } from 'woocommerce/state/sites/settings/general/actions';
-import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { put } from 'woocommerce/state/data-layer/request/actions';
+import { saveCurrencySuccess } from 'woocommerce/state/sites/settings/general/actions';
+import { WOOCOMMERCE_CURRENCY_UPDATE } from 'woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_CURRENCY_UPDATE ]: [
+		/**
+		 * Issues a PUT request to settings/general/woocommerce_currency
+		 * @param {Object} store - Redux store
+		 * @param {Object} action - and action with the following fields: siteId, currency, successAction, failureAction
+		 */
 		( store, action ) => {
 			const { siteId, currency, successAction, failureAction } = action;
 
@@ -20,11 +19,15 @@ export default {
 				value: currency,
 			};
 
+			/**
+			 * A callback issued after a successful request
+			 * @param {Function} dispatch - dispatch function
+			 * @param {Function} getState - getState function
+			 * @param {Object} data - data returned by the server
+			 */
 			const updatedAction = ( dispatch, getState, { data } ) => {
 				dispatch( saveCurrencySuccess( siteId, data, action ) );
-
-				const props = { sentData: currency, receivedData: data };
-				dispatchWithProps( dispatch, getState, successAction, props );
+				dispatch( successAction );
 			};
 
 			store.dispatch( put( siteId, 'settings/general/woocommerce_currency', payload, updatedAction, failureAction ) );

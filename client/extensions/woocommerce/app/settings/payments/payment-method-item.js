@@ -90,7 +90,7 @@ class PaymentMethodItem extends Component {
 		}
 	}
 
-	onSave = () => {
+	onDone = () => {
 		const { method, site } = this.props;
 		this.props.closeEditingPaymentMethod( site.ID, method.id );
 	}
@@ -103,7 +103,7 @@ class PaymentMethodItem extends Component {
 					method={ currentlyEditingMethod }
 					onCancel={ this.onCancel }
 					onEditField={ this.onEditField }
-					onSave={ this.onSave } />
+					onDone={ this.onDone } />
 			);
 		}
 		if ( method.id === 'stripe' ) {
@@ -112,7 +112,7 @@ class PaymentMethodItem extends Component {
 					method={ currentlyEditingMethod }
 					onCancel={ this.onCancel }
 					onEditField={ this.onEditField }
-					onSave={ this.onSave } />
+					onDone={ this.onDone } />
 			);
 		}
 		return (
@@ -120,7 +120,7 @@ class PaymentMethodItem extends Component {
 				method={ currentlyEditingMethod }
 				onCancel={ this.onCancel }
 				onEditField={ this.onEditField }
-				onSave={ this.onSave } />
+				onDone={ this.onDone } />
 		);
 	}
 

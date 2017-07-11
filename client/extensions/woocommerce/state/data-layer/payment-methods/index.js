@@ -1,18 +1,17 @@
 /**
  * Internal dependencies
  */
-import {
-	WOOCOMMERCE_PAYMENT_METHOD_UPDATE,
-} from 'woocommerce/state/action-types';
-/**
- * Internal dependencies
- */
-import { savePaymentMethodSuccess } from 'woocommerce/state/sites/payment-methods/actions';
-import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { put } from 'woocommerce/state/data-layer/request/actions';
+import { savePaymentMethodSuccess } from 'woocommerce/state/sites/payment-methods/actions';
+import { WOOCOMMERCE_PAYMENT_METHOD_UPDATE } from 'woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_PAYMENT_METHOD_UPDATE ]: [
+		/**
+		 * Issues a PUT request to payment_gateways/${ method.id }
+		 * @param {Object} store - Redux store
+		 * @param {Object} action - and action with the following fields: siteId, method, successAction, failureAction
+		 */
 		( store, action ) => {
 			const { siteId, method, successAction, failureAction } = action;
 
@@ -28,11 +27,15 @@ export default {
 				settings,
 			};
 
+			/**
+			 * A callback issued after a successful request
+			 * @param {Function} dispatch - dispatch function
+			 * @param {Function} getState - getState function
+			 * @param {Object} data - data returned by the server
+			 */
 			const updatedAction = ( dispatch, getState, { data } ) => {
 				dispatch( savePaymentMethodSuccess( siteId, data, action ) );
-
-				const props = { sentData: method.settings, receivedData: data };
-				dispatchWithProps( dispatch, getState, successAction, props );
+				dispatch( successAction );
 			};
 
 			store.dispatch( put( siteId, `payment_gateways/${ method.id }`, payload, updatedAction, failureAction ) );

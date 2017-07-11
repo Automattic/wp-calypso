@@ -37,7 +37,7 @@ class SettingsPayments extends Component {
 	};
 
 	onSave = () => {
-		const { translate, actions } = this.props;
+		const { translate } = this.props;
 
 		const successAction = successNotice(
 			translate( 'Payment settings saved.' ),
@@ -48,7 +48,7 @@ class SettingsPayments extends Component {
 			translate( 'There was a problem saving the payment settings. Please try again.' )
 		);
 
-		actions.createPaymentSettingsActionList( successAction, failureAction );
+		this.props.createPaymentSettingsActionList( successAction, failureAction );
 	}
 
 	render() {
@@ -91,13 +91,9 @@ function mapStateToProps( state ) {
 }
 
 function mapDispatchToProps( dispatch ) {
-	return {
-		actions: bindActionCreators(
-			{
-				createPaymentSettingsActionList,
-			}, dispatch
-		)
-	};
+	return bindActionCreators( {
+		createPaymentSettingsActionList,
+	}, dispatch );
 }
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( SettingsPayments ) );

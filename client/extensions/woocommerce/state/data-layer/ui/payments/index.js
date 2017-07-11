@@ -24,6 +24,12 @@ import { getPaymentMethods, arePaymentMethodsLoaded } from 'woocommerce/state/si
 import { savePaymentMethod } from 'woocommerce/state/sites/payment-methods/actions';
 import { getPaymentMethodsWithEdits } from 'woocommerce/state/ui/payments/methods/selectors';
 
+/**
+ * Creates a list of actions required to save the currency settings.
+ * @param {Object} state - Redux state
+ * @param {Number} siteId - site ID
+ * @returns {Array} - actions required to save the currency, or an empty array
+ */
 const getSaveCurrencySteps = ( state, siteId ) => {
 	if ( ! areSettingsGeneralLoaded( state, siteId ) ) {
 		return [];
@@ -48,6 +54,12 @@ const getSaveCurrencySteps = ( state, siteId ) => {
 	} ];
 };
 
+/**
+ * Creates a list of actions required to save each payment method. Checks if the methods have changed before saving them
+ * @param {Object} state - Redux state
+ * @param {Number} siteId - site ID
+ * @returns {Array} - actions required to save each payment method, or an empty array
+ */
 const getSavePaymentMethodsSteps = ( state, siteId ) => {
 	if ( ! arePaymentMethodsLoaded( state, siteId ) ) {
 		return [];
@@ -80,6 +92,11 @@ const getSavePaymentMethodsSteps = ( state, siteId ) => {
 	return actions;
 };
 
+/**
+ * Creates a list of all actions required to save the payment settings
+ * @param {Object} state - Redux state
+ * @returns {Array} - action list steps
+ */
 const getSaveSettingsActionListSteps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
@@ -91,13 +108,26 @@ const getSaveSettingsActionListSteps = ( state ) => {
 
 export default {
 	[ WOOCOMMERCE_PAYMENT_ACTION_LIST_CREATE ]: [
+		/**
+		 * Creates and executes a payments settings action list
+		 * @param {Object} store -
+		 * @param {Object} action - an action containing successAction and failureAction
+		 */
 		( store, action ) => {
 			const { successAction, failureAction } = action;
 
+			/**
+			 * A callback issued after a successful request
+			 * @param {Function} dispatch - dispatch function
+			 */
 			const onSuccess = ( dispatch ) => {
 				dispatch( successAction );
 				dispatch( actionListClear() );
 			};
+			/**
+			 * A callback issued after a successful request
+			 * @param {Function} dispatch - dispatch function
+			 */
 			const onFailure = ( dispatch ) => {
 				dispatch( failureAction );
 				dispatch( actionListClear() );
