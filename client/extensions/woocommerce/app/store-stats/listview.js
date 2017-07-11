@@ -33,6 +33,7 @@ const listType = {
 
 class StoreStatsListView extends Component {
 	static propTypes = {
+		isWooConnect: PropTypes.bool,
 		path: PropTypes.string.isRequired,
 		selectedDate: PropTypes.string,
 		siteId: PropTypes.number,

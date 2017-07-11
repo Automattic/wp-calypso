@@ -34,7 +34,7 @@ import { isPluginActive } from 'state/selectors';
 
 class StoreStats extends Component {
 	static propTypes = {
-		isWooConnect: PropTypes.bool.isRequired,
+		isWooConnect: PropTypes.bool,
 		path: PropTypes.string.isRequired,
 		queryDate: PropTypes.string,
 		querystring: PropTypes.string,

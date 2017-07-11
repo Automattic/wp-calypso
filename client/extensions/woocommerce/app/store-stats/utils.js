@@ -109,12 +109,13 @@ export function getEndPeriod( date, unit ) {
  *
  * @param {(string|number)} value - string or number to be formatted
  * @param {string} format - string of 'text', 'number' or 'currency'
+ * @param {string} [code] - optional currency code
  * @return {string|number} - formatted number or string value
 */
-export function formatValue( value, format ) {
+export function formatValue( value, format, code ) {
 	switch ( format ) {
 		case 'currency':
-			return formatCurrency( value );
+			return formatCurrency( value, code );
 		case 'number':
 			return Math.round( value * 100 ) / 100;
 		case 'text':

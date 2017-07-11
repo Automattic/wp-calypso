@@ -13,7 +13,8 @@ import { moment, translate } from 'i18n-calypso';
 import Card from 'components/card';
 import Delta from 'woocommerce/components/delta';
 import ErrorPanel from 'my-sites/stats/stats-error';
-import formatCurrency from 'lib/format-currency';
+import { formatValue } from '../utils';
+import { getPeriodFormat } from 'state/stats/lists/utils';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData
@@ -24,7 +25,6 @@ import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
 import Table from 'woocommerce/components/table';
 import TableItem from 'woocommerce/components/table/table-item';
 import TableRow from 'woocommerce/components/table/table-row';
-import { getPeriodFormat } from 'state/stats/lists/utils';
 
 class StoreStatsWidgetList extends Component {
 
@@ -132,9 +132,7 @@ class StoreStatsWidgetList extends Component {
 					: Math.abs( Math.round( delta.percentage_change * 100 ) );
 				return {
 					title: widget.title,
-					value: ( widget.type === 'currency' )
-						? formatCurrency( timeSeries[ selectedIndex ], sincePeriod.currency )
-						:	Math.round( timeSeries[ selectedIndex ] * 100 ) / 100,
+					value: formatValue( timeSeries[ selectedIndex ], widget.format, sincePeriod.currency ),
 					sparkline: <Sparkline
 						aspectRatio={ 3 }
 						data={ timeSeries }
