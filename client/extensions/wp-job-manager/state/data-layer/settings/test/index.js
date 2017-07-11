@@ -28,8 +28,8 @@ import {
 
 const apiResponse = {
 	data: {
-		job_manager_per_page: 25,
 		job_manager_hide_filled_positions: true,
+		job_manager_per_page: 25,
 	}
 };
 const saveAction = {
@@ -74,13 +74,13 @@ describe( '#updateExtensionSettings', () => {
 			account: {
 				enableRegistration: undefined,
 				generateUsername: undefined,
-				isRequired: undefined,
+				isAccountRequired: undefined,
 				role: undefined,
 			},
 			apiKey: { googleMapsApiKey: undefined },
 			approval: {
 				canEdit: undefined,
-				isRequired: undefined,
+				isApprovalRequired: undefined,
 			},
 			categories: {
 				enableCategories: undefined,
