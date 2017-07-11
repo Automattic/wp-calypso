@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, map, uniq } from 'lodash';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,13 +15,18 @@ import EditorRevisionsListItem from './item';
 import QueryPostRevisions from 'components/data/query-post-revisions';
 import QueryUsers from 'components/data/query-users';
 import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostRevision, getPostRevisions } from 'state/selectors';
+import {
+	getPostRevision,
+	getPostRevisions,
+	getPostRevisionsAuthorsId,
+} from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { isWithinBreakpoint } from 'lib/viewport';
 
 class EditorRevisionsList extends PureComponent {
 	static propTypes = {
+		authorsId: PropTypes.array.isRequired,
 		loadRevision: PropTypes.func.isRequired,
 		postId: PropTypes.number,
 		revisions: PropTypes.array.isRequired,
@@ -60,10 +65,6 @@ class EditorRevisionsList extends PureComponent {
 	}
 
 	render() {
-		// NOTE: This supports revisions that have been hydrated with author
-		// info (`author` is an object) and the ones that haven't (author is a
-		// string, containing just the ID ).
-		const usersId = uniq( map( this.props.revisions, r => get( r, 'author.ID', r.author ) ) );
 		return (
 			<div>
 				<QueryPostRevisions
@@ -73,7 +74,7 @@ class EditorRevisionsList extends PureComponent {
 				/>
 				<QueryUsers
 					siteId={ this.props.siteId }
-					usersId={ usersId }
+					usersId={ this.props.authorsId }
 				/>
 				<EditorRevisionsListHeader
 					loadRevision={ this.loadRevision }
@@ -106,6 +107,7 @@ export default connect(
 		const postId = getEditorPostId( state );
 		const type = getEditedPostValue( state, siteId, postId, 'type' );
 		return {
+			authorsId: getPostRevisionsAuthorsId( state, siteId, postId ),
 			postId,
 			revisions: getPostRevisions( state, siteId, postId, 'display' ),
 			selectedRevision: getPostRevision(
