@@ -520,6 +520,7 @@ export const PostEditor = React.createClass( {
 		}
 
 		this.debouncedSaveRawContent();
+		this.debouncedAutosave();
 	},
 
 	onEditorKeyUp: function() {
