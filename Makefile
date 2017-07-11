@@ -64,7 +64,7 @@ urn:
 	@npm start;
 
 docker-build:
-	@npm run docker-build
+	@npm run build-docker
 
 docker-run:
 	@npm run docker
