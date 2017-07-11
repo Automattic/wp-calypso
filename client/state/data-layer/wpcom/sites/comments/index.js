@@ -42,14 +42,16 @@ export const receiveCommentSuccess = ( store, action, next, response ) => {
 	} );
 };
 
-export const receiveCommentError = store => {
-	const site = getReaderSite( store.getState() );
-	const siteName = getReaderSiteName( site );
+export const receiveCommentError = ( store, action ) => {
+	const site = getReaderSite( store.getState(), action.siteId );
+	const siteName = getReaderSiteName( { site } );
 
 	store.dispatch(
-		translate( 'Failed to retrieve comment for site “%(siteName)s”', {
-			args: { siteName },
-		} ),
+		errorNotice(
+			translate( 'Failed to retrieve comment for site “%(siteName)s”', {
+				args: { siteName },
+			} ),
+		),
 	);
 };
 

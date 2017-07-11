@@ -20,6 +20,8 @@ import {
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
+export const requestComment = ( { siteId, commentId } ) => ( { siteId, commentId } );
+
 /***
  * Creates a thunk that requests comments for a given post
  * @param {Number} siteId site identifier
