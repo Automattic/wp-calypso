@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -14,14 +18,11 @@ import TestUtils from 'react-addons-test-utils';
  */
 import Notice from 'components/notice';
 import { type as domainTypes } from 'lib/domains/constants';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 import support from 'lib/url/support';
 
 describe( 'index', () => {
 	let DomainWarnings;
-
-	useFakeDom();
 
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/analytics', {} );

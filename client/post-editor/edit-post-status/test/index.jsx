@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import React from 'react';
@@ -9,14 +13,10 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'EditPostStatus', function() {
 	let EditPostStatus;
-
-	useFakeDom();
-	useMockery();
 
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/wp', {

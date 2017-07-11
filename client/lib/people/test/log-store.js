@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { assert } from 'chai';
@@ -6,15 +10,12 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import site from './fixtures/site';
 import actions from './fixtures/actions';
 import userActions from 'lib/users/test/fixtures/actions';
 
 describe( 'Viewers Store', () => {
 	let Dispatcher, PeopleLogStore;
-
-	useFakeDom();
 
 	beforeEach( () => {
 		Dispatcher = require( 'dispatcher' );

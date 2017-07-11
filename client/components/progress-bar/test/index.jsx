@@ -1,8 +1,11 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import React from 'react';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { shallow } from 'enzyme';
 import { expect } from 'chai';
 
@@ -12,8 +15,6 @@ import { expect } from 'chai';
 import ProgressBar from '../';
 
 describe( 'ProgressBar', function() {
-	useFakeDom();
-
 	it( 'should show the title', function() {
 		const progressBar = shallow( <ProgressBar value={ 20 } title="foo" /> );
 

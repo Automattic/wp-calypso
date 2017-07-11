@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -8,7 +12,6 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 const DUMMY_SITE_ID = 1,
@@ -22,7 +25,6 @@ const DUMMY_SITE_ID = 1,
 describe( 'MediaListStore', function() {
 	let Dispatcher, sandbox, MediaListStore, handler, MediaStore;
 
-	useFakeDom();
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/wp', {
 			me: () => ( {

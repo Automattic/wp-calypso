@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import debugModule from 'debug';
@@ -10,7 +14,6 @@ import assert from 'assert';
  */
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import mockedFlows from './fixtures/flows';
 
 /**
@@ -24,7 +27,6 @@ describe( 'utils', function() {
 	let flows, utils;
 
 	useFilesystemMocks( __dirname );
-	useFakeDom();
 
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'lib/abtest', {

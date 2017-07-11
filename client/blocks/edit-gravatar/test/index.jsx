@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -10,7 +14,6 @@ import { shallow } from 'enzyme';
  * Internal dependencies
  */
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -26,7 +29,6 @@ describe( 'EditGravatar', function() {
 		email_verified: false
 	};
 
-	useFakeDom();
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/oauth-token', {
 			getToken: () => 'bearerToken'

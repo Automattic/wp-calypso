@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -9,15 +13,12 @@ import { Provider as ReduxProvider } from 'react-redux';
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { createReduxStore } from 'state';
 
 import { sites } from './fixtures';
 
 describe( 'PluginsList', () => {
 	let React, testRenderer, PluginsList, TestUtils;
-
-	useFakeDom();
 
 	useMockery( mockery => {
 		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );

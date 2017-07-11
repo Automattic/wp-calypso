@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { assert } from 'chai';
@@ -11,14 +15,11 @@ import { mount, shallow } from 'enzyme';
  */
 import Interval, { EVERY_SECOND, EVERY_MINUTE } from '../index';
 import { add, resetForTesting as reset } from '../runner';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 const noop = () => null;
 const nudgeObject = ( o, v ) => () => ( o.counter += v );
 
 describe( 'Interval', function() {
-	useFakeDom();
-
 	before( function() {
 		this.clock = sinon.useFakeTimers();
 	} );

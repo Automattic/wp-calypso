@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { assert } from 'chai';
@@ -8,7 +12,6 @@ import { trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 import linkJetpackCarousels from '../rule-content-link-jetpack-carousels';
 
@@ -28,7 +31,6 @@ function asyncTransform( post, callback ) {
 describe( 'index', function() {
 	let normalizer, safeImageUrlFake, allTransforms;
 
-	useFakeDom();
 	useFilesystemMocks( __dirname );
 
 	before( function() {

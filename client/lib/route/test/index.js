@@ -1,13 +1,11 @@
 /**
+ * @jest-environment jsdom
+ */
+/**
  * External dependencies
  */
 import { expect } from 'chai';
 import { Route } from 'page';
-
-/**
- * Internal dependencies
- */
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 const checkoutRoutes = [
 	new Route( '/checkout/thank-you' ),
@@ -23,8 +21,6 @@ const commentsRoutes = [
 
 describe( 'route', function() {
 	let route;
-
-	useFakeDom();
 
 	before( function() {
 		route = require( '../' );

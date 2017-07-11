@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { assert } from 'chai';
@@ -8,13 +12,10 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'Theme', function() {
 	let ReactDom, React, TestUtils, Theme, togglePopoverStub;
-
-	useFakeDom();
 
 	useMockery( mockery => {
 		ReactDom = require( 'react-dom' );

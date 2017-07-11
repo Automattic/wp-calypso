@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import assert from 'assert';
@@ -22,8 +26,6 @@ describe( 'index', function() {
 } );
 
 describe( 'FormToggle', function() {
-	require( 'test/helpers/use-fake-dom' )();
-
 	describe( 'rendering', function() {
 		it( 'should have form-toggle class', function() {
 			const toggle = shallow( <FormToggle /> );

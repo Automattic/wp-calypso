@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -8,7 +12,6 @@ import { constant, times } from 'lodash';
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
@@ -17,8 +20,6 @@ describe( 'selectors', () => {
 	let getGuidedTourState;
 	let findEligibleTour;
 	let hasTourJustBeenVisible;
-
-	useFakeDom();
 
 	useFakeTimers( fakeClock => {
 		clock = fakeClock;

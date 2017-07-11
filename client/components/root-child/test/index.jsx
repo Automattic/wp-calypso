@@ -1,10 +1,13 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
 import ReactDom from 'react-dom';
 import React from 'react';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { mount } from 'enzyme';
 
 /**
@@ -34,8 +37,6 @@ const Greeting = React.createClass( {
 
 describe( 'RootChild', function() {
 	var container;
-
-	useFakeDom();
 
 	before( function() {
 		container = document.createElement( 'div' );

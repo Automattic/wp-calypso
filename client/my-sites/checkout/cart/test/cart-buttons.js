@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External Dependencies
  */
 import React from 'react';
@@ -9,7 +13,6 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -24,8 +27,6 @@ describe( 'cart-buttons', function() {
 	const AnalyticsMixinStub = () => ( {
 		recordEvent: recordStub
 	} );
-
-	useFakeDom();
 
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/mixins/analytics', AnalyticsMixinStub );

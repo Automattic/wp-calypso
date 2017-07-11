@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import React from 'react';
@@ -13,7 +17,6 @@ import { spy } from 'sinon';
 import fixtures from './fixtures';
 import mockedActions from './mocks/actions';
 import mockedPluginAction from './mocks/plugin-action';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'PluginAutoupdateToggle', function() {
@@ -24,7 +27,6 @@ describe( 'PluginAutoupdateToggle', function() {
 	};
 	let PluginAutoupdateToggle;
 
-	useFakeDom();
 	useMockery();
 
 	before( function() {

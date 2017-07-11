@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -9,15 +13,12 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import FormTextInput from 'components/forms/form-text-input';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormsButton from 'components/forms/form-button';
 
 describe( 'LoginForm', function() {
 	let LoginForm;
-
-	useFakeDom();
 
 	before( () => {
 		LoginForm = require( 'blocks/login/login-form' ).LoginForm;

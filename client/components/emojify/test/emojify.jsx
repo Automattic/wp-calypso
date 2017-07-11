@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -8,12 +12,9 @@ import { shallow, mount } from 'enzyme';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import Emojify from '..';
 
 describe( 'Emojify', function() {
-	useFakeDom();
-
 	context( 'component rendering', () => {
 		it( 'wraps a string in a div', () => {
 			const wrapper = shallow(

@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -11,13 +15,10 @@ import TestUtils from 'react-addons-test-utils' ;
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery' ;
 
 describe( '#signupStep User', () => {
 	let User, testElement, rendered, EMPTY_COMPONENT;
-
-	useFakeDom();
 
 	useMockery( ( mockery ) => {
 		EMPTY_COMPONENT = require( 'test/helpers/react/empty-component' );

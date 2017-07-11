@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { assert } from 'chai';
@@ -9,7 +13,6 @@ import { cloneDeep, forEach, noop } from 'lodash';
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'SitesList', () => {
 	let SitesList, Site, data;
@@ -22,7 +25,6 @@ describe( 'SitesList', () => {
 			} )
 		} );
 	} );
-	useFakeDom();
 
 	before( () => {
 		Site = require( 'lib/site' );

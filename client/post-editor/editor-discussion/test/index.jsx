@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import ReactDom from 'react-dom';
@@ -14,7 +18,6 @@ import { noop } from 'lodash';
  */
 import EmptyComponent from 'test/helpers/react/empty-component';
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 /**
  * Module variables
@@ -30,7 +33,6 @@ describe( 'EditorDiscussion', function() {
 	var editPost, EditorDiscussion;
 
 	useMockery();
-	useFakeDom();
 
 	before( function() {
 		editPost = sinon.spy();

@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 var Dispatcher = require( 'dispatcher' ),
@@ -9,12 +13,9 @@ var Dispatcher = require( 'dispatcher' ),
  * Internal dependencies
  */
 import { actions } from '../constants';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'oAuthStore', function() {
 	let oAuthStore, oAuthToken;
-
-	useFakeDom();
 
 	beforeEach( function() {
 		oAuthToken = require( 'lib/oauth-token' );

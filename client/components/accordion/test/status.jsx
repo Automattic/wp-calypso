@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -7,15 +11,9 @@ import sinon from 'sinon';
 import { shallow } from 'enzyme';
 import Gridicon from 'gridicons';
 
-/**
- * Internal dependencies
- */
-import useFakeDom from 'test/helpers/use-fake-dom';
-
 describe( 'AccordionStatus', function() {
 	let AccordionStatus, Tooltip;
 
-	useFakeDom();
 	before( () => {
 		AccordionStatus = require( '../status' );
 		Tooltip = require( 'components/tooltip' );

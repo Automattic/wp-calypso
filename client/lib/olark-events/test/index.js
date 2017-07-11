@@ -1,13 +1,14 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * Internal dependencies
  */
 import olarkMock from './mock/olark';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Olark events', () => {
 	let olarkEvents;
-
-	useFakeDom();
 
 	before( () => {
 		/**

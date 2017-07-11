@@ -1,18 +1,15 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-/**
- * Internal Dependencies
- */
-import useFakeDom from 'test/helpers/use-fake-dom';
-
 describe( 'scroll-to', () => {
 	let scrollTo;
-
-	useFakeDom();
 
 	before( () => {
 		scrollTo = require( '..' );

@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { assert } from 'chai' ;
@@ -7,7 +11,6 @@ import { assert } from 'chai' ;
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
 import plugins from './fixtures/plugins';
@@ -28,8 +31,6 @@ describe( 'Plugins Store', () => {
 		mockery.registerMock( 'lib/sites-list', mockedSitesList );
 		mockery.registerMock( 'lib/analytics', {} );
 	} );
-
-	useFakeDom();
 
 	beforeEach( () => {
 		Dispatcher = require( 'dispatcher' );

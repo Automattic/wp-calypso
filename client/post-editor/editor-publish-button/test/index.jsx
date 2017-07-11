@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -13,7 +17,6 @@ import { identity, noop } from 'lodash';
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 /**
  * Module variables
@@ -29,7 +32,6 @@ describe( 'EditorPublishButton', function() {
 	let EditorPublishButton;
 
 	useMockery();
-	useFakeDom();
 
 	before( function() {
 		mockery.registerMock( 'lib/posts/stats', {

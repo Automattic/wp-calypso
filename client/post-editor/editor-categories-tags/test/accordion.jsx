@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import React from 'react';
@@ -10,13 +14,11 @@ import { expect } from 'chai';
  */
 import EmptyComponent from 'test/helpers/react/empty-component';
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'EditorCategoriesTagsAccordion', function() {
 	let mount, i18n, accordion, EditorCategoriesTagsAccordion;
 
 	useMockery();
-	useFakeDom();
 
 	before( () => {
 		mockery.registerMock( 'post-editor/editor-term-selector', EmptyComponent );

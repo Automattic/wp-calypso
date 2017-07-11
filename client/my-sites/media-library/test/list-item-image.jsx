@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -7,7 +11,6 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 import photon from 'photon';
 import resize from 'lib/resize-image-url';
@@ -18,7 +21,6 @@ const WIDTH = 450;
 describe( 'MediaLibraryListItem image', function() {
 	let shallow, wrapper, fixtures;
 
-	useFakeDom();
 	useMockery();
 
 	before( function() {

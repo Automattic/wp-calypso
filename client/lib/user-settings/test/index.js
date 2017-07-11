@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { assert, expect } from 'chai';
@@ -6,7 +10,6 @@ import { assert, expect } from 'chai';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 import wpMock from './mocks/wp';
 import userUtilsMock from './mocks/user-utils';
@@ -18,8 +21,6 @@ describe( 'User Settings', () => {
 		mockery.registerMock( 'lib/wp', wpMock );
 		mockery.registerMock( 'lib/user/utils', userUtilsMock );
 	} );
-
-	useFakeDom();
 
 	before( () => {
 		userSettings = require( '..' );

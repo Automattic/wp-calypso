@@ -1,5 +1,9 @@
 /** @format */
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import sinon from 'sinon';
@@ -8,7 +12,6 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'reader utils', () => {
@@ -20,7 +23,6 @@ describe( 'reader utils', () => {
 
 	describe( '#showSelectedPost', () => {
 		let showSelectedPost;
-		useFakeDom();
 		useMockery( mockery => {
 			mockery.registerMock( 'page', {
 				show: pageSpy,

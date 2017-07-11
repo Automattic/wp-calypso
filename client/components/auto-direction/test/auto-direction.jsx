@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -8,11 +12,9 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import Emojify from 'components/emojify';
 
 describe( 'AutoDirection', function() {
-	useFakeDom();
 	let AutoDirection;
 
 	context( 'component rendering', () => {

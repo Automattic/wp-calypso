@@ -1,4 +1,7 @@
 /**
+ * @jest-environment jsdom
+ */
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -7,7 +10,6 @@ import url from 'url';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 function logImageLoads() {
@@ -41,7 +43,6 @@ function logImageLoads() {
 }
 
 describe( 'Analytics', function() {
-	useFakeDom();
 	useFilesystemMocks( __dirname );
 	const imagesLoaded = logImageLoads();
 

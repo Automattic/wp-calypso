@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -9,7 +13,6 @@ import { createStore } from 'redux';
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
@@ -24,8 +27,6 @@ describe( 'initial-state', () => {
 		isReduxEnabled = false;
 	const isEnabled = () => isReduxEnabled;
 	const isSupportUserSession = () => isSwitchedUser;
-
-	useFakeDom();
 
 	useFakeTimers( fakeClock => {
 		clock = fakeClock;

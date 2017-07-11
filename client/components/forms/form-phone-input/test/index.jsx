@@ -1,10 +1,13 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import React from 'react';
 import { shallow, mount } from 'enzyme';
 import { expect } from 'chai';
-import { withContainer as useFakeDom } from 'test/helpers/use-fake-dom';
 
 /**
  * Internal dependencies
@@ -16,8 +19,6 @@ import mockCountriesListEmpty from './mocks/mock-countries-list-empty';
 const countries = mockCountriesList.get();
 
 describe( 'FormPhoneInput', function() {
-	useFakeDom();
-
 	describe( 'getValue()', function() {
 		it( 'should set country from props', function() {
 			const phoneComponent = shallow(

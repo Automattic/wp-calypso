@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import React from 'react';
@@ -16,7 +20,6 @@ describe( 'index', function() {
 		{ value: 1, label: 'One' },
 		{ value: 2, label: 'Two' }
 	];
-	require( 'test/helpers/use-fake-dom' )();
 
 	afterEach( function() {
 		ReactDom.unmountComponentAtNode( document.body );

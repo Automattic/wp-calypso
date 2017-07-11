@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { assert } from 'chai';
@@ -8,7 +12,6 @@ import mockery from 'mockery';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 let Dispatcher;
@@ -102,7 +105,6 @@ function dispatchQueryPosts( postListStoreId, options ) {
 describe( 'post-list-store', () => {
 	let defaultPostListStore, getRemovedPosts, postListStoreFactory;
 
-	useFakeDom();
 	useMockery();
 
 	before( () => {

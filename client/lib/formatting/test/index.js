@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import chai from 'chai';
@@ -6,13 +10,10 @@ import chai from 'chai';
 /**
  * Internal Dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import decodeEntitiesNode from '../decode-entities/node';
 
 describe( 'formatting', () => {
 	let formatting, capitalPDangit, parseHtml, decodeEntitiesBrowser, preventWidows;
-
-	useFakeDom();
 
 	before( () => {
 		formatting = require( '../' );

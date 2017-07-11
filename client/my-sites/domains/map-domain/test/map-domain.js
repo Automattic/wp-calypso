@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External Dependencies
  */
 import React from 'react';
@@ -9,7 +13,6 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 import paths from 'my-sites/domains/paths';
 
@@ -17,9 +20,6 @@ describe( 'MapDomain component', () => {
 	const pageSpy = spy();
 	pageSpy.redirect = spy();
 	let MapDomain, MapDomainStep, HeaderCake;
-
-	// needed, because some dependency of dependency uses `window`
-	useFakeDom();
 
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'page', pageSpy );

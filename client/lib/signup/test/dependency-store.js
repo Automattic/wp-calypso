@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import assert from 'assert';
@@ -6,7 +10,6 @@ import assert from 'assert';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { createStore } from 'redux';
 import { reducer } from 'state';
 
@@ -15,7 +18,6 @@ describe( 'dependency-store', function() {
 		SignupDependencyStore,
 		SignupActions;
 
-	useFakeDom();
 	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
 
 	before( () => {

@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import React from 'react';
@@ -8,7 +12,6 @@ import { shallow, mount } from 'enzyme';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { LostPasswordFormComponent } from '..';
 
 describe( 'LostPassword', () => {
@@ -20,8 +23,6 @@ describe( 'LostPassword', () => {
 	} );
 
 	context( 'events', () => {
-		useFakeDom();
-
 		it( 'submit button should be disabled if user login is blank', function() {
 			const wrapper = mount( <LostPasswordFormComponent className="test__test" /> );
 			wrapper.setState( { userLoginFormValue: '' } );

@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External Dependencies
  */
 import React from 'react';
@@ -9,14 +13,12 @@ import { identity, noop } from 'lodash';
 /**
  * Internal Dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 import EmptyComponent from 'test/helpers/react/empty-component';
 
 describe( 'Domain Suggestion', function() {
 	let DomainSuggestion;
 
-	useFakeDom();
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'components/plans/premium-popover', EmptyComponent );
 	} );

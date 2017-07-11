@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { defer, noop } from 'lodash';
@@ -8,13 +12,10 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'actions', function() {
 	let Dispatcher, PostActions, PostEditStore, sandbox;
-
-	useFakeDom();
 
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/wp', {

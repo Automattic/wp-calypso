@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -7,7 +11,6 @@ import sinon from 'sinon';
  /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useNock from 'test/helpers/use-nock';
 
 let directly;
@@ -21,8 +24,6 @@ describe( 'index', () => {
 	// Helpers to simulate whether the remote Directly script loads or fails
 	const simulateSuccessfulScriptLoad = () => loadScript.loadScript.callsArg( 1 );
 	const simulateFailedScriptLoad = ( error ) => loadScript.loadScript.callsArgWith( 1, error );
-
-	useFakeDom();
 
 	beforeEach( () => {
 		directly = require( '..' );

@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -9,12 +13,9 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'UserUtils', () => {
 	let UserUtils, user, configMock;
-
-	useFakeDom();
 
 	useMockery( mockery => {
 		configMock = sinon.stub();

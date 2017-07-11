@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { assert } from 'chai';
@@ -8,12 +12,9 @@ import { assert } from 'chai';
  */
 import actions from './lib/mock-actions';
 import site from './lib/mock-site';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Ads Stores; EarningsStore, SettingsStore, TosStore', function() {
 	let Dispatcher, EarningsStore, SettingsStore, TosStore;
-
-	useFakeDom();
 
 	before( function() {
 		Dispatcher = require( 'dispatcher' );

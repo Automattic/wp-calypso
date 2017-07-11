@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -7,13 +11,11 @@ import mockery from 'mockery';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( '#accept()', function() {
 	let accept;
 
-	useFakeDom();
 	useMockery();
 
 	before( function() {

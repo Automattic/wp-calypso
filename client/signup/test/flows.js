@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import assert from 'assert';
@@ -9,14 +13,12 @@ import { noop } from 'lodash';
  */
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import mockedFlows from './fixtures/flows';
 
 describe( 'Signup Flows Configuration', () => {
 	describe( 'getFlow', () => {
 		let flows, user;
 
-		useFakeDom();
 		useFilesystemMocks( __dirname );
 
 		useMockery( ( mockery ) => {
@@ -49,7 +51,6 @@ describe( 'Signup Flows Configuration', () => {
 	describe( 'getABTestFilteredFlow', () => {
 		let flows;
 
-		useFakeDom();
 		useFilesystemMocks( __dirname );
 
 		const ABTestMock = {
@@ -108,7 +109,6 @@ describe( 'Signup Flows Configuration', () => {
 	describe( 'insertStepIntoFlow', () => {
 		let flows;
 
-		useFakeDom();
 		useFilesystemMocks( __dirname );
 
 		const myFlow = {

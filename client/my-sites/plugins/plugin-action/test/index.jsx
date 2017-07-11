@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -10,13 +14,11 @@ import React from 'react';
  * Internal dependencies
  */
 import EmptyComponent from 'test/helpers/react/empty-component';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'PluginAction', function() {
 	let mount, PluginAction;
 
-	useFakeDom();
 	useMockery();
 
 	before( () => {

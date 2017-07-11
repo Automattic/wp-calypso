@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import sinon from 'sinon';
@@ -9,7 +13,6 @@ import mockery from 'mockery';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 /**
@@ -44,7 +47,6 @@ describe( 'MediaActions', function() {
 		MediaActions, sandbox, Dispatcher, PostEditStore, MediaListStore,
 		mediaAddExternal;
 
-	useFakeDom();
 	useMockery();
 
 	before( function() {

@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import React from 'react';
@@ -10,13 +14,10 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 describe( 'index', function() {
-	useFakeDom();
-
 	useFilesystemMocks( __dirname );
 
 	useMockery( mockery => {

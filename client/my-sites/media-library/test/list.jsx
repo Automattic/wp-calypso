@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -10,7 +14,6 @@ import mockery from 'mockery';
  * Internal dependencies
  */
 import EmptyComponent from 'test/helpers/react/empty-component';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 /**
@@ -22,7 +25,6 @@ describe( 'MediaLibraryList item selection', function() {
 	let mount, MediaLibrarySelectedData, MediaLibrarySelectedStore,
 		MediaActions, fixtures, Dispatcher, MediaList, wrapper, mediaList;
 
-	useFakeDom();
 	useMockery();
 
 	function toggleItem( itemIndex, shiftClick ) {

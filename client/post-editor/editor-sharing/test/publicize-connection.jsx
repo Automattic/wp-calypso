@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { noop } from 'lodash';
@@ -9,7 +13,6 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 /**
@@ -26,8 +29,6 @@ var CONNECTION = {
 
 describe( 'PublicizeConnection', function() {
 	let PublicizeConnection;
-
-	useFakeDom();
 
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/posts/actions', {

@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import React from 'react';
@@ -11,7 +15,6 @@ import { test } from 'sinon';
  */
 import EmptyComponent from 'test/helpers/react/empty-component';
 import fixtures from './lib/fixtures';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 /**
@@ -96,8 +99,6 @@ describe( 'TokenField', function() {
 
 		return selectedSuggestions[ 0 ] || null;
 	}
-
-	useFakeDom();
 
 	useMockery( mockery => {
 		mount = require( 'enzyme' ).mount;

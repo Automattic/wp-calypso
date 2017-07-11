@@ -1,4 +1,7 @@
 /**
+ * @jest-environment jsdom
+ */
+/**
  * External dependencies
  */
 import React from 'react';
@@ -9,14 +12,12 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 import { PageViewTracker } from '../';
 
 describe( 'PageViewTracker', () => {
 	let clock;
 
-	useFakeDom();
 	useFakeTimers( fakeClock => {
 		clock = fakeClock;
 	} );

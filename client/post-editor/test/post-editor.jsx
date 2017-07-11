@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import React from 'react';
@@ -9,7 +13,6 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -22,7 +25,6 @@ describe( 'PostEditor', function() {
 		setLayoutFocus: () => {}
 	};
 
-	useFakeDom();
 	useSandbox( ( newSandbox ) => sandbox = newSandbox );
 	useMockery();
 

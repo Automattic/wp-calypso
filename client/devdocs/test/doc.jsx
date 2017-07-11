@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -8,13 +12,11 @@ import { expect } from 'chai';
  */
 
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'SingleDoc', () => {
 	let React, ReactDom, TestUtils, SingleDocClass;
 	let fetchResponse = '';
 
-	useFakeDom();
 	useMockery( mockery => {
 		mockery.registerMock( './service', {
 			fetch( path, cb ) {

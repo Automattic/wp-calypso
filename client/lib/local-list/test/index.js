@@ -1,12 +1,11 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 const anExampleKey = 'day:2014-08-01';
 
@@ -19,8 +18,6 @@ function createLocalRecords( statList, qty ) {
 
 describe( 'LocalList', function() {
 	let LocalList, statList;
-
-	useFakeDom();
 
 	before( () => {
 		LocalList = require( '..' );

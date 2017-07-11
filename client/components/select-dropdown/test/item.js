@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import React from 'react';
@@ -9,12 +13,9 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import SelectDropdownItem from '../item';
 
 describe( 'item', function() {
-	useFakeDom();
-
 	describe( 'component rendering', function() {
 		it( 'should render a list entry', function() {
 			const dropdownItem = shallow( <SelectDropdownItem>Published</SelectDropdownItem> );

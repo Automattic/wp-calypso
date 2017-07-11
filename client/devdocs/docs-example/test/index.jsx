@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { assert } from 'chai';
@@ -10,13 +14,10 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import DocsExample, { DocsExampleToggle, DocsExampleStats } from '../index';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import Button from 'components/button';
 import Count from 'components/count';
 
 describe( 'DocsExample', () => {
-	useFakeDom();
-
 	const props = {
 		title: 'Test Title',
 		url: '/test'

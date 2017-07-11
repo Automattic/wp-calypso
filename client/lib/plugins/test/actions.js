@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 
@@ -9,7 +13,6 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import siteData from './fixtures/site';
 import mockedWpcom from './mocks/wpcom';
 
@@ -26,8 +29,6 @@ describe( 'WPcom Data Actions', () => {
 		actions.resetQueue();
 		mockedWpcom.undocumented().reset();
 	} );
-
-	useFakeDom();
 
 	it( 'Actions should be an object', () => {
 		assert.isObject( actions );

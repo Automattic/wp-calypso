@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -14,7 +18,6 @@ import EmptyComponent from 'test/helpers/react/empty-component';
 import fixtures from './fixtures';
 import mockedActions from './mocks/actions';
 import mockedPluginAction from './mocks/plugin-action';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'PluginActivateToggle', function() {
@@ -25,7 +28,6 @@ describe( 'PluginActivateToggle', function() {
 	};
 	let PluginActivateToggle;
 
-	useFakeDom();
 	useMockery();
 
 	before( function() {

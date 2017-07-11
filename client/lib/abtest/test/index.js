@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -8,7 +12,6 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 const DATE_BEFORE = '2015-06-30T01:32:21.196Z';
@@ -20,7 +23,6 @@ describe( 'abtest', () => {
 	let ABTests;
 	const setSpy = sinon.spy( () => {} );
 
-	useFakeDom();
 	useMockery( () => {
 		require( 'lib/local-storage' )( global );
 		mockery.registerMock( 'lib/abtest/active-tests', {

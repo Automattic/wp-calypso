@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External Dependencies
  */
 import React from 'react';
@@ -10,7 +14,6 @@ import { domainRegistration, domainPrivacyProtection } from 'lib/cart-values/car
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 const wpcomMock = {
@@ -24,8 +27,6 @@ const wpcomMock = {
 
 describe( 'Domain Details Form', () => {
 	let DomainDetailsForm, DomainDetailsFormContainer;
-	// needed, because some dependency of dependency uses `window`
-	useFakeDom();
 
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'lib/analytics', {} );

@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -12,7 +16,6 @@ import mockery from 'mockery';
  */
 import EmptyComponent from 'test/helpers/react/empty-component';
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 /**
  * Module variables
@@ -28,7 +31,6 @@ describe( 'EditorGroundControl', function() {
 	let EditorGroundControl;
 
 	useMockery();
-	useFakeDom();
 
 	before( function() {
 		mockery.registerMock( 'components/card', EmptyComponent );

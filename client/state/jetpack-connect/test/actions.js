@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
@@ -26,15 +30,12 @@ import {
 	SITES_RECEIVE,
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { useSandbox } from 'test/helpers/use-sinon';
 import path from 'lib/route/path';
 
 describe( 'actions', () => {
 	let actions, sandbox, spy;
 	const mySitesPath = '/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active';
-
-	useFakeDom();
 
 	useSandbox( newSandbox => {
 		sandbox = newSandbox;

@@ -1,15 +1,16 @@
+/**
+ * @jest-environment jsdom
+ */
 
 /**
  * External Dependencies
  */
 var expect = require( 'chai' ).expect,
-	useFileSystemMocks = require( 'test/helpers/use-filesystem-mocks' ),
-	useFakeDom = require( 'test/helpers/use-fake-dom' );
+	useFileSystemMocks = require( 'test/helpers/use-filesystem-mocks' );
 
 var	Dispatcher, FeedStreamActionType, FeedPostActionType, FeedPostStore;
 
 describe( 'feed-post-store', function() {
-	useFakeDom();
 	useFileSystemMocks( __dirname );
 
 	before( () => {

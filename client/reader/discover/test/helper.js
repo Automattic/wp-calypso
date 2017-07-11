@@ -1,5 +1,9 @@
 /** @format */
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { assert } from 'chai';
@@ -10,8 +14,6 @@ import { get, omit } from 'lodash';
  */
 
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
-
 import * as fixtures from './fixtures';
 
 describe( 'helper', () => {
@@ -21,8 +23,6 @@ describe( 'helper', () => {
 		mockery.registerMock( 'config', () => fixtures.discoverSiteId );
 		mockery.registerMock( 'lib/user/utils', { getLocaleSlug: () => 'en' } );
 	} );
-
-	useFakeDom();
 
 	before( () => {
 		helper = require( '../helper' );

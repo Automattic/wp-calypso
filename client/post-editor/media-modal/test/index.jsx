@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import { identity, noop } from 'lodash';
@@ -11,7 +15,6 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { ModalViews } from 'state/ui/media-modal/constants';
 
@@ -38,7 +41,6 @@ describe( 'EditorMediaModal', function() {
 	useMockery( () => {
 		mockery.registerSubstitute( 'event', 'component-event' );
 	} );
-	useFakeDom();
 	useSandbox( ( sandbox ) => {
 		spy = sandbox.spy();
 		setLibrarySelectedItems = sandbox.stub();
