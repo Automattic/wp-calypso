@@ -10,7 +10,6 @@ import {
 	camelCase,
 	deburr,
 	first,
-	has,
 	head,
 	includes,
 	indexOf,
@@ -479,21 +478,18 @@ export class DomainDetailsForm extends PureComponent {
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			this.recordSubmit();
 
+			this.setPrivacyProtectionSubscriptions( options.addPrivacy !== false );
+
 			if ( hasErrors || options.skipFinish ) {
-				this.setPrivacyProtectionSubscriptions( options.addPrivacy !== false );
 				this.closeDialog();
 				return;
 			}
 
-			this.finish( options );
+			this.finish();
 		} );
 	}
 
-	finish( options = {} ) {
-		if ( has( options.addPrivacy ) ) {
-			this.setPrivacyProtectionSubscriptions( options.addPrivacy !== false );
-		}
-
+	finish() {
 		const allFieldValues = this.props.contactDetails;
 		debug( 'finish: allFieldValues:', allFieldValues );
 		setDomainDetails( allFieldValues );
