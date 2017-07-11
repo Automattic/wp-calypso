@@ -33,7 +33,6 @@ const actions = require( 'lib/posts/actions' ),
 	analytics = require( 'lib/analytics' );
 
 import config from 'config';
-import { abtest } from 'lib/abtest';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
@@ -81,8 +80,6 @@ export const PostEditor = React.createClass( {
 	},
 
 	_previewWindow: null,
-
-	isPostPublishPreviewABTest: abtest( 'postPublishPreview' ) === 'showPostPublishPreview',
 
 	getInitialState() {
 		return {
@@ -310,12 +307,6 @@ export const PostEditor = React.createClass( {
 					/>
 					<div className="post-editor__content">
 						<div className="post-editor__content-editor">
-							{ ! this.isPostPublishPreviewABTest
-								? <EditorNotice
-									{ ...this.state.notice }
-									onDismissClick={ this.hideNotice }
-									onViewClick={ this.onViewClick } />
-								: null }
 							<EditorActionBar
 								isNew={ this.state.isNew }
 								onPrivatePublish={ this.onPublish }
@@ -417,13 +408,10 @@ export const PostEditor = React.createClass( {
 							revision={ get( this.state, 'post.revisions.length', 0 ) }
 						/>
 						: null }
-					{ this.isPostPublishPreviewABTest
-						? <EditorNotice
-								{ ...this.state.notice }
-								onDismissClick={ this.hideNotice }
-								onViewClick={ this.onPreview }
-								isFullScreenPreview={ true } />
-						: null }
+					<EditorNotice
+						{ ...this.state.notice }
+						onDismissClick={ this.hideNotice }
+						onViewClick={ this.onPreview } />
 				</div>
 				{ isTrashed
 					? <RestorePostDialog
@@ -737,7 +725,6 @@ export const PostEditor = React.createClass( {
 			showPreview: false,
 			isPostPublishPreview: false,
 			previewAction: null,
-			notice: null,
 		} );
 
 		return false;
@@ -751,7 +738,7 @@ export const PostEditor = React.createClass( {
 		const { post } = this.state;
 
 		if ( utils.isPublished( post ) ) {
-			this.onSaveSuccess( 'updated', 'view', post.URL );
+			this.onSaveSuccess( 'updated' );
 		} else {
 			this.onSaveSuccess();
 		}
@@ -842,7 +829,7 @@ export const PostEditor = React.createClass( {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
 		}
 
-		this.onSaveSuccess( message, ( message === 'published' ? 'view' : 'preview' ), savedPost.URL );
+		this.onSaveSuccess( message );
 	},
 
 	onSaveFailure: function( error, message ) {
@@ -907,7 +894,7 @@ export const PostEditor = React.createClass( {
 		} );
 	},
 
-	onSaveSuccess: function( message, action, link ) {
+	onSaveSuccess: function( message ) {
 		const post = PostEditStore.get();
 		const isNotPrivateOrIsConfirmed = ( 'private' !== post.status ) || ( 'closed' !== this.state.confirmationSidebar );
 
@@ -932,14 +919,11 @@ export const PostEditor = React.createClass( {
 			nextState.notice = {
 				status: 'is-success',
 				message,
-				action,
-				link: this.isPostPublishPreviewABTest ? null : link,
 			};
 
 			window.scrollTo( 0, 0 );
 
 			if (
-				this.isPostPublishPreviewABTest &&
 				this.props.isSitePreviewable &&
 				isNotPrivateOrIsConfirmed
 			) {
