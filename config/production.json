@@ -72,6 +72,7 @@
 		"post-editor/video-editor": false,
 		"press-this": true,
 		"preview-layout": true,
+		"publicize-preview": true,
 		"push-notifications": true,
 		"reader": true,
 		"reader/following-intro": true,
