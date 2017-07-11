@@ -672,6 +672,10 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		margin: 0 15px 0 0;
 		min-height: 78px;
 	}
+
+	@include breakpoint( "<660px" ) {
+		min-height: 78px;
+	}
 }
 
 .reader-related-card-v2__title,
