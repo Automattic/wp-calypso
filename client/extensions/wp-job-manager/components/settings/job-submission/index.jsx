@@ -23,6 +23,7 @@ import SectionHeader from 'components/section-header';
 
 class JobSubmission extends Component {
 	static propTypes = {
+		enableRegistration: PropTypes.bool,
 		handleSubmit: PropTypes.func,
 		isDisabled: PropTypes.bool,
 		isSaving: PropTypes.bool,
@@ -34,6 +35,7 @@ class JobSubmission extends Component {
 
 	render() {
 		const {
+			enableRegistration,
 			handleSubmit,
 			isDisabled,
 			isSaving,
@@ -80,28 +82,30 @@ class JobSubmission extends Component {
 								</FormSettingExplanation>
 							</FormFieldset>
 
-							<FormFieldset>
-								<FormLabel>
-									{ translate( 'Role' ) }
-								</FormLabel>
-								<ReduxFormSelect
-									disabled={ isDisabled }
-									name="role">
-									<option value="editor">{ translate( 'Editor' ) }</option>
-									<option value="author">{ translate( 'Author' ) }</option>
-									<option value="contributor">{ translate( 'Contributor' ) }</option>
-									<option value="subscriber">{ translate( 'Subscriber' ) }</option>
-									<option value="teacher">{ translate( 'Teacher' ) }</option>
-									<option value="employer">{ translate( 'Employer' ) }</option>
-									<option value="customer">{ translate( 'Customer' ) }</option>
-									<option value="shop_manager">{ translate( 'Shop manager' ) }</option>
-								</ReduxFormSelect>
-								<FormSettingExplanation>
-									{ translate( 'Any new accounts created during submission will have this role. ' +
-										'If you haven\'t enabled account creation during submission in the options above, ' +
-										'your own method of assigning roles will apply.' ) }
-								</FormSettingExplanation>
-							</FormFieldset>
+							{ enableRegistration &&
+								<FormFieldset>
+									<FormLabel>
+										{ translate( 'Role' ) }
+									</FormLabel>
+									<ReduxFormSelect
+										disabled={ isDisabled }
+										name="role">
+										<option value="editor">{ translate( 'Editor' ) }</option>
+										<option value="author">{ translate( 'Author' ) }</option>
+										<option value="contributor">{ translate( 'Contributor' ) }</option>
+										<option value="subscriber">{ translate( 'Subscriber' ) }</option>
+										<option value="teacher">{ translate( 'Teacher' ) }</option>
+										<option value="employer">{ translate( 'Employer' ) }</option>
+										<option value="customer">{ translate( 'Customer' ) }</option>
+										<option value="shop_manager">{ translate( 'Shop manager' ) }</option>
+									</ReduxFormSelect>
+									<FormSettingExplanation>
+										{ translate( 'Any new accounts created during submission will have this role. ' +
+											'If you haven\'t enabled account creation during submission in the options above, ' +
+											'your own method of assigning roles will apply.' ) }
+									</FormSettingExplanation>
+								</FormFieldset>
+							}
 						</Card>
 					</FormSection>
 				</form>
@@ -229,6 +233,7 @@ const connectComponent = connect(
 		const selector = formValueSelector( 'submission', () => state.extensions.wpJobManager.form );
 
 		return {
+			enableRegistration: selector( state, 'account.enableRegistration' ),
 			submissionDuration: selector( state, 'duration.submissionDuration' ),
 		};
 	}
