@@ -419,6 +419,11 @@ class PluginMeta extends Component {
 		const pluginSlug = get( plugin, 'slug', '' );
 		const sections = sectionsModule.get();
 		const section = find( sections, ( value => value.name === pluginSlug ) );
+		const env = get( section, 'envId', [] );
+
+		if ( ! includes( env, config( 'env' ) ) ) {
+			return;
+		}
 
 		return get( section, 'settings_path' );
 	}
