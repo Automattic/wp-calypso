@@ -140,6 +140,8 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE ] = ( state ) => {
 				...state.creates,
 				{
 					...currentlyEditingChanges,
+					// If the "Enabled" toggle hasn't been modified in the current changes, use the value from the old method
+					enabled: isNil( currentlyEditingChanges.enabled ) ? ( method && method.enabled ) : currentlyEditingChanges.enabled,
 					id: nextCreateId( state ),
 					_originalId: originalId
 				}
@@ -199,6 +201,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
 		id: state.currentlyEditingId,
 		title,
 		methodType,
+		enabled: state.currentlyEditingChanges && state.currentlyEditingChanges.enabled,
 	};
 
 	return { ...state,
