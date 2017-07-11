@@ -1443,35 +1443,6 @@ Undocumented.prototype.usersSocialNew = function( service, token, flowName, fn )
 };
 
 /**
- * Connect the current account with a social service (e.g. Google/Facebook).
- *
- * @param {string} service - Social service associated with token, e.g. google.
- * @param {string} token - Token returned from service.
- * @param {string} redirectTo - The URL to redirect to after connecting.
- * @param {Function} fn - callback
- *
- * @return {Promise} A promise for the request
- */
-Undocumented.prototype.usersSocialConnect = function( service, token, redirectTo, fn ) {
-	const body = {
-		service,
-		token,
-		redirectTo,
-		locale: i18n.getLocaleSlug()
-	};
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( body );
-
-	const args = {
-		path: '/me/social-login/connect',
-		body
-	};
-
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
  * Sign up for a new phone account
  *
  * @param {string} query - a key/value pair; key: 'phone_number', value: 'the users phone number'

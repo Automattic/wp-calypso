@@ -303,7 +303,7 @@ export const connectSocialUser = ( service, token, redirectTo ) => dispatch => {
 		},
 	} );
 
-	return wpcom.undocumented().usersSocialConnect( service, token, redirectTo ).then( wpcomResponse => {
+	return wpcom.undocumented().me().socialConnect( service, token, redirectTo ).then( wpcomResponse => {
 		dispatch( {
 			type: SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 			redirectTo: wpcomResponse.redirect_to,

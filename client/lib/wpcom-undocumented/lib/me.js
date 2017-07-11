@@ -11,6 +11,12 @@ import debugFactory from 'debug';
 import MePreferences from './me-preferences.js';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:me' );
+import { reloadProxy } from 'wpcom-proxy-request';
+
+/**
+ * Internal dependencies.
+ */
+import config from 'config';
 
 /**
  * Create an UndocumentedMe instance
@@ -361,6 +367,36 @@ UndocumentedMe.prototype.deletePurchase = function( purchaseId, fn ) {
 	}, fn );
 };
 
+/**
+ * Connect the current account with a social service (e.g. Google/Facebook).
+ *
+ * @param {string} service - Social service associated with token, e.g. google.
+ * @param {string} token - Token returned from service.
+ * @param {string} redirectTo - The URL to redirect to after connecting.
+ * @param {Function} fn - callback
+ *
+ * @return {Promise} A promise for the request
+ */
+UndocumentedMe.prototype.socialConnect = function( service, token, redirectTo, fn ) {
+	const body = {
+		service,
+		token,
+		redirectTo,
+
+		// This API call is restricted to these OAuth keys
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+	};
+
+	const args = {
+		path: '/me/social-login/connect',
+		metaAPI: { accessAllUsersBlogs: true },
+		body: body,
+	};
+
+	reloadProxy();
+	return this.wpcom.req.post( args, fn );
+};
 UndocumentedMe.prototype.preferences = MePreferences;
 
 module.exports = UndocumentedMe;
