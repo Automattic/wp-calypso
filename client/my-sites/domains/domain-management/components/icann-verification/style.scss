@@ -11,6 +11,7 @@
 .icann-verification__status {
 	font-size: 16px;
 	font-weight: 600;
+	line-height: 21px;
 	padding-left: 50px;
 	position: relative;
 
@@ -42,6 +43,7 @@
 	padding: 24px 24px 24px 21px;
 	position: relative;
 	overflow: hidden;
+	transition: all 0.3s ease-out;
 
 	.button {
 		margin: 5px 10px 0 0;
@@ -68,6 +70,11 @@
 	animation: fadeIn 0.3s ease-out;
 }
 
+.waiting .icann-verification__status {
+	position: relative;
+	animation: fadeOut 0.3s ease-out;
+}
+
 .domain-details-card {
 	.icann-verification__card {
 		margin-bottom: 16px;
@@ -86,5 +93,17 @@
 	100% {
 		opacity: 1;
 		bottom: 0;
+	}
+}
+
+
+@keyframes fadeOut {
+	0% {
+		opacity: 0;
+		top: -20px;
+	}
+	100% {
+		opacity: 1;
+		top: 0;
 	}
 }
