@@ -65,20 +65,20 @@ class JobSubmission extends Component {
 
 								<ReduxFormToggle
 									disabled={ isDisabled }
-									name="enableRegistration"
-									text={ translate( 'Enable account creation during submission' ) } />
-								<FormSettingExplanation isIndented>
-									{ translate( 'Includes account creation on the listing submission form, to allow ' +
-										'non-registered users to create an account and submit a job listing simultaneously.' ) }
-								</FormSettingExplanation>
-
-								<ReduxFormToggle
-									disabled={ isDisabled }
 									name="generateUsername"
 									text="Generate usernames from email addresses" />
 								<FormSettingExplanation isIndented>
 									{ translate( 'Automatically generates usernames for new accounts from the registrant\'s ' +
 										'email address. If this is not enabled, a "username" field will display instead.' ) }
+								</FormSettingExplanation>
+
+								<ReduxFormToggle
+									disabled={ isDisabled }
+									name="enableRegistration"
+									text={ translate( 'Enable account creation during submission' ) } />
+								<FormSettingExplanation isIndented>
+									{ translate( 'Includes account creation on the listing submission form, to allow ' +
+										'non-registered users to create an account and submit a job listing simultaneously.' ) }
 								</FormSettingExplanation>
 							</FormFieldset>
 
