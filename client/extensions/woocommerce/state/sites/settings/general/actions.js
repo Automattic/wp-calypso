@@ -14,10 +14,11 @@ import {
 	WOOCOMMERCE_CURRENCY_UPDATE,
 	WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
+	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_FAILURE,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export const fetchSettingsGeneral = ( siteId ) => ( dispatch, getState ) => {
+export const fetchSettingsGeneral = ( siteId, retries = 0 ) => ( dispatch, getState ) => {
 	if (
 		areSettingsGeneralLoaded( getState(), siteId ) ||
 		areSettingsGeneralLoading( getState(), siteId )
@@ -40,8 +41,18 @@ export const fetchSettingsGeneral = ( siteId ) => ( dispatch, getState ) => {
 				data,
 			} );
 		} )
-		.catch( err => {
-			dispatch( setError( siteId, getAction, err ) );
+		.catch( error => {
+			dispatch( setError( siteId, getAction, error ) );
+			dispatch( {
+				type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_FAILURE,
+				siteId,
+				error,
+			} );
+			//Retry Settigns General Fetch
+			if ( 5 > retries ) {
+				retries++;
+				fetchSettingsGeneral( siteId )( dispatch, getState );
+			}
 		} );
 };
 
@@ -77,10 +88,10 @@ export const saveCurrency = (
 				dispatch( successAction( data ) );
 			}
 		} )
-		.catch( err => {
-			dispatch( setError( siteId, updateAction, err ) );
+		.catch( error => {
+			dispatch( setError( siteId, updateAction, error ) );
 			if ( failureAction ) {
-				dispatch( failureAction( err ) );
+				dispatch( failureAction( error ) );
 			}
 		} );
 };
@@ -120,11 +131,10 @@ export const updateTaxesEnabledSetting = (
 				dispatch( successAction( data ) );
 			}
 		} )
-		.catch( err => {
-			dispatch( setError( siteId, updateAction, err ) );
+		.catch( error => {
+			dispatch( setError( siteId, updateAction, error ) );
 			if ( failureAction ) {
-				dispatch( failureAction( err ) );
+				dispatch( failureAction( error ) );
 			}
 		} );
 };
-
