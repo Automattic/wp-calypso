@@ -43,6 +43,9 @@ export function receiveBlogStickerAdd( store, action, next, response ) {
 					i: <i />,
 				},
 			} ),
+			{
+				duration: 5000,
+			},
 		),
 	);
 }

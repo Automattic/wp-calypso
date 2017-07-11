@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
-import { addBlogSticker } from 'state/sites/blog-stickers/actions';
+import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/actions';
 
 class ReaderPostOptionsMenuBlogStickerMenuItem extends React.Component {
 	static propTypes = {
@@ -18,12 +18,9 @@ class ReaderPostOptionsMenuBlogStickerMenuItem extends React.Component {
 		hasSticker: React.PropTypes.bool,
 	};
 
-	addSticker = () => {
-		if ( this.props.hasSticker ) {
-			return null;
-		}
-
-		this.props.addBlogSticker( this.props.blogId, this.props.blogStickerName );
+	toggleSticker = () => {
+		const toggle = this.props.hasSticker ? this.props.removeBlogSticker : this.props.addBlogSticker;
+		toggle( this.props.blogId, this.props.blogStickerName );
 	};
 
 	render() {
@@ -37,7 +34,7 @@ class ReaderPostOptionsMenuBlogStickerMenuItem extends React.Component {
 				icon="flag"
 				key={ blogStickerName }
 				className={ classes }
-				onClick={ this.addSticker }
+				onClick={ this.toggleSticker }
 			>
 				{ children }
 			</PopoverMenuItem>
@@ -45,4 +42,6 @@ class ReaderPostOptionsMenuBlogStickerMenuItem extends React.Component {
 	}
 }
 
-export default connect( null, { addBlogSticker } )( ReaderPostOptionsMenuBlogStickerMenuItem );
+export default connect( null, { addBlogSticker, removeBlogSticker } )(
+	ReaderPostOptionsMenuBlogStickerMenuItem,
+);

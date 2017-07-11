@@ -11,7 +11,7 @@ import { SITES_BLOG_STICKER_REMOVE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { addBlogSticker } from 'state/sites/blog-stickers/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { errorNotice, plainNotice } from 'state/notices/actions';
 import { local } from 'state/data-layer/utils';
 
 export function requestBlogStickerRemove( { dispatch }, action ) {
@@ -36,13 +36,16 @@ export function receiveBlogStickerRemove( store, action, next, response ) {
 	}
 
 	store.dispatch(
-		successNotice(
-			translate( 'The sticker {{i}}%s{{/i}} has been successfully removed.', {
+		plainNotice(
+			translate( 'The sticker {{i}}%s{{/i}} has been removed.', {
 				args: action.payload.stickerName,
 				components: {
 					i: <i />,
 				},
 			} ),
+			{
+				duration: 5000,
+			},
 		),
 	);
 }
