@@ -23,6 +23,10 @@ import FormLabel from 'components/forms/form-label';
 
 class StoreAddress extends Component {
 
+	static defaultProps = {
+		showLabel: true,
+	};
+
 	componentDidMount = () => {
 		const { site } = this.props;
 
@@ -48,7 +52,6 @@ class StoreAddress extends Component {
 		super( props );
 		this.state = {
 			showDialog: false,
-			showLabel: true,
 			address: props.address,
 		};
 	}
@@ -110,7 +113,7 @@ class StoreAddress extends Component {
 	}
 
 	render() {
-		const { className, site, loading, translate } = this.props;
+		const { className, site, loading, translate, showLabel } = this.props;
 
 		const buttons = [
 			{ action: 'close', label: translate( 'Close' ) },
@@ -130,7 +133,7 @@ class StoreAddress extends Component {
 		} else {
 			display = (
 				<div>
-					{ this.props.showLabel && (
+					{ showLabel && (
 						<FormLabel>{ translate( 'Store location' ) }</FormLabel>
 					) }
 					<AddressView address={ this.state.address } />

@@ -89,7 +89,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 						)
 					} />
 				<Card className="payments__address-currency-container">
-					<StoreAddress />
+					<StoreAddress showLabel={ false } />
 					<div className="payments__currency-container">
 						<FormLabel>
 							{ translate( 'Store Currency' ) }
