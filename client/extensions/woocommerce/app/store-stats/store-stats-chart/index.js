@@ -104,7 +104,9 @@ class StoreStatsChart extends Component {
 						if ( ! isLoading ) {
 							const itemChartData = this.buildChartData( orderData[ selectedIndex ], tabs[ tabIndex ] );
 							const delta = this.getDeltaByStat( tab.attr );
-							const deltaValue = Math.abs( Math.round( delta.percentage_change * 100 ) );
+							const deltaValue = ( delta.direction === 'is-undefined-increase' )
+								? '-'
+								: Math.abs( Math.round( delta.percentage_change * 100 ) );
 							const periodFormat = getPeriodFormat( unit, delta.reference_period );
 							return (
 								<Tab
