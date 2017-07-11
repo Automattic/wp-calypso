@@ -67,30 +67,22 @@ class StoreStats extends Component {
 		const widgetPath = `/${ unit }/${ slug }${ querystring ? '?' : '' }${ querystring || '' }`;
 
 		const widgetList1 = (
-			<div className="store-stats__widgets-column spark-widgets" key="sparkwidgets1">
-				<WidgetList
-					siteId={ siteId }
-					header={ null }
-					emptyMessage={ translate( 'No data found.' ) }
-					query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
-					selectedDate={ endSelectedDate }
-					statType="statsOrders"
-					widgets={ sparkWidgetList1 }
-				/>
-			</div>
-			);
+			<WidgetList
+				siteId={ siteId }
+				query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
+				selectedDate={ endSelectedDate }
+				statType="statsOrders"
+				widgets={ sparkWidgetList1 }
+			/>
+		);
 		const widgetList2 = (
-			<div className="store-stats__widgets-column spark-widgets" key="sparkwidgets2">
-				<WidgetList
-					siteId={ siteId }
-					header={ null }
-					emptyMessage={ translate( 'No data found.' ) }
-					query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
-					selectedDate={ endSelectedDate }
-					statType="statsOrders"
-					widgets={ sparkWidgetList2 }
-				/>
-			</div>
+			<WidgetList
+				siteId={ siteId }
+				query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
+				selectedDate={ endSelectedDate }
+				statType="statsOrders"
+				widgets={ sparkWidgetList2 }
+			/>
 		);
 
 		return (
@@ -123,8 +115,18 @@ class StoreStats extends Component {
 					/>
 				</StatsPeriodNavigation>
 				<div className="store-stats__widgets">
-					{ widgetList1 }
-					{ widgetList2 }
+					<div className="store-stats__widgets-column spark-widgets" key="sparkwidgets">
+						<Module
+							siteId={ siteId }
+							header={ null }
+							emptyMessage={ translate( 'No data found.' ) }
+							query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
+							statType="statsOrders"
+						>
+							{ widgetList1 }
+							{ widgetList2 }
+						</Module>
+					</div>
 					{ topWidgets.map( widget => {
 						const header = (
 							<SectionHeader href={ widget.basePath + widgetPath }>

@@ -141,7 +141,7 @@ export function getSerializedStatsQuery( query = {} ) {
  * @return {array} - Array of data objects
  */
 function parseOrderDeltas( payload ) {
-	if ( ! payload || ! payload.deltas || ! payload.delta_fields || Object.keys( payload.deltas ).length === 0 ) {
+	if ( ! payload || ! payload.deltasv2 || ! payload.delta_fields || Object.keys( payload.deltasv2 ).length === 0 ) {
 		return [];
 	}
 	return payload.deltasv2.map( row => { // will be renamed to deltas
