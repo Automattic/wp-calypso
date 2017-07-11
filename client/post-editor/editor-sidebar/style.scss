@@ -111,3 +111,11 @@ $editor-sidebar-font-size: 13px;
 .editor-sidebar__feedback-request-button {
 	width: 100%;
 }
+
+.editor-sidebar__feedback-list-label {
+	padding: 11px 16px;
+
+	&.is-hidden {
+		display: none;
+	}
+}

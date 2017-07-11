@@ -11,10 +11,8 @@ import EditorSidebarHeader from './header';
 import SidebarFooter from 'layout/sidebar/footer';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import EditorFeedbackInvitation from 'post-editor/editor-feedback-invitation';
-import FeedbackSidebarHeader from './feedback-header';
-import FeedbackRequestForm from './feedback-request-form';
-import FeedbackList from './feedback-list';
 import EditorDeletePost from 'post-editor/editor-delete-post';
+import FeedbackView from './feedback-view';
 
 export default class EditorSidebar extends Component {
 	static propTypes = {
@@ -29,7 +27,7 @@ export default class EditorSidebar extends Component {
 		toggleSidebar: PropTypes.func,
 		setPostDate: PropTypes.func,
 		isPrivate: PropTypes.bool,
-	}
+	};
 
 	constructor() {
 		super();
@@ -46,9 +44,7 @@ export default class EditorSidebar extends Component {
 	render() {
 		return (
 			<div className="editor-sidebar">
-				{ this.state.showFeedback
-					? this.renderFeedbackSidebar()
-					: this.renderMainSidebar() }
+				{ this.state.showFeedback ? this.renderFeedbackSidebar() : this.renderMainSidebar() }
 			</div>
 		);
 	}
@@ -91,10 +87,7 @@ export default class EditorSidebar extends Component {
 				/>
 				<EditorFeedbackInvitation onTrigger={ this.openFeedbackPane } />
 				<SidebarFooter>
-					<EditorDeletePost
-						post={ post }
-						onTrashingPost={ onTrashingPost }
-					/>
+					<EditorDeletePost post={ post } onTrashingPost={ onTrashingPost } />
 				</SidebarFooter>
 			</div>
 		);
@@ -102,13 +95,24 @@ export default class EditorSidebar extends Component {
 
 	renderFeedbackSidebar() {
 		return (
-			<div className="editor-sidebar__view">
-				<FeedbackSidebarHeader closeFeedback={ this.closeFeedbackPane } />
-				<div className="editor-sidebar__feedback-header-image-box"></div>
-				<FeedbackRequestForm />
-				<FeedbackList />
-				<SidebarFooter />
-			</div>
+			<FeedbackView
+				sharedLinks={ [
+					{
+						label: 'email1@share.test',
+						link: '',
+						comments: [
+							'Comment one',
+							'Comment two',
+							'Three-score and two comments ago... there was nothing. The post was formless and void.',
+						],
+					},
+					{
+						label: 'email2@share.test',
+						link: '',
+						comments: [],
+					},
+				] }
+			/>
 		);
 	}
 }
