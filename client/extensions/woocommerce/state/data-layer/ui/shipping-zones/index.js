@@ -217,6 +217,9 @@ const getZoneMethodCreateSteps = ( siteId, zoneId, method, defaultOrder, state )
 			...omit( method, '_originalId' ),
 			order: originalMethod.order,
 		};
+		if ( isNil( method.enabled ) ) { // If the user didn't change the "Enabled" toggle, use the value from the original method
+			method.enabled = originalMethod.enabled;
+		}
 	} else if ( 'object' === typeof method._originalId ) {
 		method = {
 			...omit( method, '_originalId' ),
