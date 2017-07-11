@@ -68,6 +68,12 @@
 	animation: fadeIn 0.3s ease-out;
 }
 
+.icann-verification__subtitle {
+	color: 	darken( $gray, 20% );
+	font-size: 14px;
+	font-weight: normal;
+}
+
 .domain-details-card {
 	.icann-verification__card {
 		margin-bottom: 16px;

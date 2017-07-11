@@ -63,8 +63,8 @@ class IcannVerificationCard extends React.Component {
 		}
 
 		return translate(
-			'We need to verify the email address you provided for this domain to ensure we can contact ' +
-			'you concerning your domain. Please verify your email address or your domain will stop working. ' +
+			'We need to check your contact information to make sure you can be reached. Please verify your ' +
+			'details using the email we sent you, or your domain will stop working. ' +
 			'{{learnMoreLink}}Learn more.{{/learnMoreLink}}', {
 				components: {
 					learnMoreLink: <a href={ support.EMAIL_VALIDATION_AND_VERIFICATION }
@@ -86,7 +86,7 @@ class IcannVerificationCard extends React.Component {
 			sent: emailSent,
 		} );
 		let statusIcon = 'notice-outline';
-		let statusText = translate( 'Check your email — verfication sent to %(email)s.', {
+		let statusText = translate( 'Check your email — instructions sent to %(email)s.', {
 			args: { email: this.props.contactDetails.email },
 		} );
 		if ( emailSent ) {
