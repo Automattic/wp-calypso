@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { find, flatten, isEmpty, isNil, omit, some, xor } from 'lodash';
+import { find, flatten, isEmpty, isNil, map, omit, some, xor } from 'lodash';
 
 /**
  * Internal dependencies
@@ -210,11 +210,17 @@ const getZoneMethodUpdateSteps = ( siteId, zoneId, method, state ) => {
 	} ];
 };
 
-const getZoneMethodCreateSteps = ( siteId, zoneId, method, state ) => {
-	if ( ! isNil( method._originalId ) ) {
+const getZoneMethodCreateSteps = ( siteId, zoneId, method, defaultOrder, state ) => {
+	if ( 'number' === typeof method._originalId ) {
+		const originalMethod = getShippingZoneMethod( state, method._originalId, siteId );
 		method = {
 			...omit( method, '_originalId' ),
-			order: getShippingZoneMethod( state, method._originalId, siteId ).order,
+			order: originalMethod.order,
+		};
+	} else if ( 'object' === typeof method._originalId ) {
+		method = {
+			...omit( method, '_originalId' ),
+			order: defaultOrder + method._originalId + 1,
 		};
 	}
 
@@ -230,7 +236,7 @@ const getZoneMethodCreateSteps = ( siteId, zoneId, method, state ) => {
 				getZoneId( zoneId, actionList ),
 				id,
 				methodType,
-				order,
+				order || ( defaultOrder + id.index + 1 ),
 				createShippingZoneMethodSuccess( actionList ),
 				actionListStepFailure( actionList ),
 			) );
@@ -254,6 +260,23 @@ const getZoneMethodCreateSteps = ( siteId, zoneId, method, state ) => {
 	return steps;
 };
 
+/**
+ * Gets the "order" property of the last shipping method the zone currently being edited.
+ * All new methods of that zone must use a higher "order" value than this.
+ * @param {Object} state The whole Redux state tree
+ * @param {Number} siteId Site ID to check
+ * @return {Number} The "order" property of the last zone method, or 0 if the zone has no methods.
+ */
+const getLastZoneMethodOrder = ( state, siteId ) => {
+	const serverZones = getAPIShippingZones( state );
+	const zoneId = getShippingZonesEdits( state, siteId ).currentlyEditingId;
+	const serverZone = find( serverZones, { id: zoneId } );
+	const serverMethodIds = serverZone ? serverZone.methodIds : [];
+	const serverMethods = serverMethodIds.map( id => getShippingZoneMethod( state, id, siteId ) );
+	const lastMethodOrder = Math.max( ...map( serverMethods, 'order' ) );
+	return Math.max( lastMethodOrder, 0 );
+};
+
 export const getSaveZoneActionListSteps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const serverZones = getAPIShippingZones( state );
@@ -274,6 +297,7 @@ export const getSaveZoneActionListSteps = ( state ) => {
 	}
 
 	const methodEdits = zoneEdits.currentlyEditingChanges.methods;
+	const lastMethodOrder = getLastZoneMethodOrder( state, siteId );
 
 	return [
 		...getZoneStepsFunc( siteId, zoneId, zoneProperties ),
@@ -281,7 +305,7 @@ export const getSaveZoneActionListSteps = ( state ) => {
 		...getUpdateShippingZoneLocationsSteps( siteId, zoneId, locations, serverLocations ),
 		...flatten( methodEdits.deletes.map( method => getZoneMethodDeleteSteps( siteId, zoneId, method, state ) ) ),
 		...flatten( methodEdits.updates.map( method => getZoneMethodUpdateSteps( siteId, zoneId, method, state ) ) ),
-		...flatten( methodEdits.creates.map( method => getZoneMethodCreateSteps( siteId, zoneId, method, state ) ) ),
+		...flatten( methodEdits.creates.map( method => getZoneMethodCreateSteps( siteId, zoneId, method, lastMethodOrder, state ) ) ),
 	];
 };
 
