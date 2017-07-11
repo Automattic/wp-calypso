@@ -41,6 +41,11 @@ class QuerySimplePayments extends Component {
 			return;
 		}
 
+		// Products are indexed from 1.
+		if ( productId === 0 ) {
+			return;
+		}
+
 		if ( productId ) {
 			props.requestProduct( siteId, productId );
 
