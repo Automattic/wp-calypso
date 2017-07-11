@@ -370,7 +370,7 @@ class SiteSettingsFormGeneral extends Component {
 							'Find out by enabling this banner on your site: it shows your support ' +
 							'for real net neutrality rules by displaying a message on the bottom ' +
 							'of your site and "slowing down" some of your posts. ' +
-							'{{netNeutralityLink}}Read the release post{{/netNeutralityLink}}',
+							'{{netNeutralityLink}}Learn more about Net Neutrality{{/netNeutralityLink}}',
 							{
 								components: {
 									netNeutralityLink: (
