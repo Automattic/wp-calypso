@@ -11,6 +11,7 @@ export const restoreProgressSchema = {
 			properties: {
 				errorCode: { type: 'string' },
 				failureReason: { type: 'string' },
+				freshness: { type: 'integer' },
 				message: { type: 'string' },
 				percent: { type: 'integer' },
 				restoreId: { type: 'integer' },
