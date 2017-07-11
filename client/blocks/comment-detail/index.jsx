@@ -81,8 +81,8 @@ export class CommentDetail extends Component {
 	edit = () => noop;
 
 	toggleApprove = () => {
-		const { commentId, commentStatus, setCommentStatus } = this.props;
-		setCommentStatus( commentId, 'approved' === commentStatus ? 'unapproved' : 'approved' );
+		const { commentId, commentStatus, postId, setCommentStatus } = this.props;
+		setCommentStatus( commentId, postId, 'approved' === commentStatus ? 'unapproved' : 'approved' );
 	}
 
 	toggleExpanded = () => {
@@ -90,8 +90,8 @@ export class CommentDetail extends Component {
 	}
 
 	toggleLike = () => {
-		const { commentId, toggleCommentLike } = this.props;
-		toggleCommentLike( commentId );
+		const { commentId, postId, toggleCommentLike } = this.props;
+		toggleCommentLike( commentId, postId );
 	}
 
 	toggleSelected = () => {
@@ -100,13 +100,13 @@ export class CommentDetail extends Component {
 	}
 
 	toggleSpam = () => {
-		const { commentId, commentStatus, setCommentStatus } = this.props;
-		setCommentStatus( commentId, 'spam' === commentStatus ? 'approved' : 'spam' );
+		const { commentId, commentStatus, postId, setCommentStatus } = this.props;
+		setCommentStatus( commentId, postId, 'spam' === commentStatus ? 'approved' : 'spam' );
 	}
 
 	toggleTrash = () => {
-		const { commentId, commentStatus, setCommentStatus } = this.props;
-		setCommentStatus( commentId, 'trash' === commentStatus ? 'approved' : 'trash' );
+		const { commentId, commentStatus, postId, setCommentStatus } = this.props;
+		setCommentStatus( commentId, postId, 'trash' === commentStatus ? 'approved' : 'trash' );
 	}
 
 	render() {
@@ -169,6 +169,7 @@ export class CommentDetail extends Component {
 					deleteCommentPermanently={ this.deleteCommentPermanently }
 					isBulkEdit={ isBulkEdit }
 					isExpanded={ isExpanded }
+					postId={ postId }
 					postTitle={ postTitle }
 					toggleApprove={ this.toggleApprove }
 					toggleExpanded={ this.toggleExpanded }

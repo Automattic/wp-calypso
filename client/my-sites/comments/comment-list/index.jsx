@@ -10,10 +10,8 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 /**
  * Internal dependencies
  */
-import {
-	createNotice,
-	removeNotice,
-} from 'state/notices/actions';
+import { changeCommentStatus, likeComment, unlikeComment } from 'state/comments/actions';
+import { createNotice, removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 import getSiteComments from 'state/selectors/get-site-comments';
 import CommentDetail from 'blocks/comment-detail';
@@ -29,18 +27,21 @@ const COMMENTS_PER_PAGE = 2;
 
 export class CommentList extends Component {
 	static propTypes = {
+		changeCommentStatus: PropTypes.func, // real action
 		comments: PropTypes.array,
 		commentsCount: PropTypes.number,
 		commentsPage: PropTypes.number,
 		deleteCommentPermanently: PropTypes.func,
+		likeComment: PropTypes.func, // real action
 		setBulkStatus: PropTypes.func,
-		setCommentLike: PropTypes.func,
-		setCommentsPage: PropTypes.func,
+		setCommentLike: PropTypes.func, // CommentFaker
+		setCommentsPage: PropTypes.func, // CommentFaker
 		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 		translate: PropTypes.func,
 		undoBulkStatus: PropTypes.func,
+		unlikeComment: PropTypes.func, // real action
 	};
 
 	static defaultProps = {
@@ -104,7 +105,7 @@ export class CommentList extends Component {
 		} );
 	};
 
-	setCommentStatus = ( commentId, status, options = { showNotice: true } ) => {
+	setCommentStatus = ( commentId, postId, status, options = { showNotice: true } ) => {
 		// TODO: Replace with Redux getComment()
 		const comment = this.getComment( commentId );
 
@@ -115,10 +116,15 @@ export class CommentList extends Component {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 
 		if ( options.showNotice ) {
-			this.showNotice( commentId, status, comment.status );
+			this.showNotice( commentId, postId, status, comment.status );
 		}
 
-		this.props.setCommentStatus( commentId, status );
+		this.props.changeCommentStatus( commentId, postId, status );
+
+		// If the comment is not approved anymore, also remove the like
+		if ( 'approved' !== status ) {
+			this.props.unlikeComment( commentId, postId );
+		}
 	}
 
 	showBulkNotice = ( newStatus, selectedComments ) => {
@@ -151,7 +157,7 @@ export class CommentList extends Component {
 		this.props.createNotice( type, message, options );
 	}
 
-	showNotice = ( commentId, newStatus, previousStatus ) => {
+	showNotice = ( commentId, postId, newStatus, previousStatus ) => {
 		const { translate } = this.props;
 
 		const [ type, message ] = get( {
@@ -174,7 +180,7 @@ export class CommentList extends Component {
 			},
 			'delete' !== newStatus && {
 				button: translate( 'Undo' ),
-				onClick: () => this.setCommentStatus( commentId, previousStatus, { showNotice: false } ),
+				onClick: () => this.setCommentStatus( commentId, postId, previousStatus, { showNotice: false } ),
 			}
 		);
 
@@ -203,16 +209,21 @@ export class CommentList extends Component {
 
 	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
 
-	toggleCommentLike = commentId => {
+	toggleCommentLike = ( commentId, postId ) => {
 		// TODO: Replace with Redux getComment()
 		const comment = find( this.props.comments, [ 'ID', commentId ] );
 
 		if ( 'unapproved' === comment.status ) {
 			this.props.removeNotice( `comment-notice-${ commentId }` );
-			this.showNotice( commentId, 'approved', 'unapproved' );
+			this.showNotice( commentId, postId, 'approved', 'unapproved' );
 		}
 
-		this.props.setCommentLike( commentId, ! comment.i_like );
+		if ( comment.i_like ) {
+			this.props.unlikeComment( commentId, postId );
+		} else {
+			// Also automagically approves the comment
+			this.props.likeComment( commentId, postId );
+		}
 	}
 
 	toggleCommentSelected = commentId => {
@@ -335,9 +346,12 @@ const mapStateToProps = ( state, { siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = {
-	createNotice,
-	removeNotice,
-};
+const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
+	changeCommentStatus: ( commentId, postId, status ) => dispatch( changeCommentStatus( siteId, postId, commentId, status ) ),
+	createNotice: ( status, text, options ) => dispatch( createNotice( status, text, options ) ),
+	likeComment: ( commentId, postId ) => dispatch( likeComment( siteId, postId, commentId ) ),
+	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
+	unlikeComment: ( commentId, postId ) => dispatch( unlikeComment( siteId, postId, commentId ) ),
+} );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentFaker( CommentList ) ) );
