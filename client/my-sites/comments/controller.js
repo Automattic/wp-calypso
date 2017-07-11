@@ -34,10 +34,10 @@ export const getRedirectUrl = ( status, siteFragment ) => {
 };
 
 export const redirect = function( context, next ) {
-	const { status } = context.params;
+	const { status, site } = context.params;
 	const siteFragment = route.getSiteFragment( context.path );
 	const redirectUrl = getRedirectUrl( status, siteFragment );
-	if ( redirectUrl && '/comments/' + status !== redirectUrl ) {
+	if ( redirectUrl && ( site || '/comments/' + status !== redirectUrl ) ) {
 		return page.redirect( redirectUrl );
 	}
 	next();
