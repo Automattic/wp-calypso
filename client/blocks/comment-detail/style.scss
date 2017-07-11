@@ -337,12 +337,11 @@
 	padding: 0 10px;
 
 	&.is-unapproved {
-		background-color: $alert-yellow;
+		background: lighten( $alert-yellow, 18% );
 	}
 	&.is-spam,
 	&.is-trash {
-		background: $alert-red;
-		color: $white;
+		background: lighten( $alert-red, 18% );
 	}
 }
 
@@ -435,7 +434,6 @@ a.comment-detail__author-more-element {
 	position: relative;
 
 	textarea {
-		font-family: $serif;
 		font-size: 14px;
 		height: 47px;
 		line-height: 21px;
@@ -458,13 +456,17 @@ a.comment-detail__author-more-element {
 			min-height: 68px; // 2 lines
 		}
 
+		&::placeholder {
+			color: $gray-text-min;
+		}
+
 		&.has-scrollbar {
 			overflow-y: auto;
 		}
 	}
 
 	.comment-detail__reply-submit {
-		color: lighten( $gray, 10% );
+		color: $gray;
 		font-size: 12px;
 		font-weight: 600;
 		padding: 4px;
