@@ -5,7 +5,6 @@ import { createReducer } from 'state/utils';
 import { LOADING } from 'woocommerce/state/constants';
 import { updateSettings } from '../helpers';
 import {
-	WOOCOMMERCE_CURRENCY_UPDATE,
 	WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS,
 	WOOCOMMERCE_SETTINGS_BATCH_REQUEST,
 	WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
@@ -19,11 +18,6 @@ import {
 // TODO: Handle error
 
 export default createReducer( null, {
-	[ WOOCOMMERCE_CURRENCY_UPDATE ]: ( state ) => {
-		// TODO: Return some sort of saving indicator
-		return state;
-	},
-
 	[ WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS ]: ( state, { data } ) => {
 		const settings = state || [];
 		const newSettings = settings.map( ( setting ) => {

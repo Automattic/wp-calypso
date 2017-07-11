@@ -33,7 +33,7 @@ class PaymentMethodEdit extends Component {
 		translate: PropTypes.func.isRequired,
 		onCancel: PropTypes.func.isRequired,
 		onEditField: PropTypes.func.isRequired,
-		onSave: PropTypes.func.isRequired,
+		onDone: PropTypes.func.isRequired,
 	};
 
 	onEditFieldHandler = ( e ) => {
@@ -110,7 +110,7 @@ class PaymentMethodEdit extends Component {
 
 	buttons = [
 		{ action: 'cancel', label: this.props.translate( 'Cancel' ), onClick: this.props.onCancel },
-		{ action: 'save', label: this.props.translate( 'Save' ), onClick: this.props.onSave, isPrimary: true },
+		{ action: 'save', label: this.props.translate( 'Done' ), onClick: this.props.onDone, isPrimary: true },
 	];
 
 	render() {
