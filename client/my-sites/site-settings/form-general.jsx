@@ -334,7 +334,7 @@ class SiteSettingsFormGeneral extends Component {
 		const { fields, isRequestingSettings, translate, handleToggle, moment, handleSubmitForm, isSavingSettings } = this.props;
 
 		const today = moment(),
-			lastDay = moment( { year: 2017, month: 6, day: 13 } );
+			lastDay = moment( { year: 2017, month: 6, day: 12 } );
 
 		if ( today.isAfter( lastDay, 'day' ) ) {
 			return null;
