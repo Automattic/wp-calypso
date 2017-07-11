@@ -144,10 +144,6 @@ export const PostEditor = React.createClass( {
 		} else {
 			this.props.markSaved();
 		}
-
-		if ( ( nextState.isDirty && ! this.state.isDirty ) || ( nextProps.dirty && ! this.props.dirty ) ) {
-			this.setConfirmationSidebar( { status: 'closed', context: 'content_edit', nextProps } );
-		}
 	},
 
 	componentDidMount: function() {
@@ -203,20 +199,19 @@ export const PostEditor = React.createClass( {
 		return this.props.setLayoutFocus( 'content' );
 	},
 
-	setConfirmationSidebar: function( { status, context = null, nextProps } ) {
-		const props = nextProps || this.props;
+	setConfirmationSidebar: function( { status, context = null } ) {
 		const allowedStatuses = [ 'closed', 'open', 'publishing' ];
 		const confirmationSidebar = allowedStatuses.indexOf( status ) > -1 ? status : 'closed';
-		const editorSidebarPreference = props.editorSidebarPreference === 'open' ? 'sidebar' : 'content';
+		const editorSidebarPreference = this.props.editorSidebarPreference === 'open' ? 'sidebar' : 'content';
 		this.setState( { confirmationSidebar } );
 
 		switch ( confirmationSidebar ) {
 			case 'closed':
-				props.setLayoutFocus( editorSidebarPreference );
+				this.props.setLayoutFocus( editorSidebarPreference );
 				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_close', { context } );
 				break;
 			case 'open':
-				props.setLayoutFocus( 'editor-confirmation-sidebar' );
+				this.props.setLayoutFocus( 'editor-confirmation-sidebar' );
 				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_open' );
 				break;
 		}
@@ -227,11 +222,6 @@ export const PostEditor = React.createClass( {
 		if ( this.state.selectedText !== selectedText ) {
 			this.setState( { selectedText: selectedText || null } );
 		}
-	},
-
-	onEditorKeyUp: function() {
-		this.debouncedCopySelectedText();
-		this.debouncedSaveRawContent();
 	},
 
 	handleConfirmationSidebarPreferenceChange: function( event ) {
@@ -343,7 +333,7 @@ export const PostEditor = React.createClass( {
 								maxWidth={ 1462 } />
 							<div className="post-editor__header">
 								<EditorTitle
-									onChange={ this.debouncedAutosave }
+									onChange={ this.onEditorTitleChange }
 									tabIndex={ 1 } />
 								{ this.state.post && isPage && site
 									? <EditorPageSlug
@@ -516,9 +506,29 @@ export const PostEditor = React.createClass( {
 		this.setState( { isEditorInitialized: true } );
 	},
 
-	onEditorContentChange: function() {
-		this.debouncedSaveRawContent();
+	onEditorTitleChange() {
+		if ( 'open' === this.state.confirmationSidebar ) {
+			this.setConfirmationSidebar( { status: 'closed', context: 'content_edit' } );
+		}
+
 		this.debouncedAutosave();
+	},
+
+	onEditorContentChange: function() {
+		if ( 'open' === this.state.confirmationSidebar ) {
+			this.setConfirmationSidebar( { status: 'closed', context: 'content_edit' } );
+		}
+
+		this.debouncedSaveRawContent();
+	},
+
+	onEditorKeyUp: function() {
+		if ( 'open' === this.state.confirmationSidebar ) {
+			this.setConfirmationSidebar( { status: 'closed', context: 'content_edit' } );
+		}
+
+		this.debouncedCopySelectedText();
+		this.debouncedSaveRawContent();
 	},
 
 	onEditorFocus: function() {
