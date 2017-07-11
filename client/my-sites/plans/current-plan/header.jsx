@@ -51,6 +51,11 @@ class CurrentPlanHeader extends Component {
 		isAutomatedTransfer: PropTypes.bool,
 	};
 
+	isEligibleForLiveChat = () => {
+		const { currentPlanSlug: planSlug } = this.props;
+		return planSlug === PLAN_JETPACK_BUSINESS || planSlug === PLAN_JETPACK_BUSINESS_MONTHLY;
+	};
+
 	renderPurchaseInfo() {
 		const {
 			currentPlan,
@@ -137,6 +142,8 @@ class CurrentPlanHeader extends Component {
 						<HappinessSupport
 							isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 							isPlaceholder={ isPlaceholder }
+							showLiveChatButton={ this.isEligibleForLiveChat() }
+							liveChatButtonEventName="calypso_plans_current_plan_chat_initiated"
 						/>
 					</div>
 				</div>

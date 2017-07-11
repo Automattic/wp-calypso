@@ -61,6 +61,12 @@ import Notice from 'components/notice';
 import ThankYouCard from 'components/thank-you-card';
 import domainsPaths from 'my-sites/domains/paths';
 import config from 'config';
+import { getSitePlanSlug } from 'state/sites/plans/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+} from 'lib/plans/constants';
 
 function getPurchases( props ) {
 	return ( props.receipt.data && props.receipt.data.purchases ) || [];
@@ -203,6 +209,11 @@ const CheckoutThankYou = React.createClass( {
 		return page( `/stats/insights/${ this.props.selectedSite.slug }` );
 	},
 
+	isEligibleForLiveChat() {
+		const { planSlug } = this.props;
+		return planSlug === PLAN_JETPACK_BUSINESS || planSlug === PLAN_JETPACK_BUSINESS_MONTHLY;
+	},
+
 	isNewUser() {
 		return moment( this.props.userDate ).isAfter( moment().subtract( 2, 'hours' ) );
 	},
@@ -281,7 +292,11 @@ const CheckoutThankYou = React.createClass( {
 				</Card>
 
 				<Card className="checkout-thank-you__footer">
-					<HappinessSupport isJetpack={ wasJetpackPlanPurchased } />
+					<HappinessSupport
+						isJetpack={ wasJetpackPlanPurchased }
+						liveChatButtonEventName="calypso_plans_autoconfig_chat_initiated"
+						showLiveChatButton={ this.isEligibleForLiveChat() }
+					/>
 				</Card>
 			</Main>
 		);
@@ -391,7 +406,11 @@ const CheckoutThankYou = React.createClass( {
 
 export default connect(
 	( state, props ) => {
+		const siteId = getSelectedSiteId( state );
+		const planSlug = getSitePlanSlug( state, siteId );
+
 		return {
+			planSlug,
 			receipt: getReceiptById( state, props.receiptId ),
 			sitePlans: getPlansBySite( state, props.selectedSite ),
 			user: getCurrentUser( state ),
