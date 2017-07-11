@@ -82,6 +82,7 @@
 		"post-editor/media-advanced": true,
 		"post-editor/video-editor": false,
 		"press-this": true,
+		"publicize-preview": true,
 		"reader": true,
 		"reader/following-intro": true,
 		"reader/full-errors": true,
