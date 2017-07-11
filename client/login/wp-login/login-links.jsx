@@ -9,7 +9,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config, { isEnabled } from 'config';
+import { addQueryArgs } from 'lib/url';
+import { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'gridicons';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -19,6 +20,7 @@ import { login } from 'lib/paths';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
+		locale: PropTypes.string.isRequired,
 		recordPageView: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
@@ -107,7 +109,7 @@ export class LoginLinks extends React.Component {
 
 		return (
 			<a
-				href={ config( 'login_url' ) + '?action=lostpassword' }
+				href={ addQueryArgs( { action: 'lostpassword' }, login( { locale: this.props.locale } ) ) }
 				key="lost-password-link"
 				onClick={ this.recordResetPasswordLinkClick }
 			>

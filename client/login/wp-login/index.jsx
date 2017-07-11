@@ -93,7 +93,7 @@ export class Login extends React.Component {
 							/>
 						</div>
 
-						<LoginLinks twoFactorAuthType={ twoFactorAuthType } />
+						<LoginLinks locale={ locale } twoFactorAuthType={ twoFactorAuthType } />
 					</div>
 				</Main>
 
