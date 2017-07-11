@@ -25,6 +25,8 @@ export const requestComment = ( store, action ) => {
 			method: 'GET',
 			path: `/sites/${ siteId }/comments/${ commentId }`,
 			apiVersion: '1.1',
+			onSuccess: action,
+			onFailure: action,
 		} ),
 	);
 };
