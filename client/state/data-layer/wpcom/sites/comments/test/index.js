@@ -27,7 +27,7 @@ const query = {
 describe( '#addComments', () => {
 	let dispatch;
 
-	beforeEach( () => dispatch = spy() );
+	beforeEach( () => ( dispatch = spy() ) );
 
 	it( 'should dispatch no actions for no comments', () => {
 		addComments( { dispatch }, { query }, null, { comments: [] } );
@@ -36,10 +36,7 @@ describe( '#addComments', () => {
 	} );
 
 	it( 'should dispatch to add received comments into state', () => {
-		const comments = [
-			{ ID: 5, post: { ID: 1 } },
-			{ ID: 6, post: { ID: 1 } },
-		];
+		const comments = [ { ID: 5, post: { ID: 1 } }, { ID: 6, post: { ID: 1 } } ];
 
 		addComments( { dispatch }, { query }, null, { comments } );
 
@@ -78,7 +75,7 @@ describe( '#addComments', () => {
 describe( '#fetchCommentList', () => {
 	let dispatch;
 
-	beforeEach( () => dispatch = spy() );
+	beforeEach( () => ( dispatch = spy() ) );
 
 	it( 'should do nothing if no listType provided', () => {
 		fetchCommentsList( { dispatch }, { query } );
