@@ -32,7 +32,10 @@ import {
 	editProductVariation,
 	clearProductVariationEdits,
 } from 'woocommerce/state/ui/products/variations/actions';
-import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
+import {
+	getProductVariationsWithLocalEdits,
+	getVariationEditsStateForProduct,
+} from 'woocommerce/state/ui/products/variations/selectors';
 import {
 	editProductCategory,
 	clearProductCategoryEdits,
@@ -191,7 +194,7 @@ function mapStateToProps( state, ownProps ) {
 
 	const site = getSelectedSiteWithFallback( state );
 	const product = getProductWithLocalEdits( state, productId );
-	const hasEdits = Boolean( getProductEdits( state, productId ) );
+	const hasEdits = Boolean( getProductEdits( state, productId ) ) || Boolean( getVariationEditsStateForProduct( state, productId ) );
 	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
 	const productCategories = getProductCategoriesWithLocalEdits( state );
 	const actionList = getActionList( state );
