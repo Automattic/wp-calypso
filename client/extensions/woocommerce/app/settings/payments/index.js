@@ -69,6 +69,11 @@ class SettingsPayments extends Component {
 		if ( ! finishedInitialSetup ) {
 			successAction = () => {
 				page.redirect( getLink( '/store/:site', site ) );
+
+				return successNotice(
+					translate( 'Payment settings saved.' ),
+					{ duration: 4000, displayOnNextPage: true }
+				);
 			};
 		}
 

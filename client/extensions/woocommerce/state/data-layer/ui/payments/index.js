@@ -121,7 +121,7 @@ export default {
 			 * @param {Function} dispatch - dispatch function
 			 */
 			const onSuccess = ( dispatch ) => {
-				dispatch( successAction );
+				dispatch( successAction( dispatch ) );
 				dispatch( actionListClear() );
 			};
 			/**
