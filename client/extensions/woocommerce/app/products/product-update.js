@@ -59,14 +59,16 @@ class ProductUpdate extends React.Component {
 	};
 
 	componentDidMount() {
-		const { params, product, site } = this.props;
+		const { params, product, site, variations } = this.props;
 		const productId = Number( params.product );
 
 		if ( site && site.ID ) {
 			if ( ! product ) {
 				this.props.fetchProduct( site.ID, productId );
-				this.props.fetchProductVariations( site.ID, productId );
 				this.props.editProduct( site.ID, { id: productId }, {} );
+			}
+			if ( ! variations ) {
+				this.props.fetchProductVariations( site.ID, productId );
 			}
 			this.props.fetchProductCategories( site.ID );
 		}
