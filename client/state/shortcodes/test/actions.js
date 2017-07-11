@@ -17,7 +17,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 import useNock from 'test/helpers/use-nock';
 import wpcom from 'lib/wp';
 
-describe( 'actions', () => {
+describe.skip( 'actions', () => {
 	let spy;
 	useSandbox( ( sandbox ) => spy = sandbox.spy() );
 

@@ -20,7 +20,7 @@ let wpcom, SyncHandler, hasPaginationChanged, syncOptOut, responseData, cacheInd
 
 const setLocalData = data => localforageMock.setLocalData( data );
 
-describe( 'sync-handler', () => {
+describe.skip( 'sync-handler', () => {
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'localforage', localforageMock );
 		( { cacheIndex } = require( '../cache-index' ) );
