@@ -349,6 +349,12 @@ Undocumented.prototype.jetpackAuthorizeSSONonce = function( siteId, ssoNonce, fn
 	return this.wpcom.req.post( { path: endpointUrl }, params, fn );
 };
 
+Undocumented.prototype.jetpackIsUserConnected = function( siteId ) {
+	debug( '/sites/:site_id:/jetpack-connect/is-user-connected query' );
+	const endpointUrl = '/sites/' + siteId + '/jetpack-connect/is-user-connected';
+	return this.wpcom.req.get( { path: endpointUrl, apiNamespace: 'wpcom/v2' } );
+};
+
 /**
  * Gets the current status of a full sync for a Jetpack site.
  *

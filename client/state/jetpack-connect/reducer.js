@@ -29,6 +29,7 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
+	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
 	SITE_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE
@@ -49,7 +50,8 @@ function buildDefaultAuthorizeState() {
 		isAuthorizing: false,
 		authorizeSuccess: false,
 		authorizeError: false,
-		timestamp: Date.now()
+		timestamp: Date.now(),
+		userAlreadyConnected: false
 	};
 }
 
@@ -230,6 +232,8 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 				return Object.assign( {}, state, { clientNotResponding: true } );
 			}
 			return state;
+		case JETPACK_CONNECT_USER_ALREADY_CONNECTED:
+			return Object.assign( {}, state, { userAlreadyConnected: true } );
 		case JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
