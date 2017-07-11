@@ -60,22 +60,16 @@ class SettingsPayments extends Component {
 
 	onSave = () => {
 		const { translate, site, finishedInitialSetup } = this.props;
-
-		let successAction = successNotice(
-			translate( 'Payment settings saved.' ),
-			{ duration: 4000 }
-		);
-
-		if ( ! finishedInitialSetup ) {
-			successAction = () => {
+		const successAction = () => {
+			if ( ! finishedInitialSetup ) {
 				page.redirect( getLink( '/store/:site', site ) );
+			}
 
-				return successNotice(
-					translate( 'Payment settings saved.' ),
-					{ duration: 4000, displayOnNextPage: true }
-				);
-			};
-		}
+			return successNotice(
+				translate( 'Payment settings saved.' ),
+				{ duration: 4000, displayOnNextPage: true }
+			);
+		};
 
 		const failureAction = errorNotice(
 			translate( 'There was a problem saving the payment settings. Please try again.' )
