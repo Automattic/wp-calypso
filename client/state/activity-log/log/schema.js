@@ -16,7 +16,6 @@ export const logItemsSchema = {
 					object: { type: 'object' },
 					ts_utc: { type: 'integer' },
 				},
-				additionalProperties: false,
 			}
 		},
 	},
