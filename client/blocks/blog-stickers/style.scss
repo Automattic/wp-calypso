@@ -2,16 +2,29 @@
 	display: inline;
 }
 
+.blog-stickers__list {
+	overflow-y: auto;
+	max-height: 210px;
+}
+
 .blog-stickers__list-title {
 	font-weight: bold;
 	margin-bottom: 3px;
 }
 
 .blog-stickers__list-ul {
+	list-style-type: none;
 	margin: 0;
-	list-style-type: square;
 }
 
 .blog-stickers__list-item {
-	margin-left: 16px;
+	padding-left: 15px;
+	position: relative;
+
+	&::before {
+		color: lighten( $gray, 10% );
+		content: " • ";
+		position: absolute;
+			left: 0;
+	}
 }

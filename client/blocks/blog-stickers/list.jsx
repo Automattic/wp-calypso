@@ -11,7 +11,11 @@ const BlogStickersList = ( { stickers, translate } ) => {
 			<h3 className="blog-stickers__list-title">{ translate( 'Blog Stickers' ) }</h3>
 			<ul className="blog-stickers__list-ul">
 				{ map( stickers, sticker => {
-					return <li className="blog-stickers__list-item" key={ sticker }>{ sticker }</li>;
+					return (
+						<li className="blog-stickers__list-item" key={ sticker }>
+							{ sticker }
+						</li>
+					);
 				} ) }
 			</ul>
 		</div>
