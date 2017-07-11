@@ -549,7 +549,7 @@ export default connect(
 		// [TODO]: Migrate toward dropping incoming site prop, accepting only
 		// siteId and forcing descendant components to access via state
 		site: site || getSite( state, siteId ),
-		postId: getEditorPostId( state )
+		postId: getEditorPostId( state ),
 	} ),
 	{
 		setView: setEditorMediaModalView,

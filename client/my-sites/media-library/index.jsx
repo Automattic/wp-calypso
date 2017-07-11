@@ -40,7 +40,7 @@ module.exports = React.createClass( {
 		containerWidth: React.PropTypes.number,
 		single: React.PropTypes.bool,
 		scrollable: React.PropTypes.bool,
-		postId: React.PropTypes.number
+		postId: React.PropTypes.number,
 	},
 
 	getDefaultProps: function() {
