@@ -21,6 +21,17 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { isWithinBreakpoint } from 'lib/viewport';
 
 class EditorRevisionsList extends PureComponent {
+	static propTypes = {
+		loadRevision: PropTypes.func.isRequired,
+		postId: PropTypes.number,
+		revisions: PropTypes.array.isRequired,
+		selectedRevision: PropTypes.object,
+		selectedRevisionId: PropTypes.number,
+		selectRevision: PropTypes.func.isRequired,
+		siteId: PropTypes.number,
+		type: PropTypes.string,
+	}
+
 	loadRevision = () => {
 		this.props.loadRevision( this.props.selectedRevision );
 	}
@@ -88,17 +99,6 @@ class EditorRevisionsList extends PureComponent {
 		);
 	}
 }
-
-EditorRevisionsList.propTypes = {
-	loadRevision: PropTypes.func.isRequired,
-	postId: PropTypes.number,
-	revisions: PropTypes.array.isRequired,
-	selectedRevision: PropTypes.object,
-	selectedRevisionId: PropTypes.number,
-	selectRevision: PropTypes.func.isRequired,
-	siteId: PropTypes.number,
-	type: PropTypes.string,
-};
 
 export default connect(
 	( state, { selectedRevisionId } ) => {
