@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -25,21 +24,18 @@ import { localize } from 'i18n-calypso';
 
 const getIncludedDomain = cartItems.getIncludedDomain;
 
-const CartItem = React.createClass( {
-
-	removeFromCart: function( event ) {
+export class CartItem extends React.Component {
+	removeFromCart = ( event ) => {
 		event.preventDefault();
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Remove From Cart Icon', 'Product ID', this.props.cartItem.product_id );
 		upgradesActions.removeItem( this.props.cartItem, this.props.domainsWithPlansOnly );
-	},
+	}
 
-	price: function() {
-		var cost,
-			cart = this.props.cart,
-			cartItem = this.props.cartItem;
+	price() {
+		const { cart, cartItem, translate } = this.props;
 
 		if ( typeof cartItem.cost === 'undefined' ) {
-			return this.props.translate( 'Loading price' );
+			return translate( 'Loading price' );
 		}
 
 		if ( cartItem.free_trial ) {
@@ -50,17 +46,17 @@ const CartItem = React.createClass( {
 			return this.getDomainPlanPrice( cartItem );
 		}
 
-		cost = cartItem.cost * cartItem.volume;
+		const cost = cartItem.cost * cartItem.volume;
 
-		return this.props.translate( '%(cost)s %(currency)s', {
+		return translate( '%(cost)s %(currency)s', {
 			args: {
 				cost: cost,
 				currency: cartItem.currency
 			}
 		} );
-	},
+	}
 
-	monthlyPrice: function() {
+	monthlyPrice() {
 		const { cost, currency } = this.props.cartItem;
 
 		if ( typeof cost === 'undefined' ) {
@@ -85,10 +81,10 @@ const CartItem = React.createClass( {
 				currency
 			}
 		} );
-	},
+	}
 
-	getDomainPlanPrice: function( cartItem ) {
-		if ( abtest( 'savingsInCheckoutSummary' ) === 'show' && cartItem && cartItem.product_cost ) {
+	getDomainPlanPrice( cartItem ) {
+		if ( cartItem && cartItem.product_cost ) {
 			return (
 				<span>
 					<span className="cart__free-with-plan">{ cartItem.product_cost } { cartItem.currency }</span>
@@ -98,12 +94,10 @@ const CartItem = React.createClass( {
 		}
 
 		return <em>{ this.props.translate( 'Free with your plan' ) }</em>;
-	},
+	}
 
-	getFreeTrialPrice: function() {
-		var freeTrialText;
-
-		freeTrialText = this.props.translate( 'Free %(days)s Day Trial', {
+	getFreeTrialPrice() {
+		const freeTrialText = this.props.translate( 'Free %(days)s Day Trial', {
 			args: { days: '14' }
 		} );
 
@@ -112,11 +106,12 @@ const CartItem = React.createClass( {
 				{ freeTrialText }
 			</span>
 		);
-	},
+	}
 
 	getProductInfo() {
-		var domain = this.props.cartItem.meta || ( this.props.selectedSite && this.props.selectedSite.domain ),
-			info = null;
+		const domain = this.props.cartItem.meta || ( this.props.selectedSite && this.props.selectedSite.domain );
+		let info = null;
+
 		if ( isGoogleApps( this.props.cartItem ) && this.props.cartItem.extra.google_apps_users ) {
 			info = this.props.cartItem.extra.google_apps_users.map( user => <div>{ user.email }</div> );
 		} else if ( isCredits( this.props.cartItem ) ) {
@@ -129,10 +124,10 @@ const CartItem = React.createClass( {
 			info = domain;
 		}
 		return info;
-	},
+	}
 
-	render: function() {
-		var name = this.getProductName();
+	render() {
+		let name = this.getProductName();
 		if ( this.props.cartItem.bill_period && this.props.cartItem.bill_period !== -1 ) {
 			if ( isMonthly( this.props.cartItem ) ) {
 				name += ' - ' + this.props.translate( 'monthly subscription' );
@@ -163,17 +158,17 @@ const CartItem = React.createClass( {
 			</li>
 		);
 		/*eslint-enable wpcalypso/jsx-classname-namespace*/
-	},
+	}
 
-	getProductName: function() {
-		var cartItem = this.props.cartItem,
-			options = {
-				count: cartItem.volume,
-				args: {
-					volume: cartItem.volume,
-					productName: cartItem.product_name
-				}
-			};
+	getProductName() {
+		const cartItem = this.props.cartItem;
+		const options = {
+			count: cartItem.volume,
+			args: {
+				volume: cartItem.volume,
+				productName: cartItem.product_name,
+			},
+		};
 
 		if ( ! cartItem.volume ) {
 			return cartItem.product_name;
@@ -207,14 +202,16 @@ const CartItem = React.createClass( {
 					);
 			}
 		}
-	},
+	}
 
-	removeButton: function() {
+	removeButton() {
 		if ( canRemoveFromCart( this.props.cart, this.props.cartItem ) ) {
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return <button className="remove-item noticon noticon-close" onClick={ this.removeFromCart }></button>;
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 	}
-} );
+}
 
 export default connect(
 	state => ( {
