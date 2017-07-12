@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,6 +16,7 @@ import Gravatar from 'components/gravatar';
 import Gridicon from 'gridicons';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { addQueryArgs } from 'lib/route';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:activity-log:item' );
 
@@ -141,16 +143,33 @@ class ActivityLogItem extends Component {
 
 	static defaultProps = { allowRestore: true };
 
-	// TODO: Add analytics
 	handleClickRestore = () => {
 		const {
-			requestRestore,
 			log,
+			requestRestore,
 		} = this.props;
-		requestRestore( log.ts_utc );
+		requestRestore( log.ts_utc, 'item' );
 	};
 
-	handleOpen = () => debug( 'opened log', this.props.log );
+	handleOpen = () => {
+		const {
+			log,
+			recordTracksEvent,
+		} = this.props;
+		const {
+			group,
+			name,
+			ts_utc,
+		} = log;
+
+		debug( 'opened log', log );
+
+		recordTracksEvent( 'calypso_activitylog_item_expand', {
+			group,
+			name,
+			timestamp: ts_utc,
+		} );
+	};
 
 	getIcon() {
 		const { log } = this.props;
@@ -357,10 +376,10 @@ class ActivityLogItem extends Component {
 				</div>
 				<FoldableCard
 					className="activity-log-item__card"
-					header={ this.renderHeader() }
-					summary={ this.renderSummary() }
 					expandedSummary={ this.renderSummary() }
+					header={ this.renderHeader() }
 					onOpen={ this.handleOpen }
+					summary={ this.renderSummary() }
 				>
 					{ this.renderDescription() }
 				</FoldableCard>
@@ -369,4 +388,6 @@ class ActivityLogItem extends Component {
 	}
 }
 
-export default localize( ActivityLogItem );
+export default connect( null, {
+	recordTracksEvent: recordTracksEventAction,
+} )( localize( ActivityLogItem ) );

@@ -32,16 +32,16 @@ import QueryActivityLog from 'components/data/query-activity-log';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
-import { recordGoogleEvent } from 'state/analytics/actions';
 import ActivityLogRewindToggle from './activity-log-rewind-toggle';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
 import {
-	getRewindStatusError,
 	getActivityLogs,
 	getRestoreProgress,
-	isRewindActive as isRewindActiveSelector,
+	getRewindStatusError,
 	getSiteGmtOffset,
 	getSiteTimezoneValue,
+	isRewindActive as isRewindActiveSelector,
 } from 'state/selectors';
 
 const debug = debugFactory( 'calypso:activity-log' );
@@ -94,23 +94,35 @@ class ActivityLog extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	handleRequestRestore = ( requestedRestoreTimestamp ) => {
+	handleRequestRestore = ( requestedRestoreTimestamp, from ) => {
+		this.props.recordTracksEvent( 'calypso_activitylog_restore_request', {
+			from,
+			timestamp: requestedRestoreTimestamp,
+		} );
 		this.setState( {
 			requestedRestoreTimestamp,
 			showRestoreConfirmDialog: true,
 		} );
 	};
 
-	handleRestoreDialogClose = () => this.setState( { showRestoreConfirmDialog: false } );
+	handleRestoreDialogClose = () => {
+		this.props.recordTracksEvent( 'calypso_activitylog_restore_cancel', {
+			timestamp: this.state.requestedRestoreTimestamp,
+		} );
+		this.setState( { showRestoreConfirmDialog: false } );
+	};
 
 	handleRestoreDialogConfirm = () => {
 		const {
+			recordTracksEvent,
 			rewindRestore,
 			siteId,
 		} = this.props;
-
 		const { requestedRestoreTimestamp } = this.state;
 
+		recordTracksEvent( 'calypso_activitylog_restore_confirm', {
+			timestamp: requestedRestoreTimestamp,
+		} );
 		debug( 'Restore requested for site %d to time %d', this.props.siteId, requestedRestoreTimestamp );
 		this.setState( { showRestoreConfirmDialog: false } );
 		rewindRestore( siteId, requestedRestoreTimestamp );
@@ -263,7 +275,6 @@ class ActivityLog extends Component {
 					period="month"
 					date={ startOfMonth }
 					url={ `/stats/activity/${ slug }` }
-					recordGoogleEvent={ this.changePeriod }
 				>
 					<DatePicker
 						isActivity={ true }
@@ -341,7 +352,7 @@ export default connect(
 			gmtOffset: getSiteGmtOffset( state, siteId ),
 		};
 	}, {
-		recordGoogleEvent,
+		recordTracksEvent: recordTracksEventAction,
 		rewindRestore: rewindRestoreAction,
 	}
 )( localize( ActivityLog ) );
