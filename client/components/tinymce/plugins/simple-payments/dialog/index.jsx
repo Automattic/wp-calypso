@@ -19,6 +19,9 @@ import Button from 'components/button';
 import Navigation from './navigation';
 import ProductForm from './form';
 import ProductList from './list';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getCurrencyDefaults } from 'lib/format-currency';
+import QuerySitePlans from 'components/data/query-site-plans';
 
 class SimplePaymentsDialog extends Component {
 	static propTypes = {
@@ -51,7 +54,17 @@ class SimplePaymentsDialog extends Component {
 	}
 
 	render() {
-		const { activeTab, showDialog, onChangeTabs, onClose, siteId, paymentButtons } = this.props;
+		const {
+			activeTab,
+			showDialog,
+			onChangeTabs,
+			onClose,
+			siteId,
+			paymentButtons,
+			currencyCode,
+		} = this.props;
+
+		const currencyDefaults = getCurrencyDefaults( currencyCode );
 
 		return (
 			<Dialog
@@ -61,9 +74,12 @@ class SimplePaymentsDialog extends Component {
 				additionalClassNames="editor-simple-payments-modal"
 			>
 				<QuerySimplePayments siteId={ siteId } />
+
+				{ ! currencyCode && <QuerySitePlans siteId={ siteId } />}
+
 				<Navigation { ...{ activeTab, onChangeTabs, paymentButtons } } />
 				{ activeTab === 'addNew'
-					? <ProductForm />
+					? <ProductForm currencyDefaults={ currencyDefaults } />
 					: <ProductList paymentButtons={ paymentButtons } /> }
 			</Dialog>
 		);
@@ -72,8 +88,10 @@ class SimplePaymentsDialog extends Component {
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
+
 	return {
 		siteId,
 		paymentButtons: getSimplePayments( state, siteId ) || [],
+		currencyCode: getCurrentUserCurrencyCode( state ),
 	};
 } )( localize( SimplePaymentsDialog ) );
