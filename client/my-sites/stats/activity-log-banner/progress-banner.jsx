@@ -28,7 +28,7 @@ function ProgressBanner( {
 			status="info"
 			title={ translate( 'Currently restoring your site' ) }
 		>
-			<QueryRewindRestoreStatus siteId={ siteId } />
+			<QueryRewindRestoreStatus siteId={ siteId } queryDelay={ 1500 } />
 			<p>{ translate(
 				"We're in the process of restoring your site back to %s. " +
 				"You'll be notified once it's complete.",
