@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+/* eslint-disable react/no-danger */
 
 /**
  * External dependencies
