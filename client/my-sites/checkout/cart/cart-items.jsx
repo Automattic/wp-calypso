@@ -8,10 +8,11 @@ import React from 'react';
  */
 import CartItem from './cart-item';
 import { cartItems } from 'lib/cart-values';
+import { localize } from 'i18n-calypso';
 
 const COLLAPSED_ITEMS_COUNT = 2;
 
-export default class CartItems extends React.Component {
+export class CartItems extends React.Component {
 
 	static propTypes = {
 		collapse: React.PropTypes.bool.isRequired
@@ -44,7 +45,7 @@ export default class CartItems extends React.Component {
 		collapsedItems.push(
 			<li key="items-expander">
 				<a className="cart-items__expander" href="#" onClick={ this.handleExpand }>
-					{ this.translate(
+					{ this.props.translate(
 						'+ %(count)d more item',
 						'+ %(count)d more items',
 						{
@@ -83,3 +84,6 @@ export default class CartItems extends React.Component {
 		return <ul className="cart-items">{ items }</ul>;
 	}
 }
+
+export default localize( CartItems );
+
