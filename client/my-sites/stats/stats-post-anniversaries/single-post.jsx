@@ -10,15 +10,44 @@ import { localize, moment } from 'i18n-calypso';
  */
 import StatsContentText from '../stats-module/content-text';
 
-const periodLabel = ( translate, period ) => {
+const label = ( translate, period, yearsAgo, post ) => {
+	const { URL: url, title } = post;
+	const link = <a href={ url } target="_blank" rel="noopener noreferrer" />;
 	if ( period.period === 'day' ) {
-		return translate( 'this day' );
+		return translate(
+			'%(yearsAgo)d year ago on this day, {{href}}%(title)s{{/href}} was published.',
+			'%(yearsAgo)d years ago on this day, {{href}}%(title)s{{/href}} was published.',
+			{
+				count: yearsAgo,
+				args: { yearsAgo, title },
+				components: { href: link },
+				comment: 'Sentence showing what post was published some years ago on this day',
+			},
+		);
 	}
 	if ( period.period === 'week' ) {
-		return translate( 'this week' );
+		return translate(
+			'%(yearsAgo)d year ago on this week, {{href}}%(title)s{{/href}} was published.',
+			'%(yearsAgo)d years ago on this week, {{href}}%(title)s{{/href}} was published.',
+			{
+				count: yearsAgo,
+				args: { yearsAgo, title },
+				components: { href: link },
+				comment: 'Sentence showing what post was published some years ago on this week',
+			},
+		);
 	}
 	if ( period.period === 'month' ) {
-		return translate( 'this month' );
+		return translate(
+			'%(yearsAgo)d year ago on this month, {{href}}%(title)s{{/href}} was published.',
+			'%(yearsAgo)d years ago on this month, {{href}}%(title)s{{/href}} was published.',
+			{
+				count: yearsAgo,
+				args: { yearsAgo, title },
+				components: { href: link },
+				comment: 'Sentence showing what post was published some years ago on this month',
+			},
+		);
 	}
 	return '';
 };
@@ -32,22 +61,7 @@ const SinglePost = localize( ( { translate, post, period } ) => {
 		<StatsContentText>
 			<p>
 				<Gridicon icon="calendar" size={ 18 } />
-				{ translate(
-					'%(yearsAgo)d year ago on %(period)s, {{href}}%(title)s{{/href}} was published.',
-					'%(yearsAgo)d years ago on %(period)s, {{href}}%(title)s{{/href}} was published.',
-					{
-						count: yearsAgo,
-						args: {
-							yearsAgo,
-							period: periodLabel( translate, period ),
-							title: post.title,
-						},
-						components: {
-							href: <a href={ post.URL } target="_blank" rel="noopener noreferrer" />,
-						},
-						comment: 'Sentence showing what post was published some years ago',
-					},
-				) }
+				{ label( translate, period, yearsAgo, post ) }
 			</p>
 		</StatsContentText>
 	);

@@ -199,12 +199,17 @@ export default connect( () => {
 		postsByYearQueries.forEach( ( query, i ) => {
 			const result = getSitePostsForQuery( state, siteId, query );
 
-			// Create a new array when an item is updated to invalidate
-			// the equality check and render the component.
-			if ( postsByYear[ i ] !== result ) {
-				postsByYear[ i ] = result || [];
-				postsByYear = [ ...postsByYear ];
+			// No need to update.
+			if ( postsByYear[ i ] === result ) {
+				return;
 			}
+
+			// Fill the year posts.
+			postsByYear[ i ] = result || [];
+
+			// A new array is created after an item is updated, to invalidate the
+			// equality check and re-render the component.
+			postsByYear = [ ...postsByYear ];
 		} );
 
 		// Get the number of views for each post, to get the top posts

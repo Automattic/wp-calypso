@@ -16,52 +16,52 @@ import { getSiteSlug } from 'state/sites/selectors';
 
 const label = ( translate, period ) => {
 	if ( period.period === 'day' ) {
-		return translate( 'Published on this day in the past years:', {
+		return translate( 'Published on this day in the past:', {
 			comment: 'Preceding a list of posts published in the previous years',
 		} );
 	}
 	if ( period.period === 'week' ) {
-		return translate( 'Published on this week in the past years:', {
+		return translate( 'Published on this week in the past:', {
 			comment: 'Preceding a list of posts published in the previous years',
 		} );
 	}
 	if ( period.period === 'month' ) {
-		return translate( 'Published on this month in the past years:', {
+		return translate( 'Published on this month in the past:', {
 			comment: 'Preceding a list of posts published in the previous years',
 		} );
 	}
 	return '';
 };
 
-const GroupedPosts = ( { translate, postsByYear, summary, period, siteSlug } ) => (
+// Converts posts to the data format expected by StatsList.
+const statsListData = ( postsByYear, siteSlug ) =>
+	postsByYear.reduce(
+		( allPosts, posts, i ) =>
+			allPosts.concat(
+				posts.map( post => ( {
+					page: `/stats/post/${ post.ID }/${ siteSlug }`,
+					actions: [ { type: 'link', data: post.URL } ],
+					label: post.title,
+					value: {
+						type: 'raw',
+						value: moment().subtract( i + 1, 'years' ).format( 'YYYY' ),
+					},
+				} ) ),
+			),
+		[],
+	);
+
+const GroupedPosts = ( { translate, postsByYear, summary, period, siteSlug } ) =>
 	<div>
 		<StatsContentText>
-			{ ! summary && <p>{ label( translate, period ) }</p> }
+			{ ! summary &&
+				<p>
+					{ label( translate, period ) }
+				</p> }
 		</StatsContentText>
 		<StatsListLegend label={ translate( 'Title' ) } value={ translate( 'Year' ) } />
-		<StatsList
-			moduleName={ 'postAnniversaries' }
-			data={ postsByYear.reduce(
-				( allPosts, posts, i ) =>
-					allPosts.concat(
-						posts.map( post => ( {
-							page: `/stats/post/${ post.ID }/${ siteSlug }`,
-							actions: [
-								{ type: 'link', data: post.URL },
-							],
-							label: post.title,
-							value: {
-								type: 'raw',
-								value: moment().subtract( i + 1, 'years' ).format( 'YYYY' ),
-							},
-						} ) ),
-					),
-				[],
-			) }
-		/>
-
-	</div>
-);
+		<StatsList moduleName={ 'postAnniversaries' } data={ statsListData( postsByYear, siteSlug ) } />
+	</div>;
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
