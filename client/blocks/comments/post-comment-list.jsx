@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { translate } from 'i18n-calypso';
 import { get, size, takeRight } from 'lodash';
 
@@ -326,11 +325,5 @@ export default connect(
 			ownProps.post.ID,
 		),
 	} ),
-	dispatch =>
-		bindActionCreators(
-			{
-				requestPostComments,
-			},
-			dispatch,
-		),
+	{ requestPostComments },
 )( PostCommentList );
