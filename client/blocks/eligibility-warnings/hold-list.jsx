@@ -72,7 +72,7 @@ function getHoldMessages( siteSlug, translate ) {
 				'Please check your email to confirm your address.'
 			),
 		},
-		EXCESSIVE_DISKSPACE: {
+		EXCESSIVE_DISK_SPACE: {
 			title: translate( 'Excessive diskspace' ),
 			description: translate(
 				'This site cannot be transferred due to diskspace limitations.'
