@@ -374,7 +374,11 @@ class SiteSettingsFormGeneral extends Component {
 							{
 								components: {
 									netNeutralityLink: (
-										<a target="_blank" href={ 'https://en.blog.wordpress.com/2017/07/11/join-us-in-the-fight-for-net-neutrality/' } />
+										<a
+											target="_blank"
+											rel="noopener noreferrer"
+											href={ 'https://en.blog.wordpress.com/2017/07/11/join-us-in-the-fight-for-net-neutrality/' }
+										/>
 									)
 								}
 							}
