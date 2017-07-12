@@ -111,7 +111,7 @@ export function serverRender( req, res ) {
 		// Send state to client
 		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
 		// And cache on the server, too
-		if ( context.disableSSR ) {
+		if ( ! context.disableSSR ) {
 			const serverState = reducer( context.initialReduxState, { type: SERIALIZE } );
 			stateCache.set( context.pathname, serverState );
 		}
