@@ -162,6 +162,7 @@
 		height: 24px;
 		width: 24px;
 		margin-right: 6px;
+		flex-shrink: 0;
 
 		@include breakpoint( "<660px" ) {
 				top: 15px;
