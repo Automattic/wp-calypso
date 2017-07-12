@@ -363,14 +363,26 @@ class SiteSettingsFormGeneral extends Component {
 							disabled={ isRequestingSettings }
 							onChange={ handleToggle( 'net_neutrality' ) }
 						>
-							{ translate(
-								'The FCC wants to repeal Net Neutrality. Without Net Neutrality, ' +
-								'big cable and telecom companies can divide the internet into fast ' +
-								'and slow lanes. What would the Internet look like without net neutrality? ' +
-								'Find out by enabling this banner on your site: it shows your support ' +
-								'for real net neutrality rules by displaying a message on the bottom ' +
-								'of your site and "slowing down" some of your posts.'
-							) }
+						{ translate(
+							'The FCC wants to repeal Net Neutrality. Without Net Neutrality, ' +
+							'big cable and telecom companies can divide the internet into fast ' +
+							'and slow lanes. What would the Internet look like without net neutrality? ' +
+							'Find out by enabling this banner on your site: it shows your support ' +
+							'for real net neutrality rules by displaying a message on the bottom ' +
+							'of your site and "slowing down" some of your posts. ' +
+							'{{netNeutralityLink}}Learn more about Net Neutrality{{/netNeutralityLink}}',
+							{
+								components: {
+									netNeutralityLink: (
+										<a
+											target="_blank"
+											rel="noopener noreferrer"
+											href={ 'https://en.blog.wordpress.com/2017/07/11/join-us-in-the-fight-for-net-neutrality/' }
+										/>
+									)
+								}
+							}
+						) }
 						</CompactFormToggle>
 					</FormFieldset>
 				</Card>
