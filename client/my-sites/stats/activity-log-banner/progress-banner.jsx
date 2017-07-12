@@ -35,6 +35,7 @@ function ProgressBanner( {
 				queryDelay={ 1500 }
 				restoreId={ restoreId }
 				siteId={ siteId }
+				timestamp={ timestamp }
 			/>
 			<p>{ translate(
 				"We're in the process of restoring your site back to %s. " +
