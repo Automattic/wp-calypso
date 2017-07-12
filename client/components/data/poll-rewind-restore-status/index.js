@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { PropTypes, PureComponent } from 'react';
-import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import { pick } from 'lodash';
 
@@ -11,8 +10,6 @@ import { pick } from 'lodash';
  */
 import { getRestoreProgress } from 'state/selectors';
 import { getRewindRestoreProgress as getRewindRestoreProgressAction } from 'state/activity-log/actions';
-
-const debug = debugFactory( 'calypso:activity-log:poll-restore-progress' );
 
 class PollRewindRestoreStatus extends PureComponent {
 	static propTypes = {
@@ -53,7 +50,6 @@ class PollRewindRestoreStatus extends PureComponent {
 	}
 
 	componentWillMount() {
-		debug( 'CWMount', this.props );
 		this.query( this.props );
 	}
 
