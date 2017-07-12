@@ -11,7 +11,6 @@ import debugFactory from 'debug';
 import MePreferences from './me-preferences.js';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:me' );
-import { reloadProxy } from 'wpcom-proxy-request';
 
 /**
  * Internal dependencies.
@@ -394,7 +393,6 @@ UndocumentedMe.prototype.socialConnect = function( service, token, redirectTo, f
 		body: body,
 	};
 
-	reloadProxy();
 	return this.wpcom.req.post( args, fn );
 };
 UndocumentedMe.prototype.preferences = MePreferences;
