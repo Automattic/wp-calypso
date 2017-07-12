@@ -53,9 +53,9 @@ class ErrorBanner extends PureComponent {
 				title={ translate( 'Problem restoring your site' ) }
 			>
 				<TrackComponentView eventName="calypso_activitylog_errorbanner_impression" eventProperties={ {
-					errorCode,
-					failureReason,
-					restoreTo: timestamp,
+					error_code: errorCode,
+					failure_reason: failureReason,
+					restore_to: timestamp,
 				} } />
 				<p>{ translate( 'We came across a problem while trying to restore your site.' ) }</p>
 				<Button primary onClick={ this.handleClickRestore }>
