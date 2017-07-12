@@ -21,31 +21,33 @@ import SectionHeader from 'components/section-header';
 import { isRequestingSitePostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+const form = 'extensions.wpJobManager.pages';
 const query = { type: 'page' };
 
 class Pages extends Component {
 	static propTypes = {
 		handleSubmit: PropTypes.func,
-		isDisabled: PropTypes.bool,
-		isRequesting: PropTypes.bool,
-		isSaving: PropTypes.bool,
+		isFetching: PropTypes.bool,
+		isFetchingPages: PropTypes.bool,
 		onSubmit: PropTypes.func,
 		siteId: PropTypes.number,
+		submitting: PropTypes.bool,
 		translate: PropTypes.func,
 	};
 
-	save = section => data => this.props.onSubmit( data[ section ] );
+	save = section => data => this.props.onSubmit( form, data[ section ] );
 
 	render() {
 		const {
 			handleSubmit,
-			isRequesting,
-			isSaving,
+			isFetching,
+			isFetchingPages,
 			siteId,
+			submitting,
 			translate,
 		} = this.props;
 
-		const isDisabled = this.props.isDisabled || isRequesting;
+		const isDisabled = isFetching || isFetchingPages || submitting;
 
 		return (
 			<div>
@@ -58,7 +60,7 @@ class Pages extends Component {
 						<SectionHeader label={ translate( 'Pages' ) }>
 							<FormButton compact
 								disabled={ isDisabled }
-								isSubmitting={ isSaving }
+								isSubmitting={ submitting }
 								onClick={ handleSubmit( this.save( 'pages' ) ) } />
 						</SectionHeader>
 						<Card>
@@ -111,14 +113,12 @@ class Pages extends Component {
 	}
 }
 
-const form = 'extensions.wpJobManager.pages';
-
 const connectComponent = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			isRequesting: isRequestingSitePostsForQuery( state, siteId, query ),
+			isFetchingPages: isRequestingSitePostsForQuery( state, siteId, query ),
 			siteId,
 		};
 	}
