@@ -34,11 +34,11 @@ export class CommentDetail extends Component {
 		commentIsLiked: PropTypes.bool,
 		commentIsSelected: PropTypes.bool,
 		commentStatus: PropTypes.string,
+		commentUrl: PropTypes.string,
 		deleteCommentPermanently: PropTypes.func,
 		isBulkEdit: PropTypes.bool,
 		postAuthorDisplayName: PropTypes.string,
 		postTitle: PropTypes.string,
-		postUrl: PropTypes.string,
 		repliedToComment: PropTypes.bool,
 		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
@@ -123,6 +123,7 @@ export class CommentDetail extends Component {
 			commentIsLiked,
 			commentIsSelected,
 			commentStatus,
+			commentUrl,
 			isBulkEdit,
 			parentCommentAuthorAvatarUrl,
 			parentCommentAuthorDisplayName,
@@ -131,11 +132,12 @@ export class CommentDetail extends Component {
 			postAuthorDisplayName,
 			postId,
 			postTitle,
-			postUrl,
 			repliedToComment,
 			siteId,
 			submitComment,
 		} = this.props;
+
+		const postUrl = `/read/blogs/${ siteId }/posts/${ postId }`;
 
 		const {
 			authorIsBlocked,
@@ -168,7 +170,6 @@ export class CommentDetail extends Component {
 					isBulkEdit={ isBulkEdit }
 					isExpanded={ isExpanded }
 					postTitle={ postTitle }
-					postUrl={ postUrl }
 					toggleApprove={ this.toggleApprove }
 					toggleExpanded={ this.toggleExpanded }
 					toggleLike={ this.toggleLike }
@@ -200,7 +201,7 @@ export class CommentDetail extends Component {
 							commentContent={ commentContent }
 							commentDate={ commentDate }
 							commentStatus={ commentStatus }
-							postUrl={ postUrl }
+							commentUrl={ commentUrl }
 							repliedToComment={ repliedToComment }
 							siteId={ siteId }
 						/>
@@ -253,6 +254,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentId: comment.ID,
 		commentIsLiked: comment.i_like,
 		commentStatus: comment.status,
+		commentUrl: get( comment, 'URL' ),
 		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
 		parentCommentAuthorDisplayName: get( parentComment, 'author.name' ),
 		parentCommentContent,
@@ -260,7 +262,6 @@ const mapStateToProps = ( state, ownProps ) => {
 		postAuthorDisplayName: get( comment, 'post.author.name' ), // TODO: not available in the current data structure
 		postId,
 		postTitle,
-		postUrl: get( comment, 'URL' ),
 		repliedToComment: comment.replied, // TODO: not available in the current data structure
 		siteId: comment.siteId || siteId,
 	} );
