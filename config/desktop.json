@@ -21,6 +21,7 @@
 		"desktop-promo": false,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
+		"external-media": true,
 		"fluid-width": true,
 		"help": true,
 		"help/courses": true,
