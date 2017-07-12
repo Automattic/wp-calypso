@@ -15,15 +15,9 @@ import {
 	getPostTotalCommentsCount,
 	haveMoreCommentsToFetch,
 } from 'state/comments/selectors';
-import {
-	requestPostComments
-} from 'state/comments/actions';
+import { requestPostComments } from 'state/comments/actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrack
-} from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import PostComment from './post-comment';
 import PostCommentForm from './form';
 import CommentCount from './comment-count';
@@ -44,9 +38,7 @@ class PostCommentList extends React.Component {
 	}
 
 	componentWillMount() {
-		const {
-			post: { ID: postId, site_ID: siteId }
-		} = this.props;
+		const { post: { ID: postId, site_ID: siteId } } = this.props;
 
 		this.props.requestPostComments( siteId, postId, this.props.commentsFilter );
 	}
@@ -60,11 +52,10 @@ class PostCommentList extends React.Component {
 			nextSiteId &&
 			nextPostId &&
 			nextCommentsFilter &&
-			(
-				this.props.post.site_ID !== nextSiteId ||
+			( this.props.post.site_ID !== nextSiteId ||
 				this.props.post.ID !== nextPostId ||
 				this.props.commentsFilter !== nextCommentsFilter )
-			) {
+		) {
 			this.props.requestPostComments( nextSiteId, nextPostId, this.props.commentsFilter );
 		}
 	}
@@ -82,23 +73,25 @@ class PostCommentList extends React.Component {
 		const onUpdateCommentText = this.onUpdateCommentText.bind( this );
 		const resetActiveReplyComment = this.resetActiveReplyComment.bind( this );
 
-		return <PostComment
-			post={ this.props.post }
-			commentsTree={ this.props.commentsTree }
-			commentId={ commentId }
-			key={ commentId }
-			showModerationTools={ this.props.showModerationTools }
-			activeEditCommentId={ this.state.activeEditCommentId }
-			activeReplyCommentID={ this.state.activeReplyCommentID }
-			onEditCommentClick={ onEditCommentClick }
-			onEditCommentCancel={ onEditCommentCancel }
-			onReplyClick={ onReplyClick }
-			onReplyCancel={ onReplyCancel }
-			commentText={ commentText }
-			onUpdateCommentText={ onUpdateCommentText }
-			onCommentSubmit={ resetActiveReplyComment }
-			depth={ 0 }
-		/>;
+		return (
+			<PostComment
+				post={ this.props.post }
+				commentsTree={ this.props.commentsTree }
+				commentId={ commentId }
+				key={ commentId }
+				showModerationTools={ this.props.showModerationTools }
+				activeEditCommentId={ this.state.activeEditCommentId }
+				activeReplyCommentID={ this.state.activeReplyCommentID }
+				onEditCommentClick={ onEditCommentClick }
+				onEditCommentCancel={ onEditCommentCancel }
+				onReplyClick={ onReplyClick }
+				onReplyCancel={ onReplyCancel }
+				commentText={ commentText }
+				onUpdateCommentText={ onUpdateCommentText }
+				onCommentSubmit={ resetActiveReplyComment }
+				depth={ 0 }
+			/>
+		);
 	}
 
 	onEditCommentClick( commentId ) {
@@ -113,7 +106,7 @@ class PostCommentList extends React.Component {
 		recordGaEvent( 'Clicked Reply to Comment' );
 		recordTrack( 'calypso_reader_comment_reply_click', {
 			blog_id: this.props.post.site_ID,
-			comment_id: commentID
+			comment_id: commentID,
 		} );
 	}
 
@@ -122,7 +115,7 @@ class PostCommentList extends React.Component {
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
 		recordTrack( 'calypso_reader_comment_reply_cancel_click', {
 			blog_id: this.props.post.site_ID,
-			comment_id: this.state.activeReplyCommentID
+			comment_id: this.state.activeReplyCommentID,
 		} );
 		this.resetActiveReplyComment();
 	}
@@ -136,9 +129,11 @@ class PostCommentList extends React.Component {
 	}
 
 	renderCommentsList( commentIds ) {
-		return <ol className="comments__list is-root">
-			{ commentIds.map( ( commentId ) => this.renderComment( commentId ) ) }
-		</ol>;
+		return (
+			<ol className="comments__list is-root">
+				{ commentIds.map( commentId => this.renderComment( commentId ) ) }
+			</ol>
+		);
 	}
 
 	renderCommentForm() {
@@ -151,20 +146,25 @@ class PostCommentList extends React.Component {
 			return null;
 		}
 
-		return <PostCommentForm
-			ref="postCommentForm"
-			post={ post }
-			parentCommentID={ null }
-			commentText={ commentText }
-			onUpdateCommentText={ onUpdateCommentText }
-		/>;
+		return (
+			<PostCommentForm
+				ref="postCommentForm"
+				post={ post }
+				parentCommentID={ null }
+				commentText={ commentText }
+				onUpdateCommentText={ onUpdateCommentText }
+			/>
+		);
 	}
 
 	getCommentsCount( commentIds ) {
 		// we always count prevSum, children sum, and +1 for the current processed comment
 		return commentIds.reduce(
-			( prevSum, commentId ) => prevSum + this.getCommentsCount( get( this.props.commentsTree, [ commentId, 'children' ] ) ) + 1,
-			0
+			( prevSum, commentId ) =>
+				prevSum +
+				this.getCommentsCount( get( this.props.commentsTree, [ commentId, 'children' ] ) ) +
+				1,
+			0,
 		);
 	}
 
@@ -183,19 +183,17 @@ class PostCommentList extends React.Component {
 
 		return {
 			displayedComments: displayedComments,
-			displayedCommentsCount: this.getCommentsCount( displayedComments )
+			displayedCommentsCount: this.getCommentsCount( displayedComments ),
 		};
 	}
 
 	viewEarlierCommentsHandler() {
-		const {
-			post: { ID: postId, site_ID: siteId },
-		} = this.props;
+		const { post: { ID: postId, site_ID: siteId } } = this.props;
 
 		const amountOfCommentsToTake = this.state.amountOfCommentsToTake + this.props.pageSize;
 
 		this.setState( {
-			amountOfCommentsToTake
+			amountOfCommentsToTake,
 		} );
 
 		if ( this.props.haveMoreCommentsToFetch ) {
@@ -210,25 +208,19 @@ class PostCommentList extends React.Component {
 			return null;
 		}
 
-		const {
-			commentsFilter,
-			commentsTree,
-			showFilters,
-			totalCommentsCount,
-		} = this.props;
+		const { commentsFilter, commentsTree, showFilters, totalCommentsCount } = this.props;
 
-		const {
-			amountOfCommentsToTake
-		} = this.state;
+		const { amountOfCommentsToTake } = this.state;
 
-		const {
-			displayedComments,
-			displayedCommentsCount
-		} = this.getDisplayedComments( commentsTree.children, amountOfCommentsToTake );
+		const { displayedComments, displayedCommentsCount } = this.getDisplayedComments(
+			commentsTree.children,
+			amountOfCommentsToTake,
+		);
 
 		// Note: we might show fewer comments than totalCommentsCount because some comments might be
 		// orphans (parent deleted/unapproved), that comment will become unreachable but still counted.
-		const showViewEarlier = ( size( commentsTree.children ) > amountOfCommentsToTake || this.props.haveMoreCommentsToFetch );
+		const showViewEarlier =
+			size( commentsTree.children ) > amountOfCommentsToTake || this.props.haveMoreCommentsToFetch;
 
 		// If we're not yet fetched all comments from server, we can only rely on server's count.
 		// once we got all the comments tree, we can calculate the count of reachable comments
@@ -238,42 +230,56 @@ class PostCommentList extends React.Component {
 
 		return (
 			<div className="comments__comment-list">
-				{ ( this.props.showCommentCount || showViewEarlier ) && <div className="comments__info-bar">
-					{ this.props.showCommentCount && <CommentCount count={ actualTotalCommentsCount } /> }
-					{ showViewEarlier ? <span className="comments__view-earlier" onClick={ this.viewEarlierCommentsHandler }>
-						{
-							translate( 'View earlier comments (Showing %(shown)d of %(total)d)', {
-								args: {
-									shown: displayedCommentsCount,
-									total: actualTotalCommentsCount
-								}
-							} )
-						}</span> : null }
-				</div> }
+				{ ( this.props.showCommentCount || showViewEarlier ) &&
+					<div className="comments__info-bar">
+						{ this.props.showCommentCount && <CommentCount count={ actualTotalCommentsCount } /> }
+						{ showViewEarlier
+							? <span
+									className="comments__view-earlier"
+									onClick={ this.viewEarlierCommentsHandler }
+								>
+									{ translate( 'View earlier comments (Showing %(shown)d of %(total)d)', {
+										args: {
+											shown: displayedCommentsCount,
+											total: actualTotalCommentsCount,
+										},
+									} ) }
+								</span>
+							: null }
+					</div> }
 				{ showFilters &&
 					<SegmentedControl compact primary>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'all' }
-							onClick={ this.handleFilterClick( 'all' ) }>{ translate( 'All' ) }
+							onClick={ this.handleFilterClick( 'all' ) }
+						>
+							{ translate( 'All' ) }
 						</SegmentedControlItem>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'approved' }
-							onClick={ this.handleFilterClick( 'approved' ) }>{ translate( 'Approved', { context: 'comment status' } ) }
+							onClick={ this.handleFilterClick( 'approved' ) }
+						>
+							{ translate( 'Approved', { context: 'comment status' } ) }
 						</SegmentedControlItem>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'unapproved' }
-							onClick={ this.handleFilterClick( 'unapproved' ) }>{ translate( 'Pending', { context: 'comment status' } ) }
+							onClick={ this.handleFilterClick( 'unapproved' ) }
+						>
+							{ translate( 'Pending', { context: 'comment status' } ) }
 						</SegmentedControlItem>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'spam' }
-							onClick={ this.handleFilterClick( 'spam' ) }>{ translate( 'Spam', { context: 'comment status' } ) }
+							onClick={ this.handleFilterClick( 'spam' ) }
+						>
+							{ translate( 'Spam', { context: 'comment status' } ) }
 						</SegmentedControlItem>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'trash' }
-							onClick={ this.handleFilterClick( 'trash' ) }>{ translate( 'Trash', { context: 'comment status' } ) }
+							onClick={ this.handleFilterClick( 'trash' ) }
+						>
+							{ translate( 'Trash', { context: 'comment status' } ) }
 						</SegmentedControlItem>
-					</SegmentedControl>
-				}
+					</SegmentedControl> }
 				{ this.renderCommentsList( displayedComments ) }
 				{ this.renderCommentForm() }
 			</div>
@@ -284,7 +290,7 @@ class PostCommentList extends React.Component {
 PostCommentList.propTypes = {
 	post: React.PropTypes.shape( {
 		ID: React.PropTypes.number.isRequired,
-		site_ID: React.PropTypes.number.isRequired
+		site_ID: React.PropTypes.number.isRequired,
 	} ).isRequired,
 	onCommentsUpdate: React.PropTypes.func.isRequired,
 	pageSize: React.PropTypes.number,
@@ -295,25 +301,36 @@ PostCommentList.propTypes = {
 	commentsTree: React.PropTypes.object, //TODO: Find a lib that provides immutable shape
 	totalCommentsCount: React.PropTypes.number,
 	haveMoreCommentsToFetch: React.PropTypes.bool,
-	requestPostComments: React.PropTypes.func.isRequired
+	requestPostComments: React.PropTypes.func.isRequired,
 };
 
 PostCommentList.defaultProps = {
 	pageSize: NUMBER_OF_COMMENTS_PER_FETCH,
 	initialSize: NUMBER_OF_COMMENTS_PER_FETCH,
 	haveMoreCommentsToFetch: false,
-	showCommentCount: true
+	showCommentCount: true,
 };
 
 export default connect(
-	( state, ownProps ) => (
-		{
-			commentsTree: getPostCommentsTree( state, ownProps.post.site_ID, ownProps.post.ID, ownProps.commentsFilter ),
-			totalCommentsCount: getPostTotalCommentsCount( state, ownProps.post.site_ID, ownProps.post.ID ),
-			haveMoreCommentsToFetch: haveMoreCommentsToFetch( state, ownProps.post.site_ID, ownProps.post.ID ),
-		}
-	),
-	( dispatch ) => bindActionCreators( {
-		requestPostComments
-	}, dispatch )
+	( state, ownProps ) => ( {
+		commentsTree: getPostCommentsTree(
+			state,
+			ownProps.post.site_ID,
+			ownProps.post.ID,
+			ownProps.commentsFilter,
+		),
+		totalCommentsCount: getPostTotalCommentsCount( state, ownProps.post.site_ID, ownProps.post.ID ),
+		haveMoreCommentsToFetch: haveMoreCommentsToFetch(
+			state,
+			ownProps.post.site_ID,
+			ownProps.post.ID,
+		),
+	} ),
+	dispatch =>
+		bindActionCreators(
+			{
+				requestPostComments,
+			},
+			dispatch,
+		),
 )( PostCommentList );
