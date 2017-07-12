@@ -646,7 +646,7 @@ export const getOrderOperationsToSaveCurrentZone = ( state, siteId = getSelected
 	// to their priority, but for example that's not the case after the initial setup (the "home country" zone
 	// has order=0)
 	for ( const { id, order } of allZones ) {
-		// Skip over the "Rest of the World" zone, the current zone and zones with no locations
+		// Skip over the "Locations not covered by your other zones" zone, the current zone and zones with no locations
 		if ( currentZone.id === id || 0 === id ) {
 			continue;
 		}

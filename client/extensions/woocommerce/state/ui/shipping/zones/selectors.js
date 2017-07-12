@@ -30,7 +30,7 @@ const orderShippingZones = ( zones ) => {
 			return 1;
 		}
 
-		//Rest of the World should always be at the bottom
+		//Locations not covered by your other zones should always be at the bottom
 		if ( 0 === z1.id ) {
 			return 1;
 		}
@@ -138,7 +138,7 @@ export const areAnyShippingMethodsEnabled = ( state, siteId = getSelectedSiteId(
 /**
  * @param {Number|Object} zoneId Zone ID (can be a temporal ID)
  * @return {Boolean} Whether this zone is considered "editable". As a rule, every zone is editable,
- * except the "Rest Of The World" zone, which always has id = 0.
+ * except the "Locations not covered by your other zones" zone, which always has id = 0.
  */
 const isEditableShippingZone = ( zoneId ) => ! isNumber( zoneId ) || 0 !== zoneId;
 

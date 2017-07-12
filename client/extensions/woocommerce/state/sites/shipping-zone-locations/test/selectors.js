@@ -132,7 +132,7 @@ describe( 'selectors', () => {
 			expect( areShippingZonesLocationsValid( state ) ).to.be.true;
 		} );
 
-		it( 'should return true for the "Rest of the world" zone.', () => {
+		it( 'should return true for the "Locations not covered by your other zones" zone.', () => {
 			const state = createState( {
 				site: {
 					shippingZoneLocations: {

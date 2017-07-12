@@ -19,7 +19,7 @@ This is saved on a per-site basis, either as "LOADING" (when requesting zones), 
 	// or
 	"shippingZones": [ {
 		"id": 0,
-		"name": "Rest of the World",
+		"name": "Locations not covered by your other zones",
 		"order": 0,
 	}, { … } ],
 }

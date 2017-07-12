@@ -29,7 +29,7 @@ describe( 'actions', () => {
 				.reply( 200, {
 					data: [ {
 						id: 0,
-						name: 'Rest of the World',
+						name: 'Locations not covered by your other zones',
 						order: 0,
 					} ]
 				} );
@@ -53,7 +53,7 @@ describe( 'actions', () => {
 					siteId,
 					data: [ {
 						id: 0,
-						name: 'Rest of the World',
+						name: 'Locations not covered by your other zones',
 						order: 0,
 					} ]
 				} );

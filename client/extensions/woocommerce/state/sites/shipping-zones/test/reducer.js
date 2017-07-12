@@ -28,7 +28,7 @@ describe( 'reducer', () => {
 	it( 'should store data from the action', () => {
 		const siteId = 123;
 		const zones = [
-			{ id: 0, name: 'Rest of the World' },
+			{ id: 0, name: 'Rest of the World (this name will be overwritten)' },
 			{ id: 1, name: 'USA' },
 		];
 		const action = {
@@ -38,6 +38,9 @@ describe( 'reducer', () => {
 		};
 		const newState = reducer( {}, action );
 		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].shippingZones ).to.eql( zones );
+		expect( newState[ siteId ].shippingZones ).to.eql( [
+			{ id: 0, name: 'Locations not covered by your other zones' },
+			{ id: 1, name: 'USA' },
+		] );
 	} );
 } );

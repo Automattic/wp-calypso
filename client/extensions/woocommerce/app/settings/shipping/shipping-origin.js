@@ -16,7 +16,7 @@ const ShippingOrigin = ( { translate } ) => {
 			<ExtendedHeader
 				label={ translate( 'Shipping Origin' ) }
 				description={ translate( 'The address of where you will be shipping from.' ) } />
-			<StoreAddress />
+			<StoreAddress showLabel={ false } />
 		</div>
 	);
 };
