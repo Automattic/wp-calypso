@@ -24,8 +24,6 @@ class PollRewindRestoreStatus extends PureComponent {
 		pollWait: 1500,
 	};
 
-	pollTimeout = null;
-
 	query( props ) {
 		const {
 			getRewindRestoreProgress,
@@ -34,18 +32,10 @@ class PollRewindRestoreStatus extends PureComponent {
 			timestamp,
 		} = props;
 		if ( siteId, timestamp, restoreId ) {
-			this.pollTimeout = setTimeout(
+			setTimeout(
 				() => getRewindRestoreProgress( siteId, timestamp, restoreId ),
 				props.pollWait
 			);
-		}
-	}
-
-	stopPolling() {
-		if ( this.pollTimeout ) {
-			debug( 'Clearing timeout' );
-			clearTimeout( this.pollTimeout );
-			this.pollTimeout = null;
 		}
 	}
 
@@ -58,18 +48,12 @@ class PollRewindRestoreStatus extends PureComponent {
 			freshness,
 			restoreId,
 		} = this.props;
-		debug( 'CWUpdate next: %o this: %o', this.props, nextProps );
 		if (
 			restoreId !== nextProps.restoreId ||
 			freshness !== nextProps.freshness
 		) {
-			this.stopPolling();
 			this.query( nextProps );
 		}
-	}
-
-	componentWillUnmount() {
-		this.stopPolling();
 	}
 
 	render() {
