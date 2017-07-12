@@ -71,7 +71,13 @@ function getHoldMessages( siteSlug, translate ) {
 			description: translate(
 				'Please check your email to confirm your address.'
 			),
-		}
+		},
+		EXCESSIVE_DISK_SPACE: {
+			title: translate( 'Site too large' ),
+			description: translate(
+				'Try using a different site.'
+			),
+		},
 	};
 }
 
