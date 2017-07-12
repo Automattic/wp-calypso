@@ -3,7 +3,7 @@
  */
 import React, { PropTypes, PureComponent } from 'react';
 import DayPicker from 'react-day-picker';
-import { noop, merge, map, filter } from 'lodash';
+import { noop, merge, map, filter, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -75,7 +75,8 @@ class DatePicker extends PureComponent {
 	locale() {
 		const { moment } = this.props;
 		const localeData = moment().localeData();
-
+		const firstDayOfWeek = localeData.firstDayOfWeek();
+		const weekdays = moment.weekdaysMin();
 		const locale = {
 			formatDay: function( date ) {
 				return moment( date ).format( 'llll' );
@@ -86,7 +87,7 @@ class DatePicker extends PureComponent {
 			},
 
 			formatWeekdayShort: function( day ) {
-				return moment().weekday( day ).format( 'dd' )[ 0 ];
+				return get( weekdays, day, ' ' )[ 0 ];
 			},
 
 			formatWeekdayLong: function( day ) {
@@ -94,7 +95,7 @@ class DatePicker extends PureComponent {
 			},
 
 			getFirstDayOfWeek: function() {
-				return Number( localeData.firstDayOfWeek() );
+				return firstDayOfWeek;
 			}
 		};
 
