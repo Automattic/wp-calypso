@@ -72,6 +72,24 @@ describe( 'FormToggle', function() {
 			} );
 		} );
 
+		it( 'should fire onChange event with value param when clicked', function( done ) {
+			const toggle = TestUtils.renderIntoDocument(
+				<FormToggle
+					checked={ false }
+					onChange={ function( checked ) {
+						assert( checked, 'onChange handler was called with a value param' );
+						done();
+					} }
+				/>,
+			);
+
+			TestUtils.Simulate.click(
+				ReactDom.findDOMNode(
+					TestUtils.findRenderedDOMComponentWithClass( toggle, 'form-toggle__switch' ),
+				),
+			);
+		} );
+
 		it( 'should not be disabled when disabled is false', function() {
 			var toggle = TestUtils.renderIntoDocument( <FormToggle checked={ false } disabled={ false }/> ),
 				toggleInput = TestUtils.scryRenderedDOMComponentsWithClass( toggle, 'form-toggle' );
