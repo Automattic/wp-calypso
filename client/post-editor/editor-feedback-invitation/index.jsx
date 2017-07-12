@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 
-function EditorFeedbackInvitation( { translate, onTrigger } ) {
+export function EditorFeedbackInvitation( { translate, onTrigger } ) {
 	return (
 		<div className="editor-feedback-invitation">
 			<p className="editor-feedback-invitation__invitation">

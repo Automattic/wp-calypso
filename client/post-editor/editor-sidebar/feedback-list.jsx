@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import Accordion from 'components/accordion';
 import Gravatar from 'components/gravatar';
 
-class FeedbackList extends PureComponent {
+export class FeedbackList extends PureComponent {
 	static propTypes = {
 		sharedLinks: PropTypes.array,
 		onToggleFeedback: PropTypes.func

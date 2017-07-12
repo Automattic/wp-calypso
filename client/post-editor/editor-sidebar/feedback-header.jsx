@@ -12,7 +12,7 @@ import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
 
 // TODO: Consider merging this with EditorSidebarHeader depending on final design
-function FeedbackSidebarHeader( { translate, closeFeedback } ) {
+export function FeedbackSidebarHeader( { translate, closeFeedback } ) {
 	return (
 		<div className="editor-sidebar__header">
 			<EditorPostType isSettings />

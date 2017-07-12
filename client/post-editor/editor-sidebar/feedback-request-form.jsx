@@ -10,7 +10,8 @@ import { localize } from 'i18n-calypso';
 import FormTextInput from 'components/forms/form-text-input';
 import Button from 'components/button';
 
-class FeedbackRequestForm extends PureComponent {
+export class FeedbackRequestForm extends PureComponent {
+
 	render() {
 		const { translate } = this.props;
 

@@ -14,7 +14,7 @@ import FeedbackList from './feedback-list';
 import SidebarFooter from 'layout/sidebar/footer';
 
 // TODO: Find a clearer word than "share" for the owner of feedback and use it in subcomponent and CSS classes
-class FeedbackView extends PureComponent {
+export class FeedbackView extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
 		close: PropTypes.func,
