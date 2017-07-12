@@ -16,6 +16,7 @@ export default function( props ) {
 			shouldCombineCards={ false }
 			className="conversations__stream"
 			followSource="conversations"
+			trackScrollPage={ props.trackScrollPage }
 		/>
 	);
 }
