@@ -2,6 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
+import defer from 'lodash/defer';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -24,7 +25,6 @@ import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
-		loginError: PropTypes.string,
 		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
@@ -40,7 +40,25 @@ export class LoginForm extends Component {
 	};
 
 	componentDidMount() {
-		this.setState( { isDisabled: false } ); // eslint-disable-line react/no-did-mount-set-state
+		this.setState( { isDisabled: false }, () => { // eslint-disable-line react/no-did-mount-set-state
+			this.usernameOrEmail.focus();
+		} );
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { requestError } = this.props;
+
+		if ( prevProps.requestError || ! requestError ) {
+			return;
+		}
+
+		if ( requestError.field === 'password' ) {
+			defer( () => this.password.focus() );
+		}
+
+		if ( requestError.field === 'usernameOrEmail' ) {
+			defer( () => this.usernameOrEmail.focus() );
+		}
 	}
 
 	onChangeField = ( event ) => {
@@ -81,6 +99,14 @@ export class LoginForm extends Component {
 		} );
 	};
 
+	savePasswordRef = ( input ) => {
+		this.password = input;
+	};
+
+	saveUsernameOrEmailRef = ( input ) => {
+		this.usernameOrEmail = input;
+	};
+
 	render() {
 		const isDisabled = {};
 
@@ -100,7 +126,6 @@ export class LoginForm extends Component {
 
 						<FormTextInput
 							autoCapitalize="off"
-							autoFocus
 							className={
 								classNames( 'login__form-userdata-username-input', {
 									'is-error': requestError && requestError.field === 'usernameOrEmail'
@@ -109,6 +134,7 @@ export class LoginForm extends Component {
 							onChange={ this.onChangeField }
 							id="usernameOrEmail"
 							name="usernameOrEmail"
+							ref={ this.saveUsernameOrEmailRef }
 							value={ this.state.usernameOrEmail }
 							{ ...isDisabled } />
 
@@ -131,6 +157,7 @@ export class LoginForm extends Component {
 							onChange={ this.onChangeField }
 							id="password"
 							name="password"
+							ref={ this.savePasswordRef }
 							value={ this.state.password }
 							{ ...isDisabled } />
 

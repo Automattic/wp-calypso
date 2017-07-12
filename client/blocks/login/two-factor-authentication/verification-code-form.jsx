@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import defer from 'lodash/defer';
 import classNames from 'classnames';
 
 /**
@@ -38,20 +39,26 @@ class VerificationCodeForm extends Component {
 	};
 
 	componentDidMount() {
-		this.setState( { isDisabled: false } ); // eslint-disable-line react/no-did-mount-set-state
+		this.setState( { isDisabled: false }, () => { // eslint-disable-line react/no-did-mount-set-state
+			this.input.focus();
+		} );
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { twoFactorAuthRequestError, twoFactorAuthType } = this.props;
+
+		const hasNewError = ! prevProps.twoFactorAuthRequestError && twoFactorAuthRequestError;
+		const isNewPage = prevProps.twoFactorAuthType !== twoFactorAuthType;
+
+		if ( isNewPage || ( hasNewError && twoFactorAuthRequestError.field === 'twoStepCode' ) ) {
+			defer( () => this.input.focus() );
+		}
 	}
 
 	componentWillReceiveProps = ( nextProps ) => {
-		const hasError = this.props.twoFactorAuthRequestError !== nextProps.twoFactorAuthRequestError;
-		const isNewPage = this.props.twoFactorAuthType !== nextProps.twoFactorAuthType;
-
-		if ( isNewPage ) {
-			// Resets the code input value when changing pages
+		// Resets the verification code input field when switching pages
+		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
 			this.setState( { twoStepCode: '' } );
-		}
-
-		if ( ( isNewPage || hasError ) && ( this.input !== null ) ) {
-			this.input.focus();
 		}
 	};
 
@@ -77,6 +84,7 @@ class VerificationCodeForm extends Component {
 			onSuccess();
 		} ).catch( ( error ) => {
 			this.setState( { isDisabled: false } );
+
 			this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_failure', {
 				error_code: error.code,
 				error_message: error.message
