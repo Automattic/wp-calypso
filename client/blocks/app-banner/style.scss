@@ -1,0 +1,64 @@
+.card.app-banner {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	background-color: $blue-light;
+	color: $blue-dark;
+	/* needed for banner to appear in front of notifications panel */
+	z-index: 180;
+
+	background-repeat: no-repeat;
+	background-size: 270px;
+	background-position: right 0 bottom 0;
+}
+
+.card.app-banner.editor {
+	background-image: url( '/calypso/images/illustrations/app-banner-editor.svg' );
+}
+
+.card.app-banner.notifications {
+	background-image: url( '/calypso/images/illustrations/app-banner-notifications.svg' );
+}
+
+.card.app-banner.reader {
+	background-image: url( '/calypso/images/illustrations/app-banner-reader.svg' );
+}
+
+.card.app-banner.stats {
+	background-image: url( '/calypso/images/illustrations/app-banner-stats.svg' );
+}
+
+.app-banner__text-content {
+	width: 80%;
+	height: 70px;
+}
+
+.app-banner__title {
+	white-space: nowrap;
+	font-size: 17px;
+	font-weight: 500;
+}
+
+.app-banner__copy {
+	font-size: 12px;
+	font-weight: 400;
+}
+
+.app-banner__buttons {
+	white-space: nowrap;
+}
+
+.button.app-banner__open-button {
+	margin-top: 8px;
+}
+
+a.app-banner__no-thanks-button {
+	color: $blue-dark;
+	display: inline-block;
+	margin-top: 8px;
+	padding: 7px 14px 9px;
+	text-decoration: none;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 21px;
+}
