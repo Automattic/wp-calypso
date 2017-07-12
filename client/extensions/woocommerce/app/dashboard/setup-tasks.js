@@ -16,7 +16,8 @@ import {
 	getCheckedTaxSetup,
 } from 'woocommerce/state/sites/setup-choices/selectors';
 import {
-	getTotalProducts
+	getTotalProducts,
+	areProductsLoaded,
 } from 'woocommerce/state/sites/products/selectors';
 import {
 	fetchProducts
@@ -60,9 +61,12 @@ class SetupTasks extends Component {
 
 		if ( site && site.ID ) {
 			this.props.fetchPaymentMethods( site.ID );
-			this.props.fetchProducts( site.ID, 1 );
 			this.props.fetchSettingsGeneral( site.ID );
 			this.props.fetchSetupChoices( site.ID );
+
+			if ( ! areProductsLoaded ) {
+				this.props.fetchProducts( site.ID, 1 );
+			}
 		}
 	}
 
@@ -72,10 +76,12 @@ class SetupTasks extends Component {
 		const newSiteId = newProps.site && newProps.site.ID || null;
 		const oldSiteId = site && site.ID || null;
 
-		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchProducts( newSiteId, 1 );
+		if ( newSiteId && ( oldSiteId !== newSiteId ) ) {
 			this.props.fetchSettingsGeneral( newSiteId );
 			this.props.fetchSetupChoices( newSiteId );
+			if ( ! areProductsLoaded ) {
+				this.props.fetchProducts( newSiteId, 1 );
+			}
 		}
 	}
 
@@ -208,6 +214,7 @@ function mapStateToProps( state ) {
 		optedOutOfShippingSetup: getOptedOutOfShippingSetup( state ),
 		triedCustomizer: getTriedCustomizerDuringInitialSetup( state ),
 		hasProducts: getTotalProducts( state ) > 0,
+		productsLoaded: areProductsLoaded( state ),
 		paymentsAreSetUp: arePaymentsSetup( state ),
 		shippingIsSetUp: areAnyShippingMethodsEnabled( state ),
 		taxesAreSetUp: getCheckedTaxSetup( state ),
