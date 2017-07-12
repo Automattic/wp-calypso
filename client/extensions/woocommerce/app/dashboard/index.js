@@ -67,7 +67,7 @@ class Dashboard extends Component {
 		const newSiteId = newProps.selectedSite ? newProps.selectedSite.ID : null;
 		const oldSiteId = selectedSite ? selectedSite.ID : null;
 
-		if ( oldSiteId !== newSiteId ) {
+		if ( newSiteId && ( oldSiteId !== newSiteId ) ) {
 			this.props.fetchSetupChoices( newSiteId );
 			this.props.fetchOrders( newSiteId, 1 );
 

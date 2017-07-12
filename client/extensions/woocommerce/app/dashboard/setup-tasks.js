@@ -76,7 +76,7 @@ class SetupTasks extends Component {
 		const newSiteId = newProps.site && newProps.site.ID || null;
 		const oldSiteId = site && site.ID || null;
 
-		if ( oldSiteId !== newSiteId ) {
+		if ( newSiteId && ( oldSiteId !== newSiteId ) ) {
 			this.props.fetchSettingsGeneral( newSiteId );
 			this.props.fetchSetupChoices( newSiteId );
 			if ( ! areProductsLoaded ) {
