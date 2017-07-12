@@ -31,31 +31,24 @@ export class FeedbackView extends PureComponent {
 		} );
 	}
 
-	haveShares() {
-		return this.props.sharedLinks.length > 0;
-	}
-
-	isAllFeedbackClosed() {
-		return this.state.openFeedbackCount === 0;
-	}
-
 	render() {
 		const { sharedLinks, translate } = this.props;
+		const allFeedbackClosed = this.state.openFeedbackCount === 0;
 
 		return (
 			<div className="editor-sidebar__view">
 				<FeedbackSidebarHeader closeFeedback={ this.props.close } />
-				{ this.isAllFeedbackClosed() && (
+				{ allFeedbackClosed && (
 					<div>
 						<div className="editor-sidebar__feedback-header-image-box"></div>
 						<FeedbackRequestForm />
 					</div>
 				) }
-				{ this.haveShares() && (
+				{ sharedLinks.length > 0 && (
 					<div>
 						<div className={ classNames( {
 							'editor-sidebar__feedback-list-label': true,
-							'is-hidden': ! this.isAllFeedbackClosed()
+							'is-hidden': ! allFeedbackClosed
 						} ) }>
 							{ translate( 'Friends' ) }
 						</div>
