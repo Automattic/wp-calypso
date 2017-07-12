@@ -91,6 +91,26 @@
 		flex-grow: 1;
 		min-height: 58px;
 	}
+
+	.sidebar__menu li {
+		.count {
+			margin: 13px 8px;
+			line-height: 16px;
+			border: 1px solid darken( $sidebar-bg-color, 10% );
+			background-color: $gray-light;
+			color: darken( $gray, 20% );
+		}
+
+		&.selected .count {
+			color: $gray-dark;
+			border: 1px solid darken( $sidebar-selected-color, 10% );
+		}
+
+		&:hover .count {
+			background-color: lighten( $sidebar-bg-color, 10% );
+			color: $sidebar-text-color;
+		}
+	}
 }
 
 .is-section-woocommerce.focus-sidebar {
