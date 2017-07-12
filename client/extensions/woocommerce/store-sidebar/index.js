@@ -80,8 +80,7 @@ class StoreSidebar extends Component {
 				icon="house"
 				label={ translate( 'Dashboard' ) }
 				link={ link }
-				onNavigate={ this.onNavigate }
-				preloadSectionName={ 'dashboard' } />
+				onNavigate={ this.onNavigate } />
 		);
 	}
 
@@ -102,8 +101,7 @@ class StoreSidebar extends Component {
 				icon="product"
 				label={ translate( 'Products' ) }
 				link={ link }
-				onNavigate={ this.onNavigate }
-				preloadSectionName={ 'products' } >
+				onNavigate={ this.onNavigate } >
 				<SidebarButton disabled={ ! site } href={ addLink } >
 					{ translate( 'Add' ) }
 				</SidebarButton>
@@ -129,8 +127,7 @@ class StoreSidebar extends Component {
 				icon="pages"
 				label={ translate( 'Orders' ) }
 				link={ link }
-				onNavigate={ this.onNavigate }
-				preloadSectionName={ 'orders' }>
+				onNavigate={ this.onNavigate }>
 				{ orders.length
 					? <Count count={ orders.length } />
 					: null
@@ -160,8 +157,7 @@ class StoreSidebar extends Component {
 				icon="cog"
 				label={ translate( 'Settings' ) }
 				link={ link }
-				onNavigate={ this.onNavigate }
-				preloadSectionName={ 'settings' } />
+				onNavigate={ this.onNavigate } />
 		);
 	}
 
