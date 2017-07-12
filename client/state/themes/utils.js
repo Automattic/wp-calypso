@@ -216,6 +216,19 @@ export function isThemeFromWpcom( theme ) {
 }
 
 /**
+ * Check if theme is a Storefront theme.
+ *
+ * For AT themes, the wpcomsh plugin sets the `storefront_theme`
+ * field to true, for Jetpack API requests.
+ *
+ * @param  {Object} theme Theme object
+ * @return {Boolean}      Whether theme is a Storefront theme
+ */
+export function isStorefrontTheme( theme ) {
+	return true === theme.storefront_theme;
+}
+
+/**
  * Returns true if the theme matches the given query, or false otherwise.
  *
  * @param  {Object}  query Query object
