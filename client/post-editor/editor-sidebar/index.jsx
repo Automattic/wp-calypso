@@ -46,10 +46,7 @@ export default class EditorSidebar extends Component {
 		isPrivate: PropTypes.bool,
 	};
 
-	constructor() {
-		super();
-		this.state = { showFeedback: false };
-	}
+	state = { showFeedback: false }
 
 	openFeedbackPane = () => {
 		this.setState( { showFeedback: true } );

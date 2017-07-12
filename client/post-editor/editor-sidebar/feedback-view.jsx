@@ -21,10 +21,7 @@ export class FeedbackView extends PureComponent {
 		sharedLinks: PropTypes.array.isRequired
 	}
 
-	constructor() {
-		super();
-		this.state = { openFeedbackCount: 0 };
-	}
+	state = { openFeedbackCount: 0 }
 
 	onToggleFeedback = isOpen => {
 		const { openFeedbackCount } = this.state;
@@ -32,7 +29,7 @@ export class FeedbackView extends PureComponent {
 		this.setState( {
 			openFeedbackCount: openFeedbackCount + ( isOpen ? 1 : -1 )
 		} );
-	};
+	}
 
 	haveShares() {
 		return this.props.sharedLinks.length > 0;
