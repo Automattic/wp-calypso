@@ -105,6 +105,7 @@ export getSiteIconId from './get-site-icon-id';
 export getSiteIconUrl from './get-site-icon-url';
 export getSiteId from './get-site-id';
 export getSiteMonitorSettings from './get-site-monitor-settings';
+export getSiteOptions from './get-site-options';
 export getSites from './get-sites';
 export getSiteSetting from './get-site-setting';
 export getSiteSlugsForUpcomingTransactions from './get-site-slugs-for-upcoming-transactions';
