@@ -43,39 +43,30 @@ export class FeedbackView extends PureComponent {
 	}
 
 	render() {
+		const { sharedLinks, translate } = this.props;
+
 		return (
 			<div className="editor-sidebar__view">
 				<FeedbackSidebarHeader closeFeedback={ this.props.close } />
-				{ this.isAllFeedbackClosed() ? this.renderRequestForm() : null }
-				{ this.haveShares() ? this.renderFeedbackList() : null }
+				{ this.isAllFeedbackClosed() && (
+					<div>
+						<div className="editor-sidebar__feedback-header-image-box"></div>
+						<FeedbackRequestForm />
+					</div>
+				) }
+				{ this.haveShares() && (
+					<div>
+						<div className={ classNames( {
+							'editor-sidebar__feedback-list-label': true,
+							'is-hidden': ! this.isAllFeedbackClosed()
+						} ) }>
+							{ translate( 'Friends' ) }
+						</div>
+						<FeedbackList sharedLinks={ sharedLinks }
+							onToggleFeedback={ this.onToggleFeedback } />
+					</div>
+				) }
 				<SidebarFooter />
-			</div>
-		);
-	}
-
-	renderRequestForm() {
-		return (
-			<div>
-				<div className="editor-sidebar__feedback-header-image-box"></div>
-				<FeedbackRequestForm />
-			</div>
-		);
-	}
-
-	renderFeedbackList() {
-		const { sharedLinks, translate } = this.props;
-		const labelClasses = classNames( {
-			'editor-sidebar__feedback-list-label': true,
-			'is-hidden': ! this.isAllFeedbackClosed()
-		} );
-
-		return (
-			<div>
-				<div className={ labelClasses }>
-					{ translate( 'Friends' ) }
-				</div>
-				<FeedbackList sharedLinks={ sharedLinks }
-					onToggleFeedback={ this.onToggleFeedback } />
 			</div>
 		);
 	}

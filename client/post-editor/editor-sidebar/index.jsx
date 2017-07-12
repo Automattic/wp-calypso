@@ -14,6 +14,23 @@ import EditorFeedbackInvitation from 'post-editor/editor-feedback-invitation';
 import EditorDeletePost from 'post-editor/editor-delete-post';
 import FeedbackView from './feedback-view';
 
+const mockSharedLinks = [
+	{
+		label: 'email1@share.test',
+		link: '',
+		comments: [
+			'Comment one',
+			'Comment two',
+			'Three-score and two comments ago... there was nothing. The post was formless and void.',
+		],
+	},
+	{
+		label: 'email2@share.test',
+		link: '',
+		comments: [],
+	},
+];
+
 export default class EditorSidebar extends Component {
 	static propTypes = {
 		savedPost: PropTypes.object,
@@ -42,14 +59,6 @@ export default class EditorSidebar extends Component {
 	};
 
 	render() {
-		return (
-			<div className="editor-sidebar">
-				{ this.state.showFeedback ? this.renderFeedbackSidebar() : this.renderMainSidebar() }
-			</div>
-		);
-	}
-
-	renderMainSidebar() {
 		const {
 			toggleSidebar,
 			isNew,
@@ -65,55 +74,35 @@ export default class EditorSidebar extends Component {
 		} = this.props;
 
 		return (
-			<div className="editor-sidebar__view">
-				<EditorSidebarHeader toggleSidebar={ toggleSidebar } />
-				<EditorActionBar
-					isNew={ isNew }
-					post={ post }
-					savedPost={ savedPost }
-					site={ site }
-					type={ type }
-				/>
-				<EditorDrawer
-					site={ site }
-					savedPost={ savedPost }
-					post={ post }
-					isNew={ isNew }
-					type={ type }
-					setPostDate={ setPostDate }
-					onPrivatePublish={ onPublish }
-					onSave={ onSave }
-					isPostPrivate={ isPostPrivate }
-				/>
-				<EditorFeedbackInvitation onTrigger={ this.openFeedbackPane } />
-				<SidebarFooter>
-					<EditorDeletePost post={ post } onTrashingPost={ onTrashingPost } />
-				</SidebarFooter>
+			<div className="editor-sidebar">
+				{ this.state.showFeedback
+					? <FeedbackView close={ this.closeFeedbackPane } sharedLinks={ mockSharedLinks } />
+					: <div className="editor-sidebar__view">
+							<EditorSidebarHeader toggleSidebar={ toggleSidebar } />
+							<EditorActionBar
+								isNew={ isNew }
+								post={ post }
+								savedPost={ savedPost }
+								site={ site }
+								type={ type }
+							/>
+							<EditorDrawer
+								site={ site }
+								savedPost={ savedPost }
+								post={ post }
+								isNew={ isNew }
+								type={ type }
+								setPostDate={ setPostDate }
+								onPrivatePublish={ onPublish }
+								onSave={ onSave }
+								isPostPrivate={ isPostPrivate }
+							/>
+							<EditorFeedbackInvitation onTrigger={ this.openFeedbackPane } />
+							<SidebarFooter>
+								<EditorDeletePost post={ post } onTrashingPost={ onTrashingPost } />
+							</SidebarFooter>
+						</div> }
 			</div>
-		);
-	}
-
-	renderFeedbackSidebar() {
-		return (
-			<FeedbackView
-				close={ this.closeFeedbackPane }
-				sharedLinks={ [
-					{
-						label: 'email1@share.test',
-						link: '',
-						comments: [
-							'Comment one',
-							'Comment two',
-							'Three-score and two comments ago... there was nothing. The post was formless and void.',
-						],
-					},
-					{
-						label: 'email2@share.test',
-						link: '',
-						comments: [],
-					},
-				] }
-			/>
 		);
 	}
 }
