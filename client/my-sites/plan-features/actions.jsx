@@ -14,6 +14,7 @@ import Button from 'components/button';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPlanClass, isMonthly } from 'lib/plans/constants';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const PlanFeaturesActions = ( {
 	canPurchase,
@@ -32,6 +33,7 @@ const PlanFeaturesActions = ( {
 	planName,
 	currentSitePlan,
 	planType,
+	recordTracksEvent: trackTracksEvent,
 } ) => {
 	let upgradeButton;
 	const classes = classNames(
@@ -68,10 +70,23 @@ const PlanFeaturesActions = ( {
 			buttonText = translate( 'Upgrade to Yearly' );
 		}
 
+		const handleUpgradeButtonClick = () => {
+			if ( isPlaceholder ) {
+				return noop();
+			}
+
+			trackTracksEvent( 'calypso_plan_features_upgrade_click', {
+				currentPlan: currentSitePlan && currentSitePlan.productSlug,
+				upgradingTo: planType,
+			} );
+
+			onUpgradeClick();
+		};
+
 		upgradeButton = (
 			<Button
 				className={ classes }
-				onClick={ isPlaceholder ? noop : onUpgradeClick }
+				onClick={ handleUpgradeButtonClick }
 				disabled={ isPlaceholder }
 			>
 				{ buttonText }
@@ -109,5 +124,8 @@ export default connect(
 		return {
 			currentSitePlan,
 		};
+	},
+	{
+		recordTracksEvent
 	}
 )( localize( PlanFeaturesActions ) );
