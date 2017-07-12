@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import { filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -173,8 +174,11 @@ export const listProduct = ( { dispatch }, { siteId }, next, product ) => {
 	dispatch( receiveProduct( siteId, customPostToProduct( product ) ) );
 };
 
-export const listProducts = ( { dispatch }, { siteId }, next, { found: numOfProducts, posts: products } ) =>
-	dispatch( receiveProductsList( siteId, numOfProducts, products.map( customPostToProduct ) ) );
+export const listProducts = ( { dispatch }, { siteId }, next, { found: numOfProducts, posts: products } ) => {
+	const validProducts = filter( products, isValidSimplePaymentsProduct );
+
+	dispatch( receiveProductsList( siteId, numOfProducts, validProducts.map( customPostToProduct ) ) );
+};
 
 const announceListingProductsFailure = ( { dispatch, getState }, { siteId } ) => {
 	const site = getRawSite( getState(), siteId );
