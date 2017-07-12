@@ -27,14 +27,7 @@ class Settings extends Component {
 		translate: PropTypes.func,
 	};
 
-	state = {
-		isSaving: false,
-	}
-
-	onSubmit = data => {
-		this.setState( { isSaving: true } );
-		this.props.saveSettings( this.props.siteId, data );
-	}
+	onSubmit = ( form, data ) => this.props.saveSettings( this.props.siteId, form, data );
 
 	render() {
 		const {
@@ -45,9 +38,7 @@ class Settings extends Component {
 			tab,
 			translate,
 		} = this.props;
-		const { isSaving } = this.state;
 		const mainClassName = 'wp-job-manager__main';
-		const isDisabled = isFetching || isSaving;
 
 		return (
 			<Main className={ mainClassName }>
@@ -57,8 +48,7 @@ class Settings extends Component {
 				{
 					Children.map( children, child => cloneElement( child, {
 						initialValues,
-						isDisabled,
-						isSaving,
+						isFetching,
 						onSubmit: this.onSubmit,
 					} ) )
 				}

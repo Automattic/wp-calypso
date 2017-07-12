@@ -2,6 +2,10 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import {
+	startSubmit as startSave,
+	stopSubmit as stopSave,
+} from 'redux-form';
 
 /**
  * Internal dependencies
@@ -32,8 +36,9 @@ export const fetchExtensionError = ( { dispatch }, { siteId } ) =>
 	dispatch( fetchError( siteId ) );
 
 export const saveSettings = ( { dispatch, getState }, action ) => {
-	const { data, siteId } = action;
+	const { data, form, siteId } = action;
 
+	dispatch( startSave( form ) );
 	dispatch( removeNotice( 'wpjm-settings-save' ) );
 	dispatch( http( {
 		method: 'POST',
@@ -46,14 +51,16 @@ export const saveSettings = ( { dispatch, getState }, action ) => {
 	}, action ) );
 };
 
-export const announceSuccess = ( { dispatch } ) => {
+export const announceSuccess = ( { dispatch }, { form } ) => {
+	dispatch( stopSave( form ) );
 	dispatch( successNotice( translate(
 		'Settings saved!' ),
 		{ id: 'wpjm-settings-save' }
 	) );
 };
 
-export const announceFailure = ( { dispatch } ) => {
+export const announceFailure = ( { dispatch }, { form } ) => {
+	dispatch( stopSave( form ) );
 	dispatch( errorNotice(
 		translate( 'There was a problem saving your changes. Please try again.' ),
 		{ id: 'wpjm-settings-save' }

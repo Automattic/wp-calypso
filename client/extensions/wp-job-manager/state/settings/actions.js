@@ -37,7 +37,8 @@ export const updateSettings = ( siteId, data ) => ( { type: WP_JOB_MANAGER_UPDAT
  * Returns an action object to indicate that the settings should be saved.
  *
  * @param  {Number} siteId Site ID
- * @param  {Object} data WPJM settings
+ * @param  {Object} form Form name
+ * @param  {Object} data Settings
  * @return {Object} Action object
  */
-export const saveSettings = ( siteId, data ) => ( { type: WP_JOB_MANAGER_SAVE_SETTINGS, siteId, data } );
+export const saveSettings = ( siteId, form, data ) => ( { type: WP_JOB_MANAGER_SAVE_SETTINGS, siteId, form, data } );
