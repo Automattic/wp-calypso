@@ -24,6 +24,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { getRawSite } from 'state/sites/selectors';
 import { errorNotice } from 'state/notices/actions';
+import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
+import { isValidSimplePaymentsProduct } from 'lib/simple-payments/utils';
 
 /**
  * Reduce function for product attributes stored in post metadata
@@ -71,7 +73,7 @@ function productToCustomPost( product ) {
 			return payload;
 		},
 		{
-			type: 'jp_pay_product',
+			type: SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
 			metadata: [],
 			title: product.title,
 			content: product.description,
@@ -107,7 +109,7 @@ export function requestSimplePaymentsProducts( { dispatch }, action ) {
 		method: 'GET',
 		path: `/sites/${ siteId }/posts`,
 		query: {
-			type: 'jp_pay_product',
+			type: SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
 			status: 'publish'
 		},
 	}, action ) );
@@ -163,8 +165,13 @@ export const addProduct = ( { dispatch }, { siteId }, next, newProduct ) =>
 export const deleteProduct = ( { dispatch }, { siteId }, next, deletedProduct ) =>
 	dispatch( receiveDeleteProduct( siteId, deletedProduct.ID ) );
 
-export const listProduct = ( { dispatch }, { siteId }, next, product ) =>
+export const listProduct = ( { dispatch }, { siteId }, next, product ) => {
+	if ( ! isValidSimplePaymentsProduct( product ) ) {
+		return;
+	}
+
 	dispatch( receiveProduct( siteId, customPostToProduct( product ) ) );
+};
 
 export const listProducts = ( { dispatch }, { siteId }, next, { found: numOfProducts, posts: products } ) =>
 	dispatch( receiveProductsList( siteId, numOfProducts, products.map( customPostToProduct ) ) );
