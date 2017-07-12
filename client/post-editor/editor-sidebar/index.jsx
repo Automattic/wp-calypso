@@ -17,7 +17,7 @@ import FeedbackView from './feedback-view';
 const mockSharedLinks = [
 	{
 		label: 'email1@share.test',
-		link: '',
+		link: 'http://share-link-1',
 		comments: [
 			'Comment one',
 			'Comment two',
@@ -26,7 +26,7 @@ const mockSharedLinks = [
 	},
 	{
 		label: 'email2@share.test',
-		link: '',
+		link: 'http://share-link-2',
 		comments: [],
 	},
 ];

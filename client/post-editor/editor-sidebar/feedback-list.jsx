@@ -26,18 +26,17 @@ export class FeedbackList extends PureComponent {
 
 		return (
 			<div className="editor-sidebar__feedback-list">
-				{ sharedLinks.map( ( { label, comments } ) => (
-					<div className="editor-sidebar__feedback-item" key={ label }>
-						<Accordion
-							title={ label }
-							icon={ <Gravatar /> }
-							onToggle={ onToggleFeedback }
-							>
-							{ comments.length === 0
-								? translate( 'No feedback yet.' )
-								: <FeedbackComments comments={ comments } /> }
-						</Accordion>
-					</div>
+				{ sharedLinks.map( ( { label, link, comments } ) => (
+					<Accordion
+						key={ link }
+						title={ label }
+						icon={ <Gravatar /> }
+						onToggle={ onToggleFeedback }
+						>
+						{ comments.length === 0
+							? translate( 'No feedback yet.' )
+							: <FeedbackComments comments={ comments } /> }
+					</Accordion>
 				) ) }
 			</div>
 		);
