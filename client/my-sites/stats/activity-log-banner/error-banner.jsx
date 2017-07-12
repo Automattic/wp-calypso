@@ -52,7 +52,7 @@ class ErrorBanner extends PureComponent {
 				status="error"
 				title={ translate( 'Problem restoring your site' ) }
 			>
-				<TrackComponentView eventName="calypso_activity_log_error_banner_impression" eventProperties={ {
+				<TrackComponentView eventName="calypso_activitylog_errorbanner_impression" eventProperties={ {
 					errorCode,
 					failureReason,
 					restoreTo: timestamp,

@@ -95,7 +95,7 @@ class ActivityLog extends Component {
 	}
 
 	handleRequestRestore = ( requestedRestoreTimestamp, from ) => {
-		this.props.recordTracksEvent( 'calypso_activity_log_request_restore', {
+		this.props.recordTracksEvent( 'calypso_activitylog_restore_request', {
 			from,
 			timestamp: requestedRestoreTimestamp,
 		} );
@@ -106,7 +106,7 @@ class ActivityLog extends Component {
 	};
 
 	handleRestoreDialogClose = () => {
-		this.props.recordTracksEvent( 'calypso_activity_log_request_restore_dialog_cancel', {
+		this.props.recordTracksEvent( 'calypso_activitylog_restore_cancel', {
 			timestamp: this.state.requestedRestoreTimestamp,
 		} );
 		this.setState( { showRestoreConfirmDialog: false } );
@@ -120,7 +120,7 @@ class ActivityLog extends Component {
 		} = this.props;
 		const { requestedRestoreTimestamp } = this.state;
 
-		recordTracksEvent( 'calypso_activity_log_request_restore_dialog_confirm', {
+		recordTracksEvent( 'calypso_activitylog_restore_confirm', {
 			timestamp: requestedRestoreTimestamp,
 		} );
 		debug( 'Restore requested for site %d to time %d', this.props.siteId, requestedRestoreTimestamp );

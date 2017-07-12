@@ -164,7 +164,7 @@ class ActivityLogItem extends Component {
 
 		debug( 'opened log', log );
 
-		recordTracksEvent( 'calypso_activity_log_item_expand', {
+		recordTracksEvent( 'calypso_activitylog_item_expand', {
 			group,
 			name,
 			timestamp: ts_utc,

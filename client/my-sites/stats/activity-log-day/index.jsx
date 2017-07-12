@@ -46,7 +46,7 @@ class ActivityLogDay extends Component {
 			tsEndOfSiteDay,
 		} = this.props;
 
-		recordTracksEvent( 'calypso_activity_log_day_expand', {
+		recordTracksEvent( 'calypso_activitylog_day_expand', {
 			logCount: logs.length,
 			tsEndOfSiteDay,
 			utcDate: moment.utc( tsEndOfSiteDay ).format( 'YYYY-MM-DD' ),
