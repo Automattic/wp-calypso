@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import formatCurrency from 'lib/format-currency';
 import CompactCard from 'components/card/compact';
 
 class ProductList extends Component {
@@ -21,7 +22,7 @@ class ProductList extends Component {
 			<div className="editor-simple-payments-modal__list">
 				{ paymentButtons.map( ( { ID: id, title, price, currency } ) => (
 					<CompactCard key={ id }>
-						<div>{ title }</div><div>{ price }&nbsp;{ currency }</div>
+						<div>{ title }</div><div>{ formatCurrency( price, currency ) }</div>
 					</CompactCard>
 				) ) }
 			</div>

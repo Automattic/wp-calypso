@@ -60,7 +60,7 @@ class SimplePaymentsDialog extends Component {
 				buttons={ this.getActionButtons() }
 				additionalClassNames="editor-simple-payments-modal"
 			>
-				<QuerySimplePayments siteId={ siteId } allProducts />
+				<QuerySimplePayments siteId={ siteId } />
 				<Navigation { ...{ activeTab, onChangeTabs, paymentButtons } } />
 				{ activeTab === 'addNew'
 					? <ProductForm />
