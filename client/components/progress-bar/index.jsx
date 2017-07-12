@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
 /**
@@ -9,19 +9,14 @@ import classnames from 'classnames';
  */
 import ScreenReaderText from 'components/screen-reader-text';
 
-module.exports = React.createClass( {
+export default class ProgressBar extends PureComponent {
+	static defaultProps = {
+		total: 100,
+		compact: false,
+		isPulsing: false
+	};
 
-	displayName: 'ProgressBar',
-
-	getDefaultProps() {
-		return {
-			total: 100,
-			compact: false,
-			isPulsing: false
-		};
-	},
-
-	propTypes: {
+	static propTypes = {
 		value: React.PropTypes.number.isRequired,
 		total: React.PropTypes.number,
 		color: React.PropTypes.string,
@@ -29,14 +24,14 @@ module.exports = React.createClass( {
 		compact: React.PropTypes.bool,
 		className: React.PropTypes.string,
 		isPulsing: React.PropTypes.bool
-	},
+	};
 
 	getCompletionPercentage() {
 		const percentage = Math.ceil( this.props.value / this.props.total * 100 );
 
 		// The percentage should not be allowed to be more than 100
 		return Math.min( percentage, 100 );
-	},
+	}
 
 	renderBar() {
 		const title = this.props.title
@@ -49,7 +44,7 @@ module.exports = React.createClass( {
 		}
 
 		return <div className="progress-bar__progress" style={ styles } >{ title }</div>;
-	},
+	}
 
 	render() {
 		const classes = classnames( this.props.className, 'progress-bar', {
@@ -62,4 +57,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
