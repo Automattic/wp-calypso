@@ -26,7 +26,7 @@ export class FeedbackRequestForm extends PureComponent {
 			<div className="editor-sidebar__feedback-request-form">
 				<p>{ description }</p>
 				<label>
-					{ translate( 'Friend\'s Email' ) }
+					{ translate( "Friend's Email" ) }
 					<FormTextInput />
 				</label>
 				<Button className="editor-sidebar__feedback-request-button">
