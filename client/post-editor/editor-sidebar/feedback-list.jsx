@@ -12,8 +12,8 @@ import Gravatar from 'components/gravatar';
 
 export class FeedbackList extends PureComponent {
 	static propTypes = {
-		sharedLinks: PropTypes.array,
-		onToggleFeedback: PropTypes.func
+		sharedLinks: PropTypes.array.isRequired,
+		onToggleFeedback: PropTypes.func.isRequired
 	}
 
 	render() {

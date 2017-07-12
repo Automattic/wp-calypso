@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -33,10 +32,6 @@ export function EditorFeedbackInvitation( { translate, onTrigger } ) {
 EditorFeedbackInvitation.propTypes = {
 	translate: PropTypes.func.isRequired,
 	onTrigger: PropTypes.func.isRequired
-};
-
-EditorFeedbackInvitation.defaultProps = {
-	translate: identity
 };
 
 export default localize( EditorFeedbackInvitation );

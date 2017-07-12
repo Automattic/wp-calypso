@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -11,6 +11,9 @@ import FormTextInput from 'components/forms/form-text-input';
 import Button from 'components/button';
 
 export class FeedbackRequestForm extends PureComponent {
+	static propTypes = {
+		translate: PropTypes.func.isRequired
+	}
 
 	render() {
 		const { translate } = this.props;

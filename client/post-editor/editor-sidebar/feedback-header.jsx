@@ -31,8 +31,8 @@ export function FeedbackSidebarHeader( { translate, closeFeedback } ) {
 }
 
 FeedbackSidebarHeader.propTypes = {
-	translate: PropTypes.func,
-	closeFeedback: PropTypes.func,
+	translate: PropTypes.func.isRequired,
+	closeFeedback: PropTypes.func.isRequired,
 };
 
 export default localize( FeedbackSidebarHeader );
