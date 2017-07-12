@@ -24,17 +24,36 @@ import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 
 class PostCommentList extends React.Component {
-	constructor( props ) {
-		super();
-		this.state = {
-			activeReplyCommentID: null,
-			amountOfCommentsToTake: props.initialSize,
-			commentsFilter: 'all',
-			activeEditCommentId: null,
-		};
+	static propTypes = {
+		post: React.PropTypes.shape( {
+			ID: React.PropTypes.number.isRequired,
+			site_ID: React.PropTypes.number.isRequired,
+		} ).isRequired,
+		onCommentsUpdate: React.PropTypes.func.isRequired,
+		pageSize: React.PropTypes.number,
+		initialSize: React.PropTypes.number,
+		showCommentCount: React.PropTypes.bool,
 
-		this.viewEarlierCommentsHandler = this.viewEarlierCommentsHandler.bind( this );
-	}
+		// connect()ed props:
+		commentsTree: React.PropTypes.object, //TODO: Find a lib that provides immutable shape
+		totalCommentsCount: React.PropTypes.number,
+		haveMoreCommentsToFetch: React.PropTypes.bool,
+		requestPostComments: React.PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		pageSize: NUMBER_OF_COMMENTS_PER_FETCH,
+		initialSize: NUMBER_OF_COMMENTS_PER_FETCH,
+		haveMoreCommentsToFetch: false,
+		showCommentCount: true,
+	};
+
+	state = {
+		activeReplyCommentID: null,
+		amountOfCommentsToTake: this.props.initialSize,
+		commentsFilter: 'all',
+		activeEditCommentId: null,
+	};
 
 	componentWillMount() {
 		const { post: { ID: postId, site_ID: siteId } } = this.props;
@@ -59,18 +78,13 @@ class PostCommentList extends React.Component {
 		}
 	}
 
-	renderComment( commentId ) {
+	renderComment = commentId => {
 		if ( ! commentId ) {
 			return null;
 		}
 
+		// TODO Should not need to bind here
 		const onEditCommentClick = this.onEditCommentClick.bind( this, commentId );
-		const onEditCommentCancel = this.onEditCommentCancel.bind( this );
-		const onReplyClick = this.onReplyClick.bind( this );
-		const onReplyCancel = this.onReplyCancel.bind( this );
-		const commentText = this.state.commentText;
-		const onUpdateCommentText = this.onUpdateCommentText.bind( this );
-		const resetActiveReplyComment = this.resetActiveReplyComment.bind( this );
 
 		return (
 			<PostComment
@@ -82,24 +96,24 @@ class PostCommentList extends React.Component {
 				activeEditCommentId={ this.state.activeEditCommentId }
 				activeReplyCommentID={ this.state.activeReplyCommentID }
 				onEditCommentClick={ onEditCommentClick }
-				onEditCommentCancel={ onEditCommentCancel }
-				onReplyClick={ onReplyClick }
-				onReplyCancel={ onReplyCancel }
-				commentText={ commentText }
-				onUpdateCommentText={ onUpdateCommentText }
-				onCommentSubmit={ resetActiveReplyComment }
+				onEditCommentCancel={ this.onEditCommentCancel }
+				onReplyClick={ this.onReplyClick }
+				onReplyCancel={ this.onReplyCancel }
+				commentText={ this.commentText }
+				onUpdateCommentText={ this.onUpdateCommentText }
+				onCommentSubmit={ this.resetActiveReplyComment }
 				depth={ 0 }
 			/>
 		);
-	}
+	};
 
-	onEditCommentClick( commentId ) {
+	onEditCommentClick = commentId => {
 		this.setState( { activeEditCommentId: commentId } );
-	}
+	};
 
 	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
 
-	onReplyClick( commentID ) {
+	onReplyClick = commentID => {
 		this.setState( { activeReplyCommentID: commentID } );
 		recordAction( 'comment_reply_click' );
 		recordGaEvent( 'Clicked Reply to Comment' );
@@ -107,9 +121,9 @@ class PostCommentList extends React.Component {
 			blog_id: this.props.post.site_ID,
 			comment_id: commentID,
 		} );
-	}
+	};
 
-	onReplyCancel() {
+	onReplyCancel = () => {
 		recordAction( 'comment_reply_cancel_click' );
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
 		recordTrack( 'calypso_reader_comment_reply_cancel_click', {
@@ -117,28 +131,27 @@ class PostCommentList extends React.Component {
 			comment_id: this.state.activeReplyCommentID,
 		} );
 		this.resetActiveReplyComment();
-	}
+	};
 
-	onUpdateCommentText( commentText ) {
+	onUpdateCommentText = commentText => {
 		this.setState( { commentText: commentText } );
-	}
+	};
 
-	resetActiveReplyComment() {
+	resetActiveReplyComment = () => {
 		this.setState( { activeReplyCommentID: null } );
-	}
+	};
 
-	renderCommentsList( commentIds ) {
+	renderCommentsList = commentIds => {
 		return (
 			<ol className="comments__list is-root">
 				{ commentIds.map( commentId => this.renderComment( commentId ) ) }
 			</ol>
 		);
-	}
+	};
 
-	renderCommentForm() {
+	renderCommentForm = () => {
 		const post = this.props.post;
 		const commentText = this.state.commentText;
-		const onUpdateCommentText = this.onUpdateCommentText.bind( this );
 
 		// Are we displaying the comment form at the top-level?
 		if ( this.state.activeReplyCommentID && ! this.state.errors ) {
@@ -151,12 +164,12 @@ class PostCommentList extends React.Component {
 				post={ post }
 				parentCommentID={ null }
 				commentText={ commentText }
-				onUpdateCommentText={ onUpdateCommentText }
+				onUpdateCommentText={ this.onUpdateCommentText }
 			/>
 		);
-	}
+	};
 
-	getCommentsCount( commentIds ) {
+	getCommentsCount = commentIds => {
 		// we always count prevSum, children sum, and +1 for the current processed comment
 		return commentIds.reduce(
 			( prevSum, commentId ) =>
@@ -165,7 +178,7 @@ class PostCommentList extends React.Component {
 				1,
 			0,
 		);
-	}
+	};
 
 	/***
 	 * Gets comments for display
@@ -173,7 +186,7 @@ class PostCommentList extends React.Component {
 	 * @param {Number} numberToTake How many top level comments to take
 	 * @returns {Object} that has the displayed comments + total displayed count including children
 	 */
-	getDisplayedComments( commentIds, numberToTake ) {
+	getDisplayedComments = ( commentIds, numberToTake ) => {
 		if ( ! commentIds ) {
 			return null;
 		}
@@ -184,9 +197,9 @@ class PostCommentList extends React.Component {
 			displayedComments: displayedComments,
 			displayedCommentsCount: this.getCommentsCount( displayedComments ),
 		};
-	}
+	};
 
-	viewEarlierCommentsHandler() {
+	viewEarlierCommentsHandler = () => {
 		const { post: { ID: postId, site_ID: siteId } } = this.props;
 
 		const amountOfCommentsToTake = this.state.amountOfCommentsToTake + this.props.pageSize;
@@ -198,7 +211,7 @@ class PostCommentList extends React.Component {
 		if ( this.props.haveMoreCommentsToFetch ) {
 			this.props.requestPostComments( siteId, postId, this.props.commentsFilter );
 		}
-	}
+	};
 
 	handleFilterClick = commentsFilter => () => this.props.onFilterChange( commentsFilter );
 
@@ -285,30 +298,6 @@ class PostCommentList extends React.Component {
 		);
 	}
 }
-
-PostCommentList.propTypes = {
-	post: React.PropTypes.shape( {
-		ID: React.PropTypes.number.isRequired,
-		site_ID: React.PropTypes.number.isRequired,
-	} ).isRequired,
-	onCommentsUpdate: React.PropTypes.func.isRequired,
-	pageSize: React.PropTypes.number,
-	initialSize: React.PropTypes.number,
-	showCommentCount: React.PropTypes.bool,
-
-	// connect()ed props:
-	commentsTree: React.PropTypes.object, //TODO: Find a lib that provides immutable shape
-	totalCommentsCount: React.PropTypes.number,
-	haveMoreCommentsToFetch: React.PropTypes.bool,
-	requestPostComments: React.PropTypes.func.isRequired,
-};
-
-PostCommentList.defaultProps = {
-	pageSize: NUMBER_OF_COMMENTS_PER_FETCH,
-	initialSize: NUMBER_OF_COMMENTS_PER_FETCH,
-	haveMoreCommentsToFetch: false,
-	showCommentCount: true,
-};
 
 export default connect(
 	( state, ownProps ) => ( {
