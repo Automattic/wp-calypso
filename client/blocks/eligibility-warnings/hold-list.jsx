@@ -71,7 +71,13 @@ function getHoldMessages( siteSlug, translate ) {
 			description: translate(
 				'Please check your email to confirm your address.'
 			),
-		}
+		},
+		EXCESSIVE_DISKSPACE: {
+			title: translate( 'Excessive diskspace' ),
+			description: translate(
+				'This site cannot be transferred due to diskspace limitations.'
+			),
+		},
 	};
 }
 
