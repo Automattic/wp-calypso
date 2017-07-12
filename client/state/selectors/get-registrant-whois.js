@@ -16,6 +16,6 @@ import { findRegistrantWhois } from 'lib/domains/whois/utils';
  * @return {Object}              Contact details
  */
 export default function getRegistrantWhois( state, domain ) {
-	const whoisContacts = get( state, [ 'domains', 'management', 'items', domain ], false );
+	const whoisContacts = get( state, [ 'domains', 'management', 'items', domain ], [] );
 	return findRegistrantWhois( whoisContacts );
 }

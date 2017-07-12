@@ -22,13 +22,10 @@ import QueryWhois from 'components/data/query-whois';
 
 class IcannVerificationCard extends React.Component {
 	static propTypes = {
+		contactDetails: React.PropTypes.object,
 		explanationContext: React.PropTypes.string,
 		selectedDomainName: React.PropTypes.string.isRequired,
 		selectedSiteSlug: React.PropTypes.string.isRequired,
-		contactDetails: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired,
 	};
 
 	state = {
