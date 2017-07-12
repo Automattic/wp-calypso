@@ -110,6 +110,7 @@
 		height: 100%;
 		overflow-y: scroll;
 		padding: 16px;
+		box-sizing: border-box;
 		color: $gray-text-min;
 
 		@include breakpoint( ">960px" ) {
