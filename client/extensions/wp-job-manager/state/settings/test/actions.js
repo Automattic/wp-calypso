@@ -61,11 +61,12 @@ describe( 'actions', () => {
 
 	describe( '#saveSettings()', () => {
 		it( 'should return an action object', () => {
-			const action = saveSettings( siteId, settings );
+			const action = saveSettings( siteId, 'form', settings );
 
 			expect( action ).to.deep.equal( {
 				type: WP_JOB_MANAGER_SAVE_SETTINGS,
 				data: settings,
+				form: 'form',
 				siteId,
 			} );
 		} );
