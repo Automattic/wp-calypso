@@ -4,6 +4,11 @@
 import React from 'react';
 import classnames from 'classnames';
 
+/**
+ * Internal dependencies
+ */
+import ScreenReaderText from 'components/screen-reader-text';
+
 module.exports = React.createClass( {
 
 	displayName: 'ProgressBar',
@@ -35,8 +40,8 @@ module.exports = React.createClass( {
 
 	renderBar() {
 		const title = this.props.title
-				? <span className="screen-reader-text">{ this.props.title }</span>
-				: null;
+			? <ScreenReaderText>{ this.props.title }</ScreenReaderText>
+			: null;
 
 		const styles = { width: this.getCompletionPercentage() + '%' };
 		if ( this.props.color ) {
