@@ -3,15 +3,11 @@
  */
 import { PropTypes, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import {
-	delay,
-	pick,
-} from 'lodash';
+import { delay } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getRestoreProgress } from 'state/selectors';
 import { getRewindRestoreProgress as getRewindRestoreProgressAction } from 'state/activity-log/actions';
 
 class QueryRewindRestoreStatus extends PureComponent {
@@ -30,6 +26,7 @@ class QueryRewindRestoreStatus extends PureComponent {
 	query( props ) {
 		const {
 			getRewindRestoreProgress,
+			queryDelay,
 			restoreId,
 			siteId,
 			timestamp,
@@ -37,7 +34,7 @@ class QueryRewindRestoreStatus extends PureComponent {
 		if ( siteId, timestamp, restoreId ) {
 			delay(
 				getRewindRestoreProgress,
-				props.queryDelay,
+				queryDelay,
 				siteId,
 				timestamp,
 				restoreId,
@@ -67,13 +64,6 @@ class QueryRewindRestoreStatus extends PureComponent {
 	}
 }
 
-export default connect(
-	( state, { siteId } ) => pick( getRestoreProgress( state, siteId ), [
-		'freshness',
-		'restoreId',
-		'timestamp',
-	] ),
-	{
-		getRewindRestoreProgress: getRewindRestoreProgressAction,
-	}
-)( QueryRewindRestoreStatus );
+export default connect( null, {
+	getRewindRestoreProgress: getRewindRestoreProgressAction,
+} )( QueryRewindRestoreStatus );

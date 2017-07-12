@@ -150,7 +150,9 @@ class ActivityLog extends Component {
 		const {
 			errorCode,
 			failureReason,
+			freshness,
 			percent,
+			restoreId,
 			siteTitle,
 			status,
 			timestamp,
@@ -178,7 +180,9 @@ class ActivityLog extends Component {
 		}
 		return (
 			<ProgressBanner
+				freshness={ freshness }
 				percent={ percent }
+				restoreId={ restoreId }
 				siteId={ siteId }
 				status={ status }
 				timestamp={ timestamp }

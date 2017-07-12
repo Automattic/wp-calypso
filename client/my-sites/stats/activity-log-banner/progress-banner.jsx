@@ -18,6 +18,8 @@ function ProgressBanner( {
 	siteId,
 	timestamp,
 	translate,
+	freshness,
+	restoreId,
 } ) {
 	const restoreStatusDescription = status === 'queued'
 		? translate( 'Your restore will start in a moment.' )
@@ -28,7 +30,12 @@ function ProgressBanner( {
 			status="info"
 			title={ translate( 'Currently restoring your site' ) }
 		>
-			<QueryRewindRestoreStatus siteId={ siteId } queryDelay={ 1500 } />
+			<QueryRewindRestoreStatus
+				freshness={ freshness }
+				queryDelay={ 1500 }
+				restoreId={ restoreId }
+				siteId={ siteId }
+			/>
 			<p>{ translate(
 				"We're in the process of restoring your site back to %s. " +
 				"You'll be notified once it's complete.",
