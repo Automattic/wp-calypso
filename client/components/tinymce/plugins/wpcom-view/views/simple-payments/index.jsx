@@ -1,5 +1,4 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/* eslint-disable react/no-danger */
 
 /**
  * External dependencies
@@ -54,10 +53,8 @@ class SimplePaymentsView extends Component {
 						<div className="wpview-type-simple-payments__title">
 							{ title }
 						</div>
-						<div
-							className="wpview-type-simple-payments__description"
-							dangerouslySetInnerHTML={ { __html: description } }
-						>
+						<div className="wpview-type-simple-payments__description">
+							{ description }
 						</div>
 						<div className="wpview-type-simple-payments__price-part">
 							{ formatCurrency( price, currency ) }
