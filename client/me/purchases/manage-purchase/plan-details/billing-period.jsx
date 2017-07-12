@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
@@ -21,6 +22,7 @@ import {
 	isRenewing,
 	showCreditCardExpiringWarning,
 } from 'lib/purchases';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class PlanBillingPeriod extends Component {
 	static propTypes = {
@@ -32,6 +34,10 @@ class PlanBillingPeriod extends Component {
 		const yearlyPlanSlug = getYearlyPlanByMonthly( purchase.productSlug );
 
 		addItem( planItem( yearlyPlanSlug ) );
+		this.props.recordTracksEvent( 'calypso_purchase_details_plan_upgrade_click', {
+			currentPlan: purchase.productSlug,
+			upgradingTo: yearlyPlanSlug,
+		} );
 		page( '/checkout/' + purchase.domain );
 	};
 
@@ -114,4 +120,9 @@ class PlanBillingPeriod extends Component {
 	}
 }
 
-export default localize( PlanBillingPeriod );
+export default connect(
+	null,
+	{
+		recordTracksEvent
+	}
+)( localize( PlanBillingPeriod ) );
