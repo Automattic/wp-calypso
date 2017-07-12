@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { pick } from 'lodash';
+import { connect } from 'react-redux';
+import { flowRight, get, map, pick } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -18,7 +19,11 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
+import QueryDebugLogs from '../data/query-debug-logs';
 import WrapSettingsForm from '../wrap-settings-form';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { deleteDebugLog } from '../../state/debug/actions';
+import { getDebugLogs, isDeletingDebugLog } from '../../state/debug/selectors';
 
 class DebugTab extends Component {
 	static propTypes = {
@@ -30,14 +35,14 @@ class DebugTab extends Component {
 		fields: {},
 	};
 
-	deleteLog = () => this.props.saveSettings( this.props.siteId, { wpsc_delete_log: true } );
-
-	disableLog = () => this.props.saveSettings( this.props.siteId, { wpsc_disable_log: true } );
-
-	resetLog = () => this.props.saveSettings( this.props.siteId, { wpsc_reset_log: true } );
+	deleteLog = ( event ) => {
+		const log = get( event, 'currentTarget.dataset.log', '' );
+		this.props.deleteDebugLog( this.props.siteId, log );
+	}
 
 	render() {
 		const {
+			debugLogs,
 			fields: {
 				cache_path,
 				wp_cache_debug_ip,
@@ -55,6 +60,7 @@ class DebugTab extends Component {
 			handleSubmitForm,
 			isRequesting,
 			isSaving,
+			siteId,
 			translate,
 		} = this.props;
 
@@ -62,6 +68,7 @@ class DebugTab extends Component {
 
 		return (
 			<div>
+				<QueryDebugLogs siteId={ siteId } />
 				{ !! wp_super_cache_debug &&
 					<Card>
 						<p>
@@ -70,32 +77,26 @@ class DebugTab extends Component {
 								'It can log them to a file in your cache directory.'
 							) }
 						</p>
-						<FormFieldset>
-							<Button
-								compact
-								primary
-								disabled={ isRequesting || isSaving }
-								onClick={ this.resetLog }
-								value="1">
-								{ translate( 'Reset Debug Log' ) }
-							</Button>
-							<Button
-								compact
-								primary
-								disabled={ isRequesting || isSaving }
-								onClick={ this.disableLog }
-								value="1">
-								{ translate( 'Disable Debug Log' ) }
-							</Button>
-							<Button
-								compact
-								primary
-								disabled={ isRequesting || isSaving }
-								onClick={ this.deleteLog }
-								value="1">
-								{ translate( 'Disable and Delete Debug Log' ) }
-							</Button>
-						</FormFieldset>
+						<table>
+							<tbody>
+							{ debugLogs.map( ( { filename, username, isDeleting } ) => (
+								<tr key={ filename }>
+									<td>{ filename }</td>
+									<td>{ username }</td>
+									<td>
+										<Button
+											busy={ isDeleting }
+											compact
+											data-log={ filename }
+											disabled={ isDeleting }
+											onClick={ this.deleteLog }>
+											{ translate( 'Delete' ) }
+										</Button>
+									</td>
+								</tr>
+							) ) }
+							</tbody>
+						</table>
 						<p>
 							{ translate(
 								'Currently logging to: {{ExternalLink}}%(location)s{{/ExternalLink}}',
@@ -253,4 +254,27 @@ const getFormSettings = settings => {
 	] );
 };
 
-export default WrapSettingsForm( getFormSettings )( DebugTab );
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		const debugLogs = map(
+			getDebugLogs( state, siteId ),
+			( username, filename ) => ( {
+				filename,
+				isDeleting: isDeletingDebugLog( state, siteId, filename ),
+				username,
+			} )
+		);
+
+		return {
+			debugLogs
+		};
+	},
+	{ deleteDebugLog },
+);
+
+export default flowRight(
+	connectComponent,
+	WrapSettingsForm( getFormSettings )
+)( DebugTab );
