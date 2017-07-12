@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityLogBanner from './index';
 import ProgressBar from 'components/progress-bar';
-import PollRewindRestoreStatus from 'components/data/poll-rewind-restore-status';
+import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
 
 function ProgressBanner( {
 	moment,
@@ -28,7 +28,7 @@ function ProgressBanner( {
 			status="info"
 			title={ translate( 'Currently restoring your site' ) }
 		>
-			<PollRewindRestoreStatus siteId={ siteId } />
+			<QueryRewindRestoreStatus siteId={ siteId } />
 			<p>{ translate(
 				"We're in the process of restoring your site back to %s. " +
 				"You'll be notified once it's complete.",

@@ -3,7 +3,10 @@
  */
 import { PropTypes, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { pick } from 'lodash';
+import {
+	delay,
+	pick,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,17 +14,17 @@ import { pick } from 'lodash';
 import { getRestoreProgress } from 'state/selectors';
 import { getRewindRestoreProgress as getRewindRestoreProgressAction } from 'state/activity-log/actions';
 
-class PollRewindRestoreStatus extends PureComponent {
+class QueryRewindRestoreStatus extends PureComponent {
 	static propTypes = {
 		freshness: PropTypes.number,
-		pollWait: PropTypes.number.isRequired,
+		queryDelay: PropTypes.number.isRequired,
 		restoreId: PropTypes.number,
 		siteId: PropTypes.number.isRequired,
 		timestamp: PropTypes.number,
 	};
 
 	static defaultProps = {
-		pollWait: 1500,
+		queryDelay: 1500,
 	};
 
 	query( props ) {
@@ -32,9 +35,12 @@ class PollRewindRestoreStatus extends PureComponent {
 			timestamp,
 		} = props;
 		if ( siteId, timestamp, restoreId ) {
-			setTimeout(
-				() => getRewindRestoreProgress( siteId, timestamp, restoreId ),
-				props.pollWait
+			delay(
+				getRewindRestoreProgress,
+				props.queryDelay,
+				siteId,
+				timestamp,
+				restoreId,
 			);
 		}
 	}
@@ -70,4 +76,4 @@ export default connect(
 	{
 		getRewindRestoreProgress: getRewindRestoreProgressAction,
 	}
-)( PollRewindRestoreStatus );
+)( QueryRewindRestoreStatus );
