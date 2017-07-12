@@ -21,11 +21,16 @@ import DomainsStore from 'lib/domains/store';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import config from 'config';
 import SiteNotice from './notice';
+import CartStore from 'lib/cart/store';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedOrAllSites } from 'state/selectors';
+import { infoNotice, removeNotice } from 'state/notices/actions';
+import { getNoticeLastTimeShown } from 'state/notices/selectors';
+import { getSectionName } from 'state/ui/selectors';
+import { abtest } from 'lib/abtest';
 
 class CurrentSite extends Component {
 	static propTypes = {
@@ -50,10 +55,12 @@ class CurrentSite extends Component {
 		}
 
 		DomainsStore.on( 'change', this.handleStoreChange );
+		CartStore.on( 'change', this.showStaleCartItemsNotice );
 	}
 
 	componentWillUnmount() {
 		DomainsStore.off( 'change', this.handleStoreChange );
+		CartStore.off( 'change', this.showStaleCartItemsNotice );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -65,6 +72,36 @@ class CurrentSite extends Component {
 
 	handleStoreChange = () => {
 		this.setState( { domainsStore: DomainsStore } );
+	}
+
+	showStaleCartItemsNotice = () => {
+		const { selectedSite } = this.props,
+			cartItems = require( 'lib/cart-values' ).cartItems,
+			staleCartItemNoticeId = 'stale-cart-item-notice';
+
+		// Remove any existing stale cart notice
+		this.props.removeNotice( staleCartItemNoticeId );
+
+		// Don't show on the checkout page?
+		if ( this.props.sectionName === 'upgrades' ) {
+			return null;
+		}
+
+		// Show a notice if there are stale items in the cart and it hasn't been shown in the last 10 minutes (cart abandonment)
+		if ( cartItems.hasStaleItem( CartStore.get() ) && this.props.staleCartItemNoticeLastTimeShown < Date.now() - ( 10 * 60 * 1000 ) ) {
+			if ( abtest( 'showCartAbandonmentNotice' ) === 'showNotice' ) {
+				this.props.infoNotice(
+					this.props.translate( 'Your site deserves a boost!' ),
+					{
+						id: staleCartItemNoticeId,
+						isPersistent: false,
+						duration: 10000,
+						button: this.props.translate( 'Complete your purchase' ),
+						href: '/checkout/' + selectedSite.slug,
+					}
+				);
+			}
+		}
 	}
 
 	switchSites = ( event ) => {
@@ -200,7 +237,9 @@ export default connect(
 			selectedSite: getSelectedSite( state ),
 			anySiteSelected: getSelectedOrAllSites( state ),
 			siteCount: get( user, 'visible_site_count', 0 ),
+			staleCartItemNoticeLastTimeShown: getNoticeLastTimeShown( state, 'stale-cart-item-notice' ),
+			sectionName: getSectionName( state ),
 		};
 	},
-	{ setLayoutFocus },
+	{ setLayoutFocus, infoNotice, removeNotice },
 )( localize( CurrentSite ) );

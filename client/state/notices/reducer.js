@@ -50,6 +50,16 @@ export const items = createReducer( {}, {
 	}
 } );
 
+export const lastTimeShown = createReducer( {}, {
+	[ NOTICE_CREATE ]: ( state, action ) => {
+		const { notice } = action;
+		return {
+			...state,
+			[ notice.noticeId ]: Date.now()
+		};
+	}
+} );
+
 export default combineReducers( {
-	items
+	items, lastTimeShown
 } );

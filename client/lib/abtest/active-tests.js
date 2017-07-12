@@ -84,4 +84,13 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
+	showCartAbandonmentNotice: {
+		datestamp: '20170630',
+		variations: {
+			doNotShowNotice: 50,
+			showNotice: 50,
+		},
+		defaultVariation: 'doNotShowNotice',
+		allowExistingUsers: true,
+	},
 };
