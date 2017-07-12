@@ -10,7 +10,7 @@ import {
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-const uploadPlugin = ( { dispatch }, action ) => {
+export const uploadPlugin = ( { dispatch }, action ) => {
 	const { siteId, file } = action;
 
 	dispatch( http( {

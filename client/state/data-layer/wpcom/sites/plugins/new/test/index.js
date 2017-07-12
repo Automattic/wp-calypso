@@ -9,9 +9,10 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import {
-	uploadComplete,
-	receiveError,
 	updateUploadProgress,
+	uploadComplete,
+	uploadPlugin,
+	receiveError,
 } from '../';
 import {
 	completePluginUpload,
@@ -40,6 +41,18 @@ const SUCCESS_RESPONSE = deepFreeze( {
 const ERROR_RESPONSE = deepFreeze( {
 	error: 'folder_exists',
 	message: 'folder_exists',
+} );
+
+describe( 'uploadPlugin', () => {
+	it( 'should distpatch an http request', () => {
+		const dispatch = sinon.spy();
+		uploadPlugin( { dispatch }, { siteId, file: 'xyz' } );
+		expect( dispatch ).to.have.been.calledWithMatch( {
+			formData: [ [ 'zip[]', 'xyz' ] ],
+			method: 'POST',
+			path: `/sites/${ siteId }/plugins/new`,
+		} );
+	} );
 } );
 
 describe( 'uploadComplete', () => {
