@@ -27,6 +27,7 @@ import { selectSiteId } from 'state/help/actions';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import wpcomLib from 'lib/wp';
 import HelpResults from 'me/help/help-results';
+import HelpTeaserButton from '../help-teaser-button';
 
 /**
  * Module variables
@@ -204,6 +205,33 @@ export const HelpContactForm = React.createClass( {
 		} );
 	},
 
+	renderCalendlyOffer() {
+		const { translate, isBusinessPlanUser } = this.props;
+
+		if ( ! isBusinessPlanUser ) {
+			return (
+				<HelpTeaserButton
+					title={ translate( 'Chat is temporarily closed.' ) }
+					description={ translate(
+						'We\'re still available over email in the meantime. ' +
+						'Chat will be back on Friday, July 21st!'
+					) } />
+			);
+		}
+
+		return (
+			<HelpTeaserButton
+				onClick={ this.trackCalendlyOfferClick }
+				href="https://calendly.com/wordpressdotcom/wordpress-com-business-site-setup/"
+				title={ translate( 'Chat with us over screenshare!' ) }
+				description={ translate( 'Click here to get one-on-one help with a Happiness Engineer.' ) } />
+		);
+	},
+
+	trackCalendlyOfferClick() {
+		analytics.tracks.recordEvent( 'calypso_help_calendly_offer_click' );
+	},
+
 	/**
 	 * Render the contact form
 	 * @return {object} ReactJS JSX object
@@ -240,7 +268,11 @@ export const HelpContactForm = React.createClass( {
 					from="2016-12-24T00:00:00Z"
 					to="2017-01-02T00:00:00Z"
 				/>
+
 				{ formDescription && ( <p>{ formDescription }</p> ) }
+				<div>
+					{ this.renderCalendlyOffer() }
+				</div>
 
 				{ showHowCanWeHelpField && (
 					<div>
