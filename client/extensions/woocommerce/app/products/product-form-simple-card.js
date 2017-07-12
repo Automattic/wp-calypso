@@ -135,7 +135,7 @@ ProductFormSimpleCard.propTypes = {
 		weight: PropTypes.string,
 		regular_price: PropTypes.string,
 		manage_stock: PropTypes.bool,
-		stock_quantity: PropTypes.string,
+		stock_quantity: PropTypes.number,
 		backorders: PropTypes.string,
 	} ),
 	editProduct: PropTypes.func.isRequired,
