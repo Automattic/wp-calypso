@@ -34,7 +34,7 @@ export class CommentDetailAuthor extends Component {
 		blockUser: PropTypes.func,
 		commentDate: PropTypes.string,
 		commentStatus: PropTypes.string,
-		postUrl: PropTypes.string,
+		commentUrl: PropTypes.string,
 		showAuthorInfo: PropTypes.bool,
 		siteId: PropTypes.number,
 	};
@@ -156,7 +156,7 @@ export class CommentDetailAuthor extends Component {
 			authorDisplayName,
 			authorUrl,
 			commentStatus,
-			postUrl,
+			commentUrl,
 			showAuthorInfo,
 			siteId,
 			translate,
@@ -184,7 +184,7 @@ export class CommentDetailAuthor extends Component {
 						</div>
 						<ExternalLink
 							className="comment-detail__author-info-element comment-detail__comment-date"
-							href={ postUrl }
+							href={ commentUrl }
 						>
 							{ this.getFormattedDate() }
 						</ExternalLink>
