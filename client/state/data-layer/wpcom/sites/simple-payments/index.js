@@ -174,10 +174,10 @@ export const listProduct = ( { dispatch }, { siteId }, next, product ) => {
 	dispatch( receiveProduct( siteId, customPostToProduct( product ) ) );
 };
 
-export const listProducts = ( { dispatch }, { siteId }, next, { found: numOfProducts, posts: products } ) => {
+export const listProducts = ( { dispatch }, { siteId }, next, { posts: products } ) => {
 	const validProducts = filter( products, isValidSimplePaymentsProduct );
 
-	dispatch( receiveProductsList( siteId, numOfProducts, validProducts.map( customPostToProduct ) ) );
+	dispatch( receiveProductsList( siteId, validProducts.map( customPostToProduct ) ) );
 };
 
 const announceListingProductsFailure = ( { dispatch, getState }, { siteId } ) => {

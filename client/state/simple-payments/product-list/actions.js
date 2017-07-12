@@ -21,7 +21,7 @@ export const requestProduct = ( siteId, productId ) => ( {
 	type: SIMPLE_PAYMENTS_PRODUCT_GET,
 } );
 
-export function receiveProductsList( siteId, numOfProducts, posts ) {
+export function receiveProductsList( siteId, posts ) {
 	return {
 		type: SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE,
 		siteId,
