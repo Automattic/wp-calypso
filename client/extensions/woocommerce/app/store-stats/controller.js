@@ -25,6 +25,9 @@ function isValidParameters( context ) {
 }
 
 export default function StatsController( context ) {
+	if ( ! context.params.site || context.params.site === 'null' ) {
+		page.redirect( '/stats/day/' );
+	}
 	if ( ! isValidParameters( context ) ) {
 		page.redirect( `/store/stats/orders/day/${ context.params.site }` );
 	}
