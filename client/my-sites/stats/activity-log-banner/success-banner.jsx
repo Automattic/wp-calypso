@@ -46,7 +46,7 @@ class SuccessBanner extends PureComponent {
 				title={ translate( 'Your site has been successfully restored' ) }
 			>
 				<TrackComponentView eventName="calypso_activitylog_successbanner_impression" eventProperties={ {
-					restoreTo: timestamp,
+					restore_to: timestamp,
 				} } />
 				<p>{ translate(
 					'We successfully restored your site back to %s!',
