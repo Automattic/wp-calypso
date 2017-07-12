@@ -14,30 +14,26 @@ import FeedbackComments from './feedback-comments';
 export class FeedbackList extends PureComponent {
 	static propTypes = {
 		sharedLinks: PropTypes.array.isRequired,
-		onToggleFeedback: PropTypes.func.isRequired
-	}
+		onToggleFeedback: PropTypes.func.isRequired,
+	};
 
 	render() {
-		const {
-			translate,
-			sharedLinks,
-			onToggleFeedback
-		} = this.props;
+		const { translate, sharedLinks, onToggleFeedback } = this.props;
 
 		return (
 			<div className="editor-sidebar__feedback-list">
-				{ sharedLinks.map( ( { label, link, comments } ) => (
+				{ sharedLinks.map( ( { label, link, comments } ) =>
 					<Accordion
 						key={ link }
 						title={ label }
 						icon={ <Gravatar /> }
 						onToggle={ onToggleFeedback }
-						>
+					>
 						{ comments.length === 0
 							? translate( 'No feedback yet.' )
 							: <FeedbackComments comments={ comments } /> }
-					</Accordion>
-				) ) }
+					</Accordion>,
+				) }
 			</div>
 		);
 	}

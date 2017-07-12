@@ -12,19 +12,21 @@ import Button from 'components/button';
 
 export class FeedbackRequestForm extends PureComponent {
 	static propTypes = {
-		translate: PropTypes.func.isRequired
-	}
+		translate: PropTypes.func.isRequired,
+	};
 
 	render() {
 		const { translate } = this.props;
 
 		const description = translate(
-			'Send your friends a link to read your draft before you publish.'
+			'Send your friends a link to read your draft before you publish.',
 		);
 
 		return (
 			<div className="editor-sidebar__feedback-request-form">
-				<p>{ description }</p>
+				<p>
+					{ description }
+				</p>
 				<label>
 					{ translate( "Friend's Email" ) }
 					<FormTextInput />

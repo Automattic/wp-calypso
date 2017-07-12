@@ -19,11 +19,13 @@ export function FeedbackSidebarHeader( { translate, closeFeedback } ) {
 			<Gridicon icon="arrow-right" />
 			{ translate( 'Share Draft' ) }
 			<Button
-				compact borderless
+				compact
+				borderless
 				className="editor-sidebar__back"
 				onClick={ closeFeedback }
 				title={ translate( 'Close feedback' ) }
-				aria-label={ translate( 'Close feedback' ) }>
+				aria-label={ translate( 'Close feedback' ) }
+			>
 				<Gridicon icon="cross" />
 			</Button>
 		</div>

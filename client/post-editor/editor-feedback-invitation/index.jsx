@@ -17,9 +17,9 @@ export function EditorFeedbackInvitation( { translate, onTrigger } ) {
 					'{{highlight}}Need another set of eyes?{{/highlight}} Ask a friend to review your post.',
 					{
 						components: {
-							highlight: <span className="editor-feedback-invitation__highlight" />
-						}
-					}
+							highlight: <span className="editor-feedback-invitation__highlight" />,
+						},
+					},
 				) }
 			</p>
 			<Button className="editor-feedback-invitation__button" onClick={ onTrigger }>
@@ -31,7 +31,7 @@ export function EditorFeedbackInvitation( { translate, onTrigger } ) {
 
 EditorFeedbackInvitation.propTypes = {
 	translate: PropTypes.func.isRequired,
-	onTrigger: PropTypes.func.isRequired
+	onTrigger: PropTypes.func.isRequired,
 };
 
 export default localize( EditorFeedbackInvitation );

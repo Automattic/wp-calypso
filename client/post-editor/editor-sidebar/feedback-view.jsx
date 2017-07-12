@@ -18,18 +18,18 @@ export class FeedbackView extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
 		close: PropTypes.func.isRequired,
-		sharedLinks: PropTypes.array.isRequired
-	}
+		sharedLinks: PropTypes.array.isRequired,
+	};
 
-	state = { openFeedbackCount: 0 }
+	state = { openFeedbackCount: 0 };
 
 	onToggleFeedback = isOpen => {
 		const { openFeedbackCount } = this.state;
 
 		this.setState( {
-			openFeedbackCount: openFeedbackCount + ( isOpen ? 1 : -1 )
+			openFeedbackCount: openFeedbackCount + ( isOpen ? 1 : -1 ),
 		} );
-	}
+	};
 
 	render() {
 		const { sharedLinks, translate } = this.props;
@@ -38,24 +38,23 @@ export class FeedbackView extends PureComponent {
 		return (
 			<div className="editor-sidebar__view">
 				<FeedbackSidebarHeader closeFeedback={ this.props.close } />
-				{ allFeedbackClosed && (
+				{ allFeedbackClosed &&
 					<div>
-						<div className="editor-sidebar__feedback-header-image-box"></div>
+						<div className="editor-sidebar__feedback-header-image-box" />
 						<FeedbackRequestForm />
-					</div>
-				) }
-				{ sharedLinks.length > 0 && (
+					</div> }
+				{ sharedLinks.length > 0 &&
 					<div>
-						<div className={ classNames( {
-							'editor-sidebar__feedback-list-label': true,
-							'is-hidden': ! allFeedbackClosed
-						} ) }>
+						<div
+							className={ classNames( {
+								'editor-sidebar__feedback-list-label': true,
+								'is-hidden': ! allFeedbackClosed,
+							} ) }
+						>
 							{ translate( 'Friends' ) }
 						</div>
-						<FeedbackList sharedLinks={ sharedLinks }
-							onToggleFeedback={ this.onToggleFeedback } />
-					</div>
-				) }
+						<FeedbackList sharedLinks={ sharedLinks } onToggleFeedback={ this.onToggleFeedback } />
+					</div> }
 				<SidebarFooter />
 			</div>
 		);
