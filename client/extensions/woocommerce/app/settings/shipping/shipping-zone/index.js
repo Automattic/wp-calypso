@@ -29,6 +29,8 @@ import { getCurrentlyEditingShippingZoneLocationsList } from 'woocommerce/state/
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
+import { ProtectFormGuard } from 'lib/protect-form';
+import { getSaveZoneActionListSteps } from 'woocommerce/state/data-layer/ui/shipping-zones';
 
 class Shipping extends Component {
 	constructor() {
@@ -117,10 +119,11 @@ class Shipping extends Component {
 	}
 
 	render() {
-		const { siteId, className, loaded, zone, locations, isRestOfTheWorld } = this.props;
+		const { siteId, className, loaded, zone, locations, isRestOfTheWorld, hasEdits } = this.props;
 
 		return (
 			<Main className={ classNames( 'shipping', className ) }>
+				<ProtectFormGuard isChanged={ hasEdits } />
 				<QueryShippingZones siteId={ siteId } />
 				<ShippingZoneHeader
 					onSave={ this.onSave }
@@ -162,6 +165,7 @@ export default connect(
 			zone,
 			isRestOfTheWorld,
 			locations: loaded && getCurrentlyEditingShippingZoneLocationsList( state, 20 ),
+			hasEdits: zone && 0 !== getSaveZoneActionListSteps( state ).length,
 		};
 	},
 	( dispatch ) => ( {
