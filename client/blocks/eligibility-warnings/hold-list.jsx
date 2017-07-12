@@ -73,9 +73,9 @@ function getHoldMessages( siteSlug, translate ) {
 			),
 		},
 		EXCESSIVE_DISK_SPACE: {
-			title: translate( 'Excessive diskspace' ),
+			title: translate( 'Site too large' ),
 			description: translate(
-				'This site cannot be transferred due to diskspace limitations.'
+				'Try using a different site.'
 			),
 		},
 	};
