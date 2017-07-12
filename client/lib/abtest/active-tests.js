@@ -68,14 +68,6 @@ module.exports = {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	savingsInCheckoutSummary: {
-		datestamp: '20170516',
-		variations: {
-			hide: 50,
-			show: 50,
-		},
-		defaultVariation: 'show',
-	},
 	signupPlansCopyChanges: {
 		datestamp: '20170623',
 		variations: {
