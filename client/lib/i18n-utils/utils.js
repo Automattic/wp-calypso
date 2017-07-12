@@ -2,7 +2,7 @@
  * External dependencies
  */
 import find from 'lodash/find';
-import url from 'url';
+import { parse } from 'url';
 
 /**
  * Internal dependencies
@@ -63,10 +63,18 @@ const i18nUtils = {
 	 * @returns {string} original path with new locale slug
 	 */
 	addLocaleToPath: function( path, locale ) {
-		const urlParts = url.parse( path );
+		const urlParts = parse( path );
 		const queryString = urlParts.search || '';
 
 		return i18nUtils.removeLocaleFromPath( urlParts.pathname ) + `/${ locale }` + queryString;
+	},
+
+	addLocaleToWpcomUrl: function( url, locale ) {
+		if ( locale && locale !== 'en' ) {
+			return url.replace( 'https://wordpress.com', 'https://' + locale + '.wordpress.com' );
+		}
+
+		return url;
 	},
 
 	/**
@@ -76,7 +84,7 @@ const i18nUtils = {
 	 * @returns {string} original path minus locale slug
 	 */
 	removeLocaleFromPath: function( path ) {
-		const urlParts = url.parse( path );
+		const urlParts = parse( path );
 		const queryString = urlParts.search || '';
 		const parts = getPathParts( urlParts.pathname );
 		const locale = parts.pop();
