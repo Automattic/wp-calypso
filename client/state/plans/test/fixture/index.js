@@ -1,5 +1,5 @@
 /**
- * Action types constantes
+ * Internal dependencies
  */
 import {
 	PLANS_RECEIVE,
@@ -172,32 +172,32 @@ export const PLAN_1008 = {
 
 export const PLAN_1009 = {
 	product_id: 1009,
-	product_name: "WordPress.com Personal",
+	product_name: 'WordPress.com Personal',
 	prices: {
 		USD: 71.88
 	},
-	product_name_short: "Personal",
-	product_slug: "personal-bundle",
-	tagline: "Get your own domain",
-	description: "Use your own domain and establish your online presence without ads.",
-	icon: "https://s0.wordpress.com/i/store/plan-personal.png",
-	icon_active: "https://s0.wordpress.com/i/store/plan-personal-active.png",
-	capability: "manage_options",
+	product_name_short: 'Personal',
+	product_slug: 'personal-bundle',
+	tagline: 'Get your own domain',
+	description: 'Use your own domain and establish your online presence without ads.',
+	icon: 'https://s0.wordpress.com/i/store/plan-personal.png',
+	icon_active: 'https://s0.wordpress.com/i/store/plan-personal-active.png',
+	capability: 'manage_options',
 	cost: 71.88,
-	apple_sku: "com.wordpress.test.personal.subscription.1year",
-	android_sku: "sub_test_plan_personal_001",
+	apple_sku: 'com.wordpress.test.personal.subscription.1year',
+	android_sku: 'sub_test_plan_personal_001',
 	features_highlight: [
 		{
-			items: [ "no-adverts/no-adverts.php", "custom-domain", "support", "space" ]
+			items: [ 'no-adverts/no-adverts.php', 'custom-domain', 'support', 'space' ]
 		},
 		{
-			title : "Included with all plans:",
-			items: [ "free-blog" ]
+			title: 'Included with all plans:',
+			items: [ 'free-blog' ]
 		}
 	],
 	bill_period: 365,
-	product_type: "bundle",
-	available: "yes",
+	product_type: 'bundle',
+	available: 'yes',
 	bundle_product_ids: [
 		12,
 		9,
@@ -225,11 +225,11 @@ export const PLAN_1009 = {
 		75,
 		16
 	],
-	bill_period_label: "per year",
-	price: "$71.88",
-	formatted_price: "$71.88",
+	bill_period_label: 'per year',
+	price: '$71.88',
+	formatted_price: '$71.88',
 	raw_price: 71.88,
-	currency_code: "USD"
+	currency_code: 'USD'
 };
 
 export const PLAN_2000 = {
