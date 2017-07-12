@@ -30,7 +30,8 @@ class ActivityLogDay extends Component {
 		isRewindActive: true,
 	};
 
-	handleClickRestore = () => {
+	handleClickRestore = ( event ) => {
+		event.stopPropagation();
 		const {
 			tsEndOfSiteDay,
 			requestRestore,
@@ -120,6 +121,7 @@ class ActivityLogDay extends Component {
 		return (
 			<div className="activity-log-day">
 				<FoldableCard
+					clickableHeader
 					expandedSummary={ this.getRewindButton() }
 					header={ this.getEventsHeading() }
 					onOpen={ this.trackOpenDay }
