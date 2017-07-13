@@ -355,10 +355,11 @@ const mapStateToProps = ( state, { siteId, status } ) => {
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	changeCommentStatus: ( commentId, postId, status ) => dispatch( changeCommentStatus( siteId, postId, commentId, status ) ),
 	createNotice: ( status, text, options ) => dispatch( createNotice( status, text, options ) ),
-	deleteComment: () => noop,
+	deleteComment: noop,
 	likeComment: ( commentId, postId ) => dispatch( likeComment( siteId, postId, commentId ) ),
 	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
 	replyComment: ( commentText, postId, parentCommentId ) => dispatch( replyComment( commentText, siteId, postId, parentCommentId ) ),
+	setBulkStatus: noop,
 	unlikeComment: ( commentId, postId ) => dispatch( unlikeComment( siteId, postId, commentId ) ),
 } );
 
