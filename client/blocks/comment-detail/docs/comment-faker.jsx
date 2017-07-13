@@ -54,9 +54,9 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 
 	setBulkStatus = ( commentIds, status ) => this.setCommentStatusOrLike( commentIds, { status } );
 
-	setCommentLike = ( commentId, postId, i_like ) => this.setCommentStatusOrLike( [ commentId ], { i_like } );
+	setCommentLike = ( commentId, i_like ) => this.setCommentStatusOrLike( [ commentId ], { i_like } );
 
-	setCommentStatus = ( commentId, postId, status ) => this.setCommentStatusOrLike( [ commentId ], { status } );
+	setCommentStatus = ( commentId, status ) => this.setCommentStatusOrLike( [ commentId ], { status } );
 
 	/**
 	 * Sets a status and/or a like value to a list of comments.
