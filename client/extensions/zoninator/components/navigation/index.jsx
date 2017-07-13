@@ -65,7 +65,7 @@ const Navigation = ( { activeTab, siteSlug, translate } ) => {
 
 Navigation.propTypes = {
 	activeTab: PropTypes.string,
-	site: PropTypes.object,
+	siteSlug: PropTypes.string,
 };
 
 Navigation.defaultProps = {

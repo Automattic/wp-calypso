@@ -17,7 +17,7 @@ const Settings = ( {
 	translate
 } ) => {
 	return (
-		<Main className={ 'zoninator__main' }>
+       <Main className={ 'zoninator__main' }>
 			<DocumentHead title={ translate( 'WP Zone Manager' ) } />
 			<Navigation activeTab={ tab } />
 			{ children }
@@ -26,7 +26,6 @@ const Settings = ( {
 };
 
 Settings.propTypes = {
-	site: PropTypes.object,
 	tab: PropTypes.string,
 };
 
