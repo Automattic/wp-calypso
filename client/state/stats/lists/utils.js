@@ -144,7 +144,7 @@ function parseOrderDeltas( payload ) {
 	if ( ! payload || ! payload.deltasv2 || ! payload.delta_fields || Object.keys( payload.deltasv2 ).length === 0 ) {
 		return [];
 	}
-	return payload.deltasv2.map( row => { // will be renamed to deltas
+	return payload.deltas.map( row => { // will be renamed to deltas
 		const notPeriodKeys = Object.keys( row ).filter( key => key !== 'period' );
 		const newRow = { period: parseUnitPeriods( payload.unit, row.period ).format( 'YYYY-MM-DD' ) };
 		notPeriodKeys.forEach( key => {
