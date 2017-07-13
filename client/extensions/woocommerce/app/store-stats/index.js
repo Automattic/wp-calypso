@@ -45,11 +45,13 @@ class StoreStats extends Component {
 
 	render() {
 		const { isWooConnect, path, queryDate, selectedDate, siteId, slug, unit, querystring } = this.props;
+
 		// TODO: this is to handle users switching sites while on store stats
 		// unfortunately, we can't access the path when changing sites
 		if ( ! isWooConnect ) {
-			page.redirect( `/stats/${ slug }` );
+			page.redirect( `/stats/day/${ slug }` );
 		}
+
 		const unitQueryDate = getUnitPeriod( queryDate, unit );
 		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
 		const endSelectedDate = getEndPeriod( selectedDate, unit );
