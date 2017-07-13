@@ -32,6 +32,7 @@ class ActivityLogItem extends Component {
 				'attachment',
 				'comment',
 				'core',
+				'menu',
 				'plugin',
 				'post',
 				'term',
@@ -72,6 +73,11 @@ class ActivityLogItem extends Component {
 				core: PropTypes.shape( {
 					new_version: PropTypes.string,
 					old_version: PropTypes.string,
+				} ),
+
+				menu: PropTypes.shape( {
+					id: PropTypes.number,
+					name: PropTypes.string,
 				} ),
 
 				plugin: PropTypes.oneOfType( [
@@ -191,6 +197,9 @@ class ActivityLogItem extends Component {
 
 			case 'comment':
 				return 'comment';
+
+			case 'menu':
+				return 'menu';
 
 			case 'post':
 				return 'posts';
