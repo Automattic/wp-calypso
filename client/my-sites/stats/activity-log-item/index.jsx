@@ -198,6 +198,9 @@ class ActivityLogItem extends Component {
 			case 'comment':
 				return 'comment';
 
+			case 'core':
+				return 'my-sites';
+
 			case 'menu':
 				return 'menu';
 
