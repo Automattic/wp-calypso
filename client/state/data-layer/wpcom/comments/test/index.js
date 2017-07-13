@@ -8,19 +8,9 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	COMMENTS_RECEIVE,
-	COMMENTS_COUNT_RECEIVE,
-	NOTICE_CREATE
-} from 'state/action-types';
-import {
-	fetchPostComments,
-	addComments,
-	announceFailure,
-} from '../';
-import {
-	NUMBER_OF_COMMENTS_PER_FETCH
-} from 'state/comments/constants';
+import { COMMENTS_RECEIVE, COMMENTS_COUNT_RECEIVE, NOTICE_CREATE } from 'state/action-types';
+import { fetchPostComments, addComments, announceFailure } from '../';
+import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
 
 describe( 'wpcom-api', () => {
 	describe( 'post comments request', () => {
@@ -29,32 +19,37 @@ describe( 'wpcom-api', () => {
 				const query = {
 					order: 'DESC',
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
-					status: 'trash'
+					status: 'trash',
 				};
 				const action = {
 					type: 'DUMMY_ACTION',
 					siteId: '2916284',
 					postId: '1010',
-					query
+					query,
 				};
 				const dispatch = spy();
 				const getState = () => ( {
 					comments: {
 						items: {
-							'2916284-1010': []
-						}
-					}
+							'2916284-1010': [],
+						},
+					},
 				} );
 
 				fetchPostComments( { dispatch, getState }, action );
 
 				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( http( {
-					apiVersion: '1.1',
-					method: 'GET',
-					path: '/sites/2916284/posts/1010/replies',
-					query
-				}, action ) );
+				expect( dispatch ).to.have.been.calledWith(
+					http(
+						{
+							apiVersion: '1.1',
+							method: 'GET',
+							path: '/sites/2916284/posts/1010/replies',
+							query,
+						},
+						action,
+					),
+				);
 			} );
 
 			it( 'should dispatch an HTTP request to the post replies endpoint, before the oldest comment in state', () => {
@@ -67,7 +62,7 @@ describe( 'wpcom-api', () => {
 					type: 'DUMMY_ACTION',
 					siteId: '2916284',
 					postId: '1010',
-					query
+					query,
 				};
 				const dispatch = spy();
 				const getState = () => ( {
@@ -76,24 +71,29 @@ describe( 'wpcom-api', () => {
 							'2916284-1010': [
 								{ id: 1, date: '2017-05-25T21:41:25.841Z' },
 								{ id: 2, date: '2017-05-25T20:41:25.841Z' },
-								{ id: 3, date: '2017-05-25T19:41:25.841Z' }
-							]
-						}
-					}
+								{ id: 3, date: '2017-05-25T19:41:25.841Z' },
+							],
+						},
+					},
 				} );
 
 				fetchPostComments( { dispatch, getState }, action );
 
 				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( http( {
-					apiVersion: '1.1',
-					method: 'GET',
-					path: '/sites/2916284/posts/1010/replies',
-					query: {
-						...query,
-						before: '2017-05-25T19:41:25.841Z'
-					}
-				}, action ) );
+				expect( dispatch ).to.have.been.calledWith(
+					http(
+						{
+							apiVersion: '1.1',
+							method: 'GET',
+							path: '/sites/2916284/posts/1010/replies',
+							query: {
+								...query,
+								before: '2017-05-25T19:41:25.841Z',
+							},
+						},
+						action,
+					),
+				);
 			} );
 		} );
 
@@ -102,11 +102,11 @@ describe( 'wpcom-api', () => {
 				const dispatch = spy();
 				const action = {
 					siteId: 2916284,
-					postId: 1010
+					postId: 1010,
 				};
 				const data = {
 					comments: [],
-					found: -1
+					found: -1,
 				};
 
 				addComments( { dispatch }, action, null, data );
@@ -116,7 +116,7 @@ describe( 'wpcom-api', () => {
 					type: COMMENTS_RECEIVE,
 					siteId: 2916284,
 					postId: 1010,
-					comments: []
+					comments: [],
 				} );
 			} );
 
@@ -124,11 +124,11 @@ describe( 'wpcom-api', () => {
 				const dispatch = spy();
 				const action = {
 					siteId: 2916284,
-					postId: 1010
+					postId: 1010,
 				};
 				const data = {
 					comments: [ {}, {} ],
-					found: 2
+					found: 2,
 				};
 
 				addComments( { dispatch }, action, null, data );
@@ -138,14 +138,14 @@ describe( 'wpcom-api', () => {
 					type: COMMENTS_RECEIVE,
 					siteId: 2916284,
 					postId: 1010,
-					comments: [ {}, {} ]
+					comments: [ {}, {} ],
 				} );
 
 				expect( dispatch ).to.have.been.calledWith( {
 					type: COMMENTS_COUNT_RECEIVE,
 					siteId: 2916284,
 					postId: 1010,
-					totalCommentsCount: 2
+					totalCommentsCount: 2,
 				} );
 			} );
 		} );
@@ -155,8 +155,8 @@ describe( 'wpcom-api', () => {
 				const dispatch = spy();
 				const getState = () => ( {
 					posts: {
-						queries: {}
-					}
+						queries: {},
+					},
 				} );
 
 				announceFailure( { dispatch, getState }, { siteId: 2916284, postId: 1010 } );
@@ -166,8 +166,8 @@ describe( 'wpcom-api', () => {
 					type: NOTICE_CREATE,
 					notice: {
 						status: 'is-error',
-						text: 'Could not retrieve comments for requested post'
-					}
+						text: 'Could not retrieve comments for requested post',
+					},
 				} );
 			} );
 		} );
