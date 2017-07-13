@@ -154,7 +154,7 @@
     "webpack-hot-middleware": "2.15.0",
     "wpcom": "5.4.0",
     "wpcom-oauth": "0.3.3",
-    "wpcom-proxy-request": "3.0.0",
+    "wpcom-proxy-request": "Automattic/wpcom-proxy-request#feature\/reload",
     "wpcom-xhr-request": "1.1.0"
   },
   "engines": {

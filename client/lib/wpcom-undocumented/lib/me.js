@@ -389,9 +389,12 @@ UndocumentedMe.prototype.socialConnect = function( service, token, redirectTo, f
 
 	const args = {
 		path: '/me/social-login/connect',
-		metaAPI: { accessAllUsersBlogs: true },
 		body: body,
 	};
+
+	require( 'wpcom-proxy-request' ).reloadProxy();
+
+	this.wpcom.req.post( { metaAPI: { accessAllUsersBlogs: true } } );
 
 	return this.wpcom.req.post( args, fn );
 };
