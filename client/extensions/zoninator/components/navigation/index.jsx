@@ -15,8 +15,7 @@ import SectionNavTabItem from 'components/section-nav/item';
 import SectionNavSegmented from 'components/section-nav/segmented';
 import Button from 'components/button';
 import sectionsModule from 'sections';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 const getZones = () => {
 	return [
@@ -73,10 +72,8 @@ Navigation.defaultProps = {
 };
 
 const connectComponent = connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-
 	return {
-		siteSlug: getSiteSlug( state, siteId ),
+		siteSlug: getSelectedSiteSlug( state ),
 	};
 } );
 
