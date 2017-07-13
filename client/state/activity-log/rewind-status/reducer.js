@@ -21,7 +21,6 @@ export const rewindStatus = keyedReducer( 'siteId', createReducer( {}, {
 		...state,
 		active: true,
 	} ),
-
 }, rewindStatusSchema ) );
 
 export const rewindStatusError = keyedReducer( 'siteId', createReducer( {}, {

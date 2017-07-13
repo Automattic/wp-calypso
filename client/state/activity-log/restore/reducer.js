@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { restoreProgressSchema } from './schema';
 import {
 	REWIND_RESTORE,
 	REWIND_RESTORE_DISMISS_PROGRESS,
@@ -16,6 +17,7 @@ const stubNull = () => null;
 const startProgress = ( state, { timestamp } ) => ( {
 	errorCode: '',
 	failureReason: '',
+	freshness: -Infinity,
 	message: '',
 	percent: 0,
 	status: 'queued',
@@ -25,6 +27,7 @@ const startProgress = ( state, { timestamp } ) => ( {
 const updateProgress = ( state, {
 	errorCode,
 	failureReason,
+	freshness,
 	message,
 	percent,
 	restoreId,
@@ -33,6 +36,7 @@ const updateProgress = ( state, {
 } ) => ( {
 	errorCode,
 	failureReason,
+	freshness,
 	message,
 	percent,
 	restoreId,
@@ -45,3 +49,4 @@ export const restoreProgress = keyedReducer( 'siteId', createReducer( {}, {
 	[ REWIND_RESTORE_DISMISS_PROGRESS ]: stubNull,
 	[ REWIND_RESTORE_UPDATE_PROGRESS ]: updateProgress,
 } ) );
+restoreProgress.schema = restoreProgressSchema;
