@@ -103,15 +103,15 @@
 	color: $gray;
 }
 
-.activity-log-item__content {
+.activity-log-item__title {
 	flex: 3 1;
 }
 
-.activity-log-item__content-title {
+.activity-log-item__title-title {
 	font-size: 14px;
 }
 
-.activity-log-item__content-sub-title {
+.activity-log-item__title-subtitle {
 	font-size: 12px;
 	text-transform: uppercase;
 	color: $gray;
