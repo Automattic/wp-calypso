@@ -204,6 +204,9 @@ class ActivityLogItem extends Component {
 			case 'post':
 				return 'posts';
 
+			case 'plugin':
+				return 'plugins';
+
 			case 'term':
 				return 'folder';
 
