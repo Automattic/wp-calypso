@@ -436,7 +436,7 @@ class PluginMeta extends Component {
 		} );
 
 		const plugin = this.props.selectedSite && this.props.sites[ 0 ] ? this.props.sites[ 0 ].plugin : this.props.plugin;
-		const path = this.getExtensionSettingsPath( plugin );
+		const path = ( ! this.props.selectedSite || this.props.isInstalledOnSite ) && this.getExtensionSettingsPath( plugin );
 
 		return (
 			<div className="plugin-meta">
