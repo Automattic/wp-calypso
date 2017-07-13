@@ -222,13 +222,12 @@ export class CommentList extends Component {
 
 		if ( 'unapproved' === comment.status ) {
 			this.props.removeNotice( `comment-notice-${ commentId }` );
-			this.showNotice( commentId, postId, 'approved', 'unapproved' );
+			this.setCommentStatus( commentId, postId, 'approved' );
 		}
 
 		if ( comment.i_like ) {
 			this.props.unlikeComment( commentId, postId );
 		} else {
-			// Also automagically approves the comment
 			this.props.likeComment( commentId, postId );
 		}
 	}
