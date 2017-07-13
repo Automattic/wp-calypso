@@ -360,6 +360,7 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
 	replyComment: ( commentText, postId, parentCommentId ) => dispatch( replyComment( commentText, siteId, postId, parentCommentId ) ),
 	setBulkStatus: noop,
+	undoBulkStatus: noop,
 	unlikeComment: ( commentId, postId ) => dispatch( unlikeComment( siteId, postId, commentId ) ),
 } );
 
