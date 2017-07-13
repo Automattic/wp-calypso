@@ -9,9 +9,9 @@ import { get } from 'lodash';
  */
 import ReduxFormSelect from 'components/redux-forms/redux-form-select';
 
-const PageDropdown = ( { name, pages } ) => {
+const PageDropdown = ( { disabled, name, pages } ) => {
 	return (
-		<ReduxFormSelect name={ name }>
+		<ReduxFormSelect disabled={ disabled } name={ name }>
 			{ pages.map( ( { id, title } ) => (
 				<option key={ id } value={ id }>
 					{ get( title, 'rendered', '' ) }
