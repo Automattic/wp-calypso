@@ -17,6 +17,7 @@ export default function EllipsisMenuDemo() {
 			<PopoverMenuItem icon="pencil">Option B</PopoverMenuItem>
 			<PopoverMenuSeparator />
 			<PopoverMenuItem icon="help">Option C</PopoverMenuItem>
+			<PopoverMenuItem disabled icon="cross-circle">Disabled option</PopoverMenuItem>
 		</EllipsisMenu>
 	);
 }
