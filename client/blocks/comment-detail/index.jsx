@@ -72,9 +72,9 @@ export class CommentDetail extends Component {
 	}
 
 	deleteCommentPermanently = () => {
-		const { commentId, deleteCommentPermanently, translate } = this.props;
+		const { commentId, deleteCommentPermanently, postId, translate } = this.props;
 		if ( isUndefined( window ) || window.confirm( translate( 'Delete this comment permanently?' ) ) ) {
-			deleteCommentPermanently( commentId );
+			deleteCommentPermanently( commentId, postId );
 		}
 	}
 

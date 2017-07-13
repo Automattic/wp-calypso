@@ -35,7 +35,7 @@ export class CommentList extends Component {
 		comments: PropTypes.array,
 		commentsCount: PropTypes.number,
 		commentsPage: PropTypes.number,
-		deleteCommentPermanently: PropTypes.func,
+		deleteComment: PropTypes.func,
 		likeComment: PropTypes.func,
 		replyComment: PropTypes.func,
 		setBulkStatus: PropTypes.func,
@@ -68,11 +68,11 @@ export class CommentList extends Component {
 		this.props.setCommentsPage( page );
 	}
 
-	deleteCommentPermanently = commentId => {
+	deleteCommentPermanently = ( commentId, postId ) => {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
-		this.showNotice( commentId, 'delete', 'trash' );
+		this.showNotice( commentId, postId, 'delete', 'trash' );
 
-		this.props.deleteCommentPermanently( commentId );
+		this.props.deleteComment( commentId, postId );
 	}
 
 	getComment = commentId => find( this.props.comments, [ 'ID', commentId ] );
