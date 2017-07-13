@@ -50,10 +50,6 @@ class StoreSidebar extends Component {
 		}
 	}
 
-	onNavigate = () => {
-		window.scrollTo( 0, 0 );
-	}
-
 	isItemLinkSelected = ( paths ) => {
 		if ( ! Array.isArray( paths ) ) {
 			paths = [ paths ];
@@ -80,7 +76,7 @@ class StoreSidebar extends Component {
 				icon="house"
 				label={ translate( 'Dashboard' ) }
 				link={ link }
-				onNavigate={ this.onNavigate } />
+			/>
 		);
 	}
 
@@ -101,7 +97,7 @@ class StoreSidebar extends Component {
 				icon="product"
 				label={ translate( 'Products' ) }
 				link={ link }
-				onNavigate={ this.onNavigate } >
+			>
 				<SidebarButton disabled={ ! site } href={ addLink } >
 					{ translate( 'Add' ) }
 				</SidebarButton>
@@ -127,7 +123,7 @@ class StoreSidebar extends Component {
 				icon="pages"
 				label={ translate( 'Orders' ) }
 				link={ link }
-				onNavigate={ this.onNavigate }>
+			>
 				{ orders.length
 					? <Count count={ orders.length } />
 					: null
@@ -157,7 +153,7 @@ class StoreSidebar extends Component {
 				icon="cog"
 				label={ translate( 'Settings' ) }
 				link={ link }
-				onNavigate={ this.onNavigate } />
+			/>
 		);
 	}
 
