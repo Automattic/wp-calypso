@@ -108,8 +108,7 @@ function ReaderSubscriptionListItem( {
 							className="reader-subscription-list-item__link"
 							onClick={ recordTitleClick }
 						>
-							{' '}
-							{ siteTitle }{' '}
+							{ siteTitle }
 						</a>
 					}
 				</span>
@@ -127,8 +126,7 @@ function ReaderSubscriptionListItem( {
 										className="reader-subscription-list-item__link"
 										onClick={ recordAuthorClick }
 									>
-										{' '}
-										{ authorName }{' '}
+										{ authorName }
 									</a>
 								),
 							},
