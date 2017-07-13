@@ -36,6 +36,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js',
 	CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js',
 	GOOGLE_CONVERSION_ID = config( 'google_adwords_conversion_id' ),
+	GOOGLE_CONVERSION_ID_JETPACK = config( 'google_adwords_conversion_id_jetpack' ),
 	ONE_BY_AOL_CONVERSION_PIXEL_URL = 'https://secure.ace-tag.advertising.com/action/type=132958/bins=1/rich=0/Mnum=1516/',
 	ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL = 'https://secure.leadback.advertising.com/adcedge/lb' +
 		'?site=695501&betr=sslbet_1472760417=[+]ssprlb_1472760417[720]|sslbet_1472760452=[+]ssprlb_1472760452[8760]',
@@ -511,7 +512,9 @@ function recordProduct( product, orderId ) {
 		// Google AdWords
 		if ( window.google_trackConversion ) {
 			window.google_trackConversion( {
-				google_conversion_id: GOOGLE_CONVERSION_ID,
+				google_conversion_id: isJetpackPlan
+					? GOOGLE_CONVERSION_ID_JETPACK
+					: GOOGLE_CONVERSION_ID,
 				google_conversion_label: isJetpackPlan
 					? TRACKING_IDS.googleConversionLabelJetpack
 					: TRACKING_IDS.googleConversionLabel,
