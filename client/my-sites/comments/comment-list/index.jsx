@@ -16,7 +16,6 @@ import { getNotices } from 'state/notices/selectors';
 import getSiteComments from 'state/selectors/get-site-comments';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
-import CommentFaker from 'blocks/comment-detail/docs/comment-faker';
 import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'my-sites/stats/pagination';
@@ -277,7 +276,7 @@ export class CommentList extends Component {
 
 		return (
 			<div className="comment-list">
-				<QuerySiteComments siteId={ siteId } status="all" />
+				<QuerySiteComments siteId={ siteId } status={ status } />
 
 				<CommentNavigation
 					isBulkEdit={ isBulkEdit }
@@ -335,8 +334,8 @@ export class CommentList extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId } ) => {
-	const comments = getSiteComments( state, siteId );
+const mapStateToProps = ( state, { siteId, status } ) => {
+	const comments = getSiteComments( state, siteId, status );
 	const isLoading = ! hasSiteComments( state, siteId );
 	return {
 		comments,
@@ -355,4 +354,4 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	unlikeComment: ( commentId, postId ) => dispatch( unlikeComment( siteId, postId, commentId ) ),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentFaker( CommentList ) ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentList ) );
