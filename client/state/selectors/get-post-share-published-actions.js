@@ -13,7 +13,7 @@ const getPublishedActions = ( state, siteId, postId ) => ( orderBy( get(
 	state,
 	[ 'sharing', 'publicize', 'sharePostActions', 'published', siteId, postId ],
 	[],
-), [ 'ID' ], [ 'desc' ] ) );
+), [ 'share_date' ], [ 'desc' ] ) );
 
 /**
  * Return a share-published-actions array propagaring data from publicize connections.
