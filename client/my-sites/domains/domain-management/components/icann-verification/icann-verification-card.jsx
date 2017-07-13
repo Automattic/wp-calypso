@@ -5,7 +5,6 @@ import React from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 
 /**
@@ -15,7 +14,7 @@ import support from 'lib/url/support';
 import Button from 'components/button';
 import Card from 'components/card';
 import upgradesActions from 'lib/upgrades/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { errorNotice } from 'state/notices/actions';
 import { domainManagementEditContactInfo } from 'my-sites/domains/paths';
 import { getRegistrantWhois } from 'state/selectors';
 import QueryWhois from 'components/data/query-whois';
@@ -161,5 +160,5 @@ export default connect(
 	( state, ownProps ) => ( {
 		contactDetails: getRegistrantWhois( state, ownProps.selectedDomainName ),
 	} ),
-	dispatch => bindActionCreators( { errorNotice, successNotice }, dispatch )
+	{ errorNotice }
 )( localize( IcannVerificationCard ) );
