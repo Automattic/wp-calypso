@@ -191,17 +191,11 @@ export class CommentList extends Component {
 			? translate( 'Comment approved and reply submitted.' )
 			: translate( 'Reply submitted.' );
 
-		const noticeOptions = Object.assign(
-			{
-				duration: 5000,
-				id: `comment-notice-${ comment.parentId }`,
-				isPersistent: true,
-			},
-			alsoApprove && {
-				button: translate( 'Undo' ),
-				onClick: () => this.setCommentStatus( comment.parentId, 'unapproved', { showNotice: false } ),
-			}
-		);
+		const noticeOptions = {
+			duration: 5000,
+			id: `comment-notice-${ comment.parentId }`,
+			isPersistent: true,
+		};
 
 		this.props.createNotice( 'is-success', noticeMessage, noticeOptions );
 		this.props.submitComment( comment );
