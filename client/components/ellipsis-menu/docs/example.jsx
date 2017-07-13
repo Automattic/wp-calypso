@@ -10,7 +10,7 @@ import EllipsisMenu from '../';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
 
-export default function EllipsisMenuDemo() {
+export default function EllipsisMenuExample() {
 	return (
 		<EllipsisMenu position="bottom right">
 			<PopoverMenuItem icon="add">Option A</PopoverMenuItem>
@@ -22,4 +22,4 @@ export default function EllipsisMenuDemo() {
 	);
 }
 
-EllipsisMenuDemo.displayName = 'EllipsisMenu';
+EllipsisMenuExample.displayName = 'EllipsisMenuExample';
