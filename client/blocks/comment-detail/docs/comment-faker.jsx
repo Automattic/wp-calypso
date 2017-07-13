@@ -106,8 +106,9 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 
 	setCommentsPage = commentsPage => this.setState( { commentsPage } );
 
-	submitComment = comment => {
+	submitComment = ( comment, options = { alsoApprove: false } ) => {
 		const { comments } = this.state;
+		const parentComment = comments[ comment.parentId ];
 
 		const newComment = {
 			...createPlaceholderComment( comment.content, comment.postId, comment.parentId ),
@@ -128,6 +129,10 @@ export const CommentFaker = WrappedCommentList => class extends Component {
 		this.setState( {
 			comments: {
 				...comments,
+				[ parentComment.ID ]: {
+					...parentComment,
+					status: 'approved',
+				},
 				[ newComment.ID ]: newComment,
 			}
 		} );

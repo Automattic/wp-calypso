@@ -35,11 +35,23 @@ export class CommentDetailReply extends Component {
 		return Math.max( TEXTAREA_HEIGHT_FOCUSED, textareaHeight );
 	}
 
-	getTextareaPlaceholder = () => this.props.authorDisplayName
-		? this.props.translate( 'Reply to %(commentAuthor)s…', {
-			args: { commentAuthor: this.props.authorDisplayName }
-		} )
-		: 'Reply to comment…';
+	getTextareaPlaceholder = () => {
+		const { authorDisplayName, commentStatus, translate } = this.props;
+
+		if ( 'approved' !== commentStatus ) {
+			return authorDisplayName
+				? translate( 'Approve and reply to %(commentAuthor)s…', {
+					args: { commentAuthor: authorDisplayName }
+				} )
+				: translate( 'Approve and reply to comment…' );
+		}
+
+		return authorDisplayName
+			? translate( 'Reply to %(commentAuthor)s…', {
+				args: { commentAuthor: authorDisplayName }
+			} )
+			: translate( 'Reply to comment…' );
+	}
 
 	handleTextChange = event => {
 		const { value } = event.target;
@@ -59,6 +71,7 @@ export class CommentDetailReply extends Component {
 	submit = () => {
 		const {
 			commentId,
+			commentStatus,
 			currentUser,
 			postId,
 			postTitle,
@@ -77,7 +90,7 @@ export class CommentDetailReply extends Component {
 			content: commentText,
 			URL: postUrl,
 		};
-		submitComment( comment );
+		submitComment( comment, { alsoApprove: 'approved' !== commentStatus } );
 		this.setState( { commentText: '' } );
 	}
 
