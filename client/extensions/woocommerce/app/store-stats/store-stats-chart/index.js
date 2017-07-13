@@ -12,16 +12,17 @@ import { moment } from 'i18n-calypso';
  * Internal dependencies
  */
 import Card from 'components/card';
+import Delta from 'woocommerce/components/delta';
+import ElementChart from 'components/chart';
+import formatCurrency from 'lib/format-currency';
 import { getPeriodFormat } from 'state/stats/lists/utils';
 import { getDelta } from '../utils';
-import QuerySiteStats from 'components/data/query-site-stats';
 import { getSiteStatsNormalizedData, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
-import ElementChart from 'components/chart';
 import Legend from 'components/chart/legend';
+import QuerySiteStats from 'components/data/query-site-stats';
 import Tabs from 'my-sites/stats/stats-tabs';
 import Tab from 'my-sites/stats/stats-tabs/tab';
-import Delta from 'woocommerce/components/delta';
-import formatCurrency from 'lib/format-currency';
+import { UNITS } from 'woocommerce/app/store-stats/constants';
 
 class StoreStatsChart extends Component {
 	static propTypes = {
@@ -113,7 +114,9 @@ class StoreStatsChart extends Component {
 									<Delta
 										value={ `${ deltaValue }%` }
 										className={ `${ delta.favorable } ${ delta.direction }` }
-										suffix={ `since ${ moment( delta.reference_period, periodFormat ).format( 'MMM D' ) }` }
+										suffix={
+											`since ${ moment( delta.reference_period, periodFormat ).format( UNITS[ unit ].sinceFormat ) }`
+										}
 									/>
 								</Tab>
 							);

@@ -81,23 +81,27 @@ export const UNITS = {
 		label: 'days',
 		durationFn: 'asDays',
 		format: 'YYYY-MM-DD',
+		sinceFormat: 'MMM D',
 	},
 	week: {
 		quantity: 30,
 		label: 'weeks',
 		durationFn: 'asWeeks',
 		format: 'YYYY-[W]WW',
+		sinceFormat: 'MMM D',
 	},
 	month: {
 		quantity: 30,
 		label: 'months',
 		durationFn: 'asMonths',
-		format: 'YYYY-MM'
+		format: 'YYYY-MM',
+		sinceFormat: 'MMM [\']YY',
 	},
 	year: {
 		quantity: 10,
 		label: 'years',
 		durationFn: 'asYears',
 		format: 'YYYY',
+		sinceFormat: 'YYYY',
 	},
 };
