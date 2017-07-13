@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { find, isObject, isEqual, compact } from 'lodash';
+import { find, isObject, isFunction, isEqual, compact } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,6 +11,7 @@ import { find, isObject, isEqual, compact } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
 import { getAllProductEdits } from 'woocommerce/state/ui/products/selectors';
+import { getProduct } from 'woocommerce/state/sites/products/selectors';
 import { getAllVariationEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { getAllProductCategoryEdits } from 'woocommerce/state/ui/product-categories/selectors';
 import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
@@ -70,8 +71,13 @@ export function handleProductActionListCreate( store, action ) {
 	const { successAction, failureAction } = action;
 	const rootState = store.getState();
 	const siteId = getSelectedSiteId( rootState );
-
-	const onSuccess = ( dispatch ) => dispatch( successAction );
+	const onSuccess = ( dispatch, { productIdMapping } ) => {
+		const products = Object.values( productIdMapping ).map( ( productId ) => getProduct( store.getState(), productId ) );
+		if ( isFunction( successAction ) ) {
+			return dispatch( successAction( products, productIdMapping ) );
+		}
+		return dispatch( successAction );
+	};
 	const onFailure = ( dispatch ) => {
 		dispatch( failureAction );
 		dispatch( actionListClear() );
@@ -187,7 +193,7 @@ function getCategoryIdsForProduct( product ) {
 const productSuccess = ( actionList ) => ( dispatch, getState, { sentData, receivedData } ) => {
 	const productIdMapping = {
 		...actionList.productIdMapping,
-		[ sentData.id.index ]: receivedData.id,
+		[ sentData.id.placeholder || receivedData.id ]: receivedData.id,
 	};
 
 	const newActionList = {
@@ -319,7 +325,7 @@ function variationCreateStep( siteId, productId, variation ) {
 
 			dispatch( createProductVariation(
 				siteId,
-				( newProduct ? actionList.productIdMapping[ productId.index ] : productId ),
+				( newProduct ? actionList.productIdMapping[ productId.placeholder ] : productId ),
 				variation,
 				actionListStepSuccess( actionList ),
 				actionListStepFailure( actionList ),
@@ -357,4 +363,3 @@ function variationDeleteStep( siteId, productId, variationId ) {
 		},
 	};
 }
-
