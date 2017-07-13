@@ -312,7 +312,7 @@ describe( 'selectors', () => {
 			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );
 		} );
 
-		it( 'should return JPOP group for jetpack site', () => {
+		it( 'should return JPOP group for jetpack paid sites', () => {
 			const siteId = 1;
 			const state = {
 				currentUser: {
@@ -325,7 +325,13 @@ describe( 'selectors', () => {
 				},
 				sites: {
 					items: {
-						[ siteId ]: { jetpack: true }
+						[ siteId ]: {
+							jetpack: true,
+							plan: {
+								product_id: 2005,
+								product_slug: 'jetpack_personal'
+							}
+						}
 					}
 				}
 			};
