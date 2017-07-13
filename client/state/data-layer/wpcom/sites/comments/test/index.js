@@ -7,7 +7,16 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { addComments, fetchCommentsList } from '../';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import {
+	addComments,
+	fetchCommentsList,
+	requestComment,
+	receiveCommentError,
+	receiveCommentSuccess,
+} from '../';
+import { requestComment as requestCommentAction } from 'state/comments/actions';
+import { COMMENTS_RECEIVE } from 'state/action-types';
 
 const query = {
 	siteId: 1337,
@@ -102,5 +111,75 @@ describe( '#fetchCommentList', () => {
 		fetchCommentsList( { dispatch }, { query: { listType: 'site', siteId: 1337 } } );
 
 		expect( dispatch ).to.have.been.calledWithMatch( { query: { type: 'comment' } } );
+	} );
+} );
+
+describe( '#requestComment', () => {
+	let dispatch;
+	beforeEach( () => dispatch = spy() );
+
+	it( 'should dispatch http action', () => {
+		const siteId = '124';
+		const commentId = '579';
+		const action = requestCommentAction( { siteId, commentId } );
+
+		requestComment( { dispatch }, action );
+
+		expect( dispatch ).calledWith( http( {
+			method: 'GET',
+			path: `/sites/${ siteId }/comments/${ commentId }`,
+			apiVersion: '1.1',
+			onSuccess: action,
+			onFailure: action,
+		} ) );
+	} );
+} );
+
+describe( '#receiveCommentSuccess', () => {
+	let dispatch;
+	beforeEach( () => dispatch = spy() );
+
+	it( 'should dispatch receive comments with a single comment', () => {
+		const siteId = '124';
+		const commentId = '579';
+		const response = { post: { ID: 1 } };
+		const action = requestCommentAction( { siteId, commentId } );
+
+		receiveCommentSuccess( { dispatch }, action, null, response );
+
+		expect( dispatch ).calledWith( {
+			type: COMMENTS_RECEIVE,
+			siteId,
+			postId: response.post.ID,
+			comments: [ response ],
+		} );
+	} );
+} );
+
+describe( '#receiveCommentError', () => {
+	let dispatch;
+	beforeEach( () => dispatch = spy() );
+
+	it( 'should dispatch receive comments with a single comment', () => {
+		const siteId = '124';
+		const commentId = '579';
+		const response = { post: { ID: 1 } };
+		const action = requestCommentAction( { siteId, commentId } );
+		const getState = () => ( {
+			reader: {
+				sites: {
+					items: {
+						124: { title: 'sqeeeeee!' }
+					},
+				},
+			},
+		} );
+
+		receiveCommentError( { dispatch, getState }, action, null, response );
+		expect( dispatch ).to.have.been.calledWithMatch( {
+			notice: {
+				text: 'Failed to retrieve comment for site “sqeeeeee!”',
+			},
+		} );
 	} );
 } );

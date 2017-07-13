@@ -17,8 +17,15 @@ import {
 	COMMENTS_REMOVE,
 	COMMENTS_REPLY_WRITE,
 	COMMENTS_WRITE,
+	COMMENT_REQUEST,
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
+
+export const requestComment = ( { siteId, commentId } ) => ( {
+	type: COMMENT_REQUEST,
+	siteId,
+	commentId
+} );
 
 /***
  * Creates a thunk that requests comments for a given post
