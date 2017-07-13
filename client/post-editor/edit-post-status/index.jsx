@@ -10,7 +10,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { abtest } from 'lib/abtest';
 import AsyncLoad from 'components/async-load';
 import Button from 'components/button';

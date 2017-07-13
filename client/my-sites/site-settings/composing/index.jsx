@@ -20,7 +20,6 @@ import {
 	siteSupportsJetpackSettingsUi,
 } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import config from 'config';
 import { abtest } from 'lib/abtest';
 
 const Composing = ( {
