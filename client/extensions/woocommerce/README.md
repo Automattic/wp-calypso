@@ -1,6 +1,6 @@
-# Store on Calypso
+# Store on WordPress.com
 
-Sell anything, beautifully. Now from Calypso.
+Sell anything, beautifully. Now on WordPress.com.
 
 ## Prerequisites
 
@@ -12,4 +12,4 @@ When setting up the Store on WordPress.com the following plugins will be install
 - [WooCommerce Services](https://github.com/Automattic/woocommerce-services/) - powers USPS shipping in Calypso.
 - [WooCommerce Stripe Gateway](https://wordpress.org/plugins/woocommerce-gateway-stripe/) - Take credit card payments on your store using Stripe.
 
-Currently Store is only availiable for Atomic sites.
+Currently Store is only available for WordPress.com Atomic sites.
