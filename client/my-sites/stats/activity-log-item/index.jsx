@@ -23,10 +23,11 @@ const debug = debugFactory( 'calypso:activity-log:item' );
 class ActivityLogItem extends Component {
 
 	static propTypes = {
-		allowRestore: PropTypes.bool.isRequired,
 		siteId: PropTypes.number.isRequired,
 		requestRestore: PropTypes.func.isRequired,
 		applySiteOffset: PropTypes.func.isRequired,
+		hideRestore: PropTypes.bool,
+
 		log: PropTypes.shape( {
 			group: PropTypes.oneOf( [
 				'attachment',
@@ -148,7 +149,6 @@ class ActivityLogItem extends Component {
 	};
 
 	static defaultProps = {
-		allowRestore: true,
 		disableRestore: false,
 	};
 
@@ -262,12 +262,12 @@ class ActivityLogItem extends Component {
 
 	renderSummary() {
 		const {
-			allowRestore,
 			disableRestore,
+			hideRestore,
 			translate,
 		} = this.props;
 
-		if ( ! allowRestore ) {
+		if ( hideRestore ) {
 			return null;
 		}
 

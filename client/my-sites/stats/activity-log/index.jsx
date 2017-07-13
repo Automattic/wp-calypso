@@ -271,8 +271,8 @@ class ActivityLog extends Component {
 			),
 			( daily_logs, tsEndOfSiteDay ) => (
 				<ActivityLogDay
-					allowRestore={ !! isPressable }
 					disableRestore={ disableRestore }
+					hideRestore={ ! isPressable }
 					isRewindActive={ isRewindActive }
 					key={ tsEndOfSiteDay }
 					logs={ daily_logs }

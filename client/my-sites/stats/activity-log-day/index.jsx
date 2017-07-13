@@ -16,8 +16,8 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
 
 class ActivityLogDay extends Component {
 	static propTypes = {
-		allowRestore: PropTypes.bool.isRequired,
 		applySiteOffset: PropTypes.func.isRequired,
+		hideRestore: PropTypes.bool,
 		isRewindActive: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
 		requestRestore: PropTypes.func.isRequired,
@@ -26,7 +26,6 @@ class ActivityLogDay extends Component {
 	};
 
 	static defaultProps = {
-		allowRestore: true,
 		disableRestore: false,
 		isRewindActive: true,
 	};
@@ -63,11 +62,11 @@ class ActivityLogDay extends Component {
 	 */
 	getRewindButton( type = '' ) {
 		const {
-			allowRestore,
 			disableRestore,
+			hideRestore,
 		} = this.props;
 
-		if ( ! allowRestore ) {
+		if ( hideRestore ) {
 			return null;
 		}
 
@@ -115,8 +114,8 @@ class ActivityLogDay extends Component {
 
 	render() {
 		const {
-			allowRestore,
 			disableRestore,
+			hideRestore,
 			logs,
 			requestRestore,
 			siteId,
@@ -135,12 +134,12 @@ class ActivityLogDay extends Component {
 					{ logs.map( ( log, index ) => (
 						<ActivityLogItem
 							key={ index }
-							allowRestore={ allowRestore }
 							disableRestore={ disableRestore }
 							siteId={ siteId }
 							requestRestore={ requestRestore }
 							log={ log }
 							applySiteOffset={ applySiteOffset }
+							hideRestore={ hideRestore }
 						/>
 					) ) }
 				</FoldableCard>
