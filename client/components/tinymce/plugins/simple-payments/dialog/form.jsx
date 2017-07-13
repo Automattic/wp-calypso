@@ -26,7 +26,7 @@ const ProductImage = () => (
 
 class ProductForm extends Component {
 	render() {
-		const { translate } = this.props;
+		const { translate, currencyDefaults } = this.props;
 
 		return (
 			<form className="editor-simple-payments-modal__form">
@@ -45,7 +45,7 @@ class ProductForm extends Component {
 						<FormCurrencyInput
 							name="price"
 							id="price"
-							currencySymbolPrefix="$"
+							currencySymbolPrefix={ currencyDefaults.symbol }
 							placeholder="0.00"
 						/>
 					</FormFieldset>
