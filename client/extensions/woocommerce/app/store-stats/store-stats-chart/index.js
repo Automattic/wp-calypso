@@ -12,16 +12,17 @@ import { moment } from 'i18n-calypso';
  * Internal dependencies
  */
 import Card from 'components/card';
+import Delta from 'woocommerce/components/delta';
+import ElementChart from 'components/chart';
+import formatCurrency from 'lib/format-currency';
 import { getPeriodFormat } from 'state/stats/lists/utils';
 import { getDelta } from '../utils';
-import QuerySiteStats from 'components/data/query-site-stats';
 import { getSiteStatsNormalizedData, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
-import ElementChart from 'components/chart';
 import Legend from 'components/chart/legend';
+import QuerySiteStats from 'components/data/query-site-stats';
 import Tabs from 'my-sites/stats/stats-tabs';
 import Tab from 'my-sites/stats/stats-tabs/tab';
-import Delta from 'woocommerce/components/delta';
-import formatCurrency from 'lib/format-currency';
+import { UNITS } from 'woocommerce/app/store-stats/constants';
 
 class StoreStatsChart extends Component {
 	static propTypes = {
@@ -49,13 +50,13 @@ class StoreStatsChart extends Component {
 		} );
 	};
 
-	buildChartData = ( item, selectedTab ) => {
+	buildChartData = ( item, selectedTab, chartFormat ) => {
 		const { selectedDate } = this.props;
 		const className = classnames( item.classNames.join( ' ' ), {
 			'is-selected': item.period === selectedDate,
 		} );
 		return {
-			label: item.labelDay,
+			label: item[ chartFormat ],
 			value: item[ selectedTab.attr ],
 			nestedValue: null,
 			data: item,
@@ -75,7 +76,8 @@ class StoreStatsChart extends Component {
 		];
 		const selectedTab = tabs[ selectedTabIndex ];
 		const isLoading = ! data.length;
-		const chartData = data.map( item => this.buildChartData( item, selectedTab ) );
+		const chartFormat = UNITS[ unit ].chartFormat;
+		const chartData = data.map( item => this.buildChartData( item, selectedTab, chartFormat ) );
 		const selectedIndex = findIndex( data, d => d.period === selectedDate );
 		return (
 			<Card className="store-stats-chart stats-module">
@@ -113,7 +115,9 @@ class StoreStatsChart extends Component {
 									<Delta
 										value={ `${ deltaValue }%` }
 										className={ `${ delta.favorable } ${ delta.direction }` }
-										suffix={ `since ${ moment( delta.reference_period, periodFormat ).format( 'MMM D' ) }` }
+										suffix={
+											`since ${ moment( delta.reference_period, periodFormat ).format( UNITS[ unit ].sinceFormat ) }`
+										}
 									/>
 								</Tab>
 							);

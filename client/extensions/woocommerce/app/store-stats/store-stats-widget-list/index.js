@@ -21,6 +21,7 @@ import Sparkline from 'woocommerce/components/sparkline';
 import Table from 'woocommerce/components/table';
 import TableItem from 'woocommerce/components/table/table-item';
 import TableRow from 'woocommerce/components/table/table-row';
+import { UNITS } from 'woocommerce/app/store-stats/constants';
 
 class StoreStatsWidgetList extends Component {
 
@@ -34,10 +35,11 @@ class StoreStatsWidgetList extends Component {
 
 	render() {
 		const { data, deltas, query, selectedDate, widgets } = this.props;
+		const { unit } = query;
 		const selectedIndex = findIndex( data, d => d.period === selectedDate );
 		const firstRealKey = Object.keys( deltas[ selectedIndex ] ).filter( key => key !== 'period' )[ 0 ];
 		const sincePeriod = getDelta( deltas, selectedDate, firstRealKey );
-		const periodFormat = getPeriodFormat( query.unit, sincePeriod.reference_period );
+		const periodFormat = getPeriodFormat( unit, sincePeriod.reference_period );
 		const values = [
 			{
 				key: 'title',
@@ -53,7 +55,8 @@ class StoreStatsWidgetList extends Component {
 			},
 			{
 				key: 'delta',
-				label: `${ translate( 'Since' ) } ${ moment( sincePeriod.reference_period, periodFormat ).format( 'MMM D' ) }`
+				label: `${ translate( 'Since' ) } \
+				${ moment( sincePeriod.reference_period, periodFormat ).format( UNITS[ unit ].sinceFormat ) }`
 			}
 		];
 
