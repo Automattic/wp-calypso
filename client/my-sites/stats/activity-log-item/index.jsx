@@ -23,10 +23,10 @@ const debug = debugFactory( 'calypso:activity-log:item' );
 class ActivityLogItem extends Component {
 
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-		requestRestore: PropTypes.func.isRequired,
 		applySiteOffset: PropTypes.func.isRequired,
 		hideRestore: PropTypes.bool,
+		requestRestore: PropTypes.func.isRequired,
+		siteId: PropTypes.number.isRequired,
 
 		log: PropTypes.shape( {
 			group: PropTypes.oneOf( [

@@ -271,6 +271,7 @@ class ActivityLog extends Component {
 			),
 			( daily_logs, tsEndOfSiteDay ) => (
 				<ActivityLogDay
+					applySiteOffset={ applySiteOffset }
 					disableRestore={ disableRestore }
 					hideRestore={ ! isPressable }
 					isRewindActive={ isRewindActive }
@@ -279,7 +280,6 @@ class ActivityLog extends Component {
 					requestRestore={ this.handleRequestRestore }
 					siteId={ siteId }
 					tsEndOfSiteDay={ +tsEndOfSiteDay }
-					applySiteOffset={ applySiteOffset }
 				/>
 			)
 		);

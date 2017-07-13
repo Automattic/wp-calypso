@@ -114,12 +114,12 @@ class ActivityLogDay extends Component {
 
 	render() {
 		const {
+			applySiteOffset,
 			disableRestore,
 			hideRestore,
 			logs,
 			requestRestore,
 			siteId,
-			applySiteOffset,
 		} = this.props;
 
 		return (
@@ -133,13 +133,13 @@ class ActivityLogDay extends Component {
 				>
 					{ logs.map( ( log, index ) => (
 						<ActivityLogItem
-							key={ index }
-							disableRestore={ disableRestore }
-							siteId={ siteId }
-							requestRestore={ requestRestore }
-							log={ log }
 							applySiteOffset={ applySiteOffset }
+							disableRestore={ disableRestore }
 							hideRestore={ hideRestore }
+							key={ index }
+							log={ log }
+							requestRestore={ requestRestore }
+							siteId={ siteId }
 						/>
 					) ) }
 				</FoldableCard>
