@@ -155,6 +155,13 @@ class ActivityLog extends Component {
 		};
 	}
 
+	isRestoreInProgress() {
+		return includes( [
+			'queued',
+			'running',
+		], get( this.props, [ 'restoreProgress', 'status' ] ) );
+	}
+
 	renderBanner() {
 		const {
 			restoreProgress,
@@ -242,16 +249,13 @@ class ActivityLog extends Component {
 			isRewindActive,
 			logs,
 			moment,
-			restoreProgress,
 			siteId,
 			slug,
 			startDate,
 		} = this.props;
 
-		const disableRestore = includes( [
-			'queued',
-			'running',
-		], get( restoreProgress, 'status' ) );
+		const disableRestore = this.isRestoreInProgress();
+
 		const applySiteOffset = this.getSiteOffsetFunc();
 
 		const YEAR_MONTH = 'YYYY-MM';
