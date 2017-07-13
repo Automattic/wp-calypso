@@ -155,7 +155,6 @@ export const socialAccount = createReducer( { isCreating: false }, {
 	} ),
 	[ USER_RECEIVE ]: state => ( { ...state, bearerToken: null, username: null } ),
 	[ LOGIN_REQUEST ]: state => ( { ...state, createError: null } ),
-	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: state => ( { ...state, email: null, service: null, token: null } ),
 } );
 
 export default combineReducers( {
