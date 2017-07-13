@@ -186,19 +186,6 @@
 	}
 }
 
-.reader-subscription-list-item .gridicons-cog {
-	fill: lighten( $gray, 10% );
-	height: 18px;
-	position: relative;
-		left: 0;
-		top: 8px;
-
-	@include breakpoint( ">660px" ) {
-		left: -4px;
-		top: 4px;
-	}
-}
-
 .reader-subscription-list-item .follow-button__label {
 	@include breakpoint( "<660px" ) {
 		display: none;

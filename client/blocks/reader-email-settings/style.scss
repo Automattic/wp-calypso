@@ -74,3 +74,16 @@
 	font-size: 14px;
 	margin: 10px 0 10px 15px;
 }
+
+.reader-email-settings .gridicons-cog {
+	fill: lighten( $gray, 10% );
+	height: 18px;
+	position: relative;
+		left: 0;
+		top: 8px;
+
+	@include breakpoint( ">660px" ) {
+		left: -4px;
+		top: 4px;
+	}
+}
