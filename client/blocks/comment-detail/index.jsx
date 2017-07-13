@@ -40,9 +40,9 @@ export class CommentDetail extends Component {
 		postAuthorDisplayName: PropTypes.string,
 		postTitle: PropTypes.string,
 		repliedToComment: PropTypes.bool,
+		replyComment: PropTypes.func,
 		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
-		submitComment: PropTypes.func,
 		toggleCommentLike: PropTypes.func,
 		toggleCommentSelected: PropTypes.func,
 	};
@@ -133,8 +133,8 @@ export class CommentDetail extends Component {
 			postId,
 			postTitle,
 			repliedToComment,
+			replyComment,
 			siteId,
-			submitComment,
 		} = this.props;
 
 		const postUrl = `/read/blogs/${ siteId }/posts/${ postId }`;
@@ -212,7 +212,7 @@ export class CommentDetail extends Component {
 							commentStatus={ commentStatus }
 							postId={ postId }
 							postTitle={ postTitle }
-							submitComment={ submitComment }
+							replyComment={ replyComment }
 						/>
 					</div>
 				}

@@ -10,7 +10,12 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 /**
  * Internal dependencies
  */
-import { changeCommentStatus, likeComment, unlikeComment } from 'state/comments/actions';
+import {
+	changeCommentStatus,
+	likeComment,
+	replyComment,
+	unlikeComment,
+} from 'state/comments/actions';
 import { createNotice, removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 import getSiteComments from 'state/selectors/get-site-comments';
@@ -26,21 +31,20 @@ const COMMENTS_PER_PAGE = 2;
 
 export class CommentList extends Component {
 	static propTypes = {
-		changeCommentStatus: PropTypes.func, // real action
+		changeCommentStatus: PropTypes.func,
 		comments: PropTypes.array,
 		commentsCount: PropTypes.number,
 		commentsPage: PropTypes.number,
 		deleteCommentPermanently: PropTypes.func,
-		likeComment: PropTypes.func, // real action
+		likeComment: PropTypes.func,
+		replyComment: PropTypes.func,
 		setBulkStatus: PropTypes.func,
-		setCommentLike: PropTypes.func, // CommentFaker
 		setCommentsPage: PropTypes.func,
-		setCommentStatus: PropTypes.func, // CommentFaker
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 		translate: PropTypes.func,
 		undoBulkStatus: PropTypes.func,
-		unlikeComment: PropTypes.func, // real action
+		unlikeComment: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -90,6 +94,30 @@ export class CommentList extends Component {
 	isCommentSelected = commentId => !! this.state.selectedComments[ commentId ];
 
 	isSelectedAll = () => this.props.comments.length === size( this.state.selectedComments );
+
+	replyComment = ( commentText, postId, parentCommentId, options = { alsoApprove: false } ) => {
+		const { translate } = this.props;
+		const { alsoApprove } = options;
+
+		this.props.removeNotice( `comment-notice-${ parentCommentId }` );
+
+		const noticeMessage = alsoApprove
+			? translate( 'Comment approved and reply submitted.' )
+			: translate( 'Reply submitted.' );
+
+		const noticeOptions = {
+			duration: 5000,
+			id: `comment-notice-${ parentCommentId }`,
+			isPersistent: true,
+		};
+
+		if ( alsoApprove ) {
+			this.setCommentStatus( parentCommentId, postId, 'approved', { showNotice: false } );
+		}
+
+		this.props.createNotice( 'is-success', noticeMessage, noticeOptions );
+		this.props.replyComment( commentText, postId, parentCommentId );
+	}
 
 	setBulkStatus = status => () => {
 		this.props.removeNotice( 'comment-notice-bulk' );
@@ -184,26 +212,6 @@ export class CommentList extends Component {
 		);
 
 		this.props.createNotice( type, message, options );
-	}
-
-	submitComment = ( comment, options = { alsoApprove: false } ) => {
-		const { translate } = this.props;
-		const { alsoApprove } = options;
-
-		this.props.removeNotice( `comment-notice-${ comment.parentId }` );
-
-		const noticeMessage = alsoApprove
-			? translate( 'Comment approved and reply submitted.' )
-			: translate( 'Reply submitted.' );
-
-		const noticeOptions = {
-			duration: 5000,
-			id: `comment-notice-${ comment.parentId }`,
-			isPersistent: true,
-		};
-
-		this.props.createNotice( 'is-success', noticeMessage, noticeOptions );
-		this.props.submitComment( comment );
 	}
 
 	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
@@ -301,9 +309,9 @@ export class CommentList extends Component {
 							isBulkEdit={ isBulkEdit }
 							commentIsSelected={ this.isCommentSelected( comment.ID ) }
 							key={ `comment-${ siteId }-${ comment.ID }` }
+							replyComment={ this.replyComment }
 							setCommentStatus={ this.setCommentStatus }
 							siteId={ siteId }
-							submitComment={ this.submitComment }
 							toggleCommentLike={ this.toggleCommentLike }
 							toggleCommentSelected={ this.toggleCommentSelected }
 						/>
@@ -351,6 +359,7 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	deleteComment: () => noop,
 	likeComment: ( commentId, postId ) => dispatch( likeComment( siteId, postId, commentId ) ),
 	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
+	replyComment: ( commentText, postId, parentCommentId ) => dispatch( replyComment( commentText, siteId, postId, parentCommentId ) ),
 	unlikeComment: ( commentId, postId ) => dispatch( unlikeComment( siteId, postId, commentId ) ),
 } );
 
