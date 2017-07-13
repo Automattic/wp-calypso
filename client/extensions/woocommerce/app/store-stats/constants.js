@@ -91,7 +91,7 @@ export const UNITS = {
 		sinceFormat: 'MMM D',
 	},
 	month: {
-		quantity: 30,
+		quantity: 12,
 		label: 'months',
 		durationFn: 'asMonths',
 		format: 'YYYY-MM',
