@@ -663,7 +663,7 @@ const HelpContact = React.createClass( {
 				<Card className={ this.canShowChatbox() ? 'help-contact__chat-form' : 'help-contact__form' }>
 					{ this.getView() }
 				</Card>
-				{ ! this.props.isRequestingSites && <HappychatConnection /> }
+				<HappychatConnection />
 				<QueryOlark />
 				<QueryTicketSupportConfiguration />
 			</Main>
