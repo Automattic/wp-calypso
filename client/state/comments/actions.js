@@ -129,7 +129,8 @@ export function changeCommentStatus( siteId, postId, commentId, status ) {
 			type: COMMENTS_CHANGE_STATUS,
 			siteId,
 			postId,
-			commentId
+			commentId,
+			status
 		} );
 
 		return wpcom.site( siteId ).comment( commentId ).update( { status } ).then( data => dispatch( {
