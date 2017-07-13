@@ -2,6 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import { isEmpty } from 'lodash';
 import page from 'page';
 
 /**
@@ -22,19 +23,19 @@ export const routingMiddleware = () => {
 			return next( action );
 		}
 
-		if ( Object.keys( action.query ).length !== 0 ) {
+		if ( ! isEmpty( action.query ) ) {
 			return next( action );
 		}
 
-		const firstRun = ! hasInitialized;
+		const isFirstRun = ! hasInitialized;
 		hasInitialized = true;
 
-		if ( firstRun && action.path === '/' ) {
+		if ( isFirstRun && action.path === '/' ) {
+			// Attempt to restore the last path on the first run
 			return getSavedPath()
 					.then( ( lastPath ) => {
 						debug( 'restoring: ' + lastPath );
 						page( lastPath );
-						return;
 					} )
 					.catch( ( reason ) => {
 						debug( 'cannot restore', reason );
@@ -42,6 +43,7 @@ export const routingMiddleware = () => {
 					} );
 		}
 
+		// Attempt to save the path so it might be restored in the future
 		savePath( action.path )
 			.then( () => debug( 'saved path: ' + action.path ) )
 			.catch( ( reason ) => debug( 'error saving path', reason ) );
