@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, keyBy, keys, map, omit, size } from 'lodash';
+import { find, get, keyBy, keys, map, noop, omit, size } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -349,6 +349,7 @@ const mapStateToProps = ( state, { siteId } ) => {
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	changeCommentStatus: ( commentId, postId, status ) => dispatch( changeCommentStatus( siteId, postId, commentId, status ) ),
 	createNotice: ( status, text, options ) => dispatch( createNotice( status, text, options ) ),
+	deleteComment: () => noop,
 	likeComment: ( commentId, postId ) => dispatch( likeComment( siteId, postId, commentId ) ),
 	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
 	unlikeComment: ( commentId, postId ) => dispatch( unlikeComment( siteId, postId, commentId ) ),
