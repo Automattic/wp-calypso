@@ -22,7 +22,7 @@ describe( 'selectors', () => {
 			'89fe3b92191d36ee7fb3956cd52c704c.php': '145cc79483f018538a3edc78117622ba'
 		};
 
-		it( 'should return null if no state exists', () => {
+		it( 'should return empty object if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -169,7 +169,7 @@ describe( 'selectors', () => {
 			expect( isDeleting ).to.be.false;
 		} );
 
-		it( 'should return false if the cache is not being deleted', () => {
+		it( 'should return false if the debug log is not being deleted', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -188,7 +188,7 @@ describe( 'selectors', () => {
 			expect( isDeleting ).to.be.false;
 		} );
 
-		it( 'should return true if the cache is being deleted', () => {
+		it( 'should return true if the debug log is being deleted', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
