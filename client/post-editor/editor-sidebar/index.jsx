@@ -90,9 +90,7 @@ export default class EditorSidebar extends Component {
 								onSave={ onSave }
 								isPostPrivate={ isPostPrivate }
 							/>
-							{ ( type === 'post' || type === 'page' ) &&
-								( !! post && post.status === 'draft' ) &&
-								<EditorFeedbackInvitation onTrigger={ this.openFeedbackPane } /> }
+							<EditorFeedbackInvitation onTrigger={ this.openFeedbackPane } />
 							<SidebarFooter>
 								<EditorDeletePost post={ post } onTrashingPost={ onTrashingPost } />
 							</SidebarFooter>
