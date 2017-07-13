@@ -8,6 +8,7 @@ import React from 'react';
  */
 import ReaderEmailSettings from 'blocks/reader-email-settings';
 import Card from 'components/card';
+import SyncReaderFollows from 'components/data/sync-reader-follows';
 
 const exampleSiteId = 70135762; // Longreads
 
@@ -17,6 +18,7 @@ export default class ReaderEmailSettingsExample extends React.Component {
 	render() {
 		return (
 			<Card>
+				<SyncReaderFollows key="syncReaderFollows" />
 				<ReaderEmailSettings siteId={ exampleSiteId } />
 			</Card>
 		);
