@@ -19,26 +19,26 @@ function readLastPath() {
 	return localforage.getItem( LAST_PATH );
 }
 
+// Throws an Error when no path or an invalid path is provided
 function validatePath( path ) {
-	const errors = [];
+	if ( typeof path !== 'string' || ! path.length ) {
+		throw 'path is empty';
+	}
+
 	if ( ! isWhitelistedForRestoring( path ) ) {
-		errors.push( 'path is not whitelisted: ' + path );
+		throw 'path is not whitelisted: ' + path;
 	}
 
 	if ( isOutsideCalypso( path ) ) {
-		errors.push( 'path is "outside" Calypso: ' + path );
+		throw 'path is "outside" Calypso: ' + path;
 	}
-	return errors;
 }
 
 function getSavedPath() {
 	return new Promise( ( resolve, reject ) => {
 		readLastPath()
 			.then( ( lastPath ) => {
-				const errors = validatePath( lastPath );
-				if ( errors.length ) {
-					return reject( errors );
-				}
+				validatePath( lastPath );
 				resolve( lastPath );
 			} )
 			.catch( ( reason ) => reject( reason ) );
@@ -47,9 +47,10 @@ function getSavedPath() {
 
 function savePath( path ) {
 	return new Promise( ( resolve, reject ) => {
-		const errors = validatePath( path );
-		if ( errors.length ) {
-			return reject( errors );
+		try {
+			validatePath( path );
+		} catch ( e ) {
+			return reject( e );
 		}
 
 		readLastPath()
