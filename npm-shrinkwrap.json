@@ -3713,6 +3713,10 @@
         }
       }
     },
+    "jest-junit-reporter": {
+      "version": "1.1.0",
+      "dev": true
+    },
     "jest-matcher-utils": {
       "version": "21.2.0",
       "dev": true,
