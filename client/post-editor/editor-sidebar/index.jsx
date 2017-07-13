@@ -48,12 +48,8 @@ export default class EditorSidebar extends Component {
 
 	state = { showFeedback: false };
 
-	openFeedbackPane = () => {
-		this.setState( { showFeedback: true } );
-	};
-	closeFeedbackPane = () => {
-		this.setState( { showFeedback: false } );
-	};
+	openFeedbackPane = () => this.setState( { showFeedback: true } );
+	closeFeedbackPane = () => this.setState( { showFeedback: false } );
 
 	render() {
 		const {
