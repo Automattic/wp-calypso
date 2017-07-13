@@ -125,8 +125,7 @@ export class EditPostStatus extends Component {
 			siteUtils.gmtOffset( this.props.site )
 		).format( 'll LT' );
 
-		const isPostPublishFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
+		const isPostPublishFlow = abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
 
 		return (
 			<div className="edit-post-status">

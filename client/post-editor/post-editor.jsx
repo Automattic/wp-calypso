@@ -251,7 +251,6 @@ export const PostEditor = React.createClass( {
 		const isInvalidURL = this.state.loadingError;
 		const siteURL = site ? site.URL + '/' : null;
 		const isConfirmationFeatureEnabled = (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
 			this.isPostPublishConfirmationABTest &&
 			this.props.isConfirmationSidebarEnabled
 		);
@@ -774,7 +773,6 @@ export const PostEditor = React.createClass( {
 		};
 
 		const isConfirmationFeatureEnabled = (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
 			this.isPostPublishConfirmationABTest &&
 			this.props.isConfirmationSidebarEnabled
 		);
@@ -822,11 +820,7 @@ export const PostEditor = React.createClass( {
 	onPublishFailure: function( error ) {
 		this.onSaveFailure( error, 'publishFailure' );
 
-		if (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			this.isPostPublishConfirmationABTest &&
-			this.props.isConfirmationSidebarEnabled
-		) {
+		if ( this.isPostPublishConfirmationABTest && this.props.isConfirmationSidebarEnabled ) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_failure' } );
 		}
 	},
@@ -847,11 +841,7 @@ export const PostEditor = React.createClass( {
 			this.props.saveConfirmationSidebarPreference( this.props.siteId, false );
 		}
 
-		if (
-			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			this.isPostPublishConfirmationABTest &&
-			this.props.isConfirmationSidebarEnabled
-		) {
+		if ( this.isPostPublishConfirmationABTest && this.props.isConfirmationSidebarEnabled ) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
 		}
 

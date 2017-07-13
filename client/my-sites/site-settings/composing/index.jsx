@@ -43,7 +43,6 @@ const Composing = ( {
 		<div>
 			<CardComponent className="composing__card site-settings">
 				{
-					config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
 					abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation' &&
 					<PublishConfirmation />
 				}

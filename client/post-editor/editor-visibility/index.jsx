@@ -487,8 +487,7 @@ const EditorVisibility = React.createClass( {
 
 	render() {
 		const visibility = this.getVisibility();
-		const isDropdown = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
+		const isDropdown = abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
 		const classes = classNames( 'editor-visibility', {
 			'is-dialog-open': this.state.showPopover,
 			'is-touch': touchDetect.hasTouch(),
