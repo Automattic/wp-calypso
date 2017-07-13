@@ -28,7 +28,11 @@ const ReaderSiteStreamLink = React.createClass( {
 	render() {
 		// If we can't make a link, just return children
 		if ( ! this.props.feedId && ! this.props.siteId ) {
-			return <span>{ this.props.children }</span>;
+			return (
+				<span>
+					{ this.props.children }
+				</span>
+			);
 		}
 
 		const link = getStreamUrl( this.props.feedId, this.props.siteId );

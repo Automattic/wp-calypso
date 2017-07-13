@@ -49,8 +49,8 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 		this.setState( { showPopover: false } );
 	};
 
-	saveIconRef = ref => this.iconRef = ref;
-	saveSpanRef = ref => this.spanRef = ref;
+	saveIconRef = ref => ( this.iconRef = ref );
+	saveSpanRef = ref => ( this.spanRef = ref );
 
 	setSelected = text => () => {
 		const { siteId } = this.props;

@@ -34,7 +34,7 @@ describe( 'comment-email-subscriptions', () => {
 					apiVersion: '1.2',
 					onSuccess: action,
 					onFailure: action,
-				} )
+				} ),
 			);
 		} );
 	} );
@@ -48,7 +48,9 @@ describe( 'comment-email-subscriptions', () => {
 					delivery_frequency: 'daily',
 				},
 			} );
-			expect( dispatch ).to.have.been.calledWith( local( updateNewPostEmailSubscription( 1234, 'daily' ) ) );
+			expect( dispatch ).to.have.been.calledWith(
+				local( updateNewPostEmailSubscription( 1234, 'daily' ) ),
+			);
 		} );
 
 		it( 'should dispatch an unsubscribe if it fails using next', () => {

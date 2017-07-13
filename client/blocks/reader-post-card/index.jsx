@@ -238,7 +238,11 @@ class ReaderPostCard extends React.Component {
 				{ postByline }
 				{ showPrimaryFollowButton &&
 					followUrl &&
-					<FollowButton siteUrl={ followUrl } followSource={ followSource } railcar={ post.railcar } /> }
+					<FollowButton
+						siteUrl={ followUrl }
+						followSource={ followSource }
+						railcar={ post.railcar }
+					/> }
 				{ readerPostCard }
 				{ this.props.children }
 			</Card>
@@ -250,5 +254,5 @@ export default connect(
 	( state, ownProps ) => ( {
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 	} ),
-	{ expandCard: expandCardAction }
+	{ expandCard: expandCardAction },
 )( ReaderPostCard );

@@ -125,7 +125,7 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-				123
+				123,
 			);
 
 			expect( isUpdated ).to.be.false;
@@ -140,7 +140,7 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-				123
+				123,
 			);
 
 			expect( isUpdated ).to.be.true;
@@ -156,7 +156,7 @@ describe( 'selectors', () => {
 					},
 				},
 				'lister',
-				'bananas'
+				'bananas',
 			);
 
 			expect( list ).to.eql( undefined );
@@ -183,7 +183,7 @@ describe( 'selectors', () => {
 					},
 				},
 				'lister',
-				'bananas'
+				'bananas',
 			);
 
 			expect( list ).to.eql( {
@@ -204,7 +204,7 @@ describe( 'selectors', () => {
 					},
 				},
 				'lister',
-				'bananas'
+				'bananas',
 			);
 
 			expect( isSubscribed ).to.eql( false );
@@ -232,7 +232,7 @@ describe( 'selectors', () => {
 					},
 				},
 				'lister',
-				'bananas'
+				'bananas',
 			);
 
 			expect( isSubscribed ).to.eql( true );
@@ -249,7 +249,7 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-				456
+				456,
 			);
 
 			expect( result ).to.be.false;
@@ -264,7 +264,7 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-				123
+				123,
 			);
 
 			expect( result ).to.be.true;
@@ -282,7 +282,7 @@ describe( 'selectors', () => {
 					},
 				},
 				'lister',
-				'bananas'
+				'bananas',
 			);
 
 			expect( isMissing ).to.eql( false );
@@ -298,7 +298,7 @@ describe( 'selectors', () => {
 					},
 				},
 				'lister',
-				'bananas'
+				'bananas',
 			);
 
 			expect( isMissing ).to.eql( true );

@@ -112,7 +112,10 @@ class ReaderStream extends React.Component {
 		const recs = recommendationsStore ? recommendationsStore.get() : null;
 		// do we have enough recs? if we have a store, but not enough recs, we should fetch some more...
 		if ( recommendationsStore ) {
-			if ( ! recs || recs.length < posts.length * ( RECS_PER_BLOCK / getDistanceBetweenRecs( totalSubs ) ) ) {
+			if (
+				! recs ||
+				recs.length < posts.length * ( RECS_PER_BLOCK / getDistanceBetweenRecs( totalSubs ) )
+			) {
 				if ( ! recommendationsStore.isFetchingNextPage() ) {
 					defer( () => fetchNextPage( recommendationsStore.id ) );
 				}
@@ -398,9 +401,11 @@ class ReaderStream extends React.Component {
 	renderPost = ( postKey, index ) => {
 		const recStoreId = this.props.recommendationsStore && this.props.recommendationsStore.id;
 		const selectedPostKey = this.props.postsStore.getSelectedPostKey();
-		const isSelected = !! ( selectedPostKey &&
+		const isSelected = !! (
+			selectedPostKey &&
 			selectedPostKey.postId === postKey.postId &&
-			( selectedPostKey.blogId === postKey.blogId || selectedPostKey.feedId === postKey.feedId ) );
+			( selectedPostKey.blogId === postKey.blogId || selectedPostKey.feedId === postKey.feedId )
+		 );
 
 		const itemKey = this.getPostRef( postKey );
 		const showPost = args =>
@@ -447,7 +452,7 @@ class ReaderStream extends React.Component {
 		} else {
 			body = (
 				<InfiniteList
-					ref={ c => this._list = c }
+					ref={ c => ( this._list = c ) }
 					className="reader__content"
 					items={ this.state.items }
 					lastPage={ this.state.isLastPage }
@@ -467,7 +472,9 @@ class ReaderStream extends React.Component {
 				{ this.props.isMain &&
 					this.props.showMobileBackToSidebar &&
 					<MobileBackToSidebar>
-						<h1>{ this.props.translate( 'Streams' ) }</h1>
+						<h1>
+							{ this.props.translate( 'Streams' ) }
+						</h1>
 					</MobileBackToSidebar> }
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.showUpdates } />

@@ -27,7 +27,7 @@ function renderPostNotFound() {
 			message={ i18n.translate( 'Post Not Found' ) }
 		/>,
 		document.getElementById( 'primary' ),
-		context.store
+		context.store,
 	);
 }
 
@@ -55,7 +55,7 @@ export function blogPost( context ) {
 			onPostNotFound={ renderPostNotFound }
 		/>,
 		document.getElementById( 'primary' ),
-		context.store
+		context.store,
 	);
 	defer( function() {
 		if ( typeof window !== 'undefined' ) {
@@ -85,7 +85,7 @@ export function feedPost( context ) {
 			onPostNotFound={ renderPostNotFound }
 		/>,
 		document.getElementById( 'primary' ),
-		context.store
+		context.store,
 	);
 	defer( function() {
 		if ( typeof window !== 'undefined' ) {

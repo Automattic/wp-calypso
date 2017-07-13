@@ -33,7 +33,7 @@ describe( 'comment-email-subscriptions', () => {
 					apiVersion: '1.2',
 					onSuccess: action,
 					onFailure: action,
-				} )
+				} ),
 			);
 		} );
 	} );
@@ -63,10 +63,7 @@ describe( 'comment-email-subscriptions', () => {
 	describe( 'receiveCommentEmailUnsubscriptionError', () => {
 		it( 'should dispatch an error notice and subscribe action through next', () => {
 			const dispatch = spy();
-			receiveCommentEmailUnsubscriptionError(
-				{ dispatch },
-				{ payload: { blogId: 1234 } },
-			);
+			receiveCommentEmailUnsubscriptionError( { dispatch }, { payload: { blogId: 1234 } } );
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					text: 'Sorry, we had a problem unsubscribing. Please try again.',

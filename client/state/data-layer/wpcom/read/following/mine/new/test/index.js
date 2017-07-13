@@ -43,9 +43,10 @@ describe( 'requestFollow', () => {
 			} ),
 		);
 
-		expect( dispatch ).to.be.calledWithMatch(
-			{ type: NOTICE_CREATE, notice: { status: 'is-success' } },
-		);
+		expect( dispatch ).to.be.calledWithMatch( {
+			type: NOTICE_CREATE,
+			notice: { status: 'is-success' },
+		} );
 	} );
 } );
 
@@ -66,18 +67,20 @@ describe( 'receiveFollow', () => {
 			},
 		};
 		receiveFollow( { dispatch }, action, null, response );
-		expect( dispatch ).to.be.calledWith( local(
-			follow( 'http://example.com', {
-				ID: 1,
-				URL: 'http://example.com',
-				feed_URL: 'http://example.com',
-				blog_ID: 2,
-				feed_ID: 3,
-				date_subscribed: 211636800000,
-				delivery_methods: {},
-				is_owner: false,
-			} ),
-		) );
+		expect( dispatch ).to.be.calledWith(
+			local(
+				follow( 'http://example.com', {
+					ID: 1,
+					URL: 'http://example.com',
+					feed_URL: 'http://example.com',
+					blog_ID: 2,
+					feed_ID: 3,
+					date_subscribed: 211636800000,
+					delivery_methods: {},
+					is_owner: false,
+				} ),
+			),
+		);
 	} );
 
 	it( 'should dispatch an error notice when subscribed is false', () => {
@@ -88,9 +91,10 @@ describe( 'receiveFollow', () => {
 		};
 
 		receiveFollow( { dispatch }, action, null, response );
-		expect( dispatch ).to.be.calledWithMatch(
-			{ type: NOTICE_CREATE, notice: { status: 'is-error' } },
-		);
+		expect( dispatch ).to.be.calledWithMatch( {
+			type: NOTICE_CREATE,
+			notice: { status: 'is-error' },
+		} );
 		expect( dispatch ).to.be.calledWith( local( unfollow( 'http://example.com' ) ) );
 	} );
 } );

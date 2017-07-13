@@ -18,9 +18,8 @@ import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import { errorNotice } from 'state/notices/actions';
 
 export function requestTags( store, action ) {
-	const path = action.payload && action.payload.slug
-		? `/read/tags/${ action.payload.slug }`
-		: '/read/tags';
+	const path =
+		action.payload && action.payload.slug ? `/read/tags/${ action.payload.slug }` : '/read/tags';
 
 	store.dispatch(
 		http( {
@@ -29,7 +28,7 @@ export function requestTags( store, action ) {
 			apiVersion: '1.2',
 			onSuccess: action,
 			onFailure: action,
-		} )
+		} ),
 	);
 }
 
@@ -49,14 +48,15 @@ export function receiveTagsSuccess( store, action, next, apiResponse ) {
 		receiveTags( {
 			payload: tags,
 			resetFollowingData: !! apiResponse.tags,
-		} )
+		} ),
 	);
 }
 
 export function receiveTagsError( store, action, next, error ) {
-	const errorText = action.payload && action.payload.slug
-		? translate( 'Could not load tag, try refreshing the page' )
-		: translate( 'Could not load your followed tags, try refreshing the page' );
+	const errorText =
+		action.payload && action.payload.slug
+			? translate( 'Could not load tag, try refreshing the page' )
+			: translate( 'Could not load your followed tags, try refreshing the page' );
 
 	store.dispatch( errorNotice( errorText ) );
 	// imperfect solution of lying to Calypso and saying the tag doesn't exist so that the query component stops asking for it

@@ -22,8 +22,7 @@ import {
 	getSiteUrl,
 } from 'reader/get-helpers';
 import untrailingslashit from 'lib/route/untrailingslashit';
-import ReaderSubscriptionListItemPlaceholder
-	from 'blocks/reader-subscription-list-item/placeholder';
+import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
 import { recordTrack, recordTrackWithRailcar } from 'reader/stats';
 
 /**
@@ -109,11 +108,14 @@ function ReaderSubscriptionListItem( {
 							className="reader-subscription-list-item__link"
 							onClick={ recordTitleClick }
 						>
-							{ ' ' }{ siteTitle }{ ' ' }
+							{' '}
+							{ siteTitle }{' '}
 						</a>
 					}
 				</span>
-				<div className="reader-subscription-list-item__site-excerpt">{ siteExcerpt }</div>
+				<div className="reader-subscription-list-item__site-excerpt">
+					{ siteExcerpt }
+				</div>
 				{ ! isMultiAuthor &&
 					! isEmpty( authorName ) &&
 					<span className="reader-subscription-list-item__by-text">
@@ -125,7 +127,8 @@ function ReaderSubscriptionListItem( {
 										className="reader-subscription-list-item__link"
 										onClick={ recordAuthorClick }
 									>
-										{ ' ' }{ authorName }{ ' ' }
+										{' '}
+										{ authorName }{' '}
 									</a>
 								),
 							},

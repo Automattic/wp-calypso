@@ -19,7 +19,7 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-				'nope'
+				'nope',
 			);
 
 			expect( post ).to.eql( undefined );
@@ -40,8 +40,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					'1234'
-				)
+					'1234',
+				),
 			).to.deep.equal( {
 				ID: 1,
 				global_ID: '1234',
@@ -71,8 +71,8 @@ describe( 'selectors', () => {
 						},
 					},
 					1,
-					1
-				)
+					1,
+				),
 			).to.be.undefined;
 		} );
 
@@ -95,7 +95,7 @@ describe( 'selectors', () => {
 				},
 			};
 			expect( getPostBySiteAndId( stateTree, 1, 1 ) ).to.equal(
-				stateTree.reader.posts.items[ '2' ]
+				stateTree.reader.posts.items[ '2' ],
 			);
 		} );
 	} );

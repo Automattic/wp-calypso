@@ -84,7 +84,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 						posts: [],
 					},
 				} );
-			}
+			},
 		);
 	};
 }

@@ -112,7 +112,7 @@ describe( 'helper', () => {
 			const fixtureData = {
 				blogId: get(
 					fixtures.discoverSiteFormat,
-					'discover_metadata.featured_post_wpcom_data.blog_id'
+					'discover_metadata.featured_post_wpcom_data.blog_id',
 				),
 				postId: undefined,
 			};

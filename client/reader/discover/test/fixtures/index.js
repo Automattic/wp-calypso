@@ -47,7 +47,8 @@ export const discoverPost = {
 			author_url: 'https://talkforeigntome.com/2016/07/17/my-mystery-malady/',
 			blog_name: 'Talk Foreign to Me',
 			blog_url: 'https://talkforeigntome.com',
-			avatar_url: 'https://2.gravatar.com/avatar/8eeb836f187d8b5b861bb035bcb18ed4?s=100&amp;d=https%3A%2F%2Fsecure.gravatar.com%2Fblavatar%2Fef751c856dccbacab2b97d7b14ca002b%3Fs%3D100%26d%3Dhttps%253A%252F%252Fs2.wp.com%252Fwp-content%252Fthemes%252Fh4%252Ftabs%252Fimages%252Fdefaultavatar.png&amp;r=G',
+			avatar_url:
+				'https://2.gravatar.com/avatar/8eeb836f187d8b5b861bb035bcb18ed4?s=100&amp;d=https%3A%2F%2Fsecure.gravatar.com%2Fblavatar%2Fef751c856dccbacab2b97d7b14ca002b%3Fs%3D100%26d%3Dhttps%253A%252F%252Fs2.wp.com%252Fwp-content%252Fthemes%252Fh4%252Ftabs%252Fimages%252Fdefaultavatar.png&amp;r=G',
 		},
 		discover_fp_post_formats: [
 			{

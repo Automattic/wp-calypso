@@ -191,13 +191,11 @@ describe( 'get follow subscriptions', () => {
 			);
 
 			expect( dispatch ).to.have.been.calledWith(
-				syncComplete(
-					[
-						'http://readerpostcards.wordpress.com',
-						'https://fivethirtyeight.com/',
-						'http://feed.example.com',
-					],
-				),
+				syncComplete( [
+					'http://readerpostcards.wordpress.com',
+					'https://fivethirtyeight.com/',
+					'http://feed.example.com',
+				] ),
 			);
 		} );
 	} );

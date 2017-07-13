@@ -21,7 +21,7 @@ export function requestUnfollow( store, action ) {
 			apiVersion: '1.1',
 			onSuccess: action,
 			onFailure: action,
-		} )
+		} ),
 	);
 }
 
@@ -42,7 +42,7 @@ export function receiveUnfollowTag( store, action, next, apiResponse ) {
 	store.dispatch(
 		receiveUnfollowTagAction( {
 			payload: fromApi( apiResponse ),
-		} )
+		} ),
 	);
 }
 
