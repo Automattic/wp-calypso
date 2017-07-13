@@ -225,14 +225,10 @@ class ActivityLogItem extends Component {
 		const { name } = log;
 
 		switch ( name ) {
-			case 'comment__trashed':
-			case 'post__trashed':
-			case 'theme__deleted':
+			case 'widget__removed':
 				return 'is-error';
 
 			case 'attachment__uploaded':
-			case 'comment__published':
-			case 'post__published':
 			case 'term__created':
 			case 'theme__installed':
 			case 'user__registered':
@@ -241,6 +237,17 @@ class ActivityLogItem extends Component {
 			case 'comment__published_awaiting_approval':
 			case 'comment__unapproved':
 				return 'is-warning';
+		}
+
+		// Try matching the "verb" part of the name
+		const suffix = name.split( '__' )[ 1 ];
+		switch ( suffix ) {
+			case 'deleted':
+			case 'trashed':
+				return 'is-error';
+
+			case 'published':
+				return 'is-success';
 		}
 	}
 
