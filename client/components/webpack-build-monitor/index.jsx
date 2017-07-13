@@ -6,6 +6,7 @@
 import React from 'react';
 import { createStore } from 'redux';
 import cx from 'classnames';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,34 +20,43 @@ const BUILDING = 'BUILDING';
 const ERROR = 'ERROR';
 const IDLE = 'IDLE';
 
+// Once completed, set the status to idle unless there's an error
+const doneBuilding = state => ( state === ERROR || state === NEEDS_RELOAD ? state : IDLE );
+
+const MESSAGE_STATUS_MAP = {
+	'[HMR] connected': () => CONNECTED,
+	'[WDS] Disconnected!': () => DISCONNECTED,
+	'[HMR] bundle rebuilding': () => BUILDING,
+	'Building CSS…': () => BUILDING,
+	'[HMR] App is up to date.': doneBuilding,
+	'[WDS] Nothing changed.': doneBuilding,
+	'[WDS] App hot update...': doneBuilding,
+	'Reloading CSS: ': doneBuilding,
+	'[WDS] Errors while compiling.': () => ERROR,
+	'[HMR] Cannot find update. Need to do a full reload!': NEEDS_RELOAD,
+};
+
+const isDoneBuilding = msg => startsWith( msg, '[HMR] bundle rebuilt in' );
+const needsReload = msg => startsWith( msg, '[HMR]  - ./client' );
+
 const reducer = ( state = IDLE, { message } ) => {
-	switch ( message ) {
-		case '[WDS] Hot Module Replacement enabled.':
-			return CONNECTED;
-		case '[WDS] Disconnected!':
-			return DISCONNECTED;
-		case '[WDS] App updated. Recompiling...':
-		case 'Building CSS…':
-			return BUILDING;
-		case '[HMR] App is up to date.':
-		case '[WDS] Nothing changed.':
-		case '[WDS] App hot update...':
-		case 'Reloading CSS: ':
-			// Once completed, set the status to idle unless there's an error
-			return state === ERROR || state === NEEDS_RELOAD ? state : IDLE;
-		case '[WDS] Errors while compiling.':
-			return ERROR;
-		case '[HMR] Cannot find update. Need to do a full reload!':
-		case `[HMR] The following modules couldn't be hot updated: (They would need a full reload!)`: // eslint-disable-line
-			return state === ERROR ? ERROR : NEEDS_RELOAD;
+	if ( message in MESSAGE_STATUS_MAP ) {
+		return MESSAGE_STATUS_MAP[ message ]( state );
+	} else if ( isDoneBuilding( message ) ) {
+		return doneBuilding( state );
+	} else if ( needsReload ) {
+		return NEEDS_RELOAD;
 	}
+
 	return state;
 };
 
 const store = createStore( reducer );
 
 const wrapConsole = fn => ( message, ...args ) => {
-	store.dispatch( { type: 'WebpackBuildMessage', message } );
+	if ( message in MESSAGE_STATUS_MAP || isDoneBuilding( message ) || needsReload( message ) ) {
+		store.dispatch( { type: 'WebpackBuildMessage', message } );
+	}
 	fn.call( window, message, ...args );
 };
 
@@ -55,8 +65,12 @@ console.warn = wrapConsole( console.warn );
 console.log = wrapConsole( console.log );
 
 class WebpackBuildMonitor extends React.Component {
+	state = { status: IDLE };
+
 	componentDidMount() {
-		this.unsubscribe = store.subscribe( () => this.setState( { status: store.getState() } ) );
+		this.unsubscribe = store.subscribe( () => {
+			this.setState( { status: store.getState() } );
+		} );
 	}
 
 	componentWillUnmount() {
@@ -64,7 +78,7 @@ class WebpackBuildMonitor extends React.Component {
 	}
 
 	render() {
-		const status = store.getState();
+		const { status } = this.state;
 		const text =
 			( status === DISCONNECTED && 'Dev Server disconnected' ) ||
 			( status === NEEDS_RELOAD && 'Need to refresh' ) ||
