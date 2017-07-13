@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import some from 'lodash/some';
 import get from 'lodash/get';
-import { find, includes } from 'lodash';
+import { find, includes, trimEnd } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
 import sectionsModule from 'sections';
@@ -459,7 +459,7 @@ class PluginMeta extends Component {
 
 				{ path &&
 					<CompactCard
-						href={ `${ path }/${ this.props.slug }` }>
+						href={ trimEnd( `${ path }/${ this.props.slug || '' }`, '/' ) }>
 						{ this.props.translate( 'Edit plugin settings' ) }
 					</CompactCard>
 				}
