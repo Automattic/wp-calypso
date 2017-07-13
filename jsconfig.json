@@ -3,12 +3,12 @@
 		"checkJs": true,
 		"allowSyntheticDefaultImports": true,
 		"module": "commonjs",
-		"target": "ES6",
+		"target": "es2017",
 		"baseUrl": ".",
 		"paths": {
 			"*": [ "test/*", "server/*", "client/*" ]
 		},
-		"jsx": "react"
+		"jsx": "preserve"
 	},
 	"exclude": [
 		"node_modules",
