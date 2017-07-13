@@ -48,7 +48,7 @@ class StoreStatsModule extends Component {
 		const isLoading = ! loaded && ! ( data && data.length );
 		const hasEmptyData = loaded && data && data.length === 0;
 		return (
-			<div>
+			<div className="store-stats-module">
 				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				{ header }
 				{ isLoading && <Card><StatsModulePlaceholder isLoading={ isLoading } /></Card> }
@@ -61,8 +61,9 @@ class StoreStatsModule extends Component {
 
 export default connect(
 	( state, { siteId, statType, query } ) => {
+		const statsData = getSiteStatsNormalizedData( state, siteId, statType, query );
 		return {
-			data: getSiteStatsNormalizedData( state, siteId, statType, query ),
+			data: ( statType === 'statsOrders' ) ? statsData.data : statsData,
 			requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
 		};
 	}

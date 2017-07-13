@@ -5,13 +5,15 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import page from 'page';
-import { findIndex, find } from 'lodash';
+import { findIndex } from 'lodash';
 import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
+import { getPeriodFormat } from 'state/stats/lists/utils';
+import { getDelta } from '../utils';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSiteStatsNormalizedData, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import ElementChart from 'components/chart';
@@ -20,11 +22,11 @@ import Tabs from 'my-sites/stats/stats-tabs';
 import Tab from 'my-sites/stats/stats-tabs/tab';
 import Delta from 'woocommerce/components/delta';
 import formatCurrency from 'lib/format-currency';
-import { getPeriodFormat } from 'state/stats/lists/utils';
 
 class StoreStatsChart extends Component {
 	static propTypes = {
-		data: PropTypes.object.isRequired,
+		data: PropTypes.array.isRequired,
+		deltas: PropTypes.array.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
 		path: PropTypes.string.isRequired,
 		query: PropTypes.object.isRequired,
@@ -62,22 +64,9 @@ class StoreStatsChart extends Component {
 		};
 	};
 
-	getDeltasBySelectedPeriod = () => {
-		return find( this.props.data.deltas, ( item ) => item.period === this.props.selectedDate );
-	};
-
-	getDeltaByStat = ( stat ) => {
-		return this.getDeltasBySelectedPeriod()[ stat ];
-	};
-
-	getSelectedIndex = ( data ) => {
-		return findIndex( data, d => d.period === this.props.selectedDate );
-	};
-
 	render() {
-		const { siteId, query, data, unit } = this.props;
+		const { data, deltas, query, selectedDate, siteId, unit } = this.props;
 		const { selectedTabIndex } = this.state;
-		const orderData = data.data;
 		const tabs = [
 			{ label: 'Gross Sales', attr: 'gross_sales', type: 'currency' },
 			{ label: 'Net Sales', attr: 'net_sales', type: 'currency' },
@@ -85,9 +74,9 @@ class StoreStatsChart extends Component {
 			{ label: 'Average Order Value', attr: 'avg_order_value', type: 'currency' },
 		];
 		const selectedTab = tabs[ selectedTabIndex ];
-		const isLoading = ! orderData.length;
-		const chartData = orderData.map( item => this.buildChartData( item, selectedTab ) );
-		const selectedIndex = this.getSelectedIndex( orderData );
+		const isLoading = ! data.length;
+		const chartData = data.map( item => this.buildChartData( item, selectedTab ) );
+		const selectedIndex = findIndex( data, d => d.period === selectedDate );
 		return (
 			<Card className="store-stats-chart stats-module">
 				{ siteId && <QuerySiteStats
@@ -102,8 +91,8 @@ class StoreStatsChart extends Component {
 				<Tabs data={ chartData }>
 					{ tabs.map( ( tab, tabIndex ) => {
 						if ( ! isLoading ) {
-							const itemChartData = this.buildChartData( orderData[ selectedIndex ], tabs[ tabIndex ] );
-							const delta = this.getDeltaByStat( tab.attr );
+							const itemChartData = this.buildChartData( data[ selectedIndex ], tabs[ tabIndex ] );
+							const delta = getDelta( deltas, selectedDate, tab.attr );
 							const deltaValue = ( delta.direction === 'is-undefined-increase' )
 								? '-'
 								: Math.abs( Math.round( delta.percentage_change * 100 ) );
@@ -118,7 +107,7 @@ class StoreStatsChart extends Component {
 								>
 									<span className="store-stats-chart__value value">
 										{ ( tab.type === 'currency' )
-											? formatCurrency( itemChartData.value, orderData[ selectedIndex ].currency )
+											? formatCurrency( itemChartData.value, data[ selectedIndex ].currency )
 											:	Math.round( itemChartData.value * 100 ) / 100 }
 									</span>
 									<Delta
@@ -137,8 +126,12 @@ class StoreStatsChart extends Component {
 }
 
 export default connect(
-	( state, { query, siteId } ) => ( {
-		data: getSiteStatsNormalizedData( state, siteId, 'statsOrders', query ),
-		isRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsOrders', query ),
-	} )
+	( state, { query, siteId } ) => {
+		const statsData = getSiteStatsNormalizedData( state, siteId, 'statsOrders', query );
+		return {
+			data: statsData.data,
+			deltas: statsData.deltas,
+			isRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsOrders', query ),
+		};
+	}
 )( StoreStatsChart );
