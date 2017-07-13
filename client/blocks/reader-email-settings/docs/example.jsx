@@ -18,7 +18,7 @@ export default class ReaderEmailSettingsExample extends React.Component {
 	render() {
 		return (
 			<Card>
-				<SyncReaderFollows key="syncReaderFollows" />
+				<SyncReaderFollows />
 				<ReaderEmailSettings siteId={ exampleSiteId } />
 			</Card>
 		);
