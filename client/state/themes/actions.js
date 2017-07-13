@@ -63,6 +63,7 @@ import {
 	getThemeIdFromStylesheet,
 	isThemeMatchingQuery,
 	isThemeFromWpcom,
+	isStorefrontTheme,
 	normalizeJetpackTheme,
 	normalizeWpcomTheme,
 	normalizeWporgTheme
@@ -118,9 +119,8 @@ export function receiveThemes( themes, siteId, query, foundCount ) {
 			const filterWpcom = shouldFilterWpcomThemes( getState(), siteId );
 			filteredThemes = filter(
 				themes,
-				theme => (
-					isThemeMatchingQuery( query, theme ) &&
-						! ( filterWpcom && isThemeFromWpcom( theme ) )
+				theme => ( isStorefrontTheme( theme ) || ( isThemeMatchingQuery( query, theme ) &&
+					! ( filterWpcom && isThemeFromWpcom( theme ) ) )
 				)
 			);
 			// Jetpack API returns all themes in one response (no paging)
