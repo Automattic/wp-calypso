@@ -30,6 +30,6 @@ QueryWhois.propTypes = {
 };
 
 export default connect(
-	( state, { domain } ) => ( { requesting: isRequestingWhois( state, domain ) } ),
+	( state, { domain } ) => ( { isRequesting: isRequestingWhois( state, domain ) } ),
 	{ requestWhois }
 )( QueryWhois );
