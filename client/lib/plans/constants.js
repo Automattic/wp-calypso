@@ -1246,3 +1246,16 @@ export function getMonthlyPlanByYearly( plan ) {
 			return '';
 	}
 }
+
+export function getYearlyPlanByMonthly( plan ) {
+	switch ( plan ) {
+		case PLAN_JETPACK_PREMIUM_MONTHLY:
+			return PLAN_JETPACK_PREMIUM;
+		case PLAN_JETPACK_BUSINESS_MONTHLY:
+			return PLAN_JETPACK_BUSINESS;
+		case PLAN_JETPACK_PERSONAL_MONTHLY:
+			return PLAN_JETPACK_PERSONAL;
+		default:
+			return '';
+	}
+}
