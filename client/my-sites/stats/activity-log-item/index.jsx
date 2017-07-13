@@ -10,18 +10,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import ActivityActor from './activity-actor';
 import ActivityIcon from './activity-icon';
 import EllipsisMenu from 'components/ellipsis-menu';
 import FoldableCard from 'components/foldable-card';
-import Gravatar from 'components/gravatar';
 import PopoverMenuItem from 'components/popover/menu-item';
-import { addQueryArgs } from 'lib/route';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:activity-log:item' );
 
 class ActivityLogItem extends Component {
-
 	static propTypes = {
 		allowRestore: PropTypes.bool.isRequired,
 		siteId: PropTypes.number.isRequired,
@@ -177,33 +175,6 @@ class ActivityLogItem extends Component {
 		} );
 	};
 
-	renderActor() {
-		const { log } = this.props;
-		const { actor } = log;
-
-		if ( ! actor ) {
-			return null;
-		}
-
-		const avatar_URL = actor.avatar_url
-			? addQueryArgs( { s: 40 }, actor.avatar_url )
-			: null;
-
-		return (
-			<div className="activity-log-item__actor">
-				{ /*
-					FIXME: actor does not correspond to a Gravatar user
-					We need to receive `avatar_URL` from the endpoint or query users.
-				*/ }
-				<Gravatar user={ { avatar_URL } } size={ 40 } />
-				<div className="activity-log-item__actor-info">
-					<div className="activity-log-item__actor-name">{ actor.display_name }</div>
-					<div className="activity-log-item__actor-role">{ actor.translated_role }</div>
-				</div>
-			</div>
-		);
-	}
-
 	renderContent() {
 		const { log } = this.props;
 		const {
@@ -249,9 +220,22 @@ class ActivityLogItem extends Component {
 	}
 
 	renderHeader() {
+		const { actor = {} } = this.props.log;
+		const {
+			avatar_url: avatarUrl,
+			display_name: displayName,
+			login,
+			translated_role: translatedRole,
+		} = actor;
+
 		return (
 			<div className="activity-log-item__card-header">
-				{ this.renderActor() }
+				<ActivityActor
+					avatarUrl={ avatarUrl }
+					displayName={ displayName }
+					login={ login }
+					translatedRole={ translatedRole }
+				/>
 				{ this.renderContent() }
 			</div>
 		);
