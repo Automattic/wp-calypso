@@ -18,7 +18,7 @@ import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
-import { loginUser } from 'state/login/actions';
+import { loginUser, changeUsername } from 'state/login/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getRequestError } from 'state/login/selectors';
 import SocialLoginForm from './social';
@@ -60,6 +60,11 @@ export class LoginForm extends Component {
 			defer( () => this.usernameOrEmail.focus() );
 		}
 	}
+
+	onChangeUsername = ( event ) => {
+		this.props.changeUsername();
+		this.onChangeField( event );
+	};
 
 	onChangeField = ( event ) => {
 		this.setState( {
@@ -131,7 +136,7 @@ export class LoginForm extends Component {
 									'is-error': requestError && requestError.field === 'usernameOrEmail'
 								} )
 							}
-							onChange={ this.onChangeField }
+							onChange={ this.onChangeUsername }
 							id="usernameOrEmail"
 							name="usernameOrEmail"
 							ref={ this.saveUsernameOrEmailRef }
@@ -201,6 +206,7 @@ export default connect(
 		requestError: getRequestError( state ),
 	} ),
 	{
+		changeUsername,
 		loginUser,
 		recordTracksEvent,
 	}

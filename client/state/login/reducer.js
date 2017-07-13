@@ -12,6 +12,7 @@ import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
+	LOGIN_USERNAME_CHANGE,
 	ROUTE_SET,
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
@@ -63,6 +64,7 @@ export const requestError = createReducer( null, {
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => error,
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: () => null,
 	[ ROUTE_SET ]: () => null,
+	[ LOGIN_USERNAME_CHANGE ]: () => null,
 } );
 
 export const requestSuccess = createReducer( null, {
