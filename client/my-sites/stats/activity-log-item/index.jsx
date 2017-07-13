@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import ActivityIcon from './activity-icon';
 import EllipsisMenu from 'components/ellipsis-menu';
 import FoldableCard from 'components/foldable-card';
 import Gravatar from 'components/gravatar';
-import Gridicon from 'gridicons';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { addQueryArgs } from 'lib/route';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -177,83 +177,6 @@ class ActivityLogItem extends Component {
 		} );
 	};
 
-	getIcon() {
-		const { log } = this.props;
-		const {
-			group,
-			name,
-		} = log;
-
-		switch ( name ) {
-			// Inline return makes alphabetizing and searching easier :)
-			case 'post__published': return 'create';
-			case 'post__trashed': return 'trash';
-			case 'user__registered': return 'user-add';
-		}
-
-		switch ( group ) {
-			case 'attachment':
-				return 'image';
-
-			case 'comment':
-				return 'comment';
-
-			case 'core':
-				return 'my-sites';
-
-			case 'menu':
-				return 'menu';
-
-			case 'post':
-				return 'posts';
-
-			case 'plugin':
-				return 'plugins';
-
-			case 'term':
-				return 'folder';
-
-			case 'theme':
-				return 'themes';
-
-			case 'user':
-				return 'user';
-		}
-
-		return 'info-outline';
-	}
-
-	getStatus() {
-		const { log } = this.props;
-		const { name } = log;
-
-		switch ( name ) {
-			case 'widget__removed':
-				return 'is-error';
-
-			case 'attachment__uploaded':
-			case 'term__created':
-			case 'theme__installed':
-			case 'user__registered':
-				return 'is-success';
-
-			case 'comment__published_awaiting_approval':
-			case 'comment__unapproved':
-				return 'is-warning';
-		}
-
-		// Try matching the "verb" part of the name
-		const suffix = name.split( '__' )[ 1 ];
-		switch ( suffix ) {
-			case 'deleted':
-			case 'trashed':
-				return 'is-error';
-
-			case 'published':
-				return 'is-success';
-		}
-	}
-
 	renderActor() {
 		const { log } = this.props;
 		const { actor } = log;
@@ -334,20 +257,6 @@ class ActivityLogItem extends Component {
 		);
 	}
 
-	renderIcon() {
-		const classes = classNames(
-			'activity-log-item__icon',
-			this.getStatus(),
-		);
-		const icon = this.getIcon();
-
-		return ( icon &&
-			<div className={ classes }>
-				<Gridicon icon={ icon } size={ 24 } />
-			</div>
-		);
-	}
-
 	renderSummary() {
 		const {
 			allowRestore,
@@ -384,17 +293,22 @@ class ActivityLogItem extends Component {
 	}
 
 	render() {
-		const { className } = this.props;
-		const classes = classNames(
-			'activity-log-item',
-			className
-		);
+		const {
+			className,
+			log,
+		} = this.props;
+		const {
+			group,
+			name,
+		} = log;
+
+		const classes = classNames( 'activity-log-item', className );
 
 		return (
 			<div className={ classes } >
 				<div className="activity-log-item__type">
 					{ this.renderTime() }
-					{ this.renderIcon() }
+					<ActivityIcon group={ group } name={ name } />
 				</div>
 				<FoldableCard
 					className="activity-log-item__card"
