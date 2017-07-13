@@ -44,12 +44,9 @@ class DebugTab extends Component {
 		const {
 			debugLogs,
 			fields: {
-				cache_path,
 				wp_cache_debug_ip,
-				wp_cache_debug_log = '',
 				wp_super_cache_comments,
 				wp_super_cache_debug,
-				wp_cache_debug_username,
 				wp_super_cache_front_page_check,
 				wp_super_cache_front_page_clear,
 				wp_super_cache_front_page_text,
@@ -64,28 +61,32 @@ class DebugTab extends Component {
 			translate,
 		} = this.props;
 
-		const cacheFilename = wp_cache_debug_log.split( '/' ).pop();
-
 		return (
 			<div>
 				<QueryDebugLogs siteId={ siteId } />
 				{ !! wp_super_cache_debug &&
 					<Card>
-						<p>
-							{ translate(
-								'Fix problems with the plugin by debugging it here. ' +
-								'It can log them to a file in your cache directory.'
-							) }
-						</p>
 						<table>
+							<thead>
+								<tr>
+									<th>{ translate( 'Filename' ) }</th>
+									<th>{ translate( 'Username/Password' ) }</th>
+									<th>{ translate( 'Delete' ) }</th>
+								</tr>
+							</thead>
 							<tbody>
 							{ debugLogs.map( ( { filename, username, isDeleting } ) => (
 								<tr key={ filename }>
-									<td>{ filename }</td>
+									<td>
+										<ExternalLink href={ filename } target="_blank">
+											{ filename }
+										</ExternalLink>
+									</td>
 									<td>{ username }</td>
 									<td>
 										<Button
 											busy={ isDeleting }
+											className="wp-super-cache__debug-log-delete"
 											compact
 											data-log={ filename }
 											disabled={ isDeleting }
@@ -97,25 +98,6 @@ class DebugTab extends Component {
 							) ) }
 							</tbody>
 						</table>
-						<p>
-							{ translate(
-								'Currently logging to: {{ExternalLink}}%(location)s{{/ExternalLink}}',
-								{
-									args: { location: cache_path + cacheFilename },
-									components: {
-										ExternalLink: <ExternalLink
-											href={ wp_cache_debug_log }
-											target="_blank" />
-									}
-								}
-							) }
-						</p>
-						<p>
-							{ translate(
-								'Username and Password: %(username)s',
-								{ args: { username: wp_cache_debug_username } }
-							) }
-						</p>
 					</Card>
 				}
 				<form>
@@ -241,12 +223,9 @@ class DebugTab extends Component {
 
 const getFormSettings = settings => {
 	return pick( settings, [
-		'cache_path',
 		'wp_cache_debug_ip',
-		'wp_cache_debug_log',
 		'wp_super_cache_comments',
 		'wp_super_cache_debug',
-		'wp_cache_debug_username',
 		'wp_super_cache_front_page_check',
 		'wp_super_cache_front_page_clear',
 		'wp_super_cache_front_page_text',
