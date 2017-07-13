@@ -50,13 +50,13 @@ class StoreStatsChart extends Component {
 		} );
 	};
 
-	buildChartData = ( item, selectedTab ) => {
+	buildChartData = ( item, selectedTab, chartFormat ) => {
 		const { selectedDate } = this.props;
 		const className = classnames( item.classNames.join( ' ' ), {
 			'is-selected': item.period === selectedDate,
 		} );
 		return {
-			label: item.labelDay,
+			label: item[ chartFormat ],
 			value: item[ selectedTab.attr ],
 			nestedValue: null,
 			data: item,
@@ -76,7 +76,8 @@ class StoreStatsChart extends Component {
 		];
 		const selectedTab = tabs[ selectedTabIndex ];
 		const isLoading = ! data.length;
-		const chartData = data.map( item => this.buildChartData( item, selectedTab ) );
+		const chartFormat = UNITS[ unit ].chartFormat;
+		const chartData = data.map( item => this.buildChartData( item, selectedTab, chartFormat ) );
 		const selectedIndex = findIndex( data, d => d.period === selectedDate );
 		return (
 			<Card className="store-stats-chart stats-module">

@@ -82,6 +82,7 @@ export const UNITS = {
 		durationFn: 'asDays',
 		format: 'YYYY-MM-DD',
 		sinceFormat: 'MMM D',
+		chartFormat: 'labelDay',
 	},
 	week: {
 		quantity: 30,
@@ -89,6 +90,7 @@ export const UNITS = {
 		durationFn: 'asWeeks',
 		format: 'YYYY-[W]WW',
 		sinceFormat: 'MMM D',
+		chartFormat: 'labelWeek',
 	},
 	month: {
 		quantity: 12,
@@ -96,6 +98,7 @@ export const UNITS = {
 		durationFn: 'asMonths',
 		format: 'YYYY-MM',
 		sinceFormat: 'MMM [\']YY',
+		chartFormat: 'labelMonth',
 	},
 	year: {
 		quantity: 10,
@@ -103,5 +106,6 @@ export const UNITS = {
 		durationFn: 'asYears',
 		format: 'YYYY',
 		sinceFormat: 'YYYY',
-	},
+		chartFormat: 'labelYear',
+	}
 };
