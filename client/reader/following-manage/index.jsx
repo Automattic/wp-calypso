@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { trim, debounce, random, take, reject, includes } from 'lodash';
+import { trim, random, take, reject, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import qs from 'qs';
@@ -40,6 +40,7 @@ import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
 import { getReaderFollowsCount } from 'state/selectors';
 import { recordTrack, recordAction } from 'reader/stats';
 import { SORT_BY_RELEVANCE } from 'state/reader/feed-searches/actions';
+import withDimensions from 'lib/with-dimensions';
 
 const PAGE_SIZE = 4;
 let recommendationsSeed = random( 0, 10000 );
@@ -51,6 +52,7 @@ class FollowingManage extends Component {
 		subsSortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
 		translate: PropTypes.func,
 		showMoreResults: PropTypes.bool,
+		width: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -58,10 +60,6 @@ class FollowingManage extends Component {
 		sitesQuery: '',
 		showMoreResults: false,
 		subsSortOrder: 'date-followed',
-	};
-
-	state = {
-		width: 800,
 	};
 
 	componentWillUnmount() {
@@ -99,24 +97,9 @@ class FollowingManage extends Component {
 		window.scrollTo( 0, 0 );
 	};
 
-	handleStreamMounted = ref => this.streamRef = ref;
-	handleSearchBoxMounted = ref => this.searchBoxRef = ref;
 	handleWindowScrollerMounted = ref => this.windowScrollerRef = ref;
 
-	resizeSearchBox = () => {
-		if ( this.searchBoxRef && this.streamRef ) {
-			const width = this.streamRef.getClientRects()[ 0 ].width;
-			if ( width > 0 ) {
-				this.searchBoxRef.style.width = `${ width }px`;
-			}
-			this.setState( { width } );
-		}
-	};
-
 	componentDidMount() {
-		this.resizeListener = window.addEventListener( 'resize', debounce( this.resizeSearchBox, 50 ) );
-		this.resizeSearchBox();
-
 		// this is a total hack. In React-Virtualized you need to tell a WindowScroller when the things
 		// above it has moved with a call to updatePosition().  Our issue is we don't have a good moment
 		// where we know that the content above the WindowScroller has settled down and so instead the solution
@@ -129,7 +112,6 @@ class FollowingManage extends Component {
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.resizeListener );
 		clearInterval( this.windowScrollerRef );
 	}
 
@@ -180,6 +162,7 @@ class FollowingManage extends Component {
 			blockedSites,
 			followsCount,
 			readerAliasedFollowFeedUrl,
+			width,
 		} = this.props;
 		const searchPlaceholderText = translate( 'Search or enter URL to follow…' );
 		const hasFollows = followsCount > 0;
@@ -187,13 +170,12 @@ class FollowingManage extends Component {
 		const sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
 		const showFollowByUrl = this.shouldShowFollowByUrl();
 		const isFollowByUrlWithNoSearchResults = showFollowByUrl && searchResultsCount === 0;
-		const filteredRecommendedSites = reject(
-			recommendedSites,
-			site => includes( blockedSites, site.blogId ),
+		const filteredRecommendedSites = reject( recommendedSites, site =>
+			includes( blockedSites, site.blogId ),
 		);
 
 		return (
-			<ReaderMain className="following-manage">
+			<div>
 				<DocumentHead title={ 'Manage Following' } />
 				<MobileBackToSidebar>
 					<h1>{ translate( 'Streams' ) }</h1>
@@ -206,8 +188,7 @@ class FollowingManage extends Component {
 						offset={ recommendedSitesPagingOffset + PAGE_SIZE || 0 }
 					/> }
 				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
-				<div ref={ this.handleStreamMounted } />
-				<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
+				<div className="following-manage__fixed-area" style={ { width } }>
 					<CompactCard className="following-manage__input-card">
 						<SearchInput
 							onSearch={ this.updateQuery }
@@ -246,35 +227,46 @@ class FollowingManage extends Component {
 						searchResults={ searchResults }
 						showMoreResults={ showMoreResults }
 						onShowMoreResultsClicked={ this.handleShowMoreClicked }
-						width={ this.state.width }
+						width={ width }
 						searchResultsCount={ searchResultsCount }
 						query={ sitesQuery }
 					/> }
 				{ showExistingSubscriptions &&
 					<FollowingManageSubscriptions
-						width={ this.state.width }
+						width={ width }
 						query={ subsQuery }
 						sortOrder={ subsSortOrder }
 						windowScrollerRef={ this.handleWindowScrollerMounted }
 					/> }
 				{ ! hasFollows && <FollowingManageEmptyContent /> }
-			</ReaderMain>
+			</div>
 		);
 	}
 }
 
+/* eslint-disable */
+// wrapping with Main so that we can use withDimensions helper to pass down whole width of Main
+const wrapWithMain = Component => props => (
+	<ReaderMain className="following-manage">
+		<Component { ...props } />
+	</ReaderMain>
+);
+/* eslint-enable */
+
 export default connect( ( state, { sitesQuery } ) => ( {
-	searchResults: getReaderFeedsForQuery(
-		state,
-		{ query: sitesQuery, excludeFollowed: true, sort: SORT_BY_RELEVANCE },
-	),
-	searchResultsCount: getReaderFeedsCountForQuery(
-		state,
-		{ query: sitesQuery, excludeFollowed: true, sort: SORT_BY_RELEVANCE },
-	),
+	searchResults: getReaderFeedsForQuery( state, {
+		query: sitesQuery,
+		excludeFollowed: true,
+		sort: SORT_BY_RELEVANCE,
+	} ),
+	searchResultsCount: getReaderFeedsCountForQuery( state, {
+		query: sitesQuery,
+		excludeFollowed: true,
+		sort: SORT_BY_RELEVANCE,
+	} ),
 	recommendedSites: getReaderRecommendedSites( state, recommendationsSeed ),
 	recommendedSitesPagingOffset: getReaderRecommendedSitesPagingOffset( state, recommendationsSeed ),
 	blockedSites: getBlockedSites( state ),
 	readerAliasedFollowFeedUrl: sitesQuery && getReaderAliasedFollowFeedUrl( state, sitesQuery ),
 	followsCount: getReaderFollowsCount( state ),
-} ) )( localize( FollowingManage ) );
+} ) )( localize( wrapWithMain( withDimensions( FollowingManage ) ) ) );
