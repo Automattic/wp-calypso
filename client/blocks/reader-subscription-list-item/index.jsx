@@ -13,7 +13,7 @@ import moment from 'moment';
 import ReaderAvatar from 'blocks/reader-avatar';
 import FollowButton from 'reader/follow-button';
 import { getStreamUrl } from 'reader/route';
-import EmailSettings from './email-settings';
+import EmailSettings from 'blocks/reader-email-settings';
 import {
 	getSiteName,
 	getSiteDescription,
@@ -108,8 +108,7 @@ function ReaderSubscriptionListItem( {
 							className="reader-subscription-list-item__link"
 							onClick={ recordTitleClick }
 						>
-							{' '}
-							{ siteTitle }{' '}
+							{ siteTitle }
 						</a>
 					}
 				</span>
@@ -127,8 +126,7 @@ function ReaderSubscriptionListItem( {
 										className="reader-subscription-list-item__link"
 										onClick={ recordAuthorClick }
 									>
-										{' '}
-										{ authorName }{' '}
+										{ authorName }
 									</a>
 								),
 							},
