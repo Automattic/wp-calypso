@@ -8,14 +8,14 @@ function getSettingsState( state ) {
 }
 
 /**
- * Returns true if we are fetching settings for the specified site ID, false otherwise.
+ * Returns true if we are requesting settings for the specified site ID, false otherwise.
  *
  * @param  {Object}  state Global state tree
  * @param  {Number}  siteId Site ID
- * @return {Boolean} Whether settings are being fetched
+ * @return {Boolean} Whether settings are being requested
  */
-export function isFetchingSettings( state, siteId ) {
-	return get( getSettingsState( state ), [ 'fetching', siteId ], false );
+export function isRequestingSettings( state, siteId ) {
+	return get( getSettingsState( state ), [ 'requesting', siteId ], false );
 }
 
 /**

@@ -8,12 +8,12 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	WP_JOB_MANAGER_FETCH_PAGES,
-	WP_JOB_MANAGER_FETCH_PAGES_ERROR,
+	WP_JOB_MANAGER_REQUEST_PAGES,
+	WP_JOB_MANAGER_REQUEST_PAGES_ERROR,
 	WP_JOB_MANAGER_UPDATE_PAGES,
 } from '../../action-types';
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
-import reducer, { fetching, items } from '../reducer';
+import reducer, { requesting, items } from '../reducer';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
@@ -21,25 +21,25 @@ describe( 'reducer', () => {
 
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'fetching',
+			'requesting',
 			'items',
 		] );
 	} );
 
-	describe( 'fetching()', () => {
+	describe( 'requesting()', () => {
 		const previousState = deepFreeze( {
 			[ primarySiteId ]: true,
 		} );
 
 		it( 'should default to an empty object', () => {
-			const state = fetching( undefined, {} );
+			const state = requesting( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should set state to true if pages are being fetched', () => {
-			const state = fetching( undefined, {
-				type: WP_JOB_MANAGER_FETCH_PAGES,
+		it( 'should set state to true if pages are being requested', () => {
+			const state = requesting( undefined, {
+				type: WP_JOB_MANAGER_REQUEST_PAGES,
 				siteId: primarySiteId,
 			} );
 
@@ -48,9 +48,9 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate fetching values', () => {
-			const state = fetching( previousState, {
-				type: WP_JOB_MANAGER_FETCH_PAGES,
+		it( 'should accumulate requesting values', () => {
+			const state = requesting( previousState, {
+				type: WP_JOB_MANAGER_REQUEST_PAGES,
 				siteId: secondarySiteId,
 			} );
 
@@ -61,7 +61,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should set state to false if updating pages', () => {
-			const state = fetching( previousState, {
+			const state = requesting( previousState, {
 				type: WP_JOB_MANAGER_UPDATE_PAGES,
 				siteId: primarySiteId,
 			} );
@@ -71,9 +71,9 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set state to false if pages could not be fetched', () => {
-			const state = fetching( previousState, {
-				type: WP_JOB_MANAGER_FETCH_PAGES_ERROR,
+		it( 'should set state to false if pages could not be requested', () => {
+			const state = requesting( previousState, {
+				type: WP_JOB_MANAGER_REQUEST_PAGES_ERROR,
 				siteId: primarySiteId,
 			} );
 
@@ -83,7 +83,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should not persist state', () => {
-			const state = fetching( previousState, {
+			const state = requesting( previousState, {
 				type: SERIALIZE,
 			} );
 
@@ -91,7 +91,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should not load persisted state', () => {
-			const state = fetching( previousState, {
+			const state = requesting( previousState, {
 				type: DESERIALIZE,
 			} );
 

@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import {
-	WP_JOB_MANAGER_FETCH_PAGES,
-	WP_JOB_MANAGER_FETCH_PAGES_ERROR,
+	WP_JOB_MANAGER_REQUEST_PAGES,
+	WP_JOB_MANAGER_REQUEST_PAGES_ERROR,
 	WP_JOB_MANAGER_UPDATE_PAGES,
 } from '../action-types';
 
@@ -13,15 +13,15 @@ import {
  * @param  {Number} siteId Site ID
  * @return {Object} Action object
  */
-export const fetchPages = siteId => ( { type: WP_JOB_MANAGER_FETCH_PAGES, siteId } );
+export const requestPages = siteId => ( { type: WP_JOB_MANAGER_REQUEST_PAGES, siteId } );
 
 /**
- * Returns an action object to indicate that an error was received when fetching the pages.
+ * Returns an action object to indicate that an error was received when requesting the pages.
  *
  * @param  {Number} siteId Site ID
  * @return {Object} Action object
  */
-export const fetchPagesError = siteId => ( { type: WP_JOB_MANAGER_FETCH_PAGES_ERROR, siteId } );
+export const requestPagesError = siteId => ( { type: WP_JOB_MANAGER_REQUEST_PAGES_ERROR, siteId } );
 
 /**
  * Returns an action object to indicate that the pages should be updated.

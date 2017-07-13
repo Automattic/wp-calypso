@@ -9,13 +9,13 @@ import sinon from 'sinon';
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
-	fetchExtensionPages,
-	fetchExtensionPagesError,
+	requestExtensionPages,
+	requestExtensionPagesError,
 	updateExtensionPages,
 } from '../';
 import {
-	fetchPages,
-	fetchPagesError,
+	requestPages,
+	requestPagesError,
 	updatePages,
 } from 'wp-job-manager/state/pages/actions';
 
@@ -28,7 +28,7 @@ const apiResponse = {
 	} ]
 };
 
-describe( '#fetchExtensionPages()', () => {
+describe( '#requestExtensionPages()', () => {
 	it( 'should dispatch an HTTP request to the pages endpoint', () => {
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -36,7 +36,7 @@ describe( '#fetchExtensionPages()', () => {
 		};
 		const dispatch = sinon.spy();
 
-		fetchExtensionPages( { dispatch }, action );
+		requestExtensionPages( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( http( {
@@ -51,7 +51,7 @@ describe( '#fetchExtensionPages()', () => {
 
 describe( '#updateExtensionPages', () => {
 	it( 'should dispatch `updatePages`', () => {
-		const action = fetchPages( 12345678 );
+		const action = requestPages( 12345678 );
 		const dispatch = sinon.spy();
 
 		updateExtensionPages( { dispatch }, action, null, apiResponse );
@@ -61,14 +61,14 @@ describe( '#updateExtensionPages', () => {
 	} );
 } );
 
-describe( '#fetchExtensionPagesError', () => {
-	it( 'should dispatch `fetchPagesError`', () => {
-		const action = fetchPages( 12345678 );
+describe( '#requestExtensionPagesError', () => {
+	it( 'should dispatch `requestPagesError`', () => {
+		const action = requestPages( 12345678 );
 		const dispatch = sinon.spy();
 
-		fetchExtensionPagesError( { dispatch }, action );
+		requestExtensionPagesError( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( fetchPagesError( 12345678 ) );
+		expect( dispatch ).to.have.been.calledWith( requestPagesError( 12345678 ) );
 	} );
 } );

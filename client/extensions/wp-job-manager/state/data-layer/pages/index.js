@@ -3,10 +3,10 @@
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { fetchPagesError, updatePages } from '../../pages/actions';
-import { WP_JOB_MANAGER_FETCH_PAGES } from 'wp-job-manager/state/action-types';
+import { requestPagesError, updatePages } from '../../pages/actions';
+import { WP_JOB_MANAGER_REQUEST_PAGES } from 'wp-job-manager/state/action-types';
 
-export const fetchExtensionPages = ( { dispatch }, action ) => {
+export const requestExtensionPages = ( { dispatch }, action ) => {
 	const { siteId } = action;
 
 	dispatch( http( {
@@ -21,10 +21,10 @@ export const fetchExtensionPages = ( { dispatch }, action ) => {
 export const updateExtensionPages = ( { dispatch }, { siteId }, next, { data } ) =>
 	dispatch( updatePages( siteId, data ) );
 
-export const fetchExtensionPagesError = ( { dispatch }, { siteId } ) => dispatch( fetchPagesError( siteId ) );
+export const requestExtensionPagesError = ( { dispatch }, { siteId } ) => dispatch( requestPagesError( siteId ) );
 
-const dispatchPagesRequest = dispatchRequest( fetchExtensionPages, updateExtensionPages, fetchExtensionPagesError );
+const dispatchPagesRequest = dispatchRequest( requestExtensionPages, updateExtensionPages, requestExtensionPagesError );
 
 export default {
-	[ WP_JOB_MANAGER_FETCH_PAGES ]: [ dispatchPagesRequest ],
+	[ WP_JOB_MANAGER_REQUEST_PAGES ]: [ dispatchPagesRequest ],
 };

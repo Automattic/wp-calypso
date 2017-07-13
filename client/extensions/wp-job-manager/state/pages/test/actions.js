@@ -6,13 +6,13 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	WP_JOB_MANAGER_FETCH_PAGES,
-	WP_JOB_MANAGER_FETCH_PAGES_ERROR,
+	WP_JOB_MANAGER_REQUEST_PAGES,
+	WP_JOB_MANAGER_REQUEST_PAGES_ERROR,
 	WP_JOB_MANAGER_UPDATE_PAGES,
 } from '../../action-types';
 import {
-	fetchPages,
-	fetchPagesError,
+	requestPages,
+	requestPagesError,
 	updatePages,
 } from '../actions';
 
@@ -23,23 +23,23 @@ describe( 'actions', () => {
 		title: { rendered: 'My page' },
 	};
 
-	describe( '#fetchPages()', () => {
+	describe( '#requestPages()', () => {
 		it( 'should return an action object', () => {
-			const action = fetchPages( siteId );
+			const action = requestPages( siteId );
 
 			expect( action ).to.deep.equal( {
-				type: WP_JOB_MANAGER_FETCH_PAGES,
+				type: WP_JOB_MANAGER_REQUEST_PAGES,
 				siteId,
 			} );
 		} );
 	} );
 
-	describe( '#fetchPagesError()', () => {
+	describe( '#requestPagesError()', () => {
 		it( 'should return an action object', () => {
-			const action = fetchPagesError( siteId );
+			const action = requestPagesError( siteId );
 
 			expect( action ).to.deep.equal( {
-				type: WP_JOB_MANAGER_FETCH_PAGES_ERROR,
+				type: WP_JOB_MANAGER_REQUEST_PAGES_ERROR,
 				siteId,
 			} );
 		} );

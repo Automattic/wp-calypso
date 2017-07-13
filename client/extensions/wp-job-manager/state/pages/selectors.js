@@ -8,14 +8,14 @@ function getPagesState( state ) {
 }
 
 /**
- * Returns true if we are fetching pages for the specified site ID, false otherwise.
+ * Returns true if we are requesting pages for the specified site ID, false otherwise.
  *
  * @param  {Object}  state Global state tree
  * @param  {Number}  siteId Site ID
- * @return {Boolean} Whether pages are being fetched
+ * @return {Boolean} Whether pages are being requested
  */
-export function isFetchingPages( state, siteId ) {
-	return get( getPagesState( state ), [ 'fetching', siteId ], false );
+export function isRequestingPages( state, siteId ) {
+	return get( getPagesState( state ), [ 'requesting', siteId ], false );
 }
 
 /**

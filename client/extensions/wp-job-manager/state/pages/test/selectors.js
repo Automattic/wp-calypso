@@ -8,14 +8,14 @@ import { expect } from 'chai';
  */
 import {
 	getPages,
-	isFetchingPages,
+	isRequestingPages,
 } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	describe( 'isFetchingPages()', () => {
+	describe( 'isRequestingPages()', () => {
 		it( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
@@ -24,9 +24,9 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const isFetching = isFetchingPages( state, primarySiteId );
+			const isRequesting = isRequestingPages( state, primarySiteId );
 
-			expect( isFetching ).to.be.false;
+			expect( isRequesting ).to.be.false;
 		} );
 
 		it( 'should return false if the site is not attached', () => {
@@ -34,50 +34,50 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						pages: {
-							fetching: {
+							requesting: {
 								[ primarySiteId ]: true,
 							}
 						}
 					}
 				}
 			};
-			const isFetching = isFetchingPages( state, secondarySiteId );
+			const isRequesting = isRequestingPages( state, secondarySiteId );
 
-			expect( isFetching ).to.be.false;
+			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the pages are not being fetched', () => {
+		it( 'should return false if the pages are not being requested', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
 						pages: {
-							fetching: {
+							requesting: {
 								[ primarySiteId ]: false,
 							}
 						}
 					}
 				}
 			};
-			const isFetching = isFetchingPages( state, primarySiteId );
+			const isRequesting = isRequestingPages( state, primarySiteId );
 
-			expect( isFetching ).to.be.false;
+			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if the pages are being fetched', () => {
+		it( 'should return true if the pages are being requested', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
 						pages: {
-							fetching: {
+							requesting: {
 								[ primarySiteId ]: true,
 							}
 						}
 					}
 				}
 			};
-			const isFetching = isFetchingPages( state, primarySiteId );
+			const isRequesting = isRequestingPages( state, primarySiteId );
 
-			expect( isFetching ).to.be.true;
+			expect( isRequesting ).to.be.true;
 		} );
 	} );
 

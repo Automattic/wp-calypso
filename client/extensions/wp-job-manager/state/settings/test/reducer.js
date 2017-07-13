@@ -8,15 +8,15 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	WP_JOB_MANAGER_FETCH_ERROR,
-	WP_JOB_MANAGER_FETCH_SETTINGS,
+	WP_JOB_MANAGER_REQUEST_SETTINGS,
+	WP_JOB_MANAGER_REQUEST_SETTINGS_ERROR,
 	WP_JOB_MANAGER_SAVE_ERROR,
 	WP_JOB_MANAGER_SAVE_SETTINGS,
 	WP_JOB_MANAGER_SAVE_SUCCESS,
 	WP_JOB_MANAGER_UPDATE_SETTINGS,
 } from '../../action-types';
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
-import reducer, { fetching, items, saving } from '../reducer';
+import reducer, { requesting, items, saving } from '../reducer';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
@@ -24,26 +24,26 @@ describe( 'reducer', () => {
 
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'fetching',
+			'requesting',
 			'items',
 			'saving',
 		] );
 	} );
 
-	describe( 'fetching()', () => {
+	describe( 'requesting()', () => {
 		const previousState = deepFreeze( {
 			[ primarySiteId ]: true,
 		} );
 
 		it( 'should default to an empty object', () => {
-			const state = fetching( undefined, {} );
+			const state = requesting( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should set state to true if settings are being fetched', () => {
-			const state = fetching( undefined, {
-				type: WP_JOB_MANAGER_FETCH_SETTINGS,
+		it( 'should set state to true if settings are being requested', () => {
+			const state = requesting( undefined, {
+				type: WP_JOB_MANAGER_REQUEST_SETTINGS,
 				siteId: primarySiteId,
 			} );
 
@@ -52,9 +52,9 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate fetching values', () => {
-			const state = fetching( previousState, {
-				type: WP_JOB_MANAGER_FETCH_SETTINGS,
+		it( 'should accumulate requesting values', () => {
+			const state = requesting( previousState, {
+				type: WP_JOB_MANAGER_REQUEST_SETTINGS,
 				siteId: secondarySiteId,
 			} );
 
@@ -65,7 +65,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should set state to false if updating settings', () => {
-			const state = fetching( previousState, {
+			const state = requesting( previousState, {
 				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
 				siteId: primarySiteId,
 			} );
@@ -75,9 +75,9 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set state to false if settings could not be fetched', () => {
-			const state = fetching( previousState, {
-				type: WP_JOB_MANAGER_FETCH_ERROR,
+		it( 'should set state to false if settings could not be requested', () => {
+			const state = requesting( previousState, {
+				type: WP_JOB_MANAGER_REQUEST_SETTINGS_ERROR,
 				siteId: primarySiteId,
 			} );
 
@@ -87,7 +87,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should not persist state', () => {
-			const state = fetching( previousState, {
+			const state = requesting( previousState, {
 				type: SERIALIZE,
 			} );
 
@@ -95,7 +95,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should not load persisted state', () => {
-			const state = fetching( previousState, {
+			const state = requesting( previousState, {
 				type: DESERIALIZE,
 			} );
 

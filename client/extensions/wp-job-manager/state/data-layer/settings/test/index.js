@@ -13,14 +13,14 @@ import { errorNotice, removeNotice, successNotice } from 'state/notices/actions'
 import {
 	announceFailure,
 	announceSuccess,
-	fetchExtensionError,
-	fetchExtensionSettings,
+	requestExtensionSettings,
+	requestExtensionSettingsError,
 	saveSettings,
 	updateExtensionSettings,
 } from '../';
 import {
-	fetchError,
-	fetchSettings,
+	requestSettings,
+	requestSettingsError,
 	saveError,
 	saveSuccess,
 	updateSettings,
@@ -41,7 +41,7 @@ const saveAction = {
 	}
 };
 
-describe( '#fetchExtensionSettings()', () => {
+describe( '#requestExtensionSettings()', () => {
 	it( 'should dispatch an HTTP request to the settings endpoint', () => {
 		const action = {
 			type: 'DUMMY_ACTION',
@@ -49,7 +49,7 @@ describe( '#fetchExtensionSettings()', () => {
 		};
 		const dispatch = sinon.spy();
 
-		fetchExtensionSettings( { dispatch }, action );
+		requestExtensionSettings( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( http( {
@@ -64,7 +64,7 @@ describe( '#fetchExtensionSettings()', () => {
 
 describe( '#updateExtensionSettings', () => {
 	it( 'should dispatch `updateSettings`', () => {
-		const action = fetchSettings( 12345678 );
+		const action = requestSettings( 12345678 );
 		const dispatch = sinon.spy();
 
 		updateExtensionSettings( { dispatch }, action, null, apiResponse );
@@ -104,15 +104,15 @@ describe( '#updateExtensionSettings', () => {
 	} );
 } );
 
-describe( '#fetchExtensionError', () => {
-	it( 'should dispatch `fetchError`', () => {
-		const action = fetchSettings( 12345678 );
+describe( '#requestExtensionSettingsError', () => {
+	it( 'should dispatch `requestSettingsError`', () => {
+		const action = requestSettings( 12345678 );
 		const dispatch = sinon.spy();
 
-		fetchExtensionError( { dispatch }, action );
+		requestExtensionSettingsError( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( fetchError( 12345678 ) );
+		expect( dispatch ).to.have.been.calledWith( requestSettingsError( 12345678 ) );
 	} );
 } );
 

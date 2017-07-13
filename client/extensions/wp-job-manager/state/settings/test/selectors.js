@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	getSettings,
-	isFetchingSettings,
+	isRequestingSettings,
 	isSavingSettings,
 } from '../selectors';
 
@@ -16,7 +16,7 @@ describe( 'selectors', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	describe( 'isFetchingSettings()', () => {
+	describe( 'isRequestingSettings()', () => {
 		it( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
@@ -25,9 +25,9 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const isFetching = isFetchingSettings( state, primarySiteId );
+			const isRequesting = isRequestingSettings( state, primarySiteId );
 
-			expect( isFetching ).to.be.false;
+			expect( isRequesting ).to.be.false;
 		} );
 
 		it( 'should return false if the site is not attached', () => {
@@ -35,50 +35,50 @@ describe( 'selectors', () => {
 				extensions: {
 					wpJobManager: {
 						settings: {
-							fetching: {
+							requesting: {
 								[ primarySiteId ]: true,
 							}
 						}
 					}
 				}
 			};
-			const isFetching = isFetchingSettings( state, secondarySiteId );
+			const isRequesting = isRequestingSettings( state, secondarySiteId );
 
-			expect( isFetching ).to.be.false;
+			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the settings are not being fetched', () => {
+		it( 'should return false if the settings are not being requested', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
 						settings: {
-							fetching: {
+							requesting: {
 								[ primarySiteId ]: false,
 							}
 						}
 					}
 				}
 			};
-			const isFetching = isFetchingSettings( state, primarySiteId );
+			const isRequesting = isRequestingSettings( state, primarySiteId );
 
-			expect( isFetching ).to.be.false;
+			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if the settings are being fetched', () => {
+		it( 'should return true if the settings are being requested', () => {
 			const state = {
 				extensions: {
 					wpJobManager: {
 						settings: {
-							fetching: {
+							requesting: {
 								[ primarySiteId ]: true,
 							}
 						}
 					}
 				}
 			};
-			const isFetching = isFetchingSettings( state, primarySiteId );
+			const isRequesting = isRequestingSettings( state, primarySiteId );
 
-			expect( isFetching ).to.be.true;
+			expect( isRequesting ).to.be.true;
 		} );
 	} );
 

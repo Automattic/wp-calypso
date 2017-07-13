@@ -6,16 +6,16 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	WP_JOB_MANAGER_FETCH_ERROR,
-	WP_JOB_MANAGER_FETCH_SETTINGS,
+	WP_JOB_MANAGER_REQUEST_SETTINGS,
+	WP_JOB_MANAGER_REQUEST_SETTINGS_ERROR,
 	WP_JOB_MANAGER_SAVE_ERROR,
 	WP_JOB_MANAGER_SAVE_SETTINGS,
 	WP_JOB_MANAGER_SAVE_SUCCESS,
 	WP_JOB_MANAGER_UPDATE_SETTINGS,
 } from '../../action-types';
 import {
-	fetchError,
-	fetchSettings,
+	requestSettings,
+	requestSettingsError,
 	saveError,
 	saveSettings,
 	saveSuccess,
@@ -41,23 +41,23 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#fetchError()', () => {
+	describe( '#requestSettingsError()', () => {
 		it( 'should return an action object', () => {
-			const action = fetchError( siteId );
+			const action = requestSettingsError( siteId );
 
 			expect( action ).to.deep.equal( {
-				type: WP_JOB_MANAGER_FETCH_ERROR,
+				type: WP_JOB_MANAGER_REQUEST_SETTINGS_ERROR,
 				siteId,
 			} );
 		} );
 	} );
 
-	describe( '#fetchSettings()', () => {
+	describe( '#requestSettings()', () => {
 		it( 'should return an action object', () => {
-			const action = fetchSettings( siteId );
+			const action = requestSettings( siteId );
 
 			expect( action ).to.deep.equal( {
-				type: WP_JOB_MANAGER_FETCH_SETTINGS,
+				type: WP_JOB_MANAGER_REQUEST_SETTINGS,
 				siteId,
 			} );
 		} );
