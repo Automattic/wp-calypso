@@ -79,7 +79,6 @@
 	margin-left: 24px;
 	margin-top: 23px;
 	margin-bottom: 24px;
-	max-width: 69%;
 	text-shadow: 1px 1px 1px rgba( 0, 0, 0, 0.1 );
 
 	a {
@@ -102,5 +101,35 @@
 			display: none;
 			visibility: hidden;
 		}
+	}
+}
+
+// Following intro blue
+.following__intro-blue {
+	background: #04a9dd no-repeat 100% 0;
+	background-size: cover;
+
+	.following__intro-character {
+		background: url( '/calypso/images/reader/reader-intro-character-light-blue.svg' );
+		background-size: 120px;
+		flex: 0 0 125px;
+		height: 140px;
+	}
+}
+
+.following__intro-header {
+	display: flex;
+	flex-direction: row;
+}
+
+.following__intro-copy {
+	flex: 1 1 0;
+}
+
+.following__search {
+	margin-top: 30px;
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 8px;
 	}
 }
