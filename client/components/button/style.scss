@@ -143,9 +143,13 @@ button {
 	&:focus {
 		border-color: $alert-red;
 	}
-	&:focus {
-		box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
+
+	.accessible-focus & {
+		&:focus {
+			box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
+		}
 	}
+
 	&[disabled],
 	&:disabled {
 		color: lighten( $alert-red, 30% );
