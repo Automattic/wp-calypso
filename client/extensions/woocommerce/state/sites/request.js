@@ -20,6 +20,11 @@ const omitDeep = ( input, props ) => {
 	return input;
 };
 
+const _directRequest = ( method, path, siteId, body, auth ) => {
+	console.log( 'DIRECT REQUEST: ' + method + ' ' + path );
+	console.log( 'auth: ', auth );
+};
+
 const _request = ( method, path, siteId, body ) => {
 	// WPCOM API breaks if query parameters are passed after "?" instead of "&". Hide this hack from the calling code
 	path = path.replace( '?', '&' );
@@ -59,13 +64,13 @@ const _requestWithHeaders = ( method, path, siteId, sendBody ) => {
  * @return {Object} An object with the properties "get", "post", "put" and "del", which are functions to
  * make an HTTP GET, POST, PUT and DELETE request, respectively.
  */
-export default ( siteId ) => ( {
+export default ( siteId, directAuth = false ) => ( {
 	/**
 	 * Sends a GET request to the API
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
-	get: ( path ) => _request( 'get', path, siteId ),
+	get: ( path ) => ( directAuth ? _directRequest( 'get', path, siteId, directAuth ) : _request( 'get', path, siteId ) ),
 
 	/**
 	 * Sends a GET request to the API and returns headers along with the body.

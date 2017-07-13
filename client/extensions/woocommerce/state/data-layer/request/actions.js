@@ -10,7 +10,7 @@ import {
 	WOOCOMMERCE_API_REQUEST,
 } from 'woocommerce/state/action-types';
 
-function _createRequestAction( method, siteId, path, body, onSuccessAction, onFailureAction ) {
+function _createRequestAction( method, siteId, path, body, onSuccessAction, onFailureAction, isDirect = false ) {
 	const action = {
 		type: WOOCOMMERCE_API_REQUEST,
 		requestId: uniqueId( 'request_' ),
@@ -20,6 +20,7 @@ function _createRequestAction( method, siteId, path, body, onSuccessAction, onFa
 		body,
 		onSuccessAction,
 		onFailureAction,
+		isDirect,
 	};
 
 	return action;
@@ -33,8 +34,8 @@ function _createRequestAction( method, siteId, path, body, onSuccessAction, onFa
  * @param {Object|Function} [onFailureAction] Action with extra props { error }
  * @return {Promise<Object>} A promise to the action (only used for testing)
  */
-export function get( siteId, path, onSuccessAction, onFailureAction ) {
-	return _createRequestAction( 'get', siteId, path, undefined, onSuccessAction, onFailureAction );
+export function get( siteId, path, onSuccessAction, onFailureAction, isDirect = false ) {
+	return _createRequestAction( 'get', siteId, path, undefined, onSuccessAction, onFailureAction, isDirect );
 }
 
 /**

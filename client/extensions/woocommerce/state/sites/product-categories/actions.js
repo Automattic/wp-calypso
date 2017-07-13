@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
+import { get } from 'woocommerce/state/data-layer/request/actions';
 import { setError } from '../status/wc-api/actions';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
@@ -19,34 +19,33 @@ export function fetchProductCategories( siteId ) {
 
 		dispatch( getAction );
 
-		const jpPath = `/jetpack-blogs/${ siteId }/rest-api/`;
-		const apiPath = '/wc/v3/products/categories';
+		const successAction = fetchProductCategoriesSuccess( siteId );
+		const failureAction = setError( siteId, getAction );
 
-		// TODO: Modify this to use the extensions data layer.
-		return wp.req.get( { path: jpPath }, { path: apiPath } )
-			.then( ( { data } ) => {
-				dispatch( fetchProductCategoriesSuccess( siteId, data ) );
-			} )
-			.catch( err => {
-				dispatch( setError( siteId, getAction, err ) );
-			} );
+		const action = get( siteId, 'products/categories', successAction, failureAction, true );
+		console.log( 'action: ', action );
+		dispatch( action );
 	};
 }
 
-export function fetchProductCategoriesSuccess( siteId, data ) {
-	if ( ! isValidCategoriesArray( data ) ) {
-		const originalAction = {
-			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
+export function fetchProductCategoriesSuccess( siteId ) {
+	return ( dispatch, getState, data ) => {
+		console.log( '**** Got data: ', data );
+
+		if ( ! isValidCategoriesArray( data ) ) {
+			const originalAction = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
+				siteId,
+			};
+
+			return setError( siteId, originalAction, { message: 'Invalid Categories Array', data } );
+		}
+
+		return {
+			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 			siteId,
+			data,
 		};
-
-		return setError( siteId, originalAction, { message: 'Invalid Categories Array', data } );
-	}
-
-	return {
-		type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
-		siteId,
-		data,
 	};
 }
 
