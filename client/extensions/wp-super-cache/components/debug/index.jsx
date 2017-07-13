@@ -75,45 +75,41 @@ class DebugTab extends Component {
 						</FormToggle>
 					</Card>
 
-					{ !! wp_super_cache_debug &&
-						<div>
-							<SectionHeader label={ translate( 'Debug Logs' ) } />
-							<Card>
-								<table>
-									<thead>
-										<tr>
-											<th>{ translate( 'Filename' ) }</th>
-											<th>{ translate( 'Username/Password' ) }</th>
-											<th>{ translate( 'Delete' ) }</th>
-										</tr>
-									</thead>
-									<tbody>
-									{ debugLogs.map( ( { filename, username, isDeleting } ) => (
-										<tr key={ filename }>
-											<td>
-												<ExternalLink href={ filename } target="_blank">
-													{ filename }
-												</ExternalLink>
-											</td>
-											<td>{ username }</td>
-											<td>
-												<Button
-													busy={ isDeleting }
-													className="wp-super-cache__debug-log-delete"
-													compact
-													data-log={ filename }
-													disabled={ isDeleting }
-													onClick={ this.deleteLog }>
-													{ translate( 'Delete' ) }
-												</Button>
-											</td>
-										</tr>
-									) ) }
-									</tbody>
-								</table>
-							</Card>
-						</div>
-					}
+					<SectionHeader label={ translate( 'Debug Logs' ) } />
+					<Card>
+						<table>
+							<thead>
+								<tr>
+									<th>{ translate( 'Filename' ) }</th>
+									<th>{ translate( 'Username/Password' ) }</th>
+									<th>{ translate( 'Delete' ) }</th>
+								</tr>
+							</thead>
+							<tbody>
+							{ debugLogs.map( ( { filename, username, isDeleting } ) => (
+								<tr key={ filename }>
+									<td>
+										<ExternalLink href={ filename } target="_blank">
+											{ filename }
+										</ExternalLink>
+									</td>
+									<td>{ username }</td>
+									<td>
+										<Button
+											busy={ isDeleting }
+											className="wp-super-cache__debug-log-delete"
+											compact
+											data-log={ filename }
+											disabled={ isDeleting }
+											onClick={ this.deleteLog }>
+											{ translate( 'Delete' ) }
+										</Button>
+									</td>
+								</tr>
+							) ) }
+							</tbody>
+						</table>
+					</Card>
 
 					<SectionHeader label={ translate( 'Settings' ) }>
 						<FormButton
