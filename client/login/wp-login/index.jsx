@@ -91,8 +91,7 @@ export class Login extends React.Component {
 		return (
 			<div>
 				<Main className="wp-login__main">
-					{ ! socialConnect &&
-						this.renderLocaleSuggestions() }
+					{ this.renderLocaleSuggestions() }
 
 					<DocumentHead
 						title={ translate( 'Log In', { textOnly: true } ) }
