@@ -19,7 +19,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
-import {
+import reducer, {
 	deleteStatus,
 	items,
 	requesting,
@@ -29,6 +29,14 @@ describe( 'reducer', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 	const filename = '89fe3b92191d36ee7fb3956cd52c704c.php';
+
+	it( 'should include expected keys in return value', () => {
+		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'deleteStatus',
+			'items',
+			'requesting',
+		] );
+	} );
 
 	describe( 'deleteStatus()', () => {
 		const previousState = deepFreeze( {

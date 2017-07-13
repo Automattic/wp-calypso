@@ -81,4 +81,5 @@ export const items = createReducer( {}, {
 export default combineReducers( {
 	deleteStatus,
 	items,
+	requesting,
 } );
