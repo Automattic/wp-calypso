@@ -16,6 +16,8 @@ import { getSiteDescription, getSiteName, getSiteUrl } from 'reader/get-helpers'
 import SiteIcon from 'blocks/site-icon';
 import BlogStickers from 'blocks/blog-stickers';
 import ReaderFeedHeaderSiteBadge from './badge';
+import ReaderEmailSettings from 'blocks/reader-email-settings';
+import userSettings from 'lib/user-settings';
 
 class FeedHeader extends Component {
 	static propTypes = {
@@ -43,6 +45,7 @@ class FeedHeader extends Component {
 		const description = getSiteDescription( { site, feed } );
 		const siteTitle = getSiteName( { feed, site } );
 		const siteUrl = getSiteUrl( { feed, site } );
+		const isEmailBlocked = userSettings.getSetting( 'subscription_delivery_email_blocked' );
 
 		const classes = classnames( 'reader-feed-header', {
 			'is-placeholder': ! site && ! feed,
@@ -66,6 +69,11 @@ class FeedHeader extends Component {
 							! feed.is_error &&
 							<div className="reader-feed-header__follow-button">
 								<ReaderFollowButton siteUrl={ feed.feed_URL } iconSize={ 24 } />
+							</div> }
+						{ site &&
+							! isEmailBlocked &&
+							<div className="reader-feed-header__email-settings">
+								<ReaderEmailSettings siteId={ site.ID } />
 							</div> }
 					</div>
 				</div>

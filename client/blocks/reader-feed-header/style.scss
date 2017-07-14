@@ -191,6 +191,28 @@
 	}
 }
 
+.reader-feed-header__email-settings .gridicons-cog {
+	top: 2px;
+	left: 4px;
+}
+
+.reader-feed-header__email-settings {
+	@include breakpoint( ">660px" ) {
+		margin-top: -1px;
+
+		.gridicons-cog {
+			top: 3px;
+		}
+	}
+}
+
+.reader-feed-header__email-settings .reader-email-settings__button-label {
+	@include breakpoint( ">660px" ) {
+		font-size: 14px;
+		margin-left: 4px;
+	}
+}
+
 // Loading placeholder
 .reader-feed-header.is-placeholder {
 	pointer-events: none;
