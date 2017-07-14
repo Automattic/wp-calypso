@@ -7,6 +7,7 @@ import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_CHANGE_STATUS_FAILURE,
 	COMMENTS_CHANGE_STATUS_SUCESS,
+	COMMENTS_DELETE,
 	COMMENTS_EDIT,
 	COMMENTS_EDIT_FAILURE,
 	COMMENTS_EDIT_SUCCESS,
@@ -196,3 +197,18 @@ export function editComment( siteId, postId, commentId, content ) {
 			);
 	};
 }
+
+/**
+ * Creates a thunk that permanently deletes a comment
+ * @param {Number} siteId site identifier
+ * @param {Number} postId post identifier
+ * @param {Number} commentId comment identifier
+ * @returns {Function} thunk that deletes a comment
+ */
+export const deleteComment = ( siteId, postId, commentId ) => ( {
+	type: COMMENTS_DELETE,
+	siteId,
+	postId,
+	commentId,
+} );
+

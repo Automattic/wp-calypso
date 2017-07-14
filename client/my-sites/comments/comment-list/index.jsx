@@ -12,6 +12,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
  */
 import {
 	changeCommentStatus,
+	deleteComment,
 	likeComment,
 	replyComment,
 	unlikeComment,
@@ -355,7 +356,7 @@ const mapStateToProps = ( state, { siteId, status, order } ) => {
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	changeCommentStatus: ( commentId, postId, status ) => dispatch( changeCommentStatus( siteId, postId, commentId, status ) ),
 	createNotice: ( status, text, options ) => dispatch( createNotice( status, text, options ) ),
-	deleteComment: noop,
+	deleteComment: ( commentId, postId ) => dispatch( deleteComment( siteId, postId, commentId ) ),
 	likeComment: ( commentId, postId ) => dispatch( likeComment( siteId, postId, commentId ) ),
 	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
 	replyComment: ( commentText, postId, parentCommentId ) => dispatch( replyComment( commentText, siteId, postId, parentCommentId ) ),
