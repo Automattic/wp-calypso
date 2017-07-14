@@ -1,18 +1,18 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'lib/post-normalizer', () => require( './lib/post-normalizer' ) );
+jest.mock( 'lib/wp', () => require( './lib/wp' ) );
 
 /**
  * External Dependencies
  */
-var expect = require( 'chai' ).expect,
-	useFileSystemMocks = require( 'test/helpers/use-filesystem-mocks' );
+import { expect } from 'chai';
 
 var	Dispatcher, FeedStreamActionType, FeedPostActionType, FeedPostStore;
 
 describe( 'feed-post-store', function() {
-	useFileSystemMocks( __dirname );
-
 	before( () => {
 		Dispatcher = require( 'dispatcher' );
 		FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action;

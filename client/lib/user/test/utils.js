@@ -14,7 +14,7 @@ import sinon from 'sinon';
  */
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'UserUtils', () => {
+describe.skip( 'UserUtils', () => {
 	let UserUtils, user, configMock;
 
 	useMockery( mockery => {

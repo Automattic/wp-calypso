@@ -1,28 +1,22 @@
+jest.mock( 'lib/wporg', () => require( './mocks/wporg' ) );
+jest.mock( 'lib/impure-lodash', () => ( {
+	debounce: cb => cb,
+} ) );
+
 /**
  * External dependencies
  */
-
 import { assert } from 'chai';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
-import mockedWporg from './mocks/wporg';
+import mockedWporg from 'lib/wporg';
+import WPorgActions from 'lib/plugins/wporg-data/actions';
 
 describe( 'WPorg Data Actions', () => {
-	let WPorgActions;
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/wporg', mockedWporg );
-		mockery.registerMock( 'lib/impure-lodash', {
-			debounce: cb => cb,
-		} );
-	} );
-
 	beforeEach( () => {
-		WPorgActions = require( 'lib/plugins/wporg-data/actions' );
 		WPorgActions.reset();
 		mockedWporg.reset();
 	} );

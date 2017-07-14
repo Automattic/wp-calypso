@@ -1,6 +1,12 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'lib/wp', () => require( './mocks/wpcom' ) );
+jest.mock( 'lib/analytics', () => ( {
+	mc: { bumpStat: () => {} },
+	tracks: { recordEvent: () => {} }
+} ) );
 
 /**
  * External dependencies
@@ -12,20 +18,12 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import actions from 'lib/plugins/actions';
 import siteData from './fixtures/site';
 import mockedWpcom from './mocks/wpcom';
 
 describe( 'WPcom Data Actions', () => {
-	let actions;
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/wp', mockedWpcom );
-		mockery.registerMock( 'lib/analytics', { mc: { bumpStat: noop }, tracks: { recordEvent: noop } } );
-	} );
-
 	beforeEach( () => {
-		actions = require( 'lib/plugins/actions' );
 		actions.resetQueue();
 		mockedWpcom.undocumented().reset();
 	} );
@@ -38,60 +36,55 @@ describe( 'WPcom Data Actions', () => {
 		assert.isFunction( actions.installPlugin );
 	} );
 
-	it( 'when installing a plugin, it should send a install request to .com', done => {
-		actions.installPlugin( siteData, 'test', noop )
+	it( 'when installing a plugin, it should send a install request to .com', () => {
+		return actions.installPlugin( siteData, 'test', noop )
 			.then( () => {
 				assert.equal( mockedWpcom.getActivity().pluginsInstallCalls, 1 );
-				done();
-			} )
-			.catch( done );
+			} );
 	} );
 
-	it( 'when installing a plugin, it should send an activate request to .com', done => {
-		actions.installPlugin( siteData, 'test', noop )
+	it( 'when installing a plugin, it should send an activate request to .com', () => {
+		return actions.installPlugin( siteData, 'test', noop )
 			.then( () => {
 				assert.equal( mockedWpcom.getActivity().pluginsActivateCalls, 1 );
-				done();
-			} )
-			.catch( done );
+			} );
 	} );
 
 	it( 'when installing a plugin, it should not send a request to .com when the site doesn\'t allow us to update its files', () => {
-		actions.installPlugin( { canUpdateFiles: false }, 'test', noop );
-		assert.equal( mockedWpcom.getActivity().pluginsInstallCalls, 0 );
+		return actions.installPlugin( { canUpdateFiles: false }, 'test', noop )
+			.catch( error => {
+				assert.equal( error, 'Error: Can\'t update files on the site' );
+				assert.equal( mockedWpcom.getActivity().pluginsInstallCalls, 0 );
+			} );
 	} );
 
-	it( 'when installing a plugin, it should return a rejected promise if the site files can\'t be updated', done => {
-		actions.installPlugin( { canUpdateFiles: false, capabilities: { manage_options: true }, }, 'test', noop )
-			.then( () => done( 'Promise should be rejected' ) )
-			.catch( () => done() );
+	it( 'when installing a plugin, it should return a rejected promise if the site files can\'t be updated', () => {
+		return actions.installPlugin( { canUpdateFiles: false, capabilities: { manage_options: true }, }, 'test', noop )
+			.catch( error => assert.equal( error, 'Error: Can\'t update files on the site' ) );
 	} );
 
-	it( 'when installing a plugin, it should return a rejected promise if user can\'t manage the site', done => {
-		actions.installPlugin( { canUpdateFiles: false, capabilities: { manage_options: true }, }, 'test', noop )
-			.then( () => done( 'Promise should be rejected' ) )
-			.catch( () => done() );
+	it( 'when installing a plugin, it should return a rejected promise if user can\'t manage the site', () => {
+		return actions.installPlugin( { canUpdateFiles: false, capabilities: { manage_options: true }, }, 'test', noop )
+			.catch( error => assert.equal( error, 'Error: Can\'t update files on the site' ) );
 	} );
 
 	it( 'Actions should have method removePlugin', () => {
 		assert.isFunction( actions.removePlugin );
 	} );
 
-	it( 'when removing a plugin, it should send a remove request to .com', done => {
-		actions.removePlugin( {
+	it( 'when removing a plugin, it should send a remove request to .com', () => {
+		return actions.removePlugin( {
 			canUpdateFiles: true,
 			user_can_manage: true,
 			capabilities: { manage_options: true },
 		}, {}, noop )
 			.then( () => {
 				assert.equal( mockedWpcom.getActivity().pluginsRemoveCalls, 1 );
-				done();
-			} )
-			.catch( done );
+			} );
 	} );
 
-	it( 'when removing a plugin, it should send an deactivate request to .com', done => {
-		actions.removePlugin( {
+	it( 'when removing a plugin, it should send an deactivate request to .com', () => {
+		return actions.removePlugin( {
 			canUpdateFiles: true,
 			user_can_manage: true,
 			capabilities: { manage_options: true },
@@ -99,9 +92,7 @@ describe( 'WPcom Data Actions', () => {
 		}, { active: true }, noop )
 		.then( () => {
 			assert.equal( mockedWpcom.getActivity().pluginsDeactivateCalls, 1 );
-			done();
-		} )
-		.catch( done );
+		} );
 	} );
 
 	it( 'when removing a plugin, it should not send a request to .com when the site doesn\'t allow us to update its files', () => {

@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'lib/sites-list', () => require( './mocks/sites-list' ) );
+jest.mock( 'lib/analytics', () => ( {} ) );
 
 /**
  * External dependencies
@@ -10,33 +12,16 @@ import { assert } from 'chai' ;
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
 import { useFakeTimers } from 'test/helpers/use-sinon';
-
 import plugins from './fixtures/plugins';
 import site from './fixtures/site';
 import multiSite from './fixtures/multi-site';
 import actions from './fixtures/actions';
 import updatePluginData from './fixtures/updated-plugin';
-import mockedSitesList from './mocks/sites-list';
-
-/**
- * setup a react test enviroment
- */
+import Dispatcher from 'dispatcher';
+import PluginsStore from 'lib/plugins/store';
 
 describe( 'Plugins Store', () => {
-	let Dispatcher, PluginsStore;
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/sites-list', mockedSitesList );
-		mockery.registerMock( 'lib/analytics', {} );
-	} );
-
-	beforeEach( () => {
-		Dispatcher = require( 'dispatcher' );
-		PluginsStore = require( 'lib/plugins/store' );
-	} );
-
 	it( 'Store should be an object', () => {
 		assert.isObject( PluginsStore );
 	} );

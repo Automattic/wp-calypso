@@ -1,18 +1,13 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import { noop } from 'lodash';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import useMockery from 'test/helpers/use-mockery';
 
 const DUMMY_SITE_ID = 1,
 	DUMMY_MEDIA_ID = 10,
@@ -24,15 +19,6 @@ const DUMMY_SITE_ID = 1,
 
 describe( 'MediaStore', function() {
 	let Dispatcher, sandbox, MediaStore, handler;
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/wp', {
-			me: () => ( {
-				get: noop
-			} ),
-			site: noop
-		} );
-	} );
 
 	before( function() {
 		Dispatcher = require( 'dispatcher' );

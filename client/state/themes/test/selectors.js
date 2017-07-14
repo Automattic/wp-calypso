@@ -1258,8 +1258,8 @@ describe( 'themes selectors', () => {
 					}
 				};
 
-				context( 'in the browser', () => {
-					before( () => {
+				describe( 'in the browser', () => {
+					beforeEach( () => {
 						global.window = {
 							location: {
 								href: 'https://wordpress.com'
@@ -1267,8 +1267,8 @@ describe( 'themes selectors', () => {
 						};
 					} );
 
-					after( () => {
-						delete global.window;
+					afterEach( () => {
+						global.window = undefined;
 					} );
 
 					it( 'should return customizer URL with return arg and un-suffixed theme ID', () => {
@@ -1279,7 +1279,7 @@ describe( 'themes selectors', () => {
 					} );
 				} );
 
-				context( 'on the server', () => {
+				describe( 'on the server', () => {
 					it( 'should return customizer URL with un-suffixed theme ID', () => {
 						const customizeUrl = getThemeCustomizeUrl( state, 'twentysixteen', 77203074 );
 						expect( customizeUrl ).to.equal( 'https://example.net/wp-admin/customize.php?theme=twentysixteen' );
@@ -1310,8 +1310,8 @@ describe( 'themes selectors', () => {
 					}
 				};
 
-				context( 'in the browser', () => {
-					before( () => {
+				describe( 'in the browser', () => {
+					beforeEach( () => {
 						global.window = {
 							location: {
 								href: 'https://wordpress.com'
@@ -1319,8 +1319,8 @@ describe( 'themes selectors', () => {
 						};
 					} );
 
-					after( () => {
-						delete global.window;
+					afterEach( () => {
+						global.window = undefined;
 					} );
 
 					it( 'should return customizer URL with return arg and unsuffixed theme ID', () => {
@@ -1331,7 +1331,7 @@ describe( 'themes selectors', () => {
 					} );
 				} );
 
-				context( 'on the server', () => {
+				describe( 'on the server', () => {
 					it( 'should return customizer URL with unsuffixed theme ID', () => {
 						const customizeUrl = getThemeCustomizeUrl( state, 'twentysixteen', 77203074 );
 						expect( customizeUrl ).to.equal( 'https://example.net/wp-admin/customize.php?theme=twentysixteen' );

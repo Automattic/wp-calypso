@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'signup/config/flows', () => require( './signup/config/flows' ) );
+jest.mock( 'signup/config/steps', () => require( './signup/config/steps' ) );
 
 /**
  * External dependencies
@@ -20,8 +22,6 @@ describe( 'flow-controller', function() {
 		SignupFlowController,
 		SignupActions,
 		signupFlowController;
-
-	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
 
 	before( () => {
 		SignupProgressStore = require( '../progress-store' );

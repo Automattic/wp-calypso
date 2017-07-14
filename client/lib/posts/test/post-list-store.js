@@ -1,20 +1,20 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
 /**
  * External dependencies
  */
 import { assert } from 'chai';
-import { isPlainObject, isArray, noop } from 'lodash';
-import mockery from 'mockery';
+import { isPlainObject, isArray } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
-
-let Dispatcher;
+import Dispatcher from 'dispatcher';
+import { getRemovedPosts } from 'lib/posts/post-list-store';
+import postListStoreFactory from 'lib/posts/post-list-store-factory';
 
 /**
  * Mock Data
@@ -103,24 +103,7 @@ function dispatchQueryPosts( postListStoreId, options ) {
 }
 
 describe( 'post-list-store', () => {
-	let defaultPostListStore, getRemovedPosts, postListStoreFactory;
-
-	useMockery();
-
-	before( () => {
-		mockery.registerMock( 'lib/wp', {
-			me: () => ( {
-				get: noop
-			} )
-		} );
-		mockery.registerAllowable( 'lib/posts/post-list-store-factory' );
-		mockery.registerAllowable( 'lib/posts/post-list-cache-store' );
-		mockery.registerAllowable( 'lib/posts/post-list-store' );
-
-		getRemovedPosts = require( 'lib/posts/post-list-store' ).getRemovedPosts;
-		postListStoreFactory = require( 'lib/posts/post-list-store-factory' );
-		Dispatcher = require( 'dispatcher' );
-	} );
+	let defaultPostListStore;
 
 	beforeEach( () => {
 		postListStoreFactory._reset();

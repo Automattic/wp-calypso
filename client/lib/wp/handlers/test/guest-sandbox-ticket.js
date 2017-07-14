@@ -1,46 +1,27 @@
+jest.mock( 'store', () => require( './mocks/store' ) );
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
 
-let deleteOldTicket, GUEST_TICKET_LOCALFORAGE_KEY, injectGuestSandboxTicketHandler;
+import {
+	deleteOldTicket,
+	GUEST_TICKET_LOCALFORAGE_KEY,
+	injectGuestSandboxTicketHandler
+} from '../guest-sandbox-ticket';
 
-let storeData = {};
-const store = {
-	get( key ) {
-		return storeData[ key ];
-	},
-
-	set( key, value ) {
-		storeData[ key ] = value;
-	},
-
-	remove( key ) {
-		delete storeData[ key ];
-	}
-};
-
-describe.skip( 'guest-sandbox-ticket', () => {
-	useMockery( ( mockery ) => {
-		mockery.registerMock( 'store', store );
-
-		const guestSandboxTicket = require( '../guest-sandbox-ticket' );
-
-		deleteOldTicket = guestSandboxTicket.deleteOldTicket;
-		GUEST_TICKET_LOCALFORAGE_KEY = guestSandboxTicket.GUEST_TICKET_LOCALFORAGE_KEY;
-		injectGuestSandboxTicketHandler = guestSandboxTicket.injectGuestSandboxTicketHandler;
-	} );
-
+describe( 'guest-sandbox-ticket', () => {
 	beforeEach( () => {
-		storeData = {};
+		store.clear();
 	} );
 
-	describe.skip( '#deleteOldTicket', () => {
+	describe( '#deleteOldTicket', () => {
 		it( 'should remove tickets older than two hours', () => {
 			store.set( GUEST_TICKET_LOCALFORAGE_KEY, {
 				value: 'foo',
@@ -66,7 +47,7 @@ describe.skip( 'guest-sandbox-ticket', () => {
 		} );
 	} );
 
-	describe.skip( '#injectGuestSandboxTicketHandler', () => {
+	describe( '#injectGuestSandboxTicketHandler', () => {
 		it( 'should update `wpcom` to add the ticket param if present', ( done ) => {
 			const ticket = {
 				value: 'foo',

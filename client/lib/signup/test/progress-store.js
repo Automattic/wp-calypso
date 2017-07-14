@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'signup/config/steps', () => require( './signup/config/steps' ) );
 
 /**
  * External dependencies
@@ -13,23 +14,12 @@ import { defer, find, last, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery' ;
+import Dispatcher from 'dispatcher';
 
 describe( 'progress-store', function() {
-	let SignupProgressStore, SignupActions, Dispatcher;
-
-	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
+	let SignupProgressStore, SignupActions;
 
 	before( () => {
-		Dispatcher = require( 'dispatcher' );
-
-		useMockery( ( mockery ) => {
-			mockery.registerMock( 'dispatcher', Dispatcher );
-			mockery.registerMock( './dependency-store', {
-				dispatchToken: Dispatcher.register( ()=> {} )
-			} );
-		} );
-
 		SignupProgressStore = require( '../progress-store' );
 		SignupActions = require( '../actions' );
 	} );

@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'signup/config/steps', () => require( './signup/config/steps' ) );
 
 /**
  * External dependencies
@@ -17,8 +18,6 @@ describe( 'dependency-store', function() {
 	let SignupProgressStore,
 		SignupDependencyStore,
 		SignupActions;
-
-	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
 
 	before( () => {
 		SignupProgressStore = require( '../progress-store' );

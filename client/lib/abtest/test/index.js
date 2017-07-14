@@ -17,7 +17,7 @@ import useMockery from 'test/helpers/use-mockery';
 const DATE_BEFORE = '2015-06-30T01:32:21.196Z';
 const DATE_AFTER = '2016-06-30T01:32:21.196Z';
 
-describe( 'abtest', () => {
+describe.skip( 'abtest', () => {
 	let abtest;
 	let mockedUser = {};
 	let ABTests;

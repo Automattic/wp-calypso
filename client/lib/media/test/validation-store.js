@@ -1,15 +1,18 @@
+jest.mock( 'lib/sites-list', () => () => ( {
+	getSite: () => ( {
+		options: {
+			allowed_file_types: [ 'gif', 'pdf', 'avi' ],
+			max_upload_size: 1024
+		}
+	} )
+} ) );
+
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { assign } from 'lodash';
-import mockery from 'mockery';
+import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import useMockery from 'test/helpers/use-mockery';
 
 /**
  * Module variables
@@ -18,10 +21,8 @@ const DUMMY_SITE_ID = 1;
 const DUMMY_MEDIA_OBJECT = { ID: 100, title: 'Image', extension: 'exe' };
 const ERROR_GLOBAL_ITEM_ID = 0;
 
-describe.skip( 'MediaValidationStore', function() {
+describe( 'MediaValidationStore', function() {
 	let sandbox, MediaValidationStore, handler, Dispatcher, MediaValidationErrors;
-
-	useMockery();
 
 	before( function() {
 		Dispatcher = require( 'dispatcher' );
@@ -30,21 +31,6 @@ describe.skip( 'MediaValidationStore', function() {
 		// Sinon
 		sandbox = sinon.sandbox.create();
 		sandbox.spy( Dispatcher, 'register' );
-
-		// Mockery
-		mockery.enable( { warnOnReplace: false, warnOnUnregistered: false } );
-		mockery.registerMock( 'lib/sites-list', function() {
-			return {
-				getSite: function() {
-					return {
-						options: {
-							allowed_file_types: [ 'gif', 'pdf', 'avi' ],
-							max_upload_size: 1024
-						}
-					};
-				}
-			};
-		} );
 
 		// Load store
 		MediaValidationStore = require( '../validation-store' );
@@ -103,7 +89,7 @@ describe.skip( 'MediaValidationStore', function() {
 		} );
 	}
 
-	describe.skip( '#validateItem()', function() {
+	describe( '#validateItem()', function() {
 		var validateItem;
 
 		before( function() {
@@ -150,7 +136,7 @@ describe.skip( 'MediaValidationStore', function() {
 		} );
 	} );
 
-	describe.skip( '#clearValidationErrors()', function() {
+	describe( '#clearValidationErrors()', function() {
 		var clearValidationErrors;
 
 		before( function() {
@@ -176,7 +162,7 @@ describe.skip( 'MediaValidationStore', function() {
 		} );
 	} );
 
-	describe.skip( '#clearValidationErrorsByType', function() {
+	describe( '#clearValidationErrorsByType', function() {
 		var clearValidationErrorsByType;
 
 		before( function() {
@@ -199,7 +185,7 @@ describe.skip( 'MediaValidationStore', function() {
 		} );
 	} );
 
-	describe.skip( '#getAllErrors()', function() {
+	describe( '#getAllErrors()', function() {
 		it( 'should return an empty object when no errors exist', function() {
 			var errors = MediaValidationStore.getAllErrors( DUMMY_SITE_ID );
 
@@ -218,7 +204,7 @@ describe.skip( 'MediaValidationStore', function() {
 		} );
 	} );
 
-	describe.skip( '#getErrors()', function() {
+	describe( '#getErrors()', function() {
 		it( 'should return an empty array when no errors exist', function() {
 			var errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
 
@@ -236,7 +222,7 @@ describe.skip( 'MediaValidationStore', function() {
 		} );
 	} );
 
-	describe.skip( '.dispatchToken', function() {
+	describe( '.dispatchToken', function() {
 		it( 'should expose its dispatcher ID', function() {
 			expect( MediaValidationStore.dispatchToken ).to.not.be.undefined;
 		} );

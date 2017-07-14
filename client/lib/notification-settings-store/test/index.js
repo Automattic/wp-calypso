@@ -10,7 +10,7 @@ import mockery from 'mockery';
  */
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'index', () => {
+describe.skip( 'index', () => {
 	let NotificationSettingsStore,
 		NotificationSettingsStoreActions,
 		getNotificationSettingsStub;

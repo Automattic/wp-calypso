@@ -1,42 +1,26 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
 /**
  * External dependencies
  */
-import { defer, noop } from 'lodash';
+import { defer } from 'lodash';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import Dispatcher from 'dispatcher';
+import PostEditStore from '../post-edit-store';
+import PostActions from '../actions';
 
 describe( 'actions', function() {
-	let Dispatcher, PostActions, PostEditStore, sandbox;
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/wp', {
-			me: () => ( {
-				get: noop
-			} ),
-			site: () => ( {
-				post: () => ( {
-					add: ( query, attributes, callback ) => {
-						callback( null, attributes );
-					}
-				} )
-			} )
-		} );
-	} );
+	let sandbox;
 
 	before( () => {
-		Dispatcher = require( 'dispatcher' );
-		PostEditStore = require( '../post-edit-store' );
-		PostActions = require( '../actions' );
-
 		sandbox = sinon.sandbox.create();
 	} );
 
