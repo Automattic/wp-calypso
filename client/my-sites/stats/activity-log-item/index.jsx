@@ -23,10 +23,12 @@ const debug = debugFactory( 'calypso:activity-log:item' );
 class ActivityLogItem extends Component {
 
 	static propTypes = {
-		allowRestore: PropTypes.bool.isRequired,
-		siteId: PropTypes.number.isRequired,
-		requestRestore: PropTypes.func.isRequired,
 		applySiteOffset: PropTypes.func.isRequired,
+		disableRestore: PropTypes.bool.isRequired,
+		hideRestore: PropTypes.bool,
+		requestRestore: PropTypes.func.isRequired,
+		siteId: PropTypes.number.isRequired,
+
 		log: PropTypes.shape( {
 			group: PropTypes.oneOf( [
 				'attachment',
@@ -147,7 +149,9 @@ class ActivityLogItem extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	static defaultProps = { allowRestore: true };
+	static defaultProps = {
+		disableRestore: false,
+	};
 
 	handleClickRestore = () => {
 		const {
@@ -259,18 +263,23 @@ class ActivityLogItem extends Component {
 
 	renderSummary() {
 		const {
-			allowRestore,
+			disableRestore,
+			hideRestore,
 			translate,
 		} = this.props;
 
-		if ( ! allowRestore ) {
+		if ( hideRestore ) {
 			return null;
 		}
 
 		return (
 			<div className="activity-log-item__action">
 				<EllipsisMenu position="bottom right">
-					<PopoverMenuItem onClick={ this.handleClickRestore } icon="undo">
+					<PopoverMenuItem
+						disabled={ disableRestore }
+						icon="undo"
+						onClick={ this.handleClickRestore }
+					>
 						{ translate( 'Rewind to this point' ) }
 					</PopoverMenuItem>
 				</EllipsisMenu>
