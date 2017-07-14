@@ -43,7 +43,6 @@ import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } 
 import { isRequestingSites } from 'state/sites/selectors';
 import {
 	hasUserAskedADirectlyQuestion,
-	isBusinessPlanUser,
 	isDirectlyFailed,
 	isDirectlyReady,
 	isDirectlyUninitialized,
@@ -652,7 +651,7 @@ const HelpContact = React.createClass( {
 						showDismiss={ false }
 					/>
 				}
-				<HelpContactForm { ...contactFormProps } isBusinessPlanUser={ this.props.isBusinessPlanUser } />
+				<HelpContactForm { ...contactFormProps } />
 			</div>
 		);
 	},
@@ -691,7 +690,6 @@ export default connect(
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			isRequestingSites: isRequestingSites( state ),
-			isBusinessPlanUser: isBusinessPlanUser( state ),
 		};
 	},
 	{
