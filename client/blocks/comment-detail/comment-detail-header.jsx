@@ -34,8 +34,8 @@ export const CommentDetailHeader = ( {
 	isExpanded,
 	postTitle,
 	toggleApprove,
-	toggleLike
 	toggleExpanded,
+	toggleLike,
 	toggleSelected,
 	toggleSpam,
 	toggleTrash,

@@ -43,7 +43,6 @@ export class CommentDetail extends Component {
 		replyComment: PropTypes.func,
 		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
-		submitComment: PropTypes.func,
 		toggleCommentLike: PropTypes.func,
 		toggleCommentSelected: PropTypes.func,
 	};
