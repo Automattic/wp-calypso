@@ -64,7 +64,7 @@ import {
 	getPlanClass
 } from 'lib/plans/constants';
 import { getPlan } from 'lib/plans';
-import { isCurrentPlanPaid } from 'state/sites/selectors';
+import { PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY } from 'lib/plans/constants';
 
 const vpFeatures = {
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: true,
@@ -305,9 +305,13 @@ class JetpackThankYouCard extends Component {
 		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_chat_initiated' );
 	};
 
+	isEligibleForLiveChat() {
+		const { planSlug } = this.props;
+		return planSlug === PLAN_JETPACK_BUSINESS || planSlug === PLAN_JETPACK_BUSINESS_MONTHLY;
+	}
+
 	renderLiveChatButton() {
-		const { isJetpackPaidPlan } = this.props;
-		return isJetpackPaidPlan && (
+		return this.isEligibleForLiveChat() && (
 			<HappyChatButton
 				borderless={ false }
 				className="checkout-thank-you__happychat-button thank-you-card__button"
@@ -610,10 +614,12 @@ export default connect(
 		const site = getSelectedSite( state );
 		const whitelist = ownProps.whitelist || false;
 		let plan = getCurrentPlan( state, siteId );
+		let planSlug;
 		const planClass = plan && plan.productSlug
 			? getPlanClass( plan.productSlug )
 			: '';
 		if ( plan ) {
+			planSlug = plan.productSlug;
 			plan = getPlan( plan.productSlug );
 		}
 		const planFeatures = plan && plan.getFeatures
@@ -630,7 +636,6 @@ export default connect(
 			hasRequested: hasRequested( state, siteId ),
 			isInstalling: isInstalling( state, siteId, whitelist ),
 			isFinished: isFinished( state, siteId, whitelist ),
-			isJetpackPaidPlan: isJetpackSite( state, siteId ) && isCurrentPlanPaid( state, siteId ),
 			plugins: getPluginsForSite( state, siteId, whitelist ),
 			activePlugin: getActivePlugin( state, siteId, whitelist ),
 			nextPlugin: getNextPlugin( state, siteId, whitelist ),
@@ -638,7 +643,8 @@ export default connect(
 			isRequestingSites: isRequestingSites( state ),
 			siteId,
 			planFeatures,
-			planClass
+			planClass,
+			planSlug
 		};
 	},
 	dispatch => bindActionCreators( { requestSites, fetchPluginData, installPlugin }, dispatch )
