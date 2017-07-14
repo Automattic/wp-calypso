@@ -3,6 +3,7 @@
  */
 import {
 	PLUGIN_UPLOAD,
+	PLUGIN_UPLOAD_CLEAR,
 	PLUGIN_UPLOAD_COMPLETE,
 	PLUGIN_UPLOAD_ERROR,
 	PLUGIN_UPLOAD_PROGRESS,
@@ -67,5 +68,18 @@ export function pluginUploadError( siteId, error ) {
 		type: PLUGIN_UPLOAD_ERROR,
 		siteId,
 		error,
+	};
+}
+
+/**
+ * Clear any plugin upload data for a site.
+ *
+ * @param {number} siteId site ID
+ * @return {Object} action object
+ */
+export function clearPluginUpload( siteId ) {
+	return {
+		type: PLUGIN_UPLOAD_CLEAR,
+		siteId,
 	};
 }

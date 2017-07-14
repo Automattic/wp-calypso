@@ -22,7 +22,7 @@ export const uploadPlugin = ( { dispatch }, action ) => {
 };
 
 export const uploadComplete = ( { dispatch }, { siteId }, next, data ) => {
-	const { id: pluginId } = data;
+	const { slug: pluginId } = data;
 	dispatch( completePluginUpload( siteId, pluginId ) );
 	dispatch( {
 		type: PLUGIN_INSTALL_REQUEST_SUCCESS,
