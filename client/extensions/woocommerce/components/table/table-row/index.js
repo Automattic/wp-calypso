@@ -8,7 +8,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import onKeyDownCallback from 'woocommerce/lib/keydown-callback';
+import getKeyboardHandler from 'woocommerce/lib/get-keyboard-handler';
 
 const TableRow = ( { className, isHeader, href, children, ...props } ) => {
 	const rowClasses = classnames( 'table-row', className, {
@@ -33,7 +33,7 @@ const TableRow = ( { className, isHeader, href, children, ...props } ) => {
 			role="button"
 			tabIndex="0"
 			onClick={ goToHref }
-			onKeyDown={ onKeyDownCallback( goToHref ) }
+			onKeyDown={ getKeyboardHandler( goToHref ) }
 			{ ...props }>
 			{ children }
 		</tr>
