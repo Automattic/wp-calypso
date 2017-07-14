@@ -6,7 +6,7 @@ import { getUserPurchases } from 'state/purchases/selectors';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 
 /**
- * Returns an boolean flag indicating if the current user is a business plan user.
+ * Returns a boolean flag indicating if the current user is a business plan user.
  *
  * @param {Object}   state Global state tree
  * @return {Boolean} If the current user is a business plan user.

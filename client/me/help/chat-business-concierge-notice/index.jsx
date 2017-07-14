@@ -62,5 +62,5 @@ class ChatBusinessConciergeNotice extends Component {
 export default connect(
 	( state ) => ( {
 		isBusinessPlanUser: isBusinessPlanUser( state ),
-	} ),
+	} )
 )( localize( ChatBusinessConciergeNotice ) );
