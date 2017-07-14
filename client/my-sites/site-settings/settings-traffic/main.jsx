@@ -17,6 +17,7 @@ import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
 import SeoSettingsHelpCard from 'my-sites/site-settings/seo-settings/help';
 import AnalyticsSettings from 'my-sites/site-settings/form-analytics';
 import JetpackSiteStats from 'my-sites/site-settings/jetpack-site-stats';
+import JetpackAds from 'my-sites/site-settings/jetpack-ads';
 import RelatedPosts from 'my-sites/site-settings/related-posts';
 import AmpJetpack from 'my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'my-sites/site-settings/amp/wpcom';
@@ -55,6 +56,14 @@ const SiteSettingsTraffic = ( {
 				<JetpackSiteStats
 					handleAutosavingToggle={ handleAutosavingToggle }
 					setFieldValue={ setFieldValue }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
+			}
+			{ jetpackSettingsUiSupported &&
+				<JetpackAds
+					handleAutosavingToggle={ handleAutosavingToggle }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
@@ -111,6 +120,7 @@ const getFormSettings = partialRight( pick, [
 	'hide_smile',
 	'count_roles',
 	'roles',
+	'enable_header_ad',
 	'jetpack_relatedposts_allowed',
 	'jetpack_relatedposts_enabled',
 	'jetpack_relatedposts_show_headline',
