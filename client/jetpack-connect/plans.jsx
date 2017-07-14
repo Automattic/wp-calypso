@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import page from 'page';
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -209,6 +210,10 @@ class Plans extends Component {
 		const checkoutPath = `/checkout/${ this.props.selectedSite.slug }`;
 		// clears whatever we had stored in local cache
 		this.props.selectPlanInAdvance( null, this.props.selectedSiteSlug );
+
+		if ( cartItem.product_slug === get( this.props, 'selectedSite.plan.product_slug', null ) ) {
+			return this.redirect( CALYPSO_PLANS_PAGE );
+		}
 
 		if ( ! cartItem || cartItem.product_slug === PLAN_JETPACK_FREE ) {
 			return this.selectFreeJetpackPlan();
