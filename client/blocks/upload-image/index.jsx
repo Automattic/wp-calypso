@@ -33,10 +33,11 @@ class UploadImage extends Component {
 
 	static propTypes = {
 		isUploading: PropTypes.bool,
-		imageEditorModalClassNames: PropTypes.string,
 		allowedAspectRatios: PropTypes.arrayOf( PropTypes.oneOf( AspectRatiosValues ) ),
 		texts: PropTypes.object,
 		onImageEditorDone: PropTypes.func,
+		additionalImageEditorClasses: PropTypes.string,
+		additionalClasses: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -89,12 +90,12 @@ class UploadImage extends Component {
 
 	renderImageEditor() {
 		const {
-			imageEditorModalClassNames,
+			additionalImageEditorClasses,
 			allowedAspectRatios,
 			texts,
 		} = this.props;
 
-		const classes = classnames( 'upload-image-modal', imageEditorModalClassNames );
+		const classes = classnames( 'upload-image-modal', additionalImageEditorClasses );
 
 		if ( this.state.isEditingImage ) {
 			return (
@@ -120,6 +121,7 @@ class UploadImage extends Component {
 			isUploading,
 			translate,
 			texts,
+			additionalClasses
 		} = this.props;
 
 		let {
@@ -141,7 +143,7 @@ class UploadImage extends Component {
 		}
 
 		return (
-			<div className={	classnames( 'upload-image' ) } >
+			<div className={ classnames( 'upload-image', additionalClasses ) } >
 				{ this.renderImageEditor() }
 
 				<FilePicker accept="image/*" onPick={ this.onReceiveFile }>

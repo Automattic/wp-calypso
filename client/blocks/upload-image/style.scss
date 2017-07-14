@@ -1,3 +1,7 @@
+.upload-image {
+	display: inline-block;
+}
+
 .upload-image-modal.dialog.card {
 	max-width: none;
 	padding: 0;
@@ -33,12 +37,6 @@
 	align-items: center;
 	justify-content: center;
 	flex-direction: column;
-	margin-bottom: 24px;
 	background-color: $gray-light;
 	box-shadow: inset 0 0 0 1px lighten( $gray, 25% );
-
-	@include breakpoint( ">660px" ) {
-		flex: none;
-		margin-right: 24px;
-	}
 }
