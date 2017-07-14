@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import AddressView from 'woocommerce/components/address-view';
+import Button from 'components/button';
 import Card from 'components/card';
 import Dialog from 'components/dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
@@ -137,7 +138,7 @@ class StoreAddress extends Component {
 						<FormLabel>{ translate( 'Store location' ) }</FormLabel>
 					) }
 					<AddressView address={ this.state.address } />
-					<a onClick={ this.onShowDialog }>{ translate( 'Edit address' ) }</a>
+					<Button borderless onClick={ this.onShowDialog }>{ translate( 'Edit address' ) }</Button>
 				</div>
 			);
 		}
