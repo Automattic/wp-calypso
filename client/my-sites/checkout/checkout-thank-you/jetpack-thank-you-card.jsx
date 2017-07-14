@@ -63,7 +63,8 @@ import {
 	FEATURES_LIST,
 	getPlanClass
 } from 'lib/plans/constants';
-import { isFreePlan, getPlan } from 'lib/plans';
+import { getPlan } from 'lib/plans';
+import { isCurrentPlanPaid } from 'state/sites/selectors';
 
 const vpFeatures = {
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: true,
@@ -612,7 +613,6 @@ export default connect(
 		const planClass = plan && plan.productSlug
 			? getPlanClass( plan.productSlug )
 			: '';
-		const isJetpackFreePlan = isJetpackSite( state, siteId ) && plan && plan.productSlug && isFreePlan( plan.productSlug );
 		if ( plan ) {
 			plan = getPlan( plan.productSlug );
 		}
@@ -630,7 +630,7 @@ export default connect(
 			hasRequested: hasRequested( state, siteId ),
 			isInstalling: isInstalling( state, siteId, whitelist ),
 			isFinished: isFinished( state, siteId, whitelist ),
-			isJetpackPaidPlan: ! isJetpackFreePlan,
+			isJetpackPaidPlan: isJetpackSite( state, siteId ) && isCurrentPlanPaid( state, siteId ),
 			plugins: getPluginsForSite( state, siteId, whitelist ),
 			activePlugin: getActivePlugin( state, siteId, whitelist ),
 			nextPlugin: getNextPlugin( state, siteId, whitelist ),
