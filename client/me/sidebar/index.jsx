@@ -18,12 +18,13 @@ const Sidebar = require( 'layout/sidebar' ),
 	config = require( 'config' ),
 	ProfileGravatar = require( 'me/profile-gravatar' ),
 	eventRecorder = require( 'me/event-recorder' ),
-	userUtilities = require( 'lib/user/utils' );
+	user = require( 'lib/user' )();
 
 import Button from 'components/button';
 import purchasesPaths from 'me/purchases/paths';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { logoutUser } from 'state/login/actions';
 
 const MeSidebar = React.createClass( {
 
@@ -47,7 +48,11 @@ const MeSidebar = React.createClass( {
 		if ( isEnLocale && ! config.isEnabled( 'desktop' ) ) {
 			redirect = '/?apppromo';
 		}
-		userUtilities.logout( redirect );
+
+		this.props.logoutUser( redirect ).then( ( { redirect_to } ) => {
+			user.clear( () => location.href = redirect_to || '/' );
+		} );
+
 		this.recordClickEvent( 'Sidebar Sign Out Link' );
 	},
 
@@ -180,8 +185,8 @@ const MeSidebar = React.createClass( {
 
 function mapStateToProps( state ) {
 	return {
-		currentUser: getCurrentUser( state )
+		currentUser: getCurrentUser( state ),
 	};
 }
 
-export default connect( mapStateToProps, { setNextLayoutFocus } )( MeSidebar );
+export default connect( mapStateToProps, { logoutUser, setNextLayoutFocus } )( MeSidebar );
