@@ -306,7 +306,6 @@ export class CommentList extends Component {
 							replyComment={ this.replyComment }
 							setCommentStatus={ this.setCommentStatus }
 							siteId={ siteId }
-							submitComment={ this.submitComment }
 							toggleCommentLike={ this.toggleCommentLike }
 							toggleCommentSelected={ this.toggleCommentSelected }
 						/>

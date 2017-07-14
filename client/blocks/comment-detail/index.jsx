@@ -175,6 +175,7 @@ export class CommentDetail extends Component {
 					postTitle={ postTitle }
 					toggleApprove={ this.toggleApprove }
 					toggleExpanded={ this.toggleExpanded }
+					toggleLike={ this.toggleLike }
 					toggleSelected={ this.toggleSelected }
 					toggleSpam={ this.toggleSpam }
 					toggleTrash={ this.toggleTrash }

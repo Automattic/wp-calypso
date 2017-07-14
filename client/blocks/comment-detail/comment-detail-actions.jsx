@@ -30,6 +30,7 @@ export const CommentDetailActions = ( {
 	commentStatus,
 	deleteCommentPermanently,
 	toggleApprove,
+	toggleLike,
 	toggleSpam,
 	toggleTrash,
 	translate,
@@ -40,7 +41,9 @@ export const CommentDetailActions = ( {
 
 	return (
 		<div className="comment-detail__actions">
-			{ hasAction( commentStatus, 'like' ) && <CommentLikes { ...{ siteId, postId, commentId, commentStatus } } /> }
+			{ hasAction( commentStatus, 'like' ) &&
+				<CommentLikes { ...{ siteId, postId, commentId, commentStatus, toggleLike } } />
+			}
 
 			{ hasAction( commentStatus, 'approve' ) &&
 				<Button

@@ -34,6 +34,7 @@ export const CommentDetailHeader = ( {
 	isExpanded,
 	postTitle,
 	toggleApprove,
+	toggleLike
 	toggleExpanded,
 	toggleSelected,
 	toggleSpam,
@@ -59,6 +60,7 @@ export const CommentDetailHeader = ( {
 					commentStatus={ commentStatus }
 					deleteCommentPermanently={ deleteCommentPermanently }
 					toggleApprove={ toggleApprove }
+					toggleLike={ toggleLike }
 					toggleSpam={ toggleSpam }
 					toggleTrash={ toggleTrash }
 				/>
