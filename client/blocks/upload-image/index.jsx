@@ -141,8 +141,15 @@ class UploadImage extends Component {
 			);
 		}
 
+		const { image } = this.state;
+
 		if ( typeof uploadingContent === 'undefined' ) {
-			uploadingContent = ( <Spinner className="upload-image__spinner" /> );
+			uploadingContent = (
+				<div>
+					<img src={ image } />
+					<Spinner className="upload-image__spinner" />
+				</div>
+			);
 		}
 
 		return (
