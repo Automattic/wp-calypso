@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { find } from 'lodash';
 import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
@@ -37,7 +36,6 @@ import { sendChatMessage as sendHappychatMessage, sendUserInfo } from 'state/hap
 import { openChat as openHappychat } from 'state/ui/happychat/actions';
 import {
 	getCurrentUser,
-	getCurrentUserId,
 	getCurrentUserLocale,
 	getCurrentUserSiteCount,
 } from 'state/current-user/selectors';
@@ -45,15 +43,12 @@ import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } 
 import { isRequestingSites } from 'state/sites/selectors';
 import {
 	hasUserAskedADirectlyQuestion,
+	isBusinessPlanUser,
 	isDirectlyFailed,
 	isDirectlyReady,
 	isDirectlyUninitialized,
 } from 'state/selectors';
 import QueryUserPurchases from 'components/data/query-user-purchases';
-import {
-	getUserPurchases,
-} from 'state/purchases/selectors';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
 
 /**
  * Module variables
@@ -673,7 +668,7 @@ const HelpContact = React.createClass( {
 				<HappychatConnection />
 				<QueryOlark />
 				<QueryTicketSupportConfiguration />
-				<QueryUserPurchases userId={ this.props.userId } />
+				<QueryUserPurchases userId={ this.props.currentUser.ID } />
 			</Main>
 		);
 	}
@@ -681,11 +676,7 @@ const HelpContact = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const userId = getCurrentUserId( state );
-		const purchases = getUserPurchases( state, userId );
-
 		return {
-			userId,
 			currentUserLocale: getCurrentUserLocale( state ),
 			currentUser: getCurrentUser( state ),
 			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
@@ -700,7 +691,7 @@ export default connect(
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			isRequestingSites: isRequestingSites( state ),
-			isBusinessPlanUser: purchases && !! find( purchases, purchase => purchase.productSlug === PLAN_BUSINESS ),
+			isBusinessPlanUser: isBusinessPlanUser( state ),
 		};
 	},
 	{
