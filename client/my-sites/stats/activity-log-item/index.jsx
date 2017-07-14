@@ -24,6 +24,7 @@ class ActivityLogItem extends Component {
 
 	static propTypes = {
 		applySiteOffset: PropTypes.func.isRequired,
+		disableRestore: PropTypes.bool.isRequired,
 		hideRestore: PropTypes.bool,
 		requestRestore: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,

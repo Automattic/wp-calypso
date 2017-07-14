@@ -17,6 +17,7 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
 class ActivityLogDay extends Component {
 	static propTypes = {
 		applySiteOffset: PropTypes.func.isRequired,
+		disableRestore: PropTypes.bool.isRequired,
 		hideRestore: PropTypes.bool,
 		isRewindActive: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
