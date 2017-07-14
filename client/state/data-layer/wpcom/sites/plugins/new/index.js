@@ -37,7 +37,8 @@ export const receiveError = ( { dispatch }, { siteId }, next, error ) => {
 };
 
 export const updateUploadProgress = ( { dispatch }, { siteId }, next, { loaded, total } ) => {
-	dispatch( updatePluginUploadProgress( siteId, loaded, total ) );
+	const progress = total ? ( loaded / total ) * 100 : total;
+	dispatch( updatePluginUploadProgress( siteId, progress ) );
 };
 
 export default {

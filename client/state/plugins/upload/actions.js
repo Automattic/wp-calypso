@@ -28,16 +28,14 @@ export function uploadPlugin( siteId, file ) {
  * Update progress for an uploading plugin.
  *
  * @param {number} siteId site ID
- * @param {number} loaded bytes of plugin zip uploaded so far
- * @param {number} total total bytes to upload
+ * @param {number} progress percentage of file uploaded
  * @return {Object} action object
  */
-export function updatePluginUploadProgress( siteId, loaded, total ) {
+export function updatePluginUploadProgress( siteId, progress ) {
 	return {
 		type: PLUGIN_UPLOAD_PROGRESS,
 		siteId,
-		loaded,
-		total,
+		progress,
 	};
 }
 

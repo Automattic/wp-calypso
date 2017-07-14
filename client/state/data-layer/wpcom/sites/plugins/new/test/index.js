@@ -89,9 +89,9 @@ describe( 'receiveError', () => {
 describe( 'updateUploadProgress', () => {
 	it( 'should dispatch plugin upload progress update', () => {
 		const dispatch = sinon.spy();
-		updateUploadProgress( { dispatch }, { siteId }, null, { loaded: 350, total: 400 } );
+		updateUploadProgress( { dispatch }, { siteId }, null, { loaded: 200, total: 400 } );
 		expect( dispatch ).to.have.been.calledWith(
-			updatePluginUploadProgress( siteId, 350, 400 )
+			updatePluginUploadProgress( siteId, 50 )
 		);
 	} );
 } );
