@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, get, map, pick } from 'lodash';
+import { flowRight, get, pick } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -44,6 +44,7 @@ class DebugTab extends Component {
 		const {
 			debugLogs,
 			fields: {
+				cache_path_url,
 				wp_cache_debug_ip,
 				wp_super_cache_comments,
 				wp_super_cache_debug,
@@ -86,10 +87,10 @@ class DebugTab extends Component {
 								</tr>
 							</thead>
 							<tbody>
-							{ debugLogs.map( ( { filename, username, isDeleting } ) => (
+							{ debugLogs.map( ( { active, filename, username, isDeleting } ) => (
 								<tr key={ filename }>
 									<td>
-										<ExternalLink href={ filename } target="_blank">
+										<ExternalLink href={ cache_path_url + filename } target="_blank">
 											{ filename }
 										</ExternalLink>
 									</td>
@@ -102,7 +103,9 @@ class DebugTab extends Component {
 											data-log={ filename }
 											disabled={ isDeleting }
 											onClick={ this.deleteLog }>
-											{ translate( 'Delete' ) }
+											{ active
+												? translate( 'Reset' )
+												: translate( 'Delete' ) }
 										</Button>
 									</td>
 								</tr>
@@ -223,6 +226,7 @@ class DebugTab extends Component {
 
 const getFormSettings = settings => {
 	return pick( settings, [
+		'cache_path_url',
 		'wp_cache_debug_ip',
 		'wp_super_cache_comments',
 		'wp_super_cache_debug',
@@ -236,18 +240,13 @@ const getFormSettings = settings => {
 const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-
-		const debugLogs = map(
-			getDebugLogs( state, siteId ),
-			( username, filename ) => ( {
-				filename,
-				isDeleting: isDeletingDebugLog( state, siteId, filename ),
-				username,
-			} )
-		);
+		const debugLogs = getDebugLogs( state, siteId );
 
 		return {
-			debugLogs
+			debugLogs: debugLogs.map( ( debugLog ) => ( {
+				...debugLog,
+				isDeleting: isDeletingDebugLog( state, siteId, debugLog.filename ),
+			} ) )
 		};
 	},
 	{ deleteDebugLog },

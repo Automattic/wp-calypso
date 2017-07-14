@@ -18,11 +18,13 @@ describe( 'selectors', () => {
 	const filename = '89fe3b92191d36ee7fb3956cd52c704c.php';
 
 	describe( 'getDebugLogs()', () => {
-		const primaryDebugLogs = {
-			'89fe3b92191d36ee7fb3956cd52c704c.php': '145cc79483f018538a3edc78117622ba'
-		};
+		const primaryDebugLogs = [ {
+			active: true,
+			filename: '89fe3b92191d36ee7fb3956cd52c704c.php',
+			username: '145cc79483f018538a3edc78117622ba',
+		} ];
 
-		it( 'should return empty object if no state exists', () => {
+		it( 'should return empty array if no state exists', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -32,10 +34,10 @@ describe( 'selectors', () => {
 			};
 			const debugLogs = getDebugLogs( state, primarySiteId );
 
-			expect( debugLogs ).to.eql( {} );
+			expect( debugLogs ).to.eql( [] );
 		} );
 
-		it( 'should return an empty object if the site is not attached', () => {
+		it( 'should return an empty array if the site is not attached', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
@@ -49,7 +51,7 @@ describe( 'selectors', () => {
 			};
 			const debugLogs = getDebugLogs( state, secondarySiteId );
 
-			expect( debugLogs ).to.eql( {} );
+			expect( debugLogs ).to.eql( [] );
 		} );
 
 		it( 'should return the debugLogs for a siteId', () => {

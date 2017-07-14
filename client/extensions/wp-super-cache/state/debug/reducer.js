@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { omit } from 'lodash';
+import { filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -72,9 +72,9 @@ export const deleteStatus = createReducer( {}, {
  */
 export const items = createReducer( {}, {
 	[ WP_SUPER_CACHE_REQUEST_DEBUG_LOGS_SUCCESS ]: ( state, { siteId, data } ) => ( { ...state, [ siteId ]: data } ),
-	[ WP_SUPER_CACHE_DELETE_DEBUG_LOG_SUCCESS ]: ( state, { siteId, filename } ) => ( {
+	[ WP_SUPER_CACHE_DELETE_DEBUG_LOG_SUCCESS ]: ( state, { siteId, filename: deletedFilename } ) => ( {
 		...state,
-		[ siteId ]: omit( state[ siteId ], filename )
+		[ siteId ]: filter( state[ siteId ], ( { filename } ) => ( filename !== deletedFilename ) )
 	} )
 } );
 
