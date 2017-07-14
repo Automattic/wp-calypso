@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { get, find, findIndex, flatten, isNumber, map, remove, some } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -10,6 +11,8 @@ import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getAPIShippingZones, areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
 import { getShippingZoneMethods } from './methods/selectors';
+import { getCurrentlyEditingShippingZoneLocationsList } from './locations/selectors';
+import { decodeEntities } from 'lib/formatting';
 
 export const getShippingZonesEdits = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'zones' ] );
@@ -119,6 +122,40 @@ export const getCurrentlyEditingShippingZone = createSelector(
 		];
 	}
 );
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {String} The auto-generated name for the zone, based in its locations.
+ */
+export const generateCurrentlyEditingZoneName = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const locations = getCurrentlyEditingShippingZoneLocationsList( state, 20, siteId );
+	if ( ! locations || ! locations.length ) {
+		return translate( 'New shipping zone' );
+	}
+
+	const locationNames = locations.map( ( { name, postcodeFilter } ) => (
+		postcodeFilter ? `${ name } (${ postcodeFilter })` : decodeEntities( name )
+	) );
+
+	if ( locationNames.length > 10 ) {
+		const remaining = locationNames.length - 10;
+		const listed = locationNames.slice( 0, 10 );
+		return ( translate(
+			'%(locationList)s and %(count)s other region',
+			'%(locationList)s and %(count)s other regions',
+			{
+				count: remaining,
+				args: {
+					locationList: listed.join( ', ' ),
+					count: remaining,
+				}
+			}
+		) );
+	}
+
+	return locationNames.join( ', ' );
+};
 
 /**
  * @param {Object} state Whole Redux state tree

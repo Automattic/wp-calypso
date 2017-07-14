@@ -47,6 +47,7 @@ import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { getCountryName } from 'woocommerce/state/sites/locations/selectors';
 import { isDefaultShippingZoneCreated } from 'woocommerce/state/sites/setup-choices/selectors';
 import { setCreatedDefaultShippingZone } from 'woocommerce/state/sites/setup-choices/actions';
+import { generateCurrentlyEditingZoneName } from 'woocommerce/state/ui/shipping/zones/selectors';
 
 const createShippingZoneSuccess = ( actionList ) => ( dispatch, getState, { sentData, receivedData } ) => {
 	const zoneIdMapping = {
@@ -297,6 +298,10 @@ export const getSaveZoneActionListSteps = ( state ) => {
 	const serverZone = find( serverZones, { id: zoneId } );
 	if ( ! serverZone || serverZone.order !== order ) {
 		zoneProperties.order = order;
+	}
+
+	if ( 0 !== zoneId && ! zoneProperties.name && ! ( serverZone && serverZone.name ) ) {
+		zoneProperties.name = generateCurrentlyEditingZoneName( state, siteId );
 	}
 
 	const methodEdits = zoneEdits.currentlyEditingChanges.methods;
