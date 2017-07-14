@@ -12,6 +12,7 @@ import { noop } from 'lodash';
  */
 import formatCurrency from 'lib/format-currency';
 import CompactCard from 'components/card/compact';
+import FormRadio from 'components/forms/form-radio';
 
 class ProductList extends Component {
 	static propTypes = {
@@ -39,9 +40,7 @@ class ProductList extends Component {
 
 					return (
 						<CompactCard className="editor-simple-payments-modal__list-item" key={ paymentId }>
-							<input
-								className="editor-simple-payments-modal__list-radio"
-								type="radio"
+							<FormRadio
 								name="selection"
 								id={ radioId }
 								value={ paymentId }

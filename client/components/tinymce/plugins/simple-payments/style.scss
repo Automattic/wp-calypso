@@ -82,12 +82,12 @@
 .editor-simple-payments-modal__list-item {
 	display: flex;
 	align-items: center;
-}
 
-input[type="radio"].editor-simple-payments-modal__list-radio {
-	flex: none;
-	margin: 0;
-	margin-right: 24px;
+	.form-radio {
+		flex: none;
+		margin: 0;
+		margin-right: 24px;
+	}
 }
 
 .editor-simple-payments-modal__list-label {
