@@ -75,7 +75,23 @@
 }
 
 .editor-simple-payments-modal__list {
-	padding: 8px 16px;
 	flex: auto;
 	overflow-y: auto;
+}
+
+.editor-simple-payments-modal__list-item {
+	display: flex;
+	align-items: center;
+
+	.form-radio {
+		flex: none;
+		margin: 0;
+		margin-right: 24px;
+	}
+}
+
+.editor-simple-payments-modal__list-label {
+	flex: auto;
+	font-family: $serif;
+	font-weight: bold;
 }
