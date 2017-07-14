@@ -10,8 +10,9 @@ import config from 'config';
 import controller from './controller';
 
 export default () => {
+	page( '/oauth-login', controller.oauthLogin );
+
 	if ( config.isEnabled( 'oauth' ) ) {
-		page( '/oauth-login', controller.oauthLogin );
 		page( '/authorize', controller.authorize );
 		page( '/api/oauth/token', controller.getToken );
 	}
