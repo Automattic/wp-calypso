@@ -137,6 +137,14 @@ class PostByline extends React.Component {
 									<PostTime date={ post.date } />
 								</a>
 							</span> }
+						{ post.last_comment_date_gmt &&
+							<span className="reader-post-card__timestamp">
+								<a className="reader-post-card__timestamp-link"
+									href={ `/read/blogs/${ post.site_ID }/posts/${ post.ID }#comments` }
+									>
+								{', '}Last comment <PostTime date={ post.last_comment_date_gmt } />
+								</a>
+							</span> }
 						{ tags.length > 0 &&
 							<span className="reader-post-card__tags">
 								<Gridicon icon="tag" />
