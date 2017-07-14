@@ -22,7 +22,7 @@ import {
 import { PLUGIN_INSTALL_REQUEST_SUCCESS } from 'state/action-types';
 
 const siteId = 77203074;
-const pluginId = 'hello-dolly/hello';
+const pluginId = 'hello-dolly';
 
 const SUCCESS_RESPONSE = deepFreeze( {
 	active: false,
