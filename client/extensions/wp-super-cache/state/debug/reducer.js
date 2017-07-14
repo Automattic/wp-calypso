@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { findIndex } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
@@ -72,17 +77,51 @@ export const items = createReducer( {}, {
 		...state,
 		[ siteId ]: state[ siteId ].filter( ( { filename } ) => ( filename !== deletedFilename ) )
 	} ),
-	[ WP_SUPER_CACHE_RECEIVE_SETTINGS ]: ( state, { siteId, settings } ) => {
-		if ( settings.wp_super_cache_debug === false ) {
+	[ WP_SUPER_CACHE_RECEIVE_SETTINGS ]: ( state, {
+		siteId,
+		settings: {
+			wp_super_cache_debug,
+			wp_cache_debug_log,
+			wp_cache_debug_username,
+		}
+	} ) => {
+		if ( wp_super_cache_debug === true ) {
+			const filename = wp_cache_debug_log.split( '/' ).pop();
+			const substate = state[ siteId ];
+			const index = findIndex( substate, [ 'filename', filename ] );
+			let newSubstate;
+
+			if ( index !== -1 ) {
+				newSubstate = [
+					...substate.slice( 0, index ),
+					{
+						...substate[ index ],
+						active: true,
+					},
+					...substate.slice( index + 1 )
+				];
+			} else {
+				newSubstate = [
+					...substate,
+					{
+						filename: wp_cache_debug_log.split( '/' ).pop(),
+						username: wp_cache_debug_username,
+						active: true,
+					}
+				];
+			}
 			return {
 				...state,
-				[ siteId ]: state[ siteId ].map( debugLog => ( {
-					...debugLog,
-					active: false,
-				} ) )
+				[ siteId ]: newSubstate,
 			};
 		}
-		return state;
+		return {
+			...state,
+			[ siteId ]: state[ siteId ].map( debugLog => ( {
+				...debugLog,
+				active: false,
+			} ) )
+		};
 	}
 } );
 
