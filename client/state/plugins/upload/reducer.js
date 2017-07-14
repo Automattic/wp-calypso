@@ -29,18 +29,11 @@ export const uploadError = keyedReducer( 'siteId', createReducer( {}, {
 	[ PLUGIN_UPLOAD_COMPLETE ]: () => null,
 } ) );
 
-export const progressLoaded = keyedReducer( 'siteId', createReducer( {}, {
-	[ PLUGIN_UPLOAD_PROGRESS ]: ( state, { loaded } ) => loaded,
-	[ PLUGIN_UPLOAD ]: () => null,
-	[ PLUGIN_UPLOAD_CLEAR ]: () => null,
-	[ PLUGIN_UPLOAD_ERROR ]: () => null,
-} ) );
-
-export const progressTotal = keyedReducer( 'siteId', createReducer( {}, {
-	[ PLUGIN_UPLOAD_PROGRESS ]: ( state, { total } ) => total,
-	[ PLUGIN_UPLOAD ]: () => null,
-	[ PLUGIN_UPLOAD_CLEAR ]: () => null,
-	[ PLUGIN_UPLOAD_ERROR ]: () => null,
+export const progressPercent = keyedReducer( 'siteId', createReducer( {}, {
+	[ PLUGIN_UPLOAD_PROGRESS ]: ( state, { progress } ) => progress,
+	[ PLUGIN_UPLOAD ]: () => 0,
+	[ PLUGIN_UPLOAD_CLEAR ]: () => 0,
+	[ PLUGIN_UPLOAD_ERROR ]: () => 0,
 } ) );
 
 export const inProgress = keyedReducer( 'siteId', createReducer( {}, {
@@ -53,7 +46,6 @@ export const inProgress = keyedReducer( 'siteId', createReducer( {}, {
 export default combineReducers( {
 	uploadedPluginId,
 	uploadError,
-	progressLoaded,
-	progressTotal,
+	progressPercent,
 	inProgress,
 } );

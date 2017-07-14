@@ -10,12 +10,14 @@ import {
 	clearPluginUpload,
 	completePluginUpload,
 	pluginUploadError,
+	updatePluginUploadProgress,
 	uploadPlugin,
 } from '../actions';
 import {
+	inProgress,
+	progressPercent,
 	uploadedPluginId,
 	uploadError,
-	inProgress,
 } from '../reducer';
 
 const siteId = 2916284;
@@ -61,6 +63,23 @@ describe( 'uploadError', () => {
 	it( 'should be empty on upload start', () => {
 		const state = uploadError( { [ siteId ]: error }, uploadPlugin( siteId ) );
 		expect( state[ siteId ] ).to.be.null;
+	} );
+} );
+
+describe( 'progressPercent', () => {
+	it( 'should be zero on upload start', () => {
+		const state = progressPercent( { [ siteId ]: 50 }, uploadPlugin( siteId ) );
+		expect( state[ siteId ] ).to.equal( 0 );
+	} );
+
+	it( 'should be zero on upload clear', () => {
+		const state = progressPercent( { [ siteId ]: 50 }, clearPluginUpload( siteId ) );
+		expect( state[ siteId ] ).to.equal( 0 );
+	} );
+
+	it( 'should contain progress after progress update', () => {
+		const state = progressPercent( {}, updatePluginUploadProgress( siteId, 50 ) );
+		expect( state[ siteId ] ).to.equal( 50 );
 	} );
 } );
 
