@@ -73,7 +73,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		let buttonClasses, buttonContent;
 
 		if ( domain ) {
-			const newTLDs = [ '.rocks', '.site', '.cloud', '.club', '.today', '.tube', '.ca' ];
+			const newTLDs = [ '.rocks', '.site', '.cloud', '.club', '.today', '.tube', '.ca', '.xyz', '.shop' ];
 			const testTLDs = [ '.de', '.fr' ];
 			// Grab everything after the first dot, so 'example.co.uk' will
 			// match '.co.uk' but not '.uk'

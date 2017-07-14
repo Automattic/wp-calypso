@@ -48,6 +48,8 @@ const tlds = {
 	club: 'dotclub_domain',
 	today: 'dottoday_domain',
 	vip: 'dotvip_domain',
+	xyz: 'dotxyz_domain',
+	shop: 'dotshop_domain',
 };
 
 const domainAvailability = {
