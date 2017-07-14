@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 import { partial } from 'lodash';
 
 /**
@@ -10,7 +9,7 @@ import { partial } from 'lodash';
  */
 import UploadImage from '../';
 
-function UploadImageExample() {
+export default function UploadImageExample() {
 	return (
 		<div className="docs__design-assets-group">
 			<h3>Default Upload Image</h3>
@@ -21,12 +20,3 @@ function UploadImageExample() {
 		</div>
 	);
 }
-
-const ConnectedUploadImageExample = connect(
-	null,
-	null
-)( UploadImageExample );
-
-ConnectedUploadImageExample.displayName = 'UploadImage';
-
-export default ConnectedUploadImageExample;
