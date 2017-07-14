@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PureComponent, PropTypes } from 'react';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,26 +11,19 @@ import Gravatar from 'components/gravatar';
 
 export default class ActivityActor extends PureComponent {
 	static propTypes = {
-		avatarUrl: PropTypes.string.isRequired,
-		displayName: PropTypes.string,
-		login: PropTypes.string,
-		translatedRole: PropTypes.string.isRequired,
-	};
-
-	static defaultProps = {
-		avatarUrl: 'https://www.gravatar.com/avatar/0',
-		displayName: '',
-		login: '',
-		translatedRole: '',
+		actor: PropTypes.shape( {
+			display_name: PropTypes.string,
+			login: PropTypes.string,
+			translated_role: PropTypes.string,
+			avatar_url: PropTypes.string,
+		} ),
 	};
 
 	render() {
-		const {
-			avatarUrl,
-			displayName,
-			login,
-			translatedRole,
-		} = this.props;
+		const avatarUrl = get( this.props, [ 'actor', 'avatar_url' ], 'https://www.gravatar.com/avatar/0' );
+		const displayName = get( this.props, [ 'actor', 'display_name' ], '' );
+		const login = get( this.props, [ 'actor', 'login' ], '' );
+		const translatedRole = get( this.props, [ 'actor', 'translated_role' ], '' );
 
 		return (
 			<div className="activity-log-item__actor">

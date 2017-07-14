@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -220,22 +221,11 @@ class ActivityLogItem extends Component {
 	}
 
 	renderHeader() {
-		const { actor = {} } = this.props.log;
-		const {
-			avatar_url: avatarUrl,
-			display_name: displayName,
-			login,
-			translated_role: translatedRole,
-		} = actor;
+		const actor = get( this.props, [ 'log', 'actor' ] );
 
 		return (
 			<div className="activity-log-item__card-header">
-				<ActivityActor
-					avatarUrl={ avatarUrl }
-					displayName={ displayName }
-					login={ login }
-					translatedRole={ translatedRole }
-				/>
+				<ActivityActor actor={ actor } />
 				{ this.renderContent() }
 			</div>
 		);
