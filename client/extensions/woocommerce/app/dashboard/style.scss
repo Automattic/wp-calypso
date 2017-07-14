@@ -118,9 +118,10 @@
 		}
 
 		.dashboard__setup-task-secondary-actions {
-			a {
-				cursor: pointer;
+			.button {
+				padding: 0;
 				font-size: 12px;
+				font-weight: normal;
 			}
 		}
 	}
