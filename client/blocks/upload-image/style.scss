@@ -25,3 +25,20 @@
 .upload-image-modal .dialog__content {
 	height: 100%;
 }
+
+.upload-image__placeholder {
+	width: 200px;
+	height: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	margin-bottom: 24px;
+	background-color: $gray-light;
+	box-shadow: inset 0 0 0 1px lighten( $gray, 25% );
+
+	@include breakpoint( ">660px" ) {
+		flex: none;
+		margin-right: 24px;
+	}
+}

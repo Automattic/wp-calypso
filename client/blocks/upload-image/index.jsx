@@ -42,6 +42,7 @@ class UploadImage extends Component {
 	static defaultProps = {
 		allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
 		texts: {},
+		backgroundContent: null,
 	};
 
 	onReceiveFile = ( files ) => {
@@ -115,33 +116,22 @@ class UploadImage extends Component {
 
 	render() {
 		const {
+			backgroundContent,
 			isUploading,
 			translate,
 			texts,
 		} = this.props;
 
 		let {
-			backgroundContent,
-			notUploadingContent,
+			placeholderContent,
 			uploadingContent,
 		} = this.props;
 
-		if ( ! backgroundContent ) {
-			backgroundContent = (
-				<div className="upload-image__content">
-				</div>
-			);
-		}
-
-		if ( ! notUploadingContent ) {
-			notUploadingContent = (
-				<div className="upload-image__label-container">
-					<span className="upload-image__label">
-						{ texts.uploadText
-							? texts.uploadText
-							: <Gridicon icon="add-image" size={ 36 } />
-						}
-					</span>
+		if ( ! placeholderContent ) {
+			placeholderContent = (
+				<div className="upload-image__placeholder">
+						<Gridicon icon="add-image" size={ 36 } />
+					<span>Add an image</span>
 				</div>
 			);
 		}
@@ -172,7 +162,7 @@ class UploadImage extends Component {
 
 						{ backgroundContent }
 
-						{ ! isUploading && notUploadingContent }
+						{ ! isUploading && placeholderContent }
 						{ isUploading && uploadingContent }
 					</div>
 				</FilePicker>

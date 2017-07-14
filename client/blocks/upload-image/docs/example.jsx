@@ -13,9 +13,6 @@ import UploadImage from '../';
 function UploadImageExample() {
 	return (
 		<div className="docs__design-assets-group">
-			<h2>
-				<a href="/devdocs/blocks/upload-image">Upload Image</a>
-			</h2>
 			<UploadImage isUploading={ false } onImageEditorDone={ () => console.log( 'hello' ) } />
 		</div>
 	);
