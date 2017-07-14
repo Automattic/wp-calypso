@@ -22,7 +22,7 @@ import PluginBrowser from './plugins-browser';
 import { renderWithReduxStore, renderPage } from 'lib/react-helpers';
 import { setSection } from 'state/ui/actions';
 import { getSelectedSite, getSection } from 'state/ui/selectors';
-import Upload from 'my-sites/themes/theme-upload';
+import PluginUpload from './plugin-upload';
 
 /**
  * Module variables
@@ -231,7 +231,7 @@ const controller = {
 	},
 
 	upload( context ) {
-		renderPage( context, <Upload /> );
+		renderPage( context, <PluginUpload /> );
 	},
 
 	jetpackCanUpdate( filter, context, next ) {
