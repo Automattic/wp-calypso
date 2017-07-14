@@ -244,7 +244,10 @@ export const HelpContactForm = React.createClass( {
 
 				{ formDescription && ( <p>{ formDescription }</p> ) }
 
-				<ChatBusinessConciergeNotice />
+				<ChatBusinessConciergeNotice
+					from="2017-07-19T00:00:00Z"
+					to="2017-07-21T00:00:00Z"
+				/>
 
 				{ showHowCanWeHelpField && (
 					<div>

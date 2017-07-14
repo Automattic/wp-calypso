@@ -4,7 +4,7 @@
 import { identity } from 'lodash';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,6 +17,8 @@ class ChatBusinessConciergeNotice extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
 		isBusinessPlanUser: PropTypes.bool.isRequired,
+		from: PropTypes.string.isRequired,
+		to: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {
@@ -29,6 +31,12 @@ class ChatBusinessConciergeNotice extends Component {
 
 	render = () => {
 		const { translate } = this.props;
+		const fromDate = i18n.moment( this.props.from );
+		const toDate = i18n.moment( this.props.to );
+
+		if ( ! i18n.moment().isAfter( fromDate ) || ! i18n.moment().isBefore( toDate ) ) {
+			return null;
+		}
 
 		if ( ! this.props.isBusinessPlanUser ) {
 			return (
