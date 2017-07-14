@@ -15,6 +15,7 @@ import {
 	WP_SUPER_CACHE_REQUEST_DEBUG_LOGS,
 	WP_SUPER_CACHE_REQUEST_DEBUG_LOGS_FAILURE,
 	WP_SUPER_CACHE_REQUEST_DEBUG_LOGS_SUCCESS,
+	WP_SUPER_CACHE_RECEIVE_SETTINGS,
 } from '../action-types';
 
 /**
@@ -75,7 +76,19 @@ export const items = createReducer( {}, {
 	[ WP_SUPER_CACHE_DELETE_DEBUG_LOG_SUCCESS ]: ( state, { siteId, filename: deletedFilename } ) => ( {
 		...state,
 		[ siteId ]: filter( state[ siteId ], ( { filename } ) => ( filename !== deletedFilename ) )
-	} )
+	} ),
+	[ WP_SUPER_CACHE_RECEIVE_SETTINGS ]: ( state, { siteId, settings } ) => {
+		if ( settings.wp_super_cache_debug === false ) {
+			return {
+				...state,
+				[ siteId ]: state[ siteId ].map( debugLog => ( {
+					...debugLog,
+					active: false,
+				} ) )
+			};
+		}
+		return state;
+	}
 } );
 
 export default combineReducers( {
