@@ -13,13 +13,10 @@ import CommentsManagement from './main';
 import config from 'config';
 import route from 'lib/route';
 
-const VALID_STATUSES = [
-	'pending',
-	'approved',
-	'spam',
-	'trash',
-	...config.isEnabled( 'comments/management/all-list' ) && 'all',
-];
+const VALID_STATUSES = [ 'pending', 'approved', 'spam', 'trash' ];
+if ( config.isEnabled( 'comments/management/all-list' ) ) {
+	VALID_STATUSES.push( 'all' );
+}
 
 export const isValidStatus = status => includes( VALID_STATUSES, status );
 

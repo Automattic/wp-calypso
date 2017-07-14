@@ -38,8 +38,7 @@ export class CommentNavigation extends Component {
 
 	getNavItems = () => {
 		const { translate } = this.props;
-
-		return {
+		const navItems = {
 			unapproved: {
 				label: translate( 'Pending' ),
 			},
@@ -52,12 +51,15 @@ export class CommentNavigation extends Component {
 			trash: {
 				label: translate( 'Trash' ),
 			},
-			...config.isEnabled( 'comments/management/all-list' ) && {
-				all: {
-					label: translate( 'All' ),
-				},
-			}
 		};
+
+		if ( config.isEnabled( 'comments/management/all-list' ) ) {
+			navItems.all = {
+				label: translate( 'All' ),
+			};
+		}
+
+		return navItems;
 	}
 
 	getStatusPath = status => 'unapproved' !== status
