@@ -9,6 +9,7 @@ var ReactDom = require( 'react-dom' ),
 	findIndex = require( 'lodash/findIndex' );
 
 import { connect } from 'react-redux';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -153,9 +154,8 @@ export const MediaLibraryList = React.createClass( {
 		return 'item-' + item.ID;
 	},
 
-	renderItem: function( item ) {
-		var index = findIndex( this.props.media, { ID: item.ID } ),
-			selectedItems = this.props.mediaLibrarySelectedItems,
+	renderItem: function( item, i, colIndex ) {
+		var selectedItems = this.props.mediaLibrarySelectedItems,
 			selectedIndex = findIndex( selectedItems, { ID: item.ID } ),
 			ref = this.getItemRef( item ),
 			showGalleryHelp;
@@ -171,7 +171,7 @@ export const MediaLibraryList = React.createClass( {
 			<ListItem
 				ref={ ref }
 				key={ ref }
-				style={ this.getMediaItemStyle( index ) }
+				style={ this.getMediaItemStyle( colIndex ) }
 				media={ item }
 				scale={ this.props.mediaScale }
 				thumbnailType={ this.props.thumbnailType }
@@ -179,6 +179,20 @@ export const MediaLibraryList = React.createClass( {
 				selectedIndex={ selectedIndex }
 				onToggle={ this.toggleItem }
 				onEditItem={ this.props.onEditItem } />
+		);
+	},
+
+	renderSeparator: function( item, prevItem ) {
+		const date = moment( item.date );
+
+		if ( prevItem && ! moment( prevItem.date ).diff( date, 'days' ) ) {
+			return;
+		}
+
+		return (
+			<h3 key={ 'item-separator-' + date.format( 'YYYY-MM-DD' ) }>
+				{ date.format( 'D MMMM' ) }
+			</h3>
 		);
 	},
 
@@ -232,6 +246,7 @@ export const MediaLibraryList = React.createClass( {
 				fetchNextPage={ onFetchNextPage }
 				getItemRef={ this.getItemRef }
 				renderItem={ this.renderItem }
+				renderSeparator={ this.renderSeparator }
 				renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 				className="media-library__list" />
 		);
