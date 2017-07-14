@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import path from 'path';
 import Gridicon from 'gridicons';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,6 +45,7 @@ class UploadImage extends Component {
 		allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
 		texts: {},
 		backgroundContent: null,
+		onImageEditorDone: noop,
 	};
 
 	onReceiveFile = ( files ) => {
