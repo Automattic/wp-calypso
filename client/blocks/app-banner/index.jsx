@@ -12,13 +12,11 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import { getActionLog } from 'state/ui/action-log/selectors';
-import {
-	getAppBannerData,
-	getPageType,
-	isDismissed,
-	getNewDismissTimes,
-	ALLOWED_PAGE_TYPES
-} from './utils';
+import { getUserSetting, isNotificationsOpen } from 'state/selectors';
+import { isMobile } from 'lib/viewport';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { ROUTE_SET } from 'state/action-types';
+import { saveUserSettings } from 'state/user-settings/actions';
 import {
 	findLast,
 	get,
@@ -26,11 +24,13 @@ import {
 	includes,
 	noop
 } from 'lodash';
-import { isMobile } from 'lib/viewport';
-import { getUserSetting, isNotificationsOpen } from 'state/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { ROUTE_SET } from 'state/action-types';
-import { saveUserSettings } from 'state/user-settings/actions';
+import {
+	ALLOWED_PAGE_TYPES,
+	getAppBannerData,
+	getNewDismissTimes,
+	getPageType,
+	isDismissed,
+} from './utils';
 
 class AppBanner extends Component {
 	static propTypes = {
