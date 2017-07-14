@@ -19,6 +19,7 @@ import PostByline from './byline';
 import GalleryPost from './gallery';
 import PhotoPost from './photo';
 import StandardPost from './standard';
+import CompactPost from './compact';
 import FollowButton from 'reader/follow-button';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
@@ -47,6 +48,7 @@ class ReaderPostCard extends React.Component {
 		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
 		postKey: PropTypes.object,
+		compact: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -121,6 +123,7 @@ class ReaderPostCard extends React.Component {
 			postKey,
 			isExpanded,
 			expandCard,
+			compact,
 		} = this.props;
 
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
@@ -166,7 +169,25 @@ class ReaderPostCard extends React.Component {
 		);
 
 		let readerPostCard;
-		if ( isPhotoPost ) {
+		if ( compact ) {
+			readerPostCard = (
+				<CompactPost
+					post={ post }
+					title={ title }
+					isDiscover={ isDiscover }
+					isExpanded={ isExpanded }
+					expandCard={ expandCard }
+					site={ site }
+					postKey={ postKey }
+				>
+					{ isDailyPostChallengeOrPrompt( post ) &&
+						site &&
+						<DailyPostButton post={ post } site={ site } tagName="span" /> }
+					{ discoverFollowButton }
+					{ readerPostActions }
+				</CompactPost>
+			);
+		} else if ( isPhotoPost ) {
 			readerPostCard = (
 				<PhotoPost
 					post={ post }
