@@ -17,6 +17,14 @@ export default function UploadImageExample() {
 
 			<h3>Image is uploading</h3>
 			<UploadImage isUploading={ true } />
+
+			<h3>Image is uploaded</h3>
+			<UploadImage
+				placeholderContent={ null }
+				uploadingContent={ null }
+			>
+				<img src="https://cldup.com/mA_hqNVj0w.jpg" />
+			</UploadImage>
 		</div>
 	);
 }

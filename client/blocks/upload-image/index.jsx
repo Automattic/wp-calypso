@@ -46,6 +46,7 @@ class UploadImage extends Component {
 		texts: {},
 		backgroundContent: null,
 		onImageEditorDone: noop,
+		isUploading: false,
 	};
 
 	onReceiveFile = ( files ) => {
@@ -119,7 +120,7 @@ class UploadImage extends Component {
 
 	render() {
 		const {
-			backgroundContent,
+			children,
 			isUploading,
 			translate,
 			texts,
@@ -131,7 +132,7 @@ class UploadImage extends Component {
 			uploadingContent,
 		} = this.props;
 
-		if ( ! placeholderContent ) {
+		if ( typeof placeholderContent === 'undefined' ) {
 			placeholderContent = (
 				<div className="upload-image__placeholder">
 						<Gridicon icon="add-image" size={ 36 } />
@@ -140,7 +141,7 @@ class UploadImage extends Component {
 			);
 		}
 
-		if ( ! uploadingContent ) {
+		if ( typeof uploadingContent === 'undefined' ) {
 			uploadingContent = ( <Spinner className="upload-image__spinner" /> );
 		}
 
@@ -164,7 +165,7 @@ class UploadImage extends Component {
 							onFilesDrop={ this.onReceiveFile }
 						/>
 
-						{ backgroundContent }
+						{ children }
 
 						{ ! isUploading && placeholderContent }
 						{ isUploading && uploadingContent }
