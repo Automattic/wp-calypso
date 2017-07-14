@@ -213,14 +213,15 @@ class ActivityLogItem extends Component {
 		const {
 			group,
 			name,
-			object = {},
 		} = this.props.log;
 		const actor = get( this.props, [ 'log', 'actor' ] );
+		const object = get( this.props, [ 'log', 'object' ] );
 
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor actor={ actor } />
 				<ActivityTitle
+					actor={ actor }
 					group={ group }
 					name={ name }
 					object={ object }

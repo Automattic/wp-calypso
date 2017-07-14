@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 class ActivityTitle extends Component {
@@ -19,6 +20,11 @@ class ActivityTitle extends Component {
 			'widget',
 		] ).isRequired,
 		name: PropTypes.string.isRequired,
+
+		actor: PropTypes.shape( {
+			display_name: PropTypes.string,
+			login: PropTypes.string,
+		} ),
 
 		object: PropTypes.shape( {
 			attachment: PropTypes.shape( {
@@ -108,8 +114,55 @@ class ActivityTitle extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
+	getActorName() {
+		const displayName = get( this.props, [ 'actor', 'display_name' ] );
+		if ( displayName ) {
+			return displayName;
+		}
+
+		const login = get( this.props, [ 'actor', 'login' ] );
+		if ( login ) {
+			return login;
+		}
+	}
+
+	getPostName() {
+		return get( this.props, [ 'object', 'post', 'title' ], this.props.translate( 'A post' ) );
+	}
+
 	renderTitle() {
-		const { name } = this.props;
+		const {
+			name,
+			translate,
+		} = this.props;
+
+		switch ( name ) {
+			case 'post__published': {
+				const actorName = this.getActorName();
+				const postName = this.getPostName();
+				return actorName
+					? (
+						translate( '%(actorName)s published {{strong}}%(postName)s{{/strong}}', {
+							args: {
+								actorName,
+								postName,
+							},
+							components: {
+								strong: <strong />
+							},
+						} )
+					) : (
+						translate( 'An unknown user published {{strong}}%(postName)s{{/strong}}', {
+							args: {
+								postName,
+							},
+							components: {
+								strong: <strong />
+							},
+						} )
+					);
+			}
+		}
 
 		return name;
 	}
