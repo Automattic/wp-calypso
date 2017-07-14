@@ -16,7 +16,7 @@ export default function( callback ) {
 				event.target.nextSibling.focus();
 			}
 		} else if ( event.key === 'ArrowUp' ) {
-			if ( event.target.nextSibling ) {
+			if ( event.target.previousSibling ) {
 				event.preventDefault();
 				event.target.previousSibling.focus();
 			}
