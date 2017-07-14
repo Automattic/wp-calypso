@@ -20,7 +20,7 @@ export default ( state ) => {
 
 	const purchases = getUserPurchases( state, userId );
 
-	if ( ! purchases ) {
+	if ( ! purchases || 0 === purchases.length ) {
 		return false;
 	}
 
