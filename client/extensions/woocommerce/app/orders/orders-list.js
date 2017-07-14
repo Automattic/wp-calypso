@@ -145,7 +145,7 @@ class Orders extends Component {
 	}
 
 	render() {
-		const { orders, translate } = this.props;
+		const { orders, site, translate } = this.props;
 		if ( ! orders.length ) {
 			return (
 				<div className="orders__container">
@@ -169,7 +169,7 @@ class Orders extends Component {
 			<div className="orders__container">
 				<SectionNav>
 					<NavTabs label={ translate( 'Status' ) } selectedText={ translate( 'All orders' ) }>
-						<NavItem path="/orders" selected={ true }>{ translate( 'All orders' ) }</NavItem>
+						<NavItem path={ getLink( '/store/orders/:site', site ) } selected={ true }>{ translate( 'All orders' ) }</NavItem>
 					</NavTabs>
 				</SectionNav>
 
