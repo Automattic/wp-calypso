@@ -26,7 +26,7 @@ const JetpackDevModeNotice = ( {
 	}
 
 	return (
-		<div>
+		<div className="site-settings__jetpack-dev-mode-notice">
 			<QueryJetpackConnection siteId={ siteId } />
 
 			{
