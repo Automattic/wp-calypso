@@ -243,9 +243,8 @@ export const HelpContactForm = React.createClass( {
 				/>
 
 				{ formDescription && ( <p>{ formDescription }</p> ) }
-				<div>
-					<ChatBusinessConciergeNotice />
-				</div>
+
+				<ChatBusinessConciergeNotice />
 
 				{ showHowCanWeHelpField && (
 					<div>
