@@ -3,11 +3,11 @@
 	margin-top: 58px;
 }
 
-.shipping-zone__name {	
+.shipping-zone__name {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-		
+
 	&.is-placeholder {
 		.gridicon, button, span {
 			@include placeholder();
@@ -165,7 +165,7 @@
 		}
 
 		.form-toggle__label-content {
-			margin-left: 0;
+			margin-left: 8px;
 		}
 	}
 
@@ -273,6 +273,7 @@
 	right: 16px;
 
 	span {
+		margin-left: 6px;
 		color: $gray;
 		font-size: 11px;
 		line-height: 16px;
