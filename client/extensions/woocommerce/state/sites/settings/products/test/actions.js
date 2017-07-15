@@ -10,7 +10,6 @@ import { spy } from 'sinon';
 import { fetchSettingsProducts } from '../actions';
 import { LOADING } from 'woocommerce/state/constants';
 import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
@@ -20,7 +19,6 @@ describe( 'actions', () => {
 	describe( '#fetchSettingsProducts()', () => {
 		const siteId = '123';
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()

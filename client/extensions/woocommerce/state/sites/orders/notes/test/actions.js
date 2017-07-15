@@ -9,7 +9,6 @@ import { spy } from 'sinon';
  */
 import { fetchNotes, createNote } from '../actions';
 import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	WOOCOMMERCE_ORDER_NOTE_CREATE,
 	WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE,
@@ -25,7 +24,6 @@ describe( 'actions', () => {
 		const siteId = '123';
 		const orderId = 45;
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -112,7 +110,6 @@ describe( 'actions', () => {
 			customer_note: true,
 		};
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()

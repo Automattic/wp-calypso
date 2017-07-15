@@ -9,7 +9,6 @@ import { spy } from 'sinon';
  */
 import { fetchProductCategories } from '../actions';
 import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
@@ -21,7 +20,6 @@ describe( 'actions', () => {
 		const siteId = '123';
 		const errorSiteId = '234';
 
-		useSandbox();
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
