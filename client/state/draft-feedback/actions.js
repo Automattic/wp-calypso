@@ -90,15 +90,15 @@ export function restoreDraftShare( siteId, postId, emailAddress ) {
  * @param 	{Number} 	siteId 			Site ID
  * @param 	{Number} 	postId 			Post ID
  * @param 	{string} 	emailAddress	Email address of the person with whom we are sharing the draft
- * @param	{string}	feedback		Feedback for the draft
+ * @param	{string}	comment			A comment containing feedback for the post
  * @return 	{Object}   					Action object
  */
-export function addDraftShareFeedback( siteId, postId, emailAddress, feedback ) {
+export function addDraftShareFeedback( siteId, postId, emailAddress, comment ) {
 	return {
 		type: DRAFT_FEEDBACK_COMMENT_ADD,
 		siteId,
 		postId,
 		emailAddress,
-		feedback,
+		comment,
 	};
 }

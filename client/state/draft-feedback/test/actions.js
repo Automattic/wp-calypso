@@ -80,15 +80,15 @@ describe( 'actions', () => {
 
 	describe( '#addDraftShareFeedback', () => {
 		it( 'should return an action object', () => {
-			const FEEDBACK = 'This is test feedback.';
-			const action = addDraftShareFeedback( SITE_ID, POST_ID, EMAIL_ADDRESS, FEEDBACK );
+			const COMMENT = 'This is test feedback.';
+			const action = addDraftShareFeedback( SITE_ID, POST_ID, EMAIL_ADDRESS, COMMENT );
 
 			expect( action ).to.eql( {
 				type: DRAFT_FEEDBACK_COMMENT_ADD,
 				siteId: SITE_ID,
 				postId: POST_ID,
 				emailAddress: EMAIL_ADDRESS,
-				feedback: FEEDBACK,
+				comment: COMMENT,
 			} );
 		} );
 	} );
