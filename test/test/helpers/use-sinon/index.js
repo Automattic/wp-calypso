@@ -7,8 +7,6 @@ import isFunction from 'lodash/isFunction';
  *
  * This helper spins up and down sinon's fake clock.
  * If you provide a callback, it will be invoked with the clock instance created by sinon.
- * This allows you to get at the clock instance even if you're using arrow functions in your test
- * and cannot access the `this` provided by mocha.
  *
  * You can pass clockCallback as the first argument with no 'now' if you wish
  *
@@ -24,7 +22,6 @@ export function useFakeTimers( now = 0, clockCallback = noop ) {
 		now = 0;
 	}
 
-	// these _cannot_ be arrow functions because we're using the `this` that mocha provides
 	before( function turnOnSinonFakeTimers() {
 		clock = sinon.useFakeTimers( now );
 		clockCallback( clock );

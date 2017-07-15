@@ -29,7 +29,9 @@ describe( 'index', function() {
 		} );
 
 		context( 'when rendering a section', function() {
-			useFakeTimers();
+			let clock;
+
+			useFakeTimers( newClock => clock = newClock );
 
 			beforeEach( function() {
 				sinon.stub( analytics.statsd, 'recordTiming' );
@@ -42,12 +44,12 @@ describe( 'index', function() {
 
 			it( 'logs response time analytics', function() {
 				// Clear throttling
-				this.clock.tick( TWO_SECONDS );
+				clock.tick( TWO_SECONDS );
 
 				logSectionResponseTime( request, response, next );
 
 				// Move time forward and mock the "finish" event
-				this.clock.tick( TWO_SECONDS );
+				clock.tick( TWO_SECONDS );
 				response.emit( 'finish' );
 
 				expect( analytics.statsd.recordTiming ).to.have.been.calledWith(
@@ -57,7 +59,7 @@ describe( 'index', function() {
 
 			it( 'throttles calls to log analytics', function() {
 				// Clear throttling
-				this.clock.tick( TWO_SECONDS );
+				clock.tick( TWO_SECONDS );
 
 				logSectionResponseTime( request, response, next );
 				logSectionResponseTime( request2, response2, next );
@@ -69,7 +71,7 @@ describe( 'index', function() {
 
 				expect( analytics.statsd.recordTiming ).to.have.been.calledOnce;
 
-				this.clock.tick( TWO_SECONDS );
+				clock.tick( TWO_SECONDS );
 				expect( analytics.statsd.recordTiming ).to.have.been.calledTwice;
 			} );
 		} );
