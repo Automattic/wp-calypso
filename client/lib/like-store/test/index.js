@@ -1,13 +1,12 @@
+jest.mock( 'lib/wp', () => require( './lib/wp' ) );
+
 /**
  * External Dependencies
  */
-const expect = require( 'chai' ).expect,
-	useFilesystemMocks = require( 'test/helpers/use-filesystem-mocks' );
+const expect = require( 'chai' ).expect;
 
 describe( 'index', function() {
 	var Dispatcher, LikeStore, FeedPostStoreActionType;
-
-	useFilesystemMocks( __dirname );
 
 	before( () => {
 		LikeStore = require( '../like-store' );

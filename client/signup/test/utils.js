@@ -1,6 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'lib/abtest', () => ( {
+	abtest: () => ''
+} ) );
 
 /**
  * External dependencies
@@ -12,9 +15,9 @@ import assert from 'assert';
 /**
  * Internal dependencies
  */
-import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
-import useMockery from 'test/helpers/use-mockery';
 import mockedFlows from './fixtures/flows';
+import flows from 'signup/config/flows';
+import utils from '../utils';
 
 /**
  * Module variables
@@ -23,27 +26,13 @@ const debug = debugModule( 'calypso:client:signup:controller-utils:test' );
 
 debug( 'start utils test' );
 
-describe.skip( 'utils', function() {
-	let flows, utils;
-
-	useFilesystemMocks( __dirname );
-
-	useMockery( ( mockery ) => {
-		mockery.registerMock( 'lib/abtest', {
-			abtest: () => ''
-		} );
-	} );
-
+describe( 'utils', function() {
 	before( () => {
-		flows = require( 'signup/config/flows' );
-
 		sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
 		sinon.stub( flows, 'preloadABTestVariationsForStep', ()=>{} );
 		sinon.stub( flows, 'getABTestFilteredFlow', ( flowName, flow ) => {
 			return flow;
 		} );
-
-		utils = require( '../utils' );
 	} );
 
 	describe( 'getLocale', function() {

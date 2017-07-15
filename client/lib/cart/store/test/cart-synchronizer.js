@@ -8,7 +8,6 @@ import assert from 'assert';
  */
 import CartSynchronizer from '../cart-synchronizer';
 import FakeWPCOM from './fake-wpcom';
-import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 var TEST_CART_KEY = 91234567890;
 
@@ -18,8 +17,6 @@ var poller = {
 
 describe( 'cart-synchronizer', function() {
 	let applyCoupon, emptyCart;
-
-	useFilesystemMocks( __dirname );
 
 	before( () => {
 		const cartValues = require( 'lib/cart-values' );

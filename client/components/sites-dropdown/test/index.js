@@ -14,22 +14,9 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
-import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
+import { SitesDropdown } from '..';
 
-describe.skip( 'index', function() {
-	useFilesystemMocks( __dirname );
-
-	useMockery( mockery => {
-		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
-	} );
-
-	let SitesDropdown;
-
-	before( function() {
-		SitesDropdown = require( '..' ).SitesDropdown;
-	} );
-
+describe( 'index', function() {
 	describe( 'component rendering', function() {
 		it( 'should render a dropdown component initially closed', function() {
 			const sitesDropdown = shallow( <SitesDropdown /> );
