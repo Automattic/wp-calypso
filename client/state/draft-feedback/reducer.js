@@ -2,8 +2,6 @@
  * Internal dependencies
  */
 import {
-	EDITOR_START,
-	EDITOR_STOP,
 	DRAFT_FEEDBACK_SHARE_ADD,
 	DRAFT_FEEDBACK_SHARE_REMOVE,
 	DRAFT_FEEDBACK_SHARE_REVOKE,
@@ -13,59 +11,47 @@ import {
 import { keyedReducer, withoutPersistence } from 'state/utils';
 
 const initialState = {};
-const initialDraftShareState = {
-	enabled: true,
-	comments: [],
-};
 
-const draftShareReducer = keyedReducer(
-	'emailAddress',
-	( state = initialDraftShareState, action ) => {
-		switch ( action.type ) {
-			case DRAFT_FEEDBACK_SHARE_ADD:
-				return initialDraftShareState;
-
-			case DRAFT_FEEDBACK_SHARE_REMOVE:
-				return undefined;
-
-			case DRAFT_FEEDBACK_SHARE_REVOKE:
-				return {
-					...state,
-					enabled: false,
-				};
-
-			case DRAFT_FEEDBACK_SHARE_RESTORE:
-				return {
-					...state,
-					enabled: true,
-				};
-
-			case DRAFT_FEEDBACK_COMMENT_ADD:
-				return {
-					...state,
-					comments: state.comments.concat( action.comment ),
-				};
-
-			default:
-				return state;
-		}
-	},
-);
-
+// TODO: Only apply this reducer to 'post' and 'page' types
+// TODO: Should state be forgotten when we stop editing a post?
 export default withoutPersistence(
 	keyedReducer(
 		'siteId',
-		keyedReducer( 'postId', ( state, action ) => {
-			switch ( action.type ) {
-				case EDITOR_START:
-					return {};
+		keyedReducer(
+			'postId',
+			keyedReducer( 'emailAddress', ( state = initialState, action ) => {
+				switch ( action.type ) {
+					case DRAFT_FEEDBACK_SHARE_ADD:
+						return {
+							enabled: true,
+							comments: []
+						};
 
-				case EDITOR_STOP:
-					return undefined;
+					case DRAFT_FEEDBACK_SHARE_REMOVE:
+						return initialState;
 
-				default:
-					return draftShareReducer( state, action );
-			}
-		} ),
+					case DRAFT_FEEDBACK_SHARE_REVOKE:
+						return {
+							...state,
+							enabled: false,
+						};
+
+					case DRAFT_FEEDBACK_SHARE_RESTORE:
+						return {
+							...state,
+							enabled: true,
+						};
+
+					case DRAFT_FEEDBACK_COMMENT_ADD:
+						return {
+							...state,
+							comments: state.comments.concat( action.comment ),
+						};
+
+					default:
+						return state;
+				}
+			} ),
+		),
 	),
 );
