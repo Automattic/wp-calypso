@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
-
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
 import {
 	omit,
@@ -12,16 +11,15 @@ import {
 /**
  * Internal dependencies
  */
-var PostListFetcher = require( 'components/post-list-fetcher' ),
-	Page = require( './page' ),
-	infiniteScroll = require( 'lib/mixins/infinite-scroll' ),
-	EmptyContent = require( 'components/empty-content' ),
-	NoResults = require( 'my-sites/no-results' ),
-	actions = require( 'lib/posts/actions' ),
-	Placeholder = require( './placeholder' ),
-	mapStatus = require( 'lib/route' ).mapPostStatus,
-	sortPagesHierarchically = require( './helpers' ).sortPagesHierarchically;
-
+import PostListFetcher from 'components/post-list-fetcher';
+import Page from './page';
+import infiniteScroll from 'lib/mixins/infinite-scroll';
+import EmptyContent from 'components/empty-content';
+import NoResults from 'my-sites/no-results';
+import actions from 'lib/posts/actions';
+import Placeholder from './placeholder';
+import { mapPostStatus as mapStatus } from 'lib/route';
+import { sortPagesHierarchically } from './helpers';
 import BlogPostsPage from './blog-posts-page';
 import {
 	hasInitializedSites,
