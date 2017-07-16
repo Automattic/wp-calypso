@@ -124,60 +124,62 @@ const Pages = localize( React.createClass( {
 	},
 
 	getNoContentMessage() {
-		let attributes;
+		const { search, translate } = this.props;
 
-		if ( this.props.search ) {
+		if ( search ) {
 			return (
 				<NoResults
 					image="/calypso/images/pages/illustration-pages.svg"
 					text={
-						this.props.translate( 'No pages match your search for {{searchTerm/}}.', {
+						translate( 'No pages match your search for {{searchTerm/}}.', {
 							components: {
-								searchTerm: <em>{ this.props.search }</em>
+								searchTerm: <em>{ search }</em>
 							}
 						} ) }
 				/>
 			);
 		}
+
 		const { site, siteId } = this.props;
 		const sitePart = site && site.slug || siteId;
 		const newPageLink = this.props.siteId ? '/page/' + sitePart : '/page';
+		let attributes;
 
 		if ( this.props.hasRecentError ) {
 			attributes = {
-				title: this.props.translate( 'Oh, no! We couldn\'t fetch your pages.' ),
-				line: this.props.translate( 'Please check your internet connection.' )
+				title: translate( 'Oh, no! We couldn\'t fetch your pages.' ),
+				line: translate( 'Please check your internet connection.' )
 			};
 		} else {
 			const status = this.props.status || 'published';
 			switch ( status ) {
 				case 'drafts':
 					attributes = {
-						title: this.props.translate( 'You don\'t have any drafts.' ),
-						line: this.props.translate( 'Would you like to create one?' ),
-						action: this.props.translate( 'Start a Page' ),
+						title: translate( 'You don\'t have any drafts.' ),
+						line: translate( 'Would you like to create one?' ),
+						action: translate( 'Start a Page' ),
 						actionURL: newPageLink
 					};
 					break;
 				case 'scheduled':
 					attributes = {
-						title: this.props.translate( 'You don\'t have any scheduled pages yet.' ),
-						line: this.props.translate( 'Would you like to create one?' ),
-						action: this.props.translate( 'Start a Page' ),
+						title: translate( 'You don\'t have any scheduled pages yet.' ),
+						line: translate( 'Would you like to create one?' ),
+						action: translate( 'Start a Page' ),
 						actionURL: newPageLink
 					};
 					break;
 				case 'trashed':
 					attributes = {
-						title: this.props.translate( 'You don\'t have any pages in your trash folder.' ),
-						line: this.props.translate( 'Everything you write is solid gold.' )
+						title: translate( 'You don\'t have any pages in your trash folder.' ),
+						line: translate( 'Everything you write is solid gold.' )
 					};
 					break;
 				default:
 					attributes = {
-						title: this.props.translate( 'You haven\'t published any pages yet.' ),
-						line: this.props.translate( 'Would you like to publish your first page?' ),
-						action: this.props.translate( 'Start a Page' ),
+						title: translate( 'You haven\'t published any pages yet.' ),
+						line: translate( 'Would you like to publish your first page?' ),
+						action: translate( 'Start a Page' ),
 						actionURL: newPageLink
 					};
 			}
