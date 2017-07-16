@@ -28,23 +28,19 @@ const getMe = {
 };
 
 describe( '#httpHandler', () => {
-	let dispatch;
 	let next;
 
 	useNock();
 
 	beforeEach( () => {
-		dispatch = sinon.spy();
 		next = sinon.spy();
 	} );
 
-	it( 'should call `onSuccess` when a response returns with data', () => {
+	it( 'should call `onSuccess` when a response returns with data', done => {
 		const data = { value: 1 };
 		nock( requestDomain ).get( requestPath ).reply( 200, data );
 
-		const requestPromise = httpHandler( { dispatch }, getMe, next );
-
-		return requestPromise.then( () => {
+		const dispatch = sinon.spy( () => {
 			expect( dispatch ).to.have.been.calledOnce;
 
 			sinon.assert.calledWith(
@@ -56,16 +52,18 @@ describe( '#httpHandler', () => {
 					)
 				)
 			);
+
+			done();
 		} );
+
+		httpHandler( { dispatch }, getMe, next );
 	} );
 
-	it( 'should call `onFailure` when a response returns with error', () => {
+	it( 'should call `onFailure` when a response returns with error', done => {
 		const data = { error: 'bad, bad request!' };
 		nock( requestDomain ).get( requestPath ).reply( 400, data );
 
-		const requestPromise = httpHandler( { dispatch }, getMe, next );
-
-		return requestPromise.catch( () => {
+		const dispatch = sinon.spy( () => {
 			expect( dispatch ).to.have.been.calledOnce;
 
 			sinon.assert.calledWith(
@@ -77,24 +75,15 @@ describe( '#httpHandler', () => {
 					)
 				)
 			);
+
+			done();
 		} );
+
+		httpHandler( { dispatch }, getMe, next );
 	} );
 
-	it( 'should reject invalid headers', () => {
-		const headers = [ { key: 'Accept', value: 'something' } ];
-
-		const requestPromise = httpHandler(
-			{
-				dispatch
-			},
-			{
-				...getMe,
-				headers
-			},
-			next
-		);
-
-		return requestPromise.catch( () => {
+	it( 'should reject invalid headers', done => {
+		const dispatch = sinon.spy( () => {
 			sinon.assert.calledWith(
 				dispatch,
 				sinon.match(
@@ -104,10 +93,24 @@ describe( '#httpHandler', () => {
 					)
 				)
 			);
+
+			done();
 		} );
+
+		const headers = [ { key: 'Accept', value: 'something' } ];
+		httpHandler(
+			{
+				dispatch
+			},
+			{
+				...getMe,
+				headers
+			},
+			next
+		);
 	} );
 
-	it( 'should set appropriate headers', () => {
+	it( 'should set appropriate headers', done => {
 		let requestedHeaders;
 		nock( requestDomain ).get( requestPath )
 			.reply( function replyHandler() { // don't use arrow func to allow `this` to be set:
@@ -124,7 +127,19 @@ describe( '#httpHandler', () => {
 			[ 'Bearer', 'secret' ],
 		];
 
-		const requestPromise = httpHandler(
+		const dispatch = sinon.spy( () => {
+			expect(
+				headers
+					.map( ( [ headerKey, headerValue ] ) => [ headerKey.toLowerCase(), headerValue ] )
+					.every(
+						( [ headerKey, headerValue ] ) => requestedHeaders[ headerKey ] === headerValue
+					)
+			).to.be.true;
+
+			done();
+		} );
+
+		httpHandler(
 			{
 				dispatch
 			},
@@ -134,15 +149,5 @@ describe( '#httpHandler', () => {
 			},
 			next
 		);
-
-		return requestPromise.then( () => {
-			expect(
-				headers
-					.map( ( [ headerKey, headerValue ] ) => [ headerKey.toLowerCase(), headerValue ] )
-					.every(
-						( [ headerKey, headerValue ] ) => requestedHeaders[ headerKey ] === headerValue
-					)
-			).to.be.true;
-		} );
 	} );
 } );

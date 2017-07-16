@@ -23,13 +23,12 @@ const isAllHeadersValid = headers =>
  * {String} method the method we should use in the request: GET, POST etc.
  * {Array<Array<String>>} headers array of [ 'key', 'value' ] pairs for the request headers
  * {Object} body data send as body
- * {Boolean} withCredentials save cookie set on request
+ * {Boolean} withCredentials allows the remote server to view & set cookies (for it's domain)
  * {Action} onSuccess action to dispatch on success with data meta
  * {Action} onFailure action to dispatch on failure with error meta
  *
  * @param {Function} dispatch redux store dispatch
  * @param {Object} action dispatched action we need to handle
- * @returns {Promise} promise of the handled request
  */
 const httpHandler = ( { dispatch }, action ) => {
 	const {
@@ -45,7 +44,7 @@ const httpHandler = ( { dispatch }, action ) => {
 	if ( ! isAllHeadersValid( headers ) ) {
 		const error = new Error( "Not all headers were of an array pair: [ 'key', 'value' ]" );
 		dispatch( extendAction( onFailure, failureMeta( error ) ) );
-		return Promise.reject( error );
+		return;
 	}
 
 	const request = superagent( method, url );
@@ -62,12 +61,9 @@ const httpHandler = ( { dispatch }, action ) => {
 		request.send( body );
 	}
 
-	return request.then(
+	request.then(
 		data => dispatch( extendAction( onSuccess, successMeta( data ) ) ),
-		error => {
-			dispatch( extendAction( onFailure, failureMeta( error ) ) );
-			return Promise.reject( error );
-		}
+		error => dispatch( extendAction( onFailure, failureMeta( error ) ) )
 	);
 };
 
