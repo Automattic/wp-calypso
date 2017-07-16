@@ -48,7 +48,7 @@ PageList.propTypes = {
 	siteId: PropTypes.any
 };
 
-var Pages = localize( React.createClass( {
+const Pages = localize( React.createClass( {
 
 	displayName: 'Pages',
 
@@ -90,13 +90,13 @@ var Pages = localize( React.createClass( {
 	},
 
 	_insertTimeMarkers: function( pages ) {
-		var markedPages = [],
-			now = this.moment(),
-			lastMarker, buildMarker;
+		const markedPages = [],
+			now = this.moment();
+		let lastMarker;
 
-		buildMarker = function( pageDate ) {
+		const buildMarker = function( pageDate ) {
 			pageDate = this.moment( pageDate );
-			var days = now.diff( pageDate, 'days' );
+			const days = now.diff( pageDate, 'days' );
 			if ( days <= 0 ) {
 				return this.props.translate( 'Today' );
 			}
@@ -107,10 +107,14 @@ var Pages = localize( React.createClass( {
 		}.bind( this );
 
 		pages.forEach( function( page ) {
-			var date = this.moment( page.date ),
+			const date = this.moment( page.date ),
 				marker = buildMarker( date );
 			if ( lastMarker !== marker ) {
-				markedPages.push( <div key={ 'marker-' + date.unix() } className="page-list__header"><span className="noticon noticon-time" /> { marker } </div> );
+				markedPages.push(
+					<div key={ 'marker-' + date.unix() } className="page-list__header">
+						<span className="noticon noticon-time" /> { marker }
+					</div>
+				);
 			}
 			lastMarker = marker;
 			markedPages.push( page );
@@ -120,7 +124,7 @@ var Pages = localize( React.createClass( {
 	},
 
 	getNoContentMessage: function() {
-		var attributes, newPageLink;
+		let attributes;
 
 		if ( this.props.search ) {
 			return (
@@ -134,49 +138,48 @@ var Pages = localize( React.createClass( {
 						} ) }
 				/>
 			);
-		} else {
-			const { site, siteId } = this.props;
-			const sitePart = site && site.slug || siteId;
-			newPageLink = this.props.siteId ? '/page/' + sitePart : '/page';
+		}
+		const { site, siteId } = this.props;
+		const sitePart = site && site.slug || siteId;
+		const newPageLink = this.props.siteId ? '/page/' + sitePart : '/page';
 
-			if ( this.props.hasRecentError ) {
-				attributes = {
-					title: this.props.translate( 'Oh, no! We couldn\'t fetch your pages.' ),
-					line: this.props.translate( 'Please check your internet connection.' )
-				};
-			} else {
-				const status = this.props.status || 'published';
-				switch ( status ) {
-					case 'drafts':
-						attributes = {
-							title: this.props.translate( 'You don\'t have any drafts.' ),
-							line: this.props.translate( 'Would you like to create one?' ),
-							action: this.props.translate( 'Start a Page' ),
-							actionURL: newPageLink
-						};
-						break;
-					case 'scheduled':
-						attributes = {
-							title: this.props.translate( 'You don\'t have any scheduled pages yet.' ),
-							line: this.props.translate( 'Would you like to create one?' ),
-							action: this.props.translate( 'Start a Page' ),
-							actionURL: newPageLink
-						};
-						break;
-					case 'trashed':
-						attributes = {
-							title: this.props.translate( 'You don\'t have any pages in your trash folder.' ),
-							line: this.props.translate( 'Everything you write is solid gold.' )
-						};
-						break;
-					default:
-						attributes = {
-							title: this.props.translate( 'You haven\'t published any pages yet.' ),
-							line: this.props.translate( 'Would you like to publish your first page?' ),
-							action: this.props.translate( 'Start a Page' ),
-							actionURL: newPageLink
-						};
-				}
+		if ( this.props.hasRecentError ) {
+			attributes = {
+				title: this.props.translate( 'Oh, no! We couldn\'t fetch your pages.' ),
+				line: this.props.translate( 'Please check your internet connection.' )
+			};
+		} else {
+			const status = this.props.status || 'published';
+			switch ( status ) {
+				case 'drafts':
+					attributes = {
+						title: this.props.translate( 'You don\'t have any drafts.' ),
+						line: this.props.translate( 'Would you like to create one?' ),
+						action: this.props.translate( 'Start a Page' ),
+						actionURL: newPageLink
+					};
+					break;
+				case 'scheduled':
+					attributes = {
+						title: this.props.translate( 'You don\'t have any scheduled pages yet.' ),
+						line: this.props.translate( 'Would you like to create one?' ),
+						action: this.props.translate( 'Start a Page' ),
+						actionURL: newPageLink
+					};
+					break;
+				case 'trashed':
+					attributes = {
+						title: this.props.translate( 'You don\'t have any pages in your trash folder.' ),
+						line: this.props.translate( 'Everything you write is solid gold.' )
+					};
+					break;
+				default:
+					attributes = {
+						title: this.props.translate( 'You haven\'t published any pages yet.' ),
+						line: this.props.translate( 'Would you like to publish your first page?' ),
+						action: this.props.translate( 'Start a Page' ),
+						actionURL: newPageLink
+					};
 			}
 		}
 
@@ -194,8 +197,7 @@ var Pages = localize( React.createClass( {
 	},
 
 	addLoadingRows: function( rows, count ) {
-		var i;
-		for ( i = 0; i < count; i++ ) {
+		for ( let i = 0; i < count; i++ ) {
 			if ( i % 4 === 0 ) {
 				rows.push( <Placeholder.Marker key={ 'placeholder-marker-' + i } /> );
 			}
