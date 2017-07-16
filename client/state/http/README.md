@@ -1,6 +1,6 @@
 # HTTP API Layer
 
-[`wpcom-http`](../wpcom-http) issues requests to the WordPress.com API. However sometimes you will want to issue a request to another API, maybe even on a third-party host. This raw HTTP layer will allow you to do just that.
+[`wpcom-http`](../data-layer/wpcom-http) issues requests to the WordPress.com API. However sometimes you will want to issue a request to another API, maybe even on a third-party host. This raw HTTP layer will allow you to do just that.
 
 It follows the same API as `wpcom-http`, the only difference from the user's perspective being the action dispatched.
 
