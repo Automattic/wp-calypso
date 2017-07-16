@@ -199,6 +199,7 @@ describe( 'reducer', () => {
 			},
 		} );
 
+		// Verify a subsequent comment is simply added to existing comments
 		const stateB = reducer( stateA, {
 			type: DRAFT_FEEDBACK_COMMENT_ADD,
 			siteId: SITE_ID,
