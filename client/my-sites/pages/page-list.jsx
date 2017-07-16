@@ -67,7 +67,7 @@ const Pages = localize( React.createClass( {
 		hasRecentError: PropTypes.bool.isRequired
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			perPage: 100,
 			loading: false,
@@ -79,7 +79,7 @@ const Pages = localize( React.createClass( {
 		};
 	},
 
-	fetchPages: function( options ) {
+	fetchPages( options ) {
 		if ( this.props.loading || this.props.lastPage || this.props.hasRecentError ) {
 			return;
 		}
@@ -89,7 +89,7 @@ const Pages = localize( React.createClass( {
 		actions.fetchNextPage();
 	},
 
-	_insertTimeMarkers: function( pages ) {
+	_insertTimeMarkers( pages ) {
 		const markedPages = [],
 			now = this.moment();
 		let lastMarker;
@@ -123,7 +123,7 @@ const Pages = localize( React.createClass( {
 		return markedPages;
 	},
 
-	getNoContentMessage: function() {
+	getNoContentMessage() {
 		let attributes;
 
 		if ( this.props.search ) {
@@ -196,7 +196,7 @@ const Pages = localize( React.createClass( {
 		/>;
 	},
 
-	addLoadingRows: function( rows, count ) {
+	addLoadingRows( rows, count ) {
 		for ( let i = 0; i < count; i++ ) {
 			if ( i % 4 === 0 ) {
 				rows.push( <Placeholder.Marker key={ 'placeholder-marker-' + i } /> );
@@ -205,7 +205,7 @@ const Pages = localize( React.createClass( {
 		}
 	},
 
-	renderLoading: function() {
+	renderLoading() {
 		const rows = [];
 		this.addLoadingRows( rows, 1 );
 
@@ -216,7 +216,7 @@ const Pages = localize( React.createClass( {
 		);
 	},
 
-	renderPagesList: function( { pages } ) {
+	renderPagesList( { pages } ) {
 		const { site } = this.props;
 		const status = this.props.status || 'published';
 
@@ -232,7 +232,7 @@ const Pages = localize( React.createClass( {
 		return this.renderChronological( { pages, site } );
 	},
 
-	renderHierarchical: function( { pages, site } ) {
+	renderHierarchical( { pages, site } ) {
 		pages = sortPagesHierarchically( pages );
 		const rows = pages.map( function( page ) {
 			return (
@@ -249,7 +249,7 @@ const Pages = localize( React.createClass( {
 		);
 	},
 
-	renderChronological: function( { pages, site } ) {
+	renderChronological( { pages, site } ) {
 		if ( ! this.props.search ) {
 			// we're listing in reverse chrono. use the markers.
 			pages = this._insertTimeMarkers( pages );
@@ -282,7 +282,7 @@ const Pages = localize( React.createClass( {
 		);
 	},
 
-	renderNoContent: function() {
+	renderNoContent() {
 		return (
 			<div id="pages" className="pages__page-list">
 				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
@@ -290,7 +290,7 @@ const Pages = localize( React.createClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		const {
 			hasSites,
 			loading,
