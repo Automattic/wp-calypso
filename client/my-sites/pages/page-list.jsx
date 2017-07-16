@@ -3,7 +3,6 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
 import { omit } from 'lodash';
 
@@ -28,33 +27,26 @@ import {
 	getSelectedSiteId,
 } from 'state/ui/selectors';
 
-var PageList = React.createClass( {
+const PageList = ( props ) => (
+	<PostListFetcher
+		type="page"
+		number={ 100 }
+		siteId={ props.siteId }
+		status={ mapStatus( props.status ) }
+		search={ props.search }>
+		<Pages
+			{ ...omit( props, 'children' ) }
+		/>
+	</PostListFetcher>
+);
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
-		context: PropTypes.object,
-		search: PropTypes.string,
-		hasSites: PropTypes.bool.isRequired,
-		site: PropTypes.object,
-		siteId: PropTypes.any
-	},
-
-	render: function() {
-		return (
-			<PostListFetcher
-				type="page"
-				number={ 100 }
-				siteId={ this.props.siteId }
-				status={ mapStatus( this.props.status ) }
-				search={ this.props.search }>
-				<Pages
-					{ ...omit( this.props, 'children' ) }
-				/>
-			</PostListFetcher>
-		);
-	}
-} );
+PageList.propTypes = {
+	context: PropTypes.object,
+	search: PropTypes.string,
+	hasSites: PropTypes.bool.isRequired,
+	site: PropTypes.object,
+	siteId: PropTypes.any
+};
 
 var Pages = localize( React.createClass( {
 
