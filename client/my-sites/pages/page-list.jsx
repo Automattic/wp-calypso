@@ -4,9 +4,7 @@
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
-import {
-	omit,
-} from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
