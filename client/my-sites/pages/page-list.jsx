@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
 import { omit } from 'lodash';
@@ -55,7 +56,7 @@ var PageList = React.createClass( {
 	}
 } );
 
-var Pages = React.createClass( {
+var Pages = localize( React.createClass( {
 
 	displayName: 'Pages',
 
@@ -105,10 +106,10 @@ var Pages = React.createClass( {
 			pageDate = this.moment( pageDate );
 			var days = now.diff( pageDate, 'days' );
 			if ( days <= 0 ) {
-				return this.translate( 'Today' );
+				return this.props.translate( 'Today' );
 			}
 			if ( days === 1 ) {
-				return this.translate( 'Yesterday' );
+				return this.props.translate( 'Yesterday' );
 			}
 			return pageDate.from( now );
 		}.bind( this );
@@ -130,15 +131,17 @@ var Pages = React.createClass( {
 		var attributes, newPageLink;
 
 		if ( this.props.search ) {
-			return <NoResults
-				image="/calypso/images/pages/illustration-pages.svg"
-				text={
-					this.translate( 'No pages match your search for {{searchTerm/}}.', {
-						components: {
-							searchTerm: <em>{ this.props.search }</em>
-						}
-					} ) }
-			/>;
+			return (
+				<NoResults
+					image="/calypso/images/pages/illustration-pages.svg"
+					text={
+						this.props.translate( 'No pages match your search for {{searchTerm/}}.', {
+							components: {
+								searchTerm: <em>{ this.props.search }</em>
+							}
+						} ) }
+				/>
+			);
 		} else {
 			const { site, siteId } = this.props;
 			const sitePart = site && site.slug || siteId;
@@ -146,39 +149,39 @@ var Pages = React.createClass( {
 
 			if ( this.props.hasRecentError ) {
 				attributes = {
-					title: this.translate( 'Oh, no! We couldn\'t fetch your pages.' ),
-					line: this.translate( 'Please check your internet connection.' )
+					title: this.props.translate( 'Oh, no! We couldn\'t fetch your pages.' ),
+					line: this.props.translate( 'Please check your internet connection.' )
 				};
 			} else {
 				const status = this.props.status || 'published';
 				switch ( status ) {
 					case 'drafts':
 						attributes = {
-							title: this.translate( 'You don\'t have any drafts.' ),
-							line: this.translate( 'Would you like to create one?' ),
-							action: this.translate( 'Start a Page' ),
+							title: this.props.translate( 'You don\'t have any drafts.' ),
+							line: this.props.translate( 'Would you like to create one?' ),
+							action: this.props.translate( 'Start a Page' ),
 							actionURL: newPageLink
 						};
 						break;
 					case 'scheduled':
 						attributes = {
-							title: this.translate( 'You don\'t have any scheduled pages yet.' ),
-							line: this.translate( 'Would you like to create one?' ),
-							action: this.translate( 'Start a Page' ),
+							title: this.props.translate( 'You don\'t have any scheduled pages yet.' ),
+							line: this.props.translate( 'Would you like to create one?' ),
+							action: this.props.translate( 'Start a Page' ),
 							actionURL: newPageLink
 						};
 						break;
 					case 'trashed':
 						attributes = {
-							title: this.translate( 'You don\'t have any pages in your trash folder.' ),
-							line: this.translate( 'Everything you write is solid gold.' )
+							title: this.props.translate( 'You don\'t have any pages in your trash folder.' ),
+							line: this.props.translate( 'Everything you write is solid gold.' )
 						};
 						break;
 					default:
 						attributes = {
-							title: this.translate( 'You haven\'t published any pages yet.' ),
-							line: this.translate( 'Would you like to publish your first page?' ),
-							action: this.translate( 'Start a Page' ),
+							title: this.props.translate( 'You haven\'t published any pages yet.' ),
+							line: this.props.translate( 'Would you like to publish your first page?' ),
+							action: this.props.translate( 'Start a Page' ),
 							actionURL: newPageLink
 						};
 				}
@@ -311,7 +314,7 @@ var Pages = React.createClass( {
 		return this.renderLoading();
 	},
 
-} );
+} ) );
 
 const mapState = ( state ) => ( {
 	hasSites: hasInitializedSites( state ),
