@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
 import {
@@ -34,11 +34,11 @@ var PageList = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
-		context: React.PropTypes.object,
-		search: React.PropTypes.string,
-		hasSites: React.PropTypes.bool.isRequired,
-		site: React.PropTypes.object,
-		siteId: React.PropTypes.any
+		context: PropTypes.object,
+		search: PropTypes.string,
+		hasSites: PropTypes.bool.isRequired,
+		site: PropTypes.object,
+		siteId: PropTypes.any
 	},
 
 	render: function() {
@@ -64,16 +64,16 @@ var Pages = React.createClass( {
 	mixins: [ infiniteScroll( 'fetchPages' ) ],
 
 	propTypes: {
-		context: React.PropTypes.object.isRequired,
-		lastPage: React.PropTypes.bool.isRequired,
-		loading: React.PropTypes.bool.isRequired,
-		page: React.PropTypes.number.isRequired,
-		posts: React.PropTypes.array.isRequired,
-		search: React.PropTypes.string,
-		siteId: React.PropTypes.any,
-		hasSites: React.PropTypes.bool.isRequired,
-		trackScrollPage: React.PropTypes.func.isRequired,
-		hasRecentError: React.PropTypes.bool.isRequired
+		context: PropTypes.object.isRequired,
+		lastPage: PropTypes.bool.isRequired,
+		loading: PropTypes.bool.isRequired,
+		page: PropTypes.number.isRequired,
+		posts: PropTypes.array.isRequired,
+		search: PropTypes.string,
+		siteId: PropTypes.any,
+		hasSites: PropTypes.bool.isRequired,
+		trackScrollPage: PropTypes.func.isRequired,
+		hasRecentError: PropTypes.bool.isRequired
 	},
 
 	getDefaultProps: function() {
