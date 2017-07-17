@@ -2,13 +2,14 @@
  * External dependencies
  */
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import Button from 'components/button';
 
 class PaginationPage extends Component {
 	static propTypes = {
@@ -50,7 +51,7 @@ class PaginationPage extends Component {
 			case '...':
 				pageNumberElement = (
 					<li className="pagination__list-item pagination__ellipsis" aria-hidden="true">
-						&hellip;
+						<span>&hellip;</span>
 					</li>
 				);
 				break;
@@ -59,8 +60,10 @@ class PaginationPage extends Component {
 					'is-active': this.props.currentPage > 1,
 				} );
 				pageNumberElement = (
-					<li className={ listClass } onClick={ this.clickHandler } tabIndex="0">
-						<Gridicon icon="arrow-left" />
+					<li className={ listClass }>
+						<Button borderless onClick={ this.clickHandler } disabled={ this.props.currentPage <= 1 }>
+							<Gridicon icon="arrow-left" />
+						</Button>
 					</li>
 				);
 				break;
@@ -69,8 +72,10 @@ class PaginationPage extends Component {
 					'is-active': this.props.currentPage < this.props.totalPages,
 				} );
 				pageNumberElement = (
-					<li className={ listClass } onClick={ this.clickHandler } tabIndex="0">
-						<Gridicon icon="arrow-right" />
+					<li className={ listClass }>
+						<Button borderless onClick={ this.clickHandler } disabled={ this.props.currentPage >= this.props.totalPages }>
+							<Gridicon icon="arrow-right" />
+						</Button>
 					</li>
 				);
 				break;
@@ -79,8 +84,10 @@ class PaginationPage extends Component {
 					'is-selected': this.props.currentPage === this.props.pageNumber,
 				} );
 				pageNumberElement = (
-					<li className={ listClass } onClick={ this.clickHandler } tabIndex="0">
-						{ numberFormat( this.props.pageNumber ) }
+					<li className={ listClass }>
+						<Button borderless onClick={ this.clickHandler }>
+							{ numberFormat( this.props.pageNumber ) }
+						</Button>
 					</li>
 				);
 				break;

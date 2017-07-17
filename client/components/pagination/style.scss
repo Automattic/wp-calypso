@@ -17,24 +17,33 @@
 
 // List item styles for all links
 .pagination__list-item {
-	@extend %mobile-link-element;
 	display: inline-block;
-	padding: 0 .5em;
-	line-height: 40px;
-	text-align: center;
-	min-width: 16px;
+
+	.button {
+		@extend %mobile-link-element;
+		padding: 0 .5em;
+		line-height: 40px;
+		text-align: center;
+		min-width: 16px;
+
+		.gridicon {
+			top: 0;
+		}
+	}
+
+	&.pagination__ellipsis span {
+		padding: 0 .5em;
+		line-height: 40px;
+		text-align: center;
+		min-width: 16px;
+		vertical-align: top;
+	}
 }
 
 // Left/right navigation arrows
 // 1: Vertical align doesn't work so well and it's really obvious
 // with an outer box in close proximity
 .pagination__list-item.pagination__arrow {
-	&,
-	&:hover {
-		color: $gray;
-		cursor: default;
-	}
-
 	&.is-left {
 		padding-left: 14px;
 		float: left;
@@ -52,31 +61,26 @@
 }
 
 // Display active links as blue
-.pagination__list-item,
-.pagination__list-item.is-active {
-	cursor: pointer;
+.pagination__list-item .button {
 	color: $blue-wordpress;
 }
 
-.pagination__list-item.is-active .gridicon {
-	cursor: pointer;
-}
-
-// Hover/focus states
-.pagination__list-item:hover,
-.pagination__list-item.is-active:hover,
-.pagination__list-item:focus {
+// // Hover/focus states
+.pagination__list-item .button:not([disabled]):hover,
+.pagination__list-item .button:focus {
 	color: $link-highlight;
 }
 
 // Selected state
-.pagination__list-item.is-selected,
-.pagination__list-item.is-selected:hover {
+.pagination__list-item.is-selected .button {
 	background-color: $white;
 	font-weight: bold;
 	font-weight: 600;
 	color: $gray-dark;
-	cursor: default;
+}
+
+.pagination__list-item.is-selected .button:hover {
+	color: $gray-dark;
 }
 
 // Abridgement indication
@@ -84,5 +88,4 @@
 .pagination__ellipsis:hover {
 	@extend %mobile-interface-element;
 	color: $gray;
-	cursor: default;
 }
