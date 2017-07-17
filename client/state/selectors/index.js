@@ -60,6 +60,7 @@ export getMenusUrl from './get-menus-url';
 export getOriginalUserSetting from './get-original-user-setting';
 export getPastBillingTransaction from './get-past-billing-transaction';
 export getPastBillingTransactions from './get-past-billing-transactions';
+export getPluginUploadError from './get-plugin-upload-error';
 export getPosterUploadProgress from './get-poster-upload-progress';
 export getPosterUrl from './get-poster-url';
 export getPostLikes from './get-post-likes';
