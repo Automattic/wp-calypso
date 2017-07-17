@@ -12,9 +12,10 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import { getSectionName } from 'state/ui/selectors';
-import { getUserSetting, isNotificationsOpen } from 'state/selectors';
+import { getPreference } from 'state/preferences/selectors';
+import { isNotificationsOpen } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { saveUserSettings } from 'state/user-settings/actions';
+import { savePreference } from 'state/preferences/actions';
 import {
 	identity,
 	includes,
@@ -26,6 +27,7 @@ import {
 	getNewDismissTimes,
 	getCurrentSection,
 	isDismissed,
+	PREFERENCE_NAME,
 } from './utils';
 
 class AppBanner extends Component {
@@ -50,14 +52,10 @@ class AppBanner extends Component {
 		userAgent: navigator.userAgent,
 	};
 
-	state = {
-		isHidden: false,
-	};
-
 	isVisible() {
 		const { dismissedUntil, currentSection } = this.props;
 
-		return this.isMobile() && ! isDismissed( dismissedUntil, currentSection ) && ! this.state.isHidden;
+		return this.isMobile() && ! isDismissed( dismissedUntil, currentSection );
 	}
 
 	isiOS() {
@@ -76,7 +74,6 @@ class AppBanner extends Component {
 		event.preventDefault();
 		const { currentSection } = this.props;
 
-		this.setState( { isHidden: true } );
 		this.props.saveDismissTime( currentSection );
 		this.props.trackAppBannerDismiss( currentSection );
 	};
@@ -141,7 +138,7 @@ const mapStateToProps = ( state ) => {
 	const isNotesOpen = isNotificationsOpen( state );
 
 	return {
-		dismissedUntil: getUserSetting( state, 'appBannerDismissTimes' ),
+		dismissedUntil: getPreference( state, PREFERENCE_NAME ),
 		currentSection: getCurrentSection( sectionName, isNotesOpen ),
 	};
 };
@@ -150,7 +147,7 @@ const mapDispatchToProps = {
 	trackAppBannerImpression: ( sectionName ) => recordTracksEvent( 'calypso_mobile_app_banner_impression', { on_page: sectionName } ),
 	trackAppBannerDismiss: ( sectionName ) => recordTracksEvent( 'calypso_mobile_app_banner_dismiss', { on_page: sectionName } ),
 	trackAppBannerOpen: ( sectionName ) => recordTracksEvent( 'calypso_mobile_app_banner_open', { on_page: sectionName } ),
-	saveDismissTime: ( sectionName ) => saveUserSettings( { appBannerDismissTimes: getNewDismissTimes( sectionName ) } ),
+	saveDismissTime: ( sectionName ) => savePreference( PREFERENCE_NAME, getNewDismissTimes( sectionName ) ),
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( AppBanner ) );

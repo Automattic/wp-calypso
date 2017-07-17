@@ -7,6 +7,7 @@ import {
 	reduce,
 } from 'lodash';
 
+export const PREFERENCE_NAME = 'appBannerDismissTimes';
 export const EDITOR = 'post-editor';
 export const NOTES = 'notifications';
 export const READER = 'reader';
