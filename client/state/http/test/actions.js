@@ -10,17 +10,17 @@ import { http } from '../actions';
 
 describe( '#rawHttp', () => {
 	it( 'should set request parameters', () => {
-		const url = 'http://yury.com',
-			method = 'POST',
-			headers = [
-				[ 'Content-Type', 'application/json' ]
-			],
-			body = {
-				hello: 'world'
-			},
-			withCredentials = true,
-			onSuccess = { type: 'SUCCESS' },
-			onFailure = { type: 'FAIL' };
+		const url = 'http://yury.com';
+		const method = 'POST';
+		const headers = [
+			[ 'Content-Type', 'application/json' ]
+		];
+		const body = {
+			hello: 'world'
+		};
+		const withCredentials = true;
+		const onSuccess = { type: 'SUCCESS' };
+		const onFailure = { type: 'FAIL' };
 
 		const request = http( {
 			url,
