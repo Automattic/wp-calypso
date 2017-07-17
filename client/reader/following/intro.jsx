@@ -46,6 +46,7 @@ class FollowingIntro extends React.Component {
 				<QueryPreferences />
 				<div className="following__intro-header">
 					<div className="following__intro-copy">
+						<span>
 						{ translate(
 							'{{strong}}Welcome!{{/strong}} Reader is a custom magazine. ' +
 								'{{link}}Follow your favorite sites{{/link}} and their latest ' +
@@ -59,7 +60,9 @@ class FollowingIntro extends React.Component {
 								},
 							},
 						) }
+						</span>
 					</div>
+					<div className="following__intro-character"></div>
 
 					<div
 						className="following__intro-close"

@@ -8,6 +8,193 @@
 	z-index: z-index( 'root', '.reader-following-search' );
 }
 
+// Following intro light blue
+.following__intro-light-blue {
+	background: url( '/calypso/images/reader/reader-intro-background-light-blue.svg' ) #7fd3f1 no-repeat 100%20px;
+
+	.following__intro-copy {
+		color: #045182;
+		margin-left: 24px;
+
+		a {
+			color: #1785be;
+			border-bottom: 1px #1785be solid;
+
+			&:hover {
+				color: $white;
+				border-bottom: 1px $white solid;
+			}
+		}
+	}
+
+	.following__intro-character {
+		background: url( '/calypso/images/reader/reader-intro-character-dark-blue.svg' ) no-repeat 8px bottom;
+	}
+}
+
+// Following intro white
+.following__intro-white {
+	background: url( '/calypso/images/reader/reader-intro-background-white.svg' ) $white no-repeat 100%20px;
+
+	.following__intro-copy {
+		color: #045182;
+		margin-left: 0;
+
+		a {
+			color: #1785be;
+			border-bottom: 1px #1785be solid;
+
+			&:hover {
+				color: $white;
+				border-bottom: 1px $white solid;
+			}
+		}
+
+		@include breakpoint( "<660px" ) {
+			margin-left: 24px;
+		}
+	}
+
+	.following__intro-character {
+		background: url( '/calypso/images/reader/reader-intro-character-light-blue.svg' ) no-repeat 8px bottom;
+	}
+}
+
+// For white variation only
+// For character to sit directly on top of search field
+.following__intro-white + .card.following__search {
+	margin-top: 0;
+}
+
+.following__intro-blue,
+.following__intro-light-blue,
+.following__intro-white {
+	background-size: 450px;
+	min-height: 140px;
+
+	@media ( min-width: 661px ) and ( max-width: 773px ) {
+		background-position: 150px 20px;
+	}
+
+	@include breakpoint( "<660px" ) {
+		background-position: 120px 20px;
+	}
+
+	.following__intro-copy-hidden {
+
+		@include breakpoint( "<660px" ) {
+			display: none;
+			visibility: hidden;
+		}
+	}
+
+	.following__intro-character {
+		background-size: 106px;
+		flex: 0 0 120px;
+		min-height: 140px;
+
+		// Hides the character when main content column gets too narrow
+		@media ( min-width: 661px ) and ( max-width: 773px ) {
+			display: none;
+		}
+
+		@include breakpoint( "<660px" ) {
+			background-size: 106px;
+		}
+	}
+}
+
+.following__intro-blue .following__intro-header,
+.following__intro-light-blue .following__intro-header,
+.following__intro-white .following__intro-header {
+	align-items: stretch;
+	display: flex;
+	flex-direction: row;
+}
+
+.following__intro-blue .following__intro-copy,
+.following__intro-light-blue .following__intro-copy,
+.following__intro-white .following__intro-copy {
+	display: flex;
+	flex: 1 1 0;
+	flex-direction: column;
+	font-size: 18px;
+	justify-content: center;
+
+	@media ( min-width: 661px ) and ( max-width: 773px ) {
+		margin-bottom: 20px;
+		margin-top: 20px;
+	}
+
+	@include breakpoint( "<960px" ) {
+		font-size: 16px;
+	}
+
+	@include breakpoint( "<660px" ) {
+		font-size: 18px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		font-size: 16px;
+	}
+}
+
+.following__search {
+	margin-top: 8px;
+
+	@include breakpoint( ">660px" ) {
+		margin-top: 30px;
+	}
+}
+
+// Dismiss button
+.following__intro-blue .following__intro-close,
+.following__intro-light-blue .following__intro-close,
+.following__intro-white .following__intro-close {
+	align-items: flex-start;
+	margin-top: 8px;
+	margin-right: 8px;
+	height: 24px;
+	width: 24px;
+
+	.following__intro-close-icon {
+		position: absolute;
+		z-index: z-index( 'root', '.following__intro-close-icon' );
+		fill: $white;
+
+		// Fix for 1px (0.5pt) misalignment in Safari under retina. See
+		// https://github.com/Automattic/wp-calypso/pull/11282/#issuecomment-289837131
+		transform: scale( 1 );
+
+		&:hover {
+			cursor: pointer;
+			fill: darken( #62a9a7, 15% );
+		}
+
+		&:hover + .following__intro-close-icon-bg {
+			background-color: lighten( #62a9a7, 50% );
+			box-shadow: 0 0 0 2px lighten( #62a9a7, 40% );
+		}
+	}
+
+	.following__intro-close-icon-bg {
+		background-color: #5ca8a6;
+		border-radius: 10px;
+		display: block;
+		height: 20px;
+		position: absolute;
+			left: 2px;
+			top: 2px;
+		z-index: z-index( 'root', '.following__intro-close-icon-bg' );
+		width: 20px;
+	}
+}
+
+.following__intro-white .following__intro-close-icon {
+	fill: $gray;
+}
+
+// Following intro original
 .following__intro {
 	background: url( '/calypso/images/reader/reader-intro-background.jpg' );
 	background-position: 100% 0;
