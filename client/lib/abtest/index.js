@@ -5,6 +5,7 @@ import debugFactory from 'debug';
 import { includes, keys, reduce, some, map, every, isArray } from 'lodash';
 import store from 'store';
 import i18n from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -80,6 +81,7 @@ ABTest.prototype.init = function( name, geoLocation ) {
 	}
 
 	const variationDetails = testConfig.variations;
+	const assignmentMethod = ( typeof testConfig.assignmentMethod !== 'undefined' ) ? testConfig.assignmentMethod : 'default';
 	const variationNames = keys( variationDetails );
 	if ( ! variationDetails || variationNames.length === 0 ) {
 		throw new Error( 'No A/B test variations found for ' + name );
@@ -115,6 +117,7 @@ ABTest.prototype.init = function( name, geoLocation ) {
 	this.variationDetails = variationDetails;
 	this.defaultVariation = testConfig.defaultVariation;
 	this.variationNames = variationNames;
+	this.assignmentMethod = assignmentMethod;
 	this.experimentId = name + '_' + variationDatestamp;
 
 	if ( testConfig.countryCodeTarget ) {
@@ -232,14 +235,19 @@ ABTest.prototype.getSavedVariation = function() {
 };
 
 ABTest.prototype.assignVariation = function() {
-	let variationName;
+	let variationName, randomAllocationAmount;
 	let sum = 0;
 
+	const userId = get( user, 'data.ID' );
 	const allocationsTotal = reduce( this.variationDetails, ( allocations, allocation ) => {
 		return allocations + allocation;
 	}, 0 );
 
-	const randomAllocationAmount = Math.random() * allocationsTotal;
+	if ( this.assignmentMethod === 'userId' && ! isNaN( +userId ) ) {
+		randomAllocationAmount = Number( user.data.ID ) % allocationsTotal;
+	} else {
+		randomAllocationAmount = Math.random() * allocationsTotal;
+	}
 
 	for ( variationName in this.variationDetails ) {
 		sum += this.variationDetails[ variationName ];
