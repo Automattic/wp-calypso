@@ -24,6 +24,28 @@ export default function MyComponent( { onMenuItemClick } ) {
 
 ## Props
 
+### `onClick`
+
+<table>
+	<tr><td>Type</td><td>Function</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+	<tr><td>Default</td><td><code>noop</code></td></tr>
+</table>
+
+Callback that will be invoked when menu button is clicked.
+Will be passed the click event.
+
+### `onToggle`
+
+<table>
+	<tr><td>Type</td><td>Function</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+	<tr><td>Default</td><td><code>noop</code></td></tr>
+</table>
+
+Callback that will be invoked when menu is toggled.
+Will be passed the boolean visibility of the menu.
+
 ### `toggleTitle`
 
 <table>
