@@ -2,13 +2,16 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { pick } from 'lodash';
+import { connect } from 'react-redux';
+import { flowRight, get, pick } from 'lodash';
 import moment from 'moment';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
+import ExternalLink from 'components/external-link';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -16,7 +19,11 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
+import QueryDebugLogs from '../data/query-debug-logs';
 import WrapSettingsForm from '../wrap-settings-form';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { deleteDebugLog } from '../../state/debug/actions';
+import { getDebugLogs, isDeletingDebugLog } from '../../state/debug/selectors';
 
 class DebugTab extends Component {
 	static propTypes = {
@@ -28,12 +35,19 @@ class DebugTab extends Component {
 		fields: {},
 	};
 
+	deleteLog = ( event ) => {
+		const log = get( event, 'currentTarget.dataset.log', '' );
+		this.props.deleteDebugLog( this.props.siteId, log );
+	}
+
 	render() {
 		const {
+			debugLogs,
 			fields: {
-				wp_super_cache_debug,
+				cache_path_url,
 				wp_cache_debug_ip,
 				wp_super_cache_comments,
+				wp_super_cache_debug,
 				wp_super_cache_front_page_check,
 				wp_super_cache_front_page_clear,
 				wp_super_cache_front_page_text,
@@ -44,13 +58,63 @@ class DebugTab extends Component {
 			handleSubmitForm,
 			isRequesting,
 			isSaving,
+			siteId,
 			translate,
 		} = this.props;
 
 		return (
 			<div>
+				<QueryDebugLogs siteId={ siteId } />
 				<form>
-					<SectionHeader label={ translate( 'Debug' ) }>
+					<SectionHeader label={ translate( 'Debug' ) } />
+					<Card>
+						<FormToggle
+							checked={ !! wp_super_cache_debug }
+							disabled={ isRequesting || isSaving }
+							onChange={ handleAutosavingToggle( 'wp_super_cache_debug' ) }>
+							{ translate( 'Enable Debugging' ) }
+						</FormToggle>
+					</Card>
+
+					<SectionHeader label={ translate( 'Debug Logs' ) } />
+					<Card>
+						<table>
+							<thead>
+								<tr>
+									<th>{ translate( 'Filename' ) }</th>
+									<th>{ translate( 'Username/Password' ) }</th>
+									<th>{ translate( 'Delete' ) }</th>
+								</tr>
+							</thead>
+							<tbody>
+							{ debugLogs.map( ( { active, filename, username, isDeleting } ) => (
+								<tr key={ filename }>
+									<td>
+										<ExternalLink href={ cache_path_url + filename } target="_blank">
+											{ filename }
+										</ExternalLink>
+									</td>
+									<td>{ username }</td>
+									<td>
+										<Button
+											busy={ isDeleting }
+											className="wp-super-cache__debug-log-delete"
+											compact
+											data-log={ filename }
+											disabled={ isDeleting }
+											onClick={ this.deleteLog }>
+											{ active
+												? translate( 'Reset' )
+												: translate( 'Delete' ) }
+										</Button>
+									</td>
+								</tr>
+							) ) }
+							</tbody>
+						</table>
+					</Card>
+
+					<SectionHeader label={ translate( 'Settings' ) }>
 						<FormButton
 							compact
 							primary
@@ -60,53 +124,43 @@ class DebugTab extends Component {
 					</SectionHeader>
 					<Card>
 						<FormFieldset>
-							<FormToggle
-								checked={ !! wp_super_cache_debug }
-								disabled={ isRequesting || isSaving }
-								onChange={ handleAutosavingToggle( 'wp_super_cache_debug' ) }>
-								{ translate( 'Enable Debugging' ) }
-							</FormToggle>
+							<FormLabel htmlFor="ipAddress">
+								{ translate( 'IP Address' ) }
+							</FormLabel>
+							<FormTextInput
+								disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
+								id="ipAddress"
+								onChange={ handleChange( 'wp_cache_debug_ip' ) }
+								value={ wp_cache_debug_ip || '' } />
+							<FormSettingExplanation>
+								{ translate(
+									'(only log requests from this IP address)',
+								) }
+							</FormSettingExplanation>
 						</FormFieldset>
-						<div className="wp-super-cache__debug-fieldsets">
-							<FormFieldset>
-								<FormLabel htmlFor="ipAddress">
-									{ translate( 'IP Address' ) }
-								</FormLabel>
-								<FormTextInput
-									disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
-									id="ipAddress"
-									onChange={ handleChange( 'wp_cache_debug_ip' ) }
-									value={ wp_cache_debug_ip || '' } />
-								<FormSettingExplanation>
+						<FormFieldset>
+							<FormToggle
+								checked={ !! wp_super_cache_comments }
+								disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
+								onChange={ handleAutosavingToggle( 'wp_super_cache_comments' ) }>
+								{ translate( 'Cache Status Messages' ) }
+							</FormToggle>
+							<FormSettingExplanation>
+								{ translate(
+										'Display comments at the end of every page like this:'
+								) }
+								<span className="wp-super-cache__debug-cache-comment-snippet">
 									{ translate(
-										'(only log requests from this IP address)',
+										'<!-- Dynamic page generated in 0.450 seconds. -->\n' +
+										'<!-- Cached page generated by WP-Super-Cache on %(date)s -->\n' +
+										'<!-- super cache -->',
+										{
+											args: { date: moment().utc().format( 'YYYY-MM-DD HH:mm:ss' ) }
+										}
 									) }
-								</FormSettingExplanation>
-							</FormFieldset>
-							<FormFieldset>
-								<FormToggle
-									checked={ !! wp_super_cache_comments }
-									disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
-									onChange={ handleAutosavingToggle( 'wp_super_cache_comments' ) }>
-									{ translate( 'Cache Status Messages' ) }
-								</FormToggle>
-								<FormSettingExplanation>
-									{ translate(
-											'Display comments at the end of every page like this:'
-									) }
-									<span className="wp-super-cache__debug-cache-comment-snippet">
-										{ translate(
-											'<!-- Dynamic page generated in 0.450 seconds. -->\n' +
-											'<!-- Cached page generated by WP-Super-Cache on %(date)s -->\n' +
-											'<!-- super cache -->',
-											{
-												args: { date: moment().utc().format( 'YYYY-MM-DD HH:mm:ss' ) }
-											}
-										) }
-									</span>
-								</FormSettingExplanation>
-							</FormFieldset>
-						</div>
+								</span>
+							</FormSettingExplanation>
+						</FormFieldset>
 					</Card>
 				</form>
 
@@ -172,9 +226,10 @@ class DebugTab extends Component {
 
 const getFormSettings = settings => {
 	return pick( settings, [
-		'wp_super_cache_debug',
+		'cache_path_url',
 		'wp_cache_debug_ip',
 		'wp_super_cache_comments',
+		'wp_super_cache_debug',
 		'wp_super_cache_front_page_check',
 		'wp_super_cache_front_page_clear',
 		'wp_super_cache_front_page_text',
@@ -182,4 +237,22 @@ const getFormSettings = settings => {
 	] );
 };
 
-export default WrapSettingsForm( getFormSettings )( DebugTab );
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const debugLogs = getDebugLogs( state, siteId );
+
+		return {
+			debugLogs: debugLogs.map( ( debugLog ) => ( {
+				...debugLog,
+				isDeleting: isDeletingDebugLog( state, siteId, debugLog.filename ),
+			} ) )
+		};
+	},
+	{ deleteDebugLog },
+);
+
+export default flowRight(
+	connectComponent,
+	WrapSettingsForm( getFormSettings )
+)( DebugTab );

@@ -198,8 +198,7 @@
 }
 
 .wp-super-cache__lock-down-container,
-.wp-super-cache__cdn-fieldsets,
-.wp-super-cache__debug-fieldsets {
+.wp-super-cache__cdn-fieldsets {
 	margin-left: 40px;
 }
 
@@ -228,4 +227,14 @@
 	font-style: normal;
 	display: block;
 	white-space: pre;
+}
+
+// Debug Tab
+
+.wp-super-cache__debug-fieldsets {
+	margin-left: 40px;
+}
+
+.wp-super-cache__debug-log-delete {
+	vertical-align: middle;
 }

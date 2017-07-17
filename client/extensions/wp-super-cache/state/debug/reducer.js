@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { omit } from 'lodash';
+import { findIndex } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +15,7 @@ import {
 	WP_SUPER_CACHE_REQUEST_DEBUG_LOGS,
 	WP_SUPER_CACHE_REQUEST_DEBUG_LOGS_FAILURE,
 	WP_SUPER_CACHE_REQUEST_DEBUG_LOGS_SUCCESS,
+	WP_SUPER_CACHE_RECEIVE_SETTINGS,
 } from '../action-types';
 
 /**
@@ -72,10 +73,56 @@ export const deleteStatus = createReducer( {}, {
  */
 export const items = createReducer( {}, {
 	[ WP_SUPER_CACHE_REQUEST_DEBUG_LOGS_SUCCESS ]: ( state, { siteId, data } ) => ( { ...state, [ siteId ]: data } ),
-	[ WP_SUPER_CACHE_DELETE_DEBUG_LOG_SUCCESS ]: ( state, { siteId, filename } ) => ( {
+	[ WP_SUPER_CACHE_DELETE_DEBUG_LOG_SUCCESS ]: ( state, { siteId, filename: deletedFilename } ) => ( {
 		...state,
-		[ siteId ]: omit( state[ siteId ], filename )
-	} )
+		[ siteId ]: state[ siteId ].filter( ( { filename } ) => ( filename !== deletedFilename ) )
+	} ),
+	[ WP_SUPER_CACHE_RECEIVE_SETTINGS ]: ( state, {
+		siteId,
+		settings: {
+			wp_super_cache_debug,
+			wp_cache_debug_log,
+			wp_cache_debug_username,
+		}
+	} ) => {
+		if ( wp_super_cache_debug === true ) {
+			const filename = wp_cache_debug_log.split( '/' ).pop();
+			const substate = state[ siteId ];
+			const index = findIndex( substate, [ 'filename', filename ] );
+			let newSubstate;
+
+			if ( index !== -1 ) {
+				newSubstate = [
+					...substate.slice( 0, index ),
+					{
+						...substate[ index ],
+						active: true,
+					},
+					...substate.slice( index + 1 )
+				];
+			} else {
+				newSubstate = [
+					...substate,
+					{
+						filename: wp_cache_debug_log.split( '/' ).pop(),
+						username: wp_cache_debug_username,
+						active: true,
+					}
+				];
+			}
+			return {
+				...state,
+				[ siteId ]: newSubstate,
+			};
+		}
+		return {
+			...state,
+			[ siteId ]: state[ siteId ].map( debugLog => ( {
+				...debugLog,
+				active: false,
+			} ) )
+		};
+	}
 } );
 
 export default combineReducers( {

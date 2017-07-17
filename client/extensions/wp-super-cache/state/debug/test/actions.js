@@ -31,9 +31,11 @@ describe( 'actions', () => {
 	const failedSiteId = 456789;
 	const filename = '89fe3b92191d36ee7fb3956cd52c704c.php';
 	const username = '145cc79483f018538a3edc78117622ba';
-	const debugLogs = {
-		[ filename ]: username
-	};
+	const debugLogs = [ {
+		active: true,
+		filename,
+		username
+	} ];
 
 	describe( '#requestDebugLogs()', () => {
 		useNock( nock => {

@@ -129,10 +129,14 @@ describe( 'reducer', () => {
 
 	describe( 'items()', () => {
 		const primaryDebugLogs = {
-			'89fe3b92191d36ee7fb3956cd52c704c.php': '145cc79483f018538a3edc78117622ba'
+			active: true,
+			filename: '89fe3b92191d36ee7fb3956cd52c704c.php',
+			username: '145cc79483f018538a3edc78117622ba',
 		};
 		const secondaryDebugLogs = {
-			'5634c09a3100cd6f9d1eb0aa22c641f8.php': '57f42f740d3cdaca5a9ccc771cb4e026'
+			active: true,
+			filename: '5634c09a3100cd6f9d1eb0aa22c641f8.php',
+			username: '57f42f740d3cdaca5a9ccc771cb4e026',
 		};
 
 		const previousState = deepFreeze( {
@@ -183,10 +187,18 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should accumulate new debug logs and overwrite existing ones for the same site ID', () => {
-			const newResults = {
-				'ce5867bb0bbe558005c1c1999b471727.php': '5ea08f197441694d4b3d5ab872f53875',
-				'79be02e19bebb31c4384e5971b397fce.php': 'b165dda29fcb0c09abf7c8c4e04f53e6',
-			};
+			const newResults = [
+				{
+					active: true,
+					filename: 'ce5867bb0bbe558005c1c1999b471727.php',
+					username: '5ea08f197441694d4b3d5ab872f53875',
+				},
+				{
+					active: false,
+					filename: '79be02e19bebb31c4384e5971b397fce.php',
+					username: 'b165dda29fcb0c09abf7c8c4e04f53e6',
+				}
+			];
 
 			const state = items( previousState, {
 				type: WP_SUPER_CACHE_REQUEST_DEBUG_LOGS_SUCCESS,

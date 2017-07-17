@@ -24,6 +24,7 @@ export const itemsSchema = {
 				cache_mod_rewrite: { type: 'boolean' },
 				cache_next_gc: { type: 'integer' },
 				cache_path: { type: 'string' },
+				cache_path_url: { type: 'string' },
 				cache_rebuild: { type: 'boolean' },
 				cache_rejected_uri: { type: 'string' },
 				cache_rejected_user_agent: { type: 'string' },

@@ -12,10 +12,10 @@ function getDebugState( state ) {
  *
  * @param  {Object}  state Global state tree
  * @param  {Number}  siteId Site ID
- * @return {Object} Object with debug log URLs as keys, and usernames as values
+ * @return {Array} Array of debug log objects
  */
 export function getDebugLogs( state, siteId ) {
-	return get( getDebugState( state ), [ 'items', siteId ], {} );
+	return get( getDebugState( state ), [ 'items', siteId ], [] );
 }
 
 /**
