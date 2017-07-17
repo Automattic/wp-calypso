@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { isDate } from 'lodash';
+import { get, isDate } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,7 @@ import { createNotice, errorNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { getPostOldestCommentDate } from 'state/comments/selectors';
 import { removeComment } from 'state/comments/actions';
+import getSiteComment from 'state/selectors/get-site-comment';
 
 /***
  * Creates a placeholder comment for a given text and postId
@@ -159,8 +160,9 @@ export const announceFailure = ( { dispatch, getState }, { siteId, postId } ) =>
 };
 
 // @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/delete/
-export const deleteComment = ( { dispatch }, action ) => {
+export const deleteComment = ( { dispatch, getState }, action ) => {
 	const { siteId, postId, commentId } = action;
+	const comment = getSiteComment( getState(), siteId, commentId );
 
 	dispatch( removeComment( siteId, postId, commentId ) );
 
@@ -171,7 +173,10 @@ export const deleteComment = ( { dispatch }, action ) => {
 				apiVersion: '1.1',
 				path: `/sites/${ siteId }/comments/${ commentId }/delete`,
 			},
-			action
+			{
+				...action,
+				comment,
+			}
 		)
 	);
 };
@@ -189,8 +194,28 @@ export const announceDeleteSuccess = ( { dispatch } ) => {
 	);
 };
 
-export const announceDeleteFailure = ( { dispatch } ) => {
-	dispatch( errorNotice( translate( 'Could not delete the comment.' ) ) );
+export const announceDeleteFailure = ( { dispatch, getState }, action ) => {
+	const { siteId, postId, comment } = action;
+
+	dispatch(
+		errorNotice(
+			translate( 'Could not delete the comment.' ),
+			{
+				duration: 5000,
+				isPersistent: true,
+			}
+		)
+	);
+
+	if ( comment ) {
+		dispatch( {
+			type: COMMENTS_RECEIVE,
+			siteId,
+			postId,
+			comments: [ comment ],
+			skipSort: !! get( comment, 'parent.ID' ),
+		} );
+	}
 };
 
 export default {
