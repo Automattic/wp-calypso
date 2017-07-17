@@ -18,7 +18,8 @@ describe( 'PostEditor', function() {
 	const defaultProps = {
 		translate: string => string,
 		markSaved: () => {},
-		markChanged: () => {}
+		markChanged: () => {},
+		setLayoutFocus: () => {}
 	};
 
 	useFakeDom();
