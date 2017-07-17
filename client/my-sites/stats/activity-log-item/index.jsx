@@ -20,6 +20,8 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
 
 const debug = debugFactory( 'calypso:activity-log:item' );
 
+const stopPropagation = event => event.stopPropagation();
+
 class ActivityLogItem extends Component {
 	static propTypes = {
 		applySiteOffset: PropTypes.func.isRequired,
@@ -248,7 +250,10 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div className="activity-log-item__action">
-				<EllipsisMenu position="bottom right">
+				<EllipsisMenu
+					onClick={ stopPropagation }
+					position="bottom right"
+				>
 					<PopoverMenuItem
 						disabled={ disableRestore }
 						icon="undo"
@@ -295,6 +300,7 @@ class ActivityLogItem extends Component {
 				</div>
 				<FoldableCard
 					className="activity-log-item__card"
+					clickableHeader
 					expandedSummary={ this.renderSummary() }
 					header={ this.renderHeader() }
 					onOpen={ this.handleOpen }
