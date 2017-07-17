@@ -13,7 +13,6 @@ import Button from 'components/button';
 import Card from 'components/card';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getUserSetting, isNotificationsOpen } from 'state/selectors';
-import { isMobile } from 'lib/viewport';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { ROUTE_SET } from 'state/action-types';
 import { saveUserSettings } from 'state/user-settings/actions';
@@ -34,23 +33,24 @@ import {
 
 class AppBanner extends Component {
 	static propTypes = {
+		saveDismissTime: PropTypes.func,
 		translate: PropTypes.func,
 		trackAppBannerImpression: PropTypes.func,
 		trackAppBannerDismiss: PropTypes.func,
 		trackAppBannerOpen: PropTypes.func,
-		saveDismissTime: PropTypes.func,
+		userAgent: PropTypes.string,
 		// connected
-		pageType: React.PropTypes.string,
 		dismissedUntil: React.PropTypes.object,
+		pageType: React.PropTypes.string,
 	};
 
 	static defaultProps = {
+		saveDismissTime: noop,
 		translate: identity,
 		trackAppBannerImpression: noop,
 		trackAppBannerDismiss: noop,
 		trackAppBannerOpen: noop,
-		saveDismissTime: noop,
-		dismissedUntil: {}
+		userAgent: navigator.userAgent,
 	};
 
 	state = {
@@ -58,9 +58,21 @@ class AppBanner extends Component {
 	};
 
 	isVisible() {
-		const { pageType, dismissedUntil } = this.props;
+		const { dismissedUntil, pageType } = this.props;
 
-		return isMobile() && ! isDismissed( dismissedUntil, pageType ) && ! this.state.isHidden;
+		return this.isMobile() && ! isDismissed( dismissedUntil, pageType ) && ! this.state.isHidden;
+	}
+
+	isiOS() {
+		return this.props.userAgent.match( /iPhone/i ) ? true : false;
+	}
+
+	isAndroid() {
+		return this.props.userAgent.match( /Android/i ) ? true : false;
+	}
+
+	isMobile() {
+		return this.isiOS() || this.isAndroid();
 	}
 
 	dismiss = ( event ) => {
