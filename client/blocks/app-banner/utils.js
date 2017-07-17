@@ -2,21 +2,21 @@
  * Internal dependencies
  */
 import {
-	startsWith,
 	get,
+	includes,
 	reduce,
 } from 'lodash';
 
-export const EDITOR = 'editor';
+export const EDITOR = 'post-editor';
 export const NOTES = 'notifications';
 export const READER = 'reader';
 export const STATS = 'stats';
-export const ALLOWED_PAGE_TYPES = [ EDITOR, NOTES, READER, STATS ];
+export const ALLOWED_SECTIONS = [ EDITOR, NOTES, READER, STATS ];
 export const ONE_WEEK_IN_MILLISECONDS = 604800000;
 export const ONE_YEAR_IN_MILLISECONDS = 31540000000;
 
-export function getAppBannerData( translate, pageType ) {
-	switch ( pageType ) {
+export function getAppBannerData( translate, sectionName ) {
+	switch ( sectionName ) {
 		case EDITOR:
 			return {
 				title: translate( 'Rich mobile publishing.' ),
@@ -45,45 +45,33 @@ export function getAppBannerData( translate, pageType ) {
 	}
 }
 
-export function getPageType( currentPath, isNotesOpen ) {
-	if ( ! currentPath ) {
-		return null;
-	}
-
+export function getCurrentSection( currentSection, isNotesOpen ) {
 	if ( isNotesOpen ) {
 		return NOTES;
 	}
 
-	if ( startsWith( currentPath, '/post/' ) || startsWith( currentPath, '/page/' ) ) {
-		return EDITOR;
-	}
-
-	if ( currentPath === '/' ) {
-		return READER;
-	}
-
-	if ( startsWith( currentPath, '/stats/' ) ) {
-		return STATS;
+	if ( includes( ALLOWED_SECTIONS, currentSection ) ) {
+		return currentSection;
 	}
 
 	return null;
 }
 
-export function getNewDismissTimes( pageType ) {
+export function getNewDismissTimes( dismissedSection ) {
 	const currentTime = Date.now();
 	const aWeekFromNow = currentTime + ONE_WEEK_IN_MILLISECONDS;
 	const aYearFromNow = currentTime + ONE_YEAR_IN_MILLISECONDS;
 
-	return reduce( ALLOWED_PAGE_TYPES, ( result, type ) => {
-		result[ type ] = ( type === pageType ) ? aYearFromNow : aWeekFromNow;
+	return reduce( ALLOWED_SECTIONS, ( result, section ) => {
+		result[ section ] = ( section === dismissedSection ) ? aYearFromNow : aWeekFromNow;
 		return result;
 	}, {} );
 }
 
-export function isDismissed( dismissedUntil, pageType ) {
-	if ( ! get( dismissedUntil, pageType, false ) ) {
+export function isDismissed( dismissedUntil, sectionName ) {
+	if ( ! get( dismissedUntil, sectionName, false ) ) {
 		return false;
 	}
 
-	return dismissedUntil[ pageType ] > Date.now();
+	return dismissedUntil[ sectionName ] > Date.now();
 }

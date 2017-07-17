@@ -11,23 +11,20 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { getActionLog } from 'state/ui/action-log/selectors';
+import { getSectionName } from 'state/ui/selectors';
 import { getUserSetting, isNotificationsOpen } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { ROUTE_SET } from 'state/action-types';
 import { saveUserSettings } from 'state/user-settings/actions';
 import {
-	findLast,
-	get,
 	identity,
 	includes,
 	noop
 } from 'lodash';
 import {
-	ALLOWED_PAGE_TYPES,
+	ALLOWED_SECTIONS,
 	getAppBannerData,
 	getNewDismissTimes,
-	getPageType,
+	getCurrentSection,
 	isDismissed,
 } from './utils';
 
@@ -40,8 +37,8 @@ class AppBanner extends Component {
 		trackAppBannerOpen: PropTypes.func,
 		userAgent: PropTypes.string,
 		// connected
+		currentSection: React.PropTypes.string,
 		dismissedUntil: React.PropTypes.object,
-		pageType: React.PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -58,9 +55,9 @@ class AppBanner extends Component {
 	};
 
 	isVisible() {
-		const { dismissedUntil, pageType } = this.props;
+		const { dismissedUntil, currentSection } = this.props;
 
-		return this.isMobile() && ! isDismissed( dismissedUntil, pageType ) && ! this.state.isHidden;
+		return this.isMobile() && ! isDismissed( dismissedUntil, currentSection ) && ! this.state.isHidden;
 	}
 
 	isiOS() {
@@ -77,24 +74,24 @@ class AppBanner extends Component {
 
 	dismiss = ( event ) => {
 		event.preventDefault();
-		const { pageType } = this.props;
+		const { currentSection } = this.props;
 
 		this.setState( { isHidden: true } );
-		this.props.saveDismissTime( pageType );
-		this.props.trackAppBannerDismiss( pageType );
+		this.props.saveDismissTime( currentSection );
+		this.props.trackAppBannerDismiss( currentSection );
 	};
 
 	openApp = ( event ) => {
 		event.preventDefault();
-		const { pageType } = this.props;
+		const { currentSection } = this.props;
 
-		this.props.trackAppBannerOpen( pageType );
+		this.props.trackAppBannerOpen( currentSection );
 	};
 
 	render() {
-		const { translate, pageType } = this.props;
+		const { translate, currentSection } = this.props;
 
-		if ( ! includes( ALLOWED_PAGE_TYPES, pageType ) ) {
+		if ( ! includes( ALLOWED_SECTIONS, currentSection ) ) {
 			return null;
 		}
 
@@ -102,15 +99,15 @@ class AppBanner extends Component {
 			return null;
 		}
 
-		const { title, copy } = getAppBannerData( translate, pageType );
+		const { title, copy } = getAppBannerData( translate, currentSection );
 
-		this.props.trackAppBannerImpression( pageType );
+		this.props.trackAppBannerImpression( currentSection );
 
 		// TODO: generate deep links
 		const deepLink = '#';
 
 		return (
-			<Card className={ classNames( 'app-banner', 'is-compact', pageType ) }>
+			<Card className={ classNames( 'app-banner', 'is-compact', currentSection ) }>
 				<div className="app-banner__text-content">
 					<div className="app-banner__title">
 						<span> { title } </span>
@@ -140,21 +137,20 @@ class AppBanner extends Component {
 }
 
 const mapStateToProps = ( state ) => {
-	const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
-	const currentPath = get( currentRoute, 'path', null );
+	const sectionName = getSectionName( state );
 	const isNotesOpen = isNotificationsOpen( state );
 
 	return {
-		pageType: getPageType( currentPath, isNotesOpen ),
 		dismissedUntil: getUserSetting( state, 'appBannerDismissTimes' ),
+		currentSection: getCurrentSection( sectionName, isNotesOpen ),
 	};
 };
 
 const mapDispatchToProps = {
-	trackAppBannerImpression: ( pageType ) => recordTracksEvent( 'calypso_mobile_app_banner_impression', { on_page: pageType } ),
-	trackAppBannerDismiss: ( pageType ) => recordTracksEvent( 'calypso_mobile_app_banner_dismiss', { on_page: pageType } ),
-	trackAppBannerOpen: ( pageType ) => recordTracksEvent( 'calypso_mobile_app_banner_open', { on_page: pageType } ),
-	saveDismissTime: ( pageType ) => saveUserSettings( { appBannerDismissTimes: getNewDismissTimes( pageType ) } ),
+	trackAppBannerImpression: ( sectionName ) => recordTracksEvent( 'calypso_mobile_app_banner_impression', { on_page: sectionName } ),
+	trackAppBannerDismiss: ( sectionName ) => recordTracksEvent( 'calypso_mobile_app_banner_dismiss', { on_page: sectionName } ),
+	trackAppBannerOpen: ( sectionName ) => recordTracksEvent( 'calypso_mobile_app_banner_open', { on_page: sectionName } ),
+	saveDismissTime: ( sectionName ) => saveUserSettings( { appBannerDismissTimes: getNewDismissTimes( sectionName ) } ),
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( AppBanner ) );
