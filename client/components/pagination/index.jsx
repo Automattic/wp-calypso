@@ -1,45 +1,50 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-var PaginationPage = require( './pagination-page' );
+import PaginationPage from './pagination-page';
 
-module.exports = React.createClass({
-	displayName: 'StatModulePagination',
-
-	propTypes: {
+class Pagination extends Component {
+	static propTypes = {
 		page: React.PropTypes.number.isRequired,
 		perPage: React.PropTypes.number.isRequired,
 		total: React.PropTypes.number,
-		pageClick: React.PropTypes.func.isRequired
-	},
+		pageClick: React.PropTypes.func.isRequired,
+	}
 
-	render: function() {
-		var props = this.props,
-			currentPage = props.page,
-			pageList = [],
-			perPage = props.perPage,
-			total = props.total,
-			pageCount = Math.ceil( total / perPage ),
-			pagination = null,
-			i;
+	render() {
+		const { page, perPage, total } = this.props;
+		let pageList = [];
+		const pageCount = Math.ceil( total / perPage );
 
 		if ( pageCount > 1 ) {
-			pageList = [ 1, currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2, pageCount ];
+			pageList = [
+				1,
+				page - 2,
+				page - 1,
+				page,
+				page + 1,
+				page + 2,
+				pageCount,
+			];
 			pageList.sort( function( a, b ) {
 				return a - b;
 			} );
 
 			// Remove pages less than 1, or greater than total number of pages, and remove duplicates
 			pageList = pageList.filter( function( pageNumber, index, originalPageList ) {
-				return ( pageNumber >= 1  ) && ( pageNumber <= pageCount ) && ( originalPageList.lastIndexOf( pageNumber ) === index );
+				return (
+					pageNumber >= 1 &&
+					pageNumber <= pageCount &&
+					originalPageList.lastIndexOf( pageNumber ) === index
+				);
 			} );
 
-			for ( i = pageList.length - 2; i >= 0; i-- ) {
+			for ( let i = pageList.length - 2; i >= 0; i-- ) {
 				if ( 2 === pageList[ i + 1 ] - pageList[ i ] ) {
 					// Don't use ... if there's only 1 number being omitted, that's wasteful :)
 					pageList.splice( i + 1, 0, pageList[ i + 1 ] - 1 );
@@ -53,23 +58,30 @@ module.exports = React.createClass({
 			pageList.unshift( '<--' );
 
 			pageList = pageList.map( function( pageNumber, index ) {
-				return <PaginationPage key={ index } pageNumber={ pageNumber } currentPage={ currentPage } totalPages={ pageCount } pageClick={ this.props.pageClick } />;
+				return (
+					<PaginationPage
+						key={ index }
+						pageNumber={ pageNumber }
+						currentPage={ page }
+						totalPages={ pageCount }
+						pageClick={ this.props.pageClick }
+					/>
+				);
 			}, this );
 		}
 
-		if ( pageCount > 1 ) {
-			pagination = (
-
-				<div className="stats-pagination">
-					<ul className="stats-pagination__list">
-						{ pageList }
-					</ul>
-				</div>
-			);
-		} else {
-			pagination = null;
+		if ( pageCount <= 1 ) {
+			return null;
 		}
 
-		return pagination;
+		return (
+			<div className="pagination">
+				<ul className="pagination__list">
+					{ pageList }
+				</ul>
+			</div>
+		);
 	}
-});
+}
+
+export default Pagination;
