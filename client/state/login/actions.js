@@ -160,17 +160,14 @@ export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) =
 				data: response.body && response.body.data,
 			} );
 
-			if ( response.body.data.two_step_notification_sent === 'sms' ) {
-				const message = getSMSMessageFromResponse( response );
-				setTimeout( function() {
-					dispatch( {
-						type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
-						notice: {
-							message,
-							status: 'is-success'
-						},
-					} );
-				}, 100 );
+			if ( get( response, 'body.data.two_step_notification_sent', null ) === 'sms' ) {
+				dispatch( {
+					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+					notice: {
+						message: getSMSMessageFromResponse( response ),
+						status: 'is-success'
+					},
+				} );
 			}
 		} ).catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
