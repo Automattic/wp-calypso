@@ -184,7 +184,6 @@ class ReaderPostCard extends React.Component {
 						site &&
 						<DailyPostButton post={ post } site={ site } tagName="span" /> }
 					{ discoverFollowButton }
-					{ readerPostActions }
 				</CompactPost>
 			);
 		} else if ( isPhotoPost ) {
@@ -248,6 +247,7 @@ class ReaderPostCard extends React.Component {
 					site={ site }
 					feed={ feed }
 					showSiteName={ showSiteName || isDiscover }
+					showAvatar={ ! compact }
 				/>
 			);
 		}
