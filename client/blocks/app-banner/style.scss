@@ -4,10 +4,14 @@
 	width: 100%;
 	background-color: $blue-light;
 	color: $blue-dark;
-	/* needed for banner to appear in front of notifications panel */
+	/* Needed for banner to appear in front of notifications panel. */
 	z-index: 180;
 
 	background-repeat: no-repeat;
+	/*
+	 * Needed to match the design as closely as possible,
+	 * we want the background image to be smaller than the containing div.
+	 */
 	background-size: 270px;
 	background-position: right 0 bottom 0;
 }
