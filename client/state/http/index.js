@@ -30,7 +30,7 @@ const isAllHeadersValid = headers =>
  * @param {Function} dispatch redux store dispatch
  * @param {Object} action dispatched action we need to handle
  */
-const httpHandler = ( { dispatch }, action ) => {
+export const httpHandler = ( { dispatch }, action ) => {
 	const {
 		url,
 		method,

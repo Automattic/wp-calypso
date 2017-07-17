@@ -7,13 +7,9 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { HTTP_REQUEST } from 'state/action-types';
-import useNock, { nock } from 'test/helpers/use-nock';
+import useMockery from 'test/helpers/use-mockery';
 import { extendAction } from 'state/utils';
 import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
-import actionHandlers from '../';
-
-const httpHandler = actionHandlers[ HTTP_REQUEST ][ 0 ];
 
 const succeeder = { type: 'SUCCESS' };
 const failer = { type: 'FAIL' };
@@ -27,76 +23,119 @@ const getMe = {
 	onSuccess: succeeder,
 };
 
+class SuperAgentMock {
+	constructor() {
+		this._success = false;
+		this._data = new Error( 'Mock response is not set' );
+		this._lastRequest = null;
+	}
+
+	/***
+	 * Mocks superagent() call that returns request
+	 *
+	 * const request = superagent( method, url );
+	 *
+	 * @param {String} method HTTP method
+	 * @param {String} url URL
+	 * @returns {Object} superagent like request with sinon spies
+	 */
+	handler = ( method, url ) => {
+		const request = {
+			method,
+			url,
+			withCredentials: sinon.spy(),
+			set: sinon.spy(),
+			accept: sinon.spy(),
+			send: sinon.spy(),
+			then: ( successHandler, failureHandler ) =>
+				this._success
+					? successHandler( { body: this._data } )
+					: failureHandler( { response: { body: this._data } } ),
+		};
+
+		this._lastRequest = request;
+
+		return request;
+	};
+
+	/***
+	 * Tells the mock how to act, successful response or failure
+	 *
+	 * @param {Boolean} success should the request call success handler or failure?
+	 * @param {Object} data the data that should be passed in body
+	 */
+	setResponse( success, data ) {
+		this._success = success;
+		this._data = data;
+	}
+
+	/***
+	 * Get last mocked request
+	 * @returns {Object} An object similar to superagent's request with additional `method` and `url` fields
+	 */
+	getLastRequest() {
+		return this._lastRequest;
+	}
+}
+
+const superagentMock = new SuperAgentMock();
+
 describe( '#httpHandler', () => {
 	let next;
+	let dispatch;
+	let httpHandler;
 
-	useNock();
+	useMockery( mockery => mockery.registerMock( 'superagent', superagentMock.handler ) );
+
+	before( () => {
+		httpHandler = require( '../' ).httpHandler; // it's done here for mockery to work
+	} );
 
 	beforeEach( () => {
+		dispatch = sinon.spy();
 		next = sinon.spy();
 	} );
 
-	it( 'should call `onSuccess` when a response returns with data', done => {
+	it( 'should call `onSuccess` when a response returns with data', () => {
 		const data = { value: 1 };
-		nock( requestDomain ).get( requestPath ).reply( 200, data );
 
-		const dispatch = sinon.spy( () => {
-			expect( dispatch ).to.have.been.calledOnce;
-
-			sinon.assert.calledWith(
-				dispatch,
-				sinon.match(
-					extendAction(
-						succeeder,
-						successMeta( { body: data } )
-					)
-				)
-			);
-
-			done();
-		} );
+		superagentMock.setResponse( true, data );
 
 		httpHandler( { dispatch }, getMe, next );
+
+		expect( dispatch ).to.have.been.calledOnce;
+
+		sinon.assert.calledWith(
+			dispatch,
+			sinon.match(
+				extendAction(
+					succeeder,
+					successMeta( { body: data } )
+				)
+			)
+		);
 	} );
 
-	it( 'should call `onFailure` when a response returns with error', done => {
+	it( 'should call `onFailure` when a response returns with error', () => {
 		const data = { error: 'bad, bad request!' };
-		nock( requestDomain ).get( requestPath ).reply( 400, data );
-
-		const dispatch = sinon.spy( () => {
-			expect( dispatch ).to.have.been.calledOnce;
-
-			sinon.assert.calledWith(
-				dispatch,
-				sinon.match(
-					extendAction(
-						failer,
-						failureMeta( { response: { body: { error: data.error } } } )
-					)
-				)
-			);
-
-			done();
-		} );
+		superagentMock.setResponse( false, data );
 
 		httpHandler( { dispatch }, getMe, next );
+
+		expect( dispatch ).to.have.been.calledOnce;
+
+		sinon.assert.calledWith(
+			dispatch,
+			sinon.match(
+				extendAction(
+					failer,
+					failureMeta( { response: { body: { error: data.error } } } )
+				)
+			)
+		);
 	} );
 
-	it( 'should reject invalid headers', done => {
-		const dispatch = sinon.spy( () => {
-			sinon.assert.calledWith(
-				dispatch,
-				sinon.match(
-					extendAction(
-						failer,
-						failureMeta( new Error( "Not all headers were of an array pair: [ 'key', 'value' ]" ) )
-					)
-				)
-			);
-
-			done();
-		} );
-
+	it( 'should reject invalid headers', () => {
 		const headers = [ { key: 'Accept', value: 'something' } ];
 		httpHandler(
 			{
@@ -108,36 +147,25 @@ describe( '#httpHandler', () => {
 			},
 			next
 		);
+
+		sinon.assert.calledWith(
+			dispatch,
+			sinon.match(
+				extendAction(
+					failer,
+					failureMeta( new Error( "Not all headers were of an array pair: [ 'key', 'value' ]" ) )
+				)
+			)
+		);
 	} );
 
-	it( 'should set appropriate headers', done => {
-		let requestedHeaders;
-		nock( requestDomain ).get( requestPath )
-			.reply( function replyHandler() { // don't use arrow func to allow `this` to be set:
-				requestedHeaders = this.req.headers;
-
-				return [
-					200,
-					'',
-				];
-			} );
-
+	it( 'should set appropriate headers', () => {
 		const headers = [
 			[ 'Auth', 'something' ],
 			[ 'Bearer', 'secret' ],
 		];
 
-		const dispatch = sinon.spy( () => {
-			expect(
-				headers
-					.map( ( [ headerKey, headerValue ] ) => [ headerKey.toLowerCase(), headerValue ] )
-					.every(
-						( [ headerKey, headerValue ] ) => requestedHeaders[ headerKey ] === headerValue
-					)
-			).to.be.true;
-
-			done();
-		} );
+		superagentMock.setResponse( true, {} );
 
 		httpHandler(
 			{
@@ -148,6 +176,10 @@ describe( '#httpHandler', () => {
 				headers
 			},
 			next
+		);
+
+		headers.forEach( ( [ key, value ] ) =>
+			expect( superagentMock.getLastRequest().set ).to.have.been.calledWith( key, value )
 		);
 	} );
 } );
