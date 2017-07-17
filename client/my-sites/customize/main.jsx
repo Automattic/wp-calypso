@@ -63,6 +63,9 @@ class Customize extends React.Component {
 		this.redirectIfNeeded( this.props.pathname );
 		this.listenToCustomizer();
 		this.waitForLoading();
+	}
+
+	componentDidMount() {
 		if ( window ) {
 			window.scrollTo( 0, 0 );
 		}
