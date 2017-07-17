@@ -172,12 +172,6 @@ export class CommentNavigation extends Component {
 					) }
 				</NavTabs>
 
-				<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
-					<Button compact onClick={ toggleBulkEdit }>
-						{ translate( 'Bulk Edit' ) }
-					</Button>
-				</CommentNavigationTab>
-
 				{ hasSearch &&
 					<Search
 						delaySearch
