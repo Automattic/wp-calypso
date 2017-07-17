@@ -13,11 +13,11 @@ import { noop } from 'lodash';
 import Popover from 'components/popover';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { isRequesting } from 'state/login/selectors';
+import { isFormDisabled } from 'state/login/selectors';
 
 class GoogleLoginButton extends Component {
 	static propTypes = {
-		isRequesting: PropTypes.bool.isRequired,
+		isFormDisabled: PropTypes.bool,
 		clientId: PropTypes.string.isRequired,
 		scope: PropTypes.string,
 		fetchBasicProfile: PropTypes.bool,
@@ -37,7 +37,7 @@ class GoogleLoginButton extends Component {
 		error: '',
 		showError: false,
 		errorRef: null,
-		loaded: false,
+		isDisabled: true,
 	};
 
 	constructor( props ) {
@@ -81,7 +81,7 @@ class GoogleLoginButton extends Component {
 				fetch_basic_profile: this.props.fetchBasicProfile,
 			} )
 			.then( () => {
-				this.setState( { loaded: true } );
+				this.setState( { isDisabled: false } );
 				return gapi; // don't try to return gapi.auth2.getAuthInstance() here, it has a `then` method
 			} )
 			).catch( error => {
@@ -145,7 +145,7 @@ class GoogleLoginButton extends Component {
 
 	render() {
 		let classes = 'social-buttons__button button';
-		if ( ! this.state.loaded || this.state.error || this.props.isRequesting ) {
+		if ( this.state.isDisabled || this.props.isFormDisabled || this.state.error ) {
 			classes += ' disabled';
 		}
 
@@ -197,7 +197,7 @@ class GoogleLoginButton extends Component {
 
 export default connect(
 	( state ) => ( {
-		isRequesting: isRequesting( state ),
+		isFormDisabled: isFormDisabled( state ),
 	} ),
 	{
 		recordTracksEvent,

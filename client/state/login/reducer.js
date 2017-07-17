@@ -62,6 +62,15 @@ export const rememberMe = createReducer( null, {
 	[ LOGIN_REQUEST_FAILURE ]: () => false,
 } );
 
+export const isFormDisabled = createReducer( null, {
+	[ LOGIN_REQUEST ]: () => true,
+	[ LOGIN_REQUEST_FAILURE ]: () => false,
+	[ LOGIN_REQUEST_SUCCESS ]: () => true,
+	[ SOCIAL_LOGIN_REQUEST ]: () => true,
+	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => false,
+	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: () => true,
+} );
+
 export const requestError = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
 	[ LOGIN_REQUEST_SUCCESS ]: () => null,
@@ -163,6 +172,7 @@ export default combineReducers( {
 	magicLogin,
 	redirectTo,
 	rememberMe,
+	isFormDisabled,
 	requestError,
 	requestNotice,
 	requestSuccess,

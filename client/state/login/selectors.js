@@ -168,6 +168,16 @@ export const getRememberMe = ( state ) => {
 };
 
 /***
+ * Retrieves whether the login form should be disabled due to actions.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {Boolean}         Login form disabled flag
+ */
+export const isFormDisabled = ( state ) => {
+	return get( state, 'login.isFormDisabled', false );
+};
+
+/***
  * Tells us if we're in a process of creating a social account
  *
  * @param  {Object}   state  Global state tree

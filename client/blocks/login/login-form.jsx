@@ -21,7 +21,10 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
 import { loginUser } from 'state/login/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getRequestError } from 'state/login/selectors';
+import {
+	getRequestError,
+	isFormDisabled,
+} from 'state/login/selectors';
 import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
@@ -31,6 +34,7 @@ export class LoginForm extends Component {
 		redirectTo: PropTypes.string,
 		requestError: PropTypes.object,
 		translate: PropTypes.func.isRequired,
+		isFormDisabled: PropTypes.bool,
 	};
 
 	state = {
@@ -91,15 +95,11 @@ export class LoginForm extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 
-		this.setState( { isDisabled: true } );
-
 		this.props.loginUser( usernameOrEmail, password, rememberMe, redirectTo ).then( () => {
 			this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
 
 			onSuccess();
 		} ).catch( error => {
-			this.setState( { isDisabled: false } );
-
 			this.props.recordTracksEvent( 'calypso_login_block_login_form_failure', {
 				error_code: error.code,
 				error_message: error.message
@@ -126,7 +126,7 @@ export class LoginForm extends Component {
 	render() {
 		const isDisabled = {};
 
-		if ( this.state.isDisabled ) {
+		if ( this.state.isDisabled || this.props.isFormDisabled ) {
 			isDisabled.disabled = true;
 		}
 
@@ -234,6 +234,7 @@ export default connect(
 	( state ) => ( {
 		redirectTo: getCurrentQueryArguments( state ).redirect_to,
 		requestError: getRequestError( state ),
+		isFormDisabled: isFormDisabled( state ),
 	} ),
 	{
 		loginUser,
