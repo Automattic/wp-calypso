@@ -58,37 +58,6 @@ class CustomContentTypes extends Component {
 		return isRequestingSettings || isSavingSettings;
 	}
 
-	renderToggle( name, label, description ) {
-		const {
-			activatingCustomContentTypesModule,
-			fields,
-			handleAutosavingToggle
-		} = this.props;
-		return (
-			<div>
-				{
-					name !== 'post'
-						? (
-							<CompactFormToggle
-								checked={ !! fields[ name ] }
-								disabled={ this.isFormPending() || activatingCustomContentTypesModule }
-								onChange={ handleAutosavingToggle( name ) }
-							>
-								{ label }
-							</CompactFormToggle>
-						)
-						: label
-				}
-
-				{ this.renderPostsPerPageField( name, label ) }
-
-				<FormSettingExplanation isIndented>
-					{ description }
-				</FormSettingExplanation>
-			</div>
-		);
-	}
-
 	renderPostsPerPageField( fieldName, postTypeLabel ) {
 		const {
 			fields,
@@ -126,10 +95,33 @@ class CustomContentTypes extends Component {
 		);
 	}
 
-	renderContentTypeSettings( fieldName, fieldLabel, fieldDescription ) {
+	renderContentTypeSettings( name, label, description ) {
+		const {
+			activatingCustomContentTypesModule,
+			fields,
+			handleAutosavingToggle
+		} = this.props;
 		return (
 			<div className="custom-content-types__module-settings">
-				{ this.renderToggle( fieldName, fieldLabel, fieldDescription ) }
+				{
+					name !== 'post'
+						? (
+							<CompactFormToggle
+								checked={ !! fields[ name ] }
+								disabled={ this.isFormPending() || activatingCustomContentTypesModule }
+								onChange={ handleAutosavingToggle( name ) }
+							>
+								{ label }
+							</CompactFormToggle>
+						)
+						: label
+				}
+
+				{ this.renderPostsPerPageField( name, label ) }
+
+				<FormSettingExplanation isIndented>
+					{ description }
+				</FormSettingExplanation>
 			</div>
 		);
 	}
