@@ -20,10 +20,11 @@ export default class ActivityActor extends PureComponent {
 	};
 
 	render() {
-		const avatarUrl = get( this.props, [ 'actor', 'avatar_url' ], 'https://www.gravatar.com/avatar/0' );
-		const displayName = get( this.props, [ 'actor', 'display_name' ], '' );
-		const login = get( this.props, [ 'actor', 'login' ], '' );
-		const translatedRole = get( this.props, [ 'actor', 'translated_role' ], '' );
+		const { actor } = this.props;
+		const avatarUrl = get( actor, 'avatar_url', 'https://www.gravatar.com/avatar/0' );
+		const displayName = get( actor, 'display_name', '' );
+		const login = get( actor, 'login', '' );
+		const translatedRole = get( actor, 'translated_role', '' );
 
 		return (
 			<div className="activity-log-item__actor">
