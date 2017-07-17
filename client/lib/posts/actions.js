@@ -197,7 +197,7 @@ PostActions = {
 				callback( error, data );
 			} );
 		} else {
-			PostActions.saveEdited( null, callback, { recordSaveEvent: false } );
+			PostActions.saveEdited( null, null, callback, { recordSaveEvent: false } );
 		}
 	},
 
