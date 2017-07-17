@@ -40,7 +40,7 @@ class AppBanner extends Component {
 		userAgent: PropTypes.string,
 		// connected
 		currentSection: React.PropTypes.string,
-		dismissedUntil: React.PropTypes.object,
+		dismissedUntil: React.PropTypes.array,
 	};
 
 	static defaultProps = {

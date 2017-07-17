@@ -5,7 +5,7 @@
 	background-color: $blue-light;
 	color: $blue-dark;
 	/* Needed for banner to appear in front of notifications panel. */
-	z-index: 180;
+	z-index: z-index( 'root', '.app-banner' );
 
 	background-repeat: no-repeat;
 	/*
@@ -33,7 +33,7 @@
 }
 
 .app-banner__text-content {
-	width: 80%;
+	width: 70%;
 	height: 70px;
 }
 
