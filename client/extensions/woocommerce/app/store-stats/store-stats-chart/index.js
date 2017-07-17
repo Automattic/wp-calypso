@@ -22,6 +22,8 @@ import Legend from 'components/chart/legend';
 import Tabs from 'my-sites/stats/stats-tabs';
 import Tab from 'my-sites/stats/stats-tabs/tab';
 import { UNITS } from 'woocommerce/app/store-stats/constants';
+import analytics from 'lib/analytics';
+import { chartTabs as tabs } from 'woocommerce/app/store-stats/constants';
 
 class StoreStatsChart extends Component {
 	static propTypes = {
@@ -47,6 +49,10 @@ class StoreStatsChart extends Component {
 		this.setState( {
 			selectedTabIndex: tab.index,
 		} );
+
+		analytics.tracks.recordEvent( 'calypso_woocommerce_stats_chart_tab_click', {
+			tab: tabs[ tab.index ]
+		} );
 	};
 
 	buildChartData = ( item, selectedTab, chartFormat ) => {
@@ -67,12 +73,6 @@ class StoreStatsChart extends Component {
 	render() {
 		const { data, deltas, selectedDate, unit } = this.props;
 		const { selectedTabIndex } = this.state;
-		const tabs = [
-			{ label: 'Gross Sales', attr: 'gross_sales', type: 'currency' },
-			{ label: 'Net Sales', attr: 'net_sales', type: 'currency' },
-			{ label: 'Orders', attr: 'orders', type: 'number' },
-			{ label: 'Average Order Value', attr: 'avg_order_value', type: 'currency' },
-		];
 		const selectedTab = tabs[ selectedTabIndex ];
 		const isLoading = ! data.length;
 		const chartFormat = UNITS[ unit ].chartFormat;
