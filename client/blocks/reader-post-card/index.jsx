@@ -142,7 +142,7 @@ class ReaderPostCard extends React.Component {
 
 		let discoverFollowButton;
 
-		if ( isDiscover ) {
+		if ( isDiscover && ! compact ) {
 			const discoverBlogName = getDiscoverBlogName( post ) || null;
 			discoverFollowButton =
 				discoverBlogName &&
@@ -170,22 +170,7 @@ class ReaderPostCard extends React.Component {
 
 		let readerPostCard;
 		if ( compact ) {
-			readerPostCard = (
-				<CompactPost
-					post={ post }
-					title={ title }
-					isDiscover={ isDiscover }
-					isExpanded={ isExpanded }
-					expandCard={ expandCard }
-					site={ site }
-					postKey={ postKey }
-				>
-					{ isDailyPostChallengeOrPrompt( post ) &&
-						site &&
-						<DailyPostButton post={ post } site={ site } tagName="span" /> }
-					{ discoverFollowButton }
-				</CompactPost>
-			);
+			readerPostCard = <CompactPost post={ post } title={ title } isDiscover={ isDiscover } />;
 		} else if ( isPhotoPost ) {
 			readerPostCard = (
 				<PhotoPost
