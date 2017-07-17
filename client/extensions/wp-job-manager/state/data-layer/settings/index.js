@@ -9,9 +9,9 @@ import { translate } from 'i18n-calypso';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { fetchSettingsError, saveError, saveSuccess, updateSettings } from '../../settings/actions';
-import { fromApi, toApi } from './utils';
+import { fetchError, saveError, saveSuccess, updateSettings } from '../../settings/actions';
 import { WP_JOB_MANAGER_FETCH_SETTINGS, WP_JOB_MANAGER_SAVE_SETTINGS } from 'wp-job-manager/state/action-types';
+import { fromApi, toApi } from './utils';
 
 export const fetchExtensionSettings = ( { dispatch }, action ) => {
 	const { siteId } = action;
@@ -28,7 +28,8 @@ export const fetchExtensionSettings = ( { dispatch }, action ) => {
 export const updateExtensionSettings = ( { dispatch }, { siteId }, next, { data } ) =>
 	dispatch( updateSettings( siteId, fromApi( data ) ) );
 
-export const fetchExtensionSettingsError = ( { dispatch }, { siteId } ) => dispatch( fetchSettingsError( siteId ) );
+export const fetchExtensionError = ( { dispatch }, { siteId } ) =>
+	dispatch( fetchError( siteId ) );
 
 export const saveSettings = ( { dispatch, getState }, action ) => {
 	const { data, siteId } = action;
@@ -61,11 +62,10 @@ export const announceFailure = ( { dispatch }, { siteId } ) => {
 	) );
 };
 
-const dispatchSettingsRequest = dispatchRequest( fetchExtensionSettings, updateExtensionSettings, fetchExtensionSettingsError );
-
+const dispatchFetchSettingsRequest = dispatchRequest( fetchExtensionSettings, updateExtensionSettings, fetchExtensionError );
 const dispatchSaveSettingsRequest = dispatchRequest( saveSettings, announceSuccess, announceFailure );
 
 export default {
-	[ WP_JOB_MANAGER_FETCH_SETTINGS ]: [ dispatchSettingsRequest ],
+	[ WP_JOB_MANAGER_FETCH_SETTINGS ]: [ dispatchFetchSettingsRequest ],
 	[ WP_JOB_MANAGER_SAVE_SETTINGS ]: [ dispatchSaveSettingsRequest ],
 };
