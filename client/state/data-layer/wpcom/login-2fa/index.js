@@ -68,7 +68,7 @@ const receivedTwoFactorPushNotificationError = ( store, action, next, error ) =>
 	const twoStepNonce = get( error, 'response.body.data.two_step_nonce' );
 
 	if ( ! twoStepNonce ) {
-		store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP } ); //
+		store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP } );
 		throw new Error( "Two step nonce wasn't present on the response from polling endpoint, unable to continue" );
 	}
 
