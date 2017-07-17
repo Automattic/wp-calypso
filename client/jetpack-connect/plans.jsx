@@ -211,13 +211,14 @@ class Plans extends Component {
 		// clears whatever we had stored in local cache
 		this.props.selectPlanInAdvance( null, this.props.selectedSiteSlug );
 
+		if ( ! cartItem || cartItem.product_slug === PLAN_JETPACK_FREE ) {
+			return this.selectFreeJetpackPlan();
+		}
+
 		if ( cartItem.product_slug === get( this.props, 'selectedSite.plan.product_slug', null ) ) {
 			return this.redirect( CALYPSO_PLANS_PAGE );
 		}
 
-		if ( ! cartItem || cartItem.product_slug === PLAN_JETPACK_FREE ) {
-			return this.selectFreeJetpackPlan();
-		}
 		if ( cartItem.product_slug === PLAN_JETPACK_PERSONAL ) {
 			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_39', {
 				user: this.props.userId
