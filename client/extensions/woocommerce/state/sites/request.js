@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { omit, mapValues, isArray, isObject } from 'lodash';
+import request from 'superagent';
 
 /**
  * Internal dependencies
@@ -23,6 +24,13 @@ const omitDeep = ( input, props ) => {
 const _directRequest = ( method, path, siteId, body, auth ) => {
 	console.log( 'DIRECT REQUEST: ' + method + ' ' + path );
 	console.log( 'auth: ', auth );
+
+	const url = `${ auth.root }wc/v3/${ path }`;
+	return request( method, url )
+		.set( 'Accept', 'application/json' )
+		.set( 'cookie', auth.cookie )
+		.set( 'X-WP-Nonce', auth.nonce )
+		.then( ( { data } ) => omitDeep( data, '_links' ) );
 };
 
 const _request = ( method, path, siteId, body ) => {
@@ -70,7 +78,7 @@ export default ( siteId, directAuth = false ) => ( {
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
-	get: ( path ) => ( directAuth ? _directRequest( 'get', path, siteId, directAuth ) : _request( 'get', path, siteId ) ),
+	get: ( path ) => ( directAuth ? _directRequest( 'get', path, siteId, null, directAuth ) : _request( 'get', path, siteId ) ),
 
 	/**
 	 * Sends a GET request to the API and returns headers along with the body.
