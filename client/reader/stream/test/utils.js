@@ -23,7 +23,7 @@ describe( 'reader stream', () => {
 		injectRecommendations = utils.injectRecommendations;
 	} );
 
-	const today = moment( '1976-09-15' ).toDate();
+	const today = moment().toDate();
 	const postKey1 = { feedId: 'feed1', postId: 'postId1', date: today };
 	const postKey2 = { feedId: 'feed1', postId: 'postId2', date: today };
 	const postIds34 = [ 'postId3', 'postId4' ];
@@ -42,13 +42,12 @@ describe( 'reader stream', () => {
 	};
 
 	describe( '#sameDay', () => {
-		const momentPostKey = localMoment => ( { date: localMoment.toDate() } );
-		const today = moment();
-		const todayPostKey = momentPostKey( today );
-		const todayPostKey2 = momentPostKey( moment() );
-		const oneYearAgoPostKey = momentPostKey( moment().year( today.year() - 1 ) );
-		const oneYearInTheFuturePostKey = momentPostKey( moment().year( today.year() + 1 ) );
-		const oneMonthAgoPostKey = momentPostKey( moment().month( today.month() - 1 ) );
+		const datePostKey = date => ( { date } );
+		const todayPostKey = datePostKey( today );
+		const todayPostKey2 = datePostKey( new Date() );
+		const oneYearAgoPostKey = datePostKey( moment( today ).subtract( 1, 'year' ).toDate() );
+		const oneYearInTheFuturePostKey = datePostKey( moment( today ).add( 1, 'year' ).toDate() );
+		const oneMonthAgoPostKey = datePostKey( moment( today ).subtract( 1, 'month' ).toDate() );
 
 		it( 'should return true when two days are the same day', () => {
 			assert( sameDay( todayPostKey, todayPostKey2 ) );
