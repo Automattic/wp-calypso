@@ -24,7 +24,7 @@ describe( 'getUploadedPluginId', () => {
 	} );
 
 	it( 'should return current value for site', () => {
-		const stateFalse = deepFreeze( {
+		const state = deepFreeze( {
 			plugins: {
 				upload: {
 					uploadedPluginId: {
@@ -33,6 +33,6 @@ describe( 'getUploadedPluginId', () => {
 				}
 			}
 		} );
-		expect( getUploadedPluginId( stateFalse, siteId ) ).to.be.equal( 'hello-dolly' );
+		expect( getUploadedPluginId( state, siteId ) ).to.be.equal( 'hello-dolly' );
 	} );
 } );
