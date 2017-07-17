@@ -47,6 +47,7 @@ var PostList = React.createClass( {
 	},
 
 	getInitialState: function() {
+		// @FIXME(mcsf): don't commit
 		window.resetPage = this.resetPage;
 
 		return {
@@ -124,7 +125,7 @@ var PostList = React.createClass( {
 	}
 } );
 
-var Posts = connect(
+const Posts = connect(
 	( state, { siteId, query, page } ) => ( {
 		posts: getSitePostsForQueryIgnoringPage( state, siteId, query ) || [],
 		loading: isRequestingSitePostsForQueryIgnoringPage( state, siteId, query ),
