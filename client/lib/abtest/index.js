@@ -251,7 +251,7 @@ ABTest.prototype.assignVariation = function() {
 
 	for ( variationName in this.variationDetails ) {
 		sum += this.variationDetails[ variationName ];
-		if ( randomAllocationAmount <= sum ) {
+		if ( randomAllocationAmount < sum ) {
 			return variationName;
 		}
 	}
