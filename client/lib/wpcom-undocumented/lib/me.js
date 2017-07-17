@@ -392,6 +392,12 @@ UndocumentedMe.prototype.socialConnect = function( service, token, redirectTo, f
 		body: body,
 	};
 
+	/*
+	 * Before attempting the social connect, we reload the proxy.
+	 * This ensures that the proxy iframe has set the correct API cookie,
+	 * particularly after the user has logged in, but Calypso hasn't
+	 * been reloaded yet.
+	 */
 	require( 'wpcom-proxy-request' ).reloadProxy();
 
 	this.wpcom.req.post( { metaAPI: { accessAllUsersBlogs: true } } );
