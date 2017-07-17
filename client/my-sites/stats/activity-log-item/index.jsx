@@ -5,23 +5,22 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import ActivityActor from './activity-actor';
 import ActivityIcon from './activity-icon';
 import EllipsisMenu from 'components/ellipsis-menu';
 import FoldableCard from 'components/foldable-card';
-import Gravatar from 'components/gravatar';
 import PopoverMenuItem from 'components/popover/menu-item';
-import { addQueryArgs } from 'lib/route';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:activity-log:item' );
 
 class ActivityLogItem extends Component {
-
 	static propTypes = {
 		applySiteOffset: PropTypes.func.isRequired,
 		disableRestore: PropTypes.bool.isRequired,
@@ -181,33 +180,6 @@ class ActivityLogItem extends Component {
 		} );
 	};
 
-	renderActor() {
-		const { log } = this.props;
-		const { actor } = log;
-
-		if ( ! actor ) {
-			return null;
-		}
-
-		const avatar_URL = actor.avatar_url
-			? addQueryArgs( { s: 40 }, actor.avatar_url )
-			: null;
-
-		return (
-			<div className="activity-log-item__actor">
-				{ /*
-					FIXME: actor does not correspond to a Gravatar user
-					We need to receive `avatar_URL` from the endpoint or query users.
-				*/ }
-				<Gravatar user={ { avatar_URL } } size={ 40 } />
-				<div className="activity-log-item__actor-info">
-					<div className="activity-log-item__actor-name">{ actor.display_name }</div>
-					<div className="activity-log-item__actor-role">{ actor.translated_role }</div>
-				</div>
-			</div>
-		);
-	}
-
 	renderContent() {
 		const { log } = this.props;
 		const {
@@ -253,9 +225,11 @@ class ActivityLogItem extends Component {
 	}
 
 	renderHeader() {
+		const actor = get( this.props, [ 'log', 'actor' ] );
+
 		return (
 			<div className="activity-log-item__card-header">
-				{ this.renderActor() }
+				<ActivityActor actor={ actor } />
 				{ this.renderContent() }
 			</div>
 		);
