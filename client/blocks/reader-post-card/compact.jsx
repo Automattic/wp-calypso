@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import React from 'react';
-import { partial } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -13,7 +12,7 @@ import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderExcerpt from 'blocks/reader-excerpt';
 
-const CompactPost = ( { post, children, isDiscover, expandCard, postKey, isExpanded, site } ) => {
+const CompactPost = ( { post, children, isDiscover } ) => {
 	const canonicalMedia = post.canonical_media;
 	let featuredAsset;
 	if ( ! canonicalMedia ) {
@@ -23,8 +22,7 @@ const CompactPost = ( { post, children, isDiscover, expandCard, postKey, isExpan
 			<ReaderFeaturedVideo
 				{ ...canonicalMedia }
 				videoEmbed={ canonicalMedia }
-				onThumbnailClick={ partial( expandCard, { postKey, post, site } ) }
-				isExpanded={ isExpanded }
+				allowPlaying={ false }
 			/>
 		);
 	} else {
@@ -32,14 +30,14 @@ const CompactPost = ( { post, children, isDiscover, expandCard, postKey, isExpan
 	}
 
 	return (
-		<div className="reader-post-card__post">
+		<div className="reader-post-card__post reader-post-card__post-compact">
 			{ featuredAsset }
 			<div className="reader-post-card__post-details">
 				<AutoDirection>
 					<h1 className="reader-post-card__title">
 						<a className="reader-post-card__title-link" href={ post.URL }>
 							<Emojify>
-								Compact: { post.title }
+								{ post.title }
 							</Emojify>
 						</a>
 					</h1>
