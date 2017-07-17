@@ -62,6 +62,59 @@
 	}
 }
 
+// Following intro light blue
+.following__intro-light-blue {
+	background: url( '/calypso/images/reader/reader-intro-background-light-blue.svg' ) #7fd3f1 no-repeat 100% -20px;
+	background-size: 450px;
+	min-height: 140px;
+
+	@media ( min-width: 661px ) and ( max-width: 773px ) {
+		background-position: 150px -20px;
+	}
+
+	@include breakpoint( "<660px" ) {
+		background-position: 120px -20px;
+	}
+
+	.following__intro-copy {
+		color: #045182;
+
+		a {
+			color: #1785be;
+			border-bottom: 1px #1785be solid;
+
+			&:hover {
+				color: $white;
+				border-bottom: 1px $white solid;
+			}
+		}
+
+		@include breakpoint( "<660px" ) {
+
+			.following__intro-copy-hidden {
+				display: none;
+				visibility: hidden;
+			}
+		}
+	}
+
+	.following__intro-character {
+		background: url( '/calypso/images/reader/reader-intro-character-light-blue-gray.svg' ) no-repeat 8px bottom;
+		background-size: 106px;
+		flex: 0 0 120px;
+		min-height: 140px;
+
+		// Hides the character when main content column gets too narrow
+		@media ( min-width: 661px ) and ( max-width: 773px ) {
+			display: none;
+		}
+
+		@include breakpoint( "<660px" ) {
+			background-size: 106px;
+		}
+	}
+}
+
 .following__intro-header {
 	align-items: stretch;
 	display: flex;

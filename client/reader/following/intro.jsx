@@ -42,7 +42,7 @@ class FollowingIntro extends React.Component {
 		}
 
 		return (
-			<header className="following__intro-blue">
+			<header className="following__intro-light-blue">
 				<QueryPreferences />
 				<div className="following__intro-header">
 					<div className="following__intro-copy">
