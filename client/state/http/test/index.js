@@ -81,7 +81,6 @@ class SuperAgentMock {
 const superagentMock = new SuperAgentMock();
 
 describe( '#httpHandler', () => {
-	let next;
 	let dispatch;
 	let httpHandler;
 
@@ -93,7 +92,6 @@ describe( '#httpHandler', () => {
 
 	beforeEach( () => {
 		dispatch = sinon.spy();
-		next = sinon.spy();
 	} );
 
 	it( 'should call `onSuccess` when a response returns with data', () => {
@@ -101,7 +99,7 @@ describe( '#httpHandler', () => {
 
 		superagentMock.setResponse( true, data );
 
-		httpHandler( { dispatch }, getMe, next );
+		httpHandler( { dispatch }, getMe, null );
 
 		expect( dispatch ).to.have.been.calledOnce;
 
@@ -120,7 +118,7 @@ describe( '#httpHandler', () => {
 		const data = { error: 'bad, bad request!' };
 		superagentMock.setResponse( false, data );
 
-		httpHandler( { dispatch }, getMe, next );
+		httpHandler( { dispatch }, getMe, null );
 
 		expect( dispatch ).to.have.been.calledOnce;
 
@@ -145,7 +143,7 @@ describe( '#httpHandler', () => {
 				...getMe,
 				headers
 			},
-			next
+			null
 		);
 
 		sinon.assert.calledWith(
@@ -175,7 +173,7 @@ describe( '#httpHandler', () => {
 				...getMe,
 				headers
 			},
-			next
+			null
 		);
 
 		headers.forEach( ( [ key, value ] ) =>
