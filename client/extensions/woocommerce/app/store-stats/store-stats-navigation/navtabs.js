@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -35,4 +34,4 @@ StoreStatsNavigationTabs.propTypes = {
 	units: PropTypes.object,
 };
 
-export default localize( StoreStatsNavigationTabs );
+export default StoreStatsNavigationTabs;
