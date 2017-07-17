@@ -18,11 +18,13 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import PageDropdown from './page-dropdown';
 import QueryPosts from 'components/data/query-posts';
 import SectionHeader from 'components/section-header';
-import { getSitePosts } from 'state/posts/selectors';
+import { getSitePosts, isRequestingSitePostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 class Pages extends Component {
 	static propTypes = {
+		isDisabled: PropTypes.bool,
+		isRequesting: PropTypes.bool,
 		pages: PropTypes.array,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
@@ -30,10 +32,13 @@ class Pages extends Component {
 
 	render() {
 		const {
+			isRequesting,
 			pages,
 			siteId,
 			translate,
 		} = this.props;
+
+		const isDisabled = this.props.isDisabled || isRequesting;
 
 		return (
 			<div>
@@ -42,7 +47,8 @@ class Pages extends Component {
 				<form>
 					<FormSection name="pages">
 						<SectionHeader label={ translate( 'Pages' ) }>
-							<FormButton compact />
+							<FormButton compact
+								disabled={ isDisabled } />
 						</SectionHeader>
 						<Card>
 							<FormFieldset>
@@ -50,6 +56,7 @@ class Pages extends Component {
 									{ translate( 'Submit Job Form Page' ) }
 								</FormLabel>
 								<PageDropdown
+									disabled={ isDisabled }
 									name="submitFormPage"
 									pages={ pages } />
 								<FormSettingExplanation>
@@ -63,6 +70,7 @@ class Pages extends Component {
 									{ translate( 'Job Dashboard Page' ) }
 								</FormLabel>
 								<PageDropdown
+									disabled={ isDisabled }
 									name="dashboardPage"
 									pages={ pages } />
 								<FormSettingExplanation>
@@ -76,6 +84,7 @@ class Pages extends Component {
 									{ translate( 'Job Listings Page' ) }
 								</FormLabel>
 								<PageDropdown
+									disabled={ isDisabled }
 									name="listingsPage"
 									pages={ pages } />
 								<FormSettingExplanation>
@@ -94,9 +103,12 @@ class Pages extends Component {
 const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const pages = getSitePosts( state, siteId );
 
-		return { pages, siteId };
+		return {
+			isRequesting: isRequestingSitePostsForQuery( state, siteId, { type: 'page' } ),
+			pages: getSitePosts( state, siteId ),
+			siteId,
+		};
 	}
 );
 
