@@ -114,7 +114,11 @@ class CustomContentTypes extends Component {
 								{ label }
 							</CompactFormToggle>
 						)
-						: label
+						: (
+							<div className="custom-content-types__label">
+								{ label }
+							</div>
+						)
 				}
 
 				{ this.renderPostsPerPageField( name, label ) }
