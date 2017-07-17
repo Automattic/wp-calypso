@@ -3,39 +3,26 @@
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { Field } from 'redux-form';
-import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import FormTextarea from 'components/forms/form-textarea';
 
+// eslint-disable-next-line no-unused-vars
+const RenderTextarea = ( { input, meta, type, ...otherProps } ) => {
+	return (
+		<FormTextarea { ...input } { ...otherProps } ></FormTextarea>
+	);
+};
+
 class ReduxFormTextarea extends PureComponent {
 	static propTypes = {
-		name: PropTypes.string,
+		name: PropTypes.string.isRequired,
 	};
 
-	renderTextarea = ( { input: { onChange, value } } ) => {
-		const otherProps = omit( this.props, 'name' );
-
-		return (
-			<FormTextarea
-				{ ...otherProps }
-				onChange={ this.updateTextarea( onChange ) }
-				value={ value }>
-			</FormTextarea>
-		);
-	}
-
-	updateTextarea = onChange => event => onChange( event.target.value );
-
 	render() {
-		return (
-			<Field
-				{ ...this.props }
-				component={ this.renderTextarea }
-				name={ this.props.name } />
-		);
+		return <Field component={ RenderTextarea } type="text" { ...this.props } />;
 	}
 }
 
