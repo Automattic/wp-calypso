@@ -8,7 +8,6 @@ import noop from 'lodash/noop';
  * Internal dependencies
  */
 import config from 'config';
-import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import PostEditStore from 'lib/posts/post-edit-store';
 import utils from 'lib/posts/utils';
@@ -70,8 +69,7 @@ export function recordSaveEvent( context ) {
 	} else if ( 'publish' === nextStatus || 'private' === nextStatus ) {
 		tracksEventName += 'publish';
 		usageAction = 'new';
-		if ( context && context.isConfirmationFeatureEnabled &&
-			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation' ) {
+		if ( context && context.isConfirmationFeatureEnabled ) {
 			eventContext = 'confirmation_sidebar';
 		}
 	} else if ( 'pending' === nextStatus ) {
@@ -80,8 +78,7 @@ export function recordSaveEvent( context ) {
 		tracksEventName += 'schedule';
 		statName = 'status-schedule';
 		statEvent = 'Scheduled Post';
-		if ( context && context.isConfirmationFeatureEnabled &&
-			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation' ) {
+		if ( context && context.isConfirmationFeatureEnabled ) {
 			eventContext = 'confirmation_sidebar';
 		}
 	}
