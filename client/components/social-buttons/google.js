@@ -37,6 +37,7 @@ class GoogleLoginButton extends Component {
 		error: '',
 		showError: false,
 		errorRef: null,
+		loaded: false,
 	};
 
 	constructor( props ) {
@@ -79,7 +80,10 @@ class GoogleLoginButton extends Component {
 				scope: this.props.scope,
 				fetch_basic_profile: this.props.fetchBasicProfile,
 			} )
-			.then( () => gapi ) // don't try to return gapi.auth2.getAuthInstance() here, it has a `then` method
+			.then( () => {
+				this.setState( { loaded: true } );
+				return gapi; // don't try to return gapi.auth2.getAuthInstance() here, it has a `then` method
+			} )
 			).catch( error => {
 				this.initialized = null;
 
@@ -141,7 +145,7 @@ class GoogleLoginButton extends Component {
 
 	render() {
 		let classes = 'social-buttons__button button';
-		if ( this.state.error || this.props.isRequesting ) {
+		if ( ! this.state.loaded || this.state.error || this.props.isRequesting ) {
 			classes += ' disabled';
 		}
 
