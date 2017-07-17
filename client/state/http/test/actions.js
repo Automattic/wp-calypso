@@ -41,7 +41,7 @@ describe( '#rawHttp', () => {
 		expect( request ).to.have.property( 'onFailure', onFailure );
 	} );
 
-	it( 'should set onSuccess and onFailure to whatever passed even we have action', () => {
+	it( 'should set onSuccess and onFailure to whatever passed even when we have action', () => {
 		const someFn = () => {};
 		const someAction = { type: 'HELLO' };
 		const request = http( {
