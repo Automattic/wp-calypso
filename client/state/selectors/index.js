@@ -180,6 +180,7 @@ export isMappedDomainSite from './is-mapped-domain-site';
 export isNotificationsOpen from './is-notifications-open';
 export isPendingEmailChange from './is-pending-email-change';
 export isPluginActive from './is-plugin-active';
+export isPluginUploadInProgress from './is-plugin-upload-in-progress';
 export isPrivateSite from './is-private-site';
 export isPublicizeEnabled from './is-publicize-enabled';
 export isReaderCardExpanded from './is-reader-card-expanded';
