@@ -186,9 +186,7 @@ class Login extends Component {
 
 		if ( socialConnect ) {
 			return (
-				<div>
-					<SocialConnectPrompt onSuccess={ this.rebootAfterLogin } />
-				</div>
+				<SocialConnectPrompt onSuccess={ this.rebootAfterLogin } />
 			);
 		}
 
