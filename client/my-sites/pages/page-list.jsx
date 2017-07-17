@@ -111,7 +111,7 @@ const Pages = localize( React.createClass( {
 				marker = buildMarker( date );
 			if ( lastMarker !== marker ) {
 				markedPages.push(
-					<div key={ 'marker-' + date.unix() } className="page-list__header">
+					<div key={ 'marker-' + date.unix() } className="pages__page-list-header">
 						<span className="noticon noticon-time" /> { marker }
 					</div>
 				);
