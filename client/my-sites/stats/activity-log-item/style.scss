@@ -137,10 +137,8 @@
 }
 
 .activity-log-item__id {
-	float: right;
+	margin-top: 8px;
 	font-size: 11px;
-	color: lighten( $gray, 20% );
 	font-style: italic;
-	margin-bottom: 4px;
-	margin-right: -7px;
+	color: lighten( $gray, 20% );
 }
