@@ -6,10 +6,14 @@
 	align-content: flex-start;
 	align-items: center;
 	position: relative;
-	margin-top: 24px;
+
+	&:first-of-type {
+		margin-top: 24px;
+	}
 
 	.card {
 		flex: 1;
+		margin-bottom: 16px;
 		background: $white;
 	}
 
@@ -19,12 +23,19 @@
 		color: darken( $gray, 20% );
 	}
 
-	.foldable-card .foldable-card__expand .gridicon {
-		transform: none;
-	}
+	.foldable-card {
+		
+		.foldable-card__expand .gridicon {
+			transform: none;
+		}
 
-	.foldable-card.is-expanded .foldable-card__expand .gridicon {
-		transform: rotate( 180deg );
+		&.is-expanded {
+			margin-bottom: 24px;
+
+			.foldable-card__expand .gridicon {
+				transform: rotate( 180deg );
+			}
+		}
 	}
 
 	.foldable-card__main {
