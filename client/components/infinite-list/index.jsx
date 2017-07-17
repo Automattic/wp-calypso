@@ -94,6 +94,8 @@ module.exports = React.createClass( {
 	},
 
 	componentDidMount() {
+		console.log( 'cDM', this.props.items );
+
 		if ( this._contextLoaded() ) {
 			this._setContainerY( this.state.scrollTop );
 		}
@@ -356,6 +358,8 @@ module.exports = React.createClass( {
 		debug( 'rendering %d to %d', this.state.firstRenderedIndex, lastRenderedIndex );
 
 		for ( i = this.state.firstRenderedIndex; i <= lastRenderedIndex; i++ ) {
+			const p = this.props.items[ i ];
+			console.log( 'rr', p.global_ID, p.name || p.title || p.post_title );
 			itemsToRender.push( this.props.renderItem( this.props.items[ i ], i ) );
 		}
 

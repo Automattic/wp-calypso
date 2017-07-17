@@ -95,13 +95,17 @@ var PostList = React.createClass( {
 				siteId={ siteId }
 				query={ {
 					status: mapStatus( statusSlug ),
+					order_by: 'date',
+					order: 'DESC',
+					type: 'post',
+					site_visibility: 'visible',
 					author,
 					withImages: true,
 					withCounts: true,
-					search,
+					//search,
 					category,
 					tag,
-					page,
+					page: page > 1 ? page : undefined,
 				} }
 				page={ page }
 				incrementPage={ this.incrementPage }
@@ -126,19 +130,27 @@ var PostList = React.createClass( {
 } );
 
 const Posts = connect(
-	( state, { siteId, query, page } ) => ( {
-		posts: getSitePostsForQueryIgnoringPage( state, siteId, query ) || [],
-		loading: isRequestingSitePostsForQueryIgnoringPage( state, siteId, query ),
-		lastPage: page === getSitePostsLastPageForQuery( state, siteId, query ),
-		// assess which of these from PostListFetcher to replicate:
-		//	listId: postListStore.getID(),
-		//	posts: postListStore.getAll(),
-		//	postImages: PostContentImagesStore.getAll(),
-		//	page: postListStore.getPage(),
-		//	lastPage: postListStore.isLastPage(),
-		//	loading: postListStore.isFetchingNextPage(),
-		//	hasRecentError: postListStore.hasRecentError()
-	} )
+	( state, { siteId, query, page, hasSites } ) => {
+		if ( ! hasSites ) {
+			return { loading: true };
+		}
+
+		debug( 'ps', getSitePostsForQueryIgnoringPage( state, siteId, query ) );
+
+		return {
+			posts: getSitePostsForQueryIgnoringPage( state, siteId, query ) || [],
+			loading: isRequestingSitePostsForQueryIgnoringPage( state, siteId, query ),
+			lastPage: page === getSitePostsLastPageForQuery( state, siteId, query ),
+			// assess which of these from PostListFetcher to replicate:
+			//	listId: postListStore.getID(),
+			//	posts: postListStore.getAll(),
+			//	postImages: PostContentImagesStore.getAll(),
+			//	page: postListStore.getPage(),
+			//	lastPage: postListStore.isLastPage(),
+			//	loading: postListStore.isFetchingNextPage(),
+			//	hasRecentError: postListStore.hasRecentError()
+		};
+	}
 )( React.createClass( {
 
 	propTypes: {

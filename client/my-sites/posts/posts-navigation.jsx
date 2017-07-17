@@ -58,6 +58,7 @@ const PostsNavigation = React.createClass( {
 			state.loading = false;
 		}
 
+		debug( 'getInitialState', state.loading, counts );
 		return state;
 	},
 
