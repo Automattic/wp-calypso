@@ -173,7 +173,7 @@ class Post extends Component {
 				href={ this.getContentLinkURL() }
 				className="post__excerpt post__content-link"
 				target={ this.getContentLinkTarget() }
-				onClick={ this.analyticsEvents.postExcerptClick }
+				onClick={ this.props.recordPostExcerptClick }
 			>
 				{ excerptElement }
 			</a>
