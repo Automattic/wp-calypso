@@ -14,7 +14,6 @@
 
 	.following__intro-copy {
 		color: #045182;
-		margin-left: 24px;
 
 		a {
 			color: #1785be;
@@ -35,10 +34,10 @@
 // Following intro white
 .following__intro-white {
 	background: url( '/calypso/images/reader/reader-intro-background-white.svg' ) $white no-repeat 100%20px;
+	border: 1px solid lighten( $gray, 30% );
 
 	.following__intro-copy {
 		color: #045182;
-		margin-left: 0;
 
 		a {
 			color: #1785be;
@@ -49,21 +48,11 @@
 				border-bottom: 1px $white solid;
 			}
 		}
-
-		@include breakpoint( "<660px" ) {
-			margin-left: 24px;
-		}
 	}
 
 	.following__intro-character {
 		background: url( '/calypso/images/reader/reader-intro-character-light-blue.svg' ) no-repeat 8px bottom;
 	}
-}
-
-// For white variation only
-// For character to sit directly on top of search field
-.following__intro-white + .card.following__search {
-	margin-top: 0;
 }
 
 .following__intro-blue,
@@ -120,6 +109,7 @@
 	flex-direction: column;
 	font-size: 18px;
 	justify-content: center;
+	margin-left: 24px;
 
 	@media ( min-width: 661px ) and ( max-width: 773px ) {
 		margin-bottom: 20px;
@@ -190,8 +180,15 @@
 	}
 }
 
-.following__intro-white .following__intro-close-icon {
-	fill: $gray;
+.following__intro-white .following__intro-close {
+
+	.following__intro-close-icon {
+		fill: lighten( $gray, 10% );
+	}
+
+	.following__intro-close-icon-bg {
+		background-color: $white;
+	}
 }
 
 // Following intro original
