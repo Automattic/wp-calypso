@@ -40,7 +40,7 @@ export const inProgress = keyedReducer( 'siteId', createReducer( {}, {
 	[ PLUGIN_UPLOAD ]: () => true,
 	[ PLUGIN_UPLOAD_COMPLETE ]: () => false,
 	[ PLUGIN_UPLOAD_ERROR ]: () => false,
-	[ PLUGIN_UPLOAD_CLEAR ]: () => null,
+	[ PLUGIN_UPLOAD_CLEAR ]: () => false,
 } ) );
 
 export default combineReducers( {

@@ -33,6 +33,11 @@ describe( 'uploadedPluginId', () => {
 		expect( state[ siteId ] ).to.equal( pluginId );
 	} );
 
+	it( 'should be empty after upload start', () => {
+		const state = uploadedPluginId( {}, uploadPlugin( siteId ) );
+		expect( state[ siteId ] ).to.be.null;
+	} );
+
 	it( 'should be empty after clearing an upload', () => {
 		const state = uploadedPluginId( { [ siteId ]: pluginId }, clearPluginUpload( siteId ) );
 		expect( state[ siteId ] ).to.be.null;
@@ -74,6 +79,11 @@ describe( 'progressPercent', () => {
 
 	it( 'should be zero on upload clear', () => {
 		const state = progressPercent( { [ siteId ]: 50 }, clearPluginUpload( siteId ) );
+		expect( state[ siteId ] ).to.equal( 0 );
+	} );
+
+	it( 'should be zero on upload error', () => {
+		const state = progressPercent( { [ siteId ]: 50 }, pluginUploadError( siteId, error ) );
 		expect( state[ siteId ] ).to.equal( 0 );
 	} );
 
