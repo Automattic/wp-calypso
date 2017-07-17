@@ -28,9 +28,10 @@
 	padding: 6px 11px;
 	text-transform: uppercase;
 
-	.gridicon-time:before {
+	.gridicons-time {
 		color: $gray;
 		margin-right: 4px;
+		vertical-align: text-top;
 	}
 }
 
