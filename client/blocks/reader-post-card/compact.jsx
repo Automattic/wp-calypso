@@ -11,6 +11,7 @@ import Emojify from 'components/emojify';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderExcerpt from 'blocks/reader-excerpt';
+import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 
 const CompactPost = ( { post, children, isDiscover } ) => {
 	const canonicalMedia = post.canonical_media;
@@ -29,10 +30,12 @@ const CompactPost = ( { post, children, isDiscover } ) => {
 		featuredAsset = <ReaderFeaturedImage imageUrl={ canonicalMedia.src } href={ post.URL } />;
 	}
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="reader-post-card__post reader-post-card__post-compact">
 			{ featuredAsset }
 			<div className="reader-post-card__post-details">
+				<ReaderPostOptionsMenu className="ignore-click" showFollow={ true } post={ post } />
 				<AutoDirection>
 					<h1 className="reader-post-card__title">
 						<a className="reader-post-card__title-link" href={ post.URL }>
@@ -47,6 +50,7 @@ const CompactPost = ( { post, children, isDiscover } ) => {
 			</div>
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 CompactPost.propTypes = {
