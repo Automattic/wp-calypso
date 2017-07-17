@@ -9,21 +9,24 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import DatePicker from 'my-sites/stats/stats-date-picker';
-import Module from './store-stats-module';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getUnitPeriod } from './utils';
+import HeaderCake from 'components/header-cake';
+import { isJetpackSite } from 'state/sites/selectors';
+import { isPluginActive } from 'state/selectors';
 import List from './store-stats-list';
+import Main from 'components/main';
+import Module from './store-stats-module';
+import SectionNav from 'components/section-nav';
+import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
+import StoreStatsNavigationTabs from './store-stats-navigation/navtabs';
 import {
 	topProducts,
 	topCategories,
-	topCoupons
+	topCoupons,
+	UNITS
 } from 'woocommerce/app/store-stats/constants';
-import { getUnitPeriod } from './utils';
-import { isJetpackSite } from 'state/sites/selectors';
-import { isPluginActive } from 'state/selectors';
 
 const listType = {
 	products: topProducts,
@@ -86,6 +89,15 @@ class StoreStatsListView extends Component {
 						showQueryDate
 					/>
 				</StatsPeriodNavigation>
+				<SectionNav className="store-stats__list-view-navigation" selectedText={ UNITS[ unit ].title }>
+					<StoreStatsNavigationTabs
+						label={ 'Stats' }
+						slug={ slug }
+						type={ type }
+						unit={ unit }
+						units={ UNITS }
+					/>
+				</SectionNav>
 				<Module
 					siteId={ siteId }
 					emptyMessage={ listType[ type ].empty }
