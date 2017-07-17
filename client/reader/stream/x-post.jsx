@@ -97,7 +97,7 @@ class CrossPost extends PureComponent {
 						label: <span className="reader__x-post-label" />,
 						blogNames: this.getXPostedToContent(),
 					},
-				}
+				},
 			);
 		} else {
 			label = this.props.translate(
@@ -112,7 +112,7 @@ class CrossPost extends PureComponent {
 						label: <span className="reader__x-post-label" />,
 						blogNames: this.getXPostedToContent(),
 					},
-				}
+				},
 			);
 		}
 		return label;
@@ -135,11 +135,11 @@ class CrossPost extends PureComponent {
 					{ index + 2 < array.length && <span>, </span> }
 					{ index + 2 === array.length &&
 						<span>
-							{ ' ' }
+							{' '}
 							{ this.props.translate( 'and', {
-								comment: 'last conjunction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4',
-							} ) }
-							{ ' ' }
+								comment:
+									'last conjunction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4',
+							} ) }{' '}
 						</span> }
 				</span>
 			);

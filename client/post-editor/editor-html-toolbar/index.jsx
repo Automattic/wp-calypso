@@ -17,7 +17,8 @@ import { Env } from 'tinymce/tinymce';
 /**
  * Internal dependencies
  */
-import { serialize } from 'components/tinymce/plugins/contact-form/shortcode-utils';
+import { serialize as serializeContactForm } from 'components/tinymce/plugins/contact-form/shortcode-utils';
+import { serialize as serializeSimplePayment } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
 import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaUtils from 'lib/media/utils';
@@ -367,7 +368,7 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	onInsertContactForm = () => {
-		this.insertCustomContent( serialize( this.props.contactForm ), { paragraph: true } );
+		this.insertCustomContent( serializeContactForm( this.props.contactForm ), { paragraph: true } );
 		this.closeContactFormDialog();
 	}
 
@@ -451,6 +452,11 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( {
 			simplePaymentsDialogTab: tab,
 		} );
+	};
+
+	insertSimplePayment = ( productData ) => {
+		this.insertCustomContent( serializeSimplePayment( productData ), { paragraph: true } );
+		this.closeSimplePaymentsDialog();
 	};
 
 	onFilesDrop = () => {
@@ -684,6 +690,7 @@ export class EditorHtmlToolbar extends Component {
 					isEdit={ false }
 					onClose={ this.closeSimplePaymentsDialog }
 					onChangeTabs={ this.changeSimplePaymentsDialogTab }
+					onInsert={ this.insertSimplePayment }
 				/>
 			</div>
 		);

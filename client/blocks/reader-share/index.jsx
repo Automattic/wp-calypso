@@ -199,7 +199,11 @@ class ReaderShare extends React.Component {
 					( canShareToWordPress()
 						? <SitesPopover
 								key="menu"
-								header={ <div>{ this.props.translate( 'Share on:' ) }</div> }
+								header={
+									<div>
+										{ this.props.translate( 'Share on:' ) }
+									</div>
+								}
 								context={ this.refs && this.refs.shareButton }
 								visible={ this.state.showingMenu }
 								groups={ true }
@@ -217,13 +221,15 @@ class ReaderShare extends React.Component {
 								className="popover reader-share__popover"
 							>
 								<PopoverMenuItem action="twitter" className="reader-share__popover-item">
-									<SocialLogo icon="twitter" /><span>Twitter</span>
+									<SocialLogo icon="twitter" />
+									<span>Twitter</span>
 								</PopoverMenuItem>
 								<PopoverMenuItem action="facebook" className="reader-share__popover-item">
-									<SocialLogo icon="facebook" /><span>Facebook</span>
+									<SocialLogo icon="facebook" />
+									<span>Facebook</span>
 								</PopoverMenuItem>
 							</PopoverMenu> ),
-			]
+			],
 		);
 	}
 }

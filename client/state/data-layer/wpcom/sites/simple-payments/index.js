@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import { translate } from 'i18n-calypso';
-import { filter } from 'lodash';
+import { filter, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,8 +22,6 @@ import {
 import { metaKeyToSchemaKeyMap, metadataSchema } from 'state/simple-payments/product-list/schema';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { getRawSite } from 'state/sites/selectors';
-import { errorNotice } from 'state/notices/actions';
 import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
 import { isValidSimplePaymentsProduct } from 'lib/simple-payments/utils';
 
@@ -180,21 +177,13 @@ export const listProducts = ( { dispatch }, { siteId }, next, { posts: products 
 	dispatch( receiveProductsList( siteId, validProducts.map( customPostToProduct ) ) );
 };
 
-const announceListingProductsFailure = ( { dispatch, getState }, { siteId } ) => {
-	const site = getRawSite( getState(), siteId );
-	const error = site && site.name
-		? translate( 'Failed to retrieve products for site “%(siteName)s.”', { args: { siteName: site.name } } )
-		: translate( 'Failed to retrieve products for your site.' );
-
-	dispatch( errorNotice( error ) );
-};
-
 export default {
 	[ SIMPLE_PAYMENTS_PRODUCT_GET ]:
-		[ dispatchRequest( requestSimplePaymentsProduct, listProduct, announceListingProductsFailure ) ],
+		[ dispatchRequest( requestSimplePaymentsProduct, listProduct, noop ) ],
 	[ SIMPLE_PAYMENTS_PRODUCTS_LIST ]:
-		[ dispatchRequest( requestSimplePaymentsProducts, listProducts, announceListingProductsFailure ) ],
-	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_ADD ]: [ dispatchRequest( requestSimplePaymentsProductAdd, addProduct ) ],
-	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_EDIT ]: [ dispatchRequest( requestSimplePaymentsProductEdit, addProduct ) ],
-	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_DELETE ]: [ dispatchRequest( requestSimplePaymentsProductDelete, deleteProduct ) ],
+		[ dispatchRequest( requestSimplePaymentsProducts, listProducts, noop ) ],
+	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_ADD ]: [ dispatchRequest( requestSimplePaymentsProductAdd, addProduct, noop ) ],
+	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_EDIT ]: [ dispatchRequest( requestSimplePaymentsProductEdit, addProduct, noop ) ],
+	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_DELETE ]:
+		[ dispatchRequest( requestSimplePaymentsProductDelete, deleteProduct, noop ) ],
 };

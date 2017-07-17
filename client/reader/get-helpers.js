@@ -50,10 +50,9 @@ export const getFeedUrl = ( { feed, site, post } = {} ) => {
  */
 export const getSiteName = ( { feed, site, post } = {} ) => {
 	let siteName = null;
-	const isDefaultSiteTitle = (
-		site && site.name === i18n.translate( 'Site Title' ) ||
-		feed && feed.name === i18n.translate( 'Site Title' )
-	);
+	const isDefaultSiteTitle =
+		( site && site.name === i18n.translate( 'Site Title' ) ) ||
+		( feed && feed.name === i18n.translate( 'Site Title' ) );
 
 	if ( ! isDefaultSiteTitle && site && site.title ) {
 		siteName = site.title;

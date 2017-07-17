@@ -23,21 +23,21 @@ const response = {
 			blog_id: 19096129,
 			feed_id: 185124,
 			blog_title: 'Bente Haarstad Photography&amp;',
-			blog_url: 'http:\/\/bentehaarstad.wordpress.com',
+			blog_url: 'http://bentehaarstad.wordpress.com',
 			railcar: {},
 		},
 		{
 			blog_id: 38492359,
 			feed_id: 42081376,
 			blog_title: 'The Renegade Press',
-			blog_url: 'http:\/\/chrisnicholaswrites.wordpress.com',
+			blog_url: 'http://chrisnicholaswrites.wordpress.com',
 			railcar: {},
 		},
 		{
 			blog_id: 30436600,
 			feed_id: 1098976,
 			blog_title: 'Make Something Mondays!',
-			blog_url: 'http:\/\/makesomethingmondays.wordpress.com',
+			blog_url: 'http://makesomethingmondays.wordpress.com',
 			railcar: {},
 		},
 	],
@@ -57,7 +57,7 @@ describe( 'recommended sites', () => {
 					apiVersion: '1.2',
 					onSuccess: action,
 					onFailure: action,
-				} )
+				} ),
 			);
 		} );
 	} );
@@ -73,7 +73,7 @@ describe( 'recommended sites', () => {
 					sites: fromApi( response ),
 					seed,
 					offset: 0,
-				} )
+				} ),
 			);
 		} );
 	} );
@@ -93,7 +93,7 @@ describe( 'recommended sites', () => {
 					blogId: 19096129,
 					feedId: 185124,
 					title: 'Bente Haarstad Photography&',
-					url: 'http:\/\/bentehaarstad.wordpress.com',
+					url: 'http://bentehaarstad.wordpress.com',
 				},
 				{
 					algorithm,
@@ -101,7 +101,7 @@ describe( 'recommended sites', () => {
 					blogId: 38492359,
 					feedId: 42081376,
 					title: 'The Renegade Press',
-					url: 'http:\/\/chrisnicholaswrites.wordpress.com',
+					url: 'http://chrisnicholaswrites.wordpress.com',
 				},
 				{
 					algorithm,
@@ -109,7 +109,7 @@ describe( 'recommended sites', () => {
 					blogId: 30436600,
 					feedId: 1098976,
 					title: 'Make Something Mondays!',
-					url: 'http:\/\/makesomethingmondays.wordpress.com',
+					url: 'http://makesomethingmondays.wordpress.com',
 				},
 			];
 

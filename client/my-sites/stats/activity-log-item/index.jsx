@@ -5,28 +5,29 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import ActivityActor from './activity-actor';
 import ActivityIcon from './activity-icon';
 import EllipsisMenu from 'components/ellipsis-menu';
 import FoldableCard from 'components/foldable-card';
-import Gravatar from 'components/gravatar';
 import PopoverMenuItem from 'components/popover/menu-item';
-import { addQueryArgs } from 'lib/route';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:activity-log:item' );
 
 class ActivityLogItem extends Component {
-
 	static propTypes = {
-		allowRestore: PropTypes.bool.isRequired,
-		siteId: PropTypes.number.isRequired,
-		requestRestore: PropTypes.func.isRequired,
 		applySiteOffset: PropTypes.func.isRequired,
+		disableRestore: PropTypes.bool.isRequired,
+		hideRestore: PropTypes.bool,
+		requestRestore: PropTypes.func.isRequired,
+		siteId: PropTypes.number.isRequired,
+
 		log: PropTypes.shape( {
 			group: PropTypes.oneOf( [
 				'attachment',
@@ -147,7 +148,9 @@ class ActivityLogItem extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	static defaultProps = { allowRestore: true };
+	static defaultProps = {
+		disableRestore: false,
+	};
 
 	handleClickRestore = () => {
 		const {
@@ -176,33 +179,6 @@ class ActivityLogItem extends Component {
 			timestamp: ts_utc,
 		} );
 	};
-
-	renderActor() {
-		const { log } = this.props;
-		const { actor } = log;
-
-		if ( ! actor ) {
-			return null;
-		}
-
-		const avatar_URL = actor.avatar_url
-			? addQueryArgs( { s: 40 }, actor.avatar_url )
-			: null;
-
-		return (
-			<div className="activity-log-item__actor">
-				{ /*
-					FIXME: actor does not correspond to a Gravatar user
-					We need to receive `avatar_URL` from the endpoint or query users.
-				*/ }
-				<Gravatar user={ { avatar_URL } } size={ 40 } />
-				<div className="activity-log-item__actor-info">
-					<div className="activity-log-item__actor-name">{ actor.display_name }</div>
-					<div className="activity-log-item__actor-role">{ actor.translated_role }</div>
-				</div>
-			</div>
-		);
-	}
 
 	renderContent() {
 		const { log } = this.props;
@@ -249,9 +225,11 @@ class ActivityLogItem extends Component {
 	}
 
 	renderHeader() {
+		const actor = get( this.props, [ 'log', 'actor' ] );
+
 		return (
 			<div className="activity-log-item__card-header">
-				{ this.renderActor() }
+				<ActivityActor actor={ actor } />
 				{ this.renderContent() }
 			</div>
 		);
@@ -259,18 +237,23 @@ class ActivityLogItem extends Component {
 
 	renderSummary() {
 		const {
-			allowRestore,
+			disableRestore,
+			hideRestore,
 			translate,
 		} = this.props;
 
-		if ( ! allowRestore ) {
+		if ( hideRestore ) {
 			return null;
 		}
 
 		return (
 			<div className="activity-log-item__action">
 				<EllipsisMenu position="bottom right">
-					<PopoverMenuItem onClick={ this.handleClickRestore } icon="undo">
+					<PopoverMenuItem
+						disabled={ disableRestore }
+						icon="undo"
+						onClick={ this.handleClickRestore }
+					>
 						{ translate( 'Rewind to this point' ) }
 					</PopoverMenuItem>
 				</EllipsisMenu>

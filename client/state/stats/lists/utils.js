@@ -140,7 +140,7 @@ export function getSerializedStatsQuery( query = {} ) {
  * @param {Object} payload - response
  * @return {array} - Array of data objects
  */
-function parseOrderDeltas( payload ) {
+export function parseOrderDeltas( payload ) {
 	if ( ! payload || ! payload.deltas || ! payload.delta_fields || Object.keys( payload.deltas ).length === 0 ) {
 		return [];
 	}
@@ -166,7 +166,7 @@ function parseOrderDeltas( payload ) {
  * a null value
  * @return {array} - Array of data objects
  */
-function parseOrdersChartData( payload ) {
+export function parseOrdersChartData( payload ) {
 	if ( ! payload || ! payload.data ) {
 		return [];
 	}

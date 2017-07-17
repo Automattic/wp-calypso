@@ -32,7 +32,7 @@ export const requestPageAction = ( page = 1, number = ITEMS_PER_PAGE, meta = '' 
 let syncingFollows = false;
 let seenSubscriptions = null;
 export const isSyncingFollows = () => syncingFollows;
-export const resetSyncingFollows = () => syncingFollows = false;
+export const resetSyncingFollows = () => ( syncingFollows = false );
 
 export function syncReaderFollows( store ) {
 	if ( isSyncingFollows() ) {

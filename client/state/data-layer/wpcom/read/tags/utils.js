@@ -26,8 +26,8 @@ export function fromApi( apiResponse ) {
 		concat(
 			[],
 			isObject( apiResponse.tag ) && apiResponse.tag,
-			isArray( apiResponse.tags ) && apiResponse.tags
-		)
+			isArray( apiResponse.tags ) && apiResponse.tags,
+		),
 	);
 
 	return map( tags, tag => ( {

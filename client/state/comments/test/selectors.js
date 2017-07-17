@@ -9,20 +9,32 @@ import { expect } from 'chai';
 import {
 	getPostOldestCommentDate,
 	getPostMostRecentCommentDate,
-	getCommentLike
+	getCommentLike,
 } from '../selectors';
 
 const state = {
 	comments: {
 		items: {
 			'1-1': [
-					{ ID: 3, parent: { ID: 1 }, date: '2017-01-31T10:07:18-08:00', i_like: false, like_count: 0 },
-					{ ID: 1, parent: false, date: '2016-01-31T10:07:18-08:00', i_like: true, like_count: 5 },
-					{ ID: 2, parent: false, date: '2016-01-29T10:07:18-08:00', i_like: false, like_count: 456 },
-					{ ID: 4, parent: { ID: 2 }, date: '2015-01-29T10:07:18-08:00', i_like: false, like_count: 0 }
-			]
-		}
-	}
+				{
+					ID: 3,
+					parent: { ID: 1 },
+					date: '2017-01-31T10:07:18-08:00',
+					i_like: false,
+					like_count: 0,
+				},
+				{ ID: 1, parent: false, date: '2016-01-31T10:07:18-08:00', i_like: true, like_count: 5 },
+				{ ID: 2, parent: false, date: '2016-01-29T10:07:18-08:00', i_like: false, like_count: 456 },
+				{
+					ID: 4,
+					parent: { ID: 2 },
+					date: '2015-01-29T10:07:18-08:00',
+					i_like: false,
+					like_count: 0,
+				},
+			],
+		},
+	},
 };
 
 describe( 'selectors', () => {
@@ -34,9 +46,13 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return undefined if no comment items', () => {
-			const res = getPostMostRecentCommentDate( {
-				comments: { items: { '1-1': [] } }
-			}, 1, 1 );
+			const res = getPostMostRecentCommentDate(
+				{
+					comments: { items: { '1-1': [] } },
+				},
+				1,
+				1,
+			);
 
 			expect( res ).to.be.eql( undefined );
 		} );
@@ -50,9 +66,13 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return undefined if no comment items', () => {
-			const res = getPostOldestCommentDate( {
-				comments: { items: { '1-1': [] } }
-			}, 1, 1 );
+			const res = getPostOldestCommentDate(
+				{
+					comments: { items: { '1-1': [] } },
+				},
+				1,
+				1,
+			);
 
 			expect( res ).to.be.eql( undefined );
 		} );

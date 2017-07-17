@@ -16,16 +16,14 @@ import QueryShippingZones, { areShippingZonesFullyLoaded } from 'woocommerce/com
 import ShippingZoneHeader from './shipping-zone-header';
 import ShippingZoneLocationList from './shipping-zone-location-list';
 import ShippingZoneMethodList from './shipping-zone-method-list';
-import ShippingZoneName, { getZoneName } from './shipping-zone-name';
+import ShippingZoneName from './shipping-zone-name';
 import {
 	addNewShippingZone,
 	openShippingZoneForEdit,
 	createShippingZoneSaveActionList,
 	createShippingZoneDeleteActionList,
 } from 'woocommerce/state/ui/shipping/zones/actions';
-import { changeShippingZoneName } from 'woocommerce/state/ui/shipping/zones/actions';
 import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
-import { getCurrentlyEditingShippingZoneLocationsList } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -75,11 +73,7 @@ class Shipping extends Component {
 	}
 
 	onSave() {
-		const { siteId, zone, locations, translate, actions } = this.props;
-
-		if ( ! zone.name ) {
-			actions.changeShippingZoneName( siteId, getZoneName( zone, locations, translate ) );
-		}
+		const { zone, translate, actions } = this.props;
 
 		const successAction = successNotice(
 			isNaN( zone.id ) ? translate( 'Shipping Zone added.' ) : translate( 'Shipping Zone saved.' ),
@@ -119,7 +113,7 @@ class Shipping extends Component {
 	}
 
 	render() {
-		const { siteId, className, loaded, zone, locations, isRestOfTheWorld, hasEdits } = this.props;
+		const { className, isRestOfTheWorld, hasEdits, siteId } = this.props;
 
 		return (
 			<Main className={ classNames( 'shipping', className ) }>
@@ -128,20 +122,9 @@ class Shipping extends Component {
 				<ShippingZoneHeader
 					onSave={ this.onSave }
 					onDelete={ this.onDelete } />
-				{ isRestOfTheWorld
-					? null
-					: <ShippingZoneLocationList siteId={ siteId } loaded={ loaded } /> }
-				<ShippingZoneMethodList
-					siteId={ siteId }
-					loaded={ loaded } />
-				{ isRestOfTheWorld
-					? null
-					: <ShippingZoneName
-						siteId={ siteId }
-						loaded={ loaded }
-						zone={ zone }
-						locations={ locations } />
-				}
+				{ ! isRestOfTheWorld && <ShippingZoneLocationList siteId={ siteId } /> }
+				<ShippingZoneMethodList siteId={ siteId } />
+				{ ! isRestOfTheWorld && <ShippingZoneName siteId={ siteId } /> }
 			</Main>
 		);
 	}
@@ -164,8 +147,7 @@ export default connect(
 			loaded,
 			zone,
 			isRestOfTheWorld,
-			locations: loaded && getCurrentlyEditingShippingZoneLocationsList( state, 20 ),
-			hasEdits: zone && 0 !== getSaveZoneActionListSteps( state ).length,
+			hasEdits: Boolean( zone && 0 !== getSaveZoneActionListSteps( state ).length ),
 		};
 	},
 	( dispatch ) => ( {
@@ -173,7 +155,6 @@ export default connect(
 			{
 				addNewShippingZone,
 				openShippingZoneForEdit,
-				changeShippingZoneName,
 				createShippingZoneSaveActionList,
 				createShippingZoneDeleteActionList,
 			}, dispatch

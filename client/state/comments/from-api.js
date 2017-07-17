@@ -19,15 +19,19 @@ export const toAuthor = ( { avatar_URL, email, ID, name } ) => {
 	);
 };
 
-export const toWpcomUser = author => pickBy( {
-	ID: author.ID,
-	avatar_URL: author.avatarURL,
-	display_name: author.name,
-	email: author.email,
-	primary_blog: author.site_ID,
-	primary_blog_url: author.URL,
-	username: author.login,
-}, a => !! a );
+export const toWpcomUser = author =>
+	pickBy(
+		{
+			ID: author.ID,
+			avatar_URL: author.avatarURL,
+			display_name: author.name,
+			email: author.email,
+			primary_blog: author.site_ID,
+			primary_blog_url: author.URL,
+			username: author.login,
+		},
+		a => !! a,
+	);
 
 export const validStatusValues = {
 	approved: 'approved',
@@ -57,13 +61,14 @@ export const fromApi = ( siteId, data ) => {
 						createdAt: Date.parse( data.date ),
 						isLiked: Boolean( data.i_like ),
 					},
-					data.parent && data.parent.type === 'comment' && { parentId: parseInt( data.parent.ID, 10 ) },
+					data.parent &&
+					data.parent.type === 'comment' && { parentId: parseInt( data.parent.ID, 10 ) },
 					{
 						postId: parseInt( data.post.ID, 10 ),
 						siteId,
 						status: validStatusValues[ data.status ],
-					}
-				)
+					},
+				),
 			},
 			data.author.ID > 0 && { user: toWpcomUser( data.author ) },
 		);

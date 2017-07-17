@@ -14,12 +14,6 @@
 	.focus-sidebar & {
 		right: 273px;
 	}
-
-	@include breakpoint( "<960px" ) {
-		.focus-sidebar & {
-			right: 229px;
-		}
-	}
 }
 
 .editor-word-count__is-selected-text {

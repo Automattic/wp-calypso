@@ -76,8 +76,8 @@ const PlanFeaturesActions = ( {
 			}
 
 			trackTracksEvent( 'calypso_plan_features_upgrade_click', {
-				currentPlan: currentSitePlan && currentSitePlan.productSlug,
-				upgradingTo: planType,
+				current_plan: currentSitePlan && currentSitePlan.productSlug,
+				upgrading_to: planType,
 			} );
 
 			onUpgradeClick();

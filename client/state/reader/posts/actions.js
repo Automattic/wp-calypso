@@ -62,11 +62,12 @@ export function fetchPost( postKey ) {
 							site_ID: postKey.blogId,
 							is_external: ! postKey.blogId,
 							is_error: true,
-							global_ID: `${ postKey.feedId || 'na' }-${ postKey.blogId || 'na' }-${ postKey.postId }`,
+							global_ID: `${ postKey.feedId || 'na' }-${ postKey.blogId ||
+								'na' }-${ postKey.postId }`,
 							error: err,
 						},
 					],
-				} )
+				} ),
 		);
 }
 

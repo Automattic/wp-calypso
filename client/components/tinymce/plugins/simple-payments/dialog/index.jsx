@@ -6,7 +6,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,27 +29,34 @@ class SimplePaymentsDialog extends Component {
 		isEdit: PropTypes.bool.isRequired,
 		onChangeTabs: PropTypes.func.isRequired,
 		onClose: PropTypes.func.isRequired,
+		onInsert: PropTypes.func.isRequired,
+	};
+
+	state = {
+		selectedPaymentId: null,
+	};
+
+	handleSelectedChange = selectedPaymentId => {
+		this.setState( { selectedPaymentId } );
+	};
+
+	handleInsert = () => {
+		this.props.onInsert( { id: this.state.selectedPaymentId } );
 	};
 
 	getActionButtons() {
-		const { translate, onClose } = this.props;
+		const { activeTab, translate, onClose } = this.props;
 
-		const actionButtons = [
+		const insertEnabled = activeTab === 'paymentButtons' && this.state.selectedPaymentId !== null;
+
+		return [
 			<Button onClick={ onClose }>
 				{ translate( 'Cancel' ) }
 			</Button>,
+			<Button onClick={ this.handleInsert } disabled={ ! insertEnabled } primary>
+				{ translate( 'Insert' ) }
+			</Button>,
 		];
-
-		if ( this.props.activeTab === 'addNew' ) {
-			return [
-				...actionButtons,
-				<Button onClick={ noop } primary>
-					{ translate( 'Insert' ) }
-				</Button>,
-			];
-		}
-
-		return actionButtons;
 	}
 
 	render() {
@@ -80,7 +86,11 @@ class SimplePaymentsDialog extends Component {
 				<Navigation { ...{ activeTab, onChangeTabs, paymentButtons } } />
 				{ activeTab === 'addNew'
 					? <ProductForm currencyDefaults={ currencyDefaults } />
-					: <ProductList paymentButtons={ paymentButtons } /> }
+					: <ProductList
+							paymentButtons={ paymentButtons }
+							selectedPaymentId={ this.state.selectedPaymentId }
+							onSelectedChange={ this.handleSelectedChange }
+						/> }
 			</Dialog>
 		);
 	}

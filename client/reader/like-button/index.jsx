@@ -25,7 +25,7 @@ class ReaderLikeButton extends React.Component {
 		recordTrackForPost(
 			liked ? 'calypso_reader_article_liked' : 'calypso_reader_article_unliked',
 			post,
-			{ context: this.props.fullPost ? 'full-post' : 'card' }
+			{ context: this.props.fullPost ? 'full-post' : 'card' },
 		);
 		if ( liked && ! this.props.fullPost && ! post._seen ) {
 			markSeen( post, this.props.site );

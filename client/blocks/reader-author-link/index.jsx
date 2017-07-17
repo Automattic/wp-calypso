@@ -35,7 +35,11 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
 
 	// If we have neither author.URL or siteUrl, just return children in a wrapper
 	if ( ! siteUrl ) {
-		return <span className={ classes }>{ children }</span>;
+		return (
+			<span className={ classes }>
+				{ children }
+			</span>
+		);
 	}
 
 	return (

@@ -188,7 +188,7 @@ describe( 'actions', function() {
 			const spy = sandbox.spy();
 			sandbox.stub( PostEditStore, 'hasContent' ).returns( false );
 
-			PostActions.saveEdited( null, spy );
+			PostActions.saveEdited( null, {}, spy );
 
 			defer( () => {
 				expect( spy ).to.have.been.calledOnce;
@@ -204,7 +204,7 @@ describe( 'actions', function() {
 			sandbox.stub( PostEditStore, 'hasContent' ).returns( true );
 			sandbox.stub( PostEditStore, 'getChangedAttributes' ).returns( {} );
 
-			PostActions.saveEdited( null, spy );
+			PostActions.saveEdited( null, {}, spy );
 
 			defer( () => {
 				expect( spy ).to.have.been.calledOnce;
@@ -234,7 +234,7 @@ describe( 'actions', function() {
 			};
 			sandbox.stub( PostEditStore, 'getChangedAttributes' ).returns( changedAttributes );
 
-			PostActions.saveEdited( null, ( error, data ) => {
+			PostActions.saveEdited( null, {}, ( error, data ) => {
 				const normalizedAttributes = {
 					ID: 777,
 					site_ID: 123,

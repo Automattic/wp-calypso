@@ -650,8 +650,13 @@ export const PostEditor = React.createClass( {
 
 		edits.content = this.editor.getContent();
 
+		const isConfirmationFeatureEnabled = (
+			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.props.isConfirmationSidebarEnabled
+		);
+
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.saveEdited( edits, function( error ) {
+		actions.saveEdited( edits, { isConfirmationFeatureEnabled: isConfirmationFeatureEnabled }, function( error ) {
 			if ( error && 'NO_CHANGE' !== error.message ) {
 				this.onSaveDraftFailure( error );
 			} else {
@@ -802,7 +807,7 @@ export const PostEditor = React.createClass( {
 		// to serialize when TinyMCE is the active mode
 		edits.content = this.editor.getContent();
 
-		actions.saveEdited( edits, function( error ) {
+		actions.saveEdited( edits, { isConfirmationFeatureEnabled: isConfirmationFeatureEnabled }, function( error ) {
 			if ( error && 'NO_CHANGE' !== error.message ) {
 				this.onPublishFailure( error );
 			} else {

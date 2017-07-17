@@ -51,9 +51,10 @@ export function combine( postKey1, postKey2 ) {
 
 	const combined = {
 		isCombination: true,
-		localMoment: postKey1.localMoment && postKey1.localMoment.isBefore( postKey2.localMoment ) // keep the earliest moment
-			? postKey1.localMoment
-			: postKey2.localMoment,
+		localMoment:
+			postKey1.localMoment && postKey1.localMoment.isBefore( postKey2.localMoment ) // keep the earliest moment
+				? postKey1.localMoment
+				: postKey2.localMoment,
 		postIds: [
 			...( postKey1.postIds || [ postKey1.postId ] ),
 			...( postKey2.postIds || [ postKey2.postId ] ),
