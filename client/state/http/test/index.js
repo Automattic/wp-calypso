@@ -103,15 +103,12 @@ describe( '#httpHandler', () => {
 
 		expect( dispatch ).to.have.been.calledOnce;
 
-		sinon.assert.calledWith(
-			dispatch,
-			sinon.match(
-				extendAction(
-					succeeder,
-					successMeta( { body: data } )
-				)
+		expect( dispatch ).to.have.been.calledWithMatch( sinon.match(
+			extendAction(
+				succeeder,
+				successMeta( { body: data } )
 			)
-		);
+		) );
 	} );
 
 	it( 'should call `onFailure` when a response returns with error', () => {
@@ -122,15 +119,12 @@ describe( '#httpHandler', () => {
 
 		expect( dispatch ).to.have.been.calledOnce;
 
-		sinon.assert.calledWith(
-			dispatch,
-			sinon.match(
-				extendAction(
-					failer,
-					failureMeta( { response: { body: { error: data.error } } } )
-				)
+		expect( dispatch ).to.have.been.calledWithMatch( sinon.match(
+			extendAction(
+				failer,
+				failureMeta( { response: { body: { error: data.error } } } )
 			)
-		);
+		) );
 	} );
 
 	it( 'should reject invalid headers', () => {
@@ -146,15 +140,12 @@ describe( '#httpHandler', () => {
 			null
 		);
 
-		sinon.assert.calledWith(
-			dispatch,
-			sinon.match(
-				extendAction(
-					failer,
-					failureMeta( new Error( "Not all headers were of an array pair: [ 'key', 'value' ]" ) )
-				)
+		expect( dispatch ).to.have.been.calledWithMatch( sinon.match(
+			extendAction(
+				failer,
+				failureMeta( new Error( "Not all headers were of an array pair: [ 'key', 'value' ]" ) )
 			)
-		);
+		) );
 	} );
 
 	it( 'should set appropriate headers', () => {
