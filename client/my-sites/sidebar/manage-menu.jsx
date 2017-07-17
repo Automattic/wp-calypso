@@ -101,6 +101,18 @@ class ManageMenu extends PureComponent {
 				showOnAllMySites: false,
 			} );
 		}
+
+		items.push( {
+			name: 'discussions',
+			label: this.props.translate( 'Discussions' ),
+			capability: 'edit_posts', // TODO: should be 'moderate_comments'
+			queryable: true,
+			config: 'comments/management',
+			link: '/comments',
+			wpAdminLink: 'edit-comments.php',
+			showOnAllMySites: true,
+		} );
+
 		return items;
 	}
 
