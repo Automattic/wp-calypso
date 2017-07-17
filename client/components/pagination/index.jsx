@@ -54,8 +54,8 @@ class Pagination extends Component {
 			}
 
 			// Arrows are always present, whether or not they are active is determined in the pagination page module
-			pageList.unshift( '-->' );
-			pageList.unshift( '<--' );
+			pageList.unshift( '<--' ); // Prepend to beginning
+			pageList.push( '-->' ); // Append to end
 
 			pageList = pageList.map( function( pageNumber, index ) {
 				return (
