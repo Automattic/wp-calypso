@@ -5,9 +5,7 @@ import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 import Qs from 'qs';
-import cloneDeep from 'lodash/cloneDeep';
-import get from 'lodash/get';
-import startsWith from 'lodash/startsWith';
+import { cloneDeep, get, startsWith } from 'lodash';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 
