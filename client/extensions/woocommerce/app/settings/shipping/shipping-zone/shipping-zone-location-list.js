@@ -21,6 +21,7 @@ import { decodeEntities } from 'lib/formatting';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import { getCurrentlyEditingShippingZoneLocationsList } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 import { openEditLocations } from 'woocommerce/state/ui/shipping/zones/locations/actions';
+import { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
 
 const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actions } ) => {
 	const getLocationFlag = ( location ) => {
@@ -131,13 +132,16 @@ const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actio
 
 ShippingZoneLocationList.PropTypes = {
 	siteId: PropTypes.number,
-	loaded: PropTypes.bool.isRequired,
 };
 
 export default connect(
-	( state, ownProps ) => ( {
-		locations: ownProps.loaded && getCurrentlyEditingShippingZoneLocationsList( state, 20 ),
-	} ),
+	( state ) => {
+		const loaded = areShippingZonesFullyLoaded( state );
+		return {
+			loaded,
+			locations: loaded && getCurrentlyEditingShippingZoneLocationsList( state, 20 ),
+		};
+	},
 	( dispatch, ownProps ) => ( {
 		actions: bindActionCreatorsWithSiteId( {
 			openEditLocations,

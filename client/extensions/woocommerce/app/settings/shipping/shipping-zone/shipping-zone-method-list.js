@@ -31,6 +31,7 @@ import {
 	getNewMethodTypeOptions,
 } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
+import { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
 
 const ShippingZoneMethodList = ( {
 		siteId,
@@ -129,7 +130,6 @@ const ShippingZoneMethodList = ( {
 
 ShippingZoneMethodList.propTypes = {
 	siteId: PropTypes.number,
-	loaded: PropTypes.bool.isRequired,
 };
 
 export default connect(
@@ -138,6 +138,7 @@ export default connect(
 		methodNamesMap: getShippingMethodNameMap( state ),
 		newMethodTypeOptions: getNewMethodTypeOptions( state ),
 		currency: getCurrencyWithEdits( state ),
+		loaded: areShippingZonesFullyLoaded( state ),
 	} ),
 	( dispatch, ownProps ) => ( {
 		actions: bindActionCreatorsWithSiteId( {
