@@ -211,6 +211,7 @@ class ActivityLogItem extends Component {
 
 	renderHeader() {
 		const {
+			action,
 			group,
 			name,
 		} = this.props.log;
@@ -221,6 +222,7 @@ class ActivityLogItem extends Component {
 			<div className="activity-log-item__card-header">
 				<ActivityActor actor={ actor } />
 				<ActivityTitle
+					action={ action }
 					actor={ actor }
 					group={ group }
 					name={ name }

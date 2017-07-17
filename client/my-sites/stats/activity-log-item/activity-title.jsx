@@ -8,10 +8,18 @@ import { localize } from 'i18n-calypso';
 class ActivityTitle extends Component {
 
 	static propTypes = {
+		action: PropTypes.string,
+
+		actor: PropTypes.shape( {
+			display_name: PropTypes.string,
+			login: PropTypes.string,
+		} ),
+
 		group: PropTypes.oneOf( [
 			'attachment',
 			'comment',
 			'core',
+			'menu',
 			'plugin',
 			'post',
 			'term',
@@ -20,11 +28,6 @@ class ActivityTitle extends Component {
 			'widget',
 		] ).isRequired,
 		name: PropTypes.string.isRequired,
-
-		actor: PropTypes.shape( {
-			display_name: PropTypes.string,
-			login: PropTypes.string,
-		} ),
 
 		object: PropTypes.shape( {
 			attachment: PropTypes.shape( {
@@ -107,64 +110,151 @@ class ActivityTitle extends Component {
 				name: PropTypes.string,
 				sidebar: PropTypes.string,
 			} ),
-		} ).isRequired,
+		} ),
 
 		// localize
 		moment: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
+	getAction() {
+		return this.props.action || this.props.name;
+	}
+
 	getActorName() {
-		const displayName = get( this.props, [ 'actor', 'display_name' ] );
+		const { actor } = this.props;
+		const displayName = get( actor, 'display_name' );
 		if ( displayName ) {
 			return displayName;
 		}
-
-		const login = get( this.props, [ 'actor', 'login' ] );
+		const login = get( actor, 'display_name' );
 		if ( login ) {
 			return login;
 		}
+
+		return 'An unknown user';
 	}
 
-	getPostName() {
-		return get( this.props, [ 'object', 'post', 'title' ], this.props.translate( 'A post' ) );
-	}
-
-	renderTitle() {
-		const {
-			name,
-			translate,
-		} = this.props;
-
-		switch ( name ) {
-			case 'post__published': {
-				const actorName = this.getActorName();
-				const postName = this.getPostName();
-				return actorName
-					? (
-						translate( '%(actorName)s published {{strong}}%(postName)s{{/strong}}', {
-							args: {
-								actorName,
-								postName,
-							},
-							components: {
-								strong: <strong />
-							},
-						} )
-					) : (
-						translate( 'An unknown user published {{strong}}%(postName)s{{/strong}}', {
-							args: {
-								postName,
-							},
-							components: {
-								strong: <strong />
-							},
-						} )
-					);
-			}
+	getUserName() {
+		const user = get( this.props.object, 'user' );
+		const displayName = get( user, 'display_name' );
+		if ( displayName ) {
+			return displayName;
+		}
+		const login = get( user, 'display_name' );
+		if ( login ) {
+			return login;
 		}
 
-		return name;
+		return 'an unknown user';
+	}
+
+	getPluginName() {
+		const pluginObject = get( this.props.object, 'plugin' );
+		const getName = plugin => {
+			const name = get( plugin, 'name' );
+			if ( name ) {
+				return name;
+			}
+			const slug = get( plugin, 'slug' );
+			if ( slug ) {
+				return slug;
+			}
+			return 'an unknown plugin';
+		};
+		return Array.isArray( pluginObject )
+			? pluginObject.map( getName ).join( ', ' )
+			: getName( pluginObject );
+	}
+
+	getThemeName() {
+		const themeObject = get( this.props.object, 'theme' );
+		const getName = theme => {
+			const name = get( theme, 'name' );
+			if ( name ) {
+				return name;
+			}
+			const slug = get( theme, 'slug' );
+			if ( slug ) {
+				return slug;
+			}
+			return 'an unknown theme';
+		};
+		return Array.isArray( themeObject )
+			? themeObject.map( getName ).join( ', ' )
+			: getName( themeObject );
+	}
+
+	getObjectName() {
+		const {
+			group,
+			object,
+		} = this.props;
+
+		switch ( group ) {
+			case 'attachment': {
+				const title = get( object, [ 'attachment', 'title' ] );
+				if ( title ) {
+					return title;
+				}
+				return 'an unknown attachment';
+			}
+			case 'comment': {
+				const postTitle = get( object, [ 'post', 'title' ] );
+				if ( postTitle ) {
+					return `a comment on ${ postTitle }`;
+				}
+				return 'a comment on an unknown post';
+			}
+			case 'core':
+				return 'WordPress Core';
+			case 'menu': {
+				const name = get( object, [ 'menu', 'name' ] );
+				if ( name ) {
+					return name;
+				}
+				return 'an unknown menu';
+			}
+			case 'plugin':
+				return this.getPluginName( object );
+			case 'post': {
+				const title = get( object, [ 'post', 'title' ] );
+				if ( title ) {
+					return title;
+				}
+				return 'an unknown menu';
+			}
+			case 'term': {
+				const name = get( object, [ 'term', 'name' ] );
+				if ( name ) {
+					return name;
+				}
+				return 'an unknown menu';
+			}
+			case 'theme':
+				return this.getThemeName();
+			case 'user':
+				return this.getUserName();
+			case 'widget':
+				return 'a widget';
+			default:
+				return 'an unrecognized object';
+		}
+	}
+
+	// FIXME: This function is built with the MVP in mind. It purposefully avoids translations which
+	// will need to be revisited. They may be provided by the API.
+	renderTitle() {
+		const actorName = this.getActorName();
+		const action = this.getAction();
+		const objectName = this.getObjectName();
+
+		return (
+			<div className="activity-log-item__title-title">
+				{ `${ actorName } ${ action } ` }
+				<em>{ objectName }</em>
+			</div>
+		);
 	}
 
 	renderSubtitle() {
@@ -172,12 +262,11 @@ class ActivityTitle extends Component {
 	}
 
 	render() {
-		const title = this.renderTitle();
 		const subTitle = this.renderSubtitle();
 
 		return (
 			<div className="activity-log-item__title">
-				<div className="activity-log-item__title-title">{ title }</div>
+				{ this.renderTitle() }
 				{ subTitle && <div className="activity-log-item__title-subtitle">{ subTitle }</div> }
 			</div>
 		);
