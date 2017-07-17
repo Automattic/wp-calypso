@@ -47,9 +47,9 @@ class EllipsisMenu extends Component {
 	handleClick = ( event ) => {
 		const { onClick } = this.props;
 		const { isMenuVisible } = this.state;
-		if ( onClick ) {
-			onClick( event );
-		}
+
+		onClick( event );
+
 		if ( isMenuVisible ) {
 			this.hideMenu();
 		} else {
