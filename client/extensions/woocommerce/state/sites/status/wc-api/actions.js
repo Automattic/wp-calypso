@@ -10,7 +10,9 @@ export function setError( siteId, originalAction, data, time = Date.now() ) {
 	return {
 		type: WOOCOMMERCE_ERROR_SET,
 		siteId,
-		payload: { originalAction, data, time },
+		originalAction,
+		data,
+		time,
 	};
 }
 

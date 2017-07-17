@@ -14,12 +14,12 @@ import AddressView from 'woocommerce/components/address-view';
 import Card from 'components/card';
 import Dialog from 'components/dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getCountryData } from 'woocommerce/lib/countries';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getStoreLocation, areSettingsGeneralLoading } from 'woocommerce/state/sites/settings/general/selectors';
 import { setAddress } from 'woocommerce/state/sites/settings/actions';
 import FormLabel from 'components/forms/form-label';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 
 class StoreAddress extends Component {
 
@@ -27,24 +27,7 @@ class StoreAddress extends Component {
 		showLabel: true,
 	};
 
-	componentDidMount = () => {
-		const { site } = this.props;
-
-		if ( site && site.ID ) {
-			this.props.fetchSettingsGeneral( site.ID );
-		}
-	}
-
 	componentWillReceiveProps = ( newProps ) => {
-		const { site } = this.props;
-
-		const newSiteId = newProps.site && newProps.site.ID || null;
-		const oldSiteId = site && site.ID || null;
-
-		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchSettingsGeneral( newSiteId );
-		}
-
 		this.setState( { address: newProps.address } );
 	}
 
@@ -145,6 +128,7 @@ class StoreAddress extends Component {
 		const classes = classNames( 'store-address', { 'is-placeholder': ! site || loading }, className );
 		return (
 			<Card className={ classes }>
+				<QuerySettingsGeneral siteId={ site && site.ID } />
 				<Dialog
 					buttons={ buttons }
 					isVisible={ this.state.showDialog }
@@ -172,7 +156,6 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			fetchSettingsGeneral,
 			setAddress,
 		},
 		dispatch

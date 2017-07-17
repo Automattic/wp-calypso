@@ -22,8 +22,9 @@ import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import { getCurrentlyEditingShippingZoneLocationsList } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 import { openEditLocations } from 'woocommerce/state/ui/shipping/zones/locations/actions';
 import { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
+import { areSettingsGeneralLoaded, areSettingsGeneralLoadError } from 'woocommerce/state/sites/settings/general/selectors';
 
-const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actions } ) => {
+const ShippingZoneLocationList = ( { siteId, loaded, fetchError, translate, locations, actions } ) => {
 	const getLocationFlag = ( location ) => {
 		if ( 'continent' === location.type ) {
 			return null;
@@ -101,7 +102,10 @@ const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actio
 		actions.openEditLocations();
 	};
 
-	const locationsToRender = loaded ? locations : [ {}, {}, {} ];
+	let locationsToRender = loaded ? locations : [ {}, {}, {} ];
+	if ( fetchError ) {
+		locationsToRender = [];
+	}
 
 	return (
 		<div className="shipping-zone__locations-container">
@@ -136,9 +140,10 @@ ShippingZoneLocationList.PropTypes = {
 
 export default connect(
 	( state ) => {
-		const loaded = areShippingZonesFullyLoaded( state );
+		const loaded = areShippingZonesFullyLoaded( state ) && areSettingsGeneralLoaded( state );
 		return {
 			loaded,
+			fetchError: areSettingsGeneralLoadError( state ), // TODO: add shipping zones/methods fetch errors too
 			locations: loaded && getCurrentlyEditingShippingZoneLocationsList( state, 20 ),
 		};
 	},
