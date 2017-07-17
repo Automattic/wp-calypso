@@ -79,6 +79,17 @@ class Login extends Component {
 		}
 	};
 
+	handleValid2FACode = () => {
+		if ( this.props.linkingSocialUser ) {
+			page( login( {
+				isNative: true,
+				socialConnect: true,
+			} ) );
+		} else {
+			this.rebootAfterLogin();
+		}
+	};
+
 	rebootAfterLogin = () => {
 		const { redirectTo } = this.props;
 
@@ -158,7 +169,7 @@ class Login extends Component {
 				<div>
 					{ poller }
 					<VerificationCodeForm
-						onSuccess={ this.rebootAfterLogin }
+						onSuccess={ this.handleValid2FACode }
 						twoFactorAuthType={ twoFactorAuthType } />
 				</div>
 			);
