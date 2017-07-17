@@ -99,6 +99,7 @@ export getSelectedOrAllSitesWithPlugins from './get-selected-or-all-sites-with-p
 export getSelectedOrPrimarySiteId from './get-selected-or-primary-site-id';
 export getSharingButtons from './get-sharing-buttons';
 export getSimplePayments from './get-simple-payments';
+export getSiteComment from './get-site-comment';
 export getSiteComments from './get-site-comments';
 export getSiteConnectionStatus from './get-site-connection-status';
 export getSiteDefaultPostFormat from './get-site-default-post-format';
