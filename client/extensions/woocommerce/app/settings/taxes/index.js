@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import ActionHeader from 'woocommerce/components/action-header';
 import {
-	areSettingsGeneralLoading,
+	areSettingsGeneralLoaded,
 	areTaxCalculationsEnabled,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import {
@@ -182,7 +182,7 @@ class SettingsTaxes extends Component {
 }
 
 function mapStateToProps( state ) {
-	const loading = areTaxSettingsLoading( state ) || areSettingsGeneralLoading( state );
+	const loading = areTaxSettingsLoading( state ) || ! areSettingsGeneralLoaded( state );
 	const site = getSelectedSiteWithFallback( state );
 	const pricesIncludeTaxes = getPricesIncludeTax( state );
 	const shippingIsTaxable = ! getShippingIsTaxFree( state ); // note the inversion

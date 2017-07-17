@@ -2,13 +2,11 @@
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
-import { LOADING } from 'woocommerce/state/constants';
 import { updateSettings } from '../helpers';
 import {
 	WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS,
 	WOOCOMMERCE_SETTINGS_BATCH_REQUEST,
 	WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
-	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_FAILURE,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
 	WOOCOMMERCE_TAXES_ENABLED_UPDATE,
@@ -42,10 +40,6 @@ export default createReducer( null, {
 			return setting;
 		} );
 		return newSettings;
-	},
-
-	[ WOOCOMMERCE_SETTINGS_GENERAL_REQUEST ]: () => {
-		return LOADING;
 	},
 
 	[ WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_FAILURE ]: () => {

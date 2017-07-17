@@ -17,7 +17,7 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getCountryData } from 'woocommerce/lib/countries';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getStoreLocation, areSettingsGeneralLoading } from 'woocommerce/state/sites/settings/general/selectors';
+import { getStoreLocation, areSettingsGeneralLoaded } from 'woocommerce/state/sites/settings/general/selectors';
 import { setAddress } from 'woocommerce/state/sites/settings/actions';
 import FormLabel from 'components/forms/form-label';
 
@@ -160,7 +160,7 @@ class StoreAddress extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	const loading = areSettingsGeneralLoading( state );
+	const loading = ! areSettingsGeneralLoaded( state );
 	const address = getStoreLocation( state );
 	return {
 		site,

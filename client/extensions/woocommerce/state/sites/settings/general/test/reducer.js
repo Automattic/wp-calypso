@@ -7,26 +7,13 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from 'woocommerce/state/sites/reducer';
-import { LOADING } from 'woocommerce/state/constants';
 import {
 	WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
-	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'generalRequest', () => {
-		it( 'should mark the settings general tree as "loading"', () => {
-			const siteId = 123;
-			const action = {
-				type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
-				siteId,
-			};
-
-			const newSiteData = reducer( {}, action );
-			expect( newSiteData[ siteId ].settings.general ).to.eql( LOADING );
-		} );
-
 		it( 'should store data from the action', () => {
 			const siteId = 123;
 			const settings = [

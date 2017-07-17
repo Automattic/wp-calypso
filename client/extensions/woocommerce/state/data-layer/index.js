@@ -9,7 +9,9 @@ import products from './products';
 import productVariations from './product-variations';
 import productCategories from './product-categories';
 import request from './request';
+// TODO Combine these under /settings/general/handlers, since we want to move to handlers.js files
 import settingsGeneral from './settings-general';
+import settingsGeneralHandler from '../sites/settings/general/handlers';
 import shippingZoneLocations from './shipping-zone-locations';
 import shippingZoneMethods from './shipping-zone-methods';
 import shippingZones from './shipping-zones';
@@ -26,6 +28,7 @@ const handlers = mergeHandlers(
 	productVariations,
 	request,
 	settingsGeneral,
+	settingsGeneralHandler,
 	shippingZoneLocations,
 	shippingZoneMethods,
 	shippingZones,
@@ -38,4 +41,3 @@ export default function installActionHandlers() {
 		debug( 'Failed to add action handlers for "woocommerce"' );
 	}
 }
-
