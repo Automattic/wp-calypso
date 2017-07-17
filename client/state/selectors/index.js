@@ -61,6 +61,7 @@ export getOriginalUserSetting from './get-original-user-setting';
 export getPastBillingTransaction from './get-past-billing-transaction';
 export getPastBillingTransactions from './get-past-billing-transactions';
 export getPluginUploadError from './get-plugin-upload-error';
+export getPluginUploadProgress from './get-plugin-upload-progress';
 export getPosterUploadProgress from './get-poster-upload-progress';
 export getPosterUrl from './get-poster-url';
 export getPostLikes from './get-post-likes';
