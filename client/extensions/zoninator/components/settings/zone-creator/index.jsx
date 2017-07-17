@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { FormSection, reduxForm } from 'redux-form';
+import { reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 
@@ -22,32 +22,29 @@ const ZoneCreator = ( { translate } ) => {
 	return (
 		<div>
 			<form>
-				<FormSection name="newZone">
-					<SectionHeader label={ translate( 'New Zone' ) } />
+				<SectionHeader label={ translate( 'New Zone' ) } />
+				<Card>
+					<p>
+						{ translate(
+							'To create a zone, enter a name (and any other info) and click "Add Zone". ' +
+							'You can then choose content items to add to the zone.'
+						) }
+					</p>
 
-					<Card>
-						<p>
-							{ translate(
-								'To create a zone, enter a name (and any other info) and click "Add Zone". ' +
-								'You can then choose content items to add to the zone.'
-							) }
-						</p>
+					<FormFieldset>
+						<FormLabel htmlFor="zoneName">{ translate( 'Name' ) }</FormLabel>
+						<ReduxFormTextInput name="zoneName" />
+					</FormFieldset>
 
-						<FormFieldset>
-							<FormLabel htmlFor="zoneName">{ translate( 'Name' ) }</FormLabel>
-							<ReduxFormTextInput name="zoneName" />
-						</FormFieldset>
+					<FormFieldset>
+						<FormLabel htmlFor="zoneDescription">{ translate( 'Description' ) }</FormLabel>
+						<ReduxFormTextarea name="zoneDescription" />
+					</FormFieldset>
 
-						<FormFieldset>
-							<FormLabel htmlFor="zoneDescription">{ translate( 'Description' ) }</FormLabel>
-							<ReduxFormTextarea name="zoneDescription" />
-						</FormFieldset>
-
-						<FormButtonsBar>
-							<FormButton>{ translate( 'Add Zone' ) }</FormButton>
-						</FormButtonsBar>
-					</Card>
-				</FormSection>
+					<FormButtonsBar>
+						<FormButton>{ translate( 'Add Zone' ) }</FormButton>
+					</FormButtonsBar>
+				</Card>
 			</form>
 		</div>
 	);
