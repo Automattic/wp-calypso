@@ -12,8 +12,7 @@ import classnames from 'classnames';
  * Internal Dependencies
  */
 import Button from 'components/button';
-import ReaderSubscriptionListItemPlaceholder
-	from 'blocks/reader-subscription-list-item/placeholder';
+import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
 import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'reader/follow-button/follow-sources';
 import InfiniteStream from 'components/reader-infinite-stream';
 import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
@@ -62,9 +61,8 @@ class FollowingManageSearchFeedsResults extends React.Component {
 		if ( ! searchResults ) {
 			return (
 				<div className={ classNames }>
-					{ times(
-						10,
-						i => <ReaderSubscriptionListItemPlaceholder key={ `placeholder-${ i }` } />,
+					{ times( 10, i =>
+						<ReaderSubscriptionListItemPlaceholder key={ `placeholder-${ i }` } />,
 					) }
 				</div>
 			);

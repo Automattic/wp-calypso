@@ -70,7 +70,7 @@ describe( 'ReaderSidebar', () => {
 					shouldRenderAppPromo( {
 						...shouldRenderAppPromoDefaultProps,
 						isDesktopPromoDisabled: true,
-					} )
+					} ),
 				).to.be.false;
 			} );
 
@@ -79,19 +79,19 @@ describe( 'ReaderSidebar', () => {
 					shouldRenderAppPromo( {
 						...shouldRenderAppPromoDefaultProps,
 						isUserLocaleEnglish: false,
-					} )
+					} ),
 				).to.be.false;
 			} );
 
 			it( 'should not render if the viewport is mobile', () => {
 				expect(
-					shouldRenderAppPromo( { ...shouldRenderAppPromoDefaultProps, isViewportMobile: true } )
+					shouldRenderAppPromo( { ...shouldRenderAppPromoDefaultProps, isViewportMobile: true } ),
 				).to.be.false;
 			} );
 
 			it( "should not render if it's ChromeOS", () => {
 				expect(
-					shouldRenderAppPromo( { ...shouldRenderAppPromoDefaultProps, isUserOnChromeOs: true } )
+					shouldRenderAppPromo( { ...shouldRenderAppPromoDefaultProps, isUserOnChromeOs: true } ),
 				).to.be.false;
 			} );
 
@@ -100,7 +100,7 @@ describe( 'ReaderSidebar', () => {
 					shouldRenderAppPromo( {
 						...shouldRenderAppPromoDefaultProps,
 						isDesktopPromoConfiguredToRun: false,
-					} )
+					} ),
 				).to.be.false;
 			} );
 
@@ -109,7 +109,7 @@ describe( 'ReaderSidebar', () => {
 					shouldRenderAppPromo( {
 						...shouldRenderAppPromoDefaultProps,
 						isUserDesktopAppUser: true,
-					} )
+					} ),
 				).to.be.false;
 			} );
 

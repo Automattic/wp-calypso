@@ -55,7 +55,9 @@ export class ReaderSidebarTagsListItem extends Component {
 					href={ tag.url }
 					onClick={ this.handleTagSidebarClick }
 				>
-					<div className="sidebar__menu-item-tagname">{ tag.displayName || tag.slug }</div>
+					<div className="sidebar__menu-item-tagname">
+						{ tag.displayName || tag.slug }
+					</div>
 				</a>
 				{ tag.id !== 'pending'
 					? <button
@@ -64,7 +66,9 @@ export class ReaderSidebarTagsListItem extends Component {
 							onClick={ onUnfollow }
 						>
 							<Gridicon icon="cross-small" />
-							<span className="sidebar__menu-action-label">{ translate( 'Unfollow' ) }</span>
+							<span className="sidebar__menu-action-label">
+								{ translate( 'Unfollow' ) }
+							</span>
 						</button>
 					: null }
 			</li>

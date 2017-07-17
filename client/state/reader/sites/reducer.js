@@ -52,7 +52,7 @@ function handleRequestFailure( state, action ) {
 				is_error: true,
 			},
 		},
-		state
+		state,
 	);
 }
 
@@ -132,11 +132,11 @@ export const lastFetched = createReducer(
 					memo[ site.ID ] = Date.now();
 					return memo;
 				},
-				{}
+				{},
 			);
 			return assign( {}, state, updates );
 		},
-	}
+	},
 );
 
 export default combineReducers( {

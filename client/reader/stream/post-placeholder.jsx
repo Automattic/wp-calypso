@@ -32,7 +32,8 @@ class PostPlaceholder extends React.PureComponent {
 				<div className="reader__post-excerpt">
 					<p>
 						<span className="reader__placeholder-text">
-							Please wait while we grab all the interesting posts, photos, videos and more to show you in Reader. It shouldn’t take long.
+							Please wait while we grab all the interesting posts, photos, videos and more to show
+							you in Reader. It shouldn’t take long.
 						</span>
 					</p>
 				</div>

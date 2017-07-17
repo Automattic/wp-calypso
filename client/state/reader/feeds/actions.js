@@ -34,7 +34,7 @@ export function requestFeed( feedId ) {
 					error: err,
 				} );
 				throw err;
-			}
+			},
 		);
 	};
 }

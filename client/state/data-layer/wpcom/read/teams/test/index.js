@@ -30,7 +30,7 @@ describe( 'wpcom-api', () => {
 				.get( '/rest/v1.2/read/teams' )
 				.reply( 200, successfulResponse )
 				.get( '/rest/v1.2/read/teams' )
-				.reply( 500, new Error() )
+				.reply( 500, new Error() ),
 		);
 
 		it( 'should dispatch RECEIVE action when request completes', done => {

@@ -14,7 +14,7 @@ class PostUnavailable extends React.PureComponent {
 	componentWillMount() {
 		this.errors = {
 			unauthorized: this.props.translate(
-				'This is a post on a private site that you’re following, but not currently a member of. Please request membership to display these posts in Reader.'
+				'This is a post on a private site that you’re following, but not currently a member of. Please request membership to display these posts in Reader.',
 			),
 			default: this.props.translate( 'An error occurred loading this post.' ),
 		};
@@ -39,9 +39,13 @@ class PostUnavailable extends React.PureComponent {
 				</div>
 
 				<div className="reader__post-excerpt">
-					<p>{ errorMessage }</p>
+					<p>
+						{ errorMessage }
+					</p>
 					{ config.isEnabled( 'reader/full-errors' )
-						? <pre>{ JSON.stringify( this.props.post, null, '  ' ) }</pre>
+						? <pre>
+								{ JSON.stringify( this.props.post, null, '  ' ) }
+							</pre>
 						: null }
 				</div>
 			</Card>

@@ -34,15 +34,15 @@ export class CommentDetail extends Component {
 		commentIsLiked: PropTypes.bool,
 		commentIsSelected: PropTypes.bool,
 		commentStatus: PropTypes.string,
+		commentUrl: PropTypes.string,
 		deleteCommentPermanently: PropTypes.func,
 		isBulkEdit: PropTypes.bool,
 		postAuthorDisplayName: PropTypes.string,
 		postTitle: PropTypes.string,
-		postUrl: PropTypes.string,
 		repliedToComment: PropTypes.bool,
+		replyComment: PropTypes.func,
 		setCommentStatus: PropTypes.func,
 		siteId: PropTypes.number,
-		submitComment: PropTypes.func,
 		toggleCommentLike: PropTypes.func,
 		toggleCommentSelected: PropTypes.func,
 	};
@@ -72,17 +72,17 @@ export class CommentDetail extends Component {
 	}
 
 	deleteCommentPermanently = () => {
-		const { commentId, deleteCommentPermanently, translate } = this.props;
+		const { commentId, deleteCommentPermanently, postId, translate } = this.props;
 		if ( isUndefined( window ) || window.confirm( translate( 'Delete this comment permanently?' ) ) ) {
-			deleteCommentPermanently( commentId );
+			deleteCommentPermanently( commentId, postId );
 		}
 	}
 
 	edit = () => noop;
 
 	toggleApprove = () => {
-		const { commentId, commentStatus, setCommentStatus } = this.props;
-		setCommentStatus( commentId, 'approved' === commentStatus ? 'unapproved' : 'approved' );
+		const { commentId, commentStatus, postId, setCommentStatus } = this.props;
+		setCommentStatus( commentId, postId, 'approved' === commentStatus ? 'unapproved' : 'approved' );
 	}
 
 	toggleExpanded = () => {
@@ -90,8 +90,8 @@ export class CommentDetail extends Component {
 	}
 
 	toggleLike = () => {
-		const { commentId, toggleCommentLike } = this.props;
-		toggleCommentLike( commentId );
+		const { commentId, postId, toggleCommentLike } = this.props;
+		toggleCommentLike( commentId, postId );
 	}
 
 	toggleSelected = () => {
@@ -100,13 +100,13 @@ export class CommentDetail extends Component {
 	}
 
 	toggleSpam = () => {
-		const { commentId, commentStatus, setCommentStatus } = this.props;
-		setCommentStatus( commentId, 'spam' === commentStatus ? 'approved' : 'spam' );
+		const { commentId, commentStatus, postId, setCommentStatus } = this.props;
+		setCommentStatus( commentId, postId, 'spam' === commentStatus ? 'approved' : 'spam' );
 	}
 
 	toggleTrash = () => {
-		const { commentId, commentStatus, setCommentStatus } = this.props;
-		setCommentStatus( commentId, 'trash' === commentStatus ? 'approved' : 'trash' );
+		const { commentId, commentStatus, postId, setCommentStatus } = this.props;
+		setCommentStatus( commentId, postId, 'trash' === commentStatus ? 'approved' : 'trash' );
 	}
 
 	render() {
@@ -123,6 +123,7 @@ export class CommentDetail extends Component {
 			commentIsLiked,
 			commentIsSelected,
 			commentStatus,
+			commentUrl,
 			isBulkEdit,
 			parentCommentAuthorAvatarUrl,
 			parentCommentAuthorDisplayName,
@@ -131,11 +132,12 @@ export class CommentDetail extends Component {
 			postAuthorDisplayName,
 			postId,
 			postTitle,
-			postUrl,
 			repliedToComment,
+			replyComment,
 			siteId,
-			submitComment,
 		} = this.props;
+
+		const postUrl = `/read/blogs/${ siteId }/posts/${ postId }`;
 
 		const {
 			authorIsBlocked,
@@ -167,8 +169,8 @@ export class CommentDetail extends Component {
 					deleteCommentPermanently={ this.deleteCommentPermanently }
 					isBulkEdit={ isBulkEdit }
 					isExpanded={ isExpanded }
+					postId={ postId }
 					postTitle={ postTitle }
-					postUrl={ postUrl }
 					toggleApprove={ this.toggleApprove }
 					toggleExpanded={ this.toggleExpanded }
 					toggleLike={ this.toggleLike }
@@ -200,16 +202,17 @@ export class CommentDetail extends Component {
 							commentContent={ commentContent }
 							commentDate={ commentDate }
 							commentStatus={ commentStatus }
-							postUrl={ postUrl }
+							commentUrl={ commentUrl }
 							repliedToComment={ repliedToComment }
 							siteId={ siteId }
 						/>
 						<CommentDetailReply
 							authorDisplayName={ authorDisplayName }
 							commentId={ commentId }
+							commentStatus={ commentStatus }
 							postId={ postId }
 							postTitle={ postTitle }
-							submitComment={ submitComment }
+							replyComment={ replyComment }
 						/>
 					</div>
 				}
@@ -253,6 +256,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentId: comment.ID,
 		commentIsLiked: comment.i_like,
 		commentStatus: comment.status,
+		commentUrl: get( comment, 'URL' ),
 		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
 		parentCommentAuthorDisplayName: get( parentComment, 'author.name' ),
 		parentCommentContent,
@@ -260,7 +264,6 @@ const mapStateToProps = ( state, ownProps ) => {
 		postAuthorDisplayName: get( comment, 'post.author.name' ), // TODO: not available in the current data structure
 		postId,
 		postTitle,
-		postUrl: get( comment, 'URL' ),
 		repliedToComment: comment.replied, // TODO: not available in the current data structure
 		siteId: comment.siteId || siteId,
 	} );

@@ -15,6 +15,7 @@ import EmbedViewManager from './views/embed';
 import ContactFormView from './views/contact-form';
 import * as VideoView from './views/video';
 import SimplePaymentsView from './views/simple-payments';
+import { isEnabled } from 'config';
 
 /**
  * Module variables
@@ -24,8 +25,11 @@ let views = {
 	embed: new EmbedViewManager(),
 	contactForm: ContactFormView,
 	video: VideoView,
-	simplePayments: SimplePaymentsView,
 };
+
+if ( isEnabled( 'simple-payments' ) ) {
+	views.simplePayments = SimplePaymentsView;
+}
 
 const components = mapValues( views, ( view ) => {
 	if ( 'function' === typeof view.getComponent ) {

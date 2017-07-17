@@ -16,8 +16,9 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
 
 class ActivityLogDay extends Component {
 	static propTypes = {
-		allowRestore: PropTypes.bool.isRequired,
 		applySiteOffset: PropTypes.func.isRequired,
+		disableRestore: PropTypes.bool.isRequired,
+		hideRestore: PropTypes.bool,
 		isRewindActive: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
 		requestRestore: PropTypes.func.isRequired,
@@ -26,11 +27,12 @@ class ActivityLogDay extends Component {
 	};
 
 	static defaultProps = {
-		allowRestore: true,
+		disableRestore: false,
 		isRewindActive: true,
 	};
 
-	handleClickRestore = () => {
+	handleClickRestore = ( event ) => {
+		event.stopPropagation();
 		const {
 			tsEndOfSiteDay,
 			requestRestore,
@@ -60,9 +62,12 @@ class ActivityLogDay extends Component {
 	 * @returns { object } Button to display.
 	 */
 	getRewindButton( type = '' ) {
-		const { allowRestore } = this.props;
+		const {
+			disableRestore,
+			hideRestore,
+		} = this.props;
 
-		if ( ! allowRestore ) {
+		if ( hideRestore ) {
 			return null;
 		}
 
@@ -70,7 +75,7 @@ class ActivityLogDay extends Component {
 			<Button
 				className="activity-log-day__rewind-button"
 				compact
-				disabled={ ! this.props.isRewindActive }
+				disabled={ disableRestore || ! this.props.isRewindActive }
 				onClick={ this.handleClickRestore }
 				primary={ 'primary' === type }
 			>
@@ -110,16 +115,18 @@ class ActivityLogDay extends Component {
 
 	render() {
 		const {
-			allowRestore,
+			applySiteOffset,
+			disableRestore,
+			hideRestore,
 			logs,
 			requestRestore,
 			siteId,
-			applySiteOffset,
 		} = this.props;
 
 		return (
 			<div className="activity-log-day">
 				<FoldableCard
+					clickableHeader
 					expandedSummary={ this.getRewindButton() }
 					header={ this.getEventsHeading() }
 					onOpen={ this.trackOpenDay }
@@ -127,12 +134,13 @@ class ActivityLogDay extends Component {
 				>
 					{ logs.map( ( log, index ) => (
 						<ActivityLogItem
-							key={ index }
-							allowRestore={ allowRestore }
-							siteId={ siteId }
-							requestRestore={ requestRestore }
-							log={ log }
 							applySiteOffset={ applySiteOffset }
+							disableRestore={ disableRestore }
+							hideRestore={ hideRestore }
+							key={ index }
+							log={ log }
+							requestRestore={ requestRestore }
+							siteId={ siteId }
 						/>
 					) ) }
 				</FoldableCard>

@@ -10,6 +10,8 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import App from './app';
+
+import controller from 'my-sites/controller';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import installActionHandlers from './state/data-layer';
@@ -135,6 +137,7 @@ export default function() {
 
 	// Add pages that use my-sites navigation instead
 	if ( config.isEnabled( 'woocommerce/extension-stats' ) ) {
+		page( '/store/stats/:type/:unit', controller.siteSelection, controller.sites );
 		page( '/store/stats/:type/:unit/:site', siteSelection, navigation, StatsController );
 	}
 }

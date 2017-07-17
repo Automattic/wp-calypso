@@ -43,7 +43,7 @@ function renderFeedError( context ) {
 	renderWithReduxStore(
 		React.createElement( FeedError ),
 		document.getElementById( 'primary' ),
-		context.store
+		context.store,
 	);
 }
 
@@ -124,7 +124,7 @@ const exported = {
 		renderWithReduxStore(
 			<AsyncLoad require="reader/sidebar" path={ context.path } />,
 			document.getElementById( 'secondary' ),
-			context.store
+			context.store,
 		);
 
 		next();
@@ -164,12 +164,12 @@ const exported = {
 					basePath,
 					fullAnalyticsPageTitle,
 					analyticsPageTitle,
-					mcKey
+					mcKey,
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 			} ),
 			'primary',
-			context.store
+			context.store,
 		);
 	},
 
@@ -211,7 +211,7 @@ const exported = {
 					basePath,
 					fullAnalyticsPageTitle,
 					analyticsPageTitle,
-					mcKey
+					mcKey,
 				) }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 				showPrimaryFollowButtonOnCards={ false }
@@ -219,7 +219,7 @@ const exported = {
 				showBack={ userHasHistory( context ) }
 			/>,
 			document.getElementById( 'primary' ),
-			context.store
+			context.store,
 		);
 	},
 
@@ -247,7 +247,7 @@ const exported = {
 					basePath,
 					fullAnalyticsPageTitle,
 					analyticsPageTitle,
-					mcKey
+					mcKey,
 				) }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 				showPrimaryFollowButtonOnCards={ false }
@@ -255,7 +255,7 @@ const exported = {
 				showBack={ userHasHistory( context ) }
 			/>,
 			document.getElementById( 'primary' ),
-			context.store
+			context.store,
 		);
 	},
 
@@ -283,13 +283,13 @@ const exported = {
 					basePath,
 					fullAnalyticsPageTitle,
 					analyticsPageTitle,
-					mcKey
+					mcKey,
 				) }
 				showPrimaryFollowButtonOnCards={ false }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 			/>,
 			document.getElementById( 'primary' ),
-			context.store
+			context.store,
 		);
 	},
 };

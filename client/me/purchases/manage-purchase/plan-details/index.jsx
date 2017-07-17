@@ -14,6 +14,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
 import SectionHeader from 'components/section-header';
+import PlanBillingPeriod from './billing-period';
 import { isRequestingSites } from 'state/sites/selectors';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getPurchase, isDataLoading } from 'me/purchases/utils';
@@ -67,10 +68,12 @@ class PurchasePlanDetails extends Component {
 		} );
 
 		return (
-			<div>
+			<div className="plan-details">
 				<QueryPluginKeys siteId={ selectedSite.ID } />
 				<SectionHeader label={ headerText } />
 				<Card>
+					<PlanBillingPeriod purchase={ purchase } />
+
 					{ pluginList.map( ( plugin, i ) => {
 						return (
 							<FormFieldset key={ i }>

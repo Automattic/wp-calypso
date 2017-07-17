@@ -45,11 +45,13 @@ class StoreStats extends Component {
 
 	render() {
 		const { isWooConnect, path, queryDate, selectedDate, siteId, slug, unit, querystring } = this.props;
+
 		// TODO: this is to handle users switching sites while on store stats
 		// unfortunately, we can't access the path when changing sites
 		if ( ! isWooConnect ) {
-			page.redirect( `/stats/${ slug }` );
+			page.redirect( `/stats/day/${ slug }` );
 		}
+
 		const unitQueryDate = getUnitPeriod( queryDate, unit );
 		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
 		const endSelectedDate = getEndPeriod( selectedDate, unit );
@@ -67,30 +69,22 @@ class StoreStats extends Component {
 		const widgetPath = `/${ unit }/${ slug }${ querystring ? '?' : '' }${ querystring || '' }`;
 
 		const widgetList1 = (
-			<div className="store-stats__widgets-column spark-widgets" key="sparkwidgets1">
-				<WidgetList
-					siteId={ siteId }
-					header={ null }
-					emptyMessage={ translate( 'No data found.' ) }
-					query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
-					selectedDate={ endSelectedDate }
-					statType="statsOrders"
-					widgets={ sparkWidgetList1 }
-				/>
-			</div>
-			);
+			<WidgetList
+				siteId={ siteId }
+				query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
+				selectedDate={ endSelectedDate }
+				statType="statsOrders"
+				widgets={ sparkWidgetList1 }
+			/>
+		);
 		const widgetList2 = (
-			<div className="store-stats__widgets-column spark-widgets" key="sparkwidgets2">
-				<WidgetList
-					siteId={ siteId }
-					header={ null }
-					emptyMessage={ translate( 'No data found.' ) }
-					query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
-					selectedDate={ endSelectedDate }
-					statType="statsOrders"
-					widgets={ sparkWidgetList2 }
-				/>
-			</div>
+			<WidgetList
+				siteId={ siteId }
+				query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
+				selectedDate={ endSelectedDate }
+				statType="statsOrders"
+				widgets={ sparkWidgetList2 }
+			/>
 		);
 
 		return (
@@ -123,13 +117,21 @@ class StoreStats extends Component {
 					/>
 				</StatsPeriodNavigation>
 				<div className="store-stats__widgets">
-					{ widgetList1 }
-					{ widgetList2 }
+					<div className="store-stats__widgets-column spark-widgets" key="sparkwidgets">
+						<Module
+							siteId={ siteId }
+							header={ null }
+							emptyMessage={ translate( 'No data found.' ) }
+							query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
+							statType="statsOrders"
+						>
+							{ widgetList1 }
+							{ widgetList2 }
+						</Module>
+					</div>
 					{ topWidgets.map( widget => {
 						const header = (
-							<SectionHeader href={ widget.basePath + widgetPath }>
-								{ widget.title }
-							</SectionHeader>
+							<SectionHeader href={ widget.basePath + widgetPath } label={ widget.title } />
 						);
 						return (
 							<div className="store-stats__widgets-column" key={ widget.basePath }>

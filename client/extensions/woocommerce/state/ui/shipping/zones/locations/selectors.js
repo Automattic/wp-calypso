@@ -113,6 +113,51 @@ const getStatesOwnedByOtherZone = createSelector(
 
 /**
  * @param {Object} state Whole Redux state tree
+ * @param {Number} zoneId ID of the shipping zone
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Object} The list of locations for the shipping zone, in the form
+ * { continent: [ ... ], country: [ ... ], state: [ ... ], postcode: [ ... ] }. On any failure, it will return null.
+ * This won't include any local edits made to the zone locations.
+ */
+export const getShippingZoneLocations = createSelector(
+	( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! areShippingZonesLoaded( state, siteId ) ) {
+			return null;
+		}
+
+		const locations = getRawShippingZoneLocations( state, siteId )[ zoneId ] || {
+			continent: [],
+			country: [],
+			state: [],
+			postcode: [],
+		};
+
+		const countries = new Set( locations.country );
+		// Extract the country/state pair from the raw states (they are in the format "Country:State")
+		const states = new Set();
+		locations.state.forEach( ( fullCode ) => {
+			const [ countryCode, stateCode ] = fullCode.split( ':' );
+			countries.add( countryCode );
+			states.add( stateCode );
+		} );
+
+		return {
+			...locations,
+			country: Array.from( countries ),
+			state: Array.from( states ),
+		};
+	},
+	( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
+		const loaded = areShippingZonesLoaded( state, siteId );
+		return [
+			loaded,
+			loaded && getRawShippingZoneLocations( state, siteId )[ zoneId ],
+		];
+	}
+);
+
+/**
+ * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @param {Boolean} [overlayTemporalEdits] Whether to overlay the temporal location edits that are being made inside the modal (true),
  * or just use the committed edits.
@@ -129,22 +174,10 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 			return null;
 		}
 
-		const locations = getRawShippingZoneLocations( state, siteId )[ zone.id ] || {
-			continent: [],
-			country: [],
-			state: [],
-			postcode: [],
-		};
-
+		const locations = getShippingZoneLocations( state, zone.id, siteId );
 		const continents = new Set( locations.continent );
 		const countries = new Set( locations.country );
-		// Extract the country/state pair from the raw states (they are in the format "Country:State")
-		const states = new Set();
-		locations.state.forEach( ( fullCode ) => {
-			const [ countryCode, stateCode ] = fullCode.split( ':' );
-			countries.add( countryCode );
-			states.add( stateCode );
-		} );
+		const states = new Set( locations.state );
 
 		const { temporaryChanges, ...committedEdits } = getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations;
 		const edits = overlayTemporalEdits ? mergeLocationEdits( committedEdits, temporaryChanges ) : committedEdits;
@@ -397,11 +430,12 @@ export const areLocationsUnfiltered = ( state, siteId = getSelectedSiteId( state
 
 /**
  * @param {Object} state Whole Redux state tree
+ * @param {Object} locations Set of locations (it has the properties "continent", "country", "state" and "postcode", all arrays)
  * @param {Number} maxCountries Maximum number of countries per continent to list individually before
  * they are grouped into a continent
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} The list of locations currently configured for the zone. This doesn't include temporary edits,
- * since it's made to be used for the UI outside of the modal. Each element of the list will have these properties:
+ * @return {Array} The list of locations, based on the "locations" object provided.
+ * Each element of the list will have these properties:
  * - type: 'continent|country|state'
  * - code: Continent code, country code or state code, depending on the type
  * - name: Name of the location to be displayed
@@ -409,83 +443,115 @@ export const areLocationsUnfiltered = ( state, siteId = getSelectedSiteId( state
  * - postcodeFilter: String, postcode range applied, if any.
  * And if the "type" is "state":
  * - countryName: Name of the country that this state is part of.
- * - countryCode: Code of the ecountry that this state is part of.
+ * - countryCode: Code of the country that this state is part of.
+ */
+const getShippingZoneLocationsListFromLocations = ( state, locations, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
+	if ( ! locations ) {
+		return [];
+	}
+
+	const selectedContinents = new Set( locations.continent );
+	if ( selectedContinents.size ) {
+		return getContinents( state, siteId )
+			.filter( ( { code } ) => selectedContinents.has( code ) )
+			.map( ( { code, name } ) => ( {
+				type: 'continent',
+				code,
+				name,
+			} ) );
+	}
+
+	const selectedStates = new Set( locations.state );
+	if ( selectedStates.size ) {
+		const countryCode = locations.country[ 0 ];
+		const countryName = getCountryName( state, countryCode, siteId );
+		return getStates( state, countryCode, siteId )
+			.filter( ( { code } ) => selectedStates.has( code ) )
+			.map( ( { code, name } ) => ( {
+				type: 'state',
+				code,
+				name,
+				countryName,
+				countryCode
+			} ) );
+	}
+
+	//if postcode filter exists, then only one country should be selected
+	if ( locations.postcode[ 0 ] ) {
+		return locations.country.map( code => ( {
+			type: 'country',
+			code,
+			name: getCountryName( state, code, siteId ),
+			postcodeFilter: locations.postcode[ 0 ],
+		} ) );
+	}
+
+	const selectedCountries = new Set( locations.country );
+	if ( ! selectedCountries.size ) {
+		return [];
+	}
+
+	//if there are more than maxCountries per continent, group them into a continent
+	let result = [];
+	getContinents( state, siteId ).forEach( ( { code: continentCode, name: continentName } ) => {
+		const continentCountries = getCountries( state, continentCode, siteId );
+		const selectedContinentCountries = continentCountries
+			.filter( ( { code } ) => selectedCountries.has( code ) )
+			.map( ( { code, name } ) => ( {
+				type: 'country',
+				code,
+				name,
+				postcodeFilter: undefined,
+			} ) );
+
+		if ( selectedContinentCountries.length < maxCountries ) {
+			result = result.concat( selectedContinentCountries );
+		} else {
+			result.push( {
+				type: 'continent',
+				code: continentCode,
+				name: continentName,
+				countryCount: continentCountries.length,
+				selectedCountryCount: selectedContinentCountries.length,
+			} );
+		}
+	} );
+
+	return result;
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} zoneId ID of the shipping zone.
+ * @param {Number} maxCountries Maximum number of countries per continent to list individually before
+ * they are grouped into a continent
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Array} The list of locations configured for the zone. This doesn't include any local edits.
+ */
+export const getShippingZoneLocationsList = createSelector(
+	( state, zoneId, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
+		const locations = getShippingZoneLocations( state, zoneId, siteId );
+		return getShippingZoneLocationsListFromLocations( state, locations, maxCountries, siteId );
+	},
+	( state, zoneId, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
+		return [
+			getShippingZoneLocations( state, zoneId, siteId ),
+		];
+	}
+);
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} maxCountries Maximum number of countries per continent to list individually before
+ * they are grouped into a continent
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Array} The list of locations currently configured for the zone. This includes committed edits,
+ * but not temporary edits, since it's made to be used for the UI outside of the locations modal.
  */
 export const getCurrentlyEditingShippingZoneLocationsList = createSelector(
 	( state, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
 		const locations = getShippingZoneLocationsWithEdits( state, siteId, false );
-		if ( ! locations ) {
-			return [];
-		}
-
-		const selectedContinents = new Set( locations.continent );
-		if ( selectedContinents.size ) {
-			return getContinents( state, siteId )
-				.filter( ( { code } ) => selectedContinents.has( code ) )
-				.map( ( { code, name } ) => ( {
-					type: 'continent',
-					code,
-					name,
-				} ) );
-		}
-
-		const selectedStates = new Set( locations.state );
-		if ( selectedStates.size ) {
-			const countryCode = locations.country[ 0 ];
-			const countryName = getCountryName( state, countryCode, siteId );
-			return getStates( state, countryCode, siteId )
-				.filter( ( { code } ) => selectedStates.has( code ) )
-				.map( ( { code, name } ) => ( {
-					type: 'state',
-					code,
-					name,
-					countryName,
-					countryCode
-				} ) );
-		}
-
-		//if postcode filter exists, then only one country should be selected
-		if ( locations.postcode[ 0 ] ) {
-			return locations.country.map( code => ( {
-				type: 'country',
-				code,
-				name: getCountryName( state, code, siteId ),
-				postcodeFilter: locations.postcode[ 0 ],
-			} ) );
-		}
-
-		const selectedCountries = new Set( locations.country );
-		if ( ! selectedCountries.size ) {
-			return [];
-		}
-
-		//if there are more than maxCountries per continent, group them into a continent
-		let result = [];
-		getContinents( state, siteId ).forEach( ( { code: continentCode, name: continentName } ) => {
-			const continentCountries = getCountries( state, continentCode, siteId );
-			const selectedContinentCountries = continentCountries
-				.filter( ( { code } ) => selectedCountries.has( code ) )
-				.map( ( { code, name } ) => ( {
-					type: 'country',
-					code,
-					name,
-					postcodeFilter: undefined,
-				} ) );
-
-			if ( selectedContinentCountries.length < maxCountries ) {
-				result = result.concat( selectedContinentCountries );
-			} else {
-				result.push( {
-					type: 'continent',
-					code: continentCode,
-					name: continentName,
-					countryCount: continentCountries.length,
-					selectedCountryCount: selectedContinentCountries.length,
-				} );
-			}
-		} );
-
-		return result;
+		return getShippingZoneLocationsListFromLocations( state, locations, maxCountries, siteId );
 	},
 	( state, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
 		return [
@@ -502,7 +568,7 @@ export const getCurrentlyEditingShippingZoneLocationsList = createSelector(
  * - type: 'continent|country'
  * - code: Continent code or country code
  * - name: Name of the location to be displayed
- * - selected: Boolean, whether this location should be markef as "selected"
+ * - selected: Boolean, whether this location should be marked as "selected"
  * - disabled: Boolean, whether this location should be marked as "disabled". The user shouldn't be able to toggle a disabled element.
  * - ownerZoneId: The Zone ID that is the "owner" of this location, or undefined if no other zone includes this location.
  */

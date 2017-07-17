@@ -216,7 +216,7 @@ describe( 'reducer', () => {
 				subscribedLists( deepFreeze( [] ), {
 					type: READER_LISTS_RECEIVE,
 					lists: [ { ID: 1 }, { ID: 2 } ],
-				} )
+				} ),
 			).to.eql( [ 1, 2 ] );
 		} );
 
@@ -226,7 +226,7 @@ describe( 'reducer', () => {
 				subscribedLists( initial, {
 					type: READER_LISTS_RECEIVE,
 					lists: [ { ID: 3 }, { ID: 1 } ],
-				} )
+				} ),
 			).to.eql( [ 3, 1 ] );
 		} );
 
@@ -238,7 +238,7 @@ describe( 'reducer', () => {
 					data: {
 						list: { ID: 1 },
 					},
-				} )
+				} ),
 			).to.eql( [ 2 ] );
 		} );
 	} );

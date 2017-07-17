@@ -56,7 +56,7 @@ class FeedHeader extends Component {
 					<div className="reader-feed-header__follow">
 						{ followerCount &&
 							<span className="reader-feed-header__follow-count">
-								{ ' ' }
+								{' '}
 								{ translate( '%s follower', '%s followers', {
 									count: followerCount,
 									args: [ this.props.numberFormat( followerCount ) ],
@@ -84,7 +84,9 @@ class FeedHeader extends Component {
 						</a>
 					</div>
 					<div className="reader-feed-header__details">
-						<span className="reader-feed-header__description">{ description }</span>
+						<span className="reader-feed-header__description">
+							{ description }
+						</span>
 						{ ownerDisplayName &&
 							! isAuthorNameBlacklisted( ownerDisplayName ) &&
 							<span className="reader-feed-header__byline">

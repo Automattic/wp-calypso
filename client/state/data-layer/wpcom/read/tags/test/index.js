@@ -66,7 +66,7 @@ describe( 'wpcom-api', () => {
 						path: `/read/tags/${ slug }`,
 						onSuccess: action,
 						onFailure: action,
-					} )
+					} ),
 				);
 			} );
 
@@ -84,7 +84,7 @@ describe( 'wpcom-api', () => {
 						path: '/read/tags',
 						onSuccess: action,
 						onFailure: action,
-					} )
+					} ),
 				);
 			} );
 		} );
@@ -101,7 +101,7 @@ describe( 'wpcom-api', () => {
 					receiveTagsAction( {
 						payload: fromApi( successfulSingleTagResponse ),
 						resetFollowingData: false,
-					} )
+					} ),
 				);
 			} );
 
@@ -121,7 +121,7 @@ describe( 'wpcom-api', () => {
 					receiveTagsAction( {
 						payload: transformedResponse,
 						resetFollowingData: true,
-					} )
+					} ),
 				);
 			} );
 		} );

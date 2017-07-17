@@ -281,10 +281,11 @@ PostActions = {
 	 * Calls out to API to save a Post object
 	 *
 	 * @param {object} attributes post attributes to change before saving
+	 * @param {object} context additional properties for recording the save event
 	 * @param {function} callback receives ( err, post ) arguments
 	 * @param {object} options object with optional recordSaveEvent property. True if you want to record the save event.
 	 */
-	saveEdited: function( attributes, callback, options ) {
+	saveEdited: function( attributes, context, callback, options ) {
 		var post, postHandle, query, changedAttributes, rawContent, mode, isNew;
 
 		Dispatcher.handleViewAction( {
@@ -334,7 +335,7 @@ PostActions = {
 		};
 
 		if ( ! options || options.recordSaveEvent !== false ) {
-			stats.recordSaveEvent(); // do this before changing status from 'future'
+			stats.recordSaveEvent( context ); // do this before changing status from 'future'
 		}
 
 		if ( ( changedAttributes && changedAttributes.status === 'future' && utils.isFutureDated( post ) ) ||

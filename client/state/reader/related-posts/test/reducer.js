@@ -26,8 +26,8 @@ describe( 'items', () => {
 						postId: 1,
 						posts: [ { global_ID: 2 }, { global_ID: 3 }, { global_ID: 4 } ],
 					},
-				}
-			)
+				},
+			),
 		).to.deep.equal( {
 			'1-1-all': [ 2, 3, 4 ],
 		} );
@@ -46,8 +46,8 @@ describe( 'items', () => {
 						postId: 1,
 						posts: [ { global_ID: 3 }, { global_ID: 4 }, { global_ID: 9 } ],
 					},
-				}
-			)
+				},
+			),
 		).to.deep.equal( {
 			'1-1-all': [ 3, 4, 9 ],
 		} );
@@ -65,8 +65,8 @@ describe( 'queuedRequests', () => {
 						siteId: 1,
 						postId: 1,
 					},
-				}
-			)
+				},
+			),
 		).to.deep.equal( {
 			'1-1-all': true,
 		} );
@@ -84,8 +84,8 @@ describe( 'queuedRequests', () => {
 						siteId: 1,
 						postId: 1,
 					},
-				}
-			)
+				},
+			),
 		).to.deep.equal( {
 			'1-1-all': false,
 		} );
@@ -101,8 +101,8 @@ describe( 'queuedRequests', () => {
 						siteId: 1,
 						postId: 1,
 					},
-				}
-			)
+				},
+			),
 		).to.deep.equal( {
 			'1-1-all': false,
 		} );

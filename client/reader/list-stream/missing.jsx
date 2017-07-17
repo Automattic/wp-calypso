@@ -33,10 +33,14 @@ class ListMissing extends React.Component {
 
 	render() {
 		const action = (
-			<a className="empty-content__action button is-primary" onClick={ this.recordAction } href="/">
-				{ this.props.translate( 'Back to Followed Sites' ) }
-			</a>
-		),
+				<a
+					className="empty-content__action button is-primary"
+					onClick={ this.recordAction }
+					href="/"
+				>
+					{ this.props.translate( 'Back to Followed Sites' ) }
+				</a>
+			),
 			secondaryAction = isDiscoverEnabled()
 				? <a
 						className="empty-content__action button"

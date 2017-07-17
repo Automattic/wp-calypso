@@ -19,6 +19,7 @@
 	"google_analytics_enabled": false,
 	"google_analytics_key": "UA-10673494-15",
 	"google_adwords_conversion_id": 1067250390,
+	"google_adwords_conversion_id_jetpack": 937115306,
 	"hotjar_enabled": true,
 	"olark": {
 		"business_account_id": "3146-815-10-9343",
@@ -40,6 +41,7 @@
 		"comments/filters-in-posts": true,
 		"comments/moderation-tools-in-posts": true,
 		"comments/management": true,
+		"comments/management/all-list": false,
 		"community-translator": true,
 		"css-hot-reload": true,
 		"desktop-promo": true,

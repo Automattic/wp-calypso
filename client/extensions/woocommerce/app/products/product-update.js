@@ -139,7 +139,13 @@ class ProductUpdate extends React.Component {
 			translate( '%(product)s successfully updated.', {
 				args: { product: product.name },
 			} ),
-			{ duration: 4000 }
+			{
+				duration: 8000,
+				button: translate( 'View' ),
+				onClick: () => {
+					window.open( product.permalink );
+				},
+			}
 		);
 
 		const failureAction = errorNotice(
