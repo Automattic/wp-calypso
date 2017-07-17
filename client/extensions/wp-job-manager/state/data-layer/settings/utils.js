@@ -11,11 +11,14 @@ export const fromApi = ( {
 	job_manager_hide_expired,
 	job_manager_hide_expired_content,
 	job_manager_hide_filled_positions,
+	job_manager_job_dashboard_page_id,
+	job_manager_jobs_page_id,
 	job_manager_multi_job_type,
 	job_manager_per_page,
 	job_manager_registration_role,
 	job_manager_submission_duration,
 	job_manager_submission_requires_approval,
+	job_manager_submit_job_form_page_id,
 	job_manager_user_can_edit_pending_submissions,
 	job_manager_user_requires_account,
 } ) => ( {
@@ -51,6 +54,11 @@ export const fromApi = ( {
 	},
 	method: {
 		applicationMethod: job_manager_allowed_application_method,
+	},
+	pages: {
+		dashboardPage: job_manager_job_dashboard_page_id,
+		listingsPage: job_manager_jobs_page_id,
+		submitFormPage: job_manager_submit_job_form_page_id,
 	},
 	types: {
 		enableTypes: job_manager_enable_types,
