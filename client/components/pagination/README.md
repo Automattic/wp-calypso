@@ -5,7 +5,7 @@ This component provides a way to paginate a resultset.
 #### How to use:
 
 ```js
-var Pagination = require( 'my-sites/stats/pagination' );
+var Pagination = require( 'components/pagination' );
 
 render: function() {
     return (
