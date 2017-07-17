@@ -222,14 +222,14 @@ class ActivityTitle extends Component {
 				if ( title ) {
 					return title;
 				}
-				return 'an unknown menu';
+				return 'an unknown post';
 			}
 			case 'term': {
 				const name = get( object, [ 'term', 'name' ] );
 				if ( name ) {
 					return name;
 				}
-				return 'an unknown menu';
+				return 'an unknown term';
 			}
 			case 'theme':
 				return this.getThemeName();
@@ -245,7 +245,20 @@ class ActivityTitle extends Component {
 	// FIXME: This function is built with the MVP in mind. It purposefully avoids translations which
 	// will need to be revisited. They may be provided by the API.
 	renderTitle() {
+		const { group } = this.props;
 		const actorName = this.getActorName();
+
+		if (
+			group === 'post' &&
+			'customize_changeset' === get( this.props.object, [ 'post', 'type' ] )
+		) {
+			return (
+				<div className="activity-log-item__title-title">
+					{ `${ actorName } modified the site's customization` }
+				</div>
+			);
+		}
+
 		const action = this.getAction();
 		const objectName = this.getObjectName();
 
