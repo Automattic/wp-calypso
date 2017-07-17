@@ -12,7 +12,7 @@ import FormTextarea from 'components/forms/form-textarea';
 // eslint-disable-next-line no-unused-vars
 const RenderTextarea = ( { input, meta, type, ...otherProps } ) => {
 	return (
-		<FormTextarea { ...input } { ...otherProps } ></FormTextarea>
+		<FormTextarea { ...input } { ...otherProps } />
 	);
 };
 
