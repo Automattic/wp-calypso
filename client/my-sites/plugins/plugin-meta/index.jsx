@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import some from 'lodash/some';
 import get from 'lodash/get';
-import { find, includes, trimEnd } from 'lodash';
+import { find, includes } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
 import sectionsModule from 'sections';
@@ -41,6 +41,7 @@ import {
 	isBusiness,
 	isEnterprise
 } from 'lib/products-values';
+import { addSiteFragment } from 'lib/route/path';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isAutomatedTransferActive, isSiteAutomatedTransfer } from 'state/selectors';
@@ -459,7 +460,7 @@ class PluginMeta extends Component {
 
 				{ path &&
 					<CompactCard
-						href={ trimEnd( `${ path }/${ this.props.slug || '' }`, '/' ) }>
+						href={ addSiteFragment( path, this.props.slug ) }>
 						{ this.props.translate( 'Edit plugin settings' ) }
 					</CompactCard>
 				}
