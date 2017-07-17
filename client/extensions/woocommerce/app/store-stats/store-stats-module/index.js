@@ -47,14 +47,20 @@ class StoreStatsModule extends Component {
 		const { loaded } = this.state;
 		const isLoading = ! loaded && ! ( data && data.length );
 		const hasEmptyData = loaded && data && data.length === 0;
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="store-stats-module">
 				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				{ header }
 				{ isLoading && <Card><StatsModulePlaceholder isLoading={ isLoading } /></Card> }
-				{ ! isLoading && hasEmptyData && <Card><ErrorPanel message={ emptyMessage } /></Card> }
+				{ ! isLoading && hasEmptyData &&
+					<Card className="stats-module is-showing-error has-no-data">
+						<ErrorPanel message={ emptyMessage } />
+					</Card>
+				}
 				{ ! isLoading && ! hasEmptyData && children }
 			</div>
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		);
 	}
 }

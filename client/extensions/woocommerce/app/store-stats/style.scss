@@ -6,10 +6,6 @@
 
 .store-stats__widgets-column {
 	width: 100%;
-
-	.module-content-text.is-error {
-		padding-top: 11px;
-	}
 }
 
 @include breakpoint( ">960px" ) {
