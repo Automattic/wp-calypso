@@ -3,6 +3,7 @@
  */
 import {
 	PLUGIN_UPLOAD,
+	PLUGIN_UPLOAD_CLEAR,
 	PLUGIN_UPLOAD_COMPLETE,
 	PLUGIN_UPLOAD_ERROR,
 	PLUGIN_UPLOAD_PROGRESS,
@@ -27,16 +28,14 @@ export function uploadPlugin( siteId, file ) {
  * Update progress for an uploading plugin.
  *
  * @param {number} siteId site ID
- * @param {number} loaded bytes of plugin zip uploaded so far
- * @param {number} total total bytes to upload
+ * @param {number} progress percentage of file uploaded
  * @return {Object} action object
  */
-export function updatePluginUploadProgress( siteId, loaded, total ) {
+export function updatePluginUploadProgress( siteId, progress ) {
 	return {
 		type: PLUGIN_UPLOAD_PROGRESS,
 		siteId,
-		loaded,
-		total,
+		progress,
 	};
 }
 
@@ -67,5 +66,18 @@ export function pluginUploadError( siteId, error ) {
 		type: PLUGIN_UPLOAD_ERROR,
 		siteId,
 		error,
+	};
+}
+
+/**
+ * Clear any plugin upload data for a site.
+ *
+ * @param {number} siteId site ID
+ * @return {Object} action object
+ */
+export function clearPluginUpload( siteId ) {
+	return {
+		type: PLUGIN_UPLOAD_CLEAR,
+		siteId,
 	};
 }
