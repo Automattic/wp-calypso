@@ -78,12 +78,23 @@ class AppBanner extends Component {
 		this.props.trackAppBannerDismiss( currentSection );
 	};
 
-	openApp = ( event ) => {
-		event.preventDefault();
-		const { currentSection } = this.props;
-
-		this.props.trackAppBannerOpen( currentSection );
+	openApp = () => {
+		this.props.trackAppBannerOpen( this.props.currentSection );
 	};
+
+	getDeepLink() {
+		// TODO: update with real deep links when we get them
+		// just linking to respective app stores for now
+		if ( this.isAndroid() ) {
+			return 'https://play.google.com/store/apps/details?id=org.wordpress.android';
+		}
+
+		if ( this.isiOS() ) {
+			return 'https://itunes.apple.com/us/app/wordpress/id335703880';
+		}
+
+		return null;
+	}
 
 	render() {
 		const { translate, currentSection } = this.props;
@@ -100,9 +111,6 @@ class AppBanner extends Component {
 
 		this.props.trackAppBannerImpression( currentSection );
 
-		// TODO: generate deep links
-		const deepLink = '#';
-
 		return (
 			<Card className={ classNames( 'app-banner', 'is-compact', currentSection ) }>
 				<div className="app-banner__text-content">
@@ -116,8 +124,10 @@ class AppBanner extends Component {
 				<div className="app-banner__buttons">
 					<Button
 						className="app-banner__open-button"
+						target="_blank"
+						rel="noopener noreferrer"
 						onClick={ this.openApp }
-						href={ deepLink }
+						href={ this.getDeepLink() }
 					>
 						{ translate( 'Open in app' ) }
 					</Button>
