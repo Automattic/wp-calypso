@@ -14,12 +14,10 @@ import {
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_DELETE,
-	COMMENTS_DELETE_FAILURE,
-	COMMENTS_DELETE_SUCCESS,
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
+import { createNotice, errorNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { getPostOldestCommentDate } from 'state/comments/selectors';
 import { removeComment } from 'state/comments/actions';
@@ -160,35 +158,42 @@ export const announceFailure = ( { dispatch, getState }, { siteId, postId } ) =>
 	dispatch( errorNotice( error ) );
 };
 
+// @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/delete/
 export const deleteComment = ( { dispatch }, action ) => {
-	const { siteId, commentId } = action;
+	const { siteId, postId, commentId } = action;
+
+	dispatch( removeComment( siteId, postId, commentId ) );
+
 	dispatch(
-		http( {
-			method: 'POST',
-			apiVersion: '1.1',
-			path: `/sites/${ siteId }/comments/${ commentId }/delete`,
-			onSuccess: {
-				...action,
-				type: COMMENTS_DELETE_SUCCESS,
+		http(
+			{
+				method: 'POST',
+				apiVersion: '1.1',
+				path: `/sites/${ siteId }/comments/${ commentId }/delete`,
 			},
-			onFailure: {
-				...action,
-				type: COMMENTS_DELETE_FAILURE,
-			},
-		} )
+			action
+		)
 	);
 };
 
-export const removeCommentFromState = ( { dispatch }, action ) => {
-	const { siteId, postId, commentId } = action;
-	dispatch( removeComment( siteId, postId, commentId ) );
+export const announceDeleteSuccess = ( { dispatch } ) => {
+	dispatch(
+		createNotice(
+			'is-error',
+			translate( 'Comment deleted permanently.' ),
+			{
+				duration: 5000,
+				isPersistent: true,
+			}
+		)
+	);
 };
 
 export const announceDeleteFailure = ( { dispatch } ) => {
-	dispatch( errorNotice( translate( 'Could not delete the comment' ) ) );
+	dispatch( errorNotice( translate( 'Could not delete the comment.' ) ) );
 };
 
 export default {
 	[ COMMENTS_REQUEST ]: [ dispatchRequest( fetchPostComments, addComments, announceFailure ) ],
-	[ COMMENTS_DELETE ]: [ dispatchRequest( deleteComment, removeCommentFromState, announceDeleteFailure ) ],
+	[ COMMENTS_DELETE ]: [ dispatchRequest( deleteComment, announceDeleteSuccess, announceDeleteFailure ) ],
 };

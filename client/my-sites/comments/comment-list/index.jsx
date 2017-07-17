@@ -71,7 +71,6 @@ export class CommentList extends Component {
 
 	deleteCommentPermanently = ( commentId, postId ) => {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
-		this.showNotice( commentId, postId, 'delete', 'trash' );
 
 		this.props.deleteComment( commentId, postId );
 	}
@@ -193,24 +192,19 @@ export class CommentList extends Component {
 			unapproved: [ 'is-info', translate( 'Comment unapproved.' ) ],
 			spam: [ 'is-warning', translate( 'Comment marked as spam.' ) ],
 			trash: [ 'is-error', translate( 'Comment moved to trash.' ) ],
-			'delete': [ 'is-error', translate( 'Comment deleted permanently.' ) ],
 		}, newStatus, [ null, null ] );
 
 		if ( ! type ) {
 			return;
 		}
 
-		const options = Object.assign(
-			{
-				duration: 5000,
-				id: `comment-notice-${ commentId }`,
-				isPersistent: true,
-			},
-			'delete' !== newStatus && {
-				button: translate( 'Undo' ),
-				onClick: () => this.setCommentStatus( commentId, postId, previousStatus, { showNotice: false } ),
-			}
-		);
+		const options = {
+			button: translate( 'Undo' ),
+			duration: 5000,
+			id: `comment-notice-${ commentId }`,
+			isPersistent: true,
+			onClick: () => this.setCommentStatus( commentId, postId, previousStatus, { showNotice: false } ),
+		};
 
 		this.props.createNotice( type, message, options );
 	}
