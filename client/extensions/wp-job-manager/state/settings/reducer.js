@@ -4,8 +4,8 @@
 import { combineReducers, createReducer } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
-	WP_JOB_MANAGER_FETCH_ERROR,
-	WP_JOB_MANAGER_FETCH_SETTINGS,
+	WP_JOB_MANAGER_REQUEST_SETTINGS,
+	WP_JOB_MANAGER_REQUEST_SETTINGS_ERROR,
 	WP_JOB_MANAGER_SAVE_ERROR,
 	WP_JOB_MANAGER_SAVE_SETTINGS,
 	WP_JOB_MANAGER_SAVE_SUCCESS,
@@ -13,17 +13,17 @@ import {
 } from '../action-types';
 
 /**
- * Returns the updated fetching state after an action has been dispatched.
- * Fetching state tracks whether a settings fetch is in progress for a site.
+ * Returns the updated requesting state after an action has been dispatched.
+ * Requesting state tracks whether the settings for a site are being fetched.
  *
- * @param  {Object} state Current fetching state
+ * @param  {Object} state Current requesting state
  * @param  {Object} action Action object
- * @return {Object} Updated fetching state
+ * @return {Object} Updated requesting state
  */
-export const fetching = createReducer( {}, {
-	[ WP_JOB_MANAGER_FETCH_SETTINGS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+export const requesting = createReducer( {}, {
+	[ WP_JOB_MANAGER_REQUEST_SETTINGS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
 	[ WP_JOB_MANAGER_UPDATE_SETTINGS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-	[ WP_JOB_MANAGER_FETCH_ERROR ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	[ WP_JOB_MANAGER_REQUEST_SETTINGS_ERROR ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
 } );
 
 /**
@@ -52,7 +52,7 @@ export const items = createReducer( {}, {
 }, itemsSchema );
 
 export default combineReducers( {
-	fetching,
 	items,
+	requesting,
 	saving,
 } );

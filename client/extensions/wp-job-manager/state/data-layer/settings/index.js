@@ -9,11 +9,11 @@ import { translate } from 'i18n-calypso';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { fetchError, saveError, saveSuccess, updateSettings } from '../../settings/actions';
-import { WP_JOB_MANAGER_FETCH_SETTINGS, WP_JOB_MANAGER_SAVE_SETTINGS } from 'wp-job-manager/state/action-types';
+import { requestSettingsError, saveError, saveSuccess, updateSettings } from '../../settings/actions';
+import { WP_JOB_MANAGER_REQUEST_SETTINGS, WP_JOB_MANAGER_SAVE_SETTINGS } from 'wp-job-manager/state/action-types';
 import { fromApi, toApi } from './utils';
 
-export const fetchExtensionSettings = ( { dispatch }, action ) => {
+export const requestExtensionSettings = ( { dispatch }, action ) => {
 	const { siteId } = action;
 
 	dispatch( http( {
@@ -28,8 +28,8 @@ export const fetchExtensionSettings = ( { dispatch }, action ) => {
 export const updateExtensionSettings = ( { dispatch }, { siteId }, next, { data } ) =>
 	dispatch( updateSettings( siteId, fromApi( data ) ) );
 
-export const fetchExtensionError = ( { dispatch }, { siteId } ) =>
-	dispatch( fetchError( siteId ) );
+export const requestExtensionSettingsError = ( { dispatch }, { siteId } ) =>
+	dispatch( requestSettingsError( siteId ) );
 
 export const saveSettings = ( { dispatch, getState }, action ) => {
 	const { data, siteId } = action;
@@ -62,10 +62,10 @@ export const announceFailure = ( { dispatch }, { siteId } ) => {
 	) );
 };
 
-const dispatchFetchSettingsRequest = dispatchRequest( fetchExtensionSettings, updateExtensionSettings, fetchExtensionError );
-const dispatchSaveSettingsRequest = dispatchRequest( saveSettings, announceSuccess, announceFailure );
+const dispatchRequestSettings = dispatchRequest( requestExtensionSettings, updateExtensionSettings, requestExtensionSettingsError );
+const dispatchSaveSettings = dispatchRequest( saveSettings, announceSuccess, announceFailure );
 
 export default {
-	[ WP_JOB_MANAGER_FETCH_SETTINGS ]: [ dispatchFetchSettingsRequest ],
-	[ WP_JOB_MANAGER_SAVE_SETTINGS ]: [ dispatchSaveSettingsRequest ],
+	[ WP_JOB_MANAGER_REQUEST_SETTINGS ]: [ dispatchRequestSettings ],
+	[ WP_JOB_MANAGER_SAVE_SETTINGS ]: [ dispatchSaveSettings ],
 };

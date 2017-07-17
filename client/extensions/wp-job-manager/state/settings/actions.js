@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import {
-	WP_JOB_MANAGER_FETCH_ERROR,
-	WP_JOB_MANAGER_FETCH_SETTINGS,
+	WP_JOB_MANAGER_REQUEST_SETTINGS,
+	WP_JOB_MANAGER_REQUEST_SETTINGS_ERROR,
 	WP_JOB_MANAGER_SAVE_ERROR,
 	WP_JOB_MANAGER_SAVE_SETTINGS,
 	WP_JOB_MANAGER_SAVE_SUCCESS,
@@ -16,15 +16,15 @@ import {
  * @param  {Number} siteId Site ID
  * @return {Object} Action object
  */
-export const fetchSettings = siteId => ( { type: WP_JOB_MANAGER_FETCH_SETTINGS, siteId } );
+export const requestSettings = siteId => ( { type: WP_JOB_MANAGER_REQUEST_SETTINGS, siteId } );
 
 /**
- * Returns an action object to indicate that an error was received when fetching the settings.
+ * Returns an action object to indicate that an error was received when requesting the settings.
  *
  * @param  {Number} siteId Site ID
  * @return {Object} Action object
  */
-export const fetchError = siteId => ( { type: WP_JOB_MANAGER_FETCH_ERROR, siteId } );
+export const requestSettingsError = siteId => ( { type: WP_JOB_MANAGER_REQUEST_SETTINGS_ERROR, siteId } );
 
 /**
  * Returns an action object to indicate that the settings should be updated.
