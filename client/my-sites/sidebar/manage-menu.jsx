@@ -21,7 +21,7 @@ import MediaLibraryUploadButton from 'my-sites/media-library/upload-button';
 import { getSite, getSiteAdminUrl, getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
 
-class PublishMenu extends PureComponent {
+class ManageMenu extends PureComponent {
 	static propTypes = {
 		itemLinkClass: PropTypes.func,
 		onNavigate: PropTypes.func,
@@ -254,4 +254,4 @@ export default connect( ( state, { siteId } ) => {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 	};
-} )( localize( PublishMenu ) );
+} )( localize( ManageMenu ) );
