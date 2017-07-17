@@ -74,6 +74,7 @@ import LanguagePicker from 'components/language-picker/docs/example';
 import FormattedHeader from 'components/formatted-header/docs/example';
 import EmptyContent from 'components/empty-content/docs/example';
 import ScreenReaderTextExample from 'components/screen-reader-text/docs/example';
+import PaginationExample from 'components/pagination/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -148,6 +149,7 @@ let DesignAssets = React.createClass( {
 					<InputChrono />
 					<LanguagePicker />
 					<Notices />
+					<PaginationExample />
 					<PaymentLogo />
 					<Popovers />
 					<ProgressBar />

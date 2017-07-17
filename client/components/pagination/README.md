@@ -5,12 +5,12 @@ This component provides a way to paginate a resultset.
 #### How to use:
 
 ```js
-var Pagination = require( 'components/pagination' );
+import Pagination from 'components/pagination';
 
 render: function() {
-    return (
+	return (
 		<Pagination page={ <Number> } perPage={ <Number> } total={ <Number> } pageClick={ <Function> } />;	
-    );
+	);
 }
 ```
 
