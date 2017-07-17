@@ -230,7 +230,7 @@ class JobSubmission extends Component {
 
 const connectComponent = connect(
 	( state ) => {
-		const selector = formValueSelector( 'submission', () => state.extensions.wpJobManager.form );
+		const selector = formValueSelector( 'wpJobManager.submission', () => state.ui.form );
 
 		return {
 			enableRegistration: selector( state, 'account.enableRegistration' ),
@@ -241,8 +241,8 @@ const connectComponent = connect(
 
 const createReduxForm = reduxForm( {
 	enableReinitialize: true,
-	form: 'submission',
-	getFormState: state => state.extensions.wpJobManager.form,
+	form: 'wpJobManager.submission',
+	getFormState: state => state.ui.form,
 } );
 
 export default flowRight(
