@@ -32,10 +32,15 @@ const CompactPost = ( { post, children, isDiscover } ) => {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div className="reader-post-card__post reader-post-card__post-compact">
+		<div className="reader-post-card__post reader-post-card__compact">
 			{ featuredAsset }
 			<div className="reader-post-card__post-details">
-				<ReaderPostOptionsMenu className="ignore-click" showFollow={ true } post={ post } />
+				<ReaderPostOptionsMenu
+					className="ignore-click"
+					showFollow={ true }
+					post={ post }
+					position="bottom"
+				/>
 				<AutoDirection>
 					<h1 className="reader-post-card__title">
 						<a className="reader-post-card__title-link" href={ post.URL }>

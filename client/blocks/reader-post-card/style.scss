@@ -696,3 +696,12 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .is-section-devdocs .reader-post-card.card {
 	padding: 16px;
 }
+
+// Compact cards
+.reader-post-card__compact {
+	.reader-post-options-menu {
+		position: absolute;
+		right: 14px;
+		top: 0;
+	}
+}
