@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { omit } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -112,7 +113,7 @@ const Pages = localize( React.createClass( {
 			if ( lastMarker !== marker ) {
 				markedPages.push(
 					<div key={ 'marker-' + date.unix() } className="pages__page-list-header">
-						<span className="noticon noticon-time" /> { marker }
+						<Gridicon icon="time" size={ 12 } /> { marker }
 					</div>
 				);
 			}
