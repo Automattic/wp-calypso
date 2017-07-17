@@ -25,7 +25,7 @@ import {
 } from './helpers/analytics-mock';
 
 describe.skip( 'middleware', () => {
-	describe.skip( 'analytics dispatching', () => {
+	describe( 'analytics dispatching', () => {
 		const mockAnalytics = spy();
 		const mockAdTracking = spy();
 		let dispatch;

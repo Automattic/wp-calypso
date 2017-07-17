@@ -1,13 +1,18 @@
+jest.mock( 'lib/wporg', () => require( './lib/mock-wporg' ) );
+jest.mock( 'lib/impureLodash', () => ( {
+	debounce: cb => cb,
+} ) );
+
 /**
  * External dependencies
  */
 import { assert } from 'chai';
-import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-import mockedWporg from './lib/mock-wporg';
+import wporg from 'lib/wporg';
+import WPorgActions from '../actions';
 
 const testDispatch = ( test, testCallNumber ) => {
 	let calls = 0;
@@ -19,28 +24,9 @@ const testDispatch = ( test, testCallNumber ) => {
 	}
 };
 
-describe.skip( 'WPorg Data Actions', function() {
-	let WPorgActions;
-	before( function() {
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false
-		} );
-		mockery.registerMock( 'lib/wporg', mockedWporg );
-		mockery.registerMock( 'lib/impureLodash', {
-			debounce: cb => cb,
-		} );
-
-		WPorgActions = require( '../actions' );
-	} );
-
-	after( function() {
-		mockery.deregisterAll();
-		mockery.disable();
-	} );
-
+describe( 'WPorg Data Actions', function() {
 	beforeEach( function() {
-		mockedWporg.reset();
+		wporg.reset();
 	} );
 
 	it( 'Actions should be an object', function() {
@@ -53,7 +39,7 @@ describe.skip( 'WPorg Data Actions', function() {
 
 	it( 'FetchPluginData action should make a request', function( done ) {
 		WPorgActions.fetchPluginData( 'test' )( testDispatch( function() {
-			assert.equal( mockedWporg.getActivity().fetchPluginInformation, 1 );
+			assert.equal( wporg.getActivity().fetchPluginInformation, 1 );
 			done();
 		}, 2 ) );
 	} );
@@ -72,9 +58,9 @@ describe.skip( 'WPorg Data Actions', function() {
 	} );
 
 	it( 'FetchPluginData action should not make another request if there\'s already one in progress', function() {
-		mockedWporg.deactivatedCallbacks = true;
+		wporg.deactivatedCallbacks = true;
 		WPorgActions.fetchPluginData( 'test' )( function() { } );
 		WPorgActions.fetchPluginData( 'test' )( function() { } );
-		assert.equal( mockedWporg.getActivity().fetchPluginInformation, 1 );
+		assert.equal( wporg.getActivity().fetchPluginInformation, 1 );
 	} );
 } );

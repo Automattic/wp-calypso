@@ -1,43 +1,28 @@
+jest.mock( 'state/selectors/can-current-user', () => require( 'sinon' ).stub() );
+jest.mock( 'state/selectors/is-mapped-domain-site', () => require( 'sinon' ).stub() );
+jest.mock( 'state/selectors/is-site-on-free-plan', () => require( 'sinon' ).stub() );
+jest.mock( 'state/selectors/is-user-registration-days-within-range', () => require( 'sinon' ).stub() );
+jest.mock( 'state/selectors/is-vip-site', () => require( 'sinon' ).stub() );
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import { stub } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isEligibleForFreeToPaidUpsell from '../is-eligible-for-free-to-paid-upsell';
+import isMappedDomainSite from 'state/selectors/is-mapped-domain-site';
+import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
+import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
+import isVipSite from 'state/selectors/is-vip-site';
 
-describe.skip( 'isEligibleForFreeToPaidUpsell', () => {
+describe( 'isEligibleForFreeToPaidUpsell', () => {
 	const state = 'state';
 	const moment = 'moment';
 	const siteId = 'siteId';
-
-	let canCurrentUser;
-	let isMappedDomainSite;
-	let isSiteOnFreePlan;
-	let isUserRegistrationDaysWithinRange;
-	let isVipSite;
-	let isEligibleForFreeToPaidUpsell;
-
-	useMockery( mockery => {
-		canCurrentUser = stub();
-		isMappedDomainSite = stub();
-		isSiteOnFreePlan = stub();
-		isUserRegistrationDaysWithinRange = stub();
-		isVipSite = stub();
-
-		mockery.registerMock( 'state/selectors/can-current-user', canCurrentUser );
-		mockery.registerMock( 'state/selectors/is-mapped-domain-site', isMappedDomainSite );
-		mockery.registerMock( 'state/selectors/is-site-on-free-plan', isSiteOnFreePlan );
-		mockery.registerMock( 'state/selectors/is-user-registration-days-within-range', isUserRegistrationDaysWithinRange );
-		mockery.registerMock( 'state/selectors/is-vip-site', isVipSite );
-	} );
-
-	before( () => {
-		isEligibleForFreeToPaidUpsell = require( '../is-eligible-for-free-to-paid-upsell' );
-	} );
 
 	const meetAllConditions = () => {
 		canCurrentUser.withArgs( state, siteId, 'manage_options' ).returns( true );

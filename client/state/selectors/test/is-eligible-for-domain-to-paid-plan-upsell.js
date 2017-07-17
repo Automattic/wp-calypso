@@ -1,39 +1,25 @@
+jest.mock( 'state/selectors/can-current-user', () => require( 'sinon' ).stub() );
+jest.mock( 'state/selectors/is-mapped-domain-site', () => require( 'sinon' ).stub() );
+jest.mock( 'state/selectors/is-site-on-free-plan', () => require( 'sinon' ).stub() );
+jest.mock( 'state/selectors/is-vip-site', () => require( 'sinon' ).stub() );
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import { stub } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isMappedDomainSite from 'state/selectors/is-mapped-domain-site';
+import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
+import isVipSite from 'state/selectors/is-vip-site';
+import isEligibleForDomainToPaidPlanUpsell from '../is-eligible-for-domain-to-paid-plan-upsell';
 
-describe.skip( 'isEligibleForDomainToPaidPlanUpsell', () => {
+describe( 'isEligibleForDomainToPaidPlanUpsell', () => {
 	const state = 'state';
 	const siteId = 'siteId';
-
-	let canCurrentUser;
-	let isMappedDomainSite;
-	let isSiteOnFreePlan;
-	let isVipSite;
-	let isEligibleForDomainToPaidPlanUpsell;
-
-	useMockery( mockery => {
-		canCurrentUser = stub();
-		isMappedDomainSite = stub();
-		isSiteOnFreePlan = stub();
-		isVipSite = stub();
-
-		mockery.registerMock( 'state/selectors/can-current-user', canCurrentUser );
-		mockery.registerMock( 'state/selectors/is-mapped-domain-site', isMappedDomainSite );
-		mockery.registerMock( 'state/selectors/is-site-on-free-plan', isSiteOnFreePlan );
-		mockery.registerMock( 'state/selectors/is-vip-site', isVipSite );
-	} );
-
-	before( () => {
-		isEligibleForDomainToPaidPlanUpsell = require( '../is-eligible-for-domain-to-paid-plan-upsell' );
-	} );
 
 	const meetAllConditions = () => {
 		canCurrentUser.withArgs( state, siteId, 'manage_options' ).returns( true );
