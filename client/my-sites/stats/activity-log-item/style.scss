@@ -1,5 +1,5 @@
 .activity-log-item {
-	display:flex;
+	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: flex-start;
@@ -9,11 +9,7 @@
 	margin-top: 24px;
 
 	.card {
-		width: 300px;
-		flex-grow: 1;
-		flex-shrink: 0;
-		flex-basis: 200px;
-		align-items: center;
+		flex: 1;
 		background: $white;
 	}
 
@@ -93,9 +89,10 @@
 	}
 }
 
-.activity-log-item__actor .gravatar {
-	float: left;
-	margin-right: 16px;
+	.gravatar {
+		float: left;
+		margin-right: 16px;
+	}
 }
 
 .activity-log-item__actor-role {
