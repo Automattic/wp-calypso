@@ -131,9 +131,7 @@ class StoreStats extends Component {
 					</div>
 					{ topWidgets.map( widget => {
 						const header = (
-							<SectionHeader href={ widget.basePath + widgetPath }>
-								{ widget.title }
-							</SectionHeader>
+							<SectionHeader href={ widget.basePath + widgetPath } label={ widget.title } />
 						);
 						return (
 							<div className="store-stats__widgets-column" key={ widget.basePath }>
