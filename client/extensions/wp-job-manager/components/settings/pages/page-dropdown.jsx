@@ -21,7 +21,7 @@ const PageDropdown = ( { disabled, name, pages } ) => {
 };
 
 PageDropdown.propTypes = {
-	name: PropTypes.string,
+	name: PropTypes.string.isRequired,
 	pages: PropTypes.array,
 };
 
