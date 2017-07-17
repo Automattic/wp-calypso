@@ -165,7 +165,7 @@ export default connect(
 			zone,
 			isRestOfTheWorld,
 			locations: loaded && getCurrentlyEditingShippingZoneLocationsList( state, 20 ),
-			hasEdits: zone && 0 !== getSaveZoneActionListSteps( state ).length,
+			hasEdits: Boolean( zone && 0 !== getSaveZoneActionListSteps( state ).length ),
 		};
 	},
 	( dispatch ) => ( {
