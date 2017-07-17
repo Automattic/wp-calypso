@@ -282,12 +282,15 @@ describe( 'utils', () => {
 	describe( '#keyedReducer', () => {
 		const grow = name => ( { type: 'GROW', name } );
 		const reset = name => ( { type: 'RESET', name } );
+		const remove = name => ( { type: 'REMOVE', name } );
 
 		const age = ( state = 0, action ) => {
 			if ( 'GROW' === action.type ) {
 				return state + 1;
 			} else if ( 'RESET' === action.type ) {
 				return 0;
+			} else if ( 'REMOVE' === action.type ) {
+				return undefined;
 			}
 			return state;
 		};
@@ -367,6 +370,11 @@ describe( 'utils', () => {
 		it( 'should remove keys if set back to initialState', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( { 10: 10 }, reset( '10' ) ) ).to.eql( { } );
+		} );
+
+		it( 'should remove keys if set to undefined', () => {
+			const keyed = keyedReducer( 'name', age );
+			expect( keyed( { 10: 10 }, remove( '10' ) ) ).to.eql( { } );
 		} );
 	} );
 
