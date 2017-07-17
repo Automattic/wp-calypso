@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { forEach, startsWith, random } from 'lodash';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -21,7 +20,7 @@ function feedKeyMaker( post ) {
 	return {
 		feedId: post.feed_ID,
 		postId: post.ID,
-		localMoment: moment( post.date ),
+		date: new Date( post.date ),
 	};
 }
 
@@ -29,7 +28,7 @@ function siteKeyMaker( post ) {
 	return {
 		blogId: post.site_ID,
 		postId: post.ID,
-		localMoment: moment( post.date ),
+		date: new Date( post.date ),
 	};
 }
 
@@ -38,11 +37,21 @@ function mixedKeyMaker( post ) {
 		return {
 			feedId: post.feed_ID,
 			postId: post.feed_item_ID,
-			localMoment: moment( post.date ),
+			date: new Date( post.date ),
 		};
 	}
 
 	return siteKeyMaker( post );
+}
+
+function buildNamedKeyMaker( property ) {
+	return function keyMaker( post ) {
+		const siteKey = siteKeyMaker( post );
+		return {
+			...siteKey,
+			[ property ]: post[ property ],
+		};
+	};
 }
 
 function addMetaToNextPageFetch( params ) {
@@ -113,7 +122,7 @@ function getStoreForTag( storeId ) {
 	return new FeedStream( {
 		id: storeId,
 		fetcher: fetcher,
-		keyMaker: mixedKeyMaker,
+		keyMaker: buildNamedKeyMaker( 'tagged_on' ),
 		onGapFetch: limitSiteParamsForTags,
 		onUpdateFetch: limitSiteParamsForTags,
 		dateProperty: 'tagged_on'
@@ -292,7 +301,7 @@ export default function feedStoreFactory( storeId ) {
 		store = new FeedStream( {
 			id: storeId,
 			fetcher: wpcomUndoc.readLiked.bind( wpcomUndoc ),
-			keyMaker: siteKeyMaker,
+			keyMaker: buildNamedKeyMaker( 'date_liked' ),
 			onGapFetch: limitSiteParamsForLikes,
 			onUpdateFetch: limitSiteParamsForLikes,
 			dateProperty: 'date_liked'
