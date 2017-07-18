@@ -108,10 +108,11 @@ class ReaderPostOptionsMenu extends React.Component {
 			return;
 		}
 
-		setTimeout( () => {
-			// give the analytics a chance to escape
-			window.location.href = post.URL;
-		}, 100 );
+		stats.recordAction( 'visit_post' );
+		stats.recordGaEvent( 'Clicked Visit Post', 'post_options' );
+		stats.recordTrackForPost( 'calypso_reader_visit_post_clicked', post );
+
+		window.open( post.URL, '_blank' );
 	};
 
 	render() {
