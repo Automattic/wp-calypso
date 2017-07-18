@@ -57,7 +57,6 @@ class PaginationPage extends Component {
 			pageNumber,
 			totalPages,
 		} = this.props;
-		let listClass;
 
 		switch ( pageNumber ) {
 			case 'more':
@@ -66,8 +65,8 @@ class PaginationPage extends Component {
 						<span>&hellip;</span>
 					</li>
 				);
-			case 'previous':
-				listClass = classNames( 'pagination__list-item pagination__arrow', 'is-left', {
+			case 'previous': {
+				const listClass = classNames( 'pagination__list-item pagination__arrow', 'is-left', {
 					'is-active': currentPage > 1,
 				} );
 				return (
@@ -77,8 +76,9 @@ class PaginationPage extends Component {
 						</Button>
 					</li>
 				);
-			case 'next':
-				listClass = classNames( 'pagination__list-item pagination__arrow', 'is-right', {
+			}
+			case 'next': {
+				const listClass = classNames( 'pagination__list-item pagination__arrow', 'is-right', {
 					'is-active': currentPage < totalPages,
 				} );
 				return (
@@ -88,8 +88,9 @@ class PaginationPage extends Component {
 						</Button>
 					</li>
 				);
-			default:
-				listClass = classNames( 'pagination__list-item pagination__page-number', {
+			}
+			default: {
+				const listClass = classNames( 'pagination__list-item pagination__page-number', {
 					'is-selected': currentPage === pageNumber,
 				} );
 				return (
@@ -99,6 +100,7 @@ class PaginationPage extends Component {
 						</Button>
 					</li>
 				);
+			}
 		}
 	}
 }
