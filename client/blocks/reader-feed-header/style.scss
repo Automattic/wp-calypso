@@ -198,10 +198,6 @@
 .reader-feed-header__email-settings .gridicons-cog {
 	top: 2px;
 	left: 1px;
-
-	@include breakpoint( ">660px" ) {
-		left: 5px;
-	}
 }
 
 .reader-feed-header__email-settings {
@@ -209,6 +205,7 @@
 		margin-top: -1px;
 
 		.gridicons-cog {
+			left: 5px;
 			top: 3px;
 		}
 	}
