@@ -10,14 +10,11 @@ import Card from 'components/card';
 import Pagination from 'components/pagination';
 
 class PaginationExample extends Component {
-	constructor() {
-		super();
-		this.state = {
-			page: 1,
-		};
+	state = {
+		page: 1,
 	}
 
-	updatePage = ( page ) => {
+	updatePage = page => {
 		this.setState( { page } );
 	}
 

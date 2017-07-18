@@ -21,78 +21,85 @@ class PaginationPage extends Component {
 
 	clickHandler = ( event ) => {
 		event.stopPropagation();
-		switch ( this.props.pageNumber ) {
-			case '<--':
-				if ( this.props.currentPage - 1 < 1 ) {
+		const {
+			currentPage,
+			pageClick,
+			pageNumber,
+			totalPages
+		} = this.props;
+
+		switch ( pageNumber ) {
+			case 'previous':
+				if ( currentPage - 1 < 1 ) {
 					return;
 				}
-				this.props.pageClick( this.props.currentPage - 1 );
+				pageClick( currentPage - 1 );
 				break;
-			case '-->':
-				if ( this.props.currentPage + 1 > this.props.totalPages ) {
+			case 'next':
+				if ( currentPage + 1 > totalPages ) {
 					return;
 				}
-				this.props.pageClick( this.props.currentPage + 1 );
+				pageClick( currentPage + 1 );
 				break;
 			default:
-				if ( this.props.currentPage === this.props.pageNumber ) {
+				if ( currentPage === pageNumber ) {
 					return;
 				}
-				this.props.pageClick( this.props.pageNumber );
+				pageClick( pageNumber );
 				break;
 		}
 	}
 
 	render() {
-		const { numberFormat } = this.props;
-		let listClass, pageNumberElement;
+		const {
+			currentPage,
+			numberFormat,
+			pageNumber,
+			totalPages,
+		} = this.props;
+		let listClass;
 
-		switch ( this.props.pageNumber ) {
-			case '...':
-				pageNumberElement = (
+		switch ( pageNumber ) {
+			case 'more':
+				return (
 					<li className="pagination__list-item pagination__ellipsis" aria-hidden="true">
 						<span>&hellip;</span>
 					</li>
 				);
-				break;
-			case '<--':
+			case 'previous':
 				listClass = classNames( 'pagination__list-item pagination__arrow', 'is-left', {
-					'is-active': this.props.currentPage > 1,
+					'is-active': currentPage > 1,
 				} );
-				pageNumberElement = (
+				return (
 					<li className={ listClass }>
-						<Button borderless onClick={ this.clickHandler } disabled={ this.props.currentPage <= 1 }>
+						<Button borderless onClick={ this.clickHandler } disabled={ currentPage <= 1 }>
 							<Gridicon icon="arrow-left" />
 						</Button>
 					</li>
 				);
-				break;
-			case '-->':
+			case 'next':
 				listClass = classNames( 'pagination__list-item pagination__arrow', 'is-right', {
-					'is-active': this.props.currentPage < this.props.totalPages,
+					'is-active': currentPage < totalPages,
 				} );
-				pageNumberElement = (
+				return (
 					<li className={ listClass }>
-						<Button borderless onClick={ this.clickHandler } disabled={ this.props.currentPage >= this.props.totalPages }>
+						<Button borderless onClick={ this.clickHandler } disabled={ currentPage >= totalPages }>
 							<Gridicon icon="arrow-right" />
 						</Button>
 					</li>
 				);
-				break;
 			default:
 				listClass = classNames( 'pagination__list-item pagination__page-number', {
-					'is-selected': this.props.currentPage === this.props.pageNumber,
+					'is-selected': currentPage === pageNumber,
 				} );
-				pageNumberElement = (
+				return (
 					<li className={ listClass }>
 						<Button borderless onClick={ this.clickHandler }>
-							{ numberFormat( this.props.pageNumber ) }
+							{ numberFormat( pageNumber ) }
 						</Button>
 					</li>
 				);
-				break;
 		}
-		return pageNumberElement;
 	}
 }
 
