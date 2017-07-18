@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityActor from './activity-actor';
 import ActivityIcon from './activity-icon';
+import QueryActivityObject from './query-activity-object';
 import ActivityTitle from './activity-title';
 import EllipsisMenu from 'components/ellipsis-menu';
 import FoldableCard from 'components/foldable-card';
@@ -281,16 +282,19 @@ class ActivityLogItem extends Component {
 		const {
 			className,
 			log,
+			siteId,
 		} = this.props;
 		const {
 			group,
 			name,
+			object,
 		} = log;
 
 		const classes = classNames( 'activity-log-item', className );
 
 		return (
 			<div className={ classes } >
+				<QueryActivityObject group={ group } object={ object } siteId={ siteId } />
 				<div className="activity-log-item__type">
 					{ this.renderTime() }
 					<ActivityIcon group={ group } name={ name } />
