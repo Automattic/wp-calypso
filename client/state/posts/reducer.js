@@ -143,7 +143,7 @@ export const queries = ( () => {
 
 			return {
 				...state,
-				[ siteId ]: ( new PostQueryManager() )[ method ]( ...args )
+				[ siteId ]: ( new PostQueryManager( undefined, { itemKey: 'global_ID' } ) )[ method ]( ...args )
 			};
 		}
 
