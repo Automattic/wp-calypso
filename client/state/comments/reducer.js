@@ -107,7 +107,7 @@ export function items( state = {}, action ) {
 	return state;
 }
 
-export const hasMoreCommentsInitialState = {
+export const fetchStatusInitialState = {
 	before: true,
 	after: true,
 	hasReceivedBefore: false,
@@ -131,7 +131,7 @@ export const hasMoreCommentsInitialState = {
  * @param {Object} action redux action
  * @returns {Object} new redux state
  */
-export const hasMoreComments = createReducer(
+export const fetchStatus = createReducer(
 	{},
 	{
 		[ COMMENTS_RECEIVE ]: ( state, action ) => {
@@ -146,7 +146,7 @@ export const hasMoreComments = createReducer(
 				direction === 'before' ? 'hasReceivedBefore' : 'hasReceivedAfter';
 
 			const nextState = {
-				...( state[ stateKey ] || hasMoreCommentsInitialState ),
+				...( state[ stateKey ] || fetchStatusInitialState ),
 				[ direction ]: action.comments.length === NUMBER_OF_COMMENTS_PER_FETCH,
 				[ hasReceivedDirection ]: true,
 			};
@@ -186,6 +186,6 @@ export function totalCommentsCount( state = {}, action ) {
 
 export default combineReducers( {
 	items,
-	hasMoreComments,
+	fetchStatus,
 	totalCommentsCount,
 } );

@@ -7,7 +7,7 @@ import { filter, find, get, keyBy, last, first, map, size } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { getStateKey, hasMoreCommentsInitialState } from './reducer';
+import { getStateKey, fetchStatusInitialState } from './reducer';
 
 /***
  * Gets comment items for post
@@ -41,7 +41,7 @@ export const getPostMostRecentCommentDate = createSelector( ( state, siteId, pos
 }, getPostCommentItems );
 
 /***
- * Get most oldest comment date for a given post
+ * Get oldest comment date for a given post
  * @param {Object} state redux state
  * @param {Number} siteId site identification
  * @param {Number} postId site identification
@@ -94,45 +94,20 @@ export const getPostCommentsTree = createSelector(
 	getPostCommentItems,
 );
 
-/***
- * Whether we have more comments to fetch for a given post
- * @param {Object} state redux state
- * @param {Number} siteId site identification
- * @param {Number} postId site identification
- * @return {Boolean} do we have more comments to fetch
- */
-export const haveMoreCommentsToFetch = createSelector(
-	( state, siteId, postId ) => {
-		const items = getPostCommentItems( state, siteId, postId );
-		const totalCommentsCount = getPostTotalCommentsCount( state, siteId, postId );
-		return items && totalCommentsCount ? size( items ) < totalCommentsCount : undefined;
-	},
-	( state, siteId, postId ) => [
-		getPostCommentItems( state, siteId, postId ),
-		getPostTotalCommentsCount( state, siteId, postId ),
-	],
-);
-
-export const haveEarlierCommentsToFetch = ( state, siteId, postId, commentTotal = 0 ) =>
-	( haveMoreCommentsToFetch( state, siteId, postId ) ||
-		commentTotal > size( getPostCommentItems( state, siteId, postId ) ) ) &&
-	get( state.comments.hasMoreComments, getStateKey( siteId, postId ), hasMoreCommentsInitialState )
-		.before;
-
-export const haveLaterCommentsToFetch = ( state, siteId, postId, commentTotal = 0 ) =>
-	( haveMoreCommentsToFetch( state, siteId, postId ) ||
-		commentTotal > size( getPostCommentItems( state, siteId, postId ) ) ) &&
-	get( state.comments.hasMoreComments, getStateKey( siteId, postId ), hasMoreCommentsInitialState )
-		.after;
-
-export const haveReceivedBeforeAndAfter = ( state, siteId, postId ) => {
-	const hasMoreComments = get(
-		state.comments.hasMoreComments,
+export const commentsFetchingStatus = ( state, siteId, postId, commentTotal = 0 ) => {
+	const fetchStatus = get(
+		state.comments.fetchStatus,
 		getStateKey( siteId, postId ),
-		hasMoreCommentsInitialState,
+		fetchStatusInitialState,
 	);
-	const { hasReceivedAfter, hasReceivedBefore } = hasMoreComments;
-	return hasReceivedBefore && hasReceivedAfter;
+	const hasMoreComments = commentTotal > size( getPostCommentItems( state, siteId, postId ) );
+
+	return {
+		haveEarlierCommentsToFetch: fetchStatus.before && hasMoreComments,
+		haveLaterCommentsToFetch: fetchStatus.after && hasMoreComments,
+		hasReceivedBefore: fetchStatus.hasReceivedBefore,
+		hasReceivedAfter: fetchStatus.hasReceivedAfter,
+	};
 };
 
 /***

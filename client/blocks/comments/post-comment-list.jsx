@@ -9,13 +9,7 @@ import { get, size, takeRight, defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	getPostCommentsTree,
-	getPostTotalCommentsCount,
-	haveEarlierCommentsToFetch,
-	haveLaterCommentsToFetch,
-	haveReceivedBeforeAndAfter,
-} from 'state/comments/selectors';
+import { getPostCommentsTree, commentsFetchingStatus } from 'state/comments/selectors';
 import { requestPostComments, requestComment } from 'state/comments/actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
@@ -25,32 +19,45 @@ import CommentCount from './comment-count';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 
+// eslint-disable
+/**
+ * PostCommentList, as the name would suggest, displays a list of comments for a post.
+ * It has the capability of either starting from the latest comment for a post,
+ * or it may begin from any commentId within the post by specifying a commentId.
+ *
+ * Depending on where the list starts, there is slightly different behavior:
+ * 1. from the last comments:
+ *    this is the simplest case. Initially onMount we request the latest comments
+ *    and while only displaying a subset of them.  When the user clicks "Show More" we load more comments
+ *
+ * 2. from a specific commentId:
+ *    this is activated by specifying the commentId prop. onMount we request the specific comment and then
+ *    also a page before it / a page after it.  Then we scroll down to the specific comment.
+ *    This also activates a "Show More" button at the end of the comment list instead of just at the top
+ *
+ */
+// eslint-enable
 class PostCommentList extends React.Component {
 	static propTypes = {
 		post: React.PropTypes.shape( {
 			ID: React.PropTypes.number.isRequired,
 			site_ID: React.PropTypes.number.isRequired,
 		} ).isRequired,
-		initialSize: React.PropTypes.number,
 		pageSize: React.PropTypes.number,
+		initialSize: React.PropTypes.number,
 		showCommentCount: React.PropTypes.bool,
 		startingCommentId: React.PropTypes.number,
 		commentCount: React.PropTypes.number,
 
 		// connect()ed props:
-		commentsTree: React.PropTypes.object, //TODO: Find a lib that provides immutable shape
-		totalCommentsCount: React.PropTypes.number,
-		haveReceivedBeforeAndAfter: React.PropTypes.bool,
-		haveEarlierCommentsToFetch: React.PropTypes.bool,
-		haveLaterCommentsToFetch: React.PropTypes.bool,
+		commentsTree: React.PropTypes.object,
 		requestPostComments: React.PropTypes.func.isRequired,
+		requestComment: React.PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
 		pageSize: NUMBER_OF_COMMENTS_PER_FETCH,
 		initialSize: NUMBER_OF_COMMENTS_PER_FETCH,
-		haveEarlierCommentsToFetch: false,
-		haveLaterCommentsToFetch: false,
 		showCommentCount: true,
 	};
 
@@ -66,9 +73,15 @@ class PostCommentList extends React.Component {
 			post: { ID: postId, site_ID: siteId },
 			commentsFilter: status,
 			startingCommentId,
+			commentsFetchingStatus: { haveReceivedBeforeAndAfter },
 		} = this.props;
 
-		if ( startingCommentId && this.props.commentsTree[ startingCommentId ] ) {
+		if (
+			startingCommentId &&
+			this.props.commentsTree[ startingCommentId ] &&
+			! haveReceivedBeforeAndAfter &&
+			! this.alreadyLoadedInitialSet
+		) {
 			this.viewEarlierCommentsHandler();
 			this.viewLaterCommentsHandler();
 			this.alreadyLoadedInitialSet = true;
@@ -84,18 +97,19 @@ class PostCommentList extends React.Component {
 		const nextPostId = get( nextProps, 'post.ID' );
 		const nextCommentsFilter = get( nextProps, 'commentsFilter' );
 		const nextStartingCommentId = get( nextProps, 'startingCommentId' );
-		// todo: sort out this nonesense
+		const { hasReceivedBefore, hasReceivedAfter } = get( nextProps, 'commentsFetchingStatus' );
 
 		if (
 			nextStartingCommentId &&
 			nextProps.commentsTree[ nextStartingCommentId ] &&
-			! this.alreadyLoadedInitialSet
+			! this.alreadyLoadedInitialSet &&
+			! ( hasReceivedBefore && hasReceivedAfter )
 		) {
 			this.viewEarlierCommentsHandler();
 			this.viewLaterCommentsHandler();
 			this.alreadyLoadedInitialSet = true;
-		} else if ( nextStartingCommentId & ! nextProps.commentsTree[ nextStartingCommentId ] ) {
-			this.props.requestComment( { siteId: nextSiteId, commentId: this.props.startingCommentId } );
+		} else if ( nextStartingCommentId && ! nextProps.commentsTree[ nextStartingCommentId ] ) {
+			this.props.requestComment( { siteId: nextSiteId, commentId: nextProps.startingCommentId } );
 		} else if (
 			nextSiteId &&
 			nextPostId &&
@@ -112,7 +126,7 @@ class PostCommentList extends React.Component {
 		}
 
 		if ( this.shouldScrollToComment( nextProps ) ) {
-			// defer so that the above/below comments load
+			// defer so that the above/below comments have time to render
 			defer( () => this.scrollToComment(), 50 );
 		}
 	}
@@ -228,7 +242,8 @@ class PostCommentList extends React.Component {
 	shouldScrollToComment = ( props = this.props ) =>
 		props.startingCommentId &&
 		props.commentsTree[ this.props.startingCommentId ] &&
-		props.haveReceivedBeforeAndAfter &&
+		props.commentsFetchingStatus.hasReceivedBefore &&
+		props.commentsFetchingStatus.hasReceivedAfter &&
 		! this.hasScrolledToComment &&
 		window.document.getElementsByName( `comment-${ props.startingCommentId }` ).length > 0;
 
@@ -263,12 +278,16 @@ class PostCommentList extends React.Component {
 	};
 
 	viewEarlierCommentsHandler = () => {
-		const direction = this.props.haveEarlierCommentsToFetch ? 'before' : 'after';
+		const direction = this.props.commentsFetchingStatus.haveEarlierCommentsToFetch
+			? 'before'
+			: 'after';
 		this.loadMoreCommentsHandler( direction );
 	};
 
 	viewLaterCommentsHandler = () => {
-		const direction = this.props.haveLaterCommentsToFetch ? 'after' : 'before';
+		const direction = this.props.commentsFetchingStatus.haveLaterCommentsToFetch
+			? 'after'
+			: 'before';
 		this.loadMoreCommentsHandler( direction );
 	};
 
@@ -287,7 +306,11 @@ class PostCommentList extends React.Component {
 			return null;
 		}
 
-		const { commentsFilter, commentsTree, showFilters, totalCommentsCount } = this.props;
+		const { commentsFilter, commentsTree, showFilters, commentCount } = this.props;
+		const {
+			haveEarlierCommentsToFetch,
+			haveLaterCommentsToFetch,
+		} = this.props.commentsFetchingStatus;
 
 		const { amountOfCommentsToTake } = this.state;
 
@@ -296,31 +319,31 @@ class PostCommentList extends React.Component {
 			amountOfCommentsToTake,
 		);
 
-		// Note: we might show fewer comments than totalCommentsCount because some comments might be
+		// Note: we might show fewer comments than commentsCount because some comments might be
 		// orphans (parent deleted/unapproved), that comment will become unreachable but still counted.
 		const showViewMoreComments =
 			size( commentsTree.children ) > amountOfCommentsToTake ||
-			this.props.haveEarlierCommentsToFetch ||
-			this.props.haveLaterCommentsToFetch;
+			haveEarlierCommentsToFetch ||
+			haveLaterCommentsToFetch;
 
 		// If we're not yet fetched all comments from server, we can only rely on server's count.
 		// once we got all the comments tree, we can calculate the count of reachable comments
-		const actualTotalCommentsCount =
-			this.props.haveEarlierCommentsToFetch || this.props.haveLaterCommentsToFetch
-				? Math.max( totalCommentsCount, this.props.commentCount )
+		const actualCommentsCount =
+			haveEarlierCommentsToFetch || haveLaterCommentsToFetch
+				? commentCount
 				: this.getCommentsCount( commentsTree.children );
 
 		return (
 			<div className="comments__comment-list">
 				{ ( this.props.showCommentCount || showViewMoreComments ) &&
 					<div className="comments__info-bar">
-						{ this.props.showCommentCount && <CommentCount count={ actualTotalCommentsCount } /> }
+						{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
 						{ showViewMoreComments
 							? <span className="comments__view-more" onClick={ this.viewEarlierCommentsHandler }>
 									{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 										args: {
 											shown: displayedCommentsCount,
-											total: actualTotalCommentsCount,
+											total: actualCommentsCount,
 										},
 									} ) }
 								</span>
@@ -366,7 +389,7 @@ class PostCommentList extends React.Component {
 						{ translate( 'Load More Comments (Showing %(shown)d of %(total)d)', {
 							args: {
 								shown: displayedCommentsCount,
-								total: actualTotalCommentsCount,
+								total: actualCommentsCount,
 							},
 						} ) }
 					</span> }
@@ -384,24 +407,11 @@ export default connect(
 			ownProps.post.ID,
 			ownProps.commentsFilter,
 		),
-		totalCommentsCount:
-			getPostTotalCommentsCount( state, ownProps.post.site_ID, ownProps.post.ID ) || 0,
-		haveEarlierCommentsToFetch: haveEarlierCommentsToFetch(
+		commentsFetchingStatus: commentsFetchingStatus(
 			state,
 			ownProps.post.site_ID,
 			ownProps.post.ID,
 			ownProps.commentCount,
-		),
-		haveLaterCommentsToFetch: haveLaterCommentsToFetch(
-			state,
-			ownProps.post.site_ID,
-			ownProps.post.ID,
-			ownProps.commentCount,
-		),
-		haveReceivedBeforeAndAfter: haveReceivedBeforeAndAfter(
-			state,
-			ownProps.post.site_ID,
-			ownProps.post.ID,
 		),
 	} ),
 	{ requestPostComments, requestComment },
