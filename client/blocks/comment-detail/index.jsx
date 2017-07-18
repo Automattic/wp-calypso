@@ -157,7 +157,7 @@ export class CommentDetail extends Component {
 		} );
 
 		return (
-			<Card className={ classes }>
+			<Card className={ classes } tabIndex="0">
 				<CommentDetailHeader
 					authorAvatarUrl={ authorAvatarUrl }
 					authorDisplayName={ authorDisplayName }
