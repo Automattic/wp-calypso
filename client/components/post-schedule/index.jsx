@@ -225,6 +225,7 @@ class PostSchedule extends Component {
 				<Header
 					date={ this.state.calendarViewDate }
 					onDateChange={ this.setViewDate }
+					inputChronoDisplayed={ this.props.displayInputChrono }
 				/>
 
 				{ this.props.displayInputChrono && this.renderInputChrono() }
