@@ -60,8 +60,8 @@ class Pages extends Component {
 									name="submitFormPage"
 									pages={ pages } />
 								<FormSettingExplanation>
-									{ translate( 'Select the page where you have placed the [submit_job_form] shortcode. ' +
-										'This lets the plugin know where the form is located.' ) }
+									{ translate( 'Select the page where you\'ve used the [submit_job_form] shortcode. ' +
+										'This lets the plugin know the location of the form.' ) }
 								</FormSettingExplanation>
 							</FormFieldset>
 
@@ -74,8 +74,8 @@ class Pages extends Component {
 									name="dashboardPage"
 									pages={ pages } />
 								<FormSettingExplanation>
-									{ translate( 'Select the page where you have placed the [job_dashboard] shortcode. ' +
-										'This lets the plugin know where the dashboard is located.' ) }
+									{ translate( 'Select the page where you\'ve used the [job_dashboard] shortcode. ' +
+										'This lets the plugin know the location of the dashboard.' ) }
 								</FormSettingExplanation>
 							</FormFieldset>
 
@@ -88,8 +88,8 @@ class Pages extends Component {
 									name="listingsPage"
 									pages={ pages } />
 								<FormSettingExplanation>
-									{ translate( 'Select the page where you have placed the [jobs] shortcode. ' +
-										'This lets the plugin know where the job listings page is located.' ) }
+									{ translate( 'Select the page where you\'ve used the [jobs] shortcode. ' +
+										'This lets the plugin know the location of the job listings page.' ) }
 								</FormSettingExplanation>
 							</FormFieldset>
 						</Card>
