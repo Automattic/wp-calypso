@@ -1,6 +1,12 @@
 /**
+ * External dependencies
+ */
+import qs from 'querystring';
+
+/**
  * Internal dependencies
  */
+import { DEFAULT_QUERY, getNormalizedOrdersQuery } from './utils';
 import {
 	areOrdersLoaded,
 	areOrdersLoading,
@@ -24,29 +30,32 @@ import {
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export const fetchOrders = ( siteId, page = 1 ) => ( dispatch, getState ) => {
+export const fetchOrders = ( siteId, requestedQuery = {} ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
 	}
-	if ( areOrdersLoaded( state, page, siteId ) || areOrdersLoading( state, page, siteId ) ) {
+
+	const query = { ...DEFAULT_QUERY, ...requestedQuery };
+	const normalizedQuery = getNormalizedOrdersQuery( requestedQuery );
+	if ( areOrdersLoaded( state, query, siteId ) || areOrdersLoading( state, query, siteId ) ) {
 		return;
 	}
 
 	const fetchAction = {
 		type: WOOCOMMERCE_ORDERS_REQUEST,
 		siteId,
-		page,
+		query: normalizedQuery,
 	};
 	dispatch( fetchAction );
 
-	return request( siteId ).getWithHeaders( `orders?page=${ page }&per_page=100` ).then( ( response ) => {
+	return request( siteId ).getWithHeaders( 'orders?' + qs.stringify( query ) ).then( ( response ) => {
 		const { headers, data } = response;
 		const totalPages = headers[ 'X-WP-TotalPages' ];
 		dispatch( {
 			type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 			siteId,
-			page,
+			query: normalizedQuery,
 			totalPages,
 			orders: data,
 		} );
@@ -55,7 +64,7 @@ export const fetchOrders = ( siteId, page = 1 ) => ( dispatch, getState ) => {
 		dispatch( {
 			type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 			siteId,
-			page,
+			query: normalizedQuery,
 			error,
 		} );
 	} );

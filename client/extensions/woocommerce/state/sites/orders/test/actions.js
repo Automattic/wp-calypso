@@ -34,7 +34,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/orders&page=1&per_page=100&_envelope&_method=get', json: true } )
+				.query( { path: '/wc/v3/orders&page=1&per_page=50&status=any&_envelope&_method=get', json: true } )
 				.reply( 200, {
 					data: {
 						body: orders,
@@ -43,7 +43,7 @@ describe( 'actions', () => {
 					}
 				} )
 				.get( '/rest/v1.1/jetpack-blogs/234/rest-api/' )
-				.query( { path: '/wc/v3/orders&page=invalid&per_page=100&_envelope&_method=get', json: true } )
+				.query( { path: '/wc/v3/orders&page=invalid&per_page=50&status=any&_envelope&_method=get', json: true } )
 				.reply( 404, {
 					data: {
 						message: 'Invalid parameter(s): page',
@@ -56,20 +56,20 @@ describe( 'actions', () => {
 		it( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
-			fetchOrders( siteId, 1 )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_ORDERS_REQUEST, siteId, page: 1 } );
+			fetchOrders( siteId, { page: 1, status: 'any' } )( dispatch, getState );
+			expect( dispatch ).to.have.been.calledWith( { type: WOOCOMMERCE_ORDERS_REQUEST, siteId, query: {} } );
 		} );
 
 		it( 'should dispatch a success action with orders list when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
-			const response = fetchOrders( siteId, 1 )( dispatch, getState );
+			const response = fetchOrders( siteId, { page: 1 } )( dispatch, getState );
 
 			return response.then( () => {
 				expect( dispatch ).to.have.been.calledWith( {
 					type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 					siteId,
-					page: 1,
+					query: {},
 					totalPages: 3,
 					orders,
 				} );
@@ -79,7 +79,7 @@ describe( 'actions', () => {
 		it( 'should dispatch a failure action with the error when a the request fails', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
-			const response = fetchOrders( 234, 'invalid' )( dispatch, getState );
+			const response = fetchOrders( 234, { page: 'invalid' } )( dispatch, getState );
 
 			return response.then( () => {
 				expect( dispatch ).to.have.been.calledWithMatch( {
@@ -98,10 +98,10 @@ describe( 'actions', () => {
 								orders: {
 									isLoading: {},
 									isQueryLoading: {
-										'{page:1}': true,
+										'{}': true,
 									},
 									items: {},
-									pages: {},
+									queries: {},
 									totalPages: 1,
 								}
 							}
@@ -110,7 +110,7 @@ describe( 'actions', () => {
 				}
 			} );
 			const dispatch = spy();
-			fetchOrders( 123, 1 )( dispatch, getState );
+			fetchOrders( 123, { page: 1 } )( dispatch, getState );
 			expect( dispatch ).to.have.not.been.called;
 		} );
 	} );
@@ -185,7 +185,7 @@ describe( 'actions', () => {
 										40: true,
 									},
 									items: {},
-									pages: {},
+									queries: {},
 									totalPages: 1,
 								}
 							}

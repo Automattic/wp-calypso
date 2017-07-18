@@ -9,9 +9,9 @@ This module is used to manage orders for a site.
 
 Fetch a single order from the remote site. Does not run if this order is loading. If the order is already loaded, and refresh is true, it re-fetches the order. `refresh` defaults to false (won't re-fetch).
 
-### `fetchOrders( siteId: number, page: number )`
+### `fetchOrders( siteId: number, query: object )`
 
-Pull a page of orders from the remote site. Does not run if the orders are loading or already loaded.
+Pull a set of orders from the remote site, based on a query. See [available parameters on the API docs](http://woocommerce.github.io/woocommerce-rest-api-docs/#list-all-orders). Does not run if the orders are loading or already loaded.
 
 ### `updateOrder( siteId: number, order: object )`
 
@@ -31,8 +31,8 @@ This is saved on a per-site basis. All orders are collected in `items`, and ther
 		},
 		// Keyed by serialized query
 		"isQueryLoading": {
-			'{page:1}': false,
-			'{page:2}': true
+			'{}': false,
+			'{"page":2}': true
 		},
 		// Keyed by order ID
 		"isUpdating": {
@@ -52,8 +52,8 @@ This is saved on a per-site basis. All orders are collected in `items`, and ther
 		},
 		// Keyed by serialized query (a list of post IDs)
 		"queries": {
-			'{page:1}': [ 1, 2, 3, 4, 5 ],
-			'{page:2}': [ 6, 7, 8, 9, 10 ]
+			'{}': [ 1, 2, 3, 4, 5 ],
+			'{"page":2}': [ 6, 7, 8, 9, 10 ]
 		},
 		// A single number (the total number of pages for this site's orders)
 		"totalPages": 6
@@ -63,13 +63,13 @@ This is saved on a per-site basis. All orders are collected in `items`, and ther
 
 ## Selectors
 
-### `areOrdersLoaded( state, page, [siteId] )`
+### `areOrdersLoaded( state, query, [siteId] )`
 
-Whether the order list on a given page has been successfully loaded from the server. Optional `siteId`, will default to currently selected site.
+Whether the order list for a given query has been successfully loaded from the server. Optional `siteId`, will default to currently selected site.
 
-### `areOrdersLoading( state, page, [siteId] )`
+### `areOrdersLoading( state, query, [siteId] )`
 
-Whether the order list on a given page is currently being retrieved from the server. Optional `siteId`, will default to currently selected site.
+Whether the order list for a given query is currently being retrieved from the server. Optional `siteId`, will default to currently selected site.
 
 ### `isOrderLoaded( state, orderId, [siteId] )`
 
@@ -79,9 +79,9 @@ Whether the given order has been successfully loaded from the server. Optional `
 
 Whether the given order is currently being retrieved from the server. Optional `siteId`, will default to currently selected site.
 
-### `getOrders( state, page: number, siteId: number )`
+### `getOrders( state, query: object, siteId: number )`
 
-Gets the list of orders for this page from the current state, or an empty array if not yet loaded.
+Gets the list of orders for this query from the current state, or an empty array if not yet loaded.
 
 ### `getOrder( state, orderId: number, siteId: number )`
 

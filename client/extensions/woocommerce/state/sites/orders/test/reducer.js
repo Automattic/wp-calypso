@@ -80,33 +80,39 @@ describe( 'reducer', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST,
 				siteId: 123,
-				page: 1,
+				query: {
+					page: 1,
+				},
 			};
 			const newState = isQueryLoading( undefined, action );
-			expect( newState ).to.eql( { '{page:1}': true } );
+			expect( newState ).to.eql( { '{}': true } );
 		} );
 
 		it( 'should show that request has loaded on success', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 				siteId: 123,
-				page: 1,
+				query: {
+					page: 1,
+				},
 				totalPages: 4,
 				orders,
 			};
-			const newState = isQueryLoading( { '{page:1}': true }, action );
-			expect( newState ).to.eql( { '{page:1}': false } );
+			const newState = isQueryLoading( { '{}': true }, action );
+			expect( newState ).to.eql( { '{}': false } );
 		} );
 
 		it( 'should show that request has loaded on failure', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 				siteId: 123,
-				page: 1,
+				query: {
+					page: 1,
+				},
 				error: {},
 			};
-			const newState = isQueryLoading( { '{page:1}': true }, action );
-			expect( newState ).to.eql( { '{page:1}': false } );
+			const newState = isQueryLoading( { '{}': true }, action );
+			expect( newState ).to.eql( { '{}': false } );
 		} );
 	} );
 
@@ -159,7 +165,9 @@ describe( 'reducer', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 				siteId: 123,
-				page: 1,
+				query: {
+					page: 1,
+				},
 				totalPages: 4,
 				orders,
 			};
@@ -172,7 +180,9 @@ describe( 'reducer', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 				siteId: 123,
-				page: 2,
+				query: {
+					page: 2,
+				},
 				totalPages: 4,
 				orders: [ order ],
 			};
@@ -197,7 +207,9 @@ describe( 'reducer', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 				siteId: 123,
-				page: 1,
+				query: {
+					page: 1,
+				},
 				error: {},
 			};
 			const originalState = deepFreeze( keyBy( orders, 'id' ) );
@@ -216,35 +228,41 @@ describe( 'reducer', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 				siteId: 123,
-				page: 1,
+				query: {
+					page: 1,
+				},
 				totalPages: 4,
 				orders,
 			};
 			const newState = queries( undefined, action );
-			expect( newState ).to.eql( { '{page:1}': [ 35, 26 ] } );
+			expect( newState ).to.eql( { '{}': [ 35, 26 ] } );
 		} );
 
 		it( 'should add the next page of orders as a second list', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 				siteId: 123,
-				page: 2,
+				query: {
+					page: 2,
+				},
 				totalPages: 4,
 				orders: [ order ],
 			};
-			const originalState = deepFreeze( { '{page:1}': [ 35, 26 ] } );
+			const originalState = deepFreeze( { '{}': [ 35, 26 ] } );
 			const newState = queries( originalState, action );
-			expect( newState ).to.eql( { ...originalState, '{page:2}': [ 40 ] } );
+			expect( newState ).to.eql( { ...originalState, '{"page":2}': [ 40 ] } );
 		} );
 
 		it( 'should do nothing on a failure', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 				siteId: 123,
-				page: 1,
+				query: {
+					page: 1,
+				},
 				error: {},
 			};
-			const originalState = deepFreeze( { '{page:1}': [ 35, 26 ] } );
+			const originalState = deepFreeze( { '{}': [ 35, 26 ] } );
 			const newState = queries( originalState, action );
 			expect( newState ).to.eql( originalState );
 		} );
@@ -260,7 +278,9 @@ describe( 'reducer', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 				siteId: 123,
-				page: 1,
+				query: {
+					page: 1,
+				},
 				totalPages: 4,
 				orders,
 			};
@@ -272,7 +292,9 @@ describe( 'reducer', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 				siteId: 123,
-				page: 2,
+				query: {
+					page: 2,
+				},
 				totalPages: 4,
 				orders: [ order ],
 			};
@@ -285,7 +307,9 @@ describe( 'reducer', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 				siteId: 123,
-				page: 1,
+				query: {
+					page: 1,
+				},
 				error: {},
 			};
 			const originalState = deepFreeze( 4 );

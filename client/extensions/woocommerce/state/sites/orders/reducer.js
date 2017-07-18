@@ -7,6 +7,7 @@ import { keyBy } from 'lodash';
  * Internal dependencies
  */
 import { combineReducers } from 'state/utils';
+import { getSerializedOrdersQuery } from './utils';
 import notes from './notes/reducer';
 import {
 	WOOCOMMERCE_ORDER_REQUEST,
@@ -55,7 +56,8 @@ export function isQueryLoading( state = {}, action ) {
 		case WOOCOMMERCE_ORDERS_REQUEST:
 		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
 		case WOOCOMMERCE_ORDERS_REQUEST_FAILURE:
-			return Object.assign( {}, state, { [ `{page:${ action.page }}` ]: WOOCOMMERCE_ORDERS_REQUEST === action.type } );
+			const query = getSerializedOrdersQuery( action.query );
+			return Object.assign( {}, state, { [ query ]: WOOCOMMERCE_ORDERS_REQUEST === action.type } );
 		default:
 			return state;
 	}
@@ -115,7 +117,8 @@ export function queries( state = {}, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
 			const idList = action.orders.map( order => order.id );
-			return Object.assign( {}, state, { [ `{page:${ action.page }}` ]: idList } );
+			const query = getSerializedOrdersQuery( action.query );
+			return Object.assign( {}, state, { [ query ]: idList } );
 		default:
 			return state;
 	}
