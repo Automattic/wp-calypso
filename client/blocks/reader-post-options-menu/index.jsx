@@ -101,12 +101,25 @@ class ReaderPostOptionsMenu extends React.Component {
 		}, 100 );
 	};
 
+	visitPost = () => {
+		const post = this.props.post;
+
+		if ( ! post || ! post.URL ) {
+			return;
+		}
+
+		setTimeout( () => {
+			// give the analytics a chance to escape
+			window.location.href = post.URL;
+		}, 100 );
+	};
+
 	render() {
 		const post = this.props.post,
 			isEditPossible = PostUtils.userCan( 'edit_post', post ),
 			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
 			followUrl = this.getFollowUrl();
-		const { site, feed, teams } = this.props;
+		const { site, feed, teams, translate } = this.props;
 		const isTeamMember = isAutomatticTeamMember( teams );
 
 		let isBlockPossible = false;
@@ -143,25 +156,29 @@ class ReaderPostOptionsMenu extends React.Component {
 					{ this.props.showFollow &&
 						<FollowButton tagName={ PopoverMenuItem } siteUrl={ followUrl } /> }
 
-					{ isEditPossible
-						? <PopoverMenuItem onClick={ this.editPost } icon="pencil">
-								{ this.props.translate( 'Edit Post' ) }
-							</PopoverMenuItem>
-						: null }
+					{ post.URL &&
+						<PopoverMenuItem onClick={ this.visitPost } icon="external">
+							{ translate( 'Visit Post' ) }
+						</PopoverMenuItem> }
 
-					{ ( this.props.showFollow || isEditPossible ) &&
+					{ isEditPossible &&
+						<PopoverMenuItem onClick={ this.editPost } icon="pencil">
+							{ translate( 'Edit Post' ) }
+						</PopoverMenuItem> }
+
+					{ ( this.props.showFollow || isEditPossible || post.URL ) &&
 						( isBlockPossible || isDiscoverPost ) &&
 						<hr className="reader-post-options-menu__hr" /> }
-					{ isBlockPossible
-						? <PopoverMenuItem onClick={ this.blockSite }>
-								{ this.props.translate( 'Block Site' ) }
-							</PopoverMenuItem>
-						: null }
-					{ isBlockPossible || isDiscoverPost
-						? <PopoverMenuItem onClick={ this.reportPost }>
-								{ this.props.translate( 'Report this Post' ) }
-							</PopoverMenuItem>
-						: null }
+
+					{ isBlockPossible &&
+						<PopoverMenuItem onClick={ this.blockSite }>
+							{ translate( 'Block Site' ) }
+						</PopoverMenuItem> }
+
+					{ ( isBlockPossible || isDiscoverPost ) &&
+						<PopoverMenuItem onClick={ this.reportPost }>
+							{ translate( 'Report this Post' ) }
+						</PopoverMenuItem> }
 				</EllipsisMenu>
 			</span>
 		);
