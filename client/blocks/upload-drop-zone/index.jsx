@@ -61,12 +61,12 @@ class UploadDropZone extends Component {
 			'Only single .zip files are accepted.'
 		);
 
-		const themeUploadClass = classNames( 'upload-drop-zone', {
+		const className = classNames( 'upload-drop-zone', {
 			'is-disabled': disabled,
 		} );
 
 		return (
-			<div className={ themeUploadClass }>
+			<div className={ className }>
 				<div className="upload-drop-zone__dropzone">
 					<DropZone onFilesDrop={ this.onFileSelect } />
 					<FilePicker accept="application/zip" onPick={ this.onFileSelect } >
