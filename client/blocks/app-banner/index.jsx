@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import { getSectionName } from 'state/ui/selectors';
-import { getPreference } from 'state/preferences/selectors';
+import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
 import { isNotificationsOpen } from 'state/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { savePreference } from 'state/preferences/actions';
@@ -39,7 +39,8 @@ class AppBanner extends Component {
 		userAgent: PropTypes.string,
 		// connected
 		currentSection: React.PropTypes.string,
-		dismissedUntil: React.PropTypes.array,
+		dismissedUntil: React.PropTypes.object,
+		fetchingPreferences: React.PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -69,9 +70,9 @@ class AppBanner extends Component {
 
 	dismiss = ( event ) => {
 		event.preventDefault();
-		const { currentSection } = this.props;
+		const { currentSection, dismissedUntil } = this.props;
 
-		this.props.saveDismissTime( currentSection );
+		this.props.saveDismissTime( currentSection, dismissedUntil );
 	};
 
 	openApp = () => {
@@ -93,7 +94,11 @@ class AppBanner extends Component {
 	}
 
 	render() {
-		const { translate, currentSection } = this.props;
+		const { translate, currentSection, fetchingPreferences } = this.props;
+
+		if ( fetchingPreferences ) {
+			return null;
+		}
 
 		if ( ! includes( ALLOWED_SECTIONS, currentSection ) ) {
 			return null;
@@ -150,14 +155,15 @@ const mapStateToProps = ( state ) => {
 	return {
 		dismissedUntil: getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
 		currentSection: getCurrentSection( sectionName, isNotesOpen ),
+		fetchingPreferences: isFetchingPreferences( state ),
 	};
 };
 
 const mapDispatchToProps = {
 	recordAppBannerOpen: ( sectionName ) => recordTracksEvent( 'calypso_mobile_app_banner_open', { page: sectionName } ),
-	saveDismissTime: ( sectionName ) => withAnalytics(
+	saveDismissTime: ( sectionName, currentDimissTimes ) => withAnalytics(
 		recordTracksEvent( 'calypso_mobile_app_banner_dismiss', { page: sectionName } ),
-		savePreference( APP_BANNER_DISMISS_TIMES_PREFERENCE, getNewDismissTimes( sectionName ) )
+		savePreference( APP_BANNER_DISMISS_TIMES_PREFERENCE, getNewDismissTimes( sectionName, currentDimissTimes ) )
 	),
 };
 
