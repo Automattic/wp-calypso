@@ -13,8 +13,7 @@ import classNames from 'classnames';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import Card from 'components/card';
-import FilePicker from 'components/file-picker';
-import DropZone from 'components/drop-zone';
+import UploadDropZone from 'blocks/upload-drop-zone';
 import EmptyContent from 'components/empty-content';
 import ProgressBar from 'components/progress-bar';
 import Button from 'components/button';
@@ -272,10 +271,21 @@ class Upload extends React.Component {
 	}
 
 	renderUploadCard() {
-		const { inProgress, failed, uploadedTheme, complete } = this.props;
+		const {
+			inProgress,
+			failed,
+			uploadedTheme,
+			complete,
+			isJetpack,
+			isBusiness,
+		} = this.props;
+
+		const onDrop = isJetpack ? this.props.uploadTheme : this.props.initiateThemeTransfer;
+		const disabled = ! isBusiness && ! isJetpack;
+
 		return (
 			<Card>
-				{ ! inProgress && ! complete && this.renderDropZone() }
+				{ ! inProgress && ! complete && <UploadDropZone onDrop={ onDrop } disabled={ disabled } /> }
 				{ inProgress && this.renderProgressBar() }
 				{ complete && ! failed && uploadedTheme && this.renderTheme() }
 				{ complete && this.props.isSiteAutomatedTransfer && <WpAdminAutoLogin site={ this.props.selectedSite } /> }
