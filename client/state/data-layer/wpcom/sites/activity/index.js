@@ -14,7 +14,7 @@ import {
 	activityLogUpdate,
 } from 'state/activity-log/actions';
 
-const activityLogRequest = ( { dispatch }, action ) => {
+export const handleActivityLogRequest = ( { dispatch }, action ) => {
 	dispatch( http( {
 		apiVersion: '1',
 		method: 'GET',
@@ -42,7 +42,7 @@ export const receiveActivityLogError = ( { dispatch }, { siteId }, next, error )
 
 export default {
 	[ ACTIVITY_LOG_REQUEST ]: [ dispatchRequest(
-		activityLogRequest,
+		handleActivityLogRequest,
 		receiveActivityLog,
 		receiveActivityLogError
 	) ],
