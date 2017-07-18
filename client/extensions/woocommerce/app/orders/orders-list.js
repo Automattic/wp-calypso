@@ -21,7 +21,7 @@ import {
 	getTotalOrdersPages
 } from 'woocommerce/state/sites/orders/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { getOrdersCurrentPage } from 'woocommerce/state/ui/orders/selectors';
+import { getOrdersCurrentPage, getOrdersCurrentStatus } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import humanDate from 'lib/human-date';
 import { setCurrentPage } from 'woocommerce/state/ui/orders/actions';
@@ -34,16 +34,27 @@ import TableItem from 'woocommerce/components/table/table-item';
 
 class Orders extends Component {
 	componentDidMount() {
-		const { siteId, currentPage } = this.props;
-
+		const { siteId, currentPage, currentStatus } = this.props;
+		const query = {
+			page: currentPage,
+			status: currentStatus,
+		};
 		if ( siteId ) {
-			this.props.fetchOrders( siteId, currentPage );
+			this.props.fetchOrders( siteId, query );
 		}
 	}
 
 	componentWillReceiveProps( newProps ) {
-		if ( newProps.currentPage !== this.props.currentPage || newProps.siteId !== this.props.siteId ) {
-			this.props.fetchOrders( newProps.siteId, newProps.currentPage );
+		const query = {
+			page: newProps.currentPage,
+			status: newProps.currentStatus,
+		};
+		if (
+			newProps.currentPage !== this.props.currentPage ||
+			newProps.currentStatus !== this.props.currentStatus ||
+			newProps.siteId !== this.props.siteId
+		) {
+			this.props.fetchOrders( newProps.siteId, query );
 		}
 	}
 
@@ -187,6 +198,7 @@ export default connect(
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
 		const currentPage = getOrdersCurrentPage( state, siteId );
+		const currentStatus = getOrdersCurrentStatus( state, siteId );
 		const orders = getOrders( state, currentPage, siteId );
 		const ordersLoading = areOrdersLoading( state, currentPage, siteId );
 		const ordersLoaded = areOrdersLoaded( state, currentPage, siteId );
@@ -194,6 +206,7 @@ export default connect(
 
 		return {
 			currentPage,
+			currentStatus,
 			orders,
 			ordersLoading,
 			ordersLoaded,
