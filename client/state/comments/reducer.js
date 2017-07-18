@@ -107,13 +107,23 @@ export function items( state = {}, action ) {
 	return state;
 }
 
+export const hasMoreCommentsInitialState = {
+	before: true,
+	after: true,
+	hasReceivedBefore: false,
+	hasReceivedAfter: false,
+};
+
 /***
- * Stores whether or not there are more comments, and in which directions, for a particular post,
+ * Stores whether or not there are more comments, and in which directions, for a particular post.
+ * Also includes whether or not a before/after has ever been queried
  * Example state:
  *  {
  *     [ siteId-postId ]: {
- *       before: true,
- *       after: false,
+ *       before: bool,
+ *       after: bool,
+ *       hasReceivedBefore: bool,
+ *       hasReceivedAfter: bool,
  *     }
  *  }
  *
@@ -129,14 +139,16 @@ export const hasMoreComments = createReducer(
 			const stateKey = getStateKey( siteId, postId );
 
 			if ( commentById ) {
-				return state[ stateKey ]
-					? state
-					: { ...state, [ stateKey ]: { before: true, after: true } };
+				return state;
 			}
 
+			const hasReceivedDirection =
+				direction === 'before' ? 'hasReceivedBefore' : 'hasReceivedAfter';
+
 			const nextState = {
-				...( state[ stateKey ] || { before: true, after: true } ),
+				...( state[ stateKey ] || hasMoreCommentsInitialState ),
 				[ direction ]: action.comments.length === NUMBER_OF_COMMENTS_PER_FETCH,
+				[ hasReceivedDirection ]: true,
 			};
 
 			return isEqual( state[ stateKey ], nextState )

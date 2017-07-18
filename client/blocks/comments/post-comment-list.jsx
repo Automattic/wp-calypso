@@ -14,6 +14,7 @@ import {
 	getPostTotalCommentsCount,
 	haveEarlierCommentsToFetch,
 	haveLaterCommentsToFetch,
+	haveReceivedBeforeAndAfter,
 } from 'state/comments/selectors';
 import { requestPostComments, requestComment } from 'state/comments/actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
@@ -39,6 +40,7 @@ class PostCommentList extends React.Component {
 		// connect()ed props:
 		commentsTree: React.PropTypes.object, //TODO: Find a lib that provides immutable shape
 		totalCommentsCount: React.PropTypes.number,
+		haveReceivedBeforeAndAfter: React.PropTypes.bool,
 		haveEarlierCommentsToFetch: React.PropTypes.bool,
 		haveLaterCommentsToFetch: React.PropTypes.bool,
 		requestPostComments: React.PropTypes.func.isRequired,
@@ -109,7 +111,7 @@ class PostCommentList extends React.Component {
 			} );
 		}
 
-		if ( this.shouldScrollToComment() ) {
+		if ( this.shouldScrollToComment( nextProps ) ) {
 			this.scrollToComment();
 		}
 	}
@@ -221,14 +223,12 @@ class PostCommentList extends React.Component {
 	 *
 	 * @returns {boolean} - whether or not we should scroll to a comment
 	 */
-	shouldScrollToComment = () =>
-		this.props.startingCommentId &&
-		this.props.commentsTree[ this.props.startingCommentId ] &&
+	shouldScrollToComment = ( props = this.props ) =>
+		props.startingCommentId &&
+		props.commentsTree[ this.props.startingCommentId ] &&
+		props.haveReceivedBeforeAndAfter &&
 		! this.hasScrolledToComment &&
-		this.alreadyLoadedInitialSet &&
-		( this.getCommentsCount( this.props.commentsTree.children ) > 1 ||
-			this.props.commentCount === 1 ) &&
-		window.document.getElementsByName( `comment-${ this.props.startingCommentId }` ).length > 0;
+		window.document.getElementsByName( `comment-${ props.startingCommentId }` ).length > 0;
 
 	getCommentsCount = commentIds => {
 		// we always count prevSum, children sum, and +1 for the current processed comment
@@ -252,9 +252,7 @@ class PostCommentList extends React.Component {
 			return null;
 		}
 
-		const displayedComments = this.props.startingCommentId
-			? commentIds
-			: takeRight( commentIds, numberToTake );
+		const displayedComments = takeRight( commentIds, numberToTake );
 
 		return {
 			displayedComments,
@@ -397,6 +395,11 @@ export default connect(
 			ownProps.post.site_ID,
 			ownProps.post.ID,
 			ownProps.commentCount,
+		),
+		haveReceivedBeforeAndAfter: haveReceivedBeforeAndAfter(
+			state,
+			ownProps.post.site_ID,
+			ownProps.post.ID,
 		),
 	} ),
 	{ requestPostComments, requestComment },

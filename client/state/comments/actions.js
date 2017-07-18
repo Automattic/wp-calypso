@@ -50,7 +50,7 @@ export function requestPostComments( {
 		postId,
 		direction,
 		query: {
-			order: 'DESC',
+			order: direction === 'before' ? 'DESC' : 'ASC',
 			number: NUMBER_OF_COMMENTS_PER_FETCH,
 			status,
 		},

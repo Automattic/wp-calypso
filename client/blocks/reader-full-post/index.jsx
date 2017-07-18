@@ -296,6 +296,8 @@ export class FullPostView extends React.Component {
 
 		const externalHref = isDiscoverPost( referralPost ) ? referralPost.URL : post.URL;
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
+		const startingCommentId = this.getCommentIdFromUrl();
+		const commentCount = get( post, 'discussion.comment_count' );
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
@@ -342,7 +344,7 @@ export class FullPostView extends React.Component {
 						{ shouldShowComments( post ) &&
 							<CommentButton
 								key="comment-button"
-								commentCount={ post.discussion.comment_count }
+								commentCount={ commentCount }
 								onClick={ this.handleCommentClick }
 								tagName="div"
 							/> }
@@ -423,10 +425,10 @@ export class FullPostView extends React.Component {
 									? <Comments
 											ref="commentsList"
 											post={ post }
-											initialSize={ 10 }
+											initialSize={ startingCommentId ? commentCount : 10 }
 											pageSize={ 25 }
-											startingCommentId={ this.getCommentIdFromUrl() }
-											commentCount= { post.discussion.comment_count }
+											startingCommentId={ startingCommentId }
+											commentCount={ commentCount }
 										/>
 									: null }
 							</div>

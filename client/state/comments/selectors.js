@@ -7,7 +7,7 @@ import { filter, find, get, keyBy, last, first, map, size } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { getStateKey } from './reducer';
+import { getStateKey, hasMoreCommentsInitialState } from './reducer';
 
 /***
  * Gets comment items for post
@@ -116,12 +116,24 @@ export const haveMoreCommentsToFetch = createSelector(
 export const haveEarlierCommentsToFetch = ( state, siteId, postId, commentTotal = 0 ) =>
 	( haveMoreCommentsToFetch( state, siteId, postId ) ||
 		commentTotal > size( getPostCommentItems( state, siteId, postId ) ) ) &&
-	!! get( state.comments.hasMoreComments, getStateKey( siteId, postId ), {} ).before;
+	get( state.comments.hasMoreComments, getStateKey( siteId, postId ), hasMoreCommentsInitialState )
+		.before;
 
 export const haveLaterCommentsToFetch = ( state, siteId, postId, commentTotal = 0 ) =>
 	( haveMoreCommentsToFetch( state, siteId, postId ) ||
 		commentTotal > size( getPostCommentItems( state, siteId, postId ) ) ) &&
-	!! get( state.comments.hasMoreComments, getStateKey( siteId, postId ), {} ).after;
+	get( state.comments.hasMoreComments, getStateKey( siteId, postId ), hasMoreCommentsInitialState )
+		.after;
+
+export const haveReceivedBeforeAndAfter = ( state, siteId, postId ) => {
+	const hasMoreComments = get(
+		state.comments.hasMoreComments,
+		getStateKey( siteId, postId ),
+		hasMoreCommentsInitialState,
+	);
+	const { hasReceivedAfter, hasReceivedBefore } = hasMoreComments;
+	return hasReceivedBefore && hasReceivedAfter;
+};
 
 /***
  * Gets likes stats for the comment
