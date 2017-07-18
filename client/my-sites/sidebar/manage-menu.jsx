@@ -166,6 +166,7 @@ class ManageMenu extends PureComponent {
 			case 'jetpack-portfolio': icon = 'folder'; break;
 			case 'jetpack-testimonial': icon = 'quote'; break;
 			case 'media': icon = 'image'; break;
+			case 'conversations': icon = 'chat'; break;
 			default: icon = 'custom-post-type';
 		}
 
