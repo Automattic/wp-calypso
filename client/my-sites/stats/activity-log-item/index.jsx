@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityActor from './activity-actor';
 import ActivityIcon from './activity-icon';
+import ActivityTitle from './activity-title';
 import EllipsisMenu from 'components/ellipsis-menu';
 import FoldableCard from 'components/foldable-card';
 import PopoverMenuItem from 'components/popover/menu-item';
@@ -180,22 +181,6 @@ class ActivityLogItem extends Component {
 		} );
 	};
 
-	renderContent() {
-		const { log } = this.props;
-		const {
-			name,
-		} = log;
-
-		const subTitle = null;
-
-		return (
-			<div className="activity-log-item__content">
-				<div className="activity-log-item__content-title">{ name }</div>
-				{ subTitle && <div className="activity-log-item__content-sub-title">{ subTitle }</div> }
-			</div>
-		);
-	}
-
 	// FIXME: Just for demonstration purposes
 	renderDescription() {
 		const {
@@ -225,12 +210,24 @@ class ActivityLogItem extends Component {
 	}
 
 	renderHeader() {
+		const {
+			action,
+			group,
+			name,
+		} = this.props.log;
 		const actor = get( this.props, [ 'log', 'actor' ] );
+		const object = get( this.props, [ 'log', 'object' ] );
 
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor actor={ actor } />
-				{ this.renderContent() }
+				<ActivityTitle
+					action={ action }
+					actor={ actor }
+					group={ group }
+					name={ name }
+					object={ object }
+				/>
 			</div>
 		);
 	}

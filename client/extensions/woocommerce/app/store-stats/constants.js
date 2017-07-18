@@ -83,6 +83,7 @@ export const UNITS = {
 		format: 'YYYY-MM-DD',
 		sinceFormat: 'MMM D',
 		chartFormat: 'labelDay',
+		title: translate( 'Days' )
 	},
 	week: {
 		quantity: 30,
@@ -91,6 +92,7 @@ export const UNITS = {
 		format: 'YYYY-[W]WW',
 		sinceFormat: 'MMM D',
 		chartFormat: 'labelWeek',
+		title: translate( 'Weeks' )
 	},
 	month: {
 		quantity: 12,
@@ -99,6 +101,7 @@ export const UNITS = {
 		format: 'YYYY-MM',
 		sinceFormat: 'MMM [\']YY',
 		chartFormat: 'labelMonth',
+		title: translate( 'Months' )
 	},
 	year: {
 		quantity: 10,
@@ -107,5 +110,6 @@ export const UNITS = {
 		format: 'YYYY',
 		sinceFormat: 'YYYY',
 		chartFormat: 'labelYear',
+		title: translate( 'Years' )
 	}
 };

@@ -8,7 +8,6 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
-import Dispatcher from 'dispatcher';
 import Emitter from 'lib/mixins/emitter';
 import FeedPostStore from 'lib/feed-post-store';
 import * as FeedStreamActions from './actions';
@@ -83,8 +82,6 @@ export default class FeedStream {
 		if ( action.id !== this.id ) {
 			return;
 		}
-
-		Dispatcher.waitFor( [ FeedPostStore.dispatchToken ] );
 
 		switch ( action.type ) {
 			case ActionTypes.RECEIVE_PAGE:
@@ -237,7 +234,7 @@ export default class FeedStream {
 		do {
 			const key = this.postKeys[ i ];
 			if ( ! key.isGap ) {
-				date = FeedPostStore.get( key )[ this.dateProperty ];
+				date = key[ this.dateProperty ];
 			}
 			--i;
 		} while ( ! date && i !== -1 );
@@ -256,7 +253,7 @@ export default class FeedStream {
 		do {
 			const key = this.postKeys[ i ];
 			if ( ! key.isGap ) {
-				date = FeedPostStore.get( key )[ this.dateProperty ];
+				date = key[ this.dateProperty ];
 			}
 			++i;
 		} while ( ! date && i < this.postKeys.length );
@@ -475,7 +472,7 @@ export default class FeedStream {
 			if ( postKeys.length > 0 ) {
 				this.pendingPostKeys = postKeys;
 				this.pendingDateAfter = moment(
-					FeedPostStore.get( this.keyMaker( data.posts[ data.posts.length - 1 ] ) )[
+					this.keyMaker( data.posts[ data.posts.length - 1 ] )[
 						this.dateProperty
 					],
 				);
@@ -495,7 +492,7 @@ export default class FeedStream {
 		} );
 
 		const mostRecentPostDate = moment(
-			FeedPostStore.get( this.postKeys[ 0 ] )[ this.dateProperty ],
+			this.postKeys[ 0 ][ this.dateProperty ],
 		);
 
 		if ( this.pendingDateAfter > mostRecentPostDate ) {
@@ -539,7 +536,7 @@ export default class FeedStream {
 		const beforeGap = this.postKeys.slice( 0, indexOfGap ),
 			afterGap = this.postKeys.slice( indexOfGap + 1 ),
 			gapItems = this.filterNewPosts( posts ),
-			afterGapDate = moment( FeedPostStore.get( afterGap[ 0 ] )[ this.dateProperty ] );
+			afterGapDate = moment( afterGap[ 0 ][ this.dateProperty ] );
 
 		if ( posts.length === this.gapFillCount ) {
 			if ( moment( posts[ posts.length - 1 ][ this.dateProperty ] ) > afterGapDate ) {

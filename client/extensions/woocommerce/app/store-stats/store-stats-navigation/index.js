@@ -8,33 +8,23 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
+import StoreStatsNavigationTabs from './navtabs';
 import FollowersCount from 'blocks/followers-count';
 import SegmentedControl from 'components/segmented-control';
+import { UNITS } from 'woocommerce/app/store-stats/constants';
 
 const StoreStatsNavigation = props => {
 	const { translate, slug, type, unit } = props;
-	const units = {
-		day: translate( 'Days' ),
-		week: translate( 'Weeks' ),
-		month: translate( 'Months' ),
-		year: translate( 'Years' ),
-	};
 	return (
 		<div className="store-stats-navigation">
-			<SectionNav selectedText={ units[ unit ] }>
-				<NavTabs label={ translate( 'Stats' ) }>
-					{ Object.keys( units ).map( key => (
-						<NavItem
-							key={ key }
-							path={ `/store/stats/${ type }/${ key }/${ slug }` }
-							selected={ unit === key }
-						>
-							{ units[ key ] }
-						</NavItem>
-					) ) }
-				</NavTabs>
+			<SectionNav selectedText={ UNITS[ unit ].title }>
+				<StoreStatsNavigationTabs
+					label={ 'Stats' }
+					slug={ slug }
+					type={ type }
+					unit={ unit }
+					units={ UNITS }
+				/>
 				<SegmentedControl
 					initialSelected="store"
 					options={ [

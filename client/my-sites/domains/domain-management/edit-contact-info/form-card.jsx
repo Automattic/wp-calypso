@@ -4,7 +4,10 @@
 import React from 'react';
 import {
 	endsWith,
-	omit
+	isEqual,
+	keys,
+	omit,
+	pick,
 } from 'lodash';
 import page from 'page';
 import { bindActionCreators } from 'redux';
@@ -227,9 +230,12 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	render() {
-		const { translate } = this.props,
-			saveButtonLabel = translate( 'Save Contact Info' ),
-			canUseDesignatedAgent = this.props.selectedDomain.transferLockOnWhoisUpdateOptional;
+		const { translate } = this.props;
+		const saveButtonLabel = translate( 'Save Contact Info' );
+		const canUseDesignatedAgent = this.props.selectedDomain.transferLockOnWhoisUpdateOptional;
+		const currentContactInformation = formState.getAllFieldValues( this.state.form );
+		const initialContactInformation = pick( this.props.contactInformation, keys( currentContactInformation ) );
+		const isSaveButtonDisabled = this.state.formSubmitting || isEqual( initialContactInformation, currentContactInformation );
 
 		return (
 			<Card>
@@ -329,7 +335,7 @@ class EditContactInfoFormCard extends React.Component {
 
 					<FormFooter>
 						<FormButton
-							disabled={ this.state.formSubmitting }
+							disabled={ isSaveButtonDisabled }
 							onClick={ this.requiresConfirmation() ? this.showNonDaConfirmationDialog : this.saveContactInfo }>
 							{ saveButtonLabel }
 						</FormButton>
