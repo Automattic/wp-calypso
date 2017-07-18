@@ -17,6 +17,8 @@ import { recordTrack } from 'reader/stats';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'state/ui/guided-tours/contexts';
 import { abtest } from 'lib/abtest';
 
+const abtestVariant = abtest( 'readerIntroIllustration' );
+
 class FollowingIntro extends React.Component {
 	componentDidMount() {
 		this.recordRenderTrack();
@@ -44,7 +46,6 @@ class FollowingIntro extends React.Component {
 		const linkElement = <a onClick={ this.props.handleManageLinkClick } href="/following/manage" />;
 
 		// A/B test three variants of the new illustration
-		const abtestVariant = abtest( 'readerIntroIllustration' );
 		let variantClassname = null;
 		if ( abtestVariant === 'blue' ) {
 			variantClassname = 'following__intro-blue';
