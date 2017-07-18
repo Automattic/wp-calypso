@@ -38,6 +38,8 @@ class UploadImage extends Component {
 		onImageEditorDone: PropTypes.func,
 		additionalImageEditorClasses: PropTypes.string,
 		additionalClasses: PropTypes.string,
+		placeholderContent: PropTypes.element,
+		uploadingContent: PropTypes.element,
 	};
 
 	static defaultProps = {
@@ -50,7 +52,7 @@ class UploadImage extends Component {
 		isUploading: false,
 	};
 
-	onReceiveFile = ( files ) => {
+	receiveFiles = ( files ) => {
 		const extension = path.extname( files[ 0 ].name )
 			.toLowerCase()
 			.substring( 1 );
@@ -63,7 +65,7 @@ class UploadImage extends Component {
 
 		this.setState( {
 			isEditingImage: true,
-			uploadedImage: imageObjectUrl
+			uploadedImage: imageObjectUrl,
 		} );
 	};
 
@@ -90,40 +92,42 @@ class UploadImage extends Component {
 
 		this.setState( {
 			isEditingImage: false,
-			uploadedImage: false
+			uploadedImage: false,
 		} );
 	};
 
 	renderImageEditor() {
+		const {
+			isEditingImage,
+			uploadedImage,
+		} = this.state;
+
+		if ( ! isEditingImage ) {
+			return null;
+		}
+
 		const {
 			additionalImageEditorClasses,
 			imageEditorProps,
 			texts,
 		} = this.props;
 
-		const {
-			isEditingImage,
-			uploadedImage
-		} = this.state;
-
 		const classes = classnames( 'upload-image-modal', additionalImageEditorClasses );
 
-		if ( isEditingImage ) {
-			return (
-				<Dialog
-					additionalClassNames={ classes }
-					isVisible={ true }
-				>
-					<ImageEditor
-						{ ...imageEditorProps }
-						media={ { src: uploadedImage } }
-						onDone={ this.onImageEditorDone }
-						onCancel={ this.hideImageEditor }
-						doneButtonText={ texts.doneButtonText ? texts.doneButtonText : 'Done' }
-					/>
-				</Dialog>
-			);
-		}
+		return (
+			<Dialog
+				additionalClassNames={ classes }
+				isVisible={ true }
+			>
+				<ImageEditor
+					{ ...imageEditorProps }
+					media={ { src: uploadedImage } }
+					onDone={ this.onImageEditorDone }
+					onCancel={ this.hideImageEditor }
+					doneButtonText={ texts.doneButtonText ? texts.doneButtonText : 'Done' }
+				/>
+			</Dialog>
+		);
 	}
 
 	render() {
@@ -132,7 +136,7 @@ class UploadImage extends Component {
 			isUploading,
 			translate,
 			texts,
-			additionalClasses
+			additionalClasses,
 		} = this.props;
 
 		let {
@@ -144,7 +148,9 @@ class UploadImage extends Component {
 			placeholderContent = (
 				<div className="upload-image__placeholder">
 						<Gridicon icon="add-image" size={ 36 } />
-					<span>Add an image</span>
+					<span>
+						{ texts.addAnImage ? texts.addAnImage : translate( 'Add an image' ) }
+					</span>
 				</div>
 			);
 		}
@@ -164,7 +170,7 @@ class UploadImage extends Component {
 			<div className={ classnames( 'upload-image', additionalClasses ) } >
 				{ this.renderImageEditor() }
 
-				<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
+				<FilePicker accept="image/*" onPick={ this.receiveFiles }>
 					<div
 						className={
 							classnames( 'upload-image__image-container',
@@ -177,7 +183,7 @@ class UploadImage extends Component {
 								? texts.dragUploadText
 								: translate( 'Drop to upload image' )
 							}
-							onFilesDrop={ this.onReceiveFile }
+							onFilesDrop={ this.receiveFiles }
 						/>
 
 						{ children }

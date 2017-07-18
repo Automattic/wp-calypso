@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +15,13 @@ export default class UploadImageExample extends Component {
 		uploadedImageDataUrl: null
 	};
 
+	onImageEditorDone = ( imageBlob ) => {
+		this.setState( {
+			uploadedImageDataUrl: URL.createObjectURL( imageBlob ),
+			isUploading: true,
+		} );
+	};
+
 	render() {
 		const { isUploading, uploadedImageDataUrl } = this.state;
 
@@ -24,14 +30,7 @@ export default class UploadImageExample extends Component {
 				<h3>Default Upload Image</h3>
 				<UploadImage
 					isUploading={ isUploading }
-					onImageEditorDone={
-						( imageBlob ) => {
-							this.setState( {
-								uploadedImageDataUrl: URL.createObjectURL( imageBlob ),
-								isUploading: true,
-							} );
-						}
-					}
+					onImageEditorDone={ this.onImageEditorDone }
 					imageEditorProps={ {
 						defaultAspectRatio: AspectRatios.FREE,
 					} }

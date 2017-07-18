@@ -3,7 +3,7 @@ Upload Image
 
 `UploadImage` component is used to accommodate the following flow:
 - click on a designated place to open file explorer
-- in file exploerer, select an image to upload
+- in file explorer, select an image to upload
 - image is moved to `ImageEditor` where user can edit the image before uploading
 - after clicking on "Done", `UploadImage` calls the `onImageEditorDone` handler where you can perform any operation
  (such as actual uploading of the image).
