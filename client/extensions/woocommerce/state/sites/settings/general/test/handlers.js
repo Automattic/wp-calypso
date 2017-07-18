@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import { spy, match } from 'sinon';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,8 +15,7 @@ import {
 } from '../handlers';
 import { fetchSettingsGeneral } from '../actions';
 import {
-	WOOCOMMERCE_ERROR_SET,
-	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
+	WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 } from 'woocommerce/state/action-types';
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 
@@ -50,14 +50,13 @@ describe( 'handlers', () => {
 			const dispatch = spy();
 			const action = fetchSettingsGeneral( siteId );
 
-			handleSettingsGeneral( { dispatch, getState }, action );
+			handleSettingsGeneral( { dispatch, getState }, action, noop );
 			expect( dispatch ).to.have.been.calledWith( match( {
 				type: WPCOM_HTTP_REQUEST,
 				method: 'GET',
 				path: `/jetpack-blogs/${ siteId }/rest-api/`,
 				query: {
-					path: '/wc/v3/settings/general',
-					_method: 'GET',
+					path: '/wc/v3/settings/general&_method=GET',
 					json: true,
 					apiVersion: '1.1',
 				}
@@ -81,7 +80,7 @@ describe( 'handlers', () => {
 			const dispatch = spy();
 			const action = fetchSettingsGeneral( siteId );
 
-			handleSettingsGeneral( { dispatch, getState }, action );
+			handleSettingsGeneral( { dispatch, getState }, action, noop );
 			expect( dispatch ).to.not.have.beenCalled;
 		} );
 	} );
@@ -94,10 +93,10 @@ describe( 'handlers', () => {
 			const response = { data: settingsData };
 
 			const action = fetchSettingsGeneral( siteId );
-			handleSettingsGeneralSuccess( store, action, null, response );
+			handleSettingsGeneralSuccess( store, action, noop, response );
 
 			expect( store.dispatch ).calledWith( {
-				type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
+				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 				siteId,
 				data: settingsData,
 			} );
@@ -111,9 +110,13 @@ describe( 'handlers', () => {
 			};
 
 			const action = fetchSettingsGeneral( siteId );
-			handleSettingsGeneralError( store, action, null, 'errror' );
+			handleSettingsGeneralError( store, action, noop, 'rest_no_route' );
 
-			expect( store.dispatch ).to.have.been.calledWithMatch( { type: WOOCOMMERCE_ERROR_SET, siteId } );
+			expect( store.dispatch ).to.have.been.calledWithMatch( {
+				type: WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
+				siteId,
+				error: 'rest_no_route',
+			} );
 		} );
 	} );
 } );

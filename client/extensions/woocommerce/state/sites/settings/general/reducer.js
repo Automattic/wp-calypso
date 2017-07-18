@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
-import { LOADING } from 'woocommerce/state/constants';
+import { ERROR, LOADING } from 'woocommerce/state/constants';
 import { isNull } from 'lodash';
 import { updateSettings } from '../helpers';
 import {
@@ -10,8 +10,7 @@ import {
 	WOOCOMMERCE_SETTINGS_BATCH_REQUEST,
 	WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
-	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_FAILURE,
-	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
+	WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 	WOOCOMMERCE_TAXES_ENABLED_UPDATE,
 	WOOCOMMERCE_TAXES_ENABLED_UPDATE_SUCCESS,
 } from 'woocommerce/state/action-types';
@@ -45,18 +44,19 @@ export default createReducer( null, {
 		return newSettings;
 	},
 
-	[ WOOCOMMERCE_SETTINGS_GENERAL_REQUEST ]: ( state ) => {
-		if ( isNull( state ) ) {
+	[ WOOCOMMERCE_SETTINGS_GENERAL_REQUEST ]: ( state, { meta: { dataLayer: { error, data } } } ) => {
+		// Don't set the loading indicator if data has previously been loaded,
+		// or if the data layer is dispatching with meta attached.
+		if ( ! data && ! error && isNull( state ) ) {
 			return LOADING;
 		}
 		return state;
 	},
 
-	[ WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_FAILURE ]: () => {
-		return null;
-	},
-
-	[ WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS ]: ( state, { data } ) => {
+	[ WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE ]: ( state, { data, error } ) => {
+		if ( error ) {
+			return ERROR;
+		}
 		return data;
 	},
 
