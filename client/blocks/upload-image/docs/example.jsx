@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { partial } from 'lodash';
 
 /**
@@ -9,22 +9,42 @@ import { partial } from 'lodash';
  */
 import UploadImage from '../';
 
-export default function UploadImageExample() {
-	return (
-		<div className="docs__design-assets-group">
-			<h3>Default Upload Image</h3>
-			<UploadImage isUploading={ false } onImageEditorDone={ ( imageBlob ) => console.log( imageBlob ) } />
+export default class UploadImageExample extends Component {
+	state = {
+		isUploading: false,
+		uploadedImageDataUrl: null
+	};
 
-			<h3>Image is uploading</h3>
-			<UploadImage isUploading={ true } />
+	render() {
+		const { isUploading, uploadedImageDataUrl } = this.state;
 
-			<h3>Image is uploaded</h3>
-			<UploadImage
-				placeholderContent={ null }
-				uploadingContent={ null }
-			>
-				<img src="https://cldup.com/mA_hqNVj0w.jpg" />
-			</UploadImage>
-		</div>
-	);
+		return (
+			<div className="docs__design-assets-group">
+				<h3>Default Upload Image</h3>
+				<UploadImage
+					isUploading={ isUploading }
+					onImageEditorDone={
+						(imageBlob) => {
+							this.setState( {
+								uploadedImageDataUrl: URL.createObjectURL( imageBlob ),
+								isUploading: true,
+							} );
+						}
+					}
+				>
+					{ uploadedImageDataUrl &&
+						<img src={ uploadedImageDataUrl }/>
+					}
+				</UploadImage>
+
+				<h3>Image is uploaded</h3>
+				<UploadImage
+					placeholderContent={ null }
+					uploadingContent={ null }
+				>
+					<img src="https://cldup.com/mA_hqNVj0w.jpg"/>
+				</UploadImage>
+			</div>
+		);
+	}
 }
