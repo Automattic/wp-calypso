@@ -49,7 +49,7 @@
 }
 
 .app-banner__buttons {
-	white-space: nowrap;
+	width: calc( 100% - 84px );
 }
 
 .button.app-banner__open-button {
