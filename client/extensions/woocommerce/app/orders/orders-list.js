@@ -5,12 +5,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
-import { times } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import EmptyContent from 'components/empty-content';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import formatCurrency from 'lib/format-currency';
@@ -24,9 +22,10 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { getOrdersCurrentPage, getOrdersCurrentStatus } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import humanDate from 'lib/human-date';
-import { setCurrentPage } from 'woocommerce/state/ui/orders/actions';
+import { setCurrentQuery } from 'woocommerce/state/ui/orders/actions';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
+import Pagination from 'my-sites/stats/pagination';
 import SectionNav from 'components/section-nav';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
@@ -45,15 +44,15 @@ class Orders extends Component {
 	}
 
 	componentWillReceiveProps( newProps ) {
-		const query = {
-			page: newProps.currentPage,
-			status: newProps.currentStatus,
-		};
 		if (
 			newProps.currentPage !== this.props.currentPage ||
 			newProps.currentStatus !== this.props.currentStatus ||
 			newProps.siteId !== this.props.siteId
 		) {
+			const query = {
+				page: newProps.currentPage,
+				status: newProps.currentStatus,
+			};
 			this.props.fetchOrders( newProps.siteId, query );
 		}
 	}
@@ -122,42 +121,23 @@ class Orders extends Component {
 		);
 	}
 
-	onPageClick = ( i ) => {
-		return () => {
-			this.props.setCurrentPage( this.props.siteId, i );
-		};
-	}
-
-	renderPageLink = ( i ) => {
-		// We want this to start at 1, not 0
-		i++;
-		return (
-			<li key={ i }>
-				{ ( i !== this.props.currentPage )
-					? <Button compact borderless onClick={ this.onPageClick( i ) }>{ i }</Button>
-					: <span>{ i }</span>
-				}
-			</li>
-		);
-	}
-
-	renderPagination = () => {
-		const { totalPages } = this.props;
-		// @todo Bring back pagination
-		if ( true || totalPages < 2 ) {
-			return null;
-		}
-
-		return (
-			<ul>
-				{ times( totalPages, this.renderPageLink ) }
-			</ul>
-		);
+	onPageClick = page => {
+		this.props.setCurrentQuery( this.props.siteId, { page } );
 	}
 
 	render() {
-		const { orders, site, translate } = this.props;
-		if ( ! orders.length ) {
+		const {
+			currentPage,
+			orders,
+			ordersLoading,
+			ordersLoaded,
+			site,
+			total,
+			translate
+		} = this.props;
+
+		// Orders are done loading, and there are definitely no orders for this query
+		if ( ordersLoaded && ! total ) {
 			return (
 				<div className="orders__container">
 					<EmptyContent
@@ -185,9 +165,17 @@ class Orders extends Component {
 				</SectionNav>
 
 				<Table className="orders__table" header={ headers } horizontalScroll>
-					{ orders.map( this.renderOrderItems ) }
+					{ ordersLoading
+						? null
+						: orders.map( this.renderOrderItems ) }
 				</Table>
-				{ this.renderPagination() }
+
+				<Pagination
+					page={ currentPage }
+					perPage={ 50 }
+					total={ total }
+					pageClick={ this.onPageClick }
+				/>
 			</div>
 		);
 	}
@@ -199,7 +187,7 @@ export default connect(
 		const siteId = site ? site.ID : false;
 		const currentPage = getOrdersCurrentPage( state, siteId );
 		const currentStatus = getOrdersCurrentStatus( state, siteId );
-		const orders = getOrders( state, currentPage, siteId );
+		const orders = getOrders( state, { page: currentPage, status: currentStatus }, siteId );
 		const ordersLoading = areOrdersLoading( state, currentPage, siteId );
 		const ordersLoaded = areOrdersLoaded( state, currentPage, siteId );
 		const total = getTotalOrders( state, { status: currentStatus }, siteId );
@@ -215,5 +203,5 @@ export default connect(
 			total,
 		};
 	},
-	dispatch => bindActionCreators( { fetchOrders, setCurrentPage }, dispatch )
+	dispatch => bindActionCreators( { fetchOrders, setCurrentQuery }, dispatch )
 )( localize( Orders ) );
