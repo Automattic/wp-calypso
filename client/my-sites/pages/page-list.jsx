@@ -101,14 +101,12 @@ const Pages = localize( React.createClass( {
 		siteId: PropTypes.any,
 		hasSites: PropTypes.bool.isRequired,
 		trackScrollPage: PropTypes.func.isRequired,
-		hasRecentError: PropTypes.bool.isRequired
 	},
 
 	getDefaultProps() {
 		return {
 			perPage: 100,
 			loading: false,
-			hasRecentError: false,
 			lastPage: false,
 			page: 0,
 			pages: [],
@@ -117,7 +115,7 @@ const Pages = localize( React.createClass( {
 	},
 
 	fetchPages( options ) {
-		if ( this.props.loading || this.props.lastPage || this.props.hasRecentError ) {
+		if ( this.props.loading || this.props.lastPage ) {
 			return;
 		}
 		if ( options.triggeredByScroll ) {
@@ -177,49 +175,41 @@ const Pages = localize( React.createClass( {
 			);
 		}
 
-		const { site, siteId } = this.props;
+		const { site, siteId, status = 'published' } = this.props;
 		const sitePart = site && site.slug || siteId;
 		const newPageLink = this.props.siteId ? '/page/' + sitePart : '/page';
 		let attributes;
 
-		if ( this.props.hasRecentError ) {
-			attributes = {
-				title: translate( 'Oh, no! We couldn\'t fetch your pages.' ),
-				line: translate( 'Please check your internet connection.' )
-			};
-		} else {
-			const status = this.props.status || 'published';
-			switch ( status ) {
-				case 'drafts':
-					attributes = {
-						title: translate( 'You don\'t have any drafts.' ),
-						line: translate( 'Would you like to create one?' ),
-						action: translate( 'Start a Page' ),
-						actionURL: newPageLink
-					};
-					break;
-				case 'scheduled':
-					attributes = {
-						title: translate( 'You don\'t have any scheduled pages yet.' ),
-						line: translate( 'Would you like to create one?' ),
-						action: translate( 'Start a Page' ),
-						actionURL: newPageLink
-					};
-					break;
-				case 'trashed':
-					attributes = {
-						title: translate( 'You don\'t have any pages in your trash folder.' ),
-						line: translate( 'Everything you write is solid gold.' )
-					};
-					break;
-				default:
-					attributes = {
-						title: translate( 'You haven\'t published any pages yet.' ),
-						line: translate( 'Would you like to publish your first page?' ),
-						action: translate( 'Start a Page' ),
-						actionURL: newPageLink
-					};
-			}
+		switch ( status ) {
+			case 'drafts':
+				attributes = {
+					title: translate( 'You don\'t have any drafts.' ),
+					line: translate( 'Would you like to create one?' ),
+					action: translate( 'Start a Page' ),
+					actionURL: newPageLink
+				};
+				break;
+			case 'scheduled':
+				attributes = {
+					title: translate( 'You don\'t have any scheduled pages yet.' ),
+					line: translate( 'Would you like to create one?' ),
+					action: translate( 'Start a Page' ),
+					actionURL: newPageLink
+				};
+				break;
+			case 'trashed':
+				attributes = {
+					title: translate( 'You don\'t have any pages in your trash folder.' ),
+					line: translate( 'Everything you write is solid gold.' )
+				};
+				break;
+			default:
+				attributes = {
+					title: translate( 'You haven\'t published any pages yet.' ),
+					line: translate( 'Would you like to publish your first page?' ),
+					action: translate( 'Start a Page' ),
+					actionURL: newPageLink
+				};
 		}
 
 		attributes.illustration = '/calypso/images/pages/illustration-pages.svg';
