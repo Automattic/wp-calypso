@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -13,18 +12,18 @@ const siteId = 77203074;
 
 describe( 'isPluginUploadInProgress', () => {
 	it( 'should return false by default', () => {
-		const state = deepFreeze( {
+		const state = {
 			plugins: {
 				upload: {
 					inProgress: {}
 				}
 			}
-		} );
+		};
 		expect( isPluginUploadInProgress( state, siteId ) ).to.be.false;
 	} );
 
 	it( 'should return current value for site', () => {
-		const stateFalse = deepFreeze( {
+		const stateFalse = {
 			plugins: {
 				upload: {
 					inProgress: {
@@ -32,10 +31,10 @@ describe( 'isPluginUploadInProgress', () => {
 					}
 				}
 			}
-		} );
+		};
 		expect( isPluginUploadInProgress( stateFalse, siteId ) ).to.be.false;
 
-		const stateTrue = deepFreeze( {
+		const stateTrue = {
 			plugins: {
 				upload: {
 					inProgress: {
@@ -43,7 +42,7 @@ describe( 'isPluginUploadInProgress', () => {
 					}
 				}
 			}
-		} );
+		};
 		expect( isPluginUploadInProgress( stateTrue, siteId ) ).to.be.true;
 	} );
 } );

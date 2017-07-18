@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -13,19 +12,19 @@ const siteId = 77203074;
 
 describe( 'isPluginUploadComplete', () => {
 	it( 'should return false by default', () => {
-		const state = deepFreeze( {
+		const state = {
 			plugins: {
 				upload: {
 					inProgress: {},
 					uploadedPluginId: {},
 				}
 			}
-		} );
+		};
 		expect( isPluginUploadComplete( state, siteId ) ).to.be.false;
 	} );
 
 	it( 'should return false if no plugin id available', () => {
-		const state = deepFreeze( {
+		const state = {
 			plugins: {
 				upload: {
 					inProgress: {
@@ -34,12 +33,12 @@ describe( 'isPluginUploadComplete', () => {
 					uploadedPluginId: {},
 				}
 			}
-		} );
+		};
 		expect( isPluginUploadComplete( state, siteId ) ).to.be.false;
 	} );
 
 	it( 'should return false if upload still in progress', () => {
-		const state = deepFreeze( {
+		const state = {
 			plugins: {
 				upload: {
 					inProgress: {
@@ -50,12 +49,12 @@ describe( 'isPluginUploadComplete', () => {
 					},
 				}
 			}
-		} );
+		};
 		expect( isPluginUploadComplete( state, siteId ) ).to.be.false;
 	} );
 
 	it( 'should return true if upload not in progress and plugin id present', () => {
-		const state = deepFreeze( {
+		const state = {
 			plugins: {
 				upload: {
 					inProgress: {
@@ -66,7 +65,7 @@ describe( 'isPluginUploadComplete', () => {
 					},
 				}
 			}
-		} );
+		};
 		expect( isPluginUploadComplete( state, siteId ) ).to.be.true;
 	} );
 } );

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -17,18 +16,18 @@ const error = {
 
 describe( 'getPluginUploadError', () => {
 	it( 'should return null by default', () => {
-		const state = deepFreeze( {
+		const state = {
 			plugins: {
 				upload: {
 					uploadError: {}
 				}
 			}
-		} );
+		};
 		expect( getPluginUploadError( state, siteId ) ).to.be.null;
 	} );
 
 	it( 'should return current value for site', () => {
-		const state = deepFreeze( {
+		const state = {
 			plugins: {
 				upload: {
 					uploadError: {
@@ -36,7 +35,7 @@ describe( 'getPluginUploadError', () => {
 					},
 				},
 			},
-		} );
+		};
 		expect( getPluginUploadError( state, siteId ) ).to.deep.equal( error );
 	} );
 } );
