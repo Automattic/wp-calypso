@@ -4,8 +4,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { includes, find, isEmpty } from 'lodash';
-import Gridicon from 'gridicons';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -56,9 +54,6 @@ import {
 } from 'state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
-import {
-	MAX_UPLOADED_THEME_SIZE
-} from 'lib/automated-transfer/constants';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -150,62 +145,6 @@ class Upload extends React.Component {
 
 		const unknownCause = error.error ? `: ${ error.error }` : '';
 		notices.error( cause || translate( 'Problem uploading theme' ) + unknownCause );
-	}
-
-	onFileSelect = ( files ) => {
-		const { translate, siteId } = this.props;
-		const errorMessage = translate( 'Please drop a single zip file' );
-
-		if ( files.length !== 1 ) {
-			notices.error( errorMessage );
-			return;
-		}
-
-		// DropZone supplies an array, FilePicker supplies a FileList
-		const file = files[ 0 ] || files.item( 0 );
-		debug( 'zip file:', file );
-
-		if ( file.size > MAX_UPLOADED_THEME_SIZE ) {
-			notices.error(
-				translate( 'Theme zip is too large. Please upload a theme under 50 MB.' )
-			);
-
-			return;
-		}
-
-		const action = this.props.isJetpack
-			? this.props.uploadTheme : this.props.initiateThemeTransfer;
-		action( siteId, file );
-	}
-
-	renderDropZone() {
-		const { translate, isBusiness, isJetpack } = this.props;
-		const dropText = translate(
-			'Drop files or click here to upload'
-		);
-		const uploadInstructionsText = translate(
-			'Only single .zip files are accepted.'
-		);
-
-		const themeUploadClass = classNames( 'theme-upload', {
-			'is-disabled': ! isBusiness && ! isJetpack
-		} );
-
-		return (
-			<div className={ themeUploadClass }>
-				<div className="theme-upload__dropzone">
-					<DropZone onFilesDrop={ this.onFileSelect } />
-					<FilePicker accept="application/zip" onPick={ this.onFileSelect } >
-						<Gridicon
-							className="theme-upload__dropzone-icon"
-							icon="cloud-upload"
-							size={ 48 } />
-						{ dropText }
-						<span className="theme-upload__dropzone-instructions">{ uploadInstructionsText }</span>
-					</FilePicker>
-				</div>
-			</div>
-		);
 	}
 
 	renderProgressBar() {
