@@ -13,7 +13,6 @@ import QuerySiteSettings from 'components/data/query-site-settings';
 import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import SeoForm from './form';
-import SiteVerification from './site-verification';
 
 export class SeoSettings extends Component {
 	componentWillReceiveProps( nextProps ) {
@@ -30,7 +29,6 @@ export class SeoSettings extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
 				{ site && <SeoForm site={ site } /> }
-				{ site && <SiteVerification /> }
 			</div>
 		);
 	}
