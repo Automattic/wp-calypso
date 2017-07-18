@@ -8,6 +8,7 @@ import { setError } from '../../status/wc-api/actions';
 import {
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
+	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
 
 export const handleSettingsGeneralSuccess = ( { dispatch }, action, next, { data } ) => {
@@ -21,6 +22,11 @@ export const handleSettingsGeneralSuccess = ( { dispatch }, action, next, { data
 
 export const handleSettingsGeneralError = ( { dispatch }, action, next, error ) => {
 	const { siteId } = action;
+	dispatch( {
+		type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_FAILURE,
+		siteId,
+		error,
+	} );
 	dispatch( setError( siteId, action, error ) );
 };
 
