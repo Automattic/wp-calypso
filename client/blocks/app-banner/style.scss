@@ -33,14 +33,14 @@
 }
 
 .app-banner__text-content {
-	width: 70%;
-	height: 70px;
+	width: calc( 100% - 84px );
+	min-height: 66px;
 }
 
 .app-banner__title {
-	white-space: nowrap;
 	font-size: 17px;
-	font-weight: 500;
+	font-weight: 600;
+	line-height: 1.4;
 }
 
 .app-banner__copy {
