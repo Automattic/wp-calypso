@@ -33,4 +33,4 @@ Function that takes params `siteId` and `File`, which will be called when a zip 
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-True to disable the picker and dropzone.
+`true` to disable the picker and dropzone.
