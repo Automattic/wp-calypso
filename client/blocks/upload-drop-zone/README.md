@@ -26,7 +26,7 @@ render() {
 
 Function that takes params `siteId` and `File`, which will be called when a zip file has been selected (dropped or picked).
 
-### `disable`
+### `disabled`
 
 <table>
 	<tr><th>Type</th><td>Boolean</td></tr>
