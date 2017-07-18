@@ -8,6 +8,7 @@ import { partial } from 'lodash';
  * Internal dependencies
  */
 import UploadImage from '../';
+import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 
 export default class UploadImageExample extends Component {
 	state = {
@@ -31,6 +32,9 @@ export default class UploadImageExample extends Component {
 							} );
 						}
 					}
+					imageEditorProps={ {
+						defaultAspectRatio: AspectRatios.FREE,
+					} }
 				/>
 
 				<h3>Image is uploaded</h3>

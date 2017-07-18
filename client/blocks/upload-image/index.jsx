@@ -13,10 +13,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { ALLOWED_FILE_EXTENSIONS } from './constants';
-import {
-	AspectRatios,
-	AspectRatiosValues,
-} from 'state/ui/editor/image-editor/constants';
+import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import Dialog from 'components/dialog';
 import FilePicker from 'components/file-picker';
 import {
@@ -35,7 +32,8 @@ class UploadImage extends Component {
 
 	static propTypes = {
 		isUploading: PropTypes.bool,
-		allowedAspectRatios: PropTypes.arrayOf( PropTypes.oneOf( AspectRatiosValues ) ),
+		// Additional props passed to ImageEditor component. See blocks/image-editor.
+		imageEditorProps: PropTypes.object,
 		texts: PropTypes.object,
 		onImageEditorDone: PropTypes.func,
 		additionalImageEditorClasses: PropTypes.string,
@@ -43,7 +41,9 @@ class UploadImage extends Component {
 	};
 
 	static defaultProps = {
-		allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
+		imageEditorProps: {
+			allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
+		},
 		texts: {},
 		backgroundContent: null,
 		onImageEditorDone: noop,
@@ -97,7 +97,7 @@ class UploadImage extends Component {
 	renderImageEditor() {
 		const {
 			additionalImageEditorClasses,
-			allowedAspectRatios,
+			imageEditorProps,
 			texts,
 		} = this.props;
 
@@ -115,7 +115,7 @@ class UploadImage extends Component {
 					isVisible={ true }
 				>
 					<ImageEditor
-						allowedAspectRatios={ allowedAspectRatios }
+						{ ...imageEditorProps }
 						media={ { src: uploadedImage } }
 						onDone={ this.onImageEditorDone }
 						onCancel={ this.hideImageEditor }
