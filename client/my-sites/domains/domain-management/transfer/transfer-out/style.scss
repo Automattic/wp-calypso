@@ -12,12 +12,16 @@
 	}
 }
 
-.transfer__action-button {
+.transfer-out__action-button {
 	float: right;
 	margin-right: 10px;
 	&:first-of-type {
 		margin-right: 0;
 	}
+}
+
+.transfer-out__show-footer {
+	float: right;
 }
 
 .transfer-card {
@@ -29,6 +33,7 @@
 	}
 }
 
-.transfer__small-text {
+.transfer-out__small-text {
+	float: left;
 	font-size: 12px;
 }
