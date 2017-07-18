@@ -48,9 +48,10 @@ export function rewindActivateFailure( siteId ) {
 	};
 }
 
-export function activityLogRequest( siteId ) {
+export function activityLogRequest( siteId, params ) {
 	return {
 		type: ACTIVITY_LOG_REQUEST,
+		params,
 		siteId,
 	};
 }
