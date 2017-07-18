@@ -24,7 +24,7 @@ export const getPostCommentItems = ( state, siteId, postId ) =>
  * @param {Object} state redux state
  * @param {Number} siteId site identification
  * @param {Number} postId site identification
- * @return {Number} total comments count on the server
+ * @return {Number} total comments count on the server. if not found, assume infinity
  */
 export const getPostTotalCommentsCount = ( state, siteId, postId ) =>
 	get( state.comments.totalCommentsCount, `${ siteId }-${ postId }` );
@@ -59,13 +59,10 @@ export const getPostOldestCommentDate = createSelector( ( state, siteId, postId 
  * @param {Number} postId site identification
  * @return {Date} earliest comment date
  */
-export const getPostNewestCommentDate = createSelector(
-	( state, siteId, postId ) => {
-		const items = getPostCommentItems( state, siteId, postId );
-		return items && first( items ) ? new Date( get( first( items ), 'date' ) ) : undefined;
-	},
-	getPostCommentItems
-);
+export const getPostNewestCommentDate = createSelector( ( state, siteId, postId ) => {
+	const items = getPostCommentItems( state, siteId, postId );
+	return items && first( items ) ? new Date( get( first( items ), 'date' ) ) : undefined;
+}, getPostCommentItems );
 
 /***
  * Gets comment tree for a given post
@@ -110,15 +107,20 @@ export const haveMoreCommentsToFetch = createSelector(
 		const totalCommentsCount = getPostTotalCommentsCount( state, siteId, postId );
 		return items && totalCommentsCount ? size( items ) < totalCommentsCount : undefined;
 	},
-	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ), getPostTotalCommentsCount( state, siteId, postId ) ]
+	( state, siteId, postId ) => [
+		getPostCommentItems( state, siteId, postId ),
+		getPostTotalCommentsCount( state, siteId, postId ),
+	],
 );
 
-export const haveEarlierCommentsToFetch = ( state, siteId, postId ) =>
-	haveMoreCommentsToFetch( state, siteId, postId ) &&
+export const haveEarlierCommentsToFetch = ( state, siteId, postId, commentTotal = 0 ) =>
+	( haveMoreCommentsToFetch( state, siteId, postId ) ||
+		commentTotal > size( getPostCommentItems( state, siteId, postId ) ) ) &&
 	!! get( state.comments.hasMoreComments, getStateKey( siteId, postId ), {} ).before;
 
-export const haveLaterCommentsToFetch = ( state, siteId, postId ) =>
-	haveMoreCommentsToFetch( state, siteId, postId ) &&
+export const haveLaterCommentsToFetch = ( state, siteId, postId, commentTotal = 0 ) =>
+	( haveMoreCommentsToFetch( state, siteId, postId ) ||
+		commentTotal > size( getPostCommentItems( state, siteId, postId ) ) ) &&
 	!! get( state.comments.hasMoreComments, getStateKey( siteId, postId ), {} ).after;
 
 /***

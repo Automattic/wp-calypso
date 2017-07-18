@@ -94,15 +94,6 @@ export class FullPostView extends React.Component {
 		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
 			this.scrollToComments();
 		}
-
-		if ( startsWith( window.location.hash, '#comment-' ) ) {
-			this.checkForCommentInterval = setInterval( () => {
-				if ( this.shouldScrollToComment() ) {
-					this.scrollToComment();
-					clearInterval( this.checkForCommentInterval );
-				}
-			}, 200 );
-		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -197,24 +188,12 @@ export class FullPostView extends React.Component {
 	};
 
 	/**
-	 * Should we scroll down to a comment? Only if we have satisfied these three conditions: *
-	 * 1. there is a comment specified in the url via hash
-	 * 2. the comment has loaded and is on the DOM
-	 * 3. we haven't already scrolled to it yet
-	 *
-	 * @returns {boolean} - whether or not we should scroll to a comment
+	 * @returns {number} - the commentId in the url of the form #comment-${id}
 	 */
-	shouldScrollToComment = () =>
-		startsWith( window.location.hash, '#comment-' ) &&
-		window.document.getElementsByName( window.location.hash.substring( 1 ) ).length > 0 &&
-		! this.hasScrolledToComment;
-
-	scrollToComment = () => {
-		const comment = window.document.getElementsByName( window.location.hash.substring( 1 ) )[ 0 ];
-		comment.scrollIntoView();
-		window.scrollBy( 0, -50 );
-		this.hasScrolledToComment = true;
-	};
+	getCommentIdFromUrl = () =>
+		startsWith( window.location.hash, '#comment-' )
+			? +window.location.hash.split( '-' )[ 1 ]
+			: undefined;
 
 	// Scroll to the top of the comments section.
 	scrollToComments = () => {
@@ -446,7 +425,8 @@ export class FullPostView extends React.Component {
 											post={ post }
 											initialSize={ 10 }
 											pageSize={ 25 }
-											onCommentsUpdate={ this.checkForCommentAnchor }
+											startingCommentId={ this.getCommentIdFromUrl() }
+											commentCount= { post.discussion.comment_count }
 										/>
 									: null }
 							</div>

@@ -39,6 +39,7 @@ export const receiveCommentSuccess = ( store, action, next, response ) => {
 		siteId,
 		postId,
 		comments: [ response ],
+		commentById: true,
 	} );
 };
 

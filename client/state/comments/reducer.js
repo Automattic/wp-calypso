@@ -125,8 +125,15 @@ export const hasMoreComments = createReducer(
 	{},
 	{
 		[ COMMENTS_RECEIVE ]: ( state, action ) => {
-			const { siteId, postId, direction } = action;
+			const { siteId, postId, direction, commentById } = action;
 			const stateKey = getStateKey( siteId, postId );
+
+			if ( commentById ) {
+				return state[ stateKey ]
+					? state
+					: { ...state, [ stateKey ]: { before: true, after: true } };
+			}
+
 			const nextState = {
 				...( state[ stateKey ] || { before: true, after: true } ),
 				[ direction ]: action.comments.length === NUMBER_OF_COMMENTS_PER_FETCH,
