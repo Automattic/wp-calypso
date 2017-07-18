@@ -51,12 +51,12 @@ export const fetchOrders = ( siteId, requestedQuery = {} ) => ( dispatch, getSta
 
 	return request( siteId ).getWithHeaders( 'orders?' + qs.stringify( query ) ).then( ( response ) => {
 		const { headers, data } = response;
-		const totalPages = headers[ 'X-WP-TotalPages' ];
+		const total = headers[ 'X-WP-Total' ];
 		dispatch( {
 			type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 			siteId,
 			query: normalizedQuery,
-			totalPages,
+			total,
 			orders: data,
 		} );
 	} ).catch( error => {

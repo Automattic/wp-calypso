@@ -70,7 +70,7 @@ describe( 'actions', () => {
 					type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 					siteId,
 					query: {},
-					totalPages: 3,
+					total: 30,
 					orders,
 				} );
 			} );
@@ -102,7 +102,7 @@ describe( 'actions', () => {
 									},
 									items: {},
 									queries: {},
-									totalPages: 1,
+									total: {},
 								}
 							}
 						}
@@ -186,7 +186,7 @@ describe( 'actions', () => {
 									},
 									items: {},
 									queries: {},
-									totalPages: 1,
+									total: {},
 								}
 							}
 						}

@@ -14,7 +14,7 @@ import {
 	isUpdating,
 	items,
 	queries,
-	totalPages,
+	total,
 } from '../reducer';
 import {
 	WOOCOMMERCE_ORDER_REQUEST,
@@ -95,7 +95,7 @@ describe( 'reducer', () => {
 				query: {
 					page: 1,
 				},
-				totalPages: 4,
+				total: 4,
 				orders,
 			};
 			const newState = isQueryLoading( { '{}': true }, action );
@@ -168,7 +168,7 @@ describe( 'reducer', () => {
 				query: {
 					page: 1,
 				},
-				totalPages: 4,
+				total: 4,
 				orders,
 			};
 			const newState = items( undefined, action );
@@ -183,7 +183,7 @@ describe( 'reducer', () => {
 				query: {
 					page: 2,
 				},
-				totalPages: 4,
+				total: 4,
 				orders: [ order ],
 			};
 			const originalState = deepFreeze( keyBy( orders, 'id' ) );
@@ -231,7 +231,7 @@ describe( 'reducer', () => {
 				query: {
 					page: 1,
 				},
-				totalPages: 4,
+				total: 4,
 				orders,
 			};
 			const newState = queries( undefined, action );
@@ -245,7 +245,7 @@ describe( 'reducer', () => {
 				query: {
 					page: 2,
 				},
-				totalPages: 4,
+				total: 4,
 				orders: [ order ],
 			};
 			const originalState = deepFreeze( { '{}': [ 35, 26 ] } );
@@ -268,39 +268,39 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'totalPages', () => {
+	describe( 'total', () => {
 		it( 'should have no change by default', () => {
-			const newState = totalPages( undefined, {} );
+			const newState = total( undefined, {} );
 			expect( newState ).to.eql( 1 );
 		} );
 
-		it( 'should store the total number of pages when a request loads', () => {
+		it( 'should store the total number of orders when a request loads', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 				siteId: 123,
 				query: {
 					page: 1,
 				},
-				totalPages: 4,
+				total: 4,
 				orders,
 			};
-			const newState = totalPages( undefined, action );
-			expect( newState ).to.eql( 4 );
+			const newState = total( undefined, action );
+			expect( newState ).to.eql( { '{}': 4 } );
 		} );
 
-		it( 'should store the total number of pages even on a subsequent request load', () => {
+		it( 'should store the total number of orders on a subsequent request load', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 				siteId: 123,
 				query: {
 					page: 2,
 				},
-				totalPages: 4,
+				total: 4,
 				orders: [ order ],
 			};
-			const originalState = deepFreeze( 4 );
-			const newState = totalPages( originalState, action );
-			expect( newState ).to.eql( 4 );
+			const originalState = deepFreeze( { '{}': 4 } );
+			const newState = total( originalState, action );
+			expect( newState ).to.eql( { '{}': 4 } );
 		} );
 
 		it( 'should do nothing on a failure', () => {
@@ -312,8 +312,8 @@ describe( 'reducer', () => {
 				},
 				error: {},
 			};
-			const originalState = deepFreeze( 4 );
-			const newState = totalPages( originalState, action );
+			const originalState = deepFreeze( { '{}': 4 } );
+			const newState = total( originalState, action );
 			expect( newState ).to.eql( originalState );
 		} );
 	} );

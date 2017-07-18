@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, filter, sumBy } from 'lodash';
+import { get, filter, omit, sumBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -101,11 +101,13 @@ export const getOrder = ( state, orderId, siteId = getSelectedSiteId( state ) ) 
 
 /**
  * @param {Object} state Whole Redux state tree
+ * @param {Object} [query] Query used to fetch orders. Can contain page, status, etc. If not provided, defaults to first page, all orders.
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number} Total number of pages of orders available on a site, or 1 if not loaded yet.
+ * @return {Number} Total number of orders available on a site, or 0 if not loaded yet.
  */
-export const getTotalOrdersPages = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'totalPages' ], 1 );
+export const getTotalOrders = ( state, query = {}, siteId = getSelectedSiteId( state ) ) => {
+	const serializedQuery = getSerializedOrdersQuery( omit( query, 'page' ) );
+	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'total', serializedQuery ], 0 );
 };
 
 /**

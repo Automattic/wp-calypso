@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { keyBy } from 'lodash';
+import { keyBy, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -131,10 +131,11 @@ export function queries( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function totalPages( state = 1, action ) {
+export function total( state = 1, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
-			return action.totalPages;
+			const query = getSerializedOrdersQuery( omit( action.query, 'page' ) );
+			return Object.assign( {}, state, { [ query ]: action.total } );
 		default:
 			return state;
 	}
@@ -147,6 +148,6 @@ export default combineReducers( {
 	items,
 	queries,
 	refunds,
-	totalPages,
+	total,
 	notes,
 } );

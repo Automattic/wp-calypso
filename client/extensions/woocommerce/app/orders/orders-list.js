@@ -18,7 +18,7 @@ import {
 	areOrdersLoading,
 	areOrdersLoaded,
 	getOrders,
-	getTotalOrdersPages
+	getTotalOrders
 } from 'woocommerce/state/sites/orders/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getOrdersCurrentPage, getOrdersCurrentStatus } from 'woocommerce/state/ui/orders/selectors';
@@ -202,7 +202,7 @@ export default connect(
 		const orders = getOrders( state, currentPage, siteId );
 		const ordersLoading = areOrdersLoading( state, currentPage, siteId );
 		const ordersLoaded = areOrdersLoaded( state, currentPage, siteId );
-		const totalPages = getTotalOrdersPages( state, siteId );
+		const total = getTotalOrders( state, { status: currentStatus }, siteId );
 
 		return {
 			currentPage,
@@ -212,7 +212,7 @@ export default connect(
 			ordersLoaded,
 			site,
 			siteId,
-			totalPages,
+			total,
 		};
 	},
 	dispatch => bindActionCreators( { fetchOrders, setCurrentPage }, dispatch )

@@ -19,7 +19,7 @@ Update a given order on the remote site.
 
 ## Reducer
 
-This is saved on a per-site basis. All orders are collected in `items`, and there is a query => ID mapping in `queries`. `isQueryLoading` indicates which queries are being requested. Currently this is only paged requests (but will allow for filtered queries in v2). `totalPages` tracks the number of pages of orders (this might update to a query mapping later). `isLoading` tracks whether single order requests have been requested/loaded. The order items example below is not a complete list. See the [API documentation for orders](http://woocommerce.github.io/woocommerce-rest-api-docs/#order-properties).
+This is saved on a per-site basis. All orders are collected in `items`, and there is a query => ID mapping in `queries`. `isQueryLoading` indicates which queries are being requested. Currently this is only paged requests (but will allow for filtered queries in v2). `total` tracks the number of orders, mapped by queries (not including page). `isLoading` tracks whether single order requests have been requested/loaded. The order items example below is not a complete list. See the [API documentation for orders](http://woocommerce.github.io/woocommerce-rest-api-docs/#order-properties).
 
 ```js
 {
@@ -55,8 +55,11 @@ This is saved on a per-site basis. All orders are collected in `items`, and ther
 			'{}': [ 1, 2, 3, 4, 5 ],
 			'{"page":2}': [ 6, 7, 8, 9, 10 ]
 		},
-		// A single number (the total number of pages for this site's orders)
-		"totalPages": 6
+		// Keyed by serialized query, without page.
+		"total": {
+			'{"status":"any"}': 50,
+			'{"status":"processing"}': 8,
+		}
 	}
 }
 ```
@@ -87,6 +90,6 @@ Gets the list of orders for this query from the current state, or an empty array
 
 Gets a requested order object from the current state, or null if not yet loaded.
 
-### `getTotalOrdersPages( state, siteId: number )`
+### `getTotalOrders( state, query: object, siteId: number )`
 
-Gets the total number of pages of orders available on a site. Optional `siteId`, will default to currently selected site.
+Gets the total number of orders available on a site for a query (like, all completed orders). Optional `siteId`, will default to currently selected site.
