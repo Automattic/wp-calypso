@@ -62,6 +62,8 @@ correction when the given timezone is different from the user's timezone. `timez
 
 `gmtOffset` - **optional** Number - Like as timezone-like manner, an offset correction will be applied if there is difference between the given gmtOffset and the user's gmtOffset. Ignored if `timezone` also passed.
 
+`displayInputChrono` - **optional** Boolean - True if an `InputChrono` (a React component that creates a Date object from a user-entered textual date description) should be displayed. Default: true
+
 `onDateChange` - **optional** Called when user selects a new date on the calendar. Passed a moment Date object.
 
 `onMonthChange` - **optional** Called when the user selects a new month on the calendar. Passed a moment Date object representing the view date for the calendar, which can be used to determine the currently-showing month and year.
