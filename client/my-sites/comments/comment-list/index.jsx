@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, keyBy, keys, map, noop, omit, size } from 'lodash';
+import { each, find, get, keyBy, map, noop, omit, size } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -120,11 +120,19 @@ export class CommentList extends Component {
 	}
 
 	setBulkStatus = status => () => {
+		const { selectedComments } = this.state;
+
 		this.props.removeNotice( 'comment-notice-bulk' );
 
-		this.props.setBulkStatus( keys( this.state.selectedComments ), status );
+		each( selectedComments, ( { ID, postId } ) => {
+			this.props.changeCommentStatus( ID, postId, status );
+			// If the comment is not approved anymore, also remove the like
+			if ( 'approved' !== status ) {
+				this.props.unlikeComment( ID, postId );
+			}
+		} );
 
-		this.showBulkNotice( status, this.state.selectedComments );
+		this.showBulkNotice( status, selectedComments );
 
 		this.setState( {
 			isBulkEdit: false,
@@ -234,7 +242,7 @@ export class CommentList extends Component {
 
 	toggleCommentSelected = commentId => {
 		// TODO: Replace with Redux getComment()
-		const { i_like, status } = this.getComment( commentId );
+		const { i_like, post, status } = this.getComment( commentId );
 		const { selectedComments } = this.state;
 
 		this.setState( {
@@ -242,7 +250,12 @@ export class CommentList extends Component {
 				? omit( selectedComments, commentId )
 				: {
 					...selectedComments,
-					[ commentId ]: { i_like, status },
+					[ commentId ]: {
+						ID: commentId,
+						i_like,
+						postId: post.ID,
+						status,
+					},
 				},
 		} );
 	}
@@ -251,13 +264,24 @@ export class CommentList extends Component {
 		this.setState( {
 			selectedComments: this.isSelectedAll()
 				? {}
-				: keyBy( map( this.props.comments, ( { ID, i_like, status } ) => ( { ID, i_like, status } ) ), 'ID' ),
+				: keyBy(
+					map(
+						this.props.comments,
+						( { ID, i_like, post, status } ) => ( { ID, i_like, postId: post.ID, status } )
+					),
+					'ID'
+				),
 		} );
 	}
 
 	undoBulkStatus = selectedComments => {
 		this.props.removeNotice( 'comment-notice-bulk' );
-		this.props.undoBulkStatus( selectedComments );
+		each( selectedComments, ( { ID, i_like, postId, status } ) => {
+			this.props.changeCommentStatus( ID, postId, status );
+			if ( i_like ) {
+				this.props.likeComment( ID, postId );
+			}
+		} );
 	}
 
 	render() {
@@ -359,8 +383,6 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	likeComment: ( commentId, postId ) => dispatch( likeComment( siteId, postId, commentId ) ),
 	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
 	replyComment: ( commentText, postId, parentCommentId ) => dispatch( replyComment( commentText, siteId, postId, parentCommentId ) ),
-	setBulkStatus: noop,
-	undoBulkStatus: noop,
 	unlikeComment: ( commentId, postId ) => dispatch( unlikeComment( siteId, postId, commentId ) ),
 } );
 
