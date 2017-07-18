@@ -33,6 +33,7 @@ const actions = require( 'lib/posts/actions' ),
 	analytics = require( 'lib/analytics' );
 
 import config from 'config';
+import { abtest } from 'lib/abtest';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
@@ -80,6 +81,8 @@ export const PostEditor = React.createClass( {
 	},
 
 	_previewWindow: null,
+
+	isPostPublishConfirmationABTest: abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation',
 
 	getInitialState() {
 		return {
@@ -249,6 +252,7 @@ export const PostEditor = React.createClass( {
 		const siteURL = site ? site.URL + '/' : null;
 		const isConfirmationFeatureEnabled = (
 			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.isPostPublishConfirmationABTest &&
 			this.props.isConfirmationSidebarEnabled
 		);
 
@@ -776,6 +780,7 @@ export const PostEditor = React.createClass( {
 
 		const isConfirmationFeatureEnabled = (
 			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.isPostPublishConfirmationABTest &&
 			this.props.isConfirmationSidebarEnabled
 		);
 
@@ -824,6 +829,7 @@ export const PostEditor = React.createClass( {
 
 		if (
 			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.isPostPublishConfirmationABTest &&
 			this.props.isConfirmationSidebarEnabled
 		) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_failure' } );
@@ -848,6 +854,7 @@ export const PostEditor = React.createClass( {
 
 		if (
 			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.isPostPublishConfirmationABTest &&
 			this.props.isConfirmationSidebarEnabled
 		) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );

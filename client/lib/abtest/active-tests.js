@@ -85,4 +85,13 @@ module.exports = {
 		defaultVariation: 'doNotShowNotice',
 		allowExistingUsers: true,
 	},
+	postPublishConfirmation: {
+		datestamp: '20170713',
+		allowExistingUsers: true,
+		variations: {
+			showPublishConfirmation: 30,
+			noPublishConfirmation: 70,
+		},
+		defaultVariation: 'noPublishConfirmation',
+	},
 };
