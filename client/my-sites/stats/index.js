@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-var page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var controller = require( 'my-sites/controller' ),
-	statsController = require( './controller' ),
-	config = require( 'config' );
+import controller from 'my-sites/controller';
 
-module.exports = function() {
+import statsController from './controller';
+import config from 'config';
+
+export default function() {
 	if ( config.isEnabled( 'jetpack/activity-log' ) ) {
 		page( '/stats/activity/:site_id', controller.siteSelection, controller.navigation, statsController.activityLog );
 	}

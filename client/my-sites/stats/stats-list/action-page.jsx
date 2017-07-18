@@ -1,17 +1,20 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	page = require( 'page' ),
-	debug = require( 'debug' )( 'calypso:stats:action-page' );
+import React from 'react';
+
+import page from 'page';
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:stats:action-page');
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'gridicons' );
+import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
+import Gridicon from 'gridicons';
+
+export default React.createClass( {
 	displayName: 'StatsActionPage',
 
 	clickHandler: function( event ) {

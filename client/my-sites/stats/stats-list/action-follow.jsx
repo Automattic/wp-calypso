@@ -1,18 +1,21 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:stats:action-follow' );
+import React from 'react';
+
+import classNames from 'classnames';
+import debugFactory from 'debug';
+const debug = debugFactory('calypso:stats:action-follow');
 
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' ),
-	analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'gridicons' );
+import observe from 'lib/mixins/data-observe';
 
-module.exports = React.createClass( {
+import analytics from 'lib/analytics';
+import Gridicon from 'gridicons';
+
+export default React.createClass( {
 	displayName: 'StatsActionFollow',
 
 	mixins: [ observe( 'followSite' ) ],
