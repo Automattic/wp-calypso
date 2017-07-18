@@ -93,6 +93,17 @@ const startSession = () => request( {
 	path: '/happychat/session'
 } );
 
+export const updateChatPreferences = ( connection, { getState }, siteId ) => {
+	const state = getState();
+
+	if ( isHappychatClientConnected( state ) ) {
+		const locale = getCurrentUserLocale( state );
+		const groups = getGroups( state, siteId );
+
+		connection.setPreferences( locale, groups );
+	}
+};
+
 export const connectChat = ( connection, { getState, dispatch } ) => {
 	const state = getState();
 	if ( ! isHappychatConnectionUninitialized( state ) ) {
@@ -100,10 +111,9 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 		return;
 	}
 
-	const selectedSite = getHelpSelectedSite( state );
 	const user = getCurrentUser( state );
 	const locale = getCurrentUserLocale( state );
-	const groups = getGroups( state, selectedSite.ID );
+	const groups = getGroups( state );
 
 	// Notify that a new connection is being established
 	dispatch( setConnecting() );
@@ -114,6 +124,14 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 	connection
 		.on( 'connected', () => {
 			dispatch( setConnected() );
+
+			// update the chat locale and groups after happychat connection is established
+			// this was added just to make sure the proper operators are targeted if the customer
+			// selects a different site in the help dropdown before happychat is connected
+			const selectedHelpSite = getHelpSelectedSite( getState() );
+			if ( selectedHelpSite && selectedHelpSite.ID ) {
+				updateChatPreferences( connection, { getState }, selectedHelpSite.ID );
+			}
 
 			// TODO: There's no need to dispatch a separate action to request a transcript.
 			// The HAPPYCHAT_CONNECTED action should have its own middleware handler that does this.
@@ -136,17 +154,6 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 		} )
 		.then( ( { jwt } ) => connection.open( user.ID, jwt, locale, groups ) )
 		.catch( e => debug( 'failed to start happychat session', e, e.stack ) );
-};
-
-export const updateChatPreferences = ( connection, { getState }, siteId ) => {
-	const state = getState();
-
-	if ( isHappychatClientConnected( state ) ) {
-		const locale = getCurrentUserLocale( state );
-		const groups = getGroups( state, siteId );
-
-		connection.setPreferences( locale, groups );
-	}
 };
 
 export const requestTranscript = ( connection, { dispatch } ) => {
