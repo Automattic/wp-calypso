@@ -25,7 +25,7 @@ export default class UploadImageExample extends Component {
 				<UploadImage
 					isUploading={ isUploading }
 					onImageEditorDone={
-						(imageBlob) => {
+						( imageBlob ) => {
 							this.setState( {
 								uploadedImageDataUrl: URL.createObjectURL( imageBlob ),
 								isUploading: true,
