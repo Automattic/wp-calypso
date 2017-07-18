@@ -3,7 +3,7 @@
  */
 import { areSettingsGeneralLoaded } from 'woocommerce/state/sites/settings/general/selectors';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import request from 'woocommerce/state/sites/http-request';
 import {
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 	WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
@@ -36,16 +36,7 @@ export const handleSettingsGeneral = ( { dispatch, getState }, action, next ) =>
 		return;
 	}
 
-	// TODO Create a wrapper for these kinds of calls
-	dispatch( http( {
-		apiVersion: '1.1',
-		method: 'GET',
-		path: `/jetpack-blogs/${ siteId }/rest-api/`,
-		query: {
-			path: '/wc/v3/settings/general&_method=GET',
-			json: true,
-		}
-	}, action ) );
+	dispatch( request( siteId, action ).get( 'settings/general' ) );
 	return next( action );
 };
 
