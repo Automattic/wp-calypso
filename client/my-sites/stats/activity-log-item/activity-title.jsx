@@ -127,7 +127,7 @@ class ActivityTitle extends Component {
 		if ( displayName ) {
 			return displayName;
 		}
-		const login = get( actor, 'display_name' );
+		const login = get( actor, 'login' );
 		if ( login ) {
 			return login;
 		}
@@ -141,7 +141,7 @@ class ActivityTitle extends Component {
 		if ( displayName ) {
 			return displayName;
 		}
-		const login = get( user, 'display_name' );
+		const login = get( user, 'login' );
 		if ( login ) {
 			return login;
 		}
