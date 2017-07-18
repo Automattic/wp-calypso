@@ -13,7 +13,8 @@ import {
 	getImageEditorCropBounds,
 	getImageEditorCrop,
 	getImageEditorAspectRatio,
-	isImageEditorImageLoaded
+	isImageEditorImageLoaded,
+	getImageMeetsMinimumDimensions
 } from '../selectors';
 import { AspectRatios } from '../constants';
 
@@ -163,6 +164,24 @@ describe( 'selectors', () => {
 			} );
 
 			expect( isImageLoaded ).to.eql( ! imageIsLoading );
+		} );
+	} );
+
+	describe( '#getImageMeetsMinimumDimensions()', () => {
+		it( 'should return whether the image meets minimum dimensions', () => {
+			const imageMeetsDimensions = true;
+
+			const meetsMinimumDimensions = getImageMeetsMinimumDimensions( {
+				ui: {
+					editor: {
+						imageEditor: {
+							meetsMinimumDimensions: imageMeetsDimensions
+						}
+					}
+				}
+			} );
+
+			expect( meetsMinimumDimensions ).to.eql( imageMeetsDimensions );
 		} );
 	} );
 } );

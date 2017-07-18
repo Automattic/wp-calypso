@@ -2,17 +2,18 @@
  * Internal dependencies
  */
 import {
-	IMAGE_EDITOR_CROP,
 	IMAGE_EDITOR_COMPUTED_CROP,
-	IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE,
+	IMAGE_EDITOR_CROP,
+	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_FLIP,
+	IMAGE_EDITOR_IMAGE_HAS_LOADED,
+	IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE,
 	IMAGE_EDITOR_SET_ASPECT_RATIO,
 	IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO,
-	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_SET_FILE_INFO,
+	IMAGE_EDITOR_SET_IMAGE_MEETS_MINIMUM_DIMENSIONS,
 	IMAGE_EDITOR_STATE_RESET,
-	IMAGE_EDITOR_STATE_RESET_ALL,
-	IMAGE_EDITOR_IMAGE_HAS_LOADED
+	IMAGE_EDITOR_STATE_RESET_ALL
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 import { AspectRatios } from './constants';
@@ -176,6 +177,14 @@ export function aspectRatio( state = AspectRatios.FREE, action ) {
 	return state;
 }
 
+export function meetsMinimumDimensions( state = false, action ) {
+	switch ( action.type ) {
+		case IMAGE_EDITOR_SET_IMAGE_MEETS_MINIMUM_DIMENSIONS:
+			return action.meetsMinimumDimensions;
+	}
+	return state;
+}
+
 export default combineReducers( {
 	hasChanges,
 	fileInfo,
@@ -184,5 +193,6 @@ export default combineReducers( {
 	crop,
 	aspectRatio,
 	originalAspectRatio,
-	imageIsLoading
+	imageIsLoading,
+	meetsMinimumDimensions
 } );

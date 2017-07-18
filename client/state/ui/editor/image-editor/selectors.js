@@ -74,3 +74,15 @@ export function getImageEditorCrop( state ) {
 export function getImageEditorAspectRatio( state ) {
 	return state.ui.editor.imageEditor.aspectRatio;
 }
+
+/**
+ * Returns whether the image meets the minimum dimensions for full editor capabilities
+ *
+ * @param  {Object} state Global state tree
+ * @return {Boolean} whether the image meets the minimum dimensions or not
+ *
+ */
+export function getImageMeetsMinimumDimensions( state ) {
+	return state.ui.editor.imageEditor.meetsMinimumDimensions;
+}
+

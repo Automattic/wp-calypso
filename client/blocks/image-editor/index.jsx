@@ -26,7 +26,8 @@ import {
 	resetImageEditorState,
 	resetAllImageEditorState,
 	setImageEditorFileInfo,
-	setImageEditorDefaultAspectRatio
+	setImageEditorDefaultAspectRatio,
+	setImageMeetsMinimumDimensions
 } from 'state/ui/editor/image-editor/actions';
 import {
 	getImageEditorFileInfo,
@@ -39,7 +40,10 @@ import {
 	AspectRatios,
 	AspectRatiosValues
 } from 'state/ui/editor/image-editor/constants';
-import { getDefaultAspectRatio } from './utils';
+import {
+	getDefaultAspectRatio,
+	meetsMinimumDimensions
+} from './utils';
 
 const ImageEditor = React.createClass( {
 	mixins: [ closeOnEsc( 'onCancel' ) ],
@@ -101,6 +105,16 @@ const ImageEditor = React.createClass( {
 		this.updateFileInfo( this.props.media );
 
 		this.setDefaultAspectRatio();
+	},
+
+	componentWillMount() {
+		const {
+			media
+		} = this.props;
+
+		this.props.setImageMeetsMinimumDimensions(
+			meetsMinimumDimensions( media.width, media.height )
+		);
 	},
 
 	setDefaultAspectRatio() {
@@ -276,6 +290,7 @@ export default connect(
 		return bindActionCreators( {
 			setImageEditorFileInfo,
 			setImageEditorDefaultAspectRatio,
+			setImageMeetsMinimumDimensions,
 			resetImageEditorState: partial( resetImageEditorState, resetActionsAdditionalData ),
 			resetAllImageEditorState: partial( resetAllImageEditorState, resetActionsAdditionalData )
 

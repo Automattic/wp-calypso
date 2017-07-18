@@ -16,7 +16,8 @@ import {
 	getImageEditorTransform,
 	getImageEditorFileInfo,
 	getImageEditorCrop,
-	isImageEditorImageLoaded
+	isImageEditorImageLoaded,
+	getImageMeetsMinimumDimensions
 } from 'state/ui/editor/image-editor/selectors';
 import {
 	setImageEditorCropBounds,
@@ -41,7 +42,8 @@ class ImageEditorCanvas extends Component {
 		setImageEditorCropBounds: PropTypes.func,
 		setImageEditorImageHasLoaded: PropTypes.func,
 		onLoadError: PropTypes.func,
-		isImageLoaded: PropTypes.bool
+		isImageLoaded: PropTypes.bool,
+		imageMeetsMinimumDimensions: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -59,7 +61,8 @@ class ImageEditorCanvas extends Component {
 		setImageEditorCropBounds: noop,
 		setImageEditorImageHasLoaded: noop,
 		onLoadError: noop,
-		isImageLoaded: false
+		isImageLoaded: false,
+		imageMeetsMinimumDimensions: false
 	};
 
 	// throttle the frame rate of window.resize() to circa 30fps
@@ -309,13 +312,15 @@ export default connect(
 		const { src, mimeType } = getImageEditorFileInfo( state );
 		const crop = getImageEditorCrop( state );
 		const isImageLoaded = isImageEditorImageLoaded( state );
+		const imageMeetsMinimumDimensions = getImageMeetsMinimumDimensions( state );
 
 		return {
 			src,
 			mimeType,
 			transform,
 			crop,
-			isImageLoaded
+			isImageLoaded,
+			imageMeetsMinimumDimensions
 		};
 	},
 	{

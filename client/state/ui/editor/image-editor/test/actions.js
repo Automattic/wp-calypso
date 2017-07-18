@@ -7,17 +7,18 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	IMAGE_EDITOR_CROP,
 	IMAGE_EDITOR_COMPUTED_CROP,
-	IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE,
+	IMAGE_EDITOR_CROP,
+	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_FLIP,
+	IMAGE_EDITOR_IMAGE_HAS_LOADED,
+	IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE,
 	IMAGE_EDITOR_SET_ASPECT_RATIO,
 	IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO,
 	IMAGE_EDITOR_SET_FILE_INFO,
-	IMAGE_EDITOR_SET_CROP_BOUNDS,
+	IMAGE_EDITOR_SET_IMAGE_MEETS_MINIMUM_DIMENSIONS,
 	IMAGE_EDITOR_STATE_RESET,
-	IMAGE_EDITOR_STATE_RESET_ALL,
-	IMAGE_EDITOR_IMAGE_HAS_LOADED
+	IMAGE_EDITOR_STATE_RESET_ALL
 } from 'state/action-types';
 
 import {
@@ -31,7 +32,8 @@ import {
 	setImageEditorCropBounds,
 	imageEditorCrop,
 	imageEditorComputedCrop,
-	setImageEditorImageHasLoaded
+	setImageEditorImageHasLoaded,
+	setImageMeetsMinimumDimensions
 } from '../actions';
 import { AspectRatios } from '../constants';
 
@@ -184,6 +186,16 @@ describe( 'actions', () => {
 				type: IMAGE_EDITOR_IMAGE_HAS_LOADED,
 				width: 123,
 				height: 456
+			} );
+		} );
+	} );
+
+	describe( '#setImageMeetsMinimumDimensions()', () => {
+		it( 'should return an action object', () => {
+			const action = setImageMeetsMinimumDimensions( true );
+			expect( action ).to.eql( {
+				type: IMAGE_EDITOR_SET_IMAGE_MEETS_MINIMUM_DIMENSIONS,
+				meetsMinimumDimensions: true
 			} );
 		} );
 	} );

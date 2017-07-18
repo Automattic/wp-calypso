@@ -9,6 +9,7 @@ import {
 } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import {
 	getImageEditorAspectRatio,
+	getImageMeetsMinimumDimensions
 } from 'state/ui/editor/image-editor/selectors';
 import {
 	imageEditorRotateCounterclockwise,
@@ -31,14 +33,16 @@ class ImageEditorToolbar extends Component {
 		imageEditorRotateCounterclockwise: PropTypes.func,
 		imageEditorFlip: PropTypes.func,
 		setImageEditorAspectRatio: PropTypes.func,
-		allowedAspectRatios: PropTypes.array
+		allowedAspectRatios: PropTypes.array,
+		imageMeetsMinimumDimensions: PropTypes.bool
 	};
 
 	static defaultProps = {
 		imageEditorRotateCounterclockwise: noop,
 		imageEditorFlip: noop,
 		setImageEditorAspectRatio: noop,
-		allowedAspectRatios: objectValues( AspectRatios )
+		allowedAspectRatios: objectValues( AspectRatios ),
+		imageMeetsMinimumDimensions: false
 	};
 
 	constructor( props ) {
@@ -152,7 +156,8 @@ class ImageEditorToolbar extends Component {
 	renderButtons() {
 		const {
 			translate,
-			allowedAspectRatios
+			allowedAspectRatios,
+			imageMeetsMinimumDimensions
 		} = this.props;
 
 		const buttons = [
@@ -169,7 +174,8 @@ class ImageEditorToolbar extends Component {
 					ref: this.setAspectMenuContext,
 					icon: 'layout',
 					text: translate( 'Aspect' ),
-					onClick: this.onAspectOpen
+					onClick: this.onAspectOpen,
+					disabled: ! imageMeetsMinimumDimensions
 				},
 			{
 				tool: 'flip-vertical',
@@ -179,21 +185,24 @@ class ImageEditorToolbar extends Component {
 			}
 		];
 
-		return buttons.map( button =>
-			button
+		return buttons.map( button => {
+			const buttonClasses = classNames( 'image-editor__toolbar-button', {
+				'is-disabled': button && button.disabled
+			} );
+			return button
 				? (
 					<button
 						key={ 'image-editor-toolbar-' + button.tool }
 						ref={ button.ref }
-						className={ 'image-editor__toolbar-button' }
+						className={ buttonClasses }
 						onClick={ button.onClick }
 					>
 						<Gridicon icon={ button.icon } />
 						<span>{ button.text }</span>
 					</button>
 				)
-				: null
-		);
+				: null;
+		} );
 	}
 
 	render() {
@@ -207,9 +216,15 @@ class ImageEditorToolbar extends Component {
 }
 
 export default connect(
-	state => ( {
-		aspectRatio: getImageEditorAspectRatio( state )
-	} ),
+	( state ) => {
+		const imageMeetsMinimumDimensions = getImageMeetsMinimumDimensions( state );
+		const aspectRatio = getImageEditorAspectRatio( state );
+
+		return {
+			aspectRatio,
+			imageMeetsMinimumDimensions
+		};
+	},
 	{
 		imageEditorRotateCounterclockwise,
 		imageEditorFlip,
