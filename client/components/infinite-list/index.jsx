@@ -116,6 +116,8 @@ module.exports = React.createClass( {
 	componentWillReceiveProps( newProps ) {
 		this.scrollHelper.props = newProps;
 
+		console.log( 'fetchingNextPage', newProps.fetchingNextPage );
+
 		// New item may have arrived, should we change the rendered range?
 		if ( ! this.isScrolling ) {
 			this.cancelAnimationFrame();
@@ -358,8 +360,6 @@ module.exports = React.createClass( {
 		debug( 'rendering %d to %d', this.state.firstRenderedIndex, lastRenderedIndex );
 
 		for ( i = this.state.firstRenderedIndex; i <= lastRenderedIndex; i++ ) {
-			const p = this.props.items[ i ];
-			console.log( 'rr', p.global_ID, p.name || p.title || p.post_title );
 			itemsToRender.push( this.props.renderItem( this.props.items[ i ], i ) );
 		}
 

@@ -6,14 +6,13 @@ var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:posts' );
 
 import { connect } from 'react-redux';
-import { debounce, isEqual, omit } from 'lodash';
+import { debounce, isEqual, isNumber, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 var Post = require( './post' ),
 	PostPlaceholder = require( './post-placeholder' ),
-	actions = require( 'lib/posts/actions' ),
 	EmptyContent = require( 'components/empty-content' ),
 	InfiniteList = require( 'components/infinite-list' ),
 	NoResults = require( 'my-sites/no-results' ),
@@ -90,27 +89,34 @@ var PostList = React.createClass( {
 
 		const { page } = this.state;
 
+		const query = {
+			status: mapStatus( statusSlug ),
+			order_by: 'date',
+			order: 'DESC',
+			type: 'post',
+			site_visibility: 'visible',
+			author,
+			withImages: true,
+			withCounts: true,
+			//search,
+			category,
+			tag,
+			page: page > 1 ? page : undefined,
+		};
+
 		return (
-			<Posts
-				siteId={ siteId }
-				query={ {
-					status: mapStatus( statusSlug ),
-					order_by: 'date',
-					order: 'DESC',
-					type: 'post',
-					site_visibility: 'visible',
-					author,
-					withImages: true,
-					withCounts: true,
-					//search,
-					category,
-					tag,
-					page: page > 1 ? page : undefined,
-				} }
-				page={ page }
-				incrementPage={ this.incrementPage }
-				{ ...omit( this.props, 'children' ) }
-			/>
+			<div>
+				<QueryPosts
+					siteId={ siteId }
+					query={ query } />
+				<Posts
+					siteId={ siteId }
+					query={ query }
+					page={ page }
+					incrementPage={ this.incrementPage }
+					{ ...omit( this.props, 'children' ) }
+				/>
+			</div>
 		);
 		//
 		//return (
@@ -135,12 +141,12 @@ const Posts = connect(
 			return { loading: true };
 		}
 
-		debug( 'ps', getSitePostsForQueryIgnoringPage( state, siteId, query ) );
+		const lastPage = getSitePostsLastPageForQuery( state, siteId, query );
 
 		return {
 			posts: getSitePostsForQueryIgnoringPage( state, siteId, query ) || [],
 			loading: isRequestingSitePostsForQueryIgnoringPage( state, siteId, query ),
-			lastPage: page === getSitePostsLastPageForQuery( state, siteId, query ),
+			lastPage: isNumber( lastPage ) && ( page >= lastPage ),
 			// assess which of these from PostListFetcher to replicate:
 			//	listId: postListStore.getID(),
 			//	posts: postListStore.getAll(),
@@ -230,6 +236,7 @@ const Posts = connect(
 	},
 
 	fetchPosts: function( options ) {
+		debug( 'fetchPosts', options );
 		if ( this.props.loading || this.props.lastPage || this.props.hasRecentError ) {
 			return;
 		}
@@ -237,7 +244,6 @@ const Posts = connect(
 			this.props.trackScrollPage( this.props.page + 1 );
 		}
 		this.props.incrementPage();
-		//actions.fetchNextPage();
 	},
 
 	getNoContentMessage: function() {
@@ -390,9 +396,6 @@ const Posts = connect(
 
 		return (
 			<div>
-				<QueryPosts
-					siteId={ this.props.siteId }
-					query={ this.props.query } />
 				{ postList }
 				{ this.props.lastPage && posts.length ? <div className="infinite-scroll-end" /> : null }
 			</div>
