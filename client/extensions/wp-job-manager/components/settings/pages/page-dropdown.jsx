@@ -8,9 +8,9 @@ import React, { PropTypes } from 'react';
  */
 import ReduxFormSelect from 'components/redux-forms/redux-form-select';
 
-const PageDropdown = ( { disabled, name, pages } ) => {
+const PageDropdown = ( { name, pages, ...otherProps } ) => {
 	return (
-		<ReduxFormSelect disabled={ disabled } name={ name }>
+		<ReduxFormSelect name={ name } { ...otherProps }>
 			{ pages.map( ( { ID, title } ) => (
 				<option key={ ID } value={ ID }>
 					{ title }

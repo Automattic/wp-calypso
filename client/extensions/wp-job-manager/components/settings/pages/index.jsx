@@ -52,11 +52,12 @@ class Pages extends Component {
 						</SectionHeader>
 						<Card>
 							<FormFieldset>
-								<FormLabel>
+								<FormLabel htmlFor="submitFormPage">
 									{ translate( 'Submit Job Form Page' ) }
 								</FormLabel>
 								<PageDropdown
 									disabled={ isDisabled }
+									id="submitFormPage"
 									name="submitFormPage"
 									pages={ pages } />
 								<FormSettingExplanation>
@@ -66,11 +67,12 @@ class Pages extends Component {
 							</FormFieldset>
 
 							<FormFieldset>
-								<FormLabel>
+								<FormLabel htmlFor="dashboardPage">
 									{ translate( 'Job Dashboard Page' ) }
 								</FormLabel>
 								<PageDropdown
 									disabled={ isDisabled }
+									id="dashboardPage"
 									name="dashboardPage"
 									pages={ pages } />
 								<FormSettingExplanation>
@@ -80,11 +82,12 @@ class Pages extends Component {
 							</FormFieldset>
 
 							<FormFieldset>
-								<FormLabel>
+								<FormLabel htmlFor="listingsPage">
 									{ translate( 'Job Listings Page' ) }
 								</FormLabel>
 								<PageDropdown
 									disabled={ isDisabled }
+									id="listingsPage"
 									name="listingsPage"
 									pages={ pages } />
 								<FormSettingExplanation>
