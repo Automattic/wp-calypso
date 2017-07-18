@@ -29,7 +29,8 @@ import DropZone from 'components/drop-zone';
 class UploadImage extends Component {
 	state = {
 		isEditingImage: false,
-		image: false,
+		uploadedImage: null,
+		editedImage: null,
 	};
 
 	static propTypes = {
@@ -62,7 +63,7 @@ class UploadImage extends Component {
 
 		this.setState( {
 			isEditingImage: true,
-			image: imageObjectUrl
+			uploadedImage: imageObjectUrl
 		} );
 	};
 
@@ -72,6 +73,8 @@ class UploadImage extends Component {
 		if ( error ) {
 			return;
 		}
+
+		this.setState( { editedImage: URL.createObjectURL( imageBlob ) } );
 
 		this.props.onImageEditorDone( imageBlob );
 	};
@@ -83,11 +86,11 @@ class UploadImage extends Component {
 
 		resetAllImageEditorStateAction();
 
-		URL.revokeObjectURL( this.state.image );
+		URL.revokeObjectURL( this.state.uploadedImage );
 
 		this.setState( {
 			isEditingImage: false,
-			image: false
+			uploadedImage: false
 		} );
 	};
 
@@ -98,9 +101,14 @@ class UploadImage extends Component {
 			texts,
 		} = this.props;
 
+		const {
+			isEditingImage,
+			uploadedImage
+		} = this.state;
+
 		const classes = classnames( 'upload-image-modal', additionalImageEditorClasses );
 
-		if ( this.state.isEditingImage ) {
+		if ( isEditingImage ) {
 			return (
 				<Dialog
 					additionalClassNames={ classes }
@@ -108,7 +116,7 @@ class UploadImage extends Component {
 				>
 					<ImageEditor
 						allowedAspectRatios={ allowedAspectRatios }
-						media={ { src: this.state.image } }
+						media={ { src: uploadedImage } }
 						onDone={ this.onImageEditorDone }
 						onCancel={ this.hideImageEditor }
 						doneButtonText={ texts.doneButtonText ? texts.doneButtonText : 'Done' }
@@ -141,13 +149,13 @@ class UploadImage extends Component {
 			);
 		}
 
-		const { image } = this.state;
-
 		if ( typeof uploadingContent === 'undefined' ) {
+			const { editedImage } = this.state;
+
 			uploadingContent = (
-				<div>
-					<img src={ image } />
-					<Spinner className="upload-image__spinner" />
+				<div className="upload-image__uploading-container">
+					<img src={ editedImage } />
+					<Spinner className="upload-image__spinner" size={ 40 } />
 				</div>
 			);
 		}

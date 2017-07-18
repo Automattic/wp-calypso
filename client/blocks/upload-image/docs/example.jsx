@@ -31,11 +31,7 @@ export default class UploadImageExample extends Component {
 							} );
 						}
 					}
-				>
-					{ uploadedImageDataUrl &&
-						<img src={ uploadedImageDataUrl }/>
-					}
-				</UploadImage>
+				/>
 
 				<h3>Image is uploaded</h3>
 				<UploadImage
