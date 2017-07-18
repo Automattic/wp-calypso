@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { startsWith } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -31,6 +32,7 @@ class PreviewMain extends React.Component {
 
 	state = {
 		previewUrl: null,
+		externalUrl: null,
 	};
 
 	componentWillMount() {
@@ -41,20 +43,27 @@ class PreviewMain extends React.Component {
 		if ( ! this.props.site ) {
 			if ( this.state.previewUrl !== null ) {
 				debug( 'unloaded page' );
-				this.setState( { previewUrl: null } );
+				this.setState( {
+					previewUrl: null,
+					externalUrl: null,
+				} );
 			}
 			return;
 		}
 
+		const baseUrl = this.getBasePreviewUrl();
 		const newUrl = addQueryArgs( {
 			preview: true,
 			iframe: true,
 			'frame-nonce': this.props.site.options.frame_nonce
-		}, this.getBasePreviewUrl() );
+		}, baseUrl );
 
 		if ( this.iframeUrl !== newUrl ) {
 			debug( 'loading', newUrl );
-			this.setState( { previewUrl: newUrl } );
+			this.setState( {
+				previewUrl: newUrl,
+				externalUrl: baseUrl
+			} );
 		}
 	}
 
@@ -67,6 +76,12 @@ class PreviewMain extends React.Component {
 			debug( 'site change detected' );
 			this.updateUrl();
 		}
+	}
+
+	updateSiteLocation = ( pathname ) => {
+		this.setState( {
+			externalUrl: this.getBasePreviewUrl() + ( startsWith( pathname, '/' ) ? '' : '/' ) + pathname
+		} );
 	}
 
 	render() {
@@ -100,9 +115,11 @@ class PreviewMain extends React.Component {
 			<Main className="preview">
 				<DocumentHead title={ translate( 'Site Preview' ) } />
 				<WebPreviewContent
+					onLocationUpdate={ this.updateSiteLocation }
+					showUrl={ !! this.state.externalUrl }
 					showClose={ false }
 					previewUrl={ this.state.previewUrl }
-					externalUrl={ site.URL }
+					externalUrl={ this.state.externalUrl }
 				/>
 			</Main>
 		);

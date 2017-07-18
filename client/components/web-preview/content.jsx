@@ -109,7 +109,14 @@ export class WebPreviewContent extends Component {
 			case 'partially-loaded':
 				this.setLoaded();
 				return;
+			case 'location-change':
+				this.handleLocationChange( data.payload );
+				return;
 		}
+	}
+
+	handleLocationChange = ( payload ) => {
+		this.props.onLocationUpdate( payload.pathname );
 	}
 
 	focusIfNeeded = () => {
@@ -277,6 +284,8 @@ WebPreviewContent.propTypes = {
 	// The function to call when the iframe is loaded. Will be passed the iframe document object.
 	// Only called if using previewMarkup.
 	onLoad: PropTypes.func,
+	// Called when the iframe's location updates
+	onLocationUpdate: PropTypes.func,
 	// Called when the preview is closed, either via the 'X' button or the escape key
 	onClose: PropTypes.func,
 	// Called when the edit button is clicked
@@ -305,6 +314,7 @@ WebPreviewContent.defaultProps = {
 	previewUrl: null,
 	previewMarkup: null,
 	onLoad: noop,
+	onLocationUpdate: noop,
 	onClose: noop,
 	onEdit: noop,
 	onDeviceUpdate: noop,
