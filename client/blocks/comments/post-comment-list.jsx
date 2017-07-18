@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import { get, size, takeRight } from 'lodash';
+import { get, size, takeRight, defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -112,7 +112,8 @@ class PostCommentList extends React.Component {
 		}
 
 		if ( this.shouldScrollToComment( nextProps ) ) {
-			this.scrollToComment();
+			// defer so that the above/below comments load
+			defer( () => this.scrollToComment(), 50 );
 		}
 	}
 
@@ -221,6 +222,7 @@ class PostCommentList extends React.Component {
 	 * 3. we haven't already scrolled to it yet
 	 * 4. we have loaded some comments above + below it already (or there is only 1 comment)
 	 *
+	 * @param {object} props - the propes to use when evaluating if window should be scrolled down to a comment.
 	 * @returns {boolean} - whether or not we should scroll to a comment
 	 */
 	shouldScrollToComment = ( props = this.props ) =>
