@@ -187,10 +187,12 @@ export default connect(
 		const siteId = site ? site.ID : false;
 		const currentPage = getOrdersCurrentPage( state, siteId );
 		const currentStatus = getOrdersCurrentStatus( state, siteId );
-		const orders = getOrders( state, { page: currentPage, status: currentStatus }, siteId );
-		const ordersLoading = areOrdersLoading( state, currentPage, siteId );
-		const ordersLoaded = areOrdersLoaded( state, currentPage, siteId );
 		const total = getTotalOrders( state, { status: currentStatus }, siteId );
+
+		const query = { page: currentPage, status: currentStatus };
+		const orders = getOrders( state, query, siteId );
+		const ordersLoading = areOrdersLoading( state, query, siteId );
+		const ordersLoaded = areOrdersLoaded( state, query, siteId );
 
 		return {
 			currentPage,
