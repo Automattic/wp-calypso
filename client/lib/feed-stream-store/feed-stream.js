@@ -310,7 +310,7 @@ export default class FeedStream {
 			orderBy: this.orderBy,
 			number: this.maxUpdates,
 			before: moment().toISOString(),
-			after: mostRecentDate,
+			after: moment( mostRecentDate ).toISOString,
 		};
 
 		this.onUpdateFetch( params );
