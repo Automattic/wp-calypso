@@ -53,8 +53,10 @@ class FollowingIntro extends React.Component {
 			variantClassname = 'following__intro-light-blue';
 		} else if ( abtestVariant === 'white' ) {
 			variantClassname = 'following__intro-white';
-		} else {
-			variantClassname = 'following__intro';
+		}
+
+		if ( ! variantClassname ) {
+			return null;
 		}
 
 		return (
