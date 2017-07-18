@@ -246,7 +246,8 @@ export const SeoForm = React.createClass( {
 		const {
 			trackFormSubmitted,
 			trackTitleFormatsUpdated,
-			trackFrontPageMetaUpdated
+			trackFrontPageMetaUpdated,
+			trackSiteVerificationUpdated
 		} = this.props;
 
 		trackFormSubmitted();
@@ -257,6 +258,22 @@ export const SeoForm = React.createClass( {
 
 		if ( dirtyFields.has( 'frontPageMetaDescription' ) ) {
 			trackFrontPageMetaUpdated();
+		}
+
+		if ( dirtyFields.has( 'googleCode' ) ) {
+			trackSiteVerificationUpdated( 'google' );
+		}
+
+		if ( dirtyFields.has( 'bingCode' ) ) {
+			trackSiteVerificationUpdated( 'bing' );
+		}
+
+		if ( dirtyFields.has( 'pinterestCode' ) ) {
+			trackSiteVerificationUpdated( 'pinterest' );
+		}
+
+		if ( dirtyFields.has( 'yandexCode' ) ) {
+			trackSiteVerificationUpdated( 'yandex' );
 		}
 	},
 
@@ -563,6 +580,7 @@ const mapDispatchToProps = {
 	trackFormSubmitted: partial( recordTracksEvent, 'calypso_seo_settings_form_submit' ),
 	trackTitleFormatsUpdated: partial( recordTracksEvent, 'calypso_seo_tools_title_formats_updated' ),
 	trackFrontPageMetaUpdated: partial( recordTracksEvent, 'calypso_seo_tools_front_page_meta_updated' ),
+	trackSiteVerificationUpdated: ( service ) => recordTracksEvent( 'calypso_seo_tools_site_verification_updated', { service: service } ),
 	activateModule,
 };
 
