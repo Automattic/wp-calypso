@@ -11,7 +11,7 @@ import React, { Component, PropTypes } from 'react';
  */
 import AddressView from 'woocommerce/components/address-view';
 import {
-	areSettingsGeneralLoaded,
+	areSettingsGeneralLoading,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { errorNotice } from 'state/notices/actions';
@@ -159,7 +159,7 @@ function mapStateToProps( state, ownProps ) {
 
 	if ( ownProps.site ) {
 		address = getStoreLocation( state, ownProps.site.ID );
-		loading = ! areSettingsGeneralLoaded( state, ownProps.site.ID );
+		loading = areSettingsGeneralLoading( state, ownProps.site.ID );
 	}
 
 	return {

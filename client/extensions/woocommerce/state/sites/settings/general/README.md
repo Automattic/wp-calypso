@@ -11,10 +11,14 @@ Pull general settings from the remote site. Does not run if the settings are loa
 
 ## Reducer
 
-This is saved on a per-site basis as a list of settings as returned from the site's API.
+This is saved on a per-site basis, either as "LOADING" (when requesting settings), or a list of settings as returned from the site's API.
 
 ```js
 {
+	"settings": {
+		"general": "LOADING"
+	}
+	// or
 	"settings": {
 		"general": [ {
 			"id": "woocommerce_allowed_countries",
@@ -39,6 +43,10 @@ This is saved on a per-site basis as a list of settings as returned from the sit
 ### `areSettingsGeneralLoaded( state, [siteId] )`
 
 Whether the general settings list has been successfully loaded from the server. Optional `siteId`, will default to currently selected site.
+
+### `areSettingsGeneralLoading( state, [siteId] )`
+
+Whether the general settings list is currently being retrieved from the server. Optional `siteId`, will default to currently selected site.
 
 ### `getPaymentCurrencySettings( state, siteId: number )`
 
