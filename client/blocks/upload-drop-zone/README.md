@@ -7,17 +7,17 @@ A combined drop-zone and filepicker for uploading zip files. Click to open a fil
 
 ```jsx
 render() {
-	const onFileSelect = this.props.uploadTheme;
+	const doUpload = this.props.uploadTheme;
 	
 	return (
-		<UploadDropZone onFileSelect={ onDrop } />
+		<UploadDropZone doUpload={ doUpload } />
 	);
 }
 ```
 
 ## Props
 
-### `onFileSelect`
+### `doUpload`
 
 <table>
 	<tr><th>Type</th><td>Function</td></tr>

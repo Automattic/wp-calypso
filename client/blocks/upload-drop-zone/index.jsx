@@ -24,14 +24,14 @@ const debug = debugFactory( 'calypso:upload-drop-zone' );
 class UploadDropZone extends Component {
 
 	static propTypes = {
-		onDrop: PropTypes.func,
+		doUpload: PropTypes.func.isRequired,
 		disabled: PropTypes.bool,
 		// Connected
 		siteId: PropTypes.number,
 	}
 
 	onFileSelect = ( files ) => {
-		const { translate, siteId, onDrop } = this.props;
+		const { translate, siteId, doUpload } = this.props;
 
 		if ( files.length !== 1 ) {
 			notices.error( translate( 'Please drop a single zip file' ) );
@@ -49,7 +49,7 @@ class UploadDropZone extends Component {
 			return;
 		}
 
-		onDrop( siteId, file );
+		doUpload( siteId, file );
 	}
 
 	render() {

@@ -219,12 +219,12 @@ class Upload extends React.Component {
 			isBusiness,
 		} = this.props;
 
-		const onDrop = isJetpack ? this.props.uploadTheme : this.props.initiateThemeTransfer;
+		const uploadAction = isJetpack ? this.props.uploadTheme : this.props.initiateThemeTransfer;
 		const disabled = ! isBusiness && ! isJetpack;
 
 		return (
 			<Card>
-				{ ! inProgress && ! complete && <UploadDropZone onDrop={ onDrop } disabled={ disabled } /> }
+				{ ! inProgress && ! complete && <UploadDropZone doUpload={ uploadAction } disabled={ disabled } /> }
 				{ inProgress && this.renderProgressBar() }
 				{ complete && ! failed && uploadedTheme && this.renderTheme() }
 				{ complete && this.props.isSiteAutomatedTransfer && <WpAdminAutoLogin site={ this.props.selectedSite } /> }
