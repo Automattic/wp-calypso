@@ -20,12 +20,14 @@ class EllipsisMenu extends Component {
 		position: PropTypes.string,
 		children: PropTypes.node,
 		disabled: PropTypes.bool,
+		onClick: PropTypes.func,
 		onToggle: PropTypes.func,
 		popoverClassName: PropTypes.string,
 	};
 
 	static defaultProps = {
-		onToggle: noop
+		onClick: noop,
+		onToggle: noop,
 	}
 
 	constructor() {
@@ -41,6 +43,19 @@ class EllipsisMenu extends Component {
 
 		this.setPopoverContext = this.setPopoverContext.bind( this );
 	}
+
+	handleClick = ( event ) => {
+		const { onClick } = this.props;
+		const { isMenuVisible } = this.state;
+
+		onClick( event );
+
+		if ( isMenuVisible ) {
+			this.hideMenu();
+		} else {
+			this.showMenu();
+		}
+	};
 
 	setPopoverContext( popoverContext ) {
 		if ( popoverContext ) {
@@ -68,7 +83,7 @@ class EllipsisMenu extends Component {
 			<span className={ classes }>
 				<Button
 					ref={ this.setPopoverContext }
-					onClick={ isMenuVisible ? this.hideMenu : this.showMenu }
+					onClick={ this.handleClick }
 					title={ toggleTitle || translate( 'Toggle menu' ) }
 					borderless
 					disabled={ disabled }
