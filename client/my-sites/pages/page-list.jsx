@@ -121,7 +121,7 @@ const Pages = localize( React.createClass( {
 		if ( options.triggeredByScroll ) {
 			this.props.trackScrollPage( this.props.page + 1 );
 		}
-		//this.props.incrementPage();
+		this.props.incrementPage();
 	},
 
 	_insertTimeMarkers( pages ) {
