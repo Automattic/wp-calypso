@@ -16,7 +16,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import notices from 'notices';
 import debugFactory from 'debug';
 import {
-	MAX_UPLOADED_THEME_SIZE
+	MAX_UPLOAD_ZIP_SIZE
 } from 'lib/automated-transfer/constants';
 
 const debug = debugFactory( 'calypso:upload-drop-zone' );
@@ -42,7 +42,7 @@ class UploadDropZone extends Component {
 		const file = files[ 0 ] || files.item( 0 );
 		debug( 'zip file:', file );
 
-		if ( file.size > MAX_UPLOADED_THEME_SIZE ) {
+		if ( file.size > MAX_UPLOAD_ZIP_SIZE ) {
 			notices.error(
 				translate( 'Zip file is too large. Please upload a theme under 50 MB.' )
 			);
