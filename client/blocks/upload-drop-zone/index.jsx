@@ -44,7 +44,7 @@ class UploadDropZone extends Component {
 
 		if ( file.size > MAX_UPLOAD_ZIP_SIZE ) {
 			notices.error(
-				translate( 'Zip file is too large. Please upload a theme under 50 MB.' )
+				translate( 'Zip file is too large. Please upload a file under 50 MB.' )
 			);
 			return;
 		}
