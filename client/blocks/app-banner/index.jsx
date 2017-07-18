@@ -56,11 +56,11 @@ class AppBanner extends Component {
 	}
 
 	isiOS() {
-		return this.props.userAgent.match( /iPhone/i ) ? true : false;
+		return /iPhone/i.test( this.props.userAgent );
 	}
 
 	isAndroid() {
-		return this.props.userAgent.match( /Android/i ) ? true : false;
+		return /Android/i.test( this.props.userAgent );
 	}
 
 	isMobile() {

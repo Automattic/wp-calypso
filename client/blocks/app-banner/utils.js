@@ -69,10 +69,4 @@ export function getNewDismissTimes( dismissedSection ) {
 	}, {} );
 }
 
-export function isDismissed( dismissedUntil, sectionName ) {
-	if ( ! get( dismissedUntil, sectionName, false ) ) {
-		return false;
-	}
-
-	return dismissedUntil[ sectionName ] > Date.now();
-}
+export const isDismissed = ( dismissedUntil, section ) => get( dismissedUntil, section, -Infinity ) > Date.now();
