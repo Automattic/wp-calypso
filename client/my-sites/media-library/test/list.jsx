@@ -188,4 +188,44 @@ describe( 'MediaLibraryList item selection', function() {
 			expectSelectedItems( 4 );
 		} );
 	} );
+
+	context( 'google photos', () => {
+		let largeLibrary = [];
+
+		const getList = ( media, source ) => {
+			return mount(
+				<MediaList
+					filterRequiresUpgrade={ false }
+					site={ { ID: DUMMY_SITE_ID } }
+					media={ media }
+					mediaScale={ 0.24 }
+					source={ source }
+					single />
+				).find( MediaList ).get( 0 );
+		};
+
+		before( () => {
+			while ( largeLibrary.length < 1000 ) {
+				largeLibrary = largeLibrary.concat( fixtures.media );
+			}
+		} );
+
+		it( 'displays a trailing message when media library showing > 1000 google photos', () => {
+			const list = getList( largeLibrary, 'google_photos' );
+
+			expect( list.renderTrailingItems() ).to.not.be.null;
+		} );
+
+		it( 'doesnt displays a trailing message when media library showing > 1000 non-google photos', () => {
+			const list = getList( largeLibrary, '' );
+
+			expect( list.renderTrailingItems() ).to.be.null;
+		} );
+
+		it( 'doesnt display a trailing message when media library showing < 1000 photos', () => {
+			const list = getList( largeLibrary.slice( 0, 10 ), 'google_photos' );
+
+			expect( list.renderTrailingItems() ).to.be.null;
+		} );
+	} );
 } );
