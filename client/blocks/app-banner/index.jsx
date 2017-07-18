@@ -14,8 +14,9 @@ import Card from 'components/card';
 import { getSectionName } from 'state/ui/selectors';
 import { getPreference } from 'state/preferences/selectors';
 import { isNotificationsOpen } from 'state/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { savePreference } from 'state/preferences/actions';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import {
 	identity,
 	includes,
@@ -27,16 +28,14 @@ import {
 	getNewDismissTimes,
 	getCurrentSection,
 	isDismissed,
-	PREFERENCE_NAME,
+	APP_BANNER_DISMISS_TIMES_PREFERENCE,
 } from './utils';
 
 class AppBanner extends Component {
 	static propTypes = {
 		saveDismissTime: PropTypes.func,
 		translate: PropTypes.func,
-		trackAppBannerImpression: PropTypes.func,
-		trackAppBannerDismiss: PropTypes.func,
-		trackAppBannerOpen: PropTypes.func,
+		recordAppBannerOpen: PropTypes.func,
 		userAgent: PropTypes.string,
 		// connected
 		currentSection: React.PropTypes.string,
@@ -46,10 +45,8 @@ class AppBanner extends Component {
 	static defaultProps = {
 		saveDismissTime: noop,
 		translate: identity,
-		trackAppBannerImpression: noop,
-		trackAppBannerDismiss: noop,
-		trackAppBannerOpen: noop,
-		userAgent: navigator.userAgent,
+		recordAppBannerOpen: noop,
+		userAgent: ( typeof window !== 'undefined' ) ? navigator.userAgent : '',
 	};
 
 	isVisible() {
@@ -75,11 +72,10 @@ class AppBanner extends Component {
 		const { currentSection } = this.props;
 
 		this.props.saveDismissTime( currentSection );
-		this.props.trackAppBannerDismiss( currentSection );
 	};
 
 	openApp = () => {
-		this.props.trackAppBannerOpen( this.props.currentSection );
+		this.props.recordAppBannerOpen( this.props.currentSection );
 	};
 
 	getDeepLink() {
@@ -109,10 +105,14 @@ class AppBanner extends Component {
 
 		const { title, copy } = getAppBannerData( translate, currentSection );
 
-		this.props.trackAppBannerImpression( currentSection );
-
 		return (
 			<Card className={ classNames( 'app-banner', 'is-compact', currentSection ) }>
+				<TrackComponentView
+					eventName="calypso_mobile_app_banner_impression"
+					eventProperties={ {
+						page: currentSection,
+					} }
+				/>
 				<div className="app-banner__text-content">
 					<div className="app-banner__title">
 						<span> { title } </span>
@@ -148,16 +148,17 @@ const mapStateToProps = ( state ) => {
 	const isNotesOpen = isNotificationsOpen( state );
 
 	return {
-		dismissedUntil: getPreference( state, PREFERENCE_NAME ),
+		dismissedUntil: getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
 		currentSection: getCurrentSection( sectionName, isNotesOpen ),
 	};
 };
 
 const mapDispatchToProps = {
-	trackAppBannerImpression: ( sectionName ) => recordTracksEvent( 'calypso_mobile_app_banner_impression', { on_page: sectionName } ),
-	trackAppBannerDismiss: ( sectionName ) => recordTracksEvent( 'calypso_mobile_app_banner_dismiss', { on_page: sectionName } ),
-	trackAppBannerOpen: ( sectionName ) => recordTracksEvent( 'calypso_mobile_app_banner_open', { on_page: sectionName } ),
-	saveDismissTime: ( sectionName ) => savePreference( PREFERENCE_NAME, getNewDismissTimes( sectionName ) ),
+	recordAppBannerOpen: ( sectionName ) => recordTracksEvent( 'calypso_mobile_app_banner_open', { page: sectionName } ),
+	saveDismissTime: ( sectionName ) => withAnalytics(
+		recordTracksEvent( 'calypso_mobile_app_banner_dismiss', { page: sectionName } ),
+		savePreference( APP_BANNER_DISMISS_TIMES_PREFERENCE, getNewDismissTimes( sectionName ) )
+	),
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( AppBanner ) );
