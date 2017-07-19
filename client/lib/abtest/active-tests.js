@@ -112,5 +112,6 @@ module.exports = {
 		},
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 };
