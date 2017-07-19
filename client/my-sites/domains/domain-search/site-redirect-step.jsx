@@ -15,6 +15,7 @@ import { canRedirect } from 'lib/domains';
 import DomainProductPrice from 'components/domains/domain-product-price';
 import upgradesActions from 'lib/upgrades/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { withoutHttp } from 'lib/url';
 
 class SiteRedirectStep extends React.Component {
 	static propTypes = {
@@ -74,7 +75,7 @@ class SiteRedirectStep extends React.Component {
 	};
 
 	setSearchQuery = ( event ) => {
-		this.setState( { searchQuery: event.target.value } );
+		this.setState( { searchQuery: withoutHttp( event.target.value ) } );
 	};
 
 	handleFormSubmit = ( event ) => {
