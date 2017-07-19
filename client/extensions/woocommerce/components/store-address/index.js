@@ -16,7 +16,11 @@ import Dialog from 'components/dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getCountryData } from 'woocommerce/lib/countries';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getStoreLocation, areSettingsGeneralLoading } from 'woocommerce/state/sites/settings/general/selectors';
+import {
+	getStoreLocation,
+	areSettingsGeneralLoading,
+	areSettingsGeneralLoadError,
+} from 'woocommerce/state/sites/settings/general/selectors';
 import { setAddress } from 'woocommerce/state/sites/settings/actions';
 import FormLabel from 'components/forms/form-label';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
@@ -96,7 +100,7 @@ class StoreAddress extends Component {
 	}
 
 	render() {
-		const { className, site, loading, translate, showLabel } = this.props;
+		const { className, site, loading, fetchError, translate, showLabel } = this.props;
 
 		const buttons = [
 			{ action: 'close', label: translate( 'Close' ) },
@@ -104,7 +108,7 @@ class StoreAddress extends Component {
 		];
 
 		let display;
-		if ( ! site || loading ) {
+		if ( ! site || loading || fetchError ) {
 			display = (
 				<div>
 					<p></p>
@@ -145,11 +149,13 @@ class StoreAddress extends Component {
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const loading = areSettingsGeneralLoading( state );
+	const fetchError = areSettingsGeneralLoadError( state );
 	const address = getStoreLocation( state );
 	return {
 		site,
 		address,
 		loading,
+		fetchError,
 	};
 }
 
