@@ -243,9 +243,6 @@ export default class FeedStream {
 	}
 
 	getFirstItemWithDate() {
-		if ( this.newestPostDate ) {
-			return this.newestPostDate;
-		}
 		if ( this.postKeys.length === 0 ) {
 			return;
 		}
