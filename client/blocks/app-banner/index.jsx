@@ -81,12 +81,13 @@ class AppBanner extends Component {
 
 	getDeepLink() {
 		// TODO: update with real deep links when we get them
+		// just linking to respective app stores for now
 		if ( this.isAndroid() ) {
-			return 'wordpress://';
+			return 'https://play.google.com/store/apps/details?id=org.wordpress.android';
 		}
 
 		if ( this.isiOS() ) {
-			return 'wordpress://';
+			return 'https://itunes.apple.com/us/app/wordpress/id335703880';
 		}
 
 		return null;
