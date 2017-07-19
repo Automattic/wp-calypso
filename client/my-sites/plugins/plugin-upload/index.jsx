@@ -15,7 +15,7 @@ import Card from 'components/card';
 import ProgressBar from 'components/progress-bar';
 import UploadDropZone from 'blocks/upload-drop-zone';
 import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	getPluginUploadError,
 	getPluginUploadProgress,
@@ -25,6 +25,23 @@ import {
 } from 'state/selectors';
 
 class PluginUpload extends React.Component {
+
+	componentDidMount() {
+		const { siteId, inProgress } = this.props;
+		! inProgress && this.props.clearPluginUpload( siteId );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.siteId !== this.props.siteId ) {
+			const { siteId, inProgress } = nextProps;
+			! inProgress && this.props.clearPluginUpload( siteId );
+		}
+
+		if ( nextProps.complete ) {
+			page( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
+		}
+	}
+
 	back = () => {
 		page.back();
 	}
@@ -78,6 +95,7 @@ export default connect(
 		const progress = getPluginUploadProgress( state, siteId );
 		return {
 			siteId,
+			siteSlug: getSelectedSiteSlug( state ),
 			inProgress: isPluginUploadInProgress( state, siteId ),
 			complete: isPluginUploadComplete( state, siteId ),
 			failed: !! error,
