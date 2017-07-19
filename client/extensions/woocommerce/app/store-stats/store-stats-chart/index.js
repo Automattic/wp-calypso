@@ -19,7 +19,6 @@ import { getPeriodFormat } from 'state/stats/lists/utils';
 import { getDelta } from '../utils';
 import { getSiteStatsNormalizedData, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import Legend from 'components/chart/legend';
-import QuerySiteStats from 'components/data/query-site-stats';
 import Tabs from 'my-sites/stats/stats-tabs';
 import Tab from 'my-sites/stats/stats-tabs/tab';
 import { UNITS } from 'woocommerce/app/store-stats/constants';
@@ -66,7 +65,7 @@ class StoreStatsChart extends Component {
 	};
 
 	render() {
-		const { data, deltas, query, selectedDate, siteId, unit } = this.props;
+		const { data, deltas, selectedDate, unit } = this.props;
 		const { selectedTabIndex } = this.state;
 		const tabs = [
 			{ label: 'Gross Sales', attr: 'gross_sales', type: 'currency' },
@@ -81,11 +80,6 @@ class StoreStatsChart extends Component {
 		const selectedIndex = findIndex( data, d => d.period === selectedDate );
 		return (
 			<Card className="store-stats-chart stats-module">
-				{ siteId && <QuerySiteStats
-					query={ query }
-					siteId={ siteId }
-					statType="statsOrders"
-				/> }
 				<Legend
 					activeTab={ selectedTab }
 				/>
