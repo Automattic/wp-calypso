@@ -38,7 +38,7 @@ export default class UploadImageExample extends Component {
 					placeholderContent={ null }
 					uploadingContent={ null }
 				>
-					<img src="https://cldup.com/mA_hqNVj0w.jpg"/>
+					<img src="https://wordpress.com/calypso/images/reader/promo-app-icon.png"/>
 				</UploadImage>
 			</div>
 		);
