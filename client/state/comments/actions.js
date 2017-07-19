@@ -57,11 +57,12 @@ export const requestCommentsList = query => ( {
 } );
 
 /**
- * Creates a thunk that permanently deletes a comment or removes a comment placeholder from the state
+ * Creates an action that permanently deletes a comment
+ * or removes a comment placeholder from the state
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
- * @param {Number|String} commentId comment identifier
- * @returns {Function} thunk that deletes a comment
+ * @param {Number|String} commentId comment or comment placeholder identifier
+ * @returns {Object} action that deletes a comment
  */
 export const deleteComment = ( siteId, postId, commentId ) => ( {
 	type: COMMENTS_DELETE,
