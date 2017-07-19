@@ -27,7 +27,7 @@ class PriceInput extends Component {
 
 	render() {
 		const { siteId, value, currency, currencySetting } = this.props;
-		const props = { ...omit( this.props, [ 'value', 'currency', 'currencySetting', 'siteId' ] ) };
+		const props = { ...omit( this.props, [ 'value', 'currency', 'currencySetting', 'siteId', 'dispatch' ] ) };
 		const displayCurrency = ! currency && currencySetting ? currencySetting.value : currency;
 		const currencyObject = getCurrencyObject( value, displayCurrency );
 		return (
