@@ -3,7 +3,7 @@
  */
 import { translate } from 'i18n-calypso';
 
-export const sparkWidgetList1 = [
+const sparkWidgetList1 = [
 	{
 		key: 'products',
 		title: translate( 'Products Purchased' ),
@@ -21,7 +21,7 @@ export const sparkWidgetList1 = [
 	}
 ];
 
-export const sparkWidgetList2 = [
+const sparkWidgetList2 = [
 	{
 		key: 'total_refund',
 		title: translate( 'Refunds' ),
@@ -38,6 +38,8 @@ export const sparkWidgetList2 = [
 		format: 'currency'
 	}
 ];
+
+export const sparkWidgets = [ sparkWidgetList1, sparkWidgetList2 ];
 
 export const topProducts = {
 	basePath: '/store/stats/products',

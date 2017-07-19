@@ -27,27 +27,7 @@
 		width: calc( 33% - 3px );
 
 		&.spark-widgets {
-			width: 100%;
-
-			.store-stats-module {
-				display: flex;
-				flex-direction: row;
-				flex-wrap: wrap;
-
-				.card {
-					width: 100%;
-				}
-
-				.store-stats-widget-list {
-					width: calc( 50% - 8px );
-					&:first-child {
-						margin-left: 0;
-					}
-					&:last-child {
-						margin-right: 0;
-					}
-				}
-			}
+			width: calc( 50% - 6px );
 		}
 	}
 }
