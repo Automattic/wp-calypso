@@ -841,6 +841,10 @@
 	font-size: 12px;
 	padding-bottom: 5px;
 
+	img {
+		margin-left:8px;
+	}
+
 	@include breakpoint( "<660px" ) {
 		border-bottom: 1px solid lighten( $gray, 30% );
 		margin: 10px 0 0 0;
