@@ -1,27 +1,21 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' ),
-	omit = require( 'lodash/omit' ),
-	i18n = require( 'i18n-calypso' );
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 
-module.exports = React.createClass( {
+const FormLabel = ( { children, required, translate, className, ...extraProps } ) => {
+	return (
+		<label { ...extraProps } className={ classnames( className, 'form-label' ) } >
+			{ children }
+			{ required && <small className="form-label__required">{ translate( 'Required' ) }</small> }
+		</label>
+	);
+};
 
-	displayName: 'FormLabel',
+FormLabel.propTypes = {
+	required: React.PropTypes.bool,
+};
 
-	propTypes: {
-		required: React.PropTypes.bool,
-	},
-
-	render: function() {
-		return (
-			<label { ...omit( this.props, 'className' ) } className={ classnames( this.props.className, 'form-label' ) } >
-				{ this.props.children }
-				{ this.props.required && (
-					<small className="form-label__required">{ i18n.translate( 'Required' ) }</small>
-				) }
-			</label>
-		);
-	}
-} );
+export default localize( FormLabel );
