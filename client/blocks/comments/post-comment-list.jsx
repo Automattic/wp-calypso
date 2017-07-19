@@ -19,7 +19,6 @@ import CommentCount from './comment-count';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 
-// eslint-disable
 /**
  * PostCommentList, as the name would suggest, displays a list of comments for a post.
  * It has the capability of either starting from the latest comment for a post,
@@ -36,7 +35,7 @@ import SegmentedControlItem from 'components/segmented-control/item';
  *    This also activates a "Show More" button at the end of the comment list instead of just at the top
  *
  */
-// eslint-enable
+
 class PostCommentList extends React.Component {
 	static propTypes = {
 		post: React.PropTypes.shape( {
