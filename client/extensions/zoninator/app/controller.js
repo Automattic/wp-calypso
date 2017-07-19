@@ -33,7 +33,7 @@ export const renderTab = ( component ) => ( context ) => {
 	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
 	renderWithReduxStore(
-		<Settings tab={ zone }>
+		<Settings>
 			{ React.createElement( component ) }
 		</Settings>,
 		document.getElementById( 'primary' ),
