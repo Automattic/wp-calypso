@@ -1,16 +1,18 @@
 {
 	"compilerOptions": {
+		"checkJs": true,
 		"allowSyntheticDefaultImports": true,
-		"module": "commonjs",
-		"target": "ES6",
+		"target": "es2017",
+		"module": "es6",
 		"baseUrl": ".",
 		"paths": {
 			"*": [ "test/*", "server/*", "client/*" ]
-		}
+		},
+		"jsx": "preserve"
 	},
-	"exclude": [
-		"node_modules",
-		"public",
-		"build"
+	"include": [
+		"client/**/*",
+		"server/**/*",
+		"test/**/*"
 	]
 }
