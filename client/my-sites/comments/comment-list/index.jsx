@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, keyBy, keys, map, noop, omit, size } from 'lodash';
+import { find, get, keyBy, keys, map, noop, omit, orderBy, reject, size, uniqBy } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -54,13 +54,17 @@ export class CommentList extends Component {
 	};
 
 	state = {
+		changedComments: [],
 		isBulkEdit: false,
 		selectedComments: {},
 	};
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.status !== nextProps.status ) {
-			this.setState( { selectedComments: {} } );
+			this.setState( {
+				changedComments: [],
+				selectedComments: {},
+			} );
 		}
 	}
 
@@ -75,7 +79,13 @@ export class CommentList extends Component {
 		this.props.deleteComment( commentId, postId );
 	}
 
-	getComment = commentId => find( this.props.comments, [ 'ID', commentId ] );
+	getComment = commentId => find( this.getComments(), [ 'ID', commentId ] );
+
+	getComments = () => orderBy(
+		uniqBy( [ ...this.state.changedComments, ...this.props.comments ], 'ID' ),
+		'date',
+		'desc'
+	);
 
 	getEmptyMessage = () => {
 		const { status, translate } = this.props;
@@ -132,13 +142,15 @@ export class CommentList extends Component {
 		} );
 	};
 
-	setCommentStatus = ( commentId, postId, status, options = { showNotice: true } ) => {
+	setCommentStatus = ( commentId, postId, status, options = { isUndo: false, showNotice: true } ) => {
 		// TODO: Replace with Redux getComment()
 		const comment = this.getComment( commentId );
 
-		if ( comment && status === comment.status ) {
+		if ( ! comment ) {
 			return;
 		}
+
+		this.updateChangedComments( comment, options.isUndo );
 
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 
@@ -203,7 +215,12 @@ export class CommentList extends Component {
 			duration: 5000,
 			id: `comment-notice-${ commentId }`,
 			isPersistent: true,
-			onClick: () => this.setCommentStatus( commentId, postId, previousStatus, { showNotice: false } ),
+			onClick: () => this.setCommentStatus(
+				commentId,
+				postId,
+				previousStatus,
+				{ isUndo: true, showNotice: false }
+			),
 		};
 
 		this.props.createNotice( type, message, options );
@@ -255,9 +272,22 @@ export class CommentList extends Component {
 		this.props.undoBulkStatus( selectedComments );
 	}
 
+	updateChangedComments = ( comment, isUndo ) => {
+		const { changedComments } = this.state;
+		const filteredChangedComments = reject( changedComments, { ID: comment.ID } );
+
+		if ( isUndo ) {
+			this.setState( { changedComments: filteredChangedComments } );
+		} else {
+			this.setState( { changedComments: [
+				filteredChangedComments,
+				{ ...comment, status },
+			] } );
+		}
+	}
+
 	render() {
 		const {
-			comments,
 			commentsCount,
 			commentsPage,
 			isLoading,
@@ -269,6 +299,8 @@ export class CommentList extends Component {
 			isBulkEdit,
 			selectedComments,
 		} = this.state;
+
+		const comments = this.getComments();
 
 		const zeroComments = size( comments ) <= 0;
 		const showPlaceholder = ( ! siteId || isLoading ) && zeroComments;
