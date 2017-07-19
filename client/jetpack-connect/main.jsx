@@ -264,22 +264,28 @@ class JetpackConnectMain extends Component {
 		if ( type === 'pro' || selectedPlan === 'jetpack_business' || selectedPlan === 'jetpack_business_monthly' ) {
 			return {
 				headerTitle: translate( 'Get Jetpack Professional' ),
-				headerSubtitle: translate( 'To start securing and backing up your site, first install Jetpack, ' +
-					'then purchase and activate your plan.' ),
+				headerSubtitle: translate(
+					'WordPress sites from start to finish: unlimited premium themes, ' +
+					'business class security, and marketing automation.'
+				),
 			};
 		}
 		if ( type === 'premium' || selectedPlan === 'jetpack_premium' || selectedPlan === 'jetpack_premium_monthly' ) {
 			return {
 				headerTitle: translate( 'Get Jetpack Premium' ),
-				headerSubtitle: translate( 'To start securing and backing up your site, first install Jetpack, ' +
-					'then purchase and activate your plan.' ),
+				headerSubtitle: translate(
+					'Automated backups and malware scanning, expert priority support, ' +
+					'marketing automation, and more.'
+				),
 			};
 		}
 		if ( type === 'personal' || selectedPlan === 'jetpack_personal' || selectedPlan === 'jetpack_personal_monthly' ) {
 			return {
 				headerTitle: translate( 'Get Jetpack Personal' ),
-				headerSubtitle: translate( 'To start securing and backing up your site, first install Jetpack, ' +
-					'then purchase and activate your plan.' ),
+				headerSubtitle: translate(
+					'Security essentials for every WordPress site ' +
+					'including automated backups and priority support.'
+				),
 			};
 		}
 
