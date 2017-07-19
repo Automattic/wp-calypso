@@ -114,6 +114,14 @@ class UploadImage extends Component {
 		);
 	}
 
+	componentWillUnmount() {
+		URL.revokeObjectURL( this.state.editedImage );
+
+		this.setState( {
+			editedImage: null,
+		} );
+	}
+
 	render() {
 		const { children, isUploading, translate, texts, additionalClasses } = this.props;
 
