@@ -92,6 +92,16 @@
 		min-height: 58px;
 	}
 
+	.sidebar__menu {
+		margin-top: 0;
+
+		ul {
+			li:first-child {
+				border-top-width: 0;
+			}
+		}
+	}
+
 	.sidebar__menu li {
 		.count {
 			margin: 13px 8px;
