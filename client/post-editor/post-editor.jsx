@@ -277,6 +277,7 @@ export const PostEditor = React.createClass( {
 					onPublish={ this.onPublish }
 					post={ this.state.post }
 					savedPost={ this.state.savedPost }
+					setPostDate={ this.setPostDate }
 					setStatus={ this.setConfirmationSidebar }
 					site={ site }
 					status={ this.state.confirmationSidebar }

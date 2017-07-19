@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -13,6 +12,11 @@ import Gridicon from 'gridicons';
 import PostSchedule from 'components/post-schedule';
 
 export class EditorPublishDate extends React.Component {
+
+	static propTypes = {
+		postDate: React.PropTypes.string,
+		setPostDate: React.PropTypes.func,
+	};
 
 	constructor( props ) {
 		super( props );
@@ -31,16 +35,22 @@ export class EditorPublishDate extends React.Component {
 
 		return (
 			<div className={ className } onClick={ this.toggleOpenState }>
-				<Gridicon icon="calendar" size={ 18 } /> Publish Now
+				<Gridicon icon="calendar" size={ 18 } /> { this.props.translate( 'Publish Immediately' ) }
 			</div>
 		);
 	}
 
 	renderSchedule() {
 		const className = classNames( 'editor-publish-date__schedule', {} );
+		const selectedDay = this.props.postDate ? this.props.moment( this.props.postDate ) : null;
+
 		return (
 			<div className={ className }>
-				<PostSchedule displayInputChrono={ false } />
+				<PostSchedule
+					displayInputChrono={ false }
+					onDateChange={ this.props.setPostDate }
+					selectedDay={ selectedDay }
+					/>
 			</div>
 		);
 	}
@@ -58,9 +68,4 @@ export class EditorPublishDate extends React.Component {
 
 }
 
-export default connect(
-	() => {
-		return {};
-	},
-	{}
-)( localize( EditorPublishDate ) );
+export default localize( EditorPublishDate );
