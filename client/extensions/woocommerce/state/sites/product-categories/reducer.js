@@ -2,24 +2,28 @@
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
-import { LOADING } from 'woocommerce/state/constants';
+import { LOADING, ERROR } from 'woocommerce/state/constants';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
-	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export default createReducer( {}, {
-	[ WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST ]: () => {
-		return LOADING;
-	},
-
-	[ WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		return data;
-	},
-
+export default createReducer( null, {
+	[ WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST ]: productCategoriesRequest,
 	[ WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED ]: productCategoryUpdated,
 } );
+
+function productCategoriesRequest( state, action ) {
+	const { data, error } = action.meta.dataLayer;
+
+	if ( error ) {
+		return ERROR;
+	}
+	if ( data ) {
+		return data.data;
+	}
+	return LOADING;
+}
 
 function productCategoryUpdated( state, action ) {
 	const { data } = action;
