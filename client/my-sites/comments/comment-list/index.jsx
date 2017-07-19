@@ -341,8 +341,8 @@ export class CommentList extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, status } ) => {
-	const comments = getSiteComments( state, siteId, status );
+const mapStateToProps = ( state, { siteId, status, order } ) => {
+	const comments = getSiteComments( state, siteId, status, order );
 	const isLoading = ! hasSiteComments( state, siteId );
 	return {
 		comments,
