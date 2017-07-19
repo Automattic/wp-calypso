@@ -3,18 +3,17 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { omit } from 'lodash';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormTextInput from 'components/forms/form-text-input';
 import { getCurrencyObject } from 'lib/format-currency';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 
 class PriceInput extends Component {
 
@@ -26,40 +25,24 @@ class PriceInput extends Component {
 		} ),
 	};
 
-	componentDidMount() {
-		const { siteId, currency } = this.props;
-
-		if ( siteId && ! currency ) {
-			this.props.fetchSettingsGeneral( siteId );
-		}
-	}
-
-	componentWillReceiveProps( newProps ) {
-		const { siteId, currency } = this.props;
-
-		if ( siteId !== newProps.siteId && ! currency ) {
-			this.props.fetchSettingsGeneral( newProps.siteId );
-		}
-	}
-
 	render() {
-		const { value, currency, currencySetting } = this.props;
-		const props = { ...omit( this.props, [ 'value', 'currency', 'currencySetting', 'siteId', 'fetchSettingsGeneral' ] ) };
+		const { siteId, value, currency, currencySetting } = this.props;
+		const props = { ...omit( this.props, [ 'value', 'currency', 'currencySetting', 'siteId', 'dispatch' ] ) };
 		const displayCurrency = ! currency && currencySetting ? currencySetting.value : currency;
 		const currencyObject = getCurrencyObject( value, displayCurrency );
-		if ( ! currencyObject ) {
-			return (
-				<FormTextInput
-					value={ value }
-					{ ...omit( props, [ 'noWrap', 'min' ] ) } />
-			);
-		}
-
 		return (
-			<FormCurrencyInput
-				currencySymbolPrefix={ currencyObject.symbol }
-				value={ value }
-				{ ...props } />
+			<div>
+				<QuerySettingsGeneral siteId={ siteId } />
+				{ currencyObject
+					? <FormCurrencyInput
+							currencySymbolPrefix={ currencyObject.symbol }
+							value={ value }
+							{ ...props } />
+					: <FormTextInput
+							value={ value }
+							{ ...omit( props, [ 'noWrap', 'min' ] ) } />
+				}
+			</div>
 		);
 	}
 }
@@ -73,13 +56,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
-	return bindActionCreators(
-		{
-			fetchSettingsGeneral,
-		},
-		dispatch
-	);
-}
-
-export default connect( mapStateToProps, mapDispatchToProps )( PriceInput );
+export default connect( mapStateToProps )( PriceInput );
