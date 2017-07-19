@@ -156,7 +156,7 @@ export const getShippingZoneLocations = createSelector(
 	},
 	( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
 		const id = isObject( zoneId ) ? `i${ zoneId.index }` : zoneId;
-		return `${ state }${ id }${ siteId }`;
+		return `${ id }${ siteId }`;
 	}
 );
 
@@ -544,7 +544,7 @@ export const getShippingZoneLocationsList = createSelector(
 	},
 	( state, zoneId, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
 		const id = isObject( zoneId ) ? `i${ zoneId.index }` : zoneId;
-		return `${ state }${ id }${ maxCountries }${ siteId }`;
+		return `${ id }${ maxCountries }${ siteId }`;
 	},
 );
 
