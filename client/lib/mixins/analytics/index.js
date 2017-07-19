@@ -149,35 +149,6 @@ const EVENTS = {
 		}
 	},
 
-	siteRedirect: {
-		formSubmit( searchBoxValue ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Submitted Form in Site Redirect',
-				'Search Box Value',
-				searchBoxValue
-			);
-		},
-
-		inputFocus( searchBoxValue ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Focused On Search Box Input in Site Redirect',
-				'Search Box Value',
-				searchBoxValue
-			);
-		},
-
-		goButtonClick( searchBoxValue ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Go" Button in Site Redirect',
-				'Search Box Value',
-				searchBoxValue
-			);
-		}
-	},
-
 	domainManagement: {
 		addGoogleApps: {
 			addAnotherEmailAddressClick( domainName ) {

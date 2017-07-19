@@ -1,33 +1,31 @@
 /**
  * External dependencies
  */
-var page = require( 'page' ),
-	React = require( 'react' );
+import page from 'page';
+import React from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var cartItems = require( 'lib/cart-values' ).cartItems,
-	notices = require( 'notices' ),
-	{ canRedirect } = require( 'lib/domains' ),
-	DomainProductPrice = require( 'components/domains/domain-product-price' ),
-	upgradesActions = require( 'lib/upgrades/actions' ),
-	analyticsMixin = require( 'lib/mixins/analytics' );
+import { cartItems } from 'lib/cart-values';
+import notices from 'notices';
+import { canRedirect } from 'lib/domains';
+import DomainProductPrice from 'components/domains/domain-product-price';
+import upgradesActions from 'lib/upgrades/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-var SiteRedirectStep = React.createClass( {
-	mixins: [ analyticsMixin( 'siteRedirect' ) ],
-
-	propTypes: {
+class SiteRedirectStep extends React.Component {
+	static propTypes = {
 		cart: React.PropTypes.object.isRequired,
 		products: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.object.isRequired,
-	},
+	};
 
-	getInitialState: function() {
-		return { searchQuery: '' };
-	},
+	state = { searchQuery: '' };
 
-	render: function() {
+	render() {
 		var price = this.props.products.offsite_redirect ? this.props.products.offsite_redirect.cost_display : null;
 
 		return (
@@ -36,7 +34,7 @@ var SiteRedirectStep = React.createClass( {
 
 					<div className="site-redirect-step__domain-description">
 						<p>
-							{ this.translate( 'Redirect {{strong}}%(domain)s{{/strong}} to this domain', {
+							{ this.props.translate( 'Redirect {{strong}}%(domain)s{{/strong}} to this domain', {
 								components: { strong: <strong /> },
 								args: { domain: this.props.selectedSite.slug }
 							} ) }
@@ -52,12 +50,12 @@ var SiteRedirectStep = React.createClass( {
 							className="site-redirect-step__external-domain"
 							type="text"
 							value={ this.state.searchQuery }
-							placeholder={ this.translate( 'Enter a domain', { textOnly: true } ) }
+							placeholder={ this.props.translate( 'Enter a domain', { textOnly: true } ) }
 							onChange={ this.setSearchQuery }
 							onClick={ this.recordInputFocus } />
 						<button className="site-redirect-step__go button is-primary"
 								onClick={ this.recordGoButtonClick }>
-							{ this.translate( 'Go', {
+							{ this.props.translate( 'Go', {
 								context: 'Upgrades: Label for adding Site Redirect'
 							} ) }
 						</button>
@@ -65,25 +63,25 @@ var SiteRedirectStep = React.createClass( {
 				</form>
 			</div>
 		);
-	},
+	}
 
-	recordInputFocus: function() {
-		this.recordEvent( 'inputFocus', this.state.searchQuery );
-	},
+	recordInputFocus = () => {
+		this.props.recordInputFocus( this.state.searchQuery );
+	};
 
-	recordGoButtonClick: function() {
-		this.recordEvent( 'goButtonClick', this.state.searchQuery );
-	},
+	recordGoButtonClick = () => {
+		this.props.recordGoButtonClick( this.state.searchQuery );
+	};
 
-	setSearchQuery: function( event ) {
+	setSearchQuery = ( event ) => {
 		this.setState( { searchQuery: event.target.value } );
-	},
+	};
 
-	handleFormSubmit: function( event ) {
+	handleFormSubmit = ( event ) => {
 		var domain;
 
 		event.preventDefault();
-		this.recordEvent( 'formSubmit', this.state.searchQuery );
+		this.props.recordFormSubmit( this.state.searchQuery );
 		domain = this.state.searchQuery;
 
 		if ( cartItems.hasProduct( this.props.cart, 'offsite_redirect' ) ) {
@@ -99,43 +97,71 @@ var SiteRedirectStep = React.createClass( {
 
 			this.addSiteRedirectToCart( domain );
 		}.bind( this ) );
-	},
+	};
 
-	addSiteRedirectToCart: function( domain ) {
+	addSiteRedirectToCart = ( domain ) => {
 		upgradesActions.addItem( cartItems.siteRedirect( { domain: domain } ) );
 
 		if ( this.isMounted() ) {
 			page( '/checkout/' + this.props.selectedSite.slug );
 		}
-	},
+	};
 
-	getValidationErrorMessage: function( domain, error ) {
+	getValidationErrorMessage = ( domain, error ) => {
 		switch ( error.code ) {
 			case 'invalid_domain':
-				return this.translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
+				return this.props.translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
 					args: { domain: domain }
 				} );
 
 			case 'invalid_tld':
-				return this.translate( 'Sorry, %(domain)s does not end with a valid domain extension.', {
+				return this.props.translate( 'Sorry, %(domain)s does not end with a valid domain extension.', {
 					args: { domain: domain }
 				} );
 
 			case 'empty_query':
-				return this.translate( 'Please enter a domain name or keyword.' );
+				return this.props.translate( 'Please enter a domain name or keyword.' );
 
 			case 'has_subscription':
-				return this.translate( "You already have Site Redirect upgrade and can't add another one to the same site." );
+				return this.props.translate( "You already have Site Redirect upgrade and can't add another one to the same site." );
 
 			case 'already_in_cart':
-				return this.translate( "You already have Site Redirect upgrade in the Shopping Cart and can't add another one" );
+				return this.props.translate( "You already have Site Redirect upgrade in the Shopping Cart and can't add another one" );
 
 			default:
-				return this.translate( 'There is a problem adding Site Redirect that points to %(domain)s.', {
+				return this.props.translate( 'There is a problem adding Site Redirect that points to %(domain)s.', {
 					args: { domain: domain }
 				} );
 		}
-	}
-} );
+	};
+}
 
-module.exports = SiteRedirectStep;
+const recordInputFocus = ( searchBoxValue ) => recordGoogleEvent(
+	'Domain Search',
+	'Focused On Search Box Input in Site Redirect',
+	'Search Box Value',
+	searchBoxValue
+);
+
+const recordGoButtonClick = ( searchBoxValue ) => recordGoogleEvent(
+	'Domain Search',
+	'Clicked "Go" Button in Site Redirect',
+	'Search Box Value',
+	searchBoxValue
+);
+
+const recordFormSubmit = ( searchBoxValue ) => recordGoogleEvent(
+	'Domain Search',
+	'Submitted Form in Site Redirect',
+	'Search Box Value',
+	searchBoxValue
+);
+
+export default connect(
+	null,
+	{
+		recordInputFocus,
+		recordGoButtonClick,
+		recordFormSubmit
+	}
+)( localize( SiteRedirectStep ) );
