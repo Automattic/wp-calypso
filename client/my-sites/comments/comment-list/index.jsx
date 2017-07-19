@@ -23,7 +23,7 @@ import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
 import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
-import Pagination from 'my-sites/stats/pagination';
+import Pagination from 'components/pagination';
 import QuerySiteComments from 'components/data/query-site-comments';
 import { hasSiteComments } from 'state/selectors';
 
