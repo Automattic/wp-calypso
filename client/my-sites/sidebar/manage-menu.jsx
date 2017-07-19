@@ -106,7 +106,7 @@ class ManageMenu extends PureComponent {
 			items.push( {
 				name: 'conversations',
 				label: this.props.translate( 'Conversations' ),
-				capability: 'edit_posts', // TODO: should be 'moderate_comments'
+				capability: 'edit_posts',
 				queryable: true,
 				config: 'comments/management',
 				link: '/comments',
