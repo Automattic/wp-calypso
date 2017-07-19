@@ -6,6 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
 import {
 	getConnectingSite,
 	getAuthorizationData,
@@ -16,7 +17,7 @@ import {
 	isCalypsoStartedConnection,
 	isRedirectingToWpAdmin,
 	isRemoteSiteOnSitesList,
-	getFlowType,
+	getPreSelectedPlan,
 	getJetpackSiteByUrl,
 	hasXmlrpcError,
 	getAuthAttempts,
@@ -226,11 +227,11 @@ describe( 'selectors', () => {
 			const jetpackConnectSessions = {
 				'wordpress.com': {
 					timestamp: 1234567890,
-					flowType: 'premium'
+					selectedPlan: PLAN_JETPACK_PREMIUM
 				},
 				'jetpack.me': {
 					timestamp: 2345678901,
-					flowType: 'pro'
+					selectedPlan: PLAN_JETPACK_PREMIUM
 				}
 			};
 			const state = {
@@ -300,7 +301,7 @@ describe( 'selectors', () => {
 					jetpackConnectSessions: {
 						sitetest: {
 							timestamp: new Date( Date.now() - 59 * 60 * 1000 ).getTime(),
-							flowType: ''
+							selectedPlan: PLAN_JETPACK_PREMIUM
 						}
 					}
 				}
@@ -388,45 +389,45 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getFlowType()', () => {
-		it( 'should return the flow of the session for a site', () => {
+	describe( '#getPreSelectedPlan()', () => {
+		it( 'should return the preselected plan of the session for a site', () => {
 			const state = {
 				jetpackConnect: {
 					jetpackConnectSessions: {
 						sitetest: {
 							timestamp: new Date( Date.now() - 59 * 60 * 1000 ).getTime(),
-							flowType: 'pro'
+							selectedPlan: PLAN_JETPACK_PREMIUM
 						}
 					}
 				}
 			};
 
-			expect( getFlowType( state, 'sitetest' ) ).to.eql( 'pro' );
+			expect( getPreSelectedPlan( state, 'sitetest' ) ).to.eql( PLAN_JETPACK_PREMIUM );
 		} );
 
-		it( 'should return the flow of the session for a site with slash in the site slug', () => {
+		it( 'should return the preselected plan of the session for a site with slash in the site slug', () => {
 			const state = {
 				jetpackConnect: {
 					jetpackConnectSessions: {
 						'example.com::example123': {
 							timestamp: new Date( Date.now() - 59 * 60 * 1000 ).getTime(),
-							flowType: 'pro'
+							selectedPlan: PLAN_JETPACK_PREMIUM
 						}
 					}
 				}
 			};
 
-			expect( getFlowType( state, 'example.com/example123' ) ).to.eql( 'pro' );
+			expect( getPreSelectedPlan( state, 'example.com/example123' ) ).to.eql( PLAN_JETPACK_PREMIUM );
 		} );
 
-		it( 'should return false if there\'s no session for a site', () => {
+		it( 'should return null if there\'s no session for a site', () => {
 			const state = {
 				jetpackConnect: {
 					jetpackConnectSessions: {}
 				}
 			};
 
-			expect( getFlowType( state, 'sitetest' ) ).to.be.false;
+			expect( getPreSelectedPlan( state, 'sitetest' ) ).to.be.null;
 		} );
 	} );
 

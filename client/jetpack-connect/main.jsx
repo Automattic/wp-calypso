@@ -40,6 +40,15 @@ import {
 	goToPluginActivation,
 	checkUrl
 } from 'state/jetpack-connect/actions';
+import {
+	PLAN_JETPACK_FREE,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+} from 'lib/plans/constants';
 
 /**
  * Constants
@@ -58,6 +67,15 @@ class JetpackConnectMain extends Component {
 			false,
 		] ),
 		url: PropTypes.string,
+		selectedPlan: PropTypes.oneOf( [
+			PLAN_JETPACK_FREE,
+			PLAN_JETPACK_PREMIUM,
+			PLAN_JETPACK_BUSINESS,
+			PLAN_JETPACK_PERSONAL,
+			PLAN_JETPACK_PREMIUM_MONTHLY,
+			PLAN_JETPACK_BUSINESS_MONTHLY,
+			PLAN_JETPACK_PERSONAL_MONTHLY,
+		] ),
 	};
 
 	state = this.props.url
@@ -75,25 +93,6 @@ class JetpackConnectMain extends Component {
 		if ( this.props.url ) {
 			this.checkUrl( this.cleanUrl( this.props.url ) );
 		}
-	}
-
-	componentDidMount() {
-		let from = 'direct';
-		if ( this.props.type === 'install' ) {
-			from = 'jpdotcom';
-		}
-		if ( this.props.type === 'pro' ) {
-			from = 'ad';
-		}
-		if ( this.props.type === 'premium' ) {
-			from = 'ad';
-		}
-		if ( this.props.type === 'personal' ) {
-			from = 'ad';
-		}
-		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
-			jpc_from: from
-		} );
 	}
 
 	componentDidUpdate() {
@@ -150,7 +149,7 @@ class JetpackConnectMain extends Component {
 		return this.props.checkUrl(
 			url,
 			!! this.props.getJetpackSiteByUrl( url ),
-			this.props.type
+			this.props.selectedPlan
 		);
 	}
 
@@ -478,11 +477,11 @@ class JetpackConnectMain extends Component {
 }
 
 const connectComponent = connect(
-	state => ( {
+	( state, ownProps ) => ( {
 		jetpackConnectSite: getConnectingSite( state ),
 		getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
 		isRequestingSites: isRequestingSites( state ),
-		selectedPlan: getGlobalSelectedPlan( state )
+		selectedPlan: ownProps.selectedPlan || getGlobalSelectedPlan( state ),
 	} ),
 	{
 		confirmJetpackInstallStatus,

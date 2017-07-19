@@ -29,6 +29,7 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import PlansLanding from './plans-landing';
+import { calculatePlan } from './utils';
 
 /**
  * Module variables
@@ -98,10 +99,28 @@ export default {
 			pathname,
 			params
 		} = context;
-		const { type = false } = params;
+		const {
+			interval = 'yearly',
+			locale,
+			type = false,
+		} = params;
 		const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
+		const selectedPlan = calculatePlan( type, interval );
 
-		debug( 'entered connect flow with params %o', params );
+		debug( 'enter connect with params %o, selectedPlan %o', params, selectedPlan );
+
+		let jpc_from = 'direct';
+		switch ( type ) {
+			case 'install':
+				jpc_from = 'jpdotcom';
+				break;
+			case 'pro':
+			case 'premium':
+			case 'personal':
+				jpc_from = 'ad';
+				break;
+		}
+		analytics.tracks.recordEvent( 'calypso_jpc_url_view', { jpc_from } );
 
 		analytics.pageView.record( pathname, analyticsPageTitle );
 
@@ -112,8 +131,9 @@ export default {
 		renderWithReduxStore(
 			React.createElement( JetpackConnect, {
 				context,
-				locale: context.params.locale,
+				locale,
 				path,
+				selectedPlan,
 				type,
 				url: context.query.url,
 				userModule,

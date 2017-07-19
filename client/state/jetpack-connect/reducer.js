@@ -55,11 +55,11 @@ function buildDefaultAuthorizeState() {
 	};
 }
 
-function buildUrlSessionObj( url, flowType ) {
+function buildUrlSessionObj( url, selectedPlan = '' ) {
 	const slug = urlToSlug( url );
 	const sessionValue = {
 		timestamp: Date.now(),
-		flowType: flowType || ''
+		selectedPlan,
 	};
 	return { [ slug ]: sessionValue };
 }
@@ -67,7 +67,7 @@ function buildUrlSessionObj( url, flowType ) {
 export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_CHECK_URL:
-			return Object.assign( {}, state, buildUrlSessionObj( action.url, action.flowType ) );
+			return Object.assign( {}, state, buildUrlSessionObj( action.url, action.selectedPlan ) );
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, jetpackConnectSessionsSchema ) ) {
 				return pickBy( state, ( session ) => {
