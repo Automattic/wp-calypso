@@ -31,9 +31,6 @@ export default class UploadImageExample extends Component {
 				<UploadImage
 					isUploading={ isUploading }
 					onImageEditorDone={ this.onImageEditorDone }
-					imageEditorProps={ {
-						defaultAspectRatio: AspectRatios.FREE,
-					} }
 				/>
 
 				<h3>Image is uploaded</h3>

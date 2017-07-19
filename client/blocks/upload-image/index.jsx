@@ -44,7 +44,7 @@ class UploadImage extends Component {
 
 	static defaultProps = {
 		imageEditorProps: {
-			allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
+			defaultAspectRatio: AspectRatios.ORIGINAL,
 		},
 		backgroundContent: null,
 		onImageEditorDone: noop,
