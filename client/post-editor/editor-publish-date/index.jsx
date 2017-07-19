@@ -40,7 +40,7 @@ export class EditorPublishDate extends React.Component {
 		const className = classNames( 'editor-publish-date__schedule', {} );
 		return (
 			<div className={ className }>
-				<PostSchedule />
+				<PostSchedule displayInputChrono={ false } />
 			</div>
 		);
 	}
