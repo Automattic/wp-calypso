@@ -92,7 +92,7 @@ const Pages = localize( React.createClass( {
 
 	propTypes: {
 		incrementPage: PropTypes.func.isRequired,
-		lastPage: PropTypes.bool.isRequired,
+		lastPage: PropTypes.bool,
 		loading: PropTypes.bool.isRequired,
 		page: PropTypes.number.isRequired,
 		pages: PropTypes.array.isRequired,
