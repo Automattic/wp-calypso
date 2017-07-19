@@ -116,9 +116,9 @@ export const keyedReducer = ( keyName, reducer ) => {
 			return state;
 		}
 
-		// remove key from state if setting back to initial state
+		// remove key from state if setting to undefined or back to initial state
 		// if it didn't exist anyway, then do nothing.
-		if ( isEqual( newItemState, initialState ) ) {
+		if ( undefined === newItemState || isEqual( newItemState, initialState ) ) {
 			return state.hasOwnProperty( itemKey )
 				? omit( state, itemKey )
 				: state;
