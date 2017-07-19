@@ -89,7 +89,10 @@ class ReaderEmailSettings extends Component {
 					ref={ this.saveSpanRef }
 				>
 					<Gridicon icon="cog" size={ 24 } ref={ this.saveIconRef } />
-					<span className="reader-email-settings__button-label">
+					<span
+						className="reader-email-settings__button-label"
+						title={ translate( 'Email settings' ) }
+					>
 						{ translate( 'Settings' ) }
 					</span>
 				</span>
