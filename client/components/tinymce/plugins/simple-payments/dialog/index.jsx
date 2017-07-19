@@ -47,6 +47,7 @@ class SimplePaymentsDialog extends Component {
 		price: '',
 		multiple: false,
 		email: '',
+		currency: 'USD',
 	};
 
 	constructor( props ) {
@@ -121,11 +122,15 @@ class SimplePaymentsDialog extends Component {
 	};
 
 	handleInsert = () => {
-		const { siteId, dispatch } = this.props;
+		const { siteId, dispatch, currencyCode } = this.props;
 
 		this.setState( { isSubmitting: true } );
 
 		const productForm = this.getFormValues();
+
+		if ( currencyCode ) {
+			productForm.currency = currencyCode;
+		}
 
 		wpcom
 			.site( siteId )
