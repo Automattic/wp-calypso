@@ -32,19 +32,20 @@ class UploadImage extends Component {
 		isUploading: PropTypes.bool,
 		// Additional props passed to ImageEditor component. See blocks/image-editor.
 		imageEditorProps: PropTypes.object,
-		texts: PropTypes.object,
 		onImageEditorDone: PropTypes.func,
 		additionalImageEditorClasses: PropTypes.string,
 		additionalClasses: PropTypes.string,
 		placeholderContent: PropTypes.element,
 		uploadingContent: PropTypes.element,
+		doneButtonText: PropTypes.string,
+		addAnImage: PropTypes.string,
+		dragUploadText: PropTypes.string,
 	};
 
 	static defaultProps = {
 		imageEditorProps: {
 			allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
 		},
-		texts: {},
 		backgroundContent: null,
 		onImageEditorDone: noop,
 		isUploading: false,
@@ -97,7 +98,7 @@ class UploadImage extends Component {
 			return null;
 		}
 
-		const { additionalImageEditorClasses, imageEditorProps, texts } = this.props;
+		const { additionalImageEditorClasses, imageEditorProps, doneButtonText } = this.props;
 
 		const classes = classnames( 'upload-image-modal', additionalImageEditorClasses );
 
@@ -108,7 +109,7 @@ class UploadImage extends Component {
 					media={ { src: uploadedImage } }
 					onDone={ this.onImageEditorDone }
 					onCancel={ this.hideImageEditor }
-					doneButtonText={ texts.doneButtonText ? texts.doneButtonText : 'Done' }
+					doneButtonText={ doneButtonText ? doneButtonText : 'Done' }
 				/>
 			</Dialog>
 		);
@@ -123,7 +124,14 @@ class UploadImage extends Component {
 	}
 
 	render() {
-		const { children, isUploading, translate, texts, additionalClasses } = this.props;
+		const {
+			children,
+			isUploading,
+			translate,
+			additionalClasses,
+			addAnImage,
+			dragUploadText,
+		} = this.props;
 
 		let { placeholderContent, uploadingContent } = this.props;
 
@@ -132,7 +140,7 @@ class UploadImage extends Component {
 				<div className="upload-image__placeholder">
 					<Gridicon icon="add-image" size={ 36 } />
 					<span>
-						{ texts.addAnImage ? texts.addAnImage : translate( 'Add an Image' ) }
+						{ addAnImage ? addAnImage : translate( 'Add an Image' ) }
 					</span>
 				</div>
 			);
@@ -160,9 +168,7 @@ class UploadImage extends Component {
 						} ) }
 					>
 						<DropZone
-							textLabel={
-								texts.dragUploadText ? texts.dragUploadText : translate( 'Drop to upload image' )
-							}
+							textLabel={ dragUploadText ? dragUploadText : translate( 'Drop to upload image' ) }
 							onFilesDrop={ this.receiveFiles }
 						/>
 

@@ -30,10 +30,12 @@ To see a more complex example, have a look at `blocks/upload-image/docs/example`
 	selects an image in `onImageEditorDone`).
 - `imageEditorProps`: (default: allowedAspectRatios set to 1X1) object of additional props to send to `ImageEditor`
 	component.
-- `texts`: (default: `{}`) object of different texts/messages to show.
 - `onImageEditorDone`: (default: `noop`) function to call when user clicks on the "Done" button in `ImageEditor`.
 - `additionalImageEditorClasses`: string of additional CSS class names to apply to the `ImageEditor` modal.
 - `additionalClasses`: string of additional CSS class names to apply to the `UploadImage` component.
+- `doneButtonText`: text on the "Done" button in Image Editor modal.
+- `addAnImage`: text on the placeholder when selecting an image.
+- `dragUploadText`: text which shows when dragging an image to upload.
 
 ## Additional notes
 
