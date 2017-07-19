@@ -41,7 +41,7 @@ export default createReducer( null, {
 	[ WOOCOMMERCE_SETTINGS_GENERAL_REQUEST ]: ( state, { meta: { dataLayer: { error, data } } } ) => {
 		// Don't set the loading indicator if data has previously been loaded,
 		// or if the data layer is dispatching with meta attached.
-		if ( ! data && ! error && isNull( state ) ) {
+		if ( ! data && ! error && ( isNull( state ) || ERROR === state ) ) {
 			return LOADING;
 		}
 		return state;

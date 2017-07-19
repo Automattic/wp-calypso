@@ -95,8 +95,9 @@ class SettingsPaymentsLocationCurrency extends Component {
 						<FormSelect
 							className="payments__currency-select"
 							onChange={ this.onChange }
-							value={ currency }>
-							{ currencies && currencies.length && validCurrencies.map( this.renderOption ) }
+							value={ currency }
+							disabled={ ! currency }>
+							{ currency && currencies && currencies.length && validCurrencies.map( this.renderOption ) }
 						</FormSelect>
 					</div>
 
