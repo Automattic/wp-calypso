@@ -68,25 +68,42 @@ class PostCommentList extends React.Component {
 		activeEditCommentId: null,
 	};
 
-	componentWillMount() {
-		const {
-			post: { ID: postId, site_ID: siteId },
-			commentsFilter: status,
-			startingCommentId,
-			commentsFetchingStatus: { haveReceivedBeforeAndAfter },
-		} = this.props;
+	/**
+	 * Should we scroll down to a comment? Only if we have satisfied these conditions:
+	 * 1. there is a startingCommentId
+	 * 2. the comment has loaded and is on the DOM
+	 * 3. we haven't already scrolled to it yet
+	 * 4. we have loaded some comments above + below it already (or there is only 1 comment)
+	 *
+	 * @param {object} props - the propes to use when evaluating if window should be scrolled down to a comment.
+	 * @returns {boolean} - whether or not we should scroll to a comment
+	 */
+	shouldScrollToComment = ( props = this.props ) =>
+		props.startingCommentId &&
+		props.commentsTree[ this.props.startingCommentId ] &&
+		props.commentsFetchingStatus.hasReceivedBefore &&
+		props.commentsFetchingStatus.hasReceivedAfter &&
+		! this.hasScrolledToComment &&
+		window.document.getElementsByName( `comment-${ props.startingCommentId }` ).length > 0;
 
-		if (
-			startingCommentId &&
-			this.props.commentsTree[ startingCommentId ] &&
-			! haveReceivedBeforeAndAfter &&
-			! this.alreadyLoadedInitialSet
-		) {
+	shouldFetchInitialComment = ( { startingCommentId, commentsTree } ) =>
+		startingCommentId && commentsTree && ! commentsTree[ startingCommentId ];
+
+	shouldFetchInitialPages = ( { commentsTree, startingCommentId } ) =>
+		startingCommentId &&
+		commentsTree[ startingCommentId ] &&
+		this.props.commentsTree[ startingCommentId ] &&
+		! this.alreadyLoadedInitialSet;
+
+	componentWillMount() {
+		const { post: { ID: postId, site_ID: siteId }, commentsFilter: status } = this.props;
+
+		if ( this.shouldFetchInitialComment( this.props ) ) {
+			this.props.requestComment( { siteId, commentId: this.props.startingCommentId } );
+		} else if ( this.shouldFetchInitialPages( this.props ) ) {
 			this.viewEarlierCommentsHandler();
 			this.viewLaterCommentsHandler();
 			this.alreadyLoadedInitialSet = true;
-		} else if ( startingCommentId ) {
-			this.props.requestComment( { siteId, commentId: this.props.startingCommentId } );
 		} else {
 			this.props.requestPostComments( { siteId, postId, status } );
 		}
@@ -96,20 +113,13 @@ class PostCommentList extends React.Component {
 		const nextSiteId = get( nextProps, 'post.site_ID' );
 		const nextPostId = get( nextProps, 'post.ID' );
 		const nextCommentsFilter = get( nextProps, 'commentsFilter' );
-		const nextStartingCommentId = get( nextProps, 'startingCommentId' );
-		const { hasReceivedBefore, hasReceivedAfter } = get( nextProps, 'commentsFetchingStatus' );
 
-		if (
-			nextStartingCommentId &&
-			nextProps.commentsTree[ nextStartingCommentId ] &&
-			! this.alreadyLoadedInitialSet &&
-			! ( hasReceivedBefore && hasReceivedAfter )
-		) {
+		if ( this.shouldFetchInitialComment( nextProps ) ) {
+			this.props.requestComment( { siteId: nextSiteId, commentId: nextProps.startingCommentId } );
+		} else if ( this.shouldFetchInitialPages( nextProps ) ) {
 			this.viewEarlierCommentsHandler();
 			this.viewLaterCommentsHandler();
 			this.alreadyLoadedInitialSet = true;
-		} else if ( nextStartingCommentId && ! nextProps.commentsTree[ nextStartingCommentId ] ) {
-			this.props.requestComment( { siteId: nextSiteId, commentId: nextProps.startingCommentId } );
 		} else if (
 			nextSiteId &&
 			nextPostId &&
@@ -118,10 +128,10 @@ class PostCommentList extends React.Component {
 				this.props.post.ID !== nextPostId ||
 				this.props.commentsFilter !== nextCommentsFilter )
 		) {
-			this.props.requestPostComments( {
+			nextProps.requestPostComments( {
 				siteId: nextSiteId,
 				postId: nextPostId,
-				status: this.props.commentsFilter,
+				status: nextCommentsFilter,
 			} );
 		}
 
@@ -228,24 +238,6 @@ class PostCommentList extends React.Component {
 		window.scrollBy( 0, -50 );
 		this.hasScrolledToComment = true;
 	};
-
-	/**
-	 * Should we scroll down to a comment? Only if we have satisfied these conditions:
-	 * 1. there is a startingCommentId
-	 * 2. the comment has loaded and is on the DOM
-	 * 3. we haven't already scrolled to it yet
-	 * 4. we have loaded some comments above + below it already (or there is only 1 comment)
-	 *
-	 * @param {object} props - the propes to use when evaluating if window should be scrolled down to a comment.
-	 * @returns {boolean} - whether or not we should scroll to a comment
-	 */
-	shouldScrollToComment = ( props = this.props ) =>
-		props.startingCommentId &&
-		props.commentsTree[ this.props.startingCommentId ] &&
-		props.commentsFetchingStatus.hasReceivedBefore &&
-		props.commentsFetchingStatus.hasReceivedAfter &&
-		! this.hasScrolledToComment &&
-		window.document.getElementsByName( `comment-${ props.startingCommentId }` ).length > 0;
 
 	getCommentsCount = commentIds => {
 		// we always count prevSum, children sum, and +1 for the current processed comment
