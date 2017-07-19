@@ -66,6 +66,15 @@ function getErrorMessageFromErrorCode( code ) {
 	return code;
 }
 
+function getSMSMessageFromResponse( response ) {
+	const phoneNumber = get( response, 'body.data.phone_number' );
+	return translate( 'Message sent to phone number ending in %(phoneNumber)s', {
+		args: {
+			phoneNumber
+		}
+	} );
+}
+
 const errorFields = {
 	empty_password: 'password',
 	empty_two_step_code: 'twoStepCode',
@@ -150,6 +159,16 @@ export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) =
 				rememberMe,
 				data: response.body && response.body.data,
 			} );
+
+			if ( get( response, 'body.data.two_step_notification_sent', null ) === 'sms' ) {
+				dispatch( {
+					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+					notice: {
+						message: getSMSMessageFromResponse( response ),
+						status: 'is-success'
+					},
+				} );
+			}
 		} ).catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
 
@@ -305,12 +324,7 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
 		.then( ( response ) => {
-			const phoneNumber = get( response, 'body.data.phone_number' );
-			const message = translate( 'Message sent to phone number ending in %(phoneNumber)s', {
-				args: {
-					phoneNumber
-				}
-			} );
+			const message = getSMSMessageFromResponse( response );
 
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
