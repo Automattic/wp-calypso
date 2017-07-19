@@ -109,6 +109,16 @@ export class CommentDetail extends Component {
 		setCommentStatus( commentId, postId, 'trash' === commentStatus ? 'approved' : 'trash' );
 	}
 
+	keyHandler = event => {
+		switch ( event.keyCode ) {
+			case 32: // space
+			case 13: // enter
+				event.preventDefault();
+				this.toggleExpanded();
+				break;
+		}
+	}
+
 	render() {
 		const {
 			authorAvatarUrl,
@@ -157,7 +167,11 @@ export class CommentDetail extends Component {
 		} );
 
 		return (
-			<Card className={ classes } tabIndex="0">
+			<Card
+				onKeyDown={ this.keyHandler }
+				className={ classes }
+				tabIndex="0"
+			>
 				<CommentDetailHeader
 					authorAvatarUrl={ authorAvatarUrl }
 					authorDisplayName={ authorDisplayName }
