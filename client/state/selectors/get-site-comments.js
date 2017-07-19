@@ -30,16 +30,9 @@ export const getSiteComments = createSelector(
 			.filter( key => parseInt( key.split( '-', 1 ), 10 ) === siteId )
 			.reduce( ( list, key ) => [ ...list, ...comments[ key ] ], [] );
 
-<<<<<<< HEAD
-		if ( status ) {
-			return orderBy( filterCommentsByStatus( parsedComments, status ), 'date', order );
-		}
-		return orderBy( parsedComments, 'date', order );
-=======
 		return status
-			? filterCommentsByStatus( parsedComments, status )
-			: parsedComments;
->>>>>>> Use ternary return
+			? orderBy( filterCommentsByStatus( parsedComments, status ), 'date', order )
+			: orderBy( parsedComments, 'date', order );
 	},
 	state => [ state.comments.items ]
 );
