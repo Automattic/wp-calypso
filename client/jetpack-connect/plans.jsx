@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import page from 'page';
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -213,6 +214,11 @@ class Plans extends Component {
 		if ( ! cartItem || cartItem.product_slug === PLAN_JETPACK_FREE ) {
 			return this.selectFreeJetpackPlan();
 		}
+
+		if ( cartItem.product_slug === get( this.props, 'selectedSite.plan.product_slug', null ) ) {
+			return this.redirect( CALYPSO_PLANS_PAGE );
+		}
+
 		if ( cartItem.product_slug === PLAN_JETPACK_PERSONAL ) {
 			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_39', {
 				user: this.props.userId
