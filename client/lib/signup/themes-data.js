@@ -54,15 +54,6 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Intergalactic',
-		slug: 'intergalactic',
-		repo: 'pub',
-		fallback: true,
-		design: 'blog',
-		demo_uri: 'https://intergalacticdemo.wordpress.com',
-		verticals: []
-	},
-	{
 		name: 'Edin',
 		slug: 'edin',
 		repo: 'pub',
@@ -132,6 +123,15 @@ export const themes = [
 		fallback: false,
 		design: '',
 		demo_uri: 'http://independentpublisher2demo.wordpress.com',
+		verticals: []
+	},
+	{
+		name: 'Intergalactic 2',
+		slug: 'intergalactic-2',
+		repo: 'pub',
+		fallback: true,
+		design: 'blog',
+		demo_uri: 'https://intergalactic2demo.wordpress.com',
 		verticals: []
 	},
 	{
