@@ -32,7 +32,7 @@ const CompactPost = ( { post, children, isDiscover } ) => {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div className="reader-post-card__post reader-post-card__compact">
+		<div className="reader-post-card__post">
 			{ featuredAsset }
 			<div className="reader-post-card__post-details">
 				<ReaderPostOptionsMenu

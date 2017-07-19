@@ -167,6 +167,65 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	.reader-post-actions {
 		margin: 4px 0 0;
 	}
+
+	&.is-compact {
+
+		.reader-post-card__byline-details {
+			display: flex;
+			flex-direction: row;
+			max-height: 16px * 1.4;
+			max-width: calc( 100% - 30px );
+			overflow: hidden;
+			position: relative;
+
+			&::after {
+				@include long-content-fade( $size: 10% );
+			}
+		}
+
+		.reader-post-card__byline-author-site {
+			height: auto;
+			width: auto;
+
+			&::after {
+				display: none;
+			}
+		}
+
+		.reader-post-card__timestamp-and-tag {
+			margin-top: 0;
+			margin-left: 5px;
+		}
+
+		.reader-post-card__timestamp-link {
+			color: $gray;
+		}
+
+		.reader-post-options-menu {
+			position: absolute;
+				right: 14px;
+				top: 0;
+		}
+
+		.reader-featured-image {
+			margin-right: 15px;
+			max-width: 100px;
+		}
+
+		.reader-post-card__post {
+			margin-top: 0;
+		}
+
+		.reader-post-card__post-details .reader-excerpt {
+			font-size: 15px;
+			font-weight: 100;
+			margin-top: 4px;
+			max-height: 16px * 1.4;
+			overflow: hidden;
+			position: relative;
+			word-wrap: break-word;
+		}
+	}
 }
 
 .reader-post-card__photo {
@@ -463,7 +522,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 // 3 line excerpt for thumbnail cards
-.reader-post-card.card.has-thumbnail:not(.is-gallery):not(.is-discover) {
+.reader-post-card.card.has-thumbnail:not(.is-gallery):not(.is-discover):not(.is-compact) {
 
 	.reader-excerpt {
 		max-height: 15px * 1.6 * 3;
@@ -695,13 +754,4 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 // For these borderless cards to look more presentable on Devdocs
 .is-section-devdocs .reader-post-card.card {
 	padding: 16px;
-}
-
-// Compact cards
-.reader-post-card__compact {
-	.reader-post-options-menu {
-		position: absolute;
-		right: 14px;
-		top: 0;
-	}
 }
