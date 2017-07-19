@@ -55,45 +55,45 @@ class Pages extends Component {
 								<FormLabel htmlFor="submitFormPage">
 									{ translate( 'Submit Job Form Page' ) }
 								</FormLabel>
+								<FormSettingExplanation>
+									{ translate( 'Select the page where you\'ve used the [submit_job_form] shortcode. ' +
+										'This lets the plugin know the location of the form.' ) }
+								</FormSettingExplanation>
 								<PageDropdown
 									disabled={ isDisabled }
 									id="submitFormPage"
 									name="submitFormPage"
 									pages={ pages } />
-								<FormSettingExplanation>
-									{ translate( 'Select the page where you\'ve used the [submit_job_form] shortcode. ' +
-										'This lets the plugin know the location of the form.' ) }
-								</FormSettingExplanation>
 							</FormFieldset>
 
 							<FormFieldset>
 								<FormLabel htmlFor="dashboardPage">
 									{ translate( 'Job Dashboard Page' ) }
 								</FormLabel>
+								<FormSettingExplanation>
+									{ translate( 'Select the page where you\'ve used the [job_dashboard] shortcode. ' +
+										'This lets the plugin know the location of the dashboard.' ) }
+								</FormSettingExplanation>
 								<PageDropdown
 									disabled={ isDisabled }
 									id="dashboardPage"
 									name="dashboardPage"
 									pages={ pages } />
-								<FormSettingExplanation>
-									{ translate( 'Select the page where you\'ve used the [job_dashboard] shortcode. ' +
-										'This lets the plugin know the location of the dashboard.' ) }
-								</FormSettingExplanation>
 							</FormFieldset>
 
 							<FormFieldset>
 								<FormLabel htmlFor="listingsPage">
 									{ translate( 'Job Listings Page' ) }
 								</FormLabel>
+								<FormSettingExplanation>
+									{ translate( 'Select the page where you\'ve used the [jobs] shortcode. ' +
+										'This lets the plugin know the location of the job listings page.' ) }
+								</FormSettingExplanation>
 								<PageDropdown
 									disabled={ isDisabled }
 									id="listingsPage"
 									name="listingsPage"
 									pages={ pages } />
-								<FormSettingExplanation>
-									{ translate( 'Select the page where you\'ve used the [jobs] shortcode. ' +
-										'This lets the plugin know the location of the job listings page.' ) }
-								</FormSettingExplanation>
 							</FormFieldset>
 						</Card>
 					</FormSection>
