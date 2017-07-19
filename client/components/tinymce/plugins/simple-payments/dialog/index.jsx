@@ -13,7 +13,6 @@ import emailValidator from 'email-validator';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSimplePayments } from 'state/selectors';
-import { addProduct, waitForResponse } from 'state/simple-payments/product-list/actions';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QuerySitePlans from 'components/data/query-site-plans';
 import Dialog from 'components/dialog';
@@ -25,6 +24,12 @@ import ProductList from './list';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getCurrencyDefaults } from 'lib/format-currency';
 import formState from 'lib/form-state';
+import wpcom from 'lib/wp';
+import {
+	customPostToProduct,
+	productToCustomPost,
+} from 'state/data-layer/wpcom/sites/simple-payments/index.js';
+import { receiveUpdateProduct } from 'state/simple-payments/product-list/actions';
 
 class SimplePaymentsDialog extends Component {
 	static propTypes = {
@@ -115,64 +120,37 @@ class SimplePaymentsDialog extends Component {
 		this.setState( { errorMessage: null } );
 	};
 
-	handleInsert = async () => {
+	handleInsert = () => {
+		const { siteId, dispatch } = this.props;
+
 		this.setState( { isSubmitting: true } );
 
-		try {
-			const insertedProductId = await this.getInsertedProductId();
-			if ( insertedProductId ) {
-				this.props.onInsert( { id: insertedProductId } );
+		const productForm = this.getFormValues();
+
+		wpcom
+			.site( siteId )
+			.addPost( productToCustomPost( productForm ) )
+			.then( newProduct => {
+				dispatch( receiveUpdateProduct( siteId, customPostToProduct( newProduct ) ) );
+
+				const productId = newProduct.ID;
+
+				this.props.onInsert( { id: productId } );
+
 				// clear the form after a successful submit -- it'll be blank next time it's opened
 				this.formStateController.resetFields( this.constructor.initialFields );
-			}
-		} catch ( error ) {
-			if ( this._isMounted ) {
-				this.setState( {
-					errorMessage: this.props.translate( 'The payment button could not be inserted.' ),
-				} );
-			}
-		}
 
-		this._isMounted && this.setState( { isSubmitting: false } );
+				this._isMounted && this.setState( { isSubmitting: false } );
+			} )
+			.catch( () => {
+				if ( this._isMounted ) {
+					this.setState( {
+						errorMessage: this.props.translate( 'The payment button could not be inserted.' ),
+					} );
+					this.setState( { isSubmitting: false } );
+				}
+			} );
 	};
-
-	/*
-	 * Asynchronously retrive the ID of the product to insert. In case of selection from
-	 * list of existing product, we know the ID right away. When inserting from a filled
-	 * form, we first need to issue a create request to the server, and wait for it to
-	 * return an ID.
-	 * @returns the ID, or null in case the form is not valid, or throws an exception in
-	 * case of error that should be displayed as a notice.
-	 */
-	async getInsertedProductId() {
-		const { activeTab, siteId, dispatch } = this.props;
-
-		if ( activeTab === 'paymentButtons' ) {
-			return this.state.selectedPaymentId;
-		}
-
-		if ( activeTab === 'addNew' ) {
-			// ask the form controller to validate the field values
-			const hasErrors = await new Promise( resolve =>
-				this.formStateController.handleSubmit( resolve ),
-			);
-
-			if ( hasErrors ) {
-				return null;
-			}
-
-			// ask the data layer to add a new product
-			const formValues = this.getFormValues();
-			const addProductAction = addProduct( siteId, formValues );
-			dispatch( addProductAction );
-
-			// wait for the response and return the assigned ID
-			const addedProduct = await waitForResponse( addProductAction.requestId );
-			return addedProduct.ID;
-		}
-
-		return null;
-	}
 
 	getActionButtons() {
 		const { activeTab, translate } = this.props;

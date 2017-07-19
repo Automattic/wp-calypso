@@ -19,11 +19,10 @@ import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormToggle from 'components/forms/form-toggle';
 import FormInputValidation from 'components/forms/form-input-validation';
 
-const ProductImage = () => (
+const ProductImage = () =>
 	<div className="editor-simple-payments-modal__product-image">
 		<Gridicon icon="add-image" size={ 36 } />
-	</div>
-);
+	</div>;
 
 class ProductForm extends Component {
 	handleFieldChange = ( { currentTarget: { name, value } } ) => {

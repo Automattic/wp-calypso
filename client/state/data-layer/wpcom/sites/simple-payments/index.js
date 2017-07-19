@@ -17,7 +17,6 @@ import {
 	receiveProduct,
 	receiveProductsList,
 	receiveUpdateProduct,
-	receiveUpdateProductError,
 	receiveDeleteProduct,
 } from 'state/simple-payments/product-list/actions';
 import { metaKeyToSchemaKeyMap, metadataSchema } from 'state/simple-payments/product-list/schema';
@@ -44,7 +43,7 @@ function reduceMetadata( sanitizedProductAttributes, current ) {
  * @param { Object } product raw /post endpoint response to format
  * @returns { Object } sanitized and formatted product
  */
-function customPostToProduct( product ) {
+export function customPostToProduct( product ) {
 	return Object.assign(
 		{
 			ID: product.ID,
@@ -60,7 +59,7 @@ function customPostToProduct( product ) {
  * @param { Object } product action with product payload
  * @returns { Object } custom post type data
  */
-function productToCustomPost( product ) {
+export function productToCustomPost( product ) {
 	return Object.keys( product ).reduce(
 		function( payload, current ) {
 			if ( metadataSchema[ current ] ) {
@@ -158,11 +157,8 @@ export function requestSimplePaymentsProductDelete( { dispatch }, action ) {
 	}, action ) );
 }
 
-export const addProduct = ( { dispatch }, { siteId, requestId }, next, newProduct ) =>
-	dispatch( receiveUpdateProduct( siteId, customPostToProduct( newProduct ), requestId ) );
-
-export const handleAddProductError = ( { dispatch }, { siteId, requestId }, next, error ) =>
-	dispatch( receiveUpdateProductError( siteId, error, requestId ) );
+export const addProduct = ( { dispatch }, { siteId }, next, newProduct ) =>
+	dispatch( receiveUpdateProduct( siteId, customPostToProduct( newProduct ) ) );
 
 export const deleteProduct = ( { dispatch }, { siteId }, next, deletedProduct ) =>
 	dispatch( receiveDeleteProduct( siteId, deletedProduct.ID ) );
@@ -186,8 +182,8 @@ export default {
 		[ dispatchRequest( requestSimplePaymentsProduct, listProduct, noop ) ],
 	[ SIMPLE_PAYMENTS_PRODUCTS_LIST ]:
 		[ dispatchRequest( requestSimplePaymentsProducts, listProducts, noop ) ],
-	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_ADD ]: [ dispatchRequest( requestSimplePaymentsProductAdd, addProduct, handleAddProductError ) ],
-	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_EDIT ]: [ dispatchRequest( requestSimplePaymentsProductEdit, addProduct, handleAddProductError ) ],
+	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_ADD ]: [ dispatchRequest( requestSimplePaymentsProductAdd, addProduct, noop ) ],
+	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_EDIT ]: [ dispatchRequest( requestSimplePaymentsProductEdit, addProduct, noop ) ],
 	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_DELETE ]:
 		[ dispatchRequest( requestSimplePaymentsProductDelete, deleteProduct, noop ) ],
 };
