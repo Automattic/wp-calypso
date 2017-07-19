@@ -63,6 +63,7 @@ describe( 'wpcom-api', () => {
 					siteId: '2916284',
 					postId: '1010',
 					query,
+					direction: 'before',
 				};
 				const dispatch = spy();
 				const getState = () => ( {
@@ -103,6 +104,7 @@ describe( 'wpcom-api', () => {
 				const action = {
 					siteId: 2916284,
 					postId: 1010,
+					direction: 'before',
 				};
 				const data = {
 					comments: [],
@@ -117,6 +119,7 @@ describe( 'wpcom-api', () => {
 					siteId: 2916284,
 					postId: 1010,
 					comments: [],
+					direction: 'before',
 				} );
 			} );
 
@@ -125,6 +128,7 @@ describe( 'wpcom-api', () => {
 				const action = {
 					siteId: 2916284,
 					postId: 1010,
+					direction: 'before',
 				};
 				const data = {
 					comments: [ {}, {} ],
@@ -139,6 +143,7 @@ describe( 'wpcom-api', () => {
 					siteId: 2916284,
 					postId: 1010,
 					comments: [ {}, {} ],
+					direction: 'before',
 				} );
 
 				expect( dispatch ).to.have.been.calledWith( {
