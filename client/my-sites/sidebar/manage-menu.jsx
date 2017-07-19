@@ -21,7 +21,7 @@ import MediaLibraryUploadButton from 'my-sites/media-library/upload-button';
 import { getSite, getSiteAdminUrl, getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
 
-class PublishMenu extends PureComponent {
+class ManageMenu extends PureComponent {
 	static propTypes = {
 		itemLinkClass: PropTypes.func,
 		onNavigate: PropTypes.func,
@@ -101,6 +101,20 @@ class PublishMenu extends PureComponent {
 				showOnAllMySites: false,
 			} );
 		}
+
+		if ( config.isEnabled( 'comments/management' ) ) {
+			items.push( {
+				name: 'conversations',
+				label: this.props.translate( 'Conversations' ),
+				capability: 'edit_posts',
+				queryable: true,
+				config: 'comments/management',
+				link: '/comments',
+				wpAdminLink: 'edit-comments.php',
+				showOnAllMySites: true,
+			} );
+		}
+
 		return items;
 	}
 
@@ -152,6 +166,7 @@ class PublishMenu extends PureComponent {
 			case 'jetpack-portfolio': icon = 'folder'; break;
 			case 'jetpack-testimonial': icon = 'quote'; break;
 			case 'media': icon = 'image'; break;
+			case 'conversations': icon = 'chat'; break;
 			default: icon = 'custom-post-type';
 		}
 
@@ -254,4 +269,4 @@ export default connect( ( state, { siteId } ) => {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 	};
-} )( localize( PublishMenu ) );
+} )( localize( ManageMenu ) );
