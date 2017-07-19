@@ -292,7 +292,7 @@ class JetpackConnectMain extends Component {
 		if ( type === 'install' ) {
 			return {
 				headerTitle: translate( 'Install Jetpack' ),
-				headerSubtitle: translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect ' +
+				headerSubtitle: translate( 'Jetpack brings free themes, security services, and essential marketing tools ' +
 					'to your self-hosted WordPress site.' ),
 			};
 		}
