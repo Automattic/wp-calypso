@@ -1,15 +1,11 @@
+jest.mock( 'lib/analytics', () => {} );
+
 /**
  * External dependencies
  */
 import assert from 'assert';
 import sinon from 'sinon';
 import { identity } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
 
 describe( 'mapped-domain', () => {
 	let React,
@@ -30,11 +26,6 @@ describe( 'mapped-domain', () => {
 			settingPrimaryDomain: false,
 			translate: identity
 		};
-	} );
-
-	useFakeDom.withContainer();
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/analytics', {} );
 	} );
 
 	before( () => {

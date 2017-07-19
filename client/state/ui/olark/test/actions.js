@@ -6,6 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { olarkTimeout, requestOlark } from '../actions';
 import {
 	OLARK_REQUEST,
 	OLARK_TIMEOUT,
@@ -13,7 +14,6 @@ import {
 	OLARK_OPERATORS_AWAY,
 	OLARK_SET_AVAILABILITY,
 } from 'state/action-types';
-import useMockery from 'test/helpers/use-mockery';
 import { OLARK_TIMEOUT_MS } from '../constants';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { useFakeTimers } from 'test/helpers/use-sinon';
@@ -24,9 +24,7 @@ import {
 } from '../actions';
 
 describe( 'actions', () => {
-	let olarkTimeout, requestOlark, sandbox, spy, clock;
-
-	const olarkApiMock = function() {};
+	let sandbox, spy, clock;
 
 	useSandbox( newSandbox => {
 		sandbox = newSandbox;
@@ -35,13 +33,6 @@ describe( 'actions', () => {
 
 	useFakeTimers( fakeClock => {
 		clock = fakeClock;
-	} );
-
-	useMockery( ( mockery ) => {
-		mockery.registerMock( 'lib/olark-api', olarkApiMock );
-		const olarkActions = require( '../actions' );
-		olarkTimeout = olarkActions.olarkTimeout;
-		requestOlark = olarkActions.requestOlark;
 	} );
 
 	describe( '#setChatAvailability()', () => {

@@ -36,7 +36,7 @@ class DummyInput extends Component {
 	}
 }
 
-describe( 'TrackInputChanges#onNewValue', function() {
+describe.skip( 'TrackInputChanges#onNewValue', function() {
 	let tree, dummyInput, container;
 
 	useFakeDom.withContainer();

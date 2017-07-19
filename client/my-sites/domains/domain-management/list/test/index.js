@@ -15,7 +15,7 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'index', function() {
+describe.skip( 'index', function() {
 	let React,
 		ReactDom,
 		ReactClass,

@@ -11,7 +11,7 @@ const Wrapper = React.createClass( {
 	}
 } );
 
-describe( 'index', function() {
+describe.skip( 'index', function() {
 	var container, sandbox;
 	require( 'test/helpers/use-fake-dom' )( '<html><body><div id="container"></div></body></html>' );
 
