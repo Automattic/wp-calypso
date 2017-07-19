@@ -32,10 +32,12 @@ import {
 } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 import { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
+import { areSettingsGeneralLoaded, areSettingsGeneralLoadError } from 'woocommerce/state/sites/settings/general/selectors';
 
 const ShippingZoneMethodList = ( {
 		siteId,
 		loaded,
+		fetchError,
 		methods,
 		methodNamesMap,
 		newMethodTypeOptions,
@@ -94,7 +96,10 @@ const ShippingZoneMethodList = ( {
 		actions.addMethodToShippingZone( newType, methodNamesMap( newType ) );
 	};
 
-	const methodsToRender = loaded ? methods : [ {}, {}, {} ];
+	let methodsToRender = loaded ? methods : [ {}, {}, {} ];
+	if ( fetchError ) {
+		methodsToRender = [];
+	}
 
 	return (
 		<div className="shipping-zone__methods-container">
@@ -132,7 +137,8 @@ export default connect(
 		methodNamesMap: getShippingMethodNameMap( state ),
 		newMethodTypeOptions: getNewMethodTypeOptions( state ),
 		currency: getCurrencyWithEdits( state ),
-		loaded: areShippingZonesFullyLoaded( state ),
+		loaded: areShippingZonesFullyLoaded( state ) && areSettingsGeneralLoaded( state ),
+		fetchError: areSettingsGeneralLoadError( state ), // TODO: add shipping zones/methods fetch errors too
 	} ),
 	( dispatch, ownProps ) => ( {
 		actions: bindActionCreatorsWithSiteId( {

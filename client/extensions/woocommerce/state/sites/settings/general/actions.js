@@ -1,10 +1,6 @@
 /**
  * Internal dependencies
  */
-import {
-	areSettingsGeneralLoaded,
-	areSettingsGeneralLoading,
-} from './selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../../request';
 import { setError } from '../../status/wc-api/actions';
@@ -14,46 +10,13 @@ import {
 	WOOCOMMERCE_CURRENCY_UPDATE,
 	WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
-	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_FAILURE,
-	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export const fetchSettingsGeneral = ( siteId, retries = 0 ) => ( dispatch, getState ) => {
-	if (
-		areSettingsGeneralLoaded( getState(), siteId ) ||
-		areSettingsGeneralLoading( getState(), siteId )
-	) {
-		return;
-	}
-
-	const getAction = {
+export const fetchSettingsGeneral = ( siteId ) => {
+	return {
 		type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 		siteId,
 	};
-
-	dispatch( getAction );
-
-	return request( siteId ).get( 'settings/general' )
-		.then( ( data ) => {
-			dispatch( {
-				type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_SUCCESS,
-				siteId,
-				data,
-			} );
-		} )
-		.catch( error => {
-			dispatch( setError( siteId, getAction, error ) );
-			dispatch( {
-				type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST_FAILURE,
-				siteId,
-				error,
-			} );
-			//Retry Settigns General Fetch
-			if ( 5 > retries ) {
-				retries++;
-				fetchSettingsGeneral( siteId )( dispatch, getState );
-			}
-		} );
 };
 
 export const saveCurrencySuccess = ( siteId, data ) => {

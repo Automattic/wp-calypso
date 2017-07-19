@@ -82,7 +82,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
-			expect( areSettingsGeneralLoaded( loadingStateWithUi ) ).to.be.false;
+			expect( areSettingsGeneralLoaded( loadedStateWithUi ) ).to.be.true;
 		} );
 	} );
 
