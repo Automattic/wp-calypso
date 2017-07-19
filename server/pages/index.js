@@ -3,12 +3,13 @@
  */
 import express from 'express';
 import fs from 'fs';
+import path from 'path';
 import crypto from 'crypto';
 import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, intersection, pick } from 'lodash';
+import { get, pick, forEach, intersection } from 'lodash';
 
 /**
  * Internal dependencies
@@ -63,15 +64,15 @@ function getInitialServerState( serializedServerState ) {
 
 /**
  * Generates a hash of a files contents to be used as a version parameter on asset requests.
- * @param {String} path Path to file we want to hash
+ * @param {String} filepath Path to file we want to hash
  * @returns {String} A shortened md5 hash of the contents of the file file or a timestamp in the case of failure.
  **/
-function hashFile( path ) {
+function hashFile( filepath ) {
 	const md5 = crypto.createHash( 'md5' );
 	let data, hash;
 
 	try {
-		data = fs.readFileSync( path );
+		data = fs.readFileSync( filepath );
 		md5.update( data );
 		hash = md5.digest( 'hex' );
 		hash = hash.slice( 0, HASH_LENGTH );
@@ -82,13 +83,14 @@ function hashFile( path ) {
 	return hash;
 }
 
+let assets;
 /**
  * Generate an object that maps asset names name to a server-relative urls.
  * Assets in request and static files are included.
  * @param {Object} request A request to check for assets
  * @returns {Object} Map of asset names to urls
  **/
-function generateStaticUrls( request ) {
+function generateStaticUrls() {
 	const urls = {};
 
 	function getUrl( filename, hash ) {
@@ -104,15 +106,14 @@ function generateStaticUrls( request ) {
 		urls[ file.path ] = getUrl( file.path, file.hash );
 	} );
 
-	const assets = request.app.get( 'assets' );
+	// in production, only load assets file the first go around
+	if ( ! assets || process.env.NODE_ENV === 'development' ) {
+		assets = JSON.parse(
+			fs.readFileSync( path.join( __dirname, '../', 'bundler', 'assets.json' ), 'utf8' )
+		);
+	}
 
-	assets.forEach( function( asset ) {
-		const name = asset.name;
-		urls[ name ] = asset.url;
-		if ( config( 'env' ) !== 'development' ) {
-			urls[ name + '-min' ] = asset.url.replace( '.js', '.min.js' );
-		}
-	} );
+	forEach( assets, ( asset, name ) => urls[ name ] = asset.js );
 
 	return urls;
 }
@@ -423,8 +424,8 @@ module.exports = function() {
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {
-			section.paths.forEach( path => {
-				const pathRegex = utils.pathToRegExp( path );
+			section.paths.forEach( sectionPath => {
+				const pathRegex = utils.pathToRegExp( sectionPath );
 
 				app.get( pathRegex, function( req, res, next ) {
 					req.context = Object.assign( {}, req.context, { sectionName: section.name } );

@@ -152,18 +152,11 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			script(type='text/javascript')!= config
 		if i18nLocaleScript
 			script(src=i18nLocaleScript)
-		if 'development' === env || isDebug
-			script(src=urls[ 'manifest' ])
-			script(src=urls[ 'vendor' ])
-			script(src=urls[ jsFile ])
-			if chunk
-				script(src=urls[ chunk ])
-		else
-			script(src=urls[ 'manifest-min' ])
-			script(src=urls[ 'vendor-min' ])
-			script(src=urls[ jsFile + '-min' ])
-			if chunk
-				script(src=urls[ chunk + '-min' ])
+		script(src=urls[ 'manifest' ])
+		script(src=urls[ 'vendor' ])
+		script(src=urls[ jsFile ])
+		if chunk
+			script(src=urls[ chunk ])
 		script(type='text/javascript')!='window.AppBoot();'
 
 		noscript.wpcom-site__global-noscript

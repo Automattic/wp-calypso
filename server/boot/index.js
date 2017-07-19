@@ -17,6 +17,8 @@ const path = require( 'path' ),
  */
 function setup() {
 	const app = express();
+	let devdocs;
+	let api;
 
 	// for nginx
 	app.enable( 'trust proxy' );
@@ -34,13 +36,9 @@ function setup() {
 			app.use( build() );
 		}
 
-		require( 'bundler' )( app );
-
 		// setup logger
 		app.use( morgan( 'dev' ) );
 	} else {
-		require( 'bundler/assets' )( app );
-
 		// setup logger
 		app.use( morgan( 'combined' ) );
 	}
