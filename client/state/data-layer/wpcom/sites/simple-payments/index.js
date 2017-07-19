@@ -43,7 +43,7 @@ function reduceMetadata( sanitizedProductAttributes, current ) {
  * @param { Object } product raw /post endpoint response to format
  * @returns { Object } sanitized and formatted product
  */
-function customPostToProduct( product ) {
+export function customPostToProduct( product ) {
 	return Object.assign(
 		{
 			ID: product.ID,
@@ -59,7 +59,7 @@ function customPostToProduct( product ) {
  * @param { Object } product action with product payload
  * @returns { Object } custom post type data
  */
-function productToCustomPost( product ) {
+export function productToCustomPost( product ) {
 	return Object.keys( product ).reduce(
 		function( payload, current ) {
 			if ( metadataSchema[ current ] ) {
