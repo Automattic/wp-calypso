@@ -13,7 +13,7 @@ import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderExcerpt from 'blocks/reader-excerpt';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 
-const CompactPost = ( { post, children, isDiscover } ) => {
+const CompactPost = ( { post, postByline, children, isDiscover } ) => {
 	const canonicalMedia = post.canonical_media;
 	let featuredAsset;
 	if ( ! canonicalMedia ) {
@@ -35,6 +35,7 @@ const CompactPost = ( { post, children, isDiscover } ) => {
 		<div className="reader-post-card__post">
 			{ featuredAsset }
 			<div className="reader-post-card__post-details">
+				{ postByline }
 				<ReaderPostOptionsMenu
 					className="ignore-click"
 					showFollow={ true }
@@ -60,6 +61,7 @@ const CompactPost = ( { post, children, isDiscover } ) => {
 
 CompactPost.propTypes = {
 	post: React.PropTypes.object.isRequired,
+	postByline: React.PropTypes.string,
 	isDiscover: React.PropTypes.bool,
 };
 

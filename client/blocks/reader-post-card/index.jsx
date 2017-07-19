@@ -169,9 +169,42 @@ class ReaderPostCard extends React.Component {
 			/>
 		);
 
+		// Set up post byline
+		let postByline;
+
+		if ( isDiscoverStream && ! isEmpty( discoverPick ) ) {
+			// create a post like object with some props from the discover post
+			const postForByline = Object.assign( {}, discoverPick.post || {}, {
+				date: post.date,
+				URL: post.URL,
+				primary_tag: post.primary_tag,
+			} );
+			postByline = (
+				<PostByline post={ postForByline } site={ discoverPick.site } showSiteName={ true } />
+			);
+		} else {
+			postByline = (
+				<PostByline
+					post={ post }
+					site={ site }
+					feed={ feed }
+					showSiteName={ showSiteName || isDiscover }
+					showAvatar={ ! compact }
+				/>
+			);
+		}
+
+		// Set up post card
 		let readerPostCard;
 		if ( compact ) {
-			readerPostCard = <CompactPost post={ post } title={ title } isDiscover={ isDiscover } />;
+			readerPostCard = (
+				<CompactPost
+					post={ post }
+					title={ title }
+					isDiscover={ isDiscover }
+					postByline={ postByline }
+				/>
+			);
 		} else if ( isPhotoPost ) {
 			readerPostCard = (
 				<PhotoPost
@@ -213,36 +246,11 @@ class ReaderPostCard extends React.Component {
 			);
 		}
 
-		// set up post byline
-		let postByline;
-
-		if ( isDiscoverStream && ! isEmpty( discoverPick ) ) {
-			// create a post like object with some props from the discover post
-			const postForByline = Object.assign( {}, discoverPick.post || {}, {
-				date: post.date,
-				URL: post.URL,
-				primary_tag: post.primary_tag,
-			} );
-			postByline = (
-				<PostByline post={ postForByline } site={ discoverPick.site } showSiteName={ true } />
-			);
-		} else {
-			postByline = (
-				<PostByline
-					post={ post }
-					site={ site }
-					feed={ feed }
-					showSiteName={ showSiteName || isDiscover }
-					showAvatar={ ! compact }
-				/>
-			);
-		}
-
 		const followUrl = feed ? feed.feed_URL : post.site_URL;
 
 		return (
 			<Card className={ classes } onClick={ ! isPhotoPost && this.handleCardClick }>
-				{ postByline }
+				{ ! compact && postByline }
 				{ showPrimaryFollowButton &&
 					followUrl &&
 					<FollowButton
