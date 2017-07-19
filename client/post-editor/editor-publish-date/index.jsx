@@ -10,10 +10,12 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import PostSchedule from 'components/post-schedule';
+import utils from 'lib/posts/utils';
 
 export class EditorPublishDate extends React.Component {
 
 	static propTypes = {
+		post: React.PropTypes.object,
 		postDate: React.PropTypes.string,
 		setPostDate: React.PropTypes.func,
 	};
@@ -31,11 +33,29 @@ export class EditorPublishDate extends React.Component {
 	}
 
 	renderHeader() {
-		const className = classNames( 'editor-publish-date__header', { 'is-open': this.state.open } );
+		const isScheduled = utils.isFutureDated( this.props.post );
+		const className = classNames( 'editor-publish-date__header', {
+			'is-open': this.state.open,
+			'is-scheduled': isScheduled,
+		} );
 
 		return (
 			<div className={ className } onClick={ this.toggleOpenState }>
-				<Gridicon icon="calendar" size={ 18 } /> { this.props.translate( 'Publish Immediately' ) }
+				<Gridicon icon="calendar" size={ 18 } />
+				<div className="editor-publish-date__header-wrapper">
+					<div className="editor-publish-date__header-description">
+						{
+							isScheduled
+							? this.props.translate( 'Scheduled' )
+							: this.props.translate( 'Publish Immediately' )
+						}
+					</div>
+					{ isScheduled && (
+						<div className="editor-publish-date__header-chrono">
+							{ this.props.moment( this.props.postDate ).calendar() }
+						</div>
+					) }
+				</div>
 			</div>
 		);
 	}

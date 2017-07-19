@@ -23,7 +23,7 @@
 	line-height: #{ $option-height }px;
 
 	color: $gray-dark;
-	font-size: 14px;
+	font-size: 13px;
 	font-weight: 600;
 	white-space: nowrap;
 	overflow: hidden;
@@ -32,6 +32,10 @@
 	.gridicon {
 		margin-right: #{ ( $side-margin / 2 ) }px;
 		vertical-align: text-bottom;
+	}
+
+	&.is-scheduled {
+		color: $blue-wordpress;
 	}
 
 	// down-arrow
@@ -54,6 +58,28 @@
 	&.is-open::after {
 		transform: rotate( 180deg );
 	}
+}
+
+.editor-publish-date__header-wrapper {
+	vertical-align: text-top;
+	display: inline-block;
+	line-height: #{ $option-height }px;
+	height: #{ $option-height }px;
+}
+
+.editor-publish-date__header-description {
+	.editor-publish-date__header.is-scheduled & {
+		margin-top: -4px;
+		font-size: 10px;
+		line-height: initial;
+	}
+	line-height: initial;
+}
+
+.editor-publish-date__header-chrono {
+	font-size: 12px;
+	line-height: initial;
+	color: $gray-dark;
 }
 
 .editor-publish-date__schedule {

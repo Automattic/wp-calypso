@@ -151,6 +151,7 @@ class EditorConfirmationSidebar extends React.Component {
 
 		return (
 			<EditorPublishDate
+				post={ this.props.post }
 				postDate={ postDate }
 				setPostDate={ this.props.setPostDate }
 			/>
