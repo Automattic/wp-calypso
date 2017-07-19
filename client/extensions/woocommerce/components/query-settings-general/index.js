@@ -5,7 +5,6 @@ import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,7 +32,7 @@ class QuerySettingsGeneral extends Component {
 			this.fetch( siteId );
 		} else if ( ! this.props.error && error ) {
 			// just received an error fetching, show the notice to retry
-			const noticeId = uniqueId();
+			const noticeId = 'query-settings-general-retry';
 			this.props.actions.errorNotice( translate( 'Some of your site settings couldn\'t be retrieved.' ), {
 				id: noticeId,
 				showDismiss: false,
