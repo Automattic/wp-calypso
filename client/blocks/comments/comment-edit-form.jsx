@@ -74,7 +74,7 @@ class PostCommentForm extends Component {
 		if ( event.keyCode === 27 ) {
 			if ( this.props.placeholderId ) {
 				// remove the comment
-				this.props.removeComment( this.props.post.site_ID, this.props.post.ID, this.props.placeholderId );
+				this.props.deleteComment( this.props.post.site_ID, this.props.post.ID, this.props.placeholderId );
 			}
 		}
 	}

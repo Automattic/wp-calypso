@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { get, isDate } from 'lodash';
+import { get, isDate, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,7 +10,6 @@ import { get, isDate } from 'lodash';
 import {
 	COMMENTS_REQUEST,
 	COMMENTS_RECEIVE,
-	COMMENTS_REMOVE,
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_DELETE,
@@ -20,7 +19,6 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { createNotice, errorNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { getPostOldestCommentDate } from 'state/comments/selectors';
-import { removeComment } from 'state/comments/actions';
 import getSiteComment from 'state/selectors/get-site-comment';
 
 /***
@@ -136,7 +134,7 @@ export const writePostCommentSuccess = (
 	comment,
 ) => {
 	// remove placeholder from state
-	dispatch( { type: COMMENTS_REMOVE, siteId, postId, commentId: placeholderId } );
+	dispatch( { type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId } );
 	// add new comment to state with updated values from server
 	dispatch( {
 		type: COMMENTS_RECEIVE,
@@ -161,10 +159,13 @@ export const announceFailure = ( { dispatch, getState }, { siteId, postId } ) =>
 
 // @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/delete/
 export const deleteComment = ( { dispatch, getState }, action ) => {
-	const { siteId, postId, commentId } = action;
-	const comment = getSiteComment( getState(), siteId, commentId );
+	const { siteId, commentId } = action;
 
-	dispatch( removeComment( siteId, postId, commentId ) );
+	if ( startsWith( commentId, 'placeholder' ) ) {
+		return;
+	}
+
+	const comment = getSiteComment( getState(), siteId, commentId );
 
 	dispatch(
 		http(

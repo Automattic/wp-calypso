@@ -15,7 +15,6 @@ import {
 	COMMENTS_REQUEST,
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
-	COMMENTS_REMOVE,
 	COMMENTS_REPLY_WRITE,
 	COMMENTS_WRITE,
 	COMMENT_REQUEST,
@@ -57,21 +56,19 @@ export const requestCommentsList = query => ( {
 	query,
 } );
 
-/***
- * Creates a remove comment action for a siteId, postId, commentId
+/**
+ * Creates a thunk that permanently deletes a comment or removes a comment placeholder from the state
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
- * @param {Number|String} commentId comment identifier to remove
- * @returns {Object} remove action
+ * @param {Number|String} commentId comment identifier
+ * @returns {Function} thunk that deletes a comment
  */
-export function removeComment( siteId, postId, commentId ) {
-	return {
-		type: COMMENTS_REMOVE,
-		siteId,
-		postId,
-		commentId,
-	};
-}
+export const deleteComment = ( siteId, postId, commentId ) => ( {
+	type: COMMENTS_DELETE,
+	siteId,
+	postId,
+	commentId,
+} );
 
 /***
  * Creates a write comment action for a siteId and postId
@@ -197,18 +194,3 @@ export function editComment( siteId, postId, commentId, content ) {
 			);
 	};
 }
-
-/**
- * Creates a thunk that permanently deletes a comment
- * @param {Number} siteId site identifier
- * @param {Number} postId post identifier
- * @param {Number} commentId comment identifier
- * @returns {Function} thunk that deletes a comment
- */
-export const deleteComment = ( siteId, postId, commentId ) => ( {
-	type: COMMENTS_DELETE,
-	siteId,
-	postId,
-	commentId,
-} );
-
