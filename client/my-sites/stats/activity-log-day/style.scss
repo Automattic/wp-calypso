@@ -14,6 +14,10 @@
 
 	.foldable-card__header {
 		background: $white;
+
+		.foldable-card__secondary {
+			flex: 2;
+		}
 	}
 
 	.foldable-card.card.is-expanded {
