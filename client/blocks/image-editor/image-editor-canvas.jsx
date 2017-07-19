@@ -277,6 +277,11 @@ class ImageEditorCanvas extends Component {
 			heightRatio
 		} = this.props.crop;
 
+		const {
+			isImageLoaded,
+			imageMeetsMinimumDimensions
+		} = this.props;
+
 		const canvasX = -50 * widthRatio - 100 * leftRatio;
 		const canvasY = -50 * heightRatio - 100 * topRatio;
 
@@ -285,8 +290,6 @@ class ImageEditorCanvas extends Component {
 			maxWidth: ( 85 / widthRatio ) + '%',
 			maxHeight: ( 85 / heightRatio ) + '%'
 		};
-
-		const { isImageLoaded } = this.props;
 
 		const canvasClasses = classNames( 'image-editor__canvas', {
 			'is-placeholder': ! isImageLoaded
@@ -300,7 +303,9 @@ class ImageEditorCanvas extends Component {
 					onMouseDown={ this.preventDrag }
 					className={ canvasClasses }
 				/>
-				{ isImageLoaded && <ImageEditorCrop /> }
+				{ isImageLoaded && imageMeetsMinimumDimensions
+					? <ImageEditorCrop />
+				: null }
 			</div>
 		);
 	}

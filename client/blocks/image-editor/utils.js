@@ -39,7 +39,7 @@ export function getDefaultAspectRatio( aspectRatio = null, aspectRatios = Aspect
 }
 
 /**
- * Checks if the supplied height and width values are greater than defined minimum values.
+ * Returns whether the supplied height and width values are greater than defined minimum values.
  *
  * Expected model
  * @typedef {Object} MinimumImageDimensions
@@ -49,7 +49,7 @@ export function getDefaultAspectRatio( aspectRatio = null, aspectRatios = Aspect
  * @param   {Number} width The width of the image/element
  * @param   {Number} height The height of the image/element
  * @param   {MinimumImageDimensions} minimumDimensions The minimum dimensions to check against
- * @returns {Boolean}
+ * @returns {Boolean} whether the supplied height and width values are greater than defined minimum values
  */
 export function meetsMinimumDimensions( width, height, minimumDimensions = MinimumImageDimensions ) {
 	if ( typeof width === 'number' && typeof width === 'number' ) {

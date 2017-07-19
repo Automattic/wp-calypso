@@ -527,7 +527,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.deep.equal( false );
 		} );
-		it( 'should updated meetsMinimumDimensions', () => {
+		it( 'should update meetsMinimumDimensions', () => {
 			const state = meetsMinimumDimensions( false, {
 				type: IMAGE_EDITOR_SET_IMAGE_MEETS_MINIMUM_DIMENSIONS,
 				meetsMinimumDimensions: true

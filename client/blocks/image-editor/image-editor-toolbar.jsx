@@ -16,7 +16,10 @@ import classNames from 'classnames';
  */
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
+import {
+	AspectRatios,
+	MinimumImageDimensions
+} from 'state/ui/editor/image-editor/constants';
 import {
 	getImageEditorAspectRatio,
 	getImageMeetsMinimumDimensions
@@ -34,7 +37,8 @@ class ImageEditorToolbar extends Component {
 		imageEditorFlip: PropTypes.func,
 		setImageEditorAspectRatio: PropTypes.func,
 		allowedAspectRatios: PropTypes.array,
-		imageMeetsMinimumDimensions: PropTypes.bool
+		imageMeetsMinimumDimensions: PropTypes.bool,
+		onShowNotice: PropTypes.func
 	};
 
 	static defaultProps = {
@@ -42,7 +46,8 @@ class ImageEditorToolbar extends Component {
 		imageEditorFlip: noop,
 		setImageEditorAspectRatio: noop,
 		allowedAspectRatios: objectValues( AspectRatios ),
-		imageMeetsMinimumDimensions: false
+		imageMeetsMinimumDimensions: false,
+		onShowNotice: noop
 	};
 
 	constructor( props ) {
@@ -69,6 +74,24 @@ class ImageEditorToolbar extends Component {
 
 	onAspectOpen( event ) {
 		event.preventDefault();
+
+		const { imageMeetsMinimumDimensions, translate } = this.props;
+
+		if ( imageMeetsMinimumDimensions === false ) {
+			const noticeText = translate(
+				'To change aspect ratio, your image dimensions should be greater than %(width)px wide ' +
+				'and %(height)px in height.',
+				{
+					args: {
+						width: MinimumImageDimensions.WIDTH,
+						height: MinimumImageDimensions.HEIGHT
+					},
+					context: 'Image editor - image does not meet minimum dimensions'
+				} );
+
+			this.props.onShowNotice( noticeText );
+			return;
+		}
 
 		this.setState( { showAspectPopover: true } );
 	}

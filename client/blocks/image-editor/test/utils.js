@@ -22,6 +22,16 @@ describe( 'ImageEditor Utils', ( ) => {
 			).to.be.true;
 		} );
 
+		it( 'should return false when height and width values are the same as the minimum dimensions', ( ) => {
+			const minimumDimensionsConstants = {
+				WIDTH: 100,
+				HEIGHT: 100
+			};
+			expect(
+				meetsMinimumDimensions( 100, 100, minimumDimensionsConstants )
+			).to.be.false;
+		} );
+
 		it( 'should return false when height and width values are less than minimum dimensions', ( ) => {
 			const minimumDimensionsConstants = {
 				WIDTH: 100,
@@ -29,6 +39,16 @@ describe( 'ImageEditor Utils', ( ) => {
 			};
 			expect(
 				meetsMinimumDimensions( 99, 9, minimumDimensionsConstants )
+			).to.be.false;
+		} );
+
+		it( 'should return false when either the height or width values are less than minimum dimensions', ( ) => {
+			const minimumDimensionsConstants = {
+				WIDTH: 100,
+				HEIGHT: 100
+			};
+			expect(
+				meetsMinimumDimensions( 200, 9, minimumDimensionsConstants )
 			).to.be.false;
 		} );
 

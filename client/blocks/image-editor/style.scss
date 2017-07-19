@@ -4,6 +4,13 @@
 	height: 100%;
 }
 
+.image-editor .notice {
+	// resorted to !important
+	// because there is
+	// no stronger declaration to overwrite .editor-media-modal .notice
+	margin-top: 0 !important;
+}
+
 .image-editor__content {
 	display: flex;
 	flex-direction: column;
@@ -32,6 +39,9 @@
 	color: $white;
 	margin: 0 10px;
 	cursor: pointer;
+	&.is-disabled {
+		opacity: 0.3;
+	}
 }
 
 .image-editor__toolbar-button .gridicon {
@@ -83,7 +93,7 @@
 	border: 2px solid $white;
 	background: darken($gray, 52%);
 
-	&:before {
+	&::before {
 		border-radius: 100%;
 		content: ' ';
 		display: block;
