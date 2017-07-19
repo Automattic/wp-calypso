@@ -410,9 +410,15 @@
 	}
 }
 
-.search-stream__results.is-two-columns .search-stream__site-results .gridicons-cog {
-	left: -2px;
-	top: 8px;
+.search-stream__results.is-two-columns .search-stream__site-results {
+	.gridicons-cog {
+		left: -2px;
+		top: 8px;
+	}
+
+	.reader-email-settings__button-label {
+		display: none;
+	}
 }
 
 .search-stream .reader-subscription-list-item .gridicons-cog {
