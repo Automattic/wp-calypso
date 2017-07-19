@@ -12,10 +12,12 @@ import { localize } from 'i18n-calypso';
  */
 import Count from 'components/count';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
+import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getNewOrders } from 'woocommerce/state/sites/orders/selectors';
-import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
+import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarItem from 'layout/sidebar/item';
@@ -30,23 +32,31 @@ class StoreSidebar extends Component {
 	}
 
 	componentDidMount = () => {
-		const { site } = this.props;
+		const { productsLoaded, site } = this.props;
 
 		if ( site && site.ID ) {
 			this.props.fetchSetupChoices( site.ID );
 			this.props.fetchOrders( site.ID );
+
+			if ( ! productsLoaded ) {
+				this.props.fetchProducts( site.ID, 1 );
+			}
 		}
 	}
 
 	componentWillReceiveProps = ( newProps ) => {
-		const { site } = this.props;
+		const { productsLoaded, site } = this.props;
 
 		const newSiteId = newProps.site ? newProps.site.ID : null;
 		const oldSiteId = site ? site.ID : null;
 
-		if ( oldSiteId !== newSiteId ) {
+		if ( newSiteId && ( oldSiteId !== newSiteId ) ) {
 			this.props.fetchSetupChoices( newSiteId );
 			this.props.fetchOrders( newSiteId );
+
+			if ( ! productsLoaded ) {
+				this.props.fetchProducts( newSiteId, 1 );
+			}
 		}
 	}
 
@@ -158,7 +168,9 @@ class StoreSidebar extends Component {
 	}
 
 	render = () => {
-		const { finishedAddressSetup, site } = this.props;
+		const { finishedAddressSetup, hasProducts, site } = this.props;
+
+		const showAllSidebarItems = finishedAddressSetup || hasProducts;
 
 		return (
 			<Sidebar className="store-sidebar__sidebar">
@@ -166,10 +178,10 @@ class StoreSidebar extends Component {
 				<SidebarMenu>
 					<ul>
 						{ this.dashboard() }
-						{ finishedAddressSetup && this.products() }
-						{ finishedAddressSetup && this.orders() }
-						{ finishedAddressSetup && <SidebarSeparator /> }
-						{ finishedAddressSetup && this.settings() }
+						{ showAllSidebarItems && this.products() }
+						{ showAllSidebarItems && this.orders() }
+						{ showAllSidebarItems && <SidebarSeparator /> }
+						{ showAllSidebarItems && this.settings() }
 					</ul>
 				</SidebarMenu>
 			</Sidebar>
@@ -179,12 +191,16 @@ class StoreSidebar extends Component {
 
 function mapStateToProps( state ) {
 	const finishedAddressSetup = getSetStoreAddressDuringInitialSetup( state );
-	const site = getSelectedSiteWithFallback( state );
+	const hasProducts = getTotalProducts( state ) > 0;
 	const orders = getNewOrders( state );
+	const productsLoaded = areProductsLoaded( state );
+	const site = getSelectedSiteWithFallback( state );
 
 	return {
 		finishedAddressSetup,
+		hasProducts,
 		orders,
+		productsLoaded,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
 	};
@@ -194,6 +210,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			fetchOrders,
+			fetchProducts,
 			fetchSetupChoices,
 		},
 		dispatch
