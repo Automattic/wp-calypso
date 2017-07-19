@@ -171,20 +171,20 @@ function getStoreForSearch( storeId ) {
 	const stream =
 		sort === 'date'
 			? new FeedStream( {
-					id: storeId,
-					fetcher: fetcher,
-					keyMaker: siteKeyMaker,
-					perPage: 5,
-					onGapFetch: limitSiteParams,
-					onUpdateFetch: limitSiteParams,
-					maxUpdates: 20,
-				} )
+				id: storeId,
+				fetcher: fetcher,
+				keyMaker: siteKeyMaker,
+				perPage: 5,
+				onGapFetch: limitSiteParams,
+				onUpdateFetch: limitSiteParams,
+				maxUpdates: 20,
+			} )
 			: new PagedStream( {
-					id: storeId,
-					fetcher: fetcher,
-					keyMaker: siteKeyMaker,
-					perPage: 5,
-				} );
+				id: storeId,
+				fetcher: fetcher,
+				keyMaker: siteKeyMaker,
+				perPage: 5,
+			} );
 	stream.sortOrder = sort;
 
 	function fetcher( query, callback ) {
