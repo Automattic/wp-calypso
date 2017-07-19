@@ -19,7 +19,7 @@ import NavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 import UrlSearch from 'lib/url-search';
-import config from 'config';
+import { isEnabled } from 'config';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],
@@ -53,7 +53,7 @@ export class CommentNavigation extends Component {
 			},
 		};
 
-		if ( config.isEnabled( 'comments/management/all-list' ) ) {
+		if ( isEnabled( 'comments/management/all-list' ) ) {
 			navItems.all = {
 				label: translate( 'All' ),
 			};
@@ -172,11 +172,13 @@ export class CommentNavigation extends Component {
 					) }
 				</NavTabs>
 
-				<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
-					<Button compact onClick={ toggleBulkEdit }>
-						{ translate( 'Bulk Edit' ) }
-					</Button>
-				</CommentNavigationTab>
+				{ isEnabled( 'manage/comments/bulk-actions' ) &&
+					<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
+						<Button compact onClick={ toggleBulkEdit }>
+							{ translate( 'Bulk Edit' ) }
+						</Button>
+					</CommentNavigationTab>
+				}
 
 				{ hasSearch &&
 					<Search
