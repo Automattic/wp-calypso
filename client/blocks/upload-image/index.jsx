@@ -16,9 +16,7 @@ import { ALLOWED_FILE_EXTENSIONS } from './constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import Dialog from 'components/dialog';
 import FilePicker from 'components/file-picker';
-import {
-	resetAllImageEditorState
-} from 'state/ui/editor/image-editor/actions';
+import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
 import Spinner from 'components/spinner';
 import ImageEditor from 'blocks/image-editor';
 import DropZone from 'components/drop-zone';
@@ -52,10 +50,8 @@ class UploadImage extends Component {
 		isUploading: false,
 	};
 
-	receiveFiles = ( files ) => {
-		const extension = path.extname( files[ 0 ].name )
-			.toLowerCase()
-			.substring( 1 );
+	receiveFiles = files => {
+		const extension = path.extname( files[ 0 ].name ).toLowerCase().substring( 1 );
 
 		if ( ALLOWED_FILE_EXTENSIONS.indexOf( extension ) === -1 ) {
 			return;
@@ -82,9 +78,7 @@ class UploadImage extends Component {
 	};
 
 	hideImageEditor = () => {
-		const {
-			resetAllImageEditorState: resetAllImageEditorStateAction
-		} = this.props;
+		const { resetAllImageEditorState: resetAllImageEditorStateAction } = this.props;
 
 		resetAllImageEditorStateAction();
 
@@ -97,28 +91,18 @@ class UploadImage extends Component {
 	};
 
 	renderImageEditor() {
-		const {
-			isEditingImage,
-			uploadedImage,
-		} = this.state;
+		const { isEditingImage, uploadedImage } = this.state;
 
 		if ( ! isEditingImage ) {
 			return null;
 		}
 
-		const {
-			additionalImageEditorClasses,
-			imageEditorProps,
-			texts,
-		} = this.props;
+		const { additionalImageEditorClasses, imageEditorProps, texts } = this.props;
 
 		const classes = classnames( 'upload-image-modal', additionalImageEditorClasses );
 
 		return (
-			<Dialog
-				additionalClassNames={ classes }
-				isVisible={ true }
-			>
+			<Dialog additionalClassNames={ classes } isVisible={ true }>
 				<ImageEditor
 					{ ...imageEditorProps }
 					media={ { src: uploadedImage } }
@@ -131,25 +115,16 @@ class UploadImage extends Component {
 	}
 
 	render() {
-		const {
-			children,
-			isUploading,
-			translate,
-			texts,
-			additionalClasses,
-		} = this.props;
+		const { children, isUploading, translate, texts, additionalClasses } = this.props;
 
-		let {
-			placeholderContent,
-			uploadingContent,
-		} = this.props;
+		let { placeholderContent, uploadingContent } = this.props;
 
 		if ( typeof placeholderContent === 'undefined' ) {
 			placeholderContent = (
 				<div className="upload-image__placeholder">
-						<Gridicon icon="add-image" size={ 36 } />
+					<Gridicon icon="add-image" size={ 36 } />
 					<span>
-						{ texts.addAnImage ? texts.addAnImage : translate( 'Add an image' ) }
+						{ texts.addAnImage ? texts.addAnImage : translate( 'Add an Image' ) }
 					</span>
 				</div>
 			);
@@ -167,21 +142,18 @@ class UploadImage extends Component {
 		}
 
 		return (
-			<div className={ classnames( 'upload-image', additionalClasses ) } >
+			<div className={ classnames( 'upload-image', additionalClasses ) }>
 				{ this.renderImageEditor() }
 
 				<FilePicker accept="image/*" onPick={ this.receiveFiles }>
 					<div
-						className={
-							classnames( 'upload-image__image-container',
-								{ 'is-uploading': isUploading }
-							)
-						}
+						className={ classnames( 'upload-image__image-container', {
+							'is-uploading': isUploading,
+						} ) }
 					>
 						<DropZone
-							textLabel={ texts.dragUploadText
-								? texts.dragUploadText
-								: translate( 'Drop to upload image' )
+							textLabel={
+								texts.dragUploadText ? texts.dragUploadText : translate( 'Drop to upload image' )
 							}
 							onFilesDrop={ this.receiveFiles }
 						/>
@@ -197,9 +169,6 @@ class UploadImage extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		resetAllImageEditorState,
-	}
-)( localize( UploadImage ) );
+export default connect( null, {
+	resetAllImageEditorState,
+} )( localize( UploadImage ) );
