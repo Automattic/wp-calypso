@@ -138,6 +138,7 @@ class ReaderPostCard extends React.Component {
 			'is-selected': isSelected,
 			'is-discover': isDiscover,
 			'is-expanded-video': isVideo && isExpanded,
+			'is-compact': compact,
 		} );
 
 		let discoverFollowButton;
