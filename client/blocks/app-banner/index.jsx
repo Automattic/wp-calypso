@@ -57,7 +57,7 @@ class AppBanner extends Component {
 	}
 
 	isiOS() {
-		return /iPhone/i.test( this.props.userAgent );
+		return /iPad|iPod|iPhone/i.test( this.props.userAgent );
 	}
 
 	isAndroid() {
