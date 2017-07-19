@@ -9,6 +9,7 @@ import {
 	getProduct,
 	areProductsLoaded,
 	areProductsLoading,
+	areProductsError,
 	getTotalProductsPages,
 	getTotalProducts,
 	areProductSearchResultsLoaded,
@@ -31,6 +32,7 @@ const loadingState = {
 					products: {
 						isLoading: {
 							1: true,
+							2: true,
 						},
 						search: {
 							isLoading: {
@@ -54,12 +56,16 @@ const loadedState = {
 						search: {
 							isLoading: {
 								1: false,
+								2: false,
 							},
 							totalProducts: 28,
 							query: 'testing',
 						},
 						isLoading: {
 							1: false,
+						},
+						isError: {
+							2: true,
 						},
 						products,
 						totalPages: 3,
@@ -143,6 +149,32 @@ describe( 'selectors', () => {
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( areProductsLoading( loadedStateWithUi, 1 ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#areProductsError', () => {
+		it( 'should be false when woocommerce state is not available.', () => {
+			expect( areProductsError( preInitializedState, 2, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be false when products are currently being fetched.', () => {
+			expect( areProductsError( loadingState, 2, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be false when products are loaded correctly.', () => {
+			expect( areProductsError( loadedState, 1, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be true when products failed to load.', () => {
+			expect( areProductsError( loadedState, 2, 123 ) ).to.be.true;
+		} );
+
+		it( 'should be false when products are loaded only for a different site.', () => {
+			expect( areProductsError( loadedState, 2, 456 ) ).to.be.false;
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( areProductsError( loadedStateWithUi, 2 ) ).to.be.true;
 		} );
 	} );
 

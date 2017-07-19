@@ -9,16 +9,19 @@ import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
 	WOOCOMMERCE_PRODUCTS_REQUEST,
-	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+	WOOCOMMERCE_PRODUCTS_RECEIVE,
 } from 'woocommerce/state/action-types';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCT_DELETE_SUCCESS ]: productsDeleteSuccess,
 	[ WOOCOMMERCE_PRODUCTS_REQUEST ]: productsRequest,
-	[ WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS ]: productsRequestSuccess,
+	[ WOOCOMMERCE_PRODUCTS_RECEIVE ]: productsReceive,
 } );
 
-export function productsRequestSuccess( state, action ) {
+export function productsReceive( state, action ) {
+	if ( action.error ) {
+		return state;
+	}
 	const prevState = state || {};
 	const { page, products } = action;
 	const productIds = products.map( ( p ) => {

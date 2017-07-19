@@ -13,6 +13,7 @@ import { trim } from 'lodash';
  */
 import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
+import EmptyContent from 'components/empty-content';
 import { fetchProducts, fetchProductSearchResults, clearProductSearch } from 'woocommerce/state/sites/products/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -20,7 +21,9 @@ import {
 	getTotalProducts,
 	areProductsLoaded,
 	areProductsLoading,
+	areProductsError,
 } from 'woocommerce/state/sites/products/selectors';
+import { getProductListCurrentPage } from 'woocommerce/state/ui/products/selectors';
 import Main from 'components/main';
 import ProductsList from './products-list';
 import ProductsListSearchResults from './products-list-search-results';
@@ -81,8 +84,15 @@ class Products extends Component {
 	}
 
 	render() {
-		const { className, site, translate, productsLoading, productsLoaded, totalProducts } = this.props;
+		const { className, site, translate, productsLoading, productsLoaded, totalProducts, productsError } = this.props;
 		const classes = classNames( 'products__list', className );
+
+		if ( productsError ) {
+			return <EmptyContent
+				title={ translate( 'We are having trouble loading your products.' ) }
+				line={ translate( 'Please try again.' ) }
+			/>;
+		}
 
 		let productsDisplay;
 		if ( trim( this.state.query ) === '' ) {
@@ -120,13 +130,16 @@ class Products extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	const productsLoaded = site && areProductsLoaded( state, 1, site.ID );
+	const currentPage = site && getProductListCurrentPage( state, site.ID ) || 1;
+	const productsLoaded = site && areProductsLoaded( state, currentPage, site.ID );
 	const totalProducts = site && getTotalProducts( state, site.ID );
-	const productsLoading = site && areProductsLoading( state, 1, site.ID );
+	const productsLoading = site && areProductsLoading( state, currentPage, site.ID );
+	const productsError = site && areProductsError( state, currentPage, site.ID );
 	return {
 		site,
 		productsLoaded,
 		productsLoading,
+		productsError,
 		totalProducts,
 	};
 }

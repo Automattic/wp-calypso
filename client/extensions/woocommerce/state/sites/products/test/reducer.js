@@ -9,8 +9,7 @@ import { expect } from 'chai';
 import {
 	productsDeleteSuccess,
 	productsRequest,
-	productsRequestSuccess,
-	productsRequestFailure,
+	productsReceive,
 	productsSearchRequest,
 	productsSearchRequestFailure,
 	productsSearchRequestSuccess,
@@ -19,9 +18,8 @@ import {
 
 import {
 	WOOCOMMERCE_PRODUCTS_DELETE_SUCCESS,
+	WOOCOMMERCE_PRODUCTS_RECEIVE,
 	WOOCOMMERCE_PRODUCTS_REQUEST,
-	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
-	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 	WOOCOMMERCE_PRODUCTS_SEARCH_CLEAR,
 	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST,
 	WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
@@ -38,38 +36,39 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_PRODUCTS_REQUEST,
 				siteId: 123,
 				page: 1,
+				meta: { dataLayer: { doBypass: true } },
 			};
 			const newState = productsRequest( undefined, action );
 			expect( newState.isLoading ).to.eql( { 1: true } );
 		} );
 	} );
-	describe( 'productsRequestSuccess', () => {
+	describe( 'productsReceive', () => {
 		it( 'should should show that request is no longer loading', () => {
 			const action = {
-				type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+				type: WOOCOMMERCE_PRODUCTS_RECEIVE,
 				siteId: 123,
 				page: 1,
 				totalPages: 3,
 				products,
 			};
-			const newState = productsRequestSuccess( { isLoading: { 1: true } }, action );
+			const newState = productsReceive( { isLoading: { 1: true } }, action );
 			expect( newState.isLoading ).to.eql( { 1: false } );
 		} );
 		it( 'should store the products in state', () => {
 			const action = {
-				type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+				type: WOOCOMMERCE_PRODUCTS_RECEIVE,
 				siteId: 123,
 				page: 1,
 				totalPages: 3,
 				products,
 			};
-			const newState = productsRequestSuccess( undefined, action );
+			const newState = productsReceive( undefined, action );
 			expect( newState.products ).to.eql( products );
 		} );
 		it( 'should add new products onto the existing list', () => {
 			const additionalProducts = [ product ];
 			const action = {
-				type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+				type: WOOCOMMERCE_PRODUCTS_RECEIVE,
 				siteId: 123,
 				page: 2,
 				totalPages: 3,
@@ -80,44 +79,43 @@ describe( 'reducer', () => {
 				isLoading: { 1: false },
 				totalPages: 3,
 			};
-			const newState = productsRequestSuccess( originalState, action );
+			const newState = productsReceive( originalState, action );
 			expect( newState.products ).to.eql( [ ...products, ...additionalProducts ] );
 		} );
 		it( 'should store the total number of pages', () => {
 			const action = {
-				type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+				type: WOOCOMMERCE_PRODUCTS_RECEIVE,
 				siteId: 123,
 				page: 1,
 				totalPages: 3,
 				products,
 			};
-			const newState = productsRequestSuccess( undefined, action );
+			const newState = productsReceive( undefined, action );
 			expect( newState.totalPages ).to.eql( 3 );
 		} );
 		it( 'should store the total number of products', () => {
 			const action = {
-				type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+				type: WOOCOMMERCE_PRODUCTS_RECEIVE,
 				siteId: 123,
 				page: 1,
 				totalPages: 3,
 				totalProducts: 30,
 				products,
 			};
-			const newState = productsRequestSuccess( undefined, action );
+			const newState = productsReceive( undefined, action );
 			expect( newState.totalProducts ).to.eql( 30 );
 		} );
-	} );
-	describe( 'productsRequestFailure', () => {
-		it( 'should should show that request has loaded on failure', () => {
+		it( 'should show that request has loaded on failure', () => {
 			const action = {
-				type: WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
+				type: WOOCOMMERCE_PRODUCTS_RECEIVE,
 				siteId: 123,
 				page: 1,
 				error: {}
 			};
 
-			const newState = productsRequestFailure( { isLoading: { 1: true } }, action );
+			const newState = productsReceive( { isLoading: { 1: true } }, action );
 			expect( newState.isLoading ).to.eql( { 1: false } );
+			expect( newState.isError ).to.eql( { 1: true } );
 		} );
 	} );
 	describe( 'productsSearchRequest', () => {
