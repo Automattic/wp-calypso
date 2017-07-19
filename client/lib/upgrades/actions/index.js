@@ -1,6 +1,6 @@
-// These could be rewritten as `export * from`, pending resolution of Babel
-// transform bug: http://phabricator.babeljs.io/T2877
-
+/**
+ * Internal dependencies
+ */
 import * as cart from './cart';
 import * as checkout from './checkout';
 import * as freeTrials from './free-trials';

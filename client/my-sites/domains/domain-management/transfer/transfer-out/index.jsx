@@ -4,6 +4,7 @@
 import page from 'page';
 import React from 'react';
 import omit from 'lodash/omit';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -19,8 +20,8 @@ import Locked from './locked.jsx';
 import Unlocked from './unlocked.jsx';
 import TransferProhibited from './transfer-prohibited.jsx';
 
-const Transfer = React.createClass( {
-	propTypes: {
+class Transfer extends React.Component {
+	static propTypes = {
 		domains: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
@@ -28,11 +29,11 @@ const Transfer = React.createClass( {
 			React.PropTypes.bool
 		] ).isRequired,
 		wapiDomainInfo: React.PropTypes.object.isRequired
-	},
+	};
 
 	renderSection() {
-		const { locked, transferProhibited } = this.props.wapiDomainInfo.data,
-			{ isPendingIcannVerification, currentUserCanManage } = getSelectedDomain( this.props );
+		const { locked, transferProhibited } = this.props.wapiDomainInfo.data;
+		const { isPendingIcannVerification, currentUserCanManage } = getSelectedDomain( this.props );
 		let section = null;
 
 		if ( ! currentUserCanManage ) {
@@ -48,11 +49,11 @@ const Transfer = React.createClass( {
 		}
 
 		return React.createElement( section, omit( this.props, [ 'children' ] ) );
-	},
+	}
 
 	render() {
 		if ( this.isDataLoading() ) {
-			return <DomainMainPlaceholder goBack={ this.goToEdit }/>;
+			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
 		}
 
 		return (
@@ -60,25 +61,25 @@ const Transfer = React.createClass( {
 				<Header
 					onClick={ this.goToEdit }
 					selectedDomainName={ this.props.selectedDomainName }>
-					{ this.translate( 'Transfer Domain' ) }
+					{ this.props.translate( 'Transfer Domain' ) }
 				</Header>
 				{ this.renderSection() }
 			</Main>
 		);
-	},
+	}
 
 	goToEdit() {
 		page( paths.domainManagementTransfer(
 			this.props.selectedSite.slug,
 			this.props.selectedDomainName
 		) );
-	},
+	}
 
 	isDataLoading() {
 		return (
 			! this.props.wapiDomainInfo.hasLoadedFromServer || ! this.props.domains.hasLoadedFromServer
 		);
 	}
-} );
+}
 
-export default Transfer;
+export default localize( Transfer );
