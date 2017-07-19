@@ -31,7 +31,6 @@ import {
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 	USER_RECEIVE,
 } from 'state/action-types';
-import { login } from 'lib/paths';
 
 export const isRequesting = createReducer( false, {
 	[ LOGIN_REQUEST ]: () => true,
@@ -79,13 +78,7 @@ export const requestNotice = createReducer( null, {
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: ( state, { notice } ) => notice,
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: ( state, { notice } ) => notice,
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: () => null,
-	[ ROUTE_SET ]: ( state, action ) => {
-		// if we just navigated to the sms 2fa page, keep the notice (if any) from the loginUser action
-		if ( action.path === login( { isNative: true, twoFactorAuthType: 'sms' } ) ) {
-			return state;
-		}
-		return null;
-	},
+	[ ROUTE_SET ]: () => null,
 } );
 
 const updateTwoStepNonce = ( state, { twoStepNonce, nonceType } ) => Object.assign( {}, state, {
