@@ -485,62 +485,6 @@ const EVENTS = {
 						email
 					}
 				);
-			},
-
-			pendingAccountLogInClick( { siteSlug, domainName, user, severity, isMultipleDomains, section } ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					`Clicked "Log in" link in Google Apps pending ToS notice in ${ section }`,
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_google_apps_pending_account_log_in_click',
-					{
-						site_slug: siteSlug,
-						domain_name: domainName,
-						user,
-						severity,
-						is_multiple_domains: isMultipleDomains,
-						section
-					}
-				);
-			},
-
-			showPendingAccountNotice( { siteSlug, severity, isMultipleDomains, section } ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Showed pending account notice',
-					'Site',
-					siteSlug
-				);
-
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_google_apps_pending_account_notice_show',
-					{
-						site_slug: siteSlug,
-						severity,
-						is_multiple_domains: isMultipleDomains,
-						section
-					}
-				);
-			},
-
-			fixPendingEmailSiteNoticeClick( siteSlug ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Fix" link in site notice for email requiring action',
-					'Site',
-					siteSlug
-				);
-
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_google_apps_site_fix_click',
-					{
-						site_slug: siteSlug
-					}
-				);
 			}
 		},
 
