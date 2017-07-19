@@ -39,6 +39,11 @@
 	flex-direction: column;
 	background-color: $gray-light;
 	box-shadow: inset 0 0 0 1px lighten( $gray, 25% );
+	font-size: 14px;
+
+	&:hover {
+		cursor: pointer;
+	}
 }
 
 .upload-image__uploading-container {
@@ -49,4 +54,5 @@
 	position: absolute;
 	left: 50%;
 	top: 50%;
+	transform: translate( -50%, -50% );
 }

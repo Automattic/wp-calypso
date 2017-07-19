@@ -152,7 +152,7 @@ class UploadImage extends Component {
 			uploadingContent = (
 				<div className="upload-image__uploading-container">
 					<img src={ editedImage } />
-					<Spinner className="upload-image__spinner" size={ 40 } />
+					<Spinner className="upload-image__spinner" size={ 20 } />
 				</div>
 			);
 		}
