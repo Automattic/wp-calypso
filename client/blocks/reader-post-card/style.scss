@@ -315,14 +315,14 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	width: 100%;
 }
 
-/* Fix for IE11 unable to handle nested flexbox min-height.
- * See issue: https://github.com/Automattic/wp-calypso/issues/9412
- */
+// Fix for IE11 unable to handle nested flexbox min-height.
+// See issue: https://github.com/Automattic/wp-calypso/issues/9412
 .is-reader-page .reader-post-card.is-gallery .reader-post-card__post-details {
 	flex: inherit;
 }
 
 .reader-post-card__byline-author-site {
+	font-family: $sans;
 	overflow: hidden;
 	position: relative;
 	height: 20px;
@@ -338,9 +338,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 .reader-post-card__timestamp-and-tag {
+	align-items: flex-start;
 	display: flex;
 	flex-direction: row;
-	align-items: flex-start;
+	font-family: $sans;
 	margin-top: -2px;
 }
 
