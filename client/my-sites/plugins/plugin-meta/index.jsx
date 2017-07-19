@@ -41,6 +41,7 @@ import {
 	isBusiness,
 	isEnterprise
 } from 'lib/products-values';
+import { addSiteFragment } from 'lib/route/path';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isAutomatedTransferActive, isSiteAutomatedTransfer } from 'state/selectors';
@@ -436,7 +437,7 @@ class PluginMeta extends Component {
 		} );
 
 		const plugin = this.props.selectedSite && this.props.sites[ 0 ] ? this.props.sites[ 0 ].plugin : this.props.plugin;
-		const path = this.getExtensionSettingsPath( plugin );
+		const path = ( ! this.props.selectedSite || plugin.active ) && this.getExtensionSettingsPath( plugin );
 
 		return (
 			<div className="plugin-meta">
@@ -459,7 +460,7 @@ class PluginMeta extends Component {
 
 				{ path &&
 					<CompactCard
-						href={ `${ path }/${ this.props.slug }` }>
+						href={ addSiteFragment( path, this.props.slug ) }>
 						{ this.props.translate( 'Edit plugin settings' ) }
 					</CompactCard>
 				}
