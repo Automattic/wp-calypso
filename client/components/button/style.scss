@@ -63,7 +63,9 @@ button {
 			border-color: $blue-medium;
 			box-shadow: 0 0 0 2px $blue-light;
 	}
-	&.is-compact {
+
+	&.is-compact,
+	&.is-desktop {
 		padding: 7px;
 		color: $gray-text-min;
 		font-size: 12px;
@@ -75,7 +77,7 @@ button {
 		.gridicon {
 			top: 4px;
 			margin-top: -8px;
-			margin-right: 5px;
+			margin-right: 6px;
 		}
 		// Make the left margin of the small plus icon visually less huge
 		.gridicons-plus-small {
