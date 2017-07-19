@@ -122,9 +122,22 @@ class SimplePaymentsDialog extends Component {
 	};
 
 	handleInsert = () => {
-		const { siteId, dispatch, currencyCode } = this.props;
+		const { siteId, dispatch, currencyCode, activeTab } = this.props;
 
 		this.setState( { isSubmitting: true } );
+
+		if ( activeTab === 'paymentButtons' ) {
+			const productId = this.state.selectedPaymentId;
+
+			this.props.onInsert( { id: productId } );
+
+			// clear the form after a successful submit -- it'll be blank next time it's opened
+			this.formStateController.resetFields( this.constructor.initialFields );
+
+			this._isMounted && this.setState( { isSubmitting: false } );
+
+			return;
+		}
 
 		const productForm = this.getFormValues();
 
@@ -142,7 +155,6 @@ class SimplePaymentsDialog extends Component {
 
 				this.props.onInsert( { id: productId } );
 
-				// clear the form after a successful submit -- it'll be blank next time it's opened
 				this.formStateController.resetFields( this.constructor.initialFields );
 
 				this._isMounted && this.setState( { isSubmitting: false } );
