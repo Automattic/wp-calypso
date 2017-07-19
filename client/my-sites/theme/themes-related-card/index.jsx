@@ -27,7 +27,7 @@ const ThemesRelatedCard = React.createClass( {
 			'rowling',
 			'hemingway-rewritten',
 			'gazette',
-			'intergalactic-2',
+			'intergalactic',
 			'isola',
 			'edin',
 			'sela',
