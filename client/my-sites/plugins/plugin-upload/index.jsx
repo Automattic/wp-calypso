@@ -23,6 +23,7 @@ import {
 	isPluginUploadComplete,
 	isPluginUploadInProgress,
 } from 'state/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 class PluginUpload extends React.Component {
 
@@ -47,10 +48,12 @@ class PluginUpload extends React.Component {
 	}
 
 	renderUploadCard() {
-		const { inProgress, complete } = this.props;
+		const { inProgress, complete, isJetpack } = this.props;
 		return (
 			<Card>
-				{ ! inProgress && ! complete && <UploadDropZone doUpload={ this.props.uploadPlugin } /> }
+				{ ! inProgress && ! complete && <UploadDropZone
+					doUpload={ this.props.uploadPlugin }
+					disabled={ ! isJetpack } /> }
 				{ inProgress && this.renderProgressBar() }
 			</Card>
 		);
@@ -96,6 +99,7 @@ export default connect(
 		return {
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
+			isJetpack: isJetpackSite( state, siteId ),
 			inProgress: isPluginUploadInProgress( state, siteId ),
 			complete: isPluginUploadComplete( state, siteId ),
 			failed: !! error,
