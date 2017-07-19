@@ -83,11 +83,11 @@ class AppBanner extends Component {
 		// TODO: update with real deep links when we get them
 		// just linking to respective app stores for now
 		if ( this.isAndroid() ) {
-			return 'https://play.google.com/store/apps/details?id=org.wordpress.android';
+			return 'market://details?id=org.wordpress.android';
 		}
 
 		if ( this.isiOS() ) {
-			return 'https://itunes.apple.com/us/app/wordpress/id335703880';
+			return 'itms://itunes.apple.com/us/app/wordpress/id335703880?mt=8';
 		}
 
 		return null;
