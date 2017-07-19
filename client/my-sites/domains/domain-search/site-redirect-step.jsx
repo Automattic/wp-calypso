@@ -102,10 +102,7 @@ class SiteRedirectStep extends React.Component {
 
 	addSiteRedirectToCart = ( domain ) => {
 		upgradesActions.addItem( cartItems.siteRedirect( { domain: domain } ) );
-
-		if ( this.isMounted() ) {
-			page( '/checkout/' + this.props.selectedSite.slug );
-		}
+		page( '/checkout/' + this.props.selectedSite.slug );
 	};
 
 	getValidationErrorMessage = ( domain, error ) => {
