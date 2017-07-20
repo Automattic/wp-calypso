@@ -50,9 +50,7 @@ class Locked extends React.Component {
 
 		this.setState( { submitting: true } );
 		requestTransferCode( options, ( error ) => {
-			if ( error ) {
-				this.setState( { submitting: false } );
-			}
+			this.setState( { submitting: false } );
 			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
 		} );
 	}
