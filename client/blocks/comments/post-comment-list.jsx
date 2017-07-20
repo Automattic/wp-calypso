@@ -115,6 +115,7 @@ class PostCommentList extends React.Component {
 
 		if ( this.shouldFetchInitialComment( nextProps ) ) {
 			this.props.requestComment( { siteId: nextSiteId, commentId: nextProps.startingCommentId } );
+			this.hasScrolledToComment = false;
 		} else if ( this.shouldFetchInitialPages( nextProps ) ) {
 			this.viewEarlierCommentsHandler();
 			this.viewLaterCommentsHandler();
