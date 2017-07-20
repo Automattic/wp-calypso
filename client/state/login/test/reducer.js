@@ -19,17 +19,10 @@ import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
-	SOCIAL_LOGIN_REQUEST,
-	SOCIAL_LOGIN_REQUEST_FAILURE,
-	SOCIAL_LOGIN_REQUEST_SUCCESS,
-	SOCIAL_CONNECT_ACCOUNT_REQUEST,
-	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
-	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 	ROUTE_SET,
 } from 'state/action-types';
 import reducer, {
 	isRequesting,
-	isFormDisabled,
 	isRequestingTwoFactorAuth,
 	requestError,
 	requestNotice,
@@ -45,7 +38,6 @@ describe( 'reducer', () => {
 			'magicLogin',
 			'redirectTo',
 			'rememberMe',
-			'isFormDisabled',
 			'requestError',
 			'requestNotice',
 			'requestSuccess',
@@ -65,103 +57,27 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should set isRequesting to true value if a request is initiated', () => {
-			let state = isRequesting( undefined, {
+			const state = isRequesting( undefined, {
 				type: LOGIN_REQUEST,
-			} );
-
-			expect( state ).to.be.true;
-
-			state = isRequesting( undefined, {
-				type: SOCIAL_LOGIN_REQUEST,
 			} );
 
 			expect( state ).to.be.true;
 		} );
 
 		it( 'should set isRequesting to false value if a request was unsuccessful', () => {
-			let state = isRequesting( undefined, {
+			const state = isRequesting( undefined, {
 				type: LOGIN_REQUEST_FAILURE,
-			} );
-
-			expect( state ).to.be.false;
-
-			state = isRequesting( undefined, {
-				type: SOCIAL_LOGIN_REQUEST_FAILURE,
 			} );
 
 			expect( state ).to.be.false;
 		} );
 
 		it( 'should set isRequesting to false value if a request was successful', () => {
-			let state = isRequesting( undefined, {
+			const state = isRequesting( undefined, {
 				type: LOGIN_REQUEST_SUCCESS,
 			} );
 
 			expect( state ).to.be.false;
-
-			state = isRequesting( undefined, {
-				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should not persist state', () => {
-			const state = isRequesting( true, {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should not load persisted state', () => {
-			const state = isRequesting( true, {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should set isFormDisabled to true value if a request is initiated', () => {
-			let state = isFormDisabled( undefined, {
-				type: LOGIN_REQUEST,
-			} );
-
-			expect( state ).to.be.true;
-
-			state = isFormDisabled( undefined, {
-				type: SOCIAL_LOGIN_REQUEST,
-			} );
-
-			expect( state ).to.be.true;
-		} );
-
-		it( 'should set isFormDisabled to false value if a request was unsuccessful', () => {
-			let state = isFormDisabled( undefined, {
-				type: LOGIN_REQUEST_FAILURE,
-			} );
-
-			expect( state ).to.be.false;
-
-			state = isFormDisabled( undefined, {
-				type: SOCIAL_LOGIN_REQUEST_FAILURE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should set isFormDisabled to true value if a request was successful', () => {
-			let state = isFormDisabled( undefined, {
-				type: LOGIN_REQUEST_SUCCESS,
-			} );
-
-			expect( state ).to.be.true;
-
-			state = isFormDisabled( undefined, {
-				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
-			} );
-
-			expect( state ).to.be.true;
 		} );
 
 		it( 'should not persist state', () => {
@@ -237,47 +153,28 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should set requestError to null value if a request is initiated', () => {
-			let state = requestError( 'some error', {
+			const state = requestError( 'some error', {
 				type: LOGIN_REQUEST,
-			} );
-
-			expect( state ).to.be.null;
-
-			state = requestError( 'some error', {
-				type: SOCIAL_CONNECT_ACCOUNT_REQUEST,
 			} );
 
 			expect( state ).to.be.null;
 		} );
 
 		it( 'should set requestError to null value if a request was successful', () => {
-			let state = requestError( 'some error', {
+			const state = requestError( 'some error', {
 				type: LOGIN_REQUEST_SUCCESS,
-			} );
-
-			expect( state ).to.be.null;
-
-			state = requestError( 'some error', {
-				type: SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 			} );
 
 			expect( state ).to.be.null;
 		} );
 
 		it( 'should store the error in requestError if a request is unsuccessful', () => {
-			let state = requestError( 'some error', {
+			const state = requestError( 'some error', {
 				type: LOGIN_REQUEST_FAILURE,
 				error: 'another error'
 			} );
 
 			expect( state ).to.eql( 'another error' );
-
-			state = requestError( 'some error', {
-				type: SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
-				error: 'yet another error'
-			} );
-
-			expect( state ).to.eql( 'yet another error' );
 		} );
 
 		it( 'should reset the error to null when switching routes', () => {

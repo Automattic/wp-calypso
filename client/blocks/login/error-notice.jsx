@@ -61,11 +61,6 @@ class ErrorNotice extends Component {
 			return null;
 		}
 
-		// The existing_wpcom_user error is handled inline in LoginForm
-		if ( error.code === 'existing_wpcom_user' ) {
-			return null;
-		}
-
 		return (
 			<Notice status={ 'is-error' } showDismiss={ false }>
 				{ error.message }

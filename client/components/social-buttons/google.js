@@ -13,11 +13,9 @@ import { noop } from 'lodash';
 import Popover from 'components/popover';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { isFormDisabled } from 'state/login/selectors';
 
 class GoogleLoginButton extends Component {
 	static propTypes = {
-		isFormDisabled: PropTypes.bool,
 		clientId: PropTypes.string.isRequired,
 		scope: PropTypes.string,
 		fetchBasicProfile: PropTypes.bool,
@@ -37,7 +35,6 @@ class GoogleLoginButton extends Component {
 		error: '',
 		showError: false,
 		errorRef: null,
-		isDisabled: true,
 	};
 
 	constructor( props ) {
@@ -80,10 +77,7 @@ class GoogleLoginButton extends Component {
 				scope: this.props.scope,
 				fetch_basic_profile: this.props.fetchBasicProfile,
 			} )
-			.then( () => {
-				this.setState( { isDisabled: false } );
-				return gapi; // don't try to return gapi.auth2.getAuthInstance() here, it has a `then` method
-			} )
+			.then( () => gapi ) // don't try to return gapi.auth2.getAuthInstance() here, it has a `then` method
 			).catch( error => {
 				this.initialized = null;
 
@@ -145,7 +139,7 @@ class GoogleLoginButton extends Component {
 
 	render() {
 		let classes = 'social-buttons__button button';
-		if ( this.state.isDisabled || this.props.isFormDisabled || this.state.error ) {
+		if ( this.state.error ) {
 			classes += ' disabled';
 		}
 
@@ -196,9 +190,7 @@ class GoogleLoginButton extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		isFormDisabled: isFormDisabled( state ),
-	} ),
+	null,
 	{
 		recordTracksEvent,
 	}

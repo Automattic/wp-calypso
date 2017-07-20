@@ -13,10 +13,9 @@ import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 export default {
 	login( context, next ) {
 		const { lang, path, params } = context;
-		const socialConnect = params.socialConnect === 'social-connect';
 
 		context.primary = (
-			<WPLogin locale={ lang } path={ path } twoFactorAuthType={ params.twoFactorAuthType } socialConnect={ socialConnect } />
+			<WPLogin locale={ lang } path={ path } twoFactorAuthType={ params.twoFactorAuthType } />
 		);
 		next();
 	},
