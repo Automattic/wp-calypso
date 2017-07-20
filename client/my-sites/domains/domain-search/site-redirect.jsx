@@ -21,7 +21,7 @@ class SiteRedirect extends Component {
 		cart: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
-		isSiteUpgradeable: PropTypes.func.isRequired,
+		isSiteUpgradeable: PropTypes.bool.isRequired,
 		productsList: PropTypes.object.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
