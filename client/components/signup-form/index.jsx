@@ -419,7 +419,7 @@ class SignupForm extends Component {
 	}
 
 	passwordValidationExplanation() {
-		const passwordLength = formState.getFieldValue( this.state.form, 'password' ).length;
+		const passwordValue = formState.getFieldValue( this.state.form, 'password' );
 
 		if ( formState.isFieldInvalid( this.state.form, 'password' ) ) {
 			return (
@@ -427,7 +427,7 @@ class SignupForm extends Component {
 			);
 		}
 
-		if ( passwordLength < 6 ) {
+		if ( passwordValue && passwordValue < 6 ) {
 			return (
 				<FormSettingExplanation>
 					{ this.props.translate( 'Your password must be at least six characters long.' ) }
