@@ -61,7 +61,6 @@ function isDesktop() {
 // FIXME: We can't detect window size on the server, so until we have more intelligent detection,
 // use 769, which is just above the general maximum mobile screen width.
 function getWindowInnerWidth() {
-	console.log('innerWidth called');
 	return global.window ? global.window.innerWidth : 769;
 }
 
