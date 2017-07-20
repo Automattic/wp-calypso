@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -25,23 +26,41 @@ export class EditorPublishDate extends React.Component {
 		super( props );
 
 		this.state = {
-			open: false,
+			isOpen: false,
 		};
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'click', this.handleOutsideClick );
+	}
+
+	componentDidUpdate() {
+		if ( this.state.isOpen ) {
+			window.addEventListener( 'click', this.handleOutsideClick );
+		} else {
+			window.removeEventListener( 'click', this.handleOutsideClick );
+		}
+	}
+
+	handleOutsideClick = event => {
+		if ( ! ReactDom.findDOMNode( this.refs.editorPublishDateWrapper ).contains( event.target ) ) {
+			this.setState( { isOpen: false } );
+		}
 	}
 
 	setImmediate = () => {
 		this.props.setPostDate( this.props.moment() );
-		this.setState( { open: false } );
+		this.setState( { isOpen: false } );
 	}
 
 	toggleOpenState = () => {
-		this.setState( { open: ! this.state.open } );
+		this.setState( { isOpen: ! this.state.isOpen } );
 	}
 
 	renderHeader() {
 		const isScheduled = utils.isFutureDated( this.props.post );
 		const className = classNames( 'editor-publish-date__header', {
-			'is-open': this.state.open,
+			'is-open': this.state.isOpen,
 			'is-scheduled': isScheduled,
 		} );
 
@@ -93,9 +112,9 @@ export class EditorPublishDate extends React.Component {
 	render() {
 		return (
 			<div className="editor-publish-date">
-				<div className="editor-publish-date__wrapper">
+				<div className="editor-publish-date__wrapper" ref="editorPublishDateWrapper">
 					{ this.renderHeader() }
-					{ this.state.open && this.renderSchedule() }
+					{ this.state.isOpen && this.renderSchedule() }
 				</div>
 			</div>
 		);
