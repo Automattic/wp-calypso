@@ -43,6 +43,7 @@ export default class PageList extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.search !== this.props.search ||
+			nextProps.siteId !== this.props.siteId ||
 			nextProps.status !== this.props.status ) {
 			this.resetPage();
 		}
