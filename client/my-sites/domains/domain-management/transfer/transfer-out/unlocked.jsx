@@ -21,6 +21,14 @@ class Unlocked extends React.Component {
 		submitting: false
 	};
 
+	componentDidMount() {
+		this.mounted = true;
+	}
+
+	componentWillUnmount() {
+		this.mounted = false;
+	}
+
 	handleCancelTransferClick = () => {
 		const { translate } = this.props;
 		const { privateDomain, hasPrivacyProtection, pendingTransfer } = getSelectedDomain( this.props );
@@ -62,13 +70,15 @@ class Unlocked extends React.Component {
 						break;
 				}
 				notices.error( errorMessage );
-
-				this.setState( { submitting: false } );
 			} else if ( hasPrivacyProtection ) {
 				notices.success( translate( 'We\'ve canceled your domain transfer. Your domain is now locked and ' +
 					'Privacy Protection has been enabled.' ) );
 			} else {
 				notices.success( translate( 'We\'ve canceled your domain transfer. Your domain is now locked back.' ) );
+			}
+
+			if ( this.mounted ) {
+				this.setState( { submitting: false } );
 			}
 		} );
 	};
@@ -84,8 +94,10 @@ class Unlocked extends React.Component {
 		};
 
 		requestTransferCode( options, ( error ) => {
-			this.setState( { submitting: false } );
 			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
+			if ( this.mounted ) {
+				this.setState( { submitting: false } );
+			}
 		} );
 	};
 
