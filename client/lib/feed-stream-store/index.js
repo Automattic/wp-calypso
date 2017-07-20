@@ -66,12 +66,8 @@ const conversationsKeyMaker = ( function() {
 function conversationsPager( params ) {
 	delete params.meta;
 	delete params.orderBy;
-	if ( params.before ) {
-		delete params.before;
-	}
-	if ( params.after ) {
-		delete params.after;
-	}
+	delete params.before;
+	delete params.after;
 	params.page_handle = this.lastPageHandle;
 }
 
