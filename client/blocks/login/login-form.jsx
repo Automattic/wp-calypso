@@ -18,13 +18,14 @@ import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
-import { loginUser, changeUsername } from 'state/login/actions';
+import { loginUser, clearErrors } from 'state/login/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getRequestError } from 'state/login/selectors';
 import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
+		clearErrors: PropTypes.func.isRequired,
 		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
@@ -61,12 +62,8 @@ export class LoginForm extends Component {
 		}
 	}
 
-	onChangeUsername = ( event ) => {
-		this.props.changeUsername();
-		this.onChangeField( event );
-	};
-
 	onChangeField = ( event ) => {
+		this.props.clearErrors();
 		this.setState( {
 			[ event.target.name ]: event.target.value
 		} );
@@ -136,7 +133,7 @@ export class LoginForm extends Component {
 									'is-error': requestError && requestError.field === 'usernameOrEmail'
 								} )
 							}
-							onChange={ this.onChangeUsername }
+							onChange={ this.onChangeField }
 							id="usernameOrEmail"
 							name="usernameOrEmail"
 							ref={ this.saveUsernameOrEmailRef }
@@ -206,7 +203,7 @@ export default connect(
 		requestError: getRequestError( state ),
 	} ),
 	{
-		changeUsername,
+		clearErrors,
 		loginUser,
 		recordTracksEvent,
 	}
