@@ -54,15 +54,15 @@ export class CommentList extends Component {
 	};
 
 	state = {
-		changedComments: [],
 		isBulkEdit: false,
+		persistedComments: [],
 		selectedComments: {},
 	};
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.status !== nextProps.status ) {
 			this.setState( {
-				changedComments: [],
+				persistedComments: [],
 				selectedComments: {},
 			} );
 		}
@@ -82,7 +82,7 @@ export class CommentList extends Component {
 	getComment = commentId => find( this.getComments(), [ 'ID', commentId ] );
 
 	getComments = () => orderBy(
-		uniqBy( [ ...this.state.changedComments, ...this.props.comments ], 'ID' ),
+		uniqBy( [ ...this.state.persistedComments, ...this.props.comments ], 'ID' ),
 		'date',
 		'desc'
 	);
@@ -105,8 +105,8 @@ export class CommentList extends Component {
 
 	isSelectedAll = () => this.props.comments.length === size( this.state.selectedComments );
 
-	removeFromChangedComments = commentId => this.setState( {
-		changedComments: reject( this.state.changedComments, { ID: commentId } ),
+	removeFromPersistedComments = commentId => this.setState( {
+		persistedComments: reject( this.state.persistedComments, { ID: commentId } ),
 	} );
 
 	replyComment = ( commentText, postId, parentCommentId, options = { alsoApprove: false } ) => {
@@ -157,13 +157,13 @@ export class CommentList extends Component {
 		}
 
 		if ( persist ) {
-			this.updateChangedComments( {
+			this.updatePersistedComments( {
 				...comment,
 				i_like: 'approved' !== status ? false : comment.i_like,
 				status,
 			}, isUndo );
 		} else {
-			this.removeFromChangedComments( commentId );
+			this.removeFromPersistedComments( commentId );
 		}
 
 		this.props.removeNotice( `comment-notice-${ commentId }` );
@@ -253,7 +253,7 @@ export class CommentList extends Component {
 		if ( 'unapproved' === comment.status ) {
 			this.props.removeNotice( `comment-notice-${ commentId }` );
 			this.setCommentStatus( commentId, postId, 'approved' );
-			this.updateChangedComments( {
+			this.updatePersistedComments( {
 				...comment,
 				i_like: true,
 				status: 'approved',
@@ -295,10 +295,10 @@ export class CommentList extends Component {
 		this.props.undoBulkStatus( selectedComments );
 	}
 
-	updateChangedComments = ( comment, isUndo ) => isUndo
-		? this.removeFromChangedComments( comment.ID )
-		: this.setState( { changedComments: [
-			...reject( this.state.changedComments, { ID: comment.ID } ),
+	updatePersistedComments = ( comment, isUndo ) => isUndo
+		? this.removeFromPersistedComments( comment.ID )
+		: this.setState( { persistedComments: [
+			...reject( this.state.persistedComments, { ID: comment.ID } ),
 			comment,
 		] } );
 
