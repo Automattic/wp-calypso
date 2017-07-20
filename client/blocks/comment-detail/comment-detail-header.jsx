@@ -25,6 +25,7 @@ export const CommentDetailHeader = ( {
 	commentContent,
 	commentIsLiked,
 	commentIsSelected,
+	commentLikeCount,
 	commentStatus,
 	deleteCommentPermanently,
 	edit,
@@ -51,10 +52,11 @@ export const CommentDetailHeader = ( {
 				</Button>
 
 				<CommentDetailActions
-					edit={ edit }
 					commentIsLiked={ commentIsLiked }
+					commentLikeCount={ commentLikeCount }
 					commentStatus={ commentStatus }
 					deleteCommentPermanently={ deleteCommentPermanently }
+					edit={ edit }
 					toggleApprove={ toggleApprove }
 					toggleLike={ toggleLike }
 					toggleSpam={ toggleSpam }

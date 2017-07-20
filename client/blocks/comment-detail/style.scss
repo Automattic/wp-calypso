@@ -195,9 +195,36 @@
 		}
 
 		&.comment-detail__action-like {
-			&:focus,
-			&:hover {
-				color: $orange-jazzy;
+			overflow: visible;
+
+			.like-button {
+				color: $gray-text-min;
+				display: inline;
+				padding: 0;
+
+				&:focus,
+				&:hover {
+					color: $gray-dark;
+				}
+			}
+
+			.like-button__like-icons {
+				display: inline;
+				margin-right: 4px;
+			}
+			.gridicon {
+				margin: 0;
+			}
+			.gridicons-star {
+				width: 0;
+			}
+			.is-liked {
+				.gridicons-star {
+					width: 24px;
+				}
+				.gridicons-star-outline {
+					width: 0;
+				}
 			}
 		}
 
