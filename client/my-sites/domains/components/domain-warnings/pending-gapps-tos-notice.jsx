@@ -97,7 +97,7 @@ class PendingGappsTosNotice extends React.PureComponent {
 		} );
 	};
 
-	generateLogInClickHandlerOneDomain = () => {
+	logInClickHandlerOneDomain = () => {
 		this.recordLogInClick(
 			this.props.domains[ 0 ].name,
 			this.props.domains[ 0 ].googleAppsSubscription.pendingUsers[ 0 ],
@@ -105,7 +105,7 @@ class PendingGappsTosNotice extends React.PureComponent {
 		);
 	};
 
-	generateLogInClickHandlerMultipleDomains = ( domainName, user ) => {
+	logInClickHandlerMultipleDomains = ( domainName, user ) => {
 		this.recordLogInClick(
 			domainName,
 			user,
@@ -113,7 +113,7 @@ class PendingGappsTosNotice extends React.PureComponent {
 		);
 	};
 
-	generateFixClickHandler = () => {
+	fixClickHandler = () => {
 		this.props.fixPendingEmailSiteNoticeClick( this.props.siteSlug );
 	};
 
@@ -138,7 +138,7 @@ class PendingGappsTosNotice extends React.PureComponent {
 				) }>
 				<NoticeAction
 					href={ href }
-					onClick={ this.generateFixClickHandler }>
+					onClick={ this.fixClickHandler }>
 						{ this.props.translate( 'Fix' ) }
 				</NoticeAction>
 			</Notice>
@@ -171,7 +171,7 @@ class PendingGappsTosNotice extends React.PureComponent {
 				) }>
 				<NoticeAction
 					href={ this.getGappsLoginUrl( users[ 0 ], domainName ) }
-					onClick={ this.generateLogInClickHandlerOneDomain }
+					onClick={ this.logInClickHandlerOneDomain }
 					external>
 						{ translate( 'Log in' ) }
 				</NoticeAction>
@@ -205,7 +205,7 @@ class PendingGappsTosNotice extends React.PureComponent {
 								href={ this.getGappsLoginUrl( users[ 0 ], domainName ) }
 								domainName={ domainName }
 								user={ users[ 0 ] }
-								onClick={ this.generateLogInClickHandlerMultipleDomains } />
+								onClick={ this.logInClickHandlerMultipleDomains } />
 						</li>;
 					} )
 				}</ul>
