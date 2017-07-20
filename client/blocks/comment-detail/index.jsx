@@ -82,10 +82,16 @@ export class CommentDetail extends Component {
 
 	toggleApprove = () => {
 		const { commentId, commentStatus, postId, setCommentStatus } = this.props;
+		const isPersisted = 'approved' === commentStatus || 'unapproved' === commentStatus;
+
 		setCommentStatus( commentId, postId, 'approved' === commentStatus ? 'unapproved' : 'approved', {
-			persist: ( 'approved' === commentStatus || 'unapproved' === commentStatus ),
+			persist: isPersisted,
 			showNotice: true,
 		} );
+
+		if ( isPersisted ) {
+			this.setState( { isExpanded: false } );
+		}
 	}
 
 	toggleExpanded = () => {
@@ -93,8 +99,14 @@ export class CommentDetail extends Component {
 	}
 
 	toggleLike = () => {
-		const { commentId, postId, toggleCommentLike } = this.props;
+		const { commentId, commentIsLiked, commentStatus, postId, toggleCommentLike } = this.props;
+		const isPersisted = 'unapproved' === commentStatus && ! commentIsLiked;
+
 		toggleCommentLike( commentId, postId );
+
+		if ( isPersisted ) {
+			this.setState( { isExpanded: false } );
+		}
 	}
 
 	toggleSelected = () => {
