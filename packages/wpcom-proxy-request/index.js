@@ -335,9 +335,6 @@ function install() {
 	// create the <iframe>
 	iframe = document.createElement( 'iframe' );
 
-	// set `loaded` to true once the "load" event happens
-	event.bind( iframe, 'load', onload );
-
 	// set `src` and hide the iframe
 	iframe.src = proxyOrigin + '/wp-admin/rest-proxy/#' + origin;
 	iframe.style.display = 'none';
@@ -347,6 +344,15 @@ function install() {
 }
 
 /**
+ * Reloads the proxy iframe.
+ *
+ * @api public
+ */
+const reloadProxy = () => {
+	install();
+};
+
+/**
  * Removes the <iframe> proxy instance from the <body> of the page.
  *
  * @api private
@@ -354,6 +360,7 @@ function install() {
 function uninstall() {
 	debug( 'uninstall()' );
 	document.body.removeChild( iframe );
+	loaded = false;
 	iframe = null;
 }
 
@@ -399,6 +406,13 @@ function onmessage( e ) {
 
 	if ( postStrings && 'string' === typeof data ) {
 		data = JSON.parse( data );
+	}
+
+	// Once the iframe is loaded, we can start using it.
+	// The proxy iframe defaults to sending as a string, so test both string and array.
+	if ( 'ready' === data[0] || '["ready",null,null]' === data ) {
+		onload();
+		return;
 	}
 
 	// check if we're receiving a "progress" event
@@ -531,4 +545,4 @@ function reject( xhr, err, headers ) {
  * Export `request` function.
  */
 export default request;
-
+export { reloadProxy };

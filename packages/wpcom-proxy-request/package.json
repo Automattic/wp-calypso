@@ -12,12 +12,13 @@
   "scripts": {
     "prepublish": "make build"
   },
-  "version": "3.1.0",
+  "version": "4.0.0",
   "author": "Automattic, Inc.",
   "contributors": [
     "Damian Suarez <rdsuarez@gmail.com>",
     "Nathan Rajlich <nathan@automattic.com>",
-    "Andy Skelton <andy@automattic.com>"
+    "Andy Skelton <andy@automattic.com>",
+    "Gary Pendergast <gary@pento.net>"
   ],
   "files": [
     "build",
@@ -36,8 +37,10 @@
   },
   "devDependencies": {
     "babel-eslint": "^6.1.0",
+    "chai": "^4.1.0",
     "chokidar-cli": "^1.2.0",
     "eslint": "^3.0.0",
+    "mocha": "^3.4.2",
     "n8-make": "^1.4.0",
     "serve": "^1.4.0",
     "webpack": "^1.13.1"
