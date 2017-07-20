@@ -11,7 +11,7 @@ import { map } from 'lodash';
 import PostComment from 'blocks/comments/post-comment';
 import { getPostCommentsTree } from 'state/comments/selectors';
 
-class ConversationCommentList extends React.Component {
+export class ConversationCommentList extends React.Component {
 	static propTypes = {
 		blogId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,
@@ -19,7 +19,7 @@ class ConversationCommentList extends React.Component {
 	};
 
 	render() {
-		const { commentIds, commentsTree } = this.props.commentIds;
+		const { commentIds, commentsTree } = this.props;
 		if ( ! commentIds ) {
 			return null;
 		}
@@ -39,8 +39,10 @@ class ConversationCommentList extends React.Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+const ConnectedConversationCommentList = connect( ( state, ownProps ) => {
 	return {
 		commentsTree: getPostCommentsTree( state, ownProps.blogId, ownProps.postId, 'all' ),
 	};
 } )( ConversationCommentList );
+
+export default ConnectedConversationCommentList;
