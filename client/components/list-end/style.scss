@@ -1,11 +1,11 @@
 /**
-* Infinite Scroll End:
+* List End:
 * ------
 * Marker that gets appended to the end of a list (e.g. posts) once
 * infinite scroll has reached the last page.
 */
 
-.infinite-scroll-end {
+.list-end {
   position: relative;
   width: 100%;
   margin-top: (15 / 15) * 1em;
@@ -16,7 +16,7 @@
     top: 50%;
     left: 0;
     right: 0;
-    z-index: z-index( 'root', '.infinite-scroll-end:before' );
+    z-index: z-index( 'root', '.list-end:before' );
     border-bottom: solid 1px lighten( $gray, 25% );
   }
   &:after {
