@@ -244,21 +244,34 @@ export class CommentList extends Component {
 	toggleCommentLike = ( commentId, postId ) => {
 		// TODO: Replace with Redux getComment()
 		const comment = this.getComment( commentId );
-
-		if ( 'unapproved' === comment.status ) {
-			this.props.removeNotice( `comment-notice-${ commentId }` );
-			this.setCommentStatus( commentId, postId, 'approved' );
-			this.updatePersistedComments( {
-				...comment,
-				i_like: true,
-				status: 'approved',
-			} );
-		}
+		const isPersisted = !! find( this.state.persistedComments, [ 'ID', commentId ] );
 
 		if ( comment.i_like ) {
 			this.props.unlikeComment( commentId, postId );
+
+			if ( isPersisted ) {
+				this.updatePersistedComments( {
+					...comment,
+					i_like: false,
+				} );
+			}
 		} else {
 			this.props.likeComment( commentId, postId );
+
+			if ( 'unapproved' === comment.status ) {
+				this.props.removeNotice( `comment-notice-${ commentId }` );
+				this.setCommentStatus( commentId, postId, 'approved' );
+				this.updatePersistedComments( {
+					...comment,
+					i_like: true,
+					status: 'approved',
+				} );
+			} else if ( isPersisted ) {
+				this.updatePersistedComments( {
+					...comment,
+					i_like: true,
+				} );
+			}
 		}
 	}
 
