@@ -25,15 +25,22 @@ const query = { type: 'page' };
 
 class Pages extends Component {
 	static propTypes = {
+		handleSubmit: PropTypes.func,
 		isDisabled: PropTypes.bool,
 		isRequesting: PropTypes.bool,
+		isSaving: PropTypes.bool,
+		onSubmit: PropTypes.func,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
 	};
 
+	save = section => data => this.props.onSubmit( data[ section ] );
+
 	render() {
 		const {
+			handleSubmit,
 			isRequesting,
+			isSaving,
 			siteId,
 			translate,
 		} = this.props;
@@ -50,7 +57,9 @@ class Pages extends Component {
 					<FormSection name="pages">
 						<SectionHeader label={ translate( 'Pages' ) }>
 							<FormButton compact
-								disabled={ isDisabled } />
+								disabled={ isDisabled }
+								isSubmitting={ isSaving }
+								onClick={ handleSubmit( this.save( 'pages' ) ) } />
 						</SectionHeader>
 						<Card>
 							<FormFieldset>
