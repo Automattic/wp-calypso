@@ -99,7 +99,7 @@ class DisconnectSite extends Component {
 		}
 
 		return (
-			<div>
+			<div className="manage-connection__disconnect-link">
 				<QuerySitePlans siteId={ siteId } />
 
 				<SiteToolsLink
