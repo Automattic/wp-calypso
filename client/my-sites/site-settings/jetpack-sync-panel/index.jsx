@@ -175,7 +175,7 @@ const JetpackSyncPanel = React.createClass( {
 				<div className="jetpack-sync-panel__action">
 					{ translate(
 						'Jetpack Sync keeps your WordPress.com dashboard up to date. ' +
-						'Data is sent from your site to the WordPress.com dashboard regularly to provide a faster experience.',
+						'Data is sent from your site to the WordPress.com dashboard regularly to provide a faster experience. ',
 						{
 							components: {
 								strong: <strong />
