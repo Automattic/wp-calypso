@@ -6,24 +6,29 @@ var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:posts' );
 
 import { connect } from 'react-redux';
-import { debounce, isEqual, omit } from 'lodash';
+import { debounce, isEqual, isNumber, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var PostListFetcher = require( 'components/post-list-fetcher' ),
-	Post = require( './post' ),
+var Post = require( './post' ),
 	PostPlaceholder = require( './post-placeholder' ),
-	actions = require( 'lib/posts/actions' ),
 	EmptyContent = require( 'components/empty-content' ),
 	InfiniteList = require( 'components/infinite-list' ),
 	NoResults = require( 'my-sites/no-results' ),
 	route = require( 'lib/route' ),
 	mapStatus = route.mapPostStatus;
 
+import QueryPosts from 'components/data/query-posts';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { hasInitializedSites } from 'state/selectors';
+import {
+	getSitePostsForQueryIgnoringPage,
+	isRequestingSitePostsForQueryIgnoringPage,
+	getSitePostsLastPageForQuery,
+} from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import scrollTo from 'lib/scroll-to';
 
 var GUESSED_POST_HEIGHT = 250;
 
@@ -40,36 +45,134 @@ var PostList = React.createClass( {
 		author: React.PropTypes.number
 	},
 
+	getInitialState: function() {
+		// @FIXME(mcsf): don't commit
+		window.resetPage = this.resetPage;
+
+		return {
+			page: 1,
+		};
+	},
+
+	componentWillReceiveProps: function( nextProps ) {
+		// @TODO(mcsf): fine-tune props to monitor
+		const shouldReset = [ 'siteId', 'author' ].some( ( key ) =>
+			this.props[ key ] !== nextProps[ key ] );
+
+		if ( shouldReset ) {
+			this.resetPage();
+		}
+	},
+
+	incrementPage: function() {
+		debug( 'incrementPage from', this.state.page );
+		this.setState( { page: this.state.page + 1 } );
+	},
+
+	resetPage: function() {
+		debug( 'resetPage' );
+		this.setState( { page: 1 } );
+		scrollTo( {
+			y: 0,
+		} );
+	},
+
 	render: function() {
+		const {
+			author,
+			category,
+			search,
+			siteId,
+			statusSlug,
+			tag,
+		} = this.props;
+
+		const { page } = this.state;
+
+		const query = {
+			status: mapStatus( statusSlug ),
+			order_by: 'date',
+			order: 'DESC',
+			type: 'post',
+			site_visibility: 'visible',
+			author,
+			withImages: true,
+			withCounts: true,
+			//search,
+			category,
+			tag,
+			page: page > 1 ? page : undefined,
+		};
+
 		return (
-			<PostListFetcher
-				siteId={ this.props.siteId }
-				status={ mapStatus( this.props.statusSlug ) }
-				author={ this.props.author }
-				withImages={ true }
-				withCounts={ true }
-				search={ this.props.search }>
+			<div>
+				<QueryPosts
+					siteId={ siteId }
+					query={ query } />
 				<Posts
+					siteId={ siteId }
+					query={ query }
+					page={ page }
+					incrementPage={ this.incrementPage }
 					{ ...omit( this.props, 'children' ) }
 				/>
-			</PostListFetcher>
+			</div>
 		);
+		//
+		//return (
+		//	<PostListFetcher
+		//		siteId={ this.props.siteId }
+		//		status={ mapStatus( this.props.statusSlug ) }
+		//		author={ this.props.author }
+		//		withImages={ true }
+		//		withCounts={ true }
+		//		search={ this.props.search }>
+		//		<Posts
+		//			{ ...omit( this.props, 'children' ) }
+		//		/>
+		//	</PostListFetcher>
+		//);
 	}
 } );
 
-var Posts = React.createClass( {
+const Posts = connect(
+	( state, { siteId, query, page, hasSites } ) => {
+		if ( ! hasSites ) {
+			return { loading: true };
+		}
+
+		const lastPage = getSitePostsLastPageForQuery( state, siteId, query );
+
+		return {
+			posts: getSitePostsForQueryIgnoringPage( state, siteId, query ) || [],
+			loading: isRequestingSitePostsForQueryIgnoringPage( state, siteId, query ),
+			lastPage: isNumber( lastPage ) && ( page >= lastPage ),
+			// assess which of these from PostListFetcher to replicate:
+			//	listId: postListStore.getID(),
+			//	posts: postListStore.getAll(),
+			//	postImages: PostContentImagesStore.getAll(),
+			//	page: postListStore.getPage(),
+			//	lastPage: postListStore.isLastPage(),
+			//	loading: postListStore.isFetchingNextPage(),
+			//	hasRecentError: postListStore.hasRecentError()
+		};
+	}
+)( React.createClass( {
 
 	propTypes: {
-		author: React.PropTypes.number,
+		query: React.PropTypes.object.isRequired,
+		incrementPage: React.PropTypes.func.isRequired,
+		siteId: React.PropTypes.number,
+
+		//author: React.PropTypes.number,
 		context: React.PropTypes.object.isRequired,
-		hasRecentError: React.PropTypes.bool.isRequired,
-		lastPage: React.PropTypes.bool.isRequired,
+		//hasRecentError: React.PropTypes.bool.isRequired,
+		//lastPage: React.PropTypes.bool.isRequired,
 		loading: React.PropTypes.bool.isRequired,
 		page: React.PropTypes.number.isRequired,
 		postImages: React.PropTypes.object.isRequired,
 		posts: React.PropTypes.array.isRequired,
 		search: React.PropTypes.string,
-		siteId: React.PropTypes.number,
 		hasSites: React.PropTypes.bool.isRequired,
 		statusSlug: React.PropTypes.string,
 		trackScrollPage: React.PropTypes.func.isRequired
@@ -133,13 +236,14 @@ var Posts = React.createClass( {
 	},
 
 	fetchPosts: function( options ) {
+		debug( 'fetchPosts', options );
 		if ( this.props.loading || this.props.lastPage || this.props.hasRecentError ) {
 			return;
 		}
 		if ( options.triggeredByScroll ) {
 			this.props.trackScrollPage( this.props.page + 1 );
 		}
-		actions.fetchNextPage();
+		this.props.incrementPage();
 	},
 
 	getNoContentMessage: function() {
@@ -297,11 +401,11 @@ var Posts = React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );
 
 export default connect(
 	( state ) => ( {
 		selectedSiteId: getSelectedSiteId( state ),
-		hasSites: hasInitializedSites( state )
+		hasSites: hasInitializedSites( state ),
 	} )
 )( PostList );

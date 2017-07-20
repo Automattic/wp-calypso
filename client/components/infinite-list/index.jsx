@@ -94,6 +94,8 @@ module.exports = React.createClass( {
 	},
 
 	componentDidMount() {
+		console.log( 'cDM', this.props.items );
+
 		if ( this._contextLoaded() ) {
 			this._setContainerY( this.state.scrollTop );
 		}
@@ -113,6 +115,8 @@ module.exports = React.createClass( {
 
 	componentWillReceiveProps( newProps ) {
 		this.scrollHelper.props = newProps;
+
+		console.log( 'fetchingNextPage', newProps.fetchingNextPage );
 
 		// New item may have arrived, should we change the rendered range?
 		if ( ! this.isScrolling ) {
