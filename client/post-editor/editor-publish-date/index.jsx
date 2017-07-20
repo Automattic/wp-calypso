@@ -9,6 +9,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import PostSchedule from 'components/post-schedule';
 import utils from 'lib/posts/utils';
 
@@ -26,6 +27,11 @@ export class EditorPublishDate extends React.Component {
 		this.state = {
 			open: false,
 		};
+	}
+
+	setImmediate = () => {
+		this.props.setPostDate( this.props.moment() );
+		this.setState( { open: false } );
 	}
 
 	toggleOpenState = () => {
@@ -60,12 +66,21 @@ export class EditorPublishDate extends React.Component {
 		);
 	}
 
+	renderImmediatePublishOption() {
+		return (
+			<Button borderless={ true } className="editor-publish-date__immediate" onClick={ this.setImmediate }>
+				{ this.props.translate( 'Publish Immediately' ) }
+			</Button>
+		);
+	}
+
 	renderSchedule() {
-		const className = classNames( 'editor-publish-date__schedule', {} );
 		const selectedDay = this.props.postDate ? this.props.moment( this.props.postDate ) : null;
+		const isScheduled = utils.isFutureDated( this.props.post );
 
 		return (
-			<div className={ className }>
+			<div className="editor-publish-date__schedule">
+				{ isScheduled && this.renderImmediatePublishOption() }
 				<PostSchedule
 					displayInputChrono={ false }
 					onDateChange={ this.props.setPostDate }
