@@ -13,210 +13,91 @@ import {
 	DRAFT_FEEDBACK_SHARE_RESTORE,
 	DRAFT_FEEDBACK_COMMENT_ADD,
 } from 'state/action-types';
-import reducer from '../reducer';
+import { emails, isEnabled, comments, share, removableShare, initialShareState } from '../reducer';
 
 describe( 'reducer', () => {
-	const SITE_ID = 123;
-	const POST_ID = 456;
-	const EMAIL_ADDRESS = 'draft@feedback.test';
-
-	it( 'should add a feedback request', () => {
-		const state = reducer( undefined, {
-			type: DRAFT_FEEDBACK_SHARE_ADD,
-			siteId: SITE_ID,
-			postId: POST_ID,
-			emailAddress: EMAIL_ADDRESS,
+	describe( 'emails', () => {
+		it( 'sets initial state to an empty array', () => {
+			const initialState = emails( undefined, { type: '@@calypso/INIT' } );
+			expect( initialState ).to.be.an( 'array' ).that.is.empty;
 		} );
 
-		expect( state ).to.eql( {
-			[ SITE_ID ]: {
-				[ POST_ID ]: {
-					[ EMAIL_ADDRESS ]: {
-						enabled: true,
-						comments: [],
-					}
-				},
-			},
+		it( 'should add an email', () => {
+			const stateA = emails( [], {
+				type: DRAFT_FEEDBACK_SHARE_ADD,
+				emailAddress: 'a-test@example.com',
+			} );
+			expect( stateA ).to.eql( [ 'a-test@example.com' ] );
+
+			const stateB = emails( stateA, {
+				type: DRAFT_FEEDBACK_SHARE_ADD,
+				emailAddress: 'b-test@example.com',
+			} );
+			expect( stateB ).to.eql( [ 'a-test@example.com', 'b-test@example.com' ] );
+		} );
+
+		it( 'should remove an email', () => {
+			const stateA = emails( [ 'a-test@example.com', 'b-test@example.com' ], {
+				type: DRAFT_FEEDBACK_SHARE_REMOVE,
+				emailAddress: 'a-test@example.com',
+			} );
+			expect( stateA ).to.eql( [ 'b-test@example.com' ] );
+
+			const stateB = emails( stateA, {
+				type: DRAFT_FEEDBACK_SHARE_REMOVE,
+				emailAddress: 'b-test@example.com',
+			} );
+			expect( stateB ).to.eql( [] );
 		} );
 	} );
-	it( 'should remove a feedback request', () => {
-		const state = reducer( {
-			[ SITE_ID ]: {
-				[ POST_ID ]: {
-					[ EMAIL_ADDRESS ]: {
-						enabled: true,
-						comments: [],
-					}
-				},
-			},
-		}, {
-			type: DRAFT_FEEDBACK_SHARE_REMOVE,
-			siteId: SITE_ID,
-			postId: POST_ID,
-			emailAddress: EMAIL_ADDRESS,
-		} );
 
-		expect( state ).to.eql( {} );
-	} );
-	it( 'should revoke a feedback request', () => {
-		const state = reducer( {
-			[ SITE_ID ]: {
-				[ POST_ID ]: {
-					[ EMAIL_ADDRESS ]: {
-						enabled: true,
-						comments: [],
-					}
-				},
-			},
-		}, {
-			type: DRAFT_FEEDBACK_SHARE_REVOKE,
-			siteId: SITE_ID,
-			postId: POST_ID,
-			emailAddress: EMAIL_ADDRESS,
+	describe( 'isEnabled', () => {
+		it( 'sets initial state to enabled', () => {
+			const initialState = isEnabled( undefined, { type: '@@calypso/INIT' } );
+			expect( initialState ).to.be.true;
 		} );
-
-		expect( state ).to.eql( {
-			[ SITE_ID ]: {
-				[ POST_ID ]: {
-					[ EMAIL_ADDRESS ]: {
-						enabled: false,
-						comments: [],
-					}
-				},
-			},
+		it( 'disables', () => {
+			const state = isEnabled( true, { type: DRAFT_FEEDBACK_SHARE_REVOKE } );
+			expect( state ).to.be.false;
+		} );
+		it( 'enables', () => {
+			const state = isEnabled( false, { type: DRAFT_FEEDBACK_SHARE_RESTORE } );
+			expect( state ).to.be.true;
 		} );
 	} );
-	it( 'should preserve comments when revoking a feedback request', () => {
-		const state = reducer( {
-			[ SITE_ID ]: {
-				[ POST_ID ]: {
-					[ EMAIL_ADDRESS ]: {
-						enabled: true,
-						comments: [ 'comment1', 'comment2', 'comment3' ],
-					}
-				},
-			},
-		}, {
-			type: DRAFT_FEEDBACK_SHARE_REVOKE,
-			siteId: SITE_ID,
-			postId: POST_ID,
-			emailAddress: EMAIL_ADDRESS,
-		} );
 
-		expect( state ).to.eql( {
-			[ SITE_ID ]: {
-				[ POST_ID ]: {
-					[ EMAIL_ADDRESS ]: {
-						enabled: false,
-						comments: [ 'comment1', 'comment2', 'comment3' ],
-					}
-				},
-			},
+	describe( 'comments', () => {
+		it( 'sets initial state to an empty array', () => {
+			const initialState = comments( undefined, { type: '@@calypso/INIT' } );
+			expect( initialState ).to.be.an( 'array' ).that.is.empty;
+		} );
+		it( 'adds a comment', () => {
+			const stateA = comments( [], {
+				type: DRAFT_FEEDBACK_COMMENT_ADD,
+				comment: 'comment1',
+			} );
+			expect( stateA ).to.eql( [ 'comment1' ] );
+
+			const stateB = comments( stateA, {
+				type: DRAFT_FEEDBACK_COMMENT_ADD,
+				comment: 'comment2',
+			} );
+			expect( stateB ).to.eql( [ 'comment1', 'comment2' ] );
 		} );
 	} );
-	it( 'should restore a feedback request', () => {
-		const state = reducer( {
-			[ SITE_ID ]: {
-				[ POST_ID ]: {
-					[ EMAIL_ADDRESS ]: {
-						enabled: false,
-						comments: [],
-					}
-				},
-			},
-		}, {
-			type: DRAFT_FEEDBACK_SHARE_RESTORE,
-			siteId: SITE_ID,
-			postId: POST_ID,
-			emailAddress: EMAIL_ADDRESS,
-		} );
 
-		expect( state ).to.eql( {
-			[ SITE_ID ]: {
-				[ POST_ID ]: {
-					[ EMAIL_ADDRESS ]: {
-						enabled: true,
-						comments: [],
-					}
-				},
-			},
+	describe( 'removableShare', () => {
+		it( 'removes a share', () => {
+			const state = removableShare( {}, {
+				type: DRAFT_FEEDBACK_SHARE_REMOVE
+			} );
+			expect( state ).to.be.undefined;
 		} );
 	} );
-	it( 'should preserve comments when restoring a feedback request', () => {
-		const state = reducer( {
-			[ SITE_ID ]: {
-				[ POST_ID ]: {
-					[ EMAIL_ADDRESS ]: {
-						enabled: false,
-						comments: [ 'comment1', 'comment2', 'comment3' ],
-					}
-				},
-			},
-		}, {
-			type: DRAFT_FEEDBACK_SHARE_RESTORE,
-			siteId: SITE_ID,
-			postId: POST_ID,
-			emailAddress: EMAIL_ADDRESS,
-		} );
 
-		expect( state ).to.eql( {
-			[ SITE_ID ]: {
-				[ POST_ID ]: {
-					[ EMAIL_ADDRESS ]: {
-						enabled: true,
-						comments: [ 'comment1', 'comment2', 'comment3' ],
-					}
-				},
-			},
-		} );
-	} );
-	it( 'should add a feedback comment', () => {
-		const stateA = reducer( {
-			[ SITE_ID ]: {
-				[ POST_ID ]: {
-					[ EMAIL_ADDRESS ]: {
-						enabled: true,
-						comments: [],
-					}
-				},
-			},
-		}, {
-			type: DRAFT_FEEDBACK_COMMENT_ADD,
-			siteId: SITE_ID,
-			postId: POST_ID,
-			emailAddress: EMAIL_ADDRESS,
-			comment: 'comment1'
-		} );
-
-		expect( stateA ).to.eql( {
-			[ SITE_ID ]: {
-				[ POST_ID ]: {
-					[ EMAIL_ADDRESS ]: {
-						enabled: true,
-						comments: [ 'comment1' ],
-					}
-				},
-			},
-		} );
-
-		// Verify a subsequent comment is simply added to existing comments
-		const stateB = reducer( stateA, {
-			type: DRAFT_FEEDBACK_COMMENT_ADD,
-			siteId: SITE_ID,
-			postId: POST_ID,
-			emailAddress: EMAIL_ADDRESS,
-			comment: 'comment2'
-		} );
-
-		expect( stateB ).to.eql( {
-			[ SITE_ID ]: {
-				[ POST_ID ]: {
-					[ EMAIL_ADDRESS ]: {
-						enabled: true,
-						comments: [ 'comment1', 'comment2' ],
-					}
-				},
-			},
+	describe( 'initialShareState', () => {
+		it( 'is the initial share state', () => {
+			expect( initialShareState ).to.eql( share( undefined, { type: '@@calypso/INIT' } ) );
 		} );
 	} );
 } );
