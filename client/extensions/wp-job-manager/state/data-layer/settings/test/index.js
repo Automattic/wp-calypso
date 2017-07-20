@@ -96,6 +96,11 @@ describe( '#updateExtensionSettings', () => {
 				hideExpiredContent: undefined
 			},
 			method: { applicationMethod: undefined },
+			pages: {
+				dashboardPage: undefined,
+				listingsPage: undefined,
+				submitFormPage: undefined,
+			},
 			types: {
 				enableTypes: undefined,
 				multiJobType: undefined
