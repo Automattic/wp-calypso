@@ -42,6 +42,10 @@
 	}
 }
 
+.social-buttons__button-container + .social-buttons__button-container {
+	margin-top: 10px;
+}
+
 .signup-form__social,
 .signup-form__notice.notice {
 	margin-left: auto;
