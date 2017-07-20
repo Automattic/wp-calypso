@@ -25,7 +25,6 @@ export class Login extends React.Component {
 		recordPageView: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
-		socialConnect: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -36,14 +35,10 @@ export class Login extends React.Component {
 		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
 			this.recordPageView( nextProps );
 		}
-
-		if ( this.props.socialConnect !== nextProps.socialConnect ) {
-			this.recordPageView( nextProps );
-		}
 	}
 
 	recordPageView( props ) {
-		const { socialConnect, twoFactorAuthType } = props;
+		const { twoFactorAuthType } = props;
 
 		let url = '/log-in';
 		let title = 'Login';
@@ -53,18 +48,13 @@ export class Login extends React.Component {
 			title += ` > Two-Step Authentication > ${ startCase( twoFactorAuthType ) }`;
 		}
 
-		if ( socialConnect ) {
-			url += `/${ socialConnect }`;
-			title += ' > Social Connect';
-		}
-
 		this.props.recordPageView( url, title );
 	}
 
 	renderLocaleSuggestions() {
-		const { locale, path, twoFactorAuthType, socialConnect } = this.props;
+		const { locale, path, twoFactorAuthType } = this.props;
 
-		if ( twoFactorAuthType || socialConnect ) {
+		if ( twoFactorAuthType ) {
 			return null;
 		}
 
@@ -80,12 +70,8 @@ export class Login extends React.Component {
 	}
 
 	render() {
-		const {
-			locale,
-			socialConnect,
-			translate,
-			twoFactorAuthType,
-		} = this.props;
+		const { locale, translate, twoFactorAuthType } = this.props;
+
 		const canonicalUrl = `https://${ locale !== 'en' ? locale + '.' : '' }wordpress.com/login`;
 
 		return (
@@ -104,13 +90,10 @@ export class Login extends React.Component {
 							<LoginBlock
 								twoFactorAuthType={ twoFactorAuthType }
 								title={ translate( 'Log in to your account.' ) }
-								socialConnect={ socialConnect }
 							/>
 						</div>
 
-						{ ! socialConnect &&
-							<LoginLinks locale={ locale } twoFactorAuthType={ twoFactorAuthType } />
-						}
+						<LoginLinks locale={ locale } twoFactorAuthType={ twoFactorAuthType } />
 					</div>
 				</Main>
 
