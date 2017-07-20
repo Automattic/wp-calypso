@@ -22,7 +22,7 @@ describe( 'reducer', () => {
 			expect( initialState ).to.be.an( 'array' ).that.is.empty;
 		} );
 
-		it( 'should add an email', () => {
+		it( 'should add an email address', () => {
 			const stateA = emails( [], {
 				type: DRAFT_FEEDBACK_SHARE_ADD,
 				emailAddress: 'a-test@example.com',
@@ -36,7 +36,15 @@ describe( 'reducer', () => {
 			expect( stateB ).to.eql( [ 'a-test@example.com', 'b-test@example.com' ] );
 		} );
 
-		it( 'should remove an email', () => {
+		it( 'does not add duplicate email addresses', () => {
+			const state = emails( [ 'a-test@example.com' ], {
+				type: DRAFT_FEEDBACK_SHARE_ADD,
+				emailAddress: 'a-test@example.com',
+			} );
+			expect( state ).to.eql( [ 'a-test@example.com' ] );
+		} );
+
+		it( 'should remove an email address', () => {
 			const stateA = emails( [ 'a-test@example.com', 'b-test@example.com' ], {
 				type: DRAFT_FEEDBACK_SHARE_REMOVE,
 				emailAddress: 'a-test@example.com',
