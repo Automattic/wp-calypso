@@ -26,7 +26,7 @@ class MediaLibraryListNoContent extends Component {
 
 		switch ( filter ) {
 			case 'this-post':
-				return translate( 'There isn\'t any media uploaded to the post.', {
+				return translate( 'There are no media items uploaded to this post.', {
 					comment: 'Media no results'
 				} );
 
