@@ -15,6 +15,7 @@ import SiteRedirectStep from './site-redirect-step';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
+import { getProductsList } from 'state/products-list/selectors';
 
 class SiteRedirect extends Component {
 	static propTypes = {
@@ -77,6 +78,6 @@ export default connect(
 		selectedSiteId: getSelectedSiteId( state ),
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 		isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
-		productsList: state.productsList.items,
+		productsList: getProductsList( state ),
 	} )
 )( localize( SiteRedirect ) );

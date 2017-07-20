@@ -17,7 +17,14 @@ export default class SiteOrDomainChoice extends Component {
 	};
 
 	render() {
-		const { choice } = this.props;
+		const { choice, isPlaceholder } = this.props;
+
+		if ( isPlaceholder ) {
+			return (
+				<div className="site-or-domain__choice is-placeholder" key={ choice.type }></div>
+			);
+		}
+
 		return (
 			<div className="site-or-domain__choice" key={ choice.type }>
 				<a className="site-or-domain__choice-link" onClick={ this.handleClickChoice }>

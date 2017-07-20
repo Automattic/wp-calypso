@@ -27,6 +27,7 @@ import { shouldFetchSitePlans } from 'lib/plans';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
+import { getProductsList } from 'state/products-list/selectors';
 
 const user = userFactory();
 
@@ -117,7 +118,7 @@ export default connect(
 		return {
 			googleAppsUsers,
 			googleAppsUsersLoaded: isLoaded( state ),
-			products: state.productsList.items,
+			products: getProductsList( state ),
 			sitePlans: getPlansBySite( state, selectedSite ),
 			selectedSite,
 		};

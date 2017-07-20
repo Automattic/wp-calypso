@@ -25,6 +25,15 @@
 		border-top: solid 1px $gray-light;
 		padding: 10px 15px;
 	}
+
+	&.is-placeholder {
+		@include placeholder(23%);
+		height: 140px;
+
+		@include breakpoint( '>480px' ) {
+			height: 375px;
+		}
+	}
 }
 
 .site-or-domain__button {
