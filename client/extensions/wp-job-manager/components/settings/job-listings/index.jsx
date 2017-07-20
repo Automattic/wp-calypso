@@ -121,7 +121,7 @@ class JobListings extends Component {
 									text={ translate( 'Enable listing categories' ) } />
 								<FormSettingExplanation isIndented>
 									{ translate( 'This lets users select from a list of categories when submitting a ' +
-										'job. Note!: an admin has to create categories before site users can select them.' ) }
+										'job. Note: an admin has to create categories before site users can select them.' ) }
 								</FormSettingExplanation>
 
 								<ReduxFormToggle
@@ -182,7 +182,7 @@ class JobListings extends Component {
 									text={ translate( 'Enable listing types' ) } />
 								<FormSettingExplanation isIndented>
 									{ translate( 'This lets users select from a list of types when submitting a job. ' +
-										'Note!: an admin has to create types before site users can select them.' ) }
+										'Note: an admin has to create types before site users can select them.' ) }
 								</FormSettingExplanation>
 
 								<ReduxFormToggle
