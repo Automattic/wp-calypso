@@ -15,11 +15,12 @@ export class ConversationCommentList extends React.Component {
 	static propTypes = {
 		blogId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,
+		post: PropTypes.object.isRequired,
 		commentIds: PropTypes.array.isRequired,
 	};
 
 	render() {
-		const { commentIds, commentsTree } = this.props;
+		const { commentIds, commentsTree, post } = this.props;
 		if ( ! commentIds ) {
 			return null;
 		}
@@ -32,6 +33,7 @@ export class ConversationCommentList extends React.Component {
 						key={ commentId }
 						commentId={ commentId }
 						maxChildrenToShow={ 0 }
+						post={ post }
 					/>,
 				) }
 			</div>

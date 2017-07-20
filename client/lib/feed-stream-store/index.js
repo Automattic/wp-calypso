@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { forEach, startsWith, random } from 'lodash';
+import { forEach, map, startsWith, random } from 'lodash';
 
 /**
  * Internal dependencies
@@ -58,7 +58,7 @@ const conversationsKeyMaker = ( function() {
 	const baseMaker = buildNamedKeyMaker( 'last_comment_date_gmt' );
 	return function keyMaker( post ) {
 		const key = baseMaker( post );
-		key.comments = post.comments;
+		key.comments = map( post.comments, 'ID' );
 		return key;
 	};
 } )();
