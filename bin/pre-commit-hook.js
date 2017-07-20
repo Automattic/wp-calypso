@@ -3,6 +3,9 @@
 const execSync = require( 'child_process' ).execSync;
 const spawnSync = require( 'child_process' ).spawnSync;
 const chalk = require( 'chalk' );
+const fs = require( 'fs' );
+const prettier = require( 'prettier' );
+const path = require( 'path' );
 
 console.log( '\nBy contributing to this project, you license the materials you contribute ' +
 	'under the GNU General Public License v2 (or later). All materials must have ' +
@@ -28,3 +31,17 @@ if ( lintResult.status ) {
 		'repeat the commit command with --no-verify to avoid this check.' );
 	process.exit( 1 );
 }
+
+// run prettier for any files in the commit
+// that have a line with the contents: '// pretty'
+files
+	.map( file => path.join( __dirname, '../', file ) )
+	.forEach( file => {
+		fs.readFile( file, 'utf8', ( err, data ) => {
+			if ( data.match( /^\/\/ pretty$/m ) ) {
+				const formattedData = prettier.format( data, {} );
+				fs.writeFileSync( file, formattedData );
+				execSync( `git add ${ file }` );
+			}
+		} )
+} );
