@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { every, forIn, isEmpty, orderBy } from 'lodash';
+import { every, forIn, isEmpty, isObject, orderBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -153,6 +153,10 @@ export const getShippingZoneLocations = createSelector(
 			loaded,
 			loaded && getRawShippingZoneLocations( state, siteId )[ zoneId ],
 		];
+	},
+	( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
+		const id = isObject( zoneId ) ? `i${ zoneId.index }` : zoneId;
+		return `${ id }${ siteId }`;
 	}
 );
 
@@ -537,7 +541,11 @@ export const getShippingZoneLocationsList = createSelector(
 		return [
 			getShippingZoneLocations( state, zoneId, siteId ),
 		];
-	}
+	},
+	( state, zoneId, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
+		const id = isObject( zoneId ) ? `i${ zoneId.index }` : zoneId;
+		return `${ id }${ maxCountries }${ siteId }`;
+	},
 );
 
 /**
