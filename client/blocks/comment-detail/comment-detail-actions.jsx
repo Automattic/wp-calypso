@@ -11,6 +11,7 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
+import LikeButton from 'blocks/like-button/button';
 
 const commentActions = {
 	unapproved: [ 'like', 'approve', 'spam', 'trash' ],
@@ -22,10 +23,11 @@ const commentActions = {
 const hasAction = ( status, action ) => includes( commentActions[ status ], action );
 
 export const CommentDetailActions = ( {
-	edit,
 	commentIsLiked,
+	commentLikeCount,
 	commentStatus,
 	deleteCommentPermanently,
+	edit,
 	toggleApprove,
 	toggleLike,
 	toggleSpam,
@@ -41,15 +43,14 @@ export const CommentDetailActions = ( {
 			{ hasAction( commentStatus, 'like' ) &&
 				<Button
 					borderless
-					className={ classNames( 'comment-detail__action-like', { 'is-liked': commentIsLiked } ) }
+					className={ 'comment-detail__action-like' }
 					onClick={ toggleLike }
 				>
-					<Gridicon icon={ commentIsLiked ? 'star' : 'star-outline' } />
-					<span>{
-						commentIsLiked
-							? translate( 'Liked' )
-							: translate( 'Like' )
-					}</span>
+					<LikeButton
+						likeCount={ commentLikeCount }
+						liked={ commentIsLiked }
+						tagName="span"
+					/>
 				</Button>
 			}
 

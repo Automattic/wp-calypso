@@ -33,6 +33,7 @@ export class CommentDetail extends Component {
 		commentId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		commentIsLiked: PropTypes.bool,
 		commentIsSelected: PropTypes.bool,
+		commentLikeCount: PropTypes.number,
 		commentStatus: PropTypes.string,
 		commentUrl: PropTypes.string,
 		deleteCommentPermanently: PropTypes.func,
@@ -122,6 +123,7 @@ export class CommentDetail extends Component {
 			commentId,
 			commentIsLiked,
 			commentIsSelected,
+			commentLikeCount,
 			commentStatus,
 			commentUrl,
 			isBulkEdit,
@@ -165,6 +167,7 @@ export class CommentDetail extends Component {
 					commentContent={ commentContent }
 					commentIsLiked={ commentIsLiked }
 					commentIsSelected={ commentIsSelected }
+					commentLikeCount={ commentLikeCount }
 					commentStatus={ commentStatus }
 					deleteCommentPermanently={ this.deleteCommentPermanently }
 					isBulkEdit={ isBulkEdit }
@@ -255,6 +258,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentDate: comment.date,
 		commentId: comment.ID,
 		commentIsLiked: comment.i_like,
+		commentLikeCount: comment.like_count,
 		commentStatus: comment.status,
 		commentUrl: get( comment, 'URL' ),
 		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
