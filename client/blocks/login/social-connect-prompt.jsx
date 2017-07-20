@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import SocialLogo from 'social-logos';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -76,8 +75,16 @@ class SocialConnectPrompt extends Component {
 							<path d="M10 3.977c1.468 0 2.786.505 3.823 1.496l2.868-2.868C14.959.99 12.695 0 10 0 6.09 0 2.71 2.24 1.064 5.51l3.34 2.59C5.192 5.736 7.396 3.977 10 3.977z" fill="#EA4335" />
 						</g>
 					</svg>
+					<svg className="login__social-connect-prompt-dots" width="48px" height="4px" viewBox="0 0 48 4" xmlns="http://www.w3.org/2000/svg">
+						<g stroke="none" fill="none" fillRule="evenodd">
+							<circle fill="#C8D7E2" cx="2" cy="2" r="2"></circle>
+							<circle fill="#C8D7E2" cx="13" cy="2" r="2"></circle>
+							<circle fill="#C8D7E2" cx="24" cy="2" r="2"></circle>
+							<circle fill="#74DCFC" cx="35" cy="2" r="2"></circle>
+							<circle fill="#C8D7E2" cx="46" cy="2" r="2"></circle>
+						</g>
+					</svg>
 					{ /* eslint-enable max-len */ }
-					<Gridicon className="login__social-connect-prompt-arrow" icon="arrow-right" />
 					<SocialLogo className="login__social-connect-prompt-logo" icon="wordpress" />
 				</div>
 
