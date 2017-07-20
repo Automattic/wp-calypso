@@ -22,7 +22,7 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { getOrdersCurrentPage, getOrdersCurrentStatus } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import humanDate from 'lib/human-date';
-import { setCurrentQuery } from 'woocommerce/state/ui/orders/actions';
+import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import Pagination from 'my-sites/stats/pagination';
@@ -44,11 +44,12 @@ class Orders extends Component {
 	}
 
 	componentWillReceiveProps( newProps ) {
-		if (
+		const hasAnythingChanged = (
 			newProps.currentPage !== this.props.currentPage ||
 			newProps.currentStatus !== this.props.currentStatus ||
 			newProps.siteId !== this.props.siteId
-		) {
+		);
+		if ( newProps.siteId && hasAnythingChanged ) {
 			const query = {
 				page: newProps.currentPage,
 				status: newProps.currentStatus,
@@ -122,7 +123,7 @@ class Orders extends Component {
 	}
 
 	onPageClick = page => {
-		this.props.setCurrentQuery( this.props.siteId, { page } );
+		this.props.updateCurrentOrdersQuery( this.props.siteId, { page } );
 	}
 
 	render() {
@@ -205,5 +206,5 @@ export default connect(
 			total,
 		};
 	},
-	dispatch => bindActionCreators( { fetchOrders, setCurrentQuery }, dispatch )
+	dispatch => bindActionCreators( { fetchOrders, updateCurrentOrdersQuery }, dispatch )
 )( localize( Orders ) );
