@@ -27,6 +27,7 @@
 	}
 
 	&.is-placeholder {
+		cursor: default;
 		@include placeholder(23%);
 		height: 140px;
 
