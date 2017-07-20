@@ -20,6 +20,10 @@ export const getPostCommentItems = ( state, siteId, postId ) =>
 	get( state.comments.items, `${ siteId }-${ postId }` );
 
 export const getCommentById = createSelector( ( { state, commentId, siteId } ) => {
+	if ( get( state, 'comments.items', {} )[ `${ siteId }-error-${ commentId }` ] ) {
+		return { siteId, commentId, error: true };
+	}
+
 	const commentsForSite = flatMap(
 		filter( state.comments && state.comments.items, ( comment, key ) => {
 			return deconstructStateKey( key ).siteId === siteId;

@@ -116,6 +116,7 @@ class PostCommentList extends React.Component {
 		const nextSiteId = get( nextProps, 'post.site_ID' );
 		const nextPostId = get( nextProps, 'post.ID' );
 		const nextCommentsFilter = get( nextProps, 'commentsFilter' );
+		const nextInitialComment = nextProps.initialComment;
 
 		if ( this.shouldFetchInitialComment( nextProps ) && ! nextProps.initialComment ) {
 			this.props.requestComment( { siteId: nextSiteId, commentId: nextProps.startingCommentId } );
@@ -131,8 +132,9 @@ class PostCommentList extends React.Component {
 				( this.props.post.site_ID !== nextSiteId ||
 					this.props.post.ID !== nextPostId ||
 					this.props.commentsFilter !== nextCommentsFilter ) ) ||
-			( this.props.initialComment !== nextProps.initialComment &&
-				nextProps.initialComment.post.ID !== nextPostId )
+			( this.props.initialComment !== nextInitialComment &&
+				( ( nextInitialComment.post && nextInitialComment.post.ID !== nextPostId ) ||
+					nextInitialComment.error ) )
 		) {
 			nextProps.requestPostComments( {
 				siteId: nextSiteId,

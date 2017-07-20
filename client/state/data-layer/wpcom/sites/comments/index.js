@@ -8,7 +8,12 @@ import { forEach, groupBy } from 'lodash';
  * Internal dependencies
  */
 import { mergeHandlers } from 'state/action-watchers/utils';
-import { COMMENTS_LIST_REQUEST, COMMENTS_RECEIVE, COMMENT_REQUEST } from 'state/action-types';
+import {
+	COMMENTS_LIST_REQUEST,
+	COMMENTS_RECEIVE,
+	COMMENT_REQUEST,
+	COMMENTS_ERROR,
+} from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import replies from './replies';
@@ -54,6 +59,16 @@ export const receiveCommentError = ( store, action ) => {
 			} ),
 		),
 	);
+
+	if ( action.commentId ) {
+		store.dispatch( {
+			type: COMMENTS_ERROR,
+			siteId: action.siteId,
+			postId: `error-${ action.commentId }`,
+			commentId: action.commentId,
+			commentById: true,
+		} );
+	}
 };
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
