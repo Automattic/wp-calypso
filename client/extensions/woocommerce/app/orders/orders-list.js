@@ -25,7 +25,7 @@ import humanDate from 'lib/human-date';
 import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
-import Pagination from 'my-sites/stats/pagination';
+import Pagination from 'components/pagination';
 import SectionNav from 'components/section-nav';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
