@@ -303,8 +303,10 @@ const EditorVisibility = React.createClass( {
 		return (
 			<div>
 				<FormTextInput
+					autoFocus={ true }
 					onKeyUp={ this.onKey }
 					onChange={ this.onPasswordChange }
+					onBlur={ this.onPasswordChange }
 					value={ value }
 					isError={ isError }
 					ref="postPassword"
