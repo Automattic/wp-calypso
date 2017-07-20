@@ -62,7 +62,7 @@ class PreviewMain extends React.Component {
 			debug( 'loading', newUrl );
 			this.setState( {
 				previewUrl: newUrl,
-				externalUrl: baseUrl
+				externalUrl: this.props.site.URL,
 			} );
 		}
 	}
@@ -80,7 +80,7 @@ class PreviewMain extends React.Component {
 
 	updateSiteLocation = ( pathname ) => {
 		this.setState( {
-			externalUrl: this.getBasePreviewUrl() + ( startsWith( pathname, '/' ) ? '' : '/' ) + pathname
+			externalUrl: this.props.site.URL + ( startsWith( pathname, '/' ) ? '' : '/' ) + pathname
 		} );
 	}
 
