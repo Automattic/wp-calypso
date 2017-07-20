@@ -533,6 +533,13 @@ a.comment-detail__author-more-element {
 	.comment-detail__comment-preview {
 		width: 100%;
 	}
+
+
+	@include breakpoint( "<960px" ) {
+		.comment-detail__header.is-preview {
+			flex-wrap: nowrap;
+		}
+	}
 }
 
 @keyframes comment-detail__author-more-info {
