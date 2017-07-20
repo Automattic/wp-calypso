@@ -3,13 +3,14 @@
 	margin-bottom: 20px;
 	transition: none;
 
-	&.is-error {
+	&.is-error,
+	&[type="password"] {
 		margin-bottom: 0;
 	}
 }
 
 .signup-form .logged-out-form__footer {
-	margin-top: 10px;
+	margin-top: 20px;
 }
 
 .signup-form__terms-of-service-link {
