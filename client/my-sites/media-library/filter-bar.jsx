@@ -32,7 +32,8 @@ export class MediaLibraryFilterBar extends Component {
 		site: React.PropTypes.object,
 		onFilterChange: React.PropTypes.func,
 		onSearch: React.PropTypes.func,
-		translate: React.PropTypes.func
+		translate: React.PropTypes.func,
+		post: React.PropTypes.bool
 	};
 
 	static defaultProps ={
@@ -42,6 +43,7 @@ export class MediaLibraryFilterBar extends Component {
 		onSearch: noop,
 		translate: identity,
 		source: '',
+		post: false
 	};
 
 	getSearchPlaceholderText() {
