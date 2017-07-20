@@ -73,6 +73,10 @@
 	&.is-preview {
 		cursor: pointer;
 		padding: 12px 8px;
+
+		@include breakpoint( "<960px" ) {
+			flex-wrap: wrap;
+		}
 	}
 
 	&.is-bulk-edit {
@@ -115,6 +119,10 @@
 		padding: 0 8px;
 		width: 40%;
 
+		@include breakpoint( "<960px" ) {
+			width: 100%;
+		}
+
 		.external-link {
 			color: $gray-text-min;
 			&:hover,
@@ -133,6 +141,10 @@
 	padding: 0 8px;
 	position: relative;
 	width: 60%;
+
+	@include breakpoint( "<960px" ) {
+		width: 100%;
+	}
 
 	&:after {
 		background: linear-gradient(
@@ -323,6 +335,10 @@
 	.comment-detail__author-info {
 		line-height: 1.4;
 		padding: 0 8px;
+
+		@include breakpoint( "<960px" ) {
+			padding-right: 0;
+		}
 	}
 }
 .comment-detail.is-expanded .comment-detail__author-preview {
