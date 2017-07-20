@@ -192,11 +192,7 @@ module.exports = React.createClass( {
 				icon = ( <span className="stats-list__flag-icon" style={ style } /> );
 			}
 
-			if ( data.link ) {
-				itemLabel = ( <span title={ data.link } >{ labelItem.label }</span> );
-			} else {
-				itemLabel = ( <Emojify>{ labelItem.label }</Emojify> );
-			}
+			itemLabel = ( <Emojify>{ labelItem.label }</Emojify> );
 
 			return ( <span className={ wrapperClassSet } key={ i } >{ gridiconSpan }{ icon }{ itemLabel } </span> );
 		}, this );
@@ -227,6 +223,37 @@ module.exports = React.createClass( {
 		}
 
 		return value;
+	},
+
+	renderListItem: function( rightClassOptions, mobileActionToggle, actions, toggleIcon ) {
+		return (
+			<div>
+				<span className="module-content-list-item-wrapper" onClick={ this.onClick } tabIndex="0">
+					<span className={ classNames( rightClassOptions ) }>
+						{ mobileActionToggle }
+						{ actions }
+						<span className="module-content-list-item-value">{ this.props.data.value ? this.buildValue() : null }</span>
+					</span>
+					<span className="module-content-list-item-label">{ toggleIcon }{ this.buildLabel() }</span>
+				</span>
+				{ this.props.children }
+			</div>
+		);
+	},
+
+	renderExternalLink: function( rightClassOptions, mobileActionToggle, actions, toggleIcon ) {
+		return (
+			<a href={ this.props.data.link }>
+				<span className='module-content-list-item-wrapper' onClick={ this.onClick } tabIndex="0">
+					<span className={ classNames( rightClassOptions ) }>
+						{ mobileActionToggle }
+						{ actions }
+						<span className="module-content-list-item-value">{ this.props.data.value ? this.buildValue() : null }</span>
+					</span>
+					<span className="module-content-list-item-label">{ toggleIcon }{ this.buildLabel() }</span>
+				</span>
+			</a>
+		);
 	},
 
 	render: function() {
@@ -282,15 +309,10 @@ module.exports = React.createClass( {
 
 		return (
 			<li key={ this.key } data-group={ this.key } className={ groupClassName }>
-				<span className='module-content-list-item-wrapper' onClick={ this.onClick } tabIndex="0">
-					<span className={ classNames( rightClassOptions ) }>
-						{ mobileActionToggle }
-						{ actions }
-						<span className="module-content-list-item-value">{ data.value ? this.buildValue() : null }</span>
-					</span>
-					<span className="module-content-list-item-label">{ toggleIcon }{ this.buildLabel() }</span>
-				</span>
-				{ this.props.children }
+				{ this.props.data.link && ! this.props.children
+					? this.renderExternalLink( rightClassOptions, mobileActionToggle, actions, toggleIcon )
+					: this.renderListItem( rightClassOptions, mobileActionToggle, actions, toggleIcon )
+				}
 			</li>
 		);
 	}
