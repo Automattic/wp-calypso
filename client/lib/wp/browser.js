@@ -26,8 +26,8 @@ if ( config.isEnabled( 'oauth' ) ) {
 	wpcom = wpcomUndocumented( oauthToken.getToken(), requestHandler );
 } else {
 	const requestHandler = addSyncHandlerWrapper
-		? new SyncHandler( require( 'wpcom-proxy-request' ) )
-		: require( 'wpcom-proxy-request' );
+		? new SyncHandler( require( 'wpcom-proxy-request' ).default )
+		: require( 'wpcom-proxy-request' ).default;
 
 	wpcom = wpcomUndocumented( requestHandler );
 
