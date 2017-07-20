@@ -364,13 +364,7 @@ class SignupForm extends Component {
 					onBlur={ this.handleBlur }
 					onChange={ this.handleChangeEvent }
 					submitting={ this.state.submitting || this.props.submitting } />
-				<FormSettingExplanation>
-					{ this.props.translate( 'Your password must be at least six characters long.' ) }
-				</FormSettingExplanation>
-
-				{ formState.isFieldInvalid( this.state.form, 'password' ) && (
-					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'password' ) } />
-				) }
+				{ this.passwordValidationExplanation() }
 			</div>
 		);
 	}
@@ -422,6 +416,26 @@ class SignupForm extends Component {
 				<FormSettingExplanation noValidate={ true }>{ this.props.disableEmailExplanation }</FormSettingExplanation>
 			);
 		}
+	}
+
+	passwordValidationExplanation() {
+		const passwordLength = formState.getFieldValue( this.state.form, 'password' ).length;
+
+		if ( formState.isFieldInvalid( this.state.form, 'password' ) ) {
+			return (
+				<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'password' ) } />
+			);
+		}
+
+		if ( passwordLength < 6 ) {
+			return (
+				<FormSettingExplanation>
+					{ this.props.translate( 'Your password must be at least six characters long.' ) }
+				</FormSettingExplanation>
+			);
+		}
+
+		return false;
 	}
 
 	formFooter() {
