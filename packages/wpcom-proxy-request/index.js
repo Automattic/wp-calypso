@@ -404,15 +404,14 @@ function onmessage( e ) {
 		return debug( 'no `data`, bailing' );
 	}
 
-	if ( postStrings && 'string' === typeof data ) {
-		data = JSON.parse( data );
-	}
-
 	// Once the iframe is loaded, we can start using it.
-	// The proxy iframe defaults to sending as a string, so test both string and array.
-	if ( 'ready' === data[0] || '["ready",null,null]' === data ) {
+	if ( data === 'ready' ) {
 		onload();
 		return;
+	}
+
+	if ( postStrings && 'string' === typeof data ) {
+		data = JSON.parse( data );
 	}
 
 	// check if we're receiving a "progress" event
@@ -477,6 +476,8 @@ function onmessage( e ) {
 
 	if ( ! params.metaAPI ) {
 		debug( 'got %o status code for URL: %o', statusCode, params.path );
+	} else {
+		statusCode = body === 'metaAPIupdated' ? 200 : 500;
 	}
 
 	// add statusCode into headers object
