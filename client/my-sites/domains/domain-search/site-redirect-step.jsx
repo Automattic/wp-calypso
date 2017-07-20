@@ -27,7 +27,8 @@ class SiteRedirectStep extends React.Component {
 	state = { searchQuery: '' };
 
 	render() {
-		var price = this.props.products.offsite_redirect ? this.props.products.offsite_redirect.cost_display : null;
+		const price = this.props.products.offsite_redirect ? this.props.products.offsite_redirect.cost_display : null;
+		const { translate } = this.props;
 
 		return (
 			<div className="site-redirect-step">
@@ -35,7 +36,7 @@ class SiteRedirectStep extends React.Component {
 
 					<div className="site-redirect-step__domain-description">
 						<p>
-							{ this.props.translate( 'Redirect {{strong}}%(domain)s{{/strong}} to this domain', {
+							{ translate( 'Redirect {{strong}}%(domain)s{{/strong}} to this domain', {
 								components: { strong: <strong /> },
 								args: { domain: this.props.selectedSite.slug }
 							} ) }
@@ -51,12 +52,12 @@ class SiteRedirectStep extends React.Component {
 							className="site-redirect-step__external-domain"
 							type="text"
 							value={ this.state.searchQuery }
-							placeholder={ this.props.translate( 'Enter a domain', { textOnly: true } ) }
+							placeholder={ translate( 'Enter a domain', { textOnly: true } ) }
 							onChange={ this.setSearchQuery }
 							onClick={ this.recordInputFocus } />
 						<button className="site-redirect-step__go button is-primary"
 								onClick={ this.recordGoButtonClick }>
-							{ this.props.translate( 'Go', {
+							{ translate( 'Go', {
 								context: 'Upgrades: Label for adding Site Redirect'
 							} ) }
 						</button>
@@ -79,11 +80,11 @@ class SiteRedirectStep extends React.Component {
 	};
 
 	handleFormSubmit = ( event ) => {
-		var domain;
-
 		event.preventDefault();
-		this.props.recordFormSubmit( this.state.searchQuery );
-		domain = this.state.searchQuery;
+
+		const domain = this.state.searchQuery;
+
+		this.props.recordFormSubmit( domain );
 
 		if ( cartItems.hasProduct( this.props.cart, 'offsite_redirect' ) ) {
 			notices.error( this.getValidationErrorMessage( domain, { code: 'already_in_cart' } ) );
@@ -106,28 +107,30 @@ class SiteRedirectStep extends React.Component {
 	};
 
 	getValidationErrorMessage = ( domain, error ) => {
+		const { translate } = this.props;
+
 		switch ( error.code ) {
 			case 'invalid_domain':
-				return this.props.translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
+				return translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
 					args: { domain: domain }
 				} );
 
 			case 'invalid_tld':
-				return this.props.translate( 'Sorry, %(domain)s does not end with a valid domain extension.', {
+				return translate( 'Sorry, %(domain)s does not end with a valid domain extension.', {
 					args: { domain: domain }
 				} );
 
 			case 'empty_query':
-				return this.props.translate( 'Please enter a domain name or keyword.' );
+				return translate( 'Please enter a domain name or keyword.' );
 
 			case 'has_subscription':
-				return this.props.translate( "You already have Site Redirect upgrade and can't add another one to the same site." );
+				return translate( "You already have Site Redirect upgrade and can't add another one to the same site." );
 
 			case 'already_in_cart':
-				return this.props.translate( "You already have Site Redirect upgrade in the Shopping Cart and can't add another one" );
+				return translate( "You already have Site Redirect upgrade in the Shopping Cart and can't add another one" );
 
 			default:
-				return this.props.translate( 'There is a problem adding Site Redirect that points to %(domain)s.', {
+				return translate( 'There is a problem adding Site Redirect that points to %(domain)s.', {
 					args: { domain: domain }
 				} );
 		}
