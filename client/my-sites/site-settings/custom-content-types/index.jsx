@@ -58,38 +58,17 @@ class CustomContentTypes extends Component {
 		return isRequestingSettings || isSavingSettings;
 	}
 
-	renderToggle( name, label, description ) {
-		const {
-			activatingCustomContentTypesModule,
-			fields,
-			handleAutosavingToggle
-		} = this.props;
-		return (
-			<div>
-				<CompactFormToggle
-					checked={ !! fields[ name ] }
-					disabled={ this.isFormPending() || activatingCustomContentTypesModule }
-					onChange={ handleAutosavingToggle( name ) }
-				>
-					{ label }
-				</CompactFormToggle>
-
-				{ this.renderPostsPerPageField( name, label ) }
-
-				<FormSettingExplanation isIndented>
-					{ description }
-				</FormSettingExplanation>
-			</div>
-		);
-	}
-
 	renderPostsPerPageField( fieldName, postTypeLabel ) {
 		const {
 			fields,
 			onChangeField,
 			translate,
 		} = this.props;
-		const numberFieldName = fieldName + '_posts_per_page';
+		const numberFieldName = fieldName === 'post'
+			? 'posts_per_page'
+			: fieldName + '_posts_per_page';
+		const isDisabled = this.isFormPending() || ( ! fields[ fieldName ] && fieldName !== 'post' );
+
 		return (
 			<div className="custom-content-types__indented-form-field indented-form-field">
 				{ translate(
@@ -106,7 +85,7 @@ class CustomContentTypes extends Component {
 									id={ numberFieldName }
 									value={ 'undefined' === typeof fields[ numberFieldName ] ? 10 : fields[ numberFieldName ] }
 									onChange={ onChangeField( numberFieldName ) }
-									disabled={ this.isFormPending() || ! fields[ fieldName ] }
+									disabled={ isDisabled }
 								/>
 							)
 						}
@@ -116,10 +95,49 @@ class CustomContentTypes extends Component {
 		);
 	}
 
-	renderContentTypeSettings( fieldName, fieldLabel, fieldDescription ) {
+	renderContentTypeSettings( name, label, description ) {
+		const {
+			activatingCustomContentTypesModule,
+			fields,
+			handleAutosavingToggle
+		} = this.props;
 		return (
 			<div className="custom-content-types__module-settings">
-				{ this.renderToggle( fieldName, fieldLabel, fieldDescription ) }
+				{
+					name !== 'post'
+						? (
+							<CompactFormToggle
+								checked={ !! fields[ name ] }
+								disabled={ this.isFormPending() || activatingCustomContentTypesModule }
+								onChange={ handleAutosavingToggle( name ) }
+							>
+								{ label }
+							</CompactFormToggle>
+						)
+						: (
+							<div className="custom-content-types__label">
+								{ label }
+							</div>
+						)
+				}
+
+				{ this.renderPostsPerPageField( name, label ) }
+
+				<FormSettingExplanation isIndented>
+					{ description }
+				</FormSettingExplanation>
+			</div>
+		);
+	}
+
+	renderBlogPostSettings() {
+		const { translate } = this.props;
+		const fieldLabel = translate( 'Blog posts' );
+		const fieldDescription = translate( 'On blog pages, the number of posts to show per page.' );
+
+		return (
+			<div className="custom-content-types__module-settings">
+				{ this.renderContentTypeSettings( 'post', fieldLabel, fieldDescription ) }
 			</div>
 		);
 	}
@@ -169,6 +187,7 @@ class CustomContentTypes extends Component {
 						</InfoPopover>
 					</div>
 
+					{ this.renderBlogPostSettings() }
 					{ this.renderTestimonialSettings() }
 					{ this.renderPortfolioSettings() }
 				</FormFieldset>
