@@ -1,13 +1,13 @@
 /***
  * External dependencies
  */
-import { filter, find, get, keyBy, last, first, map, size } from 'lodash';
+import { filter, find, get, keyBy, last, first, map, size, flatMap } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { getStateKey, fetchStatusInitialState } from './reducer';
+import { getStateKey, deconstructStateKey, fetchStatusInitialState } from './reducer';
 
 /***
  * Gets comment items for post
@@ -19,6 +19,14 @@ import { getStateKey, fetchStatusInitialState } from './reducer';
 export const getPostCommentItems = ( state, siteId, postId ) =>
 	get( state.comments.items, `${ siteId }-${ postId }` );
 
+export const getCommentById = createSelector( ( { state, commentId, siteId } ) => {
+	const commentsForSite = flatMap(
+		filter( state.comments && state.comments.items, ( comment, key ) => {
+			return deconstructStateKey( key ).siteId === siteId;
+		} ),
+	);
+	return find( commentsForSite, comment => commentId === comment.ID );
+}, ( { state } ) => state.comments && state.comments.items );
 /***
  * Get total number of comments on the server for a given post
  * @param {Object} state redux state

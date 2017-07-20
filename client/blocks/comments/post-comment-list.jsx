@@ -9,7 +9,11 @@ import { get, size, takeRight, defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPostCommentsTree, commentsFetchingStatus } from 'state/comments/selectors';
+import {
+	getPostCommentsTree,
+	commentsFetchingStatus,
+	getCommentById,
+} from 'state/comments/selectors';
 import { requestPostComments, requestComment } from 'state/comments/actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
@@ -113,7 +117,7 @@ class PostCommentList extends React.Component {
 		const nextPostId = get( nextProps, 'post.ID' );
 		const nextCommentsFilter = get( nextProps, 'commentsFilter' );
 
-		if ( this.shouldFetchInitialComment( nextProps ) ) {
+		if ( this.shouldFetchInitialComment( nextProps ) && ! nextProps.initialComment ) {
 			this.props.requestComment( { siteId: nextSiteId, commentId: nextProps.startingCommentId } );
 			this.hasScrolledToComment = false;
 		} else if ( this.shouldFetchInitialPages( nextProps ) ) {
@@ -121,12 +125,14 @@ class PostCommentList extends React.Component {
 			this.viewLaterCommentsHandler();
 			this.alreadyLoadedInitialSet = true;
 		} else if (
-			nextSiteId &&
-			nextPostId &&
-			nextCommentsFilter &&
-			( this.props.post.site_ID !== nextSiteId ||
-				this.props.post.ID !== nextPostId ||
-				this.props.commentsFilter !== nextCommentsFilter )
+			( nextSiteId &&
+				nextPostId &&
+				nextCommentsFilter &&
+				( this.props.post.site_ID !== nextSiteId ||
+					this.props.post.ID !== nextPostId ||
+					this.props.commentsFilter !== nextCommentsFilter ) ) ||
+			( this.props.initialComment !== nextProps.initialComment &&
+				nextProps.initialComment.post.ID !== nextPostId )
 		) {
 			nextProps.requestPostComments( {
 				siteId: nextSiteId,
@@ -405,6 +411,11 @@ export default connect(
 			ownProps.post.ID,
 			ownProps.commentCount,
 		),
+		initialComment: getCommentById( {
+			state,
+			siteId: ownProps.post.site_ID,
+			commentId: ownProps.startingCommentId,
+		} ),
 	} ),
 	{ requestPostComments, requestComment },
 )( PostCommentList );
