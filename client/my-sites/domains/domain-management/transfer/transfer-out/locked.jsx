@@ -21,14 +21,6 @@ class Locked extends React.Component {
 		showDialog: false
 	};
 
-	componentDidMount() {
-		this.mounted = true;
-	}
-
-	componentWillUnmount() {
-		this.mounted = false;
-	}
-
 	unlockAndRequestTransferCode = () => {
 		const { privateDomain, hasPrivacyProtection } = getSelectedDomain( this.props );
 
@@ -41,10 +33,10 @@ class Locked extends React.Component {
 
 		this.setState( { submitting: true } );
 		requestTransferCode( options, ( error ) => {
-			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
-			if ( this.mounted ) {
+			if ( error ) {
 				this.setState( { submitting: false } );
 			}
+			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
 		} );
 	};
 
@@ -58,10 +50,8 @@ class Locked extends React.Component {
 
 		this.setState( { submitting: true } );
 		requestTransferCode( options, ( error ) => {
+			this.setState( { submitting: false } );
 			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
-			if ( this.mounted ) {
-				this.setState( { submitting: false } );
-			}
 		} );
 	}
 
