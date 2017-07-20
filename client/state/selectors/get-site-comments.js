@@ -19,18 +19,20 @@ function filterCommentsByStatus( comments, status ) {
  *
  * @param {Object} state Redux state
  * @param {Number} siteId Site for whose comments to find
- * @param {String} [status=unapproved] Status to filter comments
+ * @param {String} [status] Status to filter comments
  * @param {String} [order=asc] Order in which to sort filtered comments
  * @returns {Array<Object>} Available comments for site, filtered by status
  */
 export const getSiteComments = createSelector(
-	( state, siteId, status = 'unapproved', order = 'asc' ) => {
+	( state, siteId, status, order = 'asc' ) => {
 		const comments = get( state, 'comments.items', {} );
 		const parsedComments = Object.keys( comments )
 			.filter( key => parseInt( key.split( '-', 1 ), 10 ) === siteId )
 			.reduce( ( list, key ) => [ ...list, ...comments[ key ] ], [] );
 
-		return orderBy( filterCommentsByStatus( parsedComments, status ), 'date', order );
+		return status
+			? orderBy( filterCommentsByStatus( parsedComments, status ), 'date', order )
+			: orderBy( parsedComments, 'date', order );
 	},
 	state => [ state.comments.items ]
 );

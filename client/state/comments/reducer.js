@@ -10,7 +10,7 @@ import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_EDIT,
 	COMMENTS_RECEIVE,
-	COMMENTS_REMOVE,
+	COMMENTS_DELETE,
 	COMMENTS_ERROR,
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
@@ -69,7 +69,7 @@ export function items( state = {}, action ) {
 				...state,
 				[ stateKey ]: ! skipSort ? orderBy( allComments, getCommentDate, [ 'desc' ] ) : allComments,
 			};
-		case COMMENTS_REMOVE:
+		case COMMENTS_DELETE:
 			return {
 				...state,
 				[ stateKey ]: reject( state[ stateKey ], { ID: commentId } ),

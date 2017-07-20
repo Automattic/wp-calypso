@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import config from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	COMMENTS_REMOVE,
+	COMMENTS_DELETE,
 	COMMENTS_REQUEST,
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
@@ -20,7 +20,7 @@ import {
 	requestPostComments,
 	writeComment,
 	replyComment,
-	removeComment,
+	deleteComment,
 	likeComment,
 	unlikeComment,
 } from '../actions';
@@ -93,12 +93,12 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#removeComment()', () => {
+	describe( '#deleteComment()', () => {
 		it( 'should dispatch remove for a placeholder when provided', () => {
-			const removeCommentAction = removeComment( SITE_ID, POST_ID, 'placeholder-123' );
+			const deleteCommentAction = deleteComment( SITE_ID, POST_ID, 'placeholder-123' );
 
-			expect( removeCommentAction.type ).to.eql( COMMENTS_REMOVE );
-			expect( removeCommentAction.commentId ).to.equal( 'placeholder-123' );
+			expect( deleteCommentAction.type ).to.eql( COMMENTS_DELETE );
+			expect( deleteCommentAction.commentId ).to.equal( 'placeholder-123' );
 		} );
 	} );
 

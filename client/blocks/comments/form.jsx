@@ -18,7 +18,7 @@ import {
 } from 'state/current-user/selectors';
 import {
 	writeComment,
-	removeComment,
+	deleteComment,
 	replyComment,
 } from 'state/comments/actions';
 import {
@@ -91,7 +91,7 @@ class PostCommentForm extends React.Component {
 				// sync the text to the upper level so it won't be lost
 				this.props.onUpdateCommentText( this.props.commentText );
 				// remove the comment
-				this.props.removeComment( this.props.post.site_ID, this.props.post.ID, this.props.placeholderId );
+				this.props.deleteComment( this.props.post.site_ID, this.props.post.ID, this.props.placeholderId );
 			}
 		}
 	}
@@ -130,7 +130,7 @@ class PostCommentForm extends React.Component {
 		}
 
 		if ( this.props.placeholderId ) {
-			this.props.removeComment( post.site_ID, post.ID, this.props.placeholderId );
+			this.props.deleteComment( post.site_ID, post.ID, this.props.placeholderId );
 		}
 
 		if ( this.props.parentCommentID ) {
@@ -246,7 +246,7 @@ PostCommentForm.propTypes = {
 	// connect()ed props:
 	currentUser: React.PropTypes.object.isRequired,
 	writeComment: React.PropTypes.func.isRequired,
-	removeComment: React.PropTypes.func.isRequired,
+	deleteComment: React.PropTypes.func.isRequired,
 	replyComment: React.PropTypes.func.isRequired
 };
 
@@ -258,5 +258,5 @@ export default connect(
 	( state ) => ( {
 		currentUser: getCurrentUser( state )
 	} ),
-	{ writeComment, removeComment, replyComment }
+	{ writeComment, deleteComment, replyComment }
 )( PostCommentForm );

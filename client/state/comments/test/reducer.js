@@ -16,7 +16,7 @@ import {
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_RECEIVE,
-	COMMENTS_REMOVE,
+	COMMENTS_DELETE,
 } from '../../action-types';
 import { PLACEHOLDER_STATE } from '../constants';
 
@@ -63,7 +63,7 @@ describe( 'reducer', () => {
 			const removedCommentId = 9;
 			const state = deepFreeze( { '1-1': commentsNestedTree } );
 			const result = items( state, {
-				type: COMMENTS_REMOVE,
+				type: COMMENTS_DELETE,
 				siteId: 1,
 				postId: 1,
 				commentId: removedCommentId,

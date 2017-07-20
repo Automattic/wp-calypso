@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import {
-	COMMENTS_REMOVE,
+	COMMENTS_DELETE,
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_INCREMENT,
 } from 'state/action-types';
@@ -84,7 +84,7 @@ export const dispatchNewCommentRequest = ( dispatch, action, path ) => {
  */
 export const updatePlaceholderComment = ( { dispatch }, { siteId, postId, parentCommentId, placeholderId }, next, comment ) => {
 	// remove placeholder from state
-	dispatch( { type: COMMENTS_REMOVE, siteId, postId, commentId: placeholderId } );
+	dispatch( { type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId } );
 	// add new comment to state with updated values from server
 	dispatch( { type: COMMENTS_RECEIVE, siteId, postId, comments: [ comment ], skipSort: !! parentCommentId } );
 	// increment comments count
