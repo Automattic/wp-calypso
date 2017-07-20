@@ -14,15 +14,15 @@ const ShippingPackage = ( { translate, type, name, dimensions } ) => {
 	const icon = 'envelope' === type ? 'mail' : 'product';
 
 	return (
-		<div className="shipping__packages-row">
-			<div className="shipping__packages-row-icon">
+		<div className="packages__packages-row">
+			<div className="packages__packages-row-icon">
 				<Gridicon icon={ icon } size={ 18 } />
 			</div>
-			<div className="shipping__packages-row-details">
-				<div className="shipping__packages-row-details-name">{ name }</div>
+			<div className="packages__packages-row-details">
+				<div className="packages__packages-row-details-name">{ name }</div>
 			</div>
-			<div className="shipping__packages-row-dimensions">{ dimensions }</div>
-			<div className="shipping__packages-row-actions">
+			<div className="packages__packages-row-dimensions">{ dimensions }</div>
+			<div className="packages__packages-row-actions">
 				<Button compact>{ translate( 'Edit' ) }</Button>
 			</div>
 		</div>

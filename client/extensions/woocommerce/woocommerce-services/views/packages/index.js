@@ -12,7 +12,7 @@ import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import ShippingPackage from './shipping-package';
 
-class ShippingPackageList extends Component {
+class Packages extends Component {
 	constructor( props ) {
 		super( props );
 
@@ -44,12 +44,12 @@ class ShippingPackageList extends Component {
 					description={ translate( 'Add the boxes, envelopes, and other packages you use most frequently.' ) }>
 					<Button>{ translate( 'Add package' ) }</Button>
 				</ExtendedHeader>
-				<Card className="shipping__packages">
-					<div className="shipping__packages-row shipping__packages-header">
-						<div className="shipping__packages-row-icon"></div>
-						<div className="shipping__packages-row-details">{ translate( 'Name' ) }</div>
-						<div className="shipping__packages-row-dimensions">{ translate( 'Dimensions' ) }</div>
-						<div className="shipping__packages-row-actions" />
+				<Card className="packages__packages">
+					<div className="packages__packages-row packages__packages-header">
+						<div className="packages__packages-row-icon"></div>
+						<div className="packages__packages-row-details">{ translate( 'Name' ) }</div>
+						<div className="packages__packages-row-dimensions">{ translate( 'Dimensions' ) }</div>
+						<div className="packages__packages-row-actions" />
 					</div>
 					{ this.state.packages.map( this.renderShippingPackage ) }
 				</Card>
@@ -58,4 +58,4 @@ class ShippingPackageList extends Component {
 	}
 }
 
-export default localize( ShippingPackageList );
+export default localize( Packages );

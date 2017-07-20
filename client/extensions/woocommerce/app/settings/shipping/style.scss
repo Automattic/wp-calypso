@@ -1,8 +1,7 @@
 @import 'shipping-zone/style';
 @import 'shipping-zone/style';
 
-.shipping__zones-header,
-.shipping__packages-header {
+.shipping__zones-header {
 	font-weight: 600;
 }
 
@@ -34,8 +33,7 @@
 	padding: 0;
 }
 
-.shipping__zones-row,
-.shipping__packages-row {
+.shipping__zones-row {
 	display: flex;
 	flex-direction: row;
 	padding: 16px 0;
@@ -75,16 +73,14 @@
 	}
 }
 
-.shipping__zones-header,
-.shipping__packages-header {
+.shipping__zones-header{
 	padding: 12px 0;
 	font-size: 14px;
 	border-top: 0;
 	background: lighten( $gray, 35% );
 }
 
-.shipping__zones-row-icon,
-.shipping__packages-row-icon  {
+.shipping__zones-row-icon  {
 	width: 48px;
 	text-align: left;
 	padding-left: 16px;
@@ -103,8 +99,7 @@
 	width: 25%;
 }
 
-.shipping__zones-row-location-name,
-.shipping__packages-row-details-name {
+.shipping__zones-row-location-name {
 	margin-bottom: 0;
 	font-size: 14px;
 }
@@ -150,8 +145,7 @@
 	margin-bottom: 0;
 }
 
-.shipping__zones-row-actions,
-.shipping__packages-row-actions {
+.shipping__zones-row-actions {
 	width: 20%;
 	text-align: right;
 	padding-right: 16px;
@@ -159,57 +153,4 @@
 	@include breakpoint( ">480px" ) {
 		padding-right: 24px;
 	}
-}
-
-.shipping__labels-container.hidden {
-	height: 0;
-	padding: 0;
-	overflow: hidden;
-}
-
-.form-label.shipping__labels-paper-size,
-.form-label.shipping__cards-label {
-	margin-bottom: 4px;
-}
-
-.shipping__card {
-	margin-bottom: 14px;
-}
-
-.shipping__card-checkbox {
-	margin-top: 10px;
-	margin-right: 20px;
-}
-
-.payment-logo {
-	float: left;
-	margin-top: 10px;
-	margin-right: 14px;
-}
-
-.shipping__card-details {
-	float: left;
-}
-
-.shipping__card-number {
-	margin-bottom: 0;
-	font-weight: bold;
-}
-
-.shipping__card-date {
-	float: right;
-	color: $gray-text-min;
-	font-style: italic;
-}
-
-.shipping__packages {
-	padding: 0;
-}
-
-.shipping__packages-row-details {
-	width: 35%;
-}
-
-.shipping__packages-row-dimensions {
-	width: 35%;
 }
