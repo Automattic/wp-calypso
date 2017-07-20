@@ -65,7 +65,7 @@ export default class PageList extends Component {
 
 		const query = {
 			page: this.state.page,
-			number: 100, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
+			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
 			search,
 			status: mapStatus( status ),
 			type: 'page'
