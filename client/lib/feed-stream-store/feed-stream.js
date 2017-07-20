@@ -307,7 +307,7 @@ export default class FeedStream {
 			orderBy: this.orderBy,
 			number: this.maxUpdates,
 			before: moment().toISOString(),
-			after: mostRecentDate,
+			after: moment( mostRecentDate ).toISOString(),
 		};
 
 		this.onUpdateFetch( params );
@@ -421,6 +421,7 @@ export default class FeedStream {
 
 		this._isFetchingNextPage = false;
 		this.oldestPostDate = get( data, [ 'date_range', 'after' ] );
+		this.lastPageHandle = get( data, [ 'meta', 'next_page' ], null );
 
 		if ( error ) {
 			debug( 'Error fetching posts from API:', error );
