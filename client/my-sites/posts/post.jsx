@@ -254,7 +254,10 @@ class Post extends Component {
 			this.props.recordViewPost();
 		}
 
-		if ( ! isPreviewable || ! selectedSiteId ) {
+		if (
+				( ! isPreviewable || ! selectedSiteId ) &&
+				typeof window === 'object'
+		) {
 			return window.open( previewUrl );
 		}
 
