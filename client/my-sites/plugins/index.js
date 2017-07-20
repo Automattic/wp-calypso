@@ -65,6 +65,15 @@ module.exports = function() {
 			pluginsController.plugins.bind( null, 'all' ),
 		);
 
+		if ( config.isEnabled( 'manage/plugins/upload' ) ) {
+			page( '/plugins/upload', controller.sites );
+			page( '/plugins/upload/:site_id',
+				controller.siteSelection,
+				controller.navigation,
+				pluginsController.upload
+			);
+		}
+
 		page( '/plugins',
 			controller.siteSelection,
 			controller.navigation,
