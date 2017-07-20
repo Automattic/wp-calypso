@@ -198,7 +198,7 @@ module.exports = React.createClass( {
 			}
 
 			if ( data.link ) {
-				itemLabel = ( <a onclick={ this.preventDefaultOnClick } href={ data.link } >{ labelItem.label }</a> );
+				itemLabel = ( <a onClick={ this.preventDefaultOnClick } href={ data.link } >{ labelItem.label }</a> );
 			} else {
 				itemLabel = ( <Emojify>{ labelItem.label }</Emojify> );
 			}
