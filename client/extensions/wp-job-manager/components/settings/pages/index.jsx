@@ -18,7 +18,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import PageDropdown from './page-dropdown';
 import QueryPosts from 'components/data/query-posts';
 import SectionHeader from 'components/section-header';
-import { getSitePosts, isRequestingSitePostsForQuery } from 'state/posts/selectors';
+import { isRequestingSitePostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const query = { type: 'page' };
@@ -27,7 +27,6 @@ class Pages extends Component {
 	static propTypes = {
 		isDisabled: PropTypes.bool,
 		isRequesting: PropTypes.bool,
-		pages: PropTypes.array,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
 	};
@@ -35,7 +34,6 @@ class Pages extends Component {
 	render() {
 		const {
 			isRequesting,
-			pages,
 			siteId,
 			translate,
 		} = this.props;
@@ -66,8 +64,7 @@ class Pages extends Component {
 								<PageDropdown
 									disabled={ isDisabled }
 									id="submitFormPage"
-									name="submitFormPage"
-									pages={ pages } />
+									name="submitFormPage" />
 							</FormFieldset>
 
 							<FormFieldset>
@@ -81,8 +78,7 @@ class Pages extends Component {
 								<PageDropdown
 									disabled={ isDisabled }
 									id="dashboardPage"
-									name="dashboardPage"
-									pages={ pages } />
+									name="dashboardPage" />
 							</FormFieldset>
 
 							<FormFieldset>
@@ -96,8 +92,7 @@ class Pages extends Component {
 								<PageDropdown
 									disabled={ isDisabled }
 									id="listingsPage"
-									name="listingsPage"
-									pages={ pages } />
+									name="listingsPage" />
 							</FormFieldset>
 						</Card>
 					</FormSection>
@@ -113,7 +108,6 @@ const connectComponent = connect(
 
 		return {
 			isRequesting: isRequestingSitePostsForQuery( state, siteId, query ),
-			pages: ( siteId && getSitePosts( state, siteId ) ) || [],
 			siteId,
 		};
 	}

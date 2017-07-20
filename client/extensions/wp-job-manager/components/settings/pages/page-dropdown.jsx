@@ -2,13 +2,17 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import ReduxFormSelect from 'components/redux-forms/redux-form-select';
+import { getSitePosts } from 'state/posts/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
-const PageDropdown = ( { name, pages, ...otherProps } ) => {
+// eslint-disable-next-line no-unused-vars
+const PageDropdown = ( { dispatch, name, pages, ...otherProps } ) => {
 	return (
 		<ReduxFormSelect name={ name } { ...otherProps }>
 			{ pages.map( ( { ID, title } ) => (
@@ -25,4 +29,14 @@ PageDropdown.propTypes = {
 	pages: PropTypes.array,
 };
 
-export default PageDropdown;
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			pages: ( siteId && getSitePosts( state, siteId ) ) || [],
+		};
+	}
+);
+
+export default connectComponent( PageDropdown );
