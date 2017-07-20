@@ -19,6 +19,7 @@ import { setAllSitesSelected } from 'state/ui/actions';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanClass } from 'lib/plans/constants';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
 
 class DisconnectSite extends Component {
@@ -87,6 +88,7 @@ class DisconnectSite extends Component {
 
 	render() {
 		const {
+			isAutomatedTransfer,
 			planClass,
 			site,
 			siteId,
@@ -94,7 +96,7 @@ class DisconnectSite extends Component {
 			translate
 		} = this.props;
 
-		if ( ! site ) {
+		if ( ! site || isAutomatedTransfer ) {
 			return null;
 		}
 
@@ -136,6 +138,7 @@ export default connect(
 			: 'is-free-plan';
 
 		return {
+			isAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 			planClass,
 			site,
 			siteId,
