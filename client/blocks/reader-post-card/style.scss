@@ -276,14 +276,13 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	display: flex;
 	flex-direction: row;
 	height: 20px;
-	white-space: nowrap;
 	margin-left: 10px;
 	overflow: hidden;
 	position: relative;
-	width: calc( 100% - 100px );
+	width: calc( 100% - 140px );
 
 	@include breakpoint( "<480px" ) {
-		max-width: 230px;
+		max-width: 500px;
 	}
 
 	&::after {
