@@ -632,7 +632,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	position: relative;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	word-wrap: break-word;
 
 	&::after {
 		@include long-content-fade( $size: 15% );
