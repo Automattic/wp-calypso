@@ -160,7 +160,7 @@ export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) =
 				data: response.body && response.body.data,
 			} );
 
-			if ( get( response, 'body.data.two_step_notification_sent', null ) === 'sms' ) {
+			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
 				dispatch( {
 					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 					notice: {
