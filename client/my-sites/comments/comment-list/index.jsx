@@ -105,6 +105,10 @@ export class CommentList extends Component {
 
 	isSelectedAll = () => this.props.comments.length === size( this.state.selectedComments );
 
+	removeFromChangedComments = commentId => this.setState( {
+		changedComments: reject( this.state.changedComments, { ID: commentId } ),
+	} );
+
 	replyComment = ( commentText, postId, parentCommentId, options = { alsoApprove: false } ) => {
 		const { translate } = this.props;
 		const { alsoApprove } = options;
@@ -142,20 +146,26 @@ export class CommentList extends Component {
 		} );
 	};
 
-	setCommentStatus = ( commentId, postId, status, options = { isUndo: false, showNotice: true } ) => {
+	setCommentStatus = ( commentId, postId, status, options = { isUndo: false, persist: false, showNotice: true } ) => {
+		const { isUndo, persist, showNotice } = options;
+
 		// TODO: Replace with Redux getComment()
 		const comment = this.getComment( commentId );
 
-		if ( ! comment ) {
+		if ( comment && status === comment.status ) {
 			return;
 		}
 
-		this.updateChangedComments( comment, options.isUndo );
+		if ( persist ) {
+			this.updateChangedComments( comment, status, isUndo );
+		} else {
+			this.removeFromChangedComments( commentId );
+		}
 
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 
-		if ( options.showNotice ) {
-			this.showNotice( commentId, postId, status, comment.status );
+		if ( showNotice ) {
+			this.showNotice( commentId, postId, status, comment.status, { persist } );
 		}
 
 		this.props.changeCommentStatus( commentId, postId, status );
@@ -196,7 +206,7 @@ export class CommentList extends Component {
 		this.props.createNotice( type, message, options );
 	}
 
-	showNotice = ( commentId, postId, newStatus, previousStatus ) => {
+	showNotice = ( commentId, postId, newStatus, previousStatus, options = { persist: false } ) => {
 		const { translate } = this.props;
 
 		const [ type, message ] = get( {
@@ -219,11 +229,15 @@ export class CommentList extends Component {
 				commentId,
 				postId,
 				previousStatus,
-				{ isUndo: true, showNotice: false }
+				{
+					isUndo: true,
+					persist: options.persist,
+					showNotice: false,
+				}
 			),
 		};
 
-		this.props.createNotice( type, message, options );
+		this.props.createNotice( type, message, noticeOptions );
 	}
 
 	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
@@ -234,7 +248,7 @@ export class CommentList extends Component {
 
 		if ( 'unapproved' === comment.status ) {
 			this.props.removeNotice( `comment-notice-${ commentId }` );
-			this.setCommentStatus( commentId, postId, 'approved' );
+			this.setCommentStatus( commentId, postId, 'approved', { persist: true, showNotice: true } );
 		}
 
 		if ( comment.i_like ) {
@@ -272,19 +286,12 @@ export class CommentList extends Component {
 		this.props.undoBulkStatus( selectedComments );
 	}
 
-	updateChangedComments = ( comment, isUndo ) => {
-		const { changedComments } = this.state;
-		const filteredChangedComments = reject( changedComments, { ID: comment.ID } );
-
-		if ( isUndo ) {
-			this.setState( { changedComments: filteredChangedComments } );
-		} else {
-			this.setState( { changedComments: [
-				filteredChangedComments,
-				{ ...comment, status },
-			] } );
-		}
-	}
+	updateChangedComments = ( comment, status, isUndo ) => isUndo
+		? this.removeFromChangedComments( comment.ID )
+		: this.setState( { changedComments: [
+			...reject( this.state.changedComments, { ID: comment.ID } ),
+			{ ...comment, status },
+		] } );
 
 	render() {
 		const {

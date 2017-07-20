@@ -82,7 +82,10 @@ export class CommentDetail extends Component {
 
 	toggleApprove = () => {
 		const { commentId, commentStatus, postId, setCommentStatus } = this.props;
-		setCommentStatus( commentId, postId, 'approved' === commentStatus ? 'unapproved' : 'approved' );
+		setCommentStatus( commentId, postId, 'approved' === commentStatus ? 'unapproved' : 'approved', {
+			persist: ( 'approved' === commentStatus || 'unapproved' === commentStatus ),
+			showNotice: true,
+		} );
 		this.setState( { isExpanded: false } );
 	}
 
@@ -103,13 +106,11 @@ export class CommentDetail extends Component {
 	toggleSpam = () => {
 		const { commentId, commentStatus, postId, setCommentStatus } = this.props;
 		setCommentStatus( commentId, postId, 'spam' === commentStatus ? 'approved' : 'spam' );
-		this.setState( { isExpanded: false } );
 	}
 
 	toggleTrash = () => {
 		const { commentId, commentStatus, postId, setCommentStatus } = this.props;
 		setCommentStatus( commentId, postId, 'trash' === commentStatus ? 'approved' : 'trash' );
-		this.setState( { isExpanded: false } );
 	}
 
 	render() {
