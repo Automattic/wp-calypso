@@ -14,7 +14,7 @@ import i18n, { localize } from 'i18n-calypso';
 import wpcom from 'lib/wp';
 import config from 'config';
 import analytics from 'lib/analytics';
-import ValidationFieldset from 'signup/validation-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -313,58 +313,64 @@ class SignupForm extends Component {
 
 		return (
 			<div>
-				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'email' ) }>
-					<FormLabel htmlFor="email">{ this.props.translate( 'Your email address' ) }</FormLabel>
-					<FormTextInput
-						autoFocus={ ! this.props.isSocialSignupEnabled }
-						autoCapitalize="off"
-						autoCorrect="off"
-						className="signup-form__input"
-						disabled={ this.state.submitting || !! this.props.disabled || !! this.props.disableEmailInput }
-						id="email"
-						name="email"
-						type="email"
-						value={ formState.getFieldValue( this.state.form, 'email' ) }
-						isError={ formState.isFieldInvalid( this.state.form, 'email' ) }
-						isValid={ this.state.validationInitialized && isEmailValid }
-						onBlur={ this.handleBlur }
-						onChange={ this.handleChangeEvent } />
-					{ this.emailDisableExplanation() }
-				</ValidationFieldset>
+				<FormLabel htmlFor="email">{ this.props.translate( 'Your email address' ) }</FormLabel>
+				<FormTextInput
+					autoFocus={ ! this.props.isSocialSignupEnabled }
+					autoCapitalize="off"
+					autoCorrect="off"
+					className="signup-form__input"
+					disabled={ this.state.submitting || !! this.props.disabled || !! this.props.disableEmailInput }
+					id="email"
+					name="email"
+					type="email"
+					value={ formState.getFieldValue( this.state.form, 'email' ) }
+					isError={ formState.isFieldInvalid( this.state.form, 'email' ) }
+					isValid={ this.state.validationInitialized && isEmailValid }
+					onBlur={ this.handleBlur }
+					onChange={ this.handleChangeEvent } />
+				{ this.emailDisableExplanation() }
 
-				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'username' ) }>
-					<FormLabel htmlFor="username">{ this.props.translate( 'Choose a username' ) }</FormLabel>
-					<FormTextInput
-						autoCapitalize="off"
-						autoCorrect="off"
-						className="signup-form__input"
-						disabled={ this.state.submitting || this.props.disabled }
-						id="username"
-						name="username"
-						value={ formState.getFieldValue( this.state.form, 'username' ) }
-						isError={ formState.isFieldInvalid( this.state.form, 'username' ) }
-						isValid={ formState.isFieldValid( this.state.form, 'username' ) }
-						onBlur={ this.handleBlur }
-						onChange={ this.handleChangeEvent } />
-				</ValidationFieldset>
+				{ formState.isFieldInvalid( this.state.form, 'email' ) && (
+					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'email' ) } />
+				) }
 
-				<ValidationFieldset errorMessages={ formState.getFieldErrorMessages( this.state.form, 'password' ) }>
-					<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
-					<FormPasswordInput
-						className="signup-form__input"
-						disabled={ this.state.submitting || this.props.disabled }
-						id="password"
-						name="password"
-						value={ formState.getFieldValue( this.state.form, 'password' ) }
-						isError={ formState.isFieldInvalid( this.state.form, 'password' ) }
-						isValid={ formState.isFieldValid( this.state.form, 'password' ) }
-						onBlur={ this.handleBlur }
-						onChange={ this.handleChangeEvent }
-						submitting={ this.state.submitting || this.props.submitting } />
-					<FormSettingExplanation>
-						{ this.props.translate( 'Your password must be at least six characters long.' ) }
-					</FormSettingExplanation>
-				</ValidationFieldset>
+				<FormLabel htmlFor="username">{ this.props.translate( 'Choose a username' ) }</FormLabel>
+				<FormTextInput
+					autoCapitalize="off"
+					autoCorrect="off"
+					className="signup-form__input"
+					disabled={ this.state.submitting || this.props.disabled }
+					id="username"
+					name="username"
+					value={ formState.getFieldValue( this.state.form, 'username' ) }
+					isError={ formState.isFieldInvalid( this.state.form, 'username' ) }
+					isValid={ formState.isFieldValid( this.state.form, 'username' ) }
+					onBlur={ this.handleBlur }
+					onChange={ this.handleChangeEvent } />
+
+				{ formState.isFieldInvalid( this.state.form, 'username' ) && (
+					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'username' ) } />
+				) }
+
+				<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
+				<FormPasswordInput
+					className="signup-form__input"
+					disabled={ this.state.submitting || this.props.disabled }
+					id="password"
+					name="password"
+					value={ formState.getFieldValue( this.state.form, 'password' ) }
+					isError={ formState.isFieldInvalid( this.state.form, 'password' ) }
+					isValid={ formState.isFieldValid( this.state.form, 'password' ) }
+					onBlur={ this.handleBlur }
+					onChange={ this.handleChangeEvent }
+					submitting={ this.state.submitting || this.props.submitting } />
+				<FormSettingExplanation>
+					{ this.props.translate( 'Your password must be at least six characters long.' ) }
+				</FormSettingExplanation>
+
+				{ formState.isFieldInvalid( this.state.form, 'password' ) && (
+					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'password' ) } />
+				) }
 			</div>
 		);
 	}

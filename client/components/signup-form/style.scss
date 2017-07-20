@@ -1,6 +1,11 @@
 /*rtl:ignore*/
-.signup-form__input {
-	direction: ltr;
+.signup-form .signup-form__input {
+	margin-bottom: 20px;
+	transition: none;
+
+	&.is-error {
+		margin-bottom: 0;
+	}
 }
 
 .signup-form .logged-out-form__footer {
