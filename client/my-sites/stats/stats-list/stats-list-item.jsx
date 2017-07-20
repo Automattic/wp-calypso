@@ -64,6 +64,11 @@ module.exports = React.createClass( {
 		}
 	},
 
+	preventDefaultOnClick: function( event ) {
+		event.stopPropagation();
+		event.preventDefault();
+	},
+
 	onClick: function( event ) {
 		var gaEvent,
 			moduleName = titlecase( this.props.moduleName );
@@ -243,7 +248,7 @@ module.exports = React.createClass( {
 
 	renderExternalLink: function( rightClassOptions, mobileActionToggle, actions, toggleIcon ) {
 		return (
-			<a href={ this.props.data.link }>
+			<a className="stats-list__anchor" onClick={ this.preventDefaultActionClick } href={ this.props.data.link }>
 				<span className='module-content-list-item-wrapper' onClick={ this.onClick } tabIndex="0">
 					<span className={ classNames( rightClassOptions ) }>
 						{ mobileActionToggle }
