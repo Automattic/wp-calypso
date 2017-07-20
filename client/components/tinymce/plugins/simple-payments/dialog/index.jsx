@@ -30,6 +30,7 @@ import {
 	productToCustomPost,
 } from 'state/data-layer/wpcom/sites/simple-payments/index.js';
 import { receiveUpdateProduct } from 'state/simple-payments/product-list/actions';
+import MediaActions from 'lib/media/actions';
 
 class SimplePaymentsDialog extends Component {
 	static propTypes = {
@@ -106,6 +107,26 @@ class SimplePaymentsDialog extends Component {
 
 		onComplete( null, formErrors );
 	}
+
+	handleUploadImage = ( error, imageBlob, imageEditorProps ) => {
+		const { siteId } = this.props;
+
+		const { fileName, mimeType } = imageEditorProps;
+
+		const item = {
+			fileName: fileName,
+			fileContents: imageBlob,
+			mimeType: mimeType,
+		};
+
+		MediaActions.add( siteId, item );
+	};
+
+	handleUploadImageError = ( errorConstant, errorMessage ) => {
+		this.setState( {
+			errorMessage,
+		} );
+	};
 
 	handleSelectedChange = selectedPaymentId => {
 		this.setState( { selectedPaymentId } );
@@ -226,6 +247,8 @@ class SimplePaymentsDialog extends Component {
 							fieldValues={ this.getFormValues() }
 							isFieldInvalid={ this.isFormFieldInvalid }
 							onFieldChange={ this.handleFormFieldChange }
+							onImageEditorDone={ this.handleUploadImage }
+							onUploadImageError={ this.handleUploadImageError }
 						/>
 					: <ProductList
 							paymentButtons={ paymentButtons }

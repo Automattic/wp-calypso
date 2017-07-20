@@ -5,7 +5,6 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -18,11 +17,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import FormToggle from 'components/forms/form-toggle';
 import FormInputValidation from 'components/forms/form-input-validation';
-
-const ProductImage = () =>
-	<div className="editor-simple-payments-modal__product-image">
-		<Gridicon icon="add-image" size={ 36 } />
-	</div>;
+import UploadImage from 'blocks/upload-image';
 
 class ProductForm extends Component {
 	handleFieldChange = ( { currentTarget: { name, value } } ) => {
@@ -34,7 +29,14 @@ class ProductForm extends Component {
 	};
 
 	render() {
-		const { translate, currencyDefaults, fieldValues, isFieldInvalid } = this.props;
+		const {
+			translate,
+			currencyDefaults,
+			fieldValues,
+			isFieldInvalid,
+			onImageEditorDone,
+			onUploadImageError,
+		} = this.props;
 
 		const isTitleInvalid = isFieldInvalid( 'title' );
 		const isPriceInvalid = isFieldInvalid( 'price' );
@@ -42,7 +44,7 @@ class ProductForm extends Component {
 
 		return (
 			<form className="editor-simple-payments-modal__form">
-				<ProductImage />
+				<UploadImage onImageEditorDone={ onImageEditorDone } onError={ onUploadImageError } />
 				<div className="editor-simple-payments-modal__form-fields">
 					<FormFieldset>
 						<FormLabel htmlFor="title">

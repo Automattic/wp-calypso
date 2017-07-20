@@ -12,7 +12,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { ALLOWED_FILE_EXTENSIONS } from './constants';
+import { ALLOWED_FILE_EXTENSIONS, ERROR_STRINGS, ERROR_UNSUPPORTED_FILE } from './constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import Dialog from 'components/dialog';
 import FilePicker from 'components/file-picker';
@@ -26,6 +26,7 @@ class UploadImage extends Component {
 		isEditingImage: false,
 		uploadedImage: null,
 		editedImage: null,
+		uploadedImageName: '',
 	};
 
 	static propTypes = {
@@ -40,6 +41,7 @@ class UploadImage extends Component {
 		doneButtonText: PropTypes.string,
 		addAnImage: PropTypes.string,
 		dragUploadText: PropTypes.string,
+		onError: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -48,13 +50,19 @@ class UploadImage extends Component {
 		},
 		backgroundContent: null,
 		onImageEditorDone: noop,
+		onError: noop,
 		isUploading: false,
 	};
 
 	receiveFiles = files => {
-		const extension = path.extname( files[ 0 ].name ).toLowerCase().substring( 1 );
+		const fileName = files[ 0 ].name;
+		const extension = path.extname( fileName ).toLowerCase().substring( 1 );
+
+		const { onError } = this.props;
 
 		if ( ALLOWED_FILE_EXTENSIONS.indexOf( extension ) === -1 ) {
+			onError( ERROR_UNSUPPORTED_FILE, ERROR_STRINGS[ ERROR_UNSUPPORTED_FILE ]() );
+
 			return;
 		}
 
@@ -63,19 +71,16 @@ class UploadImage extends Component {
 		this.setState( {
 			isEditingImage: true,
 			uploadedImage: imageObjectUrl,
+			uploadedImageName: fileName,
 		} );
 	};
 
-	onImageEditorDone = ( error, imageBlob ) => {
-		this.hideImageEditor();
-
-		if ( error ) {
-			return;
-		}
-
+	onImageEditorDone = ( error, imageBlob, imageEditorProps ) => {
 		this.setState( { editedImage: URL.createObjectURL( imageBlob ) } );
 
-		this.props.onImageEditorDone( imageBlob );
+		this.props.onImageEditorDone( error, imageBlob, imageEditorProps );
+
+		this.hideImageEditor();
 	};
 
 	hideImageEditor = () => {
@@ -88,11 +93,12 @@ class UploadImage extends Component {
 		this.setState( {
 			isEditingImage: false,
 			uploadedImage: false,
+			uploadedImageName: '',
 		} );
 	};
 
 	renderImageEditor() {
-		const { isEditingImage, uploadedImage } = this.state;
+		const { isEditingImage, uploadedImage, uploadedImageName } = this.state;
 
 		if ( ! isEditingImage ) {
 			return null;
@@ -106,7 +112,10 @@ class UploadImage extends Component {
 			<Dialog additionalClassNames={ classes } isVisible={ true }>
 				<ImageEditor
 					{ ...imageEditorProps }
-					media={ { src: uploadedImage } }
+					media={ {
+						src: uploadedImage,
+						file: uploadedImageName,
+					} }
 					onDone={ this.onImageEditorDone }
 					onCancel={ this.hideImageEditor }
 					doneButtonText={ doneButtonText ? doneButtonText : 'Done' }
