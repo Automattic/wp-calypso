@@ -13,6 +13,20 @@ import Button from 'components/button';
 export class FeedbackRequestForm extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
+		requestFeedback: PropTypes.func.isRequired,
+	};
+
+	state = { inputValue: '' };
+
+	updateInputValue = event =>
+		this.setState( {
+			inputValue: event.target.value,
+		} );
+
+	onSubmit = event => {
+		event.preventDefault();
+		this.props.requestFeedback( this.state.inputValue );
+		this.setState( { inputValue: '' } );
 	};
 
 	render() {
@@ -23,18 +37,18 @@ export class FeedbackRequestForm extends PureComponent {
 		);
 
 		return (
-			<div className="editor-sidebar__feedback-request-form">
+			<form className="editor-sidebar__feedback-request-form" onSubmit={ this.onSubmit }>
 				<p>
 					{ description }
 				</p>
 				<label>
 					{ translate( "Friend's Email" ) }
-					<FormTextInput />
+					<FormTextInput onChange={ this.updateInputValue } value={ this.state.inputValue } />
 				</label>
-				<Button className="editor-sidebar__feedback-request-button">
+				<Button type="submit" className="editor-sidebar__feedback-request-button">
 					{ translate( 'Send to a Friend' ) }
 				</Button>
-			</div>
+			</form>
 		);
 	}
 }

@@ -14,21 +14,6 @@ import EditorFeedbackInvitation from 'post-editor/editor-feedback-invitation';
 import EditorDeletePost from 'post-editor/editor-delete-post';
 import FeedbackView from './feedback-view';
 
-const mockFeedbackShares = [
-	{
-		emailAddress: 'person1@example.com',
-		comments: [
-			'Comment one',
-			'Comment two',
-			'Three-score and two comments ago... there was nothing. The post was formless and void.',
-		],
-	},
-	{
-		emailAddress: 'person2@example.com',
-		comments: [],
-	},
-];
-
 export default class EditorSidebar extends Component {
 	static propTypes = {
 		savedPost: PropTypes.object,
@@ -67,7 +52,7 @@ export default class EditorSidebar extends Component {
 		return (
 			<div className="editor-sidebar">
 				{ this.state.showFeedback
-					? <FeedbackView close={ this.closeFeedbackPane } shares={ mockFeedbackShares } />
+					? <FeedbackView close={ this.closeFeedbackPane } />
 					: <div className="editor-sidebar__view">
 							<EditorSidebarHeader toggleSidebar={ toggleSidebar } />
 							<EditorActionBar

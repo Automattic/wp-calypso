@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -12,13 +14,20 @@ import FeedbackSidebarHeader from './feedback-header';
 import FeedbackRequestForm from './feedback-request-form';
 import FeedbackShare from './feedback-share';
 import SidebarFooter from 'layout/sidebar/footer';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getDraftFeedbackShares } from 'state/selectors';
+import { addDraftShare } from 'state/draft-feedback/actions';
 
 // TODO: Find a clearer word than "share" for the owner of feedback and use it in subcomponent and CSS classes
-export class FeedbackView extends PureComponent {
+export class FeedbackView extends Component {
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
 		close: PropTypes.func.isRequired,
+		siteId: PropTypes.number.isRequired,
+		postId: PropTypes.number.isRequired,
 		shares: PropTypes.array.isRequired,
+		addDraftShare: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -34,6 +43,11 @@ export class FeedbackView extends PureComponent {
 		} );
 	};
 
+	onAddDraftShare = emailAddress => {
+		const { postId, siteId } = this.props;
+		this.props.addDraftShare( siteId, postId, emailAddress );
+	};
+
 	render() {
 		const { shares, translate } = this.props;
 		const allSharesClosed = this.state.totalOpenedShares === 0;
@@ -44,7 +58,7 @@ export class FeedbackView extends PureComponent {
 				{ allSharesClosed &&
 					<div>
 						<div className="editor-sidebar__feedback-header-image-box" />
-						<FeedbackRequestForm />
+						<FeedbackRequestForm requestFeedback={ this.onAddDraftShare } />
 					</div> }
 				{ shares.length > 0 &&
 					<div>
@@ -70,4 +84,18 @@ export class FeedbackView extends PureComponent {
 	}
 }
 
-export default localize( FeedbackView );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const shares = getDraftFeedbackShares( state, siteId, postId );
+
+		return { siteId, postId, shares };
+	},
+	dispatch => bindActionCreators(
+		{
+			addDraftShare,
+		},
+		dispatch,
+	),
+)( localize( FeedbackView ) );
