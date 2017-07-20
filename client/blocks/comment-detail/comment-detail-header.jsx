@@ -19,11 +19,13 @@ import { stripHTML, decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
 
 export const CommentDetailHeader = ( {
+	siteId,
+	postId,
+	commentId,
 	authorAvatarUrl,
 	authorDisplayName,
 	authorUrl,
 	commentContent,
-	commentIsLiked,
 	commentIsSelected,
 	commentStatus,
 	deleteCommentPermanently,
@@ -51,8 +53,10 @@ export const CommentDetailHeader = ( {
 				</Button>
 
 				<CommentDetailActions
+					siteId={ siteId }
+					postId={ postId }
+					commentId={ commentId }
 					edit={ edit }
-					commentIsLiked={ commentIsLiked }
 					commentStatus={ commentStatus }
 					deleteCommentPermanently={ deleteCommentPermanently }
 					toggleApprove={ toggleApprove }

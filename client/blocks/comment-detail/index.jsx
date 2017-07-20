@@ -159,17 +159,18 @@ export class CommentDetail extends Component {
 		return (
 			<Card className={ classes }>
 				<CommentDetailHeader
+					siteId={ siteId }
+					postId={ postId }
+					commentId={ commentId }
 					authorAvatarUrl={ authorAvatarUrl }
 					authorDisplayName={ authorDisplayName }
 					authorUrl={ authorUrl }
 					commentContent={ commentContent }
-					commentIsLiked={ commentIsLiked }
 					commentIsSelected={ commentIsSelected }
 					commentStatus={ commentStatus }
 					deleteCommentPermanently={ this.deleteCommentPermanently }
 					isBulkEdit={ isBulkEdit }
 					isExpanded={ isExpanded }
-					postId={ postId }
 					postTitle={ postTitle }
 					toggleApprove={ this.toggleApprove }
 					toggleExpanded={ this.toggleExpanded }
