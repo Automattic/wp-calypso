@@ -42,7 +42,9 @@ class Pages extends Component {
 
 		return (
 			<div>
-				<QueryPosts siteId={ siteId } query={ { type: 'page' } } />
+				{ siteId &&
+					<QueryPosts siteId={ siteId } query={ { type: 'page' } } />
+				}
 
 				<form>
 					<FormSection name="pages">
@@ -109,7 +111,7 @@ const connectComponent = connect(
 
 		return {
 			isRequesting: isRequestingSitePostsForQuery( state, siteId, { type: 'page' } ),
-			pages: getSitePosts( state, siteId ),
+			pages: ( siteId && getSitePosts( state, siteId ) ) || [],
 			siteId,
 		};
 	}
