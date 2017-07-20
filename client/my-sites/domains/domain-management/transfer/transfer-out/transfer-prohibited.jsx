@@ -9,9 +9,9 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import support from 'lib/url/support';
 
-const TransferProhibited = () => (
+const TransferProhibited = ( { translate } ) => (
 	<div>
-		<SectionHeader label={ this.props.translate( 'Transfer Domain' ) } />
+		<SectionHeader label={ translate( 'Transfer Domain' ) } />
 		<Card className="transfer-card">
 			<p>
 				{ this.props.translate(
