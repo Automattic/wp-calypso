@@ -224,21 +224,16 @@ export class CommentList extends Component {
 			return;
 		}
 
-		const options = {
+		const noticeOptions = {
 			button: translate( 'Undo' ),
 			duration: 5000,
 			id: `comment-notice-${ commentId }`,
 			isPersistent: true,
-			onClick: () => this.setCommentStatus(
-				commentId,
-				postId,
-				previousStatus,
-				{
-					isUndo: true,
-					persist: options.persist,
-					showNotice: false,
-				}
-			),
+			onClick: () => this.setCommentStatus( commentId, postId, previousStatus, {
+				isUndo: true,
+				persist: options.persist,
+				showNotice: false,
+			} ),
 		};
 
 		this.props.createNotice( type, message, noticeOptions );
