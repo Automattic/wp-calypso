@@ -157,7 +157,11 @@ export class CommentList extends Component {
 		}
 
 		if ( persist ) {
-			this.updateChangedComments( comment, status, isUndo );
+			this.updateChangedComments( {
+				...comment,
+				i_like: 'approved' !== status ? false : comment.i_like,
+				status,
+			}, isUndo );
 		} else {
 			this.removeFromChangedComments( commentId );
 		}
@@ -244,11 +248,16 @@ export class CommentList extends Component {
 
 	toggleCommentLike = ( commentId, postId ) => {
 		// TODO: Replace with Redux getComment()
-		const comment = find( this.props.comments, [ 'ID', commentId ] );
+		const comment = this.getComment( commentId );
 
 		if ( 'unapproved' === comment.status ) {
 			this.props.removeNotice( `comment-notice-${ commentId }` );
-			this.setCommentStatus( commentId, postId, 'approved', { persist: true, showNotice: true } );
+			this.setCommentStatus( commentId, postId, 'approved' );
+			this.updateChangedComments( {
+				...comment,
+				i_like: true,
+				status: 'approved',
+			} );
 		}
 
 		if ( comment.i_like ) {
@@ -286,11 +295,11 @@ export class CommentList extends Component {
 		this.props.undoBulkStatus( selectedComments );
 	}
 
-	updateChangedComments = ( comment, status, isUndo ) => isUndo
+	updateChangedComments = ( comment, isUndo ) => isUndo
 		? this.removeFromChangedComments( comment.ID )
 		: this.setState( { changedComments: [
 			...reject( this.state.changedComments, { ID: comment.ID } ),
-			{ ...comment, status },
+			comment,
 		] } );
 
 	render() {

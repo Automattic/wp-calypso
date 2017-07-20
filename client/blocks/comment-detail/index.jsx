@@ -86,7 +86,6 @@ export class CommentDetail extends Component {
 			persist: ( 'approved' === commentStatus || 'unapproved' === commentStatus ),
 			showNotice: true,
 		} );
-		this.setState( { isExpanded: false } );
 	}
 
 	toggleExpanded = () => {
