@@ -103,7 +103,7 @@ export class CommentList extends Component {
 
 	isCommentSelected = commentId => !! this.state.selectedComments[ commentId ];
 
-	isSelectedAll = () => this.props.comments.length === size( this.state.selectedComments );
+	isSelectedAll = () => this.getComments().length === size( this.state.selectedComments );
 
 	removeFromPersistedComments = commentId => this.setState( {
 		persistedComments: reject( this.state.persistedComments, { ID: commentId } ),
@@ -294,7 +294,7 @@ export class CommentList extends Component {
 		this.setState( {
 			selectedComments: this.isSelectedAll()
 				? {}
-				: keyBy( map( this.props.comments, ( { ID, i_like, status } ) => ( { ID, i_like, status } ) ), 'ID' ),
+				: keyBy( map( this.getComments(), ( { ID, i_like, status } ) => ( { ID, i_like, status } ) ), 'ID' ),
 		} );
 	}
 
