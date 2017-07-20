@@ -21,6 +21,8 @@ import SectionHeader from 'components/section-header';
 import { getSitePosts, isRequestingSitePostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+const query = { type: 'page' };
+
 class Pages extends Component {
 	static propTypes = {
 		isDisabled: PropTypes.bool,
@@ -43,7 +45,7 @@ class Pages extends Component {
 		return (
 			<div>
 				{ siteId &&
-					<QueryPosts siteId={ siteId } query={ { type: 'page' } } />
+					<QueryPosts siteId={ siteId } query={ query } />
 				}
 
 				<form>
@@ -110,7 +112,7 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			isRequesting: isRequestingSitePostsForQuery( state, siteId, { type: 'page' } ),
+			isRequesting: isRequestingSitePostsForQuery( state, siteId, query ),
 			pages: ( siteId && getSitePosts( state, siteId ) ) || [],
 			siteId,
 		};
