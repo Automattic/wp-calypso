@@ -15,6 +15,9 @@ describe( '#rawHttp', () => {
 		const headers = [
 			[ 'Content-Type', 'application/json' ]
 		];
+		const queryParams = [
+			[ 'hello', 'world' ]
+		];
 		const body = {
 			hello: 'world'
 		};
@@ -26,6 +29,7 @@ describe( '#rawHttp', () => {
 			url,
 			method,
 			headers,
+			queryParams,
 			body,
 			withCredentials,
 			onSuccess,

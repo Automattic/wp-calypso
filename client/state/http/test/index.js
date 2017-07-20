@@ -45,6 +45,7 @@ class SuperAgentMock {
 			url,
 			withCredentials: sinon.spy(),
 			set: sinon.spy(),
+			query: sinon.spy(),
 			accept: sinon.spy(),
 			send: sinon.spy(),
 			then: ( successHandler, failureHandler ) =>
@@ -170,5 +171,49 @@ describe( '#httpHandler', () => {
 		headers.forEach( ( [ key, value ] ) =>
 			expect( superagentMock.getLastRequest().set ).to.have.been.calledWith( key, value )
 		);
+	} );
+
+	it( 'should set appropriate query string', () => {
+		const queryParams = [
+			[ 'statement', 'hello world' ],
+			[ 'regex', '/.$/' ],
+		];
+
+		const queryString = 'statement=hello%20world&regex=%2F.%24%2F';
+
+		superagentMock.setResponse( true, {} );
+
+		httpHandler(
+			{
+				dispatch
+			},
+			{
+				...getMe,
+				queryParams
+			},
+			null
+		);
+
+		expect( superagentMock.getLastRequest().query ).to.have.been.calledWith( queryString );
+	} );
+
+	it( 'should not set empty query string', () => {
+		const queryParams = [
+		];
+
+		superagentMock.setResponse( true, {} );
+
+		httpHandler(
+			{
+				dispatch
+			},
+			{
+				...getMe,
+				queryParams
+			},
+			null
+		);
+
+		expect( superagentMock.getLastRequest().query ).to.not.have.been.called;
 	} );
 } );

@@ -22,6 +22,7 @@ const isAllHeadersValid = headers =>
  * {String} url the url to request
  * {String} method the method we should use in the request: GET, POST etc.
  * {Array<Array<String>>} headers array of [ 'key', 'value' ] pairs for the request headers
+ * {Array<Array<String>>} queryParams array of [ 'key', 'value' ] pairs for the queryParams headers
  * {Object} body data send as body
  * {Boolean} withCredentials allows the remote server to view & set cookies (for it's domain)
  * {Action} onSuccess action to dispatch on success with data meta
@@ -35,6 +36,7 @@ export const httpHandler = ( { dispatch }, action ) => {
 		url,
 		method,
 		headers = [],
+		queryParams = [],
 		body,
 		withCredentials,
 		onSuccess,
@@ -51,6 +53,14 @@ export const httpHandler = ( { dispatch }, action ) => {
 
 	if ( withCredentials ) {
 		request.withCredentials();
+	}
+
+	const queryString = queryParams.map(
+		( [ queryKey, queryValue ] ) => queryKey + '=' + encodeURIComponent( queryValue )
+	).join( '&' );
+
+	if ( queryString.length > 0 ) {
+		request.query( queryString );
 	}
 
 	headers.forEach( ( [ headerKey, headerValue ] ) => request.set( headerKey, headerValue ) );
