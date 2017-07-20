@@ -55,6 +55,10 @@ class Post extends Component {
 		recordCommentIconClick: PropTypes.func.isRequired,
 		recordPostTitleClick: PropTypes.func.isRequired,
 		recordPostExcerptClick: PropTypes.func.isRequired,
+		recordPublishPost: PropTypes.func.isRequired,
+		recordRestorePost: PropTypes.func.isRequired,
+		recordDeletePost: PropTypes.func.isRequired,
+		recordTrashPost: PropTypes.func.isRequired,
 
 		// connected via updatePostStatus
 		buildUpdateTemplate: PropTypes.func.isRequired,
@@ -95,22 +99,22 @@ class Post extends Component {
 
 	publishPost = () => {
 		this.props.updatePostStatus( 'publish' );
-		recordEvent( 'Clicked Publish Post' );
+		this.props.recordPublishPost();
 	}
 
 	restorePost = () => {
 		this.props.updatePostStatus( 'restore' );
-		recordEvent( 'Clicked Restore Post' );
+		this.props.recordRestorePost();
 	}
 
 	deletePost = () => {
 		this.props.updatePostStatus( 'delete' );
-		recordEvent( 'Clicked Delete Post' );
+		this.props.recordDeletePost();
 	}
 
 	trashPost = () => {
 		this.props.updatePostStatus( 'trash' );
-		recordEvent( 'Clicked Trash Post' );
+		this.props.recordTrashPost();
 	}
 
 	getPostClass() {
@@ -321,6 +325,10 @@ const analyticsEvents = [
 	[ 'recordCommentIconClick', 'Clicked Post Comment Icon/Number' ],
 	[ 'recordPostTitleClick', 'Clicked Post Title' ],
 	[ 'recordPostExcerptClick', 'Clicked Post Excerpt' ],
+	[ 'recordPublishPost', 'Clicked Publish Post' ],
+	[ 'recordRestorePost', 'Clicked Restore Post' ],
+	[ 'recordDeletePost', 'Clicked Delete Post' ],
+	[ 'recordTrashPost', 'Clicked Trash Post' ],
 ];
 
 const mapDispatch = {
