@@ -4,13 +4,13 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
+import { goBackToWordPressDotCom } from 'state/login/magic-login/actions';
 import { recordPageView } from 'state/analytics/actions';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
@@ -45,10 +45,8 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 				/>
 				<EmptyContent
 					action={ translate( 'Back to WordPress.com' ) }
-					actionCallback={ function() {
-						page( '/' );
-					} }
-					actionURL={ '/' }
+					actionCallback={ goBackToWordPressDotCom }
+					actionURL="https://wordpress.com"
 					className="magic-login__check-email"
 					illustration={ '/calypso/images/drake/drake-all-done.svg' }
 					illustrationWidth={ 500 }
