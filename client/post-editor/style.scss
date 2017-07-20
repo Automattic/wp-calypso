@@ -217,7 +217,7 @@
 	}
 }
 
-.post-editor .drafts__list + .infinite-scroll-end::after {
+.post-editor .drafts__list + .list-end::after {
 	background-color: lighten( $gray, 30% );
 }
 

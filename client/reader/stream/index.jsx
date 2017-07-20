@@ -25,6 +25,7 @@ import {
 import LikeStore from 'lib/like-store/like-store';
 import LikeStoreActions from 'lib/like-store/actions';
 import LikeHelper from 'reader/like-helper';
+import ListEnd from 'components/list-end';
 import InfiniteList from 'components/infinite-list';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import PostPlaceholder from './post-placeholder';
@@ -484,7 +485,7 @@ class ReaderStream extends React.Component {
 				{ this.props.children }
 				{ body }
 				{ showingStream && store.isLastPage() && this.state.posts.length
-					? <div className="infinite-scroll-end" />
+					? <ListEnd />
 					: null }
 			</TopLevel>
 		);
