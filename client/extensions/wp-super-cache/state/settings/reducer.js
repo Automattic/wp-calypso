@@ -88,7 +88,7 @@ export const restoring = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {Object} Updated settings
  */
-const items = createReducer( {}, {
+export const items = createReducer( {}, {
 	[ WP_SUPER_CACHE_RECEIVE_SETTINGS ]: ( state, { siteId, settings } ) => ( { ...state, [ siteId ]: settings } ),
 	[ WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS ]: ( state, { siteId, preloading } ) => ( {
 		...state,
