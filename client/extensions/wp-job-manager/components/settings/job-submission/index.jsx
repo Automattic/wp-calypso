@@ -68,15 +68,6 @@ class JobSubmission extends Component {
 
 								<ReduxFormToggle
 									disabled={ isDisabled }
-									name="generateUsername"
-									text="Generate usernames from email addresses" />
-								<FormSettingExplanation isIndented>
-									{ translate( 'Automatically generates usernames for new accounts from the registrant\'s ' +
-										'email address. If this is not enabled, a "username" field will display instead.' ) }
-								</FormSettingExplanation>
-
-								<ReduxFormToggle
-									disabled={ isDisabled }
 									name="enableRegistration"
 									text={ translate( 'Enable account creation during submission' ) } />
 								<FormSettingExplanation isIndented>
@@ -84,15 +75,28 @@ class JobSubmission extends Component {
 										'non-registered users to create an account and submit a job listing simultaneously.' ) }
 								</FormSettingExplanation>
 
-								<ReduxFormToggle
-										disabled={ isDisabled }
-										name="emailPassword"
-										text="Email new users a link to set a password" />
-									<FormSettingExplanation isIndented>
-										{ translate( 'Sends an email to the user with their username and a link to set ' +
-											'their password. If this is not enabled, a "password" field will display instead, ' +
-											'and their email address won\'t be verified.' ) }
-									</FormSettingExplanation>
+								{ enableRegistration &&
+									<div>
+										<ReduxFormToggle
+											disabled={ isDisabled }
+											name="generateUsername"
+											text="Generate usernames from email addresses" />
+										<FormSettingExplanation isIndented>
+											{ translate( 'Automatically generates usernames for new accounts from the registrant\'s ' +
+												'email address. If this is not enabled, a "username" field will display instead.' ) }
+										</FormSettingExplanation>
+
+										<ReduxFormToggle
+											disabled={ isDisabled }
+											name="emailPassword"
+											text="Email new users a link to set a password" />
+										<FormSettingExplanation isIndented>
+											{ translate( 'Sends an email to the user with their username and a link to set ' +
+												'their password. If this is not enabled, a "password" field will display instead, ' +
+												'and their email address won\'t be verified.' ) }
+										</FormSettingExplanation>
+									</div>
+								}
 							</FormFieldset>
 
 							{ enableRegistration &&
