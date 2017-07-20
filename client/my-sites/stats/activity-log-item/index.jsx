@@ -21,6 +21,7 @@ import EllipsisMenu from 'components/ellipsis-menu';
 import FoldableCard from 'components/foldable-card';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
+import Post from 'my-sites/posts/post';
 import QueryActivityObject from './query-activity-object';
 import { getSitePost } from 'state/posts/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -192,15 +193,28 @@ class ActivityLogItem extends Component {
 	// FIXME: Just for demonstration purposes
 	renderDescription() {
 		const {
+			applySiteOffset,
 			log,
 			moment,
+			postObject,
 			translate,
-			applySiteOffset,
 		} = this.props;
 		const {
 			name,
 			ts_utc,
 		} = log;
+
+		if (
+			log.group === 'post' &&
+			'post' === get( postObject, 'type' )
+		) {
+			return (
+				<div>
+					<Post post={ postObject } />
+					<div className="activity-log-item__id">ID { ts_utc }</div>
+				</div>
+			);
+		}
 
 		return (
 			<div>
@@ -357,10 +371,8 @@ class ActivityLogItem extends Component {
 }
 
 export default connect(
-	( state, { log, siteId } ) => {
-		return {
-			postObject: getSitePost( state, siteId, get( log, [ 'object', 'post', 'id' ], null ) )
-		};
-	},
+	( state, { log, siteId } ) => ( {
+		postObject: getSitePost( state, siteId, get( log, [ 'object', 'post', 'id' ], null ) ),
+	} ),
 	{ recordTracksEvent: recordTracksEventAction }
 )( localize( ActivityLogItem ) );
