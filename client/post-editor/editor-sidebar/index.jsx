@@ -14,10 +14,9 @@ import EditorFeedbackInvitation from 'post-editor/editor-feedback-invitation';
 import EditorDeletePost from 'post-editor/editor-delete-post';
 import FeedbackView from './feedback-view';
 
-const mockSharedLinks = [
+const mockFeedbackShares = [
 	{
-		label: 'email1@share.test',
-		link: 'http://share-link-1',
+		emailAddress: 'person1@example.com',
 		comments: [
 			'Comment one',
 			'Comment two',
@@ -25,8 +24,7 @@ const mockSharedLinks = [
 		],
 	},
 	{
-		label: 'email2@share.test',
-		link: 'http://share-link-2',
+		emailAddress: 'person2@example.com',
 		comments: [],
 	},
 ];
@@ -69,7 +67,7 @@ export default class EditorSidebar extends Component {
 		return (
 			<div className="editor-sidebar">
 				{ this.state.showFeedback
-					? <FeedbackView close={ this.closeFeedbackPane } sharedLinks={ mockSharedLinks } />
+					? <FeedbackView close={ this.closeFeedbackPane } shares={ mockFeedbackShares } />
 					: <div className="editor-sidebar__view">
 							<EditorSidebarHeader toggleSidebar={ toggleSidebar } />
 							<EditorActionBar

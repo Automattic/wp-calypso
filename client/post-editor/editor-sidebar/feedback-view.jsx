@@ -10,7 +10,7 @@ import classNames from 'classnames';
  */
 import FeedbackSidebarHeader from './feedback-header';
 import FeedbackRequestForm from './feedback-request-form';
-import FeedbackList from './feedback-list';
+import FeedbackShare from './feedback-share';
 import SidebarFooter from 'layout/sidebar/footer';
 
 // TODO: Find a clearer word than "share" for the owner of feedback and use it in subcomponent and CSS classes
@@ -18,42 +18,51 @@ export class FeedbackView extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
 		close: PropTypes.func.isRequired,
-		sharedLinks: PropTypes.array.isRequired,
+		shares: PropTypes.array.isRequired,
 	};
 
-	state = { openFeedbackCount: 0 };
+	state = {
+		// The number of FeedbackShare components that are toggled open in the UI
+		totalOpenedShares: 0,
+	};
 
-	onToggleFeedback = isOpen => {
-		const { openFeedbackCount } = this.state;
+	onToggleShare = isToggledOpen => {
+		const { totalOpenedShares } = this.state;
 
 		this.setState( {
-			openFeedbackCount: openFeedbackCount + ( isOpen ? 1 : -1 ),
+			totalOpenedShares: isToggledOpen ? totalOpenedShares + 1 : totalOpenedShares - 1,
 		} );
 	};
 
 	render() {
-		const { sharedLinks, translate } = this.props;
-		const allFeedbackClosed = this.state.openFeedbackCount === 0;
+		const { shares, translate } = this.props;
+		const allSharesClosed = this.state.totalOpenedShares === 0;
 
 		return (
 			<div className="editor-sidebar__view">
 				<FeedbackSidebarHeader closeFeedback={ this.props.close } />
-				{ allFeedbackClosed &&
+				{ allSharesClosed &&
 					<div>
 						<div className="editor-sidebar__feedback-header-image-box" />
 						<FeedbackRequestForm />
 					</div> }
-				{ sharedLinks.length > 0 &&
+				{ shares.length > 0 &&
 					<div>
 						<div
 							className={ classNames( {
 								'editor-sidebar__feedback-list-label': true,
-								'is-hidden': ! allFeedbackClosed,
+								'is-hidden': ! allSharesClosed,
 							} ) }
 						>
 							{ translate( 'Friends' ) }
 						</div>
-						<FeedbackList sharedLinks={ sharedLinks } onToggleFeedback={ this.onToggleFeedback } />
+						{ shares.map( share =>
+							<FeedbackShare
+								key={ share.emailAddress }
+								share={ share }
+								onToggle={ this.onToggleShare }
+							/>,
+						) }
 					</div> }
 				<SidebarFooter />
 			</div>
