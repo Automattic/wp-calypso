@@ -145,7 +145,7 @@ export class UserStep extends Component {
 			return translate( 'Account created - Go to next step' );
 		}
 
-		return translate( 'Create My Account' );
+		return translate( 'Continue' );
 	}
 
 	renderSignupForm() {

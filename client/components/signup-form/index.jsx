@@ -391,7 +391,7 @@ class SignupForm extends Component {
 		return (
 			<p className="signup-form__terms-of-service-link">{
 				this.props.translate(
-					'By creating an account you agree to our {{a}}fascinating Terms of Service{{/a}}.',
+					'By creating an account via any of the options below, you agree to our {{a}}Terms of Service{{/a}}.',
 					{
 						components: {
 							a: <a
