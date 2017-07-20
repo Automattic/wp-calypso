@@ -167,6 +167,7 @@ export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) =
 						message: getSMSMessageFromResponse( response ),
 						status: 'is-success'
 					},
+					twoStepNonce: get( response, 'body.data.two_step_nonce_sms' )
 				} );
 			}
 		} ).catch( ( httpError ) => {
