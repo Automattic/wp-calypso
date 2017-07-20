@@ -62,16 +62,13 @@ class Unlocked extends React.Component {
 						break;
 				}
 				notices.error( errorMessage );
+
+				this.setState( { submitting: false } );
 			} else if ( hasPrivacyProtection ) {
 				notices.success( translate( 'We\'ve canceled your domain transfer. Your domain is now locked and ' +
 					'Privacy Protection has been enabled.' ) );
 			} else {
 				notices.success( translate( 'We\'ve canceled your domain transfer. Your domain is now locked back.' ) );
-			}
-
-			if ( this.isMounted() ) {
-				// component might be unmounted since it's state changed to locked
-				this.setState( { submitting: false } );
 			}
 		} );
 	};

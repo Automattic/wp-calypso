@@ -33,8 +33,7 @@ class Locked extends React.Component {
 
 		this.setState( { submitting: true } );
 		requestTransferCode( options, ( error ) => {
-			if ( this.isMounted() ) {
-				// Component might be unmounted since it's state has just changed to unlocked.
+			if ( error ) {
 				this.setState( { submitting: false } );
 			}
 			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
@@ -51,8 +50,7 @@ class Locked extends React.Component {
 
 		this.setState( { submitting: true } );
 		requestTransferCode( options, ( error ) => {
-			if ( this.isMounted() ) {
-				// Component might be unmounted since it's state has just changed to unlocked.
+			if ( error ) {
 				this.setState( { submitting: false } );
 			}
 			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
