@@ -83,6 +83,16 @@ class JobSubmission extends Component {
 									{ translate( 'Includes account creation on the listing submission form, to allow ' +
 										'non-registered users to create an account and submit a job listing simultaneously.' ) }
 								</FormSettingExplanation>
+
+								<ReduxFormToggle
+										disabled={ isDisabled }
+										name="emailPassword"
+										text="Email new users a link to set a password" />
+									<FormSettingExplanation isIndented>
+										{ translate( 'Sends an email to the user with their username and a link to set ' +
+											'their password. If this is not enabled, a "password" field will display instead, ' +
+											'and their email address won\'t be verified.' ) }
+									</FormSettingExplanation>
 							</FormFieldset>
 
 							{ enableRegistration &&
