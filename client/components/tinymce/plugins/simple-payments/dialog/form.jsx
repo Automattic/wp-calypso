@@ -34,9 +34,8 @@ class ProductForm extends Component {
 			currencyDefaults,
 			fieldValues,
 			isFieldInvalid,
-			onImageEditorDone,
 			onUploadImageError,
-			uploadedImage,
+			onUploadImageDone,
 		} = this.props;
 
 		const isTitleInvalid = isFieldInvalid( 'title' );
@@ -45,9 +44,7 @@ class ProductForm extends Component {
 
 		return (
 			<form className="editor-simple-payments-modal__form">
-				<UploadImage onImageEditorDone={ onImageEditorDone } onError={ onUploadImageError }>
-					{ uploadedImage && uploadedImage.URL && <img src={ uploadedImage.URL } /> }
-				</UploadImage>
+				<UploadImage onError={ onUploadImageError } onUploadImageDone={ onUploadImageDone } />
 				<div className="editor-simple-payments-modal__form-fields">
 					<FormFieldset>
 						<FormLabel htmlFor="title">

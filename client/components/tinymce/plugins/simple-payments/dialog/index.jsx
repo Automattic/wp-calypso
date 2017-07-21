@@ -7,7 +7,6 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import emailValidator from 'email-validator';
-import { uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,9 +30,6 @@ import {
 	productToCustomPost,
 } from 'state/data-layer/wpcom/sites/simple-payments/index.js';
 import { receiveUpdateProduct } from 'state/simple-payments/product-list/actions';
-import MediaActions from 'lib/media/actions';
-import MediaStore from 'lib/media/store';
-import MediaUtils from 'lib/media/utils';
 
 class SimplePaymentsDialog extends Component {
 	static propTypes = {
@@ -70,7 +66,7 @@ class SimplePaymentsDialog extends Component {
 			form: this.formStateController.getInitialState(),
 			isSubmitting: false,
 			errorMessage: null,
-			uploadedImage: null,
+			uploadedImageId: null,
 		};
 	}
 
@@ -112,36 +108,8 @@ class SimplePaymentsDialog extends Component {
 		onComplete( null, formErrors );
 	}
 
-	handleUploadImage = ( error, imageBlob, imageEditorProps ) => {
-		const { siteId } = this.props;
-
-		const { fileName, mimeType } = imageEditorProps;
-
-		const imageId = uniqueId( 'simple-payments-product-image-' );
-
-		const item = {
-			ID: imageId,
-			fileName: fileName,
-			fileContents: imageBlob,
-			mimeType: mimeType,
-		};
-
-		const handleUpload = () => {
-			const media = MediaStore.get( siteId, imageId );
-			const isUploadInProgress = media && MediaUtils.isItemBeingUploaded( media );
-
-			// File has finished uploading or failed.
-			if ( ! isUploadInProgress ) {
-				if ( media && media.URL ) {
-					this.setState( { uploadedImage: media } );
-
-					MediaStore.off( 'change', handleUpload );
-				}
-			}
-		};
-
-		MediaStore.on( 'change', handleUpload );
-		MediaActions.add( siteId, item );
+	handleUploadedImage = uploadedImage => {
+		this.setState( { uploadedImageId: uploadedImage.ID } );
 	};
 
 	handleUploadImageError = ( errorConstant, errorMessage ) => {
@@ -245,7 +213,7 @@ class SimplePaymentsDialog extends Component {
 			paymentButtons,
 			currencyCode,
 		} = this.props;
-		const { errorMessage, uploadedImage } = this.state;
+		const { errorMessage } = this.state;
 
 		const currencyDefaults = getCurrencyDefaults( currencyCode );
 
@@ -269,9 +237,8 @@ class SimplePaymentsDialog extends Component {
 							fieldValues={ this.getFormValues() }
 							isFieldInvalid={ this.isFormFieldInvalid }
 							onFieldChange={ this.handleFormFieldChange }
-							onImageEditorDone={ this.handleUploadImage }
+							onUploadImageDone={ this.handleUploadedImage }
 							onUploadImageError={ this.handleUploadImageError }
-							uploadedImage={ uploadedImage }
 						/>
 					: <ProductList
 							paymentButtons={ paymentButtons }

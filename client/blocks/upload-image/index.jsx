@@ -7,41 +7,49 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import path from 'path';
 import Gridicon from 'gridicons';
-import { noop } from 'lodash';
+import { noop, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { ALLOWED_FILE_EXTENSIONS, ERROR_STRINGS, ERROR_UNSUPPORTED_FILE } from './constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import Dialog from 'components/dialog';
 import FilePicker from 'components/file-picker';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
 import Spinner from 'components/spinner';
 import ImageEditor from 'blocks/image-editor';
 import DropZone from 'components/drop-zone';
+import MediaActions from 'lib/media/actions';
+import MediaStore from 'lib/media/store';
+import MediaUtils from 'lib/media/utils';
 
 class UploadImage extends Component {
 	state = {
+		isUploading: false,
 		isEditingImage: false,
-		uploadedImage: null,
+		selectedImage: null,
+		selectedImageName: '',
 		editedImage: null,
-		uploadedImageName: '',
+		uploadedImage: null,
+		uploadingImageTransientId: null,
 	};
 
 	static propTypes = {
-		isUploading: PropTypes.bool,
+		siteId: PropTypes.number,
 		// Additional props passed to ImageEditor component. See blocks/image-editor.
 		imageEditorProps: PropTypes.object,
-		onImageEditorDone: PropTypes.func,
 		additionalImageEditorClasses: PropTypes.string,
 		additionalClasses: PropTypes.string,
 		placeholderContent: PropTypes.element,
 		uploadingContent: PropTypes.element,
 		doneButtonText: PropTypes.string,
-		addAnImage: PropTypes.string,
+		addAnImageText: PropTypes.string,
 		dragUploadText: PropTypes.string,
 		onError: PropTypes.func,
+		onImageEditorDone: PropTypes.func,
+		onUploadImageDone: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -70,17 +78,71 @@ class UploadImage extends Component {
 
 		this.setState( {
 			isEditingImage: true,
-			uploadedImage: imageObjectUrl,
-			uploadedImageName: fileName,
+			selectedImage: imageObjectUrl,
+			selectedImageName: fileName,
 		} );
 	};
 
 	onImageEditorDone = ( error, imageBlob, imageEditorProps ) => {
-		this.setState( { editedImage: URL.createObjectURL( imageBlob ) } );
+		this.setState( {
+			editedImage: URL.createObjectURL( imageBlob ),
+			isUploading: true,
+		} );
+
+		MediaStore.off( 'change', this.handleMediaStoreChange );
 
 		this.props.onImageEditorDone( error, imageBlob, imageEditorProps );
 
+		this.uploadImage( imageBlob, imageEditorProps );
+
 		this.hideImageEditor();
+	};
+
+	uploadImage( imageBlob, imageEditorProps ) {
+		const { siteId } = this.props;
+
+		const { fileName, mimeType } = imageEditorProps;
+
+		const transientImageId = uniqueId( 'upload-image-' );
+
+		const item = {
+			ID: transientImageId,
+			fileName: fileName,
+			fileContents: imageBlob,
+			mimeType: mimeType,
+		};
+
+		MediaStore.on( 'change', this.handleMediaStoreChange );
+
+		// Upload the image.
+		MediaActions.add( siteId, item );
+
+		this.setState( { uploadingImageTransientId: transientImageId, isUploading: true } );
+	}
+
+	// Handle the uploading process.
+	handleMediaStoreChange = () => {
+		const { siteId, onUploadImageDone } = this.props;
+
+		const { uploadingImageTransientId } = this.state;
+
+		const uploadedImage = MediaStore.get( siteId, uploadingImageTransientId );
+		const isUploadInProgress = uploadedImage && MediaUtils.isItemBeingUploaded( uploadedImage );
+
+		// File has finished uploading or failed.
+		if ( ! isUploadInProgress ) {
+			this.setState( {
+				isUploading: false,
+			} );
+
+			if ( uploadedImage && uploadedImage.URL ) {
+				this.setState( { uploadedImage: uploadedImage, uploadingImageTransientId: null } );
+
+				MediaStore.off( 'change', this.handleMediaStoreChange );
+
+				onUploadImageDone( uploadedImage );
+			}
+		}
 	};
 
 	hideImageEditor = () => {
@@ -88,17 +150,17 @@ class UploadImage extends Component {
 
 		resetAllImageEditorStateAction();
 
-		URL.revokeObjectURL( this.state.uploadedImage );
+		URL.revokeObjectURL( this.state.selectedImage );
 
 		this.setState( {
 			isEditingImage: false,
-			uploadedImage: false,
-			uploadedImageName: '',
+			selectedImage: null,
+			selectedImageName: '',
 		} );
 	};
 
 	renderImageEditor() {
-		const { isEditingImage, uploadedImage, uploadedImageName } = this.state;
+		const { isEditingImage, selectedImage, selectedImageName } = this.state;
 
 		if ( ! isEditingImage ) {
 			return null;
@@ -113,8 +175,8 @@ class UploadImage extends Component {
 				<ImageEditor
 					{ ...imageEditorProps }
 					media={ {
-						src: uploadedImage,
-						file: uploadedImageName,
+						src: selectedImage,
+						file: selectedImageName,
 					} }
 					onDone={ this.onImageEditorDone }
 					onCancel={ this.hideImageEditor }
@@ -125,43 +187,46 @@ class UploadImage extends Component {
 	}
 
 	componentWillUnmount() {
-		URL.revokeObjectURL( this.state.editedImage );
+		const { selectedImage, editedImage } = this.state;
 
-		this.setState( {
-			editedImage: null,
-		} );
+		URL.revokeObjectURL( selectedImage );
+		URL.revokeObjectURL( editedImage );
+
+		MediaStore.off( 'change', this.handleMediaStoreChange );
 	}
 
 	render() {
-		const {
-			children,
-			isUploading,
-			translate,
-			additionalClasses,
-			addAnImage,
-			dragUploadText,
-		} = this.props;
+		const { translate, additionalClasses, addAnImageText, dragUploadText } = this.props;
 
-		let { placeholderContent, uploadingContent } = this.props;
+		const { editedImage, isUploading, uploadedImage } = this.state;
+
+		let { placeholderContent, uploadingContent, uploadingDoneContent } = this.props;
 
 		if ( typeof placeholderContent === 'undefined' ) {
 			placeholderContent = (
 				<div className="upload-image__placeholder">
 					<Gridicon icon="add-image" size={ 36 } />
 					<span>
-						{ addAnImage ? addAnImage : translate( 'Add an Image' ) }
+						{ addAnImageText ? addAnImageText : translate( 'Add an Image' ) }
 					</span>
 				</div>
 			);
 		}
 
 		if ( typeof uploadingContent === 'undefined' ) {
-			const { editedImage } = this.state;
-
 			uploadingContent = (
 				<div className="upload-image__uploading-container">
 					<img src={ editedImage } />
 					<Spinner className="upload-image__spinner" size={ 20 } />
+				</div>
+			);
+		}
+
+		if ( typeof uploadingDoneContent === 'undefined' && uploadedImage && uploadedImage.URL ) {
+			uploadingDoneContent = (
+				<div className="upload-image__uploading-done-container">
+					<img src={ uploadedImage.URL } />
+					Image is uploaded
 				</div>
 			);
 		}
@@ -181,10 +246,9 @@ class UploadImage extends Component {
 							onFilesDrop={ this.receiveFiles }
 						/>
 
-						{ children }
-
-						{ ! isUploading && placeholderContent }
+						{ ! isUploading && ! uploadedImage && placeholderContent }
 						{ isUploading && uploadingContent }
+						{ ! isUploading && uploadedImage && uploadingDoneContent }
 					</div>
 				</FilePicker>
 			</div>
@@ -192,6 +256,19 @@ class UploadImage extends Component {
 	}
 }
 
-export default connect( null, {
-	resetAllImageEditorState,
-} )( localize( UploadImage ) );
+export default connect(
+	( state, ownProps ) => {
+		let { siteId } = ownProps;
+
+		if ( ! siteId ) {
+			siteId = getSelectedSiteId( state );
+		}
+
+		return {
+			siteId,
+		};
+	},
+	{
+		resetAllImageEditorState,
+	},
+)( localize( UploadImage ) );

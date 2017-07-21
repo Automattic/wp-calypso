@@ -35,7 +35,7 @@ To see a more complex example, have a look at `blocks/upload-image/docs/example`
 - `additionalImageEditorClasses`: string of additional CSS class names to apply to the `ImageEditor` modal.
 - `additionalClasses`: string of additional CSS class names to apply to the `UploadImage` component.
 - `doneButtonText`: text on the "Done" button in Image Editor modal.
-- `addAnImage`: text on the placeholder when selecting an image.
+- `addAnImageText`: text on the placeholder when selecting an image.
 - `dragUploadText`: text which shows when dragging an image to upload.
 
 ## Additional notes
