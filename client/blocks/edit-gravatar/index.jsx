@@ -189,7 +189,8 @@ export class EditGravatar extends Component {
 			<div
 				className={
 					classnames( 'edit-gravatar',
-						{ 'is-unverified': ! user.email_verified }
+						{ 'is-unverified': ! user.email_verified },
+						{ 'is-uploading': isUploading }
 					)
 				}
 			>
