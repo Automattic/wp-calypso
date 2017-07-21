@@ -65,6 +65,12 @@ const getStorePages = () => {
 			path: '/store/orders/:site',
 		},
 		{
+			container: Orders,
+			configKey: 'woocommerce/extension-orders',
+			documentTitle: translate( 'Orders' ),
+			path: '/store/orders/:filter/:site',
+		},
+		{
 			container: Order,
 			configKey: 'woocommerce/extension-orders',
 			documentTitle: translate( 'Order Details' ),
