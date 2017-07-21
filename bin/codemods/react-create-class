@@ -1,0 +1,45 @@
+#!/usr/bin/env node
+
+/*
+	This codemod converts instances of React.createClass to use React.Component instead.
+
+	How to use:
+	./bin/codemods/react-create-class path-to-transform/
+*/
+
+/**
+ * External dependencies
+ */
+const path = require( 'path' );
+const child_process = require( 'child_process' );
+
+/**
+ * Internal dependencies
+ */
+const config = require( './src/config' );
+const helpers = require( './src/helpers' );
+
+const args = process.argv.slice( 2 );
+if ( args.length === 0 ) {
+	process.stdout.write( 'No files to transform\n' );
+	process.exit( 0 );
+}
+
+const binArgs = [
+	// jscodeshift options
+	'--transform=node_modules/react-codemod/transforms/class.js',
+	...config.jscodeshiftArgs,
+
+	// Recast options via react-codemod
+	`--printOptions=${ JSON.stringify( config.recastOptions ) }`,
+
+	// react-codemod options
+	'--pure-component=true',
+	'--mixin-module-name="react-pure-render/mixin"', // Your days are numbered, pure-render-mixin!
+
+	// Transform target
+	args[ 0 ],
+];
+const binPath = path.join( '.', 'node_modules', '.bin', 'jscodeshift' );
+const jscodeshift = child_process.spawn( binPath, binArgs );
+helpers.bindEvents( jscodeshift );
