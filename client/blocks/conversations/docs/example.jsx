@@ -7,23 +7,41 @@ import React from 'react';
  * Internal dependencies
  */
 import { ConversationCommentList } from 'blocks/conversations/list';
+import { posts } from 'blocks/reader-post-card/docs/fixtures';
 
 const ConversationCommentListExample = () => {
+	const post = posts[ 0 ];
 	const commentsTree = {
-		'123-12': [
-			{
+		1: {
+			data: {
 				ID: 1,
 				content: '<p>Good!</p>',
+				author: {
+					name: 'testuser1',
+				},
+				date: '2016-04-18T14:50:33+00:00',
 			},
-			{
+		},
+		2: {
+			data: {
 				ID: 2,
 				content: '<p>Good!</p>',
+				author: {
+					name: 'testuser1',
+				},
+				date: '2016-04-18T14:53:33+00:00',
 			},
-			{
+		},
+		3: {
+			data: {
 				ID: 3,
 				content: '<p>Good!</p>',
+				author: {
+					name: 'testuser1',
+				},
+				date: '2016-04-18T14:59:22+00:00',
 			},
-		],
+		},
 	};
 
 	return (
@@ -33,6 +51,7 @@ const ConversationCommentListExample = () => {
 				blogId={ 123 }
 				postId={ 12 }
 				commentIds={ [ 1, 2, 3 ] }
+				post={ post }
 			/>
 		</div>
 	);

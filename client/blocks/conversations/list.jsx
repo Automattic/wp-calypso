@@ -16,10 +16,11 @@ export class ConversationCommentList extends React.Component {
 		blogId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,
 		commentIds: PropTypes.array.isRequired,
+		post: PropTypes.object, // required by PostComment
 	};
 
 	render() {
-		const { commentIds, commentsTree } = this.props;
+		const { commentIds, commentsTree, post } = this.props;
 		if ( ! commentIds ) {
 			return null;
 		}
@@ -27,12 +28,16 @@ export class ConversationCommentList extends React.Component {
 		return (
 			<div className="conversations__comment-list">
 				{ map( commentIds, commentId =>
-					<PostComment
-						commentsTree={ commentsTree }
-						key={ commentId }
-						commentId={ commentId }
-						maxChildrenToShow={ 0 }
-					/>,
+					// <PostComment
+					// 	commentsTree={ commentsTree }
+					// 	key={ commentId }
+					// 	commentId={ commentId }
+					// 	maxChildrenToShow={ 0 }
+					// 	post={ post }
+					// />,
+					<div>
+						{ commentId }
+					</div>,
 				) }
 			</div>
 		);
