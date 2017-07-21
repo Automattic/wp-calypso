@@ -15,9 +15,9 @@ const ConversationCommentListExample = () => {
 		1: {
 			data: {
 				ID: 1,
-				content: '<p>Good!</p>',
+				content: '<p>Excellent!</p>',
 				author: {
-					name: 'testuser1',
+					name: 'Barnaby',
 				},
 				date: '2016-04-18T14:50:33+00:00',
 			},
@@ -25,9 +25,9 @@ const ConversationCommentListExample = () => {
 		2: {
 			data: {
 				ID: 2,
-				content: '<p>Good!</p>',
+				content: '<p>Marvellous!</p>',
 				author: {
-					name: 'testuser1',
+					name: 'Gertrude',
 				},
 				date: '2016-04-18T14:53:33+00:00',
 			},
@@ -35,9 +35,9 @@ const ConversationCommentListExample = () => {
 		3: {
 			data: {
 				ID: 3,
-				content: '<p>Good!</p>',
+				content: '<p>Splendid!</p>',
 				author: {
-					name: 'testuser1',
+					name: 'Minnie',
 				},
 				date: '2016-04-18T14:59:22+00:00',
 			},

@@ -26,7 +26,7 @@ export class ConversationCommentList extends React.Component {
 		}
 
 		return (
-			<div className="conversations__comment-list">
+			<ul className="conversations__comment-list">
 				{ map( commentIds, commentId => {
 					return (
 						<PostComment
@@ -38,7 +38,7 @@ export class ConversationCommentList extends React.Component {
 						/>
 					);
 				} ) }
-			</div>
+			</ul>
 		);
 	}
 }
