@@ -308,7 +308,7 @@ const EditorVisibility = React.createClass( {
 					autoFocus={ isInPostPublishConfirmationFlow }
 					onKeyUp={ this.onKey }
 					onChange={ this.onPasswordChange }
-					onBlur={ this.onPasswordChange }
+					onBlur={ isInPostPublishConfirmationFlow ? this.onPasswordChange : () => {} }
 					value={ value }
 					isError={ isError }
 					ref="postPassword"
