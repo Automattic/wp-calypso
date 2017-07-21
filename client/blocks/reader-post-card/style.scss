@@ -429,7 +429,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 	.reader-excerpt {
 		overflow: hidden;
-		max-height: 15px * 1.6 * 3;
+		max-height: 15px * 1.6 * 3.2;
 
 
 		// Clamp to 2 lines on wider viewports
@@ -465,7 +465,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .reader-post-card.card.has-thumbnail:not(.is-gallery):not(.is-discover) {
 
 	.reader-excerpt {
-		max-height: 15px * 1.6 * 3;
+		max-height: 15px * 1.6 * 3.2;
 		overflow: hidden;
 	}
 }
