@@ -174,6 +174,8 @@ class UploadImage extends Component {
 				MediaStore.off( 'change', this.handleMediaStoreChange );
 
 				onUploadImageDone( uploadedImage );
+
+				return;
 			}
 
 			const validationErrors = errors[ this.uploadingImageTransientId ] || [];
