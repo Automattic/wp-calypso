@@ -299,11 +299,13 @@ const EditorVisibility = React.createClass( {
 		const value = this.props.password ? this.props.password.trim() : null;
 		const isError = ! this.state.passwordIsValid;
 		const errorMessage = this.props.translate( 'Password is empty.', { context: 'Editor: Error shown when password is empty.' } );
+		const isInPostPublishConfirmationFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
 
 		return (
 			<div>
 				<FormTextInput
-					autoFocus={ true }
+					autoFocus={ isInPostPublishConfirmationFlow }
 					onKeyUp={ this.onKey }
 					onChange={ this.onPasswordChange }
 					onBlur={ this.onPasswordChange }
