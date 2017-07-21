@@ -83,7 +83,7 @@ class AppBanner extends Component {
 		// TODO: update with real deep links when we get them
 		// just linking to respective app stores for now
 		if ( this.isAndroid() ) {
-			return 'market://details?id=org.wordpress.android';
+			return 'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
 		}
 
 		if ( this.isiOS() ) {
