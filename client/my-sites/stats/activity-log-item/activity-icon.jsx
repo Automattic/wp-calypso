@@ -28,15 +28,8 @@ export default class ActivityIcon extends PureComponent {
 	getIcon() {
 		const {
 			group,
-			name,
 			object,
 		} = this.props;
-
-		switch ( name ) {
-			// Inline return makes alphabetizing and searching easier :)
-			case 'post__published': return 'create';
-			case 'post__trashed': return 'trash';
-		}
 
 		switch ( group ) {
 			case 'attachment':
@@ -80,11 +73,9 @@ export default class ActivityIcon extends PureComponent {
 			case 'widget__removed':
 				return 'is-error';
 
-			case 'attachment__uploaded':
 			case 'plugin__autoupdated':
 			case 'plugin__installed':
 			case 'plugin__installed_filesystem':
-			case 'term__created':
 			case 'theme__installed':
 			case 'user__registered':
 				return 'is-success';
