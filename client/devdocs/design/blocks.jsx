@@ -74,6 +74,7 @@ import ReaderShare from 'blocks/reader-share/docs/example';
 import Login from 'blocks/login/docs/example';
 import ReaderEmailSettings from 'blocks/reader-email-settings/docs/example';
 import UploadImage from 'blocks/upload-image/docs/example';
+import ConversationCommentList from 'blocks/conversations/docs/example';
 
 export default React.createClass( {
 	displayName: 'AppComponents',
@@ -164,6 +165,7 @@ export default React.createClass( {
 					<ReaderShare />
 					<ReaderEmailSettings />
 					<UploadImage />
+					<ConversationCommentList />
 				</Collection>
 			</Main>
 		);

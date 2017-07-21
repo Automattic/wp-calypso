@@ -22,8 +22,25 @@ import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/follow-sources';
 import CombinedCard from 'blocks/reader-combined-card';
 import fluxPostAdapter from 'lib/reader-post-flux-adapter';
 import EmptySearchRecommendedPost from './empty-search-recommended-post';
+import ConversationPostList from 'blocks/conversations/list';
+import CompactPostCard from 'blocks/reader-post-card/compact';
 
 const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
+
+class ConversationPost extends React.Component {
+	render() {
+		return (
+			<div className="stream__conversation-post">
+				<CompactPostCard {...this.props } />
+				<ConversationPostList
+					blogId={ this.props.post.site_ID }
+					postId={ this.props.post.ID }
+					post={ this.props.post }
+					commentIds={ this.props.comments } />
+			</div>
+		);
+	}
+}
 
 export default class PostLifecycle extends React.PureComponent {
 	static propTypes = {
@@ -123,6 +140,14 @@ export default class PostLifecycle extends React.PureComponent {
 			return <PostUnavailable post={ post } />;
 		} else if ( includes( this.props.blockedSites, +postKey.blogId ) ) {
 			return <PostBlocked post={ post } />;
+		} else if ( postKey.comments ) {
+			return (
+				<ConversationPost
+					post={ post }
+					comments={ postKey.comments }
+					{ ...omit( this.props, 'store' ) }
+				/>
+			);
 		} else if ( isXPost( post ) ) {
 			const xMetadata = XPostHelper.getXPostMetadata( post );
 			const xPostedTo = this.props.store.getSitesCrossPostedTo(
