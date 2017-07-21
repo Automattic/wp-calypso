@@ -12,7 +12,7 @@
   "scripts": {
     "prepublish": "make build"
   },
-  "version": "4.0.2",
+  "version": "4.0.3",
   "author": "Automattic, Inc.",
   "contributors": [
     "Damian Suarez <rdsuarez@gmail.com>",

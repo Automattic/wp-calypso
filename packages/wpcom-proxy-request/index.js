@@ -485,7 +485,7 @@ function onmessage( e ) {
 		headers.status = statusCode;
 	}
 
-	if ( statusCode && 2 === Math.floor( statusCode / 100 ) ) {
+	if ( null == statusCode || 2 === Math.floor( statusCode / 100 ) ) {
 		// 2xx status code, success
 		resolve( xhr, body, headers );
 	} else {
