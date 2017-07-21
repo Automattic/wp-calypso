@@ -129,8 +129,6 @@ class AppBanner extends Component {
 				<div className="app-banner__buttons">
 					<Button
 						className="app-banner__open-button"
-						target="_blank"
-						rel="noopener noreferrer"
 						onClick={ this.openApp }
 						href={ this.getDeepLink() }
 					>
