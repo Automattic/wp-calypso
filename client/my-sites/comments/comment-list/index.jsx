@@ -255,23 +255,25 @@ export class CommentList extends Component {
 					i_like: false,
 				} );
 			}
-		} else {
-			this.props.likeComment( commentId, postId );
 
-			if ( 'unapproved' === comment.status ) {
-				this.props.removeNotice( `comment-notice-${ commentId }` );
-				this.setCommentStatus( commentId, postId, 'approved' );
-				this.updatePersistedComments( {
-					...comment,
-					i_like: true,
-					status: 'approved',
-				} );
-			} else if ( isPersisted ) {
-				this.updatePersistedComments( {
-					...comment,
-					i_like: true,
-				} );
-			}
+			return;
+		}
+
+		this.props.likeComment( commentId, postId );
+
+		if ( 'unapproved' === comment.status ) {
+			this.props.removeNotice( `comment-notice-${ commentId }` );
+			this.setCommentStatus( commentId, postId, 'approved' );
+			this.updatePersistedComments( {
+				...comment,
+				i_like: true,
+				status: 'approved',
+			} );
+		} else if ( isPersisted ) {
+			this.updatePersistedComments( {
+				...comment,
+				i_like: true,
+			} );
 		}
 	}
 
