@@ -53,21 +53,18 @@ const shouldFormat = text => {
 
 	const firstDocBlockStartIndex = _.get( firstDocBlockStart.exec( text ), 'index' );
 
-	if ( ! firstDocBlockStartIndex ) {
+	if ( ! _.isInteger( firstDocBlockStartIndex ) ) {
 		return;
 	}
 
 	firstDocBlockEnd.lastIndex = firstDocBlockStartIndex; // docBlockEnd must come after the start
 	const firstDocBlockEndIndex = _.get( firstDocBlockEnd.exec( text ), 'index' );
 
-	if ( ! firstDocBlockEndIndex ) {
+	if ( ! _.isInteger( firstDocBlockEndIndex ) ) {
 		return;
 	}
 
-	const firstDocBlockText =
-		_.isInteger( firstDocBlockStartIndex ) &&
-		_.isInteger( firstDocBlockEndIndex ) &&
-		text.substring( firstDocBlockStartIndex, firstDocBlockEndIndex + 2 );
+	const firstDocBlockText = text.substring( firstDocBlockStartIndex, firstDocBlockEndIndex + 2 );
 
 	return firstDocBlockText && /@format/.test( firstDocBlockText );
 };
