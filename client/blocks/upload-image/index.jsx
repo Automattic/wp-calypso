@@ -31,6 +31,7 @@ import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import MediaUtils from 'lib/media/utils';
 import MediaValidationStore from 'lib/media/validation-store';
+import { ValidationErrors } from 'lib/media/constants';
 
 class UploadImage extends Component {
 	state = {
@@ -75,10 +76,8 @@ class UploadImage extends Component {
 		const fileName = files[ 0 ].name;
 		const extension = path.extname( fileName ).toLowerCase().substring( 1 );
 
-		const { onError } = this.props;
-
 		if ( ALLOWED_FILE_EXTENSIONS.indexOf( extension ) === -1 ) {
-			onError( ERROR_UNSUPPORTED_FILE, ERROR_STRINGS[ ERROR_UNSUPPORTED_FILE ]() );
+			this.handleError( ERROR_UNSUPPORTED_FILE, ERROR_STRINGS[ ERROR_UNSUPPORTED_FILE ]() );
 
 			return;
 		}
@@ -92,9 +91,23 @@ class UploadImage extends Component {
 		} );
 	};
 
+	handleError = ( errorConst, error = '' ) => {
+		const { onError } = this.props;
+
+		let message = error;
+
+		if ( errorConst === ERROR_UPLOADING_IMAGE ) {
+			if ( error.length && error[ 0 ] === ValidationErrors.SERVER_ERROR ) {
+				message = ERROR_STRINGS[ ValidationErrors.SERVER_ERROR ]();
+			}
+		}
+
+		onError( errorConst, message );
+	};
+
 	onImageEditorDone = ( error, imageBlob, imageEditorProps ) => {
 		if ( error ) {
-			this.props.onError( ERROR_IMAGE_EDITOR_DONE, error );
+			this.handleError( ERROR_IMAGE_EDITOR_DONE, error );
 		}
 
 		this.setState( {
@@ -161,10 +174,10 @@ class UploadImage extends Component {
 				MediaStore.off( 'change', this.handleMediaStoreChange );
 
 				onUploadImageDone( uploadedImage );
-			} else {
-				const validationErrors = errors[ this.uploadingImageTransientId ] || [];
-				this.props.onError( ERROR_UPLOADING_IMAGE, validationErrors );
 			}
+
+			const validationErrors = errors[ this.uploadingImageTransientId ] || [];
+			this.handleError( ERROR_UPLOADING_IMAGE, validationErrors );
 		}
 	};
 
