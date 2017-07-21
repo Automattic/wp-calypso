@@ -58,6 +58,7 @@ const shouldFormat = text => {
 files.map( file => path.join( __dirname, '../', file ) ).forEach( file => {
 	fs.readFile( file, 'utf8', ( err, text ) => {
 		if ( shouldFormat( text ) ) {
+			console.log( `Prettier formatting file: ${ file } because it contains the @format flag` );
 			const formattedText = prettier.format( text, {} );
 			fs.writeFileSync( file, formattedText );
 			execSync( `git add ${ file }` );
