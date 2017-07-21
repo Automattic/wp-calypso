@@ -216,7 +216,7 @@ class ActivityTitle extends Component {
 		return 'a widget';
 	}
 
-	getTitle() {
+	renderTitle() {
 		const { name } = this.props;
 
 		switch ( name ) {
@@ -480,7 +480,7 @@ class ActivityTitle extends Component {
 			 * before this feature goes into production.
 			 */
 			default:
-				return `The activity ${ name } is missing a title.`;
+				return <em>{ `The activity ${ name } is missing a title.` }</em>;
 		}
 	}
 
@@ -494,7 +494,7 @@ class ActivityTitle extends Component {
 		return (
 			<div className="activity-log-item__title">
 				<div className="activity-log-item__title-title">
-					{ this.getTitle() }
+					{ this.renderTitle() }
 				</div>
 				{ subTitle && <div className="activity-log-item__title-subtitle">{ subTitle }</div> }
 			</div>
