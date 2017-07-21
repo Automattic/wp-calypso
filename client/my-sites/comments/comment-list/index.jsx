@@ -105,9 +105,9 @@ export class CommentList extends Component {
 
 	isSelectedAll = () => this.getComments().length === size( this.state.selectedComments );
 
-	removeFromPersistedComments = commentId => this.setState( {
-		persistedComments: reject( this.state.persistedComments, { ID: commentId } ),
-	} );
+	removeFromPersistedComments = commentId => this.setState( ( { persistedComments } ) => ( {
+		persistedComments: reject( persistedComments, { ID: commentId } ),
+	} ) );
 
 	replyComment = ( commentText, postId, parentCommentId, options = { alsoApprove: false } ) => {
 		const { translate } = this.props;
@@ -305,10 +305,10 @@ export class CommentList extends Component {
 
 	updatePersistedComments = ( comment, isUndo ) => isUndo
 		? this.removeFromPersistedComments( comment.ID )
-		: this.setState( { persistedComments: [
-			...reject( this.state.persistedComments, { ID: comment.ID } ),
+		: this.setState( ( { persistedComments } ) => ( { persistedComments: [
+			...reject( persistedComments, { ID: comment.ID } ),
 			comment,
-		] } );
+		] } ) );
 
 	render() {
 		const {
