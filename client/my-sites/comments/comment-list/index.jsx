@@ -146,8 +146,8 @@ export class CommentList extends Component {
 		} );
 	};
 
-	setCommentStatus = ( commentId, postId, status, options = { isUndo: false, persist: false, showNotice: true } ) => {
-		const { isUndo, persist, showNotice } = options;
+	setCommentStatus = ( commentId, postId, status, options = { isUndo: false, doPersist: false, showNotice: true } ) => {
+		const { isUndo, doPersist, showNotice } = options;
 
 		// TODO: Replace with Redux getComment()
 		const comment = this.getComment( commentId );
@@ -156,7 +156,7 @@ export class CommentList extends Component {
 			return;
 		}
 
-		if ( persist ) {
+		if ( doPersist ) {
 			this.updatePersistedComments( {
 				...comment,
 				i_like: 'approved' !== status ? false : comment.i_like,
@@ -169,7 +169,7 @@ export class CommentList extends Component {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 
 		if ( showNotice ) {
-			this.showNotice( commentId, postId, status, comment.status, { persist } );
+			this.showNotice( commentId, postId, status, comment.status, { doPersist } );
 		}
 
 		this.props.changeCommentStatus( commentId, postId, status );
@@ -210,7 +210,7 @@ export class CommentList extends Component {
 		this.props.createNotice( type, message, options );
 	}
 
-	showNotice = ( commentId, postId, newStatus, previousStatus, options = { persist: false } ) => {
+	showNotice = ( commentId, postId, newStatus, previousStatus, options = { doPersist: false } ) => {
 		const { translate } = this.props;
 
 		const [ type, message ] = get( {
@@ -231,7 +231,7 @@ export class CommentList extends Component {
 			isPersistent: true,
 			onClick: () => this.setCommentStatus( commentId, postId, previousStatus, {
 				isUndo: true,
-				persist: options.persist,
+				doPersist: options.doPersist,
 				showNotice: false,
 			} ),
 		};
