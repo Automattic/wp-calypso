@@ -6,7 +6,6 @@ const chalk = require( 'chalk' );
 const fs = require( 'fs' );
 const prettier = require( 'prettier' );
 const path = require( 'path' );
-const _ = require( 'lodash' );
 
 console.log(
 	'\nBy contributing to this project, you license the materials you contribute ' +
@@ -33,25 +32,23 @@ const files = execSync( 'git diff --cached --name-only' )
  * @param {*} text text to scan for the format keyword within the first docblock
  */
 const shouldFormat = text => {
-	const firstDocBlockStart = /\/\*\*/;
-	const firstDocBlockEnd = /\*\//;
+	const docBlockStart = '/**';
+	const docBlockEnd = '*/';
 
-	const firstDocBlockStartIndex = _.get( firstDocBlockStart.exec( text ), 'index' );
+	const firstDocBlockStartIndex = text.indexOf( docBlockStart );
 
-	if ( ! _.isInteger( firstDocBlockStartIndex ) ) {
+	if ( -1 === firstDocBlockStartIndex ) {
 		return;
 	}
 
-	firstDocBlockEnd.lastIndex = firstDocBlockStartIndex; // docBlockEnd must come after the start
-	const firstDocBlockEndIndex = _.get( firstDocBlockEnd.exec( text ), 'index' );
+	const firstDocBlockEndIndex = text.indexOf( docBlockEnd, firstDocBlockStartIndex + 1 );
 
-	if ( ! _.isInteger( firstDocBlockEndIndex ) ) {
+	if ( -1 === firstDocBlockEndIndex ) {
 		return;
 	}
 
-	const firstDocBlockText = text.substring( firstDocBlockStartIndex, firstDocBlockEndIndex + 2 );
-
-	return firstDocBlockText && /@format/.test( firstDocBlockText );
+	const firstDocBlockText = text.substring( firstDocBlockStartIndex, firstDocBlockEndIndex + 1 );
+	return firstDocBlockText.indexOf( '@format' ) >= 0;
 };
 
 // run prettier for any files in the commit that have @format within their first docblock
