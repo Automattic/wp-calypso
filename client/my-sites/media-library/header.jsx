@@ -27,6 +27,7 @@ export default React.createClass( {
 		filter: PropTypes.string,
 		sliderPositionCount: PropTypes.number,
 		onMediaScaleChange: React.PropTypes.func,
+		onSourceChange: React.PropTypes.func,
 		onAddMedia: PropTypes.func,
 		sticky: React.PropTypes.bool,
 	},
@@ -69,6 +70,28 @@ export default React.createClass( {
 		} );
 	},
 
+	onClickGoogle() {
+		this.props.onSourceChange( 'google_photos' );
+	},
+
+	getPopoverButtons() {
+		const buttons = [
+			<PopoverMenuItem onClick={ this.toggleAddViaUrl.bind( this, true ) } key={ 0 }>
+				{ this.translate( 'Add via URL', { context: 'Media upload' } ) }
+			</PopoverMenuItem>
+		];
+
+		if ( this.props.onSourceChange ) {
+			buttons.push(
+				<PopoverMenuItem onClick={ this.onClickGoogle } key={ 1 }>
+					{ this.translate( 'Add from Google', { context: 'Media upload' } ) }
+				</PopoverMenuItem>
+			);
+		}
+
+		return buttons;
+	},
+
 	renderUploadButtons() {
 		const { site, filter, onAddMedia } = this.props;
 
@@ -101,9 +124,7 @@ export default React.createClass( {
 						onClose={ this.toggleMoreOptions.bind( this, false ) }
 						position="bottom right"
 						className="is-dialog-visible media-library__header-popover">
-						<PopoverMenuItem onClick={ this.toggleAddViaUrl.bind( this, true ) }>
-							{ this.translate( 'Add via URL', { context: 'Media upload' } ) }
-						</PopoverMenuItem>
+						{ this.getPopoverButtons() }
 					</PopoverMenu>
 				</Button>
 			</ButtonGroup>
