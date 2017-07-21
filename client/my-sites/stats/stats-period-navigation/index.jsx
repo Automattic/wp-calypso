@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -13,6 +13,10 @@ import Gridicon from 'gridicons';
 import { recordGoogleEvent as recordGoogleEventAction } from 'state/analytics/actions';
 
 class StatsPeriodNavigation extends PureComponent {
+	static propTypes = {
+		onPeriodChange: PropTypes.func,
+	};
+
 	handleClickNext = () => {
 		this.handleClickArrow( 'next' );
 	}
@@ -23,10 +27,20 @@ class StatsPeriodNavigation extends PureComponent {
 
 	handleClickArrow = arrow => {
 		const {
-			recordGoogleEvent,
+			date,
+			onPeriodChange,
 			period,
+			recordGoogleEvent,
 		} = this.props;
 		recordGoogleEvent( 'Stats Period Navigation', `Clicked ${ arrow } ${ period }` );
+
+		if ( onPeriodChange ) {
+			onPeriodChange( {
+				date,
+				direction: arrow,
+				period,
+			} );
+		}
 	};
 
 	render() {
