@@ -12,7 +12,13 @@ import { noop, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import { ALLOWED_FILE_EXTENSIONS, ERROR_STRINGS, ERROR_UNSUPPORTED_FILE } from './constants';
+import {
+	ALLOWED_FILE_EXTENSIONS,
+	ERROR_STRINGS,
+	ERROR_UNSUPPORTED_FILE,
+	ERROR_IMAGE_EDITOR_DONE,
+	ERROR_UPLOADING_IMAGE,
+} from './constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Dialog from 'components/dialog';
@@ -24,6 +30,7 @@ import DropZone from 'components/drop-zone';
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import MediaUtils from 'lib/media/utils';
+import MediaValidationStore from 'lib/media/validation-store';
 
 class UploadImage extends Component {
 	state = {
@@ -33,7 +40,7 @@ class UploadImage extends Component {
 		selectedImageName: '',
 		editedImage: null,
 		uploadedImage: null,
-		uploadingImageTransientId: null,
+		errors: [],
 	};
 
 	static propTypes = {
@@ -62,6 +69,8 @@ class UploadImage extends Component {
 		isUploading: false,
 	};
 
+	static uploadingImageTransientId = null;
+
 	receiveFiles = files => {
 		const fileName = files[ 0 ].name;
 		const extension = path.extname( fileName ).toLowerCase().substring( 1 );
@@ -84,12 +93,17 @@ class UploadImage extends Component {
 	};
 
 	onImageEditorDone = ( error, imageBlob, imageEditorProps ) => {
+		if ( error ) {
+			this.props.onError( ERROR_IMAGE_EDITOR_DONE, error );
+		}
+
 		this.setState( {
 			editedImage: URL.createObjectURL( imageBlob ),
 			isUploading: true,
 		} );
 
 		MediaStore.off( 'change', this.handleMediaStoreChange );
+		MediaValidationStore.off( 'change', this.storeValidationErrors );
 
 		this.props.onImageEditorDone( error, imageBlob, imageEditorProps );
 
@@ -105,6 +119,8 @@ class UploadImage extends Component {
 
 		const transientImageId = uniqueId( 'upload-image-' );
 
+		this.uploadingImageTransientId = transientImageId;
+
 		const item = {
 			ID: transientImageId,
 			fileName: fileName,
@@ -112,21 +128,23 @@ class UploadImage extends Component {
 			mimeType: mimeType,
 		};
 
+		MediaValidationStore.on( 'change', this.storeValidationErrors );
+
 		MediaStore.on( 'change', this.handleMediaStoreChange );
 
 		// Upload the image.
 		MediaActions.add( siteId, item );
 
-		this.setState( { uploadingImageTransientId: transientImageId, isUploading: true } );
+		this.setState( { isUploading: true } );
 	}
 
 	// Handle the uploading process.
 	handleMediaStoreChange = () => {
 		const { siteId, onUploadImageDone } = this.props;
 
-		const { uploadingImageTransientId } = this.state;
+		const { errors } = this.state;
 
-		const uploadedImage = MediaStore.get( siteId, uploadingImageTransientId );
+		const uploadedImage = MediaStore.get( siteId, this.uploadingImageTransientId );
 		const isUploadInProgress = uploadedImage && MediaUtils.isItemBeingUploaded( uploadedImage );
 
 		// File has finished uploading or failed.
@@ -136,13 +154,24 @@ class UploadImage extends Component {
 			} );
 
 			if ( uploadedImage && uploadedImage.URL ) {
-				this.setState( { uploadedImage: uploadedImage, uploadingImageTransientId: null } );
+				this.uploadingImageTransientId = null;
+
+				this.setState( { uploadedImage: uploadedImage } );
 
 				MediaStore.off( 'change', this.handleMediaStoreChange );
 
 				onUploadImageDone( uploadedImage );
+			} else {
+				const validationErrors = errors[ this.uploadingImageTransientId ] || [];
+				this.props.onError( ERROR_UPLOADING_IMAGE, validationErrors );
 			}
 		}
+	};
+
+	storeValidationErrors = () => {
+		this.setState( {
+			errors: MediaValidationStore.getAllErrors( this.props.siteId ),
+		} );
 	};
 
 	hideImageEditor = () => {
@@ -193,6 +222,9 @@ class UploadImage extends Component {
 		URL.revokeObjectURL( editedImage );
 
 		MediaStore.off( 'change', this.handleMediaStoreChange );
+		MediaValidationStore.off( 'change', this.storeValidationErrors );
+
+		this.uploadingImageTransientId = null;
 	}
 
 	render() {
