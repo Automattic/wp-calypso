@@ -75,6 +75,9 @@ export default class ActivityIcon extends PureComponent {
 				return 'is-error';
 
 			case 'attachment__uploaded':
+			case 'plugin__autoupdated':
+			case 'plugin__installed':
+			case 'plugin__installed_filesystem':
 			case 'term__created':
 			case 'theme__installed':
 			case 'user__registered':
@@ -82,6 +85,7 @@ export default class ActivityIcon extends PureComponent {
 
 			case 'comment__published_awaiting_approval':
 			case 'comment__unapproved':
+			case 'plugin__update_available':
 				return 'is-warning';
 		}
 
