@@ -9,20 +9,32 @@ import { localize } from 'i18n-calypso';
  */
 import Accordion from 'components/accordion';
 import Gravatar from 'components/gravatar';
-import FeedbackComments from './feedback-comments';
 
 export const FeedbackShare = ( { share, onToggle, translate } ) => {
-	const { emailAddress, comments, } = share;
+	const { emailAddress, comments } = share;
 
-	return <Accordion
-		title={ emailAddress }
-		icon={ <Gravatar /> }
-		onToggle={ onToggle }
-	>
-		{ comments.length === 0
-			? translate( 'No feedback yet.' )
-			: <FeedbackComments comments={ comments } /> }
-	</Accordion>;
+	return (
+		<Accordion
+			className="editor-sidebar__feedback-share"
+			title={ emailAddress }
+			subtitle="Subtitle TODO"
+			icon={ <Gravatar size={ 24 } /> }
+			onToggle={ onToggle }
+		>
+			{ comments.length === 0
+				? <p className="editor-sidebar__feedback-share-empty-message">
+						{ translate( 'No feedback yet.' ) }
+					</p>
+				: comments.map(
+						// NOTE: It should be OK to use the index for `key` because
+						// the list is currently append-only
+						( comment, index ) =>
+							<p key={ index }>
+								{ comment }
+							</p>,
+					) }
+		</Accordion>
+	);
 };
 
 FeedbackShare.propTypes = {

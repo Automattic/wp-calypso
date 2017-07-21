@@ -106,10 +106,23 @@ $editor-sidebar-font-size: 13px;
 .editor-sidebar__feedback-request-form {
 	background: $white;
 	padding: 16px;
+	font-size: 13px;
+}
+
+.editor-sidebar__feedback-request-input-label {
+	font-weight: 500;
+}
+
+// Including input[type="text"].form-text-input to win the specificity battle
+// with form-text-input styles
+// TODO: Is there a better way to address this?
+input[type="text"].form-text-input.editor-sidebar__feedback-request-input {
+	margin-top: 7px;
 }
 
 .editor-sidebar__feedback-request-button {
 	width: 100%;
+	margin-top: 13px;
 }
 
 .editor-sidebar__feedback-list-label {
@@ -118,4 +131,25 @@ $editor-sidebar-font-size: 13px;
 	&.is-hidden {
 		display: none;
 	}
+}
+
+.editor-sidebar__feedback-share .accordion__icon {
+	margin: 0;
+}
+
+.editor-sidebar__feedback-share.accordion.has-icon .accordion__title,
+.editor-sidebar__feedback-share.accordion.has-icon .accordion__subtitle {
+	padding-left: 33px;
+}
+
+.editor-sidebar__feedback-share .accordion__content-wrap {
+	padding-top: 7px;
+}
+
+.editor-sidebar__feedback-share p:last-of-type {
+	margin-bottom: 7px;
+}
+
+.editor-sidebar__feedback-share-empty-message {
+	font-style: italic;
 }

@@ -42,8 +42,15 @@ export class FeedbackRequestForm extends PureComponent {
 					{ description }
 				</p>
 				<label>
-					{ translate( "Friend's Email" ) }
-					<FormTextInput onChange={ this.updateInputValue } value={ this.state.inputValue } />
+					<span className="editor-sidebar__feedback-request-input-label">
+						{ translate( "Friend's Email" ) }
+					</span>
+					<FormTextInput
+						className="editor-sidebar__feedback-request-input"
+						onChange={ this.updateInputValue }
+						placeholder="name@domain.com"
+						value={ this.state.inputValue }
+					/>
 				</label>
 				<Button type="submit" className="editor-sidebar__feedback-request-button">
 					{ translate( 'Send to a Friend' ) }
