@@ -2123,7 +2123,7 @@
       "dev": true
     },
     "flow-parser": {
-      "version": "0.50.0",
+      "version": "0.51.0",
       "dev": true
     },
     "flux": {
@@ -2766,7 +2766,7 @@
       "dev": true
     },
     "gridicons": {
-      "version": "1.1.0"
+      "version": "2.0.1"
     },
     "growl": {
       "version": "1.9.2",
