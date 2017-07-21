@@ -21,7 +21,7 @@ function createDomainObjects( dataTransferObject ) {
 		return {
 			autoRenewalMoment: domain.auto_renewal_date && i18n.moment( domain.auto_renewal_date ),
 			currentUserCanManage: domain.current_user_can_manage,
-			domainLockAvailable: domain.transfer_lock_available,
+			domainLockingAvailable: domain.domain_locking_available,
 			expirationMoment: domain.expiry && i18n.moment( domain.expiry ),
 			expired: domain.expired,
 			expirySoon: domain.expiry_soon,

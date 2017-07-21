@@ -481,16 +481,17 @@ function requestTransferCode( options, onComplete ) {
 	} );
 }
 
-function enableDomainLocking( options, onComplete ) {
-	wpcom.enableDomainLocking( options, ( error ) => {
+function cancelTransferRequest( options, onComplete ) {
+	wpcom.cancelTransferRequest( options, ( error ) => {
 		if ( error ) {
 			onComplete( error );
 			return;
 		}
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.DOMAIN_LOCKING_ENABLE_COMPLETED,
-			domainName: options.domainName
+			type: ActionTypes.DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED,
+			domainName: options.domainName,
+			locked: options.enableDomainLocking,
 		} );
 
 		if ( options.enablePrivacy ) {
@@ -559,11 +560,11 @@ export {
 	addDns,
 	addEmailForwarding,
 	applyDnsTemplate,
+	cancelTransferRequest,
 	closeSiteRedirectNotice,
 	declineTransfer,
 	deleteDns,
 	deleteEmailForwarding,
-	enableDomainLocking,
 	enablePrivacyProtection,
 	fetchDns,
 	fetchDomains,

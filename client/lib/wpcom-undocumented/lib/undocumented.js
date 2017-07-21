@@ -1863,13 +1863,14 @@ Undocumented.prototype.requestTransferCode = function( options, fn ) {
 	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
 };
 
-Undocumented.prototype.enableDomainLocking = function( { domainName, enablePrivacy, declineTransfer }, fn ) {
-	var data = {
+Undocumented.prototype.cancelTransferRequest = function( { domainName, enablePrivacy, declineTransfer, enableDomainLocking }, fn ) {
+	const data = {
 		domainStatus: JSON.stringify( {
-			command: 'lock-domain',
+			command: 'cancel-transfer-request',
 			payload: {
 				enable_privacy: enablePrivacy,
-				decline_transfer: declineTransfer
+				decline_transfer: declineTransfer,
+				enable_domain_lock: enableDomainLocking
 			}
 		} )
 	};
