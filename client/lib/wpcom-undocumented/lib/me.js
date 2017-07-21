@@ -13,6 +13,11 @@ import MePreferences from './me-preferences.js';
 const debug = debugFactory( 'calypso:wpcom-undocumented:me' );
 
 /**
+ * Internal dependencies.
+ */
+import config from 'config';
+
+/**
  * Create an UndocumentedMe instance
  *
  * @param {WPCOM} wpcom - WPCOMUndocumented instance
@@ -361,6 +366,44 @@ UndocumentedMe.prototype.deletePurchase = function( purchaseId, fn ) {
 	}, fn );
 };
 
+/**
+ * Connect the current account with a social service (e.g. Google/Facebook).
+ *
+ * @param {string} service - Social service associated with token, e.g. google.
+ * @param {string} token - Token returned from service.
+ * @param {string} redirectTo - The URL to redirect to after connecting.
+ * @param {Function} fn - callback
+ *
+ * @return {Promise} A promise for the request
+ */
+UndocumentedMe.prototype.socialConnect = function( service, token, redirectTo, fn ) {
+	const body = {
+		service,
+		token,
+		redirectTo,
+
+		// This API call is restricted to these OAuth keys
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+	};
+
+	const args = {
+		path: '/me/social-login/connect',
+		body: body,
+	};
+
+	/*
+	 * Before attempting the social connect, we reload the proxy.
+	 * This ensures that the proxy iframe has set the correct API cookie,
+	 * particularly after the user has logged in, but Calypso hasn't
+	 * been reloaded yet.
+	 */
+	require( 'wpcom-proxy-request' ).reloadProxy();
+
+	this.wpcom.req.post( { metaAPI: { accessAllUsersBlogs: true } } );
+
+	return this.wpcom.req.post( args, fn );
+};
 UndocumentedMe.prototype.preferences = MePreferences;
 
 module.exports = UndocumentedMe;
