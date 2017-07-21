@@ -14,7 +14,12 @@ import Card from 'components/card';
 import { getSectionName } from 'state/ui/selectors';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
 import { isNotificationsOpen } from 'state/selectors';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics
+} from 'state/analytics/actions';
 import { savePreference } from 'state/preferences/actions';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import {
@@ -117,6 +122,8 @@ class AppBanner extends Component {
 					eventProperties={ {
 						page: currentSection,
 					} }
+					statGroup="calypso_mobile_app_banner"
+					statName="impression"
 				/>
 				<div className="app-banner__text-content">
 					<div className="app-banner__title">
@@ -158,9 +165,15 @@ const mapStateToProps = ( state ) => {
 };
 
 const mapDispatchToProps = {
-	recordAppBannerOpen: ( sectionName ) => recordTracksEvent( 'calypso_mobile_app_banner_open', { page: sectionName } ),
+	recordAppBannerOpen: ( sectionName ) => composeAnalytics(
+		recordTracksEvent( 'calypso_mobile_app_banner_open', { page: sectionName } ),
+		bumpStat( 'calypso_mobile_app_banner', 'banner_open' )
+	),
 	saveDismissTime: ( sectionName, currentDimissTimes ) => withAnalytics(
-		recordTracksEvent( 'calypso_mobile_app_banner_dismiss', { page: sectionName } ),
+		composeAnalytics(
+			recordTracksEvent( 'calypso_mobile_app_banner_dismiss', { page: sectionName } ),
+			bumpStat( 'calypso_mobile_app_banner', 'banner_dismiss' )
+		),
 		savePreference( APP_BANNER_DISMISS_TIMES_PREFERENCE, getNewDismissTimes( sectionName, currentDimissTimes ) )
 	),
 };
