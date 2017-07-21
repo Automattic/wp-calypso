@@ -66,7 +66,7 @@ export default ( siteId ) => ( {
 	 * @param {String} namespace URL namespace, defaults to 'wc/v3'
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
-	get: ( path, namespace ) => _request( 'get', path, siteId, null, namespace ),
+	get: ( path, namespace ) => _request( 'get', path, siteId, undefined, namespace ),
 
 	/**
 	 * Sends a GET request to the API and returns headers along with the body.
@@ -74,7 +74,7 @@ export default ( siteId ) => ( {
 	 * @param {String} namespace URL namespace, defaults to 'wc/v3'
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
-	getWithHeaders: ( path, namespace ) => _requestWithHeaders( 'get', path, siteId, null, namespace ),
+	getWithHeaders: ( path, namespace ) => _requestWithHeaders( 'get', path, siteId, undefined, namespace ),
 
 	/**
 	 * Sends a POST request to the API
@@ -104,5 +104,5 @@ export default ( siteId ) => ( {
 	 * @param {String} namespace URL namespace, defaults to 'wc/v3'
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
-	del: ( path, namespace ) => _request( 'delete', path, siteId, null, namespace ),
+	del: ( path, namespace ) => _request( 'delete', path, siteId, undefined, namespace ),
 } );
