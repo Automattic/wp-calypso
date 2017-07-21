@@ -156,6 +156,12 @@ class SimplePaymentsDialog extends Component {
 			productForm.currency = currencyCode;
 		}
 
+		const { uploadedImageId } = this.state;
+
+		if ( uploadedImageId ) {
+			productForm.featuredImage = uploadedImageId;
+		}
+
 		wpcom
 			.site( siteId )
 			.addPost( productToCustomPost( productForm ) )
