@@ -30,7 +30,7 @@ export const uploadPlugin = ( { dispatch }, action ) => {
 
 const showSuccessNotice = ( dispatch, { name } ) => {
 	dispatch( successNotice(
-		translate( 'Successfully uploaded plugin %(name)s', {
+		translate( 'Successfully uploaded plugin %(name)s.', {
 			args: { name }
 		} ),
 		{ duration: 5000 }
@@ -42,7 +42,7 @@ const showErrorNotice = ( dispatch, error ) => {
 		exists: translate( 'Upload problem: Plugin already installed on site.' ),
 		'too large': translate( 'Upload problem: Plugin zip must be smaller than 10MB.' ),
 		incompatible: translate( 'Upload problem: Incompatible plugin.' ),
-		unsupported_mime_type: translate( 'Upload problem: Not a valid zip file' ),
+		unsupported_mime_type: translate( 'Upload problem: Not a valid zip file.' ),
 	};
 	const errorString = toLower( error.error + error.message );
 	const knownError = find( knownErrors, ( v, key ) => includes( errorString, key ) );
@@ -52,12 +52,12 @@ const showErrorNotice = ( dispatch, error ) => {
 		return;
 	}
 	if ( error.error ) {
-		dispatch( errorNotice( translate( 'Upload problem: %(error)s', {
+		dispatch( errorNotice( translate( 'Upload problem: %(error)s.', {
 			args: { error: error.error }
 		} ) ) );
 		return;
 	}
-	dispatch( errorNotice( translate( 'Problem uploading plugin' ) ) );
+	dispatch( errorNotice( translate( 'Problem uploading plugin.' ) ) );
 };
 
 export const uploadComplete = ( { dispatch }, { siteId }, next, data ) => {
