@@ -159,7 +159,7 @@ class SimplePaymentsDialog extends Component {
 		const { uploadedImageId } = this.state;
 
 		if ( uploadedImageId ) {
-			productForm.featuredImage = uploadedImageId;
+			productForm.featuredImageId = uploadedImageId;
 		}
 
 		wpcom
