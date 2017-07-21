@@ -227,6 +227,10 @@
 	}
 	.post-selector {
 		margin-bottom: 16px;
+
+		.post-selector__results {
+			height: 24vh;
+		}
 	}
 
 	@include breakpoint( "<660px" ) {
