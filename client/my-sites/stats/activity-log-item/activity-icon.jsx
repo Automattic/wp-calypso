@@ -4,6 +4,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { get } from 'lodash';
 
 export default class ActivityIcon extends PureComponent {
 
@@ -21,12 +22,14 @@ export default class ActivityIcon extends PureComponent {
 			'widget',
 		] ).isRequired,
 		name: PropTypes.string.isRequired,
+		object: PropTypes.object.isRequired,
 	};
 
 	getIcon() {
 		const {
 			group,
 			name,
+			object,
 		} = this.props;
 
 		switch ( name ) {
@@ -37,6 +40,10 @@ export default class ActivityIcon extends PureComponent {
 
 		switch ( group ) {
 			case 'attachment':
+				if ( 'application/zip' === get( object, [ 'attachment', 'mime_type' ] ) ) {
+					return 'attachment';
+				}
+
 				return 'image';
 
 			case 'comment':
