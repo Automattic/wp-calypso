@@ -211,6 +211,10 @@ export class EditPostStatus extends Component {
 			return;
 		}
 
+		if ( 'open' === this.props.confirmationSidebarStatus ) {
+			return;
+		}
+
 		const { password, type } = this.props.post || {};
 		const isPrivateSite = this.props.site && this.props.site.is_private;
 		const savedStatus = this.props.savedPost ? this.props.savedPost.status : null;
