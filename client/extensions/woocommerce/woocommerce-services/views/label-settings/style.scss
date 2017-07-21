@@ -57,3 +57,36 @@
 	color: $gray;
 	font-style: italic;
 }
+
+.label-settings__placeholder {
+	@include placeholder();
+	pointer-events: none;
+	background: $white;
+
+	&:after {
+		content: none;
+	}
+
+	.gridicon, span, p, a, button {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		background-color: lighten( $gray, 25% );
+		color: transparent;
+		cursor: default;
+	}
+
+	p, span {
+		display: block;
+		width: 100px;
+		height: 14px;
+	}
+
+	a {
+		width: 200px;
+		height: 14px;
+	}
+
+	.gridicon {
+		fill: transparent;
+		stroke: transparent;
+	}
+}

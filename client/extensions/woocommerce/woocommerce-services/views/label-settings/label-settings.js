@@ -13,7 +13,6 @@ import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import PaymentMethod from './label-payment-method';
-import Spinner from 'components/spinner';
 
 const ShippingLabels = ( { isLoading, paymentMethods, setFormDataValue, selectedPaymentMethod, paperSize, storeOptions, translate } ) => {
 	const onPaymentMethodChange = ( value ) => setFormDataValue( 'selected_payment_method_id', value );
@@ -34,15 +33,31 @@ const ShippingLabels = ( { isLoading, paymentMethods, setFormDataValue, selected
 		);
 	};
 
-	const renderSpinner = () => (
-		<div className="label-settings__loading-spinner">
-			<Spinner size={ 24 } />
+	const renderPlaceholder = () => (
+		<div className="label-settings__placeholder">
+			<FormFieldSet>
+				<FormLabel className="label-settings__cards-label">
+					<span />
+				</FormLabel>
+				<FormSelect />
+			</FormFieldSet>
+			<FormFieldSet>
+				<FormLabel
+					className="label-settings__cards-label">
+					<span />
+				</FormLabel>
+				<p className="label-settings__credit-card-description">
+				</p>
+				<PaymentMethod selected={ false } isLoading={ true } />
+				<PaymentMethod selected={ false } isLoading={ true } />
+				<Button href="https://wordpress.com/me/billing" target="_blank" compact />
+			</FormFieldSet>
 		</div>
 	);
 
 	const renderContent = () => {
 		if ( isLoading ) {
-			return renderSpinner();
+			return renderPlaceholder();
 		}
 
 		const paperSizes = getPaperSizes( storeOptions.origin_country );

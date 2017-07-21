@@ -44,7 +44,7 @@ class AccountSettingsRootView extends Component {
 			return null;
 		}
 		const setFormDataValue = ( key, value ) => ( actions.setFormDataValue( siteId, key, value ) );
-		const onEnabledToggle = () => ( actions.setFormDataValue( siteId, 'enabled', ! enabled ) );
+		const onEnabledToggle = () => ( actions.setFormDataValue( siteId, 'enabled', ! formData.enabled ) );
 
 		const renderContent = () => {
 			if ( ! formData && ! formMeta.isFetching ) {

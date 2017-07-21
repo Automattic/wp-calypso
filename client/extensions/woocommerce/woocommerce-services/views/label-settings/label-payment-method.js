@@ -12,7 +12,26 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import CompactCard from 'components/card/compact';
 import PaymentLogo from 'components/payment-logo';
 
-const PaymentMethod = ( { translate, selected, type, digits, name, expiry, onSelect } ) => {
+const PaymentMethod = ( { translate, selected, isLoading, type, digits, name, expiry, onSelect } ) => {
+	const renderPlaceholder = () => (
+		<CompactCard className="label-settings__card">
+			<FormCheckbox
+				className="label-settings__card-checkbox" />
+			<PaymentLogo className="label-settings__card-logo" type="placeholder" />
+			<div className="label-settings__card-details">
+				<p className="label-settings__card-number" />
+				<p className="label-settings__card-name" />
+			</div>
+			<div className="label-settings__card-date">
+				<p />
+			</div>
+		</CompactCard>
+	);
+
+	if ( isLoading ) {
+		return renderPlaceholder();
+	}
+
 	const supportedTypes = {
 		amex: translate( 'American Express' ),
 		discover: translate( 'Discover' ),
@@ -56,6 +75,7 @@ const PaymentMethod = ( { translate, selected, type, digits, name, expiry, onSel
 
 PaymentMethod.propTypes = {
 	selected: PropTypes.bool.isRequired,
+	isLoading: PropTypes.bool,
 	type: PropTypes.string,
 	digits: PropTypes.string,
 	name: PropTypes.string,
