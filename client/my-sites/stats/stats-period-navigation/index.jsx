@@ -10,23 +10,43 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent as recordGoogleEventAction } from 'state/analytics/actions';
 
 class StatsPeriodNavigation extends PureComponent {
+	handleClickNext = () => {
+		this.handleClickArrow( 'next' );
+	}
+
+	handleClickPrevious = () => {
+		this.handleClickArrow( 'previous' );
+	}
+
+	handleClickArrow = arrow => {
+		const {
+			recordGoogleEvent,
+			period,
+		} = this.props;
+		recordGoogleEvent( 'Stats Period Navigation', `Clicked ${ arrow } ${ period }` );
+	};
+
 	render() {
-		const { url, children, date, period, moment } = this.props;
+		const {
+			children,
+			date,
+			moment,
+			period,
+			url,
+		} = this.props;
+
 		const isToday = moment( date ).isSame( moment(), period );
 		const previousDay = moment( date ).subtract( 1, period ).format( 'YYYY-MM-DD' );
 		const nextDay = moment( date ).add( 1, period ).format( 'YYYY-MM-DD' );
-		const clickArrow = arrow => () => {
-			this.props.recordGoogleEvent( 'Stats Period Navigation', `Clicked ${ arrow } ${ period }` );
-		};
 
 		return (
 			<div className="stats-period-navigation">
 				<a className="stats-period-navigation__previous"
 					href={ `${ url }?startDate=${ previousDay }` }
-					onClick={ clickArrow( 'previous' ) }>
+					onClick={ this.handleClickPrevious }>
 					<Gridicon icon="arrow-left" size={ 18 } />
 				</a>
 				<div className="stats-period-navigation__children">
@@ -35,7 +55,7 @@ class StatsPeriodNavigation extends PureComponent {
 				{ ! isToday &&
 					<a className="stats-period-navigation__next"
 						href={ `${ url }?startDate=${ nextDay }` }
-						onClick={ clickArrow( 'next' ) }>
+						onClick={ this.handleClickNext }>
 						<Gridicon icon="arrow-right" size={ 18 } />
 					</a>
 				}
@@ -49,7 +69,7 @@ class StatsPeriodNavigation extends PureComponent {
 	}
 }
 
-const connectComponent = connect( undefined, { recordGoogleEvent } );
+const connectComponent = connect( undefined, { recordGoogleEvent: recordGoogleEventAction } );
 
 export default flowRight(
 	connectComponent,
