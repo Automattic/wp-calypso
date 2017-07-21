@@ -10,7 +10,7 @@ import moment from 'moment';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import ExternalLink from 'components/external-link';
+import ClipboardButtonInput from 'components/clipboard-button-input';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -36,7 +36,6 @@ class DebugTab extends Component {
 		const {
 			fields: {
 				cache_path,
-				cache_path_url,
 				wp_cache_debug_ip,
 				wp_cache_debug_log = '',
 				wp_super_cache_comments,
@@ -76,42 +75,32 @@ class DebugTab extends Component {
 							</FormToggle>
 						</FormFieldset>
 						<div className="wp-super-cache__debug-fieldsets">
-							{ wp_cache_debug_log &&
-								<table>
-									<tr>
-										<td>
-											{ wp_super_cache_debug
-												? translate( 'Currently logging to:' )
-												: translate( 'Last logged to:' )
-											}
-										</td>
-										<td>
-											<ExternalLink
-												href={ cache_path_url + wp_cache_debug_log }
-												target="_blank">
-												{ cache_path + wp_cache_debug_log }
-											</ExternalLink>
-										</td>
-										<td rowSpan="2">
-											<Button
-												compact
-												disabled={ isRequesting || isSaving }
-												onClick={ this.deleteLog }
-												scary>
-												{ translate( 'Delete' ) }
-											</Button>
-										</td>
-									</tr>
-									<tr>
-										<td>
-											{ translate( 'Username and Password:' ) }
-										</td>
-										<td>
-											{ wp_cache_debug_username }
-										</td>
-									</tr>
-								</table>
-							}
+							<FormFieldset>
+								<FormLabel htmlFor="debugLog">
+									{ wp_super_cache_debug
+										? translate( 'Currently logging to:' )
+										: translate( 'Last logged to:' )
+									}
+								</FormLabel>
+								<FormTextInput
+									disabled={ true }
+									id="debugLog"
+									value={ cache_path + wp_cache_debug_log } />
+								<Button
+									className="wp-super-cache__debug-delete-debug-log"
+									compact
+									disabled={ isRequesting || isSaving }
+									onClick={ this.deleteLog }
+									scary>
+									{ translate( 'Reset debug log' ) }
+								</Button>
+							</FormFieldset>
+							<FormFieldset>
+								<FormLabel htmlFor="username">
+									{ translate( 'Username and Password:' ) }
+								</FormLabel>
+								<ClipboardButtonInput id="username" value={ wp_cache_debug_username } />
+							</FormFieldset>
 							<FormFieldset>
 								<FormLabel htmlFor="ipAddress">
 									{ translate( 'IP Address' ) }
@@ -217,7 +206,6 @@ class DebugTab extends Component {
 const getFormSettings = settings => {
 	return pick( settings, [
 		'cache_path',
-		'cache_path_url',
 		'wp_cache_debug_ip',
 		'wp_cache_debug_log',
 		'wp_super_cache_comments',
