@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import ApiCache from './api-cache';
 import CompactCard from 'components/card/compact';
 import JetpackSyncPanel from 'my-sites/site-settings/jetpack-sync-panel';
+import PublicPostTypes from './public-post-types';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
@@ -31,6 +32,7 @@ const DataSynchronization = ( {
 
 			<JetpackSyncPanel />
 			<ApiCache />
+			<PublicPostTypes />
 
 			<CompactCard href={ 'https://jetpack.com/support/debug/?url=' + siteUrl } target="_blank">
 				{ translate( 'Diagnose a connection problem' ) }
