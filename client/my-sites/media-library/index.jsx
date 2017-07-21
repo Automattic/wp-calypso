@@ -35,6 +35,7 @@ module.exports = React.createClass( {
 		onFilterChange: React.PropTypes.func,
 		onSearch: React.PropTypes.func,
 		onScaleChange: React.PropTypes.func,
+		onSourceChange: React.PropTypes.func,
 		onEditItem: React.PropTypes.func,
 		fullScreenDropZone: React.PropTypes.bool,
 		containerWidth: React.PropTypes.number,
@@ -48,6 +49,7 @@ module.exports = React.createClass( {
 			fullScreenDropZone: true,
 			onAddMedia: () => {},
 			onScaleChange: () => {},
+			onSourceChange: null,
 			scrollable: false,
 			source: '',
 		};
@@ -138,6 +140,7 @@ module.exports = React.createClass( {
 				onAddMedia={ this.onAddMedia }
 				onAddAndEditImage={ this.props.onAddAndEditImage }
 				onMediaScaleChange={ this.props.onScaleChange }
+				onSourceChange={ this.props.onSourceChange }
 				selectedItems={ this.props.mediaLibrarySelectedItems }
 				onDeleteItem={ this.props.onDeleteItem }
 				onEditItem={ this.props.onEditItem }

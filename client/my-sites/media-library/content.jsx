@@ -55,6 +55,7 @@ const MediaLibraryContent = React.createClass( {
 		scrollable: React.PropTypes.bool,
 		onAddMedia: React.PropTypes.func,
 		onMediaScaleChange: React.PropTypes.func,
+		onSourceChange: React.PropTypes.func,
 		onEditItem: React.PropTypes.func,
 		postId: React.PropTypes.number
 	},
@@ -63,6 +64,7 @@ const MediaLibraryContent = React.createClass( {
 		return {
 			mediaValidationErrors: Object.freeze( {} ),
 			onAddMedia: noop,
+			onSourceChange: null,
 			source: '',
 		};
 	},
@@ -267,6 +269,7 @@ const MediaLibraryContent = React.createClass( {
 					site={ this.props.site }
 					filter={ this.props.filter }
 					onMediaScaleChange={ this.props.onMediaScaleChange }
+					onSourceChange={ this.props.onSourceChange }
 					onAddMedia={ this.props.onAddMedia }
 					onAddAndEditImage={ this.props.onAddAndEditImage }
 					selectedItems={ this.props.selectedItems }
