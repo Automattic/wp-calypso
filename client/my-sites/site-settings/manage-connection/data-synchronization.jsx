@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import ApiCache from './api-cache';
 import CompactCard from 'components/card/compact';
 import JetpackSyncPanel from 'my-sites/site-settings/jetpack-sync-panel';
 import SectionHeader from 'components/section-header';
@@ -29,6 +30,7 @@ const DataSynchronization = ( {
 			<SectionHeader label={ translate( 'Data synchronization' ) } />
 
 			<JetpackSyncPanel />
+			<ApiCache />
 
 			<CompactCard href={ 'https://jetpack.com/support/debug/?url=' + siteUrl } target="_blank">
 				{ translate( 'Diagnose a connection problem' ) }
