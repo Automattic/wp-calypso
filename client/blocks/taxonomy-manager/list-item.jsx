@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import page from 'page';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -57,6 +58,12 @@ class TaxonomyManagerListItem extends Component {
 		this.setState( {
 			showDeleteDialog: true
 		} );
+	};
+
+	viewPosts = () => {
+		const { siteSlug, taxonomy, term } = this.props;
+		this.props.recordGoogleEvent( 'Taxonomy Manager', `View ${ taxonomy }` );
+		page( `/posts/${ siteSlug }?${ taxonomy }=${ term.slug }` );
 	};
 
 	closeDeleteDialog = action => {
@@ -167,7 +174,12 @@ class TaxonomyManagerListItem extends Component {
 							{ translate( 'Delete' ) }
 						</PopoverMenuItem>
 					}
-					{ ! isJetpack &&
+
+					<PopoverMenuItem onClick={ this.viewPosts } icon="visible">
+						{ translate( 'View Posts' ) }
+					</PopoverMenuItem>
+
+					{ false && ! isJetpack && /* TODO remove this altogether */
 						<WithPreviewProps
 								url={ this.getTaxonomyLink() }
 								isPreviewable={ this.props.isPreviewable }>
@@ -207,6 +219,7 @@ export default connect(
 		const canSetAsDefault = taxonomy === 'category';
 		const isDefault = canSetAsDefault && get( siteSettings, [ 'default_category' ] ) === term.ID;
 		const isPreviewable = get( site, 'is_previewable' );
+		const siteSlug = get( site, 'slug' );
 		const siteUrl = get( site, 'URL' );
 
 		return {
@@ -215,6 +228,7 @@ export default connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			isPreviewable,
 			siteId,
+			siteSlug,
 			siteUrl,
 		};
 	},
