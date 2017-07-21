@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+const listEnd = <div className="list-end" />;
 export default function ListEnd() {
-	return <div className="list-end" />;
+	return listEnd;
 }
