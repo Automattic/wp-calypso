@@ -330,6 +330,7 @@ const EditorDrawer = React.createClass( {
 					site={ this.props.site }
 					status={ postStatus }
 					isPostPrivate={ this.props.isPostPrivate }
+					confirmationSidebarStatus={ this.props.confirmationSidebarStatus }
 				/>
 			</Accordion>
 		);
