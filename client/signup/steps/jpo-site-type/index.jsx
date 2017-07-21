@@ -9,12 +9,12 @@ import { connect } from 'react-redux';
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import Card from 'components/card';
-import Button from 'components/button';
 import { translate } from 'i18n-calypso';
-
 import { getJPOSiteTitle } from 'state/signup/steps/jpo-site-title/selectors';
 import { setJPOSiteType } from 'state/signup/steps/jpo-site-type/actions';
+import SelectGenre from './select-genre';
+import SelectBusinessPersonal from './select-business-personal';
+import SelectBusinessAddress from './select-business-address';
 
 const JPOSiteTypeStep = React.createClass( {
 	propTypes: {
@@ -30,50 +30,92 @@ const JPOSiteTypeStep = React.createClass( {
 		this.props.goToNextStep();
 	},
 
+	getInitialState() {
+		var siteName = getJPOSiteTitle();		
+
+		return {
+			headerText: 'Let\'s shape ' + siteName + '.',
+			subHeaderText: 'What kind of site do you need? Choose an option below:',
+			currentScreen: 'genre',
+			siteTypePayload: {
+				genre: '',
+				businessPersonal: '',
+				addressInfo: {
+					businessName: '',
+					streetAddress: '',
+					city: '',
+					state: '',
+					zipCode: '',
+				}
+			}
+		};
+	},
+
+	onSelectBlog() {
+		this.setState( { currentScreen: 'businesspersonal' } );
+	},
+
+	onSelectWebsite() {
+		this.setState( { currentScreen: 'businesspersonal' } );
+	},
+
+	onSelectPortfolio() {
+		this.setState( { currentScreen: 'businesspersonal' } );
+	},
+
+	onSelectStore() {
+		this.setState( { currentScreen: 'businesspersonal' } );
+	},
+
+	onSelectPersonal() {
+		this.onNextStep();
+	},
+
+	onSelectBusiness() {
+		this.setState( { currentScreen: 'businessaddress' } );
+		
+		this.state.headerText = 'Add a business address.';
+		this.state.subHeaderText = 'Enter your business address to have a map added to your website.';
+	},
+
+	onNextStep() {
+		this.skipStep();
+	},
+
 	renderStepContent() {
 		return (
-			<div className="jpo__site-type-wrapper">
-				<div className="jpo__site-type-row">
-					<Card>
-						<Button>{ translate( 'Start with a blog' ) }</Button>
-						<div className="jpo__site-type-description">{ translate( 'To share your ideas, stories, and photographs with your followers.' ) }</div>
-					</Card>
-					<Card>
-						<Button>{ translate( 'Start with a website' ) }</Button>
-						<div className="jpo__site-type-description">{ translate( 'To promote your business, organization, or brand and connect with your audience.' ) }</div>
-					</Card>
-				</div>
-				<div className="jpo__site-type-row">
-					<Card>
-						<Button>{ translate( 'Start with a portfolio' ) }</Button>
-						<div className="jpo__site-type-description">{ translate( 'To present your creative projects in a visual showcase.' ) }</div>
-					</Card>
-					<Card>
-						<Button>{ translate( 'Start with an online store' ) }</Button>
-						<div className="jpo__site-type-description">{ translate( 'To sell your products or services and accept payments.' ) }</div>
-					</Card>
-				</div>
-				<div className="jpo__site-type-note">{ translate( 'Not sure? Pick the closest option. You can always change your settings later.' ) }</div>
+			<div>
+				<SelectGenre 
+					current={ this.state.currentScreen === 'genre' } 
+					onSelectBlog={ this.onSelectBlog }
+					onSelectWebsite={ this.onSelectWebsite }
+					onSelectPortfolio={ this.onSelectPortfolio }
+					onSelectStore={ this.onSelectStore }
+				/>
+				<SelectBusinessPersonal 
+					current={ this.state.currentScreen === 'businesspersonal' } 
+					onSelectPersonal={ this.onSelectPersonal }
+					onSelectBusiness={ this.onSelectBusiness }
+				/>
+				<SelectBusinessAddress 
+					current={ this.state.currentScreen === 'businessaddress' } 
+					onNextStep={ this.onNextStep }
+				/>
 			</div>
 		);
 	},
 
 	render() {
-		var siteName = getJPOSiteTitle();
-
-		const headerText = translate( 'Let\'s shape ' ) + siteName + translate( '.' );
-		const subHeaderText = translate( 'What kind of site do you need? Choose an option below:' );
-
 		return (
 			<div>
 				<StepWrapper
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
-					headerText={ headerText }
-					fallbackHeaderText={ headerText }
-					subHeaderText={ subHeaderText }
-					fallbackSubHeaderText={ subHeaderText }
+					headerText={ this.state.headerText }
+					fallbackHeaderText={ this.state.headerText }
+					subHeaderText={ this.state.subHeaderText }
+					fallbackSubHeaderText={ this.state.subHeaderText }
 					signupProgress={ this.props.signupProgress }
 					stepContent={ this.renderStepContent() }
 					goToNextStep={ this.skipStep }
