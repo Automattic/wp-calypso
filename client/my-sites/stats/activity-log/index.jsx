@@ -100,6 +100,13 @@ class ActivityLog extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
+	handlePeriodChange = ( { date, direction } ) => {
+		this.props.recordTracksEvent( 'calypso_activitylog_monthpicker_change', {
+			date,
+			direction,
+		} );
+	}
+
 	handleRequestRestore = ( requestedRestoreTimestamp, from ) => {
 		this.props.recordTracksEvent( 'calypso_activitylog_restore_request', {
 			from,
@@ -293,8 +300,9 @@ class ActivityLog extends Component {
 		return (
 			<div>
 				<StatsPeriodNavigation
-					period="month"
 					date={ startOfMonth }
+					onPeriodChange={ this.handlePeriodChange }
+					period="month"
 					url={ `/stats/activity/${ slug }` }
 				>
 					<DatePicker
