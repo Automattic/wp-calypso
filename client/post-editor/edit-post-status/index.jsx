@@ -44,6 +44,7 @@ export class EditPostStatus extends Component {
 		onPrivatePublish: PropTypes.func,
 		status: PropTypes.string,
 		isPostPrivate: PropTypes.bool,
+		confirmationSidebarStatus: PropTypes.string,
 	};
 
 	constructor( props ) {
@@ -208,6 +209,10 @@ export class EditPostStatus extends Component {
 
 	renderPostVisibility() {
 		if ( ! this.props.post ) {
+			return;
+		}
+
+		if ( 'open' === this.props.confirmationSidebarStatus ) {
 			return;
 		}
 
