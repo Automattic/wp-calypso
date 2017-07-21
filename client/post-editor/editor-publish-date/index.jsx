@@ -84,21 +84,14 @@ export class EditorPublishDate extends React.Component {
 		);
 	}
 
-	renderImmediatePublishOption() {
-		return (
-			<Button borderless={ true } className="editor-publish-date__immediate" onClick={ this.setImmediate }>
-				{ this.props.translate( 'Publish Immediately' ) }
-			</Button>
-		);
-	}
-
 	renderSchedule() {
 		const selectedDay = this.props.postDate ? this.props.moment( this.props.postDate ) : null;
-		const isScheduled = utils.isFutureDated( this.props.post );
 
 		return (
 			<div className="editor-publish-date__schedule">
-				{ isScheduled && this.renderImmediatePublishOption() }
+				<Button borderless={ true } className="editor-publish-date__immediate" onClick={ this.setImmediate }>
+					{ this.props.translate( 'Publish Immediately' ) }
+				</Button>
 				<PostSchedule
 					displayInputChrono={ false }
 					onDateChange={ this.props.setPostDate }
