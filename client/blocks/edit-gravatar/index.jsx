@@ -230,7 +230,9 @@ export class EditGravatar extends Component {
 					</FilePicker>
 				</div>
 				<div>
-					<p className="edit-gravatar__explanation">Your profile photo is public.</p>
+					<p className="edit-gravatar__explanation">
+						{ translate( 'Your profile photo is public.' ) }
+					</p>
 					<InfoPopover
 						className="edit-gravatar__pop-over"
 						position="left" >
