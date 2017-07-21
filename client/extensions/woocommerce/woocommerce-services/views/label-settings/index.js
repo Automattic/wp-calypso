@@ -1,73 +1,90 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { translate as __ } from 'i18n-calypso';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import ActionButtons from 'components/action-buttons';
-import CompactCard from 'components/card/compact';
-import GlobalNotices from 'components/global-notices';
+import Card from 'components/card';
+import ExtendedHeader from 'woocommerce/components/extended-header';
+import FormToggle from 'components/forms/form-toggle';
 import LabelSettings from './label-settings';
-import notices from 'notices';
-import * as settingsActions from '../state/actions';
-import * as NoticeActions from 'state/notices/actions';
+import * as settingsActions from '../../state/label-settings/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	getLabelSettingsFormData,
+	getLabelSettingsFormMeta,
+	getLabelSettingsStoreOptions
+} from '../../state/label-settings/selectors';
 
-const AccountSettingsRootView = ( { formData, formMeta, actions, noticeActions, storeOptions } ) => {
-	const onSaveSuccess = () => {
-		actions.setFormMetaProperty( 'pristine', true );
-		noticeActions.successNotice( __( 'Your payment method has been updated.' ), { duration: 5000 } );
-	};
-	const onSaveFailure = () => noticeActions.errorNotice( __( 'Unable to update your payment method. Please try again.' ) );
-	const onSaveChanges = () => actions.submit( onSaveSuccess, onSaveFailure );
+class AccountSettingsRootView extends Component {
 
-	const buttons = [
-		{
-			label: __( 'Save changes' ),
-			onClick: onSaveChanges,
-			isPrimary: true,
-			isDisabled: formMeta.pristine || formMeta.isSaving,
-		},
-	];
-
-	const renderContent = () => {
-		if ( ! formData && ! formMeta.isFetching ) {
-			return (
-				<p className="error-message">
-					{ __( 'Unable to get your settings. Please refresh the page to try again.' ) }
-				</p>
-			);
+	componentWillMount() {
+		if ( this.props.siteId ) {
+			this.props.actions.fetchSettings( this.props.siteId );
 		}
-		return (
-			<LabelSettings
-				isLoading={ formMeta.isFetching }
-				paymentMethods={ formMeta.payment_methods || [] }
-				setFormDataValue={ actions.setFormDataValue }
-				selectedPaymentMethod={ ( formData || {} ).selected_payment_method_id }
-				paperSize={ ( formData || {} ).paper_size }
-				storeOptions={ storeOptions }
-			/>
-		);
-	};
+	}
 
-	return (
-		<div>
-			<GlobalNotices id="notices" notices={ notices.list } />
-			<CompactCard>
-				{ renderContent() }
-			</CompactCard>
-			<CompactCard className="save-button-bar">
-				<ActionButtons
-					buttons={ buttons }
+	componentWillReceiveProps( props ) {
+		if ( props.siteId !== this.props.siteId ) {
+			this.props.actions.fetchSettings( props.siteId );
+		}
+	}
+
+	render() {
+		const { formData, formMeta, storeOptions, siteId, translate, actions } = this.props;
+
+		if ( ! formMeta ) {
+			return null;
+		}
+//	const onSaveSuccess = () => {
+//		actions.setFormMetaProperty( 'pristine', true );
+//		noticeActions.successNotice( __( 'Your payment method has been updated.' ), { duration: 5000 } );
+//	};
+//	const onSaveFailure = () => noticeActions.errorNotice( __( 'Unable to update your payment method. Please try again.' ) );
+//	const onSaveChanges = () => actions.submit( onSaveSuccess, onSaveFailure );
+		const setFormDataValue = ( key, value ) => ( actions.setFormDataValue( siteId, key, value ) );
+
+		const renderContent = () => {
+			if ( ! formData && ! formMeta.isFetching ) {
+				return (
+					<p>
+						{ translate( 'Unable to get your settings. Please refresh the page to try again.' ) }
+					</p>
+				);
+			}
+
+			return (
+				<LabelSettings
+					isLoading={ ( formMeta || {} ).isFetching }
+					paymentMethods={ formMeta.payment_methods || [] }
+					setFormDataValue={ setFormDataValue }
+					selectedPaymentMethod={ ( formData || {} ).selected_payment_method_id }
+					paperSize={ ( formData || {} ).paper_size }
+					storeOptions={ storeOptions }
 				/>
-			</CompactCard>
-		</div>
-	);
-};
+			);
+		};
+
+		return (
+			<div>
+				<ExtendedHeader
+					label={ translate( 'Shipping Labels' ) }
+					description={ translate( 'Print shipping labels yourself and save a trip to the post office.' ) }>
+					<FormToggle checked={ false } />
+				</ExtendedHeader>
+				<Card className={ classNames( 'label-settings__labels-container', { hidden: false } ) }>
+					{ renderContent() }
+				</Card>
+			</div>
+		);
+	}
+}
 
 AccountSettingsRootView.propTypes = {
 	submit: PropTypes.func,
@@ -75,20 +92,20 @@ AccountSettingsRootView.propTypes = {
 
 function mapStateToProps( state ) {
 	return {
-		storeOptions: state.form.storeOptions,
-		formData: state.form.data,
-		formMeta: state.form.meta,
+		siteId: getSelectedSiteId( state ),
+		storeOptions: getLabelSettingsStoreOptions( state ),
+		formData: getLabelSettingsFormData( state ),
+		formMeta: getLabelSettingsFormMeta( state ),
 	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return {
 		actions: bindActionCreators( settingsActions, dispatch ),
-		noticeActions: bindActionCreators( NoticeActions, dispatch ),
 	};
 }
 
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( AccountSettingsRootView );
+)( localize( AccountSettingsRootView ) );

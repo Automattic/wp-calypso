@@ -3,11 +3,12 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Checkbox from 'components/checkbox';
+import FormCheckbox from 'components/forms/form-checkbox';
 import CompactCard from 'components/card/compact';
 import PaymentLogo from 'components/payment-logo';
 
@@ -20,7 +21,7 @@ const PaymentMethod = ( { translate, selected, type, digits, name, expiry, onSel
 		paypal: translate( 'PayPal' ),
 	};
 
-	const typeId = Object.keys( supportedTypes ).includes( type ) ? type : 'placeholder';
+	const typeId = includes( Object.keys( supportedTypes ), type ) ? type : 'placeholder';
 	const typeName = supportedTypes[ type ] || type;
 
 	const renderDigits = () => {
@@ -32,18 +33,18 @@ const PaymentMethod = ( { translate, selected, type, digits, name, expiry, onSel
 	};
 
 	return (
-		<CompactCard className="shipping__card" onClick={ onSelect }>
-			<Checkbox
-				className="shipping__card-checkbox"
+		<CompactCard className="label-settings__card" onClick={ onSelect }>
+			<FormCheckbox
+				className="label-settings__card-checkbox"
 				checked={ selected }
 				onChange={ onSelect }
 			/>
-			<PaymentLogo className="shipping__card-logo" type={ typeId } />
-			<div className="shipping__card-details">
-				<p className="shipping__card-number">{ typeName } { renderDigits() }</p>
-				<p className="shipping__card-name">{ name }</p>
+			<PaymentLogo className="label-settings__card-logo" type={ typeId } />
+			<div className="label-settings__card-details">
+				<p className="label-settings__card-number">{ typeName } { renderDigits() }</p>
+				<p className="label-settings__card-name">{ name }</p>
 			</div>
-			<div className="shipping__card-date">
+			<div className="label-settings__card-date">
 				{ translate( 'Expires %(date)s', {
 					args: { date: expiry },
 					context: 'date is of the form MM/YY',

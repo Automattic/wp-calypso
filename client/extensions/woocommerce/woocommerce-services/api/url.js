@@ -1,4 +1,4 @@
-const namespace = 'wc/v1/connect/';
+const namespace = 'connect/';
 
 export const accountSettings = () => namespace + 'account/settings';
 

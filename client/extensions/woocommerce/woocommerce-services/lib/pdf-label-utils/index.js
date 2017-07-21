@@ -8,12 +8,12 @@ import _ from 'lodash';
 /**
  * Internal dependencies
  */
-import getPDFSupport from 'lib/utils/pdf-support';
+import getPDFSupport from '../utils/pdf-support';
 
 const PAPER_SIZES = {
 	a4: {
 		name: __( 'A4' ),
-		exclude: ( country ) => [ 'US', 'CA', 'MX', 'DO' ].includes( country ),
+		exclude: ( country ) => _.includes( [ 'US', 'CA', 'MX', 'DO' ], country ),
 	},
 	label: {
 		name: __( 'Label (4"x6")' ),

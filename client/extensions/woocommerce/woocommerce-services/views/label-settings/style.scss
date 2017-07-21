@@ -1,9 +1,5 @@
-.form-label.shipping__labels-paper-size,
-.form-label.shipping__cards-label {
-	margin-bottom: 4px;
-}
-
-.shipping__credit-card-description {
+.form-label.label-settings__labels-paper-size,
+.form-label.label-settings__cards-label {
 	margin-bottom: 4px;
 	color: $gray;
 	padding-bottom: 8px;
@@ -11,7 +7,15 @@
 	line-height: 18px;
 }
 
-.card.shipping__card {
+.label-settings__credit-card-description {
+	margin-bottom: 4px;
+	color: $gray;
+	padding-bottom: 8px;
+	font-size: 12px;
+	line-height: 18px;
+}
+
+.card.label-settings__card {
 	margin-bottom: 14px;
 	display: flex;
 	flex-direction: row;
@@ -19,11 +23,11 @@
 	cursor: pointer;
 }
 
-.shipping__card .payment-logo {
+.label-settings__card .payment-logo {
 	margin-top: 0;
 }
 
-.form-checkbox.shipping__card-checkbox {
+.form-checkbox.label-settings__card-checkbox {
 	margin-right: 20px;
 	float: left;
 }
@@ -34,21 +38,21 @@
 	margin-right: 14px;
 }
 
-.shipping__card-details {
+.label-settings__card-details {
 	float: left;
 	flex-grow: 1;
 }
 
-.shipping__card-number {
+.label-settings__card-number {
 	margin-bottom: 0;
 	font-weight: bold;
 }
 
-.shipping__card-name {
+.label-settings__card-name {
 	margin-bottom: 0;
 }
 
-.shipping__card-date {
+.label-settings__card-date {
 	float: right;
 	color: $gray;
 	font-style: italic;
