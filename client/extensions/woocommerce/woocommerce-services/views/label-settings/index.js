@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { isBoolean } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,13 +43,8 @@ class AccountSettingsRootView extends Component {
 		if ( ! formMeta ) {
 			return null;
 		}
-//	const onSaveSuccess = () => {
-//		actions.setFormMetaProperty( 'pristine', true );
-//		noticeActions.successNotice( __( 'Your payment method has been updated.' ), { duration: 5000 } );
-//	};
-//	const onSaveFailure = () => noticeActions.errorNotice( __( 'Unable to update your payment method. Please try again.' ) );
-//	const onSaveChanges = () => actions.submit( onSaveSuccess, onSaveFailure );
 		const setFormDataValue = ( key, value ) => ( actions.setFormDataValue( siteId, key, value ) );
+		const onEnabledToggle = () => ( actions.setFormDataValue( siteId, 'enabled', ! enabled ) );
 
 		const renderContent = () => {
 			if ( ! formData && ! formMeta.isFetching ) {
@@ -71,12 +67,14 @@ class AccountSettingsRootView extends Component {
 			);
 		};
 
+		const renderToggle = formData && isBoolean( formData.enabled );
+
 		return (
 			<div>
 				<ExtendedHeader
 					label={ translate( 'Shipping Labels' ) }
 					description={ translate( 'Print shipping labels yourself and save a trip to the post office.' ) }>
-					<FormToggle checked={ false } />
+					{ renderToggle && <FormToggle checked={ formData.enabled } onChange={ onEnabledToggle } /> }
 				</ExtendedHeader>
 				<Card className={ classNames( 'label-settings__labels-container', { hidden: false } ) }>
 					{ renderContent() }
