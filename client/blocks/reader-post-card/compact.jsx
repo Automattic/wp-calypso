@@ -8,32 +8,19 @@ import React from 'react';
  */
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
-import ReaderFeaturedVideo from 'blocks/reader-featured-video';
-import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderExcerpt from 'blocks/reader-excerpt';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
+import FeaturedAsset from './featured-asset';
 
 const CompactPost = ( { post, postByline, children, isDiscover } ) => {
-	const canonicalMedia = post.canonical_media;
-	let featuredAsset;
-	if ( ! canonicalMedia ) {
-		featuredAsset = null;
-	} else if ( canonicalMedia.mediaType === 'video' ) {
-		featuredAsset = (
-			<ReaderFeaturedVideo
-				{ ...canonicalMedia }
-				videoEmbed={ canonicalMedia }
-				allowPlaying={ false }
-			/>
-		);
-	} else {
-		featuredAsset = <ReaderFeaturedImage imageUrl={ canonicalMedia.src } href={ post.URL } />;
-	}
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="reader-post-card__post">
-			{ featuredAsset }
+			<FeaturedAsset
+				canonicalMedia={ post.canonical_media }
+				postUrl={ post.URL }
+				allowVideoPlaying={ false }
+			/>
 			<div className="reader-post-card__post-details">
 				{ postByline }
 				<ReaderPostOptionsMenu
