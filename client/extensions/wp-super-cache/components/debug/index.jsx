@@ -36,6 +36,7 @@ class DebugTab extends Component {
 		const {
 			fields: {
 				cache_path,
+				cache_path_url,
 				wp_cache_debug_ip,
 				wp_cache_debug_log = '',
 				wp_super_cache_comments,
@@ -83,11 +84,20 @@ class DebugTab extends Component {
 									}
 								</FormLabel>
 								<FormTextInput
-									disabled={ true }
+									disabled
 									id="debugLog"
 									value={ cache_path + wp_cache_debug_log } />
 								<Button
-									className="wp-super-cache__debug-delete-debug-log"
+									className="wp-super-cache__debug-log-button"
+									compact
+									disabled={ isRequesting || isSaving }
+									href={ cache_path_url + wp_cache_debug_log }
+									rel="noopener noreferrer"
+									target="_blank">
+									{ translate( 'View debug log' ) }
+								</Button>
+								<Button
+									className="wp-super-cache__debug-log-button"
 									compact
 									disabled={ isRequesting || isSaving }
 									onClick={ this.deleteLog }
@@ -206,6 +216,7 @@ class DebugTab extends Component {
 const getFormSettings = settings => {
 	return pick( settings, [
 		'cache_path',
+		'cache_path_url',
 		'wp_cache_debug_ip',
 		'wp_cache_debug_log',
 		'wp_super_cache_comments',
