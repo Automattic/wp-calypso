@@ -382,22 +382,39 @@ class SignupForm extends Component {
 	}
 
 	termsOfServiceLink() {
-		return (
-			<p className="signup-form__terms-of-service-link">{
-				this.props.translate(
-					'By creating an account via any of the options below, you agree to our {{a}}Terms of Service{{/a}}.',
-					{
-						components: {
-							a: <a
-								href={ this.getTermsOfServiceUrl() }
-								onClick={ this.handleOnClickTos }
-								target="_blank"
-								rel="noopener noreferrer" />
-						}
-					}
-				)
-			}</p>
+		const tosLink = <a
+			href={ this.getTermsOfServiceUrl() }
+			onClick={ this.handleOnClickTos }
+			target="_blank"
+			rel="noopener noreferrer" />;
+		const tosText = this.props.translate(
+			'By creating an account you agree to our {{a}}fascinating Terms of Service{{/a}}.',
+			{
+				components: {
+					a: tosLink
+				}
+			}
 		);
+
+		if ( this.props.isSocialSignupEnabled ) {
+			return (
+				<p className="signup-form__terms-of-service-link">{
+					this.props.translate(
+						'By creating an account via any of the options below, you agree to our {{a}}Terms of Service{{/a}}.',
+						{
+							components: {
+								a: tosLink
+							}
+						}
+					)
+				}</p>
+			);
+		}
+
+		return (
+			<p className="signup-form__terms-of-service-link">{ tosText }</p>
+		);
+
 	}
 
 	getNotice() {
