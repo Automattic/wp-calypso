@@ -23,21 +23,6 @@ const files = execSync( 'git diff --cached --name-only' )
 	.map( name => name.trim() )
 	.filter( name => name.endsWith( '.js' ) || name.endsWith( '.jsx' ) );
 
-const lintResult = spawnSync( 'eslint-eslines', [ ...files, '--', '--diff=index' ], {
-	shell: true,
-	stdio: 'inherit',
-} );
-
-if ( lintResult.status ) {
-	console.log(
-		chalk.red( 'COMMIT ABORTED:' ),
-		'The linter reported some problems. ' +
-		'If you are aware of them and it is OK, ' +
-		'repeat the commit command with --no-verify to avoid this check.'
-	);
-	process.exit( 1 );
-}
-
 /**
  * Returns true if the given text contains '@ format' (without the space after @).
  * within its first docblock. False otherwise.
@@ -79,3 +64,19 @@ files.map( file => path.join( __dirname, '../', file ) ).forEach( file => {
 		}
 	} );
 } );
+
+// linting should happen after formatting
+const lintResult = spawnSync( 'eslint-eslines', [ ...files, '--', '--diff=index' ], {
+	shell: true,
+	stdio: 'inherit',
+} );
+
+if ( lintResult.status ) {
+	console.log(
+		chalk.red( 'COMMIT ABORTED:' ),
+		'The linter reported some problems. ' +
+		'If you are aware of them and it is OK, ' +
+		'repeat the commit command with --no-verify to avoid this check.'
+	);
+	process.exit( 1 );
+}
