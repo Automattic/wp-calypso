@@ -1,10 +1,16 @@
 /*rtl:ignore*/
-.signup-form__input {
-	direction: ltr;
+.signup-form .signup-form__input {
+	margin-bottom: 20px;
+	transition: none;
+
+	&.is-error,
+	&[type="password"] {
+		margin-bottom: 0;
+	}
 }
 
 .signup-form .logged-out-form__footer {
-	margin-top: 10px;
+	margin-top: 20px;
 }
 
 .signup-form__terms-of-service-link {
@@ -35,6 +41,10 @@
 		margin: 0 0 10px;
 		width: 100%;
 	}
+}
+
+.social-buttons__button-container + .social-buttons__button-container {
+	margin-top: 10px;
 }
 
 .signup-form__social,
