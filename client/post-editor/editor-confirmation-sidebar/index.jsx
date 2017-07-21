@@ -144,7 +144,7 @@ class EditorConfirmationSidebar extends React.Component {
 		);
 	}
 
-	renderPublishDateSelector() {
+	renderPublishDateComponent() {
 		const postDate = this.props.post && this.props.post.date
 			? this.props.post.date
 			: null;
@@ -201,10 +201,10 @@ class EditorConfirmationSidebar extends React.Component {
 									} )
 							}
 						</div>
+						{ this.renderPublishDateComponent() }
 						<div className="editor-confirmation-sidebar__privacy-control">
 							{ this.renderPrivacyControl() }
 						</div>
-						{ this.renderPublishDateSelector() }
 					</div>
 					{ this.renderNoticeDisplayPreferenceCheckbox() }
 				</div>

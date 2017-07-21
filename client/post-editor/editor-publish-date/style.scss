@@ -1,9 +1,5 @@
 .editor-publish-date {
-	&.is-open {
-		.gridicons-chevron-down {
-			transform: rotate( 180deg );
-		}
-	}
+	height: 43px;
 }
 
 .editor-publish-date__wrapper {
@@ -15,6 +11,10 @@
 	position: relative;
 	transition: all .15s ease-in-out;
 	width: 100%;
+
+	.editor-publish-date.is-open & {
+		z-index: z-index( 'root', '.editor-publish-date.is-open .editor-publish-date__wrapper' );
+	}
 }
 
 .editor-publish-date__header {
@@ -38,7 +38,7 @@
 		color: $blue-wordpress;
 	}
 
-	&.is-open {
+	.editor-publish-date.is-open & {
 		border-radius: 4px 4px 0 0;
 		box-shadow: none;
 		background-color: $gray-light;
@@ -56,12 +56,10 @@
 		position: absolute;
 			right: 14px;
 			top: 0px;
-
-		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
 	}
 
 	// up-arrow
-	&.is-open::after {
+	.editor-publish-date.is-open &::after {
 		transform: rotate( 180deg );
 	}
 }
@@ -102,6 +100,8 @@
 }
 
 .editor-publish-date__schedule {
+	overflow-y: auto;
+	position: static;
 	border-top: 1px solid lighten( $gray, 20% );
 	padding: 0 10px;
 }

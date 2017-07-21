@@ -60,7 +60,6 @@ export class EditorPublishDate extends React.Component {
 	renderHeader() {
 		const isScheduled = utils.isFutureDated( this.props.post );
 		const className = classNames( 'editor-publish-date__header', {
-			'is-open': this.state.isOpen,
 			'is-scheduled': isScheduled,
 		} );
 
@@ -110,8 +109,12 @@ export class EditorPublishDate extends React.Component {
 	}
 
 	render() {
+		const className = classNames( 'editor-publish-date', {
+			'is-open': this.state.isOpen,
+		} );
+
 		return (
-			<div className="editor-publish-date">
+			<div className={ className }>
 				<div className="editor-publish-date__wrapper" ref="editorPublishDateWrapper">
 					{ this.renderHeader() }
 					{ this.state.isOpen && this.renderSchedule() }
