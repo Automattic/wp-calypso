@@ -27,18 +27,17 @@ export class ConversationCommentList extends React.Component {
 
 		return (
 			<div className="conversations__comment-list">
-				{ map( commentIds, commentId =>
-					// <PostComment
-					// 	commentsTree={ commentsTree }
-					// 	key={ commentId }
-					// 	commentId={ commentId }
-					// 	maxChildrenToShow={ 0 }
-					// 	post={ post }
-					// />,
-					<div>
-						{ commentId }
-					</div>,
-				) }
+				{ map( commentIds, commentId => {
+					return (
+						<PostComment
+							commentsTree={ commentsTree }
+							key={ commentId }
+							commentId={ commentId }
+							maxChildrenToShow={ 0 }
+							post={ post }
+						/>
+					);
+				} ) }
 			</div>
 		);
 	}
