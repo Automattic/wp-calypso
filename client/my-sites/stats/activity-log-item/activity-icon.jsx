@@ -33,7 +33,6 @@ export default class ActivityIcon extends PureComponent {
 			// Inline return makes alphabetizing and searching easier :)
 			case 'post__published': return 'create';
 			case 'post__trashed': return 'trash';
-			case 'user__registered': return 'user-add';
 		}
 
 		switch ( group ) {
