@@ -1,109 +1,94 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { translate as __ } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import ExtendedHeader from 'woocommerce/components/extended-header';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormToggle from 'components/forms/form-toggle';
-import ShippingCard from './shipping-card';
+import ActionButtons from 'components/action-buttons';
+import CompactCard from 'components/card/compact';
+import GlobalNotices from 'components/global-notices';
+import LabelSettings from './label-settings';
+import notices from 'notices';
+import * as settingsActions from '../state/actions';
+import * as NoticeActions from 'state/notices/actions';
 
-class LabelSettings extends Component {
-	constructor( props ) {
-		super( props );
+const AccountSettingsRootView = ( { formData, formMeta, actions, noticeActions, storeOptions } ) => {
+	const onSaveSuccess = () => {
+		actions.setFormMetaProperty( 'pristine', true );
+		noticeActions.successNotice( __( 'Your payment method has been updated.' ), { duration: 5000 } );
+	};
+	const onSaveFailure = () => noticeActions.errorNotice( __( 'Unable to update your payment method. Please try again.' ) );
+	const onSaveChanges = () => actions.submit( onSaveSuccess, onSaveFailure );
 
-		//TODO: use redux state with real data
-		this.state = {
-			visible: true,
-			cards: [ {
-				selected: true,
-				type: 'VISA',
-				digits: '1234',
-				name: 'Name Surname',
-				date: '12/19'
-			}, {
-				selected: false,
-				type: 'MasterCard',
-				digits: '5678',
-				name: 'Name Surname',
-				date: '01/20'
-			} ]
-		};
-	}
+	const buttons = [
+		{
+			label: __( 'Save changes' ),
+			onClick: onSaveChanges,
+			isPrimary: true,
+			isDisabled: formMeta.pristine || formMeta.isSaving,
+		},
+	];
 
-	selectCard( index ) {
-		const cards = this.state.cards.map( ( card ) => {
-			return { ...card, selected: false };
-		} );
-
-		cards[ index ].selected = true;
-
-		this.setState( { cards } );
-	}
-
-	render() {
-		const { translate } = this.props;
-
-		const onToggle = () => {
-			this.setState( { visible: ! this.state.visible } );
-		};
-
-		const renderCard = ( card, index ) => {
-			const onSelect = () => {
-				this.selectCard( index );
-			};
-
-			return ( <ShippingCard
-				key={ index }
-				onSelect={ onSelect }
-				{ ...card } /> );
-		};
-
+	const renderContent = () => {
+		if ( ! formData && ! formMeta.isFetching ) {
+			return (
+				<p className="error-message">
+					{ __( 'Unable to get your settings. Please refresh the page to try again.' ) }
+				</p>
+			);
+		}
 		return (
-			<div>
-				<ExtendedHeader
-					label={ translate( 'Shipping Labels' ) }
-					description={ translate( 'Print shipping labels yourself and save a trip to the post office.' ) }>
-					<FormToggle onChange={ onToggle } checked={ this.state.visible } />
-				</ExtendedHeader>
-				<Card className={ classNames( 'shipping__labels-container', { hidden: ! this.state.visible } ) }>
-					<FormFieldSet>
-						<FormLabel
-							className="label-settings__labels-paper-size"
-							htmlFor="paper-size">
-							{ translate( 'Paper size' ) }
-						</FormLabel>
-						<FormSelect name="paper-size">
-							<option>{ translate( 'Letter' ) }</option>
-							<option>{ translate( 'Legal' ) }</option>
-							<option>{ translate( 'Label (4"x6")' ) }</option>
-							<option>{ translate( 'A4' ) }</option>
-						</FormSelect>
-					</FormFieldSet>
-					<FormFieldSet>
-						<FormLabel
-							className="label-settings__cards-label">
-							{ translate( 'Credit card' ) }
-						</FormLabel>
-						<p className="label-settings__credit-card-description">
-							{ translate( 'Use your credit card on file to pay for the labels you print or add a new one.' ) }
-						</p>
-						{ this.state.cards.map( renderCard ) }
-						<Button compact>{ translate( 'Add another credit card' ) }</Button>
-					</FormFieldSet>
-				</Card>
-			</div>
+			<LabelSettings
+				isLoading={ formMeta.isFetching }
+				paymentMethods={ formMeta.payment_methods || [] }
+				setFormDataValue={ actions.setFormDataValue }
+				selectedPaymentMethod={ ( formData || {} ).selected_payment_method_id }
+				paperSize={ ( formData || {} ).paper_size }
+				storeOptions={ storeOptions }
+			/>
 		);
-	}
+	};
+
+	return (
+		<div>
+			<GlobalNotices id="notices" notices={ notices.list } />
+			<CompactCard>
+				{ renderContent() }
+			</CompactCard>
+			<CompactCard className="save-button-bar">
+				<ActionButtons
+					buttons={ buttons }
+				/>
+			</CompactCard>
+		</div>
+	);
+};
+
+AccountSettingsRootView.propTypes = {
+	submit: PropTypes.func,
+};
+
+function mapStateToProps( state ) {
+	return {
+		storeOptions: state.form.storeOptions,
+		formData: state.form.data,
+		formMeta: state.form.meta,
+	};
 }
 
-export default localize( LabelSettings );
+function mapDispatchToProps( dispatch ) {
+	return {
+		actions: bindActionCreators( settingsActions, dispatch ),
+		noticeActions: bindActionCreators( NoticeActions, dispatch ),
+	};
+}
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( AccountSettingsRootView );

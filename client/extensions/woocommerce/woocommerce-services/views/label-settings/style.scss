@@ -1,23 +1,31 @@
-
-
-.label-settings__labels-container.hidden {
-	height: 0;
-	padding: 0;
-	overflow: hidden;
-}
-
-.form-label.label-settings__labels-paper-size,
-.form-label.label-settings__cards-label {
+.form-label.shipping__labels-paper-size,
+.form-label.shipping__cards-label {
 	margin-bottom: 4px;
 }
 
-.label-settings__card {
-	margin-bottom: 14px;
+.shipping__credit-card-description {
+	margin-bottom: 4px;
+	color: $gray;
+	padding-bottom: 8px;
+	font-size: 12px;
+	line-height: 18px;
 }
 
-.label-settings__card-checkbox {
-	margin-top: 10px;
+.card.shipping__card {
+	margin-bottom: 14px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	cursor: pointer;
+}
+
+.shipping__card .payment-logo {
+	margin-top: 0;
+}
+
+.form-checkbox.shipping__card-checkbox {
 	margin-right: 20px;
+	float: left;
 }
 
 .payment-logo {
@@ -26,17 +34,22 @@
 	margin-right: 14px;
 }
 
-.label-settings__card-details {
+.shipping__card-details {
 	float: left;
+	flex-grow: 1;
 }
 
-.label-settings__card-number {
+.shipping__card-number {
 	margin-bottom: 0;
 	font-weight: bold;
 }
 
-.label-settings__card-date {
+.shipping__card-name {
+	margin-bottom: 0;
+}
+
+.shipping__card-date {
 	float: right;
-	color: $gray-text-min;
+	color: $gray;
 	font-style: italic;
 }
