@@ -16,15 +16,14 @@ import {
 	getImageEditorTransform,
 	getImageEditorFileInfo,
 	getImageEditorCrop,
-	isImageEditorImageLoaded,
-	getImageMeetsMinimumDimensions
+	isImageEditorImageLoaded
 } from 'state/ui/editor/image-editor/selectors';
 import {
 	setImageEditorCropBounds,
 	setImageEditorImageHasLoaded
 } from 'state/ui/editor/image-editor/actions';
 
-class ImageEditorCanvas extends Component {
+export class ImageEditorCanvas extends Component {
 	static propTypes = {
 		src: PropTypes.string,
 		mimeType: PropTypes.string,
@@ -43,7 +42,7 @@ class ImageEditorCanvas extends Component {
 		setImageEditorImageHasLoaded: PropTypes.func,
 		onLoadError: PropTypes.func,
 		isImageLoaded: PropTypes.bool,
-		imageMeetsMinimumDimensions: PropTypes.bool
+		canBeCropped: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -62,7 +61,7 @@ class ImageEditorCanvas extends Component {
 		setImageEditorImageHasLoaded: noop,
 		onLoadError: noop,
 		isImageLoaded: false,
-		imageMeetsMinimumDimensions: false
+		canBeCropped: true
 	};
 
 	// throttle the frame rate of window.resize() to circa 30fps
@@ -279,7 +278,7 @@ class ImageEditorCanvas extends Component {
 
 		const {
 			isImageLoaded,
-			imageMeetsMinimumDimensions
+			canBeCropped
 		} = this.props;
 
 		const canvasX = -50 * widthRatio - 100 * leftRatio;
@@ -303,7 +302,7 @@ class ImageEditorCanvas extends Component {
 					onMouseDown={ this.preventDrag }
 					className={ canvasClasses }
 				/>
-				{ isImageLoaded && imageMeetsMinimumDimensions
+				{ isImageLoaded && canBeCropped
 					? <ImageEditorCrop />
 				: null }
 			</div>
@@ -317,15 +316,13 @@ export default connect(
 		const { src, mimeType } = getImageEditorFileInfo( state );
 		const crop = getImageEditorCrop( state );
 		const isImageLoaded = isImageEditorImageLoaded( state );
-		const imageMeetsMinimumDimensions = getImageMeetsMinimumDimensions( state );
 
 		return {
 			src,
 			mimeType,
 			transform,
 			crop,
-			isImageLoaded,
-			imageMeetsMinimumDimensions
+			isImageLoaded
 		};
 	},
 	{

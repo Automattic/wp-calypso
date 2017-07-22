@@ -18,11 +18,10 @@ import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import {
 	AspectRatios,
-	MinimumImageDimensions
+	MinimumImageDimensions,
 } from 'state/ui/editor/image-editor/constants';
 import {
-	getImageEditorAspectRatio,
-	getImageMeetsMinimumDimensions
+	getImageEditorAspectRatio
 } from 'state/ui/editor/image-editor/selectors';
 import {
 	imageEditorRotateCounterclockwise,
@@ -30,15 +29,15 @@ import {
 	setImageEditorAspectRatio
 } from 'state/ui/editor/image-editor/actions';
 
-class ImageEditorToolbar extends Component {
+export class ImageEditorToolbar extends Component {
 	static propTypes = {
 		aspectRatio: PropTypes.string,
 		imageEditorRotateCounterclockwise: PropTypes.func,
 		imageEditorFlip: PropTypes.func,
 		setImageEditorAspectRatio: PropTypes.func,
 		allowedAspectRatios: PropTypes.array,
-		imageMeetsMinimumDimensions: PropTypes.bool,
-		onShowNotice: PropTypes.func
+		onShowNotice: PropTypes.func,
+		canChangeAspectRatio: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -46,8 +45,8 @@ class ImageEditorToolbar extends Component {
 		imageEditorFlip: noop,
 		setImageEditorAspectRatio: noop,
 		allowedAspectRatios: objectValues( AspectRatios ),
-		imageMeetsMinimumDimensions: false,
-		onShowNotice: noop
+		onShowNotice: noop,
+		canChangeAspectRatio: true
 	};
 
 	constructor( props ) {
@@ -75,21 +74,26 @@ class ImageEditorToolbar extends Component {
 	onAspectOpen( event ) {
 		event.preventDefault();
 
-		const { imageMeetsMinimumDimensions, translate } = this.props;
+		const {
+			canChangeAspectRatio,
+			onShowNotice,
+			translate
+		} = this.props;
 
-		if ( imageMeetsMinimumDimensions === false ) {
+		if ( ! canChangeAspectRatio ) {
 			const noticeText = translate(
-				'To change aspect ratio, your image dimensions should be greater than %(width)px wide ' +
-				'and %(height)px in height.',
+				'To change aspect ratio, your image dimensions should be greater than {{strong}}%(width)dpx{{/strong}} wide ' +
+				'and {{strong}}%(height)dpx{{/strong}} in height.',
 				{
 					args: {
 						width: MinimumImageDimensions.WIDTH,
 						height: MinimumImageDimensions.HEIGHT
 					},
-					context: 'Image editor - image does not meet minimum dimensions'
+					components: {
+						strong: <strong />
+					}
 				} );
-
-			this.props.onShowNotice( noticeText );
+			onShowNotice( noticeText );
 			return;
 		}
 
@@ -180,7 +184,7 @@ class ImageEditorToolbar extends Component {
 		const {
 			translate,
 			allowedAspectRatios,
-			imageMeetsMinimumDimensions
+			canChangeAspectRatio
 		} = this.props;
 
 		const buttons = [
@@ -198,7 +202,7 @@ class ImageEditorToolbar extends Component {
 					icon: 'layout',
 					text: translate( 'Aspect' ),
 					onClick: this.onAspectOpen,
-					disabled: ! imageMeetsMinimumDimensions
+					disabled: ! canChangeAspectRatio
 				},
 			{
 				tool: 'flip-vertical',
@@ -240,12 +244,9 @@ class ImageEditorToolbar extends Component {
 
 export default connect(
 	( state ) => {
-		const imageMeetsMinimumDimensions = getImageMeetsMinimumDimensions( state );
 		const aspectRatio = getImageEditorAspectRatio( state );
-
 		return {
-			aspectRatio,
-			imageMeetsMinimumDimensions
+			aspectRatio
 		};
 	},
 	{

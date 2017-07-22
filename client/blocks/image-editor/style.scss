@@ -4,11 +4,8 @@
 	height: 100%;
 }
 
-.image-editor .notice {
-	// resorted to !important
-	// because there is
-	// no stronger declaration to overwrite .editor-media-modal .notice
-	margin-top: 0 !important;
+.image-editor .notice.image-editor__notice {
+	margin-top: 0;
 }
 
 .image-editor__content {
@@ -93,7 +90,7 @@
 	border: 2px solid $white;
 	background: darken($gray, 52%);
 
-	&::before {
+	&:before {
 		border-radius: 100%;
 		content: ' ';
 		display: block;

@@ -10,7 +10,6 @@ import {
 	IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO,
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_SET_FILE_INFO,
-	IMAGE_EDITOR_SET_IMAGE_MEETS_MINIMUM_DIMENSIONS,
 	IMAGE_EDITOR_STATE_RESET,
 	IMAGE_EDITOR_STATE_RESET_ALL,
 	IMAGE_EDITOR_IMAGE_HAS_LOADED
@@ -105,12 +104,5 @@ export function setImageEditorImageHasLoaded( width, height ) {
 		type: IMAGE_EDITOR_IMAGE_HAS_LOADED,
 		width,
 		height
-	};
-}
-
-export function setImageMeetsMinimumDimensions( meetsMinimumDimensions ) {
-	return {
-		type: IMAGE_EDITOR_SET_IMAGE_MEETS_MINIMUM_DIMENSIONS,
-		meetsMinimumDimensions
 	};
 }

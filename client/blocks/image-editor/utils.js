@@ -10,8 +10,7 @@ import {
  * Internal dependencies
  */
 import {
-	AspectRatiosValues,
-	MinimumImageDimensions
+	AspectRatiosValues
 } from 'state/ui/editor/image-editor/constants';
 
 /**
@@ -37,24 +36,3 @@ export function getDefaultAspectRatio( aspectRatio = null, aspectRatios = Aspect
 		? getDefaultAspectRatio( aspectRatio )
 		: aspectRatio;
 }
-
-/**
- * Returns whether the supplied height and width values are greater than defined minimum values.
- *
- * Expected model
- * @typedef {Object} MinimumImageDimensions
- * @property {Integer} WIDTH
- * @property {Integer} HEIGHT
- *
- * @param   {Number} width The width of the image/element
- * @param   {Number} height The height of the image/element
- * @param   {MinimumImageDimensions} minimumDimensions The minimum dimensions to check against
- * @returns {Boolean} whether the supplied height and width values are greater than defined minimum values
- */
-export function meetsMinimumDimensions( width, height, minimumDimensions = MinimumImageDimensions ) {
-	if ( typeof width === 'number' && typeof width === 'number' ) {
-		return height > minimumDimensions.HEIGHT && width > minimumDimensions.HEIGHT;
-	}
-	return false;
-}
-
