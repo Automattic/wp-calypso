@@ -1,14 +1,16 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { partialRight } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { requestPostCounts } from 'state/posts/counts/actions';
 import { isRequestingPostCounts } from 'state/posts/counts/selectors';
+import PeriodicActionHandler from 'components/periodic-action-handler';
 
 class QueryPostCounts extends Component {
 	componentWillMount() {
@@ -25,7 +27,7 @@ class QueryPostCounts extends Component {
 	}
 
 	request( props ) {
-		if ( props.requesting ) {
+		if ( props.polling || props.requesting ) {
 			return;
 		}
 
@@ -33,6 +35,16 @@ class QueryPostCounts extends Component {
 	}
 
 	render() {
+		if ( this.props.polling ) {
+			return (
+				<PeriodicActionHandler
+					periodicActionId={ `PollPostCounts-${ this.props.siteId }-${ this.props.type }` }
+					interval={ 1000 }
+					actionToExecute={ requestPostCounts( this.props.siteId, this.props.type ) }
+					skipChecker={ partialRight( isRequestingPostCounts, this.props.siteId, this.props.type ) }
+					executeOnStart={ true } />
+			);
+		}
 		return null;
 	}
 }
@@ -41,7 +53,8 @@ QueryPostCounts.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	type: PropTypes.string.isRequired,
 	requesting: PropTypes.bool,
-	requestPostCounts: PropTypes.func
+	requestPostCounts: PropTypes.func,
+	polling: PropTypes.bool,
 };
 
 export default connect(
