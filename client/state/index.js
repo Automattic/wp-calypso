@@ -170,6 +170,7 @@ export function createReduxStore( initialState = {} ) {
 		isBrowser && config.isEnabled( 'restore-last-location' ) && require( './routing/middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
 		isBrowser && config.isEnabled( 'automated-transfer' ) && require( './automated-transfer/middleware.js' ).default,
+		isBrowser && require( './periodic-actions/middleware.js' ).default,
 	].filter( Boolean );
 
 	const enhancers = [
