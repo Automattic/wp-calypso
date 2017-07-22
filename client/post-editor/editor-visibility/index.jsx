@@ -64,6 +64,28 @@ const EditorVisibility = React.createClass( {
 		};
 	},
 
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.password === nextProps.password ) {
+			return;
+		}
+
+		const isInPostPublishConfirmationFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
+
+		if ( ! isInPostPublishConfirmationFlow ) {
+			return;
+		}
+
+		const oldPassword = this.props.password;
+		const newPassword = nextProps.password;
+
+		const passwordIsValid =
+			oldPassword === '' && newPassword === ' ' || // visibility dropdown selection changed from public to private (without a saved password)
+			newPassword.trim().length > 0;
+
+		this.setState( { passwordIsValid } );
+	},
+
 	getVisibility() {
 		if ( this.props.password ) {
 			return 'password';
