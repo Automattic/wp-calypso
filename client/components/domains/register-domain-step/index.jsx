@@ -23,6 +23,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import SignupDependencyStore from 'lib/signup/dependency-store';
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
 import { checkDomainAvailability, getFixedDomainSearch } from 'lib/domains';
@@ -299,6 +300,14 @@ const RegisterDomainStep = React.createClass( {
 		} );
 	},
 
+	getSuggestionToken: function() {
+		if ( SignupDependencyStore.get().designType === 'blog' ) {
+			return 'blog';
+		}
+
+		return 'default';
+	},
+
 	onSearch: function( searchQuery ) {
 		const domain = getFixedDomainSearch( searchQuery );
 
@@ -353,6 +362,7 @@ const RegisterDomainStep = React.createClass( {
 							quantity: SUGGESTION_QUANTITY,
 							include_wordpressdotcom: this.props.includeWordPressDotCom,
 							include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
+							suggestion_token: this.getSuggestionToken(),
 							vendor: searchVendor,
 							vertical: this.props.surveyVertical,
 						},
