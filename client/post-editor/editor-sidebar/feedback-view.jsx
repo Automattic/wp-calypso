@@ -17,7 +17,7 @@ import SidebarFooter from 'layout/sidebar/footer';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getDraftFeedbackShares } from 'state/selectors';
-import { addDraftShare } from 'state/draft-feedback/actions';
+import { addDraftShare, revokeDraftShare, restoreDraftShare } from 'state/draft-feedback/actions';
 
 // TODO: Find a clearer word than "share" for the owner of feedback and use it in subcomponent and CSS classes
 export class FeedbackView extends Component {
@@ -48,6 +48,16 @@ export class FeedbackView extends Component {
 		this.props.addDraftShare( siteId, postId, emailAddress );
 	};
 
+	onRevokeShareAccess = emailAddress => {
+		const { postId, siteId } = this.props;
+		this.props.revokeDraftShare( siteId, postId, emailAddress );
+	};
+
+	onRestoreShareAccess = emailAddress => {
+		const { postId, siteId } = this.props;
+		this.props.restoreDraftShare( siteId, postId, emailAddress );
+	};
+
 	render() {
 		const { shares, translate } = this.props;
 		const allSharesClosed = this.state.totalOpenedShares === 0;
@@ -75,6 +85,8 @@ export class FeedbackView extends Component {
 								key={ share.emailAddress }
 								share={ share }
 								onToggle={ this.onToggleShare }
+								onRevokeAccess={ this.onRevokeShareAccess }
+								onRestoreAccess={ this.onRestoreShareAccess }
 							/>,
 						) }
 					</div> }
@@ -92,10 +104,13 @@ export default connect(
 
 		return { siteId, postId, shares };
 	},
-	dispatch => bindActionCreators(
-		{
-			addDraftShare,
-		},
-		dispatch,
-	),
+	dispatch =>
+		bindActionCreators(
+			{
+				addDraftShare,
+				revokeDraftShare,
+				restoreDraftShare,
+			},
+			dispatch,
+		),
 )( localize( FeedbackView ) );

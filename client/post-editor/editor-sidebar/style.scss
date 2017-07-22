@@ -133,6 +133,10 @@ input[type="text"].form-text-input.editor-sidebar__feedback-request-input {
 	}
 }
 
+.editor-sidebar__feedback-share + .editor-sidebar__feedback-share {
+	margin-top: 10px;
+}
+
 .editor-sidebar__feedback-share .accordion__icon {
 	margin: 0;
 }
@@ -143,13 +147,52 @@ input[type="text"].form-text-input.editor-sidebar__feedback-request-input {
 }
 
 .editor-sidebar__feedback-share .accordion__content-wrap {
+	padding: 0;
 	padding-top: 7px;
 }
 
-.editor-sidebar__feedback-share p:last-of-type {
-	margin-bottom: 7px;
+%share-content {
+	padding: 0 16px;
+
+	&:last-of-type {
+		margin-bottom: 1em;
+	}
+}
+
+.editor-sidebar__feedback-share-comment {
+	@extend %share-content;
 }
 
 .editor-sidebar__feedback-share-empty-message {
+	@extend %share-content;
 	font-style: italic;
+}
+
+.editor-sidebar__feedback-access-button {
+	width: 100%;
+	text-align: left;
+	border-radius: 0;
+	border: 0;
+	border-top: 1px solid darken( $sidebar-bg-color, 5% );
+	background: $gray-light;
+}
+
+.editor-sidebar__feedback-access-button-icon {
+	padding-right: 12px;
+
+	.editor-sidebar__feedback-access-button.is-revoke & {
+		color: $alert-red;
+	}
+	.editor-sidebar__feedback-access-button.is-restore & {
+		color: $alert-green;
+	}
+}
+
+.editor-sidebar__feedback-access-button-text {
+	.editor-sidebar__feedback-access-button.is-revoke & {
+		color: lighten( $alert-red, 10% );
+	}
+	.editor-sidebar__feedback-access-button.is-restore & {
+		color: lighten( $alert-green, 10% );
+	}
 }
