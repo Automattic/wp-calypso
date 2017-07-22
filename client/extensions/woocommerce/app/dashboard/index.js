@@ -117,7 +117,7 @@ class Dashboard extends Component {
 			setStoreAddressDuringInitialSetup,
 		} = this.props;
 
-		if ( ! finishedInstallOfRequiredPlugins ) {
+		if ( true ) { // TODO - don't commit this
 			return ( <RequiredPluginsInstallView site={ selectedSite } /> );
 		}
 
