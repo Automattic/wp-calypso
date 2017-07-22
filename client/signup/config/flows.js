@@ -69,6 +69,18 @@ const flows = {
 		}
 	},
 
+	'rebrand-cities': {
+		steps: [ 'welcome', 'user' ],
+		destination: function( dependencies ) {
+			return '/plans/select/business/' + dependencies.siteSlug;
+		},
+		description: 'Create an account for REBRAND cities partnership',
+		lastModified: '2017-07-01',
+		meta: {
+			skipBundlingPlan: true
+		}
+	},
+
 	premium: {
 		steps: [ 'design-type', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {

@@ -8,6 +8,7 @@ import DomainsStepComponent from 'signup/steps/domains';
 import GetDotBlogPlansStepComponent from 'signup/steps/get-dot-blog-plans';
 import PlansStepComponent from 'signup/steps/plans';
 import SiteComponent from 'signup/steps/site';
+import WelcomeComponent from 'signup/steps/welcome';
 import SiteOrDomainComponent from 'signup/steps/site-or-domain';
 import SitePicker from 'signup/steps/site-picker';
 import SiteTitleComponent from 'signup/steps/site-title';
@@ -28,6 +29,7 @@ export default {
 	plans: PlansStepComponent,
 	'plans-site-selected': PlansStepWithoutFreePlan,
 	site: SiteComponent,
+	welcome: WelcomeComponent,
 	'site-or-domain': SiteOrDomainComponent,
 	'site-picker': SitePicker,
 	'site-title': SiteTitleComponent,

@@ -69,6 +69,12 @@ export default {
 		providesDependencies: [ 'siteSlug' ]
 	},
 
+	welcome: {
+		stepName: 'welcome',
+		apiRequestFunction: stepActions.createSite,
+		providesDependencies: [ 'siteSlug' ],
+	},
+
 	user: {
 		stepName: 'user',
 		apiRequestFunction: stepActions.createAccount,
