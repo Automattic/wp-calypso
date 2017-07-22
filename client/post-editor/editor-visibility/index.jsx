@@ -80,7 +80,7 @@ const EditorVisibility = React.createClass( {
 		const newPassword = nextProps.password;
 
 		const passwordIsValid =
-			oldPassword === '' && newPassword === ' ' || // visibility dropdown selection changed from public to private (without a saved password)
+			oldPassword === '' && newPassword === ' ' || // visibility selection changed from public to private (without a saved password)
 			newPassword.trim().length > 0;
 
 		this.setState( { passwordIsValid } );
