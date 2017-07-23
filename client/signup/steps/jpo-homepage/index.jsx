@@ -15,6 +15,9 @@ import { translate } from 'i18n-calypso';
 
 import { setJPOHomepage } from 'state/signup/steps/jpo-homepage/actions';
 
+import StaticGraphic from './static-graphic';
+import NewsGraphic from './news-graphic';
+
 const JPOHomepageStep = React.createClass( {
 	propTypes: {
 		flowName: PropTypes.string,
@@ -34,10 +37,12 @@ const JPOHomepageStep = React.createClass( {
 			<div className="jpo__homepage-wrapper">
 				<div className="jpo__homepage-row">
 					<Card>
+						<NewsGraphic />
 						<Button>Recent news or updates</Button>
 						<div className="jpo__homepage-description">We can pull the latest information into your homepage for you.</div>
 					</Card>
 					<Card>
+						<StaticGraphic />
 						<Button>A static welcome page</Button>
 						<div className="jpo__homepage-description">Have your homepage stay the same as time goes on.</div>
 					</Card>
