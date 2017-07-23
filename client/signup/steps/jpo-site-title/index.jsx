@@ -30,6 +30,7 @@ const JPOSiteTitleStep = React.createClass( {
 	},
 
 	submitStep() {
+		//this.props.setJPOSiteTitle( 'foo to the bar' );
 		this.props.goToNextStep();
 	},
 

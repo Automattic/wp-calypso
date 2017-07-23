@@ -15,6 +15,8 @@ import { translate } from 'i18n-calypso';
 
 import { setJPOContactForm } from 'state/signup/steps/jpo-contact-form/actions';
 
+import ContactUsGraphic from './contact-us-graphic';
+
 const JPOContactFormStep = React.createClass( {
 	propTypes: {
 		flowName: PropTypes.string,
@@ -33,6 +35,7 @@ const JPOContactFormStep = React.createClass( {
 		return (
 			<div className="jpo__contact-form-wrapper">
 				<Card>
+					<ContactUsGraphic />
 					<Button>Add a contact form</Button>
 					<div className="jpo__contact-form-description">Not sure? You can skip this step and add a contact form later.</div>
 				</Card>
