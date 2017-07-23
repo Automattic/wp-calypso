@@ -11,16 +11,10 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import {
-	getCurrentUser
-} from 'state/current-user/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 import PostTime from 'reader/post-time';
 import Gravatar from 'components/gravatar';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrack
-} from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { getStreamUrl } from 'reader/route';
 import PostCommentContent from './post-comment-content';
 import PostCommentForm from './form';
@@ -33,28 +27,28 @@ import CommentActions from './comment-actions';
 
 class PostComment extends Component {
 	state = {
-		showReplies: false
+		showReplies: false,
 	};
 
 	handleToggleRepliesClick = () => {
 		this.setState( { showReplies: ! this.state.showReplies } );
-	}
+	};
 
 	handleReply = () => {
 		this.props.onReplyClick( this.props.commentId );
 		this.setState( { showReplies: true } ); // show the comments when replying
-	}
+	};
 
-	handleAuthorClick = ( event ) => {
+	handleAuthorClick = event => {
 		recordAction( 'comment_author_click' );
 		recordGaEvent( 'Clicked Author Name' );
 		recordTrack( 'calypso_reader_comment_author_click', {
 			blog_id: this.props.post.site_ID,
 			post_id: this.props.post.ID,
 			comment_id: this.props.commentId,
-			author_url: event.target.href
+			author_url: event.target.href,
 		} );
-	}
+	};
 
 	renderRepliesList() {
 		const commentChildrenIds = get( this.props.commentsTree, [ this.props.commentId, 'children' ] );
@@ -72,8 +66,8 @@ class PostComment extends Component {
 			'show %(numOfReplies)d replies',
 			{
 				count: commentChildrenIds.length,
-				args: { numOfReplies: commentChildrenIds.length }
-			}
+				args: { numOfReplies: commentChildrenIds.length },
+			},
 		);
 
 		const hideRepliesText = translate(
@@ -81,8 +75,8 @@ class PostComment extends Component {
 			'hide %(numOfReplies)d replies',
 			{
 				count: commentChildrenIds.length,
-				args: { numOfReplies: commentChildrenIds.length }
-			}
+				args: { numOfReplies: commentChildrenIds.length },
+			},
 		);
 
 		let replyVisibilityText = null;
@@ -90,23 +84,30 @@ class PostComment extends Component {
 			replyVisibilityText = this.state.showReplies ? hideRepliesText : showRepliesText;
 		}
 
-		return ( <div>
-			{ !! replyVisibilityText
-			? <button className="comments__view-replies-btn" onClick={ this.handleToggleRepliesClick }>
-				<Gridicon icon="reply" size={ 18 } /> { replyVisibilityText }
-			</button> : null
-			}
-			{ showReplies
-				? <ol className="comments__list">
-					{
-						commentChildrenIds.map( ( childId ) =>
-							<PostComment { ...this.props } depth={ this.props.depth + 1 } key={ childId } commentId={ childId } />
-						)
-					}
-				</ol>
-				: null
-			}
-		</div> );
+		return (
+			<div>
+				{ !! replyVisibilityText
+					? <button
+							className="comments__view-replies-btn"
+							onClick={ this.handleToggleRepliesClick }
+						>
+							<Gridicon icon="reply" size={ 18 } /> { replyVisibilityText }
+						</button>
+					: null }
+				{ showReplies
+					? <ol className="comments__list">
+							{ commentChildrenIds.map( childId =>
+								<PostComment
+									{ ...this.props }
+									depth={ this.props.depth + 1 }
+									key={ childId }
+									commentId={ childId }
+								/>,
+							) }
+						</ol>
+					: null }
+			</div>
+		);
 	}
 
 	renderCommentForm() {
@@ -114,13 +115,16 @@ class PostComment extends Component {
 			return null;
 		}
 
-		return <PostCommentForm
-			ref="postCommentForm"
-			post={ this.props.post }
-			parentCommentID={ this.props.commentId }
-			commentText={ this.props.commentText }
-			onUpdateCommentText={ this.props.onUpdateCommentText }
-			onCommentSubmit={ this.props.onCommentSubmit } />;
+		return (
+			<PostCommentForm
+				ref="postCommentForm"
+				post={ this.props.post }
+				parentCommentID={ this.props.commentId }
+				commentText={ this.props.commentText }
+				onUpdateCommentText={ this.props.onUpdateCommentText }
+				onCommentSubmit={ this.props.onCommentSubmit }
+			/>
+		);
 	}
 
 	render() {
@@ -129,8 +133,11 @@ class PostComment extends Component {
 		const comment = get( commentsTree, [ this.props.commentId, 'data' ] );
 
 		// todo: connect this constants to the state (new selector)
-		const haveReplyWithError = some( get( commentsTree, [ this.props.commentId, 'children' ] ),
-			( childId ) => get( commentsTree, [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR );
+		const haveReplyWithError = some(
+			get( commentsTree, [ this.props.commentId, 'children' ] ),
+			childId =>
+				get( commentsTree, [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR,
+		);
 
 		// If it's a pending comment, use the current user as the author
 		if ( comment.isPlaceholder ) {
@@ -163,15 +170,21 @@ class PostComment extends Component {
 				<div className="comments__comment-author">
 					{ authorUrl
 						? <a href={ authorUrl } onClick={ this.handleAuthorClick }>
-							<Gravatar user={ comment.author } />
-						</a>
+								<Gravatar user={ comment.author } />
+							</a>
 						: <Gravatar user={ comment.author } /> }
 
 					{ authorUrl
-						? <a href={ authorUrl } className="comments__comment-username" onClick={ this.handleAuthorClick }>
+						? <a
+								href={ authorUrl }
+								className="comments__comment-username"
+								onClick={ this.handleAuthorClick }
+							>
 								{ comment.author.name }
 							</a>
-						: <strong className="comments__comment-username">{ comment.author.name }</strong> }
+						: <strong className="comments__comment-username">
+								{ comment.author.name }
+							</strong> }
 					<div className="comments__comment-timestamp">
 						<a href={ comment.URL }>
 							<PostTime date={ comment.date } />
@@ -180,20 +193,25 @@ class PostComment extends Component {
 				</div>
 
 				{ comment.status && comment.status === 'unapproved'
-					? <p className="comments__comment-moderation">{ translate( 'Your comment is awaiting moderation.' ) }</p>
+					? <p className="comments__comment-moderation">
+							{ translate( 'Your comment is awaiting moderation.' ) }
+						</p>
 					: null }
 
 				{ this.props.activeEditCommentId !== this.props.commentId &&
-					<PostCommentContent content={ comment.content } isPlaceholder={ comment.isPlaceholder } />
-				}
+					<PostCommentContent
+						content={ comment.content }
+						isPlaceholder={ comment.isPlaceholder }
+					/> }
 
-				{ isEnabled( 'comments/moderation-tools-in-posts' ) && this.props.activeEditCommentId === this.props.commentId &&
+				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
+					this.props.activeEditCommentId === this.props.commentId &&
 					<CommentEditForm
 						post={ this.props.post }
 						commentId={ this.props.commentId }
 						commentText={ comment.content }
-						onCommentSubmit={ this.props.onEditCommentCancel } />
-				}
+						onCommentSubmit={ this.props.onEditCommentCancel }
+					/> }
 
 				<CommentActions
 					post={ this.props.post }
@@ -205,7 +223,8 @@ class PostComment extends Component {
 					editComment={ this.props.onEditCommentClick }
 					editCommentCancel={ this.props.onEditCommentCancel }
 					handleReply={ this.handleReply }
-					onReplyCancel={ this.props.onReplyCancel } />
+					onReplyCancel={ this.props.onReplyCancel }
+				/>
 
 				{ haveReplyWithError ? null : this.renderCommentForm() }
 				{ this.renderRepliesList() }
@@ -218,7 +237,7 @@ PostComment.propTypes = {
 	commentsTree: React.PropTypes.object.isRequired,
 	commentId: React.PropTypes.oneOfType( [
 		React.PropTypes.string, // can be 'placeholder-123'
-		React.PropTypes.number
+		React.PropTypes.number,
 	] ).isRequired,
 	onReplyClick: React.PropTypes.func,
 	depth: React.PropTypes.number,
@@ -227,7 +246,7 @@ PostComment.propTypes = {
 	onCommentSubmit: React.PropTypes.func,
 
 	// connect()ed props:
-	currentUser: React.PropTypes.object.isRequired
+	currentUser: React.PropTypes.object.isRequired,
 };
 
 PostComment.defaultProps = {
@@ -235,11 +254,9 @@ PostComment.defaultProps = {
 	errors: [],
 	depth: 1,
 	maxChildrenToShow: 5,
-	onCommentSubmit: noop
+	onCommentSubmit: noop,
 };
 
-export default connect(
-	( state ) => ( {
-		currentUser: getCurrentUser( state )
-	} )
-)( PostComment );
+export default connect( state => ( {
+	currentUser: getCurrentUser( state ),
+} ) )( PostComment );

@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import React from 'react';
-import { get, partial } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -10,22 +9,26 @@ import { get, partial } from 'lodash';
 import AutoDirection from 'components/auto-direction';
 import Emojify from 'components/emojify';
 import ReaderExcerpt from 'blocks/reader-excerpt';
+import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 import FeaturedAsset from './featured-asset';
 
-const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpanded, site } ) => {
-	let onVideoThumbnailClick = null;
-	if ( get( post, 'canonical_media.mediaType' ) === 'video' ) {
-		onVideoThumbnailClick = partial( expandCard, { postKey, post, site } );
-	}
+const CompactPost = ( { post, postByline, children, isDiscover } ) => {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="reader-post-card__post">
 			<FeaturedAsset
 				canonicalMedia={ post.canonical_media }
 				postUrl={ post.URL }
-				onVideoThumbnailClick={ onVideoThumbnailClick }
-				isVideoExpanded={ isExpanded }
+				allowVideoPlaying={ false }
 			/>
 			<div className="reader-post-card__post-details">
+				{ postByline }
+				<ReaderPostOptionsMenu
+					className="ignore-click"
+					showFollow={ true }
+					post={ post }
+					position="bottom"
+				/>
 				<AutoDirection>
 					<h1 className="reader-post-card__title">
 						<a className="reader-post-card__title-link" href={ post.URL }>
@@ -40,11 +43,13 @@ const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpa
 			</div>
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-StandardPost.propTypes = {
+CompactPost.propTypes = {
 	post: React.PropTypes.object.isRequired,
+	postByline: React.PropTypes.string,
 	isDiscover: React.PropTypes.bool,
 };
 
-export default StandardPost;
+export default CompactPost;
