@@ -10,6 +10,7 @@ import {
 	includes,
 	isEmpty,
 	noop,
+	pick,
 	reject,
 	startsWith,
 	times,
@@ -301,7 +302,9 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	getSuggestionToken: function() {
-		if ( SignupDependencyStore.get().designType === 'blog' ) {
+		const store = pick( SignupDependencyStore.get(), 'designType' );
+
+		if ( store && store.designType === 'blog' ) {
 			return 'blog';
 		}
 
