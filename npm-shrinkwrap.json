@@ -936,7 +936,7 @@
       "version": "1.0.4"
     },
     "circular-json": {
-      "version": "0.3.1",
+      "version": "0.3.2",
       "dev": true
     },
     "classnames": {
@@ -4380,7 +4380,7 @@
       "version": "0.1.17"
     },
     "node-emoji": {
-      "version": "1.8.0",
+      "version": "1.8.1",
       "dev": true
     },
     "node-fetch": {
@@ -6896,8 +6896,8 @@
     },
     "wpcom-proxy-request": {
       "version": "4.0.4",
-      "from": "git://github.com/automattic/wpcom-proxy-request.git#59743fa4a36832e3417ffcec9275d1f8f1a8dc26",
-      "resolved": "git://github.com/automattic/wpcom-proxy-request.git#59743fa4a36832e3417ffcec9275d1f8f1a8dc26"
+      "from": "git://github.com/automattic/wpcom-proxy-request.git#fe120ddacbe27988efa0a8cfe5af5da3c45448cf",
+      "resolved": "git://github.com/automattic/wpcom-proxy-request.git#fe120ddacbe27988efa0a8cfe5af5da3c45448cf"
     },
     "wpcom-xhr-request": {
       "version": "1.1.0"
