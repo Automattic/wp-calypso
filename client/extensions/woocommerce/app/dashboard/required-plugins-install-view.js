@@ -4,10 +4,8 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import debugFactory from 'debug';
 import { find, size } from 'lodash';
 import { localize } from 'i18n-calypso';
-const debug = debugFactory( 'calypso:allendav' );
 
 /**
  * Internal dependencies
@@ -26,7 +24,7 @@ import wp from 'lib/wp';
 class RequiredPluginsInstallView extends Component {
 	static propTypes = {
 		site: PropTypes.shape( {
-			ID: PropTypes.number.isRequired
+			ID: PropTypes.number.isRequired,
 		} )
 	};
 
@@ -38,7 +36,7 @@ class RequiredPluginsInstallView extends Component {
 			progress: 0,
 			toActivate: [],
 			toInstall: [],
-			workingOn: ''
+			workingOn: '',
 		};
 		this.updateTimer = false;
 	}
@@ -76,7 +74,7 @@ class RequiredPluginsInstallView extends Component {
 			'wc-api-dev': translate( 'WooCommerce API Dev' ),
 			'woocommerce-gateway-stripe': translate( 'WooCommerce Stripe Gateway' ),
 			'woocommerce-services': translate( 'WooCommerce Services' ),
-			'taxjar-simplified-taxes-for-woocommerce': translate( 'TaxJar - Sales Tax Automation for WooCommerce' )
+			'taxjar-simplified-taxes-for-woocommerce': translate( 'TaxJar - Sales Tax Automation for WooCommerce' ),
 		};
 	}
 
@@ -99,12 +97,10 @@ class RequiredPluginsInstallView extends Component {
 		if ( waitingForPluginListFromSite ) {
 			this.setState( {
 				message: translate( 'Waiting for plugin list from site' ),
-				progress: 0
+				progress: 0,
 			} );
 			return;
 		}
-
-		debug( 'sitePlugins=', sitePlugins );
 
 		// Iterate over the required plugins, fetching plugin
 		// data from wordpress.org for each into state
@@ -112,7 +108,6 @@ class RequiredPluginsInstallView extends Component {
 		let pluginDataLoaded = true;
 		for ( const requiredPluginSlug in requiredPlugins ) {
 			const pluginData = getPlugin( wporg, requiredPluginSlug );
-			debug( 'plugin Data', requiredPluginSlug, pluginData );
 			// pluginData will be null until the action has had
 			// a chance to try and fetch data for the plugin slug
 			// given. Note that non-wp-org plugins (like wc-api-dev)
@@ -127,7 +122,7 @@ class RequiredPluginsInstallView extends Component {
 		if ( ! pluginDataLoaded ) {
 			this.setState( {
 				message: translate( 'Loading plugin data' ),
-				progress: 0
+				progress: 0,
 			} );
 			return;
 		}
@@ -144,16 +139,13 @@ class RequiredPluginsInstallView extends Component {
 			}
 		}
 
-		debug( 'plugins to install=', toInstall );
-		debug( 'plugins to activate=', toActivate );
-
 		if ( toInstall.length ) {
 			this.setState( {
 				engineState: 'INSTALLING',
 				message: '',
 				progress: 25,
 				toActivate,
-				toInstall
+				toInstall,
 			} );
 			return;
 		}
@@ -163,14 +155,14 @@ class RequiredPluginsInstallView extends Component {
 				engineState: 'ACTIVATING',
 				message: '',
 				progress: 50,
-				toActivate
+				toActivate,
 			} );
 			return;
 		}
 
 		this.setState( {
 			engineState: 'DONESUCCESS',
-			message: ''
+			message: '',
 		} );
 	}
 
@@ -187,13 +179,12 @@ class RequiredPluginsInstallView extends Component {
 				this.setState( {
 					engineState: 'ACTIVATING',
 					message: '',
-					progress: 50
+					progress: 50,
 				} );
 				return;
 			}
 
 			const workingOn = toInstall.shift();
-			debug( 'kicking off install of ', workingOn );
 			if ( 'wc-api-dev' === workingOn ) {
 				// Special handling for wc-api-dev
 				wp.req.post( {
@@ -209,7 +200,7 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				message: translate( 'Installing %(plugin)s', { args: { plugin: requiredPlugins[ workingOn ] } } ),
 				toInstall,
-				workingOn
+				workingOn,
 			} );
 			return;
 		}
@@ -218,7 +209,7 @@ class RequiredPluginsInstallView extends Component {
 		const pluginFound = find( sitePlugins, { slug: this.state.workingOn } );
 		if ( pluginFound ) {
 			this.setState( {
-				workingOn: ''
+				workingOn: '',
 			} );
 		}
 	}
@@ -236,25 +227,23 @@ class RequiredPluginsInstallView extends Component {
 				this.setState( {
 					engineState: 'DONESUCCESS',
 					message: '',
-					progress: 100
+					progress: 100,
 				} );
 				return;
 			}
 
 			const workingOn = toActivate.shift();
-			debug( 'kicking off activation of ', workingOn );
 
 			// It is best to use sitePlugins to get the right id since the
 			// plugin id isn't always slug/slug unless the main plugin PHP
 			// file is the same name as the plugin folder
 			const pluginToActivate = find( sitePlugins, { slug: workingOn } );
-			debug( 'pluginToActivate= ', pluginToActivate );
 			this.props.activatePlugin( site.ID, pluginToActivate );
 
 			this.setState( {
 				message: translate( 'Activating %(plugin)s', { args: { plugin: requiredPlugins[ workingOn ] } } ),
 				toActivate,
-				workingOn
+				workingOn,
 			} );
 			return;
 		}
@@ -263,7 +252,7 @@ class RequiredPluginsInstallView extends Component {
 		const pluginFound = find( sitePlugins, { slug: this.state.workingOn } );
 		if ( pluginFound && pluginFound.active ) {
 			this.setState( {
-				workingOn: ''
+				workingOn: '',
 			} );
 		}
 	}
@@ -275,7 +264,7 @@ class RequiredPluginsInstallView extends Component {
 		this.setState( {
 			engineState: 'IDLE',
 			message: translate( 'All required plugins are installed and activated' ),
-			progress: 100
+			progress: 100,
 		} );
 	}
 
@@ -360,7 +349,7 @@ function mapDispatchToProps( dispatch ) {
 			fetchPluginData,
 			fetchPlugins,
 			installPlugin,
-			setFinishedInstallOfRequiredPlugins
+			setFinishedInstallOfRequiredPlugins,
 		},
 		dispatch
 	);
