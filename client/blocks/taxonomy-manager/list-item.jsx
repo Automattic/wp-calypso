@@ -18,10 +18,9 @@ import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
 import Tooltip from 'components/tooltip';
-import WithPreviewProps from 'components/web-preview/with-preview-props';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
-import { getSite, isJetpackSite } from 'state/sites/selectors';
+import { getSite } from 'state/sites/selectors';
 import { decodeEntities } from 'lib/formatting';
 import { deleteTerm } from 'state/terms/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
@@ -39,7 +38,6 @@ class TaxonomyManagerListItem extends Component {
 		translate: PropTypes.func,
 		siteUrl: PropTypes.string,
 		slug: PropTypes.string,
-		isJetpack: PropTypes.bool,
 		isPreviewable: PropTypes.bool,
 		recordGoogleEvent: PropTypes.func,
 		bumpStat: PropTypes.func,
@@ -128,7 +126,7 @@ class TaxonomyManagerListItem extends Component {
 	};
 
 	render() {
-		const { canSetAsDefault, isDefault, onClick, term, translate, isJetpack } = this.props;
+		const { canSetAsDefault, isDefault, onClick, term, translate } = this.props;
 		const name = this.getName();
 		const className = classNames( 'taxonomy-manager__item', {
 			'is-default': isDefault
@@ -179,19 +177,6 @@ class TaxonomyManagerListItem extends Component {
 						{ translate( 'View Posts' ) }
 					</PopoverMenuItem>
 
-					{ false && ! isJetpack && /* TODO remove this altogether */
-						<WithPreviewProps
-								url={ this.getTaxonomyLink() }
-								isPreviewable={ this.props.isPreviewable }>
-							{ ( props ) =>
-								<PopoverMenuItem { ...props }
-										icon={ this.props.isPreviewable
-											? 'visible' : 'external' }>
-									{ translate( 'View Posts' ) }
-								</PopoverMenuItem>
-							}
-						</WithPreviewProps>
-					}
 					{ canSetAsDefault && ! isDefault && <PopoverMenuSeparator /> }
 					{ canSetAsDefault && ! isDefault &&
 						<PopoverMenuItem onClick={ this.setAsDefault } icon="checkmark-circle">
@@ -225,7 +210,6 @@ export default connect(
 		return {
 			canSetAsDefault,
 			isDefault,
-			isJetpack: isJetpackSite( state, siteId ),
 			isPreviewable,
 			siteId,
 			siteSlug,
