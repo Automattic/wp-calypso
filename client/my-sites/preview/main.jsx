@@ -103,6 +103,7 @@ class PreviewMain extends React.Component {
 					showClose={ false }
 					previewUrl={ this.state.previewUrl }
 					externalUrl={ site.URL }
+					showDeviceMockups={ true }
 				/>
 			</Main>
 		);

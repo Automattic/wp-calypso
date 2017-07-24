@@ -194,6 +194,7 @@ export class WebPreviewContent extends Component {
 		const className = classNames( this.props.className, 'web-preview__inner', {
 			'is-touch': this._hasTouch,
 			'is-with-sidebar': this.props.hasSidebar,
+			'is-with-device-mockup': this.props.showDeviceMockups,
 			'is-visible': this.props.showPreview,
 			'is-computer': this.state.device === 'computer',
 			'is-tablet': this.state.device === 'tablet',
@@ -226,15 +227,17 @@ export class WebPreviewContent extends Component {
 						className={ classNames( 'web-preview__frame-wrapper', {
 							'is-resizable': ! this.props.isModalWindow
 						} ) }
-						style={ { display: ( 'seo' === this.state.device ? 'none' : 'inherit' ) } }
+						style={ { display: ( 'seo' === this.state.device ? 'none' : null ) } }
 					>
-						<iframe
-							ref={ this.setIframeInstance }
-							className="web-preview__frame"
-							src="about:blank"
-							onLoad={ this.setLoaded }
-							title={ this.props.iframeTitle || translate( 'Preview' ) }
-						/>
+						<div className="web-preview__device-mockup">
+							<iframe
+								ref={ this.setIframeInstance }
+								className="web-preview__frame"
+								src="about:blank"
+								onLoad={ this.setLoaded }
+								title={ this.props.iframeTitle || translate( 'Preview' ) }
+							/>
+						</div>
 					</div>
 					{ 'seo' === this.state.device &&
 						<SeoPreviewPane
