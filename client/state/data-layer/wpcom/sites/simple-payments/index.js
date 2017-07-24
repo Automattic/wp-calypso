@@ -63,9 +63,15 @@ export function productToCustomPost( product ) {
 	return Object.keys( product ).reduce(
 		function( payload, current ) {
 			if ( metadataSchema[ current ] ) {
+				let value = product[ current ];
+
+				if ( typeof( value ) === 'boolean' ) {
+					value = value ? 1 : 0;
+				}
+
 				payload.metadata.push( {
 					key: metadataSchema[ current ].metaKey,
-					value: product[ current ]
+					value
 				} );
 			}
 			return payload;
