@@ -16,7 +16,7 @@ console.log(
 // Make quick pass over config files on every change
 require( '../server/config/validate-config-keys' );
 
-const files = execSync( 'git diff --cached --name-only' )
+const files = execSync( 'git diff --cached --name-only --diff-filter=ACM' )
 	.toString()
 	.split( '\n' )
 	.map( name => name.trim() )
