@@ -111,7 +111,7 @@ class ManageMenu extends PureComponent {
 				config: 'comments/management',
 				link: '/comments',
 				wpAdminLink: 'edit-comments.php',
-				showOnAllMySites: true,
+				showOnAllMySites: false,
 			} );
 		}
 
