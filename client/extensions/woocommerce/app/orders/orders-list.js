@@ -20,7 +20,7 @@ import {
 	getTotalOrders
 } from 'woocommerce/state/sites/orders/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { getOrdersCurrentPage } from 'woocommerce/state/ui/orders/selectors';
+import { getOrdersCurrentPage, getOrdersCurrentSearch } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import humanDate from 'lib/human-date';
 import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
@@ -32,10 +32,11 @@ import TableItem from 'woocommerce/components/table/table-item';
 
 class Orders extends Component {
 	componentDidMount() {
-		const { siteId, currentPage, currentStatus } = this.props;
+		const { siteId, currentPage, currentSearch, currentStatus } = this.props;
 		const query = {
 			page: currentPage,
 			status: currentStatus,
+			search: currentSearch,
 		};
 		if ( siteId ) {
 			this.props.fetchOrders( siteId, query );
@@ -45,6 +46,7 @@ class Orders extends Component {
 	componentWillReceiveProps( newProps ) {
 		const hasAnythingChanged = (
 			newProps.currentPage !== this.props.currentPage ||
+			newProps.currentSearch !== this.props.currentSearch ||
 			newProps.currentStatus !== this.props.currentStatus ||
 			newProps.siteId !== this.props.siteId
 		);
@@ -54,11 +56,16 @@ class Orders extends Component {
 
 		const query = {
 			page: newProps.currentPage,
+			search: newProps.currentSearch,
 			status: newProps.currentStatus,
 		};
-		if ( newProps.currentStatus !== this.props.currentStatus ) {
+		if ( newProps.currentSearch !== this.props.currentSearch ) {
 			this.props.updateCurrentOrdersQuery( this.props.siteId, { page: 1 } );
 			query.page = 1;
+		} else if ( newProps.currentStatus !== this.props.currentStatus ) {
+			this.props.updateCurrentOrdersQuery( this.props.siteId, { page: 1, search: '' } );
+			query.page = 1;
+			query.search = '';
 		}
 		this.props.fetchOrders( newProps.siteId, query );
 	}
@@ -207,16 +214,18 @@ export default connect(
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
 		const currentPage = getOrdersCurrentPage( state, siteId );
+		const currentSearch = getOrdersCurrentSearch( state, siteId );
 		const currentStatus = props.currentStatus || 'any';
 		const total = getTotalOrders( state, { status: currentStatus }, siteId );
 
-		const query = { page: currentPage, status: currentStatus };
+		const query = { page: currentPage, search: currentSearch, status: currentStatus };
 		const orders = getOrders( state, query, siteId );
 		const ordersLoading = areOrdersLoading( state, query, siteId );
 		const ordersLoaded = areOrdersLoaded( state, query, siteId );
 
 		return {
 			currentPage,
+			currentSearch,
 			currentStatus,
 			orders,
 			ordersLoading,
