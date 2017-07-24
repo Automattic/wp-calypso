@@ -42,13 +42,15 @@ class SocialConnectPrompt extends Component {
 		this.props.connectSocialUser( linkingSocialService, linkingSocialToken, redirectTo )
 			.then(
 				() => {
-					this.props.recordTracksEvent( 'calypso_login_social_connect_success', { social_account_type: 'google' } );
+					this.props.recordTracksEvent( 'calypso_login_social_connect_success', {
+						social_account_type: linkingSocialService
+					} );
 
 					onSuccess();
 				},
 				error => {
 					this.props.recordTracksEvent( 'calypso_login_social_connect_failure', {
-						social_account_type: 'google',
+						social_account_type: linkingSocialService,
 						error_code: error.code,
 						error_message: error.message
 					} );
