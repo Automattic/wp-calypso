@@ -245,11 +245,6 @@ export class CommentList extends Component {
 
 		if ( isLiked ) {
 			this.props.unlikeComment( commentId, postId );
-
-			if ( this.isCommentPersisted( commentId ) ) {
-				this.updatePersistedComments( commentId );
-			}
-
 			return;
 		}
 
@@ -258,8 +253,8 @@ export class CommentList extends Component {
 		if ( 'unapproved' === status ) {
 			this.props.removeNotice( `comment-notice-${ commentId }` );
 			this.setCommentStatus( comment, 'approved' );
+			this.updatePersistedComments( commentId );
 		}
-		this.updatePersistedComments( commentId );
 	}
 
 	toggleCommentSelected = commentId => {
