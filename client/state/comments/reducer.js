@@ -12,8 +12,6 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENTS_DELETE,
 	COMMENTS_ERROR,
-	COMMENTS_COUNT_INCREMENT,
-	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
 } from '../action-types';
@@ -170,26 +168,6 @@ export const fetchStatus = createReducer(
 	},
 );
 
-/***
- * Stores latest comments count for post we've seen from the server
- * @param {Object} state redux state, prev totalCommentsCount
- * @param {Object} action redux action
- * @returns {Object} new redux state
- */
-export const totalCommentsCount = createReducer(
-	{},
-	{
-		[ COMMENTS_COUNT_RECEIVE ]: ( state, action ) => {
-			const key = getStateKey( action.siteId, action.postId );
-			return { ...state, [ key ]: action.totalCommentsCount };
-		},
-		[ COMMENTS_COUNT_INCREMENT ]: ( state, action ) => {
-			const key = getStateKey( action.siteId, action.postId );
-			return { ...state, [ key ]: state[ key ] + 1 };
-		},
-	},
-);
-
 /**
  * Houses errors by `siteId-commentId`
  */
@@ -215,5 +193,4 @@ export default combineReducers( {
 	items,
 	fetchStatus,
 	errors,
-	totalCommentsCount,
 } );

@@ -10,7 +10,6 @@ import { spy } from 'sinon';
 import {
 	COMMENTS_DELETE,
 	COMMENTS_RECEIVE,
-	COMMENTS_COUNT_INCREMENT,
 	NOTICE_CREATE
 } from 'state/action-types';
 import {
@@ -142,12 +141,7 @@ describe( 'utility functions', () => {
 
 			updatePlaceholderComment( { dispatch }, action, null, comment );
 
-			expect( dispatch ).to.have.been.calledThrice;
-			expect( dispatch ).to.have.been.calledWith( {
-				type: COMMENTS_COUNT_INCREMENT,
-				siteId: 2916284,
-				postId: 1010
-			} );
+			expect( dispatch ).to.have.been.calledTwice;
 		} );
 	} );
 

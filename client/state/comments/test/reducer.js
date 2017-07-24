@@ -8,13 +8,11 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { items, totalCommentsCount, fetchStatus, fetchStatusInitialState } from '../reducer';
+import { items, fetchStatus, fetchStatusInitialState } from '../reducer';
 import {
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
 	COMMENTS_ERROR,
-	COMMENTS_COUNT_INCREMENT,
-	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_RECEIVE,
 	COMMENTS_DELETE,
 } from '../../action-types';
@@ -167,34 +165,6 @@ describe( 'reducer', () => {
 			const nextState = fetchStatus( prevState, actionWithCommentId );
 
 			expect( nextState ).equal( prevState );
-		} );
-	} );
-
-	describe( '#totalCommentsCount()', () => {
-		it( 'should update post comments count', () => {
-			const response = totalCommentsCount( undefined, {
-				type: COMMENTS_COUNT_RECEIVE,
-				totalCommentsCount: 123,
-				siteId: 1,
-				postId: 1,
-			} );
-
-			expect( response[ '1-1' ] ).to.eql( 123 );
-		} );
-
-		it( 'should increment post comment count', () => {
-			const response = totalCommentsCount(
-				{
-					'1-1': 1,
-				},
-				{
-					type: COMMENTS_COUNT_INCREMENT,
-					siteId: 1,
-					postId: 1,
-				},
-			);
-
-			expect( response[ '1-1' ] ).to.eql( 2 );
 		} );
 	} );
 } );

@@ -8,7 +8,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { COMMENTS_RECEIVE, COMMENTS_COUNT_RECEIVE, NOTICE_CREATE } from 'state/action-types';
+import { COMMENTS_RECEIVE, NOTICE_CREATE } from 'state/action-types';
 import { fetchPostComments, addComments, announceFailure } from '../';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
 
@@ -144,13 +144,6 @@ describe( 'wpcom-api', () => {
 					postId: 1010,
 					comments: [ {}, {} ],
 					direction: 'before',
-				} );
-
-				expect( dispatch ).to.have.been.calledWith( {
-					type: COMMENTS_COUNT_RECEIVE,
-					siteId: 2916284,
-					postId: 1010,
-					totalCommentsCount: 2,
 				} );
 			} );
 		} );

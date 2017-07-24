@@ -84,6 +84,7 @@ const ReaderPostActions = props => {
 						onClick={ onCommentClick }
 						tagName="div"
 						size={ iconSize }
+						post={ post }
 					/>
 				</li> }
 			{ shouldShowLikes( post ) &&
