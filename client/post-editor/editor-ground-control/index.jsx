@@ -186,6 +186,12 @@ export class EditorGroundControl extends PureComponent {
 
 	schedulePostPopover() {
 		const postScheduler = this.renderPostScheduler();
+		const query = {
+			status: 'publish,future',
+			before: this.state.lastDayOfTheMonth.format(),
+			after: this.state.firstDayOfTheMonth.format(),
+			number: 100
+		};
 
 		return (
 			<Popover
@@ -201,12 +207,7 @@ export class EditorGroundControl extends PureComponent {
 						: <div>
 							<QueryPosts
 								siteId={ this.props.site.ID }
-								query={ {
-									status: 'publish,future',
-									before: this.state.lastDayOfTheMonth.format(),
-									after: this.state.firstDayOfTheMonth.format(),
-									number: 100
-								} } />
+								query={ query } />
 							{ postScheduler }
 						</div>
 					}
