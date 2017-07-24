@@ -170,25 +170,19 @@ export const fetchStatus = createReducer(
  * @param {Object} action redux action
  * @returns {Object} new redux state
  */
-export function totalCommentsCount( state = {}, action ) {
-	const { siteId, postId } = action;
-	const stateKey = getStateKey( siteId, postId );
-
-	switch ( action.type ) {
-		case COMMENTS_COUNT_RECEIVE:
-			return {
-				...state,
-				[ stateKey ]: action.totalCommentsCount,
-			};
-		case COMMENTS_COUNT_INCREMENT:
-			return {
-				...state,
-				[ stateKey ]: state[ stateKey ] + 1,
-			};
-	}
-
-	return state;
-}
+export const totalCommentsCount = createReducer(
+	{},
+	{
+		[ COMMENTS_COUNT_RECEIVE ]: ( state, action ) => {
+			const key = getStateKey( action.siteId, action.postId );
+			return { ...state, [ key ]: action.totalCommentsCount };
+		},
+		[ COMMENTS_COUNT_INCREMENT ]: ( state, action ) => {
+			const key = getStateKey( action.siteId, action.postId );
+			return { ...state, [ key ]: state[ key ] + 1 };
+		},
+	},
+);
 
 /**
  * Houses errors by `siteId-commentId`
