@@ -68,12 +68,12 @@ class Transfer extends React.Component {
 		);
 	}
 
-	goToEdit() {
+	goToEdit = () => {
 		page( paths.domainManagementTransfer(
 			this.props.selectedSite.slug,
 			this.props.selectedDomainName
 		) );
-	}
+	};
 
 	isDataLoading() {
 		return (
