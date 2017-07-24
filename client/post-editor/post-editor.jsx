@@ -675,9 +675,9 @@ export const PostEditor = React.createClass( {
 	},
 
 	getPreviewUrl: function() {
-		const { post, previewAction, previewUrl } = this.state;
+		const { isPostPublishPreview, post, previewAction, previewUrl } = this.state;
 
-		if ( previewAction === 'view' ) {
+		if ( previewAction === 'view' || isPostPublishPreview ) {
 			return post.URL;
 		}
 
