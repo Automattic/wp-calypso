@@ -139,10 +139,10 @@ Shipping.propTypes = {
 };
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
 		const loaded = areShippingZonesFullyLoaded( state ) && areSettingsGeneralLoaded( state );
 		const zone = loaded && getCurrentlyEditingShippingZone( state );
-		const isRestOfTheWorld = zone && 0 === zone.id;
+		const isRestOfTheWorld = 0 === Number( ownProps.params.zone );
 
 		return {
 			siteId: getSelectedSiteId( state ),
