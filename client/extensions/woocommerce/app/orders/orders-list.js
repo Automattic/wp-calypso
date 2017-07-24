@@ -144,8 +144,9 @@ class Orders extends Component {
 			translate
 		} = this.props;
 
-		// Orders are done loading, and there are definitely no orders for this query
-		if ( ordersLoaded && ! total ) {
+		// Orders are done loading, and there are definitely no orders for this site
+		// @todo Display some other placeholder if a single status is empty
+		if ( ordersLoaded && ! total && 'any' === currentStatus ) {
 			return (
 				<div className="orders__container">
 					<EmptyContent
