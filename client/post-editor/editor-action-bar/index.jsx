@@ -13,6 +13,7 @@ import EditorSticky from 'post-editor/editor-sticky';
 import utils from 'lib/posts/utils';
 import Tooltip from 'components/tooltip';
 import Button from 'components/button';
+import PostFormat from 'components/post-format';
 import EditorActionBarViewLabel from './view-label';
 import EditorStatusLabel from 'post-editor/editor-status-label';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -42,7 +43,8 @@ class EditorActionBar extends Component {
 		// update based on post changes. Flux changes are passed down from parent components.
 		const multiUserSite = this.props.site && ! this.props.site.single_user_site;
 		const isPasswordProtected = utils.getVisibility( this.props.post ) === 'password';
-		const { isPostPrivate, postAuthor } = this.props;
+		const { isPostPrivate, post, postAuthor } = this.props;
+		const postFormat = post && post.format;
 
 		return (
 			<div className="editor-action-bar">
@@ -68,6 +70,7 @@ class EditorActionBar extends Component {
 						! isPasswordProtected && ! isPostPrivate &&
 						<EditorSticky />
 					}
+					<PostFormat format={ postFormat } size={ 26 } />
 					{ utils.isPublished( this.props.savedPost ) && (
 						<Button
 							href={ this.props.savedPost.URL }
