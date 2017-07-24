@@ -76,6 +76,13 @@ const MediaLibraryContent = React.createClass( {
 		}
 	},
 
+	componentWillReceiveProps: function( nextProps ) {
+		if ( ! nextProps.isRequesting && nextProps.source !== '' && nextProps.connectedServices.length === 0 ) {
+			// Are we connected to anything yet?
+			this.props.requestKeyringConnections();
+		}
+	},
+
 	renderErrors: function() {
 		var errorTypes, notices;
 
