@@ -18,7 +18,7 @@ import Site from 'blocks/site';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
 import PostListFetcher from 'components/post-list-fetcher';
-import stats from 'lib/posts/stats';
+import { recordEvent, recordStat } from 'lib/posts/stats';
 import AsyncLoad from 'components/async-load';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
@@ -267,15 +267,15 @@ class EditorGroundControl extends PureComponent {
 	onSaveButtonClick = () => {
 		this.props.onSave();
 		const eventLabel = postUtils.isPage( this.props.page ) ? 'Clicked Save Page Button' : 'Clicked Save Post Button';
-		stats.recordEvent( eventLabel );
-		stats.recordStat( 'save_draft_clicked' );
+		recordEvent( eventLabel );
+		recordStat( 'save_draft_clicked' );
 	}
 
 	onPreviewButtonClick = ( event ) => {
 		if ( this.isPreviewEnabled() ) {
 			this.props.onPreview( event );
 			const eventLabel = postUtils.isPage( this.props.page ) ? 'Clicked Preview Page Button' : 'Clicked Preview Post Button';
-			stats.recordEvent( eventLabel );
+			recordEvent( eventLabel );
 		}
 	}
 
