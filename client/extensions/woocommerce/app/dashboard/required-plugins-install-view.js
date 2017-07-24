@@ -207,7 +207,7 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	doActivation = () => {
-		const { site, sitePlugins, translate, wporg } = this.props;
+		const { site, sitePlugins, translate } = this.props;
 		const requiredPlugins = this.getRequiredPluginsList();
 
 		// If we are working on nothing presently, get the next thing to activate and activate it
@@ -226,16 +226,13 @@ class RequiredPluginsInstallView extends Component {
 
 			const workingOn = toActivate.shift();
 			debug( 'kicking off activation of ', workingOn );
-			const wporgPlugin = getPlugin( wporg, workingOn );
 
 			// It is best to use sitePlugins to get the right id since the
 			// plugin id isn't always slug/slug unless the main plugin PHP
 			// file is the same name as the plugin folder
 			const pluginToActivate = find( sitePlugins, { slug: workingOn } );
-			wporgPlugin.id = pluginToActivate.id;
-
-			debug( 'wporgPlugin= ', wporgPlugin );
-			this.props.activatePlugin( site.ID, wporgPlugin );
+			debug( 'pluginToActivate= ', pluginToActivate );
+			this.props.activatePlugin( site.ID, pluginToActivate );
 
 			this.setState( {
 				message: translate( 'Activating %(plugin)s', { args: { plugin: requiredPlugins[ workingOn ] } } ),
