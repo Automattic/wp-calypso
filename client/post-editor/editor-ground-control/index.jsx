@@ -7,7 +7,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import { noop } from 'lodash';
 import classNames from 'classnames';
 import page from 'page';
-import i18n from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'EditorGroundControl',
 
 	propTypes: {
@@ -134,10 +134,10 @@ export default React.createClass( {
 
 	getPreviewLabel: function() {
 		if ( postUtils.isPublished( this.props.savedPost ) && this.props.site.jetpack ) {
-			return this.translate( 'View' );
+			return this.props.translate( 'View' );
 		}
 
-		return this.translate( 'Preview' );
+		return this.props.translate( 'Preview' );
 	},
 
 	getVerificationNoticeLabel: function() {
@@ -240,14 +240,14 @@ export default React.createClass( {
 
 	getSaveStatusLabel: function() {
 		if ( this.props.isSaving ) {
-			return this.translate( 'Saving…' );
+			return this.props.translate( 'Saving…' );
 		}
 
 		if ( ! this.props.post || postUtils.isPublished( this.props.post ) || ! this.props.post.ID ) {
 			return null;
 		}
 
-		return this.translate( 'Saved' );
+		return this.props.translate( 'Saved' );
 	},
 
 	isSaveEnabled: function() {
@@ -293,69 +293,71 @@ export default React.createClass( {
 			'is-standalone': ! this.canPublishPost() || this.props.isConfirmationSidebarEnabled
 		} );
 
-		return ( <div className="editor-ground-control__action-buttons">
-			<Button
-				borderless
-				className="editor-ground-control__preview-button"
-				disabled={ ! this.isPreviewEnabled() }
-				onClick={ this.onPreviewButtonClick }
-				tabIndex={ 4 }
-			>
-				<Gridicon icon="visible" /> <span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
-			</Button>
-			<Button
-				borderless
-				className="editor-ground-control__toggle-sidebar"
-				onClick={ this.props.toggleSidebar }
-			>
-				<Gridicon icon="cog" /> <span className="editor-ground-control__button-label"><EditorPostType isSettings /></span>
-			</Button>
-			<div className={ publishComboClasses }>
-				<EditorPublishButton
-					site={ this.props.site }
-					post={ this.props.post }
-					savedPost={ this.props.savedPost }
-					onSave={ this.props.onSave }
-					onPublish={ this.props.onPublish }
-					tabIndex={ 5 }
-					isConfirmationSidebarEnabled={ this.props.isConfirmationSidebarEnabled }
-					isPublishing={ this.props.isPublishing }
-					isSaveBlocked={ this.props.isSaveBlocked }
-					hasContent={ this.props.hasContent }
-					needsVerification={ this.state.needsVerification }
-					busy={ this.props.isPublishing || ( postUtils.isPublished( this.props.savedPost ) && this.props.isSaving ) }
-				/>
+		return (
+			<div className="editor-ground-control__action-buttons">
+				<Button
+					borderless
+					className="editor-ground-control__preview-button"
+					disabled={ ! this.isPreviewEnabled() }
+					onClick={ this.onPreviewButtonClick }
+					tabIndex={ 4 }
+				>
+					<Gridicon icon="visible" /> <span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
+				</Button>
+				<Button
+					borderless
+					className="editor-ground-control__toggle-sidebar"
+					onClick={ this.props.toggleSidebar }
+				>
+					<Gridicon icon="cog" /> <span className="editor-ground-control__button-label"><EditorPostType isSettings /></span>
+				</Button>
+				<div className={ publishComboClasses }>
+					<EditorPublishButton
+						site={ this.props.site }
+						post={ this.props.post }
+						savedPost={ this.props.savedPost }
+						onSave={ this.props.onSave }
+						onPublish={ this.props.onPublish }
+						tabIndex={ 5 }
+						isConfirmationSidebarEnabled={ this.props.isConfirmationSidebarEnabled }
+						isPublishing={ this.props.isPublishing }
+						isSaveBlocked={ this.props.isSaveBlocked }
+						hasContent={ this.props.hasContent }
+						needsVerification={ this.state.needsVerification }
+						busy={ this.props.isPublishing || ( postUtils.isPublished( this.props.savedPost ) && this.props.isSaving ) }
+					/>
+					{ this.canPublishPost() &&
+					! this.props.isConfirmationSidebarEnabled &&
+					<Button
+						primary
+						compact
+						ref="schedulePost"
+						className="editor-ground-control__time-button"
+						onClick={ this.toggleSchedulePopover }
+						aria-label={ this.props.translate( 'Schedule date and time to publish post.' ) }
+						aria-pressed={ !! this.state.showSchedulePopover }
+						title={ this.props.translate( 'Set date and time' ) }
+						tabIndex={ 6 }
+					>
+						{ postUtils.isFutureDated( this.props.post )
+							? <Gridicon icon="scheduled" />
+							: <Gridicon icon="calendar" />
+						}
+						<span className="editor-ground-control__time-button-label">
+										{ postUtils.isFutureDated( this.props.post )
+											? this.moment( this.props.post.date ).calendar()
+											: this.props.translate( 'Choose Date' )
+										}
+									</span>
+					</Button>
+					}
+				</div>
 				{ this.canPublishPost() &&
 				! this.props.isConfirmationSidebarEnabled &&
-				<Button
-					primary
-					compact
-					ref="schedulePost"
-					className="editor-ground-control__time-button"
-					onClick={ this.toggleSchedulePopover }
-					aria-label={ this.translate( 'Schedule date and time to publish post.' ) }
-					aria-pressed={ !! this.state.showSchedulePopover }
-					title={ this.translate( 'Set date and time' ) }
-					tabIndex={ 6 }
-				>
-					{ postUtils.isFutureDated( this.props.post )
-						? <Gridicon icon="scheduled" />
-						: <Gridicon icon="calendar" />
-					}
-					<span className="editor-ground-control__time-button-label">
-									{ postUtils.isFutureDated( this.props.post )
-										? this.moment( this.props.post.date ).calendar()
-										: this.translate( 'Choose Date' )
-									}
-								</span>
-				</Button>
+				this.schedulePostPopover()
 				}
 			</div>
-			{ this.canPublishPost() &&
-			! this.props.isConfirmationSidebarEnabled &&
-			this.schedulePostPopover()
-			}
-		</div> );
+		);
 	},
 
 	render: function() {
@@ -366,7 +368,7 @@ export default React.createClass( {
 					className="editor-ground-control__back"
 					href={ '' }
 					onClick={ page.back.bind( page, this.props.allPostsUrl ) }
-					aria-label={ this.translate( 'Go back' ) }
+					aria-label={ this.props.translate( 'Go back' ) }
 				>
 					<Gridicon icon="arrow-left" />
 				</Button>
@@ -386,7 +388,9 @@ export default React.createClass( {
 							className="editor-ground-control__email-verification-notice-icon" />
 						{ this.getVerificationNoticeLabel() }
 						{ ' ' }
-						<span className="editor-ground-control__email-verification-notice-more">{ this.translate( 'Learn More' ) }</span>
+						<span className="editor-ground-control__email-verification-notice-more">
+							{ this.props.translate( 'Learn More' ) }
+						</span>
 					</div>
 				}
 				<div className="editor-ground-control__status">
@@ -396,7 +400,7 @@ export default React.createClass( {
 							onClick={ this.onSaveButtonClick }
 							tabIndex={ 3 }
 						>
-							{ this.translate( 'Save' ) }
+							{ this.props.translate( 'Save' ) }
 						</button>
 					}
 					{ ! this.isSaveEnabled() &&
@@ -409,4 +413,4 @@ export default React.createClass( {
 			</Card>
 		);
 	}
-} );
+} ) );
