@@ -18,7 +18,7 @@ import Popover from 'components/popover';
 import Site from 'blocks/site';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
-import PostListFetcher from 'components/post-list-fetcher';
+import QueryPosts from 'components/data/query-posts';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import AsyncLoad from 'components/async-load';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
@@ -198,15 +198,17 @@ export class EditorGroundControl extends PureComponent {
 				<span className="editor-ground-control__schedule-post">
 					{ postUtils.isPage( this.props.post )
 						? postScheduler
-						: <PostListFetcher
-							siteId={ this.props.site.ID }
-							status="publish,future"
-							before={ this.state.lastDayOfTheMonth.format() }
-							after={ this.state.firstDayOfTheMonth.format() }
-							number={ 100 }
-						>
+						: <div>
+							<QueryPosts
+								siteId={ this.props.site.ID }
+								query={ {
+									status: 'publish,future',
+									before: this.state.lastDayOfTheMonth.format(),
+									after: this.state.firstDayOfTheMonth.format(),
+									number: 100
+								} } />
 							{ postScheduler }
-						</PostListFetcher>
+						</div>
 					}
 				</span>
 			</Popover>
