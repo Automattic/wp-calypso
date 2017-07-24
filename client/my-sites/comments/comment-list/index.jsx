@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, keyBy, keys, map, noop, omit, orderBy, reject, size, uniqBy } from 'lodash';
+import { find, get, keyBy, keys, map, noop, omit, size, uniq } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -81,11 +81,7 @@ export class CommentList extends Component {
 
 	getComment = commentId => find( this.getComments(), [ 'ID', commentId ] );
 
-	getComments = () => orderBy(
-		uniqBy( [ ...this.state.persistedComments, ...this.props.comments ], 'ID' ),
-		'date',
-		'desc'
-	);
+	getComments = () => uniq( [ ...this.state.persistedComments, ...this.props.comments ] ).sort( ( a, b ) => b - a );
 
 	getEmptyMessage = () => {
 		const { status, translate } = this.props;
@@ -101,12 +97,14 @@ export class CommentList extends Component {
 		}, status, [ '', '' ] );
 	}
 
+	isCommentPersisted = commentId => -1 !== this.state.persistedComments.indexOf( commentId );
+
 	isCommentSelected = commentId => !! this.state.selectedComments[ commentId ];
 
 	isSelectedAll = () => this.getComments().length === size( this.state.selectedComments );
 
 	removeFromPersistedComments = commentId => this.setState( ( { persistedComments } ) => ( {
-		persistedComments: reject( persistedComments, { ID: commentId } ),
+		persistedComments: persistedComments.filter( c => c !== commentId ),
 	} ) );
 
 	replyComment = ( commentText, postId, parentCommentId, options = { alsoApprove: false } ) => {
@@ -146,22 +144,12 @@ export class CommentList extends Component {
 		} );
 	};
 
-	setCommentStatus = ( commentId, postId, status, options = { isUndo: false, doPersist: false, showNotice: true } ) => {
+	setCommentStatus = ( comment, status, options = { isUndo: false, doPersist: false, showNotice: true } ) => {
+		const { commentId, postId } = comment;
 		const { isUndo, doPersist, showNotice } = options;
 
-		// TODO: Replace with Redux getComment()
-		const comment = this.getComment( commentId );
-
-		if ( comment && status === comment.status ) {
-			return;
-		}
-
 		if ( doPersist ) {
-			this.updatePersistedComments( {
-				...comment,
-				i_like: 'approved' !== status ? false : comment.i_like,
-				status,
-			}, isUndo );
+			this.updatePersistedComments( commentId, isUndo );
 		} else {
 			this.removeFromPersistedComments( commentId );
 		}
@@ -169,7 +157,7 @@ export class CommentList extends Component {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 
 		if ( showNotice ) {
-			this.showNotice( commentId, postId, status, comment.status, { doPersist } );
+			this.showNotice( comment, status, { doPersist } );
 		}
 
 		this.props.changeCommentStatus( commentId, postId, status );
@@ -210,8 +198,9 @@ export class CommentList extends Component {
 		this.props.createNotice( type, message, options );
 	}
 
-	showNotice = ( commentId, postId, newStatus, previousStatus, options = { doPersist: false } ) => {
+	showNotice = ( comment, newStatus, options = { doPersist: false } ) => {
 		const { translate } = this.props;
+		const { commentId, previousStatus } = comment;
 
 		const [ type, message ] = get( {
 			approved: [ 'is-success', translate( 'Comment approved.' ) ],
@@ -229,7 +218,7 @@ export class CommentList extends Component {
 			duration: 5000,
 			id: `comment-notice-${ commentId }`,
 			isPersistent: true,
-			onClick: () => this.setCommentStatus( commentId, postId, previousStatus, {
+			onClick: () => this.setCommentStatus( comment, previousStatus, {
 				isUndo: true,
 				doPersist: options.doPersist,
 				showNotice: false,
@@ -241,19 +230,14 @@ export class CommentList extends Component {
 
 	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
 
-	toggleCommentLike = ( commentId, postId ) => {
-		// TODO: Replace with Redux getComment()
-		const comment = this.getComment( commentId );
-		const isPersisted = !! find( this.state.persistedComments, [ 'ID', commentId ] );
+	toggleCommentLike = comment => {
+		const { commentId, postId, previousIsLiked, previousStatus } = comment;
 
-		if ( comment.i_like ) {
+		if ( previousIsLiked ) {
 			this.props.unlikeComment( commentId, postId );
 
-			if ( isPersisted ) {
-				this.updatePersistedComments( {
-					...comment,
-					i_like: false,
-				} );
+			if ( this.isCommentPersisted( commentId ) ) {
+				this.updatePersistedComments( commentId );
 			}
 
 			return;
@@ -261,20 +245,11 @@ export class CommentList extends Component {
 
 		this.props.likeComment( commentId, postId );
 
-		if ( 'unapproved' === comment.status ) {
+		if ( 'unapproved' === previousStatus ) {
 			this.props.removeNotice( `comment-notice-${ commentId }` );
-			this.setCommentStatus( commentId, postId, 'approved' );
-			this.updatePersistedComments( {
-				...comment,
-				i_like: true,
-				status: 'approved',
-			} );
-		} else if ( isPersisted ) {
-			this.updatePersistedComments( {
-				...comment,
-				i_like: true,
-			} );
+			this.setCommentStatus( comment, 'approved' );
 		}
+		this.updatePersistedComments( commentId );
 	}
 
 	toggleCommentSelected = commentId => {
@@ -305,16 +280,18 @@ export class CommentList extends Component {
 		this.props.undoBulkStatus( selectedComments );
 	}
 
-	updatePersistedComments = ( comment, isUndo ) => isUndo
-		? this.removeFromPersistedComments( comment.ID )
-		: this.setState( ( { persistedComments } ) => ( { persistedComments: [
-			...reject( persistedComments, { ID: comment.ID } ),
-			comment,
-		] } ) );
+	updatePersistedComments = ( commentId, isUndo ) => {
+		if ( isUndo ) {
+			this.removeFromPersistedComments( commentId );
+		} else if ( ! this.isCommentPersisted( commentId ) ) {
+			this.setState( ( { persistedComments } ) => ( {
+				persistedComments: persistedComments.concat( commentId ),
+			} ) );
+		}
+	}
 
 	render() {
 		const {
-			comments,
 			commentsCount,
 			commentsPage,
 			isLoading,
@@ -326,6 +303,8 @@ export class CommentList extends Component {
 			isBulkEdit,
 			selectedComments,
 		} = this.state;
+
+		const comments = this.getComments();
 
 		const zeroComments = size( comments ) <= 0;
 		const showPlaceholder = ( ! siteId || isLoading ) && zeroComments;

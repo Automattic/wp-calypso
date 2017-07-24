@@ -81,11 +81,18 @@ export class CommentDetail extends Component {
 
 	edit = () => noop;
 
+	getCommentObject = () => ( {
+		commentId: this.props.commentId,
+		postId: this.props.postId,
+		previousIsLiked: this.props.commentIsLiked,
+		previousStatus: this.props.commentStatus,
+	} );
+
 	toggleApprove = () => {
-		const { commentId, commentStatus, postId, setCommentStatus } = this.props;
+		const { commentStatus, setCommentStatus } = this.props;
 		const shouldPersist = 'approved' === commentStatus || 'unapproved' === commentStatus;
 
-		setCommentStatus( commentId, postId, 'approved' === commentStatus ? 'unapproved' : 'approved', {
+		setCommentStatus( this.getCommentObject(), 'approved' === commentStatus ? 'unapproved' : 'approved', {
 			doPersist: shouldPersist,
 			showNotice: true,
 		} );
@@ -100,10 +107,10 @@ export class CommentDetail extends Component {
 	}
 
 	toggleLike = () => {
-		const { commentId, commentIsLiked, commentStatus, postId, toggleCommentLike } = this.props;
+		const { commentIsLiked, commentStatus, toggleCommentLike } = this.props;
 		const shouldPersist = 'unapproved' === commentStatus && ! commentIsLiked;
 
-		toggleCommentLike( commentId, postId );
+		toggleCommentLike( this.getCommentObject() );
 
 		if ( shouldPersist ) {
 			this.setState( { isExpanded: false } );
@@ -116,13 +123,13 @@ export class CommentDetail extends Component {
 	}
 
 	toggleSpam = () => {
-		const { commentId, commentStatus, postId, setCommentStatus } = this.props;
-		setCommentStatus( commentId, postId, 'spam' === commentStatus ? 'approved' : 'spam' );
+		const { commentStatus, setCommentStatus } = this.props;
+		setCommentStatus( this.getCommentObject(), 'spam' === commentStatus ? 'approved' : 'spam' );
 	}
 
 	toggleTrash = () => {
-		const { commentId, commentStatus, postId, setCommentStatus } = this.props;
-		setCommentStatus( commentId, postId, 'trash' === commentStatus ? 'approved' : 'trash' );
+		const { commentStatus, setCommentStatus } = this.props;
+		setCommentStatus( this.getCommentObject(), 'trash' === commentStatus ? 'approved' : 'trash' );
 	}
 
 	render() {
