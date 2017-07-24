@@ -70,7 +70,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should should remove the key when re-set to initial state', () => {
+	it( 'should should remove the key when page is re-set to initial state', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 123,
@@ -79,6 +79,19 @@ describe( 'reducer', () => {
 			}
 		};
 		const originalState = deepFreeze( { 123: { currentPage: 3, currentSearch: '' } } );
+		const newState = reducer( originalState, action );
+		expect( newState ).to.eql( {} );
+	} );
+
+	it( 'should should remove the key when search is re-set to initial state', () => {
+		const action = {
+			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
+			siteId: 123,
+			query: {
+				search: '',
+			}
+		};
+		const originalState = deepFreeze( { 123: { currentPage: 1, currentSearch: 'test' } } );
 		const newState = reducer( originalState, action );
 		expect( newState ).to.eql( {} );
 	} );

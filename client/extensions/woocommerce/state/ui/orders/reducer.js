@@ -32,7 +32,7 @@ export function currentSearch( state = '', action ) {
 	const { type, query } = action;
 	switch ( type ) {
 		case WOOCOMMERCE_UI_ORDERS_SET_QUERY:
-			return query && query.search ? query.search : state;
+			return query && ( 'undefined' !== typeof query.search ) ? query.search : state;
 		default:
 			return state;
 	}
