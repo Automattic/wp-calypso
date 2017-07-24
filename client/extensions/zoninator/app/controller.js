@@ -22,11 +22,17 @@ export const renderTab = ( component ) => ( context ) => {
 		baseAnalyticsPath += '/:site';
 	}
 
+	if ( zone ) {
+		baseAnalyticsPath += '/:zone';
+	}
+
 	let analyticsPageTitle = 'WP Zone Manager';
 
 	if ( zone.length ) {
 		analyticsPageTitle += ` > ${ titlecase( zone ) }`;
-	} else {
+	}
+
+	if ( baseAnalyticsPath.match( /.*\/new\/:site$/ ) ) {
 		analyticsPageTitle += ' > New Zone';
 	}
 
