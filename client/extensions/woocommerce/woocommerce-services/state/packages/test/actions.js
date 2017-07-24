@@ -7,6 +7,18 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	WOOCOMMERCE_SERVICES_PACKAGES_ADD_PACKAGE,
+	WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PACKAGE,
+	WOOCOMMERCE_SERVICES_PACKAGES_EDIT_PACKAGE,
+	WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL,
+	WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_SAVING,
+	WOOCOMMERCE_SERVICES_PACKAGES_SET_SELECTED_PRESET,
+	WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PACKAGE,
+	WOOCOMMERCE_SERVICES_PACKAGES_UPDATE_PACKAGES_FIELD,
+	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_OUTER_DIMENSIONS,
+	WOOCOMMERCE_SERVICES_PACKAGES_SET_MODAL_ERRORS,
+} from '../../action-types';
+import {
 	addPackage,
 	removePackage,
 	editPackage,
@@ -17,22 +29,15 @@ import {
 	toggleOuterDimensions,
 	setModalErrors,
 	setIsSaving,
-	ADD_PACKAGE,
-	REMOVE_PACKAGE,
-	EDIT_PACKAGE,
-	DISMISS_MODAL,
-	SET_IS_SAVING,
-	SET_SELECTED_PRESET,
-	SAVE_PACKAGE,
-	UPDATE_PACKAGES_FIELD,
-	TOGGLE_OUTER_DIMENSIONS,
-	SET_MODAL_ERRORS,
 } from '../actions';
+
+const siteId = 123;
 
 describe( 'Packages state actions', () => {
 	it( '#addPackage()', () => {
-		expect( addPackage() ).to.eql( {
-			type: ADD_PACKAGE,
+		expect( addPackage( siteId ) ).to.eql( {
+			type: WOOCOMMERCE_SERVICES_PACKAGES_ADD_PACKAGE,
+			siteId,
 		} );
 	} );
 
@@ -42,27 +47,31 @@ describe( 'Packages state actions', () => {
 			dimensions: '10 x 13 x 6',
 			is_letter: false,
 		};
-		expect( editPackage( packageToEdit ) ).to.eql( {
-			type: EDIT_PACKAGE,
+		expect( editPackage( siteId, packageToEdit ) ).to.eql( {
+			type: WOOCOMMERCE_SERVICES_PACKAGES_EDIT_PACKAGE,
 			'package': packageToEdit,
+			siteId,
 		} );
 	} );
 
 	it( '#dismissModal()', () => {
-		expect( dismissModal() ).to.eql( {
-			type: DISMISS_MODAL,
+		expect( dismissModal( siteId ) ).to.eql( {
+			type: WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL,
+			siteId,
 		} );
 	} );
 
 	it( '#setSelectedPreset()', () => {
-		expect( setSelectedPreset( 'a' ) ).to.eql( {
-			type: SET_SELECTED_PRESET,
+		expect( setSelectedPreset( siteId, 'a' ) ).to.eql( {
+			type: WOOCOMMERCE_SERVICES_PACKAGES_SET_SELECTED_PRESET,
 			value: 'a',
+			siteId,
 		} );
 
-		expect( setSelectedPreset( 'ab' ) ).to.eql( {
-			type: SET_SELECTED_PRESET,
+		expect( setSelectedPreset( siteId, 'ab' ) ).to.eql( {
+			type: WOOCOMMERCE_SERVICES_PACKAGES_SET_SELECTED_PRESET,
 			value: 'ab',
+			siteId,
 		} );
 	} );
 
@@ -73,11 +82,12 @@ describe( 'Packages state actions', () => {
 			is_letter: false,
 		};
 
-		const state = savePackage( packageData );
+		const state = savePackage( siteId, packageData );
 
 		expect( state ).to.eql( {
-			type: SAVE_PACKAGE,
+			type: WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PACKAGE,
 			packageData,
+			siteId,
 		} );
 	} );
 
@@ -87,46 +97,53 @@ describe( 'Packages state actions', () => {
 			dimensions: '10 x 13 x 6',
 			is_letter: false,
 		};
-		expect( updatePackagesField( fieldsToUpdate ) ).to.eql( {
-			type: UPDATE_PACKAGES_FIELD,
+		expect( updatePackagesField( siteId, fieldsToUpdate ) ).to.eql( {
+			type: WOOCOMMERCE_SERVICES_PACKAGES_UPDATE_PACKAGES_FIELD,
 			values: fieldsToUpdate,
+			siteId,
 		} );
 	} );
 
 	it( '#toggleOuterDimensions()', () => {
-		expect( toggleOuterDimensions() ).to.eql( {
-			type: TOGGLE_OUTER_DIMENSIONS,
+		expect( toggleOuterDimensions( siteId ) ).to.eql( {
+			type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_OUTER_DIMENSIONS,
+			siteId,
 		} );
 	} );
 
 	it( '#setModalErrors()', () => {
-		expect( setModalErrors( true ) ).to.eql( {
-			type: SET_MODAL_ERRORS,
+		expect( setModalErrors( siteId, true ) ).to.eql( {
+			type: WOOCOMMERCE_SERVICES_PACKAGES_SET_MODAL_ERRORS,
 			value: true,
+			siteId,
 		} );
 
-		expect( setModalErrors( false ) ).to.eql( {
-			type: SET_MODAL_ERRORS,
+		expect( setModalErrors( siteId, false ) ).to.eql( {
+			type: WOOCOMMERCE_SERVICES_PACKAGES_SET_MODAL_ERRORS,
 			value: false,
+			siteId,
 		} );
 
-		expect( setModalErrors( { any: true } ) ).to.eql( {
-			type: SET_MODAL_ERRORS,
+		expect( setModalErrors( siteId, { any: true } ) ).to.eql( {
+			type: WOOCOMMERCE_SERVICES_PACKAGES_SET_MODAL_ERRORS,
 			value: { any: true },
+			siteId,
 		} );
 	} );
 
 	it( '#removePackage', () => {
-		expect( removePackage( 0 ) ).to.eql( {
-			type: REMOVE_PACKAGE,
+		expect( removePackage( siteId, 0 ) ).to.eql( {
+			type: WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PACKAGE,
 			index: 0,
+			siteId,
 		} );
 	} );
 
 	it( '#setIsSaving', () => {
-		expect( setIsSaving( true ) ).to.eql( {
-			type: SET_IS_SAVING,
+		expect( setIsSaving( siteId, true ) ).to.eql( {
+			type: WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_SAVING,
 			isSaving: true,
+			siteId,
 		} );
 	} );
 } );

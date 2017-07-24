@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { translate as __ } from 'i18n-calypso';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -57,11 +58,11 @@ const handleSelectEvent = ( e, selectDefault, selectPreset, setSelectedPreset ) 
 	}
 };
 
-const AddPackagePresets = ( { selectedPreset, setSelectedPreset, presets, setModalErrors, updatePackagesField } ) => {
+const AddPackagePresets = ( { siteId, selectedPreset, setSelectedPreset, presets, setModalErrors, updatePackagesField, translate } ) => {
 	const onSelectPreset = ( idx ) => {
 		const preset = presets.boxes[ idx ];
-		setModalErrors( {} );
-		updatePackagesField( {
+		setModalErrors( siteId, {} );
+		updatePackagesField( siteId, {
 			index: null,
 			is_user_defined: false,
 			...preset,
@@ -69,8 +70,8 @@ const AddPackagePresets = ( { selectedPreset, setSelectedPreset, presets, setMod
 	};
 
 	const onSelectDefault = ( value ) => {
-		setModalErrors( {} );
-		updatePackagesField( {
+		setModalErrors( siteId, {} );
+		updatePackagesField( siteId, {
 			index: null,
 			is_letter: 'envelope' === value,
 			name: null,
@@ -82,11 +83,11 @@ const AddPackagePresets = ( { selectedPreset, setSelectedPreset, presets, setMod
 		} );
 	};
 
-	const onChange = ( event ) => handleSelectEvent( event, onSelectDefault, onSelectPreset, setSelectedPreset );
+	const onChange = ( event ) => handleSelectEvent( event, onSelectDefault, onSelectPreset, setSelectedPreset.bind( null, siteId ) );
 
 	return (
 		<FormFieldset>
-			<FormLabel htmlFor="package_type">{ __( 'Type of package' ) }</FormLabel>
+			<FormLabel htmlFor="package_type">{ translate( 'Type of package' ) }</FormLabel>
 			<SelectOptGroups
 				id="package_type"
 				defaultValue={ selectedPreset }
@@ -98,6 +99,7 @@ const AddPackagePresets = ( { selectedPreset, setSelectedPreset, presets, setMod
 };
 
 AddPackagePresets.propTypes = {
+	siteId: PropTypes.number,
 	selectedPreset: PropTypes.string,
 	setSelectedPreset: PropTypes.func.isRequired,
 	presets: PropTypes.object,
@@ -105,4 +107,4 @@ AddPackagePresets.propTypes = {
 	updatePackagesField: PropTypes.func.isRequired,
 };
 
-export default AddPackagePresets;
+export default localize( AddPackagePresets );

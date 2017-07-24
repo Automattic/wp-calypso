@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import _ from 'lodash';
+import { trim } from 'lodash';
 
 const string = ( value ) => {
-	return _.trim( value );
+	return trim( value );
 };
 
 const leftPoint = /^\.\d+$/;
 const rightPoint = /^\d+\.$/;
 
 const number = ( value ) => {
-	value = _.trim( value );
+	value = trim( value );
 	if ( leftPoint.test( value ) ) {
 		value = '0' + value;
 	} else if ( rightPoint.test( value ) ) {

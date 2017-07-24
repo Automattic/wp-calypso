@@ -1,110 +1,128 @@
 /**
  * Internal dependencies
  */
-import * as api from 'api';
+import * as api from '../../api';
+import {
+	WOOCOMMERCE_SERVICES_PACKAGES_ADD_PACKAGE,
+	WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PACKAGE,
+	WOOCOMMERCE_SERVICES_PACKAGES_EDIT_PACKAGE,
+	WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL,
+	WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_SAVING,
+	WOOCOMMERCE_SERVICES_PACKAGES_SET_MODAL_ERRORS,
+	WOOCOMMERCE_SERVICES_PACKAGES_SET_SELECTED_PRESET,
+	WOOCOMMERCE_SERVICES_PACKAGES_UPDATE_PACKAGES_FIELD,
+	WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PACKAGE,
+	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_OUTER_DIMENSIONS,
+	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL,
+	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PACKAGE,
+	WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCHING,
+	WOOCOMMERCE_SERVICES_PACKAGES_INIT_PACKAGES_FORM,
+} from '../action-types';
+import { getPackagesForm } from './selectors';
 
-export const ADD_PACKAGE = 'ADD_PACKAGE';
-export const REMOVE_PACKAGE = 'REMOVE_PACKAGE';
-export const EDIT_PACKAGE = 'EDIT_PACKAGE';
-export const DISMISS_MODAL = 'DISMISS_MODAL';
-export const SET_IS_SAVING = 'SET_IS_SAVING';
-export const SET_MODAL_ERRORS = 'SET_MODAL_ERROR';
-export const SET_SELECTED_PRESET = 'SET_SELECTED_PRESET';
-export const SAVE_PACKAGE = 'SAVE_PACKAGE';
-export const UPDATE_PACKAGES_FIELD = 'UPDATE_PACKAGES_FIELD';
-export const TOGGLE_OUTER_DIMENSIONS = 'TOGGLE_OUTER_DIMENSIONS';
-export const TOGGLE_ALL = 'TOGGLE_ALL';
-export const TOGGLE_PACKAGE = 'TOGGLE_PACKAGE';
-export const SET_IS_FETCHING = 'SET_IS_FETCHING';
-export const INIT_PACKAGES_FORM = 'INIT_PACKAGES_FORM';
-
-export const addPackage = () => ( {
-	type: ADD_PACKAGE,
+export const addPackage = ( siteId ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_ADD_PACKAGE,
+	siteId,
 } );
 
-export const removePackage = ( index ) => ( {
-	type: REMOVE_PACKAGE,
+export const removePackage = ( siteId, index ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PACKAGE,
 	index,
+	siteId,
 } );
 
-export const editPackage = ( packageToEdit ) => ( {
-	type: EDIT_PACKAGE,
+export const editPackage = ( siteId, packageToEdit ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_EDIT_PACKAGE,
 	'package': packageToEdit,
+	siteId,
 } );
 
-export const dismissModal = () => ( {
-	type: DISMISS_MODAL,
+export const dismissModal = ( siteId ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL,
+	siteId,
 } );
 
-export const setSelectedPreset = ( value ) => ( {
-	type: SET_SELECTED_PRESET,
+export const setSelectedPreset = ( siteId, value ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_SET_SELECTED_PRESET,
 	value,
+	siteId,
 } );
 
-export const savePackage = ( packageData ) => ( {
-	type: SAVE_PACKAGE,
+export const savePackage = ( siteId, packageData ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PACKAGE,
 	packageData,
+	siteId,
 } );
 
-export const updatePackagesField = ( newValues ) => ( {
-	type: UPDATE_PACKAGES_FIELD,
+export const updatePackagesField = ( siteId, newValues ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_UPDATE_PACKAGES_FIELD,
 	values: newValues,
+	siteId,
 } );
 
-export const toggleOuterDimensions = () => ( {
-	type: TOGGLE_OUTER_DIMENSIONS,
+export const toggleOuterDimensions = ( siteId ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_OUTER_DIMENSIONS,
+	siteId,
 } );
 
-export const toggleAll = ( serviceId, groupId, checked ) => ( {
-	type: TOGGLE_ALL,
+export const toggleAll = ( siteId, serviceId, groupId, checked ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL,
 	serviceId,
 	groupId,
 	checked,
+	siteId,
 } );
 
-export const togglePackage = ( serviceId, packageId ) => ( {
-	type: TOGGLE_PACKAGE,
+export const togglePackage = ( siteId, serviceId, packageId ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PACKAGE,
 	serviceId,
 	packageId,
+	siteId,
 } );
 
-export const setModalErrors = ( value ) => ( {
-	type: SET_MODAL_ERRORS,
+export const setModalErrors = ( siteId, value ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_SET_MODAL_ERRORS,
 	value,
+	siteId,
 } );
 
-export const setIsSaving = ( isSaving ) => ( {
-	type: SET_IS_SAVING,
+export const setIsSaving = ( siteId, isSaving ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_SAVING,
 	isSaving,
+	siteId,
 } );
 
-export const fetchSettings = () => ( dispatch, getState ) => {
-	if ( getState().form.packages || getState().form.isFetching ) {
+export const fetchSettings = ( siteId ) => ( dispatch, getState ) => {
+	const form = getPackagesForm( getState(), siteId );
+
+	if ( form && ( form.packages || form.isFetching ) ) {
 		return;
 	}
-	dispatch( { type: SET_IS_FETCHING, isFetching: true } );
+	dispatch( { type: WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCHING, isFetching: true, siteId } );
 
-	api.get( api.url.packages() )
+	api.get( siteId, api.url.packages )
 		.then( ( { formData, formSchema, storeOptions } ) => {
 			dispatch( {
-				type: INIT_PACKAGES_FORM,
+				type: WOOCOMMERCE_SERVICES_PACKAGES_INIT_PACKAGES_FORM,
 				packages: formData,
 				dimensionUnit: storeOptions.dimension_unit,
 				weightUnit: storeOptions.weight_unit,
 				packageSchema: formSchema.custom.items,
 				predefinedSchema: formSchema.predefined,
+				siteId,
 			} );
 		} )
 		.catch( ( error ) => {
 			console.error( error ); // eslint-disable-line no-console
 		} )
-		.then( () => dispatch( { type: SET_IS_FETCHING, isFetching: false } ) );
+		.then( () => dispatch( { type: WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCHING, isFetching: false, siteId } ) );
 };
 
-export const submit = ( onSaveSuccess, onSaveFailure ) => ( dispatch, getState ) => {
-	dispatch( setIsSaving( true ) );
-	api.post( api.url.packages(), getState().form.packages )
+export const submit = ( siteId, onSaveSuccess, onSaveFailure ) => ( dispatch, getState ) => {
+	const form = getPackagesForm( getState(), siteId );
+	dispatch( setIsSaving( siteId, true ) );
+	api.post( siteId, api.url.packages, form.packages )
 		.then( onSaveSuccess )
 		.catch( onSaveFailure )
-		.then( () => dispatch( setIsSaving( false ) ) );
+		.then( () => dispatch( setIsSaving( siteId, false ) ) );
 };

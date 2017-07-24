@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { translate as __ } from 'i18n-calypso';
-import _ from 'lodash';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import { concat, difference, flatten, map, omit, trim } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -11,47 +13,61 @@ import _ from 'lodash';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
-import Modal from 'components/modal';
+import Dialog from 'components/dialog';
 import AddPackagePresets from './add-package-presets';
 import checkInputs from './modal-errors';
 import inputFilters from './input-filters';
-import FieldError from 'components/field-error';
-import FieldDescription from 'components/field-description';
+import FieldError from '../../components/field-error';
 
-const getDialogButtons = ( mode, dismissModal, savePackage ) => {
-	return [
+const getDialogButtons = ( mode, dismissModal, savePackage, onRemove, translate ) => {
+	const buttons = [
 		<FormButton onClick={ savePackage }>
-			{ ( 'add' === mode ) ? __( 'Add package' ) : __( 'Apply changes' ) }
+			{ ( 'add' === mode ) ? translate( 'Add package' ) : translate( 'Apply changes' ) }
 		</FormButton>,
 		<FormButton onClick={ dismissModal } isPrimary={ false }>
-			{ __( 'Cancel' ) }
+			{ translate( 'Cancel' ) }
 		</FormButton>,
 	];
+
+	if ( 'add' !== mode ) {
+		buttons.unshift( {
+			action: 'delete',
+			label: <span><Gridicon icon="trash" /> { translate( 'Delete this package' ) }</span>,
+			onClick: onRemove,
+			additionalClassNames: 'packages__delete is-scary is-borderless'
+		} );
+	}
+
+	return buttons;
 };
 
-const OuterDimensionsToggle = ( { toggleOuterDimensions } ) => {
+const OuterDimensionsToggle = ( { siteId, toggleOuterDimensions, translate } ) => {
 	const onClick = ( evt ) => {
 		evt.preventDefault();
-		toggleOuterDimensions();
+		toggleOuterDimensions( siteId );
 	};
 
 	return (
-		<a href="#" className="form-setting-explanation" onClick={ onClick }>
-			{ __( 'View exterior dimensions' ) }
+		<a href="#" className="packages__setting-explanation" onClick={ onClick }>
+			{ translate( 'View exterior dimensions' ) }
 		</a>
 	);
 };
 
 const AddPackageDialog = ( props ) => {
 	const {
+		siteId,
 		form,
 		dismissModal,
 		toggleOuterDimensions,
 		setModalErrors,
 		savePackage,
 		updatePackagesField,
+		removePackage,
+		translate,
 	} = props;
 
 	const {
@@ -70,6 +86,7 @@ const AddPackageDialog = ( props ) => {
 	const customPackages = packages.custom;
 
 	const {
+		index,
 		name,
 		inner_dimensions,
 		outer_dimensions,
@@ -78,7 +95,6 @@ const AddPackageDialog = ( props ) => {
 		is_user_defined,
 	} = packageData;
 
-	const fieldClassName = is_user_defined ? null : 'flat-rate-package__inner-dimensions__read-only';
 	const isOuterDimensionsVisible = showOuterDimensions || outer_dimensions;
 	const exampleDimensions = [ 100.25, 25, 5.75 ].map( ( val ) => val.toLocaleString() ).join( ' x ' );
 
@@ -86,9 +102,9 @@ const AddPackageDialog = ( props ) => {
 		const editName = 'number' === typeof packageData.index ? customPackages[ packageData.index ].name : null;
 
 		//get reserved box names:
-		const boxNames = _.concat(
-			_.difference( customPackages.map( ( boxPackage ) => boxPackage.name ), [ editName ] ), //existing custom boxes
-			_.flatten( _.map( predefinedSchema, predef => _.map( predef, group => group.definitions ) ) ), //predefined boxes
+		const boxNames = concat(
+			difference( customPackages.map( ( boxPackage ) => boxPackage.name ), [ editName ] ), //existing custom boxes
+			flatten( map( predefinedSchema, predef => map( predef, group => group.definitions ) ) ), //predefined boxes
 			[ 'individual' ] //reserved for items shipping in original packaging
 		);
 
@@ -102,71 +118,74 @@ const AddPackageDialog = ( props ) => {
 
 		const errors = checkInputs( filteredPackageData, boxNames, packageSchema );
 		if ( errors.any ) {
-			updatePackagesField( filteredPackageData );
-			setModalErrors( errors );
+			updatePackagesField( siteId, filteredPackageData );
+			setModalErrors( siteId, errors );
 			return;
 		}
 
-		savePackage( filteredPackageData );
+		savePackage( siteId, filteredPackageData );
 	};
 
 	const updateTextField = ( event ) => {
 		const key = event.target.name;
 		const value = event.target.value;
-		setModalErrors( _.omit( modalErrors, key ) );
-		updatePackagesField( { [ key ]: value } );
+		setModalErrors( siteId, omit( modalErrors, key ) );
+		updatePackagesField( siteId, { [ key ]: value } );
 	};
 
 	const fieldInfo = ( field, nonEmptyText ) => {
-		const altText = nonEmptyText || __( 'Invalid value' );
-		const text = '' === _.trim( packageData[ field ] ) ? __( 'This field is required' ) : altText;
+		const altText = nonEmptyText || translate( 'Invalid value.' );
+		const text = '' === trim( packageData[ field ] ) ? translate( 'This field is required.' ) : altText;
 		return modalErrors[ field ] ? <FieldError text={ text } /> : null;
 	};
 
+	const onClose = () => ( dismissModal( siteId ) );
+	const onRemove = () => removePackage( siteId, index );
+
 	return (
-		<Modal
+		<Dialog
 			isVisible={ showModal }
-			additionalClassNames="wcc-shipping-add-edit-package-dialog"
-			onClose={ dismissModal }
-			buttons={ getDialogButtons( mode, dismissModal, onSave ) }>
+			additionalClassNames="packages__add-edit-dialog woocommerce"
+			onClose={ onClose }
+			buttons={ getDialogButtons( mode, onClose, onSave, onRemove, translate ) }>
 			<FormSectionHeading>
-				{ ( 'edit' === mode ) ? __( 'Edit package' ) : __( 'Add a package' ) }
+				{ ( 'edit' === mode ) ? translate( 'Edit package' ) : translate( 'Add a package' ) }
 			</FormSectionHeading>
 			{ ( 'add' === mode ) ? <AddPackagePresets { ...props } /> : null }
 			<FormFieldset>
-				<FormLabel htmlFor="name">{ __( 'Package name' ) }</FormLabel>
+				<FormLabel htmlFor="name">{ translate( 'Package name' ) }</FormLabel>
 				<FormTextInput
 					id="name"
 					name="name"
-					placeholder={ __( 'The customer will see this during checkout' ) }
+					placeholder={ translate( 'The customer will see this during checkout' ) }
 					value={ name || '' }
 					onChange={ updateTextField }
 					isError={ modalErrors.name }
 				/>
-				{ fieldInfo( 'name', __( 'This field must be unique' ) ) }
+				{ fieldInfo( 'name', translate( 'This field must be unique' ) ) }
 			</FormFieldset>
 			<FormFieldset>
-				<FormLabel>{ __( 'Inner Dimensions (L x W x H) %(dimensionUnit)s', { args: { dimensionUnit } } ) }</FormLabel>
+				<FormLabel>{ translate( 'Inner Dimensions (L x W x H) %(dimensionUnit)s', { args: { dimensionUnit } } ) }</FormLabel>
 				<FormTextInput
 					name="inner_dimensions"
 					placeholder={ exampleDimensions }
 					value={ inner_dimensions || '' }
-					className={ fieldClassName }
 					onChange={ updateTextField }
 					disabled={ ! is_user_defined }
 					isError={ modalErrors.inner_dimensions }
 				/>
 				{ fieldInfo( 'inner_dimensions' ) }
-				{ ! isOuterDimensionsVisible ? <OuterDimensionsToggle { ...{ toggleOuterDimensions } } /> : null }
+				{ ! isOuterDimensionsVisible ? <OuterDimensionsToggle { ...{ siteId, toggleOuterDimensions, translate } } /> : null }
 			</FormFieldset>
 			{ isOuterDimensionsVisible
 				? ( <FormFieldset>
-						<FormLabel>{ __( 'Outer Dimensions (L x W x H) %(dimensionUnit)s', { args: { dimensionUnit } } ) }</FormLabel>
+						<FormLabel>
+							{ translate( 'Outer Dimensions (L x W x H) %(dimensionUnit)s', { args: { dimensionUnit } } ) }
+						</FormLabel>
 						<FormTextInput
 							name="outer_dimensions"
 							placeholder={ exampleDimensions }
 							value={ outer_dimensions || '' }
-							className={ fieldClassName }
 							onChange={ updateTextField }
 							disabled={ ! is_user_defined }
 							isError={ modalErrors.outer_dimensions }
@@ -175,43 +194,44 @@ const AddPackageDialog = ( props ) => {
 					</FormFieldset> )
 				: null
 			}
-			<FormFieldset className="wcc-shipping-add-package-weight-group">
-				<div className="wcc-shipping-add-package-weight">
-					<FormLabel htmlFor="box_weight">{ __( 'Package weight' ) }</FormLabel>
+			<FormFieldset className="packages__add-package-weight-group">
+				<div className="packages__add-package-weight">
+					<FormLabel htmlFor="box_weight">{ translate( 'Package weight' ) }</FormLabel>
 					<FormTextInput
 						id="box_weight"
 						name="box_weight"
-						placeholder={ __( 'Weight of box' ) }
+						placeholder={ translate( 'Weight of box' ) }
 						value={ box_weight || '' }
-						className={ fieldClassName }
 						onChange={ updateTextField }
 						disabled={ ! is_user_defined }
 						isError={ modalErrors.box_weight }
 					/>
 					{ fieldInfo( 'box_weight' ) }
 				</div>
-				<div className="wcc-shipping-add-package-weight">
-					<FormLabel htmlFor="max_weight">{ __( 'Max weight' ) }</FormLabel>
+				<div className="packages__add-package-weight">
+					<FormLabel htmlFor="max_weight">{ translate( 'Max weight' ) }</FormLabel>
 					<FormTextInput
 						id="max_weight"
 						name="max_weight"
-						placeholder={ __( 'Max weight' ) }
+						placeholder={ translate( 'Max weight' ) }
 						value={ max_weight || '' }
-						className={ fieldClassName }
 						onChange={ updateTextField }
 						disabled={ ! is_user_defined }
 						isError={ modalErrors.max_weight }
 					/>
-					<span className="wcc-shipping-add-package-weight-unit">{ weightUnit }</span>
+					<span className="packages__add-package-weight-unit">{ weightUnit }</span>
 					{ fieldInfo( 'max_weight' ) }
 				</div>
-				<FieldDescription text={ __( 'Defines both the weight of the empty box and the max weight it can hold' ) } />
+				<FormSettingExplanation>
+					{ translate( 'Defines both the weight of the empty box and the max weight it can hold' ) }
+				</FormSettingExplanation>
 			</FormFieldset>
-		</Modal>
+		</Dialog>
 	);
 };
 
 AddPackageDialog.propTypes = {
+	siteId: PropTypes.number,
 	dismissModal: PropTypes.func.isRequired,
 	form: PropTypes.object.isRequired,
 	updatePackagesField: PropTypes.func.isRequired,
@@ -220,6 +240,7 @@ AddPackageDialog.propTypes = {
 	savePackage: PropTypes.func.isRequired,
 	packageData: PropTypes.object,
 	setModalErrors: PropTypes.func.isRequired,
+	removePackage: PropTypes.func,
 };
 
-export default AddPackageDialog;
+export default localize( AddPackageDialog );

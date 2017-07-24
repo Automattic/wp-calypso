@@ -2,8 +2,6 @@
 	margin-bottom: 4px;
 	color: $gray-text-min;
 	padding-bottom: 8px;
-	font-size: 12px;
-	line-height: 18px;
 }
 
 .card.label-settings__card {
@@ -45,7 +43,6 @@
 
 .label-settings__card-date {
 	float: right;
-	color: $gray;
 	font-style: italic;
 }
 
@@ -56,6 +53,7 @@
 		padding: 0;
 		overflow: hidden;
 	}
+
 	.form-fieldset:last-child {
 		margin-bottom: 0;
 	}

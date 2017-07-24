@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import _ from 'lodash';
+import { memoize, omitBy, reduce, some, trim } from 'lodash';
 import validator from 'is-my-json-valid';
 
-const memoizedValidator = _.memoize( ( schema ) => validator( schema, { greedy: true } ) );
+const memoizedValidator = memoize( ( schema ) => validator( schema, { greedy: true } ) );
 
 const processErrors = ( errors ) => {
-	return _.reduce( errors, ( result, value ) => {
+	return reduce( errors, ( result, value ) => {
 		if ( value.field ) {
 			const key = value.field.replace( 'data.', '' );
 			Object.assign( result, { [ key ]: true, any: true } );
@@ -18,12 +18,12 @@ const processErrors = ( errors ) => {
 };
 
 const checkNullOrWhitespace = ( value ) => {
-	return value && '' !== _.trim( value ) ? value : null;
+	return value && '' !== trim( value ) ? value : null;
 };
 
 const checkDuplicateName = ( name, boxNames ) => {
 	name = checkNullOrWhitespace( name );
-	return _.some( boxNames, ( boxName ) => boxName === name ) ? null : name;
+	return some( boxNames, ( boxName ) => boxName === name ) ? null : name;
 };
 
 const numberRegex = /^\d+(\.\d+)?$/;
@@ -44,7 +44,7 @@ const preProcessPackageData = ( data, boxNames ) => {
 		max_weight: checkAndConvertNumber( data.max_weight ),
 	};
 
-	return _.omitBy( result, ( value ) => null === value );
+	return omitBy( result, ( value ) => null === value );
 };
 
 export default ( packageData, boxNames, schema ) => {

@@ -20,6 +20,8 @@ import {
 	setIsSaving,
 } from '../actions';
 
+const siteId = 123;
+
 const initialState = {
 	showModal: false,
 	packageData: null,
@@ -49,7 +51,7 @@ describe( 'Packages form reducer', () => {
 				name: 'Package name here',
 			},
 		};
-		const action = addPackage();
+		const action = addPackage( siteId );
 		const state = reducer( existingAddState, action );
 
 		expect( state ).to.eql( {
@@ -68,7 +70,7 @@ describe( 'Packages form reducer', () => {
 				name: 'Package name here',
 			},
 		};
-		const action = addPackage();
+		const action = addPackage( siteId );
 		const state = reducer( existingEditState, action );
 
 		expect( state ).to.eql( {
@@ -86,7 +88,7 @@ describe( 'Packages form reducer', () => {
 		const initialStateVisibleOuterDimensions = Object.assign( {}, initialState, {
 			showOuterDimensions: true,
 		} );
-		const action = editPackage( packageData );
+		const action = editPackage( siteId, packageData );
 		const state = reducer( initialStateVisibleOuterDimensions, action );
 
 		expect( state.packageData ).to.eql( {
@@ -104,7 +106,7 @@ describe( 'Packages form reducer', () => {
 		const visibleModalState = {
 			showModal: true,
 		};
-		const action = dismissModal();
+		const action = dismissModal( siteId );
 		const state = reducer( visibleModalState, action );
 
 		expect( state ).to.eql( {
@@ -117,17 +119,17 @@ describe( 'Packages form reducer', () => {
 	it( 'SET_SELECTED_PRESET', () => {
 		let state = {};
 
-		state = reducer( state, setSelectedPreset( 'a' ) );
+		state = reducer( state, setSelectedPreset( siteId, 'a' ) );
 		expect( state ).to.eql( {
 			selectedPreset: 'a',
 		} );
 
-		state = reducer( state, setSelectedPreset( 'aaa' ) );
+		state = reducer( state, setSelectedPreset( siteId, 'aaa' ) );
 		expect( state ).to.eql( {
 			selectedPreset: 'aaa',
 		} );
 
-		state = reducer( state, setSelectedPreset( '1112' ) );
+		state = reducer( state, setSelectedPreset( siteId, '1112' ) );
 		expect( state ).to.eql( {
 			selectedPreset: '1112',
 		} );
@@ -139,7 +141,7 @@ describe( 'Packages form reducer', () => {
 			is_letter: false,
 			index: 1,
 		};
-		const action = updatePackagesField( {
+		const action = updatePackagesField( siteId, {
 			name: 'Box Test',
 			max_weight: '300',
 			index: null,
@@ -160,7 +162,7 @@ describe( 'Packages form reducer', () => {
 		const visibleModalState = {
 			showModal: true,
 		};
-		const action = toggleOuterDimensions();
+		const action = toggleOuterDimensions( siteId );
 		const state = reducer( visibleModalState, action );
 
 		expect( state ).to.eql( {
@@ -181,7 +183,7 @@ describe( 'Packages form reducer', () => {
 			showOuterDimensions: false,
 			packages: { custom: [ 1, 2, 3 ] },
 		};
-		const action = savePackage( packageData );
+		const action = savePackage( siteId, packageData );
 		const state = reducer( initialSavePackageState, action );
 
 		expect( state.packages.custom[ 3 ] ).to.eql( {
@@ -203,7 +205,7 @@ describe( 'Packages form reducer', () => {
 			showOuterDimensions: false,
 			packages: { custom: [ 1, 2, 3 ] },
 		};
-		const action = savePackage( packageData );
+		const action = savePackage( siteId, packageData );
 		const state = reducer( initialSavePackageState, action );
 
 		expect( state.packages.custom[ 1 ] ).to.eql( {
@@ -225,7 +227,7 @@ describe( 'Packages form reducer', () => {
 			showOuterDimensions: false,
 			packages: { custom: [ 1, 2, 3 ] },
 		};
-		const action = savePackage( packageData );
+		const action = savePackage( siteId, packageData );
 		const state = reducer( initialSavePackageState, action );
 
 		expect( state.showModal ).to.eql( false );
@@ -248,7 +250,7 @@ describe( 'Packages form reducer', () => {
 			mode: 'edit',
 			showOuterDimensions: false,
 		};
-		const action = setModalErrors( true );
+		const action = setModalErrors( siteId, true );
 
 		const state = reducer( initialSavePackageState, action );
 		expect( state ).to.eql( {
@@ -258,7 +260,7 @@ describe( 'Packages form reducer', () => {
 			modalErrors: true,
 		} );
 
-		const newState = reducer( initialSavePackageState, setModalErrors( { any: true } ) );
+		const newState = reducer( initialSavePackageState, setModalErrors( siteId, { any: true } ) );
 		expect( newState ).to.eql( {
 			showModal: true,
 			mode: 'edit',
@@ -268,14 +270,16 @@ describe( 'Packages form reducer', () => {
 	} );
 
 	it( 'REMOVE_PACKAGE', () => {
-		const action = removePackage( 1 );
+		const action = removePackage( siteId, 1 );
 
 		const state = reducer( initialState, action );
 		expect( state.packages.custom ).to.eql( [ 1, 3 ] );
+		expect( state.pristine ).to.eql( false );
+		expect( state.showModal ).to.eql( false );
 	} );
 
 	it( 'SET_IS_SAVING', () => {
-		const action = setIsSaving( false );
+		const action = setIsSaving( siteId, false );
 
 		const state = reducer( initialState, action );
 		expect( state.isSaving ).to.eql( false );

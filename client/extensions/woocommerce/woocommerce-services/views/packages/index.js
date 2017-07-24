@@ -1,122 +1,141 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { translate as __ } from 'i18n-calypso';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import _ from 'lodash';
-import Gridicon from 'gridicons';
+import { difference, filter, forEach, reject, some } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import Checkbox from 'components/checkbox';
-import ActionButtons from 'components/action-buttons';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormButton from 'components/forms/form-button';
+import BulkSelect from 'woocommerce/components/bulk-select';
+import Button from 'components/button';
+import Card from 'components/card';
+import ExtendedHeader from 'woocommerce/components/extended-header';
 import FoldableCard from 'components/foldable-card';
-import Spinner from 'components/spinner';
 import PackagesList from './packages-list';
 import AddPackageDialog from './add-package';
-import * as PackagesActions from '../state/actions';
-import * as NoticeActions from 'state/notices/actions';
-import GlobalNotices from 'components/global-notices';
-import notices from 'notices';
+import * as PackagesActions from '../../state/packages/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getPackagesForm } from '../../state/packages/selectors';
 
-const Packages = ( props ) => {
-	const isFetching = props.form.isFetching;
+class Packages extends Component {
+	componentWillMount() {
+		if ( this.props.siteId ) {
+			this.props.fetchSettings( this.props.siteId );
+		}
+	}
 
-	const foldableActionButton = (
-		<button className="foldable-card__action foldable-card__expand" type="button">
-			<span className="screen-reader-text">{ __( 'Expand Services' ) }</span>
-			<Gridicon icon="chevron-down" size={ 24 } />
-		</button>
-	);
+	componentWillReceiveProps( props ) {
+		if ( props.siteId !== this.props.siteId ) {
+			this.props.fetchSettings( props.siteId );
+		}
+	}
 
-	const predefSummary = ( serviceSelected, groupDefinitions ) => {
+	predefSummary = ( serviceSelected, groupDefinitions ) => {
 		const groupPackageIds = groupDefinitions.map( ( def ) => def.id );
-		const diffLen = _.difference( groupPackageIds, serviceSelected ).length;
+		const diffLen = difference( groupPackageIds, serviceSelected ).length;
+		const { translate } = this.props;
 
 		if ( 0 >= diffLen ) {
-			return __( 'All packages selected' );
+			return translate( 'All packages selected' );
 		}
 
 		const selectedCount = groupPackageIds.length - diffLen;
-		return __( '%(selectedCount)d package selected', '%(selectedCount)d packages selected', {
+		return translate( '%(selectedCount)d package selected', '%(selectedCount)d packages selected', {
 			count: selectedCount,
 			args: { selectedCount },
 		} );
 	};
 
-	const renderPredefHeader = ( title, selected, packages, serviceId, groupId ) => {
+	renderPredefHeader = ( isPlaceholder, title, selected, packages, serviceId, groupId ) => {
+		if ( isPlaceholder ) {
+			return (
+				<div className="packages__group-header" >
+					<BulkSelect
+						totalElements={ 0 }
+						selectedElements={ 1 }
+						className="packages__group-header-checkbox" />
+					<p /><p /><p />
+				</div>
+			);
+		}
+
 		if ( ! selected ) {
 			return null;
 		}
 
-		const onToggle = ( event ) => {
-			props.toggleAll( serviceId, groupId, event.target.checked );
+		const onToggle = ( state, event ) => {
+			event.stopPropagation();
+			this.props.toggleAll( this.props.siteId, serviceId, groupId, event.target.checked );
 		};
 
-		const stopPropagation = ( event ) => event.stopPropagation();
-
 		return (
-			<div className="wcc-predefined-packages-group-header" >
-				<Checkbox
-					checked={ selected.length === packages.length }
-					partialChecked={ Boolean( selected.length ) }
-					onChange={ onToggle }
-					onClick={ stopPropagation } />
+			<div className="packages__group-header" >
+				<BulkSelect
+					totalElements={ packages.length }
+					selectedElements={ selected.length }
+					onToggle={ onToggle }
+					className="packages__group-header-checkbox" />
 				{ title }
 			</div>
 		);
 	};
 
-	const renderPredefinedPackages = () => {
+	renderPredefinedPackages = () => {
 		const elements = [];
+		const { siteId, isFetching, translate, form } = this.props;
 
 		if ( isFetching ) {
-			return (
-				<div className="loading-spinner">
-					<Spinner size={ 24 } />
-				</div>
-			);
+			return [ {}, {} ].map( ( o, i ) => (
+				<FoldableCard
+					className="packages__predefined-packages placeholder"
+					key={ i }
+					header={ this.renderPredefHeader( true ) }
+					summary={ <p /> }
+					clickableHeader={ true }
+					expanded={ false }
+					icon="chevron-down"
+				/>
+			) );
 		}
 
-		_.forEach( props.form.predefinedSchema, ( servicePackages, serviceId ) => {
-			const serviceSelected = props.form.packages.predefined[ serviceId ] || [];
+		forEach( form.predefinedSchema, ( servicePackages, serviceId ) => {
+			const serviceSelected = form.packages.predefined[ serviceId ] || [];
 
-			_.forEach( servicePackages, ( predefGroup, groupId ) => {
+			forEach( servicePackages, ( predefGroup, groupId ) => {
 				const groupPackages = predefGroup.definitions;
-				const nonFlatRates = _.reject( groupPackages, 'is_flat_rate' );
+				const nonFlatRates = reject( groupPackages, 'is_flat_rate' );
 				if ( ! nonFlatRates.length ) {
 					return;
 				}
 
-				const groupSelected = _.filter( serviceSelected, selectedId => _.some( groupPackages, pckg => pckg.id === selectedId ) );
-				const summary = predefSummary( groupSelected, nonFlatRates );
+				const groupSelected = filter( serviceSelected, selectedId => some( groupPackages, pckg => pckg.id === selectedId ) );
+				const summary = this.predefSummary( groupSelected, nonFlatRates );
 
 				elements.push( <FoldableCard
+					className="packages__predefined-packages"
 					key={ `${ serviceId }_${ groupId }` }
-					header={ renderPredefHeader( predefGroup.title, groupSelected, nonFlatRates, serviceId, groupId ) }
+					header={ this.renderPredefHeader( false, predefGroup.title, groupSelected, nonFlatRates, serviceId, groupId ) }
 					summary={ summary }
 					expandedSummary={ summary }
 					clickableHeader={ true }
-					compact
-					actionButton={ foldableActionButton }
-					actionButtonExpanded={ foldableActionButton }
 					expanded={ false }
+					screenReaderText={ translate( 'Expand Services' ) }
+					icon="chevron-down"
 				>
 					<PackagesList
+						siteId={ siteId }
 						packages={ groupPackages }
 						selected={ groupSelected }
 						serviceId={ serviceId }
 						groupId={ groupId }
-						toggleAll={ props.toggleAll }
-						togglePackage={ props.togglePackage }
-						dimensionUnit={ props.form.dimensionUnit }
+						toggleAll={ this.props.toggleAll }
+						togglePackage={ this.props.togglePackage }
+						dimensionUnit={ form.dimensionUnit }
 						editable={ false } />
 				</FoldableCard> );
 			} );
@@ -125,74 +144,37 @@ const Packages = ( props ) => {
 		return elements;
 	};
 
-	const onSaveSuccess = () => props.noticeActions.successNotice( __( 'Your packages have been saved.' ), { duration: 5000 } );
-	const onSaveFailure = () => props.noticeActions.errorNotice( __( 'Unable to save your packages. Please try again.' ) );
-	const onSaveChanges = () => props.submit( onSaveSuccess, onSaveFailure );
+	render() {
+		const { isFetching, siteId, form, translate } = this.props;
 
-	const buttons = [
-		{
-			label: __( 'Save changes' ),
-			onClick: onSaveChanges,
-			isPrimary: true,
-			isDisabled: props.form.isSaving || props.form.pristine,
-		},
-	];
-
-	const renderContent = () => {
-		if ( ! props.form.packages && ! isFetching ) {
-			return (
-				<CompactCard className="settings-group-card">
-					<p className="error-message">
-						{ __( 'Unable to get your settings. Please refresh the page to try again.' ) }
-					</p>
-				</CompactCard>
-			);
-		}
+		const addPackage = () => ( this.props.addPackage( siteId ) );
 
 		return (
 			<div>
-				<CompactCard className="settings-group-card">
-					<FormSectionHeading className="settings-group-header">{ __( 'Custom packages' ) }</FormSectionHeading>
-					<div className="settings-group-content">
-						<PackagesList
-							packages={ ( props.form.packages || {} ).custom }
-							dimensionUnit={ props.form.dimensionUnit }
-							editable={ true }
-							removePackage={ props.removePackage }
-							editPackage={ props.editPackage } />
-						{ ( ! isFetching ) && <AddPackageDialog { ...props } /> }
-						<FormFieldset className="add-package-button-field">
-							<FormButton
-								type="button"
-								isPrimary={ false }
-								compact
-								disabled={ isFetching }
-								onClick={ props.addPackage } >
-								{ __( 'Add a package' ) }
-							</FormButton>
-						</FormFieldset>
-					</div>
-				</CompactCard>
-				<CompactCard className="settings-group-card">
-					<FormSectionHeading className="settings-group-header">{ __( 'Predefined packages' ) }</FormSectionHeading>
-					<div className="settings-group-content">
-						{ renderPredefinedPackages() }
-					</div>
-				</CompactCard>
+				<ExtendedHeader
+					label={ translate( 'Packages' ) }
+					description={ translate( 'Add boxes, envelopes, and other packages you use most frequently.' ) }>
+					<Button onClick={ addPackage } disabled={ isFetching }>{ translate( 'Add package' ) }</Button>
+				</ExtendedHeader>
+				<Card className="packages__packages">
+					<PackagesList
+						siteId={ this.props.siteId }
+						isFetching={ isFetching }
+						packages={ ( form.packages || {} ).custom }
+						dimensionUnit={ form.dimensionUnit }
+						editable={ true }
+						removePackage={ this.props.removePackage }
+						editPackage={ this.props.editPackage } />
+					{ ( ! isFetching ) && <AddPackageDialog { ...this.props } /> }
+				</Card>
+				<ExtendedHeader
+					label={ translate( 'Service Packages' ) }
+					description={ translate( 'Select packages provided by the shipping services that you use.' ) } />
+					{ this.renderPredefinedPackages() }
 			</div>
 		);
-	};
-
-	return (
-		<div>
-			<GlobalNotices id="notices" notices={ notices.list } />
-			{ renderContent() }
-			<CompactCard className="save-button-bar">
-				<ActionButtons buttons={ buttons } />
-			</CompactCard>
-		</div>
-	);
-};
+	}
+}
 
 Packages.propTypes = {
 	addPackage: PropTypes.func.isRequired,
@@ -206,14 +188,20 @@ Packages.propTypes = {
 	setModalErrors: PropTypes.func.isRequired,
 	showModal: PropTypes.bool,
 	form: PropTypes.object,
-	noticeActions: PropTypes.object,
 };
 
 export default connect(
-	( state ) => state,
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const form = getPackagesForm( state, siteId );
+		return {
+			siteId,
+			isFetching: ! form || ! form.packages || form.isFetching,
+			form,
+		};
+	},
 	( dispatch ) => (
 		{
 			...bindActionCreators( PackagesActions, dispatch ),
-			noticeActions: bindActionCreators( NoticeActions, dispatch ),
 		} )
-)( Packages );
+)( localize( Packages ) );

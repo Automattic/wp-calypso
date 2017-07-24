@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { translate as __ } from 'i18n-calypso';
-import _ from 'lodash';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import { trim } from 'lodash';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
 
@@ -11,9 +12,9 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Checkbox from 'components/checkbox';
+import FormCheckbox from 'components/forms/form-checkbox';
 
-const renderIcon = ( isLetter, isError, onClick ) => {
+const renderIcon = ( isLetter, isError ) => {
 	let icon;
 	if ( isError ) {
 		icon = 'notice';
@@ -21,80 +22,88 @@ const renderIcon = ( isLetter, isError, onClick ) => {
 		icon = isLetter ? 'mail' : 'product';
 	}
 
-	const gridicon = <Gridicon icon={ icon } className="package-type-icon" size={ isError ? 29 : 18 } />;
-	if ( ! onClick ) {
-		return gridicon;
-	}
-
-	return (
-		<a href="#" onClick={ onClick }>{ gridicon }</a>
-	);
+	return <Gridicon icon={ icon } size={ 18 } />;
 };
 
-const renderName = ( name, openModal ) => {
-	const nameEl = name && '' !== _.trim( name )
+const renderName = ( name, translate ) => {
+	return name && '' !== trim( name )
 		? name
-		: <span className="package-no-name">{ __( 'Untitled' ) }</span>;
-
-	if ( ! openModal ) {
-		return nameEl;
-	}
-
-	return ( <a href="#" onClick={ openModal }>{ nameEl }</a> );
+		: translate( 'Untitled' );
 };
 
 const renderSelect = ( selected, onToggle ) => {
 	return (
-		<div className="package-actions">
-			<Checkbox checked={ selected } onChange={ onToggle } />
+		<div className="packages__packages-row-actions">
+			<FormCheckbox checked={ selected } onChange={ onToggle } />
 		</div>
 	);
 };
 
-const renderActions = ( onRemove ) => {
+const renderActions = ( openModal, translate ) => {
 	return (
-		<div className="package-actions">
-			<Button compact borderless className="remove-package" onClick={ onRemove }>
-				<Gridicon icon="cross-small" size={ 18 } />
-			</Button>
+		<div className="packages__packages-row-actions">
+			<Button compact onClick={ openModal }>{ translate( 'Edit' ) }</Button>
 		</div>
 	);
 };
 
 const PackagesListItem = ( {
+	siteId,
+	isPlaceholder,
 	index,
 	data,
 	dimensionUnit,
 	editable,
 	selected,
 	onToggle,
-	onRemove,
 	editPackage,
 	hasError,
+	translate,
 } ) => {
+	if ( isPlaceholder ) {
+		return (
+			<div className="packages__packages-row placeholder">
+				<div className="packages__packages-row-icon">
+					<Gridicon icon="product" size={ 18 } />
+				</div>
+				<div className="packages__packages-row-details">
+					<div className="packages__packages-row-details-name">
+						<span />
+					</div>
+				</div>
+				<div className="packages__packages-row-dimensions">
+					<span />
+				</div>
+				<div className="packages__packages-row-actions">
+					<Button compact>{ translate( 'Edit' ) }</Button>
+				</div>
+			</div>
+		);
+	}
+
 	const openModal = editable ? ( event ) => {
 		event.preventDefault();
-		editPackage( Object.assign( {}, data, { index } ) );
+		editPackage( siteId, Object.assign( {}, data, { index } ) );
 	} : null;
 
 	return (
-		<div className={ classNames( 'wcc-shipping-packages-list-item', { 'wcc-error': hasError } ) }>
+		<div className={ classNames( 'packages__packages-row', { selectable: ! editable, error: hasError } ) }>
 			{ editable ? null : renderSelect( selected, onToggle ) }
-			<div className="package-type">
-				{ renderIcon( data.is_letter, hasError, openModal ) }
+			<div className="packages__packages-row-icon">
+				{ renderIcon( data.is_letter, hasError ) }
 			</div>
-			<div className="package-name">
-				{ renderName( data.name, openModal ) }
+			<div className="packages__packages-row-details">
+				<div className="packages__packages-row-details-name">{ renderName( data.name, translate ) }</div>
 			</div>
-			<div className="package-dimensions">
-				<span>{ data.inner_dimensions } { dimensionUnit }</span>
-			</div>
-			{ editable ? renderActions( onRemove ) : null }
+			<div className="packages__packages-row-dimensions">{ data.inner_dimensions } { dimensionUnit }</div>
+			{ editable ? renderActions( openModal, translate ) : null }
 		</div>
 	);
 };
 
 PackagesListItem.propTypes = {
+	siteId: PropTypes.number,
+	isPlaceholder: PropTypes.bool,
 	index: PropTypes.number.isRequired,
 	data: PropTypes.shape( {
 		name: PropTypes.string,
@@ -103,10 +112,9 @@ PackagesListItem.propTypes = {
 	} ).isRequired,
 	editable: PropTypes.bool.isRequired,
 	selected: PropTypes.bool,
-	dimensionUnit: PropTypes.string.isRequired,
+	dimensionUnit: PropTypes.string,
 	onToggle: PropTypes.func,
-	onRemove: PropTypes.func,
 	editPackage: PropTypes.func,
 };
 
-export default PackagesListItem;
+export default localize( PackagesListItem );
