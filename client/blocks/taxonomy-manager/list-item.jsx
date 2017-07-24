@@ -132,6 +132,7 @@ class TaxonomyManagerListItem extends Component {
 	render() {
 		const { canSetAsDefault, isDefault, onClick, term, translate } = this.props;
 		const name = this.getName();
+		const hasPosts = get( term, 'post_count', 0 ) > 0;
 		const className = classNames( 'taxonomy-manager__item', {
 			'is-default': isDefault
 		} );
@@ -176,11 +177,11 @@ class TaxonomyManagerListItem extends Component {
 							{ translate( 'Delete' ) }
 						</PopoverMenuItem>
 					}
-
-					<PopoverMenuItem onClick={ this.viewPosts } icon="visible">
-						{ translate( 'View Posts' ) }
-					</PopoverMenuItem>
-
+					{ hasPosts &&
+						<PopoverMenuItem onClick={ this.viewPosts } icon="visible">
+							{ translate( 'View Posts' ) }
+						</PopoverMenuItem>
+					}
 					{ canSetAsDefault && ! isDefault && <PopoverMenuSeparator /> }
 					{ canSetAsDefault && ! isDefault &&
 						<PopoverMenuItem onClick={ this.setAsDefault } icon="checkmark-circle">
