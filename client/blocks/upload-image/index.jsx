@@ -45,9 +45,12 @@ class UploadImage extends Component {
 	};
 
 	static propTypes = {
+		// If not supplied, currently selected site will be used.
 		siteId: PropTypes.number,
+
 		// Additional props passed to ImageEditor component. See blocks/image-editor.
 		imageEditorProps: PropTypes.object,
+
 		additionalImageEditorClasses: PropTypes.string,
 		additionalClasses: PropTypes.string,
 		placeholderContent: PropTypes.element,
@@ -118,7 +121,7 @@ class UploadImage extends Component {
 		MediaStore.off( 'change', this.handleMediaStoreChange );
 		MediaValidationStore.off( 'change', this.storeValidationErrors );
 
-		this.props.onImageEditorDone( error, imageBlob, imageEditorProps );
+		this.props.onImageEditorDone( imageBlob, imageEditorProps );
 
 		this.uploadImage( imageBlob, imageEditorProps );
 
