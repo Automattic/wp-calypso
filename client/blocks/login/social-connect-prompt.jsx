@@ -29,13 +29,7 @@ class SocialConnectPrompt extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.handleClick = this.handleClick.bind( this );
-	}
-
-	handleClick( event ) {
+	handleClick = ( event ) => {
 		const {
 			linkingSocialToken,
 			linkingSocialService,
@@ -60,7 +54,7 @@ class SocialConnectPrompt extends Component {
 					} );
 				}
 			);
-	}
+	};
 
 	render() {
 		return (
