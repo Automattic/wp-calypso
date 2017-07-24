@@ -30,8 +30,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
  */
 const productsList = productsFactory();
 
-module.exports = {
-
+export default {
 	domainsAddHeader: function( context, next ) {
 		context.getSiteSelectionHeaderText = function() {
 			return i18n.translate( 'Select a site to add a domain' );
@@ -49,9 +48,9 @@ module.exports = {
 	},
 
 	domainSearch: function( context ) {
-		var CartData = require( 'components/data/cart' ),
-			DomainSearch = require( './domain-search' ),
-			basePath = route.sectionify( context.path );
+		const CartData = require( 'components/data/cart' );
+		const DomainSearch = require( './domain-search' );
+		const basePath = route.sectionify( context.path );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Domain Search' ) ) );
@@ -77,9 +76,9 @@ module.exports = {
 	},
 
 	siteRedirect: function( context ) {
-		var CartData = require( 'components/data/cart' ),
-			SiteRedirect = require( './domain-search/site-redirect' ),
-			basePath = route.sectionify( context.path );
+		const CartData = require( 'components/data/cart' );
+		const SiteRedirect = require( './domain-search/site-redirect' );
+		const basePath = route.sectionify( context.path );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Redirect a Site' ) ) );
@@ -98,9 +97,9 @@ module.exports = {
 	},
 
 	mapDomain: function( context ) {
-		var CartData = require( 'components/data/cart' ),
-			MapDomain = require( 'my-sites/domains/map-domain' ).default,
-			basePath = route.sectionify( context.path );
+		const CartData = require( 'components/data/cart' );
+		const MapDomain = require( 'my-sites/domains/map-domain' ).default;
+		const basePath = route.sectionify( context.path );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Map a Domain' ) ) );
@@ -121,8 +120,8 @@ module.exports = {
 	},
 
 	googleAppsWithRegistration: function( context ) {
-		var CartData = require( 'components/data/cart' ),
-			GoogleApps = require( 'components/upgrades/google-apps' );
+		const CartData = require( 'components/data/cart' );
+		const GoogleApps = require( 'components/upgrades/google-apps' );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle(
@@ -172,6 +171,7 @@ module.exports = {
 			const state = context.store.getState();
 			const siteId = getSelectedSiteId( state );
 			const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+
 			if ( ! userCanManageOptions ) {
 				const user = getCurrentUser( state );
 				const visibleSiteCount = get( user, 'visible_site_count', 0 );
@@ -186,9 +186,9 @@ module.exports = {
 	redirectToAddMappingIfVipSite: function() {
 		return function( context, next ) {
 			const state = context.store.getState();
-			const selectedSite = getSelectedSite( state ),
-				domain = context.params.domain ? `/${ context.params.domain }` : '',
-				query = qs.stringify( { initialQuery: context.params.suggestion } );
+			const selectedSite = getSelectedSite( state );
+			const domain = context.params.domain ? `/${ context.params.domain }` : '';
+			const query = qs.stringify( { initialQuery: context.params.suggestion } );
 
 			if ( selectedSite && selectedSite.is_vip ) {
 				return page.redirect( `/domains/add/mapping${ domain }?${ query }` );
