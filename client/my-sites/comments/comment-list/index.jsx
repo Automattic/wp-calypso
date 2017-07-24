@@ -110,14 +110,14 @@ export class CommentList extends Component {
 		persistedComments: persistedComments.filter( c => c !== commentId ),
 	} ) );
 
-	replyComment = ( commentText, comment, options = { alsoApprove: false } ) => {
+	replyComment = ( commentText, parentComment ) => {
 		const { translate } = this.props;
 		const {
 			commentId: parentCommentId,
 			postId,
 			status,
-		} = comment;
-		const { alsoApprove } = options;
+		} = parentComment;
+		const alsoApprove = 'approved' !== status;
 
 		this.props.removeNotice( `comment-notice-${ parentCommentId }` );
 
@@ -131,7 +131,7 @@ export class CommentList extends Component {
 			isPersistent: true,
 		};
 
-		if ( 'approved' !== status ) {
+		if ( alsoApprove ) {
 			this.setCommentStatus( comment, 'approved', { doPersist: true, showNotice: false } );
 		}
 
