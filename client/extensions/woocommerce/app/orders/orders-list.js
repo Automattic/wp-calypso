@@ -19,14 +19,12 @@ import {
 	getTotalOrders
 } from 'woocommerce/state/sites/orders/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { getOrdersCurrentPage, getOrdersCurrentStatus } from 'woocommerce/state/ui/orders/selectors';
+import { getOrdersCurrentPage } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import humanDate from 'lib/human-date';
 import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
+import OrdersFilterNav from './orders-filter-nav';
 import Pagination from 'components/pagination';
-import SectionNav from 'components/section-nav';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
@@ -129,10 +127,10 @@ class Orders extends Component {
 	render() {
 		const {
 			currentPage,
+			currentStatus,
 			orders,
 			ordersLoading,
 			ordersLoaded,
-			site,
 			total,
 			translate
 		} = this.props;
@@ -159,11 +157,7 @@ class Orders extends Component {
 
 		return (
 			<div className="orders__container">
-				<SectionNav>
-					<NavTabs label={ translate( 'Status' ) } selectedText={ translate( 'All orders' ) }>
-						<NavItem path={ getLink( '/store/orders/:site', site ) } selected={ true }>{ translate( 'All orders' ) }</NavItem>
-					</NavTabs>
-				</SectionNav>
+				<OrdersFilterNav status={ currentStatus } />
 
 				<Table className="orders__table" header={ headers } horizontalScroll>
 					{ ordersLoading
@@ -183,11 +177,11 @@ class Orders extends Component {
 }
 
 export default connect(
-	state => {
+	( state, props ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
 		const currentPage = getOrdersCurrentPage( state, siteId );
-		const currentStatus = getOrdersCurrentStatus( state, siteId );
+		const currentStatus = props.currentStatus || 'any';
 		const total = getTotalOrders( state, { status: currentStatus }, siteId );
 
 		const query = { page: currentPage, status: currentStatus };
