@@ -150,7 +150,7 @@ class EditorGroundControl extends PureComponent {
 	closeSchedulePopover = ( wasCanceled ) => {
 		if ( wasCanceled ) {
 			const date = this.props.savedPost && this.props.savedPost.date
-				? this.moment( this.props.savedPost.date )
+				? this.props.moment( this.props.savedPost.date )
 				: null;
 
 			this.props.setPostDate( date );
@@ -210,7 +210,7 @@ class EditorGroundControl extends PureComponent {
 
 	getFirstDayOfTheMonth( date ) {
 		const tz = siteUtils.timezone( this.props.site );
-		date = date || this.moment();
+		date = date || this.props.moment();
 
 		return postUtils.getOffsetDate( date, tz ).set( {
 			year: date.year(),
@@ -336,7 +336,7 @@ class EditorGroundControl extends PureComponent {
 						}
 						<span className="editor-ground-control__time-button-label">
 										{ postUtils.isFutureDated( this.props.post )
-											? this.moment( this.props.post.date ).calendar()
+											? this.props.moment( this.props.post.date ).calendar()
 											: this.props.translate( 'Choose Date' )
 										}
 									</span>
