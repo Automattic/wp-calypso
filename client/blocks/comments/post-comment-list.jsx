@@ -31,7 +31,7 @@ import SegmentedControlItem from 'components/segmented-control/item';
  * Depending on where the list starts, there is slightly different behavior:
  * 1. from the last comments:
  *    this is the simplest case. Initially onMount we request the latest comments
- *    and while only displaying a subset of them.  When the user clicks "Show More" we load more comments
+ *    and only display a subset of them.  When the user clicks "Show More" we load more comments
  *
  * 2. from a specific commentId:
  *    this is activated by specifying the commentId prop. onMount we request the specific comment and then
