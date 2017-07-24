@@ -6,6 +6,7 @@ import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { intersection } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,7 +44,11 @@ export class EditorPublishDate extends React.Component {
 	}
 
 	handleOutsideClick = event => {
-		if ( ! ReactDom.findDOMNode( this.refs.editorPublishDateWrapper ).contains( event.target ) ) {
+		const targetClasses = event.target.className.split( /\s/ );
+		const hasDatePickerDayClass = intersection( targetClasses, [ 'DayPicker-Day', 'date-picker__day' ] ).length > 0;
+		const isChildOfPublishDate = ReactDom.findDOMNode( this.refs.editorPublishDateWrapper ).contains( event.target );
+
+		if ( ! hasDatePickerDayClass && ! isChildOfPublishDate ) {
 			this.setState( { isOpen: false } );
 		}
 	}
