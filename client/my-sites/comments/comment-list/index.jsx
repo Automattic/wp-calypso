@@ -205,7 +205,7 @@ export class CommentList extends Component {
 
 	showNotice = ( comment, newStatus, options = { doPersist: false } ) => {
 		const { translate } = this.props;
-		const { commentId, previousStatus } = comment;
+		const { commentId, status: previousStatus } = comment;
 
 		const [ type, message ] = get( {
 			approved: [ 'is-success', translate( 'Comment approved.' ) ],
@@ -236,9 +236,9 @@ export class CommentList extends Component {
 	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
 
 	toggleCommentLike = comment => {
-		const { commentId, postId, previousIsLiked, previousStatus } = comment;
+		const { commentId, isLiked, postId, status } = comment;
 
-		if ( previousIsLiked ) {
+		if ( isLiked ) {
 			this.props.unlikeComment( commentId, postId );
 
 			if ( this.isCommentPersisted( commentId ) ) {
@@ -250,7 +250,7 @@ export class CommentList extends Component {
 
 		this.props.likeComment( commentId, postId );
 
-		if ( 'unapproved' === previousStatus ) {
+		if ( 'unapproved' === status ) {
 			this.props.removeNotice( `comment-notice-${ commentId }` );
 			this.setCommentStatus( comment, 'approved' );
 		}

@@ -83,9 +83,9 @@ export class CommentDetail extends Component {
 
 	getCommentObject = () => ( {
 		commentId: this.props.commentId,
+		isLiked: this.props.commentIsLiked,
 		postId: this.props.postId,
-		previousIsLiked: this.props.commentIsLiked,
-		previousStatus: this.props.commentStatus,
+		status: this.props.commentStatus,
 	} );
 
 	toggleApprove = () => {
