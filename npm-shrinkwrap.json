@@ -1607,7 +1607,7 @@
       }
     },
     "enhanced-resolve": {
-      "version": "3.3.0"
+      "version": "3.4.0"
     },
     "entities": {
       "version": "1.0.0"
@@ -6895,9 +6895,7 @@
       }
     },
     "wpcom-proxy-request": {
-      "version": "4.0.4",
-      "from": "git://github.com/automattic/wpcom-proxy-request.git#d8006f9c7e2c964d26ff76dc65f47dfe84eac446",
-      "resolved": "git://github.com/automattic/wpcom-proxy-request.git#d8006f9c7e2c964d26ff76dc65f47dfe84eac446"
+      "version": "4.0.5"
     },
     "wpcom-xhr-request": {
       "version": "1.1.0"
