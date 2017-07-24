@@ -2,10 +2,9 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { flowRight, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,19 +12,13 @@ import { flowRight } from 'lodash';
 import HeaderCake from 'components/header-cake';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
-const ZoneCreator = ( { siteSlug, translate } ) => {
-	const handleGoBack = () => {
-		page( `/extensions/zoninator/${ siteSlug }` );
-	};
-
-	return (
-		<div>
-			<HeaderCake onClick={ handleGoBack }>
-				{ translate( 'Add a zone' ) }
-			</HeaderCake>
-		</div>
-	);
-};
+const ZoneCreator = ( { siteSlug, translate } ) => (
+	<div>
+		<HeaderCake backHref={ `/extensions/zoninator/${ siteSlug }` } onClick={ noop }>
+			{ translate( 'Add a zone' ) }
+		</HeaderCake>
+	</div>
+);
 
 ZoneCreator.propTypes = {
 	siteSlug: PropTypes.string,

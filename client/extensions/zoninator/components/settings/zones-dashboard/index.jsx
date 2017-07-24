@@ -2,10 +2,9 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, flowRight, get, trimEnd } from 'lodash';
+import { find, flowRight, get, noop, trimEnd } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,10 +33,6 @@ const ZonesDashboard = ( { siteSlug, translate } ) => {
 		return get( section, 'settings_path' );
 	};
 
-	const handleGoBack = () => {
-		page( `/plugins/zoninator/${ siteSlug }` );
-	};
-
 	const renderZone = ( { label, slug, description } ) => {
 		const path = trimEnd( `${ getSettingsPath() }/${ siteSlug }/${ slug }`, '/' );
 
@@ -51,7 +46,7 @@ const ZonesDashboard = ( { siteSlug, translate } ) => {
 
 	return (
 		<div>
-			<HeaderCake onClick={ handleGoBack }>
+			<HeaderCake backHref={ `/plugins/zoninator/${ siteSlug }` } onClick={ noop }>
 				Zoninator Settings
 			</HeaderCake>
 
