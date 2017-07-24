@@ -55,14 +55,14 @@ class TransferToOtherSite extends React.Component {
 			! get( site, 'options.is_domain_only', false ) &&
 			! ( this.props.domainsWithPlansOnly && get( site, 'plan.product_slug' ) === PLAN_FREE ) &&
 			site.ID !== this.props.selectedSite.ID;
-	}
+	};
 
 	handleSiteSelect = ( targetSiteId ) => {
 		this.setState( {
 			targetSiteId,
 			showConfirmationDialog: true,
 		} );
-	}
+	};
 
 	handleConfirmTransfer = ( targetSite, closeDialog ) => {
 		const { selectedDomainName } = this.props;
@@ -86,13 +86,13 @@ class TransferToOtherSite extends React.Component {
 					this.props.errorNotice( error.message || defaultErrorMessage );
 				}
 			);
-	}
+	};
 
 	handleDialogClose = () => {
 		if ( ! this.state.disableDialogButtons ) {
 			this.setState( { showConfirmationDialog: false } );
 		}
-	}
+	};
 
 	render() {
 		if ( ! this.isDataReady() ) {
