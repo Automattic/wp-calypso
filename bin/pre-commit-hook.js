@@ -32,16 +32,13 @@ const files = execSync( 'git diff --cached --name-only' )
  * @param {*} text text to scan for the format keyword within the first docblock
  */
 const shouldFormat = text => {
-	const docBlockStart = '/**';
-	const docBlockEnd = '*/';
-
-	const firstDocBlockStartIndex = text.indexOf( docBlockStart );
+	const firstDocBlockStartIndex = text.indexOf( '/**' );
 
 	if ( -1 === firstDocBlockStartIndex ) {
 		return;
 	}
 
-	const firstDocBlockEndIndex = text.indexOf( docBlockEnd, firstDocBlockStartIndex + 1 );
+	const firstDocBlockEndIndex = text.indexOf( '*/', firstDocBlockStartIndex + 1 );
 
 	if ( -1 === firstDocBlockEndIndex ) {
 		return;
