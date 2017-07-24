@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { noop } from 'lodash';
 import classNames from 'classnames';
@@ -28,25 +29,25 @@ export default React.createClass( {
 	displayName: 'EditorGroundControl',
 
 	propTypes: {
-		hasContent: React.PropTypes.bool,
-		isConfirmationSidebarEnabled: React.PropTypes.bool,
-		isDirty: React.PropTypes.bool,
-		isSaveBlocked: React.PropTypes.bool,
-		isPublishing: React.PropTypes.bool,
-		isSaving: React.PropTypes.bool,
-		onPreview: React.PropTypes.func,
-		onPublish: React.PropTypes.func,
-		onSave: React.PropTypes.func,
-		onSaveDraft: React.PropTypes.func,
-		onMoreInfoAboutEmailVerify: React.PropTypes.func,
-		post: React.PropTypes.object,
-		savedPost: React.PropTypes.object,
-		setPostDate: React.PropTypes.func,
-		site: React.PropTypes.object,
-		user: React.PropTypes.object,
-		userUtils: React.PropTypes.object,
-		toggleSidebar: React.PropTypes.func,
-		type: React.PropTypes.string
+		hasContent: PropTypes.bool,
+		isConfirmationSidebarEnabled: PropTypes.bool,
+		isDirty: PropTypes.bool,
+		isSaveBlocked: PropTypes.bool,
+		isPublishing: PropTypes.bool,
+		isSaving: PropTypes.bool,
+		onPreview: PropTypes.func,
+		onPublish: PropTypes.func,
+		onSave: PropTypes.func,
+		onSaveDraft: PropTypes.func,
+		onMoreInfoAboutEmailVerify: PropTypes.func,
+		post: PropTypes.object,
+		savedPost: PropTypes.object,
+		setPostDate: PropTypes.func,
+		site: PropTypes.object,
+		user: PropTypes.object,
+		userUtils: PropTypes.object,
+		toggleSidebar: PropTypes.func,
+		type: PropTypes.string
 	},
 
 	mixins: [ PureRenderMixin ],
