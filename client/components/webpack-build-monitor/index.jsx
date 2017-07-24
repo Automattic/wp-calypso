@@ -6,7 +6,7 @@
 import React from 'react';
 import { createStore } from 'redux';
 import cx from 'classnames';
-import { startsWith } from 'lodash';
+import { startsWith, find, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,47 +16,48 @@ import Spinner from 'components/spinner';
 const CONNECTED = 'CONNECTED';
 const DISCONNECTED = 'DISCONNECTED';
 const NEEDS_RELOAD = 'NEEDS_RELOAD';
-const BUILDING = 'BUILDING';
+const BUILDING_CSS = 'BUILDING_CSS';
+const BUILDING_JS = 'BUILDING_JS';
+const BUILDING_BOTH = 'BUILDING_BOTH';
 const ERROR = 'ERROR';
 const IDLE = 'IDLE';
 
-// Once completed, set the status to idle unless there's an error
-const doneBuilding = state => ( state === ERROR || state === NEEDS_RELOAD ? state : IDLE );
+const doneBuilding = typeDone => state => {
+	if ( state === ERROR || state === NEEDS_RELOAD ) {
+		return state;
+	} else if ( state === BUILDING_BOTH ) {
+		return typeDone === BUILDING_JS ? BUILDING_CSS : BUILDING_JS;
+	}
+	return IDLE;
+};
+
+const buildJS = state => ( state === BUILDING_CSS ? BUILDING_BOTH : BUILDING_JS );
+const buildCSS = state => ( state === BUILDING_JS ? BUILDING_BOTH : BUILDING_CSS );
 
 const MESSAGE_STATUS_MAP = {
 	'[HMR] connected': () => CONNECTED,
 	'[WDS] Disconnected!': () => DISCONNECTED,
-	'[HMR] bundle rebuilding': () => BUILDING,
-	'Building CSS…': () => BUILDING,
-	'[HMR] App is up to date.': doneBuilding,
-	'[WDS] Nothing changed.': doneBuilding,
-	'[WDS] App hot update...': doneBuilding,
-	'Reloading CSS: ': doneBuilding,
-	'[WDS] Errors while compiling.': () => ERROR,
-	'[HMR] Cannot find update. Need to do a full reload!': NEEDS_RELOAD,
+	'[HMR] bundle rebuilding': state => buildJS( state ),
+	'Building CSS…': state => buildCSS( state ),
+	'CSS build failed': () => ERROR,
+	'[WDS] Nothing changed.': doneBuilding( BUILDING_JS ),
+	'Reloading CSS: ': doneBuilding( BUILDING_CSS ),
+	'[HMR] bundle rebuilt in': doneBuilding( BUILDING_JS ),
+	"[HMR] The following modules couldn't be hot updated": () => NEEDS_RELOAD,
 };
 
-const isDoneBuilding = msg => startsWith( msg, '[HMR] bundle rebuilt in' );
-const needsReload = msg => startsWith( msg, '[HMR]  - ./client' );
-
 const reducer = ( state = IDLE, { message } ) => {
-	if ( message in MESSAGE_STATUS_MAP ) {
-		return MESSAGE_STATUS_MAP[ message ]( state );
-	} else if ( isDoneBuilding( message ) ) {
-		return doneBuilding( state );
-	} else if ( needsReload( message ) ) {
-		return NEEDS_RELOAD;
-	}
+	const getNextState = find( MESSAGE_STATUS_MAP, ( v, messagePrefix ) =>
+		startsWith( message, messagePrefix ),
+	);
 
-	return state;
+	return getNextState ? getNextState( state ) : state;
 };
 
 const store = createStore( reducer );
 
 const wrapConsole = fn => ( message, ...args ) => {
-	if ( message in MESSAGE_STATUS_MAP || isDoneBuilding( message ) || needsReload( message ) ) {
-		store.dispatch( { type: 'WebpackBuildMessage', message } );
-	}
+	store.dispatch( { type: 'WebpackBuildMessage', message } );
 	fn.call( window, message, ...args );
 };
 
@@ -64,13 +65,20 @@ console.error = wrapConsole( console.error );
 console.warn = wrapConsole( console.warn );
 console.log = wrapConsole( console.log );
 
+const STATUS_TEXTS = {
+	[ DISCONNECTED ]: 'Dev Server disconnected',
+	[ NEEDS_RELOAD ]: 'Need to refresh',
+	[ ERROR ]: 'Build error',
+	[ BUILDING_JS ]: 'Rebuilding Javascript',
+	[ BUILDING_CSS ]: 'Rebuilding CSS',
+	[ BUILDING_BOTH ]: 'Rebuiling both JS and CSS',
+};
+
 class WebpackBuildMonitor extends React.Component {
 	state = { status: IDLE };
 
 	componentDidMount() {
-		this.unsubscribe = store.subscribe( () => {
-			this.setState( { status: store.getState() } );
-		} );
+		this.unsubscribe = store.subscribe( () => this.setState( { status: store.getState() } ) );
 	}
 
 	componentWillUnmount() {
@@ -79,22 +87,20 @@ class WebpackBuildMonitor extends React.Component {
 
 	render() {
 		const { status } = this.state;
-		const text =
-			( status === DISCONNECTED && 'Dev Server disconnected' ) ||
-			( status === NEEDS_RELOAD && 'Need to refresh' ) ||
-			( status === ERROR && 'Build error' ) ||
-			( status === BUILDING && 'Rebuilding' );
+
+		const text = STATUS_TEXTS[ status ];
+
+		if ( status === IDLE || ! text ) {
+			return null;
+		}
+
 		const classnames = cx( 'webpack-build-monitor', {
 			'is-error': status === ERROR || status === DISCONNECTED,
 		} );
 
-		if ( status === IDLE ) {
-			return null;
-		}
-
 		return (
 			<div className={ classnames }>
-				{ status === BUILDING &&
+				{ includes( [ BUILDING_BOTH, BUILDING_CSS, BUILDING_JS ], status ) &&
 					<Spinner size={ 11 } className="webpack-build-monitor__spinner" /> }
 				{ text }
 			</div>
