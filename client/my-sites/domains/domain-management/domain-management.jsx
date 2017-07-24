@@ -8,6 +8,7 @@ import Edit from './edit';
 import EditContactInfo from './edit-contact-info';
 import Email from './email';
 import EmailForwarding from './email-forwarding';
+import List from './list';
 import NameServers from './name-servers';
 import PrimaryDomain from './primary-domain';
 import PrivacyProtection from './privacy-protection';
@@ -25,7 +26,7 @@ export default {
 	EditContactInfo,
 	Email,
 	EmailForwarding,
-	List: require( './list' ),
+	List,
 	NameServers,
 	PrimaryDomain,
 	PrivacyProtection,
