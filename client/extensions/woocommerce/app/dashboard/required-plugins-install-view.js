@@ -12,7 +12,7 @@ const debug = debugFactory( 'calypso:allendav' );
 /**
  * Internal dependencies
  */
-import { installPlugin } from 'state/plugins/installed/actions';
+import { activatePlugin, installPlugin } from 'state/plugins/installed/actions';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
@@ -171,6 +171,7 @@ class RequiredPluginsInstallView extends Component {
 		const { site, sitePlugins, translate, wporg } = this.props;
 		const requiredPlugins = this.getRequiredPluginsList();
 
+		// If we are working on nothing presently, get the next thing to install and install it
 		if ( 0 === this.state.workingOn.length ) {
 			const toInstall = this.state.toInstall;
 
@@ -196,6 +197,7 @@ class RequiredPluginsInstallView extends Component {
 			return;
 		}
 
+		// Otherwise, if we are working on something presently, see if it has appeared in state yet
 		const pluginFound = find( sitePlugins, { slug: this.state.workingOn } );
 		if ( pluginFound ) {
 			this.setState( {
@@ -205,13 +207,14 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	doActivation = () => {
-		const { translate } = this.props;
+		const { site, sitePlugins, translate, wporg } = this.props;
 		const requiredPlugins = this.getRequiredPluginsList();
 
+		// If we are working on nothing presently, get the next thing to activate and activate it
 		if ( 0 === this.state.workingOn.length ) {
 			const toActivate = this.state.toActivate;
 
-			// Nothing left to install? Advance to done success
+			// Nothing left to activate? Advance to done success
 			if ( 0 === toActivate.length ) {
 				this.setState( {
 					engineState: 'DONESUCCESS',
@@ -222,7 +225,17 @@ class RequiredPluginsInstallView extends Component {
 			}
 
 			const workingOn = toActivate.shift();
-			// TODO kick off activation
+			debug( 'kicking off activation of ', workingOn );
+			const wporgPlugin = getPlugin( wporg, workingOn );
+
+			// It is best to use sitePlugins to get the right id since the
+			// plugin id isn't always slug/slug unless the main plugin PHP
+			// file is the same name as the plugin folder
+			const pluginToActivate = find( sitePlugins, { slug: workingOn } );
+			wporgPlugin.id = pluginToActivate.id;
+
+			debug( 'wporgPlugin= ', wporgPlugin );
+			this.props.activatePlugin( site.ID, wporgPlugin );
 
 			this.setState( {
 				message: translate( 'Activating %(plugin)s', { args: { plugin: requiredPlugins[ workingOn ] } } ),
@@ -232,10 +245,13 @@ class RequiredPluginsInstallView extends Component {
 			return;
 		}
 
-		// TODO - check and see if the plugin is now in the plugin list for the site
-		this.setState( {
-			workingOn: ''
-		} );
+		// See if activation has appeared in state yet
+		const pluginFound = find( sitePlugins, { slug: this.state.workingOn } );
+		if ( pluginFound && pluginFound.active ) {
+			this.setState( {
+				workingOn: ''
+			} );
+		}
 	}
 
 	doneSuccess = () => {
@@ -325,6 +341,7 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			activatePlugin,
 			fetchPluginData,
 			installPlugin
 		},
