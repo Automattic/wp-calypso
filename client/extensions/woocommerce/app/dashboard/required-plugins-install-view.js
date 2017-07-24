@@ -20,7 +20,7 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProgressBar from 'components/progress-bar';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import SetupHeader from './setup-header';
-//import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
+import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
 import wp from 'lib/wp';
 
 class RequiredPluginsInstallView extends Component {
@@ -269,11 +269,12 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	doneSuccess = () => {
-		// TODO - dispatch setFinishedInstallOfRequiredPlugins
+		const { site, translate } = this.props;
+		this.props.setFinishedInstallOfRequiredPlugins( site.ID, true );
 
 		this.setState( {
 			engineState: 'IDLE',
-			message: this.props.translate( 'All required plugins are installed and activated' ),
+			message: translate( 'All required plugins are installed and activated' ),
 			progress: 100
 		} );
 	}
@@ -358,7 +359,8 @@ function mapDispatchToProps( dispatch ) {
 			activatePlugin,
 			fetchPluginData,
 			fetchPlugins,
-			installPlugin
+			installPlugin,
+			setFinishedInstallOfRequiredPlugins
 		},
 		dispatch
 	);
