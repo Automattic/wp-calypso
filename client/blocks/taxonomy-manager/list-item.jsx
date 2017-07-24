@@ -59,8 +59,12 @@ class TaxonomyManagerListItem extends Component {
 	};
 
 	viewPosts = () => {
-		const { siteSlug, taxonomy, term } = this.props;
-		this.props.recordGoogleEvent( 'Taxonomy Manager', `View ${ taxonomy }` );
+		const { siteSlug, taxonomy: rawTaxonomy, term } = this.props;
+		const taxonomy = rawTaxonomy === 'post_tag'
+			? 'tag'
+			: rawTaxonomy;
+
+		this.props.recordGoogleEvent( 'Taxonomy Manager', `View ${ rawTaxonomy }` );
 		page( `/posts/${ siteSlug }?${ taxonomy }=${ term.slug }` );
 	};
 
