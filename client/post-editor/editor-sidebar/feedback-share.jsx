@@ -14,7 +14,7 @@ import Button from 'components/button';
 
 const AccessButton = ( { additionalClassName, icon, label, onClick } ) =>
 	<Button
-		is-borderless
+		borderless
 		className={ `editor-sidebar__feedback-access-button ${ additionalClassName }` }
 		onClick={ onClick }
 	>

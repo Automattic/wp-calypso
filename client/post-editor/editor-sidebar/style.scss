@@ -168,17 +168,16 @@ input[type="text"].form-text-input.editor-sidebar__feedback-request-input {
 	font-style: italic;
 }
 
-.editor-sidebar__feedback-access-button {
+.editor-sidebar__feedback-access-button.is-borderless {
 	width: 100%;
-	text-align: left;
-	border-radius: 0;
-	border: 0;
-	border-top: 1px solid darken( $sidebar-bg-color, 5% );
 	background: $gray-light;
+	border-top: 1px solid darken( $sidebar-bg-color, 5% );
+	border-radius: 0;
+	text-align: left;
 }
 
 .editor-sidebar__feedback-access-button-icon {
-	padding-right: 12px;
+	padding: 0 12px;
 
 	.editor-sidebar__feedback-access-button.is-revoke & {
 		color: $alert-red;
