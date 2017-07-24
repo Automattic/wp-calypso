@@ -99,6 +99,14 @@ function getErrorFromHTTPError( httpError ) {
 	let message;
 	let field = 'global';
 
+	if ( ! httpError.status ) {
+		return {
+			code: 'network_error',
+			message: httpError.message,
+			field
+		};
+	}
+
 	const code = get( httpError, 'response.body.data.errors[0]' );
 
 	if ( code ) {
