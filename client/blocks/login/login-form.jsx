@@ -88,13 +88,10 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		const { password, usernameOrEmail } = this.state;
-		let { rememberMe } = this.state;
+		const { linkingSocialUser, password, usernameOrEmail } = this.state;
 		const { onSuccess, redirectTo } = this.props;
 
-		if ( this.state.linkingSocialUser ) {
-			rememberMe = true;
-		}
+		const rememberMe = linkingSocialUser ? true : this.state.rememberMe;
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 
