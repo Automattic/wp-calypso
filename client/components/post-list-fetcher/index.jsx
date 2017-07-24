@@ -30,6 +30,8 @@ function queryPosts( props ) {
 		status: props.status,
 		author: props.author,
 		search: props.search,
+		category: props.category,
+		tag: props.tag,
 		exclude_tree: props.excludeTree,
 		orderBy: props.orderBy,
 		order: props.order,
@@ -74,6 +76,8 @@ function shouldQueryPosts( props, nextProps ) {
 		props.status !== nextProps.status ||
 		props.author !== nextProps.author ||
 		props.search !== nextProps.search ||
+		props.category !== nextProps.category ||
+		props.tag !== nextProps.tag ||
 		props.excludeTree !== nextProps.excludeTree ||
 		props.withCounts !== nextProps.withCounts ||
 		props.orderBy !== nextProps.orderBy ||
@@ -93,6 +97,8 @@ PostListFetcher = React.createClass( {
 		status: React.PropTypes.string,
 		author: React.PropTypes.number,
 		search: React.PropTypes.string,
+		category: React.PropTypes.string,
+		tag: React.PropTypes.string,
 		siteId: React.PropTypes.number,
 		withImages: React.PropTypes.bool,
 		withCounts: React.PropTypes.bool,
