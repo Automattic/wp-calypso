@@ -3,8 +3,9 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
+import { identity, noop } from 'lodash';
 import classNames from 'classnames';
+import moment from 'moment';
 import page from 'page';
 import i18n, { localize } from 'i18n-calypso';
 
@@ -24,7 +25,7 @@ import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
 
-class EditorGroundControl extends PureComponent {
+export class EditorGroundControl extends PureComponent {
 	static propTypes = {
 		hasContent: PropTypes.bool,
 		isConfirmationSidebarEnabled: PropTypes.bool,
@@ -32,6 +33,7 @@ class EditorGroundControl extends PureComponent {
 		isSaveBlocked: PropTypes.bool,
 		isPublishing: PropTypes.bool,
 		isSaving: PropTypes.bool,
+		moment: PropTypes.func,
 		onPreview: PropTypes.func,
 		onPublish: PropTypes.func,
 		onSave: PropTypes.func,
@@ -44,6 +46,7 @@ class EditorGroundControl extends PureComponent {
 		user: PropTypes.object,
 		userUtils: PropTypes.object,
 		toggleSidebar: PropTypes.func,
+		translate: PropTypes.func,
 		type: PropTypes.string
 	};
 
@@ -54,11 +57,13 @@ class EditorGroundControl extends PureComponent {
 		isSaveBlocked: false,
 		isPublishing: false,
 		isSaving: false,
+		moment,
 		onPublish: noop,
 		onSaveDraft: noop,
 		post: null,
 		savedPost: null,
 		site: {},
+		translate: identity,
 		user: null,
 		userUtils: null,
 		setPostDate: noop

@@ -4,6 +4,7 @@
 import { expect } from 'chai';
 import { noop } from 'lodash';
 import React from 'react';
+import { shallow } from 'enzyme';
 import mockery from 'mockery';
 
 /**
@@ -24,15 +25,12 @@ const MOCK_SITE = {
 };
 
 describe( 'EditorGroundControl', function() {
-	let shallow, i18n, EditorGroundControl;
+	let EditorGroundControl;
 
 	useMockery();
 	useFakeDom();
 
 	before( function() {
-		shallow = require( 'enzyme' ).shallow;
-		i18n = require( 'i18n-calypso' );
-
 		mockery.registerMock( 'components/card', EmptyComponent );
 		mockery.registerMock( 'components/popover', EmptyComponent );
 		mockery.registerMock( 'blocks/site', EmptyComponent );
@@ -46,15 +44,7 @@ describe( 'EditorGroundControl', function() {
 			recordEvent: noop,
 			recordStat: noop
 		} );
-		EditorGroundControl = require( '../' );
-
-		EditorGroundControl.prototype.translate = i18n.translate;
-		EditorGroundControl.prototype.moment = i18n.moment;
-	} );
-
-	after( function() {
-		delete EditorGroundControl.prototype.translate;
-		delete EditorGroundControl.prototype.moment;
+		EditorGroundControl = require( '../' ).EditorGroundControl;
 	} );
 
 	describe( '#getPreviewLabel()', function() {
