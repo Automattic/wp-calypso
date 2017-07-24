@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import PureRenderMixin from 'react-pure-render/mixin';
 import { noop } from 'lodash';
 import classNames from 'classnames';
 import page from 'page';
@@ -25,10 +24,8 @@ import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
 
-export default localize( React.createClass( {
-	displayName: 'EditorGroundControl',
-
-	propTypes: {
+class EditorGroundControl extends PureComponent {
+	static propTypes = {
 		hasContent: PropTypes.bool,
 		isConfirmationSidebarEnabled: PropTypes.bool,
 		isDirty: PropTypes.bool,
@@ -48,30 +45,34 @@ export default localize( React.createClass( {
 		userUtils: PropTypes.object,
 		toggleSidebar: PropTypes.func,
 		type: PropTypes.string
-	},
+	};
 
-	mixins: [ PureRenderMixin ],
+	static defaultProps = {
+		hasContent: false,
+		isConfirmationSidebarEnabled: true,
+		isDirty: false,
+		isSaveBlocked: false,
+		isPublishing: false,
+		isSaving: false,
+		onPublish: noop,
+		onSaveDraft: noop,
+		post: null,
+		savedPost: null,
+		site: {},
+		user: null,
+		userUtils: null,
+		setPostDate: noop
+	};
 
-	getDefaultProps: function() {
-		return {
-			hasContent: false,
-			isConfirmationSidebarEnabled: true,
-			isDirty: false,
-			isSaveBlocked: false,
-			isPublishing: false,
-			isSaving: false,
-			onPublish: noop,
-			onSaveDraft: noop,
-			post: null,
-			savedPost: null,
-			site: {},
-			user: null,
-			userUtils: null,
-			setPostDate: noop
-		};
-	},
+	state = {
+		showSchedulePopover: false,
+		showAdvanceStatus: false,
+		firstDayOfTheMonth: this.getFirstDayOfTheMonth(),
+		lastDayOfTheMonth: this.getLastDayOfTheMonth(),
+		needsVerification: this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		if ( ! this.props.user ) {
 			return;
 		}
@@ -79,9 +80,9 @@ export default localize( React.createClass( {
 		this.props.user
 			.on( 'change', this.updateNeedsVerification )
 			.on( 'verify', this.updateNeedsVerification );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		if ( ! this.props.user ) {
 			return;
 		}
@@ -89,25 +90,15 @@ export default localize( React.createClass( {
 		this.props.user
 			.off( 'change', this.updateNeedsVerification )
 			.off( 'verify', this.updateNeedsVerification );
-	},
+	}
 
-	updateNeedsVerification: function() {
+	updateNeedsVerification = () => {
 		this.setState( {
 			needsVerification: this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
 		} );
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			showSchedulePopover: false,
-			showAdvanceStatus: false,
-			firstDayOfTheMonth: this.getFirstDayOfTheMonth(),
-			lastDayOfTheMonth: this.getLastDayOfTheMonth(),
-			needsVerification: this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
-		};
-	},
-
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.setState( {
 			needsVerification: nextProps.userUtils && nextProps.userUtils.needsVerificationForSite( nextProps.site ),
 		} );
@@ -123,24 +114,24 @@ export default localize( React.createClass( {
 				.on( 'change', this.updateNeedsVerification )
 				.on( 'verify', this.updateNeedsVerification );
 		}
-	},
+	}
 
-	setCurrentMonth: function( date ) {
+	setCurrentMonth = ( date ) => {
 		this.setState( {
 			firstDayOfTheMonth: this.getFirstDayOfTheMonth( date ),
 			lastDayOfTheMonth: this.getLastDayOfTheMonth( date )
 		} );
-	},
+	}
 
-	getPreviewLabel: function() {
+	getPreviewLabel() {
 		if ( postUtils.isPublished( this.props.savedPost ) && this.props.site.jetpack ) {
 			return this.props.translate( 'View' );
 		}
 
 		return this.props.translate( 'Preview' );
-	},
+	}
 
-	getVerificationNoticeLabel: function() {
+	getVerificationNoticeLabel() {
 		const primaryButtonState = getPublishButtonStatus( this.props.site, this.props.post, this.props.savedPost ),
 			buttonLabels = {
 				update: i18n.translate( 'To update, check your email and confirm your address.' ),
@@ -150,13 +141,13 @@ export default localize( React.createClass( {
 			};
 
 		return buttonLabels[ primaryButtonState ];
-	},
+	}
 
-	toggleSchedulePopover: function() {
+	toggleSchedulePopover = () => {
 		this.setState( { showSchedulePopover: ! this.state.showSchedulePopover } );
-	},
+	}
 
-	closeSchedulePopover: function( wasCanceled ) {
+	closeSchedulePopover = ( wasCanceled ) => {
 		if ( wasCanceled ) {
 			const date = this.props.savedPost && this.props.savedPost.date
 				? this.moment( this.props.savedPost.date )
@@ -166,9 +157,9 @@ export default localize( React.createClass( {
 		}
 
 		this.setState( { showSchedulePopover: false } );
-	},
+	}
 
-	renderPostScheduler: function() {
+	renderPostScheduler() {
 		const tz = siteUtils.timezone( this.props.site ),
 			gmtOffset = siteUtils.gmtOffset( this.props.site ),
 			postDate = this.props.post && this.props.post.date
@@ -186,9 +177,9 @@ export default localize( React.createClass( {
 				site={ this.props.site }
 			/>
 		);
-	},
+	}
 
-	schedulePostPopover: function() {
+	schedulePostPopover() {
 		const postScheduler = this.renderPostScheduler();
 
 		return (
@@ -215,9 +206,9 @@ export default localize( React.createClass( {
 				</span>
 			</Popover>
 		);
-	},
+	}
 
-	getFirstDayOfTheMonth: function( date ) {
+	getFirstDayOfTheMonth( date ) {
 		const tz = siteUtils.timezone( this.props.site );
 		date = date || this.moment();
 
@@ -230,15 +221,15 @@ export default localize( React.createClass( {
 			seconds: 0,
 			milliseconds: 0
 		} );
-	},
+	}
 
-	getLastDayOfTheMonth: function( date ) {
+	getLastDayOfTheMonth( date ) {
 		return this.getFirstDayOfTheMonth( date )
 			.add( 1, 'month' )
 			.second( -1 );
-	},
+	}
 
-	getSaveStatusLabel: function() {
+	getSaveStatusLabel() {
 		if ( this.props.isSaving ) {
 			return this.props.translate( 'Saving…' );
 		}
@@ -248,47 +239,47 @@ export default localize( React.createClass( {
 		}
 
 		return this.props.translate( 'Saved' );
-	},
+	}
 
-	isSaveEnabled: function() {
+	isSaveEnabled() {
 		return ! this.props.isSaving &&
 			! this.props.isSaveBlocked &&
 			this.props.isDirty &&
 			this.props.hasContent &&
 			!! this.props.post &&
 			! postUtils.isPublished( this.props.post );
-	},
+	}
 
-	isPreviewEnabled: function() {
+	isPreviewEnabled() {
 		return this.props.hasContent &&
 			! ( this.props.isNew && ! this.props.isDirty ) &&
 			! this.props.isSaveBlocked;
-	},
+	}
 
-	canPublishPost: function() {
+	canPublishPost() {
 		return siteUtils.userCan( 'publish_posts', this.props.site );
-	},
+	}
 
-	toggleAdvancedStatus: function() {
+	toggleAdvancedStatus = () => {
 		this.setState( { showAdvanceStatus: ! this.state.showAdvanceStatus } );
-	},
+	}
 
-	onSaveButtonClick: function() {
+	onSaveButtonClick = () => {
 		this.props.onSave();
 		const eventLabel = postUtils.isPage( this.props.page ) ? 'Clicked Save Page Button' : 'Clicked Save Post Button';
 		stats.recordEvent( eventLabel );
 		stats.recordStat( 'save_draft_clicked' );
-	},
+	}
 
-	onPreviewButtonClick: function( event ) {
+	onPreviewButtonClick = ( event ) => {
 		if ( this.isPreviewEnabled() ) {
 			this.props.onPreview( event );
 			const eventLabel = postUtils.isPage( this.props.page ) ? 'Clicked Preview Page Button' : 'Clicked Preview Post Button';
 			stats.recordEvent( eventLabel );
 		}
-	},
+	}
 
-	renderGroundControlActionButtons: function() {
+	renderGroundControlActionButtons() {
 		const publishComboClasses = classNames( 'editor-ground-control__publish-combo', {
 			'is-standalone': ! this.canPublishPost() || this.props.isConfirmationSidebarEnabled
 		} );
@@ -358,9 +349,9 @@ export default localize( React.createClass( {
 				}
 			</div>
 		);
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<Card className="editor-ground-control">
 				<Button
@@ -413,4 +404,6 @@ export default localize( React.createClass( {
 			</Card>
 		);
 	}
-} ) );
+}
+
+export default localize( EditorGroundControl );
