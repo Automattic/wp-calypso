@@ -64,7 +64,7 @@ export class FeedbackShare extends PureComponent {
 					? <AccessButton
 							additionalClassName="is-revoke"
 							icon="link-break"
-							label={ translate( 'Revoke Access' ) }
+							label={ translate( 'Remove Access' ) }
 							onClick={ this.onRevoke }
 						/>
 					: <AccessButton
