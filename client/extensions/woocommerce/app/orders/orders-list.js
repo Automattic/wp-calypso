@@ -47,13 +47,19 @@ class Orders extends Component {
 			newProps.currentStatus !== this.props.currentStatus ||
 			newProps.siteId !== this.props.siteId
 		);
-		if ( newProps.siteId && hasAnythingChanged ) {
-			const query = {
-				page: newProps.currentPage,
-				status: newProps.currentStatus,
-			};
-			this.props.fetchOrders( newProps.siteId, query );
+		if ( ! newProps.siteId || ! hasAnythingChanged ) {
+			return;
 		}
+
+		const query = {
+			page: newProps.currentPage,
+			status: newProps.currentStatus,
+		};
+		if ( newProps.currentStatus !== this.props.currentStatus ) {
+			this.props.updateCurrentOrdersQuery( this.props.siteId, { page: 1 } );
+			query.page = 1;
+		}
+		this.props.fetchOrders( newProps.siteId, query );
 	}
 
 	getOrderStatus = ( status ) => {
@@ -121,7 +127,10 @@ class Orders extends Component {
 	}
 
 	onPageClick = page => {
-		this.props.updateCurrentOrdersQuery( this.props.siteId, { page } );
+		this.props.updateCurrentOrdersQuery( this.props.siteId, {
+			page,
+			status: this.props.currentStatus,
+		} );
 	}
 
 	render() {
