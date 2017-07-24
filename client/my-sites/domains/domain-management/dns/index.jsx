@@ -58,28 +58,28 @@ console.log( '^^^^^^^' );
 console.log( this.props );
 
 		return (
-				<Main className="dns">
-					<Header
-						onClick={ this.goBack }
-						selectedDomainName={ this.props.selectedDomainName }>
-						{ this.translate( 'DNS Records' ) }
-					</Header>
+			<Main className="dns">
+				<Header
+					onClick={ this.goBack }
+					selectedDomainName={ this.props.selectedDomainName }>
+					{ this.translate( 'DNS Records' ) }
+				</Header>
 
-					<SectionHeader label={ this.translate( 'DNS Records' ) } />
-					<Card>
-						<DnsDetails />
+				<SectionHeader label={ this.translate( 'DNS Records' ) } />
+				<Card>
+					<DnsDetails />
 
-						<DnsList
-							dns={ this.props.dns }
-							selectedSite={ this.props.selectedSite }
-							selectedDomainName={ this.props.selectedDomainName } />
+					<DnsList
+						dns={ this.props.dns }
+						selectedSite={ this.props.selectedSite }
+						selectedDomainName={ this.props.selectedDomainName } />
 
-						<DnsAddNew
-							isSubmittingForm={ this.props.dns.isSubmittingForm }
-							selectedDomainName={ this.props.selectedDomainName } />
-					</Card>
-					{ this.renderDnsTemplates() }
-				</Main>
+					<DnsAddNew
+						isSubmittingForm={ this.props.dns.isSubmittingForm }
+						selectedDomainName={ this.props.selectedDomainName } />
+				</Card>
+				{ this.renderDnsTemplates() }
+			</Main>
 		);
 	},
 
