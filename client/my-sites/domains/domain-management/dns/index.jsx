@@ -17,11 +17,14 @@ import paths from 'my-sites/domains/paths';
 import { getSelectedDomain, isRegisteredDomain } from 'lib/domains';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
+import DnsTemplates from '../name-servers/dns-templates';
+import VerticalNav from 'components/vertical-nav';
 
 const Dns = React.createClass( {
 	propTypes: {
 		domains: React.PropTypes.object.isRequired,
 		dns: React.PropTypes.object.isRequired,
+		// isMappedDomain: React.PropTypes.bool.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
@@ -33,33 +36,50 @@ const Dns = React.createClass( {
 		return { addNew: true };
 	},
 
+	renderDnsTemplates() {
+console.log( this.props.selectedSite.options.is_mapped_domain );
+console.log( '^^^^^^^' );
+		if ( ! this.props.selectedSite.options.is_mapped_domain ) {
+			return null;
+		}
+
+		return (
+			<VerticalNav>
+				<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
+			</VerticalNav>
+		);
+	},
+
 	render() {
 		if ( ! this.props.dns.hasLoadedFromServer ) {
 			return <DomainMainPlaceholder goBack={ this.goBack } />;
 		}
 
+console.log( this.props );
+
 		return (
-			<Main className="dns">
-				<Header
-					onClick={ this.goBack }
-					selectedDomainName={ this.props.selectedDomainName }>
-					{ this.translate( 'DNS Records' ) }
-				</Header>
+				<Main className="dns">
+					<Header
+						onClick={ this.goBack }
+						selectedDomainName={ this.props.selectedDomainName }>
+						{ this.translate( 'DNS Records' ) }
+					</Header>
 
-				<SectionHeader label={ this.translate( 'DNS Records' ) } />
-				<Card>
-					<DnsDetails />
+					<SectionHeader label={ this.translate( 'DNS Records' ) } />
+					<Card>
+						<DnsDetails />
 
-					<DnsList
-						dns={ this.props.dns }
-						selectedSite={ this.props.selectedSite }
-						selectedDomainName={ this.props.selectedDomainName } />
+						<DnsList
+							dns={ this.props.dns }
+							selectedSite={ this.props.selectedSite }
+							selectedDomainName={ this.props.selectedDomainName } />
 
-					<DnsAddNew
-						isSubmittingForm={ this.props.dns.isSubmittingForm }
-						selectedDomainName={ this.props.selectedDomainName } />
-				</Card>
-			</Main>
+						<DnsAddNew
+							isSubmittingForm={ this.props.dns.isSubmittingForm }
+							selectedDomainName={ this.props.selectedDomainName } />
+					</Card>
+					{ this.renderDnsTemplates() }
+				</Main>
 		);
 	},
 
