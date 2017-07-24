@@ -44,15 +44,25 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 		);
 	}
 
-	const renderMethod = ( methodKey ) => {
-		const method = methods[ methodKey ];
-
+	const renderMethodCell = ( title, summary = '', key = 0 ) => {
 		return (
-			<div key={ methodKey } className="shipping__zones-row-method">
-				<p className="shipping__zones-row-method-name">{ method.title }</p>
-				<p className="shipping__zones-row-method-description">{ getMethodSummary( method, currency ) }</p>
+			<div key={ key } className="shipping__zones-row-method">
+				<p className="shipping__zones-row-method-name">{ title }</p>
+				<p className="shipping__zones-row-method-description">{ summary }</p>
 			</div>
 		);
+	};
+
+	const renderMethod = ( methodKey ) => {
+		const method = methods[ methodKey ];
+		let summary = getMethodSummary( method, currency );
+		if ( ! method.enabled ) {
+			summary = translate( '%(summary)s - Disabled', {
+				args: { summary },
+				comment: 'Summary of a disabled shipping method in WooCommerce',
+			} );
+		}
+		return renderMethodCell( method.title, summary, methodKey );
 	};
 
 	const icon = 0 === id ? 'globe' : 'location';
@@ -73,12 +83,14 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 				{ /*<p className="shipping__zones-row-location-description">{ locationDescription }</p>*/ }
 			</div>
 			<div className="shipping__zones-row-methods">
-				{ Object.keys( methods ).map( renderMethod ) }
+				{ methods && methods.length
+					? Object.keys( methods ).map( renderMethod )
+					: renderMethodCell( translate( 'No shipping methods' ) ) }
 			</div>
 			<div className="shipping__zones-row-actions">
 				<Button
 					compact
-					href={ getLink( `/store/settings/shipping/:site/zone/${ id }`, site ) }
+					href={ getLink( `/store/settings/shipping/zone/:site/${ id }`, site ) }
 					disabled={ ! isValid }
 					onClick={ onEditClick }>
 					{ translate( 'Edit' ) }

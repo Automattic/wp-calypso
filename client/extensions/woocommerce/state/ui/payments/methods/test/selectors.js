@@ -59,23 +59,23 @@ describe( 'selectors', () => {
 
 		it( 'should return the WC-API methods list if there are no edits in the state', () => {
 			siteState.paymentMethods = [
-				{ id: 1, name: 'Method1' },
-				{ id: 2, name: 'Method2' },
+				{ id: 1, settings: { name: { value: 'Method1' } } },
+				{ id: 2, settings: { name: { value: 'Method2' } } },
 			];
 			expect( getPaymentMethodsWithEdits( state ) ).to.deep.equal( [
-				{ id: 1, name: 'Method1' },
-				{ id: 2, name: 'Method2' },
+				{ id: 1, settings: { name: { value: 'Method1' } } },
+				{ id: 2, settings: { name: { value: 'Method2' } } },
 			] );
 		} );
 
 		it( 'should apply the "edits" changes to the method list', () => {
 			siteState.paymentMethods = [
-				{ id: 1, name: 'Method1' },
-				{ id: 2, name: 'Method2' },
+				{ id: 1, settings: { name: { value: 'Method1' } } },
+				{ id: 2, settings: { name: { value: 'Method2' } } },
 			];
 			uiState.methods = {
 				creates: [
-					{ id: { index: 0 }, name: 'Method3' },
+					{ id: { index: 0 }, settings: { name: { value: 'Method3' } } },
 				],
 				updates: [
 					{ id: 2, name: { value: 'EditedMethod2' } },
@@ -86,14 +86,14 @@ describe( 'selectors', () => {
 				currentlyEditingId: null,
 			};
 			expect( getPaymentMethodsWithEdits( state ) ).to.deep.equal( [
-				{ id: 2, name: 'EditedMethod2' },
-				{ id: { index: 0 }, name: 'Method3' },
+				{ id: 2, settings: { name: { value: 'EditedMethod2' } } },
+				{ id: { index: 0 }, settings: { name: { value: 'Method3' } } },
 			] );
 		} );
 
 		it( 'should apply the enabled "edits" changes to the method list', () => {
 			siteState.paymentMethods = [
-				{ id: 1, enabled: false, name: 'Method1' },
+				{ id: 1, enabled: false, settings: { name: { value: 'Method1' } } },
 			];
 			uiState.methods = {
 				creates: [],
@@ -103,13 +103,13 @@ describe( 'selectors', () => {
 				],
 			};
 			expect( getPaymentMethodsWithEdits( state ) ).to.deep.equal( [
-				{ id: 1, enabled: true, name: 'Method1', },
+				{ id: 1, enabled: true, settings: { name: { value: 'Method1' } } },
 			] );
 		} );
 
 		it( 'should NOT apply the uncommited changes made in the modal', () => {
 			siteState.paymentMethods = [
-				{ id: 1, name: 'Method1' },
+				{ id: 1, settings: { name: { value: 'Method1' } } },
 			];
 			uiState.methods = {
 				creates: [],
@@ -118,7 +118,7 @@ describe( 'selectors', () => {
 				currentlyEditingId: 1,
 				currentlyEditingChanges: { name: 'This name has not been saved yet' },
 			};
-			expect( getPaymentMethodsWithEdits( state ) ).to.deep.equal( [ { id: 1, name: 'Method1' } ] );
+			expect( getPaymentMethodsWithEdits( state ) ).to.deep.equal( [ { id: 1, settings: { name: { value: 'Method1' } } } ] );
 		} );
 	} );
 
@@ -154,8 +154,8 @@ describe( 'selectors', () => {
 
 		it( 'should return method when there is a method being edited, without changes in that method', () => {
 			siteState.paymentMethods = [
-				{ id: 1, name: 'Method1' },
-				{ id: 2, name: 'Method2' },
+				{ id: 1, settings: { name: { value: 'Method1' } } },
+				{ id: 2, settings: { name: { value: 'Method2' } } },
 			];
 			uiState.methods = {
 				creates: [],
@@ -164,12 +164,12 @@ describe( 'selectors', () => {
 				currentlyEditingId: 1,
 			};
 
-			expect( getCurrentlyEditingPaymentMethod( state ) ).to.deep.equal( { id: 1, name: 'Method1' } );
+			expect( getCurrentlyEditingPaymentMethod( state ) ).to.deep.equal( { id: 1, settings: { name: { value: 'Method1' } } } );
 		} );
 
 		it( 'should return method with changes when there is a method being edited, with changes in that method', () => {
 			siteState.paymentMethods = [
-				{ id: 1, name: 'MyMethod' },
+				{ id: 1, settings: { name: { value: 'MyMethod' } } },
 			];
 			uiState.methods = {
 				creates: [],
@@ -178,19 +178,21 @@ describe( 'selectors', () => {
 				currentlyEditingId: 1,
 			};
 
-			expect( getCurrentlyEditingPaymentMethod( state ) ).to.deep.equal( { id: 1, name: 'MyNewMethod' } );
+			expect( getCurrentlyEditingPaymentMethod( state ) ).to.deep.equal( { id: 1, settings: { name: { value: 'MyNewMethod' } } } );
 		} );
 
 		it( 'should return new method from creates when there is a newly created method being edited', () => {
 			siteState.paymentMethods = [];
 			uiState.methods = {
-				creates: [ { id: { index: 0 }, name: 'MyNewMethod' } ],
+				creates: [ { id: { index: 0 }, settings: { name: { value: 'MyNewMethod' } } } ],
 				updates: [],
 				deletes: [],
 				currentlyEditingId: { index: 0 },
 			};
 
-			expect( getCurrentlyEditingPaymentMethod( state ) ).to.deep.equal( { id: { index: 0 }, name: 'MyNewMethod' } );
+			expect( getCurrentlyEditingPaymentMethod( state ) ).to.deep.equal(
+				{ id: { index: 0 }, settings: { name: { value: 'MyNewMethod' } } }
+			);
 		} );
 	} );
 
@@ -208,8 +210,8 @@ describe( 'selectors', () => {
 
 		it( 'should return true when there is a method being edited, without changes in that method', () => {
 			siteState.paymentMethods = [
-				{ id: 1, name: 'Method1' },
-				{ id: 2, name: 'Method2' },
+				{ id: 1, settings: { name: { value: 'Method1' } } },
+				{ id: 2, settings: { name: { value: 'Method2' } } },
 			];
 			uiState.methods = {
 				creates: [],
@@ -237,29 +239,31 @@ describe( 'selectors', () => {
 	describe( 'getPaymentMethodsGroup', () => {
 		it( 'should return emoty array when no methods of type exist', () => {
 			siteState.paymentMethods = [
-				{ id: 1, name: 'Method1', methodType: 'foo' },
-				{ id: 2, name: 'Method2', methodType: 'bar' },
+				{ id: 1, settings: { name: { value: 'Method1' } }, methodType: 'foo' },
+				{ id: 2, settings: { name: { value: 'Method2' } }, methodType: 'bar' },
 			];
 
 			expect( getPaymentMethodsGroup( state, 'bang' ) ).to.deep.equal( [] );
 		} );
 		it( 'should return array of one method of type passed when one exists', () => {
 			siteState.paymentMethods = [
-				{ id: 1, name: 'Method1', methodType: 'foo' },
-				{ id: 2, name: 'Method2', methodType: 'bang' },
-			];
-
-			expect( getPaymentMethodsGroup( state, 'bang' ) ).to.deep.equal( [ { id: 2, name: 'Method2', methodType: 'bang' } ] );
-		} );
-		it( 'should return array of all methods of type when multiple exist', () => {
-			siteState.paymentMethods = [
-				{ id: 1, name: 'Method1', methodType: 'bang' },
-				{ id: 2, name: 'Method2', methodType: 'bang' },
+				{ id: 1, settings: { name: { value: 'Method1' } }, methodType: 'foo' },
+				{ id: 2, settings: { name: { value: 'Method2' } }, methodType: 'bang' },
 			];
 
 			expect( getPaymentMethodsGroup( state, 'bang' ) ).to.deep.equal( [
-				{ id: 1, name: 'Method1', methodType: 'bang' },
-				{ id: 2, name: 'Method2', methodType: 'bang' },
+				{ id: 2, settings: { name: { value: 'Method2' } }, methodType: 'bang' }
+			] );
+		} );
+		it( 'should return array of all methods of type when multiple exist', () => {
+			siteState.paymentMethods = [
+				{ id: 1, settings: { name: { value: 'Method1' } }, methodType: 'bang' },
+				{ id: 2, settings: { name: { value: 'Method2' } }, methodType: 'bang' },
+			];
+
+			expect( getPaymentMethodsGroup( state, 'bang' ) ).to.deep.equal( [
+				{ id: 1, settings: { name: { value: 'Method1' } }, methodType: 'bang' },
+				{ id: 2, settings: { name: { value: 'Method2' } }, methodType: 'bang' },
 			] );
 		} );
 	} );

@@ -4,6 +4,7 @@
 import classnames from 'classnames';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -16,6 +17,9 @@ import { getSiteDescription, getSiteName, getSiteUrl } from 'reader/get-helpers'
 import SiteIcon from 'blocks/site-icon';
 import BlogStickers from 'blocks/blog-stickers';
 import ReaderFeedHeaderSiteBadge from './badge';
+import ReaderEmailSettings from 'blocks/reader-email-settings';
+import userSettings from 'lib/user-settings';
+import { isFollowing } from 'state/selectors';
 
 class FeedHeader extends Component {
 	static propTypes = {
@@ -37,12 +41,13 @@ class FeedHeader extends Component {
 	};
 
 	render() {
-		const { site, feed, showBack, translate } = this.props;
+		const { site, feed, showBack, translate, following } = this.props;
 		const followerCount = this.getFollowerCount( feed, site );
 		const ownerDisplayName = site && ! site.is_multi_author && site.owner && site.owner.name;
 		const description = getSiteDescription( { site, feed } );
 		const siteTitle = getSiteName( { feed, site } );
 		const siteUrl = getSiteUrl( { feed, site } );
+		const isEmailBlocked = userSettings.getSetting( 'subscription_delivery_email_blocked' );
 
 		const classes = classnames( 'reader-feed-header', {
 			'is-placeholder': ! site && ! feed,
@@ -56,7 +61,7 @@ class FeedHeader extends Component {
 					<div className="reader-feed-header__follow">
 						{ followerCount &&
 							<span className="reader-feed-header__follow-count">
-								{ ' ' }
+								{' '}
 								{ translate( '%s follower', '%s followers', {
 									count: followerCount,
 									args: [ this.props.numberFormat( followerCount ) ],
@@ -66,6 +71,12 @@ class FeedHeader extends Component {
 							! feed.is_error &&
 							<div className="reader-feed-header__follow-button">
 								<ReaderFollowButton siteUrl={ feed.feed_URL } iconSize={ 24 } />
+							</div> }
+						{ site &&
+							following &&
+							! isEmailBlocked &&
+							<div className="reader-feed-header__email-settings">
+								<ReaderEmailSettings siteId={ site.ID } />
 							</div> }
 					</div>
 				</div>
@@ -84,7 +95,9 @@ class FeedHeader extends Component {
 						</a>
 					</div>
 					<div className="reader-feed-header__details">
-						<span className="reader-feed-header__description">{ description }</span>
+						<span className="reader-feed-header__description">
+							{ description }
+						</span>
 						{ ownerDisplayName &&
 							! isAuthorNameBlacklisted( ownerDisplayName ) &&
 							<span className="reader-feed-header__byline">
@@ -101,4 +114,6 @@ class FeedHeader extends Component {
 	}
 }
 
-export default localize( FeedHeader );
+export default connect( ( state, ownProps ) => ( {
+	following: ownProps.feed && isFollowing( state, { feedUrl: ownProps.feed.feed_URL } ),
+} ) )( localize( FeedHeader ) );

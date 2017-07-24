@@ -66,7 +66,8 @@ const hasShortContent = post => getCharacterCount( post ) <= 100;
 export function classifyPost( post ) {
 	const canonicalImage = post.canonical_image;
 	const imagesForGallery = filter( post.content_images, imageIsBigEnoughForGallery );
-	let displayType = DISPLAY_TYPES.UNCLASSIFIED, canonicalAspect;
+	let displayType = DISPLAY_TYPES.UNCLASSIFIED,
+		canonicalAspect;
 
 	if ( imagesForGallery.length >= GALLERY_MIN_IMAGES ) {
 		displayType ^= DISPLAY_TYPES.GALLERY;
@@ -111,34 +112,30 @@ export function classifyPost( post ) {
 	return post;
 }
 
-const fastPostNormalizationRules = flow(
-	[
-		decodeEntities,
-		stripHtml,
-		preventWidows,
-		makeSiteIdSafeForApi,
-		pickPrimaryTag,
-		safeImageProperties( READER_CONTENT_WIDTH ),
-		withContentDom(
-			[
-				removeStyles,
-				removeElementsBySelector,
-				makeImagesSafe(),
-				makeEmbedsSafe,
-				disableAutoPlayOnEmbeds,
-				disableAutoPlayOnMedia,
-				detectMedia,
-				detectPolls,
-				linkJetpackCarousels,
-			],
-		),
-		createBetterExcerpt,
-		pickCanonicalImage,
-		pickCanonicalMedia,
-		classifyPost,
-		addDiscoverProperties,
-	],
-);
+const fastPostNormalizationRules = flow( [
+	decodeEntities,
+	stripHtml,
+	preventWidows,
+	makeSiteIdSafeForApi,
+	pickPrimaryTag,
+	safeImageProperties( READER_CONTENT_WIDTH ),
+	withContentDom( [
+		removeStyles,
+		removeElementsBySelector,
+		makeImagesSafe(),
+		makeEmbedsSafe,
+		disableAutoPlayOnEmbeds,
+		disableAutoPlayOnMedia,
+		detectMedia,
+		detectPolls,
+		linkJetpackCarousels,
+	] ),
+	createBetterExcerpt,
+	pickCanonicalImage,
+	pickCanonicalMedia,
+	classifyPost,
+	addDiscoverProperties,
+] );
 
 export function runFastRules( post ) {
 	if ( ! post ) {
@@ -149,9 +146,12 @@ export function runFastRules( post ) {
 	return post;
 }
 
-const slowSyncRules = flow(
-	[ keepValidImages( 144, 72 ), pickCanonicalImage, pickCanonicalMedia, classifyPost ],
-);
+const slowSyncRules = flow( [
+	keepValidImages( 144, 72 ),
+	pickCanonicalImage,
+	pickCanonicalMedia,
+	classifyPost,
+] );
 
 export function runSlowRules( post ) {
 	post = Object.assign( {}, post );

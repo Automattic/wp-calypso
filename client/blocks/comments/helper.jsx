@@ -8,7 +8,11 @@ export function shouldShowComments( post ) {
 		return true;
 	}
 
-	if ( ! post.is_jetpack && post.discussion && ( post.discussion.comments_open || post.discussion.comment_count > 0 ) ) {
+	if (
+		! post.is_jetpack &&
+		post.discussion &&
+		( post.discussion.comments_open || post.discussion.comment_count > 0 )
+	) {
 		return true;
 	}
 
@@ -19,7 +23,10 @@ export function isCommentableDiscoverPost( post ) {
 	const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 
 	if ( isDiscoverPost ) {
-		if ( DiscoverHelper.isInternalDiscoverPost( post ) && ! DiscoverHelper.isDiscoverSitePick( post ) ) {
+		if (
+			DiscoverHelper.isInternalDiscoverPost( post ) &&
+			! DiscoverHelper.isDiscoverSitePick( post )
+		) {
 			return true;
 		}
 	}

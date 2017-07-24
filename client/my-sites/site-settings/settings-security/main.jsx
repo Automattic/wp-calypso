@@ -15,12 +15,14 @@ import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import FormSecurity from 'my-sites/site-settings/form-security';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import Placeholder from 'my-sites/site-settings/placeholder';
 
 const SiteSettingsSecurity = ( { site, siteId, siteIsJetpack, translate } ) => {
 	if ( ! site ) {
-		return <div className="settings-security__loading wpcom-site__logo noticon noticon-wordpress" />;
+		return <Placeholder />;
 	}
 
 	if ( ! siteIsJetpack ) {
@@ -59,6 +61,7 @@ const SiteSettingsSecurity = ( { site, siteId, siteIsJetpack, translate } ) => {
 	return (
 		<Main className="settings-security__main site-settings">
 			<DocumentHead title={ translate( 'Site Settings' ) } />
+			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<SiteSettingsNavigation site={ site } section="security" />
 			<JetpackMonitor />

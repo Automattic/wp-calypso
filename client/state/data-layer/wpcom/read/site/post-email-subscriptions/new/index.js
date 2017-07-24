@@ -16,6 +16,7 @@ import {
 } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
 import { buildBody } from '../utils';
+import { local } from 'state/data-layer/utils';
 
 export function requestPostEmailSubscription( { dispatch }, action ) {
 	dispatch(
@@ -26,7 +27,7 @@ export function requestPostEmailSubscription( { dispatch }, action ) {
 			apiVersion: '1.2',
 			onSuccess: action,
 			onFailure: action,
-		} )
+		} ),
 	);
 }
 
@@ -35,21 +36,23 @@ export function receivePostEmailSubscription( store, action, next, response ) {
 	const subscribed = !! ( response && response.subscribed );
 	if ( ! subscribed ) {
 		// shoot. something went wrong.
-		receivePostEmailSubscriptionError( store, action, next );
+		receivePostEmailSubscriptionError( store, action );
 		return;
 	}
 	// pass this on, but tack in the delivery_frequency that we got back from the API
-	next(
-		updateNewPostEmailSubscription(
-			action.payload.blogId,
-			get( response, [ 'subscription', 'delivery_frequency' ] )
-		)
+	store.dispatch(
+		local(
+			updateNewPostEmailSubscription(
+				action.payload.blogId,
+				get( response, [ 'subscription', 'delivery_frequency' ] ),
+			),
+		),
 	);
 }
 
-export function receivePostEmailSubscriptionError( { dispatch }, action, next ) {
+export function receivePostEmailSubscriptionError( { dispatch }, action ) {
 	dispatch( errorNotice( translate( 'Sorry, we had a problem subscribing. Please try again.' ) ) );
-	next( unsubscribeToNewPostEmail( action.payload.blogId ) );
+	dispatch( local( unsubscribeToNewPostEmail( action.payload.blogId ) ) );
 }
 
 export default {
@@ -57,7 +60,7 @@ export default {
 		dispatchRequest(
 			requestPostEmailSubscription,
 			receivePostEmailSubscription,
-			receivePostEmailSubscriptionError
+			receivePostEmailSubscriptionError,
 		),
 	],
 };

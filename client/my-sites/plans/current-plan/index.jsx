@@ -18,7 +18,7 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import DocumentHead from 'components/data/document-head';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import PlansNavigation from 'my-sites/upgrades/navigation';
+import PlansNavigation from 'my-sites/domains/navigation';
 import ProductPurchaseFeatures from 'blocks/product-purchase-features';
 import ProductPurchaseFeaturesList from 'blocks/product-purchase-features/product-purchase-features-list';
 import CurrentPlanHeader from './header';
@@ -28,7 +28,7 @@ import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { getPlan } from 'lib/plans';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
-import DomainWarnings from 'my-sites/upgrades/components/domain-warnings';
+import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 

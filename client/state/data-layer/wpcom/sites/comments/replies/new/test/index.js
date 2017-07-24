@@ -16,7 +16,7 @@ describe( '#writeReplyComment()', () => {
 		siteId: 2916284,
 		postId: 1010,
 		parentCommentId: 1,
-		commentText: 'comment text'
+		commentText: 'comment text',
 	};
 
 	it( 'should dispatch a http request action to the new comment replies endpoint', () => {
@@ -29,7 +29,7 @@ describe( '#writeReplyComment()', () => {
 		expect( dispatchNewCommentRequestSpy ).to.have.been.calledWith(
 			dispatch,
 			action,
-			'/sites/2916284/comments/1/replies/new'
+			'/sites/2916284/comments/1/replies/new',
 		);
 		dispatchNewCommentRequestSpy.restore();
 	} );

@@ -19,7 +19,10 @@ export class CommentsManagement extends Component {
 		basePath: PropTypes.string,
 		comments: PropTypes.array,
 		siteId: PropTypes.number,
-		siteSlug: PropTypes.string.isRequired,
+		siteFragment: PropTypes.oneOfType( [
+			PropTypes.string,
+			PropTypes.number,
+		] ),
 		status: PropTypes.string,
 		translate: PropTypes.func,
 	};
@@ -28,7 +31,7 @@ export class CommentsManagement extends Component {
 		const {
 			basePath,
 			siteId,
-			siteSlug,
+			siteFragment,
 			status,
 			translate,
 		} = this.props;
@@ -39,16 +42,17 @@ export class CommentsManagement extends Component {
 				<DocumentHead title={ translate( 'Manage Comments' ) } />
 				<CommentList
 					siteId={ siteId }
-					siteSlug={ siteSlug }
+					siteFragment={ siteFragment }
 					status={ status }
+					order={ 'desc' }
 				/>
 			</Main>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { siteSlug } ) => ( {
-	siteId: getSiteId( state, siteSlug ),
+const mapStateToProps = ( state, { siteFragment } ) => ( {
+	siteId: getSiteId( state, siteFragment ),
 } );
 
 export default connect( mapStateToProps )( localize( CommentsManagement ) );

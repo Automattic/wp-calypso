@@ -16,6 +16,7 @@ import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine/
 import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
 import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
 import { getSiteName } from 'reader/get-helpers';
+import { local } from 'state/data-layer/utils';
 
 export function requestFollow( { dispatch, getState }, action ) {
 	const { payload: { feedUrl } } = action;
@@ -39,17 +40,16 @@ export function requestFollow( { dispatch, getState }, action ) {
 	const feed = getFeedByFeedUrl( getState(), feedUrl );
 	const siteTitle = getSiteName( { feed, site } ) || feedUrl;
 	dispatch(
-		successNotice(
-			translate( "You're now following %(siteTitle)s", { args: { siteTitle } } ),
-			{ duration: 5000 },
-		),
+		successNotice( translate( "You're now following %(siteTitle)s", { args: { siteTitle } } ), {
+			duration: 5000,
+		} ),
 	);
 }
 
 export function receiveFollow( store, action, next, response ) {
 	if ( response && response.subscribed ) {
 		const subscription = subscriptionFromApi( response.subscription );
-		next( follow( action.payload.feedUrl, subscription ) );
+		store.dispatch( local( follow( action.payload.feedUrl, subscription ) ) );
 	} else {
 		followError( store, action, next, response );
 	}
@@ -58,10 +58,9 @@ export function receiveFollow( store, action, next, response ) {
 export function followError( { dispatch }, action, next, response ) {
 	dispatch(
 		errorNotice(
-			translate(
-				'Sorry, there was a problem following %(url)s. Please try again.',
-				{ args: { url: action.payload.feedUrl } },
-			),
+			translate( 'Sorry, there was a problem following %(url)s. Please try again.', {
+				args: { url: action.payload.feedUrl },
+			} ),
 			{ duration: 5000 },
 		),
 	);
@@ -70,7 +69,7 @@ export function followError( { dispatch }, action, next, response ) {
 		dispatch( recordFollowError( action.payload.feedUrl, response.info ) );
 	}
 
-	next( unfollow( action.payload.feedUrl ) );
+	dispatch( local( unfollow( action.payload.feedUrl ) ) );
 }
 
 export default {

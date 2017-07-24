@@ -11,6 +11,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import config from 'config';
+import { abtest } from 'lib/abtest';
 import AsyncLoad from 'components/async-load';
 import Button from 'components/button';
 import FormToggle from 'components/forms/form-toggle/compact';
@@ -124,7 +125,8 @@ export class EditPostStatus extends Component {
 			siteUtils.gmtOffset( this.props.site )
 		).format( 'll LT' );
 
-		const isPostPublishFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' );
+		const isPostPublishFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
 
 		return (
 			<div className="edit-post-status">

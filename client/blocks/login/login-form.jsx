@@ -2,6 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
+import defer from 'lodash/defer';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -17,15 +18,15 @@ import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
-import { loginUser } from 'state/login/actions';
+import { loginUser, formUpdate } from 'state/login/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { isRequesting, getRequestError } from 'state/login/selectors';
+import { getRequestError } from 'state/login/selectors';
+import { preventWidows } from 'lib/formatting';
 import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
-		isRequesting: PropTypes.bool.isRequired,
-		loginError: PropTypes.string,
+		formUpdate: PropTypes.func.isRequired,
 		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
@@ -34,12 +35,36 @@ export class LoginForm extends Component {
 	};
 
 	state = {
+		isDisabled: true,
 		usernameOrEmail: '',
 		password: '',
 		rememberMe: false,
 	};
 
+	componentDidMount() {
+		this.setState( { isDisabled: false }, () => { // eslint-disable-line react/no-did-mount-set-state
+			this.usernameOrEmail.focus();
+		} );
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { requestError } = this.props;
+
+		if ( prevProps.requestError || ! requestError ) {
+			return;
+		}
+
+		if ( requestError.field === 'password' ) {
+			defer( () => this.password.focus() );
+		}
+
+		if ( requestError.field === 'usernameOrEmail' ) {
+			defer( () => this.usernameOrEmail.focus() );
+		}
+	}
+
 	onChangeField = ( event ) => {
+		this.props.formUpdate();
 		this.setState( {
 			[ event.target.name ]: event.target.value
 		} );
@@ -61,11 +86,15 @@ export class LoginForm extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 
+		this.setState( { isDisabled: true } );
+
 		this.props.loginUser( usernameOrEmail, password, rememberMe, redirectTo ).then( () => {
 			this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
 
 			onSuccess();
 		} ).catch( error => {
+			this.setState( { isDisabled: false } );
+
 			this.props.recordTracksEvent( 'calypso_login_block_login_form_failure', {
 				error_code: error.code,
 				error_message: error.message
@@ -73,9 +102,18 @@ export class LoginForm extends Component {
 		} );
 	};
 
+	savePasswordRef = ( input ) => {
+		this.password = input;
+	};
+
+	saveUsernameOrEmailRef = ( input ) => {
+		this.usernameOrEmail = input;
+	};
+
 	render() {
 		const isDisabled = {};
-		if ( this.props.isRequesting ) {
+
+		if ( this.state.isDisabled ) {
 			isDisabled.disabled = true;
 		}
 
@@ -91,7 +129,6 @@ export class LoginForm extends Component {
 
 						<FormTextInput
 							autoCapitalize="off"
-							autoFocus
 							className={
 								classNames( 'login__form-userdata-username-input', {
 									'is-error': requestError && requestError.field === 'usernameOrEmail'
@@ -100,6 +137,7 @@ export class LoginForm extends Component {
 							onChange={ this.onChangeField }
 							id="usernameOrEmail"
 							name="usernameOrEmail"
+							ref={ this.saveUsernameOrEmailRef }
 							value={ this.state.usernameOrEmail }
 							{ ...isDisabled } />
 
@@ -122,6 +160,7 @@ export class LoginForm extends Component {
 							onChange={ this.onChangeField }
 							id="password"
 							name="password"
+							ref={ this.savePasswordRef }
 							value={ this.state.password }
 							{ ...isDisabled } />
 
@@ -140,6 +179,21 @@ export class LoginForm extends Component {
 							<span>{ this.props.translate( 'Keep me logged in' ) }</span>
 						</label>
 					</div>
+
+					<p className="login__form-terms">
+						{
+							preventWidows( this.props.translate(
+								// To make any changes to this copy please speak to the legal team
+								'By logging in via any of the options below, you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
+								{
+									components: {
+										tosLink: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
+									}
+								}
+							), 5 )
+
+						}
+					</p>
 
 					<div className="login__form-action">
 						<FormsButton primary { ...isDisabled }>
@@ -162,10 +216,10 @@ export class LoginForm extends Component {
 export default connect(
 	( state ) => ( {
 		redirectTo: getCurrentQueryArguments( state ).redirect_to,
-		isRequesting: isRequesting( state ),
 		requestError: getRequestError( state ),
 	} ),
 	{
+		formUpdate,
 		loginUser,
 		recordTracksEvent,
 	}

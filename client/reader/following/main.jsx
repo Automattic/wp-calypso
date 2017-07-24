@@ -35,7 +35,7 @@ const FollowingStream = props => {
 			flatMap( props.suggestions, query => [
 				<Suggestion suggestion={ query.text } source="following" railcar={ query.railcar } />,
 				', ',
-			] )
+			] ),
 		);
 
 	return (

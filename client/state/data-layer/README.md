@@ -169,7 +169,7 @@ In some cases it might be appropriate for a certain middleware to only handle on
 The data middleware is the gateway which performs the mapping between what is natural in Calypso/JavaScript and what is natural on the other side of the data requests.
 This is the place to couple files and functions to the structure of the associated system.
 
-For example, the WordPress.com API middleware mirrors the WordPres.com API and its files should thus mirror the API's structure. The file which handles requests to the `/sites/[ siteID ]/posts` endpoint should live at `state/data-layer/wpcom/sites/posts/index.js` and the file which handles requests to the `/me` endpoint should live at `state/data-layer/wpcom/me/index.js`.
+For example, the WordPress.com API middleware mirrors the WordPress.com API and its files should thus mirror the API's structure. The file which handles requests to the `/sites/[ siteID ]/posts` endpoint should live at `state/data-layer/wpcom/sites/posts/index.js` and the file which handles requests to the `/me` endpoint should live at `state/data-layer/wpcom/me/index.js`.
 Each file should be responsible for a single WordPress.com endpoint, and if multiple endpoints need to be polled in response to some Redux action, then we should have one file for each endpoint and both will listen for that same action.
 
 The key principle in this directory is to match the appropriate structures and norms of each possible data provider.

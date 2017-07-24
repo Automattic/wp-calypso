@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,11 +34,23 @@ export class CommentDetailReply extends Component {
 		return Math.max( TEXTAREA_HEIGHT_FOCUSED, textareaHeight );
 	}
 
-	getTextareaPlaceholder = () => this.props.authorDisplayName
-		? this.props.translate( 'Reply to %(commentAuthor)s…', {
-			args: { commentAuthor: this.props.authorDisplayName }
-		} )
-		: 'Reply to comment…';
+	getTextareaPlaceholder = () => {
+		const { authorDisplayName, commentStatus, translate } = this.props;
+
+		if ( 'approved' !== commentStatus ) {
+			return authorDisplayName
+				? translate( 'Approve and reply to %(commentAuthor)s…', {
+					args: { commentAuthor: authorDisplayName }
+				} )
+				: translate( 'Approve and reply to comment…' );
+		}
+
+		return authorDisplayName
+			? translate( 'Reply to %(commentAuthor)s…', {
+				args: { commentAuthor: authorDisplayName }
+			} )
+			: translate( 'Reply to comment…' );
+	}
 
 	handleTextChange = event => {
 		const { value } = event.target;
@@ -59,25 +70,13 @@ export class CommentDetailReply extends Component {
 	submit = () => {
 		const {
 			commentId,
-			currentUser,
+			commentStatus,
 			postId,
-			postTitle,
-			postUrl,
-			submitComment,
+			replyComment,
 		} = this.props;
 		const { commentText } = this.state;
 
-		const comment = {
-			authorAvatarUrl: get( currentUser, 'avatar_URL', '' ),
-			authorName: get( currentUser, 'display_name', '' ),
-			authorUrl: get( currentUser, 'primary_blog_url', '' ),
-			parentId: commentId,
-			postId: postId,
-			postTitle: postTitle,
-			content: commentText,
-			URL: postUrl,
-		};
-		submitComment( comment );
+		replyComment( commentText, postId, commentId, { alsoApprove: 'approved' !== commentStatus } );
 		this.setState( { commentText: '' } );
 	}
 

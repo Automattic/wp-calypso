@@ -3,19 +3,22 @@
  */
 import React, { Component, PropTypes } from 'react';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
-import Button from 'components/button';
 import ActivityLogItem from '../activity-log-item';
+import Button from 'components/button';
+import FoldableCard from 'components/foldable-card';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 class ActivityLogDay extends Component {
 	static propTypes = {
-		allowRestore: PropTypes.bool.isRequired,
 		applySiteOffset: PropTypes.func.isRequired,
+		disableRestore: PropTypes.bool.isRequired,
+		hideRestore: PropTypes.bool,
 		isRewindActive: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
 		requestRestore: PropTypes.func.isRequired,
@@ -24,16 +27,32 @@ class ActivityLogDay extends Component {
 	};
 
 	static defaultProps = {
-		allowRestore: true,
+		disableRestore: false,
 		isRewindActive: true,
 	};
 
-	handleClickRestore = () => {
+	handleClickRestore = ( event ) => {
+		event.stopPropagation();
 		const {
 			tsEndOfSiteDay,
 			requestRestore,
 		} = this.props;
-		requestRestore( tsEndOfSiteDay );
+		requestRestore( tsEndOfSiteDay, 'day' );
+	};
+
+	trackOpenDay = () => {
+		const {
+			logs,
+			moment,
+			recordTracksEvent,
+			tsEndOfSiteDay,
+		} = this.props;
+
+		recordTracksEvent( 'calypso_activitylog_day_expand', {
+			log_count: logs.length,
+			ts_end_site_day: tsEndOfSiteDay,
+			utc_date: moment.utc( tsEndOfSiteDay ).format( 'YYYY-MM-DD' ),
+		} );
 	};
 
 	/**
@@ -43,9 +62,12 @@ class ActivityLogDay extends Component {
 	 * @returns { object } Button to display.
 	 */
 	getRewindButton( type = '' ) {
-		const { allowRestore } = this.props;
+		const {
+			disableRestore,
+			hideRestore,
+		} = this.props;
 
-		if ( ! allowRestore ) {
+		if ( hideRestore ) {
 			return null;
 		}
 
@@ -53,7 +75,7 @@ class ActivityLogDay extends Component {
 			<Button
 				className="activity-log-day__rewind-button"
 				compact
-				disabled={ ! this.props.isRewindActive }
+				disabled={ disableRestore || ! this.props.isRewindActive }
 				onClick={ this.handleClickRestore }
 				primary={ 'primary' === type }
 			>
@@ -93,28 +115,32 @@ class ActivityLogDay extends Component {
 
 	render() {
 		const {
-			allowRestore,
+			applySiteOffset,
+			disableRestore,
+			hideRestore,
 			logs,
 			requestRestore,
 			siteId,
-			applySiteOffset,
 		} = this.props;
 
 		return (
 			<div className="activity-log-day">
 				<FoldableCard
-					header={ this.getEventsHeading() }
-					summary={ this.getRewindButton( 'primary' ) }
+					clickableHeader
 					expandedSummary={ this.getRewindButton() }
+					header={ this.getEventsHeading() }
+					onOpen={ this.trackOpenDay }
+					summary={ this.getRewindButton( 'primary' ) }
 				>
 					{ logs.map( ( log, index ) => (
 						<ActivityLogItem
-							key={ index }
-							allowRestore={ allowRestore }
-							siteId={ siteId }
-							requestRestore={ requestRestore }
-							log={ log }
 							applySiteOffset={ applySiteOffset }
+							disableRestore={ disableRestore }
+							hideRestore={ hideRestore }
+							key={ index }
+							log={ log }
+							requestRestore={ requestRestore }
+							siteId={ siteId }
 						/>
 					) ) }
 				</FoldableCard>
@@ -123,4 +149,6 @@ class ActivityLogDay extends Component {
 	}
 }
 
-export default localize( ActivityLogDay );
+export default connect( null, {
+	recordTracksEvent: recordTracksEventAction,
+} )( localize( ActivityLogDay ) );

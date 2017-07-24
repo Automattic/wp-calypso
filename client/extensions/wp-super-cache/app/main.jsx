@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import AdvancedTab from '../components/advanced';
 import CdnTab from '../components/cdn';
 import ContentsTab from '../components/contents';
+import DebugTab from '../components/debug';
 import EasyTab from '../components/easy';
 import Main from 'components/main';
 import Navigation from '../components/navigation';
@@ -45,6 +46,8 @@ class WPSuperCache extends Component {
 				return <ContentsTab isReadOnly={ isReadOnly } />;
 			case Tabs.PRELOAD:
 				return <PreloadTab />;
+			case Tabs.DEBUG:
+				return <DebugTab />;
 			default:
 				return <EasyTab isReadOnly={ isReadOnly } />;
 		}

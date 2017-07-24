@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Dialog from 'components/dialog';
 import ControlItem from 'components/segmented-control/item';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -33,7 +33,9 @@ class PaymentMethodStripe extends Component {
 			} ),
 		} ),
 		translate: PropTypes.func.isRequired,
+		onCancel: PropTypes.func.isRequired,
 		onEditField: PropTypes.func.isRequired,
+		onDone: PropTypes.func.isRequired,
 	};
 
 	onEditFieldHandler = ( e ) => {
@@ -46,19 +48,6 @@ class PaymentMethodStripe extends Component {
 		return () => {
 			this.props.onEditField( 'testmode', testmode );
 		};
-	}
-
-	onSaveHandler = () => {
-		this.props.onSave( this.props.method );
-	}
-
-	renderEnabledField = ( isEnabled ) => {
-		return (
-			<PaymentMethodEditFormToggle
-				checked={ isEnabled === 'yes' }
-				name="enabled"
-				onChange={ this.onEditFieldHandler } />
-		);
 	}
 
 	renderEditTextboxSecretKey = ( setting ) => {
@@ -110,10 +99,18 @@ class PaymentMethodStripe extends Component {
 		);
 	}
 
+	buttons = [
+		{ action: 'cancel', label: this.props.translate( 'Cancel' ), onClick: this.props.onCancel },
+		{ action: 'save', label: this.props.translate( 'Done' ), onClick: this.props.onDone, isPrimary: true },
+	];
+
 	render() {
 		const { method, translate } = this.props;
 		return (
-			<div className="payments__method-edit-fields">
+			<Dialog
+				additionalClassNames="payments__dialog woocommerce"
+				buttons={ this.buttons }
+				isVisible>
 				<FormFieldset className="payments__method-edit-field-container">
 					<Notice showDismiss={ false } text={ translate( 'To use Stripe you need to register an account' ) }>
 						<NoticeAction href="https://dashboard.stripe.com/register">{ translate( 'Sign up' ) }</NoticeAction>
@@ -171,10 +168,7 @@ class PaymentMethodStripe extends Component {
 						) }
 					</span>
 				</FormFieldset>
-				<Button primary onClick={ this.onSaveHandler }>
-					{ translate( 'Save' ) }
-				</Button>
-			</div>
+			</Dialog>
 		);
 	}
 }

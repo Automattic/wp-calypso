@@ -26,38 +26,30 @@ export default class FormToggle extends PureComponent {
 
 	static idNum = 0;
 
-	constructor() {
-		super( ...arguments );
-
-		this.onKeyDown = this.onKeyDown.bind( this );
-		this.onClick = this.onClick.bind( this );
-		this.onLabelClick = this.onLabelClick.bind( this );
-	}
-
 	componentWillMount() {
 		this.id = this.constructor.idNum++;
 	}
 
-	onKeyDown( event ) {
+	onKeyDown = ( event ) => {
 		if ( this.props.disabled ) {
 			return;
 		}
 
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			event.preventDefault();
-			this.props.onChange();
+			this.props.onChange( ! this.props.checked );
 		}
 
 		this.props.onKeyDown( event );
 	}
 
-	onClick() {
+	onClick = () => {
 		if ( ! this.props.disabled ) {
-			this.props.onChange();
+			this.props.onChange( ! this.props.checked );
 		}
 	}
 
-	onLabelClick( event ) {
+	onLabelClick = ( event ) => {
 		if ( this.props.disabled ) {
 			return;
 		}
@@ -65,7 +57,7 @@ export default class FormToggle extends PureComponent {
 		const nodeName = event.target.nodeName.toLowerCase();
 		if ( nodeName !== 'a' && nodeName !== 'input' && nodeName !== 'select' ) {
 			event.preventDefault();
-			this.props.onChange();
+			this.props.onChange( ! this.props.checked );
 		}
 	}
 

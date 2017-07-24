@@ -10,22 +10,31 @@ import { localize } from 'i18n-calypso';
  */
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
+import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import WritingForm from 'my-sites/site-settings/form-writing';
+import Placeholder from 'my-sites/site-settings/placeholder';
 import { getSelectedSite } from 'state/ui/selectors';
 
 const SiteSettingsWriting = ( {
 	site,
 	translate,
-} ) => (
-	<Main className="settings-writing__main site-settings">
-		<DocumentHead title={ translate( 'Site Settings' ) } />
-		<SidebarNavigation />
-		<SiteSettingsNavigation site={ site } section="writing" />
-		<WritingForm />
-	</Main>
-);
+} ) => {
+	if ( ! site ) {
+		return <Placeholder />;
+	}
+
+	return (
+		<Main className="settings-writing site-settings">
+			<DocumentHead title={ translate( 'Site Settings' ) } />
+			<JetpackDevModeNotice />
+			<SidebarNavigation />
+			<SiteSettingsNavigation site={ site } section="writing" />
+			<WritingForm />
+		</Main>
+	);
+};
 
 export default connect(
 	( state ) => ( {

@@ -7,7 +7,7 @@
 	text-align: center;
 	position: absolute;
 	z-index: z-index( '.popover', '.post-schedule__header' );
-	top: 47px;
+	top: 11px;
 	font-size: 18px;
 	font-weight: 300;
 	width: 80%;
@@ -15,6 +15,10 @@
 
 	&:first-letter {
 		text-transform: uppercase;
+	}
+
+	&.is-input-chrono-displayed {
+		top: 47px;
 	}
 }
 

@@ -16,7 +16,7 @@ import Button from 'components/button';
 import config from 'config';
 import CurrentSite from 'my-sites/current-site';
 import productsValues from 'lib/products-values';
-import PublishMenu from './publish-menu';
+import ManageMenu from './manage-menu';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarFooter from 'layout/sidebar/footer';
@@ -116,9 +116,9 @@ export class MySitesSidebar extends Component {
 		}, this );
 	}
 
-	publish() {
+	manage() {
 		return (
-			<PublishMenu siteId={ this.props.siteId }
+			<ManageMenu siteId={ this.props.siteId }
 				itemLinkClass={ this.itemLinkClass }
 				onNavigate={ this.onNavigate } />
 		);
@@ -287,7 +287,7 @@ export class MySitesSidebar extends Component {
 				link={ domainsLink }
 				onNavigate={ this.onNavigate }
 				icon="domains"
-				preloadSectionName="upgrades"
+				preloadSectionName="domains"
 			>
 				<SidebarButton href={ addDomainLink }>
 					{ this.props.translate( 'Add' ) }
@@ -547,7 +547,7 @@ export class MySitesSidebar extends Component {
 			);
 		}
 
-		const publish = !! this.publish(),
+		const manage = !! this.manage(),
 			configuration = ( !! this.sharing() || !! this.users() || !! this.siteSettings() || !! this.plugins() || !! this.upgrades() );
 
 		return (
@@ -561,10 +561,10 @@ export class MySitesSidebar extends Component {
 					</ul>
 				</SidebarMenu>
 
-				{ publish
+				{ manage
 					? <SidebarMenu>
-						<SidebarHeading>{ this.props.translate( 'Publish' ) }</SidebarHeading>
-						{ this.publish() }
+						<SidebarHeading>{ this.props.translate( 'Manage' ) }</SidebarHeading>
+						{ this.manage() }
 					</SidebarMenu>
 					: null
 				}

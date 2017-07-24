@@ -32,7 +32,10 @@ import {
 	editProductVariation,
 	clearProductVariationEdits,
 } from 'woocommerce/state/ui/products/variations/actions';
-import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
+import {
+	getProductVariationsWithLocalEdits,
+	getVariationEditsStateForProduct,
+} from 'woocommerce/state/ui/products/variations/selectors';
 import {
 	editProductCategory,
 	clearProductCategoryEdits,
@@ -59,14 +62,16 @@ class ProductUpdate extends React.Component {
 	};
 
 	componentDidMount() {
-		const { params, product, site } = this.props;
+		const { params, product, site, variations } = this.props;
 		const productId = Number( params.product );
 
 		if ( site && site.ID ) {
 			if ( ! product ) {
 				this.props.fetchProduct( site.ID, productId );
-				this.props.fetchProductVariations( site.ID, productId );
 				this.props.editProduct( site.ID, { id: productId }, {} );
+			}
+			if ( ! variations ) {
+				this.props.fetchProductVariations( site.ID, productId );
 			}
 			this.props.fetchProductCategories( site.ID );
 		}
@@ -134,7 +139,13 @@ class ProductUpdate extends React.Component {
 			translate( '%(product)s successfully updated.', {
 				args: { product: product.name },
 			} ),
-			{ duration: 4000 }
+			{
+				duration: 8000,
+				button: translate( 'View' ),
+				onClick: () => {
+					window.open( product.permalink );
+				},
+			}
 		);
 
 		const failureAction = errorNotice(
@@ -191,7 +202,7 @@ function mapStateToProps( state, ownProps ) {
 
 	const site = getSelectedSiteWithFallback( state );
 	const product = getProductWithLocalEdits( state, productId );
-	const hasEdits = Boolean( getProductEdits( state, productId ) );
+	const hasEdits = Boolean( getProductEdits( state, productId ) ) || Boolean( getVariationEditsStateForProduct( state, productId ) );
 	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
 	const productCategories = getProductCategoriesWithLocalEdits( state );
 	const actionList = getActionList( state );

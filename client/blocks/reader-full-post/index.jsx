@@ -163,7 +163,7 @@ export class FullPostView extends React.Component {
 		recordTrackForPost(
 			liked ? 'calypso_reader_article_liked' : 'calypso_reader_article_unliked',
 			this.props.post,
-			{ context: 'full-post', event_source: 'keyboard' }
+			{ context: 'full-post', event_source: 'keyboard' },
 		);
 	};
 
@@ -275,7 +275,7 @@ export class FullPostView extends React.Component {
 				components: {
 					wpLink: <a href="/" className="reader-related-card-v2__link" />,
 				},
-			}
+			},
 		);
 
 		if ( post.site_ID ) {
@@ -344,7 +344,6 @@ export class FullPostView extends React.Component {
 								fullPost={ true }
 								tagName="div"
 							/> }
-
 					</div>
 					<Emojify>
 						<article className="reader-full-post__story" ref="article">
@@ -355,7 +354,9 @@ export class FullPostView extends React.Component {
 								<FeaturedImage src={ post.featured_image } /> }
 							{ isLoading && <ReaderFullPostContentPlaceholder /> }
 							{ post.use_excerpt
-								? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
+								? <PostExcerpt
+										content={ post.better_excerpt ? post.better_excerpt : post.excerpt }
+									/>
 								: <EmbedContainer>
 										<AutoDirection>
 											<div
@@ -453,7 +454,7 @@ const ConnectedFullPostView = connect(
 
 		return props;
 	},
-	{ setSection }
+	{ setSection },
 )( FullPostView );
 
 /**

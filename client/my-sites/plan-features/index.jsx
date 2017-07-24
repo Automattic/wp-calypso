@@ -122,7 +122,7 @@ class PlanFeatures extends Component {
 		// center plans
 		if ( isInSignupTest && plansWrapper ) {
 			displayJetpackPlans
-				? plansWrapper.scrollLeft = 150
+				? plansWrapper.scrollLeft = 190
 				: plansWrapper.scrollLeft = 495;
 		}
 	}
@@ -216,6 +216,7 @@ class PlanFeatures extends Component {
 						isLandingPage={ isLandingPage }
 						isPopular = { popular }
 						planName ={ planConstantObj.getTitle() }
+						planType={ planName }
 					/>
 					<FoldableCard
 						header={ translate( 'Show features' ) }
@@ -235,7 +236,16 @@ class PlanFeatures extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { planProperties, intervalType, site, basePlansPath, isInSignup, isInSignupTest, siteType } = this.props;
+		const {
+			planProperties,
+			intervalType,
+			site,
+			basePlansPath,
+			isInSignup,
+			isInSignupTest,
+			siteType,
+			displayJetpackPlans
+		} = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -252,8 +262,9 @@ class PlanFeatures extends Component {
 			const { rawPrice, discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
 			let audience = planConstantObj.getAudience();
+			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
-			if ( isInSignupTest ) {
+			if ( isInSignupTest && ! displayJetpackPlans ) {
 				switch ( siteType ) {
 					case 'blog':
 						audience = planConstantObj.getBlogAudience();
@@ -264,6 +275,10 @@ class PlanFeatures extends Component {
 					default:
 						audience = planConstantObj.getAudience();
 				}
+			}
+
+			if ( isInSignupTest && displayJetpackPlans ) {
+				billingTimeFrame = planConstantObj.getSignupBillingTimeFrame();
 			}
 
 			return (
@@ -278,7 +293,7 @@ class PlanFeatures extends Component {
 						planType={ planName }
 						rawPrice={ rawPrice }
 						discountPrice={ discountPrice }
-						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
+						billingTimeFrame={ billingTimeFrame }
 						isPlaceholder={ isPlaceholder }
 						intervalType={ intervalType }
 						site={ site }
@@ -360,6 +375,7 @@ class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
 						manageHref={ `/plans/my-plan/${ site.slug }` }
+						planType={ planName }
 					/>
 				</td>
 			);
@@ -472,6 +488,7 @@ class PlanFeatures extends Component {
 						isLandingPage={ isLandingPage }
 						isPopular = { popular }
 						manageHref={ `/plans/my-plan/${ site.slug }` }
+						planType={ planName }
 					/>
 				</td>
 			);
@@ -542,13 +559,21 @@ export default connect(
 				if ( isInSignupTest ) {
 					switch ( siteType ) {
 						case 'blog':
-							planFeatures = getPlanFeaturesObject( planConstantObj.getBlogSignupFeatures( abtest ) );
+							if ( planConstantObj.getBlogSignupFeatures ) {
+								planFeatures = getPlanFeaturesObject( planConstantObj.getBlogSignupFeatures( abtest ) );
+							}
+
 							break;
 						case 'grid':
-							planFeatures = getPlanFeaturesObject( planConstantObj.getPortfolioSignupFeatures( abtest ) );
+							if ( planConstantObj.getPortfolioSignupFeatures ) {
+								planFeatures = getPlanFeaturesObject( planConstantObj.getPortfolioSignupFeatures( abtest ) );
+							}
+
 							break;
 						default:
-							planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
+							if ( planConstantObj.getSignupFeatures ) {
+								planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
+							}
 					}
 				}
 

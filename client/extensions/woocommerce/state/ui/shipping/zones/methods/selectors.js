@@ -96,7 +96,20 @@ const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
 		}
 		methods[ index ] = { ...methods[ index ], ...update };
 	} );
-	return sortShippingZoneMethods( state, siteId, [ ...methods, ...creates ] );
+
+	// Compute the "enabled" prop for all the methods. If a method hasn't been explicitly disabled (enabled===false), then it's enabled
+	const allMethods = [ ...methods, ...creates ].map( method => {
+		let enabled = method.enabled;
+		if ( isNil( enabled ) && 'number' === typeof method._originalId ) {
+			// If the "enabled" prop hasn't been modified, use the value from the original method
+			enabled = getShippingZoneMethod( state, method._originalId, siteId ).enabled;
+		}
+		return {
+			...method,
+			enabled: false !== enabled,
+		};
+	} );
+	return sortShippingZoneMethods( state, siteId, allMethods );
 };
 
 /**
@@ -178,7 +191,10 @@ export const getCurrentlyOpenShippingZoneMethod = ( state, siteId = getSelectedS
 	}
 
 	if ( zone.methods.currentlyEditingNew ) {
-		return zone.methods.currentlyEditingChanges;
+		return {
+			...zone.methods.currentlyEditingChanges,
+			enabled: false !== zone.methods.currentlyEditingChanges.enabled,
+		};
 	}
 
 	const methods = getCurrentlyEditingShippingZoneMethods( state );
@@ -187,9 +203,14 @@ export const getCurrentlyOpenShippingZoneMethod = ( state, siteId = getSelectedS
 		return null;
 	}
 
+	const enabled = isNil( zone.methods.currentlyEditingChanges.enabled )
+		? false !== openMethod.enabled
+		: false !== zone.methods.currentlyEditingChanges.enabled;
+
 	return {
 		...openMethod,
 		...zone.methods.currentlyEditingChanges,
+		enabled,
 	};
 };
 

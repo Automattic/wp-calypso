@@ -49,7 +49,7 @@ const StatsPeriodNavigation = props => {
 
 const connectComponent = connect( undefined, { recordGoogleEvent } );
 
-export default  flowRight(
+export default flowRight(
 	connectComponent,
 	localize,
 )( StatsPeriodNavigation );

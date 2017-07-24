@@ -1,22 +1,29 @@
-.post-editor__sidebar {
+.editor-sidebar {
 	@extend .sidebar;
-	z-index: z-index( 'root', '.post-editor__sidebar' );
+	z-index: z-index( 'root', '.editor-sidebar' );
 	background: lighten( $gray, 30% );
-	left: auto;
-	right: -273px;
 	border-left: 1px solid darken( $sidebar-bg-color, 5% );
 	border-top: 1px solid darken( $sidebar-bg-color, 5% );
 	border-right: none;
+	box-sizing: border-box;
 	top: 93px;
+	right: $sidebar-width-max;
+	left: auto;
 	transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
 
 	.focus-sidebar & {
-		transform: translateX(-273px);
+		transform: translateX( -$sidebar-width-max );
 	}
 
 	.focus-sidebar .is-loading & {
 		transition: none;
 	}
+
+	@include breakpoint( ">660px" ) {
+		border-right: 1px solid darken( $sidebar-bg-color, 5% );
+		width: $sidebar-width-max;
+	}
+
 
 	@include breakpoint( "<660px" ) {
 		position: relative;

@@ -37,8 +37,13 @@ const ListStreamHeader = ( {
 			</span>
 
 			<div className="list-stream__header-details">
-				<h1 className="list-stream__header-title">{ title }</h1>
-				{ description && <p className="list-stream__header-description">{ description }</p> }
+				<h1 className="list-stream__header-title">
+					{ title }
+				</h1>
+				{ description &&
+					<p className="list-stream__header-description">
+						{ description }
+					</p> }
 			</div>
 
 			{ showFollow &&
@@ -53,7 +58,9 @@ const ListStreamHeader = ( {
 						<span className="list-stream__header-action-icon">
 							<Gridicon icon="cog" size={ 24 } />
 						</span>
-						<span className="list-stream__header-action-label">{ translate( 'Edit' ) }</span>
+						<span className="list-stream__header-action-label">
+							{ translate( 'Edit' ) }
+						</span>
 					</a>
 				</div> }
 		</Card>

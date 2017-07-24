@@ -72,7 +72,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getShippingZoneMethods( state, 1 ) ).to.deep.equal( [ { id: 7, title: 'MyOldMethodTitle' } ] );
+			expect( getShippingZoneMethods( state, 1 ) ).to.deep.equal( [ { id: 7, title: 'MyOldMethodTitle', enabled: true } ] );
 		} );
 
 		it( 'should overlay method updates', () => {
@@ -105,7 +105,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getShippingZoneMethods( state, 1 ) ).to.deep.equal( [ { id: 7, title: 'MyNewMethodTitle' } ] );
+			expect( getShippingZoneMethods( state, 1 ) ).to.deep.equal( [ { id: 7, title: 'MyNewMethodTitle', enabled: true } ] );
 		} );
 
 		it( 'should overlay method deletes', () => {
@@ -139,7 +139,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getShippingZoneMethods( state, 1 ) ).to.deep.equal( [ { id: 8, title: 'Title8' } ] );
+			expect( getShippingZoneMethods( state, 1 ) ).to.deep.equal( [ { id: 8, title: 'Title8', enabled: true } ] );
 		} );
 
 		it( 'should overlay method creates', () => {
@@ -170,7 +170,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getShippingZoneMethods( state, 1 ) ).to.deep.equal( [ { id: { index: 0 }, title: 'NewMethod' } ] );
+			expect( getShippingZoneMethods( state, 1 ) ).to.deep.equal( [ { id: { index: 0 }, title: 'NewMethod', enabled: true } ] );
 		} );
 
 		it( 'should work for newly-created zones', () => {
@@ -199,7 +199,9 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getShippingZoneMethods( state, { index: 0 } ) ).to.deep.equal( [ { id: { index: 0 }, title: 'MyNewMethodTitle' } ] );
+			expect( getShippingZoneMethods( state, { index: 0 } ) ).to.deep.equal( [
+				{ id: { index: 0 }, title: 'MyNewMethodTitle', enabled: true },
+			] );
 		} );
 
 		it( 'should sort the shipping methods', () => {
@@ -242,10 +244,10 @@ describe( 'selectors', () => {
 			} );
 
 			expect( getShippingZoneMethods( state, 1 ) ).to.deep.equal( [
-				{ id: { index: 1 }, title: 'ConvertedMethod7', _originalId: 7 },
-				{ id: 8, title: 'NewTitle8', order: 2 },
-				{ id: { index: 2 }, title: 'ConvertedMethod0', _originalId: { index: 0 } },
-				{ id: { index: 3 }, title: 'NewMethod3' },
+				{ id: { index: 1 }, title: 'ConvertedMethod7', _originalId: 7, enabled: true },
+				{ id: 8, title: 'NewTitle8', order: 2, enabled: true },
+				{ id: { index: 2 }, title: 'ConvertedMethod0', _originalId: { index: 0 }, enabled: true },
+				{ id: { index: 3 }, title: 'NewMethod3', enabled: true },
 			] );
 		} );
 	} );
@@ -326,7 +328,7 @@ describe( 'selectors', () => {
 			} );
 
 			expect( getCurrentlyEditingShippingZoneMethods( state ) ).to.deep.equal( [
-				{ id: 7, title: 'MyNewMethodTitle', foo: 'bar' },
+				{ id: 7, title: 'MyNewMethodTitle', foo: 'bar', enabled: true },
 			] );
 		} );
 
@@ -369,7 +371,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getCurrentlyEditingShippingZoneMethods( state ) ).to.deep.equal( [ { id: 9, title: 'Title9' } ] );
+			expect( getCurrentlyEditingShippingZoneMethods( state ) ).to.deep.equal( [ { id: 9, title: 'Title9', enabled: true } ] );
 		} );
 
 		it( 'should overlay method creates in the zone currently being edited', () => {
@@ -407,7 +409,9 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getCurrentlyEditingShippingZoneMethods( state ) ).to.deep.equal( [ { id: { index: 0 }, title: 'NewMethod' } ] );
+			expect( getCurrentlyEditingShippingZoneMethods( state ) ).to.deep.equal( [
+				{ id: { index: 0 }, title: 'NewMethod', enabled: true },
+			] );
 		} );
 	} );
 
@@ -513,7 +517,7 @@ describe( 'selectors', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [
-						{ id: 1, methodIds: [ 7, 8 ] },
+						{ id: 1, methodIds: [ 7 ] },
 					],
 					shippingZoneMethods: {
 						7: { id: 7, methodType: 'free_shipping' },
@@ -631,6 +635,7 @@ describe( 'selectors', () => {
 									updates: [],
 									deletes: [],
 									currentlyEditingId: 7,
+									currentlyEditingChanges: {},
 								}
 							},
 						},
@@ -638,7 +643,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getCurrentlyOpenShippingZoneMethod( state ) ).to.deep.equal( { id: 7, title: 'methodTitle' } );
+			expect( getCurrentlyOpenShippingZoneMethod( state ) ).to.deep.equal( { id: 7, title: 'methodTitle', enabled: true } );
 		} );
 
 		it( 'should overlay method updates', () => {
@@ -673,6 +678,7 @@ describe( 'selectors', () => {
 									updates: [],
 									deletes: [],
 									currentlyEditingId: 7,
+									currentlyEditingChanges: {},
 								}
 							},
 						},
@@ -680,7 +686,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getCurrentlyOpenShippingZoneMethod( state ) ).to.deep.equal( { id: 7, title: 'MyNewMethodTitle' } );
+			expect( getCurrentlyOpenShippingZoneMethod( state ) ).to.deep.equal( { id: 7, title: 'MyNewMethodTitle', enabled: true } );
 		} );
 
 		it( 'should work for newly-created methods', () => {
@@ -713,6 +719,7 @@ describe( 'selectors', () => {
 									updates: [],
 									deletes: [],
 									currentlyEditingId: { index: 0 },
+									currentlyEditingChanges: {},
 								}
 							},
 						},
@@ -720,7 +727,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getCurrentlyOpenShippingZoneMethod( state ) ).to.deep.equal( { id: { index: 0 }, title: 'NewMethod' } );
+			expect( getCurrentlyOpenShippingZoneMethod( state ) ).to.deep.equal( { id: { index: 0 }, title: 'NewMethod', enabled: true } );
 		} );
 
 		it( 'should overlay method updates and currently added changes', () => {
@@ -763,7 +770,12 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getCurrentlyOpenShippingZoneMethod( state ) ).to.deep.equal( { id: 7, title: 'MyNewMethodTitle', cost: 123 } );
+			expect( getCurrentlyOpenShippingZoneMethod( state ) ).to.deep.equal( {
+				id: 7,
+				title: 'MyNewMethodTitle',
+				cost: 123,
+				enabled: true
+			} );
 		} );
 	} );
 

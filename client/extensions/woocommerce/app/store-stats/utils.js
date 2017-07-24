@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { includes } from 'lodash';
+import { find, includes } from 'lodash';
 import classnames from 'classnames';
 import { moment } from 'i18n-calypso';
 
@@ -9,6 +9,7 @@ import { moment } from 'i18n-calypso';
  * Internal dependencies
  */
 import { UNITS } from './constants';
+import formatCurrency from 'lib/format-currency';
 
 /**
  * @typedef {Object} Delta
@@ -75,4 +76,65 @@ export function getQueryDate( context ) {
 	const unitQuantity = unitConfig.quantity;
 	const periods = Math.floor( validDuration / unitQuantity ) * unitQuantity;
 	return today.subtract( periods, unitConfig.label ).format( 'YYYY-MM-DD' );
+}
+
+/**
+ * Given a full date YYYY-MM-DD and unit ('day', 'week', 'month', 'year') return a shortened
+ * and contextually relevant date.
+ *
+ * @param {string} date - string date in YYYY-MM-DD format
+ * @param {string} unit - string representing unit required for API eg. ('day', 'week', 'month', 'year')
+ * @return {string} - as required by the API, eg for unit 'week', '2017-W27' isoWeek returned
+ */
+export function getUnitPeriod( date, unit ) {
+	return moment( date ).format( UNITS[ unit ].format );
+}
+
+/**
+ * Given a full date YYYY-MM-DD and unit ('day', 'week', 'month', 'year') return the last date
+ * for the period formatted as YYYY-MM-DD
+ *
+ * @param {string} date - string date in YYYY-MM-DD format
+ * @param {string} unit - string representing unit required for API eg. ('day', 'week', 'month', 'year')
+ * @return {string} - YYYY-MM-DD format of the date to be queried
+ */
+export function getEndPeriod( date, unit ) {
+	return ( unit === 'week' )
+		? moment( date ).endOf( 'isoWeek' ).format( 'YYYY-MM-DD' )
+		: moment( date ).endOf( unit ).format( 'YYYY-MM-DD' );
+}
+
+/**
+ * Given a value and format option of 'text', 'number' and 'currency' return a formatted value.
+ *
+ * @param {(string|number)} value - string or number to be formatted
+ * @param {string} format - string of 'text', 'number' or 'currency'
+ * @param {string} [code] - optional currency code
+ * @return {string|number} - formatted number or string value
+*/
+export function formatValue( value, format, code ) {
+	switch ( format ) {
+		case 'currency':
+			return formatCurrency( value, code );
+		case 'number':
+			return Math.round( value * 100 ) / 100;
+		case 'text':
+		default:
+			return value;
+	}
+}
+
+/**
+ * Given a date, return the delta object for a specific stat
+ *
+ * @param {array} deltas - an array of delta objects
+ * @param {string} selectedDate - string of date in 'YYYY-MM-DD'
+ * @param {string} stat - string of stat to be referenced
+ * @return {array} - array of delta objects matching selectedDate
+*/
+export function getDelta( deltas, selectedDate, stat ) {
+	const selectedDeltas = find( deltas, ( item ) =>
+		item.period === selectedDate
+	);
+	return selectedDeltas[ stat ];
 }

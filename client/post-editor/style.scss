@@ -16,7 +16,8 @@
 }
 
 @include breakpoint( "<660px" ) {
-	.is-group-editor.focus-sidebar::before {
+	.is-group-editor.focus-sidebar::before,
+	.is-group-editor.focus-editor-confirmation-sidebar::before {
 		background-color: lighten( $gray, 30% );
 	}
 
@@ -59,16 +60,10 @@
 	margin: 0 auto; // born centered, so when width collapses for sidebar anim it doesn't move
 	left: 0;
 
-	.focus-sidebar & {
-		@include breakpoint( ">960px" ) {
-			left: ( $sidebar-width-max / -2 );
-			width: calc( 100% - ( #{ $sidebar-width-max } ) ); // subtract sidebar width
-		}
-
-		@include breakpoint( "<960px" ) {
-			left: ( $sidebar-width-min / -2 );
-			width: calc( 100% - ( #{ $sidebar-width-min } ) ); // subtract sidebar width
-		}
+	.focus-sidebar &,
+	.focus-editor-confirmation-sidebar & {
+		left: ( $sidebar-width-max / -2 );
+		width: calc( 100% - ( #{ $sidebar-width-max } ) ); // subtract sidebar width
 	}
 }
 

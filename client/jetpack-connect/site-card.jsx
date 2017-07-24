@@ -8,7 +8,7 @@ import urlModule from 'url';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import QuerySites from 'components/data/query-sites';
+import QueryUserConnection from 'components/data/query-user-connection';
 import Site from 'blocks/site';
 import safeImageUrl from 'lib/safe-image-url';
 import { decodeEntities } from 'lib/formatting';
@@ -20,8 +20,9 @@ class SiteCard extends Component {
 			blogname: PropTypes.string.isRequired,
 			home_url: PropTypes.string.isRequired,
 			site_url: PropTypes.string.isRequired,
-			client_id: PropTypes.string.isRequired
+			client_id: PropTypes.string.isRequired,
 		} ).isRequired,
+		isAlreadyOnSitesList: PropTypes.bool
 	};
 
 	render() {
@@ -49,7 +50,10 @@ class SiteCard extends Component {
 
 		return (
 			<CompactCard className="jetpack-connect__site">
-				<QuerySites siteId={ parseInt( client_id ) } />
+				<QueryUserConnection
+					siteId={ parseInt( client_id ) }
+					siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
+				/>
 				<Site site={ site } />
 			</CompactCard>
 		);

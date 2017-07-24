@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import HelpButton from './help-button';
 import { login } from 'lib/paths';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
@@ -49,6 +50,10 @@ class LoggedOutForm extends Component {
 	handleSubmitSignup = ( form, userData ) => {
 		debug( 'submiting new account', form, userData );
 		this.props.createAccount( userData );
+	};
+
+	handleClickHelp = () => {
+		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	}
 
 	renderLoginUser() {
@@ -63,12 +68,12 @@ class LoggedOutForm extends Component {
 	}
 
 	renderFormHeader() {
-		const { translate } = this.props;
+		const { translate, isAlreadyOnSitesList } = this.props;
 		const headerText = translate( 'Create your account' );
 		const subHeaderText = translate( 'You are moments away from connecting your site.' );
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const siteCard = versionCompare( queryObject.jp_version, '4.0.3', '>' )
-			? <SiteCard queryObject={ queryObject } />
+			? <SiteCard queryObject={ queryObject } isAlreadyOnSitesList={ isAlreadyOnSitesList } />
 			: null;
 
 		return (
@@ -92,10 +97,10 @@ class LoggedOutForm extends Component {
 
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href={ login( { redirectTo } ) }>
+				<LoggedOutFormLinkItem href={ login( { isNative: config.isEnabled( 'login/native-login-links' ), redirectTo } ) }>
 					{ this.props.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
-				<HelpButton onClick={ this.clickHelpButton } />
+				<HelpButton onClick={ this.handleClickHelp } />
 			</LoggedOutFormLinks>
 		);
 	}

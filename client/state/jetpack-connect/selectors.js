@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -95,6 +95,10 @@ const getAuthAttempts = ( state, slug ) => {
 	return attemptsData ? attemptsData.attempt || 0 : 0;
 };
 
+const getUserAlreadyConnected = ( state ) => {
+	return get( state, 'jetpackConnectAuthorize.userAlreadyConnected' );
+};
+
 /**
  * XMLRPC errors can be identified by the presence of an error message, the presence of an authorization code
  * and if the error message contains the string 'error'
@@ -173,5 +177,6 @@ export default {
 	getSiteSelectedPlan,
 	getGlobalSelectedPlan,
 	getAuthAttempts,
-	getSiteIdFromQueryObject
+	getSiteIdFromQueryObject,
+	getUserAlreadyConnected
 };

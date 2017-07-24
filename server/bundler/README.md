@@ -64,7 +64,7 @@ page( /^\/me(\/.*)?$/, function( context, next ) {
 } );
 ```
 
-Webpack then turns `require.ensure` into a jsonp function call that loads the script and then executes the callback `onload`. For Calypso, we have a Webpack plugin at `server/bundler/plugin` that tweaks the jsonp function in order to incorporate some error handling and add support for a `debug` mode that switches to the uncompressed versions of the scripts. If there is an error loading the script, we append `?retry=1` and try refreshing. This should catch any situations where a user has an old version of the application running and for whatever reason the old version of the JavaScript file is no longer available (e.g. due to the static file cache being flushed).
+Webpack then turns `require.ensure` into a jsonp function call that loads the script and then executes the callback `onload`. If there is an error loading the chunk, we append `?retry=1` and try refreshing. This should catch any situations where a user has an old version of the application running and for whatever reason the old version of the JavaScript file is no longer available (e.g. due to the static file cache being flushed).
 
 #### Server
 

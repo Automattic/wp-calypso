@@ -17,6 +17,7 @@ import {
 	unsubscribeToNewCommentEmail,
 } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { local } from 'state/data-layer/utils';
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestCommentEmailUnsubscription', () => {
@@ -32,23 +33,22 @@ describe( 'comment-email-subscriptions', () => {
 					apiVersion: '1.2',
 					onSuccess: action,
 					onFailure: action,
-				} )
+				} ),
 			);
 		} );
 	} );
 
 	describe( 'receiveCommentEmailUnsubscription', () => {
 		it( 'should do nothing if successful', () => {
-			const nextSpy = spy();
+			const dispatch = spy();
 
-			receiveCommentEmailUnsubscription( null, null, nextSpy, { subscribed: false } );
-			expect( nextSpy ).to.not.have.been.called;
+			receiveCommentEmailUnsubscription( { dispatch }, null, null, { subscribed: false } );
+			expect( dispatch ).to.not.have.been.called;
 		} );
 
 		it( 'should dispatch a subscribe if it fails using next', () => {
-			const nextSpy = spy();
 			const dispatch = spy();
-			receiveCommentEmailUnsubscription( { dispatch }, { payload: { blogId: 1234 } }, nextSpy, {
+			receiveCommentEmailUnsubscription( { dispatch }, { payload: { blogId: 1234 } }, null, {
 				subscribed: true,
 			} );
 			expect( dispatch ).to.have.been.calledWithMatch( {
@@ -56,25 +56,20 @@ describe( 'comment-email-subscriptions', () => {
 					text: 'Sorry, we had a problem unsubscribing. Please try again.',
 				},
 			} );
-			expect( nextSpy ).to.have.been.calledWith( subscribeToNewCommentEmail( 1234 ) );
+			expect( dispatch ).to.have.been.calledWith( local( subscribeToNewCommentEmail( 1234 ) ) );
 		} );
 	} );
 
 	describe( 'receiveCommentEmailUnsubscriptionError', () => {
 		it( 'should dispatch an error notice and subscribe action through next', () => {
 			const dispatch = spy();
-			const nextSpy = spy();
-			receiveCommentEmailUnsubscriptionError(
-				{ dispatch },
-				{ payload: { blogId: 1234 } },
-				nextSpy
-			);
+			receiveCommentEmailUnsubscriptionError( { dispatch }, { payload: { blogId: 1234 } } );
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					text: 'Sorry, we had a problem unsubscribing. Please try again.',
 				},
 			} );
-			expect( nextSpy ).to.have.been.calledWith( subscribeToNewCommentEmail( 1234 ) );
+			expect( dispatch ).to.have.been.calledWith( local( subscribeToNewCommentEmail( 1234 ) ) );
 		} );
 	} );
 } );

@@ -463,7 +463,7 @@ function wpview( editor ) {
 
 	editor.on( 'preinit show', function() {
 		views.emitters.forEach( function( emitter ) {
-			emitter.addListener( 'change', setMarkers );
+			emitter.addListener( 'change', setMarkers, editor.getParam( 'redux_store' ) );
 		} );
 
 		setMarkers();

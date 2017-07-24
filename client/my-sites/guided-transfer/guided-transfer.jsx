@@ -16,6 +16,7 @@ import HostCredentialsPage from './host-credentials-page';
 import HostSelect from './host-select';
 import IssuesNotices from './issues-notices';
 import TransferUnavailableCard from './transfer-unavailable-card';
+import Placeholder from 'my-sites/site-settings/placeholder';
 
 const guidedTransferHosts = {
 	bluehost: {
@@ -65,6 +66,11 @@ export default React.createClass( {
 	},
 
 	render: function() {
+		const { siteId, siteSlug } = this.props;
+		if ( ! siteId ) {
+			return <Placeholder />;
+		}
+
 		const hostInfo = get( guidedTransferHosts, this.props.hostSlug );
 		const hosts = Object.keys( guidedTransferHosts ).map( hostSlug => {
 			return {
@@ -72,8 +78,6 @@ export default React.createClass( {
 				showHost: () => this.showHost( hostSlug )
 			};
 		} );
-
-		const { siteId, siteSlug } = this.props;
 
 		return (
 			<Main className="guided-transfer__main site-settings">

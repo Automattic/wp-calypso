@@ -62,14 +62,16 @@ class SiteResults extends React.Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		searchResults: getReaderFeedsForQuery(
-			state,
-			{ query: ownProps.query, excludeFollowed: false, sort: ownProps.sort },
-		),
-		searchResultsCount: getReaderFeedsCountForQuery(
-			state,
-			{ query: ownProps.query, excludeFollowed: false, sort: ownProps.sort },
-		),
+		searchResults: getReaderFeedsForQuery( state, {
+			query: ownProps.query,
+			excludeFollowed: false,
+			sort: ownProps.sort,
+		} ),
+		searchResultsCount: getReaderFeedsCountForQuery( state, {
+			query: ownProps.query,
+			excludeFollowed: false,
+			sort: ownProps.sort,
+		} ),
 	} ),
 	{ requestFeedSearch },
 )( localize( withDimensions( SiteResults ) ) );

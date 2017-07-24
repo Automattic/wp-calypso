@@ -94,7 +94,7 @@ describe( '#getSiteName', () => {
 
 	it( 'should fallback to post if neither site or feed exist', () => {
 		expect( getSiteName( { site: {}, feed: {}, post: postWithSiteName } ) ).eql(
-			postWithSiteName.site_name
+			postWithSiteName.site_name,
 		);
 
 		expect( getSiteName( { post: postWithSiteName } ) ).eql( postWithSiteName.site_name );

@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityLogBanner from './index';
 import Button from 'components/button';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import { getSiteUrl } from 'state/selectors';
 import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'state/activity-log/actions';
 
@@ -44,6 +45,9 @@ class SuccessBanner extends PureComponent {
 				status="success"
 				title={ translate( 'Your site has been successfully restored' ) }
 			>
+				<TrackComponentView eventName="calypso_activitylog_successbanner_impression" eventProperties={ {
+					restore_to: timestamp,
+				} } />
 				<p>{ translate(
 					'We successfully restored your site back to %s!',
 					{ args: moment( timestamp ).format( 'LLLL' ) }

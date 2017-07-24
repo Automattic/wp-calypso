@@ -21,6 +21,7 @@ import EmailVerificationGate from 'components/email-verification/email-verificat
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
+import Placeholder from 'my-sites/site-settings/placeholder';
 
 class SiteSettingsImport extends Component {
 	static propTypes = {
@@ -77,7 +78,7 @@ class SiteSettingsImport extends Component {
 	render() {
 		const { site, siteSlug, translate } = this.props;
 		if ( ! site ) {
-			return null;
+			return <Placeholder />;
 		}
 
 		const { jetpack: isJetpack, options: { admin_url: adminUrl }, slug, title: siteTitle } = site;

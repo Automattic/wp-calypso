@@ -12,20 +12,19 @@ import { localize } from 'i18n-calypso';
  */
 import ActionHeader from 'woocommerce/components/action-header';
 import {
-	areSettingsGeneralLoading,
+	areSettingsGeneralLoaded,
 	areTaxCalculationsEnabled,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import {
-	areTaxSettingsLoading,
+	areTaxSettingsLoaded,
 	getPricesIncludeTax,
 	getShippingIsTaxFree,
 } from 'woocommerce/state/sites/settings/tax/selectors';
-import Button from 'components/button';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import {
-	fetchSettingsGeneral,
 	updateTaxesEnabledSetting,
 } from 'woocommerce/state/sites/settings/general/actions';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
 import {
 	fetchTaxSettings,
@@ -34,6 +33,7 @@ import {
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
+import TaxSettingsSaveButton from './save-button';
 import SettingsNavigation from '../navigation';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import StoreAddress from 'woocommerce/components/store-address';
@@ -45,9 +45,9 @@ class SettingsTaxes extends Component {
 		super( props );
 		this.state = {
 			isSaving: false,
-			pricesIncludeTaxes: true,
-			shippingIsTaxable: true,
-			taxesEnabled: true,
+			pricesIncludeTaxes: props.pricesIncludeTaxes,
+			shippingIsTaxable: props.shippingIsTaxable,
+			taxesEnabled: props.taxesEnabled,
 			userBeganEditing: false,
 		};
 	}
@@ -63,7 +63,6 @@ class SettingsTaxes extends Component {
 		const { site } = this.props;
 
 		if ( site && site.ID ) {
-			this.props.fetchSettingsGeneral( site.ID );
 			this.props.fetchTaxSettings( site.ID );
 		}
 	}
@@ -74,7 +73,6 @@ class SettingsTaxes extends Component {
 			const newSiteId = newProps.site && newProps.site.ID || null;
 			const oldSiteId = site && site.ID || null;
 			if ( oldSiteId !== newSiteId ) {
-				this.props.fetchSettingsGeneral( newSiteId );
 				this.props.fetchTaxSettings( newSiteId );
 			}
 
@@ -100,7 +98,7 @@ class SettingsTaxes extends Component {
 		return this.state.userBeganEditing;
 	}
 
-	onSave = ( event ) => {
+	onSave = ( event, onSuccessExtra ) => {
 		const { site, translate } = this.props;
 
 		event.preventDefault();
@@ -108,7 +106,10 @@ class SettingsTaxes extends Component {
 
 		const onSuccess = () => {
 			this.setState( { isSaving: false, userBeganEditing: false } );
-			return successNotice( translate( 'Settings updated successfully.' ) );
+			if ( onSuccessExtra ) {
+				onSuccessExtra();
+			}
+			return successNotice( translate( 'Settings updated successfully.' ), { duration: 4000, displayOnNextPage: true } );
 		};
 
 		const onFailure = () => {
@@ -138,11 +139,11 @@ class SettingsTaxes extends Component {
 	};
 
 	render = () => {
-		const { className, loading, site, translate } = this.props;
+		const { className, loaded, site, translate } = this.props;
 
-		if ( loading ) {
+		if ( ! loaded ) {
 			// TODO placeholder
-			return null;
+			return <QuerySettingsGeneral siteId={ site.ID } />;
 		}
 
 		const breadcrumbs = [
@@ -150,21 +151,17 @@ class SettingsTaxes extends Component {
 			( <span>{ translate( 'Taxes' ) }</span> ),
 		];
 
-		const saveButtonDisabled = this.state.isSaving || ! this.pageHasChanges();
-
 		return (
 			<Main className={ classNames( 'settings-taxes', className ) }>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
-					<Button disabled={ saveButtonDisabled } onClick={ this.onSave } primary>
-						{ translate( 'Save' ) }
-					</Button>
+					<TaxSettingsSaveButton onSave={ this.onSave } />
 				</ActionHeader>
 				<SettingsNavigation activeSection="taxes" />
 				<div className="taxes__nexus">
 					<ExtendedHeader
-						label={ translate( 'Store Address / Tax Nexus' ) }
+						label={ translate( 'Store Address' ) }
 						description={ translate( 'The address of where your business is located for tax purposes.' ) } />
-					<StoreAddress className="taxes__store-address" onSetAddress={ this.onAddressChange } />
+					<StoreAddress className="taxes__store-address" onSetAddress={ this.onAddressChange } showLabel={ false } />
 				</div>
 				<TaxesRates
 					taxesEnabled={ this.state.taxesEnabled }
@@ -183,22 +180,14 @@ class SettingsTaxes extends Component {
 }
 
 function mapStateToProps( state ) {
-	let loading = true;
-	let pricesIncludeTaxes = false;
-	let shippingIsTaxable = false;
-	let taxesEnabled = false;
-
+	const loaded = areTaxSettingsLoaded( state ) && areSettingsGeneralLoaded( state );
 	const site = getSelectedSiteWithFallback( state );
-
-	loading = areTaxSettingsLoading( state ) || areSettingsGeneralLoading( state );
-	if ( ! loading ) {
-		pricesIncludeTaxes = getPricesIncludeTax( state );
-		shippingIsTaxable = ! getShippingIsTaxFree( state ); // note the inversion
-		taxesEnabled = areTaxCalculationsEnabled( state );
-	}
+	const pricesIncludeTaxes = getPricesIncludeTax( state );
+	const shippingIsTaxable = ! getShippingIsTaxFree( state ); // note the inversion
+	const taxesEnabled = areTaxCalculationsEnabled( state );
 
 	return {
-		loading,
+		loaded,
 		pricesIncludeTaxes,
 		shippingIsTaxable,
 		site,
@@ -209,7 +198,6 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			fetchSettingsGeneral,
 			fetchTaxRates,
 			fetchTaxSettings,
 			updateTaxesEnabledSetting,

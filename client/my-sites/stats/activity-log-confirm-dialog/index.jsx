@@ -96,7 +96,7 @@ class ActivityLogConfirmDialog extends Component {
 					className="activity-log-confirm-dialog__more-info-link"
 					href="https://help.vaultpress.com/one-click-restore/"
 				>
-					{ translate( 'Read More about Site Restores' ) }
+					{ translate( 'Read more about site restores' ) }
 				</a>
 			</Dialog>
 		);

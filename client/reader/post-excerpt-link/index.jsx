@@ -43,7 +43,9 @@ class PostExcerptLink extends React.Component {
 				target="_blank"
 				rel="external noopener noreferrer"
 			>
-				<span className="post-excerpt-only-site-name">{ this.props.siteName || '(untitled)' }</span>
+				<span className="post-excerpt-only-site-name">
+					{ this.props.siteName || '(untitled)' }
+				</span>
 			</a>
 		);
 		const classes = classNames( {
@@ -67,7 +69,7 @@ class PostExcerptLink extends React.Component {
 				</svg>
 				<p className="post-excerpt-link__helper">
 					{ this.props.translate(
-						"The owner of this site only allows us to show a brief summary of their content. To view the full post, you'll have to visit their site."
+						"The owner of this site only allows us to show a brief summary of their content. To view the full post, you'll have to visit their site.",
 					) }
 				</p>
 			</div>

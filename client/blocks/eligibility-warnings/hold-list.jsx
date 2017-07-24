@@ -71,7 +71,14 @@ function getHoldMessages( siteSlug, translate ) {
 			description: translate(
 				'Please check your email to confirm your address.'
 			),
-		}
+		},
+		EXCESSIVE_DISK_SPACE: {
+			title: translate( 'We can\'t proceed with this upload' ),
+			description: translate(
+				'This site is not currently eligible for installing themes and plugins. Please contact support to straighten things out.'
+			),
+			supportUrl: 'https://support.wordpress.com/help-support-options/',
+		},
 	};
 }
 

@@ -47,6 +47,7 @@ import {
 	isDirectlyReady,
 	isDirectlyUninitialized,
 } from 'state/selectors';
+import QueryUserPurchases from 'components/data/query-user-purchases';
 
 /**
  * Module variables
@@ -666,6 +667,7 @@ const HelpContact = React.createClass( {
 				<HappychatConnection />
 				<QueryOlark />
 				<QueryTicketSupportConfiguration />
+				<QueryUserPurchases userId={ this.props.currentUser.ID } />
 			</Main>
 		);
 	}

@@ -1,12 +1,16 @@
 /**
  * External dependencies
  */
-import { includes, concat, compact } from 'lodash';
+import { includes, concat, compact, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { SITES_BLOG_STICKER_LIST_RECEIVE, SITES_BLOG_STICKER_ADD } from 'state/action-types';
+import {
+	SITES_BLOG_STICKER_LIST_RECEIVE,
+	SITES_BLOG_STICKER_ADD,
+	SITES_BLOG_STICKER_REMOVE,
+} from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 
 export const items = createReducer(
@@ -29,6 +33,19 @@ export const items = createReducer(
 			return {
 				...state,
 				[ blogId ]: compact( concat( stickerName, state[ blogId ] ) ),
+			};
+		},
+		[ SITES_BLOG_STICKER_REMOVE ]: ( state, action ) => {
+			const { blogId, stickerName } = action.payload;
+
+			// If the blog doesn't have this sticker, do nothing
+			if ( ! includes( state[ blogId ], stickerName ) ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ blogId ]: reject( state[ blogId ], sticker => sticker === stickerName ),
 			};
 		},
 	},

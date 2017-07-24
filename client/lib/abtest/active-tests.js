@@ -4,9 +4,9 @@ module.exports = {
 		variations: {
 			singlePurchaseFlow: 10,
 			popupCart: 45,
-			keepSearchingInGapps: 45
+			keepSearchingInGapps: 45,
 		},
-		defaultVariation: 'singlePurchaseFlow'
+		defaultVariation: 'singlePurchaseFlow',
 	},
 	signupSurveyStep: {
 		datestamp: '20170329',
@@ -28,7 +28,7 @@ module.exports = {
 		datestamp: '20170328',
 		variations: {
 			showChatButton: 20,
-			original: 80
+			original: 80,
 		},
 		defaultVariation: 'original',
 		localeTargets: 'any',
@@ -68,14 +68,6 @@ module.exports = {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	savingsInCheckoutSummary: {
-		datestamp: '20170516',
-		variations: {
-			hide: 50,
-			show: 50,
-		},
-		defaultVariation: 'show',
-	},
 	signupPlansCopyChanges: {
 		datestamp: '20170623',
 		variations: {
@@ -84,13 +76,42 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
-	postPublishPreview: {
-		datestamp: '20170627',
+	showCartAbandonmentNotice: {
+		datestamp: '20170630',
+		variations: {
+			doNotShowNotice: 50,
+			showNotice: 50,
+		},
+		defaultVariation: 'doNotShowNotice',
+		allowExistingUsers: true,
+	},
+	postPublishConfirmation: {
+		datestamp: '20170713',
 		allowExistingUsers: true,
 		variations: {
-			showPostPublishPreview: 50,
-			noShowPostPublishPreview: 50,
+			showPublishConfirmation: 30,
+			noPublishConfirmation: 70,
 		},
-		defaultVariation: 'noShowPostPublishPreview',
+		defaultVariation: 'noPublishConfirmation',
+	},
+	readerIntroIllustration: {
+		datestamp: '20170718',
+		variations: {
+			blue: 33,
+			lightBlue: 33,
+			white: 34,
+		},
+		defaultVariation: 'white',
+		assignmentMethod: 'userId',
+	},
+	paymentShowPaypalLogo: {
+		datestamp: '20170719',
+		variations: {
+			hide: 50,
+			show: 50,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 };

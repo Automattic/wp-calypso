@@ -20,7 +20,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED,
 } from 'woocommerce/state/action-types';
-import { nextBucketIndex, getBucket } from 'woocommerce/state/ui/helpers';
+import { getBucket } from 'woocommerce/state/ui/helpers';
 import flatRate from './flat-rate/reducer';
 import freeShipping from './free-shipping/reducer';
 import localPickup from './local-pickup/reducer';
@@ -42,10 +42,23 @@ export const initialState = {
 
 const reducer = {};
 
+/**
+ * Gets the temporal ID object that the next created method should have.
+ * @param {Object} state Current edit state
+ * @return {Object} Object with an "index" property, guaranteed to be unique
+ */
+const nextCreateId = ( state ) => {
+	return {
+		index: isEmpty( state.creates )
+			? 0
+			: state.creates[ state.creates.length - 1 ].id.index + 1,
+	};
+};
+
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD ] = ( state, action ) => {
 	const { methodType, title } = action;
-	const id = nextBucketIndex( state.creates );
-	let method = { id, methodType, enabled: true };
+	const id = nextCreateId( state );
+	let method = { id, methodType };
 	if ( builtInShippingMethods[ methodType ] ) {
 		method = {
 			...method,
@@ -127,7 +140,9 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE ] = ( state ) => {
 				...state.creates,
 				{
 					...currentlyEditingChanges,
-					id: nextBucketIndex( state.creates ),
+					// If the "Enabled" toggle hasn't been modified in the current changes, use the value from the old method
+					enabled: isNil( currentlyEditingChanges.enabled ) ? ( method && method.enabled ) : currentlyEditingChanges.enabled,
+					id: nextCreateId( state ),
 					_originalId: originalId
 				}
 			],
@@ -186,6 +201,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
 		id: state.currentlyEditingId,
 		title,
 		methodType,
+		enabled: state.currentlyEditingChanges && state.currentlyEditingChanges.enabled,
 	};
 
 	return { ...state,

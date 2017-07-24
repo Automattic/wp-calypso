@@ -54,7 +54,7 @@ function deserialize( state ) {
  *
  * Can be overridden on the command-line with two flags
  *   - ENABLE_FEATURES=force-sympathy npm start (always sympathize)
- *   - ENABLE_FEATURES=force-no-sympathy npm start (always prevent sympathy)
+ *   - ENABLE_FEATURES=no-force-sympathy npm start (always prevent sympathy)
  *
  * @param {Function} initialStateLoader normal unsympathetic state loader
  * @returns {Function} augmented initial state loader

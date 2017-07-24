@@ -50,9 +50,8 @@ class ManageNoOrdersView extends Component {
 				title={ translate( 'Looking for stats?' ) }
 			>
 				<p>
-					{ translate( 'This dashboard will evolve as your store grows.' +
-						' Statistics will form and order overviews will display as soon as' +
-						' your orders start arriving.' ) }
+					{ translate( 'Store statistic and reports can be found on the site stats screen.' +
+						' Keep an eye on revenues, order totals, popular products and more.' ) }
 				</p>
 			</BasicWidget>
 		);

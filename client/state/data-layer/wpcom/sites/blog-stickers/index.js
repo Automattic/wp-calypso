@@ -11,7 +11,8 @@ import { SITES_BLOG_STICKER_LIST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
-import { addBlogStickerHandler } from 'state/data-layer/wpcom/sites/blog-stickers/add';
+import addBlogStickerHandler from 'state/data-layer/wpcom/sites/blog-stickers/add';
+import removeBlogStickerHandler from 'state/data-layer/wpcom/sites/blog-stickers/remove';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { receiveBlogStickers } from 'state/sites/blog-stickers/actions';
 
@@ -31,7 +32,7 @@ export function requestBlogStickerList( { dispatch }, action ) {
 export function receiveBlogStickerList( store, action, next, response ) {
 	// validate that it worked
 	if ( ! response || ! isArray( response ) ) {
-		receiveBlogStickerListError( store, action, next );
+		receiveBlogStickerListError( store, action );
 		return;
 	}
 
@@ -52,4 +53,8 @@ const listBlogStickersHandler = {
 	],
 };
 
-export default mergeHandlers( listBlogStickersHandler, addBlogStickerHandler );
+export default mergeHandlers(
+	listBlogStickersHandler,
+	addBlogStickerHandler,
+	removeBlogStickerHandler,
+);

@@ -46,7 +46,7 @@ export class ReaderSidebarListsListItem extends Component {
 			ReaderSidebarHelper.pathStartsWithOneOf( [ listRelativeUrl ], this.props.path );
 		const isActionButtonSelected = ReaderSidebarHelper.pathStartsWithOneOf(
 			listManagementUrls,
-			this.props.path
+			this.props.path,
 		);
 
 		const classes = classNames( {
@@ -56,7 +56,9 @@ export class ReaderSidebarListsListItem extends Component {
 		return (
 			<li className={ classes } key={ list.ID }>
 				<a className="sidebar__menu-item-label" href={ listRelativeUrl }>
-					<div className="sidebar__menu-item-listname">{ list.title }</div>
+					<div className="sidebar__menu-item-listname">
+						{ list.title }
+					</div>
 				</a>
 			</li>
 		);

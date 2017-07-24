@@ -166,7 +166,7 @@ describe( 'handlers', () => {
 			const updatedSuccessAction = store.dispatch.firstCall.args[ 0 ].onSuccessAction;
 			expect( updatedSuccessAction ).to.be.a( 'function' );
 
-			updatedSuccessAction( store.dispatch, null, 'RECEIVED_DATA' );
+			updatedSuccessAction( store.dispatch, null, { data: 'RECEIVED_DATA' } );
 
 			expect( store.dispatch ).to.have.been.calledWith(
 				match( {
@@ -204,7 +204,7 @@ describe( 'handlers', () => {
 			const updatedSuccessAction = store.dispatch.firstCall.args[ 0 ].onSuccessAction;
 			expect( updatedSuccessAction ).to.be.a( 'function' );
 
-			updatedSuccessAction( store.dispatch, null, 'RECEIVED_DATA' );
+			updatedSuccessAction( store.dispatch, null, { data: 'RECEIVED_DATA' } );
 
 			expect( store.dispatch ).to.have.been.calledWith(
 				match( {
@@ -270,7 +270,7 @@ describe( 'handlers', () => {
 			const updatedSuccessAction = store.dispatch.firstCall.args[ 0 ].onSuccessAction;
 			expect( updatedSuccessAction ).to.be.a( 'function' );
 
-			updatedSuccessAction( store.dispatch, null, 'RECEIVED_DATA' );
+			updatedSuccessAction( store.dispatch, null, { data: 'RECEIVED_DATA' } );
 
 			expect( store.dispatch ).to.have.been.calledWith(
 				match( {
@@ -308,7 +308,7 @@ describe( 'handlers', () => {
 			const updatedSuccessAction = store.dispatch.firstCall.args[ 0 ].onSuccessAction;
 			expect( updatedSuccessAction ).to.be.a( 'function' );
 
-			updatedSuccessAction( store.dispatch, null, 'RECEIVED_DATA' );
+			updatedSuccessAction( store.dispatch, null, { data: 'RECEIVED_DATA' } );
 
 			expect( store.dispatch ).to.have.been.calledWith(
 				match( {
@@ -405,4 +405,3 @@ describe( 'handlers', () => {
 		} );
 	} );
 } );
-

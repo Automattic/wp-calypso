@@ -115,7 +115,7 @@ class ReaderCombinedCard extends React.Component {
 						<FollowButton siteUrl={ followUrl } followSource={ this.props.followSource } /> }
 				</header>
 				<ul className="reader-combined-card__post-list">
-					{ posts.map( post => (
+					{ posts.map( post =>
 						<ReaderCombinedCardPost
 							key={ `post-${ post.ID }` }
 							post={ post }
@@ -124,8 +124,8 @@ class ReaderCombinedCard extends React.Component {
 							isDiscover={ isDiscover }
 							isSelected={ isSelectedPost( post ) }
 							showFeaturedAsset={ mediaCount > 0 }
-						/>
-					) ) }
+						/>,
+					) }
 				</ul>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
 				{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }

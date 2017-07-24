@@ -65,7 +65,7 @@ class PlansLanding extends Component {
 		setTimeout( () => {
 			page.redirect( redirectUrl );
 		}, 25 );
-	}
+	};
 
 	render() {
 		const {

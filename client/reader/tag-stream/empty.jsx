@@ -51,7 +51,15 @@ class TagEmptyContent extends React.Component {
 
 		const message = this.props.translate(
 			'No posts have recently been tagged with {{tagName /}} for your language.',
-			{ components: { tagName: <em>{ this.props.decodedTagSlug }</em> } }
+			{
+				components: {
+					tagName: (
+						<em>
+							{ this.props.decodedTagSlug }
+						</em>
+					),
+				},
+			},
 		);
 
 		return (

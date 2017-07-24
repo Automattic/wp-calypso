@@ -24,7 +24,7 @@ import {
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export const fetchOrders = ( siteId, page ) => ( dispatch, getState ) => {
+export const fetchOrders = ( siteId, page = 1 ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );

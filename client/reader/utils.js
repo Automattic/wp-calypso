@@ -105,7 +105,7 @@ export function showFullPost( { post, replaceHistory, comments } ) {
 	const method = replaceHistory ? 'replace' : 'show';
 	if ( post.feed_ID && post.feed_item_ID ) {
 		page[ method ](
-			`/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }`
+			`/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }`,
 		);
 	} else {
 		page[ method ]( `/read/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );

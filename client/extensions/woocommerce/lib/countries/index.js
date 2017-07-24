@@ -16,8 +16,8 @@ import US from './US';
 
 export const getCountries = () => {
 	return [
-		CA(),
 		US(),
+		CA(),
 	];
 };
 

@@ -26,7 +26,8 @@ import {
 	hasExpiredSecretError,
 	isRemoteSiteOnSitesList,
 	getAuthAttempts,
-	getSiteIdFromQueryObject
+	getSiteIdFromQueryObject,
+	getUserAlreadyConnected
 } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -63,7 +64,7 @@ class JetpackConnectAuthorizeForm extends Component {
 		retryAuth: PropTypes.func,
 		siteSlug: PropTypes.string,
 		user: PropTypes.object,
-	}
+	};
 
 	componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
@@ -81,6 +82,10 @@ class JetpackConnectAuthorizeForm extends Component {
 		);
 	}
 
+	handleClickHelp = () => {
+		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
+	}
+
 	renderNoQueryArgsError() {
 		return (
 			<Main className="jetpack-connect__main-error">
@@ -93,7 +98,7 @@ class JetpackConnectAuthorizeForm extends Component {
 					actionURL="/jetpack/connect"
 				/>
 				<LoggedOutFormLinks>
-					<HelpButton onClick={ this.clickHelpButton } />
+					<HelpButton onClick={ this.handleClickHelp } />
 				</LoggedOutFormLinks>
 			</Main>
 		);
@@ -153,6 +158,7 @@ export default connect(
 			requestHasXmlrpcError,
 			siteSlug,
 			user: getCurrentUser( state ),
+			userAlreadyConnected: getUserAlreadyConnected( state )
 		};
 	},
 	{

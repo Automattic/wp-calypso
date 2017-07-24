@@ -2,18 +2,18 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import i18n from 'i18n-calypso';
-import { find, debounce } from 'lodash';
+import { find, debounce, isNumber } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import Button from 'components/button';
 import TokenField from 'components/token-field';
 
-export default class ProductVariationTypesForm extends Component {
+class ProductVariationTypesForm extends Component {
 
 	state = {
 		attributeNames: {},
@@ -75,12 +75,13 @@ export default class ProductVariationTypesForm extends Component {
 	}
 
 	renderInputs( attribute, index ) {
+		const { translate } = this.props;
 		const { attributeNames } = this.state;
 		const attributeName = attributeNames && attributeNames[ attribute.uid ] || attribute.name;
 		return (
 			<div key={ index } className="products__variation-types-form-fieldset">
 				<FormTextInput
-					placeholder={ i18n.translate( 'Color' ) }
+					placeholder={ translate( 'Color' ) }
 					value={ attributeName }
 					id={ attribute.uid }
 					name="type"
@@ -88,7 +89,7 @@ export default class ProductVariationTypesForm extends Component {
 					onChange={ this.updateNameHandler }
 				/>
 				<TokenField
-					placeholder={ i18n.translate( 'Red, Green, Blue' ) }
+					placeholder={ translate( 'Red, Green, Blue' ) }
 					value={ attribute.options }
 					name="values"
 					/* eslint-disable react/jsx-no-bind */
@@ -99,16 +100,16 @@ export default class ProductVariationTypesForm extends Component {
 	}
 
 	render() {
-		const { product } = this.props;
+		const { product, translate } = this.props;
 		const { attributes } = product;
 		const variationTypes = ( attributes && attributes.filter( attribute => attribute.variation ) ) || [];
 		const inputs = variationTypes.map( this.renderInputs, this );
 
 		return (
 			<div className="products__variation-types-form-wrapper">
-				<strong>{ i18n.translate( 'Let\'s add some variations!' ) }</strong>
+				{ ! isNumber( product.id ) && ( <strong>{ translate( 'Let\'s add some variations!' ) }</strong> ) }
 				<p>
-					{ i18n.translate(
+					{ translate(
 						'Variations let you sell one item in various different options.',
 						{ components: { em: <em /> } }
 					) }
@@ -116,15 +117,17 @@ export default class ProductVariationTypesForm extends Component {
 
 				<div className="products__variation-types-form-group">
 					<div className="products__variation-types-form-labels">
-						<FormLabel className="products__variation-types-form-label">{ i18n.translate( 'Variation type' ) }</FormLabel>
-						<FormLabel>{ i18n.translate( 'Values' ) }</FormLabel>
+						<FormLabel className="products__variation-types-form-label">{ translate( 'Variation type' ) }</FormLabel>
+						<FormLabel>{ translate( 'Values' ) }</FormLabel>
 					</div>
 					{inputs}
 				</div>
 
-				<Button onClick={ this.addType }>{ i18n.translate( 'Add another variation' ) }</Button>
+				<Button onClick={ this.addType }>{ translate( 'Add another variation' ) }</Button>
 		</div>
 		);
 	}
 
 }
+
+export default localize( ProductVariationTypesForm );

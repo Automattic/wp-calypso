@@ -11,6 +11,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { subscribeToNewCommentEmail } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
+import { local } from 'state/data-layer/utils';
 
 export function requestCommentEmailUnsubscription( { dispatch }, action ) {
 	dispatch(
@@ -21,7 +22,7 @@ export function requestCommentEmailUnsubscription( { dispatch }, action ) {
 			body: {}, // have to have the empty body for now to make the middleware happy
 			onSuccess: action,
 			onFailure: action,
-		} )
+		} ),
 	);
 }
 
@@ -31,16 +32,16 @@ export function receiveCommentEmailUnsubscription( store, action, next, response
 	const subscribed = !! ( response && response.subscribed );
 	if ( subscribed ) {
 		// shoot. something went wrong.
-		receiveCommentEmailUnsubscriptionError( store, action, next );
+		receiveCommentEmailUnsubscriptionError( store, action );
 		return;
 	}
 }
 
-export function receiveCommentEmailUnsubscriptionError( { dispatch }, action, next ) {
+export function receiveCommentEmailUnsubscriptionError( { dispatch }, action ) {
 	dispatch(
-		errorNotice( translate( 'Sorry, we had a problem unsubscribing. Please try again.' ) )
+		errorNotice( translate( 'Sorry, we had a problem unsubscribing. Please try again.' ) ),
 	);
-	next( subscribeToNewCommentEmail( action.payload.blogId ) );
+	dispatch( local( subscribeToNewCommentEmail( action.payload.blogId ) ) );
 }
 
 export default {
@@ -48,7 +49,7 @@ export default {
 		dispatchRequest(
 			requestCommentEmailUnsubscription,
 			receiveCommentEmailUnsubscription,
-			receiveCommentEmailUnsubscriptionError
+			receiveCommentEmailUnsubscriptionError,
 		),
 	],
 };

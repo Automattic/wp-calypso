@@ -28,8 +28,8 @@ import {
 
 const apiResponse = {
 	data: {
-		job_manager_per_page: 25,
 		job_manager_hide_filled_positions: true,
+		job_manager_per_page: 25,
 	}
 };
 const saveAction = {
@@ -71,23 +71,40 @@ describe( '#updateExtensionSettings', () => {
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( updateSettings( 12345678, {
-			listings: {
-				perPage: 25,
-				hideFilledPositions: true,
-				hideExpired: undefined,
-				hideExpiredContent: undefined
+			account: {
+				enableRegistration: undefined,
+				generateUsername: undefined,
+				isAccountRequired: undefined,
+				role: undefined,
+			},
+			apiKey: { googleMapsApiKey: undefined },
+			approval: {
+				canEdit: undefined,
+				isApprovalRequired: undefined,
 			},
 			categories: {
 				enableCategories: undefined,
 				enableDefaultCategory: undefined,
 				categoryFilterType: undefined
 			},
+			duration: { submissionDuration: undefined },
+			format: { dateFormat: undefined },
+			listings: {
+				perPage: 25,
+				hideFilledPositions: true,
+				hideExpired: undefined,
+				hideExpiredContent: undefined
+			},
+			method: { applicationMethod: undefined },
+			pages: {
+				dashboardPage: undefined,
+				listingsPage: undefined,
+				submitFormPage: undefined,
+			},
 			types: {
 				enableTypes: undefined,
 				multiJobType: undefined
 			},
-			format: { dateFormat: undefined },
-			apiKey: { googleMapsApiKey: undefined }
 		} ) );
 	} );
 } );

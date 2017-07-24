@@ -809,6 +809,19 @@ function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion ) {
 	return 'PRICE';
 }
 
+/**
+ * Determines whether any items in the cart were added more than X time ago (10 minutes)
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is at least one cart item added more than X time ago, false otherwise
+ */
+function hasStaleItem( cart ) {
+	return some( getAll( cart ), function( cartItem ) {
+		// time_added_to_cart is in seconds, Date.now() returns milliseconds
+		return ( cartItem.time_added_to_cart && cartItem.time_added_to_cart * 1000 < Date.now() - ( 10 * 60 * 1000 ) );
+	} );
+}
+
 module.exports = {
 	add,
 	addPrivacyToAllDomains,
@@ -867,5 +880,6 @@ module.exports = {
 	themeItem,
 	unlimitedSpaceItem,
 	unlimitedThemesItem,
-	videoPressItem
+	videoPressItem,
+	hasStaleItem
 };

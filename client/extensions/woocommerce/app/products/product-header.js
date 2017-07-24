@@ -17,9 +17,10 @@ function renderViewButton( product, translate ) {
 	const url = product && product.permalink;
 	return (
 		// TODO: Do more to validate this URL?
-		<a href={ url } className="products__header-view-link" target="_blank" rel="noopener noreferrer">
-			<Button borderless><Gridicon icon="visible" /><span> { translate( 'View' ) } </span></Button>
-		</a>
+		<Button borderless className="products__header-view-link" href={ url } target="_blank" rel="noopener noreferrer">
+			<Gridicon icon="visible" />
+			<span>{ translate( 'View' ) }</span>
+		</Button>
 	);
 }
 

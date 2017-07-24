@@ -349,6 +349,12 @@ Undocumented.prototype.jetpackAuthorizeSSONonce = function( siteId, ssoNonce, fn
 	return this.wpcom.req.post( { path: endpointUrl }, params, fn );
 };
 
+Undocumented.prototype.jetpackIsUserConnected = function( siteId ) {
+	debug( '/sites/:site_id:/jetpack-connect/is-user-connected query' );
+	const endpointUrl = '/sites/' + siteId + '/jetpack-connect/is-user-connected';
+	return this.wpcom.req.get( { path: endpointUrl, apiNamespace: 'wpcom/v2' } );
+};
+
 /**
  * Gets the current status of a full sync for a Jetpack site.
  *
@@ -1125,6 +1131,15 @@ Undocumented.prototype.readA8C = function( query, fn ) {
 	query.apiVersion = '1.3';
 	addReaderContentWidth( query );
 	return this.wpcom.req.get( '/read/a8c', query, fn );
+};
+
+Undocumented.prototype.readConversations = function( query, fn ) {
+	debug( '/read/conversations' );
+	const params = {
+		...query,
+		apiVersion: '1.2'
+	};
+	return this.wpcom.req.get( '/read/conversations', params, fn );
 };
 
 Undocumented.prototype.readFeed = function( query, fn ) {

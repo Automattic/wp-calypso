@@ -18,6 +18,7 @@ import {
 } from 'reader/controller-helper';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
+import { SEARCH_TYPES } from 'reader/search-stream/search-stream-header';
 
 const analyticsPageTitle = 'Reader';
 
@@ -36,7 +37,7 @@ const exported = {
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Search',
 			mcKey = 'search';
 
-		const { sort = 'relevance', q: searchSlug, show = 'Posts' } = context.query;
+		const { sort = 'relevance', q: searchSlug, show = SEARCH_TYPES.POSTS } = context.query;
 
 		let store;
 		if ( searchSlug ) {
@@ -79,7 +80,7 @@ const exported = {
 					basePath,
 					fullAnalyticsPageTitle,
 					analyticsPageTitle,
-					mcKey
+					mcKey,
 				) }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 				showBack={ false }
@@ -90,7 +91,7 @@ const exported = {
 				searchType={ show }
 			/>,
 			document.getElementById( 'primary' ),
-			context.store
+			context.store,
 		);
 	},
 };

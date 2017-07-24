@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { noop, values } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -12,23 +12,22 @@ import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 import NavItem from 'components/section-nav/item';
 
-export const POSTS = 'Posts';
-export const SITES = 'Sites';
+export const SEARCH_TYPES = { POSTS: 'posts', SITES: 'sites' };
 
 class SearchStreamHeader extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
 		wideDisplay: PropTypes.bool,
-		selected: PropTypes.oneOf( [ POSTS, SITES ] ),
+		selected: PropTypes.oneOf( values( SEARCH_TYPES ) ),
 		onSelection: PropTypes.func,
 	};
 	static defaultProps = {
 		onSelection: noop,
-		selected: POSTS,
-	}
+		selected: SEARCH_TYPES.posts,
+	};
 
-	handlePostsSelected = () => this.props.onSelection( POSTS );
-	handleSitesSelected = () => this.props.onSelection( SITES );
+	handlePostsSelected = () => this.props.onSelection( SEARCH_TYPES.POSTS );
+	handleSitesSelected = () => this.props.onSelection( SEARCH_TYPES.SITES );
 
 	render() {
 		const { translate, wideDisplay, selected } = this.props;
@@ -36,8 +35,12 @@ class SearchStreamHeader extends Component {
 		if ( wideDisplay ) {
 			return (
 				<ul className="search-stream__headers">
-					<li className="search-stream__post-header">{ translate( 'Posts' ) }</li>
-					<li className="search-stream__site-header">{ translate( 'Sites' ) }</li>
+					<li className="search-stream__post-header">
+						{ translate( 'Posts' ) }
+					</li>
+					<li className="search-stream__site-header">
+						{ translate( 'Sites' ) }
+					</li>
 				</ul>
 			);
 		}
@@ -48,14 +51,14 @@ class SearchStreamHeader extends Component {
 					<NavTabs>
 						<NavItem
 							key={ 'posts-nav' }
-							selected={ selected === POSTS }
+							selected={ selected === SEARCH_TYPES.POSTS }
 							onClick={ this.handlePostsSelected }
 						>
 							{ translate( 'Posts' ) }
 						</NavItem>
 						<NavItem
 							key={ 'sites-nav' }
-							selected={ selected === SITES }
+							selected={ selected === SEARCH_TYPES.SITES }
 							onClick={ this.handleSitesSelected }
 						>
 							{ translate( 'Sites' ) }

@@ -10,16 +10,14 @@ import React, { Component, PropTypes } from 'react';
  * Internal dependencies
  */
 import {
-	areTaxCalculationsEnabled,
-} from 'woocommerce/state/sites/settings/general/selectors';
-import {
 	areSetupChoicesLoading,
 	getOptedOutOfShippingSetup,
-	getOptedOutofTaxesSetup,
 	getTriedCustomizerDuringInitialSetup,
+	getCheckedTaxSetup,
 } from 'woocommerce/state/sites/setup-choices/selectors';
 import {
-	getTotalProducts
+	getTotalProducts,
+	areProductsLoaded,
 } from 'woocommerce/state/sites/products/selectors';
 import {
 	fetchProducts
@@ -30,12 +28,10 @@ import {
 import {
 	fetchSetupChoices,
 	setOptedOutOfShippingSetup,
-	setOptedOutOfTaxesSetup,
 	setTriedCustomizerDuringInitialSetup,
+	setCheckedTaxSetup,
 } from 'woocommerce/state/sites/setup-choices/actions';
-import {
-	fetchSettingsGeneral,
-} from 'woocommerce/state/sites/settings/general/actions';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import {
 	arePaymentsSetup
 } from 'woocommerce/state/ui/payments/methods/selectors';
@@ -55,7 +51,6 @@ class SetupTasks extends Component {
 		super( props );
 		this.state = {
 			showShippingTask: props.loading || ! props.optedOutOfShippingSetup,
-			showTaxesTask: props.loading || ! props.optedOutOfTaxesSetup,
 		};
 	}
 
@@ -64,9 +59,11 @@ class SetupTasks extends Component {
 
 		if ( site && site.ID ) {
 			this.props.fetchPaymentMethods( site.ID );
-			this.props.fetchProducts( site.ID, 1 );
-			this.props.fetchSettingsGeneral( site.ID );
 			this.props.fetchSetupChoices( site.ID );
+
+			if ( ! areProductsLoaded ) {
+				this.props.fetchProducts( site.ID, 1 );
+			}
 		}
 	}
 
@@ -76,10 +73,11 @@ class SetupTasks extends Component {
 		const newSiteId = newProps.site && newProps.site.ID || null;
 		const oldSiteId = site && site.ID || null;
 
-		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchProducts( newSiteId, 1 );
-			this.props.fetchSettingsGeneral( newSiteId );
+		if ( newSiteId && ( oldSiteId !== newSiteId ) ) {
 			this.props.fetchSetupChoices( newSiteId );
+			if ( ! areProductsLoaded ) {
+				this.props.fetchProducts( newSiteId, 1 );
+			}
 		}
 	}
 
@@ -91,12 +89,8 @@ class SetupTasks extends Component {
 		this.props.setOptedOutOfShippingSetup( this.props.site.ID, true );
 	}
 
-	onClickNoTaxes = () => {
-		event.preventDefault();
-		this.setState( {
-			showTaxesTask: false
-		} );
-		this.props.setOptedOutOfTaxesSetup( this.props.site.ID, true );
+	onClickTaxSettings = () => {
+		this.props.setCheckedTaxSetup( this.props.site.ID, true );
 	}
 
 	onClickOpenCustomizer = () => {
@@ -130,20 +124,14 @@ class SetupTasks extends Component {
 			},
 			{
 				checked: shippingIsSetUp,
-				explanation: translate( 'Be ready to ship by the time your first order comes in.' ),
-				label: translate( 'Set up shipping' ),
+				explanation: translate( 'We\'ve set up shipping based on your store location.' ),
+				label: translate( 'Review shipping settings' ),
 				show: this.state.showShippingTask,
 				actions: [
 					{
-						label: translate( 'Set up shipping' ),
+						label: translate( 'Review settings' ),
 						path: getLink( '/store/settings/shipping/:site', site ),
 						analyticsProp: 'set-up-shipping',
-					},
-					{
-						label: translate( 'I won\'t be shipping' ),
-						isSecondary: true,
-						onClick: this.onClickNoShip,
-						analyticsProp: 'not-shipping',
 					}
 				]
 			},
@@ -162,20 +150,15 @@ class SetupTasks extends Component {
 			},
 			{
 				checked: taxesAreSetUp,
-				explanation: translate( 'Taxes. Everyone\'s favorite. We made it simple.' ),
-				label: translate( 'Set up taxes' ),
-				show: this.state.showTaxesTask,
+				explanation: translate( 'We\'ve set up automatic tax calculations for you.' ),
+				label: translate( 'Review tax settings' ),
+				show: true,
 				actions: [
 					{
-						label: translate( 'Set up taxes' ),
+						label: translate( 'Review settings' ),
 						path: getLink( '/store/settings/taxes/:site', site ),
+						onClick: this.onClickTaxSettings,
 						analyticsProp: 'set-up-taxes',
-					},
-					{
-						label: translate( 'I won\'t be charging sales tax' ),
-						isSecondary: true,
-						onClick: this.onClickNoTaxes,
-						analyticsProp: 'no-taxes',
 					}
 				]
 			},
@@ -215,6 +198,7 @@ class SetupTasks extends Component {
 	render = () => {
 		return (
 			<div className="dashboard__setup-checklist">
+				<QuerySettingsGeneral siteId={ this.props.site.ID } />
 				{ this.getSetupTasks().map( this.renderSetupTask ) }
 			</div>
 		);
@@ -225,12 +209,12 @@ function mapStateToProps( state ) {
 	return {
 		loading: areSetupChoicesLoading( state ),
 		optedOutOfShippingSetup: getOptedOutOfShippingSetup( state ),
-		optedOutOfTaxesSetup: getOptedOutofTaxesSetup( state ),
 		triedCustomizer: getTriedCustomizerDuringInitialSetup( state ),
 		hasProducts: getTotalProducts( state ) > 0,
+		productsLoaded: areProductsLoaded( state ),
 		paymentsAreSetUp: arePaymentsSetup( state ),
 		shippingIsSetUp: areAnyShippingMethodsEnabled( state ),
-		taxesAreSetUp: !! areTaxCalculationsEnabled( state ),
+		taxesAreSetUp: getCheckedTaxSetup( state ),
 	};
 }
 
@@ -239,10 +223,9 @@ function mapDispatchToProps( dispatch ) {
 		{
 			fetchPaymentMethods,
 			fetchProducts,
-			fetchSettingsGeneral,
 			fetchSetupChoices,
 			setOptedOutOfShippingSetup,
-			setOptedOutOfTaxesSetup,
+			setCheckedTaxSetup,
 			setTriedCustomizerDuringInitialSetup,
 		},
 		dispatch

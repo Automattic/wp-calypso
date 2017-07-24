@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { findIndex, isArray } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -20,6 +21,13 @@ import {
 } from 'woocommerce/state/action-types';
 
 // TODO: Handle error
+
+const processZoneData = ( zoneData ) => {
+	if ( 0 !== zoneData.id ) {
+		return zoneData;
+	}
+	return { ...zoneData, name: translate( 'Locations not covered by your other zones' ) };
+};
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST ]: ( state, { zoneId } ) => {
@@ -62,6 +70,7 @@ export default createReducer( null, {
 	},
 
 	[ WOOCOMMERCE_SHIPPING_ZONE_UPDATED ]: ( state, { data, originatingAction: { zone } } ) => {
+		data = processZoneData( data );
 		if ( ! isArray( state ) ) {
 			return state;
 		}
@@ -159,6 +168,6 @@ export default createReducer( null, {
 	},
 
 	[ WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		return data;
+		return data.map( processZoneData );
 	},
 } );

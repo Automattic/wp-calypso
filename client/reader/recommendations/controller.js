@@ -73,13 +73,13 @@ const exported = {
 					basePath,
 					fullAnalyticsPageTitle,
 					ANALYTICS_PAGE_TITLE,
-					mcKey
+					mcKey,
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 				showBack: userHasHistory( context ),
 			} ),
 			document.getElementById( 'primary' ),
-			context.store
+			context.store,
 		);
 	},
 };

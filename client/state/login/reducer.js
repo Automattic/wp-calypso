@@ -9,6 +9,7 @@ import { get, isEmpty, omit } from 'lodash';
 import { combineReducers, createReducer } from 'state/utils';
 import magicLogin from './magic-login/reducer';
 import {
+	LOGIN_FORM_UPDATE,
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
@@ -31,6 +32,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 	USER_RECEIVE,
 } from 'state/action-types';
+import { login } from 'lib/paths';
 
 export const isRequesting = createReducer( false, {
 	[ LOGIN_REQUEST ]: () => true,
@@ -63,6 +65,7 @@ export const requestError = createReducer( null, {
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => error,
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: () => null,
 	[ ROUTE_SET ]: () => null,
+	[ LOGIN_FORM_UPDATE ]: () => null,
 } );
 
 export const requestSuccess = createReducer( null, {
@@ -78,7 +81,13 @@ export const requestNotice = createReducer( null, {
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: ( state, { notice } ) => notice,
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: ( state, { notice } ) => notice,
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: () => null,
-	[ ROUTE_SET ]: () => null,
+	[ ROUTE_SET ]: ( state, action ) => {
+		// if we just navigated to the sms 2fa page, keep the notice (if any) from the loginUser action
+		if ( action.path === login( { isNative: true, twoFactorAuthType: 'sms' } ) ) {
+			return state;
+		}
+		return null;
+	},
 } );
 
 const updateTwoStepNonce = ( state, { twoStepNonce, nonceType } ) => Object.assign( {}, state, {
@@ -117,6 +126,7 @@ export const twoFactorAuthRequestError = createReducer( null, {
 	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS ]: () => null,
 	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE ]: ( state, { error } ) => error,
 	[ ROUTE_SET ]: () => null,
+	[ LOGIN_FORM_UPDATE ]: () => null,
 } );
 
 export const twoFactorAuthPushPoll = createReducer( { inProgress: false, success: false }, {

@@ -9,24 +9,21 @@ import { Field } from 'redux-form';
  */
 import FormToggle from 'components/forms/form-toggle/compact';
 
+// eslint-disable-next-line no-unused-vars
+const RenderToggle = ( { input, meta, text, type, ...otherProps } ) => (
+	<FormToggle { ...input } { ...otherProps }>
+		{ text }
+	</FormToggle>
+);
+
 class ReduxFormToggle extends Component {
 	static propTypes = {
-		name: PropTypes.string,
+		name: PropTypes.string.isRequired,
 		text: PropTypes.string,
 	};
 
-	renderToggle = text => ( { input: { onChange, value } } ) => (
-		<FormToggle
-			checked={ value || false }
-			onChange={ this.updateToggle( value, onChange ) }>
-			{ text }
-		</FormToggle>
-	)
-
-	updateToggle = ( value, onChange ) => () => onChange( ! value );
-
 	render() {
-		return <Field component={ this.renderToggle( this.props.text ) } name={ this.props.name } />;
+		return <Field component={ RenderToggle } type="checkbox" { ...this.props } />;
 	}
 }
 

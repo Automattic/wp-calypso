@@ -30,6 +30,7 @@ describe( '#restoreProgress()', () => {
 		expect( state[ SITE_ID ] ).to.deep.equal( {
 			errorCode: '',
 			failureReason: '',
+			freshness: -Infinity,
 			message: '',
 			percent: 0,
 			status: 'queued',

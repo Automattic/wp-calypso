@@ -10,6 +10,7 @@ import { translate } from 'i18n-calypso';
  */
 import config from 'config';
 import {
+	LOGIN_FORM_UPDATE,
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
@@ -64,6 +65,15 @@ function getErrorMessageFromErrorCode( code ) {
 	}
 
 	return code;
+}
+
+function getSMSMessageFromResponse( response ) {
+	const phoneNumber = get( response, 'body.data.phone_number' );
+	return translate( 'Message sent to phone number ending in %(phoneNumber)s', {
+		args: {
+			phoneNumber
+		}
+	} );
 }
 
 const errorFields = {
@@ -150,6 +160,17 @@ export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) =
 				rememberMe,
 				data: response.body && response.body.data,
 			} );
+
+			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
+				dispatch( {
+					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+					notice: {
+						message: getSMSMessageFromResponse( response ),
+						status: 'is-success'
+					},
+					twoStepNonce: get( response, 'body.data.two_step_nonce_sms' )
+				} );
+			}
 		} ).catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
 
@@ -305,12 +326,7 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
 		.then( ( response ) => {
-			const phoneNumber = get( response, 'body.data.phone_number' );
-			const message = translate( 'Message sent to phone number ending in %(phoneNumber)s', {
-				args: {
-					phoneNumber
-				}
-			} );
+			const message = getSMSMessageFromResponse( response );
 
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
@@ -333,3 +349,4 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 
 export const startPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } );
 export const stopPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP } );
+export const formUpdate = () => ( { type: LOGIN_FORM_UPDATE } );

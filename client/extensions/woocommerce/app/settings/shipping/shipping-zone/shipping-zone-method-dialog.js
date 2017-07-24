@@ -90,7 +90,7 @@ const ShippingZoneMethodDialog = ( {
 
 	const buttons = [
 		{ action: 'cancel', label: translate( 'Cancel' ) },
-		{ action: 'add', label: translate( 'Save' ), onClick: onClose, isPrimary: true },
+		{ action: 'add', label: isNew ? translate( 'Add' ) : translate( 'Done' ), onClick: onClose, isPrimary: true },
 	];
 
 	if ( ! isNew ) {
@@ -112,13 +112,7 @@ const ShippingZoneMethodDialog = ( {
 				{ isNew ? translate( 'Add shipping method' ) : translate( 'Edit shipping method' ) }
 			</div>
 			<FormFieldSet className="shipping-zone__enable">
-				<span onClick={ onEnabledChange }>
-					{ translate( 'Enabled {{toggle/}}', {
-						components: {
-							toggle: <FormToggle checked={ enabled } />
-						}
-					} ) }
-				</span>
+				<FormToggle checked={ enabled } onChange={ onEnabledChange }>{ translate( 'Enabled' ) }</FormToggle>
 			</FormFieldSet>
 			<FormFieldSet>
 				<FormFieldSet>
@@ -137,7 +131,7 @@ const ShippingZoneMethodDialog = ( {
 						value={ title || '' }
 						onChange={ onMethodTitleChange } />
 				</FormFieldSet>
-				{ renderMethodSettingsView( method, siteId ) }
+				{ renderMethodSettingsView() }
 			</FormFieldSet>
 		</Dialog>
 	);

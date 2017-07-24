@@ -7,7 +7,7 @@ import { truncateArticleContent } from '../helpers';
 
 export class GooglePlusSharePreview extends PureComponent {
 
-	static PropTypes = {
+	static propTypes = {
 		articleUrl: PropTypes.string,
 		externalProfilePicture: PropTypes.string,
 		externalProfileUrl: PropTypes.string,

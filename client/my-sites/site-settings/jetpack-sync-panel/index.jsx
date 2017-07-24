@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Button from 'components/button';
 import Notice from 'components/notice';
 import ProgressBar from 'components/progress-bar';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -173,25 +172,25 @@ const JetpackSyncPanel = React.createClass( {
 		const { translate } = this.props;
 		return (
 			<CompactCard className="jetpack-sync-panel">
-				<div className="jetpack-sync-panel__action-group">
-					<div className="jetpack-sync-panel__description">
-						{ translate(
-							'{{strong}}Jetpack Sync keeps your WordPress.com dashboard up to date.{{/strong}} ' +
-							'Data is sent from your site to the WordPress.com dashboard regularly to provide a faster experience. ' +
-							'If you suspect some data is missing, you can initiate a sync manually.',
-							{
-								components: {
-									strong: <strong />
-								}
+				<div className="jetpack-sync-panel__action">
+					{ translate(
+						'Jetpack Sync keeps your WordPress.com dashboard up to date. ' +
+						'Data is sent from your site to the WordPress.com dashboard regularly to provide a faster experience. ',
+						{
+							components: {
+								strong: <strong />
 							}
-						) }
-					</div>
+						}
+					) }
 
-					<div className="jetpack-sync-panel__action">
-						<Button onClick={ this.onSyncRequestButtonClick } disabled={ this.shouldDisableSync() }>
-							{ translate( 'Perform full sync', { context: 'Button' } ) }
-						</Button>
-					</div>
+					{
+						! this.shouldDisableSync() &&
+						translate( 'If you suspect some data is missing, you can {{link}}initiate a sync manually{{/link}}.', {
+							components: {
+								link: <a href="" onClick={ this.onSyncRequestButtonClick } />
+							}
+						} )
+					}
 				</div>
 
 				{ this.renderErrorNotice() }

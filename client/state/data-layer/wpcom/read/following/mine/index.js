@@ -32,7 +32,7 @@ export const requestPageAction = ( page = 1, number = ITEMS_PER_PAGE, meta = '' 
 let syncingFollows = false;
 let seenSubscriptions = null;
 export const isSyncingFollows = () => syncingFollows;
-export const resetSyncingFollows = () => syncingFollows = false;
+export const resetSyncingFollows = () => ( syncingFollows = false );
 
 export function syncReaderFollows( store ) {
 	if ( isSyncingFollows() ) {
@@ -65,8 +65,8 @@ export function requestPage( store, action ) {
 const MAX_PAGES_TO_FETCH = MAX_ITEMS / ITEMS_PER_PAGE;
 
 export function receivePage( store, action, next, apiResponse ) {
-	if ( ! isValidApiResponse( apiResponse, action ) ) {
-		receiveError( store, action, next, apiResponse );
+	if ( ! isValidApiResponse( apiResponse ) ) {
+		receiveError( store );
 		return;
 	}
 

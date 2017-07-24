@@ -14,7 +14,7 @@ import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import ErrorPanel from '../stats-error';
-import Pagination from '../pagination';
+import Pagination from 'components/pagination';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';

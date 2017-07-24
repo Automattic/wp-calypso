@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import React from 'react';
-import { find } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -13,11 +12,10 @@ import QueryBlogStickers from 'components/data/query-blog-stickers';
 import { getReaderTeams, getBlogStickers } from 'state/selectors';
 import BlogStickersList from 'blocks/blog-stickers/list';
 import InfoPopover from 'components/info-popover';
+import { isAutomatticTeamMember } from 'reader/lib/teams';
 
 const BlogStickers = ( { blogId, teams, stickers } ) => {
-	// If the user isn't in the a8c team, don't show the feature
-	const isTeamMember = !! find( teams, [ 'slug', 'a8c' ] );
-
+	const isTeamMember = isAutomatticTeamMember( teams );
 	if ( teams && ! isTeamMember ) {
 		return null;
 	}
@@ -27,7 +25,9 @@ const BlogStickers = ( { blogId, teams, stickers } ) => {
 			{ isTeamMember &&
 				stickers &&
 				stickers.length > 0 &&
-				<InfoPopover><BlogStickersList stickers={ stickers } /></InfoPopover> }
+				<InfoPopover rootClassName="blog-stickers__popover">
+					<BlogStickersList stickers={ stickers } />
+				</InfoPopover> }
 			{ ! stickers && <QueryBlogStickers blogId={ blogId } /> }
 			{ ! teams && <QueryReaderTeams /> }
 		</div>

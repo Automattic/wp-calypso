@@ -18,8 +18,8 @@ export class QuerySiteComments extends Component {
 		requestComments( this.props );
 	}
 
-	componentDidUpdate( { siteId } ) {
-		if ( siteId !== this.props.siteId ) {
+	componentDidUpdate( { siteId, status } ) {
+		if ( siteId !== this.props.siteId || status !== this.props.status ) {
 			requestComments( this.props );
 		}
 	}

@@ -5,7 +5,13 @@ import React, { Component, PropTypes } from 'react';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { groupBy, map, get, filter } from 'lodash';
+import {
+	filter,
+	get,
+	groupBy,
+	includes,
+	map,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,16 +38,16 @@ import QueryActivityLog from 'components/data/query-activity-log';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
-import { recordGoogleEvent } from 'state/analytics/actions';
 import ActivityLogRewindToggle from './activity-log-rewind-toggle';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
 import {
-	getRewindStatusError,
 	getActivityLogs,
 	getRestoreProgress,
-	isRewindActive as isRewindActiveSelector,
+	getRewindStatusError,
 	getSiteGmtOffset,
 	getSiteTimezoneValue,
+	isRewindActive as isRewindActiveSelector,
 } from 'state/selectors';
 
 const debug = debugFactory( 'calypso:activity-log' );
@@ -94,23 +100,35 @@ class ActivityLog extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	handleRequestRestore = ( requestedRestoreTimestamp ) => {
+	handleRequestRestore = ( requestedRestoreTimestamp, from ) => {
+		this.props.recordTracksEvent( 'calypso_activitylog_restore_request', {
+			from,
+			timestamp: requestedRestoreTimestamp,
+		} );
 		this.setState( {
 			requestedRestoreTimestamp,
 			showRestoreConfirmDialog: true,
 		} );
 	};
 
-	handleRestoreDialogClose = () => this.setState( { showRestoreConfirmDialog: false } );
+	handleRestoreDialogClose = () => {
+		this.props.recordTracksEvent( 'calypso_activitylog_restore_cancel', {
+			timestamp: this.state.requestedRestoreTimestamp,
+		} );
+		this.setState( { showRestoreConfirmDialog: false } );
+	};
 
 	handleRestoreDialogConfirm = () => {
 		const {
+			recordTracksEvent,
 			rewindRestore,
 			siteId,
 		} = this.props;
-
 		const { requestedRestoreTimestamp } = this.state;
 
+		recordTracksEvent( 'calypso_activitylog_restore_confirm', {
+			timestamp: requestedRestoreTimestamp,
+		} );
 		debug( 'Restore requested for site %d to time %d', this.props.siteId, requestedRestoreTimestamp );
 		this.setState( { showRestoreConfirmDialog: false } );
 		rewindRestore( siteId, requestedRestoreTimestamp );
@@ -137,6 +155,13 @@ class ActivityLog extends Component {
 		};
 	}
 
+	isRestoreInProgress() {
+		return includes( [
+			'queued',
+			'running',
+		], get( this.props, [ 'restoreProgress', 'status' ] ) );
+	}
+
 	renderBanner() {
 		const {
 			restoreProgress,
@@ -150,34 +175,40 @@ class ActivityLog extends Component {
 		const {
 			errorCode,
 			failureReason,
+			freshness,
 			percent,
-			status,
+			restoreId,
 			siteTitle,
+			status,
 			timestamp,
 		} = restoreProgress;
 
 		if ( status === 'finished' ) {
-			return ( errorCode
-				? (
-					<ErrorBanner
-						errorCode={ errorCode }
-						failureReason={ failureReason }
-						requestRestore={ this.handleRequestRestore }
-						siteId={ siteId }
-						siteTitle={ siteTitle }
-						timestamp={ timestamp }
-					/>
-				) : (
-					<SuccessBanner
-						siteId={ siteId }
-						timestamp={ timestamp }
-					/>
-				)
+			return (
+				<div>
+					<QueryActivityLog siteId={ siteId } />
+					{ errorCode ? (
+						<ErrorBanner
+							errorCode={ errorCode }
+							failureReason={ failureReason }
+							requestRestore={ this.handleRequestRestore }
+							siteId={ siteId }
+							siteTitle={ siteTitle }
+							timestamp={ timestamp } />
+					) : (
+						<SuccessBanner
+							siteId={ siteId }
+							timestamp={ timestamp } />
+					) }
+				</div>
 			);
 		}
 		return (
 			<ProgressBanner
+				freshness={ freshness }
 				percent={ percent }
+				restoreId={ restoreId }
+				siteId={ siteId }
 				status={ status }
 				timestamp={ timestamp }
 			/>
@@ -223,6 +254,8 @@ class ActivityLog extends Component {
 			startDate,
 		} = this.props;
 
+		const disableRestore = this.isRestoreInProgress();
+
 		const applySiteOffset = this.getSiteOffsetFunc();
 
 		const YEAR_MONTH = 'YYYY-MM';
@@ -238,14 +271,15 @@ class ActivityLog extends Component {
 			),
 			( daily_logs, tsEndOfSiteDay ) => (
 				<ActivityLogDay
-					allowRestore={ !! isPressable }
+					applySiteOffset={ applySiteOffset }
+					disableRestore={ disableRestore }
+					hideRestore={ ! isPressable }
 					isRewindActive={ isRewindActive }
 					key={ tsEndOfSiteDay }
 					logs={ daily_logs }
 					requestRestore={ this.handleRequestRestore }
 					siteId={ siteId }
 					tsEndOfSiteDay={ +tsEndOfSiteDay }
-					applySiteOffset={ applySiteOffset }
 				/>
 			)
 		);
@@ -262,7 +296,6 @@ class ActivityLog extends Component {
 					period="month"
 					date={ startOfMonth }
 					url={ `/stats/activity/${ slug }` }
-					recordGoogleEvent={ this.changePeriod }
 				>
 					<DatePicker
 						isActivity={ true }
@@ -340,7 +373,7 @@ export default connect(
 			gmtOffset: getSiteGmtOffset( state, siteId ),
 		};
 	}, {
-		recordGoogleEvent,
+		recordTracksEvent: recordTracksEventAction,
 		rewindRestore: rewindRestoreAction,
 	}
 )( localize( ActivityLog ) );

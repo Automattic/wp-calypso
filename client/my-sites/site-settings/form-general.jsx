@@ -423,6 +423,7 @@ class SiteSettingsFormGeneral extends Component {
 		return (
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
+
 				<SectionHeader label={ translate( 'Site Profile' ) }>
 					<Button
 						compact={ true }
@@ -576,7 +577,7 @@ const getFormSettings = settings => {
 		admin_url: '',
 		jetpack_sync_non_public_post_stati: false,
 		holidaysnow: false,
-		api_cache: false,
+		api_cache: false
 	};
 
 	if ( ! settings ) {
@@ -594,7 +595,7 @@ const getFormSettings = settings => {
 
 		holidaysnow: !! settings.holidaysnow,
 
-		api_cache: settings.api_cache,
+		api_cache: settings.api_cache
 	};
 
 	// handling `gmt_offset` and `timezone_string` values

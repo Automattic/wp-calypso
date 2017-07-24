@@ -72,7 +72,14 @@ export const itemsSchema = {
 				preload_posts: { type: 'integer' },
 				preload_taxonomies: { type: 'boolean' },
 				refresh_current_only_on_comments: { type: 'boolean' },
-				use_304_headers: { type: 'boolean' }
+				use_304_headers: { type: 'boolean' },
+				wp_super_cache_debug: { type: 'boolean' },
+				wp_cache_debug_ip: { type: 'string' },
+				wp_super_cache_comments: { type: 'boolean' },
+				wp_super_cache_front_page_check: { type: 'string' },
+				wp_super_cache_front_page_clear: { type: 'boolean' },
+				wp_super_cache_front_page_text: { type: 'string' },
+				wp_super_cache_front_page_notification: { type: 'boolean' },
 			}
 		}
 	}

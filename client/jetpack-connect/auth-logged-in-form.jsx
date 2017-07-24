@@ -131,7 +131,7 @@ class LoggedInForm extends Component {
 	}
 
 	renderFormHeader( isConnected ) {
-		const { translate } = this.props;
+		const { translate, isAlreadyOnSitesList } = this.props;
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const headerText = ( isConnected )
 			? translate( 'You are connected!' )
@@ -140,7 +140,7 @@ class LoggedInForm extends Component {
 			? translate( 'Thank you for flying with Jetpack' )
 			: translate( 'Jetpack is finishing up the connection process' );
 		const siteCard = versionCompare( queryObject.jp_version, '4.0.3', '>' )
-			? <SiteCard queryObject={ queryObject } />
+			? <SiteCard queryObject={ queryObject } isAlreadyOnSitesList={ isAlreadyOnSitesList } />
 			: null;
 
 		return (
@@ -166,18 +166,18 @@ class LoggedInForm extends Component {
 
 	handleClickDisclaimer = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click' );
-	}
+	};
 
 	handleClickHelp = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
-	}
+	};
 
 	handleSignOut = () => {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const redirect = addQueryArgs( queryObject, window.location.href );
 		this.props.recordTracksEvent( 'calypso_jpc_signout_click' );
 		userUtilities.logout( redirect );
-	}
+	};
 
 	handleResolve = () => {
 		const { queryObject, authorizationCode } = this.props.jetpackConnectAuthorize;
@@ -195,7 +195,7 @@ class LoggedInForm extends Component {
 		// legacy functions on the client.
 		this.props.recordTracksEvent( 'calypso_jpc_resolve_xmlrpc_error_click' );
 		this.props.goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
-	}
+	};
 
 	handleSubmit = () => {
 		const {
@@ -232,7 +232,7 @@ class LoggedInForm extends Component {
 
 		this.props.recordTracksEvent( 'calypso_jpc_approve_click' );
 		return this.props.authorize( queryObject );
-	}
+	};
 
 	isAuthorizing() {
 		const { isAuthorizing } = this.props.jetpackConnectAuthorize;
@@ -284,9 +284,19 @@ class LoggedInForm extends Component {
 	}
 
 	renderNotices() {
-		const { authorizeError, queryObject, isAuthorizing, authorizeSuccess } = this.props.jetpackConnectAuthorize;
+		const { authorizeError, queryObject, isAuthorizing, authorizeSuccess, userAlreadyConnected } = this.props.jetpackConnectAuthorize;
 		if ( queryObject.already_authorized && ! this.props.isFetchingSites && ! this.props.isAlreadyOnSitesList ) {
+			// For users who start their journey at `wordpress.com/jetpack/connect` or similar flows, we will discourage
+			// additional users from linking. Although it is possible to link multiple users with Jetpack, the `jetpack/connect`
+			// flows will be reserved for brand new connections.
 			return <JetpackConnectNotices noticeType="alreadyConnectedByOtherUser" />;
+		}
+
+		if ( userAlreadyConnected ) {
+			// Via wp-admin it is possible to connect additional users after the initial connection is made. But if we
+			// are trying to connect an additional user, and we are logged into a wordpress.com account that is already
+			// connected, we need to show an error.
+			return <JetpackConnectNotices noticeType="userIsAlreadyConnectedToSite" />;
 		}
 
 		if ( this.retryingAuth ) {

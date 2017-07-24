@@ -1,12 +1,7 @@
+.dashboard__manage-has-orders,
+.dashboard__manage-no-orders,
 .dashboard__setup-wrapper {
-	@include breakpoint( ">960px" ) {
-		padding: 32px;
-		margin-top: 58px;
-	}
-}
-
-.dashboard__manage-no-orders {
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( ">660px" ) {
 		margin-top: 58px;
 	}
 }
@@ -118,9 +113,10 @@
 		}
 
 		.dashboard__setup-task-secondary-actions {
-			a {
-				cursor: pointer;
+			.button {
+				padding: 0;
 				font-size: 12px;
+				font-weight: normal;
 			}
 		}
 	}

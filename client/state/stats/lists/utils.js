@@ -1,13 +1,41 @@
 /**
  * External dependencies
  */
-import { sortBy, toPairs, camelCase, mapKeys, isNumber, get, filter, findIndex, forEach, map, concat, flatten } from 'lodash';
+import { sortBy, toPairs, camelCase, mapKeys, isNumber, get, filter, map, concat, flatten } from 'lodash';
 import { moment, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
+
+
+/**
+ * Returns a string of the moment format for the period. Supports store stats
+ * isoWeek and shortened formats.
+ *
+ * @param  {String} period Stats query
+ * @param  {String} date   Stats date
+ * @return {Object}        Period range
+ */
+export function getPeriodFormat( period, date ) {
+	const strDate = date.toString();
+	switch ( period ) {
+		case 'week':
+			return ( strDate.length === 8 && strDate.substr( 4, 2 ) === '-W' )
+				? 'YYYY-[W]WW'
+				:	'YYYY-MM-DD';
+		case 'month':
+			return ( strDate.length === 7 && strDate.substr( 4, 1 ) === '-' )
+				? 'YYYY-MM'
+				: 'YYYY-MM-DD';
+		case 'year':
+			return ( strDate.length === 4 ) ? 'YYYY' : 'YYYY-MM-DD';
+		case 'day':
+		default:
+			return 'YYYY-MM-DD';
+	}
+}
 
 /**
  * Returns an object with the startOf and endOf dates
@@ -18,7 +46,8 @@ import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
  * @return {Object}        Period range
  */
 export function rangeOfPeriod( period, date ) {
-	const momentDate = moment( date ).locale( 'en' );
+	const format = getPeriodFormat( period, date );
+	const momentDate = moment( date, format ).locale( 'en' );
 	const startOf = momentDate.clone().startOf( period );
 	const endOf = momentDate.clone().endOf( period );
 
@@ -111,21 +140,18 @@ export function getSerializedStatsQuery( query = {} ) {
  * @param {Object} payload - response
  * @return {array} - Array of data objects
  */
-function parseOrderDeltas( payload ) {
+export function parseOrderDeltas( payload ) {
 	if ( ! payload || ! payload.deltas || ! payload.delta_fields || Object.keys( payload.deltas ).length === 0 ) {
 		return [];
 	}
-	const periodFieldIndex = findIndex( payload.delta_fields, ( field ) => field === 'period' );
-	const periods = payload.deltas[ Object.keys( payload.deltas )[ 0 ] ].map( row => row[ periodFieldIndex ] );
-
-	return periods.map( period => {
-		const newRow = { period: parseUnitPeriods( payload.unit, period ).format( 'YYYY-MM-DD' ) };
-		forEach( payload.deltas, ( values, key ) => {
-			const newValues = values.filter( value => value[ periodFieldIndex ] === period )[ 0 ];
-			newRow[ key ] = {};
-			payload.delta_fields.forEach( ( field, i ) => {
-				newRow[ key ][ field ] = newValues[ i ];
-			} );
+	return payload.deltas.map( row => { // will be renamed to deltas
+		const notPeriodKeys = Object.keys( row ).filter( key => key !== 'period' );
+		const newRow = { period: parseUnitPeriods( payload.unit, row.period ).format( 'YYYY-MM-DD' ) };
+		notPeriodKeys.forEach( key => {
+			newRow[ key ] = row[ key ].reduce( ( acc, curr, i ) => {
+				acc[ payload.delta_fields[ i ] ] = curr;
+				return acc;
+			}, {} );
 		} );
 		return newRow;
 	} );
@@ -140,7 +166,7 @@ function parseOrderDeltas( payload ) {
  * a null value
  * @return {array} - Array of data objects
  */
-function parseOrdersChartData( payload ) {
+export function parseOrdersChartData( payload ) {
 	if ( ! payload || ! payload.data ) {
 		return [];
 	}

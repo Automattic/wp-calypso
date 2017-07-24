@@ -4,7 +4,7 @@
 import React from 'react';
 import page from 'page';
 import includes from 'lodash/includes';
-import { moment } from 'i18n-calypso';
+import { moment, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,6 +12,7 @@ import { moment } from 'i18n-calypso';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
 import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getQueryDate } from './utils';
 
 function isValidParameters( context ) {
@@ -24,6 +25,9 @@ function isValidParameters( context ) {
 }
 
 export default function StatsController( context ) {
+	if ( ! context.params.site || context.params.site === 'null' ) {
+		page.redirect( '/stats/day/' );
+	}
 	if ( ! isValidParameters( context ) ) {
 		page.redirect( `/store/stats/orders/day/${ context.params.site }` );
 	}
@@ -35,6 +39,9 @@ export default function StatsController( context ) {
 		queryDate: getQueryDate( context ),
 		selectedDate: context.query.startDate || moment().format( 'YYYY-MM-DD' ),
 	};
+	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( translate( 'Stats', { textOnly: true } ) ) );
+
 	const asyncComponent = ( props.type === 'orders' )
 		? <AsyncLoad
 			/* eslint-disable wpcalypso/jsx-classname-namespace */

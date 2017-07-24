@@ -391,14 +391,39 @@ describe( 'index', function() {
 		it( 'leaves galleries intact', function( done ) {
 			normalizer(
 				{
-					content: '<style>.gallery{}</style><div class="gallery" style="width: 100000px"><div style="width:100px">some content</div></div>' //eslint-disable-line max-len
+					content: '<div class="gallery" style="width: 100000px"><style>.gallery{}</style><div style="width:100px">some content</div></div>' //eslint-disable-line max-len
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.removeStyles ] ) ], function( err, normalized ) {
-					assert.equal( normalized.content, '<style>.gallery{}</style><div class="gallery" style="width: 100000px"><div style="width:100px">some content</div></div>' ); //eslint-disable-line max-len
+					assert.equal( normalized.content, '<div class="gallery" style="width: 100000px"><style>.gallery{}</style><div style="width:100px">some content</div></div>' ); //eslint-disable-line max-len
 					done( err );
 				}
 			);
 		} );
+
+		it( 'leaves twitter emdeds intact', function( done ) {
+			normalizer(
+				{
+					content: '<div class="embed-twitter"><blockquote class="twitter-tweet"><p lang="en" dir="ltr"></p></blockquote><script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script></div>' //eslint-disable-line max-len
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.removeStyles ] ) ], function( err, normalized ) {
+					assert.equal( normalized.content, '<div class="embed-twitter"><blockquote class="twitter-tweet"><p lang="en" dir="ltr"></p></blockquote><script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script></div>' ); //eslint-disable-line max-len
+					done( err );
+				}
+			);
+		} );
+
+		it( 'leaves instagram emdeds intact', function( done ) {
+			normalizer(
+				{
+					content: '<blockquote class="instagram-media" style="background:#FFF;"><div style="padding:8px;"><p style="margin:8px 0 0 0;"> <a style="color:#000;"></a></p></div></blockquote>' //eslint-disable-line max-len
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.removeStyles ] ) ], function( err, normalized ) {
+					assert.equal( normalized.content, '<blockquote class="instagram-media" style="background:#FFF;"><div style="padding:8px;"><p style="margin:8px 0 0 0;"> <a style="color:#000;"></a></p></div></blockquote>' ); //eslint-disable-line max-len
+					done( err );
+				}
+			);
+		} );
+
 	} );
 
 	describe( 'content.makeImagesSafe', function() {

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { orderBy, has, map, unionBy, reject } from 'lodash';
+import { isUndefined, orderBy, has, map, unionBy, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,18 +10,15 @@ import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_EDIT,
 	COMMENTS_RECEIVE,
-	COMMENTS_REMOVE,
+	COMMENTS_DELETE,
 	COMMENTS_ERROR,
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_LIKE,
-	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
 } from '../action-types';
 import { combineReducers } from 'state/utils';
-import {
-	PLACEHOLDER_STATE
-} from './constants';
+import { PLACEHOLDER_STATE } from './constants';
 
 const getCommentDate = ( { date } ) => new Date( date );
 
@@ -31,14 +28,14 @@ const updateComment = ( commentId, newProperties ) => comment => {
 	if ( comment.ID !== commentId ) {
 		return comment;
 	}
-	const updateLikeCount = has( newProperties, 'i_like' ) && ! has( newProperties, 'like_count' );
+	const updateLikeCount = has( newProperties, 'i_like' ) && isUndefined( newProperties.like_count );
 
 	return {
 		...comment,
 		...newProperties,
 		...( updateLikeCount && {
-			like_count: newProperties.i_like ? comment.like_count + 1 : comment.like_count - 1
-		} )
+			like_count: newProperties.i_like ? comment.like_count + 1 : comment.like_count - 1,
+		} ),
 	};
 };
 
@@ -49,58 +46,61 @@ const updateComment = ( commentId, newProperties ) => comment => {
  * @returns {Object} new redux state
  */
 export function items( state = {}, action ) {
-	const { siteId, postId, commentId } = action;
+	const { type, siteId, postId, commentId, like_count } = action;
 	const stateKey = getStateKey( siteId, postId );
 
-	switch ( action.type ) {
+	switch ( type ) {
 		case COMMENTS_CHANGE_STATUS:
 			const { status } = action;
 			return {
 				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { status } ) )
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { status } ) ),
 			};
 		case COMMENTS_EDIT:
 			const { content } = action;
 			return {
 				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { content } ) )
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { content } ) ),
 			};
 		case COMMENTS_RECEIVE:
 			const { skipSort, comments } = action;
 			const allComments = unionBy( state[ stateKey ], comments, 'ID' );
 			return {
 				...state,
-				[ stateKey ]: ! skipSort ? orderBy( allComments, getCommentDate, [ 'desc' ] ) : allComments
+				[ stateKey ]: ! skipSort ? orderBy( allComments, getCommentDate, [ 'desc' ] ) : allComments,
 			};
-		case COMMENTS_REMOVE:
+		case COMMENTS_DELETE:
 			return {
 				...state,
-				[ stateKey ]: reject( state[ stateKey ], { ID: commentId } )
+				[ stateKey ]: reject( state[ stateKey ], { ID: commentId } ),
 			};
 		case COMMENTS_LIKE:
 			return {
 				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: true } ) )
-			};
-		case COMMENTS_LIKE_UPDATE:
-			const { iLike, likeCount } = action;
-			return {
-				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: iLike, like_count: likeCount } ) )
+				[ stateKey ]: map(
+					state[ stateKey ],
+					updateComment( commentId, { i_like: true, like_count } ),
+				),
 			};
 		case COMMENTS_UNLIKE:
 			return {
 				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { i_like: false } ) )
+				[ stateKey ]: map(
+					state[ stateKey ],
+					updateComment( commentId, { i_like: false, like_count } ),
+				),
 			};
 		case COMMENTS_ERROR:
 			const { error } = action;
 			return {
 				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, {
-					placeholderState: PLACEHOLDER_STATE.ERROR,
-					placeholderError: error
-				} ) )
+				[ stateKey ]: map(
+					state[ stateKey ],
+					updateComment( commentId, {
+						placeholderState: PLACEHOLDER_STATE.ERROR,
+						placeholderError: error,
+					} ),
+				),
 			};
 	}
 
@@ -121,12 +121,12 @@ export function totalCommentsCount( state = {}, action ) {
 		case COMMENTS_COUNT_RECEIVE:
 			return {
 				...state,
-				[ stateKey ]: action.totalCommentsCount
+				[ stateKey ]: action.totalCommentsCount,
 			};
 		case COMMENTS_COUNT_INCREMENT:
 			return {
 				...state,
-				[ stateKey ]: state[ stateKey ] + 1
+				[ stateKey ]: state[ stateKey ] + 1,
 			};
 	}
 
@@ -135,5 +135,5 @@ export function totalCommentsCount( state = {}, action ) {
 
 export default combineReducers( {
 	items,
-	totalCommentsCount
+	totalCommentsCount,
 } );

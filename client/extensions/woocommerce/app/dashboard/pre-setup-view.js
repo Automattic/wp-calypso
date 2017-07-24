@@ -11,16 +11,16 @@ import React, { Component, PropTypes } from 'react';
  */
 import AddressView from 'woocommerce/components/address-view';
 import {
-	areSettingsGeneralLoading,
+	areSettingsGeneralLoaded,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { errorNotice } from 'state/notices/actions';
-import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
-import { getCountryData } from 'woocommerce/lib/countries';
+import { getCountryData, getCountries } from 'woocommerce/lib/countries';
 import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './setup-footer';
 import SetupHeader from './setup-header';
 import { doInitialSetup } from 'woocommerce/state/sites/settings/actions';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 
 class PreSetupView extends Component {
 	constructor( props ) {
@@ -38,23 +38,7 @@ class PreSetupView extends Component {
 		} ),
 	};
 
-	componentDidMount = () => {
-		const { site } = this.props;
-
-		if ( site && site.ID ) {
-			this.props.fetchSettingsGeneral( site.ID );
-		}
-	}
-
 	componentWillReceiveProps = ( newProps ) => {
-		const { site } = this.props;
-		const newSiteId = site.selectedSite ? newProps.selectedSite.ID : null;
-		const oldSiteId = site ? site.ID : null;
-
-		if ( newSiteId && ( oldSiteId !== newSiteId ) ) {
-			this.props.fetchSettingsGeneral( newSiteId );
-		}
-
 		if ( ! this.state.userBeganEditing ) {
 			this.setState( { address: newProps.address } );
 		}
@@ -94,25 +78,38 @@ class PreSetupView extends Component {
 			return errorNotice( translate( 'There was a problem saving the store address. Please try again.' ) );
 		};
 
+		// Provides fallbacks if the country & state options were never changed/toggled,
+		// or if an unsupported country was set in state (like WC's default GB country)
+		let country = null;
+		let state = null;
+		if ( ! this.state.address.country || ! find( getCountries(), { code: this.state.address.country } ) ) {
+			country = 'US';
+			const countryData = getCountryData( country );
+			state = this.state.address.state ? this.state.address.state : countryData.defaultState;
+		} else {
+			country = this.state.address.country;
+			state = this.state.address.state;
+		}
+
 		this.props.doInitialSetup(
 			site.ID,
 			this.state.address.street,
 			this.state.address.street2,
 			this.state.address.city,
-			this.state.address.state,
+			state,
 			this.state.address.postcode,
-			this.state.address.country,
+			country,
 			onSuccess,
 			onFailure
 		);
 	}
 
 	render = () => {
-		const { loading, site, translate } = this.props;
+		const { loaded, site, translate } = this.props;
 
-		if ( ! site || loading ) {
+		if ( ! loaded ) {
 			// TODO - maybe a loading placehoder
-			return null;
+			return <QuerySettingsGeneral siteId={ site && site.ID } />;
 		}
 
 		return (
@@ -141,24 +138,23 @@ class PreSetupView extends Component {
 }
 
 function mapStateToProps( state, ownProps ) {
-	let loading = true;
+	let loaded = false;
 	let address = {};
 
 	if ( ownProps.site ) {
 		address = getStoreLocation( state, ownProps.site.ID );
-		loading = areSettingsGeneralLoading( state, ownProps.site.ID );
+		loaded = areSettingsGeneralLoaded( state, ownProps.site.ID );
 	}
 
 	return {
 		address,
-		loading,
+		loaded,
 	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			fetchSettingsGeneral,
 			doInitialSetup,
 		},
 		dispatch

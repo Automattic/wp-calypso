@@ -22,10 +22,11 @@ import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/set
 import wp from 'lib/wp';
 
 const requiredPlugins = [
-	'woocommerce',
 	'wc-api-dev',
+	'woocommerce',
 	'woocommerce-gateway-stripe',
 	'woocommerce-services',
+	'taxjar-simplified-taxes-for-woocommerce',
 ];
 
 class RequiredPluginsInstallView extends Component {
@@ -57,6 +58,10 @@ class RequiredPluginsInstallView extends Component {
 		}
 
 		this.getWporgPluginData();
+	}
+
+	componentWillUnmount = () => {
+		this.cancelUpdateTimeout();
 	}
 
 	componentDidUpdate = ( prevProps ) => {
@@ -106,6 +111,7 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	installPlugins = ( plugins ) => {
+		this.cancelUpdateTimeout();
 		const { site, wporg } = this.props;
 		for ( let i = 0; i < requiredPlugins.length; i++ ) {
 			const slug = requiredPlugins[ i ];
@@ -131,12 +137,14 @@ class RequiredPluginsInstallView extends Component {
 					progress,
 				} ) );
 				this.props.installPlugin( site.ID, wporgPlugin );
+				this.setUpdateTimeout();
 				return;
 			}
 			if ( ! plugin.active ) {
 				const wporgPlugin = getPlugin( wporg, slug );
 				this.setState( () => ( { activatingPlugin: slug } ) );
 				this.props.activatePlugin( site.ID, { ...wporgPlugin, id: plugin.id } );
+				this.setUpdateTimeout();
 				return;
 			}
 		}
@@ -144,6 +152,18 @@ class RequiredPluginsInstallView extends Component {
 			site.ID,
 			true
 		);
+	}
+
+	cancelUpdateTimeout = () => {
+		if ( this.updateTimeout ) {
+			window.clearTimeout( this.updateTimeout );
+		}
+	}
+
+	setUpdateTimeout = () => {
+		this.updateTimeout = window.setTimeout( () => {
+			this.installPlugins( this.props.plugins );
+		}, 10000 );
 	}
 
 	render = () => {

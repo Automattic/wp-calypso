@@ -10,7 +10,7 @@ export const items = createReducer(
 	{
 		[ READER_TEAMS_RECEIVE ]: ( state, action ) => action.payload.teams,
 	},
-	itemsSchema
+	itemsSchema,
 );
 
 export const isRequesting = createReducer( false, {

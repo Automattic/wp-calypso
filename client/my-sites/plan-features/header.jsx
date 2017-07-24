@@ -26,7 +26,8 @@ import {
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
-	getPlanClass
+	getPlanClass,
+	isMonthly,
 } from 'lib/plans/constants';
 import PlanIcon from 'components/plans/plan-icon';
 import { plansLink } from 'lib/plans';
@@ -174,12 +175,15 @@ class PlanFeaturesHeader extends Component {
 			intervalType,
 			site,
 			basePlansPath,
-			hideMonthly
+			hideMonthly,
+			currentSitePlan,
 		} = this.props;
 
 		if ( hideMonthly ||
 			! rawPrice ||
-			this.isPlanCurrent() ) {
+			// Only monthly to yearly upgrades for the same plan are supported
+			( this.isPlanCurrent() && currentSitePlan && ! isMonthly( currentSitePlan.productSlug ) )
+		) {
 			return (
 				<div className="plan-features__interval-type is-placeholder">
 				</div>

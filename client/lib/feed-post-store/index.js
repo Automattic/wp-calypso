@@ -102,7 +102,7 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 
 		case FeedPostActionType.MARK_FEED_POST_SEEN:
-			markPostSeen( action.data.post, action.data.site, action.data.source );
+			markPostSeen( action.data.post, action.data.site );
 			break;
 	}
 } );
@@ -161,7 +161,10 @@ function receivePending( action ) {
 			site_ID: action.blogId,
 			ID: action.postId
 		};
-		const currentPost = _postsForBlogs[ blogKey( action.blogId, action.postId ) ];
+		const currentPost = _postsForBlogs[ blogKey( {
+			blogId: action.blogId,
+			postId: action.postId
+		} ) ];
 		post = assign( post, currentPost, { _state: 'pending' } );
 		setPost( null, post );
 	} else {

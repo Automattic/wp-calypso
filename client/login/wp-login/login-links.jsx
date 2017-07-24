@@ -9,7 +9,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config, { isEnabled } from 'config';
+import { addQueryArgs } from 'lib/url';
+import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
+import { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'gridicons';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -19,6 +21,7 @@ import { login } from 'lib/paths';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
+		locale: PropTypes.string.isRequired,
 		recordPageView: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
@@ -54,6 +57,20 @@ export class LoginLinks extends React.Component {
 	recordResetPasswordLinkClick = () => {
 		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
 	};
+
+	renderBackToWpcomLink() {
+		return (
+			<a
+				href={ addLocaleToWpcomUrl( 'https://wordpress.com', this.props.locale ) }
+				key="return-to-wpcom-link"
+				onClick={ this.recordBackToWpcomLinkClick }
+				rel="external"
+			>
+				<Gridicon icon="arrow-left" size={ 18 } />
+				{ this.props.translate( 'Back to WordPress.com' ) }
+			</a>
+		);
+	}
 
 	renderHelpLink() {
 		if ( ! this.props.twoFactorAuthType ) {
@@ -107,7 +124,7 @@ export class LoginLinks extends React.Component {
 
 		return (
 			<a
-				href={ config( 'login_url' ) + '?action=lostpassword' }
+				href={ addQueryArgs( { action: 'lostpassword' }, login( { locale: this.props.locale } ) ) }
 				key="lost-password-link"
 				onClick={ this.recordResetPasswordLinkClick }
 			>
@@ -123,16 +140,7 @@ export class LoginLinks extends React.Component {
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
-
-				<a
-					href="https://wordpress.com"
-					key="return-to-wpcom-link"
-					onClick={ this.recordBackToWpcomLinkClick }
-					rel="external"
-				>
-					<Gridicon icon="arrow-left" size={ 18 } />
-					{ this.props.translate( 'Back to WordPress.com' ) }
-				</a>
+				{ this.renderBackToWpcomLink() }
 			</div>
 		);
 	}

@@ -9,7 +9,6 @@ import { isEqual } from 'lodash';
  * Internal dependencies
  */
 import Card from 'components/card';
-import QuerySiteStats from 'components/data/query-site-stats';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData
@@ -43,26 +42,32 @@ class StoreStatsModule extends Component {
 	}
 
 	render() {
-		const { siteId, statType, header, query, children, data, emptyMessage } = this.props;
+		const { header, children, data, emptyMessage } = this.props;
 		const { loaded } = this.state;
 		const isLoading = ! loaded && ! ( data && data.length );
 		const hasEmptyData = loaded && data && data.length === 0;
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div>
-				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
+			<div className="store-stats-module">
 				{ header }
 				{ isLoading && <Card><StatsModulePlaceholder isLoading={ isLoading } /></Card> }
-				{ ! isLoading && hasEmptyData && <Card><ErrorPanel message={ emptyMessage } /></Card> }
+				{ ! isLoading && hasEmptyData &&
+					<Card className="stats-module is-showing-error has-no-data">
+						<ErrorPanel message={ emptyMessage } />
+					</Card>
+				}
 				{ ! isLoading && ! hasEmptyData && children }
 			</div>
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		);
 	}
 }
 
 export default connect(
 	( state, { siteId, statType, query } ) => {
+		const statsData = getSiteStatsNormalizedData( state, siteId, statType, query );
 		return {
-			data: getSiteStatsNormalizedData( state, siteId, statType, query ),
+			data: ( statType === 'statsOrders' ) ? statsData.data : statsData,
 			requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
 		};
 	}

@@ -45,17 +45,25 @@ export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( s
 		if ( -1 === index ) {
 			return;
 		}
-		const updateEdits = {};
+
+		const method = {
+			...methods[ index ],
+			settings: { ...methods[ index ].settings },
+		};
 		Object.keys( update ).map( function( updateKey ) {
 			if ( 'id' === updateKey ) {
 				return;
 			}
-			updateEdits[ updateKey ] = update[ updateKey ].value;
 			if ( 'enabled' === updateKey ) {
-				updateEdits[ updateKey ] = update[ updateKey ];
+				method.enabled = update[ updateKey ];
+				return;
 			}
+			method.settings[ updateKey ] = {
+				...method.settings[ updateKey ],
+				value: update[ updateKey ].value,
+			};
 		} );
-		methods[ index ] = { ...methods[ index ], ...updateEdits };
+		methods[ index ] = method;
 	} );
 	return [ ...methods, ...creates ];
 };
@@ -68,7 +76,9 @@ export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( s
  * @return {Boolean} Bool indicating if payments are setup
  */
 export const arePaymentsSetup = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return !! filter( getPaymentMethodsWithEdits( state, siteId ), { enabled: true } ).length;
+	return !! filter( getPaymentMethodsWithEdits( state, siteId ), function( method ) {
+		return method.enabled && 'cheque' !== method.id;
+	} ).length;
 };
 
 /**

@@ -9,6 +9,9 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import App from './app';
+
+import controller from 'my-sites/controller';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import installActionHandlers from './state/data-layer';
@@ -35,117 +38,76 @@ const getStorePages = () => {
 			container: Dashboard,
 			configKey: 'woocommerce/extension-dashboard',
 			path: '/store/:site',
-			sidebarItem: {
-				icon: 'house',
-				isPrimary: true,
-				label: translate( 'Dashboard' ),
-				slug: 'dashboard',
-				showDuringSetup: true,
-			},
 		},
 		{
 			container: Products,
 			configKey: 'woocommerce/extension-products',
+			documentTitle: translate( 'Products' ),
 			path: '/store/products/:site',
-			sidebarItem: {
-				icon: 'product',
-				isPrimary: true,
-				label: translate( 'Products' ),
-				slug: 'products',
-				showDuringSetup: false,
-			},
 		},
 		{
 			container: ProductCreate,
 			configKey: 'woocommerce/extension-products',
+			documentTitle: translate( 'New Product' ),
 			path: '/store/product/:site',
-			parentPath: '/store/products/:site',
-			sidebarItemButton: {
-				label: translate( 'Add' ),
-				parentSlug: 'products',
-				slug: 'product-add',
-				showDuringSetup: false,
-			},
 		},
 		{
 			container: ProductUpdate,
 			configKey: 'woocommerce/extension-products',
+			documentTitle: translate( 'Edit Product' ),
 			path: '/store/product/:site/:product',
-			parentPath: '/store/products/:site',
 		},
 		{
 			container: Orders,
 			configKey: 'woocommerce/extension-orders',
+			documentTitle: translate( 'Orders' ),
 			path: '/store/orders/:site',
-			sidebarItem: {
-				icon: 'pages',
-				isPrimary: true,
-				label: translate( 'Orders' ),
-				slug: 'orders',
-				showDuringSetup: false,
-			},
 		},
 		{
 			container: Order,
 			configKey: 'woocommerce/extension-orders',
+			documentTitle: translate( 'Order Details' ),
 			path: '/store/order/:site/:order',
-			parentPath: '/store/orders/:site',
 		},
 		{
 			container: SettingsPayments,
 			configKey: 'woocommerce/extension-settings',
+			documentTitle: translate( 'Payment Settings' ),
 			path: '/store/settings/:site',
-			sidebarItem: {
-				icon: 'cog',
-				isPrimary: false,
-				label: translate( 'Settings' ),
-				slug: 'settings',
-				showDuringSetup: false,
-			},
 		},
 		{
 			container: SettingsPayments,
 			configKey: 'woocommerce/extension-settings-payments',
+			documentTitle: translate( 'Payment Settings' ),
 			path: '/store/settings/payments/:site',
-			parentPath: '/store/settings/:site',
 		},
 		{
 			container: Shipping,
 			configKey: 'woocommerce/extension-settings-shipping',
+			documentTitle: translate( 'Shipping Settings' ),
 			path: '/store/settings/shipping/:site',
-			parentPath: '/store/settings/:site',
 		},
 		{
 			container: ShippingZone,
 			configKey: 'woocommerce/extension-settings-shipping',
-			path: '/store/settings/shipping/:site/zone/:zone',
-			parentPath: '/store/settings/:site',
+			documentTitle: translate( 'Shipping Settings' ),
+			path: '/store/settings/shipping/zone/:site/:zone?',
 		},
 		{
 			container: SettingsTaxes,
 			configKey: 'woocommerce/extension-settings-tax',
+			documentTitle: translate( 'Tax Settings' ),
 			path: '/store/settings/taxes/:site',
-			parentPath: '/store/settings/:site',
 		},
 	];
 };
 
-function getStoreSidebarItems() {
-	return getStorePages().filter( storePage => storePage.sidebarItem ).map( storePage => {
-		return { path: storePage.path, ...storePage.sidebarItem };
-	} );
-}
-
-function getStoreSidebarItemButtons() {
-	return getStorePages().filter( storePage => storePage.sidebarItemButton ).map( storePage => {
-		return { path: storePage.path, ...storePage.sidebarItemButton };
-	} );
-}
-
 function addStorePage( storePage, storeNavigation ) {
 	page( storePage.path, siteSelection, storeNavigation, function( context ) {
+		const component = React.createElement( storePage.container, { params: context.params } );
+		const appProps = storePage.documentTitle && { documentTitle: storePage.documentTitle } || {};
 		renderWithReduxStore(
-			React.createElement( storePage.container, { className: 'woocommerce', params: context.params } ),
+			React.createElement( App, appProps, component ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -157,8 +119,6 @@ function createStoreNavigation( context, next, storePage ) {
 		React.createElement( StoreSidebar, {
 			path: context.path,
 			page: storePage,
-			sidebarItems: getStoreSidebarItems(),
-			sidebarItemButtons: getStoreSidebarItemButtons(),
 		} ),
 		document.getElementById( 'secondary' ),
 		context.store
@@ -177,6 +137,7 @@ export default function() {
 
 	// Add pages that use my-sites navigation instead
 	if ( config.isEnabled( 'woocommerce/extension-stats' ) ) {
+		page( '/store/stats/:type/:unit', controller.siteSelection, controller.sites );
 		page( '/store/stats/:type/:unit/:site', siteSelection, navigation, StatsController );
 	}
 }

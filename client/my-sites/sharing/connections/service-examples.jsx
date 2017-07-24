@@ -111,9 +111,11 @@ class SharingServiceExamples extends Component {
 					)
 				},
 				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to use photos stored in your Google account directly inside the editor.', {
+					'{{strong}}Connect{{/strong}} to use photos stored in your Google account directly inside the editor. ' +
+					'{{sup}}*{{/sup}}Note that new photos may take a few minutes to appear', {
 						components: {
-							strong: <strong />
+							strong: <strong />,
+							sup: <sup />,
 						}
 					}
 				),

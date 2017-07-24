@@ -3,49 +3,51 @@
  */
 import { translate } from 'i18n-calypso';
 
-export const sparkWidgetList1 = [
+const sparkWidgetList1 = [
 	{
 		key: 'products',
 		title: translate( 'Products Purchased' ),
-		type: 'number'
+		format: 'number'
 	},
 	{
 		key: 'avg_products_per_order',
 		title: translate( 'Products Per Order' ),
-		type: 'number'
+		format: 'number'
 	},
 	{
 		key: 'coupons',
 		title: translate( 'Coupons Used' ),
-		type: 'number'
+		format: 'number'
 	}
 ];
 
-export const sparkWidgetList2 = [
+const sparkWidgetList2 = [
 	{
 		key: 'total_refund',
 		title: translate( 'Refunds' ),
-		type: 'currency'
+		format: 'currency'
 	},
 	{
 		key: 'total_shipping',
 		title: translate( 'Shipping' ),
-		type: 'currency'
+		format: 'currency'
 	},
 	{
 		key: 'total_tax',
 		title: translate( 'Tax' ),
-		type: 'currency'
+		format: 'currency'
 	}
 ];
 
+export const sparkWidgets = [ sparkWidgetList1, sparkWidgetList2 ];
+
 export const topProducts = {
 	basePath: '/store/stats/products',
-	title: translate( 'Products' ),
+	title: translate( 'Most Popular Products' ),
 	values: [
-		{ key: 'name', title: translate( 'Title' ) },
-		{ key: 'price', title: translate( 'Price' ) },
-		{ key: 'total', title: translate( 'Sales' ) },
+		{ key: 'name', title: translate( 'Title' ), format: 'text' },
+		{ key: 'quantity', title: translate( 'Quantity' ), format: 'number' },
+		{ key: 'total', title: translate( 'Sales' ), format: 'currency' },
 	],
 	empty: translate( 'No products found' ),
 	statType: 'statsTopEarners',
@@ -53,11 +55,11 @@ export const topProducts = {
 
 export const topCategories = {
 	basePath: '/store/stats/categories',
-	title: translate( 'Categories' ),
+	title: translate( 'Top Categories' ),
 	values: [
-		{ key: 'name', title: translate( 'Title' ) },
-		{ key: 'quantity', title: translate( 'Quantity' ) },
-		{ key: 'total', title: translate( 'Total' ) },
+		{ key: 'name', title: translate( 'Title' ), format: 'text' },
+		{ key: 'quantity', title: translate( 'Quantity' ), format: 'number' },
+		{ key: 'total', title: translate( 'Total' ), format: 'currency' },
 	],
 	empty: translate( 'No categories found' ),
 	statType: 'statsTopCategories',
@@ -65,11 +67,11 @@ export const topCategories = {
 
 export const topCoupons = {
 	basePath: '/store/stats/coupons',
-	title: translate( 'Coupons' ),
+	title: translate( 'Most Used Coupons' ),
 	values: [
-		{ key: 'name', title: translate( 'Title' ) },
-		{ key: 'quantity', title: translate( 'Quantity' ) },
-		{ key: 'total', title: translate( 'Total' ) },
+		{ key: 'name', title: translate( 'Title' ), format: 'text' },
+		{ key: 'quantity', title: translate( 'Quantity' ), format: 'number' },
+		{ key: 'total', title: translate( 'Total' ), format: 'currency' },
 	],
 	empty: translate( 'No coupons found' ),
 	statType: 'statsTopCoupons',
@@ -81,23 +83,35 @@ export const UNITS = {
 		label: 'days',
 		durationFn: 'asDays',
 		format: 'YYYY-MM-DD',
+		sinceFormat: 'MMM D',
+		chartFormat: 'labelDay',
+		title: translate( 'Days' )
 	},
 	week: {
 		quantity: 30,
 		label: 'weeks',
 		durationFn: 'asWeeks',
-		format: 'YYYY',
+		format: 'YYYY-[W]WW',
+		sinceFormat: 'MMM D',
+		chartFormat: 'labelWeek',
+		title: translate( 'Weeks' )
 	},
 	month: {
-		quantity: 30,
+		quantity: 12,
 		label: 'months',
 		durationFn: 'asMonths',
-		format: 'YYYY-MM'
+		format: 'YYYY-MM',
+		sinceFormat: 'MMM [\']YY',
+		chartFormat: 'labelMonth',
+		title: translate( 'Months' )
 	},
 	year: {
 		quantity: 10,
 		label: 'years',
 		durationFn: 'asYears',
 		format: 'YYYY',
-	},
+		sinceFormat: 'YYYY',
+		chartFormat: 'labelYear',
+		title: translate( 'Years' )
+	}
 };

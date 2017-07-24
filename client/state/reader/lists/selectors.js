@@ -47,9 +47,9 @@ export const getSubscribedLists = createSelector(
 				// Is the user subscribed to this list?
 				return includes( state.reader.lists.subscribedLists, item.ID );
 			} ),
-			'slug'
+			'slug',
 		),
-	state => [ state.reader.lists.items, state.reader.lists.subscribedLists ]
+	state => [ state.reader.lists.items, state.reader.lists.subscribedLists ],
 );
 
 /**

@@ -27,7 +27,8 @@ const exported = {
 			for ( let i = 0; i < keys.length; i++ ) {
 				const meta = post.metadata[ keys[ i ] ];
 				if (
-					meta.key === '_xpost_original_permalink' || meta.key === 'xcomment_original_permalink'
+					meta.key === '_xpost_original_permalink' ||
+					meta.key === 'xcomment_original_permalink'
 				) {
 					let parsedURL = url.parse( meta.value, false, false );
 					xPostMetadata.siteURL = `${ parsedURL.protocol }//${ parsedURL.host }`;

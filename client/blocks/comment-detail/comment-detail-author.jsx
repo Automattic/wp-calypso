@@ -6,20 +6,16 @@ import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
-import QuerySiteSettings from 'components/data/query-site-settings';
 import { urlToDomainAndPath } from 'lib/url';
-import {
-	defaultDateFormats,
-	defaultTimeFormats,
-} from 'my-sites/site-settings/date-time-format/default-formats';
-import { phpToMomentDatetimeFormat } from 'my-sites/site-settings/date-time-format/utils';
-import { getSiteSettings } from 'state/site-settings/selectors';
+import { getSite } from 'state/sites/selectors';
+import { convertDateToUserLocation } from 'components/post-schedule/utils';
+import { gmtOffset, timezone } from 'lib/site/utils';
 
 export class CommentDetailAuthor extends Component {
 	static propTypes = {
@@ -33,6 +29,7 @@ export class CommentDetailAuthor extends Component {
 		blockUser: PropTypes.func,
 		commentDate: PropTypes.string,
 		commentStatus: PropTypes.string,
+		commentUrl: PropTypes.string,
 		showAuthorInfo: PropTypes.bool,
 		siteId: PropTypes.number,
 	};
@@ -54,31 +51,11 @@ export class CommentDetailAuthor extends Component {
 		display_name: this.props.authorDisplayName,
 	} );
 
-	getFormattedDate = () => {
-		const {
-			commentDate,
-			dateFormat,
-			moment,
-			timeFormat,
-			translate,
-		} = this.props;
-
-		const momentDate = moment( commentDate );
-
-		if ( ! dateFormat || ! timeFormat ) {
-			return phpToMomentDatetimeFormat(
-				momentDate,
-				defaultDateFormats[ 0 ] + ' ' + defaultTimeFormats[ 0 ]
-			);
-		}
-
-		const date = phpToMomentDatetimeFormat( momentDate, dateFormat );
-		const time = phpToMomentDatetimeFormat( momentDate, timeFormat );
-
-		return translate( '%(date)s at %(time)s', {
-			args: { date, time }
-		} );
-	}
+	getFormattedDate = () => convertDateToUserLocation(
+		( this.props.commentDate || new Date() ),
+		timezone( this.props.site ),
+		gmtOffset( this.props.site )
+	).format( 'll LT' );
 
 	authorMoreInfo() {
 		if ( ! this.props.showAuthorInfo ) {
@@ -119,9 +96,9 @@ export class CommentDetailAuthor extends Component {
 					</div>
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="link" />
-						<span>
-							{ authorUrl }
-						</span>
+						<ExternalLink href={ authorUrl }>
+							{ urlToDomainAndPath( authorUrl ) }
+						</ExternalLink>
 					</div>
 					<div className="comment-detail__author-more-element">
 						<Gridicon icon="globe" />
@@ -154,8 +131,8 @@ export class CommentDetailAuthor extends Component {
 			authorDisplayName,
 			authorUrl,
 			commentStatus,
+			commentUrl,
 			showAuthorInfo,
-			siteId,
 			translate,
 		} = this.props;
 		const { isExpanded } = this.state;
@@ -166,8 +143,6 @@ export class CommentDetailAuthor extends Component {
 
 		return (
 			<div className={ classes }>
-				<QuerySiteSettings siteId={ siteId } />
-
 				<div className="comment-detail__author-preview">
 					<Gravatar user={ this.getAuthorObject() } />
 					<div className="comment-detail__author-info">
@@ -175,13 +150,16 @@ export class CommentDetailAuthor extends Component {
 							<strong>
 								{ authorDisplayName }
 							</strong>
-							<span>
+							<ExternalLink href={ authorUrl }>
 								{ urlToDomainAndPath( authorUrl ) }
-							</span>
+							</ExternalLink>
 						</div>
-						<div className="comment-detail__author-info-element comment-detail__comment-date">
+						<ExternalLink
+							className="comment-detail__author-info-element comment-detail__comment-date"
+							href={ commentUrl }
+						>
 							{ this.getFormattedDate() }
-						</div>
+						</ExternalLink>
 					</div>
 					{ 'unapproved' === commentStatus &&
 						<div className="comment-detail__status-label is-unapproved">
@@ -201,12 +179,8 @@ export class CommentDetailAuthor extends Component {
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => {
-	const settings = getSiteSettings( state, ownProps.siteId );
-	return {
-		dateFormat: get( settings, 'date_format' ),
-		timeFormat: get( settings, 'time_format' ),
-	};
-};
+const mapStateToProps = ( state, { siteId } ) => ( {
+	site: getSite( state, siteId ),
+} );
 
 export default connect( mapStateToProps )( localize( CommentDetailAuthor ) );

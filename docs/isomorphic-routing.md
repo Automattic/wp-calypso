@@ -72,7 +72,7 @@ export default function( router ) {
 }
 ```
 
-Note that in `notFoundError`, `err` is passed as an argument to `next`. This is how error middleware chains skip skip regular middlewares. The rendering middleware that is implicitly called on the server after all other middlewares are invoked uses `err.status` to set the HTTP error status.
+Note that in `notFoundError`, `err` is passed as an argument to `next`. This is how error middleware chains skip regular middlewares. The rendering middleware that is implicitly called on the server after all other middlewares are invoked uses `err.status` to set the HTTP error status.
 
 On the other hand, an error-handling middleware like `themeNotFound` will be called if any other middleware before it calls `next` with an error object:
 

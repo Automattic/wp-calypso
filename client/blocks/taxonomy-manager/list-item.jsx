@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import page from 'page';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -17,10 +18,9 @@ import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
 import Tooltip from 'components/tooltip';
-import WithPreviewProps from 'components/web-preview/with-preview-props';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
-import { getSite, isJetpackSite } from 'state/sites/selectors';
+import { getSite } from 'state/sites/selectors';
 import { decodeEntities } from 'lib/formatting';
 import { deleteTerm } from 'state/terms/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
@@ -38,7 +38,6 @@ class TaxonomyManagerListItem extends Component {
 		translate: PropTypes.func,
 		siteUrl: PropTypes.string,
 		slug: PropTypes.string,
-		isJetpack: PropTypes.bool,
 		isPreviewable: PropTypes.bool,
 		recordGoogleEvent: PropTypes.func,
 		bumpStat: PropTypes.func,
@@ -57,6 +56,16 @@ class TaxonomyManagerListItem extends Component {
 		this.setState( {
 			showDeleteDialog: true
 		} );
+	};
+
+	viewPosts = () => {
+		const { siteSlug, taxonomy: rawTaxonomy, term } = this.props;
+		const taxonomy = rawTaxonomy === 'post_tag'
+			? 'tag'
+			: rawTaxonomy;
+
+		this.props.recordGoogleEvent( 'Taxonomy Manager', `View ${ rawTaxonomy }` );
+		page( `/posts/${ siteSlug }?${ taxonomy }=${ term.slug }` );
 	};
 
 	closeDeleteDialog = action => {
@@ -121,8 +130,9 @@ class TaxonomyManagerListItem extends Component {
 	};
 
 	render() {
-		const { canSetAsDefault, isDefault, onClick, term, translate, isJetpack } = this.props;
+		const { canSetAsDefault, isDefault, onClick, term, translate } = this.props;
 		const name = this.getName();
+		const hasPosts = get( term, 'post_count', 0 ) > 0;
 		const className = classNames( 'taxonomy-manager__item', {
 			'is-default': isDefault
 		} );
@@ -167,18 +177,10 @@ class TaxonomyManagerListItem extends Component {
 							{ translate( 'Delete' ) }
 						</PopoverMenuItem>
 					}
-					{ ! isJetpack &&
-						<WithPreviewProps
-								url={ this.getTaxonomyLink() }
-								isPreviewable={ this.props.isPreviewable }>
-							{ ( props ) =>
-								<PopoverMenuItem { ...props }
-										icon={ this.props.isPreviewable
-											? 'visible' : 'external' }>
-									{ translate( 'View Posts' ) }
-								</PopoverMenuItem>
-							}
-						</WithPreviewProps>
+					{ hasPosts &&
+						<PopoverMenuItem onClick={ this.viewPosts } icon="visible">
+							{ translate( 'View Posts' ) }
+						</PopoverMenuItem>
 					}
 					{ canSetAsDefault && ! isDefault && <PopoverMenuSeparator /> }
 					{ canSetAsDefault && ! isDefault &&
@@ -207,14 +209,15 @@ export default connect(
 		const canSetAsDefault = taxonomy === 'category';
 		const isDefault = canSetAsDefault && get( siteSettings, [ 'default_category' ] ) === term.ID;
 		const isPreviewable = get( site, 'is_previewable' );
+		const siteSlug = get( site, 'slug' );
 		const siteUrl = get( site, 'URL' );
 
 		return {
 			canSetAsDefault,
 			isDefault,
-			isJetpack: isJetpackSite( state, siteId ),
 			isPreviewable,
 			siteId,
+			siteSlug,
 			siteUrl,
 		};
 	},

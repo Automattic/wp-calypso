@@ -9,7 +9,6 @@ import { includes, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import UrlSearch from 'lib/url-search';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import Count from 'components/count';
@@ -19,6 +18,8 @@ import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
+import UrlSearch from 'lib/url-search';
+import { isEnabled } from 'config';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],
@@ -37,8 +38,7 @@ export class CommentNavigation extends Component {
 
 	getNavItems = () => {
 		const { translate } = this.props;
-
-		return {
+		const navItems = {
 			unapproved: {
 				label: translate( 'Pending' ),
 			},
@@ -51,15 +51,20 @@ export class CommentNavigation extends Component {
 			trash: {
 				label: translate( 'Trash' ),
 			},
-			all: {
-				label: translate( 'All' ),
-			},
 		};
+
+		if ( isEnabled( 'comments/management/all-list' ) ) {
+			navItems.all = {
+				label: translate( 'All' ),
+			};
+		}
+
+		return navItems;
 	}
 
 	getStatusPath = status => 'unapproved' !== status
-		? `/comments/${ status }/${ this.props.siteSlug }`
-		: `/comments/pending/${ this.props.siteSlug }`;
+		? `/comments/${ status }/${ this.props.siteFragment }`
+		: `/comments/pending/${ this.props.siteFragment }`;
 
 	statusHasAction = action => includes( bulkActions[ this.props.status ], action );
 
@@ -167,11 +172,13 @@ export class CommentNavigation extends Component {
 					) }
 				</NavTabs>
 
-				<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
-					<Button compact onClick={ toggleBulkEdit }>
-						{ translate( 'Bulk Edit' ) }
-					</Button>
-				</CommentNavigationTab>
+				{ isEnabled( 'manage/comments/bulk-actions' ) &&
+					<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
+						<Button compact onClick={ toggleBulkEdit }>
+							{ translate( 'Bulk Edit' ) }
+						</Button>
+					</CommentNavigationTab>
+				}
 
 				{ hasSearch &&
 					<Search

@@ -47,18 +47,18 @@ export class RecommendedSites extends React.PureComponent {
 
 		function recordRecommendationRender( index ) {
 			return function( railcar ) {
-				recordTracksRailcarRender(
-					'recommended_site',
-					railcar,
-					{ ui_algo: 'following_manage_recommended_site', ui_position: index }
-				);
+				recordTracksRailcarRender( 'recommended_site', railcar, {
+					ui_algo: 'following_manage_recommended_site',
+					ui_position: index,
+				} );
 			};
 		}
 
 		return (
 			<div className="reader-recommended-sites">
 				<h1 className="reader-recommended-sites__header">
-					<Gridicon icon="thumbs-up" size={ 18 } />{ this.props.translate( 'Recommended Sites' ) }
+					<Gridicon icon="thumbs-up" size={ 18 } />
+					{ this.props.translate( 'Recommended Sites' ) }
 				</h1>
 				<ul className="reader-recommended-sites__list">
 					{ map( sites, ( site, index ) => {

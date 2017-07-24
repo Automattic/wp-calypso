@@ -11,7 +11,7 @@ import i18n from 'i18n-calypso';
  */
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import paths from 'my-sites/upgrades/paths';
+import paths from 'my-sites/domains/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import {
 	canCurrentUser,
