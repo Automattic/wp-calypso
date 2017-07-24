@@ -276,7 +276,6 @@ class UploadImage extends Component {
 			uploadingDoneContent = (
 				<div className="upload-image__uploading-done-container">
 					<img src={ uploadedImage.URL } />
-					Image is uploaded
 				</div>
 			);
 		}
