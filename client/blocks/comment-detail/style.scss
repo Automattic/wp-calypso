@@ -464,6 +464,7 @@ a.comment-detail__author-more-element {
 
 		&:not( :focus ) {
 			border-color: $white;
+			padding-right: 16px;
 			resize: none;
 		}
 
@@ -474,6 +475,9 @@ a.comment-detail__author-more-element {
 
 		&::placeholder {
 			color: $gray-text-min;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 
 		&.has-scrollbar {
