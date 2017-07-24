@@ -17,6 +17,12 @@
 			background: lighten( $gray, 35% );
 		}
 	}
+
+	.orders__row-placeholder span {
+		display: inline-block;
+		width: 75%;
+		@include placeholder();
+	}
 }
 
 .orders__item-link,

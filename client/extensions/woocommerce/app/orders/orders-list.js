@@ -4,6 +4,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { range } from 'lodash';
 import React, { Component } from 'react';
 
 /**
@@ -103,7 +104,20 @@ class Orders extends Component {
 		);
 	}
 
-	renderOrderItems = ( order, i ) => {
+	renderPlacholder = () => {
+		return range( 5 ).map( ( i ) => {
+			return (
+				<TableRow key={ i } className="orders__row-placeholder">
+					<TableItem className="orders__table-name" isRowHeader><span /></TableItem>
+					<TableItem className="orders__table-date"><span /></TableItem>
+					<TableItem className="orders__table-status"><span /></TableItem>
+					<TableItem className="orders__table-total"><span /></TableItem>
+				</TableRow>
+			);
+		} );
+	}
+
+	renderOrderItem = ( order, i ) => {
 		const { site } = this.props;
 		return (
 			<TableRow key={ i } href={ getLink( `/store/order/:site/${ order.number }`, site ) }>
@@ -165,14 +179,16 @@ class Orders extends Component {
 			</TableRow>
 		);
 
+		const ordersList = orders ? orders.map( this.renderOrderItem ) : null;
+
 		return (
 			<div className="orders__container">
 				<OrdersFilterNav status={ currentStatus } />
 
 				<Table className="orders__table" header={ headers } horizontalScroll>
 					{ ordersLoading
-						? null
-						: orders.map( this.renderOrderItems ) }
+						? this.renderPlacholder()
+						: ordersList }
 				</Table>
 
 				<Pagination
