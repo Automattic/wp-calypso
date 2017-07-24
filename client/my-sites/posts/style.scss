@@ -111,6 +111,12 @@
 		line-height: (32 / 24) * 1em;
 		font-family: $serif;
 		font-weight: 700;
+
+		.gridicon {
+			color: $gray-text-min;
+			margin-bottom: -3px;
+			margin-right: 6px;
+		}
 	}
 
 	.post__excerpt {
