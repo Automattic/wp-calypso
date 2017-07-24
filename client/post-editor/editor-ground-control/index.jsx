@@ -1,29 +1,28 @@
 /**
  * External dependencies
  */
-const noop = require( 'lodash/noop' ),
-	React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	i18n = require( 'i18n-calypso' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import { noop } from 'lodash';
+import classNames from 'classnames';
 import page from 'page';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-const Card = require( 'components/card' ),
-	Gridicon = require( 'gridicons' ),
-	Popover = require( 'components/popover' ),
-	Site = require( 'blocks/site' ),
-	postUtils = require( 'lib/posts/utils' ),
-	siteUtils = require( 'lib/site/utils' ),
-	PostListFetcher = require( 'components/post-list-fetcher' ),
-	stats = require( 'lib/posts/stats' );
-
+import Card from 'components/card';
+import Gridicon from 'gridicons';
+import Popover from 'components/popover';
+import Site from 'blocks/site';
+import postUtils from 'lib/posts/utils';
+import siteUtils from 'lib/site/utils';
+import PostListFetcher from 'components/post-list-fetcher';
+import stats from 'lib/posts/stats';
 import AsyncLoad from 'components/async-load';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
-import classNames from 'classnames';
 
 export default React.createClass( {
 	displayName: 'EditorGroundControl',
