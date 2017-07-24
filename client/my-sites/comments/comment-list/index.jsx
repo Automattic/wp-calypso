@@ -132,7 +132,7 @@ export class CommentList extends Component {
 		};
 
 		if ( alsoApprove ) {
-			this.setCommentStatus( comment, 'approved', { doPersist: true, showNotice: false } );
+			this.setCommentStatus( parentComment, 'approved', { doPersist: true, showNotice: false } );
 		}
 
 		this.props.createNotice( 'is-success', noticeMessage, noticeOptions );
