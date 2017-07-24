@@ -142,7 +142,6 @@ export class CommentDetail extends Component {
 			authorUsername,
 			commentContent,
 			commentDate,
-			commentId,
 			commentIsLiked,
 			commentIsSelected,
 			commentStatus,
@@ -231,9 +230,7 @@ export class CommentDetail extends Component {
 						/>
 						<CommentDetailReply
 							authorDisplayName={ authorDisplayName }
-							commentId={ commentId }
-							commentStatus={ commentStatus }
-							postId={ postId }
+							comment={ this.getCommentObject() }
 							postTitle={ postTitle }
 							replyComment={ replyComment }
 						/>
