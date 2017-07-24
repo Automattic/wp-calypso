@@ -10,8 +10,6 @@ import { get, isDate, startsWith, pickBy } from 'lodash';
 import {
 	COMMENTS_REQUEST,
 	COMMENTS_RECEIVE,
-	COMMENTS_COUNT_INCREMENT,
-	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_DELETE,
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -115,7 +113,7 @@ export const writePostComment = ( { dispatch }, action ) => {
 	);
 };
 
-export const addComments = ( { dispatch }, action, next, { comments, found } ) => {
+export const addComments = ( { dispatch }, action, next, { comments } ) => {
 	const { siteId, postId, direction } = action;
 	dispatch( {
 		type: COMMENTS_RECEIVE,
@@ -124,19 +122,6 @@ export const addComments = ( { dispatch }, action, next, { comments, found } ) =
 		comments,
 		direction,
 	} );
-
-	// if the api have returned comments count, dispatch it
-	// the api will produce a count only when the request has no
-	// query modifiers such as 'before', 'after', 'type' and more.
-	// in our case it'll be only on the first request
-	if ( found > -1 ) {
-		dispatch( {
-			type: COMMENTS_COUNT_RECEIVE,
-			siteId,
-			postId,
-			totalCommentsCount: found,
-		} );
-	}
 };
 
 export const writePostCommentSuccess = (
@@ -155,8 +140,6 @@ export const writePostCommentSuccess = (
 		comments: [ comment ],
 		skipSort: !! parentCommentId,
 	} );
-	// increment comments count
-	dispatch( { type: COMMENTS_COUNT_INCREMENT, siteId, postId } );
 };
 
 export const announceFailure = ( { dispatch, getState }, { siteId, postId } ) => {

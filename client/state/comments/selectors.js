@@ -34,15 +34,7 @@ export const getCommentById = createSelector(
 	},
 	( { state } ) => [ get( state.comments, 'items' ), get( state.comments, 'errors' ) ],
 );
-/***
- * Get total number of comments on the server for a given post
- * @param {Object} state redux state
- * @param {Number} siteId site identification
- * @param {Number} postId site identification
- * @return {Number} total comments count on the server. if not found, assume infinity
- */
-export const getPostTotalCommentsCount = ( state, siteId, postId ) =>
-	get( state.comments.totalCommentsCount, `${ siteId }-${ postId }` );
+
 /***
  * Get most recent comment date for a given post
  * @param {Object} state redux state
@@ -108,6 +100,34 @@ export const getPostCommentsTree = createSelector(
 	},
 	getPostCommentItems,
 );
+
+const getPostLoadedCommentsHelper = ( commentsTree, commentIds ) => {
+	return commentIds.reduce(
+		( prevSum, commentId ) =>
+			prevSum +
+			getPostLoadedCommentsHelper(
+				commentsTree,
+				get( commentsTree, [ commentId, 'children' ], [] ),
+			) +
+			1,
+		0,
+	);
+};
+
+/**
+ * Get total number of loaded comments for a post
+ *
+ * @param {Object} state redux state
+ * @param {Number} siteId site identification
+ * @param {Number} postId site identification
+ * @return {Number} total comments count on the server. if not found, assume infinity
+ */
+export const getPostLoadedComments = ( state, { siteId, postId, status } ) => {
+	const commentsTree = getPostCommentsTree( state, siteId, postId, status );
+	const commentIds = get( commentsTree, 'children', [] );
+
+	return getPostLoadedCommentsHelper( commentsTree, commentIds );
+};
 
 export const commentsFetchingStatus = ( state, siteId, postId, commentTotal = 0 ) => {
 	const fetchStatus = get(

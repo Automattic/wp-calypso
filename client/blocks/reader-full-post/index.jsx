@@ -347,6 +347,7 @@ export class FullPostView extends React.Component {
 								commentCount={ commentCount }
 								onClick={ this.handleCommentClick }
 								tagName="div"
+								post={ post }
 							/> }
 						{ shouldShowLikes( post ) &&
 							<LikeButton

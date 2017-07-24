@@ -9,7 +9,6 @@ import { translate } from 'i18n-calypso';
 import {
 	COMMENTS_DELETE,
 	COMMENTS_RECEIVE,
-	COMMENTS_COUNT_INCREMENT,
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { getSitePost } from 'state/posts/selectors';
@@ -87,8 +86,6 @@ export const updatePlaceholderComment = ( { dispatch }, { siteId, postId, parent
 	dispatch( { type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId } );
 	// add new comment to state with updated values from server
 	dispatch( { type: COMMENTS_RECEIVE, siteId, postId, comments: [ comment ], skipSort: !! parentCommentId } );
-	// increment comments count
-	dispatch( { type: COMMENTS_COUNT_INCREMENT, siteId, postId } );
 };
 
 /***
