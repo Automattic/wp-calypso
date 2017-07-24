@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import { get, size, takeRight, defer } from 'lodash';
+import { get, size, takeRight, delay } from 'lodash';
 
 /**
  * Internal dependencies
@@ -145,7 +145,7 @@ class PostCommentList extends React.Component {
 
 		if ( this.shouldScrollToComment( nextProps ) ) {
 			// defer so that the above/below comments have time to render
-			defer( () => this.scrollToComment(), 50 );
+			delay( () => this.scrollToComment(), 50 );
 		}
 	}
 
