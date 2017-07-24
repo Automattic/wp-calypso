@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isUndefined, orderBy, has, map, unionBy, reject, isEqual } from 'lodash';
+import { isUndefined, orderBy, has, map, unionBy, reject, isEqual, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -143,6 +143,7 @@ export const fetchStatus = createReducer(
 			const { siteId, postId, direction, commentById } = action;
 			const stateKey = getStateKey( siteId, postId );
 
+			// we can't deduce anything from a commentById fetch.
 			if ( commentById ) {
 				return state;
 			}
@@ -151,7 +152,7 @@ export const fetchStatus = createReducer(
 				direction === 'before' ? 'hasReceivedBefore' : 'hasReceivedAfter';
 
 			const nextState = {
-				...( state[ stateKey ] || fetchStatusInitialState ),
+				...get( state, stateKey, fetchStatusInitialState ),
 				[ direction ]: action.comments.length === NUMBER_OF_COMMENTS_PER_FETCH,
 				[ hasReceivedDirection ]: true,
 			};
@@ -188,6 +189,19 @@ export function totalCommentsCount( state = {}, action ) {
 
 	return state;
 }
+
+/**
+ * Houses errors by `siteId-commentId`
+ */
+export const errors = createReducer(
+	{},
+	{
+		[ COMMENTS_ERROR ]: ( state, action ) => ( {
+			...state,
+			[ `${ action.siteId }-${ action.commentId }` ]: { error: true },
+		} ),
+	},
+);
 
 export default combineReducers( {
 	items,

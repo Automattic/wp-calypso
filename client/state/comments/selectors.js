@@ -20,7 +20,7 @@ export const getPostCommentItems = ( state, siteId, postId ) =>
 	get( state.comments.items, `${ siteId }-${ postId }` );
 
 export const getCommentById = createSelector( ( { state, commentId, siteId } ) => {
-	if ( get( state, 'comments.items', {} )[ `${ siteId }-error-${ commentId }` ] ) {
+	if ( get( state, 'comments.errors', {} )[ `${ siteId }-${ commentId }` ] ) {
 		return { siteId, commentId, error: true };
 	}
 

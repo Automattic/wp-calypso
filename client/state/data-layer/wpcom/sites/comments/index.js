@@ -60,15 +60,11 @@ export const receiveCommentError = ( store, action ) => {
 		),
 	);
 
-	if ( action.commentId ) {
-		store.dispatch( {
-			type: COMMENTS_ERROR,
-			siteId: action.siteId,
-			postId: `error-${ action.commentId }`,
-			commentId: action.commentId,
-			commentById: true,
-		} );
-	}
+	store.dispatch( {
+		type: COMMENTS_ERROR,
+		siteId: action.siteId,
+		commentId: action.commentId,
+	} );
 };
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
