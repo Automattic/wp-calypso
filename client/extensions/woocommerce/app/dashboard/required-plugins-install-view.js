@@ -12,7 +12,7 @@ const debug = debugFactory( 'calypso:allendav' );
 /**
  * Internal dependencies
  */
-import { activatePlugin, installPlugin } from 'state/plugins/installed/actions';
+import { activatePlugin, fetchPlugins, installPlugin } from 'state/plugins/installed/actions';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
@@ -21,7 +21,7 @@ import ProgressBar from 'components/progress-bar';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import SetupHeader from './setup-header';
 //import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
-// import wp from 'lib/wp';
+import wp from 'lib/wp';
 
 class RequiredPluginsInstallView extends Component {
 	static propTypes = {
@@ -106,11 +106,19 @@ class RequiredPluginsInstallView extends Component {
 
 		debug( 'sitePlugins=', sitePlugins );
 
+		// Iterate over the required plugins, fetching plugin
+		// data from wordpress.org for each into state
 		const requiredPlugins = this.getRequiredPluginsList();
 		let pluginDataLoaded = true;
 		for ( const requiredPluginSlug in requiredPlugins ) {
 			const pluginData = getPlugin( wporg, requiredPluginSlug );
 			debug( 'plugin Data', requiredPluginSlug, pluginData );
+			// pluginData will be null until the action has had
+			// a chance to try and fetch data for the plugin slug
+			// given. Note that non-wp-org plugins (like wc-api-dev)
+			// will be accepted too, but with
+			// { fetched: false, wporg: false }
+			// as their response
 			if ( ! pluginData ) {
 				this.props.fetchPluginData( requiredPluginSlug );
 				pluginDataLoaded = false;
@@ -128,7 +136,6 @@ class RequiredPluginsInstallView extends Component {
 		const toActivate = [];
 		for ( const requiredPluginSlug in requiredPlugins ) {
 			const pluginFound = find( sitePlugins, { slug: requiredPluginSlug } );
-
 			if ( ! pluginFound ) {
 				toInstall.push( requiredPluginSlug );
 				toActivate.push( requiredPluginSlug );
@@ -187,7 +194,17 @@ class RequiredPluginsInstallView extends Component {
 
 			const workingOn = toInstall.shift();
 			debug( 'kicking off install of ', workingOn );
-			this.props.installPlugin( site.ID, getPlugin( wporg, workingOn ) );
+			if ( 'wc-api-dev' === workingOn ) {
+				// Special handling for wc-api-dev
+				wp.req.post( {
+					path: `/sites/${ site.ID }/woocommerce/install-api-dev-plugin`
+				} ).then( () => {
+					this.props.fetchPlugins( [ site.ID ] );
+				} );
+			} else {
+				// Otherwise, handle plugin installation the normal way
+				this.props.installPlugin( site.ID, getPlugin( wporg, workingOn ) );
+			}
 
 			this.setState( {
 				message: translate( 'Installing %(plugin)s', { args: { plugin: requiredPlugins[ workingOn ] } } ),
@@ -340,6 +357,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			activatePlugin,
 			fetchPluginData,
+			fetchPlugins,
 			installPlugin
 		},
 		dispatch
