@@ -3,13 +3,14 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { FormSection, reduxForm } from 'redux-form';
+import { FormSection, isDirty, reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { ProtectFormGuard } from 'lib/protect-form';
 import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -26,6 +27,7 @@ const query = { type: 'page' };
 
 class Pages extends Component {
 	static propTypes = {
+		dirty: PropTypes.bool,
 		handleSubmit: PropTypes.func,
 		isFetching: PropTypes.bool,
 		isFetchingPages: PropTypes.bool,
@@ -39,6 +41,7 @@ class Pages extends Component {
 
 	render() {
 		const {
+			dirty,
 			handleSubmit,
 			isFetching,
 			isFetchingPages,
@@ -56,6 +59,8 @@ class Pages extends Component {
 				}
 
 				<form>
+					<ProtectFormGuard isChanged={ dirty } />
+
 					<FormSection name="pages">
 						<SectionHeader label={ translate( 'Pages' ) }>
 							<FormButton compact
@@ -118,6 +123,7 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
+			dirty: isDirty( form ),
 			isFetchingPages: isRequestingSitePostsForQuery( state, siteId, query ),
 			siteId,
 		};

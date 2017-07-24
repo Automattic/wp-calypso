@@ -3,13 +3,14 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { change, FormSection, formValueSelector, reduxForm } from 'redux-form';
+import { change, formValueSelector, FormSection, isDirty, reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { ProtectFormGuard } from 'lib/protect-form';
 import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -26,6 +27,7 @@ const form = 'extensions.wpJobManager.submission';
 class JobSubmission extends Component {
 	static propTypes = {
 		change: PropTypes.func,
+		dirty: PropTypes.bool,
 		enableRegistration: PropTypes.bool,
 		generateUsername: PropTypes.bool,
 		handleSubmit: PropTypes.func,
@@ -53,6 +55,7 @@ class JobSubmission extends Component {
 
 	render() {
 		const {
+			dirty,
 			enableRegistration,
 			generateUsername,
 			handleSubmit,
@@ -66,6 +69,8 @@ class JobSubmission extends Component {
 		return (
 			<div>
 				<form>
+					<ProtectFormGuard isChanged={ dirty } />
+
 					<FormSection name="account">
 						<SectionHeader label={ translate( 'Account' ) }>
 							<FormButton compact
@@ -266,6 +271,7 @@ const selector = formValueSelector( form );
 
 const connectComponent = connect(
 	state => ( {
+		dirty: isDirty( form ),
 		enableRegistration: selector( state, 'account.enableRegistration' ),
 		generateUsername: selector( state, 'account.generateUsername' ),
 		submissionDuration: selector( state, 'duration.submissionDuration' ),
