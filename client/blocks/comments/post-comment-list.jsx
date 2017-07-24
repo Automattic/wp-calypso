@@ -87,12 +87,12 @@ class PostCommentList extends React.Component {
 		props.commentsFetchingStatus.hasReceivedBefore &&
 		props.commentsFetchingStatus.hasReceivedAfter &&
 		! this.hasScrolledToComment &&
-		window.document.getElementsByName( `comment-${ props.startingCommentId }` ).length > 0;
+		window.document.getElementById( `comment-${ props.startingCommentId }` );
 
-	shouldFetchInitialComment = ( { startingCommentId, commentsTree } ) =>
-		startingCommentId && commentsTree && ! commentsTree[ startingCommentId ];
+	shouldFetchInitialComment = ( { startingCommentId, initialComment } ) =>
+		startingCommentId && ! initialComment;
 
-	shouldFetchInitialPages = ( { commentsTree, startingCommentId } ) =>
+	shouldFetchInitialPages = ( { startingCommentId, commentsTree } ) =>
 		startingCommentId &&
 		commentsTree[ startingCommentId ] &&
 		this.props.commentsTree[ startingCommentId ] &&
@@ -121,9 +121,9 @@ class PostCommentList extends React.Component {
 		 *  2. the commentId does not exist for the site
 		 */
 		const commentIdBail =
-			( currentInitialComment !== nextInitialComment &&
-				( nextInitialComment.post && nextInitialComment.post.ID !== nextPostId ) ) ||
-			nextInitialComment.errors;
+			currentInitialComment !== nextInitialComment &&
+			( nextInitialComment.error ||
+				( nextInitialComment.post && nextInitialComment.post.ID !== nextPostId ) );
 
 		return ( propsExist && propChanged ) || commentIdBail;
 	};
@@ -147,7 +147,7 @@ class PostCommentList extends React.Component {
 		const postId = get( nextProps, 'post.ID' );
 		const status = get( nextProps, 'commentsFilter' );
 
-		if ( this.shouldFetchInitialComment( nextProps ) && ! nextProps.initialComment ) {
+		if ( this.shouldFetchInitialComment( nextProps ) ) {
 			this.props.requestComment( { siteId, commentId: nextProps.startingCommentId } );
 			this.hasScrolledToComment = false;
 		} else if ( this.shouldFetchInitialPages( nextProps ) ) {
@@ -256,7 +256,7 @@ class PostCommentList extends React.Component {
 	};
 
 	scrollToComment = () => {
-		const comment = window.document.getElementsByName( window.location.hash.substring( 1 ) )[ 0 ];
+		const comment = window.document.getElementById( window.location.hash.substring( 1 ) );
 		comment.scrollIntoView();
 		window.scrollBy( 0, -50 );
 		this.hasScrolledToComment = true;

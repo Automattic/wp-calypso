@@ -52,6 +52,12 @@ const updateComment = ( commentId, newProperties ) => comment => {
  */
 export function items( state = {}, action ) {
 	const { type, siteId, postId, commentId, like_count } = action;
+
+	// cannot construct stateKey without both
+	if ( ! siteId || ! postId ) {
+		return state;
+	}
+
 	const stateKey = getStateKey( siteId, postId );
 
 	switch ( type ) {
@@ -190,15 +196,24 @@ export const totalCommentsCount = createReducer(
 export const errors = createReducer(
 	{},
 	{
-		[ COMMENTS_ERROR ]: ( state, action ) => ( {
-			...state,
-			[ `${ action.siteId }-${ action.commentId }` ]: { error: true },
-		} ),
+		[ COMMENTS_ERROR ]: ( state, action ) => {
+			const key = `${ action.siteId }-${ action.commentId }`;
+
+			if ( state[ key ] ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ key ]: { error: true },
+			};
+		},
 	},
 );
 
 export default combineReducers( {
 	items,
 	fetchStatus,
+	errors,
 	totalCommentsCount,
 } );
