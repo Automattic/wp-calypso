@@ -9,6 +9,7 @@ import { get, isEmpty, omit } from 'lodash';
 import { combineReducers, createReducer } from 'state/utils';
 import magicLogin from './magic-login/reducer';
 import {
+	LOGIN_FORM_UPDATE,
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
@@ -64,6 +65,7 @@ export const requestError = createReducer( null, {
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => error,
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: () => null,
 	[ ROUTE_SET ]: () => null,
+	[ LOGIN_FORM_UPDATE ]: () => null,
 } );
 
 export const requestSuccess = createReducer( null, {
@@ -124,6 +126,7 @@ export const twoFactorAuthRequestError = createReducer( null, {
 	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS ]: () => null,
 	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE ]: ( state, { error } ) => error,
 	[ ROUTE_SET ]: () => null,
+	[ LOGIN_FORM_UPDATE ]: () => null,
 } );
 
 export const twoFactorAuthPushPoll = createReducer( { inProgress: false, success: false }, {

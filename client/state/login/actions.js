@@ -10,6 +10,7 @@ import { translate } from 'i18n-calypso';
  */
 import config from 'config';
 import {
+	LOGIN_FORM_UPDATE,
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
@@ -348,3 +349,4 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 
 export const startPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } );
 export const stopPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP } );
+export const formUpdate = () => ( { type: LOGIN_FORM_UPDATE } );
