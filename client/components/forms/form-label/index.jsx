@@ -5,10 +5,14 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 
+const renderRequiredBadge = ( translate ) => (
+	<small className="form-label__required">{ translate( 'Required' ) }</small>
+);
+
 const FormLabel = ( { children, required, translate, className, ...extraProps } ) => {
 	children = React.Children.toArray( children ) || [];
 	if ( required ) {
-		children.push( <small className="form-label__required">{ translate( 'Required' ) }</small> );
+		children.push( renderRequiredBadge( translate ) );
 	}
 
 	return (
