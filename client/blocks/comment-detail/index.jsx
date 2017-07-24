@@ -17,6 +17,7 @@ import CommentDetailPost from './comment-detail-post';
 import CommentDetailReply from './comment-detail-reply';
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import { getPostCommentsTree } from 'state/comments/selectors';
+import getSiteComment from 'state/selectors/get-site-comment';
 
 export class CommentDetail extends Component {
 	static propTypes = {
@@ -237,13 +238,8 @@ export class CommentDetail extends Component {
 }
 
 const mapStateToProps = ( state, ownProps ) => {
-	// TODO: replace `const comment = ownProps.comment;` with
-	// `const comment = ownProps.comment || getComment( ownProps.commentId );`
-	// when the selector is ready.
-	const {
-		comment,
-		siteId,
-	} = ownProps;
+	const { commentId, siteId } = ownProps;
+	const comment = getSiteComment( state, siteId, commentId );
 
 	const postId = get( comment, 'post.ID' );
 
@@ -251,7 +247,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const postTitle = decodeEntities( get( comment, 'post.title' ) );
 
 	const commentsTree = getPostCommentsTree( state, siteId, postId, 'all' );
-	const parentCommentId = get( commentsTree, [ comment.ID, 'data', 'parent', 'ID' ], 0 );
+	const parentCommentId = get( commentsTree, [ commentId, 'data', 'parent', 'ID' ], 0 );
 	const parentComment = get( commentsTree, [ parentCommentId, 'data' ], {} );
 
 	// TODO: eventually it will be returned already decoded from the data layer.
@@ -264,23 +260,23 @@ const mapStateToProps = ( state, ownProps ) => {
 		authorId: get( comment, 'author.ID' ),
 		authorIp: get( comment, 'author.ip' ), // TODO: not available in the current data structure
 		authorIsBlocked: get( comment, 'author.isBlocked' ), // TODO: not available in the current data structure
-		authorUrl: get( comment, 'author.URL' ),
+		authorUrl: get( comment, 'author.URL', '' ),
 		authorUsername: get( comment, 'author.nice_name' ),
-		commentContent: comment.content,
-		commentDate: comment.date,
-		commentId: comment.ID,
-		commentIsLiked: comment.i_like,
-		commentStatus: comment.status,
+		commentContent: get( comment, 'content' ),
+		commentDate: get( comment, 'date' ),
+		commentId,
+		commentIsLiked: get( comment, 'i_like' ),
+		commentStatus: get( comment, 'status' ),
 		commentUrl: get( comment, 'URL' ),
 		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
 		parentCommentAuthorDisplayName: get( parentComment, 'author.name' ),
 		parentCommentContent,
-		parentCommentUrl: get( parentComment, 'URL' ),
+		parentCommentUrl: get( parentComment, 'URL', '' ),
 		postAuthorDisplayName: get( comment, 'post.author.name' ), // TODO: not available in the current data structure
 		postId,
 		postTitle,
-		repliedToComment: comment.replied, // TODO: not available in the current data structure
-		siteId: comment.siteId || siteId,
+		repliedToComment: get( comment, 'replied' ), // TODO: not available in the current data structure
+		siteId: get( comment, 'siteId', siteId ),
 	} );
 };
 

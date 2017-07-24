@@ -314,6 +314,7 @@ export class CommentList extends Component {
 
 	render() {
 		const {
+			comments,
 			commentsCount,
 			commentsPage,
 			isLoading,
@@ -325,8 +326,6 @@ export class CommentList extends Component {
 			isBulkEdit,
 			selectedComments,
 		} = this.state;
-
-		const comments = this.getComments();
 
 		const zeroComments = size( comments ) <= 0;
 		const showPlaceholder = ( ! siteId || isLoading ) && zeroComments;
@@ -354,13 +353,13 @@ export class CommentList extends Component {
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-list__transition"
 				>
-					{ map( comments, comment =>
+					{ map( comments, commentId =>
 						<CommentDetail
-							comment={ comment }
+							commentId={ commentId }
 							deleteCommentPermanently={ this.deleteCommentPermanently }
 							isBulkEdit={ isBulkEdit }
-							commentIsSelected={ this.isCommentSelected( comment.ID ) }
-							key={ `comment-${ siteId }-${ comment.ID }` }
+							commentIsSelected={ this.isCommentSelected( commentId ) }
+							key={ `comment-${ siteId }-${ commentId }` }
 							replyComment={ this.replyComment }
 							setCommentStatus={ this.setCommentStatus }
 							siteId={ siteId }
@@ -395,7 +394,7 @@ export class CommentList extends Component {
 }
 
 const mapStateToProps = ( state, { siteId, status, order } ) => {
-	const comments = getSiteComments( state, siteId, status, order );
+	const comments = map( getSiteComments( state, siteId, status, order ), 'ID' );
 	const isLoading = ! hasSiteComments( state, siteId );
 	return {
 		comments,
