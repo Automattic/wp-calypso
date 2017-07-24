@@ -98,6 +98,36 @@ class PostCommentList extends React.Component {
 		this.props.commentsTree[ startingCommentId ] &&
 		! this.alreadyLoadedInitialSet;
 
+	shouldNormalFetchAfterPropsChange = nextProps => {
+		const currentSiteId = get( this.props, 'post.site_ID' );
+		const currentPostId = get( this.props, 'post.ID' );
+		const currentCommentsFilter = this.props.commentsFilter;
+		const currentInitialComment = this.props.initialComment;
+
+		const nextSiteId = get( nextProps, 'post.site_ID' );
+		const nextPostId = get( nextProps, 'post.ID' );
+		const nextCommentsFilter = nextProps.commentsFilter;
+		const nextInitialComment = nextProps.initialComment;
+
+		const propsExist = nextSiteId && nextPostId && nextCommentsFilter;
+		const propChanged =
+			currentSiteId !== nextSiteId ||
+			currentPostId !== nextPostId ||
+			currentCommentsFilter !== nextCommentsFilter;
+
+		/**
+		 * This covers two cases where fetching by commentId fails and we should fetch as if it werent specified:
+		 *  1. the comment specified (commentId) exists for the site but is for a different postId
+		 *  2. the commentId does not exist for the site
+		 */
+		const commentIdBail =
+			( currentInitialComment !== nextInitialComment &&
+				( nextInitialComment.post && nextInitialComment.post.ID !== nextPostId ) ) ||
+			nextInitialComment.errors;
+
+		return ( propsExist && propChanged ) || commentIdBail;
+	};
+
 	componentWillMount() {
 		const { post: { ID: postId, site_ID: siteId }, commentsFilter: status } = this.props;
 
@@ -113,34 +143,19 @@ class PostCommentList extends React.Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const nextSiteId = get( nextProps, 'post.site_ID' );
-		const nextPostId = get( nextProps, 'post.ID' );
-		const nextCommentsFilter = get( nextProps, 'commentsFilter' );
-		const nextInitialComment = nextProps.initialComment;
+		const siteId = get( nextProps, 'post.site_ID' );
+		const postId = get( nextProps, 'post.ID' );
+		const status = get( nextProps, 'commentsFilter' );
 
 		if ( this.shouldFetchInitialComment( nextProps ) && ! nextProps.initialComment ) {
-			this.props.requestComment( { siteId: nextSiteId, commentId: nextProps.startingCommentId } );
+			this.props.requestComment( { siteId, commentId: nextProps.startingCommentId } );
 			this.hasScrolledToComment = false;
 		} else if ( this.shouldFetchInitialPages( nextProps ) ) {
 			this.viewEarlierCommentsHandler();
 			this.viewLaterCommentsHandler();
 			this.alreadyLoadedInitialSet = true;
-		} else if (
-			( nextSiteId &&
-				nextPostId &&
-				nextCommentsFilter &&
-				( this.props.post.site_ID !== nextSiteId ||
-					this.props.post.ID !== nextPostId ||
-					this.props.commentsFilter !== nextCommentsFilter ) ) ||
-			( this.props.initialComment !== nextInitialComment &&
-				( ( nextInitialComment.post && nextInitialComment.post.ID !== nextPostId ) ||
-					nextInitialComment.error ) )
-		) {
-			nextProps.requestPostComments( {
-				siteId: nextSiteId,
-				postId: nextPostId,
-				status: nextCommentsFilter,
-			} );
+		} else if ( this.shouldNormalFetchAfterPropsChange( nextProps ) ) {
+			nextProps.requestPostComments( { siteId, postId, status } );
 		}
 
 		if ( this.shouldScrollToComment( nextProps ) ) {
