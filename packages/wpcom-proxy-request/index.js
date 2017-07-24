@@ -438,32 +438,9 @@ function onmessage( e ) {
 	// apiNamespace (WP-API)
 	const { apiNamespace } = params;
 
-	// is REST-API api?
-	const isRestAPI = apiNamespace === undefined;
-
-	if ( isRestAPI ) {
-		debug( 'REST-API detected' );
-		body = data[ 0 ];
-		statusCode = data[ 1 ];
-		headers = data[ 2 ];
-	} else {
-		debug( 'WP-API detected' );
-		body = data[ 0 ];
-		headers = data[ 2 ];
-
-		// Identify error response in `envelope` mode in function of the response fields
-		// and try to make the same error structure for both APIs
-		if (
-			body.code &&
-			( body.data && body.data.status ) &&
-			body.message
-		) {
-			body.error = body.code;
-			statusCode = body.data.status;
-			delete body.code;
-			delete body.data;
-		}
-	}
+	body = data[ 0 ];
+	statusCode = data[ 1 ];
+	headers = data[ 2 ];
 
 	if ( statusCode === 207 ) {
 		// 207 is a signal from rest-proxy. It means, "this isn't the final
@@ -485,7 +462,7 @@ function onmessage( e ) {
 		headers.status = statusCode;
 	}
 
-	if ( null == statusCode || 2 === Math.floor( statusCode / 100 ) ) {
+	if ( statusCode && 2 === Math.floor( statusCode / 100 ) ) {
 		// 2xx status code, success
 		resolve( xhr, body, headers );
 	} else {
