@@ -37,7 +37,6 @@ describe( 'EditorGroundControl', function() {
 		mockery.registerMock( 'post-editor/edit-post-status', EmptyComponent );
 		mockery.registerMock( 'post-editor/editor-status-label', EmptyComponent );
 		mockery.registerMock( 'components/sticky-panel', EmptyComponent );
-		mockery.registerMock( 'components/post-list-fetcher', EmptyComponent );
 		mockery.registerMock( 'components/post-schedule', EmptyComponent );
 		mockery.registerMock( 'lib/posts/actions', { edit: noop } );
 		mockery.registerMock( 'lib/posts/stats', {
