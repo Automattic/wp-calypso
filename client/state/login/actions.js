@@ -221,13 +221,17 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 			dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
 		} )
 		.catch( ( httpError ) => {
-			const error = getErrorFromHTTPError( httpError );
+			const twoStepNonce = get( httpError, 'response.body.data.two_step_nonce' );
 
-			dispatch( {
-				type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
-				twoStepNonce: get( httpError, 'response.body.data.two_step_nonce' ),
-				nonceType: twoFactorAuthType,
-			} );
+			if ( twoStepNonce ) {
+				dispatch( {
+					type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
+					twoStepNonce,
+					nonceType: twoFactorAuthType,
+				} );
+			}
+
+			const error = getErrorFromHTTPError( httpError );
 
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,

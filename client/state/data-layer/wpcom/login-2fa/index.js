@@ -60,23 +60,26 @@ const receivedTwoFactorPushNotificationApproved = ( { dispatch } ) =>
 /***
  * Receive error from the two factor push notification status http request
  *
- * @param {Object}	store  Global redux store
- * @param {Object}	action dispathced action
- * @param {Object}	error the error object
+ * @param {Object}	 store  Global redux store
+ * @param {Object}	 action dispatched action
+ * @param {Function} next   dispatches to next middleware in chain
+ * @param {Object}	 error  the error object
  */
 const receivedTwoFactorPushNotificationError = ( store, action, next, error ) => {
+	const isNetworkFailure = ! error.status;
 	const twoStepNonce = get( error, 'response.body.data.two_step_nonce' );
 
-	if ( ! twoStepNonce ) {
+	if ( twoStepNonce ) {
+		store.dispatch( {
+			type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
+			nonceType: 'push',
+			twoStepNonce,
+		} );
+	} else if ( ! isNetworkFailure ) {
 		store.dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP } );
-		throw new Error( "Two step nonce wasn't present on the response from polling endpoint, unable to continue" );
-	}
 
-	store.dispatch( {
-		type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
-		nonceType: 'push',
-		twoStepNonce,
-	} );
+		throw new Error( 'Unable to continue polling because of error' );
+	}
 
 	if ( getTwoFactorPushPollInProgress( store.getState() ) ) {
 		setTimeout(
