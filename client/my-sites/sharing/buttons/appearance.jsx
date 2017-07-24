@@ -99,11 +99,21 @@ class SharingButtonsAppearance extends Component {
 	}
 
 	getReblogLikeOptionsElement() {
-		if ( ( ! this.props.isJetpack || this.props.isLikesModuleActive ) ) {
+		const {
+			isJetpack,
+			isLikesModuleActive,
+			translate
+		} = this.props;
+
+		if ( ( ! isJetpack || isLikesModuleActive ) ) {
 			return (
 				<fieldset className="sharing-buttons__fieldset">
 					<legend className="sharing-buttons__fieldset-heading">
-						{ this.props.translate( 'Reblog & Like', { context: 'Sharing options: Header' } ) }
+						{
+							isJetpack
+								? translate( 'Like', { context: 'Sharing options: Header' } )
+								: translate( 'Reblog & Like', { context: 'Sharing options: Header' } )
+						}
 					</legend>
 					{ this.getReblogOptionElement() }
 					<label>
@@ -114,7 +124,7 @@ class SharingButtonsAppearance extends Component {
 							onChange={ this.onReblogsLikesCheckboxClicked }
 							disabled={ ! this.props.initialized }
 						/>
-						<span>{ this.props.translate( 'Show like button', { context: 'Sharing options: Checkbox label' } ) }</span>
+						<span>{ translate( 'Show like button', { context: 'Sharing options: Checkbox label' } ) }</span>
 					</label>
 				</fieldset>
 			);
