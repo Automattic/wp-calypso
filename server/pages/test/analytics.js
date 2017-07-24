@@ -28,7 +28,7 @@ describe( 'index', function() {
 			next = noop;
 		} );
 
-		context( 'when rendering a section', function() {
+		describe( 'when rendering a section', function() {
 			let clock;
 
 			useFakeTimers( newClock => clock = newClock );
@@ -65,18 +65,19 @@ describe( 'index', function() {
 				logSectionResponseTime( request2, response2, next );
 
 				response.emit( 'finish' );
-				response.emit( 'finish' );
-				response2.emit( 'finish' );
 				response2.emit( 'finish' );
 
 				expect( analytics.statsd.recordTiming ).to.have.been.calledOnce;
 
 				clock.tick( TWO_SECONDS );
+				response.emit( 'finish' );
+				response2.emit( 'finish' );
+
 				expect( analytics.statsd.recordTiming ).to.have.been.calledTwice;
 			} );
 		} );
 
-		context( 'when not rendering a section', function() {
+		describe( 'when not rendering a section', function() {
 			beforeEach( function() {
 				sinon.stub( analytics.statsd, 'recordTiming' );
 			} );
