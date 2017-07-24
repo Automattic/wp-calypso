@@ -4,6 +4,7 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { omit } from 'lodash';
 
 const renderRequiredBadge = ( translate ) => (
 	<small className="form-label__required">{ translate( 'Required' ) }</small>
@@ -16,7 +17,7 @@ const FormLabel = ( { children, required, translate, className, ...extraProps } 
 	}
 
 	return (
-		<label { ...extraProps } className={ classnames( className, 'form-label' ) } >
+		<label { ...omit( extraProps, 'moment', 'numberFormat' ) } className={ classnames( className, 'form-label' ) } >
 			{ children.length ? children : null }
 		</label>
 	);
