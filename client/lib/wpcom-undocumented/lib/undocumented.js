@@ -1849,7 +1849,7 @@ Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {
 };
 
 Undocumented.prototype.requestTransferCode = function( options, fn ) {
-	var { domainName, unlock, disablePrivacy } = options,
+	const { domainName, unlock, disablePrivacy } = options,
 		data = {
 			domainStatus: JSON.stringify( {
 				command: 'send-code',

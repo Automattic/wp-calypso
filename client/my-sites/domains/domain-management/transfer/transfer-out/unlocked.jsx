@@ -78,16 +78,16 @@ class Unlocked extends React.Component {
 			} else {
 				let successMessage;
 				if ( enablePrivacy && domainLockingAvailable ) {
-					successMessage = this.translate( 'We\'ve canceled your domain transfer. Your domain is now re-locked and ' +
+					successMessage = translate( 'We\'ve canceled your domain transfer. Your domain is now re-locked and ' +
 						'Privacy Protection has been enabled.' );
 				} else if ( enablePrivacy ) {
-					successMessage = this.translate( 'We\'ve canceled your domain transfer and ' +
+					successMessage = translate( 'We\'ve canceled your domain transfer and ' +
 						'Privacy Protection has been re-enabled.' );
 				} else if ( domainLockingAvailable ) {
-					successMessage = this.translate( 'We\'ve canceled your domain transfer and ' +
+					successMessage = translate( 'We\'ve canceled your domain transfer and ' +
 						're-locked your domain.' );
 				} else {
-					successMessage = this.translate( 'We\'ve canceled your domain transfer. ' );
+					successMessage = translate( 'We\'ve canceled your domain transfer. ' );
 				}
 
 				notices.success( successMessage );
@@ -118,18 +118,18 @@ class Unlocked extends React.Component {
 			hasPrivacyProtection,
 			manualTransferRequired,
 			pendingTransfer,
-			domainLockingAvailable
+			domainLockingAvailable,
 		} = getSelectedDomain( this.props );
 
 		let domainStateMessage;
 
 		if ( pendingTransfer ) {
-			domainStateMessage = this.translate( 'Your domain is pending transfer.' );
+			domainStateMessage = translate( 'Your domain is pending transfer.' );
 		} else if ( domainLockingAvailable && hasPrivacyProtection && ! privateDomain ) {
 			domainStateMessage = translate( 'Your domain is unlocked and Privacy Protection has been disabled' +
 				' to prepare for transfer.' );
 		} else if ( domainLockingAvailable ) {
-			domainStateMessage = this.translate( 'Your domain is unlocked to prepare for transfer.' );
+			domainStateMessage = translate( 'Your domain is unlocked to prepare for transfer.' );
 		}
 		// Otherwise, we can skip this paragraph.
 
