@@ -111,8 +111,10 @@ class Pages extends Component {
 	}
 }
 
+const form = 'extensions.wpJobManager.pages';
+
 const connectComponent = connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -124,8 +126,7 @@ const connectComponent = connect(
 
 const createReduxForm = reduxForm( {
 	enableReinitialize: true,
-	form: 'pages',
-	getFormState: state => state.extensions.wpJobManager.form,
+	form,
 } );
 
 export default flowRight(

@@ -272,20 +272,16 @@ class JobListings extends Component {
 	}
 }
 
-const connectComponent = connect(
-	( state ) => {
-		const selector = formValueSelector( 'jobListings', () => state.extensions.wpJobManager.form );
+const form = 'extensions.wpJobManager.jobListings';
+const selector = formValueSelector( form );
 
-		return {
-			perPage: selector( state, 'listings.perPage' ),
-		};
-	}
+const connectComponent = connect(
+	state => ( { perPage: selector( state, 'listings.perPage' ) } )
 );
 
 const createReduxForm = reduxForm( {
 	enableReinitialize: true,
-	form: 'jobListings',
-	getFormState: state => state.extensions.wpJobManager.form,
+	form,
 } );
 
 export default flowRight(
