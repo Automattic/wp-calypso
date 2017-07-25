@@ -133,8 +133,8 @@ class Post extends Component {
 					className="post__title-link post__content-link"
 					target={ this.getContentLinkTarget() }
 					onClick={ this.props.recordPostTitleClick }>
+					<PostFormat format={ this.props.post.format } />
 					<h4 className="post__title">
-						<PostFormat format={ this.props.post.format } />
 						{ this.props.post.title }
 					</h4>
 				</a>
