@@ -238,6 +238,16 @@ class RequiredPluginsInstallView extends Component {
 			// plugin id isn't always slug/slug unless the main plugin PHP
 			// file is the same name as the plugin folder
 			const pluginToActivate = find( sitePlugins, { slug: workingOn } );
+			// Already active? Skip it
+			if ( pluginToActivate.active ) {
+				this.setState( {
+					toActivate,
+					workingOn: '',
+				} );
+				return;
+			}
+
+			// Otherwise, activate!
 			this.props.activatePlugin( site.ID, pluginToActivate );
 
 			this.setState( {
