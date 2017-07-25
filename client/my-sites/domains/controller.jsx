@@ -30,7 +30,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
  */
 const productsList = productsFactory();
 
-export const domainsAddHeader = ( context, next ) => {
+const domainsAddHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
 		return i18n.translate( 'Select a site to add a domain' );
 	};
@@ -38,7 +38,7 @@ export const domainsAddHeader = ( context, next ) => {
 	next();
 };
 
-export const domainsAddRedirectHeader = ( context, next ) => {
+const domainsAddRedirectHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
 		return i18n.translate( 'Select a site to add Site Redirect' );
 	};
@@ -46,7 +46,7 @@ export const domainsAddRedirectHeader = ( context, next ) => {
 	next();
 };
 
-export const domainSearch = ( context ) => {
+const domainSearch = ( context ) => {
 	const CartData = require( 'components/data/cart' );
 	const DomainSearch = require( './domain-search' );
 	const basePath = route.sectionify( context.path );
@@ -75,7 +75,7 @@ export const domainSearch = ( context ) => {
 	);
 };
 
-export const siteRedirect = ( context ) => {
+const siteRedirect = ( context ) => {
 	const CartData = require( 'components/data/cart' );
 	const SiteRedirect = require( './domain-search/site-redirect' );
 	const basePath = route.sectionify( context.path );
@@ -96,7 +96,7 @@ export const siteRedirect = ( context ) => {
 	);
 };
 
-export const mapDomain = ( context ) => {
+const mapDomain = ( context ) => {
 	const CartData = require( 'components/data/cart' );
 	const MapDomain = require( 'my-sites/domains/map-domain' ).default;
 	const basePath = route.sectionify( context.path );
@@ -120,7 +120,7 @@ export const mapDomain = ( context ) => {
 	);
 };
 
-export const googleAppsWithRegistration = ( context ) => {
+const googleAppsWithRegistration = ( context ) => {
 	const CartData = require( 'components/data/cart' );
 	const GoogleApps = require( 'components/upgrades/google-apps' );
 
@@ -168,7 +168,7 @@ export const googleAppsWithRegistration = ( context ) => {
 	);
 };
 
-export const redirectIfNoSite = ( redirectTo ) => {
+const redirectIfNoSite = ( redirectTo ) => {
 	return ( context, next ) => {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
@@ -185,7 +185,7 @@ export const redirectIfNoSite = ( redirectTo ) => {
 	};
 };
 
-export const redirectToAddMappingIfVipSite = () => {
+const redirectToAddMappingIfVipSite = () => {
 	return ( context, next ) => {
 		const state = context.store.getState();
 		const selectedSite = getSelectedSite( state );
