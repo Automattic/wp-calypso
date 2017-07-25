@@ -41,7 +41,6 @@ describe( 'reducer', () => {
 			'themeSetup',
 			'npsSurveyNotice',
 			'isNotificationsOpen',
-			'form',
 		] );
 	} );
 
