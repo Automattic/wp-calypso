@@ -41,6 +41,7 @@ import {
 	getTwoFactorAuthNonce,
 	getTwoFactorUserId,
 } from 'state/login/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 import wpcom from 'lib/wp';
 
 function getErrorMessageFromErrorCode( code ) {
@@ -398,10 +399,14 @@ export const formUpdate = () => ( { type: LOGIN_FORM_UPDATE } );
  * @param  {String}    redirectTo         Url to redirect the user to upon successful logout
  * @return {Function}                     Action thunk to trigger the logout process.
  */
-export const logoutUser = ( redirectTo ) => dispatch => {
+export const logoutUser = ( redirectTo ) => ( dispatch, getState ) => {
 	dispatch( {
 		type: LOGOUT_REQUEST,
 	} );
+
+	const currentUser = getCurrentUser( getState() );
+	const logoutNonceMatches = ( currentUser.logout_URL || '' ).match( /_wpnonce=([^&]*)/ );
+	const logoutNonce = logoutNonceMatches && logoutNonceMatches[ 1 ];
 
 	return request.post( 'https://wordpress.com/wp-login.php?action=logout-endpoint' )
 		.withCredentials()
@@ -411,6 +416,7 @@ export const logoutUser = ( redirectTo ) => dispatch => {
 			redirect_to: redirectTo,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
+			logout_nonce: logoutNonce,
 		} ).then( ( response ) => {
 			const responseData = response.body && response.body.data;
 			dispatch( {
