@@ -2,14 +2,45 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { set } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getProductCategories, getProductCategory } from '../selectors';
-import { LOADING } from 'woocommerce/state/constants';
+import { getProductCategoriesLoadStatus, getProductCategories, getProductCategory } from '../selectors';
+import { NOT_LOADED, LOADING, SUCCESS, ERROR } from 'woocommerce/state/constants';
 
 describe( 'selectors', () => {
+	describe( '#getProductCategoriesLoadStatus', () => {
+		it( 'should return NOT_LOADED if the data is not present', () => {
+			const state = {};
+
+			set( state, [ 'extensions', 'woocommerce', 'sites', 123, 'productCategories' ], null );
+			expect( getProductCategoriesLoadStatus( state, 123 ) ).to.equal( NOT_LOADED );
+		} );
+
+		it( 'should return SUCCESS if the data looks good', () => {
+			const state = {};
+
+			set( state, [ 'extensions', 'woocommerce', 'sites', 123, 'productCategories' ], [] );
+			expect( getProductCategoriesLoadStatus( state, 123 ) ).to.equal( SUCCESS );
+		} );
+
+		it( 'should return LOADING if constant is set', () => {
+			const state = {};
+
+			set( state, [ 'extensions', 'woocommerce', 'sites', 123, 'productCategories' ], LOADING );
+			expect( getProductCategoriesLoadStatus( state, 123 ) ).to.equal( LOADING );
+		} );
+
+		it( 'should return ERROR if constant is set', () => {
+			const state = {};
+
+			set( state, [ 'extensions', 'woocommerce', 'sites', 123, 'productCategories' ], ERROR );
+			expect( getProductCategoriesLoadStatus( state, 123 ) ).to.equal( ERROR );
+		} );
+	} );
+
 	describe( '#getProductCategories()', () => {
 		it( 'should return an empty array if data is not available.', () => {
 			const state = {
