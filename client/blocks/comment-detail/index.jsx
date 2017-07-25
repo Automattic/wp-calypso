@@ -92,10 +92,14 @@ export class CommentDetail extends Component {
 		const { commentStatus, setCommentStatus } = this.props;
 		const shouldPersist = 'approved' === commentStatus || 'unapproved' === commentStatus;
 
-		setCommentStatus( this.getCommentObject(), 'approved' === commentStatus ? 'unapproved' : 'approved', {
-			doPersist: shouldPersist,
-			showNotice: true,
-		} );
+		setCommentStatus(
+			this.getCommentObject(),
+			( 'approved' === commentStatus ) ? 'unapproved' : 'approved',
+			{
+				doPersist: shouldPersist,
+				showNotice: true,
+			}
+		);
 
 		if ( shouldPersist ) {
 			this.setState( { isExpanded: false } );
@@ -124,12 +128,18 @@ export class CommentDetail extends Component {
 
 	toggleSpam = () => {
 		const { commentStatus, setCommentStatus } = this.props;
-		setCommentStatus( this.getCommentObject(), 'spam' === commentStatus ? 'approved' : 'spam' );
+		setCommentStatus(
+			this.getCommentObject(),
+			( 'spam' === commentStatus ) ? 'approved' : 'spam'
+		);
 	}
 
 	toggleTrash = () => {
 		const { commentStatus, setCommentStatus } = this.props;
-		setCommentStatus( this.getCommentObject(), 'trash' === commentStatus ? 'approved' : 'trash' );
+		setCommentStatus(
+			this.getCommentObject(),
+			( 'trash' === commentStatus ) ? 'approved' : 'trash'
+		);
 	}
 
 	render() {
