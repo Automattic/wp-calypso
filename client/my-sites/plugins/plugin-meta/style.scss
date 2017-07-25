@@ -72,10 +72,6 @@
 	margin-top: 0;
 }
 
-.plugin-meta .card {
-	margin: 0;
-}
-
 .plugin-meta__meta {
 	color: $gray;
 	white-space: pre;
@@ -150,10 +146,6 @@
 
 .plugin-meta__actions .plugin-meta__active {
 	color: $alert-green;
-}
-
-.card.plugin-meta__plugin-information-wrapper {
-	margin-top: 16px;
 }
 
 a.plugin-meta__settings-link {
