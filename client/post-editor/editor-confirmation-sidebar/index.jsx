@@ -12,6 +12,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import Button from 'components/button';
+import EditorPublishDate from 'post-editor/editor-publish-date';
 import EditorVisibility from 'post-editor/editor-visibility';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
@@ -28,6 +29,7 @@ class EditorConfirmationSidebar extends React.Component {
 		onPublish: React.PropTypes.func,
 		post: React.PropTypes.object,
 		savedPost: React.PropTypes.object,
+		setPostDate: React.PropTypes.func,
 		setStatus: React.PropTypes.func,
 		site: React.PropTypes.object,
 		status: React.PropTypes.string,
@@ -142,6 +144,20 @@ class EditorConfirmationSidebar extends React.Component {
 		);
 	}
 
+	renderPublishDateComponent() {
+		const postDate = this.props.post && this.props.post.date
+			? this.props.post.date
+			: null;
+
+		return (
+			<EditorPublishDate
+				post={ this.props.post }
+				postDate={ postDate }
+				setPostDate={ this.props.setPostDate }
+			/>
+		);
+	}
+
 	render() {
 		const isSidebarActive = this.props.status === 'open';
 		const isOverlayActive = this.props.status !== 'closed';
@@ -185,6 +201,7 @@ class EditorConfirmationSidebar extends React.Component {
 									} )
 							}
 						</div>
+						{ this.renderPublishDateComponent() }
 						<div className="editor-confirmation-sidebar__privacy-control">
 							{ this.renderPrivacyControl() }
 						</div>
