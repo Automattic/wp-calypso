@@ -17,6 +17,7 @@ import Main from 'components/main';
 import SiteOwnership from './site-ownership';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 
 class ManageConnection extends Component {
 	componentDidMount() {
@@ -28,7 +29,7 @@ class ManageConnection extends Component {
 	}
 
 	verifySiteIsJetpack() {
-		if ( this.props.siteIsJetpack === false ) {
+		if ( this.props.siteIsJetpack === false || this.props.siteIsAtomic ) {
 			this.redirectToGeneral();
 		}
 	}
@@ -59,8 +60,13 @@ class ManageConnection extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
-		siteSlug: getSelectedSiteSlug( state ),
-	} )
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
+			siteIsJetpack: isJetpackSite( state, siteId ),
+			siteSlug: getSelectedSiteSlug( state ),
+		};
+	}
 )( localize( ManageConnection ) );
