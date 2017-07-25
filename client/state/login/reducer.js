@@ -68,6 +68,7 @@ export const isFormDisabled = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => true,
 	[ LOGIN_REQUEST_FAILURE ]: () => false,
 	[ LOGIN_REQUEST_SUCCESS ]: () => true,
+	[ ROUTE_SET ]: () => false,
 	[ SOCIAL_LOGIN_REQUEST ]: () => true,
 	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => false,
 	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: () => true,
