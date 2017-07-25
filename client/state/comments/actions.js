@@ -34,7 +34,12 @@ export const requestComment = ( { siteId, commentId } ) => ( {
  * @param {String} status status filter. Defaults to approved posts
  * @returns {Function} thunk that requests comments for a given post
  */
-export function requestPostComments( siteId, postId, status = 'approved' ) {
+export function requestPostComments( {
+	siteId,
+	postId,
+	status = 'approved',
+	direction = 'before'
+} ) {
 	if ( ! isEnabled( 'comments/filters-in-posts' ) ) {
 		status = 'approved';
 	}
@@ -43,8 +48,9 @@ export function requestPostComments( siteId, postId, status = 'approved' ) {
 		type: COMMENTS_REQUEST,
 		siteId,
 		postId,
+		direction,
 		query: {
-			order: 'DESC',
+			order: direction === 'before' ? 'DESC' : 'ASC',
 			number: NUMBER_OF_COMMENTS_PER_FETCH,
 			status,
 		},
@@ -136,7 +142,7 @@ export function changeCommentStatus( siteId, postId, commentId, status ) {
 			siteId,
 			postId,
 			commentId,
-			status
+			status,
 		} );
 
 		return wpcom
