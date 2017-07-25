@@ -70,8 +70,6 @@ class Unlocked extends React.Component {
 						break;
 				}
 				notices.error( errorMessage );
-
-				this.setState( { submitting: false } );
 			} else if ( hasPrivacyProtection ) {
 				notices.success( translate( 'We\'ve canceled your domain transfer. Your domain is now locked and ' +
 					'Privacy Protection has been enabled.' ) );
@@ -92,6 +90,7 @@ class Unlocked extends React.Component {
 
 				notices.success( successMessage );
 			}
+			this.setState( { submitting: false } );
 		} );
 	};
 
@@ -135,7 +134,7 @@ class Unlocked extends React.Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Transfer Domain' ) } className="transfer-out__section-header-header">
+				<SectionHeader label={ translate( 'Transfer Domain' ) } className="transfer-out__section-header">
 					<Button
 							onClick={ this.handleCancelTransferClick }
 							disabled={ this.state.submitting }
