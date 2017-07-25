@@ -159,9 +159,15 @@ export class Notifications extends Component {
 			OPEN_POST: [ ( store, { siteId, postId, href } ) => {
 				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
 					this.props.checkToggle();
-					const commentIdIndex = href.indexOf( '#comment-' );
-					const commentHash = commentIdIndex === -1 ? '' : href.substring( commentIdIndex );
-					page( `/read/blogs/${ siteId }/posts/${ postId }${ commentHash }` );
+					page( `/read/blogs/${ siteId }/posts/${ postId }` );
+				} else {
+					window.open( href, '_blank' );
+				}
+			} ],
+			OPEN_COMMENT: [ ( store, { siteId, postId, href, commentId } ) => {
+				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
+					this.props.checkToggle();
+					page( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
 				} else {
 					window.open( href, '_blank' );
 				}
