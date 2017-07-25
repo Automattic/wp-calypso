@@ -48,7 +48,7 @@ export class EditorGroundControl extends PureComponent {
 		toggleSidebar: PropTypes.func,
 		translate: PropTypes.func,
 		type: PropTypes.string
-	};
+	}
 
 	static defaultProps = {
 		hasContent: false,
@@ -67,7 +67,7 @@ export class EditorGroundControl extends PureComponent {
 		user: null,
 		userUtils: null,
 		setPostDate: noop,
-	};
+	}
 
 	state = {
 		showSchedulePopover: false,
@@ -75,7 +75,7 @@ export class EditorGroundControl extends PureComponent {
 		firstDayOfTheMonth: this.getFirstDayOfTheMonth(),
 		lastDayOfTheMonth: this.getLastDayOfTheMonth(),
 		needsVerification: this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
-	};
+	}
 
 	componentDidMount() {
 		if ( ! this.props.user ) {
@@ -101,7 +101,7 @@ export class EditorGroundControl extends PureComponent {
 		this.setState( {
 			needsVerification: this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
 		} );
-	};
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.setState( {
