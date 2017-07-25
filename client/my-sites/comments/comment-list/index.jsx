@@ -106,9 +106,11 @@ export class CommentList extends Component {
 
 	isSelectedAll = () => this.getComments().length === size( this.state.selectedComments );
 
-	removeFromPersistedComments = commentId => this.setState( ( { persistedComments } ) => ( {
-		persistedComments: persistedComments.filter( c => c !== commentId ),
-	} ) );
+	removeFromPersistedComments = commentId => this.setState(
+		( { persistedComments } ) => ( {
+			persistedComments: persistedComments.filter( c => c !== commentId ),
+		} )
+	);
 
 	replyComment = ( commentText, parentComment ) => {
 		const { translate } = this.props;
@@ -302,9 +304,11 @@ export class CommentList extends Component {
 		if ( isUndo ) {
 			this.removeFromPersistedComments( commentId );
 		} else if ( ! this.isCommentPersisted( commentId ) ) {
-			this.setState( ( { persistedComments } ) => ( {
-				persistedComments: persistedComments.concat( commentId ),
-			} ) );
+			this.setState(
+				( { persistedComments } ) => ( {
+					persistedComments: persistedComments.concat( commentId ),
+				} )
+			);
 		}
 	}
 
