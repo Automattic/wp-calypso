@@ -19,6 +19,24 @@ import { decodeEntities, stripHTML } from 'lib/formatting';
 import { getPostCommentsTree } from 'state/comments/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
 
+/**
+ * Creates a stripped down comment object containing only the information needed by
+ * CommentList's change status functions and their respective undos.
+ *
+ * @param {Object} props The CommentDetail props object.
+ * @param {Number} props.commentId The comment ID.
+ * @param {Boolean} props.commentIsLiked The current comment i_like value.
+ * @param {String} props.commentStatus The current comment status.
+ * @param {Number} props.postId The comment's post ID.
+ * @returns {Object} A stripped down comment object.
+ */
+const getCommentStatusAction = ( { commentId, commentIsLiked, commentStatus, postId } ) => ( {
+	commentId,
+	isLiked: commentIsLiked,
+	postId,
+	status: commentStatus,
+} );
+
 export class CommentDetail extends Component {
 	static propTypes = {
 		authorAvatarUrl: PropTypes.string,
@@ -81,19 +99,12 @@ export class CommentDetail extends Component {
 
 	edit = () => noop;
 
-	getCommentObject = () => ( {
-		commentId: this.props.commentId,
-		isLiked: this.props.commentIsLiked,
-		postId: this.props.postId,
-		status: this.props.commentStatus,
-	} );
-
 	toggleApprove = () => {
 		const { commentStatus, setCommentStatus } = this.props;
 		const shouldPersist = 'approved' === commentStatus || 'unapproved' === commentStatus;
 
 		setCommentStatus(
-			this.getCommentObject(),
+			getCommentStatusAction( this.props ),
 			( 'approved' === commentStatus ) ? 'unapproved' : 'approved',
 			{
 				doPersist: shouldPersist,
@@ -114,7 +125,7 @@ export class CommentDetail extends Component {
 		const { commentIsLiked, commentStatus, toggleCommentLike } = this.props;
 		const shouldPersist = 'unapproved' === commentStatus && ! commentIsLiked;
 
-		toggleCommentLike( this.getCommentObject() );
+		toggleCommentLike( getCommentStatusAction( this.props ) );
 
 		if ( shouldPersist ) {
 			this.setState( { isExpanded: false } );
@@ -129,7 +140,7 @@ export class CommentDetail extends Component {
 	toggleSpam = () => {
 		const { commentStatus, setCommentStatus } = this.props;
 		setCommentStatus(
-			this.getCommentObject(),
+			getCommentStatusAction( this.props ),
 			( 'spam' === commentStatus ) ? 'approved' : 'spam'
 		);
 	}
@@ -137,7 +148,7 @@ export class CommentDetail extends Component {
 	toggleTrash = () => {
 		const { commentStatus, setCommentStatus } = this.props;
 		setCommentStatus(
-			this.getCommentObject(),
+			getCommentStatusAction( this.props ),
 			( 'trash' === commentStatus ) ? 'approved' : 'trash'
 		);
 	}
@@ -240,7 +251,7 @@ export class CommentDetail extends Component {
 						/>
 						<CommentDetailReply
 							authorDisplayName={ authorDisplayName }
-							comment={ this.getCommentObject() }
+							comment={ getCommentStatusAction( this.props ) }
 							postTitle={ postTitle }
 							replyComment={ replyComment }
 						/>
