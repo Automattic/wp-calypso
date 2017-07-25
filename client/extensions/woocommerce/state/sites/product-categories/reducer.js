@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
@@ -14,7 +19,7 @@ export default createReducer( null, {
 } );
 
 function productCategoriesRequest( state, action ) {
-	const { data, error } = action.meta.dataLayer;
+	const { data, error } = get( action, [ 'meta', 'dataLayer' ], {} );
 
 	if ( error ) {
 		return ERROR;

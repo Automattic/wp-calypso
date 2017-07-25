@@ -17,14 +17,14 @@ export default {
 	]
 };
 
-function requestCategories( { dispatch }, action, next ) {
+export function requestCategories( { dispatch }, action, next ) {
 	const { siteId } = action;
 
 	dispatch( request( siteId, action ).get( 'products/categories' ) );
 	return next( action );
 }
 
-function requestCategoriesSuccess( { dispatch }, action, next, { data } ) {
+export function requestCategoriesSuccess( { dispatch }, action, next, { data } ) {
 	if ( ! isValidCategoriesArray( data ) ) {
 		action.meta.dataLayer.error = { message: 'Invalid Categories array', data };
 	}
