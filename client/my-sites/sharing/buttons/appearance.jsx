@@ -101,8 +101,8 @@ class SharingButtonsAppearance extends Component {
 		} = this.props;
 
 		return (
-			<fieldset className="sharing-buttons__fieldset">
-				<legend className="sharing-buttons__fieldset-heading">
+			<fieldset className="buttons__fieldset sharing-buttons__fieldset">
+				<legend className="buttons__fieldset-heading sharing-buttons__fieldset-heading">
 					{
 						isJetpack
 							? translate( 'Like', { context: 'Sharing options: Header' } )
