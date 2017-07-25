@@ -18,10 +18,6 @@ import steps from 'signup/config/steps';
 
 const SignupDependencyStore = {
 	get: function() {
-		if ( ! SignupDependencyStore.reduxStore ) {
-			return null;
-		}
-
 		return getSignupDependencyStore( SignupDependencyStore.reduxStore.getState() );
 	},
 	reset: function() {

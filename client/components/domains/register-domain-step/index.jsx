@@ -10,7 +10,6 @@ import {
 	includes,
 	isEmpty,
 	noop,
-	pick,
 	reject,
 	startsWith,
 	times,
@@ -24,7 +23,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SignupDependencyStore from 'lib/signup/dependency-store';
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
 import { checkDomainAvailability, getFixedDomainSearch } from 'lib/domains';
@@ -126,7 +124,8 @@ const RegisterDomainStep = React.createClass( {
 		showExampleSuggestions: React.PropTypes.bool,
 		onSave: React.PropTypes.func,
 		onAddMapping: React.PropTypes.func,
-		onAddDomain: React.PropTypes.func
+		onAddDomain: React.PropTypes.func,
+		suggestionToken: React.PropTypes.string
 	},
 
 	getDefaultProps: function() {
@@ -135,7 +134,8 @@ const RegisterDomainStep = React.createClass( {
 			analyticsSection: 'domains',
 			onSave: noop,
 			onAddMapping: noop,
-			onAddDomain: noop
+			onAddDomain: noop,
+			suggestionToken: 'default'
 		};
 	},
 
@@ -301,16 +301,6 @@ const RegisterDomainStep = React.createClass( {
 		} );
 	},
 
-	getSuggestionToken: function() {
-		const store = pick( SignupDependencyStore.get(), 'designType' );
-
-		if ( store && store.designType === 'blog' ) {
-			return 'blog';
-		}
-
-		return 'default';
-	},
-
 	onSearch: function( searchQuery ) {
 		const domain = getFixedDomainSearch( searchQuery );
 
@@ -365,7 +355,7 @@ const RegisterDomainStep = React.createClass( {
 							quantity: SUGGESTION_QUANTITY,
 							include_wordpressdotcom: this.props.includeWordPressDotCom,
 							include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
-							suggestion_token: this.getSuggestionToken(),
+							suggestion_token: this.props.suggestionToken,
 							vendor: searchVendor,
 							vertical: this.props.surveyVertical,
 						},

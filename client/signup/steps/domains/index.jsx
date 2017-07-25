@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import defer from 'lodash/defer';
+import pick from 'lodash/pick';
 import page from 'page';
 import i18n from 'i18n-calypso';
 
@@ -22,6 +23,7 @@ import analyticsMixin from 'lib/mixins/analytics';
 import signupUtils from 'signup/utils';
 import { getUsernameSuggestion } from 'lib/signup/step-actions';
 import { recordAddDomainButtonClick, recordAddDomainButtonClickInMapDomain } from 'state/domains/actions';
+import SignupDependencyStore from 'lib/signup/dependency-store';
 
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
@@ -171,6 +173,16 @@ const DomainsStep = React.createClass( {
 		} );
 	},
 
+	getSuggestionToken: function() {
+		const store = pick( SignupDependencyStore.get(), 'designType' );
+
+		if ( store && store.designType === 'blog' ) {
+			return 'blog';
+		}
+
+		return 'default';
+	},
+
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
 		const includeDotBlogSubdomain = ( this.props.flowName === 'subdomain' );
@@ -193,7 +205,8 @@ const DomainsStep = React.createClass( {
 				isSignupStep
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
-				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' } />
+				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' }
+				suggestionToken={ this.getSuggestionToken() } />
 		);
 	},
 
