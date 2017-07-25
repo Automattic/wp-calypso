@@ -13,6 +13,8 @@ module.exports = {
 	},
 	rules: {
 		camelcase: 0, // REST API objects include underscores
+		indent: [ 'error', 'tab' ],
+		'react/jsx-indent': [ 'error', 'tab' ],
 		'max-len': [ 2, { code: 140 } ],
 		'no-restricted-imports': [ 2, 'lib/sites-list', 'lib/mixins/data-observe' ],
 		'no-restricted-modules': [ 2, 'lib/sites-list', 'lib/mixins/data-observe' ],
