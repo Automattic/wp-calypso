@@ -43,6 +43,7 @@ import { keysAreEqual } from 'lib/feed-stream-store/post-key';
 import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 import { combineCards, injectRecommendations, RECS_PER_BLOCK } from './utils';
 import { keyToString, keyForPost } from 'lib/feed-stream-store/post-key';
+import Topbar from 'reader/reader-topbar';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -91,6 +92,8 @@ class ReaderStream extends React.Component {
 		useCompactCards: PropTypes.bool,
 		transformStreamItems: PropTypes.func,
 		isMain: PropTypes.bool,
+		showTopbar: PropTypes.bool,
+		showTopbarSearch: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -107,6 +110,8 @@ class ReaderStream extends React.Component {
 		transformStreamItems: identity,
 		isMain: true,
 		useCompactCards: false,
+		showTopbar: true,
+		showTopbarSearch: true,
 	};
 
 	getStateFromStores( props = this.props ) {
@@ -474,6 +479,7 @@ class ReaderStream extends React.Component {
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
 			<TopLevel className={ classnames( 'following', this.props.className ) }>
+				{ this.props.showTopbar && <Topbar showSearch={ this.props.showTopbarSearch } /> }
 				{ this.props.isMain &&
 					this.props.showMobileBackToSidebar &&
 					<MobileBackToSidebar>

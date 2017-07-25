@@ -1,0 +1,134 @@
+/**
+ * External Dependencies
+ */
+import React, { Component, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
+import { noop, values, trim } from 'lodash';
+import page from 'page';
+
+/**
+ * Internal Dependencies
+ */
+import NavTabs from 'components/section-nav/tabs';
+import SectionNav from 'components/section-nav';
+import NavItem from 'components/section-nav/item';
+import SearchInput from 'components/search';
+import { recordTrack } from 'reader/stats';
+
+export const NAV_TYPES = {
+	FOLLOWED: 'followed',
+	MANAGE: 'manage',
+	DISCOVER: 'discover',
+	RECOMMENDATIONS: 'recommendations',
+	LIKED: 'liked',
+	SEARCH: 'search',
+};
+
+const handleSearch = query => {
+	recordTrack( 'calypso_reader_search_from_topbar', {
+		query,
+	} );
+
+	if ( trim( query ) !== '' ) {
+		page( '/read/search?q=' + encodeURIComponent( query ) + '&focus=1' );
+	}
+};
+
+class ReaderTopbar extends Component {
+	static propTypes = {
+		translate: PropTypes.func,
+		wideDisplay: PropTypes.bool,
+		selected: PropTypes.oneOf( values( NAV_TYPES ) ),
+		showSearch: PropTypes.bool,
+	};
+	static defaultProps = {
+		onSelection: noop,
+		selected: NAV_TYPES.FOLLOWED,
+		showSearch: true,
+	};
+
+	handleFollowedSelected = () => page( '/read' );
+	handleManageSelected = () => page( '/following/manage' );
+	handleDiscoverSelected = () => page( '/discover' );
+	handleRecommendationsSelected = () => page( '/read/search' );
+	handleLikedSelected = () => page( '/activities/likes' );
+
+	render() {
+		const { translate } = this.props;
+		let selected;
+		const url = window.location.pathname;
+		if ( url.indexOf( '/read/following/manage' ) >= 0 ) {
+			selected = NAV_TYPES.MANAGE;
+		} else if (
+			url.indexOf( '/read/search' ) >= 0 &&
+			( window.location.search === '' || window.location.search === '?q=' )
+		) {
+			selected = NAV_TYPES.RECOMMENDATIONS;
+		} else if ( url.indexOf( '/read/search' ) >= 0 ) {
+			selected = NAV_TYPES.SEARCH;
+		} else if ( url.indexOf( '/activities/likes' ) >= 0 ) {
+			selected = NAV_TYPES.LIKED;
+		} else if ( url.indexOf( '/discover' ) >= 0 ) {
+			selected = NAV_TYPES.DISCOVER;
+		} else {
+			selected = NAV_TYPES.FOLLOWED;
+		}
+
+		return (
+			<div className="reader-topbar">
+				<div className="reader-topbar__search">
+					{ this.props.showSearch &&
+						<SearchInput
+							onSearch={ handleSearch }
+							delaySearch={ true }
+							delayTimeout={ 500 }
+							placeholder={ 'Search...' }
+						/> }
+				</div>
+				<div className="reader-topbar__section-nav">
+					<SectionNav>
+						<NavTabs>
+							<NavItem
+								key={ 'followed-nav' }
+								selected={ selected === NAV_TYPES.FOLLOWED }
+								onClick={ this.handleFollowedSelected }
+							>
+								{ translate( 'Followed' ) }
+							</NavItem>
+							<NavItem
+								key={ 'manage-nav' }
+								selected={ selected === NAV_TYPES.MANAGE }
+								onClick={ this.handleManageSelected }
+							>
+								{ translate( 'Manage' ) }
+							</NavItem>
+							<NavItem
+								key={ 'discover-nav' }
+								selected={ selected === NAV_TYPES.DISCOVER }
+								onClick={ this.handleDiscoverSelected }
+							>
+								{ translate( 'Discover' ) }
+							</NavItem>
+							<NavItem
+								key={ 'recommendations-nav' }
+								selected={ selected === NAV_TYPES.RECOMMENDATIONS }
+								onClick={ this.handleRecommendationsSelected }
+							>
+								{ translate( 'Recommendations' ) }
+							</NavItem>
+							<NavItem
+								key={ 'liked-nav' }
+								selected={ selected === NAV_TYPES.LIKED }
+								onClick={ this.handleLikedSelected }
+							>
+								{ translate( 'Liked' ) }
+							</NavItem>
+						</NavTabs>
+					</SectionNav>
+				</div>
+			</div>
+		);
+	}
+}
+
+export default localize( ReaderTopbar );

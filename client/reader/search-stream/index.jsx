@@ -31,6 +31,7 @@ import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
 import { getReaderAliasedFollowFeedUrl } from 'state/selectors';
 import { SEARCH_RESULTS_URL_INPUT } from 'reader/follow-button/follow-sources';
 import FollowButton from 'reader/follow-button';
+import Topbar from 'reader/reader-topbar';
 
 const WIDE_DISPLAY_CUTOFF = 660;
 
@@ -246,9 +247,12 @@ class SearchStream extends React.Component {
 /* eslint-disable */
 // wrapping with Main so that we can use withWidth helper to pass down whole width of Main
 const wrapWithMain = Component => props =>
-	<ReaderMain className="search-stream search-stream__with-sites" wideLayout>
-		<Component { ...props } />
-	</ReaderMain>;
+	<div>
+		<Topbar showSearch={ false } />
+		<ReaderMain className="search-stream search-stream__with-sites" wideLayout>
+			<Component { ...props } />
+		</ReaderMain>;
+	</div>;
 /* eslint-enable */
 
 export default connect( ( state, ownProps ) => ( {

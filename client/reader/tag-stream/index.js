@@ -8,11 +8,11 @@ import page from 'page';
  * Internal dependencies
  */
 import { recommendedTags, tagListing } from './controller';
-import { initAbTests, preloadReaderBundle, sidebar, updateLastRoute } from 'reader/controller';
+import { initAbTests, preloadReaderBundle, unmountSidebar, updateLastRoute } from 'reader/controller';
 
 export default function() {
 	page( '/tag/*', preloadReaderBundle, initAbTests );
-	page( '/tag/:tag', updateLastRoute, sidebar, tagListing );
+	page( '/tag/:tag', updateLastRoute, unmountSidebar, tagListing );
 
-	page( '/tags', initAbTests, updateLastRoute, sidebar, recommendedTags );
+	page( '/tags', initAbTests, updateLastRoute, unmountSidebar, recommendedTags );
 }
