@@ -9,8 +9,8 @@ const path = require( 'path' );
 
 console.log(
 	'\nBy contributing to this project, you license the materials you contribute ' +
-	'under the GNU General Public License v2 (or later). All materials must have ' +
-	'GPLv2 compatible licenses — see .github/CONTRIBUTING.md for details.\n\n'
+		'under the GNU General Public License v2 (or later). All materials must have ' +
+		'GPLv2 compatible licenses — see .github/CONTRIBUTING.md for details.\n\n'
 );
 
 // Make quick pass over config files on every change
@@ -23,11 +23,8 @@ const files = execSync( 'git diff --cached --name-only --diff-filter=ACM' )
 	.filter( name => name.endsWith( '.js' ) || name.endsWith( '.jsx' ) );
 
 /**
- * Returns true if the given text contains '@ format' (without the space after @).
+ * Returns true if the given text contains @format.
  * within its first docblock. False otherwise.
- *
- * Note: I only don't write out the actual @ f o r m a t, because then this
- * file would also get formatted!
  *
  * @param {*} text text to scan for the format keyword within the first docblock
  */
@@ -70,8 +67,8 @@ if ( lintResult.status ) {
 	console.log(
 		chalk.red( 'COMMIT ABORTED:' ),
 		'The linter reported some problems. ' +
-		'If you are aware of them and it is OK, ' +
-		'repeat the commit command with --no-verify to avoid this check.'
+			'If you are aware of them and it is OK, ' +
+			'repeat the commit command with --no-verify to avoid this check.'
 	);
 	process.exit( 1 );
 }
