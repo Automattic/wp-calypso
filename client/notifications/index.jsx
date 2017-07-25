@@ -159,7 +159,9 @@ export class Notifications extends Component {
 			OPEN_POST: [ ( store, { siteId, postId, href } ) => {
 				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
 					this.props.checkToggle();
-					page( `/read/blogs/${ siteId }/posts/${ postId }` );
+					const commentIdIndex = href.indexOf( '#comment-' );
+					const commentHash = commentIdIndex === -1 ? '' : href.substring( commentIdIndex );
+					page( `/read/blogs/${ siteId }/posts/${ postId }${ commentHash }` );
 				} else {
 					window.open( href, '_blank' );
 				}
