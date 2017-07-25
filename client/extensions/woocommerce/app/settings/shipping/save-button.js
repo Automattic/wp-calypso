@@ -19,6 +19,9 @@ import {
 } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { createWcsShippingSaveActionList } from 'woocommerce/woocommerce-services/state/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
+import { getActionList } from 'woocommerce/state/action-list/selectors';
 
 class ShippingSettingsSaveButton extends Component {
 
@@ -42,7 +45,18 @@ class ShippingSettingsSaveButton extends Component {
 	}
 
 	save = () => {
-		return null;
+		const { translate } = this.props;
+
+		const successAction = successNotice(
+			translate( 'Shipping settings saved' ),
+			{ duration: 4000, displayOnNextPage: true }
+		);
+
+		const failureAction = errorNotice(
+			translate( 'There was a problem saving the shipping settings. Please try again.' )
+		);
+
+		this.props.createWcsShippingSaveActionList( successAction, failureAction );
 	}
 
 	redirect = () => {
@@ -52,7 +66,7 @@ class ShippingSettingsSaveButton extends Component {
 	}
 
 	render() {
-		const { translate, loading, site, finishedInitialSetup } = this.props;
+		const { translate, loading, site, finishedInitialSetup, isSaving } = this.props;
 		const wcsEnabled = config.isEnabled( 'woocommerce/extension-wcservices' );
 
 		if ( loading || ! site ) {
@@ -61,11 +75,11 @@ class ShippingSettingsSaveButton extends Component {
 
 		if ( finishedInitialSetup ) {
 			return wcsEnabled
-				? <Button onClick={ this.save } primary>{ translate( 'Save' ) }</Button>
+				? <Button onClick={ this.save } primary busy={ isSaving } disabled={ isSaving }>{ translate( 'Save' ) }</Button>
 				: null;
 		}
 		const label = wcsEnabled ? translate( 'Save and finish' ) : translate( 'I\'m Finished' );
-		return <Button onClick={ this.redirect } primary>{ label }</Button>;
+		return <Button onClick={ this.redirect } primary busy={ isSaving } disabled={ isSaving }>{ label }</Button>;
 	}
 }
 
@@ -77,6 +91,7 @@ function mapStateToProps( state ) {
 		site,
 		finishedInitialSetup,
 		loading,
+		isSaving: Boolean( getActionList( state ) ),
 	};
 }
 
@@ -84,6 +99,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			fetchSetupChoices,
+			createWcsShippingSaveActionList,
 		},
 		dispatch
 	);
