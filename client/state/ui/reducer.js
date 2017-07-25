@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { reducer as form } from 'redux-form';
-
-/**
  * Internal dependencies
  */
 import {
@@ -113,7 +108,6 @@ const reducer = combineReducers( {
 	themeSetup,
 	npsSurveyNotice,
 	isNotificationsOpen,
-	form,
 } );
 
 const ui = function( state, action ) {
