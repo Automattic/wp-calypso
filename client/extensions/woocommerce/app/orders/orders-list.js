@@ -99,7 +99,7 @@ class Orders extends Component {
 					</span>
 				</TableItem>
 				<TableItem className="orders__table-date">
-					{ humanDate( order.date_created ) }
+					{ humanDate( order.date_created_gmt + 'Z' ) }
 				</TableItem>
 				<TableItem className="orders__table-status">
 					{ this.getOrderStatus( order.status ) }
