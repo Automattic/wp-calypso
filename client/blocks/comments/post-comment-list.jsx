@@ -122,6 +122,7 @@ class PostCommentList extends React.Component {
 		 */
 		const commentIdBail =
 			currentInitialComment !== nextInitialComment &&
+			nextInitialComment &&
 			( nextInitialComment.error ||
 				( nextInitialComment.post && nextInitialComment.post.ID !== nextPostId ) );
 
