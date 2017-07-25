@@ -10,13 +10,10 @@ import deepFreeze from 'deep-freeze';
 import {
 	WP_JOB_MANAGER_FETCH_ERROR,
 	WP_JOB_MANAGER_FETCH_SETTINGS,
-	WP_JOB_MANAGER_SAVE_ERROR,
-	WP_JOB_MANAGER_SAVE_SETTINGS,
-	WP_JOB_MANAGER_SAVE_SUCCESS,
 	WP_JOB_MANAGER_UPDATE_SETTINGS,
 } from '../../action-types';
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
-import reducer, { fetching, items, saving } from '../reducer';
+import reducer, { fetching, items } from '../reducer';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
@@ -26,7 +23,6 @@ describe( 'reducer', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'fetching',
 			'items',
-			'saving',
 		] );
 	} );
 
@@ -96,79 +92,6 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const state = fetching( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.deep.equal( {} );
-		} );
-	} );
-
-	describe( 'saving()', () => {
-		const previousState = deepFreeze( {
-			[ primarySiteId ]: true,
-		} );
-
-		it( 'should default to an empty object', () => {
-			const state = saving( undefined, {} );
-
-			expect( state ).to.deep.equal( {} );
-		} );
-
-		it( 'should set state to true if settings are being saved', () => {
-			const state = saving( undefined, {
-				type: WP_JOB_MANAGER_SAVE_SETTINGS,
-				siteId: primarySiteId,
-			} );
-
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: true,
-			} );
-		} );
-
-		it( 'should accumulate saving values', () => {
-			const state = saving( previousState, {
-				type: WP_JOB_MANAGER_SAVE_SETTINGS,
-				siteId: secondarySiteId,
-			} );
-
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: true,
-				[ secondarySiteId ]: true,
-			} );
-		} );
-
-		it( 'should set state to false if settings were saved successfully', () => {
-			const state = saving( previousState, {
-				type: WP_JOB_MANAGER_SAVE_SUCCESS,
-				siteId: primarySiteId,
-			} );
-
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: false,
-			} );
-		} );
-
-		it( 'should set state to false if settings could not be saved', () => {
-			const state = saving( previousState, {
-				type: WP_JOB_MANAGER_SAVE_ERROR,
-				siteId: primarySiteId,
-			} );
-
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: false,
-			} );
-		} );
-
-		it( 'should not persist state', () => {
-			const state = saving( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.deep.equal( {} );
-		} );
-
-		it( 'should not load persisted state', () => {
-			const state = saving( previousState, {
 				type: DESERIALIZE,
 			} );
 

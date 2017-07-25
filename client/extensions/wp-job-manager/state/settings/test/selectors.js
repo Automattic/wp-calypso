@@ -9,7 +9,6 @@ import { expect } from 'chai';
 import {
 	getSettings,
 	isFetchingSettings,
-	isSavingSettings,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -79,72 +78,6 @@ describe( 'selectors', () => {
 			const isFetching = isFetchingSettings( state, primarySiteId );
 
 			expect( isFetching ).to.be.true;
-		} );
-	} );
-
-	describe( 'isSavingSettings()', () => {
-		it( 'should return false if no state exists', () => {
-			const state = {
-				extensions: {
-					wpJobManager: {
-						settings: undefined,
-					}
-				}
-			};
-			const isSaving = isSavingSettings( state, primarySiteId );
-
-			expect( isSaving ).to.be.false;
-		} );
-
-		it( 'should return false if the site is not attached', () => {
-			const state = {
-				extensions: {
-					wpJobManager: {
-						settings: {
-							saving: {
-								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
-			};
-			const isSaving = isSavingSettings( state, secondarySiteId );
-
-			expect( isSaving ).to.be.false;
-		} );
-
-		it( 'should return false if the settings are not being saved', () => {
-			const state = {
-				extensions: {
-					wpJobManager: {
-						settings: {
-							saving: {
-								[ primarySiteId ]: false,
-							}
-						}
-					}
-				}
-			};
-			const isSaving = isSavingSettings( state, primarySiteId );
-
-			expect( isSaving ).to.be.false;
-		} );
-
-		it( 'should return true if the settings are being saved', () => {
-			const state = {
-				extensions: {
-					wpJobManager: {
-						settings: {
-							saving: {
-								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
-			};
-			const isSaving = isSavingSettings( state, primarySiteId );
-
-			expect( isSaving ).to.be.true;
 		} );
 	} );
 
