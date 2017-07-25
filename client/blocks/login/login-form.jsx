@@ -40,7 +40,7 @@ export class LoginForm extends Component {
 	};
 
 	state = {
-		isDisabled: true,
+		isDisabledWhileLoading: true,
 		usernameOrEmail: '',
 		password: '',
 		rememberMe: false,
@@ -49,7 +49,7 @@ export class LoginForm extends Component {
 	};
 
 	componentDidMount() {
-		this.setState( { isDisabled: false }, () => { // eslint-disable-line react/no-did-mount-set-state
+		this.setState( { isDisabledWhileLoading: false }, () => { // eslint-disable-line react/no-did-mount-set-state
 			this.usernameOrEmail.focus();
 		} );
 	}
@@ -126,7 +126,7 @@ export class LoginForm extends Component {
 	render() {
 		const isDisabled = {};
 
-		if ( this.state.isDisabled || this.props.isFormDisabled ) {
+		if ( this.state.isDisabledWhileLoading || this.props.isFormDisabled ) {
 			isDisabled.disabled = true;
 		}
 
