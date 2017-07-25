@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get, isUndefined, noop } from 'lodash';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
@@ -109,7 +110,15 @@ export class CommentDetail extends Component {
 		setCommentStatus( commentId, postId, 'trash' === commentStatus ? 'approved' : 'trash' );
 	}
 
+	setCardRef = card => {
+		this.commentCard = card;
+	}
+
 	keyHandler = event => {
+		const commentHasFocus = document && this.commentCard && document.activeElement === ReactDom.findDOMNode( this.commentCard );
+		if ( this.state.isExpanded && ! commentHasFocus ) {
+			return;
+		}
 		switch ( event.keyCode ) {
 			case 32: // space
 			case 13: // enter
@@ -169,6 +178,7 @@ export class CommentDetail extends Component {
 		return (
 			<Card
 				onKeyDown={ this.keyHandler }
+				ref={ this.setCardRef }
 				className={ classes }
 				tabIndex="0"
 			>
