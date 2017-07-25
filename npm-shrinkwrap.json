@@ -836,7 +836,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000704"
+      "version": "1.0.30000706"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -1607,7 +1607,7 @@
       }
     },
     "enhanced-resolve": {
-      "version": "3.4.0"
+      "version": "3.4.1"
     },
     "entities": {
       "version": "1.0.0"
@@ -3321,7 +3321,7 @@
       "dev": true,
       "dependencies": {
         "semver": {
-          "version": "5.3.0",
+          "version": "5.4.1",
           "dev": true
         }
       }
@@ -4237,10 +4237,10 @@
       "version": "1.3.4"
     },
     "mime-db": {
-      "version": "1.27.0"
+      "version": "1.29.0"
     },
     "mime-types": {
-      "version": "2.1.15"
+      "version": "2.1.16"
     },
     "minimalistic-assert": {
       "version": "1.0.0"
@@ -4908,8 +4908,8 @@
     },
     "prettier": {
       "version": "1.5.2",
-      "from": "git+https://github.com/Automattic/calypso-prettier.git#16f324aebd861a8a0ef834ce71d4992cf0275670",
-      "resolved": "git+https://github.com/Automattic/calypso-prettier.git#16f324aebd861a8a0ef834ce71d4992cf0275670",
+      "from": "git+https://github.com/Automattic/calypso-prettier.git#cb3b628cd0b77d11c8cc41ff0c1b85fa58446418",
+      "resolved": "git+https://github.com/Automattic/calypso-prettier.git#cb3b628cd0b77d11c8cc41ff0c1b85fa58446418",
       "dev": true,
       "dependencies": {
         "babel-code-frame": {
@@ -5349,8 +5349,11 @@
       "version": "3.0.4"
     },
     "redux-form": {
-      "version": "6.8.0",
+      "version": "7.0.2",
       "dependencies": {
+        "hoist-non-react-statics": {
+          "version": "2.2.1"
+        },
         "lodash": {
           "version": "4.17.4"
         }
