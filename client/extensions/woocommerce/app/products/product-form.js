@@ -24,6 +24,8 @@ export default class ProductForm extends Component {
 		} ),
 		variations: PropTypes.array,
 		productCategories: PropTypes.array.isRequired,
+		productCategoriesLoadStatus: PropTypes.string.isRequired,
+		fetchProductCategories: PropTypes.func.isRequired,
 		editProduct: PropTypes.func.isRequired,
 		editProductCategory: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
@@ -43,7 +45,7 @@ export default class ProductForm extends Component {
 
 	render() {
 		const { siteId, product, productCategories, variations } = this.props;
-		const { editProduct, editProductCategory, editProductVariation, editProductAttribute } = this.props;
+		const { fetchProductCategories, editProduct, editProductCategory, editProductVariation, editProductAttribute } = this.props;
 		const type = product.type || 'simple';
 
 		if ( ! siteId ) {
@@ -67,6 +69,8 @@ export default class ProductForm extends Component {
 					siteId={ siteId }
 					product={ product }
 					productCategories={ productCategories }
+					productCategoriesLoadStatus={ this.props.productCategoriesLoadStatus }
+					fetchProductCategories={ fetchProductCategories }
 					editProduct={ editProduct }
 					editProductCategory={ editProductCategory }
 				/>
