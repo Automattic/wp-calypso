@@ -62,7 +62,7 @@ export default class PostScheduler extends PureComponent {
 			hours: 0,
 			minutes: 0,
 			seconds: 0,
-			milliseconds: 0
+			milliseconds: 0,
 		} );
 	}
 
@@ -85,7 +85,7 @@ export default class PostScheduler extends PureComponent {
 			status: 'publish,future',
 			before: this.state.lastDayOfTheMonth.format(),
 			after: this.state.firstDayOfTheMonth.format(),
-			number: 100
+			number: 100,
 		};
 
 		return (
