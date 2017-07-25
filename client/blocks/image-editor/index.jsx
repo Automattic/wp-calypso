@@ -141,20 +141,46 @@ const ImageEditor = React.createClass( {
 		this.props.setImageEditorFileInfo( src, fileName, mimeType, title );
 	},
 
+	convertBlobToImage( blob ) {
+		const { onDone } = this.props;
+
+		// Create a new image from the canvas blob
+		const transientImage = document.createElement( 'img' );
+		const transientImageUrl = URL.createObjectURL( blob );
+		const imageProperties = this.getImageEditorProps();
+
+		// Onload, extend imageProperties with the height and width
+		// of the newly edited image
+		transientImage.onload = () => {
+			URL.revokeObjectURL( transientImageUrl );
+
+			onDone( null, blob, {
+				...imageProperties,
+				width: transientImage.width,
+				height: transientImage.height
+			} );
+		};
+
+		// onerror, we send the image properties
+		// without the transient image's dimensions
+		transientImage.onerror = () => {
+			onDone( null, blob, imageProperties );
+		};
+
+		transientImage.src = transientImageUrl;
+	},
+
 	onDone() {
 		const { isImageLoaded, onDone } = this.props;
 
 		if ( ! isImageLoaded ) {
 			onDone( new Error( 'Image not loaded yet.' ), null, this.getImageEditorProps() );
-
 			return;
 		}
 
 		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
 
-		canvasComponent.toBlob( ( blob ) => {
-			onDone( null, blob, this.getImageEditorProps() );
-		} );
+		canvasComponent.toBlob( this.convertBlobToImage );
 	},
 
 	onCancel() {

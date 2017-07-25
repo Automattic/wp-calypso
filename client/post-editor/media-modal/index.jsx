@@ -242,19 +242,25 @@ export class EditorMediaModal extends Component {
 			fileName,
 			site,
 			ID,
-			resetAllImageEditorState
+			resetAllImageEditorState,
+			width,
+			height
 		} = imageEditorProps;
 
 		const mimeType = MediaUtils.getMimeType( fileName );
 
-		const item = {
-			ID: ID,
-			media: {
-				fileName: fileName,
-				fileContents: blob,
-				mimeType: mimeType
-			}
-		};
+		const item = Object.assign(
+			{
+				ID: ID,
+				media: {
+					fileName: fileName,
+					fileContents: blob,
+					mimeType: mimeType
+				}
+			},
+			width && { width },
+			height && { height }
+		);
 
 		MediaActions.update( site.ID, item, true );
 
