@@ -18,6 +18,7 @@ import classNames from 'classnames';
 import page from 'page';
 import wpcom from 'lib/wp';
 import { get } from 'lodash';
+import 'config';
 
 /**
  * Internal dependencies
@@ -155,9 +156,13 @@ export class Notifications extends Component {
 		const customMiddleware = {
 			APP_RENDER_NOTES: [ ( store, { newNoteCount } ) => this.props.setIndicator( newNoteCount ) ],
 			OPEN_LINK: [ ( store, { href } ) => window.open( href, '_blank' ) ],
-			OPEN_POST: [ ( store, { siteId, postId } ) => {
-				this.props.checkToggle();
-				page( `/read/blogs/${ siteId }/posts/${ postId }` );
+			OPEN_POST: [ ( store, { siteId, postId, href } ) => {
+				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
+					this.props.checkToggle();
+					page( `/read/blogs/${ siteId }/posts/${ postId }` );
+				} else {
+					window.open( href, '_blank' );
+				}
 			} ],
 			VIEW_SETTINGS: [ () => {
 				this.props.checkToggle();
