@@ -53,7 +53,7 @@ class PostComment extends Component {
 	renderRepliesList() {
 		const commentChildrenIds = get( this.props.commentsTree, [ this.props.commentId, 'children' ] );
 		// Hide children if more than maxChildrenToShow, but not if replying
-		const exceedsMaxChildrenToShow = commentChildrenIds.length < this.props.maxChildrenToShow;
+		const exceedsMaxChildrenToShow = commentChildrenIds && commentChildrenIds.length < this.props.maxChildrenToShow;
 		const showReplies = this.state.showReplies || exceedsMaxChildrenToShow;
 
 		// No children to show
