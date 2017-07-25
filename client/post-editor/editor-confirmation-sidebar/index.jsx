@@ -144,20 +144,6 @@ class EditorConfirmationSidebar extends React.Component {
 		);
 	}
 
-	renderPublishDateComponent() {
-		const postDate = this.props.post && this.props.post.date
-			? this.props.post.date
-			: null;
-
-		return (
-			<EditorPublishDate
-				post={ this.props.post }
-				postDate={ postDate }
-				setPostDate={ this.props.setPostDate }
-			/>
-		);
-	}
-
 	render() {
 		const isSidebarActive = this.props.status === 'open';
 		const isOverlayActive = this.props.status !== 'closed';
@@ -201,7 +187,10 @@ class EditorConfirmationSidebar extends React.Component {
 									} )
 							}
 						</div>
-						{ this.renderPublishDateComponent() }
+						<EditorPublishDate
+							post={ this.props.post }
+							setPostDate={ this.props.setPostDate }
+						/>
 						<div className="editor-confirmation-sidebar__privacy-control">
 							{ this.renderPrivacyControl() }
 						</div>

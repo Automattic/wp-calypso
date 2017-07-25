@@ -27,6 +27,7 @@ import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
+import EditorPublishDate from 'post-editor/editor-publish-date';
 import EditorVisibility from 'post-editor/editor-visibility';
 
 export class EditPostStatus extends Component {
@@ -119,36 +120,12 @@ export class EditPostStatus extends Component {
 			this.props.site.options &&
 			this.props.site.options.admin_url;
 
-		const fullDate = postScheduleUtils.convertDateToUserLocation(
-			( this.props.postDate || new Date() ),
-			siteUtils.timezone( this.props.site ),
-			siteUtils.gmtOffset( this.props.site )
-		).format( 'll LT' );
-
 		const isPostPublishFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
 			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
 
 		return (
 			<div className="edit-post-status">
-				<span
-					ref="postStatusTooltip"
-					className="edit-post-status__full-date"
-					onMouseEnter={ this.showTZTooltip }
-					onMouseLeave={ this.hideTZTooltip }
-					onClick={ this.togglePostSchedulePopover }
-				>
-					{
-						postUtils.isFutureDated( this.props.savedPost )
-							? <span className="edit-post-status__future-label">
-									{ translate( 'Future' ) }
-								</span>
-							: <Gridicon icon="time" size={ 18 } />
-					}
-
-					{ fullDate }
-					{ this.renderTZTooltop() }
-					{ this.renderPostSchedulePopover() }
-				</span>
+				{ this.renderPostScheduling() }
 				{
 					isPostPublishFlow
 						? this.renderPostVisibility()
@@ -203,6 +180,48 @@ export class EditPostStatus extends Component {
 					adminUrl={ adminUrl }
 				/>
 			</div>
+		);
+	}
+
+	renderPostScheduling() {
+		const isPostPublishFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
+
+		const fullDate = postScheduleUtils.convertDateToUserLocation(
+			( this.props.postDate || new Date() ),
+			siteUtils.timezone( this.props.site ),
+			siteUtils.gmtOffset( this.props.site )
+		).format( 'll LT' );
+
+		if ( isPostPublishFlow ) {
+			return (
+				<EditorPublishDate
+					post={ this.props.post }
+					setPostDate={ this.props.setPostDate }
+				/>
+			);
+		}
+
+		return (
+			<span
+				ref="postStatusTooltip"
+				className="edit-post-status__full-date"
+				onMouseEnter={ this.showTZTooltip }
+				onMouseLeave={ this.hideTZTooltip }
+				onClick={ this.togglePostSchedulePopover }
+			>
+				{
+					postUtils.isFutureDated( this.props.savedPost )
+						? <span className="edit-post-status__future-label">
+								{ this.props.translate( 'Future' ) }
+							</span>
+						: <Gridicon icon="time" size={ 18 } />
+				}
+
+				{ fullDate }
+				{ this.renderTZTooltop() }
+				{ this.renderPostSchedulePopover() }
+			</span>
 		);
 	}
 

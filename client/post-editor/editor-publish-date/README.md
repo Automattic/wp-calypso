@@ -11,7 +11,6 @@ import EditorPublishDate from 'post-editor/editor-publish-date';
 export default function MyComponent() {
 	const props = {
 		post: post,
-		postDate: postDate,
 		setPostDate: setPostDate,
 	};
 
@@ -26,5 +25,4 @@ export default function MyComponent() {
 The following props are used with the Editor Publish Date component:
 
 - `post`: (object) The post object
-- `postDate`: (string) The publish date for the post
 - `setPostDate`: (func) A callback that receives a Moment object with the updated date on change
