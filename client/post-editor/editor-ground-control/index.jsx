@@ -3,7 +3,8 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { identity, noop } from 'lodash';
+import { connect } from 'react-redux';
+import { get, identity, noop } from 'lodash';
 import classNames from 'classnames';
 import moment from 'moment';
 import page from 'page';
@@ -24,6 +25,98 @@ import AsyncLoad from 'components/async-load';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
+import { getSitePostsForQueryIgnoringPage } from 'state/posts/selectors';
+
+const PostSchedule = ( { onDateChange, onMonthChange, posts, selectedDay, site } ) => {
+	const tz = siteUtils.timezone( site );
+	const gmtOffset = siteUtils.gmtOffset( site );
+
+	return (
+		<AsyncLoad
+			require="components/post-schedule"
+			selectedDay={ selectedDay }
+			timezone={ tz }
+			gmtOffset={ gmtOffset }
+			onDateChange={ onDateChange }
+			onMonthChange={ onMonthChange }
+			posts={ posts }
+			site={ site }
+		/>
+	);
+};
+
+const ConnectedPostSchedule = connect(
+	( state, { site, query } ) => ( {
+		posts: getSitePostsForQueryIgnoringPage( state, get( site, 'ID' ), query ) || [],
+	} )
+)( PostSchedule );
+
+class PostScheduler extends PureComponent {
+	static propTypes = {
+		initialDate: PropTypes.object.isRequired,
+		post: PropTypes.object,
+		setPostDate: PropTypes.func,
+		site: PropTypes.object,
+	}
+
+	state = {
+		firstDayOfTheMonth: this.getFirstDayOfTheMonth( this.props.initialDate ),
+		lastDayOfTheMonth: this.getLastDayOfTheMonth( this.props.initialDate ),
+	}
+
+	getFirstDayOfTheMonth( date ) {
+		const tz = siteUtils.timezone( this.props.site );
+
+		return postUtils.getOffsetDate( date, tz ).set( {
+			year: date.year(),
+			month: date.month(),
+			date: 1,
+			hours: 0,
+			minutes: 0,
+			seconds: 0,
+			milliseconds: 0
+		} );
+	}
+
+	getLastDayOfTheMonth( date ) {
+		return this.getFirstDayOfTheMonth( date )
+			.add( 1, 'month' )
+			.second( -1 );
+	}
+
+	setCurrentMonth = ( date ) => {
+		this.setState( {
+			firstDayOfTheMonth: this.getFirstDayOfTheMonth( date ),
+			lastDayOfTheMonth: this.getLastDayOfTheMonth( date )
+		} );
+	}
+
+	render() {
+		const { post, setPostDate, site } = this.props;
+		const query = {
+			status: 'publish,future',
+			before: this.state.lastDayOfTheMonth.format(),
+			after: this.state.firstDayOfTheMonth.format(),
+			number: 100
+		};
+
+		return (
+			<span className="editor-ground-control__schedule-post">
+				{ ! postUtils.isPage( post ) && <QueryPosts
+					siteId={ get( site, 'ID' ) }
+					query={ query } /> }
+				<ConnectedPostSchedule
+					require="components/post-schedule"
+					onDateChange={ setPostDate }
+					onMonthChange={ this.setCurrentMonth }
+					query={ query }
+					selectedDay={ get( post, 'date' ) }
+					site={ site }
+				/>
+			</span>
+		);
+	}
+}
 
 export class EditorGroundControl extends PureComponent {
 	static propTypes = {
@@ -72,8 +165,6 @@ export class EditorGroundControl extends PureComponent {
 	state = {
 		showSchedulePopover: false,
 		showAdvanceStatus: false,
-		firstDayOfTheMonth: this.getFirstDayOfTheMonth(),
-		lastDayOfTheMonth: this.getLastDayOfTheMonth(),
 		needsVerification: this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
 	}
 
@@ -121,13 +212,6 @@ export class EditorGroundControl extends PureComponent {
 		}
 	}
 
-	setCurrentMonth = ( date ) => {
-		this.setState( {
-			firstDayOfTheMonth: this.getFirstDayOfTheMonth( date ),
-			lastDayOfTheMonth: this.getLastDayOfTheMonth( date )
-		} );
-	}
-
 	getPreviewLabel() {
 		if ( postUtils.isPublished( this.props.savedPost ) && this.props.site.jetpack ) {
 			return this.props.translate( 'View' );
@@ -164,35 +248,7 @@ export class EditorGroundControl extends PureComponent {
 		this.setState( { showSchedulePopover: false } );
 	}
 
-	renderPostScheduler() {
-		const tz = siteUtils.timezone( this.props.site ),
-			gmtOffset = siteUtils.gmtOffset( this.props.site ),
-			postDate = this.props.post && this.props.post.date
-				? this.props.post.date
-				: null;
-
-		return (
-			<AsyncLoad
-				require="components/post-schedule"
-				selectedDay={ postDate }
-				timezone={ tz }
-				gmtOffset={ gmtOffset }
-				onDateChange={ this.props.setPostDate }
-				onMonthChange={ this.setCurrentMonth }
-				site={ this.props.site }
-			/>
-		);
-	}
-
 	schedulePostPopover() {
-		const postScheduler = this.renderPostScheduler();
-		const query = {
-			status: 'publish,future',
-			before: this.state.lastDayOfTheMonth.format(),
-			after: this.state.firstDayOfTheMonth.format(),
-			number: 100
-		};
-
 		return (
 			<Popover
 				isVisible={ this.state.showSchedulePopover }
@@ -201,40 +257,12 @@ export class EditorGroundControl extends PureComponent {
 				context={ this.refs && this.refs.schedulePost }
 				id="editor-post-schedule"
 			>
-				<span className="editor-ground-control__schedule-post">
-					{ postUtils.isPage( this.props.post )
-						? postScheduler
-						: <div>
-							<QueryPosts
-								siteId={ this.props.site.ID }
-								query={ query } />
-							{ postScheduler }
-						</div>
-					}
-				</span>
+				<PostScheduler initialDate={ this.props.moment() }
+					post={ this.props.post }
+					setPostDate= { this.props.setPostDate }
+					site={ this.props.site } />
 			</Popover>
 		);
-	}
-
-	getFirstDayOfTheMonth( date ) {
-		const tz = siteUtils.timezone( this.props.site );
-		date = date || this.props.moment();
-
-		return postUtils.getOffsetDate( date, tz ).set( {
-			year: date.year(),
-			month: date.month(),
-			date: 1,
-			hours: 0,
-			minutes: 0,
-			seconds: 0,
-			milliseconds: 0
-		} );
-	}
-
-	getLastDayOfTheMonth( date ) {
-		return this.getFirstDayOfTheMonth( date )
-			.add( 1, 'month' )
-			.second( -1 );
 	}
 
 	getSaveStatusLabel() {
