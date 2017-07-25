@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { combineReducers } from 'state/utils';
 import settings from './settings/reducer';
 
-export default settings;
+export default combineReducers( { settings } );
