@@ -210,7 +210,12 @@ export class CommentList extends Component {
 
 	showNotice = ( comment, newStatus, options = { doPersist: false } ) => {
 		const { translate } = this.props;
-		const { commentId, status: previousStatus } = comment;
+		const {
+			commentId,
+			isLiked: previousIsLiked,
+			postId,
+			status: previousStatus,
+		} = comment;
 
 		const [ type, message ] = get( {
 			approved: [ 'is-success', translate( 'Comment approved.' ) ],
@@ -228,11 +233,16 @@ export class CommentList extends Component {
 			duration: 5000,
 			id: `comment-notice-${ commentId }`,
 			isPersistent: true,
-			onClick: () => this.setCommentStatus( comment, previousStatus, {
-				isUndo: true,
-				doPersist: options.doPersist,
-				showNotice: false,
-			} ),
+			onClick: () => {
+				this.setCommentStatus( comment, previousStatus, {
+					isUndo: true,
+					doPersist: options.doPersist,
+					showNotice: false,
+				} );
+				if ( previousIsLiked ) {
+					this.props.likeComment( commentId, postId );
+				}
+			},
 		};
 
 		this.props.createNotice( type, message, noticeOptions );
@@ -257,6 +267,7 @@ export class CommentList extends Component {
 		}
 	}
 
+	// TODO: rewrite after persistedComments is merged
 	toggleCommentSelected = commentId => {
 		// TODO: Replace with Redux getComment()
 		const { i_like, status } = this.getComment( commentId );
