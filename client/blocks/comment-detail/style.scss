@@ -15,12 +15,12 @@
 	&.is-collapsed {
 		&:hover {
 			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
-			z-index: 1;
+			z-index: z-index( 'root', '.comment-detail.card.is-collapsed:hover' );
 		}
 
 		.accessible-focus &:focus {
 			box-shadow: 0 0 0 1px $blue-medium, 0 0 0 3px $blue-light;
-			z-index: 1;
+			z-index: z-index( 'root', '.comment-detail.card.is-collapsed.accessible-focus:focus' );
 		}
 	}
 
