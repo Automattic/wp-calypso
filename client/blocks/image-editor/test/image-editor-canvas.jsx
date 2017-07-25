@@ -47,13 +47,13 @@ describe( 'ImageEditorToolbar', () => {
 		wrapper = shallow( <ImageEditorCanvas isImageLoaded={ true } /> );
 	} );
 
-	it( 'should render <ImageEditorCrop /> when this.props.canBeCropped === `true`', () => {
-		wrapper.setProps( { canBeCropped: true } );
+	it( 'should render <ImageEditorCrop /> when this.props.isGreaterThanMinimumDimensions === `true`', () => {
+		wrapper.setProps( { isGreaterThanMinimumDimensions: true } );
 		expect( wrapper.find( 'ImageEditorCropMock' ) ).to.have.length( 1 );
 	} );
 
-	it( 'should render <ImageEditorCrop /> when this.props.canBeCropped === `true`', () => {
-		wrapper.setProps( { canBeCropped: false } );
+	it( 'should render <ImageEditorCrop /> when this.props.isGreaterThanMinimumDimensions === `true`', () => {
+		wrapper.setProps( { isGreaterThanMinimumDimensions: false } );
 		expect( wrapper.find( 'ImageEditorCropMock' ) ).to.have.length( 0 );
 	} );
 } );

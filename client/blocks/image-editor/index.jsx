@@ -33,13 +33,11 @@ import {
 	isImageEditorImageLoaded
 } from 'state/ui/editor/image-editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getImageEditorOriginalAspectRatio } from 'state/selectors';
 import { getSite } from 'state/sites/selectors';
 import QuerySites from 'components/data/query-sites';
 import {
 	AspectRatios,
-	AspectRatiosValues,
-	MinimumImageDimensions
+	AspectRatiosValues
 } from 'state/ui/editor/image-editor/constants';
 import {
 	getDefaultAspectRatio
@@ -65,8 +63,7 @@ const ImageEditor = React.createClass( {
 		setImageEditorFileInfo: PropTypes.func,
 		setImageEditorDefaultAspectRatio: PropTypes.func,
 		translate: PropTypes.func,
-		isImageLoaded: PropTypes.bool,
-		originalAspectRatio: PropTypes.object
+		isImageLoaded: PropTypes.bool
 	},
 
 	getDefaultProps() {
@@ -78,23 +75,20 @@ const ImageEditor = React.createClass( {
 			isImageLoaded: false,
 			defaultAspectRatio: AspectRatios.FREE,
 			allowedAspectRatios: AspectRatiosValues,
-			setImageEditorDefaultAspectRatio: noop,
-			originalAspectRatio: null
+			setImageEditorDefaultAspectRatio: noop
 		};
 	},
 
 	getInitialState() {
 		return {
 			noticeText: null,
-			noticeStatus: 'is-info',
-			isGreaterThanMinimumDimensions: false
+			noticeStatus: 'is-info'
 		};
 	},
 
 	componentWillReceiveProps( newProps ) {
 		const {
-			media: currentMedia,
-			originalAspectRatio
+			media: currentMedia
 		} = this.props;
 
 		if ( newProps.media && ! isEqual( newProps.media, currentMedia ) ) {
@@ -103,15 +97,6 @@ const ImageEditor = React.createClass( {
 			this.updateFileInfo( newProps.media );
 
 			this.setDefaultAspectRatio();
-		}
-
-		if ( newProps.originalAspectRatio && ! isEqual( newProps.originalAspectRatio, originalAspectRatio ) ) {
-			if ( newProps.originalAspectRatio.width > MinimumImageDimensions.WIDTH &&
-				newProps.originalAspectRatio.height > MinimumImageDimensions.HEIGHT ) {
-				this.setState( {
-					isGreaterThanMinimumDimensions: true
-				} );
-			}
 		}
 	},
 
@@ -257,7 +242,6 @@ const ImageEditor = React.createClass( {
 		} = this.props;
 
 		const {
-			isGreaterThanMinimumDimensions,
 			noticeText
 		} = this.state;
 
@@ -276,12 +260,10 @@ const ImageEditor = React.createClass( {
 					<div className="image-editor__content">
 						<ImageEditorCanvas
 							ref="editCanvas"
-							canBeCropped={ isGreaterThanMinimumDimensions }
 							onLoadError={ this.onLoadCanvasError }
 						/>
 						<ImageEditorToolbar
 							onShowNotice={ this.showNotice }
-							canChangeAspectRatio={ isGreaterThanMinimumDimensions }
 							allowedAspectRatios={ allowedAspectRatios }
 						/>
 						<ImageEditorButtons
@@ -308,8 +290,7 @@ export default connect(
 		return {
 			...getImageEditorFileInfo( state ),
 			site: getSite( state, siteId ),
-			isImageLoaded: isImageEditorImageLoaded( state ),
-			originalAspectRatio: getImageEditorOriginalAspectRatio( state )
+			isImageLoaded: isImageEditorImageLoaded( state )
 		};
 	},
 	( dispatch, ownProp ) => {

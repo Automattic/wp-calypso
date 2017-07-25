@@ -74,4 +74,3 @@ export function getImageEditorCrop( state ) {
 export function getImageEditorAspectRatio( state ) {
 	return state.ui.editor.imageEditor.aspectRatio;
 }
-

@@ -22,6 +22,7 @@ import {
 	setImageEditorCropBounds,
 	setImageEditorImageHasLoaded
 } from 'state/ui/editor/image-editor/actions';
+import { getImageEditorIsGreaterThanMinimumDimensions } from 'state/selectors';
 
 export class ImageEditorCanvas extends Component {
 	static propTypes = {
@@ -42,7 +43,7 @@ export class ImageEditorCanvas extends Component {
 		setImageEditorImageHasLoaded: PropTypes.func,
 		onLoadError: PropTypes.func,
 		isImageLoaded: PropTypes.bool,
-		canBeCropped: PropTypes.bool
+		isGreaterThanMinimumDimensions: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -61,7 +62,7 @@ export class ImageEditorCanvas extends Component {
 		setImageEditorImageHasLoaded: noop,
 		onLoadError: noop,
 		isImageLoaded: false,
-		canBeCropped: true
+		isGreaterThanMinimumDimensions: true
 	};
 
 	// throttle the frame rate of window.resize() to circa 30fps
@@ -278,7 +279,7 @@ export class ImageEditorCanvas extends Component {
 
 		const {
 			isImageLoaded,
-			canBeCropped
+			isGreaterThanMinimumDimensions
 		} = this.props;
 
 		const canvasX = -50 * widthRatio - 100 * leftRatio;
@@ -302,7 +303,7 @@ export class ImageEditorCanvas extends Component {
 					onMouseDown={ this.preventDrag }
 					className={ canvasClasses }
 				/>
-				{ isImageLoaded && canBeCropped
+				{ isImageLoaded && isGreaterThanMinimumDimensions
 					? <ImageEditorCrop />
 				: null }
 			</div>
@@ -316,13 +317,15 @@ export default connect(
 		const { src, mimeType } = getImageEditorFileInfo( state );
 		const crop = getImageEditorCrop( state );
 		const isImageLoaded = isImageEditorImageLoaded( state );
+		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions( state );
 
 		return {
 			src,
 			mimeType,
 			transform,
 			crop,
-			isImageLoaded
+			isImageLoaded,
+			isGreaterThanMinimumDimensions
 		};
 	},
 	{

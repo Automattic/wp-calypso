@@ -28,6 +28,7 @@ import {
 	imageEditorFlip,
 	setImageEditorAspectRatio
 } from 'state/ui/editor/image-editor/actions';
+import { getImageEditorIsGreaterThanMinimumDimensions } from 'state/selectors';
 
 export class ImageEditorToolbar extends Component {
 	static propTypes = {
@@ -37,7 +38,7 @@ export class ImageEditorToolbar extends Component {
 		setImageEditorAspectRatio: PropTypes.func,
 		allowedAspectRatios: PropTypes.array,
 		onShowNotice: PropTypes.func,
-		canChangeAspectRatio: PropTypes.bool
+		isGreaterThanMinimumDimensions: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -46,7 +47,7 @@ export class ImageEditorToolbar extends Component {
 		setImageEditorAspectRatio: noop,
 		allowedAspectRatios: objectValues( AspectRatios ),
 		onShowNotice: noop,
-		canChangeAspectRatio: true
+		isGreaterThanMinimumDimensions: false
 	};
 
 	constructor( props ) {
@@ -75,15 +76,14 @@ export class ImageEditorToolbar extends Component {
 		event.preventDefault();
 
 		const {
-			canChangeAspectRatio,
+			isGreaterThanMinimumDimensions,
 			onShowNotice,
 			translate
 		} = this.props;
 
-		if ( ! canChangeAspectRatio ) {
+		if ( ! isGreaterThanMinimumDimensions ) {
 			const noticeText = translate(
-				'To change aspect ratio, your image dimensions should be greater than {{strong}}%(width)dpx{{/strong}} wide ' +
-				'and {{strong}}%(height)dpx{{/strong}} in height.',
+				'To change the aspect ratio, the height and width must be bigger than {{strong}}%(width)dpx{{/strong}}.',
 				{
 					args: {
 						width: MinimumImageDimensions.WIDTH,
@@ -184,7 +184,7 @@ export class ImageEditorToolbar extends Component {
 		const {
 			translate,
 			allowedAspectRatios,
-			canChangeAspectRatio
+			isGreaterThanMinimumDimensions
 		} = this.props;
 
 		const buttons = [
@@ -202,7 +202,7 @@ export class ImageEditorToolbar extends Component {
 					icon: 'layout',
 					text: translate( 'Aspect' ),
 					onClick: this.onAspectOpen,
-					disabled: ! canChangeAspectRatio
+					disabled: ! isGreaterThanMinimumDimensions
 				},
 			{
 				tool: 'flip-vertical',
@@ -245,8 +245,11 @@ export class ImageEditorToolbar extends Component {
 export default connect(
 	( state ) => {
 		const aspectRatio = getImageEditorAspectRatio( state );
+		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions( state );
+
 		return {
-			aspectRatio
+			aspectRatio,
+			isGreaterThanMinimumDimensions
 		};
 	},
 	{
