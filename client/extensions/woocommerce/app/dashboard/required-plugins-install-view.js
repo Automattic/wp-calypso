@@ -4,13 +4,13 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { find } from 'lodash';
+import { find, size } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { installPlugin, activatePlugin, fetchPlugins } from 'state/plugins/installed/actions';
+import { activatePlugin, fetchPlugins, installPlugin } from 'state/plugins/installed/actions';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
@@ -21,153 +21,307 @@ import SetupHeader from './setup-header';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
 import wp from 'lib/wp';
 
-const requiredPlugins = [
-	'wc-api-dev',
-	'woocommerce',
-	'woocommerce-gateway-stripe',
-	'woocommerce-services',
-	'taxjar-simplified-taxes-for-woocommerce',
-];
-
 class RequiredPluginsInstallView extends Component {
 	static propTypes = {
-		fetchPluginData: PropTypes.func.isRequired,
-		installPlugin: PropTypes.func.isRequired,
-		plugins: PropTypes.array,
-		setFinishedInstallOfRequiredPlugins: PropTypes.func.isRequired,
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
-		} ),
-		wpOrg: PropTypes.array,
+		} )
 	};
 
 	constructor( props ) {
 		super( props );
 		this.state = {
-			activatingPlugin: null,
-			installingPlugin: null,
+			engineState: 'INITIALIZING',
+			message: '',
 			progress: 0,
+			toActivate: [],
+			toInstall: [],
+			workingOn: '',
 		};
+		this.updateTimer = false;
 	}
 
 	componentDidMount = () => {
-		const { plugins, site } = this.props;
-
-		if ( site && plugins && plugins.length ) {
-			this.installPlugins( plugins );
-		}
-
-		this.getWporgPluginData();
+		this.createUpdateTimer();
 	}
 
 	componentWillUnmount = () => {
-		this.cancelUpdateTimeout();
+		this.destroyUpdateTimer();
 	}
 
-	componentDidUpdate = ( prevProps ) => {
-		const { plugins, site } = this.props;
-		if ( ! plugins || ! site ) {
+	createUpdateTimer = () => {
+		if ( this.updateTimer ) {
 			return;
 		}
-		const isReady = plugins.length && ! this.state.installingPlugin && ! this.state.activatingPlugin;
-		const isDoneInstalling = prevProps.plugins && plugins.length > prevProps.plugins.length;
-		const activatingPlugin = find( plugins, { slug: this.state.activatingPlugin } );
-		const isDoneActivating = activatingPlugin && activatingPlugin.active;
-		if (
-			isReady ||
-			( isDoneInstalling || isDoneActivating )
-		) {
-			this.installPlugins( this.props.plugins );
+
+		this.updateTimer = window.setInterval( () => {
+			this.updateEngine();
+		}, 1000 );
+	}
+
+	destroyUpdateTimer = () => {
+		if ( this.updateTimer ) {
+			window.clearInterval( this.updateTimer );
+			this.updateTimer = false;
 		}
 	}
 
-	getWporgPluginData() {
-		requiredPlugins.map( plugin => {
-			if ( 'wc-api-dev' === plugin ) {
-				return;
-			}
-			const pluginData = getPlugin( this.props.wporg, plugin );
+	getRequiredPluginsList = () => {
+		const { translate } = this.props;
+
+		return {
+			woocommerce: translate( 'WooCommerce' ),
+			'wc-api-dev': translate( 'WooCommerce API Dev' ),
+			'woocommerce-gateway-stripe': translate( 'WooCommerce Stripe Gateway' ),
+			'woocommerce-services': translate( 'WooCommerce Services' ),
+			'taxjar-simplified-taxes-for-woocommerce': translate( 'TaxJar - Sales Tax Automation for WooCommerce' ),
+		};
+	}
+
+	doInitialization = () => {
+		const { site, sitePlugins, translate, wporg } = this.props;
+
+		if ( ! site ) {
+			return;
+		}
+
+		let waitingForPluginListFromSite = false;
+		if ( ! sitePlugins ) {
+			waitingForPluginListFromSite = true;
+		} else if ( ! Array.isArray( sitePlugins ) ) {
+			waitingForPluginListFromSite = true;
+		} else if ( 0 === sitePlugins.length ) {
+			waitingForPluginListFromSite = true;
+		}
+
+		if ( waitingForPluginListFromSite ) {
+			this.setState( {
+				message: translate( 'Waiting for plugin list from site' ),
+				progress: 0,
+			} );
+			return;
+		}
+
+		// Iterate over the required plugins, fetching plugin
+		// data from wordpress.org for each into state
+		const requiredPlugins = this.getRequiredPluginsList();
+		let pluginDataLoaded = true;
+		for ( const requiredPluginSlug in requiredPlugins ) {
+			const pluginData = getPlugin( wporg, requiredPluginSlug );
+			// pluginData will be null until the action has had
+			// a chance to try and fetch data for the plugin slug
+			// given. Note that non-wp-org plugins (like wc-api-dev)
+			// will be accepted too, but with
+			// { fetched: false, wporg: false }
+			// as their response
 			if ( ! pluginData ) {
-				this.props.fetchPluginData( plugin );
+				this.props.fetchPluginData( requiredPluginSlug );
+				pluginDataLoaded = false;
 			}
+		}
+		if ( ! pluginDataLoaded ) {
+			this.setState( {
+				message: translate( 'Loading plugin data' ),
+				progress: 0,
+			} );
+			return;
+		}
+
+		const toInstall = [];
+		const toActivate = [];
+		for ( const requiredPluginSlug in requiredPlugins ) {
+			const pluginFound = find( sitePlugins, { slug: requiredPluginSlug } );
+			if ( ! pluginFound ) {
+				toInstall.push( requiredPluginSlug );
+				toActivate.push( requiredPluginSlug );
+			} else if ( ! pluginFound.active ) {
+				toActivate.push( requiredPluginSlug );
+			}
+		}
+
+		if ( toInstall.length ) {
+			this.setState( {
+				engineState: 'INSTALLING',
+				message: '',
+				progress: 25,
+				toActivate,
+				toInstall,
+			} );
+			return;
+		}
+
+		if ( toActivate.length ) {
+			this.setState( {
+				engineState: 'ACTIVATING',
+				message: '',
+				progress: 50,
+				toActivate,
+			} );
+			return;
+		}
+
+		this.setState( {
+			engineState: 'DONESUCCESS',
+			message: '',
 		} );
 	}
 
-	installApiDevPlugin = ( siteId ) => {
-		const progress = this.state.progress + ( 100 / requiredPlugins.length );
-		this.setState( () => ( {
-			installingPlugin: 'wc-api-dev',
-			progress,
-		} ) );
+	doInstallation = () => {
+		const { site, sitePlugins, translate, wporg } = this.props;
+		const requiredPlugins = this.getRequiredPluginsList();
 
-		const afterApiPluginInstalled = () => {
-			this.setState( () => ( { installingPlugin: null } ) );
-			this.props.fetchPlugins( [ siteId ] );
-		};
+		// If we are working on nothing presently, get the next thing to install and install it
+		if ( 0 === this.state.workingOn.length ) {
+			const toInstall = this.state.toInstall;
 
-		wp.req.post( {
-			path: `/sites/${ siteId }/woocommerce/install-api-dev-plugin`
-		} ).then( afterApiPluginInstalled );
-	}
-
-	installPlugins = ( plugins ) => {
-		this.cancelUpdateTimeout();
-		const { site, wporg } = this.props;
-		for ( let i = 0; i < requiredPlugins.length; i++ ) {
-			const slug = requiredPlugins[ i ];
-			const plugin = find( plugins, { slug } );
-
-			if ( ! plugin ) {
-				if ( 'wc-api-dev' === slug ) {
-					if ( 'wc-api-dev' !== this.state.installingPlugin ) {
-						this.installApiDevPlugin( site.ID );
-					}
-
-					return;
-				}
-
-				if ( ! wporg[ slug ] ) {
-					return;
-				}
-
-				const wporgPlugin = getPlugin( wporg, slug );
-				const progress = this.state.progress + ( 100 / requiredPlugins.length );
-				this.setState( () => ( {
-					installingPlugin: slug,
-					progress,
-				} ) );
-				this.props.installPlugin( site.ID, wporgPlugin );
-				this.setUpdateTimeout();
+			// Nothing left to install? Advance to activation step
+			if ( 0 === toInstall.length ) {
+				this.setState( {
+					engineState: 'ACTIVATING',
+					message: '',
+					progress: 50,
+				} );
 				return;
 			}
-			if ( ! plugin.active ) {
-				const wporgPlugin = getPlugin( wporg, slug );
-				this.setState( () => ( { activatingPlugin: slug } ) );
-				this.props.activatePlugin( site.ID, { ...wporgPlugin, id: plugin.id } );
-				this.setUpdateTimeout();
-				return;
+
+			const workingOn = toInstall.shift();
+			if ( 'wc-api-dev' === workingOn ) {
+				// Special handling for wc-api-dev
+				wp.req.post( {
+					path: `/sites/${ site.ID }/woocommerce/install-api-dev-plugin`
+				} ).then( () => {
+					this.props.fetchPlugins( [ site.ID ] );
+				} );
+			} else {
+				// Otherwise, handle plugin installation the normal way
+				this.props.installPlugin( site.ID, getPlugin( wporg, workingOn ) );
 			}
+
+			this.setState( {
+				message: translate( 'Installing %(plugin)s', { args: { plugin: requiredPlugins[ workingOn ] } } ),
+				toInstall,
+				workingOn,
+			} );
+			return;
 		}
-		this.props.setFinishedInstallOfRequiredPlugins(
-			site.ID,
-			true
-		);
-	}
 
-	cancelUpdateTimeout = () => {
-		if ( this.updateTimeout ) {
-			window.clearTimeout( this.updateTimeout );
+		// Otherwise, if we are working on something presently, see if it has appeared in state yet
+		const pluginFound = find( sitePlugins, { slug: this.state.workingOn } );
+		if ( pluginFound ) {
+			this.setState( {
+				workingOn: '',
+			} );
 		}
 	}
 
-	setUpdateTimeout = () => {
-		this.updateTimeout = window.setTimeout( () => {
-			this.installPlugins( this.props.plugins );
-		}, 10000 );
+	doActivation = () => {
+		const { site, sitePlugins, translate } = this.props;
+		const requiredPlugins = this.getRequiredPluginsList();
+
+		// If we are working on nothing presently, get the next thing to activate and activate it
+		if ( 0 === this.state.workingOn.length ) {
+			const toActivate = this.state.toActivate;
+
+			// Nothing left to activate? Advance to done success
+			if ( 0 === toActivate.length ) {
+				this.setState( {
+					engineState: 'DONESUCCESS',
+					message: '',
+					progress: 100,
+				} );
+				return;
+			}
+
+			const workingOn = toActivate.shift();
+
+			// It is best to use sitePlugins to get the right id since the
+			// plugin id isn't always slug/slug unless the main plugin PHP
+			// file is the same name as the plugin folder
+			const pluginToActivate = find( sitePlugins, { slug: workingOn } );
+			// Already active? Skip it
+			if ( pluginToActivate.active ) {
+				this.setState( {
+					toActivate,
+					workingOn: '',
+				} );
+				return;
+			}
+
+			// Otherwise, activate!
+			this.props.activatePlugin( site.ID, pluginToActivate );
+
+			this.setState( {
+				message: translate( 'Activating %(plugin)s', { args: { plugin: requiredPlugins[ workingOn ] } } ),
+				toActivate,
+				workingOn,
+			} );
+			return;
+		}
+
+		// See if activation has appeared in state yet
+		const pluginFound = find( sitePlugins, { slug: this.state.workingOn } );
+		if ( pluginFound && pluginFound.active ) {
+			this.setState( {
+				workingOn: '',
+			} );
+		}
+	}
+
+	doneSuccess = () => {
+		const { site, translate } = this.props;
+		this.props.setFinishedInstallOfRequiredPlugins( site.ID, true );
+
+		this.setState( {
+			engineState: 'IDLE',
+			message: translate( 'All required plugins are installed and activated' ),
+			progress: 100,
+		} );
+	}
+
+	updateEngine = () => {
+		switch ( this.state.engineState ) {
+			case 'INITIALIZING':
+				this.doInitialization();
+				break;
+			case 'INSTALLING':
+				this.doInstallation();
+				break;
+			case 'ACTIVATING':
+				this.doActivation();
+				break;
+			case 'DONESUCCESS':
+				this.doneSuccess();
+				break;
+		}
+	}
+
+	getProgress = () => {
+		const { engineState, toActivate, toInstall } = this.state;
+
+		const requiredPluginsCount = size( this.getRequiredPluginsList() );
+		const installedPluginsCount = requiredPluginsCount - toInstall.length;
+		const activatedPluginsCount = requiredPluginsCount - toActivate.length;
+		const perPluginProgress = 25 / requiredPluginsCount;
+
+		if ( 'INITIALIZING' === engineState ) {
+			return 0;
+		}
+
+		if ( 'INSTALLING' === engineState ) {
+			return 25 + installedPluginsCount * perPluginProgress;
+		}
+
+		if ( 'ACTIVATING' === engineState ) {
+			return 50 + activatedPluginsCount * perPluginProgress;
+		}
+
+		return 100;
 	}
 
 	render = () => {
-		const { translate, site } = this.props;
+		const { site, translate } = this.props;
+		const progress = this.getProgress();
+
 		return (
 			<div className="card dashboard__setup-wrapper">
 				{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }
@@ -177,7 +331,10 @@ class RequiredPluginsInstallView extends Component {
 					title={ translate( 'Setting up your store' ) }
 					subtitle={ translate( 'Give us a minute and we\'ll move right along.' ) }
 				>
-					<ProgressBar value={ this.state.progress } isPulsing />
+					<ProgressBar value={ progress } isPulsing />
+					<p>
+						{ this.state.message }
+					</p>
 				</SetupHeader>
 			</div>
 		);
@@ -186,9 +343,11 @@ class RequiredPluginsInstallView extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
+	const sitePlugins = site ? getPlugins( state, [ site ] ) : [];
+
 	return {
 		site,
-		plugins: getPlugins( state, [ site ] ),
+		sitePlugins,
 		wporg: state.plugins.wporg.items,
 	};
 }
