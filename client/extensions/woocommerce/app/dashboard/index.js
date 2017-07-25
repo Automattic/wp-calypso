@@ -53,7 +53,7 @@ class Dashboard extends Component {
 
 		if ( selectedSite && selectedSite.ID ) {
 			this.props.fetchSetupChoices( selectedSite.ID );
-			this.props.fetchOrders( selectedSite.ID, 1 );
+			this.props.fetchOrders( selectedSite.ID );
 
 			if ( ! productsLoaded ) {
 				this.props.fetchProducts( selectedSite.ID, 1 );
@@ -69,7 +69,7 @@ class Dashboard extends Component {
 
 		if ( newSiteId && ( oldSiteId !== newSiteId ) ) {
 			this.props.fetchSetupChoices( newSiteId );
-			this.props.fetchOrders( newSiteId, 1 );
+			this.props.fetchOrders( newSiteId );
 
 			if ( ! productsLoaded ) {
 				this.props.fetchProducts( newSiteId, 1 );

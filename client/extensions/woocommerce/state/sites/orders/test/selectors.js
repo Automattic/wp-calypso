@@ -12,7 +12,7 @@ import {
 	areOrdersLoading,
 	getOrder,
 	getOrders,
-	getTotalOrdersPages,
+	getTotalOrders,
 	isOrderLoaded,
 	isOrderLoading,
 	isOrderUpdating,
@@ -38,14 +38,14 @@ const loadingState = {
 							35: true
 						},
 						isQueryLoading: {
-							'{page:1}': true,
+							'{}': true,
 						},
 						isUpdating: {
 							20: true,
 						},
 						items: {},
 						queries: {},
-						totalPages: 1
+						total: { '{}': 0 },
 					},
 				},
 			},
@@ -62,22 +62,22 @@ const loadedState = {
 							35: false
 						},
 						isQueryLoading: {
-							'{page:1}': false,
+							'{}': false,
 						},
 						isUpdating: {
 							20: false,
 						},
 						items: keyBy( orders, 'id' ),
 						queries: {
-							'{page:1}': [ 35, 26 ]
+							'{}': [ 35, 26 ]
 						},
-						totalPages: 4
+						total: { '{}': 54 },
 					}
 				},
 				321: {
 					orders: {
 						isQueryLoading: {
-							'{page:1}': false,
+							'{}': false,
 						},
 						items: keyBy( [ ...orders, ...additionalOrders ], 'id' ),
 					}
@@ -218,25 +218,25 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getTotalOrdersPages', () => {
-		it( 'should be 1 (default) when woocommerce state is not available.', () => {
-			expect( getTotalOrdersPages( preInitializedState, 123 ) ).to.eql( 1 );
+	describe( '#getTotalOrders', () => {
+		it( 'should be 0 (default) when woocommerce state is not available.', () => {
+			expect( getTotalOrders( preInitializedState, {}, 123 ) ).to.eql( 0 );
 		} );
 
-		it( 'should be 1 (default) when orders are loading.', () => {
-			expect( getTotalOrdersPages( loadingState, 123 ) ).to.eql( 1 );
+		it( 'should be 0 (default) when orders are loading.', () => {
+			expect( getTotalOrders( loadingState, {}, 123 ) ).to.eql( 0 );
 		} );
 
-		it( 'should be 4, the set page total, if the orders are loaded.', () => {
-			expect( getTotalOrdersPages( loadedState, 123 ) ).to.eql( 4 );
+		it( 'should be 54, the set total, if the orders are loaded.', () => {
+			expect( getTotalOrders( loadedState, {}, 123 ) ).to.eql( 54 );
 		} );
 
-		it( 'should be 1 (default) when orders are loaded only for a different site.', () => {
-			expect( getTotalOrdersPages( loadedState, 456 ) ).to.eql( 1 );
+		it( 'should be 0 (default) when orders are loaded only for a different site.', () => {
+			expect( getTotalOrders( loadedState, {}, 456 ) ).to.eql( 0 );
 		} );
 
 		it( 'should get the siteId from the UI tree if not provided.', () => {
-			expect( getTotalOrdersPages( loadedStateWithUi ) ).to.eql( 4 );
+			expect( getTotalOrders( loadedStateWithUi ) ).to.eql( 54 );
 		} );
 	} );
 
