@@ -47,7 +47,7 @@ export class EditorGroundControl extends PureComponent {
 		userUtils: PropTypes.object,
 		toggleSidebar: PropTypes.func,
 		translate: PropTypes.func,
-		type: PropTypes.string
+		type: PropTypes.string,
 	}
 
 	static defaultProps = {
