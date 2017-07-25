@@ -3,7 +3,6 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -104,13 +103,9 @@ export default connect(
 
 		return { siteId, postId, shares };
 	},
-	dispatch =>
-		bindActionCreators(
-			{
-				addDraftShare,
-				revokeDraftShare,
-				restoreDraftShare,
-			},
-			dispatch,
-		),
+	{
+		addDraftShare,
+		revokeDraftShare,
+		restoreDraftShare,
+	},
 )( localize( FeedbackView ) );
