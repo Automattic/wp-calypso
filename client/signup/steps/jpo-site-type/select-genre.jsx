@@ -17,22 +17,6 @@ module.exports = React.createClass( {
 		required: React.PropTypes.bool,
 	},
 
-	handleBlogClick: function() {
-		console.log( 'blog selected' );
-	},
-
-	handleWebsiteClick: function() {
-		console.log( 'website selected' );
-	},
-
-	handlePortfolioClick: function() {
-		console.log( 'portfolio selected' );
-	},
-
-	handleStoreClick: function() {
-		console.log( 'store selected' );
-	},
-
 	render: function() {
 		if ( ! this.props.current ) {
 			return ( <div /> );

@@ -37,7 +37,7 @@ const JPOSiteTypeStep = React.createClass( {
 			headerText: 'Let\'s shape ' + siteName + '.',
 			subHeaderText: 'What kind of site do you need? Choose an option below:',
 			currentScreen: 'genre',
-			siteTypePayload: {
+			payload: {
 				genre: '',
 				businessPersonal: '',
 				addressInfo: {
@@ -51,54 +51,90 @@ const JPOSiteTypeStep = React.createClass( {
 		};
 	},
 
+	// Genre selections
 	onSelectBlog() {
+		this.state.payload.genre = 'blog';
 		this.setState( { currentScreen: 'businesspersonal' } );
 	},
 
 	onSelectWebsite() {
+		this.state.payload.genre = 'website';
 		this.setState( { currentScreen: 'businesspersonal' } );
 	},
 
 	onSelectPortfolio() {
+		this.state.payload.genre = 'portfolio';
 		this.setState( { currentScreen: 'businesspersonal' } );
 	},
 
 	onSelectStore() {
+		this.state.payload.genre = 'store';
 		this.setState( { currentScreen: 'businesspersonal' } );
 	},
 
+	// Business/personal selections
 	onSelectPersonal() {
+		this.state.payload.businessPersonal = 'personal';
 		this.onNextStep();
 	},
 
 	onSelectBusiness() {
-		this.setState( { currentScreen: 'businessaddress' } );
-		
+		this.state.payload.businessPersonal = 'business';		
 		this.state.headerText = 'Add a business address.';
 		this.state.subHeaderText = 'Enter your business address to have a map added to your website.';
+		this.setState( { currentScreen: 'businessaddress' } );
 	},
 
+	onInputBusinessName( event ) {
+		this.state.payload.addressInfo.businessName = event.target.value;
+	},
+
+	onInputStreetAddress( event ) {
+		this.state.payload.addressInfo.streetAddress = event.target.value;
+	},
+
+	onInputCity( event ) {
+		this.state.payload.addressInfo.city = event.target.value;
+	},
+
+	onInputState( event ) {
+		this.state.payload.addressInfo.state = event.target.value;
+	},
+
+	onInputZip( event ) {
+		this.state.payload.addressInfo.zipCode = event.target.value;
+	},
+
+	// Next step
 	onNextStep() {
-		this.skipStep();
+		console.log( this.state.payload );
+		
+		// setJPOSiteType( this.state.payload );
+		// this.goToNextStep();
 	},
 
 	renderStepContent() {
 		return (
 			<div>
 				<SelectGenre 
-					current={ this.state.currentScreen === 'genre' } 
+					current={ this.state.currentScreen === 'genre' }
 					onSelectBlog={ this.onSelectBlog }
 					onSelectWebsite={ this.onSelectWebsite }
 					onSelectPortfolio={ this.onSelectPortfolio }
 					onSelectStore={ this.onSelectStore }
 				/>
 				<SelectBusinessPersonal 
-					current={ this.state.currentScreen === 'businesspersonal' } 
+					current={ this.state.currentScreen === 'businesspersonal' }
 					onSelectPersonal={ this.onSelectPersonal }
 					onSelectBusiness={ this.onSelectBusiness }
 				/>
 				<SelectBusinessAddress 
-					current={ this.state.currentScreen === 'businessaddress' } 
+					current={ this.state.currentScreen === 'businessaddress' }
+					onInputBusinessName={ this.onInputBusinessName }
+					onInputStreetAddress={ this.onInputStreetAddress }
+					onInputCity={ this.onInputCity }
+					onInputState={ this.onInputState }
+					onInputZip={ this.onInputZip }
 					onNextStep={ this.onNextStep }
 				/>
 			</div>

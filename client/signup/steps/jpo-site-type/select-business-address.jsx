@@ -27,15 +27,15 @@ module.exports = React.createClass( {
 			<div className="jpo__site-type-wrapper business-address">
 				<Card>
 					<FormLabel>{ translate( 'Business Name' ) }</FormLabel>
-					<FormTextInput />
+					<FormTextInput onChange={ this.props.onInputBusinessName } />
 					<FormLabel>{ translate( 'Street Address' ) }</FormLabel>
-					<FormTextInput />
+					<FormTextInput onChange={ this.props.onInputStreetAddress } />
 					<FormLabel>{ translate( 'City' ) }</FormLabel>
-					<FormTextInput />
+					<FormTextInput onChange={ this.props.onInputCity } />
 					<FormLabel>{ translate( 'State' ) }</FormLabel>
-					<FormTextInput />
+					<FormTextInput onChange={ this.props.onInputState } />
 					<FormLabel>{ translate( 'ZIP Code' ) }</FormLabel>
-					<FormTextInput />
+					<FormTextInput onChange={ this.props.onInputZip } />
 					<Button primary onClick={ this.props.onNextStep }>{ translate( 'Next Step' ) }</Button>
 				</Card>
 			</div>
