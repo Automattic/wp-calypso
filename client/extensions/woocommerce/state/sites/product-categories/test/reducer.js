@@ -7,15 +7,14 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from 'woocommerce/state/sites/reducer';
-import { LOADING } from 'woocommerce/state/constants';
+import { LOADING, ERROR } from 'woocommerce/state/constants';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
-	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 import { productCategoryUpdated } from '../actions';
 
 describe( 'reducer', () => {
-	it( 'should mark the product category tree as "loading"', () => {
+	it( 'should mark the product category list as "loading"', () => {
 		const siteId = 123;
 		const action = {
 			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
@@ -25,6 +24,25 @@ describe( 'reducer', () => {
 		const newState = reducer( {}, action );
 		expect( newState[ siteId ] ).to.exist;
 		expect( newState[ siteId ].productCategories ).to.eql( LOADING );
+	} );
+
+	it( 'should mark the product category list as "error"', () => {
+		const siteId = 123;
+		const action = {
+			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
+			siteId,
+			meta: {
+				dataLayer: {
+					error: {
+						message: 'This is an error',
+					},
+				},
+			},
+		};
+
+		const newState = reducer( {}, action );
+		expect( newState[ siteId ] ).to.exist;
+		expect( newState[ siteId ].productCategories ).to.eql( ERROR );
 	} );
 
 	it( 'should store data from the action', () => {
@@ -41,9 +59,15 @@ describe( 'reducer', () => {
 			{ id: 2, name: 'cat2', slug: 'cat-2' },
 		];
 		const action = {
-			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
-			data: categories,
+			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 			siteId,
+			meta: {
+				dataLayer: {
+					data: {
+						data: categories,
+					},
+				},
+			},
 		};
 
 		const newState = reducer( state, action );
@@ -61,8 +85,14 @@ describe( 'reducer', () => {
 			products: {},
 		} };
 		const action = {
-			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
-			data: [],
+			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
+			meta: {
+				dataLayer: {
+					data: {
+						data: [],
+					},
+				},
+			},
 			siteId,
 		};
 
