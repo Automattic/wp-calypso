@@ -112,11 +112,31 @@ export class WebPreviewContent extends Component {
 			case 'location-change':
 				this.handleLocationChange( data.payload );
 				return;
+			case 'focus':
+				this.removeSelection();
+				return;
 		}
 	}
 
 	handleLocationChange = ( payload ) => {
 		this.props.onLocationUpdate( payload.pathname );
+	}
+
+	removeSelection = () => {
+		// remove all textual selections when user gives focus to preview iframe
+		// they might be confusing
+		if ( global.window ) {
+			if ( typeof window.getSelection !== 'undefined' ) {
+				const selection = window.getSelection();
+				if ( typeof selection.empty === 'function' ) {
+					selection.empty();
+				} else if ( typeof selection.removeAllRanges === 'function' ) {
+					selection.removeAllRanges();
+				}
+			} else if ( document.selection !== undefined && typeof document.selection.empty === 'function' ) {
+				document.selection.empty();
+			}
+		}
 	}
 
 	focusIfNeeded = () => {
