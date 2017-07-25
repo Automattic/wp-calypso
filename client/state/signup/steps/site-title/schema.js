@@ -1,3 +1,3 @@
-export const jpoSiteTitleSchema = {
+export const siteTitleSchema = {
 	type: [ 'string', 'null' ]
 };
