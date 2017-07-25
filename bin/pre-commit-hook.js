@@ -10,7 +10,7 @@ const path = require( 'path' );
 console.log(
 	'\nBy contributing to this project, you license the materials you contribute ' +
 		'under the GNU General Public License v2 (or later). All materials must have ' +
-		'GPLv2 compatible licenses — see .github/CONTRIBUTING.md for details.\n\n'
+		'GPLv2 compatible licenses — see .github/CONTRIBUTING.md for details.\n\n',
 );
 
 // Make quick pass over config files on every change
@@ -26,19 +26,19 @@ const files = execSync( 'git diff --cached --name-only --diff-filter=ACM' )
  * Returns true if the given text contains @format.
  * within its first docblock. False otherwise.
  *
- * @param {*} text text to scan for the format keyword within the first docblock
+ * @param {String} text text to scan for the format keyword within the first docblock
  */
 const shouldFormat = text => {
 	const firstDocBlockStartIndex = text.indexOf( '/**' );
 
 	if ( -1 === firstDocBlockStartIndex ) {
-		return;
+		return false;
 	}
 
 	const firstDocBlockEndIndex = text.indexOf( '*/', firstDocBlockStartIndex + 1 );
 
 	if ( -1 === firstDocBlockEndIndex ) {
-		return;
+		return false;
 	}
 
 	const firstDocBlockText = text.substring( firstDocBlockStartIndex, firstDocBlockEndIndex + 1 );
@@ -68,7 +68,7 @@ if ( lintResult.status ) {
 		chalk.red( 'COMMIT ABORTED:' ),
 		'The linter reported some problems. ' +
 			'If you are aware of them and it is OK, ' +
-			'repeat the commit command with --no-verify to avoid this check.'
+			'repeat the commit command with --no-verify to avoid this check.',
 	);
 	process.exit( 1 );
 }
