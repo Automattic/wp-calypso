@@ -28,6 +28,7 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'state/analytics/actions';
+import { withoutHttp } from 'lib/url';
 
 class SiteRedirect extends React.Component {
 	static propTypes = {
@@ -40,7 +41,7 @@ class SiteRedirect extends React.Component {
 	};
 
 	state = {
-		location: this.props.location.value
+		redirectUrl: this.props.location.value || ''
 	};
 
 	componentWillMount() {
@@ -50,7 +51,7 @@ class SiteRedirect extends React.Component {
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.location.value !== nextProps.location.value ) {
 			this.setState( {
-				location: nextProps.location.value
+				redirectUrl: nextProps.location.value
 			} );
 		}
 	}
@@ -64,26 +65,23 @@ class SiteRedirect extends React.Component {
 	};
 
 	handleChange = ( event ) => {
-		let location = event.target.value;
+		const redirectUrl = withoutHttp( event.target.value );
 
-		// Removes the protocol part
-		location = location.replace( /.*:\/\//, '' );
-
-		this.setState( { location } );
+		this.setState( { redirectUrl } );
 	};
 
 	handleClick = ( event ) => {
 		event.preventDefault();
 
-		upgradesActions.updateSiteRedirect( this.props.selectedSite.domain, this.state.location, ( success ) => {
+		upgradesActions.updateSiteRedirect( this.props.selectedSite.domain, this.state.redirectUrl, ( success ) => {
 			this.props.updateSiteRedirectClick(
 				this.props.selectedDomainName,
-				this.state.location,
+				this.state.redirectUrl,
 				success
 			);
 
 			if ( success ) {
-				page( paths.domainManagementRedirectSettings( this.props.selectedSite.slug, this.state.location ) );
+				page( paths.domainManagementRedirectSettings( this.props.selectedSite.slug, this.state.redirectUrl ) );
 			}
 		} );
 	};
@@ -95,7 +93,7 @@ class SiteRedirect extends React.Component {
 	render() {
 		const { location, translate } = this.props;
 		const { isUpdating, notice } = location;
-		const isFetching = location.isFetching || this.state.location === null;
+		const isFetching = location.isFetching || this.state.redirectUrl.length === 0;
 
 		const classes = classNames(
 			'site-redirect-card',
@@ -104,19 +102,19 @@ class SiteRedirect extends React.Component {
 
 		return (
 			<div>
-				{
-					notice &&
+				<Main>
+					<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
+						{ translate( 'Redirect Settings' ) }
+					</Header>
+
+					{
+						notice &&
 						<Notice
 							onDismissClick={ this.closeRedirectNotice }
 							status={ notices.getStatusHelper( notice ) }
 							text={ notice.text }
 						/>
-				}
-
-				<Main>
-					<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
-						{ translate( 'Redirect Settings' ) }
-					</Header>
+					}
 
 					<SectionHeader label={ translate( 'Redirect Settings' ) } />
 
@@ -135,7 +133,7 @@ class SiteRedirect extends React.Component {
 									onFocus={ this.handleFocus }
 									prefix="http://"
 									type="text"
-									value={ this.state.location || '' } />
+									value={ this.state.redirectUrl } />
 
 								<p className="site-redirect__explanation">
 									{ translate( 'All domains on this site will redirect here.' ) }
@@ -150,6 +148,7 @@ class SiteRedirect extends React.Component {
 								</FormButton>
 
 								<FormButton
+									disabled={ isFetching || isUpdating }
 									type="button"
 									isPrimary={ false }
 									onClick={ this.goToEdit }>
