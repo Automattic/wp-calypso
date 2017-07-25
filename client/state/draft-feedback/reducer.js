@@ -16,7 +16,7 @@ import {
 import { combineReducers, keyedReducer } from 'state/utils';
 
 /**
- * Reducer for the emails addresses a draft has been shared with.
+ * Reducer for the email addresses a draft has been shared with.
  *
  * @param 	{string[]}		state 	Current email addresses
  * @param 	{Object}		action 	An action
