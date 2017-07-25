@@ -66,7 +66,7 @@ export class EditorGroundControl extends PureComponent {
 		translate: identity,
 		user: null,
 		userUtils: null,
-		setPostDate: noop
+		setPostDate: noop,
 	};
 
 	state = {
