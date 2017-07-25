@@ -579,10 +579,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	getAddNewSiteUrl() {
-		if ( this.props.hasJetpackSites || abtest( 'newSiteWithJetpack' ) === 'showNewJetpackSite' ) {
-			return '/jetpack/new/?ref=calypso-selector';
-		}
-		return config( 'signup_url' ) + '?ref=calypso-selector';
+		return '/jetpack/new/?ref=calypso-selector';
 	}
 
 	addNewSite() {
