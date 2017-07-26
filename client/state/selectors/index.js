@@ -102,6 +102,7 @@ export getSharingButtons from './get-sharing-buttons';
 export getSimplePayments from './get-simple-payments';
 export getSiteComment from './get-site-comment';
 export getSiteComments from './get-site-comments';
+export getSiteCommentsTree from './get-site-comments-tree';
 export getSiteConnectionStatus from './get-site-connection-status';
 export getSiteDefaultPostFormat from './get-site-default-post-format';
 export getSiteGmtOffset from './get-site-gmt-offset';

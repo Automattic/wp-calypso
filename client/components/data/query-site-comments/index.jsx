@@ -3,23 +3,37 @@
  */
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { each, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { requestCommentsList } from 'state/comments/actions';
+import { requestComment, requestCommentsTree } from 'state/comments/actions';
+import getSiteCommentsTree from 'state/selectors/get-site-comments-tree';
 
-const requestComments = ( { requestSiteComments, siteId, status } ) => (
-	siteId && requestSiteComments( { siteId, status } )
+const requestTree = ( { requestSiteCommentsTree, siteId, status } ) => (
+	siteId && requestSiteCommentsTree( siteId, status )
 );
+
+const requestComments = ( { commentsTree, requestSingleComment, siteId } ) => {
+	if ( isEmpty( commentsTree ) ) {
+		return;
+	}
+	each( commentsTree, ( { commentId } ) => {
+		requestSingleComment( siteId, commentId );
+	} );
+};
 
 export class QuerySiteComments extends Component {
 	componentDidMount() {
-		requestComments( this.props );
+		requestTree( this.props );
 	}
 
-	componentDidUpdate( { siteId, status } ) {
+	componentDidUpdate( { commentsTree, siteId, status } ) {
 		if ( siteId !== this.props.siteId || status !== this.props.status ) {
+			requestTree( this.props );
+		}
+		if ( commentsTree !== this.props.commentsTree ) {
 			requestComments( this.props );
 		}
 	}
@@ -29,13 +43,13 @@ export class QuerySiteComments extends Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	requestSiteComments: ( { siteId, status = 'unapproved' } ) => dispatch( requestCommentsList( {
-		listType: 'site',
-		siteId,
-		status,
-		type: 'comment',
-	} ) ),
+const mapStateToProps = ( state, { siteId } ) => ( {
+	commentsTree: getSiteCommentsTree( state, siteId ),
 } );
 
-export default connect( null, mapDispatchToProps )( QuerySiteComments );
+const mapDispatchToProps = dispatch => ( {
+	requestSingleComment: ( siteId, commentId ) => dispatch( requestComment( { siteId, commentId } ) ),
+	requestSiteCommentsTree: ( siteId, status = 'unapproved' ) => dispatch( requestCommentsTree( { siteId, status } ) ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( QuerySiteComments );
