@@ -36,8 +36,7 @@ const Dns = React.createClass( {
 	},
 
 	renderDnsTemplates() {
-		const { domains, selectedDomainName } = this.props;
-		const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
+		const selectedDomain = getSelectedDomain( this.props );
 
 		if ( ! isMappedDomain( selectedDomain ) ) {
 			return null;
