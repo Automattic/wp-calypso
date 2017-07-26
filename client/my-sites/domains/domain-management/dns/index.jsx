@@ -14,9 +14,11 @@ import DomainMainPlaceholder from 'my-sites/domains/domain-management/components
 import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
 import paths from 'my-sites/domains/paths';
-import { getSelectedDomain, isRegisteredDomain } from 'lib/domains';
+import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'lib/domains';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
+import DnsTemplates from '../name-servers/dns-templates';
+import VerticalNav from 'components/vertical-nav';
 
 const Dns = React.createClass( {
 	propTypes: {
@@ -31,6 +33,20 @@ const Dns = React.createClass( {
 
 	getInitialState() {
 		return { addNew: true };
+	},
+
+	renderDnsTemplates() {
+		const selectedDomain = getSelectedDomain( this.props );
+
+		if ( ! isMappedDomain( selectedDomain ) ) {
+			return null;
+		}
+
+		return (
+			<VerticalNav>
+				<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
+			</VerticalNav>
+		);
 	},
 
 	render() {
@@ -59,6 +75,7 @@ const Dns = React.createClass( {
 						isSubmittingForm={ this.props.dns.isSubmittingForm }
 						selectedDomainName={ this.props.selectedDomainName } />
 				</Card>
+				{ this.renderDnsTemplates() }
 			</Main>
 		);
 	},

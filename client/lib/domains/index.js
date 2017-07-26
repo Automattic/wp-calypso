@@ -158,6 +158,7 @@ export {
 	hasMappedDomain,
 	hasPendingGoogleAppsUsers,
 	isInitialized,
+	isMappedDomain,
 	isRegisteredDomain,
 	isSubdomain
 };
