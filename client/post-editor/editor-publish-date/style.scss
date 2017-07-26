@@ -35,7 +35,8 @@
 		vertical-align: text-bottom;
 	}
 
-	&.is-scheduled {
+	&.is-scheduled,
+	&.is-back-dated {
 		color: $blue-wordpress;
 	}
 
@@ -73,7 +74,8 @@
 }
 
 .editor-publish-date__header-description {
-	.editor-publish-date__header.is-scheduled & {
+	.editor-publish-date__header.is-scheduled &,
+	.editor-publish-date__header.is-back-dated & {
 		margin-top: -4px;
 		font-size: 10px;
 		line-height: initial;
@@ -92,6 +94,15 @@
 	&:active {
 		color: $link-highlight;
 	}
+}
+
+.editor-publish-date__choose-header {
+	text-align: center;
+	margin: 4px auto 0 auto;
+	font-size: 14px;
+	line-height: 21px;
+	padding-top: 7px;
+	padding-bottom: 9px;
 }
 
 .editor-publish-date__header-chrono {
