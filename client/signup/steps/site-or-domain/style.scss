@@ -49,10 +49,6 @@
 
 .site-or-domain__choice-text {
 	color: $gray-dark;
-
-	p {
-		min-height: 105px;
-	}
 }
 
 @include breakpoint( ">480px" ) {
