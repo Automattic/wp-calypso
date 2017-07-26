@@ -21,7 +21,7 @@ export default class SiteOrDomainChoice extends Component {
 
 		if ( isPlaceholder ) {
 			return (
-				<div className="site-or-domain__choice" key={ choice.type }>
+				<div className="site-or-domain__choice site-or-domain__choice-is-placeholder" key={ choice.type }>
 					<Card compact className="site-or-domain__choice-image site-or-domain__is-placeholder" />
 					<Card compact className="site-or-domain__choice-text">
 						<div className="site-or-domain__choice-button">
