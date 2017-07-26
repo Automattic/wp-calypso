@@ -111,7 +111,7 @@ class Orders extends Component {
 		);
 	}
 
-	renderPlacholder = () => {
+	renderPlaceholders = () => {
 		return range( 5 ).map( ( i ) => {
 			return (
 				<TableRow key={ i } className="orders__row-placeholder">
@@ -194,7 +194,7 @@ class Orders extends Component {
 
 				<Table className="orders__table" header={ headers } horizontalScroll>
 					{ ordersLoading
-						? this.renderPlacholder()
+						? this.renderPlaceholders()
 						: ordersList }
 				</Table>
 
