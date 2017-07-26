@@ -43,7 +43,7 @@ export class ImageEditorCanvas extends Component {
 		setImageEditorImageHasLoaded: PropTypes.func,
 		onLoadError: PropTypes.func,
 		isImageLoaded: PropTypes.bool,
-		isGreaterThanMinimumDimensions: PropTypes.bool
+		showCrop: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -62,7 +62,7 @@ export class ImageEditorCanvas extends Component {
 		setImageEditorImageHasLoaded: noop,
 		onLoadError: noop,
 		isImageLoaded: false,
-		isGreaterThanMinimumDimensions: true
+		showCrop: true
 	};
 
 	// throttle the frame rate of window.resize() to circa 30fps
@@ -279,7 +279,7 @@ export class ImageEditorCanvas extends Component {
 
 		const {
 			isImageLoaded,
-			isGreaterThanMinimumDimensions
+			showCrop
 		} = this.props;
 
 		const canvasX = -50 * widthRatio - 100 * leftRatio;
@@ -303,9 +303,7 @@ export class ImageEditorCanvas extends Component {
 					onMouseDown={ this.preventDrag }
 					className={ canvasClasses }
 				/>
-				{ isImageLoaded && isGreaterThanMinimumDimensions
-					? <ImageEditorCrop />
-				: null }
+				{ showCrop && <ImageEditorCrop /> }
 			</div>
 		);
 	}
@@ -325,7 +323,7 @@ export default connect(
 			transform,
 			crop,
 			isImageLoaded,
-			isGreaterThanMinimumDimensions
+			showCrop: !! ( isImageLoaded && isGreaterThanMinimumDimensions )
 		};
 	},
 	{

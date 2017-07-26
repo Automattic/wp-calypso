@@ -10,7 +10,6 @@ import { expect } from 'chai';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
-import { useSandbox } from 'test/helpers/use-sinon';
 
 class ImageEditorCropMock extends Component {
 	constructor( props ) {
@@ -25,17 +24,9 @@ describe( 'ImageEditorToolbar', () => {
 	useFakeDom();
 
 	let ImageEditorCanvas,
-		isImageEditorImageLoaded,
 		wrapper;
 
-	useSandbox( ( sandbox ) => {
-		isImageEditorImageLoaded = sandbox.stub().returns( true );
-	} );
-
 	useMockery( mockery => {
-		mockery.registerMock( 'state/ui/editor/image-editor/selectors', {
-			isImageEditorImageLoaded
-		} );
 		mockery.registerMock( './image-editor-crop', ImageEditorCropMock );
 	} );
 
@@ -47,13 +38,13 @@ describe( 'ImageEditorToolbar', () => {
 		wrapper = shallow( <ImageEditorCanvas isImageLoaded={ true } /> );
 	} );
 
-	it( 'should render <ImageEditorCrop /> when this.props.isGreaterThanMinimumDimensions === `true`', () => {
-		wrapper.setProps( { isGreaterThanMinimumDimensions: true } );
+	it( 'should render cropping area when the image meets the minimum height and width', () => {
+		wrapper.setProps( { showCrop: true } );
 		expect( wrapper.find( 'ImageEditorCropMock' ) ).to.have.length( 1 );
 	} );
 
-	it( 'should render <ImageEditorCrop /> when this.props.isGreaterThanMinimumDimensions === `true`', () => {
-		wrapper.setProps( { isGreaterThanMinimumDimensions: false } );
+	it( 'should not render cropping area when the image is smaller than the minimum dimensions', () => {
+		wrapper.setProps( { showCrop: false } );
 		expect( wrapper.find( 'ImageEditorCropMock' ) ).to.have.length( 0 );
 	} );
 } );

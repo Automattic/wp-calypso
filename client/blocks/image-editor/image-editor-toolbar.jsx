@@ -38,7 +38,7 @@ export class ImageEditorToolbar extends Component {
 		setImageEditorAspectRatio: PropTypes.func,
 		allowedAspectRatios: PropTypes.array,
 		onShowNotice: PropTypes.func,
-		isGreaterThanMinimumDimensions: PropTypes.bool
+		isAspectRatioDisabled: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -47,7 +47,7 @@ export class ImageEditorToolbar extends Component {
 		setImageEditorAspectRatio: noop,
 		allowedAspectRatios: objectValues( AspectRatios ),
 		onShowNotice: noop,
-		isGreaterThanMinimumDimensions: false
+		isAspectRatioDisabled: false
 	};
 
 	constructor( props ) {
@@ -76,12 +76,12 @@ export class ImageEditorToolbar extends Component {
 		event.preventDefault();
 
 		const {
-			isGreaterThanMinimumDimensions,
+			isAspectRatioDisabled,
 			onShowNotice,
 			translate
 		} = this.props;
 
-		if ( ! isGreaterThanMinimumDimensions ) {
+		if ( isAspectRatioDisabled ) {
 			const noticeText = translate(
 				'To change the aspect ratio, the height and width must be bigger than {{strong}}%(width)dpx{{/strong}}.',
 				{
@@ -184,7 +184,7 @@ export class ImageEditorToolbar extends Component {
 		const {
 			translate,
 			allowedAspectRatios,
-			isGreaterThanMinimumDimensions
+			isAspectRatioDisabled
 		} = this.props;
 
 		const buttons = [
@@ -202,7 +202,7 @@ export class ImageEditorToolbar extends Component {
 					icon: 'layout',
 					text: translate( 'Aspect' ),
 					onClick: this.onAspectOpen,
-					disabled: ! isGreaterThanMinimumDimensions
+					disabled: isAspectRatioDisabled
 				},
 			{
 				tool: 'flip-vertical',
@@ -249,7 +249,7 @@ export default connect(
 
 		return {
 			aspectRatio,
-			isGreaterThanMinimumDimensions
+			isAspectRatioDisabled: ! isGreaterThanMinimumDimensions
 		};
 	},
 	{
