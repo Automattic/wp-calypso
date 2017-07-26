@@ -21,8 +21,32 @@
 }
 .reader-topbar__section-nav {
 	display: flex;
-	padding-right: 20px;
-	min-width: 600px;
+	min-width: 150px;
+
+	@include breakpoint( ">660px" ) {
+		padding-right: 20px;
+		min-width: 500px;
+	}
+}
+
+// section-nav overrides
+.reader-topbar__section-nav .select-dropdown__header{
+	border-width: 0;
+}
+.reader-topbar__section-nav .section-nav-tabs.is-dropdown {
+	margin: 0;
+}
+.reader-topbar__section-nav .section-nav {
+	margin: 0;
+}
+.reader-topbar__section-nav .section-nav__panel {
+	height: 100%;
+}
+
+.section-nav-tabs__dropdown.select-dropdown {
+	@include breakpoint( "<660px" ) {
+		width: 150px
+	}
 }
 
 .reader-topbar__section-nav .section-nav {
@@ -37,4 +61,10 @@
 .reader-topbar .search__input::placeholder,
 .reader-topbar .gridicons-search.gridicon.search__open-icon {
 	color: $blue-wordpress;
+}
+
+
+// TODO REMOVE THIS + figure out what to do
+.mobile-back-to-sidebar {
+	display: none;
 }

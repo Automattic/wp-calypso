@@ -1,5 +1,5 @@
 .is-reader-page .layout__content {
-	padding-top: 47px;
+	padding: 47px 32px 32px 32px;
 }
 
 .is-group-reader .async-load {
@@ -14,10 +14,7 @@
 
 .is-reader-page .recommended-for-you.main,
 .is-reader-page .following.main {
-
-	@include breakpoint( ">660px" ) {
-		margin: 30px auto;
-	}
+	margin: 30px auto;
 }
 
 .is-reader-page .follow-button {

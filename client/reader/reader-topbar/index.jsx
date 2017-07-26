@@ -16,12 +16,12 @@ import SearchInput from 'components/search';
 import { recordTrack } from 'reader/stats';
 
 export const NAV_TYPES = {
-	FOLLOWED: 'followed',
-	MANAGE: 'manage',
-	DISCOVER: 'discover',
-	RECOMMENDATIONS: 'recommendations',
-	LIKED: 'liked',
-	SEARCH: 'search',
+	FOLLOWED: 'Followed',
+	MANAGE: 'Manage',
+	DISCOVER: 'Discover',
+	RECOMMENDATIONS: 'Recommendations',
+	LIKED: 'Liked',
+	SEARCH: 'Search',
 };
 
 const handleSearch = query => {
@@ -86,7 +86,7 @@ class ReaderTopbar extends Component {
 						/> }
 				</div>
 				<div className="reader-topbar__section-nav">
-					<SectionNav>
+					<SectionNav selectedText={ selected }>
 						<NavTabs>
 							<NavItem
 								key={ 'followed-nav' }
