@@ -48,6 +48,7 @@ class SimplePaymentsDialog extends Component {
 		multiple: false,
 		email: '',
 		currency: 'USD',
+		featuredImageId: null,
 	};
 
 	constructor( props ) {
@@ -109,7 +110,7 @@ class SimplePaymentsDialog extends Component {
 	}
 
 	handleUploadedImage = uploadedImage => {
-		this.setState( { uploadedImageId: uploadedImage.ID } );
+		this.handleFormFieldChange( 'featuredImageId', uploadedImage.ID );
 	};
 
 	showError = errorMessage => {
@@ -154,12 +155,6 @@ class SimplePaymentsDialog extends Component {
 
 		if ( currencyCode ) {
 			productForm.currency = currencyCode;
-		}
-
-		const { uploadedImageId } = this.state;
-
-		if ( uploadedImageId ) {
-			productForm.featuredImageId = uploadedImageId;
 		}
 
 		wpcom
