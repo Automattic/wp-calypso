@@ -211,17 +211,16 @@ const ImageEditor = React.createClass( {
 		if ( ! this.state.noticeText ) {
 			return null;
 		}
-		const onDismissClick = this.state.noticeStatus === 'is-error'
-			? this.onCancel
-			: this.clearNoticeState;
+
+		const showDismiss = this.state.noticeStatus === 'is-info';
 
 		return (
 			<Notice
 				status={ this.state.noticeStatus }
-				showDismiss={ true }
+				showDismiss={ showDismiss }
 				text={ this.state.noticeText }
 				isCompact={ false }
-				onDismissClick={ onDismissClick }
+				onDismissClick={ this.clearNoticeState }
 				className="image-editor__notice" />
 		);
 	},
