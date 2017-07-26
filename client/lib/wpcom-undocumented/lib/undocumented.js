@@ -1142,6 +1142,16 @@ Undocumented.prototype.readConversations = function( query, fn ) {
 	return this.wpcom.req.get( '/read/conversations', params, fn );
 };
 
+Undocumented.prototype.readA8cConversations = function( query, fn ) {
+	debug( '/read/conversations' );
+	const params = {
+		...query,
+		index: 'a8c',
+		apiVersion: '1.2'
+	};
+	return this.wpcom.req.get( '/read/conversations', params, fn );
+};
+
 Undocumented.prototype.readFeed = function( query, fn ) {
 	var params = omit( query, 'ID' );
 	debug( '/read/feed' );
