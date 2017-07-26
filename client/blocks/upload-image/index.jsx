@@ -14,7 +14,6 @@ import { noop, uniqueId } from 'lodash';
  */
 import {
 	ALLOWED_FILE_EXTENSIONS,
-	ERROR_STRINGS,
 	ERROR_UNSUPPORTED_FILE,
 	ERROR_IMAGE_EDITOR_DONE,
 	ERROR_UPLOADING_IMAGE,
@@ -76,11 +75,18 @@ class UploadImage extends Component {
 	static uploadingImageTransientId = null;
 
 	receiveFiles = files => {
+		const { translate } = this.props;
+
 		const fileName = files[ 0 ].name;
 		const extension = path.extname( fileName ).toLowerCase().substring( 1 );
 
 		if ( ALLOWED_FILE_EXTENSIONS.indexOf( extension ) === -1 ) {
-			this.handleError( ERROR_UNSUPPORTED_FILE, ERROR_STRINGS[ ERROR_UNSUPPORTED_FILE ]() );
+			this.handleError(
+				ERROR_UNSUPPORTED_FILE,
+				translate(
+					'File you are trying to upload is not supported. Please select a valid image file.',
+				),
+			);
 
 			return;
 		}
@@ -95,13 +101,15 @@ class UploadImage extends Component {
 	};
 
 	handleError = ( errorConst, error = '' ) => {
-		const { onError } = this.props;
+		const { onError, translate } = this.props;
 
 		let message = error;
 
 		if ( errorConst === ERROR_UPLOADING_IMAGE ) {
 			if ( error.length && error[ 0 ] === ValidationErrors.SERVER_ERROR ) {
-				message = ERROR_STRINGS[ ValidationErrors.SERVER_ERROR ]();
+				message = translate(
+					'File could not be uploaded because an error occurred while uploading.',
+				);
 			}
 		}
 
