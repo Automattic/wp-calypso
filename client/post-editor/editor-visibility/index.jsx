@@ -64,6 +64,28 @@ const EditorVisibility = React.createClass( {
 		};
 	},
 
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.password === nextProps.password ) {
+			return;
+		}
+
+		const isInPostPublishConfirmationFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
+
+		if ( ! isInPostPublishConfirmationFlow ) {
+			return;
+		}
+
+		const oldPassword = this.props.password;
+		const newPassword = nextProps.password;
+
+		const passwordIsValid =
+			oldPassword === '' && newPassword === ' ' || // visibility selection changed from public to private (without a saved password)
+			newPassword.trim().length > 0;
+
+		this.setState( { passwordIsValid } );
+	},
+
 	getVisibility() {
 		if ( this.props.password ) {
 			return 'password';
@@ -299,12 +321,16 @@ const EditorVisibility = React.createClass( {
 		const value = this.props.password ? this.props.password.trim() : null;
 		const isError = ! this.state.passwordIsValid;
 		const errorMessage = this.props.translate( 'Password is empty.', { context: 'Editor: Error shown when password is empty.' } );
+		const isInPostPublishConfirmationFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
 
 		return (
 			<div>
 				<FormTextInput
+					autoFocus={ isInPostPublishConfirmationFlow }
 					onKeyUp={ this.onKey }
 					onChange={ this.onPasswordChange }
+					onBlur={ isInPostPublishConfirmationFlow ? this.onPasswordChange : () => {} }
 					value={ value }
 					isError={ isError }
 					ref="postPassword"
