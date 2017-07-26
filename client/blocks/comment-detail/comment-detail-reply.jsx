@@ -35,9 +35,13 @@ export class CommentDetailReply extends Component {
 	}
 
 	getTextareaPlaceholder = () => {
-		const { authorDisplayName, commentStatus, translate } = this.props;
+		const {
+			authorDisplayName,
+			comment: { status },
+			translate,
+		} = this.props;
 
-		if ( 'approved' !== commentStatus ) {
+		if ( 'approved' !== status ) {
 			return authorDisplayName
 				? translate( 'Approve and reply to %(commentAuthor)s…', {
 					args: { commentAuthor: authorDisplayName }
@@ -69,14 +73,12 @@ export class CommentDetailReply extends Component {
 
 	submit = () => {
 		const {
-			commentId,
-			commentStatus,
-			postId,
+			comment,
 			replyComment,
 		} = this.props;
 		const { commentText } = this.state;
 
-		replyComment( commentText, postId, commentId, { alsoApprove: 'approved' !== commentStatus } );
+		replyComment( commentText, comment );
 		this.setState( { commentText: '' } );
 	}
 
