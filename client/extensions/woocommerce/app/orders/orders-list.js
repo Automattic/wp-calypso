@@ -35,8 +35,8 @@ class Orders extends Component {
 		const { siteId, currentPage, currentSearch, currentStatus } = this.props;
 		const query = {
 			page: currentPage,
-			status: currentStatus,
 			search: currentSearch,
+			status: currentStatus,
 		};
 		if ( siteId ) {
 			this.props.fetchOrders( siteId, query );
