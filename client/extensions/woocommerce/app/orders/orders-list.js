@@ -30,6 +30,7 @@ import {
 	ORDER_COMPLETED,
 } from 'woocommerce/lib/order-status';
 import OrdersFilterNav from './orders-filter-nav';
+import OrderStatus from 'woocommerce/components/order-status';
 import Pagination from 'components/pagination';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
@@ -82,47 +83,6 @@ class Orders extends Component {
 		this.search.closeSearch( event );
 		this.props.updateCurrentOrdersQuery( siteId, { page: 1, search: '' } );
 		page( getLink( '/store/orders/:site', site ) );
-	}
-
-	getOrderStatus = ( status ) => {
-		const { translate } = this.props;
-		const classes = `orders__item-status is-${ status }`;
-		let paymentLabel;
-		let shippingLabel;
-		switch ( status ) {
-			case 'pending':
-				shippingLabel = translate( 'New order' );
-				paymentLabel = translate( 'Payment pending' );
-				break;
-			case 'processing':
-				shippingLabel = translate( 'New order' );
-				paymentLabel = translate( 'Paid in full' );
-				break;
-			case 'on-hold':
-				shippingLabel = translate( 'On hold' );
-				paymentLabel = translate( 'Payment pending' );
-				break;
-			case 'completed':
-				shippingLabel = translate( 'Fulfilled' );
-				paymentLabel = translate( 'Paid in full' );
-				break;
-			case 'cancelled':
-				paymentLabel = translate( 'Cancelled' );
-				break;
-			case 'refunded':
-				paymentLabel = translate( 'Refunded' );
-				break;
-			case 'failed':
-				paymentLabel = translate( 'Payment Failed' );
-				break;
-		}
-
-		return (
-			<span className={ classes }>
-				{ shippingLabel ? <span className="orders__shipping-status">{ shippingLabel }</span> : null }
-				<span className="orders__payment-status">{ paymentLabel }</span>
-			</span>
-		);
 	}
 
 	renderPlaceholders = () => {
@@ -179,7 +139,7 @@ class Orders extends Component {
 					{ humanDate( order.date_created_gmt + 'Z' ) }
 				</TableItem>
 				<TableItem className="orders__table-status">
-					{ this.getOrderStatus( order.status ) }
+					<OrderStatus status={ order.status } />
 				</TableItem>
 				<TableItem className="orders__table-total">
 					{ formatCurrency( order.total, order.currency ) || order.total }
