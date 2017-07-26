@@ -48,6 +48,7 @@ class SimplePaymentsDialog extends Component {
 		multiple: false,
 		email: '',
 		currency: 'USD',
+		featuredImageId: null,
 	};
 
 	constructor( props ) {
@@ -66,6 +67,7 @@ class SimplePaymentsDialog extends Component {
 			form: this.formStateController.getInitialState(),
 			isSubmitting: false,
 			errorMessage: null,
+			uploadedImageId: null,
 		};
 	}
 
@@ -106,6 +108,16 @@ class SimplePaymentsDialog extends Component {
 
 		onComplete( null, formErrors );
 	}
+
+	handleUploadedImage = uploadedImage => {
+		this.handleFormFieldChange( 'featuredImageId', uploadedImage.ID );
+	};
+
+	showError = errorMessage => {
+		this.setState( {
+			errorMessage,
+		} );
+	};
 
 	handleSelectedChange = selectedPaymentId => {
 		this.setState( { selectedPaymentId } );
@@ -226,6 +238,8 @@ class SimplePaymentsDialog extends Component {
 							fieldValues={ this.getFormValues() }
 							isFieldInvalid={ this.isFormFieldInvalid }
 							onFieldChange={ this.handleFormFieldChange }
+							onUploadImageDone={ this.handleUploadedImage }
+							showError={ this.showError }
 						/>
 					: <ProductList
 							paymentButtons={ paymentButtons }
