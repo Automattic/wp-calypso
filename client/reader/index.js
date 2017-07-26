@@ -27,9 +27,15 @@ function forceTeamA8C( context, next ) {
 	next();
 }
 
+function hello( context, next ) {
+	console.log( 'running reader page handling!' );
+	next();
+}
+
 export default function() {
+	console.log( 'loaded reader module!' );
 	if ( config.isEnabled( 'reader' ) ) {
-		page( '/', preloadReaderBundle, initAbTests, updateLastRoute, sidebar, following );
+		page( '/', hello, preloadReaderBundle, initAbTests, updateLastRoute, sidebar, following );
 
 		// Old and incomplete paths that should be redirected to /
 		page( '/read/following', '/' );
