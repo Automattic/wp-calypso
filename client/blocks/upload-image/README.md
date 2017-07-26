@@ -40,6 +40,7 @@ To see a more complex example, have a look at `blocks/upload-image/docs/example`
 - `addAnImageText`: text on the placeholder when selecting an image.
 - `dragUploadText`: text which shows when dragging an image to upload.
 
-There's also a way to design and supply your own HTML for the placeholder (when no image is selected) by supplying the
+There's a way to design and supply your own HTML for the placeholder (when no image is selected) by supplying the
 `placeholderContent` prop and for the uploading process (when image is being uploaded) by supplying the
-`uploadingContent` prop.
+`uploadingContent` prop. You can also supply your own HTML for when image is uploaded to Media library by passing the
+`uploadingDoneContent` prop.

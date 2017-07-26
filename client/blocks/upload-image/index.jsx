@@ -54,6 +54,7 @@ class UploadImage extends Component {
 		additionalClasses: PropTypes.string,
 		placeholderContent: PropTypes.element,
 		uploadingContent: PropTypes.element,
+		uploadingDoneContent: PropTypes.element,
 		doneButtonText: PropTypes.string,
 		addAnImageText: PropTypes.string,
 		dragUploadText: PropTypes.string,
@@ -253,40 +254,64 @@ class UploadImage extends Component {
 		this.uploadingImageTransientId = null;
 	}
 
-	render() {
-		const { translate, additionalClasses, addAnImageText, dragUploadText } = this.props;
+	renderPlaceholderContent() {
+		const { placeholderContent, addAnImageText, translate } = this.props;
 
-		const { editedImage, isUploading, uploadedImage } = this.state;
-
-		let { placeholderContent, uploadingContent, uploadingDoneContent } = this.props;
-
-		if ( typeof placeholderContent === 'undefined' ) {
-			placeholderContent = (
-				<div className="upload-image__placeholder">
-					<Gridicon icon="add-image" size={ 36 } />
-					<span>
-						{ addAnImageText ? addAnImageText : translate( 'Add an Image' ) }
-					</span>
-				</div>
-			);
+		if ( placeholderContent ) {
+			return placeholderContent;
 		}
 
-		if ( typeof uploadingContent === 'undefined' ) {
-			uploadingContent = (
-				<div className="upload-image__uploading-container">
-					<img src={ editedImage } />
-					<Spinner className="upload-image__spinner" size={ 20 } />
-				</div>
-			);
+		return (
+			<div className="upload-image__placeholder">
+				<Gridicon icon="add-image" size={ 36 } />
+				<span>
+					{ addAnImageText || translate( 'Add an Image' ) }
+				</span>
+			</div>
+		);
+	}
+
+	renderUploadingContent() {
+		const { uploadingContent } = this.props;
+
+		const { editedImage } = this.state;
+
+		if ( uploadingContent ) {
+			return uploadingContent;
 		}
 
-		if ( typeof uploadingDoneContent === 'undefined' && uploadedImage && uploadedImage.URL ) {
-			uploadingDoneContent = (
+		return (
+			<div className="upload-image__uploading-container">
+				<img src={ editedImage } />
+				<Spinner className="upload-image__spinner" size={ 20 } />
+			</div>
+		);
+	}
+
+	renderUploadingDoneContent() {
+		const { uploadingDoneContent } = this.props;
+
+		const { uploadedImage } = this.state;
+
+		if ( uploadingDoneContent ) {
+			return uploadingDoneContent;
+		}
+
+		if ( uploadedImage && uploadedImage.URL ) {
+			return (
 				<div className="upload-image__uploading-done-container">
 					<img src={ uploadedImage.URL } />
 				</div>
 			);
 		}
+
+		return null;
+	}
+
+	render() {
+		const { translate, additionalClasses, dragUploadText } = this.props;
+
+		const { isUploading, uploadedImage } = this.state;
 
 		return (
 			<div className={ classnames( 'upload-image', additionalClasses ) }>
@@ -303,9 +328,9 @@ class UploadImage extends Component {
 							onFilesDrop={ this.receiveFiles }
 						/>
 
-						{ ! isUploading && ! uploadedImage && placeholderContent }
-						{ isUploading && uploadingContent }
-						{ ! isUploading && uploadedImage && uploadingDoneContent }
+						{ ! isUploading && ! uploadedImage && this.renderPlaceholderContent() }
+						{ isUploading && this.renderUploadingContent() }
+						{ ! isUploading && uploadedImage && this.renderUploadingDoneContent() }
 					</div>
 				</FilePicker>
 			</div>

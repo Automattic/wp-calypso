@@ -49,7 +49,10 @@ class ProductForm extends Component {
 
 		return (
 			<form className="editor-simple-payments-modal__form">
-				<UploadImage onError={ this.handleUploadImageError } onUploadImageDone={ onUploadImageDone } />
+				<UploadImage
+					onError={ this.handleUploadImageError }
+					onUploadImageDone={ onUploadImageDone }
+				/>
 				<div className="editor-simple-payments-modal__form-fields">
 					<FormFieldset>
 						<FormLabel htmlFor="title">
