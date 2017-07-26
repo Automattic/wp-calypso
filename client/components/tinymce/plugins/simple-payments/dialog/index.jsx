@@ -33,10 +33,8 @@ import { receiveUpdateProduct } from 'state/simple-payments/product-list/actions
 
 class SimplePaymentsDialog extends Component {
 	static propTypes = {
-		activeTab: PropTypes.oneOf( [ 'paymentButtons', 'addNew' ] ).isRequired,
 		showDialog: PropTypes.bool.isRequired,
 		isEdit: PropTypes.bool.isRequired,
-		onChangeTabs: PropTypes.func.isRequired,
 		onClose: PropTypes.func.isRequired,
 		onInsert: PropTypes.func.isRequired,
 	};
@@ -63,12 +61,20 @@ class SimplePaymentsDialog extends Component {
 		} );
 
 		this.state = {
+			activeTab: 'form',
 			selectedPaymentId: null,
 			form: this.formStateController.getInitialState(),
 			isSubmitting: false,
 			errorMessage: null,
 			uploadedImageId: null,
 		};
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		// When transitioning from hidden to visible, switch the tab to 'form'.
+		if ( nextProps.showDialog && ! this.props.showDialog ) {
+			this.setState( { activeTab: 'form' } );
+		}
 	}
 
 	componentDidMount() {
@@ -113,15 +119,9 @@ class SimplePaymentsDialog extends Component {
 		this.handleFormFieldChange( 'featuredImageId', uploadedImage.ID );
 	};
 
-	showError = errorMessage => {
-		this.setState( {
-			errorMessage,
-		} );
-	};
+	handleChangeTabs = activeTab => this.setState( { activeTab } );
 
-	handleSelectedChange = selectedPaymentId => {
-		this.setState( { selectedPaymentId } );
-	};
+	handleSelectedChange = selectedPaymentId => this.setState( { selectedPaymentId } );
 
 	handleClose = () => {
 		// clear the form after a successful submit -- it'll be blank next time it's opened
@@ -129,16 +129,17 @@ class SimplePaymentsDialog extends Component {
 		this.props.onClose();
 	};
 
-	dismissError = () => {
-		this.setState( { errorMessage: null } );
-	};
+	showError = errorMessage => this._isMounted && this.setState( { errorMessage } );
+
+	dismissError = () => this._isMounted && this.setState( { errorMessage: null } );
 
 	handleInsert = () => {
-		const { siteId, dispatch, currencyCode, activeTab } = this.props;
+		const { siteId, dispatch, currencyCode } = this.props;
+		const { activeTab } = this.state;
 
 		this.setState( { isSubmitting: true } );
 
-		if ( activeTab === 'paymentButtons' ) {
+		if ( activeTab === 'list' ) {
 			const productId = this.state.selectedPaymentId;
 
 			this.props.onInsert( { id: productId } );
@@ -182,12 +183,12 @@ class SimplePaymentsDialog extends Component {
 	};
 
 	getActionButtons() {
-		const { activeTab, translate } = this.props;
-		const { isSubmitting } = this.state;
+		const { translate } = this.props;
+		const { activeTab, isSubmitting } = this.state;
 
 		const insertDisabled =
-			( activeTab === 'addNew' && formState.hasErrors( this.state.form ) ) ||
-			( activeTab === 'paymentButtons' && this.state.selectedPaymentId === null );
+			( activeTab === 'form' && formState.hasErrors( this.state.form ) ) ||
+			( activeTab === 'list' && this.state.selectedPaymentId === null );
 
 		return [
 			<Button onClick={ this.handleClose } disabled={ isSubmitting }>
@@ -205,16 +206,8 @@ class SimplePaymentsDialog extends Component {
 	}
 
 	render() {
-		const {
-			activeTab,
-			showDialog,
-			onChangeTabs,
-			onClose,
-			siteId,
-			paymentButtons,
-			currencyCode,
-		} = this.props;
-		const { errorMessage } = this.state;
+		const { showDialog, onClose, siteId, paymentButtons, currencyCode } = this.props;
+		const { activeTab, errorMessage } = this.state;
 
 		const currencyDefaults = getCurrencyDefaults( currencyCode );
 
@@ -229,10 +222,14 @@ class SimplePaymentsDialog extends Component {
 
 				{ ! currencyCode && <QuerySitePlans siteId={ siteId } /> }
 
-				<Navigation { ...{ activeTab, onChangeTabs, paymentButtons } } />
+				<Navigation
+					activeTab={ activeTab }
+					onChangeTabs={ this.handleChangeTabs }
+					paymentButtons={ paymentButtons }
+				/>
 				{ errorMessage &&
 					<Notice status="is-error" text={ errorMessage } onDismissClick={ this.dismissError } /> }
-				{ activeTab === 'addNew'
+				{ activeTab === 'form'
 					? <ProductForm
 							currencyDefaults={ currencyDefaults }
 							fieldValues={ this.getFormValues() }

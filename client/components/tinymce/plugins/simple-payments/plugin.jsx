@@ -32,11 +32,10 @@ const simplePayments = editor => {
 			isEdit = true;
 		}
 
-		function renderModal( visibility = 'show', activeTab = 'addNew' ) {
+		function renderModal( visibility = 'show' ) {
 			renderWithReduxStore(
 				createElement( SimplePaymentsDialog, {
 					showDialog: visibility === 'show',
-					activeTab,
 					isEdit,
 					onInsert( productData ) {
 						editor.execCommand(
@@ -44,14 +43,11 @@ const simplePayments = editor => {
 							false,
 							serialize( productData )
 						);
-						renderModal( 'hide', activeTab );
+						renderModal( 'hide' );
 					},
 					onClose() {
 						editor.focus();
-						renderModal( 'hide', activeTab );
-					},
-					onChangeTabs( tab ) {
-						renderModal( 'show', tab );
+						renderModal( 'hide' );
 					},
 				} ),
 				node,
