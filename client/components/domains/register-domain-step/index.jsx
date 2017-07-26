@@ -125,7 +125,7 @@ const RegisterDomainStep = React.createClass( {
 		onSave: React.PropTypes.func,
 		onAddMapping: React.PropTypes.func,
 		onAddDomain: React.PropTypes.func,
-		tldWeightOverrides: React.PropTypes.array
+		designType: React.PropTypes.string
 	},
 
 	getDefaultProps: function() {
@@ -135,7 +135,6 @@ const RegisterDomainStep = React.createClass( {
 			onSave: noop,
 			onAddMapping: noop,
 			onAddDomain: noop,
-			tldWeightOverrides: []
 		};
 	},
 
@@ -301,6 +300,16 @@ const RegisterDomainStep = React.createClass( {
 		} );
 	},
 
+	getTldWeightOverrides: function() {
+		const { designType } = this.props;
+
+		if ( designType && designType === 'blog' ) {
+			return 'design_type_blog';
+		}
+
+		return null;
+	},
+
 	onSearch: function( searchQuery ) {
 		const domain = getFixedDomainSearch( searchQuery );
 
@@ -355,7 +364,7 @@ const RegisterDomainStep = React.createClass( {
 							quantity: SUGGESTION_QUANTITY,
 							include_wordpressdotcom: this.props.includeWordPressDotCom,
 							include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
-							tld_weight_overrides: this.props.tldWeightOverrides.join( ',' ),
+							tld_weight_overrides: this.getTldWeightOverrides(),
 							vendor: searchVendor,
 							vertical: this.props.surveyVertical,
 						},
