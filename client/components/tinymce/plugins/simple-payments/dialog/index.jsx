@@ -127,6 +127,11 @@ class SimplePaymentsDialog extends Component {
 		this.handleFormFieldChange( 'featuredImageId', uploadedImage.ID );
 	};
 
+	handleFormSubmit() {
+		// will validate the form and return a promise of a `hasErrors` bool value
+		return new Promise( resolve => this.formStateController.handleSubmit( resolve ) );
+	}
+
 	handleChangeTabs = activeTab => this.setState( { activeTab } );
 
 	handleSelectedChange = selectedPaymentId => this.setState( { selectedPaymentId } );
@@ -150,23 +155,29 @@ class SimplePaymentsDialog extends Component {
 		if ( activeTab === 'list' ) {
 			productId = Promise.resolve( this.state.selectedPaymentId );
 		} else {
-			const productForm = this.getFormValues();
+			productId = this.handleFormSubmit().then( hasErrors => {
+				if ( hasErrors ) {
+					return null;
+				}
 
-			if ( currencyCode ) {
-				productForm.currency = currencyCode;
-			}
+				const productForm = this.getFormValues();
 
-			productId = wpcom
-				.site( siteId )
-				.addPost( productToCustomPost( productForm ) )
-				.then( newProduct => {
-					dispatch( receiveUpdateProduct( siteId, customPostToProduct( newProduct ) ) );
-					return newProduct.ID;
-				} );
+				if ( currencyCode ) {
+					productForm.currency = currencyCode;
+				}
+
+				return wpcom
+					.site( siteId )
+					.addPost( productToCustomPost( productForm ) )
+					.then( newProduct => {
+						dispatch( receiveUpdateProduct( siteId, customPostToProduct( newProduct ) ) );
+						return newProduct.ID;
+					} );
+			} );
 		}
 
 		productId
-			.then( id => this.props.onInsert( { id } ) )
+			.then( id => id !== null && this.props.onInsert( { id } ) )
 			.catch( () => this.showError( translate( 'The payment button could not be inserted.' ) ) )
 			.then( () => this.setIsSubmitting( false ) );
 	};
