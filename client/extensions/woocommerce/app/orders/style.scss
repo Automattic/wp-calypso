@@ -45,6 +45,15 @@
 			border-color: $alert-red;
 		}
 	}
+	
+	&.is-pending {
+		background: lighten( $alert-green, 20% );
+		color: darken( $alert-green, 30% );
+
+		span + span {
+			border-color: $alert-green;
+		}
+	}
 
 	&.is-cancelled,
 	&.is-refunded,
