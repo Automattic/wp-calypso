@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { flowRight, get } from 'lodash';
+import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -63,9 +63,8 @@ class SharingButtons extends Component {
 			return;
 		}
 
-		const currentLikesSettingValue = get( this.props, [ 'settings', 'disabled_likes' ] );
-		const isLikesButtonEnabled = get( this.state, [ 'values', 'disabled_likes' ], currentLikesSettingValue ) === false;
-		if ( ! isLikesButtonEnabled ) {
+		const updatedSettings = this.getUpdatedSettings();
+		if ( updatedSettings.disabled_likes ) {
 			return;
 		}
 
@@ -110,6 +109,20 @@ class SharingButtons extends Component {
 		}
 	}
 
+	getUpdatedSettings() {
+		const {
+			isJetpack,
+			isLikesModuleActive,
+			settings,
+		} = this.props;
+		const disabledSettings = isJetpack && isLikesModuleActive === false ? {
+			// Like button should be disabled if the Likes Jetpack module is deactivated.
+			disabled_likes: true,
+		} : {};
+
+		return Object.assign( {}, settings, disabledSettings, this.state.values );
+	}
+
 	render() {
 		const {
 			buttons,
@@ -118,7 +131,7 @@ class SharingButtons extends Component {
 			settings,
 			siteId
 		} = this.props;
-		const updatedSettings = Object.assign( {}, settings, this.state.values );
+		const updatedSettings = this.getUpdatedSettings();
 		const updatedButtons = this.state.buttonsPendingSave || buttons;
 
 		return (
