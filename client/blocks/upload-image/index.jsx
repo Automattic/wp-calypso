@@ -100,12 +100,12 @@ class UploadImage extends Component {
 		} );
 	};
 
-	handleError = ( errorConst, error = '' ) => {
+	handleError = ( errorCode, error = '' ) => {
 		const { onError, translate } = this.props;
 
 		let message = error;
 
-		if ( errorConst === ERROR_UPLOADING_IMAGE ) {
+		if ( errorCode === ERROR_UPLOADING_IMAGE ) {
 			if ( error.length && error[ 0 ] === ValidationErrors.SERVER_ERROR ) {
 				message = translate(
 					'File could not be uploaded because an error occurred while uploading.',
@@ -113,7 +113,7 @@ class UploadImage extends Component {
 			}
 		}
 
-		onError( errorConst, message );
+		onError( errorCode, message );
 	};
 
 	onImageEditorDone = ( error, imageBlob, imageEditorProps ) => {
@@ -171,27 +171,29 @@ class UploadImage extends Component {
 		const uploadedImage = MediaStore.get( siteId, this.uploadingImageTransientId );
 		const isUploadInProgress = uploadedImage && MediaUtils.isItemBeingUploaded( uploadedImage );
 
-		// File has finished uploading or failed.
-		if ( ! isUploadInProgress ) {
-			this.setState( {
-				isUploading: false,
-			} );
-
-			if ( uploadedImage && uploadedImage.URL ) {
-				this.uploadingImageTransientId = null;
-
-				this.setState( { uploadedImage: uploadedImage } );
-
-				MediaStore.off( 'change', this.handleMediaStoreChange );
-
-				onUploadImageDone( uploadedImage );
-
-				return;
-			}
-
-			const validationErrors = errors[ this.uploadingImageTransientId ] || [];
-			this.handleError( ERROR_UPLOADING_IMAGE, validationErrors );
+		if ( isUploadInProgress ) {
+			return;
 		}
+
+		// File has finished uploading or failed.
+		this.setState( {
+			isUploading: false,
+		} );
+
+		if ( uploadedImage && uploadedImage.URL ) {
+			this.uploadingImageTransientId = null;
+
+			this.setState( { uploadedImage } );
+
+			MediaStore.off( 'change', this.handleMediaStoreChange );
+
+			onUploadImageDone( uploadedImage );
+
+			return;
+		}
+
+		const validationErrors = errors[ this.uploadingImageTransientId ] || [];
+		this.handleError( ERROR_UPLOADING_IMAGE, validationErrors );
 	};
 
 	storeValidationErrors = () => {
@@ -201,9 +203,7 @@ class UploadImage extends Component {
 	};
 
 	hideImageEditor = () => {
-		const { resetAllImageEditorState: resetAllImageEditorStateAction } = this.props;
-
-		resetAllImageEditorStateAction();
+		this.props.resetAllImageEditorState();
 
 		URL.revokeObjectURL( this.state.selectedImage );
 

@@ -112,7 +112,7 @@ class SimplePaymentsDialog extends Component {
 		this.setState( { uploadedImageId: uploadedImage.ID } );
 	};
 
-	handleUploadImageError = ( errorConstant, errorMessage ) => {
+	handleUploadImageError = ( errorCode, errorMessage ) => {
 		this.setState( {
 			errorMessage,
 		} );

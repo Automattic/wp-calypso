@@ -31,8 +31,8 @@ class UploadImageExample extends Component {
 		console.log( 'Uploaded image:', uploadedImage );
 	};
 
-	onError = ( errorConstant, errorMessage ) => {
-		if ( errorConstant === ERROR_UPLOADING_IMAGE ) {
+	onError = ( errorCode, errorMessage ) => {
+		if ( errorCode === ERROR_UPLOADING_IMAGE ) {
 			console.log( 'There was an error uploading your image' );
 		} else {
 			console.log( 'UploadImage error:', errorMessage );

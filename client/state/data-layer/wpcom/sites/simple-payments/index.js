@@ -89,7 +89,7 @@ export function productToCustomPost( product ) {
 			metadata: [],
 			title: product.title,
 			content: product.description,
-			featured_image: product.featuredImageId ? product.featuredImageId : '',
+			featured_image: product.featuredImageId || '',
 		},
 	);
 }
