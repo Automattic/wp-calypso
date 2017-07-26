@@ -1,26 +1,35 @@
-/** @format */
 /**
+ * @format
  * @jest-environment jsdom
  */
+jest.mock( 'component-closest', () => require( 'sinon' ).stub() );
+jest.mock( 'lib/wp', () => ( {
+	batch: () => ( {
+		add: () => {},
+		run: () => {},
+	} ),
+	me: () => ( {
+		get: () => {},
+	} ),
+	undocumented: () => {},
+} ) );
 
 /**
  * External dependencies
  */
+import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
-import React from 'react';
-import { stub } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import {
+	ReaderSidebar,
+	shouldRenderAppPromo
+} from '..';
 
-describe.skip( 'ReaderSidebar', () => {
-	let ReaderSidebar;
-
-	let shouldRenderAppPromo;
+describe( 'ReaderSidebar', () => {
 	const shouldRenderAppPromoDefaultProps = {
 		isDesktopPromoDisabled: false,
 		isUserLocaleEnglish: true,
@@ -33,25 +42,6 @@ describe.skip( 'ReaderSidebar', () => {
 	const readerSidebarDefaultProps = {
 		path: '/',
 	};
-
-	useMockery( mockery => {
-		mockery.registerMock( 'component-closest', stub() );
-		mockery.registerMock( 'lib/wp', {
-			batch: () => ( {
-				add: noop,
-				run: noop,
-			} ),
-			me: () => ( {
-				get: noop,
-			} ),
-			undocumented: noop,
-		} );
-	} );
-
-	before( () => {
-		shouldRenderAppPromo = require( '..' ).shouldRenderAppPromo;
-		ReaderSidebar = require( '..' ).ReaderSidebar;
-	} );
 
 	context( 'AppPromo', () => {
 		it( 'should render the AppPromo when the shouldRenderAppPromo property is true', () => {

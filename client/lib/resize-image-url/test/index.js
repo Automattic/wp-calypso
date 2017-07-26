@@ -3,7 +3,7 @@
  */
 import { expect } from 'chai';
 
-describe.skip( 'resizeImageUrl()', () => {
+describe( 'resizeImageUrl()', () => {
 	const imageUrl = 'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?w=1000&h=1000&resize=foo&fit=meh';
 
 	let resizeImageUrl;
@@ -131,13 +131,13 @@ describe.skip( 'resizeImageUrl()', () => {
 	context( 'high pixel density', () => {
 		before( () => {
 			global.window = { devicePixelRatio: 2 };
-			delete require.cache[ require.resolve( '..' ) ];
+			jest.resetModules();
 			resizeImageUrl = require( '..' );
 		} );
 
 		after( () => {
-			delete global.window;
-			delete require.cache[ require.resolve( '..' ) ];
+			global.window = undefined;
+			jest.resetModules();
 			resizeImageUrl = require( '..' );
 		} );
 

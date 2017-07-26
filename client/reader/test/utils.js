@@ -2,53 +2,46 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'lib/feed-stream-store/actions', () => ( {
+	selectItem: jest.fn(),
+} ) );
+jest.mock( 'page', () => ( {
+	show: require( 'sinon' ).spy(),
+} ) );
+jest.mock( 'reader/controller-helper', () => ( {
+	setLastStoreId: jest.fn(),
+} ) );
 
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import { showSelectedPost } from '../utils';
 
-describe.skip( 'reader utils', () => {
-	const pageSpy = sinon.spy();
-
+describe( 'reader utils', () => {
 	beforeEach( () => {
-		pageSpy.reset();
+		page.show.reset();
 	} );
 
 	describe( '#showSelectedPost', () => {
-		let showSelectedPost;
-		useMockery( mockery => {
-			mockery.registerMock( 'page', {
-				show: pageSpy,
-			} );
-			mockery.registerMock( 'lib/feed-stream-store/actions', {
-				selectItem: sinon.stub(),
-			} );
-			mockery.registerMock( 'reader/controller-helper', {
-				setLastStoreId: sinon.stub(),
-			} );
-			showSelectedPost = require( '../utils' ).showSelectedPost;
-		} );
-
 		it( 'does not do anything if postKey argument is missing', () => {
 			showSelectedPost( {} );
-			expect( pageSpy ).to.have.not.been.called;
+			expect( page.show ).to.have.not.been.called;
 		} );
 
 		it( 'redirects if passed a post key', () => {
 			showSelectedPost( { postKey: { feedId: 1, postId: 5 } } );
-			expect( pageSpy ).to.have.been.calledOnce;
+			expect( page.show ).to.have.been.calledOnce;
 		} );
 
 		it( 'redirects to a #comments URL if we passed comments argument', () => {
 			showSelectedPost( { postKey: { feedId: 1, postId: 5 }, comments: true } );
-			expect( pageSpy ).to.have.been.calledWithMatch( '#comments' );
+			expect( page.show ).to.have.been.calledWithMatch( '#comments' );
 		} );
 	} );
 } );

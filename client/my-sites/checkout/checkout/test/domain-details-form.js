@@ -1,6 +1,22 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'lib/analytics', () => {} );
+jest.mock( 'i18n-calypso', () => ( {
+	localize: x => x
+} ) );
+jest.mock( 'lib/wp', () => {
+	const wpcomMock = {
+		undocumented: () => wpcomMock,
+		me: () => wpcomMock,
+		get: () => wpcomMock,
+		getProducts: () => wpcomMock,
+		getDomainContactInformation: () => wpcomMock,
+		bind: () => wpcomMock,
+	};
+
+	return wpcomMock;
+} );
 
 /**
  * External Dependencies
@@ -9,33 +25,20 @@ import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { identity, merge } from 'lodash';
-import { domainRegistration, domainPrivacyProtection } from 'lib/cart-values/cart-items';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import {
+	domainRegistration,
+	domainPrivacyProtection
+} from 'lib/cart-values/cart-items';
+import {
+	DomainDetailsForm,
+	DomainDetailsFormContainer
+} from '../domain-details-form';
 
-const wpcomMock = {
-	undocumented: () => wpcomMock,
-	me: () => wpcomMock,
-	get: () => wpcomMock,
-	getProducts: () => wpcomMock,
-	getDomainContactInformation: () => wpcomMock,
-	bind: () => wpcomMock,
-};
-
-describe.skip( 'Domain Details Form', () => {
-	let DomainDetailsForm, DomainDetailsFormContainer;
-
-	useMockery( ( mockery ) => {
-		mockery.registerMock( 'lib/analytics', {} );
-		mockery.registerMock( 'i18n-calypso', { localize: identity } );
-		mockery.registerMock( 'lib/wp', wpcomMock );
-		DomainDetailsForm = require( '../domain-details-form' ).DomainDetailsForm;
-		DomainDetailsFormContainer = require( '../domain-details-form' ).DomainDetailsFormContainer;
-	} );
-
+describe( 'Domain Details Form', () => {
 	const defaultProps = {
 		productsList: {},
 		cart: {

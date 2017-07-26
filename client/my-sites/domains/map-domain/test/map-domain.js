@@ -1,33 +1,32 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'page', () => {
+	const { spy } = require( 'sinon' );
+	const pageSpy = spy();
+
+	pageSpy.redirect = spy();
+
+	return pageSpy;
+} );
 
 /**
  * External Dependencies
  */
-import React from 'react';
 import { expect } from 'chai';
+import pageSpy from 'page';
+import React from 'react';
 import { shallow } from 'enzyme';
-import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import HeaderCake from 'components/header-cake';
+import { MapDomain } from '..';
+import MapDomainStep from 'components/domains/map-domain-step';
 import paths from 'my-sites/domains/paths';
 
-describe.skip( 'MapDomain component', () => {
-	const pageSpy = spy();
-	pageSpy.redirect = spy();
-	let MapDomain, MapDomainStep, HeaderCake;
-
-	useMockery( ( mockery ) => {
-		mockery.registerMock( 'page', pageSpy );
-		MapDomain = require( '..' ).MapDomain;
-		MapDomainStep = require( 'components/domains/map-domain-step' );
-		HeaderCake = require( 'components/header-cake' );
-	} );
-
+describe( 'MapDomain component', () => {
 	beforeEach( () => {
 		pageSpy.reset();
 		pageSpy.redirect.reset();

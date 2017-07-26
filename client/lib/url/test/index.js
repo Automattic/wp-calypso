@@ -59,7 +59,7 @@ describe( 'withoutHttp', () => {
 	} );
 } );
 
-describe.skip( 'isExternal', () => {
+describe( 'isExternal', () => {
 	it( 'should return false for relative path-only url', () => {
 		const source = '/relative';
 

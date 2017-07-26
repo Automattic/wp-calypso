@@ -1,3 +1,6 @@
+jest.mock( 'lib/products-values', () => ( {} ) );
+jest.mock( 'lib/purchases', () => ( {} ) );
+
 /**
  * External dependencies
  */
@@ -6,24 +9,20 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import {
+	cancellationEffectDetail,
+	cancellationEffectHeadline
+} from '../cancellation-effect';
+import productsValues from 'lib/products-values';
+import purchases from 'lib/purchases';
 
-describe.skip( 'cancellation-effect', function() {
+describe( 'cancellation-effect', function() {
 	const purchase = { domain: 'example.com' };
-	const purchases = {};
-	const productsValues = {};
-	let cancellationEffect;
 	let translate;
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/purchases', purchases );
-		mockery.registerMock( 'lib/products-values', productsValues );
-	} );
 
 	beforeEach( function() {
 		purchases.getName = () => 'purchase name';
 		translate = ( text, args ) => ( { args, text } );
-		cancellationEffect = require( '../cancellation-effect' );
 	} );
 
 	describe( 'cancellationEffectHeadline', function() {
@@ -33,7 +32,7 @@ describe.skip( 'cancellation-effect', function() {
 			} );
 
 			it( 'should return translation of cancel and return', function() {
-				const headline = cancellationEffect.cancellationEffectHeadline( purchase, translate );
+				const headline = cancellationEffectHeadline( purchase, translate );
 				expect( headline.text ).to.equal(
 					'Are you sure you want to cancel and remove %(purchaseName)s from {{em}}%(domain)s{{/em}}? '
 				);
@@ -46,7 +45,7 @@ describe.skip( 'cancellation-effect', function() {
 			} );
 
 			it( 'should return translation of cancel', function() {
-				const headline = cancellationEffect.cancellationEffectHeadline( purchase, translate );
+				const headline = cancellationEffectHeadline( purchase, translate );
 				expect( headline.text ).to.equal(
 					'Are you sure you want to cancel %(purchaseName)s for {{em}}%(domain)s{{/em}}? '
 				);
@@ -62,7 +61,7 @@ describe.skip( 'cancellation-effect', function() {
 
 			it( 'should return translation of theme message when product is a theme', function() {
 				productsValues.isTheme = () => true;
-				const headline = cancellationEffect.cancellationEffectDetail( purchase, translate );
+				const headline = cancellationEffectDetail( purchase, translate );
 				expect( headline.text ).to.equal(
 					"Your site's appearance will revert to its previously selected theme and you will be refunded %(cost)s."
 				);
@@ -71,7 +70,7 @@ describe.skip( 'cancellation-effect', function() {
 			it( 'should return translation of g suite message when product is g suite', function() {
 				productsValues.isTheme = () => false;
 				productsValues.isGoogleApps = () => true;
-				const headline = cancellationEffect.cancellationEffectDetail( purchase, translate );
+				const headline = cancellationEffectDetail( purchase, translate );
 				expect( headline.text ).to.equal(
 					'You will be refunded %(cost)s, but your G Suite account will continue working without interruption. ' +
 						'You will be able to manage your G Suite billing directly through Google.'
@@ -82,7 +81,7 @@ describe.skip( 'cancellation-effect', function() {
 				productsValues.isTheme = () => false;
 				productsValues.isGoogleApps = () => false;
 				productsValues.isJetpackPlan = () => true;
-				const headline = cancellationEffect.cancellationEffectDetail( purchase, translate );
+				const headline = cancellationEffectDetail( purchase, translate );
 				expect( headline.text ).to.equal(
 					'All plan features - spam filtering, backups, and security screening ' +
 						'- will be removed from your site and you will be refunded %(cost)s.'
@@ -93,7 +92,7 @@ describe.skip( 'cancellation-effect', function() {
 				productsValues.isTheme = () => false;
 				productsValues.isGoogleApps = () => false;
 				productsValues.isJetpackPlan = () => false;
-				const headline = cancellationEffect.cancellationEffectDetail( purchase, translate );
+				const headline = cancellationEffectDetail( purchase, translate );
 				expect( headline.text ).to.equal(
 					'All plan features and custom changes will be removed from your site and you will be refunded %(cost)s.'
 				);
@@ -108,7 +107,7 @@ describe.skip( 'cancellation-effect', function() {
 
 			it( 'should return translation of g suite message when product is g suite', function() {
 				productsValues.isGoogleApps = () => true;
-				const headline = cancellationEffect.cancellationEffectDetail( purchase, translate );
+				const headline = cancellationEffectDetail( purchase, translate );
 				expect( headline.text ).to.equal(
 					'Your G Suite account remains active until it expires on %(subscriptionEndDate)s.'
 				);
@@ -117,7 +116,7 @@ describe.skip( 'cancellation-effect', function() {
 			it( 'should return translation of domain mapping message when product is a domain mapping', function() {
 				productsValues.isGoogleApps = () => false;
 				productsValues.isDomainMapping = () => true;
-				const headline = cancellationEffect.cancellationEffectDetail( purchase, translate );
+				const headline = cancellationEffectDetail( purchase, translate );
 				expect( headline.text ).to.equal(
 					'Your domain mapping remains active until it expires on %(subscriptionEndDate)s.'
 				);
@@ -126,7 +125,7 @@ describe.skip( 'cancellation-effect', function() {
 			it( 'should return translation of plan message when product is not g suite or a domain mapping', function() {
 				productsValues.isGoogleApps = () => false;
 				productsValues.isDomainMapping = () => false;
-				const headline = cancellationEffect.cancellationEffectDetail( purchase, translate );
+				const headline = cancellationEffectDetail( purchase, translate );
 				expect( headline.text ).to.equal(
 					"Your plan's features remain active until your subscription expires on %(subscriptionEndDate)s."
 				);

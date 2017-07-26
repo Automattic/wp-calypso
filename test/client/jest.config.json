@@ -6,6 +6,7 @@
 	"rootDir": "./../../",
 	"testEnvironment": "node",
 	"testMatch": [ "**/client/**/test/*.js?(x)" ],
+	"testURL": "https://example.com",
 	"setupTestFrameworkScriptFile": "<rootDir>/test/client/setup-test-framework.js",
 	"verbose": false
 }

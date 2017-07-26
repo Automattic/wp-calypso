@@ -1,31 +1,40 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'lib/wp', () => ( {
+	me: () => ( {
+		get: () => {}
+	} )
+} ) );
+jest.mock( 'components/infinite-list', () => require( 'components/empty-component' ) );
+jest.mock( 'my-sites/media-library/list-item', () => require( 'components/empty-component' ) );
+jest.mock( 'my-sites/media-library/list-plan-upgrade-nudge', () => require( 'components/empty-component' ) );
 
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import { noop, toArray } from 'lodash';
+import { mount } from 'enzyme';
+import { toArray } from 'lodash';
 import React from 'react';
-import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-import EmptyComponent from 'test/helpers/react/empty-component';
-import useMockery from 'test/helpers/use-mockery';
+import Dispatcher from 'dispatcher';
+import fixtures from './fixtures';
+import { MediaLibraryList as MediaList } from '../list';
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+import MediaActions from 'lib/media/actions';
 
 /**
  * Module variables
  */
 const DUMMY_SITE_ID = 2916284;
 
-describe.skip( 'MediaLibraryList item selection', function() {
-	let mount, MediaLibrarySelectedData, MediaLibrarySelectedStore,
-		MediaActions, fixtures, Dispatcher, MediaList, wrapper, mediaList;
-
-	useMockery();
+describe( 'MediaLibraryList item selection', function() {
+	let wrapper, mediaList;
 
 	function toggleItem( itemIndex, shiftClick ) {
 		mediaList.toggleItem( fixtures.media[ itemIndex ], shiftClick );
@@ -40,29 +49,11 @@ describe.skip( 'MediaLibraryList item selection', function() {
 	}
 
 	before( function() {
-		mockery.registerMock( 'lib/wp', {
-			me: () => ( {
-				get: noop
-			} )
-		} );
-		mockery.registerMock( 'components/infinite-list', EmptyComponent );
-		mockery.registerMock( './list-item', EmptyComponent );
-		mockery.registerMock( './list-plan-upgrade-nudge', EmptyComponent );
-
-		mount = require( 'enzyme' ).mount;
-		MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' );
-		MediaLibrarySelectedStore = require( 'lib/media/library-selected-store' );
-		MediaActions = require( 'lib/media/actions' );
-		fixtures = require( './fixtures' );
-		Dispatcher = require( 'dispatcher' );
-
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_MEDIA_ITEMS',
 			siteId: DUMMY_SITE_ID,
 			data: fixtures
 		} );
-
-		MediaList = require( '../list' ).MediaLibraryList;
 	} );
 
 	beforeEach( function() {

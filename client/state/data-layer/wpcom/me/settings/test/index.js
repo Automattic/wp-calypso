@@ -1,13 +1,16 @@
+jest.mock( 'lib/user', () => () => ( {
+	fetch() {}
+} ) );
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import * as settingsModule from '../';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
@@ -15,17 +18,10 @@ import {
 	clearUnsavedUserSettings,
 } from 'state/user-settings/actions';
 
-describe.skip( 'wpcom-api', () => {
-	let dispatch, settingsModule;
+describe( 'wpcom-api', () => {
+	let dispatch;
 	useSandbox( sandbox => {
 		dispatch = sandbox.spy();
-	} );
-
-	useMockery( () => {
-		mockery.registerMock( 'lib/user', () => ( {
-			fetch() {}
-		} ) );
-		settingsModule = require( '../' );
 	} );
 
 	describe( 'user settings request', () => {

@@ -1,36 +1,37 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'config', () => {
+	const { stub } = require( 'sinon' );
+
+	const configMock = stub();
+	configMock.isEnabled = stub();
+
+	return configMock;
+} );
+jest.mock( 'lib/wp', () => ( {
+	me: () => ( {
+		get: () => {}
+	} )
+} ) );
 
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import { noop } from 'lodash';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import configMock from 'config';
+import UserUtils from '../utils';
 
-describe.skip( 'UserUtils', () => {
-	let UserUtils, user, configMock;
-
-	useMockery( mockery => {
-		configMock = sinon.stub();
-		configMock.isEnabled = sinon.stub();
-		mockery.registerMock( 'config', configMock );
-		mockery.registerMock( 'lib/wp', {
-			me: () => ( {
-				get: noop
-			} )
-		} );
-	} );
+describe( 'UserUtils', () => {
+	let user;
 
 	before( () => {
 		user = require( 'lib/user' )();
-		UserUtils = require( '../utils' );
 	} );
 
 	beforeEach( () => {

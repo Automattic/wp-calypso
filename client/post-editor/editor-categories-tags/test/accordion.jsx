@@ -1,36 +1,24 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
+jest.mock( 'post-editor/editor-term-selector', () => require( 'components/empty-component' ) );
 
 /**
  * External dependencies
  */
 import React from 'react';
-import mockery from 'mockery';
 import { expect } from 'chai';
+import { mount } from 'enzyme';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import EmptyComponent from 'test/helpers/react/empty-component';
-import useMockery from 'test/helpers/use-mockery';
+import { EditorCategoriesTagsAccordion } from 'post-editor/editor-categories-tags/accordion';
 
-describe.skip( 'EditorCategoriesTagsAccordion', function() {
-	let mount, i18n, accordion, EditorCategoriesTagsAccordion;
-
-	useMockery();
-
-	before( () => {
-		mockery.registerMock( 'post-editor/editor-term-selector', EmptyComponent );
-		mockery.registerMock( 'components/info-popover', EmptyComponent );
-		mockery.registerMock( 'react-virtualized/List', EmptyComponent );
-
-		mount = require( 'enzyme' ).mount;
-		i18n = require( 'i18n-calypso' );
-
-		// require needs to be here in order for mocking of List to work
-		EditorCategoriesTagsAccordion = require ( 'post-editor/editor-categories-tags/accordion' ).EditorCategoriesTagsAccordion;
-	} );
+describe( 'EditorCategoriesTagsAccordion', function() {
+	let accordion;
 
 	function render( postTerms = {} ) {
 		accordion = mount(
@@ -38,7 +26,7 @@ describe.skip( 'EditorCategoriesTagsAccordion', function() {
 				siteId={ 777 }
 				postTerms={ postTerms }
 				postType="post"
-				translate={ i18n.translate } />
+				translate={ translate } />
 		);
 	}
 

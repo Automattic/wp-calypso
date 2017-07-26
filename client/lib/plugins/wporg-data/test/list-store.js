@@ -1,3 +1,9 @@
+jest.mock( 'config', () => ( {
+	isEnabled: () => true
+} ) );
+jest.mock( 'store', () => require( './mocks/local-store' ) );
+jest.mock( 'lib/plugins/wporg-data/actions', () => require( './mocks/actions' ) );
+
 /**
  * External dependencies
  */
@@ -7,18 +13,14 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
 import actionsData from './fixtures/actions';
 import actionsSpies from './mocks/actions';
+import Dispatcher from 'dispatcher';
 import localStorageSpies from './mocks/local-store';
+import PluginsListsStore from 'lib/plugins/wporg-data/list-store';
 
-describe.skip( 'WPORG Plugins Lists Store', () => {
-	let Dispatcher, PluginsListsStore, pluginsList;
-	useMockery( mockery => {
-		mockery.registerMock( 'config', { isEnabled: () => true } );
-		mockery.registerMock( 'store', localStorageSpies );
-		mockery.registerMock( './actions', actionsSpies );
-	} );
+describe( 'WPORG Plugins Lists Store', () => {
+	let pluginsList;
 
 	function resetListsStore() {
 		Dispatcher.handleServerAction( { type: 'RESET_WPORG_PLUGINS_LIST' } );
@@ -27,8 +29,6 @@ describe.skip( 'WPORG Plugins Lists Store', () => {
 	beforeEach( () => {
 		localStorageSpies.reset();
 		actionsSpies.fetchPluginsList.reset();
-		Dispatcher = require( 'dispatcher' );
-		PluginsListsStore = require( 'lib/plugins/wporg-data/list-store' );
 		resetListsStore();
 	} );
 
@@ -62,7 +62,7 @@ describe.skip( 'WPORG Plugins Lists Store', () => {
 		assert.isDefined( pluginsList.list );
 	} );
 
-	describe.skip( 'short lists', () => {
+	describe( 'short lists', () => {
 		it( 'should be empty if the list has not been fetched yet', () => {
 			const newPlugins = PluginsListsStore.getShortList( 'new' );
 			assert.lengthOf( newPlugins.list, 0 );
@@ -132,7 +132,7 @@ describe.skip( 'WPORG Plugins Lists Store', () => {
 		} );
 	} );
 
-	describe.skip( 'Full lists', () => {
+	describe( 'Full lists', () => {
 		it( 'should be empty if the list has not been fetched yet', () => {
 			const newPlugins = PluginsListsStore.getFullList( 'new' );
 			assert.lengthOf( newPlugins.list, 0 );
@@ -186,7 +186,7 @@ describe.skip( 'WPORG Plugins Lists Store', () => {
 		} );
 	} );
 
-	describe.skip( 'Search lists', () => {
+	describe( 'Search lists', () => {
 		it( 'should be empty if the search list has not been fetched yet', () => {
 			const newPlugins = PluginsListsStore.getSearchList( 'test' );
 			assert.lengthOf( newPlugins.list, 0 );

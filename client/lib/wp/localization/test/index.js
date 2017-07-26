@@ -1,37 +1,25 @@
+jest.mock( 'state/current-user/selectors', () => ( {
+	getCurrentUserLocale: jest.fn()
+} ) );
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import mockery from 'mockery';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import {
+	addLocaleQueryParam,
+	bindState,
+	getLocale,
+	injectLocalization,
+	setLocale
+} from '../';
+import { getCurrentUserLocale as getCurrentUserLocaleMock } from 'state/current-user/selectors';
 
-describe.skip( 'index', () => {
-	let getCurrentUserLocaleMock, addLocaleQueryParam,
-		injectLocalization, bindState, setLocale, getLocale;
-
-	useMockery();
-
-	before( () => {
-		// Mock user locale state selector
-		mockery.registerMock( 'state/current-user/selectors', {
-			getCurrentUserLocale: () => getCurrentUserLocaleMock()
-		} );
-
-		// Prepare module for rewiring
-		( {
-			addLocaleQueryParam,
-			injectLocalization,
-			bindState,
-			setLocale,
-			getLocale
-		} = require( '../' ) );
-	} );
-
+describe( 'index', () => {
 	beforeEach( () => {
 		setLocale( undefined );
 	} );
@@ -92,7 +80,7 @@ describe.skip( 'index', () => {
 
 	describe( '#bindState()', () => {
 		it( 'should set initial locale from state', () => {
-			getCurrentUserLocaleMock = sinon.stub().returns( 'fr' );
+			getCurrentUserLocaleMock.mockReturnValueOnce( 'fr' );
 			bindState( { subscribe() {}, getState() {} } );
 			expect( getLocale() ).to.equal( 'fr' );
 		} );
@@ -105,7 +93,7 @@ describe.skip( 'index', () => {
 				},
 				getState() {}
 			} );
-			getCurrentUserLocaleMock = sinon.stub().returns( 'de' );
+			getCurrentUserLocaleMock.mockReturnValueOnce( 'de' );
 			listener();
 
 			expect( getLocale() ).to.equal( 'de' );

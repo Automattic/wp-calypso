@@ -1,3 +1,5 @@
+jest.mock( 'config', () => jest.fn().mockReturnValueOnce( 'wordpress.com' ) );
+
 /**
  * External dependencies
  */
@@ -8,28 +10,16 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import config from 'config';
+import WpcomLoginForm from '..';
 
-describe.skip( 'WpcomLoginForm', () => {
-	let WpcomLoginForm, mockHostname;
+describe( 'WpcomLoginForm', () => {
 	const props = {
 		log: 'log_text',
 		pwd: 'secret',
 		authorization: 'authorization_token',
 		redirectTo: 'https://test.wordpress.com',
 	};
-
-	useMockery( mockery => {
-		mockery.registerMock( 'config', () => mockHostname );
-	} );
-
-	before( () => {
-		WpcomLoginForm = require( '..' );
-	} );
-
-	beforeEach( () => {
-		mockHostname = 'wordpress.com';
-	} );
 
 	it( 'should render default fields as expected.', () => {
 		const wrapper = shallow(
@@ -90,17 +80,18 @@ describe.skip( 'WpcomLoginForm', () => {
 		expect( wrapper.find( 'form' ).prop( 'action' ) ).to.equal( 'https://foo.wordpress.com/wp-login.php' );
 
 		// should be default url
-		mockHostname = 'wpcalypso.wordpress.com';
+		config.mockReturnValueOnce( 'wpcalypso.wordpress.com' );
 		wrapper.setProps( { log: 'wpcalpso' } ); // to update form action
 		expect( wrapper.find( 'form' ).prop( 'action' ) ).to.equal( 'https://wordpress.com/wp-login.php' );
 
 		// should has the same hostname with redirectTo prop.
-		mockHostname = 'bar.wordpress.com';
+		config.mockReturnValueOnce( 'bar.wordpress.com' );
 		wrapper.setProps( { log: 'bar' } ); // to update form action
 		expect( wrapper.find( 'form' ).prop( 'action' ) ).to.equal( 'https://foo.wordpress.com/wp-login.php' );
 
 		// should be default url
-		mockHostname = 'horizon.wordpress.com';
+		config.mockReturnValueOnce( 'horizon.wordpress.com' );
+		config.mockReturnValueOnce( 'horizon.wordpress.com' );
 		wrapper.setProps( { log: 'horizon' } ); // to update form action
 		expect( wrapper.find( 'form' ).prop( 'action' ) ).to.equal( 'https://wordpress.com/wp-login.php' );
 	} );

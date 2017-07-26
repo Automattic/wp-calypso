@@ -1,36 +1,33 @@
+jest.mock( 'lib/wp', () => {
+	const getNotificationSettingsStub = require( 'sinon' ).stub();
+
+	return {
+		undocumented: () => ( {
+			me: () => ( {
+				getNotificationSettings: getNotificationSettingsStub
+			} )
+		} )
+	};
+} );
+
 /**
  * External dependencies
  */
 import { assert } from 'chai';
 import sinon from 'sinon';
-import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import * as NotificationSettingsStoreActions from '../actions';
+import NotificationSettingsStore from '../';
+import { undocumented } from 'lib/wp';
 
-describe.skip( 'index', () => {
-	let NotificationSettingsStore,
-		NotificationSettingsStoreActions,
-		getNotificationSettingsStub;
-	const wpcomMock = {
-			undocumented: () => {
-				return { me: () => {
-					return { getNotificationSettings: getNotificationSettingsStub };
-				} };
-			}
-		},
-		changeSpy = sinon.spy();
-
-	useMockery();
+describe( 'index', () => {
+	const changeSpy = sinon.spy();
+	const getNotificationSettingsStub = undocumented().me().getNotificationSettings;
 
 	before( () => {
-		mockery.registerAllowable( [ '../', '../actions' ] );
-		mockery.registerMock( 'lib/wp', wpcomMock );
-
-		NotificationSettingsStore = require( '../' );
-		NotificationSettingsStoreActions = require( '../actions' );
 		NotificationSettingsStore.on( 'change', changeSpy );
 	} );
 
@@ -39,7 +36,7 @@ describe.skip( 'index', () => {
 	} );
 
 	beforeEach( () => {
-		getNotificationSettingsStub = sinon.stub();
+		getNotificationSettingsStub.reset();
 		changeSpy.reset();
 	} );
 

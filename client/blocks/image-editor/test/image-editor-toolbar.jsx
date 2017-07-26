@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import React from 'react';
@@ -9,27 +13,17 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
+import { ImageEditorToolbar } from '../image-editor-toolbar';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'ImageEditorToolbar', () => {
-	useFakeDom();
-
-	let ImageEditorToolbar,
-		defaultProps,
+	let defaultProps,
 		wrapper;
 
 	useSandbox( ( sandbox ) => {
 		defaultProps = {
 			onShowNotice: sandbox.spy()
 		};
-	} );
-
-	before( () => {
-		// Requiring ImageEditorToolbar after useFakeDom() to ensure the
-		// window object is available to the event binders in
-		// imported component, PopoverMenu
-		ImageEditorToolbar = require( '../image-editor-toolbar' ).ImageEditorToolbar;
 	} );
 
 	beforeEach( () => {

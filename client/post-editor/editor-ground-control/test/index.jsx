@@ -1,21 +1,32 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'blocks/site', () => require( 'components/empty-component' ) );
+jest.mock( 'components/card', () => require( 'components/empty-component' ) );
+jest.mock( 'components/popover', () => require( 'components/empty-component' ) );
+jest.mock( 'components/post-schedule', () => require( 'components/empty-component' ) );
+jest.mock( 'components/sticky-panel', () => require( 'components/empty-component' ) );
+jest.mock( 'lib/posts/actions', () => ( {
+	edit: () => {}
+} ) );
+jest.mock( 'lib/posts/actions', () => ( {
+	recordEvent: () => {},
+	recordStat: () => {}
+} ) );
+jest.mock( 'post-editor/edit-post-status', () => require( 'components/empty-component' ) );
+jest.mock( 'post-editor/editor-status-label', () => require( 'components/empty-component' ) );
 
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import { noop } from 'lodash';
 import React from 'react';
 import { shallow } from 'enzyme';
-import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-import EmptyComponent from 'test/helpers/react/empty-component';
-import useMockery from 'test/helpers/use-mockery';
+import { EditorGroundControl } from '../';
 
 /**
  * Module variables
@@ -27,27 +38,7 @@ const MOCK_SITE = {
 	options: {}
 };
 
-describe.skip( 'EditorGroundControl', function() {
-	let EditorGroundControl;
-
-	useMockery();
-
-	before( function() {
-		mockery.registerMock( 'components/card', EmptyComponent );
-		mockery.registerMock( 'components/popover', EmptyComponent );
-		mockery.registerMock( 'blocks/site', EmptyComponent );
-		mockery.registerMock( 'post-editor/edit-post-status', EmptyComponent );
-		mockery.registerMock( 'post-editor/editor-status-label', EmptyComponent );
-		mockery.registerMock( 'components/sticky-panel', EmptyComponent );
-		mockery.registerMock( 'components/post-schedule', EmptyComponent );
-		mockery.registerMock( 'lib/posts/actions', { edit: noop } );
-		mockery.registerMock( 'lib/posts/stats', {
-			recordEvent: noop,
-			recordStat: noop
-		} );
-		EditorGroundControl = require( '../' ).EditorGroundControl;
-	} );
-
+describe( 'EditorGroundControl', function() {
 	describe( '#getPreviewLabel()', function() {
 		it( 'should return View if the site is a Jetpack site and the post is published', function() {
 			var tree = shallow(

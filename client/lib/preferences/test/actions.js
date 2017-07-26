@@ -64,7 +64,7 @@ describe.skip( 'PreferencesActions', function() {
 		postSettings = sandbox.stub().callsArgAsync( 1 );
 	} );
 
-	describe.skip( '#fetch()', function() {
+	describe( '#fetch()', function() {
 		it( 'should retrieve from localStorage and trigger a request to the REST API', function( done ) {
 			store.get.restore();
 			sandbox.stub( store, 'get' ).returns( DUMMY_PERSISTED_PREFERENCES );
@@ -118,7 +118,7 @@ describe.skip( 'PreferencesActions', function() {
 		} );
 	} );
 
-	describe.skip( '#set()', function() {
+	describe( '#set()', function() {
 		it( 'should save to localStorage and trigger a request to the REST API', function( done ) {
 			PreferencesActions.set( 'one', 1 );
 
@@ -179,7 +179,7 @@ describe.skip( 'PreferencesActions', function() {
 		} );
 	} );
 
-	describe.skip( '#remove()', function() {
+	describe( '#remove()', function() {
 		it( 'should remove from localStorage and trigger a request to the REST API', function( done ) {
 			PreferencesActions.set( 'one', 1 );
 			PreferencesActions.remove( 'one' );

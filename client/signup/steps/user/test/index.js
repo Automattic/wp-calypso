@@ -1,12 +1,31 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'components/signup-form', () => require( 'components/empty-component' ) );
+jest.mock( 'lib/abtest', () => () => {} );
+jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'signup/step-wrapper', () => require( 'components/empty-component' ) );
+jest.mock( 'signup/utils', () => ( {
+	getFlowSteps: ( flow ) => {
+		let flowSteps = null;
+
+		if ( 'userAsFirstStepInFlow' === flow ) {
+			flowSteps = [ 'user' ];
+		} else {
+			flowSteps = [ 'theme', 'domains', 'user' ];
+		}
+
+		return flowSteps;
+	},
+	getNextStepName: x => x,
+	getStepUrl: x => x,
+	getPreviousStepName: x => x
+} ) );
 
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import { identity, noop } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import sinon from 'sinon';
@@ -15,40 +34,10 @@ import TestUtils from 'react-addons-test-utils' ;
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery' ;
+import { UserStep as User } from '../';
 
-describe.skip( '#signupStep User', () => {
-	let User, testElement, rendered, EMPTY_COMPONENT;
-
-	useMockery( ( mockery ) => {
-		EMPTY_COMPONENT = require( 'test/helpers/react/empty-component' );
-
-		mockery.registerMock( 'lib/abtest', noop );
-		mockery.registerMock( 'lib/analytics', {} );
-		mockery.registerMock( 'components/signup-form', EMPTY_COMPONENT );
-		mockery.registerMock( 'signup/step-wrapper', EMPTY_COMPONENT );
-
-		mockery.registerMock( 'signup/utils', {
-			getFlowSteps: function( flow ) {
-				let flowSteps = null;
-
-				if ( 'userAsFirstStepInFlow' === flow ) {
-					flowSteps = [ 'user' ];
-				} else {
-					flowSteps = [ 'theme', 'domains', 'user' ];
-				}
-
-				return flowSteps;
-			},
-			getNextStepName: identity,
-			getStepUrl: identity,
-			getPreviousStepName: identity
-		} );
-	} );
-
-	before( () => {
-		User = require( '../' ).UserStep;
-	} );
+describe( '#signupStep User', () => {
+	let testElement, rendered;
 
 	it( 'should show community subheader text if User step is first in the flow', () => {
 		testElement = React.createElement( User, {
