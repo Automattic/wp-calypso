@@ -134,7 +134,7 @@ const RegisterDomainStep = React.createClass( {
 			analyticsSection: 'domains',
 			onSave: noop,
 			onAddMapping: noop,
-			onAddDomain: noop,
+			onAddDomain: noop
 		};
 	},
 
