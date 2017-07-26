@@ -125,7 +125,7 @@ const RegisterDomainStep = React.createClass( {
 		onSave: React.PropTypes.func,
 		onAddMapping: React.PropTypes.func,
 		onAddDomain: React.PropTypes.func,
-		suggestionToken: React.PropTypes.string
+		tldWeightOverrides: React.PropTypes.array
 	},
 
 	getDefaultProps: function() {
@@ -135,7 +135,7 @@ const RegisterDomainStep = React.createClass( {
 			onSave: noop,
 			onAddMapping: noop,
 			onAddDomain: noop,
-			suggestionToken: 'default'
+			tldWeightOverrides: []
 		};
 	},
 
@@ -355,7 +355,7 @@ const RegisterDomainStep = React.createClass( {
 							quantity: SUGGESTION_QUANTITY,
 							include_wordpressdotcom: this.props.includeWordPressDotCom,
 							include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
-							suggestion_token: this.props.suggestionToken,
+							tld_weight_overrides: this.props.tldWeightOverrides.join( ',' ),
 							vendor: searchVendor,
 							vertical: this.props.surveyVertical,
 						},

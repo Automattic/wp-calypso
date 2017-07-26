@@ -173,14 +173,15 @@ const DomainsStep = React.createClass( {
 		} );
 	},
 
-	getSuggestionToken: function() {
+	getTldWeightOverrides: function() {
 		const store = pick( SignupDependencyStore.get(), 'designType' );
+		const tldWeightOverrides = [];
 
 		if ( store && store.designType === 'blog' ) {
-			return 'blog';
+			tldWeightOverrides.push( 'design_type_blog' );
 		}
 
-		return 'default';
+		return tldWeightOverrides;
 	},
 
 	domainForm: function() {
@@ -206,7 +207,7 @@ const DomainsStep = React.createClass( {
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
 				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' }
-				suggestionToken={ this.getSuggestionToken() } />
+				tldWeightOverrides={ this.getTldWeightOverrides() } />
 		);
 	},
 
