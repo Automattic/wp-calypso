@@ -105,6 +105,7 @@ export const ReaderSidebar = createReactClass( {
 	},
 
 	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace,max-len */
 		return (
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarRegion>
@@ -250,6 +251,7 @@ export const ReaderSidebar = createReactClass( {
 				<SidebarFooter />
 			</Sidebar>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace,max-len */
 	},
 } );
 
