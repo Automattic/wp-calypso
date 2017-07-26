@@ -18,12 +18,11 @@ import Popover from 'components/popover';
 import Site from 'blocks/site';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
-import PostListFetcher from 'components/post-list-fetcher';
 import { recordEvent, recordStat } from 'lib/posts/stats';
-import AsyncLoad from 'components/async-load';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
+import PostScheduler from './post-scheduler';
 
 export class EditorGroundControl extends PureComponent {
 	static propTypes = {
@@ -72,8 +71,6 @@ export class EditorGroundControl extends PureComponent {
 	state = {
 		showSchedulePopover: false,
 		showAdvanceStatus: false,
-		firstDayOfTheMonth: this.getFirstDayOfTheMonth(),
-		lastDayOfTheMonth: this.getLastDayOfTheMonth(),
 		needsVerification: this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
 	}
 
@@ -121,13 +118,6 @@ export class EditorGroundControl extends PureComponent {
 		}
 	}
 
-	setCurrentMonth = ( date ) => {
-		this.setState( {
-			firstDayOfTheMonth: this.getFirstDayOfTheMonth( date ),
-			lastDayOfTheMonth: this.getLastDayOfTheMonth( date )
-		} );
-	}
-
 	getPreviewLabel() {
 		if ( postUtils.isPublished( this.props.savedPost ) && this.props.site.jetpack ) {
 			return this.props.translate( 'View' );
@@ -164,29 +154,7 @@ export class EditorGroundControl extends PureComponent {
 		this.setState( { showSchedulePopover: false } );
 	}
 
-	renderPostScheduler() {
-		const tz = siteUtils.timezone( this.props.site ),
-			gmtOffset = siteUtils.gmtOffset( this.props.site ),
-			postDate = this.props.post && this.props.post.date
-				? this.props.post.date
-				: null;
-
-		return (
-			<AsyncLoad
-				require="components/post-schedule"
-				selectedDay={ postDate }
-				timezone={ tz }
-				gmtOffset={ gmtOffset }
-				onDateChange={ this.props.setPostDate }
-				onMonthChange={ this.setCurrentMonth }
-				site={ this.props.site }
-			/>
-		);
-	}
-
 	schedulePostPopover() {
-		const postScheduler = this.renderPostScheduler();
-
 		return (
 			<Popover
 				isVisible={ this.state.showSchedulePopover }
@@ -195,43 +163,12 @@ export class EditorGroundControl extends PureComponent {
 				context={ this.refs && this.refs.schedulePost }
 				id="editor-post-schedule"
 			>
-				<span className="editor-ground-control__schedule-post">
-					{ postUtils.isPage( this.props.post )
-						? postScheduler
-						: <PostListFetcher
-							siteId={ this.props.site.ID }
-							status="publish,future"
-							before={ this.state.lastDayOfTheMonth.format() }
-							after={ this.state.firstDayOfTheMonth.format() }
-							number={ 100 }
-						>
-							{ postScheduler }
-						</PostListFetcher>
-					}
-				</span>
+				<PostScheduler initialDate={ this.props.moment() }
+					post={ this.props.post }
+					setPostDate= { this.props.setPostDate }
+					site={ this.props.site } />
 			</Popover>
 		);
-	}
-
-	getFirstDayOfTheMonth( date ) {
-		const tz = siteUtils.timezone( this.props.site );
-		date = date || this.props.moment();
-
-		return postUtils.getOffsetDate( date, tz ).set( {
-			year: date.year(),
-			month: date.month(),
-			date: 1,
-			hours: 0,
-			minutes: 0,
-			seconds: 0,
-			milliseconds: 0
-		} );
-	}
-
-	getLastDayOfTheMonth( date ) {
-		return this.getFirstDayOfTheMonth( date )
-			.add( 1, 'month' )
-			.second( -1 );
 	}
 
 	getSaveStatusLabel() {
