@@ -136,10 +136,10 @@ export const fetchCommentsTree = ( { dispatch }, action ) => {
 	);
 };
 
-const addCommentsTree = ( { dispatch }, { siteId }, next, data ) => {
+const addCommentsTree = ( { dispatch }, { siteId, status }, next, data ) => {
 	const [ commentsCount, commentsTree ] = data;
 
-	const count = commentsCount[ 0 ];
+	const count = parseInt( commentsCount[ 0 ] );
 
 	const tree = keyBy( map( commentsTree, comment => ( {
 		commentId: comment[ 0 ],
@@ -151,6 +151,7 @@ const addCommentsTree = ( { dispatch }, { siteId }, next, data ) => {
 		type: COMMENTS_TREE_RECEIVE,
 		count,
 		siteId,
+		status,
 		tree,
 	} );
 };

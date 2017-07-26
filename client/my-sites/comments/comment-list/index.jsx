@@ -26,7 +26,7 @@ import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
 import QuerySiteComments from 'components/data/query-site-comments';
-import { hasSiteComments } from 'state/selectors';
+import { getSiteCommentsCount, hasSiteComments } from 'state/selectors';
 
 const COMMENTS_PER_PAGE = 2;
 
@@ -399,6 +399,7 @@ const mapStateToProps = ( state, { siteId, status, order } ) => {
 	const isLoading = ! hasSiteComments( state, siteId );
 	return {
 		comments,
+		commentsCount: getSiteCommentsCount( state, siteId, status ),
 		isLoading,
 		notices: getNotices( state ),
 		siteId,

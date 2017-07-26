@@ -197,8 +197,30 @@ export const totalCommentsCount = createReducer(
  * @param {Object} action Redux action
  * @returns {Object} New Redux state.
  */
-export const trees = ( state = {}, { siteId, tree, type } ) => COMMENTS_TREE_RECEIVE === type
-	? { ...state, [ siteId ]: tree }
+export const trees = ( state = {}, { siteId, status, tree, type } ) => COMMENTS_TREE_RECEIVE === type
+	? {
+		...state,
+		[ siteId ]: {
+			...state[ siteId ],
+			[ status ]: tree,
+		}
+	}
+	: state;
+
+/**
+ * Stores a site's comments count.
+ * @param {Object} state Redux state (`comments.counts`)
+ * @param {Object} action Redux action
+ * @returns {Object} New Redux state.
+ */
+export const counts = ( state = {}, { count, siteId, status, type } ) => COMMENTS_TREE_RECEIVE === type
+	? {
+		...state,
+		[ siteId ]: {
+			...state[ siteId ],
+			[ status ]: count,
+		},
+	}
 	: state;
 
 /**
@@ -225,7 +247,8 @@ export const errors = createReducer(
 export default combineReducers( {
 	items,
 	fetchStatus,
-	trees,
 	errors,
 	totalCommentsCount,
+	trees,
+	counts,
 } );

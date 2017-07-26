@@ -43,8 +43,8 @@ export class QuerySiteComments extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId } ) => ( {
-	commentsTree: getSiteCommentsTree( state, siteId ),
+const mapStateToProps = ( state, { siteId, status } ) => ( {
+	commentsTree: getSiteCommentsTree( state, siteId, status ),
 } );
 
 const mapDispatchToProps = dispatch => ( {
