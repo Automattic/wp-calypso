@@ -288,7 +288,7 @@ export class CommentDetail extends Component {
 
 const mapStateToProps = ( state, ownProps ) => {
 	const { commentId, siteId } = ownProps;
-	const comment = getSiteComment( state, siteId, commentId );
+	const comment = ownProps.comment || getSiteComment( state, siteId, commentId );
 
 	const postId = get( comment, 'post.ID' );
 
