@@ -61,7 +61,7 @@ class Order extends Component {
 
 		const breadcrumbs = [
 			( <a href={ getLink( '/store/orders/:site/', site ) }>{ translate( 'Orders' ) }</a> ),
-			( <span>{ translate( 'Order Details %(orderId)s', { args: { orderId: `#${ orderId }` } } ) }</span> ),
+			( <span>{ translate( 'Order %(orderId)s Details', { args: { orderId: `#${ orderId }` } } ) }</span> ),
 		];
 		return (
 			<Main className={ className }>
