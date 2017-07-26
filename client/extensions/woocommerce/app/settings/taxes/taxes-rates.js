@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { isEmpty, round } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -164,18 +165,20 @@ class TaxesRates extends Component {
 
 		if ( DESTINATION_BASED_SALES_TAX === stateData.salesTaxBasis ) {
 			return (
-				<p>
+				<div className="taxes__taxes-calculate">
+					<Gridicon icon="checkmark" />
 					{ translate( 'We\'ll automatically calculate and charge the ' +
 						'correct rate of tax for you each time a customer checks out.' ) }
-				</p>
+				</div>
 			);
 		}
 
 		return (
-			<p>
+			<div className="taxes__taxes-calculate">
+				<Gridicon icon="checkmark" />
 				{ translate( 'We\'ll automatically calculate and charge sales tax ' +
 					'at the following rate each time a customer checks out.' ) }
-			</p>
+			</div>
 		);
 	}
 
@@ -262,8 +265,7 @@ class TaxesRates extends Component {
 			return null;
 		}
 
-		const toggleMessage = taxesEnabled ? translate( 'Tax calculations enabled' )
-			: translate( 'Tax calculations disabled' );
+		const toggleMessage = translate( 'Tax calculations enabled' );
 
 		return (
 			<div className="taxes__taxes-rates">
@@ -273,7 +275,7 @@ class TaxesRates extends Component {
 						name="taxesEnabled"
 						onChange={ onEnabledChange }
 						checked={ taxesEnabled } >
-						<span>
+						<span className="taxes__taxes-calculate-label">
 							{ toggleMessage }
 						</span>
 					</FormToggle>
