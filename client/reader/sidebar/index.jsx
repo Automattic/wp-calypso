@@ -169,7 +169,7 @@ export const ReaderSidebar = createReactClass( {
 											<path d="M9.47 5.73C9.07 5.47 8.52 5.59 8.26 6L6.21 9.17c-0.26 0.41-0.15 0.95 0.26 1.21 0.4 0.26 0.95 0.14 1.21-0.26l2.05-3.17C9.99 6.53 9.88 5.99 9.47 5.73z" />
 										</svg>
 										<span className="menu-link-text">
-											{ this.props.translate( 'A8C Conversations' ) }
+											A8C Conversations
 										</span>
 									</a>
 								</li> }
