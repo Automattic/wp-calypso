@@ -124,6 +124,30 @@ class Orders extends Component {
 		} );
 	}
 
+	renderNoContent = () => {
+		const { currentSearch, currentStatus, site, translate } = this.props;
+		let emptyMessage = translate( 'Your orders will appear here as they come in.' );
+		if ( currentSearch ) {
+			emptyMessage = translate( 'No orders matching your search.' );
+		} else if ( 'pending' === currentStatus ) {
+			emptyMessage = translate( 'You don\'t have any orders awaiting payment.' );
+		} else if ( 'processing' === currentStatus ) {
+			emptyMessage = translate( 'You don\'t have any orders awaiting fulfillment.' );
+		}
+
+		return (
+			<TableRow>
+				<TableItem colSpan={ 4 }>
+					<EmptyContent
+						title={ emptyMessage }
+						action={ translate( 'View all orders' ) }
+						actionURL={ getLink( '/store/orders/:site', site ) }
+					/>
+				</TableItem>
+			</TableRow>
+		);
+	}
+
 	renderOrderItem = ( order, i ) => {
 		const { site } = this.props;
 		return (
@@ -186,7 +210,7 @@ class Orders extends Component {
 			</TableRow>
 		);
 
-		const ordersList = orders ? orders.map( this.renderOrderItem ) : null;
+		const ordersList = ( orders && orders.length ) ? orders.map( this.renderOrderItem ) : this.renderNoContent();
 
 		return (
 			<div className="orders__container">
