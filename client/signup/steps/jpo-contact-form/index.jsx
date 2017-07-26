@@ -27,6 +27,20 @@ const JPOContactFormStep = React.createClass( {
 		stepName: PropTypes.string,
 	},
 
+	onSelect() {
+		const jpoContactForm = true;
+
+		this.props.setJPOContactForm( jpoContactForm );
+
+		SignupActions.submitSignupStep( {
+			processingMessage: translate( 'Setting up your site' ),
+			stepName: this.props.stepName,
+			jpoContactForm
+		}, [], { jpoContactForm } );
+
+		this.props.goToNextStep();
+	},
+
 	skipStep() {
 		this.props.goToNextStep();
 	},
@@ -36,7 +50,7 @@ const JPOContactFormStep = React.createClass( {
 			<div className="jpo__contact-form-wrapper">
 				<Card>
 					<ContactUsGraphic />
-					<Button>Add a contact form</Button>
+					<Button onClick={ this.onSelect }>Add a contact form</Button>
 					<div className="jpo__contact-form-description">Not sure? You can skip this step and add a contact form later.</div>
 				</Card>
 			</div>
