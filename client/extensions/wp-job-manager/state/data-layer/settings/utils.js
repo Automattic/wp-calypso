@@ -19,6 +19,7 @@ export const fromApi = ( {
 	job_manager_submission_duration,
 	job_manager_submission_requires_approval,
 	job_manager_submit_job_form_page_id,
+	job_manager_use_standard_password_setup_email,
 	job_manager_user_can_edit_pending_submissions,
 	job_manager_user_requires_account,
 } ) => ( {
@@ -27,6 +28,7 @@ export const fromApi = ( {
 		generateUsername: job_manager_generate_username_from_email,
 		isAccountRequired: job_manager_user_requires_account,
 		role: job_manager_registration_role,
+		sendPassword: job_manager_use_standard_password_setup_email,
 	},
 	apiKey: {
 		googleMapsApiKey: job_manager_google_maps_api_key,
@@ -87,6 +89,7 @@ export const toApi = ( {
 	multiJobType,
 	perPage,
 	role,
+	sendPassword,
 	submissionDuration,
 	submitFormPage,
 } ) => ( {
@@ -110,6 +113,7 @@ export const toApi = ( {
 	job_manager_submission_duration: submissionDuration,
 	job_manager_submission_requires_approval: isApprovalRequired,
 	job_manager_submit_job_form_page_id: submitFormPage,
+	job_manager_use_standard_password_setup_email: sendPassword,
 	job_manager_user_can_edit_pending_submissions: canEdit,
 	job_manager_user_requires_account: isAccountRequired,
 } );

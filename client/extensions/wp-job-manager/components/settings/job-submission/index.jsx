@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { FormSection, formValueSelector, reduxForm } from 'redux-form';
+import { change, FormSection, formValueSelector, reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 
@@ -25,7 +25,9 @@ const form = 'extensions.wpJobManager.submission';
 
 class JobSubmission extends Component {
 	static propTypes = {
+		change: PropTypes.func,
 		enableRegistration: PropTypes.bool,
+		generateUsername: PropTypes.bool,
 		handleSubmit: PropTypes.func,
 		isFetching: PropTypes.bool,
 		onSubmit: PropTypes.func,
@@ -33,11 +35,26 @@ class JobSubmission extends Component {
 		translate: PropTypes.func,
 	};
 
+	componentWillReceiveProps( nextProps ) {
+		const { generateUsername } = nextProps;
+
+		if ( generateUsername === this.props.generateUsername ) {
+			return;
+		}
+
+		if ( ! generateUsername ) {
+			return;
+		}
+
+		this.props.change( 'account.sendPassword', generateUsername );
+	}
+
 	save = section => data => this.props.onSubmit( form, data[ section ] );
 
 	render() {
 		const {
 			enableRegistration,
+			generateUsername,
 			handleSubmit,
 			isFetching,
 			submissionDuration,
@@ -68,21 +85,35 @@ class JobSubmission extends Component {
 
 								<ReduxFormToggle
 									disabled={ isDisabled }
-									name="generateUsername"
-									text="Generate usernames from email addresses" />
-								<FormSettingExplanation isIndented>
-									{ translate( 'Automatically generates usernames for new accounts from the registrant\'s ' +
-										'email address. If this is not enabled, a "username" field will display instead.' ) }
-								</FormSettingExplanation>
-
-								<ReduxFormToggle
-									disabled={ isDisabled }
 									name="enableRegistration"
 									text={ translate( 'Enable account creation during submission' ) } />
 								<FormSettingExplanation isIndented>
 									{ translate( 'Includes account creation on the listing submission form, to allow ' +
 										'non-registered users to create an account and submit a job listing simultaneously.' ) }
 								</FormSettingExplanation>
+
+								{ enableRegistration &&
+									<div>
+										<ReduxFormToggle
+											disabled={ isDisabled }
+											name="generateUsername"
+											text="Generate usernames from email addresses" />
+										<FormSettingExplanation isIndented>
+											{ translate( 'Automatically generates usernames for new accounts from the registrant\'s ' +
+												'email address. If this is not enabled, a "username" field will display instead.' ) }
+										</FormSettingExplanation>
+
+										<ReduxFormToggle
+											disabled={ isDisabled || generateUsername }
+											name="sendPassword"
+											text="Email new users a link to set a password" />
+										<FormSettingExplanation isIndented>
+											{ translate( 'Sends an email to the user with their username and a link to set ' +
+												'their password. If this is not enabled, a "password" field will display instead, ' +
+												'and their email address won\'t be verified.' ) }
+										</FormSettingExplanation>
+									</div>
+								}
 							</FormFieldset>
 
 							{ enableRegistration &&
@@ -236,8 +267,10 @@ const selector = formValueSelector( form );
 const connectComponent = connect(
 	state => ( {
 		enableRegistration: selector( state, 'account.enableRegistration' ),
+		generateUsername: selector( state, 'account.generateUsername' ),
 		submissionDuration: selector( state, 'duration.submissionDuration' ),
-	} )
+	} ),
+	{ change }
 );
 
 const createReduxForm = reduxForm( {

@@ -74,6 +74,7 @@ describe( '#updateExtensionSettings', () => {
 				generateUsername: undefined,
 				isAccountRequired: undefined,
 				role: undefined,
+				sendPassword: undefined,
 			},
 			apiKey: { googleMapsApiKey: undefined },
 			approval: {
