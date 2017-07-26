@@ -22,19 +22,29 @@ import {
 } from 'state/analytics/actions';
 import { savePreference } from 'state/preferences/actions';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import {
+	get,
 	identity,
 	includes,
 	noop
 } from 'lodash';
 import {
 	ALLOWED_SECTIONS,
+	EDITOR,
+	NOTES,
+	READER,
+	STATS,
 	getAppBannerData,
 	getNewDismissTimes,
 	getCurrentSection,
 	isDismissed,
 	APP_BANNER_DISMISS_TIMES_PREFERENCE,
 } from './utils';
+import versionCompare from 'lib/version-compare';
+
+const IOS_REGEX = /iPad|iPod|iPhone/i;
+const ANDROID_REGEX = /Android (\d+(\.\d+)?(\.\d+)?)/i;
 
 class AppBanner extends Component {
 	static propTypes = {
@@ -62,11 +72,14 @@ class AppBanner extends Component {
 	}
 
 	isiOS() {
-		return /iPad|iPod|iPhone/i.test( this.props.userAgent );
+		return IOS_REGEX.test( this.props.userAgent );
 	}
 
 	isAndroid() {
-		return /Android/i.test( this.props.userAgent );
+		const match = ANDROID_REGEX.exec( this.props.userAgent );
+		const version = get( match, '1', '0' );
+		//intents are only supported on Android 4.4+
+		return versionCompare( version, '4.4', '>=' );
 	}
 
 	isMobile() {
@@ -85,10 +98,25 @@ class AppBanner extends Component {
 	};
 
 	getDeepLink() {
+		const { currentSection, siteId } = this.props;
 		// TODO: update with real deep links when we get them
 		// just linking to respective app stores for now
 		if ( this.isAndroid() ) {
-			return 'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+			switch ( currentSection ) {
+				case EDITOR:
+					'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+				case NOTES:
+					return 'intent://viewnotifications/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+				case READER:
+					return 'intent://viewpost/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+				case STATS:
+					if ( siteId ) {
+						return `intent://viewstats/?siteId=${ siteId }#Intent;scheme=wordpress;package=org.wordpress.android;end'`;
+					}
+					return 'intent://viewstats/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+				default:
+					return 'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+			}
 		}
 
 		if ( this.isiOS() ) {
@@ -161,6 +189,7 @@ const mapStateToProps = ( state ) => {
 		dismissedUntil: getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
 		currentSection: getCurrentSection( sectionName, isNotesOpen ),
 		fetchingPreferences: isFetchingPreferences( state ),
+		siteId: getSelectedSiteId( state ),
 	};
 };
 
