@@ -12,6 +12,7 @@ import { translate } from 'i18n-calypso';
 import App from './app';
 
 import controller from 'my-sites/controller';
+import EmptyContent from 'components/empty-content';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import installActionHandlers from './state/data-layer';
@@ -127,6 +128,20 @@ function createStoreNavigation( context, next, storePage ) {
 	next();
 }
 
+function notFoundError( context, next ) {
+	renderWithReduxStore(
+		React.createElement( EmptyContent, {
+			className: 'content-404',
+			illustration: '/calypso/images/illustrations/illustration-404.svg',
+			title: translate( 'Uh oh. Page not found.' ),
+			line: translate( 'Sorry, the page you were looking for doesn\'t exist or has been moved.' ),
+		} ),
+		document.getElementById( 'content' ),
+		context.store
+	);
+	next();
+}
+
 export default function() {
 	// Add pages that use the store navigation
 	getStorePages().forEach( function( storePage ) {
@@ -140,6 +155,11 @@ export default function() {
 		page( '/store/stats/:type/:unit', controller.siteSelection, controller.sites );
 		page( '/store/stats/:type/:unit/:site', siteSelection, navigation, StatsController );
 	}
+
+	page(
+		'/store/*',
+		notFoundError
+	);
 }
 
 // TODO: This could probably be done in a better way through the same mechanisms
