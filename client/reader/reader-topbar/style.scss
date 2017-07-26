@@ -19,34 +19,57 @@
 	max-width: 300px;
 	padding-left: 50px;
 }
-.reader-topbar__section-nav {
+
+.reader-topbar__navigation {
 	display: flex;
+	min-width: 200px;
+	@include breakpoint( ">660px" ) {
+		padding-right: 20px;
+		min-width: 600px;
+	}
+}
+
+.reader-topbar__section-nav {
 	min-width: 150px;
 
 	@include breakpoint( ">660px" ) {
-		padding-right: 20px;
 		min-width: 500px;
 	}
 }
 
 // section-nav overrides
-.reader-topbar__section-nav .select-dropdown__header{
+.reader-topbar__navigation .select-dropdown__header{
 	border-width: 0;
 }
-.reader-topbar__section-nav .section-nav-tabs.is-dropdown {
+.reader-topbar__navigation .section-nav-tabs.is-dropdown {
 	margin: 0;
 }
-.reader-topbar__section-nav .section-nav {
+.reader-topbar__navigation .section-nav {
 	margin: 0;
 }
-.reader-topbar__section-nav .section-nav__panel {
+.reader-topbar__navigation .section-nav__panel {
 	height: 100%;
+}
+
+.reader-topbar__navigation .select-dropdown__header {
+	color: $blue-wordpress;
+	margin-top: 5px;
+	font-weight: 400;
+}
+
+.reader-topbar__navigation .section-nav__mobile-header {
+	margin-top: 3px;
+	font-weight: 400;
+	color: $blue-wordpress;
 }
 
 .section-nav-tabs__dropdown.select-dropdown {
 	@include breakpoint( "<660px" ) {
 		width: 150px
 	}
+}
+.reader-topbar__section-navigation .select-dropdown__header {
+	border-width: 0;
 }
 
 .reader-topbar__section-nav .section-nav {
