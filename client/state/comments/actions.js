@@ -63,10 +63,9 @@ export const requestCommentsList = query => ( {
 	query,
 } );
 
-export const requestCommentsTree = ( { siteId, status = 'unapproved' } ) => ( {
+export const requestCommentsTree = query => ( {
 	type: COMMENTS_TREE_REQUEST,
-	siteId,
-	status,
+	query,
 } );
 
 /**

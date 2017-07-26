@@ -121,7 +121,7 @@ const announceFailure = ( { dispatch, getState }, { query: { siteId } } ) => {
 };
 
 export const fetchCommentsTree = ( { dispatch }, action ) => {
-	const { siteId, status = 'unapproved' } = action;
+	const { siteId, status = 'unapproved' } = action.query;
 
 	dispatch(
 		http(
@@ -136,7 +136,7 @@ export const fetchCommentsTree = ( { dispatch }, action ) => {
 	);
 };
 
-const addCommentsTree = ( { dispatch }, { siteId, status }, next, data ) => {
+const addCommentsTree = ( { dispatch }, { query: { siteId, status } }, next, data ) => {
 	const [ commentsCount, commentsTree ] = data;
 
 	const count = parseInt( commentsCount[ 0 ] );
