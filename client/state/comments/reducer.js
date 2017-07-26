@@ -16,6 +16,7 @@ import {
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
+	COMMENTS_TREE_RECEIVE,
 } from '../action-types';
 import { combineReducers, createReducer } from 'state/utils';
 import { PLACEHOLDER_STATE, NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
@@ -191,6 +192,16 @@ export const totalCommentsCount = createReducer(
 );
 
 /**
+ * Stores a site's comments tree.
+ * @param {Object} state Redux state (`comments.trees`)
+ * @param {Object} action Redux action
+ * @returns {Object} New Redux state.
+ */
+export const trees = ( state = {}, { siteId, tree, type } ) => COMMENTS_TREE_RECEIVE === type
+	? { ...state, [ siteId ]: tree }
+	: state;
+
+/**
  * Houses errors by `siteId-commentId`
  */
 export const errors = createReducer(
@@ -214,6 +225,7 @@ export const errors = createReducer(
 export default combineReducers( {
 	items,
 	fetchStatus,
+	trees,
 	errors,
 	totalCommentsCount,
 } );

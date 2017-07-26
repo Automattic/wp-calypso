@@ -18,6 +18,7 @@ import {
 	COMMENTS_REPLY_WRITE,
 	COMMENTS_WRITE,
 	COMMENT_REQUEST,
+	COMMENTS_TREE_REQUEST,
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
@@ -59,6 +60,11 @@ export function requestPostComments( {
 
 export const requestCommentsList = query => ( {
 	type: COMMENTS_LIST_REQUEST,
+	query,
+} );
+
+export const requestCommentsTree = query => ( {
+	type: COMMENTS_TREE_REQUEST,
 	query,
 } );
 

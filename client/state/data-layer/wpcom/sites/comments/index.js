@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { forEach, groupBy } from 'lodash';
+import { forEach, groupBy, keyBy, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,6 +11,8 @@ import { mergeHandlers } from 'state/action-watchers/utils';
 import {
 	COMMENTS_LIST_REQUEST,
 	COMMENTS_RECEIVE,
+	COMMENTS_TREE_REQUEST,
+	COMMENTS_TREE_RECEIVE,
 	COMMENT_REQUEST,
 	COMMENTS_ERROR,
 } from 'state/action-types';
@@ -118,8 +120,50 @@ const announceFailure = ( { dispatch, getState }, { query: { siteId } } ) => {
 	dispatch( errorNotice( error ) );
 };
 
+export const fetchCommentsTree = ( { dispatch }, action ) => {
+	const { query } = action;
+
+	if ( ! query ) {
+		return;
+	}
+
+	const { siteId, status = 'pending' } = query;
+
+	dispatch(
+		http(
+			{
+				method: 'GET',
+				path: `/sites/${ siteId }/comments-tree`,
+				apiNamespace: 'wpcom/v2',
+				query: { status },
+			},
+			action,
+		)
+	);
+};
+
+const addCommentsTree = ( { dispatch }, { query: { siteId } }, next, data ) => {
+	const [ commentsCount, commentsTree ] = data;
+
+	const count = commentsCount[ 0 ];
+
+	const tree = keyBy( map( commentsTree, comment => ( {
+		commentId: comment[ 0 ],
+		postId: comment[ 1 ],
+		commentParentId: comment[ 2 ],
+	} ) ), 'commentId' );
+
+	dispatch( {
+		type: COMMENTS_TREE_RECEIVE,
+		count,
+		siteId,
+		tree,
+	} );
+};
+
 const fetchHandler = {
 	[ COMMENTS_LIST_REQUEST ]: [ dispatchRequest( fetchCommentsList, addComments, announceFailure ) ],
+	[ COMMENTS_TREE_REQUEST ]: [ dispatchRequest( fetchCommentsTree, addCommentsTree, announceFailure ) ],
 	[ COMMENT_REQUEST ]: [
 		dispatchRequest( requestComment, receiveCommentSuccess, receiveCommentError ),
 	],
