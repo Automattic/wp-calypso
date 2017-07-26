@@ -302,12 +302,7 @@ const RegisterDomainStep = React.createClass( {
 
 	getTldWeightOverrides: function() {
 		const { designType } = this.props;
-
-		if ( designType && designType === 'blog' ) {
-			return 'design_type_blog';
-		}
-
-		return null;
+		return designType && designType === 'blog' ? 'design_type_blog' : null;
 	},
 
 	onSearch: function( searchQuery ) {
