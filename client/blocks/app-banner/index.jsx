@@ -98,27 +98,23 @@ class AppBanner extends Component {
 	};
 
 	getDeepLink() {
-		const { currentSection, siteId } = this.props;
-		// TODO: update with real deep links when we get them
-		// just linking to respective app stores for now
+		const { currentSection } = this.props;
+
 		if ( this.isAndroid() ) {
+			//TODO: update when section deep links are available.
 			switch ( currentSection ) {
 				case EDITOR:
-					'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return 'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
 				case NOTES:
-					return 'intent://viewnotifications/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return 'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
 				case READER:
-					return 'intent://viewpost/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return 'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
 				case STATS:
-					if ( siteId ) {
-						return `intent://viewstats/?siteId=${ siteId }#Intent;scheme=wordpress;package=org.wordpress.android;end'`;
-					}
-					return 'intent://viewstats/#Intent;scheme=wordpress;package=org.wordpress.android;end';
-				default:
 					return 'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
 			}
 		}
 
+		//TODO: update when deferred deep links are available
 		if ( this.isiOS() ) {
 			return 'itms://itunes.apple.com/us/app/wordpress/id335703880?mt=8';
 		}
