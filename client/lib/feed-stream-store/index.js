@@ -327,6 +327,16 @@ export default function feedStoreFactory( storeId ) {
 			onGapFetch: limitSiteParamsForConversations,
 			dateProperty: 'last_comment_date_gmt',
 		} );
+	} else if ( storeId === 'conversations-a8c' ) {
+		store = new FeedStream( {
+			id: storeId,
+			fetcher: wpcomUndoc.readA8cConversations.bind( wpcomUndoc ),
+			keyMaker: conversationsKeyMaker,
+			onNextPageFetch: conversationsPager,
+			onUpdateFetch: limitSiteParamsForConversations,
+			onGapFetch: limitSiteParamsForConversations,
+			dateProperty: 'last_comment_date_gmt',
+		} );
 	} else if ( storeId === 'a8c' ) {
 		store = new FeedStream( {
 			id: storeId,
