@@ -9,12 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import AddButton from './../card/add-button';
 
-const PrivacyProtectionCardHeader = ( {
-	displayCost,
-	selectedDomainName,
-	selectedSite,
-	translate
- } ) => (
+const PrivacyProtectionCardHeader = ( { displayCost, selectedDomainName, selectedSite, translate } ) => (
 	<header className="privacy-protection-card__header">
 		<h3>{ translate( 'Privacy Protection' ) }</h3>
 
@@ -33,7 +28,8 @@ const PrivacyProtectionCardHeader = ( {
 
 		<AddButton
 			selectedDomainName={ selectedDomainName }
-			selectedSite={ selectedSite } />
+			selectedSite={ selectedSite }
+		/>
 	</header>
 );
 
