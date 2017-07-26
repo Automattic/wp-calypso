@@ -12,7 +12,7 @@ import sites from './sites/reducer';
 import actionList from './action-list/reducer';
 import woocommerceServices from 'woocommerce/woocommerce-services/state/reducer';
 
-const wcsEnabled = config.isEnabled( 'woocommerce/wcs-enabled' );
+const wcsEnabled = config.isEnabled( 'woocommerce/extension-wcservices' );
 
 const reducers = {
 	ui,
