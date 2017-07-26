@@ -129,7 +129,9 @@ export const fetchCommentsTree = ( { dispatch }, action ) => {
 				method: 'GET',
 				path: `/sites/${ siteId }/comments-tree`,
 				apiNamespace: 'wpcom/v2',
-				query: { status },
+				query: {
+					status: ( 'unapproved' === status ) ? 'pending' : status,
+				},
 			},
 			action,
 		)
