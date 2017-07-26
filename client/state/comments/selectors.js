@@ -1,7 +1,7 @@
 /***
  * External dependencies
  */
-import { filter, find, get, keyBy, last, first, map, size, flatMap } from 'lodash';
+import { filter, find, get, keyBy, last, first, map, size, flatMap, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,6 +18,14 @@ import { getStateKey, deconstructStateKey, fetchStatusInitialState } from './red
  */
 export const getPostCommentItems = ( state, siteId, postId ) =>
 	get( state.comments.items, `${ siteId }-${ postId }` );
+
+export const getDateSortedPostComments = createSelector(
+	( state, siteId, postId ) => {
+		const comments = getPostCommentItems( state, siteId, postId );
+		return sortBy( comments, comment => new Date( comment.date ) );
+	},
+	( state, siteId, postId ) => [ get( state.comments, 'items' )[ getStateKey( siteId, postId ) ] ],
+);
 
 export const getCommentById = createSelector(
 	( { state, commentId, siteId } ) => {
