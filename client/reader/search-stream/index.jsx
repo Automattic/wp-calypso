@@ -28,7 +28,7 @@ import SuggestionProvider from './suggestion-provider';
 import Suggestion from './suggestion';
 import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
 import { getReaderAliasedFollowFeedUrl } from 'state/selectors';
-import { READER_FOLLOWING_MANAGE_URL_INPUT } from 'reader/follow-button/follow-sources';
+import { SEARCH_RESULTS_URL_INPUT } from 'reader/follow-button/follow-sources';
 import FollowButton from 'reader/follow-button';
 
 const WIDE_DISPLAY_CUTOFF = 660;
@@ -194,7 +194,7 @@ class SearchStream extends React.Component {
 								followLabel={ translate( 'Follow %s', { args: queryWithoutProtocol } ) }
 								followingLabel={ translate( 'Following %s', { args: queryWithoutProtocol } ) }
 								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
-								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
+								followSource={ SEARCH_RESULTS_URL_INPUT }
 							/>
 						</div> }
 					{ query &&
