@@ -25,7 +25,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
 import { isValidSimplePaymentsProduct } from 'lib/simple-payments/utils';
 import formatCurrency from 'lib/format-currency';
-import { getFeaturedImageId } from 'lib/posts/utils';
+import { getFeaturedImageId } from 'lib/posts/utils-ssr-ready';
 
 /**
  * Reduce function for product attributes stored in post metadata
