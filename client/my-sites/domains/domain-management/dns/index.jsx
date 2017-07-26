@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import page from 'page';
-import find from 'lodash/find';
 
 /**
  * Internal dependencies
@@ -15,12 +14,11 @@ import DomainMainPlaceholder from 'my-sites/domains/domain-management/components
 import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
 import paths from 'my-sites/domains/paths';
-import { getSelectedDomain, isRegisteredDomain } from 'lib/domains';
+import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'lib/domains';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import DnsTemplates from '../name-servers/dns-templates';
 import VerticalNav from 'components/vertical-nav';
-import { type as domainTypes } from 'lib/domains/constants';
 
 const Dns = React.createClass( {
 	propTypes: {
@@ -37,16 +35,11 @@ const Dns = React.createClass( {
 		return { addNew: true };
 	},
 
-	isMappedDomain() {
-		const domainInfo = find( this.props.domains.list, ( domain ) => {
-			return domain.name === this.props.selectedDomainName;
-		} );
-
-		return domainInfo.type === domainTypes.MAPPED;
-	},
-
 	renderDnsTemplates() {
-		if ( ! this.isMappedDomain() ) {
+		const { domains, selectedDomainName } = this.props;
+		const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
+
+		if ( ! isMappedDomain( selectedDomain ) ) {
 			return null;
 		}
 
