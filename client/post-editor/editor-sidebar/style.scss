@@ -1,3 +1,5 @@
+$editor-sidebar-font-size: 13px;
+
 .editor-sidebar {
 	@extend .sidebar;
 	z-index: z-index( 'root', '.editor-sidebar' );
@@ -41,10 +43,22 @@
 	}
 }
 
+// TODO: Find better name than `view`
+.editor-sidebar__view {
+	display: flex;
+	flex-direction: column;
+
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+
 .editor-sidebar__header {
 	background: lighten( $gray, 30% );
 	display: none;
-	font-size: 13px;
+	font-size: $editor-sidebar-font-size;
 	color: $gray-dark;
 	font-weight: 500;
 
@@ -74,5 +88,115 @@
 	margin-left: 16px;
 	@include breakpoint( ">660px" ) {
 		display: none;
+	}
+}
+
+.editor-sidebar .editor-feedback-invitation {
+	font-size: $editor-sidebar-font-size;
+}
+
+.editor-sidebar .editor-feedback-invitation__button {
+	width: 100%;
+}
+
+.editor-sidebar__feedback-header-image-box {
+	min-height: 100px;
+}
+
+.editor-sidebar__feedback-request-form {
+	background: $white;
+	padding: 16px;
+	font-size: 13px;
+}
+
+.editor-sidebar__feedback-request-input-label {
+	font-weight: 500;
+}
+
+// Including input[type="text"].form-text-input to win the specificity battle
+// with form-text-input styles
+// TODO: Is there a better way to address this?
+input[type="email"].form-text-input.editor-sidebar__feedback-request-input {
+	margin-top: 7px;
+}
+
+.editor-sidebar__feedback-request-input-invalid-message {
+	margin-top: 7px;
+	color: $alert-red;
+}
+
+.editor-sidebar__feedback-request-button {
+	width: 100%;
+	margin-top: 13px;
+}
+
+.editor-sidebar__feedback-list-label {
+	padding: 11px 16px;
+
+	&.is-hidden {
+		display: none;
+	}
+}
+
+.editor-sidebar__feedback-share + .editor-sidebar__feedback-share {
+	margin-top: 10px;
+}
+
+.editor-sidebar__feedback-share .accordion__icon {
+	margin: 0;
+}
+
+.editor-sidebar__feedback-share.accordion.has-icon .accordion__title,
+.editor-sidebar__feedback-share.accordion.has-icon .accordion__subtitle {
+	padding-left: 33px;
+}
+
+.editor-sidebar__feedback-share .accordion__content-wrap {
+	padding: 0;
+	padding-top: 7px;
+}
+
+%share-content {
+	padding: 0 16px;
+
+	&:last-of-type {
+		margin-bottom: 1em;
+	}
+}
+
+.editor-sidebar__feedback-share-comment {
+	@extend %share-content;
+}
+
+.editor-sidebar__feedback-share-empty-message {
+	@extend %share-content;
+	font-style: italic;
+}
+
+.editor-sidebar__feedback-access-button.is-borderless {
+	width: 100%;
+	background: $gray-light;
+	border-top: 1px solid darken( $sidebar-bg-color, 5% );
+	border-radius: 0;
+	text-align: left;
+}
+
+.editor-sidebar__feedback-access-button-icon {
+	padding: 0 12px;
+
+	.editor-sidebar__feedback-access-button.is-revoke & {
+		color: $alert-red;
+	}
+	.editor-sidebar__feedback-access-button.is-restore & {
+		color: $alert-green;
+	}
+}
+
+.editor-sidebar__feedback-access-button-text {
+	.editor-sidebar__feedback-access-button.is-revoke & {
+		color: lighten( $alert-red, 10% );
+	}
+	.editor-sidebar__feedback-access-button.is-restore & {
+		color: lighten( $alert-green, 10% );
 	}
 }
