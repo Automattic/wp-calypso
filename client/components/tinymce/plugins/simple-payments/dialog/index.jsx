@@ -112,7 +112,7 @@ class SimplePaymentsDialog extends Component {
 		this.setState( { uploadedImageId: uploadedImage.ID } );
 	};
 
-	handleUploadImageError = ( errorCode, errorMessage ) => {
+	showError = errorMessage => {
 		this.setState( {
 			errorMessage,
 		} );
@@ -244,7 +244,7 @@ class SimplePaymentsDialog extends Component {
 							isFieldInvalid={ this.isFormFieldInvalid }
 							onFieldChange={ this.handleFormFieldChange }
 							onUploadImageDone={ this.handleUploadedImage }
-							onUploadImageError={ this.handleUploadImageError }
+							showError={ this.showError }
 						/>
 					: <ProductList
 							paymentButtons={ paymentButtons }

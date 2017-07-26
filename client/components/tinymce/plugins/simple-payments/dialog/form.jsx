@@ -28,13 +28,18 @@ class ProductForm extends Component {
 		this.props.onFieldChange( 'multiple', checked );
 	};
 
+	handleUploadImageError = ( errorCode, errorMessage ) => {
+		const { showError } = this.props;
+
+		showError( errorMessage );
+	};
+
 	render() {
 		const {
 			translate,
 			currencyDefaults,
 			fieldValues,
 			isFieldInvalid,
-			onUploadImageError,
 			onUploadImageDone,
 		} = this.props;
 
@@ -44,7 +49,7 @@ class ProductForm extends Component {
 
 		return (
 			<form className="editor-simple-payments-modal__form">
-				<UploadImage onError={ onUploadImageError } onUploadImageDone={ onUploadImageDone } />
+				<UploadImage onError={ this.handleUploadImageError } onUploadImageDone={ onUploadImageDone } />
 				<div className="editor-simple-payments-modal__form-fields">
 					<FormFieldset>
 						<FormLabel htmlFor="title">
