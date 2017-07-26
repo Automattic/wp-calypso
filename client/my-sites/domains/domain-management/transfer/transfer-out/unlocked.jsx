@@ -130,7 +130,8 @@ class Unlocked extends React.Component {
 		} else if ( domainLockingAvailable ) {
 			domainStateMessage = translate( 'Your domain is unlocked to prepare for transfer.' );
 		}
-		// Otherwise, we can skip this paragraph.
+		// If the domain doesn't support locking don't even mention it, it would
+		// just confuse the user.
 
 		return (
 			<div>
@@ -148,7 +149,7 @@ class Unlocked extends React.Component {
 
 				<Card className="transfer-card">
 					<div>
-						{ domainStateMessage ? <p>{ domainStateMessage }</p> : null }
+						{ domainStateMessage && <p>{ domainStateMessage }</p> }
 						<p>
 							{
 								! manualTransferRequired
