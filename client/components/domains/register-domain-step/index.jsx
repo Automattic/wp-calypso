@@ -125,7 +125,7 @@ const RegisterDomainStep = React.createClass( {
 		onSave: React.PropTypes.func,
 		onAddMapping: React.PropTypes.func,
 		onAddDomain: React.PropTypes.func,
-		designType: React.PropTypes.string
+		designType: React.PropTypes.string,
 	},
 
 	getDefaultProps: function() {
@@ -134,7 +134,7 @@ const RegisterDomainStep = React.createClass( {
 			analyticsSection: 'domains',
 			onSave: noop,
 			onAddMapping: noop,
-			onAddDomain: noop
+			onAddDomain: noop,
 		};
 	},
 
@@ -148,7 +148,7 @@ const RegisterDomainStep = React.createClass( {
 			lastDomainStatus: null,
 			loadingResults: Boolean( suggestion ),
 			notice: null,
-			searchResults: null
+			searchResults: null,
 		};
 	},
 
@@ -296,7 +296,7 @@ const RegisterDomainStep = React.createClass( {
 			lastDomainSearched: null,
 			loadingResults: Boolean( getFixedDomainSearch( searchQuery ) ),
 			notice: null,
-			searchResults: null
+			searchResults: null,
 		} );
 	},
 
@@ -430,7 +430,7 @@ const RegisterDomainStep = React.createClass( {
 
 				this.setState( {
 					searchResults: suggestions,
-					loadingResults: false
+					loadingResults: false,
 				}, this.save );
 			}
 		);
@@ -573,6 +573,6 @@ module.exports = connect( ( state, props ) => {
 	return {
 		currentUser: getCurrentUser( state ),
 		defaultSuggestions: getDomainsSuggestions( state, queryObject ),
-		defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject )
+		defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
 	};
 } )( localize( RegisterDomainStep ) );
