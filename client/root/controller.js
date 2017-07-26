@@ -12,7 +12,7 @@ import { getSavedPath } from 'lib/restore-last-path';
 
 const debug = debugFactory( 'calypso:restore-last-location' );
 
-function sessionRestore( context, next ) {
+export function sessionRestore( context, next ) {
 	const querystring = get( context, 'querystring', '' );
 	if ( querystring.length ) {
 		debug( 'cannot restore: has query string' );
@@ -30,7 +30,3 @@ function sessionRestore( context, next ) {
 			next();
 		} );
 }
-
-export default {
-	sessionRestore,
-};
