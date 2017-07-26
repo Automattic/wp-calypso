@@ -32,12 +32,13 @@ import TableItem from 'woocommerce/components/table/table-item';
 
 class Orders extends Component {
 	componentDidMount() {
-		const { siteId, currentPage, currentSearch, currentStatus } = this.props;
+		const { siteId, currentStatus } = this.props;
 		const query = {
-			page: currentPage,
-			search: currentSearch,
+			page: 1,
+			search: '',
 			status: currentStatus,
 		};
+		this.props.updateCurrentOrdersQuery( this.props.siteId, { page: 1, search: '' } );
 		if ( siteId ) {
 			this.props.fetchOrders( siteId, query );
 		}
