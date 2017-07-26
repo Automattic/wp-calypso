@@ -86,6 +86,7 @@ class ReaderStream extends React.Component {
 		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
 		shouldCombineCards: PropTypes.bool,
+		useCompactCards: PropTypes.bool,
 		transformStreamItems: PropTypes.func,
 		isMain: PropTypes.bool,
 	};
@@ -103,6 +104,7 @@ class ReaderStream extends React.Component {
 		shouldCombineCards: true,
 		transformStreamItems: identity,
 		isMain: true,
+		useCompactCards: false,
 	};
 
 	getStateFromStores( props = this.props ) {
@@ -434,6 +436,7 @@ class ReaderStream extends React.Component {
 				index={ index }
 				selectedPostKey={ selectedPostKey }
 				recStoreId={ recStoreId }
+				compact={ this.props.useCompactCards }
 			/>
 		);
 	};
