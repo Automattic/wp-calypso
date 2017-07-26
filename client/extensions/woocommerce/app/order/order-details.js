@@ -91,7 +91,7 @@ class OrderDetails extends Component {
 
 		return (
 			<div className="order__details">
-				<SectionHeader label={ translate( 'Order Details' ) }>
+				<SectionHeader label={ translate( 'Order Details %(orderId)s', { args: { orderId: `#${ order.id }` } } ) }>
 					<span>{ this.renderStatus() }</span>
 				</SectionHeader>
 				<Card className="order__details-card">
