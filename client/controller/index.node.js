@@ -43,3 +43,7 @@ export function redirectLoggedIn( { isLoggedIn, res }, next ) {
 
 	next();
 }
+
+export function restoreLastSession() {
+	return false;
+}
