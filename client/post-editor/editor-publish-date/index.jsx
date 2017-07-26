@@ -80,7 +80,7 @@ export class EditorPublishDate extends React.Component {
 		}
 
 		if ( isBackDated ) {
-			return this.props.translate( 'Back-date' );
+			return this.props.translate( 'Backdate' );
 		}
 
 		return this.props.translate( 'Publish Immediately' );
