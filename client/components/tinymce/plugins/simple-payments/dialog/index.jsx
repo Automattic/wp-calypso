@@ -29,7 +29,10 @@ import {
 	customPostToProduct,
 	productToCustomPost,
 } from 'state/data-layer/wpcom/sites/simple-payments/index.js';
-import { receiveUpdateProduct } from 'state/simple-payments/product-list/actions';
+import {
+	receiveUpdateProduct,
+	receiveDeleteProduct,
+} from 'state/simple-payments/product-list/actions';
 
 class SimplePaymentsDialog extends Component {
 	static propTypes = {
@@ -174,6 +177,20 @@ class SimplePaymentsDialog extends Component {
 			.then( () => this.setIsSubmitting( false ) );
 	};
 
+	trashPaymentButton = paymentId => {
+		this.setIsSubmitting( true );
+
+		const { siteId, dispatch, translate } = this.props;
+
+		wpcom
+			.site( siteId )
+			.post( paymentId )
+			.delete()
+			.then( () => dispatch( receiveDeleteProduct( siteId, paymentId ) ) )
+			.catch( () => this.showError( translate( 'The payment button could not be deleted.' ) ) )
+			.then( () => this.setIsSubmitting( false ) );
+	};
+
 	getActionButtons() {
 		const { translate } = this.props;
 		const { activeTab, isSubmitting } = this.state;
@@ -234,6 +251,7 @@ class SimplePaymentsDialog extends Component {
 							paymentButtons={ paymentButtons }
 							selectedPaymentId={ this.state.selectedPaymentId }
 							onSelectedChange={ this.handleSelectedChange }
+							onTrashClick={ this.trashPaymentButton }
 						/> }
 			</Dialog>
 		);
