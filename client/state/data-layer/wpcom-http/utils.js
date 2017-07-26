@@ -67,26 +67,28 @@ export const getProgress = action => get( action, 'meta.dataLayer.progress', nul
  *   onProgress :: ReduxStore -> Action -> Dispatcher -> ProgressData
  *
  * @param {Function} initiator called if action lacks response meta; should create HTTP request
- * @param {Function} onSuccess called if the action meta includes response data
- * @param {Function} onError called if the action meta includes error data
+ * @param {Function} [onSuccess] called if the action meta includes response data. The default
+ *                                behavior of this optional handler is to call `next( action )`
+ * @param {Function} [onError] called if the action meta includes error data. The default
+ *                                behavior of this optional handler is to call `next( action )`
  * @param {Function} [onProgress] called on progress events when uploading. The default
- *                                behavior of this optional handler is to do nothing.
+ *                                behavior of this optional handler is to call `next( action )`
  * @returns {?*} please ignore return values, they are undefined
  */
 export const dispatchRequest = ( initiator, onSuccess, onError, onProgress = noop ) => ( store, action, next ) => {
 	const error = getError( action );
 	if ( error ) {
-		return onError( store, action, next, error );
+		return ( onError ? onError( store, action, next, error ) : next( action ) );
 	}
 
 	const data = getData( action );
 	if ( data ) {
-		return onSuccess( store, action, next, data );
+		return ( onSuccess ? onSuccess( store, action, next, data ) : next( action ) );
 	}
 
 	const progress = getProgress( action );
 	if ( progress ) {
-		return onProgress( store, action, next, progress );
+		return ( onProgress ? onProgress( store, action, next, progress ) : next( action ) );
 	}
 
 	return initiator( store, action, next );
