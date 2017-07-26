@@ -79,22 +79,3 @@ function render( context ) {
 		document.getElementById( 'wpcom' )
 	);
 }
-
-let isFirstRun = true;
-export function restoreLastSession( currentPath ) {
-	console.log( 'restoreLastSession' );
-
-	if ( ! isFirstRun ) {
-		console.log( 'not first run, skipping' );
-		return false;
-	}
-
-	isFirstRun = false;
-	if ( currentPath === '/' && localStorage.lastPath ) {
-		console.log( 'redir to', localStorage.lastPath );
-		page( localStorage.lastPath );
-		return true;
-	}
-
-	return false;
-}

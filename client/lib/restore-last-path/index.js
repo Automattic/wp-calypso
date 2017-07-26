@@ -1,12 +1,16 @@
 /**
- * Internal dependencies
- */
-import localforage from 'lib/localforage';
-
-/**
  * External dependencies
  */
+import debugFactory from 'debug';
+import page from 'page';
+import store from 'store';
+
+/**
+ * Internal dependencies
+ */
 import { isOutsideCalypso } from 'lib/url';
+
+const debug = debugFactory( 'calypso:restore-last-path' );
 
 const LAST_PATH = 'last_path';
 const ALLOWED_PATHS_FOR_RESTORING = /^\/(read|stats|plans|view|posts|pages|media|types|themes|sharing|people|plugins|domains)/i;
@@ -16,7 +20,7 @@ function isWhitelistedForRestoring( path ) {
 }
 
 function readLastPath() {
-	return localforage.getItem( LAST_PATH );
+	return store.get( LAST_PATH );
 }
 
 // Throws an Error when no path or an invalid path is provided
@@ -35,17 +39,16 @@ function validatePath( path ) {
 }
 
 function getSavedPath() {
-	return new Promise( ( resolve, reject ) => {
-		readLastPath()
-			.then( ( lastPath ) => {
-				validatePath( lastPath );
-				resolve( lastPath );
-			} )
-			.catch( ( reason ) => reject( reason ) );
-	} );
+	const lastPath = readLastPath();
+	try {
+		validatePath( lastPath );
+		return lastPath;
+	} catch ( e ) {
+		debug( e );
+	}
 }
 
-function savePath( path ) {
+export function savePath( path ) {
 	return new Promise( ( resolve, reject ) => {
 		try {
 			validatePath( path );
@@ -53,19 +56,32 @@ function savePath( path ) {
 			return reject( e );
 		}
 
-		readLastPath()
-			.then( ( lastPath ) => {
-				if ( lastPath === path ) {
-					return reject( 'path is identical' );
-				}
-				localforage.setItem( LAST_PATH, path ).then( () => resolve() );
-			} )
-			.catch( ( reason ) => reject( reason ) );
+		const lastPath = readLastPath();
+		if ( lastPath === path ) {
+			return reject( 'path is identical' );
+		}
+		store.set( LAST_PATH, path );
+		resolve();
 	} );
 }
 
-export default {
-	isWhitelistedForRestoring,
-	getSavedPath,
-	savePath,
-};
+let isFirstRun = true;
+export function restoreLastSession( currentPath ) {
+	console.log( 'restoreLastSession' );
+
+	if ( ! isFirstRun ) {
+		console.log( 'not first run, skipping' );
+		return false;
+	}
+
+	const lastPath = getSavedPath();
+	console.log( 'found', lastPath );
+	isFirstRun = false;
+	if ( currentPath === '/' && lastPath ) {
+		console.log( 'redir to', lastPath );
+		page( lastPath );
+		return true;
+	}
+
+	return false;
+}

@@ -7,9 +7,7 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	savePath,
-} from 'lib/restore-last-path';
+import { savePath } from 'lib/restore-last-path';
 import { ROUTE_SET } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:restore-last-location' );

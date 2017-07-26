@@ -14,6 +14,7 @@ function getSectionsModule( sections ) {
 			"\tactivateNextLayoutFocus = require( 'state/ui/layout-focus/actions' ).activateNextLayoutFocus,",
 			"\tLoadingError = require( 'layout/error' ),",
 			"\tcontroller = require( 'controller' ),",
+			"\trestoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,",
 			"\tpreloadHub = require( 'sections-preload' ).hub;",
 			'\n',
 			'var _loadedSections = {};\n'
@@ -94,7 +95,7 @@ function splitTemplate( path, section ) {
 		'		return next();',
 		'	}',
 		'	console.log( "path is", context.path );',
-		'	if ( controller.restoreLastSession( context.path ) ) {',
+		'	if ( restoreLastSession( context.path ) ) {',
 		'		return;',
 		'	}',
 		'	console.log( "moving on" );',
