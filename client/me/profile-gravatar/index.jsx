@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -13,12 +12,7 @@ import Animate from 'components/animate';
 import Gravatar from 'components/gravatar';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-const debug = debugFactory( 'calypso:me:sidebar-gravatar' );
-
 class ProfileGravatar extends Component {
-	componentDidMount() {
-		debug( 'The ProfileGravatar component is mounted.' );
-	}
 
 	recordGravatarMisclick = () => {
 		this.props.recordGoogleEvent( 'Me',
