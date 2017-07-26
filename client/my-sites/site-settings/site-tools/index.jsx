@@ -16,7 +16,7 @@ import SectionHeader from 'components/section-header';
 import SiteToolsLink from './link';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSiteAdminUrl } from 'state/sites/selectors';
-import { isVipSite } from 'state/selectors';
+import { isSiteAutomatedTransfer, isVipSite } from 'state/selectors';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
@@ -181,6 +181,7 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSelectedSiteSlug( state );
+		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isVip = isVipSite( state, siteId );
 		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
@@ -202,7 +203,7 @@ export default connect(
 			showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
 			showDeleteContent: ! isJetpack && ! isVip,
 			showDeleteSite: ! isJetpack && ! isVip && sitePurchasesLoaded,
-			showManageConnection: isJetpack,
+			showManageConnection: isJetpack && ! isAtomic,
 		};
 	}
 )( localize( SiteTools ) );
