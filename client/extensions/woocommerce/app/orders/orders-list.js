@@ -241,12 +241,16 @@ export default connect(
 		const currentPage = getOrdersCurrentPage( state, siteId );
 		const currentSearch = getOrdersCurrentSearch( state, siteId );
 		const currentStatus = props.currentStatus || 'any';
-		const total = getTotalOrders( state, { status: currentStatus }, siteId );
 
-		const query = { page: currentPage, search: currentSearch, status: currentStatus };
+		const query = {
+			page: currentPage,
+			search: currentSearch,
+			status: currentStatus,
+		};
 		const orders = getOrders( state, query, siteId );
 		const ordersLoading = areOrdersLoading( state, query, siteId );
 		const ordersLoaded = areOrdersLoaded( state, query, siteId );
+		const total = getTotalOrders( state, query, siteId );
 
 		return {
 			currentPage,
