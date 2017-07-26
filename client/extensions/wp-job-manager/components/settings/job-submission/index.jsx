@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { FormSection, formValueSelector, reduxForm } from 'redux-form';
+import { change, FormSection, formValueSelector, reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 
@@ -25,13 +25,29 @@ const form = 'extensions.wpJobManager.submission';
 
 class JobSubmission extends Component {
 	static propTypes = {
+		change: PropTypes.func,
 		enableRegistration: PropTypes.bool,
+		generateUsername: PropTypes.bool,
 		handleSubmit: PropTypes.func,
 		isFetching: PropTypes.bool,
 		onSubmit: PropTypes.func,
 		submitting: PropTypes.bool,
 		translate: PropTypes.func,
 	};
+
+	componentWillReceiveProps( nextProps ) {
+		const { generateUsername } = nextProps;
+
+		if ( generateUsername === this.props.generateUsername ) {
+			return;
+		}
+
+		if ( ! generateUsername ) {
+			return;
+		}
+
+		this.props.change( 'account.sendPassword', generateUsername );
+	}
 
 	save = section => data => this.props.onSubmit( form, data[ section ] );
 
@@ -89,7 +105,7 @@ class JobSubmission extends Component {
 
 										<ReduxFormToggle
 											disabled={ isDisabled || generateUsername }
-											name="emailPassword"
+											name="sendPassword"
 											text="Email new users a link to set a password" />
 										<FormSettingExplanation isIndented>
 											{ translate( 'Sends an email to the user with their username and a link to set ' +
@@ -253,7 +269,8 @@ const connectComponent = connect(
 		enableRegistration: selector( state, 'account.enableRegistration' ),
 		generateUsername: selector( state, 'account.generateUsername' ),
 		submissionDuration: selector( state, 'duration.submissionDuration' ),
-	} )
+	} ),
+	{ change }
 );
 
 const createReduxForm = reduxForm( {
