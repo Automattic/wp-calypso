@@ -28,6 +28,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import EditorVisibility from 'post-editor/editor-visibility';
+import PostListFetcher from 'components/post-list-fetcher';
 
 export class EditPostStatus extends Component {
 
@@ -147,7 +148,7 @@ export class EditPostStatus extends Component {
 
 					{ fullDate }
 					{ this.renderTZTooltop() }
-					{ this.renderPostSchedulePopover() }
+					{ this.schedulePostPopover() }
 				</span>
 				{
 					isPostPublishFlow
@@ -231,6 +232,32 @@ export class EditPostStatus extends Component {
 		);
 	}
 
+	schedulePostPopover() {
+		const postScheduler = this.renderPostSchedulePopover();
+
+		return (
+			<Popover
+					isVisible={ this.state.showPostSchedulePopover }
+					onClose={ this.togglePostSchedulePopover }
+					position={ 'bottom left' }
+					context={ this.refs && this.refs.postStatusTooltip }
+				>
+				<span className="edit-post-status__post-schedule">
+					{ postUtils.isPage( this.props.post )
+						? postScheduler
+						: <PostListFetcher
+							siteId={ this.props.siteId }
+							status="publish,future"
+							number={ 100 }
+						>
+							{ postScheduler }
+						</PostListFetcher>
+					}
+				</span>
+			</Popover>
+		);
+	}
+
 	renderPostSchedulePopover() {
 		const tz = siteUtils.timezone( this.props.site ),
 			gmt = siteUtils.gmtOffset( this.props.site ),
@@ -239,22 +266,14 @@ export class EditPostStatus extends Component {
 				: null;
 
 		return (
-			<Popover
-				context={ this.refs && this.refs.postStatusTooltip }
-				isVisible={ this.state.showPostSchedulePopover }
-				position="bottom left"
-				onClose={ this.togglePostSchedulePopover }
-			>
-				<div className="edit-post-status__post-schedule">
-					<AsyncLoad
-						require="components/post-schedule"
-						selectedDay={ selectedDay }
-						timezone={ tz }
-						gmtOffset={ gmt }
-						onDateChange={ this.props.setPostDate }
-					/>
-				</div>
-			</Popover>
+			<AsyncLoad
+				require="components/post-schedule"
+				selectedDay={ selectedDay }
+				timezone={ tz }
+				gmtOffset={ gmt }
+				onDateChange={ this.props.setPostDate }
+				site={ this.props.site }
+			/>
 		);
 	}
 
