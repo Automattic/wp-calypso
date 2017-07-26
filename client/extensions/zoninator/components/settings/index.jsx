@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -9,11 +9,9 @@ import { localize } from 'i18n-calypso';
  */
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
-import Navigation from '../navigation';
 
 const Settings = ( {
 	children,
-	tab,
 	translate
 } ) => {
 	const mainClassName = 'zoninator__main';
@@ -21,18 +19,9 @@ const Settings = ( {
 	return (
 		<Main className={ mainClassName }>
 			<DocumentHead title={ translate( 'WP Zone Manager' ) } />
-			<Navigation activeTab={ tab } />
 			{ children }
 		</Main>
 	);
-};
-
-Settings.propTypes = {
-	tab: PropTypes.string,
-};
-
-Settings.defaultProps = {
-	tab: '',
 };
 
 export default localize( Settings );
