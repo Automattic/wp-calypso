@@ -2,6 +2,10 @@ export function isProductsListFetching( state ) {
 	return state.productsList.isFetching;
 }
 
+export function getProductsList( state ) {
+	return state.productsList.items;
+}
+
 /**
  * Returns the display price of a product
  *

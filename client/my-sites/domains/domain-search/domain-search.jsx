@@ -22,6 +22,7 @@ import { currentUserHasFlag } from 'state/current-user/selectors';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
+import { getProductsList } from 'state/products-list/selectors';
 import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
 
 class DomainSearch extends Component {
@@ -154,7 +155,7 @@ export default connect(
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 		isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
-		productsList: state.productsList.items,
+		productsList: getProductsList( state )
 	} ),
 	{
 		recordAddDomainButtonClick,
