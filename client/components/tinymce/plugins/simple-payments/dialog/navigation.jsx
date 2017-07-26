@@ -13,7 +13,7 @@ import Button from 'components/button';
 
 class SimplePaymentsDialogNavigation extends Component {
 	static propTypes = {
-		activeTab: PropTypes.oneOf( [ 'paymentButtons', 'addNew' ] ).isRequired,
+		activeTab: PropTypes.oneOf( [ 'list', 'form' ] ).isRequired,
 		onChangeTabs: PropTypes.func.isRequired,
 		paymentButtons: PropTypes.array.isRequired,
 	};
@@ -25,7 +25,7 @@ class SimplePaymentsDialogNavigation extends Component {
 
 		const classNames = 'editor-simple-payments-modal__navigation';
 
-		if ( activeTab === 'addNew' ) {
+		if ( activeTab === 'form' ) {
 			if ( ! paymentButtons.length ) {
 				// We are on "Add New" view without previously made payment buttons.
 				return null;
@@ -35,7 +35,7 @@ class SimplePaymentsDialogNavigation extends Component {
 			return (
 				<HeaderCake
 					className={ classNames }
-					onClick={ this.onChangeTabs( 'paymentButtons' ) }
+					onClick={ this.onChangeTabs( 'list' ) }
 					backText={ translate( 'Payment Buttons' ) }
 				/>
 			);
@@ -48,7 +48,7 @@ class SimplePaymentsDialogNavigation extends Component {
 				label={ translate( 'Payment Buttons' ) }
 				count={ paymentButtons.length }
 			>
-				<Button compact onClick={ this.onChangeTabs( 'addNew' ) }>
+				<Button compact onClick={ this.onChangeTabs( 'form' ) }>
 					{ translate( '+ Add New' ) }
 				</Button>
 			</SectionHeader>
