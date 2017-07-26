@@ -25,16 +25,6 @@
 		border-top: solid 1px $gray-light;
 		padding: 10px 15px;
 	}
-
-	&.is-placeholder {
-		cursor: default;
-		@include placeholder(23%);
-		height: 140px;
-
-		@include breakpoint( '>480px' ) {
-			height: 375px;
-		}
-	}
 }
 
 .site-or-domain__button {
@@ -46,6 +36,10 @@
 
 	.button {
 		text-transform: uppercase;
+
+		&.site-or-domain__is-placeholder {
+			width: 90%;
+		}
 	}
 }
 
@@ -55,6 +49,10 @@
 
 .site-or-domain__choice-text {
 	color: $gray-dark;
+
+	p {
+		min-height: 105px;
+	}
 }
 
 @include breakpoint( ">480px" ) {
@@ -78,4 +76,8 @@
 		display: flex;
 		flex-direction: column-reverse;
 	}
+}
+
+.site-or-domain__is-placeholder {
+	@include placeholder(23%);
 }

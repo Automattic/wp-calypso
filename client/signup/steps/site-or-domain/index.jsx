@@ -21,20 +21,17 @@ import ExistingSite from 'signup/steps/design-type-with-store/existing-site';
 import NavigationLink from 'signup/navigation-link';
 import QueryProductsList from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';
+import { getTld } from 'lib/domains';
 
 class SiteOrDomain extends Component {
 	getDomainProductSlug( domain ) {
-		const domainParts = domain.split( '.' );
-		const tld = domainParts.slice( 1 ).join( '.' );
+		const tld = getTld( domain );
 
-		let productSlug = null;
 		if ( includes( [ 'com', 'net', 'org' ], tld ) ) {
-			productSlug = 'domain_reg';
-		} else {
-			productSlug = `dot${ tld }_domain`;
+			return 'domain_reg';
 		}
 
-		return productSlug;
+		return `dot${ tld }_domain`;
 	}
 
 	getDomainName() {
@@ -94,15 +91,13 @@ class SiteOrDomain extends Component {
 	}
 
 	renderChoices() {
-		const productsLoaded = ! isEmpty( this.props.productsList );
-
 		return (
 			<div className="site-or-domain__choices">
 				{ this.getChoices().map( ( choice, index ) => (
 					<SiteOrDomainChoice
 						choice={ choice }
 						handleClickChoice={ this.handleClickChoice }
-						isPlaceholder={ ! productsLoaded }
+						isPlaceholder={ ! this.props.productsLoaded }
 						key={ `site-or-domain-choice-${ index }` }
 					/>
 				) ) }
@@ -128,11 +123,9 @@ class SiteOrDomain extends Component {
 	}
 
 	renderScreen() {
-		const productsLoaded = ! isEmpty( this.props.productsList );
-
 		return (
 			<div>
-				{ ! productsLoaded && <QueryProductsList /> }
+				{ ! this.props.productsLoaded && <QueryProductsList /> }
 				{ this.renderChoices() }
 				{ this.renderBackLink() }
 			</div>
@@ -182,13 +175,12 @@ class SiteOrDomain extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
-		const productsLoaded = ! isEmpty( this.props.productsList );
+		const { translate, productsLoaded } = this.props;
 
 		if ( productsLoaded && ! this.getDomainName() ) {
 			const headerText = translate( 'Unsupported domain.' );
 			const subHeaderText = translate(
-				'Please visit {{a}}wordpress.com/domains{{/a}} to search for another domain.',
+				'Please visit {{a}}wordpress.com/domains{{/a}} to search for a domain.',
 				{
 					components: {
 						a: <a href={ 'https://wordpress.com/domains' } />
@@ -226,9 +218,13 @@ class SiteOrDomain extends Component {
 
 export default connect(
 	( state ) => {
+		const productsList = getProductsList( state );
+		const productsLoaded = ! isEmpty( productsList );
+
 		return {
 			isLoggedIn: !! getCurrentUserId( state ),
-			productsList: getProductsList( state )
+			productsList,
+			productsLoaded,
 		};
 	}
 )( localize( SiteOrDomain ) );
