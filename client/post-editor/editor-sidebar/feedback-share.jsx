@@ -53,8 +53,9 @@ export class FeedbackShare extends PureComponent {
 							{ translate( 'No feedback yet.' ) }
 						</p>
 					: comments.map(
-							// NOTE: It should be OK to use the index for `key` because
-							// the list is currently append-only
+							// NOTE: Using the list index is best here because comment text _can_
+							// be identical across comments. It's breaking a rule, but here it's
+							// appropriate.
 							( comment, index ) =>
 								<p key={ index } className="editor-sidebar__feedback-share-comment">
 									{ comment }
