@@ -49,8 +49,11 @@ export const saveSettings = ( { dispatch, getState }, action ) => {
 };
 
 export const announceSuccess = ( { dispatch }, { form, siteId }, next, { data } ) => {
-	dispatch( initialize( form, fromApi( data ) ) );
+	const updatedData = fromApi( data );
+
 	dispatch( stopSave( form ) );
+	dispatch( initialize( form, updatedData ) );
+	dispatch( updateSettings( siteId, updatedData ) );
 	dispatch( successNotice( translate(
 		'Settings saved!' ),
 		{ id: 'wpjm-settings-save' }
