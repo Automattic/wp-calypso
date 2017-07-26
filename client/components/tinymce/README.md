@@ -52,64 +52,13 @@ Many TinyMCE events can be hooked by passing its equivalent event name from the 
 
 Other props are defined in detail below:
 
-### `mode`
-
-<table>
-	<tr><th>Type</th><td>String</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
-	<tr><th>Default</th><td><code>"tinymce"</code></td></tr>
-	<tr>
-		<th>Supported</th>
-		<td>
-			<ul>
-				<li><code>"tinymce"</code></li>
-				<li><code>"html"</code></li>
-			</ul>
-		</td>
-	</tr>
-</table>
-
-The editor can be toggled between two modes, `tinymce` and `html`. The `tinymce` mode will be rendered as the visual WYSIWYG editor. The `html` mode is rendered as a `<textarea>` element.
-
-### `isNew`
-
-<table>
-	<tr><th>Type</th><td>Boolean</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
-	<tr><th>Default</th><td><code>false</code></td></tr>
-</table>
-
-Controls whether the editor instance should be autofocussed when initialized.
-
-### `tabIndex`
-
-<table>
-	<tr><th>Type</th><td>Number</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
-	<tr><th>Default</th><td><code>null</code></td></tr>
-</table>
-
-Controls the `tabindex` attribute of both the TinyMCE visual editor and the `<textarea>` element.
-
-### `onTextEditorChange`
-
-<table>
-	<tr><th>Type</th><td>Function</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
-	<tr><th>Default</th><td><code>null</code></td></tr>
-</table>
-
-If defined, a function to be triggered when the contents of the `<textarea>` element change.
-
-### `onTogglePin`
-
-<table>
-	<tr><th>Type</th><td>Function</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
-	<tr><th>Default</th><td><code>null</code></td></tr>
-</table>
-
-If defined, a function to be triggered when the visual editor toolbar is pinned to the top of the screen. Currently, any instance of `<TinyMCE />` is hard-coded to pin its toolbar to the top of the viewport on larger displays when the Calypso master bar bumps against the top of the toolbar. The function should expect to be passed a string argument, `"pin"` or `"unpinned"`, when the toolbar is pinned or unpinned respectively.
+| property             | type                           | required | default     | comment |
+| -------------------- | ------------------------------ | -------- | ----------- | ------- |
+| `mode`               | String (`"tinymce"`, `"html"`) | no       | `"tinymce"` | The editor can be toggled between two modes, `tinymce` and `html`. The `tinymce` mode will be rendered as the visual WYSIWYG editor. The `html` mode is rendered as a `<textarea>` element. |
+| `isNew`              | Boolean                        | no       | `false`     | Controls whether the editor instance should be autofocused when initialized. |
+| `tabIndex`           | Number                         | no       | `null`      | Controls the `tabindex` attribute of both the TinyMCE visual editor and the `<textarea>` element. |
+| `onTextEditorChange` | Function                       | no       | `null`      | If defined, a function to be triggered when the contents of the `<textarea>` element change. |
+| `onTogglePin`        | Function                       | no       | `null`      | If defined, a function to be triggered when the visual editor toolbar is pinned to the top of the screen. Currently, any instance of `<TinyMCE />` is hard-coded to pin its toolbar to the top of the viewport on larger displays when the Calypso master bar bumps against the top of the toolbar. The function should expect to be passed a string argument, `"pin"` or `"unpinned"`, when the toolbar is pinned or unpinned respectively. |
 
 ## Plugins
 
