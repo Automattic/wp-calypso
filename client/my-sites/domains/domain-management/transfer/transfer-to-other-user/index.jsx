@@ -30,7 +30,6 @@ import DesignatedAgentNotice from 'my-sites/domains/domain-management/components
 const wpcom = wp.undocumented();
 
 class TransferOtherUser extends React.Component {
-
 	static propTypes = {
 		domains: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,

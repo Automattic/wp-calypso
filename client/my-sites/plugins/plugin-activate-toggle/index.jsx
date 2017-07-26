@@ -66,12 +66,12 @@ export class PluginActivateToggle extends Component {
 		return (
 			<span className="plugin-activate-toggle__link">
 				<a onClick={ this.trackManageConnectionLink }
-					href={ '/settings/general/' + site.slug } >
+					href={ '/settings/manage-connection/' + site.slug } >
 					{ translate( 'Manage Connection', { comment: 'manage Jetpack connnection settings link' } ) }
 				</a>
 				<a className="plugin-activate-toggle__icon"
 					onClick={ this.trackManageConnectionLink }
-					href={ '/settings/general/' + site.slug } >
+					href={ '/settings/manage-connection/' + site.slug } >
 					<Gridicon icon="cog" size={ 18 } />
 				</a>
 			</span>

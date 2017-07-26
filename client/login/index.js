@@ -17,7 +17,7 @@ export default router => {
 
 	if ( config.isEnabled( 'login/wp-login' ) ) {
 		router(
-			'/log-in/:twoFactorAuthType(authenticator|backup|sms|push)?/:lang?',
+			'/log-in/:twoFactorAuthType(authenticator|backup|sms|push)?/:socialConnect(social-connect)?/:lang?',
 			setUpLocale,
 			login,
 			makeLayout,

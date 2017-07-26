@@ -111,6 +111,18 @@
 		line-height: (32 / 24) * 1em;
 		font-family: $serif;
 		font-weight: 700;
+		clear: right;
+	}
+
+
+	.post-format__icon {
+		float: left;
+		margin-top: 4px;
+
+		.gridicon {
+			color: $gray-text-min;
+			margin-right: 6px;
+		}
 	}
 
 	.post__excerpt {
@@ -380,7 +392,7 @@
 	margin-top: -4px;
 }
 
-.post .comments__view-earlier {
+.post .comments__view-more {
 	margin-top: 15px;
 }
 

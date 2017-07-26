@@ -21,8 +21,6 @@ import {
 import {
 	fetchError,
 	fetchSettings,
-	saveError,
-	saveSuccess,
 	updateSettings,
 } from 'wp-job-manager/state/settings/actions';
 
@@ -96,6 +94,11 @@ describe( '#updateExtensionSettings', () => {
 				hideExpiredContent: undefined
 			},
 			method: { applicationMethod: undefined },
+			pages: {
+				dashboardPage: undefined,
+				listingsPage: undefined,
+				submitFormPage: undefined,
+			},
 			types: {
 				enableTypes: undefined,
 				multiJobType: undefined
@@ -143,14 +146,6 @@ describe( '#saveSettings()', () => {
 } );
 
 describe( '#announceSuccess()', () => {
-	it( 'should dispatch `saveSuccess`', () => {
-		const dispatch = sinon.spy();
-
-		announceSuccess( { dispatch }, saveAction );
-
-		expect( dispatch ).to.have.been.calledWith( saveSuccess( '101010' ) );
-	} );
-
 	it( 'should dispatch `successNotice`', () => {
 		const dispatch = sinon.spy();
 
@@ -164,14 +159,6 @@ describe( '#announceSuccess()', () => {
 } );
 
 describe( '#announceFailure()', () => {
-	it( 'should dispatch `saveError`', () => {
-		const dispatch = sinon.spy();
-
-		announceFailure( { dispatch }, saveAction );
-
-		expect( dispatch ).to.have.been.calledWith( saveError( '101010' ) );
-	} );
-
 	it( 'should dispatch `errorNotice`', () => {
 		const dispatch = sinon.spy();
 

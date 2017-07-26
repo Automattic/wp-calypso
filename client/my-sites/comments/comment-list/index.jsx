@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, keyBy, keys, map, noop, omit, size } from 'lodash';
+import { find, get, keyBy, keys, map, noop, omit, size, uniq } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -12,6 +12,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
  */
 import {
 	changeCommentStatus,
+	deleteComment,
 	likeComment,
 	replyComment,
 	unlikeComment,
@@ -54,12 +55,17 @@ export class CommentList extends Component {
 
 	state = {
 		isBulkEdit: false,
+		persistedComments: [],
+		// TODO: replace {} with [] after persistedComments is merged
 		selectedComments: {},
 	};
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.status !== nextProps.status ) {
-			this.setState( { selectedComments: {} } );
+			this.setState( {
+				persistedComments: [],
+				selectedComments: {},
+			} );
 		}
 	}
 
@@ -70,12 +76,14 @@ export class CommentList extends Component {
 
 	deleteCommentPermanently = ( commentId, postId ) => {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
-		this.showNotice( commentId, postId, 'delete', 'trash' );
 
 		this.props.deleteComment( commentId, postId );
 	}
 
-	getComment = commentId => find( this.props.comments, [ 'ID', commentId ] );
+	// TODO: remove after persistedComments is merged
+	getComment = commentId => find( this.getComments(), [ 'ID', commentId ] );
+
+	getComments = () => uniq( [ ...this.state.persistedComments, ...this.props.comments ] ).sort( ( a, b ) => b - a );
 
 	getEmptyMessage = () => {
 		const { status, translate } = this.props;
@@ -91,13 +99,27 @@ export class CommentList extends Component {
 		}, status, [ '', '' ] );
 	}
 
+	isCommentPersisted = commentId => -1 !== this.state.persistedComments.indexOf( commentId );
+
+	// TODO: replace with array logic after persistedComments is merged
 	isCommentSelected = commentId => !! this.state.selectedComments[ commentId ];
 
-	isSelectedAll = () => this.props.comments.length === size( this.state.selectedComments );
+	isSelectedAll = () => this.getComments().length === size( this.state.selectedComments );
 
-	replyComment = ( commentText, postId, parentCommentId, options = { alsoApprove: false } ) => {
+	removeFromPersistedComments = commentId => this.setState(
+		( { persistedComments } ) => ( {
+			persistedComments: persistedComments.filter( c => c !== commentId ),
+		} )
+	);
+
+	replyComment = ( commentText, parentComment ) => {
 		const { translate } = this.props;
-		const { alsoApprove } = options;
+		const {
+			commentId: parentCommentId,
+			postId,
+			status,
+		} = parentComment;
+		const alsoApprove = 'approved' !== status;
 
 		this.props.removeNotice( `comment-notice-${ parentCommentId }` );
 
@@ -112,13 +134,14 @@ export class CommentList extends Component {
 		};
 
 		if ( alsoApprove ) {
-			this.setCommentStatus( parentCommentId, postId, 'approved', { showNotice: false } );
+			this.setCommentStatus( parentComment, 'approved', { doPersist: true, showNotice: false } );
 		}
 
 		this.props.createNotice( 'is-success', noticeMessage, noticeOptions );
 		this.props.replyComment( commentText, postId, parentCommentId );
 	}
 
+	// TODO: rewrite after persistedComments is merged
 	setBulkStatus = status => () => {
 		this.props.removeNotice( 'comment-notice-bulk' );
 
@@ -132,18 +155,20 @@ export class CommentList extends Component {
 		} );
 	};
 
-	setCommentStatus = ( commentId, postId, status, options = { showNotice: true } ) => {
-		// TODO: Replace with Redux getComment()
-		const comment = this.getComment( commentId );
+	setCommentStatus = ( comment, status, options = { isUndo: false, doPersist: false, showNotice: true } ) => {
+		const { commentId, postId } = comment;
+		const { isUndo, doPersist, showNotice } = options;
 
-		if ( comment && status === comment.status ) {
-			return;
+		if ( doPersist ) {
+			this.updatePersistedComments( commentId, isUndo );
+		} else {
+			this.removeFromPersistedComments( commentId );
 		}
 
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 
-		if ( options.showNotice ) {
-			this.showNotice( commentId, postId, status, comment.status );
+		if ( showNotice ) {
+			this.showNotice( comment, status, { doPersist } );
 		}
 
 		this.props.changeCommentStatus( commentId, postId, status );
@@ -154,6 +179,7 @@ export class CommentList extends Component {
 		}
 	}
 
+	// TODO: rewrite after persistedComments is merged
 	showBulkNotice = ( newStatus, selectedComments ) => {
 		const { translate } = this.props;
 
@@ -184,54 +210,66 @@ export class CommentList extends Component {
 		this.props.createNotice( type, message, options );
 	}
 
-	showNotice = ( commentId, postId, newStatus, previousStatus ) => {
+	showNotice = ( comment, newStatus, options = { doPersist: false } ) => {
 		const { translate } = this.props;
+		const {
+			commentId,
+			isLiked: previousIsLiked,
+			postId,
+			status: previousStatus,
+		} = comment;
 
 		const [ type, message ] = get( {
 			approved: [ 'is-success', translate( 'Comment approved.' ) ],
 			unapproved: [ 'is-info', translate( 'Comment unapproved.' ) ],
 			spam: [ 'is-warning', translate( 'Comment marked as spam.' ) ],
 			trash: [ 'is-error', translate( 'Comment moved to trash.' ) ],
-			'delete': [ 'is-error', translate( 'Comment deleted permanently.' ) ],
 		}, newStatus, [ null, null ] );
 
 		if ( ! type ) {
 			return;
 		}
 
-		const options = Object.assign(
-			{
-				duration: 5000,
-				id: `comment-notice-${ commentId }`,
-				isPersistent: true,
+		const noticeOptions = {
+			button: translate( 'Undo' ),
+			duration: 5000,
+			id: `comment-notice-${ commentId }`,
+			isPersistent: true,
+			onClick: () => {
+				this.setCommentStatus( comment, previousStatus, {
+					isUndo: true,
+					doPersist: options.doPersist,
+					showNotice: false,
+				} );
+				if ( previousIsLiked ) {
+					this.props.likeComment( commentId, postId );
+				}
 			},
-			'delete' !== newStatus && {
-				button: translate( 'Undo' ),
-				onClick: () => this.setCommentStatus( commentId, postId, previousStatus, { showNotice: false } ),
-			}
-		);
+		};
 
-		this.props.createNotice( type, message, options );
+		this.props.createNotice( type, message, noticeOptions );
 	}
 
 	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
 
-	toggleCommentLike = ( commentId, postId ) => {
-		// TODO: Replace with Redux getComment()
-		const comment = find( this.props.comments, [ 'ID', commentId ] );
+	toggleCommentLike = comment => {
+		const { commentId, isLiked, postId, status } = comment;
 
-		if ( 'unapproved' === comment.status ) {
-			this.props.removeNotice( `comment-notice-${ commentId }` );
-			this.setCommentStatus( commentId, postId, 'approved' );
+		if ( isLiked ) {
+			this.props.unlikeComment( commentId, postId );
+			return;
 		}
 
-		if ( comment.i_like ) {
-			this.props.unlikeComment( commentId, postId );
-		} else {
-			this.props.likeComment( commentId, postId );
+		this.props.likeComment( commentId, postId );
+
+		if ( 'unapproved' === status ) {
+			this.props.removeNotice( `comment-notice-${ commentId }` );
+			this.setCommentStatus( comment, 'approved' );
+			this.updatePersistedComments( commentId );
 		}
 	}
 
+	// TODO: rewrite after persistedComments is merged
 	toggleCommentSelected = commentId => {
 		// TODO: Replace with Redux getComment()
 		const { i_like, status } = this.getComment( commentId );
@@ -247,22 +285,35 @@ export class CommentList extends Component {
 		} );
 	}
 
+	// TODO: rewrite after persistedComments is merged
 	toggleSelectAll = () => {
 		this.setState( {
 			selectedComments: this.isSelectedAll()
 				? {}
-				: keyBy( map( this.props.comments, ( { ID, i_like, status } ) => ( { ID, i_like, status } ) ), 'ID' ),
+				: keyBy( map( this.getComments(), ( { ID, i_like, status } ) => ( { ID, i_like, status } ) ), 'ID' ),
 		} );
 	}
 
+	// TODO: rewrite after persistedComments is merged
 	undoBulkStatus = selectedComments => {
 		this.props.removeNotice( 'comment-notice-bulk' );
 		this.props.undoBulkStatus( selectedComments );
 	}
 
+	updatePersistedComments = ( commentId, isUndo ) => {
+		if ( isUndo ) {
+			this.removeFromPersistedComments( commentId );
+		} else if ( ! this.isCommentPersisted( commentId ) ) {
+			this.setState(
+				( { persistedComments } ) => ( {
+					persistedComments: persistedComments.concat( commentId ),
+				} )
+			);
+		}
+	}
+
 	render() {
 		const {
-			comments,
 			commentsCount,
 			commentsPage,
 			isLoading,
@@ -274,6 +325,8 @@ export class CommentList extends Component {
 			isBulkEdit,
 			selectedComments,
 		} = this.state;
+
+		const comments = this.getComments();
 
 		const zeroComments = size( comments ) <= 0;
 		const showPlaceholder = ( ! siteId || isLoading ) && zeroComments;
@@ -301,13 +354,13 @@ export class CommentList extends Component {
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-list__transition"
 				>
-					{ map( comments, comment =>
+					{ map( comments, commentId =>
 						<CommentDetail
-							comment={ comment }
+							commentId={ commentId }
 							deleteCommentPermanently={ this.deleteCommentPermanently }
 							isBulkEdit={ isBulkEdit }
-							commentIsSelected={ this.isCommentSelected( comment.ID ) }
-							key={ `comment-${ siteId }-${ comment.ID }` }
+							commentIsSelected={ this.isCommentSelected( commentId ) }
+							key={ `comment-${ siteId }-${ commentId }` }
 							replyComment={ this.replyComment }
 							setCommentStatus={ this.setCommentStatus }
 							siteId={ siteId }
@@ -341,8 +394,8 @@ export class CommentList extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, status } ) => {
-	const comments = getSiteComments( state, siteId, status );
+const mapStateToProps = ( state, { siteId, status, order } ) => {
+	const comments = map( getSiteComments( state, siteId, status, order ), 'ID' );
 	const isLoading = ! hasSiteComments( state, siteId );
 	return {
 		comments,
@@ -355,7 +408,7 @@ const mapStateToProps = ( state, { siteId, status } ) => {
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	changeCommentStatus: ( commentId, postId, status ) => dispatch( changeCommentStatus( siteId, postId, commentId, status ) ),
 	createNotice: ( status, text, options ) => dispatch( createNotice( status, text, options ) ),
-	deleteComment: noop,
+	deleteComment: ( commentId, postId ) => dispatch( deleteComment( siteId, postId, commentId ) ),
 	likeComment: ( commentId, postId ) => dispatch( likeComment( siteId, postId, commentId ) ),
 	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
 	replyComment: ( commentText, postId, parentCommentId ) => dispatch( replyComment( commentText, siteId, postId, parentCommentId ) ),

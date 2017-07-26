@@ -21,25 +21,28 @@ import ReduxFormTextInput from 'components/redux-forms/redux-form-text-input';
 import ReduxFormToggle from 'components/redux-forms/redux-form-toggle';
 import SectionHeader from 'components/section-header';
 
+const form = 'extensions.wpJobManager.jobListings';
+
 class JobListings extends Component {
 	static propTypes = {
 		handleSubmit: PropTypes.func,
-		isDisabled: PropTypes.bool,
-		isSaving: PropTypes.bool,
+		isFetching: PropTypes.bool,
 		onSubmit: PropTypes.func,
+		submitting: PropTypes.bool,
 		translate: PropTypes.func,
 	};
 
-	save = section => data => this.props.onSubmit( data[ section ] );
+	save = section => data => this.props.onSubmit( form, data[ section ] );
 
 	render() {
 		const {
 			handleSubmit,
-			isDisabled,
-			isSaving,
+			isFetching,
 			perPage,
-			translate
+			submitting,
+			translate,
 		} = this.props;
+		const isDisabled = isFetching || submitting;
 
 		return (
 			<div>
@@ -48,7 +51,7 @@ class JobListings extends Component {
 						<SectionHeader label={ translate( 'Listings' ) }>
 							<FormButton compact
 								disabled={ isDisabled }
-								isSubmitting={ isSaving }
+								isSubmitting={ submitting }
 								onClick={ handleSubmit( this.save( 'listings' ) ) } />
 						</SectionHeader>
 						<Card>
@@ -107,7 +110,7 @@ class JobListings extends Component {
 						<SectionHeader label={ translate( 'Categories' ) }>
 							<FormButton compact
 								disabled={ isDisabled }
-								isSubmitting={ isSaving }
+								isSubmitting={ submitting }
 								onClick={ handleSubmit( this.save( 'categories' ) ) } />
 						</SectionHeader>
 						<Card>
@@ -168,7 +171,7 @@ class JobListings extends Component {
 						<SectionHeader label={ translate( 'Types' ) }>
 							<FormButton compact
 								disabled={ isDisabled }
-								isSubmitting={ isSaving }
+								isSubmitting={ submitting }
 								onClick={ handleSubmit( this.save( 'types' ) ) } />
 						</SectionHeader>
 						<Card>
@@ -201,7 +204,7 @@ class JobListings extends Component {
 						<SectionHeader label={ translate( 'Date Format' ) }>
 							<FormButton compact
 								disabled={ isDisabled }
-								isSubmitting={ isSaving }
+								isSubmitting={ submitting }
 								onClick={ handleSubmit( this.save( 'format' ) ) } />
 						</SectionHeader>
 						<Card>
@@ -238,7 +241,7 @@ class JobListings extends Component {
 						<SectionHeader label={ translate( 'Google Maps API Key' ) }>
 							<FormButton compact
 								disabled={ isDisabled }
-								isSubmitting={ isSaving }
+								isSubmitting={ submitting }
 								onClick={ handleSubmit( this.save( 'apiKey' ) ) } />
 						</SectionHeader>
 						<Card>
@@ -272,20 +275,15 @@ class JobListings extends Component {
 	}
 }
 
-const connectComponent = connect(
-	( state ) => {
-		const selector = formValueSelector( 'jobListings', () => state.extensions.wpJobManager.form );
+const selector = formValueSelector( form );
 
-		return {
-			perPage: selector( state, 'listings.perPage' ),
-		};
-	}
+const connectComponent = connect(
+	state => ( { perPage: selector( state, 'listings.perPage' ) } )
 );
 
 const createReduxForm = reduxForm( {
 	enableReinitialize: true,
-	form: 'jobListings',
-	getFormState: state => state.extensions.wpJobManager.form,
+	form,
 } );
 
 export default flowRight(

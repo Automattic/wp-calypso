@@ -8,17 +8,13 @@ import { expect } from 'chai';
 import {
 	WP_JOB_MANAGER_FETCH_ERROR,
 	WP_JOB_MANAGER_FETCH_SETTINGS,
-	WP_JOB_MANAGER_SAVE_ERROR,
 	WP_JOB_MANAGER_SAVE_SETTINGS,
-	WP_JOB_MANAGER_SAVE_SUCCESS,
 	WP_JOB_MANAGER_UPDATE_SETTINGS,
 } from '../../action-types';
 import {
 	fetchError,
 	fetchSettings,
-	saveError,
 	saveSettings,
-	saveSuccess,
 	updateSettings,
 } from '../actions';
 
@@ -65,33 +61,12 @@ describe( 'actions', () => {
 
 	describe( '#saveSettings()', () => {
 		it( 'should return an action object', () => {
-			const action = saveSettings( siteId, settings );
+			const action = saveSettings( siteId, 'form', settings );
 
 			expect( action ).to.deep.equal( {
 				type: WP_JOB_MANAGER_SAVE_SETTINGS,
 				data: settings,
-				siteId,
-			} );
-		} );
-	} );
-
-	describe( '#saveError()', () => {
-		it( 'should return an action object', () => {
-			const action = saveError( siteId );
-
-			expect( action ).to.deep.equal( {
-				type: WP_JOB_MANAGER_SAVE_ERROR,
-				siteId,
-			} );
-		} );
-	} );
-
-	describe( '#saveSuccess()', () => {
-		it( 'should return an action object', () => {
-			const action = saveSuccess( siteId );
-
-			expect( action ).to.deep.equal( {
-				type: WP_JOB_MANAGER_SAVE_SUCCESS,
+				form: 'form',
 				siteId,
 			} );
 		} );

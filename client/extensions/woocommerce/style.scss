@@ -106,20 +106,24 @@
 	.sidebar__menu li {
 		.count {
 			margin: 13px 8px;
-			line-height: 16px;
-			border: 1px solid darken( $sidebar-bg-color, 10% );
-			background-color: $gray-light;
-			color: darken( $gray, 20% );
+			line-height: 18px;
+			border: 0;
+			background-color: $blue-wordpress;
+			color: $white;
+			min-width: 20px;
 		}
 
-		&.selected .count {
-			color: $gray-dark;
-			border: 1px solid darken( $sidebar-selected-color, 10% );
+		&.selected {
+			.count,
+			&:hover .count {
+				color: $gray-dark;
+				background-color: $white;
+			}
 		}
 
 		&:hover .count {
-			background-color: lighten( $sidebar-bg-color, 10% );
-			color: $sidebar-text-color;
+			background-color: $blue-wordpress;
+			color: $white;
 		}
 	}
 }

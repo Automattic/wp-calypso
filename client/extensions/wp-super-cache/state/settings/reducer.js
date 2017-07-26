@@ -5,6 +5,7 @@ import { combineReducers, createReducer } from 'state/utils';
 
 import { itemsSchema } from './schema';
 import {
+	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
 	WP_SUPER_CACHE_RECEIVE_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
@@ -87,8 +88,15 @@ export const restoring = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {Object} Updated settings
  */
-const items = createReducer( {}, {
+export const items = createReducer( {}, {
 	[ WP_SUPER_CACHE_RECEIVE_SETTINGS ]: ( state, { siteId, settings } ) => ( { ...state, [ siteId ]: settings } ),
+	[ WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS ]: ( state, { siteId, preloading } ) => ( {
+		...state,
+		[ siteId ]: {
+			...state[ siteId ],
+			is_preloading: preloading
+		}
+	} )
 }, itemsSchema );
 
 export default combineReducers( {

@@ -41,3 +41,13 @@ The value of the `<input />` element, and the text to be copied when clicking th
 </table>
 
 Whether the children `<input />` and `<button />` should be rendered as `disabled`.
+
+### `hideHttp`
+
+<table>
+	<tr><td>Type</td><td>Boolean</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+	<tr><td>Default</td><td><code>false</code></td></tr>
+</table>
+
+Allows URLs to be shown without `http://` or `https://` while keeping the scheme in the copyable value.

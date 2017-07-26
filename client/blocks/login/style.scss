@@ -54,6 +54,15 @@
 	}
 }
 
+.login__form-terms {
+	font-size: 11px;
+	text-align: center;
+
+	a {
+		white-space: pre;
+	}
+}
+
 .login__social-text {
 	text-align: center;
 }
@@ -120,4 +129,31 @@
 	clear: both;
 	font-size: 11px;
 	padding: 1em 0;
+}
+
+.login__social-connect-prompt-logos {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+}
+
+.login__social-connect-prompt-logo {
+	height: 72px;
+	width: 72px;
+}
+
+.login__social-connect-prompt-dots {
+	margin: 0 5px;
+}
+
+.login__social-connect-prompt-logo.wordpress {
+	color: $blue-wordpress;
+}
+
+.login__social-connect-prompt-message {
+	margin: 20px 0;
+}
+
+.login__social-connect-prompt-action .button {
+	width: 100%;
 }

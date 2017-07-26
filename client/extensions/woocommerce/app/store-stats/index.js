@@ -3,7 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
 import { moment, translate } from 'i18n-calypso';
 
 /**
@@ -21,20 +20,20 @@ import List from './store-stats-list';
 import WidgetList from './store-stats-widget-list';
 import SectionHeader from 'components/section-header';
 import {
-	sparkWidgetList1,
-	sparkWidgetList2,
+	sparkWidgets,
 	topProducts,
 	topCategories,
 	topCoupons,
 	UNITS
 } from 'woocommerce/app/store-stats/constants';
 import { getUnitPeriod, getEndPeriod } from './utils';
-import { isJetpackSite } from 'state/sites/selectors';
-import { isPluginActive } from 'state/selectors';
+import { getJetpackSites } from 'state/selectors';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import QuerySiteStats from 'components/data/query-site-stats';
 
 class StoreStats extends Component {
 	static propTypes = {
-		isWooConnect: PropTypes.bool,
+		jetPackSites: PropTypes.array,
 		path: PropTypes.string.isRequired,
 		queryDate: PropTypes.string,
 		querystring: PropTypes.string,
@@ -44,20 +43,13 @@ class StoreStats extends Component {
 	};
 
 	render() {
-		const { isWooConnect, path, queryDate, selectedDate, siteId, slug, unit, querystring } = this.props;
-
-		// TODO: this is to handle users switching sites while on store stats
-		// unfortunately, we can't access the path when changing sites
-		if ( ! isWooConnect ) {
-			page.redirect( `/stats/day/${ slug }` );
-		}
-
+		const { jetPackSites, path, queryDate, selectedDate, siteId, slug, unit, querystring } = this.props;
 		const unitQueryDate = getUnitPeriod( queryDate, unit );
 		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
 		const endSelectedDate = getEndPeriod( selectedDate, unit );
 		const ordersQuery = {
 			unit,
-			date: queryDate,
+			date: unitQueryDate,
 			quantity: UNITS[ unit ].quantity,
 		};
 		const topQuery = {
@@ -68,32 +60,15 @@ class StoreStats extends Component {
 		const topWidgets = [ topProducts, topCategories, topCoupons ];
 		const widgetPath = `/${ unit }/${ slug }${ querystring ? '?' : '' }${ querystring || '' }`;
 
-		const widgetList1 = (
-			<WidgetList
-				siteId={ siteId }
-				query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
-				selectedDate={ endSelectedDate }
-				statType="statsOrders"
-				widgets={ sparkWidgetList1 }
-			/>
-		);
-		const widgetList2 = (
-			<WidgetList
-				siteId={ siteId }
-				query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
-				selectedDate={ endSelectedDate }
-				statType="statsOrders"
-				widgets={ sparkWidgetList2 }
-			/>
-		);
-
 		return (
 			<Main className="store-stats woocommerce" wideLayout={ true }>
+				<QueryJetpackPlugins siteIds={ jetPackSites.map( site => site.ID ) } />
+				{ siteId && <QuerySiteStats statType="statsOrders" siteId={ siteId } query={ ordersQuery } /> }
 				<div className="store-stats__sidebar-nav"><SidebarNavigation /></div>
 				<Navigation unit={ unit } type="orders" slug={ slug } />
 				<Chart
 					path={ path }
-					query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
+					query={ ordersQuery }
 					selectedDate={ endSelectedDate }
 					siteId={ siteId }
 					unit={ unit }
@@ -117,24 +92,35 @@ class StoreStats extends Component {
 					/>
 				</StatsPeriodNavigation>
 				<div className="store-stats__widgets">
-					<div className="store-stats__widgets-column spark-widgets" key="sparkwidgets">
-						<Module
-							siteId={ siteId }
-							header={ null }
-							emptyMessage={ translate( 'No data found.' ) }
-							query={ Object.assign( {}, ordersQuery, { date: unitQueryDate } ) }
-							statType="statsOrders"
-						>
-							{ widgetList1 }
-							{ widgetList2 }
-						</Module>
-					</div>
+					{ sparkWidgets.map( ( widget, index ) => (
+						<div className="store-stats__widgets-column spark-widgets" key={ index }>
+							<Module
+								siteId={ siteId }
+								emptyMessage={ translate( 'No data found' ) }
+								query={ ordersQuery }
+								statType="statsOrders"
+							>
+								<WidgetList
+									siteId={ siteId }
+									query={ ordersQuery }
+									selectedDate={ endSelectedDate }
+									statType="statsOrders"
+									widgets={ widget }
+								/>
+							</Module>
+						</div>
+					) ) }
 					{ topWidgets.map( widget => {
 						const header = (
 							<SectionHeader href={ widget.basePath + widgetPath } label={ widget.title } />
 						);
 						return (
 							<div className="store-stats__widgets-column" key={ widget.basePath }>
+								{ siteId && <QuerySiteStats
+									statType={ widget.statType }
+									siteId={ siteId }
+									query={ topQuery }
+								/> }
 								<Module
 									siteId={ siteId }
 									header={ header }
@@ -159,13 +145,9 @@ class StoreStats extends Component {
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
-		return {
-			isWooConnect: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
-			slug: getSelectedSiteSlug( state ),
-			siteId,
-		};
-	}
+	state => ( {
+		slug: getSelectedSiteSlug( state ),
+		siteId: getSelectedSiteId( state ),
+		jetPackSites: getJetpackSites( state ),
+	} )
 )( StoreStats );

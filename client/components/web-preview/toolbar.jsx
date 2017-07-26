@@ -121,6 +121,7 @@ class PreviewToolbar extends Component {
 					<ClipboardButtonInput
 						className="web-preview__url-clipboard-input"
 						value={ externalUrl || previewUrl }
+						hideHttp
 					/>
 				}
 				<div className="web-preview__toolbar-actions">

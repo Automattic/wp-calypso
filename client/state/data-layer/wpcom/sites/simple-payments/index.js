@@ -24,6 +24,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
 import { isValidSimplePaymentsProduct } from 'lib/simple-payments/utils';
+import formatCurrency from 'lib/format-currency';
 
 /**
  * Reduce function for product attributes stored in post metadata
@@ -60,12 +61,23 @@ export function customPostToProduct( product ) {
  * @returns { Object } custom post type data
  */
 export function productToCustomPost( product ) {
+	// add formatted_price to display money correctly
+	if ( ! product.formatted_price ) {
+		product.formatted_price = formatCurrency( product.price, product.currency );
+	}
+
 	return Object.keys( product ).reduce(
 		function( payload, current ) {
 			if ( metadataSchema[ current ] ) {
+				let value = product[ current ];
+
+				if ( typeof( value ) === 'boolean' ) {
+					value = value ? 1 : 0;
+				}
+
 				payload.metadata.push( {
 					key: metadataSchema[ current ].metaKey,
-					value: product[ current ]
+					value
 				} );
 			}
 			return payload;

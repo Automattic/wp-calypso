@@ -10,6 +10,7 @@ import { translate } from 'i18n-calypso';
  */
 import config from 'config';
 import {
+	LOGIN_FORM_UPDATE,
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
@@ -19,6 +20,9 @@ import {
 	SOCIAL_CREATE_ACCOUNT_REQUEST,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
+	SOCIAL_CONNECT_ACCOUNT_REQUEST,
+	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
+	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -64,6 +68,15 @@ function getErrorMessageFromErrorCode( code ) {
 	}
 
 	return code;
+}
+
+function getSMSMessageFromResponse( response ) {
+	const phoneNumber = get( response, 'body.data.phone_number' );
+	return translate( 'Message sent to phone number ending in %(phoneNumber)s', {
+		args: {
+			phoneNumber
+		}
+	} );
 }
 
 const errorFields = {
@@ -150,6 +163,17 @@ export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) =
 				rememberMe,
 				data: response.body && response.body.data,
 			} );
+
+			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
+				dispatch( {
+					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+					notice: {
+						message: getSMSMessageFromResponse( response ),
+						status: 'is-success'
+					},
+					twoStepNonce: get( response, 'body.data.two_step_nonce_sms' )
+				} );
+			}
 		} ).catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
 
@@ -236,10 +260,13 @@ export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 		} )
 		.catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
+			error.email = get( httpError, 'response.body.data.email' );
 
 			dispatch( {
 				type: SOCIAL_LOGIN_REQUEST_FAILURE,
 				error,
+				service: service,
+				token: token,
 			} );
 
 			return Promise.reject( error );
@@ -248,7 +275,6 @@ export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 
 /**
  * Attempt to create an account with a social service
- usersSocialNew( 'google', response.Zi.id_token, 'login', ( wpcomError, wpcomResponse ) => {
  *
  * @param  {String}    service    The external social service name.
  * @param  {String}    token      Authentication token provided by the external social service.
@@ -278,7 +304,40 @@ export const createSocialUser = ( service, token, flowName ) => dispatch => {
 			error,
 		} );
 
-		return Promise.reject( wpcomError );
+		return Promise.reject( error );
+	} );
+};
+
+/**
+ * Attempt to connect the current account with a social service
+ *
+ * @param  {String}    service    The external social service name.
+ * @param  {String}    token      Authentication token provided by the external social service.
+ * @param  {String}    redirectTo Url to redirect the user to upon successful login
+ * @return {Function}             Action thunk to trigger the login process.
+ */
+export const connectSocialUser = ( service, token, redirectTo ) => dispatch => {
+	dispatch( {
+		type: SOCIAL_CONNECT_ACCOUNT_REQUEST,
+		notice: {
+			message: translate( 'Creating your account' )
+		},
+	} );
+
+	return wpcom.undocumented().me().socialConnect( service, token, redirectTo ).then( wpcomResponse => {
+		dispatch( {
+			type: SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
+			redirectTo: wpcomResponse.redirect_to,
+		} );
+	}, wpcomError => {
+		const error = getErrorFromWPCOMError( wpcomError );
+
+		dispatch( {
+			type: SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
+			error,
+		} );
+
+		return Promise.reject( error );
 	} );
 };
 
@@ -305,12 +364,7 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
 		.then( ( response ) => {
-			const phoneNumber = get( response, 'body.data.phone_number' );
-			const message = translate( 'Message sent to phone number ending in %(phoneNumber)s', {
-				args: {
-					phoneNumber
-				}
-			} );
+			const message = getSMSMessageFromResponse( response );
 
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
@@ -333,3 +387,4 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 
 export const startPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } );
 export const stopPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP } );
+export const formUpdate = () => ( { type: LOGIN_FORM_UPDATE } );

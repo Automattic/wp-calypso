@@ -7,6 +7,7 @@ import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_CHANGE_STATUS_FAILURE,
 	COMMENTS_CHANGE_STATUS_SUCESS,
+	COMMENTS_DELETE,
 	COMMENTS_EDIT,
 	COMMENTS_EDIT_FAILURE,
 	COMMENTS_EDIT_SUCCESS,
@@ -14,7 +15,6 @@ import {
 	COMMENTS_REQUEST,
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
-	COMMENTS_REMOVE,
 	COMMENTS_REPLY_WRITE,
 	COMMENTS_WRITE,
 	COMMENT_REQUEST,
@@ -34,7 +34,12 @@ export const requestComment = ( { siteId, commentId } ) => ( {
  * @param {String} status status filter. Defaults to approved posts
  * @returns {Function} thunk that requests comments for a given post
  */
-export function requestPostComments( siteId, postId, status = 'approved' ) {
+export function requestPostComments( {
+	siteId,
+	postId,
+	status = 'approved',
+	direction = 'before'
+} ) {
 	if ( ! isEnabled( 'comments/filters-in-posts' ) ) {
 		status = 'approved';
 	}
@@ -43,8 +48,9 @@ export function requestPostComments( siteId, postId, status = 'approved' ) {
 		type: COMMENTS_REQUEST,
 		siteId,
 		postId,
+		direction,
 		query: {
-			order: 'DESC',
+			order: direction === 'before' ? 'DESC' : 'ASC',
 			number: NUMBER_OF_COMMENTS_PER_FETCH,
 			status,
 		},
@@ -56,21 +62,20 @@ export const requestCommentsList = query => ( {
 	query,
 } );
 
-/***
- * Creates a remove comment action for a siteId, postId, commentId
+/**
+ * Creates an action that permanently deletes a comment
+ * or removes a comment placeholder from the state
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
- * @param {Number|String} commentId comment identifier to remove
- * @returns {Object} remove action
+ * @param {Number|String} commentId comment or comment placeholder identifier
+ * @returns {Object} action that deletes a comment
  */
-export function removeComment( siteId, postId, commentId ) {
-	return {
-		type: COMMENTS_REMOVE,
-		siteId,
-		postId,
-		commentId,
-	};
-}
+export const deleteComment = ( siteId, postId, commentId ) => ( {
+	type: COMMENTS_DELETE,
+	siteId,
+	postId,
+	commentId,
+} );
 
 /***
  * Creates a write comment action for a siteId and postId
@@ -137,7 +142,7 @@ export function changeCommentStatus( siteId, postId, commentId, status ) {
 			siteId,
 			postId,
 			commentId,
-			status
+			status,
 		} );
 
 		return wpcom

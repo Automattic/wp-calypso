@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { items, totalCommentsCount } from '../reducer';
+import { items, totalCommentsCount, fetchStatus, fetchStatusInitialState } from '../reducer';
 import {
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
@@ -16,7 +16,7 @@ import {
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_RECEIVE,
-	COMMENTS_REMOVE,
+	COMMENTS_DELETE,
 } from '../../action-types';
 import { PLACEHOLDER_STATE } from '../constants';
 
@@ -63,7 +63,7 @@ describe( 'reducer', () => {
 			const removedCommentId = 9;
 			const state = deepFreeze( { '1-1': commentsNestedTree } );
 			const result = items( state, {
-				type: COMMENTS_REMOVE,
+				type: COMMENTS_DELETE,
 				siteId: 1,
 				postId: 1,
 				commentId: removedCommentId,
@@ -126,6 +126,47 @@ describe( 'reducer', () => {
 
 			expect( result[ '1-1' ][ 0 ].placeholderState ).to.equal( PLACEHOLDER_STATE.ERROR );
 			expect( result[ '1-1' ][ 0 ].placeholderError ).to.equal( 'error_message' );
+		} );
+	} );
+
+	describe( '#fetchStatus', () => {
+		const actionWithComments = {
+			type: COMMENTS_RECEIVE,
+			siteId: '123',
+			postId: '456',
+			direction: 'before',
+			comments: [ {}, {} ],
+		};
+		const actionWithCommentId = {
+			type: COMMENTS_RECEIVE,
+			siteId: '123',
+			commentById: true,
+			comments: [ {} ],
+			direction: 'after',
+		};
+
+		it( 'should default to an empty object', () => {
+			expect( fetchStatus( undefined, { type: 'okapi' } ) ).eql( {} );
+		} );
+
+		it( 'should set hasReceived and before/after when receiving commments', () => {
+			const prevState = {};
+			const nextState = fetchStatus( prevState, actionWithComments );
+			expect( nextState ).eql( {
+				[ `${ actionWithComments.siteId }-${ actionWithComments.postId }` ]: {
+					before: false,
+					after: true,
+					hasReceivedBefore: true,
+					hasReceivedAfter: false,
+				},
+			} );
+		} );
+
+		it( 'fetches by id should not modify the state', () => {
+			const prevState = { [ actionWithCommentId.siteId ]: fetchStatusInitialState };
+			const nextState = fetchStatus( prevState, actionWithCommentId );
+
+			expect( nextState ).equal( prevState );
 		} );
 	} );
 

@@ -7,6 +7,7 @@ export const metadataSchema = {
 	multiple: { type: 'number', metaKey: 'spay_multiple' },
 	status: { type: 'number', metaKey: 'spay_status' },
 	email: { type: 'string', metaKey: 'spay_email' },
+	formatted_price: { type: 'string', metaKey: 'spay_formatted_price' },
 };
 
 /**

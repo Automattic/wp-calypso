@@ -34,6 +34,8 @@ var PostList = React.createClass( {
 	propTypes: {
 		context: React.PropTypes.object,
 		search: React.PropTypes.string,
+		category: React.PropTypes.string,
+		tag: React.PropTypes.string,
 		hasSites: React.PropTypes.bool,
 		statusSlug: React.PropTypes.string,
 		siteId: React.PropTypes.number,
@@ -48,7 +50,10 @@ var PostList = React.createClass( {
 				author={ this.props.author }
 				withImages={ true }
 				withCounts={ true }
-				search={ this.props.search }>
+				search={ this.props.search }
+				category={ this.props.category }
+				tag={ this.props.tag }
+			>
 				<Posts
 					{ ...omit( this.props, 'children' ) }
 				/>

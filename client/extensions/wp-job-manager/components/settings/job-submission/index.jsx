@@ -21,27 +21,30 @@ import ReduxFormTextInput from 'components/redux-forms/redux-form-text-input';
 import ReduxFormToggle from 'components/redux-forms/redux-form-toggle';
 import SectionHeader from 'components/section-header';
 
+const form = 'extensions.wpJobManager.submission';
+
 class JobSubmission extends Component {
 	static propTypes = {
 		enableRegistration: PropTypes.bool,
 		handleSubmit: PropTypes.func,
-		isDisabled: PropTypes.bool,
-		isSaving: PropTypes.bool,
+		isFetching: PropTypes.bool,
 		onSubmit: PropTypes.func,
+		submitting: PropTypes.bool,
 		translate: PropTypes.func,
 	};
 
-	save = section => data => this.props.onSubmit( data[ section ] );
+	save = section => data => this.props.onSubmit( form, data[ section ] );
 
 	render() {
 		const {
 			enableRegistration,
 			handleSubmit,
-			isDisabled,
-			isSaving,
+			isFetching,
 			submissionDuration,
+			submitting,
 			translate,
 		} = this.props;
+		const isDisabled = isFetching || submitting;
 
 		return (
 			<div>
@@ -50,7 +53,7 @@ class JobSubmission extends Component {
 						<SectionHeader label={ translate( 'Account' ) }>
 							<FormButton compact
 								disabled={ isDisabled }
-								isSubmitting={ isSaving }
+								isSubmitting={ submitting }
 								onClick={ handleSubmit( this.save( 'account' ) ) } />
 						</SectionHeader>
 						<Card>
@@ -115,7 +118,7 @@ class JobSubmission extends Component {
 						<SectionHeader label={ translate( 'Approval' ) }>
 							<FormButton compact
 								disabled={ isDisabled }
-								isSubmitting={ isSaving }
+								isSubmitting={ submitting }
 								onClick={ handleSubmit( this.save( 'approval' ) ) } />
 						</SectionHeader>
 						<Card>
@@ -146,7 +149,7 @@ class JobSubmission extends Component {
 						<SectionHeader label={ translate( 'Listing Duration' ) }>
 							<FormButton compact
 								disabled={ isDisabled }
-								isSubmitting={ isSaving }
+								isSubmitting={ submitting }
 								onClick={ handleSubmit( this.save( 'duration' ) ) } />
 						</SectionHeader>
 						<Card>
@@ -181,7 +184,7 @@ class JobSubmission extends Component {
 						<SectionHeader label={ translate( 'Application Method' ) }>
 							<FormButton compact
 								disabled={ isDisabled }
-								isSubmitting={ isSaving }
+								isSubmitting={ submitting }
 								onClick={ handleSubmit( this.save( 'method' ) ) } />
 						</SectionHeader>
 						<Card>
@@ -228,21 +231,18 @@ class JobSubmission extends Component {
 	}
 }
 
-const connectComponent = connect(
-	( state ) => {
-		const selector = formValueSelector( 'submission', () => state.extensions.wpJobManager.form );
+const selector = formValueSelector( form );
 
-		return {
-			enableRegistration: selector( state, 'account.enableRegistration' ),
-			submissionDuration: selector( state, 'duration.submissionDuration' ),
-		};
-	}
+const connectComponent = connect(
+	state => ( {
+		enableRegistration: selector( state, 'account.enableRegistration' ),
+		submissionDuration: selector( state, 'duration.submissionDuration' ),
+	} )
 );
 
 const createReduxForm = reduxForm( {
 	enableReinitialize: true,
-	form: 'submission',
-	getFormState: state => state.extensions.wpJobManager.form,
+	form,
 } );
 
 export default flowRight(

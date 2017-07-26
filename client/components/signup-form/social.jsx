@@ -45,7 +45,7 @@ class SocialSignupForm extends Component {
 		return (
 			<Card className="signup-form__social">
 				<p>
-					{ preventWidows( this.props.translate( "Or create an account using your existing social profile to get started faster. We'll never post without your permission." ) ) }
+					{ preventWidows( this.props.translate( 'Or connect your existing profile to get started faster.' ) ) }
 				</p>
 
 				<div className="signup-form__social-buttons">

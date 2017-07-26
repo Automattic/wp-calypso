@@ -800,7 +800,14 @@ function recordParamsInFloodlight( params ) {
 
 	// The ord is only set for purchases; the rest of the time it should be a random string
 	if ( params.ord === undefined ) {
+		// From the docs:
+		// "For unique user tags, use a constant value."
+		// TODO: Should we use a constant value if it's a unique user? How do we determine a unique user?
 		params.ord = floodlightCacheBuster();
+
+		// From the docs:
+		// "Unique user tags also require a random number as the value of the num= parameter."
+		params.num = floodlightCacheBuster();
 	}
 
 	debug( 'recordParamsInFloodlight:', params );

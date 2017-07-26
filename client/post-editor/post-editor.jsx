@@ -59,7 +59,7 @@ import Site from 'blocks/site';
 import StatusLabel from 'post-editor/editor-status-label';
 import { editedPostHasContent } from 'state/selectors';
 import EditorGroundControl from 'post-editor/editor-ground-control';
-import { isMobile } from 'lib/viewport';
+import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
 
 export const PostEditor = React.createClass( {
@@ -189,7 +189,7 @@ export const PostEditor = React.createClass( {
 
 	useDefaultSidebarFocus( nextProps ) {
 		const props = nextProps || this.props;
-		if ( ! isMobile() && ( props.editorSidebarPreference === 'open' || props.hasBrokenPublicizeConnection ) ) {
+		if ( isWithinBreakpoint( '>660px' ) && ( props.editorSidebarPreference === 'open' || props.hasBrokenPublicizeConnection ) ) {
 			this.props.setLayoutFocus( 'sidebar' );
 		}
 	},
@@ -277,6 +277,7 @@ export const PostEditor = React.createClass( {
 					onPublish={ this.onPublish }
 					post={ this.state.post }
 					savedPost={ this.state.savedPost }
+					setPostDate={ this.setPostDate }
 					setStatus={ this.setConfirmationSidebar }
 					site={ site }
 					status={ this.state.confirmationSidebar }
@@ -675,9 +676,9 @@ export const PostEditor = React.createClass( {
 	},
 
 	getPreviewUrl: function() {
-		const { post, previewAction, previewUrl } = this.state;
+		const { isPostPublishPreview, post, previewAction, previewUrl } = this.state;
 
-		if ( previewAction === 'view' ) {
+		if ( previewAction === 'view' || isPostPublishPreview ) {
 			return post.URL;
 		}
 

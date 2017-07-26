@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,21 +14,19 @@ import Button from 'components/button';
 import notices from 'notices';
 import support from 'lib/url/support';
 
-const IcannVerification = React.createClass( {
-	getInitialState() {
-		return {
-			submitting: false
-		};
-	},
+class IcannVerification extends React.Component {
+	state = {
+		submitting: false
+	};
 
-	handleClick() {
+	handleClick = () => {
 		this.setState( { submitting: true } );
 
 		resendIcannVerification( this.props.selectedDomainName, ( error ) => {
 			if ( error ) {
 				notices.error( error.message );
 			} else {
-				notices.success( this.translate(
+				notices.success( this.props.translate(
 					'We sent the ICANN verification email to your ' +
 					'email address. Please check your inbox and click the link in the email.'
 				) );
@@ -35,22 +34,24 @@ const IcannVerification = React.createClass( {
 
 			this.setState( { submitting: false } );
 		} );
-	},
+	};
 
 	render() {
+		const { translate } = this.props;
+
 		return (
 			<div>
-				<SectionHeader label={ this.translate( 'Transfer Domain' ) }>
+				<SectionHeader label={ translate( 'Transfer Domain' ) }>
 					<Button
 						onClick={ this.handleClick }
 						disabled={ this.state.submitting }
 						compact
-						primary>{ this.translate( 'Resend Verification Email' ) }</Button>
+						primary>{ translate( 'Resend Verification Email' ) }</Button>
 				</SectionHeader>
 
 				<Card className="transfer-card">
 					<p>
-						{ this.translate(
+						{ translate(
 							'You must verify your email address before you can transfer this domain. ' +
 							'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 							{
@@ -58,7 +59,7 @@ const IcannVerification = React.createClass( {
 									learnMoreLink: <a
 										href={ support.TRANSFER_DOMAIN_REGISTRATION }
 										target="_blank"
-										rel="noopener noreferrer"/>
+										rel="noopener noreferrer" />
 								}
 							}
 						) }
@@ -67,5 +68,6 @@ const IcannVerification = React.createClass( {
 			</div>
 		);
 	}
-} );
-export default IcannVerification;
+}
+
+export default localize( IcannVerification );
