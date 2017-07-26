@@ -126,9 +126,9 @@ class ReaderPostCard extends React.Component {
 			compact,
 		} = this.props;
 
-		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
-		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY );
-		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO );
+		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
+		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
+		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
 		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const classes = classnames( 'reader-post-card', {
