@@ -546,54 +546,6 @@ const EVENTS = {
 			}
 		},
 
-		siteRedirect: {
-			cancelClick( domainName ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Cancel" Button in Site Redirect',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_site_redirect_cancel_click',
-					{ domain_name: domainName }
-				);
-			},
-
-			locationFocus( domainName ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Focused On "Location" Input in Site Redirect',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_site_redirect_location_focus',
-					{ domain_name: domainName }
-				);
-			},
-
-			updateSiteRedirectClick( domainName, location, success ) {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Update Site Redirect" Button in Site Redirect',
-					'Domain Name',
-					domainName
-				);
-
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_site_redirect_update_site_redirect_click',
-					{
-						domain_name: domainName,
-						location,
-						success
-					}
-				);
-			}
-		},
-
 		nameServers: {
 			wpcomNameServersToggleButtonClick( domainName, enabled ) {
 				const state = enabled ? 'On' : 'Off';
