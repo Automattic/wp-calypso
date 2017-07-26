@@ -36,7 +36,7 @@ module.exports = React.createClass( {
 					<FormTextInput onChange={ this.props.onInputState } />
 					<FormLabel>{ translate( 'ZIP Code' ) }</FormLabel>
 					<FormTextInput onChange={ this.props.onInputZip } />
-					<Button primary onClick={ this.props.onNextStep }>{ translate( 'Next Step' ) }</Button>
+					<Button primary onClick={ this.props.submitStep }>{ translate( 'Next Step' ) }</Button>
 				</Card>
 			</div>
 		);

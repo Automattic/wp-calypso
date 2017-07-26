@@ -28,6 +28,26 @@ const JPOHomepageStep = React.createClass( {
 		stepName: PropTypes.string,
 	},
 
+	onSelectNews() {
+		this.submitStep( 'news' );
+	},
+
+	onSelectStatic() {
+		this.submitStep( 'static' );
+	},
+
+	submitStep( jpoHomepage ) {
+		this.props.setJPOHomepage( jpoHomepage );
+
+		SignupActions.submitSignupStep( {
+			processingMessage: translate( 'Setting up your site' ),
+			stepName: this.props.stepName,
+			jpoHomepage
+		}, [], { jpoHomepage } );
+
+		this.props.goToNextStep();
+	},
+
 	skipStep() {
 		this.props.goToNextStep();
 	},
@@ -38,12 +58,12 @@ const JPOHomepageStep = React.createClass( {
 				<div className="jpo__homepage-row">
 					<Card>
 						<NewsGraphic />
-						<Button>Recent news or updates</Button>
+						<Button onClick={ this.onSelectNews }>Recent news or updates</Button>
 						<div className="jpo__homepage-description">We can pull the latest information into your homepage for you.</div>
 					</Card>
 					<Card>
 						<StaticGraphic />
-						<Button>A static welcome page</Button>
+						<Button onClick={ this.onSelectStatic }>A static welcome page</Button>
 						<div className="jpo__homepage-description">Have your homepage stay the same as time goes on.</div>
 					</Card>
 				</div>

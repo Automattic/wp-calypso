@@ -3,16 +3,20 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
- */
+ */ 
+import analytics from 'lib/analytics';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import Card from 'components/card';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
+import FormFieldset from 'components/forms/form-fieldset';
+import formState from 'lib/form-state';
 import Button from 'components/button';
 import { translate } from 'i18n-calypso';
 
@@ -29,8 +33,50 @@ const JPOSiteTitleStep = React.createClass( {
 		stepName: PropTypes.string,
 	},
 
+	componentWillMount() {
+		this.formStateController = new formState.Controller( {
+			fieldNames: [ 'siteTitle', 'siteDescription' ],
+			validatorFunction: noop,
+			onNewState: this.setFormState,
+			hideFieldErrorsOnChange: true,
+			initialState: {
+				siteTitle: {
+					value: 'foo'
+				},
+				siteDescription: {
+					value: 'bar'
+				}
+			}
+		} );
+
+		this.setFormState( this.formStateController.getInitialState() );
+	},
+
+	setFormState( state ) {
+		this.setState( { form: state } );
+	},
+
+	handleChangeEvent( event ) {
+		this.formStateController.handleFieldChange( {
+			name: event.target.name,
+			value: event.target.value
+		} );
+	},
+
 	submitStep() {
-		//this.props.setJPOSiteTitle( 'foo to the bar' );
+		const jpoSiteTitle = {
+			siteTitle: formState.getFieldValue( this.state.form, 'siteTitle' ),
+			siteDescription: formState.getFieldValue( this.state.form, 'siteDescription' )
+		};
+
+		this.props.setJPOSiteTitle( jpoSiteTitle );
+
+		SignupActions.submitSignupStep( {
+			processingMessage: translate( 'Setting up your site' ),
+			stepName: this.props.stepName,
+			jpoSiteTitle
+		}, [], { jpoSiteTitle } );
+
 		this.props.goToNextStep();
 	},
 
@@ -41,11 +87,21 @@ const JPOSiteTitleStep = React.createClass( {
 	renderStepContent() {
 		return (
 			<Card className="jpo__site-title-card">
-				<FormLabel>{ translate( 'Site Title' ) }</FormLabel>
-				<FormTextInput className="jpo__site-title-input" />
-				<FormLabel>{ translate( 'Site Description' ) }</FormLabel>
-				<FormTextarea className="jpo__site-description-input" />
-				<Button primary onClick={ this.submitStep } className="jpo__site-title-submit">{ translate( 'Next Step' ) }</Button>
+				<FormFieldset>
+					<FormLabel>{ translate( 'Site Title' ) }</FormLabel>
+					<FormTextInput 
+						className="jpo__site-title-input"
+						name="siteTitle"
+						onChange={ this.handleChangeEvent }
+					/>
+					<FormLabel>{ translate( 'Site Description' ) }</FormLabel>
+					<FormTextarea 
+						className="jpo__site-description-input" 
+						name="siteDescription"
+						onChange={ this.handleChangeEvent }
+					/>
+					<Button primary onClick={ this.submitStep } className="jpo__site-title-submit">{ translate( 'Next Step' ) }</Button>
+				</FormFieldset>
 			</Card>
 		);
 	},

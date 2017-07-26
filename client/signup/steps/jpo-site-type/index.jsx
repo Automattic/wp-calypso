@@ -26,10 +26,6 @@ const JPOSiteTypeStep = React.createClass( {
 		stepName: PropTypes.string,
 	},
 
-	skipStep() {
-		this.props.goToNextStep();
-	},
-
 	getInitialState() {
 		var siteName = getJPOSiteTitle();		
 
@@ -51,7 +47,6 @@ const JPOSiteTypeStep = React.createClass( {
 		};
 	},
 
-	// Genre selections
 	onSelectBlog() {
 		this.state.payload.genre = 'blog';
 		this.setState( { currentScreen: 'businesspersonal' } );
@@ -72,10 +67,9 @@ const JPOSiteTypeStep = React.createClass( {
 		this.setState( { currentScreen: 'businesspersonal' } );
 	},
 
-	// Business/personal selections
 	onSelectPersonal() {
 		this.state.payload.businessPersonal = 'personal';
-		this.onNextStep();
+		this.submitStep();
 	},
 
 	onSelectBusiness() {
@@ -105,12 +99,22 @@ const JPOSiteTypeStep = React.createClass( {
 		this.state.payload.addressInfo.zipCode = event.target.value;
 	},
 
-	// Next step
-	onNextStep() {
-		console.log( this.state.payload );
-		
-		// setJPOSiteType( this.state.payload );
-		// this.goToNextStep();
+	submitStep() {
+		const jpoSiteType = this.state.payload;
+
+		this.props.setJPOSiteType( jpoSiteType );
+
+		SignupActions.submitSignupStep( {
+			processingMessage: translate( 'Setting up your site' ),
+			stepName: this.props.stepName,
+			jpoSiteType
+		}, [], { jpoSiteType } );
+
+		this.props.goToNextStep();
+	},
+
+	skipStep() {
+		this.props.goToNextStep();
 	},
 
 	renderStepContent() {
@@ -135,7 +139,7 @@ const JPOSiteTypeStep = React.createClass( {
 					onInputCity={ this.onInputCity }
 					onInputState={ this.onInputState }
 					onInputZip={ this.onInputZip }
-					onNextStep={ this.onNextStep }
+					submitStep={ this.submitStep }
 				/>
 			</div>
 		);
