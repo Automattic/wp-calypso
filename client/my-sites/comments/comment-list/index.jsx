@@ -310,6 +310,7 @@ export class CommentList extends Component {
 
 	render() {
 		const {
+			commentsCount,
 			isLoading,
 			siteId,
 			siteFragment,
@@ -322,7 +323,6 @@ export class CommentList extends Component {
 		} = this.state;
 
 		const comments = this.getComments();
-		const commentsCount = comments.length;
 		const commentsPage = this.getCommentsPage( comments );
 
 		const zeroComments = commentsCount <= 0;
@@ -333,7 +333,12 @@ export class CommentList extends Component {
 
 		return (
 			<div className="comment-list">
-				<QuerySiteComments siteId={ siteId } status={ status } />
+				<QuerySiteComments
+					commentsPerPage={ COMMENTS_PER_PAGE }
+					page={ page }
+					siteId={ siteId }
+					status={ status }
+				/>
 
 				<CommentNavigation
 					isBulkEdit={ isBulkEdit }

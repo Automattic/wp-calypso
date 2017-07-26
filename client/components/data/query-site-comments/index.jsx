@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
+import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { each, isEmpty } from 'lodash';
+import { each, isEmpty, reverse, slice, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,25 +15,52 @@ const requestTree = ( { requestSiteCommentsTree, siteId, status } ) => (
 	siteId && requestSiteCommentsTree( siteId, status )
 );
 
-const requestComments = ( { commentsTree, requestSingleComment, siteId } ) => {
+const requestComments = props => {
+	const {
+		commentsPerPage,
+		commentsTree,
+		page,
+		requestSingleComment,
+		siteId,
+	} = props;
+
 	if ( isEmpty( commentsTree ) ) {
 		return;
 	}
-	each( commentsTree, ( { commentId } ) => {
+
+	if ( ! page || ! commentsPerPage ) {
+		each( commentsTree, ( { commentId } ) => {
+			requestSingleComment( siteId, commentId );
+		} );
+		return;
+	}
+
+	const startingIndex = ( page - 1 ) * commentsPerPage;
+	const parsedCommentsTree = reverse( values( commentsTree ) );
+	const commentsPage = slice( parsedCommentsTree, startingIndex, startingIndex + commentsPerPage );
+
+	each( commentsPage, ( { commentId } ) => {
 		requestSingleComment( siteId, commentId );
 	} );
 };
 
 export class QuerySiteComments extends Component {
+	static propTypes = {
+		commentsPerPage: PropTypes.number,
+		page: PropTypes.number,
+		siteId: PropTypes.number,
+		status: PropTypes.string,
+	};
+
 	componentDidMount() {
 		requestTree( this.props );
 	}
 
-	componentDidUpdate( { commentsTree, siteId, status } ) {
+	componentDidUpdate( { commentsTree, page, siteId, status } ) {
 		if ( siteId !== this.props.siteId || status !== this.props.status ) {
 			requestTree( this.props );
 		}
-		if ( commentsTree !== this.props.commentsTree ) {
+		if ( commentsTree !== this.props.commentsTree || page !== this.props.page ) {
 			requestComments( this.props );
 		}
 	}
