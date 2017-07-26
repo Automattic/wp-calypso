@@ -129,57 +129,49 @@ class SimplePaymentsDialog extends Component {
 		this.props.onClose();
 	};
 
+	setIsSubmitting( isSubmitting ) {
+		this._isMounted && this.setState( { isSubmitting } );
+	}
+
 	showError = errorMessage => this._isMounted && this.setState( { errorMessage } );
 
 	dismissError = () => this._isMounted && this.setState( { errorMessage: null } );
 
 	handleInsert = () => {
-		const { siteId, dispatch, currencyCode } = this.props;
+		const { siteId, dispatch, currencyCode, translate } = this.props;
 		const { activeTab } = this.state;
 
-		this.setState( { isSubmitting: true } );
+		this.setIsSubmitting( true );
+
+		let productId;
 
 		if ( activeTab === 'list' ) {
-			const productId = this.state.selectedPaymentId;
+			productId = Promise.resolve( this.state.selectedPaymentId );
+		} else {
+			const productForm = this.getFormValues();
 
-			this.props.onInsert( { id: productId } );
+			if ( currencyCode ) {
+				productForm.currency = currencyCode;
+			}
 
-			// clear the form after a successful submit -- it'll be blank next time it's opened
-			this.formStateController.resetFields( this.constructor.initialFields );
-
-			this._isMounted && this.setState( { isSubmitting: false } );
-
-			return;
+			productId = wpcom
+				.site( siteId )
+				.addPost( productToCustomPost( productForm ) )
+				.then( newProduct => {
+					dispatch( receiveUpdateProduct( siteId, customPostToProduct( newProduct ) ) );
+					return newProduct.ID;
+				} );
 		}
 
-		const productForm = this.getFormValues();
+		productId
+			.then( id => {
+				this.props.onInsert( { id } );
 
-		if ( currencyCode ) {
-			productForm.currency = currencyCode;
-		}
-
-		wpcom
-			.site( siteId )
-			.addPost( productToCustomPost( productForm ) )
-			.then( newProduct => {
-				dispatch( receiveUpdateProduct( siteId, customPostToProduct( newProduct ) ) );
-
-				const productId = newProduct.ID;
-
-				this.props.onInsert( { id: productId } );
-
+				// clear the form after a successful submit -- it'll be blank next time it's opened
 				this.formStateController.resetFields( this.constructor.initialFields );
-
-				this._isMounted && this.setState( { isSubmitting: false } );
 			} )
-			.catch( () => {
-				if ( this._isMounted ) {
-					this.setState( {
-						errorMessage: this.props.translate( 'The payment button could not be inserted.' ),
-					} );
-					this.setState( { isSubmitting: false } );
-				}
-			} );
+			.catch( () => this.showError( translate( 'The payment button could not be inserted.' ) ) )
+			.then( () => this.setIsSubmitting( false ) );
 	};
 
 	getActionButtons() {
