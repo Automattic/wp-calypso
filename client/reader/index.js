@@ -30,11 +30,14 @@ function forceTeamA8C( context, next ) {
 
 export default function() {
 	if ( config.isEnabled( 'reader' ) ) {
-		if ( config.isEnabled( 'restore-last-location' ) ) {
-			page( '/', sessionRestore, preloadReaderBundle, initAbTests, updateLastRoute, sidebar, following );
-		} else {
-			page( '/', preloadReaderBundle, initAbTests, updateLastRoute, sidebar, following );
-		}
+		page( '/', ...[
+			config.isEnabled( 'restore-last-location' ) && sessionRestore,
+			preloadReaderBundle,
+			initAbTests,
+			updateLastRoute,
+			sidebar,
+			following,
+		].filter( Boolean ) );
 
 		// Old and incomplete paths that should be redirected to /
 		page( '/read/following', '/' );
