@@ -63,6 +63,15 @@
 			top: 115px;
 		}
 	}
+
+	.content-404 {
+		margin: 35px 200px 0 0;
+		max-width: initial;
+
+		@media( max-width: 660px ) {
+			margin: 0px;
+		}
+	}
 }
 
 .store-sidebar__sidebar {
