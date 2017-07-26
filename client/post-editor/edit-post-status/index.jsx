@@ -212,6 +212,8 @@ export class EditPostStatus extends Component {
 			return;
 		}
 
+		// Do not render the editor visibility component on both the editor sidebar and the confirmation sidebar
+		// at the same time so that it is predictable which one gets the focus / shows the validation error message.
 		if ( 'open' === this.props.confirmationSidebarStatus ) {
 			return;
 		}
