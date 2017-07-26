@@ -78,6 +78,11 @@ class SimplePaymentsDialog extends Component {
 		if ( nextProps.showDialog && ! this.props.showDialog ) {
 			this.setState( { activeTab: 'form' } );
 		}
+
+		// clear the form when dialog is being closed -- it'll be blank next time it's opened
+		if ( ! nextProps.showDialog && this.props.showDialog ) {
+			this.formStateController.resetFields( this.constructor.initialFields );
+		}
 	}
 
 	componentDidMount() {
@@ -126,12 +131,6 @@ class SimplePaymentsDialog extends Component {
 
 	handleSelectedChange = selectedPaymentId => this.setState( { selectedPaymentId } );
 
-	handleClose = () => {
-		// clear the form after a successful submit -- it'll be blank next time it's opened
-		this.formStateController.resetFields( this.constructor.initialFields );
-		this.props.onClose();
-	};
-
 	setIsSubmitting( isSubmitting ) {
 		this._isMounted && this.setState( { isSubmitting } );
 	}
@@ -167,12 +166,7 @@ class SimplePaymentsDialog extends Component {
 		}
 
 		productId
-			.then( id => {
-				this.props.onInsert( { id } );
-
-				// clear the form after a successful submit -- it'll be blank next time it's opened
-				this.formStateController.resetFields( this.constructor.initialFields );
-			} )
+			.then( id => this.props.onInsert( { id } ) )
 			.catch( () => this.showError( translate( 'The payment button could not be inserted.' ) ) )
 			.then( () => this.setIsSubmitting( false ) );
 	};
@@ -192,7 +186,7 @@ class SimplePaymentsDialog extends Component {
 	};
 
 	getActionButtons() {
-		const { translate } = this.props;
+		const { onClose, translate } = this.props;
 		const { activeTab, isSubmitting } = this.state;
 
 		const insertDisabled =
@@ -200,7 +194,7 @@ class SimplePaymentsDialog extends Component {
 			( activeTab === 'list' && this.state.selectedPaymentId === null );
 
 		return [
-			<Button onClick={ this.handleClose } disabled={ isSubmitting }>
+			<Button onClick={ onClose } disabled={ isSubmitting }>
 				{ translate( 'Cancel' ) }
 			</Button>,
 			<Button
