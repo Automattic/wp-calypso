@@ -6,7 +6,7 @@
 
 	.accessible-focus &:focus {
 		box-shadow: 0 0 0 1px $blue-medium, 0 0 0 3px $blue-light;
-		z-index: z-index( 'root', '.comment-detail.card.is-collapsed.accessible-focus:focus' );
+		z-index: z-index( 'root', '.comment-detail.card.accessible-focus:focus' );
 	}
 
 	&.is-expanded {
