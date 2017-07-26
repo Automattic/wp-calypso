@@ -55,6 +55,15 @@ const ShippingLabels = ( { isLoading, paymentMethods, setFormDataValue, selected
 		</div>
 	);
 
+	let description, buttonLabel;
+	if ( paymentMethods.length ) {
+		description = translate( 'Use your credit card on file to pay for the labels you print or add a new one.' );
+		buttonLabel = translate( 'Add another credit card' );
+	} else {
+		description = translate( 'To pay for shipping labels you need to add a credit card to your account' );
+		buttonLabel = translate( 'Add a credit card' );
+	}
+
 	const renderContent = () => {
 		if ( isLoading ) {
 			return renderPlaceholder();
@@ -81,11 +90,11 @@ const ShippingLabels = ( { isLoading, paymentMethods, setFormDataValue, selected
 						{ translate( 'Credit card' ) }
 					</FormLabel>
 					<p className="label-settings__credit-card-description">
-						{ translate( 'Use your credit card on file to pay for the labels you print or add a new one.' ) }
+						{ description }
 					</p>
 					{ paymentMethods.map( renderPaymentMethod ) }
 					<Button href="https://wordpress.com/me/billing" target="_blank" compact>
-						{ translate( 'Add another credit card' ) }
+						{ buttonLabel }
 					</Button>
 				</FormFieldSet>
 			</div>
