@@ -47,9 +47,9 @@ module.exports = React.createClass( {
 		return (
 			<span className="post-relative-time-status__time">
 				<Gridicon icon="time" size={ 18 } />
-				<span className="post-relative-time-status__time-text">
+				<time className="post-relative-time-status__time-text" dateTime={ time } title={ time }>
 					{ this.moment( time ).fromNow() }
-				</span>
+				</time>
 			</span>
 		);
 	},
