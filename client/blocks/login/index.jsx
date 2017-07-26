@@ -111,6 +111,7 @@ class Login extends Component {
 
 	renderHeader() {
 		const {
+			privateSite,
 			socialConnect,
 			translate,
 			twoStepNonce,
@@ -126,6 +127,8 @@ class Login extends Component {
 					service: capitalize( linkingSocialService ),
 				}
 			} );
+		} else if ( privateSite ) {
+			headerText = translate( 'This is a private WordPress.com site.' );
 		} else {
 			headerText = translate( 'Log in to your account.' );
 		}
@@ -153,6 +156,7 @@ class Login extends Component {
 
 	renderContent() {
 		const {
+			privateSite,
 			twoFactorAuthType,
 			twoFactorEnabled,
 			twoFactorNotificationSent,
@@ -191,7 +195,7 @@ class Login extends Component {
 		}
 
 		return (
-			<LoginForm onSuccess={ this.handleValidUsernamePassword } />
+			<LoginForm onSuccess={ this.handleValidUsernamePassword } privateSite={ privateSite } />
 		);
 	}
 

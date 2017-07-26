@@ -118,7 +118,7 @@ export class LoginLinks extends React.Component {
 	}
 
 	renderResetPasswordLink() {
-		if ( this.props.twoFactorAuthType ) {
+		if ( this.props.twoFactorAuthType || this.props.privateSite ) {
 			return null;
 		}
 

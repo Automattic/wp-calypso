@@ -26,7 +26,9 @@ import {
 	getRequestError,
 	isFormDisabled,
 } from 'state/login/selectors';
+import Notice from 'components/notice';
 import SocialLoginForm from './social';
+import userUtils from 'lib/user/utils';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -123,6 +125,18 @@ export class LoginForm extends Component {
 		} );
 	};
 
+	privateSiteNotice() {
+		if ( this.props.privateSite && ! userUtils.isLoggedIn() ) {
+			return (
+				<Notice status="is-info" showDismiss={ false } icon="lock">
+					{ this.props.translate( 'Log in to WordPress.com to proceed. ' +
+					"If you are not a member of this site, we'll send " +
+					'your username to the site owner for approval.' ) }
+				</Notice>
+			);
+		}
+	}
+
 	render() {
 		const isDisabled = {};
 
@@ -134,6 +148,7 @@ export class LoginForm extends Component {
 
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
+				{ this.privateSiteNotice() }
 				<Card className="login__form">
 					<div className="login__form-userdata">
 						{ this.state.linkingSocialUser && (

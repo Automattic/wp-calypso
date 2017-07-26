@@ -14,9 +14,15 @@ export default {
 	login( context, next ) {
 		const { lang, path, params } = context;
 		const socialConnect = params.socialConnect === 'social-connect';
+		const privateSite = params.privateSite === 'private-site';
 
 		context.primary = (
-			<WPLogin locale={ lang } path={ path } twoFactorAuthType={ params.twoFactorAuthType } socialConnect={ socialConnect } />
+			<WPLogin
+				locale={ lang }
+				path={ path }
+				twoFactorAuthType={ params.twoFactorAuthType }
+				socialConnect={ socialConnect }
+				privateSite={ privateSite } />
 		);
 		next();
 	},
