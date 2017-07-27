@@ -28,6 +28,7 @@ import PaymentMethodEditDialog from './payment-method-edit-dialog';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 import PaymentMethodPaypal from './payment-method-paypal';
 import PaymentMethodStripe from './payment-method-stripe';
+import PaymentMethodCheque from './payment-method-cheque';
 
 class PaymentMethodItem extends Component {
 	static propTypes = {
@@ -109,6 +110,15 @@ class PaymentMethodItem extends Component {
 		if ( method.id === 'stripe' ) {
 			return (
 				<PaymentMethodStripe
+					method={ currentlyEditingMethod }
+					onCancel={ this.onCancel }
+					onEditField={ this.onEditField }
+					onDone={ this.onDone } />
+			);
+		}
+		if ( method.id === 'cheque' ) {
+			return (
+				<PaymentMethodCheque
 					method={ currentlyEditingMethod }
 					onCancel={ this.onCancel }
 					onEditField={ this.onEditField }
