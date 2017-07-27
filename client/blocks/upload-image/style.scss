@@ -60,4 +60,19 @@
 .upload-image__image-container {
 	width: 200px;
 	height: 200px;
+
+	&.is-uploaded, &.is-uploading {
+		border: 1px solid lighten( $gray, 10% );
+		background-color: lighten( $gray, 30% );
+	}
+}
+
+.upload-image__uploading-container, .upload-image__uploading-done-container {
+	height: 100%;
+}
+
+.upload-image__uploading-image, .upload-image__uploaded-image {
+	position: relative;
+	top: 50%;
+	transform: perspective(1px) translateY(-50%);
 }

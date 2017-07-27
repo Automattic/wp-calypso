@@ -282,7 +282,7 @@ class UploadImage extends Component {
 
 		return (
 			<div className="upload-image__uploading-container">
-				<img src={ editedImage } />
+				<img src={ editedImage } className="upload-image__uploading-image" />
 				<Spinner className="upload-image__spinner" size={ 20 } />
 			</div>
 		);
@@ -300,7 +300,7 @@ class UploadImage extends Component {
 		if ( uploadedImage && uploadedImage.URL ) {
 			return (
 				<div className="upload-image__uploading-done-container">
-					<img src={ uploadedImage.URL } />
+					<img src={ uploadedImage.URL } className="upload-image__uploaded-image" />
 				</div>
 			);
 		}
@@ -321,6 +321,7 @@ class UploadImage extends Component {
 					<div
 						className={ classnames( 'upload-image__image-container', {
 							'is-uploading': isUploading,
+							'is-uploaded': ! isUploading && uploadedImage,
 						} ) }
 					>
 						<DropZone
