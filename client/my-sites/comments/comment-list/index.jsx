@@ -353,7 +353,7 @@ export class CommentList extends Component {
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-list__transition"
 				>
-					{ map( commentsPage, ( { commentId } ) =>
+					{ map( commentsPage, commentId =>
 						<CommentDetail
 							commentId={ commentId }
 							deleteCommentPermanently={ this.deleteCommentPermanently }
@@ -394,9 +394,10 @@ export class CommentList extends Component {
 }
 
 const mapStateToProps = ( state, { siteId, status } ) => {
+	const comments = map( getSiteCommentsTree( state, siteId, status ), 'commentId' );
 	const isLoading = ! hasSiteComments( state, siteId );
 	return {
-		comments: getSiteCommentsTree( state, siteId, status ),
+		comments,
 		commentsCount: getSiteCommentsCount( state, siteId, status ),
 		isLoading,
 		notices: getNotices( state ),
