@@ -20,6 +20,7 @@ import {
 	sidebar,
 	updateLastRoute,
 } from './controller';
+import { sessionRestore } from 'root/controller';
 import config from 'config';
 
 function forceTeamA8C( context, next ) {
@@ -29,7 +30,14 @@ function forceTeamA8C( context, next ) {
 
 export default function() {
 	if ( config.isEnabled( 'reader' ) ) {
-		page( '/', preloadReaderBundle, initAbTests, updateLastRoute, sidebar, following );
+		page( '/', ...[
+			config.isEnabled( 'restore-last-location' ) && sessionRestore,
+			preloadReaderBundle,
+			initAbTests,
+			updateLastRoute,
+			sidebar,
+			following,
+		].filter( Boolean ) );
 
 		// Old and incomplete paths that should be redirected to /
 		page( '/read/following', '/' );
