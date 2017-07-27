@@ -14,6 +14,18 @@ import FormTextInputWithAction from 'components/forms/form-text-input-with-actio
 class EditorShareADraft extends Component {
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
+		// Expose copySelection as a prop to facilitate unit test
+		copySelection: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		copySelection: () => document.execCommand( 'copy' ),
+	};
+
+	saveLinkInputRef = linkInput => ( this.linkInputNode = linkInput.refs.textField );
+	onCopy = () => {
+		this.linkInputNode.select();
+		this.props.copySelection();
 	};
 
 	render() {
@@ -32,7 +44,10 @@ class EditorShareADraft extends Component {
 				</FormToggle>
 				<FormTextInputWithAction
 					readOnly
+					defaultValue="linkage"
 					action={ translate( 'Copy', { context: 'verb' } ) }
+					inputRef={ this.saveLinkInputRef }
+					onAction={ this.onCopy }
 				/>
 			</Accordion>
 		);
