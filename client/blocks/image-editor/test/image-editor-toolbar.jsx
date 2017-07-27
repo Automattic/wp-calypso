@@ -26,6 +26,9 @@ describe( 'ImageEditorToolbar', () => {
 	} );
 
 	before( () => {
+		// Requiring ImageEditorToolbar after useFakeDom() to ensure the
+		// window object is available to the event binders in
+		// imported component, PopoverMenu
 		ImageEditorToolbar = require( '../image-editor-toolbar' ).ImageEditorToolbar;
 	} );
 
