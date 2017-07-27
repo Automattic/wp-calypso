@@ -67,18 +67,18 @@ export function savePath( path ) {
 
 let isFirstRun = true;
 export function restoreLastSession( currentPath ) {
-	console.log( 'restoreLastSession' );
+	debug( 'restoreLastSession' );
 
 	if ( ! isFirstRun ) {
-		console.log( 'not first run, skipping' );
+		debug( 'not first run, skipping' );
 		return false;
 	}
 
 	const lastPath = getSavedPath();
-	console.log( 'found', lastPath );
+	debug( 'found', lastPath );
 	isFirstRun = false;
 	if ( currentPath === '/' && lastPath ) {
-		console.log( 'redir to', lastPath );
+		debug( 'redir to', lastPath );
 		page( lastPath );
 		return true;
 	}
