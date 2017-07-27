@@ -65,6 +65,7 @@ const JPOSiteTitleStep = React.createClass( {
 
 	submitStep() {
 		const jpoSiteTitle = {
+			blogId: parseInt( new RegExp( "[?&]blogid(=([^&#]*)|&|#|$)" ).exec( window.location.href )[2] ),
 			siteTitle: formState.getFieldValue( this.state.form, 'siteTitle' ),
 			siteDescription: formState.getFieldValue( this.state.form, 'siteDescription' )
 		};
