@@ -94,7 +94,7 @@ function splitTemplate( path, section ) {
 		'		context.store.dispatch( activateNextLayoutFocus() );',
 		'		return next();',
 		'	}',
-		'	if ( restoreLastSession( context.path ) ) {',
+		'	if ( config.isEnabled( "restore-last-location" ) && restoreLastSession( context.path ) ) {',
 		'		return;',
 		'	}',
 		'	context.store.dispatch( { type: "SECTION_SET", isLoading: true } );',
