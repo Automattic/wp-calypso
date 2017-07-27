@@ -25,17 +25,16 @@ Below is example usage for rendering an SortableList:
 In traditional React fashion, a SortableList does not track its own state, but instead expects you as the developer to track changes through an `onChange` handler, re-rendering the component with the updated element ordering. Refer to the following example:
 
 ```jsx
-var SortableList = require( 'components/forms/sortable-list' );
+import React, { Component } from 'react';
+import SortableList from 'components/forms/sortable-list';
 
-module.exports = React.createClass( { 
-	getInitialState: function() {
-		return {
-			items: [ 'First', 'Second', 'Third' ];
-		};
-	},
+class MyComponent extends Component {
+	state = {
+		items: [ 'First', 'Second', 'Third' ];
+	}
 
-	onChange: function( order ) {
-		var items = [];
+	onChange = ( order ) => {
+		let items = [];
 
 		this.state.items.forEach( function( item, i ) {
 			items[ order[ i ] ] = item;
@@ -46,12 +45,12 @@ module.exports = React.createClass( {
 		} );
 	},
 
-	render: function() {
-		var items = this.items.map( function( item ) {
+	render() {
+		const items = this.state.items.map( function( item ) {
 			return <button className="button">{ item }</button>;
 		} );
 
-		return <SortableList>{ items }</SortableList>;
+		return <SortableList onChange={ onChange }>{ items }</SortableList>;
 	}
 } );
 ```
