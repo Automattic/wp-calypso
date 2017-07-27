@@ -28,6 +28,7 @@ export class EditorGroundControl extends PureComponent {
 	static propTypes = {
 		hasContent: PropTypes.bool,
 		isConfirmationSidebarEnabled: PropTypes.bool,
+		confirmationSidebarStatus: PropTypes.string,
 		isDirty: PropTypes.bool,
 		isSaveBlocked: PropTypes.bool,
 		isPublishing: PropTypes.bool,
@@ -222,6 +223,10 @@ export class EditorGroundControl extends PureComponent {
 	}
 
 	renderGroundControlActionButtons() {
+		if ( this.props.confirmationSidebarStatus === 'open' ) {
+			return;
+		}
+
 		const publishComboClasses = classNames( 'editor-ground-control__publish-combo', {
 			'is-standalone': ! this.canPublishPost() || this.props.isConfirmationSidebarEnabled
 		} );
