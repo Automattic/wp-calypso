@@ -13,10 +13,8 @@ import { getPostCommentsTree } from 'state/comments/selectors';
 
 export class ConversationCommentList extends React.Component {
 	static propTypes = {
-		blogId: PropTypes.number.isRequired,
-		postId: PropTypes.number.isRequired,
+		post: PropTypes.object.isRequired, // required by PostComment
 		commentIds: PropTypes.array.isRequired,
-		post: PropTypes.object, // required by PostComment
 	};
 
 	render() {
@@ -44,8 +42,10 @@ export class ConversationCommentList extends React.Component {
 }
 
 const ConnectedConversationCommentList = connect( ( state, ownProps ) => {
+	const { site_ID: siteId, ID: postId } = ownProps.post;
+
 	return {
-		commentsTree: getPostCommentsTree( state, ownProps.blogId, ownProps.postId, 'all' ),
+		commentsTree: getPostCommentsTree( state, siteId, postId, 'all' ),
 	};
 } )( ConversationCommentList );
 
