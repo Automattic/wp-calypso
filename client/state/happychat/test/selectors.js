@@ -92,23 +92,21 @@ describe( 'selectors', () => {
 			HAPPYCHAT_CHAT_STATUS_NEW,
 		];
 
-		it( 'should return false if Happychat is unavailable', () => {
+		it( 'should return false if Happychat is not connected', () => {
 			const state = deepFreeze( {
 				happychat: {
 					connectionStatus: 'uninitialized',
-					isAvailable: false,
 					chatStatus: HAPPYCHAT_CHAT_STATUS_NEW
 				}
 			} );
 			expect( canUserSendMessages( state ) ).to.be.false;
 		} );
 
-		it( "should return false if Happychat is available but the chat status doesn't allow messaging", () => {
+		it( "should return false if Happychat is connected but the chat status doesn't allow messaging", () => {
 			messagingDisabledChatStatuses.forEach( status => {
 				const state = deepFreeze( {
 					happychat: {
 						connectionStatus: 'connected',
-						isAvailable: true,
 						chatStatus: status
 					}
 				} );
@@ -116,25 +114,11 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should return true if Happychat is available but client is not connected', () => {
-			messagingEnabledChatStatuses.forEach( status => {
-				const state = deepFreeze( {
-					happychat: {
-						connectionStatus: 'uninitialized',
-						isAvailable: true,
-						chatStatus: status
-					}
-				} );
-				expect( canUserSendMessages( state ) ).to.be.false;
-			} );
-		} );
-
-		it( 'should return true if Happychat is available and the chat status allows messaging', () => {
+		it( 'should return true if Happychat is connected and the chat status allows messaging', () => {
 			messagingEnabledChatStatuses.forEach( status => {
 				const state = deepFreeze( {
 					happychat: {
 						connectionStatus: 'connected',
-						isAvailable: true,
 						chatStatus: status
 					}
 				} );
