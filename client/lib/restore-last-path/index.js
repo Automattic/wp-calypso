@@ -19,6 +19,15 @@ function isWhitelistedForRestoring( path ) {
 	return !! path.match( ALLOWED_PATHS_FOR_RESTORING );
 }
 
+/**
+ * Pull the device's last validated location (if any) out of storage
+ *
+ * We're intentionally using store / localStorage in this module.
+ * localForage is usually preferable, but would mean a signifcant
+ * refactor of server/bundler/loader to use an asynchronous API there.
+ *
+ * @return {void}
+ */
 function readLastPath() {
 	return store.get( LAST_PATH );
 }
@@ -48,6 +57,17 @@ function getSavedPath() {
 	}
 }
 
+/**
+ * Validate the passed path & save it to the local device for future retrieval
+ *
+ * We're intentionally using store / localStorage in this module.
+ * localForage is usually preferable, but would mean a signifcant
+ * refactor of server/bundler/loader to use an asynchronous API there.
+ *
+ * @param  {string} path The current location within calypso to be potentially saved
+ * @return {Promise}      * Rejected if path validation fails or the saved path did not change
+ *                        * Resolved if the path was saved
+ */
 export function savePath( path ) {
 	return new Promise( ( resolve, reject ) => {
 		try {
