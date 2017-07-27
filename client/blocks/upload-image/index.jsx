@@ -212,7 +212,6 @@ class UploadImage extends Component {
 		this.setState( {
 			isEditingImage: false,
 			selectedImage: null,
-			selectedImageName: '',
 		} );
 	};
 
@@ -258,6 +257,15 @@ class UploadImage extends Component {
 
 		this.uploadingImageTransientId = null;
 	}
+
+	editUploadedImage = () => {
+		const { editedImage } = this.state;
+
+		this.setState( {
+			isEditingImage: true,
+			selectedImage: editedImage,
+		} );
+	};
 
 	renderImagePickerContent() {
 		const { imagePickerContent, addAnImageText, translate } = this.props;
@@ -321,7 +329,7 @@ class UploadImage extends Component {
 					<div className="upload-image__uploaded-image-wrapper">
 						<img src={ uploadedImage.URL } className="upload-image__uploaded-image" />
 						<Button
-							onClick={ false }
+							onClick={ this.editUploadedImage }
 							compact
 							className="upload-image__uploaded-image-edit-button"
 						>
