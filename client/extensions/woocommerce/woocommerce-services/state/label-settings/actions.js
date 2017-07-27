@@ -46,7 +46,7 @@ export const fetchSettings = ( siteId ) => ( dispatch, getState ) => {
 	}
 	dispatch( setFormMetaProperty( siteId, 'isFetching', true ) );
 
-	api.get( siteId, api.url.accountSettings() )
+	api.get( siteId, api.url.accountSettings )
 		.then( ( { storeOptions, formMeta, formData } ) => {
 			dispatch( initForm( siteId, storeOptions, formData, formMeta ) );
 		} )
@@ -58,7 +58,7 @@ export const fetchSettings = ( siteId ) => ( dispatch, getState ) => {
 
 export const submit = ( siteId, onSaveSuccess, onSaveFailure ) => ( dispatch, getState ) => {
 	dispatch( setFormMetaProperty( 'isSaving', true ) );
-	api.post( siteId, api.url.accountSettings(), getState().form.data )
+	api.post( siteId, api.url.accountSettings, getState().form.data )
 		.then( onSaveSuccess )
 		.catch( onSaveFailure )
 		.then( () => dispatch( setFormMetaProperty( 'isSaving', false ) ) );

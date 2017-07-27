@@ -1,11 +1,7 @@
 /**
- * External dependencies
- */
-import config from 'config';
-
-/**
  * Internal dependencies
  */
+import config from 'config';
 import { combineReducers } from 'state/utils';
 import ui from './ui/reducer';
 import sites from './sites/reducer';
