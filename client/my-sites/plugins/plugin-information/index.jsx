@@ -16,6 +16,7 @@ import Version from 'components/version';
 import PluginRatings from 'my-sites/plugins/plugin-ratings/';
 import versionCompare from 'lib/version-compare';
 import analytics from 'lib/analytics';
+import Card from 'components/card';
 
 export default React.createClass( {
 	_WPORG_PLUGINS_URL: 'wordpress.org/plugins/',
@@ -217,7 +218,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<div className="plugin-information">
+			<Card className="plugin-information">
 				<div className="plugin-information__wrapper">
 					<div className={ classes }>
 						<div className="plugin-information__version-shell">
@@ -255,7 +256,7 @@ export default React.createClass( {
 					downloaded={ this.props.plugin.downloaded }
 					numRatings={ this.props.plugin.num_ratings }
 					slug={ this.props.plugin.slug } />
-			</div>
+			</Card>
 		);
 	}
 } );

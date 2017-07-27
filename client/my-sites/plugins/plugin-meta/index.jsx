@@ -460,13 +460,13 @@ class PluginMeta extends Component {
 
 				{ path &&
 					<CompactCard
+						className="plugin-meta__settings-link"
 						href={ addSiteFragment( path, this.props.slug ) }>
 						{ this.props.translate( 'Edit plugin settings' ) }
 					</CompactCard>
 				}
 
 				{ ! this.props.isMock && get( this.props.selectedSite, 'jetpack' ) &&
-				<Card className="plugin-meta__plugin-information-wrapper">
 					<PluginInformation
 						plugin={ this.props.plugin }
 						isPlaceholder={ this.props.isPlaceholder }
@@ -475,7 +475,6 @@ class PluginMeta extends Component {
 						siteVersion={ this.props.selectedSite && this.props.selectedSite.options.software_version }
 						hasUpdate={ this.getAvailableNewVersions().length > 0 }
 					/>
-				</Card>
 				}
 
 				{ this.props.atEnabled &&

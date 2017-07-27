@@ -72,10 +72,6 @@
 	margin-top: 0;
 }
 
-.plugin-meta .card {
-	margin: 0;
-}
-
 .plugin-meta__meta {
 	color: $gray;
 	white-space: pre;
@@ -152,26 +148,7 @@
 	color: $alert-green;
 }
 
-.card.plugin-meta__plugin-information-wrapper {
-	margin-top: 16px;
-}
-
-a.plugin-meta__settings-link {
-	color: $gray;
-	display: block;
-	font-size: 11px;
-	line-height: 16px;
-	margin: 16px 9px 0 0;
-	text-transform: uppercase;
-
-	@include breakpoint( '>480px' ) {
-		display: inline-block;
-	}
-
-	.gridicon {
-		float: right;
-		position: relative;
-			left: 7px;
-			top: -3px;
-	}
+.card.plugin-meta__settings-link {
+	margin-top: -16px;
+	margin-bottom: 16px;
 }
