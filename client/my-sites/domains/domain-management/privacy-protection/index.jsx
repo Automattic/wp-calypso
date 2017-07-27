@@ -76,14 +76,18 @@ class PrivacyProtection extends Component {
 				</Header>
 
 				<Card className="privacy-protection-card">
-					{ displayCost && <PrivacyProtectionCardHeader
-						displayCost={ displayCost }
-						selectedDomainName={ selectedDomainName }
-						selectedSite={ selectedSite } /> }
+					{ displayCost &&
+						<PrivacyProtectionCardHeader
+							displayCost={ displayCost }
+							selectedDomainName={ selectedDomainName }
+							selectedSite={ selectedSite }
+						/>
+					}
 
 					<CardContent
 						selectedDomainName={ selectedDomainName }
-						selectedSite={ selectedSite } />
+						selectedSite={ selectedSite }
+					/>
 				</Card>
 			</Main>
 		);
