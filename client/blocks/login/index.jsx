@@ -117,7 +117,8 @@ class Login extends Component {
 			twoStepNonce,
 			linkingSocialService,
 		} = this.props;
-		let headerText;
+
+		let headerText = translate( 'Log in to your account.' );
 
 		if ( twoStepNonce ) {
 			headerText = translate( 'Two-Step Authentication' );
@@ -129,8 +130,6 @@ class Login extends Component {
 			} );
 		} else if ( privateSite ) {
 			headerText = translate( 'This is a private WordPress.com site.' );
-		} else {
-			headerText = translate( 'Log in to your account.' );
 		}
 
 		return (
