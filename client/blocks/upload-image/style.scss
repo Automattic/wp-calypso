@@ -71,6 +71,10 @@
 	height: 100%;
 }
 
+.upload-image__uploading-container, .upload-image__uploaded-image-wrapper {
+	text-align: center;
+}
+
 .upload-image__uploading-done-container {
 	position: relative;
 }
@@ -100,18 +104,16 @@
 	color: lighten( $gray, 10% );
 }
 
-.upload-image__uploading-image {
+.upload-image__uploading-image, .upload-image__uploaded-image-wrapper {
 	position: relative;
 	top: 50%;
 	transform: perspective(1px) translateY(-50%);
 	line-height: 0;
 }
 
-.upload-image__uploaded-image-wrapper {
-	transform: perspective(1px) translateY(-50%);
-	position: relative;
-	top: 50%;
-	line-height: 0;
+.upload-image__uploading-image, .upload-image__uploaded-image {
+	max-width: 200px;
+	max-height: 200px;
 }
 
 .button.is-compact.upload-image__uploaded-image-edit-button {
