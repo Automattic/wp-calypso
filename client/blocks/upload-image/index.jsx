@@ -53,7 +53,7 @@ class UploadImage extends Component {
 
 		additionalImageEditorClasses: PropTypes.string,
 		additionalClasses: PropTypes.string,
-		placeholderContent: PropTypes.element,
+		imagePickerContent: PropTypes.element,
 		uploadingContent: PropTypes.element,
 		uploadingDoneContent: PropTypes.element,
 		doneButtonText: PropTypes.string,
@@ -243,9 +243,7 @@ class UploadImage extends Component {
 		);
 	}
 
-	removeUploadedImage = event => {
-		event.stopPropagation(); // so it won't open File Picker.
-
+	removeUploadedImage = () => {
 		this.setState( { uploadedImage: null } );
 	};
 
@@ -261,20 +259,22 @@ class UploadImage extends Component {
 		this.uploadingImageTransientId = null;
 	}
 
-	renderPlaceholderContent() {
-		const { placeholderContent, addAnImageText, translate } = this.props;
+	renderImagePickerContent() {
+		const { imagePickerContent, addAnImageText, translate } = this.props;
 
-		if ( placeholderContent ) {
-			return placeholderContent;
+		if ( imagePickerContent ) {
+			return imagePickerContent;
 		}
 
 		return (
-			<div className="upload-image__placeholder">
-				<Gridicon icon="add-image" size={ 36 } />
-				<span>
-					{ addAnImageText || translate( 'Add an Image' ) }
-				</span>
-			</div>
+			<FilePicker accept="image/*" onPick={ this.receiveFiles }>
+				<div className="upload-image__image-picker">
+					<Gridicon icon="add-image" size={ 36 } />
+					<span>
+						{ addAnImageText || translate( 'Add an Image' ) }
+					</span>
+				</div>
+			</FilePicker>
 		);
 	}
 
@@ -341,24 +341,21 @@ class UploadImage extends Component {
 		return (
 			<div className={ classnames( 'upload-image', additionalClasses ) }>
 				{ this.renderImageEditor() }
+				<div
+					className={ classnames( 'upload-image__image-container', {
+						'is-uploading': isUploading,
+						'is-uploaded': ! isUploading && uploadedImage,
+					} ) }
+				>
+					<DropZone
+						textLabel={ dragUploadText ? dragUploadText : translate( 'Drop to upload image' ) }
+						onFilesDrop={ this.receiveFiles }
+					/>
 
-				<FilePicker accept="image/*" onPick={ this.receiveFiles }>
-					<div
-						className={ classnames( 'upload-image__image-container', {
-							'is-uploading': isUploading,
-							'is-uploaded': ! isUploading && uploadedImage,
-						} ) }
-					>
-						<DropZone
-							textLabel={ dragUploadText ? dragUploadText : translate( 'Drop to upload image' ) }
-							onFilesDrop={ this.receiveFiles }
-						/>
-
-						{ ! isUploading && ! uploadedImage && this.renderPlaceholderContent() }
-						{ isUploading && this.renderUploadingContent() }
-						{ ! isUploading && uploadedImage && this.renderUploadingDoneContent() }
-					</div>
-				</FilePicker>
+					{ ! isUploading && ! uploadedImage && this.renderImagePickerContent() }
+					{ isUploading && this.renderUploadingContent() }
+					{ ! isUploading && uploadedImage && this.renderUploadingDoneContent() }
+				</div>
 			</div>
 		);
 	}
