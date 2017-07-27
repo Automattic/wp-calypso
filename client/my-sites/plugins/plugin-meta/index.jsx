@@ -460,6 +460,7 @@ class PluginMeta extends Component {
 
 				{ path &&
 					<CompactCard
+						className="plugin-meta__settings-link"
 						href={ addSiteFragment( path, this.props.slug ) }>
 						{ this.props.translate( 'Edit plugin settings' ) }
 					</CompactCard>
