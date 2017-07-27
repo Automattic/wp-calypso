@@ -10,7 +10,7 @@ import classnames from 'classnames';
  */
 import FormRange from 'components/forms/form-range';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Range',
 
 	propTypes: {

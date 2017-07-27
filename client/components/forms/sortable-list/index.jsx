@@ -12,7 +12,7 @@ const debug = debugFactory( 'calypso:forms:sortable-list' );
  */
 import touchDetect from 'lib/touch-detect';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SortableList',
 
 	propTypes: {

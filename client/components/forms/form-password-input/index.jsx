@@ -12,7 +12,7 @@ import { omit } from 'lodash';
 import FormTextInput from 'components/forms/form-text-input';
 import viewport from 'lib/viewport';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'FormPasswordInput',
 

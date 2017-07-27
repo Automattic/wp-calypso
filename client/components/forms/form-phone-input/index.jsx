@@ -16,7 +16,7 @@ import phoneValidation from 'lib/phone-validation';
 
 var CLEAN_REGEX = /^0|[\s.\-()]+/g;
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'FormPhoneInput',
 
 	propTypes: {

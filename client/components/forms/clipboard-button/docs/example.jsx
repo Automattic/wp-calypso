@@ -9,7 +9,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import ClipboardButton from '../';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'ClipboardButtons',
 
 	mixins: [ PureRenderMixin ],

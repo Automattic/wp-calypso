@@ -10,7 +10,7 @@ import { omit } from 'lodash';
  */
 import Toggle from 'components/forms/form-toggle';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'CompactFormToggle',
 

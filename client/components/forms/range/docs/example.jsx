@@ -10,7 +10,7 @@ import Gridicon from 'gridicons';
  */
 import FormRange from 'components/forms/range';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Ranges',
 
 	mixins: [ PureRenderMixin ],

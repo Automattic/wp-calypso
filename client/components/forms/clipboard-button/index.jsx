@@ -12,7 +12,7 @@ import classNames from 'classnames';
  */
 import Button from 'components/button';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'ClipboardButton',
 
 	propTypes: {

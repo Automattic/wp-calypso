@@ -9,7 +9,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import CountedTextarea from 'components/forms/counted-textarea';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'CountedTextareas',
 
 	mixins: [ PureRenderMixin ],

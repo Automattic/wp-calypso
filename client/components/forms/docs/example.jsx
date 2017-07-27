@@ -284,4 +284,4 @@ var FormFields = React.createClass( {
 	}
 } );
 
-module.exports = FormFields;
+export default FormFields;
