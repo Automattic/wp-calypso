@@ -246,13 +246,11 @@ export class LoginForm extends Component {
 					</div>
 				</Card>
 				{ config.isEnabled( 'signup/social' ) && (
-					<Card>
-						<div className="login__form-social">
-							<SocialLoginForm
-								onSuccess={ this.props.onSuccess }
-								linkSocialUser={ this.linkSocialUser }
-								linkingSocialService={ this.state.linkingSocialService } />
-						</div>
+					<Card className="login__form-social">
+						<SocialLoginForm
+							onSuccess={ this.props.onSuccess }
+							linkSocialUser={ this.linkSocialUser }
+							linkingSocialService={ this.state.linkingSocialService } />
 					</Card>
 				) }
 			</form>
