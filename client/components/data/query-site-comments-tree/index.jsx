@@ -1,26 +1,38 @@
 /**
  * External dependencies
  */
-import { Component } from 'react';
+import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { requestCommentsList } from 'state/comments/actions';
+import { requestCommentsTreeForSite } from 'state/comments/actions';
 
-const requestComments = ( { requestSiteComments, siteId, status } ) => (
-	siteId && requestSiteComments( { siteId, status } )
-);
+export class QuerySiteCommentsTree extends Component {
+	static propTypes = {
+		siteId: PropTypes.number,
+		status: PropTypes.string,
+	};
 
-export class QuerySiteComments extends Component {
+	static defaultProps = {
+		status: 'unapproved',
+	};
+
 	componentDidMount() {
-		requestComments( this.props );
+		this.request();
 	}
 
 	componentDidUpdate( { siteId, status } ) {
 		if ( siteId !== this.props.siteId || status !== this.props.status ) {
-			requestComments( this.props );
+			this.request();
+		}
+	}
+
+	request() {
+		const { siteId, status } = this.props;
+		if ( siteId ) {
+			this.props.requestCommentsTreeForSite( { siteId, status } );
 		}
 	}
 
@@ -29,13 +41,4 @@ export class QuerySiteComments extends Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	requestSiteComments: ( { siteId, status = 'unapproved' } ) => dispatch( requestCommentsList( {
-		listType: 'site',
-		siteId,
-		status,
-		type: 'comment',
-	} ) ),
-} );
-
-export default connect( null, mapDispatchToProps )( QuerySiteComments );
+export default connect( null, { requestCommentsTreeForSite } )( QuerySiteCommentsTree );

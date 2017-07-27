@@ -25,7 +25,7 @@ import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-place
 import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
-import QuerySiteComments from 'components/data/query-site-comments';
+import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import { hasSiteComments } from 'state/selectors';
 
 const COMMENTS_PER_PAGE = 2;
@@ -336,7 +336,7 @@ export class CommentList extends Component {
 
 		return (
 			<div className="comment-list">
-				<QuerySiteComments siteId={ siteId } status={ status } />
+				<QuerySiteCommentsTree siteId={ siteId } status={ status } />
 
 				<CommentNavigation
 					isBulkEdit={ isBulkEdit }
