@@ -163,7 +163,7 @@ class PaymentMethodStripe extends Component {
 						onChange={ this.onEditFieldHandler } />
 					<span>
 						{ translate(
-							'By using ApplePay you aggree to Stripe and ' +
+							'By using ApplePay you agree to Stripe and ' +
 							'Apple\'s terms of service'
 						) }
 					</span>
