@@ -3,6 +3,12 @@
  */
 const sections = [
 	{
+		name: 'root',
+		paths: [ '/' ],
+		module: 'root',
+		secondary: false,
+	},
+	{
 		name: 'sites',
 		paths: [ '/sites' ],
 		module: 'my-sites',
@@ -240,7 +246,7 @@ sections.push( {
 // this MUST be the first section for /read paths so subsequent sections under /read can override settings
 sections.push( {
 	name: 'reader',
-	paths: [ '/', '/read' ],
+	paths: [ '/read' ],
 	module: 'reader',
 	secondary: true,
 	group: 'reader',

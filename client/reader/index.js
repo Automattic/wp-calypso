@@ -29,18 +29,17 @@ function forceTeamA8C( context, next ) {
 
 export default function() {
 	if ( config.isEnabled( 'reader' ) ) {
-		page( '/', preloadReaderBundle, initAbTests, updateLastRoute, sidebar, following );
-
-		// Old and incomplete paths that should be redirected to /
-		page( '/read/following', '/' );
-		page( '/read', '/' );
-		page( '/read/blogs', '/' );
-		page( '/read/feeds', '/' );
-		page( '/read/blog', '/' );
-		page( '/read/post', '/' );
-		page( '/read/feed', '/' );
+		// Old and incomplete paths that should be redirected to /read
+		page( '/read/following', '/read' );
+		page( '/read/blogs', '/read' );
+		page( '/read/feeds', '/read' );
+		page( '/read/blog', '/read' );
+		page( '/read/post', '/read' );
+		page( '/read/feed', '/read' );
 
 		// Feed stream
+		page( '/read', preloadReaderBundle, initAbTests, updateLastRoute, sidebar, following );
+
 		page( '/read/*', preloadReaderBundle, initAbTests );
 		page( '/read/blog/feed/:feed_id', legacyRedirects );
 		page( '/read/feeds/:feed_id/posts', incompleteUrlRedirects );

@@ -30,17 +30,8 @@ export const routingMiddleware = () => {
 		const isFirstRun = ! hasInitialized;
 		hasInitialized = true;
 
-		if ( isFirstRun && action.path === '/' ) {
-			// Attempt to restore the last path on the first run
-			return getSavedPath()
-					.then( ( lastPath ) => {
-						debug( 'restoring: ' + lastPath );
-						page( lastPath );
-					} )
-					.catch( ( reason ) => {
-						debug( 'cannot restore', reason );
-						next( action );
-					} );
+		if ( isFirstRun || action.path === '/' ) {
+			return next( action );
 		}
 
 		// Attempt to save the path so it might be restored in the future
