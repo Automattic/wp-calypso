@@ -21,7 +21,6 @@ var AsyncLoad = require( 'components/async-load' ),
 	TranslatorLauncher = require( './community-translator/launcher' ),
 	Welcome = require( 'my-sites/welcome/welcome' ),
 	WelcomeMessage = require( 'layout/nux-welcome/welcome-message' ),
-	GuidedTours = require( 'layout/guided-tours' ),
 	analytics = require( 'lib/analytics' ),
 	config = require( 'config' ),
 	PulsingDot = require( 'components/pulsing-dot' ),
@@ -29,8 +28,7 @@ var AsyncLoad = require( 'components/async-load' ),
 	OfflineStatus = require( 'layout/offline-status' ),
 	QueryPreferences = require( 'components/data/query-preferences' ),
 	KeyboardShortcutsMenu,
-	Layout,
-	SupportUser;
+	Layout;
 
 import QuerySites from 'components/data/query-sites';
 import { isOffline } from 'state/application/selectors';
@@ -39,14 +37,9 @@ import { isHappychatOpen } from 'state/ui/happychat/selectors';
 import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
-import NpsSurveyNotice from 'layout/nps-survey-notice';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
-}
-
-if ( config.isEnabled( 'support-user' ) ) {
-	SupportUser = require( 'support/support-user' );
 }
 
 Layout = React.createClass( {
@@ -145,11 +138,11 @@ Layout = React.createClass( {
 				<DocumentHead />
 				<QuerySites allSites />
 				<QueryPreferences />
-				{ <GuidedTours /> }
-				{ config.isEnabled( 'nps-survey/notice' ) && <NpsSurveyNotice /> }
-				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
+				{ <AsyncLoad require="layout/guided-tours" placeholder={ null } /> }
+				{ config.isEnabled( 'nps-survey/notice' ) && <AsyncLoad require="layout/nps-survey-notice" placeholder={ null } /> }
+				{ config.isEnabled( 'keyboard-shortcuts' ) && <KeyboardShortcutsMenu /> }
 				{ this.renderMasterbar() }
-				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
+				{ config.isEnabled( 'support-user' ) && <AsyncLoad require="support/support-user" placeholder={ null } /> }
 				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.section.name } /></div>
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
