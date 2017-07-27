@@ -1,15 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	omit = require( 'lodash/omit' ),
-	classnames = require( 'classnames' ),
-	uniqueId = require( 'lodash/uniqueId' );
+import React from 'react';
+import { omit, uniqueId } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * External dependencies
  */
-var FormRange = require( 'components/forms/form-range' );
+import FormRange from 'components/forms/form-range';
 
 module.exports = React.createClass( {
 	displayName: 'Range',

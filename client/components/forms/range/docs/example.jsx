@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-var FormRange = require( 'components/forms/range' );
-var Gridicon = require( 'gridicons' );
+import FormRange from 'components/forms/range';
 
 module.exports = React.createClass( {
 	displayName: 'Ranges',

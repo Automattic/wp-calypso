@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	Gridicon = require( 'gridicons' ),
-	classNames = require( 'classnames' ),
-	omit = require( 'lodash/omit' );
+import React from 'react';
+import Gridicon from 'gridicons';
+import classNames from 'classnames';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var FormTextInput = require( 'components/forms/form-text-input' ),
-	viewport = require( 'lib/viewport' );
+import FormTextInput from 'components/forms/form-text-input';
+import viewport from 'lib/viewport';
 
 module.exports = React.createClass( {
 

@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	Clipboard = require( 'clipboard' ),
-	omit = require( 'lodash/omit' ),
-	noop = require( 'lodash/noop' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import ReactDom from 'react-dom';
+import Clipboard from 'clipboard';
+import { omit, noop } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Button = require( 'components/button' );
+import Button from 'components/button';
 
 module.exports = React.createClass( {
 	displayName: 'ClipboardButton',

@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	fromPairs = require( 'lodash/fromPairs' ),
-	findIndex = require( 'lodash/findIndex' ),
-	assign = require( 'lodash/assign' ),
-	debug = require( 'debug' )( 'calypso:forms:sortable-list' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import { assign, findIndex, fromPairs } from 'lodash';
+import classNames from 'classnames';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:forms:sortable-list' );
 
 /**
  * Internal dependencies
  */
-var touchDetect = require( 'lib/touch-detect' );
+import touchDetect from 'lib/touch-detect';
 
 module.exports = React.createClass( {
 	displayName: 'SortableList',

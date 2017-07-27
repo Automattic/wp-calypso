@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	omit = require( 'lodash/omit' ),
-	classnames = require( 'classnames' );
+import React from 'react';
+import { omit } from 'lodash';
+import classnames from 'classnames';
 
 module.exports = React.createClass( {
 	displayName: 'FormRange',

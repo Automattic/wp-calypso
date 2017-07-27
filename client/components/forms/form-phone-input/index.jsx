@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 import { noop, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var FormLabel = require( 'components/forms/form-label' ),
-	FormTelInput = require( 'components/forms/form-tel-input' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	CountrySelect = require( 'components/forms/form-country-select' ),
-	classnames = require( 'classnames' ),
-	phoneValidation = require( 'lib/phone-validation' );
+import FormLabel from 'components/forms/form-label';
+import FormTelInput from 'components/forms/form-tel-input';
+import FormFieldset from 'components/forms/form-fieldset';
+import CountrySelect from 'components/forms/form-country-select';
+import classnames from 'classnames';
+import phoneValidation from 'lib/phone-validation';
 
 var CLEAN_REGEX = /^0|[\s.\-()]+/g;
 

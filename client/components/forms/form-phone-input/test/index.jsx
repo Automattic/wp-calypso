@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	useFakeDom = require( 'test/helpers/use-fake-dom' ).withContainer,
-	getContainer = require( 'test/helpers/use-fake-dom' ).getContainer,
-	useMockery = require( 'test/helpers/use-mockery' );
+import { expect } from 'chai';
+import { withContainer as useFakeDom } from 'test/helpers/use-fake-dom';
+import { getContainer } from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'FormPhoneInput', function() {
 	var React, ReactDom, ReactClass, TestUtils, i18n, mockCountriesList, mockCountriesListEmpty, FormPhoneInput, countries, container;

@@ -3,8 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import omit from 'lodash/omit';
-import noop from 'lodash/noop';
+import { omit, noop } from 'lodash';
 
 /**
  * Internal dependencies

@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	ReactClass = require( 'react/lib/ReactClass' ),
-	TestUtils = require( 'react-addons-test-utils' ),
-	expect = require( 'chai' ).expect,
-	i18n = require( 'i18n-calypso' );
+import React from 'react';
+import ReactClass from 'react/lib/ReactClass';
+import TestUtils from 'react-addons-test-utils';
+import { expect } from 'chai';
+import i18n from 'i18n-calypso';
 
 describe( 'index', function() {
 	var CountedTextarea, renderer;

@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var ClipboardButton = require( '../' );
+import ClipboardButton from '../';
 
 module.exports = React.createClass( {
 	displayName: 'ClipboardButtons',
