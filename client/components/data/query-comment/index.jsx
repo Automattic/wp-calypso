@@ -15,11 +15,11 @@ export class QueryComment extends Component {
 		siteId: PropTypes.number,
 	};
 
-	commentDidMount() {
+	componentDidMount() {
 		this.request();
 	}
 
-	commentDidUpdate( { siteId, commentId } ) {
+	componentDidUpdate( { siteId, commentId } ) {
 		if ( siteId !== this.props.siteId || commentId !== this.props.commentId ) {
 			this.request();
 		}
