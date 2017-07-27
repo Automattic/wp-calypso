@@ -71,6 +71,35 @@
 	height: 100%;
 }
 
+.upload-image__uploading-done-container {
+	position: relative;
+}
+
+.button.is-compact.upload-image__uploaded-image-remove {
+	position: absolute;
+		top: 0;
+		right: 0;
+	width: 24px;
+	height: 24px;
+	transform: translate(50%, -50%);
+	border: 1px solid lighten( $gray, 10% );
+	border-radius: 50%;
+	background-color: $gray-light;
+	cursor: pointer;
+	z-index: z-index( '.dialog__backdrop', '.upload-image__uploaded-image-remove' );
+}
+
+.button.is-compact .gridicon.upload-image__uploaded-image-remove-icon {
+	position: absolute;
+		top: 50%;
+		left: 50%;
+	transform: translate(-50%, -50%);
+	width: 20px;
+	height: 20px;
+	margin: 0;
+	color: lighten( $gray, 10% );
+}
+
 .upload-image__uploading-image {
 	position: relative;
 	top: 50%;

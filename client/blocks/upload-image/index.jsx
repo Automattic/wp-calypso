@@ -31,6 +31,7 @@ import MediaStore from 'lib/media/store';
 import MediaUtils from 'lib/media/utils';
 import MediaValidationStore from 'lib/media/validation-store';
 import { ValidationErrors } from 'lib/media/constants';
+import Button from 'components/button';
 
 class UploadImage extends Component {
 	state = {
@@ -300,6 +301,16 @@ class UploadImage extends Component {
 		if ( uploadedImage && uploadedImage.URL ) {
 			return (
 				<div className="upload-image__uploading-done-container">
+					<Button
+						onClick={ false }
+						compact
+						className="upload-image__uploaded-image-remove">
+						<Gridicon
+							icon="cross"
+							size={ 24 }
+							className="upload-image__uploaded-image-remove-icon"
+						/>
+					</Button>
 					<div className="upload-image__uploaded-image-wrapper">
 						<img src={ uploadedImage.URL } className="upload-image__uploaded-image" />
 						<Gridicon
