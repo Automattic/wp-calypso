@@ -1,31 +1,28 @@
 /**
  * External dependencies
  */
+import React from 'react';
+import ReactDom from 'react-dom';
+import TestUtils from 'react-addons-test-utils';
 import { expect } from 'chai';
 import { withContainer as useFakeDom } from 'test/helpers/use-fake-dom';
 import { getContainer } from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
+
+/**
+ * Internal dependencies
+ */
+import { FormPhoneInput } from '../';
+import mockCountriesList from './mocks/mock-countries-list';
+import mockCountriesListEmpty from './mocks/mock-countries-list-empty';
+
+const countries = mockCountriesList.get();
 
 describe( 'FormPhoneInput', function() {
-	var React, ReactDom, ReactClass, TestUtils, i18n, mockCountriesList, mockCountriesListEmpty, FormPhoneInput, countries, container;
+	var container;
 
 	useFakeDom();
-	useMockery();
 
 	before( function() {
-		ReactDom = require( 'react-dom' );
-		React = require( 'react' );
-		ReactClass = require( 'react/lib/ReactClass' );
-		TestUtils = require( 'react-addons-test-utils' );
-
-		i18n = require( 'i18n-calypso' );
-		mockCountriesList = require( './mocks/mock-countries-list' );
-		mockCountriesListEmpty = require( './mocks/mock-countries-list-empty' );
-
-		countries = mockCountriesList.get();
-
-		ReactClass.injection.injectMixin( i18n.mixin );
-		FormPhoneInput = require( 'components/forms/form-phone-input' ).FormPhoneInput;
 		container = getContainer();
 	} );
 

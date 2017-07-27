@@ -3,7 +3,7 @@
  */
 import emitter from 'lib/mixins/emitter';
 
-var countriesList = {
+const countriesList = {
 	get: function() {
 		return {};
 	}
