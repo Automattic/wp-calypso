@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import { noop } from 'lodash';
+import { noop, isFunction } from 'lodash';
 import page from 'page';
 import shallowCompare from 'react-addons-shallow-compare';
 import { v4 as uuid } from 'uuid';
@@ -112,11 +112,31 @@ export class WebPreviewContent extends Component {
 			case 'location-change':
 				this.handleLocationChange( data.payload );
 				return;
+			case 'focus':
+				this.removeSelection();
+				return;
 		}
 	}
 
 	handleLocationChange = ( payload ) => {
 		this.props.onLocationUpdate( payload.pathname );
+	}
+
+	removeSelection = () => {
+		// remove all textual selections when user gives focus to preview iframe
+		// they might be confusing
+		if ( global.window ) {
+			if ( isFunction( window.getSelection ) ) {
+				const selection = window.getSelection();
+				if ( isFunction( selection.empty ) ) {
+					selection.empty();
+				} else if ( isFunction( selection.removeAllRanges ) ) {
+					selection.removeAllRanges();
+				}
+			} else if ( document.selection && isFunction( document.selection.empty ) ) {
+				document.selection.empty();
+			}
+		}
 	}
 
 	focusIfNeeded = () => {
