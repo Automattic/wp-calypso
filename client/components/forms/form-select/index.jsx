@@ -5,7 +5,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 class FormSelect extends React.Component {
-    static defaultProps = {
+	static defaultProps = {
 		isError: false,
 	};
 

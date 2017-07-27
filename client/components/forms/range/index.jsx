@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { omit, uniqueId } from 'lodash';
+import { omit, uniqueId } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -12,7 +12,7 @@ import classnames from 'classnames';
 import FormRange from 'components/forms/form-range';
 
 export default class extends React.Component {
-    static displayName = 'Range';
+	static displayName = 'Range';
 
 	static propTypes = {
 		minContent: PropTypes.oneOfType( [ PropTypes.element, PropTypes.string ] ),
@@ -20,29 +20,37 @@ export default class extends React.Component {
 		min: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		max: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		value: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
-		showValueLabel: PropTypes.bool
+		showValueLabel: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		min: 0,
 		max: 10,
 		value: 0,
-		showValueLabel: false
+		showValueLabel: false,
 	};
 
 	state = {
-		id: uniqueId( 'range' )
+		id: uniqueId( 'range' ),
 	};
 
 	getMinContentElement = () => {
 		if ( this.props.minContent ) {
-			return <span className="range__content is-min">{ this.props.minContent }</span>;
+			return (
+				<span className="range__content is-min">
+					{ this.props.minContent }
+				</span>
+			);
 		}
 	};
 
 	getMaxContentElement = () => {
 		if ( this.props.maxContent ) {
-			return <span className="range__content is-max">{ this.props.maxContent }</span>;
+			return (
+				<span className="range__content is-max">
+					{ this.props.maxContent }
+				</span>
+			);
 		}
 	};
 
@@ -70,7 +78,13 @@ export default class extends React.Component {
 
 			return (
 				<span className="range__label" style={ { left: ( left || 0 ) + '%', marginLeft: offset } }>
-					<output className="range__label-inner" htmlFor={ this.state.id } value={ this.props.value }>{ this.props.value }</output>
+					<output
+						className="range__label-inner"
+						htmlFor={ this.state.id }
+						value={ this.props.value }
+					>
+						{ this.props.value }
+					</output>
 				</span>
 			);
 		}
@@ -79,13 +93,17 @@ export default class extends React.Component {
 	render() {
 		var classes = classnames( this.props.className, 'range', {
 			'has-min-content': !! this.props.minContent,
-			'has-max-content': !! this.props.maxContent
+			'has-max-content': !! this.props.maxContent,
 		} );
 
 		return (
 			<div className={ classes }>
 				{ this.getMinContentElement() }
-				<FormRange id={ this.state.id } className="range__input" { ...omit( this.props, 'minContent', 'maxContent', 'showValueLabel', 'className' ) } />
+				<FormRange
+					id={ this.state.id }
+					className="range__input"
+					{ ...omit( this.props, 'minContent', 'maxContent', 'showValueLabel', 'className' ) }
+				/>
 				{ this.getMaxContentElement() }
 				{ this.getValueLabelElement() }
 			</div>

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import Clipboard from 'clipboard';
-import { omit, noop } from 'lodash';
+import { omit, noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -15,20 +15,20 @@ import classNames from 'classnames';
 import Button from 'components/button';
 
 class ClipboardButton extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		className: PropTypes.string,
 		text: PropTypes.string,
-		onCopy: PropTypes.func
+		onCopy: PropTypes.func,
 	};
 
 	static defaultProps = {
-		onCopy: noop
+		onCopy: noop,
 	};
 
 	componentDidMount() {
 		var button = ReactDom.findDOMNode( this.refs.button );
 		this.clipboard = new Clipboard( button, {
-			text: () => this.props.text
+			text: () => this.props.text,
 		} );
 		this.clipboard.on( 'success', this.props.onCopy );
 		this.clipboard.on( 'error', this.displayPrompt );
@@ -40,7 +40,10 @@ class ClipboardButton extends React.Component {
 	}
 
 	displayPrompt = () => {
-		window.prompt( this.props.translate( 'Highlight and copy the following text to your clipboard:' ), this.props.text );
+		window.prompt(
+			this.props.translate( 'Highlight and copy the following text to your clipboard:' ),
+			this.props.text
+		);
 	};
 
 	render() {
@@ -50,7 +53,8 @@ class ClipboardButton extends React.Component {
 			<Button
 				ref="button"
 				{ ...omit( this.props, Object.keys( this.constructor.propTypes ) ) }
-				className={ classes } />
+				className={ classes }
+			/>
 		);
 	}
 }

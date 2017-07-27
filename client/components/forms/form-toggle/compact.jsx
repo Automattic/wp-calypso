@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import { omit } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,7 +11,7 @@ import { omit } from 'lodash';
 import Toggle from 'components/forms/form-toggle';
 
 export default class extends React.Component {
-    static displayName = 'CompactFormToggle';
+	static displayName = 'CompactFormToggle';
 
 	render() {
 		return (

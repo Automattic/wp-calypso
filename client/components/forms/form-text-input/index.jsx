@@ -11,7 +11,7 @@ export default class FormTextInput extends PureComponent {
 		isError: PropTypes.bool,
 		isValid: PropTypes.bool,
 		selectOnFocus: PropTypes.bool,
-		className: PropTypes.string
+		className: PropTypes.string,
 	};
 
 	constructor() {
@@ -36,7 +36,7 @@ export default class FormTextInput extends PureComponent {
 
 		const classes = classNames( 'form-text-input', this.props.className, {
 			'is-error': this.props.isError,
-			'is-valid': this.props.isValid
+			'is-valid': this.props.isValid,
 		} );
 
 		return (
@@ -45,7 +45,8 @@ export default class FormTextInput extends PureComponent {
 				{ ...props }
 				ref={ inputRef || 'textField' }
 				className={ classes }
-				onClick={ this.selectOnFocus } />
+				onClick={ this.selectOnFocus }
+			/>
 		);
 	}
 }

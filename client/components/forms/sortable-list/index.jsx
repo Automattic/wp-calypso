@@ -15,22 +15,22 @@ const debug = debugFactory( 'calypso:forms:sortable-list' );
 import touchDetect from 'lib/touch-detect';
 
 class SortableList extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		direction: PropTypes.oneOf( [ 'horizontal', 'vertical' ] ),
 		allowDrag: PropTypes.bool,
-		onChange: PropTypes.func
+		onChange: PropTypes.func,
 	};
 
 	static defaultProps = {
 		direction: 'horizontal',
 		allowDrag: true,
-		onChange: function() {}
+		onChange: function() {},
 	};
 
 	state = {
 		activeIndex: null,
 		activeOrder: null,
-		position: null
+		position: null,
 	};
 
 	componentWillMount() {
@@ -45,14 +45,14 @@ class SortableList extends React.Component {
 		document.removeEventListener( 'mousemove', this.onMouseMove );
 	}
 
-	getPositionForCursorElement = (element, event) => {
+	getPositionForCursorElement = ( element, event ) => {
 		return {
-			top: event.clientY - ( element.clientHeight / 2 ),
-			left: event.clientX - ( element.clientWidth / 2 )
+			top: event.clientY - element.clientHeight / 2,
+			left: event.clientX - element.clientWidth / 2,
 		};
 	};
 
-	compareCursorVerticalToElement = (element, event) => {
+	compareCursorVerticalToElement = ( element, event ) => {
 		var rect = element.getBoundingClientRect();
 
 		if ( event.clientY < rect.top ) {
@@ -64,7 +64,7 @@ class SortableList extends React.Component {
 		}
 	};
 
-	isCursorBeyondElementThreshold = (element, direction, permittedVertical, event) => {
+	isCursorBeyondElementThreshold = ( element, direction, permittedVertical, event ) => {
 		var rect = element.getBoundingClientRect();
 
 		// We check for Y bounds on right and left and not X bounds for top
@@ -72,17 +72,21 @@ class SortableList extends React.Component {
 		// should be careful to consider vertical position in those cases
 		switch ( direction ) {
 			case 'top':
-				return event.clientY <= rect.top + ( rect.height / 2 );
+				return event.clientY <= rect.top + rect.height / 2;
 			case 'right':
-				return event.clientX >= rect.left + ( rect.width / 2 ) &&
+				return (
+					event.clientX >= rect.left + rect.width / 2 &&
 					( 'top' === permittedVertical || event.clientY >= rect.top ) &&
-					( 'bottom' === permittedVertical || event.clientY <= rect.bottom );
+					( 'bottom' === permittedVertical || event.clientY <= rect.bottom )
+				);
 			case 'bottom':
-				return event.clientY >= rect.top + ( rect.height / 2 );
+				return event.clientY >= rect.top + rect.height / 2;
 			case 'left':
-				return event.clientX <= rect.left + ( rect.width / 2 ) &&
+				return (
+					event.clientX <= rect.left + rect.width / 2 &&
 					( 'top' === permittedVertical || event.clientY >= rect.top ) &&
-					( 'bottom' === permittedVertical || event.clientY <= rect.bottom );
+					( 'bottom' === permittedVertical || event.clientY <= rect.bottom )
+				);
 			default:
 				return false;
 		}
@@ -105,52 +109,63 @@ class SortableList extends React.Component {
 			shadowRect = this.refs[ 'wrap-shadow-' + this.state.activeIndex ].getBoundingClientRect(),
 			index;
 
-		index = findIndex( this.props.children, function( child, i ) {
-			var isBeyond, adjustedElementIndex, permittedVertical;
+		index = findIndex(
+			this.props.children,
+			function( child, i ) {
+				var isBeyond, adjustedElementIndex, permittedVertical;
 
-			// Avoid self-comparisons for the active item
-			if ( i === this.state.activeIndex ) {
-				return false;
-			}
-
-			// Since elements are now shifted around, we want to find their
-			// visible position to make accurate comparisons
-			adjustedElementIndex = this.getAdjustedElementIndex( i );
-
-			// When rearranging on a horizontal plane, permit breaking of
-			// vertical if the cursor is outside the list element on the
-			// same vertical, and only if the element is on the same line as
-			// the active item's shadow element
-			if ( 'horizontal' === this.props.direction ) {
-				if ( 1 === cursorCompare && this.refs[ 'wrap-' + i ].getBoundingClientRect().top >= shadowRect.top ) {
-					permittedVertical = 'bottom';
-				} else if ( -1 === cursorCompare && this.refs[ 'wrap-' + i ].getBoundingClientRect().bottom <= shadowRect.bottom ) {
-					permittedVertical = 'top';
+				// Avoid self-comparisons for the active item
+				if ( i === this.state.activeIndex ) {
+					return false;
 				}
-			}
 
-			if ( adjustedElementIndex < adjustedActiveIndex ) {
-				// If the item which is currently before the active item is
-				// suddenly after, return this item's index
-				isBeyond = this.isCursorBeyondElementThreshold(
-					this.refs[ 'wrap-' + i ],
-					'horizontal' === this.props.direction ? 'left' : 'top',
-					permittedVertical,
-					event
-				);
-			} else if ( adjustedElementIndex > adjustedActiveIndex ) {
-				// If the item which is currently after the active item is
-				// suddenly before, return this item's index
-				isBeyond = isBeyond || this.isCursorBeyondElementThreshold(
-					this.refs[ 'wrap-' + i ],
-					'horizontal' === this.props.direction ? 'right' : 'bottom',
-					permittedVertical,
-					event
-				);
-			}
+				// Since elements are now shifted around, we want to find their
+				// visible position to make accurate comparisons
+				adjustedElementIndex = this.getAdjustedElementIndex( i );
 
-			return isBeyond;
-		}.bind( this ) );
+				// When rearranging on a horizontal plane, permit breaking of
+				// vertical if the cursor is outside the list element on the
+				// same vertical, and only if the element is on the same line as
+				// the active item's shadow element
+				if ( 'horizontal' === this.props.direction ) {
+					if (
+						1 === cursorCompare &&
+						this.refs[ 'wrap-' + i ].getBoundingClientRect().top >= shadowRect.top
+					) {
+						permittedVertical = 'bottom';
+					} else if (
+						-1 === cursorCompare &&
+						this.refs[ 'wrap-' + i ].getBoundingClientRect().bottom <= shadowRect.bottom
+					) {
+						permittedVertical = 'top';
+					}
+				}
+
+				if ( adjustedElementIndex < adjustedActiveIndex ) {
+					// If the item which is currently before the active item is
+					// suddenly after, return this item's index
+					isBeyond = this.isCursorBeyondElementThreshold(
+						this.refs[ 'wrap-' + i ],
+						'horizontal' === this.props.direction ? 'left' : 'top',
+						permittedVertical,
+						event
+					);
+				} else if ( adjustedElementIndex > adjustedActiveIndex ) {
+					// If the item which is currently after the active item is
+					// suddenly before, return this item's index
+					isBeyond =
+						isBeyond ||
+						this.isCursorBeyondElementThreshold(
+							this.refs[ 'wrap-' + i ],
+							'horizontal' === this.props.direction ? 'right' : 'bottom',
+							permittedVertical,
+							event
+						);
+				}
+
+				return isBeyond;
+			}.bind( this )
+		);
 
 		return this.getAdjustedElementIndex( index );
 	};
@@ -165,14 +180,14 @@ class SortableList extends React.Component {
 		this.props.onChange( activeOrder );
 
 		this.setState( {
-			activeIndex: activeOrder[ this.state.activeIndex ]
+			activeIndex: activeOrder[ this.state.activeIndex ],
 		} );
 	};
 
-	onMouseDown = (index, event) => {
+	onMouseDown = ( index, event ) => {
 		this.setState( {
 			activeIndex: index,
-			position: this.getPositionForCursorElement( event.currentTarget.firstChild, event )
+			position: this.getPositionForCursorElement( event.currentTarget.firstChild, event ),
 		} );
 	};
 
@@ -215,8 +230,11 @@ class SortableList extends React.Component {
 		}
 
 		this.setState( {
-			position: this.getPositionForCursorElement( this.refs[ 'wrap-' + this.state.activeIndex ].firstChild, event ),
-			activeOrder: activeOrder
+			position: this.getPositionForCursorElement(
+				this.refs[ 'wrap-' + this.state.activeIndex ].firstChild,
+				event
+			),
+			activeOrder: activeOrder,
 		} );
 	};
 
@@ -228,47 +246,71 @@ class SortableList extends React.Component {
 		this.setState( {
 			activeIndex: null,
 			activeOrder: null,
-			position: null
+			position: null,
 		} );
 	};
 
 	onClick = index => {
 		this.setState( {
-			activeIndex: index
+			activeIndex: index,
 		} );
 	};
 
 	getOrderedListItemElements = () => {
-		return React.Children.map( this.props.children, function( child, index ) {
-			var isActive = this.state.activeIndex === index,
-				isDraggable = this.props.allowDrag && ! touchDetect.hasTouch(),
-				events = isDraggable ? [ 'onMouseDown', 'onMouseUp' ] : [ 'onClick' ],
-				style = { order: this.getAdjustedElementIndex( index ) },
-				classes = classNames( {
-					'sortable-list__item': true,
-					'is-active': isActive,
-					'is-draggable': isDraggable
-				} ), item;
+		return React.Children.map(
+			this.props.children,
+			function( child, index ) {
+				var isActive = this.state.activeIndex === index,
+					isDraggable = this.props.allowDrag && ! touchDetect.hasTouch(),
+					events = isDraggable ? [ 'onMouseDown', 'onMouseUp' ] : [ 'onClick' ],
+					style = { order: this.getAdjustedElementIndex( index ) },
+					classes = classNames( {
+						'sortable-list__item': true,
+						'is-active': isActive,
+						'is-draggable': isDraggable,
+					} ),
+					item;
 
-			events = fromPairs( events.map( function( event ) {
-				return [ event, this[ event ].bind( null, index ) ];
-			}, this ) );
+				events = fromPairs(
+					events.map( function( event ) {
+						return [ event, this[ event ].bind( null, index ) ];
+					}, this )
+				);
 
-			if ( isActive ) {
-				assign( style, this.state.position );
-			}
+				if ( isActive ) {
+					assign( style, this.state.position );
+				}
 
-			item = <li ref={ 'wrap-' + index } key={ 'wrap-' + index } { ...events } className={ classes } style={ style }>{ child }</li>;
+				item = (
+					<li
+						ref={ 'wrap-' + index }
+						key={ 'wrap-' + index }
+						{ ...events }
+						className={ classes }
+						style={ style }
+					>
+						{ child }
+					</li>
+				);
 
-			if ( isActive && isDraggable ) {
-				return [
-					<li ref={ 'wrap-shadow-' + index } key={ 'wrap-shadow-' + index } className="sortable-list__item is-shadow" style={ style }>{ child }</li>,
-					item
-				];
-			} else {
-				return item;
-			}
-		}, this );
+				if ( isActive && isDraggable ) {
+					return [
+						<li
+							ref={ 'wrap-shadow-' + index }
+							key={ 'wrap-shadow-' + index }
+							className="sortable-list__item is-shadow"
+							style={ style }
+						>
+							{ child }
+						</li>,
+						item,
+					];
+				} else {
+					return item;
+				}
+			},
+			this
+		);
 	};
 
 	getNavigationElement = () => {
@@ -282,17 +324,26 @@ class SortableList extends React.Component {
 					type="button"
 					onClick={ this.moveItem.bind( null, 'previous' ) }
 					className="sortable-list__navigation-button is-previous"
-					disabled={ null === this.state.activeIndex || this.state.activeIndex === 0 }>
-						<span className="screen-reader-text">{ this.props.translate( 'Move previous' ) }</span>
-						<span className="noticon noticon-expand" />
+					disabled={ null === this.state.activeIndex || this.state.activeIndex === 0 }
+				>
+					<span className="screen-reader-text">
+						{ this.props.translate( 'Move previous' ) }
+					</span>
+					<span className="noticon noticon-expand" />
 				</button>
 				<button
 					type="button"
 					onClick={ this.moveItem.bind( null, 'next' ) }
 					className="sortable-list__navigation-button is-next"
-					disabled={ null === this.state.activeIndex || this.state.activeIndex === this.props.children.length - 1 }>
-						<span className="screen-reader-text">{ this.props.translate( 'Move next' ) }</span>
-						<span className="noticon noticon-collapse" />
+					disabled={
+						null === this.state.activeIndex ||
+						this.state.activeIndex === this.props.children.length - 1
+					}
+				>
+					<span className="screen-reader-text">
+						{ this.props.translate( 'Move next' ) }
+					</span>
+					<span className="noticon noticon-collapse" />
 				</button>
 			</div>
 		);
@@ -302,12 +353,14 @@ class SortableList extends React.Component {
 		var classes = classNames( {
 			'sortable-list': true,
 			'is-horizontal': 'horizontal' === this.props.direction,
-			'is-vertical': 'vertical' === this.props.direction
+			'is-vertical': 'vertical' === this.props.direction,
 		} );
 
 		return (
 			<div className={ classes }>
-				<ol ref="list" className="sortable-list__list">{ this.getOrderedListItemElements() }</ol>
+				<ol ref="list" className="sortable-list__list">
+					{ this.getOrderedListItemElements() }
+				</ol>
 				{ this.getNavigationElement() }
 			</div>
 		);

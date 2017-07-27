@@ -7,14 +7,14 @@ import { omit } from 'lodash';
 import classnames from 'classnames';
 
 export default class extends React.Component {
-    static displayName = 'FormRange';
+	static displayName = 'FormRange';
 
 	static propTypes = {
-		onChange: PropTypes.func
+		onChange: PropTypes.func,
 	};
 
 	static defaultProps = {
-		onChange: function() {}
+		onChange: function() {},
 	};
 
 	componentDidMount() {
@@ -43,6 +43,13 @@ export default class extends React.Component {
 	render() {
 		var classes = classnames( this.props.className, 'form-range' );
 
-		return <input ref="range" type="range" className={ classes } { ...omit( this.props, 'className' ) } />;
+		return (
+			<input
+				ref="range"
+				type="range"
+				className={ classes }
+				{ ...omit( this.props, 'className' ) }
+			/>
+		);
 	}
 }

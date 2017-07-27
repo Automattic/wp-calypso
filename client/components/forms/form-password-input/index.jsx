@@ -13,17 +13,17 @@ import FormTextInput from 'components/forms/form-text-input';
 import viewport from 'lib/viewport';
 
 export default class extends React.Component {
-    static displayName = 'FormPasswordInput';
+	static displayName = 'FormPasswordInput';
 
-	constructor(props) {
-	    super(props);
+	constructor( props ) {
+		super( props );
 		var isMobile = viewport.isMobile();
 
 		if ( isMobile ) {
-		    this.state = { hidePassword: false };
+			this.state = { hidePassword: false };
 			return;
 		} else {
-		    this.state = { hidePassword: true };
+			this.state = { hidePassword: true };
 			return;
 		}
 	}
@@ -44,25 +44,22 @@ export default class extends React.Component {
 	};
 
 	render() {
-
 		var toggleVisibilityClasses = classNames( {
 			'form-password-input__toggle': true,
-			'form-password-input__toggle-visibility': ! this.props.hideToggle
+			'form-password-input__toggle-visibility': ! this.props.hideToggle,
 		} );
 
 		return (
 			<div className="form-password-input">
-				<FormTextInput { ...omit( this.props, 'hideToggle', 'submitting' ) }
+				<FormTextInput
+					{ ...omit( this.props, 'hideToggle', 'submitting' ) }
 					autoComplete="off"
 					ref="textField"
-					type={ this.hidden() ? 'password' : 'text' } />
+					type={ this.hidden() ? 'password' : 'text' }
+				/>
 
 				<span className={ toggleVisibilityClasses } onClick={ this.togglePasswordVisibility }>
-				{ this.hidden() ?
-					<Gridicon icon="not-visible" />
-				:
-					<Gridicon icon="visible" />
-				}
+					{ this.hidden() ? <Gridicon icon="not-visible" /> : <Gridicon icon="visible" /> }
 				</span>
 			</div>
 		);

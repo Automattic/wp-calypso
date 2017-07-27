@@ -7,12 +7,12 @@ import classNames from 'classnames';
 import { omit } from 'lodash';
 
 export default class extends React.Component {
-    static displayName = 'FormSettingExplanation';
+	static displayName = 'FormSettingExplanation';
 
 	static propTypes = {
 		noValidate: PropTypes.bool,
 		isIndented: PropTypes.bool,
-		className: PropTypes.string
+		className: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -23,12 +23,11 @@ export default class extends React.Component {
 	render() {
 		const classes = classNames( this.props.className, 'form-setting-explanation', {
 			'no-validate': this.props.noValidate,
-			'is-indented': this.props.isIndented
+			'is-indented': this.props.isIndented,
 		} );
 
 		return (
-			<p { ...omit( this.props, 'className', 'noValidate', 'isIndented' ) }
-				className={ classes } >
+			<p { ...omit( this.props, 'className', 'noValidate', 'isIndented' ) } className={ classes }>
 				{ this.props.children }
 			</p>
 		);

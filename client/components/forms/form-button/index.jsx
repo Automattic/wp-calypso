@@ -12,27 +12,30 @@ import React, { Children } from 'react';
 import Button from 'components/button';
 
 class FormButton extends React.Component {
-    static defaultProps = {
+	static defaultProps = {
 		isSubmitting: false,
 		isPrimary: true,
-		type: 'submit'
+		type: 'submit',
 	};
 
 	getDefaultButtonAction = () => {
-		return this.props.isSubmitting ? this.props.translate( 'Saving…' ) : this.props.translate( 'Save Settings' );
+		return this.props.isSubmitting
+			? this.props.translate( 'Saving…' )
+			: this.props.translate( 'Save Settings' );
 	};
 
 	render() {
 		const { children, className, isPrimary, ...props } = this.props,
 			buttonClasses = classNames( className, {
-				'form-button': true
+				'form-button': true,
 			} );
 
 		return (
 			<Button
 				{ ...omit( props, 'isSubmitting' ) }
 				primary={ isPrimary }
-				className={ buttonClasses }>
+				className={ buttonClasses }
+			>
 				{ Children.count( children ) ? children : this.getDefaultButtonAction() }
 			</Button>
 		);
