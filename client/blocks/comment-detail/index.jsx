@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get, isUndefined, noop } from 'lodash';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
@@ -153,6 +154,24 @@ export class CommentDetail extends Component {
 		);
 	}
 
+	setCardRef = card => {
+		this.commentCard = card;
+	}
+
+	keyHandler = event => {
+		const commentHasFocus = document && this.commentCard && document.activeElement === ReactDom.findDOMNode( this.commentCard );
+		if ( this.state.isExpanded && ! commentHasFocus ) {
+			return;
+		}
+		switch ( event.keyCode ) {
+			case 32: // space
+			case 13: // enter
+				event.preventDefault();
+				this.toggleExpanded();
+				break;
+		}
+	}
+
 	render() {
 		const {
 			authorAvatarUrl,
@@ -200,7 +219,12 @@ export class CommentDetail extends Component {
 		} );
 
 		return (
-			<Card className={ classes }>
+			<Card
+				onKeyDown={ this.keyHandler }
+				ref={ this.setCardRef }
+				className={ classes }
+				tabIndex="0"
+			>
 				<CommentDetailHeader
 					authorAvatarUrl={ authorAvatarUrl }
 					authorDisplayName={ authorDisplayName }

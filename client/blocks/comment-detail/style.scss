@@ -4,6 +4,11 @@
 	padding: 0;
 	transition: margin .15s linear;
 
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 1px $blue-medium, 0 0 0 3px $blue-light;
+		z-index: z-index( 'root', '.comment-detail.card.accessible-focus:focus' );
+	}
+
 	&.is-expanded {
 		margin: 16px auto;
 
@@ -12,9 +17,11 @@
 		}
 	}
 
-	&.is-collapsed:hover {
-		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
-		z-index: 1;
+	&.is-collapsed {
+		&:hover {
+			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
+			z-index: z-index( 'root', '.comment-detail.card.is-collapsed:hover' );
+		}
 	}
 
 	// If the comment is unapproved and collapsed, color it yellow.
