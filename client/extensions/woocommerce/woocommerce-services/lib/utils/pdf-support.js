@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import _ from 'lodash';
+import { memoize, includes } from 'lodash';
 
 /**
  * This function result is cached for performance reasons, since browser capabilities won't change.
@@ -11,8 +11,8 @@ import _ from 'lodash';
  * no guarantee that they will respond to a DOM-like API. false if the browser can't display
  * PDFs at all.
  */
-export default _.memoize( () => {
-	if ( navigator.userAgent.includes( 'Firefox' ) ) {
+export default memoize( () => {
+	if ( includes( navigator.userAgent, 'Firefox' ) ) {
 		// Firefox has a long-lived bug (https://bugzilla.mozilla.org/show_bug.cgi?id=911444),
 		// it's not reliable to consider its PDF reader "native"
 		return 'addon';

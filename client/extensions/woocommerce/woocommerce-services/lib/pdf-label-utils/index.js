@@ -3,7 +3,7 @@
  */
 import { translate as __ } from 'i18n-calypso';
 import querystring from 'querystring';
-import _ from 'lodash';
+import { includes, reduce, filter, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,7 +13,7 @@ import getPDFSupport from '../utils/pdf-support';
 const PAPER_SIZES = {
 	a4: {
 		name: __( 'A4' ),
-		exclude: ( country ) => _.includes( [ 'US', 'CA', 'MX', 'DO' ], country ),
+		exclude: ( country ) => includes( [ 'US', 'CA', 'MX', 'DO' ], country ),
 	},
 	label: {
 		name: __( 'Label (4"x6")' ),
@@ -27,7 +27,7 @@ const PAPER_SIZES = {
 };
 
 export const getPaperSizes = ( country ) => (
-	_.reduce( PAPER_SIZES, ( result, { name, exclude }, key ) => {
+	reduce( PAPER_SIZES, ( result, { name, exclude }, key ) => {
 		if ( ! exclude || ! exclude( country ) ) {
 			result[ key ] = name;
 		}
@@ -42,8 +42,8 @@ const _getPDFURL = ( paperSize, labels, baseURL, nonce ) => {
 	const params = {
 		_wpnonce: nonce,
 		paper_size: paperSize,
-		'label_ids[]': _.filter( _.map( labels, 'labelId' ) ),
-		'captions[]': _.filter( _.map( labels, 'caption' ) ),
+		'label_ids[]': filter( map( labels, 'labelId' ) ),
+		'captions[]': filter( map( labels, 'caption' ) ),
 	};
 	return baseURL + '?' + querystring.stringify( params );
 };
