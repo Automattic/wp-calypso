@@ -402,7 +402,7 @@ class PostCommentList extends React.Component {
 				{ showViewMoreComments &&
 					this.props.startingCommentId &&
 					<span className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
-						{ translate( 'Load More Comments (Showing %(shown)d of %(total)d)', {
+						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 							args: {
 								shown: displayedCommentsCount,
 								total: actualCommentsCount,
