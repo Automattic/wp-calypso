@@ -19,6 +19,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import changeStatus from './change-status';
 import replies from './replies';
 import likes from './likes';
+import trees from './trees';
 import { errorNotice } from 'state/notices/actions';
 import { getRawSite } from 'state/sites/selectors';
 import { getSiteName as getReaderSiteName } from 'reader/get-helpers';
@@ -126,4 +127,4 @@ const fetchHandler = {
 	],
 };
 
-export default mergeHandlers( fetchHandler, replies, likes, changeStatus );
+export default mergeHandlers( fetchHandler, replies, likes, changeStatus, trees );
