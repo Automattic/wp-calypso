@@ -1,18 +1,24 @@
 /**
  * External dependencies
  */
-import { unionBy } from 'lodash';
+import { reject, unionBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { COMMENTS_TREE_SITE_ADD } from 'state/action-types';
+import {
+	COMMENTS_DELETE,
+	COMMENTS_TREE_SITE_ADD,
+} from 'state/action-types';
 import { keyedReducer } from 'state/utils';
 
-const siteTree = ( state = {}, { tree, type } ) => {
-	switch ( type ) {
+const siteTree = ( state = [], action ) => {
+	switch ( action.type ) {
+		case COMMENTS_DELETE:
+			const { commentId } = action;
+			return reject( state, { commentId } );
 		case COMMENTS_TREE_SITE_ADD:
-			return unionBy( tree, state, 'commentId' );
+			return unionBy( action.tree, state, 'commentId' );
 	}
 	return state;
 };
