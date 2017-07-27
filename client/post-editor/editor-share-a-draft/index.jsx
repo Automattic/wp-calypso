@@ -31,7 +31,7 @@ class EditorShareADraft extends Component {
 					{ translate( 'Enable draft sharing' ) }
 				</FormToggle>
 				<FormTextInputWithAction
-					readonly
+					readOnly
 					action={ translate( 'Copy', { context: 'verb' } ) }
 				/>
 			</Accordion>
