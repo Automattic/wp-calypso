@@ -248,3 +248,27 @@ export const getLinkingSocialAuthInfo = ( state ) => get( state, 'login.socialAc
  * @return {Object}          OAuth2 client data
  */
 export const getOAuth2ClientData = ( state ) => get( state, 'login.oauth2ClientData', null );
+
+/***
+ * Gets social account linking status
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?Boolean}         Boolean describing social account linking status
+ */
+export const getSocialAccountIsLinking = ( state ) => get( state, 'login.socialAccountLink.isLinking', null );
+
+/***
+ * Gets social account linking email
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         wpcom email that is being linked
+ */
+export const getSocialAccountLinkEmail = ( state ) => get( state, 'login.socialAccountLink.email', null );
+
+/***
+ * Gets social account linking service
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         service name that is being linked
+ */
+export const getSocialAccountLinkService = ( state ) => get( state, 'login.socialAccountLink.service', null );

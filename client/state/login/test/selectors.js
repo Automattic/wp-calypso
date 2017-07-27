@@ -25,6 +25,10 @@ import {
 	getLinkingSocialUser,
 	getLinkingSocialService,
 	getLinkingSocialAuthInfo,
+	getCreateSocialAccountError,
+	getSocialAccountIsLinking,
+	getSocialAccountLinkEmail,
+	getSocialAccountLinkService,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -350,6 +354,69 @@ describe( 'selectors', () => {
 					}
 				}
 			} ) ).to.deep.eql( socialAccountInfo );
+		} );
+	} );
+
+	describe( 'getCreateSocialAccountError()', () => {
+		it( 'return null if create error not set', () => {
+			expect(
+				getCreateSocialAccountError( {
+					login: {
+						socialAccount: {
+						}
+					}
+				} )
+			).to.be.null;
+		} );
+
+		it( 'return error object if create error is set', () => {
+			const createError = { message: 'hello' };
+
+			expect(
+				getCreateSocialAccountError( {
+					login: {
+						socialAccount: {
+							createError
+						}
+					}
+				} )
+			).to.eql( createError );
+		} );
+	} );
+
+	describe( 'getSocialAccountIsLinking()', () => {
+		it( 'return social account linking status', () => {
+			const socialAccountLink = { isLinking: true };
+
+			expect( getSocialAccountIsLinking( {
+				login: {
+					socialAccountLink
+				}
+			} ) ).to.eql( true );
+		} );
+	} );
+
+	describe( 'getSocialAccountLinkEmail()', () => {
+		it( 'return social account linking email', () => {
+			const socialAccountLink = { email: 'test@hello.world' };
+
+			expect( getSocialAccountLinkEmail( {
+				login: {
+					socialAccountLink
+				}
+			} ) ).to.eql( 'test@hello.world' );
+		} );
+	} );
+
+	describe( 'getSocialAccountLinkService()', () => {
+		it( 'return social account linking service', () => {
+			const socialAccountLink = { service: 'google' };
+
+			expect( getSocialAccountLinkService( {
+				login: {
+					socialAccountLink
+				}
+			} ) ).to.eql( 'google' );
 		} );
 	} );
 } );

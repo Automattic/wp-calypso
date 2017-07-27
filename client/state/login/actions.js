@@ -2,7 +2,7 @@
  * External dependencies
  */
 import request from 'superagent';
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -111,6 +111,7 @@ const getErrorFromWPCOMError = ( wpcomError ) => ( {
 	message: wpcomError.message,
 	code: wpcomError.error,
 	field: 'global',
+	...omit( wpcomError, [ 'error', 'message', 'field' ] )
 } );
 
 /**
@@ -330,6 +331,13 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 		return Promise.reject( error );
 	} );
 };
+
+export const createSocialUserFailed = ( service, token, error ) => ( {
+	type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+	service,
+	token,
+	error: error.field ? error : getErrorFromWPCOMError( error )
+} );
 
 /**
  * Sends a two factor authentication recovery code to the 2FA user
