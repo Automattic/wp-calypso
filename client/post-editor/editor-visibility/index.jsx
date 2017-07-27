@@ -76,12 +76,14 @@ const EditorVisibility = React.createClass( {
 			return;
 		}
 
-		const oldPassword = this.props.password;
-		const newPassword = nextProps.password;
+		const currentPassword = this.props.password + ''; // force to string
+		const nextPassword = nextProps.password + '';     // force to string
 
-		const passwordIsValid =
-			oldPassword === '' && newPassword === ' ' || // visibility selection changed from public to private (without a saved password)
-			newPassword.trim().length > 0;
+		// visibility selection changed from public to private (without a saved password)
+		const isChangeFromPublicToPrivate = currentPassword === '' && nextPassword === ' ';
+		const isPasswordNotEmpty = nextPassword.trim().length > 0;
+
+		const passwordIsValid = isChangeFromPublicToPrivate || isPasswordNotEmpty;
 
 		this.setState( { passwordIsValid } );
 	},
