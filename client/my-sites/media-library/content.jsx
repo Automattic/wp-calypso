@@ -92,6 +92,7 @@ const MediaLibraryContent = React.createClass( {
 			let status = 'is-error';
 			let upgradeNudgeName = undefined;
 			let upgradeNudgeFeature = undefined;
+			let tryAgain = false;
 
 			switch ( errorType ) {
 				case MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN:
@@ -143,6 +144,10 @@ const MediaLibraryContent = React.createClass( {
 						i18nOptions
 					);
 					break;
+				case MediaValidationErrors.SERVICE_FAILED:
+					message = translate( 'We are unable to retrieve your full media library.' );
+					tryAgain = true;
+					break;
 				default:
 					message = this.translate(
 						'%d file could not be uploaded because an error occurred while uploading.',
@@ -155,11 +160,24 @@ const MediaLibraryContent = React.createClass( {
 			return (
 				<Notice status={ status } text={ message } onDismissClick={ onDismiss } >
 					{ this.renderNoticeAction( upgradeNudgeName, upgradeNudgeFeature ) }
+					{ tryAgain && this.renderTryAgain() }
 				</Notice>
 			);
 		} );
 
 		return createFragment( notices );
+	},
+
+	renderTryAgain() {
+		return (
+			<NoticeAction onClick={ this.retryList }>
+				{ translate( 'Retry' ) }
+			</NoticeAction>
+		);
+	},
+
+	retryList() {
+		MediaActions.sourceChanged( this.props.site.ID );
 	},
 
 	renderNoticeAction( upgradeNudgeName, upgradeNudgeFeature ) {
