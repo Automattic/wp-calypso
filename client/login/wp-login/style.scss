@@ -52,17 +52,21 @@
 	}
 }
 
-.wp-login__private-image {
+.card.wp-login__private-site {
+	margin-bottom: 0;
+}
+
+.wp-login__private-site-image {
 	height: 92px;
 	margin-bottom: 10px;
 	text-align: center;
 }
 
-.wp-login__private-header {
+.wp-login__private-site-header {
 	font-weight: bold;
 	margin-bottom: 10px;
 }
 
-.wp-login__private-button {
+.wp-login__private-site-button {
 	width: 100%;
 }
