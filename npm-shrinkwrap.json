@@ -107,7 +107,7 @@
       "dev": true
     },
     "anymatch": {
-      "version": "1.3.0"
+      "version": "1.3.2"
     },
     "append-transform": {
       "version": "0.4.0",
@@ -625,7 +625,7 @@
       }
     },
     "babel-runtime": {
-      "version": "6.23.0"
+      "version": "6.25.0"
     },
     "babel-template": {
       "version": "6.25.0"
@@ -836,7 +836,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000706"
+      "version": "1.0.30000708"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -2018,7 +2018,7 @@
       "version": "2.1.1"
     },
     "fbjs": {
-      "version": "0.8.12",
+      "version": "0.8.14",
       "dependencies": {
         "core-js": {
           "version": "1.2.7"
@@ -3928,7 +3928,7 @@
       "version": "1.7.0"
     },
     "level-codec": {
-      "version": "6.1.0"
+      "version": "7.0.0"
     },
     "level-errors": {
       "version": "1.0.4"
@@ -3948,7 +3948,12 @@
       }
     },
     "levelup": {
-      "version": "1.3.8"
+      "version": "1.3.9",
+      "dependencies": {
+        "semver": {
+          "version": "5.4.1"
+        }
+      }
     },
     "leven": {
       "version": "1.0.2",
@@ -4507,7 +4512,7 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "1.1.19"
+      "version": "1.2.0"
     },
     "npm-path": {
       "version": "1.1.0",
@@ -5494,7 +5499,7 @@
       "dev": true
     },
     "resolve": {
-      "version": "1.3.3"
+      "version": "1.4.0"
     },
     "resolve-from": {
       "version": "1.0.1",
@@ -6615,7 +6620,7 @@
           "dev": true
         },
         "ipaddr.js": {
-          "version": "1.3.0",
+          "version": "1.4.0",
           "dev": true
         },
         "lodash": {
@@ -6635,7 +6640,7 @@
           "dev": true
         },
         "proxy-addr": {
-          "version": "1.1.4",
+          "version": "1.1.5",
           "dev": true
         },
         "qs": {
