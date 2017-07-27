@@ -32,7 +32,7 @@ class EditorShareADraft extends Component {
 				</FormToggle>
 				<FormTextInputWithAction
 					readonly
-					action={ translate( 'Copy', { context: 'verb: imperative' } ) }
+					action={ translate( 'Copy', { context: 'verb' } ) }
 				/>
 			</Accordion>
 		);
