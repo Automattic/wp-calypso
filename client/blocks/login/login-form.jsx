@@ -127,7 +127,7 @@ export class LoginForm extends Component {
 		} );
 	};
 
-	privateSiteNotice() {
+	renderPrivateSiteNotice() {
 		if ( this.props.privateSite && ! this.props.isLoggedIn ) {
 			return (
 				<Notice status="is-info" showDismiss={ false } icon="lock">
@@ -150,7 +150,8 @@ export class LoginForm extends Component {
 
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
-				{ this.privateSiteNotice() }
+				{ this.renderPrivateSiteNotice() }
+
 				<Card className="login__form">
 					<div className="login__form-userdata">
 						{ this.state.linkingSocialUser && (
