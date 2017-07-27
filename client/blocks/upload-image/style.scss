@@ -71,8 +71,22 @@
 	height: 100%;
 }
 
-.upload-image__uploading-image, .upload-image__uploaded-image {
+.upload-image__uploading-image {
 	position: relative;
 	top: 50%;
 	transform: perspective(1px) translateY(-50%);
+	line-height: 0;
+}
+
+.upload-image__uploaded-image-wrapper {
+	transform: perspective(1px) translateY(-50%);
+	position: relative;
+	top: 50%;
+	line-height: 0;
+}
+
+.upload-image__uploaded-image-edit-icon {
+	position: absolute;
+	bottom: 10px;
+	right: 7px;
 }

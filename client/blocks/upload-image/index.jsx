@@ -300,7 +300,14 @@ class UploadImage extends Component {
 		if ( uploadedImage && uploadedImage.URL ) {
 			return (
 				<div className="upload-image__uploading-done-container">
-					<img src={ uploadedImage.URL } className="upload-image__uploaded-image" />
+					<div className="upload-image__uploaded-image-wrapper">
+						<img src={ uploadedImage.URL } className="upload-image__uploaded-image" />
+						<Gridicon
+							icon="pencil"
+							size={ 18 }
+							className="upload-image__uploaded-image-edit-icon"
+						/>
+					</div>
 				</div>
 			);
 		}
