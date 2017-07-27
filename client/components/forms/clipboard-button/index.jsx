@@ -14,38 +14,36 @@ import classNames from 'classnames';
  */
 import Button from 'components/button';
 
-const ClipboardButton = React.createClass( {
-	propTypes: {
+class ClipboardButton extends React.Component {
+    static propTypes = {
 		className: PropTypes.string,
 		text: PropTypes.string,
 		onCopy: PropTypes.func
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			onCopy: noop
-		};
-	},
+	static defaultProps = {
+		onCopy: noop
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		var button = ReactDom.findDOMNode( this.refs.button );
 		this.clipboard = new Clipboard( button, {
 			text: () => this.props.text
 		} );
 		this.clipboard.on( 'success', this.props.onCopy );
 		this.clipboard.on( 'error', this.displayPrompt );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		this.clipboard.destroy();
 		delete this.clipboard;
-	},
+	}
 
-	displayPrompt: function() {
+	displayPrompt = () => {
 		window.prompt( this.props.translate( 'Highlight and copy the following text to your clipboard:' ), this.props.text );
-	},
+	};
 
-	render: function() {
+	render() {
 		var classes = classNames( 'clipboard-button', this.props.className );
 
 		return (
@@ -55,6 +53,6 @@ const ClipboardButton = React.createClass( {
 				className={ classes } />
 		);
 	}
-} );
+}
 
 export default localize( ClipboardButton );

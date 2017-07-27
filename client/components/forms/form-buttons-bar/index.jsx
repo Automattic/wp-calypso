@@ -5,11 +5,10 @@ import React from 'react';
 import classnames from 'classnames';
 import { omit } from 'lodash';
 
-export default React.createClass( {
+export default class extends React.Component {
+    static displayName = 'FormButtonsBar';
 
-	displayName: 'FormButtonsBar',
-
-	render: function() {
+	render() {
 		return (
 			<div
 				{ ...omit( this.props, 'className' ) }
@@ -18,4 +17,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

@@ -12,36 +12,38 @@ import { omit } from 'lodash';
 import FormTextInput from 'components/forms/form-text-input';
 import viewport from 'lib/viewport';
 
-export default React.createClass( {
+export default class extends React.Component {
+    static displayName = 'FormPasswordInput';
 
-	displayName: 'FormPasswordInput',
-
-	getInitialState: function() {
+	constructor(props) {
+	    super(props);
 		var isMobile = viewport.isMobile();
 
 		if ( isMobile ) {
-			return { hidePassword: false };
+		    this.state = { hidePassword: false };
+			return;
 		} else {
-			return { hidePassword: true };
+		    this.state = { hidePassword: true };
+			return;
 		}
-	},
+	}
 
-	togglePasswordVisibility: function() {
+	togglePasswordVisibility = () => {
 		this.setState( { hidePassword: ! this.state.hidePassword } );
-	},
+	};
 
-	hidden: function() {
+	hidden = () => {
 		if ( this.props.hideToggle ) {
 			return true;
 		}
 		return this.props.submitting || this.state.hidePassword;
-	},
+	};
 
-	focus: function() {
+	focus = () => {
 		this.refs.textField.focus();
-	},
+	};
 
-	render: function() {
+	render() {
 
 		var toggleVisibilityClasses = classNames( {
 			'form-password-input__toggle': true,
@@ -65,4 +67,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

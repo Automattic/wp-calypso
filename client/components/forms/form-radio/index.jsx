@@ -5,11 +5,10 @@ import React from 'react';
 import classnames from 'classnames';
 import { omit } from 'lodash';
 
-export default React.createClass( {
+export default class extends React.Component {
+    static displayName = 'FormRadio';
 
-	displayName: 'FormRadio',
-
-	render: function() {
+	render() {
 		var otherProps = omit( this.props, [ 'className', 'type' ] );
 
 		return (
@@ -19,4 +18,4 @@ export default React.createClass( {
 				className={ classnames( this.props.className, 'form-radio' ) } />
 		);
 	}
-} );
+}

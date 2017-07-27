@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -39,39 +38,35 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
  */
 var countriesList = require( 'lib/countries-list' ).forSms();
 
-const FormFields = React.createClass( {
-	mixins: [ PureRenderMixin ],
+class FormFields extends React.PureComponent {
+    state = {
+		checkedRadio: 'first',
+		toggled: false,
+		compactToggled: false,
+		phoneInput: { countryCode: 'US', value: '' }
+	};
 
-	getInitialState: function() {
-		return {
-			checkedRadio: 'first',
-			toggled: false,
-			compactToggled: false,
-			phoneInput: { countryCode: 'US', value: '' }
-		};
-	},
-
-	handleRadioChange: function( event ) {
+	handleRadioChange = event => {
 		this.setState( { checkedRadio: event.currentTarget.value } );
-	},
+	};
 
-	handleToggle: function() {
+	handleToggle = () => {
 		this.setState( { toggled: ! this.state.toggled } );
-	},
+	};
 
-	handleCompactToggle: function() {
+	handleCompactToggle = () => {
 		this.setState( { compactToggled: ! this.state.compactToggled } );
-	},
+	};
 
-	handleAction: function() {
+	handleAction = () => {
 		alert( 'Thank you.' );
-	},
+	};
 
-	handlePhoneInputChange( data ) {
+	handlePhoneInputChange = data => {
 		this.setState( { phoneInput: data } );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 		    <div>
 				<p>
@@ -281,6 +276,6 @@ const FormFields = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default localize( FormFields );

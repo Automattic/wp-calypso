@@ -11,14 +11,14 @@ import { keys, omit } from 'lodash';
  */
 import FormTextInput from 'components/forms/form-text-input';
 
-export default React.createClass( {
-	displayName: 'FormTextInputWithAffixes',
+export default class extends React.Component {
+    static displayName = 'FormTextInputWithAffixes';
 
-	propTypes: {
+	static propTypes = {
 		noWrap: PropTypes.bool,
 		prefix: PropTypes.string,
 		suffix: PropTypes.string
-	},
+	};
 
 	render() {
 		return (
@@ -39,4 +39,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

@@ -5,15 +5,14 @@ import React from 'react';
 import classnames from 'classnames';
 import { omit } from 'lodash';
 
-export default React.createClass( {
+export default class extends React.Component {
+    static displayName = 'FormFieldset';
 
-	displayName: 'FormFieldset',
-
-	render: function() {
+	render() {
 		return (
 			<fieldset { ...omit( this.props, 'className' ) } className={ classnames( this.props.className, 'form-fieldset' ) } >
 				{ this.props.children }
 			</fieldset>
 		);
 	}
-} );
+}

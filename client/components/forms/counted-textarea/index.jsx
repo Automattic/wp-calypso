@@ -12,8 +12,8 @@ import { omit, noop } from 'lodash';
  */
 import FormTextarea from 'components/forms/form-textarea';
 
-export const CountedTextarea = React.createClass( {
-	propTypes: {
+export class CountedTextarea extends React.Component {
+    static propTypes = {
 		value: PropTypes.string,
 		placeholder: PropTypes.string,
 		countPlaceholderLength: PropTypes.bool,
@@ -21,20 +21,18 @@ export const CountedTextarea = React.createClass( {
 		acceptableLength: PropTypes.number,
 		showRemainingCharacters: PropTypes.bool,
 		translate: PropTypes.func,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			value: '',
-			placeholder: '',
-			countPlaceholderLength: false,
-			onChange: noop,
-			showRemainingCharacters: false,
-			translate,
-		};
-	},
+	static defaultProps = {
+		value: '',
+		placeholder: '',
+		countPlaceholderLength: false,
+		onChange: noop,
+		showRemainingCharacters: false,
+		translate,
+	};
 
-	renderCountPanel() {
+	renderCountPanel = () => {
 		let length = this.props.value.length;
 		if ( ! length && this.props.countPlaceholderLength ) {
 			length = this.props.placeholder.length;
@@ -61,7 +59,7 @@ export const CountedTextarea = React.createClass( {
 				{ this.props.children }
 			</div>
 		);
-	},
+	};
 
 	render() {
 		const classes = classNames( 'counted-textarea', this.props.className, {
@@ -84,6 +82,6 @@ export const CountedTextarea = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default localize( CountedTextarea );

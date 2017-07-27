@@ -6,22 +6,19 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { omit } from 'lodash';
 
-export default React.createClass( {
+export default class extends React.Component {
+    static displayName = 'FormSettingExplanation';
 
-	displayName: 'FormSettingExplanation',
-
-	propTypes: {
+	static propTypes = {
 		noValidate: PropTypes.bool,
 		isIndented: PropTypes.bool,
 		className: PropTypes.string
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			noValidate: false,
-			isIndented: false,
-		};
-	},
+	static defaultProps = {
+		noValidate: false,
+		isIndented: false,
+	};
 
 	render() {
 		const classes = classNames( this.props.className, 'form-setting-explanation', {
@@ -36,4 +33,4 @@ export default React.createClass( {
 			</p>
 		);
 	}
-} );
+}

@@ -6,20 +6,17 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
+export default class extends React.Component {
+    static displayName = 'FormInputValidation';
 
-	displayName: 'FormInputValidation',
-
-	propTypes: {
+	static propTypes = {
 		isError: PropTypes.bool,
 		isWarning: PropTypes.bool,
 		text: PropTypes.node,
 		icon: PropTypes.string
-	},
+	};
 
-	getDefaultProps() {
-		return { isError: false };
-	},
+	static defaultProps = { isError: false };
 
 	render() {
 		const classes = classNames( {
@@ -36,4 +33,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

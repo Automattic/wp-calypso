@@ -5,15 +5,14 @@ import React from 'react';
 import classnames from 'classnames';
 import { omit } from 'lodash';
 
-export default React.createClass( {
+export default class extends React.Component {
+    static displayName = 'FormSectionHeading';
 
-	displayName: 'FormSectionHeading',
-
-	render: function() {
+	render() {
 		return (
 			<h3 { ...omit( this.props, 'className' ) } className={ classnames( this.props.className, 'form-section-heading' ) } >
 				{ this.props.children }
 			</h3>
 		);
 	}
-} );
+}

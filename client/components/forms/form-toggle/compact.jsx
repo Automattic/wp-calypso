@@ -10,11 +10,10 @@ import { omit } from 'lodash';
  */
 import Toggle from 'components/forms/form-toggle';
 
-export default React.createClass( {
+export default class extends React.Component {
+    static displayName = 'CompactFormToggle';
 
-	displayName: 'CompactFormToggle',
-
-	render: function() {
+	render() {
 		return (
 			<Toggle
 				{ ...omit( this.props, 'className' ) }
@@ -24,4 +23,4 @@ export default React.createClass( {
 			</Toggle>
 		);
 	}
-} );
+}

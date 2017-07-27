@@ -16,11 +16,11 @@ import CompactFormToggle from '../compact';
 /**
  * Module variables
  */
-var Wrapper = React.createClass( {
-	render: function() {
+class Wrapper extends React.Component {
+    render() {
 		return <div>{ this.props.children }</div>;
 	}
-} );
+}
 
 describe( 'index', function() {
 	require( 'test/helpers/use-fake-dom' )();

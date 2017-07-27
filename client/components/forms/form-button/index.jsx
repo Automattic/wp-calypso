@@ -11,18 +11,16 @@ import React, { Children } from 'react';
  */
 import Button from 'components/button';
 
-const FormButton = React.createClass( {
-	getDefaultProps() {
-		return {
-			isSubmitting: false,
-			isPrimary: true,
-			type: 'submit'
-		};
-	},
+class FormButton extends React.Component {
+    static defaultProps = {
+		isSubmitting: false,
+		isPrimary: true,
+		type: 'submit'
+	};
 
-	getDefaultButtonAction() {
+	getDefaultButtonAction = () => {
 		return this.props.isSubmitting ? this.props.translate( 'Saving…' ) : this.props.translate( 'Save Settings' );
-	},
+	};
 
 	render() {
 		const { children, className, isPrimary, ...props } = this.props,
@@ -39,6 +37,6 @@ const FormButton = React.createClass( {
 			</Button>
 		);
 	}
-} );
+}
 
 export default localize( FormButton );

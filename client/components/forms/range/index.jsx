@@ -11,46 +11,42 @@ import classnames from 'classnames';
  */
 import FormRange from 'components/forms/form-range';
 
-export default React.createClass( {
-	displayName: 'Range',
+export default class extends React.Component {
+    static displayName = 'Range';
 
-	propTypes: {
+	static propTypes = {
 		minContent: PropTypes.oneOfType( [ PropTypes.element, PropTypes.string ] ),
 		maxContent: PropTypes.oneOfType( [ PropTypes.element, PropTypes.string ] ),
 		min: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		max: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		value: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		showValueLabel: PropTypes.bool
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			id: uniqueId( 'range' )
-		};
-	},
+	static defaultProps = {
+		min: 0,
+		max: 10,
+		value: 0,
+		showValueLabel: false
+	};
 
-	getDefaultProps: function() {
-		return {
-			min: 0,
-			max: 10,
-			value: 0,
-			showValueLabel: false
-		};
-	},
+	state = {
+		id: uniqueId( 'range' )
+	};
 
-	getMinContentElement: function() {
+	getMinContentElement = () => {
 		if ( this.props.minContent ) {
 			return <span className="range__content is-min">{ this.props.minContent }</span>;
 		}
-	},
+	};
 
-	getMaxContentElement: function() {
+	getMaxContentElement = () => {
 		if ( this.props.maxContent ) {
 			return <span className="range__content is-max">{ this.props.maxContent }</span>;
 		}
-	},
+	};
 
-	getValueLabelElement: function() {
+	getValueLabelElement = () => {
 		var left, offset;
 
 		if ( this.props.showValueLabel ) {
@@ -78,9 +74,9 @@ export default React.createClass( {
 				</span>
 			);
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		var classes = classnames( this.props.className, 'range', {
 			'has-min-content': !! this.props.minContent,
 			'has-max-content': !! this.props.maxContent
@@ -95,4 +91,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

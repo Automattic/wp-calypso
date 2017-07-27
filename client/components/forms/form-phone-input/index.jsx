@@ -18,8 +18,8 @@ import phoneValidation from 'lib/phone-validation';
 
 var CLEAN_REGEX = /^0|[\s.\-()]+/g;
 
-export const FormPhoneInput = React.createClass( {
-	propTypes: {
+export class FormPhoneInput extends React.Component {
+    static propTypes = {
 		initialCountryCode: PropTypes.string,
 		initialPhoneNumber: PropTypes.string,
 		countriesList: PropTypes.object.isRequired,
@@ -28,34 +28,30 @@ export const FormPhoneInput = React.createClass( {
 		phoneInputProps: PropTypes.object,
 		onChange: PropTypes.func,
 		translate: PropTypes.func,
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			isDisabled: false,
-			countrySelectProps: {},
-			phoneInputProps: {},
-			onChange: noop,
-			translate: identity,
-		};
-	},
+	static defaultProps = {
+		isDisabled: false,
+		countrySelectProps: {},
+		phoneInputProps: {},
+		onChange: noop,
+		translate: identity,
+	};
 
-	getInitialState: function() {
-		return {
-			countryCode: this.props.initialCountryCode || '',
-			phoneNumber: this.props.initialPhoneNumber || ''
-		};
-	},
+	state = {
+		countryCode: this.props.initialCountryCode || '',
+		phoneNumber: this.props.initialPhoneNumber || ''
+	};
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this._maybeSetCountryStateFromList();
-	},
+	}
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		this._maybeSetCountryStateFromList();
-	},
+	}
 
-	render: function() {
+	render() {
 		var countryValueLink = {
 				value: this.state.countryCode,
 				requestChange: this._handleCountryChange
@@ -90,33 +86,33 @@ export const FormPhoneInput = React.createClass( {
 				</FormFieldset>
 			</div>
 		);
-	},
+	}
 
-	_getCountryData: function() {
+	_getCountryData = () => {
 		// TODO: move this to country-list or CountrySelect
 		return find( this.props.countriesList.get(), {
 			code: this.state.countryCode
 		} );
-	},
+	};
 
-	_handleCountryChange: function( newValue ) {
+	_handleCountryChange = newValue => {
 		this.setState( { countryCode: newValue }, this._triggerOnChange );
-	},
+	};
 
-	_handlePhoneChange: function( newValue ) {
+	_handlePhoneChange = newValue => {
 		this.setState( { phoneNumber: newValue }, this._triggerOnChange );
-	},
+	};
 
-	_triggerOnChange: function() {
+	_triggerOnChange = () => {
 		this.props.onChange( this.getValue() );
-	},
+	};
 
-	_cleanNumber: function( number ) {
+	_cleanNumber = number => {
 		return number.replace( CLEAN_REGEX, '' );
-	},
+	};
 
 	// Set the default state of the country code selector, if not already set
-	_maybeSetCountryStateFromList: function() {
+	_maybeSetCountryStateFromList = () => {
 		var countries;
 
 		if ( this.state.countryCode ) {
@@ -131,13 +127,13 @@ export const FormPhoneInput = React.createClass( {
 		this.setState( {
 			countryCode: countries[ 0 ].code
 		} );
-	},
+	};
 
-	_validate: function( number ) {
+	_validate = number => {
 		return phoneValidation( number );
-	},
+	};
 
-	getValue: function() {
+	getValue = () => {
 		var countryData = this._getCountryData(),
 			numberClean = this._cleanNumber( this.state.phoneNumber ),
 			countryNumericCode = countryData ? countryData.numeric_code : '',
@@ -151,7 +147,7 @@ export const FormPhoneInput = React.createClass( {
 			phoneNumber: numberClean,
 			phoneNumberFull: numberFull
 		};
-	}
-} );
+	};
+}
 
 export default localize( FormPhoneInput );

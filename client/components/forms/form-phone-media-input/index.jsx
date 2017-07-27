@@ -10,16 +10,14 @@ import PhoneInput from 'components/phone-input';
 import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
 
-export default React.createClass( {
-	displayName: 'FormPhoneMediaInput',
+export default class extends React.Component {
+    static displayName = 'FormPhoneMediaInput';
 
-	getDefaultProps: function() {
-		return {
-			isError: false
-		};
-	},
+	static defaultProps = {
+		isError: false
+	};
 
-	render: function() {
+	render() {
 		const classes = classnames( this.props.className, {
 			'is-error': this.props.isError
 		} );
@@ -37,4 +35,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

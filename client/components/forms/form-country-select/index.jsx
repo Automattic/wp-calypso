@@ -2,12 +2,13 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import classnames from 'classnames';
 import observe from 'lib/mixins/data-observe';
 import { isEmpty, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 
-export default localize( React.createClass( {
+export default localize( createReactClass({
 
 	displayName: 'FormCountrySelect',
 
@@ -43,4 +44,4 @@ export default localize( React.createClass( {
 			</select>
 		);
 	}
-} ) );
+}) );

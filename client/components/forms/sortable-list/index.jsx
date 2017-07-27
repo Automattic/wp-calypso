@@ -14,49 +14,45 @@ const debug = debugFactory( 'calypso:forms:sortable-list' );
  */
 import touchDetect from 'lib/touch-detect';
 
-const SortableList = React.createClass( {
-	propTypes: {
+class SortableList extends React.Component {
+    static propTypes = {
 		direction: PropTypes.oneOf( [ 'horizontal', 'vertical' ] ),
 		allowDrag: PropTypes.bool,
 		onChange: PropTypes.func
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			activeIndex: null,
-			activeOrder: null,
-			position: null
-		};
-	},
+	static defaultProps = {
+		direction: 'horizontal',
+		allowDrag: true,
+		onChange: function() {}
+	};
 
-	getDefaultProps: function() {
-		return {
-			direction: 'horizontal',
-			allowDrag: true,
-			onChange: function() {}
-		};
-	},
+	state = {
+		activeIndex: null,
+		activeOrder: null,
+		position: null
+	};
 
-	componentWillMount: function() {
+	componentWillMount() {
 		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		document.addEventListener( 'mousemove', this.onMouseMove );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		document.removeEventListener( 'mousemove', this.onMouseMove );
-	},
+	}
 
-	getPositionForCursorElement: function( element, event ) {
+	getPositionForCursorElement = (element, event) => {
 		return {
 			top: event.clientY - ( element.clientHeight / 2 ),
 			left: event.clientX - ( element.clientWidth / 2 )
 		};
-	},
+	};
 
-	compareCursorVerticalToElement: function( element, event ) {
+	compareCursorVerticalToElement = (element, event) => {
 		var rect = element.getBoundingClientRect();
 
 		if ( event.clientY < rect.top ) {
@@ -66,9 +62,9 @@ const SortableList = React.createClass( {
 		} else {
 			return 0;
 		}
-	},
+	};
 
-	isCursorBeyondElementThreshold: function( element, direction, permittedVertical, event ) {
+	isCursorBeyondElementThreshold = (element, direction, permittedVertical, event) => {
 		var rect = element.getBoundingClientRect();
 
 		// We check for Y bounds on right and left and not X bounds for top
@@ -90,9 +86,9 @@ const SortableList = React.createClass( {
 			default:
 				return false;
 		}
-	},
+	};
 
-	getAdjustedElementIndex: function( index ) {
+	getAdjustedElementIndex = index => {
 		// The active order array is used as an array where each index matches
 		// the original prop children indices, but the values correspond to
 		// their visible position index
@@ -101,9 +97,9 @@ const SortableList = React.createClass( {
 		} else {
 			return index;
 		}
-	},
+	};
 
-	getCursorElementIndex: function( event ) {
+	getCursorElementIndex = event => {
 		var cursorCompare = this.compareCursorVerticalToElement( this.refs.list, event ),
 			adjustedActiveIndex = this.getAdjustedElementIndex( this.state.activeIndex ),
 			shadowRect = this.refs[ 'wrap-shadow-' + this.state.activeIndex ].getBoundingClientRect(),
@@ -157,9 +153,9 @@ const SortableList = React.createClass( {
 		}.bind( this ) );
 
 		return this.getAdjustedElementIndex( index );
-	},
+	};
 
-	moveItem: function( direction ) {
+	moveItem = direction => {
 		var increment = 'previous' === direction ? -1 : 1,
 			activeOrder = Object.keys( this.props.children ).map( Number );
 
@@ -171,16 +167,16 @@ const SortableList = React.createClass( {
 		this.setState( {
 			activeIndex: activeOrder[ this.state.activeIndex ]
 		} );
-	},
+	};
 
-	onMouseDown: function( index, event ) {
+	onMouseDown = (index, event) => {
 		this.setState( {
 			activeIndex: index,
 			position: this.getPositionForCursorElement( event.currentTarget.firstChild, event )
 		} );
-	},
+	};
 
-	onMouseMove: function( event ) {
+	onMouseMove = event => {
 		var activeOrder, newIndex;
 		if ( null === this.state.activeIndex || ! this.props.allowDrag || touchDetect.hasTouch() ) {
 			return;
@@ -222,9 +218,9 @@ const SortableList = React.createClass( {
 			position: this.getPositionForCursorElement( this.refs[ 'wrap-' + this.state.activeIndex ].firstChild, event ),
 			activeOrder: activeOrder
 		} );
-	},
+	};
 
-	onMouseUp: function() {
+	onMouseUp = () => {
 		if ( this.state.activeOrder ) {
 			this.props.onChange( this.state.activeOrder );
 		}
@@ -234,15 +230,15 @@ const SortableList = React.createClass( {
 			activeOrder: null,
 			position: null
 		} );
-	},
+	};
 
-	onClick: function( index ) {
+	onClick = index => {
 		this.setState( {
 			activeIndex: index
 		} );
-	},
+	};
 
-	getOrderedListItemElements: function() {
+	getOrderedListItemElements = () => {
 		return React.Children.map( this.props.children, function( child, index ) {
 			var isActive = this.state.activeIndex === index,
 				isDraggable = this.props.allowDrag && ! touchDetect.hasTouch(),
@@ -273,9 +269,9 @@ const SortableList = React.createClass( {
 				return item;
 			}
 		}, this );
-	},
+	};
 
-	getNavigationElement: function() {
+	getNavigationElement = () => {
 		if ( this.props.allowDrag && ! touchDetect.hasTouch() ) {
 			return;
 		}
@@ -300,9 +296,9 @@ const SortableList = React.createClass( {
 				</button>
 			</div>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		var classes = classNames( {
 			'sortable-list': true,
 			'is-horizontal': 'horizontal' === this.props.direction,
@@ -316,6 +312,6 @@ const SortableList = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default localize( SortableList );
