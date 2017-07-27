@@ -3,6 +3,13 @@
  */
 const sections = [
 	{
+		name: 'demo',
+		paths: [ '/demo' ],
+		module: 'my-sites/demo',
+		group: 'sites',
+		secondary: true
+	},
+	{
 		name: 'sites',
 		paths: [ '/sites' ],
 		module: 'my-sites',
