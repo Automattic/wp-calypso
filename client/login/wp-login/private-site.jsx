@@ -28,12 +28,12 @@ class PrivateSite extends Component {
 					{ translate( 'This is a private WordPress.com site.' ) }
 				</h2>
 
-				<p className="wp-login__private-text">
+				<p>
 					{ translate( "Request an invitation to view it and we'll " +
 						'send your username to the site owner for their approval.' ) }
 				</p>
 
-				<Button primary={ true } className="wp-login__private-button">
+				<Button primary className="wp-login__private-button">
 					{ translate( 'Request Invitation' ) }
 				</Button>
 			</Card>
