@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { translate as __ } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import querystring from 'querystring';
 import { includes, reduce, filter, map } from 'lodash';
 
@@ -12,17 +12,17 @@ import getPDFSupport from '../utils/pdf-support';
 
 const PAPER_SIZES = {
 	a4: {
-		name: __( 'A4' ),
+		name: translate( 'A4' ),
 		exclude: ( country ) => includes( [ 'US', 'CA', 'MX', 'DO' ], country ),
 	},
 	label: {
-		name: __( 'Label (4"x6")' ),
+		name: translate( 'Label (4"x6")' ),
 	},
 	legal: {
-		name: __( 'Legal' ),
+		name: translate( 'Legal' ),
 	},
 	letter: {
-		name: __( 'Letter' ),
+		name: translate( 'Letter' ),
 	},
 };
 
