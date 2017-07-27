@@ -19,7 +19,7 @@ import PostByline from './byline';
 import GalleryPost from './gallery';
 import PhotoPost from './photo';
 import StandardPost from './standard';
-import CompactPost from './compact';
+import ConversationPost from './conversation-post';
 import FollowButton from 'reader/follow-button';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
@@ -198,7 +198,7 @@ class ReaderPostCard extends React.Component {
 		let readerPostCard;
 		if ( compact ) {
 			readerPostCard = (
-				<CompactPost
+				<ConversationPost
 					post={ post }
 					title={ title }
 					isDiscover={ isDiscover }
