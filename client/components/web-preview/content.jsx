@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import { noop } from 'lodash';
+import { noop, isFunction } from 'lodash';
 import page from 'page';
 import shallowCompare from 'react-addons-shallow-compare';
 import { v4 as uuid } from 'uuid';
@@ -126,14 +126,14 @@ export class WebPreviewContent extends Component {
 		// remove all textual selections when user gives focus to preview iframe
 		// they might be confusing
 		if ( global.window ) {
-			if ( typeof window.getSelection !== 'undefined' ) {
+			if ( isFunction( window.getSelection ) ) {
 				const selection = window.getSelection();
-				if ( typeof selection.empty === 'function' ) {
+				if ( isFunction( selection.empty ) ) {
 					selection.empty();
-				} else if ( typeof selection.removeAllRanges === 'function' ) {
+				} else if ( isFunction( selection.removeAllRanges ) ) {
 					selection.removeAllRanges();
 				}
-			} else if ( document.selection !== undefined && typeof document.selection.empty === 'function' ) {
+			} else if ( document.selection && isFunction( document.selection.empty ) ) {
 				document.selection.empty();
 			}
 		}
