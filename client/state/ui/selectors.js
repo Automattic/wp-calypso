@@ -139,3 +139,54 @@ export function hasSidebar( state ) {
 	}
 	return get( getSection( state ), 'secondary', true );
 }
+
+/**
+ * Returns viewport width
+ *
+ * @param  {Object}  state Global state tree
+ * @return {Number}  Viewport width in pixels
+ */
+export const getViewportWidth = ( state ) => ( state.ui.viewportWidth );
+
+/**
+ * Returns true if viewport is within the breakpoint
+ *
+ * @param  {Object}  state Global state tree
+ * @param  {String}  breakpoint String identifying the breakpoint to test
+ * @return {Boolean} True if current viewport width is within the breakpoint
+ */
+export const isViewportWithinBreakpoint = ( state, breakpoint ) => {
+	const screenWidth = getViewportWidth( state );
+	switch ( breakpoint ) {
+		case '<480px': return screenWidth <= 480;
+		case '<660px': return screenWidth <= 660;
+		case '<960px': return screenWidth <= 960;
+		case '>480px': return screenWidth > 480;
+		case '>660px': return screenWidth > 660;
+		case '>960px': return screenWidth > 960;
+		case '480px-660px': return ( screenWidth > 480 && screenWidth <= 660 );
+		case '660px-960px': return ( screenWidth > 660 && screenWidth <= 960 );
+		case '480px-960px': return ( screenWidth > 480 && screenWidth <= 960 );
+	}
+
+	if ( global.window ) {
+		global.window.console.warn( 'Undefined breakpoint used in `isViewportWithinBreakpoint` selector', breakpoint );
+	}
+	return null;
+}
+
+/**
+ * Returns true if viewport is within the mobile breakpoint
+ *
+ * @param  {Object}  state Global state tree
+ * @return {Boolean} True if current viewport width is within the mobile breakpoint
+ */
+export const isMobile = ( state ) => isViewportWithinBreakpoint( state, '<480px' );
+
+/**
+ * Returns true if viewport is within the desktop breakpoint
+ *
+ * @param  {Object}  state Global state tree
+ * @return {Boolean} True if current viewport width is within the desktop breakpoint
+ */
+export const isDesktop = ( state ) => isViewportWithinBreakpoint( state, '>960px' );

@@ -40,6 +40,7 @@ import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
+import ViewportWatcher from 'layout/viewport-watcher';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -145,6 +146,7 @@ Layout = React.createClass( {
 				<DocumentHead />
 				<QuerySites allSites />
 				<QueryPreferences />
+				<ViewportWatcher />
 				{ <GuidedTours /> }
 				{ config.isEnabled( 'nps-survey/notice' ) && <NpsSurveyNotice /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }

@@ -6,7 +6,8 @@ import {
 	ROUTE_SET,
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
-	NOTIFICATIONS_PANEL_TOGGLE
+	NOTIFICATIONS_PANEL_TOGGLE,
+	VIEWPORT_WIDTH_SET
 } from 'state/action-types';
 
 /**
@@ -77,3 +78,17 @@ export const toggleNotificationsPanel = () => {
 		type: NOTIFICATIONS_PANEL_TOGGLE
 	};
 };
+
+/**
+ * Returns an action object to be used in signalling that a viewport width
+ * has updated.
+ *
+ * @param  {Number} width  Viewport Width
+ * @return {Object}        Action object
+ */
+export const setViewportWidth = ( width ) => {
+	return {
+		type: VIEWPORT_WIDTH_SET,
+		width
+	};
+}
