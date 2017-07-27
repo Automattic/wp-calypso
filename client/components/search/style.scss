@@ -208,3 +208,14 @@
 .animating.search-opening .search input {
 		opacity: 1;
 }
+
+// http://a11yproject.com/posts/how-to-hide-content/
+.search__input-label  {
+    position: absolute !important;
+    clip: rect(1px, 1px, 1px, 1px);
+    padding: 0 !important;
+    border: 0 !important;
+    height: 1px !important;
+    width: 1px !important;
+    overflow: hidden;
+}
