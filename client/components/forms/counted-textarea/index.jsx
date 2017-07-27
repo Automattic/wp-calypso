@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { localize, translate } from 'i18n-calypso';
 import classNames from 'classnames';
 import { omit, noop } from 'lodash';
@@ -13,13 +14,13 @@ import FormTextarea from 'components/forms/form-textarea';
 
 export const CountedTextarea = React.createClass( {
 	propTypes: {
-		value: React.PropTypes.string,
-		placeholder: React.PropTypes.string,
-		countPlaceholderLength: React.PropTypes.bool,
-		onChange: React.PropTypes.func,
-		acceptableLength: React.PropTypes.number,
-		showRemainingCharacters: React.PropTypes.bool,
-		translate: React.PropTypes.func,
+		value: PropTypes.string,
+		placeholder: PropTypes.string,
+		countPlaceholderLength: PropTypes.bool,
+		onChange: PropTypes.func,
+		acceptableLength: PropTypes.number,
+		showRemainingCharacters: PropTypes.bool,
+		translate: PropTypes.func,
 	},
 
 	getDefaultProps() {

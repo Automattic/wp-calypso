@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -10,10 +11,10 @@ export default React.createClass( {
 	displayName: 'FormInputValidation',
 
 	propTypes: {
-		isError: React.PropTypes.bool,
-		isWarning: React.PropTypes.bool,
-		text: React.PropTypes.node,
-		icon: React.PropTypes.string
+		isError: PropTypes.bool,
+		isWarning: PropTypes.bool,
+		text: PropTypes.node,
+		icon: PropTypes.string
 	},
 
 	getDefaultProps() {

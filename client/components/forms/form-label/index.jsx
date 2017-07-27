@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
+import React from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { isObject, omit } from 'lodash';
 
 const renderRequiredBadge = ( translate ) => (
@@ -26,7 +27,7 @@ const FormLabel = ( { children, required, translate, className, ...extraProps } 
 };
 
 FormLabel.propTypes = {
-	required: React.PropTypes.bool,
+	required: PropTypes.bool,
 };
 
 export default localize( FormLabel );

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { keys, omit } from 'lodash';
 
@@ -14,9 +15,9 @@ export default React.createClass( {
 	displayName: 'FormTextInputWithAffixes',
 
 	propTypes: {
-		noWrap: React.PropTypes.bool,
-		prefix: React.PropTypes.string,
-		suffix: React.PropTypes.string
+		noWrap: PropTypes.bool,
+		prefix: PropTypes.string,
+		suffix: PropTypes.string
 	},
 
 	render() {

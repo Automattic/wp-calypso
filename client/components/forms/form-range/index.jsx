@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { omit } from 'lodash';
 import classnames from 'classnames';
 
@@ -9,7 +10,7 @@ export default React.createClass( {
 	displayName: 'FormRange',
 
 	propTypes: {
-		onChange: React.PropTypes.func
+		onChange: PropTypes.func
 	},
 
 	getDefaultProps: function() {

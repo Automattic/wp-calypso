@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { assign, findIndex, fromPairs } from 'lodash';
 import classNames from 'classnames';
@@ -15,9 +16,9 @@ import touchDetect from 'lib/touch-detect';
 
 const SortableList = React.createClass( {
 	propTypes: {
-		direction: React.PropTypes.oneOf( [ 'horizontal', 'vertical' ] ),
-		allowDrag: React.PropTypes.bool,
-		onChange: React.PropTypes.func
+		direction: PropTypes.oneOf( [ 'horizontal', 'vertical' ] ),
+		allowDrag: PropTypes.bool,
+		onChange: PropTypes.func
 	},
 
 	getInitialState: function() {

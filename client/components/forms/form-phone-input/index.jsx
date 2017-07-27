@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { identity, noop, find } from 'lodash';
 
@@ -19,14 +20,14 @@ var CLEAN_REGEX = /^0|[\s.\-()]+/g;
 
 export const FormPhoneInput = React.createClass( {
 	propTypes: {
-		initialCountryCode: React.PropTypes.string,
-		initialPhoneNumber: React.PropTypes.string,
-		countriesList: React.PropTypes.object.isRequired,
-		isDisabled: React.PropTypes.bool,
-		countrySelectProps: React.PropTypes.object,
-		phoneInputProps: React.PropTypes.object,
-		onChange: React.PropTypes.func,
-		translate: React.PropTypes.func,
+		initialCountryCode: PropTypes.string,
+		initialPhoneNumber: PropTypes.string,
+		countriesList: PropTypes.object.isRequired,
+		isDisabled: PropTypes.bool,
+		countrySelectProps: PropTypes.object,
+		phoneInputProps: PropTypes.object,
+		onChange: PropTypes.func,
+		translate: PropTypes.func,
 	},
 
 	getDefaultProps: function() {

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { omit, uniqueId } from 'lodash';
 import classnames from 'classnames';
 
@@ -14,12 +15,12 @@ export default React.createClass( {
 	displayName: 'Range',
 
 	propTypes: {
-		minContent: React.PropTypes.oneOfType( [ React.PropTypes.element, React.PropTypes.string ] ),
-		maxContent: React.PropTypes.oneOfType( [ React.PropTypes.element, React.PropTypes.string ] ),
-		min: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.number ] ),
-		max: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.number ] ),
-		value: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.number ] ),
-		showValueLabel: React.PropTypes.bool
+		minContent: PropTypes.oneOfType( [ PropTypes.element, PropTypes.string ] ),
+		maxContent: PropTypes.oneOfType( [ PropTypes.element, PropTypes.string ] ),
+		min: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		max: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		value: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		showValueLabel: PropTypes.bool
 	},
 
 	getInitialState: function() {

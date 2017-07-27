@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import Clipboard from 'clipboard';
@@ -15,9 +16,9 @@ import Button from 'components/button';
 
 const ClipboardButton = React.createClass( {
 	propTypes: {
-		className: React.PropTypes.string,
-		text: React.PropTypes.string,
-		onCopy: React.PropTypes.func
+		className: PropTypes.string,
+		text: PropTypes.string,
+		onCopy: PropTypes.func
 	},
 
 	getDefaultProps: function() {
