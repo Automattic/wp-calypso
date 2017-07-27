@@ -11,6 +11,7 @@ import { get, isUndefined, noop } from 'lodash';
  * Internal dependencies
  */
 import Card from 'components/card';
+import QueryComment from 'components/data/query-comment';
 import CommentDetailComment from './comment-detail-comment';
 import CommentDetailHeader from './comment-detail-header';
 import CommentDetailPost from './comment-detail-post';
@@ -163,6 +164,7 @@ export class CommentDetail extends Component {
 			authorUsername,
 			commentContent,
 			commentDate,
+			commentId,
 			commentIsLiked,
 			commentIsSelected,
 			commentStatus,
@@ -201,6 +203,8 @@ export class CommentDetail extends Component {
 
 		return (
 			<Card className={ classes }>
+				<QueryComment commentId={ commentId } siteId={ siteId } />
+
 				<CommentDetailHeader
 					authorAvatarUrl={ authorAvatarUrl }
 					authorDisplayName={ authorDisplayName }

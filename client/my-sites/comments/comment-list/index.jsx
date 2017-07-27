@@ -19,14 +19,13 @@ import {
 } from 'state/comments/actions';
 import { createNotice, removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
-import getSiteComments from 'state/selectors/get-site-comments';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
 import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
-import { getSiteCommentsCount, hasSiteComments } from 'state/selectors';
+import { getSiteCommentsCount, getSiteCommentsTree, hasSiteComments } from 'state/selectors';
 
 const COMMENTS_PER_PAGE = 2;
 
@@ -354,7 +353,7 @@ export class CommentList extends Component {
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-list__transition"
 				>
-					{ map( commentsPage, commentId =>
+					{ map( commentsPage, ( { commentId } ) =>
 						<CommentDetail
 							commentId={ commentId }
 							deleteCommentPermanently={ this.deleteCommentPermanently }
@@ -394,11 +393,10 @@ export class CommentList extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, status, order } ) => {
-	const comments = map( getSiteComments( state, siteId, status, order ), 'ID' );
+const mapStateToProps = ( state, { siteId, status } ) => {
 	const isLoading = ! hasSiteComments( state, siteId );
 	return {
-		comments,
+		comments: getSiteCommentsTree( state, siteId, status ),
 		commentsCount: getSiteCommentsCount( state, siteId, status ),
 		isLoading,
 		notices: getNotices( state ),

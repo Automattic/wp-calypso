@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { forEach, groupBy, keyBy, map } from 'lodash';
+import { forEach, groupBy, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -143,11 +143,11 @@ const addCommentsTree = ( { dispatch }, { query: { siteId, status } }, next, dat
 
 	const count = parseInt( commentsCount[ 0 ] );
 
-	const tree = keyBy( map( commentsTree, comment => ( {
+	const tree = map( commentsTree, comment => ( {
 		commentId: comment[ 0 ],
 		postId: comment[ 1 ],
 		commentParentId: comment[ 2 ],
-	} ) ), 'commentId' );
+	} ) );
 
 	dispatch( {
 		type: COMMENTS_TREE_RECEIVE,
