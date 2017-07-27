@@ -406,7 +406,7 @@ export const PostEditor = React.createClass( {
 							isLoading={ this.state.isLoading }
 							isFullScreen={ this.state.isPostPublishPreview }
 							previewUrl={ this.getPreviewUrl() }
-							externalUrl={ this.getPreviewUrl() }
+							externalUrl={ this.getExternalUrl() }
 							editUrl={ this.props.editPath }
 							defaultViewportDevice={ this.state.isPostPublishPreview ? 'computer' : 'tablet' }
 							revision={ get( this.state, 'post.revisions.length', 0 ) }
@@ -676,13 +676,23 @@ export const PostEditor = React.createClass( {
 	},
 
 	getPreviewUrl: function() {
-		const { isPostPublishPreview, post, previewAction, previewUrl } = this.state;
+		const { post, previewAction, previewUrl } = this.state;
 
-		if ( previewAction === 'view' || isPostPublishPreview ) {
+		if ( previewAction === 'view' && post ) {
 			return post.URL;
 		}
 
 		return previewUrl;
+	},
+
+	getExternalUrl: function() {
+		const { post } = this.state;
+
+		if ( post ) {
+			return post.URL;
+		}
+
+		return this.getPreviewUrl();
 	},
 
 	onPreview: function( action, event ) {
