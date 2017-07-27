@@ -889,6 +889,15 @@ export const PostEditor = React.createClass( {
 			this.props.editPost( siteId, postId, { date: dateValue } );
 		}
 
+		if (
+			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.isPostPublishConfirmationABTest
+		) {
+			analytics.tracks.recordEvent( 'calypso_editor_publish_date_change', {
+				context: 'open' === this.state.confirmationSidebar ? 'confirmation-sidebar' : 'post-settings',
+			} );
+		}
+
 		this.checkForDateChange( dateValue );
 	},
 
