@@ -491,7 +491,7 @@ function cancelTransferRequest( options, onComplete ) {
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED,
 			domainName: options.domainName,
-			locked: options.enableDomainLocking,
+			locked: options.lockDomain,
 		} );
 
 		if ( options.enablePrivacy ) {

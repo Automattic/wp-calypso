@@ -33,13 +33,14 @@ class Unlocked extends React.Component {
 		this.setState( { submitting: true } );
 
 		const enablePrivacy = hasPrivacyProtection && ! privateDomain;
+		const lockDomain = domainLockingAvailable;
 
 		cancelTransferRequest( {
 			domainName: this.props.selectedDomainName,
 			declineTransfer: pendingTransfer,
-			enableDomainLocking: domainLockingAvailable,
 			siteId: this.props.selectedSite.ID,
 			enablePrivacy,
+			lockDomain,
 		}, ( error ) => {
 			if ( error ) {
 				const contactLink = <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />;
@@ -75,13 +76,13 @@ class Unlocked extends React.Component {
 					'Privacy Protection has been enabled.' ) );
 			} else {
 				let successMessage;
-				if ( enablePrivacy && domainLockingAvailable ) {
+				if ( enablePrivacy && lockDomain ) {
 					successMessage = translate( 'We\'ve canceled your domain transfer. Your domain is now re-locked and ' +
 						'Privacy Protection has been enabled.' );
 				} else if ( enablePrivacy ) {
 					successMessage = translate( 'We\'ve canceled your domain transfer and ' +
 						'Privacy Protection has been re-enabled.' );
-				} else if ( domainLockingAvailable ) {
+				} else if ( lockDomain ) {
 					successMessage = translate( 'We\'ve canceled your domain transfer and ' +
 						're-locked your domain.' );
 				} else {
