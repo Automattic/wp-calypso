@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import DocumentHead from 'components/data/document-head';
 import LoginLinks from './login-links';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import Main from 'components/main';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoginBlock from 'blocks/login';
@@ -18,10 +19,10 @@ import { recordPageView } from 'state/analytics/actions';
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
 import PrivateSite from './private-site';
-import userUtils from 'lib/user/utils';
 
 export class Login extends React.Component {
 	static propTypes = {
+		isLoggedIn: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		path: PropTypes.string.isRequired,
 		recordPageView: PropTypes.func.isRequired,
@@ -83,12 +84,13 @@ export class Login extends React.Component {
 
 	renderContent() {
 		const {
+			isLoggedIn,
 			privateSite,
 			socialConnect,
 			twoFactorAuthType,
 		} = this.props;
 
-		if ( privateSite && userUtils.isLoggedIn() ) {
+		if ( privateSite && isLoggedIn ) {
 			return (
 				<PrivateSite />
 			);
@@ -141,8 +143,11 @@ export class Login extends React.Component {
 	}
 }
 
-const mapDispatch = {
-	recordPageView,
-};
-
-export default connect( null, mapDispatch )( localize( Login ) );
+export default connect(
+	( state ) => ( {
+		isLoggedIn: Boolean( getCurrentUserId( state ) )
+	} ),
+	{
+		recordPageView,
+	}
+)( localize( Login ) );

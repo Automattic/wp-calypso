@@ -19,6 +19,7 @@ import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { loginUser, formUpdate } from 'state/login/actions';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -28,11 +29,11 @@ import {
 } from 'state/login/selectors';
 import Notice from 'components/notice';
 import SocialLoginForm from './social';
-import userUtils from 'lib/user/utils';
 
 export class LoginForm extends Component {
 	static propTypes = {
 		formUpdate: PropTypes.func.isRequired,
+		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
@@ -126,7 +127,7 @@ export class LoginForm extends Component {
 	};
 
 	privateSiteNotice() {
-		if ( this.props.privateSite && ! userUtils.isLoggedIn() ) {
+		if ( this.props.privateSite && ! this.props.isLoggedIn ) {
 			return (
 				<Notice status="is-info" showDismiss={ false } icon="lock">
 					{ this.props.translate( 'Log in to WordPress.com to proceed. ' +
@@ -263,6 +264,7 @@ export default connect(
 		redirectTo: getCurrentQueryArguments( state ).redirect_to,
 		requestError: getRequestError( state ),
 		isFormDisabled: isFormDisabled( state ),
+		isLoggedIn: Boolean( getCurrentUserId( state ) )
 	} ),
 	{
 		formUpdate,
