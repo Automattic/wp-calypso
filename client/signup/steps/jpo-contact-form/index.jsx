@@ -58,7 +58,11 @@ const JPOContactFormStep = React.createClass( {
 	},
 
 	render() {
-		const headerText = translate( 'Let\'s shape site name.' );
+		const siteTitle = ( 'undefined' !== typeof this.props.signupProgress[0].jpoSiteTitle )
+			? this.props.signupProgress[0].jpoSiteTitle.siteTitle
+			: translate( 'your new site' );
+
+		const headerText = translate( 'Let\'s shape ' ) + siteTitle + translate( '.' );
 		const subHeaderText = translate( 'Would you like to get started with a Contact Us page?' );
 
 		return (

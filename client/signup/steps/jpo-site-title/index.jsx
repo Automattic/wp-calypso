@@ -41,10 +41,10 @@ const JPOSiteTitleStep = React.createClass( {
 			hideFieldErrorsOnChange: true,
 			initialState: {
 				siteTitle: {
-					value: 'foo'
+					value: ''
 				},
 				siteDescription: {
-					value: 'bar'
+					value: ''
 				}
 			}
 		} );

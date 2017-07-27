@@ -12,9 +12,7 @@ import SignupActions from 'lib/signup/actions';
 import Card from 'components/card';
 import Button from 'components/button';
 import { translate } from 'i18n-calypso';
-
 import { setJPOHomepage } from 'state/signup/steps/jpo-homepage/actions';
-
 import StaticGraphic from './static-graphic';
 import NewsGraphic from './news-graphic';
 
@@ -58,13 +56,13 @@ const JPOHomepageStep = React.createClass( {
 				<div className="jpo__homepage-row">
 					<Card>
 						<NewsGraphic />
-						<Button onClick={ this.onSelectNews }>Recent news or updates</Button>
-						<div className="jpo__homepage-description">We can pull the latest information into your homepage for you.</div>
+						<Button onClick={ this.onSelectNews }>{ translate( 'Recent news or updates' ) }</Button>
+						<div className="jpo__homepage-description">{ translate( 'We can pull the latest information into your homepage for you.' ) }</div>
 					</Card>
 					<Card>
 						<StaticGraphic />
-						<Button onClick={ this.onSelectStatic }>A static welcome page</Button>
-						<div className="jpo__homepage-description">Have your homepage stay the same as time goes on.</div>
+						<Button onClick={ this.onSelectStatic }>{ translate( 'A static welcome page' ) }</Button>
+						<div className="jpo__homepage-description">{ translate( 'Have your homepage stay the same as time goes on.' ) }</div>
 					</Card>
 				</div>
 			</div>
@@ -72,7 +70,11 @@ const JPOHomepageStep = React.createClass( {
 	},
 
 	render() {
-		const headerText = translate( 'Let\'s shape site name.' );
+		const siteTitle = ( 'undefined' !== typeof this.props.signupProgress[0].jpoSiteTitle )
+			? this.props.signupProgress[0].jpoSiteTitle.siteTitle
+			: translate( 'your new site' );
+
+		const headerText = translate( 'Let\'s shape ' ) + siteTitle + translate( '.' );
 		const subHeaderText = translate( 'What should visitors see on your homepage?' );
 
 		return (
