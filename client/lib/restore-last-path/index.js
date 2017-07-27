@@ -70,6 +70,11 @@ function getSavedPath() {
  */
 export function savePath( path ) {
 	return new Promise( ( resolve, reject ) => {
+		if ( ! path || path === '/' ) {
+			store.remove( LAST_PATH );
+			return resolve( 'emptied saved path' );
+		}
+
 		try {
 			validatePath( path );
 		} catch ( e ) {
@@ -81,29 +86,35 @@ export function savePath( path ) {
 			return reject( 'path is identical' );
 		}
 		store.set( LAST_PATH, path );
-		resolve();
+		resolve( 'saved path: ' + path );
 	} );
 }
 
+// Store a module-level variable to enforce restoreLastSession only runs once per session
 let isFirstRun = true;
-export function restoreLastSession( currentPath ) {
-	debug( 'Entering restoreLastSession. Current path is: ' + ( currentPath || 'empty' ) );
 
+/**
+ * This is called early in the loading process to attempt to restore a device to
+ * the last path it visited (if valid). It returns a boolean value so the caller
+ * knows whether to return (i.e. the path is being restored) or continue (it is not).
+ *
+ * @param  {string} currentPath The current path from the caller's context
+ * @return {boolean}             True if path was restored. False if not.
+ */
+export function restoreLastSession( currentPath ) {
 	if ( ! isFirstRun ) {
-		debug( 'not first run, skipping' );
+		// not first run, skipping
 		return false;
 	}
+	isFirstRun = false;
 
 	const lastPath = getSavedPath();
-	debug( 'found', lastPath );
-	isFirstRun = false;
 	if ( currentPath === '/' && lastPath ) {
-		debug( 'redir to', lastPath );
+		// Redirect & return `true` so the caller knows to return
 		page( lastPath );
 		return true;
 	}
 
-	debug( 'Not restoring lastPath. Moving on' );
-
+	// Not restoring lastPath. Moving on.
 	return false;
 }

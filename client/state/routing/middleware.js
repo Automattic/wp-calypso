@@ -23,8 +23,8 @@ export const routingMiddleware = () => {
 
 		// Attempt to save the path so it might be restored in the future
 		savePath( action.path )
-			.then( () => debug( 'saved path: ' + action.path ) )
-			.catch( ( reason ) => debug( 'error saving path', reason ) );
+			.then( ( result ) => debug( result ) )
+			.catch( ( reason ) => debug( reason ) );
 
 		next( action );
 	};
