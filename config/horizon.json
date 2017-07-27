@@ -64,6 +64,7 @@
 		"me/trophies": false,
 		"network-connection": true,
 		"notifications2beta": true,
+		"notifications/link-to-reader": true,
 		"olark": true,
 		"perfmon": true,
 		"persist-redux": true,
