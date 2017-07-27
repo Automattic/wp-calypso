@@ -36,6 +36,7 @@ export class LoginForm extends Component {
 		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
+		privateSite: PropTypes.bool,
 		redirectTo: PropTypes.string,
 		requestError: PropTypes.object,
 		translate: PropTypes.func.isRequired,

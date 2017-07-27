@@ -22,6 +22,7 @@ import { login } from 'lib/paths';
 export class LoginLinks extends React.Component {
 	static propTypes = {
 		locale: PropTypes.string.isRequired,
+		privateSite: PropTypes.bool,
 		recordPageView: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,

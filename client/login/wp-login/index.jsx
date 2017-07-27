@@ -25,6 +25,7 @@ export class Login extends React.Component {
 		isLoggedIn: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		path: PropTypes.string.isRequired,
+		privateSite: PropTypes.bool,
 		recordPageView: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,

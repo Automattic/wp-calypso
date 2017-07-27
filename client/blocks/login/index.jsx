@@ -33,6 +33,7 @@ const user = userFactory();
 
 class Login extends Component {
 	static propTypes = {
+		privateSite: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
 		requestNotice: PropTypes.object,
