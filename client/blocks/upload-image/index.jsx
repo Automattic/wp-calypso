@@ -320,11 +320,17 @@ class UploadImage extends Component {
 					</Button>
 					<div className="upload-image__uploaded-image-wrapper">
 						<img src={ uploadedImage.URL } className="upload-image__uploaded-image" />
-						<Gridicon
-							icon="pencil"
-							size={ 18 }
-							className="upload-image__uploaded-image-edit-icon"
-						/>
+						<Button
+							onClick={ false }
+							compact
+							className="upload-image__uploaded-image-edit-button"
+						>
+							<Gridicon
+								icon="pencil"
+								size={ 18 }
+								className="upload-image__uploaded-image-edit-icon"
+							/>
+						</Button>
 					</div>
 				</div>
 			);
