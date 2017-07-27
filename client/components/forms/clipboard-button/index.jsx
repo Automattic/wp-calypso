@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import Clipboard from 'clipboard';
 import { omit, noop } from 'lodash';
@@ -12,9 +13,7 @@ import classNames from 'classnames';
  */
 import Button from 'components/button';
 
-export default React.createClass( {
-	displayName: 'ClipboardButton',
-
+const ClipboardButton = React.createClass( {
 	propTypes: {
 		className: React.PropTypes.string,
 		text: React.PropTypes.string,
@@ -42,7 +41,7 @@ export default React.createClass( {
 	},
 
 	displayPrompt: function() {
-		window.prompt( this.translate( 'Highlight and copy the following text to your clipboard:' ), this.props.text );
+		window.prompt( this.props.translate( 'Highlight and copy the following text to your clipboard:' ), this.props.text );
 	},
 
 	render: function() {
@@ -56,3 +55,5 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default localize( ClipboardButton );

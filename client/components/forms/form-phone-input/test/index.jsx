@@ -25,7 +25,7 @@ describe( 'FormPhoneInput', function() {
 		countries = mockCountriesList.get();
 
 		ReactClass.injection.injectMixin( i18n.mixin );
-		FormPhoneInput = require( 'components/forms/form-phone-input' );
+		FormPhoneInput = require( 'components/forms/form-phone-input' ).FormPhoneInput;
 		container = getContainer();
 	} );
 

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { assign, findIndex, fromPairs } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
@@ -12,9 +13,7 @@ const debug = debugFactory( 'calypso:forms:sortable-list' );
  */
 import touchDetect from 'lib/touch-detect';
 
-export default React.createClass( {
-	displayName: 'SortableList',
-
+const SortableList = React.createClass( {
 	propTypes: {
 		direction: React.PropTypes.oneOf( [ 'horizontal', 'vertical' ] ),
 		allowDrag: React.PropTypes.bool,
@@ -287,7 +286,7 @@ export default React.createClass( {
 					onClick={ this.moveItem.bind( null, 'previous' ) }
 					className="sortable-list__navigation-button is-previous"
 					disabled={ null === this.state.activeIndex || this.state.activeIndex === 0 }>
-						<span className="screen-reader-text">{ this.translate( 'Move previous' ) }</span>
+						<span className="screen-reader-text">{ this.props.translate( 'Move previous' ) }</span>
 						<span className="noticon noticon-expand" />
 				</button>
 				<button
@@ -295,7 +294,7 @@ export default React.createClass( {
 					onClick={ this.moveItem.bind( null, 'next' ) }
 					className="sortable-list__navigation-button is-next"
 					disabled={ null === this.state.activeIndex || this.state.activeIndex === this.props.children.length - 1 }>
-						<span className="screen-reader-text">{ this.translate( 'Move next' ) }</span>
+						<span className="screen-reader-text">{ this.props.translate( 'Move next' ) }</span>
 						<span className="noticon noticon-collapse" />
 				</button>
 			</div>
@@ -317,3 +316,5 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default localize( SortableList );

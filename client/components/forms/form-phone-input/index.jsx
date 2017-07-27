@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import { noop, find } from 'lodash';
+import { localize } from 'i18n-calypso';
+import { identity, noop, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,9 +17,7 @@ import phoneValidation from 'lib/phone-validation';
 
 var CLEAN_REGEX = /^0|[\s.\-()]+/g;
 
-export default React.createClass( {
-	displayName: 'FormPhoneInput',
-
+export const FormPhoneInput = React.createClass( {
 	propTypes: {
 		initialCountryCode: React.PropTypes.string,
 		initialPhoneNumber: React.PropTypes.string,
@@ -26,7 +25,8 @@ export default React.createClass( {
 		isDisabled: React.PropTypes.bool,
 		countrySelectProps: React.PropTypes.object,
 		phoneInputProps: React.PropTypes.object,
-		onChange: React.PropTypes.func
+		onChange: React.PropTypes.func,
+		translate: React.PropTypes.func,
 	},
 
 	getDefaultProps: function() {
@@ -34,7 +34,8 @@ export default React.createClass( {
 			isDisabled: false,
 			countrySelectProps: {},
 			phoneInputProps: {},
-			onChange: noop
+			onChange: noop,
+			translate: identity,
 		};
 	},
 
@@ -66,7 +67,7 @@ export default React.createClass( {
 		return (
 			<div className={ classnames( this.props.className, 'form-phone-input' ) }>
 				<FormFieldset className="form-fieldset__country">
-					<FormLabel htmlFor="country_code">{ this.translate( 'Country Code', { context: 'The country code for the phone for the user.' } ) }</FormLabel>
+					<FormLabel htmlFor="country_code">{ this.props.translate( 'Country Code', { context: 'The country code for the phone for the user.' } ) }</FormLabel>
 					<CountrySelect
 						{ ...this.props.countrySelectProps }
 						countriesList={ this.props.countriesList }
@@ -78,7 +79,7 @@ export default React.createClass( {
 				</FormFieldset>
 
 				<FormFieldset className="form-fieldset__phone-number">
-					<FormLabel htmlFor="phone_number">{ this.translate( 'Phone Number' ) }</FormLabel>
+					<FormLabel htmlFor="phone_number">{ this.props.translate( 'Phone Number' ) }</FormLabel>
 					<FormTelInput
 						{ ...this.props.phoneInputProps }
 						disabled={ this.props.isDisabled }
@@ -151,3 +152,5 @@ export default React.createClass( {
 		};
 	}
 } );
+
+export default localize( FormPhoneInput );

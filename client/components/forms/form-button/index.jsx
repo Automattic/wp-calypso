@@ -2,6 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import React, { Children } from 'react';
 
@@ -10,10 +11,7 @@ import React, { Children } from 'react';
  */
 import Button from 'components/button';
 
-export default React.createClass( {
-
-	displayName: 'FormsButton',
-
+const FormButton = React.createClass( {
 	getDefaultProps() {
 		return {
 			isSubmitting: false,
@@ -23,7 +21,7 @@ export default React.createClass( {
 	},
 
 	getDefaultButtonAction() {
-		return this.props.isSubmitting ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' );
+		return this.props.isSubmitting ? this.props.translate( 'Saving…' ) : this.props.translate( 'Save Settings' );
 	},
 
 	render() {
@@ -42,3 +40,5 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default localize( FormButton );

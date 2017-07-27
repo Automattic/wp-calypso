@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
@@ -38,9 +39,7 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
  */
 var countriesList = require( 'lib/countries-list' ).forSms();
 
-var FormFields = React.createClass( {
-	displayName: 'FormFields',
-
+const FormFields = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	getInitialState: function() {
@@ -74,7 +73,7 @@ var FormFields = React.createClass( {
 
 	render: function() {
 		return (
-			<div>
+		    <div>
 				<p>
 					The form fields components act as wrapper components to aid in componentizing CSS.
 					Here is an example of all of the form fields components and their expected markup.
@@ -177,7 +176,7 @@ var FormFields = React.createClass( {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="password">{ this.translate( 'Form Password Input' ) }</FormLabel>
+						<FormLabel htmlFor="password">{ this.props.translate( 'Form Password Input' ) }</FormLabel>
 						<FormPasswordInput
 							id="password"
 							name="password" />
@@ -284,4 +283,4 @@ var FormFields = React.createClass( {
 	}
 } );
 
-export default FormFields;
+export default localize( FormFields );
