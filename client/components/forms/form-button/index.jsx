@@ -32,7 +32,7 @@ class FormButton extends React.Component {
 
 		return (
 			<Button
-				{ ...omit( props, 'isSubmitting' ) }
+				{ ...omit( props, [ 'isSubmitting', 'moment', 'numberFormat', 'translate' ] ) }
 				primary={ isPrimary }
 				className={ buttonClasses }
 			>
