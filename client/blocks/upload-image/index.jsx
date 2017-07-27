@@ -243,6 +243,12 @@ class UploadImage extends Component {
 		);
 	}
 
+	removeUploadedImage = event => {
+		event.stopPropagation(); // so it won't open File Picker.
+
+		this.setState( { uploadedImage: null } );
+	};
+
 	componentWillUnmount() {
 		const { selectedImage, editedImage } = this.state;
 
@@ -302,9 +308,10 @@ class UploadImage extends Component {
 			return (
 				<div className="upload-image__uploading-done-container">
 					<Button
-						onClick={ false }
+						onClick={ this.removeUploadedImage }
 						compact
-						className="upload-image__uploaded-image-remove">
+						className="upload-image__uploaded-image-remove"
+					>
 						<Gridicon
 							icon="cross"
 							size={ 24 }
