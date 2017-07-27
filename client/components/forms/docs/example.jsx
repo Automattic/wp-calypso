@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -177,9 +176,7 @@ class FormFields extends React.PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="password">
-							{ this.props.translate( 'Form Password Input' ) }
-						</FormLabel>
+						<FormLabel htmlFor="password">Form Password Input</FormLabel>
 						<FormPasswordInput id="password" name="password" />
 					</FormFieldset>
 
@@ -291,4 +288,4 @@ class FormFields extends React.PureComponent {
 	}
 }
 
-export default localize( FormFields );
+export default FormFields;
