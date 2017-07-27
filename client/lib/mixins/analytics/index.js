@@ -509,43 +509,6 @@ const EVENTS = {
 			}
 		},
 
-		primaryDomain: {
-			cancelClick( domain ) {
-				const domainType = getDomainTypeText( domain );
-
-				analytics.ga.recordEvent(
-					'Domain Management',
-					`Clicked "Cancel" Button on a ${domainType} in Primary Domain`,
-					'Domain Name',
-					domain.name
-				);
-
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_primary_domain_cancel_click',
-					{ section: snakeCase( domainType ) }
-				);
-			},
-
-			updatePrimaryDomainClick( domain, success ) {
-				const domainType = getDomainTypeText( domain );
-
-				analytics.ga.recordEvent(
-					'Domain Management',
-					`Clicked "Update Primary Domain" Button on a ${domainType} in Primary Domain`,
-					'Domain Name',
-					domain.name
-				);
-
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_primary_domain_update_primary_domain_click',
-					{
-						section: snakeCase( domainType ),
-						success
-					}
-				);
-			}
-		},
-
 		nameServers: {
 			wpcomNameServersToggleButtonClick( domainName, enabled ) {
 				const state = enabled ? 'On' : 'Off';
