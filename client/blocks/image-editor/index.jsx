@@ -39,7 +39,9 @@ import {
 	AspectRatios,
 	AspectRatiosValues
 } from 'state/ui/editor/image-editor/constants';
-import { getDefaultAspectRatio } from './utils';
+import {
+	getDefaultAspectRatio
+} from './utils';
 
 const ImageEditor = React.createClass( {
 	mixins: [ closeOnEsc( 'onCancel' ) ],
@@ -79,7 +81,8 @@ const ImageEditor = React.createClass( {
 
 	getInitialState() {
 		return {
-			canvasError: null
+			noticeText: null,
+			noticeStatus: 'is-info'
 		};
 	},
 
@@ -190,22 +193,43 @@ const ImageEditor = React.createClass( {
 		return imageProperties;
 	},
 
-	onLoadCanvasError() {
-		const { translate } = this.props;
-
+	showNotice( noticeText, noticeStatus = 'is-info' ) {
 		this.setState( {
-			canvasError: translate( 'We are unable to edit this image.' )
+			noticeText,
+			noticeStatus
 		} );
 	},
 
-	renderError() {
+	clearNoticeState() {
+		this.setState( {
+			noticeText: null,
+			noticeStatus: 'is-info'
+		} );
+	},
+
+	renderNotice() {
+		if ( ! this.state.noticeText ) {
+			return null;
+		}
+
+		const showDismiss = this.state.noticeStatus === 'is-info';
+
 		return (
 			<Notice
-				status="is-error"
-				showDismiss={ true }
-				text={ this.state.canvasError }
+				status={ this.state.noticeStatus }
+				showDismiss={ showDismiss }
+				text={ this.state.noticeText }
 				isCompact={ false }
-				onDismissClick={ this.props.onImageEditorCancel } 	/>
+				onDismissClick={ this.clearNoticeState }
+				className="image-editor__notice" />
+		);
+	},
+
+	onLoadCanvasError() {
+		const { translate } = this.props;
+		this.showNotice(
+			translate( 'We are unable to edit this image.' ),
+			'is-error'
 		);
 	},
 
@@ -216,6 +240,10 @@ const ImageEditor = React.createClass( {
 			allowedAspectRatios
 		} = this.props;
 
+		const {
+			noticeText
+		} = this.state;
+
 		const classes = classNames(
 			'image-editor',
 			className
@@ -223,7 +251,7 @@ const ImageEditor = React.createClass( {
 
 		return (
 			<div className={ classes }>
-				{ this.state.canvasError && this.renderError() }
+				{ noticeText && this.renderNotice() }
 
 				<QuerySites siteId={ siteId } />
 
@@ -234,6 +262,7 @@ const ImageEditor = React.createClass( {
 							onLoadError={ this.onLoadCanvasError }
 						/>
 						<ImageEditorToolbar
+							onShowNotice={ this.showNotice }
 							allowedAspectRatios={ allowedAspectRatios }
 						/>
 						<ImageEditorButtons
