@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import Button from 'components/button';
 import { translate } from 'i18n-calypso';
-
 import { setJPOSummary } from 'state/signup/steps/jpo-summary/actions';
 
 const JPOSummaryStep = React.createClass( {
@@ -24,11 +24,33 @@ const JPOSummaryStep = React.createClass( {
 		stepName: PropTypes.string,
 	},
 
+	goToStepOne() {
+		this.props.goToStep( 1 );
+	},
+
+	goToStepTwo() {
+		this.props.goToStep( 2 );
+	},
+
+	goToStepThree() {
+		this.props.goToStep( 3 );
+	},
+
+	goToStepFour() {
+		this.props.goToStep( 4 );
+	},
+
 	skipStep() {
 		this.props.goToNextStep();
 	},
 
 	renderStepContent() {
+		const connectionToJetpackComplete = true;
+
+		const checkMark = <Gridicon
+			className="plan-features__item-checkmark"
+			size={ 18 } icon="checkmark" />;
+
 		return (
 			<div className="jpo__summary-wrapper">
 				<table>
@@ -37,20 +59,25 @@ const JPOSummaryStep = React.createClass( {
 							<td>
 								<div className="jpo__summary-col-header">Steps you've completed:</div>
 								<ul>
-									<li>Site Title & Description</li>
-									<li>Type of Site</li>
-									<li>Type of Homepage</li>
-									<li>Contact Us Form</li>
-									<li>Connection to Jetpack</li>
+									{ 'undefined' !== typeof this.props.signupProgress[0].jpoSiteTitle ? <li>{ checkMark } { translate( 'Site Title & Description' ) }</li> : null }
+									{ 'undefined' !== typeof this.props.signupProgress[1].jpoSiteType ? <li>{ checkMark } { translate( 'Type of Site' ) }</li> : null }
+									{ 'undefined' !== typeof this.props.signupProgress[2].jpoHomepage ? <li>{ checkMark } { translate( 'Type of Homepage' ) }</li> : null }
+									{ 'undefined' !== typeof this.props.signupProgress[3].jpoContactForm ? <li>{ checkMark } { translate( 'Contact Us Form' ) }</li> : null }
+									{ connectionToJetpackComplete ? <li>{ checkMark } { translate( 'Connection to Jetpack' ) }</li> : null }
 								</ul>
 							</td>
 							<td>
 								<div className="jpo__summary-col-header">Configure more of your site:</div>
 								<ul>
-									<li>Choose a Theme</li>
-									<li>Add a Site Address</li>
-									<li>Add a Store</li>
-									<li>Start a Blog</li>
+									{ 'undefined' === typeof this.props.signupProgress[0].jpoSiteTitle ? <li onClick={ this.goToStepOne }>{ translate( 'Site Title & Description' ) }</li> : null }
+									{ 'undefined' === typeof this.props.signupProgress[1].jpoSiteType ? <li onClick={ this.goToStepTwo }>{ translate( 'Type of Site' ) }</li> : null }
+									{ 'undefined' === typeof this.props.signupProgress[2].jpoHomepage ? <li onClick={ this.goToStepThree }>{ translate( 'Type of Homepage' ) }</li> : null }
+									{ 'undefined' === typeof this.props.signupProgress[3].jpoContactForm ? <li onClick={ this.goToStepFour }>{ translate( 'Contact Us Form' ) }</li> : null }
+									{ ! connectionToJetpackComplete ? <li>{ translate( 'Connection to Jetpack' ) }</li> : null }
+									<li>{ translate( 'Choose a Theme' ) }</li>
+									<li>{ translate( 'Add a Site Address' ) }</li>
+									<li>{ translate( 'Add a Store' ) }</li>
+									<li>{ translate( 'Start a Blog' ) }</li>
 								</ul>
 							</td>
 						</tr>
@@ -64,7 +91,11 @@ const JPOSummaryStep = React.createClass( {
 	},
 
 	render() {
-		const headerText = translate( 'Congratulations! Site name is on its way.' );
+		let siteTitle = ( 'undefined' !== typeof this.props.signupProgress[0].jpoSiteTitle )
+			? this.props.signupProgress[0].jpoSiteTitle.siteTitle
+			: translate( 'your new site' );
+
+		const headerText = translate( 'Congratulations! ' ) + siteTitle + translate( ' is on its way.' );
 		const subHeaderText = translate( 'You enabled Jetpack and unlocked dozens of website-bolstering features. Continue preparing yoru site below.' );
 
 		return (

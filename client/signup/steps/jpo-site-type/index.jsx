@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import { translate } from 'i18n-calypso';
-import { getJPOSiteTitle } from 'state/signup/steps/jpo-site-title/selectors';
 import { setJPOSiteType } from 'state/signup/steps/jpo-site-type/actions';
 import SelectGenre from './select-genre';
 import SelectBusinessPersonal from './select-business-personal';
@@ -27,11 +26,13 @@ const JPOSiteTypeStep = React.createClass( {
 	},
 
 	getInitialState() {
-		var siteName = getJPOSiteTitle();		
+		const siteTitle = ( 'undefined' !== typeof this.props.signupProgress[0].jpoSiteTitle )
+			? this.props.signupProgress[0].jpoSiteTitle.siteTitle
+			: translate( 'your new site' );
 
 		return {
-			headerText: 'Let\'s shape ' + siteName + '.',
-			subHeaderText: 'What kind of site do you need? Choose an option below:',
+			headerText: translate( 'Let\'s shape ' ) + siteTitle + translate( '.' ),
+			subHeaderText: translate( 'What kind of site do you need? Choose an option below:' ),
 			currentScreen: 'genre',
 			payload: {
 				genre: '',
