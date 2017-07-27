@@ -37,6 +37,7 @@ import { login } from 'lib/paths';
  */
 const MAX_AUTH_ATTEMPTS = 3;
 const PLANS_PAGE = '/jetpack/connect/plans/';
+const ONBOARDING_PAGE = '/start/jetpack-onboarding/';
 const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 
 class LoggedInForm extends Component {
@@ -431,6 +432,14 @@ class LoggedInForm extends Component {
 	}
 
 	getRedirectionTarget() {
+		// Redirect to Calypso JPO
+		if ( this.props.onboarding ) {
+			var blogId = this.props.jetpackConnectAuthorize.queryObject.client_id;
+
+			return ONBOARDING_PAGE + '?blogid=' + blogId;
+		}
+
+		// No onboarding
 		return PLANS_PAGE + this.props.siteSlug;
 	}
 

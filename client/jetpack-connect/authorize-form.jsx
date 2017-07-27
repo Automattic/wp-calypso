@@ -27,7 +27,8 @@ import {
 	isRemoteSiteOnSitesList,
 	getAuthAttempts,
 	getSiteIdFromQueryObject,
-	getUserAlreadyConnected
+	getUserAlreadyConnected,
+	getOnboardingFromQueryObject
 } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -146,7 +147,7 @@ export default connect(
 		const requestHasExpiredSecretError = () => hasExpiredSecretError( state );
 		const requestHasXmlrpcError = () => hasXmlrpcError( state );
 		const siteId = getSiteIdFromQueryObject( state );
-
+		
 		return {
 			authAttempts: getAuthAttempts( state, siteSlug ),
 			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
@@ -158,7 +159,8 @@ export default connect(
 			requestHasXmlrpcError,
 			siteSlug,
 			user: getCurrentUser( state ),
-			userAlreadyConnected: getUserAlreadyConnected( state )
+			userAlreadyConnected: getUserAlreadyConnected( state ),
+			onboarding: getOnboardingFromQueryObject( state )
 		};
 	},
 	{
