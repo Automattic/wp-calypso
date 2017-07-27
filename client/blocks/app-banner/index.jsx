@@ -14,22 +14,37 @@ import Card from 'components/card';
 import { getSectionName } from 'state/ui/selectors';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
 import { isNotificationsOpen } from 'state/selectors';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics
+} from 'state/analytics/actions';
 import { savePreference } from 'state/preferences/actions';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import {
+	get,
 	identity,
 	includes,
 	noop
 } from 'lodash';
 import {
 	ALLOWED_SECTIONS,
+	EDITOR,
+	NOTES,
+	READER,
+	STATS,
 	getAppBannerData,
 	getNewDismissTimes,
 	getCurrentSection,
 	isDismissed,
 	APP_BANNER_DISMISS_TIMES_PREFERENCE,
 } from './utils';
+import versionCompare from 'lib/version-compare';
+
+const IOS_REGEX = /iPad|iPod|iPhone/i;
+const ANDROID_REGEX = /Android (\d+(\.\d+)?(\.\d+)?)/i;
 
 class AppBanner extends Component {
 	static propTypes = {
@@ -57,11 +72,14 @@ class AppBanner extends Component {
 	}
 
 	isiOS() {
-		return /iPad|iPod|iPhone/i.test( this.props.userAgent );
+		return IOS_REGEX.test( this.props.userAgent );
 	}
 
 	isAndroid() {
-		return /Android/i.test( this.props.userAgent );
+		const match = ANDROID_REGEX.exec( this.props.userAgent );
+		const version = get( match, '1', '0' );
+		//intents are only supported on Android 4.4+
+		return versionCompare( version, '4.4', '>=' );
 	}
 
 	isMobile() {
@@ -80,12 +98,23 @@ class AppBanner extends Component {
 	};
 
 	getDeepLink() {
-		// TODO: update with real deep links when we get them
-		// just linking to respective app stores for now
+		const { currentSection } = this.props;
+
 		if ( this.isAndroid() ) {
-			return 'market://details?id=org.wordpress.android';
+			//TODO: update when section deep links are available.
+			switch ( currentSection ) {
+				case EDITOR:
+					return 'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+				case NOTES:
+					return 'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+				case READER:
+					return 'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+				case STATS:
+					return 'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+			}
 		}
 
+		//TODO: update when deferred deep links are available
 		if ( this.isiOS() ) {
 			return 'itms://itunes.apple.com/us/app/wordpress/id335703880?mt=8';
 		}
@@ -117,6 +146,8 @@ class AppBanner extends Component {
 					eventProperties={ {
 						page: currentSection,
 					} }
+					statGroup="calypso_mobile_app_banner"
+					statName="impression"
 				/>
 				<div className="app-banner__text-content">
 					<div className="app-banner__title">
@@ -129,8 +160,6 @@ class AppBanner extends Component {
 				<div className="app-banner__buttons">
 					<Button
 						className="app-banner__open-button"
-						target="_blank"
-						rel="noopener noreferrer"
 						onClick={ this.openApp }
 						href={ this.getDeepLink() }
 					>
@@ -156,13 +185,20 @@ const mapStateToProps = ( state ) => {
 		dismissedUntil: getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
 		currentSection: getCurrentSection( sectionName, isNotesOpen ),
 		fetchingPreferences: isFetchingPreferences( state ),
+		siteId: getSelectedSiteId( state ),
 	};
 };
 
 const mapDispatchToProps = {
-	recordAppBannerOpen: ( sectionName ) => recordTracksEvent( 'calypso_mobile_app_banner_open', { page: sectionName } ),
+	recordAppBannerOpen: ( sectionName ) => composeAnalytics(
+		recordTracksEvent( 'calypso_mobile_app_banner_open', { page: sectionName } ),
+		bumpStat( 'calypso_mobile_app_banner', 'banner_open' )
+	),
 	saveDismissTime: ( sectionName, currentDimissTimes ) => withAnalytics(
-		recordTracksEvent( 'calypso_mobile_app_banner_dismiss', { page: sectionName } ),
+		composeAnalytics(
+			recordTracksEvent( 'calypso_mobile_app_banner_dismiss', { page: sectionName } ),
+			bumpStat( 'calypso_mobile_app_banner', 'banner_dismiss' )
+		),
 		savePreference( APP_BANNER_DISMISS_TIMES_PREFERENCE, getNewDismissTimes( sectionName, currentDimissTimes ) )
 	),
 };
