@@ -7,6 +7,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import emailValidator from 'email-validator';
+import { find, isNumber, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,7 +38,9 @@ import {
 class SimplePaymentsDialog extends Component {
 	static propTypes = {
 		showDialog: PropTypes.bool.isRequired,
-		isEdit: PropTypes.bool.isRequired,
+		// If not null and is a valid payment button ID, start editing the button.
+		// Otherwise, show the existing button list or the "Add New" form.
+		editPaymentId: PropTypes.number,
 		onClose: PropTypes.func.isRequired,
 		onInsert: PropTypes.func.isRequired,
 	};
@@ -58,13 +61,14 @@ class SimplePaymentsDialog extends Component {
 		this._isMounted = false;
 
 		this.formStateController = formState.Controller( {
-			initialFields: this.constructor.initialFields,
+			initialFields: this.getInitialFormFields( this.props.editPaymentId ),
 			onNewState: form => this._isMounted && this.setState( { form } ),
 			validatorFunction: this.validateFormFields,
 		} );
 
 		this.state = {
 			activeTab: 'form',
+			editedPaymentId: this.props.editPaymentId,
 			selectedPaymentId: null,
 			form: this.formStateController.getInitialState(),
 			isSubmitting: false,
@@ -74,9 +78,9 @@ class SimplePaymentsDialog extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		// When transitioning from hidden to visible, switch the tab to 'form'.
+		// When transitioning from hidden to visible, show and initialize the form
 		if ( nextProps.showDialog && ! this.props.showDialog ) {
-			this.setState( { activeTab: 'form' } );
+			this.editPaymentButton( nextProps.editPaymentId );
 		}
 
 		// clear the form when dialog is being closed -- it'll be blank next time it's opened
@@ -98,6 +102,22 @@ class SimplePaymentsDialog extends Component {
 	};
 
 	isFormFieldInvalid = name => formState.isFieldInvalid( this.state.form, name );
+
+	// Get initial values for a form -- either from an existing payment when editing one,
+	// or the default values for a new one.
+	getInitialFormFields( paymentId ) {
+		const { initialFields } = this.constructor;
+
+		if ( isNumber( paymentId ) ) {
+			const editedPayment = find( this.props.paymentButtons, p => p.ID === paymentId );
+			if ( editedPayment ) {
+				// Pick only the fields supported by the form -- drop the rest
+				return pick( editedPayment, Object.keys( initialFields ) );
+			}
+		}
+
+		return initialFields;
+	}
 
 	getFormValues() {
 		return formState.getAllFieldValues( this.state.form );
@@ -121,6 +141,10 @@ class SimplePaymentsDialog extends Component {
 		}
 
 		onComplete( null, formErrors );
+	}
+
+	isDirectEdit() {
+		return isNumber( this.props.editPaymentId );
 	}
 
 	handleUploadedImage = uploadedImage => {
@@ -182,6 +206,53 @@ class SimplePaymentsDialog extends Component {
 			.then( () => this.setIsSubmitting( false ) );
 	};
 
+	handleSave = () => {
+		// On successful update, either go back to list or close the dialog.
+		// On validation or save error, keep the form displayed, i.e., do nothing here.
+		this.handleFormSubmit().then( hasErrors => {
+			if ( hasErrors ) {
+				return;
+			}
+
+			this.updatePaymentButton().then( () => {
+				if ( this.isDirectEdit() ) {
+					// after changes are saved, close the dialog...
+					this.props.onClose();
+				} else {
+					// ...or return to the list
+					this.setState( { activeTab: 'list' } );
+				}
+			} );
+		} );
+	};
+
+	editPaymentButton = paymentId => {
+		this.setState( { activeTab: 'form', editedPaymentId: paymentId } );
+		this.formStateController.resetFields( this.getInitialFormFields( paymentId ) );
+	};
+
+	updatePaymentButton() {
+		this.setIsSubmitting( true );
+
+		const { siteId, dispatch, translate } = this.props;
+		const { editedPaymentId } = this.state;
+		const productForm = this.getFormValues();
+
+		const update = wpcom
+			.site( siteId )
+			.post( editedPaymentId )
+			.update( productToCustomPost( productForm ) );
+
+		update
+			.then( updatedProduct => {
+				dispatch( receiveUpdateProduct( siteId, customPostToProduct( updatedProduct ) ) );
+			} )
+			.catch( () => this.showError( translate( 'The payment button could not be updated.' ) ) )
+			.then( () => this.setIsSubmitting( false ) );
+
+		return update;
+	}
+
 	trashPaymentButton = paymentId => {
 		this.setIsSubmitting( true );
 
@@ -200,29 +271,53 @@ class SimplePaymentsDialog extends Component {
 		const { onClose, translate } = this.props;
 		const { activeTab, isSubmitting } = this.state;
 
-		const insertDisabled =
-			( activeTab === 'form' && formState.hasErrors( this.state.form ) ) ||
-			( activeTab === 'list' && this.state.selectedPaymentId === null );
-
-		return [
+		const buttons = [
 			<Button onClick={ onClose } disabled={ isSubmitting }>
 				{ translate( 'Cancel' ) }
 			</Button>,
-			<Button
-				onClick={ this.handleInsert }
-				busy={ isSubmitting }
-				disabled={ isSubmitting || insertDisabled }
-				primary
-			>
-				{ translate( 'Insert' ) }
-			</Button>,
 		];
+
+		// When editing an existing payment, show "Save" button. Otherwise, show "Insert"
+		const showSave = activeTab === 'form' && isNumber( this.state.editedPaymentId );
+		if ( showSave ) {
+			const saveDisabled = formState.hasErrors( this.state.form );
+
+			buttons.push(
+				<Button
+					onClick={ this.handleSave }
+					busy={ isSubmitting }
+					disabled={ isSubmitting || saveDisabled }
+					primary
+				>
+					{ translate( 'Save' ) }
+				</Button>,
+			);
+		} else {
+			const insertDisabled =
+				( activeTab === 'form' && formState.hasErrors( this.state.form ) ) ||
+				( activeTab === 'list' && this.state.selectedPaymentId === null );
+
+			buttons.push(
+				<Button
+					onClick={ this.handleInsert }
+					busy={ isSubmitting }
+					disabled={ isSubmitting || insertDisabled }
+					primary
+				>
+					{ translate( 'Insert' ) }
+				</Button>,
+			);
+		}
+
+		return buttons;
 	}
 
 	render() {
 		const { showDialog, onClose, siteId, paymentButtons, currencyCode } = this.props;
 		const { activeTab, errorMessage } = this.state;
 
+		// Don't show navigation when directly editing a payment button
+		const showNavigation = activeTab === 'list' || ! this.isDirectEdit();
 		const currencyDefaults = getCurrencyDefaults( currencyCode );
 
 		return (
@@ -236,11 +331,12 @@ class SimplePaymentsDialog extends Component {
 
 				{ ! currencyCode && <QuerySitePlans siteId={ siteId } /> }
 
-				<Navigation
-					activeTab={ activeTab }
-					onChangeTabs={ this.handleChangeTabs }
-					paymentButtons={ paymentButtons }
-				/>
+				{ showNavigation &&
+					<Navigation
+						activeTab={ activeTab }
+						paymentButtons={ paymentButtons }
+						onChangeTabs={ this.handleChangeTabs }
+					/> }
 				{ errorMessage &&
 					<Notice status="is-error" text={ errorMessage } onDismissClick={ this.dismissError } /> }
 				{ activeTab === 'form'
@@ -257,6 +353,7 @@ class SimplePaymentsDialog extends Component {
 							selectedPaymentId={ this.state.selectedPaymentId }
 							onSelectedChange={ this.handleSelectedChange }
 							onTrashClick={ this.trashPaymentButton }
+							onEditClick={ this.editPaymentButton }
 						/> }
 			</Dialog>
 		);
