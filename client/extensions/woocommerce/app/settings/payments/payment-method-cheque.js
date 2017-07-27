@@ -57,19 +57,21 @@ class PaymentMethodCheque extends Component {
 					/>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container" >
-					<FormLabel>{ translate( 'Description' ) }</FormLabel>
+					<FormLabel>{ translate( 'Instructions for customer at checkout' ) }</FormLabel>
 					<FormTextarea
 						name="description"
 						onChange={ this.onEditFieldHandler }
 						value={ method.description }
+						placeholder={ translate( 'Please send a check to…' ) }
 					/>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container" >
-					<FormLabel>{ translate( 'Instructions' ) }</FormLabel>
+					<FormLabel>{ translate( 'Instructions for customer in order email notification' ) }</FormLabel>
 					<FormTextarea
 						name="instructions"
 						onChange={ this.onEditFieldHandler }
 						value={ settings.instructions.value }
+						placeholder={ translate( 'Please send a check to…' ) }
 					/>
 				</FormFieldset>
 			</Dialog>
