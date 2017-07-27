@@ -125,6 +125,20 @@ describe( 'selectors', () => {
 				expect( canUserSendMessages( state ) ).to.be.true;
 			} );
 		} );
+
+		it( 'should return true even when isAvailable is false', () => {
+			// This test is here to prevent a code regression — isAvailable is supposed to
+			// determine whether Happychat is capable of starting new chats, and should not be
+			// a factor when determining if a user should be able to send messages to the service.
+			const state = deepFreeze( {
+				happychat: {
+					connectionStatus: 'connected',
+					chatStatus: HAPPYCHAT_CHAT_STATUS_NEW,
+					isAvailable: false,
+				}
+			} );
+			expect( canUserSendMessages( state ) ).to.be.true;
+		} );
 	} );
 
 	describe( '#getLostFocusTimestamp', () => {
