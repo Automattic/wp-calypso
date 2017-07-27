@@ -57,6 +57,7 @@ export class CommentDetail extends Component {
 		commentUrl: PropTypes.string,
 		deleteCommentPermanently: PropTypes.func,
 		isBulkEdit: PropTypes.bool,
+		isLoading: PropTypes.bool,
 		postAuthorDisplayName: PropTypes.string,
 		postTitle: PropTypes.string,
 		repliedToComment: PropTypes.bool,
@@ -70,6 +71,7 @@ export class CommentDetail extends Component {
 	static defaultProps = {
 		commentIsSelected: false,
 		isBulkEdit: false,
+		isLoading: true,
 	};
 
 	state = {
@@ -119,7 +121,9 @@ export class CommentDetail extends Component {
 	}
 
 	toggleExpanded = () => {
-		this.setState( { isExpanded: ! this.state.isExpanded } );
+		if ( ! this.props.isLoading ) {
+			this.setState( { isExpanded: ! this.state.isExpanded } );
+		}
 	}
 
 	toggleLike = () => {
@@ -170,6 +174,7 @@ export class CommentDetail extends Component {
 			commentStatus,
 			commentUrl,
 			isBulkEdit,
+			isLoading,
 			parentCommentAuthorAvatarUrl,
 			parentCommentAuthorDisplayName,
 			parentCommentContent,
@@ -191,6 +196,7 @@ export class CommentDetail extends Component {
 
 		const classes = classNames( 'comment-detail', {
 			'author-is-blocked': authorIsBlocked,
+			'comment-detail__placeholder': isLoading,
 			'is-approved': 'approved' === commentStatus,
 			'is-unapproved': 'unapproved' === commentStatus,
 			'is-bulk-edit': isBulkEdit,
@@ -268,7 +274,9 @@ export class CommentDetail extends Component {
 
 const mapStateToProps = ( state, ownProps ) => {
 	const { commentId, siteId } = ownProps;
-	const comment = getSiteComment( state, siteId, commentId );
+	const comment = ownProps.comment || getSiteComment( state, siteId, commentId );
+
+	const isLoading = isUndefined( comment );
 
 	const postId = get( comment, 'post.ID' );
 
@@ -282,7 +290,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	// TODO: eventually it will be returned already decoded from the data layer.
 	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
 
-	return ( {
+	return {
 		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
 		authorDisplayName: get( comment, 'author.name' ),
 		authorEmail: get( comment, 'author.email' ),
@@ -297,6 +305,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentIsLiked: get( comment, 'i_like' ),
 		commentStatus: get( comment, 'status' ),
 		commentUrl: get( comment, 'URL' ),
+		isLoading,
 		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
 		parentCommentAuthorDisplayName: get( parentComment, 'author.name' ),
 		parentCommentContent,
@@ -306,7 +315,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		postTitle,
 		repliedToComment: get( comment, 'replied' ), // TODO: not available in the current data structure
 		siteId: get( comment, 'siteId', siteId ),
-	} );
+	};
 };
 
 export default connect( mapStateToProps )( localize( CommentDetail ) );

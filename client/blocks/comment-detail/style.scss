@@ -516,25 +516,29 @@ a.comment-detail__author-more-element {
 		background-color: lighten( $gray, 30% );
 		color: transparent;
 		height: 32px;
-		margin: 0 8px;
 		&:after {
 			background: transparent;
 		}
 	}
 
-	&.is-expanded .comment-detail__header {
-		border: none;
+	.comment-detail__header.is-preview {
+		cursor: default;
 	}
 
 	.gravatar {
 		width: 32px;
 	}
 
+	.comment-detail__author-preview {
+		max-width: 48px;
+	}
+
 	.comment-detail__author-info {
-		text-overflow: initial;
+		display: none;
 	}
 
 	.comment-detail__comment-preview {
+		margin: 0 8px;
 		width: 100%;
 	}
 
