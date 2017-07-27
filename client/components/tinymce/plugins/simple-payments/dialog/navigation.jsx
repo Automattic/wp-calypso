@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -48,8 +49,8 @@ class SimplePaymentsDialogNavigation extends Component {
 				label={ translate( 'Payment Buttons' ) }
 				count={ paymentButtons.length }
 			>
-				<Button compact onClick={ this.onChangeTabs( 'form' ) }>
-					{ translate( '+ Add New' ) }
+				<Button compact icon onClick={ this.onChangeTabs( 'form' ) }>
+					<Gridicon icon="plus-small" /> { translate( 'Add New' ) }
 				</Button>
 			</SectionHeader>
 		);
