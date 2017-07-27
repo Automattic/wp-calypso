@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isUndefined, orderBy, has, map, unionBy, reject, isEqual, get } from 'lodash';
+import { isUndefined, orderBy, has, map, unionBy, reject, isEqual, get, filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,8 @@ import {
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
+	COMMENTS_TREE_COMMENT_ADD,
+	COMMENTS_TREE_COMMENT_REMOVE,
 	COMMENTS_TREE_RECEIVE,
 } from '../action-types';
 import { combineReducers, createReducer } from 'state/utils';
@@ -197,15 +199,50 @@ export const totalCommentsCount = createReducer(
  * @param {Object} action Redux action
  * @returns {Object} New Redux state.
  */
-export const trees = ( state = {}, { siteId, status, tree, type } ) => COMMENTS_TREE_RECEIVE === type
-	? {
-		...state,
-		[ siteId ]: {
-			...state[ siteId ],
-			[ status ]: tree,
-		}
+export const trees = ( state = {}, action ) => {
+	const { siteId, status, type } = action;
+	const siteTree = get( state, siteId, {} );
+
+	switch ( type ) {
+		case COMMENTS_TREE_RECEIVE:
+			const { tree } = action;
+			return {
+				...state,
+				[ siteId ]: {
+					...siteTree,
+					[ status ]: tree,
+				}
+			};
+		case COMMENTS_TREE_COMMENT_ADD:
+			const { comment } = action;
+			if ( ! comment ) {
+				break;
+			}
+			const commentStatus = get( comment, 'status' );
+			const newComment = {
+				commentId: get( comment, 'ID' ),
+				commentParentId: get( comment, [ 'parent', 'ID' ], 0 ),
+				postId: get( comment, [ 'post', 'ID' ] ),
+			};
+			return {
+				...state,
+				[ siteId ]: {
+					...siteTree,
+					[ commentStatus ]: get( siteTree, commentStatus, [] ).concat( newComment ),
+				}
+			};
+		case COMMENTS_TREE_COMMENT_REMOVE:
+			const { commentId } = action;
+			return {
+				...state,
+				[ siteId ]: {
+					...siteTree,
+					[ status ]: filter( get( siteTree, status, [] ), c => c.commentId !== commentId ),
+				},
+			};
 	}
-	: state;
+	return state;
+};
 
 /**
  * Stores a site's comments count.
@@ -213,15 +250,44 @@ export const trees = ( state = {}, { siteId, status, tree, type } ) => COMMENTS_
  * @param {Object} action Redux action
  * @returns {Object} New Redux state.
  */
-export const counts = ( state = {}, { count, siteId, status, type } ) => COMMENTS_TREE_RECEIVE === type
-	? {
-		...state,
-		[ siteId ]: {
-			...state[ siteId ],
-			[ status ]: count,
-		},
+export const counts = ( state = {}, action ) => {
+	const { siteId, status, type } = action;
+	const siteCount = get( state, siteId, {} );
+
+	switch ( type ) {
+		case COMMENTS_TREE_RECEIVE:
+			const { count } = action;
+			return {
+				...state,
+				[ siteId ]: {
+					...siteCount,
+					[ status ]: count,
+				},
+			};
+		case COMMENTS_TREE_COMMENT_ADD:
+			const { comment } = action;
+			if ( ! comment ) {
+				break;
+			}
+			const commentStatus = get( comment, 'status' );
+			return {
+				...state,
+				[ siteId ]: {
+					...siteCount,
+					[ status ]: get( siteCount, commentStatus, 0 ) + 1,
+				},
+			};
+		case COMMENTS_TREE_COMMENT_REMOVE:
+			return {
+				...state,
+				[ siteId ]: {
+					...siteCount,
+					[ status ]: get( siteCount, status, 0 ) - 1,
+				},
+			};
 	}
-	: state;
+	return state;
+};
 
 /**
  * Houses errors by `siteId-commentId`

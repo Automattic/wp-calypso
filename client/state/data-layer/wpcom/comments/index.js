@@ -20,6 +20,7 @@ import { createNotice, errorNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { getPostOldestCommentDate, getPostNewestCommentDate } from 'state/comments/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
+import { addCommentToTree, removeCommentFromTree } from 'state/comments/actions';
 
 /***
  * Creates a placeholder comment for a given text and postId
@@ -192,6 +193,8 @@ export const deleteComment = ( { dispatch, getState }, action ) => {
 			}
 		)
 	);
+
+	dispatch( removeCommentFromTree( siteId, commentId, comment.status ) );
 };
 
 export const announceDeleteSuccess = ( { dispatch } ) => {
@@ -228,6 +231,7 @@ export const announceDeleteFailure = ( { dispatch, getState }, action ) => {
 			comments: [ comment ],
 			skipSort: !! get( comment, 'parent.ID' ),
 		} );
+		dispatch( addCommentToTree( siteId, comment ) );
 	}
 };
 

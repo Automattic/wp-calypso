@@ -14,6 +14,7 @@ import {
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { errorNotice } from 'state/notices/actions';
+import { addCommentToTree } from 'state/comments/actions';
 
 /***
  * Creates a placeholder comment for a given text and postId
@@ -89,6 +90,8 @@ export const updatePlaceholderComment = ( { dispatch }, { siteId, postId, parent
 	dispatch( { type: COMMENTS_RECEIVE, siteId, postId, comments: [ comment ], skipSort: !! parentCommentId } );
 	// increment comments count
 	dispatch( { type: COMMENTS_COUNT_INCREMENT, siteId, postId } );
+
+	dispatch( addCommentToTree( siteId, comment ) );
 };
 
 /***

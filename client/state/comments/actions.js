@@ -18,6 +18,8 @@ import {
 	COMMENTS_REPLY_WRITE,
 	COMMENTS_WRITE,
 	COMMENT_REQUEST,
+	COMMENTS_TREE_COMMENT_ADD,
+	COMMENTS_TREE_COMMENT_REMOVE,
 	COMMENTS_TREE_REQUEST,
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
@@ -66,6 +68,19 @@ export const requestCommentsList = query => ( {
 export const requestCommentsTree = query => ( {
 	type: COMMENTS_TREE_REQUEST,
 	query,
+} );
+
+export const addCommentToTree = ( siteId, comment ) => ( {
+	type: COMMENTS_TREE_COMMENT_ADD,
+	siteId,
+	comment,
+} );
+
+export const removeCommentFromTree = ( siteId, commentId, status ) => ( {
+	type: COMMENTS_TREE_COMMENT_REMOVE,
+	siteId,
+	commentId,
+	status,
 } );
 
 /**
@@ -141,7 +156,7 @@ export const unlikeComment = ( siteId, postId, commentId ) => ( {
 	commentId,
 } );
 
-export function changeCommentStatus( siteId, postId, commentId, status ) {
+export function changeCommentStatus( siteId, postId, commentId, status, previousStatus ) {
 	return dispatch => {
 		dispatch( {
 			type: COMMENTS_CHANGE_STATUS,
@@ -155,15 +170,16 @@ export function changeCommentStatus( siteId, postId, commentId, status ) {
 			.site( siteId )
 			.comment( commentId )
 			.update( { status } )
-			.then( data =>
+			.then( data => {
+				dispatch( removeCommentFromTree( siteId, commentId, previousStatus ) );
 				dispatch( {
 					type: COMMENTS_CHANGE_STATUS_SUCESS,
 					siteId,
 					postId,
 					commentId,
 					status: data.status,
-				} ),
-			)
+				} );
+			} )
 			.catch( () =>
 				dispatch( {
 					type: COMMENTS_CHANGE_STATUS_FAILURE,

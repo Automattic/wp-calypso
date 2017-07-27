@@ -166,7 +166,7 @@ export class CommentList extends Component {
 			this.showNotice( comment, status, { doPersist } );
 		}
 
-		this.props.changeCommentStatus( commentId, postId, status );
+		this.props.changeCommentStatus( commentId, postId, status, comment.status );
 
 		// If the comment is not approved anymore, also remove the like
 		if ( 'approved' !== status ) {
@@ -406,7 +406,8 @@ const mapStateToProps = ( state, { siteId, status } ) => {
 };
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	changeCommentStatus: ( commentId, postId, status ) => dispatch( changeCommentStatus( siteId, postId, commentId, status ) ),
+	changeCommentStatus: ( commentId, postId, status, previousStatus ) =>
+		dispatch( changeCommentStatus( siteId, postId, commentId, status, previousStatus ) ),
 	createNotice: ( status, text, options ) => dispatch( createNotice( status, text, options ) ),
 	deleteComment: ( commentId, postId ) => dispatch( deleteComment( siteId, postId, commentId ) ),
 	likeComment: ( commentId, postId ) => dispatch( likeComment( siteId, postId, commentId ) ),
