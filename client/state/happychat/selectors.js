@@ -145,6 +145,7 @@ export const getHappychatTimeline = createSelector(
  * @return {Boolean} Whether the user is able to send messages
  */
 export const canUserSendMessages = state => (
+	isHappychatClientConnected( state ) &&
 	! includes(
 		[
 			HAPPYCHAT_CHAT_STATUS_BLOCKED,
