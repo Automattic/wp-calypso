@@ -67,7 +67,7 @@ export function savePath( path ) {
 
 let isFirstRun = true;
 export function restoreLastSession( currentPath ) {
-	debug( 'restoreLastSession' );
+	debug( 'Entering restoreLastSession. Current path is: ' + ( currentPath || 'empty' ) );
 
 	if ( ! isFirstRun ) {
 		debug( 'not first run, skipping' );
@@ -82,6 +82,8 @@ export function restoreLastSession( currentPath ) {
 		page( lastPath );
 		return true;
 	}
+
+	debug( 'Not restoring lastPath. Moving on' );
 
 	return false;
 }
