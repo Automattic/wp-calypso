@@ -35,6 +35,7 @@ export getBlogStickers from './get-blog-stickers';
 export getContactDetailsCache from './get-contact-details-cache';
 export getContactDetailsExtraCache from './get-contact-details-extra-cache';
 export getCurrentUserPaymentMethods from './get-current-user-payment-methods';
+export getDraftSharing from './get-draft-sharing';
 export getImageEditorIsGreaterThanMinimumDimensions from './get-image-editor-is-greater-than-minimum-dimensions';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
 export getJetpackConnectionStatus from './get-jetpack-connection-status';
