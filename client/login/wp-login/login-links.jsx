@@ -85,7 +85,8 @@ export class LoginLinks extends React.Component {
 				icon={ true }
 				onClick={ this.recordHelpLinkClick }
 				target="_blank"
-				href="https://en.support.wordpress.com/security/two-step-authentication/">
+				href="https://en.support.wordpress.com/security/two-step-authentication/"
+			>
 				{ this.props.translate( 'Get help' ) }
 			</ExternalLink>
 		);
@@ -129,6 +130,7 @@ export class LoginLinks extends React.Component {
 				href={ addQueryArgs( { action: 'lostpassword' }, login( { locale: this.props.locale } ) ) }
 				key="lost-password-link"
 				onClick={ this.recordResetPasswordLinkClick }
+				rel="external"
 			>
 				{ this.props.translate( 'Lost your password?' ) }
 			</a>
