@@ -121,8 +121,11 @@ const getCreateShippingZoneSteps = ( siteId, zoneId, zoneProperties ) => {
 const getUpdateShippingZoneLocationsSteps = ( siteId, zoneId, locations, serverLocations ) => {
 	serverLocations = serverLocations || { continent: [], country: [], state: [], postcode: [] };
 	if ( ! isEmpty( locations.state ) ) {
-		locations.state = locations.state.map( st => locations.country[ 0 ] + ':' + st );
-		locations.country = [];
+		locations = {
+			...locations,
+			state: locations.state.map( st => locations.country[ 0 ] + ':' + st ),
+			country: [],
+		};
 	}
 	const areLocationsDifferent = some( Object.keys( locations ).map( ( key ) => {
 		return ! isEmpty( xor( locations[ key ], serverLocations[ key ] ) );
