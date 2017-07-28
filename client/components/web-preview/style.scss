@@ -300,14 +300,32 @@ a.web-preview__external.button {
 	left: initial;
 }
 
+.web-preview__loading-message-wrapper {
+	display: flex;
+	justify-content: center;
+	height: 100%;
+	flex-direction: column;
+	position: relative;
+	z-index: z-index( 'root', '.web-preview__loading-message-wrapper' );
+}
+
+.web-preview__loading-message-wrapper .spinner__image {
+	margin: 0 auto 16px;
+}
+
 .web-preview__loading-message {
-	color: $gray;
-	font-size: 18px;
+	color: $gray-text-min;
 	font-weight: 300;
 	text-align: center;
 	display: block;
-	margin: 48px 0;
-	height: 100%;
+	font-size: 16px;
+}
+
+.web-preview__loading-message strong {
+	color: #537994;
+	display: block;
+	font-size: 24px;
+	margin-bottom: 5px;
 }
 
 .web-preview__inner .spinner-line {

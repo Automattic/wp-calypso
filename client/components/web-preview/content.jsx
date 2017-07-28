@@ -247,7 +247,7 @@ export class WebPreviewContent extends Component {
 					<SpinnerLine />
 				}
 				<div className="web-preview__placeholder">
-					{ this.props.showPreview && ! this.state.loaded && 'seo' !== this.state.device &&
+					{ ( this.props.showPreview || ! this.props.isModalWindow ) && ! this.state.loaded && 'seo' !== this.state.device &&
 						<div className="web-preview__loading-message-wrapper">
 							<Spinner />
 							{ this.props.loadingMessage &&
