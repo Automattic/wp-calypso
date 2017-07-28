@@ -20,7 +20,7 @@ import NewSiteImage from 'signup/steps/design-type-with-store/new-site-image';
 import ExistingSite from 'signup/steps/design-type-with-store/existing-site';
 import NavigationLink from 'signup/navigation-link';
 import QueryProductsList from 'components/data/query-products-list';
-import { getProductsList } from 'state/products-list/selectors';
+import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getTld } from 'lib/domains';
 
 class SiteOrDomain extends Component {
@@ -218,7 +218,7 @@ class SiteOrDomain extends Component {
 
 export default connect(
 	( state ) => {
-		const productsList = getProductsList( state );
+		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
 
 		return {
