@@ -290,6 +290,7 @@ export const PostEditor = React.createClass( {
 						setPostDate={ this.setPostDate }
 						hasContent={ this.state.hasContent }
 						isConfirmationSidebarEnabled={ isConfirmationFeatureEnabled }
+						confirmationSidebarStatus={ this.state.confirmationSidebar }
 						isDirty={ this.state.isDirty || this.props.dirty }
 						isSaveBlocked={ this.isSaveBlocked() }
 						isPublishing={ this.state.isPublishing }
