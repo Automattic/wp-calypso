@@ -32,7 +32,6 @@ import purchasesPaths from 'me/purchases/paths';
 import { plansLink } from 'lib/plans';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
-import { abtest } from 'lib/abtest';
 
 class PlansFeaturesMain extends Component {
 	getPlanFeatures() {
