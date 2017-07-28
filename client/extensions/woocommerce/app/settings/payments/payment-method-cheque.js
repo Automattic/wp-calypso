@@ -62,7 +62,7 @@ class PaymentMethodCheque extends Component {
 						name="description"
 						onChange={ this.onEditFieldHandler }
 						value={ method.description }
-						placeholder={ translate( 'Please send a check to…' ) }
+						placeholder={ translate( 'Pay for this order by check.' ) }
 					/>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container" >
@@ -71,7 +71,7 @@ class PaymentMethodCheque extends Component {
 						name="instructions"
 						onChange={ this.onEditFieldHandler }
 						value={ settings.instructions.value }
-						placeholder={ translate( 'Please send a check to…' ) }
+						placeholder={ translate( 'Make your check payable to…' ) }
 					/>
 				</FormFieldset>
 			</Dialog>
