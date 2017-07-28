@@ -25,6 +25,7 @@ import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
+import draftSharing from './draft-sharing/reducer';
 import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import help from './help/reducer';
@@ -90,6 +91,7 @@ const reducers = {
 	currentUser,
 	documentHead,
 	domains,
+	draftSharing,
 	extensions,
 	form,
 	geo,
