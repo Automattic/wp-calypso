@@ -282,6 +282,7 @@ a.web-preview__external.button {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
+	position: relative;
 }
 
 .web-preview .spinner {
@@ -305,4 +306,10 @@ a.web-preview__external.button {
 	display: block;
 	margin: 48px 0;
 	height: 100%;
+}
+
+.web-preview__inner .spinner-line {
+	position: absolute;
+	width: 100%;
+	top: 20px;
 }
