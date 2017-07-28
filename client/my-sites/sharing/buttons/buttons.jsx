@@ -23,7 +23,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import { activateModule, fetchModuleList } from 'state/jetpack/modules/actions';
+import { activateModule } from 'state/jetpack/modules/actions';
 import { protectForm } from 'lib/protect-form';
 
 class SharingButtons extends Component {
@@ -68,8 +68,7 @@ class SharingButtons extends Component {
 			return;
 		}
 
-		this.props.activateModule( siteId, 'likes', true )
-			.then( () => this.props.fetchModuleList( siteId ) );
+		this.props.activateModule( siteId, 'likes', true );
 	};
 
 	handleChange = ( option, value ) => {
@@ -181,7 +180,6 @@ const connectComponent = connect(
 	{
 		activateModule,
 		errorNotice,
-		fetchModuleList,
 		recordGoogleEvent,
 		saveSharingButtons,
 		saveSiteSettings,
