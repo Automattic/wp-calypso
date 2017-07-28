@@ -112,7 +112,7 @@ class PreviewMain extends React.Component {
 
 		return (
 			<Main className="preview">
-				<DocumentHead title={ translate( 'Site Preview' ) } />
+				<DocumentHead title={ translate( 'Your Site' ) } />
 				<WebPreviewContent
 					onLocationUpdate={ this.updateSiteLocation }
 					showUrl={ !! this.state.externalUrl }
