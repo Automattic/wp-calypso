@@ -37,10 +37,10 @@ To see a more complex example, have a look at `blocks/upload-image/docs/example`
 - `additionalImageEditorClasses`: string of additional CSS class names to apply to the `ImageEditor` modal.
 - `additionalClasses`: string of additional CSS class names to apply to the `UploadImage` component.
 - `doneButtonText`: text on the "Done" button in Image Editor modal.
-- `addAnImageText`: text on the placeholder when selecting an image.
+- `addAnImageText`: text on the image picker when selecting an image.
 - `dragUploadText`: text which shows when dragging an image to upload.
 
-There's a way to design and supply your own HTML for the placeholder (when no image is selected) by supplying the
-`placeholderContent` prop and for the uploading process (when image is being uploaded) by supplying the
+There's a way to design and supply your own HTML for the image picker (when no image is selected) by supplying the
+`imagePickerContent` prop and for the uploading process (when image is being uploaded) by supplying the
 `uploadingContent` prop. You can also supply your own HTML for when image is uploaded to Media library by passing the
 `uploadingDoneContent` prop.
