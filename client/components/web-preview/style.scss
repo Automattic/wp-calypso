@@ -244,9 +244,11 @@ a.web-preview__external.button {
 	opacity: 0;
 	transition: opacity 0.2s ease-in-out;
 	margin: 0 auto;
+	pointer-events: none;
 
 	.is-loaded & {
 		opacity: 1;
+		pointer-events: all;
 	}
 }
 
