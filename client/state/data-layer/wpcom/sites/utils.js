@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,6 +11,7 @@ import {
 	COMMENTS_DELETE,
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_INCREMENT,
+	COMMENTS_TREE_SITE_ADD,
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { getSitePost } from 'state/posts/selectors';
@@ -89,6 +91,17 @@ export const updatePlaceholderComment = ( { dispatch }, { siteId, postId, parent
 	dispatch( { type: COMMENTS_RECEIVE, siteId, postId, comments: [ comment ], skipSort: !! parentCommentId } );
 	// increment comments count
 	dispatch( { type: COMMENTS_COUNT_INCREMENT, siteId, postId } );
+	// add new comment to the tree
+	dispatch( {
+		type: COMMENTS_TREE_SITE_ADD,
+		siteId,
+		tree: [ {
+			commentId: get( comment, 'ID' ),
+			commentParentId: parentCommentId,
+			postId,
+			status: 'approved',
+		} ],
+	} );
 };
 
 /***
