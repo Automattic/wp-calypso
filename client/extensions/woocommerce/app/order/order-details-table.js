@@ -55,7 +55,7 @@ class OrderDetailsTable extends Component {
 				return 0;
 			}
 			const price = parseFloat( this.props.order.line_items[ i ].price );
-			const tax = parseFloat( this.props.order.line_items[ i ].total_tax );
+			const tax = parseFloat( this.props.order.line_items[ i ].total_tax ) / this.props.order.line_items[ i ].quantity;
 			const taxIncludedPrice = price + tax;
 			if ( this.props.order.prices_include_tax ) {
 				return price * q;
