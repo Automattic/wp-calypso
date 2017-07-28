@@ -108,6 +108,9 @@ const getStatesOwnedByOtherZone = createSelector(
 			getCurrentlyEditingShippingZone( state, siteId ),
 			getRawShippingZoneLocations( state, siteId ),
 		];
+	},
+	( state, siteId, countryCode ) => {
+		return [ siteId, countryCode ].join();
 	}
 );
 
@@ -568,7 +571,10 @@ export const getCurrentlyEditingShippingZoneLocationsList = createSelector(
 		return [
 			getShippingZoneLocationsWithEdits( state, siteId, false ),
 		];
-	}
+	},
+	( state, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
+		return [ maxCountries, siteId ].join();
+	},
 );
 
 /**
