@@ -49,7 +49,7 @@ class SettingsPaymentsMethodList extends Component {
 
 	renderMethodItem = ( method ) => {
 		// Disable BACS and Cheque payment for now until #16630 and #16629 are fixed.
-		if ( 'bacs' === method.id || 'cheque' === method.id ) {
+		if ( 'bacs' === method.id ) {
 			return null;
 		}
 

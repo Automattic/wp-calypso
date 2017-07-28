@@ -25,6 +25,7 @@ export default {
 
 			const payload = {
 				settings,
+				description: method.description,
 			};
 
 			/**
