@@ -116,7 +116,7 @@ let DesignAssets = React.createClass( {
 						/> }
 
 				<Collection component={ component } filter={ filter }>
-					<Accordions componentUsageStats={ componentsUsageStats.accordion } />
+					<Accordions componentUsageStats={ componentsUsageStats.accordion } readmeFilePath="components/accordion" />
 					<Banner />
 					<BulkSelect />
 					<ButtonGroups />
