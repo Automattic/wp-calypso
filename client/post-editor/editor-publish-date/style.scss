@@ -36,7 +36,8 @@
 	}
 
 	&.is-scheduled,
-	&.is-back-dated {
+	&.is-back-dated,
+	&.is-published {
 		color: $blue-wordpress;
 	}
 
@@ -75,7 +76,8 @@
 
 .editor-publish-date__header-description {
 	.editor-publish-date__header.is-scheduled &,
-	.editor-publish-date__header.is-back-dated & {
+	.editor-publish-date__header.is-back-dated &,
+	.editor-publish-date__header.is-published & {
 		margin-top: -4px;
 		font-size: 10px;
 		line-height: initial;
