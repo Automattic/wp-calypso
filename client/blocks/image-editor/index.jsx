@@ -228,7 +228,7 @@ const ImageEditor = React.createClass( {
 	onLoadCanvasError() {
 		const { translate } = this.props;
 		this.showNotice(
-			translate( 'We are unable to edit this image.' ),
+			translate( 'Sorry, there was a problem loading the image. Please close this editor and try selecting the image again.' ),
 			'is-error'
 		);
 	},
