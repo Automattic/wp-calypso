@@ -91,7 +91,7 @@ export class CommentList extends Component {
 		const defaultLine = translate( 'Your queue is clear.' );
 
 		return get( {
-			unapproved: [ translate( 'No new comments yet.' ), defaultLine ],
+			unapproved: [ translate( 'No new comments yet.' ), defaultLine ],
 			approved: [ translate( 'No approved comments.' ), defaultLine ],
 			spam: [ translate( 'No spam comments.' ), defaultLine ],
 			trash: [ translate( 'No deleted comments.' ), defaultLine ],
@@ -99,7 +99,7 @@ export class CommentList extends Component {
 		}, status, [ '', '' ] );
 	}
 
-	isCommentPersisted = commentId => -1 !== this.state.persistedComments.indexOf( commentId );
+	isCommentPersisted = commentId => -1 !== this.state.persistedComments.indexOf( commentId );
 
 	// TODO: replace with array logic after persistedComments is merged
 	isCommentSelected = commentId => !! this.state.selectedComments[ commentId ];
@@ -183,12 +183,12 @@ export class CommentList extends Component {
 	showBulkNotice = ( newStatus, selectedComments ) => {
 		const { translate } = this.props;
 
-		const [ type, message ] = get( {
-			approved: [ 'is-success', translate( 'All selected comments approved.' ) ],
-			unapproved: [ 'is-info', translate( 'All selected comments unapproved.' ) ],
+		const [ type, message ] = get( {
+			approved: [ 'is-success', translate( 'All selected comments approved.' ) ],
+			unapproved: [ 'is-info', translate( 'All selected comments unapproved.' ) ],
 			spam: [ 'is-warning', translate( 'All selected comments marked as spam.' ) ],
-			trash: [ 'is-error', translate( 'All selected comments moved to trash.' ) ],
-			'delete': [ 'is-error', translate( 'All selected comments deleted permanently.' ) ],
+			trash: [ 'is-error', translate( 'All selected comments moved to trash.' ) ],
+			'delete': [ 'is-error', translate( 'All selected comments deleted permanently.' ) ],
 		}, newStatus, [ null, null ] );
 
 		if ( ! type ) {
@@ -219,11 +219,11 @@ export class CommentList extends Component {
 			status: previousStatus,
 		} = comment;
 
-		const [ type, message ] = get( {
-			approved: [ 'is-success', translate( 'Comment approved.' ) ],
-			unapproved: [ 'is-info', translate( 'Comment unapproved.' ) ],
+		const [ type, message ] = get( {
+			approved: [ 'is-success', translate( 'Comment approved.' ) ],
+			unapproved: [ 'is-info', translate( 'Comment unapproved.' ) ],
 			spam: [ 'is-warning', translate( 'Comment marked as spam.' ) ],
-			trash: [ 'is-error', translate( 'Comment moved to trash.' ) ],
+			trash: [ 'is-error', translate( 'Comment moved to trash.' ) ],
 		}, newStatus, [ null, null ] );
 
 		if ( ! type ) {
@@ -290,7 +290,7 @@ export class CommentList extends Component {
 		this.setState( {
 			selectedComments: this.isSelectedAll()
 				? {}
-				: keyBy( map( this.getComments(), ( { ID, i_like, status } ) => ( { ID, i_like, status } ) ), 'ID' ),
+				: keyBy( map( this.getComments(), ( { ID, i_like, status } ) => ( { ID, i_like, status } ) ), 'ID' ),
 		} );
 	}
 
