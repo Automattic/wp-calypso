@@ -1405,7 +1405,7 @@
       "version": "1.0.0"
     },
     "depd": {
-      "version": "1.1.0"
+      "version": "1.1.1"
     },
     "des.js": {
       "version": "1.0.0"
@@ -2123,7 +2123,7 @@
       "dev": true
     },
     "flow-parser": {
-      "version": "0.51.0",
+      "version": "0.51.1",
       "dev": true
     },
     "flux": {
@@ -2980,6 +2980,9 @@
     "http-errors": {
       "version": "1.6.1",
       "dependencies": {
+        "depd": {
+          "version": "1.1.0"
+        },
         "inherits": {
           "version": "2.0.3"
         }
