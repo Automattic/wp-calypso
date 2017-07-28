@@ -9,7 +9,7 @@ import { get } from 'lodash';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_CHANGE_STATUS_FAILURE,
-	COMMENTS_CHANGE_STATUS_SUCESS,
+	COMMENTS_CHANGE_STATUS_SUCCESS,
 } from 'state/action-types';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -37,7 +37,7 @@ const changeCommentStatus = ( { dispatch }, action ) => {
 const changeCommentStatusSuccess = ( { dispatch }, action ) => {
 	dispatch( {
 		...action,
-		type: COMMENTS_CHANGE_STATUS_SUCESS,
+		type: COMMENTS_CHANGE_STATUS_SUCCESS,
 	} );
 };
 

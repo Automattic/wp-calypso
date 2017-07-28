@@ -23,7 +23,7 @@ import {
 	HELP_CONTACT_FORM_SITE_SELECT,
 	ROUTE_SET,
 
-	COMMENTS_CHANGE_STATUS_SUCESS,
+	COMMENTS_CHANGE_STATUS_SUCCESS,
 	EXPORT_COMPLETE,
 	EXPORT_FAILURE,
 	EXPORT_STARTED,
@@ -219,7 +219,7 @@ export const getEventMessageFromActionData = ( action ) => {
 	// Below we've stubbed in the actions we think we'll care about, so that we can
 	// start incrementally adding messages for them.
 	switch ( action.type ) {
-		case COMMENTS_CHANGE_STATUS_SUCESS:
+		case COMMENTS_CHANGE_STATUS_SUCCESS:
 			return `Changed a comment's status to "${ action.status }"`;
 		case EXPORT_COMPLETE:
 			return 'Export completed';
@@ -332,7 +332,7 @@ export default function( connection = null ) {
 			case HAPPYCHAT_INITIALIZE:
 				connectIfRecentlyActive( connection, store );
 				break;
-        
+
 			case HELP_CONTACT_FORM_SITE_SELECT:
 				updateChatPreferences( connection, store, action.siteId );
 				break;
