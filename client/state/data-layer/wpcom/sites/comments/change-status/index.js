@@ -37,7 +37,7 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	);
 };
 
-const changeCommentStatusSuccess = ( { dispatch }, action, next, data ) => {
+const verifyCommentStatus = ( { dispatch }, action, next, data ) => {
 	dispatch(
 		local( {
 			...action,
@@ -57,7 +57,7 @@ const announceFailure = ( { dispatch, getState }, action ) => {
 };
 
 const changeStatusHandlers = {
-	[ COMMENTS_CHANGE_STATUS ]: [ dispatchRequest( changeCommentStatus, changeCommentStatusSuccess, announceFailure ) ],
+	[ COMMENTS_CHANGE_STATUS ]: [ dispatchRequest( changeCommentStatus, verifyCommentStatus, announceFailure ) ],
 };
 
 export default mergeHandlers( changeStatusHandlers );
