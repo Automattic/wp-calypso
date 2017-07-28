@@ -28,29 +28,20 @@ const bundleEnv = config( 'env' );
 const isWindows = os.type() === 'Windows_NT';
 
 /**
- * This function scans the /client/extensions directory in order to generate a map that looks like this:
+ * This function scans the specified directory in order to generate an alias to path map that looks like this:
  * {
  *   sensei: 'absolute/path/to/wp-calypso/client/extensions/sensei',
  *   woocommerce: 'absolute/path/to/wp-calypso/client/extensions/woocommerce',
  *   ....
  * }
  *
- * Providing webpack with these aliases instead of telling it to scan client/extensions for every
+ * Providing webpack with these aliases instead of telling it to scan the directory for every
  * module resolution speeds up builds significantly.
+ *
+ * @param { String } prefix - A unique prefix for the alias to prevent alias collisions.
+ * @param { String } directory - A directory to scan for modules.
+ * @return { Object } aliasesMap - The alias to path map.
  */
-function getAliasesForExtensions() {
-	const extensionsDirectory = path.join( __dirname, 'client', 'extensions' );
-	const extensionsNames = fs
-		.readdirSync( extensionsDirectory )
-		.filter( filename => filename.indexOf( '.' ) === -1 ); // heuristic for finding directories
-
-	const aliasesMap = {};
-	extensionsNames.forEach( extensionName =>
-		aliasesMap[ extensionName ] = path.join( extensionsDirectory, extensionName )
-	);
-	return aliasesMap;
-}
-
 function getAliasesForDirectory( prefix, directory ) {
 	const filenames = fs
 		.readdirSync( directory )
@@ -153,7 +144,7 @@ const webpackConfig = {
 				'react-virtualized': 'react-virtualized/dist/commonjs',
 				'social-logos/example': 'social-logos/build/example'
 			},
-			getAliasesForExtensions(),
+			getAliasesForDirectory( '', path.join( __dirname, 'client', 'extensions' ) ),
 			getAliasesForDirectory( 'component-readme-', path.join( __dirname, 'client', 'components' ) )
 		),
 	},
