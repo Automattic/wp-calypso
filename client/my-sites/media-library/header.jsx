@@ -90,7 +90,7 @@ export default React.createClass( {
 					compact
 					ref={ this.setMoreOptionsContext }
 					onClick={ this.toggleMoreOptions.bind( this, ! this.state.isMoreOptionsVisible ) }
-					className="button media-library__upload-more icon-only">
+					className="button media-library__upload-more">
 					<span className="screen-reader-text">
 						{ this.translate( 'More Options' ) }
 					</span>

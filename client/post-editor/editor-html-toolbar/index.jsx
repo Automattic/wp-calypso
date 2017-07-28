@@ -593,7 +593,7 @@ export class EditorHtmlToolbar extends Component {
 							<div className="editor-html-toolbar__button-insert-content" ref={ this.bindInsertContentButtonsRef }>
 								<Button
 									borderless
-									className="editor-html-toolbar__button-insert-media icon-only"
+									className="editor-html-toolbar__button-insert-media"
 									compact
 									onClick={ this.openMediaModal }
 								>

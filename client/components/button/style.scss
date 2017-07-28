@@ -65,10 +65,9 @@ button {
 	}
 
 	&.is-desktop,
-	&.is-compact:not(.icon-only)
-	&.is-compact:not(.gridicon + .gridicon) {
-		.gridicon {
-			margin-right: 4px;
+	&.is-compact {
+		.gridicon + span {
+			margin-left: 4px;
 		}
 	}
 
