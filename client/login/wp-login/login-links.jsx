@@ -14,13 +14,14 @@ import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'gridicons';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { recordPageView, recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { login } from 'lib/paths';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
+		isLoggedIn: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		privateSite: PropTypes.bool,
 		recordPageView: PropTypes.func.isRequired,
@@ -107,7 +108,7 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
-		if ( this.props.currentUser ) {
+		if ( this.props.isLoggedIn ) {
 			return null;
 		}
 
@@ -148,7 +149,7 @@ export class LoginLinks extends React.Component {
 }
 
 const mapState = ( state ) => ( {
-	currentUser: getCurrentUser( state ),
+	isLoggedIn: Boolean( getCurrentUserId( state ) )
 } );
 
 const mapDispatch = {
