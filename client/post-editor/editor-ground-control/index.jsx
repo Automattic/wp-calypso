@@ -162,6 +162,7 @@ export class EditorGroundControl extends PureComponent {
 				position={ 'bottom left' }
 				context={ this.refs && this.refs.schedulePost }
 				id="editor-post-schedule"
+				className="editor-ground-control__post-schedule-popover"
 			>
 				<PostScheduler initialDate={ this.props.moment() }
 					post={ this.props.post }
