@@ -55,6 +55,10 @@
 	@include breakpoint( ">660px" ) {
 		display: flex;
 	}
+
+	.upload-image {
+		margin-right: 25px;
+	}
 }
 
 .editor-simple-payments-modal__product-image {
@@ -104,8 +108,4 @@
 .editor-simple-payments-modal__list-menu {
 	flex: none;
 	margin-left: 16px;
-}
-
-.editor-simple-payments-modal__form .upload-image {
-	margin-right: 25px;
 }
