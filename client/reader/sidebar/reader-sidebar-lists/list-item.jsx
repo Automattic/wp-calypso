@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import last from 'lodash/last';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -31,7 +32,7 @@ export class ReaderSidebarListsListItem extends Component {
 	}
 
 	render() {
-		const list = this.props.list;
+		const { list, translate } = this.props;
 		const listRelativeUrl = `/read/list/${ list.owner }/${ list.slug }`;
 		const listManagementUrls = [
 			listRelativeUrl + '/tags',
@@ -46,7 +47,7 @@ export class ReaderSidebarListsListItem extends Component {
 			ReaderSidebarHelper.pathStartsWithOneOf( [ listRelativeUrl ], this.props.path );
 		const isActionButtonSelected = ReaderSidebarHelper.pathStartsWithOneOf(
 			listManagementUrls,
-			this.props.path,
+			this.props.path
 		);
 
 		const classes = classNames( {
@@ -55,7 +56,15 @@ export class ReaderSidebarListsListItem extends Component {
 
 		return (
 			<li className={ classes } key={ list.ID }>
-				<a className="sidebar__menu-item-label" href={ listRelativeUrl }>
+				<a
+					className="sidebar__menu-item-label"
+					href={ listRelativeUrl }
+					title={ translate( "View list '%(currentListName)s'", {
+						args: {
+							currentListName: list.title,
+						},
+					} ) }
+				>
 					<div className="sidebar__menu-item-listname">
 						{ list.title }
 					</div>
@@ -65,4 +74,4 @@ export class ReaderSidebarListsListItem extends Component {
 	}
 }
 
-export default ReaderSidebarListsListItem;
+export default localize( ReaderSidebarListsListItem );

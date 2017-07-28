@@ -2,13 +2,14 @@
  * External Dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
 import ReaderSidebarHelper from '../helper';
 
-export const ReaderSidebarTeamsListItem = ( { path, team } ) => {
+export const ReaderSidebarTeamsListItem = ( { path, team, translate } ) => {
 	const teamUri = '/read/' + encodeURIComponent( team.slug );
 	return (
 		<li
@@ -17,7 +18,14 @@ export const ReaderSidebarTeamsListItem = ( { path, team } ) => {
 				'sidebar-streams__team': true,
 			} ) }
 		>
-			<a href={ teamUri }>
+			<a
+				href={ teamUri }
+				title={ translate( "View team '%(currentTeamName)s'", {
+					args: {
+						currentTeamName: team.title,
+					},
+				} ) }
+			>
 				<svg
 					className={ 'gridicon gridicon-' + team.slug }
 					width="24"
@@ -41,4 +49,4 @@ ReaderSidebarTeamsListItem.propTypes = {
 	path: React.PropTypes.string.isRequired,
 };
 
-export default ReaderSidebarTeamsListItem;
+export default localize( ReaderSidebarTeamsListItem );
