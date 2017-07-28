@@ -86,7 +86,7 @@ module.exports = {
 		allowExistingUsers: true,
 	},
 	postPublishConfirmation: {
-		datestamp: '20170802',
+		datestamp: '20170801',
 		allowExistingUsers: true,
 		variations: {
 			showPublishConfirmation: 5,
