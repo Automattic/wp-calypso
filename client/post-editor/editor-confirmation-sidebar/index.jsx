@@ -92,7 +92,8 @@ class EditorConfirmationSidebar extends React.Component {
 			return;
 		}
 
-		const { password, type, status } = this.props.post || {};
+		const { password, type } = this.props.post || {};
+		const status = get( this.props.post, 'status', 'draft' );
 		const isPrivateSite = get( this.props, 'site.is_private' );
 		const savedStatus = get( this.props, 'savedPost.status' );
 		const savedPassword = get( this.props, 'savedPost.password' );
