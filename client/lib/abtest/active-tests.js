@@ -71,8 +71,8 @@ module.exports = {
 	signupPlansCopyChanges: {
 		datestamp: '20170623',
 		variations: {
-			original: 50,
-			modified: 50,
+			original: 0,
+			modified: 100, //Set to 100% while copy is translated
 		},
 		defaultVariation: 'original',
 	},
