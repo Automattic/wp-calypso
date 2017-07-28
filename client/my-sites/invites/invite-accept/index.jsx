@@ -155,7 +155,7 @@ let InviteAccept = React.createClass( {
 				"We weren't able to verify that invitation.",
 				{ context: 'Message that is displayed to users when an invitation is invalid.' }
 			),
-			illustration: '/calypso/images/drake/drake-whoops.svg'
+			illustration: '/calypso/images/illustrations/whoops.svg'
 		};
 
 		if ( error.error && error.message ) {

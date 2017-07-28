@@ -377,7 +377,7 @@ class JetpackSsoForm extends Component {
 		return (
 			<Main>
 				<EmptyContent
-					illustration="/calypso/images/drake/drake-whoops.svg"
+					illustration="/calypso/images/illustrations/whoops.svg"
 					title={ translate(
 						'Oops, this URL should not be accessed directly'
 					) }
