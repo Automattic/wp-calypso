@@ -13,7 +13,7 @@ import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { local } from 'state/data-layer/utils';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
+import { errorNotice, removeNotice } from 'state/notices/actions';
 import { getSiteComment } from 'state/selectors';
 
 const changeCommentStatus = ( { dispatch, getState }, action ) => {
@@ -79,16 +79,27 @@ const getErrorMessage = ( status, content ) => {
 	}
 };
 
+const retryChangeStatus = ( dispatch, action ) => {
+	dispatch( removeNotice( `comment-notice-${ action.commentId }` ) );
+	dispatch( action );
+};
+
 const announceFailure = ( { dispatch, getState }, action ) => {
+	const { siteId, commentId, status, previousStatus } = action;
+
 	dispatch(
 		local( {
 			...action,
-			status: action.previousStatus,
+			status: previousStatus,
 		} )
 	);
 
-	const content = get( getSiteComment( getState(), action.siteId, action.commentId ), 'content' );
-	dispatch( errorNotice( getErrorMessage( action.status, content ) ) );
+	const content = get( getSiteComment( getState(), siteId, commentId ), 'content' );
+	dispatch( errorNotice( getErrorMessage( status, content ), {
+		button: translate( 'Try again' ),
+		id: `comment-notice-${ commentId }`,
+		onClick: () => retryChangeStatus( dispatch, action ),
+	} ) );
 };
 
 const changeStatusHandlers = {
