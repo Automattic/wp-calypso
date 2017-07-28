@@ -114,7 +114,20 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				}
 
 				if ( ! isSupported() ) {
-					window.location = 'https://wordpress.com/browsehappy?url=' + encodeURIComponent( window.location );
+					if ( window.location.pathname.match( /^\/log-in/ ) ) {
+
+						var login = 'https://wordpress.com/wp-login.php';
+						if ( window.location.search ) {
+							login += window.location.search + '&';
+						} else {
+							login += '?';
+						}
+						login += 'no_calypso=1';
+
+						window.location = login;
+					} else {
+						window.location = 'https://wordpress.com/browsehappy?url=' + encodeURIComponent( window.location );
+					}
 				}
 			})();
 
