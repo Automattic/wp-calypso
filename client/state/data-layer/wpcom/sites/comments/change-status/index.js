@@ -10,12 +10,14 @@ import { get } from 'lodash';
 import { COMMENTS_CHANGE_STATUS } from 'state/action-types';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { local } from 'state/data-layer/utils';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { getSiteComment } from 'state/selectors';
 
-const changeCommentStatus = ( { dispatch }, action ) => {
+const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	const { siteId, commentId, status } = action;
+	const comment = getSiteComment( getState(), action.siteId, action.commentId );
 
 	dispatch(
 		http(
@@ -27,24 +29,30 @@ const changeCommentStatus = ( { dispatch }, action ) => {
 					status,
 				},
 			},
-			action
+			{
+				...action,
+				previousStatus: get( comment, 'status' ),
+			}
 		)
 	);
 };
 
 const changeCommentStatusSuccess = ( { dispatch }, action, next, data ) => {
-	dispatch( {
-		...action,
-		status: get( data, 'status' ),
-	} );
+	dispatch(
+		local( {
+			...action,
+			status: get( data, 'status' ),
+		} )
+	);
 };
 
 const announceFailure = ( { dispatch, getState }, action ) => {
-	const comment = getSiteComment( getState( action.siteId, action.commentId ) );
-	dispatch( {
-		...action,
-		status: get( comment, 'status' ),
-	} );
+	dispatch(
+		local( {
+			...action,
+			status: action.previousStatus,
+		} )
+	);
 	dispatch( errorNotice( translate( 'Could not update the comment' ) ) );
 };
 
