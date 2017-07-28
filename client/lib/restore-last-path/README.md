@@ -13,7 +13,7 @@ There is a REGEX-based subset of paths that are whitelisted for saving (& subseq
 `restoreLastSession`
 -----------------------
 
-This is called early in the [loading process](/tree/master/server/bundler/loader.js) to attempt to restore a device to the last path it visited (if valid). It returns a boolean value so the caller knows whether to return (i.e. the path is being restored) or continue (it is not).
+This is called early in the [loading process](/server/bundler/loader.js) to attempt to restore a device to the last path it visited (if valid). It returns a boolean value so the caller knows whether to return (i.e. the path is being restored) or continue (it is not).
 
 `savePath`
 -----------------------

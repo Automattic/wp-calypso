@@ -11,6 +11,6 @@ This middleware implements one part of the behavior — first seen in the WordPr
 
 We listen for `ROUTE_SET` actions and save the action's path to localStorage if it meets certain conditions
 
-The "restore" side is implemented in the [restore-last-path lib](/tree/master/client/lib/restore-last-path) & initiated [during initial loading](/tree/master/server/bundler/loader.js).
+The "restore" side is implemented in the [restore-last-path lib](/client/lib/restore-last-path) & initiated [during initial loading](/server/bundler/loader.js).
 
 Behavior will probably change or be fine-tuned in the future.
