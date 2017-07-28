@@ -16,7 +16,6 @@ export const routingMiddleware = () => {
 	return ( next ) => ( action ) => {
 		if ( action.type !== ROUTE_SET ||
 				! action.path ||
-				! action.query ||
 				! isEmpty( action.query )
 		) {
 			return next( action );
