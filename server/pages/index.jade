@@ -85,7 +85,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 		script.
 			(function() {
 				function isSupported() {
-					var ios, version, ua;
+					var ios, version, ua, android;
 
 					ua = window.navigator.userAgent;
 
@@ -108,6 +108,11 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 					if ( ios && version < 6 ) {
 						// disable for now because it is breaking Chrome on iOS
 						//return false;
+					}
+
+					android = getFirstMatch( /android (\d+)/i );
+					if ( android && android < 3 ) {
+						return false;
 					}
 
 					return true;
