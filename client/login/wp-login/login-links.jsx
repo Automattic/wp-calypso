@@ -39,7 +39,7 @@ export class LoginLinks extends React.Component {
 		this.props.recordTracksEvent( 'calypso_login_help_link_click' );
 	};
 
-	recordLostPhoneLinkClick = ( event ) => {
+	handleLostPhoneLinkClick = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_lost_phone_link_click' );
@@ -47,7 +47,7 @@ export class LoginLinks extends React.Component {
 		page( login( { isNative: true, twoFactorAuthType: 'backup' } ) );
 	};
 
-	recordMagicLoginLinkClick = ( event ) => {
+	handleMagicLoginLinkClick = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
@@ -97,7 +97,7 @@ export class LoginLinks extends React.Component {
 		}
 
 		return (
-			<a href="#" key="lost-phone-link" onClick={ this.recordLostPhoneLinkClick }>
+			<a href="#" key="lost-phone-link" onClick={ this.handleLostPhoneLinkClick }>
 				{ this.props.translate( "I can't access my phone" ) }
 			</a>
 		);
@@ -113,7 +113,7 @@ export class LoginLinks extends React.Component {
 		}
 
 		return (
-			<a href="#" key="magic-login-link" onClick={ this.recordMagicLoginLinkClick }>
+			<a href="#" key="magic-login-link" onClick={ this.handleMagicLoginLinkClick }>
 				{ this.props.translate( 'Email me a login link' ) }
 			</a>
 		);
