@@ -72,6 +72,15 @@ describe( 'section-nav', function() {
 				}
 			} );
 		} );
+
+		it( 'should not render a header if dropdown disabled', () => {
+			const component = createComponent( SectionNav, {
+				selectedText: 'test',
+				allowDropdown: false,
+			}, ( <p>mmyellow</p> ) );
+
+			assert.notEqual( component.props.children[ 0 ].className, 'section-nav__mobile-header' );
+		} );
 	} );
 
 	describe( 'interaction', function() {

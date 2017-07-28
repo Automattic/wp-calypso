@@ -24,6 +24,7 @@ var SectionNav = React.createClass( {
 		hasPinnedItems: React.PropTypes.bool,
 		onMobileNavPanelOpen: React.PropTypes.func,
 		className: React.PropTypes.string,
+		allowDropdown: React.PropTypes.bool,
 	},
 
 	getInitialState: function() {
@@ -34,7 +35,8 @@ var SectionNav = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			onMobileNavPanelOpen: () => {}
+			onMobileNavPanelOpen: () => {},
+			allowDropdown: true,
 		};
 	},
 
@@ -52,6 +54,23 @@ var SectionNav = React.createClass( {
 		if ( ! this.hasSiblingControls ) {
 			this.closeMobilePanel();
 		}
+	},
+
+	renderDropdown() {
+		if ( ! this.props.allowDropdown ) {
+			return <div />;
+		}
+
+		return (
+			<div
+				className="section-nav__mobile-header"
+				onClick={ this.toggleMobileOpenState }
+			>
+				<span className="section-nav__mobile-header-text">
+					{ this.props.selectedText }
+				</span>
+			</div>
+		);
 	},
 
 	render: function() {
@@ -81,14 +100,7 @@ var SectionNav = React.createClass( {
 
 		return (
 			<div className={ className }>
-				<div
-					className="section-nav__mobile-header"
-					onClick={ this.toggleMobileOpenState }
-				>
-					<span className="section-nav__mobile-header-text">
-						{ this.props.selectedText }
-					</span>
-				</div>
+				{ this.renderDropdown() }
 
 				<div className="section-nav__panel">
 					{ children }

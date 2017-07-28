@@ -160,9 +160,14 @@ export class MediaLibraryFilterBar extends Component {
 	}
 
 	render() {
+		// Dropdown is disabled when viewing any external data source
 		return (
 			<div className="media-library__filter-bar">
-				<SectionNav selectedText={ this.getFilterLabel( this.props.filter ) } hasSearch={ true }>
+				<SectionNav
+					selectedText={ this.getFilterLabel( this.props.filter ) }
+					hasSearch={ true }
+					allowDropdown={ ! this.props.source }
+				>
 					{ this.renderSectionTitle() }
 					{ this.renderTabItems() }
 					{ this.renderSearchSection() }
