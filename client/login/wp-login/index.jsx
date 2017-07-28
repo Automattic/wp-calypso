@@ -11,17 +11,21 @@ import { localize } from 'i18n-calypso';
  */
 import DocumentHead from 'components/data/document-head';
 import LoginLinks from './login-links';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import Main from 'components/main';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoginBlock from 'blocks/login';
 import { recordPageView } from 'state/analytics/actions';
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
+import PrivateSite from './private-site';
 
 export class Login extends React.Component {
 	static propTypes = {
+		isLoggedIn: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		path: PropTypes.string.isRequired,
+		privateSite: PropTypes.bool,
 		recordPageView: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
@@ -79,9 +83,33 @@ export class Login extends React.Component {
 		);
 	}
 
+	renderContent() {
+		const {
+			isLoggedIn,
+			privateSite,
+			socialConnect,
+			twoFactorAuthType,
+		} = this.props;
+
+		if ( privateSite && isLoggedIn ) {
+			return (
+				<PrivateSite />
+			);
+		}
+
+		return (
+			<LoginBlock
+				twoFactorAuthType={ twoFactorAuthType }
+				socialConnect={ socialConnect }
+				privateSite={ privateSite }
+			/>
+		);
+	}
+
 	render() {
 		const {
 			locale,
+			privateSite,
 			socialConnect,
 			translate,
 			twoFactorAuthType,
@@ -101,15 +129,11 @@ export class Login extends React.Component {
 
 					<div>
 						<div className="wp-login__container">
-							<LoginBlock
-								twoFactorAuthType={ twoFactorAuthType }
-								title={ translate( 'Log in to your account.' ) }
-								socialConnect={ socialConnect }
-							/>
+							{ this.renderContent() }
 						</div>
 
 						{ ! socialConnect &&
-							<LoginLinks locale={ locale } twoFactorAuthType={ twoFactorAuthType } />
+							<LoginLinks locale={ locale } twoFactorAuthType={ twoFactorAuthType } privateSite={ privateSite } />
 						}
 					</div>
 				</Main>
@@ -120,8 +144,11 @@ export class Login extends React.Component {
 	}
 }
 
-const mapDispatch = {
-	recordPageView,
-};
-
-export default connect( null, mapDispatch )( localize( Login ) );
+export default connect(
+	( state ) => ( {
+		isLoggedIn: Boolean( getCurrentUserId( state ) )
+	} ),
+	{
+		recordPageView,
+	}
+)( localize( Login ) );

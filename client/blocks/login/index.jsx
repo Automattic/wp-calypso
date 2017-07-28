@@ -33,6 +33,7 @@ const user = userFactory();
 
 class Login extends Component {
 	static propTypes = {
+		privateSite: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
 		requestNotice: PropTypes.object,
@@ -111,12 +112,14 @@ class Login extends Component {
 
 	renderHeader() {
 		const {
+			privateSite,
 			socialConnect,
 			translate,
 			twoStepNonce,
 			linkingSocialService,
 		} = this.props;
-		let headerText;
+
+		let headerText = translate( 'Log in to your account.' );
 
 		if ( twoStepNonce ) {
 			headerText = translate( 'Two-Step Authentication' );
@@ -126,8 +129,8 @@ class Login extends Component {
 					service: capitalize( linkingSocialService ),
 				}
 			} );
-		} else {
-			headerText = translate( 'Log in to your account.' );
+		} else if ( privateSite ) {
+			headerText = translate( 'This is a private WordPress.com site.' );
 		}
 
 		return (
@@ -153,6 +156,7 @@ class Login extends Component {
 
 	renderContent() {
 		const {
+			privateSite,
 			twoFactorAuthType,
 			twoFactorEnabled,
 			twoFactorNotificationSent,
@@ -191,7 +195,7 @@ class Login extends Component {
 		}
 
 		return (
-			<LoginForm onSuccess={ this.handleValidUsernamePassword } />
+			<LoginForm onSuccess={ this.handleValidUsernamePassword } privateSite={ privateSite } />
 		);
 	}
 

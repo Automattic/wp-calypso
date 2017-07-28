@@ -19,6 +19,7 @@ import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { loginUser, formUpdate } from 'state/login/actions';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -26,13 +27,16 @@ import {
 	getRequestError,
 	isFormDisabled,
 } from 'state/login/selectors';
+import Notice from 'components/notice';
 import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
 		formUpdate: PropTypes.func.isRequired,
+		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
+		privateSite: PropTypes.bool,
 		redirectTo: PropTypes.string,
 		requestError: PropTypes.object,
 		translate: PropTypes.func.isRequired,
@@ -123,6 +127,18 @@ export class LoginForm extends Component {
 		} );
 	};
 
+	renderPrivateSiteNotice() {
+		if ( this.props.privateSite && ! this.props.isLoggedIn ) {
+			return (
+				<Notice status="is-info" showDismiss={ false } icon="lock">
+					{ this.props.translate( 'Log in to WordPress.com to proceed. ' +
+					"If you are not a member of this site, we'll send " +
+					'your username to the site owner for approval.' ) }
+				</Notice>
+			);
+		}
+	}
+
 	render() {
 		const isDisabled = {};
 
@@ -134,6 +150,8 @@ export class LoginForm extends Component {
 
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
+				{ this.renderPrivateSiteNotice() }
+
 				<Card className="login__form">
 					<div className="login__form-userdata">
 						{ this.state.linkingSocialUser && (
@@ -231,13 +249,11 @@ export class LoginForm extends Component {
 					</div>
 				</Card>
 				{ config.isEnabled( 'signup/social' ) && (
-					<Card>
-						<div className="login__form-social">
-							<SocialLoginForm
-								onSuccess={ this.props.onSuccess }
-								linkSocialUser={ this.linkSocialUser }
-								linkingSocialService={ this.state.linkingSocialService } />
-						</div>
+					<Card className="login__form-social">
+						<SocialLoginForm
+							onSuccess={ this.props.onSuccess }
+							linkSocialUser={ this.linkSocialUser }
+							linkingSocialService={ this.state.linkingSocialService } />
 					</Card>
 				) }
 			</form>
@@ -250,6 +266,7 @@ export default connect(
 		redirectTo: getCurrentQueryArguments( state ).redirect_to,
 		requestError: getRequestError( state ),
 		isFormDisabled: isFormDisabled( state ),
+		isLoggedIn: Boolean( getCurrentUserId( state ) )
 	} ),
 	{
 		formUpdate,
