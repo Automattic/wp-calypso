@@ -39,6 +39,9 @@ var Cards = React.createClass( {
 
 				<SectionHeader label={ this.translate( 'Team' ) } count={ 10 } href="/devdocs/design/section-header">
 				</SectionHeader>
+
+				<h3>Empty SectionHeader</h3>
+				<SectionHeader />
 			</div>
 		);
 	}
