@@ -16,6 +16,7 @@ import {
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import changeStatus from './change-status';
 import replies from './replies';
 import likes from './likes';
 import { errorNotice } from 'state/notices/actions';
@@ -125,4 +126,4 @@ const fetchHandler = {
 	],
 };
 
-export default mergeHandlers( fetchHandler, replies, likes );
+export default mergeHandlers( fetchHandler, replies, likes, changeStatus );
