@@ -101,22 +101,9 @@
 
 &.order__refund-dialog {
 	max-width: 720px;
-	max-height: 85%;
 	display: flex;
 	flex-direction: column;
 	padding: 0;
-
-	.dialog__content {
-		height: 100%;
-		overflow-y: scroll;
-		padding: 16px;
-		box-sizing: border-box;
-		color: $gray-text-min;
-
-		@include breakpoint( ">960px" ) {
-			padding: 24px;
-		}
-	}
 
 	.order__detail-header,
 	.order__details-total {
@@ -268,10 +255,6 @@
 
 
 &.dialog__content {
-	@include breakpoint( ">960px" ) {
-		width: 720px;
-	}
-
 	.form-text-input,
 	.form-text-input-with-affixes input {
 		text-align: right;
