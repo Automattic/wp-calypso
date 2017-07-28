@@ -51,6 +51,22 @@ function getAliasesForExtensions() {
 	return aliasesMap;
 }
 
+function getAliasesForDirectory( prefix, directory ) {
+	const filenames = fs
+		.readdirSync( directory )
+		.filter( filename =>
+			fs.lstatSync(
+				path.join( directory, filename )
+			).isDirectory()
+		);
+
+	const aliasesMap = {};
+	filenames.forEach( filename =>
+		aliasesMap[ prefix + filename ] = path.join( directory, filename )
+	);
+	return aliasesMap;
+}
+
 const babelLoader = {
 	loader: 'babel-loader',
 	options: {
@@ -111,6 +127,18 @@ const webpackConfig = {
 			{
 				test: /node_modules[\/\\]tinymce/,
 				use: 'imports-loader?this=>window',
+			},
+			{
+				test: /README\.md$/,
+				use: [
+					{ loader: 'html-loader' },
+					{
+						loader: 'markdown-loader',
+						options: {
+							sanitize: true
+						}
+					}
+				]
 			}
 		]
 	},
@@ -125,7 +153,8 @@ const webpackConfig = {
 				'react-virtualized': 'react-virtualized/dist/commonjs',
 				'social-logos/example': 'social-logos/build/example'
 			},
-			getAliasesForExtensions()
+			getAliasesForExtensions(),
+			getAliasesForDirectory( 'component-readme-', path.join( __dirname, 'client', 'components' ) )
 		),
 	},
 	node: {
