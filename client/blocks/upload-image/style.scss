@@ -87,7 +87,6 @@
 	border-radius: 50%;
 	background-color: $gray-light;
 	cursor: pointer;
-	z-index: z-index( '.dialog__backdrop', '.upload-image__uploaded-image-remove' );
 
 	&:hover {
 		border-color: darken( $gray, 10% );

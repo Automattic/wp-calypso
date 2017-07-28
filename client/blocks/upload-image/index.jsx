@@ -315,17 +315,6 @@ class UploadImage extends Component {
 		if ( uploadedImage && uploadedImage.URL ) {
 			return (
 				<div className="upload-image__uploading-done-container">
-					<Button
-						onClick={ this.removeUploadedImage }
-						compact
-						className="upload-image__uploaded-image-remove"
-					>
-						<Gridicon
-							icon="cross"
-							size={ 24 }
-							className="upload-image__uploaded-image-remove-icon"
-						/>
-					</Button>
 					<div className="upload-image__uploaded-image-wrapper">
 						<img src={ uploadedImage.URL } className="upload-image__uploaded-image" />
 						<Button
@@ -340,6 +329,17 @@ class UploadImage extends Component {
 							/>
 						</Button>
 					</div>
+					<Button
+						onClick={ this.removeUploadedImage }
+						compact
+						className="upload-image__uploaded-image-remove"
+					>
+						<Gridicon
+							icon="cross"
+							size={ 24 }
+							className="upload-image__uploaded-image-remove-icon"
+						/>
+					</Button>
 				</div>
 			);
 		}
