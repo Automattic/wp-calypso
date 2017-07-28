@@ -44,6 +44,7 @@ export class ReaderSidebarTagsListItem extends Component {
 		const { tag, path, onUnfollow, translate } = this.props;
 		const tagName = tag.displayName || tag.slug;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<li
 				key={ tag.id }
@@ -78,6 +79,7 @@ export class ReaderSidebarTagsListItem extends Component {
 					</button> }
 			</li>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

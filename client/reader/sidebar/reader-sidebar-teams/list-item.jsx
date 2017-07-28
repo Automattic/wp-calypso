@@ -11,6 +11,7 @@ import ReaderSidebarHelper from '../helper';
 
 export const ReaderSidebarTeamsListItem = ( { path, team, translate } ) => {
 	const teamUri = '/read/' + encodeURIComponent( team.slug );
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<li
 			key={ team.slug }
@@ -42,6 +43,7 @@ export const ReaderSidebarTeamsListItem = ( { path, team, translate } ) => {
 			</a>
 		</li>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 ReaderSidebarTeamsListItem.propTypes = {

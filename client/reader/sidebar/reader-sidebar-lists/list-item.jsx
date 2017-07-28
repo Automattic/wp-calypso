@@ -54,6 +54,7 @@ export class ReaderSidebarListsListItem extends Component {
 			selected: isCurrentList || isActionButtonSelected,
 		} );
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<li className={ classes } key={ list.ID }>
 				<a
@@ -71,6 +72,7 @@ export class ReaderSidebarListsListItem extends Component {
 				</a>
 			</li>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
