@@ -12,7 +12,7 @@ import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 
 export default {
 	login( context, next ) {
-		const { lang, path, params: { flow, twoFactorAuthType } } = context;
+		const { lang, path, params: { flow, twoFactorAuthType }, query: { site } } = context;
 
 		context.primary = (
 			<WPLogin
@@ -20,7 +20,8 @@ export default {
 				path={ path }
 				twoFactorAuthType={ twoFactorAuthType }
 				socialConnect={ flow === 'social-connect' }
-				privateSite={ flow === 'private-site' } />
+				privateSite={ flow === 'private-site' }
+				site={ site } />
 		);
 
 		next();
