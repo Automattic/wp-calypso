@@ -1,16 +1,12 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	COMMENTS_CHANGE_STATUS,
-	COMMENTS_CHANGE_STATUS_FAILURE,
-	COMMENTS_CHANGE_STATUS_SUCCESS,
-} from 'state/action-types';
+import { COMMENTS_CHANGE_STATUS } from 'state/action-types';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
@@ -34,24 +30,17 @@ const changeCommentStatus = ( { dispatch }, action ) => {
 	);
 };
 
-const changeCommentStatusSuccess = ( { dispatch }, action ) => {
-	dispatch( {
-		...action,
-		type: COMMENTS_CHANGE_STATUS_SUCCESS,
-	} );
-};
-
 const changeCommentStatusFailure = ( { dispatch, getState }, action ) => {
 	const comment = getSiteComment( getState( action.siteId, action.commentId ) );
 	dispatch( {
 		...action,
-		type: COMMENTS_CHANGE_STATUS_FAILURE,
-		previousStatus: get( comment, 'status' ),
+		type: COMMENTS_CHANGE_STATUS,
+		status: get( comment, 'status' ),
 	} );
 };
 
 const changeStatusHandlers = {
-	[ COMMENTS_CHANGE_STATUS ]: [ dispatchRequest( changeCommentStatus, changeCommentStatusSuccess, changeCommentStatusFailure ) ],
+	[ COMMENTS_CHANGE_STATUS ]: [ dispatchRequest( changeCommentStatus, noop, changeCommentStatusFailure ) ],
 };
 
 export default mergeHandlers( changeStatusHandlers );
