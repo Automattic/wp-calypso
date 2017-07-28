@@ -85,7 +85,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 		script.
 			(function() {
 				function isSupported() {
-					var ios, version, ua, android;
+					var ios, version, ua, android, matches;
 
 					ua = window.navigator.userAgent;
 
@@ -119,9 +119,15 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				}
 
 				if ( ! isSupported() ) {
-					if ( window.location.pathname.match( /^\/log-in/ ) ) {
+					if ( matches = window.location.pathname.match( /^\/log-in(?:\/([a-z]{2}))?\/?$/ ) ) {
+						var login = 'https://'
 
-						var login = 'https://wordpress.com/wp-login.php';
+						if ( matches[1] ) {
+							login += matches[1] + '.';
+						}
+
+						login += 'wordpress.com/wp-login.php';
+
 						if ( window.location.search ) {
 							login += window.location.search + '&';
 						} else {
