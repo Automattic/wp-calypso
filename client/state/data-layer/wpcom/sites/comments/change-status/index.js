@@ -37,13 +37,18 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	);
 };
 
-const verifyCommentStatus = ( { dispatch }, action, next, data ) => {
-	dispatch(
-		local( {
-			...action,
-			status: get( data, 'status' ),
-		} )
-	);
+const verifyCommentStatus = ( { dispatch, getState }, action, next, data ) => {
+	const statusFromState = get( getSiteComment( getState(), action.siteId, action.commentId ), 'status' );
+	const statusFromServer = get( data, 'status' );
+
+	if ( statusFromServer && statusFromServer !== statusFromState ) {
+		dispatch(
+			local( {
+				...action,
+				status: get( data, 'status' ),
+			} )
+		);
+	}
 };
 
 const announceFailure = ( { dispatch, getState }, action ) => {
