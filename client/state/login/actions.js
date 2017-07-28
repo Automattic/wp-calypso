@@ -158,7 +158,7 @@ export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) =
 		type: LOGIN_REQUEST,
 	} );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=login-endpoint' )
+	return request.get( 'https://wordpress.com/wp-login.php?action=login-endpoint' )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
