@@ -11,7 +11,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
-import EMPTY_COMPONENT from 'test/helpers/react/empty-component';
+import EMPTY_COMPONENT from 'components/empty-component';
 
 describe.skip( 'NavigationLink', () => {
 	const Gridicon = EMPTY_COMPONENT;

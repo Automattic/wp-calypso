@@ -17,7 +17,7 @@ import {
  */
 import { createReduxStore } from 'state';
 import useMockery from 'test/helpers/use-mockery';
-import EmptyComponent from 'test/helpers/react/empty-component';
+import EmptyComponent from 'components/empty-component';
 
 describe.skip( 'main', function() {
 	describe( 'Calling renderToString() on Theme Info sheet', function() {

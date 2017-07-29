@@ -24,7 +24,7 @@ describe.skip( 'PluginsList', () => {
 		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
 		mockery.registerSubstitute( 'query', 'component-query' );
 
-		const emptyComponent = require( 'test/helpers/react/empty-component' );
+		const emptyComponent = require( 'components/empty-component' );
 		mockery.registerMock( 'my-sites/plugins/plugin-item/plugin-item', emptyComponent );
 		mockery.registerMock( 'my-sites/plugins/plugin-list-header', emptyComponent );
 
