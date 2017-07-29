@@ -11,6 +11,7 @@ import {
 	camelCaseToSlug,
 	getComponentName,
 } from 'devdocs/docs-example/util';
+import ReadmeViewer from 'devdocs/docs-example/readme-viewer';
 
 const shouldShowInstance = ( example, filter, component ) => {
 	const name = getComponentName( example );
@@ -58,6 +59,7 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 			);
 		}
 
+		const readmeFilePath = example.props.readmeFilePath;
 		return (
 			<DocsExampleWrapper
 				name={ exampleName }
@@ -65,6 +67,7 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 				url={ exampleLink }
 			>
 				{ example }
+				{ component && readmeFilePath && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
 			</DocsExampleWrapper>
 		);
 	} );

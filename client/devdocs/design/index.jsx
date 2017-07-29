@@ -116,60 +116,60 @@ let DesignAssets = React.createClass( {
 						/> }
 
 				<Collection component={ component } filter={ filter }>
-					<Accordions componentUsageStats={ componentsUsageStats.accordion } />
-					<Banner />
-					<BulkSelect />
-					<ButtonGroups />
-					<Buttons componentUsageStats={ componentsUsageStats.button } />
-					<Cards />
-					<ClipboardButtonInput />
-					<ClipboardButtons />
-					<Count />
-					<CountedTextareas />
-					<DatePicker />
-					<DropZones searchKeywords="drag" />
-					<EllipsisMenu />
-					<EmojifyExample />
-					<EmptyContent />
-					<ExternalLink />
-					<FAQ />
-					<FeatureGate />
-					<FilePickers />
-					<FoldableCard />
-					<FormattedHeader />
-					<FormFields searchKeywords="input textbox textarea radio" />
-					<Gauge />
-					<GlobalNotices />
-					<Gravatar />
-					<Gridicons />
-					<Headers />
-					<ImagePreloader />
-					<InfoPopover />
-					<Tooltip />
-					<InputChrono />
-					<LanguagePicker />
-					<Notices />
-					<PaginationExample />
-					<PaymentLogo />
-					<Popovers />
-					<ProgressBar />
-					<Ranges />
-					<Rating />
-					<Ribbon />
+					<Accordions componentUsageStats={ componentsUsageStats.accordion } readmeFilePath="components/accordion" />
+					<Banner readmeFilePath="components/banner" />
+					<BulkSelect readmeFilePath="components/bulk-select" />
+					<ButtonGroups readmeFilePath="components/button-group" />
+					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="components/button" />
+					<Cards readmeFilePath="components/card" />
+					<ClipboardButtonInput readmeFilePath="components/clipboard-button-input" />
+					<ClipboardButtons readmeFilePath="components/forms/clipboard-button" />
+					<Count readmeFilePath="components/count" />
+					<CountedTextareas readmeFilePath="components/forms/counted-text-area" />
+					<DatePicker readmeFilePath="components/date-picker" />
+					<DropZones searchKeywords="drag" readmeFilePath="components/drop-zone" />
+					<EllipsisMenu readmeFilePath="components/ellipsis-menu" />
+					<EmojifyExample readmeFilePath="components/emojify" />
+					<EmptyContent readmeFilePath="components/empty-content" />
+					<ExternalLink readmeFilePath="components/external-link" />
+					<FAQ readmeFilePath="components/faq" />
+					<FeatureGate readmeFilePath="components/feature-example" />
+					<FilePickers readmeFilePath="components/file-picker" />
+					<FoldableCard readmeFilePath="components/foldable-card" />
+					<FormattedHeader readmeFilePath="components/formatted-header" />
+					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="components/forms" />
+					<Gauge readmeFilePath="components/gauge" />
+					<GlobalNotices readmeFilePath="components/global-notices" />
+					<Gravatar readmeFilePath="components/gravatar" />
+					<Gridicons readmeFilePath="components/gridicons" />
+					<Headers readmeFilePath="components/header-cake" />
+					<ImagePreloader readmeFilePath="components/image-preloader" />
+					<InfoPopover readmeFilePath="components/info-popover" />
+					<Tooltip readmeFilePath="components/tooltip" />
+					<InputChrono readmeFilePath="components/input-chrono" />
+					<LanguagePicker readmeFilePath="components/language-picker" />
+					<Notices readmeFilePath="components/notice" />
+					<PaginationExample readmeFilePath="components/pagination" />
+					<PaymentLogo readmeFilePath="components/payment-logo" />
+					<Popovers readmeFilePath="components/popover" />
+					<ProgressBar readmeFilePath="components/progress-bar" />
+					<Ranges readmeFilePath="components/forms/range" />
+					<Rating readmeFilePath="components/rating" />
+					<Ribbon readmeFilePath="components/ribbon" />
 					<ScreenReaderTextExample />
-					<SearchDemo />
-					<SectionHeader />
-					<SectionNav />
-					<SegmentedControl />
-					<SelectDropdown searchKeywords="menu" />
+					<SearchDemo readmeFilePath="components/search" />
+					<SectionHeader readmeFilePath="components/section-header" />
+					<SectionNav readmeFilePath="components/section-nav" />
+					<SegmentedControl readmeFilePath="components/segmented-control" />
+					<SelectDropdown searchKeywords="menu" readmeFilePath="components/select-dropdown" />
 					<SocialLogos />
-					<Spinner searchKeywords="loading" />
-					<SpinnerButton searchKeywords="loading input submit" />
-					<SpinnerLine searchKeywords="loading" />
-					<Timezone />
-					<TokenFields />
-					<VerticalMenu />
-					<Version />
+					<Spinner searchKeywords="loading" readmeFilePath="components/spinner" />
+					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="components/spinner-button" />
+					<SpinnerLine searchKeywords="loading" readmeFilePath="components/spinner-line" />
+					<Timezone readmeFilePath="components/timezone" />
+					<TokenFields readmeFilePath="components/token-field" />
+					<VerticalMenu readmeFilePath="components/vertical-menu" />
+					<Version readmeFilePath="components/version" />
 				</Collection>
 			</Main>
 		);
