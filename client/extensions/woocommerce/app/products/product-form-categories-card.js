@@ -9,17 +9,24 @@ import { find, pick, compact, escape, unescape } from 'lodash';
  * Internal dependencies
  */
 import Card from 'components/card';
+import Button from 'components/button';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
+import FormInputValidation from 'components/forms/form-input-validation';
 import TokenField from 'components/token-field';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { generateProductCategoryId } from 'woocommerce/state/ui/product-categories/actions';
+import { NOT_LOADED, LOADING, SUCCESS, ERROR } from 'woocommerce/state/constants';
 
 // TODO Rename this card since it contains other controls, and may contain more in the future (like tax)
 const ProductFormCategoriesCard = (
-	{ siteId, product, productCategories, editProduct, editProductCategory, translate }
+	{ siteId, product, productCategories, productCategoriesLoadStatus, fetchProductCategories, editProduct, editProductCategory, translate }
 ) => {
+	const handleCategoriesRetry = () => {
+		fetchProductCategories( siteId );
+	};
+
 	const handleChange = ( categoryNames ) => {
 		const newCategories = compact( categoryNames.map( ( name ) => {
 			const category = find( productCategories, { name: escape( name ) } );
@@ -43,24 +50,48 @@ const ProductFormCategoriesCard = (
 		editProduct( siteId, product, { featured: ! product.featured } );
 	};
 
-	const selectedCategories = product.categories || [];
-	const selectedCategoryNames = compact( selectedCategories.map( ( c ) => {
-		const category = find( productCategories, { id: c.id } );
-		return category && unescape( category.name ) || undefined;
-	} ) );
-	const productCategoryNames = productCategories.map( c => unescape( c.name ) );
+	let selectedCategoryNames = [];
+	let productCategoryNames = [];
+	let categoryValidation = null;
+
+	switch ( productCategoriesLoadStatus ) {
+		case SUCCESS:
+			const selectedCategories = product.categories || [];
+			selectedCategoryNames = compact( selectedCategories.map( ( c ) => {
+				const category = find( productCategories, { id: c.id } );
+				return category && unescape( category.name ) || undefined;
+			} ) );
+			productCategoryNames = productCategories.map( c => unescape( c.name ) );
+			break;
+		case NOT_LOADED:
+		case LOADING:
+			break;
+		case ERROR:
+			categoryValidation = (
+				<span>
+					<FormInputValidation isError >
+						<span> { translate( 'Product Categories could not be retrieved.' ) } </span>
+						<Button scary onClick={ handleCategoriesRetry } >{ translate( 'Try again' ) }</Button>
+					</FormInputValidation>
+				</span>
+			);
+			break;
+	}
 
 	return (
 		<Card className="products__categories-card">
 			<FormFieldSet>
 				<FormLabel htmlFor="categories">{ translate( 'Category' ) }</FormLabel>
 				<TokenField
+					className={ { 'is-placeholder': LOADING !== productCategories } }
+					disabled={ SUCCESS !== productCategoriesLoadStatus }
 					name="categories"
 					placeholder={ translate( 'Enter category names' ) }
 					value={ selectedCategoryNames }
 					suggestions={ productCategoryNames }
 					onChange={ handleChange }
 				/>
+				{ categoryValidation }
 				<FormSettingExplanation>
 					{ translate( 'Categories let you group similar products so customers can find them more easily.' ) }
 				</FormSettingExplanation>
@@ -86,6 +117,8 @@ ProductFormCategoriesCard.propTypes = {
 		type: PropTypes.string,
 	} ),
 	productCategories: PropTypes.array.isRequired,
+	productCategoriesLoadStatus: PropTypes.string.isRequired,
+	fetchProductCategories: PropTypes.func.isRequired,
 	editProduct: PropTypes.func.isRequired,
 };
 

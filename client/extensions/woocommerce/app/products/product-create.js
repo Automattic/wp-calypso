@@ -38,6 +38,7 @@ import {
 	editProductVariation,
 } from 'woocommerce/state/ui/products/variations/actions';
 import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
+import { getProductCategoriesLoadStatus } from 'woocommerce/state/sites/product-categories/selectors';
 import { createProduct } from 'woocommerce/state/sites/products/actions';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
@@ -53,6 +54,8 @@ class ProductCreate extends React.Component {
 		product: PropTypes.shape( {
 			id: PropTypes.isRequired,
 		} ),
+		productCategories: PropTypes.array.isRequired,
+		productCategoriesLoadStatus: PropTypes.string.isRequired,
 		fetchProductCategories: PropTypes.func.isRequired,
 		editProduct: PropTypes.func.isRequired,
 		editProductCategory: PropTypes.func.isRequired,
@@ -137,6 +140,7 @@ class ProductCreate extends React.Component {
 		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
 		const saveEnabled = isValid && ! isBusy;
 
+		// TODO: Make ProductForm and/or its children a connected component so we don't have to pass so many props through it.
 		return (
 			<Main className={ className }>
 				<ProductHeader
@@ -151,6 +155,8 @@ class ProductCreate extends React.Component {
 					product={ product || { type: 'simple' } }
 					variations={ variations }
 					productCategories={ productCategories }
+					productCategoriesLoadStatus={ this.props.productCategoriesLoadStatus }
+					fetchProductCategories={ this.props.fetchProductCategories }
 					editProduct={ this.props.editProduct }
 					editProductCategory={ this.props.editProductCategory }
 					editProductAttribute={ this.props.editProductAttribute }
@@ -169,6 +175,7 @@ function mapStateToProps( state ) {
 	const hasEdits = Boolean( getProductEdits( state, productId ) );
 	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
 	const productCategories = getProductCategoriesWithLocalEdits( state );
+	const productCategoriesLoadStatus = getProductCategoriesLoadStatus( state );
 	const actionList = getActionList( state );
 
 	return {
@@ -177,6 +184,7 @@ function mapStateToProps( state ) {
 		hasEdits,
 		variations,
 		productCategories,
+		productCategoriesLoadStatus,
 		actionList,
 	};
 }

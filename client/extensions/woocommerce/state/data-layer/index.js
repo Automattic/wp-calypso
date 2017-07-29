@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import debugFactory from 'debug';
+
+/**
  * Internal dependencies
  */
 import { mergeHandlers } from 'state/action-watchers/utils';
@@ -7,14 +12,15 @@ import actionList from './action-list';
 import paymentMethods from './payment-methods';
 import products from './products';
 import productVariations from './product-variations';
+// TODO Combine these under /sites/product-categories/handlers, since we want to move to handlers.js files
 import productCategories from './product-categories';
+import sitesProductCategories from 'woocommerce/state/sites/product-categories/handlers';
 import request from './request';
 import settingsGeneral from '../sites/settings/general/handlers';
 import shippingZoneLocations from './shipping-zone-locations';
 import shippingZoneMethods from './shipping-zone-methods';
 import shippingZones from './shipping-zones';
 import ui from './ui';
-import debugFactory from 'debug';
 
 const debug = debugFactory( 'woocommerce:errors' );
 
@@ -22,6 +28,7 @@ const handlers = mergeHandlers(
 	actionList,
 	paymentMethods,
 	productCategories,
+	sitesProductCategories,
 	products,
 	productVariations,
 	request,
