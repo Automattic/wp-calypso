@@ -98,13 +98,14 @@ export const middleware = handlers => store => next => {
 		// this guarantees that we don't double-dispatch
 		const nextActions = new Set();
 		const safeNext = a => nextActions.add( a );
-
-		handlerChain.forEach( handler => handler( store, action, safeNext ) );
+		let shouldIgnore = false;
+		const ignoreAction = () => shouldIgnore = true;
+		handlerChain.forEach( handler => handler( store, action, safeNext, ignoreAction ) );
 
 		// make sure we pass along this action
 		// eventually this will return to the
 		// simpler `return next( action )`
-		if ( shouldNext( action ) ) {
+		if ( shouldNext( action ) && ! shouldIgnore ) {
 			nextActions.add( action );
 		}
 		nextActions.forEach( localNext );
