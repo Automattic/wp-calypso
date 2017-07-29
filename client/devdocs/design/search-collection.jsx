@@ -59,6 +59,7 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 			);
 		}
 
+		const readmeFilePath = example.props.readmeFilePath;
 		return (
 			<DocsExampleWrapper
 				name={ exampleName }
@@ -66,7 +67,7 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 				url={ exampleLink }
 			>
 				{ example }
-				{ component && <ReadmeViewer readmeFilePath={ example.props.readmeFilePath } /> }
+				{ component && readmeFilePath && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
 			</DocsExampleWrapper>
 		);
 	} );

@@ -120,7 +120,7 @@ const webpackConfig = {
 				use: 'imports-loader?this=>window',
 			},
 			{
-				test: /client[\/\\]components[\/\\].*[\/\\]README\.md$/,
+				test: /README\.md$/,
 				use: [
 					{ loader: 'html-loader' },
 					{
