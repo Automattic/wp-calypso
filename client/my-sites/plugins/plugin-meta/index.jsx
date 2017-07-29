@@ -445,8 +445,8 @@ class PluginMeta extends Component {
 			'has-site': !! selectedSite,
 			'is-placeholder': !! isPlaceholder
 		} );
-		// if selectedSite, read plugin from sites
-		const plugin = selectedSite ? get( sites, '[0].plugin', pluginProp ) : pluginProp;
+		const selectedSitePlugin = get( sites, '[0].plugin', pluginProp );
+		const plugin = selectedSite ? selectedSitePlugin : pluginProp;
 		const path = ( ! selectedSite || plugin.active ) && this.getExtensionSettingsPath( plugin );
 
 		return (
