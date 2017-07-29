@@ -28,7 +28,7 @@ class GoogleLoginButton extends Component {
 	};
 
 	static defaultProps = {
-		scope: 'https://www.googleapis.com/auth/plus.login',
+		scope: 'https://www.googleapis.com/auth/userinfo.profile',
 		fetchBasicProfile: true,
 		onClick: noop,
 	};
