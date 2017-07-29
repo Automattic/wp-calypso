@@ -1,27 +1,28 @@
 /**
+ * @jest-environment jsdom
+ */
+jest.mock( 'lib/oauth-store/actions', () => ( {
+	login: require( 'sinon' ).stub()
+} ) );
+jest.mock( 'lib/analytics', () => ( {
+	ga: {
+		recordEvent: () => {}
+	}
+} ) );
+
+/**
  * External dependencies
  */
 import { expect } from 'chai';
-import { identity, noop } from 'lodash';
-import { stub } from 'sinon';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
+import { login as loginStub } from 'lib/oauth-store/actions';
 
-describe.skip( 'LoginTest', function() {
-	let Login, loginStub, page, React, ReactDom, ReactClass, TestUtils;
-
-	useFakeDom.withContainer();
-	useMockery( ( mockery ) => {
-		loginStub = stub();
-		mockery.registerMock( 'lib/oauth-store/actions', {
-			login: loginStub
-		} );
-		mockery.registerMock( 'lib/analytics', { ga: { recordEvent: noop } } );
-	} );
+describe( 'LoginTest', function() {
+	let Login, page, React, ReactDom, ReactClass, TestUtils;
 
 	before( () => {
 		React = require( 'react' );
@@ -30,7 +31,9 @@ describe.skip( 'LoginTest', function() {
 		TestUtils = require( 'react-addons-test-utils' );
 		ReactClass.injection.injectMixin( { translate: identity } );
 		Login = require( '../login.jsx' );
-		page = ReactDom.render( <Login />, useFakeDom.getContainer() );
+
+		const container = document.createElement( 'div' );
+		page = ReactDom.render( <Login />, container );
 	} );
 
 	it( 'OTP is not present on first render', function( done ) {

@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import ReactDom from 'react-dom';
@@ -6,7 +10,6 @@ import React, { Component } from 'react';
 import TestUtils from 'react-addons-test-utils';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import useFakeDom from 'test/helpers/use-fake-dom';
 
 /**
  * Internal dependencies
@@ -36,13 +39,11 @@ class DummyInput extends Component {
 	}
 }
 
-describe.skip( 'TrackInputChanges#onNewValue', function() {
+describe( 'TrackInputChanges#onNewValue', function() {
 	let tree, dummyInput, container;
 
-	useFakeDom.withContainer();
-
 	before( () => {
-		container = useFakeDom.getContainer();
+		container = document.createElement( 'div' );
 	} );
 
 	afterEach( () => {

@@ -1,21 +1,29 @@
 /**
+ * @jest-environment jsdom
+ */
+jest.mock( 'lib/wp', () => ( {
+	me: () => ( {
+		get: () => {}
+	} ),
+	undocumented: () => ( {
+		getProducts: () => {}
+	} )
+} ) );
+
+/**
  * External dependencies
  */
 import deepFreeze from 'deep-freeze';
 import assert from 'assert';
-import { noop } from 'lodash';
 import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { createReduxStore } from 'state';
-import EmptyComponent from 'test/helpers/react/empty-component';
-import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe.skip( 'index', function() {
+describe( 'index', function() {
 	let React,
 		ReactDom,
 		ReactClass,
@@ -26,25 +34,6 @@ describe.skip( 'index', function() {
 		sandbox;
 
 	useSandbox( newSandbox => sandbox = newSandbox );
-	useFakeDom.withContainer();
-	useMockery( mockery => {
-		mockery.registerMock( 'components/section-nav', EmptyComponent );
-		mockery.registerMock( 'components/sidebar-navigation', EmptyComponent );
-		mockery.registerMock( 'lib/analytics/ad-tracking', noop );
-		mockery.registerMock( 'lib/analytics/track-component-view', EmptyComponent );
-		mockery.registerMock( 'lib/mixins/analytics', () => ( {
-			recordEvent: noop
-		} ) );
-		mockery.registerMock( 'lib/wp', {
-			me: () => ( {
-				get: noop
-			} ),
-			undocumented: () => ( {
-				getProducts: noop
-			} )
-		} );
-		mockery.registerMock( 'blocks/domain-to-plan-nudge', EmptyComponent );
-	} );
 
 	before( () => {
 		React = require( 'react' );
@@ -88,6 +77,7 @@ describe.skip( 'index', function() {
 	} );
 
 	function renderWithProps( props = defaultProps ) {
+		const container = document.createElement( 'div' );
 		const store = createReduxStore(),
 			dom = ReactDom.render(
 			<ReduxProvider store={ store }>
@@ -95,7 +85,7 @@ describe.skip( 'index', function() {
 					{ ...props }
 				/>
 			</ReduxProvider>,
-			useFakeDom.getContainer()
+			container
 		);
 
 		return TestUtils.scryRenderedComponentsWithType( dom, DomainList )[ 0 ];
@@ -104,10 +94,6 @@ describe.skip( 'index', function() {
 	describe( 'regular cases', function() {
 		beforeEach( function() {
 			component = renderWithProps();
-		} );
-
-		afterEach( function() {
-			ReactDom.unmountComponentAtNode( useFakeDom.getContainer() );
 		} );
 
 		it( 'should list two domains', () => {
@@ -119,10 +105,6 @@ describe.skip( 'index', function() {
 		describe( 'when not enabled', () => {
 			beforeEach( () => {
 				component = renderWithProps();
-			} );
-
-			afterEach( function() {
-				ReactDom.unmountComponentAtNode( useFakeDom.getContainer() );
 			} );
 
 			it( 'should show "Change Primary Domain" button', () => {
@@ -141,10 +123,6 @@ describe.skip( 'index', function() {
 				component = renderWithProps();
 				const button = ReactDom.findDOMNode( component ).querySelector( '.domain-management-list__change-primary-button' );
 				TestUtils.Simulate.click( button );
-			} );
-
-			afterEach( function() {
-				ReactDom.unmountComponentAtNode( useFakeDom.getContainer() );
 			} );
 
 			it( 'should show the cancel button', () => {
