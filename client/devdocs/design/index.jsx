@@ -125,7 +125,7 @@ let DesignAssets = React.createClass( {
 					<ClipboardButtonInput readmeFilePath="components/clipboard-button-input" />
 					<ClipboardButtons readmeFilePath="components/forms/clipboard-button" />
 					<Count readmeFilePath="components/count" />
-					<CountedTextareas readmeFilePath="components/forms/counted-text-area" />
+					<CountedTextareas readmeFilePath="components/forms/counted-textarea" />
 					<DatePicker readmeFilePath="components/date-picker" />
 					<DropZones searchKeywords="drag" readmeFilePath="components/drop-zone" />
 					<EllipsisMenu readmeFilePath="components/ellipsis-menu" />
@@ -139,23 +139,23 @@ let DesignAssets = React.createClass( {
 					<FormattedHeader readmeFilePath="components/formatted-header" />
 					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="components/forms" />
 					<Gauge readmeFilePath="components/gauge" />
-					<GlobalNotices readmeFilePath="components/global-notices" />
+					<GlobalNotices />
 					<Gravatar readmeFilePath="components/gravatar" />
-					<Gridicons readmeFilePath="components/gridicons" />
+					<Gridicons />
 					<Headers readmeFilePath="components/header-cake" />
 					<ImagePreloader readmeFilePath="components/image-preloader" />
 					<InfoPopover readmeFilePath="components/info-popover" />
 					<Tooltip readmeFilePath="components/tooltip" />
 					<InputChrono readmeFilePath="components/input-chrono" />
 					<LanguagePicker readmeFilePath="components/language-picker" />
-					<Notices readmeFilePath="components/notice" />
+					<Notices />
 					<PaginationExample readmeFilePath="components/pagination" />
 					<PaymentLogo readmeFilePath="components/payment-logo" />
 					<Popovers readmeFilePath="components/popover" />
 					<ProgressBar readmeFilePath="components/progress-bar" />
 					<Ranges readmeFilePath="components/forms/range" />
 					<Rating readmeFilePath="components/rating" />
-					<Ribbon readmeFilePath="components/ribbon" />
+					<Ribbon />
 					<ScreenReaderTextExample />
 					<SearchDemo readmeFilePath="components/search" />
 					<SectionHeader readmeFilePath="components/section-header" />
