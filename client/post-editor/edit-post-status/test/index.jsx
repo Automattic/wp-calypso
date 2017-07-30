@@ -1,11 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( 'lib/wp', () => ( {
-	me: () => ( {
-		get: () => {}
-	} )
-} ) );
+jest.mock( 'lib/user', () => () => {} );
 
 /**
  * External dependencies

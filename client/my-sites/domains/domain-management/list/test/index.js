@@ -1,10 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'lib/wp', () => ( {
-	me: () => ( {
-		get: () => {}
-	} ),
 	undocumented: () => ( {
 		getProducts: () => {}
 	} )

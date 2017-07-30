@@ -1,6 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
+jest.mock( 'lib/oauth-token', () => ( {
+	getToken: () => 'bearerToken'
+} ) );
+jest.mock( 'lib/user', () => () => {} );
 
 /**
  * External dependencies
@@ -14,10 +19,9 @@ import { shallow } from 'enzyme';
  * Internal dependencies
  */
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe.skip( 'EditGravatar', function() {
+describe( 'EditGravatar', function() {
 	let EditGravatar,
 		FilePicker,
 		Gravatar,
@@ -29,13 +33,6 @@ describe.skip( 'EditGravatar', function() {
 		email_verified: false
 	};
 
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/oauth-token', {
-			getToken: () => 'bearerToken'
-		} );
-		mockery.registerSubstitute( 'event', 'component-event' );
-		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
-	} );
 	useSandbox( newSandbox => {
 		sandbox = newSandbox;
 		global.URL = {
