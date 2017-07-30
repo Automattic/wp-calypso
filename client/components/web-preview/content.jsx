@@ -19,6 +19,7 @@ import touchDetect from 'lib/touch-detect';
 import { isMobile } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import Spinner from 'components/spinner';
+import SpinnerLine from 'components/spinner-line';
 import SeoPreviewPane from 'components/seo-preview-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -32,7 +33,8 @@ export class WebPreviewContent extends Component {
 	state = {
 		iframeUrl: null,
 		device: this.props.defaultViewportDevice || 'computer',
-		loaded: false
+		loaded: false,
+		isLoadingSubpage: false
 	};
 
 	setIframeInstance = ( ref ) => {
@@ -115,11 +117,15 @@ export class WebPreviewContent extends Component {
 			case 'focus':
 				this.removeSelection();
 				return;
+			case 'loading':
+				this.setState( { isLoadingSubpage: true } );
+				return;
 		}
 	}
 
 	handleLocationChange = ( payload ) => {
 		this.props.onLocationUpdate( payload.pathname );
+		this.setState( { isLoadingSubpage: false } );
 	}
 
 	removeSelection = () => {
@@ -196,7 +202,7 @@ export class WebPreviewContent extends Component {
 	}
 
 	setLoaded = () => {
-		if ( this.state.loaded ) {
+		if ( this.state.loaded && ! this.state.isLoadingSubpage ) {
 			debug( 'already loaded' );
 			return;
 		}
@@ -210,7 +216,7 @@ export class WebPreviewContent extends Component {
 		} else {
 			debug( 'preview loaded for url:', this.state.iframeUrl );
 		}
-		this.setState( { loaded: true } );
+		this.setState( { loaded: true, isLoadingSubpage: false } );
 
 		this.focusIfNeeded();
 	}
@@ -237,7 +243,11 @@ export class WebPreviewContent extends Component {
 					showExternal={ ( this.props.previewUrl ? this.props.showExternal : false ) }
 					showDeviceSwitcher={ this.props.showDeviceSwitcher && ! this._isMobile }
 					selectSeoPreview={ this.selectSEO }
+					isLoading={ this.state.isLoadingSubpage }
 				/>
+				{ ( ! this.state.loaded || this.state.isLoadingSubpage ) &&
+					<SpinnerLine />
+				}
 				<div className="web-preview__placeholder">
 					{ this.props.showPreview && ! this.state.loaded && 'seo' !== this.state.device &&
 						<div className="web-preview__loading-message-wrapper">
