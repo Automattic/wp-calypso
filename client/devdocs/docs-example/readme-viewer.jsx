@@ -7,13 +7,8 @@ import React, { Component, PropTypes } from 'react';
  * Internal Dependencies
  */
 import FoldableCard from 'components/foldable-card';
-import SectionHeader from 'components/section-header';
 
 class ReadmeViewer extends Component {
-	static propTypes = {
-		readmeFilePath: PropTypes.string.isRequired
-	};
-
 	constructor( props ) {
 		super( props );
 	}
@@ -23,10 +18,22 @@ class ReadmeViewer extends Component {
 	}
 
 	render() {
+		const headerText = this.props.readmeFilePath
+			? 'README.md'
+			: "Oh no. There's no README.";
+		const header = <span className="docs-example__readme-viewer-header">{ headerText } </span>;
+
+		const body = this.props.readmeFilePath
+			? <div dangerouslySetInnerHTML={ this.getReadmeHTML() } />
+			: 'Please write one!';
+
 		return (
-			<FoldableCard header="README" clickableHeader={ true }>
-				<div dangerouslySetInnerHTML={ this.getReadmeHTML() } />
-			</FoldableCard>
+			<div className="docs-example__readme-viewer">
+				<hr className="docs-example__readme-viewer-hr"/>
+				<FoldableCard header={ header } clickableHeader={ true } compact={ true }>
+					{ body }
+				</FoldableCard>
+			</div>
 		);
 	}
 }

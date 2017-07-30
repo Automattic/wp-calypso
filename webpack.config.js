@@ -9,10 +9,11 @@ const DashboardPlugin = require( 'webpack-dashboard/plugin' );
 const fs = require( 'fs' );
 const HappyPack = require( 'happypack' );
 const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
+const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
 const os = require( 'os' );
 const path = require( 'path' );
+const prism = require ( 'prismjs' );
 const webpack = require( 'webpack' );
-const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
 
 /**
  * Internal dependencies
@@ -38,12 +39,12 @@ const isWindows = os.type() === 'Windows_NT';
  * Providing webpack with these aliases instead of telling it to scan the directory for every
  * module resolution speeds up builds significantly.
  *
- * @param { String } prefix - A unique prefix for the alias to prevent alias collisions.
  * @param { String } directory - A directory to scan for modules.
+ * @param { String } prefix - A unique prefix for the alias to prevent alias collisions.
  * @return { Object } aliasesMap - The alias to path map.
  */
-function getAliasesForDirectory( prefix, directory ) {
-	const filenames = fs
+function getAliasesForDirectory( directory, prefix = '' ) {
+	const folders = fs
 		.readdirSync( directory )
 		.filter( filename =>
 			fs.lstatSync(
@@ -52,8 +53,8 @@ function getAliasesForDirectory( prefix, directory ) {
 		);
 
 	const aliasesMap = {};
-	filenames.forEach( filename =>
-		aliasesMap[ prefix + filename ] = path.join( directory, filename )
+	folders.forEach( folder =>
+		aliasesMap[ prefix + folder ] = path.join( directory, folder )
 	);
 	return aliasesMap;
 }
@@ -126,7 +127,11 @@ const webpackConfig = {
 					{
 						loader: 'markdown-loader',
 						options: {
-							sanitize: true
+							sanitize: true,
+							highlight: function( code, language ) {
+								const syntax = prism.languages[ language ];
+								return syntax ? prism.highlight( code, syntax ) : code;
+							}
 						}
 					}
 				]
@@ -144,9 +149,9 @@ const webpackConfig = {
 				'react-virtualized': 'react-virtualized/dist/commonjs',
 				'social-logos/example': 'social-logos/build/example'
 			},
-			getAliasesForDirectory( '', path.join( __dirname, 'client', 'extensions' ) ),
-			getAliasesForDirectory( 'component-readme-', path.join( __dirname, 'client', 'components' ) )
-		),
+			getAliasesForDirectory( path.join( __dirname, 'client', 'extensions' ) ),
+			getAliasesForDirectory( path.join( __dirname, 'client', 'components' ), 'component-readme-' )
+		)
 	},
 	node: {
 		console: false,
