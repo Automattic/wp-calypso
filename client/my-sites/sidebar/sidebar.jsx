@@ -34,8 +34,9 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 import {
 	canCurrentUser,
+	canCurrentUserManagePlugins,
 	getPrimarySiteId,
-	getSites,
+	hasJetpackSites,
 	isDomainOnlySite,
 	isSiteAutomatedTransfer
 } from 'state/selectors';
@@ -638,23 +639,14 @@ function mapStateToProps( state ) {
 	const site = getSite( state, siteId );
 
 	const isJetpack = isJetpackSite( state, siteId );
-	// FIXME: Fun with Boolean algebra :-)
-	const isSharingEnabledOnJetpackSite = ! (
-		! isJetpackModuleActive( state, siteId, 'publicize' ) &&
-		( ! isJetpackModuleActive( state, siteId, 'sharedaddy' ) || isJetpackMinimumVersion( state, siteId, '3.4-dev' ) )
-	);
-	// FIXME: Turn into dedicated selector
-	const canManagePlugins = !! getSites( state ).some( ( s ) => (
-		( s.capabilities && s.capabilities.manage_options )
-	) );
 
-	// FIXME: Turn into dedicated selector
-	const hasJetpackSites = getSites( state ).some( s => s.jetpack );
+	const isSharingEnabledOnJetpackSite = isJetpackModuleActive( state, siteId, 'publicize' ) ||
+		( isJetpackModuleActive( state, siteId, 'sharedaddy' ) && ! isJetpackMinimumVersion( state, siteId, '3.4-dev' ) );
 
 	const isPreviewShowing = getCurrentLayoutFocus( state ) === 'preview';
 
 	return {
-		canManagePlugins,
+		canManagePlugins: canCurrentUserManagePlugins( state ),
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
 		canUserListUsers: canCurrentUser( state, siteId, 'list_users' ),
 		canUserManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
@@ -662,7 +654,7 @@ function mapStateToProps( state ) {
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
-		hasJetpackSites,
+		hasJetpackSites: hasJetpackSites( state ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
 		isPreviewable: isSitePreviewable( state, selectedSiteId ),
