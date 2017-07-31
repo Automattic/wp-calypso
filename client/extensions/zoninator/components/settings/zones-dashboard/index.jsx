@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, flowRight, get, noop } from 'lodash';
+import { find, flowRight, get, range } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,34 +15,35 @@ import SectionHeader from 'components/section-header';
 import sectionsModule from 'sections';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryZones from '../../data/query-zones';
-import Zone from './zone';
+import ZoneItem from './zone-item';
+import ZonePlaceholder from './zone-placeholder';
 import { getZones, isFetchingZones } from '../../../state/zones/selectors';
 
-const ZonesDashboard = ( { siteId, siteSlug, translate, zones } ) => {
-	const getSettingsPath = () => {
-		const sections = sectionsModule.get();
-		const section = find( sections, ( value => value.name === 'zoninator' ) );
+const placeholderCount = 16;
 
-		return get( section, 'settings_path' );
-	};
-
-	console.log( zones );
+const ZonesDashboard = ( { isFetching, siteId, siteSlug, translate, zones } ) => {
+	const sections = sectionsModule.get();
+	const section = find( sections, ( value => value.name === 'zoninator' ) );
+	const settingsPath = get( section, 'settings_path' );
 
 	return (
 		<div>
 			<QueryZones siteId={ siteId } />
 
-			<HeaderCake backHref={ `/plugins/zoninator/${ siteSlug }` } onClick={ noop }>
+			<HeaderCake backHref={ `/plugins/zoninator/${ siteSlug }` }>
 				Zoninator Settings
 			</HeaderCake>
 
 			<SectionHeader label={ translate( 'Zones' ) }>
-				<Button compact href={ `${ getSettingsPath() }/new/${ siteSlug }` }>
+				<Button compact href={ `${ settingsPath }/new/${ siteSlug }` }>
 					{ translate( 'Add a zone' ) }
 				</Button>
 			</SectionHeader>
-			{ zones.map( ( { name, slug, description} ) => (
-				<Zone key={ slug } label={ name } slug={ slug } description={ description } />
+			{ isFetching && zones.length === 0 && range( placeholderCount ).map( i => (
+				<ZonePlaceholder key={ i } />
+			) ) }
+			{ zones.map( ( zone, idx ) => (
+				<ZoneItem key={ idx } zone={ zone } />
 			) ) }
 		</div>
 	);
@@ -58,7 +59,7 @@ const connectComponent = connect( state => {
 
 	return {
 		zones: getZones( state, siteId ),
-		isFetchingZones: isFetchingZones( state, siteId ),
+		isFetching: isFetchingZones( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
 		siteId,
 	};
