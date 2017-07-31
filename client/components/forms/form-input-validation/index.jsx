@@ -31,7 +31,10 @@ export default React.createClass( {
 
 		return (
 			<div className={ classes }>
-				<span><Gridicon size={ 24 } icon={ this.props.icon ? this.props.icon : icon } /> { this.props.text }</span>
+				<span>
+					<Gridicon size={ 24 } icon={ this.props.icon ? this.props.icon : icon } />
+					{ this.props.text || this.props.children }
+				</span>
 			</div>
 		);
 	}

@@ -26,8 +26,17 @@ The `FormSectionHeading` component allows you to add a section header to your se
 ### FormInputValidation
 The `FormInputValidation` component is used to display a validation notice to the user. You can use it like this:
 
+```jsx
 <FormInputValidation isError={ true } text="Usernames can only contain lowercase letters (a-z) and numbers." />
 <FormInputValidation text="That username is valid." />
+
+or add children to render if more than simple text is needed.
+
+<FormInputValidation isError={ true }>
+	<span> Your API key could not be verified. </span>
+	<Button> Try again </Button>
+</FormInputValidation>
+```
 
 ### MultiCheckbox
 
