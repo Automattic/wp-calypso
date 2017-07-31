@@ -24,6 +24,15 @@ export default {
 		providesDependencies: [ 'themeSlugWithRepo' ]
 	},
 
+	'portfolio-themes': {
+		stepName: 'portfolio-themes',
+		props: {
+			designType: 'grid'
+		},
+		dependencies: [ 'siteSlug' ],
+		providesDependencies: [ 'themeSlugWithRepo' ]
+	},
+
 	// `themes` does not update the theme for an existing site as we normally
 	// do this when the site is created. In flows where a site is merely being
 	// updated, we need to use a different API request function.
