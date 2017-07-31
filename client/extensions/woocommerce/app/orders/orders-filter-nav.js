@@ -44,13 +44,14 @@ class OrdersFilterNav extends Component {
 				</NavTabs>
 
 				<Search
+					ref={ this.props.searchRef }
 					pinned
 					fitsContainer
 					onSearch={ this.doSearch }
 					onSearchClose={ this.clearSearch }
 					placeholder={ translate( 'Search orders' ) }
 					analyticsGroup="Orders"
-					delaySearch={ true }
+					delaySearch
 				/>
 			</SectionNav>
 		);

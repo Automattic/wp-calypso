@@ -4,6 +4,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import { range } from 'lodash';
 import React, { Component } from 'react';
 
@@ -71,6 +72,13 @@ class Orders extends Component {
 		this.props.fetchOrders( newProps.siteId, query );
 	}
 
+	clearSearch = ( event ) => {
+		const { site, siteId } = this.props;
+		this.search.closeSearch( event );
+		this.props.updateCurrentOrdersQuery( siteId, { page: 1, search: '' } );
+		page( getLink( '/store/orders/:site', site ) );
+	}
+
 	getOrderStatus = ( status ) => {
 		const { translate } = this.props;
 		const classes = `orders__item-status is-${ status }`;
@@ -129,7 +137,7 @@ class Orders extends Component {
 		const { currentSearch, currentStatus, site, translate } = this.props;
 		let emptyMessage = translate( 'Your orders will appear here as they come in.' );
 		if ( currentSearch ) {
-			emptyMessage = translate( 'No orders matching your search.' );
+			emptyMessage = translate( 'There are no orders matching your search.' );
 		} else if ( 'pending' === currentStatus ) {
 			emptyMessage = translate( 'You don\'t have any orders awaiting payment.' );
 		} else if ( 'processing' === currentStatus ) {
@@ -143,6 +151,7 @@ class Orders extends Component {
 						title={ emptyMessage }
 						action={ translate( 'View all orders' ) }
 						actionURL={ getLink( '/store/orders/:site', site ) }
+						actionCallback={ this.clearSearch }
 					/>
 				</TableItem>
 			</TableRow>
@@ -172,9 +181,9 @@ class Orders extends Component {
 		);
 	}
 
-	onPageClick = page => {
+	onPageClick = nextPage => {
 		this.props.updateCurrentOrdersQuery( this.props.siteId, {
-			page,
+			page: nextPage,
 			status: this.props.currentStatus,
 		} );
 	}
@@ -183,6 +192,7 @@ class Orders extends Component {
 		const {
 			currentPage,
 			currentStatus,
+			isDefaultPage,
 			orders,
 			ordersLoading,
 			ordersLoaded,
@@ -191,7 +201,7 @@ class Orders extends Component {
 		} = this.props;
 
 		// Orders are done loading, and there are definitely no orders for this site
-		if ( ordersLoaded && ! total && 'any' === currentStatus ) {
+		if ( ordersLoaded && ! total && isDefaultPage ) {
 			return (
 				<div className="orders__container">
 					<EmptyContent
@@ -212,9 +222,11 @@ class Orders extends Component {
 
 		const ordersList = ( orders && orders.length ) ? orders.map( this.renderOrderItem ) : this.renderNoContent();
 
+		const setSearchRef = ref => this.search = ref;
+
 		return (
 			<div className="orders__container">
-				<OrdersFilterNav status={ currentStatus } />
+				<OrdersFilterNav searchRef={ setSearchRef } status={ currentStatus } />
 
 				<Table className="orders__table" header={ headers } horizontalScroll>
 					{ ordersLoading
@@ -241,6 +253,8 @@ export default connect(
 		const currentSearch = getOrdersCurrentSearch( state, siteId );
 		const currentStatus = props.currentStatus || 'any';
 
+		const isDefaultPage = ( '' === currentSearch && 'any' === currentStatus );
+
 		const query = {
 			page: currentPage,
 			search: currentSearch,
@@ -255,6 +269,7 @@ export default connect(
 			currentPage,
 			currentSearch,
 			currentStatus,
+			isDefaultPage,
 			orders,
 			ordersLoading,
 			ordersLoaded,
