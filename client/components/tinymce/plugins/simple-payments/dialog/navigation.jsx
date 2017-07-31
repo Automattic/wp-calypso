@@ -16,7 +16,7 @@ class SimplePaymentsDialogNavigation extends Component {
 	static propTypes = {
 		activeTab: PropTypes.oneOf( [ 'list', 'form' ] ).isRequired,
 		onChangeTabs: PropTypes.func.isRequired,
-		paymentButtons: PropTypes.array.isRequired,
+		paymentButtons: PropTypes.array,
 	};
 
 	onChangeTabs = tab => () => this.props.onChangeTabs( tab );
@@ -27,12 +27,7 @@ class SimplePaymentsDialogNavigation extends Component {
 		const classNames = 'editor-simple-payments-modal__navigation';
 
 		if ( activeTab === 'form' ) {
-			if ( ! paymentButtons.length ) {
-				// We are on "Add New" view without previously made payment buttons.
-				return null;
-			}
-
-			// We are on "Add New" view with previously made payment buttons.
+			// Navigation for the editing form
 			return (
 				<HeaderCake
 					className={ classNames }
@@ -43,6 +38,11 @@ class SimplePaymentsDialogNavigation extends Component {
 		}
 
 		// We are on "Payment Buttons" view.
+		if ( ! paymentButtons ) {
+			// Render an empty SectionHeader as a placeholder
+			return <SectionHeader className={ classNames } />;
+		}
+
 		return (
 			<SectionHeader
 				className={ classNames }
