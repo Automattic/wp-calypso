@@ -2,7 +2,7 @@
  * External dependencies
  */
 import qs from 'querystring';
-
+import { omitBy } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -49,7 +49,8 @@ export const fetchOrders = ( siteId, requestedQuery = {} ) => ( dispatch, getSta
 	};
 	dispatch( fetchAction );
 
-	return request( siteId ).getWithHeaders( 'orders?' + qs.stringify( query ) ).then( ( response ) => {
+	const queryString = qs.stringify( omitBy( query, val => '' === val ) );
+	return request( siteId ).getWithHeaders( 'orders?' + queryString ).then( ( response ) => {
 		const { headers, data } = response;
 		const total = headers[ 'X-WP-Total' ];
 		dispatch( {
