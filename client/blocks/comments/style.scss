@@ -259,6 +259,11 @@
 	}
 }
 
+.comments__comment-respondee {
+	color: $gray-dark;
+	font-size: 15px;
+}
+
 .comments__comment-author {
 	font-weight: 600;
 	color: darken( $gray, 30% );

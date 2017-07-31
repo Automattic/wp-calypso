@@ -50,6 +50,9 @@ class PostComment extends Component {
 		} );
 	};
 
+	// current hack because our css basically just indents anything 0,1,2.  TODO: make depth meaningful
+	getDepth = () => this.props.depth > this.props.maxDepth ? 4 : this.props.depth;
+
 	renderRepliesList() {
 		const commentChildrenIds = get( this.props.commentsTree, [ this.props.commentId, 'children' ] );
 		// Hide children if more than maxChildrenToShow, but not if replying
@@ -99,7 +102,7 @@ class PostComment extends Component {
 							{ commentChildrenIds.map( childId =>
 								<PostComment
 									{ ...this.props }
-									depth={ this.props.depth + 1 }
+									depth={ this.getDepth() + 1 }
 									key={ childId }
 									commentId={ childId }
 								/>,
@@ -165,8 +168,14 @@ class PostComment extends Component {
 			authorUrl = comment.author.URL;
 		}
 
+		const parentComment = get( commentsTree, [ get( comment, 'parent.ID' ), 'data' ], {} );
+		const parentAuthor = parentComment.author;
+		const parentAuthorUrl = parentAuthor && parentAuthor.site_ID
+			? getStreamUrl( null, parentComment.author.site_ID )
+			: parentAuthor && parentAuthor.URL;
+
 		return (
-			<li className={ 'comments__comment depth-' + this.props.depth }>
+			<li className={ 'comments__comment depth-' + this.getDepth() }>
 				<div className="comments__comment-author">
 					{ authorUrl
 						? <a href={ authorUrl } onClick={ this.handleAuthorClick }>
@@ -189,6 +198,11 @@ class PostComment extends Component {
 							>
 								{ comment.author.name }
 							</strong> }
+						{ this.props.showNestingReplyArrow && parentAuthorUrl &&
+							<span> > <a className="comments__comment-respondee" href={ parentAuthorUrl }>
+								{ parentAuthor.name }
+							</a> </span>
+						}
 					<div className="comments__comment-timestamp">
 						<a href={ comment.URL }>
 							<PostTime date={ comment.date } />
@@ -248,6 +262,8 @@ PostComment.propTypes = {
 	post: React.PropTypes.object,
 	maxChildrenToShow: React.PropTypes.number,
 	onCommentSubmit: React.PropTypes.func,
+	maxDepth: React.PropTypes.number,
+	showNestingReplyArrow: React.PropTypes.bool,
 
 	// connect()ed props:
 	currentUser: React.PropTypes.object.isRequired,
@@ -257,8 +273,10 @@ PostComment.defaultProps = {
 	onReplyClick: noop,
 	errors: [],
 	depth: 1,
+	maxDepth: Infinity,
 	maxChildrenToShow: 5,
 	onCommentSubmit: noop,
+	showNestingReplyArrow: false,
 };
 
 export default connect( state => ( {
