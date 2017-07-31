@@ -43,7 +43,9 @@ import {
 } from 'state/login/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import wpcom from 'lib/wp';
+import i18nUtils from 'lib/i18n-utils';
 
+// TODO: Remove when we're done with the PR15485 fallback.
 function getErrorMessageFromErrorCode( code ) {
 	const errorMessages = {
 		account_unactivated: translate( "This account hasn't been activated yet — check your email for a message from " +
@@ -93,6 +95,14 @@ const errorFields = {
 	invalid_username: 'usernameOrEmail',
 };
 
+function getLocalizedLoginURL( action ) {
+	if ( 'en' === i18nUtils.getLocaleSlug() ) {
+		return 'https://wordpress.com/wp-login.php?action=' + action;
+	}
+
+	return 'https://' + i18nUtils.getLocaleSlug() + '.wordpress.com/wp-login.php?action=' + action;
+}
+
 /**
  * Retrieves the first error message from the specified HTTP error.
  *
@@ -100,7 +110,7 @@ const errorFields = {
  * @returns {{code: string?, message: string, field: string}} an error message and the id of the corresponding field, if not global
  */
 function getErrorFromHTTPError( httpError ) {
-	let message;
+	let message, code;
 	let field = 'global';
 
 	if ( ! httpError.status ) {
@@ -111,11 +121,16 @@ function getErrorFromHTTPError( httpError ) {
 		};
 	}
 
-	const code = get( httpError, 'response.body.data.errors[0]' );
+	code = get( httpError, 'response.body.data.errors.code' );
+	if ( code ) {
+		message = get( httpError, 'response.body.data.errors.message' );
+	} else {
+		// TODO: Remove when we're done with the PR15485 fallback.
+		code = get( httpError, 'response.body.data.errors[0]', false );
+		message = getErrorMessageFromErrorCode( code );
+	}
 
 	if ( code ) {
-		message = getErrorMessageFromErrorCode( code );
-
 		if ( code in errorFields ) {
 			field = errorFields[ code ];
 		}
@@ -126,6 +141,7 @@ function getErrorFromHTTPError( httpError ) {
 	return { code, message, field };
 }
 
+// TODO: Remove when we're done with the PR15485 fallback.
 const wpcomErrorMessages = {
 	user_exists: translate( 'Your Google email address is already in use WordPress.com. ' +
 		'Log in to your account using your email address or username, and your password. ' +
@@ -139,7 +155,8 @@ const wpcomErrorMessages = {
  * @returns {{message: string, field: string, code: string}} an error message and the id of the corresponding field
  */
 const getErrorFromWPCOMError = ( wpcomError ) => ( {
-	message: wpcomErrorMessages[ wpcomError.error ] || wpcomError.message,
+	// TODO: Remove wpcomErrorMessages[] reference when we're done with the PR15485 fallback.
+	message: wpcomError.message || wpcomErrorMessages[ wpcomError.error ],
 	code: wpcomError.error,
 	field: 'global',
 } );
@@ -158,7 +175,7 @@ export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) =
 		type: LOGIN_REQUEST,
 	} );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=login-endpoint' )
+	return request.post( getLocalizedLoginURL( 'login-endpoint' ) )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
@@ -208,7 +225,7 @@ export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) =
 export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAuthType ) => ( dispatch, getState ) => {
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
+	return request.post( getLocalizedLoginURL( 'two-step-authentication-endpoint' ) )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
@@ -257,7 +274,7 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=social-login-endpoint' )
+	return request.post( getLocalizedLoginURL( 'social-login-endpoint' ) )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
@@ -370,7 +387,7 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 		},
 	} );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint' )
+	return request.post( getLocalizedLoginURL( 'send-sms-code-endpoint' ) )
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
