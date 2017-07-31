@@ -39,17 +39,13 @@ describe( 'FormToggle', function() {
 
 	describe( 'rendering', function() {
 		it( 'should have form-toggle class', function() {
-			var toggle = TestUtils.renderIntoDocument( <FormToggle /> ),
-				toggleInput = TestUtils.scryRenderedDOMComponentsWithClass( toggle, 'form-toggle' );
-
-			assert( 0 < toggleInput.length, 'a form toggle was rendered' );
+			const toggle = shallow( <FormToggle /> );
+			assert( toggle.find( '.form-toggle' ).length === 1 );
 		} );
 
 		it( 'should not have is-compact class', function() {
-			var toggle = TestUtils.renderIntoDocument( <FormToggle /> ),
-				toggleInput = TestUtils.scryRenderedDOMComponentsWithClass( toggle, 'is-compact' );
-
-			assert( 0 === toggleInput.length, 'no form toggle with is-compact class' );
+			const toggle = shallow( <FormToggle /> );
+			assert( toggle.find( '.is-compact' ).length === 0 );
 		} );
 
 		it( 'should be checked when checked is true', function() {
