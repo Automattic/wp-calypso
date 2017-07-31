@@ -17,9 +17,10 @@ import Security2faProgress from 'me/security-2fa-progress';
 import analytics from 'lib/analytics';
 import observe from 'lib/mixins/data-observe';
 import { protectForm } from 'lib/protect-form';
+import { forSms } from 'lib/countries-list';
 
 const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
-var countriesList = require( 'lib/countries-list' ).forSms();
+const countriesList = forSms();
 
 module.exports = protectForm( React.createClass( {
 
