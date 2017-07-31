@@ -11,6 +11,7 @@ import { renderTab } from './app/controller';
 import ZoneCreator from './components/settings/zone-creator';
 import Zone from './components/settings/zone';
 import ZonesDashboard from './components/settings/zones-dashboard';
+import installActionHandlers from './state/data-layer';
 
 export default function() {
 	page( '/extensions/zoninator', sites );
@@ -18,3 +19,5 @@ export default function() {
 	page( '/extensions/zoninator/new/:site', siteSelection, navigation, renderTab( ZoneCreator ) );
 	page( '/extensions/zoninator/:site/:zone', siteSelection, navigation, renderTab( Zone ) );
 }
+
+installActionHandlers();
