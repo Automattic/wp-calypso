@@ -71,6 +71,11 @@ export class ReaderSidebarTagsListItem extends Component {
 						className="sidebar__menu-action"
 						data-tag-slug={ tag.slug }
 						onClick={ onUnfollow }
+						title={ translate( "Unfollow tag '%(currentTagName)s'", {
+							args: {
+								currentTagName: tagName,
+							},
+						} ) }
 					>
 						<Gridicon icon="cross-small" />
 						<span className="sidebar__menu-action-label">
