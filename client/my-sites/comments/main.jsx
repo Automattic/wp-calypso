@@ -39,8 +39,8 @@ export class CommentsManagement extends Component {
 
 		return (
 			<Main className="comments" wideLayout>
-				<PageViewTracker path={ basePath } title="Conversations" />
-				<DocumentHead title={ translate( 'Conversations' ) } />
+				<PageViewTracker path={ basePath } title="Comments" />
+				<DocumentHead title={ translate( 'Comments' ) } />
 				<SidebarNavigation />
 				<CommentList
 					siteId={ siteId }
