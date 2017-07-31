@@ -371,7 +371,7 @@ export const PLANS_LIST = {
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'for life' ),
 	},
-	
+
 	[ PLAN_JETPACK_PREMIUM ]: {
 		getTitle: () => i18n.translate( 'Premium' ),
 		getAudience: () => 'Best for small businesses', //PLANS A/B TEST: Translate if test passes
