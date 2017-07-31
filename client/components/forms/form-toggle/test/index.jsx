@@ -5,6 +5,7 @@ import assert from 'assert';
 import ReactDom from 'react-dom';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
+import { shallow } from 'enzyme';
 import { uniq } from 'lodash';
 
 /**
@@ -25,11 +26,8 @@ describe( 'index', function() {
 	require( 'test/helpers/use-fake-dom' )();
 	describe( 'rendering', function() {
 		it( 'should have is-compact class', function() {
-			var toggle = TestUtils.renderIntoDocument( <CompactFormToggle /> ),
-				toggleInput = TestUtils.scryRenderedDOMComponentsWithClass( toggle, 'form-toggle' );
-
-			assert( 0 < toggleInput.length, 'a form toggle was rendered' );
-			assert( toggleInput[ 0 ].className.indexOf( 'is-compact' ) >= 0, 'is-compact class exists' );
+			const toggle = shallow( <CompactFormToggle /> );
+			assert( toggle.hasClass( 'is-compact' ) );
 		} );
 	} );
 } );
