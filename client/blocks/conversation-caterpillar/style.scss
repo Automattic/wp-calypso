@@ -1,0 +1,8 @@
+.conversation-caterpillar__gravatar {
+	border: 2px solid #fff;
+	margin-left: -8px;
+
+	&:first-child {
+		margin-left: 0;
+	}
+}
