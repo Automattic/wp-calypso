@@ -1,20 +1,27 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import classNames from 'classnames';
+var React = require( 'react' ),
+	classNames = require( 'classnames' ),
+	omit = require( 'lodash/omit' );
 
 /**
  * Internal dependencies
  */
-import Toggle from 'components/forms/form-toggle';
+var Toggle = require( 'components/forms/form-toggle' );
 
-const CompactFormToggle = ( { className, children, ...otherProps } ) => (
-	<Toggle { ...otherProps }
-		className={ classNames( className, 'is-compact' ) }
-	>
-		{ children }
-	</Toggle>
-);
+module.exports = React.createClass( {
 
-export default CompactFormToggle;
+	displayName: 'CompactFormToggle',
+
+	render: function() {
+		return (
+			<Toggle
+				{ ...omit( this.props, 'className' ) }
+				className={ classNames( this.props.className, 'is-compact' ) }
+			>
+				{ this.props.children }
+			</Toggle>
+		);
+	}
+} );

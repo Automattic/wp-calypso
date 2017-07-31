@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import ReactDom from 'react-dom';
-import Gridicon from 'gridicons';
-import TestUtils from 'react-addons-test-utils';
-import { expect } from 'chai';
+var expect = require( 'chai' ).expect,
+	ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
+	TestUtils = require( 'react-addons-test-utils' );
 
 /**
  * Internal dependencies
  */
-import FormRange from '../';
+var FormRange = require( '../' );
+var Gridicon = require( 'gridicons' );
 
 describe( 'index', function() {
 	require( 'test/helpers/use-fake-dom' )();

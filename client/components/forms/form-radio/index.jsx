@@ -1,14 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import classnames from 'classnames';
+var React = require( 'react' ),
+	classnames = require( 'classnames' ),
+	omit = require( 'lodash/omit' );
 
-const FormRadio = ( { className, ...otherProps } ) => (
-	<input { ...otherProps }
-		type="radio"
-		className={ classnames( className, 'form-radio' ) }
-	/>
-);
+module.exports = React.createClass( {
 
-export default FormRadio;
+	displayName: 'FormRadio',
+
+	render: function() {
+		var otherProps = omit( this.props, [ 'className', 'type' ] );
+
+		return (
+			<input
+				{ ...otherProps }
+				type="radio"
+				className={ classnames( this.props.className, 'form-radio' ) } />
+		);
+	}
+} );

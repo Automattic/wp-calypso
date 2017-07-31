@@ -1,83 +1,83 @@
 /**
  * External dependencies
  */
-import React from 'react';
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormCountrySelect from 'components/forms/form-country-select';
-import FormCurrencyInput from 'components/forms/form-currency-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormPhoneInput from 'components/forms/form-phone-input';
-import FormRadio from 'components/forms/form-radio';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormSelect from 'components/forms/form-select';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormStateSelector from 'components/forms/us-state-selector';
-import FormTelInput from 'components/forms/form-tel-input';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import FormToggle from 'components/forms/form-toggle';
-import PhoneInput from 'components/phone-input';
+var countriesList = require( 'lib/countries-list' ).forSms(),
+	Card = require( 'components/card' ),
+	FormButton = require( 'components/forms/form-button' ),
+	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
+	FormCheckbox = require( 'components/forms/form-checkbox' ),
+	FormCountrySelect = require( 'components/forms/form-country-select' ),
+	FormCurrencyInput = require( 'components/forms/form-currency-input' ),
+	FormFieldset = require( 'components/forms/form-fieldset' ),
+	FormInputValidation = require( 'components/forms/form-input-validation' ),
+	FormLabel = require( 'components/forms/form-label' ),
+	FormLegend = require( 'components/forms/form-legend' ),
+	FormPasswordInput = require( 'components/forms/form-password-input' ),
+	FormPhoneInput = require( 'components/forms/form-phone-input' ),
+	FormRadio = require( 'components/forms/form-radio' ),
+	FormSectionHeading = require( 'components/forms/form-section-heading' ),
+	FormSelect = require( 'components/forms/form-select' ),
+	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
+	FormStateSelector = require( 'components/forms/us-state-selector' ),
+	FormTelInput = require( 'components/forms/form-tel-input' ),
+	FormTextarea = require( 'components/forms/form-textarea' ),
+	FormTextInput = require( 'components/forms/form-text-input' ),
+	FormTextInputWithAction = require( 'components/forms/form-text-input-with-action' ),
+	FormTextInputWithAffixes = require( 'components/forms/form-text-input-with-affixes' ),
+	FormToggle = require( 'components/forms/form-toggle' ),
+	PhoneInput = require( 'components/phone-input' ),
+	CompactFormToggle = require( 'components/forms/form-toggle/compact' );
 
-/**
- * Internal dependencies
- */
-var countriesList = require( 'lib/countries-list' ).forSms();
+var FormFields = React.createClass( {
+	displayName: 'FormFields',
 
-class FormFields extends React.PureComponent {
-	static displayName = 'FormFields'; // Needed for devdocs/design
+	mixins: [ PureRenderMixin ],
 
-	state = {
-		checkedRadio: 'first',
-		toggled: false,
-		compactToggled: false,
-		phoneInput: { countryCode: 'US', value: '' },
-	};
+	getInitialState: function() {
+		return {
+			checkedRadio: 'first',
+			toggled: false,
+			compactToggled: false,
+			phoneInput: { countryCode: 'US', value: '' }
+		};
+	},
 
-	handleRadioChange = event => {
+	handleRadioChange: function( event ) {
 		this.setState( { checkedRadio: event.currentTarget.value } );
-	};
+	},
 
-	handleToggle = () => {
+	handleToggle: function() {
 		this.setState( { toggled: ! this.state.toggled } );
-	};
+	},
 
-	handleCompactToggle = () => {
+	handleCompactToggle: function() {
 		this.setState( { compactToggled: ! this.state.compactToggled } );
-	};
+	},
 
-	handleAction = () => {
+	handleAction: function() {
 		alert( 'Thank you.' );
-	};
+	},
 
-	handlePhoneInputChange = data => {
+	handlePhoneInputChange( data ) {
 		this.setState( { phoneInput: data } );
-	};
+	},
 
-	render() {
+	render: function() {
 		return (
 			<div>
 				<p>
-					The form fields components act as wrapper components to aid in componentizing CSS. Here is
-					an example of all of the form fields components and their expected markup.
+					The form fields components act as wrapper components to aid in componentizing CSS.
+					Here is an example of all of the form fields components and their expected markup.
 				</p>
 
 				<p>
-					The following form fields components are wrapped in Card components to demonstrate the
-					FormSectionHeading component.
+					The following form fields components are wrapped in Card components to demonstrate the FormSectionHeading component.
 				</p>
 
 				<Card>
@@ -104,9 +104,7 @@ class FormFields extends React.PureComponent {
 					<FormFieldset>
 						<FormLabel htmlFor="username">Form Text Input</FormLabel>
 						<FormTextInput id="username" name="username" placeholder="Placeholder text..." />
-						<FormSettingExplanation>
-							This is an explanation of FormTextInput.
-						</FormSettingExplanation>
+						<FormSettingExplanation>This is an explanation of FormTextInput.</FormSettingExplanation>
 					</FormFieldset>
 
 					<FormFieldset>
@@ -143,11 +141,8 @@ class FormFields extends React.PureComponent {
 							placeholder="Enter a name for your site"
 							action="Continue"
 							onAction={ this.handleAction }
-						/>
-						<FormSettingExplanation>
-							Action becomes avaliable when filled. Can be triggered by clicking button or pressing
-							enter.
-						</FormSettingExplanation>
+							/>
+						<FormSettingExplanation>Action becomes avaliable when filled. Can be triggered by clicking button or pressing enter.</FormSettingExplanation>
 					</FormFieldset>
 
 					<FormFieldset>
@@ -157,7 +152,7 @@ class FormFields extends React.PureComponent {
 							placeholder="Placeholder text..."
 							prefix="Prefix"
 							suffix="Suffix"
-						/>
+							/>
 					</FormFieldset>
 
 					<FormFieldset>
@@ -178,23 +173,37 @@ class FormFields extends React.PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="password">Form Password Input</FormLabel>
-						<FormPasswordInput id="password" name="password" />
+						<FormLabel htmlFor="password">{ this.translate( 'Form Password Input' ) }</FormLabel>
+						<FormPasswordInput
+							id="password"
+							name="password" />
 					</FormFieldset>
 
 					<FormLegend>Form Toggle</FormLegend>
-					<FormToggle checked={ this.state.toggled } onChange={ this.handleToggle } />
+					<FormToggle
+						checked={ this.state.toggled }
+						onChange={ this.handleToggle }
+					/>
 					<br />
-					<FormToggle checked={ false } disabled />
+					<FormToggle
+						checked={ false }
+						disabled={ true }
+					/>
 					<br />
-					<FormToggle checked={ true } disabled />
+					<FormToggle
+						checked={ true }
+						disabled={ true }
+					/>
 					<br />
 					<CompactFormToggle
 						checked={ this.state.compactToggled }
 						onChange={ this.handleCompactToggle }
 					/>
 					<br />
-					<CompactFormToggle checked={ false } disabled />
+					<CompactFormToggle
+						checked={ false }
+						disabled={ true }
+					/>
 
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>
@@ -206,11 +215,7 @@ class FormFields extends React.PureComponent {
 
 					<FormFieldset>
 						<FormLabel htmlFor="country_code">Form Country Select</FormLabel>
-						<FormCountrySelect
-							name="country_code"
-							id="country_code"
-							countriesList={ countriesList }
-						/>
+						<FormCountrySelect name="country_code" id="country_code" countriesList={ countriesList } />
 					</FormFieldset>
 
 					<FormFieldset>
@@ -221,20 +226,12 @@ class FormFields extends React.PureComponent {
 					<FormFieldset>
 						<FormLegend>Form Radios</FormLegend>
 						<FormLabel>
-							<FormRadio
-								value="first"
-								checked={ 'first' === this.state.checkedRadio }
-								onChange={ this.handleRadioChange }
-							/>
+							<FormRadio value="first" checked={ 'first' === this.state.checkedRadio } onChange={ this.handleRadioChange } />
 							<span>First radio</span>
 						</FormLabel>
 
 						<FormLabel>
-							<FormRadio
-								value="second"
-								checked={ 'second' === this.state.checkedRadio }
-								onChange={ this.handleRadioChange }
-							/>
+							<FormRadio value="second" checked={ 'second' === this.state.checkedRadio } onChange={ this.handleRadioChange } />
 							<span>Second radio</span>
 						</FormLabel>
 					</FormFieldset>
@@ -250,17 +247,12 @@ class FormFields extends React.PureComponent {
 							initialCountryCode="US"
 							initialPhoneNumber="8772733049"
 							countriesList={ countriesList }
-						/>
+							/>
 					</FormFieldset>
 
 					<FormFieldset>
 						<FormLabel>Form Media Phone Input</FormLabel>
-						<PhoneInput
-							countryCode={ this.state.phoneInput.countryCode }
-							value={ this.state.phoneInput.value }
-							countriesList={ countriesList }
-							onChange={ this.handlePhoneInputChange }
-						/>
+						<PhoneInput countryCode={ this.state.phoneInput.countryCode } value={ this.state.phoneInput.value } countriesList={ countriesList } onChange={ this.handlePhoneInputChange } />
 					</FormFieldset>
 
 					<FormFieldset>
@@ -275,19 +267,17 @@ class FormFields extends React.PureComponent {
 
 					<FormFieldset>
 						<FormLabel htmlFor="textarea">Form Textarea</FormLabel>
-						<FormTextarea name="textarea" id="textarea" placeholder="Placeholder text..." />
+						<FormTextarea name="textarea" id="textarea" placeholder="Placeholder text..."></FormTextarea>
 					</FormFieldset>
 
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>
-						<FormButton type="button" isPrimary={ false }>
-							Secondary Form Button
-						</FormButton>
+						<FormButton type="button" isPrimary={ false }>Secondary Form Button</FormButton>
 					</FormButtonsBar>
 				</Card>
 			</div>
 		);
 	}
-}
+} );
 
-export default FormFields;
+module.exports = FormFields;

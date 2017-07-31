@@ -1,15 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import classnames from 'classnames';
+var React = require( 'react' ),
+	classnames = require( 'classnames' ),
+	omit = require( 'lodash/omit' );
 
-const FormInputCheckbox = ( { className, ...otherProps } ) => (
-	<input
-		{ ...otherProps }
-		type="checkbox"
-		className={ classnames( className, 'form-checkbox' ) }
-	/>
-);
+module.exports = React.createClass( {
 
-export default FormInputCheckbox;
+	displayName: 'FormInputCheckbox',
+
+	render: function() {
+		var otherProps = omit( this.props, [ 'className', 'type' ] );
+
+		return (
+			<input { ...otherProps } type="checkbox" className={ classnames( this.props.className, 'form-checkbox' ) } />
+		);
+	}
+} );

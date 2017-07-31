@@ -1,15 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import classnames from 'classnames';
+var React = require( 'react' ),
+	classnames = require( 'classnames' ),
+	omit = require( 'lodash/omit' );
 
-const FormSectionHeading = ( { className, children, ...otherProps } ) => (
-	<h3 { ...otherProps }
-		className={ classnames( className, 'form-section-heading' ) }
-	>
-		{ children }
-	</h3>
-);
+module.exports = React.createClass( {
 
-export default FormSectionHeading;
+	displayName: 'FormSectionHeading',
+
+	render: function() {
+		return (
+			<h3 { ...omit( this.props, 'className' ) } className={ classnames( this.props.className, 'form-section-heading' ) } >
+				{ this.props.children }
+			</h3>
+		);
+	}
+} );
