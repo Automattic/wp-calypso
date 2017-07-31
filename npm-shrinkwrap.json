@@ -1905,6 +1905,9 @@
       "version": "0.2.0",
       "dev": true
     },
+    "execa": {
+      "version": "0.7.0"
+    },
     "execall": {
       "version": "1.0.0",
       "dev": true
@@ -2118,7 +2121,7 @@
       "dev": true
     },
     "flow-parser": {
-      "version": "0.51.1",
+      "version": "0.52.0",
       "dev": true
     },
     "flux": {
@@ -2670,8 +2673,7 @@
       "version": "4.0.1"
     },
     "get-stream": {
-      "version": "3.0.0",
-      "dev": true
+      "version": "3.0.0"
     },
     "get-video-id": {
       "version": "2.1.4"
@@ -4197,6 +4199,9 @@
     "media-typer": {
       "version": "0.3.0"
     },
+    "mem": {
+      "version": "1.1.0"
+    },
     "memory-fs": {
       "version": "0.4.1",
       "dependencies": {
@@ -4251,6 +4256,9 @@
     },
     "mime-types": {
       "version": "2.1.16"
+    },
+    "mimic-fn": {
+      "version": "1.1.0"
     },
     "min-document": {
       "version": "2.19.0"
@@ -4559,6 +4567,9 @@
         }
       }
     },
+    "npm-run-path": {
+      "version": "2.0.2"
+    },
     "npmlog": {
       "version": "4.1.2"
     },
@@ -4662,6 +4673,9 @@
       "version": "1.1.2",
       "dev": true
     },
+    "p-finally": {
+      "version": "1.0.0"
+    },
     "p-limit": {
       "version": "1.1.0"
     },
@@ -4750,6 +4764,9 @@
     "path-is-inside": {
       "version": "1.0.2",
       "dev": true
+    },
+    "path-key": {
+      "version": "2.0.1"
     },
     "path-parse": {
       "version": "1.0.5"
@@ -5963,6 +5980,9 @@
     "strip-bom": {
       "version": "2.0.0"
     },
+    "strip-eof": {
+      "version": "1.0.0"
+    },
     "strip-indent": {
       "version": "1.0.1"
     },
@@ -6537,19 +6557,45 @@
       "optional": true
     },
     "webpack": {
-      "version": "3.1.0",
+      "version": "3.4.1",
       "dependencies": {
         "acorn": {
           "version": "5.1.1"
+        },
+        "ansi-regex": {
+          "version": "3.0.0"
         },
         "async": {
           "version": "2.5.0"
         },
         "camelcase": {
-          "version": "3.0.0"
+          "version": "4.1.0"
         },
         "cliui": {
-          "version": "3.2.0"
+          "version": "3.2.0",
+          "dependencies": {
+            "string-width": {
+              "version": "1.0.2"
+            }
+          }
+        },
+        "has-flag": {
+          "version": "2.0.0"
+        },
+        "load-json-file": {
+          "version": "2.0.0"
+        },
+        "os-locale": {
+          "version": "2.1.0"
+        },
+        "path-type": {
+          "version": "2.0.0"
+        },
+        "read-pkg": {
+          "version": "2.0.0"
+        },
+        "read-pkg-up": {
+          "version": "2.0.0"
         },
         "source-list-map": {
           "version": "2.0.0"
@@ -6557,14 +6603,34 @@
         "source-map": {
           "version": "0.5.6"
         },
+        "string-width": {
+          "version": "2.1.1",
+          "dependencies": {
+            "is-fullwidth-code-point": {
+              "version": "2.0.0"
+            },
+            "strip-ansi": {
+              "version": "4.0.0"
+            }
+          }
+        },
+        "strip-bom": {
+          "version": "3.0.0"
+        },
+        "supports-color": {
+          "version": "4.2.1"
+        },
         "webpack-sources": {
           "version": "1.0.1"
         },
+        "which-module": {
+          "version": "2.0.0"
+        },
         "yargs": {
-          "version": "6.6.0"
+          "version": "8.0.2"
         },
         "yargs-parser": {
-          "version": "4.2.1"
+          "version": "7.0.0"
         }
       }
     },
