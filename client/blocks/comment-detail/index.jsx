@@ -12,6 +12,7 @@ import ReactDom from 'react-dom';
  * Internal dependencies
  */
 import Card from 'components/card';
+import QueryComment from 'components/data/query-comment';
 import CommentDetailComment from './comment-detail-comment';
 import CommentDetailHeader from './comment-detail-header';
 import CommentDetailPost from './comment-detail-post';
@@ -57,6 +58,7 @@ export class CommentDetail extends Component {
 		commentUrl: PropTypes.string,
 		deleteCommentPermanently: PropTypes.func,
 		isBulkEdit: PropTypes.bool,
+		isLoading: PropTypes.bool,
 		postAuthorDisplayName: PropTypes.string,
 		postTitle: PropTypes.string,
 		repliedToComment: PropTypes.bool,
@@ -70,6 +72,7 @@ export class CommentDetail extends Component {
 	static defaultProps = {
 		commentIsSelected: false,
 		isBulkEdit: false,
+		isLoading: true,
 	};
 
 	state = {
@@ -119,7 +122,9 @@ export class CommentDetail extends Component {
 	}
 
 	toggleExpanded = () => {
-		this.setState( { isExpanded: ! this.state.isExpanded } );
+		if ( ! this.props.isLoading ) {
+			this.setState( ( { isExpanded } ) => ( { isExpanded: ! isExpanded } ) );
+		}
 	}
 
 	toggleLike = () => {
@@ -182,11 +187,13 @@ export class CommentDetail extends Component {
 			authorUsername,
 			commentContent,
 			commentDate,
+			commentId,
 			commentIsLiked,
 			commentIsSelected,
 			commentStatus,
 			commentUrl,
 			isBulkEdit,
+			isLoading,
 			parentCommentAuthorAvatarUrl,
 			parentCommentAuthorDisplayName,
 			parentCommentContent,
@@ -208,6 +215,7 @@ export class CommentDetail extends Component {
 
 		const classes = classNames( 'comment-detail', {
 			'author-is-blocked': authorIsBlocked,
+			'comment-detail__placeholder': isLoading,
 			'is-approved': 'approved' === commentStatus,
 			'is-unapproved': 'unapproved' === commentStatus,
 			'is-bulk-edit': isBulkEdit,
@@ -225,6 +233,8 @@ export class CommentDetail extends Component {
 				className={ classes }
 				tabIndex="0"
 			>
+				<QueryComment commentId={ commentId } siteId={ siteId } />
+
 				<CommentDetailHeader
 					authorAvatarUrl={ authorAvatarUrl }
 					authorDisplayName={ authorDisplayName }
@@ -290,6 +300,8 @@ const mapStateToProps = ( state, ownProps ) => {
 	const { commentId, siteId } = ownProps;
 	const comment = ownProps.comment || getSiteComment( state, siteId, commentId );
 
+	const isLoading = isUndefined( comment );
+
 	const postId = get( comment, 'post.ID' );
 
 	// TODO: eventually it will be returned already decoded from the data layer.
@@ -317,6 +329,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentIsLiked: get( comment, 'i_like' ),
 		commentStatus: get( comment, 'status' ),
 		commentUrl: get( comment, 'URL' ),
+		isLoading,
 		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
 		parentCommentAuthorDisplayName: get( parentComment, 'author.name' ),
 		parentCommentContent,

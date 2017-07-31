@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, keyBy, keys, map, noop, omit, size, uniq } from 'lodash';
+import { find, get, keyBy, keys, map, noop, omit, size, slice, uniq } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -19,14 +19,13 @@ import {
 } from 'state/comments/actions';
 import { createNotice, removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
-import getSiteComments from 'state/selectors/get-site-comments';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
 import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
-import { hasSiteComments } from 'state/selectors';
+import { getSiteCommentsTree, hasSiteComments } from 'state/selectors';
 
 const COMMENTS_PER_PAGE = 2;
 
@@ -34,13 +33,10 @@ export class CommentList extends Component {
 	static propTypes = {
 		changeCommentStatus: PropTypes.func,
 		comments: PropTypes.array,
-		commentsCount: PropTypes.number,
-		commentsPage: PropTypes.number,
 		deleteComment: PropTypes.func,
 		likeComment: PropTypes.func,
 		replyComment: PropTypes.func,
 		setBulkStatus: PropTypes.func,
-		setCommentsPage: PropTypes.func,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 		translate: PropTypes.func,
@@ -48,13 +44,9 @@ export class CommentList extends Component {
 		unlikeComment: PropTypes.func,
 	};
 
-	static defaultProps = {
-		commentsCount: 0,
-		commentsPage: 1,
-	};
-
 	state = {
 		isBulkEdit: false,
+		page: 1,
 		persistedComments: [],
 		// TODO: replace {} with [] after persistedComments is merged
 		selectedComments: {},
@@ -63,16 +55,17 @@ export class CommentList extends Component {
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.status !== nextProps.status ) {
 			this.setState( {
+				page: 1,
 				persistedComments: [],
 				selectedComments: {},
 			} );
 		}
 	}
 
-	changePage = page => {
-		this.setState( { selectedComments: {} } );
-		this.props.setCommentsPage( page );
-	}
+	changePage = page => this.setState( {
+		page,
+		selectedComments: {},
+	} );
 
 	deleteCommentPermanently = ( commentId, postId ) => {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
@@ -84,6 +77,11 @@ export class CommentList extends Component {
 	getComment = commentId => find( this.getComments(), [ 'ID', commentId ] );
 
 	getComments = () => uniq( [ ...this.state.persistedComments, ...this.props.comments ] ).sort( ( a, b ) => b - a );
+
+	getCommentsPage = ( comments, page ) => {
+		const startingIndex = ( page - 1 ) * COMMENTS_PER_PAGE;
+		return slice( comments, startingIndex, startingIndex + COMMENTS_PER_PAGE );
+	};
 
 	getEmptyMessage = () => {
 		const { status, translate } = this.props;
@@ -314,8 +312,6 @@ export class CommentList extends Component {
 
 	render() {
 		const {
-			commentsCount,
-			commentsPage,
 			isLoading,
 			siteId,
 			siteFragment,
@@ -323,14 +319,16 @@ export class CommentList extends Component {
 		} = this.props;
 		const {
 			isBulkEdit,
+			page,
 			selectedComments,
 		} = this.state;
 
 		const comments = this.getComments();
+		const commentsCount = comments.length;
+		const commentsPage = this.getCommentsPage( comments, page );
 
-		const zeroComments = size( comments ) <= 0;
-		const showPlaceholder = ( ! siteId || isLoading ) && zeroComments;
-		const showEmptyContent = zeroComments && ! showPlaceholder;
+		const showPlaceholder = ( ! siteId || isLoading ) && ! commentsCount;
+		const showEmptyContent = ! commentsCount && ! showPlaceholder;
 
 		const [ emptyMessageTitle, emptyMessageLine ] = this.getEmptyMessage();
 
@@ -354,7 +352,7 @@ export class CommentList extends Component {
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-list__transition"
 				>
-					{ map( comments, commentId =>
+					{ map( commentsPage, commentId =>
 						<CommentDetail
 							commentId={ commentId }
 							deleteCommentPermanently={ this.deleteCommentPermanently }
@@ -382,7 +380,7 @@ export class CommentList extends Component {
 					{ ! showPlaceholder && ! showEmptyContent &&
 						<Pagination
 							key="comment-list-pagination"
-							page={ commentsPage }
+							page={ page }
 							pageClick={ this.changePage }
 							perPage={ COMMENTS_PER_PAGE }
 							total={ commentsCount }
@@ -394,8 +392,8 @@ export class CommentList extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, status, order } ) => {
-	const comments = map( getSiteComments( state, siteId, status, order ), 'ID' );
+const mapStateToProps = ( state, { siteId, status } ) => {
+	const comments = map( getSiteCommentsTree( state, siteId, status ), 'commentId' );
 	const isLoading = ! hasSiteComments( state, siteId );
 	return {
 		comments,
