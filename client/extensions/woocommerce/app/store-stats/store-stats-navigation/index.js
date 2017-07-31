@@ -15,15 +15,17 @@ import { UNITS } from 'woocommerce/app/store-stats/constants';
 
 const StoreStatsNavigation = props => {
 	const { translate, slug, type, unit } = props;
+	const selectedText = UNITS[ unit ].title;
 	return (
 		<div className="store-stats-navigation">
-			<SectionNav selectedText={ UNITS[ unit ].title }>
+			<SectionNav selectedText={ selectedText }>
 				<StoreStatsNavigationTabs
 					label={ 'Stats' }
 					slug={ slug }
 					type={ type }
 					unit={ unit }
 					units={ UNITS }
+					selectedText={ selectedText }
 				/>
 				<SegmentedControl
 					initialSelected="store"
