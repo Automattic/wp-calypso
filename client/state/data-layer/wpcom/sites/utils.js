@@ -89,7 +89,6 @@ export const updatePlaceholderComment = ( { dispatch }, { siteId, postId, parent
 	dispatch( { type: COMMENTS_RECEIVE, siteId, postId, comments: [ comment ], skipSort: !! parentCommentId } );
 	// increment comments count
 	dispatch( { type: COMMENTS_COUNT_INCREMENT, siteId, postId } );
-	// add new comment to the tree
 };
 
 /***
