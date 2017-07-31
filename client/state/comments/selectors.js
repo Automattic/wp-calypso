@@ -24,7 +24,7 @@ export const getDateSortedPostComments = createSelector(
 		const comments = getPostCommentItems( state, siteId, postId );
 		return sortBy( comments, comment => new Date( comment.date ) );
 	},
-	( state, siteId, postId ) => [ get( state.comments, 'items' )[ getStateKey( siteId, postId ) ] ],
+	( state, siteId, postId ) => [ get( state.comments, 'items' )[ getStateKey( siteId, postId ) ] ]
 );
 
 export const getCommentById = createSelector(
@@ -36,11 +36,16 @@ export const getCommentById = createSelector(
 		const commentsForSite = flatMap(
 			filter( state.comments && state.comments.items, ( comment, key ) => {
 				return deconstructStateKey( key ).siteId === siteId;
-			} ),
+			} )
 		);
 		return find( commentsForSite, comment => commentId === comment.ID );
 	},
-	( { state } ) => [ get( state.comments, 'items' ), get( state.comments, 'errors' ) ],
+	( { state, commentId, siteId } ) => [
+		commentId,
+		siteId,
+		get( state.comments, 'items' ),
+		get( state.comments, 'errors' ),
+	]
 );
 /***
  * Get total number of comments on the server for a given post
@@ -109,19 +114,19 @@ export const getPostCommentsTree = createSelector(
 					children: map( filter( items, { parent: { ID: item.ID } } ), 'ID' ).reverse(),
 					data: item,
 				} ) ),
-				'data.ID',
+				'data.ID'
 			),
 			children: map( filter( items, { parent: false } ), 'ID' ).reverse(),
 		};
 	},
-	getPostCommentItems,
+	getPostCommentItems
 );
 
 export const commentsFetchingStatus = ( state, siteId, postId, commentTotal = 0 ) => {
 	const fetchStatus = get(
 		state.comments.fetchStatus,
 		getStateKey( siteId, postId ),
-		fetchStatusInitialState,
+		fetchStatusInitialState
 	);
 	const hasMoreComments = commentTotal > size( getPostCommentItems( state, siteId, postId ) );
 
