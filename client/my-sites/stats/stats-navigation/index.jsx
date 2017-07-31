@@ -29,26 +29,24 @@ const StatsNavigation = ( props ) => {
 
 	let statsControl;
 
-	if ( config.isEnabled( 'woocommerce/extension-stats' ) ) {
-		if ( isWooConnect ) {
-			statsControl = (
-				<SegmentedControl
-					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-					className="stats-navigation__control is-store"
-					initialSelected="site"
-					options={ [
-						{
-							value: 'site',
-							label: translate( 'Site' )
-						},
-						{
-							value: 'store',
-							label: translate( 'Store' ),
-							path: `/store/stats/orders/${ section }/${ slug }` }
-					] }
-				/>
-			);
-		}
+	if ( isWooConnect ) {
+		statsControl = (
+			<SegmentedControl
+				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+				className="stats-navigation__control is-store"
+				initialSelected="site"
+				options={ [
+					{
+						value: 'site',
+						label: translate( 'Site' )
+					},
+					{
+						value: 'store',
+						label: translate( 'Store' ),
+						path: `/store/stats/orders/${ section }/${ slug }` }
+				] }
+			/>
+		);
 	}
 
 	const ActivityTab = config.isEnabled( 'jetpack/activity-log' ) && isJetpack
