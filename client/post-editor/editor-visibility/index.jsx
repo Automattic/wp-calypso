@@ -188,8 +188,6 @@ const EditorVisibility = React.createClass( {
 
 	updateVisibility( newVisibility ) {
 		const { siteId, postId } = this.props;
-		const defaultVisibility = 'draft' === this.props.status ? 'draft' : 'publish';
-		const postEdits = { status: defaultVisibility };
 		let reduxPostEdits;
 
 		switch ( newVisibility ) {
@@ -211,8 +209,6 @@ const EditorVisibility = React.createClass( {
 		recordEvent( 'Changed visibility', newVisibility );
 		tracks.recordEvent( 'calypso_editor_visibility_set', { context: this.props.context, visibility: newVisibility } );
 
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		postActions.edit( postEdits );
 		if ( reduxPostEdits ) {
 			this.props.editPost( siteId, postId, reduxPostEdits );
 		}
