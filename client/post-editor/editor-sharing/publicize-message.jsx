@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-const React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-const CountedTextarea = require( 'components/forms/counted-textarea' ),
-	FormTextarea = require( 'components/forms/form-textarea' ),
-	PostActions = require( 'lib/posts/actions' ),
-	stats = require( 'lib/posts/stats' ),
-	TrackInputChanges = require( 'components/track-input-changes' ),
-	InfoPopover = require( 'components/info-popover' );
+import CountedTextarea from 'components/forms/counted-textarea';
+import FormTextarea from 'components/forms/form-textarea';
+import InfoPopover from 'components/info-popover';
+import TrackInputChanges from 'components/track-input-changes';
+import PostActions from 'lib/posts/actions';
+import stats from 'lib/posts/stats';
 
 export default React.createClass( {
 	displayName: 'PublicizeMessage',
