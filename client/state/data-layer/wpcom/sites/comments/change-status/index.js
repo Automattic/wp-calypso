@@ -2,12 +2,11 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { get, truncate } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { stripHTML, decodeEntities } from 'lib/formatting';
 import { COMMENTS_CHANGE_STATUS } from 'state/action-types';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -52,40 +51,10 @@ const verifyCommentStatus = ( { dispatch, getState }, action, next, data ) => {
 	}
 };
 
-const getErrorMessage = ( status, content ) => {
-	const commentContent = content && truncate( decodeEntities( stripHTML( content ) ), { length: 30, omission: '…' } );
-
-	switch ( status ) {
-		case 'approved':
-			return commentContent
-				? translate( 'Could not approve the comment "%(commentContent)s".', { args: { commentContent } } )
-				: translate( 'Could not approve the comment.' );
-		case 'unapproved':
-			return commentContent
-				? translate( 'Could not unapprove the comment "%(commentContent)s".', { args: { commentContent } } )
-				: translate( 'Could not unapprove the comment.' );
-		case 'spam':
-			return commentContent
-				? translate( 'Could not mark the comment "%(commentContent)s" as spam.', { args: { commentContent } } )
-				: translate( 'Could not mark the comment as spam.' );
-		case 'trash':
-			return commentContent
-				? translate( 'Could not move the comment "%(commentContent)s" to trash.', { args: { commentContent } } )
-				: translate( 'Could not move the comment to trash.' );
-		default:
-			return commentContent
-				? translate( 'Could not update the comment "%(commentContent)s".', { args: { commentContent } } )
-				: translate( 'Could not update the comment.' );
-	}
-};
-
-const retryChangeStatus = ( dispatch, action ) => {
-	dispatch( removeNotice( `comment-notice-${ action.commentId }` ) );
-	dispatch( action );
-};
-
 const announceFailure = ( { dispatch, getState }, action ) => {
-	const { siteId, commentId, status, previousStatus } = action;
+	const { commentId, status, previousStatus } = action;
+
+	dispatch( removeNotice( `comment-notice-${ action.commentId }` ) );
 
 	dispatch(
 		local( {
@@ -94,11 +63,18 @@ const announceFailure = ( { dispatch, getState }, action ) => {
 		} )
 	);
 
-	const content = get( getSiteComment( getState(), siteId, commentId ), 'content' );
-	dispatch( errorNotice( getErrorMessage( status, content ), {
+	const errorMessage = {
+		approved: translate( "We couldn't approve this comment." ),
+		unapproved: translate( "We couldn't unapprove this comment." ),
+		spam: translate( "We couldn't mark this comment as spam." ),
+		trash: translate( "We couldn't move this comment to trash." ),
+	};
+	const defaultErrorMessage = translate( "We couldn't update this comment." );
+
+	dispatch( errorNotice( get( errorMessage, status, defaultErrorMessage ), {
 		button: translate( 'Try again' ),
 		id: `comment-notice-${ commentId }`,
-		onClick: () => retryChangeStatus( dispatch, action ),
+		onClick: () => dispatch( action ),
 	} ) );
 };
 
