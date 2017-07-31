@@ -42,7 +42,9 @@ export class ReaderSidebarTagsListItem extends Component {
 
 	render() {
 		const { tag, path, onUnfollow, translate } = this.props;
+		const tagName = tag.displayName || tag.slug;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<li
 				key={ tag.id }
@@ -54,25 +56,35 @@ export class ReaderSidebarTagsListItem extends Component {
 					className="sidebar__menu-item-label"
 					href={ tag.url }
 					onClick={ this.handleTagSidebarClick }
+					title={ translate( "View tag '%(currentTagName)s'", {
+						args: {
+							currentTagName: tagName,
+						},
+					} ) }
 				>
 					<div className="sidebar__menu-item-tagname">
-						{ tag.displayName || tag.slug }
+						{ tagName }
 					</div>
 				</a>
-				{ tag.id !== 'pending'
-					? <button
-							className="sidebar__menu-action"
-							data-tag-slug={ tag.slug }
-							onClick={ onUnfollow }
-						>
-							<Gridicon icon="cross-small" />
-							<span className="sidebar__menu-action-label">
-								{ translate( 'Unfollow' ) }
-							</span>
-						</button>
-					: null }
+				{ tag.id !== 'pending' &&
+					<button
+						className="sidebar__menu-action"
+						data-tag-slug={ tag.slug }
+						onClick={ onUnfollow }
+						title={ translate( "Unfollow tag '%(currentTagName)s'", {
+							args: {
+								currentTagName: tagName,
+							},
+						} ) }
+					>
+						<Gridicon icon="cross-small" />
+						<span className="sidebar__menu-action-label">
+							{ translate( 'Unfollow' ) }
+						</span>
+					</button> }
 			</li>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
