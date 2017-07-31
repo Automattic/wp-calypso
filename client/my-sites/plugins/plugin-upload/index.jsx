@@ -14,6 +14,7 @@ import HeaderCake from 'components/header-cake';
 import Card from 'components/card';
 import ProgressBar from 'components/progress-bar';
 import UploadDropZone from 'blocks/upload-drop-zone';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
@@ -23,7 +24,7 @@ import {
 	isPluginUploadComplete,
 	isPluginUploadInProgress,
 } from 'state/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 
 class PluginUpload extends React.Component {
 
@@ -80,12 +81,21 @@ class PluginUpload extends React.Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const {
+			translate,
+			upgradeJetpack,
+			siteId,
+		} = this.props;
 
 		return (
 			<Main>
 				<HeaderCake onClick={ this.back }>{ translate( 'Upload plugin' ) }</HeaderCake>
-				{ this.renderUploadCard() }
+				{ upgradeJetpack && <JetpackManageErrorPage
+					template="updateJetpack"
+					siteId={ siteId }
+					featureExample={ this.renderUploadCard() }
+					version="5.1" /> }
+				{ ! upgradeJetpack && this.renderUploadCard() }
 			</Main>
 		);
 	}
@@ -96,10 +106,11 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const error = getPluginUploadError( state, siteId );
 		const progress = getPluginUploadProgress( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
 		return {
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
-			isJetpack: isJetpackSite( state, siteId ),
+			isJetpack,
 			inProgress: isPluginUploadInProgress( state, siteId ),
 			complete: isPluginUploadComplete( state, siteId ),
 			failed: !! error,
@@ -107,6 +118,7 @@ export default connect(
 			error,
 			progress,
 			installing: progress === 100,
+			upgradeJetpack: isJetpack && ! isJetpackMinimumVersion( state, siteId, 5.1 ),
 		};
 	},
 	{ uploadPlugin, clearPluginUpload }
