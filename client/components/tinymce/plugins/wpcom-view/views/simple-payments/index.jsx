@@ -22,17 +22,18 @@ import { getMediaItem } from 'state/selectors';
 
 class SimplePaymentsView extends Component {
 	render() {
-		const { productId, product, siteId } = this.props;
+		const { translate, productId, product, siteId } = this.props;
 
 		if ( ! product ) {
 			return ( <QuerySimplePayments siteId={ siteId } productId={ productId } /> );
 		}
 
 		const { productImage } = this.props;
-		const { title, description, price, currency, featuredImageId: productImageId } = product;
+		const { title, description, price, currency, multiple, featuredImageId: productImageId } = product;
 
-		// TODO: make proper icon and store on some proper place.
-		const paypalButtonImageUrl = 'https://cldup.com/DoIAwrACBs.png';
+		// TODO: product.multiple should be normalized to a boolean value
+		// see https://github.com/Automattic/wp-calypso/pull/16772#discussion_r130579768
+		const multipleIsEnabled = multiple === '1';
 
 		return (
 			<div className="wpview-content wpview-type-simple-payments">
@@ -59,6 +60,7 @@ class SimplePaymentsView extends Component {
 							{ formatCurrency( price, currency ) }
 						</div>
 						<div className="wpview-type-simple-payments__pay-part">
+							{ multipleIsEnabled &&
 							<div className="wpview-type-simple-payments__pay-quantity">
 								<input
 									className="wpview-type-simple-payments__pay-quantity-input"
@@ -67,11 +69,12 @@ class SimplePaymentsView extends Component {
 									readOnly
 								/>
 							</div>
+							}
 							<div className="wpview-type-simple-payments__pay-paypal-button-wrapper">
-								<img
-									className="wpview-type-simple-payments__pay-paypal-button"
-									src={ paypalButtonImageUrl }
-								/>
+								<div className="wpview-type-simple-payments__pay-paypal-button-content">
+									<span className="wpview-type-simple-payments__pay-paypal-button-text">{ translate( 'Pay with' ) }</span>
+									<span className="wpview-type-simple-payments_paypal-logo" />
+								</div>
 							</div>
 						</div>
 					</div>
