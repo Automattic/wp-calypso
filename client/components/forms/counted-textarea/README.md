@@ -14,8 +14,6 @@ import React from 'react';
 import CountedTextarea from 'components/forms/counted-textarea';
 
 class MyComponent extends Component {
-	displayName: 'MyComponent'
-
 	state = {
 		value: ''
 	}

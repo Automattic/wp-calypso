@@ -3,19 +3,13 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { omit } from 'lodash';
 
-export default class extends React.Component {
-	static displayName = 'FormSectionHeading';
+const FormSectionHeading = ( { className, children, ...otherProps } ) => (
+	<h3 { ...otherProps }
+		className={ classnames( className, 'form-section-heading' ) }
+	>
+		{ children }
+	</h3>
+);
 
-	render() {
-		return (
-			<h3
-				{ ...omit( this.props, 'className' ) }
-				className={ classnames( this.props.className, 'form-section-heading' ) }
-			>
-				{ this.props.children }
-			</h3>
-		);
-	}
-}
+export default FormSectionHeading;

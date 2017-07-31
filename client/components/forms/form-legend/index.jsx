@@ -3,19 +3,13 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { omit } from 'lodash';
 
-export default class extends React.Component {
-	static displayName = 'FormLegend';
+const FormLegend = ( { className, children, ...otherProps } ) => (
+	<legend { ...otherProps }
+		className={ classnames( className, 'form-legend' ) }
+	>
+		{ children }
+	</legend>
+);
 
-	render() {
-		return (
-			<legend
-				{ ...omit( this.props, 'className' ) }
-				className={ classnames( this.props.className, 'form-legend' ) }
-			>
-				{ this.props.children }
-			</legend>
-		);
-	}
-}
+export default FormLegend;

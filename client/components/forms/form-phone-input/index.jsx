@@ -5,6 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { identity, noop, find } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -13,10 +14,9 @@ import FormLabel from 'components/forms/form-label';
 import FormTelInput from 'components/forms/form-tel-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import CountrySelect from 'components/forms/form-country-select';
-import classnames from 'classnames';
 import phoneValidation from 'lib/phone-validation';
 
-var CLEAN_REGEX = /^0|[\s.\-()]+/g;
+const CLEAN_REGEX = /^0|[\s.\-()]+/g;
 
 export class FormPhoneInput extends React.Component {
 	static propTypes = {

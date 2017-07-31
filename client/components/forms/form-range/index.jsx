@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { omit } from 'lodash';
+import { omit, noop } from 'lodash';
 import classnames from 'classnames';
 
 export default class extends React.Component {
@@ -14,7 +14,7 @@ export default class extends React.Component {
 	};
 
 	static defaultProps = {
-		onChange: function() {},
+		onChange: noop,
 	};
 
 	componentDidMount() {
@@ -28,7 +28,7 @@ export default class extends React.Component {
 	}
 
 	shouldNormalizeChange = () => {
-		var ua = window.navigator.userAgent;
+		const ua = window.navigator.userAgent;
 
 		// Internet Explorer doesn't trigger the normal "input" event as the
 		// user drags the thumb. Instead, it emits the equivalent event on
@@ -41,7 +41,7 @@ export default class extends React.Component {
 	};
 
 	render() {
-		var classes = classnames( this.props.className, 'form-range' );
+		const classes = classnames( this.props.className, 'form-range' );
 
 		return (
 			<input

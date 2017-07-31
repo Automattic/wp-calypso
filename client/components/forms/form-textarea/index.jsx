@@ -3,19 +3,13 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { omit } from 'lodash';
 
-export default class extends React.Component {
-	static displayName = 'FormTextarea';
+const FormTextarea = ( { className, children, ...otherProps } ) => (
+	<textarea { ...otherProps }
+		className={ classnames( className, 'form-textarea' ) }
+	>
+		{ children }
+	</textarea>
+);
 
-	render() {
-		return (
-			<textarea
-				{ ...omit( this.props, 'className' ) }
-				className={ classnames( this.props.className, 'form-textarea' ) }
-			>
-				{ this.props.children }
-			</textarea>
-		);
-	}
-}
+export default FormTextarea;

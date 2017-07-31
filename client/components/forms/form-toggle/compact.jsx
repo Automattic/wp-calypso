@@ -3,24 +3,18 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Toggle from 'components/forms/form-toggle';
 
-export default class extends React.Component {
-	static displayName = 'CompactFormToggle';
+const CompactFormToggle = ( { className, children, ...otherProps } ) => (
+	<Toggle { ...otherProps }
+		className={ classNames( className, 'is-compact' ) }
+	>
+		{ children }
+	</Toggle>
+);
 
-	render() {
-		return (
-			<Toggle
-				{ ...omit( this.props, 'className' ) }
-				className={ classNames( this.props.className, 'is-compact' ) }
-			>
-				{ this.props.children }
-			</Toggle>
-		);
-	}
-}
+export default CompactFormToggle;

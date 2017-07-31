@@ -19,6 +19,10 @@ class ClipboardButton extends React.Component {
 		className: PropTypes.string,
 		text: PropTypes.string,
 		onCopy: PropTypes.func,
+		// from localize()
+		moment: PropTypes.func,
+		numberFormat: PropTypes.func,
+		translate: PropTypes.func,
 	};
 
 	static defaultProps = {

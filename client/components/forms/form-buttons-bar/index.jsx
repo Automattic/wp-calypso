@@ -3,19 +3,13 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { omit } from 'lodash';
 
-export default class extends React.Component {
-	static displayName = 'FormButtonsBar';
+const FormButtonsBar = ( { className, children, ...otherProps } ) => (
+	<div { ...otherProps }
+		className={ classnames( className, 'form-buttons-bar' ) }
+	>
+		{ children }
+	</div>
+);
 
-	render() {
-		return (
-			<div
-				{ ...omit( this.props, 'className' ) }
-				className={ classnames( this.props.className, 'form-buttons-bar' ) }
-			>
-				{ this.props.children }
-			</div>
-		);
-	}
-}
+export default FormButtonsBar;

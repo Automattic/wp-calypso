@@ -4,15 +4,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { assign, findIndex, fromPairs } from 'lodash';
+import { assign, findIndex, fromPairs, noop } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:forms:sortable-list' );
 
 /**
  * Internal dependencies
  */
 import touchDetect from 'lib/touch-detect';
+
+const debug = debugFactory( 'calypso:forms:sortable-list' );
 
 class SortableList extends React.Component {
 	static propTypes = {
@@ -24,7 +25,7 @@ class SortableList extends React.Component {
 	static defaultProps = {
 		direction: 'horizontal',
 		allowDrag: true,
-		onChange: function() {},
+		onChange: noop,
 	};
 
 	state = {
@@ -111,7 +112,7 @@ class SortableList extends React.Component {
 
 		index = findIndex(
 			this.props.children,
-			function( child, i ) {
+			( child, i ) => {
 				var isBeyond, adjustedElementIndex, permittedVertical;
 
 				// Avoid self-comparisons for the active item
@@ -164,7 +165,7 @@ class SortableList extends React.Component {
 				}
 
 				return isBeyond;
-			}.bind( this )
+			}
 		);
 
 		return this.getAdjustedElementIndex( index );

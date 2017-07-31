@@ -26,9 +26,7 @@ class FormButton extends React.Component {
 
 	render() {
 		const { children, className, isPrimary, ...props } = this.props,
-			buttonClasses = classNames( className, {
-				'form-button': true,
-			} );
+			buttonClasses = classNames( className, 'form-button' );
 
 		return (
 			<Button

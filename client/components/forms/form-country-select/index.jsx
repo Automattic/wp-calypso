@@ -16,13 +16,17 @@ export default localize(
 
 		getOptions( countriesList ) {
 			if ( isEmpty( countriesList ) ) {
-				return [ { key: '', label: this.props.translate( 'Loading…' ), disabled: 'disabled' } ];
+				return [ {
+					key: '',
+					label: this.props.translate( 'Loading…' ),
+					disabled: true,
+				} ];
 			}
 			return countriesList.map( ( { code, name }, idx ) => ( {
 				key: idx,
 				label: name,
 				code,
-				disabled: code ? '' : 'disabled',
+				disabled: ! code,
 			} ) );
 		},
 

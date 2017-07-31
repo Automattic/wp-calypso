@@ -7,10 +7,10 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import FormRange from 'components/forms/range';
+import FormRange from '../';
 
 export default class extends React.PureComponent {
-    static displayName = 'Ranges';
+  static displayName = 'Ranges';
 
 	state = {
 		rangeValue: 24

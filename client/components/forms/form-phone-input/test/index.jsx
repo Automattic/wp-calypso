@@ -20,7 +20,10 @@ describe( 'FormPhoneInput', function() {
 
 	describe( 'getValue()', function() {
 		it( 'should set country from props', function() {
-			const phoneComponent = shallow( <FormPhoneInput countriesList={ mockCountriesList } initialCountryCode={ countries[ 1 ].code } /> );
+			const phoneComponent = shallow(
+				<FormPhoneInput countriesList={ mockCountriesList }
+					initialCountryCode={ countries[ 1 ].code } />
+			);
 			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal( countries[ 1 ] );
 		} );
 

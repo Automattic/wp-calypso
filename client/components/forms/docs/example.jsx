@@ -7,6 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -30,7 +31,6 @@ import FormTextInputWithAction from 'components/forms/form-text-input-with-actio
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FormToggle from 'components/forms/form-toggle';
 import PhoneInput from 'components/phone-input';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
 
 /**
  * Internal dependencies
@@ -183,16 +183,16 @@ class FormFields extends React.PureComponent {
 					<FormLegend>Form Toggle</FormLegend>
 					<FormToggle checked={ this.state.toggled } onChange={ this.handleToggle } />
 					<br />
-					<FormToggle checked={ false } disabled={ true } />
+					<FormToggle checked={ false } disabled />
 					<br />
-					<FormToggle checked={ true } disabled={ true } />
+					<FormToggle checked={ true } disabled />
 					<br />
 					<CompactFormToggle
 						checked={ this.state.compactToggled }
 						onChange={ this.handleCompactToggle }
 					/>
 					<br />
-					<CompactFormToggle checked={ false } disabled={ true } />
+					<CompactFormToggle checked={ false } disabled />
 
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>

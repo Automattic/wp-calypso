@@ -4,6 +4,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { noop } from 'lodash';
 
 export default class FormToggle extends PureComponent {
 	static propTypes = {
@@ -21,8 +22,8 @@ export default class FormToggle extends PureComponent {
 	static defaultProps = {
 		checked: false,
 		disabled: false,
-		onKeyDown: () => {},
-		onChange: () => {},
+		onKeyDown: noop,
+		onChange: noop,
 	};
 
 	static idNum = 0;

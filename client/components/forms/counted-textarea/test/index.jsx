@@ -71,7 +71,7 @@ describe( 'index', function() {
 			<CountedTextarea value={ value }
 				className="custom-class"
 				placeholder={ placeholder }
-				countPlaceholderLength={ true } />
+				countPlaceholderLength />
 		);
 		const result = renderer.getRenderOutput();
 
@@ -125,7 +125,7 @@ describe( 'index', function() {
 		renderer.render(
 			<CountedTextarea value={ value }
 				acceptableLength={ acceptableLength }
-				showRemainingCharacters={ true } >
+				showRemainingCharacters>
 				{ additionalPanelContent }
 			</CountedTextarea>
 		);

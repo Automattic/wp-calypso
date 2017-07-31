@@ -32,12 +32,12 @@ export default class extends React.Component {
 		this.setState( { hidePassword: ! this.state.hidePassword } );
 	};
 
-	hidden = () => {
+	hidden() {
 		if ( this.props.hideToggle ) {
 			return true;
 		}
 		return this.props.submitting || this.state.hidePassword;
-	};
+	}
 
 	focus = () => {
 		this.refs.textField.focus();
