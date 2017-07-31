@@ -15,6 +15,7 @@ import Card from 'components/card';
 import ProgressBar from 'components/progress-bar';
 import UploadDropZone from 'blocks/upload-drop-zone';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import EmptyContent from 'components/empty-content';
 import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
@@ -24,7 +25,12 @@ import {
 	isPluginUploadComplete,
 	isPluginUploadInProgress,
 } from 'state/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
+import {
+	getSiteAdminUrl,
+	isJetpackMinimumVersion,
+	isJetpackSite,
+	isJetpackSiteMultiSite,
+} from 'state/sites/selectors';
 
 class PluginUpload extends React.Component {
 
@@ -80,9 +86,24 @@ class PluginUpload extends React.Component {
 		);
 	}
 
+	renderNotAvailableForMultisite() {
+		const { translate, siteAdminUrl } = this.props;
+
+		return (
+			<EmptyContent
+				title={ translate( 'Not available on multisite networks' ) }
+				line={ translate( 'Use the WP Admin interface instead' ) }
+				action={ translate( 'Open WP Admin' ) }
+				actionURL={ siteAdminUrl }
+				illustration={ '/calypso/images/illustrations/illustration-jetpack.svg' }
+			/>
+		);
+	}
+
 	render() {
 		const {
 			translate,
+			isJetpackMultisite,
 			upgradeJetpack,
 			siteId,
 		} = this.props;
@@ -95,7 +116,8 @@ class PluginUpload extends React.Component {
 					siteId={ siteId }
 					featureExample={ this.renderUploadCard() }
 					version="5.1" /> }
-				{ ! upgradeJetpack && this.renderUploadCard() }
+				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
+				{ ! upgradeJetpack && ! isJetpackMultisite && this.renderUploadCard() }
 			</Main>
 		);
 	}
@@ -119,6 +141,8 @@ export default connect(
 			progress,
 			installing: progress === 100,
 			upgradeJetpack: isJetpack && ! isJetpackMinimumVersion( state, siteId, '5.1' ),
+			isJetpackMultisite: isJetpackSiteMultiSite( state, siteId ),
+			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		};
 	},
 	{ uploadPlugin, clearPluginUpload }
