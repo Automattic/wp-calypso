@@ -1,10 +1,11 @@
-/** @format */
 /**
+ * @format
  * @jest-environment jsdom
  */
 jest.mock( 'lib/feed-stream-store/actions', () => ( {
 	selectItem: jest.fn(),
 } ) );
+jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'page', () => ( {
 	show: require( 'sinon' ).spy(),
 } ) );

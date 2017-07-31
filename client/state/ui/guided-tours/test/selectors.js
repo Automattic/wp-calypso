@@ -4,6 +4,7 @@
 jest.mock( 'layout/guided-tours/config', () => {
 	return require( 'state/ui/guided-tours/test/fixtures/config' );
 } );
+jest.mock( 'lib/user', () => () => {} );
 
 /**
  * External dependencies

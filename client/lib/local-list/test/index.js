@@ -1,11 +1,29 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'store', () => {
+	const data = {};
+
+	return {
+		get( key ) {
+			return data[ key ];
+		},
+
+		set( key, value ) {
+			data[ key ] = value;
+		}
+	};
+} );
 
 /**
  * External dependencies
  */
 import { assert } from 'chai';
+
+/**
+ * Internal dependecies
+ */
+import LocalList from '../';
 
 const anExampleKey = 'day:2014-08-01';
 
@@ -16,11 +34,10 @@ function createLocalRecords( statList, qty ) {
 	}
 }
 
-describe.skip( 'LocalList', function() {
-	let LocalList, statList;
+describe( 'LocalList', function() {
+	let statList;
 
 	before( () => {
-		LocalList = require( '..' );
 		statList = new LocalList( { localStoreKey: 'TestLocalListKey' } );
 	} );
 

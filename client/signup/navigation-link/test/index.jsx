@@ -1,3 +1,16 @@
+jest.mock( 'lib/analytics', () => ( {
+	tracks: {
+		recordEvent: () => {}
+	}
+} ) );
+jest.mock( 'lib/signup/actions', () => ( {
+	submitSignupStep: require( 'sinon' ).stub()
+} ) );
+jest.mock( 'signup/utils', () => ( {
+	getStepUrl: require( 'sinon' ).stub()
+} ) );
+jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
+
 /**
  * External dependencies
  */
@@ -5,17 +18,16 @@ import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { stub } from 'sinon';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
 import EMPTY_COMPONENT from 'components/empty-component';
+import { NavigationLink } from '../';
+import signupUtils from 'signup/utils';
 
-describe.skip( 'NavigationLink', () => {
+describe( 'NavigationLink', () => {
 	const Gridicon = EMPTY_COMPONENT;
-	const submitSignupStep = stub();
 	const defaultProps = {
 		flowName: 'test:flow',
 		stepName: 'test:step2',
@@ -29,25 +41,15 @@ describe.skip( 'NavigationLink', () => {
 		goToNextStep: stub(),
 		translate: ( str ) => `translated:${ str }`,
 	};
-	const signupUtils = { getStepUrl: stub() };
-	let NavigationLink, props;
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/analytics', { tracks: { recordEvent: noop } } );
-		mockery.registerMock( 'lib/signup/actions', { submitSignupStep } );
-		mockery.registerMock( 'signup/utils', signupUtils );
-		mockery.registerMock( 'gridicons', EMPTY_COMPONENT );
-	} );
-
-	before( () => {
-		NavigationLink = require( '..' ).NavigationLink;
-	} );
+	let props;
 
 	beforeEach( () => {
 		props = Object.assign( {}, defaultProps );
 		props.goToNextStep = stub();
+	} );
 
-		signupUtils.getStepUrl = stub();
+	afterEach( () => {
+		signupUtils.getStepUrl.reset();
 	} );
 
 	it( 'should render Button element', () => {

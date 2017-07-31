@@ -98,7 +98,8 @@ describe( 'FormToggle', function() {
 			);
 			const toggleInputs = toggles.find( '.form-toggle' );
 			const ids = toggleInputs.map( ( input ) => input.props().id );
-			return ids.length === uniq( ids ).length;
+
+			assert( ids.length === uniq( ids ).length );
 		} );
 	} );
 } );

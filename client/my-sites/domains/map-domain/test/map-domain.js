@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'page', () => {
 	const { spy } = require( 'sinon' );
 	const pageSpy = spy();
@@ -33,6 +34,7 @@ describe( 'MapDomain component', () => {
 	} );
 
 	const defaultProps = {
+		cart: {},
 		productsList: {},
 		domainsWithPlansOnly: false,
 		translate: string => string,

@@ -1,16 +1,47 @@
+jest.mock( 'lib/user/utils', () => ( {
+	isLoggedIn: () => true
+} ) );
+jest.mock( 'store', () => ( {
+	get: () => {},
+	set: () => {}
+} ) );
+jest.mock( 'dispatcher', () => ( {
+	handleViewAction: () => {},
+	handleServerAction: () => {}
+} ) );
+jest.mock( 'lib/wp', () => {
+	const { stub } = require( 'sinon' );
+	const getSettings = stub();
+	const postSettings = stub();
+
+	return {
+		getSettings,
+		postSettings,
+		undocumented: () => ( {
+			me: () => ( {
+				settings: () => ( {
+					get: getSettings,
+					update: postSettings
+				} )
+			} )
+		} )
+	};
+} );
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import mockery from 'mockery';
-import { noop } from 'lodash';
+import store from 'store';
 
 /**
  * Internal dependencies
  */
+import Dispatcher from 'dispatcher';
+import { getSettings, postSettings } from 'lib/wp';
+import * as PreferencesActions from '../actions';
 import { USER_SETTING_KEY, LOCALSTORAGE_KEY } from '../constants';
 import { useSandbox } from 'test/helpers/use-sinon';
-import useMockery from 'test/helpers/use-mockery';
 import useNock from 'test/helpers/use-nock';
 
 /**
@@ -18,38 +49,10 @@ import useNock from 'test/helpers/use-nock';
  */
 const DUMMY_PERSISTED_PREFERENCES = { saved: true };
 
-describe.skip( 'PreferencesActions', function() {
-	let sandbox, PreferencesActions, getSettings, postSettings;
-	const store = { get: noop, set: noop };
-	const Dispatcher = { handleViewAction: noop, handleServerAction: noop };
-
+describe( 'PreferencesActions', function() {
+	let sandbox;
 	useSandbox( ( _sandbox ) => sandbox = _sandbox );
-	useMockery();
 	useNock();
-
-	before( function() {
-		mockery.registerMock( 'lib/user/utils', { isLoggedIn: () => true } );
-		mockery.registerMock( 'store', store );
-		mockery.registerMock( 'dispatcher', Dispatcher );
-		mockery.registerMock( 'lib/wp', {
-			undocumented: function() {
-				return {
-					me: function() {
-						return {
-							settings: function() {
-								return {
-									get: getSettings,
-									update: postSettings
-								};
-							}
-						};
-					}
-				};
-			}
-		} );
-
-		PreferencesActions = require( '../actions' );
-	} );
 
 	beforeEach( function() {
 		sandbox.restore();
@@ -58,10 +61,15 @@ describe.skip( 'PreferencesActions', function() {
 		sandbox.stub( Dispatcher, 'handleViewAction' );
 		sandbox.stub( Dispatcher, 'handleServerAction' );
 
-		getSettings = sandbox.stub().callsArgWithAsync( 0, null, {
+		getSettings.callsArgWithAsync( 0, null, {
 			[ USER_SETTING_KEY ]: DUMMY_PERSISTED_PREFERENCES
 		} );
-		postSettings = sandbox.stub().callsArgAsync( 1 );
+		postSettings.callsArgAsync( 1 );
+	} );
+
+	afterEach( () => {
+		getSettings.reset();
+		postSettings.reset();
 	} );
 
 	describe( '#fetch()', function() {
@@ -89,7 +97,7 @@ describe.skip( 'PreferencesActions', function() {
 		it( 'should not persist to localStorage from remote request if error occurs', function( done ) {
 			sandbox.stub( PreferencesActions, 'mergePreferencesToLocalStorage' );
 
-			getSettings = sandbox.stub().callsArgWithAsync( 0, true );
+			getSettings.callsArgWithAsync( 0, true );
 
 			PreferencesActions.fetch();
 			process.nextTick( function() {

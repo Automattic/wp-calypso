@@ -4,6 +4,9 @@
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => ''
 } ) );
+jest.mock( 'lib/user', () => () => ( {
+	get: () => {}
+} ) );
 
 /**
  * External dependencies

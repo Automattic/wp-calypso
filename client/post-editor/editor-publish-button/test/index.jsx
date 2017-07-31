@@ -4,6 +4,7 @@
 jest.mock( 'lib/posts/stats', () => ( {
 	recordEvent: () => {}
 } ) );
+jest.mock( 'lib/user', () => () => {} );
 
 /**
  * External dependencies

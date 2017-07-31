@@ -15,9 +15,8 @@ import {
 import { fetchShortcode } from '../actions';
 import { useSandbox } from 'test/helpers/use-sinon';
 import useNock from 'test/helpers/use-nock';
-import wpcom from 'lib/wp';
 
-describe.skip( 'actions', () => {
+describe( 'actions', () => {
 	let spy;
 	useSandbox( ( sandbox ) => spy = sandbox.spy() );
 
@@ -27,9 +26,9 @@ describe.skip( 'actions', () => {
 
 		describe( 'success', () => {
 			useNock( ( nock ) => {
-				nock( 'https://public-api.wordpress.com:443' )
+				nock( 'https://public-api.wordpress.com' )
 					.persist()
-					.get( '/sites/' + siteId + '/shortcodes/render' )
+					.get( `/rest/v1.1/sites/${ siteId }/shortcodes/render` )
 					.query( {
 						shortcode
 					} )
@@ -38,26 +37,21 @@ describe.skip( 'actions', () => {
 						shortcode: '[gallery ids="1,2,3"]',
 						scripts: {},
 						styles: {}
-					}, {
-						'Content-Type': 'application/json'
 					} );
 			} );
 
 			it( 'should return a fetch action object when called', () => {
-				fetchShortcode( siteId, shortcode )( spy );
-
-				expect( spy ).to.have.been.calledWith( {
-					type: SHORTCODE_REQUEST,
-					siteId,
-					shortcode
+				return fetchShortcode( siteId, shortcode )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: SHORTCODE_REQUEST,
+						siteId,
+						shortcode
+					} );
 				} );
 			} );
 
 			it( 'should return a receive action when request successfully completes', () => {
-				return wpcom.undocumented().site( siteId ).shortcodes(
-					{
-						shortcode
-					},
+				return fetchShortcode( siteId, shortcode )( spy ).then(
 					() => {
 						expect( spy ).to.have.been.calledWith( {
 							type: SHORTCODE_REQUEST_SUCCESS,
@@ -83,24 +77,19 @@ describe.skip( 'actions', () => {
 
 		describe( 'failure', () => {
 			useNock( ( nock ) => {
-				nock( 'https://public-api.wordpress.com:443' )
+				nock( 'https://public-api.wordpress.com' )
 					.persist()
-					.get( '/sites/' + siteId + '/shortcodes/render' )
+					.get( `/rest/v1.1/sites/${ siteId }/shortcodes/render` )
 					.query( {
 						shortcode
 					} )
 					.reply( 400, {
 						error: 'The requested shortcode does not exist.'
-					}, {
-						'Content-Type': 'application/json'
 					} );
 			} );
 
 			it( 'should return a receive action when an error occurs', () => {
-				return wpcom.undocumented().site( siteId ).shortcodes(
-					{
-						shortcode
-					},
+				return fetchShortcode( siteId, shortcode )( spy ).catch(
 					() => {
 						expect( spy ).to.have.been.calledWith( {
 							type: SHORTCODE_REQUEST_FAILURE,

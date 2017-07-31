@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'lib/user', () => () => {} );
 
 /**
  * External dependencies
