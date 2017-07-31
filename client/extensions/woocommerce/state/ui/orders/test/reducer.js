@@ -28,7 +28,7 @@ describe( 'reducer', () => {
 		expect( newState ).to.eql( { 123: { currentPage: 2, currentSearch: '' } } );
 	} );
 
-	it( 'should should update the current page when changed', () => {
+	it( 'should update the current page when changed', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 123,
@@ -41,7 +41,7 @@ describe( 'reducer', () => {
 		expect( newState ).to.eql( { 123: { currentPage: 2, currentSearch: '' } } );
 	} );
 
-	it( 'should should update the current search when changed', () => {
+	it( 'should update the current search when changed', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 123,
@@ -54,7 +54,7 @@ describe( 'reducer', () => {
 		expect( newState ).to.eql( { 123: { currentPage: 3, currentSearch: 'example' } } );
 	} );
 
-	it( 'should should store the current query for more than one site', () => {
+	it( 'should store the current query for more than one site', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 234,
@@ -70,7 +70,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should should remove the key when page is re-set to initial state', () => {
+	it( 'should remove the key when page is re-set to initial state', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 123,
@@ -83,7 +83,7 @@ describe( 'reducer', () => {
 		expect( newState ).to.eql( {} );
 	} );
 
-	it( 'should should remove the key when search is re-set to initial state', () => {
+	it( 'should remove the key when search is re-set to initial state', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 123,
