@@ -430,7 +430,7 @@ export const logoutUser = ( redirectTo ) => ( dispatch, getState ) => {
 			client_secret: config( 'wpcom_signup_key' ),
 			logout_nonce: logoutNonce,
 		} ).then( ( response ) => {
-			const responseData = response.body && response.body.data;
+			const responseData = response.body && response.body.data || {};
 			dispatch( {
 				type: LOGOUT_REQUEST_SUCCESS,
 				data: responseData,
