@@ -38,6 +38,8 @@ import PhoneInput from 'components/phone-input';
 var countriesList = require( 'lib/countries-list' ).forSms();
 
 class FormFields extends React.PureComponent {
+	displayName: 'FormFields' // Needed for devdocs/design
+
 	state = {
 		checkedRadio: 'first',
 		toggled: false,
