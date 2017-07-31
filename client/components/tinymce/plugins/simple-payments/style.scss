@@ -114,6 +114,15 @@
 		margin: 0;
 		margin-right: 24px;
 	}
+
+	&.is-placeholder {
+		padding-left: 64px; // 2*24px of padding + 16px of radio width
+		padding-right: 72px; // 2*24px of padding + 24px gridicon width
+	}
+
+	.placeholder-text {
+		@include placeholder();
+	}
 }
 
 .editor-simple-payments-modal__list-label {

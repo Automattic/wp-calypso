@@ -35,6 +35,9 @@ import {
 	receiveDeleteProduct,
 } from 'state/simple-payments/product-list/actions';
 
+// Utility function for checking the state of the Payment Buttons list
+const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
+
 class SimplePaymentsDialog extends Component {
 	static propTypes = {
 		showDialog: PropTypes.bool.isRequired,
@@ -60,15 +63,17 @@ class SimplePaymentsDialog extends Component {
 
 		this._isMounted = false;
 
+		const { editPaymentId, paymentButtons } = this.props;
+
 		this.formStateController = formState.Controller( {
-			initialFields: this.getInitialFormFields( this.props.editPaymentId ),
+			initialFields: this.getInitialFormFields( editPaymentId ),
 			onNewState: form => this._isMounted && this.setState( { form } ),
 			validatorFunction: this.validateFormFields,
 		} );
 
 		this.state = {
-			activeTab: 'form',
-			editedPaymentId: this.props.editPaymentId,
+			activeTab: editPaymentId || isEmptyArray( paymentButtons ) ? 'form' : 'list',
+			editedPaymentId: editPaymentId,
 			selectedPaymentId: null,
 			form: this.formStateController.getInitialState(),
 			isSubmitting: false,
@@ -80,7 +85,21 @@ class SimplePaymentsDialog extends Component {
 	componentWillReceiveProps( nextProps ) {
 		// When transitioning from hidden to visible, show and initialize the form
 		if ( nextProps.showDialog && ! this.props.showDialog ) {
-			this.editPaymentButton( nextProps.editPaymentId );
+			if ( nextProps.editPaymentId ) {
+				// Explicitly ordered to edit a particular button
+				this.editPaymentButton( nextProps.editPaymentId );
+			} else if ( isEmptyArray( nextProps.paymentButtons ) ) {
+				// If the button list is loaded and empty, show the "Add New" form
+				this.editPaymentButton( null );
+			} else {
+				// If the list is loading or is non-empty, show it
+				this.setState( { activeTab: 'list' } );
+			}
+		}
+
+		// If the list has finished loading and is empty, switch from list to the "Add New" form
+		if ( this.props.paymentButtons === null && isEmptyArray( nextProps.paymentButtons ) ) {
+			this.editPaymentButton( null );
 		}
 
 		// clear the form when dialog is being closed -- it'll be blank next time it's opened
@@ -316,9 +335,11 @@ class SimplePaymentsDialog extends Component {
 		const { showDialog, onClose, siteId, paymentButtons, currencyCode } = this.props;
 		const { activeTab, errorMessage } = this.state;
 
-		// Don't show navigation when directly editing a payment button
-		const showNavigation = activeTab === 'list' || ! this.isDirectEdit();
-		const currencyDefaults = getCurrencyDefaults( currencyCode );
+		// Don't show navigation on 'form' tab if the list is empty or if directly editing
+		// a payment button. On the 'list' tab, always show it.
+		const showNavigation =
+			activeTab === 'list' ||
+			( activeTab === 'form' && ! this.isDirectEdit() && ! isEmptyArray( paymentButtons ) );
 
 		return (
 			<Dialog
@@ -341,7 +362,7 @@ class SimplePaymentsDialog extends Component {
 					<Notice status="is-error" text={ errorMessage } onDismissClick={ this.dismissError } /> }
 				{ activeTab === 'form'
 					? <ProductForm
-							currencyDefaults={ currencyDefaults }
+							currencyDefaults={ getCurrencyDefaults( currencyCode ) }
 							fieldValues={ this.getFormValues() }
 							isFieldInvalid={ this.isFormFieldInvalid }
 							onFieldChange={ this.handleFormFieldChange }
@@ -367,7 +388,7 @@ export default connect( ( state, { siteId } ) => {
 
 	return {
 		siteId,
-		paymentButtons: getSimplePayments( state, siteId ) || [],
+		paymentButtons: getSimplePayments( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 	};
 } )( localize( SimplePaymentsDialog ) );
