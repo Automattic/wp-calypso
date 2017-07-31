@@ -89,6 +89,11 @@ export class EditorPublishDate extends React.Component {
 	renderCalendarHeader() {
 		const isScheduled = utils.isFutureDated( this.props.post );
 		const isBackDated = utils.isBackDated( this.props.post );
+		const isPublished = utils.isPublished( this.props.post );
+
+		if ( isPublished ) {
+			return;
+		}
 
 		if ( ! isScheduled && ! isBackDated ) {
 			return (
