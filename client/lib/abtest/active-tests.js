@@ -114,4 +114,14 @@ module.exports = {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	restoreSession: {
+		datestamp: '20170730',
+		variations: {
+			restorePath: 50,
+			doNotRestore: 50,
+		},
+		allowExistingUsers: true,
+		defaultVariation: 'restorePath',
+		localeTargets: 'any',
+	},
 };

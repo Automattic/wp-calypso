@@ -8,6 +8,7 @@ import store from 'store';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import { isOutsideCalypso } from 'lib/url';
 
 const debug = debugFactory( 'calypso:restore-last-path' );
@@ -107,6 +108,9 @@ export function restoreLastSession( currentPath ) {
 		return false;
 	}
 	isFirstRun = false;
+	if ( abtest( 'restoreSession' ) !== 'restorePath' ) {
+		return false;
+	}
 
 	const lastPath = getSavedPath();
 	if ( currentPath === '/' && lastPath ) {
