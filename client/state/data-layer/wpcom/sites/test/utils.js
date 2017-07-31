@@ -99,7 +99,7 @@ describe( 'utility functions', () => {
 
 			updatePlaceholderComment( { dispatch }, action, null, comment );
 
-			expect( dispatch ).to.have.been.called.exactly( 4 );
+			expect( dispatch ).to.have.been.calledThrice;
 			expect( dispatch ).to.have.been.calledWith( {
 				type: COMMENTS_DELETE,
 				siteId: 2916284,
@@ -120,7 +120,7 @@ describe( 'utility functions', () => {
 
 			updatePlaceholderComment( { dispatch }, action, null, comment );
 
-			expect( dispatch ).to.have.been.called.exactly( 4 );
+			expect( dispatch ).to.have.been.calledThrice;
 			expect( dispatch ).to.have.been.calledWith( {
 				type: COMMENTS_RECEIVE,
 				siteId: 2916284,
@@ -142,7 +142,7 @@ describe( 'utility functions', () => {
 
 			updatePlaceholderComment( { dispatch }, action, null, comment );
 
-			expect( dispatch ).to.have.been.called.exactly( 4 );
+			expect( dispatch ).to.have.been.calledThrice;
 			expect( dispatch ).to.have.been.calledWith( {
 				type: COMMENTS_COUNT_INCREMENT,
 				siteId: 2916284,

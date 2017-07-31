@@ -49,6 +49,7 @@ const addCommentsTree = ( { dispatch }, { query }, next, data ) => {
 	dispatch( {
 		type: COMMENTS_TREE_SITE_ADD,
 		siteId,
+		status,
 		tree,
 	} );
 };
