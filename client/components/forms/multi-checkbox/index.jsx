@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { includes, omit } from 'lodash';
 
 export default class MultiCheckbox extends Component {
@@ -18,22 +19,22 @@ export default class MultiCheckbox extends Component {
 		defaultChecked: Object.freeze( [] ),
 		disabled: false,
 		onChange: () => {},
-		name: 'multiCheckbox'
+		name: 'multiCheckbox',
 	};
 
 	state = {
-		initialChecked: this.props.defaultChecked
+		initialChecked: this.props.defaultChecked,
 	};
 
-	handleChange = ( event ) => {
+	handleChange = event => {
 		const target = event.target;
 		let checked = this.props.checked || this.state.initialChecked;
-		checked = checked.concat( [ target.value ] ).filter( ( currentValue ) => {
+		checked = checked.concat( [ target.value ] ).filter( currentValue => {
 			return currentValue !== target.value || target.checked;
 		} );
 
 		this.props.onChange( {
-			value: checked
+			value: checked,
 		} );
 
 		event.stopPropagation();
@@ -43,8 +44,11 @@ export default class MultiCheckbox extends Component {
 		const { disabled, name, options } = this.props;
 		const checked = this.props.checked || this.state.initialChecked;
 		return (
-			<div className="multi-checkbox" { ...omit( this.props, Object.keys( MultiCheckbox.propTypes ) ) }>
-				{ options.map( ( option ) => (
+			<div
+				className="multi-checkbox"
+				{ ...omit( this.props, Object.keys( MultiCheckbox.propTypes ) ) }
+			>
+				{ options.map( option =>
 					<label key={ option.value }>
 						<input
 							name={ name + '[]' }
@@ -54,9 +58,11 @@ export default class MultiCheckbox extends Component {
 							onChange={ this.handleChange }
 							disabled={ disabled }
 						/>
-						<span>{ option.label }</span>
+						<span>
+							{ option.label }
+						</span>
 					</label>
-				) ) }
+				) }
 			</div>
 		);
 	}

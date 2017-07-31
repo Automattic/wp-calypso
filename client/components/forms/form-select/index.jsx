@@ -4,12 +4,10 @@
 import React from 'react';
 import classNames from 'classnames';
 
-const FormSelect = React.createClass( {
-	getDefaultProps() {
-		return {
-			isError: false,
-		};
-	},
+class FormSelect extends React.Component {
+	static defaultProps = {
+		isError: false,
+	};
 
 	render() {
 		const { inputRef, className, isError, ...props } = this.props;
@@ -23,6 +21,6 @@ const FormSelect = React.createClass( {
 			</select>
 		);
 	}
-} );
+}
 
 export default FormSelect;

@@ -10,24 +10,24 @@ Counted Textarea is a React form component which renders a `<textarea />` accomp
 `<CountedTextarea />` expects to be rendered as a [controlled component](https://facebook.github.io/react/docs/forms.html#controlled-components), meaning that it will only behave as expected if passed a `value` prop. The textarea will automatically keep the character count in sync as the value prop is changed. With the exception of `className`, all props will be transferred to the child `<textarea />`. If a `className` prop is passed, it will be applied to the wrapper node.
 
 ```jsx
-var React = require( 'react' ),
-	CountedTextarea = require( 'components/forms/counted-textarea' );
+import React from 'react';
+import CountedTextarea from 'components/forms/counted-textarea';
 
-module.exports = React.createClass( {
-	displayName: 'MyComponent',
+class MyComponent extends Component {
+	state = {
+		value: ''
+	}
 
-	getInitialState: function() {
-		return { value: '' };
-	},
-
-	onChange: function( event ) {
+	onChange = ( event ) => {
 		this.setState( { value: event.target.value } );
-	},
+	}
 
-	render: function() {
+	render() {
 		return <CountedTextarea value={ this.state.value } onChange={ this.onChange } />
 	}
-} );
+};
+
+export default MyComponent;
 ```
 
 ## Props
