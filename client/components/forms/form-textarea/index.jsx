@@ -1,15 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import classnames from 'classnames';
+var React = require( 'react' ),
+	classnames = require( 'classnames' ),
+	omit = require( 'lodash/omit' );
 
-const FormTextarea = ( { className, children, ...otherProps } ) => (
-	<textarea { ...otherProps }
-		className={ classnames( className, 'form-textarea' ) }
-	>
-		{ children }
-	</textarea>
-);
+module.exports = React.createClass( {
 
-export default FormTextarea;
+	displayName: 'FormTextarea',
+
+	render: function() {
+		return (
+			<textarea { ...omit( this.props, 'className' ) } className={ classnames( this.props.className, 'form-textarea' ) } >
+				{ this.props.children }
+			</textarea>
+		);
+	}
+} );

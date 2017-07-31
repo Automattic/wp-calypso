@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import ReactDom from 'react-dom';
-import TestUtils from 'react-addons-test-utils';
-import assert from 'assert';
-
-/**
- * Internal dependencies
- */
-import MultiCheckbox from '../';
+var assert = require( 'assert' ),
+	ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
+	TestUtils = require( 'react-addons-test-utils' ),
+	MultiCheckbox = require( '../' );
 
 describe( 'index', function() {
 	var options = [

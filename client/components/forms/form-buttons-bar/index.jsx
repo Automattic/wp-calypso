@@ -1,15 +1,21 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import classnames from 'classnames';
+var React = require( 'react' ),
+	classnames = require( 'classnames' ),
+	omit = require( 'lodash/omit' );
 
-const FormButtonsBar = ( { className, children, ...otherProps } ) => (
-	<div { ...otherProps }
-		className={ classnames( className, 'form-buttons-bar' ) }
-	>
-		{ children }
-	</div>
-);
+module.exports = React.createClass( {
 
-export default FormButtonsBar;
+	displayName: 'FormButtonsBar',
+
+	render: function() {
+		return (
+			<div
+				{ ...omit( this.props, 'className' ) }
+				className={ classnames( this.props.className, 'form-buttons-bar' ) } >
+				{ this.props.children }
+			</div>
+		);
+	}
+} );

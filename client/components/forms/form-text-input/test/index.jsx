@@ -2,7 +2,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { spy } from 'sinon';
-import FormTextInput from '../';
+import FormTextInput from 'components/forms/form-text-input';
 
 describe( '<FormTextInput />', () => {
 	it( 'should add the provided class names', () => {

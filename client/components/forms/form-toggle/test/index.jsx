@@ -1,26 +1,26 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
-import ReactDom from 'react-dom';
-import React from 'react';
-import TestUtils from 'react-addons-test-utils';
-import { uniq } from 'lodash';
+var assert = require( 'assert' ),
+	ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
+	TestUtils = require( 'react-addons-test-utils' ),
+	uniq = require( 'lodash/uniq' );
 
 /**
  * Internal dependencies
  */
-import FormToggle from '../';
-import CompactFormToggle from '../compact';
+var FormToggle = require( 'components/forms/form-toggle' ),
+	CompactFormToggle = require( 'components/forms/form-toggle/compact' );
 
 /**
  * Module variables
  */
-class Wrapper extends React.Component {
-    render() {
+var Wrapper = React.createClass( {
+	render: function() {
 		return <div>{ this.props.children }</div>;
 	}
-}
+} );
 
 describe( 'index', function() {
 	require( 'test/helpers/use-fake-dom' )();
