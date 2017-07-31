@@ -3,7 +3,8 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { map } from 'lodash';
+import { map, get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /***
  * Internal dependencies
@@ -11,7 +12,7 @@ import { map } from 'lodash';
 import Gravatar from 'components/gravatar';
 import { getPostCommentsTree } from 'state/comments/selectors';
 
-export class ConversationCaterpillar extends React.Component {
+class ConversationCaterpillarComponent extends React.Component {
 	static propTypes = {
 		blogId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,
@@ -23,6 +24,9 @@ export class ConversationCaterpillar extends React.Component {
 		if ( ! commentId ) {
 			return null;
 		}
+
+		const firstComment = commentsTree[ Object.keys( commentsTree )[ 0 ] ];
+		const firstCommenterName = get( firstComment, 'data.author.name' );
 
 		// At the moment, we just show authors for the entire commentsTree
 		return (
@@ -37,10 +41,15 @@ export class ConversationCaterpillar extends React.Component {
 						/>
 					);
 				} ) }
+				<div className="conversation-caterpillar__count">
+					{ firstCommenterName }
+				</div>
 			</div>
 		);
 	}
 }
+
+export const ConversationCaterpillar = localize( ConversationCaterpillarComponent );
 
 const ConnectedConversationCaterpillar = connect( ( state, ownProps ) => {
 	return {
