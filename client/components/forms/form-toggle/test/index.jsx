@@ -23,7 +23,6 @@ const Wrapper = ( { children } ) => (
 );
 
 describe( 'index', function() {
-	require( 'test/helpers/use-fake-dom' )();
 	describe( 'rendering', function() {
 		it( 'should have is-compact class', function() {
 			const toggle = shallow( <CompactFormToggle /> );
