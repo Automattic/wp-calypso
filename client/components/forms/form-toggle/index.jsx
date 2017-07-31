@@ -75,6 +75,7 @@ export default class FormToggle extends PureComponent {
 		return (
 			<span className={ wrapperClasses }>
 				<input
+					id={ id }
 					className={ toggleClasses }
 					type="checkbox"
 					checked={ this.props.checked }
@@ -84,7 +85,6 @@ export default class FormToggle extends PureComponent {
 				<label className="form-toggle__label" htmlFor={ id }>
 					<span
 						className="form-toggle__switch"
-						id={ id }
 						onClick={ this.onClick }
 						onKeyDown={ this.onKeyDown }
 						role="checkbox"
