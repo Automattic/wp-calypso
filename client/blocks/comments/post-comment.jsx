@@ -250,7 +250,7 @@ PostComment.propTypes = {
 	onCommentSubmit: React.PropTypes.func,
 
 	// connect()ed props:
-	currentUser: React.PropTypes.object.isRequired,
+	currentUser: React.PropTypes.object,
 };
 
 PostComment.defaultProps = {

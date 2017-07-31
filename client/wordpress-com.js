@@ -248,10 +248,16 @@ sections.push( {
 
 sections.push( {
 	name: 'reader',
-	paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
+	paths: [
+		'/read/feeds/[^\\/]+/posts/[^\\/]+',
+		'/read/blogs/[^\\/]+/posts/[^\\/]+',
+		'/read/feeds/',
+		'/read/blogs/'
+	],
 	module: 'reader/full-post',
 	secondary: false,
-	group: 'reader'
+	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {

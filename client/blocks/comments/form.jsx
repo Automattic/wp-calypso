@@ -263,7 +263,7 @@ PostCommentForm.propTypes = {
 	onCommentSubmit: React.PropTypes.func,
 
 	// connect()ed props:
-	currentUser: React.PropTypes.object.isRequired,
+	currentUser: React.PropTypes.object,
 	writeComment: React.PropTypes.func.isRequired,
 	deleteComment: React.PropTypes.func.isRequired,
 	replyComment: React.PropTypes.func.isRequired,
