@@ -1,17 +1,21 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	isEmpty = require( 'lodash/isEmpty' );
+import React from 'react';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormPhoneInput = require( 'components/forms/form-phone-input' ),
-	FormInputValidation = require( 'components/forms/form-input-validation' ),
-	countriesList = require( 'lib/countries-list' ).forSms(),
-	Buttons = require( './buttons' );
+import FormFieldset from 'components/forms/form-fieldset';
+import FormPhoneInput from 'components/forms/form-phone-input';
+import FormInputValidation from 'components/forms/form-input-validation';
+import Buttons from './buttons';
+
+/**
+ * Internal dependencies
+ */
+var countriesList = require( 'lib/countries-list' ).forSms();
 
 module.exports = React.createClass( {
 	displayName: 'SecurityAccountRecoveryRecoveryPhoneEdit',
