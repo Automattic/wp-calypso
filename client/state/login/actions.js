@@ -45,7 +45,6 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import wpcom from 'lib/wp';
 import i18nUtils from 'lib/i18n-utils';
 
-// TODO: Remove when we're done with the PR15485 fallback.
 function getErrorMessageFromErrorCode( code ) {
 	const errorMessages = {
 		account_unactivated: translate( "This account hasn't been activated yet — check your email for a message from " +
@@ -110,7 +109,7 @@ function getLocalizedLoginURL( action ) {
  * @returns {{code: string?, message: string, field: string}} an error message and the id of the corresponding field, if not global
  */
 function getErrorFromHTTPError( httpError ) {
-	let message, code;
+	let message;
 	let field = 'global';
 
 	if ( ! httpError.status ) {
@@ -121,14 +120,8 @@ function getErrorFromHTTPError( httpError ) {
 		};
 	}
 
-	code = get( httpError, 'response.body.data.errors.code' );
-	if ( code ) {
-		message = get( httpError, 'response.body.data.errors.message' );
-	} else {
-		// TODO: Remove when we're done with the PR15485 fallback.
-		code = get( httpError, 'response.body.data.errors[0]', false );
-		message = getErrorMessageFromErrorCode( code );
-	}
+	const code = get( httpError, 'response.body.data.errors.code' );
+	message = get( httpError, 'response.body.data.errors.message' );
 
 	if ( code ) {
 		if ( code in errorFields ) {
@@ -141,7 +134,6 @@ function getErrorFromHTTPError( httpError ) {
 	return { code, message, field };
 }
 
-// TODO: Remove when we're done with the PR15485 fallback.
 const wpcomErrorMessages = {
 	user_exists: translate( 'Your Google email address is already in use WordPress.com. ' +
 		'Log in to your account using your email address or username, and your password. ' +
@@ -155,8 +147,7 @@ const wpcomErrorMessages = {
  * @returns {{message: string, field: string, code: string}} an error message and the id of the corresponding field
  */
 const getErrorFromWPCOMError = ( wpcomError ) => ( {
-	// TODO: Remove wpcomErrorMessages[] reference when we're done with the PR15485 fallback.
-	message: wpcomError.message || wpcomErrorMessages[ wpcomError.error ],
+	message: wpcomErrorMessages[ wpcomError.error ] || wpcomError.message,
 	code: wpcomError.error,
 	field: 'global',
 } );
