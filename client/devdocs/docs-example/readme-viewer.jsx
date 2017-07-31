@@ -28,7 +28,7 @@ class ReadmeViewer extends Component {
 				</span>;
 
 		const body = this.props.readmeFilePath
-			? <div dangerouslySetInnerHTML={ this.props.getReadmeHTML() } />
+			? <div dangerouslySetInnerHTML={ this.props.getReadmeHTML( this.props.readmeFilePath ) } />
 			: <div>Please write one!</div>;
 
 		return (
@@ -43,7 +43,9 @@ class ReadmeViewer extends Component {
 }
 
 ReadmeViewer.defaultProps = {
-	getReadmeHTML: () => { __html: require( `../../${ this.props.readmeFilePath }/README.md` ) }
+	getReadmeHTML: ( readmeFilePath ) => {
+		return { __html: require( `../../components/${ readmeFilePath }/README.md` ) };
+	}
 };
 
 export default ReadmeViewer;

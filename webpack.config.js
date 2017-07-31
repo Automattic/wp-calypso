@@ -149,8 +149,7 @@ const webpackConfig = {
 				'react-virtualized': 'react-virtualized/dist/commonjs',
 				'social-logos/example': 'social-logos/build/example'
 			},
-			getAliasesForDirectory( path.join( __dirname, 'client', 'extensions' ) ),
-			getAliasesForDirectory( path.join( __dirname, 'client', 'components' ), 'component-readme-' )
+			getAliasesForDirectory( path.join( __dirname, 'client', 'extensions' ) )
 		)
 	},
 	node: {

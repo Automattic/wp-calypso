@@ -116,60 +116,60 @@ let DesignAssets = React.createClass( {
 						/> }
 
 				<Collection component={ component } filter={ filter }>
-					<Accordions componentUsageStats={ componentsUsageStats.accordion } readmeFilePath="components/accordion" />
-					<Banner readmeFilePath="components/banner" />
-					<BulkSelect readmeFilePath="components/bulk-select" />
-					<ButtonGroups readmeFilePath="components/button-group" />
-					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="components/button" />
-					<Cards readmeFilePath="components/card" />
-					<ClipboardButtonInput readmeFilePath="components/clipboard-button-input" />
-					<ClipboardButtons readmeFilePath="components/forms/clipboard-button" />
-					<Count readmeFilePath="components/count" />
-					<CountedTextareas readmeFilePath="components/forms/counted-textarea" />
-					<DatePicker readmeFilePath="components/date-picker" />
-					<DropZones searchKeywords="drag" readmeFilePath="components/drop-zone" />
-					<EllipsisMenu readmeFilePath="components/ellipsis-menu" />
-					<EmojifyExample readmeFilePath="components/emojify" />
-					<EmptyContent readmeFilePath="components/empty-content" />
-					<ExternalLink readmeFilePath="components/external-link" />
-					<FAQ readmeFilePath="components/faq" />
-					<FeatureGate readmeFilePath="components/feature-example" />
-					<FilePickers readmeFilePath="components/file-picker" />
-					<FoldableCard readmeFilePath="components/foldable-card" />
-					<FormattedHeader readmeFilePath="components/formatted-header" />
-					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="components/forms" />
-					<Gauge readmeFilePath="components/gauge" />
+					<Accordions componentUsageStats={ componentsUsageStats.accordion } readmeFilePath="accordion" />
+					<Banner readmeFilePath="banner" />
+					<BulkSelect readmeFilePath="bulk-select" />
+					<ButtonGroups readmeFilePath="button-group" />
+					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="button" />
+					<Cards readmeFilePath="card" />
+					<ClipboardButtonInput readmeFilePath="clipboard-button-input" />
+					<ClipboardButtons readmeFilePath="forms/clipboard-button" />
+					<Count readmeFilePath="count" />
+					<CountedTextareas readmeFilePath="forms/counted-textarea" />
+					<DatePicker readmeFilePath="date-picker" />
+					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
+					<EllipsisMenu readmeFilePath="ellipsis-menu" />
+					<EmojifyExample readmeFilePath="emojify" />
+					<EmptyContent readmeFilePath="empty-content" />
+					<ExternalLink readmeFilePath="external-link" />
+					<FAQ readmeFilePath="faq" />
+					<FeatureGate readmeFilePath="feature-example" />
+					<FilePickers readmeFilePath="file-picker" />
+					<FoldableCard readmeFilePath="foldable-card" />
+					<FormattedHeader readmeFilePath="formatted-header" />
+					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />
+					<Gauge readmeFilePath="gauge" />
 					<GlobalNotices />
-					<Gravatar readmeFilePath="components/gravatar" />
+					<Gravatar readmeFilePath="gravatar" />
 					<Gridicons />
-					<Headers readmeFilePath="components/header-cake" />
-					<ImagePreloader readmeFilePath="components/image-preloader" />
-					<InfoPopover readmeFilePath="components/info-popover" />
-					<Tooltip readmeFilePath="components/tooltip" />
-					<InputChrono readmeFilePath="components/input-chrono" />
-					<LanguagePicker readmeFilePath="components/language-picker" />
+					<Headers readmeFilePath="header-cake" />
+					<ImagePreloader readmeFilePath="image-preloader" />
+					<InfoPopover readmeFilePath="info-popover" />
+					<Tooltip readmeFilePath="tooltip" />
+					<InputChrono readmeFilePath="input-chrono" />
+					<LanguagePicker readmeFilePath="language-picker" />
 					<Notices />
-					<PaginationExample readmeFilePath="components/pagination" />
-					<PaymentLogo readmeFilePath="components/payment-logo" />
-					<Popovers readmeFilePath="components/popover" />
-					<ProgressBar readmeFilePath="components/progress-bar" />
-					<Ranges readmeFilePath="components/forms/range" />
-					<Rating readmeFilePath="components/rating" />
+					<PaginationExample readmeFilePath="pagination" />
+					<PaymentLogo readmeFilePath="payment-logo" />
+					<Popovers readmeFilePath="popover" />
+					<ProgressBar readmeFilePath="progress-bar" />
+					<Ranges readmeFilePath="forms/range" />
+					<Rating readmeFilePath="rating" />
 					<Ribbon />
 					<ScreenReaderTextExample />
-					<SearchDemo readmeFilePath="components/search" />
-					<SectionHeader readmeFilePath="components/section-header" />
-					<SectionNav readmeFilePath="components/section-nav" />
-					<SegmentedControl readmeFilePath="components/segmented-control" />
-					<SelectDropdown searchKeywords="menu" readmeFilePath="components/select-dropdown" />
+					<SearchDemo readmeFilePath="search" />
+					<SectionHeader readmeFilePath="section-header" />
+					<SectionNav readmeFilePath="section-nav" />
+					<SegmentedControl readmeFilePath="segmented-control" />
+					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
 					<SocialLogos />
-					<Spinner searchKeywords="loading" readmeFilePath="components/spinner" />
-					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="components/spinner-button" />
-					<SpinnerLine searchKeywords="loading" readmeFilePath="components/spinner-line" />
-					<Timezone readmeFilePath="components/timezone" />
-					<TokenFields readmeFilePath="components/token-field" />
-					<VerticalMenu readmeFilePath="components/vertical-menu" />
-					<Version readmeFilePath="components/version" />
+					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
+					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
+					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
+					<Timezone readmeFilePath="timezone" />
+					<TokenFields readmeFilePath="token-field" />
+					<VerticalMenu readmeFilePath="vertical-menu" />
+					<Version readmeFilePath="version" />
 				</Collection>
 			</Main>
 		);
