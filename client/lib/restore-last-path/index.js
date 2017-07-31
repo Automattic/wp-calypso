@@ -13,7 +13,7 @@ import { isOutsideCalypso } from 'lib/url';
 const debug = debugFactory( 'calypso:restore-last-path' );
 
 const LAST_PATH = 'last_path';
-const ALLOWED_PATHS_FOR_RESTORING = /^\/(read|stats|plans|view|posts|pages|media|types|themes|sharing|people|plugins|domains)/i;
+const ALLOWED_PATHS_FOR_RESTORING = /^\/(stats|plans|view|posts|pages|media|types|themes|sharing|people|plugins|domains)/i;
 
 function isWhitelistedForRestoring( path ) {
 	return !! path.match( ALLOWED_PATHS_FOR_RESTORING );
