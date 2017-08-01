@@ -8,6 +8,15 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import ReaderSidebarHelper from '../helper';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+
+const handleReaderSidebarTeamsListItemClicked = team => () => {
+	recordAction( 'clicked_reader_sidebar_teams_list_item' );
+	recordGaEvent( 'Clicked Reader Sidebar Teams List Item' );
+	recordTrack( 'calypso_reader_sidebar_teams_list_item_clicked', {
+		team: decodeURIComponent( team.slug ),
+	} );
+};
 
 export const ReaderSidebarTeamsListItem = ( { path, team, translate } ) => {
 	const teamUri = '/read/' + encodeURIComponent( team.slug );
@@ -21,6 +30,7 @@ export const ReaderSidebarTeamsListItem = ( { path, team, translate } ) => {
 		>
 			<a
 				href={ teamUri }
+				onClick={ handleReaderSidebarTeamsListItemClicked( team ) }
 				title={ translate( "View team '%(currentTeamName)s'", {
 					args: {
 						currentTeamName: team.title,

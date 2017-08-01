@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import ReaderSidebarHelper from '../helper';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 export class ReaderSidebarListsListItem extends Component {
 	static propTypes = {
@@ -30,6 +31,14 @@ export class ReaderSidebarListsListItem extends Component {
 			node.scrollIntoView();
 		}
 	}
+
+	handleListSidebarClick = () => {
+		recordAction( 'clicked_reader_sidebar_list_item' );
+		recordGaEvent( 'Clicked Reader Sidebar List Item' );
+		recordTrack( 'calypso_reader_sidebar_list_item_clicked', {
+			list: decodeURIComponent( this.props.list.slug ),
+		} );
+	};
 
 	render() {
 		const { list, translate } = this.props;
@@ -60,6 +69,7 @@ export class ReaderSidebarListsListItem extends Component {
 				<a
 					className="sidebar__menu-item-label"
 					href={ listRelativeUrl }
+					onClick={ this.handleListSidebarClick }
 					title={ translate( "View list '%(currentListName)s'", {
 						args: {
 							currentListName: list.title,
