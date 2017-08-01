@@ -102,7 +102,7 @@ class ActivityLog extends Component {
 
 	handlePeriodChange = ( { date, direction } ) => {
 		this.props.recordTracksEvent( 'calypso_activitylog_monthpicker_change', {
-			date,
+			date: date.utc().toISOString(),
 			direction,
 		} );
 	}
