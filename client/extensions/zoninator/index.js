@@ -14,6 +14,8 @@ import ZonesDashboard from './components/settings/zones-dashboard';
 
 export default function() {
 	page( '/extensions/zoninator', sites );
+	page( '/extensions/zoninator/new', sites );
+
 	page( '/extensions/zoninator/:site', siteSelection, navigation, renderTab( ZonesDashboard ) );
 	page( '/extensions/zoninator/new/:site', siteSelection, navigation, renderTab( ZoneCreator ) );
 	page( '/extensions/zoninator/:site/:zone', siteSelection, navigation, renderTab( Zone ) );
