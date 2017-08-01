@@ -51,11 +51,11 @@ const SpamFilteringSettings = ( {
 	if ( ! inTransition && ! hasAkismetFeature && ! isValidKey ) {
 		return (
 			<Banner
-				description={ translate( 'Add state-of-the-art spam defense powered by Akismet.' ) }
+				description={ translate( 'Detect and tweeze spam automatically, with Akismet.' ) }
 				event={ 'calypso_akismet_settings_upgrade_nudge' }
 				feature={ FEATURE_SPAM_AKISMET_PLUS }
 				plan={ PLAN_JETPACK_PERSONAL }
-				title={ translate( 'Enable spam filtering by upgrading to Jetpack Personal' ) }
+				title={ translate( 'Defend your site against spam! Upgrade to Jetpack Personal.' ) }
 			/>
 		);
 	}
