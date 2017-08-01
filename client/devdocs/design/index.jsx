@@ -75,6 +75,7 @@ import FormattedHeader from 'components/formatted-header/docs/example';
 import EmptyContent from 'components/empty-content/docs/example';
 import ScreenReaderTextExample from 'components/screen-reader-text/docs/example';
 import PaginationExample from 'components/pagination/docs/example';
+import ListEnd from 'components/list-end/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -148,6 +149,7 @@ let DesignAssets = React.createClass( {
 					<Tooltip />
 					<InputChrono />
 					<LanguagePicker />
+					<ListEnd />
 					<Notices />
 					<PaginationExample />
 					<PaymentLogo />

@@ -17,6 +17,7 @@ var Card = require( 'components/card' ),
 	NoResults = require( 'my-sites/no-results' ),
 	analytics = require( 'lib/analytics' ),
 	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' );
+import ListEnd from 'components/list-end';
 
 /**
  * Module Variables
@@ -101,7 +102,7 @@ var Team = React.createClass( {
 				<Card className={ listClass }>
 					{ people }
 				</Card>
-				{ this.isLastPage() && <div className="infinite-scroll-end" /> }
+				{ this.isLastPage() && <ListEnd /> }
 			</div>
 		);
 	},

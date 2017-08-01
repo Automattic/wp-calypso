@@ -21,6 +21,7 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	route = require( 'lib/route' ),
 	mapStatus = route.mapPostStatus;
 
+import ListEnd from 'components/list-end';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { hasInitializedSites } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -298,7 +299,7 @@ var Posts = React.createClass( {
 		return (
 			<div>
 				{ postList }
-				{ this.props.lastPage && posts.length ? <div className="infinite-scroll-end" /> : null }
+				{ this.props.lastPage && posts.length ? <ListEnd /> : null }
 			</div>
 		);
 	}
