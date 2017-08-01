@@ -430,12 +430,14 @@ export const logoutUser = ( redirectTo ) => ( dispatch, getState ) => {
 			client_secret: config( 'wpcom_signup_key' ),
 			logout_nonce: logoutNonce,
 		} ).then( ( response ) => {
-			const responseData = response.body && response.body.data;
+			const data = get( response, 'body.data', {} );
+
 			dispatch( {
 				type: LOGOUT_REQUEST_SUCCESS,
-				data: responseData,
+				data,
 			} );
-			return Promise.resolve( responseData );
+
+			return Promise.resolve( data );
 		} ).catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
 
