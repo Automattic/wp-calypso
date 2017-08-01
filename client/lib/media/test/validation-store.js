@@ -14,8 +14,9 @@ import useMockery from 'test/helpers/use-mockery';
 /**
  * Module variables
  */
-var DUMMY_SITE_ID = 1,
-	DUMMY_MEDIA_OBJECT = { ID: 100, title: 'Image', extension: 'exe' };
+const DUMMY_SITE_ID = 1;
+const DUMMY_MEDIA_OBJECT = { ID: 100, title: 'Image', extension: 'exe' };
+const ERROR_GLOBAL_ITEM_ID = 0;
 
 describe( 'MediaValidationStore', function() {
 	let sandbox, MediaValidationStore, handler, Dispatcher, MediaValidationErrors;
@@ -57,6 +58,19 @@ describe( 'MediaValidationStore', function() {
 	after( function() {
 		sandbox.restore();
 	} );
+
+	function dispatchError( error ) {
+		handler( {
+			action: {
+				type: 'RECEIVE_MEDIA_ITEM',
+				siteId: DUMMY_SITE_ID,
+				data: DUMMY_MEDIA_OBJECT,
+				error: {
+					error: error,
+				},
+			}
+		} );
+	}
 
 	function dispatchCreateMediaItem( action ) {
 		handler( {
@@ -339,6 +353,31 @@ describe( 'MediaValidationStore', function() {
 				[ DUMMY_MEDIA_OBJECT.ID ]: [ MediaValidationErrors.FILE_TYPE_UNSUPPORTED ],
 				101: [ MediaValidationErrors.FILE_TYPE_UNSUPPORTED ]
 			} );
+		} );
+
+		it( 'should detect an external media error and set error on item ERROR_GLOBAL_ITEM_ID', () => {
+			dispatchError( 'servicefail' );
+
+			const errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, ERROR_GLOBAL_ITEM_ID );
+
+			expect( errors ).to.eql( [ MediaValidationErrors.SERVICE_FAILED ] );
+		} );
+
+		it( 'should require an action ID for all errors other than external media', () => {
+			dispatchError( 'someothererror' );
+
+			const errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, ERROR_GLOBAL_ITEM_ID );
+
+			expect( errors ).to.eql( [] );
+		} );
+
+		it( 'should remove all validation errors when changing the data source', () => {
+			dispatchError( 'servicefail' );
+			handler( { action: { type: 'CHANGE_MEDIA_SOURCE', siteId: DUMMY_SITE_ID } } );
+
+			const errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, ERROR_GLOBAL_ITEM_ID );
+
+			expect( errors ).to.eql( [] );
 		} );
 	} );
 } );
