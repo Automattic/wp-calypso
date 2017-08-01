@@ -334,7 +334,8 @@ class ActivityTitle extends Component {
 			}
 			case 'plugin__updated': {
 				const actorName = this.getActorName();
-				return `${ actorName } updated plugin <title, link>.`;
+				const pluginName = this.getPluginName();
+				return `${ actorName } updated plugin ${ pluginName }`;
 			}
 
 			/**
