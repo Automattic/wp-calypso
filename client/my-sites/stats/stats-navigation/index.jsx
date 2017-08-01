@@ -16,7 +16,7 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import config from 'config';
 
 const StatsNavigation = ( props ) => {
-	const { translate, section, slug, siteId, isJetpack, isWooConnect } = props;
+	const { translate, section, slug, siteId, isJetpack, isStore } = props;
 	const siteFragment = slug ? '/' + slug : '';
 	const sectionTitles = {
 		insights: translate( 'Insights' ),
@@ -29,7 +29,7 @@ const StatsNavigation = ( props ) => {
 
 	let statsControl;
 
-	if ( isWooConnect ) {
+	if ( isStore ) {
 		statsControl = (
 			<SegmentedControl
 				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -84,7 +84,7 @@ const StatsNavigation = ( props ) => {
 
 StatsNavigation.propTypes = {
 	isJetpack: PropTypes.bool,
-	isWooConnect: PropTypes.bool,
+	isStore: PropTypes.bool,
 	section: PropTypes.string.isRequired,
 	slug: PropTypes.string,
 	siteId: PropTypes.number,
