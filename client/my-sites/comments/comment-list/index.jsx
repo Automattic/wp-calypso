@@ -27,7 +27,7 @@ import Pagination from 'components/pagination';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import { getSiteCommentsTree, hasSiteComments } from 'state/selectors';
 
-const COMMENTS_PER_PAGE = 2;
+const COMMENTS_PER_PAGE = 20;
 
 export class CommentList extends Component {
 	static propTypes = {
