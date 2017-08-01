@@ -4,7 +4,6 @@
 import { connect } from 'react-redux';
 import { find, findIndex, identity, noop, times } from 'lodash';
 import Gridicon from 'gridicons';
-import moment from 'moment';
 import page from 'page';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -83,8 +82,6 @@ export class List extends React.Component {
 		}
 
 		const { translate } = this.props;
-		const eventName = 'calypso_domain_credit_reminder_impression';
-		const eventProperties = { cta_name: 'domain_info_notice' };
 
 		return (
 			<Notice
@@ -94,7 +91,10 @@ export class List extends React.Component {
 				icon="globe">
 				<NoticeAction onClick={ this.props.clickClaimDomainNotice } href={ `/domains/add/${ this.props.selectedSite.slug }` }>
 					{ translate( 'Claim Free Domain' ) }
-					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+					<TrackComponentView
+						eventName={ 'calypso_domain_credit_reminder_impression' }
+						eventProperties={ { cta_name: 'domain_info_notice' } }
+					/>
 				</NoticeAction>
 			</Notice>
 		);
@@ -151,7 +151,7 @@ export class List extends React.Component {
 			find( this.props.domains.list, ( { name } ) => name === domainName );
 
 		return domain && domain.registrationMoment &&
-			moment().subtract( 1, 'day' ).isBefore( domain.registrationMoment );
+			this.props.moment().subtract( 1, 'day' ).isBefore( domain.registrationMoment );
 	}
 
 	hideNotice = () => {
