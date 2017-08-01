@@ -26,5 +26,8 @@
     "i18n-calypso": "^1.7.4",
     "prop-types": "^15.5.10",
     "react": "^15.6.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
