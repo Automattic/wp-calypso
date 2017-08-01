@@ -44,19 +44,25 @@ import PlanStorageBar from 'blocks/plan-storage/bar';
 
 class MediaSettings extends Component {
 	static propTypes = {
-		carouselActive: PropTypes.bool.isRequired,
 		fields: PropTypes.object,
 		handleAutosavingToggle: PropTypes.func.isRequired,
 		isRequestingSettings: PropTypes.bool,
 		isSavingSettings: PropTypes.bool,
+		onChangeField: PropTypes.func.isRequired,
+		siteId: PropTypes.number.isRequired,
+
+		// connected props
+		carouselActive: PropTypes.bool.isRequired,
 		isVideoPressActive: PropTypes.bool,
 		isVideoPressAvailable: PropTypes.bool,
 		mediaStorage: PropTypes.shape( {
 			max_storage_bytes: PropTypes.number.isRequired,
 			storage_used_bytes: PropTypes.number.isRequired,
 		} ).isRequired,
-		onChangeField: PropTypes.func.isRequired,
-		siteId: PropTypes.number.isRequired,
+		photonModuleUnavailable: PropTypes.bool,
+		selectedSiteId: PropTypes.number,
+		sitePlanSlug: PropTypes.string,
+		siteSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
