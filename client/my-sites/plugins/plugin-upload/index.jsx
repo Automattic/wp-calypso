@@ -15,6 +15,7 @@ import Card from 'components/card';
 import ProgressBar from 'components/progress-bar';
 import UploadDropZone from 'blocks/upload-drop-zone';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import EmptyContent from 'components/empty-content';
 import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
@@ -24,7 +25,12 @@ import {
 	isPluginUploadComplete,
 	isPluginUploadInProgress,
 } from 'state/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
+import {
+	getSiteAdminUrl,
+	isJetpackMinimumVersion,
+	isJetpackSite,
+	isJetpackSiteMultiSite,
+} from 'state/sites/selectors';
 
 class PluginUpload extends React.Component {
 
@@ -80,9 +86,23 @@ class PluginUpload extends React.Component {
 		);
 	}
 
+	renderNotAvailableForMultisite() {
+		const { translate, siteAdminUrl } = this.props;
+
+		return (
+			<EmptyContent
+				title={ translate( 'Visit WP Admin to install your plugin.' ) }
+				action={ translate( 'Go to WP Admin' ) }
+				actionURL={ `${ siteAdminUrl }/plugin-install.php` }
+				illustration={ '/calypso/images/illustrations/illustration-jetpack.svg' }
+			/>
+		);
+	}
+
 	render() {
 		const {
 			translate,
+			isJetpackMultisite,
 			upgradeJetpack,
 			siteId,
 		} = this.props;
@@ -95,7 +115,8 @@ class PluginUpload extends React.Component {
 					siteId={ siteId }
 					featureExample={ this.renderUploadCard() }
 					version="5.1" /> }
-				{ ! upgradeJetpack && this.renderUploadCard() }
+				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
+				{ ! upgradeJetpack && ! isJetpackMultisite && this.renderUploadCard() }
 			</Main>
 		);
 	}
@@ -107,6 +128,7 @@ export default connect(
 		const error = getPluginUploadError( state, siteId );
 		const progress = getPluginUploadProgress( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
+		const isJetpackMultisite = isJetpackSiteMultiSite( state, siteId );
 		return {
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
@@ -118,7 +140,9 @@ export default connect(
 			error,
 			progress,
 			installing: progress === 100,
-			upgradeJetpack: isJetpack && ! isJetpackMinimumVersion( state, siteId, '5.1' ),
+			upgradeJetpack: isJetpack && ! isJetpackMultisite && ! isJetpackMinimumVersion( state, siteId, '5.1' ),
+			isJetpackMultisite,
+			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		};
 	},
 	{ uploadPlugin, clearPluginUpload }
