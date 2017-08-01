@@ -18,6 +18,11 @@
 		small {
 			font-size: 12px;
 		}
+
+		@include breakpoint( ">660px" ) {
+			display: flex;
+			align-items: center;
+		}
 	}
 
 	.map-domain-step & {
