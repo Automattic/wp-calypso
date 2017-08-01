@@ -5,8 +5,6 @@ import { isEnabled } from 'config';
 import wpcom from 'lib/wp';
 import {
 	COMMENTS_CHANGE_STATUS,
-	COMMENTS_CHANGE_STATUS_FAILURE,
-	COMMENTS_CHANGE_STATUS_SUCESS,
 	COMMENTS_DELETE,
 	COMMENTS_EDIT,
 	COMMENTS_EDIT_FAILURE,
@@ -135,39 +133,21 @@ export const unlikeComment = ( siteId, postId, commentId ) => ( {
 	commentId,
 } );
 
-export function changeCommentStatus( siteId, postId, commentId, status ) {
-	return dispatch => {
-		dispatch( {
-			type: COMMENTS_CHANGE_STATUS,
-			siteId,
-			postId,
-			commentId,
-			status,
-		} );
-
-		return wpcom
-			.site( siteId )
-			.comment( commentId )
-			.update( { status } )
-			.then( data =>
-				dispatch( {
-					type: COMMENTS_CHANGE_STATUS_SUCESS,
-					siteId,
-					postId,
-					commentId,
-					status: data.status,
-				} ),
-			)
-			.catch( () =>
-				dispatch( {
-					type: COMMENTS_CHANGE_STATUS_FAILURE,
-					siteId,
-					postId,
-					commentId,
-				} ),
-			);
-	};
-}
+/**
+ * Creates an action that changes a comment status.
+ * @param {Number} siteId Site identifier
+ * @param {Number} postId Post identifier
+ * @param {Number} commentId Comment identifier
+ * @param {Number} status New status
+ * @returns {Object} Action that changes a comment status
+ */
+export const changeCommentStatus = ( siteId, postId, commentId, status ) => ( {
+	type: COMMENTS_CHANGE_STATUS,
+	siteId,
+	postId,
+	commentId,
+	status,
+} );
 
 export function editComment( siteId, postId, commentId, content ) {
 	return dispatch => {
