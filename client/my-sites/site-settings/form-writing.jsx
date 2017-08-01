@@ -63,6 +63,8 @@ class SiteSettingsFormWriting extends Component {
 			setFieldValue,
 			siteId,
 			translate,
+			trackEvent,
+			submitForm,
 			updateFields,
 		} = this.props;
 
@@ -149,6 +151,9 @@ class SiteSettingsFormWriting extends Component {
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
 								fields={ fields }
+								trackEvent={ trackEvent }
+								submitForm={ submitForm }
+								updateFields={ updateFields }
 							/>
 
 							{ config.isEnabled( 'press-this' ) &&

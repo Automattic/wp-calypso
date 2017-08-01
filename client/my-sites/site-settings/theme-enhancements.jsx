@@ -17,6 +17,7 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackMinimumVersion } from 'state/sites/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
@@ -46,14 +47,30 @@ class ThemeEnhancements extends Component {
 		return isRequestingSettings || isSavingSettings;
 	}
 
+	handleMobileThemeNonBooleanSettings = ( name ) => () => {
+		this.props.trackEvent( 'Toggled Mobile Theme Setting' );
+		this.props.updateFields( {
+			[ name ]: this.props.fields[ name ] === 'enabled' ? 'disabled' : 'enabled'
+		}, () => {
+			this.props.submitForm();
+		} );
+	}
+
 	renderToggle( name, isDisabled, label ) {
-		const { fields, handleAutosavingToggle } = this.props;
+		const { fields, handleAutosavingToggle, isJetpackLegacyVersion } = this.props;
+		let fieldValue = fields[ name ];
+		let handleToggle = handleAutosavingToggle;
+
+		if ( isJetpackLegacyVersion &&
+			( name === 'wp_mobile_excerpt' || name === 'wp_mobile_featured_images' ) ) {
+			handleToggle = this.handleMobileThemeNonBooleanSettings;
+			fieldValue = fields[ name ] === 'enabled';
+		}
 		return (
 			<CompactFormToggle
-				checked={ !! fields[ name ] }
+				checked={ fieldValue }
 				disabled={ this.isFormPending() || isDisabled }
-				onChange={ handleAutosavingToggle( name ) }
-			>
+				onChange={ handleToggle( name ) } >
 				{ label }
 			</CompactFormToggle>
 		);
@@ -188,6 +205,7 @@ export default connect(
 			selectedSiteId,
 			infiniteScrollModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'infinite-scroll' ),
 			minilevenModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'minileven' ),
+			isJetpackLegacyVersion: ! isJetpackMinimumVersion( state, selectedSiteId, '4.8.0' )
 		};
 	}
 )( localize( ThemeEnhancements ) );
