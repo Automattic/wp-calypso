@@ -15,6 +15,7 @@ import CompactCard from 'components/card/compact';
 import EllipsisMenu from 'components/ellipsis-menu';
 import FormRadio from 'components/forms/form-radio';
 import PopoverMenuItem from 'components/popover/menu-item';
+import ProductImage from './product-image';
 
 class ProductListItem extends Component {
 	static propTypes = {
@@ -34,7 +35,16 @@ class ProductListItem extends Component {
 	handleTrashClick = () => this.props.onTrashClick( this.props.paymentId );
 
 	render() {
-		const { paymentId, title, price, currency, isSelected, translate } = this.props;
+		const {
+			siteId,
+			paymentId,
+			title,
+			price,
+			currency,
+			featuredImageId,
+			isSelected,
+			translate,
+		} = this.props;
 		const radioId = `simple-payments-list-item-radio-${ paymentId }`;
 
 		return (
@@ -54,6 +64,7 @@ class ProductListItem extends Component {
 						{ formatCurrency( price, currency ) }
 					</div>
 				</label>
+				<ProductImage siteId={ siteId } imageId={ featuredImageId } />
 				<EllipsisMenu
 					className="editor-simple-payments-modal__list-menu"
 					popoverClassName="is-dialog-visible"
