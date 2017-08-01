@@ -10,7 +10,7 @@ import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 
 render() {
 	return (
-		<ConversationCaterpillar commentId={ commentId } />
+		<ConversationCaterpillar blogId={ blogId } postId={ postId } />
 	);
 }
 ```
