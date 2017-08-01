@@ -16,6 +16,7 @@ import {
 	COMMENTS_REPLY_WRITE,
 	COMMENTS_WRITE,
 	COMMENT_REQUEST,
+	COMMENTS_TREE_SITE_REQUEST,
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
@@ -57,6 +58,18 @@ export function requestPostComments( {
 
 export const requestCommentsList = query => ( {
 	type: COMMENTS_LIST_REQUEST,
+	query,
+} );
+
+/**
+ * Creates an action that requests the comments tree for a given site.
+ * @param {Object} query API call parameters
+ * @param {Number} query.siteId Site identifier
+ * @param {String} query.status Status filter
+ * @returns {Object} Action that requests a comment tree
+ */
+export const requestCommentsTreeForSite = query => ( {
+	type: COMMENTS_TREE_SITE_REQUEST,
 	query,
 } );
 

@@ -1,9 +1,8 @@
-Query Site Comments
+Query Site Comments Tree
 ================
 
-`<QuerySiteComments />` requests that recent comments for a given site be loaded into Calypso.
-It should be used when we need comments but don't have a specific associated post.
-In many cases, for instance, we are looking for comment replies to a specific post, but in this case we are working with comments for any and all posts across an entire site.
+`<QuerySiteCommentsTree />` requests that the entire tree of comments for a given site be loaded into Calypso.
+Only the strictly needed comment identifiers will be returned (`commentId`, `parentCommentId`, `postId`).
 
 ## Usage
 
@@ -14,11 +13,11 @@ There is planned support for additional features not yet implemented:
  - Pinghub connection
 
 ```js
-import QuerySiteComments from 'components/data/query-site-comments'
+import QuerySiteCommentsTree from 'components/data/query-site-comments-tree'
 
 const CommentList = ( { comments, siteId } ) => (
 	<div>
-		<QuerySiteComments siteId={ siteId } />
+		<QuerySiteCommentsTree siteId={ siteId } />
 		{ comments.map( … ) }
 	</div>
 )

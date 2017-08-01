@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { get, noop, omit } from 'lodash';
+import { get, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,8 +18,6 @@ import { getSiteComment } from 'state/selectors';
 const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	const { siteId, commentId, status } = action;
 	const previousStatus = get( getSiteComment( getState(), action.siteId, action.commentId ), 'status' );
-
-	dispatch( removeNotice( `comment-notice-${ commentId }` ) );
 
 	dispatch(
 		http(
@@ -39,8 +37,13 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	);
 };
 
+const removeErrorNoticeOnSuccess = ( { dispatch }, { commentId } ) =>
+	dispatch( removeNotice( `comment-notice-error-${ commentId }` ) );
+
 const announceFailure = ( { dispatch, getState }, action ) => {
 	const { commentId, status, previousStatus } = action;
+
+	dispatch( removeNotice( `comment-notice-${ commentId }` ) );
 
 	dispatch(
 		local( {
@@ -59,13 +62,13 @@ const announceFailure = ( { dispatch, getState }, action ) => {
 
 	dispatch( errorNotice( get( errorMessage, status, defaultErrorMessage ), {
 		button: translate( 'Try again' ),
-		id: `comment-notice-${ commentId }`,
+		id: `comment-notice-error-${ commentId }`,
 		onClick: () => dispatch( omit( action, [ 'meta' ] ) ),
 	} ) );
 };
 
 const changeStatusHandlers = {
-	[ COMMENTS_CHANGE_STATUS ]: [ dispatchRequest( changeCommentStatus, noop, announceFailure ) ],
+	[ COMMENTS_CHANGE_STATUS ]: [ dispatchRequest( changeCommentStatus, removeErrorNoticeOnSuccess, announceFailure ) ],
 };
 
 export default mergeHandlers( changeStatusHandlers );

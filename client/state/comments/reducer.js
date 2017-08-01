@@ -19,6 +19,7 @@ import {
 } from '../action-types';
 import { combineReducers, createReducer } from 'state/utils';
 import { PLACEHOLDER_STATE, NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
+import trees from './trees/reducer';
 
 const getCommentDate = ( { date } ) => new Date( date );
 
@@ -216,4 +217,5 @@ export default combineReducers( {
 	fetchStatus,
 	errors,
 	totalCommentsCount,
+	trees,
 } );
