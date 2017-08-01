@@ -51,7 +51,7 @@ class StoreStatsChart extends Component {
 		} );
 
 		analytics.tracks.recordEvent( 'calypso_woocommerce_stats_chart_tab_click', {
-			tab: tabs[ tab.index ]
+			tab: tabs[ tab.index ].attr
 		} );
 	};
 
