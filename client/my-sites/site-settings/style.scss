@@ -450,7 +450,9 @@
 	.plan-storage__bar {
 		margin-top: 24px;
 	}
-	p.site-settings__videopress-storage-used {
+
+	// Necessary additional specificity
+	.site-settings__videopress-storage-used.form-setting-explanation {
 		margin-left: 36px;
 	}
 }

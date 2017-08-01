@@ -41,6 +41,7 @@ import { updateSettings } from 'state/jetpack/settings/actions';
 import QueryMediaStorage from 'components/data/query-media-storage';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import PlanStorageBar from 'blocks/plan-storage/bar';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 class MediaSettings extends Component {
 	static propTypes = {
@@ -124,13 +125,13 @@ class MediaSettings extends Component {
 						mediaStorage={ mediaStorage }
 					/>
 				) : (
-					<p className="site-settings__videopress-storage-used form-setting-explanation">{
-						translate( '%(size)s uploaded, unlimited storage available', {
+					<FormSettingExplanation className="site-settings__videopress-storage-used">
+						{ translate( '%(size)s uploaded, unlimited storage available', {
 							args: {
 								size: filesize( mediaStorage.storage_used_bytes ),
 							}
-						} )
-					}</p>
+						} ) }
+					</FormSettingExplanation>
 				)
 		);
 
