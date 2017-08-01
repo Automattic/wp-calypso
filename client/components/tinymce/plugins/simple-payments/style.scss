@@ -8,6 +8,7 @@
 		padding: 0;
 		display: flex;
 		flex-direction: column;
+		max-width: none;
 
 		@include breakpoint( ">660px" ) {
 			top: 5%;
@@ -24,11 +25,18 @@
 		}
 	}
 
+	.header-cake.card {
+		@include breakpoint( "<660px" ) {
+			margin-top: 0;
+		}
+	}
+
 	.dialog__content {
 		display: flex;
 		flex-direction: column;
 		flex: auto;
 		min-height: 0; // permits the to shrink below its min height and scroll
+		padding: 0;
 	}
 
 	.dialog__action-buttons {
@@ -52,12 +60,20 @@
 	flex: auto;
 	overflow-y: auto;
 
+	@include breakpoint( ">480px" ) {
+		padding: 24px;
+	}
+
 	@include breakpoint( ">660px" ) {
 		display: flex;
+
+		.upload-image {
+			margin-right: 25px;
+		}
 	}
 
 	.upload-image {
-		margin-right: 25px;
+		margin-bottom: 20px;
 	}
 }
 
