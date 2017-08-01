@@ -459,56 +459,6 @@ const EVENTS = {
 			}
 		},
 
-		list: {
-			addDomainClick() {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Add Domain" Button in List'
-				);
-
-				analytics.tracks.recordEvent( 'calypso_domain_management_list_add_domain_click' );
-			},
-			enablePrimaryDomainMode() {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "Change Primary" button in List'
-				);
-
-				analytics.tracks.recordEvent( 'calypso_domain_management_list_enable_primary_domain_mode_click' );
-			},
-			disablePrimaryDomainMode() {
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Clicked "X" button to disable change primary mode in List'
-				);
-
-				analytics.tracks.recordEvent( 'calypso_domain_management_list_disable_primary_mode_click' );
-			},
-			changePrimary( domain ) {
-				const section = snakeCase( getDomainTypeText( domain ) );
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Changed Primary Domain to in List',
-					'Domain Name',
-					domain.name
-				);
-
-				analytics.tracks.recordEvent( 'calypso_domain_management_list_change_primary_domain_click', { section } );
-			},
-			undoChangePrimary( domain ) {
-				const section = snakeCase( getDomainTypeText( domain ) );
-
-				analytics.ga.recordEvent(
-					'Domain Management',
-					'Undo change Primary Domain in List',
-					'Domain Name (Reverted to)',
-					domain.name
-				);
-
-				analytics.tracks.recordEvent( 'calypso_domain_management_list_undo_change_primary_domain_click', { section } );
-			}
-		},
-
 		nameServers: {
 			wpcomNameServersToggleButtonClick( domainName, enabled ) {
 				const state = enabled ? 'On' : 'Off';
