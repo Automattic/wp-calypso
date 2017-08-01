@@ -82,6 +82,12 @@ export class CommentList extends Component {
 			} );
 			this.scheduleLoadingTimeout();
 		}
+		if ( this.props.siteId !== nextProps.siteId ) {
+			this.setState( {
+				isLoading: true
+			} );
+			this.scheduleLoadingTimeout();
+		}
 	}
 
 	changePage = page => this.setState( {
