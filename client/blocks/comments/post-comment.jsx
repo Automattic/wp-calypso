@@ -199,9 +199,11 @@ class PostComment extends Component {
 								{ comment.author.name }
 							</strong> }
 						{ this.props.showNestingReplyArrow && parentAuthorUrl &&
-							<span> > <a className="comments__comment-respondee" href={ parentAuthorUrl }>
-								{ parentAuthor.name }
-							</a> </span>
+							<span className="comments__comment-respondee"> >
+								<a href={ parentAuthorUrl }>
+									{ parentAuthor.name }
+								</a>
+							</span>
 						}
 					<div className="comments__comment-timestamp">
 						<a href={ comment.URL }>
