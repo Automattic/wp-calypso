@@ -3,11 +3,27 @@
  */
 import { filter, get } from 'lodash';
 
-export const getSiteCommentsTree = ( state, siteId, status ) => {
-	const siteTree = get( state, [ 'comments', 'trees', siteId ] );
-	return status
-		? filter( siteTree, { status } )
-		: siteTree;
-};
+/**
+ * Internal dependencies
+ */
+import createSelector from 'lib/create-selector';
+
+/**
+ * Returns a tree of loaded comments for a given site, filtered by status
+ *
+ * @param {Object} state Redux state
+ * @param {Number} siteId Site for whose comments to find
+ * @param {String} [status] Status to filter comments
+ * @returns {Array<Object>} Comments tree for site, filtered by status
+ */
+export const getSiteCommentsTree = createSelector(
+	( state, siteId, status ) => {
+		const siteTree = get( state, [ 'comments', 'trees', siteId ] );
+		return status
+			? filter( siteTree, { status } )
+			: siteTree;
+	},
+	( state, siteId ) => [ state.comments.trees[ siteId ] ]
+);
 
 export default getSiteCommentsTree;
