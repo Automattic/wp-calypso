@@ -2,9 +2,9 @@
  * External dependencies
  */
 import React from 'react';
-import includes from 'lodash/includes';
-import assign from 'lodash/assign';
-import find from 'lodash/find';
+import { connect } from 'react-redux';
+import { assign, includes, find, flatMap } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -20,30 +20,28 @@ import MxRecord from './mx-record';
 import TxtRecord from './txt-record';
 import SrvRecord from './srv-record';
 import formState from 'lib/form-state';
-import notices from 'notices';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { validateAllFields, getNormalizedData } from 'lib/domains/dns';
 
-const DnsAddNew = React.createClass( {
-	propTypes: {
+class DnsAddNew extends React.Component {
+	static propTypes = {
 		isSubmittingForm: React.PropTypes.bool.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired
-	},
+	};
 
-	getInitialState() {
-		return {
-			fields: null,
-			type: 'A'
-		};
-	},
+	state = {
+		fields: null,
+		type: 'A'
+	};
 
-	recordTypes: [
+	recordTypes = [
 		[ ARecord, [ 'A', 'AAAA' ] ],
 		[ CnameRecord, [ 'CNAME' ] ],
 		[ MxRecord, [ 'MX' ] ],
 		[ TxtRecord, [ 'TXT' ] ],
 		[ SrvRecord, [ 'SRV' ] ]
-	],
+	];
 
 	getFieldsForType( type ) {
 		/* eslint-disable no-unused-vars, no-shadow */
@@ -53,8 +51,12 @@ const DnsAddNew = React.createClass( {
 			return includes( types, type );
 		} );
 
-		return assign( {}, Component.initialFields, { type } );
-	},
+		return assign(
+			{},
+			Component.initialFields || Component._composedComponent.initialFields,
+			{ type }
+		);
+	}
 
 	componentWillMount() {
 		this.formStateController = formState.Controller( {
@@ -63,17 +65,18 @@ const DnsAddNew = React.createClass( {
 			validatorFunction: ( fieldValues, onComplete ) => {
 				onComplete( null, validateAllFields( fieldValues, this.props.selectedDomainName ) );
 			}
-		}	);
+		} );
 
 		this.setFormState( this.formStateController.getInitialState() );
-	},
+	}
 
-	setFormState( fields ) {
+	setFormState = ( fields ) => {
 		this.setState( { fields } );
-	},
+	};
 
-	onAddDnsRecord( event ) {
+	onAddDnsRecord = ( event ) => {
 		event.preventDefault();
+		const { translate } = this.props;
 
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			if ( hasErrors ) {
@@ -88,39 +91,46 @@ const DnsAddNew = React.createClass( {
 
 			upgradesActions.addDns( this.props.selectedDomainName, normalizedData, ( error ) => {
 				if ( error ) {
-					notices.error( error.message || this.translate( 'The DNS record has not been added.' ) );
+					this.props.errorNotice(
+						error.message || translate( 'The DNS record has not been added.' )
+					);
 				} else {
-					notices.success( this.translate( 'The DNS record has been added.' ), {
-						duration: 5000
-					} );
+					this.props.successNotice(
+						translate( 'The DNS record has been added.' ),
+						{
+							duration: 5000
+						}
+					);
 				}
 			} );
 		} );
-	},
+	};
 
-	onChange( event ) {
-		const { name, value } = event.target,
-			skipNormalization = name === 'data' && this.state.type === 'TXT';
+	onChange = ( event ) => {
+		const { name, value } = event.target;
+		const skipNormalization = name === 'data' && this.state.type === 'TXT';
+
 		this.formStateController.handleFieldChange( {
 			name,
 			value: skipNormalization ? value : value.trim().toLowerCase(),
 		} );
-	},
+	};
 
-	changeType( event ) {
+	changeType = ( event ) => {
 		const fields = this.getFieldsForType( event.target.value );
+
 		this.setState( { type: event.target.value } );
 		this.formStateController.resetFields( fields );
-	},
+	};
 
-	isValid( fieldName ) {
+	isValid = ( fieldName ) => {
 		// If the field is not active, return early so we don't get an error.
 		if ( ! this.state.fields[ fieldName ] ) {
 			return true;
 		}
 
 		return ! formState.isFieldInvalid( this.state.fields, fieldName );
-	},
+	};
 
 	recordFields() {
 		return this.recordTypes.map( ( [ Component, showTypes ] ) => {
@@ -131,24 +141,29 @@ const DnsAddNew = React.createClass( {
 					show={ includes( showTypes, this.state.fields.type.value ) }
 					fieldValues={ formState.getAllFieldValues( this.state.fields ) }
 					isValid={ this.isValid }
-					onChange={ this.onChange } />
+					onChange={ this.onChange }
+				/>
 			);
 		} );
-	},
+	}
 
 	render() {
-		const options = [ 'A', 'AAAA', 'CNAME', 'MX', 'SRV', 'TXT' ].map( function( type ) {
-				return <option key={ type }>{ type }</option>;
-			} ),
-			isSubmitDisabled = formState.isSubmitButtonDisabled( this.state.fields ) ||
-				this.props.isSubmittingForm ||
-				formState.hasErrors( this.state.fields );
+		const { translate } = this.props;
+		const dnsRecordTypes = flatMap( this.recordTypes, ( record ) => record[ 1 ] );
+		const options = dnsRecordTypes.map(
+			( type ) => <option key={ type }>{ type }</option>
+		);
+		const isSubmitDisabled = formState.isSubmitButtonDisabled( this.state.fields ) ||
+			this.props.isSubmittingForm ||
+			formState.hasErrors( this.state.fields );
 
 		return (
 			<form className="dns__add-new">
 				<div className="dns__form-content">
 					<FormFieldset>
-						<FormLabel>{ this.translate( 'Type', { context: 'DNS Record' } ) }</FormLabel>
+						<FormLabel>
+							{ translate( 'Type', { context: 'DNS Record' } ) }
+						</FormLabel>
 
 						<FormSelect onChange={ this.changeType } value={ this.state.fields.type.value }>
 							{ options }
@@ -159,15 +174,19 @@ const DnsAddNew = React.createClass( {
 				</div>
 
 				<FormFooter>
-					<FormButton
-						disabled={ isSubmitDisabled }
-						onClick={ this.onAddDnsRecord }>
-						{ this.translate( 'Add New DNS Record' ) }
+					<FormButton disabled={ isSubmitDisabled } onClick={ this.onAddDnsRecord }>
+						{ translate( 'Add New DNS Record' ) }
 					</FormButton>
 				</FormFooter>
 			</form>
 		);
 	}
-} );
+}
 
-export default DnsAddNew;
+export default connect(
+	null,
+	{
+		errorNotice,
+		successNotice,
+	}
+)( localize( DnsAddNew ) );
