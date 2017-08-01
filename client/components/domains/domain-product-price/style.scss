@@ -6,6 +6,9 @@
 
 	@include breakpoint( ">660px" ) {
 		min-width: 130px;
+		display: flex;
+		align-items: center;
+		margin-top: -4px;
 	}
 
 	@include breakpoint( "<660px" ) {
@@ -17,11 +20,6 @@
 
 		small {
 			font-size: 12px;
-		}
-
-		@include breakpoint( ">660px" ) {
-			display: flex;
-			align-items: center;
 		}
 	}
 
