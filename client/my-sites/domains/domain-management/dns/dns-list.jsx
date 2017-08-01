@@ -2,36 +2,38 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecord from './dns-record';
-import notices from 'notices';
+import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { deleteDns as deleteDnsAction, addDns as addDnsAction } from 'lib/upgrades/actions';
 import { isDeletingLastMXRecord } from 'lib/domains/dns';
 
-const DnsList = React.createClass( {
-	propTypes: {
+class DnsList extends React.Component {
+	static propTypes = {
 		dns: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired
-	},
+	};
 
-	getInitialState: function() {
-		return { dialog: this.noDialog() };
-	},
+	state = {
+		dialog: this.noDialog()
+	};
 
-	noDialog: function() {
+	noDialog() {
 		return {
 			type: null,
 			onClose: null
 		};
-	},
+	}
 
 	openDialog( type, onClose ) {
 		this.setState( {
@@ -40,14 +42,15 @@ const DnsList = React.createClass( {
 				onClose
 			}
 		} );
-	},
+	}
 
-	handleDialogClose( result ) {
+	handleDialogClose = ( result ) => {
 		this.state.dialog.onClose( result );
 		this.setState( { dialog: this.noDialog() } );
-	},
+	};
 
-	deleteDns: function( record, confirmed = false ) {
+	deleteDns = ( record, confirmed = false ) => {
+		const { selectedDomainName, translate } = this.props;
 		const { records } = this.props.dns;
 
 		if ( ! confirmed && isDeletingLastMXRecord( record, records ) ) {
@@ -60,48 +63,63 @@ const DnsList = React.createClass( {
 			return;
 		}
 
-		deleteDnsAction( this.props.selectedDomainName, record, ( error ) => {
+		deleteDnsAction( selectedDomainName, record, ( error ) => {
 			if ( error ) {
-				notices.error( error.message || this.translate( 'The DNS record has not been deleted.' ) );
+				this.props.errorNotice(
+					error.message || translate( 'The DNS record has not been deleted.' )
+				);
 			} else {
-				const notice = notices.success( this.translate( 'The DNS record has been deleted.' ), {
-					showDismiss: false,
-					duration: 5000,
-					button: this.translate( 'Undo' ),
-					onClick: () => {
-						notices.removeNotice( notice );
-						this.addDns( record );
+				const successNoticeId = 'dns-list-success-notice';
+				this.props.successNotice(
+					translate( 'The DNS record has been deleted.' ),
+					{
+						id: successNoticeId,
+						showDismiss: false,
+						duration: 5000,
+						button: translate( 'Undo' ),
+						onClick: () => {
+							this.props.removeNotice( successNoticeId );
+							this.addDns( record );
+						}
 					}
-				} );
+				);
 			}
 		} );
-	},
+	};
 
-	addDns: function( record ) {
+	addDns( record ) {
+		const { translate } = this.props;
+
 		addDnsAction( this.props.selectedDomainName, record, ( error ) => {
 			if ( error ) {
-				notices.error( error.message || this.translate( 'The DNS record could not be restored.' ) );
+				this.props.errorNotice(
+					error.message || translate( 'The DNS record could not be restored.' )
+				);
 			} else {
-				notices.success( this.translate( 'The DNS record has been restored.' ), {
-					duration: 5000
-				} );
+				this.props.successNotice(
+					translate( 'The DNS record has been restored.' ),
+					{
+						duration: 5000
+					}
+				);
 			}
 		} );
-	},
+	}
 
-	render: function() {
-		const { dialog } = this.state,
-			{ dns, selectedDomainName, selectedSite } = this.props,
-			dnsRecordsList = dns.records.map( function( dnsRecord, index ) {
-				return (
-					<DnsRecord
-						key={ index }
-						dnsRecord={ dnsRecord }
-						onDeleteDns={ this.deleteDns }
-						selectedDomainName={ selectedDomainName }
-						selectedSite={ selectedSite } />
-				);
-			}, this );
+	render() {
+		const { dialog } = this.state;
+		const { dns, selectedDomainName, selectedSite } = this.props;
+		const dnsRecordsList = dns.records.map( ( dnsRecord, index ) => {
+			return (
+				<DnsRecord
+					key={ index }
+					dnsRecord={ dnsRecord }
+					onDeleteDns={ this.deleteDns }
+					selectedDomainName={ selectedDomainName }
+					selectedSite={ selectedSite }
+				/>
+			);
+		} );
 
 		return (
 			<div className="dns__list">
@@ -109,11 +127,21 @@ const DnsList = React.createClass( {
 					visible={ dialog.type === 'deleteEmailForwards' }
 					onClose={ this.handleDialogClose }
 					selectedDomainName={ selectedDomainName }
-					selectedSite={ selectedSite } />
-				<ul>{ dnsRecordsList }</ul>
+					selectedSite={ selectedSite }
+				/>
+				<ul>
+					{ dnsRecordsList }
+				</ul>
 			</div>
 		);
 	}
-} );
+}
 
-export default DnsList;
+export default connect(
+	null,
+	{
+		errorNotice,
+		removeNotice,
+		successNotice,
+	}
+)( localize( DnsList ) );
