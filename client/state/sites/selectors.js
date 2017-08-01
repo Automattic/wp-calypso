@@ -33,7 +33,7 @@ import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/map
 import versionCompare from 'lib/version-compare';
 import getComputedAttributes from 'lib/site/computed-attributes';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
-import { isSiteUpgradeable, getSiteOptions } from 'state/selectors';
+import { isSiteUpgradeable } from 'state/selectors';
 
 /**
  * Returns a raw site object by its ID.
@@ -315,7 +315,12 @@ export function isSitePreviewable( state, siteId ) {
  * @return {*}  The value of that option or null
  */
 export function getSiteOption( state, siteId, optionName ) {
-	return get( getSiteOptions( state, siteId ), optionName, null );
+	const site = getRawSite( state, siteId );
+	if ( ! site || ! site.options ) {
+		return null;
+	}
+
+	return site.options[ optionName ];
 }
 
 /**
