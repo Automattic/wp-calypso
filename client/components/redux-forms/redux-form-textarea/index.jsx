@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import { Field } from 'redux-form';
 
 /**
@@ -16,14 +16,12 @@ const RenderTextarea = ( { input, meta, type, ...otherProps } ) => {
 	);
 };
 
-class ReduxFormTextarea extends PureComponent {
-	static propTypes = {
-		name: PropTypes.string.isRequired,
-	};
+const ReduxFormTextarea = ( props ) => (
+	<Field component={ RenderTextarea } type="text" { ...props } />
+);
 
-	render() {
-		return <Field component={ RenderTextarea } type="text" { ...this.props } />;
-	}
-}
+ReduxFormTextarea.propTypes = {
+	name: PropTypes.string.isRequired,
+};
 
 export default ReduxFormTextarea;
