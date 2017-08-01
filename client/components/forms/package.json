@@ -1,6 +1,6 @@
 {
   "name": "@automattic/form-components",
-  "version": "0.1.1",
+  "version": "0.1.0-alpha.0",
   "description": "React-based form components, as used on WordPress.com",
   "scripts": {
     "test": "run-s -s test-client test-server test-test"
