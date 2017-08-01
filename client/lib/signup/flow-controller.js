@@ -230,7 +230,29 @@ assign( SignupFlowController.prototype, {
 
 		SignupProgressStore.reset();
 		SignupDependencyStore.reset();
-	}
+	},
+
+	canResumeAt( stepName ) {
+		const currentSteps = this._flow.steps;
+		const stepIndex = currentSteps.indexOf( stepName );
+
+		if ( 1 > stepIndex ) {
+			return false;
+		}
+
+		return every(
+			pick( steps, currentSteps.slice( 0, stepIndex ) ),
+			step => {
+				if ( ! step.providesDependencies ) {
+					return true;
+				}
+
+				const dependenciesNotProvided = difference( step.providesDependencies, keys( SignupDependencyStore.get() ) );
+
+				return isEmpty( dependenciesNotProvided );
+			}
+		);
+	},
 } );
 
 module.exports = SignupFlowController;

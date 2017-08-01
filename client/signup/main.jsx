@@ -168,7 +168,11 @@ const Signup = React.createClass( {
 			step => ( -1 !== flowSteps.indexOf( step.stepName ) ),
 		);
 
-		if ( flowStepsInProgressStore.length > 0 && ! flow.disallowResume ) {
+		if (
+			flowStepsInProgressStore.length > 0 &&
+			! flow.disallowResume &&
+			this.signupFlowController.canResumeAt( this.firstUnsubmittedStepName() )
+		) {
 			// we loaded progress from local storage, attempt to resume progress
 			return this.resumeProgress();
 		}
