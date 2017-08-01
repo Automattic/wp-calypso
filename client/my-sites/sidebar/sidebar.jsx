@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,6 +25,9 @@ import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
+import WhoisStore from 'lib/domains/whois/store';
+import { findRegistrantWhois } from 'lib/domains/whois/utils';
+import { fetchWhois } from 'lib/upgrades/actions/domain-management';
 import StatsSparkline from 'blocks/stats-sparkline';
 import JetpackLogo from 'components/jetpack-logo';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
@@ -345,20 +349,56 @@ export class MySitesSidebar extends Component {
 	};
 
 	store() {
+		// TODO: Add to this array as we add more countries.
+		const allowedCountries = [ 'CA', 'US' ];
 		const { canUserManageOptions, isJetpack, site, siteSuffix, translate } = this.props;
 		const storeLink = '/store' + siteSuffix;
 		const showStoreLink = config.isEnabled( 'woocommerce/extension-dashboard' ) &&
 			site && isJetpack && canUserManageOptions && this.props.isSiteAutomatedTransfer;
 
-		return (
-			showStoreLink &&
-			<SidebarItem
-				label={ translate( 'Store (BETA)' ) }
-				link={ storeLink }
-				onNavigate={ this.trackStoreClick }
-				icon="cart"
-			/>
-		);
+		// Note: If we no longer restrict by country, this class is no longer necessary, just return <SidebarItem... />
+		class StoreSidebarItem extends Component {
+			componentWillMount() {
+				this.fetchWhois();
+			}
+
+			componentWillUpdate() {
+				this.fetchWhois();
+			}
+
+			fetchWhois() {
+				if ( site && ! this.getRegistrant() ) {
+					fetchWhois( site.domain );
+				}
+			}
+
+			getRegistrant() {
+				const domain = site && site.domain;
+				const whois = domain && WhoisStore.getByDomainName( site.domain );
+				return whois ? findRegistrantWhois( whois.data ) : undefined;
+			}
+
+			isStoreAvailable() {
+				const registrant = this.getRegistrant();
+				const { countryCode } = registrant || {};
+
+				return showStoreLink && includes( allowedCountries, countryCode );
+			}
+
+			render() {
+				return (
+					this.isStoreAvailable() &&
+					<SidebarItem
+						label={ translate( 'Store (BETA)' ) }
+						link={ storeLink }
+						onNavigate={ this.trackStoreClick }
+						icon="cart"
+					/>
+				);
+			}
+		}
+
+		return <StoreSidebarItem />;
 	}
 
 	trackUpgradeClick = () => {
