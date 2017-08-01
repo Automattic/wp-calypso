@@ -45,6 +45,10 @@ class ShippingSettingsSaveButton extends Component {
 	}
 
 	save = () => {
+		if ( ! config.isEnabled( 'woocommerce/extension-wcservices' ) ) {
+			return;
+		}
+
 		const { translate } = this.props;
 
 		const successAction = successNotice(
