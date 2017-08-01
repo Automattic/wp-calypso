@@ -23,7 +23,7 @@ export const getSiteCommentsTree = createSelector(
 			? filter( siteTree, { status } )
 			: siteTree;
 	},
-	( state, siteId ) => [ state.comments.trees[ siteId ] ]
+	( state, siteId ) => [ get( state, [ 'comments', 'trees', siteId ] ) ]
 );
 
 export default getSiteCommentsTree;
