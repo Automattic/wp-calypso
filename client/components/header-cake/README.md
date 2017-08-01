@@ -13,7 +13,7 @@ The "header cake" component should be used at the top of an item's detail page. 
 
 ## Props
 
-* `onClick` - (**required**) Function to trigger when the back text is clicked
+* `onClick` - Function to trigger when the back text is clicked
 * `onTitleClick` - Function to trigger when the title is clicked
 * `backText` - React Element or string to use in place of default "Back" text
 * `backHref` - URL to specify where the back button should redirect

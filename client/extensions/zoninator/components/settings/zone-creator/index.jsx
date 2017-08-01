@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flowRight, noop } from 'lodash';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,7 +14,7 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 const ZoneCreator = ( { siteSlug, translate } ) => (
 	<div>
-		<HeaderCake backHref={ `/extensions/zoninator/${ siteSlug }` } onClick={ noop }>
+		<HeaderCake backHref={ `/extensions/zoninator/${ siteSlug }` }>
 			{ translate( 'Add a zone' ) }
 		</HeaderCake>
 	</div>
