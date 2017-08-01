@@ -47,9 +47,7 @@ class MxRecord extends React.PureComponent {
 						placeholder={
 							translate(
 								'Enter subdomain (optional)',
-								{ context: 'Placeholder shown when entering the optional ' +
-									'subdomain part of a new DNS record'
-								}
+								{ context: 'Placeholder shown when entering the optional subdomain part of a new DNS record' }
 							)
 						}
 						isError={ ! isNameValid }
