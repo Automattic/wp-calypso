@@ -9,10 +9,11 @@ const DashboardPlugin = require( 'webpack-dashboard/plugin' );
 const fs = require( 'fs' );
 const HappyPack = require( 'happypack' );
 const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
+const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
 const os = require( 'os' );
 const path = require( 'path' );
+const prism = require( 'prismjs' );
 const webpack = require( 'webpack' );
-const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
 
 /**
  * Internal dependencies
@@ -28,25 +29,32 @@ const bundleEnv = config( 'env' );
 const isWindows = os.type() === 'Windows_NT';
 
 /**
- * This function scans the /client/extensions directory in order to generate a map that looks like this:
+ * This function scans the specified directory in order to generate an alias to path map that looks like this:
  * {
  *   sensei: 'absolute/path/to/wp-calypso/client/extensions/sensei',
  *   woocommerce: 'absolute/path/to/wp-calypso/client/extensions/woocommerce',
  *   ....
  * }
  *
- * Providing webpack with these aliases instead of telling it to scan client/extensions for every
+ * Providing webpack with these aliases instead of telling it to scan the directory for every
  * module resolution speeds up builds significantly.
+ *
+ * @param { String } directory - A directory to scan for modules.
+ * @param { String } prefix - A unique prefix for the alias to prevent alias collisions.
+ * @return { Object } aliasesMap - The alias to path map.
  */
-function getAliasesForExtensions() {
-	const extensionsDirectory = path.join( __dirname, 'client', 'extensions' );
-	const extensionsNames = fs
-		.readdirSync( extensionsDirectory )
-		.filter( filename => filename.indexOf( '.' ) === -1 ); // heuristic for finding directories
+function getAliasesForDirectory( directory, prefix = '' ) {
+	const folders = fs
+		.readdirSync( directory )
+		.filter( filename =>
+			fs.lstatSync(
+				path.join( directory, filename )
+			).isDirectory()
+		);
 
 	const aliasesMap = {};
-	extensionsNames.forEach( extensionName =>
-		aliasesMap[ extensionName ] = path.join( extensionsDirectory, extensionName )
+	folders.forEach( folder =>
+		aliasesMap[ prefix + folder ] = path.join( directory, folder )
 	);
 	return aliasesMap;
 }
@@ -110,7 +118,23 @@ const webpackConfig = {
 			},
 			{
 				test: /node_modules[\/\\]tinymce/,
-				use: 'imports-loader?this=>window',
+				use: 'imports-loader?this=>window'
+			},
+			{
+				test: /README\.md$/,
+				use: [
+					{ loader: 'html-loader' },
+					{
+						loader: 'markdown-loader',
+						options: {
+							sanitize: true,
+							highlight: function( code, language ) {
+								const syntax = prism.languages[ language ];
+								return syntax ? prism.highlight( code, syntax ) : code;
+							}
+						}
+					}
+				]
 			}
 		]
 	},
@@ -125,8 +149,8 @@ const webpackConfig = {
 				'react-virtualized': 'react-virtualized/dist/commonjs',
 				'social-logos/example': 'social-logos/build/example'
 			},
-			getAliasesForExtensions()
-		),
+			getAliasesForDirectory( path.join( __dirname, 'client', 'extensions' ) )
+		)
 	},
 	node: {
 		console: false,

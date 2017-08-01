@@ -21,19 +21,7 @@ React.createClass( {
 
 The following props can be passed to the Version component:
 
-### `version`
-
-<table>
-	<tr><td>Type</td><td>String or Number</td></tr>
-	<tr><td>Required</td><td>Yes</td></tr>
-</table>
-
-The version number that you want to display
-### `icon`
-
-<table>
-	<tr><td>Type</td><td>String</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-</table>
-
-The Gridicon you want to display next to the version. 
+| property  | type             | required | comment |
+| --------- | ---------------- | -------- | ------- |
+| `version` | String or Number | yes      | The version number that you want to display. |
+| `icon`    | String           | no       | The Gridicon you want to display next to the version. |

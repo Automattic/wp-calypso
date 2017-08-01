@@ -63,3 +63,99 @@
 		}
 	}
 }
+
+.docs-example__readme-viewer {
+	p, li {
+		font-size: 1.5rem;
+		font-weight: 400;
+	}
+
+	p {
+		margin-bottom: .5rem
+	}
+
+	code {
+		color: $orange-jazzy;
+	}
+
+	table {
+		border-collapse: collapse;
+		border-spacing: 0;
+
+		th, td {
+			border: 1px solid $gray;
+			font-size: .83em;
+			padding: 8px;
+			text-align: left;
+		}
+
+		th {
+			background-color: $gray-light;
+			padding-top: 11px;
+			padding-bottom: 11px;
+		}
+
+		td {
+			font-weight: 300;
+		}
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		display: block;
+		font-weight: 400;
+		margin-bottom: 0.5em;
+		margin-left: 0;
+	}
+
+	h1 {
+		font-size: 1.33em;
+	}
+
+	h2 {
+		font-size: 1.17em;
+	}
+
+	h3 {
+    font-size: 1em;
+	}
+
+	h4 {
+		font-size: .83em;
+	}
+
+	h5 {
+		font-size: .67em;
+	}
+
+	h6 {
+		font-size: .5em;
+	}
+}
+
+.docs-example__readme-viewer-header {
+	font-size: .83em;
+	font-weight: 500;
+}
+
+.docs-example__readme-viewer-hr {
+	background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+	border: 0;
+	display: block;
+	height: 1px;
+	margin-bottom: 2em;
+	position: relative;
+	text-align: center;
+	top: 1em;
+	width: 100%;
+}
+
+.docs-example__readme-viewer-hr:after {
+	background: $gray-light;
+	color: $blue-wordpress;
+	content: '\0000A7';
+	display: inline-block;
+	font-size: 18px;
+	padding: 0 10px;
+	position: relative;
+	top: -15px;
+}

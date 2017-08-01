@@ -116,60 +116,60 @@ let DesignAssets = React.createClass( {
 						/> }
 
 				<Collection component={ component } filter={ filter }>
-					<Accordions componentUsageStats={ componentsUsageStats.accordion } />
-					<Banner />
-					<BulkSelect />
-					<ButtonGroups />
-					<Buttons componentUsageStats={ componentsUsageStats.button } />
-					<Cards />
-					<ClipboardButtonInput />
-					<ClipboardButtons />
-					<Count />
-					<CountedTextareas />
-					<DatePicker />
-					<DropZones searchKeywords="drag" />
-					<EllipsisMenu />
-					<EmojifyExample />
-					<EmptyContent />
-					<ExternalLink />
-					<FAQ />
-					<FeatureGate />
-					<FilePickers />
-					<FoldableCard />
-					<FormattedHeader />
-					<FormFields searchKeywords="input textbox textarea radio" />
-					<Gauge />
+					<Accordions componentUsageStats={ componentsUsageStats.accordion } readmeFilePath="accordion" />
+					<Banner readmeFilePath="banner" />
+					<BulkSelect readmeFilePath="bulk-select" />
+					<ButtonGroups readmeFilePath="button-group" />
+					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="button" />
+					<Cards readmeFilePath="card" />
+					<ClipboardButtonInput readmeFilePath="clipboard-button-input" />
+					<ClipboardButtons readmeFilePath="forms/clipboard-button" />
+					<Count readmeFilePath="count" />
+					<CountedTextareas readmeFilePath="forms/counted-textarea" />
+					<DatePicker readmeFilePath="date-picker" />
+					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
+					<EllipsisMenu readmeFilePath="ellipsis-menu" />
+					<EmojifyExample readmeFilePath="emojify" />
+					<EmptyContent readmeFilePath="empty-content" />
+					<ExternalLink readmeFilePath="external-link" />
+					<FAQ readmeFilePath="faq" />
+					<FeatureGate readmeFilePath="feature-example" />
+					<FilePickers readmeFilePath="file-picker" />
+					<FoldableCard readmeFilePath="foldable-card" />
+					<FormattedHeader readmeFilePath="formatted-header" />
+					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />
+					<Gauge readmeFilePath="gauge" />
 					<GlobalNotices />
-					<Gravatar />
+					<Gravatar readmeFilePath="gravatar" />
 					<Gridicons />
-					<Headers />
-					<ImagePreloader />
-					<InfoPopover />
-					<Tooltip />
-					<InputChrono />
-					<LanguagePicker />
+					<Headers readmeFilePath="header-cake" />
+					<ImagePreloader readmeFilePath="image-preloader" />
+					<InfoPopover readmeFilePath="info-popover" />
+					<Tooltip readmeFilePath="tooltip" />
+					<InputChrono readmeFilePath="input-chrono" />
+					<LanguagePicker readmeFilePath="language-picker" />
 					<Notices />
-					<PaginationExample />
-					<PaymentLogo />
-					<Popovers />
-					<ProgressBar />
-					<Ranges />
-					<Rating />
+					<PaginationExample readmeFilePath="pagination" />
+					<PaymentLogo readmeFilePath="payment-logo" />
+					<Popovers readmeFilePath="popover" />
+					<ProgressBar readmeFilePath="progress-bar" />
+					<Ranges readmeFilePath="forms/range" />
+					<Rating readmeFilePath="rating" />
 					<Ribbon />
 					<ScreenReaderTextExample />
-					<SearchDemo />
-					<SectionHeader />
-					<SectionNav />
-					<SegmentedControl />
-					<SelectDropdown searchKeywords="menu" />
+					<SearchDemo readmeFilePath="search" />
+					<SectionHeader readmeFilePath="section-header" />
+					<SectionNav readmeFilePath="section-nav" />
+					<SegmentedControl readmeFilePath="segmented-control" />
+					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
 					<SocialLogos />
-					<Spinner searchKeywords="loading" />
-					<SpinnerButton searchKeywords="loading input submit" />
-					<SpinnerLine searchKeywords="loading" />
-					<Timezone />
-					<TokenFields />
-					<VerticalMenu />
-					<Version />
+					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
+					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
+					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
+					<Timezone readmeFilePath="timezone" />
+					<TokenFields readmeFilePath="token-field" />
+					<VerticalMenu readmeFilePath="vertical-menu" />
+					<Version readmeFilePath="version" />
 				</Collection>
 			</Main>
 		);
