@@ -199,8 +199,9 @@ class PostComment extends Component {
 								{ comment.author.name }
 							</strong> }
 						{ this.props.showNestingReplyArrow && parentAuthorUrl &&
-							<span className="comments__comment-respondee"> >
-								<a href={ parentAuthorUrl }>
+							<span className="comments__comment-respondee">
+								<Gridicon icon="chevron-right" size={ 18 } />
+								<a className="comments__comment-respondee-link" href={ parentAuthorUrl }>
 									{ parentAuthor.name }
 								</a>
 							</span>

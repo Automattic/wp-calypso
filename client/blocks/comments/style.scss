@@ -260,8 +260,13 @@
 }
 
 .comments__comment-respondee {
-	color: darken( $gray, 20% );
+	color: $gray;
 	font-size: 15px;
+}
+
+.comments__comment-respondee .comments__comment-respondee-link:hover,
+.comments__comment-respondee .comments__comment-respondee-link {
+	color: $gray;
 }
 
 .comments__comment-author {
