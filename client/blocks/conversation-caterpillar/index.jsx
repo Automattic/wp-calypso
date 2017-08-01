@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { map, get } from 'lodash';
+import { map, get, last } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /***
@@ -16,17 +16,13 @@ class ConversationCaterpillarComponent extends React.Component {
 	static propTypes = {
 		blogId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,
-		commentId: PropTypes.number.isRequired,
 	};
 
 	render() {
-		const { commentId, commentsTree } = this.props;
-		if ( ! commentId ) {
-			return null;
-		}
-
-		const firstComment = commentsTree[ Object.keys( commentsTree )[ 0 ] ];
-		const firstCommenterName = get( firstComment, 'data.author.name' );
+		const { commentsTree, translate } = this.props;
+		const lastComment = commentsTree[ last( Object.keys( commentsTree ) ) ];
+		const lastCommenterName = get( lastComment, 'data.author.name' );
+		const commentCount = Object.keys( commentsTree ).length;
 
 		// At the moment, we just show authors for the entire commentsTree
 		return (
@@ -38,12 +34,40 @@ class ConversationCaterpillarComponent extends React.Component {
 							key={ comment.data.ID }
 							user={ comment.data.author }
 							size={ 32 }
+							aria-hidden="true"
 						/>
 					);
 				} ) }
-				<div className="conversation-caterpillar__count">
-					{ firstCommenterName }
-				</div>
+				<button
+					className="conversation-caterpillar__count"
+					title={
+						commentCount > 1
+							? translate( 'View comments from %(commenterName)s and %(count)d others', {
+									args: {
+										commenterName: lastCommenterName,
+										count: commentCount - 1,
+									},
+								} )
+							: translate( 'View comment from %(commenterName)s', {
+									args: {
+										commenterName: lastCommenterName,
+									},
+								} )
+					}
+				>
+					{ commentCount > 1
+						? translate( '%(commenterName)s and %(count)d others', {
+								args: {
+									commenterName: lastCommenterName,
+									count: commentCount - 1,
+								},
+							} )
+						: translate( '%(commenterName)s commented', {
+								args: {
+									commenterName: lastCommenterName,
+								},
+							} ) }
+				</button>
 			</div>
 		);
 	}
