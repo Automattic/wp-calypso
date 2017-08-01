@@ -3,18 +3,18 @@
 	flex-direction: column;
 	padding: 10px;
 
-	// @include breakpoint( ">480px" ) {
-	// 	flex-direction: row;
-	// }
+	@include breakpoint( ">480px" ) {
+		flex-direction: row;
+	}
 }
 
 .wpview-type-simple-payments__image-part {
 	flex: 0 0 30%;
 	margin-bottom: 24px;
 
-	// @include breakpoint( ">480px" ) {
-	// 	margin-bottom: 0
-	// }
+	@include breakpoint( ">480px" ) {
+		margin-bottom: 0
+	}
 }
 
 .wpview-type-simple-payments__image-figure {
@@ -43,10 +43,10 @@
 }
 
 .wpview-type-simple-payments__image-part + .wpview-type-simple-payments__text-part {
-	// @include breakpoint( ">480px" ) {
-	// 	flex-basis: 70%;
-	// 	padding-left: 16px;
-	// }
+	@include breakpoint( ">480px" ) {
+	flex-basis: 70%;
+		padding-left: 16px;
+	}
 }
 
 .wpview-type-simple-payments__title {
