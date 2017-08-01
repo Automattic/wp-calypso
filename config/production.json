@@ -109,7 +109,6 @@
 		"woocommerce/extension-settings-payments": true,
 		"woocommerce/extension-settings-shipping": true,
 		"woocommerce/extension-settings-tax": true,
-		"woocommerce/extension-stats": true,
 		"wpcom-user-bootstrap": true
 	},
 	"rtl": false,

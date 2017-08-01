@@ -457,8 +457,8 @@ const navigateToSite = ( siteId, {
 		}
 
 		if ( path.match( /^\/store\/stats\// ) ) {
-			const isWooConnect = site.jetpack && isPluginActive( state, site.ID, 'woocommerce' );
-			if ( ! isWooConnect ) {
+			const isStore = site.jetpack && isPluginActive( state, site.ID, 'woocommerce' );
+			if ( ! isStore ) {
 				path = '/stats/day';
 			}
 		}
