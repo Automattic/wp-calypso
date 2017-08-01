@@ -84,7 +84,9 @@ var SectionNavigation = React.createClass( {
 	render: function() {
 		var demoSections = {};
 
-		forEach( omit( this.props, 'isolated', 'uniqueInstance' ), function( prop, key ) {
+		// this will potentially break every time a new prop is added
+		// perhaps it should be refactored to explicitly iterate only the props it cares about
+		forEach( omit( this.props, 'isolated', 'uniqueInstance', 'readmeFilePath' ), function( prop, key ) {
 			demoSections[ key ] = [];
 
 			prop.forEach( function( item, index ) {
