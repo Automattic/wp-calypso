@@ -6,17 +6,34 @@ This is a directory of shared form components.
 ### Settings Form Fields
 The following form components were created as an effort to minimize duplication between site settings and me settings.
 
+- clipboard-button
+- counted-textarea
 - form-button
 - form-buttons-bar
 - form-checkbox
+- form-country-select
+- form-currency-input
 - form-fieldset
+- form-input-validation
 - form-label
 - form-legend
+- form-password-input
+- form-phone-input
+- form-phone-media-input
 - form-radio
+- form-range
+- form-section-heading
 - form-select
 - form-setting-explanation
+- form-tel-input
 - form-text-input
+- form-text-input-with-action
+- form-text-input-with-affixes
 - form-textarea
+- form-toggle
+- multi-checkbox
+- range
+- sortable-list
 
 The component jsx files are wrappers that ensure our classes are added to each form field. Each form field component also contains a `style.scss` file in its directory for styling. These stylesheets are included in `/assets/stylesheets/_components.scss`.
 
