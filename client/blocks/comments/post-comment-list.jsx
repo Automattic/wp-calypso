@@ -82,7 +82,7 @@ class PostCommentList extends React.Component {
 	 * @returns {boolean} - whether or not we should scroll to a comment
 	 */
 	shouldScrollToComment = ( props = this.props ) => {
-		return (
+		return !! (
 			props.startingCommentId &&
 			props.commentsTree[ this.props.startingCommentId ] &&
 			props.commentsFetchingStatus.hasReceivedBefore &&
@@ -93,7 +93,7 @@ class PostCommentList extends React.Component {
 	};
 
 	shouldFetchInitialComment = ( { startingCommentId, initialComment } ) => {
-		return startingCommentId && ! initialComment;
+		return !! ( startingCommentId && ! initialComment );
 	};
 
 	shouldFetchInitialPages = ( { startingCommentId, commentsTree } ) =>
