@@ -2,15 +2,15 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, noop, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { COMMENTS_CHANGE_STATUS } from 'state/action-types';
 import { mergeHandlers } from 'state/action-watchers/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import { local } from 'state/data-layer/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice } from 'state/notices/actions';
 import { getSiteComment } from 'state/selectors';
@@ -37,20 +37,6 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	);
 };
 
-const verifyCommentStatus = ( { dispatch, getState }, action, next, data ) => {
-	const statusFromState = get( getSiteComment( getState(), action.siteId, action.commentId ), 'status' );
-	const statusFromServer = get( data, 'status' );
-
-	if ( statusFromServer && statusFromServer !== statusFromState ) {
-		dispatch(
-			local( {
-				...action,
-				status: get( data, 'status' ),
-			} )
-		);
-	}
-};
-
 const announceFailure = ( { dispatch, getState }, action ) => {
 	const { commentId, status, previousStatus } = action;
 
@@ -58,7 +44,7 @@ const announceFailure = ( { dispatch, getState }, action ) => {
 
 	dispatch(
 		local( {
-			...action,
+			...omit( action, [ 'meta' ] ),
 			status: previousStatus,
 		} )
 	);
@@ -74,12 +60,12 @@ const announceFailure = ( { dispatch, getState }, action ) => {
 	dispatch( errorNotice( get( errorMessage, status, defaultErrorMessage ), {
 		button: translate( 'Try again' ),
 		id: `comment-notice-${ commentId }`,
-		onClick: () => dispatch( action ),
+		onClick: () => dispatch( omit( action, [ 'meta' ] ) ),
 	} ) );
 };
 
 const changeStatusHandlers = {
-	[ COMMENTS_CHANGE_STATUS ]: [ dispatchRequest( changeCommentStatus, verifyCommentStatus, announceFailure ) ],
+	[ COMMENTS_CHANGE_STATUS ]: [ dispatchRequest( changeCommentStatus, noop, announceFailure ) ],
 };
 
 export default mergeHandlers( changeStatusHandlers );
