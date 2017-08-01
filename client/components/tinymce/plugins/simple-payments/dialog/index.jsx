@@ -360,8 +360,10 @@ class SimplePaymentsDialog extends Component {
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect( ( state, { siteId } ) => {
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
 
 	return {
 		siteId,
