@@ -57,7 +57,8 @@ class AccountSettingsRootView extends Component {
 
 			return (
 				<LabelSettings
-					isLoading={ ( formMeta || {} ).isFetching }
+					isLoading={ formMeta.isFetching }
+					pristine={ formMeta.pristine }
 					paymentMethods={ formMeta.payment_methods || [] }
 					setFormDataValue={ setFormDataValue }
 					selectedPaymentMethod={ ( formData || {} ).selected_payment_method_id }

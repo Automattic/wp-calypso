@@ -3,7 +3,6 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,6 +10,29 @@ import { includes } from 'lodash';
 import FormCheckbox from 'components/forms/form-checkbox';
 import CompactCard from 'components/card/compact';
 import PaymentLogo from 'components/payment-logo';
+
+export const getPaymentMethodTitle = ( translate, paymentType, digits ) => {
+	const supportedTypes = {
+		amex: translate( 'American Express' ),
+		discover: translate( 'Discover' ),
+		mastercard: translate( 'MasterCard' ),
+		visa: translate( 'VISA' ),
+		paypal: translate( 'PayPal' ),
+	};
+
+	if ( ! supportedTypes[ paymentType ] ) {
+		return null;
+	}
+
+	if ( ! digits ) {
+		return supportedTypes[ paymentType ];
+	}
+
+	return translate( '%(card)s ****%(digits)s', { args: {
+		card: supportedTypes[ paymentType ],
+		digits
+	} } );
+};
 
 const PaymentMethod = ( { translate, selected, isLoading, type, digits, name, expiry, onSelect } ) => {
 	const renderPlaceholder = () => (
@@ -32,24 +54,9 @@ const PaymentMethod = ( { translate, selected, isLoading, type, digits, name, ex
 		return renderPlaceholder();
 	}
 
-	const supportedTypes = {
-		amex: translate( 'American Express' ),
-		discover: translate( 'Discover' ),
-		mastercard: translate( 'MasterCard' ),
-		visa: translate( 'VISA' ),
-		paypal: translate( 'PayPal' ),
-	};
-
-	const typeId = includes( Object.keys( supportedTypes ), type ) ? type : 'placeholder';
-	const typeName = supportedTypes[ type ] || type;
-
-	const renderDigits = () => {
-		if ( ! digits ) {
-			return null;
-		}
-
-		return translate( '****%(digits)s', { args: { digits } } );
-	};
+	const typeTitle = getPaymentMethodTitle( translate, type, digits );
+	const typeId = typeTitle ? type : 'placeholder';
+	const typeName = typeTitle || type;
 
 	return (
 		<CompactCard className="label-settings__card" onClick={ onSelect }>
@@ -60,7 +67,7 @@ const PaymentMethod = ( { translate, selected, isLoading, type, digits, name, ex
 			/>
 			<PaymentLogo className="label-settings__card-logo" type={ typeId } />
 			<div className="label-settings__card-details">
-				<p className="label-settings__card-number">{ typeName } { renderDigits() }</p>
+				<p className="label-settings__card-number">{ typeName }</p>
 				<p className="label-settings__card-name">{ name }</p>
 			</div>
 			<div className="label-settings__card-date">

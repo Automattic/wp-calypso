@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,63 +13,120 @@ import Button from 'components/button';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
-import PaymentMethod from './label-payment-method';
+import PaymentMethod, { getPaymentMethodTitle } from './label-payment-method';
 
-const ShippingLabels = ( { isLoading, paymentMethods, setFormDataValue, selectedPaymentMethod, paperSize, storeOptions, translate } ) => {
-	const onPaymentMethodChange = ( value ) => setFormDataValue( 'selected_payment_method_id', value );
-	const onPaperSizeChange = ( event ) => setFormDataValue( 'paper_size', event.target.value );
+class ShippingLabels extends Component {
+	componentWillMount() {
+		this.setState( { expanded: this.isExpanded( this.props ) } );
+	}
 
-	const renderPaymentMethod = ( method, index ) => {
-		const onSelect = () => onPaymentMethodChange( method.payment_method_id );
+	componentWillReceiveProps( props ) {
+		this.setState( { expanded: this.isExpanded( props ) } );
+	}
+
+	isExpanded( { pristine, selectedPaymentMethod } ) {
+		return ! selectedPaymentMethod || ! pristine;
+	}
+
+	renderPlaceholder() {
+		return (
+			<div className="label-settings__placeholder">
+				<FormFieldSet>
+					<FormLabel className="label-settings__cards-label">
+						<span />
+					</FormLabel>
+					<FormSelect />
+				</FormFieldSet>
+				<FormFieldSet>
+					<FormLabel
+						className="label-settings__cards-label">
+						<span />
+					</FormLabel>
+					<p className="label-settings__credit-card-description">
+					</p>
+					<PaymentMethod selected={ false } isLoading={ true } />
+					<PaymentMethod selected={ false } isLoading={ true } />
+					<Button href="https://wordpress.com/me/billing" target="_blank" compact />
+				</FormFieldSet>
+			</div>
+		);
+	}
+
+	renderPaymentsSection = () => {
+		const { paymentMethods, setFormDataValue, selectedPaymentMethod, translate } = this.props;
+
+		if ( ! this.state.expanded ) {
+			const expand = ( event ) => {
+				event.preventDefault();
+				this.setState( { expanded: true } );
+			};
+
+			const {
+				card_type: selectedType,
+				card_digits: selectedDigits,
+			} = find( paymentMethods, { payment_method_id: selectedPaymentMethod } );
+
+			return (
+				<div>
+					<p className="label-settings__credit-card-description">
+						{ translate( 'We\'ll charge the credit card on your ' +
+							'account (%(card)s) to pay for the labels you print', { args: {
+								card: getPaymentMethodTitle( translate, selectedType, selectedDigits ),
+							} } ) }
+					</p>
+					<p className="label-settings__credit-card-description">
+						<a href="#" onClick={ expand }>{ translate( 'Choose a different card' ) }</a>
+					</p>
+				</div>
+			);
+		}
+
+		const onPaymentMethodChange = ( value ) => setFormDataValue( 'selected_payment_method_id', value );
+
+		let description, buttonLabel;
+		if ( paymentMethods.length ) {
+			description = translate( 'Use your credit card on file to pay for the labels you print or add a new one.' );
+			buttonLabel = translate( 'Add another credit card' );
+		} else {
+			description = translate( 'To pay for shipping labels you need to add a credit card to your account' );
+			buttonLabel = translate( 'Add a credit card' );
+		}
+
+		const renderPaymentMethod = ( method, index ) => {
+			const onSelect = () => onPaymentMethodChange( method.payment_method_id );
+			return (
+				<PaymentMethod
+					key={ index }
+					selected={ selectedPaymentMethod === method.payment_method_id }
+					type={ method.card_type }
+					name={ method.name }
+					digits={ method.card_digits }
+					expiry={ method.expiry }
+					onSelect={ onSelect } />
+			);
+		};
 
 		return (
-			<PaymentMethod
-				key={ index }
-				selected={ selectedPaymentMethod === method.payment_method_id }
-				type={ method.card_type }
-				name={ method.name }
-				digits={ method.card_digits }
-				expiry={ method.expiry }
-				onSelect={ onSelect } />
+			<div>
+				<p className="label-settings__credit-card-description">
+					{ description }
+				</p>
+				{ paymentMethods.map( renderPaymentMethod ) }
+				<Button href="https://wordpress.com/me/billing" target="_blank" compact>
+					{ buttonLabel }
+				</Button>
+			</div>
 		);
 	};
 
-	const renderPlaceholder = () => (
-		<div className="label-settings__placeholder">
-			<FormFieldSet>
-				<FormLabel className="label-settings__cards-label">
-					<span />
-				</FormLabel>
-				<FormSelect />
-			</FormFieldSet>
-			<FormFieldSet>
-				<FormLabel
-					className="label-settings__cards-label">
-					<span />
-				</FormLabel>
-				<p className="label-settings__credit-card-description">
-				</p>
-				<PaymentMethod selected={ false } isLoading={ true } />
-				<PaymentMethod selected={ false } isLoading={ true } />
-				<Button href="https://wordpress.com/me/billing" target="_blank" compact />
-			</FormFieldSet>
-		</div>
-	);
+	renderContent = () => {
+		const { isLoading, setFormDataValue, paperSize, storeOptions, translate } = this.props;
 
-	let description, buttonLabel;
-	if ( paymentMethods.length ) {
-		description = translate( 'Use your credit card on file to pay for the labels you print or add a new one.' );
-		buttonLabel = translate( 'Add another credit card' );
-	} else {
-		description = translate( 'To pay for shipping labels you need to add a credit card to your account' );
-		buttonLabel = translate( 'Add a credit card' );
-	}
-
-	const renderContent = () => {
 		if ( isLoading ) {
-			return renderPlaceholder();
+			return this.renderPlaceholder();
 		}
 
+		const onPaperSizeChange = ( event ) => setFormDataValue( 'paper_size', event.target.value );
 		const paperSizes = getPaperSizes( storeOptions.origin_country );
 
 		return (
@@ -87,29 +145,28 @@ const ShippingLabels = ( { isLoading, paymentMethods, setFormDataValue, selected
 				<FormFieldSet>
 					<FormLabel
 						className="label-settings__cards-label">
-						{ translate( 'Credit card' ) }
+						{ translate( 'Payment' ) }
 					</FormLabel>
-					<p className="label-settings__credit-card-description">
-						{ description }
-					</p>
-					{ paymentMethods.map( renderPaymentMethod ) }
-					<Button href="https://wordpress.com/me/billing" target="_blank" compact>
-						{ buttonLabel }
-					</Button>
+					{ this.renderPaymentsSection() }
 				</FormFieldSet>
+
 			</div>
 		);
 	};
 
-	return (
-		<div className="label-settings__labels-container">
-			{ renderContent() }
-		</div>
-	);
-};
+	render() {
+		return (
+			<div className="label-settings__labels-container">
+				{ this.renderContent() }
+			</div>
+		);
+	}
+
+}
 
 ShippingLabels.propTypes = {
 	isLoading: PropTypes.bool,
+	pristine: PropTypes.bool,
 	paymentMethods: PropTypes.array,
 	setFormDataValue: PropTypes.func,
 	selectedPaymentMethod: PropTypes.number,
