@@ -159,6 +159,7 @@
 	}
 }
 
+.order__details-created,
 .order__details-refund,
 .order__details-fulfillment {
 	margin: 0 -16px;
@@ -172,6 +173,7 @@
 		padding: 24px;
 	}
 
+	.order__details-created-label,
 	.order__details-refund-label,
 	.order__details-fulfillment-label {
 		display: flex;
