@@ -118,7 +118,7 @@ export default connect(
 			error,
 			progress,
 			installing: progress === 100,
-			upgradeJetpack: isJetpack && ! isJetpackMinimumVersion( state, siteId, 5.1 ),
+			upgradeJetpack: isJetpack && ! isJetpackMinimumVersion( state, siteId, '5.1' ),
 		};
 	},
 	{ uploadPlugin, clearPluginUpload }
