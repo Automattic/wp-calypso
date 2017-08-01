@@ -83,7 +83,7 @@ class StatsPeriodNavigation extends PureComponent {
 	}
 }
 
-const connectComponent = connect( undefined, { recordGoogleEvent: recordGoogleEventAction } );
+const connectComponent = connect( null, { recordGoogleEvent: recordGoogleEventAction } );
 
 export default flowRight(
 	connectComponent,
