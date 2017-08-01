@@ -19,6 +19,8 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	const { siteId, commentId, status } = action;
 	const previousStatus = get( getSiteComment( getState(), action.siteId, action.commentId ), 'status' );
 
+	dispatch( removeNotice( `comment-notice-${ commentId }` ) );
+
 	dispatch(
 		http(
 			{
@@ -39,8 +41,6 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 
 const announceFailure = ( { dispatch, getState }, action ) => {
 	const { commentId, status, previousStatus } = action;
-
-	dispatch( removeNotice( `comment-notice-${ action.commentId }` ) );
 
 	dispatch(
 		local( {
