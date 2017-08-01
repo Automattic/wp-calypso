@@ -65,6 +65,7 @@
 		"me/notifications": true,
 		"me/trophies": false,
 		"notifications2beta": true,
+		"notifications/link-to-reader": true,
 		"nps-survey/devdocs": false,
 		"nps-survey/dev-trigger": false,
 		"nps-survey/notice": true,
