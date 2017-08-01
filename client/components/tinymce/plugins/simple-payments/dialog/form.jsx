@@ -15,7 +15,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormCurrencyInput from 'components/forms/form-currency-input';
-import FormToggle from 'components/forms/form-toggle';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormInputValidation from 'components/forms/form-input-validation';
 import UploadImage from 'blocks/upload-image';
 
@@ -99,14 +99,14 @@ class ProductForm extends Component {
 							<FormInputValidation isError text={ translate( 'Invalid price' ) } /> }
 					</FormFieldset>
 					<FormFieldset>
-						<FormToggle
+						<CompactFormToggle
 							name="multiple"
 							id="multiple"
 							checked={ !! fieldValues.multiple }
 							onChange={ this.handleMultipleCheckboxChange }
 						>
 							{ translate( 'Allow people to buy more than one item at a time.' ) }
-						</FormToggle>
+						</CompactFormToggle>
 					</FormFieldset>
 					<FormFieldset>
 						<FormLabel htmlFor="email">
