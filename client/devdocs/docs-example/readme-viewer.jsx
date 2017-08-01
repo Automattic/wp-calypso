@@ -2,6 +2,8 @@
  * External Dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { Parser } from 'html-to-react';
+const htmlToReactParser = new Parser();
 
 /**
  * Internal Dependencies
@@ -10,7 +12,7 @@ import FoldableCard from 'components/foldable-card';
 
 class ReadmeViewer extends Component {
 	static propTypes = {
-		getReadmeHTML: PropTypes.func,
+		getReadme: PropTypes.func,
 		readmeFilePath: PropTypes.string
 	};
 
@@ -27,15 +29,13 @@ class ReadmeViewer extends Component {
 					Oh no. There's no README.
 				</span>;
 
-		const body = this.props.readmeFilePath
-			? <div dangerouslySetInnerHTML={ this.props.getReadmeHTML( this.props.readmeFilePath ) } />
-			: <div>Please write one!</div>;
+		const readme = this.props.readmeFilePath && this.props.getReadme( this.props.readmeFilePath );
 
 		return (
 			<div className="docs-example__readme-viewer">
-				<hr className="docs-example__readme-viewer-hr"/>
+				<hr className="docs-example__readme-viewer-hr" />
 				<FoldableCard header={ header } clickableHeader={ true } compact={ true }>
-					{ body }
+					{ readme || 'Please write one!' }
 				</FoldableCard>
 			</div>
 		);
@@ -43,8 +43,9 @@ class ReadmeViewer extends Component {
 }
 
 ReadmeViewer.defaultProps = {
-	getReadmeHTML: ( readmeFilePath ) => {
-		return { __html: require( `../../components/${ readmeFilePath }/README.md` ) };
+	getReadme: ( readmeFilePath ) => {
+		return htmlToReactParser.parse(
+			require( `../../components/${ readmeFilePath }/README.md` ) );
 	}
 };
 

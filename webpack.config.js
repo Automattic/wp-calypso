@@ -12,7 +12,7 @@ const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
 const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
 const os = require( 'os' );
 const path = require( 'path' );
-const prism = require ( 'prismjs' );
+const prism = require( 'prismjs' );
 const webpack = require( 'webpack' );
 
 /**
@@ -118,7 +118,7 @@ const webpackConfig = {
 			},
 			{
 				test: /node_modules[\/\\]tinymce/,
-				use: 'imports-loader?this=>window',
+				use: 'imports-loader?this=>window'
 			},
 			{
 				test: /README\.md$/,

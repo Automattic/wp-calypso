@@ -59,7 +59,6 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 			);
 		}
 
-		const readmeFilePath = example.props.readmeFilePath;
 		return (
 			<DocsExampleWrapper
 				name={ exampleName }
