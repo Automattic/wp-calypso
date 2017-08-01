@@ -53,7 +53,7 @@ class ShippingSettingsSaveButton extends Component {
 
 		const successAction = successNotice(
 			translate( 'Shipping settings saved' ),
-			{ duration: 4000, displayOnNextPage: true }
+			{ duration: 4000 }
 		);
 
 		const failureAction = errorNotice(
