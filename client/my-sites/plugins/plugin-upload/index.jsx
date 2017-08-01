@@ -129,6 +129,7 @@ export default connect(
 		const error = getPluginUploadError( state, siteId );
 		const progress = getPluginUploadProgress( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
+		const isJetpackMultisite = isJetpackSiteMultiSite( state, siteId );
 		return {
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
@@ -140,8 +141,8 @@ export default connect(
 			error,
 			progress,
 			installing: progress === 100,
-			upgradeJetpack: isJetpack && ! isJetpackMinimumVersion( state, siteId, '5.1' ),
-			isJetpackMultisite: isJetpackSiteMultiSite( state, siteId ),
+			upgradeJetpack: isJetpack && ! isJetpackMultisite && ! isJetpackMinimumVersion( state, siteId, '5.1' ),
+			isJetpackMultisite,
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		};
 	},
