@@ -8,7 +8,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, isEmpty, pick } from 'lodash';
+import { get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -122,13 +122,9 @@ function getCurrentCommitShortChecksum() {
 }
 
 function getDefaultContext( request ) {
-	let initialServerState = {};
-	// We don't cache routes with query params
-	if ( isEmpty( request.query ) ) {
-		// context.pathname is set to request.path, see server/isomorphic-routing#getEnhancedContext()
-		const serializeCachedServerState = stateCache.get( request.path ) || {};
-		initialServerState = getInitialServerState( serializeCachedServerState );
-	}
+	// context.pathname is set to request.path, see server/isomorphic-routing#getEnhancedContext()
+	const serializeCachedServerState = stateCache.get( request.path ) || {};
+	const initialServerState = getInitialServerState( serializeCachedServerState );
 
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,

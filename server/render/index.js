@@ -4,7 +4,7 @@
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
-import { isEmpty, pick } from 'lodash';
+import { pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -86,7 +86,7 @@ export function serverRender( req, res ) {
 		config.isEnabled( 'server-side-rendering' ) &&
 		context.layout &&
 		! context.user &&
-		isEmpty( context.query ) &&
+		! context.disableSSR &&
 		isDefaultLocale( context.lang )
 	) {
 		// context.pathname doesn't include querystring, so it's a suitable cache key.
@@ -111,8 +111,7 @@ export function serverRender( req, res ) {
 		// Send state to client
 		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
 		// And cache on the server, too
-		if ( isEmpty( context.query ) ) {
-			// Don't cache if we have query params
+		if ( ! context.disableSSR ) {
 			const serverState = reducer( context.initialReduxState, { type: SERIALIZE } );
 			stateCache.set( context.pathname, serverState );
 		}

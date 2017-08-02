@@ -76,6 +76,7 @@ export function loggedIn( context, next ) {
 export function loggedOut( context, next ) {
 	if ( context.isServerSide && ! isEmpty( context.query ) ) {
 		// Don't server-render URLs with query params
+		context.disableSSR = true;
 		return next();
 	}
 
