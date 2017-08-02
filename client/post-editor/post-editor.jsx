@@ -387,7 +387,8 @@ export const PostEditor = React.createClass( {
 								<FeaturedImage
 									site={ site }
 									post={ this.state.post }
-									maxWidth={ 1462 } />
+									maxWidth={ 1462 }
+									hasDropZone={ true } />
 								<div className="post-editor__header">
 									<EditorTitle
 										onChange={ this.onEditorTitleChange }
