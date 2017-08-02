@@ -16,6 +16,7 @@ class ConversationCaterpillarComponent extends React.Component {
 	static propTypes = {
 		blogId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,
+		commentsTree: PropTypes.object.isRequired,
 	};
 
 	render() {
