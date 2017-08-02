@@ -45,7 +45,21 @@ const JPOSummaryStep = React.createClass( {
 	},
 
 	completeOnboarding() {
-		console.log( this.getFormattedPayload() );
+		// Get the payload and original JPC url
+		const payload = this.getFormattedPayload();
+		const jetpackConnectUrl = localStorage.getItem( 'jpoConnectUrl' );
+
+		// Flag the flow as complete for use in JPC
+		localStorage.setItem( 'jpoFlowComplete', '1' );
+
+		/**
+		 * Store the payload in localStorage for use after the connection
+		 * to Jetpack has been authorized
+		 */
+		localStorage.setItem( 'jpoPayload', JSON.stringify( payload ) );
+
+		// Redirect to the original JPC URL
+		window.location.href = jetpackConnectUrl;
 	},
 
 	goToStepOne() {
