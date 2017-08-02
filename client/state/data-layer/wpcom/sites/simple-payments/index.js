@@ -28,33 +28,46 @@ import formatCurrency from 'lib/format-currency';
 import { getFeaturedImageId } from 'lib/posts/utils-ssr-ready';
 
 /**
- * Reduce function for product attributes stored in post metadata
- * @param { Object }  sanitizedProductAttributes object with all sanitized attributes
- * @param { Object } current  item from post_meta to process
- * @returns { Object } sanitizedProductAttributes
+ * Convert custom post metadata array to product attributes
+ * @param { Array } metadata Array of post metadata
+ * @returns { Object } properties extracted from the metadata, to be merged into the product object
  */
-function reduceMetadata( sanitizedProductAttributes, current ) {
-	if ( metaKeyToSchemaKeyMap[ current.key ] ) {
-		sanitizedProductAttributes[ metaKeyToSchemaKeyMap[ current.key ] ] = current.value;
-	}
-	return sanitizedProductAttributes;
+function customPostMetadataToProductAttributes( metadata ) {
+	const productAttributes = {};
+
+	metadata.forEach( ( { key, value } ) => {
+		const schemaKey = metaKeyToSchemaKeyMap[ key ];
+		if ( ! schemaKey ) {
+			return;
+		}
+
+		// If the property's type is marked as boolean in the schema,
+		// convert the value from PHP-ish truthy/falsy numbers to a plain boolean.
+		if ( metadataSchema[ schemaKey ].type === 'boolean' ) {
+			value = !! Number( value );
+		}
+
+		productAttributes[ schemaKey ] = value;
+	} );
+
+	return productAttributes;
 }
 
 /**
- * Formats /posts endpoint response into a product list
- * @param { Object } product raw /post endpoint response to format
+ * Formats /posts endpoint response into a product object
+ * @param { Object } customPost raw /post endpoint response to format
  * @returns { Object } sanitized and formatted product
  */
-export function customPostToProduct( product ) {
-	return Object.assign(
-		{
-			ID: product.ID,
-			description: product.content,
-			title: product.title,
-			featuredImageId: getFeaturedImageId( product ),
-		},
-		product.metadata.reduce( reduceMetadata, {} ),
-	);
+export function customPostToProduct( customPost ) {
+	const metadataAttributes = customPostMetadataToProductAttributes( customPost.metadata );
+
+	return {
+		ID: customPost.ID,
+		description: customPost.content,
+		title: customPost.title,
+		featuredImageId: getFeaturedImageId( customPost ),
+		...metadataAttributes,
+	};
 }
 
 /**
