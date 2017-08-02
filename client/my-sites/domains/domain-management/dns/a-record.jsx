@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,66 +14,101 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
-const ARecord = React.createClass( {
-	statics: {
-		initialFields: {
-			name: '',
-			data: ''
-		}
-	},
-
-	propTypes: {
+class ARecord extends React.Component {
+	static propTypes = {
 		fieldValues: React.PropTypes.object.isRequired,
 		onChange: React.PropTypes.func.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
-		show: React.PropTypes.bool.isRequired
-	},
+		show: React.PropTypes.bool.isRequired,
+	};
+
+	static initialFields = {
+		name: '',
+		data: '',
+	};
 
 	render() {
-		const classes = classnames( { 'is-hidden': ! this.props.show } ),
-			{ fieldValues, isValid, onChange, selectedDomainName } = this.props,
-			isNameValid = isValid( 'name' ),
-			isDataValid = isValid( 'data' ),
-			isAaaaRecord = this.props.fieldValues.type === 'AAAA';
-		let namePlaceholder = this.translate( 'Enter subdomain (optional)', {
+		const { fieldValues, isValid, onChange, selectedDomainName, show, translate } = this.props;
+		const classes = classnames( { 'is-hidden': ! show } );
+		const isNameValid = isValid( 'name' );
+		const isDataValid = isValid( 'data' );
+		const isAaaaRecord = fieldValues.type === 'AAAA';
+
+		let namePlaceholder = translate(
+			'Enter subdomain (optional)',
+			{
 				context: 'Placeholder shown when entering the optional subdomain part of a new DNS record'
-			} ),
-			dataPlaceholder = this.translate( 'e.g. %(example)s', { args: { example: '123.45.78.9' } } );
+			}
+		);
+		let dataPlaceholder = translate(
+			'e.g. %(example)s',
+			{
+				args: {
+					example: '123.45.78.9'
+				}
+			}
+		);
 
 		if ( isAaaaRecord ) {
-			namePlaceholder = this.translate( 'Enter subdomain (required)', {
-				context: 'Placeholder shown when entering the required subdomain part of a new DNS record'
-			} ),
-			dataPlaceholder = this.translate( 'e.g. %(example)s', { args: { example: '2001:500:84::b' } } );
+			namePlaceholder = translate(
+				'Enter subdomain (required)',
+				{
+					context: 'Placeholder shown when entering the required subdomain part of a new DNS record'
+				}
+			);
+			dataPlaceholder = translate(
+				'e.g. %(example)s',
+				{
+					args: {
+						example: '2001:500:84::b'
+					}
+				}
+			);
 		}
 
 		return (
 			<div className={ classes }>
 				<FormFieldset>
-					<FormLabel>{ this.translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
+					<FormLabel>
+						{ translate( 'Name', { context: 'Dns Record' } ) }
+					</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
 						placeholder={ namePlaceholder }
 						isError={ ! isNameValid }
 						onChange={ onChange }
 						value={ fieldValues.name }
-						suffix={ '.' + selectedDomainName } />
-					{ ! isNameValid ? <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> : null }
+						suffix={ '.' + selectedDomainName }
+					/>
+					{ ! isNameValid &&
+						<FormInputValidation
+							text={ translate( 'Invalid Name' ) }
+							isError
+						/>
+					}
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>{ this.translate( 'Points To' ) }</FormLabel>
+					<FormLabel>
+						{ translate( 'Points To' ) }
+					</FormLabel>
 					<FormTextInput
 						name="data"
 						isError={ ! isDataValid }
 						onChange={ onChange }
 						value={ fieldValues.data }
-						placeholder={ dataPlaceholder } />
-					{ ! isDataValid ? <FormInputValidation text={ this.translate( 'Invalid IP' ) } isError={ true } /> : null }
+						placeholder={ dataPlaceholder }
+					/>
+					{ ! isDataValid &&
+						<FormInputValidation
+							text={ translate( 'Invalid IP' ) }
+							isError
+						/>
+					}
 				</FormFieldset>
 			</div>
 		);
 	}
-} );
+}
 
-export default ARecord;
+export default localize( ARecord );
