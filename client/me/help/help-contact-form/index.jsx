@@ -206,6 +206,15 @@ export const HelpContactForm = React.createClass( {
 	},
 
 	/**
+	 * Tracks clicks on the questions returned by Sibyl.
+	 * @param {object} event Click event
+	 * @param {object} helpLink Help link, including id for tracking
+	 */
+	trackSibylClick( event, helpLink ) {
+		analytics.mc.bumpStat( 'sibyl_question_clicks', helpLink.id );
+	},
+
+	/**
 	 * Render the contact form
 	 * @return {object} ReactJS JSX object
 	 */
@@ -292,6 +301,7 @@ export const HelpContactForm = React.createClass( {
 					header={ translate( 'Do you want the answer to any of these questions?' ) }
 					helpLinks={ this.state.qanda }
 					iconTypeDescription="book"
+					onClick={ this.trackSibylClick }
 				/>
 
 				<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>{ buttonLabel }</FormButton>
