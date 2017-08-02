@@ -1,30 +1,24 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
+var React = require( 'react' );
 
 /**
  * Internal dependencies
  */
-import { CUSTOM_DNS } from 'lib/url/support';
+var support = require( 'lib/url/support' );
 
-class DnsDetails extends React.PureComponent {
-	render() {
-		const { translate } = this.props;
-
+var DnsDetails = React.createClass( {
+	render: function() {
 		return (
 			<p className="dns__details">
-				{ translate(
-					'DNS records are special settings that change how your domain works. ' +
-					'They let you connect to third-party services, like an email provider. '
-				) }
-				<a href={ CUSTOM_DNS }>
-					{ translate( 'Learn more.' ) }
+				{ this.translate( 'DNS records are special settings that change how your domain works. They let you connect to third-party services, like an email provider. ' ) }
+				<a href={ support.CUSTOM_DNS }>
+					{ this.translate( 'Learn more.' ) }
 				</a>
 			</p>
 		);
 	}
-}
+} );
 
-export default localize( DnsDetails );
+module.exports = DnsDetails;
