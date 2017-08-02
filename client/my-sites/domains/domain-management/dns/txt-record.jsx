@@ -14,7 +14,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
-class TxtRecord extends React.PureComponent {
+class TxtRecord extends React.Component {
 	static initialFields = {
 		name: '',
 		data: '',

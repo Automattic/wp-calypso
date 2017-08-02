@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import { domainManagementEmailForwarding } from 'my-sites/domains/paths';
 
-class DeleteEmailForwardsDialog extends React.PureComponent {
+class DeleteEmailForwardsDialog extends React.Component {
 	static propTypes = {
 		onClose: React.PropTypes.func,
 		visible: React.PropTypes.bool.isRequired,
