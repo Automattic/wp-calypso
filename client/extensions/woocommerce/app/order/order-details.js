@@ -10,6 +10,7 @@ import React, { Component, PropTypes } from 'react';
  */
 import Card from 'components/card';
 import FormSelect from 'components/forms/form-select';
+import OrderCreated from './order-created';
 import OrderDetailsTable from './order-details-table';
 import OrderFulfillment from './order-fulfillment';
 import OrderRefundCard from './order-refund-card';
@@ -96,6 +97,7 @@ class OrderDetails extends Component {
 				</SectionHeader>
 				<Card className="order__details-card">
 					<OrderDetailsTable order={ order } site={ site } />
+					<OrderCreated order={ order } site={ site } />
 					<OrderRefundCard order={ order } site={ site } />
 					<OrderFulfillment order={ order } site={ site } />
 				</Card>
