@@ -2363,7 +2363,7 @@ Undocumented.prototype.initiateTransfer = function( siteId, plugin, theme, onPro
 			post.body = { plugin };
 		}
 		if ( theme ) {
-			post.formData = [ [ 'theme', theme ] ];
+			post.formData = [ [ 'plugin_zip', theme ] ];
 		}
 
 		const req = this.wpcom.req.post( post, resolver );
