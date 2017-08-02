@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { forEach, map, random, startsWith } from 'lodash';
+import { filter, forEach, map, random, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -327,6 +327,16 @@ export default function feedStoreFactory( storeId ) {
 			onGapFetch: limitSiteParamsForConversations,
 			dateProperty: 'last_comment_date_gmt',
 		} );
+		// monkey patching is the best patching
+		store.filterNewPosts = function filterConversationsPosts( posts ) {
+			// for conversations, we want to keep posts that we already have that have new comments attached
+			const postById = this.postById;
+			posts = filter( posts, function( post ) {
+				return ! postById.has( post.ID );
+			} );
+			posts = this.filterFollowedXPosts( posts );
+			return map( posts, this.keyMaker );
+		};
 	} else if ( storeId === 'conversations-a8c' ) {
 		store = new FeedStream( {
 			id: storeId,
