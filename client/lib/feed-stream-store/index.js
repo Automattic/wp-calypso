@@ -1,8 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import { filter, forEach, map, random, startsWith } from 'lodash';
-
+import { filter, forEach, isEqual, map, random, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -329,13 +329,24 @@ export default function feedStoreFactory( storeId ) {
 		} );
 		// monkey patching is the best patching
 		store.filterNewPosts = function filterConversationsPosts( posts ) {
-			// for conversations, we want to keep posts that we already have that have new comments attached
-			const postById = this.postById;
-			posts = filter( posts, function( post ) {
-				return ! postById.has( post.ID );
+			// turn the new ones into post keys
+			const newPosts = map( posts, this.keyMaker );
+			return filter( newPosts, post => {
+				// only keep things that we don't have or things that have new comments
+				if ( ! this.postById.has( post.ID ) ) {
+					return true; // new new
+				}
+				const existingPost = find( this.postKeys, { ID: post.ID } );
+				if ( ! existingPost ) {
+					// this should never happen
+					return true;
+				}
+
+				if ( isEqual( existingPost.comments, post.comments ) ) {
+					return false;
+				}
+				return true;
 			} );
-			posts = this.filterFollowedXPosts( posts );
-			return map( posts, this.keyMaker );
 		};
 	} else if ( storeId === 'conversations-a8c' ) {
 		store = new FeedStream( {
