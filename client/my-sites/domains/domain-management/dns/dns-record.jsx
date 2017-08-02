@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import { isBeingProcessed } from 'lib/domains/dns';
 
-class DnsRecord extends React.PureComponent {
+class DnsRecord extends React.Component {
 	static propTypes = {
 		onDeleteDns: React.PropTypes.func.isRequired,
 		dnsRecord: React.PropTypes.object.isRequired,

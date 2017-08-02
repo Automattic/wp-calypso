@@ -15,7 +15,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FormSettingExplanation from 'components/forms/form-setting-explanation' ;
 
-class MxRecord extends React.PureComponent {
+class MxRecord extends React.Component {
 	static initialFields = {
 		name: '',
 		data: '',

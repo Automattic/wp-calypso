@@ -14,7 +14,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
-class CnameRecord extends React.PureComponent {
+class CnameRecord extends React.Component {
 	static propTypes = {
 		fieldValues: React.PropTypes.object.isRequired,
 		onChange: React.PropTypes.func.isRequired,

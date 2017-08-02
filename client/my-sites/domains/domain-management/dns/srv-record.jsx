@@ -15,7 +15,7 @@ import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
-class SrvRecord extends React.PureComponent {
+class SrvRecord extends React.Component {
 	static initialFields = {
 		name: '',
 		service: '',
