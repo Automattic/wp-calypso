@@ -1,7 +1,8 @@
+/** @format */
 /**
  * External Dependencies
  */
-import { filter, findIndex, findLastIndex, forEach, get, map, noop, defer } from 'lodash';
+import { filter, findIndex, findLastIndex, forEach, get, map, noop, defer, uniqBy } from 'lodash';
 import moment from 'moment';
 import debugFactory from 'debug';
 
@@ -473,9 +474,7 @@ export default class FeedStream {
 			if ( postKeys.length > 0 ) {
 				this.pendingPostKeys = postKeys;
 				this.pendingDateAfter = moment(
-					this.keyMaker( data.posts[ data.posts.length - 1 ] )[
-						this.dateProperty
-					],
+					this.keyMaker( data.posts[ data.posts.length - 1 ] )[ this.dateProperty ]
 				);
 				this.emitChange();
 			}
@@ -492,9 +491,7 @@ export default class FeedStream {
 			postById.add( postKey.postId );
 		} );
 
-		const mostRecentPostDate = moment(
-			this.postKeys[ 0 ][ this.dateProperty ],
-		);
+		const mostRecentPostDate = moment( this.postKeys[ 0 ][ this.dateProperty ] );
 
 		if ( this.pendingDateAfter > mostRecentPostDate ) {
 			this.pendingPostKeys.push( {
@@ -503,7 +500,7 @@ export default class FeedStream {
 				to: this.pendingDateAfter,
 			} );
 		}
-		this.postKeys = this.pendingPostKeys.concat( this.postKeys );
+		this.postKeys = uniqBy( this.pendingPostKeys.concat( this.postKeys ), postKey => postKey.ID );
 		if ( this.selectedIndex > -1 ) {
 			//we already scroll to top of content, so deselect so we don't
 			//try to scroll down again.
