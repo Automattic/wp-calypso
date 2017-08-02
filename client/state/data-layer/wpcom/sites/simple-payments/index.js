@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, noop } from 'lodash';
+import { filter, toPairs, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -63,35 +63,36 @@ export function customPostToProduct( product ) {
  * @returns { Object } custom post type data
  */
 export function productToCustomPost( product ) {
+	// Get the `product` object entries and filter only those that will go into metadata
+	const metadataEntries = toPairs( product ).filter( ( [ key ] ) => metadataSchema[ key ] );
+
 	// add formatted_price to display money correctly
 	if ( ! product.formatted_price ) {
-		product.formatted_price = formatCurrency( product.price, product.currency );
+		metadataEntries.push( [
+			'formatted_price',
+			formatCurrency( product.price, product.currency ),
+		] );
 	}
 
-	return Object.keys( product ).reduce(
-		function( payload, current ) {
-			if ( metadataSchema[ current ] ) {
-				let value = product[ current ];
+	// Convert the `product` entries into a metadata array
+	const metadata = metadataEntries.map( ( [ key, value ] ) => {
+		if ( typeof value === 'boolean' ) {
+			value = value ? 1 : 0;
+		}
 
-				if ( typeof( value ) === 'boolean' ) {
-					value = value ? 1 : 0;
-				}
+		return {
+			key: metadataSchema[ key ].metaKey,
+			value,
+		};
+	} );
 
-				payload.metadata.push( {
-					key: metadataSchema[ current ].metaKey,
-					value
-				} );
-			}
-			return payload;
-		},
-		{
-			type: SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
-			metadata: [],
-			title: product.title,
-			content: product.description,
-			featured_image: product.featuredImageId || '',
-		},
-	);
+	return {
+		type: SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
+		metadata,
+		title: product.title,
+		content: product.description,
+		featured_image: product.featuredImageId || '',
+	};
 }
 
 /**
