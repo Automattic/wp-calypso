@@ -8,12 +8,12 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
+import CompactCard from 'components/card/compact';
 import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
 import config from 'config';
 import { tracks } from 'lib/analytics';
 import { localize } from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
-import SiteToolsLink from './link';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSiteAdminUrl } from 'state/sites/selectors';
 import { isVipSite } from 'state/selectors';
@@ -87,47 +87,64 @@ class SiteTools extends Component {
 			<div className="site-tools">
 				<SectionHeader label={ translate( 'Site Tools' ) } />
 				{ showChangeAddress &&
-					<SiteToolsLink
+					<CompactCard
 						href={ changeAddressLink }
 						onClick={ this.trackChangeAddress }
-						title={ changeSiteAddress }
-						description={ changeAddressText }
-					/>
+						className="site-tools__link">
+						<div className="site-tools__content">
+							<p className="site-tools__section-title">{ changeSiteAddress }</p>
+							<p className="site-tools__section-desc">{ changeAddressText }</p>
+						</div>
+					</CompactCard>
 				}
-				<SiteToolsLink
+				<CompactCard
 					href={ importUrl }
-					title={ importTitle }
-					description={ importText }
-				/>
-				<SiteToolsLink
+					className="site-tools__link">
+					<div className="site-tools__content">
+						<p className="site-tools__section-title">{ importTitle }</p>
+						<p className="site-tools__section-desc">{ importText }</p>
+					</div>
+				</CompactCard>
+				<CompactCard
 					href={ exportUrl }
-					title={ exportTitle }
-					description={ exportText }
-				/>
+					className="site-tools__link">
+					<div className="site-tools__content">
+						<p className="site-tools__section-title">{ exportTitle }</p>
+						<p className="site-tools__section-desc">{ exportText }</p>
+					</div>
+				</CompactCard>
 				{ showThemeSetup &&
-					<SiteToolsLink
+					<CompactCard
 						href={ themeSetupLink }
 						onClick={ this.trackThemeSetup }
-						title={ themeSetup }
-						description={ themeSetupText }
-					/>
+						className="site-tools__link">
+						<div className="site-tools__content">
+							<p className="site-tools__section-title">{ themeSetup }</p>
+							<p className="site-tools__section-desc">{ themeSetupText }</p>
+						</div>
+					</CompactCard>
 				}
 				{ showDeleteContent &&
-					<SiteToolsLink
+					<CompactCard
 						href={ startOverLink }
 						onClick={ this.trackStartOver }
-						title={ startOver }
-						description={ startOverText }
-					/>
+						className="site-tools__link">
+						<div className="site-tools__content">
+							<p className="site-tools__section-title">{ startOver }</p>
+							<p className="site-tools__section-desc">{ startOverText }</p>
+						</div>
+					</CompactCard>
 				}
 				{ showDeleteSite &&
-					<SiteToolsLink
+					<CompactCard
 						href={ deleteSiteLink }
 						onClick={ this.checkForSubscriptions }
-						title={ deleteSite }
-						description={ deleteSiteText }
-						isWarning
-					/>
+						className="site-tools__link">
+						<div className="site-tools__content">
+							<p className="site-tools__section-title is-warning">{ deleteSite }</p>
+							<p className="site-tools__section-desc">{ deleteSiteText }</p>
+						</div>
+					</CompactCard>
 				}
 				<DeleteSiteWarningDialog
 					isVisible={ this.state.showDialog }

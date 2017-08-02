@@ -373,7 +373,7 @@ describe( 'handlers', () => {
 		} );
 
 		it( 'should create variations for a new product', () => {
-			const product1 = { id: { placeholder: 0 }, name: 'Product #1', type: 'variable' };
+			const product1 = { id: { index: 0 }, name: 'Product #1', type: 'variable' };
 
 			const productEdits = {
 				creates: [
@@ -383,7 +383,7 @@ describe( 'handlers', () => {
 
 			const variationEdits = [
 				{
-					productId: { placeholder: 0 },
+					productId: { index: 0 },
 					creates: [
 						variationBlackNew,
 					],
@@ -530,3 +530,4 @@ describe( 'handlers', () => {
 		} );
 	} );
 } );
+

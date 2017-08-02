@@ -48,7 +48,7 @@ class DebugTab extends Component {
 		} = this.props;
 
 		return (
-			<div className="wp-super-cache__debug-tab">
+			<div>
 				<form>
 					<SectionHeader label={ translate( 'Debug' ) }>
 						<FormButton
@@ -90,7 +90,7 @@ class DebugTab extends Component {
 									onChange={ handleAutosavingToggle( 'wp_super_cache_comments' ) }>
 									{ translate( 'Cache Status Messages' ) }
 								</FormToggle>
-								<FormSettingExplanation isIndented>
+								<FormSettingExplanation>
 									{ translate(
 											'Display comments at the end of every page like this:'
 									) }
@@ -127,7 +127,7 @@ class DebugTab extends Component {
 								onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_check' ) }>
 								{ translate( 'Check front page every 5 minutes.' ) }
 							</FormToggle>
-							<FormSettingExplanation isIndented>
+							<FormSettingExplanation>
 								{ translate( ' If there are errors you\'ll receive an email.' ) }
 							</FormSettingExplanation>
 						</FormFieldset>

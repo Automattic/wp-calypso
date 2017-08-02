@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
-import { get } from 'lodash';
-import { localize } from 'i18n-calypso';
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,16 +10,9 @@ import React from 'react';
 import analytics from 'lib/analytics';
 import Button from 'components/button';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
-import { getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors';
 
-const PluginSiteDisabledManage = ( {
-	isNetwork,
-	plugin,
-	remoteManagementUrl,
-	site,
-	translate
-} ) => {
-	const url = remoteManagementUrl + '&section=plugins';
+const PluginSiteDisabledManage = ( { isNetwork, site, plugin, translate } ) => {
+	const url = site.getRemoteManagementURL() + '&section=plugins';
 	const message = isNetwork
 		? translate( 'Network management disabled' )
 		: translate( 'Management disabled' );
@@ -53,8 +44,4 @@ const PluginSiteDisabledManage = ( {
 	);
 };
 
-export default connect(
-	( state, ownProps ) => ( {
-		remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, get( ownProps, 'site.ID' ) )
-	} )
-)( localize( PluginSiteDisabledManage ) );
+export default localize( PluginSiteDisabledManage );

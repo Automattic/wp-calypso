@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { get, isDate, startsWith } from 'lodash';
+import { isDate } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,16 +10,15 @@ import { get, isDate, startsWith } from 'lodash';
 import {
 	COMMENTS_REQUEST,
 	COMMENTS_RECEIVE,
+	COMMENTS_REMOVE,
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
-	COMMENTS_DELETE,
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { createNotice, errorNotice } from 'state/notices/actions';
+import { errorNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { getPostOldestCommentDate } from 'state/comments/selectors';
-import getSiteComment from 'state/selectors/get-site-comment';
 
 /***
  * Creates a placeholder comment for a given text and postId
@@ -32,17 +31,17 @@ export function createPlaceholderComment( commentText, postId, parentCommentId )
 	// We need placehodler id to be unique in the context of siteId, postId for that specific user,
 	// date milliseconds will do for that purpose.
 	return {
-		ID: 'placeholder-' + new Date().getTime(),
+		ID: 'placeholder-' + ( new Date().getTime() ),
 		parent: parentCommentId ? { ID: parentCommentId } : false,
-		date: new Date().toISOString(),
+		date: ( new Date() ).toISOString(),
 		content: commentText,
 		status: 'pending',
 		type: 'comment',
 		post: {
-			ID: postId,
+			ID: postId
 		},
 		isPlaceholder: true,
-		placeholderState: 'PENDING',
+		placeholderState: 'PENDING'
 	};
 }
 
@@ -51,24 +50,17 @@ export const fetchPostComments = ( { dispatch, getState }, action ) => {
 	const { siteId, postId, query } = action;
 	const before = getPostOldestCommentDate( getState(), siteId, postId );
 
-	dispatch(
-		http(
-			{
-				method: 'GET',
-				path: `/sites/${ siteId }/posts/${ postId }/replies`,
-				apiVersion: '1.1',
-				query: {
-					...query,
-					...( before &&
-					isDate( before ) &&
-					before.toISOString && {
-						before: before.toISOString(),
-					} ),
-				},
-			},
-			action,
-		),
-	);
+	dispatch( http( {
+		method: 'GET',
+		path: `/sites/${ siteId }/posts/${ postId }/replies`,
+		apiVersion: '1.1',
+		query: {
+			...query,
+			...( before && isDate( before ) && before.toISOString && {
+				before: before.toISOString()
+			} )
+		}
+	}, action ) );
 };
 
 export const writePostComment = ( { dispatch }, action ) => {
@@ -81,28 +73,26 @@ export const writePostComment = ( { dispatch }, action ) => {
 		siteId,
 		postId,
 		comments: [ placeholder ],
-		skipSort: !! parentCommentId,
+		skipSort: !! parentCommentId
 	} );
 
 	const path = !! parentCommentId
 		? `/sites/${ siteId }/comments/${ parentCommentId }/replies/new`
 		: `/sites/${ siteId }/posts/${ postId }/replies/new`;
 
-	dispatch(
-		http( {
-			method: 'POST',
-			apiVersion: '1.1',
-			path,
-			body: {
-				content: commentText,
-			},
-			onSuccess: {
-				...action,
-				placeholderId: placeholder.ID,
-			},
-			onFailure: action,
-		} ),
-	);
+	dispatch( http( {
+		method: 'POST',
+		apiVersion: '1.1',
+		path,
+		body: {
+			content: commentText
+		},
+		onSuccess: {
+			...action,
+			placeholderId: placeholder.ID
+		},
+		onFailure: action
+	} ) );
 };
 
 export const addComments = ( { dispatch }, { siteId, postId }, next, { comments, found } ) => {
@@ -110,7 +100,7 @@ export const addComments = ( { dispatch }, { siteId, postId }, next, { comments,
 		type: COMMENTS_RECEIVE,
 		siteId,
 		postId,
-		comments,
+		comments
 	} );
 
 	// if the api have returned comments count, dispatch it
@@ -122,27 +112,16 @@ export const addComments = ( { dispatch }, { siteId, postId }, next, { comments,
 			type: COMMENTS_COUNT_RECEIVE,
 			siteId,
 			postId,
-			totalCommentsCount: found,
+			totalCommentsCount: found
 		} );
 	}
 };
 
-export const writePostCommentSuccess = (
-	{ dispatch },
-	{ siteId, postId, parentCommentId, placeholderId },
-	next,
-	comment,
-) => {
+export const writePostCommentSuccess = ( { dispatch }, { siteId, postId, parentCommentId, placeholderId }, next, comment ) => {
 	// remove placeholder from state
-	dispatch( { type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId } );
+	dispatch( { type: COMMENTS_REMOVE, siteId, postId, commentId: placeholderId } );
 	// add new comment to state with updated values from server
-	dispatch( {
-		type: COMMENTS_RECEIVE,
-		siteId,
-		postId,
-		comments: [ comment ],
-		skipSort: !! parentCommentId,
-	} );
+	dispatch( { type: COMMENTS_RECEIVE, siteId, postId, comments: [ comment ], skipSort: !! parentCommentId } );
 	// increment comments count
 	dispatch( { type: COMMENTS_COUNT_INCREMENT, siteId, postId } );
 };
@@ -157,69 +136,6 @@ export const announceFailure = ( { dispatch, getState }, { siteId, postId } ) =>
 	dispatch( errorNotice( error ) );
 };
 
-// @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/delete/
-export const deleteComment = ( { dispatch, getState }, action ) => {
-	const { siteId, commentId } = action;
-
-	if ( startsWith( commentId, 'placeholder' ) ) {
-		return;
-	}
-
-	const comment = getSiteComment( getState(), siteId, commentId );
-
-	dispatch(
-		http(
-			{
-				method: 'POST',
-				apiVersion: '1.1',
-				path: `/sites/${ siteId }/comments/${ commentId }/delete`,
-			},
-			{
-				...action,
-				comment,
-			}
-		)
-	);
-};
-
-export const announceDeleteSuccess = ( { dispatch } ) => {
-	dispatch(
-		createNotice(
-			'is-error',
-			translate( 'Comment deleted permanently.' ),
-			{
-				duration: 5000,
-				isPersistent: true,
-			}
-		)
-	);
-};
-
-export const announceDeleteFailure = ( { dispatch, getState }, action ) => {
-	const { siteId, postId, comment } = action;
-
-	dispatch(
-		errorNotice(
-			translate( 'Could not delete the comment.' ),
-			{
-				duration: 5000,
-				isPersistent: true,
-			}
-		)
-	);
-
-	if ( comment ) {
-		dispatch( {
-			type: COMMENTS_RECEIVE,
-			siteId,
-			postId,
-			comments: [ comment ],
-			skipSort: !! get( comment, 'parent.ID' ),
-		} );
-	}
-};
-
 export default {
-	[ COMMENTS_REQUEST ]: [ dispatchRequest( fetchPostComments, addComments, announceFailure ) ],
-	[ COMMENTS_DELETE ]: [ dispatchRequest( deleteComment, announceDeleteSuccess, announceDeleteFailure ) ],
+	[ COMMENTS_REQUEST ]: [ dispatchRequest( fetchPostComments, addComments, announceFailure ) ]
 };

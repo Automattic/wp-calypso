@@ -72,10 +72,9 @@ import ReaderImportButton from 'blocks/reader-import-button/docs/example';
 import SharingPreviewPane from 'blocks/sharing-preview-pane/docs/example';
 import ReaderShare from 'blocks/reader-share/docs/example';
 import Login from 'blocks/login/docs/example';
-import ReaderEmailSettings from 'blocks/reader-email-settings/docs/example';
-import UploadImage from 'blocks/upload-image/docs/example';
 
 export default React.createClass( {
+
 	displayName: 'AppComponents',
 
 	getInitialState() {
@@ -93,16 +92,18 @@ export default React.createClass( {
 	render() {
 		return (
 			<Main className="design">
-				{ this.props.component
+				{
+					this.props.component
 					? <HeaderCake onClick={ this.backToComponents } backText="All Blocks">
-							{ slugToCamelCase( this.props.component ) }
-						</HeaderCake>
+						{ slugToCamelCase( this.props.component ) }
+					</HeaderCake>
 					: <SearchCard
-							onSearch={ this.onSearch }
-							initialValue={ this.state.filter }
-							placeholder="Search blocks…"
-							analyticsGroup="Docs"
-						/> }
+						onSearch={ this.onSearch }
+						initialValue={ this.state.filter }
+						placeholder="Search blocks…"
+						analyticsGroup="Docs">
+					</SearchCard>
+				}
 				<Collection
 					component={ this.props.component }
 					filter={ this.state.filter }
@@ -162,10 +163,8 @@ export default React.createClass( {
 					<ReaderImportButton />
 					<SharingPreviewPane />
 					<ReaderShare />
-					<ReaderEmailSettings />
-					<UploadImage />
 				</Collection>
 			</Main>
 		);
-	},
+	}
 } );

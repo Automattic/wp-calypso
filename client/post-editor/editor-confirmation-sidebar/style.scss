@@ -28,14 +28,14 @@
 
 .editor-confirmation-sidebar__sidebar {
 	@extend .sidebar;
-	width: $sidebar-width-max;
+	width: $sidebar-width-min;
 	background: $sidebar-bg-color;
 	border-left: 1px solid darken( $sidebar-bg-color, 5% );
 	border-right: none;
 	box-sizing: border-box;
 	position: fixed;
 		left: auto;
-		right: -$sidebar-width-max;
+		right: -$sidebar-width-min;
 	z-index: z-index( 'root', '.editor-confirmation-sidebar__sidebar' );
 	transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
 

@@ -59,9 +59,11 @@ button {
 			border-width: 1px 1px 2px;
 		}
 	}
-	.accessible-focus &:focus {
+	.accessible-focus & {
+		&:focus {
 			border-color: $blue-medium;
 			box-shadow: 0 0 0 2px $blue-light;
+		}
 	}
 	&.is-compact {
 		padding: 7px;
@@ -141,11 +143,9 @@ button {
 	&:focus {
 		border-color: $alert-red;
 	}
-
-	.accessible-focus &:focus {
-			box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
+	&:focus {
+		box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
 	}
-
 	&[disabled],
 	&:disabled {
 		color: lighten( $alert-red, 30% );
@@ -175,9 +175,11 @@ button {
 	color: $gray-text-min;
 	padding-left: 0;
 	padding-right: 0;
+	border-radius: 0;
 
 	&:hover,
 	&:focus {
+		box-shadow: none;
 		color: $gray-dark;
 	}
 

@@ -155,7 +155,6 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
 					siteId,
-					preloading: true,
 				} );
 			} );
 		} );
@@ -199,7 +198,6 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
 					siteId,
-					preloading: false,
 				} );
 			} );
 		} );

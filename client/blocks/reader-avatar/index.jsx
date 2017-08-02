@@ -94,11 +94,7 @@ const ReaderAvatar = ( {
 
 	return (
 		<div className={ classes } onClick={ onClick }>
-			{ siteUrl
-				? <a href={ siteUrl }>
-						{ iconElements }
-					</a>
-				: iconElements }
+			{ siteUrl ? <a href={ siteUrl }>{ iconElements }</a> : iconElements }
 		</div>
 	);
 };

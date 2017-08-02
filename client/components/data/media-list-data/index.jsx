@@ -27,7 +27,6 @@ module.exports = React.createClass( {
 	propTypes: {
 		siteId: React.PropTypes.number.isRequired,
 		source: React.PropTypes.string,
-		postId: React.PropTypes.number,
 		filter: React.PropTypes.string,
 		search: React.PropTypes.string
 	},
@@ -65,13 +64,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( props.filter ) {
-			if ( props.filter === 'this-post' ) {
-				if ( props.postId ) {
-					query.post_ID = props.postId;
-				}
-			} else {
-				query.mime_type = utils.getMimeBaseTypeFromFilter( props.filter );
-			}
+			query.mime_type = utils.getMimeBaseTypeFromFilter( props.filter );
 		}
 
 		if ( props.source ) {

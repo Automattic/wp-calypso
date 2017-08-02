@@ -27,7 +27,7 @@ export function requestPostEmailSubscription( { dispatch }, action ) {
 			apiVersion: '1.2',
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 }
 
@@ -40,14 +40,12 @@ export function receivePostEmailSubscription( store, action, next, response ) {
 		return;
 	}
 	// pass this on, but tack in the delivery_frequency that we got back from the API
-	store.dispatch(
-		local(
-			updateNewPostEmailSubscription(
-				action.payload.blogId,
-				get( response, [ 'subscription', 'delivery_frequency' ] ),
-			),
-		),
-	);
+	store.dispatch( local(
+		updateNewPostEmailSubscription(
+			action.payload.blogId,
+			get( response, [ 'subscription', 'delivery_frequency' ] )
+		)
+	) );
 }
 
 export function receivePostEmailSubscriptionError( { dispatch }, action ) {
@@ -60,7 +58,7 @@ export default {
 		dispatchRequest(
 			requestPostEmailSubscription,
 			receivePostEmailSubscription,
-			receivePostEmailSubscriptionError,
+			receivePostEmailSubscriptionError
 		),
 	],
 };

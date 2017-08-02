@@ -2,40 +2,38 @@
  * External Dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
+import analyticsMixin from 'lib/mixins/analytics';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import support from 'lib/url/support';
 import { domainManagementEmail } from 'my-sites/domains/paths';
-import PendingGappsTosNoticeMultipleDomainListItem from './pending-gapps-tos-notice-multiple-domain-list-item';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'state/analytics/actions';
 
-const learnMoreLink = <a href={ support.COMPLETING_GOOGLE_APPS_SIGNUP } target="_blank" rel="noopener noreferrer" />;
-const strong = <strong />;
+const learnMoreLink = <a href={ support.COMPLETING_GOOGLE_APPS_SIGNUP } target="_blank" rel="noopener noreferrer" />,
+	strong = <strong />;
 
-class PendingGappsTosNotice extends React.PureComponent {
-	static propTypes = {
+const PendingGappsTosNotice = React.createClass( {
+	mixins: [ analyticsMixin( 'domainManagement', 'googleApps' ) ],
+
+	propTypes: {
 		siteSlug: React.PropTypes.string.isRequired,
 		domains: React.PropTypes.array.isRequired,
 		section: React.PropTypes.string.isRequired,
-		isCompact: React.PropTypes.bool,
-	};
+		isCompact: React.PropTypes.bool
+	},
 
-	static defaultProps = {
-		isCompact: false,
-	};
+	getDefaultProps() {
+		return {
+			isCompact: false
+		};
+	},
 
 	componentDidMount() {
-		this.props.showPendingAccountNotice(
+		this.recordEvent( 'showPendingAccountNotice',
 			{
 				siteSlug: this.props.siteSlug,
 				severity: this.getNoticeSeverity(),
@@ -43,19 +41,17 @@ class PendingGappsTosNotice extends React.PureComponent {
 				section: this.props.section
 			}
 		);
-	}
+	},
 
 	getGappsLoginUrl( email, domain ) {
 		return `https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel` +
 			`&continue=https%3A%2F%2Fadmin.google.com%2F${ domain }` +
 			'%2FAcceptTermsOfService%3Fcontinue%3Dhttps%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F1';
-	}
+	},
 
 	getNoticeSeverity() {
-		const { moment } = this.props;
-
 		const subscribedDaysAgo = days => {
-			return domain => moment( domain.googleAppsSubscription.subscribedDate ).isBefore( moment().subtract( days, 'days' ) );
+			return domain => this.moment( domain.googleAppsSubscription.subscribedDate ).isBefore( this.moment().subtract( days, 'days' ) );
 		};
 
 		if ( this.props.domains.some( subscribedDaysAgo( 21 ) ) ) {
@@ -65,10 +61,9 @@ class PendingGappsTosNotice extends React.PureComponent {
 		}
 
 		return 'info';
-	}
+	},
 
 	getExclamation( severity ) {
-		const { translate } = this.props;
 		const translationOptions = {
 			context: 'Beginning of Gapps pending account notice',
 			comment: 'Used as an exclamation in Gapps\' pending account notice'
@@ -76,52 +71,40 @@ class PendingGappsTosNotice extends React.PureComponent {
 
 		switch ( severity ) {
 			case 'warning':
-				return translate( 'Attention!', translationOptions );
+				return this.props.translate( 'Attention!', translationOptions );
 
 			case 'error':
-				return translate( 'Urgent!', translationOptions );
+				return this.props.translate( 'Urgent!', translationOptions );
 
 			default:
-				return translate( 'You\'re almost there!', translationOptions );
+				return this.props.translate( 'You\'re almost there!', translationOptions );
 		}
-	}
+	},
 
-	recordLogInClick = ( domainName, user, isMultipleDomains ) => {
-		this.props.pendingAccountLogInClick( {
-			domainName,
-			isMultipleDomains,
-			user,
-			severity: this.getNoticeSeverity(),
-			section: this.props.section,
-			siteSlug: this.props.siteSlug
-		} );
-	};
+	generateLogInClickHandler( { domainName, user, severity, isMultipleDomains } ) {
+		return () => {
+			this.recordEvent( 'pendingAccountLogInClick', {
+				domainName,
+				isMultipleDomains,
+				severity,
+				user,
+				section: this.props.section,
+				siteSlug: this.props.siteSlug
+			} );
+		};
+	},
 
-	logInClickHandlerOneDomain = () => {
-		this.recordLogInClick(
-			this.props.domains[ 0 ].name,
-			this.props.domains[ 0 ].googleAppsSubscription.pendingUsers[ 0 ],
-			false
-		);
-	};
-
-	logInClickHandlerMultipleDomains = ( domainName, user ) => {
-		this.recordLogInClick(
-			domainName,
-			user,
-			true
-		);
-	};
-
-	fixClickHandler = () => {
-		this.props.fixPendingEmailSiteNoticeClick( this.props.siteSlug );
-	};
+	generateFixClickHandler() {
+		return () => {
+			this.recordEvent( 'fixPendingEmailSiteNoticeClick', this.props.siteSlug );
+		};
+	},
 
 	compactNotice() {
-		const severity = this.getNoticeSeverity();
-		const href = this.props.domains.length === 1
-			? domainManagementEmail( this.props.siteSlug, this.props.domains[ 0 ].name )
-			: domainManagementEmail( this.props.siteSlug );
+		const severity = this.getNoticeSeverity(),
+			href = this.props.domains.length === 1
+				? domainManagementEmail( this.props.siteSlug, this.props.domains[ 0 ].name )
+				: domainManagementEmail( this.props.siteSlug );
 
 		return (
 			<Notice
@@ -138,19 +121,18 @@ class PendingGappsTosNotice extends React.PureComponent {
 				) }>
 				<NoticeAction
 					href={ href }
-					onClick={ this.fixClickHandler }>
+					onClick={ this.generateFixClickHandler() }>
 						{ this.props.translate( 'Fix' ) }
 				</NoticeAction>
 			</Notice>
 		);
-	}
+	},
 
 	oneDomainNotice() {
-		const { translate } = this.props;
-		const severity = this.getNoticeSeverity();
-		const exclamation = this.getExclamation( severity );
-		const domainName = this.props.domains[ 0 ].name;
-		const users = this.props.domains[ 0 ].googleAppsSubscription.pendingUsers;
+		const severity = this.getNoticeSeverity(),
+			exclamation = this.getExclamation( severity ),
+			domainName = this.props.domains[ 0 ].name,
+			users = this.props.domains[ 0 ].googleAppsSubscription.pendingUsers;
 
 		return (
 			<Notice
@@ -158,7 +140,7 @@ class PendingGappsTosNotice extends React.PureComponent {
 				status={ `is-${ severity }` }
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domain"
-				text={ translate(
+				text={ this.props.translate(
 					'%(exclamation)s To activate your email {{strong}}%(emails)s{{/strong}}, please log in to G Suite ' +
 						'and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
 					'%(exclamation)s To activate your emails {{strong}}%(emails)s{{/strong}}, please log in to G Suite ' +
@@ -171,25 +153,24 @@ class PendingGappsTosNotice extends React.PureComponent {
 				) }>
 				<NoticeAction
 					href={ this.getGappsLoginUrl( users[ 0 ], domainName ) }
-					onClick={ this.logInClickHandlerOneDomain }
+					onClick={ this.generateLogInClickHandler( { domainName, user: users[ 0 ], severity, isMultipleDomains: false } ) }
 					external>
-						{ translate( 'Log in' ) }
+						{ this.props.translate( 'Log in' ) }
 				</NoticeAction>
 			</Notice>
 		);
-	}
+	},
 
 	multipleDomainsNotice() {
-		const { translate } = this.props;
-		const severity = this.getNoticeSeverity();
-		const exclamation = this.getExclamation( severity );
+		const severity = this.getNoticeSeverity(),
+			exclamation = this.getExclamation( severity );
 
 		return (
 			<Notice
 				status={ `is-${ severity }` }
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domains">
-				{ translate(
+				{ this.props.translate(
 					'%(exclamation)s To activate your new email addresses, please log in to G Suite ' +
 						'and finish setting them up. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 					{
@@ -201,17 +182,24 @@ class PendingGappsTosNotice extends React.PureComponent {
 					this.props.domains.map( ( { name: domainName, googleAppsSubscription: { pendingUsers: users } } ) => {
 						return <li key={ `pending-gapps-tos-acceptance-domain-${ domainName }` }>
 						<strong>{ users.join( ', ' ) } </strong>
-							<PendingGappsTosNoticeMultipleDomainListItem
+							<a
 								href={ this.getGappsLoginUrl( users[ 0 ], domainName ) }
-								domainName={ domainName }
-								user={ users[ 0 ] }
-								onClick={ this.logInClickHandlerMultipleDomains } />
+								onClick={ this.generateLogInClickHandler( {
+									domainName,
+									severity,
+									isMultipleDomains: true,
+									user: users[ 0 ]
+								} ) }
+								target="_blank"
+								rel="noopener noreferrer">
+									{ this.props.translate( 'Log in' ) }
+							</a>
 						</li>;
 					} )
 				}</ul>
 			</Notice>
 		);
-	}
+	},
 
 	render() {
 		if ( this.props.isCompact ) {
@@ -228,67 +216,7 @@ class PendingGappsTosNotice extends React.PureComponent {
 			default:
 				return this.multipleDomainsNotice();
 		}
-	}
-}
+	},
+} );
 
-const pendingAccountLogInClick = ( { siteSlug, domainName, user, severity, isMultipleDomains, section } ) => composeAnalytics(
-	recordGoogleEvent(
-		'Domain Management',
-		`Clicked "Log in" link in Google Apps pending ToS notice in ${ section }`,
-		'Domain Name',
-		domainName
-	),
-	recordTracksEvent(
-		'calypso_domain_management_google_apps_pending_account_log_in_click',
-		{
-			site_slug: siteSlug,
-			domain_name: domainName,
-			user,
-			severity,
-			is_multiple_domains: isMultipleDomains,
-			section
-		}
-	),
-);
-
-const showPendingAccountNotice = ( { siteSlug, severity, isMultipleDomains, section } ) => composeAnalytics(
-	recordGoogleEvent(
-		'Domain Management',
-		'Showed pending account notice',
-		'Site',
-		siteSlug
-	),
-	recordTracksEvent(
-		'calypso_domain_management_google_apps_pending_account_notice_show',
-		{
-			site_slug: siteSlug,
-			severity,
-			is_multiple_domains: isMultipleDomains,
-			section
-		}
-	),
-);
-
-const fixPendingEmailSiteNoticeClick = ( siteSlug ) => composeAnalytics(
-	recordGoogleEvent(
-		'Domain Management',
-		'Clicked "Fix" link in site notice for email requiring action',
-		'Site',
-		siteSlug
-	),
-	recordTracksEvent(
-		'calypso_domain_management_google_apps_site_fix_click',
-		{
-			site_slug: siteSlug
-		}
-	),
-);
-
-export default connect(
-	null,
-	{
-		fixPendingEmailSiteNoticeClick,
-		pendingAccountLogInClick,
-		showPendingAccountNotice,
-	}
-)( localize( PendingGappsTosNotice ) );
+export default localize( PendingGappsTosNotice );

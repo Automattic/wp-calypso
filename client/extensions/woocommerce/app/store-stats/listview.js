@@ -9,25 +9,21 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DatePicker from 'my-sites/stats/stats-date-picker';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getUnitPeriod } from './utils';
-import HeaderCake from 'components/header-cake';
-import List from './store-stats-list';
 import Main from 'components/main';
-import Module from './store-stats-module';
-import SectionNav from 'components/section-nav';
+import HeaderCake from 'components/header-cake';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
-import StoreStatsNavigationTabs from './store-stats-navigation/navtabs';
+import DatePicker from 'my-sites/stats/stats-date-picker';
+import Module from './store-stats-module';
+import List from './store-stats-list';
 import {
 	topProducts,
 	topCategories,
-	topCoupons,
-	UNITS
+	topCoupons
 } from 'woocommerce/app/store-stats/constants';
-import { getJetpackSites } from 'state/selectors';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import QuerySiteStats from 'components/data/query-site-stats';
+import { getUnitPeriod } from './utils';
+import { isJetpackSite } from 'state/sites/selectors';
+import { isPluginActive } from 'state/selectors';
 
 const listType = {
 	products: topProducts,
@@ -37,7 +33,7 @@ const listType = {
 
 class StoreStatsListView extends Component {
 	static propTypes = {
-		jetPackSites: PropTypes.array,
+		isWooConnect: PropTypes.bool,
 		path: PropTypes.string.isRequired,
 		selectedDate: PropTypes.string,
 		siteId: PropTypes.number,
@@ -58,18 +54,20 @@ class StoreStatsListView extends Component {
 	};
 
 	render() {
-		const { jetPackSites, siteId, slug, selectedDate, type, unit } = this.props;
+		const { isWooConnect, siteId, slug, selectedDate, type, unit } = this.props;
+		// TODO: this is to handle users switching sites while on store stats
+		// unfortunately, we can't access the path when changing sites
+		if ( ! isWooConnect ) {
+			page.redirect( `/stats/${ slug }` );
+		}
 		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
 		const listviewQuery = {
 			unit,
 			date: unitSelectedDate,
 			limit: 100,
 		};
-		const statType = listType[ type ].statType;
 		return (
 			<Main className="store-stats__list-view woocommerce" wideLayout={ true }>
-				<QueryJetpackPlugins siteIds={ jetPackSites.map( site => site.ID ) } />
-				{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ listviewQuery } /> }
 				<HeaderCake onClick={ this.goBack }>{ listType[ type ].title }</HeaderCake>
 				<StatsPeriodNavigation
 					date={ selectedDate }
@@ -84,30 +82,21 @@ class StoreStatsListView extends Component {
 								: selectedDate
 						}
 						query={ listviewQuery }
-						statsType={ statType }
+						statsType={ listType[ type ].statType }
 						showQueryDate
 					/>
 				</StatsPeriodNavigation>
-				<SectionNav className="store-stats__list-view-navigation" selectedText={ UNITS[ unit ].title }>
-					<StoreStatsNavigationTabs
-						label={ 'Stats' }
-						slug={ slug }
-						type={ type }
-						unit={ unit }
-						units={ UNITS }
-					/>
-				</SectionNav>
 				<Module
 					siteId={ siteId }
 					emptyMessage={ listType[ type ].empty }
 					query={ listviewQuery }
-					statType={ statType }
+					statType={ listType[ type ].statType }
 				>
 					<List
 						siteId={ siteId }
 						values={ listType[ type ].values }
 						query={ listviewQuery }
-						statType={ statType }
+						statType={ listType[ type ].statType }
 					/>
 				</Module>
 			</Main>
@@ -116,9 +105,13 @@ class StoreStatsListView extends Component {
 }
 
 export default connect(
-	state => ( {
-		slug: getSelectedSiteSlug( state ),
-		siteId: getSelectedSiteId( state ),
-		jetPackSites: getJetpackSites( state ),
-	} )
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
+		return {
+			isWooConnect: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
+			slug: getSelectedSiteSlug( state ),
+			siteId: getSelectedSiteId( state ),
+		};
+	}
 )( StoreStatsListView );

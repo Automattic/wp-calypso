@@ -19,12 +19,6 @@
 		transition: none;
 	}
 
-	@include breakpoint( ">660px" ) {
-		border-right: 1px solid darken( $sidebar-bg-color, 5% );
-		width: $sidebar-width-max;
-	}
-
-
 	@include breakpoint( "<660px" ) {
 		position: relative;
 		top: 0;

@@ -46,9 +46,7 @@ const PostsMain = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.siteId !== this.props.siteId || nextProps.hasMinimumJetpackVersion !== this.props.hasMinimumJetpackVersion ) {
-			this.setWarning( nextProps );
-		}
+		this.setWarning( nextProps );
 	},
 
 	showDrafts() {

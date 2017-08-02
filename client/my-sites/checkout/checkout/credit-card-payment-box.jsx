@@ -4,7 +4,6 @@
 import React from 'react';
 import classnames from 'classnames';
 import { some } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -88,7 +87,7 @@ var CreditCardPaymentBox = React.createClass( {
 	progressBar: function() {
 		return (
 			<div className="credit-card-payment-box__progress-bar">
-				{ this.props.translate( 'Processing payment…' ) }
+				{ this.translate( 'Processing payment…' ) }
 				<ProgressBar value={ Math.round( this.state.progress ) } isPulsing />
 			</div>
 		);
@@ -100,13 +99,9 @@ var CreditCardPaymentBox = React.createClass( {
 			showPaymentChatButton = config.isEnabled( 'upgrades/presale-chat' ) &&
 				abtest( 'presaleChatButton' ) === 'showChatButton' &&
 				hasBusinessPlanInCart,
-			showPaypalLogo = abtest( 'paymentShowPaypalLogo' ) === 'show',
 			paypalButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
-				'credit-card-payment-box__switch-link-left': showPaymentChatButton,
-			} ),
-			paypalLinkContent = showPaypalLogo
-				? <img src="/calypso/images/upgrades/paypal.svg" alt="PayPal" width="80" />
-				: <span>PayPal</span>;
+				'credit-card-payment-box__switch-link-left': showPaymentChatButton
+			} );
 
 		return (
 			<div className="payment-box__payment-buttons">
@@ -115,12 +110,7 @@ var CreditCardPaymentBox = React.createClass( {
 					transactionStep={ this.props.transactionStep } />
 
 				{ cartValues.isPayPalExpressEnabled( cart )
-					? <a className={ paypalButtonClasses } href="" onClick={ this.handleToggle }>
-						{ this.props.translate( 'or use {{paypal/}}', {
-							components: {
-								paypal: paypalLinkContent
-							}
-						} ) }</a>
+					? <a className={ paypalButtonClasses } href="" onClick={ this.handleToggle }>{ this.translate( 'or use PayPal' ) }</a>
 					: null
 				}
 
@@ -183,7 +173,7 @@ var CreditCardPaymentBox = React.createClass( {
 		return (
 			<PaymentBox
 				classSet="credit-card-payment-box"
-				title={ this.props.translate( 'Secure Payment' ) }>
+				title={ this.translate( 'Secure Payment' ) }>
 				{ this.content() }
 			</PaymentBox>
 		);
@@ -191,4 +181,4 @@ var CreditCardPaymentBox = React.createClass( {
 
 } );
 
-module.exports = localize( CreditCardPaymentBox );
+module.exports = CreditCardPaymentBox;

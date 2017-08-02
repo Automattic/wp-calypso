@@ -49,9 +49,6 @@ export default class Sparkline extends Component {
 	componentDidUpdate() {
 		this.redrawChart();
 	}
-	componentWillReceiveProps() {
-		this.updateScales();
-	}
 	// Remove listener
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.handleResize );
@@ -61,19 +58,6 @@ export default class Sparkline extends Component {
 	setNodeRef = ( node ) => {
 		this.node = node;
 	};
-
-	updateScales = () => {
-		const { data, margin } = this.props;
-		const { width, height } = this.state;
-		this.setState( {
-			xScale: d3ScaleLinear()
-				.domain( d3Extent( data, ( d, i ) => i ) )
-				.range( [ margin.left, width - margin.right ] ),
-			yScale: d3ScaleLinear()
-				.domain( d3Extent( data, ( d ) => d ) )
-				.range( [ height - margin.bottom, margin.top ] ),
-		}, this.redrawChart );
-	}
 
 	handleResize = () => {
 		const { aspectRatio, data, margin, maxHeight } = this.props;

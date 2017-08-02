@@ -12,6 +12,7 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import DateTimeFormat from '../date-time-format';
 import DefaultPostFormat from './default-post-format';
+import PostsPerPage from './posts-per-page';
 import PublishConfirmation from './publish-confirmation';
 import {
 	isJetpackMinimumVersion,
@@ -20,7 +21,6 @@ import {
 } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import config from 'config';
-import { abtest } from 'lib/abtest';
 
 const Composing = ( {
 	eventTracker,
@@ -33,6 +33,7 @@ const Composing = ( {
 	jetpackSettingsUISupported,
 	onChangeField,
 	setFieldValue,
+	uniqueEventTracker,
 	updateFields,
 } ) => {
 	const CardComponent = jetpackSettingsUISupported ? CompactCard : Card;
@@ -40,11 +41,18 @@ const Composing = ( {
 	return (
 		<div>
 			<CardComponent className="composing__card site-settings">
-				{
-					config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
-					abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation' &&
+				{ config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
 					<PublishConfirmation />
 				}
+
+				<PostsPerPage
+					eventTracker={ eventTracker }
+					fields={ fields }
+					isRequestingSettings={ isRequestingSettings }
+					isSavingSettings={ isSavingSettings }
+					onChangeField={ onChangeField }
+					uniqueEventTracker={ uniqueEventTracker }
+				/>
 
 				<DefaultPostFormat
 					eventTracker={ eventTracker }
@@ -92,6 +100,7 @@ Composing.propTypes = {
 	isSavingSettings: PropTypes.bool,
 	onChangeField: PropTypes.func.isRequired,
 	setFieldValue: PropTypes.func.isRequired,
+	uniqueEventTracker: PropTypes.func.isRequired,
 	updateFields: PropTypes.func.isRequired,
 };
 

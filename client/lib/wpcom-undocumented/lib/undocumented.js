@@ -1133,15 +1133,6 @@ Undocumented.prototype.readA8C = function( query, fn ) {
 	return this.wpcom.req.get( '/read/a8c', query, fn );
 };
 
-Undocumented.prototype.readConversations = function( query, fn ) {
-	debug( '/read/conversations' );
-	const params = {
-		...query,
-		apiVersion: '1.2'
-	};
-	return this.wpcom.req.get( '/read/conversations', params, fn );
-};
-
 Undocumented.prototype.readFeed = function( query, fn ) {
 	var params = omit( query, 'ID' );
 	debug( '/read/feed' );

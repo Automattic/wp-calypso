@@ -9,7 +9,7 @@ import products from './products';
 import productVariations from './product-variations';
 import productCategories from './product-categories';
 import request from './request';
-import settingsGeneral from '../sites/settings/general/handlers';
+import settingsGeneral from './settings-general';
 import shippingZoneLocations from './shipping-zone-locations';
 import shippingZoneMethods from './shipping-zone-methods';
 import shippingZones from './shipping-zones';
@@ -38,3 +38,4 @@ export default function installActionHandlers() {
 		debug( 'Failed to add action handlers for "woocommerce"' );
 	}
 }
+

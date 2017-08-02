@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { trim, initial, flatMap } from 'lodash';
+import { trim } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classnames from 'classnames';
@@ -23,8 +23,6 @@ import { addQueryArgs } from 'lib/url';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
 import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
 import withDimensions from 'lib/with-dimensions';
-import SuggestionProvider from './suggestion-provider';
-import Suggestion from './suggestion';
 
 const WIDE_DISPLAY_CUTOFF = 660;
 
@@ -33,14 +31,14 @@ const updateQueryArg = params =>
 
 const pickSort = sort => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
 
-const SpacerDiv = withDimensions( ( { width, height } ) =>
+const SpacerDiv = withDimensions( ( { width, height } ) => (
 	<div
 		style={ {
 			width: `${ width }px`,
 			height: `${ height }px`,
 		} }
-	/>,
-);
+	/>
+) );
 
 class SearchStream extends React.Component {
 	static propTypes = {
@@ -106,12 +104,12 @@ class SearchStream extends React.Component {
 		updateQueryArg( { sort } );
 	};
 
-	handleFixedAreaMounted = ref => ( this.fixedAreaRef = ref );
+	handleFixedAreaMounted = ref => this.fixedAreaRef = ref;
 
 	handleSearchTypeSelection = searchType => updateQueryArg( { show: searchType } );
 
 	render() {
-		const { query, translate, searchType, suggestions } = this.props;
+		const { query, translate, searchType } = this.props;
 		const sortOrder = this.props.postsStore && this.props.postsStore.sortOrder;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 
@@ -139,17 +137,6 @@ class SearchStream extends React.Component {
 		const singleColumnResultsClasses = classnames( 'search-stream__single-column-results', {
 			'is-post-results': searchType === SEARCH_TYPES.POSTS && query,
 		} );
-		const suggestionList = initial(
-			flatMap( suggestions, suggestion => [
-				<Suggestion
-					suggestion={ suggestion.text }
-					source="search"
-					sort={ sortOrder === 'date' ? sortOrder : undefined }
-					railcar={ suggestion.railcar }
-				/>,
-				', ',
-			] ),
-		);
 
 		return (
 			<div>
@@ -186,15 +173,6 @@ class SearchStream extends React.Component {
 							onSelection={ this.handleSearchTypeSelection }
 							wideDisplay={ wideDisplay }
 						/> }
-					{ ! query &&
-						<div className="search-stream__blank-suggestions">
-							{ suggestions &&
-								this.props.translate( 'Suggestions: {{suggestions /}}.', {
-									components: {
-										suggestions: suggestionList,
-									},
-								} ) }
-						</div> }
 				</div>
 				<SpacerDiv domTarget={ this.fixedAreaRef } />
 				{ wideDisplay &&
@@ -228,10 +206,11 @@ class SearchStream extends React.Component {
 
 /* eslint-disable */
 // wrapping with Main so that we can use withWidth helper to pass down whole width of Main
-const wrapWithMain = Component => props =>
+const wrapWithMain = Component => props => (
 	<ReaderMain className="search-stream search-stream__with-sites" wideLayout>
 		<Component { ...props } />
-	</ReaderMain>;
+	</ReaderMain>
+);
 /* eslint-enable */
 
-export default localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) );
+export default localize( wrapWithMain( withDimensions( SearchStream ) ) );

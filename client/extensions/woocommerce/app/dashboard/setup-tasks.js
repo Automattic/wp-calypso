@@ -31,7 +31,9 @@ import {
 	setTriedCustomizerDuringInitialSetup,
 	setCheckedTaxSetup,
 } from 'woocommerce/state/sites/setup-choices/actions';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import {
+	fetchSettingsGeneral,
+} from 'woocommerce/state/sites/settings/general/actions';
 import {
 	arePaymentsSetup
 } from 'woocommerce/state/ui/payments/methods/selectors';
@@ -59,6 +61,7 @@ class SetupTasks extends Component {
 
 		if ( site && site.ID ) {
 			this.props.fetchPaymentMethods( site.ID );
+			this.props.fetchSettingsGeneral( site.ID );
 			this.props.fetchSetupChoices( site.ID );
 
 			if ( ! areProductsLoaded ) {
@@ -74,6 +77,7 @@ class SetupTasks extends Component {
 		const oldSiteId = site && site.ID || null;
 
 		if ( newSiteId && ( oldSiteId !== newSiteId ) ) {
+			this.props.fetchSettingsGeneral( newSiteId );
 			this.props.fetchSetupChoices( newSiteId );
 			if ( ! areProductsLoaded ) {
 				this.props.fetchProducts( newSiteId, 1 );
@@ -198,7 +202,6 @@ class SetupTasks extends Component {
 	render = () => {
 		return (
 			<div className="dashboard__setup-checklist">
-				<QuerySettingsGeneral siteId={ this.props.site.ID } />
 				{ this.getSetupTasks().map( this.renderSetupTask ) }
 			</div>
 		);
@@ -223,6 +226,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			fetchPaymentMethods,
 			fetchProducts,
+			fetchSettingsGeneral,
 			fetchSetupChoices,
 			setOptedOutOfShippingSetup,
 			setCheckedTaxSetup,

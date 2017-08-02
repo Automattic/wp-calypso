@@ -7,7 +7,6 @@ import React from 'react';
  * Local dependencies
  */
 import HeaderControl from './header-controls';
-import classNames from 'classnames';
 
 /**
  * Globals
@@ -17,15 +16,11 @@ var noop = () => {};
 export default React.createClass( {
 	propTypes: {
 		date: React.PropTypes.object,
-		inputChronoDisplayed: React.PropTypes.bool,
 		onDateChange: React.PropTypes.func,
 	},
 
 	getDefaultProps() {
-		return {
-			inputChronoDisplayed: true,
-			onDateChange: noop
-		};
+		return { onDateChange: noop };
 	},
 
 	getInitialState() {
@@ -56,10 +51,8 @@ export default React.createClass( {
 	},
 
 	render() {
-		const headerClasses = classNames( 'post-schedule__header', { 'is-input-chrono-displayed': this.props.inputChronoDisplayed } );
-
 		return (
-			<div className={ headerClasses }>
+			<div className="post-schedule__header">
 				<span
 					className="post-schedule__header-month"
 					onClick={ this.setToCurrentMonth }

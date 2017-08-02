@@ -22,7 +22,7 @@ import {
 import { PLUGIN_INSTALL_REQUEST_SUCCESS } from 'state/action-types';
 
 const siteId = 77203074;
-const pluginId = 'hello-dolly';
+const pluginId = 'hello-dolly/hello';
 
 const SUCCESS_RESPONSE = deepFreeze( {
 	active: false,
@@ -89,9 +89,9 @@ describe( 'receiveError', () => {
 describe( 'updateUploadProgress', () => {
 	it( 'should dispatch plugin upload progress update', () => {
 		const dispatch = sinon.spy();
-		updateUploadProgress( { dispatch }, { siteId }, null, { loaded: 200, total: 400 } );
+		updateUploadProgress( { dispatch }, { siteId }, null, { loaded: 350, total: 400 } );
 		expect( dispatch ).to.have.been.calledWith(
-			updatePluginUploadProgress( siteId, 50 )
+			updatePluginUploadProgress( siteId, 350, 400 )
 		);
 	} );
 } );

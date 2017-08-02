@@ -16,9 +16,8 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
 
 class ActivityLogDay extends Component {
 	static propTypes = {
+		allowRestore: PropTypes.bool.isRequired,
 		applySiteOffset: PropTypes.func.isRequired,
-		disableRestore: PropTypes.bool.isRequired,
-		hideRestore: PropTypes.bool,
 		isRewindActive: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
 		requestRestore: PropTypes.func.isRequired,
@@ -27,7 +26,7 @@ class ActivityLogDay extends Component {
 	};
 
 	static defaultProps = {
-		disableRestore: false,
+		allowRestore: true,
 		isRewindActive: true,
 	};
 
@@ -62,12 +61,9 @@ class ActivityLogDay extends Component {
 	 * @returns { object } Button to display.
 	 */
 	getRewindButton( type = '' ) {
-		const {
-			disableRestore,
-			hideRestore,
-		} = this.props;
+		const { allowRestore } = this.props;
 
-		if ( hideRestore ) {
+		if ( ! allowRestore ) {
 			return null;
 		}
 
@@ -75,7 +71,7 @@ class ActivityLogDay extends Component {
 			<Button
 				className="activity-log-day__rewind-button"
 				compact
-				disabled={ disableRestore || ! this.props.isRewindActive }
+				disabled={ ! this.props.isRewindActive }
 				onClick={ this.handleClickRestore }
 				primary={ 'primary' === type }
 			>
@@ -115,12 +111,11 @@ class ActivityLogDay extends Component {
 
 	render() {
 		const {
-			applySiteOffset,
-			disableRestore,
-			hideRestore,
+			allowRestore,
 			logs,
 			requestRestore,
 			siteId,
+			applySiteOffset,
 		} = this.props;
 
 		return (
@@ -134,13 +129,12 @@ class ActivityLogDay extends Component {
 				>
 					{ logs.map( ( log, index ) => (
 						<ActivityLogItem
-							applySiteOffset={ applySiteOffset }
-							disableRestore={ disableRestore }
-							hideRestore={ hideRestore }
 							key={ index }
-							log={ log }
-							requestRestore={ requestRestore }
+							allowRestore={ allowRestore }
 							siteId={ siteId }
+							requestRestore={ requestRestore }
+							log={ log }
+							applySiteOffset={ applySiteOffset }
 						/>
 					) ) }
 				</FoldableCard>

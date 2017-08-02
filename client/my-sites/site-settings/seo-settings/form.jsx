@@ -9,6 +9,7 @@ import {
 	includes,
 	isArray,
 	isEqual,
+	isString,
 	mapValues,
 	omit,
 	overSome,
@@ -23,12 +24,15 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import Button from 'components/button';
 import SectionHeader from 'components/section-header';
+import ExternalLink from 'components/external-link';
 import MetaTitleEditor from 'components/seo/meta-title-editor';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
 import { protectForm } from 'lib/protect-form';
+import FormInput from 'components/forms/form-text-input-with-affixes';
 import FormInputValidation from 'components/forms/form-input-validation';
+import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
@@ -71,6 +75,13 @@ import {
 	saveSiteSettings
 } from 'state/site-settings/actions';
 
+const serviceIds = {
+	google: 'google-site-verification',
+	bing: 'msvalidate.01',
+	pinterest: 'p:domain_verify',
+	yandex: 'yandex-verification'
+};
+
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
@@ -88,8 +99,35 @@ function getJetpackPluginUrl( slug ) {
 function stateForSite( site ) {
 	return {
 		frontPageMetaDescription: get( site, 'options.advanced_seo_front_page_description', '' ),
+		googleCode: get( site, 'options.verification_services_codes.google', '' ),
+		bingCode: get( site, 'options.verification_services_codes.bing', '' ),
+		pinterestCode: get( site, 'options.verification_services_codes.pinterest', '' ),
+		yandexCode: get( site, 'options.verification_services_codes.yandex', '' ),
 		isFetchingSettings: get( site, 'fetchingSettings', false )
 	};
+}
+
+function getMetaTag( serviceName = '', content = '' ) {
+	if ( ! content ) {
+		return '';
+	}
+
+	if ( includes( content, '<meta' ) ) {
+		// We were passed a meta tag already!
+		return content;
+	}
+
+	return `<meta name="${ get( serviceIds, serviceName, '' ) }" content="${ content }" />`;
+}
+
+function isValidCode( serviceName = '', content = '' ) {
+	if ( ! content.length ) {
+		return true;
+	}
+
+	content = getMetaTag( serviceName, content );
+
+	return includes( content, serviceIds[ serviceName ] );
 }
 
 export const SeoForm = React.createClass( {
@@ -106,6 +144,13 @@ export const SeoForm = React.createClass( {
 			dirtyFields: Set(),
 			invalidatedSiteObject: this.props.selectedSite,
 		};
+	},
+
+	componentWillMount() {
+		this.changeGoogleCode = this.handleVerificationCodeChange( 'googleCode' );
+		this.changeBingCode = this.handleVerificationCodeChange( 'bingCode' );
+		this.changePinterestCode = this.handleVerificationCodeChange( 'pinterestCode' );
+		this.changeYandexCode = this.handleVerificationCodeChange( 'yandexCode' );
 	},
 
 	componentDidMount() {
@@ -179,6 +224,32 @@ export const SeoForm = React.createClass( {
 		) );
 	},
 
+	handleVerificationCodeChange( serviceCode ) {
+		return event => {
+			const { dirtyFields } = this.state;
+
+			if ( ! this.state.hasOwnProperty( serviceCode ) ) {
+				return;
+			}
+
+			// Show an error if the user types into the field
+			if ( event.target.value.length === 1 ) {
+				this.setState( {
+					showPasteError: true,
+					invalidCodes: [ serviceCode.replace( 'Code', '' ) ]
+				} );
+				return;
+			}
+
+			this.setState( {
+				invalidCodes: [],
+				showPasteError: false,
+				[ serviceCode ]: event.target.value,
+				dirtyFields: dirtyFields.add( serviceCode )
+			} );
+		};
+	},
+
 	updateTitleFormats( seoTitleFormats ) {
 		const { dirtyFields } = this.state;
 
@@ -194,6 +265,7 @@ export const SeoForm = React.createClass( {
 			storedTitleFormats,
 			showAdvancedSeo,
 			showWebsiteMeta,
+			translate,
 		} = this.props;
 
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
@@ -201,6 +273,27 @@ export const SeoForm = React.createClass( {
 		}
 
 		notices.clearNotices( 'notices' );
+
+		const verificationCodes = {
+			google: this.state.googleCode,
+			bing: this.state.bingCode,
+			pinterest: this.state.pinterestCode,
+			yandex: this.state.yandexCode
+		};
+
+		const filteredCodes = pickBy( verificationCodes, isString );
+		const invalidCodes = Object.keys(
+			pickBy(
+				filteredCodes,
+				( name, content ) => ! isValidCode( content, name )
+			)
+		);
+
+		this.setState( { invalidCodes } );
+		if ( invalidCodes.length > 0 ) {
+			notices.error( translate( 'Invalid site verification tag entered.' ) );
+			return;
+		}
 
 		this.setState( {
 			isSubmittingForm: true
@@ -219,6 +312,7 @@ export const SeoForm = React.createClass( {
 			advanced_seo_title_formats: seoTitleToApi(
 				pickBy( this.state.seoTitleFormats, hasChanges )
 			),
+			verification_services_codes: filteredCodes
 		};
 
 		// Update this option only if advanced SEO is enabled or grandfathered in order to
@@ -246,8 +340,7 @@ export const SeoForm = React.createClass( {
 		const {
 			trackFormSubmitted,
 			trackTitleFormatsUpdated,
-			trackFrontPageMetaUpdated,
-			trackSiteVerificationUpdated
+			trackFrontPageMetaUpdated
 		} = this.props;
 
 		trackFormSubmitted();
@@ -258,22 +351,6 @@ export const SeoForm = React.createClass( {
 
 		if ( dirtyFields.has( 'frontPageMetaDescription' ) ) {
 			trackFrontPageMetaUpdated();
-		}
-
-		if ( dirtyFields.has( 'googleCode' ) ) {
-			trackSiteVerificationUpdated( 'google' );
-		}
-
-		if ( dirtyFields.has( 'bingCode' ) ) {
-			trackSiteVerificationUpdated( 'bing' );
-		}
-
-		if ( dirtyFields.has( 'pinterestCode' ) ) {
-			trackSiteVerificationUpdated( 'pinterest' );
-		}
-
-		if ( dirtyFields.has( 'yandexCode' ) ) {
-			trackSiteVerificationUpdated( 'yandex' );
 		}
 	},
 
@@ -288,6 +365,17 @@ export const SeoForm = React.createClass( {
 				invalidatedSiteObject: selectedSite,
 			}, () => refreshSiteData( selectedSite.ID ) );
 		}
+	},
+
+	getVerificationError( isPasteError ) {
+		const { translate } = this.props;
+		return (
+			<FormInputValidation isError={ true } text={
+				isPasteError
+					? translate( 'Verification code should be copied and pasted into this field.' )
+					: translate( 'Invalid site verification tag.' )
+			} />
+		);
 	},
 
 	showPreview() {
@@ -323,6 +411,7 @@ export const SeoForm = React.createClass( {
 			isSeoToolsActive,
 			isSitePrivate,
 			isSiteHidden,
+			isVerificationToolsActive,
 			activePlugins,
 			translate,
 		} = this.props;
@@ -341,14 +430,29 @@ export const SeoForm = React.createClass( {
 			showPreview = false
 		} = this.state;
 
+		let { googleCode, bingCode, pinterestCode, yandexCode } = this.state;
+
 		const activateSeoTools = () => this.props.activateModule( siteId, 'seo-tools' );
+		const activateVerificationServices = () => this.props.activateModule( siteId, 'verification-tools' );
 		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsSeo;
 		const isDisabled = isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
 		const isSeoDisabled = isDisabled || isSeoToolsActive === false;
+		const isVerificationDisabled = isDisabled || isVerificationToolsActive === false;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
 		const generalTabUrl = getGeneralTabUrl( slug );
 		const jetpackUpdateUrl = getJetpackPluginUrl( slug );
+		const placeholderTagContent = '1234';
+
+		// The API returns 'false' for an empty array value, so we force it to an empty string if needed
+		googleCode = getMetaTag( 'google', googleCode || '' );
+		bingCode = getMetaTag( 'bing', bingCode || '' );
+		pinterestCode = getMetaTag( 'pinterest', pinterestCode || '' );
+		yandexCode = getMetaTag( 'yandex', yandexCode || '' );
+
+		const hasError = function( service ) {
+			return includes( invalidCodes, service );
+		};
 
 		const nudgeTitle = siteIsJetpack
 			? translate( 'Enable SEO Tools features by upgrading to Jetpack Professional' )
@@ -528,8 +632,138 @@ export const SeoForm = React.createClass( {
 							</Card>
 						</div>
 					}
-				</form>
 
+					{ siteIsJetpack && isVerificationToolsActive === false &&
+						<Notice
+							status="is-warning"
+							showDismiss={ false }
+							text={ translate(
+								'Site Verification Services are disabled in Jetpack.'
+							) }
+						>
+							<NoticeAction onClick={ activateVerificationServices }>
+								{ translate( 'Enable' ) }
+							</NoticeAction>
+						</Notice>
+					}
+
+					<SectionHeader label={ translate( 'Site Verification Services' ) }>
+						<Button
+							compact
+							primary
+							onClick={ this.submitSeoForm }
+							type="submit"
+							disabled={ isSaveDisabled || isVerificationDisabled }
+						>
+							{ isSubmittingForm
+								? translate( 'Saving…' )
+								: translate( 'Save Settings' )
+							}
+						</Button>
+					</SectionHeader>
+					<Card>
+						<p>
+							{ translate(
+								'Note that {{b}}verifying your site with these services is not necessary{{/b}} in order' +
+								' for your site to be indexed by search engines. To use these advanced search engine tools' +
+								' and verify your site with a service, paste the HTML Tag code below. Read the' +
+								' {{support}}full instructions{{/support}} if you are having trouble. Supported verification services:' +
+								' {{google}}Google Search Console{{/google}}, {{bing}}Bing Webmaster Center{{/bing}},' +
+								' {{pinterest}}Pinterest Site Verification{{/pinterest}}, and {{yandex}}Yandex.Webmaster{{/yandex}}.',
+								{
+									components: {
+										b: <strong />,
+										support: <a href="https://en.support.wordpress.com/webmaster-tools/" />,
+										google: (
+											<ExternalLink
+												icon={ true }
+												target="_blank"
+												href="https://www.google.com/webmasters/tools/"
+											/>
+										),
+										bing: (
+											<ExternalLink
+												icon={ true }
+												target="_blank"
+												href="https://www.bing.com/webmaster/"
+											/>
+										),
+										pinterest: (
+											<ExternalLink
+												icon={ true }
+												target="_blank"
+												href="https://pinterest.com/website/verify/"
+											/>
+										),
+										yandex: (
+											<ExternalLink
+												icon={ true }
+												target="_blank"
+												href="https://webmaster.yandex.com/sites/"
+											/>
+										),
+									}
+								}
+							) }
+						</p>
+						<FormFieldset>
+							<FormInput
+								prefix={ translate( 'Google' ) }
+								name="verification_code_google"
+								type="text"
+								value={ googleCode }
+								id="verification_code_google"
+								spellCheck="false"
+								disabled={ isVerificationDisabled }
+								isError={ hasError( 'google' ) }
+								placeholder={ getMetaTag( 'google', placeholderTagContent ) }
+								onChange={ this.changeGoogleCode } />
+							{ hasError( 'google' ) && this.getVerificationError( showPasteError ) }
+						</FormFieldset>
+						<FormFieldset>
+							<FormInput
+								prefix={ translate( 'Bing' ) }
+								name="verification_code_bing"
+								type="text"
+								value={ bingCode }
+								id="verification_code_bing"
+								spellCheck="false"
+								disabled={ isVerificationDisabled }
+								isError={ hasError( 'bing' ) }
+								placeholder={ getMetaTag( 'bing', placeholderTagContent ) }
+								onChange={ this.changeBingCode } />
+							{ hasError( 'bing' ) && this.getVerificationError( showPasteError ) }
+						</FormFieldset>
+						<FormFieldset>
+							<FormInput
+								prefix={ translate( 'Pinterest' ) }
+								name="verification_code_pinterest"
+								type="text"
+								value={ pinterestCode }
+								id="verification_code_pinterest"
+								spellCheck="false"
+								disabled={ isVerificationDisabled }
+								isError={ hasError( 'pinterest' ) }
+								placeholder={ getMetaTag( 'pinterest', placeholderTagContent ) }
+								onChange={ this.changePinterestCode } />
+							{ hasError( 'pinterest' ) && this.getVerificationError( showPasteError ) }
+						</FormFieldset>
+						<FormFieldset>
+							<FormInput
+								prefix={ translate( 'Yandex' ) }
+								name="verification_code_yandex"
+								type="text"
+								value={ yandexCode }
+								id="verification_code_yandex"
+								spellCheck="false"
+								disabled={ isVerificationDisabled }
+								isError={ hasError( 'yandex' ) }
+								placeholder={ getMetaTag( 'yandex', placeholderTagContent ) }
+								onChange={ this.changeYandexCode } />
+							{ hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
+						</FormFieldset>
+					</Card>
+				</form>
 				<WebPreview
 					showPreview={ showPreview }
 					onClose={ this.hidePreview }
@@ -566,6 +800,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
+		isVerificationToolsActive: isJetpackModuleActive( state, siteId, 'verification-tools' ),
 		activePlugins: getPlugins( state, [ { ID: siteId } ], 'active' ),
 		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
@@ -580,7 +815,6 @@ const mapDispatchToProps = {
 	trackFormSubmitted: partial( recordTracksEvent, 'calypso_seo_settings_form_submit' ),
 	trackTitleFormatsUpdated: partial( recordTracksEvent, 'calypso_seo_tools_title_formats_updated' ),
 	trackFrontPageMetaUpdated: partial( recordTracksEvent, 'calypso_seo_tools_front_page_meta_updated' ),
-	trackSiteVerificationUpdated: ( service ) => recordTracksEvent( 'calypso_seo_tools_site_verification_updated', { service: service } ),
 	activateModule,
 };
 

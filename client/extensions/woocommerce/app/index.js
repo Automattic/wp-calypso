@@ -27,12 +27,6 @@ class App extends Component {
 		children: PropTypes.element.isRequired,
 	};
 
-	componentWillReceiveProps( newProps ) {
-		if ( this.props.children !== newProps.children ) {
-			window.scrollTo( 0, 0 );
-		}
-	}
-
 	redirect = () => {
 		window.location.href = '/stats/day';
 	}

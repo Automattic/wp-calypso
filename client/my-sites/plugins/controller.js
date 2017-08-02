@@ -19,10 +19,9 @@ import PluginEligibility from './plugin-eligibility';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
-import { renderWithReduxStore, renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import { setSection } from 'state/ui/actions';
 import { getSelectedSite, getSection } from 'state/ui/selectors';
-import PluginUpload from './plugin-upload';
 
 /**
  * Module variables
@@ -228,10 +227,6 @@ const controller = {
 
 	browsePlugins( context ) {
 		renderPluginsBrowser( context );
-	},
-
-	upload( context ) {
-		renderPage( context, <PluginUpload /> );
 	},
 
 	jetpackCanUpdate( filter, context, next ) {

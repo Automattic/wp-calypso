@@ -38,7 +38,6 @@ import SitePlaceholder from 'blocks/site/placeholder';
 import Search from 'components/search';
 import SiteSelectorAddSite from './add-site';
 import searchSites from 'components/search-sites';
-import { isPluginActive } from 'state/selectors';
 
 const ALL_SITES = 'ALL_SITES';
 
@@ -418,14 +417,13 @@ const navigateToSite = ( siteId, {
 	allSitesSingleUser,
 	siteBasePath,
 } ) => ( dispatch, getState ) => {
-	const state = getState();
 	const pathname = getPathnameForSite();
 	if ( pathname ) {
 		page( pathname );
 	}
 
 	function getPathnameForSite() {
-		const site = getSite( state, siteId );
+		const site = getSite( getState(), siteId );
 		debug( 'getPathnameForSite', siteId, site );
 
 		if ( siteId === ALL_SITES ) {
@@ -454,13 +452,6 @@ const navigateToSite = ( siteId, {
 
 		if ( path.match( /^\/domains\/manage\// ) ) {
 			path = '/domains/manage';
-		}
-
-		if ( path.match( /^\/store\/stats\// ) ) {
-			const isWooConnect = site.jetpack && isPluginActive( state, site.ID, 'woocommerce' );
-			if ( ! isWooConnect ) {
-				path = '/stats/day';
-			}
 		}
 
 		return path;

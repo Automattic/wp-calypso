@@ -23,18 +23,18 @@
 		}
 	}
 
-	.pagination__list {
+	.stats-pagination__list {
 		background: $white;
 		border: 1px solid lighten( $gray, 25% );
 		padding: 8px;
 	}
 
-	.pagination__list-item .button {
+	.stats-pagination__list-item {
 		padding: 0 8px;
 		line-height: 34px;
 	}
 
-	.pagination__list-item.is-selected {
+	.stats-pagination__list-item.is-selected {
 		border: 1px solid lighten( $gray, 20% );
 	}
 

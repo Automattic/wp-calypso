@@ -73,7 +73,7 @@
 		"plans/jetpack-config-v2": false,
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
-		"post-editor/video-editor": true,
+		"post-editor/video-editor": false,
 		"press-this": true,
 		"preview-layout": true,
 		"publicize-preview": true,
@@ -119,7 +119,6 @@
 	"server_side_boom_analytics_enabled": true,
 	"boom_analytics_key": "stage",
 	"google_adwords_conversion_id": 1067250390,
-	"google_adwords_conversion_id_jetpack": 937115306,
 	"hotjar_enabled": true,
 	"olark": {
 		"business_account_id": "3146-815-10-9343",

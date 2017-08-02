@@ -44,21 +44,6 @@ const JPOSummaryStep = React.createClass( {
 		this.props.goToNextStep();
 	},
 
-<<<<<<< HEAD
-	doJetpackConnect() {
-		if ( 'undefined' !== typeof( Storage ) && localStorage.getItem( 'jetpackConnectUrl' ) ) {
-			const connectUrl = localStorage.getItem( 'jetpackConnectUrl' );
-
-			localStorage.removeItem( 'jetpackConnectUrl' );
-			
-			localStorage.setItem( 'jetpackOnboardingPayload', JSON.stringify( this.props.signupProgress ) );
-
-			document.location.href = connectUrl.replace( '&onboarding=1', '' );
-		}
-	},
-
-=======
->>>>>>> 374e2ba4bd84992dc5aa4e56e820f0da4e00c81a
 	renderStepContent() {
 		const connectionToJetpackComplete = true;
 
@@ -99,11 +84,7 @@ const JPOSummaryStep = React.createClass( {
 					</tbody>
 				</table>
 				<div>
-<<<<<<< HEAD
-					<Button primary onClick={ this.doJetpackConnect }>Complete Onboarding</Button>
-=======
 					<Button primary>Complete Onboarding</Button>
->>>>>>> 374e2ba4bd84992dc5aa4e56e820f0da4e00c81a
 				</div>
 			</div>
 		);

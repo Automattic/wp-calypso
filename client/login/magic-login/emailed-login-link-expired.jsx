@@ -12,7 +12,7 @@ import addQueryArgs from 'lib/route/add-query-args';
 import config from 'config';
 import EmptyContent from 'components/empty-content';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
-import { goBackToWordPressDotCom } from 'state/login/magic-login/actions';
+import page from 'page';
 import { recordPageView } from 'state/analytics/actions';
 
 const lostPasswordURL = addQueryArgs( {
@@ -37,9 +37,11 @@ class EmailedLoginLinkExpired extends React.Component {
 					replaceCurrentLocation={ true }
 				/>
 				<EmptyContent
-					action={ translate( 'Back to WordPress.com' ) }
-					actionCallback={ goBackToWordPressDotCom }
-					actionURL="https://wordpress.com"
+					action={ translate( 'Return to WordPress.com' ) }
+					actionCallback={ function() {
+						page( '/' );
+					} }
+					actionURL={ '/' }
 					className="magic-login__link-expired"
 					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 					illustrationWidth={ 500 }

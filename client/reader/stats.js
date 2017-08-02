@@ -136,7 +136,9 @@ export function recordTracksRailcar( action, eventName, railcar, overrides = {} 
 	recordTrack(
 		action,
 		Object.assign(
-			eventName ? { action: eventName.replace( 'calypso_reader_', '' ) } : {},
+			eventName
+				? { action: eventName.replace( 'calypso_reader_', '' ) }
+				: {},
 			railcar,
 			overrides,
 		),

@@ -14,15 +14,12 @@ import {
 	activityLogUpdate,
 } from 'state/activity-log/actions';
 
-export const handleActivityLogRequest = ( { dispatch }, action ) => {
+const activityLogRequest = ( { dispatch }, action ) => {
 	dispatch( http( {
 		apiVersion: '1',
 		method: 'GET',
 		path: `/sites/${ action.siteId }/activity`,
-		query: {
-			number: 1000,
-			...action.params,
-		},
+		query: { number: 1000 },
 	}, action ) );
 };
 
@@ -42,7 +39,7 @@ export const receiveActivityLogError = ( { dispatch }, { siteId }, next, error )
 
 export default {
 	[ ACTIVITY_LOG_REQUEST ]: [ dispatchRequest(
-		handleActivityLogRequest,
+		activityLogRequest,
 		receiveActivityLog,
 		receiveActivityLogError
 	) ],

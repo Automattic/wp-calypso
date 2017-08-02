@@ -18,7 +18,7 @@ var lists = null,
 function mapApiToId( list ) {
 	return {
 		owner: list.owner,
-		slug: list.slug,
+		slug: list.slug
 	};
 }
 
@@ -32,12 +32,9 @@ function sortList() {
 
 ReaderListStore = {
 	get: function() {
-		return (
-			lists &&
-			lists.map( function( list ) {
-				return ListStore.get( list.owner, list.slug );
-			} )
-		);
+		return lists && lists.map( function( list ) {
+			return ListStore.get( list.owner, list.slug );
+		} );
 	},
 
 	findByOwnerAndSlug: function( owner, slug ) {
@@ -92,7 +89,7 @@ ReaderListStore = {
 	setIsFetching: function( val ) {
 		isFetching = val;
 		ReaderListStore.emitChange();
-	},
+	}
 };
 
 emitter( ReaderListStore );

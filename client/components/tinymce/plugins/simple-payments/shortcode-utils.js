@@ -9,18 +9,6 @@ import { get } from 'lodash';
 import Shortcode from 'lib/shortcode';
 
 /**
- * Serializes shortcode data (object with id property) to a Simple Payments shortcode.
- * @returns {string} Serialized shortcode, e.g., `[simple-payment id="1"]`
- */
-export function serialize( { id } ) {
-	return Shortcode.stringify( {
-		tag: 'simple-payment',
-		type: 'single',
-		attrs: { id }
-	} );
-}
-
-/**
  * Returns Simple Payments' shortcode data in an object.
  *
  * @param {string} shortcode Simple Payments shortcode (e.g. [simple-payment id="20"])

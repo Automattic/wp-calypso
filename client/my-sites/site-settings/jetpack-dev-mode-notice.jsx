@@ -13,20 +13,14 @@ import NoticeAction from 'components/notice/notice-action';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSiteInDevelopmentMode } from 'state/selectors';
-import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 
 const JetpackDevModeNotice = ( {
 	isJetpackSiteInDevMode,
-	jetpackSettingsUiSupported,
 	siteId,
 	translate
 } ) => {
-	if ( ! jetpackSettingsUiSupported ) {
-		return null;
-	}
-
 	return (
-		<div className="site-settings__jetpack-dev-mode-notice">
+		<div>
 			<QueryJetpackConnection siteId={ siteId } />
 
 			{
@@ -47,13 +41,10 @@ const JetpackDevModeNotice = ( {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const siteIsJetpack = isJetpackSite( state, siteId );
-		const jetpackUiSupported = siteSupportsJetpackSettingsUi( state, siteId );
 
 		return {
 			siteId,
 			isJetpackSiteInDevMode: isJetpackSiteInDevelopmentMode( state, siteId ),
-			jetpackSettingsUiSupported: siteIsJetpack && jetpackUiSupported,
 		};
 	}
 )( localize( JetpackDevModeNotice ) );

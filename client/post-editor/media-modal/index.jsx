@@ -36,7 +36,6 @@ import accept from 'lib/accept';
 
 import { getMediaModalView } from 'state/ui/media-modal/selectors';
 import { getSite } from 'state/sites/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
 import { resetMediaModalView } from 'state/ui/media-modal/actions';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
@@ -71,8 +70,7 @@ export class EditorMediaModal extends Component {
 		enabledFilters: React.PropTypes.arrayOf( React.PropTypes.string ),
 		view: React.PropTypes.oneOf( values( ModalViews ) ),
 		setView: React.PropTypes.func,
-		resetView: React.PropTypes.func,
-		postId: React.PropTypes.number,
+		resetView: React.PropTypes.func
 	};
 
 	static defaultProps = {
@@ -520,7 +518,6 @@ export class EditorMediaModal extends Component {
 						onDeleteItem={ this.deleteMedia }
 						onViewDetails={ this.props.onViewDetails }
 						mediaLibrarySelectedItems={ this.props.mediaLibrarySelectedItems }
-						postId={ this.props.postId }
 						scrollable />
 				);
 				break;
@@ -548,8 +545,7 @@ export default connect(
 		view: getMediaModalView( state ),
 		// [TODO]: Migrate toward dropping incoming site prop, accepting only
 		// siteId and forcing descendant components to access via state
-		site: site || getSite( state, siteId ),
-		postId: getEditorPostId( state ),
+		site: site || getSite( state, siteId )
 	} ),
 	{
 		setView: setEditorMediaModalView,

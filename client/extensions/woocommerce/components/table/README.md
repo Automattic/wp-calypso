@@ -42,19 +42,18 @@ render: function() {
 #### Props `<Table/>`
 
 * `header`: A `<TableRow />` element used to define the table's head.
-* `className`: Classes added to top level element.
+* `className`: Classes added to top level elment.
 * `compact`: Denotes a more compact table.
 
 #### Props `<TableRow/>`
 
-* `className`: Classes added to top level element.
+* `className`: Classes added to top level elment.
 * `isHeader`: Establishes row as being used for table head.
-* `href`: Optional link, if set, the row becomes clickable/focusable.
 
 #### Props `<TableItem/>`
 
 * `alignRight`: Apply `text-align: right` on an item.
-* `className`: Classes added to top level element.
+* `className`: Classes added to top level elment.
 * `isHeader`: Establishes item as being a column header.
 * `isRowHeader`: Establishes item as being a row header.
 * `isTitle`: Used to specify a main cell occupying the maximum available space in `compact` mode.

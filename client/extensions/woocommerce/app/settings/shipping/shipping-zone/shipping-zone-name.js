@@ -11,25 +11,52 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormTextInput from 'components/forms/form-text-input';
+import { decodeEntities } from 'lib/formatting';
 import { changeShippingZoneName } from 'woocommerce/state/ui/shipping/zones/actions';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
-import { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
-import {
-	getCurrentlyEditingShippingZone,
-	generateCurrentlyEditingZoneName,
-} from 'woocommerce/state/ui/shipping/zones/selectors';
-import { areSettingsGeneralLoaded, areSettingsGeneralLoadError } from 'woocommerce/state/sites/settings/general/selectors';
 
-const ShippingZoneName = ( { loaded, fetchError, zoneName, generatedZoneName, actions, translate } ) => {
+export const getZoneName = ( zone, locations, translate, returnEmpty = false ) => {
+	if ( zone && zone.name ) {
+		return zone.name;
+	}
+
+	if ( returnEmpty ) {
+		return '';
+	}
+
+	if ( ! locations || ! locations.length ) {
+		return translate( 'New shipping zone' );
+	}
+
+	const locationNames = locations.map( ( { name, postcodeFilter } ) => (
+		postcodeFilter ? `${ name } (${ postcodeFilter })` : decodeEntities( name )
+	) );
+
+	if ( locationNames.length > 10 ) {
+		const remaining = locationNames.length - 10;
+		const listed = locationNames.slice( 0, 10 );
+		return ( translate(
+			'%(locationList)s and %(count)s other region',
+			'%(locationList)s and %(count)s other regions',
+			{
+				count: remaining,
+				args: {
+					locationList: listed.join( ', ' ),
+					count: remaining,
+				}
+			}
+		) );
+	}
+
+	return locationNames.join( ', ' );
+};
+
+const ShippingZoneName = ( { loaded, zone, locations, actions, translate } ) => {
 	const onNameChange = ( event ) => {
 		actions.changeShippingZoneName( event.target.value );
 	};
 
 	const renderContent = () => {
-		if ( fetchError ) {
-			return <div className="shipping-zone__name" />;
-		}
-
 		if ( ! loaded ) {
 			return (
 				<div className="shipping-zone__name is-placeholder">
@@ -38,12 +65,14 @@ const ShippingZoneName = ( { loaded, fetchError, zoneName, generatedZoneName, ac
 			);
 		}
 
+		const zoneName = getZoneName( zone, locations, translate, true );
+
 		return (
 			<div className="shipping-zone__name">
 				<FormTextInput
 					value={ zoneName }
 					onChange={ onNameChange }
-					placeholder={ generatedZoneName } />
+					placeholder={ getZoneName( zone, locations, translate ) } />
 			</div>
 		);
 	};
@@ -63,19 +92,13 @@ const ShippingZoneName = ( { loaded, fetchError, zoneName, generatedZoneName, ac
 
 ShippingZoneName.PropTypes = {
 	siteId: PropTypes.number,
+	loaded: PropTypes.bool.isRequired,
+	zone: PropTypes.object,
+	locations: PropTypes.array,
 };
 
 export default connect(
-	( state ) => {
-		const loaded = areShippingZonesFullyLoaded( state ) && areSettingsGeneralLoaded( state );
-		const zone = loaded && getCurrentlyEditingShippingZone( state );
-		return {
-			loaded,
-			fetchError: areSettingsGeneralLoadError( state ), // TODO: add shipping zones/methods fetch errors too
-			zoneName: zone && zone.name,
-			generatedZoneName: generateCurrentlyEditingZoneName( state ),
-		};
-	},
+	null,
 	( dispatch, ownProps ) => ( {
 		actions: bindActionCreatorsWithSiteId( {
 			changeShippingZoneName,

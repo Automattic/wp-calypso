@@ -9,7 +9,6 @@ import { unmountComponentAtNode } from 'react-dom';
  * Internal Dependencies
  */
 import SimplePaymentsDialog from './dialog';
-import { serialize } from './shortcode-utils';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const simplePayments = editor => {
@@ -17,7 +16,9 @@ const simplePayments = editor => {
 	const store = editor.getParam( 'redux_store' );
 
 	editor.on( 'init', () => {
-		node = editor.getContainer().appendChild( document.createElement( 'div' ) );
+		node = editor.getContainer().appendChild(
+			document.createElement( 'div' )
+		);
 	} );
 
 	editor.on( 'remove', () => {
@@ -38,14 +39,6 @@ const simplePayments = editor => {
 					showDialog: visibility === 'show',
 					activeTab,
 					isEdit,
-					onInsert( productData ) {
-						editor.execCommand(
-							'mceInsertContent',
-							false,
-							serialize( productData )
-						);
-						renderModal( 'hide', activeTab );
-					},
 					onClose() {
 						editor.focus();
 						renderModal( 'hide', activeTab );
@@ -55,7 +48,7 @@ const simplePayments = editor => {
 					},
 				} ),
 				node,
-				store,
+				store
 			);
 		}
 

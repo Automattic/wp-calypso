@@ -80,24 +80,24 @@ describe( 'index', function() {
 	it( 'should preserve props passed to the children', function() {
 		var result;
 
-		renderer.render( <PassThrough><div data-preserve /></PassThrough> );
+		renderer.render( <PassThrough><div preserve /></PassThrough> );
 		result = renderer.getRenderOutput();
 
 		expect( result.type ).to.equal( 'div' );
 		expect( result.props ).to.eql( assign( {}, DUMMY_PROPS, {
-			'data-preserve': true
+			preserve: true
 		} ) );
 	} );
 
 	it( 'should preserve props passed to the instance itself', function() {
 		var result;
 
-		renderer.render( <PassThrough data-preserve><div /></PassThrough> );
+		renderer.render( <PassThrough preserve><div /></PassThrough> );
 		result = renderer.getRenderOutput();
 
 		expect( result.type ).to.equal( 'div' );
 		expect( result.props ).to.eql( assign( {}, DUMMY_PROPS, {
-			'data-preserve': true
+			preserve: true
 		} ) );
 	} );
 } );

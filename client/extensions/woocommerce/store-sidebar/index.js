@@ -12,12 +12,10 @@ import { localize } from 'i18n-calypso';
  */
 import Count from 'components/count';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
-import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getNewOrders } from 'woocommerce/state/sites/orders/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
-import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarItem from 'layout/sidebar/item';
@@ -32,32 +30,28 @@ class StoreSidebar extends Component {
 	}
 
 	componentDidMount = () => {
-		const { productsLoaded, site } = this.props;
+		const { site } = this.props;
 
 		if ( site && site.ID ) {
 			this.props.fetchSetupChoices( site.ID );
 			this.props.fetchOrders( site.ID );
-
-			if ( ! productsLoaded ) {
-				this.props.fetchProducts( site.ID, 1 );
-			}
 		}
 	}
 
 	componentWillReceiveProps = ( newProps ) => {
-		const { productsLoaded, site } = this.props;
+		const { site } = this.props;
 
 		const newSiteId = newProps.site ? newProps.site.ID : null;
 		const oldSiteId = site ? site.ID : null;
 
-		if ( newSiteId && ( oldSiteId !== newSiteId ) ) {
+		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchSetupChoices( newSiteId );
 			this.props.fetchOrders( newSiteId );
-
-			if ( ! productsLoaded ) {
-				this.props.fetchProducts( newSiteId, 1 );
-			}
 		}
+	}
+
+	onNavigate = () => {
+		window.scrollTo( 0, 0 );
 	}
 
 	isItemLinkSelected = ( paths ) => {
@@ -86,7 +80,7 @@ class StoreSidebar extends Component {
 				icon="house"
 				label={ translate( 'Dashboard' ) }
 				link={ link }
-			/>
+				onNavigate={ this.onNavigate } />
 		);
 	}
 
@@ -107,7 +101,7 @@ class StoreSidebar extends Component {
 				icon="product"
 				label={ translate( 'Products' ) }
 				link={ link }
-			>
+				onNavigate={ this.onNavigate } >
 				<SidebarButton disabled={ ! site } href={ addLink } >
 					{ translate( 'Add' ) }
 				</SidebarButton>
@@ -133,7 +127,7 @@ class StoreSidebar extends Component {
 				icon="pages"
 				label={ translate( 'Orders' ) }
 				link={ link }
-			>
+				onNavigate={ this.onNavigate }>
 				{ orders.length
 					? <Count count={ orders.length } />
 					: null
@@ -163,14 +157,12 @@ class StoreSidebar extends Component {
 				icon="cog"
 				label={ translate( 'Settings' ) }
 				link={ link }
-			/>
+				onNavigate={ this.onNavigate } />
 		);
 	}
 
 	render = () => {
-		const { finishedAddressSetup, hasProducts, site } = this.props;
-
-		const showAllSidebarItems = finishedAddressSetup || hasProducts;
+		const { finishedAddressSetup, site } = this.props;
 
 		return (
 			<Sidebar className="store-sidebar__sidebar">
@@ -178,10 +170,10 @@ class StoreSidebar extends Component {
 				<SidebarMenu>
 					<ul>
 						{ this.dashboard() }
-						{ showAllSidebarItems && this.products() }
-						{ showAllSidebarItems && this.orders() }
-						{ showAllSidebarItems && <SidebarSeparator /> }
-						{ showAllSidebarItems && this.settings() }
+						{ finishedAddressSetup && this.products() }
+						{ finishedAddressSetup && this.orders() }
+						{ finishedAddressSetup && <SidebarSeparator /> }
+						{ finishedAddressSetup && this.settings() }
 					</ul>
 				</SidebarMenu>
 			</Sidebar>
@@ -191,16 +183,12 @@ class StoreSidebar extends Component {
 
 function mapStateToProps( state ) {
 	const finishedAddressSetup = getSetStoreAddressDuringInitialSetup( state );
-	const hasProducts = getTotalProducts( state ) > 0;
-	const orders = getNewOrders( state );
-	const productsLoaded = areProductsLoaded( state );
 	const site = getSelectedSiteWithFallback( state );
+	const orders = getNewOrders( state );
 
 	return {
 		finishedAddressSetup,
-		hasProducts,
 		orders,
-		productsLoaded,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
 	};
@@ -210,7 +198,6 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			fetchOrders,
-			fetchProducts,
 			fetchSetupChoices,
 		},
 		dispatch

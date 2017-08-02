@@ -11,16 +11,16 @@ import React, { Component, PropTypes } from 'react';
  */
 import AddressView from 'woocommerce/components/address-view';
 import {
-	areSettingsGeneralLoaded,
+	areSettingsGeneralLoading,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { errorNotice } from 'state/notices/actions';
+import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getCountryData, getCountries } from 'woocommerce/lib/countries';
 import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './setup-footer';
 import SetupHeader from './setup-header';
 import { doInitialSetup } from 'woocommerce/state/sites/settings/actions';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 
 class PreSetupView extends Component {
 	constructor( props ) {
@@ -38,7 +38,23 @@ class PreSetupView extends Component {
 		} ),
 	};
 
+	componentDidMount = () => {
+		const { site } = this.props;
+
+		if ( site && site.ID ) {
+			this.props.fetchSettingsGeneral( site.ID );
+		}
+	}
+
 	componentWillReceiveProps = ( newProps ) => {
+		const { site } = this.props;
+		const newSiteId = site.selectedSite ? newProps.selectedSite.ID : null;
+		const oldSiteId = site ? site.ID : null;
+
+		if ( newSiteId && ( oldSiteId !== newSiteId ) ) {
+			this.props.fetchSettingsGeneral( newSiteId );
+		}
+
 		if ( ! this.state.userBeganEditing ) {
 			this.setState( { address: newProps.address } );
 		}
@@ -105,11 +121,11 @@ class PreSetupView extends Component {
 	}
 
 	render = () => {
-		const { loaded, site, translate } = this.props;
+		const { loading, site, translate } = this.props;
 
-		if ( ! loaded ) {
+		if ( ! site || loading ) {
 			// TODO - maybe a loading placehoder
-			return <QuerySettingsGeneral siteId={ site && site.ID } />;
+			return null;
 		}
 
 		return (
@@ -138,23 +154,24 @@ class PreSetupView extends Component {
 }
 
 function mapStateToProps( state, ownProps ) {
-	let loaded = false;
+	let loading = true;
 	let address = {};
 
 	if ( ownProps.site ) {
 		address = getStoreLocation( state, ownProps.site.ID );
-		loaded = areSettingsGeneralLoaded( state, ownProps.site.ID );
+		loading = areSettingsGeneralLoading( state, ownProps.site.ID );
 	}
 
 	return {
 		address,
-		loaded,
+		loading,
 	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			fetchSettingsGeneral,
 			doInitialSetup,
 		},
 		dispatch

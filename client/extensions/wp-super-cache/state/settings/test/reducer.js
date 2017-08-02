@@ -9,7 +9,6 @@ import deepFreeze from 'deep-freeze';
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
 	WP_SUPER_CACHE_RECEIVE_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
@@ -25,10 +24,8 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
-import reducer, {
-	items,
-	restoring,
-} from '../reducer';
+import reducer from '../reducer';
+import { restoring } from '../reducer';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
@@ -382,40 +379,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state.items ).to.eql( {} );
-		} );
-
-		it( 'should set is_preloading to true after switching preloading on', () => {
-			const state = items(
-				{
-					[ primarySiteId ]: {
-						is_preloading: false
-					}
-				},
-				{
-					type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
-					siteId: primarySiteId,
-					preloading: true,
-				}
-			);
-
-			expect( state[ primarySiteId ].is_preloading ).to.be.true;
-		} );
-
-		it( 'should set is_preloading to false after switching preloading off', () => {
-			const state = items(
-				{
-					[ primarySiteId ]: {
-						is_preloading: true
-					}
-				},
-				{
-					type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
-					siteId: primarySiteId,
-					preloading: false,
-				}
-			);
-
-			expect( state[ primarySiteId ].is_preloading ).to.be.false;
 		} );
 	} );
 } );

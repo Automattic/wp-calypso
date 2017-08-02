@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -11,60 +10,57 @@ import EmptyContent from 'components/empty-content';
 import UploadButton from './upload-button';
 import { userCan } from 'lib/site/utils';
 
-class MediaLibraryListNoContent extends Component {
-	static propTypes = {
+export default React.createClass( {
+	displayName: 'MediaLibraryListNoContent',
+
+	propTypes: {
 		site: React.PropTypes.object,
 		filter: React.PropTypes.string,
 		source: React.PropTypes.string,
-	};
+	},
 
 	getLabel() {
-		const {
-			filter,
-			translate,
-		} = this.props;
-
-		switch ( filter ) {
-			case 'this-post':
-				return translate( 'There are no media items uploaded to this post.', {
-					comment: 'Media no results'
-				} );
-
+		switch ( this.props.filter ) {
 			case 'images':
-				return translate( 'You don\'t have any images.', {
-					comment: 'Media no results'
+				return this.translate( 'You don\'t have any images.', {
+					textOnly: true,
+					context: 'Media no results'
 				} );
 
 			case 'videos':
-				return translate( 'You don\'t have any videos.', {
-					comment: 'Media no results'
+				return this.translate( 'You don\'t have any videos.', {
+					textOnly: true,
+					context: 'Media no results'
 				} );
 
 			case 'audio':
-				return translate( 'You don\'t have any audio files.', {
-					comment: 'Media no results'
+				return this.translate( 'You don\'t have any audio files.', {
+					textOnly: true,
+					context: 'Media no results'
 				} );
 
 			case 'documents':
-				return translate( 'You don\'t have any documents.', {
-					comment: 'Media no results'
+				return this.translate( 'You don\'t have any documents.', {
+					textOnly: true,
+					context: 'Media no results'
 				} );
 
 			default:
-				return translate( 'You don\'t have any media.', {
-					comment: 'Media no results'
+				return this.translate( 'You don\'t have any media.', {
+					textOnly: true,
+					context: 'Media no results'
 				} );
 		}
-	}
+	},
 
 	render() {
 		let line = '', action = '';
 
 		if ( userCan( 'upload_files', this.props.site ) && ! this.props.source ) {
-			line = this.props.translate( 'Would you like to upload something?' );
+			line = this.translate( 'Would you like to upload something?' );
 			action = (
 				<UploadButton className="button is-primary" site={ this.props.site }>
-					{ this.props.translate( 'Upload Media' ) }
+					{ this.translate( 'Upload Media' ) }
 				</UploadButton>
 			);
 		}
@@ -79,6 +75,4 @@ class MediaLibraryListNoContent extends Component {
 			/>
 		);
 	}
-}
-
-export default localize( MediaLibraryListNoContent );
+} );

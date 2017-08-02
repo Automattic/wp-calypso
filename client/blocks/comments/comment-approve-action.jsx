@@ -10,15 +10,13 @@ import classnames from 'classnames';
 const CommentApproveAction = ( { translate, status, approveComment, unapproveComment } ) => {
 	const isApproved = status === 'approved';
 	const buttonStyle = classnames( 'comments__comment-actions-approve', {
-		'is-approved': isApproved,
+		'is-approved': isApproved
 	} );
 
 	return (
 		<button className={ buttonStyle } onClick={ ! isApproved ? approveComment : unapproveComment }>
 			<Gridicon icon="checkmark" size={ 18 } />
-			<span className="comments__comment-actions-like-label">
-				{ isApproved ? translate( 'Approved' ) : translate( 'Approve' ) }
-			</span>
+			<span className="comments__comment-actions-like-label">{ isApproved ? translate( 'Approved' ) : translate( 'Approve' ) }</span>
 		</button>
 	);
 };
@@ -32,7 +30,7 @@ CommentApproveAction.propTypes = {
 
 CommentApproveAction.defaultProps = {
 	approveComment: noop,
-	unapproveComment: noop,
+	unapproveComment: noop
 };
 
 export default localize( CommentApproveAction );

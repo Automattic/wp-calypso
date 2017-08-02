@@ -126,7 +126,7 @@ class SiteSettingsFormWriting extends Component {
 				}
 
 				{
-					this.renderSectionHeader( translate( 'Content types' ) )
+					this.renderSectionHeader( translate( 'Custom content types' ) )
 				}
 
 				<CustomContentTypes

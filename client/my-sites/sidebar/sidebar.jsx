@@ -16,7 +16,7 @@ import Button from 'components/button';
 import config from 'config';
 import CurrentSite from 'my-sites/current-site';
 import productsValues from 'lib/products-values';
-import ManageMenu from './manage-menu';
+import PublishMenu from './publish-menu';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarFooter from 'layout/sidebar/footer';
@@ -116,9 +116,9 @@ export class MySitesSidebar extends Component {
 		}, this );
 	}
 
-	manage() {
+	publish() {
 		return (
-			<ManageMenu siteId={ this.props.siteId }
+			<PublishMenu siteId={ this.props.siteId }
 				itemLinkClass={ this.itemLinkClass }
 				onNavigate={ this.onNavigate } />
 		);
@@ -547,7 +547,7 @@ export class MySitesSidebar extends Component {
 			);
 		}
 
-		const manage = !! this.manage(),
+		const publish = !! this.publish(),
 			configuration = ( !! this.sharing() || !! this.users() || !! this.siteSettings() || !! this.plugins() || !! this.upgrades() );
 
 		return (
@@ -561,10 +561,10 @@ export class MySitesSidebar extends Component {
 					</ul>
 				</SidebarMenu>
 
-				{ manage
+				{ publish
 					? <SidebarMenu>
-						<SidebarHeading>{ this.props.translate( 'Manage' ) }</SidebarHeading>
-						{ this.manage() }
+						<SidebarHeading>{ this.props.translate( 'Publish' ) }</SidebarHeading>
+						{ this.publish() }
 					</SidebarMenu>
 					: null
 				}

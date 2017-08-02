@@ -56,7 +56,6 @@ const MediaLibraryContent = React.createClass( {
 		onAddMedia: React.PropTypes.func,
 		onMediaScaleChange: React.PropTypes.func,
 		onEditItem: React.PropTypes.func,
-		postId: React.PropTypes.number
 	},
 
 	getDefaultProps: function() {
@@ -233,7 +232,6 @@ const MediaLibraryContent = React.createClass( {
 		return (
 			<MediaListData
 				siteId={ this.props.site.ID }
-				postId={ this.props.postId }
 				filter={ this.props.filter }
 				search={ this.props.search }
 				source={ this.props.source }>

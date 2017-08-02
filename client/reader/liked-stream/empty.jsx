@@ -30,14 +30,10 @@ class TagEmptyContent extends React.Component {
 
 	render() {
 		var action = (
-				<a
-					className="empty-content__action button is-primary"
-					onClick={ this.recordAction }
-					href="/"
-				>
-					{ this.props.translate( 'Back to Following' ) }
-				</a>
-			),
+			<a className="empty-content__action button is-primary" onClick={ this.recordAction } href="/">
+				{ this.props.translate( 'Back to Following' ) }
+			</a>
+		),
 			secondaryAction = isDiscoverEnabled()
 				? <a
 						className="empty-content__action button"

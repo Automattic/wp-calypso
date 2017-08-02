@@ -4,7 +4,6 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { head } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
@@ -94,28 +93,22 @@ class ProductCreate extends React.Component {
 	onSave = () => {
 		const { site, product, translate } = this.props;
 
-		const successAction = ( products ) => {
-			const newProduct = head( products );
+		const successAction = () => {
 			page.redirect( getLink( '/store/products/:site', site ) );
+
 			return successNotice(
 				translate( '%(product)s successfully created.', {
 					args: { product: product.name },
 				} ),
-				{
-					displayOnNextPage: true,
-					duration: 8000,
-					button: translate( 'View' ),
-					onClick: () => {
-						window.open( newProduct.permalink );
-					},
-				}
+				{ duration: 4000, isPersistent: true }
 			);
 		};
 
 		const failureAction = errorNotice(
 			translate( 'There was a problem saving %(product)s. Please try again.', {
 				args: { product: product.name },
-			} )
+			} ),
+			{ isPersistent: true },
 		);
 
 		if ( ! product.type ) {

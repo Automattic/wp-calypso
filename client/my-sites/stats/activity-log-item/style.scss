@@ -1,19 +1,19 @@
 .activity-log-item {
-	display: flex;
+	display:flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: flex-start;
 	align-content: flex-start;
 	align-items: center;
 	position: relative;
-
-	&:first-of-type {
-		margin-top: 24px;
-	}
+	margin-top: 24px;
 
 	.card {
-		flex: 1;
-		margin-bottom: 16px;
+		width: 300px;
+		flex-grow: 1;
+		flex-shrink: 0;
+		flex-basis: 200px;
+		align-items: center;
 		background: $white;
 	}
 
@@ -23,19 +23,12 @@
 		color: darken( $gray, 20% );
 	}
 
-	.foldable-card {
-		
-		.foldable-card__expand .gridicon {
-			transform: none;
-		}
+	.foldable-card .foldable-card__expand .gridicon {
+		transform: none;
+	}
 
-		&.is-expanded {
-			margin-bottom: 24px;
-
-			.foldable-card__expand .gridicon {
-				transform: rotate( 180deg );
-			}
-		}
+	.foldable-card.is-expanded .foldable-card__expand .gridicon {
+		transform: rotate( 180deg );
 	}
 
 	.foldable-card__main {
@@ -49,10 +42,6 @@
 	text-align: center;
 	margin: -2px 22px 0 10px;
 	padding: 4px 0 6px;
-
-	@include breakpoint( "<480px" ) {
-		margin: -2px 14px 0 4px;
-	}
 }
 
 .activity-log-item__time {
@@ -62,7 +51,7 @@
 	white-space: nowrap;
 }
 
-.activity-log-item__activity-icon {
+.activity-log-item__icon {
 	// General notice
 	background: $gray;
 	color: $white;
@@ -70,10 +59,6 @@
 	border-radius: 50%;
 	padding: 12px;
 	margin-top: 2px;
-
-	@include breakpoint( "<480px" ) {
-		padding: 10px;
-	}
 
 	// Success
 	&.is-success {
@@ -95,27 +80,21 @@
 	display: flex;
 	flex: 1;
 	align-items: center;
-
-	@include breakpoint( "<960px" ) {
-		flex-direction: column;
-		align-items: flex-start;
-	}
 }
 
 .activity-log-item__actor {
 	display: flex;
-	flex: 3 1;
+	flex: 2 1;
 	align-items: center;
-	margin-right: 32px;
 
-	@include breakpoint( "<960px" ) {
-		margin-bottom: 16px;
+	@include breakpoint( ">1040px" ) {
+		flex: 1 1;
 	}
+}
 
-	.gravatar {
-		float: left;
-		margin-right: 16px;
-	}
+.activity-log-item__actor .gravatar {
+	float: left;
+	margin-right: 16px;
 }
 
 .activity-log-item__actor-role {
@@ -124,19 +103,15 @@
 	color: $gray;
 }
 
-.activity-log-item__title {
-	flex: 4 1;
-
-	@include breakpoint( "<960px" ) {
-		margin-left: 54px;
-	}
+.activity-log-item__content {
+	flex: 3 1;
 }
 
-.activity-log-item__title-title {
+.activity-log-item__content-title {
 	font-size: 14px;
 }
 
-.activity-log-item__title-subtitle {
+.activity-log-item__content-sub-title {
 	font-size: 12px;
 	text-transform: uppercase;
 	color: $gray;
@@ -148,8 +123,10 @@
 }
 
 .activity-log-item__id {
-	margin-top: 8px;
+	float: right;
 	font-size: 11px;
-	font-style: italic;
 	color: lighten( $gray, 20% );
+	font-style: italic;
+	margin-bottom: 4px;
+	margin-right: -7px;
 }

@@ -3,7 +3,7 @@
  */
 import { translate } from 'i18n-calypso';
 
-const sparkWidgetList1 = [
+export const sparkWidgetList1 = [
 	{
 		key: 'products',
 		title: translate( 'Products Purchased' ),
@@ -21,7 +21,7 @@ const sparkWidgetList1 = [
 	}
 ];
 
-const sparkWidgetList2 = [
+export const sparkWidgetList2 = [
 	{
 		key: 'total_refund',
 		title: translate( 'Refunds' ),
@@ -38,8 +38,6 @@ const sparkWidgetList2 = [
 		format: 'currency'
 	}
 ];
-
-export const sparkWidgets = [ sparkWidgetList1, sparkWidgetList2 ];
 
 export const topProducts = {
 	basePath: '/store/stats/products',
@@ -83,35 +81,23 @@ export const UNITS = {
 		label: 'days',
 		durationFn: 'asDays',
 		format: 'YYYY-MM-DD',
-		sinceFormat: 'MMM D',
-		chartFormat: 'labelDay',
-		title: translate( 'Days' )
 	},
 	week: {
 		quantity: 30,
 		label: 'weeks',
 		durationFn: 'asWeeks',
 		format: 'YYYY-[W]WW',
-		sinceFormat: 'MMM D',
-		chartFormat: 'labelWeek',
-		title: translate( 'Weeks' )
 	},
 	month: {
-		quantity: 12,
+		quantity: 30,
 		label: 'months',
 		durationFn: 'asMonths',
-		format: 'YYYY-MM',
-		sinceFormat: 'MMM [\']YY',
-		chartFormat: 'labelMonth',
-		title: translate( 'Months' )
+		format: 'YYYY-MM'
 	},
 	year: {
 		quantity: 10,
 		label: 'years',
 		durationFn: 'asYears',
 		format: 'YYYY',
-		sinceFormat: 'YYYY',
-		chartFormat: 'labelYear',
-		title: translate( 'Years' )
-	}
+	},
 };

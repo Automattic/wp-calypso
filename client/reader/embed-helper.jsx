@@ -50,8 +50,7 @@ var embedsConfig = {
 	},
 	soundcloud: {
 		sizingFunction: function soundcloudEmbedSizingFunction( embed, availableWidth ) {
-			var aspectRatio = embed.aspectRatio || 1,
-				height = '100%';
+			var aspectRatio = embed.aspectRatio || 1, height = '100%';
 
 			if ( embed.iframe.indexOf( 'visual=true' ) > -1 ) {
 				height = Math.floor( availableWidth / aspectRatio ) + 'px';
@@ -67,8 +66,7 @@ var embedsConfig = {
 };
 
 function extractUrlFromIframe( iframeHtml ) {
-	var urlRegex = new RegExp( 'src="([^"]+)"' ),
-		res = urlRegex.exec( iframeHtml );
+	var urlRegex = new RegExp( 'src="([^"]+)"' ), res = urlRegex.exec( iframeHtml );
 
 	return res.length > 1 ? res[ 1 ] : null;
 }

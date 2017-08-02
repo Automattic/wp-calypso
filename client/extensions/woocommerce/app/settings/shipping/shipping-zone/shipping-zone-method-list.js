@@ -31,13 +31,10 @@ import {
 	getNewMethodTypeOptions,
 } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
-import { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
-import { areSettingsGeneralLoaded, areSettingsGeneralLoadError } from 'woocommerce/state/sites/settings/general/selectors';
 
 const ShippingZoneMethodList = ( {
 		siteId,
 		loaded,
-		fetchError,
 		methods,
 		methodNamesMap,
 		newMethodTypeOptions,
@@ -78,7 +75,13 @@ const ShippingZoneMethodList = ( {
 					{ getMethodSummary( method, currency ) }
 				</ListItemField>
 				<ListItemField className="shipping-zone__enable-container">
-					<FormToggle checked={ method.enabled } onChange={ onEnabledToggle }>{ translate( 'Enabled' ) }</FormToggle>
+					<span onClick={ onEnabledToggle }>
+						{ translate( 'Enabled {{toggle/}}', {
+							components: {
+								toggle: <FormToggle checked={ method.enabled } />
+							}
+						} ) }
+					</span>
 				</ListItemField>
 				<ListItemField className="shipping-zone__method-actions">
 					<Button compact onClick={ onEditClick }>{ translate( 'Edit' ) }</Button>
@@ -96,10 +99,7 @@ const ShippingZoneMethodList = ( {
 		actions.addMethodToShippingZone( newType, methodNamesMap( newType ) );
 	};
 
-	let methodsToRender = loaded ? methods : [ {}, {}, {} ];
-	if ( fetchError ) {
-		methodsToRender = [];
-	}
+	const methodsToRender = loaded ? methods : [ {}, {}, {} ];
 
 	return (
 		<div className="shipping-zone__methods-container">
@@ -129,6 +129,7 @@ const ShippingZoneMethodList = ( {
 
 ShippingZoneMethodList.propTypes = {
 	siteId: PropTypes.number,
+	loaded: PropTypes.bool.isRequired,
 };
 
 export default connect(
@@ -137,8 +138,6 @@ export default connect(
 		methodNamesMap: getShippingMethodNameMap( state ),
 		newMethodTypeOptions: getNewMethodTypeOptions( state ),
 		currency: getCurrencyWithEdits( state ),
-		loaded: areShippingZonesFullyLoaded( state ) && areSettingsGeneralLoaded( state ),
-		fetchError: areSettingsGeneralLoadError( state ), // TODO: add shipping zones/methods fetch errors too
 	} ),
 	( dispatch, ownProps ) => ( {
 		actions: bindActionCreatorsWithSiteId( {

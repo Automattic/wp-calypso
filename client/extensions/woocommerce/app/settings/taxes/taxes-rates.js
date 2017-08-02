@@ -27,13 +27,13 @@ import {
 } from 'woocommerce/lib/countries/constants';
 import { getCountryData, getStateData } from 'woocommerce/lib/countries';
 import ExtendedHeader from 'woocommerce/components/extended-header';
+import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
 import FormToggle from 'components/forms/form-toggle';
 import Notice from 'components/notice';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 
 class TaxesRates extends Component {
 
@@ -48,7 +48,9 @@ class TaxesRates extends Component {
 		const { address, loadedSettingsGeneral, loadedTaxRates, site } = this.props;
 
 		if ( site && site.ID ) {
-			if ( loadedSettingsGeneral && ! loadedTaxRates ) {
+			if ( ! loadedSettingsGeneral ) {
+				this.props.fetchSettingsGeneral( site.ID );
+			} else if ( ! loadedTaxRates ) {
 				this.props.fetchTaxRates( site.ID, address );
 			}
 		}
@@ -252,10 +254,10 @@ class TaxesRates extends Component {
 	}
 
 	render = () => {
-		const { site, loadedSettingsGeneral, loadedTaxRates, onEnabledChange, taxesEnabled, translate } = this.props;
+		const { loadedSettingsGeneral, loadedTaxRates, onEnabledChange, taxesEnabled, translate } = this.props;
 
 		if ( ! loadedSettingsGeneral ) {
-			return <QuerySettingsGeneral siteId={ site && site.ID } />;
+			return null;
 		}
 
 		if ( ! loadedTaxRates ) {
@@ -311,6 +313,7 @@ function mapStateToProps( state, ownProps ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			fetchSettingsGeneral,
 			fetchTaxRates,
 		},
 		dispatch

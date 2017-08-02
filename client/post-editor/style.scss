@@ -62,8 +62,15 @@
 
 	.focus-sidebar &,
 	.focus-editor-confirmation-sidebar & {
-		left: ( $sidebar-width-max / -2 );
-		width: calc( 100% - ( #{ $sidebar-width-max } ) ); // subtract sidebar width
+		@include breakpoint( ">960px" ) {
+			left: ( $sidebar-width-max / -2 );
+			width: calc( 100% - ( #{ $sidebar-width-max } ) ); // subtract sidebar width
+		}
+
+		@include breakpoint( "<960px" ) {
+			left: ( $sidebar-width-min / -2 );
+			width: calc( 100% - ( #{ $sidebar-width-min } ) ); // subtract sidebar width
+		}
 	}
 }
 

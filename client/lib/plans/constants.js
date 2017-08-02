@@ -374,8 +374,8 @@ export const PLANS_LIST = {
 		], plan ),
 		getPathSlug: () => 'premium',
 		getDescription: () => i18n.translate(
-				'Automated backups and malware scanning, expert priority ' +
-				'support, marketing automation, and more.'
+				'Generate income and save on video hosting costs. ' +
+				'Improve security with daily backups, malware scanning, and spam defense.'
 		),
 		getFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -408,8 +408,8 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'premium-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getDescription: () => i18n.translate(
-				'Automated backups and malware scanning, expert priority ' +
-				'support, marketing automation, and more.'
+				'Generate income and save on video hosting costs. ' +
+				'Improve security with daily backups, malware scanning, and spam defense.'
 		),
 		getFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -442,8 +442,8 @@ export const PLANS_LIST = {
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getPathSlug: () => 'jetpack-personal',
 		getDescription: () => i18n.translate(
-				'Security essentials for every WordPress site including ' +
-				'automated backups and priority support.'
+				'Essentials for every site. The most affordable solution to keep your' +
+				' personal or small business site backed up and spam-free.'
 		),
 		getFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -472,8 +472,8 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'jetpack-personal-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
 		getDescription: () => i18n.translate(
-				'Security essentials for every WordPress site including ' +
-				'automated backups and priority support.'
+				'Essentials for every site. The most affordable solution to keep your' +
+				' personal or small business site backed up and spam-free.'
 		),
 		getFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -509,8 +509,8 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'professional',
 
 		getDescription: () => i18n.translate(
-			'WordPress sites from start to finish: unlimited premium ' +
-			'themes, business class security, and marketing automation.'
+			'Real-time backups, unlimited archives, and one-click threat ' +
+			'resolution. Also includes SEO tools, and unlimited video hosting.'
 		),
 		getFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -530,8 +530,8 @@ export const PLANS_LIST = {
 			FEATURE_UNLIMITED_PREMIUM_THEMES,
 		] ),
 		getSignupFeatures: () => compact( [
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
+			FEATURE_VIDEO_CDN_UNLIMITED,
 			FEATURE_SEO_PREVIEW_TOOLS,
 			FEATURE_ALL_PREMIUM_FEATURES
 		] ),
@@ -552,8 +552,8 @@ export const PLANS_LIST = {
 			PLAN_JETPACK_PERSONAL_MONTHLY
 		], plan ),
 		getDescription: () => i18n.translate(
-			'WordPress sites from start to finish: unlimited premium ' +
-			'themes, business class security, and marketing automation.'
+			'Real-time backups, unlimited archives, and one-click threat ' +
+			'resolution. Also includes SEO tools, and unlimited video hosting.'
 		),
 		getFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,

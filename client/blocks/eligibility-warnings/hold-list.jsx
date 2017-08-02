@@ -73,11 +73,10 @@ function getHoldMessages( siteSlug, translate ) {
 			),
 		},
 		EXCESSIVE_DISK_SPACE: {
-			title: translate( 'We can\'t proceed with this upload' ),
+			title: translate( 'Site too large' ),
 			description: translate(
-				'This site is not currently eligible for installing themes and plugins. Please contact support to straighten things out.'
+				'Try using a different site.'
 			),
-			supportUrl: 'https://support.wordpress.com/help-support-options/',
 		},
 	};
 }

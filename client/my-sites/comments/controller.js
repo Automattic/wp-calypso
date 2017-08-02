@@ -9,14 +9,10 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import CommentsManagement from './main';
-import config from 'config';
 import route from 'lib/route';
+import CommentsManagement from './main';
 
-const VALID_STATUSES = [ 'pending', 'approved', 'spam', 'trash' ];
-if ( config.isEnabled( 'comments/management/all-list' ) ) {
-	VALID_STATUSES.push( 'all' );
-}
+const VALID_STATUSES = [ 'pending', 'approved', 'spam', 'trash', 'all' ];
 
 export const isValidStatus = status => includes( VALID_STATUSES, status );
 

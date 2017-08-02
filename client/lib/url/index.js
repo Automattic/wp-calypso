@@ -1,11 +1,8 @@
 /**
  * External dependencies
  */
-import {
-	format as formatUrl,
-	parse as parseUrl,
-} from 'url';
-import { omit, startsWith } from 'lodash';
+import { parse as parseUrl } from 'url';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -157,25 +154,6 @@ function resemblesUrl( query ) {
 	return true;
 }
 
-/**
- * Removes given params from a url.
- *
- * @param  {String} url URL to be cleaned
- * @param  {Array|String}  paramsToOmit The collection of params or single param to reject
- * @return {String} Url less the omitted params.
- */
-function omitUrlParams( url, paramsToOmit ) {
-	if ( ! url ) {
-		return null;
-	}
-
-	const parsed = parseUrl( url, true );
-	parsed.query = omit( parsed.query, paramsToOmit );
-
-	delete parsed.search;
-	return formatUrl( parsed );
-}
-
 export default {
 	isOutsideCalypso,
 	isExternal,
@@ -188,5 +166,4 @@ export default {
 	// [TODO]: Move lib/route/add-query-args contents here
 	addQueryArgs,
 	resemblesUrl,
-	omitUrlParams,
 };

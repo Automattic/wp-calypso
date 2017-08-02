@@ -7,8 +7,16 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { COMMENTS_LIKE, COMMENTS_UNLIKE, NOTICE_CREATE } from 'state/action-types';
-import { likeComment, updateCommentLikes, handleLikeFailure } from '../';
+import {
+	COMMENTS_LIKE,
+	COMMENTS_UNLIKE,
+	NOTICE_CREATE,
+} from 'state/action-types';
+import {
+	likeComment,
+	updateCommentLikes,
+	handleLikeFailure,
+} from '../';
 import { local } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
@@ -18,7 +26,7 @@ const action = {
 	type: COMMENTS_LIKE,
 	siteId: SITE_ID,
 	postId: POST_ID,
-	commentId: 1,
+	commentId: 1
 };
 
 describe( '#likeComment()', () => {
@@ -28,16 +36,11 @@ describe( '#likeComment()', () => {
 		likeComment( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
-			http(
-				{
-					apiVersion: '1.1',
-					method: 'POST',
-					path: `/sites/${ SITE_ID }/comments/1/likes/new`,
-				},
-				action,
-			),
-		);
+		expect( dispatch ).to.have.been.calledWith( http( {
+			apiVersion: '1.1',
+			method: 'POST',
+			path: `/sites/${ SITE_ID }/comments/1/likes/new`
+		}, action ) );
 	} );
 } );
 
@@ -45,20 +48,16 @@ describe( '#updateCommentLikes()', () => {
 	it( 'should dispatch a comment like update action', () => {
 		const dispatch = spy();
 
-		updateCommentLikes( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 }, null, {
-			like_count: 4,
-		} );
+		updateCommentLikes( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 }, null, { like_count: 4 } );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
-			local( {
-				type: COMMENTS_LIKE,
-				siteId: SITE_ID,
-				postId: POST_ID,
-				commentId: 1,
-				like_count: 4,
-			} ),
-		);
+		expect( dispatch ).to.have.been.calledWith( local( {
+			type: COMMENTS_LIKE,
+			siteId: SITE_ID,
+			postId: POST_ID,
+			commentId: 1,
+			like_count: 4
+		} ) );
 	} );
 } );
 
@@ -69,14 +68,12 @@ describe( '#handleLikeFailure()', () => {
 		handleLikeFailure( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
 
 		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWith(
-			local( {
-				type: COMMENTS_UNLIKE,
-				siteId: SITE_ID,
-				postId: POST_ID,
-				commentId: 1,
-			} ),
-		);
+		expect( dispatch ).to.have.been.calledWith( local( {
+			type: COMMENTS_UNLIKE,
+			siteId: SITE_ID,
+			postId: POST_ID,
+			commentId: 1
+		} ) );
 	} );
 
 	it( 'should dispatch an error notice', () => {
@@ -89,8 +86,8 @@ describe( '#handleLikeFailure()', () => {
 			type: NOTICE_CREATE,
 			notice: {
 				status: 'is-error',
-				text: 'Could not like this comment',
-			},
+				text: 'Could not like this comment'
+			}
 		} );
 	} );
 } );

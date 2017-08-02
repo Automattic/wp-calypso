@@ -23,7 +23,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
 import ChatClosureNotice from '../chat-closure-notice';
-import ChatBusinessConciergeNotice from '../chat-business-concierge-notice';
 import { selectSiteId } from 'state/help/actions';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import wpcomLib from 'lib/wp';
@@ -241,13 +240,7 @@ export const HelpContactForm = React.createClass( {
 					from="2016-12-24T00:00:00Z"
 					to="2017-01-02T00:00:00Z"
 				/>
-
 				{ formDescription && ( <p>{ formDescription }</p> ) }
-
-				<ChatBusinessConciergeNotice
-					from="2017-07-19T00:00:00Z"
-					to="2017-07-21T00:00:00Z"
-				/>
 
 				{ showHowCanWeHelpField && (
 					<div>

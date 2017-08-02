@@ -3,13 +3,13 @@
  */
 import React from 'react';
 import url from 'url';
+import omit from 'lodash/omit';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { omitUrlParams } from 'lib/url';
 import WebPreview from 'components/web-preview';
 import WebPreviewContent from 'components/web-preview/content';
 
@@ -88,7 +88,13 @@ const EditorPreview = React.createClass( {
 	},
 
 	cleanExternalUrl( externalUrl ) {
-		return omitUrlParams( externalUrl, [ 'iframe', 'frame-nonce' ] );
+		if ( ! externalUrl ) {
+			return null;
+		}
+		const parsed = url.parse( externalUrl, true );
+		parsed.query = omit( parsed.query, 'iframe', 'frame-nonce' );
+		delete parsed.search;
+		return url.format( parsed );
 	},
 
 	render() {

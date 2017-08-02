@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import config from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	COMMENTS_DELETE,
+	COMMENTS_REMOVE,
 	COMMENTS_REQUEST,
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
@@ -20,18 +20,20 @@ import {
 	requestPostComments,
 	writeComment,
 	replyComment,
-	deleteComment,
+	removeComment,
 	likeComment,
-	unlikeComment,
+	unlikeComment
 } from '../actions';
-import { NUMBER_OF_COMMENTS_PER_FETCH } from '../constants';
+import {
+	NUMBER_OF_COMMENTS_PER_FETCH
+} from '../constants';
 
 const SITE_ID = 91750058;
 const POST_ID = 287;
 
 describe( 'actions', () => {
 	describe( '#requestPostComments()', () => {
-		useSandbox( sandbox => {
+		useSandbox( ( sandbox ) => {
 			sandbox.stub( config, 'isEnabled' ).withArgs( 'comments/filters-in-posts' ).returns( true );
 		} );
 
@@ -45,8 +47,8 @@ describe( 'actions', () => {
 				query: {
 					order: 'DESC',
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
-					status: 'trash',
-				},
+					status: 'trash'
+				}
 			} );
 		} );
 
@@ -60,8 +62,8 @@ describe( 'actions', () => {
 				query: {
 					order: 'DESC',
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
-					status: 'approved',
-				},
+					status: 'approved'
+				}
 			} );
 		} );
 	} );
@@ -93,12 +95,12 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#deleteComment()', () => {
+	describe( '#removeComment()', () => {
 		it( 'should dispatch remove for a placeholder when provided', () => {
-			const deleteCommentAction = deleteComment( SITE_ID, POST_ID, 'placeholder-123' );
+			const removeCommentAction = removeComment( SITE_ID, POST_ID, 'placeholder-123' );
 
-			expect( deleteCommentAction.type ).to.eql( COMMENTS_DELETE );
-			expect( deleteCommentAction.commentId ).to.equal( 'placeholder-123' );
+			expect( removeCommentAction.type ).to.eql( COMMENTS_REMOVE );
+			expect( removeCommentAction.commentId ).to.equal( 'placeholder-123' );
 		} );
 	} );
 
@@ -110,7 +112,7 @@ describe( 'actions', () => {
 				type: COMMENTS_LIKE,
 				siteId: SITE_ID,
 				postId: POST_ID,
-				commentId: 1,
+				commentId: 1
 			} );
 		} );
 	} );
@@ -123,7 +125,7 @@ describe( 'actions', () => {
 				type: COMMENTS_UNLIKE,
 				siteId: SITE_ID,
 				postId: POST_ID,
-				commentId: 1,
+				commentId: 1
 			} );
 		} );
 	} );

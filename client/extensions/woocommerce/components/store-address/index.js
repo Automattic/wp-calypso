@@ -11,20 +11,15 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import AddressView from 'woocommerce/components/address-view';
-import Button from 'components/button';
 import Card from 'components/card';
 import Dialog from 'components/dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getCountryData } from 'woocommerce/lib/countries';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import {
-	getStoreLocation,
-	areSettingsGeneralLoading,
-	areSettingsGeneralLoadError,
-} from 'woocommerce/state/sites/settings/general/selectors';
+import { getStoreLocation, areSettingsGeneralLoading } from 'woocommerce/state/sites/settings/general/selectors';
 import { setAddress } from 'woocommerce/state/sites/settings/actions';
 import FormLabel from 'components/forms/form-label';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 
 class StoreAddress extends Component {
 
@@ -32,7 +27,24 @@ class StoreAddress extends Component {
 		showLabel: true,
 	};
 
+	componentDidMount = () => {
+		const { site } = this.props;
+
+		if ( site && site.ID ) {
+			this.props.fetchSettingsGeneral( site.ID );
+		}
+	}
+
 	componentWillReceiveProps = ( newProps ) => {
+		const { site } = this.props;
+
+		const newSiteId = newProps.site && newProps.site.ID || null;
+		const oldSiteId = site && site.ID || null;
+
+		if ( oldSiteId !== newSiteId ) {
+			this.props.fetchSettingsGeneral( newSiteId );
+		}
+
 		this.setState( { address: newProps.address } );
 	}
 
@@ -101,7 +113,7 @@ class StoreAddress extends Component {
 	}
 
 	render() {
-		const { className, site, loading, fetchError, translate, showLabel } = this.props;
+		const { className, site, loading, translate, showLabel } = this.props;
 
 		const buttons = [
 			{ action: 'close', label: translate( 'Close' ) },
@@ -109,7 +121,7 @@ class StoreAddress extends Component {
 		];
 
 		let display;
-		if ( ! site || loading || fetchError ) {
+		if ( ! site || loading ) {
 			display = (
 				<div>
 					<p></p>
@@ -125,7 +137,7 @@ class StoreAddress extends Component {
 						<FormLabel>{ translate( 'Store location' ) }</FormLabel>
 					) }
 					<AddressView address={ this.state.address } />
-					<Button borderless onClick={ this.onShowDialog }>{ translate( 'Edit address' ) }</Button>
+					<a onClick={ this.onShowDialog }>{ translate( 'Edit address' ) }</a>
 				</div>
 			);
 		}
@@ -133,7 +145,6 @@ class StoreAddress extends Component {
 		const classes = classNames( 'store-address', { 'is-placeholder': ! site || loading }, className );
 		return (
 			<Card className={ classes }>
-				<QuerySettingsGeneral siteId={ site && site.ID } />
 				<Dialog
 					buttons={ buttons }
 					isVisible={ this.state.showDialog }
@@ -150,19 +161,18 @@ class StoreAddress extends Component {
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const loading = areSettingsGeneralLoading( state );
-	const fetchError = areSettingsGeneralLoadError( state );
 	const address = getStoreLocation( state );
 	return {
 		site,
 		address,
 		loading,
-		fetchError,
 	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			fetchSettingsGeneral,
 			setAddress,
 		},
 		dispatch

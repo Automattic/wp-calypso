@@ -16,7 +16,7 @@ import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormToggle from 'components/forms/form-toggle';
-import getKeyboardHandler from 'woocommerce/lib/get-keyboard-handler';
+import VerticalMenu from 'components/vertical-menu';
 
 class ProductFormVariationsModal extends React.Component {
 
@@ -89,13 +89,9 @@ class ProductFormVariationsModal extends React.Component {
 		const { selectedVariation } = this.state;
 		const variation = this.selectedVariation();
 
-		const navItems = variations && variations.map( ( v, i ) => {
+		const navItems = variations && variations.map( function( v, i ) {
 			return (
-				<ModalNavItem
-					key={ i }
-					variation={ v }
-					onClick={ this.switchVariation }
-					selected={ selectedVariation } />
+				<ModalNavItem key={ i } variation={ v } selected={ selectedVariation } />
 			);
 		} );
 
@@ -105,9 +101,9 @@ class ProductFormVariationsModal extends React.Component {
 			<div className="products__product-form-modal-wrapper">
 				<h1>{ translate( 'Variation details' ) }</h1>
 
-				<div className="products__product-form-modal-menu vertical-menu">
-					{ navItems }
-				</div>
+				<VerticalMenu onClick={ this.switchVariation } className="products__product-form-modal-menu">
+					{navItems}
+				</VerticalMenu>
 
 				<div className="products__product-form-modal-contents">
 					<h2>{ formattedVariationName( variation ) }</h2>
@@ -148,7 +144,13 @@ class ProductFormVariationsModal extends React.Component {
 
 }
 
-const ModalNavItem = ( { onClick, variation, selected } ) => {
+const ModalNavItem = props => {
+	const {
+		onClick,
+		variation,
+		selected,
+	} = props;
+
 	const classes = classNames(
 		'vertical-menu__items',
 		{ 'is-selected': ( variation.id === selected ) }
@@ -159,14 +161,9 @@ const ModalNavItem = ( { onClick, variation, selected } ) => {
 	};
 
 	return (
-		<div
-			className={ classes }
-			role="button"
-			tabIndex="0"
-			onClick={ clickHandler }
-			onKeyDown={ getKeyboardHandler( clickHandler ) }>
+		<li className={ classes } onClick={ clickHandler }>
 			{ formattedVariationName( variation ) }
-		</div>
+		</li>
 	);
 };
 

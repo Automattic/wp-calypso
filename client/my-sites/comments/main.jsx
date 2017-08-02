@@ -44,7 +44,6 @@ export class CommentsManagement extends Component {
 					siteId={ siteId }
 					siteFragment={ siteFragment }
 					status={ status }
-					order={ 'desc' }
 				/>
 			</Main>
 		);

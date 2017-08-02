@@ -34,8 +34,9 @@ class PostResults extends Component {
 	render() {
 		const { query, translate } = this.props;
 		const emptyContent = <EmptyContent query={ query } />;
-		const transformStreamItems =
-			! query || query === '' ? postKey => ( { ...postKey, isRecommendation: true } ) : identity;
+		const transformStreamItems = ! query || query === ''
+			? postKey => ( { ...postKey, isRecommendation: true } )
+			: identity;
 
 		return (
 			<Stream

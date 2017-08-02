@@ -39,8 +39,7 @@ module.exports = React.createClass( {
 		fullScreenDropZone: React.PropTypes.bool,
 		containerWidth: React.PropTypes.number,
 		single: React.PropTypes.bool,
-		scrollable: React.PropTypes.bool,
-		postId: React.PropTypes.number,
+		scrollable: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
@@ -141,8 +140,7 @@ module.exports = React.createClass( {
 				selectedItems={ this.props.mediaLibrarySelectedItems }
 				onDeleteItem={ this.props.onDeleteItem }
 				onEditItem={ this.props.onEditItem }
-				onViewDetails={ this.props.onViewDetails }
-				postId={ this.props.postId } />
+				onViewDetails={ this.props.onViewDetails } />
 		);
 
 		if ( this.props.site ) {
@@ -171,8 +169,7 @@ module.exports = React.createClass( {
 					search={ this.props.search }
 					onFilterChange={ this.props.onFilterChange }
 					source={ this.props.source }
-					onSearch={ this.doSearch }
-					post={ !! this.props.postId } />
+					onSearch={ this.doSearch } />
 				{ content }
 			</div>
 		);

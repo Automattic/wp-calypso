@@ -1,156 +1,127 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
+
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import {
+	omit,
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
-import QueryPosts from 'components/data/query-posts';
-import Page from './page';
-import infiniteScroll from 'lib/mixins/infinite-scroll';
-import EmptyContent from 'components/empty-content';
-import NoResults from 'my-sites/no-results';
-import Placeholder from './placeholder';
-import { mapPostStatus as mapStatus } from 'lib/route';
-import { sortPagesHierarchically } from './helpers';
+var PostListFetcher = require( 'components/post-list-fetcher' ),
+	Page = require( './page' ),
+	infiniteScroll = require( 'lib/mixins/infinite-scroll' ),
+	EmptyContent = require( 'components/empty-content' ),
+	NoResults = require( 'my-sites/no-results' ),
+	actions = require( 'lib/posts/actions' ),
+	Placeholder = require( './placeholder' ),
+	mapStatus = require( 'lib/route' ).mapPostStatus,
+	sortPagesHierarchically = require( './helpers' ).sortPagesHierarchically;
+
 import BlogPostsPage from './blog-posts-page';
 import {
 	hasInitializedSites,
 } from 'state/selectors';
 import {
-	getSitePostsForQueryIgnoringPage,
-	isRequestingSitePostsForQuery,
-	isSitePostsLastPageForQuery,
- } from 'state/posts/selectors';
-import {
-	getSite
-} from 'state/sites/selectors';
+	getSelectedSite,
+	getSelectedSiteId,
+} from 'state/ui/selectors';
 
-export default class PageList extends Component {
-	static propTypes = {
-		search: PropTypes.string,
-		siteId: PropTypes.number,
-		status: PropTypes.string,
-	}
+var PageList = React.createClass( {
 
-	state = {
-		page: 1,
-	}
+	mixins: [ PureRenderMixin ],
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.search !== this.props.search ||
-			nextProps.siteId !== this.props.siteId ||
-			nextProps.status !== this.props.status ) {
-			this.resetPage();
-		}
-	}
+	propTypes: {
+		context: React.PropTypes.object,
+		search: React.PropTypes.string,
+		hasSites: React.PropTypes.bool.isRequired,
+		site: React.PropTypes.object,
+		siteId: React.PropTypes.any
+	},
 
-	incrementPage = () => {
-		this.setState( { page: this.state.page + 1 } );
-	}
-
-	resetPage = () => {
-		this.setState( { page: 1 } );
-	}
-
-	render() {
-		const {
-			search,
-			siteId,
-			status,
-		} = this.props;
-
-		const query = {
-			page: this.state.page,
-			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
-			search,
-			status: mapStatus( status ),
-			type: 'page'
-		};
-
+	render: function() {
 		return (
-			<div>
-				<QueryPosts siteId={ siteId }
-					query={ query } />
-				<ConnectedPages
-					incrementPage={ this.incrementPage }
-					query={ query }
-					siteId={ siteId } />
-			</div>
+			<PostListFetcher
+				type="page"
+				number={ 100 }
+				siteId={ this.props.siteId }
+				status={ mapStatus( this.props.status ) }
+				search={ this.props.search }>
+				<Pages
+					{ ...omit( this.props, 'children' ) }
+				/>
+			</PostListFetcher>
 		);
 	}
-}
+} );
 
-const Pages = localize( React.createClass( {
+var Pages = React.createClass( {
 
 	displayName: 'Pages',
 
 	mixins: [ infiniteScroll( 'fetchPages' ) ],
 
 	propTypes: {
-		incrementPage: PropTypes.func.isRequired,
-		lastPage: PropTypes.bool,
-		loading: PropTypes.bool.isRequired,
-		page: PropTypes.number.isRequired,
-		pages: PropTypes.array.isRequired,
-		search: PropTypes.string,
-		site: PropTypes.object,
-		siteId: PropTypes.any,
-		hasSites: PropTypes.bool.isRequired,
-		trackScrollPage: PropTypes.func.isRequired,
+		context: React.PropTypes.object.isRequired,
+		lastPage: React.PropTypes.bool.isRequired,
+		loading: React.PropTypes.bool.isRequired,
+		page: React.PropTypes.number.isRequired,
+		posts: React.PropTypes.array.isRequired,
+		search: React.PropTypes.string,
+		siteId: React.PropTypes.any,
+		hasSites: React.PropTypes.bool.isRequired,
+		trackScrollPage: React.PropTypes.func.isRequired,
+		hasRecentError: React.PropTypes.bool.isRequired
 	},
 
-	getDefaultProps() {
+	getDefaultProps: function() {
 		return {
 			perPage: 100,
 			loading: false,
+			hasRecentError: false,
 			lastPage: false,
 			page: 0,
-			pages: [],
+			posts: [],
 			trackScrollPage: function() {}
 		};
 	},
 
-	fetchPages( options ) {
-		if ( this.props.loading || this.props.lastPage ) {
+	fetchPages: function( options ) {
+		if ( this.props.loading || this.props.lastPage || this.props.hasRecentError ) {
 			return;
 		}
 		if ( options.triggeredByScroll ) {
 			this.props.trackScrollPage( this.props.page + 1 );
 		}
-		this.props.incrementPage();
+		actions.fetchNextPage();
 	},
 
-	_insertTimeMarkers( pages ) {
-		const markedPages = [],
-			now = this.moment();
-		let lastMarker;
+	_insertTimeMarkers: function( pages ) {
+		var markedPages = [],
+			now = this.moment(),
+			lastMarker, buildMarker;
 
-		const buildMarker = function( pageDate ) {
+		buildMarker = function( pageDate ) {
 			pageDate = this.moment( pageDate );
-			const days = now.diff( pageDate, 'days' );
+			var days = now.diff( pageDate, 'days' );
 			if ( days <= 0 ) {
-				return this.props.translate( 'Today' );
+				return this.translate( 'Today' );
 			}
 			if ( days === 1 ) {
-				return this.props.translate( 'Yesterday' );
+				return this.translate( 'Yesterday' );
 			}
 			return pageDate.from( now );
 		}.bind( this );
 
 		pages.forEach( function( page ) {
-			const date = this.moment( page.date ),
+			var date = this.moment( page.date ),
 				marker = buildMarker( date );
 			if ( lastMarker !== marker ) {
-				markedPages.push(
-					<div key={ 'marker-' + date.unix() } className="pages__page-list-header">
-						<Gridicon icon="time" size={ 12 } /> { marker }
-					</div>
-				);
+				markedPages.push( <div key={ 'marker-' + date.unix() } className="page-list__header"><span className="noticon noticon-time" /> { marker } </div> );
 			}
 			lastMarker = marker;
 			markedPages.push( page );
@@ -159,58 +130,63 @@ const Pages = localize( React.createClass( {
 		return markedPages;
 	},
 
-	getNoContentMessage() {
-		const { search, translate } = this.props;
+	getNoContentMessage: function() {
+		var attributes, newPageLink;
 
-		if ( search ) {
-			return (
-				<NoResults
-					image="/calypso/images/pages/illustration-pages.svg"
-					text={
-						translate( 'No pages match your search for {{searchTerm/}}.', {
-							components: {
-								searchTerm: <em>{ search }</em>
-							}
-						} ) }
-				/>
-			);
-		}
+		if ( this.props.search ) {
+			return <NoResults
+				image="/calypso/images/pages/illustration-pages.svg"
+				text={
+					this.translate( 'No pages match your search for {{searchTerm/}}.', {
+						components: {
+							searchTerm: <em>{ this.props.search }</em>
+						}
+					} ) }
+			/>;
+		} else {
+			const { site, siteId } = this.props;
+			const sitePart = site && site.slug || siteId;
+			newPageLink = this.props.siteId ? '/page/' + sitePart : '/page';
 
-		const { site, siteId, status = 'published' } = this.props;
-		const sitePart = site && site.slug || siteId;
-		const newPageLink = this.props.siteId ? '/page/' + sitePart : '/page';
-		let attributes;
-
-		switch ( status ) {
-			case 'drafts':
+			if ( this.props.hasRecentError ) {
 				attributes = {
-					title: translate( 'You don\'t have any drafts.' ),
-					line: translate( 'Would you like to create one?' ),
-					action: translate( 'Start a Page' ),
-					actionURL: newPageLink
+					title: this.translate( 'Oh, no! We couldn\'t fetch your pages.' ),
+					line: this.translate( 'Please check your internet connection.' )
 				};
-				break;
-			case 'scheduled':
-				attributes = {
-					title: translate( 'You don\'t have any scheduled pages yet.' ),
-					line: translate( 'Would you like to create one?' ),
-					action: translate( 'Start a Page' ),
-					actionURL: newPageLink
-				};
-				break;
-			case 'trashed':
-				attributes = {
-					title: translate( 'You don\'t have any pages in your trash folder.' ),
-					line: translate( 'Everything you write is solid gold.' )
-				};
-				break;
-			default:
-				attributes = {
-					title: translate( 'You haven\'t published any pages yet.' ),
-					line: translate( 'Would you like to publish your first page?' ),
-					action: translate( 'Start a Page' ),
-					actionURL: newPageLink
-				};
+			} else {
+				const status = this.props.status || 'published';
+				switch ( status ) {
+					case 'drafts':
+						attributes = {
+							title: this.translate( 'You don\'t have any drafts.' ),
+							line: this.translate( 'Would you like to create one?' ),
+							action: this.translate( 'Start a Page' ),
+							actionURL: newPageLink
+						};
+						break;
+					case 'scheduled':
+						attributes = {
+							title: this.translate( 'You don\'t have any scheduled pages yet.' ),
+							line: this.translate( 'Would you like to create one?' ),
+							action: this.translate( 'Start a Page' ),
+							actionURL: newPageLink
+						};
+						break;
+					case 'trashed':
+						attributes = {
+							title: this.translate( 'You don\'t have any pages in your trash folder.' ),
+							line: this.translate( 'Everything you write is solid gold.' )
+						};
+						break;
+					default:
+						attributes = {
+							title: this.translate( 'You haven\'t published any pages yet.' ),
+							line: this.translate( 'Would you like to publish your first page?' ),
+							action: this.translate( 'Start a Page' ),
+							actionURL: newPageLink
+						};
+				}
+			}
 		}
 
 		attributes.illustration = '/calypso/images/pages/illustration-pages.svg';
@@ -226,8 +202,9 @@ const Pages = localize( React.createClass( {
 		/>;
 	},
 
-	addLoadingRows( rows, count ) {
-		for ( let i = 0; i < count; i++ ) {
+	addLoadingRows: function( rows, count ) {
+		var i;
+		for ( i = 0; i < count; i++ ) {
 			if ( i % 4 === 0 ) {
 				rows.push( <Placeholder.Marker key={ 'placeholder-marker-' + i } /> );
 			}
@@ -235,7 +212,7 @@ const Pages = localize( React.createClass( {
 		}
 	},
 
-	renderLoading() {
+	renderLoading: function() {
 		const rows = [];
 		this.addLoadingRows( rows, 1 );
 
@@ -246,7 +223,7 @@ const Pages = localize( React.createClass( {
 		);
 	},
 
-	renderPagesList( { pages } ) {
+	renderPagesList: function( { pages } ) {
 		const { site } = this.props;
 		const status = this.props.status || 'published';
 
@@ -262,7 +239,7 @@ const Pages = localize( React.createClass( {
 		return this.renderChronological( { pages, site } );
 	},
 
-	renderHierarchical( { pages, site } ) {
+	renderHierarchical: function( { pages, site } ) {
 		pages = sortPagesHierarchically( pages );
 		const rows = pages.map( function( page ) {
 			return (
@@ -279,7 +256,7 @@ const Pages = localize( React.createClass( {
 		);
 	},
 
-	renderChronological( { pages, site } ) {
+	renderChronological: function( { pages, site } ) {
 		if ( ! this.props.search ) {
 			// we're listing in reverse chrono. use the markers.
 			pages = this._insertTimeMarkers( pages );
@@ -312,7 +289,7 @@ const Pages = localize( React.createClass( {
 		);
 	},
 
-	renderNoContent() {
+	renderNoContent: function() {
 		return (
 			<div id="pages" className="pages__page-list">
 				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
@@ -320,15 +297,15 @@ const Pages = localize( React.createClass( {
 		);
 	},
 
-	render() {
+	render: function() {
 		const {
 			hasSites,
 			loading,
-			pages,
+			posts,
 		} = this.props;
 
-		if ( pages.length && hasSites ) {
-			return this.renderPagesList( { pages } );
+		if ( posts.length && hasSites ) {
+			return this.renderPagesList( { pages: posts } );
 		}
 
 		if ( ( ! loading ) && hasSites ) {
@@ -338,14 +315,12 @@ const Pages = localize( React.createClass( {
 		return this.renderLoading();
 	},
 
-} ) );
-
-const mapState = ( state, { query, siteId } ) => ( {
-	hasSites: hasInitializedSites( state ),
-	loading: isRequestingSitePostsForQuery( state, siteId, query ),
-	lastPage: isSitePostsLastPageForQuery( state, siteId, query ),
-	pages: getSitePostsForQueryIgnoringPage( state, siteId, query ) || [],
-	site: getSite( state, siteId ),
 } );
 
-const ConnectedPages = connect( mapState )( Pages );
+const mapState = ( state ) => ( {
+	hasSites: hasInitializedSites( state ),
+	site: getSelectedSite( state ),
+	siteId: getSelectedSiteId( state ),
+} );
+
+export default connect( mapState )( PageList );

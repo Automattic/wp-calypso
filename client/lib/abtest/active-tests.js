@@ -4,9 +4,9 @@ module.exports = {
 		variations: {
 			singlePurchaseFlow: 10,
 			popupCart: 45,
-			keepSearchingInGapps: 45,
+			keepSearchingInGapps: 45
 		},
-		defaultVariation: 'singlePurchaseFlow',
+		defaultVariation: 'singlePurchaseFlow'
 	},
 	signupSurveyStep: {
 		datestamp: '20170329',
@@ -28,7 +28,7 @@ module.exports = {
 		datestamp: '20170328',
 		variations: {
 			showChatButton: 20,
-			original: 80,
+			original: 80
 		},
 		defaultVariation: 'original',
 		localeTargets: 'any',
@@ -84,34 +84,5 @@ module.exports = {
 		},
 		defaultVariation: 'doNotShowNotice',
 		allowExistingUsers: true,
-	},
-	postPublishConfirmation: {
-		datestamp: '20170713',
-		allowExistingUsers: true,
-		variations: {
-			showPublishConfirmation: 30,
-			noPublishConfirmation: 70,
-		},
-		defaultVariation: 'noPublishConfirmation',
-	},
-	readerIntroIllustration: {
-		datestamp: '20170718',
-		variations: {
-			blue: 33,
-			lightBlue: 33,
-			white: 34,
-		},
-		defaultVariation: 'white',
-		assignmentMethod: 'userId',
-	},
-	paymentShowPaypalLogo: {
-		datestamp: '20170719',
-		variations: {
-			hide: 50,
-			show: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-		localeTargets: 'any',
 	},
 };

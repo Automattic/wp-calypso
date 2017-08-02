@@ -43,7 +43,7 @@ export function recordEvent( action, label, value ) {
 	analytics.ga.recordEvent( 'Editor', action, label, value );
 }
 
-export function recordSaveEvent( context ) {
+export function recordSaveEvent() {
 	const post = PostEditStore.get();
 	const savedPost = PostEditStore.getSavedPost();
 
@@ -69,7 +69,7 @@ export function recordSaveEvent( context ) {
 	} else if ( 'publish' === nextStatus || 'private' === nextStatus ) {
 		tracksEventName += 'publish';
 		usageAction = 'new';
-		if ( context && context.isConfirmationFeatureEnabled ) {
+		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
 			eventContext = 'confirmation_sidebar';
 		}
 	} else if ( 'pending' === nextStatus ) {
@@ -78,7 +78,7 @@ export function recordSaveEvent( context ) {
 		tracksEventName += 'schedule';
 		statName = 'status-schedule';
 		statEvent = 'Scheduled Post';
-		if ( context && context.isConfirmationFeatureEnabled ) {
+		if ( config.isEnabled( 'post-editor/delta-post-publish-flow' ) ) {
 			eventContext = 'confirmation_sidebar';
 		}
 	}

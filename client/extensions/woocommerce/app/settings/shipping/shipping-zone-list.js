@@ -14,8 +14,6 @@ import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import ShippingZoneEntry from './shipping-zone-list-entry';
 import QueryShippingZones, { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import { areSettingsGeneralLoaded, areSettingsGeneralLoadError } from 'woocommerce/state/sites/settings/general/selectors';
 import Notice from 'components/notice';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getShippingZones } from 'woocommerce/state/ui/shipping/zones/selectors';
@@ -40,16 +38,13 @@ class ShippingZoneList extends Component {
 	}
 
 	renderContent = () => {
-		const { siteId, loaded, fetchError, shippingZones, isValid, translate } = this.props;
+		const { siteId, loaded, shippingZones, isValid, translate } = this.props;
 
 		const renderShippingZone = ( zone, index ) => {
 			return ( <ShippingZoneEntry key={ index } siteId={ siteId } loaded={ loaded } isValid={ isValid } { ...zone } /> );
 		};
 
-		let zonesToRender = loaded ? shippingZones : [ {}, {}, {} ];
-		if ( fetchError ) {
-			zonesToRender = [];
-		}
+		const zonesToRender = loaded ? shippingZones : [ {}, {}, {} ];
 
 		return (
 			<div>
@@ -85,7 +80,6 @@ class ShippingZoneList extends Component {
 		return (
 			<div>
 				<QueryShippingZones siteId={ siteId } />
-				<QuerySettingsGeneral siteId={ siteId } />
 				<ExtendedHeader
 					label={ translate( 'Shipping Zones' ) }
 					description={ translate( 'These are the regions you’ll ship to. ' +
@@ -108,7 +102,7 @@ class ShippingZoneList extends Component {
 export default connect(
 	( state ) => {
 		const savingZones = Boolean( getActionList( state ) );
-		const loaded = areShippingZonesFullyLoaded( state ) && areSettingsGeneralLoaded( state ) && ! savingZones;
+		const loaded = areShippingZonesFullyLoaded( state ) && ! savingZones;
 
 		return {
 			site: getSelectedSite( state ),
@@ -116,7 +110,6 @@ export default connect(
 			shippingZones: getShippingZones( state ),
 			savingZones,
 			loaded,
-			fetchError: areSettingsGeneralLoadError( state ), // TODO: add shipping zones/methods fetch errors too
 			isValid: ! loaded || areShippingZonesLocationsValid( state ),
 		};
 	},

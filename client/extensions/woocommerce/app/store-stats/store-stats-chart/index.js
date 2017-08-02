@@ -12,16 +12,16 @@ import { moment } from 'i18n-calypso';
  * Internal dependencies
  */
 import Card from 'components/card';
-import Delta from 'woocommerce/components/delta';
-import ElementChart from 'components/chart';
-import formatCurrency from 'lib/format-currency';
 import { getPeriodFormat } from 'state/stats/lists/utils';
 import { getDelta } from '../utils';
+import QuerySiteStats from 'components/data/query-site-stats';
 import { getSiteStatsNormalizedData, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
+import ElementChart from 'components/chart';
 import Legend from 'components/chart/legend';
 import Tabs from 'my-sites/stats/stats-tabs';
 import Tab from 'my-sites/stats/stats-tabs/tab';
-import { UNITS } from 'woocommerce/app/store-stats/constants';
+import Delta from 'woocommerce/components/delta';
+import formatCurrency from 'lib/format-currency';
 
 class StoreStatsChart extends Component {
 	static propTypes = {
@@ -49,13 +49,13 @@ class StoreStatsChart extends Component {
 		} );
 	};
 
-	buildChartData = ( item, selectedTab, chartFormat ) => {
+	buildChartData = ( item, selectedTab ) => {
 		const { selectedDate } = this.props;
 		const className = classnames( item.classNames.join( ' ' ), {
 			'is-selected': item.period === selectedDate,
 		} );
 		return {
-			label: item[ chartFormat ],
+			label: item.labelDay,
 			value: item[ selectedTab.attr ],
 			nestedValue: null,
 			data: item,
@@ -65,7 +65,7 @@ class StoreStatsChart extends Component {
 	};
 
 	render() {
-		const { data, deltas, selectedDate, unit } = this.props;
+		const { data, deltas, query, selectedDate, siteId, unit } = this.props;
 		const { selectedTabIndex } = this.state;
 		const tabs = [
 			{ label: 'Gross Sales', attr: 'gross_sales', type: 'currency' },
@@ -75,11 +75,15 @@ class StoreStatsChart extends Component {
 		];
 		const selectedTab = tabs[ selectedTabIndex ];
 		const isLoading = ! data.length;
-		const chartFormat = UNITS[ unit ].chartFormat;
-		const chartData = data.map( item => this.buildChartData( item, selectedTab, chartFormat ) );
+		const chartData = data.map( item => this.buildChartData( item, selectedTab ) );
 		const selectedIndex = findIndex( data, d => d.period === selectedDate );
 		return (
 			<Card className="store-stats-chart stats-module">
+				{ siteId && <QuerySiteStats
+					query={ query }
+					siteId={ siteId }
+					statType="statsOrders"
+				/> }
 				<Legend
 					activeTab={ selectedTab }
 				/>
@@ -109,9 +113,7 @@ class StoreStatsChart extends Component {
 									<Delta
 										value={ `${ deltaValue }%` }
 										className={ `${ delta.favorable } ${ delta.direction }` }
-										suffix={
-											`since ${ moment( delta.reference_period, periodFormat ).format( UNITS[ unit ].sinceFormat ) }`
-										}
+										suffix={ `since ${ moment( delta.reference_period, periodFormat ).format( 'MMM D' ) }` }
 									/>
 								</Tab>
 							);

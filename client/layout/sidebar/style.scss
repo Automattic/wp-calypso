@@ -129,16 +129,14 @@
 	}
 
 	a {
-		font-size: 14px;
-		line-height: 1;
+		font-size: 13px;
 		position: relative;
-		padding: 11px 16px 11px 18px;
+		padding: 14px 16px 14px 55px;
 		color: $sidebar-text-color;
 		box-sizing: border-box;
 		white-space: nowrap;
 		overflow: hidden;
 		display: flex;
-		align-items: center;
 
 		&:focus {
 			outline: none;
@@ -146,24 +144,34 @@
 
 		-webkit-tap-highlight-color: rgba( $gray-dark, .2 );
 
+		@include breakpoint( "<660px" ) {
+			padding: 18px 16px 18px 53px;
+		}
 	}
 
 	a.plan-name {
 		padding: 3px 8px 4px 8px;
-		margin-right: 8px;
-		align-self: center;
-		color: darken( $gray, 20% );
+		position: absolute;
+			top: 12px;
+			right: 8px;
+		color: darken( $gray, 10% );
 		font-weight: 600;
-		font-size: 12px;
+		font-size: 11px;
+
+		@include breakpoint( "<660px" ) {
+			top: 16px;
+			right: 16px;
+		}
 	}
 
 	.gridicon,
 	.jetpack-logo {
+		position: absolute;
+			top: 11px;
+			left: 20px;
 		fill: $gray;
 		height: 24px;
 		width: 24px;
-		margin-right: 6px;
-		flex-shrink: 0;
 
 		@include breakpoint( "<660px" ) {
 				top: 15px;
@@ -180,9 +188,10 @@
 				left: auto;
 			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
 			height: 18px;
-			margin-right: 0;
 
-
+			@include breakpoint( "<660px" ) {
+				top: 17px;
+			}
 		}
 	}
 }
@@ -190,25 +199,25 @@
 a.sidebar__button, form.sidebar__button {
 	display: flex;
 	position: relative;
-	align-self: center;
 	box-sizing: border-box;
 	white-space: nowrap;
 	overflow: hidden;
 	padding: 2px 8px 3px 8px;
 	height: 24px;
-	margin-right: 8px;
+	margin: 11px 8px 0 0;
 	line-height: 18px;
 	background-color: $gray-light;
 	color: darken( $gray, 20% );
-	font-size: 12px;
+	font-size: 11px;
 	font-weight: 600;
 	border-radius: 3px;
 	border: 1px solid darken( $sidebar-bg-color, 10% );
 
 	@include breakpoint( "<660px" ) {
 		font-size: 14px;
-		height: 30px;
-		line-height: 23px;
+		height: 35px;
+		padding: 8px 16px;
+		margin: 10px 10px 0 0;
 	}
 }
 form.sidebar__button {

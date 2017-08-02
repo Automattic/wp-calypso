@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -71,12 +72,25 @@ export class CommentDetailReply extends Component {
 		const {
 			commentId,
 			commentStatus,
+			currentUser,
 			postId,
-			replyComment,
+			postTitle,
+			postUrl,
+			submitComment,
 		} = this.props;
 		const { commentText } = this.state;
 
-		replyComment( commentText, postId, commentId, { alsoApprove: 'approved' !== commentStatus } );
+		const comment = {
+			authorAvatarUrl: get( currentUser, 'avatar_URL', '' ),
+			authorName: get( currentUser, 'display_name', '' ),
+			authorUrl: get( currentUser, 'primary_blog_url', '' ),
+			parentId: commentId,
+			postId: postId,
+			postTitle: postTitle,
+			content: commentText,
+			URL: postUrl,
+		};
+		submitComment( comment, { alsoApprove: 'approved' !== commentStatus } );
 		this.setState( { commentText: '' } );
 	}
 

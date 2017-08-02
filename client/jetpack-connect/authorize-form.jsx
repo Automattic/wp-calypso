@@ -120,27 +120,6 @@ class JetpackConnectAuthorizeForm extends Component {
 	}
 
 	render() {
-		if ( 'undefined' !== typeof( Storage ) ) {
-			if ( this.props.onboarding || localStorage.getItem( 'jetpackOnboardingPayload' ) ) {
-				if ( localStorage.getItem( 'jetpackOnboardingPayload' ) ) {
-					const jetpackOnboardingPayload = JSON.parse( localStorage.getItem( 'jetpackOnboardingPayload' ) );
-
-					console.log( jetpackOnboardingPayload );
-
-					localStorage.removeItem( 'jetpackOnboardingPayload' );
-				} else {
-					console.log( 'jetpackOnboardingPayload NOT set' );
-
-					if ( ! localStorage.getItem( 'jetpackConnectUrl' ) ) {
-						localStorage.setItem( 'jetpackConnectUrl', this.props.path );
-					}
-
-					document.location.href = '/start/jetpack-onboarding/';
-					return false;
-				}
-			}
-		}
-
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 
 		if ( typeof queryObject === 'undefined' ) {

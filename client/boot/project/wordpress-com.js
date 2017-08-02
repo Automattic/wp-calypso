@@ -17,7 +17,6 @@ const config = require( 'config' ),
 	getSavedVariations = abtestModule.getSavedVariations, // used by logger
 	initializeHappychat = require( 'state/happychat/actions' ).initialize,
 	analytics = require( 'lib/analytics' ),
-	reduxBridge = require( 'lib/redux-bridge' ),
 	route = require( 'lib/route' ),
 	normalize = require( 'lib/route/normalize' ),
 	{ isLegacyRoute } = require( 'lib/route/legacy-routes' ),
@@ -61,7 +60,6 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing WordPress.com configure Redux store.' );
 
 	supportUser.setReduxStore( reduxStore );
-	reduxBridge.setReduxStore( reduxStore );
 
 	if ( currentUser.get() ) {
 		if ( config.isEnabled( 'push-notifications' ) ) {

@@ -64,11 +64,6 @@ module.exports = React.createClass( {
 		}
 	},
 
-	preventDefaultOnClick: function( event ) {
-		event.stopPropagation();
-		event.preventDefault();
-	},
-
 	onClick: function( event ) {
 		var gaEvent,
 			moduleName = titlecase( this.props.moduleName );
@@ -173,8 +168,7 @@ module.exports = React.createClass( {
 		label = labelData.map( function( labelItem, i ) {
 			var iconClassSetOptions = { avatar: true },
 				icon,
-				gridiconSpan,
-				itemLabel;
+				gridiconSpan;
 
 			if ( labelItem.labelIcon ) {
 				gridiconSpan = ( <Gridicon icon={ labelItem.labelIcon } /> );
@@ -197,13 +191,7 @@ module.exports = React.createClass( {
 				icon = ( <span className="stats-list__flag-icon" style={ style } /> );
 			}
 
-			if ( data.link ) {
-				itemLabel = ( <a onclick={ this.preventDefaultOnClick } href={ data.link } >{ labelItem.label }</a> );
-			} else {
-				itemLabel = ( <Emojify>{ labelItem.label }</Emojify> );
-			}
-
-			return ( <span className={ wrapperClassSet } key={ i } >{ gridiconSpan }{ icon }{ itemLabel } </span> );
+			return ( <span className={ wrapperClassSet } key={ i } >{ gridiconSpan }{ icon }<Emojify>{ labelItem.label }</Emojify></span> );
 		}, this );
 
 		return label;

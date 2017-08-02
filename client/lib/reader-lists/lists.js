@@ -8,11 +8,7 @@ import last from 'lodash/last';
 // Internal dependencies
 import { action as actionTypes } from './constants';
 
-var lists = {},
-	errors = [],
-	updatedLists = {},
-	isFetching = false,
-	ListStore;
+var lists = {}, errors = [], updatedLists = {}, isFetching = false, ListStore;
 
 function keyForList( owner, slug ) {
 	return decodeURIComponent( owner ) + '-' + decodeURIComponent( slug );
@@ -41,7 +37,7 @@ ListStore = {
 
 	setIsFetching( val ) {
 		isFetching = val;
-	},
+	}
 };
 
 emitter( ListStore );
@@ -73,7 +69,7 @@ function markPending( owner, slug ) {
 			slug: slug,
 			title: slug,
 			ID: null,
-			_state: 'pending',
+			_state: 'pending'
 		};
 		lists[ key ] = list;
 		ListStore.emit( 'change' );

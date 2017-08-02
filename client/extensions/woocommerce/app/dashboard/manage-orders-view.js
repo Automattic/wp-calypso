@@ -17,6 +17,7 @@ import {
 	getNewOrders,
 	getNewOrdersRevenue,
 } from 'woocommerce/state/sites/orders/selectors';
+import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -24,7 +25,6 @@ import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/gen
 import ProcessOrdersWidget from 'woocommerce/components/process-orders-widget';
 import ShareWidget from 'woocommerce/components/share-widget';
 import Card from 'components/card';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 
 class ManageOrdersView extends Component {
 	static propTypes = {
@@ -34,6 +34,7 @@ class ManageOrdersView extends Component {
 			URL: PropTypes.string.isRequired,
 		} ),
 		fetchOrders: PropTypes.func,
+		fetchSettingsGeneral: PropTypes.func,
 		currency: PropTypes.shape( {
 			value: PropTypes.string,
 		} ),
@@ -52,6 +53,7 @@ class ManageOrdersView extends Component {
 
 		if ( site && site.ID ) {
 			this.props.fetchOrders( site.ID );
+			this.props.fetchSettingsGeneral( site.ID );
 		}
 	}
 
@@ -62,6 +64,7 @@ class ManageOrdersView extends Component {
 
 		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchOrders( newSiteId );
+			this.props.fetchSettingsGeneral( newSiteId );
 		}
 	}
 
@@ -97,7 +100,6 @@ class ManageOrdersView extends Component {
 		const { site, translate, orders, user } = this.props;
 		return (
 			<div className="dashboard__manage-has-orders">
-				<QuerySettingsGeneral siteId={ site && site.ID } />
 				<div className="dashboard__manage-has-orders-header">
 					<h2>
 						{ translate( 'Hi, {{storeOwnerName/}}.', {
@@ -115,7 +117,7 @@ class ManageOrdersView extends Component {
 					className="dashboard__reports-widget"
 				>
 					<div className="dashboard__reports-widget-content-wrapper">
-						<img src="/calypso/images/extensions/woocommerce/woocommerce-reports.svg" alt="" />
+						<img src="/calypso/images/extensions/woocommerce/woocommerce-reports.svg" />
 						<div className="dashboard__reports-widget-content">
 							<h2>
 								{ translate( 'Reports' ) }
@@ -160,6 +162,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			fetchOrders,
+			fetchSettingsGeneral,
 		},
 		dispatch
 	);

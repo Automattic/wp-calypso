@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import shallowEqual from 'react-pure-render/shallowEqual';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { partial, noop } from 'lodash';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,8 +20,8 @@ import PostImage from '../post/post-image';
 import PostExcerpt from 'components/post-excerpt';
 import updatePostStatus from 'components/update-post-status';
 import utils from 'lib/posts/utils';
+import analytics from 'lib/analytics';
 import config from 'config';
-import { recordGoogleEvent } from 'state/analytics/actions';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getPostPreviewUrl } from 'state/posts/selectors';
@@ -33,7 +33,9 @@ import Comments from 'blocks/comments';
 import PostShare from 'blocks/post-share';
 import PostActions from 'blocks/post-actions';
 
-const recordEvent = partial( recordGoogleEvent, 'Posts' );
+function recordEvent( eventAction ) {
+	analytics.ga.recordEvent( 'Posts', eventAction );
+}
 
 function checkPropsChange( currentProps, nextProps, propArr ) {
 	for ( let i = 0; i < propArr.length; i++ ) {
@@ -45,21 +47,10 @@ function checkPropsChange( currentProps, nextProps, propArr ) {
 	return false;
 }
 
-class Post extends Component {
-	static propTypes = {
-		// connected via Redux
-		setPreviewUrl: PropTypes.func.isRequired,
-		setLayoutFocus: PropTypes.func.isRequired,
-		recordViewPost: PropTypes.func.isRequired,
-		recordPreviewPost: PropTypes.func.isRequired,
-		recordCommentIconClick: PropTypes.func.isRequired,
-		recordPostTitleClick: PropTypes.func.isRequired,
-		recordPostExcerptClick: PropTypes.func.isRequired,
-		recordPublishPost: PropTypes.func.isRequired,
-		recordRestorePost: PropTypes.func.isRequired,
-		recordDeletePost: PropTypes.func.isRequired,
-		recordTrashPost: PropTypes.func.isRequired,
+const Post = React.createClass( {
+	displayName: 'Post',
 
+	propTypes: {
 		// connected via updatePostStatus
 		buildUpdateTemplate: PropTypes.func.isRequired,
 		togglePageActions: PropTypes.func.isRequired,
@@ -69,13 +60,15 @@ class Post extends Component {
 		previousStatus: PropTypes.string,
 		showMoreOptions: PropTypes.bool.isRequired,
 		showPageActions: PropTypes.bool.isRequired,
-	}
+	},
 
-	state = {
-		showComments: false,
-		showShare: false,
-		commentsFilter: 'all',
-	}
+	getInitialState() {
+		return {
+			showComments: false,
+			showShare: false,
+			commentsFilter: 'all'
+		};
+	},
 
 	shouldComponentUpdate( nextProps, nextState ) {
 		if ( ! shallowEqual( this.state, nextState ) ) {
@@ -95,34 +88,77 @@ class Post extends Component {
 			'updatedStatus',
 		];
 		return checkPropsChange( this.props, nextProps, propsToCheck );
-	}
+	},
 
-	publishPost = () => {
+	analyticsEvents: {
+		viewPost() {
+			recordEvent( 'Clicked View Post' );
+		},
+		previewPost() {
+			recordEvent( 'Clicked Preview Post' );
+		},
+		editPost() {
+			recordEvent( 'Clicked Edit Post' );
+		},
+		commentIconClick() {
+			recordEvent( 'Clicked Post Comment Icon/Number' );
+		},
+		likeIconClick() {
+			recordEvent( 'Clicked Post Likes Icon/Number' );
+		},
+		dateClick() {
+			recordEvent( 'Clicked Post Date' );
+		},
+		featuredImageStandardClick() {
+			recordEvent( 'Clicked Post Featured Image Standard' );
+		},
+		featuredImageLargeClick() {
+			recordEvent( 'Clicked Post Featured Image Large' );
+		},
+		postTitleClick() {
+			recordEvent( 'Clicked Post Title' );
+		},
+		postExcerptClick() {
+			recordEvent( 'Clicked Post Excerpt' );
+		},
+		viewStats() {
+			recordEvent( 'Clicked View Post Stats' );
+		}
+
+	},
+
+	publishPost() {
 		this.props.updatePostStatus( 'publish' );
-		this.props.recordPublishPost();
-	}
+		recordEvent( 'Clicked Publish Post' );
+	},
 
-	restorePost = () => {
+	restorePost() {
 		this.props.updatePostStatus( 'restore' );
-		this.props.recordRestorePost();
-	}
+		recordEvent( 'Clicked Restore Post' );
+	},
 
-	deletePost = () => {
+	deletePost() {
 		this.props.updatePostStatus( 'delete' );
-		this.props.recordDeletePost();
-	}
+		recordEvent( 'Clicked Delete Post' );
+	},
 
-	trashPost = () => {
+	trashPost() {
 		this.props.updatePostStatus( 'trash' );
-		this.props.recordTrashPost();
-	}
+		recordEvent( 'Clicked Trash Post' );
+	},
+
+	canUserEditPost() {
+		const post = this.props.post;
+		return post.capabilities && post.capabilities.edit_post && post.status !== 'trash';
+	},
 
 	getPostClass() {
-		return classNames( 'post', {
-			'is-protected': !! this.props.post.password,
-			'show-more-options': this.props.showMoreOptions,
+		return classNames( {
+			post: true,
+			'is-protected': ( this.props.post.password ) ? true : false,
+			'show-more-options': this.props.showMoreOptions
 		} );
-	}
+	},
 
 	getTitle() {
 		if ( this.props.post.title ) {
@@ -131,12 +167,12 @@ class Post extends Component {
 					href={ this.getContentLinkURL() }
 					className="post__title-link post__content-link"
 					target={ this.getContentLinkTarget() }
-					onClick={ this.props.recordPostTitleClick }>
+					onClick={ this.analyticsEvents.postTitleClick }>
 					<h4 className="post__title">{ this.props.post.title }</h4>
 				</a>
 			);
 		}
-	}
+	},
 
 	getPostImage() {
 		if ( ! this.props.postImages ) {
@@ -152,12 +188,12 @@ class Post extends Component {
 		return (
 			<PostImage postImages={ this.props.postImages } />
 		);
-	}
+	},
 
 	getTrimmedExcerpt() {
 		const excerpt = this.props.post.excerpt;
 		return ( excerpt.length <= 220 ) ? excerpt : excerpt.substring( 0, 220 ) + '\u2026';
-	}
+	},
 
 	getExcerpt() {
 		let excerptElement;
@@ -177,12 +213,12 @@ class Post extends Component {
 				href={ this.getContentLinkURL() }
 				className="post__excerpt post__content-link"
 				target={ this.getContentLinkTarget() }
-				onClick={ this.props.recordPostExcerptClick }
+				onClick={ this.analyticsEvents.postExcerptClick }
 			>
 				{ excerptElement }
 			</a>
 		);
-	}
+	},
 
 	getHeader() {
 		if ( this.props.selectedSiteId && this.props.isPostFromSingleUserSite ) {
@@ -195,7 +231,7 @@ class Post extends Component {
 				path={ this.props.path }
 				showAuthor={ ! this.props.isPostFromSingleUserSite } />
 		);
-	}
+	},
 
 	getContent() {
 		const post = this.props.post;
@@ -208,7 +244,7 @@ class Post extends Component {
 				</div>
 			);
 		}
-	}
+	},
 
 	getContentLinkURL() {
 		const post = this.props.post;
@@ -219,7 +255,7 @@ class Post extends Component {
 			return null;
 		}
 		return post.URL;
-	}
+	},
 
 	getContentLinkTarget() {
 		if ( utils.userCan( 'edit_post', this.props.post ) ) {
@@ -227,43 +263,40 @@ class Post extends Component {
 		}
 
 		return '_blank';
-	}
+	},
 
-	toggleComments = () => {
+	toggleComments() {
 		this.setState( {
 			showComments: ! this.state.showComments
 		} );
-		this.props.recordCommentIconClick();
-	}
+		this.analyticsEvents.commentIconClick();
+	},
 
-	toggleShare = () => {
+	toggleShare() {
 		this.setState( { showShare: ! this.state.showShare } );
-	}
+	},
 
-	setCommentsFilter = ( commentsFilter ) => {
+	setCommentsFilter( commentsFilter ) {
 		this.setState( { commentsFilter } );
-	}
+	},
 
-	viewPost = ( event ) => {
+	viewPost( event ) {
 		event.preventDefault();
 		const { isPreviewable, previewUrl, selectedSiteId } = this.props;
 
 		if ( this.props.post.status && this.props.post.status === 'future' ) {
-			this.props.recordPreviewPost();
+			this.analyticsEvents.previewPost();
 		} else {
-			this.props.recordViewPost();
+			this.analyticsEvents.viewPost();
 		}
 
-		if (
-				( ! isPreviewable || ! selectedSiteId ) &&
-				typeof window === 'object'
-		) {
+		if ( ! isPreviewable || ! selectedSiteId ) {
 			return window.open( previewUrl );
 		}
 
 		this.props.setPreviewUrl( previewUrl );
 		this.props.setLayoutFocus( 'preview' );
-	}
+	},
 
 	render() {
 		return (
@@ -320,28 +353,7 @@ class Post extends Component {
 		);
 	}
 
-}
-
-const analyticsEvents = [
-	[ 'recordViewPost', 'Clicked View Post' ],
-	[ 'recordPreviewPost', 'Clicked Preview Post' ],
-	[ 'recordCommentIconClick', 'Clicked Post Comment Icon/Number' ],
-	[ 'recordPostTitleClick', 'Clicked Post Title' ],
-	[ 'recordPostExcerptClick', 'Clicked Post Excerpt' ],
-	[ 'recordPublishPost', 'Clicked Publish Post' ],
-	[ 'recordRestorePost', 'Clicked Restore Post' ],
-	[ 'recordDeletePost', 'Clicked Delete Post' ],
-	[ 'recordTrashPost', 'Clicked Trash Post' ],
-];
-
-const mapDispatch = {
-	setPreviewUrl,
-	setLayoutFocus,
-	...analyticsEvents.reduce( ( actions, [ key, event ] ) => {
-		actions[ key ] = partial( recordEvent, event );
-		return actions;
-	}, {} ),
-};
+} );
 
 export default connect(
 	( state, { post } ) => {
@@ -371,5 +383,5 @@ export default connect(
 			)
 		};
 	},
-	mapDispatch
+	{ setPreviewUrl, setLayoutFocus }
 )( updatePostStatus( localize( Post ) ) );

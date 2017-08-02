@@ -115,9 +115,6 @@ class AddressView extends Component {
 								<option key={ option.code } value={ option.code }>{ option.name }</option>
 							);
 						} ) }
-						<option key="XX" value="XX" disabled="disabled">
-							{ translate( 'More countries coming soon' ) }
-						</option>
 					</FormSelect>
 				</FormFieldSet>
 			</div>

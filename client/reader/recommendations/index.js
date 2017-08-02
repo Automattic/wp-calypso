@@ -30,14 +30,11 @@ export default function() {
 				'/recommendations/coldtopics',
 			],
 			path => {
-				page.apply( page, [
-					path,
-					preloadReaderBundle,
-					updateLastRoute,
-					sidebar,
-					recommendedPosts,
-				] );
-			},
+				page.apply(
+					page,
+					[ path, preloadReaderBundle, updateLastRoute, sidebar, recommendedPosts ]
+				);
+			}
 		);
 	}
 }

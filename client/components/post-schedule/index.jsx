@@ -30,7 +30,6 @@ class PostSchedule extends Component {
 		timezone: PropTypes.string,
 		gmtOffset: PropTypes.number,
 		site: PropTypes.object,
-		displayInputChrono: PropTypes.bool,
 		onDateChange: PropTypes.func,
 		onMonthChange: PropTypes.func,
 		onDayMouseEnter: PropTypes.func,
@@ -40,7 +39,6 @@ class PostSchedule extends Component {
 	static defaultProps = {
 		posts: [],
 		events: [],
-		displayInputChrono: true,
 		onDateChange: noop,
 		onMonthChange: noop,
 		onDayMouseEnter: noop,
@@ -225,10 +223,9 @@ class PostSchedule extends Component {
 				<Header
 					date={ this.state.calendarViewDate }
 					onDateChange={ this.setViewDate }
-					inputChronoDisplayed={ this.props.displayInputChrono }
 				/>
 
-				{ this.props.displayInputChrono && this.renderInputChrono() }
+				{ this.renderInputChrono() }
 
 				<DatePicker
 					events={ this.events() }

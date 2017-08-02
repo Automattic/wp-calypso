@@ -189,8 +189,7 @@ export class EditGravatar extends Component {
 			<div
 				className={
 					classnames( 'edit-gravatar',
-						{ 'is-unverified': ! user.email_verified },
-						{ 'is-uploading': isUploading }
+						{ 'is-unverified': ! user.email_verified }
 					)
 				}
 			>
@@ -231,9 +230,7 @@ export class EditGravatar extends Component {
 					</FilePicker>
 				</div>
 				<div>
-					<p className="edit-gravatar__explanation">
-						{ translate( 'Your profile photo is public.' ) }
-					</p>
+					<p className="edit-gravatar__explanation">Your profile photo is public.</p>
 					<InfoPopover
 						className="edit-gravatar__pop-over"
 						position="left" >

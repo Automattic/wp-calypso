@@ -21,10 +21,8 @@ import { decodeEntities } from 'lib/formatting';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import { getCurrentlyEditingShippingZoneLocationsList } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 import { openEditLocations } from 'woocommerce/state/ui/shipping/zones/locations/actions';
-import { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
-import { areSettingsGeneralLoaded, areSettingsGeneralLoadError } from 'woocommerce/state/sites/settings/general/selectors';
 
-const ShippingZoneLocationList = ( { siteId, loaded, fetchError, translate, locations, actions } ) => {
+const ShippingZoneLocationList = ( { siteId, loaded, translate, locations, actions } ) => {
 	const getLocationFlag = ( location ) => {
 		if ( 'continent' === location.type ) {
 			return null;
@@ -102,10 +100,7 @@ const ShippingZoneLocationList = ( { siteId, loaded, fetchError, translate, loca
 		actions.openEditLocations();
 	};
 
-	let locationsToRender = loaded ? locations : [ {}, {}, {} ];
-	if ( fetchError ) {
-		locationsToRender = [];
-	}
+	const locationsToRender = loaded ? locations : [ {}, {}, {} ];
 
 	return (
 		<div className="shipping-zone__locations-container">
@@ -136,17 +131,13 @@ const ShippingZoneLocationList = ( { siteId, loaded, fetchError, translate, loca
 
 ShippingZoneLocationList.PropTypes = {
 	siteId: PropTypes.number,
+	loaded: PropTypes.bool.isRequired,
 };
 
 export default connect(
-	( state ) => {
-		const loaded = areShippingZonesFullyLoaded( state ) && areSettingsGeneralLoaded( state );
-		return {
-			loaded,
-			fetchError: areSettingsGeneralLoadError( state ), // TODO: add shipping zones/methods fetch errors too
-			locations: loaded && getCurrentlyEditingShippingZoneLocationsList( state, 20 ),
-		};
-	},
+	( state, ownProps ) => ( {
+		locations: ownProps.loaded && getCurrentlyEditingShippingZoneLocationsList( state, 20 ),
+	} ),
 	( dispatch, ownProps ) => ( {
 		actions: bindActionCreatorsWithSiteId( {
 			openEditLocations,

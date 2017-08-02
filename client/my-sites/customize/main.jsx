@@ -1,97 +1,83 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
-import url from 'url';
-import Qs from 'qs';
-import { cloneDeep, get, startsWith } from 'lodash';
-import { connect } from 'react-redux';
-import debugFactory from 'debug';
+var React = require( 'react' ),
+	url = require( 'url' ),
+	Qs = require( 'qs' ),
+	cloneDeep = require( 'lodash/cloneDeep' ),
+	connect = require( 'react-redux' ).connect,
+	debug = require( 'debug' )( 'calypso:my-sites:customize' );
+import { get, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import page from 'page';
-import CustomizerLoadingPanel from 'my-sites/customize/loading-panel';
-import EmptyContent from 'components/empty-content';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Actions from 'my-sites/customize/actions';
-import { themeActivated } from 'state/themes/actions';
+var notices = require( 'notices' ),
+	page = require( 'page' ),
+	CustomizerLoadingPanel = require( 'my-sites/customize/loading-panel' ),
+	EmptyContent = require( 'components/empty-content' ),
+	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
+	Actions = require( 'my-sites/customize/actions' ),
+	themeActivated = require( 'state/themes/actions' ).themeActivated;
 import { getCustomizerFocus } from './panels';
 import { getMenusUrl } from 'state/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
 
-const debug = debugFactory( 'calypso:my-sites:customize' );
+var loadingTimer;
 
-// Used to allow timing-out the iframe loading process
-let loadingTimer;
+var Customize = React.createClass( {
+	displayName: 'Customize',
 
-class Customize extends React.Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
+	propTypes: {
+		domain: React.PropTypes.string.isRequired,
+		site: React.PropTypes.object.isRequired,
+		pathname: React.PropTypes.string.isRequired,
+		prevPath: React.PropTypes.string,
+		query: React.PropTypes.object,
+		themeActivated: React.PropTypes.func.isRequired,
+		panel: React.PropTypes.string,
+	},
+
+	getDefaultProps: function() {
+		return {
+			domain: '',
+			prevPath: null
+		};
+	},
+
+	getInitialState: function() {
+		return {
 			iframeLoaded: false,
 			errorFromIframe: false,
 			timeoutError: false
 		};
-	}
+	},
 
-	static propTypes = {
-		domain: PropTypes.string.isRequired,
-		site: PropTypes.object.isRequired,
-		pathname: PropTypes.string.isRequired,
-		prevPath: PropTypes.string,
-		query: PropTypes.object,
-		themeActivated: PropTypes.func.isRequired,
-		panel: PropTypes.string,
-		isJetpack: PropTypes.bool,
-		customizerUrl: PropTypes.string,
-		translate: PropTypes.func.isRequired,
-	}
-
-	static defaultProps = {
-		domain: '',
-		prevPath: null
-	}
-
-	componentWillMount() {
+	componentWillMount: function() {
 		this.redirectIfNeeded( this.props.pathname );
 		this.listenToCustomizer();
 		this.waitForLoading();
-	}
+		window.scrollTo( 0, 0 );
+	},
 
-	componentDidMount() {
-		if ( window ) {
-			window.scrollTo( 0, 0 );
-		}
-	}
-
-	componentWillUnmount() {
-		if ( window ) {
-			window.removeEventListener( 'message', this.onMessage, false );
-		}
+	componentWillUnmount: function() {
+		window.removeEventListener( 'message', this.onMessage, false );
 		this.cancelWaitingTimer();
-	}
+	},
 
-	componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps: function( nextProps ) {
 		this.redirectIfNeeded( nextProps.pathname );
-	}
+	},
 
-	redirectIfNeeded = ( pathname ) => {
-		const { menusUrl, isJetpack, customizerUrl } = this.props;
+	redirectIfNeeded: function( pathname ) {
+		const { menusUrl } = this.props;
 		if ( startsWith( pathname, '/customize/menus' ) && pathname !== menusUrl ) {
 			page( menusUrl );
 		}
-		if ( isJetpack ) {
-			page( customizerUrl );
-		}
-	}
+	},
 
-	canUserCustomizeDomain = () => {
-		const { site } = this.props;
+	canUserCustomizeDomain: function() {
+		const { site } = this.props;
 		if ( ! site ) {
 			debug( 'domain is not in the user\'s site list', this.props.domain );
 			return false;
@@ -101,10 +87,10 @@ class Customize extends React.Component {
 		}
 		debug( 'user cannot customize domain', this.props.domain );
 		return false;
-	}
+	},
 
-	getPreviousPath = () => {
-		let path = this.props.prevPath;
+	getPreviousPath: function() {
+		var path = this.props.prevPath;
 		if ( ! path || /^\/customize\/?/.test( path ) ) {
 			path = '/stats';
 			if ( this.props.domain ) {
@@ -112,39 +98,39 @@ class Customize extends React.Component {
 			}
 		}
 		return path;
-	}
+	},
 
-	goBack = () => {
-		const path = this.getPreviousPath();
+	goBack: function() {
+		var path = this.getPreviousPath();
 
 		Actions.close( path );
 
 		debug( 'returning to previous page', path );
 		page.back( path );
-	}
+	},
 
-	waitForLoading = () => {
+	waitForLoading: function() {
 		debug( 'waiting for iframe to load' );
 		this.cancelWaitingTimer();
 		loadingTimer = setTimeout( this.cancelCustomizer, 25000 );
-	}
+	},
 
-	cancelWaitingTimer = () => {
+	cancelWaitingTimer: function() {
 		if ( loadingTimer ) {
 			clearTimeout( loadingTimer );
 		}
-	}
+	},
 
-	cancelCustomizer = () => {
+	cancelCustomizer: function() {
 		if ( this.state.iframeLoaded ) {
 			return;
 		}
 		debug( 'iframe loading timed out' );
 		this.setState( { timeoutError: true } );
-	}
+	},
 
-	getUrl = () => {
-		const { site } = this.props;
+	getUrl: function() {
+		const { site } = this.props;
 		if ( ! site ) {
 			return false;
 		}
@@ -158,9 +144,9 @@ class Customize extends React.Component {
 			return site.options.admin_url + 'customize.php?' + this.buildCustomizerQuery();
 		}
 		return domain + '/wp-admin/customize.php?' + this.buildCustomizerQuery();
-	}
+	},
 
-	buildCustomizerQuery = () => {
+	buildCustomizerQuery: function() {
 		const { protocol, host } = window.location;
 		const query = cloneDeep( this.props.query );
 		const { panel, site } = this.props;
@@ -182,15 +168,15 @@ class Customize extends React.Component {
 		}
 
 		return Qs.stringify( query );
-	}
+	},
 
-	listenToCustomizer = () => {
+	listenToCustomizer: function() {
 		window.removeEventListener( 'message', this.onMessage, false );
 		window.addEventListener( 'message', this.onMessage, false );
-	}
+	},
 
-	onMessage = ( event ) => {
-		const { site } = this.props;
+	onMessage: function( event ) {
+		const { site } = this.props;
 		if ( ! site || ! site.options ) {
 			debug( 'ignoring message received from iframe because the site data cannot be found' );
 			return;
@@ -246,9 +232,9 @@ class Customize extends React.Component {
 					break;
 			}
 		}
-	}
+	},
 
-	renderErrorPage = ( error ) => {
+	renderErrorPage: function( error ) {
 		return (
 			<div className="main main-column customize" role="main">
 				<SidebarNavigation />
@@ -261,14 +247,16 @@ class Customize extends React.Component {
 				/>
 			</div>
 		);
-	}
+	},
 
-	render() {
+	render: function() {
+		var iframeUrl;
+
 		if ( this.state.timeoutError ) {
 			this.cancelWaitingTimer();
 			return this.renderErrorPage( {
-				title: this.props.translate( 'Sorry, the customizing tools did not load correctly' ),
-				action: this.props.translate( 'Try again' ),
+				title: this.translate( 'Sorry, the customizing tools did not load correctly' ),
+				action: this.translate( 'Try again' ),
 				actionCallback: function() {
 					window.location.reload();
 				}
@@ -293,11 +281,11 @@ class Customize extends React.Component {
 		if ( ! this.canUserCustomizeDomain() ) {
 			this.cancelWaitingTimer();
 			return this.renderErrorPage( {
-				title: this.props.translate( 'Sorry, you do not have enough permissions to customize this site' )
+				title: this.translate( 'Sorry, you do not have enough permissions to customize this site' )
 			} );
 		}
 
-		const iframeUrl = this.getUrl();
+		iframeUrl = this.getUrl();
 
 		if ( iframeUrl ) {
 			debug( 'loading iframe URL', iframeUrl );
@@ -318,26 +306,22 @@ class Customize extends React.Component {
 		// canUserCustomizeDomain returns true. But just in case...
 		this.cancelWaitingTimer();
 		return this.renderErrorPage( {
-			title: this.props.translate( 'Sorry, the customizing tools did not load correctly' ),
-			action: this.props.translate( 'Try again' ),
+			title: this.translate( 'Sorry, the customizing tools did not load correctly' ),
+			action: this.translate( 'Try again' ),
 			actionCallback: function() {
 				window.location.reload();
 			}
 		} );
 	}
-}
+} );
 
 export default connect(
 	( state ) => {
 		const site = getSelectedSite( state );
-		const siteId = get( site, 'ID' );
 		return {
 			site,
-			menusUrl: getMenusUrl( state, siteId ),
-			isJetpack: isJetpackSite( state, siteId ),
-			// TODO: include panel from props?
-			customizerUrl: getCustomizerUrl( state, siteId ),
+			menusUrl: getMenusUrl( state, get( site, 'ID' ) )
 		};
 	},
 	{ themeActivated }
-)( localize( Customize ) );
+)( Customize );

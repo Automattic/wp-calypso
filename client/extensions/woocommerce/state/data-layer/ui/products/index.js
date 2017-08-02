@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { find, isObject, isFunction, isEqual, compact } from 'lodash';
+import { find, isObject, isEqual, compact } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,7 +11,6 @@ import { find, isObject, isFunction, isEqual, compact } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
 import { getAllProductEdits } from 'woocommerce/state/ui/products/selectors';
-import { getProduct } from 'woocommerce/state/sites/products/selectors';
 import { getAllVariationEdits } from 'woocommerce/state/ui/products/variations/selectors';
 import { getAllProductCategoryEdits } from 'woocommerce/state/ui/product-categories/selectors';
 import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
@@ -71,13 +70,8 @@ export function handleProductActionListCreate( store, action ) {
 	const { successAction, failureAction } = action;
 	const rootState = store.getState();
 	const siteId = getSelectedSiteId( rootState );
-	const onSuccess = ( dispatch, { updatedProductIds } ) => {
-		const products = Object.values( updatedProductIds ).map( ( productId ) => getProduct( store.getState(), productId ) );
-		if ( isFunction( successAction ) ) {
-			return dispatch( successAction( products, updatedProductIds ) );
-		}
-		return dispatch( successAction );
-	};
+
+	const onSuccess = ( dispatch ) => dispatch( successAction );
 	const onFailure = ( dispatch ) => {
 		dispatch( failureAction );
 		dispatch( actionListClear() );
@@ -190,31 +184,15 @@ function getCategoryIdsForProduct( product ) {
 	} );
 }
 
-const variationSuccess = ( actionList, productId ) => ( dispatch ) => {
-	const productIds = actionList.updatedProductIds && [ ...actionList.updatedProductIds ] || [];
-	productIds.push( productId );
-
-	const newActionList = {
-		...actionList,
-		updatedProductIds: productIds,
-	};
-
-	dispatch( actionListStepSuccess( newActionList ) );
-};
-
 const productSuccess = ( actionList ) => ( dispatch, getState, { sentData, receivedData } ) => {
 	const productIdMapping = {
 		...actionList.productIdMapping,
-		[ sentData.id.placeholder || receivedData.id ]: receivedData.id,
+		[ sentData.id.index ]: receivedData.id,
 	};
-
-	const updatedProductIds = actionList.updatedProductIds && [ ...actionList.updatedProductIds ] || [];
-	updatedProductIds.push( receivedData.id );
 
 	const newActionList = {
 		...actionList,
 		productIdMapping,
-		updatedProductIds,
 	};
 
 	dispatch( actionListStepSuccess( newActionList ) );
@@ -338,13 +316,12 @@ function variationCreateStep( siteId, productId, variation ) {
 		description: translate( 'Creating variation' ),
 		onStep: ( dispatch, actionList ) => {
 			const newProduct = isObject( productId );
-			const realProductId = ( newProduct ? actionList.productIdMapping[ productId.placeholder ] : productId );
 
 			dispatch( createProductVariation(
 				siteId,
-				realProductId,
+				( newProduct ? actionList.productIdMapping[ productId.index ] : productId ),
 				variation,
-				variationSuccess( actionList, realProductId ),
+				actionListStepSuccess( actionList ),
 				actionListStepFailure( actionList ),
 			) );
 		},
@@ -359,7 +336,7 @@ function variationUpdateStep( siteId, productId, variation ) {
 				siteId,
 				productId,
 				variation,
-				variationSuccess( actionList, productId ),
+				actionListStepSuccess( actionList ),
 				actionListStepFailure( actionList ),
 			) );
 		},
@@ -380,3 +357,4 @@ function variationDeleteStep( siteId, productId, variationId ) {
 		},
 	};
 }
+

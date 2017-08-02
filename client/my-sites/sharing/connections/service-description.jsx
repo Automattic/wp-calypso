@@ -114,10 +114,7 @@ class SharingServiceDescription extends Component {
 					} );
 				}
 
-				return this.props.translate( 'Access photos stored in your Google account{{sup}}*{{/sup}}', {
-					components: {
-						sup: <sup />,
-					},
+				return this.props.translate( 'Access photos stored in your Google account.', {
 					comment: 'Description for Google Photos when no accounts are connected'
 				} );
 			}

@@ -9,13 +9,12 @@ import assign from 'lodash/assign';
 const exported = {
 	itemLinkClass: function( path, currentPath, additionalClasses ) {
 		const basePathLowerCase = decodeURIComponent( currentPath )
-				.split( '?' )[ 0 ]
-				.replace( /\/manage$/, '' )
-				.toLowerCase(),
+			.split( '?' )[ 0 ]
+			.replace( /\/manage$/, '' )
+			.toLowerCase(),
 			pathLowerCase = decodeURIComponent( path ).replace( /\/manage$/, '' ).toLowerCase();
 
-		let selected = basePathLowerCase === pathLowerCase,
-			isActionButtonSelected = false;
+		let selected = basePathLowerCase === pathLowerCase, isActionButtonSelected = false;
 
 		// Following is a special case, because it can be at / or /following
 		if ( pathLowerCase === '/' && ! selected ) {
@@ -31,8 +30,8 @@ const exported = {
 		return classNames(
 			assign(
 				{ selected: selected, 'is-action-button-selected': isActionButtonSelected },
-				additionalClasses,
-			),
+				additionalClasses
+			)
 		);
 	},
 

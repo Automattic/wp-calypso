@@ -35,8 +35,8 @@ class PlanBillingPeriod extends Component {
 
 		addItem( planItem( yearlyPlanSlug ) );
 		this.props.recordTracksEvent( 'calypso_purchase_details_plan_upgrade_click', {
-			current_plan: purchase.productSlug,
-			upgrading_to: yearlyPlanSlug,
+			currentPlan: purchase.productSlug,
+			upgradingTo: yearlyPlanSlug,
 		} );
 		page( '/checkout/' + purchase.domain );
 	};

@@ -18,10 +18,10 @@ import FormSelect from 'components/forms/form-select';
 import StoreAddress from 'woocommerce/components/store-address';
 import { changeCurrency } from 'woocommerce/state/ui/payments/currency/actions';
 import { fetchCurrencies } from 'woocommerce/state/sites/currencies/actions';
+import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getCurrencies } from 'woocommerce/state/sites/currencies/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 
 class SettingsPaymentsLocationCurrency extends Component {
 	static propTypes = {
@@ -29,6 +29,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 		currencies: PropTypes.array,
 		currency: PropTypes.string,
 		fetchCurrencies: PropTypes.func.isRequired,
+		fetchSettingsGeneral: PropTypes.func.isRequired,
 		getCurrencyWithEdits: PropTypes.func.isRequired,
 		site: PropTypes.object,
 	};
@@ -38,6 +39,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 
 		if ( site && site.ID ) {
 			this.props.fetchCurrencies( site.ID );
+			this.props.fetchSettingsGeneral( site.ID );
 		}
 	}
 
@@ -49,6 +51,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 
 		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchCurrencies( newSiteId );
+			this.props.fetchSettingsGeneral( newSiteId );
 		}
 	}
 
@@ -74,11 +77,10 @@ class SettingsPaymentsLocationCurrency extends Component {
 	}
 
 	render() {
-		const { currencies, currency, site, translate } = this.props;
+		const { currencies, currency, translate } = this.props;
 		const validCurrencies = [ 'USD', 'AUD', 'CAD', 'GBP', 'BRL' ];
 		return (
 			<div className="payments__location-currency">
-				<QuerySettingsGeneral siteId={ site && site.ID } />
 				<ExtendedHeader
 					label={ translate( 'Store location and currency' ) }
 					description={
@@ -95,9 +97,8 @@ class SettingsPaymentsLocationCurrency extends Component {
 						<FormSelect
 							className="payments__currency-select"
 							onChange={ this.onChange }
-							value={ currency }
-							disabled={ ! currency }>
-							{ currency && currencies && currencies.length && validCurrencies.map( this.renderOption ) }
+							value={ currency }>
+							{ currencies && currencies.length && validCurrencies.map( this.renderOption ) }
 						</FormSelect>
 					</div>
 
@@ -124,6 +125,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			changeCurrency,
 			fetchCurrencies,
+			fetchSettingsGeneral,
 			getCurrencyWithEdits,
 		},
 		dispatch

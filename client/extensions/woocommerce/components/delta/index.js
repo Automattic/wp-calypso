@@ -21,7 +21,7 @@ export default class Delta extends Component {
 	};
 
 	static defaultProps = {
-		iconSize: 20,
+		iconSize: 18,
 	};
 
 	render() {

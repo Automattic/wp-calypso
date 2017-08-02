@@ -5,13 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import {
-	filter,
-	get,
-	groupBy,
-	includes,
-	map,
-} from 'lodash';
+import { groupBy, map, get, filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -155,13 +149,6 @@ class ActivityLog extends Component {
 		};
 	}
 
-	isRestoreInProgress() {
-		return includes( [
-			'queued',
-			'running',
-		], get( this.props, [ 'restoreProgress', 'status' ] ) );
-	}
-
 	renderBanner() {
 		const {
 			restoreProgress,
@@ -254,8 +241,6 @@ class ActivityLog extends Component {
 			startDate,
 		} = this.props;
 
-		const disableRestore = this.isRestoreInProgress();
-
 		const applySiteOffset = this.getSiteOffsetFunc();
 
 		const YEAR_MONTH = 'YYYY-MM';
@@ -271,15 +256,14 @@ class ActivityLog extends Component {
 			),
 			( daily_logs, tsEndOfSiteDay ) => (
 				<ActivityLogDay
-					applySiteOffset={ applySiteOffset }
-					disableRestore={ disableRestore }
-					hideRestore={ ! isPressable }
+					allowRestore={ !! isPressable }
 					isRewindActive={ isRewindActive }
 					key={ tsEndOfSiteDay }
 					logs={ daily_logs }
 					requestRestore={ this.handleRequestRestore }
 					siteId={ siteId }
 					tsEndOfSiteDay={ +tsEndOfSiteDay }
+					applySiteOffset={ applySiteOffset }
 				/>
 			)
 		);

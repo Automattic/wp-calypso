@@ -177,9 +177,9 @@ class ProductFormVariationsRow extends Component {
 				<td className="products__product-id">
 					<div className="products__product-name-thumb">
 						{ this.renderImage() }
-						<Button borderless className="products__product-name products__variation-settings-link" onClick={ this.showDialog }>
+						<span className="products__product-name products__variation-settings-link" onClick={ this.showDialog }>
 							{ formattedVariationName( variation ) }
-						</Button>
+						</span>
 					</div>
 				</td>
 				<td>

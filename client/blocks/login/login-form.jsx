@@ -21,7 +21,6 @@ import { getCurrentQueryArguments } from 'state/ui/selectors';
 import { loginUser } from 'state/login/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getRequestError } from 'state/login/selectors';
-import { preventWidows } from 'lib/formatting';
 import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
@@ -177,21 +176,6 @@ export class LoginForm extends Component {
 							<span>{ this.props.translate( 'Keep me logged in' ) }</span>
 						</label>
 					</div>
-
-					<p className="login__form-terms">
-						{
-							preventWidows( this.props.translate(
-								// To make any changes to this copy please speak to the legal team
-								'By logging in via any of the options below, you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
-								{
-									components: {
-										tosLink: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
-									}
-								}
-							), 5 )
-
-						}
-					</p>
 
 					<div className="login__form-action">
 						<FormsButton primary { ...isDisabled }>

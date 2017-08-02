@@ -213,8 +213,7 @@
 .site-settings__general-settings,
 .site-settings__writing-settings,
 .site-settings__traffic-settings,
-.site-settings__security-settings,
-.manage-connection {
+.site-settings__security-settings {
 	.form-toggle__label {
 		display: flex;
 		align-items: center;
@@ -420,8 +419,7 @@
 	margin-top: 3px;
 }
 
-.site-settings__foldable-card + .card.is-compact:last-child,
-.site-settings__card + .card.is-compact:last-child {
+.site-settings__foldable-card + .card.is-compact:last-child {
 	margin-top: -16px;
 	margin-bottom: 16px;
 }
@@ -440,8 +438,4 @@
 	& + & {
 		margin-top: 24px;
 	}
-}
-
-.site-settings__jetpack-dev-mode-notice .notice {
-	animation: none;
 }

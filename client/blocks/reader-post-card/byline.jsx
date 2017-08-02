@@ -58,12 +58,10 @@ class PostByline extends React.Component {
 		feed: React.PropTypes.object,
 		isDiscoverPost: React.PropTypes.bool,
 		showSiteName: React.PropTypes.bool,
-		showAvatar: React.PropTypes.bool,
 	};
 
 	static defaultProps = {
 		isDiscoverPost: false,
-		showAvatar: true,
 	};
 
 	recordDateClick = () => {
@@ -71,7 +69,7 @@ class PostByline extends React.Component {
 	};
 
 	render() {
-		const { post, site, feed, isDiscoverPost, showSiteName, showAvatar } = this.props;
+		const { post, site, feed, isDiscoverPost, showSiteName } = this.props;
 		const feedId = get( post, 'feed_ID' );
 		const siteId = get( site, 'ID' );
 		const siteName = getSiteName( { site, feed, post } );
@@ -94,15 +92,14 @@ class PostByline extends React.Component {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<div className="reader-post-card__byline ignore-click">
-				{ showAvatar &&
-					<ReaderAvatar
-						siteIcon={ siteIcon }
-						feedIcon={ feedIcon }
-						author={ post.author }
-						preferGravatar={ true }
-						siteUrl={ streamUrl }
-						isCompact={ true }
-					/> }
+				<ReaderAvatar
+					siteIcon={ siteIcon }
+					feedIcon={ feedIcon }
+					author={ post.author }
+					preferGravatar={ true }
+					siteUrl={ streamUrl }
+					isCompact={ true }
+				/>
 				<div className="reader-post-card__byline-details">
 					{ ( shouldDisplayAuthor || showSiteName ) &&
 						<div className="reader-post-card__byline-author-site">

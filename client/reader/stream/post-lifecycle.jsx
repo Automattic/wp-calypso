@@ -39,9 +39,7 @@ export default class PostLifecycle extends React.PureComponent {
 
 	getPostFromStore( props = this.props ) {
 		if (
-			props.postKey.isRecommendationBlock ||
-			props.postKey.isCombination ||
-			props.postKey.isGap
+			props.postKey.isRecommendationBlock || props.postKey.isCombination || props.postKey.isGap
 		) {
 			return null;
 		}
@@ -126,7 +124,7 @@ export default class PostLifecycle extends React.PureComponent {
 		} else if ( isXPost( post ) ) {
 			const xMetadata = XPostHelper.getXPostMetadata( post );
 			const xPostedTo = this.props.store.getSitesCrossPostedTo(
-				xMetadata.commentURL || xMetadata.postURL,
+				xMetadata.commentURL || xMetadata.postURL
 			);
 			return (
 				<CrossPost

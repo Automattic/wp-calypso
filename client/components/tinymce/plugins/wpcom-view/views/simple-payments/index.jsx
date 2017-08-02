@@ -19,10 +19,15 @@ import QuerySimplePayments from 'components/data/query-simple-payments';
 
 class SimplePaymentsView extends Component {
 	render() {
-		const { productId, product, siteId } = this.props;
+		const { productId, product, content, siteId } = this.props;
 
 		if ( ! product ) {
-			return ( <QuerySimplePayments siteId={ siteId } productId={ productId } /> );
+			return (
+				<div className="wpview-content wpview-type-simple-payments">
+					{ content }
+					<QuerySimplePayments siteId={ siteId } productId={ productId } />
+				</div>
+			);
 		}
 
 		const { title, description, price, currency } = product;
