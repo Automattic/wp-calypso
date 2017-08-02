@@ -19,10 +19,16 @@ class WelcomeStep extends Component {
 	handleSubmit = ( event ) => {
 		event.preventDefault();
 
-		//Create site here
+		const { stepName, translate } = this.props;
+
+		const timestamp = ( new Date() ).getTime();
+		const noise = Math.random().toString( 36 ).substring( 2, 10 );
+		const site = `site${ timestamp }${ noise }`;
 
 		SignupActions.submitSignupStep( {
-			stepName: this.props.stepName,
+			processingMessage: translate( 'Setting up your site' ),
+			stepName: stepName,
+			site,
 		} );
 
 		this.props.goToNextStep();
