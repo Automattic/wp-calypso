@@ -43,7 +43,7 @@ class ConversationCaterpillarComponent extends React.Component {
 					className="conversation-caterpillar__count"
 					title={
 						commentCount > 1
-							? translate( 'View comments from %(commenterName)s and %(count)d others', {
+							? translate( 'View comments from %(commenterName)s and %(count)d more', {
 									args: {
 										commenterName: lastCommenterName,
 										count: commentCount - 1,
@@ -57,7 +57,7 @@ class ConversationCaterpillarComponent extends React.Component {
 					}
 				>
 					{ commentCount > 1
-						? translate( '%(commenterName)s and %(count)d others', {
+						? translate( '%(commenterName)s and %(count)d more', {
 								args: {
 									commenterName: lastCommenterName,
 									count: commentCount - 1,
