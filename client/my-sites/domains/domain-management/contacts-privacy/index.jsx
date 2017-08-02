@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,8 +18,8 @@ import paths from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
 import { findRegistrantWhois, findPrivacyServiceWhois } from 'lib/domains/whois/utils';
 
-const ContactsPrivacy = React.createClass( {
-	propTypes: {
+class ContactsPrivacy extends React.PureComponent {
+	static propTypes = {
 		domains: React.PropTypes.object.isRequired,
 		whois: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
@@ -26,25 +27,27 @@ const ContactsPrivacy = React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired
-	},
+	};
 
 	render() {
 		if ( this.isDataLoading() ) {
 			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
 		}
 
-		const domain = getSelectedDomain( this.props ),
-			{ hasPrivacyProtection, privateDomain, privacyAvailable, currentUserCanManage } = domain,
-			contactInformation = privateDomain
-				? findPrivacyServiceWhois( this.props.whois.data )
-				: findRegistrantWhois( this.props.whois.data );
+		const { translate } = this.props;
+		const domain = getSelectedDomain( this.props );
+		const { hasPrivacyProtection, privateDomain, privacyAvailable, currentUserCanManage } = domain;
+		const contactInformation = privateDomain
+			? findPrivacyServiceWhois( this.props.whois.data )
+			: findRegistrantWhois( this.props.whois.data );
 
 		return (
 			<Main className="domain-management-contacts-privacy">
 				<Header
 					onClick={ this.goToEdit }
-					selectedDomainName={ this.props.selectedDomainName }>
-					{ this.translate( 'Contacts and Privacy' ) }
+					selectedDomainName={ this.props.selectedDomainName }
+				>
+					{ translate( 'Contacts and Privacy' ) }
 				</Header>
 
 				<VerticalNav>
@@ -55,31 +58,40 @@ const ContactsPrivacy = React.createClass( {
 						hasPrivacyProtection={ hasPrivacyProtection }
 						privateDomain={ privateDomain }
 						privacyAvailable={ privacyAvailable }
-						currentUserCanManage={ currentUserCanManage } />
+						currentUserCanManage={ currentUserCanManage }
+					/>
 
 					<VerticalNavItem
-							path={ paths.domainManagementEditContactInfo( this.props.selectedSite.slug, this.props.selectedDomainName ) }>
-						{ this.translate( 'Edit Contact Info' ) }
+						path={ paths.domainManagementEditContactInfo(
+							this.props.selectedSite.slug,
+							this.props.selectedDomainName
+						) }
+					>
+						{ translate( 'Edit Contact Info' ) }
 					</VerticalNavItem>
 
 					{ ! hasPrivacyProtection && privacyAvailable && (
 						<VerticalNavItem
-							path={ paths.domainManagementPrivacyProtection( this.props.selectedSite.slug, this.props.selectedDomainName ) }>
-							{ this.translate( 'Privacy Protection' ) }
+							path={ paths.domainManagementPrivacyProtection(
+								this.props.selectedSite.slug,
+								this.props.selectedDomainName
+							) }
+						>
+							{ translate( 'Privacy Protection' ) }
 						</VerticalNavItem>
 					) }
 				</VerticalNav>
 			</Main>
 		);
-	},
+	}
 
 	isDataLoading() {
 		return ( ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer );
-	},
+	}
 
-	goToEdit() {
+	goToEdit = () => {
 		page( paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	}
-} );
+}
 
-export default ContactsPrivacy;
+export default localize( ContactsPrivacy );
