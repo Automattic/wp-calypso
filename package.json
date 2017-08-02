@@ -10,7 +10,7 @@
   },
   "main": "index.js",
   "dependencies": {
-    "@automattic/form-components": "^0.1.0-alpha.1",
+    "@automattic/form-components": "^0.1.0-alpha.2",
     "ajv": "5.2.1",
     "async": "0.9.0",
     "autoprefixer": "6.3.5",
