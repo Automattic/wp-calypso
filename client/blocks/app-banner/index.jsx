@@ -71,7 +71,7 @@ class AppBanner extends Component {
 	};
 
 	preventNotificationsClose = ( appBanner ) => {
-		if ( ! appBanner ) {
+		if ( ! appBanner && this.appBannerNode ) {
 			this.appBannerNode.removeEventListener( 'mousedown', this.stopBubblingEvents, false );
 			this.appBannerNode.removeEventListener( 'touchstart', this.stopBubblingEvents, false );
 			return;
