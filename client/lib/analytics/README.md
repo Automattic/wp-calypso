@@ -24,6 +24,9 @@ Automatticians may refer to internal documentation for more information about MC
 
 # Usage
 
+Note: In most situations it is best to use the [Analytics middleware](https://github.com/Automattic/wp-calypso/tree/master/client/state/analytics), which has no direct browser dependencies and therefore will not complicate any unit testing of the modules where it is used.
+
+If you do still want to use this library directly:
 ```js
 // require the module
 import analytics from 'lib/analytics';

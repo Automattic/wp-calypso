@@ -16,9 +16,12 @@ import {
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 export const uploadPlugin = ( { dispatch }, action ) => {
 	const { siteId, file } = action;
+
+	dispatch( recordTracksEvent( 'calypso_plugin_upload' ) );
 
 	dispatch( http( {
 		method: 'POST',
@@ -62,6 +65,11 @@ const showErrorNotice = ( dispatch, error ) => {
 
 export const uploadComplete = ( { dispatch }, { siteId }, next, data ) => {
 	const { slug: pluginId } = data;
+
+	dispatch( recordTracksEvent( 'calypso_plugin_upload_complete', {
+		plugin_id: pluginId
+	} ) );
+
 	dispatch( completePluginUpload( siteId, pluginId ) );
 	dispatch( {
 		type: PLUGIN_INSTALL_REQUEST_SUCCESS,
@@ -74,6 +82,12 @@ export const uploadComplete = ( { dispatch }, { siteId }, next, data ) => {
 };
 
 export const receiveError = ( { dispatch }, { siteId }, next, error ) => {
+
+	dispatch( recordTracksEvent( 'calypso_plugin_upload_error', {
+		error_code: error.error,
+		error_message: error.message
+	} ) );
+
 	showErrorNotice( dispatch, error );
 	dispatch( pluginUploadError( siteId, error ) );
 };
