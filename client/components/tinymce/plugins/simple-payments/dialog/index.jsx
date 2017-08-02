@@ -13,6 +13,7 @@ import { find, isNumber, pick } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSimplePayments } from 'state/selectors';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -46,6 +47,7 @@ class SimplePaymentsDialog extends Component {
 		editPaymentId: PropTypes.number,
 		onClose: PropTypes.func.isRequired,
 		onInsert: PropTypes.func.isRequired,
+		isJetpackNotSupported: PropTypes.bool,
 	};
 
 	static initialFields = {
@@ -332,7 +334,7 @@ class SimplePaymentsDialog extends Component {
 	}
 
 	render() {
-		const { showDialog, onClose, siteId, paymentButtons, currencyCode } = this.props;
+		const { showDialog, onClose, siteId, paymentButtons, currencyCode, isJetpackNotSupported, translate } = this.props;
 		const { activeTab, errorMessage } = this.state;
 
 		// Don't show navigation on 'form' tab if the list is empty or if directly editing
@@ -341,6 +343,24 @@ class SimplePaymentsDialog extends Component {
 			activeTab === 'list' ||
 			( activeTab === 'form' && ! this.isDirectEdit() && ! isEmptyArray( paymentButtons ) );
 
+		if ( isJetpackNotSupported ) {
+			return (
+				<Dialog
+					isVisible={ showDialog }
+					onClose={ onClose }
+					buttons={ [
+						<Button onClick={ onClose }>
+							{ translate( 'Cancel' ) }
+						</Button>,
+					] }
+					additionalClassNames="editor-simple-payments-modal"
+				>
+					<Notice status="is-error" text={
+						translate( 'Please upgrade to Jetpack 5.2 to use Simple Payments feature' )
+					} onDismissClick={ onClose } />
+				</Dialog>
+			);
+		}
 		return (
 			<Dialog
 				isVisible={ showDialog }
@@ -390,5 +410,6 @@ export default connect( ( state, { siteId } ) => {
 		siteId,
 		paymentButtons: getSimplePayments( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
+		isJetpackNotSupported: isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' )
 	};
 } )( localize( SimplePaymentsDialog ) );
