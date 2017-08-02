@@ -432,6 +432,14 @@ class LoggedInForm extends Component {
 	}
 
 	getRedirectionTarget() {
+		// Redirect to Calypso JPO
+		if ( this.props.onboarding ) {
+			var blogId = this.props.jetpackConnectAuthorize.queryObject.client_id;
+
+			return ONBOARDING_PAGE + '?blogid=' + blogId;
+		}
+
+		// No onboarding
 		return PLANS_PAGE + this.props.siteSlug;
 	}
 
