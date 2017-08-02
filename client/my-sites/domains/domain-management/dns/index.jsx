@@ -39,7 +39,7 @@ class Dns extends React.Component {
 	renderDnsTemplates() {
 		const selectedDomain = getSelectedDomain( this.props );
 
-		if ( ! isMappedDomain( selectedDomain ) ) {
+		if ( ! selectedDomain || ! isMappedDomain( selectedDomain ) ) {
 			return null;
 		}
 
