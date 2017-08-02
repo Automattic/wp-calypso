@@ -13,11 +13,13 @@ import Gridicon from 'gridicons';
 import checkInputs from './modal-errors';
 import Dialog from 'components/dialog';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FormButton from 'components/forms/form-button';
 import FieldError from '../../components/field-error';
 import inputFilters from './input-filters';
@@ -46,6 +48,26 @@ const getDialogButtons = ( mode, dismissModal, savePackage, onRemove, translate 
 	return buttons;
 };
 
+const renderDimensionsInput = ( dimensionsName, dimensionsStr, updateField ) => {
+	const { length, width, height } = inputFilters.parseDimensions( dimensionsStr );
+	const onChange = ( event ) => {
+		const name = event.target.name;
+		const value = event.target.value;
+		const allDimensions = [
+			'length' === name ? value : length,
+			'width' === name ? value : width,
+			'height' === name ? value : height,
+		];
+		updateField( dimensionsName, allDimensions.join( ' x ' ) );
+	};
+
+	return (
+		<FormDimensionsInput
+			dimensions={ { width, height, length } }
+			onChange={ onChange } />
+	);
+};
+
 const OuterDimensionsToggle = ( { siteId, toggleOuterDimensions, translate } ) => {
 	const onClick = ( event ) => {
 		event.preventDefault();
@@ -54,7 +76,7 @@ const OuterDimensionsToggle = ( { siteId, toggleOuterDimensions, translate } ) =
 
 	return (
 		<a href="#" className="packages__setting-explanation" onClick={ onClick }>
-			{ translate( 'View exterior dimensions' ) }
+			{ translate( 'Add exterior dimensions' ) }
 		</a>
 	);
 };
@@ -94,12 +116,10 @@ const AddPackageDialog = ( props ) => {
 		outer_dimensions,
 		box_weight,
 		max_weight,
-		is_user_defined,
 		is_letter,
 	} = packageData;
 
 	const isOuterDimensionsVisible = showOuterDimensions || outer_dimensions;
-	const exampleDimensions = [ 100.25, 25, 5.75 ].map( ( val ) => val.toLocaleString() ).join( ' x ' );
 
 	const onSave = () => {
 		const editName = 'number' === typeof packageData.index ? customPackages[ packageData.index ].name : null;
@@ -129,11 +149,15 @@ const AddPackageDialog = ( props ) => {
 		savePackage( siteId, filteredPackageData );
 	};
 
+	const updateField = ( key, value ) => {
+		setModalErrors( siteId, omit( modalErrors, key ) );
+		updatePackagesField( siteId, { [ key ]: value } );
+	};
+
 	const updateTextField = ( event ) => {
 		const key = event.target.name;
 		const value = event.target.value;
-		setModalErrors( siteId, omit( modalErrors, key ) );
-		updatePackagesField( siteId, { [ key ]: value } );
+		updateField( key, value );
 	};
 
 	const fieldInfo = ( field, nonEmptyText ) => {
@@ -184,14 +208,10 @@ const AddPackageDialog = ( props ) => {
 			</FormFieldset>
 			<FormFieldset>
 				<FormLabel>{ translate( 'Inner Dimensions (L x W x H) %(dimensionUnit)s', { args: { dimensionUnit } } ) }</FormLabel>
-				<FormTextInput
-					name="inner_dimensions"
-					placeholder={ exampleDimensions }
-					value={ inner_dimensions || '' }
-					onChange={ updateTextField }
-					disabled={ ! is_user_defined }
-					isError={ modalErrors.inner_dimensions }
-				/>
+				{ renderDimensionsInput(
+					'inner_dimensions',
+					inner_dimensions,
+					updateField ) }
 				{ fieldInfo( 'inner_dimensions' ) }
 				{ ! isOuterDimensionsVisible ? <OuterDimensionsToggle { ...{ siteId, toggleOuterDimensions, translate } } /> : null }
 			</FormFieldset>
@@ -200,14 +220,10 @@ const AddPackageDialog = ( props ) => {
 						<FormLabel>
 							{ translate( 'Outer Dimensions (L x W x H) %(dimensionUnit)s', { args: { dimensionUnit } } ) }
 						</FormLabel>
-						<FormTextInput
-							name="outer_dimensions"
-							placeholder={ exampleDimensions }
-							value={ outer_dimensions || '' }
-							onChange={ updateTextField }
-							disabled={ ! is_user_defined }
-							isError={ modalErrors.outer_dimensions }
-						/>
+						{ renderDimensionsInput(
+							'outer_dimensions',
+							outer_dimensions,
+							updateField ) }
 						{ fieldInfo( 'outer_dimensions' ) }
 					</FormFieldset> )
 				: null
@@ -215,29 +231,32 @@ const AddPackageDialog = ( props ) => {
 			<FormFieldset className="packages__add-package-weight-group">
 				<div className="packages__add-package-weight">
 					<FormLabel htmlFor="box_weight">{ translate( 'Package weight' ) }</FormLabel>
-					<FormTextInput
+					<FormTextInputWithAffixes
 						id="box_weight"
 						name="box_weight"
 						placeholder={ translate( 'Package weight' ) }
 						value={ box_weight || '' }
 						onChange={ updateTextField }
-						disabled={ ! is_user_defined }
 						isError={ modalErrors.box_weight }
+						type="number"
+						noWrap
+						suffix={ weightUnit }
 					/>
 					{ fieldInfo( 'box_weight' ) }
 				</div>
 				<div className="packages__add-package-weight">
 					<FormLabel htmlFor="max_weight">{ translate( 'Max weight' ) }</FormLabel>
-					<FormTextInput
+					<FormTextInputWithAffixes
 						id="max_weight"
 						name="max_weight"
 						placeholder={ translate( 'Max weight' ) }
 						value={ max_weight || '' }
 						onChange={ updateTextField }
-						disabled={ ! is_user_defined }
 						isError={ modalErrors.max_weight }
+						type="number"
+						noWrap
+						suffix={ weightUnit }
 					/>
-					<span className="packages__add-package-weight-unit">{ weightUnit }</span>
 					{ fieldInfo( 'max_weight' ) }
 				</div>
 				<FormSettingExplanation>

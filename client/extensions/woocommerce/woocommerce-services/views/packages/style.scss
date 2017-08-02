@@ -11,20 +11,8 @@
 		}
 	}
 
-	#box_weight,
-	#max_weight {
+	.form-text-input-with-affixes {
 		width: 82%;
-	}
-
-	#max_weight {
-		@include breakpoint( '>660px' ) {
-			width: 66%;
-		}
-	}
-
-	.packages__add-package-weight-unit {
-		width: 34%;
-		padding-left: 8px;
 	}
 }
 

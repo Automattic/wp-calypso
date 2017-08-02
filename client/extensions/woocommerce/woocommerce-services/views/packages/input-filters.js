@@ -22,6 +22,7 @@ const number = ( value ) => {
 };
 
 const dimensionRegex = /^\s*(\S+)\s*x\s*(\S+)\s*x\s*(\S+)\s*$/;
+const optionalDimensionRegex = /^\s*(\S+)?\s*x\s*(\S+)?\s*x\s*(\S+)?\s*$/;
 const dimensions = ( value ) => {
 	const result = dimensionRegex.exec( value );
 	if ( result ) {
@@ -32,8 +33,24 @@ const dimensions = ( value ) => {
 	return value;
 };
 
+const parseDimensions = ( value ) => {
+	let length = '';
+	let width = '';
+	let height = '';
+
+	const match = optionalDimensionRegex.exec( value );
+	if ( match && 4 === match.length ) {
+		length = match[ 1 ] || '';
+		width = match[ 2 ] || '';
+		height = match[ 3 ] || '';
+	}
+
+	return { length, width, height };
+};
+
 export default {
 	string,
 	number,
 	dimensions,
+	parseDimensions,
 };
