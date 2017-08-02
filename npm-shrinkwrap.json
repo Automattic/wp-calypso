@@ -4921,8 +4921,8 @@
     },
     "prettier": {
       "version": "1.5.2",
-      "from": "git+https://github.com/Automattic/calypso-prettier.git#0cbd77dcfc7bb82bff5f4485a6f078dec5cc9595",
-      "resolved": "git+https://github.com/Automattic/calypso-prettier.git#0cbd77dcfc7bb82bff5f4485a6f078dec5cc9595",
+      "from": "git://github.com/automattic/calypso-prettier.git#0cbd77dcfc7bb82bff5f4485a6f078dec5cc9595",
+      "resolved": "git://github.com/automattic/calypso-prettier.git#0cbd77dcfc7bb82bff5f4485a6f078dec5cc9595",
       "dev": true,
       "dependencies": {
         "babel-code-frame": {
