@@ -66,11 +66,8 @@ class SimplePaymentsDialog extends Component {
 			validatorFunction: this.validateFormFields,
 		} );
 
-		const { paymentButtons } = this.props;
-		const hasPaymentButtons = paymentButtons && paymentButtons.length > 0;
-
 		this.state = {
-			activeTab: hasPaymentButtons ? 'list' : 'form',
+			activeTab: this.defaultActiveTab(),
 			editedPaymentId: this.props.editPaymentId,
 			selectedPaymentId: null,
 			form: this.formStateController.getInitialState(),
@@ -98,6 +95,12 @@ class SimplePaymentsDialog extends Component {
 
 	componentWillUnmount() {
 		this._isMounted = false;
+	}
+
+	defaultActiveTab() {
+		const { paymentButtons } = this.props;
+		const hasPaymentButtons = paymentButtons && paymentButtons.length > 0;
+		return hasPaymentButtons ? 'list' : 'form';
 	}
 
 	handleFormFieldChange = ( name, value ) => {
@@ -230,7 +233,7 @@ class SimplePaymentsDialog extends Component {
 	};
 
 	editPaymentButton = paymentId => {
-		this.setState( { activeTab: 'form', editedPaymentId: paymentId } );
+		this.setState( { activeTab: paymentId ? 'form' : this.defaultActiveTab(), editedPaymentId: paymentId } );
 		this.formStateController.resetFields( this.getInitialFormFields( paymentId ) );
 	};
 
