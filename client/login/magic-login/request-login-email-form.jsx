@@ -100,6 +100,9 @@ class RequestLoginEmailForm extends React.Component {
 
 		return (
 			<div>
+				<h1 className="magic-login__form-header">
+					{ translate( 'Email me a login link.' ) }
+				</h1>
 				{ requestError &&
 					<Notice
 						duration={ 10000 }
@@ -109,9 +112,6 @@ class RequestLoginEmailForm extends React.Component {
 						onDismissClick={ this.onNoticeDismiss }
 						status="is-error" />
 				}
-				<h1 className="magic-login__form-header">
-					{ translate( 'Email me a login link.' ) }
-				</h1>
 				{ currentUser && currentUser.username &&
 					<p>{
 						translate( 'NOTE: You are already logged in as user: %(user)s', {
