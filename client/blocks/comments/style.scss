@@ -262,6 +262,8 @@
 .comments__comment-respondee {
 	color: $gray;
 	font-size: 15px;
+	margin-right: 12px;
+	margin-left: -12px;
 
 	.gridicon {
 		margin-right: 3px;
@@ -282,6 +284,10 @@
 	color: darken( $gray, 30% );
 	display: flex;
 	font-weight: 600;
+
+	@include breakpoint( "<480px" ) {
+		flex-wrap: wrap;
+	}
 
 	.gravatar {
 		position: absolute;
@@ -318,6 +324,7 @@
 .comments__comment-username {
 	font-size: 15px;
 	color: darken( $gray, 30% );
+	margin-right: 12px;
 }
 
 a.comments__comment-username {
@@ -326,10 +333,6 @@ a.comments__comment-username {
 	&:hover {
 		color: $blue-light;
 	}
-}
-
-.comments__comment-timestamp {
-	margin-left: 12px;
 }
 
 .comments__comment-timestamp a {
