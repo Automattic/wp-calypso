@@ -46,6 +46,9 @@ class PaymentMethodItem extends Component {
 			informationUrl: PropTypes.string,
 		} ),
 		openPaymentMethodForEdit: PropTypes.func.isRequired,
+		site: PropTypes.shape( {
+			title: PropTypes.string,
+		} ),
 	};
 
 	onEditHandler = () => {
@@ -97,7 +100,7 @@ class PaymentMethodItem extends Component {
 	}
 
 	outputEditComponent = () => {
-		const { currentlyEditingMethod, method } = this.props;
+		const { currentlyEditingMethod, method, site } = this.props;
 		if ( method.id === 'paypal' ) {
 			return (
 				<PaymentMethodPaypal
@@ -113,7 +116,8 @@ class PaymentMethodItem extends Component {
 					method={ currentlyEditingMethod }
 					onCancel={ this.onCancel }
 					onEditField={ this.onEditField }
-					onDone={ this.onDone } />
+					onDone={ this.onDone }
+					site={ site } />
 			);
 		}
 		if ( method.id === 'cheque' ) {

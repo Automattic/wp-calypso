@@ -13,6 +13,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 import SegmentedControl from 'components/segmented-control';
@@ -36,9 +37,20 @@ class PaymentMethodStripe extends Component {
 		onCancel: PropTypes.func.isRequired,
 		onEditField: PropTypes.func.isRequired,
 		onDone: PropTypes.func.isRequired,
+		site: PropTypes.shape( {
+			title: PropTypes.string,
+		} ),
 	};
 
 	onEditFieldHandler = ( e ) => {
+		// Limit the statement descriptor field to 22 characters
+		// since that is all Stripe will accept
+		if ( e.target && 'statement_descriptor' === e.target.name ) {
+			if ( 22 < e.target.value.length ) {
+				return;
+			}
+		}
+		// All others may continue
 		this.props.onEditField( e.target.name, e.target.value );
 	}
 
@@ -104,6 +116,12 @@ class PaymentMethodStripe extends Component {
 		{ action: 'save', label: this.props.translate( 'Done' ), onClick: this.props.onDone, isPrimary: true },
 	];
 
+	getStatementDescriptorPlaceholder = () => {
+		const { site, translate } = this.props;
+		const domain = site.domain.substr( 0, 22 ).trim().toUpperCase();
+		return translate( 'e.g. %(domain)s', { args: { domain } } );
+	}
+
 	render() {
 		const { method, translate } = this.props;
 		return (
@@ -152,11 +170,26 @@ class PaymentMethodStripe extends Component {
 							value="no"
 							checked={ 'no' === method.settings.capture.value }
 							onChange={ this.onEditFieldHandler } />
-						<span>{ translate( 'Authorize the customers credit card but charge manually' ) }</span>
+						<span>{ translate( 'Authorize the customer\'s credit card but charge manually' ) }</span>
 					</FormLabel>
 				</FormFieldset>
+				<FormFieldset>
+					<FormLabel>
+						{ translate( 'Descriptor' ) }
+					</FormLabel>
+					<FormTextInput
+						name="statement_descriptor"
+						onChange={ this.onEditFieldHandler }
+						value={ method.settings.statement_descriptor.value }
+						placeholder={ this.getStatementDescriptorPlaceholder() } />
+					<FormSettingExplanation>
+						{ translate( 'Appears on your customer\'s credit card statement. 22 characters maximum' ) }
+					</FormSettingExplanation>
+				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>Use ApplePay</FormLabel>
+					<FormLabel>
+						{ translate( 'Use ApplePay' ) }
+					</FormLabel>
 					<PaymentMethodEditFormToggle
 						checked={ method.settings.apple_pay.value === 'yes' ? true : false }
 						name="apple_pay"
