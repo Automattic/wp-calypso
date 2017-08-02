@@ -165,6 +165,11 @@ class OrderRefundCard extends Component {
 		const { isPaymentLoading, order, site, translate } = this.props;
 		const { errorMessage, refundNote, showDialog } = this.state;
 		const dialogClass = 'woocommerce'; // eslint/css specificity hack
+
+		if ( 'cancelled' === order.status || 'failed' === order.status ) {
+			return null;
+		}
+
 		let refundTotal = formatCurrency( 0, order.currency );
 		if ( this.state.refundTotal ) {
 			refundTotal = formatCurrency( this.state.refundTotal, order.currency ) || this.state.refundTotal;
