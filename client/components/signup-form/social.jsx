@@ -31,7 +31,7 @@ class SocialSignupForm extends Component {
 			return;
 		}
 
-		this.props.handleResponse( 'google', response.Zi.id_token );
+		this.props.handleResponse( 'google', response.Zi.access_token, response.Zi.id_token );
 	}
 
 	handleFacebookResponse( response ) {

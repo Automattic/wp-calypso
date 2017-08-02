@@ -285,13 +285,18 @@ module.exports = {
 		SignupCart.addToCart( siteId, newCartItems, error => callback( error, { cartItem, privacyItem } ) );
 	},
 
-	createAccount( callback, dependencies, { userData, flowName, queryArgs, service, token }, reduxStore ) {
+	createAccount( callback, dependencies, { userData, flowName, queryArgs, service, access_token, id_token }, reduxStore ) {
 		const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 		const surveySiteType = getSurveySiteType( reduxStore.getState() ).trim();
 
 		if ( service ) {
 			// We're creating a new social account
-			wpcom.undocumented().usersSocialNew( service, token, flowName, ( error, response ) => {
+			wpcom.undocumented().usersSocialNew( {
+				service,
+				access_token,
+				id_token,
+				signup_flow_name: flowName,
+			}, ( error, response ) => {
 				const errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined;
 
 				if ( errors ) {

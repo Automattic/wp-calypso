@@ -1414,7 +1414,7 @@ Undocumented.prototype.saveABTestData = function( name, variation, fn ) {
  * Sign up for a new user account
  * Create a new user
  *
- * @param {string} query - an object with three values: email, username, password
+ * @param {object} query - an object with three values: email, username, password
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersNew = function( query, fn ) {
@@ -1436,26 +1436,20 @@ Undocumented.prototype.usersNew = function( query, fn ) {
 /**
  * Sign up for a new account with a social service (e.g. Google/Facebook).
  *
- * @param {string} service - Social service associated with token, e.g. google.
- * @param {string} token - Token returned from service.
+ * @param {object} query - an object with the following values: service, access_token, id_token (optional), signup_flow_name
  * @param {Function} fn - callback
  *
  * @return {Promise} A promise for the request
  */
-Undocumented.prototype.usersSocialNew = function( service, token, flowName, fn ) {
-	const body = {
-		service,
-		token,
-		signup_flow_name: flowName,
-		locale: i18n.getLocaleSlug()
-	};
+Undocumented.prototype.usersSocialNew = function( query, fn ) {
+	query.locale = i18n.getLocaleSlug();
 
 	// This API call is restricted to these OAuth keys
 	restrictByOauthKeys( body );
 
 	const args = {
 		path: '/users/social/new',
-		body
+		body: query
 	};
 
 	return this.wpcom.req.post( args, fn );
@@ -1464,7 +1458,7 @@ Undocumented.prototype.usersSocialNew = function( service, token, flowName, fn )
 /**
  * Sign up for a new phone account
  *
- * @param {string} query - a key/value pair; key: 'phone_number', value: 'the users phone number'
+ * @param {object} query - a key/value pair; key: 'phone_number', value: 'the users phone number'
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersPhoneNew = function( query, fn ) {
@@ -1484,7 +1478,7 @@ Undocumented.prototype.usersPhoneNew = function( query, fn ) {
 /**
  * Log in to an existing phone account
  *
- * @param {string} query - a key/value pair; key: 'phone_number', value: 'the users phone number'
+ * @param {object} query - a key/value pair; key: 'phone_number', value: 'the users phone number'
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersPhone = function( query, fn ) {
@@ -1504,7 +1498,7 @@ Undocumented.prototype.usersPhone = function( query, fn ) {
 /**
  * Verify a record in the signups table and create a new user from it
  *
- * @param {string} query - two key/value pairs; { 'phone_number': 'the users phone number', 'code': 'the verification code we sent to the phone number' }
+ * @param {object} query - two key/value pairs; { 'phone_number': 'the users phone number', 'code': 'the verification code we sent to the phone number' }
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersPhoneVerification = function( query, fn ) {
@@ -1525,7 +1519,7 @@ Undocumented.prototype.usersPhoneVerification = function( query, fn ) {
 /**
  * Sign up for a new email only account
  *
- * @param {string} query - a key/value pair; key: 'email', value: 'the users email address'
+ * @param {object} query - a key/value pair; key: 'email', value: 'the users email address'
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersEmailNew = function( query, fn ) {
@@ -1545,7 +1539,7 @@ Undocumented.prototype.usersEmailNew = function( query, fn ) {
 /**
  * Log in to an existing email account
  *
- * @param {string} query - a key/value pair; key: 'email', value: 'the users email address'
+ * @param {object} query - a key/value pair; key: 'email', value: 'the users email address'
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersEmail = function( query, fn ) {
@@ -1565,7 +1559,7 @@ Undocumented.prototype.usersEmail = function( query, fn ) {
 /**
  * Verify a record in wp_signups and create a new user from it
  *
- * @param {string} query - two key/value pairs; { 'email': 'the users email address', 'code': 'the verification code we sent to the email address' }
+ * @param {object} query - two key/value pairs; { 'email': 'the users email address', 'code': 'the verification code we sent to the email address' }
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersEmailVerification = function( query, fn ) {
