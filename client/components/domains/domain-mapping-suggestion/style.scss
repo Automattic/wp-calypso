@@ -2,21 +2,10 @@
 	display: flex;
 
 	.domain-product-price {
-		@include breakpoint( ">660px" ) {
-			margin-top: 5px;
-		}
-
 		&.is-free-domain {
 			@include breakpoint( ">660px" ) {
 				margin-top: 5px;
 			}
-		}
-	}
-	.domain-suggestion__action {
-			margin-top: 20px;
-
-		@include breakpoint( ">660px" ) {
-			margin-top: 10px;
 		}
 	}
 }
