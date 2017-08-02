@@ -19,7 +19,7 @@ export class ConversationCommentList extends React.Component {
 	};
 
 	static defaultProps = {
-		showCaterpillar: true,
+		showCaterpillar: false,
 	};
 
 	render() {
