@@ -102,51 +102,26 @@ export default {
 	'jpo-site-title': {
 		stepName: 'jpo-site-title',
 		providesDependencies: [ 'jpoSiteTitle' ],
-		props: {
-			setJPOSiteTitle: function( siteTitle ) {
-				console.log( "Got site title ".siteTitle );
-			}
-		}
 	},
 
 	'jpo-site-type': {
 		stepName: 'jpo-site-type',
 		providesDependencies: [ 'jpoSiteType' ],
-		props: {
-			setJPOSiteType: function( siteType ) {
-				console.log( "Got site type ".siteType );
-			}
-		}
 	},
 
 	'jpo-homepage': {
 		stepName: 'jpo-homepage',
 		providesDependencies: [ 'jpoHomepage' ],
-		props: {
-			setJPOHomepage: function( homepage ) {
-				console.log( "Got homepage ".homepage );
-			}
-		}
 	},
 
 	'jpo-contact-form': {
 		stepName: 'jpo-contact-form',
 		providesDependencies: [ 'jpoContactForm' ],
-		props: {
-			setJPOContactForm: function( contactForm ) {
-				console.log( "Got contact form ".contactForm );
-			}
-		}
 	},
 
 	'jpo-summary': {
 		stepName: 'jpo-summary',
 		providesDependencies: [ 'jpoSummary' ],
-		props: {
-			setJPOSummary: function( summary ) {
-				console.log( "Got summary ".summary );
-			}
-		}
 	},
 
 	'site-title': {

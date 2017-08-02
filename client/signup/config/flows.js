@@ -23,7 +23,7 @@ function dependenciesContainCartItem( dependencies ) {
 }
 
 function getJetpackSiteDestination( dependencies ) {
-	let protocol = dependencies.siteSlug.match( /wordpress\.[a-z]+$/i ) ? 'https' : 'http';
+	const protocol = dependencies.siteSlug.match( /wordpress\.[a-z]+$/i ) ? 'https' : 'http';
 
 	return protocol + '://' + dependencies.siteSlug;
 }
