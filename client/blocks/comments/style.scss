@@ -283,7 +283,7 @@
 .comments__comment-author {
 	color: darken( $gray, 30% );
 	display: flex;
-	font-weight: 600;
+	font-weight: 500;
 
 	@include breakpoint( "<480px" ) {
 		flex-wrap: wrap;
