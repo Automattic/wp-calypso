@@ -20,8 +20,8 @@ export const getOrdersCurrentPage = ( state, siteId = getSelectedSiteId( state )
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {String} The current status filter being shown to the user. Defaults to "any".
+ * @return {String} The current search term being shown to the user. Defaults to "".
  */
-export const getOrdersCurrentStatus = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'currentStatus' ], 'any' );
+export const getOrdersCurrentSearch = ( state, siteId = getSelectedSiteId( state ) ) => {
+	return get( state, [ 'extensions', 'woocommerce', 'ui', 'orders', siteId, 'currentSearch' ], '' );
 };

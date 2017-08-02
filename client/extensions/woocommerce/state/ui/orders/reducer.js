@@ -28,11 +28,11 @@ export function currentPage( state = 1, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function currentStatus( state = 'any', action ) {
+export function currentSearch( state = '', action ) {
 	const { type, query } = action;
 	switch ( type ) {
 		case WOOCOMMERCE_UI_ORDERS_SET_QUERY:
-			return query && query.status ? query.status : state;
+			return query && ( 'undefined' !== typeof query.search ) ? query.search : state;
 		default:
 			return state;
 	}
@@ -40,7 +40,7 @@ export function currentStatus( state = 'any', action ) {
 
 const ordersReducer = combineReducers( {
 	currentPage,
-	currentStatus
+	currentSearch
 } );
 
 export default keyedReducer( 'siteId', ordersReducer );
