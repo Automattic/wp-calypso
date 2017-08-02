@@ -2,7 +2,7 @@
  * External dependencies
  */
 import Gridicon from 'gridicons';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 
 class OrderCreated extends Component {
@@ -13,7 +13,7 @@ class OrderCreated extends Component {
 	}
 
 	render() {
-		const { order, translate } = this.props;
+		const { moment, order, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
