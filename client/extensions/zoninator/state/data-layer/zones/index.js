@@ -13,7 +13,7 @@ export const fetchZonesList = ( { dispatch }, action ) => {
 		method: 'GET',
 		path: `/jetpack-blogs/${ siteId }/rest-api/`,
 		query: {
-			path: 'zoninator/v1/zones',
+			path: '/zoninator/v1/zones',
 		},
 	}, action ) );
 };
