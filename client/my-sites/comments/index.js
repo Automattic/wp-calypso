@@ -7,7 +7,7 @@ import page from 'page';
  * Internal dependencies
  */
 import controller from 'my-sites/controller';
-import { comments, redirect } from './controller';
+import { clearCommentNotices, comments, redirect } from './controller';
 import config from 'config';
 
 export default function() {
@@ -24,5 +24,7 @@ export default function() {
 			controller.navigation,
 			comments
 		);
+
+		page.exit( '/comments/*', clearCommentNotices );
 	}
 }
