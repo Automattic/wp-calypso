@@ -5,13 +5,13 @@ import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
-import { recordTrack } from 'reader/stats';
 import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
  */
 import ReaderSidebarHelper from '../helper';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 export class ReaderSidebarTagsListItem extends Component {
 	static propTypes = {
@@ -35,8 +35,10 @@ export class ReaderSidebarTagsListItem extends Component {
 	}
 
 	handleTagSidebarClick = () => {
-		recordTrack( 'calypso_reader_tag_sidebar_click', {
-			slug: this.props.tag.slug,
+		recordAction( 'clicked_reader_sidebar_tag_item' );
+		recordGaEvent( 'Clicked Reader Sidebar Tag Item' );
+		recordTrack( 'calypso_reader_sidebar_tag_item_clicked', {
+			tag: decodeURIComponent( this.props.tag.slug ),
 		} );
 	};
 
