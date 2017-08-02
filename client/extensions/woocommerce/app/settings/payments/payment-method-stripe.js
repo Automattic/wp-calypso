@@ -44,7 +44,8 @@ class PaymentMethodStripe extends Component {
 
 	onEditFieldHandler = ( e ) => {
 		// Limit the statement descriptor field to 22 characters
-		if ( e.target && e.target.name && 'statement_descriptor' === e.target.name ) {
+		// since that is all Stripe will accept
+		if ( e.target && 'statement_descriptor' === e.target.name ) {
 			if ( 22 < e.target.value.length ) {
 				return;
 			}
