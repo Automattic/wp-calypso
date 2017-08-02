@@ -90,7 +90,7 @@ const ReaderAvatar = ( {
 	const avatarElement =
 		( hasAvatar || showPlaceholder ) &&
 		<Gravatar key="author-avatar" user={ author } size={ gravatarSize } />;
-	const iconElements = [ siteIconElement, avatarElement ];
+	const iconElements = hasSiteIcon ? siteIconElement : avatarElement;
 
 	return (
 		<div className={ classes } onClick={ onClick } aria-hidden="true">
