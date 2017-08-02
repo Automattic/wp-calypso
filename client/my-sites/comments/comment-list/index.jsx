@@ -46,6 +46,7 @@ export class CommentList extends Component {
 
 	state = {
 		isBulkEdit: false,
+		// TODO: replace with [] when adding back Bulk Actions
 		lastUndo: null,
 		page: 1,
 		persistedComments: [],
@@ -369,7 +370,7 @@ export class CommentList extends Component {
 							isBulkEdit={ isBulkEdit }
 							commentIsSelected={ this.isCommentSelected( commentId ) }
 							key={ `comment-${ siteId }-${ commentId }` }
-							preventServerRequest={ this.hasCommentJustMovedBackToCurrentStatus( commentId ) }
+							refreshCommentData={ ! this.hasCommentJustMovedBackToCurrentStatus( commentId ) }
 							replyComment={ this.replyComment }
 							setCommentStatus={ this.setCommentStatus }
 							siteId={ siteId }
