@@ -46,6 +46,7 @@ export class CommentList extends Component {
 
 	state = {
 		isBulkEdit: false,
+		lastUndo: null,
 		page: 1,
 		persistedComments: [],
 		// TODO: replace {} with [] after persistedComments is merged
@@ -55,6 +56,7 @@ export class CommentList extends Component {
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.status !== nextProps.status ) {
 			this.setState( {
+				lastUndo: null,
 				page: 1,
 				persistedComments: [],
 				selectedComments: {},
@@ -96,6 +98,8 @@ export class CommentList extends Component {
 			all: [ translate( 'No comments yet.' ), defaultLine ],
 		}, status, [ '', '' ] );
 	}
+
+	hasCommentJustMovedBackToCurrentStatus = commentId => this.state.lastUndo === commentId;
 
 	isCommentPersisted = commentId => -1 !== this.state.persistedComments.indexOf( commentId );
 
@@ -156,6 +160,12 @@ export class CommentList extends Component {
 	setCommentStatus = ( comment, status, options = { isUndo: false, doPersist: false, showNotice: true } ) => {
 		const { commentId, postId } = comment;
 		const { isUndo, doPersist, showNotice } = options;
+
+		if ( isUndo ) {
+			this.setState( { lastUndo: commentId } );
+		} else {
+			this.setState( { lastUndo: null } );
+		}
 
 		if ( doPersist ) {
 			this.updatePersistedComments( commentId, isUndo );
@@ -359,6 +369,7 @@ export class CommentList extends Component {
 							isBulkEdit={ isBulkEdit }
 							commentIsSelected={ this.isCommentSelected( commentId ) }
 							key={ `comment-${ siteId }-${ commentId }` }
+							preventServerRequest={ this.hasCommentJustMovedBackToCurrentStatus( commentId ) }
 							replyComment={ this.replyComment }
 							setCommentStatus={ this.setCommentStatus }
 							siteId={ siteId }

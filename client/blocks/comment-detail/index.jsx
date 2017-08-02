@@ -61,6 +61,7 @@ export class CommentDetail extends Component {
 		isLoading: PropTypes.bool,
 		postAuthorDisplayName: PropTypes.string,
 		postTitle: PropTypes.string,
+		preventServerRequest: PropTypes.bool,
 		repliedToComment: PropTypes.bool,
 		replyComment: PropTypes.func,
 		setCommentStatus: PropTypes.func,
@@ -73,6 +74,7 @@ export class CommentDetail extends Component {
 		commentIsSelected: false,
 		isBulkEdit: false,
 		isLoading: true,
+		preventServerRequest: false,
 	};
 
 	state = {
@@ -201,6 +203,7 @@ export class CommentDetail extends Component {
 			postAuthorDisplayName,
 			postId,
 			postTitle,
+			preventServerRequest,
 			repliedToComment,
 			replyComment,
 			siteId,
@@ -233,7 +236,9 @@ export class CommentDetail extends Component {
 				className={ classes }
 				tabIndex="0"
 			>
-				<QueryComment commentId={ commentId } siteId={ siteId } />
+				{ ! preventServerRequest &&
+					<QueryComment commentId={ commentId } siteId={ siteId } />
+				}
 
 				<CommentDetailHeader
 					authorAvatarUrl={ authorAvatarUrl }
