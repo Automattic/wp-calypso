@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import support from 'lib/url/support';
+import { CUSTOM_DNS } from 'lib/url/support';
 
 class DnsDetails extends React.PureComponent {
 	render() {
@@ -19,7 +19,7 @@ class DnsDetails extends React.PureComponent {
 					'DNS records are special settings that change how your domain works. ' +
 					'They let you connect to third-party services, like an email provider. '
 				) }
-				<a href={ support.CUSTOM_DNS }>
+				<a href={ CUSTOM_DNS }>
 					{ translate( 'Learn more.' ) }
 				</a>
 			</p>
