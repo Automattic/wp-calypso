@@ -31,10 +31,6 @@ class SimplePaymentsView extends Component {
 		const { productImage } = this.props;
 		const { title, description, price, currency, multiple, featuredImageId: productImageId } = product;
 
-		// TODO: product.multiple should be normalized to a boolean value
-		// see https://github.com/Automattic/wp-calypso/pull/16772#discussion_r130579768
-		const multipleIsEnabled = multiple === '1';
-
 		return (
 			<div className="wpview-content wpview-type-simple-payments">
 				{ productImageId && <QueryMedia siteId={ siteId } mediaId={ productImageId } /> }
@@ -60,7 +56,7 @@ class SimplePaymentsView extends Component {
 							{ formatCurrency( price, currency ) }
 						</div>
 						<div className="wpview-type-simple-payments__pay-part">
-							{ multipleIsEnabled &&
+							{ multiple &&
 							<div className="wpview-type-simple-payments__pay-quantity">
 								<input
 									className="wpview-type-simple-payments__pay-quantity-input"
