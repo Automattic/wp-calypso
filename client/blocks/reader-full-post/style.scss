@@ -10,6 +10,7 @@
 }
 
 .reader-full-post__content {
+	margin: 0 auto;
 
 	@include breakpoint( ">1280px" ) {
 		width: 720px;
@@ -32,7 +33,22 @@
 		padding: 0 20px;
 	}
 
-	margin: 0 auto;
+	// Daily Post button
+	.daily-post-button .daily-post-button__button.button.is-primary.is-compact {
+		background: none;
+		border: 0;
+		color: $blue-medium;
+		font-size: 14px;
+		line-height: normal;
+		padding: 0;
+
+		.gridicon {
+			fill: $blue-medium;
+			height: 20px;
+			margin-top: 0;
+			width: 20px;
+		}
+	}
 }
 
 .reader-full-post__back-container {
