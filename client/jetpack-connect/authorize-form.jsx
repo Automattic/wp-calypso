@@ -27,7 +27,8 @@ import {
 	isRemoteSiteOnSitesList,
 	getAuthAttempts,
 	getSiteIdFromQueryObject,
-	getUserAlreadyConnected
+	getUserAlreadyConnected,
+	getOnboardingFromQueryObject
 } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -125,6 +126,27 @@ class JetpackConnectAuthorizeForm extends Component {
 	}
 
 	render() {
+		if ( 'undefined' !== typeof( Storage ) ) {
+			if ( this.props.onboarding || localStorage.getItem( 'jetpackOnboardingPayload' ) ) {
+				if ( localStorage.getItem( 'jetpackOnboardingPayload' ) ) {
+					const jetpackOnboardingPayload = JSON.parse( localStorage.getItem( 'jetpackOnboardingPayload' ) );
+
+					console.log( jetpackOnboardingPayload );
+
+					localStorage.removeItem( 'jetpackOnboardingPayload' );
+				} else {
+					console.log( 'jetpackOnboardingPayload NOT set' );
+
+					if ( ! localStorage.getItem( 'jetpackConnectUrl' ) ) {
+						localStorage.setItem( 'jetpackConnectUrl', this.props.path );
+					}
+
+					document.location.href = '/start/jetpack-onboarding/';
+					return false;
+				}
+			}
+		}
+
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 
 		if ( typeof queryObject === 'undefined' ) {
@@ -152,7 +174,7 @@ export default connect(
 		const requestHasExpiredSecretError = () => hasExpiredSecretError( state );
 		const requestHasXmlrpcError = () => hasXmlrpcError( state );
 		const siteId = getSiteIdFromQueryObject( state );
-
+		
 		return {
 			authAttempts: getAuthAttempts( state, siteSlug ),
 			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
@@ -164,7 +186,8 @@ export default connect(
 			requestHasXmlrpcError,
 			siteSlug,
 			user: getCurrentUser( state ),
-			userAlreadyConnected: getUserAlreadyConnected( state )
+			userAlreadyConnected: getUserAlreadyConnected( state ),
+			onboarding: getOnboardingFromQueryObject( state )
 		};
 	},
 	{
