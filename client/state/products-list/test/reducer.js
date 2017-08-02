@@ -42,6 +42,7 @@ describe( 'reducer', () => {
 		it( 'should store the product list received', () => {
 			const productsList = [ {
 				guided_transfer: {
+					available: true,
 					product_id: 40,
 					product_name: 'Guided Transfer',
 					product_slug: 'guided_transfer',
@@ -65,6 +66,7 @@ describe( 'reducer', () => {
 			it( 'persists state', () => {
 				const original = deepFreeze( {
 					guided_transfer: {
+						available: true,
 						product_id: 40,
 						product_name: 'Guided Transfer',
 						product_slug: 'guided_transfer',
@@ -82,6 +84,7 @@ describe( 'reducer', () => {
 			it( 'loads valid persisted state', () => {
 				const original = deepFreeze( {
 					guided_transfer: {
+						available: true,
 						product_id: 40,
 						product_name: 'Guided Transfer',
 						product_slug: 'guided_transfer',
@@ -99,6 +102,7 @@ describe( 'reducer', () => {
 			it( 'loads default state when schema does not match', () => {
 				const original = deepFreeze( {
 					guided_transfer: {
+						available: true,
 						id: 40,
 						name: 'Guided Transfer',
 						slug: 'guided_transfer',
