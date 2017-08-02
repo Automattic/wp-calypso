@@ -58,7 +58,7 @@ class PlanStorageBar extends Component {
 		return (
 			<div className={ classes }>
 				<ProgressBar
-					className="plan-storage__bar"
+					className="plan-storage__storage-bar"
 					value={ percent }
 					total={ 100 }
 					compact={ true } />
