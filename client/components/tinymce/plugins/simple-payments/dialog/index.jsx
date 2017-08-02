@@ -66,8 +66,11 @@ class SimplePaymentsDialog extends Component {
 			validatorFunction: this.validateFormFields,
 		} );
 
+		const { paymentButtons } = this.props;
+		const hasPaymentButtons = paymentButtons && paymentButtons.length > 0;
+
 		this.state = {
-			activeTab: 'form',
+			activeTab: hasPaymentButtons ? 'list' : 'form',
 			editedPaymentId: this.props.editPaymentId,
 			selectedPaymentId: null,
 			form: this.formStateController.getInitialState(),
