@@ -66,14 +66,22 @@ class AppBanner extends Component {
 		userAgent: ( typeof window !== 'undefined' ) ? navigator.userAgent : '',
 	};
 
-	preventNotificationsClose( appBanner ) {
-		const appBannerNode = ReactDom.findDOMNode( appBanner );
-		if ( ! appBannerNode ) {
+	stopBubblingEvents = ( event ) => {
+		event.stopPropagation();
+	};
+
+	preventNotificationsClose = ( appBanner ) => {
+		if ( ! appBanner ) {
+			this.appBannerNode.removeEventListener( 'mousedown', this.stopBubblingEvents, false );
+			this.appBannerNode.removeEventListener( 'touchstart', this.stopBubblingEvents, false );
 			return;
 		}
-		appBannerNode.addEventListener( 'mousedown', event => event.stopPropagation(), false );
-		appBannerNode.addEventListener( 'touchstart', event => event.stopPropagation(), false );
-	}
+		if ( appBanner ) {
+			this.appBannerNode = ReactDom.findDOMNode( appBanner );
+			this.appBannerNode.addEventListener( 'mousedown', this.stopBubblingEvents, false );
+			this.appBannerNode.addEventListener( 'touchstart', this.stopBubblingEvents, false );
+		}
+	};
 
 	isVisible() {
 		const { dismissedUntil, currentSection } = this.props;
