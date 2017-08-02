@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -63,6 +64,23 @@ class AppBanner extends Component {
 		translate: identity,
 		recordAppBannerOpen: noop,
 		userAgent: ( typeof window !== 'undefined' ) ? navigator.userAgent : '',
+	};
+
+	stopBubblingEvents = ( event ) => {
+		event.stopPropagation();
+	};
+
+	preventNotificationsClose = ( appBanner ) => {
+		if ( ! appBanner && this.appBannerNode ) {
+			this.appBannerNode.removeEventListener( 'mousedown', this.stopBubblingEvents, false );
+			this.appBannerNode.removeEventListener( 'touchstart', this.stopBubblingEvents, false );
+			return;
+		}
+		if ( appBanner ) {
+			this.appBannerNode = ReactDom.findDOMNode( appBanner );
+			this.appBannerNode.addEventListener( 'mousedown', this.stopBubblingEvents, false );
+			this.appBannerNode.addEventListener( 'touchstart', this.stopBubblingEvents, false );
+		}
 	};
 
 	isVisible() {
@@ -140,7 +158,7 @@ class AppBanner extends Component {
 		const { title, copy } = getAppBannerData( translate, currentSection );
 
 		return (
-			<Card className={ classNames( 'app-banner', 'is-compact', currentSection ) }>
+			<Card className={ classNames( 'app-banner', 'is-compact', currentSection ) } ref={ this.preventNotificationsClose }>
 				<TrackComponentView
 					eventName="calypso_mobile_app_banner_impression"
 					eventProperties={ {
