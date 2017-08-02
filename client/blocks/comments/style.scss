@@ -261,7 +261,6 @@
 
 .comments__comment-respondee {
 	color: $gray;
-	font-size: 15px;
 	margin-right: 12px;
 	margin-left: -12px;
 
@@ -283,6 +282,7 @@
 .comments__comment-author {
 	color: darken( $gray, 30% );
 	display: flex;
+	font-size: 14px;
 	font-weight: 500;
 
 	@include breakpoint( "<480px" ) {
@@ -322,7 +322,6 @@
 }
 
 .comments__comment-username {
-	font-size: 15px;
 	color: darken( $gray, 30% );
 	margin-right: 12px;
 }
@@ -338,7 +337,6 @@ a.comments__comment-username {
 .comments__comment-timestamp a {
 	color: lighten( $gray, 10% );
 	font-weight: normal;
-	font-size: 13px;
 	text-decoration: none;
 
 	&:hover {
