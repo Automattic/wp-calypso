@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -64,6 +65,15 @@ class AppBanner extends Component {
 		recordAppBannerOpen: noop,
 		userAgent: ( typeof window !== 'undefined' ) ? navigator.userAgent : '',
 	};
+
+	preventNotificationsClose( appBanner ) {
+		const appBannerNode = ReactDom.findDOMNode( appBanner );
+		if ( ! appBannerNode ) {
+			return;
+		}
+		appBannerNode.addEventListener( 'mousedown', event => event.stopPropagation(), false );
+		appBannerNode.addEventListener( 'touchstart', event => event.stopPropagation(), false );
+	}
 
 	isVisible() {
 		const { dismissedUntil, currentSection } = this.props;
@@ -140,7 +150,7 @@ class AppBanner extends Component {
 		const { title, copy } = getAppBannerData( translate, currentSection );
 
 		return (
-			<Card className={ classNames( 'app-banner', 'is-compact', currentSection ) }>
+			<Card className={ classNames( 'app-banner', 'is-compact', currentSection ) } ref={ this.preventNotificationsClose }>
 				<TrackComponentView
 					eventName="calypso_mobile_app_banner_impression"
 					eventProperties={ {
