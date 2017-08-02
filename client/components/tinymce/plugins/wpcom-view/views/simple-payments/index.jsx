@@ -22,12 +22,13 @@ import { getMediaItem } from 'state/selectors';
 
 class SimplePaymentsView extends Component {
 	render() {
-		const { productId, product, siteId, productImage } = this.props;
+		const { productId, product, siteId } = this.props;
 
 		if ( ! product ) {
 			return ( <QuerySimplePayments siteId={ siteId } productId={ productId } /> );
 		}
 
+		const { productImage } = this.props;
 		const { title, description, price, currency, featuredImageId: productImageId } = product;
 
 		// TODO: make proper icon and store on some proper place.
