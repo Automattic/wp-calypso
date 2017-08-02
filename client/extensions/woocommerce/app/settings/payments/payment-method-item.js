@@ -97,41 +97,23 @@ class PaymentMethodItem extends Component {
 	}
 
 	outputEditComponent = () => {
-		const { currentlyEditingMethod, method } = this.props;
-		if ( method.id === 'paypal' ) {
-			return (
-				<PaymentMethodPaypal
-					method={ currentlyEditingMethod }
-					onCancel={ this.onCancel }
-					onEditField={ this.onEditField }
-					onDone={ this.onDone } />
-			);
+		const { currentlyEditingMethod, method: { id } } = this.props;
+		let PaymentMethod = null;
+		if ( id === 'paypal' ) {
+			PaymentMethod = PaymentMethodPaypal;
+		} else if ( id === 'stripe' ) {
+			PaymentMethod = PaymentMethodStripe;
+		} else if ( id === 'cheque' ) {
+			PaymentMethod = PaymentMethodCheque;
+		} else {
+			PaymentMethod = PaymentMethodEditDialog;
 		}
-		if ( method.id === 'stripe' ) {
-			return (
-				<PaymentMethodStripe
-					method={ currentlyEditingMethod }
-					onCancel={ this.onCancel }
-					onEditField={ this.onEditField }
-					onDone={ this.onDone } />
-			);
-		}
-		if ( method.id === 'cheque' ) {
-			return (
-				<PaymentMethodCheque
-					method={ currentlyEditingMethod }
-					onCancel={ this.onCancel }
-					onEditField={ this.onEditField }
-					onDone={ this.onDone } />
-			);
-		}
-		return (
-			<PaymentMethodEditDialog
-				method={ currentlyEditingMethod }
-				onCancel={ this.onCancel }
-				onEditField={ this.onEditField }
-				onDone={ this.onDone } />
-		);
+
+		return <PaymentMethod
+			method={ currentlyEditingMethod }
+			onCancel={ this.onCancel }
+			onEditField={ this.onEditField }
+			onDone={ this.onDone } />;
 	}
 
 	renderEnabledField = ( isEnabled ) => {
