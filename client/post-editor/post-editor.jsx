@@ -920,8 +920,13 @@ export const PostEditor = React.createClass( {
 		}
 
 		const currentDate = this.moment( date );
-		const ModifiedDate = this.moment( savedPost.date );
-		const diff = !! currentDate.diff( ModifiedDate );
+		const modifiedDate = this.moment( savedPost.date );
+		const dateChange = ! (
+			currentDate.get( 'date' ) === modifiedDate.get( 'date' ) &&
+			currentDate.get( 'month' ) === modifiedDate.get( 'month' ) &&
+			currentDate.get( 'year' ) === modifiedDate.get( 'year' )
+		);
+		const diff = !! currentDate.diff( modifiedDate ) && !! dateChange;
 
 		if ( savedPost.type === 'post' && utils.isPublished( savedPost ) && diff ) {
 			this.warnPublishDateChange();
