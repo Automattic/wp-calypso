@@ -10,30 +10,30 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
-import { getPostCommentsTree } from 'state/comments/selectors';
+import { getDateSortedPostComments } from 'state/comments/selectors';
 
 class ConversationCaterpillarComponent extends React.Component {
 	static propTypes = {
 		blogId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,
-		commentsTree: PropTypes.object.isRequired,
+		comments: PropTypes.array.isRequired,
 	};
 
 	render() {
-		const { commentsTree, translate } = this.props;
-		const lastComment = commentsTree[ last( Object.keys( commentsTree ) ) ];
-		const lastCommenterName = get( lastComment, 'data.author.name' );
-		const commentCount = Object.keys( commentsTree ).length;
+		const { comments, translate } = this.props;
+		const lastComment = last( comments );
+		const lastCommenterName = get( lastComment, 'author.name' );
+		const commentCount = comments.length;
 
-		// At the moment, we just show authors for the entire commentsTree
+		// At the moment, we just show authors for the entire comments array
 		return (
 			<div className="conversation-caterpillar">
-				{ map( commentsTree, comment => {
+				{ map( comments, comment => {
 					return (
 						<Gravatar
 							className="conversation-caterpillar__gravatar"
-							key={ comment.data.ID }
-							user={ comment.data.author }
+							key={ comment.ID }
+							user={ comment.author }
 							size={ 32 }
 							aria-hidden="true"
 						/>
@@ -78,7 +78,7 @@ export const ConversationCaterpillar = localize( ConversationCaterpillarComponen
 
 const ConnectedConversationCaterpillar = connect( ( state, ownProps ) => {
 	return {
-		commentsTree: getPostCommentsTree( state, ownProps.blogId, ownProps.postId, 'all' ),
+		comments: getDateSortedPostComments( state, ownProps.blogId, ownProps.postId ),
 	};
 } )( ConversationCaterpillar );
 
