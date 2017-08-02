@@ -22,6 +22,12 @@ function dependenciesContainCartItem( dependencies ) {
 	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
 }
 
+function getJetpackSiteDestination( dependencies ) {
+	let protocol = dependencies.siteSlug.match( /wordpress\.[a-z]+$/i ) ? 'https' : 'http';
+
+	return protocol + '://' + dependencies.siteSlug;
+}
+
 function getSiteDestination( dependencies ) {
 	if ( dependenciesContainCartItem( dependencies ) ) {
 		return getCheckoutUrl( dependencies );
@@ -251,6 +257,15 @@ if ( config.isEnabled( 'signup/social' ) ) {
 		destination: '/',
 		description: 'Create an account without a blog with social signup enabled.',
 		lastModified: '2017-03-16'
+	};
+}
+
+if ( config.isEnabled( 'jetpack/onboarding' ) ) {
+	flows[ 'jetpack-onboarding' ] = {
+		steps: [ 'jpo-site-title', 'jpo-site-type', 'jpo-homepage', 'jpo-contact-form', 'jpo-summary' ],
+		destination: getJetpackSiteDestination,
+		description: 'Configure a JPO site.',
+		lastModified: '2017-07-14'
 	};
 }
 
