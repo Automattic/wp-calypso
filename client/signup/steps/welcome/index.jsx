@@ -19,7 +19,11 @@ class WelcomeStep extends Component {
 	handleSubmit = ( event ) => {
 		event.preventDefault();
 
-		const { stepName, translate } = this.props;
+		const {
+			goToNextStep,
+			stepName,
+			translate,
+		} = this.props;
 
 		const timestamp = ( new Date() ).getTime();
 		const noise = Math.random().toString( 36 ).substring( 2, 10 );
@@ -31,15 +35,16 @@ class WelcomeStep extends Component {
 			site,
 		} );
 
-		this.props.goToNextStep();
+		goToNextStep();
 	}
 
 	renderContent() {
+		const { translate } = this.props;
 		const buttonClass = 'button is-primary';
 		return (
 			<div className="welcome__content">
 				<button className={ buttonClass } onClick={ this.handleSubmit }>
-					{ this.props.translate( 'Create your account' ) }
+					{ translate( 'Create your account' ) }
 				</button>
 			</div>
 		);
