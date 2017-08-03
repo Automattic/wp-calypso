@@ -46,6 +46,16 @@ import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import PlanStorageBar from 'blocks/plan-storage/bar';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
+/**
+ * Module constants
+ */
+const plansIncludingVideoPress = [
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+];
+
 class MediaSettings extends Component {
 	static propTypes = {
 		fields: PropTypes.object,
@@ -250,12 +260,6 @@ export default connect(
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 		const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
 		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, selectedSiteId, 'photon' );
-		const plansIncludingVideoPress = [
-			PLAN_JETPACK_BUSINESS,
-			PLAN_JETPACK_BUSINESS_MONTHLY,
-			PLAN_JETPACK_PREMIUM,
-			PLAN_JETPACK_PREMIUM_MONTHLY,
-		];
 		const isVideoPressAvailable = includes( plansIncludingVideoPress, sitePlanSlug );
 
 		return {
