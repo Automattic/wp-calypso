@@ -344,7 +344,7 @@ class SimplePaymentsDialog extends Component {
 				onClose={ onClose }
 				buttons={ [
 					<Button onClick={ onClose }>
-						{ translate( 'Cancel' ) }
+						{ translate( 'Close' ) }
 					</Button>,
 				] }
 				additionalClassNames="editor-simple-payments-modal"
