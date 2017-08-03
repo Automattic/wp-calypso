@@ -40,7 +40,7 @@ import {
 	getCurrentUserSiteCount,
 } from 'state/current-user/selectors';
 import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } from 'state/help/directly/actions';
-import { isRequestingSites } from 'state/sites/selectors';
+import { isCurrentPlanPaid, isRequestingSites } from 'state/sites/selectors';
 import {
 	hasUserAskedADirectlyQuestion,
 	isDirectlyFailed,
@@ -48,6 +48,7 @@ import {
 	isDirectlyUninitialized,
 } from 'state/selectors';
 import QueryUserPurchases from 'components/data/query-user-purchases';
+import { getHelpSelectedSiteId } from 'state/help/selectors';
 
 /**
  * Module variables
@@ -402,9 +403,8 @@ const HelpContact = React.createClass( {
 		if ( ! config.isEnabled( 'happychat' ) ) {
 			return false;
 		}
-
 		// if the happychat connection is able to accept chats, use it
-		return this.props.isHappychatAvailable && olark.isUserEligible;
+		return this.props.isHappychatAvailable && olark.isUserEligible && this.props.isSelectedHelpSiteOnPaidPlan;
 	},
 
 	shouldUseDirectly: function() {
@@ -675,6 +675,7 @@ const HelpContact = React.createClass( {
 
 export default connect(
 	( state ) => {
+		const helpSelectedSiteId = getHelpSelectedSiteId( state );
 		return {
 			currentUserLocale: getCurrentUserLocale( state ),
 			currentUser: getCurrentUser( state ),
@@ -690,6 +691,7 @@ export default connect(
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			isRequestingSites: isRequestingSites( state ),
+			isSelectedHelpSiteOnPaidPlan: isCurrentPlanPaid( state, helpSelectedSiteId ),
 		};
 	},
 	{
