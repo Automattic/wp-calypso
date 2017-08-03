@@ -138,9 +138,9 @@ class Orders extends Component {
 		let emptyMessage = translate( 'Your orders will appear here as they come in.' );
 		if ( currentSearch ) {
 			emptyMessage = translate( 'There are no orders matching your search.' );
-		} else if ( 'pending' === currentStatus ) {
+		} else if ( 'pay' === currentStatus ) {
 			emptyMessage = translate( 'You don\'t have any orders awaiting payment.' );
-		} else if ( 'processing' === currentStatus ) {
+		} else if ( 'fulfill' === currentStatus ) {
 			emptyMessage = translate( 'You don\'t have any orders awaiting fulfillment.' );
 		}
 
