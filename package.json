@@ -262,6 +262,7 @@
     "eslint-plugin-jest": "21.2.0",
     "eslint-plugin-react": "7.1.0",
     "eslint-plugin-wpcalypso": "3.4.1",
+    "find-root": "1.1.0",
     "glob": "7.0.3",
     "husky": "0.13.3",
     "ignore": "3.3.5",
