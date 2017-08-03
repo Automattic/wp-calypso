@@ -94,7 +94,7 @@ const webpackConfig = {
 				loader: path.join( __dirname, 'server', 'isomorphic-routing', 'loader' )
 			},
 			{
-				test: /\.js$/,
+				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs[\/\\]search-index)/,
 				loader: [ jsLoader ]
 			},
@@ -108,7 +108,7 @@ const webpackConfig = {
 			path.join( __dirname, 'client', 'extensions' ),
 			'node_modules',
 		],
-		extensions: [ '.json', '.js' ],
+		extensions: [ '.json', '.js', '.jsx' ],
 	},
 	node: {
 		// Tell webpack we want to supply absolute paths for server code,
