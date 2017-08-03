@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -15,7 +16,7 @@ import { getDateSortedPostComments } from 'state/comments/selectors';
 class ConversationPost extends React.Component {
 	static propTypes = {
 		post: React.PropTypes.object.isRequired,
-		comments: React.PropTypes.object.isRequired,
+		comments: React.PropTypes.array.isRequired,
 	};
 
 	render() {
@@ -23,10 +24,7 @@ class ConversationPost extends React.Component {
 		return (
 			<div className="reader-post-card__conversation-post">
 				<CompactPostCard { ...this.props } />
-				<ConversationPostList
-					post={ this.props.post }
-					commentIds={ commentIdsToShow }
-				/>
+				<ConversationPostList post={ this.props.post } commentIds={ commentIdsToShow } />
 			</div>
 		);
 	}
