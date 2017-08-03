@@ -55,6 +55,7 @@ export getMagicLoginRequestedEmailSuccessfully from './get-magic-login-requested
 export getMagicLoginRequestEmailError from './get-magic-login-request-email-error';
 export getMedia from './get-media';
 export getMediaItem from './get-media-item';
+export getMediaStorageLimit from './get-media-storage-limit';
 export getMediaUrl from './get-media-url';
 export getMenuItemTypes from './get-menu-item-types';
 export getMenusUrl from './get-menus-url';
