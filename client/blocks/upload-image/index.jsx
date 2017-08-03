@@ -20,6 +20,7 @@ import {
 } from './constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getMediaItem } from 'state/selectors';
 import Dialog from 'components/dialog';
 import FilePicker from 'components/file-picker';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
@@ -59,6 +60,8 @@ class UploadImage extends Component {
 		doneButtonText: PropTypes.string,
 		addAnImageText: PropTypes.string,
 		dragUploadText: PropTypes.string,
+		defaultImageId: PropTypes.number,
+		defaultImage: PropTypes.object,
 		onError: PropTypes.func,
 		onImageEditorDone: PropTypes.func,
 		onUploadImageDone: PropTypes.func,
@@ -246,6 +249,16 @@ class UploadImage extends Component {
 		this.setState( { uploadedImage: null } );
 	};
 
+	componentDidMount() {
+		// use defaultImage as uploadedImage if set.
+		const { defaultImage } = this.props;
+		if ( defaultImage ) {
+			this.setState( {
+				uploadedImage: defaultImage,
+			} );
+		}
+	}
+
 	componentWillUnmount() {
 		const { selectedImage, editedImage } = this.state;
 
@@ -377,14 +390,19 @@ class UploadImage extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		let { siteId } = ownProps;
+		let { siteId, defaultImage, defaultImageId } = ownProps;
 
 		if ( ! siteId ) {
 			siteId = getSelectedSiteId( state );
 		}
 
+		if ( ! defaultImage && defaultImageId ) {
+			defaultImage = getMediaItem( state, siteId, defaultImageId );
+		}
+	
 		return {
 			siteId,
+			defaultImage,
 		};
 	},
 	{
