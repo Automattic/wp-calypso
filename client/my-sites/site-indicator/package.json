@@ -2,5 +2,5 @@
   "name": "site indicator for updates and errors",
   "version": "0.0.0",
   "private": true,
-  "main": "site-indicator.jsx"
+  "main": "site-indicator.js"
 }

@@ -2,5 +2,5 @@
   "name": "domains",
   "version": "0.0.0",
   "private": true,
-  "main": "domain-management.jsx"
+  "main": "domain-management.js"
 }
