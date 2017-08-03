@@ -10,6 +10,7 @@ import React, { Component, PropTypes } from 'react';
  */
 import Card from 'components/card';
 import FormSelect from 'components/forms/form-select';
+import { getOrderStatusList } from 'woocommerce/lib/order-status';
 import OrderCreated from './order-created';
 import OrderDetailsTable from './order-details-table';
 import OrderFulfillment from './order-fulfillment';
@@ -40,31 +41,9 @@ class OrderDetails extends Component {
 	}
 
 	renderStatus = () => {
-		const { order, translate } = this.props;
+		const { order } = this.props;
 		const classes = `order__status is-${ order.status }`;
-		// TODO: create a helper function for status labels
-		const statuses = [ {
-			value: 'pending',
-			name: translate( 'Pending payment' ),
-		}, {
-			value: 'processing',
-			name: translate( 'Processing' ),
-		}, {
-			value: 'on-hold',
-			name: translate( 'On Hold' ),
-		}, {
-			value: 'completed',
-			name: translate( 'Completed' ),
-		}, {
-			value: 'cancelled',
-			name: translate( 'Cancelled' ),
-		}, {
-			value: 'refunded',
-			name: translate( 'Refunded' ),
-		}, {
-			value: 'failed',
-			name: translate( 'Payment Failed' ),
-		} ];
+		const statuses = getOrderStatusList();
 
 		if ( 'pending' === order.status || 'on-hold' === order.status ) {
 			return (
