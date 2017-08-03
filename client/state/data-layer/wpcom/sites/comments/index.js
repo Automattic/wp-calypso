@@ -50,22 +50,34 @@ export const receiveCommentSuccess = ( store, action, next, response ) => {
 	} );
 };
 
-export const receiveCommentError = ( store, action ) => {
-	const site = getReaderSite( store.getState(), action.siteId );
+export const receiveCommentError = ( { dispatch, getState }, { siteId, commentId } ) => {
+	const site = getReaderSite( getState(), siteId );
 	const siteName = getReaderSiteName( { site } );
 
-	store.dispatch(
-		errorNotice(
-			translate( 'Failed to retrieve comment for site “%(siteName)s”', {
-				args: { siteName },
-			} ),
-		),
-	);
+	if ( siteName ) {
+		dispatch(
+			errorNotice(
+				translate( 'Failed to retrieve comment for site “%(siteName)s”', {
+					args: { siteName },
+				} )
+			)
+		);
+	} else {
+		const rawSite = getRawSite( getState(), siteId );
+		const error =
+			rawSite && rawSite.name
+				? translate( 'Failed to retrieve comment for site “%(siteName)s”', {
+					args: { siteName: rawSite.name },
+				} )
+				: translate( 'Failed to retrieve comment for your site' );
 
-	store.dispatch( {
+		dispatch( errorNotice( error ) );
+	}
+
+	dispatch( {
 		type: COMMENTS_ERROR,
-		siteId: action.siteId,
-		commentId: action.commentId,
+		siteId,
+		commentId,
 	} );
 };
 
