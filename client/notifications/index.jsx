@@ -172,6 +172,14 @@ export class Notifications extends Component {
 					window.open( href, '_blank' );
 				}
 			} ],
+			OPEN_SITE: [ ( store, { siteId, href } ) => {
+				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
+					this.props.checkToggle();
+					page( `/read/blogs/${ siteId }` );
+				} else {
+					window.open( href, '_blank' );
+				}
+			} ],
 			VIEW_SETTINGS: [ () => {
 				this.props.checkToggle();
 				page( '/me/notifications' );
