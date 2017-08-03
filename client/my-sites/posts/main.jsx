@@ -12,7 +12,7 @@ import { map } from 'lodash';
  */
 import PostsNavigation from './posts-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import PostList from './post-list';
+import PostListWrapper from './post-list-wrapper';
 import config from 'config';
 import Main from 'components/main';
 import QueryPosts from 'components/data/query-posts';
@@ -117,7 +117,7 @@ const PostsMain = React.createClass( {
 				<SidebarNavigation />
 				<div className="posts__primary">
 					<PostsNavigation { ...this.props } />
-					<PostList { ...this.props } />
+					<PostListWrapper { ...this.props } />
 				</div>
 				{ path !== '/posts/drafts' && this.mostRecentDrafts() }
 			</Main>
