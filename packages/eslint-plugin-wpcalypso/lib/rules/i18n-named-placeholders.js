@@ -41,6 +41,12 @@ rule = module.exports = function( context ) {
 	return {
 		CallExpression: function( node ) {
 			var singular, plural;
+
+			// Done if no args are passed
+			if ( node.arguments.length === 0 ) {
+				return;
+			}
+
 			if ( 'translate' !== getCallee( node ).name ) {
 				return;
 			}

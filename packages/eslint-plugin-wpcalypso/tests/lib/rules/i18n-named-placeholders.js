@@ -21,6 +21,9 @@ var rule = require( '../../../lib/rules/i18n-named-placeholders' ),
 ( new RuleTester( config ) ).run( 'i18n-named-placeholders', rule, {
 	valid: [
 		{
+			code: 'translate( /* zero args */ );'
+		},
+		{
 			code: 'translate( \'Hello %s\' );'
 		},
 		{
