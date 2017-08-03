@@ -132,6 +132,20 @@ function handleChange() {
 	store.set( STORAGE_KEY, omitUserData( signupProgress ) );
 }
 
+function addStorableDependencies( step, action ) {
+	const { unstorableDependencies } = steps[ step.stepName ];
+
+	if ( isEmpty( action.providedDependencies ) ) {
+		return step;
+	}
+
+	const providedDependencies = isEmpty( unstorableDependencies )
+		? action.providedDependencies
+		: omit( action.providedDependencies, unstorableDependencies );
+
+	return { ...step, providedDependencies };
+}
+
 SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 	var action = payload.action,
 		step = addTimestamp( action.data );
@@ -147,18 +161,18 @@ SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 			loadProgressFromCache();
 			break;
 		case 'SAVE_SIGNUP_STEP':
-			saveStep( step );
+			saveStep( addStorableDependencies( step, action ) );
 			break;
 		case 'SUBMIT_SIGNUP_STEP':
 			debug( 'submit step' );
-			submitStep( step );
+			submitStep( addStorableDependencies( step, action ) );
 			break;
 		case 'PROCESS_SIGNUP_STEP':
-			processStep( step );
+			processStep( addStorableDependencies( step, action ) );
 			break;
 		case 'PROCESSED_SIGNUP_STEP':
 			debug( 'complete step' );
-			completeStep( step );
+			completeStep( addStorableDependencies( step, action ) );
 			break;
 	}
 } );

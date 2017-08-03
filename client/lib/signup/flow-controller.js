@@ -65,6 +65,11 @@ function SignupFlowController( options ) {
 		this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );
 
 		SignupActions.provideDependencies( options.providedDependencies );
+	} else {
+		const storedDependencies = this._getStoredDependencies();
+		if ( ! isEmpty( storedDependencies ) ) {
+			SignupActions.provideDependencies( storedDependencies );
+		}
 	}
 
 	store.set( STORAGE_KEY, options.flowName );
@@ -221,6 +226,20 @@ assign( SignupFlowController.prototype, {
 		return this._flow.destination;
 	},
 
+	_getStoredDependencies() {
+		const requiredDependencies = this._flow.steps.reduce( ( current, stepName ) => {
+			if ( ! steps[ stepName ] || ! steps[ stepName ].providesDependencies ) {
+				return current;
+			}
+			return current.concat( steps[ stepName ].providesDependencies );
+		}, [] );
+
+		return SignupProgressStore.get().reduce(
+			( current, step ) => ( { ...current, ...pick( step.providedDependencies, requiredDependencies ) } ),
+			{}
+		);
+	},
+
 	shouldAutoContinue: function() {
 		return !! this._flow.autoContinue;
 	},
@@ -230,29 +249,7 @@ assign( SignupFlowController.prototype, {
 
 		SignupProgressStore.reset();
 		SignupDependencyStore.reset();
-	},
-
-	canResumeAt( stepName ) {
-		const currentSteps = this._flow.steps;
-		const stepIndex = currentSteps.indexOf( stepName );
-
-		if ( 1 > stepIndex ) {
-			return false;
-		}
-
-		return every(
-			pick( steps, currentSteps.slice( 0, stepIndex ) ),
-			step => {
-				if ( ! step.providesDependencies ) {
-					return true;
-				}
-
-				const dependenciesNotProvided = difference( step.providesDependencies, keys( SignupDependencyStore.get() ) );
-
-				return isEmpty( dependenciesNotProvided );
-			}
-		);
-	},
+	}
 } );
 
 module.exports = SignupFlowController;
