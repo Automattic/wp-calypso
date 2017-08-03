@@ -9,6 +9,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
+import Banner from 'components/banner';
 import FoldableCard from 'components/foldable-card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -20,11 +21,17 @@ import ExternalLink from 'components/external-link';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getJetpackSettingsSaveError, getJetpackSettingsSaveRequestStatus } from 'state/selectors';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { hasFeature } from 'state/sites/plans/selectors';
+import {
+	FEATURE_SPAM_AKISMET_PLUS,
+	PLAN_JETPACK_PERSONAL,
+} from 'lib/plans/constants';
 
 const SpamFilteringSettings = ( {
 	currentAkismetKey,
 	dirtyFields,
 	fields,
+	hasAkismetFeature,
 	hasAkismetKeyError,
 	isRequestingSettings,
 	isSavingSettings,
@@ -40,6 +47,19 @@ const SpamFilteringSettings = ( {
 		( wordpress_api_key && isDirty && isStoredKey && ! hasAkismetKeyError );
 	const isInvalidKey = isDirty && hasAkismetKeyError && ! isStoredKey;
 	let validationText, className, header = null;
+
+	if ( ! inTransition && ! hasAkismetFeature && ! isValidKey ) {
+		return (
+			<Banner
+				description={ translate( 'Detect and tweeze spam automatically, with Akismet.' ) }
+				event={ 'calypso_akismet_settings_upgrade_nudge' }
+				feature={ FEATURE_SPAM_AKISMET_PLUS }
+				plan={ PLAN_JETPACK_PERSONAL }
+				title={ translate( 'Defend your site against spam! Upgrade to Jetpack Personal.' ) }
+			/>
+		);
+	}
+
 	if ( ! inTransition && isValidKey ) {
 		validationText = translate( 'Your Antispam key is valid.' );
 		className = 'is-valid';
@@ -127,7 +147,10 @@ export default connect( state => {
 		jetpackSettingsSaveStatus &&
 		jetpackSettingsSaveStatus === 'error' &&
 		includes( jetpackSettingsSaveError, 'wordpress_api_key' );
+	const hasAkismetFeature = hasFeature( state, selectedSiteId, FEATURE_SPAM_AKISMET_PLUS );
+
 	return {
+		hasAkismetFeature,
 		hasAkismetKeyError,
 	};
 } )( localize( SpamFilteringSettings ) );
