@@ -794,8 +794,12 @@ ul.email-forwarding__list {
 			display: none;
 		}
 
-		span:nth-of-type( 2 ) {
+		span:nth-of-type( 1 ) {
 			@include placeholder();
+		}
+
+		span:nth-of-type( 2 ) {
+			display: none;
 		}
 	}
 }
