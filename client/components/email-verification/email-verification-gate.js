@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 
-import EmailUnverifiedNotice from './email-unverified-notice.jsx';
+import EmailUnverifiedNotice from './email-unverified-notice.js';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 

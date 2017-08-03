@@ -13,7 +13,7 @@ import {
 	getPostShareScheduledActions,
 	getPostSharePublishedActions,
 } from 'state/selectors';
-import QuerySharePostActions from 'components/data/query-share-post-actions/index.jsx';
+import QuerySharePostActions from 'components/data/query-share-post-actions/index.js';
 import CompactCard from 'components/card/compact';
 import SocialLogo from 'social-logos';
 import EllipsisMenu from 'components/ellipsis-menu';

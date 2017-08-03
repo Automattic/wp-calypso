@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PaymentBox from './payment-box.jsx';
+import PaymentBox from './payment-box.js';
 
 const SecurePaymentFormPlaceholder = () => {
 	return (

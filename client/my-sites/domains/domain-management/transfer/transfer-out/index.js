@@ -15,10 +15,10 @@ import Main from 'components/main';
 import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
 import paths from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
-import IcannVerification from './icann-verification.jsx';
-import Locked from './locked.jsx';
-import Unlocked from './unlocked.jsx';
-import TransferProhibited from './transfer-prohibited.jsx';
+import IcannVerification from './icann-verification.js';
+import Locked from './locked.js';
+import Unlocked from './unlocked.js';
+import TransferProhibited from './transfer-prohibited.js';
 
 class Transfer extends React.Component {
 	static propTypes = {
