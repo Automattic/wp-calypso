@@ -64,8 +64,8 @@ export const comments = function( context ) {
 };
 
 export const clearCommentNotices = ( { store }, next ) => {
-	// `page.current` is the "next" path
-	if ( ! startsWith( page.current, '/comments' ) ) {
+	const nextPath = page.current;
+	if ( ! startsWith( nextPath, '/comments' ) ) {
 		const { getState, dispatch } = store;
 		const notices = getNotices( getState() );
 		each( notices, ( { noticeId } ) => {
