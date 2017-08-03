@@ -25,6 +25,21 @@ render: function() {
 }
 ```
 
+To use as changable image:
+
+```js
+import UploadImage from 'blocks/upload-image';
+
+render: function() {
+	return
+		<UploadImage 
+			siteId={ <your-site-id> or currently selected siteId if not specified }
+			defaultImage={ default image or its id }
+			onUploadImageDone={ ( uploadedImage ) => console.log( uploadedImage.ID ) }
+		/>;
+}
+```
+
 To see a more complex example, have a look at `blocks/upload-image/docs/example`.
 
 #### Props

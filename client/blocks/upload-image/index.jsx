@@ -218,6 +218,7 @@ class UploadImage extends Component {
 	};
 
 	renderImageEditor() {
+		const { defaultImage } = this.props;
 		const { isEditingImage, selectedImage, selectedImageName } = this.state;
 
 		if ( ! isEditingImage ) {
@@ -228,14 +229,18 @@ class UploadImage extends Component {
 
 		const classes = classnames( 'upload-image-modal', additionalImageEditorClasses );
 
+		const isEditingDefaultImage = defaultImage && selectedImage === defaultImage.URL;
+
+		const media = isEditingDefaultImage ? defaultImage : {
+			src: selectedImage,
+			file: selectedImageName
+		};
+
 		return (
 			<Dialog additionalClassNames={ classes } isVisible={ true }>
 				<ImageEditor
 					{ ...imageEditorProps }
-					media={ {
-						src: selectedImage,
-						file: selectedImageName,
-					} }
+					media={ media }
 					onDone={ this.onImageEditorDone }
 					onCancel={ this.hideImageEditor }
 					doneButtonText={ doneButtonText ? doneButtonText : 'Done' }
@@ -254,6 +259,9 @@ class UploadImage extends Component {
 		if ( defaultImage ) {
 			this.setState( {
 				uploadedImage: defaultImage,
+				selectedImage: defaultImage.URL,
+				selectedImageName: path.basename( defaultImage.URL ),
+				editedImage: defaultImage.URL,
 			} );
 		}
 	}
