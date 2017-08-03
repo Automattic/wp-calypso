@@ -359,7 +359,9 @@ export class MySitesSidebar extends Component {
 		}
 
 		const countryCode = currentUser.user_ip_country_code;
-		const isCountryAllowed = includes( allowedCountryCodes, countryCode );
+		const isCountryAllowed =
+			includes( allowedCountryCodes, countryCode ) ||
+			( 'development' === config( 'env' ) );
 
 		return (
 			isCountryAllowed &&
