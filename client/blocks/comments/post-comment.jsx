@@ -51,8 +51,6 @@ class PostComment extends Component {
 		} );
 	};
 
-	getDepth = () => Math.min( this.props.depth, this.props.maxDepth );
-
 	renderRepliesList() {
 		const commentChildrenIds = get( this.props.commentsTree, [ this.props.commentId, 'children' ] );
 		// Hide children if more than maxChildrenToShow, but not if replying
@@ -103,7 +101,7 @@ class PostComment extends Component {
 							{ commentChildrenIds.map( childId =>
 								<PostComment
 									{ ...this.props }
-									depth={ this.getDepth() + 1 }
+									depth={ this.props.depth + 1 }
 									key={ childId }
 									commentId={ childId }
 								/>
@@ -157,7 +155,7 @@ class PostComment extends Component {
 	};
 
 	render() {
-		const { commentsTree, commentId } = this.props;
+		const { commentsTree, commentId, depth, maxDepth } = this.props;
 		const comment = get( commentsTree, [ commentId, 'data' ] );
 
 		// todo: connect this constants to the state (new selector)
@@ -193,8 +191,8 @@ class PostComment extends Component {
 			commentAuthorName: parentAuthorName,
 		} = this.getAuthorDetails( parentCommentId );
 
-		const postCommentClassnames = classnames( 'comments__comment depth-', {
-			[ 'depth-' + this.getDepth() ]: this.getDepth() < 4, // only indent up to 3
+		const postCommentClassnames = classnames( 'comments__comment', {
+			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
 		} );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
