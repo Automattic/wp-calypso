@@ -14,7 +14,7 @@ import SignupActions from 'lib/signup/actions';
 import Card from 'components/card';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import FormTextarea from 'components/forms/form-textarea';
+import JPOTextarea from './jpo-textarea';
 import FormFieldset from 'components/forms/form-fieldset';
 import formState from 'lib/form-state';
 import Button from 'components/button';
@@ -24,13 +24,15 @@ import { setJPOSiteTitle } from 'state/signup/steps/jpo-site-title/actions';
 import { getJPOSiteTitle } from 'state/signup/steps/jpo-site-title/selectors';
 
 const JPOSiteTitleStep = React.createClass( {
+	errorMessage: '',
+
 	propTypes: {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
 		setJPOSiteTitle: PropTypes.func.isRequired,
 		signupProgress: PropTypes.array,
-		stepName: PropTypes.string,
+		stepName: PropTypes.string
 	},
 
 	componentWillMount() {
@@ -57,17 +59,45 @@ const JPOSiteTitleStep = React.createClass( {
 	},
 
 	handleChangeEvent( event ) {
+		if ( 'siteTitle' === event.target.name ) {
+			this.setState( { siteTitleInvalid: false } );
+		}
+
+		if ( 'siteDescription' === event.target.name ) {
+			this.setState( { siteDescriptionInvalid: false } );
+		}
+
 		this.formStateController.handleFieldChange( {
 			name: event.target.name,
 			value: event.target.value
 		} );
 	},
 
-	submitStep() {
-		const jpoSiteTitle = {
+	getPayload() {
+		return {
 			siteTitle: formState.getFieldValue( this.state.form, 'siteTitle' ),
 			siteDescription: formState.getFieldValue( this.state.form, 'siteDescription' )
 		};
+	},
+
+	submitStep() {
+		const jpoSiteTitle = this.getPayload();
+
+		if ( ! jpoSiteTitle.siteTitle ) {
+			this.errorMessage = 'Please enter a valid site name and description.';
+			this.setState( { siteTitleInvalid: true } );
+		}
+
+		if ( ! jpoSiteTitle.siteDescription ) {
+			this.errorMessage = 'Please enter a valid site name and description.';
+			this.setState( { siteDescriptionInvalid: true } );
+		}
+
+		console.log( jpoSiteTitle.siteTitle, jpoSiteTitle.siteDescription );
+
+		if ( ! ( jpoSiteTitle.siteTitle && jpoSiteTitle.siteDescription ) ) {
+			return false;
+		}
 
 		this.props.setJPOSiteTitle( jpoSiteTitle );
 
@@ -90,16 +120,19 @@ const JPOSiteTitleStep = React.createClass( {
 				<FormFieldset>
 					<FormLabel>{ translate( 'Site Title' ) }</FormLabel>
 					<FormTextInput 
+						isError={ this.state.siteTitleInvalid }
 						className="jpo__site-title-input"
 						name="siteTitle"
 						onChange={ this.handleChangeEvent }
 					/>
 					<FormLabel>{ translate( 'Site Description' ) }</FormLabel>
-					<FormTextarea 
+					<JPOTextarea
+						isError={ this.state.siteDescriptionInvalid } 
 						className="jpo__site-description-input" 
 						name="siteDescription"
 						onChange={ this.handleChangeEvent }
 					/>
+					<FormLabel className="jpo__validation-error">{ this.errorMessage }</FormLabel>
 					<Button primary onClick={ this.submitStep } className="jpo__site-title-submit">{ translate( 'Next Step' ) }</Button>
 				</FormFieldset>
 			</Card>
