@@ -392,12 +392,18 @@ class SimplePaymentsDialog extends Component {
 
 		if ( ! planHasSimplePaymentsFeature ) {
 			return this.renderEmptyDialog(
-				<UpgradeNudge
-					title={ translate( 'Upgrade to a Premium Plan!' ) }
-					icon=""
-					feature={ FEATURE_SIMPLE_PAYMENTS }
-					shouldDisplay={ this.returnTrue }
-				/>
+				<div className="editor-simple-payments-modal__nudge-wrapper">
+					<div className="editor-simple-payments-modal__nudge-title">{ translate( 'Insert payment button' ) }</div>
+					<div className="editor-simple-payments-modal__nudge-subtitle">
+						{ translate( 'To insert Payment Button to your site, upgrade your plan.' ) }
+					</div>
+					<UpgradeNudge
+						className="editor-simple-payments-modal__nudge-nudge"
+						title={ translate( 'Upgrade to a Premium Plan!' ) }
+						feature={ FEATURE_SIMPLE_PAYMENTS }
+						shouldDisplay={ this.returnTrue }
+					/>
+				</div>
 			);
 		}
 
