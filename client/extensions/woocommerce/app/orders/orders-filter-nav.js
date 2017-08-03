@@ -29,9 +29,18 @@ class OrdersFilterNav extends Component {
 
 	render() {
 		const { translate, site, status } = this.props;
+		let currentSelection = translate( 'All orders' );
+		if ( 'pay' === status ) {
+			currentSelection = translate( 'Awaiting Payment' );
+		} else if ( 'fulfill' === status ) {
+			currentSelection = translate( 'Awaiting Fulfillment' );
+		} else if ( 'finished' === status ) {
+			currentSelection = translate( 'Completed' );
+		}
+
 		return (
-			<SectionNav>
-				<NavTabs label={ translate( 'Status' ) } selectedText={ translate( 'All orders' ) }>
+			<SectionNav selectedText={ currentSelection }>
+				<NavTabs label={ translate( 'Status' ) } selectedText={ currentSelection }>
 					<NavItem path={ getLink( '/store/orders/:site', site ) } selected={ 'any' === status }>
 						{ translate( 'All orders' ) }
 					</NavItem>
