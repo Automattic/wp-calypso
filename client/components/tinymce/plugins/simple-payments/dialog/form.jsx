@@ -50,6 +50,7 @@ class ProductForm extends Component {
 		return (
 			<form className="editor-simple-payments-modal__form">
 				<UploadImage
+					defaultImage={ fieldValues.featuredImageId }
 					onError={ this.handleUploadImageError }
 					onUploadImageDone={ onUploadImageDone }
 				/>

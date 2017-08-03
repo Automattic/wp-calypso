@@ -20,6 +20,7 @@ import {
 } from './constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getMediaItem } from 'state/selectors';
 import Dialog from 'components/dialog';
 import FilePicker from 'components/file-picker';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
@@ -59,6 +60,7 @@ class UploadImage extends Component {
 		doneButtonText: PropTypes.string,
 		addAnImageText: PropTypes.string,
 		dragUploadText: PropTypes.string,
+		defaultImage: PropTypes.any,
 		onError: PropTypes.func,
 		onImageEditorDone: PropTypes.func,
 		onUploadImageDone: PropTypes.func,
@@ -216,6 +218,7 @@ class UploadImage extends Component {
 	};
 
 	renderImageEditor() {
+		const { defaultImage } = this.props;
 		const { isEditingImage, selectedImage, selectedImageName } = this.state;
 
 		if ( ! isEditingImage ) {
@@ -226,14 +229,18 @@ class UploadImage extends Component {
 
 		const classes = classnames( 'upload-image-modal', additionalImageEditorClasses );
 
+		const isEditingDefaultImage = defaultImage && selectedImage === defaultImage.URL;
+
+		const media = isEditingDefaultImage ? defaultImage : {
+			src: selectedImage,
+			file: selectedImageName
+		};
+
 		return (
 			<Dialog additionalClassNames={ classes } isVisible={ true }>
 				<ImageEditor
 					{ ...imageEditorProps }
-					media={ {
-						src: selectedImage,
-						file: selectedImageName,
-					} }
+					media={ media }
 					onDone={ this.onImageEditorDone }
 					onCancel={ this.hideImageEditor }
 					doneButtonText={ doneButtonText ? doneButtonText : 'Done' }
@@ -245,6 +252,19 @@ class UploadImage extends Component {
 	removeUploadedImage = () => {
 		this.setState( { uploadedImage: null } );
 	};
+
+	componentWillMount() {
+		// use defaultImage as uploadedImage if set.
+		const { defaultImage } = this.props;
+		if ( defaultImage ) {
+			this.setState( {
+				uploadedImage: defaultImage,
+				selectedImage: defaultImage.URL,
+				selectedImageName: path.basename( defaultImage.URL ),
+				editedImage: defaultImage.URL,
+			} );
+		}
+	}
 
 	componentWillUnmount() {
 		const { selectedImage, editedImage } = this.state;
@@ -377,14 +397,19 @@ class UploadImage extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		let { siteId } = ownProps;
+		let { siteId, defaultImage } = ownProps;
 
 		if ( ! siteId ) {
 			siteId = getSelectedSiteId( state );
 		}
 
+		if ( ! defaultImage || typeof( defaultImage ) !== 'object' ) {
+			defaultImage = getMediaItem( state, siteId, defaultImage );
+		}
+
 		return {
 			siteId,
+			defaultImage,
 		};
 	},
 	{

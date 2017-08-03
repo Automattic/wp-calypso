@@ -25,6 +25,21 @@ render: function() {
 }
 ```
 
+To use as changable image:
+
+```js
+import UploadImage from 'blocks/upload-image';
+
+render: function() {
+	return
+		<UploadImage 
+			siteId={ <your-site-id> or currently selected siteId if not specified }
+			defaultImage={ default image or its id }
+			onUploadImageDone={ ( uploadedImage ) => console.log( uploadedImage.ID ) }
+		/>;
+}
+```
+
 To see a more complex example, have a look at `blocks/upload-image/docs/example`.
 
 #### Props
@@ -39,6 +54,7 @@ To see a more complex example, have a look at `blocks/upload-image/docs/example`
 - `doneButtonText`: text on the "Done" button in Image Editor modal.
 - `addAnImageText`: text on the image picker when selecting an image.
 - `dragUploadText`: text which shows when dragging an image to upload.
+- `defaultImage`: previously uploaded image or its id to be used as default image.
 
 There's a way to design and supply your own HTML for the image picker (when no image is selected) by supplying the
 `imagePickerContent` prop and for the uploading process (when image is being uploaded) by supplying the
