@@ -71,7 +71,7 @@ class ListItem extends React.PureComponent {
 		if ( this.props.enableSelection ) {
 			return null;
 		}
-		return <Gridicon className="card__link-indicator" icon="chevron-right" />
+		return <Gridicon className="card__link-indicator" icon="chevron-right" />;
 	}
 
 	handleClick = () => {
