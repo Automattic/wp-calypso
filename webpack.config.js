@@ -83,7 +83,7 @@ const webpackConfig = {
 		noParse: /[\/\\]node_modules[\/\\]localforage[\/\\]dist[\/\\]localforage\.js$/,
 		rules: [
 			{
-				test: /\.jsx?$/,
+				test: /\.js$/,
 				exclude: /node_modules[\/\\](?!notifications-panel)/,
 				loader: [ jsLoader ]
 			},
@@ -115,7 +115,7 @@ const webpackConfig = {
 		]
 	},
 	resolve: {
-		extensions: [ '.json', '.js', '.jsx' ],
+		extensions: [ '.json', '.js' ],
 		modules: [
 			path.join( __dirname, 'client' ),
 			'node_modules',

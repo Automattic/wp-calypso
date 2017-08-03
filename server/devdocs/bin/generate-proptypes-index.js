@@ -113,7 +113,7 @@ const readFile = ( filePath ) => {
 const processFile = ( filePath ) => {
 	const filename = path.basename( filePath );
 	const includePathRegEx = new RegExp(`^client/(.*?)/${ filename }$`);
-	const includePathSuffix = ( filename === 'index.jsx' ? '' : '/' + path.basename( filename, '.jsx' ) );
+	const includePathSuffix = ( filename === 'index.js' ? '' : '/' + path.basename( filename, '.js' ) );
 	const includePath = includePathRegEx.exec( filePath )[1] + includePathSuffix;
 	try {
 		const usePath = path.isAbsolute( filePath ) ? filePath : path.join( process.cwd(), filePath );
