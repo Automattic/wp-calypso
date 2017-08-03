@@ -111,7 +111,3 @@ export const fetchMagicLoginAuthenticate = ( email, token, tt ) => dispatch => {
 			} );
 		} );
 };
-
-export function goBackToWordPressDotCom() {
-	window.location = 'https://wordpress.com';
-}
