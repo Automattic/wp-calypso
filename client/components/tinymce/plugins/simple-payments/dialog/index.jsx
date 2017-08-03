@@ -35,6 +35,9 @@ import {
 	receiveUpdateProduct,
 	receiveDeleteProduct,
 } from 'state/simple-payments/product-list/actions';
+import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
+import { hasFeature } from 'state/sites/plans/selectors';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
@@ -333,8 +336,39 @@ class SimplePaymentsDialog extends Component {
 		return buttons;
 	}
 
+	renderEmptyDialog( content ) {
+		const { onClose, translate, showDialog } = this.props;
+		return (
+			<Dialog
+				isVisible={ showDialog }
+				onClose={ onClose }
+				buttons={ [
+					<Button onClick={ onClose }>
+						{ translate( 'Cancel' ) }
+					</Button>,
+				] }
+				additionalClassNames="editor-simple-payments-modal"
+			>
+				{ content }
+			</Dialog>
+		);
+	}
+
+	returnTrue() {
+		return true;
+	}
+
 	render() {
-		const { showDialog, onClose, siteId, paymentButtons, currencyCode, isJetpackNotSupported, translate } = this.props;
+		const {
+			showDialog,
+			onClose,
+			siteId,
+			paymentButtons,
+			currencyCode,
+			isJetpackNotSupported,
+			translate,
+			planHasSimplePaymentsFeature
+		} = this.props;
 		const { activeTab, errorMessage } = this.state;
 
 		// Don't show navigation on 'form' tab if the list is empty or if directly editing
@@ -344,23 +378,23 @@ class SimplePaymentsDialog extends Component {
 			( activeTab === 'form' && ! this.isDirectEdit() && ! isEmptyArray( paymentButtons ) );
 
 		if ( isJetpackNotSupported ) {
-			return (
-				<Dialog
-					isVisible={ showDialog }
-					onClose={ onClose }
-					buttons={ [
-						<Button onClick={ onClose }>
-							{ translate( 'Cancel' ) }
-						</Button>,
-					] }
-					additionalClassNames="editor-simple-payments-modal"
-				>
-					<Notice status="is-error" text={
-						translate( 'Please upgrade to Jetpack 5.2 to use Simple Payments feature' )
-					} onDismissClick={ onClose } />
-				</Dialog>
+			return this.renderEmptyDialog(
+				<Notice status="is-error" text={
+					translate( 'Please upgrade to Jetpack 5.2 to use Simple Payments feature' )
+				} onDismissClick={ onClose } />
 			);
 		}
+
+		if ( ! planHasSimplePaymentsFeature ) {
+			return this.renderEmptyDialog(
+				<UpgradeNudge
+					title={ translate( 'Upgrade to a Premium Plan!' ) }
+					feature={ FEATURE_SIMPLE_PAYMENTS }
+					shouldDisplay={ this.returnTrue }
+				/>
+			);
+		}
+
 		return (
 			<Dialog
 				isVisible={ showDialog }
@@ -411,6 +445,7 @@ export default connect( ( state, { siteId } ) => {
 		siteId,
 		paymentButtons: getSimplePayments( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
-		isJetpackNotSupported: isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' )
+		isJetpackNotSupported: isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' ),
+		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS )
 	};
 } )( localize( SimplePaymentsDialog ) );
