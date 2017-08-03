@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,7 @@ export default function() {
 		updateLastRoute,
 		initAbTests,
 		sidebar,
-		conversations,
+		conversations
 	);
 
 	page(
@@ -25,6 +26,6 @@ export default function() {
 		updateLastRoute,
 		initAbTests,
 		sidebar,
-		conversationsA8c,
+		conversationsA8c
 	);
 }

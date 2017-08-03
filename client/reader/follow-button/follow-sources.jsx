@@ -1,3 +1,4 @@
+/** @format */
 /* Follow Source Constants */
 export const IN_STREAM_RECOMMENDATION = 'in-stream-recommendation';
 export const EMPTY_SEARCH_RECOMMENDATIONS = 'empty-search-rec';
@@ -11,4 +12,3 @@ export const READER_FOLLOWING_MANAGE_SEARCH_RESULT = 'reader-following-manage-se
 export const READER_FOLLOWING_MANAGE_RECOMMENDATION = 'reader-following-manage-recommendation';
 export const TAG_PAGE = 'reader-tag-page';
 export const DISCOVER_POST = 'reader-discover-post';
-

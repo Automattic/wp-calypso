@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -22,7 +23,7 @@ export function requestCommentEmailSubscription( { dispatch }, action ) {
 			apiVersion: '1.2',
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 }
 
@@ -45,7 +46,7 @@ export default {
 		dispatchRequest(
 			requestCommentEmailSubscription,
 			receiveCommentEmailSubscription,
-			receiveCommentEmailSubscriptionError,
+			receiveCommentEmailSubscriptionError
 		),
 	],
 };

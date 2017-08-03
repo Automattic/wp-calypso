@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -27,15 +28,16 @@ function renderPostNotFound() {
 			message={ i18n.translate( 'Post Not Found' ) }
 		/>,
 		document.getElementById( 'primary' ),
-		context.store,
+		context.store
 	);
 }
 
-const scrollTopIfNoHash = () => defer( () => {
-	if ( typeof window !== 'undefined' && ! window.location.hash ) {
-		window.scrollTo( 0, 0 );
-	}
-} );
+const scrollTopIfNoHash = () =>
+	defer( () => {
+		if ( typeof window !== 'undefined' && ! window.location.hash ) {
+			window.scrollTo( 0, 0 );
+		}
+	} );
 
 export function blogPost( context ) {
 	const blogId = context.params.blog,
@@ -61,7 +63,7 @@ export function blogPost( context ) {
 			onPostNotFound={ renderPostNotFound }
 		/>,
 		document.getElementById( 'primary' ),
-		context.store,
+		context.store
 	);
 	scrollTopIfNoHash();
 }
@@ -87,7 +89,7 @@ export function feedPost( context ) {
 			onPostNotFound={ renderPostNotFound }
 		/>,
 		document.getElementById( 'primary' ),
-		context.store,
+		context.store
 	);
 	scrollTopIfNoHash();
 }

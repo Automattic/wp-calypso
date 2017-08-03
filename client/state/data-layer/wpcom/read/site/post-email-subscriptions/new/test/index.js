@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -34,7 +35,7 @@ describe( 'comment-email-subscriptions', () => {
 					apiVersion: '1.2',
 					onSuccess: action,
 					onFailure: action,
-				} ),
+				} )
 			);
 		} );
 	} );
@@ -49,7 +50,7 @@ describe( 'comment-email-subscriptions', () => {
 				},
 			} );
 			expect( dispatch ).to.have.been.calledWith(
-				local( updateNewPostEmailSubscription( 1234, 'daily' ) ),
+				local( updateNewPostEmailSubscription( 1234, 'daily' ) )
 			);
 		} );
 

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -35,8 +36,8 @@ describe( 'reducer', () => {
 					{
 						type: READER_TEAMS_RECEIVE,
 						payload: { teams: [ TEAM1 ] },
-					},
-				),
+					}
+				)
 			).to.deep.equal( [ TEAM1 ] );
 		} );
 
@@ -47,8 +48,8 @@ describe( 'reducer', () => {
 					{
 						type: READER_TEAMS_RECEIVE,
 						payload: { teams: [ TEAM1, TEAM2 ] },
-					},
-				),
+					}
+				)
 			).to.deep.equal( [ TEAM1, TEAM2 ] );
 		} );
 
@@ -72,7 +73,7 @@ describe( 'reducer', () => {
 			expect(
 				isRequesting( false, {
 					type: READER_TEAMS_REQUEST,
-				} ),
+				} )
 			).to.equal( true );
 		} );
 
@@ -81,7 +82,7 @@ describe( 'reducer', () => {
 				isRequesting( true, {
 					type: READER_TEAMS_RECEIVE,
 					teams: [ {}, {}, {} ],
-				} ),
+				} )
 			).to.equal( false );
 		} );
 
@@ -90,7 +91,7 @@ describe( 'reducer', () => {
 				isRequesting( true, {
 					type: READER_TEAMS_RECEIVE,
 					error: new Error( 'test error' ),
-				} ),
+				} )
 			).to.equal( false );
 		} );
 	} );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -148,5 +149,5 @@ export default localize(
 				</Card>
 			);
 		}
-	},
+	}
 );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -44,13 +45,12 @@ const SpacerDiv = withDimensions( ( { width, height } ) =>
 			width: `${ width }px`,
 			height: `${ height }px`,
 		} }
-	/>,
+	/>
 );
 
 class SearchStream extends React.Component {
 	static propTypes = {
 		query: PropTypes.string,
-
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -156,7 +156,7 @@ class SearchStream extends React.Component {
 					railcar={ suggestion.railcar }
 				/>,
 				', ',
-			] ),
+			] )
 		);
 
 		return (

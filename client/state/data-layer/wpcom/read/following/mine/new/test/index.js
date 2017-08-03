@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -40,7 +41,7 @@ describe( 'requestFollow', () => {
 				},
 				onSuccess: action,
 				onFailure: action,
-			} ),
+			} )
 		);
 
 		expect( dispatch ).to.be.calledWithMatch( {
@@ -78,8 +79,8 @@ describe( 'receiveFollow', () => {
 					date_subscribed: 211636800000,
 					delivery_methods: {},
 					is_owner: false,
-				} ),
-			),
+				} )
+			)
 		);
 	} );
 

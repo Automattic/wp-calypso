@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -64,7 +65,7 @@ function getDistanceBetweenRecs( totalSubs ) {
 	const distance = clamp(
 		Math.floor( Math.log( totalSubs ) * Math.LOG2E * 5 - 6 ),
 		MIN_DISTANCE_BETWEEN_RECS,
-		MAX_DISTANCE_BETWEEN_RECS,
+		MAX_DISTANCE_BETWEEN_RECS
 	);
 	return distance;
 }
@@ -282,7 +283,7 @@ class ReaderStream extends React.Component {
 
 	isPostFullScreen() {
 		return !! window.location.pathname.match(
-			/^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i,
+			/^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i
 		);
 	}
 
@@ -408,7 +409,7 @@ class ReaderStream extends React.Component {
 			selectedPostKey &&
 			selectedPostKey.postId === postKey.postId &&
 			( selectedPostKey.blogId === postKey.blogId || selectedPostKey.feedId === postKey.feedId )
-		 );
+		);
 
 		const itemKey = this.getPostRef( postKey );
 		const showPost = args =>
@@ -484,9 +485,7 @@ class ReaderStream extends React.Component {
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.showUpdates } />
 				{ this.props.children }
 				{ body }
-				{ showingStream && store.isLastPage() && this.state.posts.length
-					? <ListEnd />
-					: null }
+				{ showingStream && store.isLastPage() && this.state.posts.length ? <ListEnd /> : null }
 			</TopLevel>
 		);
 	}
@@ -498,6 +497,6 @@ export default localize(
 			blockedSites: getBlockedSites( state ),
 			totalSubs: getReaderFollows( state ).length,
 		} ),
-		{ resetCardExpansions },
-	)( ReaderStream ),
+		{ resetCardExpansions }
+	)( ReaderStream )
 );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +32,7 @@ class ReaderPostOptionsMenuBlogStickers extends React.Component {
 						hasSticker={ includes( stickers, blogStickerName ) }
 					>
 						{ blogStickerName }
-					</ReaderPostOptionsMenuBlogStickerMenuItem>,
+					</ReaderPostOptionsMenuBlogStickerMenuItem>
 				) }
 				{ ! stickers && <QueryBlogStickers blogId={ blogId } /> }
 			</div>

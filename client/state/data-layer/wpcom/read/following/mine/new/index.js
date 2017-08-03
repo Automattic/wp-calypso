@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -32,7 +33,7 @@ export function requestFollow( { dispatch, getState }, action ) {
 			},
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 
 	// build up a notice to show
@@ -42,7 +43,7 @@ export function requestFollow( { dispatch, getState }, action ) {
 	dispatch(
 		successNotice( translate( "You're now following %(siteTitle)s", { args: { siteTitle } } ), {
 			duration: 5000,
-		} ),
+		} )
 	);
 }
 
@@ -61,8 +62,8 @@ export function followError( { dispatch }, action, next, response ) {
 			translate( 'Sorry, there was a problem following %(url)s. Please try again.', {
 				args: { url: action.payload.feedUrl },
 			} ),
-			{ duration: 5000 },
-		),
+			{ duration: 5000 }
+		)
 	);
 
 	if ( response && response.info ) {
