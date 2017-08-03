@@ -3,7 +3,7 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { throttle } from 'lodash';
+import { debounce } from 'lodash';
 import React from 'react';
 import debugFactory from 'debug';
 
@@ -49,14 +49,14 @@ class PreviewMain extends React.Component {
 		} );
 	}
 
-	throttledUpdateLayout = throttle( this.updateLayout, 100 );
+	debouncedUpdateLayout = debounce( this.updateLayout, 50 );
 
 	componentDidMount() {
-		global.window && global.window.addEventListener( 'resize', this.throttledUpdateLayout );
+		global.window && global.window.addEventListener( 'resize', this.debouncedUpdateLayout );
 	}
 
 	componentWillUnmount() {
-		global.window && global.window.removeEventListener( 'resize', this.throttledUpdateLayout );
+		global.window && global.window.removeEventListener( 'resize', this.debouncedUpdateLayout );
 	}
 
 	updateUrl() {
