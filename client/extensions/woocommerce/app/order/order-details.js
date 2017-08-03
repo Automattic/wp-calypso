@@ -96,8 +96,8 @@ class OrderDetails extends Component {
 					<span>{ this.renderStatus() }</span>
 				</SectionHeader>
 				<Card className="order__details-card">
-					<OrderDetailsTable order={ order } site={ site } />
 					<OrderCreated order={ order } site={ site } />
+					<OrderDetailsTable order={ order } site={ site } />
 					<OrderRefundCard order={ order } site={ site } />
 					<OrderFulfillment order={ order } site={ site } />
 				</Card>
