@@ -3,7 +3,8 @@
   "version": "0.1.0-alpha.1",
   "description": "React components, as used on WordPress.com",
   "scripts": {
-    "test": "run-s -s test-client test-server test-test"
+    "build": "babel ./index.js --out-dir cjs && babel ./button --out-dir cjs/button && babel ./main --out-dir cjs/main",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -20,7 +21,11 @@
     "url": "https://github.com/automattic/wp-calypso/issues"
   },
   "homepage": "https://github.com/Automattic/wp-calypso/blob/master/docs/components.md",
+  "main": "./cjs/index.js",
+  "module": "./index.js",
   "files": [
+    "index.js",
+    "cjs/",
     "button/",
     "main/"
   ],
@@ -32,5 +37,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1"
   }
 }
