@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -345,13 +346,25 @@ export class MySitesSidebar extends Component {
 	};
 
 	store() {
-		const { canUserManageOptions, isJetpack, site, siteSuffix, translate } = this.props;
+		// IMPORTANT: If you add a country to this list, you must also add it
+		// to ../../extensions/woocommerce/lib/countries in the getCountries function
+		const allowedCountryCodes = [ 'US', 'CA' ];
+		const { currentUser, canUserManageOptions, isJetpack, site, siteSuffix, translate } = this.props;
 		const storeLink = '/store' + siteSuffix;
 		const showStoreLink = config.isEnabled( 'woocommerce/extension-dashboard' ) &&
 			site && isJetpack && canUserManageOptions && this.props.isSiteAutomatedTransfer;
 
+		if ( ! showStoreLink ) {
+			return null;
+		}
+
+		const countryCode = currentUser.user_ip_country_code;
+		const isCountryAllowed =
+			includes( allowedCountryCodes, countryCode ) ||
+			( 'development' === config( 'env' ) );
+
 		return (
-			showStoreLink &&
+			isCountryAllowed &&
 			<SidebarItem
 				label={ translate( 'Store (BETA)' ) }
 				link={ storeLink }
