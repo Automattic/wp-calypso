@@ -1,9 +1,10 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { map, get, last } from 'lodash';
+import { map, get, last, uniqBy, size } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /***
@@ -23,17 +24,19 @@ class ConversationCaterpillarComponent extends React.Component {
 		const { comments, translate } = this.props;
 		const lastComment = last( comments );
 		const lastCommenterName = get( lastComment, 'author.name' );
-		const commentCount = comments.length;
+		const commentCount = size( comments );
+		const uniqueAuthors = uniqBy( map( comments, 'author' ), 'ID' );
+		const uniqueAuthorsCount = size( uniqueAuthors );
 
 		// At the moment, we just show authors for the entire comments array
 		return (
 			<div className="conversation-caterpillar">
-				{ map( comments, comment => {
+				{ map( uniqueAuthors, author => {
 					return (
 						<Gravatar
 							className="conversation-caterpillar__gravatar"
-							key={ comment.ID }
-							user={ comment.author }
+							key={ author.ID }
+							user={ author }
 							size={ 32 }
 							aria-hidden="true"
 						/>
@@ -46,7 +49,7 @@ class ConversationCaterpillarComponent extends React.Component {
 							? translate( 'View comments from %(commenterName)s and %(count)d more', {
 									args: {
 										commenterName: lastCommenterName,
-										count: commentCount - 1,
+										count: uniqueAuthorsCount - 1,
 									},
 								} )
 							: translate( 'View comment from %(commenterName)s', {
@@ -60,7 +63,7 @@ class ConversationCaterpillarComponent extends React.Component {
 						? translate( '%(commenterName)s and %(count)d more', {
 								args: {
 									commenterName: lastCommenterName,
-									count: commentCount - 1,
+									count: uniqueAuthorsCount - 1,
 								},
 							} )
 						: translate( '%(commenterName)s commented', {
