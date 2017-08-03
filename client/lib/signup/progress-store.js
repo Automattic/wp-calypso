@@ -133,7 +133,11 @@ function handleChange() {
 }
 
 function addStorableDependencies( step, action ) {
-	const { unstorableDependencies } = steps[ step.stepName ];
+	let unstorableDependencies;
+
+	if ( steps[ step.stepName ] ) {
+		unstorableDependencies = steps[ step.stepName ].unstorableDependencies;
+	}
 
 	if ( isEmpty( action.providedDependencies ) ) {
 		return step;
