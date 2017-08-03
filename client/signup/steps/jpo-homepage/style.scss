@@ -27,10 +27,11 @@
 }
 
 .jpo__homepage-row .card .button {
-	text-transform: uppercase;
 	font-size: 1.25rem;
 	margin-bottom: 1rem;
 	color: $blue-wordpress;
+	padding: 7px;
+    line-height: 1;
 }
 
 .jpo__homepage-description {

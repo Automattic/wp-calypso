@@ -34,16 +34,19 @@
 }
 
 .jpo__site-type-row .card .button {
-	text-transform: uppercase;
 	font-size: 1.25rem;
 	margin-bottom: 1rem;
 	color: $blue-wordpress;
+	padding: 7px;
+    line-height: 1;
 }
 
 .jpo__site-type-row-small .card .button {
 	text-transform: none;
 	margin-top: 1rem;
 	margin-bottom: 0;
+	padding: 7px;
+    line-height: 1;
 }
 
 .jpo__site-type-description {
@@ -53,6 +56,8 @@
 
 .jpo__site-type-note {
 	text-align: center;
+	color: darken( $gray, 20% );
+	font-size: 14px;
 }
 
 .business-address .card {
