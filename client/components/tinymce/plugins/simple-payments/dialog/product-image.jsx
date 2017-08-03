@@ -20,7 +20,7 @@ const ProductImage = ( { siteId, imageId, image } ) => {
 
 	if ( ! image ) {
 		return (
-			<figure className="editor-simple-payments-modal__list-figure is-placeholder">
+			<figure className="editor-simple-payments-modal__figure is-placeholder">
 				<QueryMedia siteId={ siteId } mediaId={ imageId } />
 			</figure>
 		);
