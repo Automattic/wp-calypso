@@ -54,13 +54,13 @@ export const receiveCommentError = ( store, action ) => {
 	const site = getReaderSite( store.getState(), action.siteId );
 	const siteName = getReaderSiteName( { site } );
 
-	store.dispatch(
-		errorNotice(
-			translate( 'Failed to retrieve comment for site “%(siteName)s”', {
-				args: { siteName },
-			} ),
-		),
-	);
+	const error = siteName
+		? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
+			args: { siteName },
+		} )
+		: translate( 'Failed to retrieve comments for your site' );
+
+	store.dispatch( errorNotice( error ) );
 
 	store.dispatch( {
 		type: COMMENTS_ERROR,
