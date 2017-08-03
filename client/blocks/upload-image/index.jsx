@@ -60,8 +60,7 @@ class UploadImage extends Component {
 		doneButtonText: PropTypes.string,
 		addAnImageText: PropTypes.string,
 		dragUploadText: PropTypes.string,
-		defaultImageId: PropTypes.number,
-		defaultImage: PropTypes.object,
+		defaultImage: PropTypes.any,
 		onError: PropTypes.func,
 		onImageEditorDone: PropTypes.func,
 		onUploadImageDone: PropTypes.func,
@@ -391,14 +390,13 @@ class UploadImage extends Component {
 export default connect(
 	( state, ownProps ) => {
 		let { siteId, defaultImage } = ownProps;
-		const { defaultImageId } = ownProps;
 
 		if ( ! siteId ) {
 			siteId = getSelectedSiteId( state );
 		}
 
-		if ( ! defaultImage && defaultImageId ) {
-			defaultImage = getMediaItem( state, siteId, defaultImageId );
+		if ( ! defaultImage || typeof( defaultImage ) !== 'object' ) {
+			defaultImage = getMediaItem( state, siteId, defaultImage );
 		}
 
 		return {

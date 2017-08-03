@@ -40,7 +40,6 @@ To see a more complex example, have a look at `blocks/upload-image/docs/example`
 - `addAnImageText`: text on the image picker when selecting an image.
 - `dragUploadText`: text which shows when dragging an image to upload.
 - `defaultImage`: previously uploaded image or its id to be used as default image.
-- `defaultImageId`: id of previously uploaded image to be used as default image.
 
 There's a way to design and supply your own HTML for the image picker (when no image is selected) by supplying the
 `imagePickerContent` prop and for the uploading process (when image is being uploaded) by supplying the
