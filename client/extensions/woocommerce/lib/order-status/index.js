@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Lists of statuses in each group, waiting for payment, waiting for
  * fulfillment, and finished orders.
  */
@@ -15,6 +20,36 @@ export const statusFinished = [
 	'failed',
 	'refunded',
 ];
+
+/**
+ * Get a list of order statuses for display (including a translated label)
+ *
+ * @return {Array} List of objects {name,value} for each status
+ */
+export function getOrderStatusList() {
+	return [ {
+		value: 'pending',
+		name: translate( 'Pending payment' ),
+	}, {
+		value: 'processing',
+		name: translate( 'Processing' ),
+	}, {
+		value: 'on-hold',
+		name: translate( 'On Hold' ),
+	}, {
+		value: 'completed',
+		name: translate( 'Completed' ),
+	}, {
+		value: 'cancelled',
+		name: translate( 'Cancelled' ),
+	}, {
+		value: 'refunded',
+		name: translate( 'Refunded' ),
+	}, {
+		value: 'failed',
+		name: translate( 'Payment Failed' ),
+	} ];
+}
 
 /**
  * Checks if this status (from an order) is in the "waiting for payment" group
