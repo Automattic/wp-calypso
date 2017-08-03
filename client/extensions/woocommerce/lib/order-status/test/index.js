@@ -17,6 +17,10 @@ describe( 'isOrderWaitingPayment', () => {
 		expect( isOrderWaitingPayment( 'pending' ) ).to.be.true;
 	} );
 
+	it( 'should be true for an on-hold order', () => {
+		expect( isOrderWaitingPayment( 'on-hold' ) ).to.be.true;
+	} );
+
 	it( 'should be false for a processing order', () => {
 		expect( isOrderWaitingPayment( 'processing' ) ).to.be.false;
 	} );
@@ -39,6 +43,10 @@ describe( 'isOrderWaitingFulfillment', () => {
 		expect( isOrderWaitingFulfillment( 'pending' ) ).to.be.false;
 	} );
 
+	it( 'should be false for an on-hold order', () => {
+		expect( isOrderWaitingFulfillment( 'on-hold' ) ).to.be.false;
+	} );
+
 	it( 'should be true for a processing order', () => {
 		expect( isOrderWaitingFulfillment( 'processing' ) ).to.be.true;
 	} );
@@ -59,6 +67,10 @@ describe( 'isOrderWaitingFulfillment', () => {
 describe( 'isOrderFinished', () => {
 	it( 'should be false for a pending order', () => {
 		expect( isOrderFinished( 'pending' ) ).to.be.false;
+	} );
+
+	it( 'should be false for an on-hold order', () => {
+		expect( isOrderFinished( 'on-hold' ) ).to.be.false;
 	} );
 
 	it( 'should be false for a processing order', () => {
