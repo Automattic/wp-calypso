@@ -249,7 +249,7 @@ class UploadImage extends Component {
 		this.setState( { uploadedImage: null } );
 	};
 
-	componentDidMount() {
+	componentWillMount() {
 		// use defaultImage as uploadedImage if set.
 		const { defaultImage } = this.props;
 		if ( defaultImage ) {
@@ -390,7 +390,8 @@ class UploadImage extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		let { siteId, defaultImage, defaultImageId } = ownProps;
+		let { siteId, defaultImage } = ownProps;
+		const { defaultImageId } = ownProps;
 
 		if ( ! siteId ) {
 			siteId = getSelectedSiteId( state );
@@ -399,7 +400,7 @@ export default connect(
 		if ( ! defaultImage && defaultImageId ) {
 			defaultImage = getMediaItem( state, siteId, defaultImageId );
 		}
-	
+
 		return {
 			siteId,
 			defaultImage,
