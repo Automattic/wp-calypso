@@ -31,8 +31,11 @@ import {
 	isJetpackModuleUnavailableInDevelopmentMode,
 	isJetpackSiteInDevelopmentMode
 } from 'state/selectors';
-import { getMediaStorage } from 'state/sites/media-storage/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	getMediaStorageLimit,
+	getMediaStorageUsed,
+} from 'state/selectors';
 import {
 	getSitePlanSlug,
 	getSiteSlug,
@@ -52,25 +55,16 @@ class MediaSettings extends Component {
 		onChangeField: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 
-		// connected props
+		// Connected props
 		carouselActive: PropTypes.bool.isRequired,
 		isVideoPressActive: PropTypes.bool,
 		isVideoPressAvailable: PropTypes.bool,
-		mediaStorage: PropTypes.shape( {
-			max_storage_bytes: PropTypes.number.isRequired,
-			storage_used_bytes: PropTypes.number.isRequired,
-		} ).isRequired,
+		mediaStorageLimit: PropTypes.number,
+		mediaStorageUsed: PropTypes.number,
 		photonModuleUnavailable: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		sitePlanSlug: PropTypes.string,
 		siteSlug: PropTypes.string,
-	};
-
-	static defaultProps = {
-		mediaStorage: {
-			max_storage_bytes: -1,
-			storage_used_bytes: -1,
-		},
 	};
 
 	renderVideoSettings() {
@@ -105,7 +99,8 @@ class MediaSettings extends Component {
 
 	renderVideoStorageIndicator() {
 		const {
-			mediaStorage,
+			mediaStorageLimit,
+			mediaStorageUsed,
 			siteId,
 			sitePlanSlug,
 			siteSlug,
@@ -113,25 +108,32 @@ class MediaSettings extends Component {
 		} = this.props;
 
 		// The API may use -1 for both values to indicate special cases
-		const isStorageDataValid = mediaStorage.storage_used_bytes > -1;
-		const isStorageUnlimited = mediaStorage.max_storage_bytes > -1;
+		const isStorageDataValid = (
+			null !== mediaStorageUsed &&
+			null !== mediaStorageLimit &&
+			mediaStorageUsed > -1
+		);
+		const isStorageUnlimited = mediaStorageLimit === -1;
 
 		const renderedStorageInfo = isStorageDataValid && (
 			isStorageUnlimited
 				? (
-					<PlanStorageBar
-						siteSlug={ siteSlug }
-						sitePlanSlug={ sitePlanSlug }
-						mediaStorage={ mediaStorage }
-					/>
-				) : (
 					<FormSettingExplanation className="site-settings__videopress-storage-used">
 						{ translate( '%(size)s uploaded, unlimited storage available', {
 							args: {
-								size: filesize( mediaStorage.storage_used_bytes ),
+								size: filesize( mediaStorageUsed ),
 							}
 						} ) }
 					</FormSettingExplanation>
+				) : (
+					<PlanStorageBar
+						siteSlug={ siteSlug }
+						sitePlanSlug={ sitePlanSlug }
+						mediaStorage={ {
+							max_storage_bytes: mediaStorageLimit,
+							storage_used_bytes: mediaStorageUsed,
+						} }
+					/>
 				)
 		);
 
@@ -260,7 +262,8 @@ export default connect(
 			carouselActive: !! isJetpackModuleActive( state, selectedSiteId, 'carousel' ),
 			isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
 			isVideoPressAvailable,
-			mediaStorage: getMediaStorage( state, selectedSiteId ),
+			mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
+			mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
 			photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 			selectedSiteId,
 			sitePlanSlug,
