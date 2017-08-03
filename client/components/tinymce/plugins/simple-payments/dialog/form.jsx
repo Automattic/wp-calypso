@@ -62,6 +62,7 @@ class ProductForm extends Component {
 						<FormTextInput
 							name="title"
 							id="title"
+							placeholder={ translate( 'Product name' ) }
 							value={ fieldValues.title }
 							onChange={ this.handleFieldChange }
 							isError={ isTitleInvalid }
