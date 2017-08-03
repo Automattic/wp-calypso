@@ -13,19 +13,19 @@ import PaymentLogo from 'components/payment-logo';
 
 const ShippingCard = ( { translate, selected, type, digits, name, date, onSelect } ) => {
 	return (
-		<CompactCard className="shipping__card">
+		<CompactCard className="label-settings__card">
 			<FormCheckbox
-				className="shipping__card-checkbox"
+				className="label-settings__card-checkbox"
 				checked={ selected }
 				onChange={ onSelect }
 			/>
-			<div className="shipping__card-info">
-				<PaymentLogo className="shipping__card-logo" type={ type.toLowerCase() } />
-				<div className="shipping__card-details">
-					<p className="shipping__card-number">{ type } ****{ digits }</p>
-					<p className="shipping__card-name">{ name }</p>
+			<div className="label-settings__card-info">
+				<PaymentLogo className="label-settings__card-logo" type={ type.toLowerCase() } />
+				<div className="label-settings__card-details">
+					<p className="label-settings__card-number">{ type } ****{ digits }</p>
+					<p className="label-settings__card-name">{ name }</p>
 				</div>
-				<div className="shipping__card-date">
+				<div className="label-settings__card-date">
 					{ translate( 'Expires %(date)s', {
 						args: { date: date },
 						context: 'date is of the form MM/YY'

@@ -134,6 +134,7 @@
 		"woocommerce/extension-settings-payments": true,
 		"woocommerce/extension-settings-shipping": true,
 		"woocommerce/extension-settings-tax": true,
+		"woocommerce/extension-wcservices": true,
 		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",

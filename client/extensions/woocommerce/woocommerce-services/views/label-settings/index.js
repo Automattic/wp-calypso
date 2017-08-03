@@ -17,7 +17,7 @@ import FormSelect from 'components/forms/form-select';
 import FormToggle from 'components/forms/form-toggle';
 import ShippingCard from './shipping-card';
 
-class ShippingLabels extends Component {
+class LabelSettings extends Component {
 	constructor( props ) {
 		super( props );
 
@@ -78,7 +78,7 @@ class ShippingLabels extends Component {
 				<Card className={ classNames( 'shipping__labels-container', { hidden: ! this.state.visible } ) }>
 					<FormFieldSet>
 						<FormLabel
-							className="shipping__labels-paper-size"
+							className="label-settings__labels-paper-size"
 							htmlFor="paper-size">
 							{ translate( 'Paper size' ) }
 						</FormLabel>
@@ -91,10 +91,10 @@ class ShippingLabels extends Component {
 					</FormFieldSet>
 					<FormFieldSet>
 						<FormLabel
-							className="shipping__cards-label">
+							className="label-settings__cards-label">
 							{ translate( 'Credit card' ) }
 						</FormLabel>
-						<p className="shipping__credit-card-description">
+						<p className="label-settings__credit-card-description">
 							{ translate( 'Use your credit card on file to pay for the labels you print or add a new one.' ) }
 						</p>
 						{ this.state.cards.map( renderCard ) }
@@ -106,4 +106,4 @@ class ShippingLabels extends Component {
 	}
 }
 
-export default localize( ShippingLabels );
+export default localize( LabelSettings );

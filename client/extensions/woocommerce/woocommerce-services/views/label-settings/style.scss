@@ -1,0 +1,42 @@
+
+
+.label-settings__labels-container.hidden {
+	height: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+.form-label.label-settings__labels-paper-size,
+.form-label.label-settings__cards-label {
+	margin-bottom: 4px;
+}
+
+.label-settings__card {
+	margin-bottom: 14px;
+}
+
+.label-settings__card-checkbox {
+	margin-top: 10px;
+	margin-right: 20px;
+}
+
+.payment-logo {
+	float: left;
+	margin-top: 10px;
+	margin-right: 14px;
+}
+
+.label-settings__card-details {
+	float: left;
+}
+
+.label-settings__card-number {
+	margin-bottom: 0;
+	font-weight: bold;
+}
+
+.label-settings__card-date {
+	float: right;
+	color: $gray-text-min;
+	font-style: italic;
+}
