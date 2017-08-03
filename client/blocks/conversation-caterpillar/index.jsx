@@ -27,7 +27,6 @@ class ConversationCaterpillarComponent extends React.Component {
 		// Only display authors with a gravatar, and only display each author once
 		const uniqueAuthors = uniqBy( map( comments, 'author' ), 'ID' );
 		const displayedAuthors = filter( uniqueAuthors, author => !! author.avatar_URL );
-		const displayedAuthorsCount = size( displayedAuthors );
 		const lastAuthorName = get( last( displayedAuthors ), 'name' );
 
 		// At the moment, we just show authors for the entire comments array
@@ -51,7 +50,7 @@ class ConversationCaterpillarComponent extends React.Component {
 							? translate( 'View comments from %(commenterName)s and %(count)d more', {
 									args: {
 										commenterName: lastAuthorName,
-										count: displayedAuthorsCount - 1,
+										count: commentCount - 1,
 									},
 								} )
 							: translate( 'View comment from %(commenterName)s', {
@@ -65,7 +64,7 @@ class ConversationCaterpillarComponent extends React.Component {
 						? translate( '%(commenterName)s and %(count)d more', {
 								args: {
 									commenterName: lastAuthorName,
-									count: displayedAuthorsCount - 1,
+									count: commentCount - 1,
 								},
 							} )
 						: translate( '%(commenterName)s commented', {
