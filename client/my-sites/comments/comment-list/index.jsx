@@ -33,8 +33,9 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 
+export const COMMENTS_STATS_GROUP = 'calypso_comment_management';
+
 const COMMENTS_PER_PAGE = 20;
-const COMMENTS_STATS_GROUP = 'calypso_comment_management';
 const LOADING_TIMEOUT = 2000;
 let loadingTimeoutRef;
 
