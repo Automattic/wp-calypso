@@ -42,8 +42,6 @@ module.exports = React.createClass( {
 	},
 
 	getRelativeTimeText: function() {
-		const status = this.props.post.status;
-
 		const time = this.getTimestamp();
 		if ( ! time ) {
 			return;
@@ -112,7 +110,11 @@ module.exports = React.createClass( {
 
 		if ( this.props.link ) {
 			const rel = this.props.target === '_blank' ? 'noopener noreferrer' : null;
-			details = ( <p className={ realtiveTimeClass } title={ time }><a href={ this.props.link } target={ this.props.target } rel={ rel } onClick={ this.props.onClick }>{ innerText }</a></p> );
+			details = (
+				<p className={ realtiveTimeClass } title={ time }>
+					<a href={ this.props.link } target={ this.props.target } rel={ rel } onClick={ this.props.onClick }>{ innerText }</a>
+				</p>
+			);
 		} else {
 			details = ( <p className={ realtiveTimeClass } title={ time }>{ innerText }</p> );
 		}
