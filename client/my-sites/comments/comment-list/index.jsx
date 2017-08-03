@@ -201,7 +201,7 @@ export class CommentList extends Component {
 	setCommentStatus = ( comment, status, options = { isUndo: false, doPersist: false, showNotice: true } ) => {
 		const { commentId, postId, isLiked } = comment;
 		const { isUndo, doPersist, showNotice } = options;
-		const alsoUnlike = isLiked && ( 'approved' !== status );
+		const alsoUnlikeComment = isLiked && ( 'approved' !== status );
 
 		if ( isUndo ) {
 			this.setState( { lastUndo: commentId } );
@@ -221,10 +221,14 @@ export class CommentList extends Component {
 			this.showNotice( comment, status, { doPersist } );
 		}
 
-		this.props.changeCommentStatus( commentId, postId, status, { alsoUnlike, isUndo } );
+		this.props.changeCommentStatus( commentId, postId, status, {
+			alsoUnlike: alsoUnlikeComment,
+			isUndo,
+			previousStatus: comment.status,
+		} );
 
 		// If the comment is not approved anymore, also remove the like
-		if ( alsoUnlike ) {
+		if ( alsoUnlikeComment ) {
 			this.props.unlikeComment( commentId, postId );
 		}
 	}
@@ -459,7 +463,12 @@ const mapStateToProps = ( state, { siteId, status } ) => {
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	changeCommentStatus: ( commentId, postId, status, analytics = { alsoUnlike: false, isUndo: false } ) => dispatch( withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( 'calypso_comment_management_change_status', { ...analytics, status } ),
+			recordTracksEvent( 'calypso_comment_management_change_status', {
+				also_unlike: analytics.alsoUnlike,
+				is_undo: analytics.isUndo,
+				previous_status: analytics.previousStatus,
+				status,
+			} ),
 			bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
 		),
 		changeCommentStatus( siteId, postId, commentId, status )
@@ -477,7 +486,9 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 
 	likeComment: ( commentId, postId, analytics = { alsoApprove: false } ) => dispatch( withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( 'calypso_comment_management_like', analytics ),
+			recordTracksEvent( 'calypso_comment_management_like', {
+				also_approve: analytics.alsoApprove,
+			} ),
 			bumpStat( 'calypso_comment_management', 'comment_liked' )
 		),
 		likeComment( siteId, postId, commentId )
@@ -492,7 +503,9 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 
 	replyComment: ( commentText, postId, parentCommentId, analytics = { alsoApprove: false } ) => dispatch( withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( 'calypso_comment_management_reply', analytics ),
+			recordTracksEvent( 'calypso_comment_management_reply', {
+				also_approve: analytics.alsoApprove,
+			} ),
 			bumpStat( 'calypso_comment_management', 'comment_reply' )
 		),
 		replyComment( commentText, siteId, postId, parentCommentId )
