@@ -1,3 +1,7 @@
+#### v3.4.1 (2017-08-03)
+
+- Fix: i18n-named-placeholders: Resolve error thrown if `translate` has no arguments
+
 #### v3.4.0 (2017-05-26)
 
 - New Rule: [`redux-no-bound-selectors`](docs/rules/redux-no-bound-selectors.md)
