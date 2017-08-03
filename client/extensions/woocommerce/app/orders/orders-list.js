@@ -24,12 +24,17 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { getOrdersCurrentPage, getOrdersCurrentSearch } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import humanDate from 'lib/human-date';
-import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
+import {
+	ORDER_UNPAID,
+	ORDER_UNFULFILLED,
+	ORDER_COMPLETED,
+} from 'woocommerce/lib/order-status';
 import OrdersFilterNav from './orders-filter-nav';
 import Pagination from 'components/pagination';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
+import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
 
 class Orders extends Component {
 	componentDidMount() {
@@ -138,10 +143,12 @@ class Orders extends Component {
 		let emptyMessage = translate( 'Your orders will appear here as they come in.' );
 		if ( currentSearch ) {
 			emptyMessage = translate( 'There are no orders matching your search.' );
-		} else if ( 'pay' === currentStatus ) {
+		} else if ( ORDER_UNPAID === currentStatus ) {
 			emptyMessage = translate( 'You don\'t have any orders awaiting payment.' );
-		} else if ( 'fulfill' === currentStatus ) {
+		} else if ( ORDER_UNFULFILLED === currentStatus ) {
 			emptyMessage = translate( 'You don\'t have any orders awaiting fulfillment.' );
+		} else if ( ORDER_COMPLETED === currentStatus ) {
+			emptyMessage = translate( 'You don\'t have any completed orders.' );
 		}
 
 		return (

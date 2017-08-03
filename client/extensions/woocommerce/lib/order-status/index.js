@@ -4,6 +4,16 @@
 import { translate } from 'i18n-calypso';
 
 /**
+ * Custom statuses for Calypso
+ *
+ * These are used as collective terms for the WC core statuses,
+ * grouping them by a more general point in an order lifecycle.
+ */
+export const ORDER_UNPAID = 'unpaid';
+export const ORDER_UNFULFILLED = 'unfulfilled';
+export const ORDER_COMPLETED = 'finished';
+
+/**
  * Lists of statuses in each group, waiting for payment, waiting for
  * fulfillment, and finished orders.
  */

@@ -17,6 +17,9 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
 import {
+	ORDER_UNPAID,
+	ORDER_UNFULFILLED,
+	ORDER_COMPLETED,
 	statusWaitingPayment,
 	statusWaitingFulfillment,
 	statusFinished,
@@ -55,11 +58,11 @@ export const fetchOrders = ( siteId, requestedQuery = {} ) => ( dispatch, getSta
 	dispatch( fetchAction );
 
 	// Convert URL status to status group
-	if ( 'pay' === query.status ) {
+	if ( ORDER_UNPAID === query.status ) {
 		query.status = statusWaitingPayment.join( ',' );
-	} else if ( 'fulfill' === query.status ) {
+	} else if ( ORDER_UNFULFILLED === query.status ) {
 		query.status = statusWaitingFulfillment.join( ',' );
-	} else if ( 'finished' === query.status ) {
+	} else if ( ORDER_COMPLETED === query.status ) {
 		query.status = statusFinished.join( ',' );
 	}
 
