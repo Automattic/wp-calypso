@@ -14,6 +14,7 @@ import ProductListItemPlaceholder from './list-item-placeholder';
 
 class ProductList extends Component {
 	static propTypes = {
+		siteId: PropTypes.number.isRequired,
 		paymentButtons: PropTypes.array,
 		selectedPaymentId: PropTypes.number,
 		onSelectedChange: PropTypes.func,
@@ -30,6 +31,7 @@ class ProductList extends Component {
 
 	renderListItems() {
 		const {
+			siteId,
 			paymentButtons,
 			selectedPaymentId,
 			onSelectedChange,
@@ -42,14 +44,16 @@ class ProductList extends Component {
 			return range( 2 ).map( i => <ProductListItemPlaceholder key={ i } /> );
 		}
 
-		return paymentButtons.map( ( { ID: paymentId, title, price, currency } ) =>
+		return paymentButtons.map( ( { ID: paymentId, title, price, currency, featuredImageId } ) =>
 			<ProductListItem
 				key={ paymentId }
+				siteId={ siteId }
 				paymentId={ paymentId }
 				isSelected={ selectedPaymentId === paymentId }
 				title={ title }
 				price={ price }
 				currency={ currency }
+				featuredImageId={ featuredImageId }
 				onSelectedChange={ onSelectedChange }
 				onEditClick={ onEditClick }
 				onTrashClick={ onTrashClick }

@@ -390,6 +390,7 @@ class SimplePaymentsDialog extends Component {
 							showError={ this.showError }
 						/>
 					: <ProductList
+							siteId={ siteId }
 							paymentButtons={ paymentButtons }
 							selectedPaymentId={ this.state.selectedPaymentId }
 							onSelectedChange={ this.handleSelectedChange }
