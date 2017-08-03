@@ -26,8 +26,15 @@ import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import { getSiteCommentsTree } from 'state/selectors';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
 
 const COMMENTS_PER_PAGE = 20;
+const COMMENTS_TRACKS_NAME = 'calypso_comment_management';
 const LOADING_TIMEOUT = 2000;
 let loadingTimeoutRef;
 
@@ -37,6 +44,7 @@ export class CommentList extends Component {
 		comments: PropTypes.array,
 		deleteComment: PropTypes.func,
 		likeComment: PropTypes.func,
+		recordChangePage: PropTypes.func,
 		replyComment: PropTypes.func,
 		setBulkStatus: PropTypes.func,
 		siteId: PropTypes.number,
@@ -93,10 +101,14 @@ export class CommentList extends Component {
 		}
 	}
 
-	changePage = page => this.setState( {
-		page,
-		selectedComments: {},
-	} );
+	changePage = page => {
+		this.props.recordChangePage( page, ( this.props.comments.length + this.state.persistedComments.length ) );
+
+		this.setState( {
+			page,
+			selectedComments: {},
+		} );
+	};
 
 	deleteCommentPermanently = ( commentId, postId ) => {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
@@ -169,7 +181,7 @@ export class CommentList extends Component {
 		}
 
 		this.props.createNotice( 'is-success', noticeMessage, noticeOptions );
-		this.props.replyComment( commentText, postId, parentCommentId );
+		this.props.replyComment( commentText, postId, parentCommentId, { alsoApprove } );
 	}
 
 	// TODO: rewrite after persistedComments is merged
@@ -208,7 +220,7 @@ export class CommentList extends Component {
 			this.showNotice( comment, status, { doPersist } );
 		}
 
-		this.props.changeCommentStatus( commentId, postId, status );
+		this.props.changeCommentStatus( commentId, postId, status, { isUndo } );
 
 		// If the comment is not approved anymore, also remove the like
 		if ( isLiked && 'approved' !== status ) {
@@ -442,15 +454,57 @@ const mapStateToProps = ( state, { siteId, status } ) => {
 };
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	changeCommentStatus: ( commentId, postId, status ) => dispatch( changeCommentStatus( siteId, postId, commentId, status ) ),
+	changeCommentStatus: ( commentId, postId, status, analytics = { isUndo: false } ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( COMMENTS_TRACKS_NAME + '_change_status', { ...analytics, status } ),
+			bumpStat( COMMENTS_TRACKS_NAME, 'comment_change_status_to_' + status )
+		),
+		changeCommentStatus( siteId, postId, commentId, status )
+	) ),
+
 	createNotice: ( status, text, options ) => dispatch( createNotice( status, text, options ) ),
-	deleteComment: ( commentId, postId ) => dispatch( deleteComment( siteId, postId, commentId ) ),
-	likeComment: ( commentId, postId ) => dispatch( likeComment( siteId, postId, commentId ) ),
+
+	deleteComment: ( commentId, postId ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( COMMENTS_TRACKS_NAME + '_unlike' ),
+			bumpStat( COMMENTS_TRACKS_NAME, 'comment_unliked' )
+		),
+		deleteComment( siteId, postId, commentId )
+	) ),
+
+	likeComment: ( commentId, postId, analytics = { alsoApprove: false } ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( COMMENTS_TRACKS_NAME + '_like', analytics ),
+			bumpStat( COMMENTS_TRACKS_NAME, 'comment_liked' )
+		),
+		likeComment( siteId, postId, commentId )
+	) ),
+
+	recordChangePage: ( page, total ) => dispatch( composeAnalytics(
+		recordTracksEvent( COMMENTS_TRACKS_NAME + '_change_page', { page, total } ),
+		bumpStat( COMMENTS_TRACKS_NAME, 'change_page' )
+	) ),
+
 	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
-	replyComment: ( commentText, postId, parentCommentId ) => dispatch( replyComment( commentText, siteId, postId, parentCommentId ) ),
+
+	replyComment: ( commentText, postId, parentCommentId, analytics = { alsoApprove: false } ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( COMMENTS_TRACKS_NAME + '_reply', analytics ),
+			bumpStat( COMMENTS_TRACKS_NAME, 'comment_reply' )
+		),
+		replyComment( commentText, siteId, postId, parentCommentId )
+	) ),
+
 	setBulkStatus: noop,
 	undoBulkStatus: noop,
-	unlikeComment: ( commentId, postId ) => dispatch( unlikeComment( siteId, postId, commentId ) ),
+
+	unlikeComment: ( commentId, postId ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( COMMENTS_TRACKS_NAME + '_unlike' ),
+			bumpStat( COMMENTS_TRACKS_NAME, 'comment_unliked' )
+		),
+		unlikeComment( siteId, postId, commentId )
+	) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentList ) );
