@@ -159,6 +159,9 @@ export class Notifications extends Component {
 			OPEN_POST: [ ( store, { siteId, postId, href } ) => {
 				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
 					this.props.checkToggle();
+					analytics.tracks.recordEvent( 'calypso_notifications_open_post', {
+						siteId, postId
+					} );
 					page( `/read/blogs/${ siteId }/posts/${ postId }` );
 				} else {
 					window.open( href, '_blank' );
@@ -167,6 +170,9 @@ export class Notifications extends Component {
 			OPEN_COMMENT: [ ( store, { siteId, postId, href, commentId } ) => {
 				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
 					this.props.checkToggle();
+					analytics.tracks.recordEvent( 'calypso_notifications_open_comment', {
+						siteId, postId, commentId
+					} );
 					page( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
 				} else {
 					window.open( href, '_blank' );
@@ -175,6 +181,7 @@ export class Notifications extends Component {
 			OPEN_SITE: [ ( store, { siteId, href } ) => {
 				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
 					this.props.checkToggle();
+					analytics.tracks.recordEvent( 'calypso_notifications_open_site', { siteId } );
 					page( `/read/blogs/${ siteId }` );
 				} else {
 					window.open( href, '_blank' );
