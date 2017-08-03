@@ -102,7 +102,8 @@ export class CommentList extends Component {
 	}
 
 	changePage = page => {
-		this.props.recordChangePage( page, ( this.props.comments.length + this.state.persistedComments.length ) );
+		const total = Math.ceil( ( this.props.comments.length + this.state.persistedComments.length ) / COMMENTS_PER_PAGE );
+		this.props.recordChangePage( page, total );
 
 		this.setState( {
 			page,
@@ -460,7 +461,7 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	changeCommentStatus: ( commentId, postId, status, analytics = { alsoUnlike: false, isUndo: false } ) => dispatch( withAnalytics(
 		composeAnalytics(
 			recordTracksEvent( COMMENTS_STATS_GROUP + '_change_status', { ...analytics, status } ),
-			bumpStat( COMMENTS_STATS_GROUP, 'comment_change_status_to_' + status )
+			bumpStat( COMMENTS_STATS_GROUP, 'comment_status_changed_to_' + status )
 		),
 		changeCommentStatus( siteId, postId, commentId, status )
 	) ),
