@@ -57,7 +57,7 @@ export const receiveCommentError = ( { dispatch, getState }, { siteId, commentId
 	if ( siteName ) {
 		dispatch(
 			errorNotice(
-				translate( 'Failed to retrieve comments for site “%(siteName)s”', {
+				translate( 'Failed to retrieve comment for site “%(siteName)s”', {
 					args: { siteName },
 				} )
 			)
@@ -66,10 +66,10 @@ export const receiveCommentError = ( { dispatch, getState }, { siteId, commentId
 		const rawSite = getRawSite( getState(), siteId );
 		const error =
 			rawSite && rawSite.name
-				? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
+				? translate( 'Failed to retrieve comment for site “%(siteName)s”', {
 					args: { siteName: rawSite.name },
 				} )
-				: translate( 'Failed to retrieve comments for your site' );
+				: translate( 'Failed to retrieve comment for your site' );
 
 		dispatch( errorNotice( error ) );
 	}
