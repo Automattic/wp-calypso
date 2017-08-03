@@ -32,7 +32,6 @@ import {
 	isFetchingConnections,
 } from 'state/sharing/publicize/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import PopupMonitor from 'lib/popup-monitor';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import ServiceAction from './service-action';
@@ -40,6 +39,7 @@ import ServiceConnectedAccounts from './service-connected-accounts';
 import ServiceDescription from './service-description';
 import ServiceExamples from './service-examples';
 import ServiceTip from './service-tip';
+import requestExternalAccess from 'lib/sharing';
 
 export class SharingService extends Component {
 	static propTypes = {
@@ -121,12 +121,7 @@ export class SharingService extends Component {
 			} else {
 				// Attempt to create a new connection. If a Keyring connection ID
 				// is not provided, the user will need to authorize the app
-				const popupMonitor = new PopupMonitor();
-
-				popupMonitor.open( service.connect_URL, null, 'toolbar=0,location=0,status=0,menubar=0,' +
-					popupMonitor.getScreenCenterSpecs( 780, 500 ) );
-
-				popupMonitor.once( 'close', () => {
+				requestExternalAccess( service.connect_URL, () => {
 					// When the user has finished authorizing the connection
 					// (or otherwise closed the window), force a refresh
 					this.props.requestKeyringConnections();
@@ -198,12 +193,7 @@ export class SharingService extends Component {
 			if ( keyringConnection ) {
 				// Attempt to create a new connection. If a Keyring connection ID
 				// is not provided, the user will need to authorize the app
-				const popupMonitor = new PopupMonitor();
-
-				popupMonitor.open( connection.refresh_URL, null, 'toolbar=0,location=0,status=0,menubar=0,' +
-					popupMonitor.getScreenCenterSpecs( 780, 500 ) );
-
-				popupMonitor.once( 'close', () => {
+				requestExternalAccess( connection.refresh_URL, () => {
 					// When the user has finished authorizing the connection
 					// (or otherwise closed the window), force a refresh
 					this.fetchConnection( connection );
