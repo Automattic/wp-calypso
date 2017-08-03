@@ -41,7 +41,7 @@ import FormButton from 'components/forms/form-button';
 import { countries } from 'components/phone-input/data';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
-import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.jsx';
+import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.js';
 import wp from 'lib/wp';
 import ExtraInfoForm, { tldsWithAdditionalDetailsForms } from 'components/domains/registrant-extra-info';
 import config from 'config';

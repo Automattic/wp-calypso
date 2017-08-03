@@ -29,7 +29,7 @@ describe( 'LoginTest', function() {
 		ReactClass = require( 'react/lib/ReactClass' );
 		TestUtils = require( 'react-addons-test-utils' );
 		ReactClass.injection.injectMixin( { translate: identity } );
-		Login = require( '../login.jsx' );
+		Login = require( '../login.js' );
 		page = ReactDom.render( <Login />, useFakeDom.getContainer() );
 	} );
 

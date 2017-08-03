@@ -29,7 +29,7 @@ describe( 'cart-buttons', function() {
 
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/mixins/analytics', AnalyticsMixinStub );
-		CartButtons = require( '../cart-buttons.jsx' ).CartButtons;
+		CartButtons = require( '../cart-buttons.js' ).CartButtons;
 	} );
 
 	describe( 'Click on Keep Searching Button', function() {

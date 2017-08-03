@@ -8,9 +8,9 @@ import React from 'react';
  */
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Main from 'components/main';
-import GetAppsIllustration from './illustration.jsx';
-import DesktopDownloadCard from './desktop-download-card.jsx';
-import MobileDownloadCard from './mobile-download-card.jsx';
+import GetAppsIllustration from './illustration.js';
+import DesktopDownloadCard from './desktop-download-card.js';
+import MobileDownloadCard from './mobile-download-card.js';
 
 export const GetApps = () => {
 	return (

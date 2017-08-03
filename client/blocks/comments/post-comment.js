@@ -22,7 +22,7 @@ import CommentEditForm from './comment-edit-form';
 import { PLACEHOLDER_STATE } from 'state/comments/constants';
 import { decodeEntities } from 'lib/formatting';
 import PostCommentWithError from './post-comment-with-error';
-import PostTrackback from './post-trackback.jsx';
+import PostTrackback from './post-trackback.js';
 import CommentActions from './comment-actions';
 
 class PostComment extends Component {

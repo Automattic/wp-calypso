@@ -28,7 +28,7 @@ describe( 'SingleDoc', () => {
 		ReactDom = require( 'react-dom' );
 		TestUtils = require( 'react-addons-test-utils' );
 
-		SingleDocClass = require( '../doc.jsx' );
+		SingleDocClass = require( '../doc.js' );
 	} );
 
 	describe( 'makeSnip', () => {
