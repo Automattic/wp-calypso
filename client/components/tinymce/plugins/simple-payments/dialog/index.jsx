@@ -400,6 +400,7 @@ class SimplePaymentsDialog extends Component {
 					<UpgradeNudge
 						className="editor-simple-payments-modal__nudge-nudge"
 						title={ translate( 'Upgrade to a Premium Plan!' ) }
+						message={ translate( 'And get simple payments, advanced social media, your own domain, and more.' ) }
 						feature={ FEATURE_SIMPLE_PAYMENTS }
 						shouldDisplay={ this.returnTrue }
 					/>
