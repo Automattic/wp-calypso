@@ -11,10 +11,12 @@ import page from 'page';
  */
 import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
+import OauthClientLayout from 'layout/oauth-client';
 import nuxWelcome from 'layout/nux-welcome';
 import translatorInvitation from 'layout/community-translator/invitation-utils';
 import { makeLayoutMiddleware } from './shared.js';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getOauthClientId } from 'state/login/selectors';
 import userFactory from 'lib/user';
 
 /**
@@ -33,11 +35,13 @@ export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } )
 				nuxWelcome={ nuxWelcome }
 				translatorInvitation={ translatorInvitation }
 			/>
-			: <LayoutLoggedOut
-				primary={ primary }
-				secondary={ secondary }
-				redirectUri={ redirectUri }
-			/>
+			: getOauthClientId( store.getState() )
+				? <OauthClientLayout primary={ primary } />
+				: <LayoutLoggedOut
+					primary={ primary }
+					secondary={ secondary }
+					redirectUri={ redirectUri }
+				/>
 		}
 	</ReduxProvider>
 );

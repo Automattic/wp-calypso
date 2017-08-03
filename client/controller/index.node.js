@@ -9,6 +9,8 @@ import { Provider as ReduxProvider } from 'react-redux';
  */
 import { makeLayoutMiddleware } from './shared.js';
 import LayoutLoggedOut from 'layout/logged-out';
+import OauthClientLayout from 'layout/oauth-client';
+import { getOauthClientId } from 'state/login/selectors';
 
 /**
  * Re-export
@@ -17,11 +19,14 @@ export { setSection, setUpLocale } from './shared.js';
 
 const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri } ) => (
 	<ReduxProvider store={ store }>
-		<LayoutLoggedOut
-			primary={ primary }
-			secondary={ secondary }
-			redirectUri={ redirectUri }
-		/>
+		{ getOauthClientId( store.getState() )
+			? <OauthClientLayout primary={ primary } />
+			: <LayoutLoggedOut
+				primary={ primary }
+				secondary={ secondary }
+				redirectUri={ redirectUri }
+			/>
+		}
 	</ReduxProvider>
 );
 

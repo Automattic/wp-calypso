@@ -11,6 +11,7 @@ import { translate } from 'i18n-calypso';
 import config from 'config';
 import {
 	LOGIN_FORM_UPDATE,
+	LOGIN_OAUTH_CLIENT_SET,
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
