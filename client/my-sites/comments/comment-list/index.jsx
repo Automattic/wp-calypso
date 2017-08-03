@@ -201,6 +201,7 @@ export class CommentList extends Component {
 	setCommentStatus = ( comment, status, options = { isUndo: false, doPersist: false, showNotice: true } ) => {
 		const { commentId, postId, isLiked } = comment;
 		const { isUndo, doPersist, showNotice } = options;
+		const alsoUnlike = isLiked && ( 'approved' !== status );
 
 		if ( isUndo ) {
 			this.setState( { lastUndo: commentId } );
@@ -220,10 +221,10 @@ export class CommentList extends Component {
 			this.showNotice( comment, status, { doPersist } );
 		}
 
-		this.props.changeCommentStatus( commentId, postId, status, { isUndo } );
+		this.props.changeCommentStatus( commentId, postId, status, { alsoUnlike, isUndo } );
 
 		// If the comment is not approved anymore, also remove the like
-		if ( isLiked && 'approved' !== status ) {
+		if ( alsoUnlike ) {
 			this.props.unlikeComment( commentId, postId );
 		}
 	}
@@ -309,9 +310,11 @@ export class CommentList extends Component {
 			return;
 		}
 
-		this.props.likeComment( commentId, postId );
+		const alsoApprove = 'unapproved' === status;
 
-		if ( 'unapproved' === status ) {
+		this.props.likeComment( commentId, postId, { alsoApprove } );
+
+		if ( alsoApprove ) {
 			this.props.removeNotice( `comment-notice-${ commentId }` );
 			this.setCommentStatus( comment, 'approved' );
 			this.updatePersistedComments( commentId );
@@ -454,7 +457,7 @@ const mapStateToProps = ( state, { siteId, status } ) => {
 };
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	changeCommentStatus: ( commentId, postId, status, analytics = { isUndo: false } ) => dispatch( withAnalytics(
+	changeCommentStatus: ( commentId, postId, status, analytics = { alsoUnlike: false, isUndo: false } ) => dispatch( withAnalytics(
 		composeAnalytics(
 			recordTracksEvent( COMMENTS_TRACKS_NAME + '_change_status', { ...analytics, status } ),
 			bumpStat( COMMENTS_TRACKS_NAME, 'comment_change_status_to_' + status )
