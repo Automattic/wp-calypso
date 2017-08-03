@@ -23,6 +23,7 @@ import DevWelcome from './welcome';
 import Sidebar from './sidebar';
 import FormStateExamplesComponent from './form-state-examples';
 import EmptyContent from 'components/empty-content';
+import Wizard from 'components/wizard/docs/example';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const devdocs = {
@@ -99,6 +100,16 @@ const devdocs = {
 		renderWithReduxStore(
 			React.createElement( DesignAssetsComponent, {
 				component: context.params.component
+			} ),
+			'primary',
+			context.store
+		);
+	},
+
+	wizard: function( context ) {
+		renderWithReduxStore(
+			React.createElement( Wizard, {
+				stepName: context.params.stepName
 			} ),
 			'primary',
 			context.store
