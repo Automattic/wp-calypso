@@ -1,3 +1,4 @@
+/** @format */
 import keyBy from 'lodash/keyBy';
 import filter from 'lodash/filter';
 
@@ -35,7 +36,7 @@ export function getPostBySiteAndId( state, siteId, postId ) {
 			// only internal (wpcom / jetpack) posts have a valid site_ID and post ID
 			internalPosts = filter(
 				items,
-				post => post && post.site_ID && post.ID && ! post.is_external,
+				post => post && post.site_ID && post.ID && ! post.is_external
 			);
 
 		postMapBySiteAndPost = keyBy( internalPosts, post => {

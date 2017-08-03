@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -133,18 +134,18 @@ export function recordTracksRailcar( action, eventName, railcar, overrides = {} 
 		Object.assign(
 			eventName ? { action: eventName.replace( 'calypso_reader_', '' ) } : {},
 			railcar,
-			overrides,
-		),
+			overrides
+		)
 	);
 }
 
 export const recordTracksRailcarRender = partial(
 	recordTracksRailcar,
-	'calypso_traintracks_render',
+	'calypso_traintracks_render'
 );
 export const recordTracksRailcarInteract = partial(
 	recordTracksRailcar,
-	'calypso_traintracks_interact',
+	'calypso_traintracks_interact'
 );
 
 export function recordTrackForPost( eventName, post = {}, additionalProps = {} ) {
@@ -158,15 +159,15 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 				feed_item_id: post.feed_item_ID > 0 ? post.feed_item_ID : undefined,
 				is_jetpack: post.is_jetpack,
 			},
-			additionalProps,
-		),
+			additionalProps
+		)
 	);
 	if ( post.railcar && tracksRailcarEventWhitelist.has( eventName ) ) {
 		// check for overrides for the railcar
 		recordTracksRailcarInteract(
 			eventName,
 			post.railcar,
-			pick( additionalProps, [ 'ui_position', 'ui_algo' ] ),
+			pick( additionalProps, [ 'ui_position', 'ui_algo' ] )
 		);
 	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
 		console.warn( 'Consider whitelisting reader track', eventName ); //eslint-disable-line no-console
@@ -178,7 +179,7 @@ export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
 	recordTracksRailcarInteract(
 		eventName,
 		railcar,
-		pick( eventProperties, [ 'ui_position', 'ui_algo' ] ),
+		pick( eventProperties, [ 'ui_position', 'ui_algo' ] )
 	);
 }
 

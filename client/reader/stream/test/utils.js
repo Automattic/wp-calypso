@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -90,7 +91,7 @@ describe( 'reader stream', () => {
 		it( 'recs should never be marked as sameSite', () => {
 			const isSame = sameSite(
 				{ ...postKey1, isRecommendationBlock: 'isRecommendationBlock' },
-				postKey1,
+				postKey1
 			);
 			assert.isNotTrue( isSame );
 		} );

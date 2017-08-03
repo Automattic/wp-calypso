@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -11,7 +12,7 @@ import ReaderSidebarTeamsListItem from './list-item';
 
 const renderItems = ( teams, path ) =>
 	map( teams, team =>
-		<ReaderSidebarTeamsListItem key={ team.slug } team={ team } path={ path } />,
+		<ReaderSidebarTeamsListItem key={ team.slug } team={ team } path={ path } />
 	);
 
 export class ReaderSidebarTeams extends Component {

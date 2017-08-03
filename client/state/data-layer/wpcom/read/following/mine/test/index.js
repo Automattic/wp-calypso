@@ -1,3 +1,4 @@
+/** @format */
 /*
  * External dependencies
  */
@@ -84,7 +85,7 @@ describe( 'get follow subscriptions', () => {
 					query: { page: 1, number: 200, meta: '' },
 					onSuccess: action,
 					onError: action,
-				} ),
+				} )
 			);
 		} );
 	} );
@@ -105,7 +106,7 @@ describe( 'get follow subscriptions', () => {
 				receiveFollowsAction( {
 					follows: subscriptionsFromApi( successfulApiResponse ),
 					totalCount: successfulApiResponse.total_subscriptions,
-				} ),
+				} )
 			);
 		} );
 
@@ -143,10 +144,10 @@ describe( 'get follow subscriptions', () => {
 				receiveFollowsAction( {
 					follows: [],
 					totalCount: 10,
-				} ),
+				} )
 			);
 			expect( dispatch ).to.have.been.calledWith(
-				syncComplete( [ 'http://readerpostcards.wordpress.com', 'https://fivethirtyeight.com/' ] ),
+				syncComplete( [ 'http://readerpostcards.wordpress.com', 'https://fivethirtyeight.com/' ] )
 			);
 		} );
 
@@ -187,7 +188,7 @@ describe( 'get follow subscriptions', () => {
 				receiveFollowsAction( {
 					follows: [],
 					totalCount: 10,
-				} ),
+				} )
 			);
 
 			expect( dispatch ).to.have.been.calledWith(
@@ -195,7 +196,7 @@ describe( 'get follow subscriptions', () => {
 					'http://readerpostcards.wordpress.com',
 					'https://fivethirtyeight.com/',
 					'http://feed.example.com',
-				] ),
+				] )
 			);
 		} );
 	} );

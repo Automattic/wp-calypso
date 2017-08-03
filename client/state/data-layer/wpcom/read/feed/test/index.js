@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -36,7 +37,7 @@ describe( 'wpcom-api', () => {
 						query: { q: query, offset: 0, exclude_followed: true, sort: 'relevance' },
 						onSuccess: action,
 						onFailure: action,
-					} ),
+					} )
 				);
 			} );
 
@@ -55,7 +56,7 @@ describe( 'wpcom-api', () => {
 						query: { q: query, offset: 0, exclude_followed: false, sort: 'relevance' },
 						onSuccess: action,
 						onFailure: action,
-					} ),
+					} )
 				);
 			} );
 
@@ -74,7 +75,7 @@ describe( 'wpcom-api', () => {
 						query: { q: query, offset: 10, exclude_followed: true, sort: 'relevance' },
 						onSuccess: action,
 						onFailure: action,
-					} ),
+					} )
 				);
 			} );
 		} );
@@ -98,8 +99,8 @@ describe( 'wpcom-api', () => {
 								subscribe_URL: 'feedUrl',
 							},
 						],
-						200,
-					),
+						200
+					)
 				);
 			} );
 		} );

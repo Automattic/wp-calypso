@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -74,7 +75,7 @@ export function requestTagImages( tag, limit = 5 ) {
 					tag,
 					error,
 				} );
-			},
+			}
 		);
 	};
 }

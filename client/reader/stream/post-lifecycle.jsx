@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -126,7 +127,7 @@ export default class PostLifecycle extends React.PureComponent {
 		} else if ( isXPost( post ) ) {
 			const xMetadata = XPostHelper.getXPostMetadata( post );
 			const xPostedTo = this.props.store.getSitesCrossPostedTo(
-				xMetadata.commentURL || xMetadata.postURL,
+				xMetadata.commentURL || xMetadata.postURL
 			);
 			return (
 				<CrossPost

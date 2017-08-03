@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -34,7 +35,7 @@ describe( 'normalization-rules', () => {
 					},
 					better_excerpt_no_html: repeat( 'no ', 10 ),
 				},
-				[ DISPLAY_TYPES.PHOTO_ONLY ],
+				[ DISPLAY_TYPES.PHOTO_ONLY ]
 			);
 		} );
 
@@ -47,7 +48,7 @@ describe( 'normalization-rules', () => {
 					},
 					better_excerpt_no_html: repeat( 'no ', 100 ),
 				},
-				[ DISPLAY_TYPES.UNCLASSIFIED ],
+				[ DISPLAY_TYPES.UNCLASSIFIED ]
 			);
 		} );
 
@@ -74,7 +75,7 @@ describe( 'normalization-rules', () => {
 					],
 					better_excerpt_no_html: repeat( 'no ', 5 ),
 				},
-				[ DISPLAY_TYPES.PHOTO_ONLY ],
+				[ DISPLAY_TYPES.PHOTO_ONLY ]
 			);
 		} );
 	} );

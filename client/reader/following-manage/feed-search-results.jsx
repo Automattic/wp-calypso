@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -62,7 +63,7 @@ class FollowingManageSearchFeedsResults extends React.Component {
 			return (
 				<div className={ classNames }>
 					{ times( 10, i =>
-						<ReaderSubscriptionListItemPlaceholder key={ `placeholder-${ i }` } />,
+						<ReaderSubscriptionListItemPlaceholder key={ `placeholder-${ i }` } />
 					) }
 				</div>
 			);
@@ -109,5 +110,5 @@ class FollowingManageSearchFeedsResults extends React.Component {
 }
 
 export default connect( null, { requestFeedSearch } )(
-	localize( FollowingManageSearchFeedsResults ),
+	localize( FollowingManageSearchFeedsResults )
 );

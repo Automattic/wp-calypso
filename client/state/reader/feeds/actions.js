@@ -1,3 +1,4 @@
+/** @format */
 import isArray from 'lodash/isArray';
 
 import wpcom from 'lib/wp';
@@ -34,7 +35,7 @@ export function requestFeed( feedId ) {
 					error: err,
 				} );
 				throw err;
-			},
+			}
 		);
 	};
 }

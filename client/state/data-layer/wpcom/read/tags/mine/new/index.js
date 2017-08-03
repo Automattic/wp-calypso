@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +24,7 @@ export function requestFollowTag( store, action ) {
 			apiVersion: '1.1',
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 }
 
@@ -42,7 +43,7 @@ export function receiveFollowTag( store, action, next, apiResponse ) {
 	store.dispatch(
 		receiveTagsAction( {
 			payload: [ followedTag ],
-		} ),
+		} )
 	);
 }
 

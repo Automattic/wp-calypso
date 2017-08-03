@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -229,7 +230,7 @@ class ReaderShare extends React.Component {
 									<span>Facebook</span>
 								</PopoverMenuItem>
 							</PopoverMenu> ),
-			],
+			]
 		);
 	}
 }

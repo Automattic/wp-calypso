@@ -1,3 +1,4 @@
+/** @format */
 import React from 'react';
 import Main from 'components/main';
 import Navigation from 'reader/recommendations/navigation';

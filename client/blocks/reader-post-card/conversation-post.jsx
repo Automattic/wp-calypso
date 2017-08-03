@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -23,10 +24,7 @@ class ConversationPost extends React.Component {
 		return (
 			<div className="reader-post-card__conversation-post">
 				<CompactPostCard { ...this.props } />
-				<ConversationPostList
-					post={ this.props.post }
-					commentIds={ commentIdsToShow }
-				/>
+				<ConversationPostList post={ this.props.post } commentIds={ commentIdsToShow } />
 			</div>
 		);
 	}

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -35,7 +36,7 @@ export function conversations( context ) {
 			trackScrollPage={ scrollTracker }
 		/>,
 		document.getElementById( 'primary' ),
-		context.store,
+		context.store
 	);
 }
 
@@ -50,7 +51,13 @@ export function conversationsA8c( context ) {
 	const convoStream = feedStreamStore( 'conversations-a8c' );
 	ensureStoreLoading( convoStream, context );
 
-	const scrollTracker = trackScrollPage.bind( null, '/read/conversations/a8c', title, 'Reader', mcKey );
+	const scrollTracker = trackScrollPage.bind(
+		null,
+		'/read/conversations/a8c',
+		title,
+		'Reader',
+		mcKey
+	);
 
 	renderWithReduxStore(
 		<AsyncLoad
@@ -61,6 +68,6 @@ export function conversationsA8c( context ) {
 			trackScrollPage={ scrollTracker }
 		/>,
 		document.getElementById( 'primary' ),
-		context.store,
+		context.store
 	);
 }

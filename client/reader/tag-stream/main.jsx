@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -83,13 +84,13 @@ class TagStream extends React.Component {
 		recordAction( isFollowing ? 'unfollowed_topic' : 'followed_topic' );
 		recordGaEvent(
 			isFollowing ? 'Clicked Unfollow Topic' : 'Clicked Follow Topic',
-			decodedTagSlug,
+			decodedTagSlug
 		);
 		recordTrack(
 			isFollowing ? 'calypso_reader_reader_tag_unfollowed' : 'calypso_reader_reader_tag_followed',
 			{
 				tag: decodedTagSlug,
-			},
+			}
 		);
 	};
 
@@ -139,5 +140,5 @@ export default connect(
 	{
 		followTag: requestFollowTag,
 		unfollowTag: requestUnfollowTag,
-	},
+	}
 )( localize( TagStream ) );

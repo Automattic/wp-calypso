@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -24,8 +25,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					1,
-				),
+					1
+				)
 			).to.be.false;
 		} );
 
@@ -45,8 +46,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					1,
-				),
+					1
+				)
 			).to.be.false;
 		} );
 
@@ -64,8 +65,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					1,
-				),
+					1
+				)
 			).to.be.true;
 		} );
 
@@ -85,8 +86,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					1,
-				),
+					1
+				)
 			).to.be.true;
 		} );
 
@@ -102,8 +103,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					1,
-				),
+					1
+				)
 			).to.be.true;
 		} );
 
@@ -123,8 +124,8 @@ describe( 'selectors', () => {
 							},
 						},
 					},
-					1,
-				),
+					1
+				)
 			).to.be.true;
 		} );
 	} );

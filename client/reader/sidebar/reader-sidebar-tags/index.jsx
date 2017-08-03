@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -93,5 +94,5 @@ export default connect(
 	{
 		followTag: requestFollowTag,
 		unfollowTag: requestUnfollowTag,
-	},
+	}
 )( localize( ReaderSidebarTags ) );

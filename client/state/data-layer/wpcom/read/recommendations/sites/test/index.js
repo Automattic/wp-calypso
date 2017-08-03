@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -57,7 +58,7 @@ describe( 'recommended sites', () => {
 					apiVersion: '1.2',
 					onSuccess: action,
 					onFailure: action,
-				} ),
+				} )
 			);
 		} );
 	} );
@@ -73,7 +74,7 @@ describe( 'recommended sites', () => {
 					sites: fromApi( response ),
 					seed,
 					offset: 0,
-				} ),
+				} )
 			);
 		} );
 	} );

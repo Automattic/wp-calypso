@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -32,7 +33,7 @@ describe( 'reducer', () => {
 					type: READER_THUMBNAIL_RECEIVE,
 					embedUrl,
 					thumbnailUrl,
-				},
+				}
 			);
 
 			expect( state[ embedUrl ] ).to.eql( thumbnailUrl );
@@ -44,7 +45,7 @@ describe( 'reducer', () => {
 				{
 					type: READER_THUMBNAIL_REQUEST_FAILURE,
 					embedUrl,
-				},
+				}
 			);
 
 			expect( state ).to.eql( {} );
@@ -63,7 +64,7 @@ describe( 'reducer', () => {
 				{
 					type: READER_THUMBNAIL_REQUEST,
 					embedUrl,
-				},
+				}
 			);
 
 			expect( state ).to.eql( {

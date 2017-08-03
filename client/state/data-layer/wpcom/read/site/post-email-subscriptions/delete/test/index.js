@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -30,7 +31,7 @@ describe( 'comment-email-subscriptions', () => {
 					apiVersion: '1.2',
 					onSuccess: action,
 					onFailure: action,
-				} ),
+				} )
 			);
 		} );
 	} );

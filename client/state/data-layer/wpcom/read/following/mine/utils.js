@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -27,7 +28,7 @@ export const subscriptionFromApi = subscription =>
 			delivery_methods: subscription.delivery_methods,
 			is_owner: subscription.is_owner,
 		},
-		isUndefined,
+		isUndefined
 	);
 
 export const subscriptionsFromApi = apiResponse => {

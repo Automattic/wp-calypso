@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -22,7 +23,7 @@ export function requestPostEmailUnsubscription( { dispatch }, action ) {
 			body: {}, // have to have the empty body for now to make the middleware happy
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 }
 
@@ -39,7 +40,7 @@ export function receivePostEmailUnsubscription( store, action, next, response ) 
 
 export function receivePostEmailUnsubscriptionError( { dispatch }, action ) {
 	dispatch(
-		errorNotice( translate( 'Sorry, we had a problem unsubscribing. Please try again.' ) ),
+		errorNotice( translate( 'Sorry, we had a problem unsubscribing. Please try again.' ) )
 	);
 	dispatch( local( subscribeToNewPostEmail( action.payload.blogId ) ) );
 }
@@ -49,7 +50,7 @@ export default {
 		dispatchRequest(
 			requestPostEmailUnsubscription,
 			receivePostEmailUnsubscription,
-			receivePostEmailUnsubscriptionError,
+			receivePostEmailUnsubscriptionError
 		),
 	],
 };
