@@ -35,10 +35,13 @@ class OrdersFilterNav extends Component {
 					<NavItem path={ getLink( '/store/orders/:site', site ) } selected={ 'any' === status }>
 						{ translate( 'All orders' ) }
 					</NavItem>
-					<NavItem path={ getLink( '/store/orders/processing/:site', site ) } selected={ 'processing' === status }>
-						{ translate( 'Processing' ) }
+					<NavItem path={ getLink( '/store/orders/pay/:site', site ) } selected={ 'pay' === status }>
+						{ translate( 'Awaiting Payment' ) }
 					</NavItem>
-					<NavItem path={ getLink( '/store/orders/completed/:site', site ) } selected={ 'completed' === status }>
+					<NavItem path={ getLink( '/store/orders/fulfill/:site', site ) } selected={ 'fulfill' === status }>
+						{ translate( 'Awaiting Fulfillment' ) }
+					</NavItem>
+					<NavItem path={ getLink( '/store/orders/finished/:site', site ) } selected={ 'finished' === status }>
 						{ translate( 'Completed' ) }
 					</NavItem>
 				</NavTabs>
