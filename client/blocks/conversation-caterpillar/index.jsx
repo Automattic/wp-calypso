@@ -4,7 +4,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { map, get, last, uniqBy, size } from 'lodash';
+import { map, get, last, uniqBy, size, filter } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /***
@@ -22,16 +22,18 @@ class ConversationCaterpillarComponent extends React.Component {
 
 	render() {
 		const { comments, translate } = this.props;
-		const lastComment = last( comments );
-		const lastCommenterName = get( lastComment, 'author.name' );
 		const commentCount = size( comments );
+
+		// Only display authors with a gravatar, and only display each author once
 		const uniqueAuthors = uniqBy( map( comments, 'author' ), 'ID' );
-		const uniqueAuthorsCount = size( uniqueAuthors );
+		const displayedAuthors = filter( uniqueAuthors, author => !! author.avatar_URL );
+		const displayedAuthorsCount = size( displayedAuthors );
+		const lastAuthorName = get( last( displayedAuthors ), 'name' );
 
 		// At the moment, we just show authors for the entire comments array
 		return (
 			<div className="conversation-caterpillar">
-				{ map( uniqueAuthors, author => {
+				{ map( displayedAuthors, author => {
 					return (
 						<Gravatar
 							className="conversation-caterpillar__gravatar"
@@ -48,13 +50,13 @@ class ConversationCaterpillarComponent extends React.Component {
 						commentCount > 1
 							? translate( 'View comments from %(commenterName)s and %(count)d more', {
 									args: {
-										commenterName: lastCommenterName,
-										count: uniqueAuthorsCount - 1,
+										commenterName: lastAuthorName,
+										count: displayedAuthorsCount - 1,
 									},
 								} )
 							: translate( 'View comment from %(commenterName)s', {
 									args: {
-										commenterName: lastCommenterName,
+										commenterName: lastAuthorName,
 									},
 								} )
 					}
@@ -62,13 +64,13 @@ class ConversationCaterpillarComponent extends React.Component {
 					{ commentCount > 1
 						? translate( '%(commenterName)s and %(count)d more', {
 								args: {
-									commenterName: lastCommenterName,
-									count: uniqueAuthorsCount - 1,
+									commenterName: lastAuthorName,
+									count: displayedAuthorsCount - 1,
 								},
 							} )
 						: translate( '%(commenterName)s commented', {
 								args: {
-									commenterName: lastCommenterName,
+									commenterName: lastAuthorName,
 								},
 							} ) }
 				</button>
