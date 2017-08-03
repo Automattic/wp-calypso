@@ -199,7 +199,12 @@ export class CommentList extends Component {
 	};
 
 	setCommentStatus = ( comment, status, options = { isUndo: false, doPersist: false, showNotice: true } ) => {
-		const { commentId, postId, isLiked } = comment;
+		const {
+			commentId,
+			postId,
+			isLiked,
+			status: previousStatus,
+		} = comment;
 		const { isUndo, doPersist, showNotice } = options;
 		const alsoUnlikeComment = isLiked && ( 'approved' !== status );
 
@@ -224,7 +229,7 @@ export class CommentList extends Component {
 		this.props.changeCommentStatus( commentId, postId, status, {
 			alsoUnlike: alsoUnlikeComment,
 			isUndo,
-			previousStatus: comment.status,
+			previousStatus,
 		} );
 
 		// If the comment is not approved anymore, also remove the like
@@ -290,7 +295,11 @@ export class CommentList extends Component {
 			id: `comment-notice-${ commentId }`,
 			isPersistent: true,
 			onClick: () => {
-				this.setCommentStatus( comment, previousStatus, {
+				const updatedComment = {
+					...comment,
+					status: newStatus,
+				};
+				this.setCommentStatus( updatedComment, previousStatus, {
 					isUndo: true,
 					doPersist: options.doPersist,
 					showNotice: false,
