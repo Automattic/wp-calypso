@@ -5,7 +5,7 @@ import { mergeHandlers } from 'state/action-watchers/utils';
 import { addHandlers } from 'state/data-layer/extensions-middleware';
 import actionList from './action-list';
 import paymentMethods from './payment-methods';
-import products from './products';
+import products from '../sites/products/handlers';
 import productVariations from './product-variations';
 import productCategories from './product-categories';
 import request from './request';

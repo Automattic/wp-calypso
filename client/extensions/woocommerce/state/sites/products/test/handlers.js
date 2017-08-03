@@ -21,7 +21,7 @@ import {
 	handleProductsRequest,
 	handleProductsRequestSuccess,
 	handleProductsRequestError,
-} from '../';
+} from '../handlers';
 import {
 	WOOCOMMERCE_API_REQUEST,
 	WOOCOMMERCE_PRODUCTS_RECEIVE,
