@@ -7,7 +7,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import emailValidator from 'email-validator';
-import { find, isNumber, pick } from 'lodash';
+import { find, isNumber, pick, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -349,6 +349,11 @@ class SimplePaymentsDialog extends Component {
 				] }
 				additionalClassNames="editor-simple-payments-modal"
 			>
+				<Navigation
+					activeTab={ 'list' }
+					paymentButtons={ [] }
+					onChangeTabs={ noop }
+				/>
 				{ content }
 			</Dialog>
 		);
@@ -389,6 +394,7 @@ class SimplePaymentsDialog extends Component {
 			return this.renderEmptyDialog(
 				<UpgradeNudge
 					title={ translate( 'Upgrade to a Premium Plan!' ) }
+					icon=""
 					feature={ FEATURE_SIMPLE_PAYMENTS }
 					shouldDisplay={ this.returnTrue }
 				/>
