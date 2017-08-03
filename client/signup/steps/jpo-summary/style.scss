@@ -25,5 +25,12 @@
 
 .jpo__summary-wrapper table tr td ul li {
 	margin-top: 2rem;
-	color: #00aadc;
+}
+
+.jpo-summary__completed-onboarding {
+	color: $gray;
+}
+
+.jpo-summary__more-onboarding {
+	color: $blue-medium;
 }

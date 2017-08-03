@@ -96,7 +96,7 @@ const JPOSummaryStep = React.createClass( {
 						<tr>
 							<td>
 								<div className="jpo__summary-col-header">Steps you've completed:</div>
-								<ul>
+								<ul className="jpo-summary__completed-onboarding">
 									{ 'undefined' !== typeof this.props.signupProgress[0].jpoSiteTitle ? <li>{ checkMark } { translate( 'Site Title & Description' ) }</li> : null }
 									{ 'undefined' !== typeof this.props.signupProgress[1].jpoSiteType ? <li>{ checkMark } { translate( 'Type of Site' ) }</li> : null }
 									{ 'undefined' !== typeof this.props.signupProgress[2].jpoHomepage ? <li>{ checkMark } { translate( 'Type of Homepage' ) }</li> : null }
@@ -106,7 +106,7 @@ const JPOSummaryStep = React.createClass( {
 							</td>
 							<td>
 								<div className="jpo__summary-col-header">Configure more of your site:</div>
-								<ul>
+								<ul className="jpo-summary__more-onboarding">
 									{ 'undefined' === typeof this.props.signupProgress[0].jpoSiteTitle ? <li onClick={ this.goToStepOne }>{ translate( 'Site Title & Description' ) }</li> : null }
 									{ 'undefined' === typeof this.props.signupProgress[1].jpoSiteType ? <li onClick={ this.goToStepTwo }>{ translate( 'Type of Site' ) }</li> : null }
 									{ 'undefined' === typeof this.props.signupProgress[2].jpoHomepage ? <li onClick={ this.goToStepThree }>{ translate( 'Type of Homepage' ) }</li> : null }
