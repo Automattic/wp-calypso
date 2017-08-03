@@ -12,11 +12,16 @@ import React, { Component } from 'react';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getOrdersCurrentSearch } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
+import {
+	ORDER_UNPAID,
+	ORDER_UNFULFILLED,
+	ORDER_COMPLETED,
+} from 'woocommerce/lib/order-status';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
+import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
 
 class OrdersFilterNav extends Component {
 	doSearch = ( search ) => {
@@ -30,27 +35,35 @@ class OrdersFilterNav extends Component {
 	render() {
 		const { translate, site, status } = this.props;
 		let currentSelection = translate( 'All orders' );
-		if ( 'pay' === status ) {
+		if ( ORDER_UNPAID === status ) {
 			currentSelection = translate( 'Awaiting Payment' );
-		} else if ( 'fulfill' === status ) {
+		} else if ( ORDER_UNFULFILLED === status ) {
 			currentSelection = translate( 'Awaiting Fulfillment' );
-		} else if ( 'finished' === status ) {
+		} else if ( ORDER_COMPLETED === status ) {
 			currentSelection = translate( 'Completed' );
 		}
 
 		return (
 			<SectionNav selectedText={ currentSelection }>
 				<NavTabs label={ translate( 'Status' ) } selectedText={ currentSelection }>
-					<NavItem path={ getLink( '/store/orders/:site', site ) } selected={ 'any' === status }>
+					<NavItem
+						path={ getLink( '/store/orders/:site', site ) }
+						selected={ 'any' === status }>
 						{ translate( 'All orders' ) }
 					</NavItem>
-					<NavItem path={ getLink( '/store/orders/pay/:site', site ) } selected={ 'pay' === status }>
+					<NavItem
+						path={ getLink( `/store/orders/${ ORDER_UNPAID }/:site`, site ) }
+						selected={ ORDER_UNPAID === status }>
 						{ translate( 'Awaiting Payment' ) }
 					</NavItem>
-					<NavItem path={ getLink( '/store/orders/fulfill/:site', site ) } selected={ 'fulfill' === status }>
+					<NavItem
+						path={ getLink( `/store/orders/${ ORDER_UNFULFILLED }/:site`, site ) }
+						selected={ ORDER_UNFULFILLED === status }>
 						{ translate( 'Awaiting Fulfillment' ) }
 					</NavItem>
-					<NavItem path={ getLink( '/store/orders/finished/:site', site ) } selected={ 'finished' === status }>
+					<NavItem
+						path={ getLink( `/store/orders/${ ORDER_COMPLETED }/:site`, site ) }
+						selected={ ORDER_COMPLETED === status }>
 						{ translate( 'Completed' ) }
 					</NavItem>
 				</NavTabs>
