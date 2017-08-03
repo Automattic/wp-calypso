@@ -31,6 +31,8 @@ module.exports = React.createClass( {
 	},
 
 	getTimestamp: function() {
+		const status = this.props.post.status;
+
 		let time;
 		if ( status === 'draft' || status === 'pending' ) {
 			time = this.props.post.modified;
