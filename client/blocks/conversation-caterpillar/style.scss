@@ -1,0 +1,21 @@
+.conversation-caterpillar {
+	cursor: pointer;
+}
+
+.conversation-caterpillar__gravatar {
+	border: 2px solid $white;
+	margin-left: -8px;
+	vertical-align: middle;
+
+	&:first-child {
+		margin-left: 0;
+	}
+}
+
+.conversation-caterpillar__count {
+	color: $gray;
+	font-size: 13px;
+	font-weight: 500;
+	margin-left: 8px;
+	cursor: pointer;
+}

@@ -10,6 +10,7 @@ import { map } from 'lodash';
  */
 import PostComment from 'blocks/comments/post-comment';
 import { getPostCommentsTree } from 'state/comments/selectors';
+import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 
 export class ConversationCommentList extends React.Component {
 	static propTypes = {
@@ -17,26 +18,34 @@ export class ConversationCommentList extends React.Component {
 		commentIds: PropTypes.array.isRequired,
 	};
 
+	static defaultProps = {
+		showCaterpillar: false,
+	};
+
 	render() {
-		const { commentIds, commentsTree, post } = this.props;
+		const { commentIds, commentsTree, post, showCaterpillar } = this.props;
 		if ( ! commentIds ) {
 			return null;
 		}
 
 		return (
-			<ul className="conversations__comment-list">
-				{ map( commentIds, commentId => {
-					return (
-						<PostComment
-							commentsTree={ commentsTree }
-							key={ commentId }
-							commentId={ commentId }
-							maxChildrenToShow={ 0 }
-							post={ post }
-						/>
-					);
-				} ) }
-			</ul>
+			<div className="conversations__comment-list">
+				<ul className="conversations__comment-list-ul">
+					{ map( commentIds, commentId => {
+						return (
+							<PostComment
+								commentsTree={ commentsTree }
+								key={ commentId }
+								commentId={ commentId }
+								maxChildrenToShow={ 0 }
+								post={ post }
+							/>
+						);
+					} ) }
+				</ul>
+				{ showCaterpillar &&
+					<ConversationCaterpillar blogId={ post.site_ID } postId={ post.ID } /> }
+			</div>
 		);
 	}
 }
