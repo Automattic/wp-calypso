@@ -103,6 +103,17 @@ const BillingReceipt = React.createClass( {
 		);
 	},
 
+	renderEmptyBillingDetails() {
+		const { translate } = this.props;
+
+		return (
+			<li className="billing-history__billing-details">
+				<strong>{ translate( 'Billing Details' ) }</strong>
+				<div contentEditable="true"></div>
+			</li>
+		);
+	},
+
 	renderLineItems() {
 		const { transaction, translate } = this.props;
 		const items = transaction.items.map( ( item ) => {
@@ -185,7 +196,11 @@ const BillingReceipt = React.createClass( {
 						</li>
 						{ this.ref() }
 						{ this.paymentMethod() }
-						{ transaction.cc_num !== 'XXXX' ? this.renderBillingDetails() : null }
+						{
+							transaction.cc_num !== 'XXXX'
+								? this.renderBillingDetails()
+								: this.renderEmptyBillingDetails()
+						}
 					</ul>
 					{ this.renderLineItems() }
 				</Card>
