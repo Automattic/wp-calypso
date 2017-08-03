@@ -469,8 +469,8 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 
 	deleteComment: ( commentId, postId ) => dispatch( withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( COMMENTS_STATS_GROUP + '_unlike' ),
-			bumpStat( COMMENTS_STATS_GROUP, 'comment_unliked' )
+			recordTracksEvent( COMMENTS_STATS_GROUP + '_delete' ),
+			bumpStat( COMMENTS_STATS_GROUP, 'comment_deleted' )
 		),
 		deleteComment( siteId, postId, commentId )
 	) ),
