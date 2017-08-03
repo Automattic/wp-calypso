@@ -33,8 +33,6 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 
-export const COMMENTS_STATS_GROUP = 'calypso_comment_management';
-
 const COMMENTS_PER_PAGE = 20;
 const LOADING_TIMEOUT = 2000;
 let loadingTimeoutRef;
@@ -461,8 +459,8 @@ const mapStateToProps = ( state, { siteId, status } ) => {
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	changeCommentStatus: ( commentId, postId, status, analytics = { alsoUnlike: false, isUndo: false } ) => dispatch( withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( COMMENTS_STATS_GROUP + '_change_status', { ...analytics, status } ),
-			bumpStat( COMMENTS_STATS_GROUP, 'comment_status_changed_to_' + status )
+			recordTracksEvent( 'calypso_comment_management_change_status', { ...analytics, status } ),
+			bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
 		),
 		changeCommentStatus( siteId, postId, commentId, status )
 	) ),
@@ -471,31 +469,31 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 
 	deleteComment: ( commentId, postId ) => dispatch( withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( COMMENTS_STATS_GROUP + '_delete' ),
-			bumpStat( COMMENTS_STATS_GROUP, 'comment_deleted' )
+			recordTracksEvent( 'calypso_comment_management_delete' ),
+			bumpStat( 'calypso_comment_management', 'comment_deleted' )
 		),
 		deleteComment( siteId, postId, commentId )
 	) ),
 
 	likeComment: ( commentId, postId, analytics = { alsoApprove: false } ) => dispatch( withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( COMMENTS_STATS_GROUP + '_like', analytics ),
-			bumpStat( COMMENTS_STATS_GROUP, 'comment_liked' )
+			recordTracksEvent( 'calypso_comment_management_like', analytics ),
+			bumpStat( 'calypso_comment_management', 'comment_liked' )
 		),
 		likeComment( siteId, postId, commentId )
 	) ),
 
 	recordChangePage: ( page, total ) => dispatch( composeAnalytics(
-		recordTracksEvent( COMMENTS_STATS_GROUP + '_change_page', { page, total } ),
-		bumpStat( COMMENTS_STATS_GROUP, 'change_page' )
+		recordTracksEvent( 'calypso_comment_management_change_page', { page, total } ),
+		bumpStat( 'calypso_comment_management', 'change_page' )
 	) ),
 
 	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
 
 	replyComment: ( commentText, postId, parentCommentId, analytics = { alsoApprove: false } ) => dispatch( withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( COMMENTS_STATS_GROUP + '_reply', analytics ),
-			bumpStat( COMMENTS_STATS_GROUP, 'comment_reply' )
+			recordTracksEvent( 'calypso_comment_management_reply', analytics ),
+			bumpStat( 'calypso_comment_management', 'comment_reply' )
 		),
 		replyComment( commentText, siteId, postId, parentCommentId )
 	) ),
@@ -505,8 +503,8 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 
 	unlikeComment: ( commentId, postId ) => dispatch( withAnalytics(
 		composeAnalytics(
-			recordTracksEvent( COMMENTS_STATS_GROUP + '_unlike' ),
-			bumpStat( COMMENTS_STATS_GROUP, 'comment_unliked' )
+			recordTracksEvent( 'calypso_comment_management_unlike' ),
+			bumpStat( 'calypso_comment_management', 'comment_unliked' )
 		),
 		unlikeComment( siteId, postId, commentId )
 	) ),

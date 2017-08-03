@@ -26,7 +26,6 @@ import {
 	composeAnalytics,
 	recordTracksEvent,
 } from 'state/analytics/actions';
-import { COMMENTS_STATS_GROUP } from 'my-sites/comments/comment-list';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],
@@ -206,8 +205,8 @@ export class CommentNavigation extends Component {
 
 const mapDispatchToProps = {
 	recordChangeFilter: status => composeAnalytics(
-		recordTracksEvent( COMMENTS_STATS_GROUP + '_change_filter', { status } ),
-		bumpStat( COMMENTS_STATS_GROUP, 'change_filter_to_' + status )
+		recordTracksEvent( 'calypso_comment_management_change_filter', { status } ),
+		bumpStat( 'calypso_comment_management', 'change_filter_to_' + status )
 	),
 };
 
