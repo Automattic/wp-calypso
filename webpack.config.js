@@ -150,7 +150,8 @@ const webpackConfig = {
 			loaders: _.compact( [
 				process.env.NODE_ENV === 'development' && 'react-hot-loader',
 				babelLoader
-			] )
+			] ),
+			threads: Math.max( 1, os.cpus().length - 1 ) // use at least 1, at most all but one
 		} ),
 		new webpack.NamedModulesPlugin(),
 		new webpack.NamedChunksPlugin( chunk => {
