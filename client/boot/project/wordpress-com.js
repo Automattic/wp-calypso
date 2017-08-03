@@ -33,19 +33,21 @@ const config = require( 'config' ),
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
-function renderLayout( reduxStore ) {
-	const Layout = require( 'controller' ).ReduxWrappedLayout;
+function renderLayoutAsync( reduxStore ) {
+	return require( 'controller' ).getReduxWrappedLayout( reduxStore ).then(
+		Layout => {
+			const layoutElement = React.createElement( Layout, {
+				store: reduxStore
+			} );
 
-	const layoutElement = React.createElement( Layout, {
-		store: reduxStore
-	} );
+			ReactDom.render(
+				layoutElement,
+				document.getElementById( 'wpcom' )
+			);
 
-	ReactDom.render(
-		layoutElement,
-		document.getElementById( 'wpcom' )
+			debug( 'Main layout rendered.' );
+		}
 	);
-
-	debug( 'Main layout rendered.' );
 }
 
 export function utils() {
@@ -84,11 +86,17 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		analytics.setSuperProps( superProps );
 	}
 
-	// Render Layout only for non-isomorphic sections.
+	// Ensure Layout is rendered.
 	// Isomorphic sections will take care of rendering their Layout last themselves.
-	if ( ! document.getElementById( 'primary' ) ) {
-		renderLayout( reduxStore );
+	page( '*', function( context, next ) {
+		if ( ! document.getElementById( 'primary' ) ) {
+			renderLayoutAsync( reduxStore ).then( next );
+		} else {
+			next();
+		}
+	} );
 
+	if ( ! document.getElementById( 'primary' ) ) {
 		if ( config.isEnabled( 'catch-js-errors' ) ) {
 			const Logger = require( 'lib/catch-js-errors' );
 			const errorLogger = new Logger();
@@ -250,12 +258,14 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		if ( isMultiTreeLayout && previousLayoutIsSingleTree ) {
 			debug( 'Re-rendering multi-tree layout' );
 			ReactDom.unmountComponentAtNode( document.getElementById( 'wpcom' ) );
-			renderLayout( context.store );
+			renderLayoutAsync( context.store ).then( next );
 		} else if ( ! isMultiTreeLayout && ! previousLayoutIsSingleTree ) {
 			debug( 'Unmounting multi-tree layout' );
 			ReactDom.unmountComponentAtNode( document.getElementById( 'primary' ) );
 			ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+			next();
+		} else {
+			next();
 		}
-		next();
 	} );
 }

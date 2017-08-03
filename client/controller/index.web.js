@@ -9,7 +9,6 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
 import nuxWelcome from 'layout/nux-welcome';
 import translatorInvitation from 'layout/community-translator/invitation-utils';
@@ -24,25 +23,62 @@ export { setSection, setUpLocale } from './shared.js';
 
 const user = userFactory();
 
-export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => (
-	<ReduxProvider store={ store }>
-		{ getCurrentUser( store.getState() )
-			? <Layout primary={ primary }
-				secondary={ secondary }
-				user={ user }
-				nuxWelcome={ nuxWelcome }
-				translatorInvitation={ translatorInvitation }
-			/>
-			: <LayoutLoggedOut
-				primary={ primary }
-				secondary={ secondary }
-				redirectUri={ redirectUri }
-			/>
+/**
+ * Fetch the correct Layout based on whether or not the user is logged-in.
+ *
+ * @param {bool} loggedIn true if the user is logged-in, false otherwise
+ * @returns {Promise} a Promise that resolves to the Layout component
+ */
+function getLayout( loggedIn ) {
+	return new Promise( ( resolve ) => {
+		if ( loggedIn ) {
+			// If user is logged in, async load the main layout
+			asyncRequire( 'layout', ( Layout ) => {
+				resolve(
+					( { primary, secondary } ) => (
+						<Layout
+							primary={ primary }
+							secondary={ secondary }
+							user={ user }
+							nuxWelcome={ nuxWelcome }
+							translatorInvitation={ translatorInvitation }
+						/>
+					)
+				);
+			} );
+		} else {
+			resolve(
+				( { primary, secondary, redirectUri } ) => (
+					<LayoutLoggedOut
+						primary={ primary }
+						secondary={ secondary }
+						redirectUri={ redirectUri }
+					/>
+				)
+			);
 		}
-	</ReduxProvider>
-);
+	} );
+}
 
-export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
+export function getReduxWrappedLayout( reduxStore ) {
+	const loggedIn = getCurrentUser( reduxStore.getState() );
+
+	return getLayout( loggedIn ).then( ( InnerLayout ) => (
+		// Wrap the InnerLayout
+		( { store, primary, secondary, redirectUri } ) => (
+			<ReduxProvider store={ store }>
+				<InnerLayout
+					store={ store }
+					primary={ primary }
+					secondary={ secondary }
+					redirectUri={ redirectUri }
+				/>
+			</ReduxProvider>
+		)
+	) );
+}
+
+export const makeLayout = makeLayoutMiddleware( getReduxWrappedLayout );
 
 /**
  * Isomorphic routing helper, client side
