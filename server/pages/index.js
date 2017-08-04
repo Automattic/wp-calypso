@@ -225,7 +225,7 @@ function setUpLoggedInRoute( req, res, next ) {
 		start = new Date().getTime();
 
 		debug( 'Issuing API call to fetch user object' );
-		user( req.get( 'Cookie' ), function( error, data ) {
+		user( req.get( 'Cookie' ), req.ip, function( error, data ) {
 			let searchParam, errorMessage;
 
 			if ( error ) {
