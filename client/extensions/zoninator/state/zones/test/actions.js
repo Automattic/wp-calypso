@@ -7,13 +7,13 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	ZONINATOR_FETCH_ZONES,
-	ZONINATOR_FETCH_ERROR,
+	ZONINATOR_REQUEST_ZONES,
+	ZONINATOR_REQUEST_ERROR,
 	ZONINATOR_UPDATE_ZONES,
 } from '../../action-types';
 import {
-	fetchZones,
-	fetchError,
+	requestZones,
+	requestError,
 	updateZones,
 } from '../actions';
 
@@ -44,10 +44,10 @@ describe( 'actions', () => {
 
 	describe( '#fetchZones()', () => {
 		it( 'should return an action object', () => {
-			const action = fetchZones( siteId );
+			const action = requestZones( siteId );
 
 			expect( action ).to.deep.equal( {
-				type: ZONINATOR_FETCH_ZONES,
+				type: ZONINATOR_REQUEST_ZONES,
 				siteId,
 			} );
 		} );
@@ -55,10 +55,10 @@ describe( 'actions', () => {
 
 	describe( '#fetchError', () => {
 		it( 'should return an action object', () => {
-			const action = fetchError( siteId );
+			const action = requestError( siteId );
 
 			expect( action ).to.deep.equal( {
-				type: ZONINATOR_FETCH_ERROR,
+				type: ZONINATOR_REQUEST_ERROR,
 				siteId,
 			} );
 		} );

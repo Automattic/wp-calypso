@@ -8,12 +8,12 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	ZONINATOR_FETCH_ZONES,
-	ZONINATOR_FETCH_ERROR,
+	ZONINATOR_REQUEST_ZONES,
+	ZONINATOR_REQUEST_ERROR,
 	ZONINATOR_UPDATE_ZONES,
 } from '../../action-types';
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
-import reducer, { fetching, items } from '../reducer';
+import reducer, { requesting, items } from '../reducer';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
@@ -21,25 +21,25 @@ describe( 'reducer', () => {
 
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'fetching',
+			'requesting',
 			'items',
 		] );
 	} );
 
-	describe( 'fetching', () => {
+	describe( 'requesting', () => {
 		const previousState = deepFreeze( {
 			[ primarySiteId ]: true,
 		} );
 
 		it( 'should default to an empty object', () => {
-			const state = fetching( undefined, {} );
+			const state = requesting( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should set state to true if settings are being fetched', () => {
-			const state = fetching( undefined, {
-				type: ZONINATOR_FETCH_ZONES,
+		it( 'should set state to true if zones are being fetched', () => {
+			const state = requesting( undefined, {
+				type: ZONINATOR_REQUEST_ZONES,
 				siteId: primarySiteId,
 			} );
 
@@ -48,9 +48,9 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should accumulate fetching values', () => {
-			const state = fetching( previousState, {
-				type: ZONINATOR_FETCH_ZONES,
+		it( 'should accumulate requesting values', () => {
+			const state = requesting( previousState, {
+				type: ZONINATOR_REQUEST_ZONES,
 				siteId: secondarySiteId,
 			} );
 
@@ -60,8 +60,8 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set state to false if updating settings', () => {
-			const state = fetching( previousState, {
+		it( 'should set state to false if updating zones', () => {
+			const state = requesting( previousState, {
 				type: ZONINATOR_UPDATE_ZONES,
 				siteId: primarySiteId,
 			} );
@@ -71,9 +71,9 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set state to false if settings could not be fetched', () => {
-			const state = fetching( previousState, {
-				type: ZONINATOR_FETCH_ERROR,
+		it( 'should set state to false if zones could not be fetched', () => {
+			const state = requesting( previousState, {
+				type: ZONINATOR_REQUEST_ERROR,
 				siteId: primarySiteId,
 			} );
 
@@ -83,7 +83,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should not persist state', () => {
-			const state = fetching( previousState, {
+			const state = requesting( previousState, {
 				type: SERIALIZE,
 			} );
 
@@ -91,7 +91,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should not load persisted state', () => {
-			const state = fetching( previousState, {
+			const state = requesting( previousState, {
 				type: DESERIALIZE,
 			} );
 

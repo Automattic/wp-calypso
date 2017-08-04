@@ -4,15 +4,15 @@
 import { combineReducers, createReducer } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
-	ZONINATOR_FETCH_ERROR,
-	ZONINATOR_FETCH_ZONES,
+	ZONINATOR_REQUEST_ERROR,
+	ZONINATOR_REQUEST_ZONES,
 	ZONINATOR_UPDATE_ZONES
 } from '../action-types';
 
-export const fetching = createReducer( {}, {
-	[ ZONINATOR_FETCH_ZONES ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+export const requesting = createReducer( {}, {
+	[ ZONINATOR_REQUEST_ZONES ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
 	[ ZONINATOR_UPDATE_ZONES ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-	[ ZONINATOR_FETCH_ERROR ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	[ ZONINATOR_REQUEST_ERROR ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
 } );
 
 export const items = createReducer( {}, {
@@ -20,6 +20,6 @@ export const items = createReducer( {}, {
 }, itemsSchema );
 
 export default combineReducers( {
-	fetching,
+	requesting,
 	items,
 } );

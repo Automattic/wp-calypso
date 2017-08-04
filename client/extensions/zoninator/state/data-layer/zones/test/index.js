@@ -8,8 +8,8 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { fetchZonesError, fetchZonesList, updateZonesList } from '../';
-import { fetchError, fetchZones, updateZones } from 'zoninator/state/zones/actions';
+import { requestZonesError, requestZonesList, updateZonesList } from '../';
+import { requestError, requestZones, updateZones } from 'zoninator/state/zones/actions';
 
 const apiResponse = {
 	data: [
@@ -21,7 +21,7 @@ const apiResponse = {
 	],
 };
 
-describe( '#fetchExtensionSettings()', () => {
+describe( '#requestZonesList()', () => {
 	it( 'should dispatch a HTTP request to the zones endpoint', () => {
 		const dispatch = sinon.spy();
 		const action = {
@@ -29,7 +29,7 @@ describe( '#fetchExtensionSettings()', () => {
 			siteId: 123456,
 		};
 
-		fetchZonesList( { dispatch }, action );
+		requestZonesList( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( http( {
@@ -45,7 +45,7 @@ describe( '#fetchExtensionSettings()', () => {
 describe( '#updateZonesList', () => {
 	it( 'should dispatch `updateZones`', () => {
 		const dispatch = sinon.spy();
-		const action = fetchZones( 123456 );
+		const action = requestZones( 123456 );
 
 		updateZonesList( { dispatch }, action, null, apiResponse );
 
@@ -60,14 +60,14 @@ describe( '#updateZonesList', () => {
 	} );
 } );
 
-describe( '#fetchZonesError', () => {
-	it( 'should dispatch `fetchError`', () => {
+describe( '#requestZonesError', () => {
+	it( 'should dispatch `requestError`', () => {
 		const dispatch = sinon.spy();
-		const action = fetchError( 123456 );
+		const action = requestError( 123456 );
 
-		fetchZonesError( { dispatch }, action );
+		requestZonesError( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( fetchError( 123456 ) );
+		expect( dispatch ).to.have.been.calledWith( requestError( 123456 ) );
 	} );
 } );

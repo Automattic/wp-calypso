@@ -3,10 +3,10 @@
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { fetchError, updateZones } from '../../zones/actions';
-import { ZONINATOR_FETCH_ZONES } from 'zoninator/state/action-types';
+import { requestError, updateZones } from '../../zones/actions';
+import { ZONINATOR_REQUEST_ZONES } from 'zoninator/state/action-types';
 
-export const fetchZonesList = ( { dispatch }, action ) => {
+export const requestZonesList = ( { dispatch }, action ) => {
 	const { siteId } = action;
 
 	dispatch( http( {
@@ -18,14 +18,14 @@ export const fetchZonesList = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const fetchZonesError = ( { dispatch }, { siteId } ) =>
-	dispatch( fetchError( siteId ) );
+export const requestZonesError = ( { dispatch }, { siteId } ) =>
+	dispatch( requestError( siteId ) );
 
 export const updateZonesList = ( { dispatch }, { siteId }, next, { data } ) =>
 	dispatch( updateZones( siteId, data ) );
 
-const dispatchFetchZonesRequest = dispatchRequest( fetchZonesList, updateZonesList, fetchZonesError );
+const dispatchFetchZonesRequest = dispatchRequest( requestZonesList, updateZonesList, requestZonesError );
 
 export default {
-	[ ZONINATOR_FETCH_ZONES ]: [ dispatchFetchZonesRequest ],
+	[ ZONINATOR_REQUEST_ZONES ]: [ dispatchFetchZonesRequest ],
 };

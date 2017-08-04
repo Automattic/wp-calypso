@@ -6,13 +6,13 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getZones, isFetchingZones } from '../selectors';
+import { getZones, isRequestingZones } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 234567;
 
-	describe( 'isFetchingZones()', () => {
+	describe( 'isRequestingZones()', () => {
 		it( 'should return false if no state exists', () => {
 			const state = {
 				extensions: {
@@ -22,9 +22,9 @@ describe( 'selectors', () => {
 				}
 			};
 
-			const isFetching = isFetchingZones( state, primarySiteId );
+			const isRequesting = isRequestingZones( state, primarySiteId );
 
-			expect( isFetching ).to.be.false;
+			expect( isRequesting ).to.be.false;
 		} );
 
 		it( 'should return false if the site is not attached', () => {
@@ -32,7 +32,7 @@ describe( 'selectors', () => {
 				extensions: {
 					zoninator: {
 						zones: {
-							fetching: {
+							requesting: {
 								[ primarySiteId ]: true,
 							}
 						}
@@ -40,9 +40,9 @@ describe( 'selectors', () => {
 				}
 			};
 
-			const isFetching = isFetchingZones( state, secondarySiteId );
+			const isRequesting = isRequestingZones( state, secondarySiteId );
 
-			expect( isFetching ).to.be.false;
+			expect( isRequesting ).to.be.false;
 		} );
 
 		it( 'should return false if the settings are not being fetched', () => {
@@ -50,7 +50,7 @@ describe( 'selectors', () => {
 				extensions: {
 					zoninator: {
 						zones: {
-							fetching: {
+							requesting: {
 								[ primarySiteId ]: false,
 							}
 						}
@@ -58,9 +58,9 @@ describe( 'selectors', () => {
 				}
 			};
 
-			const isFetching = isFetchingZones( state, primarySiteId );
+			const isRequesting = isRequestingZones( state, primarySiteId );
 
-			expect( isFetching ).to.be.false;
+			expect( isRequesting ).to.be.false;
 		} );
 
 		it( 'should return true if the settings are being fetched', () => {
@@ -68,7 +68,7 @@ describe( 'selectors', () => {
 				extensions: {
 					zoninator: {
 						zones: {
-							fetching: {
+							requesting: {
 								[ primarySiteId ]: true,
 							}
 						}
@@ -76,9 +76,9 @@ describe( 'selectors', () => {
 				}
 			};
 
-			const isFetching = isFetchingZones( state, primarySiteId );
+			const isRequesting = isRequestingZones( state, primarySiteId );
 
-			expect( isFetching ).to.be.true;
+			expect( isRequesting ).to.be.true;
 		} );
 	} );
 

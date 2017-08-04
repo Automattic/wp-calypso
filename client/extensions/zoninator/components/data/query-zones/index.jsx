@@ -7,13 +7,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isFetchingZones } from '../../../state/zones/selectors';
-import { fetchZones } from '../../../state/zones/actions';
+import { isRequestingZones } from '../../../state/zones/selectors';
+import { requestZones } from '../../../state/zones/actions';
 
 class QueryZones extends Component {
 
 	componentWillMount() {
-		this.fetchZones( this.props );
+		this.requestZones( this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -21,14 +21,14 @@ class QueryZones extends Component {
 			return;
 		}
 
-		this.fetchZones( nextProps );
+		this.requestZones( nextProps );
 	}
 
-	fetchZones( props ) {
+	requestZones( props ) {
 		const { fetchingZones, siteId } = props;
 
 		if ( ! fetchingZones && siteId ) {
-			props.fetchZones( siteId );
+			props.requestZones( siteId );
 		}
 	}
 
@@ -38,8 +38,8 @@ class QueryZones extends Component {
 }
 
 const connectComponent = connect(
-	( state, { siteId } ) => ( { fetchingZones: isFetchingZones( state, siteId ) } ),
-	{ fetchZones },
+	( state, { siteId } ) => ( { fetchingZones: isRequestingZones( state, siteId ) } ),
+	{ requestZones },
 );
 
 export default connectComponent( QueryZones );
