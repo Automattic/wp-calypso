@@ -158,6 +158,7 @@ export isAmbiguousThemeFilterTerm from './is-ambiguous-theme-filter-term';
 export isAutomatedTransferActive from './is-automated-transfer-active';
 export isAutomatedTransferFailed from './is-automated-transfer-failed';
 export isBusinessPlanUser from './is-business-plan-user';
+export isCommentsTreeInitialized from './is-comments-tree-initialized';
 export isConnectedSecondaryNetworkSite from './is-connected-secondary-network-site';
 export isDeactivatingJetpackJumpstart from './is-deactivating-jetpack-jumpstart';
 export isDeactivatingJetpackModule from './is-deactivating-jetpack-module';
