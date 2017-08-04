@@ -22,8 +22,14 @@ import {
 	FEATURES_LIST,
 	PLANS_LIST,
 	PLAN_FREE,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_FREE,
-	PLAN_PERSONAL
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_PERSONAL,
 } from 'lib/plans/constants';
 
 /**
@@ -141,6 +147,66 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 
 		return ! isJetpackPlan( plan );
 	} );
+}
+
+/**
+ * Returns the monthly slug which corresponds to the provided yearly slug or "" if the slug is
+ * not a recognized or cannot be converted.
+ *
+ * @param  {String} planSlug Slug to convert to monthly.
+ * @return {String}          Monthly version slug or "" if the slug could not be converted.
+ */
+export function getMonthlyPlanByYearly( planSlug ) {
+	switch ( planSlug ) {
+		case PLAN_JETPACK_PREMIUM:
+			return PLAN_JETPACK_PREMIUM_MONTHLY;
+		case PLAN_JETPACK_BUSINESS:
+			return PLAN_JETPACK_BUSINESS_MONTHLY;
+		case PLAN_JETPACK_PERSONAL:
+			return PLAN_JETPACK_PERSONAL_MONTHLY;
+		default:
+			return '';
+	}
+}
+
+/**
+ * Returns the yearly slug which corresponds to the provided monthly slug or "" if the slug is
+ * not a recognized or cannot be converted.
+ *
+ * @param  {String} planSlug Slug to convert to yearly.
+ * @return {String}          Yearly version slug or "" if the slug could not be converted.
+ */
+export function getYearlyPlanByMonthly( planSlug ) {
+	switch ( planSlug ) {
+		case PLAN_JETPACK_PREMIUM_MONTHLY:
+			return PLAN_JETPACK_PREMIUM;
+		case PLAN_JETPACK_BUSINESS_MONTHLY:
+			return PLAN_JETPACK_BUSINESS;
+		case PLAN_JETPACK_PERSONAL_MONTHLY:
+			return PLAN_JETPACK_PERSONAL;
+		default:
+			return '';
+	}
+}
+
+/**
+ * Returns true if plan "types" match regardless of their interval.
+ *
+ * For example (fake plans):
+ *     planLevelsMatch( PRO_YEARLY, PRO_YEARLY ) => true
+ *     planLevelsMatch( PRO_YEARLY, PRO_MONTHLY ) => true
+ *     planLevelsMatch( PRO_YEARLY, PERSONAL_YEARLY ) => false
+ *
+ * @param  {String}  planSlugA One of the plan slugs to compare
+ * @param  {String}  planSlugB One of the plan slugs to compare
+ * @return {Boolean}           Whether the plan "types" match regardless of interval
+ */
+export function planLevelsMatch( planSlugA, planSlugB ) {
+	return (
+		planSlugA === planSlugB ||
+		getMonthlyPlanByYearly( planSlugA ) === planSlugB ||
+		planSlugA === getMonthlyPlanByYearly( planSlugB )
+	);
 }
 
 export const isPlanFeaturesEnabled = () => {
