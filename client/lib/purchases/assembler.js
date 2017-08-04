@@ -16,6 +16,7 @@ function createPurchaseObject( purchase ) {
 		amount: Number( purchase.amount ),
 		attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
 		canDisableAutoRenew: Boolean( purchase.can_disable_auto_renew ),
+		canExplicitRenew: Boolean( purchase.can_explicit_renew ),
 		currencyCode: purchase.currency_code,
 		currencySymbol: purchase.currency_symbol,
 		domain: purchase.domain,
