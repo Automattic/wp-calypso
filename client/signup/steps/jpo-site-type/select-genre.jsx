@@ -23,34 +23,59 @@ module.exports = React.createClass( {
 		}
 
 		return ( 
+
 			<div className="jpo__site-type-wrapper">
 				<div className="jpo__site-type-row">
-					<Card>
+					<div className="card design-type-with-store__choice">
+						<a className="design-type-with-store__choice-link:after" href="#">
+						<div className="design-type-with-store__image">
 						<BlogGraphic />
-						<hr />
-						<Button onClick={ this.props.onSelectBlog }>{ translate( 'Start with a blog' ) }</Button>
-						<div className="jpo__site-type-description">{ translate( 'To share your ideas, stories, and photographs with your followers.' ) }</div>
-					</Card>
-					<Card>
+						</div>
+						<div className="design-type-with-store__choice-copy">
+						<span className="button is-compact design-type-with-store__cta"
+						onClick={ this.props.onSelectBlog }>{
+							translate( 'Start with a blog' ) }</span>
+						<p className="jpo__site-type-description">{
+							translate( 'To share your ideas, stories, and photographs with your followers.' ) }</p>
+						</div>
+						</a>
+					</div>
+					<div className="card design-type-with-store__choice">
+						<div className="design-type-with-store__image">
 						<WebsiteGraphic />
-						<hr />
-						<Button onClick={ this.props.onSelectWebsite }>{ translate( 'Start with a website' ) }</Button>
-						<div className="jpo__site-type-description">{ translate( 'To promote your business, organization, or brand and connect with your audience.' ) }</div>
-					</Card>
+						</div>
+						<div className="design-type-with-store__choice-copy">
+						<span className="button is-compact design-type-with-store__cta"
+						onClick={ this.props.onSelectWebsite }>{
+							translate( 'Start with a website' ) }</span>
+						<p className="jpo__site-type-description">{
+							translate( 'To promote your business, organization, or brand and connect with your audience.' ) }</p>
+						</div>
+					</div>
 				</div>
 				<div className="jpo__site-type-row">
-					<Card>
+					<div className="card design-type-with-store__choice">
+						<div className="design-type-with-store__image">
 						<PortfolioGraphic />
-						<hr />
-						<Button onClick={ this.props.onSelectPortfolio }>{ translate( 'Start with a portfolio' ) }</Button>
-						<div className="jpo__site-type-description">{ translate( 'To present your creative projects in a visual showcase.' ) }</div>
-					</Card>
-					<Card>
+						</div>
+						<div className="design-type-with-store__choice-copy">
+						<span className="button is-compact design-type-with-store__cta"
+						onClick={ this.props.onSelectPortfolio }>{ translate( 'Start with a portfolio' ) }</span>
+						<p className="jpo__site-type-description">{
+							translate( 'To present your creative projects in a visual showcase.' ) }</p>
+						</div>
+					</div>
+					<div className="card design-type-with-store__choice">
+						<div className="design-type-with-store__image">
 						<StoreGraphic />
-						<hr />
-						<Button onClick={ this.props.onSelectStore }>{ translate( 'Start with an online store' ) }</Button>
-						<div className="jpo__site-type-description">{ translate( 'To sell your products or services and accept payments.' ) }</div>
-					</Card>
+						</div>
+						<div className="design-type-with-store__choice-copy">
+						<span className="button is-compact design-type-with-store__cta"
+						onClick={ this.props.onSelectStore }>{ translate( 'Start with an online store' ) }</span>
+						<p className="jpo__site-type-description">{
+							translate( 'To sell your products or services and accept payments.' ) }</p>
+						</div>
+					</div>
 				</div>
 				<div className="jpo__site-type-note">{ translate( 'Not sure? Pick the closest option. You can always change your settings later.' ) }</div>
 			</div>
