@@ -93,4 +93,54 @@ export const comments = [
 		},
 		date: '2016-04-18T15:22:00+00:00',
 	},
+	{
+		ID: 10,
+		content: '<p>Watermelon</p>',
+		author: {
+			ID: 10,
+			name: 'Aaron',
+			avatar_URL: 'https://2.gravatar.com/avatar/20600ea4d39b6facdd79875d24d2dbab?d=mm&r=G',
+		},
+		date: '2016-04-18T15:22:00+00:00',
+	},
+	{
+		ID: 11,
+		content: '<p>Bagel</p>',
+		author: {
+			ID: 11,
+			name: 'Greg',
+			avatar_URL: 'https://0.gravatar.com/avatar/915ee4efbd21f12b55b6362cf4f7c42f?d=mm&r=G',
+		},
+		date: '2016-04-18T15:22:00+00:00',
+	},
+	{
+		ID: 11,
+		content: '<p>Apple</p>',
+		author: {
+			ID: 11,
+			name: 'Greg',
+			avatar_URL: 'https://1.gravatar.com/avatar/765b5dca3190e27b9c88d6143c5527d5?d=mm&r=G',
+		},
+		date: '2016-04-18T15:22:00+00:00',
+	},
+	{
+		ID: 12,
+		content: '<p>Pancake</p>',
+		author: {
+			ID: 12,
+			name: 'Martin',
+			avatar_URL: 'https://0.gravatar.com/avatar/33b3e384f5a150015a5a981402983ca3?d=mm&r=G',
+		},
+		date: '2016-04-18T15:22:00+00:00',
+	},
+	{
+		ID: 13,
+		content: '<p>Gelato</p>',
+		author: {
+			ID: 13,
+			name: 'Yanir',
+			avatar_URL: 'https://1.gravatar.com/avatar/dda019c47a6183120608a6aeac2db6c5?d=mm&r=G',
+		},
+		date: '2016-04-18T15:22:00+00:00',
+	},
 ];
