@@ -183,7 +183,7 @@ export class Notifications extends Component {
 			OPEN_SITE: [ ( store, { siteId, href } ) => {
 				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
 					this.props.checkToggle();
-					this.props.recordTracksEven( 'calypso_notifications_open_site', { siteId } );
+					this.props.recordTracksEvent( 'calypso_notifications_open_site', { siteId } );
 					page( `/read/blogs/${ siteId }` );
 				} else {
 					window.open( href, '_blank' );
