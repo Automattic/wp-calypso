@@ -16,7 +16,7 @@ import addQueryArgs from 'lib/route/add-query-args';
  */
 import Toolbar from './toolbar';
 import touchDetect from 'lib/touch-detect';
-import { isMobile } from 'lib/viewport';
+import { isWithinBreakpoint } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import Spinner from 'components/spinner';
 import SpinnerLine from 'components/spinner-line';
@@ -28,7 +28,6 @@ const debug = debugModule( 'calypso:web-preview' );
 export class WebPreviewContent extends Component {
 	previewId = uuid();
 	_hasTouch = false;
-	_isMobile = false;
 
 	state = {
 		iframeUrl: null,
@@ -44,7 +43,6 @@ export class WebPreviewContent extends Component {
 	componentWillMount() {
 		// Cache touch and mobile detection for the entire lifecycle of the component
 		this._hasTouch = touchDetect.hasTouch();
-		this._isMobile = isMobile();
 	}
 
 	componentDidMount() {
@@ -241,7 +239,7 @@ export class WebPreviewContent extends Component {
 					device={ this.state.device }
 					{ ...this.props }
 					showExternal={ ( this.props.previewUrl ? this.props.showExternal : false ) }
-					showDeviceSwitcher={ this.props.showDeviceSwitcher && ! this._isMobile }
+					showDeviceSwitcher={ this.props.showDeviceSwitcher && isWithinBreakpoint( '>660px' ) }
 					selectSeoPreview={ this.selectSEO }
 					isLoading={ this.state.isLoadingSubpage }
 				/>
