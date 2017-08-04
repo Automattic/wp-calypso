@@ -23,14 +23,30 @@ module.exports = React.createClass( {
 		return ( 
 			<div className="jpo__site-type-wrapper">
 				<div className="jpo__site-type-row jpo__site-type-row-small">
-					<Card>
+					<div className="card design-type-with-store__choice">
+						<a className="design-type-with-store__choice-link:after" href="#"
+						onClick={ this.props.onSelectPersonal }>
+						<div className="design-type-with-store__image">
 						<PersonalGraphic />
-						<Button onClick={ this.props.onSelectPersonal }>{ translate( 'Personal site' ) }</Button>
-					</Card>
-					<Card>
+						</div>
+						<div className="design-type-with-store__choice-copy">
+						<span className="button is-compact design-type-with-store__cta"
+						onClick={ this.props.onSelectPersonal }>{ translate( 'Personal site' ) }</span>
+						</div>
+						</a>
+					</div>
+					<div className="card design-type-with-store__choice">
+						<a className="design-type-with-store__choice-link:after" href="#"
+						onClick={ this.props.onSelectBusiness }>
+						<div className="design-type-with-store__image">
 						<BusinessGraphic />
-						<Button onClick={ this.props.onSelectBusiness }>{ translate( 'Business site' ) }</Button>
-					</Card>
+						</div>
+						<div className="design-type-with-store__choice-copy">
+						<span className="button is-compact design-type-with-store__cta"
+						onClick={ this.props.onSelectBusiness }>{ translate( 'Business site' ) }</span>
+						</div>
+						</a>
+					</div>
 				</div>
 			</div>
 		);
