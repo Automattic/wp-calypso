@@ -1,3 +1,4 @@
+// @format
 /**
  * External Dependencies
  */
@@ -8,17 +9,41 @@ import { expect } from 'chai';
  */
 import { isPlanMatch } from '..';
 import {
+	PLAN_BUSINESS,
+	PLAN_FREE,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
 } from '../constants';
 
 describe( 'isPlanMatch', () => {
+	const testPlansArrayIndependentOfOrder = ( plansArray, result ) =>
+		plansArray.forEach( ( [ slugA, slugB ] ) => {
+			expect( isPlanMatch( slugA, slugB ) ).to.be[ result ];
+			expect( isPlanMatch( slugB, slugA ) ).to.be[ result ];
+		} );
+
 	it( 'should return true for identical plans', () => {
-		expect( isPlanMatch( PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS ) ).to.be.true;
+		const identicalPlans = [
+			[ PLAN_BUSINESS, PLAN_BUSINESS ],
+			[ PLAN_FREE, PLAN_FREE ],
+			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS ],
+			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ],
+			[ PLAN_JETPACK_FREE, PLAN_JETPACK_FREE ],
+			[ PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL ],
+			[ PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_JETPACK_PERSONAL_MONTHLY ],
+			[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM ],
+			[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PREMIUM_MONTHLY ],
+			[ PLAN_PERSONAL, PLAN_PERSONAL ],
+			[ PLAN_PREMIUM, PLAN_PREMIUM ],
+		];
+		testPlansArrayIndependentOfOrder( identicalPlans, 'true' );
 	} );
 
 	it( 'should return true for matching plans', () => {
@@ -26,16 +51,31 @@ describe( 'isPlanMatch', () => {
 			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ],
 			[ PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ],
 			[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ],
-			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_BUSINESS ],
-			[ PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_JETPACK_PERSONAL ],
-			[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PREMIUM ],
 		];
-		matchingPlans.forEach(
-			( [ slugA, slugB ] ) => expect( isPlanMatch( slugA, slugB ) ).to.be.true
-		);
+		testPlansArrayIndependentOfOrder( matchingPlans, 'true' );
 	} );
 
 	it( 'should return false for non-matching plans', () => {
-		expect( isPlanMatch( PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PERSONAL ) ).to.be.false;
+		const nonMatchingPlans = [
+			[ PLAN_JETPACK_BUSINESS, PLAN_BUSINESS ],
+			[ PLAN_JETPACK_BUSINESS, PLAN_FREE ],
+			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PERSONAL_MONTHLY ],
+			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PREMIUM_MONTHLY ],
+			[ PLAN_JETPACK_BUSINESS, PLAN_PERSONAL ],
+			[ PLAN_JETPACK_BUSINESS, PLAN_PREMIUM ],
+			[ PLAN_JETPACK_PERSONAL, PLAN_BUSINESS ],
+			[ PLAN_JETPACK_PERSONAL, PLAN_FREE ],
+			[ PLAN_JETPACK_PERSONAL, PLAN_JETPACK_BUSINESS_MONTHLY ],
+			[ PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PREMIUM_MONTHLY ],
+			[ PLAN_JETPACK_PERSONAL, PLAN_PERSONAL ],
+			[ PLAN_JETPACK_PERSONAL, PLAN_PREMIUM ],
+			[ PLAN_JETPACK_PREMIUM, PLAN_BUSINESS ],
+			[ PLAN_JETPACK_PREMIUM, PLAN_FREE ],
+			[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS_MONTHLY ],
+			[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PERSONAL_MONTHLY ],
+			[ PLAN_JETPACK_PREMIUM, PLAN_PERSONAL ],
+			[ PLAN_JETPACK_PREMIUM, PLAN_PREMIUM ],
+		];
+		testPlansArrayIndependentOfOrder( nonMatchingPlans, 'false' );
 	} );
 } );
