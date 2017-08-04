@@ -836,7 +836,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000709"
+      "version": "1.0.30000710"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -1855,7 +1855,7 @@
       }
     },
     "eslint-plugin-wpcalypso": {
-      "version": "3.3.0",
+      "version": "3.4.1",
       "dev": true
     },
     "esmangle-evaluator": {
@@ -6691,8 +6691,14 @@
           "dev": true
         },
         "finalhandler": {
-          "version": "1.0.3",
-          "dev": true
+          "version": "1.0.4",
+          "dev": true,
+          "dependencies": {
+            "debug": {
+              "version": "2.6.8",
+              "dev": true
+            }
+          }
         },
         "fresh": {
           "version": "0.5.0",
