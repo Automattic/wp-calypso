@@ -80,6 +80,14 @@ module.exports = function() {
 	);
 
 	page(
+		'/settings/disconnect-site/why/:site_id',
+		mySitesController.siteSelection,
+		mySitesController.navigation,
+		settingsController.setScroll,
+		controller.disconnectSite
+	);
+
+	page(
 		'/settings/:section',
 		controller.legacyRedirects,
 		mySitesController.siteSelection,
