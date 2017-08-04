@@ -19,6 +19,7 @@ import page from 'page';
 import wpcom from 'lib/wp';
 import { get } from 'lodash';
 import 'config';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -26,6 +27,7 @@ import 'config';
 import analytics from 'lib/analytics';
 import config from 'config';
 import userLib from 'lib/user';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 import NotificationsPanel, { refreshNotes } from 'notifications-panel';
 
@@ -159,6 +161,9 @@ export class Notifications extends Component {
 			OPEN_POST: [ ( store, { siteId, postId, href } ) => {
 				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
 					this.props.checkToggle();
+					this.props.recordTracksEvent( 'calypso_notifications_open_post', {
+						siteId, postId
+					} );
 					page( `/read/blogs/${ siteId }/posts/${ postId }` );
 				} else {
 					window.open( href, '_blank' );
@@ -167,6 +172,9 @@ export class Notifications extends Component {
 			OPEN_COMMENT: [ ( store, { siteId, postId, href, commentId } ) => {
 				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
 					this.props.checkToggle();
+					this.props.recordTracksEvent( 'calypso_notifications_open_comment', {
+						siteId, postId, commentId
+					} );
 					page( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
 				} else {
 					window.open( href, '_blank' );
@@ -175,6 +183,7 @@ export class Notifications extends Component {
 			OPEN_SITE: [ ( store, { siteId, href } ) => {
 				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
 					this.props.checkToggle();
+					this.props.recordTracksEvent( 'calypso_notifications_open_site', { siteId } );
 					page( `/read/blogs/${ siteId }` );
 				} else {
 					window.open( href, '_blank' );
@@ -206,4 +215,4 @@ export class Notifications extends Component {
 	}
 }
 
-export default Notifications;
+export default connect( null, { recordTracksEvent } )( Notifications );
