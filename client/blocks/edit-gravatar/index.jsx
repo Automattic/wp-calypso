@@ -248,8 +248,7 @@ export class EditGravatar extends Component {
 										href={ gravatarLink }
 										target="_blank"
 										rel="noopener noreferrer"
-										icon={ true }
-										iconSize={ 14 } />,
+										icon={ true } />,
 									p: <p />
 								},
 								args: {
