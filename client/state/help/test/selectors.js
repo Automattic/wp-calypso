@@ -8,11 +8,11 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	getHelpSelectedSiteId,
+	getHelpSiteId,
 } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( '#getHelpSelectedSiteId()', () => {
+	describe( '#getHelpSiteId()', () => {
 		it( 'should return null for default state', () => {
 			const state = deepFreeze( {
 				help: {
@@ -20,7 +20,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( getHelpSelectedSiteId( state ) ).to.be.null;
+			expect( getHelpSiteId( state ) ).to.be.null;
 		} );
 
 		it( 'should return courses for given state', () => {
@@ -30,7 +30,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( getHelpSelectedSiteId( state ) ).to.eql( state.help.selectedSiteId );
+			expect( getHelpSiteId( state ) ).to.eql( state.help.selectedSiteId );
 		} );
 	} );
 } );
