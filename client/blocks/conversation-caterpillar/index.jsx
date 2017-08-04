@@ -4,7 +4,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { map, get, last, uniqBy, size, filter } from 'lodash';
+import { map, get, last, uniqBy, size, filter, takeRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /***
@@ -12,6 +12,8 @@ import { localize } from 'i18n-calypso';
  */
 import Gravatar from 'components/gravatar';
 import { getDateSortedPostComments } from 'state/comments/selectors';
+
+const MAX_GRAVATARS_TO_DISPLAY = 10;
 
 class ConversationCaterpillarComponent extends React.Component {
 	static propTypes = {
@@ -26,16 +28,31 @@ class ConversationCaterpillarComponent extends React.Component {
 
 		// Only display authors with a gravatar, and only display each author once
 		const uniqueAuthors = uniqBy( map( comments, 'author' ), 'ID' );
-		const displayedAuthors = filter( uniqueAuthors, 'avatar_URL' );
+		const displayedAuthors = takeRight(
+			filter( uniqueAuthors, 'avatar_URL' ),
+			MAX_GRAVATARS_TO_DISPLAY
+		);
+		const displayedAuthorsCount = size( displayedAuthors );
 		const lastAuthorName = get( last( displayedAuthors ), 'name' );
+		const gravatarSmallScreenThreshold = MAX_GRAVATARS_TO_DISPLAY / 2;
 
 		// At the moment, we just show authors for the entire comments array
 		return (
 			<div className="conversation-caterpillar">
-				{ map( displayedAuthors, author => {
+				{ map( displayedAuthors, ( author, index ) => {
+					let gravClasses = 'conversation-caterpillar__gravatar';
+					// If we have more than 5 gravs,
+					// add a additional class so we can hide some on small screens
+					if (
+						displayedAuthorsCount > gravatarSmallScreenThreshold &&
+						index < displayedAuthorsCount - gravatarSmallScreenThreshold
+					) {
+						gravClasses += ' is-hidden-on-small-screens';
+					}
+
 					return (
 						<Gravatar
-							className="conversation-caterpillar__gravatar"
+							className={ gravClasses }
 							key={ author.ID }
 							user={ author }
 							size={ 32 }

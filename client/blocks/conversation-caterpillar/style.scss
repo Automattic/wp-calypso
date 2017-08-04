@@ -10,6 +10,14 @@
 	&:first-child {
 		margin-left: 0;
 	}
+
+	&.is-hidden-on-small-screens {
+		display: none;
+
+		@include breakpoint( ">660px" ) {
+   			display: inline;
+   		}
+	}
 }
 
 .conversation-caterpillar__count {
