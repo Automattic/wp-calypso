@@ -11,29 +11,29 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 
 class WelcomeStep extends Component {
-	state = {
-		form: null,
-		submitting: false
-	};
-
 	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		const {
 			goToNextStep,
 			stepName,
+			stepSectionName,
 			translate,
 		} = this.props;
 
 		const timestamp = ( new Date() ).getTime();
 		const noise = Math.random().toString( 36 ).substring( 2, 10 );
-		const site = `site${ timestamp }${ noise }`;
+		const siteUrl = `site${ timestamp }${ noise }`;
 
-		SignupActions.submitSignupStep( {
-			processingMessage: translate( 'Setting up your site' ),
-			stepName: stepName,
-			site,
-		} );
+		SignupActions.submitSignupStep(
+			{
+				processingMessage: translate( 'Setting up your site' ),
+				stepName,
+				stepSectionName,
+				siteUrl,
+				isPurchasingItem: false,
+			}
+		);
 
 		goToNextStep();
 	}

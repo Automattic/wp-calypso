@@ -71,8 +71,12 @@ export default {
 
 	welcome: {
 		stepName: 'welcome',
-		apiRequestFunction: stepActions.createSite,
-		providesDependencies: [ 'siteSlug' ],
+		apiRequestFunction: stepActions.createSiteWithCart,
+		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+		props: {
+			isDomainOnly: false
+		},
+		delayApiRequestUntilComplete: true
 	},
 
 	user: {
