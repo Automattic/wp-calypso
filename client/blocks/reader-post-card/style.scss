@@ -755,27 +755,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 }
 
-// Daily Post button
-.reader-post-card.card .daily-post-button .daily-post-button__button {
-	background: none;
-	border: 0;
-	color: $blue-medium;
-	font-size: 14px;
-	line-height: normal;
-	padding: 0;
-
-	.gridicon {
-		fill: $blue-medium;
-		height: 20px;
-		margin-top: 0;
-		width: 20px;
-	}
-}
-
-.reader-post-card.card .daily-post-button {
-	margin: 5px 0 8px;
-}
-
 .reader-post-card__blocked-description {
 	margin-bottom: 0;
 	color: $gray-dark;

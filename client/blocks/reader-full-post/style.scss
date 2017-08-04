@@ -32,23 +32,6 @@
 		width: auto;
 		padding: 0 20px;
 	}
-
-	// Daily Post button
-	.daily-post-button .daily-post-button__button.button.is-primary.is-compact {
-		background: none;
-		border: 0;
-		color: $blue-medium;
-		font-size: 14px;
-		line-height: normal;
-		padding: 0;
-
-		.gridicon {
-			fill: $blue-medium;
-			height: 20px;
-			margin-top: 0;
-			width: 20px;
-		}
-	}
 }
 
 .reader-full-post__back-container {
