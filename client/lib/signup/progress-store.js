@@ -8,6 +8,7 @@ var debug = require( 'debug' )( 'calypso:signup-progress-store' ), // eslint-dis
 	find = require( 'lodash/find' ),
 	map = require( 'lodash/map' ),
 	isEmpty = require( 'lodash/isEmpty' ),
+	get = require( 'lodash/get' ),
 	clone = require( 'lodash/clone' );
 
 /**
@@ -133,19 +134,13 @@ function handleChange() {
 }
 
 function addStorableDependencies( step, action ) {
-	let unstorableDependencies;
-
-	if ( steps[ step.stepName ] ) {
-		unstorableDependencies = steps[ step.stepName ].unstorableDependencies;
-	}
+	const unstorableDependencies = get( steps, [ step.stepName, 'unstorableDependencies' ] );
 
 	if ( isEmpty( action.providedDependencies ) ) {
 		return step;
 	}
 
-	const providedDependencies = isEmpty( unstorableDependencies )
-		? action.providedDependencies
-		: omit( action.providedDependencies, unstorableDependencies );
+	const providedDependencies = omit( action.providedDependencies, unstorableDependencies );
 
 	return { ...step, providedDependencies };
 }
