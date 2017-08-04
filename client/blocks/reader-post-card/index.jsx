@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -239,7 +240,7 @@ class ReaderPostCard extends React.Component {
 				>
 					{ isDailyPostChallengeOrPrompt( post ) &&
 						site &&
-						<DailyPostButton post={ post } site={ site } tagName="span" /> }
+						<DailyPostButton post={ post } site={ site } /> }
 					{ discoverFollowButton }
 					{ readerPostActions }
 				</StandardPost>
@@ -269,5 +270,5 @@ export default connect(
 	( state, ownProps ) => ( {
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 	} ),
-	{ expandCard: expandCardAction },
+	{ expandCard: expandCardAction }
 )( ReaderPostCard );
