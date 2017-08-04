@@ -12,7 +12,7 @@ var config = require( 'config' ),
 	*/
 	url = 'https://public-api.wordpress.com/rest/v1/me?meta=flags';
 
-module.exports = function( userCookie, callback ) {
+module.exports = function( userCookie, clientIp, callback ) {
 	// create HTTP Request object
 	var req = superagent.get( url ),
 		hmac, cookies, hash;
@@ -28,6 +28,7 @@ module.exports = function( userCookie, callback ) {
 			req.set( 'User-Agent', 'WordPress.com Calypso' );
 		}
 	}
+	req.set( 'X-Forwarded-For', clientIp );
 
 	// start the request
 	req.end( function( err, res ) {
