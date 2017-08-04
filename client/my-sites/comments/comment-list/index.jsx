@@ -328,8 +328,12 @@ export class CommentList extends Component {
 		this.props.likeComment( commentId, postId, { alsoApprove } );
 
 		if ( alsoApprove ) {
+			const updatedComment = {
+				...comment,
+				isLiked: true,
+			};
 			this.props.removeNotice( `comment-notice-${ commentId }` );
-			this.setCommentStatus( comment, 'approved' );
+			this.setCommentStatus( updatedComment, 'approved' );
 			this.updatePersistedComments( commentId );
 		}
 	}
