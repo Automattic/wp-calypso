@@ -15,7 +15,7 @@ import DocumentHead from 'components/data/document-head';
 import CommentList from './comment-list';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
-import { comp as ReasonableDemo, inc as incrementCounter } from 'bs/reasonableDemo';
+import { comp as ReasonableDemo, inc as incrementCounter } from 'components/reasonable-demo/reasonableDemo';
 
 export class CommentsManagement extends Component {
 	static propTypes = {

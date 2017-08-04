@@ -113,7 +113,7 @@ const webpackConfig = {
 				use: 'imports-loader?this=>window',
 			},
 			{
-				test: \.(ml|re)$/,
+				test: /\.(ml|re)$/,
 				use: 'bs-loader',
 			}
 		]

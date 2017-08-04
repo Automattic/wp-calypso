@@ -10,10 +10,10 @@ type actions =
 
 let make ::name ::count ::onClick _children => {
   let text = ReasonReact.stringToElement;
-  let clickIt _event _state _self => onClick () [@bs];
+  let clickIt _event _state => onClick () [@bs];
   {
     ...component,
-    render: fun () self =>
+    render: fun self =>
       <div>
         <label> (text name) </label>
         <button _type="button" className="button is-compact" onClick=(self.update clickIt)>
