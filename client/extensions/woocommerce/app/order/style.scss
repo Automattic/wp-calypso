@@ -72,11 +72,13 @@
 
 	.order__detail-item-cost,
 	.order__detail-item-quantity,
+	.order__detail-item-tax,
 	.order__detail-item-total {
 		text-align: right;
+		width: 70px;
 
 		input {
-			width: 5em;
+			width: 70px;
 		}
 	}
 
@@ -129,7 +131,7 @@
 
 	.order__details-total-discount,
 	.order__details-total-shipping,
-	.order__details-total-tax,
+	.order__details-total-shipping-refund,
 	.order__details-total-refund,
 	.order__details-total {
 		margin-bottom: 8px;
@@ -137,15 +139,18 @@
 		align-items: center;
 
 		.order__details-totals-label {
-			width: 75%;
+			flex: 1 0 calc( 100% - 204px );
 		}
 
+		.order__details-totals-tax,
 		.order__details-totals-value {
-			width: 25%;
+			flex: 1 0 92px;
+		}
+	}
 
-			.form-text-input-with-affixes {
-				width: 85%;
-			}
+	.order__details-total-shipping-refund {
+		.form-text-input-with-affixes {
+			width: 130px;
 		}
 	}
 
