@@ -31,6 +31,11 @@
 	vertical-align: top;
 	text-align: center;
 	padding: 0;
+
+	@media (max-width: 480px) {
+		width: 100%;
+		text-align: left;
+	}
 }
 
 .jpo__site-type-row .card svg {
@@ -43,15 +48,30 @@
 }
 
 .jpo__site-type-row .card:first-child {
-	margin-right: 2%;
+	@include breakpoint( ">480px" ) {
+		margin-right: 2%;
+	}
+    
+    @media (max-width: 480px) {
+		margin-right: 10px;
+	}
 }
 
 .jpo__site-type-row .card .button {
 	font-size: 1.25rem;
 	margin-bottom: 1rem;
 	color: $blue-wordpress;
-	padding: 7px;
     line-height: 1;
+
+	@include breakpoint( ">480px" ) {
+		padding: 7px;
+	}
+    
+    @media (max-width: 480px) {
+		margin-bottom: 0;
+		font-size:1.5rem;
+		padding: 0;
+	}
 }
 
 .jpo__site-type-row-small .card .button {
@@ -79,8 +99,12 @@ p.jpo__site-type-description {
 	color: $gray;
 	margin: 0;
 
-		@include breakpoint( ">480px" ) {
+	@include breakpoint( ">480px" ) {
 		margin-top: 10px;
+	}
+
+	@media (max-width: 480px) {
+		text-align:left;
 	}
 }
 
@@ -107,7 +131,7 @@ p.jpo__site-type-description {
 	width: 100%;
 	margin-top: 1rem;
 
-		@include breakpoint( "<480px" ) {
+	@include breakpoint( "<480px" ) {
 		background: none;
 		font-size: 1.1em;
 		border: 0;
@@ -182,6 +206,11 @@ p.jpo__site-type-description {
 
 .design-type-with-store__choice-copy {
 	border-top: 1px solid rgba(200, 215, 225, 0.5);
+
+	@include breakpoint( "<480px" ) {
+		padding: 16px;
+		border-top: 0;
+	}
 }
 
 @include breakpoint( ">480px" ) {

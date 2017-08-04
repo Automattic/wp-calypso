@@ -27,7 +27,8 @@ module.exports = React.createClass( {
 			<div className="jpo__site-type-wrapper">
 				<div className="jpo__site-type-row">
 					<div className="card design-type-with-store__choice">
-						<a className="design-type-with-store__choice-link:after" href="#">
+						<a className="design-type-with-store__choice-link:after" href="#"
+						onClick={ this.props.onSelectBlog }>
 						<div className="design-type-with-store__image">
 						<BlogGraphic />
 						</div>
@@ -41,6 +42,8 @@ module.exports = React.createClass( {
 						</a>
 					</div>
 					<div className="card design-type-with-store__choice">
+						<a className="design-type-with-store__choice-link:after" href="#"
+						onClick={ this.props.onSelectWebsite }>
 						<div className="design-type-with-store__image">
 						<WebsiteGraphic />
 						</div>
@@ -51,10 +54,11 @@ module.exports = React.createClass( {
 						<p className="jpo__site-type-description">{
 							translate( 'To promote your business, organization, or brand and connect with your audience.' ) }</p>
 						</div>
+						</a>
 					</div>
-				</div>
-				<div className="jpo__site-type-row">
 					<div className="card design-type-with-store__choice">
+						<a className="design-type-with-store__choice-link:after" href="#"
+						onClick={ this.props.onSelectWebsite }>
 						<div className="design-type-with-store__image">
 						<PortfolioGraphic />
 						</div>
@@ -64,8 +68,11 @@ module.exports = React.createClass( {
 						<p className="jpo__site-type-description">{
 							translate( 'To present your creative projects in a visual showcase.' ) }</p>
 						</div>
+						</a>
 					</div>
 					<div className="card design-type-with-store__choice">
+						<a className="design-type-with-store__choice-link:after" href="#"
+						onClick={ this.props.onSelectWebsite }>
 						<div className="design-type-with-store__image">
 						<StoreGraphic />
 						</div>
@@ -75,6 +82,7 @@ module.exports = React.createClass( {
 						<p className="jpo__site-type-description">{
 							translate( 'To sell your products or services and accept payments.' ) }</p>
 						</div>
+						</a>
 					</div>
 				</div>
 				<div className="jpo__site-type-note">{ translate( 'Not sure? Pick the closest option. You can always change your settings later.' ) }</div>
