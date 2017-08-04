@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { includes, map } from 'lodash';
@@ -20,6 +21,11 @@ import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 import UrlSearch from 'lib/url-search';
 import { isEnabled } from 'config';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+} from 'state/analytics/actions';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],
@@ -35,6 +41,8 @@ export class CommentNavigation extends Component {
 		selectedCount: 0,
 		status: 'unapproved',
 	};
+
+	changeFilter = status => () => this.props.recordChangeFilter( status );
 
 	getNavItems = () => {
 		const { translate } = this.props;
@@ -164,6 +172,7 @@ export class CommentNavigation extends Component {
 					{ map( navItems, ( { label }, status ) =>
 						<NavItem
 							key={ status }
+							onClick={ this.changeFilter( status ) }
 							path={ this.getStatusPath( status ) }
 							selected={ queryStatus === status }
 						>
@@ -194,4 +203,11 @@ export class CommentNavigation extends Component {
 	}
 }
 
-export default localize( UrlSearch( CommentNavigation ) );
+const mapDispatchToProps = {
+	recordChangeFilter: status => composeAnalytics(
+		recordTracksEvent( 'calypso_comment_management_change_filter', { status } ),
+		bumpStat( 'calypso_comment_management', 'change_filter_to_' + status )
+	),
+};
+
+export default connect( null, mapDispatchToProps )( localize( UrlSearch( CommentNavigation ) ) );

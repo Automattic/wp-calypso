@@ -26,6 +26,12 @@ import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import { getSiteCommentsTree } from 'state/selectors';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
 
 const COMMENTS_PER_PAGE = 20;
 const LOADING_TIMEOUT = 2000;
@@ -37,6 +43,7 @@ export class CommentList extends Component {
 		comments: PropTypes.array,
 		deleteComment: PropTypes.func,
 		likeComment: PropTypes.func,
+		recordChangePage: PropTypes.func,
 		replyComment: PropTypes.func,
 		setBulkStatus: PropTypes.func,
 		siteId: PropTypes.number,
@@ -93,10 +100,15 @@ export class CommentList extends Component {
 		}
 	}
 
-	changePage = page => this.setState( {
-		page,
-		selectedComments: {},
-	} );
+	changePage = page => {
+		const total = Math.ceil( ( this.props.comments.length + this.state.persistedComments.length ) / COMMENTS_PER_PAGE );
+		this.props.recordChangePage( page, total );
+
+		this.setState( {
+			page,
+			selectedComments: {},
+		} );
+	};
 
 	deleteCommentPermanently = ( commentId, postId ) => {
 		this.props.removeNotice( `comment-notice-${ commentId }` );
@@ -169,7 +181,7 @@ export class CommentList extends Component {
 		}
 
 		this.props.createNotice( 'is-success', noticeMessage, noticeOptions );
-		this.props.replyComment( commentText, postId, parentCommentId );
+		this.props.replyComment( commentText, postId, parentCommentId, { alsoApprove } );
 	}
 
 	// TODO: rewrite after persistedComments is merged
@@ -187,8 +199,14 @@ export class CommentList extends Component {
 	};
 
 	setCommentStatus = ( comment, status, options = { isUndo: false, doPersist: false, showNotice: true } ) => {
-		const { commentId, postId, isLiked } = comment;
+		const {
+			commentId,
+			postId,
+			isLiked,
+			status: previousStatus,
+		} = comment;
 		const { isUndo, doPersist, showNotice } = options;
+		const alsoUnlikeComment = isLiked && ( 'approved' !== status );
 
 		if ( isUndo ) {
 			this.setState( { lastUndo: commentId } );
@@ -208,10 +226,14 @@ export class CommentList extends Component {
 			this.showNotice( comment, status, { doPersist } );
 		}
 
-		this.props.changeCommentStatus( commentId, postId, status );
+		this.props.changeCommentStatus( commentId, postId, status, {
+			alsoUnlike: alsoUnlikeComment,
+			isUndo,
+			previousStatus,
+		} );
 
 		// If the comment is not approved anymore, also remove the like
-		if ( isLiked && 'approved' !== status ) {
+		if ( alsoUnlikeComment ) {
 			this.props.unlikeComment( commentId, postId );
 		}
 	}
@@ -273,7 +295,11 @@ export class CommentList extends Component {
 			id: `comment-notice-${ commentId }`,
 			isPersistent: true,
 			onClick: () => {
-				this.setCommentStatus( comment, previousStatus, {
+				const updatedComment = {
+					...comment,
+					status: newStatus,
+				};
+				this.setCommentStatus( updatedComment, previousStatus, {
 					isUndo: true,
 					doPersist: options.doPersist,
 					showNotice: false,
@@ -297,9 +323,11 @@ export class CommentList extends Component {
 			return;
 		}
 
-		this.props.likeComment( commentId, postId );
+		const alsoApprove = 'unapproved' === status;
 
-		if ( 'unapproved' === status ) {
+		this.props.likeComment( commentId, postId, { alsoApprove } );
+
+		if ( alsoApprove ) {
 			this.props.removeNotice( `comment-notice-${ commentId }` );
 			this.setCommentStatus( comment, 'approved' );
 			this.updatePersistedComments( commentId );
@@ -442,15 +470,66 @@ const mapStateToProps = ( state, { siteId, status } ) => {
 };
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	changeCommentStatus: ( commentId, postId, status ) => dispatch( changeCommentStatus( siteId, postId, commentId, status ) ),
+	changeCommentStatus: ( commentId, postId, status, analytics = { alsoUnlike: false, isUndo: false } ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_comment_management_change_status', {
+				also_unlike: analytics.alsoUnlike,
+				is_undo: analytics.isUndo,
+				previous_status: analytics.previousStatus,
+				status,
+			} ),
+			bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
+		),
+		changeCommentStatus( siteId, postId, commentId, status )
+	) ),
+
 	createNotice: ( status, text, options ) => dispatch( createNotice( status, text, options ) ),
-	deleteComment: ( commentId, postId ) => dispatch( deleteComment( siteId, postId, commentId ) ),
-	likeComment: ( commentId, postId ) => dispatch( likeComment( siteId, postId, commentId ) ),
+
+	deleteComment: ( commentId, postId ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_comment_management_delete' ),
+			bumpStat( 'calypso_comment_management', 'comment_deleted' )
+		),
+		deleteComment( siteId, postId, commentId )
+	) ),
+
+	likeComment: ( commentId, postId, analytics = { alsoApprove: false } ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_comment_management_like', {
+				also_approve: analytics.alsoApprove,
+			} ),
+			bumpStat( 'calypso_comment_management', 'comment_liked' )
+		),
+		likeComment( siteId, postId, commentId )
+	) ),
+
+	recordChangePage: ( page, total ) => dispatch( composeAnalytics(
+		recordTracksEvent( 'calypso_comment_management_change_page', { page, total } ),
+		bumpStat( 'calypso_comment_management', 'change_page' )
+	) ),
+
 	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
-	replyComment: ( commentText, postId, parentCommentId ) => dispatch( replyComment( commentText, siteId, postId, parentCommentId ) ),
+
+	replyComment: ( commentText, postId, parentCommentId, analytics = { alsoApprove: false } ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_comment_management_reply', {
+				also_approve: analytics.alsoApprove,
+			} ),
+			bumpStat( 'calypso_comment_management', 'comment_reply' )
+		),
+		replyComment( commentText, siteId, postId, parentCommentId )
+	) ),
+
 	setBulkStatus: noop,
 	undoBulkStatus: noop,
-	unlikeComment: ( commentId, postId ) => dispatch( unlikeComment( siteId, postId, commentId ) ),
+
+	unlikeComment: ( commentId, postId ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_comment_management_unlike' ),
+			bumpStat( 'calypso_comment_management', 'comment_unliked' )
+		),
+		unlikeComment( siteId, postId, commentId )
+	) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentList ) );
