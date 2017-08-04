@@ -149,8 +149,15 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 	} );
 }
 
-export function getMonthlyPlanByYearly( plan ) {
-	switch ( plan ) {
+/**
+ * Returns the monthly slug which corresponds to the provided yearly slug or "" if the slug is
+ * not a recognized or cannot be converted.
+ *
+ * @param  {String} planSlug Slug to convert to monthly.
+ * @return {String}          Monthly version slug or "" if the slug could not be converted.
+ */
+export function getMonthlyPlanByYearly( planSlug ) {
+	switch ( planSlug ) {
 		case PLAN_JETPACK_PREMIUM:
 			return PLAN_JETPACK_PREMIUM_MONTHLY;
 		case PLAN_JETPACK_BUSINESS:
@@ -162,8 +169,15 @@ export function getMonthlyPlanByYearly( plan ) {
 	}
 }
 
-export function getYearlyPlanByMonthly( plan ) {
-	switch ( plan ) {
+/**
+ * Returns the yearly slug which corresponds to the provided monthly slug or "" if the slug is
+ * not a recognized or cannot be converted.
+ *
+ * @param  {String} planSlug Slug to convert to yearly.
+ * @return {String}          Yearly version slug or "" if the slug could not be converted.
+ */
+export function getYearlyPlanByMonthly( planSlug ) {
+	switch ( planSlug ) {
 		case PLAN_JETPACK_PREMIUM_MONTHLY:
 			return PLAN_JETPACK_PREMIUM;
 		case PLAN_JETPACK_BUSINESS_MONTHLY:
