@@ -555,7 +555,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	height: 22px;
 
 	&.reader-post-actions__visit {
-		margin-left: -2px;
 
 		.gridicon {
 			position: relative;
@@ -754,10 +753,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	@include breakpoint( ">960px" ) {
 		height: 130px;
 	}
-}
-
-.reader-post-card.card .daily-post-button {
-	margin-bottom: 10px;
 }
 
 .reader-post-card__blocked-description {

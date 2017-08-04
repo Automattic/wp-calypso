@@ -1,12 +1,17 @@
-.daily-post-button {
-	margin-top: 20px;
-	display: inline-block;
+.daily-post-button .daily-post-button__button.button.is-primary {
+	background: none;
+	border: 0;
+	color: $blue-medium;
+	font-size: 14px;
+	line-height: normal;
+	margin: 9px 0 6px;
+	padding: 0;
 
-	.daily-post-button__button {
-		text-transform: capitalize;
-
-		.gridicon {
-			margin-right: 5px;
-		}
+	.gridicon {
+		fill: $blue-medium;
+		height: 20px;
+		margin-top: 0;
+		margin-right: 5px;
+		width: 20px;
 	}
 }

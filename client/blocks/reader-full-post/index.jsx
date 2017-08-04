@@ -388,7 +388,7 @@ export class FullPostView extends React.Component {
 									followUrl={ getSourceFollowUrl( post ) }
 								/> }
 							{ isDailyPostChallengeOrPrompt( post ) &&
-								<DailyPostButton post={ post } site={ site } tagName="span" /> }
+								<DailyPostButton post={ post } site={ site } /> }
 
 							<ReaderPostActions
 								post={ post }

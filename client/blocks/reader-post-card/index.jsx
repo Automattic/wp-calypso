@@ -240,7 +240,7 @@ class ReaderPostCard extends React.Component {
 				>
 					{ isDailyPostChallengeOrPrompt( post ) &&
 						site &&
-						<DailyPostButton post={ post } site={ site } tagName="span" /> }
+						<DailyPostButton post={ post } site={ site } /> }
 					{ discoverFollowButton }
 					{ readerPostActions }
 				</StandardPost>
