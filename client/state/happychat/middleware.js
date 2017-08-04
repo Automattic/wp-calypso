@@ -113,7 +113,13 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 
 	const user = getCurrentUser( state );
 	const locale = getCurrentUserLocale( state );
-	const groups = getGroups( state );
+	let groups = getGroups( state );
+
+	// update the chat locale and groups when happychat is initialized
+	const selectedSite = getHelpSelectedSite( state );
+	if ( selectedSite && selectedSite.ID ) {
+		groups = getGroups( state, selectedSite.ID );
+	}
 
 	// Notify that a new connection is being established
 	dispatch( setConnecting() );
@@ -124,14 +130,6 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 	connection
 		.on( 'connected', () => {
 			dispatch( setConnected() );
-
-			// update the chat locale and groups after happychat connection is established
-			// this was added just to make sure the proper operators are targeted if the customer
-			// selects a different site in the help dropdown before happychat is connected
-			const selectedHelpSite = getHelpSelectedSite( getState() );
-			if ( selectedHelpSite && selectedHelpSite.ID ) {
-				updateChatPreferences( connection, { getState }, selectedHelpSite.ID );
-			}
 
 			// TODO: There's no need to dispatch a separate action to request a transcript.
 			// The HAPPYCHAT_CONNECTED action should have its own middleware handler that does this.
