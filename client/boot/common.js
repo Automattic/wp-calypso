@@ -79,17 +79,13 @@ const loggedOutMiddleware = currentUser => {
 		return;
 	}
 
-	if ( config.isEnabled( 'desktop' ) ) {
+	if ( config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
 		page( '/', () => {
 			if ( config.isEnabled( 'oauth' ) ) {
 				page.redirect( '/authorize' );
 			} else {
-				page.redirect( '/log-in' );
+				page.redirect( '/devdocs/start' );
 			}
-		} );
-	} else if ( config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
-		page( '/', () => {
-			page.redirect( '/devdocs/start' );
 		} );
 	}
 

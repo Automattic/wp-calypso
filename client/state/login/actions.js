@@ -14,9 +14,6 @@ import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
-	LOGOUT_REQUEST,
-	LOGOUT_REQUEST_FAILURE,
-	LOGOUT_REQUEST_SUCCESS,
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
@@ -41,7 +38,6 @@ import {
 	getTwoFactorAuthNonce,
 	getTwoFactorUserId,
 } from 'state/login/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
 import wpcom from 'lib/wp';
 
 function getErrorMessageFromErrorCode( code ) {
@@ -404,48 +400,3 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 export const startPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } );
 export const stopPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP } );
 export const formUpdate = () => ( { type: LOGIN_FORM_UPDATE } );
-
-/**
- * Attempt to logout a user.
- *
- * @param  {String}    redirectTo         Url to redirect the user to upon successful logout
- * @return {Function}                     Action thunk to trigger the logout process.
- */
-export const logoutUser = ( redirectTo ) => ( dispatch, getState ) => {
-	dispatch( {
-		type: LOGOUT_REQUEST,
-	} );
-
-	const currentUser = getCurrentUser( getState() );
-	const logoutNonceMatches = ( currentUser.logout_URL || '' ).match( /_wpnonce=([^&]*)/ );
-	const logoutNonce = logoutNonceMatches && logoutNonceMatches[ 1 ];
-
-	return request.post( 'https://wordpress.com/wp-login.php?action=logout-endpoint' )
-		.withCredentials()
-		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-		.accept( 'application/json' )
-		.send( {
-			redirect_to: redirectTo,
-			client_id: config( 'wpcom_signup_id' ),
-			client_secret: config( 'wpcom_signup_key' ),
-			logout_nonce: logoutNonce,
-		} ).then( ( response ) => {
-			const data = get( response, 'body.data', {} );
-
-			dispatch( {
-				type: LOGOUT_REQUEST_SUCCESS,
-				data,
-			} );
-
-			return Promise.resolve( data );
-		} ).catch( ( httpError ) => {
-			const error = getErrorFromHTTPError( httpError );
-
-			dispatch( {
-				type: LOGOUT_REQUEST_FAILURE,
-				error,
-			} );
-
-			return Promise.reject( error );
-		} );
-};
