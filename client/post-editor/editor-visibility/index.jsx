@@ -186,6 +186,13 @@ const EditorVisibility = React.createClass( {
 		this.updateVisibility( event.target.value );
 	},
 
+	updatePostStatus() {
+		const defaultVisibility = 'draft' === this.props.status ? 'draft' : 'publish';
+		const postEdits = { status: defaultVisibility };
+
+		postActions.edit( postEdits );
+	},
+
 	updateVisibility( newVisibility ) {
 		const { siteId, postId } = this.props;
 		let reduxPostEdits;
@@ -208,6 +215,10 @@ const EditorVisibility = React.createClass( {
 		recordStat( 'visibility-set-' + newVisibility );
 		recordEvent( 'Changed visibility', newVisibility );
 		tracks.recordEvent( 'calypso_editor_visibility_set', { context: this.props.context, visibility: newVisibility } );
+
+		// This is necessary for cases when the post is changed from private to another visibility
+		// since private has its own post status.
+		this.updatePostStatus();
 
 		if ( reduxPostEdits ) {
 			this.props.editPost( siteId, postId, reduxPostEdits );
