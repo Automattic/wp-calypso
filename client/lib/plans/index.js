@@ -190,15 +190,16 @@ export function getYearlyPlanByMonthly( planSlug ) {
 }
 
 /**
- * Returns true if plans match regardless of their interval.
+ * Returns true if plan "types" match regardless of their interval.
+ *
  * For example (fake plans):
- *     planLevelsMatch( 'proYearly', 'proYearly' ) => true
- *     planLevelsMatch( 'proYearly', 'proMonthly' ) => true
- *     planLevelsMatch( 'proYearly', 'personalYearly' ) => false
+ *     planLevelsMatch( PRO_YEARLY, PRO_YEARLY ) => true
+ *     planLevelsMatch( PRO_YEARLY, PRO_MONTHLY ) => true
+ *     planLevelsMatch( PRO_YEARLY, PERSONAL_YEARLY ) => false
  *
  * @param  {String}  planSlugA One of the plan slugs to compare
  * @param  {String}  planSlugB One of the plan slugs to compare
- * @return {Boolean}           Whether the plans match
+ * @return {Boolean}           Whether the plan "types" match regardless of interval
  */
 export function planLevelsMatch( planSlugA, planSlugB ) {
 	return (
