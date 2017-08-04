@@ -1,3 +1,4 @@
+/** @format */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
@@ -319,7 +320,7 @@ class SimplePaymentsDialog extends Component {
 					primary
 				>
 					{ translate( 'Save' ) }
-				</Button>,
+				</Button>
 			);
 		} else {
 			const insertDisabled =
@@ -334,7 +335,7 @@ class SimplePaymentsDialog extends Component {
 					primary
 				>
 					{ translate( 'Insert' ) }
-				</Button>,
+				</Button>
 			);
 		}
 
@@ -354,11 +355,7 @@ class SimplePaymentsDialog extends Component {
 				] }
 				additionalClassNames="editor-simple-payments-modal"
 			>
-				<Navigation
-					activeTab={ 'list' }
-					paymentButtons={ [] }
-					onChangeTabs={ noop }
-				/>
+				<Navigation activeTab={ 'list' } paymentButtons={ [] } onChangeTabs={ noop } />
 				{ content }
 			</Dialog>
 		);
@@ -378,7 +375,7 @@ class SimplePaymentsDialog extends Component {
 			isJetpackNotSupported,
 			translate,
 			planHasSimplePaymentsFeature,
-			shouldQuerySitePlans
+			shouldQuerySitePlans,
 		} = this.props;
 		const { activeTab, errorMessage } = this.state;
 
@@ -390,23 +387,29 @@ class SimplePaymentsDialog extends Component {
 
 		if ( ! shouldQuerySitePlans && isJetpackNotSupported ) {
 			return this.renderEmptyDialog(
-				<Notice status="is-error" text={
-					translate( 'Please upgrade to Jetpack 5.2 to use Simple Payments feature' )
-				} onDismissClick={ onClose } />
+				<Notice
+					status="is-error"
+					text={ translate( 'Please upgrade to Jetpack 5.2 to use Simple Payments feature' ) }
+					onDismissClick={ onClose }
+				/>
 			);
 		}
 
 		if ( ! shouldQuerySitePlans && ! planHasSimplePaymentsFeature ) {
 			return this.renderEmptyDialog(
 				<div className="editor-simple-payments-modal__nudge-wrapper">
-					<div className="editor-simple-payments-modal__nudge-title">{ translate( 'Insert payment button' ) }</div>
+					<div className="editor-simple-payments-modal__nudge-title">
+						{ translate( 'Insert payment button' ) }
+					</div>
 					<div className="editor-simple-payments-modal__nudge-subtitle">
 						{ translate( 'To insert Payment Button to your site, upgrade your plan.' ) }
 					</div>
 					<UpgradeNudge
 						className="editor-simple-payments-modal__nudge-nudge"
 						title={ translate( 'Upgrade to a Premium Plan!' ) }
-						message={ translate( 'And get simple payments, advanced social media, your own domain, and more.' ) }
+						message={ translate(
+							'And get simple payments, advanced social media, your own domain, and more.'
+						) }
 						feature={ FEATURE_SIMPLE_PAYMENTS }
 						shouldDisplay={ this.returnTrue }
 					/>
@@ -465,8 +468,9 @@ export default connect( ( state, { siteId } ) => {
 		siteId,
 		paymentButtons: getSimplePayments( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
-		shouldQuerySitePlans: ( getSitePlanSlug( state, siteId ) === null ),
-		isJetpackNotSupported: isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' ),
-		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS )
+		shouldQuerySitePlans: getSitePlanSlug( state, siteId ) === null,
+		isJetpackNotSupported:
+			isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' ),
+		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 	};
 } )( localize( SimplePaymentsDialog ) );
