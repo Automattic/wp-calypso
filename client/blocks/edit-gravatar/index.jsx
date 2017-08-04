@@ -239,7 +239,7 @@ export class EditGravatar extends Component {
 						position="left" >
 						{ translate( '{{p}}The avatar you use on WordPress.com comes ' +
 							'from {{ExternalLink}}Gravatar{{/ExternalLink}}, a universal avatar service ' +
-							'(it stands for "Global Avatar," get it?).{{/p}}' +
+							'(it stands for "Globally Recognized Avatar," get it?).{{/p}}' +
 							'{{p}}Your image may also appear on other sites using Gravatar ' +
 							"whenever you're logged in with your email address %(email)s.{{/p}}",
 							{
