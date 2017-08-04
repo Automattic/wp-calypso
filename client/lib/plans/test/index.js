@@ -7,7 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal Dependencies
  */
-import { isPlanMatch } from '..';
+import { planLevelsMatch } from '..';
 import {
 	PLAN_BUSINESS,
 	PLAN_FREE,
@@ -22,11 +22,11 @@ import {
 	PLAN_PREMIUM,
 } from '../constants';
 
-describe( 'isPlanMatch', () => {
+describe( 'planLevelsMatch', () => {
 	const testPlansArrayIndependentOfOrder = ( plansArray, result ) =>
 		plansArray.forEach( ( [ slugA, slugB ] ) => {
-			expect( isPlanMatch( slugA, slugB ) ).to.be[ result ];
-			expect( isPlanMatch( slugB, slugA ) ).to.be[ result ];
+			expect( planLevelsMatch( slugA, slugB ) ).to.be[ result ];
+			expect( planLevelsMatch( slugB, slugA ) ).to.be[ result ];
 		} );
 
 	it( 'should return true for identical plans', () => {
