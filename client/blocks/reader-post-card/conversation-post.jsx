@@ -16,7 +16,7 @@ import { getDateSortedPostComments } from 'state/comments/selectors';
 class ConversationPost extends React.Component {
 	static propTypes = {
 		post: React.PropTypes.object.isRequired,
-		comments: React.PropTypes.object.isRequired,
+		comments: React.PropTypes.array.isRequired,
 	};
 
 	render() {
