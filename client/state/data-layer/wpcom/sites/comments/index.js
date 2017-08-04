@@ -2,28 +2,82 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { forEach, groupBy } from 'lodash';
+import { forEach, get, groupBy, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { mergeHandlers } from 'state/action-watchers/utils';
 import {
+	COMMENTS_CHANGE_STATUS,
 	COMMENTS_LIST_REQUEST,
 	COMMENTS_RECEIVE,
 	COMMENT_REQUEST,
 	COMMENTS_ERROR,
 } from 'state/action-types';
+import { local } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import changeStatus from './change-status';
 import replies from './replies';
 import likes from './likes';
-import trees from './trees';
-import { errorNotice } from 'state/notices/actions';
+import trees from './comment-tree';
+import { errorNotice, removeNotice } from 'state/notices/actions';
 import { getRawSite } from 'state/sites/selectors';
+import { getSiteComment } from 'state/selectors';
 import { getSiteName as getReaderSiteName } from 'reader/get-helpers';
 import { getSite as getReaderSite } from 'state/reader/sites/selectors';
+
+const changeCommentStatus = ( { dispatch, getState }, action ) => {
+	const { siteId, commentId, status } = action;
+	const previousStatus = get( getSiteComment( getState(), action.siteId, action.commentId ), 'status' );
+
+	dispatch(
+		http(
+			{
+				method: 'POST',
+				path: `/sites/${ siteId }/comments/${ commentId }`,
+				apiVersion: '1.1',
+				body: {
+					status,
+				},
+			},
+			{
+				...action,
+				previousStatus,
+			}
+		)
+	);
+};
+
+const removeCommentStatusErrorNotice = ( { dispatch }, { commentId } ) =>
+	dispatch( removeNotice( `comment-notice-error-${ commentId }` ) );
+
+const announceStatusChangeFailure = ( { dispatch, getState }, action ) => {
+	const { commentId, status, previousStatus } = action;
+
+	dispatch( removeNotice( `comment-notice-${ commentId }` ) );
+
+	dispatch(
+		local( {
+			...omit( action, [ 'meta' ] ),
+			status: previousStatus,
+		} )
+	);
+
+	const errorMessage = {
+		approved: translate( "We couldn't approve this comment." ),
+		unapproved: translate( "We couldn't unapprove this comment." ),
+		spam: translate( "We couldn't mark this comment as spam." ),
+		trash: translate( "We couldn't move this comment to trash." ),
+	};
+	const defaultErrorMessage = translate( "We couldn't update this comment." );
+
+	dispatch( errorNotice( get( errorMessage, status, defaultErrorMessage ), {
+		button: translate( 'Try again' ),
+		id: `comment-notice-error-${ commentId }`,
+		onClick: () => dispatch( omit( action, [ 'meta' ] ) ),
+	} ) );
+};
 
 export const requestComment = ( store, action ) => {
 	const { siteId, commentId } = action;
@@ -132,11 +186,10 @@ const announceFailure = ( { dispatch, getState }, { query: { siteId } } ) => {
 	dispatch( errorNotice( error ) );
 };
 
-const fetchHandler = {
+export const fetchHandler = {
+	[ COMMENTS_CHANGE_STATUS ]: [ dispatchRequest( changeCommentStatus, removeCommentStatusErrorNotice, announceStatusChangeFailure ) ],
 	[ COMMENTS_LIST_REQUEST ]: [ dispatchRequest( fetchCommentsList, addComments, announceFailure ) ],
-	[ COMMENT_REQUEST ]: [
-		dispatchRequest( requestComment, receiveCommentSuccess, receiveCommentError ),
-	],
+	[ COMMENT_REQUEST ]: [ dispatchRequest( requestComment, receiveCommentSuccess, receiveCommentError ) ],
 };
 
-export default mergeHandlers( fetchHandler, replies, likes, changeStatus, trees );
+export default mergeHandlers( fetchHandler, replies, likes, trees );
