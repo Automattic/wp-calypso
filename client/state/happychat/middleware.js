@@ -113,7 +113,7 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 
 	const user = getCurrentUser( state );
 	const locale = getCurrentUserLocale( state );
-	let groups = getGroups( state, );
+	let groups = getGroups( state );
 
 	// update the chat locale and groups when happychat is initialized
 	const selectedSite = getHelpSelectedSite( state );
