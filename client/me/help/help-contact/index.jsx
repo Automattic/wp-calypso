@@ -403,8 +403,10 @@ const HelpContact = React.createClass( {
 		if ( ! config.isEnabled( 'happychat' ) ) {
 			return false;
 		}
+
 		// if the happychat connection is able to accept chats, use it
-		return this.props.isHappychatAvailable && olark.isUserEligible && this.props.isSelectedHelpSiteOnPaidPlan;
+		return ( this.props.isHappychatAvailable && olark.isUserEligible &&
+			this.props.isSelectedHelpSiteOnPaidPlan );
 	},
 
 	shouldUseDirectly: function() {
