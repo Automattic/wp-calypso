@@ -49,3 +49,9 @@ textarea.jpo-textarea {
 		}
 	}
 }
+
+label.jpo__validation-error.form-label {
+	color: $alert-red;
+	font-weight: 400;
+	margin: -20px 0 20px 0;
+}

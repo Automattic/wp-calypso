@@ -84,12 +84,12 @@ const JPOSiteTitleStep = React.createClass( {
 		const jpoSiteTitle = this.getPayload();
 
 		if ( ! jpoSiteTitle.siteTitle ) {
-			this.errorMessage = 'Please enter a valid site name and description.';
+			this.errorMessage = 'Your site name and description is required.';
 			this.setState( { siteTitleInvalid: true } );
 		}
 
 		if ( ! jpoSiteTitle.siteDescription ) {
-			this.errorMessage = 'Please enter a valid site name and description.';
+			this.errorMessage = 'Your site name and description is required.';
 			this.setState( { siteDescriptionInvalid: true } );
 		}
 
