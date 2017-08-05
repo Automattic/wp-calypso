@@ -1,30 +1,22 @@
 /** @jest-environment jsdom */
+jest.mock( 'lib/user', () => () => {} );
 
 /**
  * External dependencies
  */
 import assert from 'assert';
-import { assign, isEqual, noop } from 'lodash';
+import { assign, isEqual } from 'lodash';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import Dispatcher from 'dispatcher';
 
-describe.skip( 'post-edit-store', function() {
-	let Dispatcher, PostEditStore, dispatcherCallback;
-
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/wp', {
-			me: () => ( {
-				get: noop
-			} )
-		} );
-	} );
+describe( 'post-edit-store', function() {
+	let PostEditStore, dispatcherCallback;
 
 	before( () => {
-		Dispatcher = require( 'dispatcher' );
 		spy( Dispatcher, 'register' );
 		PostEditStore = require( '../post-edit-store' );
 		dispatcherCallback = Dispatcher.register.lastCall.args[ 0 ];

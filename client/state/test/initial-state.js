@@ -1,51 +1,48 @@
 /** @jest-environment jsdom */
+jest.mock( 'config', () => {
+	const config = () => 'development';
+
+	config.isEnabled = jest.fn( false );
+
+	return config;
+} );
+jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
+jest.mock( 'lib/user', () => () => ( {
+	get: () => ( {
+		ID: 123456789
+	} )
+} ) );
+jest.mock( 'lib/user/support-user-interop', () => ( {
+	isSupportUserSession: jest.fn( false )
+} ) );
 
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import mockery from 'mockery';
 import { createStore } from 'redux';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import { isEnabled } from 'config';
+import { isSupportUserSession } from 'lib/user/support-user-interop';
+import localforage from 'lib/localforage';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
-describe.skip( 'initial-state', () => {
+describe( 'initial-state', () => {
 	let clock,
-		localforage,
 		createReduxStoreFromPersistedInitialState,
 		persistOnChange,
 		MAX_AGE,
-		SERIALIZE_THROTTLE,
-		isSwitchedUser = false,
-		isReduxEnabled = false;
-	const isEnabled = () => isReduxEnabled;
-	const isSupportUserSession = () => isSwitchedUser;
+		SERIALIZE_THROTTLE;
 
 	useFakeTimers( fakeClock => {
 		clock = fakeClock;
 	} );
 
-	useMockery( () => {
-		const configMock = function() {
-			return 'development'; //needed to mock out lib/warn
-		};
-		configMock.isEnabled = isEnabled;
-		mockery.registerMock( 'lib/user/support-user-interop', { isSupportUserSession: isSupportUserSession } );
-		mockery.registerMock( 'config', configMock );
-		localforage = require( 'lib/localforage/localforage-bypass' );
-		mockery.registerMock( 'lib/localforage', localforage );
-		mockery.registerMock( 'lib/user', () => {
-			return {
-				get: () => {
-					return { ID: 123456789 };
-				}
-			};
-		} );
+	before( () => {
 		const initialState = require( 'state/initial-state' );
 		createReduxStoreFromPersistedInitialState = initialState.default;
 		persistOnChange = initialState.persistOnChange;
@@ -101,8 +98,8 @@ describe.skip( 'initial-state', () => {
 						_timestamp: Date.now()
 					};
 					before( ( done ) => {
-						isReduxEnabled = true;
-						isSwitchedUser = true;
+						isEnabled.mockReturnValue( true );
+						isSupportUserSession.mockReturnValue( true );
 						window.initialReduxState = { currentUser: { id: 123456789 } };
 						sandbox.spy( console, 'error' );
 						sandbox.stub( localforage, 'getItem' )
@@ -118,8 +115,8 @@ describe.skip( 'initial-state', () => {
 						createReduxStoreFromPersistedInitialState( reduxReady );
 					} );
 					after( () => {
-						isReduxEnabled = false;
-						isSwitchedUser = false;
+						isEnabled.mockReturnValue( false );
+						isSupportUserSession.mockReturnValue( false );
 						window.initialReduxState = null;
 					} );
 					it( 'builds store without errors', () => {
@@ -163,7 +160,7 @@ describe.skip( 'initial-state', () => {
 					};
 				before( ( done ) => {
 					window.initialReduxState = serverState;
-					isReduxEnabled = true;
+					isEnabled.mockReturnValue( true );
 					sandbox.spy( console, 'error' );
 					sandbox.stub( localforage, 'getItem' )
 						.returns(
@@ -179,7 +176,7 @@ describe.skip( 'initial-state', () => {
 				} );
 				after( () => {
 					window.initialReduxState = null;
-					isReduxEnabled = false;
+					isEnabled.mockReturnValue( false );
 				} );
 				it( 'builds store without errors', () => {
 					expect( console.error.called ).to.equal( false ); // eslint-disable-line no-console
@@ -209,7 +206,7 @@ describe.skip( 'initial-state', () => {
 				};
 				before( ( done ) => {
 					window.initialReduxState = serverState;
-					isReduxEnabled = true;
+					isEnabled.mockReturnValue( true );
 					sandbox.spy( console, 'error' );
 					sandbox.stub( localforage, 'getItem' )
 						.returns(
@@ -236,7 +233,7 @@ describe.skip( 'initial-state', () => {
 				} );
 				after( () => {
 					window.initialReduxState = null;
-					isReduxEnabled = false;
+					isEnabled.mockReturnValue( false );
 				} );
 				it( 'builds store without errors', () => {
 					expect( console.error.called ).to.equal( false ); // eslint-disable-line no-console
@@ -270,7 +267,7 @@ describe.skip( 'initial-state', () => {
 					serverState = {};
 				before( ( done ) => {
 					window.initialReduxState = serverState;
-					isReduxEnabled = true;
+					isEnabled.mockReturnValue( true );
 					sandbox.spy( console, 'error' );
 					sandbox.stub( localforage, 'getItem' )
 						.returns(
@@ -286,7 +283,7 @@ describe.skip( 'initial-state', () => {
 				} );
 				after( () => {
 					window.initialReduxState = null;
-					isReduxEnabled = false;
+					isEnabled.mockReturnValue( false );
 				} );
 				it( 'builds store without errors', () => {
 					expect( console.error.called ).to.equal( false ); // eslint-disable-line no-console
