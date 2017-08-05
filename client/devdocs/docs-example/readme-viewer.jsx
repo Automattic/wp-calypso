@@ -21,21 +21,28 @@ class ReadmeViewer extends Component {
 	}
 
 	render() {
-		const header = this.props.readmeFilePath
-			? <span id="docs-example__readme-present-header" className="docs-example__readme-viewer-header">
-					README.md
-				</span>
-			: <span id="docs-example__readme-not-present-header" className="docs-example__readme-viewer-header">
-					Oh no. There's no README.
-				</span>;
-
-		const readme = this.props.readmeFilePath && this.props.getReadme( this.props.readmeFilePath );
-
+		const readmeFilePath = this.props.readmeFilePath;
+		const readme = readmeFilePath && this.props.getReadme( readmeFilePath );
+		const editLink = <div className="docs-example__readme-viewer-edit-link">
+			<a
+				href={ `https://github.com/Automattic/wp-calypso/edit/master/client/components/${ readmeFilePath }/README.md`}
+			>
+				Improve this document on GitHub
+			</a>
+		</div>;
 		return (
 			<div className="docs-example__readme-viewer">
 				<hr className="docs-example__readme-viewer-hr" />
-				<FoldableCard header={ header } clickableHeader={ true } compact={ true }>
-					{ readme || 'Please write one!' }
+				<FoldableCard
+					header=""
+					clickableHeader={ true }
+					compact={ true }
+					expanded={ true }
+					summary="README.md"
+					disabled={ ! readme }
+				>
+					{ readme && editLink }
+					{ readme || <div className="docs-example__readme-viewer-not-available">README.md is not available.</div> }
 				</FoldableCard>
 			</div>
 		);
