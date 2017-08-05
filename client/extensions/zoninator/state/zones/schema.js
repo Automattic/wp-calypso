@@ -6,7 +6,7 @@ export const itemsSchema = {
 			type: 'array',
 			items: {
 				type: 'object',
-				additionalProperties: true,
+				term_id: { type: 'integer' },
 				name: { type: 'string' },
 				slug: { type: 'string' },
 				description: { type: 'string' },
