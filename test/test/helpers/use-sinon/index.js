@@ -15,6 +15,7 @@ import isFunction from 'lodash/isFunction';
  * See http://sinonjs.org/docs/#clock
  * @param  {Number} now The timestamp to set "now" to.
  * @param  {Function} clockCallback  A function invoked with the clock created by sinon
+ * @deprecated Use Jest's timer mocks instead (https://facebook.github.io/jest/docs/timer-mocks.html)
  */
 export function useFakeTimers( now = 0, clockCallback = noop ) {
 	if ( isFunction( now ) && clockCallback === noop ) {
@@ -43,6 +44,7 @@ export function useFakeTimers( now = 0, clockCallback = noop ) {
  *
  * @param  {Object|Function} config The configuration to use, or a callback that is invoked with the sandbox instance
  * @param  {Function} sandboxCallback A callback function that is invoked with the sandbox instance
+ * @deprecated Use Jest's mock functions instead (https://facebook.github.io/jest/docs/mock-functions.html)
  */
 export function useSandbox( config, sandboxCallback = noop ) {
 	if ( isFunction( config ) && sandboxCallback === noop ) {

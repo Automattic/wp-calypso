@@ -4,14 +4,13 @@ Calypso has a lot of React UI components. (Try for example running `find -name *
 
 ## [Getting started](#getting-started)
 
-To run all current tests, run `npm test` in the root source folder. You can also run individual tests. Check [How to run single test runner](https://github.com/Automattic/wp-calypso/blob/master/test/README.md#how-to-run-single-test-runner) documentation for more details.
+To run all current client side tests, run `npm run test-client` in the root source folder. You can also run individual tests. Check [How to run single test runner](https://github.com/Automattic/wp-calypso/blob/master/docs/testing.md) documentation for more details.
 
 Going through the current tests is a good way to get ideas for how different kinds of things can be tested.
 
 ### [Set up a test environment](#setting-up-environment)
 
-It's very possible that your tests will assume the existence of a browser environment to work properly.
-Refer to the [Use fake DOM](https://github.com/Automattic/wp-calypso/tree/master/test/test/helpers/use-fake-dom) test helper documentation to learn how to configure an emulated DOM for your test.
+It's very possible that your tests will assume the existence of a browser environment to work properly. The test runner we use [Jest](https://facebook.github.io/jest) allows to set browser-like environment through [jsdom](https://github.com/tmpvar/jsdom). We opted to default to node-like environment to make tests faster. If some tests require another environment, you can add a @jest-environment docblock. Check [this Jest doc](https://facebook.github.io/jest/docs/configuration.html#testenvironment-string) to learn more.
 
 ### [What to test?](#what-to-test)
 
