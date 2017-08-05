@@ -256,7 +256,8 @@ const PluginsActions = {
 
 		const manageError = error => {
 			if ( error.name === 'PluginAlreadyInstalledError' ) {
-				if ( site.isMainNetworkSite() ) {
+				//TODO: compatibility with old site object (for now, remove when not needed)
+				if ( typeof site.isMainNetworkSite === 'function' ? site.isMainNetworkSite() : site.isMainNetworkSite ) {
 					return update( plugin )
 						.then( autoupdate )
 						.then( manageSuccess )
@@ -281,8 +282,8 @@ const PluginsActions = {
 		};
 
 		dispatchMessage( 'INSTALL_PLUGIN' );
-
-		if ( site.isMainNetworkSite() ) {
+		//TODO: compatibility with old site object (for now, remove when not needed)
+		if ( typeof site.isMainNetworkSite === 'function' ? site.isMainNetworkSite() : site.isMainNetworkSite ) {
 			return install()
 				.then( autoupdate )
 				.then( manageSuccess )
