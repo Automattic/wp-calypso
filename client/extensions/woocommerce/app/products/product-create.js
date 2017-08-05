@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { head } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import { isObject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,6 +43,7 @@ import { createProduct } from 'woocommerce/state/sites/products/actions';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
 import { getLink } from 'woocommerce/lib/nav-utils';
+import { getCookieAuth } from 'woocommerce/state/sites/auth/selectors';
 
 class ProductCreate extends React.Component {
 	static propTypes = {
@@ -61,9 +63,9 @@ class ProductCreate extends React.Component {
 	};
 
 	componentDidMount() {
-		const { product, site } = this.props;
+		const { product, site, hasAuth } = this.props;
 
-		if ( site && site.ID ) {
+		if ( site && site.ID && hasAuth ) {
 			if ( ! product ) {
 				this.props.editProduct( site.ID, null, {} );
 			}
@@ -71,13 +73,18 @@ class ProductCreate extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	componentDidUpdate( prevProps ) {
+		console.log( 'componentWillReceiveProps' );
 		const { site } = this.props;
-		const newSiteId = newProps.site && newProps.site.ID || null;
+		const newSiteId = this.props.site && this.props.site.ID || null;
 		const oldSiteId = site && site.ID || null;
-		if ( oldSiteId !== newSiteId ) {
+		if ( oldSiteId !== newSiteId || prevProps.hasAuth !== this.props.hasAuth ) {
 			this.props.editProduct( newSiteId, null, {} );
-			this.props.fetchProductCategories( newSiteId );
+			console.log( 'fetching categories!' );
+
+			if ( this.props.hasAuth ) {
+				this.props.fetchProductCategories( newSiteId );
+			}
 		}
 	}
 
@@ -163,6 +170,7 @@ class ProductCreate extends React.Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
+	const hasAuth = isObject( getCookieAuth( state ) ); // TODO: Temporary, just to ensure it's loaded.
 	const productId = getCurrentlyEditingId( state );
 	const combinedProduct = getProductWithLocalEdits( state, productId );
 	const product = combinedProduct || ( productId && { id: productId } );
@@ -173,6 +181,7 @@ function mapStateToProps( state ) {
 
 	return {
 		site,
+		hasAuth,
 		product,
 		hasEdits,
 		variations,

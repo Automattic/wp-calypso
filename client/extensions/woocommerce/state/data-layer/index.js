@@ -1,8 +1,14 @@
 /**
+ * External dependencies
+ */
+import debugFactory from 'debug';
+
+/**
  * Internal dependencies
  */
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { addHandlers } from 'state/data-layer/extensions-middleware';
+import auth from 'woocommerce/state/sites/auth/handlers';
 import actionList from './action-list';
 import paymentMethods from './payment-methods';
 import products from './products';
@@ -14,11 +20,11 @@ import shippingZoneLocations from './shipping-zone-locations';
 import shippingZoneMethods from './shipping-zone-methods';
 import shippingZones from './shipping-zones';
 import ui from './ui';
-import debugFactory from 'debug';
 
 const debug = debugFactory( 'woocommerce:errors' );
 
 const handlers = mergeHandlers(
+	auth,
 	actionList,
 	paymentMethods,
 	productCategories,

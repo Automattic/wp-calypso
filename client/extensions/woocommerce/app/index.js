@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
@@ -14,6 +15,7 @@ import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
+import { requestCookieAuth } from 'woocommerce/state/sites/auth/actions';
 import route from 'lib/route';
 
 class App extends Component {
@@ -35,6 +37,23 @@ class App extends Component {
 
 	redirect = () => {
 		window.location.href = '/stats/day';
+	}
+
+	componentDidMount = () => {
+		const { siteId } = this.props;
+
+		if ( siteId ) {
+			this.props.requestCookieAuth( siteId );
+		}
+	}
+
+	componentWillReceiveProps = ( newProps ) => {
+		const { siteId: oldSiteId } = this.props;
+		const { siteId: newSiteId } = newProps;
+
+		if ( newSiteId !== oldSiteId ) {
+			this.props.requestCookieAuth( newSiteId );
+		}
 	}
 
 	render = () => {
@@ -90,4 +109,13 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps )( localize( App ) );
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			requestCookieAuth,
+		},
+		dispatch
+	);
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( App ) );
