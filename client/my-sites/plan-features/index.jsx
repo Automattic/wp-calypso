@@ -223,7 +223,8 @@ class PlanFeatures extends Component {
 					<FoldableCard
 						header={ translate( 'Show features' ) }
 						clickableHeader
-						compact>
+						compact
+						solitary>
 						{ this.renderMobileFeatures( features ) }
 					</FoldableCard>
 				</div>
