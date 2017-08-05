@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'components/plans/premium-popover', () => require( 'components/empty-component' ) );
 
 /**

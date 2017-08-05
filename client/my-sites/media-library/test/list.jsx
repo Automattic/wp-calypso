@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'components/infinite-list', () => require( 'components/empty-component' ) );
 jest.mock( 'my-sites/media-library/list-item', () => require( 'components/empty-component' ) );

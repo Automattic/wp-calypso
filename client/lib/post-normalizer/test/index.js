@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'lib/safe-image-url', () => require( './lib/safe-image-url' ) );
 
 /**

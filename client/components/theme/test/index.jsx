@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'components/popover/menu', () => require( 'components/empty-component' ) );
 jest.mock( 'components/popover/menu-item', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/user', () => () => {} );

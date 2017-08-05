@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'blocks/site', () => require( 'components/empty-component' ) );
 jest.mock( 'components/card', () => require( 'components/empty-component' ) );
 jest.mock( 'components/popover', () => require( 'components/empty-component' ) );

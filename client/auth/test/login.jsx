@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'lib/oauth-store/actions', () => ( {
 	login: require( 'sinon' ).stub()
 } ) );

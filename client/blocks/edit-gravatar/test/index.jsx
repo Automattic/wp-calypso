@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
 jest.mock( 'lib/oauth-token', () => ( {
 	getToken: () => 'bearerToken'

@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'lib/mixins/analytics', () => {
 	const recordStub = require( 'sinon' ).stub();
 

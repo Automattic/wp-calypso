@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'lib/analytics', () => {} );
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x

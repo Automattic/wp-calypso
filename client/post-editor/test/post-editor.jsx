@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'components/tinymce', () => require( 'components/empty-component' ) );
 jest.mock( 'components/popover', () => require( 'components/empty-component' ) );
 jest.mock( 'components/forms/clipboard-button', () => require( 'components/empty-component' ) );

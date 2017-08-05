@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'lib/sites-list', () => require( './mocks/sites-list' ) );
 jest.mock( 'lib/analytics', () => ( {} ) );
 

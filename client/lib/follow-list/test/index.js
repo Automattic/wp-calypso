@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'lib/wp', () => require( './lib/wp' ) );
 
 var assert = require( 'chai' ).assert,

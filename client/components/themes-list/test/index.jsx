@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'components/pulsing-dot', () => require( 'components/empty-component' ) );
 jest.mock( 'components/theme/more-button', () => require( 'components/empty-component' ) );
 

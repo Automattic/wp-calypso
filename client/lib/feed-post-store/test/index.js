@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/post-normalizer', () => require( './lib/post-normalizer' ) );
 jest.mock( 'lib/wp', () => require( './lib/wp' ) );

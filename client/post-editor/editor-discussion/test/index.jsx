@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/posts/actions', () =>( {
 	edit: require( 'sinon' ).spy()

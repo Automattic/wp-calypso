@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/analytics', () => ( {
 	ga: {

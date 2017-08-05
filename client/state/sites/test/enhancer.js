@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 /* eslint-disable no-restricted-modules */
 jest.mock( 'lib/user', () => () => {} );
 

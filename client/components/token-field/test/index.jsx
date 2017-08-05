@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'components/tooltip', () => require( 'components/empty-component' ) );
 
 /**

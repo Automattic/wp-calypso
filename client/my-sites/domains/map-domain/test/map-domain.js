@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'page', () => {
 	const { spy } = require( 'sinon' );

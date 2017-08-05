@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'lib/impure-lodash', () => ( {
 	uniqueId: () => 'media-13',
 } ) );

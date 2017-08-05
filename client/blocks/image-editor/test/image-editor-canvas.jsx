@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'blocks/image-editor/image-editor-crop', () => {
 	const { Component } = require( 'react' );
 

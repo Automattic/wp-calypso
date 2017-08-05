@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'lib/media/library-selected-store', () => ( {
 	getAll: () => [ require( './fixtures' ).DUMMY_ITEM ]
 } ) );

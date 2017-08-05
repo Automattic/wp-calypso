@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'components/signup-form', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/abtest', () => () => {} );
 jest.mock( 'lib/analytics', () => ( {} ) );

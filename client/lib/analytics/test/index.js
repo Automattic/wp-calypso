@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'config', () => require( './config' ) );
 jest.mock( 'lib/analytics/ad-tracking', () => ( {
 	retarget: () => {}

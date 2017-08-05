@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'component-closest', () => {} );
 jest.mock( 'components/dialog', () => require( 'components/empty-component' ) );
 jest.mock( 'components/popover', () => require( 'components/empty-component' ) );

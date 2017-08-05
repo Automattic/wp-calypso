@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/** @jest-environment jsdom */
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/wp', () => require( './mocks/wpcom' ) );
 jest.mock( 'lib/analytics', () => ( {
