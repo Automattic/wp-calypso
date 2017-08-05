@@ -10,11 +10,15 @@ import {
 	ZONINATOR_REQUEST_ZONES,
 	ZONINATOR_REQUEST_ERROR,
 	ZONINATOR_UPDATE_ZONES,
+	ZONINATOR_UPDATE_ZONE,
+	ZONINATOR_ADD_ZONE,
 } from '../../action-types';
 import {
 	requestZones,
 	requestError,
 	updateZones,
+	updateZone,
+	addZone,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -59,6 +63,31 @@ describe( 'actions', () => {
 
 			expect( action ).to.deep.equal( {
 				type: ZONINATOR_REQUEST_ERROR,
+				siteId,
+			} );
+		} );
+	} );
+
+	describe( '#updateZone', () => {
+		it( 'should return an action object', () => {
+			const action = updateZone( siteId, zones[ 0 ] );
+
+			expect( action ).to.deep.equal( {
+				type: ZONINATOR_UPDATE_ZONE,
+				data: zones[ 0 ],
+				siteId,
+			} );
+		} );
+	} );
+
+	describe( '#addZone', () => {
+		it( 'should return an action object', () => {
+			const action = addZone( siteId, 'form', zones[ 0 ] );
+
+			expect( action ).to.deep.equal( {
+				type: ZONINATOR_ADD_ZONE,
+				data: zones[ 0 ],
+				form: 'form',
 				siteId,
 			} );
 		} );

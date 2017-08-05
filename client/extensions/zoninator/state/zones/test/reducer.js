@@ -11,6 +11,7 @@ import {
 	ZONINATOR_REQUEST_ZONES,
 	ZONINATOR_REQUEST_ERROR,
 	ZONINATOR_UPDATE_ZONES,
+	ZONINATOR_UPDATE_ZONE,
 } from '../../action-types';
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import reducer, { requesting, items } from '../reducer';
@@ -101,11 +102,13 @@ describe( 'reducer', () => {
 
 	describe( 'items()', () => {
 		const primaryZones = [ {
+			term_id: 1,
 			name: 'Test zone',
 			description: 'A test zone',
 			slug: 'test-zone',
 		} ];
 		const secondaryZones = [ {
+			term_id: 2,
 			name: 'Test zone 2',
 			description: 'Another test zone',
 		} ];
@@ -154,6 +157,52 @@ describe( 'reducer', () => {
 
 			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: secondaryZones,
+			} );
+		} );
+
+		it( 'should initiate zones array for a site ID after the first zone is added', () => {
+			const state = items( undefined, {
+				type: ZONINATOR_UPDATE_ZONE,
+				siteId: primarySiteId,
+				data: primaryZones[ 0 ],
+			} );
+
+			expect( state ).to.deep.equal( {
+				[ primarySiteId ]: primaryZones,
+			} );
+		} );
+
+		it( 'should append new zones to existing zones of the same site ID', () => {
+			const state = items( previousState, {
+				type: ZONINATOR_UPDATE_ZONE,
+				siteId: primarySiteId,
+				data: secondaryZones[ 0 ],
+			} );
+
+			expect( state ).to.deep.equal( {
+				[ primarySiteId ]: [
+					primaryZones[ 0 ],
+					secondaryZones[ 0 ],
+				],
+			} );
+		} );
+
+		it( 'should update zones of the same site ID with the same term_id', () => {
+			const updatedZone = {
+				term_id: primaryZones[ 0 ].term_id,
+				name: 'Updated zone',
+				slug: 'updated-zone',
+				description: 'This zone has been updated.',
+			};
+
+			const state = items( previousState, {
+				type: ZONINATOR_UPDATE_ZONE,
+				siteId: primarySiteId,
+				data: updatedZone,
+			} );
+
+			expect( state ).to.deep.equal( {
+				[ primarySiteId ]: [ updatedZone ],
 			} );
 		} );
 
