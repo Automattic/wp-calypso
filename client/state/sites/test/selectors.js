@@ -973,7 +973,7 @@ describe( 'selectors', () => {
 			expect( siteOption ).to.be.null;
 		} );
 
-		it( 'should return undefined if the option is not known for that site', () => {
+		it( 'should return null if the option is not known for that site', () => {
 			const siteOption = getSiteOption(
 				{
 					sites: {
@@ -992,7 +992,7 @@ describe( 'selectors', () => {
 				'example_option'
 			);
 
-			expect( siteOption ).to.be.undefined;
+			expect( siteOption ).to.be.null;
 		} );
 
 		it( 'should return the option value if the option is known for that site', () => {
