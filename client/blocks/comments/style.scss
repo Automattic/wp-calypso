@@ -253,7 +253,6 @@
 .comments__comment-respondee {
 	color: $gray;
 	margin-right: 12px;
-	// border: 1px solid red;
 
 	.gridicon {
 		position: relative;
@@ -277,10 +276,6 @@
 	flex-wrap: wrap;
 	font-size: 14px;
 	font-weight: 500;
-
-	> a {
-		// border: 1px solid red;
-	}
 
 	.gravatar {
 		border-radius: 48px;
@@ -322,11 +317,6 @@ a.comments__comment-username {
 	&:hover {
 		color: $blue-light;
 	}
-}
-
-.comments__comment-timestamp {
-
-	// border: 1px solid red;
 }
 
 .comments__comment-timestamp a {
