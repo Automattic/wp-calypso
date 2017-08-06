@@ -113,7 +113,8 @@ export const receiveCommentError = ( { dispatch, getState }, { siteId, commentId
 			errorNotice(
 				translate( 'Failed to retrieve comment for site “%(siteName)s”', {
 					args: { siteName },
-				} )
+				} ),
+				{ id: `request-comment-error-${ siteId }` }
 			)
 		);
 	} else {
@@ -125,7 +126,7 @@ export const receiveCommentError = ( { dispatch, getState }, { siteId, commentId
 				} )
 				: translate( 'Failed to retrieve comment for your site' );
 
-		dispatch( errorNotice( error ) );
+		dispatch( errorNotice( error, { id: `request-comment-error-${ siteId }` } ) );
 	}
 
 	dispatch( {
