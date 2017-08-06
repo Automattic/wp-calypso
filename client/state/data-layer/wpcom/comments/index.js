@@ -197,7 +197,7 @@ export const deleteComment = ( { dispatch, getState }, action ) => {
 export const announceDeleteSuccess = ( { dispatch } ) => {
 	dispatch(
 		createNotice(
-			'is-error',
+			'is-success',
 			translate( 'Comment deleted permanently.' ),
 			{
 				duration: 5000,
