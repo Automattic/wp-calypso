@@ -7,15 +7,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
 import SiteIcon from 'blocks/site-icon';
 
 export const CommentDetailPost = ( {
+	commentId,
 	parentCommentAuthorAvatarUrl,
 	parentCommentAuthorDisplayName,
 	parentCommentContent,
-	parentCommentUrl,
 	postAuthorDisplayName,
 	postTitle,
 	postUrl,
@@ -40,9 +39,9 @@ export const CommentDetailPost = ( {
 							{ translate( '%(authorName)s:', { args: { authorName: parentCommentAuthorDisplayName } } ) }
 						</span>
 					}
-					<ExternalLink href={ parentCommentUrl }>
+					<a href={ `${ postUrl }#comment-${ commentId }` }>
 						{ parentCommentContent }
-					</ExternalLink>
+					</a>
 				</div>
 			</div>
 		);
