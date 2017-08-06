@@ -69,9 +69,18 @@ export function receiveSiteUpdates( sites ) {
 
 /**
  * Returns an action object that signals the intention to request all visible sites
- * @returns {Object}        Action object
+ * @param  {Function}   onSuccess function to be called once sites are requested with success
+ * @returns {Object}              Action object
  */
-export function requestSites() {
+export function requestSites( onSuccess ) {
+	if ( onSuccess ) {
+		return {
+			type: SITES_REQUEST,
+			meta: {
+				onSuccess
+			}
+		};
+	}
 	return {
 		type: SITES_REQUEST
 	};

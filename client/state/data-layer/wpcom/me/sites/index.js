@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { get, noop } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
@@ -64,6 +69,7 @@ export const receiveSitesSuccess = ( { dispatch }, action, next, response ) => {
 	dispatch( {
 		type: SITES_REQUEST_SUCCESS
 	} );
+	get( action, 'meta.onSuccess', noop )();
 };
 
 export default {
