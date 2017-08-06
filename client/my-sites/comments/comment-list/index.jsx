@@ -17,7 +17,7 @@ import {
 	replyComment,
 	unlikeComment,
 } from 'state/comments/actions';
-import { createNotice, removeNotice } from 'state/notices/actions';
+import { removeNotice, successNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
@@ -180,7 +180,7 @@ export class CommentList extends Component {
 			this.setCommentStatus( parentComment, 'approved', { doPersist: true, showNotice: false } );
 		}
 
-		this.props.createNotice( 'is-success', noticeMessage, noticeOptions );
+		this.props.successNotice( noticeMessage, noticeOptions );
 		this.props.replyComment( commentText, postId, parentCommentId, { alsoApprove } );
 	}
 
@@ -266,7 +266,7 @@ export class CommentList extends Component {
 			}
 		);
 
-		this.props.createNotice( 'is-success', message, options );
+		this.props.successNotice( message, options );
 	}
 
 	showNotice = ( comment, newStatus, options = { doPersist: false } ) => {
@@ -310,7 +310,7 @@ export class CommentList extends Component {
 			},
 		};
 
-		this.props.createNotice( 'is-success', message, noticeOptions );
+		this.props.successNotice( message, noticeOptions );
 	}
 
 	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
@@ -483,7 +483,7 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		changeCommentStatus( siteId, postId, commentId, status )
 	) ),
 
-	createNotice: ( status, text, options ) => dispatch( createNotice( status, text, options ) ),
+	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 
 	deleteComment: ( commentId, postId ) => dispatch( withAnalytics(
 		composeAnalytics(
