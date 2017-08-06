@@ -3,7 +3,7 @@
  */
 import {
 	POST_SHARE_A_DRAFT_REQUEST,
-	POST_SHARE_A_DRAFT_RECEIVE,
+	POST_SHARE_A_DRAFT_ADD,
 	POST_SHARE_A_DRAFT_ENABLE,
 	POST_SHARE_A_DRAFT_DISABLE,
 } from 'state/action-types';
@@ -14,8 +14,8 @@ export const requestDraftSharing = ( siteId, postId ) => ( {
 	postId,
 } );
 
-export const receiveDraftSharing = ( siteId, postId, { isEnabled, link } ) => ( {
-	type: POST_SHARE_A_DRAFT_RECEIVE,
+export const addDraftSharing = ( siteId, postId, { isEnabled, link } ) => ( {
+	type: POST_SHARE_A_DRAFT_ADD,
 	siteId,
 	postId,
 	isEnabled,

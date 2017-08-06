@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import { isEnabled, link } from '../reducer';
 import {
-	POST_SHARE_A_DRAFT_RECEIVE,
+	POST_SHARE_A_DRAFT_ADD,
 	POST_SHARE_A_DRAFT_ENABLE,
 	POST_SHARE_A_DRAFT_DISABLE,
 } from 'state/action-types';
@@ -20,15 +20,15 @@ describe( 'reducer', () => {
 			expect( initialState ).to.be.false;
 		} );
 
-		it( 'receives draft sharing state', () => {
+		it( 'adds draft sharing enabled state', () => {
 			const stateA = isEnabled( false, {
-				type: POST_SHARE_A_DRAFT_RECEIVE,
+				type: POST_SHARE_A_DRAFT_ADD,
 				isEnabled: true,
 			} );
 			expect( stateA ).to.be.true;
 
 			const stateB = isEnabled( false, {
-				type: POST_SHARE_A_DRAFT_RECEIVE,
+				type: POST_SHARE_A_DRAFT_ADD,
 				isEnabled: false,
 			} );
 			expect( stateB ).to.be.false;
@@ -51,9 +51,9 @@ describe( 'reducer', () => {
 			expect( initialState ).to.be.a( 'string' ).that.is.empty;
 		} );
 
-		it( 'receives draft sharing state', () => {
+		it( 'adds draft sharing link state', () => {
 			const state = link( '', {
-				type: POST_SHARE_A_DRAFT_RECEIVE,
+				type: POST_SHARE_A_DRAFT_ADD,
 				link: 'expected-link',
 			} );
 			expect( state ).to.equal( 'expected-link' );

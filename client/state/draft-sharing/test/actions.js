@@ -8,13 +8,13 @@ import { expect } from 'chai';
  */
 import {
 	POST_SHARE_A_DRAFT_REQUEST,
-	POST_SHARE_A_DRAFT_RECEIVE,
+	POST_SHARE_A_DRAFT_ADD,
 	POST_SHARE_A_DRAFT_ENABLE,
 	POST_SHARE_A_DRAFT_DISABLE,
 } from 'state/action-types';
 import {
 	requestDraftSharing,
-	receiveDraftSharing,
+	addDraftSharing,
 	enableDraftSharing,
 	disableDraftSharing,
 } from '../actions';
@@ -34,16 +34,16 @@ describe( 'actions', () => {
 			} );
 		} );
 	} );
-	describe( '#receiveDraftSharing', () => {
+	describe( '#addDraftSharing', () => {
 		it( 'should return an action object', () => {
 			const draftShare = {
 				isEnabled: true,
 				link: 'test-link',
 			};
-			const action = receiveDraftSharing( SITE_ID, POST_ID, draftShare );
+			const action = addDraftSharing( SITE_ID, POST_ID, draftShare );
 
 			expect( action ).to.eql( {
-				type: POST_SHARE_A_DRAFT_RECEIVE,
+				type: POST_SHARE_A_DRAFT_ADD,
 				siteId: SITE_ID,
 				postId: POST_ID,
 				isEnabled: draftShare.isEnabled,
