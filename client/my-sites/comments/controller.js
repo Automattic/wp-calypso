@@ -14,6 +14,8 @@ import config from 'config';
 import route from 'lib/route';
 import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { canCurrentUser } from 'state/selectors';
 
 const VALID_STATUSES = [ 'pending', 'approved', 'spam', 'trash' ];
 if ( config.isEnabled( 'comments/management/all-list' ) ) {
@@ -50,6 +52,13 @@ export const redirect = function( context, next ) {
 };
 
 export const comments = function( context ) {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+
+	if ( ! canCurrentUser( state, siteId, 'moderate_comments' ) ) {
+		return page.redirect( '/stats' );
+	}
+
 	const { status } = context.params;
 	const siteFragment = route.getSiteFragment( context.path );
 	renderWithReduxStore(
