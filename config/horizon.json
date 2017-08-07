@@ -18,7 +18,6 @@
 		"automated-transfer": true,
 		"catch-js-errors": true,
 		"code-splitting": true,
-		"community-translator": true,
 		"devdocs": false,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
