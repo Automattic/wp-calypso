@@ -83,17 +83,18 @@
 
 		th, td {
 			border-bottom: 1px solid transparentize( lighten( $gray, 20% ), .5 );
-			padding: 8px;
 			text-align: left;
 		}
 
 		th {
 			color: $blue-dark;
 			font-size: .75em;
+			padding: .25em 3em .25em 0em;
 		}
 
 		td {
 			font-size: .83em;
+			padding: 1.17em 3em 1.17em 0em;
 		}
 	}
 

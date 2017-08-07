@@ -24,7 +24,7 @@ React.createClass( {
 
 The following props can be passed to the Spinner component:
 
-| property   | type   | required | default | comment |
-| ---------- | ------ | -------- | ------- | ------- |
-| `size`     | number | no       | `20`    | The width and height of the spinner, in pixels. |
-| `duration` | number | no       | `3000`  | The duration of a single spin animation, in milliseconds. |
+| PROPERTY     | TYPE     | REQUIRED | DEFAULT | DESCRIPTION |
+| ------------ | -------- | -------- | ------- | ----------- |
+| **size**     | *number* | no       | `20`    | The width and height of the spinner, in pixels. |
+| **duration** | *number* | no       | `3000`  | The duration of a single spin animation, in milliseconds. |
