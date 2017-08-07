@@ -99,7 +99,7 @@ class SimplePaymentsDialog extends Component {
 				this.editPaymentButton( null );
 			} else {
 				// If the list is loading or is non-empty, show it
-				this.setState( { activeTab: 'list' } );
+				this.showButtonList();
 			}
 		}
 
@@ -185,7 +185,22 @@ class SimplePaymentsDialog extends Component {
 		return new Promise( resolve => this.formStateController.handleSubmit( resolve ) );
 	}
 
-	handleChangeTabs = activeTab => this.setState( { activeTab } );
+	handleChangeTabs = activeTab => {
+		if ( activeTab === 'form' ) {
+			this.editPaymentButton( null );
+		} else {
+			this.showButtonList();
+		}
+	};
+
+	showButtonList() {
+		this.setState( { activeTab: 'list' } );
+	}
+
+	editPaymentButton = editedPaymentId => {
+		this.setState( { activeTab: 'form', editedPaymentId } );
+		this.formStateController.resetFields( this.getInitialFormFields( editedPaymentId ) );
+	};
 
 	handleSelectedChange = selectedPaymentId => this.setState( { selectedPaymentId } );
 
@@ -253,11 +268,6 @@ class SimplePaymentsDialog extends Component {
 				}
 			} );
 		} );
-	};
-
-	editPaymentButton = paymentId => {
-		this.setState( { activeTab: 'form', editedPaymentId: paymentId } );
-		this.formStateController.resetFields( this.getInitialFormFields( paymentId ) );
 	};
 
 	updatePaymentButton() {
