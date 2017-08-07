@@ -147,6 +147,10 @@
 			flex: 1 0 92px;
 		}
 	}
+	
+	.order__details-total-refund {
+		color: $alert-red;
+	}
 
 	.order__details-total-shipping-refund {
 		.form-text-input-with-affixes {
