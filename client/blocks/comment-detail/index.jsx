@@ -129,16 +129,7 @@ export class CommentDetail extends Component {
 		}
 	}
 
-	toggleLike = () => {
-		const { commentIsLiked, commentStatus, toggleCommentLike } = this.props;
-		const shouldPersist = 'unapproved' === commentStatus && ! commentIsLiked;
-
-		toggleCommentLike( getCommentStatusAction( this.props ) );
-
-		if ( shouldPersist ) {
-			this.setState( { isExpanded: false } );
-		}
-	}
+	toggleLike = () => this.props.toggleCommentLike( getCommentStatusAction( this.props ) );
 
 	toggleSelected = () => {
 		const { commentId, toggleCommentSelected } = this.props;
