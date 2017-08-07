@@ -113,23 +113,23 @@ function getErrorFromHTTPError( httpError ) {
 		};
 	}
 
-	let code = get( httpError, 'response.body.data.errors.code' );
-	if ( code ) {
-		message = get( httpError, 'response.body.data.errors.message' );
+	// TODO: Simplify this block when we're done with the fallback.
+	let code = get( httpError, 'response.body.data.errors[0]' );
+	if ( typeof code === 'object' ) {
+		message = code.message;
+		code = code.code;
 	} else {
-		// TODO: Remove when we're done with the fallback.
-		code = get( httpError, 'response.body.data.errors[0]' );
 		message = getErrorMessageFromErrorCode( code );
 	}
 
 	if ( code ) {
-		message = getErrorMessageFromErrorCode( code );
-
 		if ( code in errorFields ) {
 			field = errorFields[ code ];
 		}
-	} else {
-		message = get( httpError, 'response.body.data', httpError.message );
+
+		if ( ! message ) {
+			message = get( httpError, 'response.body.data', httpError.message );
+		}
 	}
 
 	return { code, message, field };
