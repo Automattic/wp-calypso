@@ -3,6 +3,7 @@
  * External dependencies
  */
 import { assert, expect } from 'chai';
+import deepfreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -51,6 +52,17 @@ describe( 'reducer', () => {
 					}
 				)
 			).to.deep.equal( [ TEAM1, TEAM2 ] );
+		} );
+
+		it( 'should ignore errors', () => {
+			const initialState = deepfreeze( {} );
+			expect(
+				items( initialState, {
+					type: READER_TEAMS_RECEIVE,
+					payload: { some: 'error' },
+					error: true,
+				} )
+			).to.equal( initialState );
 		} );
 
 		it( 'deserialize: should succeed with good data', () => {
