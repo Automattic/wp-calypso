@@ -13,6 +13,10 @@ const handleError = ( jsonError ) => {
 	throw JSON.stringify( jsonError );
 };
 
-export const post = ( siteId, url, data ) => request( siteId ).post( url, data, 'wc/v1' ).catch( handleError );
+export const post = ( siteId, url, data ) => request( siteId )
+	.post( url, data, 'wc/v1' ) //WCS exposes it's REST endpoints only over wc/v1
+	.catch( handleError );
 
-export const get = ( siteId, url ) => request( siteId ).get( url, 'wc/v1' ).catch( handleError );
+export const get = ( siteId, url ) => request( siteId )
+	.get( url, 'wc/v1' ) //WCS exposes it's REST endpoints only over wc/v1
+	.catch( handleError );

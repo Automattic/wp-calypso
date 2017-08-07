@@ -58,6 +58,15 @@
 	font-style: italic;
 }
 
+.label-settings__labels-container {
+	&.hidden {
+		visibility: hidden;
+		height: 0;
+		padding: 0;
+		overflow: hidden;
+	}
+}
+
 .label-settings__placeholder {
 	@include placeholder();
 	pointer-events: none;
@@ -80,7 +89,7 @@
 		height: 14px;
 	}
 
-	a {
+	button {
 		width: 200px;
 		height: 14px;
 	}

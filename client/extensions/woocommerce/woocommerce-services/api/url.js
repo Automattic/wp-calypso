@@ -1,4 +1,2 @@
-const namespace = 'connect/';
-
-export const accountSettings = namespace + 'account/settings';
-export const packages = namespace + 'packages';
+export const accountSettings = 'connect/account/settings';
+export const packages = 'connect/packages';

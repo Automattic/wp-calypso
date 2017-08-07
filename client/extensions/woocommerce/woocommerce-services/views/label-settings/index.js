@@ -68,7 +68,9 @@ class AccountSettingsRootView extends Component {
 			);
 		};
 
+		//hide the toggle when the enabled flag is not present (older version of WCS) and respect the setting otherwise.
 		const renderToggle = formData && isBoolean( formData.enabled );
+		const hidden = formData && isBoolean( formData.enabled ) && ! formData.enabled;
 
 		return (
 			<div>
@@ -77,7 +79,7 @@ class AccountSettingsRootView extends Component {
 					description={ translate( 'Print shipping labels yourself and save a trip to the post office.' ) }>
 					{ renderToggle && <FormToggle checked={ formData.enabled } onChange={ onEnabledToggle } /> }
 				</ExtendedHeader>
-				<Card className={ classNames( 'label-settings__labels-container', { hidden: false } ) }>
+				<Card className={ classNames( 'label-settings__labels-container', { hidden } ) }>
 					{ renderContent() }
 				</Card>
 			</div>

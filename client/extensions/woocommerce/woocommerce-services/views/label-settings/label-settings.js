@@ -46,7 +46,7 @@ class ShippingLabels extends Component {
 					</p>
 					<PaymentMethod selected={ false } isLoading={ true } />
 					<PaymentMethod selected={ false } isLoading={ true } />
-					<Button href="https://wordpress.com/me/billing" target="_blank" compact />
+					<Button compact />
 				</FormFieldSet>
 			</div>
 		);
@@ -112,7 +112,7 @@ class ShippingLabels extends Component {
 					{ description }
 				</p>
 				{ paymentMethods.map( renderPaymentMethod ) }
-				<Button href="https://wordpress.com/me/billing" target="_blank" compact>
+				<Button href="/me/billing" target="_blank" compact>
 					{ buttonLabel }
 				</Button>
 			</div>

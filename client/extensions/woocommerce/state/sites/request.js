@@ -36,8 +36,8 @@ const _request = ( method, path, siteId, body, namespace = 'wc/v3' ) => {
 	).then( ( { data } ) => omitDeep( data, '_links' ) );
 };
 
-const _requestWithHeaders = ( method, path, siteId, sendBody ) => {
-	return _request( method, path + '&_envelope', siteId, sendBody ).then( response => {
+const _requestWithHeaders = ( method, path, siteId, sendBody, namespace = 'wc/v3' ) => {
+	return _request( method, path + '&_envelope', siteId, sendBody, namespace ).then( response => {
 		const { headers, body, status } = response;
 
 		if ( status !== 200 ) {
