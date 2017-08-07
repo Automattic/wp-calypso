@@ -136,7 +136,7 @@ class DnsAddNew extends React.Component {
 		return this.recordTypes.map( ( [ Component, showTypes ] ) => {
 			return (
 				<Component
-					key={ Component.displayName }
+					key={ showTypes.join( ',' ) }
 					selectedDomainName={ this.props.selectedDomainName }
 					show={ includes( showTypes, this.state.fields.type.value ) }
 					fieldValues={ formState.getAllFieldValues( this.state.fields ) }
