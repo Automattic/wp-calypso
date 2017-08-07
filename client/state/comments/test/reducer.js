@@ -8,7 +8,13 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { items, totalCommentsCount, fetchStatus, fetchStatusInitialState } from '../reducer';
+import {
+	items,
+	totalCommentsCount,
+	fetchStatus,
+	fetchStatusInitialState,
+	treesInitialized,
+} from '../reducer';
 import {
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
@@ -17,6 +23,7 @@ import {
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_RECEIVE,
 	COMMENTS_DELETE,
+	COMMENTS_TREE_SITE_ADD,
 } from '../../action-types';
 import { PLACEHOLDER_STATE } from '../constants';
 
@@ -195,6 +202,47 @@ describe( 'reducer', () => {
 			);
 
 			expect( response[ '1-1' ] ).to.eql( 2 );
+		} );
+	} );
+	describe( '#treesInitialized()', () => {
+		it( 'should track when a tree is initialized for a given query', () => {
+			const state = treesInitialized(
+				undefined,
+				{
+					type: COMMENTS_TREE_SITE_ADD,
+					siteId: 77203074,
+					status: 'unapproved',
+				} );
+			expect( state ).to.eql( {
+				77203074: { unapproved: true }
+			} );
+		} );
+		it( 'can track init status of many states', () => {
+			const initState = deepFreeze( { 77203074: { unapproved: true } } );
+			const state = treesInitialized(
+				initState,
+				{
+					type: COMMENTS_TREE_SITE_ADD,
+					siteId: 77203074,
+					status: 'spam',
+				} );
+			expect( state ).to.eql( {
+				77203074: { unapproved: true, spam: true }
+			} );
+		} );
+		it( 'can track init status of many sites', () => {
+			const initState = deepFreeze( { 77203074: { unapproved: true } } );
+			const state = treesInitialized(
+				initState,
+				{
+					type: COMMENTS_TREE_SITE_ADD,
+					siteId: 2916284,
+					status: 'unapproved',
+				} );
+			expect( state ).to.eql( {
+				77203074: { unapproved: true },
+				2916284: { unapproved: true }
+			} );
 		} );
 	} );
 } );

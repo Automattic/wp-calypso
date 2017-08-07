@@ -25,7 +25,7 @@ import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
-import { getSiteCommentsTree } from 'state/selectors';
+import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -34,8 +34,6 @@ import {
 } from 'state/analytics/actions';
 
 const COMMENTS_PER_PAGE = 20;
-const LOADING_TIMEOUT = 2000;
-let loadingTimeoutRef;
 
 export class CommentList extends Component {
 	static propTypes = {
@@ -54,7 +52,6 @@ export class CommentList extends Component {
 	};
 
 	state = {
-		isLoading: true,
 		isBulkEdit: false,
 		// TODO: replace with [] when adding back Bulk Actions
 		lastUndo: null,
@@ -63,24 +60,6 @@ export class CommentList extends Component {
 		// TODO: replace {} with [] after persistedComments is merged
 		selectedComments: {},
 	};
-
-	scheduleLoadingTimeout() {
-		clearTimeout( loadingTimeoutRef );
-		loadingTimeoutRef = setTimeout( () => {
-			this.setState( {
-				isLoading: false
-			} );
-		}, LOADING_TIMEOUT );
-	}
-
-	componentDidMount() {
-		this.scheduleLoadingTimeout();
-	}
-
-	componentWillUnmount() {
-		clearTimeout( loadingTimeoutRef );
-	}
-
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.status !== nextProps.status ) {
 			this.setState( {
@@ -88,15 +67,7 @@ export class CommentList extends Component {
 				page: 1,
 				persistedComments: [],
 				selectedComments: {},
-				isLoading: true,
 			} );
-			this.scheduleLoadingTimeout();
-		}
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.setState( {
-				isLoading: true
-			} );
-			this.scheduleLoadingTimeout();
 		}
 	}
 
@@ -383,12 +354,12 @@ export class CommentList extends Component {
 
 	render() {
 		const {
+			isLoading,
 			siteId,
 			siteFragment,
 			status,
 		} = this.props;
 		const {
-			isLoading,
 			isBulkEdit,
 			page,
 			selectedComments,
@@ -466,8 +437,10 @@ export class CommentList extends Component {
 
 const mapStateToProps = ( state, { siteId, status } ) => {
 	const comments = map( getSiteCommentsTree( state, siteId, status ), 'commentId' );
+	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
 		comments,
+		isLoading,
 		notices: getNotices( state ),
 		siteId,
 	};
