@@ -9,6 +9,13 @@
     "url": "https://github.com/Automattic/wp-calypso.git"
   },
   "main": "index.js",
+	"browserlist": [
+		"last 2 versions",
+		"Safari >= 9",
+		"iOS >= 9",
+		"not ie <= 10",
+		"> 1%"
+	],
   "dependencies": {
     "ajv": "5.2.1",
     "async": "0.9.0",
@@ -165,7 +172,7 @@
   "scripts": {
     "preanalyze-bundles": "cross-env WEBPACK_OUTPUT_JSON=1 CALYPSO_ENV=production NODE_ARGS=\"--max_old_space_size=8192\" npm run -s build",
     "analyze-bundles": "webpack-bundle-analyzer stats.json public -p 9898",
-    "autoprefixer": "postcss -r --use autoprefixer --autoprefixer.browsers \"last 2 versions, > 1%, Safari >= 8, iOS >= 8, Firefox ESR, Opera 12.1\"",
+    "autoprefixer": "postcss -r --use autoprefixer",
     "prebuild": "npm run -s install-if-deps-outdated",
     "build": "run-p -s build-devdocs:* build-server build-css",
     "postbuild": "npm run -s bundle",
