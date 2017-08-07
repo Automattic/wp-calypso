@@ -17,7 +17,7 @@ import {
 	replyComment,
 	unlikeComment,
 } from 'state/comments/actions';
-import { createNotice, removeNotice } from 'state/notices/actions';
+import { removeNotice, successNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
@@ -180,7 +180,7 @@ export class CommentList extends Component {
 			this.setCommentStatus( parentComment, 'approved', { doPersist: true, showNotice: false } );
 		}
 
-		this.props.createNotice( 'is-success', noticeMessage, noticeOptions );
+		this.props.successNotice( noticeMessage, noticeOptions );
 		this.props.replyComment( commentText, postId, parentCommentId, { alsoApprove } );
 	}
 
@@ -242,15 +242,15 @@ export class CommentList extends Component {
 	showBulkNotice = ( newStatus, selectedComments ) => {
 		const { translate } = this.props;
 
-		const [ type, message ] = get( {
-			approved: [ 'is-success', translate( 'All selected comments approved.' ) ],
-			unapproved: [ 'is-info', translate( 'All selected comments unapproved.' ) ],
-			spam: [ 'is-warning', translate( 'All selected comments marked as spam.' ) ],
-			trash: [ 'is-error', translate( 'All selected comments moved to trash.' ) ],
-			'delete': [ 'is-error', translate( 'All selected comments deleted permanently.' ) ],
-		}, newStatus, [ null, null ] );
+		const message = get( {
+			approved: translate( 'All selected comments approved.' ),
+			unapproved: translate( 'All selected comments unapproved.' ),
+			spam: translate( 'All selected comments marked as spam.' ),
+			trash: translate( 'All selected comments moved to trash.' ),
+			'delete': translate( 'All selected comments deleted permanently.' ),
+		}, newStatus );
 
-		if ( ! type ) {
+		if ( ! message ) {
 			return;
 		}
 
@@ -266,7 +266,7 @@ export class CommentList extends Component {
 			}
 		);
 
-		this.props.createNotice( type, message, options );
+		this.props.successNotice( message, options );
 	}
 
 	showNotice = ( comment, newStatus, options = { doPersist: false } ) => {
@@ -278,14 +278,14 @@ export class CommentList extends Component {
 			status: previousStatus,
 		} = comment;
 
-		const [ type, message ] = get( {
-			approved: [ 'is-success', translate( 'Comment approved.' ) ],
-			unapproved: [ 'is-info', translate( 'Comment unapproved.' ) ],
-			spam: [ 'is-warning', translate( 'Comment marked as spam.' ) ],
-			trash: [ 'is-error', translate( 'Comment moved to trash.' ) ],
-		}, newStatus, [ null, null ] );
+		const message = get( {
+			approved: translate( 'Comment approved.' ),
+			unapproved: translate( 'Comment unapproved.' ),
+			spam: translate( 'Comment marked as spam.' ),
+			trash: translate( 'Comment moved to trash.' ),
+		}, newStatus );
 
-		if ( ! type ) {
+		if ( ! message ) {
 			return;
 		}
 
@@ -310,7 +310,7 @@ export class CommentList extends Component {
 			},
 		};
 
-		this.props.createNotice( type, message, noticeOptions );
+		this.props.successNotice( message, noticeOptions );
 	}
 
 	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
@@ -483,7 +483,7 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		changeCommentStatus( siteId, postId, commentId, status )
 	) ),
 
-	createNotice: ( status, text, options ) => dispatch( createNotice( status, text, options ) ),
+	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 
 	deleteComment: ( commentId, postId ) => dispatch( withAnalytics(
 		composeAnalytics(
