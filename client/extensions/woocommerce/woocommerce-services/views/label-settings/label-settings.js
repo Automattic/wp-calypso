@@ -90,7 +90,7 @@ class ShippingLabels extends Component {
 			description = translate( 'Use your credit card on file to pay for the labels you print or add a new one.' );
 			buttonLabel = translate( 'Add another credit card' );
 		} else {
-			description = translate( 'To pay for shipping labels you need to add a credit card to your account' );
+			description = translate( 'To pay for the shipping labels you print, add a credit card.' );
 			buttonLabel = translate( 'Add a credit card' );
 		}
 
