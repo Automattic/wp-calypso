@@ -55,7 +55,8 @@ export const comments = function( context ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 
-	if ( ! canCurrentUser( state, siteId, 'moderate_comments' ) ) {
+	// TODO: replace with `moderate_comments` as soon as it's available from the endpoint
+	if ( ! canCurrentUser( state, siteId, 'edit_others_posts' ) ) {
 		return page.redirect( '/stats' );
 	}
 
