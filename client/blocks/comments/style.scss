@@ -307,12 +307,13 @@
 
 .comments__comment-username {
 	color: darken( $gray, 30% );
-	height: 22px;
+	height: 21px;
 	margin-right: 7px;
 }
 
 a.comments__comment-username {
 	color: $blue-medium;
+	height: 21px;
 
 	&:hover {
 		color: $blue-light;
