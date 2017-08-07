@@ -70,7 +70,7 @@ const flows = {
 	},
 
 	'rebrand-cities': {
-		steps: [ 'welcome', 'user' ],
+		steps: [ 'rebrand-cities-welcome', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},

@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 
-class WelcomeStep extends Component {
+class RebrandCitiesWelcomeStep extends Component {
 	handleSubmit = ( event ) => {
 		event.preventDefault();
 
@@ -42,7 +42,7 @@ class WelcomeStep extends Component {
 		const { translate } = this.props;
 		const buttonClass = 'button is-primary';
 		return (
-			<div className="welcome__content">
+			<div className="rebrand-cities-welcome__content">
 				<button className={ buttonClass } onClick={ this.handleSubmit }>
 					{ translate( 'Create your account' ) }
 				</button>
@@ -72,4 +72,4 @@ class WelcomeStep extends Component {
 	}
 }
 
-export default localize( WelcomeStep );
+export default localize( RebrandCitiesWelcomeStep );

@@ -69,8 +69,8 @@ export default {
 		providesDependencies: [ 'siteSlug' ]
 	},
 
-	welcome: {
-		stepName: 'welcome',
+	'rebrand-cities-welcome': {
+		stepName: 'rebrand-cities-welcome',
 		apiRequestFunction: stepActions.createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		props: {
