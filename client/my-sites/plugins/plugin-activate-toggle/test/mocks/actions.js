@@ -3,7 +3,14 @@
  */
 import sinon from 'sinon';
 
-export default {
-	togglePluginActivation: sinon.spy(),
-	removePluginsNotices: () => {}
+const exported = {
+ togglePluginActivation: sinon.spy(),
+ removePluginsNotices: () => {}
 };
+
+export default exported;
+
+export const {
+ togglePluginActivation,
+ removePluginsNotices
+} = exported;

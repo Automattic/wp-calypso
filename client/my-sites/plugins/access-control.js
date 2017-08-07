@@ -48,4 +48,9 @@ const hasRestrictedAccess = ( site ) => {
 	}
 };
 
-export default { hasRestrictedAccess };
+const exported = {
+    hasRestrictedAccess
+};
+
+export default exported;
+export { hasRestrictedAccess };

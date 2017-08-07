@@ -269,4 +269,14 @@ const controller = {
 	}
 };
 
-module.exports = controller;
+export default controller;
+
+export const {
+    plugins,
+    plugin,
+    browsePlugins,
+    jetpackCanUpdate,
+    setupPlugins,
+    eligibility,
+    resetHistory
+} = controller;

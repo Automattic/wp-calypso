@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	compact = require( 'lodash/compact' );
+import React from 'react';
+import classNames from 'classnames';
+import compact from 'lodash/compact';
 
 /**
  * Internal dependencies
  */
-var allSites = require( 'lib/sites-list' )(),
-	PluginSite = require( 'my-sites/plugins/plugin-site/plugin-site' ),
-	SectionHeader = require( 'components/section-header' ),
-	PluginsStore = require( 'lib/plugins/store' );
+import allSitesFactory from 'lib/sites-list';
+const allSites = allSitesFactory();
+import PluginSite from 'my-sites/plugins/plugin-site/plugin-site';
+import SectionHeader from 'components/section-header';
+import PluginsStore from 'lib/plugins/store';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'PluginSiteList',
 
@@ -25,8 +26,8 @@ module.exports = React.createClass( {
 	},
 
 	getSecondaryPluginSites: function( site ) {
-		let secondarySites = allSites.getNetworkSites( site );
-		let secondaryPluginSites = site.plugin
+		const secondarySites = allSites.getNetworkSites( site );
+		const secondaryPluginSites = site.plugin
 			? PluginsStore.getSites( secondarySites, this.props.plugin.slug )
 			: secondarySites;
 		return compact( secondaryPluginSites );
