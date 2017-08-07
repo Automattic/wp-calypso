@@ -208,7 +208,7 @@ export class CommentDetail extends Component {
 
 		const classes = classNames( 'comment-detail', {
 			'author-is-blocked': authorIsBlocked,
-			'comment-detail__placeholder': isLoading,
+			'comment-detail__placeholder is-loading': isLoading,
 			'is-approved': 'approved' === commentStatus,
 			'is-unapproved': 'unapproved' === commentStatus,
 			'is-bulk-edit': isBulkEdit,

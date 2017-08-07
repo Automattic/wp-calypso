@@ -9,6 +9,10 @@
 		z-index: z-index( 'root', '.comment-detail.card.accessible-focus:focus' );
 	}
 
+	&.is-loading:not(:first-of-type) {
+		display: none;
+	}
+
 	&.is-expanded {
 		margin: 16px auto;
 
