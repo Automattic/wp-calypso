@@ -43,7 +43,7 @@ import {
 } from 'state/login/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import wpcom from 'lib/wp';
-import i18nUtils from 'lib/i18n-utils';
+import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
 
 // TODO: Remove when we're done with the fallback.
 function getErrorMessageFromErrorCode( code ) {
@@ -94,14 +94,6 @@ const errorFields = {
 	invalid_two_step_code: 'twoStepCode',
 	invalid_username: 'usernameOrEmail',
 };
-
-function getLocalizedLoginURL( action ) {
-	if ( 'en' === i18nUtils.getLocaleSlug() ) {
-		return 'https://wordpress.com/wp-login.php?action=' + action;
-	}
-
-	return 'https://' + i18nUtils.getLocaleSlug() + '.wordpress.com/wp-login.php?action=' + action;
-}
 
 /**
  * Retrieves the first error message from the specified HTTP error.
@@ -177,7 +169,7 @@ export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) =
 		type: LOGIN_REQUEST,
 	} );
 
-	return request.post( getLocalizedLoginURL( 'login-endpoint' ) )
+	return request.post( addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=login-endpoint', getLocaleSlug() ) )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
@@ -227,7 +219,8 @@ export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) =
 export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAuthType ) => ( dispatch, getState ) => {
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 
-	return request.post( getLocalizedLoginURL( 'two-step-authentication-endpoint' ) )
+	return request.post(
+			addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint', getLocaleSlug() ) )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
@@ -276,7 +269,7 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
 
-	return request.post( getLocalizedLoginURL( 'social-login-endpoint' ) )
+	return request.post( addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=social-login-endpoint', getLocaleSlug() ) )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
@@ -389,7 +382,7 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 		},
 	} );
 
-	return request.post( getLocalizedLoginURL( 'send-sms-code-endpoint' ) )
+	return request.post( addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint', getLocaleSlug() ) )
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
@@ -439,7 +432,7 @@ export const logoutUser = ( redirectTo ) => ( dispatch, getState ) => {
 	const logoutNonceMatches = ( currentUser.logout_URL || '' ).match( /_wpnonce=([^&]*)/ );
 	const logoutNonce = logoutNonceMatches && logoutNonceMatches[ 1 ];
 
-	return request.post( getLocalizedLoginURL( 'logout-endpoint' ) )
+	return request.post( addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=logout-endpoint', getLocaleSlug() ) )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
