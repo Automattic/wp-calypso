@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -10,12 +11,20 @@ import { localize } from 'i18n-calypso';
 import Accordion from 'components/accordion';
 import FormToggle from 'components/forms/form-toggle';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
+import { getDraftSharing } from 'state/selectors';
+import { enableDraftSharing, disableDraftSharing } from 'state/draft-sharing/actions';
 
-class EditorShareADraft extends Component {
+export class EditorShareADraft extends Component {
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
 		// Expose copySelection as a prop to facilitate unit test
 		copySelection: PropTypes.func.isRequired,
+		siteId: PropTypes.number.isRequired,
+		postId: PropTypes.number,
+		isEnabled: PropTypes.bool.isRequired,
+		link: PropTypes.string.isRequired,
+		enableDraftSharing: PropTypes.func.isRequired,
+		disableDraftSharing: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -28,8 +37,16 @@ class EditorShareADraft extends Component {
 		this.props.copySelection();
 	};
 
+	onToggleSharing = shouldEnable => {
+		const { siteId, postId } = this.props;
+		shouldEnable
+			? this.props.enableDraftSharing( siteId, postId )
+			: this.props.disableDraftSharing( siteId, postId );
+	};
+
 	render() {
-		const { translate } = this.props;
+		const { translate, postId, isEnabled, link } = this.props;
+		const hasPostId = postId !== null;
 
 		return (
 			<Accordion className="editor-share-a-draft" title={ translate( 'Share a Draft' ) }>
@@ -39,12 +56,12 @@ class EditorShareADraft extends Component {
 							'so you can ask a trusted reader for feedback before you publish.',
 					) }
 				</p>
-				<FormToggle>
+				<FormToggle checked={ hasPostId && isEnabled } disabled={ ! hasPostId } onChange={ this.onToggleSharing }>
 					{ translate( 'Enable draft sharing' ) }
 				</FormToggle>
 				<FormTextInputWithAction
 					readOnly
-					defaultValue="linkage"
+					defaultValue={ link }
 					action={ translate( 'Copy', { context: 'verb' } ) }
 					inputRef={ this.saveLinkInputRef }
 					onAction={ this.onCopy }
@@ -54,4 +71,10 @@ class EditorShareADraft extends Component {
 	}
 }
 
-export default localize( EditorShareADraft );
+export default connect(
+	( state, { siteId, postId } ) => getDraftSharing( state, siteId, postId ),
+	{
+		enableDraftSharing,
+		disableDraftSharing,
+	},
+)( localize( EditorShareADraft ) );

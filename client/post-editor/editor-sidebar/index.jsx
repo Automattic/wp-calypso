@@ -97,7 +97,7 @@ export default class EditorSidebar extends Component {
 						setNestedSidebar={ setNestedSidebar }
 						selectRevision={ selectRevision }
 					/>
-					<EditorShareADraft />
+					<EditorShareADraft siteId={ site.ID } postId={ post ? post.ID : null } />
 				</SidebarRegion>
 				<SidebarRegion className="editor-sidebar__nested-region">
 					{ nestedSidebar === NESTED_SIDEBAR_REVISIONS &&
