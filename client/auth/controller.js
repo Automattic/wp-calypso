@@ -32,8 +32,6 @@ export default {
 					document.getElementById( 'primary' )
 				);
 			}
-		} else {
-			page( '/' );
 		}
 	},
 
