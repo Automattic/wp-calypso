@@ -5,7 +5,9 @@
 
 // Popover arrows
 .reader-popover.popover.is-bottom-left .popover__arrow,
-.reader-popover.popover.is-top-left .popover__arrow {
+.reader-popover.popover.is-bottom-right .popover__arrow,
+.reader-popover.popover.is-top-left .popover__arrow,
+.reader-popover.popover.is-top-right .popover__arrow {
 
 	&::before {
 		border: 10px solid $gray-light;
@@ -18,7 +20,8 @@
 	}
 }
 
-.reader-popover.popover.is-bottom-left .popover__arrow {
+.reader-popover.popover.is-bottom-left .popover__arrow,
+.reader-popover.popover.is-bottom-right .popover__arrow {
 
 	&::before {
 		top: 2px;
@@ -27,7 +30,8 @@
 	}
 }
 
-.reader-popover.popover.is-top-left .popover__arrow {
+.reader-popover.popover.is-top-left .popover__arrow,
+.reader-popover.popover.is-top-right .popover__arrow {
 
 	&::before {
 		bottom: 2px;
