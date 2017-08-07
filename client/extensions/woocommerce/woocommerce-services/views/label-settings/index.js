@@ -15,7 +15,10 @@ import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormToggle from 'components/forms/form-toggle';
 import LabelSettings from './label-settings';
-import * as settingsActions from '../../state/label-settings/actions';
+import {
+	fetchSettings,
+	setFormDataValue,
+} from '../../state/label-settings/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getLabelSettingsFormData,
@@ -27,24 +30,24 @@ class AccountSettingsRootView extends Component {
 
 	componentWillMount() {
 		if ( this.props.siteId ) {
-			this.props.actions.fetchSettings( this.props.siteId );
+			this.props.fetchSettings( this.props.siteId );
 		}
 	}
 
 	componentWillReceiveProps( props ) {
 		if ( props.siteId !== this.props.siteId ) {
-			this.props.actions.fetchSettings( props.siteId );
+			this.props.fetchSettings( props.siteId );
 		}
 	}
 
 	render() {
-		const { formData, formMeta, storeOptions, siteId, translate, actions } = this.props;
+		const { formData, formMeta, storeOptions, siteId, translate } = this.props;
 
 		if ( ! formMeta ) {
 			return null;
 		}
-		const setFormDataValue = ( key, value ) => ( actions.setFormDataValue( siteId, key, value ) );
-		const onEnabledToggle = () => ( actions.setFormDataValue( siteId, 'enabled', ! formData.enabled ) );
+		const setValue = ( key, value ) => ( this.props.setFormDataValue( siteId, key, value ) );
+		const onEnabledToggle = () => ( this.props.setFormDataValue( siteId, 'enabled', ! formData.enabled ) );
 
 		const renderContent = () => {
 			if ( ! formData && ! formMeta.isFetching ) {
@@ -60,7 +63,7 @@ class AccountSettingsRootView extends Component {
 					isLoading={ formMeta.isFetching }
 					pristine={ formMeta.pristine }
 					paymentMethods={ formMeta.payment_methods || [] }
-					setFormDataValue={ setFormDataValue }
+					setFormDataValue={ setValue }
 					selectedPaymentMethod={ ( formData || {} ).selected_payment_method_id }
 					paperSize={ ( formData || {} ).paper_size }
 					storeOptions={ storeOptions }
@@ -101,9 +104,10 @@ function mapStateToProps( state ) {
 }
 
 function mapDispatchToProps( dispatch ) {
-	return {
-		actions: bindActionCreators( settingsActions, dispatch ),
-	};
+	return bindActionCreators( {
+		fetchSettings,
+		setFormDataValue,
+	}, dispatch );
 }
 
 export default connect(
