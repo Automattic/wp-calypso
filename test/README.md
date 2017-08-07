@@ -1,11 +1,11 @@
 ## Testing configuration
 
 At the moment we maintain three different group of tests. You can find configurations for all of them in the following subfolders:
-* `client` - unit and component tests for code located in `client` folder.
-* `integration` - integration tests for code located in `bin`, `client` and `server` folders.
-* `server` - unit tests for code located in `server` folder.
+* `client` - unit and component tests for code located in `client` top level folder.
+* `integration` - integration tests for code located in `bin`, `client` and `server` top level folders.
+* `server` - unit tests for code located in `server` top level folder.
 
-Check [testing documentation](https://github.com/Automattic/wp-calypso/blob/master/docs/testing.md) to learn more how all those test configurations are consumed by [Jest](https://facebook.github.io/jest/) testing platform to ensure proper code quality of Calypso codebase.
+Check [testing overview](../docs/testing/testing-overview.md) to learn more how all those test configurations are consumed by [Jest](https://facebook.github.io/jest/) testing platform to ensure proper code quality of Calypso codebase.
 
 ## Test helpers
 
