@@ -21,7 +21,9 @@ class ShippingLabels extends Component {
 	}
 
 	componentWillReceiveProps( props ) {
-		this.setState( { expanded: this.isExpanded( props ) } );
+		if ( props.selectedPaymentMethod !== this.props.selectedPaymentMethod ) {
+			this.setState( { expanded: this.isExpanded( props ) } );
+		}
 	}
 
 	isExpanded( { pristine, selectedPaymentMethod } ) {
