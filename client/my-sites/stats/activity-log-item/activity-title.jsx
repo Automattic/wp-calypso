@@ -435,8 +435,8 @@ class ActivityTitle extends Component {
 				return `${ actorName } attempted and failed to login.`;
 			}
 			case 'user__login': {
-				const actorName = this.getActorName();
-				return `${ actorName } logged in successfully.`;
+				const userName = this.getUserName();
+				return `${ userName } logged in successfully.`;
 			}
 			case 'user__registered': {
 				const actorName = this.getActorName();
