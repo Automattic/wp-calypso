@@ -3,11 +3,15 @@
  */
 import * as api from '../../api';
 import { getLabelSettingsForm } from './selectors';
-import { INIT_FORM, SET_FORM_DATA_VALUE, SET_FORM_META_PROPERTY } from '../action-types';
+import {
+	WOOCOMMERCE_SERVICES_LABELS_INIT_FORM,
+	WOOCOMMERCE_SERVICES_LABELS_SET_FORM_DATA_VALUE,
+	WOOCOMMERCE_SERVICES_LABELS_SET_FORM_META_PROPERTY,
+} from '../action-types';
 
 export const initForm = ( siteId, storeOptions, formData, formMeta ) => {
 	return {
-		type: INIT_FORM,
+		type: WOOCOMMERCE_SERVICES_LABELS_INIT_FORM,
 		siteId,
 		storeOptions,
 		formData,
@@ -16,7 +20,7 @@ export const initForm = ( siteId, storeOptions, formData, formMeta ) => {
 };
 
 export const setFormDataValue = ( siteId, key, value ) => ( {
-	type: SET_FORM_DATA_VALUE,
+	type: WOOCOMMERCE_SERVICES_LABELS_SET_FORM_DATA_VALUE,
 	siteId,
 	key,
 	value,
@@ -24,7 +28,7 @@ export const setFormDataValue = ( siteId, key, value ) => ( {
 
 export const setFormMetaProperty = ( siteId, key, value ) => {
 	return {
-		type: SET_FORM_META_PROPERTY,
+		type: WOOCOMMERCE_SERVICES_LABELS_SET_FORM_META_PROPERTY,
 		siteId,
 		key,
 		value,
