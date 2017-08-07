@@ -99,7 +99,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getKeyringServiceByName()', () => {
-		it( 'should return empty object if there is no service', () => {
+		it( 'should return false if there is no service', () => {
 			const service = getKeyringServiceByName( defaultState, 'thingy' );
 
 			expect( service ).to.be.false;
