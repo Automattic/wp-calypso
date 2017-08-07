@@ -1,0 +1,44 @@
+{
+  "name": "@automattic/simple-components",
+  "version": "0.1.0-alpha.3",
+  "description": "React components, as used on WordPress.com",
+  "scripts": {
+    "build": "babel ./index.js --out-dir cjs && babel ./button --out-dir cjs/button && babel ./main --out-dir cjs/main",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/automattic/wp-calypso.git"
+  },
+  "keywords": [
+    "wordpress",
+    "react",
+    "components"
+  ],
+  "author": "Automattic",
+  "license": "GPL-2.0+",
+  "bugs": {
+    "url": "https://github.com/automattic/wp-calypso/issues"
+  },
+  "homepage": "https://github.com/Automattic/wp-calypso/blob/master/docs/components.md",
+  "main": "./cjs/index.js",
+  "esnext": "./index.js",
+  "files": [
+    "index.js",
+    "cjs/",
+    "button/",
+    "main/"
+  ],
+  "dependencies": {
+    "classnames": "1.1.1",
+    "lodash": "4.15.0",
+    "prop-types": "15.5.10",
+    "react": "15.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1"
+  }
+}
