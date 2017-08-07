@@ -6,7 +6,7 @@
 import React from 'react';
 import { createStore } from 'redux';
 import classNames from 'classnames';
-import { startsWith, find, includes } from 'lodash';
+import { find, includes, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
