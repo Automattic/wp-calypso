@@ -73,7 +73,8 @@ export default {
 		stepName: 'user',
 		apiRequestFunction: stepActions.createAccount,
 		providesToken: true,
-		providesDependencies: [ 'bearer_token', 'username' ]
+		providesDependencies: [ 'bearer_token', 'username' ],
+		unstorableDependencies: [ 'bearer_token' ],
 	},
 
 	'user-social': {
@@ -81,6 +82,7 @@ export default {
 		apiRequestFunction: stepActions.createAccount,
 		providesToken: true,
 		providesDependencies: [ 'bearer_token', 'username' ],
+		unstorableDependencies: [ 'bearer_token' ],
 		props: {
 			headerText: i18n.translate( 'Create your account.' ),
 			isSocialSignupEnabled: true
