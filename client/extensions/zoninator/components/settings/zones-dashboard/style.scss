@@ -1,8 +1,23 @@
 .zones-dashboard__zone-label {
 	color: $gray-dark;
 	font-weight: bold;
+
+	&.is-placeholder {
+		width: 38%;
+		height: 22px;
+		background-color: lighten( $gray, 30% );
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
 }
 
 .zones-dashboard__zone-description {
 	color: $gray-dark;
+
+	&.is-placeholder {
+		width: 56%;
+		height: 15px;
+		margin-top: 7px;
+		background-color: lighten( $gray, 30% );
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
 }
