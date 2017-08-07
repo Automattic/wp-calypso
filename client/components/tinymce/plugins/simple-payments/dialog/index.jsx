@@ -7,7 +7,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import emailValidator from 'email-validator';
 import { find, isNumber, pick, noop } from 'lodash';
 
 /**
@@ -22,11 +21,10 @@ import Dialog from 'components/dialog';
 import Button from 'components/button';
 import Notice from 'components/notice';
 import Navigation from './navigation';
-import ProductForm from './form';
+import ProductForm, { getProductFormValues, isProductFormValid, isProductFormDirty } from './form';
 import ProductList from './list';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getCurrencyDefaults } from 'lib/format-currency';
-import formState from 'lib/form-state';
 import wpcom from 'lib/wp';
 import {
 	customPostToProduct,
@@ -42,6 +40,52 @@ import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
+
+// Selector to get the form values, insert the missing field, and convert it to
+// a custom post data structure ready to be passed to `wpcom` API.
+const productFormToCustomPost = state => {
+	const currencyCode = getCurrentUserCurrencyCode( state );
+	const formValues = getProductFormValues( state );
+
+	if ( currencyCode ) {
+		formValues.currency = currencyCode;
+	}
+
+	return productToCustomPost( formValues );
+};
+
+// Thunk action creator to create a new button
+const createPaymentButton = siteId => ( dispatch, getState ) => {
+	const productCustomPost = productFormToCustomPost( getState() );
+
+	return wpcom.site( siteId ).addPost( productCustomPost ).then( newPost => {
+		const newProduct = customPostToProduct( newPost );
+		dispatch( receiveUpdateProduct( siteId, newProduct ) );
+		return newProduct;
+	} );
+};
+
+// Thunk action creator to update an existing button
+const updatePaymentButton = ( siteId, paymentId ) => ( dispatch, getState ) => {
+	const productCustomPost = productFormToCustomPost( getState() );
+
+	return wpcom.site( siteId ).post( paymentId ).update( productCustomPost ).then( updatedPost => {
+		const updatedProduct = customPostToProduct( updatedPost );
+		dispatch( receiveUpdateProduct( siteId, updatedProduct ) );
+		return updatedProduct;
+	} );
+};
+
+// Thunk action creator to delete a button
+const trashPaymentButton = ( siteId, paymentId ) => dispatch => {
+	// TODO: Replace double-delete with single-delete call after server-side shortcode renderer
+	// is updated to ignore payment button posts with `trash` status.
+	const post = wpcom.site( siteId ).post( paymentId );
+	return post
+		.delete()
+		.then( () => post.delete() )
+		.then( () => dispatch( receiveDeleteProduct( siteId, paymentId ) ) );
+};
 
 class SimplePaymentsDialog extends Component {
 	static propTypes = {
@@ -71,20 +115,13 @@ class SimplePaymentsDialog extends Component {
 
 		const { editPaymentId, paymentButtons } = this.props;
 
-		this.formStateController = formState.Controller( {
-			initialFields: this.getInitialFormFields( editPaymentId ),
-			onNewState: form => this._isMounted && this.setState( { form } ),
-			validatorFunction: this.validateFormFields,
-		} );
-
 		this.state = {
 			activeTab: editPaymentId || isEmptyArray( paymentButtons ) ? 'form' : 'list',
 			editedPaymentId: editPaymentId,
+			initialFormValues: this.getInitialFormFields( editPaymentId ),
 			selectedPaymentId: null,
-			form: this.formStateController.getInitialState(),
 			isSubmitting: false,
 			errorMessage: null,
-			uploadedImageId: null,
 		};
 	}
 
@@ -93,10 +130,10 @@ class SimplePaymentsDialog extends Component {
 		if ( nextProps.showDialog && ! this.props.showDialog ) {
 			if ( nextProps.editPaymentId ) {
 				// Explicitly ordered to edit a particular button
-				this.editPaymentButton( nextProps.editPaymentId );
+				this.showButtonForm( nextProps.editPaymentId );
 			} else if ( isEmptyArray( nextProps.paymentButtons ) ) {
 				// If the button list is loaded and empty, show the "Add New" form
-				this.editPaymentButton( null );
+				this.showButtonForm( null );
 			} else {
 				// If the list is loading or is non-empty, show it
 				this.showButtonList();
@@ -105,12 +142,7 @@ class SimplePaymentsDialog extends Component {
 
 		// If the list has finished loading and is empty, switch from list to the "Add New" form
 		if ( this.props.paymentButtons === null && isEmptyArray( nextProps.paymentButtons ) ) {
-			this.editPaymentButton( null );
-		}
-
-		// clear the form when dialog is being closed -- it'll be blank next time it's opened
-		if ( ! nextProps.showDialog && this.props.showDialog ) {
-			this.formStateController.resetFields( this.constructor.initialFields );
+			this.showButtonForm( null );
 		}
 	}
 
@@ -121,12 +153,6 @@ class SimplePaymentsDialog extends Component {
 	componentWillUnmount() {
 		this._isMounted = false;
 	}
-
-	handleFormFieldChange = ( name, value ) => {
-		this.formStateController.handleFieldChange( { name, value } );
-	};
-
-	isFormFieldInvalid = name => formState.isFieldInvalid( this.state.form, name );
 
 	// Get initial values for a form -- either from an existing payment when editing one,
 	// or the default values for a new one.
@@ -144,50 +170,13 @@ class SimplePaymentsDialog extends Component {
 		return initialFields;
 	}
 
-	getFormValues() {
-		return formState.getAllFieldValues( this.state.form );
-	}
-
-	validateFormFields( formValues, onComplete ) {
-		const formErrors = {};
-
-		if ( ! formValues.title ) {
-			formErrors.title = [ 'empty' ];
-		}
-
-		if ( ! formValues.price ) {
-			formErrors.price = [ 'empty' ];
-		}
-
-		if ( ! formValues.email ) {
-			formErrors.email = [ 'empty' ];
-		} else if ( ! emailValidator.validate( formValues.email ) ) {
-			formErrors.email = [ 'invalid' ];
-		}
-
-		onComplete( null, formErrors );
-	}
-
 	isDirectEdit() {
 		return isNumber( this.props.editPaymentId );
 	}
 
-	handleUploadedImage = uploadedImage => {
-		this.handleFormFieldChange( 'featuredImageId', uploadedImage.ID );
-	};
-
-	handleUploadedImageRemoval = () => {
-		this.handleFormFieldChange( 'featuredImageId', null );
-	};
-
-	handleFormSubmit() {
-		// will validate the form and return a promise of a `hasErrors` bool value
-		return new Promise( resolve => this.formStateController.handleSubmit( resolve ) );
-	}
-
 	handleChangeTabs = activeTab => {
 		if ( activeTab === 'form' ) {
-			this.editPaymentButton( null );
+			this.showButtonForm( null );
 		} else {
 			this.showButtonList();
 		}
@@ -197,9 +186,9 @@ class SimplePaymentsDialog extends Component {
 		this.setState( { activeTab: 'list' } );
 	}
 
-	editPaymentButton = editedPaymentId => {
-		this.setState( { activeTab: 'form', editedPaymentId } );
-		this.formStateController.resetFields( this.getInitialFormFields( editedPaymentId ) );
+	showButtonForm = editedPaymentId => {
+		const initialFormValues = this.getInitialFormFields( editedPaymentId );
+		this.setState( { activeTab: 'form', editedPaymentId, initialFormValues } );
 	};
 
 	handleSelectedChange = selectedPaymentId => this.setState( { selectedPaymentId } );
@@ -213,7 +202,7 @@ class SimplePaymentsDialog extends Component {
 	dismissError = () => this._isMounted && this.setState( { errorMessage: null } );
 
 	handleInsert = () => {
-		const { siteId, dispatch, currencyCode, translate } = this.props;
+		const { siteId, dispatch, translate } = this.props;
 		const { activeTab } = this.state;
 
 		this.setIsSubmitting( true );
@@ -223,92 +212,49 @@ class SimplePaymentsDialog extends Component {
 		if ( activeTab === 'list' ) {
 			productId = Promise.resolve( this.state.selectedPaymentId );
 		} else {
-			productId = this.handleFormSubmit().then( hasErrors => {
-				if ( hasErrors ) {
-					return null;
-				}
-
-				const productForm = this.getFormValues();
-
-				if ( currencyCode ) {
-					productForm.currency = currencyCode;
-				}
-
-				return wpcom
-					.site( siteId )
-					.addPost( productToCustomPost( productForm ) )
-					.then( newProduct => {
-						dispatch( receiveUpdateProduct( siteId, customPostToProduct( newProduct ) ) );
-						return newProduct.ID;
-					} );
-			} );
+			productId = dispatch( createPaymentButton( siteId ) ).then( newProduct => newProduct.ID );
 		}
 
 		productId
-			.then( id => id !== null && this.props.onInsert( { id } ) )
+			.then( id => this.props.onInsert( { id } ) )
 			.catch( () => this.showError( translate( 'The payment button could not be inserted.' ) ) )
 			.then( () => this.setIsSubmitting( false ) );
 	};
 
 	handleSave = () => {
-		// On successful update, either go back to list or close the dialog.
-		// On validation or save error, keep the form displayed, i.e., do nothing here.
-		this.handleFormSubmit().then( hasErrors => {
-			if ( hasErrors ) {
-				return;
-			}
+		this.setIsSubmitting( true );
 
-			this.updatePaymentButton().then( () => {
+		const { siteId, dispatch, translate } = this.props;
+		const { editedPaymentId } = this.state;
+
+		dispatch( updatePaymentButton( siteId, editedPaymentId ) )
+			.then( () => {
+				// On successful update, either go back to list or close the dialog.
+				// On save error, keep the form displayed, i.e., do nothing here.
 				if ( this.isDirectEdit() ) {
 					// after changes are saved, close the dialog...
 					this.props.onClose();
 				} else {
 					// ...or return to the list
-					this.setState( { activeTab: 'list' } );
+					this.showButtonList();
 				}
-			} );
-		} );
-	};
-
-	updatePaymentButton() {
-		this.setIsSubmitting( true );
-
-		const { siteId, dispatch, translate } = this.props;
-		const { editedPaymentId } = this.state;
-		const productForm = this.getFormValues();
-
-		const update = wpcom
-			.site( siteId )
-			.post( editedPaymentId )
-			.update( productToCustomPost( productForm ) );
-
-		update
-			.then( updatedProduct => {
-				dispatch( receiveUpdateProduct( siteId, customPostToProduct( updatedProduct ) ) );
 			} )
 			.catch( () => this.showError( translate( 'The payment button could not be updated.' ) ) )
 			.then( () => this.setIsSubmitting( false ) );
+	};
 
-		return update;
-	}
-
-	trashPaymentButton = paymentId => {
+	handleTrash = paymentId => {
 		this.setIsSubmitting( true );
 
 		const { siteId, dispatch, translate } = this.props;
 
-		// TODO: Replace double-delete with single-delete call after server-side shortcode renderer
-		// is updated to ignore payment button posts with `trash` status.
-		const productAPI = wpcom.site( siteId ).post( paymentId );
-		productAPI.delete()
-			.then( () => productAPI.delete() )
-			.then( () => dispatch( receiveDeleteProduct( siteId, paymentId ) ) )
+		dispatch( trashPaymentButton( siteId, paymentId ) )
 			.catch( () => this.showError( translate( 'The payment button could not be deleted.' ) ) )
 			.then( () => this.setIsSubmitting( false ) );
 	};
 
 	getActionButtons() {
-		const { onClose, translate } = this.props;
+		const { formCanBeSubmitted, onClose, translate } = this.props;
 		const { activeTab, isSubmitting } = this.state;
 
 		const buttons = [
@@ -320,13 +266,11 @@ class SimplePaymentsDialog extends Component {
 		// When editing an existing payment, show "Save" button. Otherwise, show "Insert"
 		const showSave = activeTab === 'form' && isNumber( this.state.editedPaymentId );
 		if ( showSave ) {
-			const saveDisabled = formState.hasErrors( this.state.form );
-
 			buttons.push(
 				<Button
 					onClick={ this.handleSave }
 					busy={ isSubmitting }
-					disabled={ isSubmitting || saveDisabled }
+					disabled={ isSubmitting || ! formCanBeSubmitted }
 					primary
 				>
 					{ translate( 'Save' ) }
@@ -334,7 +278,7 @@ class SimplePaymentsDialog extends Component {
 			);
 		} else {
 			const insertDisabled =
-				( activeTab === 'form' && formState.hasErrors( this.state.form ) ) ||
+				( activeTab === 'form' && ! formCanBeSubmitted ) ||
 				( activeTab === 'list' && this.state.selectedPaymentId === null );
 
 			buttons.push(
@@ -387,7 +331,7 @@ class SimplePaymentsDialog extends Component {
 			planHasSimplePaymentsFeature,
 			shouldQuerySitePlans,
 		} = this.props;
-		const { activeTab, errorMessage } = this.state;
+		const { activeTab, initialFormValues, errorMessage } = this.state;
 
 		// Don't show navigation on 'form' tab if the list is empty or if directly editing
 		// a payment button. On the 'list' tab, always show it.
@@ -448,12 +392,8 @@ class SimplePaymentsDialog extends Component {
 					<Notice status="is-error" text={ errorMessage } onDismissClick={ this.dismissError } /> }
 				{ activeTab === 'form'
 					? <ProductForm
+							initialValues={ initialFormValues }
 							currencyDefaults={ getCurrencyDefaults( currencyCode ) }
-							fieldValues={ this.getFormValues() }
-							isFieldInvalid={ this.isFormFieldInvalid }
-							onFieldChange={ this.handleFormFieldChange }
-							onImageUploadDone={ this.handleUploadedImage }
-							onImageRemove={ this.handleUploadedImageRemoval }
 							showError={ this.showError }
 						/>
 					: <ProductList
@@ -461,8 +401,8 @@ class SimplePaymentsDialog extends Component {
 							paymentButtons={ paymentButtons }
 							selectedPaymentId={ this.state.selectedPaymentId }
 							onSelectedChange={ this.handleSelectedChange }
-							onTrashClick={ this.trashPaymentButton }
-							onEditClick={ this.editPaymentButton }
+							onTrashClick={ this.handleTrash }
+							onEditClick={ this.showButtonForm }
 						/> }
 			</Dialog>
 		);
@@ -482,5 +422,6 @@ export default connect( ( state, { siteId } ) => {
 		isJetpackNotSupported:
 			isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' ),
 		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
+		formCanBeSubmitted: isProductFormValid( state ) && isProductFormDirty( state ),
 	};
 } )( localize( SimplePaymentsDialog ) );
