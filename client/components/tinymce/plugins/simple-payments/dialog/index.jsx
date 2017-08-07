@@ -36,7 +36,7 @@ import {
 	receiveDeleteProduct,
 } from 'state/simple-payments/product-list/actions';
 import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
-import { hasFeature } from 'state/sites/plans/selectors';
+import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 // Utility function for checking the state of the Payment Buttons list
@@ -372,7 +372,8 @@ class SimplePaymentsDialog extends Component {
 			currencyCode,
 			isJetpackNotSupported,
 			translate,
-			planHasSimplePaymentsFeature
+			planHasSimplePaymentsFeature,
+			shouldQuerySitePlans
 		} = this.props;
 		const { activeTab, errorMessage } = this.state;
 
@@ -382,7 +383,7 @@ class SimplePaymentsDialog extends Component {
 			activeTab === 'list' ||
 			( activeTab === 'form' && ! this.isDirectEdit() && ! isEmptyArray( paymentButtons ) );
 
-		if ( isJetpackNotSupported ) {
+		if ( ! shouldQuerySitePlans && isJetpackNotSupported ) {
 			return this.renderEmptyDialog(
 				<Notice status="is-error" text={
 					translate( 'Please upgrade to Jetpack 5.2 to use Simple Payments feature' )
@@ -390,7 +391,7 @@ class SimplePaymentsDialog extends Component {
 			);
 		}
 
-		if ( ! planHasSimplePaymentsFeature ) {
+		if ( ! shouldQuerySitePlans && ! planHasSimplePaymentsFeature ) {
 			return this.renderEmptyDialog(
 				<div className="editor-simple-payments-modal__nudge-wrapper">
 					<div className="editor-simple-payments-modal__nudge-title">{ translate( 'Insert payment button' ) }</div>
@@ -417,7 +418,7 @@ class SimplePaymentsDialog extends Component {
 			>
 				<QuerySimplePayments siteId={ siteId } />
 
-				{ ! currencyCode && <QuerySitePlans siteId={ siteId } /> }
+				{ ( ! currencyCode || shouldQuerySitePlans ) && <QuerySitePlans siteId={ siteId } /> }
 
 				{ showNavigation &&
 					<Navigation
@@ -458,6 +459,7 @@ export default connect( ( state, { siteId } ) => {
 		siteId,
 		paymentButtons: getSimplePayments( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
+		shouldQuerySitePlans: ( getSitePlanSlug( state, siteId ) === null ),
 		isJetpackNotSupported: isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' ),
 		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS )
 	};
