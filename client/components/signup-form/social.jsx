@@ -27,7 +27,7 @@ class SocialSignupForm extends Component {
 	}
 
 	handleGoogleResponse( response ) {
-		if ( ! response.Zi || ! response.Zi.id_token ) {
+		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
 			return;
 		}
 

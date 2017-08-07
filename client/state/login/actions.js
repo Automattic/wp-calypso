@@ -261,12 +261,14 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 /**
  * Attempt to login a user with an external social account.
  *
- * @param  {String}    service    The external social service name.
- * @param  {String}    token      Authentication token provided by the external social service.
- * @param  {String}    redirectTo Url to redirect the user to upon successful login
- * @return {Function}             Action thunk to trigger the login process.
+ * @param  {Object}    socialInfo   Object containing { service, access_token, id_token }
+ *            {String}    service      The external social service name.
+ *            {String}    access_token OAuth2 access token provided by the social service.
+ *            {String}    id_token     JWT ID token such as the one provided by Google OpenID Connect.
+ * @param  {String}    redirectTo   Url to redirect the user to upon successful login
+ * @return {Function}               Action thunk to trigger the login process.
  */
-export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
+export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
 
 	return request.post( addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=social-login-endpoint', getLocaleSlug() ) )
@@ -274,8 +276,7 @@ export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
-			service,
-			token,
+			...socialInfo,
 			redirect_to: redirectTo,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
@@ -293,8 +294,7 @@ export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 			dispatch( {
 				type: SOCIAL_LOGIN_REQUEST_FAILURE,
 				error,
-				service: service,
-				token: token,
+				authInfo: socialInfo
 			} );
 
 			return Promise.reject( error );
@@ -304,12 +304,14 @@ export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 /**
  * Attempt to create an account with a social service
  *
- * @param  {String}    service    The external social service name.
- * @param  {String}    token      Authentication token provided by the external social service.
+ * @param  {Object}    socialInfo   Object containing { service, access_token, id_token }
+ *            {String}    service      The external social service name.
+ *            {String}    access_token OAuth2 access token provided by the social service.
+ *            {String}    id_token     JWT ID token such as the one provided by Google OpenID Connect.
  * @param  {String}    flowName   the name of the signup flow
  * @return {Function}             Action thunk to trigger the login process.
  */
-export const createSocialUser = ( service, token, flowName ) => dispatch => {
+export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
 	dispatch( {
 		type: SOCIAL_CREATE_ACCOUNT_REQUEST,
 		notice: {
@@ -317,7 +319,7 @@ export const createSocialUser = ( service, token, flowName ) => dispatch => {
 		},
 	} );
 
-	return wpcom.undocumented().usersSocialNew( service, token, flowName ).then( wpcomResponse => {
+	return wpcom.undocumented().usersSocialNew( { ...socialInfo, signup_flow_name: flowName } ).then( wpcomResponse => {
 		const data = {
 			username: wpcomResponse.username,
 			bearerToken: wpcomResponse.bearer_token
@@ -339,12 +341,14 @@ export const createSocialUser = ( service, token, flowName ) => dispatch => {
 /**
  * Attempt to connect the current account with a social service
  *
- * @param  {String}    service    The external social service name.
- * @param  {String}    token      Authentication token provided by the external social service.
- * @param  {String}    redirectTo Url to redirect the user to upon successful login
- * @return {Function}             Action thunk to trigger the login process.
+ * @param  {Object}    socialInfo   Object containing { service, access_token, id_token, redirectTo }
+ *            {String}    service      The external social service name.
+ *            {String}    access_token OAuth2 access token provided by the social service.
+ *            {String}    id_token     JWT ID token such as the one provided by Google OpenID Connect.
+ * @param  {String}    redirectTo   Url to redirect the user to upon successful login
+ * @return {Function}               Action thunk to trigger the login process.
  */
-export const connectSocialUser = ( service, token, redirectTo ) => dispatch => {
+export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 	dispatch( {
 		type: SOCIAL_CONNECT_ACCOUNT_REQUEST,
 		notice: {
@@ -352,7 +356,7 @@ export const connectSocialUser = ( service, token, redirectTo ) => dispatch => {
 		},
 	} );
 
-	return wpcom.undocumented().me().socialConnect( service, token, redirectTo ).then( wpcomResponse => {
+	return wpcom.undocumented().me().socialConnect( { ...socialInfo, redirectTo } ).then( wpcomResponse => {
 		dispatch( {
 			type: SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 			redirectTo: wpcomResponse.redirect_to,

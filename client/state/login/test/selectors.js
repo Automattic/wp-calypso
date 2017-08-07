@@ -24,7 +24,7 @@ import {
 	isFormDisabled,
 	getLinkingSocialUser,
 	getLinkingSocialService,
-	getLinkingSocialToken,
+	getLinkingSocialAuthInfo,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -310,27 +310,46 @@ describe( 'selectors', () => {
 				}
 			} ) ).to.eql( account );
 		} );
+	} );
+
+	describe( 'getLinkingSocialAuthInfo()', () => {
+		it( 'should return null if there is no information yet', () => {
+			expect( getLinkingSocialService( undefined ) ).to.be.null;
+		} );
 
 		it( 'should return the social service when available', () => {
-			const service = 'google';
 			expect( getLinkingSocialService( {
 				login: {
 					socialAccount: {
-						service: service,
+						authInfo: {
+							service: 'google',
+							access_token: 'a_token',
+							id_token: 'another_token',
+						}
 					}
 				}
-			} ) ).to.eql( service );
+			} ) ).to.eql( 'google' );
+		} );
+	} );
+
+	describe( 'getLinkingSocialAuthInfo()', () => {
+		it( 'should return null if there is no information yet', () => {
+			expect( getLinkingSocialAuthInfo( undefined ) ).to.be.null;
 		} );
 
-		it( 'should return the social account token when available', () => {
-			const token = 'this-is-probably-not-a-real-token';
-			expect( getLinkingSocialToken( {
+		it( 'should return the social account authentication information when available', () => {
+			const socialAccountInfo = {
+				service: 'google',
+				access_token: 'a_token',
+				id_token: 'another_token',
+			};
+			expect( getLinkingSocialAuthInfo( {
 				login: {
 					socialAccount: {
-						token: token,
+						authInfo: socialAccountInfo,
 					}
 				}
-			} ) ).to.eql( token );
+			} ) ).to.deep.eql( socialAccountInfo );
 		} );
 	} );
 } );

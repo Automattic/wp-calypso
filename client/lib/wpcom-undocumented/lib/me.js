@@ -370,16 +370,18 @@ UndocumentedMe.prototype.deletePurchase = function( purchaseId, fn ) {
  * Connect the current account with a social service (e.g. Google/Facebook).
  *
  * @param {string} service - Social service associated with token, e.g. google.
- * @param {string} token - Token returned from service.
+ * @param {string} access_token - OAuth2 Token returned from service.
+ * @param {string} id_token - (Optional) OpenID Connect Token returned from service.
  * @param {string} redirectTo - The URL to redirect to after connecting.
  * @param {Function} fn - callback
  *
  * @return {Promise} A promise for the request
  */
-UndocumentedMe.prototype.socialConnect = function( service, token, redirectTo, fn ) {
+UndocumentedMe.prototype.socialConnect = function( { service, access_token, id_token, redirectTo }, fn ) {
 	const body = {
 		service,
-		token,
+		access_token,
+		id_token,
 		redirectTo,
 
 		// This API call is restricted to these OAuth keys

@@ -1445,7 +1445,7 @@ Undocumented.prototype.usersSocialNew = function( query, fn ) {
 	query.locale = i18n.getLocaleSlug();
 
 	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( body );
+	restrictByOauthKeys( query );
 
 	const args = {
 		path: '/users/social/new',
