@@ -105,6 +105,7 @@ class ActivityTitle extends Component {
 				external_user_id: PropTypes.string,
 				login: PropTypes.string,
 				wpcom_user_id: PropTypes.number,
+				user_login_attempt: PropTypes.string,
 			} ),
 
 			widget: PropTypes.shape( {
@@ -431,8 +432,8 @@ class ActivityTitle extends Component {
 				return `${ actorName } deleted user ${ userName }.`;
 			}
 			case 'user__failed_login_attempt': {
-				const actorName = this.getActorName();
-				return `${ actorName } attempted and failed to login.`;
+				const userLogin = get( this.props.object, [ 'user', 'user_login_attempt' ], 'An unknown user' );
+				return `${ userLogin } attempted and failed to login.`;
 			}
 			case 'user__login': {
 				const userName = this.getUserName();
