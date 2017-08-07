@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import { createStore } from 'redux';
-import cx from 'classnames';
+import classNames from 'classnames';
 import { startsWith, find, includes } from 'lodash';
 
 /**
@@ -94,7 +94,7 @@ class WebpackBuildMonitor extends React.Component {
 			return null;
 		}
 
-		const classnames = cx( 'webpack-build-monitor', {
+		const classnames = classNames( 'webpack-build-monitor', {
 			'is-error': status === ERROR || status === DISCONNECTED,
 		} );
 
