@@ -215,12 +215,12 @@ export const errors = createReducer(
 
 export const treesInitializedReducer = ( state = {}, action ) => {
 	if ( action.type === COMMENTS_TREE_SITE_ADD ) {
-		return { ...state, [ action.status ]: true };
+		return true;
 	}
 	return state;
 };
 
-export const treesInitialized = keyedReducer( 'siteId', treesInitializedReducer );
+export const treesInitialized = keyedReducer( 'siteId', keyedReducer( 'status', treesInitializedReducer ) );
 
 export default combineReducers( {
 	items,
