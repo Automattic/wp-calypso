@@ -131,6 +131,9 @@ const webpackConfig = {
 			'node_modules',
 		],
 		extensions: [ '.json', '.js', '.jsx' ],
+		alias: {
+			'components/': '@automattic/simple-components/',
+		},
 	},
 	node: {
 		// Tell webpack we want to supply absolute paths for server code,
