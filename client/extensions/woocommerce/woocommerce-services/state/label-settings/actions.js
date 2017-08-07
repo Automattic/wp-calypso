@@ -3,8 +3,7 @@
  */
 import * as api from '../../api';
 import { getLabelSettingsForm } from './selectors';
-
-export const INIT_FORM = 'INIT_FORM';
+import { INIT_FORM, SET_FORM_DATA_VALUE, SET_FORM_META_PROPERTY } from '../action-types';
 
 export const initForm = ( siteId, storeOptions, formData, formMeta ) => {
 	return {
@@ -16,18 +15,12 @@ export const initForm = ( siteId, storeOptions, formData, formMeta ) => {
 	};
 };
 
-// SET_FORM_DATA_VALUE is used to update a form field's underlying setting, e.g. selected_payment_method_id
-export const SET_FORM_DATA_VALUE = 'SET_FORM_DATA_VALUE';
-
 export const setFormDataValue = ( siteId, key, value ) => ( {
 	type: SET_FORM_DATA_VALUE,
 	siteId,
 	key,
 	value,
 } );
-
-// SET_FORM_META_PROPERTY is used to update the form state, e.g. isSaving or success
-export const SET_FORM_META_PROPERTY = 'SET_FORM_META_PROPERTY';
 
 export const setFormMetaProperty = ( siteId, key, value ) => {
 	return {
