@@ -110,7 +110,7 @@ function getLocalizedLoginURL( action ) {
  * @returns {{code: string?, message: string, field: string}} an error message and the id of the corresponding field, if not global
  */
 function getErrorFromHTTPError( httpError ) {
-	let message, code;
+	let message;
 	let field = 'global';
 
 	if ( ! httpError.status ) {
@@ -121,12 +121,12 @@ function getErrorFromHTTPError( httpError ) {
 		};
 	}
 
-	code = get( httpError, 'response.body.data.errors.code' );
+	let code = get( httpError, 'response.body.data.errors.code' );
 	if ( code ) {
 		message = get( httpError, 'response.body.data.errors.message' );
 	} else {
 		// TODO: Remove when we're done with the fallback.
-		code = get( httpError, 'response.body.data.errors[0]', false );
+		code = get( httpError, 'response.body.data.errors[0]' );
 		message = getErrorMessageFromErrorCode( code );
 	}
 
