@@ -378,7 +378,7 @@ export const PostEditor = React.createClass( {
 								onFocus={ this.onEditorFocus }
 								onMouseUp={ this.copySelectedText }
 								onBlur={ this.copySelectedText }
-								onTextEditorChange={ this.onEditorContentChange } />
+								onTextEditorChange={ this.onEditorTextContentChange } />
 						</div>
 						<EditorWordCount
 							selectedText={ this.state.selectedText }
@@ -522,6 +522,11 @@ export const PostEditor = React.createClass( {
 	},
 
 	onEditorContentChange: function() {
+		this.debouncedSaveRawContent();
+		this.debouncedAutosave();
+	},
+
+	onEditorTextContentChange: function() {
 		if ( 'open' === this.state.confirmationSidebar ) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'content_edit' } );
 		}
