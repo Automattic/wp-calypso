@@ -23,7 +23,10 @@ import { metaKeyToSchemaKeyMap, metadataSchema } from 'state/simple-payments/pro
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
-import { isValidSimplePaymentsProduct } from 'lib/simple-payments/utils';
+import {
+	isValidSimplePaymentsProduct,
+	decodeProductAttribute,
+} from 'lib/simple-payments/utils';
 import formatCurrency from 'lib/format-currency';
 import { getFeaturedImageId } from 'lib/posts/utils-ssr-ready';
 
@@ -64,8 +67,8 @@ export function customPostToProduct( customPost ) {
 
 	return {
 		ID: customPost.ID,
-		description: customPost.content,
-		title: customPost.title,
+		description: decodeProductAttribute( customPost.content ),
+		title: decodeProductAttribute( customPost.title ),
 		featuredImageId: getFeaturedImageId( customPost ),
 		...metadataAttributes,
 	};
