@@ -88,7 +88,7 @@ class Dashboard extends Component {
 		} = this.props;
 
 		if ( ! finishedInstallOfRequiredPlugins ) {
-			return translate( 'Installing Plugins' );
+			return translate( 'Store' );
 		}
 
 		if ( ! finishedPageSetup && ! hasProducts ) {

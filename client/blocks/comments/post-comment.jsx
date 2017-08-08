@@ -6,6 +6,7 @@ import { get, noop, some } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -53,7 +54,8 @@ class PostComment extends Component {
 	renderRepliesList() {
 		const commentChildrenIds = get( this.props.commentsTree, [ this.props.commentId, 'children' ] );
 		// Hide children if more than maxChildrenToShow, but not if replying
-		const exceedsMaxChildrenToShow = commentChildrenIds && commentChildrenIds.length < this.props.maxChildrenToShow;
+		const exceedsMaxChildrenToShow =
+			commentChildrenIds && commentChildrenIds.length < this.props.maxChildrenToShow;
 		const showReplies = this.state.showReplies || exceedsMaxChildrenToShow;
 
 		// No children to show
@@ -67,7 +69,7 @@ class PostComment extends Component {
 			{
 				count: commentChildrenIds.length,
 				args: { numOfReplies: commentChildrenIds.length },
-			},
+			}
 		);
 
 		const hideRepliesText = translate(
@@ -76,7 +78,7 @@ class PostComment extends Component {
 			{
 				count: commentChildrenIds.length,
 				args: { numOfReplies: commentChildrenIds.length },
-			},
+			}
 		);
 
 		let replyVisibilityText = null;
@@ -102,7 +104,7 @@ class PostComment extends Component {
 									depth={ this.props.depth + 1 }
 									key={ childId }
 									commentId={ childId }
-								/>,
+								/>
 							) }
 						</ol>
 					: null }
@@ -127,16 +129,40 @@ class PostComment extends Component {
 		);
 	}
 
+	getAuthorDetails = commentId => {
+		const comment = get( this.props.commentsTree, [ commentId, 'data' ], {} );
+		const commentAuthor = get( comment, 'author', {} );
+		const commentAuthorName = decodeEntities( commentAuthor.name );
+		const commentAuthorUrl = !! commentAuthor.site_ID
+			? getStreamUrl( null, commentAuthor.site_ID )
+			: commentAuthor && commentAuthor.URL;
+		return { comment, commentAuthor, commentAuthorUrl, commentAuthorName };
+	};
+
+	renderAuthorTag = ( { authorName, authorUrl, commentId, className } ) => {
+		return !! authorUrl
+			? <a
+					href={ authorUrl }
+					className={ className }
+					onClick={ this.handleAuthorClick }
+					id={ `comment-${ commentId }` }
+				>
+					{ authorName }
+				</a>
+			: <strong className={ className } id={ `comment-${ commentId }` }>
+					{ authorName }
+				</strong>;
+	};
+
 	render() {
-		// todo: connect this constants to the state (new selector)
-		const commentsTree = this.props.commentsTree;
-		const comment = get( commentsTree, [ this.props.commentId, 'data' ] );
+		const { commentsTree, commentId, depth, maxDepth } = this.props;
+		const comment = get( commentsTree, [ commentId, 'data' ] );
 
 		// todo: connect this constants to the state (new selector)
 		const haveReplyWithError = some(
 			get( commentsTree, [ this.props.commentId, 'children' ] ),
 			childId =>
-				get( commentsTree, [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR,
+				get( commentsTree, [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR
 		);
 
 		// If it's a pending comment, use the current user as the author
@@ -157,38 +183,44 @@ class PostComment extends Component {
 			return <PostTrackback { ...this.props } />;
 		}
 
-		// Author URL
-		let authorUrl;
-		if ( comment.author.site_ID ) {
-			authorUrl = getStreamUrl( null, comment.author.site_ID );
-		} else if ( comment.author.URL ) {
-			authorUrl = comment.author.URL;
-		}
+		// Author Details
+		const parentCommentId = get( comment, 'parent.ID' );
+		const { commentAuthorUrl, commentAuthorName } = this.getAuthorDetails( commentId );
+		const {
+			commentAuthorUrl: parentAuthorUrl,
+			commentAuthorName: parentAuthorName,
+		} = this.getAuthorDetails( parentCommentId );
 
+		const postCommentClassnames = classnames( 'comments__comment', {
+			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
+		} );
+
+		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
-			<li className={ 'comments__comment depth-' + this.props.depth }>
+			<li className={ postCommentClassnames }>
 				<div className="comments__comment-author">
-					{ authorUrl
-						? <a href={ authorUrl } onClick={ this.handleAuthorClick }>
+					{ commentAuthorUrl
+						? <a href={ commentAuthorUrl } onClick={ this.handleAuthorClick }>
 								<Gravatar user={ comment.author } />
 							</a>
 						: <Gravatar user={ comment.author } /> }
 
-					{ authorUrl
-						? <a
-							href={ authorUrl }
-							className="comments__comment-username"
-							onClick={ this.handleAuthorClick }
-							id={ `comment-${ this.props.commentId }` }
-							>
-								{ comment.author.name }
-							</a>
-						: <strong
-							className="comments__comment-username"
-							id={ `comment-${ this.props.commentId }` }
-							>
-								{ comment.author.name }
-							</strong> }
+					{ this.renderAuthorTag( {
+						authorUrl: commentAuthorUrl,
+						authorName: commentAuthorName,
+						commentId,
+						className: 'comments__comment-username',
+					} ) }
+					{ this.props.showNestingReplyArrow && parentAuthorName &&
+						<span className="comments__comment-respondee">
+							<Gridicon icon="chevron-right" size={ 16 } />
+							{ this.renderAuthorTag( {
+								className: 'comments__comment-respondee-link',
+								authorName: parentAuthorName,
+								authorUrl: parentAuthorUrl,
+								commentId: parentCommentId,
+							} ) }
+						</span> }
 					<div className="comments__comment-timestamp">
 						<a href={ comment.URL }>
 							<PostTime date={ comment.date } />
@@ -248,6 +280,8 @@ PostComment.propTypes = {
 	post: React.PropTypes.object,
 	maxChildrenToShow: React.PropTypes.number,
 	onCommentSubmit: React.PropTypes.func,
+	maxDepth: React.PropTypes.number,
+	showNestingReplyArrow: React.PropTypes.bool,
 
 	// connect()ed props:
 	currentUser: React.PropTypes.object.isRequired,
@@ -257,8 +291,10 @@ PostComment.defaultProps = {
 	onReplyClick: noop,
 	errors: [],
 	depth: 1,
+	maxDepth: Infinity,
 	maxChildrenToShow: 5,
 	onCommentSubmit: noop,
+	showNestingReplyArrow: false,
 };
 
 export default connect( state => ( {

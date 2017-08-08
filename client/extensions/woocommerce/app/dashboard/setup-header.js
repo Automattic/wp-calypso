@@ -18,7 +18,7 @@ SetupHeader.propTypes = {
 	imageSource: PropTypes.string,
 	imageWidth: PropTypes.number,
 	title: PropTypes.string.isRequired,
-	subtitle: PropTypes.string,
+	subtitle: PropTypes.oneOfType( [ PropTypes.array, PropTypes.string ] ),
 };
 
 export default SetupHeader;
