@@ -1,10 +1,12 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
+import React from 'react';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { isNull } from 'lodash';
-import { localize } from 'i18n-calypso';
-import React, { PropTypes } from 'react';
 
 /**
  * Internal dependencies

@@ -1,10 +1,13 @@
-/**
- * External dependencies
- */
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React, { Component, PropTypes } from 'react';
+
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies

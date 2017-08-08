@@ -1,6 +1,13 @@
-import React, { PropTypes } from 'react';
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
+import React from 'react';
 import omit from 'lodash/omit';
 
+/**
+ * Internal dependencies
+ */
 import {
 	add, remove,
 	EVERY_SECOND,

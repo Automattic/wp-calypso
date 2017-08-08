@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import page from 'page';
 import analytics from 'lib/analytics';
@@ -16,8 +18,8 @@ module.exports = React.createClass( {
 	displayName: 'MediaLibraryListPlanPromo',
 
 	propTypes: {
-		site: React.PropTypes.object,
-		filter: React.PropTypes.string
+		site: PropTypes.object,
+		filter: PropTypes.string
 	},
 
 	getTitle: function() {
