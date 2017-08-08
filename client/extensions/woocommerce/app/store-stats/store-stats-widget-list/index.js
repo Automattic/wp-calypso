@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { findIndex } from 'lodash';

@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
 import React from 'react';
+import PropTypes from 'prop-types';
 import page from 'page';
 import analytics from 'lib/analytics';
 import { preventWidows } from 'lib/formatting';

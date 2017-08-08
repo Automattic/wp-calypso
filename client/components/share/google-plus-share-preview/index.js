@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { truncateArticleContent } from '../helpers';
 

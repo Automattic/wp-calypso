@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loadScript } from 'lib/load-script';
 import { localize } from 'i18n-calypso';

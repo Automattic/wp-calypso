@@ -4,9 +4,8 @@ import { localize } from 'i18n-calypso';
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import SocialLogo from 'social-logos';
 import url from 'url';
 

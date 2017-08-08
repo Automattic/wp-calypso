@@ -3,9 +3,8 @@ import classNames from 'classnames';
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class WidgetGroup extends Component {
 	static defaultProps = {

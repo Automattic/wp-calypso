@@ -3,10 +3,9 @@ import { localize } from 'i18n-calypso';
 /**
  * External dependencies
  */
-import classnames from 'classnames';
-import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import { sum } from 'lodash';
 
 /**

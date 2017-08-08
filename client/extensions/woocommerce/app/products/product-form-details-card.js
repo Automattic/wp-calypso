@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'i18n-calypso';
 import { trim, debounce, isNumber } from 'lodash';
 

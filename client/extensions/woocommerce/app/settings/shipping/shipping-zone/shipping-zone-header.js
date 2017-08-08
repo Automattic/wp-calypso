@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
 import React from 'react';
+import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';

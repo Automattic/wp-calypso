@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { assign, uniqueId, noop } from 'lodash';
 import classNames from 'classnames';
 import tinymce from 'tinymce/tinymce';
