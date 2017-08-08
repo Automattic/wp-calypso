@@ -102,6 +102,8 @@ a.web-preview__external.button {
 
 	cursor: pointer;
 
+	border-radius: 0;
+
 	&:hover {
 		color: $gray-dark;
 	}
