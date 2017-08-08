@@ -64,6 +64,7 @@ class UploadImage extends Component {
 		onError: PropTypes.func,
 		onImageEditorDone: PropTypes.func,
 		onUploadImageDone: PropTypes.func,
+		onUploadedImageRemove: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -72,6 +73,8 @@ class UploadImage extends Component {
 		},
 		backgroundContent: null,
 		onImageEditorDone: noop,
+		onUploadImageDone: noop,
+		onUploadedImageRemove: noop,
 		onError: noop,
 		isUploading: false,
 	};
@@ -231,10 +234,12 @@ class UploadImage extends Component {
 
 		const isEditingDefaultImage = defaultImage && selectedImage === defaultImage.URL;
 
-		const media = isEditingDefaultImage ? defaultImage : {
-			src: selectedImage,
-			file: selectedImageName
-		};
+		const media = isEditingDefaultImage
+			? defaultImage
+			: {
+				src: selectedImage,
+				file: selectedImageName,
+			};
 
 		return (
 			<Dialog additionalClassNames={ classes } isVisible={ true }>
@@ -250,7 +255,12 @@ class UploadImage extends Component {
 	}
 
 	removeUploadedImage = () => {
+		const { onUploadedImageRemove } = this.props;
+		const { uploadedImage } = this.state;
+
 		this.setState( { uploadedImage: null } );
+
+		onUploadedImageRemove( uploadedImage );
 	};
 
 	componentWillMount() {
@@ -403,7 +413,7 @@ export default connect(
 			siteId = getSelectedSiteId( state );
 		}
 
-		if ( ! defaultImage || typeof( defaultImage ) !== 'object' ) {
+		if ( ! defaultImage || typeof defaultImage !== 'object' ) {
 			defaultImage = getMediaItem( state, siteId, defaultImage );
 		}
 

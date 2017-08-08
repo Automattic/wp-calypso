@@ -39,6 +39,10 @@ class UploadImageExample extends Component {
 		}
 	};
 
+	onUploadedImageRemove = ( uploadedImage ) => {
+		console.log( 'The following uploaded image is going to be removed from screen:', uploadedImage );
+	};
+
 	render() {
 		const { primarySiteId } = this.props;
 
@@ -50,6 +54,7 @@ class UploadImageExample extends Component {
 					siteId={ primarySiteId }
 					onImageEditorDone={ this.onImageEditorDone }
 					onUploadImageDone={ this.onUploadImageDone }
+					onUploadedImageRemove={ this.onUploadedImageRemove }
 					onError={ this.onError }
 				/>
 			</div>
