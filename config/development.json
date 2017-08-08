@@ -123,6 +123,7 @@
 		"post-editor/image-editor": true,
 		"post-editor/media-advanced": false,
 		"post-editor/video-editor": true,
+		"posts/post-type-list": false,
 		"press-this": true,
 		"publicize-preview": true,
 		"push-notifications": true,
