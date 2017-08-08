@@ -12,6 +12,7 @@ import tinymce from 'tinymce/tinymce';
  * Internal dependencies
  */
 import EmbedDialog from './dialog';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * Manages an EmbedDialog to allow editing the URL of an embed inside the editor.
@@ -28,6 +29,7 @@ const embed = editor => {
 	 */
 	const render = ( visible = true ) => {
 		const selectedEmbedNode = editor.selection.getNode();
+		const store = editor.getParam( 'redux_store' );
 		const embedDialogProps = {
 			embedUrl: selectedEmbedNode.innerText || selectedEmbedNode.textContent,
 			isVisible: visible,
@@ -38,12 +40,13 @@ const embed = editor => {
 			},
 		};
 
-		ReactDom.render( React.createElement( EmbedDialog, embedDialogProps ), embedDialogContainer );
+		renderWithReduxStore( React.createElement( EmbedDialog, embedDialogProps ), embedDialogContainer, store );
 
 		// Focus on the editor when closing the dialog, so that the user can start typing right away
 		// instead of having to tab back to the editor.
 		if ( ! visible ) {
 			editor.focus();
+			// maybe it won't be necessary after setting up embed/dialog updating similar to wplink/dialog?
 		}
 	};
 
@@ -55,6 +58,18 @@ const embed = editor => {
 
 	editor.on( 'remove', () => {
 		ReactDom.unmountComponentAtNode( embedDialogContainer );
+		{/*
+		Warning: unmountComponentAtNode(): Render methods should be a pure function of props and state;
+		triggering nested component updates from render is not allowed.
+		If necessary, trigger nested updates in componentDidUpdate.
+		Check the render method of EmbedDialog.
+
+		shouldn't this only fire when unmounting tinymce and navigating to another page?
+		why doesn't this error happen for other plugins like wplink? or maybe it does? check
+
+		this is no longer here now that it's rendered with redux store? i don't see how the two are connected though.
+		*/}
+
 		embedDialogContainer.parentNode.removeChild( embedDialogContainer );
 		embedDialogContainer = null;
 	} );
