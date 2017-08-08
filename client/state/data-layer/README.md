@@ -56,15 +56,14 @@ Instead the components should be able to request that they require such data and
 
 ## Implementation
 
-The data layer _intercepts_ Redux actions.
-Once it has performed its behavior, this action will be dropped entirely from the dispatch path unless explicitly forwarded to the next middleware or dispatched again.
-This is to prevent two middlewares which can both supply a given request from fighting with each other or duplicating the request; consequently it allows for prioritization of data-fetching needs by means of ordering how the middleware are arranged in the chain.
-For example, we could start polling from the WP-API for posts but leave all other requests up to the WordPress.com API.
-Note that we can still allow multiple functions within the same middleware to handle the same action.
-The WordPress.com API middleware demonstrates this in building a tree of handlers which can all respond to given action types.
+The data layer _responds to_ Redux actions.
+Once it has performed its behavior, the original action will continue along the dispatch path to the next middleware in the chain.
+We can create multiple "handler" functions for the same action type and they will be triggered in the order they are registered when that action type dispatches.
+The WordPress.com API middleware demonstrates this in building a tree of handlers which can all respond to given data requests.
 
-Each middleware intercepts given Redux actions and will correspondingly dispatch new follow-up actions to actually handle their requests.
-The functions that compose to form the middleware _can_ and in most cases _will_ closely resemble what was previously written in `redux-thunk` actions.
+Each middleware handler can dispatch new follow-up actions to respond in some way to the original action.
+For example, they will often dispatch a new HTTP request.
+The functions that compose to form the middleware _can_ and in most cases _will_ closely resemble what was previously written in `redux-thunk` actions but in this system they will be controllable.
 
 The middleware should be pieced together from multiple handler functions in a logical way which encourages modularity and isolation of responsibilities.
 The data layer provides `mergeHandlers()` as a utility to support this.
@@ -78,15 +77,15 @@ The handlers are functions which take two arguments and whose return value, if a
 The type of a handler follows:
 
 ```js
-// middlewareHandler :: ReduxStore -> ReduxAction -> BypassingDispatcher -> Any
-const myHandler = ( store, action, next ) => { … }
+// middlewareHandler :: ReduxStore -> ReduxAction -> Any
+const myHandler = ( store, action ) => { … }
 ```
 
 Note that the Redux store incorporates four methods, two of which are likely to be used here.
-Also note that there is a distinction between the store's dispatcher and `next` passed in as input arguments.
 When dispatching through the store's `dispatch` function the action will start at the beginning of the entire middleware chain.
-When using `next` there will be data-layer-specific meta information added to the action which will cause all further data-layer middleware in the chain to ignore the action and pass it along untouched.
-This `next` dispatcher exists to prevent triggering endless loops inside the middleware, such as issuing an action from the middleware handler which then triggers the same handler again, which reissues a new action, etc…
+Sometimes we need to bypass the data layer so that we don't create endless loops of action dispatches.
+In these cases we can import the `local()` function which will cause the action to do just that: bypass the data layer.
+
 
 ```js
 const {
@@ -106,6 +105,10 @@ Let's look at a full example:
  *
  * Requests splines and reticulations from API
  * and feeds the responses back into Calypso
+ *
+ * Note: This is an example, but we should be using
+ *       the HTTP action types instead of `wpcom.js`
+ * @see ./wpcom-http/README.md
  */
 
 const requestSplines = ( { dispatch }, action ) => {
@@ -132,14 +135,9 @@ const syncChanges = ( { dispatch, getState }, action, next ) => {
 			// the request failed; give up and reset the
 			// spline to the former state; bypass all
 			// further data-layer middleware by using
-			// next() instead of dispatch()
-			next( reticulateSpline( oldSpline ) );
+			// local() inside of dispatch()
+			dispatch( local( reticulateSpline( oldSpline ) ) );
 		} );
-
-	// pass along action to reducers
-	// and bypass all further
-	// data-layer middleware
-	next( action );
 };
 
 export default {
@@ -169,7 +167,7 @@ In some cases it might be appropriate for a certain middleware to only handle on
 The data middleware is the gateway which performs the mapping between what is natural in Calypso/JavaScript and what is natural on the other side of the data requests.
 This is the place to couple files and functions to the structure of the associated system.
 
-For example, the WordPress.com API middleware mirrors the WordPress.com API and its files should thus mirror the API's structure. The file which handles requests to the `/sites/[ siteID ]/posts` endpoint should live at `state/data-layer/wpcom/sites/posts/index.js` and the file which handles requests to the `/me` endpoint should live at `state/data-layer/wpcom/me/index.js`.
+For example, the WordPress.com API middleware mirrors the WordPress.com API and its **files should thus mirror the API's structure**. The file which handles requests to the `/sites/[ siteID ]/posts` endpoint should live at `state/data-layer/wpcom/sites/posts/index.js` and the file which handles requests to the `/me` endpoint should live at `state/data-layer/wpcom/me/index.js`.
 Each file should be responsible for a single WordPress.com endpoint, and if multiple endpoints need to be polled in response to some Redux action, then we should have one file for each endpoint and both will listen for that same action.
 
 The key principle in this directory is to match the appropriate structures and norms of each possible data provider.
