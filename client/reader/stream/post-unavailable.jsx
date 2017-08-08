@@ -1,5 +1,4 @@
 /** @format */
-/** @format */
 /**
  * External dependencies
  */
@@ -17,6 +16,7 @@ class PostUnavailable extends React.PureComponent {
 		this.errors = {
 			unauthorized: this.props.translate(
 				'This is a post on a private site that you’re following, but not currently a member of.' +
+					' ' +
 					'Please request membership to display these posts in Reader.'
 			),
 			default: this.props.translate( 'An error occurred loading this post.' ),

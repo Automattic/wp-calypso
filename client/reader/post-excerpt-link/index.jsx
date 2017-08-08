@@ -72,6 +72,7 @@ class PostExcerptLink extends React.Component {
 				<p className="post-excerpt-link__helper">
 					{ this.props.translate(
 						'The owner of this site only allows us to show a brief summary of their content.' +
+							' ' +
 							"To view the full post, you'll have to visit their site."
 					) }
 				</p>
