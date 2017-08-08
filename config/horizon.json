@@ -70,6 +70,7 @@
 		"persist-redux": true,
 		"plans/personal-plan": true,
 		"plans/jetpack-config-v2": true,
+		"post-editor/delta-post-publish-flow": true,
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
 		"post-editor/video-editor": true,
