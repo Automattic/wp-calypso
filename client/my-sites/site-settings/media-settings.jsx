@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,12 +19,12 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import {
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
+	FEATURE_VIDEO_UPLOADS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
+	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 } from 'lib/plans/constants';
+import { hasFeature } from 'state/sites/plans/selectors';
 import {
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
@@ -45,16 +44,6 @@ import QueryMediaStorage from 'components/data/query-media-storage';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import PlanStorageBar from 'blocks/plan-storage/bar';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-
-/**
- * Module constants
- */
-const plansIncludingVideoPress = [
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-];
 
 class MediaSettings extends Component {
 	static propTypes = {
@@ -260,7 +249,11 @@ export default connect(
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 		const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
 		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, selectedSiteId, 'photon' );
-		const isVideoPressAvailable = includes( plansIncludingVideoPress, sitePlanSlug );
+		const isVideoPressAvailable = (
+			hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS ) ||
+			hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
+			hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO )
+		);
 
 		return {
 			carouselActive: !! isJetpackModuleActive( state, selectedSiteId, 'carousel' ),
