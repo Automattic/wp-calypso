@@ -1498,7 +1498,8 @@ Undocumented.prototype.usersPhone = function( query, fn ) {
 /**
  * Verify a record in the signups table and create a new user from it
  *
- * @param {object} query - two key/value pairs; { 'phone_number': 'the users phone number', 'code': 'the verification code we sent to the phone number' }
+ * @param {object} query - two key/value pairs;
+ *           { 'phone_number': 'the users phone number', 'code': 'the verification code we sent to the phone number' }
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersPhoneVerification = function( query, fn ) {
@@ -1559,7 +1560,8 @@ Undocumented.prototype.usersEmail = function( query, fn ) {
 /**
  * Verify a record in wp_signups and create a new user from it
  *
- * @param {object} query - two key/value pairs; { 'email': 'the users email address', 'code': 'the verification code we sent to the email address' }
+ * @param {object} query - two key/value pairs;
+ *            { 'email': 'the users email address', 'code': 'the verification code we sent to the email address' }
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.usersEmailVerification = function( query, fn ) {
