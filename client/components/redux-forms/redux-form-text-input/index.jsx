@@ -8,6 +8,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextInput from 'components/forms/form-text-input';
 
 class ReduxFormTextInput extends Component {
@@ -15,14 +16,17 @@ class ReduxFormTextInput extends Component {
 		name: PropTypes.string,
 	};
 
-	renderTextInput = ( { input: { onChange, value } } ) => {
+	renderTextInput = ( { input: { onChange, value }, meta: { touched, error } } ) => {
 		const otherProps = omit( this.props, 'name' );
 
 		return (
-			<FormTextInput
-				{ ...otherProps }
-				onChange={ this.updateTextInput( onChange ) }
-				value={ value } />
+			<span>
+				<FormTextInput
+					{ ...otherProps }
+					onChange={ this.updateTextInput( onChange ) }
+					value={ value } />
+				{ touched && error && <FormInputValidation isError text={ error } /> }
+			</span>
 		);
 	}
 
