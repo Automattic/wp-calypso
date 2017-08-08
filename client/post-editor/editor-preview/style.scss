@@ -23,27 +23,6 @@
     }
 }
 
-.editor-preview .web-preview__loading-message-wrapper {
-	display: flex;
-	justify-content: center;
-	height: 100%;
-}
-
-.editor-preview .web-preview__loading-message {
-	font-size: 16px;
-	height: initial;
-	position: relative;
-		top: 30%;
-		z-index: z-index( 'root', '.editor-preview' );
-
-	strong {
-		color: $gray-text-min;
-		display: block;
-		font-size: 24px;
-		margin-bottom: 5px;
-	}
-}
-
 .editor-preview .web-preview__close.button,
 .editor-preview a.web-preview__external.button,
 .editor-preview .web-preview__edit.button {
