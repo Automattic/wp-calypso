@@ -11,13 +11,13 @@ import { requestCommentsTreeForJetpackSite } from 'state/comments/actions';
 
 export class QueryJetpackSiteCommentsTree extends Component {
 	static propTypes = {
-		offset: PropTypes.number,
+		page: PropTypes.number,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 	};
 
 	static defaultProps = {
-		offset: 0,
+		page: 1,
 		status: 'unapproved',
 	};
 
@@ -25,16 +25,19 @@ export class QueryJetpackSiteCommentsTree extends Component {
 		this.request();
 	}
 
-	componentDidUpdate( { offset, siteId, status } ) {
-		if ( offset !== this.props.offset || siteId !== this.props.siteId || status !== this.props.status ) {
-			this.request();
+	componentDidUpdate( { page, siteId, status } ) {
+		const pageChange = page !== this.props.page;
+		const statusChange = status !== this.props.status;
+
+		if ( pageChange || statusChange || siteId !== this.props.siteId ) {
+			this.request( ( pageChange && ! statusChange ) ? 'add' : 'replace' );
 		}
 	}
 
-	request() {
-		const { offset, siteId, status } = this.props;
+	request( strategy = 'replace' ) {
+		const { page, siteId, status } = this.props;
 		if ( siteId ) {
-			this.props.requestCommentsTreeForJetpackSite( { offset, siteId, status } );
+			this.props.requestCommentsTreeForJetpackSite( { page, siteId, status, strategy } );
 		}
 	}
 

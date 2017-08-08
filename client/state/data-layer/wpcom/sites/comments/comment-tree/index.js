@@ -8,6 +8,7 @@ import { get, map } from 'lodash';
  * Internal dependencies
  */
 import {
+	COMMENTS_RECEIVE,
 	COMMENTS_TREE_SITE_ADD,
 	COMMENTS_TREE_SITE_REQUEST,
 	COMMENTS_TREE_JETPACK_SITE_REQUEST,
@@ -69,11 +70,11 @@ const announceFailure = ( { dispatch, getState }, { query } ) => {
 };
 
 const fetchCommentsTreeForJetpackSites = ( { dispatch }, action ) => {
-	const { offset, siteId, status } = action.query;
+	const { page, siteId, status } = action.query;
 	const query = {
-		fields: 'ID,parent,post',
+		fields: 'ID,parent,post,status',
 		number: 81,
-		offset,
+		offset: ( page - 1 ) * 20, // see CommentList COMMENTS_PER_PAGE constant
 		siteId,
 		status,
 		type: 'comment',
@@ -93,7 +94,16 @@ const fetchCommentsTreeForJetpackSites = ( { dispatch }, action ) => {
 };
 
 const addCommentsToJetpackTree = ( { dispatch }, { query }, next, { comments } ) => {
-	const { siteId, status } = query;
+	const { siteId, status, strategy } = query;
+
+	if ( 'add' === strategy ) {
+		dispatch( {
+			type: COMMENTS_RECEIVE,
+			siteId,
+			comments,
+		} );
+		return;
+	}
 
 	const tree = map( comments, comment => ( {
 		commentId: get( comment, 'ID' ),

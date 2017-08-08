@@ -42,7 +42,7 @@ const siteTree = ( state = [], action ) => {
 			return reject( state, { commentId: action.commentId } );
 		case COMMENTS_RECEIVE:
 			// Add the new comments to the state
-			return unionBy( convertToTree( action.comments ), state, 'commentId' );
+			return unionBy( state, convertToTree( action.comments ), 'commentId' );
 		case COMMENTS_TREE_SITE_ADD:
 			// Replace the comments of a given status with the comments freshly fetched from the server
 			return unionBy( action.tree, reject( state, { status: action.status } ), 'commentId' );
