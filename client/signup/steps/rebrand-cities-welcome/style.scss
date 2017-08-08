@@ -18,7 +18,6 @@
 	}
 }
 
-
 .rebrand-cities-welcome__illustration-wrapper {
 	max-width: 800px;
 	width: 100%;
@@ -29,7 +28,7 @@
 	background: url( '/calypso/images/illustrations/rebrand-cities-welcome.svg' ) no-repeat 50% 0;
 	background-size: 100%;
 	display: inline-block;
-	padding-top: 53%;
+	padding-top: 53%; /* percentage ratio of height to width */
 	width: 100%;
 }
 
