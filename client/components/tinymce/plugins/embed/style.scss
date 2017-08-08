@@ -1,10 +1,14 @@
 .dialog.card.embed__modal {
 	width: 80%;
-	max-width: 600px;
+	max-width: 690px;
 }
 
 .embed__modal .dialog__action-buttons:before {
 	background: none;
+}
+
+.embed__modal .dialog__content {
+	padding-bottom: 0;
 }
 
 .embed__title {
@@ -12,6 +16,27 @@
 	font-weight: bold;
 }
 
+.embed-dialog__url {
+	margin-top: 1em;
+}
+
 input[type="text"].embed__url {
 	margin-top: 1em;
+}
+
+.embed__modal .wpview-type-embed {
+	margin: 1.75em -24px 0 -24px; /* counter-act the left/right padding from `.dialog__content`, so that the preview can have a background color that extends to the edge of `.dialog__content` */
+	padding: 24px;
+	margin-top: 1.75em;
+		/* rem instead? */
+	background: $gray-light;
+		/* get close to #f4f6f8 */
+
+	/* want embed 100% width, mbut that'll distort ratio? need to make modal 640 instead? but will that work for all embeds, or just youtube videos? */
+	/* make margin/padding match the ones around the title, so they're consistent */
+	/* here is that semi-transparent gradient on the bottom coming from? want to remove it */
+	/* poster image is getting edges cropped off. why? started happening when you made your css changes, maybe just from applying classes */
+		/* gets cut off inside editor on master branch too, though, so probably outside scope */
+
+	/* videopress embeds are smaller than youtube, leaving undesired space. need them to be 100% width too. are there other services to test as well? vimeo, etc */
 }
