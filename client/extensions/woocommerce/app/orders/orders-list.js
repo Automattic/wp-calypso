@@ -145,16 +145,12 @@ class Orders extends Component {
 		}
 
 		return (
-			<TableRow>
-				<TableItem colSpan={ 4 }>
-					<EmptyContent
-						title={ emptyMessage }
-						action={ translate( 'View all orders' ) }
-						actionURL={ getLink( '/store/orders/:site', site ) }
-						actionCallback={ this.clearSearch }
-					/>
-				</TableItem>
-			</TableRow>
+			<EmptyContent
+				title={ emptyMessage }
+				action={ translate( 'View all orders' ) }
+				actionURL={ getLink( '/store/orders/:site', site ) }
+				actionCallback={ this.clearSearch }
+			/>
 		);
 	}
 
@@ -181,6 +177,28 @@ class Orders extends Component {
 		);
 	}
 
+	renderOrderItems = () => {
+		const { orders, ordersLoading, translate } = this.props;
+
+		const headers = (
+			<TableRow isHeader>
+				<TableItem className="orders__table-name" isHeader>{ translate( 'Order' ) }</TableItem>
+				<TableItem className="orders__table-date" isHeader>{ translate( 'Date' ) }</TableItem>
+				<TableItem className="orders__table-status" isHeader>{ translate( 'Status' ) }</TableItem>
+				<TableItem className="orders__table-total" isHeader>{ translate( 'Total' ) }</TableItem>
+			</TableRow>
+		);
+
+		return (
+			<Table className="orders__table" header={ headers } horizontalScroll>
+				{ ordersLoading
+					? this.renderPlaceholders()
+					: orders.map( this.renderOrderItem )
+				}
+			</Table>
+		);
+	}
+
 	onPageClick = nextPage => {
 		this.props.updateCurrentOrdersQuery( this.props.siteId, {
 			page: nextPage,
@@ -194,7 +212,6 @@ class Orders extends Component {
 			currentStatus,
 			isDefaultPage,
 			orders,
-			ordersLoading,
 			ordersLoaded,
 			total,
 			translate
@@ -211,28 +228,16 @@ class Orders extends Component {
 			);
 		}
 
-		const headers = (
-			<TableRow isHeader>
-				<TableItem className="orders__table-name" isHeader>{ translate( 'Order' ) }</TableItem>
-				<TableItem className="orders__table-date" isHeader>{ translate( 'Date' ) }</TableItem>
-				<TableItem className="orders__table-status" isHeader>{ translate( 'Status' ) }</TableItem>
-				<TableItem className="orders__table-total" isHeader>{ translate( 'Total' ) }</TableItem>
-			</TableRow>
-		);
-
-		const ordersList = ( orders && orders.length ) ? orders.map( this.renderOrderItem ) : this.renderNoContent();
-
 		const setSearchRef = ref => this.search = ref;
 
 		return (
 			<div className="orders__container">
 				<OrdersFilterNav searchRef={ setSearchRef } status={ currentStatus } />
 
-				<Table className="orders__table" header={ headers } horizontalScroll>
-					{ ordersLoading
-						? this.renderPlaceholders()
-						: ordersList }
-				</Table>
+				{ ( ! ordersLoaded || ( orders && orders.length ) )
+					? this.renderOrderItems()
+					: this.renderNoContent()
+				}
 
 				<Pagination
 					page={ currentPage }

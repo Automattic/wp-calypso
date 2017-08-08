@@ -23,6 +23,11 @@
 		width: 75%;
 		@include placeholder();
 	}
+
+	.search,
+	.search .search__open-icon {
+		z-index: initial;
+	}
 }
 
 .orders__item-link,
@@ -51,7 +56,7 @@
 			border-color: $alert-red;
 		}
 	}
-	
+
 	&.is-pending {
 		background: lighten( $alert-green, 20% );
 		color: darken( $alert-green, 30% );

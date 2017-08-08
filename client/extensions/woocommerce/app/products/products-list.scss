@@ -23,21 +23,6 @@
 		}
 	}
 
-	.pagination__list {
-		background: $white;
-		border: 1px solid lighten( $gray, 25% );
-		padding: 8px;
-	}
-
-	.pagination__list-item .button {
-		padding: 0 8px;
-		line-height: 34px;
-	}
-
-	.pagination__list-item.is-selected {
-		border: 1px solid lighten( $gray, 20% );
-	}
-
 	.products__list-placeholder {
 		@include placeholder();
 		background: $white;
