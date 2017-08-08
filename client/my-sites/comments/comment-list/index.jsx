@@ -24,6 +24,7 @@ import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-place
 import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
+import QueryJetpackSiteCommentsTree from 'components/data/query-site-comments-tree/query-jetpack-site-comments-tree';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors';
 import {
@@ -32,6 +33,7 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'state/analytics/actions';
+import { isJetpackSite } from 'state/sites/selectors';
 
 const COMMENTS_PER_PAGE = 20;
 
@@ -354,6 +356,7 @@ export class CommentList extends Component {
 
 	render() {
 		const {
+			isJetpack,
 			isLoading,
 			siteId,
 			siteFragment,
@@ -376,7 +379,12 @@ export class CommentList extends Component {
 
 		return (
 			<div className="comment-list">
-				<QuerySiteCommentsTree siteId={ siteId } status={ status } />
+				{ isJetpack &&
+					<QueryJetpackSiteCommentsTree siteId={ siteId } status={ status } />
+				}
+				{ ! isJetpack &&
+					<QuerySiteCommentsTree siteId={ siteId } status={ status } />
+				}
 
 				<CommentNavigation
 					isBulkEdit={ isBulkEdit }
@@ -440,6 +448,7 @@ const mapStateToProps = ( state, { siteId, status } ) => {
 	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
 		comments,
+		isJetpack: isJetpackSite( state, siteId ),
 		isLoading,
 		notices: getNotices( state ),
 		siteId,

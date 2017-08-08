@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { map } from 'lodash';
+import { get, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,6 +10,7 @@ import { map } from 'lodash';
 import {
 	COMMENTS_TREE_SITE_ADD,
 	COMMENTS_TREE_SITE_REQUEST,
+	COMMENTS_TREE_JETPACK_SITE_REQUEST,
 } from 'state/action-types';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -67,8 +68,53 @@ const announceFailure = ( { dispatch, getState }, { query } ) => {
 	dispatch( errorNotice( error ) );
 };
 
+const fetchCommentsTreeForJetpackSites = ( { dispatch }, action ) => {
+	const { offset, siteId, status } = action.query;
+	const query = {
+		fields: 'ID,parent,post',
+		number: 81,
+		offset,
+		siteId,
+		status,
+		type: 'comment',
+	};
+
+	dispatch(
+		http(
+			{
+				method: 'GET',
+				path: `/sites/${ siteId }/comments`,
+				apiVersion: '1.1',
+				query,
+			},
+			action
+		)
+	);
+};
+
+const addCommentsToJetpackTree = ( { dispatch }, { query }, next, { comments } ) => {
+	const { siteId, status } = query;
+
+	const tree = map( comments, comment => ( {
+		commentId: get( comment, 'ID' ),
+		postId: get( comment, 'post.ID' ),
+		commentParentId: get( comment, 'parent.ID', 0 ),
+		status,
+	} ) );
+
+	dispatch( {
+		type: COMMENTS_TREE_SITE_ADD,
+		siteId,
+		status,
+		tree,
+	} );
+};
+
 const treeHandlers = {
 	[ COMMENTS_TREE_SITE_REQUEST ]: [ dispatchRequest( fetchCommentsTreeForSite, addCommentsTree, announceFailure ) ],
+	[ COMMENTS_TREE_JETPACK_SITE_REQUEST ]: [ dispatchRequest(
+		fetchCommentsTreeForJetpackSites, addCommentsToJetpackTree, announceFailure
+	) ],
 };
 
 export default mergeHandlers( treeHandlers );
