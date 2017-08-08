@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { compact, isEqual, uniqueId } from 'lodash';
+import { compact, isEqual, uniqueId, filter } from 'lodash';
 import { createReducer } from 'state/utils';
 
 /**
@@ -9,6 +9,7 @@ import { createReducer } from 'state/utils';
  */
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
+	WOOCOMMERCE_PRODUCT_DELETE,
 	WOOCOMMERCE_PRODUCT_EDIT,
 	WOOCOMMERCE_PRODUCT_EDIT_CLEAR,
 	WOOCOMMERCE_PRODUCT_UPDATE,
@@ -21,6 +22,7 @@ import { getBucket } from '../helpers';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCT_EDIT ]: editProductAction,
+	[ WOOCOMMERCE_PRODUCT_DELETE ]: deleteProductAction,
 	[ WOOCOMMERCE_PRODUCT_EDIT_CLEAR ]: clearEditsAction,
 	[ WOOCOMMERCE_PRODUCT_UPDATED ]: productUpdatedAction,
 	[ WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT ]: editProductAttributeAction,
@@ -176,4 +178,18 @@ export function editProductAttribute( attributes, attribute, data ) {
 	}
 
 	return _attributes;
+}
+
+export function deleteProductAction( edits, action ) {
+	const { productId } = action;
+	const prevEdits = edits || {};
+
+	if ( prevEdits && prevEdits.updates ) {
+		const newUpdates = filter( prevEdits.updates, product => product.id !== productId );
+		return { ...prevEdits,
+			updates: newUpdates,
+		};
+	}
+
+	return edits;
 }
