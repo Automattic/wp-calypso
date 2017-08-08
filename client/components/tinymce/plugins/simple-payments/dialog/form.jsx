@@ -41,6 +41,7 @@ class ProductForm extends Component {
 			fieldValues,
 			isFieldInvalid,
 			onUploadImageDone,
+			onUploadedImageRemove,
 		} = this.props;
 
 		const isTitleInvalid = isFieldInvalid( 'title' );
@@ -53,6 +54,7 @@ class ProductForm extends Component {
 					defaultImage={ fieldValues.featuredImageId }
 					onError={ this.handleUploadImageError }
 					onUploadImageDone={ onUploadImageDone }
+					onUploadedImageRemove={ onUploadedImageRemove }
 				/>
 				<div className="editor-simple-payments-modal__form-fields">
 					<FormFieldset>

@@ -175,6 +175,10 @@ class SimplePaymentsDialog extends Component {
 		this.handleFormFieldChange( 'featuredImageId', uploadedImage.ID );
 	};
 
+	handleUploadedImageRemoval = () => {
+		this.handleFormFieldChange( 'featuredImageId', null );
+	};
+
 	handleFormSubmit() {
 		// will validate the form and return a promise of a `hasErrors` bool value
 		return new Promise( resolve => this.formStateController.handleSubmit( resolve ) );
@@ -436,6 +440,7 @@ class SimplePaymentsDialog extends Component {
 							isFieldInvalid={ this.isFormFieldInvalid }
 							onFieldChange={ this.handleFormFieldChange }
 							onUploadImageDone={ this.handleUploadedImage }
+							onUploadedImageRemove={ this.handleUploadedImageRemoval }
 							showError={ this.showError }
 						/>
 					: <ProductList
