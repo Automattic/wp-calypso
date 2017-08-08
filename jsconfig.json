@@ -9,8 +9,13 @@
 		}
 	},
 	"exclude": [
-		"node_modules",
-		"public",
-		"build"
+		"**/node_modules/*",
+		"**/public/*",
+		"**/build/*",
+		"**/docs/*",
+		"**/server/*",
+		"**/test/*",
+		"**/config/*",
+		"**/bin/*"
 	]
 }

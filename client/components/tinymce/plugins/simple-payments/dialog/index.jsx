@@ -282,6 +282,8 @@ class SimplePaymentsDialog extends Component {
 
 		const { siteId, dispatch, translate } = this.props;
 
+		// TODO: Replace double-delete with single-delete call after server-side shortcode renderer
+		// is updated to ignore payment button posts with `trash` status.
 		const productAPI = wpcom.site( siteId ).post( paymentId );
 		productAPI.delete()
 			.then( () => productAPI.delete() )
