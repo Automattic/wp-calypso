@@ -67,6 +67,7 @@ import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
 import { getLastStore } from 'reader/controller-helper';
 import { showSelectedPost } from 'reader/utils';
 import Emojify from 'components/emojify';
+import config from 'config';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
@@ -423,7 +424,7 @@ export class FullPostView extends React.Component {
 							<div className="reader-full-post__comments-wrapper" ref="commentsWrapper">
 								{ shouldShowComments( post )
 									? <Comments
-											showNestingReplyArrow
+											showNestingReplyArrow={ config.isEnabled( 'reader/nesting-arrow' ) }
 											ref="commentsList"
 											post={ post }
 											initialSize={ startingCommentId ? commentCount : 10 }

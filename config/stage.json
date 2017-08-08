@@ -85,6 +85,7 @@
 		"reader/following-intro": true,
 		"reader/following-manage-refresh": true,
 		"reader/full-errors": true,
+		"reader/nesting-arrow": true,
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
 		"reader/tags-with-elasticsearch": false,
