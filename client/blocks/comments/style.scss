@@ -262,7 +262,7 @@
 }
 
 .comments__comment-respondee .comments__comment-respondee-link {
-	color: darken( $gray, 10% );
+	color: $gray;
 	margin-left: -2px;
 
 	&:hover {
