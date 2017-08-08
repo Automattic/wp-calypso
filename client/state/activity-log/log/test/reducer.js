@@ -11,6 +11,9 @@ import deepFreeze from 'deep-freeze';
 import { ACTIVITY_LOG_UPDATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { logItems } from '../reducer';
 import { useSandbox } from 'test/helpers/use-sinon';
+import { withSchemaValidation } from 'state/utils';
+
+const logItemsReducer = withSchemaValidation( logItems.schema, logItems );
 
 describe( 'reducer', () => {
 	useSandbox( sandbox => {
@@ -19,7 +22,7 @@ describe( 'reducer', () => {
 
 	describe( '#logItems()', () => {
 		it( 'should default to an empty object', () => {
-			const state = logItems( undefined, {} );
+			const state = logItemsReducer( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
@@ -32,7 +35,7 @@ describe( 'reducer', () => {
 					name: 'user__failed_login_attempt',
 				},
 			] );
-			const state = logItems( undefined, {
+			const state = logItemsReducer( undefined, {
 				type: ACTIVITY_LOG_UPDATE,
 				siteId,
 				data,
@@ -52,7 +55,7 @@ describe( 'reducer', () => {
 					},
 				],
 			} );
-			const state = logItems( original, { type: SERIALIZE } );
+			const state = logItemsReducer( original, { type: SERIALIZE } );
 
 			expect( state ).to.eql( original );
 		} );
@@ -67,7 +70,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			const state = logItems( original, { type: DESERIALIZE } );
+			const state = logItemsReducer( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( original );
 		} );
@@ -80,7 +83,7 @@ describe( 'reducer', () => {
 					},
 				],
 			} );
-			const state = logItems( original, { type: DESERIALIZE } );
+			const state = logItemsReducer( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
 		} );
