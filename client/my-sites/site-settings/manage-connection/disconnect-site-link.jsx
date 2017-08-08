@@ -22,7 +22,7 @@ import { getPlanClass } from 'lib/plans/constants';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
 
-class DisconnectSite extends Component {
+class DisconnectSiteLink extends Component {
 	state = {
 		dialogVisible: false,
 	}
@@ -154,4 +154,4 @@ export default connect(
 		infoNotice,
 		removeNotice
 	}
-)( localize( DisconnectSite ) );
+)( localize( DisconnectSiteLink ) );

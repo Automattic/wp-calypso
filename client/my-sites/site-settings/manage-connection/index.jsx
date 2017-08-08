@@ -10,7 +10,7 @@ import page from 'page';
  * Internal dependencies
  */
 import DataSynchronization from './data-synchronization';
-import DisconnectSite from './disconnect-site';
+import DisconnectSiteLink from './disconnect-site-link';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
@@ -53,7 +53,7 @@ class ManageConnection extends Component {
 
 				<SiteOwnership />
 				<DataSynchronization />
-				<DisconnectSite />
+				<DisconnectSiteLink />
 			</Main>
 		);
 	}
