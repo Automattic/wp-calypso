@@ -12,11 +12,18 @@
 
 .zones-dashboard__zone-description {
 	color: $gray-dark;
+	height: 15px;
+	width: 56%;
+
+	small {
+		display: block;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
 
 	&.is-placeholder {
-		width: 56%;
-		height: 15px;
-		margin-top: 7px;
+		margin: 7px 0 0;
 		background-color: lighten( $gray, 30% );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
