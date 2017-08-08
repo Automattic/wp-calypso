@@ -282,10 +282,9 @@ class SimplePaymentsDialog extends Component {
 
 		const { siteId, dispatch, translate } = this.props;
 
-		wpcom
-			.site( siteId )
-			.post( paymentId )
-			.delete()
+		const productAPI = wpcom.site( siteId ).post( paymentId );
+		productAPI.delete()
+			.then( () => productAPI.delete() )
 			.then( () => dispatch( receiveDeleteProduct( siteId, paymentId ) ) )
 			.catch( () => this.showError( translate( 'The payment button could not be deleted.' ) ) )
 			.then( () => this.setIsSubmitting( false ) );
