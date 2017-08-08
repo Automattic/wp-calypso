@@ -803,8 +803,13 @@ function wpview( editor ) {
 		}
 	} );
 
-	editor.on( 'ExecCommand', function() {
+	editor.on( 'ExecCommand', function( args ) {
 		var toSelect, node;
+
+		// Don't steal the focus from `.embed-dialog__url`
+		if ( 'embedDialog' === args.command ) {
+			return;
+		}
 
 		if ( selected ) {
 			toSelect = selected;
