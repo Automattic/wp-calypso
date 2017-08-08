@@ -16,21 +16,6 @@ module.exports = React.createClass( {
 
 	mixins: [ PureRenderMixin ],
 
-	/**
-	 * Creates an onClick handler that has access to the helpLink.
-	 *
-	 * This is so we can use any additional data returned in the helpLink
-	 * for tracking purposes.
-	 * @param {function} onClick onClick handler
-	 * @param {object} helpLink Help link data
-	 * @return {function} Function that takes an event, and help link data
-	 */
-	createOnClick: function( onClick, helpLink ) {
-		return function( event ) {
-			return onClick( event, helpLink );
-		};
-	},
-
 	render: function() {
 		if ( ! this.props.helpLinks.length ) {
 			return null;
@@ -42,7 +27,7 @@ module.exports = React.createClass( {
 				{ this.props.helpLinks.map( helpLink =>
 					<HelpResult
 						key={ helpLink.link } helpLink={ helpLink } iconTypeDescription={ this.props.iconTypeDescription }
-						onClick={ this.props.onClick ? this.createOnClick( this.props.onClick, helpLink ) : undefined } /> )
+						onClick={ this.props.onClick } /> )
 				}
 				<a href={ this.props.searchLink } target="__blank">
 					<CompactCard className="help-results__footer">

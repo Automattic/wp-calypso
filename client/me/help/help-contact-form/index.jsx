@@ -211,7 +211,11 @@ export const HelpContactForm = React.createClass( {
 	 * @param {object} helpLink Help link, including id for tracking
 	 */
 	trackSibylClick( event, helpLink ) {
+		// bump the clicks stat for the question in MC
 		analytics.mc.bumpStat( 'sibyl_question_clicks', helpLink.id );
+		// track that the user clicked the question, so we can see how
+		// effective questions are at preventing unnessecary chat sessions
+		analytics.tracks.recordEvent( 'calypso_sibyl_question_click' );
 	},
 
 	/**
