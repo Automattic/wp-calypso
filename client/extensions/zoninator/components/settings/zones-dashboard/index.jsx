@@ -26,7 +26,7 @@ const ZonesDashboard = ( { isRequesting, siteId, siteSlug, translate, zones } ) 
 		<QueryZones siteId={ siteId } />
 
 		<HeaderCake backHref={ `/plugins/zoninator/${ siteSlug }` }>
-			Zoninator Settings
+			{ translate( 'Zoninator Settings' ) }
 		</HeaderCake>
 
 		<SectionHeader label={ translate( 'Zones' ) }>
