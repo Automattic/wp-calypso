@@ -4,34 +4,41 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
+import { login } from 'lib/paths';
+import Card from 'components/card';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
-import { goBackToWordPressDotCom } from 'state/login/magic-login/actions';
+import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { recordPageView } from 'state/analytics/actions';
+import Gridicon from 'gridicons';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
 	static propTypes = {
 		recordPageView: PropTypes.func.isRequired,
 	};
 
+	onClickBackLink = event => {
+		event.preventDefault();
+		this.props.hideMagicLoginRequestForm();
+		page( login( { isNative: true } ) );
+	};
+
 	render() {
 		const { translate, emailAddress } = this.props;
 		const line = [
 			emailAddress
-				? translate( 'We sent an email to %(emailAddress)s with a magic login link.', {
+				? translate( 'We just emailed a link to %(emailAddress)s.', {
 					args: {
 						emailAddress
 					}
 				} )
-				: translate( 'We sent you an email with a magic login link.' ),
-			( <br key="magic-login-line-br" /> ),
-			translate( 'It should arrive within a few minutes. Go click it!', {
-				context: '"It" is an email'
-			} )
+				: translate( 'We just emailed you a link.' ),
+			( ' ' ),
+			translate( 'Please check your inbox and click the link to log in.' )
 		];
 
 		this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
@@ -43,22 +50,29 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 					replaceCurrentLocation={ true }
 					waitForEmailAddress={ emailAddress }
 				/>
-				<EmptyContent
-					action={ translate( 'Back to WordPress.com' ) }
-					actionCallback={ goBackToWordPressDotCom }
-					actionURL="https://wordpress.com"
-					className="magic-login__check-email"
-					illustration={ '/calypso/images/drake/drake-all-done.svg' }
-					illustrationWidth={ 500 }
-					line={ line }
-					title={ translate( 'Check your Email!' ) }
-					/>
+				<h1 className="magic-login__form-header">
+					{ translate( 'Check your email!' ) }
+				</h1>
+				<Card className="magic-login__form">
+					<img
+						src="/calypso/images/login/check-email.svg"
+						className="magic-login__check-email-image" />
+					<p>
+						{ line }
+					</p>
+				</Card>
+				<div className="magic-login__footer">
+					<a href="#" onClick={ this.onClickBackLink }>
+						<Gridicon icon="arrow-left" size={ 18 } /> { translate( 'Back' ) }
+					</a>
+				</div>
 			</div>
 		);
 	}
 }
 
 const mapDispatch = {
+	hideMagicLoginRequestForm,
 	recordPageView,
 };
 

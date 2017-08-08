@@ -100,6 +100,9 @@ class RequestLoginEmailForm extends React.Component {
 
 		return (
 			<div>
+				<h1 className="magic-login__form-header">
+					{ translate( 'Email me a login link.' ) }
+				</h1>
 				{ requestError &&
 					<Notice
 						duration={ 10000 }
@@ -109,13 +112,6 @@ class RequestLoginEmailForm extends React.Component {
 						onDismissClick={ this.onNoticeDismiss }
 						status="is-error" />
 				}
-				<h1 className="magic-login__form-header">
-					{ translate( 'Email me a login link.' ) }
-				</h1>
-				<p className="magic-login__description">
-					{ translate( 'Get a link sent to the email address associated ' +
-						'with your account to log in instantly without your password.' ) }
-				</p>
 				{ currentUser && currentUser.username &&
 					<p>{
 						translate( 'NOTE: You are already logged in as user: %(user)s', {
@@ -125,13 +121,19 @@ class RequestLoginEmailForm extends React.Component {
 						} ) }</p>
 				}
 				<LoggedOutForm onSubmit={ this.onSubmit }>
+					<p>
+						{ translate( 'Get a link sent to the email address associated ' +
+							'with your account to log in instantly without your password.' ) }
+					</p>
+					<label htmlFor="emailAddress" className="magic-login__form-label">
+						{ this.props.translate( 'Email Address' ) }
+					</label>
 					<FormFieldset className="magic-login__email-fields">
 						<FormTextInput
 							autoCapitalize="off"
 							autoFocus="true"
 							disabled={ isFetching || emailRequested }
 							name="emailAddress"
-							placeholder={ translate( 'Email address' ) }
 							type="email"
 							onChange={ this.onEmailAddressFieldChange }
 						/>
