@@ -18,7 +18,8 @@ const Sidebar = require( 'layout/sidebar' ),
 	config = require( 'config' ),
 	ProfileGravatar = require( 'me/profile-gravatar' ),
 	eventRecorder = require( 'me/event-recorder' ),
-	user = require( 'lib/user' )();
+	user = require( 'lib/user' )(),
+	userUtilities = require( 'lib/user/utils' );
 
 import Button from 'components/button';
 import purchasesPaths from 'me/purchases/paths';
@@ -49,9 +50,13 @@ const MeSidebar = React.createClass( {
 			redirect = '/?apppromo';
 		}
 
-		this.props.logoutUser( redirect ).then( ( { redirect_to } ) => {
-			user.clear( () => location.href = redirect_to || '/' );
-		} );
+		if ( config.isEnabled( 'login/wp-login' ) ) {
+			this.props.logoutUser( redirect ).then( ( { redirect_to } ) => {
+				user.clear( () => location.href = redirect_to || '/' );
+			} );
+		} else {
+			userUtilities.logout( redirect );
+		}
 
 		this.recordClickEvent( 'Sidebar Sign Out Link' );
 	},
