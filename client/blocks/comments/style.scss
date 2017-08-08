@@ -255,6 +255,7 @@
 	margin-right: 12px;
 
 	.gridicon {
+		fill: $gray;
 		position: relative;
 			left: -5px;
 			top: 3px;
@@ -263,6 +264,7 @@
 
 .comments__comment-respondee .comments__comment-respondee-link {
 	color: $gray;
+	font-weight: normal;
 	margin-left: -2px;
 
 	&:hover {
@@ -321,7 +323,7 @@ a.comments__comment-username {
 }
 
 .comments__comment-timestamp a {
-	color: lighten( $gray, 10% );
+	color: $gray;
 	font-weight: normal;
 	text-decoration: none;
 
@@ -380,6 +382,11 @@ a.comments__comment-username {
 			position: relative;
 			top: 4px;
 			margin-right: 4px;
+		}
+
+		.gridicons-star,
+		.gridicons-star-outline {
+			top: 3px;
 		}
 
 		.like-button__like-icons {
