@@ -8,15 +8,15 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
 import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
 import config from 'config';
 import { tracks } from 'lib/analytics';
 import { localize } from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
+import SiteToolsLink from './link';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSiteAdminUrl } from 'state/sites/selectors';
-import { isVipSite } from 'state/selectors';
+import { isSiteAutomatedTransfer, isVipSite } from 'state/selectors';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
@@ -52,12 +52,14 @@ class SiteTools extends Component {
 			showDeleteContent,
 			showDeleteSite,
 			showThemeSetup,
+			showManageConnection,
 		} = this.props;
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }`;
 		const themeSetupLink = `/settings/theme-setup/${ siteSlug }`;
 		const startOverLink = `/settings/start-over/${ siteSlug }`;
 		const deleteSiteLink = `/settings/delete-site/${ siteSlug }`;
+		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }`;
 
 		const themeSetupText = translate( 'Automatically make your site look like your theme\'s demo.' );
 		const changeSiteAddress = translate( 'Change your site address' );
@@ -71,6 +73,10 @@ class SiteTools extends Component {
 		const deleteSiteText = translate(
 			'Delete all your posts, pages, media and data, ' +
 			'and give up your site\'s address.'
+		);
+		const manageConnectionTitle = translate( 'Manage your connection' );
+		const manageConnectionText = translate(
+			'Sync your site content for a faster experience, change site owner, cycle or terminate your connection.'
 		);
 
 		const importTitle = translate( 'Import' );
@@ -87,64 +93,54 @@ class SiteTools extends Component {
 			<div className="site-tools">
 				<SectionHeader label={ translate( 'Site Tools' ) } />
 				{ showChangeAddress &&
-					<CompactCard
+					<SiteToolsLink
 						href={ changeAddressLink }
 						onClick={ this.trackChangeAddress }
-						className="site-tools__link">
-						<div className="site-tools__content">
-							<p className="site-tools__section-title">{ changeSiteAddress }</p>
-							<p className="site-tools__section-desc">{ changeAddressText }</p>
-						</div>
-					</CompactCard>
+						title={ changeSiteAddress }
+						description={ changeAddressText }
+					/>
 				}
-				<CompactCard
+				<SiteToolsLink
 					href={ importUrl }
-					className="site-tools__link">
-					<div className="site-tools__content">
-						<p className="site-tools__section-title">{ importTitle }</p>
-						<p className="site-tools__section-desc">{ importText }</p>
-					</div>
-				</CompactCard>
-				<CompactCard
+					title={ importTitle }
+					description={ importText }
+				/>
+				<SiteToolsLink
 					href={ exportUrl }
-					className="site-tools__link">
-					<div className="site-tools__content">
-						<p className="site-tools__section-title">{ exportTitle }</p>
-						<p className="site-tools__section-desc">{ exportText }</p>
-					</div>
-				</CompactCard>
+					title={ exportTitle }
+					description={ exportText }
+				/>
 				{ showThemeSetup &&
-					<CompactCard
+					<SiteToolsLink
 						href={ themeSetupLink }
 						onClick={ this.trackThemeSetup }
-						className="site-tools__link">
-						<div className="site-tools__content">
-							<p className="site-tools__section-title">{ themeSetup }</p>
-							<p className="site-tools__section-desc">{ themeSetupText }</p>
-						</div>
-					</CompactCard>
+						title={ themeSetup }
+						description={ themeSetupText }
+					/>
 				}
 				{ showDeleteContent &&
-					<CompactCard
+					<SiteToolsLink
 						href={ startOverLink }
 						onClick={ this.trackStartOver }
-						className="site-tools__link">
-						<div className="site-tools__content">
-							<p className="site-tools__section-title">{ startOver }</p>
-							<p className="site-tools__section-desc">{ startOverText }</p>
-						</div>
-					</CompactCard>
+						title={ startOver }
+						description={ startOverText }
+					/>
 				}
 				{ showDeleteSite &&
-					<CompactCard
+					<SiteToolsLink
 						href={ deleteSiteLink }
 						onClick={ this.checkForSubscriptions }
-						className="site-tools__link">
-						<div className="site-tools__content">
-							<p className="site-tools__section-title is-warning">{ deleteSite }</p>
-							<p className="site-tools__section-desc">{ deleteSiteText }</p>
-						</div>
-					</CompactCard>
+						title={ deleteSite }
+						description={ deleteSiteText }
+						isWarning
+					/>
+				}
+				{ showManageConnection &&
+					<SiteToolsLink
+						href={ manageConnectionLink }
+						title={ manageConnectionTitle }
+						description={ manageConnectionText }
+					/>
 				}
 				<DeleteSiteWarningDialog
 					isVisible={ this.state.showDialog }
@@ -185,6 +181,7 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSelectedSiteSlug( state );
+		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isVip = isVipSite( state, siteId );
 		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
@@ -206,6 +203,7 @@ export default connect(
 			showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
 			showDeleteContent: ! isJetpack && ! isVip,
 			showDeleteSite: ! isJetpack && ! isVip && sitePurchasesLoaded,
+			showManageConnection: isJetpack && ! isAtomic,
 		};
 	}
 )( localize( SiteTools ) );

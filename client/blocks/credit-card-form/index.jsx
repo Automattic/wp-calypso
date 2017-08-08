@@ -61,7 +61,7 @@ const CreditCardForm = React.createClass( {
 		this._mounted = true;
 
 		const fields = this.fieldNames.reduce( ( result, fieldName ) => {
-			return { ...result, [ fieldName ]: undefined };
+			return { ...result, [ fieldName ]: '' };
 		}, {} );
 
 		if ( this.props.initialValues ) {

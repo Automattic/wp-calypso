@@ -7,7 +7,7 @@ import { find, get, isArray } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { LOADING } from 'woocommerce/state/constants';
+import { LOADING, ERROR } from 'woocommerce/state/constants';
 
 const getRawGeneralSettings = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'settings', 'general' ] );
@@ -29,6 +29,15 @@ export const areSettingsGeneralLoaded = ( state, siteId = getSelectedSiteId( sta
  */
 export const areSettingsGeneralLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return LOADING === getRawGeneralSettings( state, siteId );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether there has been an error fetching the general settings list from the server
+ */
+export const areSettingsGeneralLoadError = ( state, siteId = getSelectedSiteId( state ) ) => {
+	return ERROR === getRawGeneralSettings( state, siteId );
 };
 
 /**

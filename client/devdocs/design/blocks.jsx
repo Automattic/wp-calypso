@@ -73,6 +73,10 @@ import SharingPreviewPane from 'blocks/sharing-preview-pane/docs/example';
 import ReaderShare from 'blocks/reader-share/docs/example';
 import Login from 'blocks/login/docs/example';
 import ReaderEmailSettings from 'blocks/reader-email-settings/docs/example';
+import UploadImage from 'blocks/upload-image/docs/example';
+import ConversationCommentList from 'blocks/conversations/docs/example';
+import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog/docs/example';
+import ConversationCaterpillar from 'blocks/conversation-caterpillar/docs/example';
 
 export default React.createClass( {
 	displayName: 'AppComponents',
@@ -160,8 +164,12 @@ export default React.createClass( {
 					<ReaderExportButton />
 					<ReaderImportButton />
 					<SharingPreviewPane />
+					<SimplePaymentsDialog />
 					<ReaderShare />
 					<ReaderEmailSettings />
+					<UploadImage />
+					<ConversationCommentList />
+					<ConversationCaterpillar />
 				</Collection>
 			</Main>
 		);

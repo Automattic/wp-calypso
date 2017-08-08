@@ -26,6 +26,7 @@ import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
+import EditorPublishDate from 'post-editor/editor-publish-date';
 import EditorVisibility from 'post-editor/editor-visibility';
 
 export class EditPostStatus extends Component {
@@ -43,6 +44,7 @@ export class EditPostStatus extends Component {
 		onPrivatePublish: PropTypes.func,
 		status: PropTypes.string,
 		isPostPrivate: PropTypes.bool,
+		confirmationSidebarStatus: PropTypes.string,
 	};
 
 	constructor( props ) {
@@ -118,35 +120,11 @@ export class EditPostStatus extends Component {
 			this.props.site.options &&
 			this.props.site.options.admin_url;
 
-		const fullDate = postScheduleUtils.convertDateToUserLocation(
-			( this.props.postDate || new Date() ),
-			siteUtils.timezone( this.props.site ),
-			siteUtils.gmtOffset( this.props.site )
-		).format( 'll LT' );
-
 		const isPostPublishFlow = abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
 
 		return (
 			<div className="edit-post-status">
-				<span
-					ref="postStatusTooltip"
-					className="edit-post-status__full-date"
-					onMouseEnter={ this.showTZTooltip }
-					onMouseLeave={ this.hideTZTooltip }
-					onClick={ this.togglePostSchedulePopover }
-				>
-					{
-						postUtils.isFutureDated( this.props.savedPost )
-							? <span className="edit-post-status__future-label">
-									{ translate( 'Future' ) }
-								</span>
-							: <Gridicon icon="time" size={ 18 } />
-					}
-
-					{ fullDate }
-					{ this.renderTZTooltop() }
-					{ this.renderPostSchedulePopover() }
-				</span>
+				{ this.renderPostScheduling() }
 				{
 					isPostPublishFlow
 						? this.renderPostVisibility()
@@ -204,8 +182,56 @@ export class EditPostStatus extends Component {
 		);
 	}
 
+	renderPostScheduling() {
+		const isPostPublishFlow = config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation';
+
+		const fullDate = postScheduleUtils.convertDateToUserLocation(
+			( this.props.postDate || new Date() ),
+			siteUtils.timezone( this.props.site ),
+			siteUtils.gmtOffset( this.props.site )
+		).format( 'll LT' );
+
+		if ( isPostPublishFlow ) {
+			return (
+				<EditorPublishDate
+					post={ this.props.post }
+					setPostDate={ this.props.setPostDate }
+				/>
+			);
+		}
+
+		return (
+			<span
+				ref="postStatusTooltip"
+				className="edit-post-status__full-date"
+				onMouseEnter={ this.showTZTooltip }
+				onMouseLeave={ this.hideTZTooltip }
+				onClick={ this.togglePostSchedulePopover }
+			>
+				{
+					postUtils.isFutureDated( this.props.savedPost )
+						? <span className="edit-post-status__future-label">
+								{ this.props.translate( 'Future' ) }
+							</span>
+						: <Gridicon icon="time" size={ 18 } />
+				}
+
+				{ fullDate }
+				{ this.renderTZTooltop() }
+				{ this.renderPostSchedulePopover() }
+			</span>
+		);
+	}
+
 	renderPostVisibility() {
 		if ( ! this.props.post ) {
+			return;
+		}
+
+		// Do not render the editor visibility component on both the editor sidebar and the confirmation sidebar
+		// at the same time so that it is predictable which one gets the focus / shows the validation error message.
+		if ( 'open' === this.props.confirmationSidebarStatus ) {
 			return;
 		}
 

@@ -36,8 +36,6 @@ class TaxesOptions extends Component {
 							<FormCheckbox checked={ pricesIncludeTaxes || false } name="pricesIncludeTaxes" onChange={ onCheckboxChange } />
 								<span>{ translate( 'Taxes are included in product prices' ) }</span>
 						</FormLabel>
-					</FormFieldset>
-					<FormFieldset>
 						<FormLabel>
 							<FormCheckbox checked={ shippingIsTaxable || false } name="shippingIsTaxable" onChange={ onCheckboxChange } />
 								<span>{ translate( 'Charge taxes on shipping costs' ) }</span>

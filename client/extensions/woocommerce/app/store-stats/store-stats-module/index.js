@@ -9,7 +9,6 @@ import { isEqual } from 'lodash';
  * Internal dependencies
  */
 import Card from 'components/card';
-import QuerySiteStats from 'components/data/query-site-stats';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData
@@ -43,14 +42,13 @@ class StoreStatsModule extends Component {
 	}
 
 	render() {
-		const { siteId, statType, header, query, children, data, emptyMessage } = this.props;
+		const { header, children, data, emptyMessage } = this.props;
 		const { loaded } = this.state;
 		const isLoading = ! loaded && ! ( data && data.length );
 		const hasEmptyData = loaded && data && data.length === 0;
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="store-stats-module">
-				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				{ header }
 				{ isLoading && <Card><StatsModulePlaceholder isLoading={ isLoading } /></Card> }
 				{ ! isLoading && hasEmptyData &&

@@ -3,7 +3,7 @@
  */
 import { translate } from 'i18n-calypso';
 
-export const sparkWidgetList1 = [
+const sparkWidgetList1 = [
 	{
 		key: 'products',
 		title: translate( 'Products Purchased' ),
@@ -21,7 +21,7 @@ export const sparkWidgetList1 = [
 	}
 ];
 
-export const sparkWidgetList2 = [
+const sparkWidgetList2 = [
 	{
 		key: 'total_refund',
 		title: translate( 'Refunds' ),
@@ -38,6 +38,8 @@ export const sparkWidgetList2 = [
 		format: 'currency'
 	}
 ];
+
+export const sparkWidgets = [ sparkWidgetList1, sparkWidgetList2 ];
 
 export const topProducts = {
 	basePath: '/store/stats/products',
@@ -113,3 +115,10 @@ export const UNITS = {
 		title: translate( 'Years' )
 	}
 };
+
+export const chartTabs = [
+	{ label: translate( 'Gross Sales' ), attr: 'gross_sales', type: 'currency' },
+	{ label: translate( 'Net Sales' ), attr: 'net_sales', type: 'currency' },
+	{ label: translate( 'Orders' ), attr: 'orders', type: 'number' },
+	{ label: translate( 'Average Order Value' ), attr: 'avg_order_value', type: 'currency' },
+];

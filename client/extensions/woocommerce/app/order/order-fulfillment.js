@@ -113,6 +113,11 @@ class OrderFulfillment extends Component {
 			return null;
 		}
 
+		const dialogButtons = [
+			<Button onClick={ this.toggleDialog }>{ translate( 'Cancel' ) }</Button>,
+			<Button primary onClick={ this.submit }>{ translate( 'Fulfill' ) }</Button>,
+		];
+
 		const classes = classNames( {
 			'order__details-fulfillment': true,
 			'is-completed': 'completed' === order.status,
@@ -131,7 +136,7 @@ class OrderFulfillment extends Component {
 					}
 				</div>
 
-				<Dialog isVisible={ showDialog } onClose={ this.toggleDialog } className={ dialogClass }>
+				<Dialog isVisible={ showDialog } onClose={ this.toggleDialog } className={ dialogClass } buttons={ dialogButtons }>
 					<h1>{ translate( 'Fulfill order' ) }</h1>
 					<form>
 						<FormFieldset className="order__fulfillment-tracking">
@@ -149,11 +154,7 @@ class OrderFulfillment extends Component {
 							<FormInputCheckbox checked={ this.state.shouldEmail } onChange={ this.updateCustomerEmail } />
 							<span>{ translate( 'Email tracking number to customer' ) }</span>
 						</FormLabel>
-						<div className="order__fulfillment-actions">
-							{ errorMessage && <Notice status="is-error" showDismiss={ false }>{ errorMessage }</Notice> }
-							<Button onClick={ this.toggleDialog }>{ translate( 'Cancel' ) }</Button>
-							<Button primary onClick={ this.submit }>{ translate( 'Fulfill' ) }</Button>
-						</div>
+						{ errorMessage && <Notice status="is-error" showDismiss={ false }>{ errorMessage }</Notice> }
 					</form>
 				</Dialog>
 			</div>

@@ -10,9 +10,9 @@ import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 
 const StoreStatsNavigationTabs = props => {
-	const { label, slug, type, unit, units } = props;
+	const { label, selectedText, slug, type, unit, units } = props;
 	return (
-		<NavTabs label={ label }>
+		<NavTabs label={ label } selectedText={ selectedText }>
 			{ Object.keys( units ).map( key => (
 				<NavItem
 					key={ key }
@@ -28,6 +28,7 @@ const StoreStatsNavigationTabs = props => {
 
 StoreStatsNavigationTabs.propTypes = {
 	label: PropTypes.string,
+	selectedText: PropTypes.string,
 	slug: PropTypes.string,
 	type: PropTypes.string,
 	unit: PropTypes.string,

@@ -1,15 +1,27 @@
+/** @format */
 /**
  * External Dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
 import ReaderSidebarHelper from '../helper';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
-export const ReaderSidebarTeamsListItem = ( { path, team } ) => {
+const handleReaderSidebarTeamsListItemClicked = team => () => {
+	recordAction( 'clicked_reader_sidebar_teams_list_item' );
+	recordGaEvent( 'Clicked Reader Sidebar Teams List Item' );
+	recordTrack( 'calypso_reader_sidebar_teams_list_item_clicked', {
+		team: decodeURIComponent( team.slug ),
+	} );
+};
+
+export const ReaderSidebarTeamsListItem = ( { path, team, translate } ) => {
 	const teamUri = '/read/' + encodeURIComponent( team.slug );
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<li
 			key={ team.slug }
@@ -17,7 +29,15 @@ export const ReaderSidebarTeamsListItem = ( { path, team } ) => {
 				'sidebar-streams__team': true,
 			} ) }
 		>
-			<a href={ teamUri }>
+			<a
+				href={ teamUri }
+				onClick={ handleReaderSidebarTeamsListItemClicked( team ) }
+				title={ translate( "View team '%(currentTeamName)s'", {
+					args: {
+						currentTeamName: team.title,
+					},
+				} ) }
+			>
 				<svg
 					className={ 'gridicon gridicon-' + team.slug }
 					width="24"
@@ -34,6 +54,7 @@ export const ReaderSidebarTeamsListItem = ( { path, team } ) => {
 			</a>
 		</li>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 ReaderSidebarTeamsListItem.propTypes = {
@@ -41,4 +62,4 @@ ReaderSidebarTeamsListItem.propTypes = {
 	path: React.PropTypes.string.isRequired,
 };
 
-export default ReaderSidebarTeamsListItem;
+export default localize( ReaderSidebarTeamsListItem );

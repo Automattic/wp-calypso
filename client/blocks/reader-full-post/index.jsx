@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -6,7 +7,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get } from 'lodash';
+import { get, startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -163,7 +164,7 @@ export class FullPostView extends React.Component {
 		recordTrackForPost(
 			liked ? 'calypso_reader_article_liked' : 'calypso_reader_article_unliked',
 			this.props.post,
-			{ context: 'full-post', event_source: 'keyboard' },
+			{ context: 'full-post', event_source: 'keyboard' }
 		);
 	};
 
@@ -187,6 +188,14 @@ export class FullPostView extends React.Component {
 		}
 	};
 
+	/**
+	 * @returns {number} - the commentId in the url of the form #comment-${id}
+	 */
+	getCommentIdFromUrl = () =>
+		startsWith( window.location.hash, '#comment-' )
+			? +window.location.hash.split( '-' )[ 1 ]
+			: undefined;
+
 	// Scroll to the top of the comments section.
 	scrollToComments = () => {
 		if ( ! this.props.post ) {
@@ -198,6 +207,7 @@ export class FullPostView extends React.Component {
 		if ( this._scrolling ) {
 			return;
 		}
+
 		this._scrolling = true;
 		setTimeout( () => {
 			const commentsNode = ReactDom.findDOMNode( this.refs.commentsWrapper );
@@ -275,7 +285,7 @@ export class FullPostView extends React.Component {
 				components: {
 					wpLink: <a href="/" className="reader-related-card-v2__link" />,
 				},
-			},
+			}
 		);
 
 		if ( post.site_ID ) {
@@ -287,6 +297,8 @@ export class FullPostView extends React.Component {
 
 		const externalHref = isDiscoverPost( referralPost ) ? referralPost.URL : post.URL;
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
+		const startingCommentId = this.getCommentIdFromUrl();
+		const commentCount = get( post, 'discussion.comment_count' );
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
@@ -333,7 +345,7 @@ export class FullPostView extends React.Component {
 						{ shouldShowComments( post ) &&
 							<CommentButton
 								key="comment-button"
-								commentCount={ post.discussion.comment_count }
+								commentCount={ commentCount }
 								onClick={ this.handleCommentClick }
 								tagName="div"
 							/> }
@@ -376,7 +388,7 @@ export class FullPostView extends React.Component {
 									followUrl={ getSourceFollowUrl( post ) }
 								/> }
 							{ isDailyPostChallengeOrPrompt( post ) &&
-								<DailyPostButton post={ post } site={ site } tagName="span" /> }
+								<DailyPostButton post={ post } site={ site } /> }
 
 							<ReaderPostActions
 								post={ post }
@@ -414,9 +426,10 @@ export class FullPostView extends React.Component {
 									? <Comments
 											ref="commentsList"
 											post={ post }
-											initialSize={ 10 }
+											initialSize={ startingCommentId ? commentCount : 10 }
 											pageSize={ 25 }
-											onCommentsUpdate={ this.checkForCommentAnchor }
+											startingCommentId={ startingCommentId }
+											commentCount={ commentCount }
 										/>
 									: null }
 							</div>
@@ -454,7 +467,7 @@ const ConnectedFullPostView = connect(
 
 		return props;
 	},
-	{ setSection },
+	{ setSection }
 )( FullPostView );
 
 /**

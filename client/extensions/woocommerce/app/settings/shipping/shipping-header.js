@@ -12,7 +12,7 @@ import ActionHeader from 'woocommerce/components/action-header';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import SettingsNavigation from '../navigation';
-import ShippingSettingsFinishedButton from './finished-button';
+import ShippingSettingsSaveButton from './save-button';
 
 const ShippingHeader = ( { translate, site } ) => {
 	const breadcrumbs = [
@@ -22,7 +22,7 @@ const ShippingHeader = ( { translate, site } ) => {
 	return (
 		<div>
 			<ActionHeader breadcrumbs={ breadcrumbs }>
-				<ShippingSettingsFinishedButton />
+				<ShippingSettingsSaveButton />
 			</ActionHeader>
 			<SettingsNavigation activeSection="shipping" />
 		</div>

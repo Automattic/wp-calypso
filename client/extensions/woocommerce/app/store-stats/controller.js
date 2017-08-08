@@ -14,6 +14,8 @@ import AsyncLoad from 'components/async-load';
 import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getQueryDate } from './utils';
+import analytics from 'lib/analytics';
+import titlecase from 'to-title-case';
 
 function isValidParameters( context ) {
 	const validParameters = {
@@ -31,6 +33,12 @@ export default function StatsController( context ) {
 	if ( ! isValidParameters( context ) ) {
 		page.redirect( `/store/stats/orders/day/${ context.params.site }` );
 	}
+
+	analytics.pageView.record(
+		`/store/stats/${ context.params.type }/${ context.params.unit }`,
+		`Store > Stats > ${ titlecase( context.params.type ) } > ${ titlecase( context.params.unit ) }`
+	);
+
 	const props = {
 		querystring: context.querystring,
 		type: context.params.type,

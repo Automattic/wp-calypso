@@ -13,19 +13,9 @@ import { translate } from 'i18n-calypso';
 import AutoDirection from 'components/auto-direction';
 import Gravatar from 'components/gravatar';
 import Notice from 'components/notice';
-import {
-	getCurrentUser
-} from 'state/current-user/selectors';
-import {
-	writeComment,
-	removeComment,
-	replyComment,
-} from 'state/comments/actions';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrackForPost
-} from 'reader/stats';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { writeComment, deleteComment, replyComment } from 'state/comments/actions';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import { isCommentableDiscoverPost } from 'blocks/comments/helper';
 
 class PostCommentForm extends React.Component {
@@ -34,19 +24,19 @@ class PostCommentForm extends React.Component {
 
 		this.state = {
 			commentText: props.commentText || '',
-			haveFocus: false
+			haveFocus: false,
 		};
 
 		// bind event handlers to this instance
 		Object.getOwnPropertyNames( PostCommentForm.prototype )
-			.filter( ( prop ) => prop.indexOf( 'handle' ) === 0 )
-			.filter( ( prop ) => typeof this[ prop ] === 'function' )
-			.forEach( ( prop ) => this[ prop ] = this[ prop ].bind( this ) );
+			.filter( prop => prop.indexOf( 'handle' ) === 0 )
+			.filter( prop => typeof this[ prop ] === 'function' )
+			.forEach( prop => ( this[ prop ] = this[ prop ].bind( this ) ) );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.setState( {
-			commentText: nextProps.commentText || ''
+			commentText: nextProps.commentText || '',
 		} );
 	}
 
@@ -66,7 +56,9 @@ class PostCommentForm extends React.Component {
 
 		const commentText = this.getCommentText();
 		const currentHeight = parseInt( commentTextNode.style.height, 10 ) || 0;
-		commentTextNode.style.height = commentText.length ? Math.max( commentTextNode.scrollHeight, currentHeight ) + 'px' : null;
+		commentTextNode.style.height = commentText.length
+			? Math.max( commentTextNode.scrollHeight, currentHeight ) + 'px'
+			: null;
 	}
 
 	handleTextAreaNode( textareaNode ) {
@@ -91,7 +83,11 @@ class PostCommentForm extends React.Component {
 				// sync the text to the upper level so it won't be lost
 				this.props.onUpdateCommentText( this.props.commentText );
 				// remove the comment
-				this.props.removeComment( this.props.post.site_ID, this.props.post.ID, this.props.placeholderId );
+				this.props.deleteComment(
+					this.props.post.site_ID,
+					this.props.post.ID,
+					this.props.placeholderId,
+				);
 			}
 		}
 	}
@@ -112,7 +108,7 @@ class PostCommentForm extends React.Component {
 	resetCommentText() {
 		this.setState( { commentText: '' } );
 
-        // Update the comment text in the container's state
+		// Update the comment text in the container's state
 		this.props.onUpdateCommentText( '' );
 	}
 
@@ -130,7 +126,7 @@ class PostCommentForm extends React.Component {
 		}
 
 		if ( this.props.placeholderId ) {
-			this.props.removeComment( post.site_ID, post.ID, this.props.placeholderId );
+			this.props.deleteComment( post.site_ID, post.ID, this.props.placeholderId );
 		}
 
 		if ( this.props.parentCommentID ) {
@@ -142,7 +138,7 @@ class PostCommentForm extends React.Component {
 		recordAction( 'posted_comment' );
 		recordGaEvent( 'Clicked Post Comment Button' );
 		recordTrackForPost( 'calypso_reader_article_commented_on', post, {
-			parent_post_id: this.props.parentCommentID ? this.props.parentCommentID : undefined
+			parent_post_id: this.props.parentCommentID ? this.props.parentCommentID : undefined,
 		} );
 
 		this.resetCommentText();
@@ -163,7 +159,9 @@ class PostCommentForm extends React.Component {
 
 		switch ( error.error ) {
 			case 'comment_duplicate':
-				message = translate( "Duplicate comment detected. It looks like you've already said that!" );
+				message = translate(
+					"Duplicate comment detected. It looks like you've already said that!",
+				);
 				break;
 
 			default:
@@ -171,17 +169,33 @@ class PostCommentForm extends React.Component {
 				break;
 		}
 
-		return <Notice text={ message } className="comments__notice" showDismiss={ false } status="is-error" />;
+		return (
+			<Notice
+				text={ message }
+				className="comments__notice"
+				showDismiss={ false }
+				status="is-error"
+			/>
+		);
 	}
 
 	render() {
 		const post = this.props.post;
 
 		// Don't display the form if comments are closed
-		if ( post && post.discussion && post.discussion.comments_open === false && ! isCommentableDiscoverPost( post ) ) {
+		if (
+			post &&
+			post.discussion &&
+			post.discussion.comments_open === false &&
+			! isCommentableDiscoverPost( post )
+		) {
 			// If we already have some comments, show a 'comments closed message'
 			if ( post.discussion.comment_count && post.discussion.comment_count > 0 ) {
-				return <p className="comments__form-closed">{ translate( 'Comments are closed.' ) }</p>;
+				return (
+					<p className="comments__form-closed">
+						{ translate( 'Comments are closed.' ) }
+					</p>
+				);
 			}
 
 			return null;
@@ -189,12 +203,12 @@ class PostCommentForm extends React.Component {
 
 		const buttonClasses = classNames( {
 			'is-active': this.hasCommentText(),
-			'is-visible': this.state.haveFocus || this.hasCommentText()
+			'is-visible': this.state.haveFocus || this.hasCommentText(),
 		} );
 
 		const expandingAreaClasses = classNames( {
 			focused: this.state.haveFocus,
-			'expanding-area': true
+			'expanding-area': true,
 		} );
 
 		// How auto expand works for the textarea is covered in this article:
@@ -205,7 +219,12 @@ class PostCommentForm extends React.Component {
 					<Gravatar user={ this.props.currentUser } />
 					<label>
 						<div className={ expandingAreaClasses }>
-							<pre><span>{ this.state.commentText }</span><br /></pre>
+							<pre>
+								<span>
+									{ this.state.commentText }
+								</span>
+								<br />
+							</pre>
 							<AutoDirection>
 								<textarea
 									value={ this.state.commentText }
@@ -223,7 +242,8 @@ class PostCommentForm extends React.Component {
 							ref="commentButton"
 							className={ buttonClasses }
 							disabled={ this.state.commentText.length === 0 }
-							onClick={ this.handleSubmit }>
+							onClick={ this.handleSubmit }
+						>
 							{ translate( 'Send' ) }
 						</button>
 						{ this.renderError() }
@@ -232,7 +252,6 @@ class PostCommentForm extends React.Component {
 			</form>
 		);
 	}
-
 }
 
 PostCommentForm.propTypes = {
@@ -246,17 +265,17 @@ PostCommentForm.propTypes = {
 	// connect()ed props:
 	currentUser: React.PropTypes.object.isRequired,
 	writeComment: React.PropTypes.func.isRequired,
-	removeComment: React.PropTypes.func.isRequired,
-	replyComment: React.PropTypes.func.isRequired
+	deleteComment: React.PropTypes.func.isRequired,
+	replyComment: React.PropTypes.func.isRequired,
 };
 
 PostCommentForm.defaultProps = {
-	onCommentSubmit: noop
+	onCommentSubmit: noop,
 };
 
 export default connect(
-	( state ) => ( {
-		currentUser: getCurrentUser( state )
+	state => ( {
+		currentUser: getCurrentUser( state ),
 	} ),
-	{ writeComment, removeComment, replyComment }
+	{ writeComment, deleteComment, replyComment },
 )( PostCommentForm );

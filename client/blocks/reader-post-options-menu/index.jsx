@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -33,6 +34,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		feed: React.PropTypes.object,
 		onBlock: React.PropTypes.func,
 		showFollow: React.PropTypes.bool,
+		position: React.PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -60,7 +62,7 @@ class ReaderPostOptionsMenu extends React.Component {
 
 		window.open(
 			'https://wordpress.com/abuse/?report_url=' + encodeURIComponent( this.props.post.URL ),
-			'_blank',
+			'_blank'
 		);
 	};
 
@@ -75,7 +77,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		stats.recordGaEvent( isMenuVisible ? 'Open Post Options Menu' : 'Close Post Options Menu' );
 		stats.recordTrackForPost(
 			'calypso_reader_post_options_menu_' + ( isMenuVisible ? 'opened' : 'closed' ),
-			this.props.post,
+			this.props.post
 		);
 	};
 
@@ -101,12 +103,25 @@ class ReaderPostOptionsMenu extends React.Component {
 		}, 100 );
 	};
 
+	visitPost = () => {
+		const post = this.props.post;
+
+		if ( ! post || ! post.URL ) {
+			return;
+		}
+
+		stats.recordAction( 'visit_post' );
+		stats.recordGaEvent( 'Clicked Visit Post', 'post_options' );
+		stats.recordTrackForPost( 'calypso_reader_visit_post_clicked', post );
+
+		window.open( post.URL, '_blank' );
+	};
+
 	render() {
-		const post = this.props.post,
-			isEditPossible = PostUtils.userCan( 'edit_post', post ),
-			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
-			followUrl = this.getFollowUrl();
-		const { site, feed, teams } = this.props;
+		const { post, site, feed, teams, translate, position } = this.props;
+		const isEditPossible = PostUtils.userCan( 'edit_post', post );
+		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
+		const followUrl = this.getFollowUrl();
 		const isTeamMember = isAutomatticTeamMember( teams );
 
 		let isBlockPossible = false;
@@ -137,31 +152,36 @@ class ReaderPostOptionsMenu extends React.Component {
 					className="reader-post-options-menu__ellipsis-menu"
 					popoverClassName="reader-post-options-menu__popover"
 					onToggle={ this.onMenuToggle }
+					position={ position }
 				>
 					{ isTeamMember && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
 
 					{ this.props.showFollow &&
 						<FollowButton tagName={ PopoverMenuItem } siteUrl={ followUrl } /> }
 
-					{ isEditPossible
-						? <PopoverMenuItem onClick={ this.editPost } icon="pencil">
-								{ this.props.translate( 'Edit Post' ) }
-							</PopoverMenuItem>
-						: null }
+					{ post.URL &&
+						<PopoverMenuItem onClick={ this.visitPost } icon="external">
+							{ translate( 'Visit Post' ) }
+						</PopoverMenuItem> }
 
-					{ ( this.props.showFollow || isEditPossible ) &&
+					{ isEditPossible &&
+						<PopoverMenuItem onClick={ this.editPost } icon="pencil">
+							{ translate( 'Edit Post' ) }
+						</PopoverMenuItem> }
+
+					{ ( this.props.showFollow || isEditPossible || post.URL ) &&
 						( isBlockPossible || isDiscoverPost ) &&
 						<hr className="reader-post-options-menu__hr" /> }
-					{ isBlockPossible
-						? <PopoverMenuItem onClick={ this.blockSite }>
-								{ this.props.translate( 'Block Site' ) }
-							</PopoverMenuItem>
-						: null }
-					{ isBlockPossible || isDiscoverPost
-						? <PopoverMenuItem onClick={ this.reportPost }>
-								{ this.props.translate( 'Report this Post' ) }
-							</PopoverMenuItem>
-						: null }
+
+					{ isBlockPossible &&
+						<PopoverMenuItem onClick={ this.blockSite }>
+							{ translate( 'Block Site' ) }
+						</PopoverMenuItem> }
+
+					{ ( isBlockPossible || isDiscoverPost ) &&
+						<PopoverMenuItem onClick={ this.reportPost }>
+							{ translate( 'Report this Post' ) }
+						</PopoverMenuItem> }
 				</EllipsisMenu>
 			</span>
 		);
@@ -180,5 +200,5 @@ export default connect(
 	},
 	{
 		requestSiteBlock,
-	},
+	}
 )( localize( ReaderPostOptionsMenu ) );

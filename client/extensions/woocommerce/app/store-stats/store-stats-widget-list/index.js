@@ -13,10 +13,7 @@ import { moment, translate } from 'i18n-calypso';
 import Delta from 'woocommerce/components/delta';
 import { formatValue, getDelta } from '../utils';
 import { getPeriodFormat } from 'state/stats/lists/utils';
-import {
-	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData
-} from 'state/stats/lists/selectors';
+import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 import Sparkline from 'woocommerce/components/sparkline';
 import Table from 'woocommerce/components/table';
 import TableItem from 'woocommerce/components/table/table-item';
@@ -125,7 +122,6 @@ export default connect(
 		return {
 			data: siteStats.data,
 			deltas: siteStats.deltas,
-			requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
 		};
 	}
 )( StoreStatsWidgetList );

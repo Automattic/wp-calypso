@@ -63,33 +63,39 @@ class PrivacyProtection extends Component {
 			return <DomainMainPlaceholder goBack={ this.goToPreviousSection } />;
 		}
 
+		const { displayCost, selectedDomainName, selectedSite, translate } = this.props;
+
 		return (
 			<Main className="domain-management-privacy-protection">
 				<QueryProductsList />
 
 				<Header
 					onClick={ this.goToPreviousSection }
-					selectedDomainName={ this.props.selectedDomainName }>
-					{ this.props.translate( 'Privacy Protection' ) }
+					selectedDomainName={ selectedDomainName }>
+					{ translate( 'Privacy Protection' ) }
 				</Header>
 
 				<Card className="privacy-protection-card">
-					{ this.props.displayCost && <PrivacyProtectionCardHeader
-						displayCost={ this.props.displayCost }
-						selectedDomainName={ this.props.selectedDomainName }
-						selectedSite={ this.props.selectedSite } /> }
+					{ displayCost &&
+						<PrivacyProtectionCardHeader
+							displayCost={ displayCost }
+							selectedDomainName={ selectedDomainName }
+							selectedSite={ selectedSite }
+						/>
+					}
 
 					<CardContent
-						selectedDomainName={ this.props.selectedDomainName }
-						selectedSite={ this.props.selectedSite } />
+						selectedDomainName={ selectedDomainName }
+						selectedSite={ selectedSite }
+					/>
 				</Card>
 			</Main>
 		);
 	}
 
 	goToPreviousSection = () => {
-		const { prevPath } = this.props.context,
-			previousSection = paths.getSectionName( prevPath );
+		const { prevPath } = this.props.context;
+		const previousSection = paths.getSectionName( prevPath );
 		let path;
 
 		if ( previousSection === 'contacts-privacy' ) {

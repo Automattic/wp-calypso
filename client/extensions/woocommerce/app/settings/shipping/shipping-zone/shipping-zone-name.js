@@ -18,13 +18,18 @@ import {
 	getCurrentlyEditingShippingZone,
 	generateCurrentlyEditingZoneName,
 } from 'woocommerce/state/ui/shipping/zones/selectors';
+import { areSettingsGeneralLoaded, areSettingsGeneralLoadError } from 'woocommerce/state/sites/settings/general/selectors';
 
-const ShippingZoneName = ( { loaded, zoneName, generatedZoneName, actions, translate } ) => {
+const ShippingZoneName = ( { loaded, fetchError, zoneName, generatedZoneName, actions, translate } ) => {
 	const onNameChange = ( event ) => {
 		actions.changeShippingZoneName( event.target.value );
 	};
 
 	const renderContent = () => {
+		if ( fetchError ) {
+			return <div className="shipping-zone__name" />;
+		}
+
 		if ( ! loaded ) {
 			return (
 				<div className="shipping-zone__name is-placeholder">
@@ -62,10 +67,11 @@ ShippingZoneName.PropTypes = {
 
 export default connect(
 	( state ) => {
-		const loaded = areShippingZonesFullyLoaded( state );
+		const loaded = areShippingZonesFullyLoaded( state ) && areSettingsGeneralLoaded( state );
 		const zone = loaded && getCurrentlyEditingShippingZone( state );
 		return {
 			loaded,
+			fetchError: areSettingsGeneralLoadError( state ), // TODO: add shipping zones/methods fetch errors too
 			zoneName: zone && zone.name,
 			generatedZoneName: generateCurrentlyEditingZoneName( state ),
 		};

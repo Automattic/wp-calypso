@@ -34,6 +34,7 @@
 	@import 'app/store-stats/store-stats-navigation/style';
 	@import 'app/store-stats/store-stats-widget-list/style';
 	@import 'app/store-stats/style';
+	@import 'woocommerce-services/style';
 
 	.components__action-header {
 		width: 100%;
@@ -61,6 +62,15 @@
 	.global-notices {
 		@include breakpoint( ">660px" ) {
 			top: 115px;
+		}
+	}
+
+	.content-404 {
+		margin: 35px 200px 0 0;
+		max-width: initial;
+
+		@media( max-width: 660px ) {
+			margin: 0px;
 		}
 	}
 }
@@ -93,23 +103,37 @@
 		min-height: 58px;
 	}
 
+	.sidebar__menu {
+		margin-top: 0;
+
+		ul {
+			li:first-child {
+				border-top-width: 0;
+			}
+		}
+	}
+
 	.sidebar__menu li {
 		.count {
 			margin: 13px 8px;
-			line-height: 16px;
-			border: 1px solid darken( $sidebar-bg-color, 10% );
-			background-color: $gray-light;
-			color: darken( $gray, 20% );
+			line-height: 18px;
+			border: 0;
+			background-color: $blue-wordpress;
+			color: $white;
+			min-width: 20px;
 		}
 
-		&.selected .count {
-			color: $gray-dark;
-			border: 1px solid darken( $sidebar-selected-color, 10% );
+		&.selected {
+			.count,
+			&:hover .count {
+				color: $gray-dark;
+				background-color: $white;
+			}
 		}
 
 		&:hover .count {
-			background-color: lighten( $sidebar-bg-color, 10% );
-			color: $sidebar-text-color;
+			background-color: $blue-wordpress;
+			color: $white;
 		}
 	}
 }
@@ -138,7 +162,7 @@
 			a {
 				position: fixed;
 				z-index: 1;
-				top: 10px;
+				margin-top: 10px;
 				background: transparent;
 				border: none;
 			}

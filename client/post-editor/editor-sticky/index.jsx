@@ -53,6 +53,14 @@ const EditorSticky = React.createClass( {
 		this.setState( { tooltip: false } );
 	},
 
+	enableTooltip: function() {
+		this.setState( { tooltip: true } );
+	},
+
+	disableTooltip: function() {
+		this.setState( { tooltip: false } );
+	},
+
 	render: function() {
 		const classes = classnames(
 			'editor-sticky',
@@ -64,8 +72,8 @@ const EditorSticky = React.createClass( {
 				borderless
 				className={ classes }
 				onClick={ this.toggleStickyStatus }
-				onMouseEnter={ () => this.setState( { tooltip: true } ) }
-				onMouseLeave={ () => this.setState( { tooltip: false } ) }
+				onMouseEnter={ this.enableTooltip }
+				onMouseLeave={ this.disableTooltip }
 				aria-label={ this.translate( 'Stick post to the front page' ) }
 				ref="stickyPostButton"
 			>

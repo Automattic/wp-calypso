@@ -22,6 +22,7 @@ import SetupFooter from './setup-footer';
 import SetupHeader from './setup-header';
 import SetupTasks from './setup-tasks';
 import QueryShippingZones from 'woocommerce/components/query-shipping-zones';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import { areAnyShippingMethodsEnabled } from 'woocommerce/state/ui/shipping/zones/selectors';
 
 class SetupTasksView extends Component {
@@ -46,6 +47,7 @@ class SetupTasksView extends Component {
 		return (
 			<div className="card dashboard__setup-wrapper">
 				<QueryShippingZones siteId={ site.ID } />
+				<QuerySettingsGeneral siteId={ site.ID } />
 				<SetupHeader
 					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
 					imageWidth={ 160 }

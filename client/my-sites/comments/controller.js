@@ -4,7 +4,7 @@
 import { renderWithReduxStore } from 'lib/react-helpers';
 import React from 'react';
 import page from 'page';
-import { includes } from 'lodash';
+import { each, includes, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,6 +12,8 @@ import { includes } from 'lodash';
 import CommentsManagement from './main';
 import config from 'config';
 import route from 'lib/route';
+import { removeNotice } from 'state/notices/actions';
+import { getNotices } from 'state/notices/selectors';
 
 const VALID_STATUSES = [ 'pending', 'approved', 'spam', 'trash' ];
 if ( config.isEnabled( 'comments/management/all-list' ) ) {
@@ -59,4 +61,18 @@ export const comments = function( context ) {
 		'primary',
 		context.store
 	);
+};
+
+export const clearCommentNotices = ( { store }, next ) => {
+	const nextPath = page.current;
+	if ( ! startsWith( nextPath, '/comments' ) ) {
+		const { getState, dispatch } = store;
+		const notices = getNotices( getState() );
+		each( notices, ( { noticeId } ) => {
+			if ( startsWith( noticeId, 'comment-notice' ) ) {
+				dispatch( removeNotice( noticeId ) );
+			}
+		} );
+	}
+	next();
 };

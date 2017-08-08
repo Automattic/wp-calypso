@@ -21,6 +21,10 @@ import {
 	isRequestingTwoFactorAuth,
 	isTwoFactorAuthTypeSupported,
 	isTwoFactorEnabled,
+	isFormDisabled,
+	getLinkingSocialUser,
+	getLinkingSocialService,
+	getLinkingSocialToken,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -153,6 +157,17 @@ describe( 'selectors', () => {
 		} );
 	} );
 
+	describe( 'isFormDisabled()', () => {
+		it( 'should return false if there is no information yet', () => {
+			expect( isFormDisabled( undefined ) ).to.be.false;
+		} );
+
+		it( 'should return true/false depending on the state of the request', () => {
+			expect( isFormDisabled( { login: { isFormDisabled: false } } ) ).to.be.false;
+			expect( isFormDisabled( { login: { isFormDisabled: true } } ) ).to.be.true;
+		} );
+	} );
+
 	describe( 'isTwoFactorEnabled()', () => {
 		it( 'should return false if there is no two factor information yet', () => {
 			const twoFactorEnabled = isTwoFactorEnabled( undefined );
@@ -277,6 +292,45 @@ describe( 'selectors', () => {
 					}
 				}
 			} ) ).to.eql( success );
+		} );
+	} );
+
+	describe( 'getLinkingSocialUser()', () => {
+		it( 'should return null if there is no information yet', () => {
+			expect( getLinkingSocialUser( undefined ) ).to.be.null;
+		} );
+
+		it( 'should return the social user account when available', () => {
+			const account = 'foo@bar.baz';
+			expect( getLinkingSocialUser( {
+				login: {
+					socialAccount: {
+						email: account,
+					}
+				}
+			} ) ).to.eql( account );
+		} );
+
+		it( 'should return the social service when available', () => {
+			const service = 'google';
+			expect( getLinkingSocialService( {
+				login: {
+					socialAccount: {
+						service: service,
+					}
+				}
+			} ) ).to.eql( service );
+		} );
+
+		it( 'should return the social account token when available', () => {
+			const token = 'this-is-probably-not-a-real-token';
+			expect( getLinkingSocialToken( {
+				login: {
+					socialAccount: {
+						token: token,
+					}
+				}
+			} ) ).to.eql( token );
 		} );
 	} );
 } );

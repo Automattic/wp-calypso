@@ -124,7 +124,8 @@ const RegisterDomainStep = React.createClass( {
 		showExampleSuggestions: React.PropTypes.bool,
 		onSave: React.PropTypes.func,
 		onAddMapping: React.PropTypes.func,
-		onAddDomain: React.PropTypes.func
+		onAddDomain: React.PropTypes.func,
+		designType: React.PropTypes.string,
 	},
 
 	getDefaultProps: function() {
@@ -133,7 +134,7 @@ const RegisterDomainStep = React.createClass( {
 			analyticsSection: 'domains',
 			onSave: noop,
 			onAddMapping: noop,
-			onAddDomain: noop
+			onAddDomain: noop,
 		};
 	},
 
@@ -147,7 +148,7 @@ const RegisterDomainStep = React.createClass( {
 			lastDomainStatus: null,
 			loadingResults: Boolean( suggestion ),
 			notice: null,
-			searchResults: null
+			searchResults: null,
 		};
 	},
 
@@ -295,8 +296,13 @@ const RegisterDomainStep = React.createClass( {
 			lastDomainSearched: null,
 			loadingResults: Boolean( getFixedDomainSearch( searchQuery ) ),
 			notice: null,
-			searchResults: null
+			searchResults: null,
 		} );
+	},
+
+	getTldWeightOverrides: function() {
+		const { designType } = this.props;
+		return designType && designType === 'blog' ? 'design_type_blog' : null;
 	},
 
 	onSearch: function( searchQuery ) {
@@ -353,6 +359,7 @@ const RegisterDomainStep = React.createClass( {
 							quantity: SUGGESTION_QUANTITY,
 							include_wordpressdotcom: this.props.includeWordPressDotCom,
 							include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
+							tld_weight_overrides: this.getTldWeightOverrides(),
 							vendor: searchVendor,
 							vertical: this.props.surveyVertical,
 						},
@@ -423,7 +430,7 @@ const RegisterDomainStep = React.createClass( {
 
 				this.setState( {
 					searchResults: suggestions,
-					loadingResults: false
+					loadingResults: false,
 				}, this.save );
 			}
 		);
@@ -566,6 +573,6 @@ module.exports = connect( ( state, props ) => {
 	return {
 		currentUser: getCurrentUser( state ),
 		defaultSuggestions: getDomainsSuggestions( state, queryObject ),
-		defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject )
+		defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
 	};
 } )( localize( RegisterDomainStep ) );

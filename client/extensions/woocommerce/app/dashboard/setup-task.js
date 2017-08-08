@@ -82,7 +82,7 @@ class SetupTask extends Component {
 							action.onClick( e );
 						};
 						return (
-							<a key={ index } onClick={ trackClick }>{ action.label }</a>
+							<Button borderless key={ index } onClick={ trackClick }>{ action.label }</Button>
 						);
 					} )
 				}

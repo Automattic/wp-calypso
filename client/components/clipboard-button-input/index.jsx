@@ -8,6 +8,7 @@ import omit from 'lodash/omit';
 /**
  * Internal dependencies
  */
+import { withoutHttp } from 'lib/url';
 import ClipboardButton from 'components/forms/clipboard-button';
 import FormTextInput from 'components/forms/form-text-input';
 
@@ -17,7 +18,8 @@ export default React.createClass( {
 	propTypes: {
 		value: PropTypes.string,
 		disabled: PropTypes.bool,
-		className: PropTypes.string
+		className: PropTypes.string,
+		hideHttp: PropTypes.bool
 	},
 
 	getInitialState() {
@@ -51,13 +53,14 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { value, className, disabled } = this.props;
+		const { value, className, disabled, hideHttp } = this.props;
 		const classes = classnames( 'clipboard-button-input', className );
 
 		return (
 			<span className={ classes }>
 				<FormTextInput
-					{ ...omit( this.props, 'className' ) }
+					{ ...omit( this.props, 'className', 'hideHttp' ) }
+					value={ hideHttp ? withoutHttp( value ) : value }
 					type="text"
 					selectOnFocus
 					readOnly />

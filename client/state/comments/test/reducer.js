@@ -8,7 +8,13 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { items, totalCommentsCount } from '../reducer';
+import {
+	items,
+	totalCommentsCount,
+	fetchStatus,
+	fetchStatusInitialState,
+	treesInitialized,
+} from '../reducer';
 import {
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
@@ -16,7 +22,8 @@ import {
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_RECEIVE,
-	COMMENTS_REMOVE,
+	COMMENTS_DELETE,
+	COMMENTS_TREE_SITE_ADD,
 } from '../../action-types';
 import { PLACEHOLDER_STATE } from '../constants';
 
@@ -63,7 +70,7 @@ describe( 'reducer', () => {
 			const removedCommentId = 9;
 			const state = deepFreeze( { '1-1': commentsNestedTree } );
 			const result = items( state, {
-				type: COMMENTS_REMOVE,
+				type: COMMENTS_DELETE,
 				siteId: 1,
 				postId: 1,
 				commentId: removedCommentId,
@@ -129,6 +136,47 @@ describe( 'reducer', () => {
 		} );
 	} );
 
+	describe( '#fetchStatus', () => {
+		const actionWithComments = {
+			type: COMMENTS_RECEIVE,
+			siteId: '123',
+			postId: '456',
+			direction: 'before',
+			comments: [ {}, {} ],
+		};
+		const actionWithCommentId = {
+			type: COMMENTS_RECEIVE,
+			siteId: '123',
+			commentById: true,
+			comments: [ {} ],
+			direction: 'after',
+		};
+
+		it( 'should default to an empty object', () => {
+			expect( fetchStatus( undefined, { type: 'okapi' } ) ).eql( {} );
+		} );
+
+		it( 'should set hasReceived and before/after when receiving commments', () => {
+			const prevState = {};
+			const nextState = fetchStatus( prevState, actionWithComments );
+			expect( nextState ).eql( {
+				[ `${ actionWithComments.siteId }-${ actionWithComments.postId }` ]: {
+					before: false,
+					after: true,
+					hasReceivedBefore: true,
+					hasReceivedAfter: false,
+				},
+			} );
+		} );
+
+		it( 'fetches by id should not modify the state', () => {
+			const prevState = { [ actionWithCommentId.siteId ]: fetchStatusInitialState };
+			const nextState = fetchStatus( prevState, actionWithCommentId );
+
+			expect( nextState ).equal( prevState );
+		} );
+	} );
+
 	describe( '#totalCommentsCount()', () => {
 		it( 'should update post comments count', () => {
 			const response = totalCommentsCount( undefined, {
@@ -154,6 +202,47 @@ describe( 'reducer', () => {
 			);
 
 			expect( response[ '1-1' ] ).to.eql( 2 );
+		} );
+	} );
+	describe( '#treesInitialized()', () => {
+		it( 'should track when a tree is initialized for a given query', () => {
+			const state = treesInitialized(
+				undefined,
+				{
+					type: COMMENTS_TREE_SITE_ADD,
+					siteId: 77203074,
+					status: 'unapproved',
+				} );
+			expect( state ).to.eql( {
+				77203074: { unapproved: true }
+			} );
+		} );
+		it( 'can track init status of many states', () => {
+			const initState = deepFreeze( { 77203074: { unapproved: true } } );
+			const state = treesInitialized(
+				initState,
+				{
+					type: COMMENTS_TREE_SITE_ADD,
+					siteId: 77203074,
+					status: 'spam',
+				} );
+			expect( state ).to.eql( {
+				77203074: { unapproved: true, spam: true }
+			} );
+		} );
+		it( 'can track init status of many sites', () => {
+			const initState = deepFreeze( { 77203074: { unapproved: true } } );
+			const state = treesInitialized(
+				initState,
+				{
+					type: COMMENTS_TREE_SITE_ADD,
+					siteId: 2916284,
+					status: 'unapproved',
+				} );
+			expect( state ).to.eql( {
+				77203074: { unapproved: true },
+				2916284: { unapproved: true }
+			} );
 		} );
 	} );
 } );

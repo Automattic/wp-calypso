@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { isEmpty, round } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -27,13 +28,13 @@ import {
 } from 'woocommerce/lib/countries/constants';
 import { getCountryData, getStateData } from 'woocommerce/lib/countries';
 import ExtendedHeader from 'woocommerce/components/extended-header';
-import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
 import FormToggle from 'components/forms/form-toggle';
 import Notice from 'components/notice';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 
 class TaxesRates extends Component {
 
@@ -48,9 +49,7 @@ class TaxesRates extends Component {
 		const { address, loadedSettingsGeneral, loadedTaxRates, site } = this.props;
 
 		if ( site && site.ID ) {
-			if ( ! loadedSettingsGeneral ) {
-				this.props.fetchSettingsGeneral( site.ID );
-			} else if ( ! loadedTaxRates ) {
+			if ( loadedSettingsGeneral && ! loadedTaxRates ) {
 				this.props.fetchTaxRates( site.ID, address );
 			}
 		}
@@ -166,18 +165,20 @@ class TaxesRates extends Component {
 
 		if ( DESTINATION_BASED_SALES_TAX === stateData.salesTaxBasis ) {
 			return (
-				<p>
+				<div className="taxes__taxes-calculate">
+					<Gridicon icon="checkmark" />
 					{ translate( 'We\'ll automatically calculate and charge the ' +
 						'correct rate of tax for you each time a customer checks out.' ) }
-				</p>
+				</div>
 			);
 		}
 
 		return (
-			<p>
+			<div className="taxes__taxes-calculate">
+				<Gridicon icon="checkmark" />
 				{ translate( 'We\'ll automatically calculate and charge sales tax ' +
 					'at the following rate each time a customer checks out.' ) }
-			</p>
+			</div>
 		);
 	}
 
@@ -254,18 +255,17 @@ class TaxesRates extends Component {
 	}
 
 	render = () => {
-		const { loadedSettingsGeneral, loadedTaxRates, onEnabledChange, taxesEnabled, translate } = this.props;
+		const { site, loadedSettingsGeneral, loadedTaxRates, onEnabledChange, taxesEnabled, translate } = this.props;
 
 		if ( ! loadedSettingsGeneral ) {
-			return null;
+			return <QuerySettingsGeneral siteId={ site && site.ID } />;
 		}
 
 		if ( ! loadedTaxRates ) {
 			return null;
 		}
 
-		const toggleMessage = taxesEnabled ? translate( 'Tax calculations enabled' )
-			: translate( 'Tax calculations disabled' );
+		const toggleMessage = translate( 'Tax calculations enabled' );
 
 		return (
 			<div className="taxes__taxes-rates">
@@ -275,7 +275,7 @@ class TaxesRates extends Component {
 						name="taxesEnabled"
 						onChange={ onEnabledChange }
 						checked={ taxesEnabled } >
-						<span>
+						<span className="taxes__taxes-calculate-label">
 							{ toggleMessage }
 						</span>
 					</FormToggle>
@@ -313,7 +313,6 @@ function mapStateToProps( state, ownProps ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			fetchSettingsGeneral,
 			fetchTaxRates,
 		},
 		dispatch

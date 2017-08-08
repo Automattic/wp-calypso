@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -93,7 +94,7 @@ const ReaderAvatar = ( {
 	const iconElements = [ siteIconElement, avatarElement ];
 
 	return (
-		<div className={ classes } onClick={ onClick }>
+		<div className={ classes } onClick={ onClick } aria-hidden="true">
 			{ siteUrl
 				? <a href={ siteUrl }>
 						{ iconElements }

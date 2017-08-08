@@ -105,6 +105,10 @@ export function domForHtml( html ) {
  * @returns {boolean} - true or false depending on if it is probably an image (has the right extension)
  */
 export function isUrlLikelyAnImage( uri ) {
+	if ( ! uri ) {
+		return false;
+	}
+
 	const withoutQuery = url.parse( uri ).pathname;
 	return some( [ '.jpg', '.jpeg', '.png', '.gif' ], ext => endsWith( withoutQuery, ext ) );
 }

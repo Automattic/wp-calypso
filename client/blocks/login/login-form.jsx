@@ -6,6 +6,7 @@ import defer from 'lodash/defer';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { capitalize } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,29 +19,41 @@ import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
-import { loginUser } from 'state/login/actions';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { loginUser, formUpdate } from 'state/login/actions';
+import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getRequestError } from 'state/login/selectors';
+import {
+	getRequestError,
+	isFormDisabled,
+} from 'state/login/selectors';
+import Notice from 'components/notice';
 import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
+		formUpdate: PropTypes.func.isRequired,
+		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
+		privateSite: PropTypes.bool,
 		redirectTo: PropTypes.string,
 		requestError: PropTypes.object,
 		translate: PropTypes.func.isRequired,
+		isFormDisabled: PropTypes.bool,
 	};
 
 	state = {
-		isDisabled: true,
+		isDisabledWhileLoading: true,
 		usernameOrEmail: '',
 		password: '',
 		rememberMe: false,
+		linkingSocialUser: false,
+		linkingSocialService: '',
 	};
 
 	componentDidMount() {
-		this.setState( { isDisabled: false }, () => { // eslint-disable-line react/no-did-mount-set-state
+		this.setState( { isDisabledWhileLoading: false }, () => { // eslint-disable-line react/no-did-mount-set-state
 			this.usernameOrEmail.focus();
 		} );
 	}
@@ -62,6 +75,7 @@ export class LoginForm extends Component {
 	}
 
 	onChangeField = ( event ) => {
+		this.props.formUpdate();
 		this.setState( {
 			[ event.target.name ]: event.target.value
 		} );
@@ -78,20 +92,18 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		const { password, rememberMe, usernameOrEmail } = this.state;
+		const { linkingSocialUser, password, usernameOrEmail } = this.state;
 		const { onSuccess, redirectTo } = this.props;
 
-		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
+		const rememberMe = linkingSocialUser ? true : this.state.rememberMe;
 
-		this.setState( { isDisabled: true } );
+		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 
 		this.props.loginUser( usernameOrEmail, password, rememberMe, redirectTo ).then( () => {
 			this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
 
 			onSuccess();
 		} ).catch( error => {
-			this.setState( { isDisabled: false } );
-
 			this.props.recordTracksEvent( 'calypso_login_block_login_form_failure', {
 				error_code: error.code,
 				error_message: error.message
@@ -107,10 +119,30 @@ export class LoginForm extends Component {
 		this.usernameOrEmail = input;
 	};
 
+	linkSocialUser = ( service, usernameOrEmail ) => {
+		this.setState( {
+			usernameOrEmail: usernameOrEmail,
+			linkingSocialUser: true,
+			linkingSocialService: capitalize( service ),
+		} );
+	};
+
+	renderPrivateSiteNotice() {
+		if ( this.props.privateSite && ! this.props.isLoggedIn ) {
+			return (
+				<Notice status="is-info" showDismiss={ false } icon="lock">
+					{ this.props.translate( 'Log in to WordPress.com to proceed. ' +
+					"If you are not a member of this site, we'll send " +
+					'your username to the site owner for approval.' ) }
+				</Notice>
+			);
+		}
+	}
+
 	render() {
 		const isDisabled = {};
 
-		if ( this.state.isDisabled ) {
+		if ( this.state.isDisabledWhileLoading || this.props.isFormDisabled ) {
 			isDisabled.disabled = true;
 		}
 
@@ -118,8 +150,24 @@ export class LoginForm extends Component {
 
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
+				{ this.renderPrivateSiteNotice() }
+
 				<Card className="login__form">
 					<div className="login__form-userdata">
+						{ this.state.linkingSocialUser && (
+							<div className="login__form-link-social-notice">
+								<p>
+									{ this.props.translate( 'We found a WordPress.com account with the email address "%(email)s". ' +
+										'Log in to this account to connect it to your %(service)s profile.', {
+											args: {
+												email: this.state.usernameOrEmail,
+												service: this.state.linkingSocialService,
+											}
+										}
+									) }
+								</p>
+							</div>
+						) }
 						<label htmlFor="usernameOrEmail" className="login__form-userdata-username">
 							{ this.props.translate( 'Username or Email Address' ) }
 						</label>
@@ -166,16 +214,33 @@ export class LoginForm extends Component {
 						) }
 					</div>
 
-					<div className="login__form-remember-me">
-						<label>
-							<FormCheckbox
-								name="rememberMe"
-								checked={ this.state.rememberMe }
-								onChange={ this.onChangeRememberMe }
-								{ ...isDisabled } />
-							<span>{ this.props.translate( 'Keep me logged in' ) }</span>
-						</label>
-					</div>
+					{ ! this.state.linkingSocialUser && (
+						<div className="login__form-remember-me">
+							<label>
+								<FormCheckbox
+									name="rememberMe"
+									checked={ this.state.rememberMe }
+									onChange={ this.onChangeRememberMe }
+									{ ...isDisabled } />
+								<span>{ this.props.translate( 'Keep me logged in' ) }</span>
+							</label>
+						</div>
+					) }
+
+					<p className="login__form-terms">
+						{
+							preventWidows( this.props.translate(
+								// To make any changes to this copy please speak to the legal team
+								'By logging in via any of the options below, you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
+								{
+									components: {
+										tosLink: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
+									}
+								}
+							), 5 )
+
+						}
+					</p>
 
 					<div className="login__form-action">
 						<FormsButton primary { ...isDisabled }>
@@ -184,10 +249,11 @@ export class LoginForm extends Component {
 					</div>
 				</Card>
 				{ config.isEnabled( 'signup/social' ) && (
-					<Card>
-						<div className="login__form-social">
-							<SocialLoginForm onSuccess={ this.props.onSuccess } />
-						</div>
+					<Card className="login__form-social">
+						<SocialLoginForm
+							onSuccess={ this.props.onSuccess }
+							linkSocialUser={ this.linkSocialUser }
+							linkingSocialService={ this.state.linkingSocialService } />
 					</Card>
 				) }
 			</form>
@@ -199,8 +265,11 @@ export default connect(
 	( state ) => ( {
 		redirectTo: getCurrentQueryArguments( state ).redirect_to,
 		requestError: getRequestError( state ),
+		isFormDisabled: isFormDisabled( state ),
+		isLoggedIn: Boolean( getCurrentUserId( state ) )
 	} ),
 	{
+		formUpdate,
 		loginUser,
 		recordTracksEvent,
 	}

@@ -5,8 +5,7 @@ import { isEnabled } from 'config';
 import wpcom from 'lib/wp';
 import {
 	COMMENTS_CHANGE_STATUS,
-	COMMENTS_CHANGE_STATUS_FAILURE,
-	COMMENTS_CHANGE_STATUS_SUCESS,
+	COMMENTS_DELETE,
 	COMMENTS_EDIT,
 	COMMENTS_EDIT_FAILURE,
 	COMMENTS_EDIT_SUCCESS,
@@ -14,10 +13,10 @@ import {
 	COMMENTS_REQUEST,
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
-	COMMENTS_REMOVE,
 	COMMENTS_REPLY_WRITE,
 	COMMENTS_WRITE,
 	COMMENT_REQUEST,
+	COMMENTS_TREE_SITE_REQUEST,
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
@@ -34,7 +33,12 @@ export const requestComment = ( { siteId, commentId } ) => ( {
  * @param {String} status status filter. Defaults to approved posts
  * @returns {Function} thunk that requests comments for a given post
  */
-export function requestPostComments( siteId, postId, status = 'approved' ) {
+export function requestPostComments( {
+	siteId,
+	postId,
+	status = 'approved',
+	direction = 'before'
+} ) {
 	if ( ! isEnabled( 'comments/filters-in-posts' ) ) {
 		status = 'approved';
 	}
@@ -43,8 +47,9 @@ export function requestPostComments( siteId, postId, status = 'approved' ) {
 		type: COMMENTS_REQUEST,
 		siteId,
 		postId,
+		direction,
 		query: {
-			order: 'DESC',
+			order: direction === 'before' ? 'DESC' : 'ASC',
 			number: NUMBER_OF_COMMENTS_PER_FETCH,
 			status,
 		},
@@ -56,21 +61,32 @@ export const requestCommentsList = query => ( {
 	query,
 } );
 
-/***
- * Creates a remove comment action for a siteId, postId, commentId
+/**
+ * Creates an action that requests the comments tree for a given site.
+ * @param {Object} query API call parameters
+ * @param {Number} query.siteId Site identifier
+ * @param {String} query.status Status filter
+ * @returns {Object} Action that requests a comment tree
+ */
+export const requestCommentsTreeForSite = query => ( {
+	type: COMMENTS_TREE_SITE_REQUEST,
+	query,
+} );
+
+/**
+ * Creates an action that permanently deletes a comment
+ * or removes a comment placeholder from the state
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
- * @param {Number|String} commentId comment identifier to remove
- * @returns {Object} remove action
+ * @param {Number|String} commentId comment or comment placeholder identifier
+ * @returns {Object} action that deletes a comment
  */
-export function removeComment( siteId, postId, commentId ) {
-	return {
-		type: COMMENTS_REMOVE,
-		siteId,
-		postId,
-		commentId,
-	};
-}
+export const deleteComment = ( siteId, postId, commentId ) => ( {
+	type: COMMENTS_DELETE,
+	siteId,
+	postId,
+	commentId,
+} );
 
 /***
  * Creates a write comment action for a siteId and postId
@@ -130,39 +146,21 @@ export const unlikeComment = ( siteId, postId, commentId ) => ( {
 	commentId,
 } );
 
-export function changeCommentStatus( siteId, postId, commentId, status ) {
-	return dispatch => {
-		dispatch( {
-			type: COMMENTS_CHANGE_STATUS,
-			siteId,
-			postId,
-			commentId,
-			status
-		} );
-
-		return wpcom
-			.site( siteId )
-			.comment( commentId )
-			.update( { status } )
-			.then( data =>
-				dispatch( {
-					type: COMMENTS_CHANGE_STATUS_SUCESS,
-					siteId,
-					postId,
-					commentId,
-					status: data.status,
-				} ),
-			)
-			.catch( () =>
-				dispatch( {
-					type: COMMENTS_CHANGE_STATUS_FAILURE,
-					siteId,
-					postId,
-					commentId,
-				} ),
-			);
-	};
-}
+/**
+ * Creates an action that changes a comment status.
+ * @param {Number} siteId Site identifier
+ * @param {Number} postId Post identifier
+ * @param {Number} commentId Comment identifier
+ * @param {Number} status New status
+ * @returns {Object} Action that changes a comment status
+ */
+export const changeCommentStatus = ( siteId, postId, commentId, status ) => ( {
+	type: COMMENTS_CHANGE_STATUS,
+	siteId,
+	postId,
+	commentId,
+	status,
+} );
 
 export function editComment( siteId, postId, commentId, content ) {
 	return dispatch => {

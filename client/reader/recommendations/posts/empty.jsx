@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -52,7 +53,7 @@ class RecommendedPostsEmptyContent extends React.Component {
 			<EmptyContent
 				title={ this.props.translate( 'No Post Recommendations yet' ) }
 				line={ this.props.translate(
-					'Posts we recommend based on your WordPress.com activity will appear here.',
+					'Posts we recommend based on your WordPress.com activity will appear here.'
 				) }
 				action={ action }
 				secondaryAction={ secondaryAction }

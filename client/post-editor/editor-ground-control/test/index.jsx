@@ -4,6 +4,7 @@
 import { expect } from 'chai';
 import { noop } from 'lodash';
 import React from 'react';
+import { shallow } from 'enzyme';
 import mockery from 'mockery';
 
 /**
@@ -24,37 +25,25 @@ const MOCK_SITE = {
 };
 
 describe( 'EditorGroundControl', function() {
-	let shallow, i18n, EditorGroundControl;
+	let EditorGroundControl;
 
 	useMockery();
 	useFakeDom();
 
 	before( function() {
-		shallow = require( 'enzyme' ).shallow;
-		i18n = require( 'i18n-calypso' );
-
 		mockery.registerMock( 'components/card', EmptyComponent );
 		mockery.registerMock( 'components/popover', EmptyComponent );
 		mockery.registerMock( 'blocks/site', EmptyComponent );
 		mockery.registerMock( 'post-editor/edit-post-status', EmptyComponent );
 		mockery.registerMock( 'post-editor/editor-status-label', EmptyComponent );
 		mockery.registerMock( 'components/sticky-panel', EmptyComponent );
-		mockery.registerMock( 'components/post-list-fetcher', EmptyComponent );
 		mockery.registerMock( 'components/post-schedule', EmptyComponent );
 		mockery.registerMock( 'lib/posts/actions', { edit: noop } );
 		mockery.registerMock( 'lib/posts/stats', {
 			recordEvent: noop,
 			recordStat: noop
 		} );
-		EditorGroundControl = require( '../' );
-
-		EditorGroundControl.prototype.translate = i18n.translate;
-		EditorGroundControl.prototype.moment = i18n.moment;
-	} );
-
-	after( function() {
-		delete EditorGroundControl.prototype.translate;
-		delete EditorGroundControl.prototype.moment;
+		EditorGroundControl = require( '../' ).EditorGroundControl;
 	} );
 
 	describe( '#getPreviewLabel()', function() {

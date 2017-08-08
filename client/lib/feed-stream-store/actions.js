@@ -11,6 +11,8 @@ import { action as ActionType } from './constants';
 import FeedPostStoreActions from 'lib/feed-post-store/actions';
 import feedPostListCache from './feed-stream-cache';
 import wpcom from 'lib/wp';
+import { reduxDispatch } from 'lib/redux-bridge';
+import { COMMENTS_RECEIVE } from 'state/action-types';
 
 function getNextPageParams( store ) {
 	const params = {
@@ -89,6 +91,15 @@ export function receivePage( id, error, data ) {
 				FeedPostStoreActions.receivePost( null, post, {
 					blogId: post.site_ID,
 					postId: post.ID
+				} );
+			}
+			if ( post.comments ) {
+				// conversations!
+				reduxDispatch( {
+					type: COMMENTS_RECEIVE,
+					siteId: post.site_ID,
+					postId: post.ID,
+					comments: post.comments,
 				} );
 			}
 		} );

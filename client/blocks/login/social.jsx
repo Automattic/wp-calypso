@@ -29,6 +29,12 @@ class SocialLoginForm extends Component {
 		onSuccess: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		loginSocialUser: PropTypes.func.isRequired,
+		linkSocialUser: PropTypes.func.isRequired,
+		linkingSocialService: PropTypes.string,
+	};
+
+	static defaultProps = {
+		linkingSocialService: '',
 	};
 
 	handleGoogleResponse = ( response ) => {
@@ -55,6 +61,8 @@ class SocialLoginForm extends Component {
 									error_message: createAccountError.message
 								} )
 							);
+					} else if ( error.code === 'existing_wpcom_user' ) {
+						this.props.linkSocialUser( 'google', error.email );
 					}
 
 					this.recordEvent( 'calypso_login_social_login_failure', {
@@ -74,12 +82,30 @@ class SocialLoginForm extends Component {
 		this.recordEvent( 'calypso_login_social_button_click' );
 	};
 
+	renderText() {
+		if ( this.props.linkingSocialService ) {
+			return (
+				<p className="login__social-text">
+					{ this.props.translate( 'Or, choose a different %(service)s account:', {
+						args: {
+							service: this.props.linkingSocialService,
+						}
+					} ) }
+				</p>
+			);
+		}
+
+		return (
+			<p className="login__social-text">
+				{ this.props.translate( 'Or log in with your existing social profile:' ) }
+			</p>
+		);
+	}
+
 	render() {
 		return (
 			<div className="login__social">
-				<p className="login__social-text">
-					{ this.props.translate( 'Or log in with your existing social profile:' ) }
-				</p>
+				{ this.renderText() }
 
 				<div className="login__social-buttons">
 					<GoogleLoginButton

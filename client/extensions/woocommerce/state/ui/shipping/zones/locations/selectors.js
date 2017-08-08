@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { every, forIn, isEmpty, orderBy } from 'lodash';
+import { every, forIn, isEmpty, isObject, orderBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -108,6 +108,9 @@ const getStatesOwnedByOtherZone = createSelector(
 			getCurrentlyEditingShippingZone( state, siteId ),
 			getRawShippingZoneLocations( state, siteId ),
 		];
+	},
+	( state, siteId, countryCode ) => {
+		return [ siteId, countryCode ].join();
 	}
 );
 
@@ -151,8 +154,12 @@ export const getShippingZoneLocations = createSelector(
 		const loaded = areShippingZonesLoaded( state, siteId );
 		return [
 			loaded,
-			loaded && getRawShippingZoneLocations( state, siteId )[ zoneId ],
+			loaded && getRawShippingZoneLocations( state, siteId ),
 		];
+	},
+	( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
+		const id = isObject( zoneId ) ? `i${ zoneId.index }` : zoneId;
+		return `${ id }${ siteId }`;
 	}
 );
 
@@ -280,10 +287,13 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 		return [
 			loaded,
 			zone,
-			zone && getRawShippingZoneLocations( state, siteId ),
+			zone && getShippingZoneLocations( state, zone.id, siteId ),
 			zone && getShippingZonesEdits( state, siteId ),
 			zone && getCountriesOwnedByOtherZone( state, siteId ),
 		];
+	},
+	( state, siteId = getSelectedSiteId( state ), overlayTemporalEdits = true ) => {
+		return [ siteId, overlayTemporalEdits ].join();
 	}
 );
 
@@ -537,7 +547,11 @@ export const getShippingZoneLocationsList = createSelector(
 		return [
 			getShippingZoneLocations( state, zoneId, siteId ),
 		];
-	}
+	},
+	( state, zoneId, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
+		const id = isObject( zoneId ) ? `i${ zoneId.index }` : zoneId;
+		return `${ id }${ maxCountries }${ siteId }`;
+	},
 );
 
 /**
@@ -557,7 +571,10 @@ export const getCurrentlyEditingShippingZoneLocationsList = createSelector(
 		return [
 			getShippingZoneLocationsWithEdits( state, siteId, false ),
 		];
-	}
+	},
+	( state, maxCountries = 999, siteId = getSelectedSiteId( state ) ) => {
+		return [ maxCountries, siteId ].join();
+	},
 );
 
 /**

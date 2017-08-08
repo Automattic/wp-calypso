@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { isDate } from 'lodash';
+import { get, isDate, startsWith, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,15 +10,16 @@ import { isDate } from 'lodash';
 import {
 	COMMENTS_REQUEST,
 	COMMENTS_RECEIVE,
-	COMMENTS_REMOVE,
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
+	COMMENTS_DELETE,
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
-import { getPostOldestCommentDate } from 'state/comments/selectors';
+import { getPostOldestCommentDate, getPostNewestCommentDate } from 'state/comments/selectors';
+import getSiteComment from 'state/selectors/get-site-comment';
 
 /***
  * Creates a placeholder comment for a given text and postId
@@ -47,8 +48,21 @@ export function createPlaceholderComment( commentText, postId, parentCommentId )
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/posts/%24post_ID/replies/
 export const fetchPostComments = ( { dispatch, getState }, action ) => {
-	const { siteId, postId, query } = action;
-	const before = getPostOldestCommentDate( getState(), siteId, postId );
+	const { siteId, postId, query, direction } = action;
+	const oldestDate = getPostOldestCommentDate( getState(), siteId, postId );
+	const newestDate = getPostNewestCommentDate( getState(), siteId, postId );
+
+	const before =
+		direction === 'before' &&
+		isDate( oldestDate ) &&
+		oldestDate.toISOString &&
+		oldestDate.toISOString();
+
+	const after =
+		direction === 'after' &&
+		isDate( newestDate ) &&
+		newestDate.toISOString &&
+		newestDate.toISOString();
 
 	dispatch(
 		http(
@@ -56,14 +70,11 @@ export const fetchPostComments = ( { dispatch, getState }, action ) => {
 				method: 'GET',
 				path: `/sites/${ siteId }/posts/${ postId }/replies`,
 				apiVersion: '1.1',
-				query: {
+				query: pickBy( {
 					...query,
-					...( before &&
-					isDate( before ) &&
-					before.toISOString && {
-						before: before.toISOString(),
-					} ),
-				},
+					after,
+					before,
+				} ),
 			},
 			action,
 		),
@@ -104,12 +115,14 @@ export const writePostComment = ( { dispatch }, action ) => {
 	);
 };
 
-export const addComments = ( { dispatch }, { siteId, postId }, next, { comments, found } ) => {
+export const addComments = ( { dispatch }, action, next, { comments, found } ) => {
+	const { siteId, postId, direction } = action;
 	dispatch( {
 		type: COMMENTS_RECEIVE,
 		siteId,
 		postId,
 		comments,
+		direction,
 	} );
 
 	// if the api have returned comments count, dispatch it
@@ -133,7 +146,7 @@ export const writePostCommentSuccess = (
 	comment,
 ) => {
 	// remove placeholder from state
-	dispatch( { type: COMMENTS_REMOVE, siteId, postId, commentId: placeholderId } );
+	dispatch( { type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId } );
 	// add new comment to state with updated values from server
 	dispatch( {
 		type: COMMENTS_RECEIVE,
@@ -156,6 +169,68 @@ export const announceFailure = ( { dispatch, getState }, { siteId, postId } ) =>
 	dispatch( errorNotice( error ) );
 };
 
+// @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/delete/
+export const deleteComment = ( { dispatch, getState }, action ) => {
+	const { siteId, commentId } = action;
+
+	if ( startsWith( commentId, 'placeholder' ) ) {
+		return;
+	}
+
+	const comment = getSiteComment( getState(), siteId, commentId );
+
+	dispatch(
+		http(
+			{
+				method: 'POST',
+				apiVersion: '1.1',
+				path: `/sites/${ siteId }/comments/${ commentId }/delete`,
+			},
+			{
+				...action,
+				comment,
+			}
+		)
+	);
+};
+
+export const announceDeleteSuccess = ( { dispatch } ) => {
+	dispatch(
+		successNotice(
+			translate( 'Comment deleted permanently.' ),
+			{
+				duration: 5000,
+				isPersistent: true,
+			}
+		)
+	);
+};
+
+export const announceDeleteFailure = ( { dispatch, getState }, action ) => {
+	const { siteId, postId, comment } = action;
+
+	dispatch(
+		errorNotice(
+			translate( 'Could not delete the comment.' ),
+			{
+				duration: 5000,
+				isPersistent: true,
+			}
+		)
+	);
+
+	if ( comment ) {
+		dispatch( {
+			type: COMMENTS_RECEIVE,
+			siteId,
+			postId,
+			comments: [ comment ],
+			skipSort: !! get( comment, 'parent.ID' ),
+		} );
+	}
+};
+
 export default {
 	[ COMMENTS_REQUEST ]: [ dispatchRequest( fetchPostComments, addComments, announceFailure ) ],
+	[ COMMENTS_DELETE ]: [ dispatchRequest( deleteComment, announceDeleteSuccess, announceDeleteFailure ) ],
 };

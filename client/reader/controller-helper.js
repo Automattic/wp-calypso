@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -42,7 +43,7 @@ export function trackPageLoad( path, title, readerView ) {
 	analytics.pageView.record( path, title );
 	analytics.mc.bumpStat(
 		'reader_views',
-		readerView === 'full_post' ? readerView : readerView + '_load',
+		readerView === 'full_post' ? readerView : readerView + '_load'
 	);
 }
 

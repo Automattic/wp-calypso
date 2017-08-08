@@ -1,24 +1,26 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-sms-settings' ),
-	observe = require( 'lib/mixins/data-observe' );
+import React from 'react';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-var countriesList = require( 'lib/countries-list' ).forSms(),
-	FormPhoneInput = require( 'components/forms/form-phone-input' ),
-	formBase = require( 'me/form-base' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	Security2faProgress = require( 'me/security-2fa-progress' ),
-	analytics = require( 'lib/analytics' );
-
-import { protectForm } from 'lib/protect-form';
+import FormPhoneInput from 'components/forms/form-phone-input';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
 import Notice from 'components/notice';
+import formBase from 'me/form-base';
+import Security2faProgress from 'me/security-2fa-progress';
+import analytics from 'lib/analytics';
+import observe from 'lib/mixins/data-observe';
+import { protectForm } from 'lib/protect-form';
+import { forSms } from 'lib/countries-list';
+
+const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
+const countriesList = forSms();
 
 module.exports = protectForm( React.createClass( {
 

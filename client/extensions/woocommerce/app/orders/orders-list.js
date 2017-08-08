@@ -4,13 +4,13 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import { range } from 'lodash';
 import React, { Component } from 'react';
-import { times } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import EmptyContent from 'components/empty-content';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import formatCurrency from 'lib/format-currency';
@@ -18,33 +18,65 @@ import {
 	areOrdersLoading,
 	areOrdersLoaded,
 	getOrders,
-	getTotalOrdersPages
+	getTotalOrders
 } from 'woocommerce/state/sites/orders/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { getOrdersCurrentPage } from 'woocommerce/state/ui/orders/selectors';
+import { getOrdersCurrentPage, getOrdersCurrentSearch } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import humanDate from 'lib/human-date';
-import { setCurrentPage } from 'woocommerce/state/ui/orders/actions';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
-import SectionNav from 'components/section-nav';
+import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
+import OrdersFilterNav from './orders-filter-nav';
+import Pagination from 'components/pagination';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
 
 class Orders extends Component {
 	componentDidMount() {
-		const { siteId, currentPage } = this.props;
-
+		const { siteId, currentStatus } = this.props;
+		const query = {
+			page: 1,
+			search: '',
+			status: currentStatus,
+		};
+		this.props.updateCurrentOrdersQuery( this.props.siteId, { page: 1, search: '' } );
 		if ( siteId ) {
-			this.props.fetchOrders( siteId, currentPage );
+			this.props.fetchOrders( siteId, query );
 		}
 	}
 
 	componentWillReceiveProps( newProps ) {
-		if ( newProps.currentPage !== this.props.currentPage || newProps.siteId !== this.props.siteId ) {
-			this.props.fetchOrders( newProps.siteId, newProps.currentPage );
+		const hasAnythingChanged = (
+			newProps.currentPage !== this.props.currentPage ||
+			newProps.currentSearch !== this.props.currentSearch ||
+			newProps.currentStatus !== this.props.currentStatus ||
+			newProps.siteId !== this.props.siteId
+		);
+		if ( ! newProps.siteId || ! hasAnythingChanged ) {
+			return;
 		}
+
+		const query = {
+			page: newProps.currentPage,
+			search: newProps.currentSearch,
+			status: newProps.currentStatus,
+		};
+		if ( newProps.currentSearch !== this.props.currentSearch ) {
+			this.props.updateCurrentOrdersQuery( this.props.siteId, { page: 1 } );
+			query.page = 1;
+		} else if ( newProps.currentStatus !== this.props.currentStatus ) {
+			this.props.updateCurrentOrdersQuery( this.props.siteId, { page: 1, search: '' } );
+			query.page = 1;
+			query.search = '';
+		}
+		this.props.fetchOrders( newProps.siteId, query );
+	}
+
+	clearSearch = ( event ) => {
+		const { site, siteId } = this.props;
+		this.search.closeSearch( event );
+		this.props.updateCurrentOrdersQuery( siteId, { page: 1, search: '' } );
+		page( getLink( '/store/orders/:site', site ) );
 	}
 
 	getOrderStatus = ( status ) => {
@@ -88,7 +120,45 @@ class Orders extends Component {
 		);
 	}
 
-	renderOrderItems = ( order, i ) => {
+	renderPlaceholders = () => {
+		return range( 5 ).map( ( i ) => {
+			return (
+				<TableRow key={ i } className="orders__row-placeholder">
+					<TableItem className="orders__table-name" isRowHeader><span /></TableItem>
+					<TableItem className="orders__table-date"><span /></TableItem>
+					<TableItem className="orders__table-status"><span /></TableItem>
+					<TableItem className="orders__table-total"><span /></TableItem>
+				</TableRow>
+			);
+		} );
+	}
+
+	renderNoContent = () => {
+		const { currentSearch, currentStatus, site, translate } = this.props;
+		let emptyMessage = translate( 'Your orders will appear here as they come in.' );
+		if ( currentSearch ) {
+			emptyMessage = translate( 'There are no orders matching your search.' );
+		} else if ( 'pending' === currentStatus ) {
+			emptyMessage = translate( 'You don\'t have any orders awaiting payment.' );
+		} else if ( 'processing' === currentStatus ) {
+			emptyMessage = translate( 'You don\'t have any orders awaiting fulfillment.' );
+		}
+
+		return (
+			<TableRow>
+				<TableItem colSpan={ 4 }>
+					<EmptyContent
+						title={ emptyMessage }
+						action={ translate( 'View all orders' ) }
+						actionURL={ getLink( '/store/orders/:site', site ) }
+						actionCallback={ this.clearSearch }
+					/>
+				</TableItem>
+			</TableRow>
+		);
+	}
+
+	renderOrderItem = ( order, i ) => {
 		const { site } = this.props;
 		return (
 			<TableRow key={ i } href={ getLink( `/store/order/:site/${ order.number }`, site ) }>
@@ -99,7 +169,7 @@ class Orders extends Component {
 					</span>
 				</TableItem>
 				<TableItem className="orders__table-date">
-					{ humanDate( order.date_created ) }
+					{ humanDate( order.date_created_gmt + 'Z' ) }
 				</TableItem>
 				<TableItem className="orders__table-status">
 					{ this.getOrderStatus( order.status ) }
@@ -111,42 +181,27 @@ class Orders extends Component {
 		);
 	}
 
-	onPageClick = ( i ) => {
-		return () => {
-			this.props.setCurrentPage( this.props.siteId, i );
-		};
-	}
-
-	renderPageLink = ( i ) => {
-		// We want this to start at 1, not 0
-		i++;
-		return (
-			<li key={ i }>
-				{ ( i !== this.props.currentPage )
-					? <Button compact borderless onClick={ this.onPageClick( i ) }>{ i }</Button>
-					: <span>{ i }</span>
-				}
-			</li>
-		);
-	}
-
-	renderPagination = () => {
-		const { totalPages } = this.props;
-		// @todo Bring back pagination
-		if ( true || totalPages < 2 ) {
-			return null;
-		}
-
-		return (
-			<ul>
-				{ times( totalPages, this.renderPageLink ) }
-			</ul>
-		);
+	onPageClick = nextPage => {
+		this.props.updateCurrentOrdersQuery( this.props.siteId, {
+			page: nextPage,
+			status: this.props.currentStatus,
+		} );
 	}
 
 	render() {
-		const { orders, translate } = this.props;
-		if ( ! orders.length ) {
+		const {
+			currentPage,
+			currentStatus,
+			isDefaultPage,
+			orders,
+			ordersLoading,
+			ordersLoaded,
+			total,
+			translate
+		} = this.props;
+
+		// Orders are done loading, and there are definitely no orders for this site
+		if ( ordersLoaded && ! total && isDefaultPage ) {
 			return (
 				<div className="orders__container">
 					<EmptyContent
@@ -165,42 +220,63 @@ class Orders extends Component {
 			</TableRow>
 		);
 
+		const ordersList = ( orders && orders.length ) ? orders.map( this.renderOrderItem ) : this.renderNoContent();
+
+		const setSearchRef = ref => this.search = ref;
+
 		return (
 			<div className="orders__container">
-				<SectionNav>
-					<NavTabs label={ translate( 'Status' ) } selectedText={ translate( 'All orders' ) }>
-						<NavItem path="/orders" selected={ true }>{ translate( 'All orders' ) }</NavItem>
-					</NavTabs>
-				</SectionNav>
+				<OrdersFilterNav searchRef={ setSearchRef } status={ currentStatus } />
 
 				<Table className="orders__table" header={ headers } horizontalScroll>
-					{ orders.map( this.renderOrderItems ) }
+					{ ordersLoading
+						? this.renderPlaceholders()
+						: ordersList }
 				</Table>
-				{ this.renderPagination() }
+
+				<Pagination
+					page={ currentPage }
+					perPage={ 50 }
+					total={ total }
+					pageClick={ this.onPageClick }
+				/>
 			</div>
 		);
 	}
 }
 
 export default connect(
-	state => {
+	( state, props ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
 		const currentPage = getOrdersCurrentPage( state, siteId );
-		const orders = getOrders( state, currentPage, siteId );
-		const ordersLoading = areOrdersLoading( state, currentPage, siteId );
-		const ordersLoaded = areOrdersLoaded( state, currentPage, siteId );
-		const totalPages = getTotalOrdersPages( state, siteId );
+		const currentSearch = getOrdersCurrentSearch( state, siteId );
+		const currentStatus = props.currentStatus || 'any';
+
+		const isDefaultPage = ( '' === currentSearch && 'any' === currentStatus );
+
+		const query = {
+			page: currentPage,
+			search: currentSearch,
+			status: currentStatus,
+		};
+		const orders = getOrders( state, query, siteId );
+		const ordersLoading = areOrdersLoading( state, query, siteId );
+		const ordersLoaded = areOrdersLoaded( state, query, siteId );
+		const total = getTotalOrders( state, query, siteId );
 
 		return {
 			currentPage,
+			currentSearch,
+			currentStatus,
+			isDefaultPage,
 			orders,
 			ordersLoading,
 			ordersLoaded,
 			site,
 			siteId,
-			totalPages,
+			total,
 		};
 	},
-	dispatch => bindActionCreators( { fetchOrders, setCurrentPage }, dispatch )
+	dispatch => bindActionCreators( { fetchOrders, updateCurrentOrdersQuery }, dispatch )
 )( localize( Orders ) );

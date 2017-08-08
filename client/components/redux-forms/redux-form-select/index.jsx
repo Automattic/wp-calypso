@@ -12,7 +12,7 @@ import FormSelect from 'components/forms/form-select';
 
 class ReduxFormSelect extends Component {
 	static propTypes = {
-		name: PropTypes.string,
+		name: PropTypes.string.isRequired,
 	};
 
 	renderSelect = ( { input: { onChange, value } } ) => {

@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import config from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	COMMENTS_REMOVE,
+	COMMENTS_DELETE,
 	COMMENTS_REQUEST,
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
@@ -20,7 +20,7 @@ import {
 	requestPostComments,
 	writeComment,
 	replyComment,
-	removeComment,
+	deleteComment,
 	likeComment,
 	unlikeComment,
 } from '../actions';
@@ -36,7 +36,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should return a comment request action', function() {
-			const action = requestPostComments( SITE_ID, POST_ID, 'trash' );
+			const action = requestPostComments( { siteId: SITE_ID, postId: POST_ID, status: 'trash' } );
 
 			expect( action ).to.eql( {
 				type: COMMENTS_REQUEST,
@@ -47,16 +47,18 @@ describe( 'actions', () => {
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
 					status: 'trash',
 				},
+				direction: 'before',
 			} );
 		} );
 
 		it( 'should return a comment request action with a default status of approved', function() {
-			const action = requestPostComments( SITE_ID, POST_ID, undefined );
+			const action = requestPostComments( { siteId: SITE_ID, postId: POST_ID, status: undefined } );
 
 			expect( action ).to.eql( {
 				type: COMMENTS_REQUEST,
 				siteId: SITE_ID,
 				postId: POST_ID,
+				direction: 'before',
 				query: {
 					order: 'DESC',
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
@@ -93,12 +95,12 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#removeComment()', () => {
+	describe( '#deleteComment()', () => {
 		it( 'should dispatch remove for a placeholder when provided', () => {
-			const removeCommentAction = removeComment( SITE_ID, POST_ID, 'placeholder-123' );
+			const deleteCommentAction = deleteComment( SITE_ID, POST_ID, 'placeholder-123' );
 
-			expect( removeCommentAction.type ).to.eql( COMMENTS_REMOVE );
-			expect( removeCommentAction.commentId ).to.equal( 'placeholder-123' );
+			expect( deleteCommentAction.type ).to.eql( COMMENTS_DELETE );
+			expect( deleteCommentAction.commentId ).to.equal( 'placeholder-123' );
 		} );
 	} );
 

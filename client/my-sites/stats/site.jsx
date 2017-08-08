@@ -201,7 +201,7 @@ export default connect(
 		return {
 			isJetpack,
 			hasPodcasts: getSiteOption( state, siteId, 'podcasting_archive' ),
-			isWooConnect: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
+			isStore: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
 			siteId,
 			slug: getSelectedSiteSlug( state )
 		};

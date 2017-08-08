@@ -10,6 +10,7 @@
 }
 
 .reader-full-post__content {
+	margin: 0 auto;
 
 	@include breakpoint( ">1280px" ) {
 		width: 720px;
@@ -31,8 +32,6 @@
 		width: auto;
 		padding: 0 20px;
 	}
-
-	margin: 0 auto;
 }
 
 .reader-full-post__back-container {

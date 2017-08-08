@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -59,7 +60,7 @@ class TagEmptyContent extends React.Component {
 						</em>
 					),
 				},
-			},
+			}
 		);
 
 		return (

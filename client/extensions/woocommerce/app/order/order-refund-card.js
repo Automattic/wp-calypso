@@ -165,11 +165,21 @@ class OrderRefundCard extends Component {
 		const { isPaymentLoading, order, site, translate } = this.props;
 		const { errorMessage, refundNote, showDialog } = this.state;
 		const dialogClass = 'woocommerce'; // eslint/css specificity hack
+
+		if ( 'cancelled' === order.status || 'failed' === order.status ) {
+			return null;
+		}
+
 		let refundTotal = formatCurrency( 0, order.currency );
 		if ( this.state.refundTotal ) {
 			refundTotal = formatCurrency( this.state.refundTotal, order.currency ) || this.state.refundTotal;
 		}
 		refundTotal = refundTotal.replace( /[^0-9.,]/g, '' );
+
+		const dialogButtons = [
+			<Button onClick={ this.toggleDialog }>{ translate( 'Cancel' ) }</Button>,
+			<Button primary onClick={ this.sendRefund } disabled={ isPaymentLoading }>{ translate( 'Refund' ) }</Button>,
+		];
 
 		return (
 			<div className="order__details-refund">
@@ -188,6 +198,7 @@ class OrderRefundCard extends Component {
 					isVisible={ showDialog }
 					onClose={ this.toggleDialog }
 					className={ dialogClass }
+					buttons={ dialogButtons }
 					additionalClassNames="order__refund-dialog woocommerce">
 					<h1>{ translate( 'Refund order' ) }</h1>
 					<OrderDetailsTable order={ order } isEditable onChange={ this.recalculateRefund } site={ site } />
@@ -212,11 +223,7 @@ class OrderRefundCard extends Component {
 							{ this.renderCreditCard() }
 						</FormFieldset>
 
-						<div className="order__refund-actions">
-							{ errorMessage && <Notice status="is-error" showDismiss={ false }>{ errorMessage }</Notice> }
-							<Button onClick={ this.toggleDialog }>{ translate( 'Cancel' ) }</Button>
-							<Button primary onClick={ this.sendRefund } disabled={ isPaymentLoading }>{ translate( 'Refund' ) }</Button>
-						</div>
+						{ errorMessage && <Notice status="is-error" showDismiss={ false }>{ errorMessage }</Notice> }
 					</form>
 				</Dialog>
 			</div>

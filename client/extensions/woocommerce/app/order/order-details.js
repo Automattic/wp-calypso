@@ -10,6 +10,7 @@ import React, { Component, PropTypes } from 'react';
  */
 import Card from 'components/card';
 import FormSelect from 'components/forms/form-select';
+import OrderCreated from './order-created';
 import OrderDetailsTable from './order-details-table';
 import OrderFulfillment from './order-fulfillment';
 import OrderRefundCard from './order-refund-card';
@@ -91,10 +92,11 @@ class OrderDetails extends Component {
 
 		return (
 			<div className="order__details">
-				<SectionHeader label={ translate( 'Order Details' ) }>
+				<SectionHeader label={ translate( 'Order %(orderId)s Details', { args: { orderId: `#${ order.id }` } } ) }>
 					<span>{ this.renderStatus() }</span>
 				</SectionHeader>
 				<Card className="order__details-card">
+					<OrderCreated order={ order } site={ site } />
 					<OrderDetailsTable order={ order } site={ site } />
 					<OrderRefundCard order={ order } site={ site } />
 					<OrderFulfillment order={ order } site={ site } />

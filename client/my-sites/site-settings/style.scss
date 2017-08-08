@@ -213,7 +213,8 @@
 .site-settings__general-settings,
 .site-settings__writing-settings,
 .site-settings__traffic-settings,
-.site-settings__security-settings {
+.site-settings__security-settings,
+.manage-connection {
 	.form-toggle__label {
 		display: flex;
 		align-items: center;
@@ -443,4 +444,15 @@
 
 .site-settings__jetpack-dev-mode-notice .notice {
 	animation: none;
+}
+
+.site-settings__videopress-storage {
+	.plan-storage__bar {
+		margin-top: 24px;
+	}
+
+	// Necessary additional specificity
+	.site-settings__videopress-storage-used.form-setting-explanation {
+		margin-left: 36px;
+	}
 }

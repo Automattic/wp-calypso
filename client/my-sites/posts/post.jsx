@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import shallowEqual from 'react-pure-render/shallowEqual';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { partial, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,13 +15,14 @@ import { noop } from 'lodash';
 import { isEnabled } from 'config';
 import Card from 'components/card';
 import PostControls from './post-controls';
+import PostFormat from 'components/post-format';
 import PostHeader from './post-header';
 import PostImage from '../post/post-image';
 import PostExcerpt from 'components/post-excerpt';
 import updatePostStatus from 'components/update-post-status';
 import utils from 'lib/posts/utils';
-import analytics from 'lib/analytics';
 import config from 'config';
+import { recordGoogleEvent } from 'state/analytics/actions';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getPostPreviewUrl } from 'state/posts/selectors';
@@ -33,9 +34,7 @@ import Comments from 'blocks/comments';
 import PostShare from 'blocks/post-share';
 import PostActions from 'blocks/post-actions';
 
-function recordEvent( eventAction ) {
-	analytics.ga.recordEvent( 'Posts', eventAction );
-}
+const recordEvent = partial( recordGoogleEvent, 'Posts' );
 
 function checkPropsChange( currentProps, nextProps, propArr ) {
 	for ( let i = 0; i < propArr.length; i++ ) {
@@ -47,10 +46,21 @@ function checkPropsChange( currentProps, nextProps, propArr ) {
 	return false;
 }
 
-const Post = React.createClass( {
-	displayName: 'Post',
+class Post extends Component {
+	static propTypes = {
+		// connected via Redux
+		setPreviewUrl: PropTypes.func.isRequired,
+		setLayoutFocus: PropTypes.func.isRequired,
+		recordViewPost: PropTypes.func.isRequired,
+		recordPreviewPost: PropTypes.func.isRequired,
+		recordCommentIconClick: PropTypes.func.isRequired,
+		recordPostTitleClick: PropTypes.func.isRequired,
+		recordPostExcerptClick: PropTypes.func.isRequired,
+		recordPublishPost: PropTypes.func.isRequired,
+		recordRestorePost: PropTypes.func.isRequired,
+		recordDeletePost: PropTypes.func.isRequired,
+		recordTrashPost: PropTypes.func.isRequired,
 
-	propTypes: {
 		// connected via updatePostStatus
 		buildUpdateTemplate: PropTypes.func.isRequired,
 		togglePageActions: PropTypes.func.isRequired,
@@ -60,15 +70,13 @@ const Post = React.createClass( {
 		previousStatus: PropTypes.string,
 		showMoreOptions: PropTypes.bool.isRequired,
 		showPageActions: PropTypes.bool.isRequired,
-	},
+	}
 
-	getInitialState() {
-		return {
-			showComments: false,
-			showShare: false,
-			commentsFilter: 'all'
-		};
-	},
+	state = {
+		showComments: false,
+		showShare: false,
+		commentsFilter: 'all',
+	}
 
 	shouldComponentUpdate( nextProps, nextState ) {
 		if ( ! shallowEqual( this.state, nextState ) ) {
@@ -88,77 +96,34 @@ const Post = React.createClass( {
 			'updatedStatus',
 		];
 		return checkPropsChange( this.props, nextProps, propsToCheck );
-	},
+	}
 
-	analyticsEvents: {
-		viewPost() {
-			recordEvent( 'Clicked View Post' );
-		},
-		previewPost() {
-			recordEvent( 'Clicked Preview Post' );
-		},
-		editPost() {
-			recordEvent( 'Clicked Edit Post' );
-		},
-		commentIconClick() {
-			recordEvent( 'Clicked Post Comment Icon/Number' );
-		},
-		likeIconClick() {
-			recordEvent( 'Clicked Post Likes Icon/Number' );
-		},
-		dateClick() {
-			recordEvent( 'Clicked Post Date' );
-		},
-		featuredImageStandardClick() {
-			recordEvent( 'Clicked Post Featured Image Standard' );
-		},
-		featuredImageLargeClick() {
-			recordEvent( 'Clicked Post Featured Image Large' );
-		},
-		postTitleClick() {
-			recordEvent( 'Clicked Post Title' );
-		},
-		postExcerptClick() {
-			recordEvent( 'Clicked Post Excerpt' );
-		},
-		viewStats() {
-			recordEvent( 'Clicked View Post Stats' );
-		}
-
-	},
-
-	publishPost() {
+	publishPost = () => {
 		this.props.updatePostStatus( 'publish' );
-		recordEvent( 'Clicked Publish Post' );
-	},
+		this.props.recordPublishPost();
+	}
 
-	restorePost() {
+	restorePost = () => {
 		this.props.updatePostStatus( 'restore' );
-		recordEvent( 'Clicked Restore Post' );
-	},
+		this.props.recordRestorePost();
+	}
 
-	deletePost() {
+	deletePost = () => {
 		this.props.updatePostStatus( 'delete' );
-		recordEvent( 'Clicked Delete Post' );
-	},
+		this.props.recordDeletePost();
+	}
 
-	trashPost() {
+	trashPost = () => {
 		this.props.updatePostStatus( 'trash' );
-		recordEvent( 'Clicked Trash Post' );
-	},
-
-	canUserEditPost() {
-		const post = this.props.post;
-		return post.capabilities && post.capabilities.edit_post && post.status !== 'trash';
-	},
+		this.props.recordTrashPost();
+	}
 
 	getPostClass() {
-		return classNames( {
-			post: true,
-			'is-protected': ( this.props.post.password ) ? true : false,
-			'show-more-options': this.props.showMoreOptions
+		return classNames( 'post', {
+			'is-protected': !! this.props.post.password,
+			'show-more-options': this.props.showMoreOptions,
 		} );
-	},
+	}
 
 	getTitle() {
 		if ( this.props.post.title ) {
@@ -167,12 +132,15 @@ const Post = React.createClass( {
 					href={ this.getContentLinkURL() }
 					className="post__title-link post__content-link"
 					target={ this.getContentLinkTarget() }
-					onClick={ this.analyticsEvents.postTitleClick }>
-					<h4 className="post__title">{ this.props.post.title }</h4>
+					onClick={ this.props.recordPostTitleClick }>
+					<PostFormat format={ this.props.post.format } />
+					<h4 className="post__title">
+						{ this.props.post.title }
+					</h4>
 				</a>
 			);
 		}
-	},
+	}
 
 	getPostImage() {
 		if ( ! this.props.postImages ) {
@@ -188,12 +156,12 @@ const Post = React.createClass( {
 		return (
 			<PostImage postImages={ this.props.postImages } />
 		);
-	},
+	}
 
 	getTrimmedExcerpt() {
 		const excerpt = this.props.post.excerpt;
 		return ( excerpt.length <= 220 ) ? excerpt : excerpt.substring( 0, 220 ) + '\u2026';
-	},
+	}
 
 	getExcerpt() {
 		let excerptElement;
@@ -213,12 +181,12 @@ const Post = React.createClass( {
 				href={ this.getContentLinkURL() }
 				className="post__excerpt post__content-link"
 				target={ this.getContentLinkTarget() }
-				onClick={ this.analyticsEvents.postExcerptClick }
+				onClick={ this.props.recordPostExcerptClick }
 			>
 				{ excerptElement }
 			</a>
 		);
-	},
+	}
 
 	getHeader() {
 		if ( this.props.selectedSiteId && this.props.isPostFromSingleUserSite ) {
@@ -231,7 +199,7 @@ const Post = React.createClass( {
 				path={ this.props.path }
 				showAuthor={ ! this.props.isPostFromSingleUserSite } />
 		);
-	},
+	}
 
 	getContent() {
 		const post = this.props.post;
@@ -244,7 +212,7 @@ const Post = React.createClass( {
 				</div>
 			);
 		}
-	},
+	}
 
 	getContentLinkURL() {
 		const post = this.props.post;
@@ -255,7 +223,7 @@ const Post = React.createClass( {
 			return null;
 		}
 		return post.URL;
-	},
+	}
 
 	getContentLinkTarget() {
 		if ( utils.userCan( 'edit_post', this.props.post ) ) {
@@ -263,40 +231,43 @@ const Post = React.createClass( {
 		}
 
 		return '_blank';
-	},
+	}
 
-	toggleComments() {
+	toggleComments = () => {
 		this.setState( {
 			showComments: ! this.state.showComments
 		} );
-		this.analyticsEvents.commentIconClick();
-	},
+		this.props.recordCommentIconClick();
+	}
 
-	toggleShare() {
+	toggleShare = () => {
 		this.setState( { showShare: ! this.state.showShare } );
-	},
+	}
 
-	setCommentsFilter( commentsFilter ) {
+	setCommentsFilter = ( commentsFilter ) => {
 		this.setState( { commentsFilter } );
-	},
+	}
 
-	viewPost( event ) {
+	viewPost = ( event ) => {
 		event.preventDefault();
 		const { isPreviewable, previewUrl, selectedSiteId } = this.props;
 
 		if ( this.props.post.status && this.props.post.status === 'future' ) {
-			this.analyticsEvents.previewPost();
+			this.props.recordPreviewPost();
 		} else {
-			this.analyticsEvents.viewPost();
+			this.props.recordViewPost();
 		}
 
-		if ( ! isPreviewable || ! selectedSiteId ) {
+		if (
+				( ! isPreviewable || ! selectedSiteId ) &&
+				typeof window === 'object'
+		) {
 			return window.open( previewUrl );
 		}
 
 		this.props.setPreviewUrl( previewUrl );
 		this.props.setLayoutFocus( 'preview' );
-	},
+	}
 
 	render() {
 		return (
@@ -333,6 +304,7 @@ const Post = React.createClass( {
 				{ this.state.showComments &&
 					<Comments
 						showCommentCount={ false }
+						commentCount = { this.props.post.discussion.comment_count }
 						post={ this.props.post }
 						showFilters={ isEnabled( 'comments/filters-in-posts' ) }
 						showModerationTools={ isEnabled( 'comments/moderation-tools-in-posts' ) }
@@ -353,7 +325,28 @@ const Post = React.createClass( {
 		);
 	}
 
-} );
+}
+
+const analyticsEvents = [
+	[ 'recordViewPost', 'Clicked View Post' ],
+	[ 'recordPreviewPost', 'Clicked Preview Post' ],
+	[ 'recordCommentIconClick', 'Clicked Post Comment Icon/Number' ],
+	[ 'recordPostTitleClick', 'Clicked Post Title' ],
+	[ 'recordPostExcerptClick', 'Clicked Post Excerpt' ],
+	[ 'recordPublishPost', 'Clicked Publish Post' ],
+	[ 'recordRestorePost', 'Clicked Restore Post' ],
+	[ 'recordDeletePost', 'Clicked Delete Post' ],
+	[ 'recordTrashPost', 'Clicked Trash Post' ],
+];
+
+const mapDispatch = {
+	setPreviewUrl,
+	setLayoutFocus,
+	...analyticsEvents.reduce( ( actions, [ key, event ] ) => {
+		actions[ key ] = partial( recordEvent, event );
+		return actions;
+	}, {} ),
+};
 
 export default connect(
 	( state, { post } ) => {
@@ -383,5 +376,5 @@ export default connect(
 			)
 		};
 	},
-	{ setPreviewUrl, setLayoutFocus }
+	mapDispatch
 )( updatePostStatus( localize( Post ) ) );

@@ -233,6 +233,7 @@ export const PLANS_LIST = {
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
 		] ),
@@ -298,6 +299,7 @@ export const PLANS_LIST = {
 			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_NO_ADS,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
 			FEATURE_BUSINESS_ONBOARDING,
@@ -306,7 +308,6 @@ export const PLANS_LIST = {
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING,
-			isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 		] ),
 		getPromotedFeatures: () => [
 			FEATURE_UNLIMITED_STORAGE,
@@ -374,8 +375,8 @@ export const PLANS_LIST = {
 		], plan ),
 		getPathSlug: () => 'premium',
 		getDescription: () => i18n.translate(
-				'Generate income and save on video hosting costs. ' +
-				'Improve security with daily backups, malware scanning, and spam defense.'
+				'Automated backups and malware scanning, expert priority ' +
+				'support, marketing automation, and more.'
 		),
 		getFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -386,6 +387,7 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
@@ -408,8 +410,8 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'premium-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getDescription: () => i18n.translate(
-				'Generate income and save on video hosting costs. ' +
-				'Improve security with daily backups, malware scanning, and spam defense.'
+				'Automated backups and malware scanning, expert priority ' +
+				'support, marketing automation, and more.'
 		),
 		getFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -420,6 +422,7 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
@@ -442,8 +445,8 @@ export const PLANS_LIST = {
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getPathSlug: () => 'jetpack-personal',
 		getDescription: () => i18n.translate(
-				'Essentials for every site. The most affordable solution to keep your' +
-				' personal or small business site backed up and spam-free.'
+				'Security essentials for every WordPress site including ' +
+				'automated backups and priority support.'
 		),
 		getFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -472,8 +475,8 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'jetpack-personal-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
 		getDescription: () => i18n.translate(
-				'Essentials for every site. The most affordable solution to keep your' +
-				' personal or small business site backed up and spam-free.'
+				'Security essentials for every WordPress site including ' +
+				'automated backups and priority support.'
 		),
 		getFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -509,8 +512,8 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'professional',
 
 		getDescription: () => i18n.translate(
-			'Real-time backups, unlimited archives, and one-click threat ' +
-			'resolution. Also includes SEO tools, and unlimited video hosting.'
+			'WordPress sites from start to finish: unlimited premium ' +
+			'themes, business class security, and marketing automation.'
 		),
 		getFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -521,6 +524,7 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
@@ -530,8 +534,8 @@ export const PLANS_LIST = {
 			FEATURE_UNLIMITED_PREMIUM_THEMES,
 		] ),
 		getSignupFeatures: () => compact( [
+			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-			FEATURE_VIDEO_CDN_UNLIMITED,
 			FEATURE_SEO_PREVIEW_TOOLS,
 			FEATURE_ALL_PREMIUM_FEATURES
 		] ),
@@ -552,8 +556,8 @@ export const PLANS_LIST = {
 			PLAN_JETPACK_PERSONAL_MONTHLY
 		], plan ),
 		getDescription: () => i18n.translate(
-			'Real-time backups, unlimited archives, and one-click threat ' +
-			'resolution. Also includes SEO tools, and unlimited video hosting.'
+			'WordPress sites from start to finish: unlimited premium ' +
+			'themes, business class security, and marketing automation.'
 		),
 		getFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -564,6 +568,7 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
@@ -1229,32 +1234,6 @@ export function getPlanClass( plan ) {
 		case PLAN_JETPACK_BUSINESS:
 		case PLAN_JETPACK_BUSINESS_MONTHLY:
 			return 'is-business-plan';
-		default:
-			return '';
-	}
-}
-
-export function getMonthlyPlanByYearly( plan ) {
-	switch ( plan ) {
-		case PLAN_JETPACK_PREMIUM:
-			return PLAN_JETPACK_PREMIUM_MONTHLY;
-		case PLAN_JETPACK_BUSINESS:
-			return PLAN_JETPACK_BUSINESS_MONTHLY;
-		case PLAN_JETPACK_PERSONAL:
-			return PLAN_JETPACK_PERSONAL_MONTHLY;
-		default:
-			return '';
-	}
-}
-
-export function getYearlyPlanByMonthly( plan ) {
-	switch ( plan ) {
-		case PLAN_JETPACK_PREMIUM_MONTHLY:
-			return PLAN_JETPACK_PREMIUM;
-		case PLAN_JETPACK_BUSINESS_MONTHLY:
-			return PLAN_JETPACK_BUSINESS;
-		case PLAN_JETPACK_PERSONAL_MONTHLY:
-			return PLAN_JETPACK_PERSONAL;
 		default:
 			return '';
 	}

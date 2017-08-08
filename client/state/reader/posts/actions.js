@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -67,7 +68,7 @@ export function fetchPost( postKey ) {
 							error: err,
 						},
 					],
-				} ),
+				} )
 		);
 }
 

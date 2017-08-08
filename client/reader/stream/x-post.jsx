@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -97,7 +98,7 @@ class CrossPost extends PureComponent {
 						label: <span className="reader__x-post-label" />,
 						blogNames: this.getXPostedToContent(),
 					},
-				},
+				}
 			);
 		} else {
 			label = this.props.translate(
@@ -112,7 +113,7 @@ class CrossPost extends PureComponent {
 						label: <span className="reader__x-post-label" />,
 						blogNames: this.getXPostedToContent(),
 					},
-				},
+				}
 			);
 		}
 		return label;

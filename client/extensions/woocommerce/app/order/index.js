@@ -54,14 +54,14 @@ class Order extends Component {
 	}
 
 	render() {
-		const { className, isSaving, order, site, translate } = this.props;
+		const { className, isSaving, order, orderId, site, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
 
 		const breadcrumbs = [
 			( <a href={ getLink( '/store/orders/:site/', site ) }>{ translate( 'Orders' ) }</a> ),
-			( <span>{ translate( 'Order Details' ) }</span> ),
+			( <span>{ translate( 'Order %(orderId)s Details', { args: { orderId: `#${ orderId }` } } ) }</span> ),
 		];
 		return (
 			<Main className={ className }>

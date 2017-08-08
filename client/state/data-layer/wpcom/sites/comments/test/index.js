@@ -149,6 +149,7 @@ describe( '#receiveCommentSuccess', () => {
 			siteId,
 			postId: response.post.ID,
 			comments: [ response ],
+			commentById: true,
 		} );
 	} );
 } );

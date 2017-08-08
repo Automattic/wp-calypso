@@ -87,6 +87,7 @@
 
 .editor-ground-control__toggle-sidebar {
 	margin-right: 8px;
+	border-radius: 0;
 }
 
 .focus-sidebar .editor-ground-control__toggle-sidebar:hover,
@@ -254,4 +255,11 @@
 		display: none;
 	}
 
+}
+
+.popover {
+	&.editor-ground-control__post-schedule-popover {
+		/* applying a lower z-index to ensure it is layered behind global notice */
+		z-index: z-index( 'root', '.popover.editor-ground-control__post-schedule-popover' );
+	}
 }

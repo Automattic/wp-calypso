@@ -89,6 +89,7 @@ class RequestLoginEmailForm extends React.Component {
 		}
 
 		const submitEnabled = (
+			emailAddress.length &&
 			! isFetching &&
 			! emailRequested &&
 			! requestError

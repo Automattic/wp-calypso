@@ -1133,6 +1133,25 @@ Undocumented.prototype.readA8C = function( query, fn ) {
 	return this.wpcom.req.get( '/read/a8c', query, fn );
 };
 
+Undocumented.prototype.readConversations = function( query, fn ) {
+	debug( '/read/conversations' );
+	const params = {
+		...query,
+		apiVersion: '1.2'
+	};
+	return this.wpcom.req.get( '/read/conversations', params, fn );
+};
+
+Undocumented.prototype.readA8cConversations = function( query, fn ) {
+	debug( '/read/conversations' );
+	const params = {
+		...query,
+		index: 'a8c',
+		apiVersion: '1.2'
+	};
+	return this.wpcom.req.get( '/read/conversations', params, fn );
+};
+
 Undocumented.prototype.readFeed = function( query, fn ) {
 	var params = omit( query, 'ID' );
 	debug( '/read/feed' );
@@ -1586,6 +1605,10 @@ Undocumented.prototype.validateNewUser = function( data, fn ) {
  */
 Undocumented.prototype.requestMagicLoginEmail = function( data, fn ) {
 	restrictByOauthKeys( data );
+
+	data.locale = i18n.getLocaleSlug();
+	data.lang_id = i18n.getLanguage( data.locale ).value;
+
 	return this.wpcom.req.post( '/auth/send-login-email', {
 		apiVersion: '1.2',
 	}, data, fn );

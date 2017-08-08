@@ -4,58 +4,70 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { noop, range } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
-import CompactCard from 'components/card/compact';
-import FormRadio from 'components/forms/form-radio';
+import ProductListItem from './list-item';
+import ProductListItemPlaceholder from './list-item-placeholder';
 
 class ProductList extends Component {
 	static propTypes = {
-		paymentButtons: PropTypes.array.isRequired,
+		siteId: PropTypes.number.isRequired,
+		paymentButtons: PropTypes.array,
 		selectedPaymentId: PropTypes.number,
 		onSelectedChange: PropTypes.func,
+		onEditClick: PropTypes.func,
+		onTrashClick: PropTypes.func,
 	};
 
 	static defaultProps = {
 		selectedPaymentId: null,
 		onSelectedChange: noop,
+		onEditClick: noop,
+		onTrashClick: noop,
 	};
 
-	handleRadioChange = event => {
-		this.props.onSelectedChange( parseInt( event.target.value ) );
-	};
+	renderListItems() {
+		const {
+			siteId,
+			paymentButtons,
+			selectedPaymentId,
+			onSelectedChange,
+			onEditClick,
+			onTrashClick,
+		} = this.props;
+
+		if ( ! paymentButtons ) {
+			// Render 2 placeholder items
+			return range( 2 ).map( i => <ProductListItemPlaceholder key={ i } /> );
+		}
+
+		return paymentButtons.map( ( { ID: paymentId, title, price, currency, featuredImageId } ) =>
+			<ProductListItem
+				key={ paymentId }
+				siteId={ siteId }
+				paymentId={ paymentId }
+				isSelected={ selectedPaymentId === paymentId }
+				title={ title }
+				price={ price }
+				currency={ currency }
+				featuredImageId={ featuredImageId }
+				onSelectedChange={ onSelectedChange }
+				onEditClick={ onEditClick }
+				onTrashClick={ onTrashClick }
+			/>,
+		);
+	}
 
 	render() {
-		const { paymentButtons, selectedPaymentId } = this.props;
-
 		return (
 			<div className="editor-simple-payments-modal__list">
-				{ paymentButtons.map( ( { ID: paymentId, title, price, currency } ) => {
-					const radioId = `simple-payments-list-item-radio-${ paymentId }`;
-
-					return (
-						<CompactCard className="editor-simple-payments-modal__list-item" key={ paymentId }>
-							<FormRadio
-								name="selection"
-								id={ radioId }
-								value={ paymentId }
-								checked={ selectedPaymentId === paymentId }
-								onChange={ this.handleRadioChange }
-							/>
-							<label className="editor-simple-payments-modal__list-label" htmlFor={ radioId }>
-								<div>{ title }</div><div>{ formatCurrency( price, currency ) }</div>
-							</label>
-						</CompactCard>
-					);
-				} ) }
+				{ this.renderListItems() }
 			</div>
 		);
 	}
 }
 
-export default localize( ProductList );
+export default ProductList;

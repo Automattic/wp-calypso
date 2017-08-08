@@ -102,7 +102,7 @@ export const preloadCache = ( siteId ) => {
 			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
 			{ path: '/wp-super-cache/v1/preload', body: JSON.stringify( { enable: true } ), json: true } )
 			.then( () => {
-				dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS, siteId } );
+				dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS, siteId, preloading: true } );
 				dispatch( successNotice(
 					translate( 'Cache preload started successfully on %(siteTitle)s.',
 						{ args: { siteTitle: getSiteTitle( getState(), siteId ) } }
@@ -135,7 +135,7 @@ export const cancelPreloadCache = ( siteId ) => {
 			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
 			{ path: '/wp-super-cache/v1/preload', body: JSON.stringify( { enable: false } ), json: true } )
 			.then( () => {
-				dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS, siteId } );
+				dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS, siteId, preloading: false } );
 				dispatch( successNotice(
 					translate( 'Cache preload cancelled successfully on %(siteTitle)s.',
 						{ args: { siteTitle: getSiteTitle( getState(), siteId ) } }

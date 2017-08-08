@@ -132,6 +132,10 @@ function urlToDomainAndPath( urlToConvert ) {
  * @return {Boolean} Does it appear to be a URL?
  */
 function resemblesUrl( query ) {
+	if ( ! query ) {
+		return false;
+	}
+
 	let parsedUrl = parseUrl( query );
 
 	// Make sure the query has a protocol - hostname ends up blank otherwise

@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { get, flowRight } from 'lodash';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +15,6 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
 import LanguageSelector from 'components/forms/language-selector';
-import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
 import SectionHeader from 'components/section-header';
 import config from 'config';
 import notices from 'notices';
@@ -27,7 +26,6 @@ import FormRadio from 'components/forms/form-radio';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
-import JetpackSyncPanel from './jetpack-sync-panel';
 import SiteIconSetting from './site-icon-setting';
 import Banner from 'components/banner';
 import { isBusiness } from 'lib/products-values';
@@ -232,69 +230,6 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	showPublicPostTypesCheckbox() {
-		const { supportsPublicPostTypesCheckbox } = this.props;
-
-		if ( ! config.isEnabled( 'manage/option_sync_non_public_post_stati' ) ) {
-			return false;
-		}
-
-		if ( ! supportsPublicPostTypesCheckbox ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	syncNonPublicPostTypes() {
-		const { fields, handleToggle, isRequestingSettings, translate } = this.props;
-		if ( ! this.showPublicPostTypesCheckbox() ) {
-			return null;
-		}
-
-		return (
-			<CompactCard>
-				<form>
-					<ul id="settings-jetpack">
-						<li>
-							<CompactFormToggle
-								checked={ !! fields.jetpack_sync_non_public_post_stati }
-								disabled={ isRequestingSettings }
-								onChange={ handleToggle( 'jetpack_sync_non_public_post_stati' ) }
-							>
-								{ translate(
-									'Allow synchronization of Posts and Pages with non-public post statuses'
-								) }
-							</CompactFormToggle>
-							<FormSettingExplanation isIndented>
-								{ translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }
-							</FormSettingExplanation>
-						</li>
-					</ul>
-				</form>
-			</CompactCard>
-		);
-	}
-
-	jetpackDisconnectOption() {
-		const { site, siteIsJetpack, translate } = this.props;
-		const isAutomatedTransfer = get( site, 'options.is_automated_transfer', false );
-
-		if ( ! siteIsJetpack || isAutomatedTransfer ) {
-			return null;
-		}
-
-		const disconnectText = translate( 'Disconnect Site', {
-			context: 'Jetpack: Action user takes to disconnect Jetpack site from .com link in general site settings'
-		} );
-
-		return <DisconnectJetpackButton
-				site={ site }
-				text= { disconnectText }
-				redirect= "/stats"
-				linkDisplay={ false } />;
-	}
-
 	holidaySnowOption() {
 		// Note that years and months below are zero indexed
 		const { fields, handleToggle, isRequestingSettings, moment, supportsHolidaySnowOption, translate } = this.props,
@@ -355,53 +290,6 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	renderJetpackSyncPanel() {
-		const { supportsJetpackSync } = this.props;
-		if ( ! supportsJetpackSync ) {
-			return null;
-		}
-
-		return (
-			<JetpackSyncPanel />
-		);
-	}
-
-	renderApiCache() {
-		const { fields, translate, isRequestingSettings, handleToggle } = this.props;
-
-		if ( ! this.showApiCacheCheckbox() ) {
-			return null;
-		}
-
-		return (
-			<CompactCard>
-				<CompactFormToggle
-					checked={ !! fields.api_cache }
-					disabled={ isRequestingSettings }
-					onChange={ handleToggle( 'api_cache' ) }
-				>
-					{ translate(
-						'Use synchronized data to boost performance'
-					) } (a8c-only experimental feature)
-				</CompactFormToggle>
-			</CompactCard>
-		);
-	}
-
-	showApiCacheCheckbox() {
-		const { supportsApiCacheCheckbox } = this.props;
-
-		if ( ! config.isEnabled( 'jetpack/api-cache' ) ) {
-			return false;
-		}
-
-		if ( ! supportsApiCacheCheckbox ) {
-			return false;
-		}
-
-		return true;
-	}
-
 	render() {
 		const {
 			handleSubmitForm,
@@ -413,7 +301,7 @@ class SiteSettingsFormGeneral extends Component {
 			translate
 		} = this.props;
 		if ( siteIsJetpack && ! site.hasMinimumJetpackVersion ) {
-			return this.jetpackDisconnectOption();
+			return null;
 		}
 
 		const classes = classNames( 'site-settings__general-settings', {
@@ -495,36 +383,6 @@ class SiteSettingsFormGeneral extends Component {
 						}
 					</div>
 				}
-
-				{ siteIsJetpack
-					? <div className="site-settings__general-jetpack">
-						<SectionHeader label={ translate( 'Jetpack' ) }>
-							{ this.jetpackDisconnectOption() }
-							{ this.showPublicPostTypesCheckbox() || this.showApiCacheCheckbox()
-								? <Button
-									compact={ true }
-									onClick={ handleSubmitForm }
-									primary={ true }
-									type="submit"
-									disabled={ isRequestingSettings || isSavingSettings }>
-									{ isSavingSettings
-										? translate( 'Saving…' )
-										: translate( 'Save Settings' )
-									}
-									</Button>
-								: null
-							}
-						</SectionHeader>
-
-						{ this.renderJetpackSyncPanel() }
-						{ this.renderApiCache() }
-						{ this.syncNonPublicPostTypes() }
-
-						<CompactCard href={ '../security/' + siteSlug }>
-							{ translate( 'View Jetpack Monitor Settings' ) }
-						</CompactCard>
-					</div>
-					: null }
 			</div>
 		);
 	}
@@ -556,10 +414,7 @@ const connectComponent = connect(
 		return {
 			siteIsJetpack,
 			siteSlug: getSelectedSiteSlug( state ),
-			supportsPublicPostTypesCheckbox: siteIsJetpack && ! isJetpackMinimumVersion( state, siteId, '4.2' ),
 			supportsHolidaySnowOption: siteIsJetpack && isJetpackMinimumVersion( state, siteId, '4.0' ),
-			supportsJetpackSync: siteIsJetpack && isJetpackMinimumVersion( state, siteId, '4.2-alpha' ),
-			supportsApiCacheCheckbox: siteIsJetpack && isJetpackMinimumVersion( state, siteId, '4.4.1' ),
 		};
 	},
 	null,
@@ -575,9 +430,7 @@ const getFormSettings = settings => {
 		timezone_string: '',
 		blog_public: '',
 		admin_url: '',
-		jetpack_sync_non_public_post_stati: false,
 		holidaysnow: false,
-		api_cache: false
 	};
 
 	if ( ! settings ) {
@@ -591,11 +444,8 @@ const getFormSettings = settings => {
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
 		timezone_string: settings.timezone_string,
-		jetpack_sync_non_public_post_stati: settings.jetpack_sync_non_public_post_stati,
 
 		holidaysnow: !! settings.holidaysnow,
-
-		api_cache: settings.api_cache
 	};
 
 	// handling `gmt_offset` and `timezone_string` values

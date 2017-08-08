@@ -25,6 +25,7 @@ export default class EditorSidebar extends Component {
 		toggleSidebar: PropTypes.func,
 		setPostDate: PropTypes.func,
 		isPrivate: PropTypes.bool,
+		confirmationSidebarStatus: PropTypes.string,
 	}
 
 	render() {
@@ -39,6 +40,7 @@ export default class EditorSidebar extends Component {
 			type,
 			setPostDate,
 			isPostPrivate,
+			confirmationSidebarStatus,
 		} = this.props;
 
 		return (
@@ -61,6 +63,7 @@ export default class EditorSidebar extends Component {
 					onPrivatePublish={ onPublish }
 					onSave={ onSave }
 					isPostPrivate={ isPostPrivate }
+					confirmationSidebarStatus={ confirmationSidebarStatus }
 				/>
 				<SidebarFooter>
 					<EditorDeletePost

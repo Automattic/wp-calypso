@@ -36,6 +36,8 @@ const _defaultQuery = {
 	order: 'DESC',
 	author: false,
 	search: false,
+	category: false,
+	tag: false,
 	perPage: 20
 };
 
@@ -348,6 +350,14 @@ export default function( id ) {
 				params.search = query.search;
 			}
 
+			if ( query.category ) {
+				params.category = query.category;
+			}
+
+			if ( query.tag ) {
+				params.tag = query.tag;
+			}
+
 			if ( ! params.siteId ) {
 				// Only query from visible sites
 				params.site_visibility = 'visible';
@@ -370,6 +380,14 @@ export default function( id ) {
 
 			if ( query.search ) {
 				params.search = query.search;
+			}
+
+			if ( query.category ) {
+				params.category = query.category;
+			}
+
+			if ( query.tag ) {
+				params.tag = query.tag;
 			}
 
 			if ( ! params.siteId ) {

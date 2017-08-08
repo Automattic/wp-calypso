@@ -13,6 +13,7 @@ import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import CommentList from './comment-list';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 export class CommentsManagement extends Component {
 	static propTypes = {
@@ -38,12 +39,14 @@ export class CommentsManagement extends Component {
 
 		return (
 			<Main className="comments" wideLayout>
-				<PageViewTracker path={ basePath } title="Manage Comments" />
-				<DocumentHead title={ translate( 'Manage Comments' ) } />
+				<PageViewTracker path={ basePath } title="Comments" />
+				<DocumentHead title={ translate( 'Comments' ) } />
+				<SidebarNavigation />
 				<CommentList
 					siteId={ siteId }
 					siteFragment={ siteFragment }
 					status={ status }
+					order={ 'desc' }
 				/>
 			</Main>
 		);

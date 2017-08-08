@@ -58,7 +58,7 @@ import Site from 'blocks/site';
 import StatusLabel from 'post-editor/editor-status-label';
 import { editedPostHasContent } from 'state/selectors';
 import EditorGroundControl from 'post-editor/editor-ground-control';
-import { isMobile } from 'lib/viewport';
+import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
 
 export const PostEditor = React.createClass( {
@@ -188,7 +188,7 @@ export const PostEditor = React.createClass( {
 
 	useDefaultSidebarFocus( nextProps ) {
 		const props = nextProps || this.props;
-		if ( ! isMobile() && ( props.editorSidebarPreference === 'open' || props.hasBrokenPublicizeConnection ) ) {
+		if ( isWithinBreakpoint( '>660px' ) && ( props.editorSidebarPreference === 'open' || props.hasBrokenPublicizeConnection ) ) {
 			this.props.setLayoutFocus( 'sidebar' );
 		}
 	},
@@ -275,6 +275,7 @@ export const PostEditor = React.createClass( {
 					onPublish={ this.onPublish }
 					post={ this.state.post }
 					savedPost={ this.state.savedPost }
+					setPostDate={ this.setPostDate }
 					setStatus={ this.setConfirmationSidebar }
 					site={ site }
 					status={ this.state.confirmationSidebar }
@@ -287,6 +288,7 @@ export const PostEditor = React.createClass( {
 						setPostDate={ this.setPostDate }
 						hasContent={ this.state.hasContent }
 						isConfirmationSidebarEnabled={ isConfirmationFeatureEnabled }
+						confirmationSidebarStatus={ this.state.confirmationSidebar }
 						isDirty={ this.state.isDirty || this.props.dirty }
 						isSaveBlocked={ this.isSaveBlocked() }
 						isPublishing={ this.state.isPublishing }
@@ -374,7 +376,7 @@ export const PostEditor = React.createClass( {
 								onFocus={ this.onEditorFocus }
 								onMouseUp={ this.copySelectedText }
 								onBlur={ this.copySelectedText }
-								onTextEditorChange={ this.onEditorContentChange } />
+								onTextEditorChange={ this.onEditorTextContentChange } />
 						</div>
 						<EditorWordCount
 							selectedText={ this.state.selectedText }
@@ -392,6 +394,7 @@ export const PostEditor = React.createClass( {
 						setPostDate={ this.setPostDate }
 						onSave={ this.onSave }
 						isPostPrivate={ utils.isPrivate( this.state.post ) }
+						confirmationSidebarStatus={ this.state.confirmationSidebar }
 						/>
 					{ this.props.isSitePreviewable
 						? <EditorPreview
@@ -402,7 +405,7 @@ export const PostEditor = React.createClass( {
 							isLoading={ this.state.isLoading }
 							isFullScreen={ this.state.isPostPublishPreview }
 							previewUrl={ this.getPreviewUrl() }
-							externalUrl={ this.getPreviewUrl() }
+							externalUrl={ this.getExternalUrl() }
 							editUrl={ this.props.editPath }
 							defaultViewportDevice={ this.state.isPostPublishPreview ? 'computer' : 'tablet' }
 							revision={ get( this.state, 'post.revisions.length', 0 ) }
@@ -517,6 +520,11 @@ export const PostEditor = React.createClass( {
 	},
 
 	onEditorContentChange: function() {
+		this.debouncedSaveRawContent();
+		this.debouncedAutosave();
+	},
+
+	onEditorTextContentChange: function() {
 		if ( 'open' === this.state.confirmationSidebar ) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'content_edit' } );
 		}
@@ -674,11 +682,21 @@ export const PostEditor = React.createClass( {
 	getPreviewUrl: function() {
 		const { post, previewAction, previewUrl } = this.state;
 
-		if ( previewAction === 'view' ) {
+		if ( previewAction === 'view' && post ) {
 			return post.URL;
 		}
 
 		return previewUrl;
+	},
+
+	getExternalUrl: function() {
+		const { post } = this.state;
+
+		if ( post ) {
+			return post.URL;
+		}
+
+		return this.getPreviewUrl();
 	},
 
 	onPreview: function( action, event ) {
@@ -876,6 +894,15 @@ export const PostEditor = React.createClass( {
 			this.props.editPost( siteId, postId, { date: dateValue } );
 		}
 
+		if (
+			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.isPostPublishConfirmationABTest
+		) {
+			analytics.tracks.recordEvent( 'calypso_editor_publish_date_change', {
+				context: 'open' === this.state.confirmationSidebar ? 'confirmation-sidebar' : 'post-settings',
+			} );
+		}
+
 		this.checkForDateChange( dateValue );
 	},
 
@@ -887,8 +914,13 @@ export const PostEditor = React.createClass( {
 		}
 
 		const currentDate = this.moment( date );
-		const ModifiedDate = this.moment( savedPost.date );
-		const diff = !! currentDate.diff( ModifiedDate );
+		const modifiedDate = this.moment( savedPost.date );
+		const dateChange = ! (
+			currentDate.get( 'date' ) === modifiedDate.get( 'date' ) &&
+			currentDate.get( 'month' ) === modifiedDate.get( 'month' ) &&
+			currentDate.get( 'year' ) === modifiedDate.get( 'year' )
+		);
+		const diff = !! currentDate.diff( modifiedDate ) && !! dateChange;
 
 		if ( savedPost.type === 'post' && utils.isPublished( savedPost ) && diff ) {
 			this.warnPublishDateChange();

@@ -3,11 +3,17 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
-const FlowProgressIndicator = ( { flowLength, positionInFlow, translate } ) => {
+const FlowProgressIndicator = ( { flowLength, positionInFlow, translate, flowName } ) => {
 	if ( flowLength > 1 ) {
+		const flowClassName = classNames(
+			'flow-progress-indicator',
+			`flow-progress-indicator__${ flowName }`
+		);
+
 		return (
-			<div className="flow-progress-indicator">
+			<div className={ flowClassName }>
 				{
 					translate( 'Step %(stepNumber)d of %(stepTotal)d', {
 						args: {

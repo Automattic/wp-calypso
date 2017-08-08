@@ -21,6 +21,8 @@ import {
 	isSitePostsLastPageForQuery,
 	getSitePostsForQueryIgnoringPage,
 	isRequestingSitePostsForQueryIgnoringPage,
+	isEditedPostPrivate,
+	isPrivateEditedPostPasswordValid,
 	getEditedPost,
 	getPostEdits,
 	getEditedPostValue,
@@ -1083,6 +1085,220 @@ describe( 'selectors', () => {
 			}, 2916284, 841, 'discussion.pings_open' );
 
 			expect( editedPostValue ).to.be.true;
+		} );
+	} );
+
+	describe( 'isEditedPostPrivate()', () => {
+		it( 'should return false if the post does not exist', () => {
+			const privatePost = isEditedPostPrivate( {
+				posts: {
+					items: {},
+					queries: {},
+					edits: {}
+				}
+			}, 2916284, 841 );
+
+			expect( privatePost ).to.be.false;
+		} );
+
+		it( 'should return false if post password is a zero length string', () => {
+			const postObject = {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Hello World',
+				password: 'secret'
+			};
+			const privatePost = isEditedPostPrivate( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ]
+					},
+					queries: {
+						2916284: new PostQueryManager( {
+							items: { 841: postObject }
+						} )
+					},
+					edits: {
+						2916284: {
+							841: {
+								password: ''
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( privatePost ).to.be.false;
+		} );
+
+		it( 'should return true if post password is a non-zero length string', () => {
+			const postObject = {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Hello World',
+				password: ''
+			};
+			const privatePost = isEditedPostPrivate( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ]
+					},
+					queries: {
+						2916284: new PostQueryManager( {
+							items: { 841: postObject }
+						} )
+					},
+					edits: {
+						2916284: {
+							841: {
+								password: 'secret'
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( privatePost ).to.be.true;
+		} );
+
+		it( 'should return true if post password is whitespace only', () => {
+			const postObject = {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Hello World',
+				password: ''
+			};
+			const privatePost = isEditedPostPrivate( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ]
+					},
+					queries: {
+						2916284: new PostQueryManager( {
+							items: { 841: postObject }
+						} )
+					},
+					edits: {
+						2916284: {
+							841: {
+								password: ' '
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( privatePost ).to.be.true;
+		} );
+	} );
+
+	describe( 'isPrivateEditedPostPasswordValid()', () => {
+		it( 'should return false if the post does not exist', () => {
+			const isPasswordValid = isPrivateEditedPostPasswordValid( {
+				posts: {
+					items: {},
+					queries: {},
+					edits: {}
+				}
+			}, 2916284, 841 );
+
+			expect( isPasswordValid ).to.be.false;
+		} );
+
+		it( 'should return false if post password is a zero length string', () => {
+			const postObject = {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Hello World',
+				password: 'secret'
+			};
+			const isPasswordValid = isPrivateEditedPostPasswordValid( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ]
+					},
+					queries: {
+						2916284: new PostQueryManager( {
+							items: { 841: postObject }
+						} )
+					},
+					edits: {
+						2916284: {
+							841: {
+								password: ''
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( isPasswordValid ).to.be.false;
+		} );
+
+		it( 'should return true if post password is a non-zero length string', () => {
+			const postObject = {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Hello World',
+				password: ''
+			};
+			const isPasswordValid = isPrivateEditedPostPasswordValid( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ]
+					},
+					queries: {
+						2916284: new PostQueryManager( {
+							items: { 841: postObject }
+						} )
+					},
+					edits: {
+						2916284: {
+							841: {
+								password: 'secret'
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( isPasswordValid ).to.be.true;
+		} );
+
+		it( 'should return false if post password is whitespace only', () => {
+			const postObject = {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Hello World',
+				password: ''
+			};
+			const isPasswordValid = isPrivateEditedPostPasswordValid( {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ]
+					},
+					queries: {
+						2916284: new PostQueryManager( {
+							items: { 841: postObject }
+						} )
+					},
+					edits: {
+						2916284: {
+							841: {
+								password: ' '
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( isPasswordValid ).to.be.false;
 		} );
 	} );
 

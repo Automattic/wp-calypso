@@ -4,11 +4,11 @@
 import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
 import Main from 'components/main';
 import Card from 'components/card/compact';
 import Header from 'my-sites/domains/domain-management/components/header';
@@ -21,44 +21,45 @@ import SectionHeader from 'components/section-header';
 import support from 'lib/url/support';
 import { getDomainsBySite } from 'state/sites/domains/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'state/analytics/actions';
 
-const PrimaryDomain = React.createClass( {
-	mixins: [ analyticsMixin( 'domainManagement', 'primaryDomain' ) ],
-
-	propTypes: {
+class PrimaryDomain extends React.Component {
+	static propTypes = {
 		domains: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired
-	},
+	};
 
-	getInitialState() {
-		return {
-			loading: false,
-			errorMessage: null
-		};
-	},
+	state = {
+		loading: false,
+		errorMessage: null
+	};
 
 	getEditPath() {
 		return paths.domainManagementEdit(
 			this.props.selectedSite.slug,
 			this.props.selectedDomainName
 		);
-	},
+	}
 
-	goToEditDomainRoot() {
+	goToEditDomainRoot = () => {
 		page( this.getEditPath() );
-	},
+	};
 
-	handleCancelClick() {
-		this.recordEvent( 'cancelClick', getSelectedDomain( this.props ) );
+	handleCancelClick = () => {
+		this.props.cancelClick( getSelectedDomain( this.props ) );
 
 		page( this.getEditPath() );
-	},
+	};
 
-	handleConfirmClick() {
+	handleConfirmClick = () => {
 		if ( ! this.state.loading ) {
 			const domain = getSelectedDomain( this.props );
 
@@ -71,7 +72,7 @@ const PrimaryDomain = React.createClass( {
 				this.props.selectedSite.ID,
 				this.props.selectedDomainName,
 				( error, data ) => {
-					this.recordEvent( 'updatePrimaryDomainClick', domain, data && data.success );
+					this.props.updatePrimaryDomainClick( domain, data && data.success );
 
 					if ( ! error && data.success ) {
 						page.redirect( this.getEditPath() );
@@ -79,7 +80,7 @@ const PrimaryDomain = React.createClass( {
 					} else {
 						this.setState( {
 							loading: false,
-							errorMessage: error.message || this.translate(
+							errorMessage: error.message || this.props.translate(
 								'There was a problem updating your primary ' +
 								'domain. Please try again later or contact ' +
 								'support'
@@ -89,16 +90,19 @@ const PrimaryDomain = React.createClass( {
 				}
 			);
 		}
-	},
+	};
+
 	errors() {
 		if ( this.state.errorMessage ) {
 			return <Notice status="is-error">{ this.state.errorMessage }</Notice>;
 		}
-	},
+	}
+
 	render() {
 		const {
 			selectedDomainName,
 			selectedSite,
+			translate
 		} = this.props;
 		const primaryDomainSupportUrl = support.SETTING_PRIMARY_DOMAIN;
 
@@ -109,13 +113,13 @@ const PrimaryDomain = React.createClass( {
 				<Header
 					selectedDomainName={ selectedDomainName }
 					onClick={ this.goToEditDomainRoot }>
-					{ this.translate( 'Primary Domain' ) }
+					{ translate( 'Primary Domain' ) }
 				</Header>
 
 				{ this.errors() }
 
 				<SectionHeader
-					label={ this.translate(
+					label={ translate(
 						'Make %(domainName)s the Primary Domain',
 						{ args: { domainName: selectedDomainName } }
 					) }
@@ -124,7 +128,7 @@ const PrimaryDomain = React.createClass( {
 				<Card className="primary-domain-card">
 					<section>
 						<div className="primary-domain-explanation">
-							{ this.translate(
+							{ translate(
 								'Your primary domain is the address ' +
 								'visitors will see in their browser ' +
 								'when visiting your site.'
@@ -132,24 +136,27 @@ const PrimaryDomain = React.createClass( {
 							<a
 								href={ primaryDomainSupportUrl }
 								target="_blank"
-								rel="noopener noreferrer"
-							>{ this.translate( 'Learn More' ) }</a>
+								rel="noopener noreferrer">
+								{ translate( 'Learn More' ) }
+							</a>
 						</div>
 					</section>
 
 					<Notice
 						showDismiss={ false }
 						className="primary-domain-notice">
-						{ this.translate(
-							'The primary domain for this site is currently ' +
-							'%(oldDomainName)s. If you update the primary ' +
-							'domain, all other domains will redirect to ' +
-							'%(newDomainName)s.',
-							{ args: {
-								oldDomainName: selectedSite.domain,
-								newDomainName: selectedDomainName
-							} }
-						) }
+						{
+							translate(
+								'The primary domain for this site is currently ' +
+								'%(oldDomainName)s. If you update the primary ' +
+								'domain, all other domains will redirect to ' +
+								'%(newDomainName)s.',
+								{ args: {
+									oldDomainName: selectedSite.domain,
+									newDomainName: selectedDomainName
+								} }
+							)
+						}
 					</Notice>
 
 					<section className="primary-domain__actions">
@@ -157,37 +164,67 @@ const PrimaryDomain = React.createClass( {
 							className="button is-primary"
 							disabled={ this.state.loading }
 							onClick={ this.handleConfirmClick }>
-							{ this.translate( 'Update Primary Domain' ) }
+							{ translate( 'Update Primary Domain' ) }
 						</button>
 
 						<button
 							className="button"
 							disabled={ this.state.loading }
 							onClick={ this.handleCancelClick }>
-							{ this.translate( 'Cancel' ) }
+							{ translate( 'Cancel' ) }
 						</button>
 					</section>
 				</Card>
 			</Main>
 		);
 	}
-} );
+}
 
-const mapStateToProps = state => {
-	const selectedSite = getSelectedSite( state );
-	const domains = getDomainsBySite( state, selectedSite );
+const cancelClick = ( { name, type } ) => composeAnalytics(
+	recordGoogleEvent(
+		'Domain Management',
+		`Clicked "Cancel" Button on a ${ type } in Primary Domain`,
+		'Domain Name',
+		name
+	),
+	recordTracksEvent(
+		'calypso_domain_management_primary_domain_cancel_click',
+		{ section: type }
+	),
+);
 
-	return {
-		domains: {
-			isFetching: !! domains.length,
-			list: domains,
-		},
-		selectedSite,
-	};
-};
+const updatePrimaryDomainClick = ( { name, type }, success ) => composeAnalytics(
+	recordGoogleEvent(
+		'Domain Management',
+		`Clicked "Update Primary Domain" Button on a ${ type } in Primary Domain`,
+		'Domain Name',
+		name
+	),
+	recordTracksEvent(
+		'calypso_domain_management_primary_domain_update_primary_domain_click',
+		{
+			section: type,
+			success
+		}
+	),
+);
 
-const mapDispatchToProps = {
-	setPrimaryDomain: upgradesActions.setPrimaryDomain
-};
+export default connect(
+	state => {
+		const selectedSite = getSelectedSite( state );
+		const domains = getDomainsBySite( state, selectedSite );
 
-export default connect( mapStateToProps, mapDispatchToProps )( PrimaryDomain );
+		return {
+			domains: {
+				isFetching: !! domains.length,
+				list: domains,
+			},
+			selectedSite,
+		};
+	},
+	{
+		setPrimaryDomain: upgradesActions.setPrimaryDomain,
+		cancelClick,
+		updatePrimaryDomainClick,
+	}
+)( localize( PrimaryDomain ) );

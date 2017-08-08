@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { trim, initial, flatMap } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -25,6 +27,10 @@ import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searc
 import withDimensions from 'lib/with-dimensions';
 import SuggestionProvider from './suggestion-provider';
 import Suggestion from './suggestion';
+import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
+import { getReaderAliasedFollowFeedUrl } from 'state/selectors';
+import { SEARCH_RESULTS_URL_INPUT } from 'reader/follow-button/follow-sources';
+import FollowButton from 'reader/follow-button';
 
 const WIDE_DISPLAY_CUTOFF = 660;
 
@@ -39,7 +45,7 @@ const SpacerDiv = withDimensions( ( { width, height } ) =>
 			width: `${ width }px`,
 			height: `${ height }px`,
 		} }
-	/>,
+	/>
 );
 
 class SearchStream extends React.Component {
@@ -111,9 +117,11 @@ class SearchStream extends React.Component {
 	handleSearchTypeSelection = searchType => updateQueryArg( { show: searchType } );
 
 	render() {
-		const { query, translate, searchType, suggestions } = this.props;
+		const { query, translate, searchType, suggestions, readerAliasedFollowFeedUrl } = this.props;
 		const sortOrder = this.props.postsStore && this.props.postsStore.sortOrder;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
+		const showFollowByUrl = resemblesUrl( query );
+		const queryWithoutProtocol = withoutHttp( query );
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -148,7 +156,7 @@ class SearchStream extends React.Component {
 					railcar={ suggestion.railcar }
 				/>,
 				', ',
-			] ),
+			] )
 		);
 
 		return (
@@ -180,6 +188,15 @@ class SearchStream extends React.Component {
 								</ControlItem>
 							</SegmentedControl> }
 					</CompactCard>
+					{ showFollowByUrl &&
+						<div className="search-stream__url-follow">
+							<FollowButton
+								followLabel={ translate( 'Follow %s', { args: queryWithoutProtocol } ) }
+								followingLabel={ translate( 'Following %s', { args: queryWithoutProtocol } ) }
+								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
+								followSource={ SEARCH_RESULTS_URL_INPUT }
+							/>
+						</div> }
 					{ query &&
 						<SearchStreamHeader
 							selected={ searchType }
@@ -234,4 +251,7 @@ const wrapWithMain = Component => props =>
 	</ReaderMain>;
 /* eslint-enable */
 
-export default localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) );
+export default connect( ( state, ownProps ) => ( {
+	readerAliasedFollowFeedUrl:
+		ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
+} ) )( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );

@@ -56,6 +56,7 @@ const MediaLibraryContent = React.createClass( {
 		onAddMedia: React.PropTypes.func,
 		onMediaScaleChange: React.PropTypes.func,
 		onEditItem: React.PropTypes.func,
+		postId: React.PropTypes.number
 	},
 
 	getDefaultProps: function() {
@@ -91,6 +92,7 @@ const MediaLibraryContent = React.createClass( {
 			let status = 'is-error';
 			let upgradeNudgeName = undefined;
 			let upgradeNudgeFeature = undefined;
+			let tryAgain = false;
 
 			switch ( errorType ) {
 				case MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN:
@@ -142,6 +144,10 @@ const MediaLibraryContent = React.createClass( {
 						i18nOptions
 					);
 					break;
+				case MediaValidationErrors.SERVICE_FAILED:
+					message = translate( 'We are unable to retrieve your full media library.' );
+					tryAgain = true;
+					break;
 				default:
 					message = this.translate(
 						'%d file could not be uploaded because an error occurred while uploading.',
@@ -154,11 +160,24 @@ const MediaLibraryContent = React.createClass( {
 			return (
 				<Notice status={ status } text={ message } onDismissClick={ onDismiss } >
 					{ this.renderNoticeAction( upgradeNudgeName, upgradeNudgeFeature ) }
+					{ tryAgain && this.renderTryAgain() }
 				</Notice>
 			);
 		} );
 
 		return createFragment( notices );
+	},
+
+	renderTryAgain() {
+		return (
+			<NoticeAction onClick={ this.retryList }>
+				{ translate( 'Retry' ) }
+			</NoticeAction>
+		);
+	},
+
+	retryList() {
+		MediaActions.sourceChanged( this.props.site.ID );
 	},
 
 	renderNoticeAction( upgradeNudgeName, upgradeNudgeFeature ) {
@@ -232,6 +251,7 @@ const MediaLibraryContent = React.createClass( {
 		return (
 			<MediaListData
 				siteId={ this.props.site.ID }
+				postId={ this.props.postId }
 				filter={ this.props.filter }
 				search={ this.props.search }
 				source={ this.props.source }>

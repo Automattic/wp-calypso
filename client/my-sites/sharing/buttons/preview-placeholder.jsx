@@ -24,9 +24,6 @@ module.exports = React.createClass( {
 					<div className="sharing-buttons-preview__buttons" />
 
 					<div className="sharing-buttons-preview__reblog-like">
-						<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__reblog">
-							<span className="noticon noticon-reblog" />{ this.translate( 'Reblog' ) }
-						</a>
 						<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__like">
 							<span className="noticon noticon-like" />{ this.translate( 'Like' ) }
 						</a>

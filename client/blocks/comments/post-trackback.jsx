@@ -39,7 +39,9 @@ export default class PostTrackback extends React.Component {
 							>
 								{ unescapedAuthorName }
 							</a>
-						: <strong className="comments__comment-username">{ unescapedAuthorName }</strong> }
+						: <strong className="comments__comment-username">
+								{ unescapedAuthorName }
+							</strong> }
 
 					<div className="comments__comment-timestamp">
 						<a href={ comment.URL }>
@@ -47,7 +49,6 @@ export default class PostTrackback extends React.Component {
 						</a>
 					</div>
 				</div>
-
 			</li>
 		);
 	}

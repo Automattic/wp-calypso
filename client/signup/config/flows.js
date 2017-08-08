@@ -69,6 +69,18 @@ const flows = {
 		}
 	},
 
+	'rebrand-cities': {
+		steps: [ 'rebrand-cities-welcome', 'user' ],
+		destination: function( dependencies ) {
+			return '/plans/select/business/' + dependencies.siteSlug;
+		},
+		description: 'Create an account for REBRAND cities partnership',
+		lastModified: '2017-07-01',
+		meta: {
+			skipBundlingPlan: true
+		}
+	},
+
 	premium: {
 		steps: [ 'design-type', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
@@ -93,6 +105,13 @@ const flows = {
 		destination: getSiteDestination,
 		description: 'Preselect a theme to activate/buy from an external source',
 		lastModified: '2016-01-27'
+	},
+
+	'creative-mornings': {
+		steps: [ 'portfolio-themes', 'domains', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'Signup flow for creative mornings partnership',
+		lastModified: '2017-08-01'
 	},
 
 	subdomain: {

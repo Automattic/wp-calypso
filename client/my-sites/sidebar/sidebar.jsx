@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +17,7 @@ import Button from 'components/button';
 import config from 'config';
 import CurrentSite from 'my-sites/current-site';
 import productsValues from 'lib/products-values';
-import PublishMenu from './publish-menu';
+import ManageMenu from './manage-menu';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarFooter from 'layout/sidebar/footer';
@@ -33,8 +34,9 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 import {
 	canCurrentUser,
+	canCurrentUserManagePlugins,
 	getPrimarySiteId,
-	getSites,
+	hasJetpackSites,
 	isDomainOnlySite,
 	isSiteAutomatedTransfer
 } from 'state/selectors';
@@ -116,9 +118,9 @@ export class MySitesSidebar extends Component {
 		}, this );
 	}
 
-	publish() {
+	manage() {
 		return (
-			<PublishMenu siteId={ this.props.siteId }
+			<ManageMenu siteId={ this.props.siteId }
 				itemLinkClass={ this.itemLinkClass }
 				onNavigate={ this.onNavigate } />
 		);
@@ -345,13 +347,25 @@ export class MySitesSidebar extends Component {
 	};
 
 	store() {
-		const { canUserManageOptions, isJetpack, site, siteSuffix, translate } = this.props;
+		// IMPORTANT: If you add a country to this list, you must also add it
+		// to ../../extensions/woocommerce/lib/countries in the getCountries function
+		const allowedCountryCodes = [ 'US', 'CA' ];
+		const { currentUser, canUserManageOptions, isJetpack, site, siteSuffix, translate } = this.props;
 		const storeLink = '/store' + siteSuffix;
 		const showStoreLink = config.isEnabled( 'woocommerce/extension-dashboard' ) &&
 			site && isJetpack && canUserManageOptions && this.props.isSiteAutomatedTransfer;
 
+		if ( ! showStoreLink ) {
+			return null;
+		}
+
+		const countryCode = currentUser.user_ip_country_code;
+		const isCountryAllowed =
+			includes( allowedCountryCodes, countryCode ) ||
+			( 'development' === config( 'env' ) );
+
 		return (
-			showStoreLink &&
+			isCountryAllowed &&
 			<SidebarItem
 				label={ translate( 'Store (BETA)' ) }
 				link={ storeLink }
@@ -547,7 +561,7 @@ export class MySitesSidebar extends Component {
 			);
 		}
 
-		const publish = !! this.publish(),
+		const manage = !! this.manage(),
 			configuration = ( !! this.sharing() || !! this.users() || !! this.siteSettings() || !! this.plugins() || !! this.upgrades() );
 
 		return (
@@ -561,10 +575,10 @@ export class MySitesSidebar extends Component {
 					</ul>
 				</SidebarMenu>
 
-				{ publish
+				{ manage
 					? <SidebarMenu>
-						<SidebarHeading>{ this.props.translate( 'Publish' ) }</SidebarHeading>
-						{ this.publish() }
+						<SidebarHeading>{ this.props.translate( 'Manage' ) }</SidebarHeading>
+						{ this.manage() }
 					</SidebarMenu>
 					: null
 				}
@@ -625,23 +639,14 @@ function mapStateToProps( state ) {
 	const site = getSite( state, siteId );
 
 	const isJetpack = isJetpackSite( state, siteId );
-	// FIXME: Fun with Boolean algebra :-)
-	const isSharingEnabledOnJetpackSite = ! (
-		! isJetpackModuleActive( state, siteId, 'publicize' ) &&
-		( ! isJetpackModuleActive( state, siteId, 'sharedaddy' ) || isJetpackMinimumVersion( state, siteId, '3.4-dev' ) )
-	);
-	// FIXME: Turn into dedicated selector
-	const canManagePlugins = !! getSites( state ).some( ( s ) => (
-		( s.capabilities && s.capabilities.manage_options )
-	) );
 
-	// FIXME: Turn into dedicated selector
-	const hasJetpackSites = getSites( state ).some( s => s.jetpack );
+	const isSharingEnabledOnJetpackSite = isJetpackModuleActive( state, siteId, 'publicize' ) ||
+		( isJetpackModuleActive( state, siteId, 'sharedaddy' ) && ! isJetpackMinimumVersion( state, siteId, '3.4-dev' ) );
 
 	const isPreviewShowing = getCurrentLayoutFocus( state ) === 'preview';
 
 	return {
-		canManagePlugins,
+		canManagePlugins: canCurrentUserManagePlugins( state ),
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
 		canUserListUsers: canCurrentUser( state, siteId, 'list_users' ),
 		canUserManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
@@ -649,7 +654,7 @@ function mapStateToProps( state ) {
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
-		hasJetpackSites,
+		hasJetpackSites: hasJetpackSites( state ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
 		isPreviewable: isSitePreviewable( state, selectedSiteId ),

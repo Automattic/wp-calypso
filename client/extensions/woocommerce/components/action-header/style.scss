@@ -40,9 +40,13 @@
 
 	.button {
 		white-space: nowrap;
-		margin-left: 24px;
-		@include breakpoint( "<660px" ) {
-			margin-left: 18px;
+
+		&:not( :first-child ) {
+			margin-left: 24px;
+
+			@include breakpoint( "<660px" ) {
+				margin-left: 18px;
+			}
 		}
 	}
 }

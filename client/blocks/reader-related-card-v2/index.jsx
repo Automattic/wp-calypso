@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -31,7 +32,7 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 
 	return (
 		<div className="reader-related-card-v2__meta">
-			<a href={ siteUrl } onClick={ onSiteClick }>
+			<a href={ siteUrl } onClick={ onSiteClick } aria-hidden="true">
 				<Gravatar user={ post.author } />
 			</a>
 			<div className="reader-related-card-v2__byline">

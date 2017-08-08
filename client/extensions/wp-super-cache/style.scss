@@ -14,6 +14,10 @@
 	margin-right: 8px;
 }
 
+.wp-super-cache__main .form-fieldset:last-child {
+	margin-bottom: 0;
+}
+
 // Easy Tab
 .wp-super-cache__notice-hug-card {
 	margin-top: -15px;
@@ -198,8 +202,7 @@
 }
 
 .wp-super-cache__lock-down-container,
-.wp-super-cache__cdn-fieldsets,
-.wp-super-cache__debug-fieldsets {
+.wp-super-cache__cdn-fieldsets {
 	margin-left: 40px;
 }
 
@@ -228,4 +231,15 @@
 	font-style: normal;
 	display: block;
 	white-space: pre;
+}
+
+// Debug Tab
+
+.wp-super-cache__debug-fieldsets,
+.wp-super-cache__debug-tab .form-fieldset .form-setting-explanation.is-indented {
+	margin-left: 36px;
+}
+
+.wp-super-cache__debug-log-button {
+	margin-top: 12px;
 }

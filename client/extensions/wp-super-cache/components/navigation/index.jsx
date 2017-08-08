@@ -2,14 +2,17 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import HeaderCake from 'components/header-cake';
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
+import { addSiteFragment } from 'lib/route/path';
 import { Tabs } from '../../app/constants';
 
 const Navigation = ( { activeTab, site, translate } ) => {
@@ -65,12 +68,19 @@ const Navigation = ( { activeTab, site, translate } ) => {
 		} );
 	};
 
+	const pluginUrl = addSiteFragment( '/plugins/wp-super-cache', get( site, 'slug' ) );
 	return (
-		<SectionNav selectedText="Settings">
-			<SectionNavTabs>
-				{ renderTabItems( getTabs() ) }
-			</SectionNavTabs>
-		</SectionNav>
+		<div>
+			<HeaderCake backText={ translate( 'Plugin Overview' ) }
+				backHref={ pluginUrl }>
+				WP Super Cache
+			</HeaderCake>
+			<SectionNav selectedText="Settings">
+				<SectionNavTabs>
+					{ renderTabItems( getTabs() ) }
+				</SectionNavTabs>
+			</SectionNav>
+		</div>
 	);
 };
 

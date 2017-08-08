@@ -4,6 +4,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { translate } from 'i18n-calypso';
+import { initialize, startSubmit as startSave, stopSubmit as stopSave } from 'redux-form';
 
 /**
  * Internal dependencies
@@ -21,8 +22,6 @@ import {
 import {
 	fetchError,
 	fetchSettings,
-	saveError,
-	saveSuccess,
 	updateSettings,
 } from 'wp-job-manager/state/settings/actions';
 
@@ -34,10 +33,48 @@ const apiResponse = {
 };
 const saveAction = {
 	type: 'DUMMY_ACTION',
-	siteId: '101010',
 	data: {
 		hideFilledPositions: true,
 		perPage: 25,
+	},
+	form: 'my-form',
+	siteId: 101010,
+};
+const transformedData = {
+	account: {
+		enableRegistration: undefined,
+		generateUsername: undefined,
+		isAccountRequired: undefined,
+		role: undefined,
+		sendPassword: undefined,
+	},
+	apiKey: { googleMapsApiKey: undefined },
+	approval: {
+		canEdit: undefined,
+		isApprovalRequired: undefined,
+	},
+	categories: {
+		categoryFilterType: undefined,
+		enableCategories: undefined,
+		enableDefaultCategory: undefined,
+	},
+	duration: { submissionDuration: undefined },
+	format: { dateFormat: undefined },
+	listings: {
+		hideExpired: undefined,
+		hideExpiredContent: undefined,
+		hideFilledPositions: true,
+		perPage: 25,
+	},
+	method: { applicationMethod: undefined },
+	pages: {
+		dashboardPage: undefined,
+		listingsPage: undefined,
+		submitFormPage: undefined,
+	},
+	types: {
+		enableTypes: undefined,
+		multiJobType: undefined
 	}
 };
 
@@ -45,7 +82,7 @@ describe( '#fetchExtensionSettings()', () => {
 	it( 'should dispatch an HTTP request to the settings endpoint', () => {
 		const action = {
 			type: 'DUMMY_ACTION',
-			siteId: '101010',
+			siteId: 101010,
 		};
 		const dispatch = sinon.spy();
 
@@ -70,37 +107,7 @@ describe( '#updateExtensionSettings', () => {
 		updateExtensionSettings( { dispatch }, action, null, apiResponse );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( updateSettings( 12345678, {
-			account: {
-				enableRegistration: undefined,
-				generateUsername: undefined,
-				isAccountRequired: undefined,
-				role: undefined,
-			},
-			apiKey: { googleMapsApiKey: undefined },
-			approval: {
-				canEdit: undefined,
-				isApprovalRequired: undefined,
-			},
-			categories: {
-				enableCategories: undefined,
-				enableDefaultCategory: undefined,
-				categoryFilterType: undefined
-			},
-			duration: { submissionDuration: undefined },
-			format: { dateFormat: undefined },
-			listings: {
-				perPage: 25,
-				hideFilledPositions: true,
-				hideExpired: undefined,
-				hideExpiredContent: undefined
-			},
-			method: { applicationMethod: undefined },
-			types: {
-				enableTypes: undefined,
-				multiJobType: undefined
-			},
-		} ) );
+		expect( dispatch ).to.have.been.calledWith( updateSettings( 12345678, transformedData ) );
 	} );
 } );
 
@@ -117,6 +124,14 @@ describe( '#fetchExtensionError', () => {
 } );
 
 describe( '#saveSettings()', () => {
+	it( 'should dispatch `startSave`', () => {
+		const dispatch = sinon.spy();
+
+		saveSettings( { dispatch }, saveAction );
+
+		expect( dispatch ).to.have.been.calledWith( startSave( 'my-form' ) );
+	} );
+
 	it( 'should dispatch an HTTP POST request to the settings endpoint', () => {
 		const dispatch = sinon.spy();
 
@@ -143,18 +158,34 @@ describe( '#saveSettings()', () => {
 } );
 
 describe( '#announceSuccess()', () => {
-	it( 'should dispatch `saveSuccess`', () => {
+	it( 'should dispatch `stopSave`', () => {
 		const dispatch = sinon.spy();
 
-		announceSuccess( { dispatch }, saveAction );
+		announceSuccess( { dispatch }, saveAction, null, apiResponse );
 
-		expect( dispatch ).to.have.been.calledWith( saveSuccess( '101010' ) );
+		expect( dispatch ).to.have.been.calledWith( stopSave( 'my-form' ) );
+	} );
+
+	it( 'should dispatch `initialize`', () => {
+		const dispatch = sinon.spy();
+
+		announceSuccess( { dispatch }, saveAction, null, apiResponse );
+
+		expect( dispatch ).to.have.been.calledWith( initialize( 'my-form', transformedData ) );
+	} );
+
+	it( 'should dispatch `updateSettings`', () => {
+		const dispatch = sinon.spy();
+
+		announceSuccess( { dispatch }, saveAction, null, apiResponse );
+
+		expect( dispatch ).to.have.been.calledWith( updateSettings( 101010, transformedData ) );
 	} );
 
 	it( 'should dispatch `successNotice`', () => {
 		const dispatch = sinon.spy();
 
-		announceSuccess( { dispatch }, saveAction );
+		announceSuccess( { dispatch }, saveAction, null, apiResponse );
 
 		expect( dispatch ).to.have.been.calledWith( successNotice( translate(
 			'Settings saved!' ),
@@ -164,12 +195,12 @@ describe( '#announceSuccess()', () => {
 } );
 
 describe( '#announceFailure()', () => {
-	it( 'should dispatch `saveError`', () => {
+	it( 'should dispatch `stopSave`', () => {
 		const dispatch = sinon.spy();
 
 		announceFailure( { dispatch }, saveAction );
 
-		expect( dispatch ).to.have.been.calledWith( saveError( '101010' ) );
+		expect( dispatch ).to.have.been.calledWith( stopSave( 'my-form' ) );
 	} );
 
 	it( 'should dispatch `errorNotice`', () => {

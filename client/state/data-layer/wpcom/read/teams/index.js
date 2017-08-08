@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -18,7 +19,7 @@ export function handleTeamsRequest( store ) {
 				payload: error,
 				error: true,
 			} );
-		},
+		}
 	);
 }
 

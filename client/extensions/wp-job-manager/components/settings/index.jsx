@@ -15,33 +15,30 @@ import Navigation from '../navigation';
 import QuerySettings from '../data/query-settings';
 import { saveSettings } from '../../state/settings/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSettings, isFetchingSettings, isSavingSettings } from '../../state/settings/selectors';
+import { getSettings, isFetchingSettings } from '../../state/settings/selectors';
 
 class Settings extends Component {
 	static propTypes = {
 		children: PropTypes.element,
 		initialValues: PropTypes.object,
 		isFetching: PropTypes.bool,
-		isSaving: PropTypes.bool,
 		siteId: PropTypes.number,
 		tab: PropTypes.string,
 		translate: PropTypes.func,
 	};
 
-	onSubmit = data => this.props.saveSettings( this.props.siteId, data );
+	onSubmit = ( form, data ) => this.props.saveSettings( this.props.siteId, form, data );
 
 	render() {
 		const {
 			children,
 			initialValues,
 			isFetching,
-			isSaving,
 			siteId,
 			tab,
 			translate,
 		} = this.props;
 		const mainClassName = 'wp-job-manager__main';
-		const isDisabled = isFetching || isSaving;
 
 		return (
 			<Main className={ mainClassName }>
@@ -51,8 +48,7 @@ class Settings extends Component {
 				{
 					Children.map( children, child => cloneElement( child, {
 						initialValues,
-						isDisabled,
-						isSaving,
+						isFetching,
 						onSubmit: this.onSubmit,
 					} ) )
 				}
@@ -68,7 +64,6 @@ const connectComponent = connect(
 		return {
 			initialValues: getSettings( state, siteId ),
 			isFetching: isFetchingSettings( state, siteId ),
-			isSaving: isSavingSettings( state, siteId ),
 			siteId,
 		};
 	},

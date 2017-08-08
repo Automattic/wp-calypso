@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -44,7 +45,7 @@ class ReaderExportButton extends React.Component {
 
 		if ( ! err && ! data.success ) {
 			this.props.errorNotice(
-				this.props.translate( 'Sorry, there was a problem creating your export file.' ),
+				this.props.translate( 'Sorry, there was a problem creating your export file.' )
 			);
 			return;
 		}

@@ -20,8 +20,7 @@ export default createReducer( null, {
 	[ WOOCOMMERCE_ERROR_CLEAR ]: clearApiError,
 } );
 
-function setApiError( error, action ) {
-	const { data, originalAction, time } = action.payload;
+function setApiError( error, { data, originalAction, time } ) {
 	const newError = { data, originalAction, time };
 
 	debug( 'WC-API error occurred: ', newError );

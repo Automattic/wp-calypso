@@ -3,12 +3,13 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 import page from 'page';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
 import Header from 'my-sites/domains/domain-management/components/header';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -16,124 +17,142 @@ import FormFooter from 'my-sites/domains/domain-management/components/form-foote
 import FormLabel from 'components/forms/form-label';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import Main from 'components/main';
-import SiteRedirectNotice from './notice';
+import Notice from 'components/notice';
+import notices from 'notices';
 import paths from 'my-sites/domains/paths';
 import * as upgradesActions from 'lib/upgrades/actions';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'state/analytics/actions';
+import { withoutHttp } from 'lib/url';
 
-const SiteRedirect = React.createClass( {
-	mixins: [ analyticsMixin( 'domainManagement', 'siteRedirect' ) ],
-
-	propTypes: {
+class SiteRedirect extends React.Component {
+	static propTypes = {
 		location: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired
-	},
+	};
+
+	state = {
+		redirectUrl: this.props.location.value || ''
+	};
 
 	componentWillMount() {
 		upgradesActions.fetchSiteRedirect( this.props.selectedSite.domain );
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.location.value !== nextProps.location.value ) {
 			this.setState( {
-				location: nextProps.location.value
+				redirectUrl: nextProps.location.value
 			} );
 		}
-	},
+	}
 
 	componentWillUnmount() {
+		this.closeRedirectNotice();
+	}
+
+	closeRedirectNotice = () => {
 		upgradesActions.closeSiteRedirectNotice( this.props.selectedSite.domain );
-	},
+	};
 
-	getInitialState() {
-		return {
-			location: this.props.location.value
-		};
-	},
+	handleChange = ( event ) => {
+		const redirectUrl = withoutHttp( event.target.value );
 
-	handleChange( event ) {
-		let location = event.target.value;
+		this.setState( { redirectUrl } );
+	};
 
-		// Removes the protocol part
-		location = location.replace( /.*:\/\//, '' );
-
-		this.setState( { location } );
-	},
-
-	handleClick( event ) {
+	handleClick = ( event ) => {
 		event.preventDefault();
 
-		upgradesActions.updateSiteRedirect( this.props.selectedSite.domain, this.state.location, ( success ) => {
-			this.recordEvent( 'updateSiteRedirectClick', this.props.selectedDomainName, this.state.location, success );
+		upgradesActions.updateSiteRedirect( this.props.selectedSite.domain, this.state.redirectUrl, ( success ) => {
+			this.props.updateSiteRedirectClick(
+				this.props.selectedDomainName,
+				this.state.redirectUrl,
+				success
+			);
 
 			if ( success ) {
-				page( paths.domainManagementRedirectSettings( this.props.selectedSite.slug, this.state.location ) );
+				page( paths.domainManagementRedirectSettings( this.props.selectedSite.slug, this.state.redirectUrl ) );
 			}
 		} );
-	},
+	};
 
-	handleFocus() {
-		this.recordEvent( 'locationFocus', this.props.selectedDomainName );
-	},
+	handleFocus = () => {
+		this.props.locationFocus( this.props.selectedDomainName );
+	};
 
 	render() {
-		let classes = classNames(
+		const { location, translate } = this.props;
+		const { isUpdating, notice } = location;
+		const isFetching = location.isFetching || this.state.redirectUrl.length === 0;
+
+		const classes = classNames(
 			'site-redirect-card',
-			{ fetching: this.props.location.isFetching }
+			{ fetching: isFetching }
 		);
 
 		return (
 			<div>
-				<SiteRedirectNotice
-					notice={ this.props.location.notice }
-					selectedSite={ this.props.selectedSite } />
-
-				<Main className="domain-management-site-redirect">
+				<Main>
 					<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
-						{ this.translate( 'Redirect Settings' ) }
+						{ translate( 'Redirect Settings' ) }
 					</Header>
 
-					<SectionHeader label={ this.translate( 'Redirect Settings' ) } />
+					{
+						notice &&
+						<Notice
+							onDismissClick={ this.closeRedirectNotice }
+							status={ notices.getStatusHelper( notice ) }
+							text={ notice.text }
+						/>
+					}
+
+					<SectionHeader label={ translate( 'Redirect Settings' ) } />
 
 					<Card className={ classes }>
 						<form>
 							<FormFieldset>
 								<FormLabel>
-									{ this.translate( 'Redirect To' ) }
+									{ translate( 'Redirect To' ) }
 								</FormLabel>
 
 								<FormTextInputWithAffixes
-									disabled={ this.props.location.isFetching || this.props.location.isUpdating }
+									disabled={ isFetching || isUpdating }
 									name="destination"
 									noWrap
 									onChange={ this.handleChange }
 									onFocus={ this.handleFocus }
 									prefix="http://"
 									type="text"
-									value={ this.state.location } />
+									value={ this.state.redirectUrl } />
 
 								<p className="site-redirect__explanation">
-									{ this.translate( 'All domains on this site will redirect here.' ) }
+									{ translate( 'All domains on this site will redirect here.' ) }
 								</p>
 							</FormFieldset>
 
 							<FormFooter>
 								<FormButton
-									disabled={ this.props.location.isFetching || this.props.location.isUpdating }
+									disabled={ isFetching || isUpdating }
 									onClick={ this.handleClick }>
-									{ this.translate( 'Update Site Redirect' ) }
+									{ translate( 'Update Site Redirect' ) }
 								</FormButton>
 
 								<FormButton
+									disabled={ isFetching || isUpdating }
 									type="button"
 									isPrimary={ false }
 									onClick={ this.goToEdit }>
-									{ this.translate( 'Cancel' ) }
+									{ translate( 'Cancel' ) }
 								</FormButton>
 							</FormFooter>
 						</form>
@@ -141,13 +160,64 @@ const SiteRedirect = React.createClass( {
 				</Main>
 			</div>
 		);
-	},
-
-	goToEdit() {
-		this.recordEvent( 'cancelClick', this.props.selectedDomainName );
-
-		page( paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	}
-} );
 
-export default SiteRedirect;
+	goToEdit = () => {
+		const { selectedDomainName, selectedSite } = this.props;
+
+		this.props.cancelClick( selectedDomainName );
+		page( paths.domainManagementEdit( selectedSite.slug, selectedDomainName ) );
+	}
+}
+
+const cancelClick = ( domainName ) => composeAnalytics(
+	recordGoogleEvent(
+		'Domain Management',
+		'Clicked "Cancel" Button in Site Redirect',
+		'Domain Name',
+		domainName
+	),
+	recordTracksEvent(
+		'calypso_domain_management_site_redirect_cancel_click',
+		{ domain_name: domainName }
+	),
+);
+
+const locationFocus = ( domainName ) => composeAnalytics(
+	recordGoogleEvent(
+		'Domain Management',
+		'Focused On "Location" Input in Site Redirect',
+		'Domain Name',
+		domainName
+	),
+	recordTracksEvent(
+		'calypso_domain_management_site_redirect_location_focus',
+		{ domain_name: domainName }
+	),
+);
+
+const updateSiteRedirectClick = ( domainName, location, success ) => composeAnalytics(
+	recordGoogleEvent(
+		'Domain Management',
+		'Clicked "Update Site Redirect" Button in Site Redirect',
+		'Domain Name',
+		domainName
+	),
+	recordTracksEvent(
+		'calypso_domain_management_site_redirect_update_site_redirect_click',
+		{
+			domain_name: domainName,
+			location,
+			success
+		}
+	),
+);
+
+export default connect(
+	null,
+	{
+		cancelClick,
+		locationFocus,
+		updateSiteRedirectClick,
+	}
+)( localize( SiteRedirect ) );

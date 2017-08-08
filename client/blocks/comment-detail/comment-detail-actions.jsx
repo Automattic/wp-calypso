@@ -13,10 +13,10 @@ import { includes } from 'lodash';
 import Button from 'components/button';
 
 const commentActions = {
-	unapproved: [ 'like', 'approve', 'edit', 'spam', 'trash' ],
-	approved: [ 'like', 'approve', 'edit', 'spam', 'trash' ],
-	spam: [ 'approve', 'edit', 'delete' ],
-	trash: [ 'approve', 'edit', 'spam', 'delete' ],
+	unapproved: [ 'like', 'approve', 'spam', 'trash' ],
+	approved: [ 'like', 'approve', 'spam', 'trash' ],
+	spam: [ 'approve', 'delete' ],
+	trash: [ 'approve', 'spam', 'delete' ],
 };
 
 const hasAction = ( status, action ) => includes( commentActions[ status ], action );

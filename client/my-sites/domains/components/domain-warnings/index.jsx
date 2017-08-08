@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-
 import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -26,9 +25,9 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 
 const debug = _debug( 'calypso:domain-warnings' );
 
-const allAboutDomainsLink = <a href={ support.ALL_ABOUT_DOMAINS } target="_blank" rel="noopener noreferrer" />,
-	domainsLink = <a href={ support.DOMAINS } target="_blank" rel="noopener noreferrer" />,
-	pNode = <p />;
+const allAboutDomainsLink = <a href={ support.ALL_ABOUT_DOMAINS } target="_blank" rel="noopener noreferrer" />;
+const domainsLink = <a href={ support.DOMAINS } target="_blank" rel="noopener noreferrer" />;
+const pNode = <p />;
 
 const expiredDomainsCanManageWarning = 'expired-domains-can-manage';
 const expiredDomainsCannotManageWarning = 'expired-domains-cannot-manage';
@@ -79,6 +78,7 @@ export class DomainWarnings extends React.PureComponent {
 		const link = count === 1
 			? `/checkout/domain_map:${ domain }/renew/${ subscriptionId }/${ selectedSite.slug }`
 			: purchasesPaths.purchasesRoot();
+
 		return (
 			<NoticeAction href={ link } onClick={ onClick }>
 				{ this.props.isCompact ? compactMessage : fullMessage }
@@ -140,9 +140,9 @@ export class DomainWarnings extends React.PureComponent {
 		}
 
 		const { translate } = this.props;
-		let learnMoreUrl,
-			text,
-			offendingList = null;
+		let learnMoreUrl;
+		let text;
+		let offendingList = null;
 
 		if ( wrongMappedDomains.length === 1 ) {
 			const domain = wrongMappedDomains[ 0 ];
@@ -196,11 +196,11 @@ export class DomainWarnings extends React.PureComponent {
 				</a>{ offendingList }</span>;
 		}
 		return <Notice { ...noticeProps }>{ children }</Notice>;
-	}
+	};
 
 	onExpiredDomainsNoticeClick = () => {
 		this.trackClick( expiredDomainsCanManageWarning );
-	}
+	};
 
 	expiredDomainsCanManage = () => {
 		debug( 'Rendering expiredDomainsCanManage' );
@@ -237,7 +237,7 @@ export class DomainWarnings extends React.PureComponent {
 				{ this.trackImpression( expiredDomainsCanManageWarning, expiredDomains.length ) }
 			</Notice>
 		);
-	}
+	};
 
 	expiredDomainsCannotManage = () => {
 		const expiredDomains = this.getDomains()
@@ -276,11 +276,11 @@ export class DomainWarnings extends React.PureComponent {
 			{ this.trackImpression( expiredDomainsCannotManageWarning, expiredDomains.length ) }
 			</Notice>
 		);
-	}
+	};
 
 	onExpiringDomainsNoticeClick = () => {
 		this.trackClick( expiredDomainsCanManageWarning );
-	}
+	};
 
 	expiringDomainsCanManage = () => {
 		const expiringDomains = this.getDomains()
@@ -320,7 +320,7 @@ export class DomainWarnings extends React.PureComponent {
 				{ this.trackImpression( expiringDomainsCanManageWarning, expiringDomains.length ) }
 			</Notice>
 		);
-	}
+	};
 
 	expiringDomainsCannotManage = () => {
 		const expiringDomains = this.getDomains()
@@ -359,7 +359,7 @@ export class DomainWarnings extends React.PureComponent {
 				{ this.trackImpression( expiringDomainsCannotManageWarning, expiringDomains.length ) }
 			</Notice>
 		);
-	}
+	};
 
 	newDomains = () => {
 		if ( get( this.props, 'selectedSite.options.is_domain_only' ) ) {
@@ -442,7 +442,7 @@ export class DomainWarnings extends React.PureComponent {
 				key="new-domains">{ text }
 			</Notice>
 		);
-	}
+	};
 
 	unverifiedDomainsCanManage = () => {
 		const domains = this.getDomains().filter( domain => domain.isPendingIcannVerification && domain.currentUserCanManage );
@@ -555,7 +555,7 @@ export class DomainWarnings extends React.PureComponent {
 				{ this.props.isCompact ? compactContent : fullContent }
 			</Notice>
 		);
-	}
+	};
 
 	unverifiedDomainsCannotManage = () => {
 		const domains = this.getDomains().filter( domain => domain.isPendingIcannVerification && ! domain.currentUserCanManage );
@@ -624,7 +624,7 @@ export class DomainWarnings extends React.PureComponent {
 				{ this.props.isCompact ? compactContent : fullContent }
 			</Notice>
 		);
-	}
+	};
 
 	pendingGappsTosAcceptanceDomains = () => {
 		const pendingDomains = this.getDomains().filter( hasPendingGoogleAppsUsers );
@@ -634,7 +634,7 @@ export class DomainWarnings extends React.PureComponent {
 				siteSlug={ this.props.selectedSite && this.props.selectedSite.slug }
 				domains={ pendingDomains }
 				section="domain-management" />;
-	}
+	};
 
 	pendingTransfer = () => {
 		const domain = find( this.getDomains(), 'pendingTransfer' );
@@ -667,7 +667,7 @@ export class DomainWarnings extends React.PureComponent {
 				{ ! this.props.isCompact && fullNotice }
 			</Notice>
 		);
-	}
+	};
 
 	componentWillMount() {
 		if ( ! this.props.domains && ! this.props.domain ) {

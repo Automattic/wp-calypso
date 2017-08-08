@@ -26,7 +26,7 @@ class TransferConfirmationDialog extends React.PureComponent {
 
 	onConfirm = ( closeDialog ) => {
 		this.props.onConfirmTransfer( this.props.targetSite, closeDialog );
-	}
+	};
 
 	render() {
 		const { domainName, translate } = this.props;

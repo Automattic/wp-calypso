@@ -82,6 +82,10 @@ class JetpackConnectAuthorizeForm extends Component {
 		);
 	}
 
+	isWCS() {
+		return 'woocommerce-services' === this.props.jetpackConnectAuthorize.queryObject.from;
+	}
+
 	handleClickHelp = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	}
@@ -110,10 +114,12 @@ class JetpackConnectAuthorizeForm extends Component {
 				? <LoggedInForm
 					{ ...this.props }
 					isSSO={ this.isSSO() }
+					isWCS={ this.isWCS() }
 				/>
 				: <LoggedOutForm
 					{ ...this.props }
 					isSSO={ this.isSSO() }
+					isWCS={ this.isWCS() }
 				/>
 		);
 	}

@@ -331,6 +331,32 @@ export function getEditedPostValue( state, siteId, postId, field ) {
 }
 
 /**
+ * Returns true if the edited post visibility is private.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {Number}  postId Post ID
+ * @return {Boolean}        Whether edited post visibility is private
+ */
+export function isEditedPostPrivate( state, siteId, postId ) {
+	const password = getEditedPostValue( state, siteId, postId, 'password' );
+	return !! ( password && password.length > 0 );
+}
+
+/**
+ * Returns true if a valid password is set for the edited post with private visibility.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {Number}  postId Post ID
+ * @return {Boolean}        Whether password for the edited post with private visibility is valid
+ */
+export function isPrivateEditedPostPasswordValid( state, siteId, postId ) {
+	const password = getEditedPostValue( state, siteId, postId, 'password' );
+	return !! ( password && password.trim().length > 0 );
+}
+
+/**
  * Returns true if there are "dirty" edited fields to be saved for the post
  * corresponding with the site ID post ID pair, or false otherwise.
  *

@@ -48,9 +48,33 @@ export function rewindActivateFailure( siteId ) {
 	};
 }
 
-export function activityLogRequest( siteId ) {
+/**
+ * Activity endpoint query parameters.
+ *
+ * The API is subject to change, this documentation has been provided as a basis. For up to
+ * date information, it's best to check the current state of the API.
+ *
+ * @typdef {Object} ActivityParams
+ *
+ * @property {number} date_start Filter activity after this date (utc microtime timestamp).
+ * @property {number} date_end   Filter activity before this date (utc microtime timestamp).
+ * @property {number} number     Maximum number of results to return.
+ */
+
+/**
+ * Requests activity from the API
+ *
+ * You may optionally pass an object of parameters for the query to this action.
+ * @see ActivityParams
+ *
+ * @param  {number}         siteId site ID
+ * @param  {ActivityParams} params Optional. Parameters to pass to the endpoint
+ * @return {Object}                The request action
+ */
+export function activityLogRequest( siteId, params ) {
 	return {
 		type: ACTIVITY_LOG_REQUEST,
+		params,
 		siteId,
 	};
 }

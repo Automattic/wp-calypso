@@ -45,7 +45,6 @@ const controller = {
 
 		renderWithReduxStore(
 			React.createElement( Pages, {
-				context: context,
 				siteID: siteID,
 				status: status,
 				search: search,

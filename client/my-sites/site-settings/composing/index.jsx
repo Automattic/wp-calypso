@@ -12,7 +12,6 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import DateTimeFormat from '../date-time-format';
 import DefaultPostFormat from './default-post-format';
-import PostsPerPage from './posts-per-page';
 import PublishConfirmation from './publish-confirmation';
 import {
 	isJetpackMinimumVersion,
@@ -33,7 +32,6 @@ const Composing = ( {
 	jetpackSettingsUISupported,
 	onChangeField,
 	setFieldValue,
-	uniqueEventTracker,
 	updateFields,
 } ) => {
 	const CardComponent = jetpackSettingsUISupported ? CompactCard : Card;
@@ -45,15 +43,6 @@ const Composing = ( {
 					abtest( 'postPublishConfirmation' ) === 'showPublishConfirmation' &&
 					<PublishConfirmation />
 				}
-
-				<PostsPerPage
-					eventTracker={ eventTracker }
-					fields={ fields }
-					isRequestingSettings={ isRequestingSettings }
-					isSavingSettings={ isSavingSettings }
-					onChangeField={ onChangeField }
-					uniqueEventTracker={ uniqueEventTracker }
-				/>
 
 				<DefaultPostFormat
 					eventTracker={ eventTracker }
@@ -101,7 +90,6 @@ Composing.propTypes = {
 	isSavingSettings: PropTypes.bool,
 	onChangeField: PropTypes.func.isRequired,
 	setFieldValue: PropTypes.func.isRequired,
-	uniqueEventTracker: PropTypes.func.isRequired,
 	updateFields: PropTypes.func.isRequired,
 };
 

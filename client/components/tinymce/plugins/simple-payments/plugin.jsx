@@ -9,7 +9,7 @@ import { unmountComponentAtNode } from 'react-dom';
  * Internal Dependencies
  */
 import SimplePaymentsDialog from './dialog';
-import { serialize } from './shortcode-utils';
+import { serialize, deserialize } from './shortcode-utils';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const simplePayments = editor => {
@@ -27,31 +27,28 @@ const simplePayments = editor => {
 	} );
 
 	editor.addCommand( 'simplePaymentsButton', content => {
-		let isEdit = false;
+		let editPaymentId = null;
 		if ( content ) {
-			isEdit = true;
+			const shortCodeData = deserialize( content );
+			editPaymentId = shortCodeData.id || null;
 		}
 
-		function renderModal( visibility = 'show', activeTab = 'addNew' ) {
+		function renderModal( visibility = 'show' ) {
 			renderWithReduxStore(
 				createElement( SimplePaymentsDialog, {
 					showDialog: visibility === 'show',
-					activeTab,
-					isEdit,
+					editPaymentId,
 					onInsert( productData ) {
 						editor.execCommand(
 							'mceInsertContent',
 							false,
 							serialize( productData )
 						);
-						renderModal( 'hide', activeTab );
+						renderModal( 'hide' );
 					},
 					onClose() {
 						editor.focus();
-						renderModal( 'hide', activeTab );
-					},
-					onChangeTabs( tab ) {
-						renderModal( 'show', tab );
+						renderModal( 'hide' );
 					},
 				} ),
 				node,

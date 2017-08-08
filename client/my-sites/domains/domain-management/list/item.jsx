@@ -4,6 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,9 +15,8 @@ import Notice from 'components/notice';
 import { type as domainTypes } from 'lib/domains/constants';
 import Spinner from 'components/spinner';
 
-const ListItem = React.createClass( {
-
-	propTypes: {
+class ListItem extends React.PureComponent {
+	static propTypes = {
 		busy: React.PropTypes.bool,
 		busyMessage: React.PropTypes.string,
 		domain: React.PropTypes.object.isRequired,
@@ -25,7 +25,7 @@ const ListItem = React.createClass( {
 		onSelect: React.PropTypes.func.isRequired,
 		selectionIndex: React.PropTypes.number,
 		isSelected: React.PropTypes.bool
-	},
+	};
 
 	render() {
 		const cardClass = classNames( 'domain-management-list-item', {
@@ -38,7 +38,7 @@ const ListItem = React.createClass( {
 				{ this.props.enableSelection && <label htmlFor={ this.getInputId() }>{ this.content() }</label> || this.content() }
 			</CompactCard>
 		);
-	},
+	}
 
 	content() {
 		return (
@@ -50,18 +50,18 @@ const ListItem = React.createClass( {
 				<span className="domain-management-list-item__meta">
 					<span className="domain-management-list-item__type">{ this.getDomainTypeText() }</span>
 					{ this.props.domain.type !== 'WPCOM' && this.showDomainExpirationWarning( this.props.domain ) }
-					<DomainPrimaryFlag domain={ this.props.domain }/>
+					<DomainPrimaryFlag domain={ this.props.domain } />
 				</span>
 				{ this.busyMessage() }
 			</div>
 		);
-	},
+	}
 
 	busyMessage() {
 		if ( this.props.busy && this.props.busyMessage ) {
 			return <div className="domain-management-list-item__busy-message">{ this.props.busyMessage }</div>;
 		}
-	},
+	}
 
 	icon() {
 		if ( this.props.busy ) {
@@ -71,23 +71,23 @@ const ListItem = React.createClass( {
 		if ( this.props.enableSelection ) {
 			return null;
 		}
-		return <Gridicon className="card__link-indicator" icon="chevron-right" />
-	},
+		return <Gridicon className="card__link-indicator" icon="chevron-right" />;
+	}
 
-	handleClick() {
+	handleClick = () => {
 		if ( this.props.enableSelection ) {
 			return;
 		}
 		this.props.onClick( this.props.domain );
-	},
+	};
 
-	handleSelect() {
+	handleSelect = () => {
 		this.props.onSelect( this.props.selectionIndex, this.props.domain );
-	},
+	};
 
 	getInputId() {
 		return `domain-management-list-item_radio-${ this.props.domain.name }`;
-	},
+	}
 
 	selectionRadio() {
 		if ( ! this.props.enableSelection ) {
@@ -99,14 +99,17 @@ const ListItem = React.createClass( {
 			className="domain-management-list-item__radio"
 			type="radio"
 			checked={ this.props.isSelected }
-			onChange={ this.handleSelect }/>
-	},
+			onChange={ this.handleSelect }
+		/>;
+	}
 
 	showDomainExpirationWarning( domain ) {
+		const { translate } = this.props;
+
 		if ( domain.expired ) {
 			return (
 				<Notice isCompact status="is-error" icon="spam">
-					{ this.translate( 'Expired %(timeSinceExpiry)s', {
+					{ translate( 'Expired %(timeSinceExpiry)s', {
 						args: {
 							timeSinceExpiry: domain.expirationMoment.fromNow()
 						},
@@ -116,10 +119,10 @@ const ListItem = React.createClass( {
 			);
 		}
 
-		if ( domain.expirationMoment && domain.expirationMoment < this.moment().add( 30, 'days' ) ) {
+		if ( domain.expirationMoment && domain.expirationMoment < this.props.moment().add( 30, 'days' ) ) {
 			return (
 				<Notice isCompact status="is-error" icon="spam">
-					{ this.translate( 'Expires %(timeUntilExpiry)s', {
+					{ translate( 'Expires %(timeUntilExpiry)s', {
 						args: {
 							timeUntilExpiry: domain.expirationMoment.fromNow()
 						},
@@ -128,23 +131,25 @@ const ListItem = React.createClass( {
 				</Notice>
 			);
 		}
-	},
+	}
 
 	getDomainTypeText() {
-		switch ( this.props.domain.type ) {
+		const { domain, translate } = this.props;
+
+		switch ( domain.type ) {
 			case domainTypes.MAPPED:
-				return this.translate( 'Mapped Domain' );
+				return translate( 'Mapped Domain' );
 
 			case domainTypes.REGISTERED:
-				return this.translate( 'Registered Domain' );
+				return translate( 'Registered Domain' );
 
 			case domainTypes.SITE_REDIRECT:
-				return this.translate( 'Site Redirect' );
+				return translate( 'Site Redirect' );
 
 			case domainTypes.WPCOM:
-				return this.translate( 'Included with Site' );
+				return translate( 'Included with Site' );
 		}
 	}
-} );
+}
 
-export default ListItem;
+export default localize( ListItem );

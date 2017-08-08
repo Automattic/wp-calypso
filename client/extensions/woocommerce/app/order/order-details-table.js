@@ -80,6 +80,7 @@ class OrderDetailsTable extends Component {
 				<TableItem isHeader className="order__detail-item-product">{ translate( 'Product' ) }</TableItem>
 				<TableItem isHeader className="order__detail-item-cost">{ translate( 'Cost' ) }</TableItem>
 				<TableItem isHeader className="order__detail-item-quantity">{ translate( 'Quantity' ) }</TableItem>
+				<TableItem isHeader className="order__detail-item-total">{ translate( 'Tax' ) }</TableItem>
 				<TableItem isHeader className="order__detail-item-total">{ translate( 'Total' ) }</TableItem>
 			</TableRow>
 		);
@@ -107,6 +108,9 @@ class OrderDetailsTable extends Component {
 							value={ this.state.quantities[ i ] || 0 } />
 						: item.quantity
 					}
+				</TableItem>
+				<TableItem className="order__detail-item-total">
+					{ formatCurrency( item.total_tax, order.currency ) || item.total_tax }
 				</TableItem>
 				<TableItem className="order__detail-item-total">{ formatCurrency( item.total, order.currency ) || item.total }</TableItem>
 			</TableRow>
@@ -160,6 +164,12 @@ class OrderDetailsTable extends Component {
 									value={ this.state.shippingTotal } />
 								: formatCurrency( order.shipping_total, order.currency ) || order.shipping_total
 							}
+						</div>
+					</div>
+					<div className="order__details-total-tax">
+						<div className="order__details-totals-label">{ translate( 'Tax' ) }</div>
+						<div className="order__details-totals-value">
+							{ formatCurrency( order.total_tax, order.currency ) || order.total_tax }
 						</div>
 					</div>
 					<div className="order__details-total">

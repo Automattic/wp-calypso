@@ -19,10 +19,11 @@ import { getPeriodFormat } from 'state/stats/lists/utils';
 import { getDelta } from '../utils';
 import { getSiteStatsNormalizedData, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import Legend from 'components/chart/legend';
-import QuerySiteStats from 'components/data/query-site-stats';
 import Tabs from 'my-sites/stats/stats-tabs';
 import Tab from 'my-sites/stats/stats-tabs/tab';
 import { UNITS } from 'woocommerce/app/store-stats/constants';
+import analytics from 'lib/analytics';
+import { chartTabs as tabs } from 'woocommerce/app/store-stats/constants';
 
 class StoreStatsChart extends Component {
 	static propTypes = {
@@ -48,6 +49,10 @@ class StoreStatsChart extends Component {
 		this.setState( {
 			selectedTabIndex: tab.index,
 		} );
+
+		analytics.tracks.recordEvent( 'calypso_woocommerce_stats_chart_tab_click', {
+			tab: tabs[ tab.index ].attr
+		} );
 	};
 
 	buildChartData = ( item, selectedTab, chartFormat ) => {
@@ -66,14 +71,8 @@ class StoreStatsChart extends Component {
 	};
 
 	render() {
-		const { data, deltas, query, selectedDate, siteId, unit } = this.props;
+		const { data, deltas, selectedDate, unit } = this.props;
 		const { selectedTabIndex } = this.state;
-		const tabs = [
-			{ label: 'Gross Sales', attr: 'gross_sales', type: 'currency' },
-			{ label: 'Net Sales', attr: 'net_sales', type: 'currency' },
-			{ label: 'Orders', attr: 'orders', type: 'number' },
-			{ label: 'Average Order Value', attr: 'avg_order_value', type: 'currency' },
-		];
 		const selectedTab = tabs[ selectedTabIndex ];
 		const isLoading = ! data.length;
 		const chartFormat = UNITS[ unit ].chartFormat;
@@ -81,11 +80,6 @@ class StoreStatsChart extends Component {
 		const selectedIndex = findIndex( data, d => d.period === selectedDate );
 		return (
 			<Card className="store-stats-chart stats-module">
-				{ siteId && <QuerySiteStats
-					query={ query }
-					siteId={ siteId }
-					statType="statsOrders"
-				/> }
 				<Legend
 					activeTab={ selectedTab }
 				/>

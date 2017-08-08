@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -124,7 +125,7 @@ class ReaderCombinedCard extends React.Component {
 							isDiscover={ isDiscover }
 							isSelected={ isSelectedPost( post ) }
 							showFeaturedAsset={ mediaCount > 0 }
-						/>,
+						/>
 					) }
 				</ul>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }

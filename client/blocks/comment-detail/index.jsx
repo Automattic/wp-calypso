@@ -6,17 +6,38 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get, isUndefined, noop } from 'lodash';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
+import QueryComment from 'components/data/query-comment';
 import CommentDetailComment from './comment-detail-comment';
 import CommentDetailHeader from './comment-detail-header';
 import CommentDetailPost from './comment-detail-post';
 import CommentDetailReply from './comment-detail-reply';
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import { getPostCommentsTree } from 'state/comments/selectors';
+import getSiteComment from 'state/selectors/get-site-comment';
+
+/**
+ * Creates a stripped down comment object containing only the information needed by
+ * CommentList's change status functions and their respective undos.
+ *
+ * @param {Object} props The CommentDetail props object.
+ * @param {Number} props.commentId The comment ID.
+ * @param {Boolean} props.commentIsLiked The current comment i_like value.
+ * @param {String} props.commentStatus The current comment status.
+ * @param {Number} props.postId The comment's post ID.
+ * @returns {Object} A stripped down comment object.
+ */
+const getCommentStatusAction = ( { commentId, commentIsLiked, commentStatus, postId } ) => ( {
+	commentId,
+	isLiked: commentIsLiked,
+	postId,
+	status: commentStatus,
+} );
 
 export class CommentDetail extends Component {
 	static propTypes = {
@@ -37,8 +58,10 @@ export class CommentDetail extends Component {
 		commentUrl: PropTypes.string,
 		deleteCommentPermanently: PropTypes.func,
 		isBulkEdit: PropTypes.bool,
+		isLoading: PropTypes.bool,
 		postAuthorDisplayName: PropTypes.string,
 		postTitle: PropTypes.string,
+		refreshCommentData: PropTypes.bool,
 		repliedToComment: PropTypes.bool,
 		replyComment: PropTypes.func,
 		setCommentStatus: PropTypes.func,
@@ -50,6 +73,8 @@ export class CommentDetail extends Component {
 	static defaultProps = {
 		commentIsSelected: false,
 		isBulkEdit: false,
+		isLoading: true,
+		refreshCommentData: false,
 	};
 
 	state = {
@@ -81,18 +106,30 @@ export class CommentDetail extends Component {
 	edit = () => noop;
 
 	toggleApprove = () => {
-		const { commentId, commentStatus, postId, setCommentStatus } = this.props;
-		setCommentStatus( commentId, postId, 'approved' === commentStatus ? 'unapproved' : 'approved' );
+		const { commentStatus, setCommentStatus } = this.props;
+		const shouldPersist = 'approved' === commentStatus || 'unapproved' === commentStatus;
+
+		setCommentStatus(
+			getCommentStatusAction( this.props ),
+			( 'approved' === commentStatus ) ? 'unapproved' : 'approved',
+			{
+				doPersist: shouldPersist,
+				showNotice: true,
+			}
+		);
+
+		if ( shouldPersist ) {
+			this.setState( { isExpanded: false } );
+		}
 	}
 
 	toggleExpanded = () => {
-		this.setState( { isExpanded: ! this.state.isExpanded } );
+		if ( ! this.props.isLoading ) {
+			this.setState( ( { isExpanded } ) => ( { isExpanded: ! isExpanded } ) );
+		}
 	}
 
-	toggleLike = () => {
-		const { commentId, postId, toggleCommentLike } = this.props;
-		toggleCommentLike( commentId, postId );
-	}
+	toggleLike = () => this.props.toggleCommentLike( getCommentStatusAction( this.props ) );
 
 	toggleSelected = () => {
 		const { commentId, toggleCommentSelected } = this.props;
@@ -100,13 +137,37 @@ export class CommentDetail extends Component {
 	}
 
 	toggleSpam = () => {
-		const { commentId, commentStatus, postId, setCommentStatus } = this.props;
-		setCommentStatus( commentId, postId, 'spam' === commentStatus ? 'approved' : 'spam' );
+		const { commentStatus, setCommentStatus } = this.props;
+		setCommentStatus(
+			getCommentStatusAction( this.props ),
+			( 'spam' === commentStatus ) ? 'approved' : 'spam'
+		);
 	}
 
 	toggleTrash = () => {
-		const { commentId, commentStatus, postId, setCommentStatus } = this.props;
-		setCommentStatus( commentId, postId, 'trash' === commentStatus ? 'approved' : 'trash' );
+		const { commentStatus, setCommentStatus } = this.props;
+		setCommentStatus(
+			getCommentStatusAction( this.props ),
+			( 'trash' === commentStatus ) ? 'approved' : 'trash'
+		);
+	}
+
+	setCardRef = card => {
+		this.commentCard = card;
+	}
+
+	keyHandler = event => {
+		const commentHasFocus = document && this.commentCard && document.activeElement === ReactDom.findDOMNode( this.commentCard );
+		if ( this.state.isExpanded && ! commentHasFocus ) {
+			return;
+		}
+		switch ( event.keyCode ) {
+			case 32: // space
+			case 13: // enter
+				event.preventDefault();
+				this.toggleExpanded();
+				break;
+		}
 	}
 
 	render() {
@@ -125,13 +186,14 @@ export class CommentDetail extends Component {
 			commentStatus,
 			commentUrl,
 			isBulkEdit,
+			isLoading,
 			parentCommentAuthorAvatarUrl,
 			parentCommentAuthorDisplayName,
 			parentCommentContent,
-			parentCommentUrl,
 			postAuthorDisplayName,
 			postId,
 			postTitle,
+			refreshCommentData,
 			repliedToComment,
 			replyComment,
 			siteId,
@@ -146,6 +208,7 @@ export class CommentDetail extends Component {
 
 		const classes = classNames( 'comment-detail', {
 			'author-is-blocked': authorIsBlocked,
+			'comment-detail__placeholder': isLoading,
 			'is-approved': 'approved' === commentStatus,
 			'is-unapproved': 'unapproved' === commentStatus,
 			'is-bulk-edit': isBulkEdit,
@@ -157,7 +220,16 @@ export class CommentDetail extends Component {
 		} );
 
 		return (
-			<Card className={ classes }>
+			<Card
+				onKeyDown={ this.keyHandler }
+				ref={ this.setCardRef }
+				className={ classes }
+				tabIndex="0"
+			>
+				{ refreshCommentData &&
+					<QueryComment commentId={ commentId } siteId={ siteId } />
+				}
+
 				<CommentDetailHeader
 					authorAvatarUrl={ authorAvatarUrl }
 					authorDisplayName={ authorDisplayName }
@@ -181,10 +253,10 @@ export class CommentDetail extends Component {
 				{ isExpanded &&
 					<div className="comment-detail__content">
 						<CommentDetailPost
+							commentId={ commentId }
 							parentCommentAuthorAvatarUrl={ parentCommentAuthorAvatarUrl }
 							parentCommentAuthorDisplayName={ parentCommentAuthorDisplayName }
 							parentCommentContent={ parentCommentContent }
-							parentCommentUrl={ parentCommentUrl }
 							postAuthorDisplayName={ postAuthorDisplayName }
 							postTitle={ postTitle }
 							postUrl={ postUrl }
@@ -208,9 +280,7 @@ export class CommentDetail extends Component {
 						/>
 						<CommentDetailReply
 							authorDisplayName={ authorDisplayName }
-							commentId={ commentId }
-							commentStatus={ commentStatus }
-							postId={ postId }
+							comment={ getCommentStatusAction( this.props ) }
 							postTitle={ postTitle }
 							replyComment={ replyComment }
 						/>
@@ -222,13 +292,10 @@ export class CommentDetail extends Component {
 }
 
 const mapStateToProps = ( state, ownProps ) => {
-	// TODO: replace `const comment = ownProps.comment;` with
-	// `const comment = ownProps.comment || getComment( ownProps.commentId );`
-	// when the selector is ready.
-	const {
-		comment,
-		siteId,
-	} = ownProps;
+	const { commentId, siteId } = ownProps;
+	const comment = ownProps.comment || getSiteComment( state, siteId, commentId );
+
+	const isLoading = isUndefined( comment );
 
 	const postId = get( comment, 'post.ID' );
 
@@ -236,7 +303,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const postTitle = decodeEntities( get( comment, 'post.title' ) );
 
 	const commentsTree = getPostCommentsTree( state, siteId, postId, 'all' );
-	const parentCommentId = get( commentsTree, [ comment.ID, 'data', 'parent', 'ID' ], 0 );
+	const parentCommentId = get( commentsTree, [ commentId, 'data', 'parent', 'ID' ], 0 );
 	const parentComment = get( commentsTree, [ parentCommentId, 'data' ], {} );
 
 	// TODO: eventually it will be returned already decoded from the data layer.
@@ -249,23 +316,23 @@ const mapStateToProps = ( state, ownProps ) => {
 		authorId: get( comment, 'author.ID' ),
 		authorIp: get( comment, 'author.ip' ), // TODO: not available in the current data structure
 		authorIsBlocked: get( comment, 'author.isBlocked' ), // TODO: not available in the current data structure
-		authorUrl: get( comment, 'author.URL' ),
+		authorUrl: get( comment, 'author.URL', '' ),
 		authorUsername: get( comment, 'author.nice_name' ),
-		commentContent: comment.content,
-		commentDate: comment.date,
-		commentId: comment.ID,
-		commentIsLiked: comment.i_like,
-		commentStatus: comment.status,
+		commentContent: get( comment, 'content' ),
+		commentDate: get( comment, 'date' ),
+		commentId,
+		commentIsLiked: get( comment, 'i_like' ),
+		commentStatus: get( comment, 'status' ),
 		commentUrl: get( comment, 'URL' ),
+		isLoading,
 		parentCommentAuthorAvatarUrl: get( parentComment, 'author.avatar_URL' ),
 		parentCommentAuthorDisplayName: get( parentComment, 'author.name' ),
 		parentCommentContent,
-		parentCommentUrl: get( parentComment, 'URL' ),
 		postAuthorDisplayName: get( comment, 'post.author.name' ), // TODO: not available in the current data structure
 		postId,
 		postTitle,
-		repliedToComment: comment.replied, // TODO: not available in the current data structure
-		siteId: comment.siteId || siteId,
+		repliedToComment: get( comment, 'replied' ), // TODO: not available in the current data structure
+		siteId: get( comment, 'siteId', siteId ),
 	} );
 };
 

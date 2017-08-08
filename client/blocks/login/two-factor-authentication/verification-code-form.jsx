@@ -19,11 +19,12 @@ import { localize } from 'i18n-calypso';
 import { loginUserWithTwoFactorVerificationCode } from 'state/login/actions';
 import { getTwoFactorAuthRequestError } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { sendSmsCode } from 'state/login/actions';
+import { sendSmsCode, formUpdate } from 'state/login/actions';
 import TwoFactorActions from './two-factor-actions';
 
 class VerificationCodeForm extends Component {
 	static propTypes = {
+		formUpdate: PropTypes.func.isRequired,
 		loginUserWithTwoFactorVerificationCode: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -63,6 +64,8 @@ class VerificationCodeForm extends Component {
 	};
 
 	onChangeField = ( event ) => {
+		this.props.formUpdate();
+
 		this.setState( {
 			[ event.target.name ]: event.target.value,
 		} );
@@ -174,6 +177,7 @@ export default connect(
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
 	} ),
 	{
+		formUpdate,
 		loginUserWithTwoFactorVerificationCode,
 		recordTracksEvent,
 		sendSmsCode

@@ -15,6 +15,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
 import SeoSettingsHelpCard from 'my-sites/site-settings/seo-settings/help';
+import SiteVerification from 'my-sites/site-settings/seo-settings/site-verification';
 import AnalyticsSettings from 'my-sites/site-settings/form-analytics';
 import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackSiteStats from 'my-sites/site-settings/jetpack-site-stats';
@@ -89,14 +90,15 @@ const SiteSettingsTraffic = ( {
 					fields={ fields }
 				/>
 			}
-			<AnalyticsSettings />
 			<SeoSettingsHelpCard />
 			<SeoSettingsMain />
+			<AnalyticsSettings />
 			<Sitemaps
 				isSavingSettings={ isSavingSettings }
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
 			/>
+			{ site && <SiteVerification /> }
 		</Main>
 	);
 };

@@ -410,9 +410,15 @@
 	}
 }
 
-.search-stream__results.is-two-columns .search-stream__site-results .gridicons-cog {
-	left: -2px;
-	top: 8px;
+.search-stream__results.is-two-columns .search-stream__site-results {
+	.gridicons-cog {
+		left: -2px;
+		top: 8px;
+	}
+
+	.reader-email-settings__button-label {
+		display: none;
+	}
 }
 
 .search-stream .reader-subscription-list-item .gridicons-cog {
@@ -424,5 +430,39 @@
 .card.reader-search-card.is-photo {
 	@include breakpoint( "<660px" ) {
 		z-index: z-index( 'root', '.reader-search-card' );
+	}
+}
+
+.search-stream__url-follow {
+	border-bottom: 1px solid lighten( $gray, 30% );
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 13px 0 10px;
+	position: relative;
+	z-index: z-index( 'root', '.following-manage__url-follow' );
+
+	.follow-button {
+		.gridicon {
+			fill: $blue-medium;
+		}
+
+		.follow-button__label {
+			color: $blue-medium;
+
+			@include breakpoint ("<660px" ) {
+				display: inline;
+			}
+		}
+
+		&.is-following {
+			.gridicon {
+				fill: $alert-green;
+			}
+
+			.follow-button__label {
+				color: $alert-green;
+			}
+		}
 	}
 }

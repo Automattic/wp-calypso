@@ -1,25 +1,5 @@
 .jetpack-sync-panel__action {
-	margin-top: 16px
-}
-
-@include breakpoint( ">660px" ) {
-	.jetpack-sync-panel__action-group {
-		display: flex;
-	}
-
-	.jetpack-sync-panel__description {
-		display: block;
-		flex-grow: 1;
-		padding-right: 8px;
-	}
-
-	.jetpack-sync-panel__action {
-		align-self: center;
-		flex-grow: 1;
-		flex-shrink: 0;
-		margin-top: 0;
-		padding-left: 8px;
-	}
+	font-style: italic;
 }
 
 .jetpack-sync-panel .progress-bar {

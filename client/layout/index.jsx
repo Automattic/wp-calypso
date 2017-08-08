@@ -40,6 +40,7 @@ import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
+import AppBanner from 'blocks/app-banner';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -167,6 +168,7 @@ Layout = React.createClass( {
 					isActive={ translator.isActivated() } />
 				{ this.renderPreview() }
 				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
+				<AppBanner />
 			</div>
 		);
 	}

@@ -13,6 +13,8 @@ import page from 'page';
  */
 import Main from 'components/main';
 import QueryShippingZones, { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import { areSettingsGeneralLoaded } from 'woocommerce/state/sites/settings/general/selectors';
 import ShippingZoneHeader from './shipping-zone-header';
 import ShippingZoneLocationList from './shipping-zone-location-list';
 import ShippingZoneMethodList from './shipping-zone-method-list';
@@ -119,6 +121,7 @@ class Shipping extends Component {
 			<Main className={ classNames( 'shipping', className ) }>
 				<ProtectFormGuard isChanged={ hasEdits } />
 				<QueryShippingZones siteId={ siteId } />
+				<QuerySettingsGeneral siteId={ siteId } />
 				<ShippingZoneHeader
 					onSave={ this.onSave }
 					onDelete={ this.onDelete } />
@@ -136,10 +139,10 @@ Shipping.propTypes = {
 };
 
 export default connect(
-	( state ) => {
-		const loaded = areShippingZonesFullyLoaded( state );
+	( state, ownProps ) => {
+		const loaded = areShippingZonesFullyLoaded( state ) && areSettingsGeneralLoaded( state );
 		const zone = loaded && getCurrentlyEditingShippingZone( state );
-		const isRestOfTheWorld = zone && 0 === zone.id;
+		const isRestOfTheWorld = 0 === Number( ownProps.params.zone );
 
 		return {
 			siteId: getSelectedSiteId( state ),

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -33,7 +34,7 @@ export function initiateFeedSearch( store, action ) {
 			},
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 }
 

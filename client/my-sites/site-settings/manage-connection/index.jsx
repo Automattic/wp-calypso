@@ -9,12 +9,15 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import DataSynchronization from './data-synchronization';
+import DisconnectSite from './disconnect-site';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SiteOwnership from './site-ownership';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 
 class ManageConnection extends Component {
 	componentDidMount() {
@@ -26,7 +29,7 @@ class ManageConnection extends Component {
 	}
 
 	verifySiteIsJetpack() {
-		if ( this.props.siteIsJetpack === false ) {
+		if ( this.props.siteIsJetpack === false || this.props.siteIsAtomic ) {
 			this.redirectToGeneral();
 		}
 	}
@@ -49,14 +52,21 @@ class ManageConnection extends Component {
 				</HeaderCake>
 
 				<SiteOwnership />
+				<DataSynchronization />
+				<DisconnectSite />
 			</Main>
 		);
 	}
 }
 
 export default connect(
-	( state ) => ( {
-		siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
-		siteSlug: getSelectedSiteSlug( state ),
-	} )
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
+			siteIsJetpack: isJetpackSite( state, siteId ),
+			siteSlug: getSelectedSiteSlug( state ),
+		};
+	}
 )( localize( ManageConnection ) );

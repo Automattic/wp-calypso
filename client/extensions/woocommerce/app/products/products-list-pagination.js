@@ -6,7 +6,7 @@ import React, { PropTypes } from 'react';
 /**
  * Internal dependencies
  */
-import Pagination from 'my-sites/stats/pagination';
+import Pagination from 'components/pagination';
 
 const ProductsListPagination = ( { site, totalProducts, currentPage, currentPageLoaded, requestedPage, onSwitchPage } ) => {
 	const perPage = 10;

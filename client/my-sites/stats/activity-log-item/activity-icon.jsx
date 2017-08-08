@@ -4,6 +4,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { get, startsWith } from 'lodash';
 
 export default class ActivityIcon extends PureComponent {
 
@@ -21,24 +22,21 @@ export default class ActivityIcon extends PureComponent {
 			'widget',
 		] ).isRequired,
 		name: PropTypes.string.isRequired,
+		object: PropTypes.object.isRequired,
 	};
 
 	getIcon() {
 		const {
 			group,
-			name,
+			object,
 		} = this.props;
-
-		switch ( name ) {
-			// Inline return makes alphabetizing and searching easier :)
-			case 'post__published': return 'create';
-			case 'post__trashed': return 'trash';
-			case 'user__registered': return 'user-add';
-		}
 
 		switch ( group ) {
 			case 'attachment':
-				return 'image';
+				if ( startsWith( get( object, [ 'attachment', 'mime_type' ] ), 'image/' ) ) {
+					return 'image';
+				}
+				return 'attachment';
 
 			case 'comment':
 				return 'comment';
@@ -75,14 +73,16 @@ export default class ActivityIcon extends PureComponent {
 			case 'widget__removed':
 				return 'is-error';
 
-			case 'attachment__uploaded':
-			case 'term__created':
+			case 'plugin__autoupdated':
+			case 'plugin__installed':
+			case 'plugin__installed_filesystem':
 			case 'theme__installed':
 			case 'user__registered':
 				return 'is-success';
 
 			case 'comment__published_awaiting_approval':
 			case 'comment__unapproved':
+			case 'plugin__update_available':
 				return 'is-warning';
 		}
 

@@ -110,16 +110,10 @@ const ShippingZoneMethodDialog = ( {
 			onClose={ onCancel } >
 			<div className="shipping-zone__method-dialog-header">
 				{ isNew ? translate( 'Add shipping method' ) : translate( 'Edit shipping method' ) }
+				<FormFieldSet className="shipping-zone__enable">
+					<FormToggle checked={ enabled } onChange={ onEnabledChange }>{ translate( 'Enabled' ) }</FormToggle>
+				</FormFieldSet>
 			</div>
-			<FormFieldSet className="shipping-zone__enable">
-				<span onClick={ onEnabledChange }>
-					{ translate( 'Enabled {{toggle/}}', {
-						components: {
-							toggle: <FormToggle checked={ enabled } />
-						}
-					} ) }
-				</span>
-			</FormFieldSet>
 			<FormFieldSet>
 				<FormFieldSet>
 					<FormLabel>{ translate( 'Method' ) }</FormLabel>

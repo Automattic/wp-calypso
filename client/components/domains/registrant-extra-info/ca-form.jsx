@@ -42,37 +42,37 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		super( props );
 		const { translate } = props;
 		const legalTypes = {
-			ABO: translate( 'Aboriginal', {
-				comment: 'Refers to indigenous peoples, specifically of Canada.'
-			} ),
-			ASS: translate( 'Association (Unincorporated)', {
+			CCT: translate( 'Canadian Citizen' ),
+			CCO: translate( 'Canadian Corporation' ),
+			RES: translate( 'Permanent Resident' ),
+			GOV: translate( 'Government' ),
+			EDU: translate( 'Educational Institution' ),
+			ASS: translate( 'Unincorporated Association', {
 				comment: 'Refers to Canadian legal concept -- encompasses entities ' +
 					'like religious congregations, social clubs, community groups, etc'
 			} ),
-			CCO: translate( 'Canadian Corporation' ),
-			CCT: translate( 'Canadian Citizen' ),
-			EDU: translate( 'Educational Institution' ),
-			GOV: translate( 'Government' ),
 			HOP: translate( 'Hospital' ),
+			PRT: translate( 'Partnership' ),
+			TDM: translate( 'Trademark Owner' ),
+			TRD: translate( 'Trade Union' ),
+			PLT: translate( 'Political Party' ),
+			LAM: translate( 'Library, Archive, or Museum' ),
+			TRS: translate( 'Trust', {
+				comment: 'Refers to the legal concept of trust (noun)'
+			} ),
+			ABO: translate( 'Aboriginal Peoples', {
+				comment: 'Refers to indigenous peoples, specifically of Canada.'
+			} ),
 			INB: translate( 'Indian Band', {
 				comment: 'Refers to Canadian legal concept -- Indian meaning the ' +
 					'indigeonous people of North America and band meaning a small ' +
 					'group or community'
 			} ),
-			LAM: translate( 'Library, Archive, or Museum' ),
 			LGR: translate( 'Legal Representative' ),
-			MAJ: translate( 'Her Majesty the Queen' ),
 			OMK: translate( 'Official Mark', {
 				comment: 'Refers to a Canadian legal concept -- similar to a trademark'
 			} ),
-			PLT: translate( 'Political Party' ),
-			PRT: translate( 'Partnership' ),
-			RES: translate( 'Permanent Resident' ),
-			TDM: translate( 'Trademark Owner' ),
-			TRD: translate( 'Trade Union' ),
-			TRS: translate( 'Trust', {
-				comment: 'Refers to the legal concept of trust (noun)'
-			} ),
+			MAJ: translate( 'Her Majesty the Queen' ),
 		};
 		const legalTypeOptions = map( legalTypes, ( text, optionValue ) =>
 			<option value={ optionValue } key={ optionValue }>{ text }</option>

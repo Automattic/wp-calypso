@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import SegmentedControl from 'components/segmented-control';
 
-class DnsTemplateSelector extends Component {
+class DnsTemplateSelector extends React.PureComponent {
 	handleOnSelect = ( option ) => {
 		this.props.onTemplateClick( option.label );
-	}
+	};
 
 	render() {
 		const { templates } = this.props;
+
 		return (
 			<SegmentedControl
 				primary={ true }

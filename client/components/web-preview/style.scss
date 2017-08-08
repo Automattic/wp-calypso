@@ -141,6 +141,12 @@ a.web-preview__external.button {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: flex-end;
+
+	@include breakpoint( ">960px" ) {
+		// Matches __device-switcher width + margin
+		// and allows the center area to flex equally
+		min-width: 212px;
+	}
 }
 
 .web-preview__device-switcher {
@@ -155,14 +161,15 @@ a.web-preview__external.button {
 	width: auto;
 
 	.form-text-input {
-		color: $gray;
+		color: $gray-text-min;
 		font-size: 14px;
 		height: 35px;
 		border-color: transparent;
 		text-overflow: ellipsis;
+		text-align: center;
 	}
 
-	&:hover .form-text-input {
+	&:hover .form-text-input:not(:focus) {
 		border-color: lighten( $gray, 20% );
 	}
 
@@ -172,16 +179,6 @@ a.web-preview__external.button {
 
 	&:hover .clipboard-button {
 		display: block;
-	}
-
-	@include breakpoint( ">660px" ) {
-		max-width: 50%;
-	}
-
-	@include breakpoint( ">960px" ) {
-		margin: 6px auto;
-		width: 35%;
-		flex-grow: inherit;
 	}
 }
 
@@ -285,6 +282,7 @@ a.web-preview__external.button {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
+	position: relative;
 }
 
 .web-preview .spinner {
@@ -308,4 +306,11 @@ a.web-preview__external.button {
 	display: block;
 	margin: 48px 0;
 	height: 100%;
+}
+
+.web-preview__inner .spinner-line {
+	position: absolute;
+		top: 22px;
+	width: 100%;
+	z-index: z-index( 'root', '.web-preview__inner .spinner-line' );
 }

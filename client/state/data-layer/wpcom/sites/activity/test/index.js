@@ -8,12 +8,15 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { http } from 'state/data-layer/wpcom-http/actions';
 import {
+	handleActivityLogRequest,
 	receiveActivityLogError,
 	receiveActivityLog,
 } from '..';
 import {
 	activityLogError,
+	activityLogRequest,
 	activityLogUpdate,
 } from 'state/activity-log/actions';
 
@@ -97,5 +100,51 @@ describe( 'receiveActivityLogError', () => {
 				message: 'Unknown blog'
 			} )
 		);
+	} );
+} );
+
+describe( 'handleActivityLogRequest', () => {
+	it( 'should dispatch HTTP action with default when no params are passed', () => {
+		const action = activityLogRequest( SITE_ID );
+		const dispatch = sinon.spy();
+
+		handleActivityLogRequest( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.calledOnce;
+		expect( dispatch ).to.have.been.calledWith( http( {
+			apiVersion: '1',
+			method: 'GET',
+			path: `/sites/${ SITE_ID }/activity`,
+			query: {
+				number: 1000,
+			},
+		}, action ) );
+	} );
+
+	it( 'should dispatch HTTP action with provided parameters', () => {
+		const action = activityLogRequest( SITE_ID, {
+			date_end: 1500300000000,
+			date_start: 1500000000000,
+			group: 'post',
+			name: 'post__published',
+			number: 10,
+		} );
+		const dispatch = sinon.spy();
+
+		handleActivityLogRequest( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.calledOnce;
+		expect( dispatch ).to.have.been.calledWith( http( {
+			apiVersion: '1',
+			method: 'GET',
+			path: `/sites/${ SITE_ID }/activity`,
+			query: {
+				date_end: 1500300000000,
+				date_start: 1500000000000,
+				group: 'post',
+				name: 'post__published',
+				number: 10,
+			},
+		}, action ) );
 	} );
 } );

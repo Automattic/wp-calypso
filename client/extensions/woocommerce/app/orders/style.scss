@@ -17,6 +17,12 @@
 			background: lighten( $gray, 35% );
 		}
 	}
+
+	.orders__row-placeholder span {
+		display: inline-block;
+		width: 75%;
+		@include placeholder();
+	}
 }
 
 .orders__item-link,
@@ -43,6 +49,15 @@
 
 		span + span {
 			border-color: $alert-red;
+		}
+	}
+	
+	&.is-pending {
+		background: lighten( $alert-green, 20% );
+		color: darken( $alert-green, 30% );
+
+		span + span {
+			border-color: $alert-green;
 		}
 	}
 

@@ -289,7 +289,7 @@ class AdsFormEarnings extends Component {
 							<tr>
 								<th className="ads__earnings-history-header">{ translate( 'Period' ) }</th>
 								<th className="ads__earnings-history-header">{ translate( 'Earnings' ) }</th>
-								<th className="ads__earnings-history-header">{ translate( 'Ad Impressions' ) }</th>
+								<th className="ads__earnings-history-header">{ translate( 'Attempted Impressions' ) }</th>
 								<th className="ads__earnings-history-header">{ translate( 'Status' ) }</th>
 							</tr>
 						</thead>

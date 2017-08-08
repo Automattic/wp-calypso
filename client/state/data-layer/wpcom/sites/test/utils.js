@@ -8,7 +8,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import {
-	COMMENTS_REMOVE,
+	COMMENTS_DELETE,
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_INCREMENT,
 	NOTICE_CREATE
@@ -101,7 +101,7 @@ describe( 'utility functions', () => {
 
 			expect( dispatch ).to.have.been.calledThrice;
 			expect( dispatch ).to.have.been.calledWith( {
-				type: COMMENTS_REMOVE,
+				type: COMMENTS_DELETE,
 				siteId: 2916284,
 				postId: 1010,
 				commentId: 'placeholder-id'

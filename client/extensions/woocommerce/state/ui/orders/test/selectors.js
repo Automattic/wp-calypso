@@ -6,7 +6,10 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getOrdersCurrentPage } from '../selectors';
+import {
+	getOrdersCurrentPage,
+	getOrdersCurrentSearch
+} from '../selectors';
 
 const preInitializedState = {
 	extensions: {
@@ -22,9 +25,11 @@ const state = {
 				orders: {
 					123: {
 						currentPage: 2,
+						currentSearch: 'example',
 					},
 					234: {
 						currentPage: 5,
+						currentSearch: 'test',
 					},
 				},
 			},
@@ -48,6 +53,24 @@ describe( 'selectors', () => {
 
 		it( 'should get the siteId from the UI tree if not provided', () => {
 			expect( getOrdersCurrentPage( state ) ).to.eql( 2 );
+		} );
+	} );
+
+	describe( '#getOrdersCurrentSearch', () => {
+		it( 'should be any (default) when woocommerce state is not available', () => {
+			expect( getOrdersCurrentSearch( preInitializedState, 123 ) ).to.eql( '' );
+		} );
+
+		it( 'should get the current search term', () => {
+			expect( getOrdersCurrentSearch( state, 123 ) ).to.eql( 'example' );
+		} );
+
+		it( 'should get the current search term for a second site in the state', () => {
+			expect( getOrdersCurrentSearch( state, 234 ) ).to.eql( 'test' );
+		} );
+
+		it( 'should get the siteId from the UI tree if not provided', () => {
+			expect( getOrdersCurrentSearch( state ) ).to.eql( 'example' );
 		} );
 	} );
 } );

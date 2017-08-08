@@ -16,6 +16,7 @@ var debug = require( 'debug' )( 'calypso:signup:flow-controller' ), // eslint-di
 	find = require( 'lodash/find' ),
 	pick = require( 'lodash/pick' ),
 	keys = require( 'lodash/keys' ),
+	get = require( 'lodash/get' ),
 	page = require( 'page' );
 
 /**
@@ -65,6 +66,11 @@ function SignupFlowController( options ) {
 		this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );
 
 		SignupActions.provideDependencies( options.providedDependencies );
+	} else {
+		const storedDependencies = this._getStoredDependencies();
+		if ( ! isEmpty( storedDependencies ) ) {
+			SignupActions.provideDependencies( storedDependencies );
+		}
 	}
 
 	store.set( STORAGE_KEY, options.flowName );
@@ -219,6 +225,18 @@ assign( SignupFlowController.prototype, {
 		}
 
 		return this._flow.destination;
+	},
+
+	_getStoredDependencies() {
+		const requiredDependencies = this._flow.steps.reduce( ( current, stepName ) => {
+			const providesDependencies = get( steps, [ stepName, 'providesDependencies' ] );
+			return providesDependencies ? current.concat( providesDependencies ) : current;
+		}, [] );
+
+		return SignupProgressStore.get().reduce(
+			( current, step ) => ( { ...current, ...pick( step.providedDependencies, requiredDependencies ) } ),
+			{}
+		);
 	},
 
 	shouldAutoContinue: function() {
