@@ -105,7 +105,7 @@ webpack( webpackConfig, function( error, stats ) {
 	if ( process.env.WEBPACK_OUTPUT_JSON ) {
 		fs.writeFile(
 			path.join( process.cwd(), 'stats.json' ),
-			JSON.stringify( stats.toJson() )
+			JSON.stringify( stats.toJson(), null, '\t' )
 		);
 	}
 
