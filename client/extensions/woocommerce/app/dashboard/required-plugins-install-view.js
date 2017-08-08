@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { activatePlugin, fetchPlugins, installPlugin } from 'state/plugins/installed/actions';
+import analytics from 'lib/analytics';
 import Button from 'components/button';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
@@ -320,6 +321,9 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	startSetup = () => {
+		analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
+			action: 'initial-setup',
+		} );
 		this.setState( {
 			engineState: 'INITIALIZING',
 		} );
