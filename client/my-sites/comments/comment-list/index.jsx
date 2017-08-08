@@ -380,7 +380,7 @@ export class CommentList extends Component {
 		return (
 			<div className="comment-list">
 				{ isJetpack &&
-					<QueryJetpackSiteCommentsTree siteId={ siteId } status={ status } />
+					<QueryJetpackSiteCommentsTree page={ page } siteId={ siteId } status={ status } />
 				}
 				{ ! isJetpack &&
 					<QuerySiteCommentsTree siteId={ siteId } status={ status } />

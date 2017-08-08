@@ -73,7 +73,7 @@ const fetchCommentsTreeForJetpackSites = ( { dispatch }, action ) => {
 	const { page, siteId, status } = action.query;
 	const query = {
 		fields: 'ID,parent,post,status',
-		number: 81,
+		number: 100,
 		offset: ( page - 1 ) * 20, // see CommentList COMMENTS_PER_PAGE constant
 		siteId,
 		status,
