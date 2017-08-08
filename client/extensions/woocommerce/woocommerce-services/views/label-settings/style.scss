@@ -1,23 +1,26 @@
-
-
-.label-settings__labels-container.hidden {
-	height: 0;
-	padding: 0;
-	overflow: hidden;
-}
-
-.form-label.label-settings__labels-paper-size,
-.form-label.label-settings__cards-label {
+.label-settings__credit-card-description {
 	margin-bottom: 4px;
+	color: $gray-text-min;
+	padding-bottom: 8px;
+	font-size: 12px;
+	line-height: 18px;
 }
 
-.label-settings__card {
+.card.label-settings__card {
 	margin-bottom: 14px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	cursor: pointer;
 }
 
-.label-settings__card-checkbox {
-	margin-top: 10px;
+.label-settings__card .payment-logo {
+	margin-top: 0;
+}
+
+.form-checkbox.label-settings__card-checkbox {
 	margin-right: 20px;
+	float: left;
 }
 
 .payment-logo {
@@ -28,6 +31,7 @@
 
 .label-settings__card-details {
 	float: left;
+	flex-grow: 1;
 }
 
 .label-settings__card-number {
@@ -35,8 +39,57 @@
 	font-weight: bold;
 }
 
+.label-settings__card-name {
+	margin-bottom: 0;
+}
+
 .label-settings__card-date {
 	float: right;
-	color: $gray-text-min;
+	color: $gray;
 	font-style: italic;
+}
+
+.label-settings__labels-container {
+	&.hidden {
+		visibility: hidden;
+		height: 0;
+		padding: 0;
+		overflow: hidden;
+	}
+	.form-fieldset:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.label-settings__placeholder {
+	@include placeholder();
+	pointer-events: none;
+	background: $white;
+
+	&:after {
+		content: none;
+	}
+
+	.gridicon, span, p, a, button {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		background-color: lighten( $gray, 25% );
+		color: transparent;
+		cursor: default;
+	}
+
+	p, span {
+		display: block;
+		width: 100px;
+		height: 14px;
+	}
+
+	button {
+		width: 200px;
+		height: 14px;
+	}
+
+	.gridicon {
+		fill: transparent;
+		stroke: transparent;
+	}
 }
