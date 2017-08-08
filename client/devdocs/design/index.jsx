@@ -37,6 +37,7 @@ import CountedTextareas from 'components/forms/counted-textarea/docs/example';
 import DatePicker from 'components/date-picker/docs/example';
 import DropZones from 'components/drop-zone/docs/example';
 import EllipsisMenu from 'components/ellipsis-menu/docs/example';
+import EmbedDialog from 'components/tinymce/plugins/embed/docs/example';
 import EmojifyExample from 'components/emojify/docs/example';
 import EmptyContent from 'components/empty-content/docs/example';
 import ExternalLink from 'components/external-link/docs/example';
@@ -139,6 +140,7 @@ class DesignAssets extends React.Component {
 					<DatePicker />
 					<DropZones searchKeywords="drag" />
 					<EllipsisMenu />
+					<EmbedDialog />
 					<EmojifyExample />
 					<EmptyContent />
 					<ExternalLink />
