@@ -388,8 +388,8 @@
 	animation: appear .3s ease-in-out;
 }
 
-.post .comments__comment-timestamp {
-	margin-top: -4px;
+.post .comments__comment-author .gravatar{
+	top: 5px;
 }
 
 .post .comments__view-more {
