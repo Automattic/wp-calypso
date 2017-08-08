@@ -17,12 +17,14 @@ import QueryPlans from 'components/data/query-plans';
 import addQueryArgs from 'lib/route/add-query-args';
 
 const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
+const CALYPSO_JETPACK_CONNECT_CHECK_USER = '/jetpack/connect/authorize?preSelectedSite=';
 
 class PlansLanding extends Component {
 	static propTypes = {
 		basePlansPath: PropTypes.string,
 		interval: PropTypes.string,
 		url: PropTypes.string,
+		preSelectedSite: PropTypes.string
 	};
 
 	static defaultProps = {
@@ -50,8 +52,11 @@ class PlansLanding extends Component {
 	}
 
 	storeSelectedPlan = ( cartItem ) => {
-		const { url } = this.props;
-		let redirectUrl = CALYPSO_JETPACK_CONNECT;
+		const { url, preSelectedSite } = this.props;
+		const selectedPlanSlug = cartItem ? cartItem.product_slug : 'free';
+		let redirectUrl = preSelectedSite
+			? CALYPSO_JETPACK_CONNECT_CHECK_USER + preSelectedSite + '&selectedPlan=' + selectedPlanSlug
+			: CALYPSO_JETPACK_CONNECT;
 
 		if ( url ) {
 			redirectUrl = addQueryArgs( { url }, redirectUrl );
@@ -60,7 +65,7 @@ class PlansLanding extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_store_plan', {
 			plan: cartItem ? cartItem.product_slug : 'free'
 		} );
-		this.props.selectPlanInAdvance( cartItem ? cartItem.product_slug : 'free', '*' );
+		this.props.selectPlanInAdvance( selectedPlanSlug, '*' );
 
 		setTimeout( () => {
 			page.redirect( redirectUrl );
