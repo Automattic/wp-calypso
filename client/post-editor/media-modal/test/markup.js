@@ -107,11 +107,11 @@ describe( 'markup', function() {
 			it( 'should not set width auto if media width cannot be determined', function() {
 				var value = markup.mimeTypes.image( site, {
 					ID: 'media-4',
-					URL: 'blob:http%3A//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71',
+					URL: 'http%3A//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71',
 					thumbnails: {}
 				} );
 
-				expect( value ).to.equal( '<img src="blob:http%3A//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71" class="alignnone size-full wp-image-media-4"/>' );
+				expect( value ).to.equal( '<img src="http%3A//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71" class="alignnone size-full wp-image-media-4"/>' ); // eslint-disable-line max-len
 			} );
 
 			it( 'should return an img element for an image', function() {
@@ -248,6 +248,35 @@ describe( 'markup', function() {
 
 				expect( value ).to.equal( '<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png?w=1024" alt="Automattic" width="1024" height="111" class="alignnone size-large wp-image-1"/>' );
 			} );
+
+			it( 'should include a data-istransient="istransient" attribute when media.transient is truthy', function() {
+				const value = markup.mimeTypes.image( site, {
+					ID: 1,
+					URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
+					alt: 'Automattic',
+					thumbnails: {},
+					width: 2760,
+					height: 300,
+					'transient': true
+				} );
+
+				expect( value ).to.equal( '<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="2760" height="300" class="alignnone size-full wp-image-1" data-istransient="istransient"/>' ); // eslint-disable-line max-len
+			} );
+
+			it( 'should not include a data-istransient attribute when media.transient is falsy', function() {
+				const value = markup.mimeTypes.image( site, {
+					ID: 1,
+					URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
+					alt: 'Automattic',
+					thumbnails: {},
+					width: 2760,
+					height: 300,
+					'transient': false
+				} );
+
+				expect( value ).to.equal( '<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="2760" height="300" class="alignnone size-full wp-image-1"/>' ); // eslint-disable-line max-len
+			} );
+
 		} );
 
 		describe( '#audio()', function() {
