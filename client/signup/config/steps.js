@@ -69,6 +69,16 @@ export default {
 		providesDependencies: [ 'siteSlug' ]
 	},
 
+	'rebrand-cities-welcome': {
+		stepName: 'rebrand-cities-welcome',
+		apiRequestFunction: stepActions.createSiteWithCart,
+		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+		props: {
+			isDomainOnly: false
+		},
+		delayApiRequestUntilComplete: true
+	},
+
 	user: {
 		stepName: 'user',
 		apiRequestFunction: stepActions.createAccount,
