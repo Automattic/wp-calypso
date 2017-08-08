@@ -39,27 +39,29 @@ class ConversationCaterpillarComponent extends React.Component {
 		// At the moment, we just show authors for the entire comments array
 		return (
 			<div className="conversation-caterpillar">
-				{ map( displayedAuthors, ( author, index ) => {
-					let gravClasses = 'conversation-caterpillar__gravatar';
-					// If we have more than 5 gravs,
-					// add a additional class so we can hide some on small screens
-					if (
-						displayedAuthorsCount > gravatarSmallScreenThreshold &&
-						index < displayedAuthorsCount - gravatarSmallScreenThreshold
-					) {
-						gravClasses += ' is-hidden-on-small-screens';
-					}
+				<div className="conversation-caterpillar__gravatars">
+					{ map( displayedAuthors, ( author, index ) => {
+						let gravClasses = 'conversation-caterpillar__gravatar';
+						// If we have more than 5 gravs,
+						// add a additional class so we can hide some on small screens
+						if (
+							displayedAuthorsCount > gravatarSmallScreenThreshold &&
+							index < displayedAuthorsCount - gravatarSmallScreenThreshold
+						) {
+							gravClasses += ' is-hidden-on-small-screens';
+						}
 
-					return (
-						<Gravatar
-							className={ gravClasses }
-							key={ author.ID }
-							user={ author }
-							size={ 32 }
-							aria-hidden="true"
-						/>
-					);
-				} ) }
+						return (
+							<Gravatar
+								className={ gravClasses }
+								key={ author.ID }
+								user={ author }
+								size={ 32 }
+								aria-hidden="true"
+							/>
+						);
+					} ) }
+				</div>
 				<button
 					className="conversation-caterpillar__count"
 					title={

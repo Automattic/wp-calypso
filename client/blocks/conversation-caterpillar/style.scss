@@ -1,29 +1,34 @@
 .conversation-caterpillar {
 	cursor: pointer;
+	display: flex;
+}
+
+.conversation-caterpillar__gravatars {
+	display: flex;
+	flex-wrap: wrap;
+	max-height: 36px;
+	overflow: hidden;
 }
 
 .conversation-caterpillar__gravatar {
 	border: 2px solid $white;
+	height: 32px;
 	margin-left: -8px;
 	vertical-align: middle;
+	width: 32px;
 
 	&:first-child {
 		margin-left: 0;
-	}
-
-	&.is-hidden-on-small-screens {
-		display: none;
-
-		@include breakpoint( ">660px" ) {
-   			display: inline;
-   		}
 	}
 }
 
 .conversation-caterpillar__count {
 	color: $gray;
+	display: flex;
+	flex: 1 0 auto;
 	font-size: 13px;
-	font-weight: 500;
+	font-weight: 400;
+	justify-content: flex-start;
 	margin-left: 8px;
 	cursor: pointer;
 }
