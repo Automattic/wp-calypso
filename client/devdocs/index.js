@@ -56,6 +56,13 @@ export default function() {
 			clientRender
 		);
 		page(
+			'/devdocs/data/:component?',
+			controller.sidebar,
+			controller.data,
+		 	makeLayout,
+			clientRender
+		);
+		page(
 			'/devdocs/selectors/:selector?',
 			controller.sidebar,
 			controller.selectors,
