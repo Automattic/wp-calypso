@@ -26,6 +26,7 @@ import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants
 import { isValidSimplePaymentsProduct } from 'lib/simple-payments/utils';
 import formatCurrency from 'lib/format-currency';
 import { getFeaturedImageId } from 'lib/posts/utils-ssr-ready';
+import { decodeEntities } from 'lib/formatting';
 
 /**
  * Convert custom post metadata array to product attributes
@@ -64,8 +65,8 @@ export function customPostToProduct( customPost ) {
 
 	return {
 		ID: customPost.ID,
-		description: customPost.content,
-		title: customPost.title,
+		description: decodeEntities( customPost.content ),
+		title: decodeEntities( customPost.title ),
 		featuredImageId: getFeaturedImageId( customPost ),
 		...metadataAttributes,
 	};
