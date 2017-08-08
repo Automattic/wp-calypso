@@ -20,6 +20,7 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import {
+	PLAN_BUSINESS,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
@@ -50,6 +51,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
  * Module constants
  */
 const plansIncludingVideoPress = [
+	PLAN_BUSINESS,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
