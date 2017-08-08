@@ -143,9 +143,6 @@ function uploadFiles( uploader, files, siteId ) {
 		// Generate a fake transient item that can be used immediately, even
 		// before the media has persisted to the server
 		const transientMedia = { date, ...MediaUtils.createTransientMedia( file ) };
-		if ( file.ID ) {
-			transientMedia.ID = file.ID;
-		}
 
 		Dispatcher.handleViewAction( {
 			type: 'CREATE_MEDIA_ITEM',
