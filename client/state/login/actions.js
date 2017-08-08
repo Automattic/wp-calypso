@@ -432,7 +432,7 @@ export const logoutUser = ( redirectTo ) => ( dispatch, getState ) => {
 	const logoutNonceMatches = ( currentUser.logout_URL || '' ).match( /_wpnonce=([^&]*)/ );
 	const logoutNonce = logoutNonceMatches && logoutNonceMatches[ 1 ];
 
-	return request.post( addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=logout-endpoint', getLocaleSlug() ) )
+	return request.post( 'https://wordpress.com/wp-login.php?action=logout-endpoint' )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
