@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import Gravatar from 'components/gravatar';
 import { getDateSortedPostComments } from 'state/comments/selectors';
+import Card from 'components/card';
 
 const MAX_GRAVATARS_TO_DISPLAY = 10;
 
@@ -38,7 +39,7 @@ class ConversationCaterpillarComponent extends React.Component {
 
 		// At the moment, we just show authors for the entire comments array
 		return (
-			<div className="conversation-caterpillar">
+			<Card className="conversation-caterpillar">
 				<div className="conversation-caterpillar__gravatars">
 					{ map( displayedAuthors, ( author, index ) => {
 						let gravClasses = 'conversation-caterpillar__gravatar';
@@ -92,7 +93,7 @@ class ConversationCaterpillarComponent extends React.Component {
 								},
 							} ) }
 				</button>
-			</div>
+			</Card>
 		);
 	}
 }
