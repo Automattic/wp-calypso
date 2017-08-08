@@ -9,6 +9,8 @@
 		color: $gray-dark;
 		font-size: 34px;
 		font-weight: bold;
+		line-height: 1.2em;
+		margin-bottom: 0.2em;
 	}
 
 	@include breakpoint( ">480px" ) {
