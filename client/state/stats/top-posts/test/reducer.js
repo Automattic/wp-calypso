@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
+import { flow } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ import {
 } from 'state/action-types';
 import { requesting, items as unwrappedItems } from '../reducer';
 import { withSchemaValidation } from 'state/utils';
+import { getSerializedTopPostsQuery as serializeQuery } from '../utils';
 
 const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );
 
@@ -33,168 +35,82 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should set requesting value to true if request in progress', () => {
+			const query = { date: '2017-06-25', period: 'week' };
 			const state = requesting( undefined, {
 				type: TOP_POSTS_REQUEST,
 				siteId: 2916284,
-				date: '2017-06-25',
-				period: 'week',
-				num: 1,
+				query,
 			} );
-
 			expect( state ).to.eql( {
-				2916284: {
-					'2017-06-25week1': true,
-				},
+				[ serializeQuery( query, 2916284 ) ]: true,
 			} );
 		} );
 
-		it( 'should accumulate requesting values (period)', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					'2017-06-25week1': true,
-				},
-			} );
-			const state = requesting( previousState, {
-				type: TOP_POSTS_REQUEST,
-				siteId: 2916284,
-				date: '2017-06-25',
-				period: 'day',
-				num: 1,
-			} );
+		it( 'should accumulate requesting values', () => {
+			const query1 = { date: '2017-06-25', period: 'week' };
+			const query2 = { date: '2017-06-25', period: 'day' };
+			const query3 = { date: '2017-06-24', period: 'day' };
+			const query4 = { date: '2017-06-25', period: 'day', max: 5 };
+
+			const addRequest = ( query, siteId ) => state =>
+				requesting( state, { type: TOP_POSTS_REQUEST, siteId, query } );
+
+			const state = flow(
+				addRequest( query1, 2916284 ),
+				addRequest( query2, 2916284 ),
+				addRequest( query3, 2916284 ),
+				addRequest( query4, 2916284 ),
+				addRequest( query1, 2916285 ),
+			)( {} );
 
 			expect( state ).to.eql( {
-				2916284: {
-					'2017-06-25week1': true,
-					'2017-06-25day1': true,
-				},
+				[ serializeQuery( query1, 2916284 ) ]: true,
+				[ serializeQuery( query2, 2916284 ) ]: true,
+				[ serializeQuery( query3, 2916284 ) ]: true,
+				[ serializeQuery( query4, 2916284 ) ]: true,
+				[ serializeQuery( query1, 2916285 ) ]: true,
 			} );
 		} );
 
-		it( 'should accumulate requesting values (date)', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					'2017-06-25week1': true,
-				},
+		it( 'should remove the request if it finishes successfully', () => {
+			const query = { date: '2017-06-25' };
+			const prevState = deepFreeze( {
+				[ serializeQuery( query, 2916284 ) ]: true,
 			} );
-			const state = requesting( previousState, {
-				type: TOP_POSTS_REQUEST,
-				siteId: 2916284,
-				date: '2017-06-24',
-				period: 'week',
-				num: 1,
-			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					'2017-06-24week1': true,
-					'2017-06-25week1': true,
-				},
-			} );
-		} );
-
-		it( 'should accumulate requesting values (num)', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					'2017-06-25week1': true,
-				},
-			} );
-			const state = requesting( previousState, {
-				type: TOP_POSTS_REQUEST,
-				siteId: 2916284,
-				date: '2017-06-25',
-				period: 'week',
-				num: 6,
-			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					'2017-06-25week1': true,
-					'2017-06-25week6': true,
-				},
-			} );
-		} );
-
-		it( 'should accumulate requesting values (siteId)', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					'2017-06-25week1': true,
-				},
-			} );
-			const state = requesting( previousState, {
-				type: TOP_POSTS_REQUEST,
-				siteId: 2916285,
-				date: '2017-06-25',
-				period: 'week',
-				num: 1,
-			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					'2017-06-25week1': true,
-				},
-				2916285: {
-					'2017-06-25week1': true,
-				},
-			} );
-		} );
-
-		it( 'should set request to false if request finishes successfully', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					'2017-06-25week1': true,
-				},
-			} );
-			const state = requesting( previousState, {
+			const state = requesting( prevState, {
 				type: TOP_POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
-				date: '2017-06-25',
-				period: 'week',
-				num: 1,
+				query,
 			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					'2017-06-25week1': false,
-				},
-			} );
+			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set request to false if request finishes with failure', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					'2017-06-25week1': true,
-				},
+		it( 'should remove the request if it finishes with failure', () => {
+			const query = { date: '2017-06-25' };
+			const prevState = deepFreeze( {
+				[ serializeQuery( query, 2916284 ) ]: true,
 			} );
-			const state = requesting( previousState, {
+			const state = requesting( prevState, {
 				type: TOP_POSTS_REQUEST_FAILURE,
 				siteId: 2916284,
-				date: '2017-06-25',
-				period: 'week',
-				num: 1,
+				query,
 			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					'2017-06-25week1': false,
-				},
-			} );
+			expect( state ).to.eql( {} );
 		} );
 	} );
 
 	describe( '#items()', () => {
 		it( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
-
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index post stats by siteId, date, period and num', () => {
+		it( 'should index posts correctly', () => {
+			const query = { date: '2017-06-25' };
 			const state = items( null, {
 				type: TOP_POSTS_RECEIVE,
 				siteId: 2916284,
-				date: '2017-06-25',
-				period: 'week',
-				num: 1,
+				query,
 				postsByDay: {
 					'2017-06-25': {
 						postviews: [],
@@ -204,212 +120,55 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				2916284: {
-					'2017-06-25week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
+				[ serializeQuery( query, 2916284 ) ]: {
+					'2017-06-25': {
+						postviews: [],
+						total_views: 12,
 					},
 				},
 			} );
 		} );
 
-		it( 'should accumulate period', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					'2017-06-25week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
+		it( 'should accumulate request params', () => {
+			const query1 = { date: '2017-06-25', period: 'week' };
+			const query2 = { date: '2017-06-25', period: 'day' };
+			const query3 = { date: '2017-06-24', period: 'day' };
+			const query4 = { date: '2017-06-25', period: 'day', max: 5 };
+			const result = { '2017-06-25': { postviews: [], total_views: 12 } };
+
+			const addItems = ( query, siteId ) => state =>
+				items( state, { type: TOP_POSTS_RECEIVE, siteId, query, postsByDay: result } );
+
+			const state = flow(
+				addItems( query1, 2916284 ),
+				addItems( query2, 2916284 ),
+				addItems( query3, 2916284 ),
+				addItems( query4, 2916284 ),
+				addItems( query1, 2916285 ),
+			)( {} );
+
+			expect( state ).to.eql( {
+				[ serializeQuery( query1, 2916284 ) ]: result,
+				[ serializeQuery( query2, 2916284 ) ]: result,
+				[ serializeQuery( query3, 2916284 ) ]: result,
+				[ serializeQuery( query4, 2916284 ) ]: result,
+				[ serializeQuery( query1, 2916285 ) ]: result,
+			} );
+		} );
+
+		it( 'should override previous stat value of same siteId and query', () => {
+			const prevState = deepFreeze( {
+				[ serializeQuery( { date: '2017-06-25' }, 2916284 ) ]: {
+					'2017-06-25': {
+						postviews: [],
+						total_views: 12,
 					},
 				},
 			} );
-
-			const state = items( previousState, {
+			const state = items( prevState, {
 				type: TOP_POSTS_RECEIVE,
 				siteId: 2916284,
-				date: '2017-06-25',
-				period: 'day',
-				num: 1,
-				postsByDay: {
-					'2017-06-25': {
-						postviews: [],
-						total_views: 12,
-					},
-				},
-			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					'2017-06-25week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
-					},
-					'2017-06-25day1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
-					},
-				},
-			} );
-		} );
-
-		it( 'should accumulate date', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					'2017-06-25week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
-					},
-				},
-			} );
-
-			const state = items( previousState, {
-				type: TOP_POSTS_RECEIVE,
-				siteId: 2916284,
-				date: '2017-06-26',
-				period: 'week',
-				num: 1,
-				postsByDay: {
-					'2017-06-25': {
-						postviews: [],
-						total_views: 12,
-					},
-				},
-			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					'2017-06-25week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
-					},
-					'2017-06-26week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
-					},
-				},
-			} );
-		} );
-
-		it( 'should accumulate num', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					'2017-06-25week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
-					},
-				},
-			} );
-
-			const state = items( previousState, {
-				type: TOP_POSTS_RECEIVE,
-				siteId: 2916284,
-				date: '2017-06-25',
-				period: 'week',
-				num: 2,
-				postsByDay: {
-					'2017-06-25': {
-						postviews: [],
-						total_views: 12,
-					},
-				},
-			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					'2017-06-25week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
-					},
-					'2017-06-25week2': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
-					},
-				},
-			} );
-		} );
-
-		it( 'should accumulate site IDs', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					'2017-06-25week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
-					},
-				},
-			} );
-
-			const state = items( previousState, {
-				type: TOP_POSTS_RECEIVE,
-				siteId: 2916285,
-				date: '2017-06-25',
-				period: 'week',
-				num: 1,
-				postsByDay: {
-					'2017-06-25': {
-						postviews: [],
-						total_views: 12,
-					},
-				},
-			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					'2017-06-25week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
-					},
-				},
-				2916285: {
-					'2017-06-25week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
-					},
-				},
-			} );
-		} );
-
-		it( 'should override previous stat value of same siteId, date, period and num', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					'2017-06-25week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
-					},
-				},
-			} );
-			const state = items( previousState, {
-				type: TOP_POSTS_RECEIVE,
-				siteId: 2916284,
-				date: '2017-06-25',
-				period: 'week',
-				num: 1,
+				query: { date: '2017-06-25' },
 				postsByDay: {
 					'2017-06-25': {
 						postviews: [],
@@ -419,62 +178,52 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				2916284: {
-					'2017-06-25week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 10,
-						},
+				[ serializeQuery( { date: '2017-06-25' }, 2916284 ) ]: {
+					'2017-06-25': {
+						postviews: [],
+						total_views: 10,
 					},
 				},
 			} );
 		} );
 
 		it( 'should persist state', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					'2017-06-25week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
+			const prevState = deepFreeze( {
+				[ serializeQuery( { date: '2017-06-25' }, 2916284 ) ]: {
+					'2017-06-25': {
+						postviews: [],
+						total_views: 12,
 					},
 				},
 			} );
-			const state = items( previousState, { type: SERIALIZE } );
+			const state = items( prevState, { type: SERIALIZE } );
 
 			expect( state ).to.eql( {
-				2916284: {
-					'2017-06-25week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
+				[ serializeQuery( { date: '2017-06-25' }, 2916284 ) ]: {
+					'2017-06-25': {
+						postviews: [],
+						total_views: 12,
 					},
 				},
 			} );
 		} );
 
 		it( 'should load valid persisted state', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					'2017-06-25week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
+			const prevState = deepFreeze( {
+				[ serializeQuery( { date: '2017-06-25' }, 2916284 ) ]: {
+					'2017-06-25': {
+						postviews: [],
+						total_views: 12,
 					},
 				},
 			} );
-			const state = items( previousState, { type: DESERIALIZE } );
+			const state = items( prevState, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {
-				2916284: {
-					'2017-06-25week1': {
-						'2017-06-25': {
-							postviews: [],
-							total_views: 12,
-						},
+				[ serializeQuery( { date: '2017-06-25' }, 2916284 ) ]: {
+					'2017-06-25': {
+						postviews: [],
+						total_views: 12,
 					},
 				},
 			} );
@@ -482,7 +231,7 @@ describe( 'reducer', () => {
 
 		it( 'should not load invalid persisted state', () => {
 			const previousInvalidState = deepFreeze( {
-				2916284: {
+				[ serializeQuery( { date: '2017-06-25' }, 2916284 ) ]: {
 					'2017-06-251': {
 						'2017-06-25': {
 							postviews: [],

@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { isRequestingTopPosts, getTopPosts } from '../selectors';
+import { getSerializedTopPostsQuery } from '../utils';
 
 describe( 'selectors', () => {
 	describe( '#isRequestingTopPosts()', () => {
@@ -15,15 +16,13 @@ describe( 'selectors', () => {
 				stats: {
 					topPosts: {
 						requesting: {
-							2916284: {
-								[ '2017-06-25' + 'day' + 2 ]: true,
-							},
+							[ getSerializedTopPostsQuery( { date: '2017-06-25' }, 2916284 ) ]: true,
 						},
 					},
 				},
 			};
 
-			const isRequesting = isRequestingTopPosts( state, 2916284, '2017-06-25', 'week', 1 );
+			const isRequesting = isRequestingTopPosts( state, 2916284, { date: '2017-06-26' } );
 			expect( isRequesting ).to.be.false;
 		} );
 
@@ -32,15 +31,13 @@ describe( 'selectors', () => {
 				stats: {
 					topPosts: {
 						requesting: {
-							2916284: {
-								[ '2017-06-25' + 'week' + 1 ]: false,
-							},
+							[ getSerializedTopPostsQuery( { date: '2017-06-25' }, 2916284 ) ]: false,
 						},
 					},
 				},
 			};
 
-			const isRequesting = isRequestingTopPosts( state, 2916284, '2017-06-25', 'week', 1 );
+			const isRequesting = isRequestingTopPosts( state, 2916284, { date: '2017-06-25' } );
 			expect( isRequesting ).to.be.false;
 		} );
 
@@ -49,46 +46,33 @@ describe( 'selectors', () => {
 				stats: {
 					topPosts: {
 						requesting: {
-							2916284: {
-								[ '2017-06-25' + 'week' + 1 ]: true,
-							},
+							[ getSerializedTopPostsQuery( { date: '2017-06-25' }, 2916284 ) ]: true,
 						},
 					},
 				},
 			};
 
-			const isRequesting = isRequestingTopPosts( state, 2916284, '2017-06-25', 'week', 1 );
+			const isRequesting = isRequestingTopPosts( state, 2916284, { date: '2017-06-25' } );
 			expect( isRequesting ).to.be.true;
 		} );
 	} );
 
 	describe( '#getTopPosts()', () => {
 		it( 'should return null if the posts are not attached', () => {
-			const state = {
-				stats: {
-					topPosts: {
-						items: {
-							2916284: {},
-						},
-					},
-				},
-			};
-
-			const posts = getTopPosts( state, 2916284, '2017-06-25', 'week', 1 );
+			const state = { stats: { topPosts: { items: {} } } };
+			const posts = getTopPosts( state, 2916284, { date: '2017-06-25' } );
 			expect( posts ).to.be.null;
 		} );
 
-		it( 'should return the posts for a siteId, period, date and num', () => {
+		it( 'should return the posts for a siteId, period and date', () => {
 			const state = {
 				stats: {
 					topPosts: {
 						items: {
-							2916284: {
-								[ '2017-06-25' + 'week' + 1 ]: {
-									'2017-06-25': {
-										postviews: [],
-										total_views: 12,
-									},
+							[ getSerializedTopPostsQuery( { date: '2017-06-25' }, 2916284 ) ]: {
+								'2017-06-25': {
+									postviews: [],
+									total_views: 12,
 								},
 							},
 						},
@@ -96,7 +80,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const posts = getTopPosts( state, 2916284, '2017-06-25', 'week', 1 );
+			const posts = getTopPosts( state, 2916284, { date: '2017-06-25' } );
 			expect( posts ).to.have.key( '2017-06-25' );
 		} );
 	} );

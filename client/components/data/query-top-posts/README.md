@@ -7,7 +7,9 @@ Reference page from the REST API: https://developer.wordpress.com/docs/api/1.1/g
 
 ## Usage
 
-Render the component, passing `siteId`, `date`, `period` (optional) and `num` (optional). It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
+Render the component, passing a `siteId` and a query parameter (containing at least a `date`). The query object accepts the same parameters than the REST API.
+
+It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```jsx
 import React from 'react';
@@ -17,7 +19,7 @@ import MyTopPostsItem from './top-posts-item';
 export default function MyTopPostsItem() {
 	return (
 		<div>
-			<QueryTopPosts siteId={ 3584907 } date='2017-06-25' />
+			<QueryTopPosts siteId={ 3584907 } query={ { date: '2017-06-25' } } />
 		</div>
 	);
 }
@@ -35,31 +37,11 @@ export default function MyTopPostsItem() {
 
 The site ID for which the top posts should be requested.
 
-### `date`
+### `query`
 
 <table>
-	<tr><th>Type</th><td>String</td></tr>
+	<tr><th>Type</th><td>Object</td></tr>
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-The most recent day to include in the results.
-
-### `period`
-
-<table>
-	<tr><th>Type</th><td>String</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
-	<tr><th>Default</th><td><code>'day'</code></td></tr>
-</table>
-
-The period over which the results will be returned: `'day'`, `'week'`, `'month'` or `'year'`.
-
-### `num`
-
-<table>
-	<tr><th>Type</th><td>Number</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
-	<tr><th>Default</th><td><code>1</code></td></tr>
-</table>
-
-Number of periods to include in the results.
+The query object. The `date` is the only required key, and should follow the format `'YYYY-MM-DD'`. The query parameters are sent to the [REST API](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/top-posts/).

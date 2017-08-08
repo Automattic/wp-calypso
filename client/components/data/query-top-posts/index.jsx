@@ -3,7 +3,7 @@
  */
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { isUndefined } from 'lodash';
+import shallowEqual from 'react-pure-render/shallowEqual';
 
 /**
  * Internal dependencies
@@ -14,50 +14,33 @@ import { requestTopPosts } from 'state/stats/top-posts/actions';
 class QueryTopPosts extends Component {
 	static defaultProps = {
 		requestTopPosts: () => {},
-		period: 'day',
-		num: 1,
 	};
 
 	static propTypes = {
 		siteId: PropTypes.number,
-		date: PropTypes.string,
-		period: PropTypes.string,
-		num: PropTypes.number,
+		query: PropTypes.object,
 		requestingTopPosts: PropTypes.bool,
 		requestTopPosts: PropTypes.func,
 	};
 
 	componentWillMount() {
-		const { requestingTopPosts, siteId, period, date, num } = this.props;
-		if (
-			siteId &&
-			! requestingTopPosts &&
-			! isUndefined( date ) &&
-			! isUndefined( period ) &&
-			! isUndefined( num )
-		) {
+		const { requestingTopPosts, siteId, query } = this.props;
+		if ( siteId && ! requestingTopPosts && query ) {
 			this.requestTopPosts( this.props );
 		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { siteId, period, date, num } = this.props;
-		if (
-			! ( siteId && ! isUndefined( period ) && ! isUndefined( date ) && ! isUndefined( num ) ) ||
-			( siteId === nextProps.siteId &&
-				date === nextProps.date &&
-				period === nextProps.period &&
-				num === nextProps.num )
-		) {
+		const { siteId, query } = this.props;
+		if ( siteId === nextProps.siteId && shallowEqual( query, nextProps.query ) ) {
 			return;
 		}
-
 		this.requestTopPosts( nextProps );
 	}
 
 	requestTopPosts( props ) {
-		const { siteId, date, period, num } = props;
-		props.requestTopPosts( siteId, date, period, num );
+		const { siteId, query } = props;
+		props.requestTopPosts( siteId, query );
 	}
 
 	render() {
@@ -66,9 +49,9 @@ class QueryTopPosts extends Component {
 }
 
 export default connect(
-	( state, { siteId, date, period, num } ) => {
+	( state, { siteId, query } ) => {
 		return {
-			requestingTopPosts: isRequestingTopPosts( state, siteId, date, period, num ),
+			requestingTopPosts: isRequestingTopPosts( state, siteId, query ),
 		};
 	},
 	{ requestTopPosts },

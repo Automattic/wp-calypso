@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { getSerializedTopPostsQuery } from './utils';
 
 /**
  * Returns true if current requesting top posts for the specified site ID,
@@ -9,13 +9,12 @@ import { get } from 'lodash';
  *
  * @param  {Object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
- * @param  {String}  date    Most recent day
- * @param  {String}  period  Period (day, week, month, year) (default: 'day')
- * @param  {Number}  num     Number of periods (default: 1)
+ * @param  {Object}  query   Top posts query
  * @return {Boolean}         Whether the top posts are being requested
  */
-export function isRequestingTopPosts( state, siteId, date, period = 'day', num = 1 ) {
-	return get( state.stats.topPosts.requesting, [ siteId, date + period + num ], false );
+export function isRequestingTopPosts( state, siteId, query = {} ) {
+	const serializedQuery = getSerializedTopPostsQuery( query, siteId );
+	return state.stats.topPosts.requesting[ serializedQuery ] || false;
 }
 
 /**
@@ -23,11 +22,10 @@ export function isRequestingTopPosts( state, siteId, date, period = 'day', num =
  *
  * @param  {Object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
- * @param  {String}  date    Most recent day to include
- * @param  {String}  period  Period to fetch (day, week, month, year) (default: 'day')
- * @param  {Number}  num     Number of periods to include (default: 1)
+ * @param  {Object}  query   Top posts query
  * @return {Object}          Top posts
  */
-export function getTopPosts( state, siteId, date, period = 'day', num = 1 ) {
-	return get( state.stats.topPosts.items, [ siteId, date + period + num ], null );
+export function getTopPosts( state, siteId, query = {} ) {
+	const serializedQuery = getSerializedTopPostsQuery( query, siteId );
+	return state.stats.topPosts.items[ serializedQuery ] || null;
 }

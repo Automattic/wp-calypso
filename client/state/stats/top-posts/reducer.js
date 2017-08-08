@@ -1,24 +1,21 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { combineReducers } from 'state/utils';
-import { items as itemSchemas } from './schema';
 import {
 	TOP_POSTS_RECEIVE,
 	TOP_POSTS_REQUEST,
 	TOP_POSTS_REQUEST_FAILURE,
 	TOP_POSTS_REQUEST_SUCCESS,
 } from 'state/action-types';
+import { getSerializedTopPostsQuery } from './utils';
+import { omit } from 'lodash';
+import { items as itemSchemas } from './schema';
 
 /**
- * Returns the updated requests state after an action has been dispatched. The
- * state maps site ID, request date, period and num parameter to whether a
- * request is in progress.
+ * Returns the updated requests state after an action has been dispatched.
+ * The state maps the site ID and the query object to whether a request is in
+ * progress.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
@@ -29,12 +26,14 @@ export function requesting( state = {}, action ) {
 		case TOP_POSTS_REQUEST:
 		case TOP_POSTS_REQUEST_FAILURE:
 		case TOP_POSTS_REQUEST_SUCCESS:
+			const serializedQuery = getSerializedTopPostsQuery( action.query, action.siteId );
+			const isRequesting = TOP_POSTS_REQUEST === action.type;
+			if ( ! isRequesting ) {
+				return omit( state, serializedQuery );
+			}
 			return {
 				...state,
-				[ action.siteId ]: {
-					...get( state, [ action.siteId ], {} ),
-					[ action.date + action.period + action.num ]: TOP_POSTS_REQUEST === action.type,
-				},
+				[ serializedQuery ]: true,
 			};
 	}
 	return state;
@@ -42,8 +41,8 @@ export function requesting( state = {}, action ) {
 
 /**
  * Returns the updated items state after an action has been dispatched. The
- * state maps site ID, request date, period and num parameter to whether a
- * request is in progress.
+ * state maps the site ID and the query object to whether a request is in
+ * progress.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
@@ -52,12 +51,10 @@ export function requesting( state = {}, action ) {
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case TOP_POSTS_RECEIVE:
+			const serializedQuery = getSerializedTopPostsQuery( action.query, action.siteId );
 			return {
 				...state,
-				[ action.siteId ]: {
-					...get( state, [ action.siteId ], {} ),
-					[ action.date + action.period + action.num ]: action.postsByDay,
-				},
+				[ serializedQuery ]: action.postsByDay,
 			};
 	}
 	return state;

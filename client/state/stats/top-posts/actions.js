@@ -10,50 +10,42 @@ import {
 } from 'state/action-types';
 
 /**
- * Returns an action object to be used in signaling that the top posts for a
- * period, a number of periods and a date have been received.
+ * Returns an action object to be used in signaling that
+ * the top posts for a query has been received.
  *
  * @param  {Number} siteId      Site ID
- * @param  {String} date        Most recent day included
- * @param  {String} period      Period received (day, week, month, year)
- * @param  {Number} num         Number of periods included
- * @param  {Object} postsByDay  Posts received
+ * @param  {Ojbect} query       Top posts query parameters
+ * @param  {Object} postsByDay  Posts received, grouped by days
  * @return {Object}             Action object
  */
-export function receiveTopPosts( siteId, date, period, num, postsByDay ) {
+export function receiveTopPosts( siteId, query, postsByDay ) {
 	return {
 		type: TOP_POSTS_RECEIVE,
 		siteId,
-		date,
-		period,
-		num,
+		query,
 		postsByDay,
 	};
 }
 
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
- * retrieve the top posts for a site and period.
+ * retrieve the top posts for a site and query.
  *
  * @param  {Number} siteId Site ID
- * @param  {String} date   Most recent day to include
- * @param  {String} period Period to fetch (day, week, month, year) (default: day)
- * @param  {num} num       Number of periods to include (default: 1)
+ * @param  {Object} query  Top posts query parameters
  * @return {Function}      Action thunk
  */
-export function requestTopPosts( siteId, date, period = 'day', num = 1 ) {
+export function requestTopPosts( siteId, query = {} ) {
 	return dispatch => {
 		dispatch( {
 			type: TOP_POSTS_REQUEST,
 			siteId,
-			date,
-			period,
-			num,
+			query,
 		} );
 
 		return wpcom
 			.site( siteId )
-			.statsTopPosts( { date, period, num } )
+			.statsTopPosts( { ...query } )
 			.then( data => {
 				// Converts total_views from string to integer
 				const days = Object.entries( data.days ).reduce( ( result, day ) => {
@@ -64,22 +56,18 @@ export function requestTopPosts( siteId, date, period = 'day', num = 1 ) {
 					return result;
 				}, {} );
 
-				dispatch( receiveTopPosts( siteId, date, period, num, days ) );
+				dispatch( receiveTopPosts( siteId, query, days ) );
 				dispatch( {
 					type: TOP_POSTS_REQUEST_SUCCESS,
 					siteId,
-					date,
-					period,
-					num,
+					query,
 				} );
 			} )
 			.catch( error => {
 				dispatch( {
 					type: TOP_POSTS_REQUEST_FAILURE,
 					siteId,
-					date,
-					period,
-					num,
+					query,
 					error,
 				} );
 			} );
