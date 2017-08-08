@@ -1605,6 +1605,10 @@ Undocumented.prototype.validateNewUser = function( data, fn ) {
  */
 Undocumented.prototype.requestMagicLoginEmail = function( data, fn ) {
 	restrictByOauthKeys( data );
+
+	data.locale = i18n.getLocaleSlug();
+	data.lang_id = i18n.getLanguage( data.locale ).value;
+
 	return this.wpcom.req.post( '/auth/send-login-email', {
 		apiVersion: '1.2',
 	}, data, fn );

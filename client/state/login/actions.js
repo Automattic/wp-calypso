@@ -43,7 +43,9 @@ import {
 } from 'state/login/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import wpcom from 'lib/wp';
+import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
 
+// TODO: Remove when we're done with the fallback.
 function getErrorMessageFromErrorCode( code ) {
 	const errorMessages = {
 		account_unactivated: translate( "This account hasn't been activated yet — check your email for a message from " +
@@ -111,21 +113,29 @@ function getErrorFromHTTPError( httpError ) {
 		};
 	}
 
-	const code = get( httpError, 'response.body.data.errors[0]' );
+	// TODO: Simplify this block when we're done with the fallback.
+	let code = get( httpError, 'response.body.data.errors[0]' );
+	if ( typeof code === 'object' ) {
+		message = code.message;
+		code = code.code;
+	} else {
+		message = getErrorMessageFromErrorCode( code );
+	}
 
 	if ( code ) {
-		message = getErrorMessageFromErrorCode( code );
-
 		if ( code in errorFields ) {
 			field = errorFields[ code ];
 		}
-	} else {
-		message = get( httpError, 'response.body.data', httpError.message );
+
+		if ( ! message ) {
+			message = get( httpError, 'response.body.data', httpError.message );
+		}
 	}
 
 	return { code, message, field };
 }
 
+// TODO: Remove when we're done with the fallback.
 const wpcomErrorMessages = {
 	user_exists: translate( 'Your Google email address is already in use WordPress.com. ' +
 		'Log in to your account using your email address or username, and your password. ' +
@@ -139,7 +149,8 @@ const wpcomErrorMessages = {
  * @returns {{message: string, field: string, code: string}} an error message and the id of the corresponding field
  */
 const getErrorFromWPCOMError = ( wpcomError ) => ( {
-	message: wpcomErrorMessages[ wpcomError.error ] || wpcomError.message,
+	// TODO: Remove wpcomErrorMessages[] reference when we're done with the fallback.
+	message: wpcomError.message || wpcomErrorMessages[ wpcomError.error ],
 	code: wpcomError.error,
 	field: 'global',
 } );
@@ -158,7 +169,7 @@ export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) =
 		type: LOGIN_REQUEST,
 	} );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=login-endpoint' )
+	return request.post( addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=login-endpoint', getLocaleSlug() ) )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
@@ -208,7 +219,8 @@ export const loginUser = ( usernameOrEmail, password, rememberMe, redirectTo ) =
 export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAuthType ) => ( dispatch, getState ) => {
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint' )
+	return request.post(
+			addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint', getLocaleSlug() ) )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
@@ -257,7 +269,7 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 export const loginSocialUser = ( service, token, redirectTo ) => dispatch => {
 	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=social-login-endpoint' )
+	return request.post( addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=social-login-endpoint', getLocaleSlug() ) )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
@@ -370,7 +382,7 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 		},
 	} );
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint' )
+	return request.post( addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint', getLocaleSlug() ) )
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
@@ -420,7 +432,7 @@ export const logoutUser = ( redirectTo ) => ( dispatch, getState ) => {
 	const logoutNonceMatches = ( currentUser.logout_URL || '' ).match( /_wpnonce=([^&]*)/ );
 	const logoutNonce = logoutNonceMatches && logoutNonceMatches[ 1 ];
 
-	return request.post( 'https://wordpress.com/wp-login.php?action=logout-endpoint' )
+	return request.post( addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=logout-endpoint', getLocaleSlug() ) )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )

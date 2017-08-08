@@ -23,6 +23,7 @@ import {
 import { http } from 'state/http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { local } from 'state/data-layer/utils';
+import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
 
 /***
  * Module constants
@@ -34,7 +35,7 @@ const requestTwoFactorPushNotificationStatus = ( store, action ) => {
 
 	store.dispatch(
 		http( {
-			url: 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint',
+			url: addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint', getLocaleSlug() ),
 			method: 'POST',
 			headers: [
 				[ 'Content-Type', 'application/x-www-form-urlencoded' ],

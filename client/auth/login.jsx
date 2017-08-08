@@ -22,12 +22,14 @@ import * as AuthActions from 'lib/oauth-store/actions';
 import eventRecorder from 'me/event-recorder';
 import WordPressLogo from 'components/wordpress-logo';
 import AuthCodeButton from './auth-code-button';
+import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
 
 const LostPassword = React.createClass( {
 	render: function() {
+		const url = addLocaleToWpcomUrl( 'https://wordpress.com/wp-login.php?action=lostpassword', getLocaleSlug() );
 		return (
 			<p className="auth__lost-password">
-				<a href="https://wordpress.com/wp-login.php?action=lostpassword" target="_blank" rel="noopener noreferrer">
+				<a href={ url } target="_blank" rel="noopener noreferrer">
 					{ this.translate( 'Lost your password?' ) }
 				</a>
 			</p>
