@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { activatePlugin, fetchPlugins, installPlugin } from 'state/plugins/installed/actions';
+import Button from 'components/button';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
@@ -31,7 +32,7 @@ class RequiredPluginsInstallView extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			engineState: 'INITIALIZING',
+			engineState: 'CONFIRMING',
 			message: '',
 			progress: 0,
 			toActivate: [],
@@ -318,8 +319,45 @@ class RequiredPluginsInstallView extends Component {
 		return 100;
 	}
 
+	startSetup = () => {
+		this.setState( {
+			engineState: 'INITIALIZING',
+		} );
+	}
+
+	renderConfirmScreen = () => {
+		const { translate } = this.props;
+		return (
+			<div className="card dashboard__setup-wrapper dashboard__setup-confirm">
+				<SetupHeader
+					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
+					imageWidth={ 160 }
+					title={ translate( 'Have something to sell?' ) }
+					subtitle={ translate(
+						'If you\'re located in the {{strong}}United States{{/strong}} ' +
+						'or {{strong}}Canada{{/strong}}, you can now add a store to sell your physical ' +
+						'products right on your site!',
+						{
+							components: { strong: <strong /> }
+						}
+					) }
+				>
+					<Button onClick={ this.startSetup } primary>
+						{ translate( 'Set up my store!' ) }
+					</Button>
+				</SetupHeader>
+			</div>
+		);
+	}
+
 	render = () => {
 		const { site, translate } = this.props;
+		const { engineState } = this.state;
+
+		if ( 'CONFIRMING' === engineState ) {
+			return this.renderConfirmScreen();
+		}
+
 		const progress = this.getProgress();
 
 		return (
