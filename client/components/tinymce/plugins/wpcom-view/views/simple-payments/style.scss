@@ -42,10 +42,14 @@
 	flex-basis: 100%;
 }
 
+.mce-content-body .wpview-type-simple-payments__text-part > div:not(.wpview-type-simple-payments__pay-part) {
+	line-height: 1.7;
+}
+
 .wpview-type-simple-payments__image-part + .wpview-type-simple-payments__text-part {
 	@include breakpoint( ">480px" ) {
-	flex-basis: 70%;
-		padding-left: 16px;
+		flex-basis: 70%;
+		padding-left: 24px;
 	}
 }
 
