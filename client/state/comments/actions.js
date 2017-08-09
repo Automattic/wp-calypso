@@ -17,7 +17,6 @@ import {
 	COMMENTS_WRITE,
 	COMMENT_REQUEST,
 	COMMENTS_TREE_SITE_REQUEST,
-	COMMENTS_TREE_JETPACK_SITE_REQUEST,
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
@@ -82,20 +81,6 @@ export const requestCommentsList = query => ( {
  */
 export const requestCommentsTreeForSite = query => ( {
 	type: COMMENTS_TREE_SITE_REQUEST,
-	query,
-} );
-
-/**
- * Creates an action that requests the comments tree for a given site.
- * @param {Object} query API call parameters
- * @param {Number} query.page Number of page of 20 comments to calculate the offset
- * @param {Number} query.siteId Site identifier
- * @param {String} query.status Status filter
- * @param {('add'|'replace')} query.strategy Add or replace comments to the tree
- * @returns {Object} Action that requests a comment tree
- */
-export const requestCommentsTreeForJetpackSite = query => ( {
-	type: COMMENTS_TREE_JETPACK_SITE_REQUEST,
 	query,
 } );
 

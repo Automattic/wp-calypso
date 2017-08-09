@@ -24,7 +24,7 @@ import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-place
 import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
-import QueryJetpackSiteCommentsTree from 'components/data/query-site-comments-tree/query-jetpack-site-comments-tree';
+import QueryCommentsList from 'components/data/query-comments-list';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors';
 import {
@@ -380,7 +380,7 @@ export class CommentList extends Component {
 		return (
 			<div className="comment-list">
 				{ isJetpack &&
-					<QueryJetpackSiteCommentsTree page={ page } siteId={ siteId } status={ status } />
+					<QueryCommentsList page={ page } siteId={ siteId } status={ status } />
 				}
 				{ ! isJetpack &&
 					<QuerySiteCommentsTree siteId={ siteId } status={ status } />

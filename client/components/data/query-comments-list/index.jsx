@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -9,9 +9,10 @@ import { connect } from 'react-redux';
  */
 import { requestCommentsList } from 'state/comments/actions';
 
-export class QueryJetpackSiteCommentsTree extends Component {
+export class QueryCommentsList extends PureComponent {
 	static propTypes = {
 		page: PropTypes.number,
+		query: PropTypes.object,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 	};
@@ -25,19 +26,17 @@ export class QueryJetpackSiteCommentsTree extends Component {
 		this.request();
 	}
 
-	componentDidUpdate( { page, siteId, status } ) {
-		if ( page !== this.props.page || siteId !== this.props.siteId || status !== this.props.status ) {
-			this.request();
-		}
+	componentDidUpdate() {
+		this.request();
 	}
 
 	request() {
-		const { page, siteId, status } = this.props;
+		const { page, query, siteId, status } = this.props;
 		if ( ! siteId ) {
 			return;
 		}
 
-		const query = {
+		const defaultQuery = {
 			listType: 'site',
 			number: 100,
 			offset: ( page - 1 ) * 20, // see CommentList COMMENTS_PER_PAGE constant
@@ -45,7 +44,7 @@ export class QueryJetpackSiteCommentsTree extends Component {
 			status,
 			type: 'comment',
 		};
-		this.props.requestCommentsList( query );
+		this.props.requestCommentsList( { ...defaultQuery, ...query } );
 	}
 
 	render() {
@@ -53,4 +52,4 @@ export class QueryJetpackSiteCommentsTree extends Component {
 	}
 }
 
-export default connect( null, { requestCommentsList } )( QueryJetpackSiteCommentsTree );
+export default connect( null, { requestCommentsList } )( QueryCommentsList );
