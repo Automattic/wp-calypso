@@ -23,8 +23,9 @@ class Unlocked extends React.Component {
 
 		this.state = {
 			submitting: false,
-			// If the domain has any protection, we will must have sent the
-			// request to get to this page.
+			// For protected domains, the flow in transfer-out/index will
+			// send users to transfer-out/locked and send an initial auth
+			// code request from there before the user gets here.
 			sent: ! this.isDomainAlwaysTransferrable(),
 		};
 	}
