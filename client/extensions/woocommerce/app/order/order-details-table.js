@@ -46,6 +46,15 @@ class OrderDetailsTable extends Component {
 		};
 	}
 
+	shouldShowTax = () => {
+		const { order } = this.props;
+		if ( ! order ) {
+			return false;
+		}
+		// If there are any items in `tax_lines`, we have taxes on this order.
+		return !! order.tax_lines.length;
+	}
+
 	recalculateRefund = () => {
 		if ( ! this.props.order ) {
 			return 0;
@@ -129,6 +138,8 @@ class OrderDetailsTable extends Component {
 			return null;
 		}
 
+		const showTax = this.shouldShowTax();
+
 		return (
 			<div>
 				<Table className="order__details-table" header={ this.renderTableHeader() }>
@@ -136,16 +147,16 @@ class OrderDetailsTable extends Component {
 				</Table>
 
 				<div className="order__details-totals">
-					<OrderDiscountRow order={ order } />
+					<OrderDiscountRow order={ order } showTax={ showTax } />
 					{ isEditable
 						? <OrderShippingRefundRow
 							currency={ order.currency }
 							onChange={ this.onChange }
 							shippingTotal={ this.state.shippingTotal } />
-						: <OrderShippingRow order={ order } />
+						: <OrderShippingRow order={ order } showTax={ showTax } />
 					}
-					<OrderTotalRow order={ order } />
-					<OrderRefundRow order={ order } />
+					<OrderTotalRow order={ order } showTax={ showTax } />
+					<OrderRefundRow order={ order } showTax={ showTax } />
 				</div>
 			</div>
 		);

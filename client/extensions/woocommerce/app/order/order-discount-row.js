@@ -16,20 +16,25 @@ class OrderDiscountRow extends Component {
 			discount_tax: PropTypes.string.isRequired,
 			discount_total: PropTypes.string.isRequired,
 		} ),
+		showTax: PropTypes.bool,
 	}
 
 	render() {
-		const { order, translate } = this.props;
+		const { order, showTax, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
 
+		const tax = (
+			<div className="order__details-totals-tax">
+				{ formatCurrency( order.discount_tax, order.currency ) }
+			</div>
+		);
+
 		return (
 			<div className="order__details-total-discount">
 				<div className="order__details-totals-label">{ translate( 'Discount' ) }</div>
-				<div className="order__details-totals-tax">
-					{ formatCurrency( order.discount_tax, order.currency ) }
-				</div>
+				{ showTax && tax }
 				<div className="order__details-totals-value">
 					{ formatCurrency( order.discount_total, order.currency ) }
 				</div>
