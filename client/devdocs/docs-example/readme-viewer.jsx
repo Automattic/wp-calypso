@@ -16,9 +16,12 @@ class ReadmeViewer extends Component {
 		readmeFilePath: PropTypes.string
 	};
 
-	constructor( props ) {
-		super( props );
-	}
+	static defaultProps = {
+		getReadme: readmeFilePath => {
+			return htmlToReactParser.parse(
+				require( `../../components/${ readmeFilePath }/README.md` ) );
+		}
+	};
 
 	render() {
 		const readmeFilePath = this.props.readmeFilePath;
@@ -48,12 +51,5 @@ class ReadmeViewer extends Component {
 		);
 	}
 }
-
-ReadmeViewer.defaultProps = {
-	getReadme: ( readmeFilePath ) => {
-		return htmlToReactParser.parse(
-			require( `../../components/${ readmeFilePath }/README.md` ) );
-	}
-};
 
 export default ReadmeViewer;
