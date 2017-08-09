@@ -11,27 +11,26 @@ import { filter, get, groupBy, includes, isEmpty, isNull, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
-import StatsFirstView from '../stats-first-view';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import StatsNavigation from '../stats-navigation';
+import ActivityLogBanner from '../activity-log-banner';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import ActivityLogDay from '../activity-log-day';
-import ActivityLogBanner from '../activity-log-banner';
-import ActivityLogEmpty from './activity-log-empty';
-import ErrorBanner from '../activity-log-banner/error-banner';
-import ProgressBanner from '../activity-log-banner/progress-banner';
-import SuccessBanner from '../activity-log-banner/success-banner';
-import QueryRewindStatus from 'components/data/query-rewind-status';
-import QueryActivityLog from 'components/data/query-activity-log';
-// For site time offset
-import QuerySiteSettings from 'components/data/query-site-settings';
-import DatePicker from 'my-sites/stats/stats-date-picker';
-import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import ActivityLogRewindToggle from './activity-log-rewind-toggle';
+import DatePicker from 'my-sites/stats/stats-date-picker';
+import EmptyContent from 'components/empty-content';
+import ErrorBanner from '../activity-log-banner/error-banner';
 import ListEnd from 'components/list-end';
+import Main from 'components/main';
+import ProgressBanner from '../activity-log-banner/progress-banner';
+import QueryActivityLog from 'components/data/query-activity-log';
+import QueryRewindStatus from 'components/data/query-rewind-status';
+import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import StatsFirstView from '../stats-first-view';
+import StatsNavigation from '../stats-navigation';
+import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
+import SuccessBanner from '../activity-log-banner/success-banner';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
 import {
@@ -229,7 +228,7 @@ class ActivityLog extends Component {
 	}
 
 	renderLogs() {
-		const { isPressable, isRewindActive, logs, moment, siteId, startDate } = this.props;
+		const { isPressable, isRewindActive, logs, moment, translate, siteId, startDate } = this.props;
 
 		if ( isNull( logs ) ) {
 			return null;
@@ -246,7 +245,13 @@ class ActivityLog extends Component {
 		} );
 
 		if ( isEmpty( logsForMonth ) ) {
-			return <ActivityLogEmpty />;
+			return (
+				<EmptyContent
+					title={ translate( 'No activity for %s', {
+						args: moment.utc( startDate ).format( 'MMMM YYYY' ),
+					} ) }
+				/>
+			);
 		}
 
 		const logsGroupedByDay = map(
