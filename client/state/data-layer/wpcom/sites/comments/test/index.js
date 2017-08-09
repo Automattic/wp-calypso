@@ -29,10 +29,10 @@ describe( '#addComments', () => {
 
 	beforeEach( () => ( dispatch = spy() ) );
 
-	it( 'should dispatch no actions for no comments', () => {
+	it( 'should dispatch one action for no comments', () => {
 		addComments( { dispatch }, { query }, null, { comments: [] } );
 
-		expect( dispatch ).to.have.not.been.called;
+		expect( dispatch ).to.have.been.calledOnce;
 	} );
 
 	it( 'should dispatch to add received comments into state', () => {
