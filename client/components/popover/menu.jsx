@@ -20,6 +20,7 @@ const PopoverMenu = React.createClass( {
 		className: React.PropTypes.string,
 		rootClassName: React.PropTypes.string,
 		popoverComponent: React.PropTypes.func,
+		popoverTitle: React.PropTypes.string, // used by ReaderPopover
 	},
 
 	getDefaultProps: function() {
@@ -48,6 +49,7 @@ const PopoverMenu = React.createClass( {
 				onShow={ this._onShow }
 				className={ this.props.className }
 				rootClassName={ this.props.rootClassName }
+				popoverTitle={ this.props.popoverTitle }
 			>
 				<div
 					ref="menu"
