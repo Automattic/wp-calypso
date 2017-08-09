@@ -15,6 +15,7 @@ class OrderRefundRow extends Component {
 			currency: PropTypes.string.isRequired,
 			refunds: PropTypes.array.isRequired,
 		} ),
+		showTax: PropTypes.bool,
 	}
 
 	getRefundedTotal = ( order ) => {
@@ -22,7 +23,7 @@ class OrderRefundRow extends Component {
 	}
 
 	render() {
-		const { order, translate } = this.props;
+		const { order, showTax, translate } = this.props;
 		const refundValue = order.refunds.length ? this.getRefundedTotal( order ) : false;
 		if ( ! refundValue ) {
 			return null;
@@ -31,7 +32,7 @@ class OrderRefundRow extends Component {
 		return (
 			<div className="order__details-total-refund">
 				<div className="order__details-totals-label">{ translate( 'Refunded' ) }</div>
-				<div className="order__details-totals-tax"></div>
+				{ showTax && <div className="order__details-totals-tax"></div> }
 				<div className="order__details-totals-value">
 					{ formatCurrency( refundValue, order.currency ) }
 				</div>

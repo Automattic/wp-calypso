@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 import { sum } from 'lodash';
@@ -139,6 +140,11 @@ class OrderDetailsTable extends Component {
 		}
 
 		const showTax = this.shouldShowTax();
+		const totalsClasses = classnames( {
+			'order__details-totals': true,
+			'has-taxes': showTax,
+			'is-refund-modal': isEditable,
+		} );
 
 		return (
 			<div>
@@ -146,7 +152,7 @@ class OrderDetailsTable extends Component {
 					{ order.line_items.map( this.renderOrderItems ) }
 				</Table>
 
-				<div className="order__details-totals">
+				<div className={ totalsClasses }>
 					<OrderDiscountRow order={ order } showTax={ showTax } />
 					{ isEditable
 						? <OrderShippingRefundRow
