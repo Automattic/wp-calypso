@@ -1,0 +1,37 @@
+.disconnect-site {
+	&.why__card {
+		width: 70%;
+		height: 800%;
+		margin: auto;
+	}
+}
+.why__card {
+	&.dropdown {
+	  width: 90%;
+		margin-left: 3px;
+
+		.select-dropdown__container {
+			width: 200px;
+		}
+
+	}
+	&.question {
+		padding-bottom: 20px;
+		text-align: left;
+
+		&.why {
+			padding-top: 15px;
+		}
+
+		&.follow-up {
+			padding-top: 35px;
+		}
+	}
+}
+
+.why__pagination {
+	&.main {
+		margin: 16px 0 24px 0;
+		text-align: center;
+	}
+}

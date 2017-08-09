@@ -16,6 +16,7 @@ import SiteSettingsMain from 'my-sites/site-settings/main';
 import StartOver from './start-over';
 import ThemeSetup from './theme-setup';
 import ManageConnection from './manage-connection';
+import DisconnectSite from './disconnect-site/why';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser, isVipSite } from 'state/selectors';
@@ -153,6 +154,13 @@ const controller = {
 		renderPage(
 			context,
 			<ManageConnection />
+		);
+	},
+
+	disconnectSite( context ) {
+		renderPage(
+			context,
+			<DisconnectSite />
 		);
 	},
 
