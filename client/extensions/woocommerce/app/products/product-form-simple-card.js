@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { isNull } from 'lodash';
+import { localize } from 'i18n-calypso';
+import React, { PropTypes } from 'react';
 
 /**
  * Internal dependencies
@@ -34,8 +35,15 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 	};
 
 	const setStockQuantity = ( e ) => {
-		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
-		const manage_stock = stock_quantity !== '';
+		let stock_quantity;
+		let manage_stock;
+		if ( e.target.value !== '' ) {
+			stock_quantity = Number( e.target.value );
+			manage_stock = true;
+		} else {
+			stock_quantity = null;
+			manage_stock = false;
+		}
 		editProduct( siteId, product, { manage_stock, stock_quantity } );
 	};
 
@@ -87,6 +95,9 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 		'products__product-form-stock-disabled': ! product.manage_stock,
 	} );
 
+	const { stock_quantity } = product;
+	const quantity = ! isNull( stock_quantity ) ? stock_quantity : '';
+
 	const renderStock = () => (
 		<Card className={ stockClasses }>
 			<div className="products__product-stock-options-wrapper">
@@ -94,7 +105,7 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 					<FormLabel>{ translate( 'Inventory' ) }</FormLabel>
 					<FormTextInput
 						name="stock_quantity"
-						value={ product.stock_quantity || '' }
+						value={ quantity }
 						type="number"
 						min="0"
 						onChange={ setStockQuantity }
