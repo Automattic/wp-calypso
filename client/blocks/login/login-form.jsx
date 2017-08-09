@@ -227,6 +227,7 @@ export class LoginForm extends Component {
 						</div>
 					) }
 
+					{ config.isEnabled( 'signup/social' ) && (
 					<p className="login__form-terms">
 						{
 							preventWidows( this.props.translate(
@@ -241,6 +242,7 @@ export class LoginForm extends Component {
 
 						}
 					</p>
+					) }
 
 					<div className="login__form-action">
 						<FormsButton primary { ...isDisabled }>
