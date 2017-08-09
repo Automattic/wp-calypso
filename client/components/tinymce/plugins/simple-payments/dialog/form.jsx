@@ -42,7 +42,8 @@ function decimalPlaces( number ) {
 // Validation function for the form
 const validate = ( values, props ) => {
 	// The translate function was passed as a prop to the `reduxForm()` wrapped component
-	const { translate } = props;
+	const { currencyDefaults, translate } = props;
+	const precision = currencyDefaults ? currencyDefaults.precision : 2;
 	const errors = {};
 
 	if ( ! values.title ) {
@@ -55,8 +56,24 @@ const validate = ( values, props ) => {
 		errors.price = translate( 'Price is malformed.' );
 	} else if ( parseFloat( values.price ) < 0 ) {
 		errors.price = translate( 'Price can not be negative.' );
-	} else if ( decimalPlaces( values.price ) > 2 ) {
-		errors.price = translate( 'Price can not have higher than 2 decimal places.' );
+	} else if ( decimalPlaces( values.price ) > precision ) {
+		if ( precision === 0 ) {
+			errors.price = translate( 'Price can not have decimal places.' );
+		} else {
+			const countDecimal = translate(
+				'%(precision)d decimal place',
+				'%(precision)d decimal places',
+				{
+					count: precision,
+					args: {
+						precision,
+					},
+				}
+			);
+			errors.price = translate( 'Price can not have more than %(countDecimal)s.', {
+				args: { countDecimal },
+			} );
+		}
 	}
 
 	if ( ! values.email ) {
