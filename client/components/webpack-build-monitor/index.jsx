@@ -1,3 +1,4 @@
+/** @format */
 /* eslint-disable no-console */
 
 /**
@@ -52,9 +53,9 @@ const reducer = ( state = IDLE, { type, message } ) => {
 		return state;
 	}
 
-	const getNextState = find( MESSAGE_STATUS_MAP, ( v, messagePrefix ) =>
-		startsWith( message, messagePrefix ),
-	) || identity;
+	const getNextState =
+		find( MESSAGE_STATUS_MAP, ( v, messagePrefix ) => startsWith( message, messagePrefix ) ) ||
+		identity;
 
 	return getNextState( state );
 };
