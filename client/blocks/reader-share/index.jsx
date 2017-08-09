@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PopoverMenu from 'components/popover/menu';
+import ReaderPopoverMenu from 'components/reader-popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'gridicons';
 import * as stats from 'reader/stats';
@@ -174,6 +174,7 @@ class ReaderShare extends React.Component {
 	}
 
 	render() {
+		const { translate } = this.props;
 		const buttonClasses = classnames( {
 			'reader-share__button': true,
 			'ignore-click': true,
@@ -193,7 +194,7 @@ class ReaderShare extends React.Component {
 				<span key="button" ref="shareButton" className={ buttonClasses }>
 					<Gridicon icon="share" size={ this.props.iconSize } />
 					<span className="reader-share__button-label">
-						{ this.props.translate( 'Share', { comment: 'Share the post' } ) }
+						{ translate( 'Share', { comment: 'Share the post' } ) }
 					</span>
 				</span>,
 				this.state.showingMenu &&
@@ -213,23 +214,32 @@ class ReaderShare extends React.Component {
 								position={ this.props.position }
 								className="reader-share__sites-popover"
 							/>
-						: <PopoverMenu
+						: <ReaderPopoverMenu
 								key="menu"
 								context={ this.refs && this.refs.shareButton }
 								isVisible={ this.state.showingMenu }
 								onClose={ this.closeExternalShareMenu }
 								position={ this.props.position }
 								className="popover reader-share__popover"
+								popoverTitle={ translate( 'Share on' ) }
 							>
-								<PopoverMenuItem action="twitter" className="reader-share__popover-item">
+								<PopoverMenuItem
+									action="twitter"
+									className="reader-share__popover-item"
+									title={ translate( 'Share on Twitter' ) }
+								>
 									<SocialLogo icon="twitter" />
 									<span>Twitter</span>
 								</PopoverMenuItem>
-								<PopoverMenuItem action="facebook" className="reader-share__popover-item">
+								<PopoverMenuItem
+									action="facebook"
+									className="reader-share__popover-item"
+									title={ translate( 'Share on Facebook' ) }
+								>
 									<SocialLogo icon="facebook" />
 									<span>Facebook</span>
 								</PopoverMenuItem>
-							</PopoverMenu> ),
+							</ReaderPopoverMenu> ),
 			]
 		);
 	}
