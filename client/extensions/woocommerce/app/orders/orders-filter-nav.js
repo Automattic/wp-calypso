@@ -34,7 +34,7 @@ class OrdersFilterNav extends Component {
 
 	render() {
 		const { translate, site, status } = this.props;
-		let currentSelection = translate( 'All orders' );
+		let currentSelection = translate( 'All Orders' );
 		if ( ORDER_UNPAID === status ) {
 			currentSelection = translate( 'Awaiting Payment' );
 		} else if ( ORDER_UNFULFILLED === status ) {
@@ -49,7 +49,7 @@ class OrdersFilterNav extends Component {
 					<NavItem
 						path={ getLink( '/store/orders/:site', site ) }
 						selected={ 'any' === status }>
-						{ translate( 'All orders' ) }
+						{ translate( 'All Orders' ) }
 					</NavItem>
 					<NavItem
 						path={ getLink( `/store/orders/${ ORDER_UNPAID }/:site`, site ) }

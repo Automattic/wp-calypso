@@ -32,7 +32,7 @@ function OrderStatus( { showPayment = true, showShipping = true, status, transla
 			paymentLabel = translate( 'Refunded' );
 			break;
 		case 'failed':
-			paymentLabel = translate( 'Payment Failed' );
+			paymentLabel = translate( 'Payment failed' );
 			break;
 	}
 

@@ -45,7 +45,7 @@ export function getOrderStatusList() {
 		name: translate( 'Processing' ),
 	}, {
 		value: 'on-hold',
-		name: translate( 'On Hold' ),
+		name: translate( 'On hold' ),
 	}, {
 		value: 'completed',
 		name: translate( 'Completed' ),
@@ -57,7 +57,7 @@ export function getOrderStatusList() {
 		name: translate( 'Refunded' ),
 	}, {
 		value: 'failed',
-		name: translate( 'Payment Failed' ),
+		name: translate( 'Payment failed' ),
 	} ];
 }
 
