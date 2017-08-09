@@ -14,7 +14,6 @@ import Button from 'components/button';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import QueryZones from '../../data/query-zones';
 import ZoneItem from './zone-item';
 import ZonePlaceholder from './zone-placeholder';
 import { getZones, isRequestingZones } from '../../../state/zones/selectors';
@@ -22,12 +21,10 @@ import { settingsPath } from '../../../app/util';
 
 const placeholderCount = 5;
 
-const ZonesDashboard = ( { isRequesting, siteId, siteSlug, translate, zones } ) => (
+const ZonesDashboard = ( { isRequesting, siteSlug, translate, zones } ) => (
 	<div>
-		<QueryZones siteId={ siteId } />
-
 		<HeaderCake backHref={ `/plugins/zoninator/${ siteSlug }` }>
-			{ translate( 'Zoninator Settings' ) }
+			Zoninator Settings
 		</HeaderCake>
 
 		<SectionHeader label={ translate( 'Zones' ) }>
@@ -56,7 +53,6 @@ const connectComponent = connect( state => {
 		zones: getZones( state, siteId ),
 		isRequesting: isRequestingZones( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
-		siteId,
 	};
 } );
 
