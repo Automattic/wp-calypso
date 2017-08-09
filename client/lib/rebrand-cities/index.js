@@ -5,9 +5,12 @@ import { v4 as uuid } from 'uuid';
 
 const allHyphens = new RegExp( '-', 'g' );
 
+function uuidWithoutHyphens() {
+	return uuid().replace( allHyphens, '' );
+}
+
 function generateUniqueSiteUrl( prefix ) {
-	const uniqueSuffix = uuid().replace( allHyphens, '' );
-	return `${ prefix }${ uniqueSuffix }`;
+	return `${ prefix }${ uuidWithoutHyphens() }`;
 }
 
 const rebrandCitiesPrefix = 'site';
