@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -33,8 +34,8 @@ const AcceptDialog = React.createClass( {
 
 	getActionButtons: function() {
 		const { options } = this.props;
-		const isScary = options ? options.isScary : false;
-		const additionalClassNames = isScary ? 'is-scary' : null;
+		const isScary = options && options.isScary;
+		const additionalClassNames = classnames( { 'is-scary': isScary } );
 		return [
 			{
 				action: 'cancel',
