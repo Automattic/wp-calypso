@@ -77,7 +77,7 @@ const STATUS_TEXTS = {
 	[ ERROR ]: 'Build error',
 	[ BUILDING_JS ]: 'Rebuilding Javascript',
 	[ BUILDING_CSS ]: 'Rebuilding CSS',
-	[ BUILDING_BOTH ]: 'Rebuiling both JS and CSS',
+	[ BUILDING_BOTH ]: 'Rebuilding JS and CSS',
 };
 
 class WebpackBuildMonitor extends React.Component {
