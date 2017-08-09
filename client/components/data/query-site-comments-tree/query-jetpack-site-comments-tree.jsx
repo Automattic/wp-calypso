@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestCommentsTreeForJetpackSite } from 'state/comments/actions';
+import { requestCommentsList } from 'state/comments/actions';
 
 export class QueryJetpackSiteCommentsTree extends Component {
 	static propTypes = {
@@ -26,19 +26,26 @@ export class QueryJetpackSiteCommentsTree extends Component {
 	}
 
 	componentDidUpdate( { page, siteId, status } ) {
-		const pageChange = page !== this.props.page;
-		const statusChange = status !== this.props.status;
-
-		if ( pageChange || statusChange || siteId !== this.props.siteId ) {
-			this.request( ( pageChange && ! statusChange ) ? 'add' : 'replace' );
+		if ( page !== this.props.page || siteId !== this.props.siteId || status !== this.props.status ) {
+			this.request();
 		}
 	}
 
-	request( strategy = 'replace' ) {
+	request() {
 		const { page, siteId, status } = this.props;
-		if ( siteId ) {
-			this.props.requestCommentsTreeForJetpackSite( { page, siteId, status, strategy } );
+		if ( ! siteId ) {
+			return;
 		}
+
+		const query = {
+			listType: 'site',
+			number: 100,
+			offset: ( page - 1 ) * 20, // see CommentList COMMENTS_PER_PAGE constant
+			siteId,
+			status,
+			type: 'comment',
+		};
+		this.props.requestCommentsList( query );
 	}
 
 	render() {
@@ -46,4 +53,4 @@ export class QueryJetpackSiteCommentsTree extends Component {
 	}
 }
 
-export default connect( null, { requestCommentsTreeForJetpackSite } )( QueryJetpackSiteCommentsTree );
+export default connect( null, { requestCommentsList } )( QueryJetpackSiteCommentsTree );

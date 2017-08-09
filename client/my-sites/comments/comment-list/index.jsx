@@ -409,7 +409,7 @@ export class CommentList extends Component {
 							isBulkEdit={ isBulkEdit }
 							commentIsSelected={ this.isCommentSelected( commentId ) }
 							key={ `comment-${ siteId }-${ commentId }` }
-							refreshCommentData={ ! this.hasCommentJustMovedBackToCurrentStatus( commentId ) }
+							refreshCommentData={ ! isJetpack && ! this.hasCommentJustMovedBackToCurrentStatus( commentId ) }
 							replyComment={ this.replyComment }
 							setCommentStatus={ this.setCommentStatus }
 							siteId={ siteId }
@@ -427,17 +427,17 @@ export class CommentList extends Component {
 						line={ emptyMessageLine }
 						title={ emptyMessageTitle }
 					/> }
-
-					{ ! showPlaceholder && ! showEmptyContent &&
-						<Pagination
-							key="comment-list-pagination"
-							page={ page }
-							pageClick={ this.changePage }
-							perPage={ COMMENTS_PER_PAGE }
-							total={ commentsCount }
-						/>
-					}
 				</ReactCSSTransitionGroup>
+
+				{ ! showPlaceholder && ! showEmptyContent &&
+					<Pagination
+						key="comment-list-pagination"
+						page={ page }
+						pageClick={ this.changePage }
+						perPage={ COMMENTS_PER_PAGE }
+						total={ commentsCount }
+					/>
+				}
 			</div>
 		);
 	}
