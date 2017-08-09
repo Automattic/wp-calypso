@@ -22,6 +22,7 @@ const CdnTab = ( {
 	fields: {
 		ossdl_cname,
 		ossdl_https,
+		ossdl_off_blog_url,
 		ossdl_off_cdn_url,
 		ossdl_off_exclude,
 		ossdl_off_include_dirs,
@@ -64,6 +65,22 @@ const CdnTab = ( {
 					</FormFieldset>
 
 					<div className="wp-super-cache__cdn-fieldsets">
+						<FormFieldset>
+							<FormLabel htmlFor="ossdl_off_blog_url">
+								{ translate( 'Site URL' ) }
+							</FormLabel>
+
+							<FormTextInput
+								disabled={ isRequesting || isSaving || ! ossdlcdn }
+								id="ossdl_off_cdn_url"
+								onChange={ handleChange( 'ossdl_off_blog_url' ) }
+								value={ ossdl_off_blog_url || '' } />
+
+							<FormSettingExplanation>
+								{ translate( 'The URL of your site. No trailing / please.' ) }
+							</FormSettingExplanation>
+						</FormFieldset>
+
 						<FormFieldset>
 							<FormLabel htmlFor="ossdl_off_cdn_url">
 								{ translate( 'Off-site URL' ) }
@@ -182,6 +199,7 @@ const getFormSettings = settings => {
 	return pick( settings, [
 		'ossdl_cname',
 		'ossdl_https',
+		'ossdl_off_blog_url',
 		'ossdl_off_cdn_url',
 		'ossdl_off_exclude',
 		'ossdl_off_include_dirs',
