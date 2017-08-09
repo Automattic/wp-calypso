@@ -32,7 +32,7 @@ class RebrandCitiesThankYou extends Component {
 							</p>
 						</div>
 					}
-					buttonUrl={ 'https://rebrandcities.typeform.com/to/mbymUQ' }
+					buttonUrl={ 'https://rebrandcities.typeform.com/to/mbymUQ?typeform-welcome=0' }
 					buttonText={ translate( 'Start our business survey' ) }
 					icon={ this.renderLogo() }
 					action={ null }
