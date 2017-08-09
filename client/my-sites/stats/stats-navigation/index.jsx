@@ -57,7 +57,7 @@ const StatsNavigation = ( props ) => {
 
 	return (
 		<SectionNav selectedText={ sectionTitles[ section ] }>
-			{ isJetpack && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
+			{ isJetpack && siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 			<NavTabs label={ translate( 'Stats' ) }>
 				<NavItem path={ '/stats/insights' + siteFragment } selected={ section === 'insights' }>
 					{ sectionTitles.insights }
