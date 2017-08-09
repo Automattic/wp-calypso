@@ -9,6 +9,7 @@ import { expect } from 'chai';
 import {
 	getKeyringServices,
 	getKeyringServicesByType,
+	getKeyringServiceByName,
 	getEligibleKeyringServices,
 	isKeyringServicesFetching,
 } from '../selectors';
@@ -94,6 +95,20 @@ describe( 'selectors', () => {
 				{ ID: 'facebook', type: 'publicize', jetpack_support: true },
 				{ ID: 'twitter', type: 'publicize', jetpack_support: true },
 			] );
+		} );
+	} );
+
+	describe( 'getKeyringServiceByName()', () => {
+		it( 'should return false if there is no service', () => {
+			const service = getKeyringServiceByName( defaultState, 'thingy' );
+
+			expect( service ).to.be.false;
+		} );
+
+		it( 'should return the named keyring service', () => {
+			const service = getKeyringServiceByName( activeState, 'eventbrite' );
+
+			expect( service ).to.eql( activeState.sharing.services.items.eventbrite );
 		} );
 	} );
 
