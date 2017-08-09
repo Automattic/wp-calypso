@@ -6,7 +6,7 @@
 import React from 'react';
 import { createStore } from 'redux';
 import classNames from 'classnames';
-import { find, includes, startsWith } from 'lodash';
+import { find, includes, startsWith, identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,14 +31,14 @@ const doneBuilding = typeDone => state => {
 	return IDLE;
 };
 
-const buildJS = state => ( state === BUILDING_CSS ? BUILDING_BOTH : BUILDING_JS );
-const buildCSS = state => ( state === BUILDING_JS ? BUILDING_BOTH : BUILDING_CSS );
+const buildJs = state => ( state === BUILDING_CSS ? BUILDING_BOTH : BUILDING_JS );
+const buildCss = state => ( state === BUILDING_JS ? BUILDING_BOTH : BUILDING_CSS );
 
 const MESSAGE_STATUS_MAP = {
 	'[HMR] connected': () => CONNECTED,
 	'[WDS] Disconnected!': () => DISCONNECTED,
-	'[HMR] bundle rebuilding': state => buildJS( state ),
-	'Building CSS…': state => buildCSS( state ),
+	'[HMR] bundle rebuilding': state => buildJs( state ),
+	'Building CSS…': state => buildCss( state ),
 	'CSS build failed': () => ERROR,
 	'[WDS] Nothing changed.': doneBuilding( BUILDING_JS ),
 	'Reloading CSS: ': doneBuilding( BUILDING_CSS ),
@@ -46,12 +46,17 @@ const MESSAGE_STATUS_MAP = {
 	"[HMR] The following modules couldn't be hot updated": () => NEEDS_RELOAD,
 };
 
-const reducer = ( state = IDLE, { message } ) => {
+const reducer = ( state = IDLE, { type, message } ) => {
+	// only listen for WebpackBuildMessages and also never change from a NEEDS_RELOAD state
+	if ( type !== 'WebpackBuildMessage' || state === NEEDS_RELOAD ) {
+		return state;
+	}
+
 	const getNextState = find( MESSAGE_STATUS_MAP, ( v, messagePrefix ) =>
 		startsWith( message, messagePrefix ),
-	);
+	) || identity;
 
-	return getNextState ? getNextState( state ) : state;
+	return getNextState( state );
 };
 
 const store = createStore( reducer );
@@ -78,7 +83,12 @@ class WebpackBuildMonitor extends React.Component {
 	state = { status: IDLE };
 
 	componentDidMount() {
-		this.unsubscribe = store.subscribe( () => this.setState( { status: store.getState() } ) );
+		this.unsubscribe = store.subscribe( () => {
+			const status = store.getState();
+			if ( status !== this.state.status ) {
+				this.setState( { status: store.getState() } );
+			}
+		} );
 	}
 
 	componentWillUnmount() {
