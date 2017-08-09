@@ -35,31 +35,6 @@
 	}
 }
 
-.order__status {
-	display: inline-flex;
-	padding: 0px 12px;
-	line-height: 32px;
-	background: lighten( $gray, 20% );
-	border-radius: 4px;
-
-	&.is-failed {
-		background: lighten( $alert-red, 20% );
-		color: darken( $alert-red, 30% );
-	}
-
-	&.is-cancelled,
-	&.is-refunded,
-	&.is-completed {
-		background: $gray-light;
-		color: $gray-dark;
-	}
-
-	&.is-on-hold {
-		background: lighten( $alert-yellow, 20% );
-		color: darken( $alert-yellow, 30% );
-	}
-}
-
 .order__details-card {
 	padding-top: 0;
 	padding-bottom: 0;

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 
@@ -9,11 +8,13 @@ import React, { Component, PropTypes } from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
-import FormSelect from 'components/forms/form-select';
+import { isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 import OrderCreated from './order-created';
 import OrderDetailsTable from './order-details-table';
 import OrderFulfillment from './order-fulfillment';
 import OrderRefundCard from './order-refund-card';
+import OrderStatus from 'woocommerce/components/order-status';
+import OrderStatusSelect from 'woocommerce/components/order-status/select';
 import SectionHeader from 'components/section-header';
 
 class OrderDetails extends Component {
@@ -40,48 +41,11 @@ class OrderDetails extends Component {
 	}
 
 	renderStatus = () => {
-		const { order, translate } = this.props;
-		const classes = `order__status is-${ order.status }`;
-		// TODO: create a helper function for status labels
-		const statuses = [ {
-			value: 'pending',
-			name: translate( 'Pending payment' ),
-		}, {
-			value: 'processing',
-			name: translate( 'Processing' ),
-		}, {
-			value: 'on-hold',
-			name: translate( 'On Hold' ),
-		}, {
-			value: 'completed',
-			name: translate( 'Completed' ),
-		}, {
-			value: 'cancelled',
-			name: translate( 'Cancelled' ),
-		}, {
-			value: 'refunded',
-			name: translate( 'Refunded' ),
-		}, {
-			value: 'failed',
-			name: translate( 'Payment Failed' ),
-		} ];
+		const { order } = this.props;
 
-		if ( 'pending' === order.status || 'on-hold' === order.status ) {
-			return (
-				<FormSelect id="select" value={ this.state.status } onChange={ this.updateStatus }>
-					{ statuses.map( ( status, i ) => {
-						return (
-							<option key={ i } value={ status.value }>{ status.name }</option>
-						);
-					} ) }
-				</FormSelect>
-			);
-		}
-
-		const statusLabel = find( statuses, { value: order.status } );
-		return (
-			<span className={ classes }>{ statusLabel.name }</span>
-		);
+		return isOrderWaitingPayment( order.status )
+			? <OrderStatusSelect value={ this.state.status } onChange={ this.updateStatus } />
+			: <OrderStatus status={ order.status } showShipping={ false } />;
 	}
 
 	render() {

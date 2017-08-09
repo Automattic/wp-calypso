@@ -128,7 +128,7 @@ class OrderRefundCard extends Component {
 		const refundObj = {
 			amount: this.state.refundTotal + '', // API expects a string
 			reason: this.state.refundNote,
-			api_refund: ( -1 !== paymentMethod.method_supports.indexOf( 'refunds' ) ),
+			api_refund: ( paymentMethod && ( -1 !== paymentMethod.method_supports.indexOf( 'refunds' ) ) ),
 		};
 		this.props.sendRefund( site.ID, order.id, refundObj );
 	}
@@ -139,7 +139,7 @@ class OrderRefundCard extends Component {
 			return null;
 		}
 
-		if ( -1 === paymentMethod.method_supports.indexOf( 'refunds' ) ) {
+		if ( paymentMethod && ( -1 === paymentMethod.method_supports.indexOf( 'refunds' ) ) ) {
 			return (
 				<div className="order__refund-method">
 					<h3>{ translate( 'Manual Refund' ) }</h3>

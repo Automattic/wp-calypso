@@ -24,12 +24,18 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { getOrdersCurrentPage, getOrdersCurrentSearch } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import humanDate from 'lib/human-date';
-import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
+import {
+	ORDER_UNPAID,
+	ORDER_UNFULFILLED,
+	ORDER_COMPLETED,
+} from 'woocommerce/lib/order-status';
 import OrdersFilterNav from './orders-filter-nav';
+import OrderStatus from 'woocommerce/components/order-status';
 import Pagination from 'components/pagination';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
+import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
 
 class Orders extends Component {
 	componentDidMount() {
@@ -79,47 +85,6 @@ class Orders extends Component {
 		page( getLink( '/store/orders/:site', site ) );
 	}
 
-	getOrderStatus = ( status ) => {
-		const { translate } = this.props;
-		const classes = `orders__item-status is-${ status }`;
-		let paymentLabel;
-		let shippingLabel;
-		switch ( status ) {
-			case 'pending':
-				shippingLabel = translate( 'New order' );
-				paymentLabel = translate( 'Payment pending' );
-				break;
-			case 'processing':
-				shippingLabel = translate( 'New order' );
-				paymentLabel = translate( 'Paid in full' );
-				break;
-			case 'on-hold':
-				shippingLabel = translate( 'On hold' );
-				paymentLabel = translate( 'Payment pending' );
-				break;
-			case 'completed':
-				shippingLabel = translate( 'Fulfilled' );
-				paymentLabel = translate( 'Paid in full' );
-				break;
-			case 'cancelled':
-				paymentLabel = translate( 'Cancelled' );
-				break;
-			case 'refunded':
-				paymentLabel = translate( 'Refunded' );
-				break;
-			case 'failed':
-				paymentLabel = translate( 'Payment Failed' );
-				break;
-		}
-
-		return (
-			<span className={ classes }>
-				{ shippingLabel ? <span className="orders__shipping-status">{ shippingLabel }</span> : null }
-				<span className="orders__payment-status">{ paymentLabel }</span>
-			</span>
-		);
-	}
-
 	renderPlaceholders = () => {
 		return range( 5 ).map( ( i ) => {
 			return (
@@ -138,10 +103,12 @@ class Orders extends Component {
 		let emptyMessage = translate( 'Your orders will appear here as they come in.' );
 		if ( currentSearch ) {
 			emptyMessage = translate( 'There are no orders matching your search.' );
-		} else if ( 'pending' === currentStatus ) {
+		} else if ( ORDER_UNPAID === currentStatus ) {
 			emptyMessage = translate( 'You don\'t have any orders awaiting payment.' );
-		} else if ( 'processing' === currentStatus ) {
+		} else if ( ORDER_UNFULFILLED === currentStatus ) {
 			emptyMessage = translate( 'You don\'t have any orders awaiting fulfillment.' );
+		} else if ( ORDER_COMPLETED === currentStatus ) {
+			emptyMessage = translate( 'You don\'t have any completed orders.' );
 		}
 
 		return (
@@ -168,7 +135,7 @@ class Orders extends Component {
 					{ humanDate( order.date_created_gmt + 'Z' ) }
 				</TableItem>
 				<TableItem className="orders__table-status">
-					{ this.getOrderStatus( order.status ) }
+					<OrderStatus status={ order.status } />
 				</TableItem>
 				<TableItem className="orders__table-total">
 					{ formatCurrency( order.total, order.currency ) || order.total }
