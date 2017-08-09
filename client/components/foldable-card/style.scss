@@ -7,7 +7,7 @@
 
 	&.is-expanded {
 		margin: 8px 0;
-		&.is-solitary {
+		&:first-child {
 			margin: 0 0 8px 0;
 		}
 	}

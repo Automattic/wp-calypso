@@ -20,7 +20,6 @@ class FoldableCard extends Component {
 		actionButtonExpanded: PropTypes.element,
 		cardKey: PropTypes.string,
 		compact: PropTypes.bool,
-		solitary: PropTypes.bool,
 		disabled: PropTypes.bool,
 		expandedSummary: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		expanded: PropTypes.bool,
@@ -145,7 +144,6 @@ class FoldableCard extends Component {
 			this.props.className,
 			{
 				'is-disabled': !! this.props.disabled,
-				'is-solitary': !! this.props.solitary,
 				'is-expanded': !! this.state.expanded,
 				'has-expanded-summary': !! this.props.expandedSummary,
 			}

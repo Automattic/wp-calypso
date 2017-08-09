@@ -220,13 +220,14 @@ class PlanFeatures extends Component {
 						planName ={ planConstantObj.getTitle() }
 						planType={ planName }
 					/>
-					<FoldableCard
-						header={ translate( 'Show features' ) }
-						clickableHeader
-						compact
-						solitary>
-						{ this.renderMobileFeatures( features ) }
-					</FoldableCard>
+					<div>
+						<FoldableCard
+							header={ translate( 'Show features' ) }
+							clickableHeader
+							compact>
+							{ this.renderMobileFeatures( features ) }
+						</FoldableCard>
+					</div>
 				</div>
 			);
 		} );
