@@ -180,7 +180,13 @@ class SimplePaymentsDialog extends Component {
 		return new Promise( resolve => this.formStateController.handleSubmit( resolve ) );
 	}
 
-	handleChangeTabs = activeTab => this.setState( { activeTab } );
+	handleChangeTabs = ( activeTab, why ) => {
+		if ( why === 'add' ) {
+			this.addNewPaymentButton();
+		} else {
+			this.setState( { activeTab } );
+		}
+	}
 
 	handleSelectedChange = selectedPaymentId => this.setState( { selectedPaymentId } );
 
@@ -249,6 +255,11 @@ class SimplePaymentsDialog extends Component {
 			} );
 		} );
 	};
+
+	addNewPaymentButton = () => {
+		this.setState( { activeTab: 'form', editedPaymentId: null } );
+		this.formStateController.resetFields( this.getInitialFormFields( null ) );
+	}
 
 	editPaymentButton = paymentId => {
 		this.setState( { activeTab: 'form', editedPaymentId: paymentId } );
