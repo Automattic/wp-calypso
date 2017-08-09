@@ -165,7 +165,10 @@ export const fetchCommentsList = ( { dispatch }, action ) => {
 };
 
 export const addComments = ( { dispatch }, { query: { siteId, status } }, next, { comments } ) => {
-	// Initialize the comments tree
+	// Initialize the comments tree to let CommentList know if a tree is actually loaded and empty.
+	// This is needed as a workaround for Jetpack sites populating their comments trees
+	// via `fetchCommentsList` instead of `fetchCommentsTreeForSite`.
+	// @see https://github.com/Automattic/wp-calypso/pull/16997#discussion_r132161699
 	if ( 0 === comments.length ) {
 		dispatch( {
 			type: COMMENTS_TREE_SITE_ADD,

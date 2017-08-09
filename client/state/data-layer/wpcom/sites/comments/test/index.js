@@ -29,10 +29,16 @@ describe( '#addComments', () => {
 
 	beforeEach( () => ( dispatch = spy() ) );
 
-	it( 'should dispatch one action for no comments', () => {
+	it( 'should dispatch a tree initialization action for no comments', () => {
 		addComments( { dispatch }, { query }, null, { comments: [] } );
 
 		expect( dispatch ).to.have.been.calledOnce;
+		expect( dispatch.lastCall ).to.have.been.calledWith( {
+			type: 'COMMENTS_TREE_SITE_ADD',
+			siteId: query.siteId,
+			status: query.status,
+			tree: [],
+		} );
 	} );
 
 	it( 'should dispatch to add received comments into state', () => {

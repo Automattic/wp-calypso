@@ -379,14 +379,16 @@ export class CommentList extends Component {
 
 		return (
 			<div className="comment-list">
-				{ isJetpack
-					? <QuerySiteCommentsList
+				{ isJetpack &&
+					<QuerySiteCommentsList
 						number={ 100 }
 						offset={ ( page - 1 ) * COMMENTS_PER_PAGE }
 						siteId={ siteId }
 						status={ status }
 					/>
-					: <QuerySiteCommentsTree siteId={ siteId } status={ status } />
+				}
+				{ ! isJetpack &&
+					<QuerySiteCommentsTree siteId={ siteId } status={ status } />
 				}
 
 				<CommentNavigation
