@@ -645,7 +645,7 @@ export const PLANS_LIST = {
 export const FEATURES_LIST = {
 	[ FEATURE_BLANK ]: {
 		getSlug: () => FEATURE_BLANK,
-		getTitle: () => '', //PLANS A/B TEST: Translate if test passes
+		getTitle: () => '',
 	},
 
 	[ FEATURE_ALL_FREE_FEATURES ]: {
