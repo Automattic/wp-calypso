@@ -15,7 +15,8 @@ const AcceptDialog = React.createClass( {
 		message: PropTypes.node,
 		onClose: PropTypes.func.isRequired,
 		confirmButtonText: PropTypes.node,
-		cancelButtonText: PropTypes.node
+		cancelButtonText: PropTypes.node,
+		options: PropTypes.object
 	},
 
 	getInitialState: function() {
@@ -31,6 +32,9 @@ const AcceptDialog = React.createClass( {
 	},
 
 	getActionButtons: function() {
+		const { options } = this.props;
+		const isScary = options ? options.isScary : false;
+		const additionalClassNames = isScary ? 'is-scary' : null;
 		return [
 			{
 				action: 'cancel',
@@ -39,7 +43,8 @@ const AcceptDialog = React.createClass( {
 			{
 				action: 'accept',
 				label: this.props.confirmButtonText ? this.props.confirmButtonText : this.props.translate( 'OK' ),
-				isPrimary: true
+				isPrimary: true,
+				additionalClassNames
 			}
 		];
 	},
