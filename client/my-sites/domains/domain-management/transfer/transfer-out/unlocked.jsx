@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,6 +29,24 @@ class Unlocked extends React.Component {
 		};
 	}
 
+	componentWillUnmount() {
+		this.setStateIfMounted = noop;
+	}
+
+	/**
+	 * Wrap setState calls that might occur after unmounting.
+	 *
+	 * When we cancel a transfer, that might update locking or privacy,
+	 * but errors mean we can't know in time - the store gets the information
+	 * before we do.
+	 *
+	 * The recommended solution is cancellable promises, but we don't want to
+	 * cancel these requests if we navigate away, so that won't work for us here.
+	 */
+	setStateIfMounted( ...args ) {
+		this.setState( ...args );
+	}
+
 	handleCancelTransferClick = () => {
 		const { translate } = this.props;
 		const {
@@ -49,7 +68,7 @@ class Unlocked extends React.Component {
 			enablePrivacy,
 			lockDomain,
 		}, ( error ) => {
-			this.setState( { submitting: false } );
+			this.setStateIfMounted( { submitting: false } );
 
 			if ( error ) {
 				const contactLink = <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />;
@@ -82,7 +101,7 @@ class Unlocked extends React.Component {
 				notices.error( errorMessage );
 			} else {
 				// Success.
-				this.setState( { sent: false } );
+				this.setStateIfMounted( { sent: false } );
 
 				let successMessage;
 				if ( enablePrivacy && lockDomain ) {
