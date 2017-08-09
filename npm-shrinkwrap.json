@@ -714,7 +714,7 @@
       "version": "2.11.0"
     },
     "bn.js": {
-      "version": "4.11.7"
+      "version": "4.11.8"
     },
     "body-parser": {
       "version": "1.17.2",
@@ -836,7 +836,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000710"
+      "version": "1.0.30000713"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -1176,7 +1176,7 @@
       }
     },
     "core-js": {
-      "version": "2.4.1"
+      "version": "2.5.0"
     },
     "core-util-is": {
       "version": "1.0.2"
@@ -1845,14 +1845,8 @@
       "dev": true
     },
     "eslint-plugin-react": {
-      "version": "6.4.1",
-      "dev": true,
-      "dependencies": {
-        "doctrine": {
-          "version": "1.5.0",
-          "dev": true
-        }
-      }
+      "version": "7.1.0",
+      "dev": true
     },
     "eslint-plugin-wpcalypso": {
       "version": "3.4.1",
@@ -1862,7 +1856,7 @@
       "version": "1.0.1"
     },
     "espree": {
-      "version": "3.4.3",
+      "version": "3.5.0",
       "dev": true,
       "dependencies": {
         "acorn": {
@@ -2983,11 +2977,8 @@
       "version": "3.8.3"
     },
     "http-errors": {
-      "version": "1.6.1",
+      "version": "1.6.2",
       "dependencies": {
-        "depd": {
-          "version": "1.1.0"
-        },
         "inherits": {
           "version": "2.0.3"
         }
@@ -4405,7 +4396,7 @@
       "dev": true
     },
     "node-fetch": {
-      "version": "1.7.1"
+      "version": "1.7.2"
     },
     "node-gyp": {
       "version": "3.6.2",
@@ -4879,7 +4870,7 @@
           "dev": true
         },
         "chalk": {
-          "version": "2.0.1",
+          "version": "2.1.0",
           "dev": true
         },
         "escape-string-regexp": {
@@ -4918,7 +4909,7 @@
       "dev": true
     },
     "prebuild-install": {
-      "version": "2.2.1",
+      "version": "2.2.2",
       "dependencies": {
         "minimist": {
           "version": "1.2.0"
@@ -4983,7 +4974,7 @@
               "dev": true
             },
             "chalk": {
-              "version": "2.0.1",
+              "version": "2.1.0",
               "dev": true
             },
             "escape-string-regexp": {
@@ -5382,7 +5373,7 @@
       "version": "7.0.2",
       "dependencies": {
         "hoist-non-react-statics": {
-          "version": "2.2.1"
+          "version": "2.2.2"
         },
         "lodash": {
           "version": "4.17.4"
@@ -6667,7 +6658,7 @@
           "dev": true
         },
         "debug": {
-          "version": "2.6.7",
+          "version": "2.6.8",
           "dev": true
         },
         "destroy": {
@@ -6683,7 +6674,7 @@
           "dev": true
         },
         "express": {
-          "version": "4.15.3",
+          "version": "4.15.4",
           "dev": true
         },
         "filesize": {
@@ -6692,13 +6683,7 @@
         },
         "finalhandler": {
           "version": "1.0.4",
-          "dev": true,
-          "dependencies": {
-            "debug": {
-              "version": "2.6.8",
-              "dev": true
-            }
-          }
+          "dev": true
         },
         "fresh": {
           "version": "0.5.0",
@@ -6729,7 +6714,7 @@
           "dev": true
         },
         "qs": {
-          "version": "6.4.0",
+          "version": "6.5.0",
           "dev": true
         },
         "range-parser": {
@@ -6741,11 +6726,11 @@
           "dev": true
         },
         "send": {
-          "version": "0.15.3",
+          "version": "0.15.4",
           "dev": true
         },
         "serve-static": {
-          "version": "1.12.3",
+          "version": "1.12.4",
           "dev": true
         },
         "supports-color": {
