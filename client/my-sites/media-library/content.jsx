@@ -32,7 +32,7 @@ import {
 } from 'lib/media/constants';
 import { getSiteSlug } from 'state/sites/selectors';
 import MediaLibraryHeader from './header';
-import MediaLibraryScaleHeader from './empty-header';
+import MediaLibraryExternalHeader from './external-media-header';
 import MediaLibraryList from './list';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import {
@@ -275,7 +275,11 @@ const MediaLibraryContent = React.createClass( {
 	renderHeader() {
 		if ( this.props.source !== '' ) {
 			return (
-				<MediaLibraryScaleHeader onMediaScaleChange={ this.props.onMediaScaleChange } />
+				<MediaLibraryExternalHeader
+					onMediaScaleChange={ this.props.onMediaScaleChange }
+					site={ this.props.site }
+					visible={ ! this.props.isRequesting }
+				/>
 			);
 		}
 
