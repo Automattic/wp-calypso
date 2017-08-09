@@ -2,3 +2,35 @@
 	list-style-type: none;
 	margin-left: 0;
 }
+
+.conversations__stream .card.is-compact {
+	padding: 0;
+}
+
+.conversations__stream .reader-post-card.card .reader-post-options-menu {
+	position: absolute;
+		right: -2px;
+		top: -16px;
+}
+
+.conversations__stream .reader-post-card__title {
+	height: 16px * 1.7;
+	overflow: hidden;
+	position: relative;
+	width: calc( 100% - 120px );
+	white-space: nowrap;
+
+	&::after{
+		@include long-content-fade( $size: 10% );
+	}
+}
+
+// Hides Follow button in Conversations stream
+.conversations__stream .follow-button {
+	display: none;
+}
+
+// Hides tags in Coversations stream
+.conversations__stream .reader-post-card__tags {
+	display: none;
+}
