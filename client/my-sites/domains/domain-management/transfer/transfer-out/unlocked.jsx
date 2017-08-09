@@ -134,7 +134,9 @@ class Unlocked extends React.Component {
 	renderCancelButton( domain ) {
 		const { pendingTransfer } = domain;
 
-		if ( this.isDomainAlwaysTransferrable() && ! pendingTransfer ) {
+		const showCancelButton = pendingTransfer ||
+			! this.isDomainAlwaysTransferrable();
+		if ( ! showCancelButton ) {
 			return null;
 		}
 
