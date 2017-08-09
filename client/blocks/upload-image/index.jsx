@@ -258,7 +258,14 @@ class UploadImage extends Component {
 		const { onUploadedImageRemove } = this.props;
 		const { uploadedImage } = this.state;
 
-		this.setState( { uploadedImage: null } );
+		this.revokeImageObjects();
+
+		this.setState( {
+			selectedImage: null,
+			selectedImageName: '',
+			editedImage: null,
+			uploadedImage: null,
+		} );
 
 		onUploadedImageRemove( uploadedImage );
 	};
@@ -276,11 +283,20 @@ class UploadImage extends Component {
 		}
 	}
 
-	componentWillUnmount() {
+	revokeImageObjects = () => {
 		const { selectedImage, editedImage } = this.state;
 
-		URL.revokeObjectURL( selectedImage );
-		URL.revokeObjectURL( editedImage );
+		if ( selectedImage ) {
+			URL.revokeObjectURL( selectedImage );
+		}
+
+		if ( editedImage ) {
+			URL.revokeObjectURL( editedImage );
+		}
+	};
+
+	componentWillUnmount() {
+		this.revokeImageObjects();
 
 		MediaStore.off( 'change', this.handleMediaStoreChange );
 		MediaValidationStore.off( 'change', this.storeValidationErrors );
