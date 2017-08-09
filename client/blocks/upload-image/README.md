@@ -47,9 +47,9 @@ To see a more complex example, have a look at `blocks/upload-image/docs/example`
 - `imageEditorProps`: (default: allowedAspectRatios set to 1X1) object of additional props to send to `ImageEditor`
 	component.
 - `onImageEditorDone`: (default: `noop`) function to call when user clicks on the "Done" button in `ImageEditor`.
+- `onImageUploadDone`: (default: `noop`) function to call when the image is uploaded to specified `siteId` Media library.
+- `onImageRemove`: (default: `noop`) function to call when user clicked the (X) button to remove uploaded image.
 - `onError`: (default: `noop`) function to call when there's any error during file uploading/image editing.
-- `onUploadImageDone`: (default: `noop`) function to call when the image is uploaded to specified `siteId` Media library.
-- `onUploadedImageRemove`: (default: `noop`) function to call when user clicked the (X) button to remove uploaded image.
 - `additionalImageEditorClasses`: string of additional CSS class names to apply to the `ImageEditor` modal.
 - `additionalClasses`: string of additional CSS class names to apply to the `UploadImage` component.
 - `doneButtonText`: text on the "Done" button in Image Editor modal.

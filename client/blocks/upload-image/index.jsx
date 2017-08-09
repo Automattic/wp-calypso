@@ -63,8 +63,8 @@ class UploadImage extends Component {
 		defaultImage: PropTypes.any,
 		onError: PropTypes.func,
 		onImageEditorDone: PropTypes.func,
-		onUploadImageDone: PropTypes.func,
-		onUploadedImageRemove: PropTypes.func,
+		onImageUploadDone: PropTypes.func,
+		onImageRemove: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -73,8 +73,8 @@ class UploadImage extends Component {
 		},
 		backgroundContent: null,
 		onImageEditorDone: noop,
-		onUploadImageDone: noop,
-		onUploadedImageRemove: noop,
+		onImageUploadDone: noop,
+		onImageRemove: noop,
 		onError: noop,
 		isUploading: false,
 	};
@@ -171,7 +171,7 @@ class UploadImage extends Component {
 
 	// Handle the uploading process.
 	handleMediaStoreChange = () => {
-		const { siteId, onUploadImageDone } = this.props;
+		const { siteId, onImageUploadDone } = this.props;
 
 		const { errors } = this.state;
 
@@ -194,7 +194,7 @@ class UploadImage extends Component {
 
 			MediaStore.off( 'change', this.handleMediaStoreChange );
 
-			onUploadImageDone( uploadedImage );
+			onImageUploadDone( uploadedImage );
 
 			return;
 		}
@@ -255,7 +255,7 @@ class UploadImage extends Component {
 	}
 
 	removeUploadedImage = () => {
-		const { onUploadedImageRemove } = this.props;
+		const { onImageRemove } = this.props;
 		const { uploadedImage } = this.state;
 
 		this.revokeImageObjects();
@@ -267,7 +267,7 @@ class UploadImage extends Component {
 			uploadedImage: null,
 		} );
 
-		onUploadedImageRemove( uploadedImage );
+		onImageRemove( uploadedImage );
 	};
 
 	componentWillMount() {

@@ -439,8 +439,8 @@ class SimplePaymentsDialog extends Component {
 							fieldValues={ this.getFormValues() }
 							isFieldInvalid={ this.isFormFieldInvalid }
 							onFieldChange={ this.handleFormFieldChange }
-							onUploadImageDone={ this.handleUploadedImage }
-							onUploadedImageRemove={ this.handleUploadedImageRemoval }
+							onImageUploadDone={ this.handleUploadedImage }
+							onImageRemove={ this.handleUploadedImageRemoval }
 							showError={ this.showError }
 						/>
 					: <ProductList
