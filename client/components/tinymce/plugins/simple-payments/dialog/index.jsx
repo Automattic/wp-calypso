@@ -244,9 +244,17 @@ class SimplePaymentsDialog extends Component {
 	};
 
 	handleTrash = paymentId => {
+		const { translate } = this.props;
+
+		if (
+			! confirm( translate( 'Are you sure you want to permanently delete this payment button?' ) )
+		) {
+			return;
+		}
+
 		this.setIsSubmitting( true );
 
-		const { siteId, dispatch, translate } = this.props;
+		const { siteId, dispatch } = this.props;
 
 		dispatch( trashPaymentButton( siteId, paymentId ) )
 			.catch( () => this.showError( translate( 'The payment button could not be deleted.' ) ) )
