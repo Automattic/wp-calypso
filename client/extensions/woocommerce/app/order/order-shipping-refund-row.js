@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 
 /**
@@ -22,11 +23,13 @@ class OrderShippingRefundRow extends Component {
 		const {
 			currency,
 			onChange,
-			shippingTotal
+			shippingTotal,
+			translate
 		} = this.props;
 
 		return (
 			<div className="order__details-total-shipping-refund">
+				<div className="order__details-totals-label">{ translate( 'Shipping' ) }</div>
 				<div className="order__details-totals-value">
 					<PriceInput
 						name="shipping_total"
@@ -39,4 +42,4 @@ class OrderShippingRefundRow extends Component {
 	}
 }
 
-export default OrderShippingRefundRow;
+export default localize( OrderShippingRefundRow );

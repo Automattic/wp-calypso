@@ -42,7 +42,7 @@ class OrderDetailsTable extends Component {
 		super( props );
 		this.state = {
 			quantities: [],
-			shippingTotal: 0,
+			shippingTotal: parseFloat( props.order.shipping_tax ) + parseFloat( props.order.shipping_total ),
 		};
 	}
 
@@ -137,13 +137,12 @@ class OrderDetailsTable extends Component {
 
 				<div className="order__details-totals">
 					<OrderDiscountRow order={ order } />
-					<OrderShippingRow order={ order } />
 					{ isEditable
 						? <OrderShippingRefundRow
 							currency={ order.currency }
 							onChange={ this.onChange }
 							shippingTotal={ this.state.shippingTotal } />
-						: null
+						: <OrderShippingRow order={ order } />
 					}
 					<OrderTotalRow order={ order } />
 					<OrderRefundRow order={ order } />
