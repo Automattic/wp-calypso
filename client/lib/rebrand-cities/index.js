@@ -3,8 +3,10 @@
  */
 import { v4 as uuid } from 'uuid';
 
+const allHyphens = new RegExp( '-', 'g' );
+
 function generateUniqueSiteUrl( prefix ) {
-	const uniqueSuffix = uuid().replace( new RegExp( '-', 'g' ), '' );
+	const uniqueSuffix = uuid().replace( allHyphens, '' );
 	return `${ prefix }${ uniqueSuffix }`;
 }
 
