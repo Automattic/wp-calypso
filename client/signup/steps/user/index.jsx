@@ -104,8 +104,16 @@ export class UserStep extends Component {
 		} );
 	};
 
-	handleSocialResponse = ( service, token ) => {
-		this.submit( { service, token } );
+	/**
+	 * Handle Social service authentication flow result (OAuth2 or OpenID Connect)
+	 *
+	 * @param {String} service      The name of the social service
+	 * @param {String} access_token An OAuth2 acccess token
+	 * @param {String} id_token     (Optional) a JWT id_token which contains the signed user info
+	 *                              So our server doesn't have to request the user profile on its end.
+	 */
+	handleSocialResponse = ( service, access_token, id_token = null ) => {
+		this.submit( { service, access_token, id_token } );
 	};
 
 	userCreationComplete() {

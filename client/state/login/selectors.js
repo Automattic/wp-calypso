@@ -231,12 +231,12 @@ export const getLinkingSocialUser = ( state ) => get( state, 'login.socialAccoun
  * @param  {Object}   state  Global state tree
  * @return {?String}         Service name of the social account.
  */
-export const getLinkingSocialService = ( state ) => get( state, 'login.socialAccount.service', null );
+export const getLinkingSocialService = ( state ) => get( state, 'login.socialAccount.authInfo.service', null );
 
 /***
- * Gets the token of the social account to be linked.
+ * Gets the auth information of the social account to be linked.
  *
  * @param  {Object}   state  Global state tree
- * @return {?String}         Token of the social account.
+ * @return {?String}         Email address of the social account.
  */
-export const getLinkingSocialToken = ( state ) => get( state, 'login.socialAccount.token', null );
+export const getLinkingSocialAuthInfo = ( state ) => get( state, 'login.socialAccount.authInfo', null );

@@ -27,11 +27,11 @@ class SocialSignupForm extends Component {
 	}
 
 	handleGoogleResponse( response ) {
-		if ( ! response.Zi || ! response.Zi.id_token ) {
+		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
 			return;
 		}
 
-		this.props.handleResponse( 'google', response.Zi.id_token );
+		this.props.handleResponse( 'google', response.Zi.access_token, response.Zi.id_token );
 	}
 
 	handleFacebookResponse( response ) {

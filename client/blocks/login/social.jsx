@@ -40,11 +40,17 @@ class SocialLoginForm extends Component {
 	handleGoogleResponse = ( response ) => {
 		const { onSuccess, redirectTo } = this.props;
 
-		if ( ! response.Zi || ! response.Zi.id_token ) {
+		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
 			return;
 		}
 
-		this.props.loginSocialUser( 'google', response.Zi.id_token, redirectTo )
+		const socialInfo = {
+			service: 'google',
+			access_token: response.Zi.access_token,
+			id_token: response.Zi.id_token,
+		};
+
+		this.props.loginSocialUser( socialInfo, redirectTo )
 			.then(
 				() => {
 					this.recordEvent( 'calypso_login_social_login_success' );
@@ -53,7 +59,7 @@ class SocialLoginForm extends Component {
 				},
 				error => {
 					if ( error.code === 'unknown_user' ) {
-						return this.props.createSocialUser( 'google', response.Zi.id_token, 'login' )
+						return this.props.createSocialUser( socialInfo, 'login' )
 							.then(
 								() => this.recordEvent( 'calypso_login_social_signup_success' ),
 								createAccountError => this.recordEvent( 'calypso_login_social_signup_failure', {
