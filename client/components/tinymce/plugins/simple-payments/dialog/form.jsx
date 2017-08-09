@@ -30,6 +30,15 @@ export const getProductFormValues = state => getFormValues( REDUX_FORM_NAME )( s
 export const isProductFormValid = state => isValid( REDUX_FORM_NAME )( state );
 export const isProductFormDirty = state => isDirty( REDUX_FORM_NAME )( state );
 
+// based on https://stackoverflow.com/a/10454560/59752
+function decimalPlaces( number ) {
+	const match = ( '' + number ).match( /(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/ );
+	if ( ! match ) {
+		return 0;
+	}
+	return Math.max( 0, ( match[ 1 ] ? match[ 1 ].length : 0 ) - ( match[ 2 ] ? +match[ 2 ] : 0 ) );
+}
+
 // Validation function for the form
 const validate = ( values, props ) => {
 	// The translate function was passed as a prop to the `reduxForm()` wrapped component
@@ -42,6 +51,12 @@ const validate = ( values, props ) => {
 
 	if ( ! values.price ) {
 		errors.price = translate( 'Price can not be empty.' );
+	} else if ( parseFloat( values.price ) === NaN ) {
+		errors.price = translate( 'Price is malformed.' );
+	} else if ( parseFloat( values.price ) < 0 ) {
+		errors.price = translate( 'Price can not be negative.' );
+	} else if ( decimalPlaces( values.price ) > 2 ) {
+		errors.price = translate( 'Price can not have higher than 2 decimal places.' );
 	}
 
 	if ( ! values.email ) {
