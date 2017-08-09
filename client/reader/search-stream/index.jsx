@@ -8,6 +8,7 @@ import { trim, initial, flatMap } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classnames from 'classnames';
+import config from 'config';
 
 /**
  * Internal Dependencies
@@ -123,6 +124,7 @@ class SearchStream extends React.Component {
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const showFollowByUrl = resemblesUrl( query );
 		const queryWithoutProtocol = withoutHttp( query );
+		const showSearch = ! config.isEnabled( 'reader/vertical-nav' );
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -168,27 +170,28 @@ class SearchStream extends React.Component {
 					style={ { width: this.props.width } }
 					ref={ this.handleFixedAreaMounted }
 				>
-					<CompactCard className="search-stream__input-card">
-						<SearchInput
-							onSearch={ this.updateQuery }
-							onSearchClose={ this.scrollToTop }
-							autoFocus={ this.props.autoFocusInput }
-							delaySearch={ true }
-							delayTimeout={ 500 }
-							placeholder={ searchPlaceholderText }
-							initialValue={ query || '' }
-							value={ query || '' }
-						/>
-						{ query &&
-							<SegmentedControl compact className="search-stream__sort-picker">
-								<ControlItem selected={ sortOrder !== 'date' } onClick={ this.useRelevanceSort }>
-									{ TEXT_RELEVANCE_SORT }
-								</ControlItem>
-								<ControlItem selected={ sortOrder === 'date' } onClick={ this.useDateSort }>
-									{ TEXT_DATE_SORT }
-								</ControlItem>
-							</SegmentedControl> }
-					</CompactCard>
+					{ showSearch &&
+						<CompactCard className="search-stream__input-card">
+							<SearchInput
+								onSearch={ this.updateQuery }
+								onSearchClose={ this.scrollToTop }
+								autoFocus={ this.props.autoFocusInput }
+								delaySearch={ true }
+								delayTimeout={ 500 }
+								placeholder={ searchPlaceholderText }
+								initialValue={ query || '' }
+								value={ query || '' }
+							/>
+							{ query &&
+								<SegmentedControl compact className="search-stream__sort-picker">
+									<ControlItem selected={ sortOrder !== 'date' } onClick={ this.useRelevanceSort }>
+										{ TEXT_RELEVANCE_SORT }
+									</ControlItem>
+									<ControlItem selected={ sortOrder === 'date' } onClick={ this.useDateSort }>
+										{ TEXT_DATE_SORT }
+									</ControlItem>
+								</SegmentedControl> }
+						</CompactCard> }
 					{ showFollowByUrl &&
 						<div className="search-stream__url-follow">
 							<FollowButton
@@ -246,13 +249,22 @@ class SearchStream extends React.Component {
 
 /* eslint-disable */
 // wrapping with Main so that we can use withWidth helper to pass down whole width of Main
-const wrapWithMain = Component => props =>
-	<div>
-		<Topbar showSearch={ false } />
-		<ReaderMain className="search-stream search-stream__with-sites" wideLayout>
-			<Component { ...props } />
-		</ReaderMain>;
-	</div>;
+const wrapWithMain = Component => props => {
+	const verticalNav = config.isEnabled( 'reader/vertical-nav' );
+	return (
+		<div>
+			{ verticalNav && <Topbar /> }
+			<ReaderMain
+				className={ classnames( 'search-stream search-stream__with-sites', {
+					'vertical-nav': verticalNav,
+				} ) }
+				wideLayout
+			>
+				<Component { ...props } />
+			</ReaderMain>;
+		</div>
+	);
+};
 /* eslint-enable */
 
 export default connect( ( state, ownProps ) => ( {

@@ -80,6 +80,10 @@
 	flex-direction: column; // So post results are stacked
 }
 
+.is-reader-page .search-stream.search-stream__with-sites.vertical-nav {
+	margin-top: 100px;
+}
+
 .is-reader-page .search-stream__recommendation-list-item {
 	box-sizing: border-box;
 	border-bottom: 1px solid lighten( $gray, 20% );
