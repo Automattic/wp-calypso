@@ -19,7 +19,7 @@ class SimplePaymentsDialogNavigation extends Component {
 		paymentButtons: PropTypes.array,
 	};
 
-	onChangeTabs = tab => () => this.props.onChangeTabs( tab );
+	onChangeTabs = ( tab, why ) => () => this.props.onChangeTabs( tab, why );
 
 	render() {
 		const { paymentButtons, activeTab, translate } = this.props;
@@ -31,7 +31,7 @@ class SimplePaymentsDialogNavigation extends Component {
 			return (
 				<HeaderCake
 					className={ classNames }
-					onClick={ this.onChangeTabs( 'list' ) }
+					onClick={ this.onChangeTabs( 'list', 'back' ) }
 					backText={ translate( 'Payment Buttons' ) }
 				/>
 			);
@@ -49,7 +49,7 @@ class SimplePaymentsDialogNavigation extends Component {
 				label={ translate( 'Payment Buttons' ) }
 				count={ paymentButtons.length }
 			>
-				<Button compact icon onClick={ this.onChangeTabs( 'form' ) }>
+				<Button compact icon onClick={ this.onChangeTabs( 'form', 'add' ) }>
 					<Gridicon icon="plus-small" /> { translate( 'Add New' ) }
 				</Button>
 			</SectionHeader>
