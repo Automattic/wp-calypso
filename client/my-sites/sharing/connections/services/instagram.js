@@ -2,7 +2,6 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import { last, isEqual } from 'lodash';
 
 /**

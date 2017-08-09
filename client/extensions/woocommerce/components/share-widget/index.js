@@ -1,11 +1,10 @@
-import config from 'config';
-import { localize } from 'i18n-calypso';
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import config from 'config';
+import { localize } from 'i18n-calypso';
 import SocialLogo from 'social-logos';
 import url from 'url';
 

@@ -1,12 +1,11 @@
-import { bindActionCreators } from 'redux';
-import classNames from 'classnames';
-import { connect } from 'react-redux';
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**

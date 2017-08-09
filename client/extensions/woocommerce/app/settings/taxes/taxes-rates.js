@@ -1,13 +1,12 @@
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { isEmpty, round } from 'lodash';
-import { localize } from 'i18n-calypso';
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { isEmpty, round } from 'lodash';
+import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
 /**
