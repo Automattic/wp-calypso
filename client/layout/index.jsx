@@ -168,6 +168,7 @@ Layout = React.createClass( {
 					isActive={ translator.isActivated() } />
 				{ this.renderPreview() }
 				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
+				{ 'development' === process.env.NODE_ENV && <AsyncLoad require="components/webpack-build-monitor" /> }
 				<AppBanner />
 			</div>
 		);
