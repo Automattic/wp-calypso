@@ -26,6 +26,7 @@ import ProductList from './list';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getCurrencyDefaults } from 'lib/format-currency';
 import wpcom from 'lib/wp';
+import accept from 'lib/accept';
 import {
 	customPostToProduct,
 	productToCustomPost,
@@ -244,13 +245,23 @@ class SimplePaymentsDialog extends Component {
 	};
 
 	handleTrash = paymentId => {
-		this.setIsSubmitting( true );
+		const { translate } = this.props;
+		const areYouSure = translate(
+			'Are you sure you want to permanently delete this payment button?'
+		);
+		accept( areYouSure, accepted => {
+			if ( ! accepted ) {
+				return;
+			}
 
-		const { siteId, dispatch, translate } = this.props;
+			this.setIsSubmitting( true );
 
-		dispatch( trashPaymentButton( siteId, paymentId ) )
-			.catch( () => this.showError( translate( 'The payment button could not be deleted.' ) ) )
-			.then( () => this.setIsSubmitting( false ) );
+			const { siteId, dispatch } = this.props;
+
+			dispatch( trashPaymentButton( siteId, paymentId ) )
+				.catch( () => this.showError( translate( 'The payment button could not be deleted.' ) ) )
+				.then( () => this.setIsSubmitting( false ) );
+		} );
 	};
 
 	getActionButtons() {
