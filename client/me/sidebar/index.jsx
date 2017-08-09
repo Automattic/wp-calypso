@@ -51,9 +51,13 @@ const MeSidebar = React.createClass( {
 		}
 
 		if ( config.isEnabled( 'login/wp-login' ) ) {
-			this.props.logoutUser( redirect ).then( ( { redirect_to } ) => {
-				user.clear( () => location.href = redirect_to || '/' );
-			} );
+			this.props.logoutUser( redirect )
+				.then(
+					( { redirect_to } ) => user.clear( () => location.href = redirect_to || '/' ),
+					// The logout endpoint might fail if the nonce has expired.
+					// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
+					() => userUtilities.logout( redirect )
+				);
 		} else {
 			userUtilities.logout( redirect );
 		}
