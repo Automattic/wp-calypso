@@ -102,7 +102,7 @@ class OrderDetailsTable extends Component {
 					</a>
 					<span className="order__detail-item-sku">{ item.sku }</span>
 				</TableItem>
-				<TableItem className="order__detail-item-cost">{ formatCurrency( item.price, order.currency ) || item.price }</TableItem>
+				<TableItem className="order__detail-item-cost">{ formatCurrency( item.price, order.currency ) }</TableItem>
 				<TableItem className="order__detail-item-quantity">
 					{ isEditable
 						? <FormTextInput
@@ -116,9 +116,9 @@ class OrderDetailsTable extends Component {
 					}
 				</TableItem>
 				<TableItem className="order__detail-item-tax">
-					{ formatCurrency( item.total_tax, order.currency ) || item.total_tax }
+					{ formatCurrency( item.total_tax, order.currency ) }
 				</TableItem>
-				<TableItem className="order__detail-item-total">{ formatCurrency( item.total, order.currency ) || item.total }</TableItem>
+				<TableItem className="order__detail-item-total">{ formatCurrency( item.total, order.currency ) }</TableItem>
 			</TableRow>
 		);
 	}

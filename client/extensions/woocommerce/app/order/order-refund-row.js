@@ -33,7 +33,7 @@ class OrderRefundRow extends Component {
 				<div className="order__details-totals-label">{ translate( 'Refunded' ) }</div>
 				<div className="order__details-totals-tax"></div>
 				<div className="order__details-totals-value">
-					{ formatCurrency( refundValue, order.currency ) || refundValue }
+					{ formatCurrency( refundValue, order.currency ) }
 				</div>
 			</div>
 		);

@@ -28,10 +28,10 @@ class OrderShippingRow extends Component {
 			<div className="order__details-total-shipping">
 				<div className="order__details-totals-label">{ translate( 'Shipping' ) }</div>
 				<div className="order__details-totals-tax">
-					{ formatCurrency( order.shipping_tax, order.currency ) || order.shipping_tax }
+					{ formatCurrency( order.shipping_tax, order.currency ) }
 				</div>
 				<div className="order__details-totals-value">
-					{ formatCurrency( order.shipping_total, order.currency ) || order.shipping_total }
+					{ formatCurrency( order.shipping_total, order.currency ) }
 				</div>
 			</div>
 		);

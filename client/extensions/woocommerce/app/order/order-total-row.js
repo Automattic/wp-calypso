@@ -28,10 +28,10 @@ class OrderTotalRow extends Component {
 			<div className="order__details-total">
 				<div className="order__details-totals-label">{ translate( 'Total' ) }</div>
 				<div className="order__details-totals-tax">
-					{ formatCurrency( order.total_tax, order.currency ) || order.total_tax }
+					{ formatCurrency( order.total_tax, order.currency ) }
 				</div>
 				<div className="order__details-totals-value">
-					{ formatCurrency( order.total, order.currency ) || order.total }
+					{ formatCurrency( order.total, order.currency ) }
 				</div>
 			</div>
 		);
