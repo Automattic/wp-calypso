@@ -64,6 +64,8 @@ The WordPress.com API middleware demonstrates this in building a tree of handler
 Each middleware handler can dispatch new follow-up actions to respond in some way to the original action.
 For example, they will often dispatch a new HTTP request.
 The functions that compose to form the middleware _can_ and in most cases _will_ closely resemble what was previously written in `redux-thunk` actions but in this system they will be controllable.
+That is, they are descriptions of what we want to happen which get interpreted by the data layer and possibly altered as it creates a plan to fulfill all the requests.
+It's hard to convey how much more useful it is to treat actions and [effects as data](https://www.youtube.com/watch?v=6EdXaWfoslc) rather than actually doing them<sup><a href="http://degoes.net/articles/modern-fp">1</a></sup>.
 
 The middleware should be pieced together from multiple handler functions in a logical way which encourages modularity and isolation of responsibilities.
 The data layer provides `mergeHandlers()` as a utility to support this.
@@ -104,46 +106,53 @@ Let's look at a full example:
  * state/data-layer/wpcom/splines/index.js
  *
  * Requests splines and reticulations from API
- * and feeds the responses back into Calypso
  *
- * Note: This is an example, but we should be using
- *       the HTTP action types instead of `wpcom.js`
- * @see ./wpcom-http/README.md
+ * Because this uses the HTTP actions it will
+ * automatically prevent sending two or more at the
+ * same time while we're waiting for a response to
+ * come back in and it will also automatically
+ * retry if it fails (up to a certain point where
+ * it will give up and launch the failure handler)
  */
-
-const requestSplines = ( { dispatch }, action ) => {
-	wpcom
-		.splines( action.splineId )
-		.then( splines => dispatch( addSplines( splines ) ) )
-		.catch( handleErrors )
+const fetchSplines = ( { dispatch }, action ) => {
+	dispatch( http( {
+		method: 'GET',
+		apiVersion: 'v1.1',
+		path: '/splines',
+		query: {
+			site_id: action.siteId,
+		}
+	}, action ) );
 };
 
-const invalidateExisting = ( { dispatch } ) => {
-	…
+/**
+ * Take spline data from API request and inject into state
+ *
+ * If the data is invalid we can abort and announce the failure
+ */
+const addSplines = ( store, action, responseData ) => {
+	const splines = fromApi( responseData );
+	
+	if ( ! splines ) {
+		return announceFailure( store, action );
+	}
+	
+	splines.forEach( spline => dispatch( addSpline( action.siteId, spline ) ) );
 };
 
-const requestReticulations = ( store, { splineSet } ) =>
-	requestSplines( store, { type: REQUEST_SPLINES, setId: splineSet } );
+/**
+ * Notify customer that we failed to get splines for site
+ *
+ * @TODO: Explain why and provide better alternatives
+ */
+const announceFailure( { dispatch, getState }, action, error ) => {
+	const siteName = getSiteName( getState(), action.siteId );
 
-const syncChanges = ( { dispatch, getState }, action, next ) => {
-	const oldSpline = getSpline( getState(), action.spline.id );
-
-	wpcom
-		.saveSpline( action.spline )
-		.then( noop ) // no need to respond if successful
-		.catch( () => {
-			// the request failed; give up and reset the
-			// spline to the former state; bypass all
-			// further data-layer middleware by using
-			// local() inside of dispatch()
-			dispatch( local( reticulateSpline( oldSpline ) ) );
-		} );
+	dispatch( createError( `Could not retrieve the splines for ${ siteName }. Please try again.` ) );
 };
 
 export default {
-	[ REQUEST_RETICULATIONS ]: [ requestReticulations ],
-	[ REQUEST_SPLINES ]: [ invalidateExisting, requestSplines ],
-	[ RETICULATE_SPLINE ]: [ syncChanges ],
+	[ SPLINES_REQUEST ]: [ dispatchRequest( fetchSplines, addSplines, announceFailure ) ],
 }
 
 // middlware.js
