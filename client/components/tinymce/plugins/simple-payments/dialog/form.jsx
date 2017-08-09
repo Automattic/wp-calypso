@@ -53,7 +53,7 @@ const validate = ( values, props ) => {
 	if ( ! values.price ) {
 		errors.price = translate( 'Price can not be empty.' );
 	} else if ( parseFloat( values.price ) === NaN ) {
-		errors.price = translate( 'Price is invalid.' );
+		errors.price = translate( 'Invalid price' );
 	} else if ( parseFloat( values.price ) < 0 ) {
 		errors.price = translate( 'Price can not be negative.' );
 	} else if ( decimalPlaces( values.price ) > precision ) {
