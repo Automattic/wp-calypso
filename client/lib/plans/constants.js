@@ -1253,18 +1253,12 @@ export const FEATURES_LIST = {
 	[ FEATURE_CONCIERGE_SETUP ]: {
 		getSlug: () => FEATURE_CONCIERGE_SETUP,
 		getTitle: () => i18n.translate( 'Concierge Setup' ),
-		getDescription: () => i18n.translate(
-			'Schedule time with one of our Happiness Engineers.'
-		),
 		hideInfoPopover: true
 	},
 
 	[ FEATURE_MARKETING_AUTOMATION ]: {
 		getSlug: () => FEATURE_MARKETING_AUTOMATION,
 		getTitle: () => i18n.translate( 'Marketing Automation' ),
-		getDescription: () => i18n.translate(
-			'Schedule all your social media posts in advance.'
-		),
 		hideInfoPopover: true
 	}
 };
