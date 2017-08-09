@@ -204,7 +204,7 @@ class Unlocked extends React.Component {
 				'your transfer request and will be in touch shortly to help ' +
 				'you complete the process.' )
 			: translate( 'Please request an authorization code to notify our ' +
-				'happiness engineers of your intention.' )
+				'Happiness Engineers of your intention.' )
 		}</p> );
 	}
 
