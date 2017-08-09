@@ -30,10 +30,20 @@ export const getProductFormValues = state => getFormValues( REDUX_FORM_NAME )( s
 export const isProductFormValid = state => isValid( REDUX_FORM_NAME )( state );
 export const isProductFormDirty = state => isDirty( REDUX_FORM_NAME )( state );
 
+// based on https://stackoverflow.com/a/10454560/59752
+function decimalPlaces( number ) {
+	const match = ( '' + number ).match( /(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/ );
+	if ( ! match ) {
+		return 0;
+	}
+	return Math.max( 0, ( match[ 1 ] ? match[ 1 ].length : 0 ) - ( match[ 2 ] ? +match[ 2 ] : 0 ) );
+}
+
 // Validation function for the form
 const validate = ( values, props ) => {
 	// The translate function was passed as a prop to the `reduxForm()` wrapped component
-	const { translate } = props;
+	const { currencyDefaults, translate } = props;
+	const precision = currencyDefaults ? currencyDefaults.precision : 2;
 	const errors = {};
 
 	if ( ! values.title ) {
@@ -42,6 +52,28 @@ const validate = ( values, props ) => {
 
 	if ( ! values.price ) {
 		errors.price = translate( 'Price can not be empty.' );
+	} else if ( parseFloat( values.price ) === NaN ) {
+		errors.price = translate( 'Invalid price' );
+	} else if ( parseFloat( values.price ) < 0 ) {
+		errors.price = translate( 'Price can not be negative.' );
+	} else if ( decimalPlaces( values.price ) > precision ) {
+		if ( precision === 0 ) {
+			errors.price = translate( 'Price can not have decimal places.' );
+		} else {
+			const countDecimal = translate(
+				'%(precision)d decimal place',
+				'%(precision)d decimal places',
+				{
+					count: precision,
+					args: {
+						precision,
+					},
+				}
+			);
+			errors.price = translate( 'Price can not have more than %(countDecimal)s.', {
+				args: { countDecimal },
+			} );
+		}
 	}
 
 	if ( ! values.email ) {
