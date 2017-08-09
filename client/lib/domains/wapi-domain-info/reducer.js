@@ -50,6 +50,7 @@ function reducer( state, payload ) {
 		case UpgradesActionTypes.DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
+					locked: action.locked,
 					pendingTransfer: false
 				} )
 			} );
