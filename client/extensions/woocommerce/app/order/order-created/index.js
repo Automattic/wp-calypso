@@ -31,8 +31,8 @@ class OrderCreated extends Component {
 		);
 
 		return (
-			<div className="order__details-created">
-				<div className="order__details-created-label">
+			<div className="order-created">
+				<div className="order-created__label">
 					<Gridicon icon="time" size={ 24 } />
 					{ createdLabel }
 				</div>

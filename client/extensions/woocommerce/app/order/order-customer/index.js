@@ -28,14 +28,14 @@ class OrderCustomerInfo extends Component {
 		const { billing, shipping } = order;
 
 		return (
-			<div className="order__customer-info">
+			<div className="order-customer">
 				<SectionHeader label={ translate( 'Customer Information' ) } />
 				<Card>
-					<div className="order__customer-info-container">
-					<div className="order__customer-billing">
-					<h3 className="order__billing-details">{ translate( 'Billing Details' ) }</h3>
+				<div className="order-customer__container">
+					<div className="order-customer__billing">
+					<h3 className="order-customer__billing-details">{ translate( 'Billing Details' ) }</h3>
 						<h4>{ translate( 'Address' ) }</h4>
-						<div className="order__billing-address">
+						<div className="order-customer__billing-address">
 							<p>{ `${ billing.first_name } ${ billing.last_name }` }</p>
 							<p>{ billing.address_1 }</p>
 							<p>{ billing.address_2 }</p>
@@ -50,10 +50,10 @@ class OrderCustomerInfo extends Component {
 						<span>{ billing.phone }</span>
 					</div>
 
-					<div className="order__customer-shipping">
-					<h3 className="order__shipping-details">{ translate( 'Shipping Details' ) }</h3>
+					<div className="order-customer__shipping">
+						<h3 className="order-customer__shipping-details">{ translate( 'Shipping Details' ) }</h3>
 						<h4>{ translate( 'Address' ) }</h4>
-						<div className="order__shipping-address">
+						<div className="order-customer__shipping-address">
 							<p>{ `${ shipping.first_name } ${ shipping.last_name }` }</p>
 							<p>{ shipping.address_1 }</p>
 							<p>{ shipping.address_2 }</p>
