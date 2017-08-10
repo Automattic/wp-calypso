@@ -1,26 +1,27 @@
 /** @format */
 /**
-* External dependencies
-*/
-const ReactDom = require( 'react-dom' ),
-	React = require( 'react' );
+ * External dependencies
+ */
+import React from 'react';
+import ReactDom from 'react-dom';
+import PropTypes from 'prop-types';
 import { over } from 'lodash';
 
 /**
-* Internal dependencies
-*/
-const Popover = require( 'components/popover' );
+ * Internal dependencies
+ */
+import Popover from 'components/popover';
 
 const PopoverMenu = React.createClass( {
 	propTypes: {
-		autoPosition: React.PropTypes.bool,
-		isVisible: React.PropTypes.bool.isRequired,
-		onClose: React.PropTypes.func.isRequired,
-		position: React.PropTypes.string,
-		className: React.PropTypes.string,
-		rootClassName: React.PropTypes.string,
-		popoverComponent: React.PropTypes.func,
-		popoverTitle: React.PropTypes.string, // used by ReaderPopover
+		autoPosition: PropTypes.bool,
+		isVisible: PropTypes.bool.isRequired,
+		onClose: PropTypes.func.isRequired,
+		position: PropTypes.string,
+		className: PropTypes.string,
+		rootClassName: PropTypes.string,
+		popoverComponent: PropTypes.func,
+		popoverTitle: PropTypes.string, // used by ReaderPopover
 	},
 
 	getDefaultProps: function() {
