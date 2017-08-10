@@ -1,75 +1,96 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
+
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import getLabel from './locales';
 
-export default React.createClass( {
-	displayName: 'ContactFormDialogFieldHeader',
+export default localize(
+	class extends React.Component {
+		static displayName = 'ContactFormDialogFieldHeader';
 
-	propTypes: {
-		label: PropTypes.string.isRequired,
-		type: PropTypes.string.isRequired,
-		options: PropTypes.string,
-		required: PropTypes.bool,
-	},
+		static propTypes = {
+			label: PropTypes.string.isRequired,
+			type: PropTypes.string.isRequired,
+			options: PropTypes.string,
+			required: PropTypes.bool,
+		};
 
-	getLegend() {
-		if ( this.props.options ) {
-			const count = this.props.options.split( ',' ).length;
+		getLegend = () => {
+			if ( this.props.options ) {
+				const count = this.props.options.split( ',' ).length;
 
-			if ( this.props.required ) {
-				return this.translate(
-					'Required field "%(fieldName)s" with %(numOption)d option',
-					'Required field "%(fieldName)s" with %(numOption)d options', {
+				if ( this.props.required ) {
+					return this.props.translate(
+						'Required field "%(fieldName)s" with %(numOption)d option',
+						'Required field "%(fieldName)s" with %(numOption)d options',
+						{
+							count,
+							args: {
+								fieldName: getLabel( this.props.type ),
+								numOption: count,
+							},
+							comment:
+								'Explains to the user the field settings. If required, type, and how many options it has.',
+						}
+					);
+				}
+
+				return this.props.translate(
+					'Optional field "%(fieldName)s" with %(numOption)d option',
+					'Optional field "%(fieldName)s" with %(numOption)d options',
+					{
 						count,
 						args: {
 							fieldName: getLabel( this.props.type ),
-							numOption: count
+							numOption: count,
 						},
-						comment: 'Explains to the user the field settings. If required, type, and how many options it has.'
-					} );
+						comment:
+							'Explains to the user the field settings. If required, type, and how many options it has.',
+					}
+				);
 			}
 
-			return this.translate(
-				'Optional field "%(fieldName)s" with %(numOption)d option',
-				'Optional field "%(fieldName)s" with %(numOption)d options', {
-					count,
+			if ( this.props.required ) {
+				return this.props.translate( 'Required field "%(fieldName)s"', {
 					args: {
 						fieldName: getLabel( this.props.type ),
-						numOption: count
 					},
-					comment: 'Explains to the user the field settings. If required, type, and how many options it has.'
+					comment:
+						'Explain to the user the field settings for fields other than dropdown and select list.',
 				} );
-		}
+			}
 
-		if ( this.props.required ) {
-			return this.translate( 'Required field "%(fieldName)s"', {
+			return this.props.translate( 'Optional field "%(fieldName)s"', {
 				args: {
-					fieldName: getLabel( this.props.type )
+					fieldName: getLabel( this.props.type ),
 				},
-				comment: 'Explain to the user the field settings for fields other than dropdown and select list.'
+				comment:
+					'Explain to the user the field settings for fields other than dropdown and select list.',
 			} );
+		};
+
+		render() {
+			return (
+				<div>
+					<div>
+						{ this.props.label }
+					</div>
+					<div>
+						<small>
+							{ this.getLegend() }
+						</small>
+					</div>
+				</div>
+			);
 		}
-
-		return this.translate( 'Optional field "%(fieldName)s"', {
-			args: {
-				fieldName: getLabel( this.props.type )
-			},
-			comment: 'Explain to the user the field settings for fields other than dropdown and select list.'
-		} );
-	},
-
-	render() {
-		return (
-			<div>
-				<div>{ this.props.label }</div>
-				<div><small>{ this.getLegend() }</small></div>
-			</div>
-		);
 	}
-} );
+);

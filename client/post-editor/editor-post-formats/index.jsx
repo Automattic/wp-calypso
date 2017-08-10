@@ -1,7 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { map } from 'lodash';
 import Gridicon from 'gridicons';
@@ -18,31 +22,29 @@ import EditorThemeHelp from 'post-editor/editor-theme-help';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
 
-const EditorPostFormats = React.createClass( {
-	propTypes: {
+class EditorPostFormats extends React.Component {
+	static propTypes = {
 		siteId: PropTypes.number,
 		value: PropTypes.string,
-		postFormats: PropTypes.object
-	},
+		postFormats: PropTypes.object,
+	};
 
-	getDefaultProps() {
-		return {
-			value: 'standard'
-		};
-	},
+	static defaultProps = {
+		value: 'standard',
+	};
 
-	getSelectedPostFormat() {
+	getSelectedPostFormat = () => {
 		const { value } = this.props;
 		const isSupportedFormat = !! this.getPostFormats()[ value ];
 
 		return isSupportedFormat ? value : 'standard';
-	},
+	};
 
-	getPostFormats() {
+	getPostFormats = () => {
 		let formats = {
-			standard: this.translate( 'Standard', {
-				context: 'Post format'
-			} )
+			standard: this.props.translate( 'Standard', {
+				context: 'Post format',
+			} ),
 		};
 
 		if ( this.props.postFormats ) {
@@ -50,9 +52,9 @@ const EditorPostFormats = React.createClass( {
 		}
 
 		return formats;
-	},
+	};
 
-	getPostFormatIcon( postFormatSlug ) {
+	getPostFormatIcon = postFormatSlug => {
 		const icons = {
 			aside: 'aside',
 			image: 'image',
@@ -62,23 +64,23 @@ const EditorPostFormats = React.createClass( {
 			gallery: 'image-multiple',
 			status: 'pencil',
 			audio: 'audio',
-			chat: 'comment'
+			chat: 'comment',
 		};
 
 		return icons[ postFormatSlug ] ? icons[ postFormatSlug ] : 'posts';
-	},
+	};
 
-	onChange( event ) {
+	onChange = event => {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
-			format: event.target.value
+			format: event.target.value,
 		} );
 
 		recordStat( 'post_format_changed' );
 		recordEvent( 'Changed Post Format', event.target.value );
-	},
+	};
 
-	renderPostFormats() {
+	renderPostFormats = () => {
 		const selectedFormat = this.getSelectedPostFormat();
 
 		return map( this.getPostFormats(), ( postFormatLabel, postFormatSlug ) => {
@@ -92,7 +94,7 @@ const EditorPostFormats = React.createClass( {
 							onChange={ this.onChange }
 						/>
 						<span className="editor-post-formats__format-label">
-							<span className={ 'editor-post-formats__format-icon' } >
+							<span className={ 'editor-post-formats__format-icon' }>
 								<Gridicon icon={ this.getPostFormatIcon( postFormatSlug ) } size={ 18 } />
 							</span>
 							{ postFormatLabel }
@@ -101,7 +103,7 @@ const EditorPostFormats = React.createClass( {
 				</li>
 			);
 		} );
-	},
+	};
 
 	render() {
 		return (
@@ -114,15 +116,13 @@ const EditorPostFormats = React.createClass( {
 			</AccordionSection>
 		);
 	}
-} );
+}
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			siteId,
-			postFormats: getPostFormats( state, siteId )
-		};
-	}
-)( EditorPostFormats );
+	return {
+		siteId,
+		postFormats: getPostFormats( state, siteId ),
+	};
+} )( localize( EditorPostFormats ) );

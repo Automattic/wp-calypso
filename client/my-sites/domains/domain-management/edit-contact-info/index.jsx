@@ -1,7 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import { includes } from 'lodash';
 
@@ -21,16 +25,13 @@ import { findRegistrantWhois } from 'lib/domains/whois/utils';
 import SectionHeader from 'components/section-header';
 import { registrar as registrarNames } from 'lib/domains/constants';
 
-const EditContactInfo = React.createClass( {
-	propTypes: {
-		domains: React.PropTypes.object.isRequired,
-		whois: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired
-	},
+class EditContactInfo extends React.Component {
+	static propTypes = {
+		domains: PropTypes.object.isRequired,
+		whois: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+	};
 
 	render() {
 		if ( this.isDataLoading() ) {
@@ -41,19 +42,20 @@ const EditContactInfo = React.createClass( {
 			<Main className="domain-management-edit-contact-info">
 				<Header
 					onClick={ this.goToContactsPrivacy }
-					selectedDomainName={ this.props.selectedDomainName }>
-					{ this.translate( 'Edit Contact Info' ) }
+					selectedDomainName={ this.props.selectedDomainName }
+				>
+					{ this.props.translate( 'Edit Contact Info' ) }
 				</Header>
 				{ this.getCard() }
 			</Main>
 		);
-	},
+	}
 
-	isDataLoading() {
-		return ( ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer );
-	},
+	isDataLoading = () => {
+		return ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer;
+	};
 
-	getCard() {
+	getCard = () => {
 		const domain = getSelectedDomain( this.props ),
 			{ OPENHRS, OPENSRS } = registrarNames;
 
@@ -71,18 +73,24 @@ const EditContactInfo = React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ this.translate( 'Edit Contact Info' ) } />
+				<SectionHeader label={ this.props.translate( 'Edit Contact Info' ) } />
 				<EditContactInfoFormCard
 					contactInformation={ findRegistrantWhois( this.props.whois.data ) }
 					selectedDomain={ getSelectedDomain( this.props ) }
-					selectedSite={ this.props.selectedSite } />
+					selectedSite={ this.props.selectedSite }
+				/>
 			</div>
 		);
-	},
+	};
 
-	goToContactsPrivacy() {
-		page( paths.domainManagementContactsPrivacy( this.props.selectedSite.slug, this.props.selectedDomainName ) );
-	}
-} );
+	goToContactsPrivacy = () => {
+		page(
+			paths.domainManagementContactsPrivacy(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName
+			)
+		);
+	};
+}
 
-export default EditContactInfo;
+export default localize( EditContactInfo );

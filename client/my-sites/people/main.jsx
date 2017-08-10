@@ -1,7 +1,10 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
+import { localize } from 'i18n-calypso';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
 
@@ -19,10 +22,7 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import {
-	isJetpackMinimumVersion,
-	isJetpackSite,
-} from 'state/sites/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser, isPrivateSite } from 'state/selectors';
 
 /**
@@ -31,7 +31,8 @@ import { canCurrentUser, isPrivateSite } from 'state/selectors';
 const debug = debugModule( 'calypso:my-sites:people:main' );
 
 // TODO: port to es6 once we remove the last observe
-export const People = React.createClass( { // eslint-disable-line react/prefer-es6-class
+export const People = createReactClass( {
+	// eslint-disable-line react/prefer-es6-class
 
 	displayName: 'People',
 
@@ -46,15 +47,18 @@ export const People = React.createClass( { // eslint-disable-line react/prefer-e
 			case 'team':
 				return <TeamList site={ site } search={ this.props.search } />;
 			case 'followers':
-				return <FollowersList site={ site } label={ this.translate( 'Followers' ) } />;
+				return <FollowersList site={ site } label={ this.props.translate( 'Followers' ) } />;
 			case 'email-followers':
-				return <FollowersList
-					site={ site }
-					search={ this.props.search }
-					label={ this.translate( 'Email Followers' ) }
-					type="email" />;
+				return (
+					<FollowersList
+						site={ site }
+						search={ this.props.search }
+						label={ this.props.translate( 'Email Followers' ) }
+						type="email"
+					/>
+				);
 			case 'viewers':
-				return <ViewersList site={ site } label={ this.translate( 'Viewers' ) } />;
+				return <ViewersList site={ site } label={ this.props.translate( 'Viewers' ) } />;
 			default:
 				return null;
 		}
@@ -69,7 +73,7 @@ export const People = React.createClass( { // eslint-disable-line react/prefer-e
 			site,
 			search,
 			filter,
-			isPrivate
+			isPrivate,
 		} = this.props;
 
 		// Jetpack 3.7 is necessary to manage people
@@ -77,11 +81,7 @@ export const People = React.createClass( { // eslint-disable-line react/prefer-e
 			return (
 				<Main>
 					<SidebarNavigation />
-					<JetpackManageErrorPage
-						template="updateJetpack"
-						siteId={ siteId }
-						version="3.7"
-					/>
+					<JetpackManageErrorPage template="updateJetpack" siteId={ siteId } version="3.7" />
 				</Main>
 			);
 		}
@@ -90,7 +90,7 @@ export const People = React.createClass( { // eslint-disable-line react/prefer-e
 				<Main>
 					<SidebarNavigation />
 					<EmptyContent
-						title={ this.translate( 'You are not authorized to view this page' ) }
+						title={ this.props.translate( 'You are not authorized to view this page' ) }
 						illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
 					/>
 				</Main>
@@ -100,32 +100,33 @@ export const People = React.createClass( { // eslint-disable-line react/prefer-e
 			<Main>
 				<SidebarNavigation />
 				<div>
-					{ <PeopleSectionNav
-						isJetpack={ isJetpack }
-						isPrivate={ isPrivate }
-						jetpackPeopleSupported={ jetpackPeopleSupported }
-						canViewPeople={ canViewPeople }
-						search={ search }
-						filter={ filter }
-						site={ site } /> }
+					{
+						<PeopleSectionNav
+							isJetpack={ isJetpack }
+							isPrivate={ isPrivate }
+							jetpackPeopleSupported={ jetpackPeopleSupported }
+							canViewPeople={ canViewPeople }
+							search={ search }
+							filter={ filter }
+							site={ site }
+						/>
+					}
 					<PeopleNotices />
 					{ this.renderPeopleList( site ) }
 				</div>
 			</Main>
 		);
-	}
+	},
 } );
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		return {
-			siteId,
-			site: getSelectedSite( state ),
-			isJetpack: isJetpackSite( state, siteId ),
-			isPrivate: isPrivateSite( state, siteId ),
-			canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
-			jetpackPeopleSupported: isJetpackMinimumVersion( state, siteId, '3.7.0-beta' ),
-		};
-	}
-)( People );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		siteId,
+		site: getSelectedSite( state ),
+		isJetpack: isJetpackSite( state, siteId ),
+		isPrivate: isPrivateSite( state, siteId ),
+		canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
+		jetpackPeopleSupported: isJetpackMinimumVersion( state, siteId, '3.7.0-beta' ),
+	};
+} )( localize( People ) );

@@ -1,8 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import PropTypes from 'prop-types';
+
+import React from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -44,25 +47,15 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
  * legend.
  */
 
-const PostTypeOptions = React.createClass( {
-	displayName: 'PostTypeOptions',
+class PostTypeOptions extends React.PureComponent {
+	static displayName = 'PostTypeOptions';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		legend: PropTypes.string.isRequired,
-	},
+	};
 
 	render() {
-		const {
-			description,
-			legend,
-			isDateValid,
-			isEnabled,
-			onSelect,
-			postType,
-			siteId,
-		} = this.props;
+		const { description, legend, isDateValid, isEnabled, onSelect, postType, siteId } = this.props;
 
 		const fields = [ 'author', 'status', 'start_date', 'end_date', 'category' ];
 
@@ -74,29 +67,30 @@ const PostTypeOptions = React.createClass( {
 
 		return (
 			<div className="export-card__option-fieldset">
-
 				<Label className="export-card__option-fieldset-legend">
-					<FormRadio
-						checked={ isEnabled }
-						onChange={ onSelect }/>
-					<span className="export-card__option-fieldset-legend-text">{ legend }</span>
+					<FormRadio checked={ isEnabled } onChange={ onSelect } />
+					<span className="export-card__option-fieldset-legend-text">
+						{ legend }
+					</span>
 				</Label>
 
 				{ description &&
 					<p className="export-card__option-fieldset-description">
 						{ description }
-					</p>
-				}
+					</p> }
 
 				<div className="export-card__option-fieldset-fields">
 					{ fields.map( fieldName =>
-						<Select key={ fieldName }
+						<Select
+							key={ fieldName }
 							ref={ setRef( fieldName ) }
 							siteId={ siteId }
 							postType={ postType }
 							fieldName={ fieldName }
 							isEnabled={ isEnabled }
-							isError={ ( fieldName === 'start_date' || fieldName === 'end_date' ) && ! isDateValid }
+							isError={
+								( fieldName === 'start_date' || fieldName === 'end_date' ) && ! isDateValid
+							}
 						/>
 					) }
 				</div>
@@ -104,12 +98,13 @@ const PostTypeOptions = React.createClass( {
 				<Tooltip
 					context={ this._startDate }
 					status="error"
-					isVisible={ isEnabled && ! this.props.isDateValid }>
-						{ this.translate( 'Selected start date is later than the end date' ) }
+					isVisible={ isEnabled && ! this.props.isDateValid }
+				>
+					{ this.props.translate( 'Selected start date is later than the end date' ) }
 				</Tooltip>
 			</div>
 		);
 	}
-} );
+}
 
-export default connect( mapStateToProps, mapDispatchToProps )( PostTypeOptions );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PostTypeOptions ) );

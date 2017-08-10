@@ -1,36 +1,50 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
 
-export default React.createClass( {
-	displayName: 'PostSelectorNoResults',
+import React from 'react';
 
-	propTypes: {
-		createLink: PropTypes.string
-	},
+import { localize } from 'i18n-calypso';
 
-	render() {
-		let createMessage;
-		let noResultsMessage;
+export default localize(
+	class extends React.Component {
+		static displayName = 'PostSelectorNoResults';
 
-		noResultsMessage = this.translate( 'No results. Please try a different search.' );
+		static propTypes = {
+			createLink: PropTypes.string,
+		};
 
-		if ( this.props.createLink ) {
-			createMessage = this.translate( 'You may want to {{a}}create a new page{{/a}}.', {
-				context: 'Menus: item search/listing results',
-				comment: 'This is used when no posts or pages match the given search.',
-				components: {
-					a: <a className='create-link' href={ this.props.createLink } target="_blank" rel="noopener noreferrer" />
-				}
-			} );
+		render() {
+			let createMessage;
+			let noResultsMessage;
+
+			noResultsMessage = this.props.translate( 'No results. Please try a different search.' );
+
+			if ( this.props.createLink ) {
+				createMessage = this.props.translate( 'You may want to {{a}}create a new page{{/a}}.', {
+					context: 'Menus: item search/listing results',
+					comment: 'This is used when no posts or pages match the given search.',
+					components: {
+						a: (
+							<a
+								className="create-link"
+								href={ this.props.createLink }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
+				} );
+			}
+
+			return (
+				<span className="is-empty-content">
+					{ noResultsMessage }
+					&nbsp;{ createMessage }
+				</span>
+			);
 		}
-
-		return (
-			<span className='is-empty-content'>
-				{ noResultsMessage }
-				&nbsp;{ createMessage }
-			</span>
-		);
-	},
-} );
+	}
+);

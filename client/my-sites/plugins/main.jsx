@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { find, isEmpty, some } from 'lodash';
@@ -29,406 +31,442 @@ import WpcomPluginPanel from 'my-sites/plugins-wpcom';
 import PluginsBrowser from './plugins-browser';
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
-import {
-	canCurrentUser,
-	canCurrentUserManagePlugins
-} from 'state/selectors';
+import { canCurrentUser, canCurrentUserManagePlugins } from 'state/selectors';
 import {
 	canJetpackSiteManage,
 	canJetpackSiteUpdateFiles,
 	isJetpackSite,
-	isRequestingSites
+	isRequestingSites,
 } from 'state/sites/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug
-} from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
-const PluginsMain = React.createClass( {
-	mixins: [ URLSearch ],
+const PluginsMain = localize(
+	createReactClass( {
+		displayName: 'PluginsMain',
+		mixins: [ URLSearch ],
 
-	getInitialState() {
-		return this.getPluginsState( this.props );
-	},
+		getInitialState() {
+			return this.getPluginsState( this.props );
+		},
 
-	componentDidMount() {
-		this.props.sites.on( 'change', this.refreshPlugins );
-		PluginsStore.on( 'change', this.refreshPlugins );
-	},
+		componentDidMount() {
+			this.props.sites.on( 'change', this.refreshPlugins );
+			PluginsStore.on( 'change', this.refreshPlugins );
+		},
 
-	componentWillUnmount() {
-		this.props.sites.removeListener( 'change', this.refreshPlugins );
-		PluginsStore.removeListener( 'change', this.refreshPlugins );
-	},
+		componentWillUnmount() {
+			this.props.sites.removeListener( 'change', this.refreshPlugins );
+			PluginsStore.removeListener( 'change', this.refreshPlugins );
+		},
 
-	componentWillReceiveProps( nextProps ) {
-		this.refreshPlugins( nextProps );
-	},
+		componentWillReceiveProps( nextProps ) {
+			this.refreshPlugins( nextProps );
+		},
 
-	getPluginsFromStore( nextProps, sites ) {
-		const props = nextProps || this.props;
-		let	plugins = null;
-		if ( ! props.selectedSiteSlug ) {
-			plugins = PluginsStore.getPlugins( sites.filter( site => site.visible ), props.filter );
-		} else {
-			plugins = PluginsStore.getPlugins( sites, props.filter );
-		}
-
-		if ( ! plugins ) {
-			return plugins;
-		}
-
-		if ( props && props.search ) {
-			plugins = plugins.filter( this.matchSearchTerms.bind( this, props.search ) );
-		}
-
-		return this.addWporgDataToPlugins( plugins );
-	},
-
-	// plugins for Jetpack sites require additional data from the wporg-data store
-	addWporgDataToPlugins( plugins ) {
-		return plugins.map( plugin => {
-			const pluginData = WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, plugin.slug );
-			if ( ! pluginData ) {
-				this.props.wporgFetchPluginData( plugin.slug );
-			}
-			return Object.assign( {}, plugin, pluginData );
-		} );
-	},
-
-	getPluginsState( nextProps ) {
-		const sites = this.props.sites.getSelectedOrAllWithPlugins(),
-			pluginUpdate = PluginsStore.getPlugins( sites, 'updates' );
-		return {
-			plugins: this.getPluginsFromStore( nextProps, sites ),
-			pluginUpdateCount: pluginUpdate && pluginUpdate.length,
-			selectedAction: 'Actions'
-		};
-	},
-
-	refreshPlugins( nextProps ) {
-		this.setState( this.getPluginsState( nextProps ) );
-	},
-
-	matchSearchTerms( search, plugin ) {
-		search = search.toLowerCase();
-		return [ 'name', 'description', 'author' ].some( attribute =>
-			plugin[ attribute ] && plugin[ attribute ].toLowerCase().indexOf( search ) !== -1
-		);
-	},
-
-	getFilters() {
-		const siteFilter = this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '';
-
-		return [
-			{
-				title: this.translate( 'All', { context: 'Filter label for plugins list' } ),
-				path: '/plugins' + siteFilter,
-				id: 'all'
-			},
-			{
-				title: this.translate( 'Active', { context: 'Filter label for plugins list' } ),
-				path: '/plugins/active' + siteFilter,
-				id: 'active'
-			},
-			{
-				title: this.translate( 'Inactive', { context: 'Filter label for plugins list' } ),
-				path: '/plugins/inactive' + siteFilter,
-				id: 'inactive'
-			},
-			{
-				title: this.translate( 'Updates', { context: 'Filter label for plugins list' } ),
-				path: '/plugins/updates' + siteFilter,
-				id: 'updates'
-			}
-		];
-	},
-
-	isFetchingPlugins() {
-		const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];
-		return sites.some( PluginsStore.isFetchingSite );
-	},
-
-	getSelectedText() {
-		const found = find( this.getFilters(), filterItem => this.props.filter === filterItem.id );
-		if ( 'undefined' !== typeof found ) {
-			return found.title;
-		}
-		return '';
-	},
-
-	getSearchPlaceholder() {
-		switch ( this.props.filter ) {
-			case 'active':
-				return this.translate( 'Search All…', { textOnly: true } );
-
-			case 'inactive':
-				return this.translate( 'Search Inactive…', { textOnly: true } );
-
-			case 'updates':
-				return this.translate( 'Search Updates…', { textOnly: true } );
-
-			case 'all':
-				return this.translate( 'Search All…', { textOnly: true } );
-		}
-	},
-
-	getEmptyContentUpdateData() {
-		const emptyContentData = { illustration: '/calypso/images/illustrations/illustration-ok.svg' },
-			{ selectedSite } = this.props;
-
-		if ( selectedSite ) {
-			emptyContentData.title = this.translate( 'All plugins on %(siteName)s are {{span}}up to date.{{/span}}', {
-				textOnly: true,
-				args: { siteName: selectedSite.title },
-				components: { span: <span className="plugins__plugin-list-state" /> },
-				comment: 'The span tags prevents single words from showing on a single line.'
-			} );
-		} else {
-			emptyContentData.title = this.translate( 'All plugins are up to date.', { textOnly: true } );
-		}
-
-		if ( this.getUpdatesTabVisibility() ) {
-			return emptyContentData;
-		}
-
-		emptyContentData.action = this.translate( 'All Plugins', { textOnly: true } );
-
-		if ( selectedSite ) {
-			emptyContentData.actionURL = '/plugins/' + selectedSite.slug;
-			if ( this.props.selectedSiteIsJetpack ) {
-				emptyContentData.illustration = '/calypso/images/illustrations/illustration-jetpack.svg';
-				emptyContentData.title = this.translate( 'Plugins can\'t be updated on %(siteName)s.', {
-					textOnly: true,
-					args: { siteName: selectedSite.title }
-				} );
+		getPluginsFromStore( nextProps, sites ) {
+			const props = nextProps || this.props;
+			let plugins = null;
+			if ( ! props.selectedSiteSlug ) {
+				plugins = PluginsStore.getPlugins( sites.filter( site => site.visible ), props.filter );
 			} else {
-				// buisness plan sites
-				emptyContentData.title = this.translate( 'Plugins are updated automatically on %(siteName)s.', {
-					textOnly: true,
-					args: { siteName: selectedSite.title }
-				} );
+				plugins = PluginsStore.getPlugins( sites, props.filter );
 			}
-		} else {
-			emptyContentData.title = this.translate( 'No updates are available.', { textOnly: true } );
-			emptyContentData.illustration = '/calypso/images/illustrations/illustration-empty-results.svg';
-			emptyContentData.actionURL = '/plugins';
-		}
 
-		return emptyContentData;
-	},
+			if ( ! plugins ) {
+				return plugins;
+			}
 
-	getEmptyContentData() {
-		let emptyContentData = { illustration: '/calypso/images/illustrations/illustration-empty-results.svg', };
+			if ( props && props.search ) {
+				plugins = plugins.filter( this.matchSearchTerms.bind( this, props.search ) );
+			}
 
-		switch ( this.props.filter ) {
-			case 'active':
-				emptyContentData.title = this.translate( 'No plugins are active.', { textOnly: true } );
-				break;
-			case 'inactive':
-				emptyContentData.title = this.translate( 'No plugins are inactive.', { textOnly: true } );
-				break;
-			case 'updates':
-				emptyContentData = this.getEmptyContentUpdateData();
-				break;
-			default:
-				return null;
-		}
-		return emptyContentData;
-	},
+			return this.addWporgDataToPlugins( plugins );
+		},
 
-	getUpdatesTabVisibility() {
-		const { selectedSite } = this.props;
+		// plugins for Jetpack sites require additional data from the wporg-data store
+		addWporgDataToPlugins( plugins ) {
+			return plugins.map( plugin => {
+				const pluginData = WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, plugin.slug );
+				if ( ! pluginData ) {
+					this.props.wporgFetchPluginData( plugin.slug );
+				}
+				return Object.assign( {}, plugin, pluginData );
+			} );
+		},
 
-		if ( selectedSite ) {
-			return this.props.selectedSiteIsJetpack && this.props.canSelectedJetpackSiteUpdateFiles;
-		}
+		getPluginsState( nextProps ) {
+			const sites = this.props.sites.getSelectedOrAllWithPlugins(),
+				pluginUpdate = PluginsStore.getPlugins( sites, 'updates' );
+			return {
+				plugins: this.getPluginsFromStore( nextProps, sites ),
+				pluginUpdateCount: pluginUpdate && pluginUpdate.length,
+				selectedAction: 'Actions',
+			};
+		},
 
-		return some(
-			this.props.sites.getSelectedOrAllWithPlugins(),
-			site => site && this.props.isJetpackSite( site.ID ) && this.props.canJetpackSiteUpdateFiles( site.ID )
-		);
-	},
+		refreshPlugins( nextProps ) {
+			this.setState( this.getPluginsState( nextProps ) );
+		},
 
-	shouldShowPluginListPlaceholders() {
-		const { plugins } = this.state;
+		matchSearchTerms( search, plugin ) {
+			search = search.toLowerCase();
+			return [ 'name', 'description', 'author' ].some(
+				attribute =>
+					plugin[ attribute ] && plugin[ attribute ].toLowerCase().indexOf( search ) !== -1
+			);
+		},
 
-		return isEmpty( plugins ) && this.isFetchingPlugins();
-	},
+		getFilters() {
+			const siteFilter = this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '';
 
-	renderDocumentHead() {
-		return <DocumentHead title={ this.translate( 'Plugins', { textOnly: true } ) } />;
-	},
+			return [
+				{
+					title: this.props.translate( 'All', { context: 'Filter label for plugins list' } ),
+					path: '/plugins' + siteFilter,
+					id: 'all',
+				},
+				{
+					title: this.props.translate( 'Active', { context: 'Filter label for plugins list' } ),
+					path: '/plugins/active' + siteFilter,
+					id: 'active',
+				},
+				{
+					title: this.props.translate( 'Inactive', { context: 'Filter label for plugins list' } ),
+					path: '/plugins/inactive' + siteFilter,
+					id: 'inactive',
+				},
+				{
+					title: this.props.translate( 'Updates', { context: 'Filter label for plugins list' } ),
+					path: '/plugins/updates' + siteFilter,
+					id: 'updates',
+				},
+			];
+		},
 
-	renderPluginsContent() {
-		const plugins = this.state.plugins || [];
-		const { selectedSite } = this.props;
+		isFetchingPlugins() {
+			const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];
+			return sites.some( PluginsStore.isFetchingSite );
+		},
 
-		if ( isEmpty( plugins ) && ! this.isFetchingPlugins() ) {
-			if ( this.props.search ) {
-				const searchTitle = this.translate( 'Suggested plugins for: %(searchQuery)s', {
-					textOnly: true,
-					args: {
-						searchQuery: this.props.search
+		getSelectedText() {
+			const found = find( this.getFilters(), filterItem => this.props.filter === filterItem.id );
+			if ( 'undefined' !== typeof found ) {
+				return found.title;
+			}
+			return '';
+		},
+
+		getSearchPlaceholder() {
+			switch ( this.props.filter ) {
+				case 'active':
+					return this.props.translate( 'Search All…', { textOnly: true } );
+
+				case 'inactive':
+					return this.props.translate( 'Search Inactive…', { textOnly: true } );
+
+				case 'updates':
+					return this.props.translate( 'Search Updates…', { textOnly: true } );
+
+				case 'all':
+					return this.props.translate( 'Search All…', { textOnly: true } );
+			}
+		},
+
+		getEmptyContentUpdateData() {
+			const emptyContentData = {
+					illustration: '/calypso/images/illustrations/illustration-ok.svg',
+				},
+				{ selectedSite } = this.props;
+
+			if ( selectedSite ) {
+				emptyContentData.title = this.props.translate(
+					'All plugins on %(siteName)s are {{span}}up to date.{{/span}}',
+					{
+						textOnly: true,
+						args: { siteName: selectedSite.title },
+						components: { span: <span className="plugins__plugin-list-state" /> },
+						comment: 'The span tags prevents single words from showing on a single line.',
 					}
+				);
+			} else {
+				emptyContentData.title = this.props.translate( 'All plugins are up to date.', {
+					textOnly: true,
 				} );
+			}
 
-				return <PluginsBrowser
-						hideSearchForm
-						site={ selectedSite ? selectedSite.slug : null }
-						path={ this.context.path }
+			if ( this.getUpdatesTabVisibility() ) {
+				return emptyContentData;
+			}
+
+			emptyContentData.action = this.props.translate( 'All Plugins', { textOnly: true } );
+
+			if ( selectedSite ) {
+				emptyContentData.actionURL = '/plugins/' + selectedSite.slug;
+				if ( this.props.selectedSiteIsJetpack ) {
+					emptyContentData.illustration = '/calypso/images/illustrations/illustration-jetpack.svg';
+					emptyContentData.title = this.props.translate(
+						"Plugins can't be updated on %(siteName)s.",
+						{
+							textOnly: true,
+							args: { siteName: selectedSite.title },
+						}
+					);
+				} else {
+					// buisness plan sites
+					emptyContentData.title = this.props.translate(
+						'Plugins are updated automatically on %(siteName)s.',
+						{
+							textOnly: true,
+							args: { siteName: selectedSite.title },
+						}
+					);
+				}
+			} else {
+				emptyContentData.title = this.props.translate( 'No updates are available.', {
+					textOnly: true,
+				} );
+				emptyContentData.illustration =
+					'/calypso/images/illustrations/illustration-empty-results.svg';
+				emptyContentData.actionURL = '/plugins';
+			}
+
+			return emptyContentData;
+		},
+
+		getEmptyContentData() {
+			let emptyContentData = {
+				illustration: '/calypso/images/illustrations/illustration-empty-results.svg',
+			};
+
+			switch ( this.props.filter ) {
+				case 'active':
+					emptyContentData.title = this.props.translate( 'No plugins are active.', {
+						textOnly: true,
+					} );
+					break;
+				case 'inactive':
+					emptyContentData.title = this.props.translate( 'No plugins are inactive.', {
+						textOnly: true,
+					} );
+					break;
+				case 'updates':
+					emptyContentData = this.getEmptyContentUpdateData();
+					break;
+				default:
+					return null;
+			}
+			return emptyContentData;
+		},
+
+		getUpdatesTabVisibility() {
+			const { selectedSite } = this.props;
+
+			if ( selectedSite ) {
+				return this.props.selectedSiteIsJetpack && this.props.canSelectedJetpackSiteUpdateFiles;
+			}
+
+			return some(
+				this.props.sites.getSelectedOrAllWithPlugins(),
+				site =>
+					site &&
+					this.props.isJetpackSite( site.ID ) &&
+					this.props.canJetpackSiteUpdateFiles( site.ID )
+			);
+		},
+
+		shouldShowPluginListPlaceholders() {
+			const { plugins } = this.state;
+
+			return isEmpty( plugins ) && this.isFetchingPlugins();
+		},
+
+		renderDocumentHead() {
+			return <DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
+		},
+
+		renderPluginsContent() {
+			const plugins = this.state.plugins || [];
+			const { selectedSite } = this.props;
+
+			if ( isEmpty( plugins ) && ! this.isFetchingPlugins() ) {
+				if ( this.props.search ) {
+					const searchTitle = this.props.translate( 'Suggested plugins for: %(searchQuery)s', {
+						textOnly: true,
+						args: {
+							searchQuery: this.props.search,
+						},
+					} );
+
+					return (
+						<PluginsBrowser
+							hideSearchForm
+							site={ selectedSite ? selectedSite.slug : null }
+							path={ this.context.path }
+							sites={ this.props.sites }
+							search={ this.props.search }
+							store={ this.context.store }
+							searchTitle={ searchTitle }
+						/>
+					);
+				}
+
+				const emptyContentData = this.getEmptyContentData();
+				if ( emptyContentData ) {
+					return (
+						<EmptyContent
+							title={ emptyContentData.title }
+							illustration={ emptyContentData.illustration }
+							actionURL={ emptyContentData.actionURL }
+							action={ emptyContentData.action }
+						/>
+					);
+				}
+			}
+			return (
+				<div className="plugins__lists">
+					<PluginsList
+						header={ this.props.translate( 'Plugins' ) }
+						plugins={ plugins }
 						sites={ this.props.sites }
-						search={ this.props.search }
-						store={ this.context.store }
-						searchTitle={ searchTitle }
-					/>;
+						pluginUpdateCount={ this.state.pluginUpdateCount }
+						isPlaceholder={ this.shouldShowPluginListPlaceholders() }
+					/>
+				</div>
+			);
+		},
+
+		getMockPluginItems() {
+			const plugins = [
+				{
+					slug: 'akismet',
+					name: 'Akismet',
+					icon: '//ps.w.org/akismet/assets/icon-256x256.png',
+					wporg: true,
+				},
+				{
+					slug: 'wp-super-cache',
+					name: 'WP Super Cache',
+					icon: '//ps.w.org/wp-super-cache/assets/icon-256x256.png',
+					wporg: true,
+				},
+				{
+					slug: 'jetpack',
+					name: 'Jetpack by WordPress.com',
+					icon: '//ps.w.org/jetpack/assets/icon-256x256.png',
+					wporg: true,
+				},
+			];
+			const selectedSite = {
+				slug: 'no-slug',
+				canUpdateFiles: true,
+				name: 'Not a real site',
+			};
+
+			return plugins.map( plugin => {
+				return (
+					<PluginItem
+						key={ 'plugin-item-mock-' + plugin.slug }
+						plugin={ plugin }
+						sites={ [] }
+						selectedSite={ selectedSite }
+						progress={ [] }
+						isMock={ true }
+					/>
+				);
+			} );
+		},
+
+		render() {
+			const { category, search, selectedSite, selectedSiteId } = this.props;
+
+			if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
+				return (
+					<NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />
+				);
 			}
 
-			const emptyContentData = this.getEmptyContentData();
-			if ( emptyContentData ) {
-				return <EmptyContent
-					title={ emptyContentData.title }
-					illustration={ emptyContentData.illustration }
-					actionURL={ emptyContentData.actionURL }
-					action={ emptyContentData.action } />;
+			if ( selectedSite && ! this.props.selectedSiteIsJetpack ) {
+				return (
+					<Main>
+						{ this.renderDocumentHead() }
+						<SidebarNavigation />
+						<WpcomPluginPanel
+							{ ...{
+								category,
+								search,
+							} }
+						/>
+					</Main>
+				);
 			}
-		}
-		return (
-			<div className="plugins__lists">
-				<PluginsList
-					header={ this.translate( 'Plugins' ) }
-					plugins={ plugins }
-					sites={ this.props.sites }
-					pluginUpdateCount={ this.state.pluginUpdateCount }
-					isPlaceholder= { this.shouldShowPluginListPlaceholders() } />
-			</div>
-		);
-	},
 
-	getMockPluginItems() {
-		const plugins = [ {
-			slug: 'akismet',
-			name: 'Akismet',
-			icon: '//ps.w.org/akismet/assets/icon-256x256.png',
-			wporg: true
-		}, {
-			slug: 'wp-super-cache',
-			name: 'WP Super Cache',
-			icon: '//ps.w.org/wp-super-cache/assets/icon-256x256.png',
-			wporg: true
-		}, {
-			slug: 'jetpack',
-			name: 'Jetpack by WordPress.com',
-			icon: '//ps.w.org/jetpack/assets/icon-256x256.png',
-			wporg: true
-		} ];
-		const selectedSite = {
-			slug: 'no-slug',
-			canUpdateFiles: true,
-			name: 'Not a real site'
-		};
+			if ( this.props.selectedSiteIsJetpack && ! this.props.canSelectedJetpackSiteManage ) {
+				return (
+					<Main>
+						{ this.renderDocumentHead() }
+						<SidebarNavigation />
+						<JetpackManageErrorPage
+							template="optInManage"
+							siteId={ selectedSiteId }
+							title={ this.props.translate( "Looking to manage this site's plugins?" ) }
+							section="plugins"
+							featureExample={ this.getMockPluginItems() }
+						/>
+					</Main>
+				);
+			}
 
-		return plugins.map( plugin => {
-			return <PluginItem
-				key={ 'plugin-item-mock-' + plugin.slug }
-				plugin={ plugin }
-				sites={ [] }
-				selectedSite={ selectedSite }
-				progress={ [] }
-				isMock={ true } />;
-		} );
-	},
+			const containerClass = classNames( {
+				'main-column': true,
+				plugins: true,
+				'search-open': this.getSearchOpen(),
+			} );
 
-	render() {
-		const {
-			category,
-			search,
-			selectedSite,
-			selectedSiteId,
-		} = this.props;
-
-		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
-			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
-		}
-
-		if ( selectedSite && ! this.props.selectedSiteIsJetpack ) {
 			return (
-				<Main>
+				<Main className={ containerClass }>
+					<NonSupportedJetpackVersionNotice />
 					{ this.renderDocumentHead() }
 					<SidebarNavigation />
-					<WpcomPluginPanel { ...{
-						category,
-						search,
-					} } />
+					<SectionNav selectedText={ this.getSelectedText() }>
+						<NavTabs>
+							{ this.getFilters().map( filterItem => {
+								if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
+									return null;
+								}
+
+								const attr = {
+									key: filterItem.id,
+									path: filterItem.path,
+									selected: filterItem.id === this.props.filter,
+								};
+
+								if ( 'updates' === filterItem.id ) {
+									attr.count = this.state.pluginUpdateCount;
+								}
+								return (
+									<NavItem { ...attr }>
+										{ filterItem.title }
+									</NavItem>
+								);
+							} ) }
+						</NavTabs>
+
+						<Search
+							pinned
+							fitsContainer
+							onSearch={ this.doSearch }
+							initialValue={ this.props.search }
+							ref="url-search"
+							analyticsGroup="Plugins"
+							placeholder={ this.getSearchPlaceholder() }
+						/>
+					</SectionNav>
+					{ this.renderPluginsContent() }
 				</Main>
 			);
-		}
-
-		if ( this.props.selectedSiteIsJetpack && ! this.props.canSelectedJetpackSiteManage ) {
-			return (
-				<Main>
-					{ this.renderDocumentHead() }
-					<SidebarNavigation />
-					<JetpackManageErrorPage
-						template="optInManage"
-						siteId={ selectedSiteId }
-						title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
-						section="plugins"
-						featureExample={ this.getMockPluginItems() } />
-				</Main>
-			);
-		}
-
-		const containerClass = classNames( {
-			'main-column': true,
-			plugins: true,
-			'search-open': this.getSearchOpen()
-		} );
-
-		return (
-			<Main className={ containerClass }>
-				<NonSupportedJetpackVersionNotice />
-				{ this.renderDocumentHead() }
-				<SidebarNavigation />
-				<SectionNav selectedText={ this.getSelectedText() }>
-					<NavTabs>
-						{ this.getFilters().map( filterItem => {
-							if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
-								return null;
-							}
-
-							const attr = {
-								key: filterItem.id,
-								path: filterItem.path,
-								selected: filterItem.id === this.props.filter,
-							};
-
-							if ( 'updates' === filterItem.id ) {
-								attr.count = this.state.pluginUpdateCount;
-							}
-							return (
-								<NavItem { ...attr } >
-									{ filterItem.title }
-								</NavItem>
-							);
-						} ) }
-					</NavTabs>
-
-					<Search
-						pinned
-						fitsContainer
-						onSearch={ this.doSearch }
-						initialValue={ this.props.search }
-						ref="url-search"
-						analyticsGroup="Plugins"
-						placeholder={ this.getSearchPlaceholder() } />
-				</SectionNav>
-				{ this.renderPluginsContent() }
-			</Main>
-		);
-	}
-} );
+		},
+	} )
+);
 
 export default connect(
 	state => {
@@ -440,14 +478,15 @@ export default connect(
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSiteId ),
 			canSelectedJetpackSiteManage: selectedSite && canJetpackSiteManage( state, selectedSiteId ),
-			canSelectedJetpackSiteUpdateFiles: selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
+			canSelectedJetpackSiteUpdateFiles:
+				selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
 			canJetpackSiteUpdateFiles: siteId => canJetpackSiteUpdateFiles( state, siteId ),
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
 			wporgPlugins: state.plugins.wporg.items,
 			isRequestingSites: isRequestingSites( state ),
-			userCanManagePlugins: ( selectedSiteId
+			userCanManagePlugins: selectedSiteId
 				? canCurrentUser( state, selectedSiteId, 'manage_options' )
-				: canCurrentUserManagePlugins( state ) )
+				: canCurrentUserManagePlugins( state ),
 		};
 	},
 	{ wporgFetchPluginData }

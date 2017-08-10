@@ -1,3 +1,5 @@
+/** @format */
+var PropTypes = require( 'prop-types' );
 /**
  * External dependencies
  */
@@ -8,49 +10,79 @@ var React = require( 'react' );
  */
 var analytics = require( 'lib/analytics' );
 
-module.exports = React.createClass( {
-	displayName: 'SharingButtonsStyle',
+module.exports = localize(
+	class extends React.Component {
+		static displayName = 'SharingButtonsStyle';
 
-	propTypes: {
-		onChange: React.PropTypes.func,
-		value: React.PropTypes.string,
-		disabled: React.PropTypes.bool
-	},
-
-	getDefaultProps: function() {
-		return {
-			onChange: function() {},
-			disabled: false
+		static propTypes = {
+			onChange: PropTypes.func,
+			value: PropTypes.string,
+			disabled: PropTypes.bool,
 		};
-	},
 
-	onChange: function( value ) {
-		this.props.onChange( value );
-		analytics.ga.recordEvent( 'Sharing', 'Clicked Button Style Radio Button', value );
-	},
+		static defaultProps = {
+			onChange: function() {},
+			disabled: false,
+		};
 
-	getOptions: function() {
-		return [
-			{ value: 'icon-text', label: this.translate( 'Icon & Text', { context: 'Sharing: Sharing button option label' } ) },
-			{ value: 'icon', label: this.translate( 'Icon Only', { context: 'Sharing: Sharing button option label' } ) },
-			{ value: 'text', label: this.translate( 'Text Only', { context: 'Sharing: Sharing button option label' } ) },
-			{ value: 'official', label: this.translate( 'Official Buttons', { context: 'Sharing: Sharing button option label' } ) }
-		].map( function( option ) {
+		onChange = value => {
+			this.props.onChange( value );
+			analytics.ga.recordEvent( 'Sharing', 'Clicked Button Style Radio Button', value );
+		};
+
+		getOptions = () => {
+			return [
+				{
+					value: 'icon-text',
+					label: this.props.translate( 'Icon & Text', {
+						context: 'Sharing: Sharing button option label',
+					} ),
+				},
+				{
+					value: 'icon',
+					label: this.props.translate( 'Icon Only', {
+						context: 'Sharing: Sharing button option label',
+					} ),
+				},
+				{
+					value: 'text',
+					label: this.props.translate( 'Text Only', {
+						context: 'Sharing: Sharing button option label',
+					} ),
+				},
+				{
+					value: 'official',
+					label: this.props.translate( 'Official Buttons', {
+						context: 'Sharing: Sharing button option label',
+					} ),
+				},
+			].map( function( option ) {
+				return (
+					<label key={ option.value }>
+						<input
+							name="sharing_button_style"
+							type="radio"
+							checked={ option.value === this.props.value }
+							onChange={ this.onChange.bind( null, option.value ) }
+							disabled={ this.props.disabled }
+						/>
+						{ option.label }
+					</label>
+				);
+			}, this );
+		};
+
+		render() {
 			return (
-				<label key={ option.value }>
-					<input name="sharing_button_style" type="radio" checked={ option.value === this.props.value } onChange={ this.onChange.bind( null, option.value ) } disabled={ this.props.disabled } />
-					{ option.label }
-				</label>
+				<fieldset className="sharing-buttons__fieldset">
+					<legend className="sharing-buttons__fieldset-heading">
+						{ this.props.translate( 'Button style', {
+							context: 'Sharing: Sharing button option heading',
+						} ) }
+					</legend>
+					{ this.getOptions() }
+				</fieldset>
 			);
-		}, this );
-	},
-
-	render: function() {
-		return (
-			<fieldset className="sharing-buttons__fieldset">
-				<legend className="sharing-buttons__fieldset-heading">{ this.translate( 'Button style', { context: 'Sharing: Sharing button option heading' } ) }</legend>
-				{ this.getOptions() }
-			</fieldset>
-		);
+		}
 	}
-} );
+);

@@ -1,7 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
+import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import Gridicon from 'gridicons';
 
@@ -15,84 +19,104 @@ import * as PostStats from 'lib/posts/stats';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 
-export default React.createClass( {
-	displayName: 'EditorSharingPublicizeConnection',
+export default localize(
+	class extends React.Component {
+		static displayName = 'EditorSharingPublicizeConnection';
 
-	propTypes: {
-		post: PropTypes.object,
-		connection: PropTypes.object,
-		onRefresh: PropTypes.func,
-		label: PropTypes.string
-	},
-
-	getDefaultProps() {
-		return {
-			onRefresh: () => {}
+		static propTypes = {
+			post: PropTypes.object,
+			connection: PropTypes.object,
+			onRefresh: PropTypes.func,
+			label: PropTypes.string,
 		};
-	},
 
-	isConnectionSkipped() {
-		const { post, connection } = this.props;
-		return post && connection && includes( PostMetadata.publicizeSkipped( post ), connection.keyring_connection_ID );
-	},
+		static defaultProps = {
+			onRefresh: () => {},
+		};
 
-	isConnectionDone() {
-		const { post, connection } = this.props;
-		return post && connection && includes( PostMetadata.publicizeDone( post ), connection.keyring_connection_ID );
-	},
+		isConnectionSkipped = () => {
+			const { post, connection } = this.props;
+			return (
+				post &&
+				connection &&
+				includes( PostMetadata.publicizeSkipped( post ), connection.keyring_connection_ID )
+			);
+		};
 
-	isDisabled() {
-		const { connection } = this.props;
-		return ! connection || connection.read_only;
-	},
+		isConnectionDone = () => {
+			const { post, connection } = this.props;
+			return (
+				post &&
+				connection &&
+				includes( PostMetadata.publicizeDone( post ), connection.keyring_connection_ID )
+			);
+		};
 
-	onChange( event ) {
-		const { connection } = this.props;
-		if ( ! connection ) {
-			return;
+		isDisabled = () => {
+			const { connection } = this.props;
+			return ! connection || connection.read_only;
+		};
+
+		onChange = event => {
+			const { connection } = this.props;
+			if ( ! connection ) {
+				return;
+			}
+
+			if ( event.target.checked ) {
+				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+				PostActions.deleteMetadata( '_wpas_skip_' + connection.keyring_connection_ID );
+				PostStats.recordStat( 'sharing_enabled_' + connection.service );
+				PostStats.recordEvent( 'Publicize Service', connection.service, 'enabled' );
+			} else {
+				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+				PostActions.updateMetadata( '_wpas_skip_' + connection.keyring_connection_ID, 1 );
+				PostStats.recordStat( 'sharing_disabled_' + connection.service );
+				PostStats.recordEvent( 'Publicize Service', connection.service, 'disabled' );
+			}
+		};
+
+		renderBrokenConnection = () => {
+			const { connection } = this.props;
+			if ( ! connection || connection.status !== 'broken' ) {
+				return;
+			}
+
+			return (
+				<Notice
+					isCompact
+					className="editor-sharing__broken-publicize-connection"
+					status="is-warning"
+					showDismiss={ false }
+				>
+					{ this.props.translate( 'There is an issue connecting to %s.', {
+						args: connection.label,
+					} ) }
+					<NoticeAction onClick={ this.props.onRefresh }>
+						Reconnect <Gridicon icon="external" size={ 18 } />
+					</NoticeAction>
+				</Notice>
+			);
+		};
+
+		render() {
+			const { connection, label } = this.props;
+
+			return (
+				<div className="editor-sharing__publicize-connection">
+					<label>
+						<FormCheckbox
+							checked={ ! this.isConnectionSkipped() }
+							disabled={ this.isDisabled() }
+							onChange={ this.onChange }
+						/>
+						<span data-e2e-service={ label }>
+							{ connection && connection.external_display }
+						</span>
+					</label>
+					{ this.renderBrokenConnection() }
+				</div>
+			);
 		}
-
-		if ( event.target.checked ) {
-			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-			PostActions.deleteMetadata( '_wpas_skip_' + connection.keyring_connection_ID );
-			PostStats.recordStat( 'sharing_enabled_' + connection.service );
-			PostStats.recordEvent( 'Publicize Service', connection.service, 'enabled' );
-		} else {
-			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-			PostActions.updateMetadata( '_wpas_skip_' + connection.keyring_connection_ID, 1 );
-			PostStats.recordStat( 'sharing_disabled_' + connection.service );
-			PostStats.recordEvent( 'Publicize Service', connection.service, 'disabled' );
-		}
-	},
-
-	renderBrokenConnection() {
-		const { connection } = this.props;
-		if ( ! connection || connection.status !== 'broken' ) {
-			return;
-		}
-
-		return (
-			<Notice isCompact className="editor-sharing__broken-publicize-connection" status="is-warning" showDismiss={ false }>
-				{ this.translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
-				<NoticeAction onClick={ this.props.onRefresh }>Reconnect <Gridicon icon="external" size={ 18 } /></NoticeAction>
-			</Notice>
-		);
-	},
-
-	render() {
-		const { connection, label } = this.props;
-
-		return (
-			<div className="editor-sharing__publicize-connection">
-				<label>
-					<FormCheckbox
-						checked={ ! this.isConnectionSkipped() }
-						disabled={ this.isDisabled() }
-						onChange={ this.onChange } />
-					<span data-e2e-service={ label }>{ connection && connection.external_display }</span>
-				</label>
-				{ this.renderBrokenConnection() }
-			</div>
-		);
 	}
-} );
+);

@@ -1,7 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -13,80 +17,89 @@ import accept from 'lib/accept';
 import utils from 'lib/posts/utils';
 import Button from 'components/button';
 
-export default React.createClass( {
-	displayName: 'EditorDeletePost',
+export default localize(
+	class extends React.Component {
+		static displayName = 'EditorDeletePost';
 
-	propTypes: {
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		onTrashingPost: React.PropTypes.func
-	},
+		static propTypes = {
+			site: PropTypes.object,
+			post: PropTypes.object,
+			onTrashingPost: PropTypes.func,
+		};
 
-	getInitialState: function() {
-		return {
+		state = {
 			isTrashing: false,
 		};
-	},
 
-	sendToTrash() {
-		this.setState( { isTrashing: true } );
+		sendToTrash = () => {
+			this.setState( { isTrashing: true } );
 
-		const handleTrashingPost = function( error ) {
-			if ( error ) {
-				this.setState( { isTrashing: false } );
+			const handleTrashingPost = function( error ) {
+				if ( error ) {
+					this.setState( { isTrashing: false } );
+				}
+
+				if ( this.props.onTrashingPost ) {
+					this.props.onTrashingPost( error );
+				}
+			}.bind( this );
+
+			if ( utils.userCan( 'delete_post', this.props.post ) ) {
+				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+				actions.trash( this.props.post, handleTrashingPost );
+			}
+		};
+
+		onSendToTrash = () => {
+			let message;
+			if ( this.state.isTrashing ) {
+				return;
 			}
 
-			if ( this.props.onTrashingPost ) {
-				this.props.onTrashingPost( error );
+			if ( this.props.post.type === 'page' ) {
+				message = this.props.translate( 'Are you sure you want to trash this page?' );
+			} else {
+				message = this.props.translate( 'Are you sure you want to trash this post?' );
 			}
-		}.bind( this );
 
-		if ( utils.userCan( 'delete_post', this.props.post ) ) {
-			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-			actions.trash( this.props.post, handleTrashingPost );
-		}
-	},
+			accept(
+				message,
+				accepted => {
+					if ( accepted ) {
+						this.sendToTrash();
+					}
+				},
+				this.props.translate( 'Move to trash' ),
+				this.props.translate( 'Back' )
+			);
+		};
 
-	onSendToTrash() {
-		let message;
-		if ( this.state.isTrashing ) {
-			return;
-		}
-
-		if ( this.props.post.type === 'page' ) {
-			message = this.translate( 'Are you sure you want to trash this page?' );
-		} else {
-			message = this.translate( 'Are you sure you want to trash this post?' );
-		}
-
-		accept( message, ( accepted ) => {
-			if ( accepted ) {
-				this.sendToTrash();
+		render() {
+			const { post } = this.props;
+			if ( ! post || ! post.ID || post.status === 'trash' ) {
+				return null;
 			}
-		}, this.translate( 'Move to trash' ), this.translate( 'Back' ) );
-	},
 
-	render() {
-		const { post } = this.props;
-		if ( ! post || ! post.ID || post.status === 'trash' ) {
-			return null;
+			const classes = classnames( 'editor-delete-post__button', {
+				'is-trashing': this.state.isTrashing,
+			} );
+			const label = this.state.isTrashing
+				? this.props.translate( 'Trashing...' )
+				: this.props.translate( 'Move to trash' );
+
+			return (
+				<div className="editor-delete-post">
+					<Button
+						borderless
+						className={ classes }
+						onClick={ this.onSendToTrash }
+						aria-label={ label }
+					>
+						<Gridicon icon="trash" size={ 18 } />
+						{ label }
+					</Button>
+				</div>
+			);
 		}
-
-		const classes = classnames( 'editor-delete-post__button', { 'is-trashing': this.state.isTrashing } );
-		const label = this.state.isTrashing ? this.translate( 'Trashing...' ) : this.translate( 'Move to trash' );
-
-		return (
-			<div className="editor-delete-post">
-				<Button
-					borderless
-					className={ classes }
-					onClick={ this.onSendToTrash }
-					aria-label={ label }
-				>
-					<Gridicon icon="trash" size={ 18 } />
-					{ label }
-				</Button>
-			</div>
-		);
 	}
-} );
+);

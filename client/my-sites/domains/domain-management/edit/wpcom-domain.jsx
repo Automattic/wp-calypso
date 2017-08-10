@@ -1,7 +1,12 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
+
+import createReactClass from 'create-react-class';
+
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,7 +18,8 @@ import Property from './card/property';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 
-const WpcomDomain = React.createClass( {
+const WpcomDomain = createReactClass( {
+	displayName: 'WpcomDomain',
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
 	handleEditSiteAddressClick() {
@@ -31,10 +37,12 @@ const WpcomDomain = React.createClass( {
 		return (
 			<VerticalNav>
 				<VerticalNavItem
-					path={ `https://${ this.props.domain.name }/wp-admin/index.php?page=my-blogs#blog_row_${ this.props.selectedSite.ID }` }
+					path={ `https://${ this.props.domain
+						.name }/wp-admin/index.php?page=my-blogs#blog_row_${ this.props.selectedSite.ID }` }
 					external={ true }
-					onClick={ this.handleEditSiteAddressClick }>
-					{ this.translate( 'Edit Site Address' ) }
+					onClick={ this.handleEditSiteAddressClick }
+				>
+					{ this.props.translate( 'Edit Site Address' ) }
 				</VerticalNavItem>
 			</VerticalNav>
 		);
@@ -47,19 +55,26 @@ const WpcomDomain = React.createClass( {
 					<Header { ...this.props } />
 
 					<Card>
-						<Property label={ this.translate( 'Type', { context: 'A type of domain.' } ) }>
-							{ this.translate( 'Included with Site' ) }
+						<Property label={ this.props.translate( 'Type', { context: 'A type of domain.' } ) }>
+							{ this.props.translate( 'Included with Site' ) }
 						</Property>
 
-						<Property label={ this.translate( 'Renews on', { comment: 'The corresponding date is in a different cell in the UI, the date is not included within the translated string' } ) }>
-							<em>{ this.translate( 'Never Expires' ) }</em>
+						<Property
+							label={ this.props.translate( 'Renews on', {
+								comment:
+									'The corresponding date is in a different cell in the UI, the date is not included within the translated string',
+							} ) }
+						>
+							<em>
+								{ this.props.translate( 'Never Expires' ) }
+							</em>
 						</Property>
 					</Card>
 				</div>
 				{ this.getEditSiteAddressBlock() }
 			</div>
 		);
-	}
+	},
 } );
 
-export default WpcomDomain;
+export default localize( WpcomDomain );

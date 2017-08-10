@@ -1,7 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { has, isEmpty } from 'lodash';
 import classNames from 'classnames';
@@ -16,16 +20,16 @@ import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
 import { getSiteDefaultPostFormat } from 'state/selectors';
 
-const EditorPostFormatsAccordion = React.createClass( {
-	propTypes: {
+class EditorPostFormatsAccordion extends React.Component {
+	static propTypes = {
 		siteId: PropTypes.number,
 		site: PropTypes.object,
 		post: PropTypes.object,
 		postFormats: PropTypes.object,
 		defaultPostFormat: PropTypes.string,
-	},
+	};
 
-	getFormatValue() {
+	getFormatValue = () => {
 		const { post, defaultPostFormat } = this.props;
 		if ( ! post ) {
 			return;
@@ -36,9 +40,9 @@ const EditorPostFormatsAccordion = React.createClass( {
 		}
 
 		return defaultPostFormat;
-	},
+	};
 
-	getSubtitle() {
+	getSubtitle = () => {
 		const formatValue = this.getFormatValue();
 		const { post, postFormats } = this.props;
 
@@ -50,42 +54,40 @@ const EditorPostFormatsAccordion = React.createClass( {
 			return postFormats[ formatValue ];
 		}
 
-		return this.translate( 'Standard', {
-			context: 'Post format'
+		return this.props.translate( 'Standard', {
+			context: 'Post format',
 		} );
-	},
+	};
 
 	render() {
 		const { className, post, postFormats } = this.props;
 		const classes = classNames( 'editor-post-formats__accordion', className, {
-			'is-loading': ! post || ! postFormats
+			'is-loading': ! post || ! postFormats,
 		} );
 
 		return (
 			<div>
 				<QueryPostFormats siteId={ this.props.siteId } />
-				{ ! isEmpty( postFormats ) && (
+				{ ! isEmpty( postFormats ) &&
 					<Accordion
-						title={ this.translate( 'Post Format' ) }
+						title={ this.props.translate( 'Post Format' ) }
 						subtitle={ this.getSubtitle() }
-						className={ classes }>
+						className={ classes }
+					>
 						<PostFormats value={ this.getFormatValue() } />
-					</Accordion>
-				) }
+					</Accordion> }
 			</div>
 		);
 	}
-} );
+}
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			siteId,
-			site: getSelectedSite( state ),
-			postFormats: getPostFormats( state, siteId ),
-			defaultPostFormat: getSiteDefaultPostFormat( state, siteId ),
-		};
-	}
-)( EditorPostFormatsAccordion );
+	return {
+		siteId,
+		site: getSelectedSite( state ),
+		postFormats: getPostFormats( state, siteId ),
+		defaultPostFormat: getSiteDefaultPostFormat( state, siteId ),
+	};
+} )( localize( EditorPostFormatsAccordion ) );

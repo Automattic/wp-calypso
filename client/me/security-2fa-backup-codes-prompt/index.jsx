@@ -1,9 +1,13 @@
+/** @format */
+var PropTypes = require( 'prop-types' );
 /**
  * External dependencies
  */
 var React = require( 'react' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-backup-codes-prompt' );
+
+var createReactClass = require( 'create-react-class' );
 
 /**
  * Internal dependencies
@@ -18,144 +22,160 @@ var FormButton = require( 'components/forms/form-button' ),
 
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
+import { localize } from 'i18n-calypso';
 
-	displayName: 'Security2faBackupCodesPrompt',
+module.exports = localize(
+	createReactClass( {
+		displayName: 'Security2faBackupCodesPrompt',
 
-	mixins: [ LinkedStateMixin ],
+		mixins: [ LinkedStateMixin ],
 
-	propTypes: {
-		onPrintAgain: React.PropTypes.func,
-		onSuccess: React.PropTypes.func.isRequired
-	},
+		propTypes: {
+			onPrintAgain: PropTypes.func,
+			onSuccess: PropTypes.func.isRequired,
+		},
 
-	componentDidMount: function() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
+		componentDidMount: function() {
+			debug( this.constructor.displayName + ' React component is mounted.' );
+		},
 
-	componentWillUnmount: function() {
-		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
+		componentWillUnmount: function() {
+			debug( this.constructor.displayName + ' React component will unmount.' );
+		},
 
-	getInitialState: function() {
-		return {
-			backupCodeEntry: '',
-			lastError: false,
-			submittingCode: false
-		};
-	},
+		getInitialState: function() {
+			return {
+				backupCodeEntry: '',
+				lastError: false,
+				submittingCode: false,
+			};
+		},
 
-	getSubmitDisabled: function() {
-		if ( this.state.submittingCode ) {
-			return true;
-		}
+		getSubmitDisabled: function() {
+			if ( this.state.submittingCode ) {
+				return true;
+			}
 
-		if ( this.state.backupCodeEntry.length !== 8 ) {
-			return true;
-		}
+			if ( this.state.backupCodeEntry.length !== 8 ) {
+				return true;
+			}
 
-		return false;
-	},
+			return false;
+		},
 
-	onVerify: function( event ) {
-		event.preventDefault();
-		this.setState( { submittingCode: true } );
-		twoStepAuthorization.validateBackupCode( this.state.backupCodeEntry, this.onRequestComplete );
-	},
+		onVerify: function( event ) {
+			event.preventDefault();
+			this.setState( { submittingCode: true } );
+			twoStepAuthorization.validateBackupCode( this.state.backupCodeEntry, this.onRequestComplete );
+		},
 
-	onRequestComplete: function( error, data ) {
-		this.setState( { submittingCode: false } );
-		if ( error ) {
-			this.setState( { lastError: this.translate( 'Unable to validate codes right now. Please try again later.' ) } );
-			return;
-		}
+		onRequestComplete: function( error, data ) {
+			this.setState( { submittingCode: false } );
+			if ( error ) {
+				this.setState( {
+					lastError: this.props.translate(
+						'Unable to validate codes right now. Please try again later.'
+					),
+				} );
+				return;
+			}
 
-		if ( ! data.success ) {
-			this.setState( { lastError: this.translate( 'You entered an invalid code. Please try again.' ), } );
-			return;
-		}
+			if ( ! data.success ) {
+				this.setState( {
+					lastError: this.props.translate( 'You entered an invalid code. Please try again.' ),
+				} );
+				return;
+			}
 
-		this.props.onSuccess();
-	},
+			this.props.onSuccess();
+		},
 
-	onPrintAgain: function( event ) {
-		event.preventDefault();
-		this.props.onPrintAgain();
-	},
+		onPrintAgain: function( event ) {
+			event.preventDefault();
+			this.props.onPrintAgain();
+		},
 
-	clearLastError: function() {
-		this.setState( { lastError: false } );
-	},
+		clearLastError: function() {
+			this.setState( { lastError: false } );
+		},
 
-	onClickPrintButton: function( event ) {
-		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Again Button' );
-		this.onPrintAgain( event );
-	},
+		onClickPrintButton: function( event ) {
+			analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Again Button' );
+			this.onPrintAgain( event );
+		},
 
-	possiblyRenderPrintAgainButton: function() {
-		if ( ! this.props.onPrintAgain ) {
-			return null;
-		}
+		possiblyRenderPrintAgainButton: function() {
+			if ( ! this.props.onPrintAgain ) {
+				return null;
+			}
 
-		return (
-			<FormButton
-				className="security-2fa-backup-codes-prompt__print"
-				disabled={ this.state.submittingCode }
-				isPrimary={ false }
-				onClick={ this.onClickPrintButton }
-				type="button"
-			>
-				{ this.translate( "Didn't Print The Codes?" ) }
-			</FormButton>
-		);
-	},
-
-	possiblyRenderError: function() {
-		if ( ! this.state.lastError ) {
-			return null;
-		}
-
-		return (
-			<Notice
-				status="is-error"
-				onDismissClick={ this.clearLastError }
-				text={ this.state.lastError }
-			/>
-		);
-	},
-
-	render: function() {
-		return (
-			<form className="security-2fa-backup-codes-prompt" onSubmit={ this.onVerify }>
-				<FormFieldset>
-					<FormLabel htmlFor="backup-code-entry">{ this.translate( 'Type a Backup Code to Verify' ) }</FormLabel>
-					<FormTelInput
-						disabled={ this.state.submittingCode }
-						name="backup-code-entry"
-						autoComplete="off"
-						maxLength="8"
-						placeholder={ constants.eightDigitBackupCodePlaceholder }
-						valueLink={ this.linkState( 'backupCodeEntry' ) }
-						onFocus={ function() {
-							analytics.ga.recordEvent( 'Me', 'Focused On 2fa Backup Codes Confirm Printed Backup Codes Input' );
-						} }
-					/>
-				</FormFieldset>
-
-				{ this.possiblyRenderError() }
-
-				{ this.possiblyRenderPrintAgainButton() }
-
+			return (
 				<FormButton
-					className="security-2fa-backup-codes-prompt__verify"
-					disabled={ this.getSubmitDisabled() }
-					onClick={ function() {
-						analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Backup Codes Verify Button' );
-					} }
+					className="security-2fa-backup-codes-prompt__print"
+					disabled={ this.state.submittingCode }
+					isPrimary={ false }
+					onClick={ this.onClickPrintButton }
+					type="button"
 				>
-					{ this.state.submittingCode ? this.translate( 'Verifying…' ) : this.translate( 'Verify' ) }
+					{ this.props.translate( "Didn't Print The Codes?" ) }
 				</FormButton>
-			</form>
-		);
-	}
-} );
+			);
+		},
+
+		possiblyRenderError: function() {
+			if ( ! this.state.lastError ) {
+				return null;
+			}
+
+			return (
+				<Notice
+					status="is-error"
+					onDismissClick={ this.clearLastError }
+					text={ this.state.lastError }
+				/>
+			);
+		},
+
+		render: function() {
+			return (
+				<form className="security-2fa-backup-codes-prompt" onSubmit={ this.onVerify }>
+					<FormFieldset>
+						<FormLabel htmlFor="backup-code-entry">
+							{ this.props.translate( 'Type a Backup Code to Verify' ) }
+						</FormLabel>
+						<FormTelInput
+							disabled={ this.state.submittingCode }
+							name="backup-code-entry"
+							autoComplete="off"
+							maxLength="8"
+							placeholder={ constants.eightDigitBackupCodePlaceholder }
+							valueLink={ this.linkState( 'backupCodeEntry' ) }
+							onFocus={ function() {
+								analytics.ga.recordEvent(
+									'Me',
+									'Focused On 2fa Backup Codes Confirm Printed Backup Codes Input'
+								);
+							} }
+						/>
+					</FormFieldset>
+
+					{ this.possiblyRenderError() }
+
+					{ this.possiblyRenderPrintAgainButton() }
+
+					<FormButton
+						className="security-2fa-backup-codes-prompt__verify"
+						disabled={ this.getSubmitDisabled() }
+						onClick={ function() {
+							analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Backup Codes Verify Button' );
+						} }
+					>
+						{ this.state.submittingCode
+							? this.props.translate( 'Verifying…' )
+							: this.props.translate( 'Verify' ) }
+					</FormButton>
+				</form>
+			);
+		},
+	} )
+);

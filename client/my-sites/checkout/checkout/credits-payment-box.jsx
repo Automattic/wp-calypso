@@ -1,10 +1,10 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
-import {
-	some,
-} from 'lodash';
+import { localize } from 'i18n-calypso';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,8 +19,8 @@ import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 
-var CreditsPaymentBox = React.createClass( {
-	content: function() {
+class CreditsPaymentBox extends React.Component {
+	content = () => {
 		const { cart, transactionStep } = this.props;
 		const hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } );
 		const showPaymentChatButton =
@@ -31,36 +31,36 @@ var CreditsPaymentBox = React.createClass( {
 		return (
 			<form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
-					<h6>{ this.translate( 'WordPress.com Credits' ) }</h6>
+					<h6>
+						{ this.props.translate( 'WordPress.com Credits' ) }
+					</h6>
 
 					<span>
-						{ this.translate( 'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
+						{ this.props.translate(
+							'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
 							{
 								args: {
 									credits: cart.credits,
-									currency: cart.currency
+									currency: cart.currency,
 								},
 								components: {
-									strong: <strong />
-								}
-							} )
-						}
+									strong: <strong />,
+								},
+							}
+						) }
 					</span>
 				</div>
 
 				<TermsOfService />
 
 				<div className="payment-box-actions">
-					<PayButton
-						cart={ this.props.cart }
-						transactionStep={ transactionStep } />
-					{
-						showPaymentChatButton &&
+					<PayButton cart={ this.props.cart } transactionStep={ transactionStep } />
+					{ showPaymentChatButton &&
 						<PaymentChatButton
 							paymentType="credits"
 							cart={ cart }
-							transactionStep={ transactionStep } />
-					}
+							transactionStep={ transactionStep }
+						/> }
 				</div>
 
 				<CartCoupon cart={ cart } />
@@ -68,17 +68,15 @@ var CreditsPaymentBox = React.createClass( {
 				<CartToggle />
 			</form>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
-			<PaymentBox
-				classSet="credits-payment-box"
-				title={ this.translate( 'Secure Payment' ) }>
+			<PaymentBox classSet="credits-payment-box" title={ this.props.translate( 'Secure Payment' ) }>
 				{ this.content() }
 			</PaymentBox>
 		);
 	}
-} );
+}
 
-module.exports = CreditsPaymentBox;
+module.exports = localize( CreditsPaymentBox );

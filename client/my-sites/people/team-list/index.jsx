@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,141 +20,158 @@ var Card = require( 'components/card' ),
 	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' );
 import ListEnd from 'components/list-end';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Module Variables
  */
-var Team = React.createClass( {
-	displayName: 'Team',
+var Team = localize(
+	/**
+ * Module Variables
+ */
+	class extends React.Component {
+		static displayName = 'Team';
 
-	getInitialState: function() {
-		return {
-			bulkEditing: false
+		state = {
+			bulkEditing: false,
 		};
-	},
 
-	isLastPage() {
-		return this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
-	},
+		isLastPage = () => {
+			return this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
+		};
 
-	render: function() {
-		var key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
-			headerText = this.translate( 'Team', { context: 'A navigation label.' } ),
-			listClass = ( this.state.bulkEditing ) ? 'bulk-editing' : null,
-			people;
+		render() {
+			var key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
+				headerText = this.props.translate( 'Team', { context: 'A navigation label.' } ),
+				listClass = this.state.bulkEditing ? 'bulk-editing' : null,
+				people;
 
-		if ( this.props.fetchInitialized && ! this.props.users.length && this.props.fetchOptions.search && ! this.props.fetchingUsers ) {
-			return (
-				<NoResults
-					image="/calypso/images/people/mystery-person.svg"
-					text={
-						this.translate( 'No results found for {{em}}%(searchTerm)s{{/em}}',
-							{
-								args: { searchTerm: this.props.search },
-								components: { em: <em /> }
-							}
-						)
-					} />
-			);
-		}
-
-		if ( this.props.site && this.props.users.length ) {
-			if ( this.props.search && this.props.totalUsers ) {
-				headerText = this.translate(
-					'%(numberPeople)d Person Matching {{em}}"%(searchTerm)s"{{/em}}',
-					'%(numberPeople)d People Matching {{em}}"%(searchTerm)s"{{/em}}',
-					{
-						count: this.props.users.length,
-						args: {
-							numberPeople: this.props.totalUsers,
-							searchTerm: this.props.search
-						},
-						components: {
-							em: <em />
-						}
-					}
+			if (
+				this.props.fetchInitialized &&
+				! this.props.users.length &&
+				this.props.fetchOptions.search &&
+				! this.props.fetchingUsers
+			) {
+				return (
+					<NoResults
+						image="/calypso/images/people/mystery-person.svg"
+						text={ this.props.translate( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
+							args: { searchTerm: this.props.search },
+							components: { em: <em /> },
+						} ) }
+					/>
 				);
 			}
 
-			people = (
-				<InfiniteList
-					key={ key }
-					items={ this.props.users }
-					className="people-selector__infinite-list"
-					ref="infiniteList"
-					fetchingNextPage={ this.props.fetchingUsers }
-					lastPage={ this.isLastPage() }
-					fetchNextPage={ this._fetchNextPage }
-					getItemRef={ this._getPersonRef }
-					renderLoadingPlaceholders={ this._renderLoadingPeople }
-					renderItem={ this._renderPerson }
-					guessedItemHeight={ 126 }>
-				</InfiniteList>
+			if ( this.props.site && this.props.users.length ) {
+				if ( this.props.search && this.props.totalUsers ) {
+					headerText = this.props.translate(
+						'%(numberPeople)d Person Matching {{em}}"%(searchTerm)s"{{/em}}',
+						'%(numberPeople)d People Matching {{em}}"%(searchTerm)s"{{/em}}',
+						{
+							count: this.props.users.length,
+							args: {
+								numberPeople: this.props.totalUsers,
+								searchTerm: this.props.search,
+							},
+							components: {
+								em: <em />,
+							},
+						}
+					);
+				}
+
+				people = (
+					<InfiniteList
+						key={ key }
+						items={ this.props.users }
+						className="people-selector__infinite-list"
+						ref="infiniteList"
+						fetchingNextPage={ this.props.fetchingUsers }
+						lastPage={ this.isLastPage() }
+						fetchNextPage={ this._fetchNextPage }
+						getItemRef={ this._getPersonRef }
+						renderLoadingPlaceholders={ this._renderLoadingPeople }
+						renderItem={ this._renderPerson }
+						guessedItemHeight={ 126 }
+					/>
+				);
+			} else {
+				people = this._renderLoadingPeople();
+			}
+
+			return (
+				<div>
+					<PeopleListSectionHeader
+						label={ headerText }
+						site={ this.props.site }
+						count={
+							this.props.fetchingUsers || this.props.fetchOptions.search
+								? null
+								: this.props.totalUsers
+						}
+					/>
+					<Card className={ listClass }>
+						{ people }
+					</Card>
+					{ this.isLastPage() && <ListEnd /> }
+				</div>
 			);
-		} else {
-			people = this._renderLoadingPeople();
 		}
 
-		return (
-			<div>
-				<PeopleListSectionHeader
-					label={ headerText }
+		_renderPerson = user => {
+			return (
+				<PeopleListItem
+					key={ user.ID }
+					user={ user }
+					type="user"
 					site={ this.props.site }
-					count={ this.props.fetchingUsers || this.props.fetchOptions.search ? null : this.props.totalUsers } />
-				<Card className={ listClass }>
-					{ people }
-				</Card>
-				{ this.isLastPage() && <ListEnd /> }
-			</div>
-		);
-	},
+					isSelectable={ this.state.bulkEditing }
+				/>
+			);
+		};
 
-	_renderPerson: function( user ) {
-		return (
-			<PeopleListItem
-				key={ user.ID }
-				user={ user }
-				type="user"
-				site={ this.props.site }
-				isSelectable={ this.state.bulkEditing } />
-		);
-	},
+		_fetchNextPage = () => {
+			var offset = this.props.users.length;
+			var fetchOptions = Object.assign( {}, this.props.fetchOptions, { offset: offset } );
+			analytics.ga.recordEvent(
+				'People',
+				'Fetched more users with infinite list',
+				'offset',
+				offset
+			);
+			debug( 'fetching next batch of users' );
+			UsersActions.fetchUsers( fetchOptions );
+		};
 
-	_fetchNextPage: function() {
-		var offset = this.props.users.length;
-		var fetchOptions = Object.assign( {}, this.props.fetchOptions, { offset: offset } );
-		analytics.ga.recordEvent( 'People', 'Fetched more users with infinite list', 'offset', offset );
-		debug( 'fetching next batch of users' );
-		UsersActions.fetchUsers( fetchOptions );
-	},
+		_getPersonRef = user => {
+			return 'user-' + user.ID;
+		};
 
-	_getPersonRef: function( user ) {
-		return 'user-' + user.ID;
-	},
-
-	_renderLoadingPeople: function() {
-		return <PeopleListItem key="people-list-item-placeholder" />;
+		_renderLoadingPeople = () => {
+			return <PeopleListItem key="people-list-item-placeholder" />;
+		};
 	}
+);
 
-} );
+module.exports = class extends React.Component {
+	static displayName = 'TeamList';
 
-module.exports = React.createClass( {
-	displayName: 'TeamList',
-
-	render: function() {
+	render() {
 		var fetchOptions = {
 			siteId: this.props.site && this.props.site.ID,
 			order: 'ASC',
 			order_by: 'display_name',
-			search: ( this.props.search ) ? '*' + this.props.search + '*' : null,
-			search_columns: [ 'display_name', 'user_login' ]
+			search: this.props.search ? '*' + this.props.search + '*' : null,
+			search_columns: [ 'display_name', 'user_login' ],
 		};
 
 		Object.freeze( fetchOptions );
 
 		return (
-			<SiteUsersFetcher fetchOptions={ fetchOptions } >
+			<SiteUsersFetcher fetchOptions={ fetchOptions }>
 				<Team { ...this.props } />
 			</SiteUsersFetcher>
 		);
 	}
-} );
+};

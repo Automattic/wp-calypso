@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,6 +8,8 @@ var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
 	Gridicon = require( 'gridicons' );
 
+var createReactClass = require( 'create-react-class' );
+
 /**
  * Internal dependencies
  */
@@ -14,8 +17,7 @@ var eventRecorder = require( 'me/event-recorder' ),
 	errorNotice = require( 'state/notices/actions' ).errorNotice,
 	Button = require( 'components/button' );
 
-const ApplicationPasswordsItem = React.createClass( {
-
+const ApplicationPasswordsItem = createReactClass( {
 	displayName: 'ApplicationPasswordsItem',
 
 	mixins: [ eventRecorder ],
@@ -30,46 +32,57 @@ const ApplicationPasswordsItem = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			removingPassword: false
+			removingPassword: false,
 		};
 	},
 
 	removeApplicationPassword: function() {
 		this.setState( { removingPassword: true } );
 
-		this.props.appPasswordsData.revoke( parseInt( this.props.password.ID, 10 ), function( error ) {
-			if ( error && 'unknown_application_password' !== error.error ) {
-				this.setState( { removingPassword: false } );
-				this.props.errorNotice( this.translate( 'The application password was not successfully deleted. Please try again.' ) );
-			}
-		}.bind( this ) );
+		this.props.appPasswordsData.revoke(
+			parseInt( this.props.password.ID, 10 ),
+			function( error ) {
+				if ( error && 'unknown_application_password' !== error.error ) {
+					this.setState( { removingPassword: false } );
+					this.props.errorNotice(
+						this.props.translate(
+							'The application password was not successfully deleted. Please try again.'
+						)
+					);
+				}
+			}.bind( this )
+		);
 	},
 
 	render: function() {
 		var password = this.props.password;
 		return (
-			<li className="application-password-item__password" key={ password.ID } >
+			<li className="application-password-item__password" key={ password.ID }>
 				<div className="application-password-item__details">
-					<h2 className="application-password-item__name">{ password.name }</h2>
+					<h2 className="application-password-item__name">
+						{ password.name }
+					</h2>
 					<p className="application-password-item__generated">
-						{
-							this.translate( 'Generated on %s', {
-								args: this.moment( password.generated ).format( 'MMM DD, YYYY @ h:mm a' )
-							} )
-						}
+						{ this.props.translate( 'Generated on %s', {
+							args: this.moment( password.generated ).format( 'MMM DD, YYYY @ h:mm a' ),
+						} ) }
 					</p>
 				</div>
-				<Button borderless className="application-password-item__revoke"
-					onClick={ this.recordClickEvent( 'Remove Application Password Button', this.removeApplicationPassword ) }
+				<Button
+					borderless
+					className="application-password-item__revoke"
+					onClick={ this.recordClickEvent(
+						'Remove Application Password Button',
+						this.removeApplicationPassword
+					) }
 				>
 					<Gridicon icon="cross" />
 				</Button>
 			</li>
 		);
-	}
+	},
 } );
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { errorNotice }, dispatch )
-)( ApplicationPasswordsItem );
+export default connect( null, dispatch => bindActionCreators( { errorNotice }, dispatch ) )(
+	localize( ApplicationPasswordsItem )
+);
