@@ -1,8 +1,3 @@
-.conversations__comment-list-ul {
-	list-style-type: none;
-	margin-left: 0;
-}
-
 .conversations__stream .card.is-compact {
 	padding: 0;
 }
@@ -14,7 +9,8 @@
 }
 
 .conversations__stream .reader-post-card__title {
-	height: 16px * 1.7;
+	line-height: 1.2;
+	max-height: 16px * 1.6;
 	overflow: hidden;
 	position: relative;
 	width: calc( 100% - 120px );
@@ -23,14 +19,31 @@
 	&::after{
 		@include long-content-fade( $size: 10% );
 	}
+
+	.reader-post-card__title-link {
+		font-size: 17px;
+	}
 }
 
-// Hides Follow button in Conversations stream
-.conversations__stream .follow-button {
-	display: none;
+.conversations__stream .reader-featured-image {
+	max-height: 64px;
 }
 
-// Hides tags in Coversations stream
+.conversations__stream .reader-post-card.card:not(:first-child) {
+	margin-top: 16px;
+}
+
+// Hides Follow button and tags in Conversations stream
+.conversations__stream .follow-button,
 .conversations__stream .reader-post-card__tags {
 	display: none;
+}
+
+.conversations__stream .comments__comment-author .gravatar {
+	top: 5px;
+}
+
+.conversations__comment-list-ul {
+	list-style-type: none;
+	margin-left: 0;
 }
