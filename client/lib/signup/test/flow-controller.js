@@ -1,7 +1,7 @@
 /** @jest-environment jsdom */
 jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'signup/config/flows', () => require( './signup/config/flows' ) );
-jest.mock( 'signup/config/steps', () => require( './signup/config/steps' ) );
+jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
+jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 
 /**
  * External dependencies

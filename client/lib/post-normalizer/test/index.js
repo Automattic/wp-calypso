@@ -1,5 +1,5 @@
 /** @jest-environment jsdom */
-jest.mock( 'lib/safe-image-url', () => require( './lib/safe-image-url' ) );
+jest.mock( 'lib/safe-image-url', () => require( './mocks/lib/safe-image-url' ) );
 
 /**
  * External dependencies

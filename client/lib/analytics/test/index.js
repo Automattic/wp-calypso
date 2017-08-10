@@ -1,9 +1,9 @@
 /** @jest-environment jsdom */
-jest.mock( 'config', () => require( './config' ) );
+jest.mock( 'config', () => require( './mocks/config' ) );
 jest.mock( 'lib/analytics/ad-tracking', () => ( {
 	retarget: () => {}
 } ) );
-jest.mock( 'lib/load-script', () => require( './lib/load-script' ) );
+jest.mock( 'lib/load-script', () => require( './mocks/lib/load-script' ) );
 
 /**
  * External dependencies

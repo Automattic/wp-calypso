@@ -1,4 +1,4 @@
-jest.mock( 'lib/wp', () => require( './lib/wp' ) );
+jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
 /**
  * External Dependencies

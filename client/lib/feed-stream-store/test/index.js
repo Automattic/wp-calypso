@@ -1,8 +1,8 @@
 /** @format */
 jest.mock( 'lib/analytics', () => ( {} ) );
-jest.mock( 'lib/data-poller', () => require( './lib/data-poller' ) );
-jest.mock( 'lib/post-normalizer', () => require( './lib/post-normalizer' ) );
-jest.mock( 'lib/wp', () => require( './lib/wp' ) );
+jest.mock( 'lib/data-poller', () => require( './mocks/lib/data-poller' ) );
+jest.mock( 'lib/post-normalizer', () => require( './mocks/lib/post-normalizer' ) );
+jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 jest.mock( 'reader/stats', () => ( {
 	recordTrack: require( 'sinon' ).spy()
 } ) );

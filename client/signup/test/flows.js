@@ -3,7 +3,7 @@ jest.mock( 'lib/abtest', () => ( {
 	abtest: () => {},
 	getABTestVariation: () => null
 } ) );
-jest.mock( 'lib/user', () => require( './lib/user' ) );
+jest.mock( 'lib/user', () => require( './mocks/lib/user' ) );
 
 /**
  * External dependencies

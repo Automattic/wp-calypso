@@ -1,7 +1,7 @@
 /** @jest-environment jsdom */
 jest.mock( 'lib/analytics', () => ( {} ) );
-jest.mock( 'lib/post-normalizer', () => require( './lib/post-normalizer' ) );
-jest.mock( 'lib/wp', () => require( './lib/wp' ) );
+jest.mock( 'lib/post-normalizer', () => require( './mocks/lib/post-normalizer' ) );
+jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
 /**
  * External Dependencies
