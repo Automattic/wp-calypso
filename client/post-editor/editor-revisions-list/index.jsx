@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import { map } from 'lodash';
-import React, { PureComponent, PropTypes } from 'react';
-import { connect } from 'react-redux';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
