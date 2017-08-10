@@ -245,9 +245,12 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		// Rebrand Cities thanks page
-		if ( isRebrandCitiesSiteUrl( this.props.selectedSite.URL ) && PLAN_BUSINESS === this.props.selectedSite.plan.product_slug ) {
+		if (
+			isRebrandCitiesSiteUrl( this.props.selectedSite.slug ) &&
+			PLAN_BUSINESS === this.props.selectedSite.plan.product_slug
+		) {
 			return (
-				<RebrandCitiesThankYou />
+				<RebrandCitiesThankYou receipt={ this.props.receipt } />
 			);
 		}
 
