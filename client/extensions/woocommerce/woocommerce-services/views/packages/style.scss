@@ -36,9 +36,15 @@
 	}
 }
 
-& .packages__add-edit-dialog {
+&.packages__add-edit-dialog {
+	max-width: 600px;
+
 	.form-setting-explanation {
 		display: inline-block;
+	}
+
+	.field-error__input-validation {
+		padding-left: 0;
 	}
 }
 
@@ -228,8 +234,4 @@
 
 .packages__delete {
 	float: left;
-}
-
-&.packages__add-edit-dialog {
-	max-width: 600px;
 }
