@@ -28,11 +28,21 @@ import { selectSiteId } from 'state/help/actions';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import wpcomLib from 'lib/wp';
 import HelpResults from 'me/help/help-results';
+import {
+	bumpStat,
+	recordTracksEvent,
+	composeAnalytics,
+} from 'state/analytics/actions';
 
 /**
  * Module variables
  */
 const wpcom = wpcomLib.undocumented();
+
+const trackSibylClick = ( event, helpLink ) => composeAnalytics(
+	bumpStat( 'sibyl_question_clicks', helpLink.id ),
+	recordTracksEvent( 'calypso_sibyl_question_click', {} )
+);
 
 export const HelpContactForm = React.createClass( {
 	mixins: [ LinkedStateMixin, PureRenderMixin ],
@@ -206,19 +216,6 @@ export const HelpContactForm = React.createClass( {
 	},
 
 	/**
-	 * Tracks clicks on the questions returned by Sibyl.
-	 * @param {object} event Click event
-	 * @param {object} helpLink Help link, including id for tracking
-	 */
-	trackSibylClick( event, helpLink ) {
-		// bump the clicks stat for the question in MC
-		analytics.mc.bumpStat( 'sibyl_question_clicks', helpLink.id );
-		// track that the user clicked the question, so we can see how
-		// effective questions are at preventing unnessecary chat sessions
-		analytics.tracks.recordEvent( 'calypso_sibyl_question_click' );
-	},
-
-	/**
 	 * Render the contact form
 	 * @return {object} ReactJS JSX object
 	 */
@@ -305,7 +302,7 @@ export const HelpContactForm = React.createClass( {
 					header={ translate( 'Do you want the answer to any of these questions?' ) }
 					helpLinks={ this.state.qanda }
 					iconTypeDescription="book"
-					onClick={ this.trackSibylClick }
+					onClick={ this.props.trackSibylClick }
 				/>
 
 				<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>{ buttonLabel }</FormButton>
@@ -319,7 +316,8 @@ const mapStateToProps = ( state ) => ( {
 } );
 
 const mapDispatchToProps = {
-	onChangeSite: selectSiteId
+	onChangeSite: selectSiteId,
+	trackSibylClick
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpContactForm ) );
