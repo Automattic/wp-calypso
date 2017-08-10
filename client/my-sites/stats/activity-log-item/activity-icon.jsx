@@ -94,6 +94,7 @@ export default class ActivityIcon extends PureComponent {
 		const suffix = name.split( '__' )[ 1 ];
 		switch ( suffix ) {
 			case 'deleted':
+			case 'error':
 			case 'trashed':
 				return 'is-error';
 
