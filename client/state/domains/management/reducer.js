@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { merge, stubFalse, stubTrue } from 'lodash';
+import { isArray, merge, omit, stubFalse, stubTrue } from 'lodash';
 
 /**
  * Internal dependencies
@@ -76,10 +76,17 @@ export const isSaving = createReducer( {}, {
  * @return {Object}        Updated state
  */
 export const items = createReducer( {}, {
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE ]: ( state, { data } ) => ( { ...state, _contactDetailsCache: data } ),
-	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE ]: ( state, { data } ) => {
-		return merge( {}, state, { _contactDetailsCache: data } );
-	},
+	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE ]:
+		( state, { data } ) =>
+			( { ...state, _contactDetailsCache: sanitizeExtra( data ) } ),
+	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE ]:
+		( state, { data } ) => {
+			return merge(
+				{},
+				state,
+				{ _contactDetailsCache: sanitizeExtra( data ) }
+			);
+		},
 	[ DOMAIN_MANAGEMENT_WHOIS_RECEIVE ]: ( state, { domain, whoisData } ) => ( { ...state, [ domain ]: whoisData } ),
 	[ DOMAIN_MANAGEMENT_WHOIS_UPDATE ]: ( state, { domain, whoisData } ) => {
 		return merge( {}, state, { [ domain ]: { ...state[ domain ], ...whoisData } } );
@@ -92,3 +99,29 @@ export default combineReducers( {
 	isRequestingWhois,
 	isSaving
 } );
+
+/**
+ * Drop data.extra if it's an array
+ *
+ * Assigning extra as an array (due to a bug in the server) leads to a
+ * a really weird state that effectively disables the extra form for the user
+ * permanently.
+ *
+ * These values will be persisted locally, so we need to handle them here
+ * even if we catch them all on the backend.
+ *
+ * In case you're curios, Here's the weirdness:
+ *
+ *   weird = Object.assign( [1,2,3], { foo:'bar' } )
+ *   // [1, 2, 3, foo: "bar"] (wat?)
+ *   weird.map( v => v );
+ *   // [1, 2, 3] (no foo for you!)
+ *
+ * @param  {Object} data   Potential contact details
+ * @return {Object}        Sanitized contact details
+ */
+function sanitizeExtra( data ) {
+	return data && isArray( data.extra )
+		? omit( data, 'extra' )
+		: data;
+}
