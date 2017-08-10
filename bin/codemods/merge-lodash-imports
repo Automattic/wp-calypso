@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*
-	This codemod converts modular lodash imports to ES2015-style imports
+	This codemod merges multiple named lodash imports into one
 
 	How to use:
 	./bin/codemods/merge-lodash-imports path-to-transform/
