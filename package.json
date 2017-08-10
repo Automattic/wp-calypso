@@ -201,7 +201,7 @@
     "codemod": "node bin/codemods/run",
     "predashboard": "npm run -s install-if-deps-outdated",
     "dashboard": "cross-env DASHBOARD=1 webpack-dashboard -- npm start",
-    "distclean": "npm run -s clean && lerna clean --yes",
+    "distclean": "npm run -s clean && lerna clean --yes && npm run -s rm -- node_modules",
     "docker": "docker run -it --name wp-calypso --rm -p 80:3000 -e NODE_ENV=wpcalypso -e CALYPSO_ENV=wpcalypso wp-calypso",
     "env": "cross-env NODE_PATH=$NODE_PATH:server:client:.",
     "eslint-branch": "node bin/eslint-branch.js",
