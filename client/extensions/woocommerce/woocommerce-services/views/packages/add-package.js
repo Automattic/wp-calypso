@@ -35,7 +35,9 @@ const getDialogButtons = ( mode, dismissModal, savePackage, onRemove, translate 
 	if ( 'add' !== mode ) {
 		buttons.unshift( {
 			action: 'delete',
-			label: <span><Gridicon icon="trash" /> { translate( 'Delete this package' ) }</span>,
+			label: <span>{ translate( '{{icon/}} Delete this package', { components: {
+				icon: <Gridicon icon="trash" />,
+			} } ) }</span>,
 			onClick: onRemove,
 			additionalClassNames: 'packages__delete is-scary is-borderless'
 		} );
