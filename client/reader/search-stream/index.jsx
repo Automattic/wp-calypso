@@ -253,7 +253,7 @@ const wrapWithMain = Component => props => {
 	const verticalNav = config.isEnabled( 'reader/vertical-nav' );
 	return (
 		<div>
-			{ verticalNav && <Topbar /> }
+			{ verticalNav && <Topbar { ...props } /> }
 			<ReaderMain
 				className={ classnames( 'search-stream search-stream__with-sites', {
 					'vertical-nav': verticalNav,

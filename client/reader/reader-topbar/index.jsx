@@ -15,7 +15,7 @@ import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 import NavItem from 'components/section-nav/item';
 import SearchInput from 'components/search';
-import { recordTrack } from 'reader/stats';
+import { recordTrack, recordAction } from 'reader/stats';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import { getReaderFollowedTags, getReaderTeams } from 'state/selectors';
@@ -25,6 +25,9 @@ import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags'
 import QueryReaderLists from 'components/data/query-reader-lists';
 import QueryReaderTeams from 'components/data/query-reader-teams';
 import withDimensions from 'lib/with-dimensions';
+import SegmentedControl from 'components/segmented-control';
+import { addQueryArgs } from 'lib/url';
+import ControlItem from 'components/segmented-control/item';
 
 export const NAV_TYPES = {
 	FOLLOWED: 'Followed',
@@ -38,15 +41,8 @@ export const NAV_TYPES = {
 
 const WIDE_DISPLAY_CUTOFF = 660;
 
-const handleSearch = query => {
-	recordTrack( 'calypso_reader_search_from_topbar', {
-		query,
-	} );
-
-	if ( trim( query ) !== '' ) {
-		page( '/read/search?q=' + encodeURIComponent( query ) + '&focus=1' );
-	}
-};
+const updateQueryArg = params =>
+	page.replace( addQueryArgs( params, window.location.pathname + window.location.search ) );
 
 class ReaderTopbar extends Component {
 	static propTypes = {
@@ -70,9 +66,43 @@ class ReaderTopbar extends Component {
 	handleLikedSelected = () => page( '/activities/likes' );
 	handleSearchOpen = () => this.setState( { searchOpen: true } );
 	handleSearchClosed = () => this.setState( { searchOpen: false } );
+	handleSearch = newValue => {
+		const trimmedValue = trim( newValue ).substring( 0, 1024 );
+		if (
+			( trimmedValue !== '' && trimmedValue.length > 1 && trimmedValue !== this.props.query ) ||
+			newValue === ''
+		) {
+			recordTrack( 'calypso_reader_search_from_topbar', {
+				query: newValue,
+			} );
+			updateQueryArg( { q: newValue } );
+			window.scrollTo( 0, 0 );
+		}
+	};
+
+	useRelevanceSort = () => {
+		const sort = 'relevance';
+		recordAction( 'search_page_clicked_relevance_sort' );
+		recordTrack( 'calypso_reader_clicked_search_sort', {
+			query: this.props.query,
+			sort,
+		} );
+		updateQueryArg( { sort } );
+	};
+
+	useDateSort = () => {
+		const sort = 'date';
+		recordAction( 'search_page_clicked_date_sort' );
+		recordTrack( 'calypso_reader_clicked_search_sort', {
+			query: this.props.query,
+			sort,
+		} );
+		updateQueryArg( { sort } );
+	};
 
 	render() {
-		const { translate, followedTags, followedLists, isTeamMember, width } = this.props;
+		const { translate, followedTags, followedLists, isTeamMember, width, query } = this.props;
+		const sortOrder = this.props.postsStore && this.props.postsStore.sortOrder;
 		const wideDisplay = width > WIDE_DISPLAY_CUTOFF;
 		// at small widths when search is active then hide all other nav items
 		const onlyShowSearch = ! wideDisplay && this.state.searchOpen;
@@ -98,6 +128,14 @@ class ReaderTopbar extends Component {
 			selected = NAV_TYPES.FOLLOWED;
 		}
 
+		const TEXT_RELEVANCE_SORT = translate( 'Relevance', {
+			comment: 'A sort order, showing the most relevant posts first.',
+		} );
+
+		const TEXT_DATE_SORT = translate( 'Date', {
+			comment: 'A sort order, showing the most recent posts first.',
+		} );
+
 		return (
 			<div className="reader-topbar">
 				<QueryReaderLists />
@@ -106,14 +144,27 @@ class ReaderTopbar extends Component {
 				<div className="reader-topbar__search">
 					{ this.props.showSearch &&
 						<SearchInput
-							onSearch={ handleSearch }
+							onSearch={ this.handleSearch }
 							delaySearch={ true }
 							delayTimeout={ 500 }
 							placeholder={ 'Search...' }
 							pinned={ ! wideDisplay }
 							onSearchOpen={ this.handleSearchOpen }
 							onSearchClose={ this.handleSearchClosed }
-						/> }
+							initialValue={ query || '' }
+							value={ query || '' }
+						>
+							{ query &&
+								this.state.searchOpen &&
+								<SegmentedControl compact className="search-stream__sort-picker">
+									<ControlItem selected={ sortOrder !== 'date' } onClick={ this.useRelevanceSort }>
+										{ TEXT_RELEVANCE_SORT }
+									</ControlItem>
+									<ControlItem selected={ sortOrder === 'date' } onClick={ this.useDateSort }>
+										{ TEXT_DATE_SORT }
+									</ControlItem>
+								</SegmentedControl> }
+						</SearchInput> }
 				</div>
 				{ ! onlyShowSearch &&
 					<div className="reader-topbar__navigation">
