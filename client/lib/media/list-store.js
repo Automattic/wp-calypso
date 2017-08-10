@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/assign' ),
-	omit = require( 'lodash/omit' ),
-	map = require( 'lodash/map' ),
-	isEqual = require( 'lodash/isEqual' );
+import { assign, isEqual, map, omit } from 'lodash';
 
 /**
  * Internal dependencies

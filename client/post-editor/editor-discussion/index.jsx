@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	get = require( 'lodash/get' ),
-	pick = require( 'lodash/pick' );
+import { get, pick } from 'lodash';
+
+const React = require( 'react' );
 
 /**
  * Internal dependencies

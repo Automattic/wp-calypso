@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { isEqual, toArray, some } from 'lodash';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies

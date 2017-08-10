@@ -1,12 +1,10 @@
 /**
  * External dependencies
  */
+import { includes, isEqual, omit, partition } from 'lodash';
+
 var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:site-users-fetcher' ),
-	omit = require( 'lodash/omit' ),
-	isEqual = require( 'lodash/isEqual' ),
-	includes = require( 'lodash/includes' ),
-	partition = require( 'lodash/partition' );
+	debug = require( 'debug' )( 'calypso:site-users-fetcher' );
 
 /**
  * Internal dependencies

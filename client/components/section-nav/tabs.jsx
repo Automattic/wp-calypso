@@ -1,9 +1,10 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import { debounce } from 'lodash';
+
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	debounce = require( 'lodash/debounce' ),
 	classNames = require( 'classnames' );
 
 /**

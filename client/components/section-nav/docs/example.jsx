@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
+import { forEach, omit } from 'lodash';
+
 var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	forEach = require( 'lodash/forEach' ),
-	omit = require( 'lodash/omit' );
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
  * Internal dependencies

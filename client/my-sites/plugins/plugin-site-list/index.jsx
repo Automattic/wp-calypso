@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
+import { compact } from 'lodash';
+
 var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	compact = require( 'lodash/compact' );
+	classNames = require( 'classnames' );
 
 /**
  * Internal dependencies

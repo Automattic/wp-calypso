@@ -1,15 +1,12 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	clone = require( 'lodash/clone' ),
-	noop = require( 'lodash/noop' ),
-	filter = require( 'lodash/filter' ),
-	findIndex = require( 'lodash/findIndex' );
-
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
+import { clone, filter, findIndex, noop } from 'lodash';
+
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' );
 
 /**
  * Internal dependencies

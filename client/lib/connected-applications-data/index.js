@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
+import { filter, find } from 'lodash';
+
 var debug = require( 'debug' )( 'calypso:connected-applications-data' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	filter = require( 'lodash/filter' ),
-	find = require( 'lodash/find' );
+	Emitter = require( 'lib/mixins/emitter' );
 
 /**
  * Internal dependencies

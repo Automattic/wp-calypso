@@ -1,15 +1,9 @@
 /**
  * External dependencies
  */
-var some = require( 'lodash/some' ),
-	mapValues = require( 'lodash/mapValues' ),
-	includes = require( 'lodash/includes' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	flatten = require( 'lodash/flatten' ),
-	compact = require( 'lodash/compact' ),
-	values = require( 'lodash/values' ),
-	property = require( 'lodash/property' ),
-	i18n = require( 'i18n-calypso' ),
+import { compact, flatten, includes, isEmpty, mapValues, property, some, values } from 'lodash';
+
+var i18n = require( 'i18n-calypso' ),
 	emailValidator = require( 'email-validator' );
 
 function filter( { users, fields } ) {

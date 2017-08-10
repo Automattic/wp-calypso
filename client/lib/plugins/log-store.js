@@ -1,13 +1,9 @@
 /**
  * External dependencies
  */
-var reject = require( 'lodash/reject' ),
-	isArray = require( 'lodash/isArray' ),
-	clone = require( 'lodash/clone' ),
-	indexOf = require( 'lodash/indexOf' ),
-	findIndex = require( 'lodash/findIndex' ),
-	pullAt = require( 'lodash/pullAt' ),
-	debug = require( 'debug' )( 'calypso:my-sites:plugins:log-store' );
+import { clone, findIndex, indexOf, isArray, pullAt, reject } from 'lodash';
+
+var debug = require( 'debug' )( 'calypso:my-sites:plugins:log-store' );
 
 /**
  * Internal dependencies

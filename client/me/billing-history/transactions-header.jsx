@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	uniq = require( 'lodash/uniq' ),
-	map = require( 'lodash/map' ),
-	range = require( 'lodash/range' ),
-	closest = require( 'component-closest' ),
-	last = require( 'lodash/last' ),
-	classNames = require( 'classnames' );
+import { last, map, range, uniq } from 'lodash';
+
 import Gridicon from 'gridicons';
+
+var React = require( 'react' ),
+	closest = require( 'component-closest' ),
+	classNames = require( 'classnames' );
 
 /**
  * Internal dependencies

@@ -1,20 +1,17 @@
 /**
+ * External dependencies
+ */
+import { isEqual } from 'lodash';
+
+var store = require( 'store' ),
+	debug = require( 'debug' )( 'calypso:user' ),
+	config = require( 'config' ), qs = require( 'qs' );
+
+/**
  * Internal dependencies
  */
 import { isSupportUserSession, boot as supportUserBoot } from 'lib/user/support-user-interop';
 
-/**
- * External dependencies
- */
-var store = require( 'store' ),
-	debug = require( 'debug' )( 'calypso:user' ),
-	config = require( 'config' ),
-	qs = require( 'qs' ),
-	isEqual = require( 'lodash/isEqual' );
-
-/**
- * Internal dependencies
- */
 var wpcom = require( 'lib/wp' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	userUtils = require( './shared-utils' ),

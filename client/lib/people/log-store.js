@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:my-sites:people:log-store' ),
-	clone = require( 'lodash/clone' ),
-	find = require( 'lodash/find' ),
-	reject = require( 'lodash/reject' );
+import { clone, find, reject } from 'lodash';
+
+var debug = require( 'debug' )( 'calypso:my-sites:people:log-store' );
 
 /**
  * Internal dependencies

@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
+import { startsWith } from 'lodash';
+
 var React = require( 'react' ),
-	page = require( 'page' ),
-	startsWith = require( 'lodash/startsWith' );
+	page = require( 'page' );
 
 var CartEmpty = React.createClass({
 	render: function() {

@@ -1,5 +1,9 @@
+/**
+ * External dependencies
+ */
+import { wrap } from 'lodash';
+
 var Emitter = require( 'lib/mixins/emitter' ),
-	wrap = require( 'lodash/wrap' ),
 	debug = require( 'debug' )( 'calypso:ticker' );
 
 var ticker = {};

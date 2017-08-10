@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-var assert = require( 'assert' ),
-	assign = require( 'lodash/assign' ),
-	mapValues = require( 'lodash/mapValues' ),
-	constant = require( 'lodash/constant' ),
-	zipObject = require( 'lodash/zipObject' );
+import { assign, constant, mapValues, zipObject } from 'lodash';
+
+var assert = require( 'assert' );
 
 /**
  * Internal dependencies

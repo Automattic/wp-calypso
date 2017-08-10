@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:wpcom-followers-store' ),
-	omit = require( 'lodash/omit' ),
-	endsWith = require( 'lodash/endsWith' );
+import { endsWith, omit } from 'lodash';
+
+var debug = require( 'debug' )( 'calypso:wpcom-followers-store' );
 
 /**
  * Internal dependencies

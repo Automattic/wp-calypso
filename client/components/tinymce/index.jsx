@@ -1,12 +1,12 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import { assign, forEach } from 'lodash';
+
 const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	classnames = require( 'classnames' ),
 	autosize = require( 'autosize' ),
-	forEach = require( 'lodash/forEach' ),
-	assign = require( 'lodash/assign' ),
 	tinymce = require( 'tinymce/tinymce' );
 
 require( 'tinymce/themes/modern/theme.js' );

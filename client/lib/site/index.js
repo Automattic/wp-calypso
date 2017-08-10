@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
+import { find, isEqual, omit } from 'lodash';
+
 var debug = require( 'debug' )( 'calypso:site' ),
-	i18n = require( 'i18n-calypso' ),
-	isEqual = require( 'lodash/isEqual' ),
-	find = require( 'lodash/find' ),
-	omit = require( 'lodash/omit' );
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies

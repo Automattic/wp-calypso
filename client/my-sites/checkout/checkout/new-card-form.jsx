@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	classNames = require( 'classnames' );
+import { isEmpty } from 'lodash';
+
+var React = require( 'react' ), classNames = require( 'classnames' );
 
 /**
  * Internal dependencies

@@ -1,8 +1,9 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import { isEqual } from 'lodash';
+
 var React = require( 'react' ),
-	isEqual = require( 'lodash/isEqual' ),
 	classNames = require( 'classnames' );
 
 /**

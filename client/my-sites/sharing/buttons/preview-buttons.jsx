@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
+import { filter, isEqual } from 'lodash';
+
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	filter = require( 'lodash/filter' ),
-	isEqual = require( 'lodash/isEqual' ),
 	classNames = require( 'classnames' );
 
 /**

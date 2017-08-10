@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
+import { filter, find } from 'lodash';
+
 const React = require( 'react' ),
 	titleCase = require( 'to-title-case' ),
-	find = require( 'lodash/find' ),
-	filter = require( 'lodash/filter' ),
 	classNames = require( 'classnames' );
 
 /**

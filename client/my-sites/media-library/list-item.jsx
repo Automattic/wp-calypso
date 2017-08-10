@@ -1,12 +1,10 @@
 /**
  * External dependencies
  */
+import { assign, isEqual, noop, omit } from 'lodash';
+
 var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	noop = require( 'lodash/noop' ),
-	assign = require( 'lodash/assign' ),
-	omit = require( 'lodash/omit' ),
-	isEqual = require( 'lodash/isEqual' );
+	classNames = require( 'classnames' );
 
 /**
  * Internal dependencies

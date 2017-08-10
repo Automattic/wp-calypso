@@ -1,20 +1,12 @@
 /**
  * External dependencies
  */
-var take = require( 'lodash/take' ),
-	clone = require( 'lodash/clone' ),
-	uniq = require( 'lodash/uniq' ),
-	last = require( 'lodash/last' ),
-	map = require( 'lodash/map' ),
-	difference = require( 'lodash/difference' ),
-	React = require( 'react' ),
+import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
+
+var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	each = require( 'lodash/each' ),
-	identity = require( 'lodash/identity' ),
 	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:token-field' ),
-	some = require( 'lodash/some' ),
-	forEach = require( 'lodash/forEach' );
+	debug = require( 'debug' )( 'calypso:token-field' );
 
 /**
  * Internal dependencies

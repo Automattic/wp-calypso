@@ -1,18 +1,12 @@
 /**
  * External dependencies
  */
+import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } from 'lodash';
+import cookie from 'cookie';
+
 const debug = require( 'debug' ),
-	assign = require( 'lodash/assign' ),
-	isObjectLike = require( 'lodash/isObjectLike' ),
-	times = require( 'lodash/times' ),
-	omit = require( 'lodash/omit' ),
-	pickBy = require( 'lodash/pickBy' ),
-	startsWith = require( 'lodash/startsWith' ),
-	isUndefined = require( 'lodash/isUndefined' ),
 	url = require( 'url' ),
 	qs = require( 'qs' );
-
-import cookie from 'cookie';
 
 /**
  * Internal dependencies

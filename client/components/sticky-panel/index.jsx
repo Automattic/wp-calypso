@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
+import { throttle } from 'lodash';
+
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	throttle = require( 'lodash/throttle' ),
 	classNames = require( 'classnames' );
 
 /**

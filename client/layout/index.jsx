@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
+import { property, sortBy } from 'lodash';
+
 var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
-	classnames = require( 'classnames' ),
-	property = require( 'lodash/property' ),
-	sortBy = require( 'lodash/sortBy' );
+	classnames = require( 'classnames' );
 
 /**
  * Internal dependencies

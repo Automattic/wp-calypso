@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
+import { assign } from 'lodash';
+
 var ReactDomServer = require( 'react-dom/server' ),
 	React = require( 'react' ),
-	assign = require( 'lodash/assign' ),
 	classNames = require( 'classnames' );
 
 /**

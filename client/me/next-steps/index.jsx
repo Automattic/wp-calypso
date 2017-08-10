@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	property = require( 'lodash/property' ),
-	sortBy = require( 'lodash/sortBy' );
+import { property, sortBy } from 'lodash';
+
+var React = require( 'react' );
 
 /**
  * Internal dependencies

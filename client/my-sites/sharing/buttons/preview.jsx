@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	some = require( 'lodash/some' ),
-	filter = require( 'lodash/filter' );
+import { filter, some } from 'lodash';
+
+var React = require( 'react' );
 
 /**
  * Internal dependencies

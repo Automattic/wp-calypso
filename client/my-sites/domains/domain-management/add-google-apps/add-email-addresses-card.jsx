@@ -1,14 +1,11 @@
 /**
  * External dependencies
  */
+import { find, groupBy, isEmpty, map, mapValues } from 'lodash';
+
 const React = require( 'react' ),
 	update = require( 'react-addons-update' ),
-	groupBy = require( 'lodash/groupBy' ),
-	mapValues = require( 'lodash/mapValues' ),
-	map = require( 'lodash/map' ),
-	page = require( 'page' ),
-	find = require( 'lodash/find' ),
-	isEmpty = require( 'lodash/isEmpty' );
+	page = require( 'page' );
 
 /**
  * Internal dependencies

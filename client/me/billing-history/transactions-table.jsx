@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
+import { defer, isEmpty, pick } from 'lodash';
+
 var React = require( 'react' ),
-	defer = require( 'lodash/defer' ),
-	pick = require( 'lodash/pick' ),
-	isEmpty = require( 'lodash/isEmpty' ),
 	titleCase = require( 'to-title-case' ),
 	capitalPDangit = require( 'lib/formatting' ).capitalPDangit;
 

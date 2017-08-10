@@ -1,9 +1,10 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import { isEqual } from 'lodash';
+
 var debug = require( 'debug' )( 'calypso:infinite-list:positions-store' ),
-	Dispatcher = require( 'dispatcher' ),
-	isEqual = require( 'lodash/isEqual' );
+	Dispatcher = require( 'dispatcher' );
 
 /**
  * Internal Dependencies

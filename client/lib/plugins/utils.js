@@ -1,13 +1,9 @@
 /**
  * External dependencies
  */
-var pick = require( 'lodash/pick' ),
-	assign = require( 'lodash/assign' ),
-	map = require( 'lodash/map' ),
-	filter = require( 'lodash/filter' ),
-	transform = require( 'lodash/transform' ),
-	sortBy = require( 'lodash/sortBy' ),
-	sanitizeHtml = require( 'sanitize-html' );
+import { assign, filter, map, pick, sortBy, transform } from 'lodash';
+
+var sanitizeHtml = require( 'sanitize-html' );
 
 /**
  * Internal dependencies

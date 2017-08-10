@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
+import { assign } from 'lodash';
+
 var React = require( 'react' ),
 	TestUtils = require( 'react-addons-test-utils' ),
-	assign = require( 'lodash/assign' ),
 	expect = require( 'chai' ).expect;
 
 /**

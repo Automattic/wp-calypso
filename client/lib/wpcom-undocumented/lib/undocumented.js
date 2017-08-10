@@ -1,15 +1,10 @@
 /**
- * External dependencies.
+ * External dependencies
  */
+import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
+
 var debug = require( 'debug' )( 'calypso:wpcom-undocumented:undocumented' ),
-	isPlainObject = require( 'lodash/isPlainObject' ),
-	clone = require( 'lodash/clone' ),
-	omit = require( 'lodash/omit' ),
-	camelCase = require( 'lodash/camelCase' ),
-	snakeCase = require( 'lodash/snakeCase' ),
-	pick = require( 'lodash/pick' ),
-	url = require( 'url' ),
-	reject = require( 'lodash/reject' );
+	url = require( 'url' );
 
 /**
  * Internal dependencies.

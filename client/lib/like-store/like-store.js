@@ -1,11 +1,12 @@
 /**
+ * External dependencies
+ */
+import { assign, clone, isEqual } from 'lodash';
+
+/**
  * External Dependencies
  */
-var assign = require( 'lodash/assign' ),
-	clone = require( 'lodash/clone' ),
-	config = require( 'config' ),
-	//debug = require( 'debug' )( 'calypso:lib:like-store' ),
-	isEqual = require( 'lodash/isEqual' );
+var config = require( 'config' );
 
 /**
  * Internal dependencies

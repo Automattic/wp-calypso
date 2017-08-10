@@ -3,8 +3,9 @@
  * External dependencies
  */
 
-var isEqual = require( 'lodash/isEqual' ),
-	debug = require( 'debug' )( 'calypso:posts:post-counts-store' );
+import { isEqual } from 'lodash';
+
+var debug = require( 'debug' )( 'calypso:posts:post-counts-store' );
 
 const sum = obj => {
 	return Object.keys( obj )

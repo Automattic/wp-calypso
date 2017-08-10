@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-var throttle = require( 'lodash/throttle' ),
-	SCROLL_CHECK_RATE_IN_MS = 400;
+import { throttle } from 'lodash';
+
+var SCROLL_CHECK_RATE_IN_MS = 400;
 
 module.exports = function( nextPageMethod ) {
 

@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-const assign = require( 'lodash/assign' ),
-	expect = require( 'chai' ).expect;
+import { assign } from 'lodash';
+
+const expect = require( 'chai' ).expect;
 
 /**
  * Internal dependencies

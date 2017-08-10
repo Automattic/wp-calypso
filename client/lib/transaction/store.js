@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-var cloneDeep = require( 'lodash/cloneDeep' ),
-	merge = require( 'lodash/merge' ),
-	assign = require( 'lodash/assign' ),
-	update = require( 'react-addons-update' );
+import { assign, cloneDeep, merge } from 'lodash';
+
+var update = require( 'react-addons-update' );
 
 /**
  * Internal dependencies

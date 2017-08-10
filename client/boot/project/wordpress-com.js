@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
+import { includes, startsWith } from 'lodash';
+
 const React = require( 'react' ),
 	ReactDom = require( 'react-dom' ),
 	store = require( 'store' ),
-	startsWith = require( 'lodash/startsWith' ),
 	debug = require( 'debug' )( 'calypso' ),
-	page = require( 'page' ),
-	includes = require( 'lodash/includes' );
+	page = require( 'page' );
 
 /**
  * Internal dependencies

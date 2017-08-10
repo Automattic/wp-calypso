@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:media' ),
-	assign = require( 'lodash/assign' );
+import { assign } from 'lodash';
+
+var debug = require( 'debug' )( 'calypso:media' );
 
 /**
  * Internal dependencies

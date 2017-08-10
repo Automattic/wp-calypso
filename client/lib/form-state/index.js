@@ -1,22 +1,25 @@
 /**
  * External dependencies
  */
-var isEmpty = require( 'lodash/isEmpty' ),
-	filter = require( 'lodash/filter' ),
-	map = require( 'lodash/map' ),
-	pickBy = require( 'lodash/pickBy' ),
-	property = require( 'lodash/property' ),
-	flatten = require( 'lodash/flatten' ),
-	mapValues = require( 'lodash/mapValues' ),
-	debounce = require( 'lodash/debounce' ),
-	every = require( 'lodash/every' ),
-	assign = require( 'lodash/assign' ),
-	uniqueId = require( 'lodash/uniqueId' ),
-	some = require( 'lodash/some' ),
-	isUndefined = require( 'lodash/isUndefined' ),
-	camelCase = require( 'lodash/camelCase' ),
-	constant = require( 'lodash/constant' ),
-	update = require( 'react-addons-update' );
+import {
+	assign,
+	camelCase,
+	constant,
+	debounce,
+	every,
+	filter,
+	flatten,
+	isEmpty,
+	isUndefined,
+	map,
+	mapValues,
+	pickBy,
+	property,
+	some,
+	uniqueId
+} from 'lodash';
+
+var update = require( 'react-addons-update' );
 
 function Controller( options ) {
 	var debounceWait;

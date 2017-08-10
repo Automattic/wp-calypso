@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/assign' );
+import { assign } from 'lodash';
 
 /**
  * Internal dependencies

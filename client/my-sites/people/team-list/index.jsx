@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
+import { omit } from 'lodash';
+
 var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:people:team-list' ),
-	omit = require( 'lodash/omit' );
+	debug = require( 'debug' )( 'calypso:my-sites:people:team-list' );
 
 /**
  * Internal dependencies

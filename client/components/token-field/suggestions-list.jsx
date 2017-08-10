@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-var map = require( 'lodash/map' ),
-	React = require( 'react' ),
+import { map } from 'lodash';
+
+var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' ),
 	scrollIntoView = require( 'dom-scroll-into-view' );
