@@ -42,7 +42,8 @@ export default class EditorSidebar extends Component {
 	}
 
 	render() {
-		const { isNew,
+		const {
+			isNew,
 			onTrashingPost,
 			onPublish,
 			onSave,
