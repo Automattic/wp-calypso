@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import { cloneDeep } from 'lodash';
 
 export const original = [
