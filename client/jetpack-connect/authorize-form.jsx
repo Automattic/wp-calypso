@@ -29,7 +29,7 @@ import {
 	isRemoteSiteOnSitesList,
 	getAuthAttempts,
 	getSiteIdFromQueryObject,
-	getUserAlreadyConnected,
+	getUserAlreadyConnected
 } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
@@ -160,7 +160,7 @@ export default connect(
 			requestHasXmlrpcError,
 			siteSlug,
 			user: getCurrentUser( state ),
-			userAlreadyConnected: getUserAlreadyConnected( state ),
+			userAlreadyConnected: getUserAlreadyConnected( state )
 		};
 	},
 	{
