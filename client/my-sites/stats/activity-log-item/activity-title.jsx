@@ -353,6 +353,15 @@ class ActivityTitle extends Component {
 			}
 
 			/**
+			 * Rewind
+			 * @FIXME: Need data from API and activity to produce relevant titles
+			 */
+			case 'rewind__complete':
+				return 'A rewind was completed.';
+			case 'rewind__error':
+				return 'There was an error during rewind.';
+
+			/**
 			 * Term
 			 */
 			case 'term__created': {
