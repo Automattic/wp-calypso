@@ -84,7 +84,7 @@ const EditorDrawer = React.createClass( {
 		onSave: PropTypes.func,
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
-		toggleNestedSidebar: PropTypes.func,
+		setNestedSidebar: PropTypes.func,
 	},
 
 	onExcerptChange: function( event ) {
@@ -334,7 +334,7 @@ const EditorDrawer = React.createClass( {
 					status={ postStatus }
 					isPostPrivate={ this.props.isPostPrivate }
 					confirmationSidebarStatus={ this.props.confirmationSidebarStatus }
-					toggleNestedSidebar={ this.props.toggleNestedSidebar }
+					setNestedSidebar={ this.props.setNestedSidebar }
 				/>
 			</Accordion>
 		);

@@ -31,14 +31,14 @@ export default class EditorSidebar extends Component {
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
 		nestedSidebar: NestedSidebarPropType,
-		toggleNestedSidebar: PropTypes.func,
+		setNestedSidebar: PropTypes.func,
 	}
 
 	headerToggleSidebar = () => {
 		if ( this.props.nestedSidebar === NESTED_SIDEBAR_NONE ) {
 			this.props.toggleSidebar();
 		} else {
-			this.props.toggleNestedSidebar( NESTED_SIDEBAR_NONE );
+			this.props.setNestedSidebar( NESTED_SIDEBAR_NONE );
 		}
 	}
 
@@ -56,7 +56,7 @@ export default class EditorSidebar extends Component {
 			isPostPrivate,
 			confirmationSidebarStatus,
 			nestedSidebar,
-			toggleNestedSidebar,
+			setNestedSidebar,
 		} = this.props;
 
 		const sidebarClassNames = classNames(
@@ -86,7 +86,7 @@ export default class EditorSidebar extends Component {
 						onSave={ onSave }
 						isPostPrivate={ isPostPrivate }
 						confirmationSidebarStatus={ confirmationSidebarStatus }
-						toggleNestedSidebar={ toggleNestedSidebar }
+						setNestedSidebar={ setNestedSidebar }
 					/>
 				</SidebarRegion>
 				<SidebarRegion className="editor-sidebar__nested-region" />

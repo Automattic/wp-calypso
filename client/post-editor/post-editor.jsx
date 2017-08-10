@@ -247,7 +247,7 @@ export const PostEditor = React.createClass( {
 		}
 	},
 
-	toggleNestedSidebar: function( nestedSidebar ) {
+	setNestedSidebar: function( nestedSidebar ) {
 		this.setState( { nestedSidebar } );
 	},
 
@@ -404,7 +404,7 @@ export const PostEditor = React.createClass( {
 						onSave={ this.onSave }
 						isPostPrivate={ utils.isPrivate( this.state.post ) }
 						confirmationSidebarStatus={ this.state.confirmationSidebar }
-						toggleNestedSidebar={ this.toggleNestedSidebar }
+						setNestedSidebar={ this.setNestedSidebar }
 						nestedSidebar={ this.state.nestedSidebar }
 						/>
 					{ this.props.isSitePreviewable
