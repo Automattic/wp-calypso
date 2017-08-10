@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import reduce from 'lodash/reduce';
+import { reduce } from 'lodash';
 
 /**
  * Internal Dependencies

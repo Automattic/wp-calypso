@@ -2,8 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import flowRight from 'lodash/flowRight';
-import noop from 'lodash/noop';
+import { flowRight, noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**

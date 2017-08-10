@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { extent as d3Extent } from 'd3-array';
 import { scaleLinear as d3ScaleLinear } from 'd3-scale';

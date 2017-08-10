@@ -3,7 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**

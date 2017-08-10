@@ -3,9 +3,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import isEmpty from 'lodash/isEmpty';
-import isArray from 'lodash/isArray';
-import assign from 'lodash/assign';
+import { assign, isArray, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 
 /**

@@ -11,6 +11,7 @@ import {
 	groupBy,
 	includes,
 	map,
+	isEmpty,
 } from 'lodash';
 
 /**
@@ -39,6 +40,7 @@ import QuerySiteSettings from 'components/data/query-site-settings';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import ActivityLogRewindToggle from './activity-log-rewind-toggle';
+import ListEnd from 'components/list-end';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { rewindRestore as rewindRestoreAction } from 'state/activity-log/actions';
 import {
@@ -309,6 +311,7 @@ class ActivityLog extends Component {
 				<section className="activity-log__wrapper">
 					{ logsGroupedByDay }
 				</section>
+				{ ! isEmpty( logsGroupedByDay ) && <ListEnd /> }
 			</div>
 		);
 	}

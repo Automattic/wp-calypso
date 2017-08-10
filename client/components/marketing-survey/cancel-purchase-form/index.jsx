@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import shuffle from 'lodash/shuffle';
+import { shuffle } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 

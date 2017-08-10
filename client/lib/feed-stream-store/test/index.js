@@ -3,7 +3,7 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
-import set from 'lodash/set';
+import { set } from 'lodash';
 
 /**
  * Internal Dependencies

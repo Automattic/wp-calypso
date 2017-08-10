@@ -7,7 +7,7 @@ import { shallow } from 'enzyme';
 import { assert } from 'chai';
 import { stub, spy } from 'sinon';
 import qs from 'qs';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies

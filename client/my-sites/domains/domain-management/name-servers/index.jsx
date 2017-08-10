@@ -22,7 +22,7 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { WPCOM_DEFAULTS, isWpcomDefaults } from 'lib/domains/nameservers';
 import { getSelectedDomain } from 'lib/domains';
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty } from 'lodash';
 import { errorNotice, successNotice } from 'state/notices/actions';
 
 class NameServers extends React.Component {

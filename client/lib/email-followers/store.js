@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import omit from 'lodash/omit';
+import { omit } from 'lodash';
 const debug = require( 'debug' )( 'calypso:email-followers-store' );
 
 /**

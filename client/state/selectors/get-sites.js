@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { partition, sortBy } from 'lodash/fp';
+import { partition, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,7 +10,7 @@ import createSelector from 'lib/create-selector';
 import { getSite } from 'state/sites/selectors';
 import { getPrimarySiteId } from 'state/selectors';
 
-const sortByNameAndUrl = sortBy( [ 'name', 'URL' ] );
+const sortByNameAndUrl = list => sortBy( list, [ 'name', 'URL' ] );
 
 /**
  * Get all sites
@@ -21,7 +21,7 @@ const sortByNameAndUrl = sortBy( [ 'name', 'URL' ] );
 export default createSelector(
 	( state ) => {
 		const primarySiteId = getPrimarySiteId( state );
-		const [ primarySite, sites ] = partition( { ID: primarySiteId } )( state.sites.items );
+		const [ primarySite, sites ] = partition( state.sites.items, { ID: primarySiteId } );
 
 		return [
 			...primarySite,

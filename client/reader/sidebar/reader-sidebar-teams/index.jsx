@@ -3,7 +3,7 @@
  * External Dependencies
  */
 import React, { Component } from 'react';
-import map from 'lodash/map';
+import { map } from 'lodash';
 
 /**
  * Internal Dependencies

@@ -1,8 +1,6 @@
 import Dispatcher from 'dispatcher';
 import React from 'react';
-import find from 'lodash/find';
-import identity from 'lodash/identity';
-import isFunction from 'lodash/isFunction';
+import { find, identity, isFunction } from 'lodash';
 
 const firstCallable = ( ...args ) => find( args, isFunction );
 const mergeProps = ( ...args ) => Object.assign( {}, ...args );

@@ -3,9 +3,8 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { find, get } from 'lodash';
 import { localize } from 'i18n-calypso';
-import find from 'lodash/find';
-import get from 'lodash/get';
 import Gridicon from 'gridicons';
 import classnames from 'classnames';
 

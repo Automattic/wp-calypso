@@ -24,6 +24,7 @@ import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-place
 import CommentNavigation from '../comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
+import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors';
 import {
@@ -32,6 +33,7 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'state/analytics/actions';
+import { isJetpackSite } from 'state/sites/selectors';
 
 const COMMENTS_PER_PAGE = 20;
 
@@ -354,6 +356,7 @@ export class CommentList extends Component {
 
 	render() {
 		const {
+			isJetpack,
 			isLoading,
 			siteId,
 			siteFragment,
@@ -376,7 +379,17 @@ export class CommentList extends Component {
 
 		return (
 			<div className="comment-list">
-				<QuerySiteCommentsTree siteId={ siteId } status={ status } />
+				{ isJetpack &&
+					<QuerySiteCommentsList
+						number={ 100 }
+						offset={ ( page - 1 ) * COMMENTS_PER_PAGE }
+						siteId={ siteId }
+						status={ status }
+					/>
+				}
+				{ ! isJetpack &&
+					<QuerySiteCommentsTree siteId={ siteId } status={ status } />
+				}
 
 				<CommentNavigation
 					isBulkEdit={ isBulkEdit }
@@ -401,7 +414,7 @@ export class CommentList extends Component {
 							isBulkEdit={ isBulkEdit }
 							commentIsSelected={ this.isCommentSelected( commentId ) }
 							key={ `comment-${ siteId }-${ commentId }` }
-							refreshCommentData={ ! this.hasCommentJustMovedBackToCurrentStatus( commentId ) }
+							refreshCommentData={ ! isJetpack && ! this.hasCommentJustMovedBackToCurrentStatus( commentId ) }
 							replyComment={ this.replyComment }
 							setCommentStatus={ this.setCommentStatus }
 							siteId={ siteId }
@@ -419,17 +432,17 @@ export class CommentList extends Component {
 						line={ emptyMessageLine }
 						title={ emptyMessageTitle }
 					/> }
-
-					{ ! showPlaceholder && ! showEmptyContent &&
-						<Pagination
-							key="comment-list-pagination"
-							page={ page }
-							pageClick={ this.changePage }
-							perPage={ COMMENTS_PER_PAGE }
-							total={ commentsCount }
-						/>
-					}
 				</ReactCSSTransitionGroup>
+
+				{ ! showPlaceholder && ! showEmptyContent &&
+					<Pagination
+						key="comment-list-pagination"
+						page={ page }
+						pageClick={ this.changePage }
+						perPage={ COMMENTS_PER_PAGE }
+						total={ commentsCount }
+					/>
+				}
 			</div>
 		);
 	}
@@ -440,6 +453,7 @@ const mapStateToProps = ( state, { siteId, status } ) => {
 	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
 		comments,
+		isJetpack: isJetpackSite( state, siteId ),
 		isLoading,
 		notices: getNotices( state ),
 		siteId,

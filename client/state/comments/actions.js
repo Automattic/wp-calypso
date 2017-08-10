@@ -56,6 +56,17 @@ export function requestPostComments( {
 	};
 }
 
+/**
+ * Creates an action that request a list of comments for a given query.
+ * Except the two query properties descibed here, this function accepts all query parameters
+ * listed in the API docs:
+ * @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
+ *
+ * @param {Object} query API call parameters
+ * @param {String} query.listType Type of list to return (required as 'site')
+ * @param {Number} query.siteId Site identifier
+ * @returns {Object} Action that requests a comment list
+ */
 export const requestCommentsList = query => ( {
 	type: COMMENTS_LIST_REQUEST,
 	query,

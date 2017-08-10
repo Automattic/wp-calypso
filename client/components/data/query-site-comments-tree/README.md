@@ -2,12 +2,11 @@ Query Site Comments Tree
 ================
 
 `<QuerySiteCommentsTree />` requests that the entire tree of comments for a given site be loaded into Calypso.
-Only the strictly needed comment identifiers will be returned (`commentId`, `parentCommentId`, `postId`).
+Only the strictly needed comment identifiers will be returned (`commentId`, `parentCommentId`, `postId`, `status`).
 
 ## Usage
 
 There is planned support for additional features not yet implemented:
- - paging and limiting
  - specifying type of comments (pingbacks, trackbacks, etc…)
  - ordering
  - Pinghub connection
@@ -27,5 +26,5 @@ const CommentList = ( { comments, siteId } ) => (
 
 | Name | Type | Required? | Default | Description |
 | --- | --- | --- | --- | --- |
-| `siteId` | Number | Yes | | Site for whose recent comments to retrieve |
+| `siteId` | Number | Yes | | Site for whose comments to retrieve |
 | `status` | String | No | `unapproved` | Which comments to retrieve<br /> <ul><li>`all`</li><li>`approved`</li><li>`unapproved`</li><li>`spam`</li><li>`trash`</li></ul> |

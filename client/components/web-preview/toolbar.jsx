@@ -104,6 +104,7 @@ class PreviewToolbar extends Component {
 						className="web-preview__device-switcher"
 						selectedText={ selectedDevice.title }
 						selectedIcon={ <Gridicon size={ 18 } icon={ selectedDevice.icon } /> }
+						ref={ this.setDropdown }
 					>
 						{ devicesToShow.map( device => (
 							<DropdownItem

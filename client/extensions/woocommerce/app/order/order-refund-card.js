@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import React, { Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies

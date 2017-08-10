@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-import mapValues from 'lodash/mapValues';
-import without from 'lodash/without';
-import isEmpty from 'lodash/isEmpty';
-import pickBy from 'lodash/pickBy';
+import { isEmpty, mapValues, pickBy, without } from 'lodash';
 
 /**
  * Internal dependencies

@@ -30,7 +30,7 @@ class ConversationCaterpillarComponent extends React.Component {
 		// Only display authors with a gravatar, and only display each author once
 		const uniqueAuthors = uniqBy( map( comments, 'author' ), 'ID' );
 		const displayedAuthors = takeRight(
-			filter( uniqueAuthors, 'avatar_URL' ),
+			filter( uniqueAuthors, 'has_avatar' ),
 			MAX_GRAVATARS_TO_DISPLAY
 		);
 		const displayedAuthorsCount = size( displayedAuthors );

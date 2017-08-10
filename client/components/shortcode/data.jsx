@@ -3,7 +3,7 @@
  */
 import { cloneElement, Component, PropTypes } from 'react';
 import { Container } from 'flux/utils';
-import pick from 'lodash/pick';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies

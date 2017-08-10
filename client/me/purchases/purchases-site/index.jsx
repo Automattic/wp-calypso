@@ -4,8 +4,7 @@
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import React from 'react';
-import times from 'lodash/times';
-import some from 'lodash/some';
+import { some, times } from 'lodash';
 
 /**
  * Internal dependencies

@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import React from 'react';
-import get from 'lodash/get';
+import { get } from 'lodash';
 import i18n from 'i18n-calypso';
 
 export default {

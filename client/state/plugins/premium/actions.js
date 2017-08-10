@@ -2,8 +2,7 @@
  * External dependencies
  */
 const wpcom = require( 'lib/wp' );
-import keys from 'lodash/keys';
-import get from 'lodash/get';
+import { get, keys } from 'lodash';
 
 /**
  * Internal dependencies

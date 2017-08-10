@@ -1,18 +1,7 @@
 /**
  * External dependencies
  */
-import startsWith from 'lodash/startsWith';
-import {
-	every,
-	get,
-	includes,
-	map,
-	mapKeys,
-	omit,
-	omitBy,
-	some,
-	split
-} from 'lodash';
+import { every, get, includes, map, mapKeys, omit, omitBy, some, split, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -65,12 +54,12 @@ export function normalizeJetpackTheme( theme = {} ) {
 	};
 }
 
- /**
-  * Normalizes a theme obtained from the WordPress.com REST API
-  *
-  * @param  {Object} theme  Theme object
-  * @return {Object}        Normalized theme object
-  */
+/**
+ * Normalizes a theme obtained from the WordPress.com REST API
+ *
+ * @param  {Object} theme  Theme object
+ * @return {Object}        Normalized theme object
+ */
 export function normalizeWpcomTheme( theme ) {
 	const attributesMap = {
 		description_long: 'descriptionLong',

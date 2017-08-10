@@ -15,6 +15,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormToggle from 'components/forms/form-toggle/compact';
+import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
@@ -22,6 +23,7 @@ const CdnTab = ( {
 	fields: {
 		ossdl_cname,
 		ossdl_https,
+		ossdl_off_blog_url,
 		ossdl_off_cdn_url,
 		ossdl_off_exclude,
 		ossdl_off_include_dirs,
@@ -64,6 +66,35 @@ const CdnTab = ( {
 					</FormFieldset>
 
 					<div className="wp-super-cache__cdn-fieldsets">
+						{ ossdl_off_blog_url && get( site, 'URL' ) && ( ossdl_off_blog_url !== get( site, 'URL' ) ) &&
+							<Notice showDismiss={ false } status="is-warning">
+								{ translate(
+									'Your siteurl and homeurl are different. The plugin is using ' +
+									'{{code}}%(ossdl_off_blog_url)s{{/code}} as the homepage URL of your site ' +
+									'but if that is wrong please use the filter "ossdl_off_blog_url" to fix it.',
+									{
+										args: { ossdl_off_blog_url },
+										components: { code: <code /> }
+									}
+								) }
+							</Notice>
+						}
+						<FormFieldset>
+							<FormLabel htmlFor="ossdl_off_blog_url">
+								{ translate( 'Site URL' ) }
+							</FormLabel>
+
+							<FormTextInput
+								disabled={ isRequesting || isSaving || ! ossdlcdn }
+								id="ossdl_off_cdn_url"
+								onChange={ handleChange( 'ossdl_off_blog_url' ) }
+								value={ ossdl_off_blog_url || '' } />
+
+							<FormSettingExplanation>
+								{ translate( 'The URL of your site. No trailing / please.' ) }
+							</FormSettingExplanation>
+						</FormFieldset>
+
 						<FormFieldset>
 							<FormLabel htmlFor="ossdl_off_cdn_url">
 								{ translate( 'Off-site URL' ) }
@@ -182,6 +213,7 @@ const getFormSettings = settings => {
 	return pick( settings, [
 		'ossdl_cname',
 		'ossdl_https',
+		'ossdl_off_blog_url',
 		'ossdl_off_cdn_url',
 		'ossdl_off_exclude',
 		'ossdl_off_include_dirs',

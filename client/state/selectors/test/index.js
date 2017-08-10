@@ -2,9 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import kebabCase from 'lodash/kebabCase';
-import camelCase from 'lodash/camelCase';
-import each from 'lodash/each';
+import { camelCase, each, kebabCase } from 'lodash';
 import fs from 'fs';
 import path from 'path';
 
