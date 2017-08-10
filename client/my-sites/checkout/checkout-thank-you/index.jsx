@@ -244,6 +244,16 @@ const CheckoutThankYou = React.createClass( {
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 
+		// Rebrand Cities thanks page
+		if (
+			isRebrandCitiesSiteUrl( this.props.selectedSite.slug ) &&
+			PLAN_BUSINESS === this.props.selectedSite.plan.product_slug
+		) {
+			return (
+				<RebrandCitiesThankYou receipt={ this.props.receipt } />
+			);
+		}
+
 		// streamlined paid NUX thanks page
 		if ( this.isNewUser() && wasDotcomPlanPurchased ) {
 			return (
@@ -371,12 +381,6 @@ const CheckoutThankYou = React.createClass( {
 						<PurchaseDetail isPlaceholder />
 					</div>
 				</div>
-			);
-		}
-
-		if ( isRebrandCitiesSiteUrl( selectedSite.wpcom_url ) && PLAN_BUSINESS === primaryPurchase.productSlug ) {
-			return (
-				<RebrandCitiesThankYou />
 			);
 		}
 
