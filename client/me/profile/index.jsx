@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
+import { localize } from 'i18n-calypso';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import debugFactory from 'debug';
 
@@ -30,7 +32,7 @@ import SectionHeader from 'components/section-header';
 
 const debug = debugFactory( 'calypso:me:profile' );
 
-export default protectForm( React.createClass( {
+export default protectForm( localize(createReactClass({
 
 	displayName: 'Profile',
 
@@ -48,16 +50,16 @@ export default protectForm( React.createClass( {
 		const gravatarProfileLink = 'https://gravatar.com/' + this.props.userSettings.getSetting( 'user_login' );
 
 		return (
-			<Main className="profile">
+		    <Main className="profile">
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<SectionHeader label={ this.translate( 'Profile' ) } />
+				<SectionHeader label={ this.props.translate( 'Profile' ) } />
 				<Card className="me-profile-settings">
 					{ isEnabled( 'me/edit-gravatar' ) && <EditGravatar /> }
 
 					<form onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
 						<FormFieldset>
-							<FormLabel htmlFor="first_name">{ this.translate( 'First Name' ) }</FormLabel>
+							<FormLabel htmlFor="first_name">{ this.props.translate( 'First Name' ) }</FormLabel>
 							<FormTextInput
 								disabled={ this.getDisabledState() }
 								id="first_name"
@@ -67,7 +69,7 @@ export default protectForm( React.createClass( {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLabel htmlFor="last_name">{ this.translate( 'Last Name' ) }</FormLabel>
+							<FormLabel htmlFor="last_name">{ this.props.translate( 'Last Name' ) }</FormLabel>
 							<FormTextInput
 								disabled={ this.getDisabledState() }
 								id="last_name"
@@ -77,7 +79,7 @@ export default protectForm( React.createClass( {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLabel htmlFor="display_name">{ this.translate( 'Public Display Name' ) }</FormLabel>
+							<FormLabel htmlFor="display_name">{ this.props.translate( 'Public Display Name' ) }</FormLabel>
 							<FormTextInput
 								disabled={ this.getDisabledState() }
 								id="display_name"
@@ -87,7 +89,7 @@ export default protectForm( React.createClass( {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLabel htmlFor="description">{ this.translate( 'About Me' ) }</FormLabel>
+							<FormLabel htmlFor="description">{ this.props.translate( 'About Me' ) }</FormLabel>
 							<FormTextarea
 								disabled={ this.getDisabledState() }
 								id="description"
@@ -101,12 +103,12 @@ export default protectForm( React.createClass( {
 							<FormButton
 								disabled={ ! this.props.userSettings.hasUnsavedSettings() || this.getDisabledState() }
 								onClick={ this.recordClickEvent( 'Save Profile Details Button' ) }>
-								{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Profile Details' ) }
+								{ this.state.submittingForm ? this.props.translate( 'Saving…' ) : this.props.translate( 'Save Profile Details' ) }
 							</FormButton>
 						</p>
 					</form>
 					<p className="me-profile-settings__info-text">
-						{ this.translate(
+						{ this.props.translate(
 							'This information will be displayed publicly on {{profilelink}}your profile{{/profilelink}} and in ' +
 							'{{hovercardslink}}Gravatar Hovercards{{/hovercardslink}}.',
 							{
@@ -138,4 +140,4 @@ export default protectForm( React.createClass( {
 			</Main>
 		);
 	}
-} ) );
+})) );

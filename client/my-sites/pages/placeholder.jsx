@@ -10,28 +10,28 @@ var CompactCard = require( 'components/card/compact' ),
 	SiteIcon = require( 'blocks/site-icon' );
 
 module.exports = {
-	Page: React.createClass( {
-		displayName: 'PagePlaceholder',
+	Page: localize(class extends React.Component {
+	    static displayName = 'PagePlaceholder';
 
-		render: function() {
+		render() {
 			return (
-				<CompactCard className="page is-placeholder">
+			    <CompactCard className="page is-placeholder">
 					{ this.props.multisite ? <SiteIcon size={ 34 } /> : null }
-					<a className="page__title"><span className="placeholder-text">{ this.translate( 'Loading a page of Pages…' ) }</span></a>
-					{ this.props.multisite ? <span className="page__site-url "><span className="placeholder-text">{ this.translate( 'A domain, quite soon…') }</span></span> : null }
+					<a className="page__title"><span className="placeholder-text">{ this.props.translate( 'Loading a page of Pages…' ) }</span></a>
+					{ this.props.multisite ? <span className="page__site-url "><span className="placeholder-text">{ this.props.translate( 'A domain, quite soon…') }</span></span> : null }
 				</CompactCard>
 			);
 		}
-	} ),
-	Marker: React.createClass( {
-		displayName: 'MarkerPlaceholder',
+	}),
+	Marker: class extends React.Component {
+	    static displayName = 'MarkerPlaceholder';
 
-		render: function() {
+		render() {
 			return (
 				<div className="pages__page-list-header is-placeholder">
 					<span>&nbsp;</span>
 				</div>
 			);
 		}
-	} )
+	}
 };

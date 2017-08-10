@@ -5,17 +5,20 @@ var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:connected-application-item' ),
 	classNames = require( 'classnames' );
 
+var createReactClass = require('create-react-class');
+
 /**
  * Internal dependencies
  */
 import eventRecorder from 'me/event-recorder';
+import { localize } from 'i18n-calypso';
 import ConnectedApplicationIcon from 'me/connected-application-icon';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import analytics from 'lib/analytics';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 
-export default React.createClass( {
+export default localize(createReactClass({
 
 	displayName: 'ConnectedApplicationItem',
 
@@ -60,9 +63,9 @@ export default React.createClass( {
 		}
 
 		if ( 'auth' === scope ) {
-			meta = this.translate( 'Authentication' );
+			meta = this.props.translate( 'Authentication' );
 		} else if ( 'global' === scope ) {
-			meta = this.translate( 'Global' );
+			meta = this.props.translate( 'Global' );
 		} else if ( site ) {
 			meta = site.site_name;
 		}
@@ -84,16 +87,16 @@ export default React.createClass( {
 		}
 
 		if ( 'global' === scope ) {
-			message = this.translate(
+			message = this.props.translate(
 				'This connection is allowed to manage all of your blogs on WordPress.com, ' +
 				'including any Jetpack blogs that are connected to your WordPress.com account.'
 			);
 		} else if ( 'auth' === scope ) {
-			message = this.translate(
+			message = this.props.translate(
 				'This connection is not allowed to manage any of your blogs.'
 			);
 		} else if ( false !== site ) {
-			message = this.translate(
+			message = this.props.translate(
 				'This connection is only allowed to access {{siteLink}}%(siteName)s{{/siteLink}}', {
 					components: {
 						siteLink: <a
@@ -115,9 +118,9 @@ export default React.createClass( {
 		}
 
 		return (
-			<div>
+		    <div>
 				<h2>
-					{ this.translate( 'Access Scope' ) }
+					{ this.props.translate( 'Access Scope' ) }
 					{ this.renderAccessScopeBadge() }
 				</h2>
 
@@ -135,8 +138,8 @@ export default React.createClass( {
 		}
 
 		return (
-			<div>
-				<h2>{ this.translate( 'Application Website' ) }</h2>
+		    <div>
+				<h2>{ this.props.translate( 'Application Website' ) }</h2>
 				<p>
 					<a
 						href={ safeProtocolUrl( URL ) }
@@ -148,7 +151,7 @@ export default React.createClass( {
 					</a>
 				</p>
 
-				{ this.translate( '{{detailTitle}}Authorized On{{/detailTitle}}{{detailDescription}}%(date)s{{/detailDescription}}', {
+				{ this.props.translate( '{{detailTitle}}Authorized On{{/detailTitle}}{{detailDescription}}%(date)s{{/detailDescription}}', {
 					components: {
 						detailTitle: <h2 />,
 						detailDescription: <p className="connected-application-item__connection-detail-description" />
@@ -162,7 +165,7 @@ export default React.createClass( {
 				</div>
 
 				<h2>
-					{ this.translate( 'Access Permissions' ) }
+					{ this.props.translate( 'Access Permissions' ) }
 				</h2>
 				<ul className="connected-application-item__connection-detail-descriptions">
 					{ permissions.map( ( { name, description } ) => (
@@ -185,13 +188,14 @@ export default React.createClass( {
 	},
 
 	summary: function() {
-		return(
-			<div>
+		return (
+		    <div>
 				{ this.props.isPlaceholder
-					? ( <Button compact disabled>{ this.translate( 'Loading…' ) }</Button> )
-					: ( <Button compact onClick={ this.disconnect }>{ this.translate( 'Disconnect' ) }</Button> )
+					? ( <Button compact disabled>{ this.props.translate( 'Loading…' ) }</Button> )
+					: ( <Button compact onClick={ this.disconnect }>{ this.props.translate( 'Disconnect' ) }</Button> )
 				}
-			</div> );
+			</div>
+		);
 	},
 
 	render: function() {
@@ -212,4 +216,4 @@ export default React.createClass( {
 			</FoldableCard>
 		);
 	},
-} );
+}));

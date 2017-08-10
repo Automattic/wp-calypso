@@ -16,38 +16,39 @@ var TransactionsHeader = require( './transactions-header' ),
 
 import SearchCard from 'components/search-card';
 
-var TransactionsTable = React.createClass( {
-	displayName: 'TransactionsTable',
+import { localize } from 'i18n-calypso';
 
-	getInitialState: function() {
+class TransactionsTable extends React.Component {
+    static displayName = 'TransactionsTable';
+
+	static defaultProps = {
+		header: false
+	};
+
+	constructor(props) {
+	    super(props);
 		var initialTransactions;
 
-		if ( this.props.transactions ) {
-			initialTransactions = tableRows.filter( this.props.transactions, this.props.initialFilter );
+		if ( props.transactions ) {
+			initialTransactions = tableRows.filter( props.transactions, props.initialFilter );
 		}
 
-		return {
+		this.state = {
 			transactions: initialTransactions,
-			filter: this.props.initialFilter
+			filter: props.initialFilter
 		};
-	},
+	}
 
-	getDefaultProps: function() {
-		return {
-			header: false
-		};
-	},
-
-	componentWillUpdate: function() {
+	componentWillUpdate() {
 		if ( ! this.state.transactions ) {
 			// `defer` is necessary to prevent a React.js rendering error. It is
 			// not possible to call `this.setState` during `componentWillUpdate`, so
 			// we use `defer` to run the update on the next event loop.
 			defer( this.filterTransactions.bind( this, this.state.filter ) );
 		}
-	},
+	}
 
-	filterTransactions: function( filter ) {
+	filterTransactions = filter => {
 		var newFilter, newTransactions;
 
 		if ( ! this.props.transactions ) {
@@ -70,13 +71,13 @@ var TransactionsTable = React.createClass( {
 			transactions: newTransactions,
 			filter: newFilter
 		} );
-	},
+	};
 
-	onSearch: function( terms ) {
+	onSearch = terms => {
 		this.filterTransactions( { search: terms } );
-	},
+	};
 
-	render: function() {
+	render() {
 		var header;
 
 		if ( false !== this.props.header ) {
@@ -87,9 +88,9 @@ var TransactionsTable = React.createClass( {
 		}
 
 		return (
-			<div>
+		    <div>
 				<SearchCard
-					placeholder={ this.translate( 'Search all receipts…', { textOnly: true } ) }
+					placeholder={ this.props.translate( 'Search all receipts…', { textOnly: true } ) }
 					onSearch={ this.onSearch }
 				/>
 				<table className="billing-history__transactions">
@@ -98,9 +99,9 @@ var TransactionsTable = React.createClass( {
 				</table>
 			</div>
 		);
-	},
+	}
 
-	serviceName: function( transaction ) {
+	serviceName = transaction => {
 		var item,
 			name;
 
@@ -111,13 +112,13 @@ var TransactionsTable = React.createClass( {
 			item.plan = capitalPDangit( titleCase( item.variation ) );
 			name = this.serviceNameDescription( item );
 		} else {
-			name = <strong>{ this.translate( 'Multiple items' ) }</strong>;
+			name = <strong>{ this.props.translate( 'Multiple items' ) }</strong>;
 		}
 
 		return name;
-	},
+	};
 
-	serviceNameDescription: function( transaction ) {
+	serviceNameDescription = transaction => {
 		var description;
 		if ( transaction.domain ) {
 			description = (
@@ -131,9 +132,9 @@ var TransactionsTable = React.createClass( {
 		}
 
 		return description;
-	},
+	};
 
-	renderPlaceholder() {
+	renderPlaceholder = () => {
 		return (
 			<tr className="billing-history__transaction is-placeholder">
 				<td className="date">
@@ -147,9 +148,9 @@ var TransactionsTable = React.createClass( {
 				</td>
 			</tr>
 		);
-	},
+	};
 
-	renderRows: function() {
+	renderRows = () => {
 		if ( ! this.state.transactions ) {
 			return this.renderPlaceholder();
 		}
@@ -186,7 +187,7 @@ var TransactionsTable = React.createClass( {
 				</tr>
 			);
 		}, this );
-	}
-} );
+	};
+}
 
-module.exports = TransactionsTable;
+module.exports = localize(TransactionsTable);

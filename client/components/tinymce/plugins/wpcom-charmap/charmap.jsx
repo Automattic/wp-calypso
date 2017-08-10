@@ -13,22 +13,24 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 
-export default React.createClass( {
-	displayName: 'CharMap',
+export default localize(class extends React.Component {
+    static displayName = 'CharMap';
 
-	propTypes: {
+	static propTypes = {
 		onClose: React.PropTypes.func,
 		showDialog: React.PropTypes.bool,
 		editor: React.PropTypes.object
-	},
+	};
 
-	defaultCharMap() {
+	defaultCharMap = () => {
 		return [
 			[ '160', 'no-break space' ],
 			[ '173', 'soft hyphen' ],
@@ -289,9 +291,9 @@ export default React.createClass( {
 			[ '8206', 'left-to-right mark' ],
 			[ '8207', 'right-to-left mark' ]
 		];
-	},
+	};
 
-	renderCell( cell ) {
+	renderCell = cell => {
 		return (
 			<div
 				key={ cell[ 0 ] }
@@ -302,40 +304,39 @@ export default React.createClass( {
 					{ String.fromCharCode( parseInt( cell[ 0 ], 10 ) ) }
 			</div>
 		);
-	},
+	};
 
-	onCellClick( event ) {
+	onCellClick = event => {
 		this.props.editor.execCommand(
 			'mceInsertContent',
 			false,
 			event.target.textContent.trim()
 		);
-	},
+	};
 
-	getButtons() {
+	getButtons = () => {
 		return [
 			<FormButton
 				isPrimary={ false }
-				aria-label={ this.translate( 'Close special characters dialog' ) }
+				aria-label={ this.props.translate( 'Close special characters dialog' ) }
 				onClick={ this.props.onClose }>
-					{ this.translate( 'Close' ) }
+					{ this.props.translate( 'Close' ) }
 			</FormButton>
 		];
-	},
+	};
 
 	render() {
 		return (
-			<Dialog
+		    <Dialog
 				isVisible={ this.props.showDialog }
 				buttons={ this.getButtons() }
 				additionalClassNames="wpcom-charmap__dialog"
 				onClose={ this.props.onClose }>
-				<h2 className="wpcom-charmap__heading">{ this.translate( 'Special characters' ) }</h2>
+				<h2 className="wpcom-charmap__heading">{ this.props.translate( 'Special characters' ) }</h2>
 				<div className="wpcom-charmap__table">
 					{ this.defaultCharMap().map( this.renderCell, this ) }
 				</div>
 			</Dialog>
 		);
 	}
-
-} );
+});

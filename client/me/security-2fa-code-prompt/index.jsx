@@ -5,6 +5,8 @@ var React = require( 'react' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-code-prompt' );
 
+var createReactClass = require('create-react-class');
+
 /**
  * Internal dependencies
  */
@@ -20,7 +22,9 @@ var FormButton = require( 'components/forms/form-button' ),
 
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
+import { localize } from 'i18n-calypso';
+
+module.exports = localize(createReactClass({
 
 	displayName: 'Security2faCodePrompt',
 
@@ -110,7 +114,7 @@ module.exports = React.createClass( {
 			this.setState(
 				{
 					codeRequestPerformed: false,
-					lastError: this.translate( 'Unable to request a code via SMS right now. Please try again after one minute.' ),
+					lastError: this.props.translate( 'Unable to request a code via SMS right now. Please try again after one minute.' ),
 					lastErrorType: 'is-info'
 				}
 			);
@@ -140,14 +144,14 @@ module.exports = React.createClass( {
 		if ( error ) {
 			this.setState(
 				{
-					lastError: this.translate( 'An unexpected error occurred. Please try again later.' ),
+					lastError: this.props.translate( 'An unexpected error occurred. Please try again later.' ),
 					lastErrorType: 'is-error'
 				}
 			);
 		} else if ( ! data.success ) {
 			this.setState(
 				{
-					lastError: this.translate( 'You entered an invalid code. Please try again.' ),
+					lastError: this.props.translate( 'You entered an invalid code. Please try again.' ),
 					lastErrorType: 'is-error'
 				}
 			);
@@ -161,13 +165,13 @@ module.exports = React.createClass( {
 
 		switch ( this.props.action ) {
 			case 'disable-two-step':
-				label = this.state.submittingCode ? this.translate( 'Disabling Two-Step…' ) : this.translate( 'Disable Two-Step' );
+				label = this.state.submittingCode ? this.props.translate( 'Disabling Two-Step…' ) : this.props.translate( 'Disable Two-Step' );
 				break;
 			case 'enable-two-step':
-				label = this.state.submittingCode ? this.translate( 'Enabling Two-Step…' ) : this.translate( 'Enable Two-Step' );
+				label = this.state.submittingCode ? this.props.translate( 'Enabling Two-Step…' ) : this.props.translate( 'Enable Two-Step' );
 				break;
 			default:
-				label = this.state.submittingCode ? this.translate( 'Submitting…' ) : this.translate( 'Submit' );
+				label = this.state.submittingCode ? this.props.translate( 'Submitting…' ) : this.props.translate( 'Submit' );
 		}
 
 		return label;
@@ -201,9 +205,9 @@ module.exports = React.createClass( {
 			: constants.sixDigit2faPlaceholder;
 
 		return (
-			<form className="security-2fa-code-prompt" onSubmit={ this.onSubmit }>
+		    <form className="security-2fa-code-prompt" onSubmit={ this.onSubmit }>
 				<FormFieldset>
-					<FormLabel htmlFor="verification-code">{ this.translate( 'Verification Code' ) }</FormLabel>
+					<FormLabel htmlFor="verification-code">{ this.props.translate( 'Verification Code' ) }</FormLabel>
 					<FormTelInput
 						autoFocus
 						className="security-2fa-code-prompt__verification-code"
@@ -221,7 +225,7 @@ module.exports = React.createClass( {
 						? (
 							<FormSettingExplanation>
 								{
-									this.translate(
+									this.props.translate(
 										'A code has been sent to your device via SMS.  ' +
 										'You may request another code after one minute.'
 									)
@@ -255,7 +259,7 @@ module.exports = React.createClass( {
 									this.onRequestCode( event );
 								}.bind( this ) }
 							>
-								{ this.state.codeRequestPerformed ? this.translate( 'Resend Code' ) : this.translate( 'Send Code via SMS' ) }
+								{ this.state.codeRequestPerformed ? this.props.translate( 'Resend Code' ) : this.props.translate( 'Send Code via SMS' ) }
 							</FormButton>
 						)
 						: null
@@ -272,7 +276,7 @@ module.exports = React.createClass( {
 									this.onCancel( event );
 								}.bind( this ) }
 							>
-								{ this.translate( 'Cancel' ) }
+								{ this.props.translate( 'Cancel' ) }
 							</FormButton>
 						)
 						: null
@@ -281,4 +285,4 @@ module.exports = React.createClass( {
 			</form>
 		);
 	}
-} );
+}));

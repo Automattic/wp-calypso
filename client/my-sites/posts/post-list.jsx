@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	debug = require( 'debug' )( 'calypso:my-sites:posts' );
+var React = require( 'react' ), debug = require( 'debug' )( 'calypso:my-sites:posts' );
 
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { debounce, isEqual, omit } from 'lodash';
 
 /**
@@ -28,11 +27,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 var GUESSED_POST_HEIGHT = 250;
 
-var PostList = React.createClass( {
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+class PostList extends React.PureComponent {
+    static propTypes = {
 		context: React.PropTypes.object,
 		search: React.PropTypes.string,
 		category: React.PropTypes.string,
@@ -41,9 +37,9 @@ var PostList = React.createClass( {
 		statusSlug: React.PropTypes.string,
 		siteId: React.PropTypes.number,
 		author: React.PropTypes.number
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<PostListFetcher
 				siteId={ this.props.siteId }
@@ -61,11 +57,10 @@ var PostList = React.createClass( {
 			</PostListFetcher>
 		);
 	}
-} );
+}
 
-var Posts = React.createClass( {
-
-	propTypes: {
+var Posts = localize(class extends React.Component {
+    static propTypes = {
 		author: React.PropTypes.number,
 		context: React.PropTypes.object.isRequired,
 		hasRecentError: React.PropTypes.bool.isRequired,
@@ -79,37 +74,33 @@ var Posts = React.createClass( {
 		hasSites: React.PropTypes.bool.isRequired,
 		statusSlug: React.PropTypes.string,
 		trackScrollPage: React.PropTypes.func.isRequired
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			hasRecentError: false,
-			loading: false,
-			lastPage: false,
-			page: 0,
-			postImages: {},
-			posts: [],
-			trackScrollPage: function() {}
-		};
-	},
+	static defaultProps = {
+		hasRecentError: false,
+		loading: false,
+		lastPage: false,
+		page: 0,
+		postImages: {},
+		posts: [],
+		trackScrollPage: function() {}
+	};
 
-	getInitialState: function() {
-		return {
-			postsAtFullWidth: window.innerWidth >= 960
-		};
-	},
+	state = {
+		postsAtFullWidth: window.innerWidth >= 960
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( 'Posts React component mounted.' );
 		this.debouncedAfterResize = debounce( this.afterResize, 300 );
 		window.addEventListener( 'resize', this.debouncedAfterResize );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.debouncedAfterResize );
-	},
+	}
 
-	shouldComponentUpdate: function( nextProps ) {
+	shouldComponentUpdate(nextProps) {
 		if ( nextProps.loading !== this.props.loading ) {
 			return true;
 		}
@@ -126,9 +117,9 @@ var Posts = React.createClass( {
 			return true;
 		}
 		return false;
-	},
+	}
 
-	afterResize: function() {
+	afterResize = () => {
 		var arePostsAtFullWidth = window.innerWidth >= 960;
 
 		if ( this.state.postsAtFullWidth !== arePostsAtFullWidth ) {
@@ -136,9 +127,9 @@ var Posts = React.createClass( {
 				postsAtFullWidth: arePostsAtFullWidth
 			} );
 		}
-	},
+	};
 
-	fetchPosts: function( options ) {
+	fetchPosts = options => {
 		if ( this.props.loading || this.props.lastPage || this.props.hasRecentError ) {
 			return;
 		}
@@ -146,58 +137,60 @@ var Posts = React.createClass( {
 			this.props.trackScrollPage( this.props.page + 1 );
 		}
 		actions.fetchNextPage();
-	},
+	};
 
-	getNoContentMessage: function() {
+	getNoContentMessage = () => {
 		var attributes, newPostLink;
 
 		if ( this.props.search ) {
-			return <NoResults
-				image="/calypso/images/posts/illustration-posts.svg"
-				text={
-					this.translate( 'No posts match your search for {{searchTerm/}}.', {
-						components: {
-							searchTerm: <em>{ this.props.search }</em>
-						}
-					} )	}
-			/>;
+			return (
+			    <NoResults
+					image="/calypso/images/posts/illustration-posts.svg"
+					text={
+						this.props.translate( 'No posts match your search for {{searchTerm/}}.', {
+							components: {
+								searchTerm: <em>{ this.props.search }</em>
+							}
+						} )	}
+				/>
+			);
 		} else {
 			newPostLink = this.props.siteId ? '/post/' + this.props.siteId : '/post';
 
 			if ( this.props.hasRecentError ) {
 				attributes = {
-					title: this.translate( 'Oh, no! We couldn\'t fetch your posts.' ),
-					line: this.translate( 'Please check your internet connection.' )
+					title: this.props.translate( 'Oh, no! We couldn\'t fetch your posts.' ),
+					line: this.props.translate( 'Please check your internet connection.' )
 				};
 			} else {
 				switch ( this.props.statusSlug ) {
 					case 'drafts':
 						attributes = {
-							title: this.translate( 'You don\'t have any drafts.' ),
-							line: this.translate( 'Would you like to create one?' ),
-							action: this.translate( 'Start a Post' ),
+							title: this.props.translate( 'You don\'t have any drafts.' ),
+							line: this.props.translate( 'Would you like to create one?' ),
+							action: this.props.translate( 'Start a Post' ),
 							actionURL: newPostLink
 						};
 						break;
 					case 'scheduled':
 						attributes = {
-							title: this.translate( 'You don\'t have any scheduled posts.' ),
-							line: this.translate( 'Would you like to schedule a draft to publish?' ),
-							action: this.translate( 'Edit Drafts' ),
+							title: this.props.translate( 'You don\'t have any scheduled posts.' ),
+							line: this.props.translate( 'Would you like to schedule a draft to publish?' ),
+							action: this.props.translate( 'Edit Drafts' ),
 							actionURL: ( this.props.siteId ) ? '/posts/drafts/' + this.props.siteId : '/posts/drafts'
 						};
 						break;
 					case 'trashed':
 						attributes = {
-							title: this.translate( 'You don\'t have any posts in your trash folder.' ),
-							line: this.translate( 'Everything you write is solid gold.' )
+							title: this.props.translate( 'You don\'t have any posts in your trash folder.' ),
+							line: this.props.translate( 'Everything you write is solid gold.' )
 						};
 						break;
 					default:
 						attributes = {
-							title: this.translate( 'You haven\'t published any posts yet.' ),
-							line: this.translate( 'Would you like to publish your first post?' ),
-							action: this.translate( 'Start a Post' ),
+							title: this.props.translate( 'You haven\'t published any posts yet.' ),
+							line: this.props.translate( 'Would you like to publish your first post?' ),
+							action: this.props.translate( 'Start a Post' ),
 							actionURL: newPostLink
 						};
 				}
@@ -215,19 +208,19 @@ var Posts = React.createClass( {
 			illustration={ attributes.illustration }
 			illustrationWidth={ attributes.illustrationWidth }
 		/>;
-	},
+	};
 
-	getPostRef: function( post ) {
+	getPostRef = post => {
 		return post.global_ID;
-	},
+	};
 
-	renderLoadingPlaceholders: function() {
+	renderLoadingPlaceholders = () => {
 		return (
 			<PostPlaceholder key={ 'placeholder-scroll-' + this.props.page } />
 		);
-	},
+	};
 
-	renderPost: function( post, index ) {
+	renderPost = (post, index) => {
 		const postImages = this.props.postImages[ post.global_ID ];
 		const renderedPost = (
 			<Post
@@ -242,10 +235,10 @@ var Posts = React.createClass( {
 
 		if ( index === 2 && this.props.selectedSiteId && ! this.props.statusSlug ) {
 			return (
-				<div key={ post.global_ID }>
+			    <div key={ post.global_ID }>
 					<UpgradeNudge
-						title={ this.translate( 'No Ads with WordPress.com Premium' ) }
-						message={ this.translate( 'Prevent ads from showing on your site.' ) }
+						title={ this.props.translate( 'No Ads with WordPress.com Premium' ) }
+						message={ this.props.translate( 'Prevent ads from showing on your site.' ) }
 						feature="no-adverts"
 						event="published_posts_no_ads"
 					/>
@@ -255,9 +248,9 @@ var Posts = React.createClass( {
 		} else {
 			return renderedPost;
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		var posts = this.props.posts,
 			placeholderCount = 1,
 			placeholders = [],
@@ -303,7 +296,7 @@ var Posts = React.createClass( {
 			</div>
 		);
 	}
-} );
+});
 
 export default connect(
 	( state ) => ( {

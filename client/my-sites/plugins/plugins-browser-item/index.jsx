@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
 
@@ -16,37 +17,34 @@ import Gridicon from 'gridicons';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
-const PluginsBrowserListElement = React.createClass( {
+class PluginsBrowserListElement extends React.Component {
+    static defaultProps = {
+		iconSize: 40
+	};
 
-	getDefaultProps: function() {
-		return {
-			iconSize: 40
-		};
-	},
-
-	getPluginLink: function() {
+	getPluginLink = () => {
 		var url = '/plugins/' + this.props.plugin.slug;
 		if ( this.props.site ) {
 			url += '/' + this.props.site;
 		}
 		return url;
-	},
+	};
 
-	getSites: function() {
+	getSites = () => {
 		if ( this.props.site && this.props.currentSites ) {
 			return PluginsStore.getSites( this.props.currentSites, this.props.plugin.slug );
 		}
 		return [];
-	},
+	};
 
-	trackPluginLinkClick: function() {
+	trackPluginLinkClick = () => {
 		analytics.tracks.recordEvent( 'calypso_plugin_browser_item_click', {
 			site: this.props.site,
 			plugin: this.props.plugin.slug
 		} );
-	},
+	};
 
-	isWpcomPreinstalled: function() {
+	isWpcomPreinstalled = () => {
 		const installedPlugins = [ 'Jetpack by WordPress.com', 'Akismet', 'VaultPress' ];
 
 		if ( ! this.props.site ) {
@@ -54,22 +52,22 @@ const PluginsBrowserListElement = React.createClass( {
 		}
 
 		return ! this.props.isJetpackSite && includes( installedPlugins, this.props.plugin.name );
-	},
+	};
 
-	renderInstalledIn: function() {
+	renderInstalledIn = () => {
 		var sites = this.getSites();
 		if ( sites && sites.length > 0 || this.isWpcomPreinstalled() ) {
 			return (
-				<div className="plugins-browser-item__installed">
+			    <div className="plugins-browser-item__installed">
 						<Gridicon icon='checkmark' size={ 18 } />
-						{ this.translate( 'Installed' ) }
+						{ this.props.translate( 'Installed' ) }
 				</div>
 			);
 		}
 		return null;
-	},
+	};
 
-	renderPlaceholder: function() {
+	renderPlaceholder = () => {
 		return (
 			<li className="plugins-browser-item is-placeholder">
 				<span className="plugins-browser-item__link" >
@@ -82,9 +80,9 @@ const PluginsBrowserListElement = React.createClass( {
 				</span>
 			</li>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		if ( this.props.isPlaceholder ) {
 			return this.renderPlaceholder();
 		}
@@ -102,7 +100,7 @@ const PluginsBrowserListElement = React.createClass( {
 			</li>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state ) => {
@@ -112,4 +110,4 @@ export default connect(
 			isJetpackSite: isJetpackSite( state, selectedSiteId ),
 		};
 	}
-)( PluginsBrowserListElement );
+)( localize(PluginsBrowserListElement) );

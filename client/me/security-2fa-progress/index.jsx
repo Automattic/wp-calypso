@@ -5,48 +5,46 @@ var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-progress' ),
 	ProgressItem = require( './progress-item' );
 
-module.exports = React.createClass( {
+module.exports = localize(class extends React.Component {
+    static displayName = 'Security2faProgress';
 
-	displayName: 'Security2faProgress',
-
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
+	}
 
-	stepClass: function( step ) {
+	stepClass = step => {
 		var currentStep = parseInt( this.props.step, 10 );
 
 		return ( {
 			isHighlighted: step === currentStep,
 			isCompleted: step < currentStep
 		} );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
-
-			<div className="security-2fa-progress__container">
+		    <div className="security-2fa-progress__container">
 
 				<div className="security-2fa-progress__inner-container">
 
 					<ProgressItem
-						label={ this.translate( 'Enter Phone Number' ) }
+						label={ this.props.translate( 'Enter Phone Number' ) }
 						icon="phone"
 						step={ this.stepClass( 1 ) }
 					/>
 
 					<ProgressItem
-						label={ this.translate( 'Verify Code' ) }
+						label={ this.props.translate( 'Verify Code' ) }
 						icon="send-to-phone"
 						step={ this.stepClass( 2 ) }
 					/>
 
 					<ProgressItem
-						label={ this.translate( 'Generate Backup Codes' ) }
+						label={ this.props.translate( 'Generate Backup Codes' ) }
 						icon="refresh"
 						step={ this.stepClass( 3 ) }
 					/>
@@ -54,7 +52,6 @@ module.exports = React.createClass( {
 				</div>
 
 			</div>
-
 		);
 	}
-} );
+});

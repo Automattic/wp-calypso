@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
+import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 
 /**
@@ -17,7 +19,7 @@ import eventRecorder from 'me/event-recorder';
 import ProfileLinksAddWordPress from 'me/profile-links-add-wordpress';
 import ProfileLinksAddOther from 'me/profile-links-add-other';
 
-export default React.createClass( {
+export default localize(createReactClass({
 
 	displayName: 'ProfileLinks',
 
@@ -121,10 +123,10 @@ export default React.createClass( {
 		}
 
 		return (
-			<Notice className="profile-links__error"
+		    <Notice className="profile-links__error"
 				status="is-error"
 				onDismissClick={ this.clearLastError }>
-				{ this.translate( 'An error occurred while attempting to remove the link. Please try again later.' ) }
+				{ this.props.translate( 'An error occurred while attempting to remove the link. Please try again later.' ) }
 			</Notice>
 		);
 	},
@@ -150,9 +152,9 @@ export default React.createClass( {
 
 	renderNoProfileLinks() {
 		return (
-			<p className="profile-links__no-links">
+		    <p className="profile-links__no-links">
 				{
-					this.translate( 'You have no sites in your profile links. You may add sites if you\'d like.' )
+					this.props.translate( 'You have no sites in your profile links. You may add sites if you\'d like.' )
 				}
 			</p>
 		);
@@ -188,9 +190,9 @@ export default React.createClass( {
 		}
 
 		return (
-			<div>
+		    <div>
 				<p>
-					{ this.translate( 'Manage which sites appear in your profile.' ) }
+					{ this.props.translate( 'Manage which sites appear in your profile.' ) }
 				</p>
 
 				{ this.possiblyRenderError() }
@@ -221,8 +223,8 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div>
-				<SectionHeader label={ this.translate( 'Profile Links' ) }>
+		    <div>
+				<SectionHeader label={ this.props.translate( 'Profile Links' ) }>
 					<AddProfileLinksButtons
 						userProfileLinks={ this.props.userProfileLinks }
 						showingForm={ !! this.state.showingForm }
@@ -239,4 +241,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}));

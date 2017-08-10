@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,12 +17,10 @@ const importerData = {
 	icon: 'wordpress'
 };
 
-export default React.createClass( {
-	displayName: 'ImporterWordPress',
+export default localize(class extends React.PureComponent {
+    static displayName = 'ImporterWordPress';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		importerStatus: PropTypes.shape( {
 			filename: PropTypes.string,
 			importerState: PropTypes.string.isRequired,
@@ -34,15 +32,15 @@ export default React.createClass( {
 			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string
 		} )
-	},
+	};
 
-	render: function() {
-		importerData.description = this.translate(
+	render() {
+		importerData.description = this.props.translate(
 			'Import posts, pages, and media ' +
 			'from a WordPress export\u00A0file.'
 		);
 
-		importerData.uploadDescription = this.translate(
+		importerData.uploadDescription = this.props.translate(
 			'Upload a {{b}}WordPress export file{{/b}} to start ' +
 			'importing into {{b2}}%(title)s{{/b2}}. Check out our ' +
 			'{{a}}WordPress export guide{{/a}} if you need ' +
@@ -58,4 +56,4 @@ export default React.createClass( {
 
 		return <FileImporter importerData={ importerData } {...this.props} />;
 	}
-} );
+});

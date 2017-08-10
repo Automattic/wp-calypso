@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -44,14 +44,12 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
  * legend.
  */
 
-const PostTypeOptions = React.createClass( {
-	displayName: 'PostTypeOptions',
+class PostTypeOptions extends React.PureComponent {
+    static displayName = 'PostTypeOptions';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		legend: PropTypes.string.isRequired,
-	},
+	};
 
 	render() {
 		const {
@@ -73,7 +71,7 @@ const PostTypeOptions = React.createClass( {
 		};
 
 		return (
-			<div className="export-card__option-fieldset">
+		    <div className="export-card__option-fieldset">
 
 				<Label className="export-card__option-fieldset-legend">
 					<FormRadio
@@ -105,11 +103,11 @@ const PostTypeOptions = React.createClass( {
 					context={ this._startDate }
 					status="error"
 					isVisible={ isEnabled && ! this.props.isDateValid }>
-						{ this.translate( 'Selected start date is later than the end date' ) }
+						{ this.props.translate( 'Selected start date is later than the end date' ) }
 				</Tooltip>
 			</div>
 		);
 	}
-} );
+}
 
-export default connect( mapStateToProps, mapDispatchToProps )( PostTypeOptions );
+export default connect( mapStateToProps, mapDispatchToProps )( localize(PostTypeOptions) );

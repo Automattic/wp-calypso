@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import page from 'page';
 import { connect } from 'react-redux';
@@ -20,13 +21,10 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import analytics from 'lib/analytics';
 
-let InviteAcceptLoggedIn = React.createClass( {
+class InviteAcceptLoggedIn extends React.Component {
+    state = { submitting: false };
 
-	getInitialState() {
-		return { submitting: false };
-	},
-
-	accept() {
+	accept = () => {
 		this.setState( { submitting: true } );
 		this.props.acceptInvite( this.props.invite, error => {
 			if ( error ) {
@@ -38,40 +36,40 @@ let InviteAcceptLoggedIn = React.createClass( {
 			}
 		} );
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_join_button_click' );
-	},
+	};
 
-	decline() {
+	decline = () => {
 		if ( this.props.decline && 'function' === typeof this.props.decline ) {
 			this.props.decline();
 			analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_decline_button_click' );
 		}
-	},
+	};
 
-	signInLink() {
+	signInLink = () => {
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_sign_in_link_click' );
-	},
+	};
 
-	getButtonText() {
+	getButtonText = () => {
 		let text = '';
 		if ( 'follower' === this.props.invite.role ) {
 			text = this.state.submitting
-				? this.translate( 'Following…', { context: 'button' } )
-				: this.translate( 'Follow', { context: 'button' } );
+				? this.props.translate( 'Following…', { context: 'button' } )
+				: this.props.translate( 'Follow', { context: 'button' } );
 		} else {
 			text = this.state.submitting
-				? this.translate( 'Joining…', { context: 'button' } )
-				: this.translate( 'Join', { context: 'button' } );
+				? this.props.translate( 'Joining…', { context: 'button' } )
+				: this.props.translate( 'Join', { context: 'button' } );
 		}
 
 		return text;
-	},
+	};
 
-	getJoinAsText() {
+	getJoinAsText = () => {
 		const { user } = this.props;
 		let text = '';
 
 		if ( 'follower' === this.props.invite.role ) {
-			text = this.translate( 'Follow as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
+			text = this.props.translate( 'Follow as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
 				components: {
 					usernameWrap: <span className="invite-accept-logged-in__join-as-username" />
 				},
@@ -80,7 +78,7 @@ let InviteAcceptLoggedIn = React.createClass( {
 				}
 			} );
 		} else {
-			text = this.translate( 'Join as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
+			text = this.props.translate( 'Join as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
 				components: {
 					usernameWrap: <span className="invite-accept-logged-in__join-as-username" />
 				},
@@ -91,28 +89,28 @@ let InviteAcceptLoggedIn = React.createClass( {
 		}
 
 		return text;
-	},
+	};
 
-	renderMatchEmailError() {
+	renderMatchEmailError = () => {
 		return (
-			<Card>
+		    <Card>
 				<InviteFormHeader { ... this.props.invite } user={ this.props.user } matchEmailError />
 				<div className="invite-accept-logged-in__button-bar">
 					<Button onClick={ this.signInLink } href={ this.props.signInLink }>
 						{
 							this.props.invite.knownUser
-							? this.translate( 'Sign In as %(email)s', { context: 'button', args: { email: this.props.invite.sentTo } } )
-							: this.translate( 'Register as %(email)s', { context: 'button', args: { email: this.props.invite.sentTo } } )
+							? this.props.translate( 'Sign In as %(email)s', { context: 'button', args: { email: this.props.invite.sentTo } } )
+							: this.props.translate( 'Register as %(email)s', { context: 'button', args: { email: this.props.invite.sentTo } } )
 						}
 					</Button>
 				</div>
 			</Card>
 		);
-	},
+	};
 
-	renderAccept() {
+	renderAccept = () => {
 		return (
-			<div>
+		    <div>
 				<Card>
 					<InviteFormHeader { ... this.props.invite } user={ this.props.user } />
 					<div className="invite-accept-logged-in__join-as">
@@ -121,7 +119,7 @@ let InviteAcceptLoggedIn = React.createClass( {
 					</div>
 					<div className="invite-accept-logged-in__button-bar">
 						<Button onClick={ this.decline } disabled={ this.state.submitting }>
-							{ this.translate( 'Cancel', { context: 'button' } ) }
+							{ this.props.translate( 'Cancel', { context: 'button' } ) }
 						</Button>
 						<Button primary onClick={ this.accept } disabled={ this.state.submitting }>
 							{ this.getButtonText() }
@@ -131,12 +129,12 @@ let InviteAcceptLoggedIn = React.createClass( {
 
 				<LoggedOutFormLinks>
 					<LoggedOutFormLinkItem onClick={ this.signInLink } href={ this.props.signInLink }>
-						{ this.translate( 'Sign in as a different user' ) }
+						{ this.props.translate( 'Sign in as a different user' ) }
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>
 			</div>
 		);
-	},
+	};
 
 	render() {
 		return (
@@ -145,9 +143,9 @@ let InviteAcceptLoggedIn = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect(
 	null,
 	dispatch => bindActionCreators( { acceptInvite }, dispatch )
-)( InviteAcceptLoggedIn );
+)( localize(InviteAcceptLoggedIn) );

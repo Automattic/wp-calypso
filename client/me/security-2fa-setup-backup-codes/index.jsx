@@ -4,6 +4,8 @@
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-setup-backup-codes' );
 
+var createReactClass = require('create-react-class');
+
 /**
  * Internal dependencies
  */
@@ -15,7 +17,9 @@ var Security2faBackupCodesList = require( 'me/security-2fa-backup-codes-list' ),
 
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
+import { localize } from 'i18n-calypso';
+
+module.exports = localize(createReactClass({
 
 	displayName: 'Security2faSetupBackupCodes',
 
@@ -44,7 +48,7 @@ module.exports = React.createClass( {
 	onRequestComplete: function( error, data ) {
 		if ( error ) {
 			this.setState( {
-				lastError: this.translate( 'Unable to obtain backup codes.  Please try again later.' ),
+				lastError: this.props.translate( 'Unable to obtain backup codes.  Please try again later.' ),
 			} );
 			return;
 		}
@@ -64,7 +68,7 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		errorMessage = this.translate(
+		errorMessage = this.props.translate(
 			'There was an error retrieving back up codes. Please {{supportLink}}contact support{{/supportLink}}',
 			{
 				components: {
@@ -103,11 +107,11 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div>
+		    <div>
 				<Security2faProgress step={ 3 } />
 				<p>
 					{
-						this.translate(
+						this.props.translate(
 							'Backup codes let you access your account if your phone is ' +
 							'lost, stolen, or if you run it through the washing ' +
 							'machine and the bag of rice trick doesn\'t work.'
@@ -120,4 +124,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}));

@@ -2,25 +2,20 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
+export default localize(class extends React.PureComponent {
+    static displayName = 'EditorRevisions';
 
-	displayName: 'EditorRevisions',
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		adminUrl: React.PropTypes.string,
 		revisions: React.PropTypes.array
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			revisions: []
-		};
-	},
+	static defaultProps = {
+		revisions: []
+	};
 
 	render() {
 		if ( ! this.props.revisions || ! this.props.revisions.length ) {
@@ -31,14 +26,14 @@ export default React.createClass( {
 		const revisionsLink = this.props.adminUrl + 'revision.php?revision=' + lastRevision;
 
 		return (
-			<a className="editor-revisions"
+		    <a className="editor-revisions"
 				href={ revisionsLink }
 				target="_blank"
 				rel="noopener noreferrer"
-				aria-label={ this.translate( 'Open list of revisions' ) }
+				aria-label={ this.props.translate( 'Open list of revisions' ) }
 			>
 				<Gridicon icon="history" size={ 18 } />
-				{ this.translate(
+				{ this.props.translate(
 					'%(revisions)d revision',
 					'%(revisions)d revisions', {
 						count: this.props.revisions.length,
@@ -50,4 +45,4 @@ export default React.createClass( {
 			</a>
 		);
 	}
-} );
+});

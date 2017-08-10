@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import createFragment from 'react-addons-create-fragment';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -70,8 +71,8 @@ const POST_TYPE_SUPPORTS = {
 	}
 };
 
-const EditorDrawer = React.createClass( {
-	propTypes: {
+class EditorDrawer extends React.Component {
+    static propTypes = {
 		site: React.PropTypes.object,
 		savedPost: React.PropTypes.object,
 		post: React.PropTypes.object,
@@ -83,14 +84,14 @@ const EditorDrawer = React.createClass( {
 		onSave: React.PropTypes.func,
 		isPostPrivate: React.PropTypes.bool,
 		confirmationSidebarStatus: React.PropTypes.string,
-	},
+	};
 
-	onExcerptChange: function( event ) {
+	onExcerptChange = event => {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { excerpt: event.target.value } );
-	},
+	};
 
-	currentPostTypeSupports: function( feature ) {
+	currentPostTypeSupports = feature => {
 		const { typeObject, type } = this.props;
 
 		if ( typeObject && typeObject.supports ) {
@@ -104,14 +105,14 @@ const EditorDrawer = React.createClass( {
 
 		// Default to true until post types are known
 		return true;
-	},
+	};
 
-	recordExcerptChangeStats: function() {
+	recordExcerptChangeStats = () => {
 		recordStat( 'excerpt_changed' );
 		recordEvent( 'Changed Excerpt' );
-	},
+	};
 
-	renderTaxonomies: function() {
+	renderTaxonomies = () => {
 		const { type, canJetpackUseTaxonomies } = this.props;
 
 		// Compatibility: Allow Tags for pages when supported prior to launch
@@ -134,9 +135,9 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return createFragment( { categories, taxonomies } );
-	},
+	};
 
-	renderPostFormats: function() {
+	renderPostFormats = () => {
 		if ( ! this.props.post || ! this.currentPostTypeSupports( 'post-formats' ) ) {
 			return;
 		}
@@ -148,18 +149,18 @@ const EditorDrawer = React.createClass( {
 				className="editor-drawer__accordion"
 			/>
 		);
-	},
+	};
 
-	renderSharing: function() {
+	renderSharing = () => {
 		return (
 			<AsyncLoad
 				require="post-editor/editor-sharing/accordion"
 				site={ this.props.site }
 				post={ this.props.post } />
 		);
-	},
+	};
 
-	renderFeaturedImage: function() {
+	renderFeaturedImage = () => {
 		if ( ! this.currentPostTypeSupports( 'thumbnail' ) ) {
 			return;
 		}
@@ -171,9 +172,9 @@ const EditorDrawer = React.createClass( {
 				post={ this.props.post }
 			/>
 		);
-	},
+	};
 
-	renderExcerpt: function() {
+	renderExcerpt = () => {
 		let excerpt;
 
 		if ( ! this.currentPostTypeSupports( 'excerpt' ) ) {
@@ -185,10 +186,10 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<AccordionSection>
+		    <AccordionSection>
 				<EditorDrawerLabel
-					labelText={ this.translate( 'Excerpt' ) }
-					helpText={ this.translate( 'Excerpts are optional hand-crafted summaries of your content.' ) }
+					labelText={ this.props.translate( 'Excerpt' ) }
+					helpText={ this.props.translate( 'Excerpts are optional hand-crafted summaries of your content.' ) }
 				>
 					<TrackInputChanges onNewValue={ this.recordExcerptChangeStats }>
 						<FormTextarea
@@ -196,16 +197,16 @@ const EditorDrawer = React.createClass( {
 							name="excerpt"
 							onChange={ this.onExcerptChange }
 							value={ excerpt }
-							placeholder={ this.translate( 'Write an excerpt…' ) }
-							aria-label={ this.translate( 'Write an excerpt…' ) }
+							placeholder={ this.props.translate( 'Write an excerpt…' ) }
+							aria-label={ this.props.translate( 'Write an excerpt…' ) }
 						/>
 					</TrackInputChanges>
 				</EditorDrawerLabel>
 			</AccordionSection>
 		);
-	},
+	};
 
-	renderLocation: function() {
+	renderLocation = () => {
 		if ( ! this.props.site || this.props.isJetpack ) {
 			return;
 		}
@@ -215,17 +216,17 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<AccordionSection>
-				<EditorDrawerLabel labelText={ this.translate( 'Location' ) } />
+		    <AccordionSection>
+				<EditorDrawerLabel labelText={ this.props.translate( 'Location' ) } />
 				<AsyncLoad
 					require="post-editor/editor-location"
 					coordinates={ PostMetadata.geoCoordinates( this.props.post ) }
 				/>
 			</AccordionSection>
 		);
-	},
+	};
 
-	renderDiscussion: function() {
+	renderDiscussion = () => {
 		if ( ! this.currentPostTypeSupports( 'comments' ) ) {
 			return;
 		}
@@ -240,9 +241,9 @@ const EditorDrawer = React.createClass( {
 				/>
 			</AccordionSection>
 		);
-	},
+	};
 
-	renderSeo: function() {
+	renderSeo = () => {
 		const { jetpackVersionSupportsSeo } = this.props;
 
 		if ( ! this.props.site ) {
@@ -268,18 +269,18 @@ const EditorDrawer = React.createClass( {
 				metaDescription={ PostMetadata.metaDescription( this.props.post ) }
 			/>
 		);
-	},
+	};
 
-	renderCopyPost: function() {
+	renderCopyPost = () => {
 		const { type } = this.props;
 		if ( 'post' !== type && 'page' !== type ) {
 			return;
 		}
 
 		return <EditorMoreOptionsCopyPost type={ type } />;
-	},
+	};
 
-	renderMoreOptions: function() {
+	renderMoreOptions = () => {
 		const { isPermalinkEditable } = this.props;
 
 		if (
@@ -292,8 +293,8 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<Accordion
-				title={ this.translate( 'More Options' ) }
+		    <Accordion
+				title={ this.props.translate( 'More Options' ) }
 				className="editor-drawer__more-options"
 			>
 				{ isPermalinkEditable && <EditorMoreOptionsSlug /> }
@@ -303,23 +304,23 @@ const EditorDrawer = React.createClass( {
 				{ this.renderCopyPost() }
 			</Accordion>
 		);
-	},
+	};
 
-	renderPageOptions() {
+	renderPageOptions = () => {
 		if ( ! this.currentPostTypeSupports( 'page-attributes' ) ) {
 			return;
 		}
 
 		return <EditorDrawerPageOptions />;
-	},
+	};
 
-	renderStatus() {
+	renderStatus = () => {
 		// TODO: REDUX - remove this logic and prop for EditPostStatus when date is moved to redux
 		const postDate = get( this.props.post, 'date', null );
 		const postStatus = get( this.props.post, 'status', null );
 
 		return (
-			<Accordion title={ this.translate( 'Status' ) }>
+		    <Accordion title={ this.props.translate( 'Status' ) }>
 				<EditPostStatus
 					savedPost={ this.props.savedPost }
 					postDate={ postDate }
@@ -335,9 +336,9 @@ const EditorDrawer = React.createClass( {
 				/>
 			</Accordion>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		const { site } = this.props;
 
 		return (
@@ -359,7 +360,7 @@ const EditorDrawer = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state ) => {
@@ -378,4 +379,4 @@ export default connect(
 	null,
 	null,
 	{ pure: false }
-)( EditorDrawer );
+)( localize(EditorDrawer) );

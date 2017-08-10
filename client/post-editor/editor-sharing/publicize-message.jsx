@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -13,58 +15,56 @@ import TrackInputChanges from 'components/track-input-changes';
 import PostActions from 'lib/posts/actions';
 import stats from 'lib/posts/stats';
 
-export default React.createClass( {
-	displayName: 'PublicizeMessage',
+export default localize(class extends React.Component {
+    static displayName = 'PublicizeMessage';
 
-	propTypes: {
+	static propTypes = {
 		disabled: React.PropTypes.bool,
 		message: React.PropTypes.string,
 		preview: React.PropTypes.string,
 		acceptableLength: React.PropTypes.number,
 		requireCount: React.PropTypes.bool,
 		onChange: React.PropTypes.func
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			disabled: false,
-			message: '',
-			acceptableLength: 140,
-			requireCount: false,
-		};
-	},
+	static defaultProps = {
+		disabled: false,
+		message: '',
+		acceptableLength: 140,
+		requireCount: false,
+	};
 
-	onChange: function( event ) {
+	onChange = event => {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		if ( this.props.onChange ) {
 			this.props.onChange( event.target.value );
 		} else {
 			PostActions.updateMetadata( '_wpas_mess', event.target.value );
 		}
-	},
+	};
 
-	recordStats: function() {
+	recordStats = () => {
 		stats.recordStat( 'sharing_message_changed' );
 		stats.recordEvent( 'Publicize Sharing Message Changed' );
-	},
+	};
 
-	renderInfoPopover: function() {
+	renderInfoPopover = () => {
 		return (
-			<InfoPopover
+		    <InfoPopover
 				className="publicize-message-counter-info"
 				position="bottom left"
 				gaEventCategory="Editor"
 				popoverName="SharingMessage"
 			>
-				{ this.translate(
+				{ this.props.translate(
 					'The length includes space for the link to your post and an attached image.',
 					{ context: 'Post editor sharing message counter explanation' }
 			) }
 			</InfoPopover>
 		);
-	},
+	};
 
-	renderTextarea: function() {
+	renderTextarea = () => {
 		if ( this.props.requireCount ) {
 			return (
 				<CountedTextarea
@@ -90,13 +90,13 @@ export default React.createClass( {
 					className="editor-sharing__message-input" />
 			);
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
-			<div className="editor-sharing__publicize-message">
+		    <div className="editor-sharing__publicize-message">
 				<h5 className="editor-sharing__message-heading">
-					{ this.translate( 'Customize the message', { context: 'Post editor sharing message heading' } ) }
+					{ this.props.translate( 'Customize the message', { context: 'Post editor sharing message heading' } ) }
 				</h5>
 				<TrackInputChanges onNewValue={ this.recordStats }>
 					{ this.renderTextarea() }
@@ -104,4 +104,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+});

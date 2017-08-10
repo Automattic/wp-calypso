@@ -3,37 +3,39 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
 
-export default React.createClass( {
-	displayName: 'Alert',
+export default localize(class extends React.Component {
+    static displayName = 'Alert';
 
-	propTypes: {
+	static propTypes = {
 		isVisible: React.PropTypes.bool.isRequired,
 		onClose: React.PropTypes.func.isRequired,
 		message: React.PropTypes.string.isRequired,
-	},
+	};
 
-	splitMessage() {
+	splitMessage = () => {
 		const lines = this.props.message.split( '\n\n' );
 		return lines.map( ( line, i ) => <p key={ 'alert-' + i }>{ line }</p> );
-	},
+	};
 
-	getButtons() {
+	getButtons = () => {
 		return [
 			<FormButton
 				isPrimary={ false }
-				aria-label={ this.translate( 'Dismiss alert message' ) }
+				aria-label={ this.props.translate( 'Dismiss alert message' ) }
 				onClick={ this.props.onClose }
 			>
-				{ this.translate( 'OK' ) }
+				{ this.props.translate( 'OK' ) }
 			</FormButton>
 		];
-	},
+	};
 
 	render() {
 		return (
@@ -47,4 +49,4 @@ export default React.createClass( {
 			</Dialog>
 		);
 	}
-} );
+});

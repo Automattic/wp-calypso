@@ -2,47 +2,40 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import Tooltip from 'components/tooltip';
 
-export default React.createClass( {
+export default localize(class extends React.PureComponent {
+    static displayName = 'PostTrendsDay';
 
-	displayName: 'PostTrendsDay',
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		label: PropTypes.string,
 		className: PropTypes.string,
 		postCount: PropTypes.number
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			postCount: 0
-		};
-	},
+	static defaultProps = {
+		postCount: 0
+	};
 
-	getInitialState() {
-		return { showPopover: false };
-	},
+	state = { showPopover: false };
 
-	mouseEnter() {
+	mouseEnter = () => {
 		this.setState( { showPopover: true } );
-	},
+	};
 
-	mouseLeave() {
+	mouseLeave = () => {
 		this.setState( { showPopover: false } );
-	},
+	};
 
-	buildTooltipData() {
+	buildTooltipData = () => {
 		const { label, postCount } = this.props;
-		const content = this.translate(
+		const content = this.props.translate(
 			'%(posts)d post',
 			'%(posts)d posts', {
 				count: postCount,
@@ -57,9 +50,9 @@ export default React.createClass( {
 				<span className="post-count">{ content } </span>
 				<span className="date">{ label }</span>
 		</span> );
-	},
+	};
 
-	render: function() {
+	render() {
 		const { postCount, className } = this.props;
 		const hoveredClass = {
 			'is-hovered': this.state.showPopover
@@ -83,4 +76,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+});

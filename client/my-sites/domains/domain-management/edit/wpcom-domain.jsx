@@ -3,6 +3,10 @@
  */
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -13,14 +17,15 @@ import Property from './card/property';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 
-const WpcomDomain = React.createClass( {
-	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
+const WpcomDomain = createReactClass({
+    displayName: 'WpcomDomain',
+    mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
-	handleEditSiteAddressClick() {
+    handleEditSiteAddressClick() {
 		this.recordEvent( 'navigationClick', 'Edit Site Address', this.props.domain );
 	},
 
-	getEditSiteAddressBlock() {
+    getEditSiteAddressBlock() {
 		/**
 		 * Hide Edit site address for .blog subdomains as this is unsupported for now.
 		 */
@@ -29,30 +34,30 @@ const WpcomDomain = React.createClass( {
 		}
 
 		return (
-			<VerticalNav>
+		    <VerticalNav>
 				<VerticalNavItem
 					path={ `https://${ this.props.domain.name }/wp-admin/index.php?page=my-blogs#blog_row_${ this.props.selectedSite.ID }` }
 					external={ true }
 					onClick={ this.handleEditSiteAddressClick }>
-					{ this.translate( 'Edit Site Address' ) }
+					{ this.props.translate( 'Edit Site Address' ) }
 				</VerticalNavItem>
 			</VerticalNav>
 		);
 	},
 
-	render() {
+    render() {
 		return (
-			<div>
+		    <div>
 				<div className="domain-details-card">
 					<Header { ...this.props } />
 
 					<Card>
-						<Property label={ this.translate( 'Type', { context: 'A type of domain.' } ) }>
-							{ this.translate( 'Included with Site' ) }
+						<Property label={ this.props.translate( 'Type', { context: 'A type of domain.' } ) }>
+							{ this.props.translate( 'Included with Site' ) }
 						</Property>
 
-						<Property label={ this.translate( 'Renews on', { comment: 'The corresponding date is in a different cell in the UI, the date is not included within the translated string' } ) }>
-							<em>{ this.translate( 'Never Expires' ) }</em>
+						<Property label={ this.props.translate( 'Renews on', { comment: 'The corresponding date is in a different cell in the UI, the date is not included within the translated string' } ) }>
+							<em>{ this.props.translate( 'Never Expires' ) }</em>
 						</Property>
 					</Card>
 				</div>
@@ -60,6 +65,6 @@ const WpcomDomain = React.createClass( {
 			</div>
 		);
 	}
-} );
+});
 
-export default WpcomDomain;
+export default localize(WpcomDomain);

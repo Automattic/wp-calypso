@@ -8,10 +8,10 @@ const React = require( 'react' );
  */
 const { getGoogleAppsSupportedDomains } = require( 'lib/domains' );
 
-const DomainsSelect = React.createClass( {
-	propTypes: {
+class DomainsSelect extends React.Component {
+    static propTypes = {
 		domains: React.PropTypes.object.isRequired
-	},
+	};
 
 	render() {
 		let domainRegistrations,
@@ -30,7 +30,7 @@ const DomainsSelect = React.createClass( {
 			} );
 		} else {
 			disabled = true;
-			options = <option>{ this.translate( 'Loading' ) }...</option>;
+			options = <option>{ this.props.translate( 'Loading' ) }...</option>;
 		}
 
 		return (
@@ -42,6 +42,6 @@ const DomainsSelect = React.createClass( {
 			</select>
 		);
 	}
-} );
+}
 
-module.exports = DomainsSelect;
+module.exports = localize(DomainsSelect);

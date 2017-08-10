@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { find, isEmpty, some } from 'lodash';
@@ -45,28 +46,29 @@ import {
 	getSelectedSiteSlug
 } from 'state/ui/selectors';
 
-const PluginsMain = React.createClass( {
-	mixins: [ URLSearch ],
+const PluginsMain = localize(createReactClass({
+    displayName: 'PluginsMain',
+    mixins: [ URLSearch ],
 
-	getInitialState() {
+    getInitialState() {
 		return this.getPluginsState( this.props );
 	},
 
-	componentDidMount() {
+    componentDidMount() {
 		this.props.sites.on( 'change', this.refreshPlugins );
 		PluginsStore.on( 'change', this.refreshPlugins );
 	},
 
-	componentWillUnmount() {
+    componentWillUnmount() {
 		this.props.sites.removeListener( 'change', this.refreshPlugins );
 		PluginsStore.removeListener( 'change', this.refreshPlugins );
 	},
 
-	componentWillReceiveProps( nextProps ) {
+    componentWillReceiveProps( nextProps ) {
 		this.refreshPlugins( nextProps );
 	},
 
-	getPluginsFromStore( nextProps, sites ) {
+    getPluginsFromStore( nextProps, sites ) {
 		const props = nextProps || this.props;
 		let	plugins = null;
 		if ( ! props.selectedSiteSlug ) {
@@ -86,7 +88,7 @@ const PluginsMain = React.createClass( {
 		return this.addWporgDataToPlugins( plugins );
 	},
 
-	// plugins for Jetpack sites require additional data from the wporg-data store
+    // plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins( plugins ) {
 		return plugins.map( plugin => {
 			const pluginData = WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, plugin.slug );
@@ -97,7 +99,7 @@ const PluginsMain = React.createClass( {
 		} );
 	},
 
-	getPluginsState( nextProps ) {
+    getPluginsState( nextProps ) {
 		const sites = this.props.sites.getSelectedOrAllWithPlugins(),
 			pluginUpdate = PluginsStore.getPlugins( sites, 'updates' );
 		return {
@@ -107,50 +109,50 @@ const PluginsMain = React.createClass( {
 		};
 	},
 
-	refreshPlugins( nextProps ) {
+    refreshPlugins( nextProps ) {
 		this.setState( this.getPluginsState( nextProps ) );
 	},
 
-	matchSearchTerms( search, plugin ) {
+    matchSearchTerms( search, plugin ) {
 		search = search.toLowerCase();
 		return [ 'name', 'description', 'author' ].some( attribute =>
 			plugin[ attribute ] && plugin[ attribute ].toLowerCase().indexOf( search ) !== -1
 		);
 	},
 
-	getFilters() {
+    getFilters() {
 		const siteFilter = this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '';
 
 		return [
 			{
-				title: this.translate( 'All', { context: 'Filter label for plugins list' } ),
+				title: this.props.translate( 'All', { context: 'Filter label for plugins list' } ),
 				path: '/plugins' + siteFilter,
 				id: 'all'
 			},
 			{
-				title: this.translate( 'Active', { context: 'Filter label for plugins list' } ),
+				title: this.props.translate( 'Active', { context: 'Filter label for plugins list' } ),
 				path: '/plugins/active' + siteFilter,
 				id: 'active'
 			},
 			{
-				title: this.translate( 'Inactive', { context: 'Filter label for plugins list' } ),
+				title: this.props.translate( 'Inactive', { context: 'Filter label for plugins list' } ),
 				path: '/plugins/inactive' + siteFilter,
 				id: 'inactive'
 			},
 			{
-				title: this.translate( 'Updates', { context: 'Filter label for plugins list' } ),
+				title: this.props.translate( 'Updates', { context: 'Filter label for plugins list' } ),
 				path: '/plugins/updates' + siteFilter,
 				id: 'updates'
 			}
 		];
 	},
 
-	isFetchingPlugins() {
+    isFetchingPlugins() {
 		const sites = this.props.sites.getSelectedOrAllWithPlugins() || [];
 		return sites.some( PluginsStore.isFetchingSite );
 	},
 
-	getSelectedText() {
+    getSelectedText() {
 		const found = find( this.getFilters(), filterItem => this.props.filter === filterItem.id );
 		if ( 'undefined' !== typeof found ) {
 			return found.title;
@@ -158,60 +160,60 @@ const PluginsMain = React.createClass( {
 		return '';
 	},
 
-	getSearchPlaceholder() {
+    getSearchPlaceholder() {
 		switch ( this.props.filter ) {
 			case 'active':
-				return this.translate( 'Search All…', { textOnly: true } );
+				return this.props.translate( 'Search All…', { textOnly: true } );
 
 			case 'inactive':
-				return this.translate( 'Search Inactive…', { textOnly: true } );
+				return this.props.translate( 'Search Inactive…', { textOnly: true } );
 
 			case 'updates':
-				return this.translate( 'Search Updates…', { textOnly: true } );
+				return this.props.translate( 'Search Updates…', { textOnly: true } );
 
 			case 'all':
-				return this.translate( 'Search All…', { textOnly: true } );
+				return this.props.translate( 'Search All…', { textOnly: true } );
 		}
 	},
 
-	getEmptyContentUpdateData() {
+    getEmptyContentUpdateData() {
 		const emptyContentData = { illustration: '/calypso/images/illustrations/illustration-ok.svg' },
 			{ selectedSite } = this.props;
 
 		if ( selectedSite ) {
-			emptyContentData.title = this.translate( 'All plugins on %(siteName)s are {{span}}up to date.{{/span}}', {
+			emptyContentData.title = this.props.translate( 'All plugins on %(siteName)s are {{span}}up to date.{{/span}}', {
 				textOnly: true,
 				args: { siteName: selectedSite.title },
 				components: { span: <span className="plugins__plugin-list-state" /> },
 				comment: 'The span tags prevents single words from showing on a single line.'
 			} );
 		} else {
-			emptyContentData.title = this.translate( 'All plugins are up to date.', { textOnly: true } );
+			emptyContentData.title = this.props.translate( 'All plugins are up to date.', { textOnly: true } );
 		}
 
 		if ( this.getUpdatesTabVisibility() ) {
 			return emptyContentData;
 		}
 
-		emptyContentData.action = this.translate( 'All Plugins', { textOnly: true } );
+		emptyContentData.action = this.props.translate( 'All Plugins', { textOnly: true } );
 
 		if ( selectedSite ) {
 			emptyContentData.actionURL = '/plugins/' + selectedSite.slug;
 			if ( this.props.selectedSiteIsJetpack ) {
 				emptyContentData.illustration = '/calypso/images/illustrations/illustration-jetpack.svg';
-				emptyContentData.title = this.translate( 'Plugins can\'t be updated on %(siteName)s.', {
+				emptyContentData.title = this.props.translate( 'Plugins can\'t be updated on %(siteName)s.', {
 					textOnly: true,
 					args: { siteName: selectedSite.title }
 				} );
 			} else {
 				// buisness plan sites
-				emptyContentData.title = this.translate( 'Plugins are updated automatically on %(siteName)s.', {
+				emptyContentData.title = this.props.translate( 'Plugins are updated automatically on %(siteName)s.', {
 					textOnly: true,
 					args: { siteName: selectedSite.title }
 				} );
 			}
 		} else {
-			emptyContentData.title = this.translate( 'No updates are available.', { textOnly: true } );
+			emptyContentData.title = this.props.translate( 'No updates are available.', { textOnly: true } );
 			emptyContentData.illustration = '/calypso/images/illustrations/illustration-empty-results.svg';
 			emptyContentData.actionURL = '/plugins';
 		}
@@ -219,15 +221,15 @@ const PluginsMain = React.createClass( {
 		return emptyContentData;
 	},
 
-	getEmptyContentData() {
+    getEmptyContentData() {
 		let emptyContentData = { illustration: '/calypso/images/illustrations/illustration-empty-results.svg', };
 
 		switch ( this.props.filter ) {
 			case 'active':
-				emptyContentData.title = this.translate( 'No plugins are active.', { textOnly: true } );
+				emptyContentData.title = this.props.translate( 'No plugins are active.', { textOnly: true } );
 				break;
 			case 'inactive':
-				emptyContentData.title = this.translate( 'No plugins are inactive.', { textOnly: true } );
+				emptyContentData.title = this.props.translate( 'No plugins are inactive.', { textOnly: true } );
 				break;
 			case 'updates':
 				emptyContentData = this.getEmptyContentUpdateData();
@@ -238,7 +240,7 @@ const PluginsMain = React.createClass( {
 		return emptyContentData;
 	},
 
-	getUpdatesTabVisibility() {
+    getUpdatesTabVisibility() {
 		const { selectedSite } = this.props;
 
 		if ( selectedSite ) {
@@ -251,23 +253,23 @@ const PluginsMain = React.createClass( {
 		);
 	},
 
-	shouldShowPluginListPlaceholders() {
+    shouldShowPluginListPlaceholders() {
 		const { plugins } = this.state;
 
 		return isEmpty( plugins ) && this.isFetchingPlugins();
 	},
 
-	renderDocumentHead() {
-		return <DocumentHead title={ this.translate( 'Plugins', { textOnly: true } ) } />;
+    renderDocumentHead() {
+		return <DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 	},
 
-	renderPluginsContent() {
+    renderPluginsContent() {
 		const plugins = this.state.plugins || [];
 		const { selectedSite } = this.props;
 
 		if ( isEmpty( plugins ) && ! this.isFetchingPlugins() ) {
 			if ( this.props.search ) {
-				const searchTitle = this.translate( 'Suggested plugins for: %(searchQuery)s', {
+				const searchTitle = this.props.translate( 'Suggested plugins for: %(searchQuery)s', {
 					textOnly: true,
 					args: {
 						searchQuery: this.props.search
@@ -295,9 +297,9 @@ const PluginsMain = React.createClass( {
 			}
 		}
 		return (
-			<div className="plugins__lists">
+		    <div className="plugins__lists">
 				<PluginsList
-					header={ this.translate( 'Plugins' ) }
+					header={ this.props.translate( 'Plugins' ) }
 					plugins={ plugins }
 					sites={ this.props.sites }
 					pluginUpdateCount={ this.state.pluginUpdateCount }
@@ -306,7 +308,7 @@ const PluginsMain = React.createClass( {
 		);
 	},
 
-	getMockPluginItems() {
+    getMockPluginItems() {
 		const plugins = [ {
 			slug: 'akismet',
 			name: 'Akismet',
@@ -340,7 +342,7 @@ const PluginsMain = React.createClass( {
 		} );
 	},
 
-	render() {
+    render() {
 		const {
 			category,
 			search,
@@ -367,13 +369,13 @@ const PluginsMain = React.createClass( {
 
 		if ( this.props.selectedSiteIsJetpack && ! this.props.canSelectedJetpackSiteManage ) {
 			return (
-				<Main>
+			    <Main>
 					{ this.renderDocumentHead() }
 					<SidebarNavigation />
 					<JetpackManageErrorPage
 						template="optInManage"
 						siteId={ selectedSiteId }
-						title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
+						title={ this.props.translate( 'Looking to manage this site\'s plugins?' ) }
 						section="plugins"
 						featureExample={ this.getMockPluginItems() } />
 				</Main>
@@ -428,7 +430,7 @@ const PluginsMain = React.createClass( {
 			</Main>
 		);
 	}
-} );
+}));
 
 export default connect(
 	state => {

@@ -13,20 +13,20 @@ var isPlan = require( 'lib/products-values' ).isPlan,
 	PaymentBox = require( './payment-box' ),
 	TermsOfService = require( './terms-of-service' );
 
-const FreeTrialConfirmationBox = React.createClass( {
-	content() {
+class FreeTrialConfirmationBox extends React.Component {
+    content = () => {
 		return (
-			<form onSubmit={ this.props.onSubmit }>
+		    <form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
 					<h6>
 					{
-						this.translate( 'Get started with %(productName)s', { args: { productName: this.getProductName() } } )
+						this.props.translate( 'Get started with %(productName)s', { args: { productName: this.getProductName() } } )
 					}
 					</h6>
 
 					<span>
 					{
-						this.translate( 'Enjoy your free trial with no strings attached: your site will simply revert to the free plan when the period is over.' )
+						this.props.translate( 'Enjoy your free trial with no strings attached: your site will simply revert to the free plan when the period is over.' )
 					}
 					</span>
 				</div>
@@ -39,13 +39,13 @@ const FreeTrialConfirmationBox = React.createClass( {
 				</div>
 			</form>
 		);
-	},
+	};
 
-	getProductName() {
+	getProductName = () => {
 		const planProduct = find( this.props.cart.products, isPlan );
 
 		return ( planProduct && planProduct.product_name ) || '';
-	},
+	};
 
 	render() {
 		return (
@@ -54,6 +54,6 @@ const FreeTrialConfirmationBox = React.createClass( {
 			</PaymentBox>
 		);
 	}
-} );
+}
 
-module.exports = FreeTrialConfirmationBox;
+module.exports = localize(FreeTrialConfirmationBox);

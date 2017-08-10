@@ -6,6 +6,8 @@ var ReactDom = require( 'react-dom' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	emailValidator = require( 'email-validator' );
 
+var createReactClass = require('create-react-class');
+
 /**
  * Internal dependencies
  */
@@ -15,7 +17,7 @@ var FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
 	Buttons = require( './buttons' );
 
-module.exports = React.createClass( {
+module.exports = localize(createReactClass({
 	displayName: 'SecurityAccountRecoveryRecoveryEmailEdit',
 
 	mixins: [ LinkedStateMixin ],
@@ -61,7 +63,7 @@ module.exports = React.createClass( {
 			text;
 
 		if ( this.props.primaryEmail ) {
-			text = this.translate( 'Your primary email address is {{email/}}', {
+			text = this.props.translate( 'Your primary email address is {{email/}}', {
 				components: {
 					email: <strong>{ this.props.primaryEmail }</strong>
 				}
@@ -76,7 +78,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className={ this.props.className }>
+		    <div className={ this.props.className }>
 				<FormFieldset>
 					<FormTextInput
 						valueLink={ this.linkState( 'email' ) }
@@ -93,7 +95,7 @@ module.exports = React.createClass( {
 				<Buttons
 					isSavable={ this.isSavable() }
 					isDeletable={ !! this.props.storedEmail }
-					saveText={ this.translate( 'Save Email' ) }
+					saveText={ this.props.translate( 'Save Email' ) }
 					onSave={ this.onSave }
 					onDelete={ this.onDelete }
 					onCancel={ this.onCancel }
@@ -133,12 +135,12 @@ module.exports = React.createClass( {
 
 		if ( this.props.primaryEmail &&
 				email === this.props.primaryEmail ) {
-			this.setState( { validation: this.translate( 'You have entered your primary email address. Please enter a different email address.' ) } );
+			this.setState( { validation: this.props.translate( 'You have entered your primary email address. Please enter a different email address.' ) } );
 			return;
 		}
 
 		if ( ! emailValidator.validate( email ) ) {
-			this.setState( { validation: this.translate( 'Please enter a valid email address.' ) } );
+			this.setState( { validation: this.props.translate( 'Please enter a valid email address.' ) } );
 			return;
 		}
 
@@ -153,4 +155,4 @@ module.exports = React.createClass( {
 	onDelete: function() {
 		this.props.onDelete();
 	}
-} );
+}));

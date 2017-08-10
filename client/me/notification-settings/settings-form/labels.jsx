@@ -3,29 +3,31 @@
  */
 import React, { PropTypes } from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
 import StreamHeader from './stream-header';
 import LabelsList from './labels-list';
 
-export default React.createClass( {
-	displayName: 'NotificationSettingsFormLabels',
+export default localize(class extends React.Component {
+    static displayName = 'NotificationSettingsFormLabels';
 
-	propTypes: {
+	static propTypes = {
 		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired
-	},
+	};
 
 	shouldComponentUpdate() {
 		return false;
-	},
+	}
 
 	render() {
 		return (
-			<div className="notification-settings-form-labels">
-				<StreamHeader title={ this.translate( 'notifications' ) } />
+		    <div className="notification-settings-form-labels">
+				<StreamHeader title={ this.props.translate( 'notifications' ) } />
 				<LabelsList settingKeys={ this.props.settingKeys } />
 			</div>
 		);
 	}
-} );
+});

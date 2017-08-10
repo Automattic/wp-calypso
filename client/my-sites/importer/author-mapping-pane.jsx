@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,12 +12,10 @@ import AuthorMapping from './author-mapping-item';
 import SiteUsersFetcher from 'components/site-users-fetcher';
 import UsersStore from 'lib/users/store';
 
-export default React.createClass( {
-	displayName: 'ImporterMappingPane',
+export default localize(class extends React.PureComponent {
+    static displayName = 'ImporterMappingPane';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		hasSingleAuthor: PropTypes.bool.isRequired,
 		onMap: PropTypes.func,
 		onStartImport: PropTypes.func,
@@ -30,20 +28,20 @@ export default React.createClass( {
 		).isRequired,
 		sourceTitle: PropTypes.string.isRequired,
 		targetTitle: PropTypes.string.isRequired
-	},
+	};
 
-	getFetchOptions( options = {} ) {
+	getFetchOptions = (options = {}) => {
 		return Object.assign( {
 			number: 50,
 			order: 'ASC',
 			order_by: 'display_name',
 			siteId: this.props.siteId
 		}, options );
-	},
+	};
 
-	getMappingDescription( numSourceUsers, numTargetUsers, targetTitle ) {
+	getMappingDescription = (numSourceUsers, numTargetUsers, targetTitle) => {
 		if ( numTargetUsers === 1 && numSourceUsers === 1 ) {
-			return this.translate(
+			return this.props.translate(
 				'We found one author on your %(sourceType)s site. ' +
 				'Because you\'re the only author on {{b}}%(destinationSiteTitle)s{{/b}}, ' +
 				'all imported content will be assigned to you. ' +
@@ -58,7 +56,7 @@ export default React.createClass( {
 				}
 			);
 		} else if ( numTargetUsers === 1 && numSourceUsers > 1 ) {
-			return this.translate(
+			return this.props.translate(
 				'We found multiple authors on your %(sourceType)s site. ' +
 				'Because you\'re the only author on {{b}}%(destinationSiteTitle)s{{/b}}, ' +
 				'all imported content will be assigned to you. ' +
@@ -73,7 +71,7 @@ export default React.createClass( {
 				}
 			);
 		} else if ( numTargetUsers > 1 && numSourceUsers === 1 ) {
-			return this.translate(
+			return this.props.translate(
 				'We found multiple authors on {{b}}%(destinationSiteTitle)s{{/b}}. ' +
 				'Please reassign the authors of the imported items to an existing ' +
 				'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click Start Import.', {
@@ -87,7 +85,7 @@ export default React.createClass( {
 				}
 			);
 		} else if ( numTargetUsers > 1 && numSourceUsers > 1 ) {
-			return this.translate(
+			return this.props.translate(
 				'We found multiple authors on your %(sourceType)s site. ' +
 				'Please reassign the authors of the imported items to an existing ' +
 				'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click Start Import.', {
@@ -101,23 +99,23 @@ export default React.createClass( {
 				}
 			);
 		}
-	},
+	};
 
-	getUserCount() {
+	getUserCount = () => {
 		const fetchOptions = this.getFetchOptions( 50 );
 		const { totalUsers } = UsersStore.getPaginationData( fetchOptions );
 
 		return totalUsers;
-	},
+	};
 
-	render: function() {
+	render() {
 		const { hasSingleAuthor, sourceAuthors, sourceTitle, targetTitle, onMap, onStartImport, siteId } = this.props;
 		const canStartImport = hasSingleAuthor || sourceAuthors.some( author => author.mappedTo );
 		const targetUserCount = this.getUserCount();
 		const mappingDescription = this.getMappingDescription( sourceAuthors.length, targetUserCount, targetTitle );
 
 		return (
-			<div className="importer__mapping-pane">
+		    <div className="importer__mapping-pane">
 				<SiteUsersFetcher fetchOptions={ this.getFetchOptions( { number: 50 } ) }>
 					<div className="importer__mapping-description">
 						{ mappingDescription }
@@ -139,9 +137,9 @@ export default React.createClass( {
 					);
 				} ) }
 				<Button disabled={ ! canStartImport } onClick={ onStartImport }>
-					{ this.translate( 'Start Import' ) }
+					{ this.props.translate( 'Start Import' ) }
 				</Button>
 			</div>
 		);
 	}
-} );
+});

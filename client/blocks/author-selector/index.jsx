@@ -2,7 +2,9 @@
  * External dependencies
  */
 import ReactDom from 'react-dom';
+import { localize } from 'i18n-calypso';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import debugModule from 'debug';
 import { trim } from 'lodash';
 import Gridicon from 'gridicons';
@@ -25,7 +27,7 @@ import { hasTouch } from 'lib/touch-detect';
 const debug = debugModule( 'calypso:author-selector' );
 let instance = 0;
 
-const SwitcherShell = React.createClass( {
+const SwitcherShell = localize(createReactClass({
 	displayName: 'AuthorSwitcherShell',
 	propTypes: {
 		users: React.PropTypes.array,
@@ -74,7 +76,7 @@ const SwitcherShell = React.createClass( {
 		}
 
 		return (
-			<span>
+		    <span>
 				<span
 					className="author-selector__author-toggle"
 					onClick={ this._toggleShowAuthor }
@@ -96,7 +98,7 @@ const SwitcherShell = React.createClass( {
 						<Search
 							compact
 							onSearch={ this._onSearch }
-							placeholder={ this.translate( 'Find Author…', { context: 'search label' } ) }
+							placeholder={ this.props.translate( 'Find Author…', { context: 'search label' } ) }
 							delaySearch={ true }
 							ref="authorSelectorSearch"
 						/>
@@ -190,8 +192,8 @@ const SwitcherShell = React.createClass( {
 
 	_noUsersFound: function() {
 		return (
-			<div className="author-selector__no-users">
-				{ this.translate( 'No matching users found.' ) }
+		    <div className="author-selector__no-users">
+				{ this.props.translate( 'No matching users found.' ) }
 			</div>
 		);
 	},
@@ -228,38 +230,35 @@ const SwitcherShell = React.createClass( {
 	_onSearch: function( searchTerm ) {
 		this.props.updateSearch( searchTerm );
 	}
-} );
+}));
 
-module.exports = React.createClass( {
-	displayName: 'AuthorSelector',
-	propTypes: {
+module.exports = class extends React.Component {
+    static displayName = 'AuthorSelector';
+
+	static propTypes = {
 		siteId: React.PropTypes.number.isRequired,
 		onSelect: React.PropTypes.func,
 		exclude: React.PropTypes.arrayOf( React.PropTypes.number ),
 		allowSingleUser: React.PropTypes.bool,
 		popoverPosition: React.PropTypes.string
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			search: ''
-		};
-	},
+	static defaultProps = {
+		showAuthorMenu: false,
+		onClose: function() {},
+		allowSingleUser: false,
+		popoverPosition: 'bottom left'
+	};
 
-	getDefaultProps: function() {
-		return {
-			showAuthorMenu: false,
-			onClose: function() {},
-			allowSingleUser: false,
-			popoverPosition: 'bottom left'
-		};
-	},
+	state = {
+		search: ''
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( 'AuthorSelector mounted' );
-	},
+	}
 
-	render: function() {
+	render() {
 		let searchString = this.state.search || '';
 		searchString = trim( searchString );
 
@@ -282,12 +281,12 @@ module.exports = React.createClass( {
 				<SwitcherShell { ...this.props } updateSearch={ this._updateSearch } />
 			</SiteUsersFetcher>
 		);
-	},
+	}
 
-	_updateSearch: function( searchTerm ) {
+	_updateSearch = searchTerm => {
 		searchTerm = searchTerm ? '*' + searchTerm + '*' : '';
 		this.setState( {
 			search: searchTerm
 		} );
-	}
-} );
+	};
+};

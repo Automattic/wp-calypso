@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { find } from 'lodash';
-import i18n from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,18 +11,18 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import signupUtils from 'signup/utils';
 
-export default React.createClass( {
-	displayName: 'PreviousStepButton',
+export default localize(class extends React.Component {
+    static displayName = 'PreviousStepButton';
 
-	propTypes: {
+	static propTypes = {
 		flowName: React.PropTypes.string.isRequired,
 		stepName: React.PropTypes.string.isRequired,
 		previousPath: React.PropTypes.string,
 		positionInFlow: React.PropTypes.number.isRequired,
 		signupProgress: React.PropTypes.array.isRequired
-	},
+	};
 
-	backUrl() {
+	backUrl = () => {
 		if ( this.props.backUrl ) {
 			return this.props.backUrl;
 		}
@@ -31,21 +31,21 @@ export default React.createClass( {
 			{ stepSectionName } = find( this.props.signupProgress, { stepName: previousStepName } );
 
 		return signupUtils.getStepUrl( this.props.flowName, previousStepName, stepSectionName, i18n.getLocaleSlug() );
-	},
+	};
 
-	recordClick() {
+	recordClick = () => {
 		analytics.tracks.recordEvent( 'calypso_signup_previous_step_button_click', {
 			flow: this.props.flowName,
 			step: this.props.stepName
 		} );
-	},
+	};
 
 	render() {
 		if ( this.props.positionInFlow > 0 ) {
 			return (
-				<a className="previous-step" href={ this.backUrl() } onClick={ this.recordClick }>
+			    <a className="previous-step" href={ this.backUrl() } onClick={ this.recordClick }>
 					<span className="previous-step__label">
-						{ this.translate( 'Back' ) }
+						{ this.props.translate( 'Back' ) }
 					</span>
 				</a>
 			);
@@ -53,4 +53,4 @@ export default React.createClass( {
 
 		return null;
 	}
-} );
+});

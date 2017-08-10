@@ -3,6 +3,8 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -18,18 +20,17 @@ import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
 import Site from 'blocks/site';
 
-export default React.createClass( {
+export default localize(class extends React.Component {
+    static displayName = 'PluginSiteNetwork';
 
-	displayName: 'PluginSiteNetwork',
-
-	propTypes: {
+	static propTypes = {
 		site: React.PropTypes.object,
 		plugin: React.PropTypes.object,
 		notices: React.PropTypes.object,
 		secondarySites: React.PropTypes.array,
-	},
+	};
 
-	renderInstallButton: function() {
+	renderInstallButton = () => {
 		if ( ! this.props.site.canManage() ) {
 			return this.renderManageWarning();
 		}
@@ -41,16 +42,16 @@ export default React.createClass( {
 			selectedSite={ this.props.site }
 			plugin={ this.props.plugin }
 			isInstalling={ installInProgress } />;
-	},
+	};
 
-	renderMultisiteHeader: function() {
+	renderMultisiteHeader = () => {
 		return (
-			<div className="plugin-site-network__header">
+		    <div className="plugin-site-network__header">
 				<AllSites
 					sites={ this.props.secondarySites }
 					count={ this.props.secondarySites.length }
 					domain={ this.props.site.domain }
-					title={ this.translate( '%(mainSiteName)s\'s Network', {
+					title={ this.props.translate( '%(mainSiteName)s\'s Network', {
 						args: {
 							mainSiteName: this.props.site.name
 						},
@@ -58,9 +59,9 @@ export default React.createClass( {
 				/>
 			</div>
 		);
-	},
+	};
 
-	renderInstallPlugin: function() {
+	renderInstallPlugin = () => {
 		return (
 			<FoldableCard compact
 				className="plugin-site-network"
@@ -68,9 +69,9 @@ export default React.createClass( {
 				actionButton={ this.renderInstallButton() } >
 			</FoldableCard>
 		);
-	},
+	};
 
-	renderPluginActions: function() {
+	renderPluginActions = () => {
 		if ( ! this.props.site.canManage() ) {
 			return this.renderManageWarning();
 		}
@@ -81,9 +82,9 @@ export default React.createClass( {
 				<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } notices={ this.props.notices } />
 			</div>
 		);
-	},
+	};
 
-	renderPluginSite: function() {
+	renderPluginSite = () => {
 		return (
 			<FoldableCard compact clickableHeader
 				className="plugin-site-network"
@@ -101,18 +102,18 @@ export default React.createClass( {
 
 			</FoldableCard>
 		);
-	},
+	};
 
-	renderSecondarySite: function( site ) {
+	renderSecondarySite = site => {
 		return (
 			<CompactCard className="plugin-site-network__secondary-site" key={ 'secondary-site-' + site.ID }>
 				<Site site={ site } indicator={ false } />
 				{ this.renderSecondarySiteActions( site ) }
 			</CompactCard>
 		);
-	},
+	};
 
-	renderSecondarySiteActions: function( site ) {
+	renderSecondarySiteActions = site => {
 		if ( ! site.canManage() ) {
 			return (
 				<div className="plugin-site-network__secondary-site-actions">
@@ -125,17 +126,17 @@ export default React.createClass( {
 				<PluginActivateToggle site={ site } plugin={ site.plugin } notices={ this.props.notices } />
 			</div>
 		);
-	},
+	};
 
-	renderManageWarning: function() {
+	renderManageWarning = () => {
 		return (
 			<div className="plugin-site-network__network_disabled">
 				<PluginSiteDisabledManage site={ this.props.site } plugin={ this.props.plugin } isNetwork={ true } />
 			</div>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		if ( ! this.props.site || ! this.props.plugin ) {
 			return null;
 		}
@@ -146,4 +147,4 @@ export default React.createClass( {
 
 		return this.renderPluginSite();
 	}
-} );
+});

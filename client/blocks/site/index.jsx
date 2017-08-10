@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { noop } from 'lodash';
@@ -14,32 +15,30 @@ import SiteIcon from 'blocks/site-icon';
 import SiteIndicator from 'my-sites/site-indicator';
 import { getSite } from 'state/sites/selectors';
 
-const Site = React.createClass( {
-	getDefaultProps() {
-		return {
-			// onSelect callback
-			onSelect: noop,
-			// mouse event callbacks
-			onMouseEnter: noop,
-			onMouseLeave: noop,
+class Site extends React.Component {
+    static defaultProps = {
+		// onSelect callback
+		onSelect: noop,
+		// mouse event callbacks
+		onMouseEnter: noop,
+		onMouseLeave: noop,
 
-			// Set a href attribute to the anchor
-			href: null,
+		// Set a href attribute to the anchor
+		href: null,
 
-			// Choose to show the SiteIndicator
-			indicator: true,
+		// Choose to show the SiteIndicator
+		indicator: true,
 
-			// Mark as selected or not
-			isSelected: false,
+		// Mark as selected or not
+		isSelected: false,
 
-			homeLink: false,
-			// if homeLink is enabled
-			showHomeIcon: true,
-			compact: false
-		};
-	},
+		homeLink: false,
+		// if homeLink is enabled
+		showHomeIcon: true,
+		compact: false
+	};
 
-	propTypes: {
+	static propTypes = {
 		href: React.PropTypes.string,
 		externalLink: React.PropTypes.bool,
 		indicator: React.PropTypes.bool,
@@ -53,19 +52,19 @@ const Site = React.createClass( {
 		homeLink: React.PropTypes.bool,
 		showHomeIcon: React.PropTypes.bool,
 		compact: React.PropTypes.bool
-	},
+	};
 
-	onSelect( event ) {
+	onSelect = event => {
 		this.props.onSelect( event, this.props.site.ID );
-	},
+	};
 
-	onMouseEnter( event ) {
+	onMouseEnter = event => {
 		this.props.onMouseEnter( event, this.props.site.ID );
-	},
+	};
 
-	onMouseLeave( event ) {
+	onMouseLeave = event => {
 		this.props.onMouseLeave( event, this.props.site.ID );
-	},
+	};
 
 	render() {
 		const site = this.props.site;
@@ -87,23 +86,23 @@ const Site = React.createClass( {
 		} );
 
 		return (
-			<div className={ siteClass }>
+		    <div className={ siteClass }>
 				<a className="site__content"
 					href={ this.props.homeLink ? site.URL : this.props.href }
 					data-tip-target={ this.props.tipTarget }
 					target={ this.props.externalLink && '_blank' }
 					title={ this.props.homeLink
-						? this.translate( 'View this site' )
-						: this.translate( 'Select this site' )
+						? this.props.translate( 'View this site' )
+						: this.props.translate( 'Select this site' )
 					}
 					onClick={ this.onSelect }
 					onMouseEnter={ this.onMouseEnter }
 					onMouseLeave={ this.onMouseLeave }
 					aria-label={ this.props.homeLink && site.is_previewable
-						? this.translate( 'Open site %(domain)s in a preview', {
+						? this.props.translate( 'Open site %(domain)s in a preview', {
 							args: { domain: site.domain }
 						} )
-						: this.translate( 'Open site %(domain)s in new tab', {
+						: this.props.translate( 'Open site %(domain)s in new tab', {
 							args: { domain: site.domain }
 						} )
 					}
@@ -145,8 +144,8 @@ const Site = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect( ( state, { siteId, site } ) => ( {
 	site: siteId ? getSite( state, siteId ) : site
-} ) )( Site );
+} ) )( localize(Site) );

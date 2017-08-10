@@ -1,8 +1,7 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+var React = require( 'react' );
 
 /**
  * Internal dependencies
@@ -10,20 +9,18 @@ var React = require( 'react' ),
 var SectionHeader = require( 'components/section-header' ),
 	Button = require( 'components/button' );
 
-var Cards = React.createClass( {
-	displayName: 'SectionHeader',
+class Cards extends React.PureComponent {
+    static displayName = 'SectionHeader';
 
-	mixins: [ PureRenderMixin ],
-
-	render: function() {
+	render() {
 		return (
-			<div>
-				<SectionHeader label={ this.translate( 'Team' ) } count={ 10 }>
+		    <div>
+				<SectionHeader label={ this.props.translate( 'Team' ) } count={ 10 }>
 					<Button compact primary>
-						{ this.translate( 'Primary Action' ) }
+						{ this.props.translate( 'Primary Action' ) }
 					</Button>
 					<Button compact>
-						{ this.translate( 'Manage' ) }
+						{ this.props.translate( 'Manage' ) }
 					</Button>
 					<Button
 						compact
@@ -31,13 +28,13 @@ var Cards = React.createClass( {
 							alert( 'Clicked add button' );
 						} }
 					>
-						{ this.translate( 'Add' ) }
+						{ this.props.translate( 'Add' ) }
 					</Button>
 				</SectionHeader>
 
 				<h3>Clickable SectionHeader</h3>
 
-				<SectionHeader label={ this.translate( 'Team' ) } count={ 10 } href="/devdocs/design/section-header">
+				<SectionHeader label={ this.props.translate( 'Team' ) } count={ 10 } href="/devdocs/design/section-header">
 				</SectionHeader>
 
 				<h3>Empty SectionHeader</h3>
@@ -45,6 +42,6 @@ var Cards = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
-module.exports = Cards;
+module.exports = localize(Cards);

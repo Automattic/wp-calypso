@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import { localize } from 'i18n-calypso';
 
 import {
 	firstValid,
@@ -28,10 +28,8 @@ const googleSnippet = firstValid(
 
 const googleUrl = hardTruncation( 79 );
 
-export const SearchPreview = React.createClass( {
-	mixins: [ PureRenderMixin ],
-
-	render() {
+export class SearchPreview extends React.PureComponent {
+    render() {
 		const {
 			snippet,
 			title,
@@ -39,8 +37,8 @@ export const SearchPreview = React.createClass( {
 		} = this.props;
 
 		return (
-			<div className="seo-search-preview">
-				<h2 className="seo-search-preview__header">{ this.translate( 'Search Preview' ) }</h2>
+		    <div className="seo-search-preview">
+				<h2 className="seo-search-preview__header">{ this.props.translate( 'Search Preview' ) }</h2>
 				<div className="seo-search-preview__display">
 					<div className="seo-search-preview__title">
 						{ googleTitle( title ) }
@@ -55,7 +53,7 @@ export const SearchPreview = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 SearchPreview.propTypes = {
 	title: PropTypes.string,
@@ -69,4 +67,4 @@ SearchPreview.defaultProps = {
 	snippet: ''
 };
 
-export default SearchPreview;
+export default localize(SearchPreview);

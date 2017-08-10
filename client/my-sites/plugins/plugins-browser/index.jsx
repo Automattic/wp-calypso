@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -35,14 +36,13 @@ import {
 import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
 
-const PluginsBrowser = React.createClass( {
-	_SHORT_LIST_LENGTH: 6,
+const PluginsBrowser = localize(createReactClass({
+    displayName: 'PluginsBrowser',
+    _SHORT_LIST_LENGTH: 6,
+    visibleCategories: [ 'new', 'popular', 'featured' ],
+    mixins: [ infiniteScroll( 'fetchNextPagePlugins' ), URLSearch ],
 
-	visibleCategories: [ 'new', 'popular', 'featured' ],
-
-	mixins: [ infiniteScroll( 'fetchNextPagePlugins' ), URLSearch ],
-
-	componentDidMount() {
+    componentDidMount() {
 		PluginsListStore.on( 'change', this.refreshLists );
 		this.props.sites.on( 'change', this.refreshLists );
 
@@ -53,24 +53,24 @@ const PluginsBrowser = React.createClass( {
 		}
 	},
 
-	getInitialState() {
+    getInitialState() {
 		return this.getPluginsLists( this.props.search );
 	},
 
-	componentWillUnmount() {
+    componentWillUnmount() {
 		PluginsListStore.removeListener( 'change', this.refreshLists );
 		this.props.sites.removeListener( 'change', this.refreshLists );
 	},
 
-	componentWillReceiveProps( newProps ) {
+    componentWillReceiveProps( newProps ) {
 		this.refreshLists( newProps.search );
 	},
 
-	refreshLists( search ) {
+    refreshLists( search ) {
 		this.setState( this.getPluginsLists( search || this.props.search ) );
 	},
 
-	fetchNextPagePlugins() {
+    fetchNextPagePlugins() {
 		let doSearch = true;
 
 		if ( this.state.fullLists.search && this.state.fullLists.search.fetching ) {
@@ -88,7 +88,7 @@ const PluginsBrowser = React.createClass( {
 		}
 	},
 
-	getPluginsLists( search ) {
+    getPluginsLists( search ) {
 		const shortLists = {},
 			fullLists = {};
 		this.visibleCategories.forEach( category => {
@@ -102,15 +102,15 @@ const PluginsBrowser = React.createClass( {
 		};
 	},
 
-	getPluginsShortList( listName ) {
+    getPluginsShortList( listName ) {
 		return this.state.shortLists[ listName ] ? this.state.shortLists[ listName ].list : [];
 	},
 
-	getPluginsFullList( listName ) {
+    getPluginsFullList( listName ) {
 		return this.state.fullLists[ listName ] ? this.state.fullLists[ listName ].list : [];
 	},
 
-	getPluginBrowserContent() {
+    getPluginBrowserContent() {
 		if ( this.props.search ) {
 			return this.getSearchListView( this.props.search );
 		}
@@ -120,18 +120,18 @@ const PluginsBrowser = React.createClass( {
 		return this.getShortListsView();
 	},
 
-	translateCategory( category ) {
+    translateCategory( category ) {
 		switch ( category ) {
 			case 'new':
-				return this.translate( 'New', { context: 'Category description for the plugin browser.' } );
+				return this.props.translate( 'New', { context: 'Category description for the plugin browser.' } );
 			case 'popular':
-				return this.translate( 'Popular', { context: 'Category description for the plugin browser.' } );
+				return this.props.translate( 'Popular', { context: 'Category description for the plugin browser.' } );
 			case 'featured':
-				return this.translate( 'Featured', { context: 'Category description for the plugin browser.' } );
+				return this.props.translate( 'Featured', { context: 'Category description for the plugin browser.' } );
 		}
 	},
 
-	getFullListView( category ) {
+    getFullListView( category ) {
 		const isFetching = this.state.fullLists[ category ] ? !! this.state.fullLists[ category ].fetching : true;
 		if ( this.getPluginsFullList( category ).length > 0 || isFetching ) {
 			return <PluginsBrowserList
@@ -144,10 +144,10 @@ const PluginsBrowser = React.createClass( {
 		}
 	},
 
-	getSearchListView( searchTerm ) {
+    getSearchListView( searchTerm ) {
 		const isFetching = this.state.fullLists.search ? !! this.state.fullLists.search.fetching : true;
 		if ( this.getPluginsFullList( 'search' ).length > 0 || isFetching ) {
-			const searchTitle = this.props.searchTitle || this.translate( 'Results for: %(searchTerm)s', {
+			const searchTitle = this.props.searchTitle || this.props.translate( 'Results for: %(searchTerm)s', {
 				textOnly: true,
 				args: {
 					searchTerm
@@ -162,9 +162,9 @@ const PluginsBrowser = React.createClass( {
 				currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
 		}
 		return (
-			<NoResults
+		    <NoResults
 				text={
-					this.translate( 'No plugins match your search for {{searchTerm/}}.', {
+					this.props.translate( 'No plugins match your search for {{searchTerm/}}.', {
 						textOnly: true,
 						components: { searchTerm: <em>{ searchTerm }</em> }
 					} )
@@ -172,7 +172,7 @@ const PluginsBrowser = React.createClass( {
 		);
 	},
 
-	getPluginSingleListView( category ) {
+    getPluginSingleListView( category ) {
 		const listLink = '/plugins/browse/' + category + '/';
 		return <PluginsBrowserList
 			plugins={ this.getPluginsShortList( category ) }
@@ -185,7 +185,7 @@ const PluginsBrowser = React.createClass( {
 			currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
 	},
 
-	getShortListsView() {
+    getShortListsView() {
 		return (
 			<span>
 				{ this.getPluginSingleListView( 'featured' ) }
@@ -195,65 +195,67 @@ const PluginsBrowser = React.createClass( {
 		);
 	},
 
-	getSearchBox( pinned ) {
+    getSearchBox( pinned ) {
 		if ( pinned ) {
 			return (
-				<Search
+			    <Search
 					pinned
 					fitsContainer
 					onSearch={ this.doSearch }
 					initialValue={ this.props.search }
-					placeholder={ this.translate( 'Search Plugins' ) }
+					placeholder={ this.props.translate( 'Search Plugins' ) }
 					delaySearch={ true }
 					analyticsGroup="PluginsBrowser" />
 			);
 		}
 
 		return (
-			<SearchCard
+		    <SearchCard
 				autoFocus={ ! hasTouch() }
 				onSearch={ this.doSearch }
 				initialValue={ this.props.search }
-				placeholder={ this.translate( 'Search Plugins' ) }
+				placeholder={ this.props.translate( 'Search Plugins' ) }
 				delaySearch={ true }
 				analyticsGroup="PluginsBrowser" />
 		);
 	},
 
-	getNavigationBar() {
+    getNavigationBar() {
 		const site = this.props.site ? '/' + this.props.site : '';
-		return <SectionNav selectedText={ this.translate( 'Category', { context: 'Category of plugins to be filtered by' } ) }>
-			<NavTabs label="Category">
-				<NavItem
-					path={ '/plugins/browse' + site }
-					selected={ false }
-				>
-					{ this.translate( 'All', { context: 'Filter all plugins' } ) }
-				</NavItem>
-				<NavItem
-					path={ '/plugins/browse/featured' + site }
-					selected={ this.props.path === ( '/plugins/browse/featured' + site ) }
-				>
-					{ this.translate( 'Featured', { context: 'Filter featured plugins' } ) }
-				</NavItem>
-				<NavItem
-					path={ '/plugins/browse/popular' + site }
-					selected={ this.props.path === ( '/plugins/browse/popular' + site ) }
-				>
-					{ this.translate( 'Popular', { context: 'Filter popular plugins' } ) }
-				</NavItem>
-				<NavItem
-					path={ '/plugins/browse/new' + site }
-					selected={ this.props.path === ( '/plugins/browse/new' + site ) }
-				>
-					{ this.translate( 'New', { context: 'Filter new plugins' } ) }
-				</NavItem>
-			</NavTabs>
-			{ this.getSearchBox( true ) }
-		</SectionNav>;
+		return (
+		    <SectionNav selectedText={ this.props.translate( 'Category', { context: 'Category of plugins to be filtered by' } ) }>
+				<NavTabs label="Category">
+					<NavItem
+						path={ '/plugins/browse' + site }
+						selected={ false }
+					>
+						{ this.props.translate( 'All', { context: 'Filter all plugins' } ) }
+					</NavItem>
+					<NavItem
+						path={ '/plugins/browse/featured' + site }
+						selected={ this.props.path === ( '/plugins/browse/featured' + site ) }
+					>
+						{ this.props.translate( 'Featured', { context: 'Filter featured plugins' } ) }
+					</NavItem>
+					<NavItem
+						path={ '/plugins/browse/popular' + site }
+						selected={ this.props.path === ( '/plugins/browse/popular' + site ) }
+					>
+						{ this.props.translate( 'Popular', { context: 'Filter popular plugins' } ) }
+					</NavItem>
+					<NavItem
+						path={ '/plugins/browse/new' + site }
+						selected={ this.props.path === ( '/plugins/browse/new' + site ) }
+					>
+						{ this.props.translate( 'New', { context: 'Filter new plugins' } ) }
+					</NavItem>
+				</NavTabs>
+				{ this.getSearchBox( true ) }
+			</SectionNav>
+		);
 	},
 
-	getPageHeaderView() {
+    getPageHeaderView() {
 		if ( this.props.category ) {
 			return this.getNavigationBar();
 		}
@@ -269,28 +271,30 @@ const PluginsBrowser = React.createClass( {
 		);
 	},
 
-	getMockPluginItems() {
-		return <PluginsBrowserList
-			plugins={ this.getPluginsShortList( 'popular' ) }
-			listName={ 'Plugins' }
-			title={ this.translate( 'Popular Plugins' ) }
-			size={ 12 } />;
+    getMockPluginItems() {
+		return (
+		    <PluginsBrowserList
+				plugins={ this.getPluginsShortList( 'popular' ) }
+				listName={ 'Plugins' }
+				title={ this.props.translate( 'Popular Plugins' ) }
+				size={ 12 } />
+		);
 	},
 
-	renderDocumentHead() {
-		return <DocumentHead title={ this.translate( 'Plugin Browser', { textOnly: true } ) } />;
+    renderDocumentHead() {
+		return <DocumentHead title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />;
 	},
 
-	renderJetpackManageError() {
+    renderJetpackManageError() {
 		const { selectedSiteId } = this.props;
 
 		return (
-			<MainComponent>
+		    <MainComponent>
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
 				<JetpackManageErrorPage
 					template="optInManage"
-					title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
+					title={ this.props.translate( 'Looking to manage this site\'s plugins?' ) }
 					siteId={ selectedSiteId }
 					section="plugins"
 					illustration="/calypso/images/jetpack/jetpack-manage.svg"
@@ -299,7 +303,7 @@ const PluginsBrowser = React.createClass( {
 		);
 	},
 
-	render() {
+    render() {
 		if ( ! this.props.isRequestingSites && this.props.noPermissionsError ) {
 			return <NoPermissionsError title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />;
 		}
@@ -318,7 +322,7 @@ const PluginsBrowser = React.createClass( {
 			</MainComponent>
 		);
 	}
-} );
+}));
 
 export default connect(
 	state => {

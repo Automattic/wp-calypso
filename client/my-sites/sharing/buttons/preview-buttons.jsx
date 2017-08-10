@@ -15,42 +15,38 @@ var ButtonsPreviewButton = require( 'my-sites/sharing/buttons/preview-button' ),
 	previewWidget = require( './preview-widget' ),
 	touchDetect = require( 'lib/touch-detect' );
 
-var SharingButtonsPreviewButtons = module.exports = React.createClass( {
-	displayName: 'SharingButtonsPreviewButtons',
+var SharingButtonsPreviewButtons = module.exports = localize(class extends React.Component {
+    static displayName = 'SharingButtonsPreviewButtons';
 
-	propTypes: {
+	static propTypes = {
 		buttons: React.PropTypes.array,
 		visibility: React.PropTypes.oneOf( [ 'hidden', 'visible' ] ),
 		style: React.PropTypes.oneOf( [ 'icon', 'icon-text', 'text', 'official' ] ),
 		onButtonClick: React.PropTypes.func,
 		showMore: React.PropTypes.bool,
 		forceMorePreviewVisible: React.PropTypes.bool
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			buttons: Object.freeze( [] ),
-			style: 'icon',
-			onButtonClick: function() {},
-			showMore: false,
-			forceMorePreviewVisible: false
-		};
-	},
+	static defaultProps = {
+		buttons: Object.freeze( [] ),
+		style: 'icon',
+		onButtonClick: function() {},
+		showMore: false,
+		forceMorePreviewVisible: false
+	};
 
-	getInitialState: function() {
-		return {
-			morePreviewOffset: null,
-			morePreviewVisible: false
-		};
-	},
+	state = {
+		morePreviewOffset: null,
+		morePreviewVisible: false
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.maybeListenForWidgetMorePreview();
 		this.updateMorePreviewVisibility();
 		document.addEventListener( 'click', this.hideMorePreview );
-	},
+	}
 
-	componentDidUpdate: function( prevProps ) {
+	componentDidUpdate(prevProps) {
 		this.maybeListenForWidgetMorePreview();
 
 		if ( prevProps.forceMorePreviewVisible !== this.props.forceMorePreviewVisible ||
@@ -60,21 +56,21 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 			// visible, or vice-versa
 			this.updateMorePreviewVisibility();
 		}
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		window.removeEventListener( 'message', this.detectWidgetPreviewChanges );
 		document.removeEventListener( 'click', this.hideMorePreview );
-	},
+	}
 
-	maybeListenForWidgetMorePreview: function() {
+	maybeListenForWidgetMorePreview = () => {
 		if ( 'official' === this.props.style && this.props.showMore ) {
 			window.removeEventListener( 'message', this.detectWidgetPreviewChanges );
 			window.addEventListener( 'message', this.detectWidgetPreviewChanges );
 		}
-	},
+	};
 
-	detectWidgetPreviewChanges: function( event ) {
+	detectWidgetPreviewChanges = event => {
 		var preview, offset;
 
 		// Ensure this only triggers in the context of an official preview
@@ -108,17 +104,17 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 				this.updateMorePreviewVisibility();
 			}
 		}
-	},
+	};
 
-	updateMorePreviewVisibility: function() {
+	updateMorePreviewVisibility = () => {
 		if ( ! this.props.forceMorePreviewVisible ) {
 			this.hideMorePreview();
 		} else {
 			this.showMorePreview();
 		}
-	},
+	};
 
-	showMorePreview: function( event ) {
+	showMorePreview = event => {
 		var moreButton, offset;
 
 		if ( event && ( event.currentTarget.contains( event.relatedTarget ) || touchDetect.hasTouch() ) ) {
@@ -146,9 +142,9 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 				morePreviewVisible: true
 			} );
 		}
-	},
+	};
 
-	toggleMorePreview: function( event ) {
+	toggleMorePreview = event => {
 		if ( event ) {
 			// Prevent document click handler from doubling or counteracting this
 			// toggle action
@@ -160,15 +156,15 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 		} else {
 			this.showMorePreview();
 		}
-	},
+	};
 
-	hideMorePreview: function() {
+	hideMorePreview = () => {
 		if ( ! this.props.forceMorePreviewVisible && this.state.morePreviewVisible ) {
 			this.setState( { morePreviewVisible: false } );
 		}
-	},
+	};
 
-	getOfficialPreviewElement: function() {
+	getOfficialPreviewElement = () => {
 		// We filter by visibility for official buttons since we'll never need
 		// to include the non-enabled icons in a preview. Non-enabled icons are
 		// only needed in the button selection tray, where official buttons are
@@ -177,9 +173,9 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 			previewUrl = previewWidget.generatePreviewUrlFromButtons( buttons, this.props.showMore );
 
 		return <ResizableIframe ref="iframe" src={ previewUrl } width="100%" frameBorder="0" className="official-preview" />;
-	},
+	};
 
-	getCustomPreviewElement: function() {
+	getCustomPreviewElement = () => {
 		var buttons = this.props.buttons.map( function( button ) {
 			return <ButtonsPreviewButton key={ button.ID } button={ button } enabled={ button.visibility === this.props.visibility } style={ this.props.style } onClick={ this.props.onButtonClick.bind( null, button ) } />;
 		}, this );
@@ -191,7 +187,7 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 					key="more"
 					button={ {
 						ID: 'more',
-						name: this.translate( 'More' ),
+						name: this.props.translate( 'More' ),
 						genericon: '\\f415'
 					} }
 					style={ 'icon' === this.props.style ? 'icon-text' : this.props.style }
@@ -201,9 +197,9 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 		}
 
 		return buttons;
-	},
+	};
 
-	getMorePreviewElement: function() {
+	getMorePreviewElement = () => {
 		var classes, hiddenButtons;
 		if ( ! this.props.showMore ) {
 			return;
@@ -224,9 +220,9 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 				</div>
 			</div>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="sharing-buttons-preview-buttons">
 				{ 'official' === this.props.style ? this.getOfficialPreviewElement() : this.getCustomPreviewElement() }
@@ -234,4 +230,4 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+});

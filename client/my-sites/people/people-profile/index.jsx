@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { omit } from 'lodash';
 
@@ -11,12 +11,10 @@ import { omit } from 'lodash';
  */
 import Gravatar from 'components/gravatar';
 
-module.exports = React.createClass( {
-	displayName: 'PeopleProfile',
+module.exports = localize(class extends React.PureComponent {
+    static displayName = 'PeopleProfile';
 
-	mixins: [ PureRenderMixin ],
-
-	getRole() {
+	getRole = () => {
 		const user = this.props.user;
 		if ( ! user ) {
 			return 'subscriber';
@@ -27,48 +25,48 @@ module.exports = React.createClass( {
 		}
 
 		return;
-	},
+	};
 
-	getRoleBadgeText( role ) {
+	getRoleBadgeText = role => {
 		let text;
 		role = 'undefined' === typeof role ? this.getRole() : role;
 
 		switch ( role ) {
 			case 'super admin':
-				text = this.translate( 'Super Admin', { context: 'Noun: A user role displayed in a badge' } );
+				text = this.props.translate( 'Super Admin', { context: 'Noun: A user role displayed in a badge' } );
 				break;
 			case 'administrator':
-				text = this.translate( 'Admin', { context: 'Noun: A user role displayed in a badge' } );
+				text = this.props.translate( 'Admin', { context: 'Noun: A user role displayed in a badge' } );
 				break;
 			case 'editor':
-				text = this.translate( 'Editor', { context: 'Noun: A user role displayed in a badge' } );
+				text = this.props.translate( 'Editor', { context: 'Noun: A user role displayed in a badge' } );
 				break;
 			case 'author':
-				text = this.translate( 'Author', { context: 'Noun: A user role displayed in a badge' } );
+				text = this.props.translate( 'Author', { context: 'Noun: A user role displayed in a badge' } );
 				break;
 			case 'contributor':
-				text = this.translate( 'Contributor', { context: 'Noun: A user role displayed in a badge' } );
+				text = this.props.translate( 'Contributor', { context: 'Noun: A user role displayed in a badge' } );
 				break;
 			case 'subscriber':
-				text = this.translate( 'Subscriber', { context: 'Noun: A user role displayed in a badge' } );
+				text = this.props.translate( 'Subscriber', { context: 'Noun: A user role displayed in a badge' } );
 				break;
 			default:
 				text = role;
 		}
 
 		return text;
-	},
+	};
 
-	getRoleBadgeClass( role ) {
+	getRoleBadgeClass = role => {
 		role = 'undefined' === typeof role ? this.getRole() : role;
 		return 'role-' + role;
-	},
+	};
 
-	renderName() {
+	renderName = () => {
 		const user = this.props.user;
 		let name;
 		if ( ! user ) {
-			name = this.translate( 'Loading Users', { context: 'Placeholder text while fetching users.' } );
+			name = this.props.translate( 'Loading Users', { context: 'Placeholder text while fetching users.' } );
 		} else if ( user.name ) {
 			name = user.name;
 		} else if ( user.label ) {
@@ -84,12 +82,12 @@ module.exports = React.createClass( {
 		}
 
 		return name;
-	},
+	};
 
-	renderLogin() {
+	renderLogin = () => {
 		let login;
 		if ( ! this.props.user ) {
-			login = this.translate( 'Loading Users', { context: 'Placeholder text while fetching users.' } );
+			login = this.props.translate( 'Loading Users', { context: 'Placeholder text while fetching users.' } );
 		} else if ( this.props.user.login ) {
 			login = this.props.user.login;
 		}
@@ -103,9 +101,9 @@ module.exports = React.createClass( {
 		}
 
 		return login;
-	},
+	};
 
-	renderRole() {
+	renderRole = () => {
 		let superAdminBadge,
 			roleBadge;
 
@@ -135,17 +133,17 @@ module.exports = React.createClass( {
 				{ roleBadge }
 			</div>
 		);
-	},
+	};
 
-	renderSubscribedDate() {
+	renderSubscribedDate = () => {
 		if ( ! this.props.user || ! this.props.user.date_subscribed ) {
 			return;
 		}
 
 		return (
-			<div className="people-profile__subscribed">
+		    <div className="people-profile__subscribed">
 				{
-					this.translate( 'Since %(formattedDate)s', {
+					this.props.translate( 'Since %(formattedDate)s', {
 						context: 'How long a user has been subscribed to a blog. Example: "Since Sep 16, 2015"',
 						args: {
 							formattedDate: this.moment( this.props.user.date_subscribed ).format( 'll' )
@@ -154,13 +152,13 @@ module.exports = React.createClass( {
 				}
 			</div>
 		);
-	},
+	};
 
-	isFollowerType() {
+	isFollowerType = () => {
 		return this.props.user && ! this.props.user.roles && this.props.user.date_subscribed;
-	},
+	};
 
-	render: function() {
+	render() {
 		const user = this.props.user,
 			classes = classNames( 'people-profile', {
 				'is-placeholder': ! user
@@ -179,4 +177,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+});

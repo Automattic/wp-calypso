@@ -3,13 +3,15 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
 import { emailForwardingPlanLimit } from 'lib/domains/email-forwarding';
 
-const EmailForwardingLimit = React.createClass( {
-	render() {
+class EmailForwardingLimit extends React.Component {
+    render() {
 		const used = this.props.emailForwarding.list.length;
 
 		if ( used < 1 ) {
@@ -17,7 +19,7 @@ const EmailForwardingLimit = React.createClass( {
 		}
 
 		return (
-			<div className="email-forwarding__limit">{ this.translate(
+		    <div className="email-forwarding__limit">{ this.props.translate(
 				'You are using %(used)s out of %(available)s email forwards.', {
 					args: {
 						used,
@@ -26,6 +28,6 @@ const EmailForwardingLimit = React.createClass( {
 				} ) }</div>
 		);
 	}
-} );
+}
 
-export default EmailForwardingLimit;
+export default localize(EmailForwardingLimit);

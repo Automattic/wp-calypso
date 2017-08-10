@@ -10,18 +10,18 @@ var React = require( 'react' ),
  */
 var MediaUtils = require( 'lib/media/utils' );
 
-module.exports = React.createClass( {
-	displayName: 'EditorMediaModalDetailFileInfo',
+module.exports = localize(class extends React.Component {
+    static displayName = 'EditorMediaModalDetailFileInfo';
 
-	propTypes: {
+	static propTypes = {
 		item: React.PropTypes.object
-	},
+	};
 
-	getItemValue( attribute ) {
+	getItemValue = attribute => {
 		let value;
 
 		if ( ! this.props.item ) {
-			return this.translate( 'Loading…' );
+			return this.props.translate( 'Loading…' );
 		}
 
 		switch ( attribute ) {
@@ -31,9 +31,9 @@ module.exports = React.createClass( {
 
 			case 'dimensions':
 				value = createFragment( {
-					width: <abbr title={ this.translate( 'Width in pixels' ) }>{ this.props.item.width }</abbr>,
+					width: <abbr title={ this.props.translate( 'Width in pixels' ) }>{ this.props.item.width }</abbr>,
 					separator: ' ✕ ',
-					height: <abbr title={ this.translate( 'Height in pixels' ) }>{ this.props.item.height }</abbr>
+					height: <abbr title={ this.props.translate( 'Height in pixels' ) }>{ this.props.item.height }</abbr>
 				} );
 				break;
 
@@ -50,33 +50,33 @@ module.exports = React.createClass( {
 		}
 
 		return value;
-	},
+	};
 
-	renderDimensions() {
+	renderDimensions = () => {
 		if ( ! this.props.item || ( ! this.props.item.width && ! this.props.item.height ) ) {
 			return;
 		}
 
 		return (
-			<tr>
-				<th>{ this.translate( 'Dimensions' ) }</th>
+		    <tr>
+				<th>{ this.props.translate( 'Dimensions' ) }</th>
 				<td>{ this.getItemValue( 'dimensions' ) }</td>
 			</tr>
 		);
-	},
+	};
 
-	renderDuration() {
+	renderDuration = () => {
 		if ( ! this.props.item || ! this.props.item.length ) {
 			return;
 		}
 
 		return (
-			<tr>
-				<th>{ this.translate( 'Duration' ) }</th>
+		    <tr>
+				<th>{ this.props.translate( 'Duration' ) }</th>
 				<td>{ this.getItemValue( 'length' ) }</td>
 			</tr>
 		);
-	},
+	};
 
 	render() {
 		let classes = classNames( 'editor-media-modal-detail__file-info', {
@@ -84,26 +84,26 @@ module.exports = React.createClass( {
 		} );
 
 		return (
-			<table className={ classes }>
+		    <table className={ classes }>
 				<tbody>
 					<tr>
-						<th>{ this.translate( 'File Name' ) }</th>
+						<th>{ this.props.translate( 'File Name' ) }</th>
 						<td title={ this.getItemValue( 'file' ) }>
 							<span>{ this.getItemValue( 'file' ) }</span>
 						</td>
 					</tr>
 					<tr>
-						<th>{ this.translate( 'File Type' ) }</th>
+						<th>{ this.props.translate( 'File Type' ) }</th>
 						<td>{ this.getItemValue( 'extension' ) }</td>
 					</tr>
 					{ this.renderDimensions() }
 					{ this.renderDuration() }
 					<tr>
-						<th>{ this.translate( 'Upload Date' ) }</th>
+						<th>{ this.props.translate( 'Upload Date' ) }</th>
 						<td>{ this.getItemValue( 'date' ) }</td>
 					</tr>
 				</tbody>
 			</table>
 		);
 	}
-} );
+});

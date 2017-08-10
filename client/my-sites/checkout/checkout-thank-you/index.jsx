@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import page from 'page';
 import React, { PropTypes } from 'react';
@@ -82,8 +83,8 @@ function findPurchaseAndDomain( purchases, predicate ) {
 	return [ purchase, purchase.meta ];
 }
 
-const CheckoutThankYou = React.createClass( {
-	propTypes: {
+class CheckoutThankYou extends React.Component {
+    static propTypes = {
 		domainOnlySiteFlow: PropTypes.bool.isRequired,
 		failedPurchases: PropTypes.array,
 		productsList: PropTypes.object.isRequired,
@@ -93,7 +94,7 @@ const CheckoutThankYou = React.createClass( {
 			PropTypes.bool,
 			PropTypes.object
 		] ).isRequired
-	},
+	};
 
 	componentDidMount() {
 		this.redirectIfThemePurchased();
@@ -122,9 +123,9 @@ const CheckoutThankYou = React.createClass( {
 		if ( this.isNewUser() ) {
 			this.props.loadTrackingTool( 'HotJar' );
 		}
-	},
+	}
 
-	componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps(nextProps) {
 		this.redirectIfThemePurchased();
 
 		if (
@@ -134,45 +135,45 @@ const CheckoutThankYou = React.createClass( {
 		) {
 			this.props.refreshSitePlans( this.props.selectedSite );
 		}
-	},
+	}
 
-	hasPlanOrDomainProduct( props = this.props ) {
+	hasPlanOrDomainProduct = (props = this.props) => {
 		return getPurchases( props ).some( purchase => isPlan( purchase ) || isDomainProduct( purchase ) );
-	},
+	};
 
-	renderConfirmationNotice: function() {
+	renderConfirmationNotice = () => {
 		if ( ! this.props.user || ! this.props.user.email || this.props.user.email_verified ) {
 			return null;
 		}
 
 		return (
-			<Notice
+		    <Notice
 				className="checkout-thank-you__verification-notice"
 				showDismiss={ false }
 				status="is-warning"
 				>
-				{ this.translate( 'We’ve sent a message to {{strong}}%(email)s{{/strong}}. ' +
+				{ this.props.translate( 'We’ve sent a message to {{strong}}%(email)s{{/strong}}. ' +
 					'Please check your email to confirm your address.', {
 						args: { email: this.props.user.email },
 						components: { strong: <strong className="checkout-thank-you__verification-notice-email" />
 				} } ) }
 			</Notice>
 		);
-	},
+	};
 
-	isDataLoaded() {
+	isDataLoaded = () => {
 		if ( this.isGenericReceipt() ) {
 			return true;
 		}
 
 		return ( ! this.props.selectedSite || this.props.sitePlans.hasLoadedFromServer ) && this.props.receipt.hasLoadedFromServer;
-	},
+	};
 
-	isGenericReceipt() {
+	isGenericReceipt = () => {
 		return ! this.props.receiptId;
-	},
+	};
 
-	redirectIfThemePurchased() {
+	redirectIfThemePurchased = () => {
 		const purchases = getPurchases( this.props );
 
 		if ( this.props.receipt.hasLoadedFromServer && purchases.length > 0 && purchases.every( isTheme ) ) {
@@ -181,9 +182,9 @@ const CheckoutThankYou = React.createClass( {
 
 			page.redirect( '/themes/' + this.props.selectedSite.slug );
 		}
-	},
+	};
 
-	goBack() {
+	goBack = () => {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
 			const site = this.props.selectedSite.slug;
@@ -207,16 +208,16 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		return page( `/stats/insights/${ this.props.selectedSite.slug }` );
-	},
+	};
 
-	isEligibleForLiveChat() {
+	isEligibleForLiveChat = () => {
 		const { planSlug } = this.props;
 		return planSlug === PLAN_JETPACK_BUSINESS || planSlug === PLAN_JETPACK_BUSINESS_MONTHLY;
-	},
+	};
 
-	isNewUser() {
+	isNewUser = () => {
 		return moment( this.props.userDate ).isAfter( moment().subtract( 2, 'hours' ) );
-	},
+	};
 
 	render() {
 		let purchases = [],
@@ -262,22 +263,22 @@ const CheckoutThankYou = React.createClass( {
 			const domainName = find( purchases, isDomainRegistration ).meta;
 
 			return (
-				<Main className="checkout-thank-you">
+			    <Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
 
 					<ThankYouCard
 						name={ domainName }
 						price={ this.props.receipt.data.displayPrice }
-						heading={ this.translate( 'Thank you for your purchase!' ) }
-						description={ this.translate( "That looks like a great domain. Now it's time to get it all set up." ) }
+						heading={ this.props.translate( 'Thank you for your purchase!' ) }
+						description={ this.props.translate( "That looks like a great domain. Now it's time to get it all set up." ) }
 						buttonUrl={ domainManagementList( domainName ) }
-						buttonText={ this.translate( 'Go To Your Domain' ) }
+						buttonText={ this.props.translate( 'Go To Your Domain' ) }
 					/>
 				</Main>
 			);
 		}
 
-		const goBackText = this.props.selectedSite ? this.translate( 'Back to my site' ) : this.translate( 'Register Domain' );
+		const goBackText = this.props.selectedSite ? this.props.translate( 'Back to my site' ) : this.props.translate( 'Register Domain' );
 
 		// standard thanks page
 		return (
@@ -300,7 +301,7 @@ const CheckoutThankYou = React.createClass( {
 				</Card>
 			</Main>
 		);
-	},
+	}
 
 	/**
 	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
@@ -309,7 +310,7 @@ const CheckoutThankYou = React.createClass( {
 	 * @returns {*[]} an array of varying size with the component instance,
 	 * then an optional purchase object possibly followed by a domain name
 	 */
-	getComponentAndPrimaryPurchaseAndDomain() {
+	getComponentAndPrimaryPurchaseAndDomain = () => {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props ),
 				failedPurchases = getFailedPurchases( this.props );
@@ -340,9 +341,9 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		return [];
-	},
+	};
 
-	productRelatedMessages() {
+	productRelatedMessages = () => {
 		const { selectedSite, sitePlans } = this.props,
 			purchases = getPurchases( this.props ),
 			failedPurchases = getFailedPurchases( this.props ),
@@ -401,8 +402,8 @@ const CheckoutThankYou = React.createClass( {
 				) }
 			</div>
 		);
-	}
-} );
+	};
+}
 
 export default connect(
 	( state, props ) => {
@@ -436,4 +437,4 @@ export default connect(
 			}
 		};
 	}
-)( CheckoutThankYou );
+)( localize(CheckoutThankYou) );

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import { localize } from 'i18n-calypso';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -25,28 +25,24 @@ const TransitionGroupComponent = ( props ) => {
 	return children[ 0 ] || null;
 };
 
-const FirstView = React.createClass( {
-	mixins: [ PureRenderMixin ],
-
-	getInitialState() {
-		return {
-			isEnabled: false,
-		};
-	},
+class FirstView extends React.PureComponent {
+    state = {
+		isEnabled: false,
+	};
 
 	componentDidMount() {
 		this.updateDocumentStyles();
-	},
+	}
 
 	componentDidUpdate() {
 		this.updateDocumentStyles();
-	},
+	}
 
 	componentWillUnmount() {
 		process.nextTick( () => {
 			this.updateDocumentStylesForHiddenFirstView();
 		} );
-	},
+	}
 
 	render() {
 		const classes = classNames( 'first-view', {
@@ -56,7 +52,7 @@ const FirstView = React.createClass( {
 		const firstViewHidePreferenceClasses = classNames( 'first-view__hide-preference' );
 
 		return (
-			<RootChild className={ classes }>
+		    <RootChild className={ classes }>
 				<ReactCSSTransitionGroup transitionName="first-view-transition"
 						component={ TransitionGroupComponent }
 						transitionEnter={ false } transitionEnterTimeout={ 0 }
@@ -66,7 +62,7 @@ const FirstView = React.createClass( {
 							{ this.props.children }
 
 							<Button primary onClick={ this.hide }>
-								{ this.translate( 'Got It!', { context: 'Button that dismisses the introduction overlay.' } ) }
+								{ this.props.translate( 'Got It!', { context: 'Button that dismisses the introduction overlay.' } ) }
 							</Button>
 
 							<div className={ firstViewHidePreferenceClasses }>
@@ -74,7 +70,7 @@ const FirstView = React.createClass( {
 									<input type="checkbox"
 											checked={ ! this.state.isEnabled }
 											onChange={ this.enableOrDisableNextTime } />
-									{ this.translate( "Don't show this again" ) }
+									{ this.props.translate( "Don't show this again" ) }
 								</label>
 							</div>
 						</Card>
@@ -82,27 +78,27 @@ const FirstView = React.createClass( {
 				</ReactCSSTransitionGroup>
 			</RootChild>
 		);
-	},
+	}
 
-	hide() {
+	hide = () => {
 		this.props.hideView( { enabled: this.state.isEnabled } );
-	},
+	};
 
-	enableOrDisableNextTime( event ) {
+	enableOrDisableNextTime = event => {
 		this.setState( {
 			isEnabled: ! event.target.checked
 		} );
-	},
+	};
 
-	updateDocumentStyles() {
+	updateDocumentStyles = () => {
 		if ( this.props.isVisible ) {
 			this.updateDocumentStylesForVisibleFirstView();
 		} else {
 			this.updateDocumentStylesForHiddenFirstView();
 		}
-	},
+	};
 
-	updateDocumentStylesForVisibleFirstView() {
+	updateDocumentStylesForVisibleFirstView = () => {
 		document.documentElement.classList.add( 'no-scroll' );
 		document.documentElement.classList.add( 'is-first-view-active' );
 		process.nextTick( () => {
@@ -110,9 +106,9 @@ const FirstView = React.createClass( {
 				document.documentElement.classList.add( 'is-first-view-visible' );
 			}
 		} );
-	},
+	};
 
-	updateDocumentStylesForHiddenFirstView() {
+	updateDocumentStylesForHiddenFirstView = () => {
 		document.documentElement.classList.remove( 'no-scroll' );
 		document.documentElement.classList.remove( 'is-first-view-visible' );
 		// wait a bit so that we trigger the CSS transition
@@ -121,8 +117,8 @@ const FirstView = React.createClass( {
 				document.documentElement.classList.remove( 'is-first-view-active' );
 			}
 		}, 600 );
-	}
-} );
+	};
+}
 
 export default connect(
 	( state ) => {
@@ -134,4 +130,4 @@ export default connect(
 	{
 		hideView
 	}
-)( FirstView );
+)( localize(FirstView) );

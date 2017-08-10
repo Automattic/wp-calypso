@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 
 /**
@@ -17,29 +18,29 @@ import paths from 'my-sites/domains/paths';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 
-const EmailForwarding = React.createClass( {
-	propTypes: {
+class EmailForwarding extends React.Component {
+    static propTypes = {
 		emailForwarding: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired
-	},
+	};
 
 	render() {
 		if ( this.isDataLoading() ) {
 			return <MainPlaceholder goBack={ this.goToEditEmail } />;
 		}
 		return (
-			<Main className="email-forwarding">
+		    <Main className="email-forwarding">
 				<Header
 					onClick={ this.goToEditEmail }
 					selectedDomainName={ this.props.selectedDomainName }>
-					{ this.translate( 'Email Forwarding' ) }
+					{ this.props.translate( 'Email Forwarding' ) }
 				</Header>
 
-				<SectionHeader label={ this.translate( 'Email Forwarding' ) } />
+				<SectionHeader label={ this.props.translate( 'Email Forwarding' ) } />
 				<Card className="email-forwarding-card">
 					<EmailForwardingDetails
 						selectedDomainName={ this.props.selectedDomainName } />
@@ -55,15 +56,15 @@ const EmailForwarding = React.createClass( {
 				</Card>
 			</Main>
 		);
-	},
-
-	isDataLoading() {
-		return ( ! this.props.emailForwarding.hasLoadedFromServer );
-	},
-
-	goToEditEmail() {
-		page( paths.domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	}
-} );
 
-export default EmailForwarding;
+	isDataLoading = () => {
+		return ( ! this.props.emailForwarding.hasLoadedFromServer );
+	};
+
+	goToEditEmail = () => {
+		page( paths.domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+	};
+}
+
+export default localize(EmailForwarding);

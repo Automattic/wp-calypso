@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import store from 'store';
@@ -27,31 +28,28 @@ import FormButton from 'components/forms/form-button';
  */
 const debug = debugModule( 'calypso:invite-accept:logged-out' );
 
-let InviteAcceptLoggedOut = React.createClass( {
+class InviteAcceptLoggedOut extends React.Component {
+    state = { error: false, bearerToken: false, userData: false, submitting: false };
 
-	getInitialState() {
-		return { error: false, bearerToken: false, userData: false, submitting: false };
-	},
-
-	submitButtonText() {
+	submitButtonText = () => {
 		let text = '';
 		if ( 'follower' === this.props.invite.role ) {
-			text = this.translate( 'Sign Up & Follow' );
+			text = this.props.translate( 'Sign Up & Follow' );
 		} else if ( 'viewer' === this.props.invite.role ) {
-			text = this.translate( 'Sign Up & View' );
+			text = this.props.translate( 'Sign Up & View' );
 		} else {
-			text = this.translate( 'Sign Up & Join' );
+			text = this.props.translate( 'Sign Up & Join' );
 		}
 		return text;
-	},
+	};
 
-	clickSignInLink() {
+	clickSignInLink = () => {
 		const signInLink = login( { redirectTo: window.location.href } );
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_out_sign_in_link_click' );
 		window.location = signInLink;
-	},
+	};
 
-	submitForm( form, userData ) {
+	submitForm = (form, userData) => {
 		this.setState( { submitting: true } );
 		debug( 'Storing invite_accepted: ' + JSON.stringify( this.props.invite ) );
 		store.set( 'invite_accepted', this.props.invite );
@@ -73,15 +71,15 @@ let InviteAcceptLoggedOut = React.createClass( {
 			this.props.invite,
 			createAccountCallback
 		);
-	},
+	};
 
-	renderFormHeader() {
+	renderFormHeader = () => {
 		return (
 			<InviteFormHeader { ...this.props.invite } />
 		);
-	},
+	};
 
-	loginUser() {
+	loginUser = () => {
 		const { userData, bearerToken } = this.state;
 		return (
 			<WpcomLoginForm
@@ -89,9 +87,9 @@ let InviteAcceptLoggedOut = React.createClass( {
 				authorization={ 'Bearer ' + bearerToken }
 				redirectTo={ window.location.href } />
 		);
-	},
+	};
 
-	subscribeUserByEmailOnly() {
+	subscribeUserByEmailOnly = () => {
 		const { invite } = this.props;
 		this.setState( { submitting: true } );
 		this.props.acceptInvite(
@@ -105,45 +103,45 @@ let InviteAcceptLoggedOut = React.createClass( {
 			}
 		);
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_out_follow_by_email_click' );
-	},
+	};
 
-	renderFooterLink() {
+	renderFooterLink = () => {
 		return (
-			<LoggedOutFormLinks>
+		    <LoggedOutFormLinks>
 				<LoggedOutFormLinkItem onClick={ this.clickSignInLink }>
-					{ this.translate( 'Already have a WordPress.com account? Log in now.' ) }
+					{ this.props.translate( 'Already have a WordPress.com account? Log in now.' ) }
 				</LoggedOutFormLinkItem>
 				{ this.renderEmailOnlySubscriptionLink() }
 			</LoggedOutFormLinks>
 		);
-	},
+	};
 
-	renderEmailOnlySubscriptionLink() {
+	renderEmailOnlySubscriptionLink = () => {
 		if ( this.props.invite.role !== 'follower' || ! this.props.invite.activationKey ) {
 			return null;
 		}
 
 		return (
-			<LoggedOutFormLinkItem onClick={ this.subscribeUserByEmailOnly }>
-				{ this.translate( 'Follow by email subscription only.' ) }
+		    <LoggedOutFormLinkItem onClick={ this.subscribeUserByEmailOnly }>
+				{ this.props.translate( 'Follow by email subscription only.' ) }
 			</LoggedOutFormLinkItem>
 		);
-	},
+	};
 
-	renderSignInLinkOnly() {
+	renderSignInLinkOnly = () => {
 		return (
-			<div className="sign-up-form">
+		    <div className="sign-up-form">
 				<Card className="logged-out-form">
 					{ this.renderFormHeader() }
 					<Card className="logged-out-form__footer">
 						<FormButton className="signup-form__submit" onClick={ this.clickSignInLink }>
-							{ this.translate( 'Sign In' ) }
+							{ this.props.translate( 'Sign In' ) }
 						</FormButton>
 					</Card>
 				</Card>
 			</div>
 		);
-	},
+	};
 
 	render() {
 		if ( this.props.forceMatchingEmail && this.props.invite.knownUser ) {
@@ -151,7 +149,7 @@ let InviteAcceptLoggedOut = React.createClass( {
 		}
 
 		return (
-			<div>
+		    <div>
 				<SignupForm
 					getRedirectToAfterLoginUrl={ window.location.href }
 					disabled={ this.state.submitting }
@@ -163,15 +161,14 @@ let InviteAcceptLoggedOut = React.createClass( {
 					footerLink={ this.renderFooterLink() }
 					email={ this.props.invite.sentTo }
 					disableEmailInput={ this.props.forceMatchingEmail }
-					disableEmailExplanation={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: this.props.invite.sentTo } } ) } />
+					disableEmailExplanation={ this.props.translate( 'This invite is only valid for %(email)s.', { args: { email: this.props.invite.sentTo } } ) } />
 				{ this.state.userData && this.loginUser() }
 			</div>
 		);
 	}
-
-} );
+}
 
 export default connect(
 	null,
 	dispatch => bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
-)( InviteAcceptLoggedOut );
+)( localize(InviteAcceptLoggedOut) );

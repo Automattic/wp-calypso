@@ -6,6 +6,8 @@ var React = require( 'react' ),
 	bindActionCreators = require( 'redux' ).bindActionCreators,
 	connect = require( 'react-redux' ).connect;
 
+var createReactClass = require('create-react-class');
+
 /**
  * Internal dependencies
  */
@@ -20,7 +22,7 @@ var ConnectedAppItem = require( 'me/connected-application-item' ),
 	Main = require( 'components/main' ),
 	successNotice = require( 'state/notices/actions' ).successNotice;
 
-const ConnectedApplications = React.createClass( {
+const ConnectedApplications = createReactClass({
 
 	displayName: 'ConnectedApplications',
 
@@ -52,7 +54,7 @@ const ConnectedApplications = React.createClass( {
 				} else {
 					debug( 'Application connection was successfully revoked.' );
 					this.props.successNotice(
-						this.translate( '%(applicationTitle)s no longer has access to your WordPress.com account.', {
+						this.props.translate( '%(applicationTitle)s no longer has access to your WordPress.com account.', {
 							args: {
 								applicationTitle: application.title
 							}
@@ -65,9 +67,9 @@ const ConnectedApplications = React.createClass( {
 
 	renderEmptyContent: function() {
 		return (
-			<EmptyContent
-				title={ this.translate( "You haven't connected any apps yet." ) }
-				line={ this.translate( 'You can get started with the {{link}}WordPress mobile apps!{{/link}}', {
+		    <EmptyContent
+				title={ this.props.translate( "You haven't connected any apps yet." ) }
+				line={ this.props.translate( 'You can get started with the {{link}}WordPress mobile apps!{{/link}}', {
 					components: {
 						link: <a href="https://apps.wordpress.org/" target="_blank" rel="noopener noreferrer" title="WordPress Mobile Apps" />
 					}
@@ -85,7 +87,7 @@ const ConnectedApplications = React.createClass( {
 				<ConnectedAppItem
 					connection={ {
 						ID: i,
-						title: this.translate( 'Loading Connected Applications' )
+						title: this.props.translate( 'Loading Connected Applications' )
 					} }
 					key={ i }
 					isPlaceholder
@@ -139,9 +141,9 @@ const ConnectedApplications = React.createClass( {
 			</Main>
 		);
 	}
-} );
+});
 
 export default connect(
 	null,
 	dispatch => bindActionCreators( { successNotice }, dispatch )
-)( ConnectedApplications );
+)( localize(ConnectedApplications) );

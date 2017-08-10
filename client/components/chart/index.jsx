@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React from 'react';
+import createReactClass from 'create-react-class';
+import { localize } from 'i18n-calypso';
 import { some, noop, throttle } from 'lodash';
 
 /**
@@ -11,7 +13,7 @@ import BarContainer from './bar-container';
 import observe from 'lib/mixins/data-observe';
 import touchDetect from 'lib/touch-detect';
 
-module.exports = React.createClass( {
+module.exports = localize(createReactClass({
 	displayName: 'ModuleChart',
 
 	mixins: [ observe( 'dataList' ) ],
@@ -121,7 +123,7 @@ module.exports = React.createClass( {
 			emptyChart = (
 				<div className="chart__empty">
 					<span className="chart__empty_notice">
-						{ this.translate( 'No activity this period', {
+						{ this.props.translate( 'No activity this period', {
 							context: 'Message on empty bar chart in Stats',
 							comment: 'Should be limited to 32 characters to prevent wrapping'
 						} ) }
@@ -154,4 +156,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}));

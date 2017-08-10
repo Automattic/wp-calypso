@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
 /**
@@ -10,14 +11,14 @@ import Gridicon from 'gridicons';
 import invitationUtils from './invitation-utils';
 import { ga as googleAnalytics } from 'lib/analytics';
 
-export default React.createClass( {
-	displayName: 'CommunityTranslatorInvitation',
+export default localize(class extends React.Component {
+    static displayName = 'CommunityTranslatorInvitation';
 
-	propTypes: {
+	static propTypes = {
 		isVisible: React.PropTypes.bool
-	},
+	};
 
-	render: function() {
+	render() {
 		if ( ! this.props.isVisible ) {
 			return null;
 		}
@@ -25,10 +26,10 @@ export default React.createClass( {
 		invitationUtils.recordInvitationDisplayed();
 
 		const subComponents = {
-			title: this.translate( 'Translate WordPress.com as you go' ),
-			acceptButtonText: this.translate( 'Try it now!' ),
-			dismissButtonText: this.translate( 'No thanks' ),
-			content: this.translate( 'Help translate the WordPress.com dashboard into your' +
+			title: this.props.translate( 'Translate WordPress.com as you go' ),
+			acceptButtonText: this.props.translate( 'Try it now!' ),
+			dismissButtonText: this.props.translate( 'No thanks' ),
+			content: this.props.translate( 'Help translate the WordPress.com dashboard into your' +
 			' native language using the Community Translator tool. ' +
 			'{{docsLink}}Find out more{{/docsLink}}. ',
 				{ components: { docsLink: <a target="_blank" rel="noopener noreferrer"
@@ -65,23 +66,23 @@ export default React.createClass( {
 				<Gridicon className="community-translator__translator-invitation__decoration" icon="globe" />
 			</div>
 		);
-	},
+	}
 
-	acceptButton: function() {
+	acceptButton = () => {
 		recordEvent( 'Clicked Accept Button' );
 		invitationUtils.activate();
-	},
+	};
 
-	dismissButton: function() {
+	dismissButton = () => {
 		recordEvent( 'Clicked Dismiss Button' );
 		invitationUtils.dismiss();
-	},
+	};
 
-	docsLink: function() {
+	docsLink = () => {
 		recordEvent( 'More Info' );
 		invitationUtils.recordDocsEvent();
-	}
-} );
+	};
+});
 
 function recordEvent( eventAction ) {
 	googleAnalytics.recordEvent( 'Translator Invitation', eventAction );

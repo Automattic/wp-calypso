@@ -4,7 +4,7 @@
 import React from 'react';
 import url from 'url';
 import { connect } from 'react-redux';
-import i18n from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -26,17 +26,15 @@ import {
 import TrackComponentView from 'lib/analytics/track-component-view';
 import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
 
-const SiteNotice = React.createClass( {
-	propTypes: {
+class SiteNotice extends React.Component {
+    static propTypes = {
 		site: React.PropTypes.object
-	},
+	};
 
-	getDefaultProps() {
-		return {
-		};
-	},
+	static defaultProps = {
+	};
 
-	getSiteRedirectNotice: function( site ) {
+	getSiteRedirectNotice = site => {
 		if ( ! site ) {
 			return null;
 		}
@@ -45,23 +43,23 @@ const SiteNotice = React.createClass( {
 		}
 		const { hostname } = url.parse( site.URL );
 		return (
-			<Notice
+		    <Notice
 				showDismiss={ false }
 				icon="info-outline"
 				isCompact
 			>
-				{ this.translate( 'Redirects to {{a}}%(url)s{{/a}}', {
+				{ this.props.translate( 'Redirects to {{a}}%(url)s{{/a}}', {
 					args: { url: hostname },
 					components: { a: <a href={ site.URL }/> }
 				} ) }
 				<NoticeAction href={ paths.domainManagementList( site.domain ) }>
-					{ this.translate( 'Edit' ) }
+					{ this.props.translate( 'Edit' ) }
 				</NoticeAction>
 			</Notice>
 		);
-	},
+	};
 
-	domainCreditNotice() {
+	domainCreditNotice = () => {
 		if ( ! this.props.hasDomainCredit || ! this.props.canManageOptions ) {
 			return null;
 		}
@@ -69,56 +67,56 @@ const SiteNotice = React.createClass( {
 		const eventName = 'calypso_domain_credit_reminder_impression';
 		const eventProperties = { cta_name: 'current_site_domain_notice' };
 		return (
-			<Notice isCompact status="is-success" icon="info-outline">
-				{ this.translate( 'Free domain available' ) }
+		    <Notice isCompact status="is-success" icon="info-outline">
+				{ this.props.translate( 'Free domain available' ) }
 				<NoticeAction
 					onClick={ this.props.clickClaimDomainNotice }
 					href={ `/domains/add/${ this.props.site.slug }` }
 				>
-					{ this.translate( 'Claim' ) }
+					{ this.props.translate( 'Claim' ) }
 					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
 				</NoticeAction>
 			</Notice>
 		);
-	},
+	};
 
-	freeToPaidPlanNotice() {
+	freeToPaidPlanNotice = () => {
 		if ( ! this.props.isEligibleForFreeToPaidUpsell || '/plans' === this.props.allSitesPath ) {
 			return null;
 		}
 		const eventName = 'calypso_upgrade_nudge_impression';
 		const eventProperties = { cta_name: 'free-to-paid-sidebar' };
 		return (
-			<Notice isCompact status="is-success" icon="info-outline">
-				{ this.translate( 'Free domain with a plan' ) }
+		    <Notice isCompact status="is-success" icon="info-outline">
+				{ this.props.translate( 'Free domain with a plan' ) }
 				<NoticeAction
 					onClick={ this.props.clickFreeToPaidPlanNotice }
 					href={ `/plans/my-plan/${ this.props.site.slug }` }
 				>
-					{ this.translate( 'Upgrade' ) }
+					{ this.props.translate( 'Upgrade' ) }
 					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
 				</NoticeAction>
 			</Notice>
 		);
-	},
+	};
 
-	jetpackPluginsSetupNotice() {
+	jetpackPluginsSetupNotice = () => {
 		if ( ! this.props.pausedJetpackPluginsSetup || this.props.site.plan.product_slug === 'jetpack_free' ) {
 			return null;
 		}
 
 		return (
-			<Notice isCompact status="is-info" icon="plugins">
-				{ this.translate(
+		    <Notice isCompact status="is-info" icon="plugins">
+				{ this.props.translate(
 					'Your %(plan)s plan needs setting up!',
 					{ args: { plan: this.props.site.plan.product_name_short } }
 				) }
 				<NoticeAction href={ `/plugins/setup/${ this.props.site.slug }` } >
-					{ this.translate( 'Finish' ) }
+					{ this.props.translate( 'Finish' ) }
 				</NoticeAction>
 			</Notice>
 		);
-	},
+	};
 
 	render() {
 		const { site } = this.props;
@@ -136,7 +134,7 @@ const SiteNotice = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect( ( state, ownProps ) => {
 	const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
@@ -159,4 +157,4 @@ export default connect( ( state, ownProps ) => {
 			}
 		) ),
 	};
-} )( SiteNotice );
+} )( localize(SiteNotice) );

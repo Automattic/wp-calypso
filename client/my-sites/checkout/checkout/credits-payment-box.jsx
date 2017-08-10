@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import {
 	some,
 } from 'lodash';
@@ -19,8 +20,8 @@ import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 
-var CreditsPaymentBox = React.createClass( {
-	content: function() {
+class CreditsPaymentBox extends React.Component {
+    content = () => {
 		const { cart, transactionStep } = this.props;
 		const hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } );
 		const showPaymentChatButton =
@@ -29,12 +30,12 @@ var CreditsPaymentBox = React.createClass( {
 			hasBusinessPlanInCart;
 
 		return (
-			<form onSubmit={ this.props.onSubmit }>
+		    <form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
-					<h6>{ this.translate( 'WordPress.com Credits' ) }</h6>
+					<h6>{ this.props.translate( 'WordPress.com Credits' ) }</h6>
 
 					<span>
-						{ this.translate( 'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
+						{ this.props.translate( 'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
 							{
 								args: {
 									credits: cart.credits,
@@ -68,17 +69,17 @@ var CreditsPaymentBox = React.createClass( {
 				<CartToggle />
 			</form>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
-			<PaymentBox
+		    <PaymentBox
 				classSet="credits-payment-box"
-				title={ this.translate( 'Secure Payment' ) }>
+				title={ this.props.translate( 'Secure Payment' ) }>
 				{ this.content() }
 			</PaymentBox>
 		);
 	}
-} );
+}
 
-module.exports = CreditsPaymentBox;
+module.exports = localize(CreditsPaymentBox);

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -16,10 +17,10 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import PostEditStore from 'lib/posts/post-edit-store';
 import { validateFormFields, validateSettingsToEmail } from './validations';
 
-const ContactFormDialog = React.createClass( {
-	displayName: 'ContactFormDialog',
+class ContactFormDialog extends React.Component {
+    static displayName = 'ContactFormDialog';
 
-	propTypes: {
+	static propTypes = {
 		activeTab: PropTypes.oneOf( [ 'fields', 'settings' ] ).isRequired,
 		showDialog: PropTypes.bool.isRequired,
 		isEdit: PropTypes.bool.isRequired,
@@ -35,9 +36,9 @@ const ContactFormDialog = React.createClass( {
 		onFieldRemove: PropTypes.func.isRequired,
 		onFieldUpdate: PropTypes.func.isRequired,
 		onSettingsUpdate: PropTypes.func.isRequired
-	},
+	};
 
-	getActionButtons() {
+	getActionButtons = () => {
 		const isValidForm = validateFormFields( this.props.contactForm.fields ) && validateSettingsToEmail( this.props.contactForm.to );
 		const actionButtons = [
 			<FormButton
@@ -45,14 +46,14 @@ const ContactFormDialog = React.createClass( {
 				data-e2e-button="save"
 				disabled={ ! isValidForm }
 				onClick={ this.props.onInsert } >
-				{ this.props.isEdit ? this.translate( 'Update' ) : this.translate( 'Insert' ) }
+				{ this.props.isEdit ? this.props.translate( 'Update' ) : this.props.translate( 'Insert' ) }
 			</FormButton>,
 			<FormButton
 				key="cancel"
 				isPrimary={ false }
 				data-e2e-button="cancel"
 				onClick={ this.props.onClose } >
-				{ this.translate( 'Cancel' ) }
+				{ this.props.translate( 'Cancel' ) }
 			</FormButton>
 		];
 
@@ -64,7 +65,7 @@ const ContactFormDialog = React.createClass( {
 						isPrimary={ false }
 						data-e2e-button="add"
 						onClick={ this.props.onFieldAdd } >
-						{ this.translate( 'Add New Field' ) }
+						{ this.props.translate( 'Add New Field' ) }
 					</FormButton>
 				</div>,
 				...actionButtons
@@ -72,7 +73,7 @@ const ContactFormDialog = React.createClass( {
 		}
 
 		return actionButtons;
-	},
+	};
 
 	render() {
 		const {
@@ -104,7 +105,7 @@ const ContactFormDialog = React.createClass( {
 			</Dialog>
 		);
 	}
-} );
+}
 
 export default connect( state => {
 	return {
@@ -112,4 +113,4 @@ export default connect( state => {
 		currentUser: getCurrentUser( state ),
 		contactForm: state.ui.editor.contactForm
 	};
-} )( ContactFormDialog );
+} )( localize(ContactFormDialog) );

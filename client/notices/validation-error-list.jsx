@@ -4,18 +4,18 @@
 var React = require( 'react' ),
 	map = require( 'lodash/map' );
 
-module.exports = React.createClass( {
-	displayName: 'ValidationErrorList',
+module.exports = localize(class extends React.Component {
+    static displayName = 'ValidationErrorList';
 
-	propTypes: {
+	static propTypes = {
 		messages: React.PropTypes.array.isRequired
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
-			<div>
+		    <div>
 				<p>
-					{ this.translate(
+					{ this.props.translate(
 						'Please correct the issue below and try again.',
 						'Please correct the issues listed below and try again.',
 						{
@@ -31,4 +31,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+});

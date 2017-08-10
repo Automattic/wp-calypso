@@ -12,60 +12,58 @@ var Dialog = require( 'components/dialog' ),
 	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
 	KeyBindings = require( 'lib/keyboard-shortcuts/key-bindings' );
 
-module.exports = React.createClass({
-	displayName: 'KeyboardShortcutsMenu',
+module.exports = localize(class extends React.Component {
+    static displayName = 'KeyboardShortcutsMenu';
 
-	componentDidMount: function() {
+	state = {
+		showDialog: false
+	};
+
+	componentDidMount() {
 		KeyBindings.on( 'language-change', this.handleLanguageChange );
 		KeyboardShortcuts.on( 'open-keyboard-shortcuts-menu', this.toggleShowDialog );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		KeyBindings.off( 'language-change', this.handleLanguageChange );
 		KeyboardShortcuts.off( 'open-keyboard-shortcuts-menu', this.toggleShowDialog );
-	},
+	}
 
-	getInitialState: function() {
-		return {
-			showDialog: false
-		};
-	},
-
-	handleLanguageChange: function() {
+	handleLanguageChange = () => {
 		// if the language changes, force a re-render to get the translated key-binding descriptions
 		this.forceUpdate();
-	},
+	};
 
-	closeDialog: function() {
+	closeDialog = () => {
 		this.setState( { showDialog: false } );
-	},
+	};
 
-	toggleShowDialog: function() {
+	toggleShowDialog = () => {
 		this.setState( { showDialog: ! this.state.showDialog } );
-	},
+	};
 
-	getShortcutsByCategory: function() {
+	getShortcutsByCategory = () => {
 		var allShortcuts = KeyBindings.get(),
 			shortcutsByCategory = [
 				{
-					name: this.translate( 'List Navigation' ),
+					name: this.props.translate( 'List Navigation' ),
 					shortcuts: allShortcuts.listNavigation,
 					className: 'keyboard-shortcuts__list-navigation',
 					disabled: true
 				},
 				{
-					name: this.translate( 'Site Navigation' ),
+					name: this.props.translate( 'Site Navigation' ),
 					shortcuts: allShortcuts.siteNavigation,
 					className: 'keyboard-shortcuts__site-navigation'
 				},
 				{
-					name: this.translate( 'Reader' ),
+					name: this.props.translate( 'Reader' ),
 					shortcuts: allShortcuts.reader,
 					className: 'keyboard-shortcuts__reader',
 					disabled: true
 				},
 				{
-					name: this.translate( 'Blog Posts and Pages' ),
+					name: this.props.translate( 'Blog Posts and Pages' ),
 					shortcuts: allShortcuts.blogPostsAndPages,
 					className: 'keyboard-shortcuts__blog-posts-and-pages',
 					disabled: true
@@ -75,7 +73,7 @@ module.exports = React.createClass({
 		if ( config.isEnabled( 'devdocs' ) ) {
 			shortcutsByCategory = shortcutsByCategory.concat(
 				{
-					name: this.translate( 'Developer' ),
+					name: this.props.translate( 'Developer' ),
 					shortcuts: allShortcuts.developer,
 					className: 'keyboard-shortcuts__developer'
 				}
@@ -97,9 +95,9 @@ module.exports = React.createClass({
 				</li>
 			);
 		}, this );
-	},
+	};
 
-	getShortcutList: function( shortcuts ) {
+	getShortcutList = shortcuts => {
 		return shortcuts.map( function( shortcut ) {
 			// process the list of keys in this shortcut into individual elements
 			var keys = shortcut.description.keys.map( function( key, index ) {
@@ -113,12 +111,12 @@ module.exports = React.createClass({
 				</li>
 			);
 		}, this );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
-			<Dialog additionalClassNames="keyboard-shortcuts" isVisible={ this.state.showDialog } onClose={ this.closeDialog }>
-				<h1 className="keyboard-shortcuts__title">{ this.translate( 'Keyboard Shortcuts' ) }</h1>
+		    <Dialog additionalClassNames="keyboard-shortcuts" isVisible={ this.state.showDialog } onClose={ this.closeDialog }>
+				<h1 className="keyboard-shortcuts__title">{ this.props.translate( 'Keyboard Shortcuts' ) }</h1>
 				<ul className="keyboard-shortcuts__categories">{ this.getShortcutsByCategory() }</ul>
 			</Dialog>
 		);

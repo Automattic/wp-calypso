@@ -15,10 +15,10 @@ var ButtonsLabelEditor = require( './label-editor' ),
 	decodeEntities = require( 'lib/formatting' ).decodeEntities,
 	analytics = require( 'lib/analytics' );
 
-module.exports = React.createClass( {
-	displayName: 'SharingButtonsPreview',
+module.exports = localize(class extends React.Component {
+    static displayName = 'SharingButtonsPreview';
 
-	propTypes: {
+	static propTypes = {
 		isPrivateSite: React.PropTypes.bool,
 		style: React.PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
 		label: React.PropTypes.string,
@@ -27,27 +27,23 @@ module.exports = React.createClass( {
 		showReblog: React.PropTypes.bool,
 		onLabelChange: React.PropTypes.func,
 		onButtonsChange: React.PropTypes.func
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			isEditingLabel: false,
-			buttonsTrayVisibility: null
-		};
-	},
+	static defaultProps = {
+		style: 'icon',
+		buttons: [],
+		showLike: true,
+		showReblog: true,
+		onLabelChange: function() {},
+		onButtonsChange: function() {}
+	};
 
-	getDefaultProps: function() {
-		return {
-			style: 'icon',
-			buttons: [],
-			showLike: true,
-			showReblog: true,
-			onLabelChange: function() {},
-			onButtonsChange: function() {}
-		};
-	},
+	state = {
+		isEditingLabel: false,
+		buttonsTrayVisibility: null
+	};
 
-	toggleEditLabel: function() {
+	toggleEditLabel = () => {
 		var isEditingLabel = ! this.state.isEditingLabel;
 		this.setState( { isEditingLabel: isEditingLabel } );
 
@@ -57,18 +53,18 @@ module.exports = React.createClass( {
 		} else {
 			analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Text Done Button' );
 		}
-	},
+	};
 
-	showButtonsTray: function( visibility ) {
+	showButtonsTray = visibility => {
 		this.setState( {
 			isEditingLabel: false,
 			buttonsTrayVisibility: visibility
 		} );
 
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Buttons Links', visibility );
-	},
+	};
 
-	hideButtonsTray: function() {
+	hideButtonsTray = () => {
 		if ( ! this.state.buttonsTrayVisibility ) {
 			return;
 		}
@@ -77,23 +73,23 @@ module.exports = React.createClass( {
 		this.setState( { buttonsTrayVisibility: null } );
 
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Buttons Done Button' );
-	},
+	};
 
-	getButtonsTrayToggleButtonLabel: function( visibility, enabledButtonsExist ) {
+	getButtonsTrayToggleButtonLabel = (visibility, enabledButtonsExist) => {
 		if ( 'visible' === visibility ) {
 			if ( enabledButtonsExist ) {
-				return this.translate( 'Edit sharing buttons', { context: 'Sharing: Buttons edit label' } );
+				return this.props.translate( 'Edit sharing buttons', { context: 'Sharing: Buttons edit label' } );
 			} else {
-				return this.translate( 'Add sharing buttons', { context: 'Sharing: Buttons edit label' } );
+				return this.props.translate( 'Add sharing buttons', { context: 'Sharing: Buttons edit label' } );
 			}
 		} else if ( enabledButtonsExist ) {
-			return this.translate( 'Edit “More” buttons', { context: 'Sharing: Buttons edit label' } );
+			return this.props.translate( 'Edit “More” buttons', { context: 'Sharing: Buttons edit label' } );
 		}
 
-		return this.translate( 'Add “More” button', { context: 'Sharing: Buttons edit label' } );
-	},
+		return this.props.translate( 'Add “More” button', { context: 'Sharing: Buttons edit label' } );
+	};
 
-	getButtonsTrayToggleButtonElement: function( visibility ) {
+	getButtonsTrayToggleButtonElement = visibility => {
 		var enabledButtonsExist = some( this.props.buttons, {
 			'visibility': visibility,
 			enabled: true
@@ -108,35 +104,35 @@ module.exports = React.createClass( {
 					{ this.getButtonsTrayToggleButtonLabel( visibility, enabledButtonsExist ) }
 			</ButtonsPreviewAction>
 		);
-	},
+	};
 
-	getReblogButtonElement: function() {
+	getReblogButtonElement = () => {
 		if ( this.props.showReblog ) {
 			return (
-				<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__reblog">
-					<span className="noticon noticon-reblog" />{ this.translate( 'Reblog' ) }
+			    <a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__reblog">
+					<span className="noticon noticon-reblog" />{ this.props.translate( 'Reblog' ) }
 				</a>
 			);
 		}
-	},
+	};
 
-	getLikeButtonElement: function() {
+	getLikeButtonElement = () => {
 		if ( this.props.showLike ) {
 			return (
-				<span>
+			    <span>
 					<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__like">
-						<span className="noticon noticon-like" />{ this.translate( 'Like' ) }
+						<span className="noticon noticon-like" />{ this.props.translate( 'Like' ) }
 					</a>
 					<div className="sharing-buttons-preview__fake-user">
 						<img src="https://1.gravatar.com/avatar/767fc9c115a1b989744c755db47feb60" />
 					</div>
-					<div className="sharing-buttons-preview__fake-like">{ this.translate( 'One blogger likes this.' ) }</div>
+					<div className="sharing-buttons-preview__fake-like">{ this.props.translate( 'One blogger likes this.' ) }</div>
 				</span>
 			);
 		}
-	},
+	};
 
-	getPreviewButtonsElement: function() {
+	getPreviewButtonsElement = () => {
 		var enabledButtons = filter( this.props.buttons, { enabled: true } );
 
 		if ( enabledButtons.length ) {
@@ -149,13 +145,13 @@ module.exports = React.createClass( {
 					forceMorePreviewVisible={ 'hidden' === this.state.buttonsTrayVisibility } />
 			);
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
-			<div className="sharing-buttons-preview">
+		    <div className="sharing-buttons-preview">
 				<ButtonsPreviewAction active={ ! this.state.isEditingLabel } onClick={ this.toggleEditLabel } icon="pencil" position="top-left">
-					{ this.translate( 'Edit label text', { context: 'Sharing: Buttons edit label' } ) }
+					{ this.props.translate( 'Edit label text', { context: 'Sharing: Buttons edit label' } ) }
 				</ButtonsPreviewAction>
 				<ButtonsLabelEditor
 					active={ this.state.isEditingLabel }
@@ -164,7 +160,7 @@ module.exports = React.createClass( {
 					onClose={ this.toggleEditLabel }
 					hasEnabledButtons={ some( this.props.buttons, { enabled: true } ) } />
 
-				<h2 className="sharing-buttons-preview__heading">{ this.translate( 'Preview' ) }</h2>
+				<h2 className="sharing-buttons-preview__heading">{ this.props.translate( 'Preview' ) }</h2>
 				<div className="sharing-buttons-preview__display">
 					<span className="sharing-buttons-preview__label">{ decodeEntities( this.props.label ) }</span>
 					<div className="sharing-buttons-preview__buttons">
@@ -193,4 +189,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+});

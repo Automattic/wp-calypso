@@ -3,6 +3,8 @@
  */
 import React from 'react'
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -11,13 +13,11 @@ import Card from 'components/card'
 import Gridicon from 'gridicons'
 import SectionHeader from 'components/section-header'
 
-export default React.createClass( {
+export default localize(class extends React.Component {
+    static displayName = 'PluginsBrowserList';
+	_DEFAULT_PLACEHOLDER_NUMBER = 6;
 
-	displayName: 'PluginsBrowserList',
-
-	_DEFAULT_PLACEHOLDER_NUMBER: 6,
-
-	renderPluginsViewList() {
+	renderPluginsViewList = () => {
 		let emptyCounter = 0;
 
 		let pluginsViewsList = this.props.plugins.map( ( plugin, n ) => {
@@ -38,30 +38,32 @@ export default React.createClass( {
 		}
 
 		return pluginsViewsList;
-	},
+	};
 
-	renderPlaceholdersViews() {
+	renderPlaceholdersViews = () => {
 		return Array.apply( null, Array( this.props.size || this._DEFAULT_PLACEHOLDER_NUMBER ) ).map( ( item, i ) => {
 			return <PluginBrowserItem isPlaceholder key={ 'placeholder-plugin-' + i } />;
 		} );
-	},
+	};
 
-	renderViews() {
+	renderViews = () => {
 		if ( this.props.plugins.length ) {
 			return this.renderPluginsViewList();
 		} else if ( this.props.showPlaceholders ) {
 			return this.renderPlaceholdersViews();
 		}
-	},
+	};
 
-	renderLink() {
+	renderLink = () => {
 		if ( this.props.expandedListLink ) {
-			return <a className="button is-link plugins-browser-list__select-all" href={ this.props.expandedListLink + ( this.props.site || '' ) }>
-				{ this.translate( 'See All' ) }
-				<Gridicon icon="chevron-right" size={ 18 } />
-			</a>;
+			return (
+			    <a className="button is-link plugins-browser-list__select-all" href={ this.props.expandedListLink + ( this.props.site || '' ) }>
+					{ this.props.translate( 'See All' ) }
+					<Gridicon icon="chevron-right" size={ 18 } />
+				</a>
+			);
 		}
-	},
+	};
 
 	render() {
 		return (
@@ -75,4 +77,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+});

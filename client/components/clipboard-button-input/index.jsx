@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 import { omit } from 'lodash';
 
@@ -12,35 +13,31 @@ import { withoutHttp } from 'lib/url';
 import ClipboardButton from 'components/forms/clipboard-button';
 import FormTextInput from 'components/forms/form-text-input';
 
-export default React.createClass( {
-	displayName: 'ClipboardButtonInput',
+export default localize(class extends React.Component {
+    static displayName = 'ClipboardButtonInput';
 
-	propTypes: {
+	static propTypes = {
 		value: PropTypes.string,
 		disabled: PropTypes.bool,
 		className: PropTypes.string,
 		hideHttp: PropTypes.bool
-	},
+	};
 
-	getInitialState() {
-		return {
-			isCopied: false,
-			disabled: false
-		};
-	},
+	static defaultProps = {
+		value: ''
+	};
 
-	getDefaultProps() {
-		return {
-			value: ''
-		};
-	},
+	state = {
+		isCopied: false,
+		disabled: false
+	};
 
 	componentWillUnmount() {
 		clearTimeout( this.confirmationTimeout );
 		delete this.confirmationTimeout;
-	},
+	}
 
-	showConfirmation() {
+	showConfirmation = () => {
 		this.setState( {
 			isCopied: true
 		} );
@@ -50,14 +47,14 @@ export default React.createClass( {
 				isCopied: false
 			} );
 		}, 4000 );
-	},
+	};
 
 	render() {
 		const { value, className, disabled, hideHttp } = this.props;
 		const classes = classnames( 'clipboard-button-input', className );
 
 		return (
-			<span className={ classes }>
+		    <span className={ classes }>
 				<FormTextInput
 					{ ...omit( this.props, 'className', 'hideHttp' ) }
 					value={ hideHttp ? withoutHttp( value ) : value }
@@ -70,10 +67,10 @@ export default React.createClass( {
 					disabled={ disabled }
 					compact>
 					{ this.state.isCopied
-						? this.translate( 'Copied!' )
-						: this.translate( 'Copy', { context: 'verb' } ) }
+						? this.props.translate( 'Copied!' )
+						: this.props.translate( 'Copy', { context: 'verb' } ) }
 				</ClipboardButton>
 			</span>
 		);
 	}
-} );
+});

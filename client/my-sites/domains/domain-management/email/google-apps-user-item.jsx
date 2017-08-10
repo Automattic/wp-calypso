@@ -3,29 +3,31 @@
  */
 import React from 'react';
 
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
 import ExternalLink from 'components/external-link';
 
-const GoogleAppsUserItem = React.createClass( {
-	propTypes: {
+class GoogleAppsUserItem extends React.Component {
+    static propTypes = {
 		user: React.PropTypes.object.isRequired,
 		onClick: React.PropTypes.func
-	},
+	};
 
-	shouldComponentUpdate( nextProps ) {
+	shouldComponentUpdate(nextProps) {
 		return this.props.user !== nextProps.user || this.props.onClick !== nextProps.onClick;
-	},
+	}
 
-	getLoginLink() {
+	getLoginLink = () => {
 		const { email, domain } = this.props.user;
 		return `https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel&continue=https://admin.google.com/a/${ domain }`;
-	},
+	};
 
 	render() {
 		return (
-			<li>
+		    <li>
 				<span className="google-apps-user-item__email">
 					{ this.props.user.email }
 				</span>
@@ -37,11 +39,11 @@ const GoogleAppsUserItem = React.createClass( {
 					onClick={ this.props.onClick }
 					target="_blank"
 					rel="noopener noreferrer">
-					{ this.translate( 'Manage', { context: 'G Suite user item' } ) }
+					{ this.props.translate( 'Manage', { context: 'G Suite user item' } ) }
 				</ExternalLink>
 			</li>
 		);
 	}
-} );
+}
 
-export default GoogleAppsUserItem;
+export default localize(GoogleAppsUserItem);

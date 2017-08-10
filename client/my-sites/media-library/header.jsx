@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
 /**
@@ -19,34 +20,30 @@ import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import StickyPanel from 'components/sticky-panel';
 
-export default React.createClass( {
-	displayName: 'MediaLibraryHeader',
+export default localize(class extends React.Component {
+    static displayName = 'MediaLibraryHeader';
 
-	propTypes: {
+	static propTypes = {
 		site: PropTypes.object,
 		filter: PropTypes.string,
 		sliderPositionCount: PropTypes.number,
 		onMediaScaleChange: React.PropTypes.func,
 		onAddMedia: PropTypes.func,
 		sticky: React.PropTypes.bool,
-	},
+	};
 
-	getInitialState() {
-		return {
-			addingViaUrl: false,
-			isMoreOptionsVisible: false
-		};
-	},
+	static defaultProps = {
+		onAddMedia: () => {},
+		sliderPositionCount: 100,
+		sticky: false,
+	};
 
-	getDefaultProps() {
-		return {
-			onAddMedia: () => {},
-			sliderPositionCount: 100,
-			sticky: false,
-		};
-	},
+	state = {
+		addingViaUrl: false,
+		isMoreOptionsVisible: false
+	};
 
-	setMoreOptionsContext( component ) {
+	setMoreOptionsContext = component => {
 		if ( ! component ) {
 			return;
 		}
@@ -54,22 +51,22 @@ export default React.createClass( {
 		this.setState( {
 			moreOptionsContext: component
 		} );
-	},
+	};
 
-	toggleAddViaUrl( state ) {
+	toggleAddViaUrl = state => {
 		this.setState( {
 			addingViaUrl: state,
 			isMoreOptionsVisible: false
 		} );
-	},
+	};
 
-	toggleMoreOptions( state ) {
+	toggleMoreOptions = state => {
 		this.setState( {
 			isMoreOptionsVisible: state
 		} );
-	},
+	};
 
-	renderUploadButtons() {
+	renderUploadButtons = () => {
 		const { site, filter, onAddMedia } = this.props;
 
 		if ( ! userCan( 'upload_files', site ) ) {
@@ -77,14 +74,14 @@ export default React.createClass( {
 		}
 
 		return (
-			<ButtonGroup className="media-library__upload-buttons">
+		    <ButtonGroup className="media-library__upload-buttons">
 				<UploadButton
 					site={ site }
 					filter={ filter }
 					onAddMedia={ onAddMedia }
 					className="button is-compact">
 					<Gridicon icon="add-image" />
-					<span className="is-desktop">{ this.translate( 'Add New', { context: 'Media upload' } ) }</span>
+					<span className="is-desktop">{ this.props.translate( 'Add New', { context: 'Media upload' } ) }</span>
 				</UploadButton>
 				<Button
 					compact
@@ -92,7 +89,7 @@ export default React.createClass( {
 					onClick={ this.toggleMoreOptions.bind( this, ! this.state.isMoreOptionsVisible ) }
 					className="button media-library__upload-more">
 					<span className="screen-reader-text">
-						{ this.translate( 'More Options' ) }
+						{ this.props.translate( 'More Options' ) }
 					</span>
 					<Gridicon icon="chevron-down" size={ 20 }/>
 					<PopoverMenu
@@ -102,13 +99,13 @@ export default React.createClass( {
 						position="bottom right"
 						className="is-dialog-visible media-library__header-popover">
 						<PopoverMenuItem onClick={ this.toggleAddViaUrl.bind( this, true ) }>
-							{ this.translate( 'Add via URL', { context: 'Media upload' } ) }
+							{ this.props.translate( 'Add via URL', { context: 'Media upload' } ) }
 						</PopoverMenuItem>
 					</PopoverMenu>
 				</Button>
 			</ButtonGroup>
 		);
-	},
+	};
 
 	render() {
 		const { site, onAddMedia } = this.props;
@@ -148,4 +145,4 @@ export default React.createClass( {
 			return card;
 		}
 	}
-} );
+});

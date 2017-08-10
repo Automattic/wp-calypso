@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -10,22 +10,17 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import Card from 'components/card';
 import DropZone from 'components/drop-zone';
 
-export default React.createClass( {
-	displayName: 'DropZones',
+export default localize(class extends React.PureComponent {
+    static displayName = 'DropZones';
+	state = {};
 
-	mixins: [ PureRenderMixin ],
-
-	getInitialState() {
-		return {};
-	},
-
-	onFilesDrop( files ) {
+	onFilesDrop = files => {
 		this.setState( {
 			lastDroppedFiles: files
 		} );
-	},
+	};
 
-	renderContainerContent() {
+	renderContainerContent = () => {
 		const style = {
 			lineHeight: '100px',
 			textAlign: 'center'
@@ -39,15 +34,15 @@ export default React.createClass( {
 		}
 
 		return (
-			<Card style={ style }>
+		    <Card style={ style }>
 				{ fileNames
-					? this.translate( 'You dropped: %s', { args: fileNames } )
-					: this.translate( 'This is a droppable area' ) }
+					? this.props.translate( 'You dropped: %s', { args: fileNames } )
+					: this.props.translate( 'This is a droppable area' ) }
 			</Card>
 		);
-	},
+	};
 
-	renderContainer() {
+	renderContainer = () => {
 		const style = {
 			position: 'relative',
 			height: '150px'
@@ -59,9 +54,9 @@ export default React.createClass( {
 				<DropZone onFilesDrop={ this.onFilesDrop } />
 			</div>
 		);
-	},
+	};
 
 	render() {
 		return this.renderContainer();
 	}
-} );
+});

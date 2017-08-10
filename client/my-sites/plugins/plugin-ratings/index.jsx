@@ -3,6 +3,10 @@
  */
 import React from 'react';
 
+import createReactClass from 'create-react-class';
+
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -10,7 +14,7 @@ import ProgressBar from 'components/progress-bar';
 import Rating from 'components/rating';
 import analytics from 'lib/analytics';
 
-export default React.createClass( {
+export default localize(createReactClass({
 	displayName: 'PluginRatings',
 
 	propTypes: {
@@ -33,12 +37,13 @@ export default React.createClass( {
 	},
 
 	renderPlaceholder() {
-		return ( // eslint-disable-next-line
+		return (
+		    // eslint-disable-next-line
 			<div className="plugin-ratings is-placeholder">
 				<div className="plugin-ratings__rating-stars">
 					<Rating rating={ 0 } />
 				</div>
-				<div className="plugin-ratings__rating-text">{ this.translate( 'Based on' ) }</div>
+				<div className="plugin-ratings__rating-text">{ this.props.translate( 'Based on' ) }</div>
 			</div>
 		);
 	},
@@ -51,7 +56,7 @@ export default React.createClass( {
 		};
 
 		return (
-			<a
+		    <a
 				className="plugin-ratings__rating-container"
 				key={ `plugins-ratings__tier-${ ratingTier }` }
 				target="_blank"
@@ -61,7 +66,7 @@ export default React.createClass( {
 			>
 				<span className="plugin-ratings__rating-tier-text">
 					{
-						this.translate(
+						this.props.translate(
 							'%(ratingTier)s star', '%(ratingTier)s stars', {
 								count: ratingTier,
 								args: { ratingTier: ratingTier }
@@ -73,7 +78,7 @@ export default React.createClass( {
 					<ProgressBar
 						value={ numberOfRatings }
 						total={ numRatings }
-						title={ this.translate( '%(numberOfRatings)s ratings', { args: { numberOfRatings } } ) }
+						title={ this.props.translate( '%(numberOfRatings)s ratings', { args: { numberOfRatings } } ) }
 					/>
 				</span>
 			</a>
@@ -91,9 +96,9 @@ export default React.createClass( {
 		}
 
 		return (
-			<div className="plugin-ratings__downloads">
+		    <div className="plugin-ratings__downloads">
 				{
-					this.translate( '%(installs)s downloads', {
+					this.props.translate( '%(installs)s downloads', {
 						args: { installs: downloaded }
 					} )
 				}
@@ -114,12 +119,12 @@ export default React.createClass( {
 
 		const tierViews = this.ratingTiers.map( tierLevel => this.renderRatingTier( tierLevel ) );
 		return (
-			<div className="plugin-ratings">
+		    <div className="plugin-ratings">
 				<div className="plugin-ratings__rating-stars">
 					<Rating rating={ rating } />
 				</div>
 				<div className="plugin-ratings__rating-text">
-					{ this.translate( 'Based on %(ratingsNumber)s rating', 'Based on %(ratingsNumber)s ratings', {
+					{ this.props.translate( 'Based on %(ratingsNumber)s rating', 'Based on %(ratingsNumber)s ratings', {
 						count: numRatings,
 						args: { ratingsNumber: numRatings }
 					} ) }
@@ -131,4 +136,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}));

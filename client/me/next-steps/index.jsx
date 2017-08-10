@@ -5,6 +5,8 @@ var React = require( 'react' ),
 	property = require( 'lodash/property' ),
 	sortBy = require( 'lodash/sortBy' );
 
+var createReactClass = require('create-react-class');
+
 /**
  * Internal dependencies
  */
@@ -16,7 +18,7 @@ var NextStepsBox = require( './next-steps-box' ),
 	productsValues = require( 'lib/products-values' ),
 	sites = require( 'lib/sites-list' )();
 
-module.exports = React.createClass( {
+module.exports = localize(createReactClass({
 
 	mixins: [ observe( 'trophiesData', 'sites' ) ],
 
@@ -92,10 +94,10 @@ module.exports = React.createClass( {
 	introMessage: function() {
 		if ( this.props.isWelcome ) {
 			return (
-				<div className="next-steps__intro">
-				<h3 className="next-steps__title">{ this.translate( 'Thanks for signing up for WordPress.com.' ) }</h3>
+			    <div className="next-steps__intro">
+				<h3 className="next-steps__title">{ this.props.translate( 'Thanks for signing up for WordPress.com.' ) }</h3>
 				<p className="next-steps__intro">
-					{ this.translate(
+					{ this.props.translate(
 						'Next you can take any of the following steps, ' +
 						'join a {{bloggingUniversityLink}}guided blogging course{{/bloggingUniversityLink}}, ' +
 						'or check out our {{docsLink}}support documentation{{/docsLink}}.', {
@@ -134,9 +136,9 @@ module.exports = React.createClass( {
 			dismissLink = '/stats/insights/' + ( site ? site.slug : '' );
 
 			return (
-				<div className="next-steps__outro">
+			    <div className="next-steps__outro">
 				<p>{
-					this.translate( 'If you want you can {{a}}skip these steps{{/a}}. You can come back to this page any time.', {
+					this.props.translate( 'If you want you can {{a}}skip these steps{{/a}}. You can come back to this page any time.', {
 						components: {
 							a: <a href={ dismissLink } onClick={ this.dismissLinkRecordEvent } />
 						}
@@ -192,4 +194,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}));

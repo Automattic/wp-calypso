@@ -16,19 +16,22 @@ const analytics = require( 'lib/analytics' ),
 	NavTabs = require( 'components/section-nav/tabs' ),
 	NavItem = require( 'components/section-nav/item' );
 
-module.exports = React.createClass( {
+module.exports = localize(class extends React.Component {
+    static displayName = 'PluginSections';
 
-	_COLLAPSED_DESCRIPTION_HEIGHT: 140,
+	state = {
+		selectedSection: false,
+		readMore: false
+	};
 
-	displayName: 'PluginSections',
+	_COLLAPSED_DESCRIPTION_HEIGHT = 140;
+	descriptionHeight = 0;
 
-	descriptionHeight: 0,
-
-	recordEvent: function( eventAction ) {
+	recordEvent = eventAction => {
 		analytics.ga.recordEvent( 'Plugins', eventAction, 'Plugin Name', this.props.plugin.slug );
-	},
+	};
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		if ( this.refs.content ) {
 			const node = this.refs.content;
 
@@ -36,9 +39,9 @@ module.exports = React.createClass( {
 				this.descriptionHeight = node.offsetHeight;
 			}
 		}
-	},
+	}
 
-	getFilteredSections: function() {
+	getFilteredSections = () => {
 		if ( this.props.isWpcom ) {
 			return this.getWpcomFilteredSections();
 		}
@@ -46,88 +49,81 @@ module.exports = React.createClass( {
 		return [
 			{
 				key: 'description',
-				title: this.translate( 'Description', {
+				title: this.props.translate( 'Description', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
 			},
 			{
 				key: 'installation',
-				title: this.translate( 'Installation', {
+				title: this.props.translate( 'Installation', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
 			},
 			{
 				key: 'changelog',
-				title: this.translate( 'Changelog', {
+				title: this.props.translate( 'Changelog', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
 			},
 			{
 				key: 'faq',
-				title: this.translate( 'FAQs', {
+				title: this.props.translate( 'FAQs', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
 			},
 			{
 				key: 'other_notes',
-				title: this.translate( 'Other Notes', {
+				title: this.props.translate( 'Other Notes', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
 			}
 		];
-	},
+	};
 
-	getWpcomFilteredSections: function() {
+	getWpcomFilteredSections = () => {
 		return [
 			{
 				key: 'description',
-				title: this.translate( 'Description', {
+				title: this.props.translate( 'Description', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
 			}
-		]
-	},
+		];
+	};
 
-	getInitialState: function() {
-		return {
-			selectedSection: false,
-			readMore: false
-		};
-	},
-
-	getSelected: function() {
+	getSelected = () => {
 		return this.state.selectedSection || this.getDefaultSection();
-	},
+	};
 
-	getDefaultSection: function() {
+	getDefaultSection = () => {
 		const sections = this.props.plugin.sections;
 		return find( this.getFilteredSections(), function( section ) {
 			return sections[ section.key ];
 		} ).key;
-	},
+	};
 
-	getAvailableSections: function() {
+	getAvailableSections = () => {
 		const sections = this.props.plugin.sections;
 		return filter( this.getFilteredSections(), function( section ) {
 			return sections[ section.key ];
 		} );
-	},
+	};
 
-	getNavTitle: function( sectionKey ) {
+	getNavTitle = sectionKey => {
 		const titleSection = find( this.getFilteredSections(), function( section ) {
 			return section.key === sectionKey;
 		} );
 
 		return ( titleSection && titleSection.title ) ? titleSection.title : titleCase( sectionKey );
-	},
+	};
 
-	setSelectedSection: function( section, event ) {
+	setSelectedSection = (section, event) => {
 		this.setState( {
 			readMore: false !== this.state.readMore || this.getSelected() !== section,
 			selectedSection: section
@@ -135,20 +131,20 @@ module.exports = React.createClass( {
 		if ( event ) {
 			this.recordEvent( 'Clicked Section Tab: ' + section );
 		}
-	},
+	};
 
-	toggleReadMore: function() {
+	toggleReadMore = () => {
 		this.setState( { readMore: ! this.state.readMore } );
-	},
+	};
 
-	renderReadMore: function() {
+	renderReadMore = () => {
 		if ( this.props.isWpcom || this.descriptionHeight < this._COLLAPSED_DESCRIPTION_HEIGHT ) {
 			return null;
 		}
 		const button = (
 			<button className="plugin-sections__read-more-link" onClick={ this.toggleReadMore }>
 				<span className="plugin-sections__read-more-text">
-					{ this.translate( 'Read More' ) }
+					{ this.props.translate( 'Read More' ) }
 				</span>
 			</button>
 		);
@@ -161,9 +157,9 @@ module.exports = React.createClass( {
 				}
 			</div>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		const contentClasses = classNames(
 			'plugin-sections__content',
 			{ trimmed: ! this.props.isWpcom && ! this.state.readMore }
@@ -207,4 +203,4 @@ module.exports = React.createClass( {
 		);
 		/*eslint-enable react/no-danger*/
 	}
-} );
+});

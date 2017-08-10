@@ -12,16 +12,14 @@ var wpcom = require( 'lib/wp' ),
 	analytics = require( 'lib/analytics' ),
 	Gridicon = require( 'gridicons' );
 
-module.exports = React.createClass( {
-	displayName: 'StatsActionSpam',
+module.exports = localize(class extends React.Component {
+    static displayName = 'StatsActionSpam';
 
-	getInitialState: function() {
-		return {
-			spammed: false
-		};
-	},
+	state = {
+		spammed: false
+	};
 
-	clickHandler: function( event ) {
+	clickHandler = event => {
 		var spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew',
 			gaEvent = this.state.spammed ? 'Undid Referrer Spam' : 'Marked Referrer as Spam',
 			wpcomSite;
@@ -39,18 +37,18 @@ module.exports = React.createClass( {
 		wpcomSite = wpcom.site( this.props.data.siteID );
 		wpcomSite[ spamType ].call( wpcomSite, this.props.data.domain, function() {} );
 		analytics.ga.recordEvent( 'Stats', gaEvent + ' in ' + this.props.moduleName + ' List' );
-	},
+	};
 
-	render: function() {
-		var label = this.state.spammed ? this.translate( 'Not Spam' ) : this.translate( 'Spam', {
+	render() {
+		var label = this.state.spammed ? this.props.translate( 'Not Spam' ) : this.props.translate( 'Spam', {
 				context: 'Stats: Action to mark an item as spam',
 				comment: 'Default label (changes into "Not Spam").'
 			} ),
-			title = this.state.spammed ? this.translate( 'Not Spam', {
+			title = this.state.spammed ? this.props.translate( 'Not Spam', {
 				textOnly: true,
 				context: 'Stats: Action to undo marking an item as spam',
 				comment: 'Secondary label (default label is "Spam"). Recommended to use a very short label.'
-			} ) : this.translate( 'Spam', {
+			} ) : this.props.translate( 'Spam', {
 				textOnly: true,
 				context: 'Stats: Action to mark an item as spam',
 				comment: 'Default label (changes into "Not Spam").'
@@ -73,4 +71,4 @@ module.exports = React.createClass( {
 			</li>
 		);
 	}
-} );
+});

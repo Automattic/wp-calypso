@@ -4,6 +4,8 @@
 const React = require( 'react' ),
 	page = require( 'page' );
 
+const createReactClass = require('create-react-class');
+
 /**
  * Internal dependencies
  */
@@ -11,10 +13,11 @@ const analyticsMixin = require( 'lib/mixins/analytics' ),
 	paths = require( 'my-sites/domains/paths' ),
 	Button = require( 'components/button' );
 
-const PrimaryDomainButton = React.createClass( {
-	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
+const PrimaryDomainButton = createReactClass({
+    displayName: 'PrimaryDomainButton',
+    mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
-	propTypes: {
+    propTypes: {
 		domain: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
@@ -23,21 +26,21 @@ const PrimaryDomainButton = React.createClass( {
 		settingPrimaryDomain: React.PropTypes.bool.isRequired
 	},
 
-	handleClick() {
+    handleClick() {
 		this.recordEvent( 'makePrimaryClick', this.props.domain );
 
 		page( paths.domainManagementPrimaryDomain( this.props.selectedSite.slug, this.props.domain.name ) );
 	},
 
-	render() {
+    render() {
 		const domain = this.props.domain;
 		var label;
 
 		if ( domain && ! domain.isPrimary ) {
 			if ( this.props.settingPrimaryDomain ) {
-				label = this.translate( 'Saving…' );
+				label = this.props.translate( 'Saving…' );
 			} else {
-				label = this.translate( 'Make Primary' );
+				label = this.props.translate( 'Make Primary' );
 			}
 
 			return (
@@ -52,6 +55,6 @@ const PrimaryDomainButton = React.createClass( {
 
 		return null;
 	}
-} );
+});
 
-module.exports = PrimaryDomainButton;
+module.exports = localize(PrimaryDomainButton);

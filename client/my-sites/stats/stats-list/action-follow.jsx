@@ -5,6 +5,8 @@ var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	debug = require( 'debug' )( 'calypso:stats:action-follow' );
 
+var createReactClass = require('create-react-class');
+
 /**
  * Internal dependencies
  */
@@ -12,7 +14,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 	analytics = require( 'lib/analytics' ),
 	Gridicon = require( 'gridicons' );
 
-module.exports = React.createClass( {
+module.exports = localize(createReactClass({
 	displayName: 'StatsActionFollow',
 
 	mixins: [ observe( 'followSite' ) ],
@@ -44,10 +46,10 @@ module.exports = React.createClass( {
 				following: following
 			} ),
 			label = following ?
-				this.translate( 'Following', {
+				this.props.translate( 'Following', {
 					context: 'Stats: Follow action / Following status'
 				} ) :
-				this.translate( 'Follow', {
+				this.props.translate( 'Follow', {
 					context: 'Stats: Follow action / Following status'
 				} ),
 			gridiconType = following ? 'reader-following' : 'reader-follow',
@@ -56,12 +58,12 @@ module.exports = React.createClass( {
 		wrapperClassSet = classNames( wrapperClass );
 
 		return (
-			<li className='module-content-list-item-action'>
-				<a href='#' onClick={ this.clickHandler } className={ wrapperClassSet } title={ site.blog_domain } aria-label={ this.translate( 'Follow or unfollow user', { textOnly: true, context: 'Stats ARIA label: Follow/Unfollow action' } ) } >
+		    <li className='module-content-list-item-action'>
+				<a href='#' onClick={ this.clickHandler } className={ wrapperClassSet } title={ site.blog_domain } aria-label={ this.props.translate( 'Follow or unfollow user', { textOnly: true, context: 'Stats ARIA label: Follow/Unfollow action' } ) } >
 					<span className='module-content-list-item-action-label'><Gridicon icon={ gridiconType } size={ 18 } />{ label }</span>
-					<span className='module-content-list-item-action-label unfollow'><Gridicon icon="cross" size={ 18 } />{ this.translate( 'Unfollow', { context: 'Stats ARIA label: Unfollow action' } ) }</span>
+					<span className='module-content-list-item-action-label unfollow'><Gridicon icon="cross" size={ 18 } />{ this.props.translate( 'Unfollow', { context: 'Stats ARIA label: Unfollow action' } ) }</span>
 				</a>
 			</li>
 		);
 	}
-} );
+}));

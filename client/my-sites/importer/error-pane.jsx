@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import { localize } from 'i18n-calypso';
 import Page from 'page';
 
 /**
@@ -10,24 +10,22 @@ import Page from 'page';
  */
 import Notice from 'components/notice';
 
-export default React.createClass( {
-	displayName: 'SiteSettingsImporterError',
+export default localize(class extends React.PureComponent {
+    static displayName = 'SiteSettingsImporterError';
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		description: PropTypes.string.isRequired,
 		type: PropTypes.string.isRequired
-	},
+	};
 
-	contactSupport: function( event ) {
+	contactSupport = event => {
 		event.preventDefault();
 		event.stopPropagation();
 		Page( '/help' );
-	},
+	};
 
-	getImportError: function() {
-		return this.translate(
+	getImportError = () => {
+		return this.props.translate(
 			'%(errorDescription)s{{br/}}{{a}}Try again{{/a}} or {{cs}}contact support{{/cs}}.', {
 				args: {
 					errorDescription: this.props.description
@@ -39,13 +37,13 @@ export default React.createClass( {
 				}
 			}
 		);
-	},
+	};
 
-	getUploadError: function() {
-		const defaultError = this.translate( 'Unexpected error during the upload' );
+	getUploadError = () => {
+		const defaultError = this.props.translate( 'Unexpected error during the upload' );
 		const { description = '' } = this.props;
 
-		return this.translate(
+		return this.props.translate(
 			'%(errorDescription)s{{br/}}Try another file or {{cs}}contact support{{/cs}}.', {
 				args: {
 					errorDescription: description.length ? description : defaultError
@@ -56,9 +54,9 @@ export default React.createClass( {
 				}
 			}
 		);
-	},
+	};
 
-	getErrorMessage: function() {
+	getErrorMessage = () => {
 		var actionMessage;
 
 		switch ( this.props.type ) {
@@ -72,14 +70,14 @@ export default React.createClass( {
 		}
 
 		return actionMessage;
-	},
+	};
 
-	retryImport: function( event ) {
+	retryImport = event => {
 		event.preventDefault();
 		event.stopPropagation();
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div>
 				<Notice
@@ -90,4 +88,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+});

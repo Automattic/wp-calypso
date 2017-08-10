@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import createReactClass from 'create-react-class';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { find, includes, reduce } from 'lodash';
 
@@ -19,10 +21,11 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 
-const PostTypeFilter = React.createClass( {
-	mixins: [ UrlSearch ],
+const PostTypeFilter = createReactClass({
+    displayName: 'PostTypeFilter',
+    mixins: [ UrlSearch ],
 
-	propTypes: {
+    propTypes: {
 		siteId: PropTypes.number,
 		query: PropTypes.object,
 		jetpack: PropTypes.bool,
@@ -30,13 +33,13 @@ const PostTypeFilter = React.createClass( {
 		counts: PropTypes.object
 	},
 
-	getDefaultProps() {
+    getDefaultProps() {
 		return {
 			query: {}
 		};
 	},
 
-	getNavItems() {
+    getNavItems() {
 		const { query, siteSlug, jetpack, counts } = this.props;
 
 		return reduce( counts, ( memo, count, status ) => {
@@ -47,27 +50,27 @@ const PostTypeFilter = React.createClass( {
 			let label, pathStatus;
 			switch ( status ) {
 				case 'publish':
-					label = this.translate( 'Published', {
+					label = this.props.translate( 'Published', {
 						context: 'Filter label for posts list'
 					} );
 					break;
 
 				case 'draft':
-					label = this.translate( 'Drafts', {
+					label = this.props.translate( 'Drafts', {
 						context: 'Filter label for posts list'
 					} );
 					pathStatus = 'drafts';
 					break;
 
 				case 'future':
-					label = this.translate( 'Scheduled', {
+					label = this.props.translate( 'Scheduled', {
 						context: 'Filter label for posts list'
 					} );
 					pathStatus = 'scheduled';
 					break;
 
 				case 'trash':
-					label = this.translate( 'Trashed', {
+					label = this.props.translate( 'Trashed', {
 						context: 'Filter label for posts list'
 					} );
 					pathStatus = 'trashed';
@@ -89,13 +92,13 @@ const PostTypeFilter = React.createClass( {
 		}, [] );
 	},
 
-	render() {
+    render() {
 		const { siteId, query, jetpack } = this.props;
 		const navItems = this.getNavItems();
 		const selectedItem = find( navItems, 'selected' ) || {};
 
 		return (
-			<div>
+		    <div>
 				{ query && siteId && false === jetpack && (
 					<QueryPostCounts
 						siteId={ siteId }
@@ -107,7 +110,7 @@ const PostTypeFilter = React.createClass( {
 					{ query && [
 						<NavTabs
 							key="tabs"
-							label={ this.translate( 'Status', { context: 'Filter group label for tabs' } ) }
+							label={ this.props.translate( 'Status', { context: 'Filter group label for tabs' } ) }
 							selectedText={ selectedItem.children }
 							selectedCount={ selectedItem.count }>
 							{ navItems.map( ( props ) => <NavItem { ...props } /> ) }
@@ -117,14 +120,14 @@ const PostTypeFilter = React.createClass( {
 							pinned
 							fitsContainer
 							onSearch={ this.doSearch }
-							placeholder={ this.translate( 'Search…' ) }
+							placeholder={ this.props.translate( 'Search…' ) }
 							delaySearch={ true } />
 					] }
 				</SectionNav>
 			</div>
 		);
 	}
-} );
+});
 
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
@@ -141,4 +144,4 @@ export default connect( ( state, ownProps ) => {
 	return Object.assign( props, {
 		counts: getNormalizedPostCounts( state, siteId, ownProps.query.type )
 	} );
-} )( PostTypeFilter );
+} )( localize(PostTypeFilter) );

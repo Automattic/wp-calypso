@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import createFragment from 'react-addons-create-fragment';
 import { groupBy, head, mapValues, noop, some, toArray, values } from 'lodash';
-import { translate } from 'i18n-calypso';
+import { translate, localize } from 'i18n-calypso';
 import page from 'page';
 
 /**
@@ -36,8 +36,8 @@ import {
 
 const isConnected = props => some( props.connectedServices, item => item.service === props.source );
 
-const MediaLibraryContent = React.createClass( {
-	propTypes: {
+class MediaLibraryContent extends React.Component {
+    static propTypes = {
 		site: React.PropTypes.object,
 		mediaValidationErrors: React.PropTypes.object,
 		filter: React.PropTypes.string,
@@ -51,24 +51,22 @@ const MediaLibraryContent = React.createClass( {
 		onMediaScaleChange: React.PropTypes.func,
 		onEditItem: React.PropTypes.func,
 		postId: React.PropTypes.number
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			mediaValidationErrors: Object.freeze( {} ),
-			onAddMedia: noop,
-			source: '',
-		};
-	},
+	static defaultProps = {
+		mediaValidationErrors: Object.freeze( {} ),
+		onAddMedia: noop,
+		source: '',
+	};
 
-	componentWillMount: function() {
+	componentWillMount() {
 		if ( ! this.props.isRequesting && this.props.source !== '' && this.props.connectedServices.length === 0 ) {
 			// Are we connected to anything yet?
 			this.props.requestKeyringConnections();
 		}
-	},
+	}
 
-	renderErrors: function() {
+	renderErrors = () => {
 		var errorTypes, notices;
 
 		errorTypes = values( this.props.mediaValidationErrors ).map( head );
@@ -93,28 +91,28 @@ const MediaLibraryContent = React.createClass( {
 					status = 'is-warning';
 					upgradeNudgeName = 'plan-media-storage-error-video';
 					upgradeNudgeFeature = 'video-upload';
-					message = this.translate(
+					message = this.props.translate(
 						'%d file could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.',
 						'%d files could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.',
 						i18nOptions
 					);
 					break;
 				case MediaValidationErrors.FILE_TYPE_UNSUPPORTED:
-					message = this.translate(
+					message = this.props.translate(
 						'%d file could not be uploaded because the file type is not supported.',
 						'%d files could not be uploaded because their file types are unsupported.',
 						i18nOptions
 					);
 					break;
 				case MediaValidationErrors.UPLOAD_VIA_URL_404:
-					message = this.translate(
+					message = this.props.translate(
 						'%d file could not be uploaded because no image exists at the specified URL.',
 						'%d files could not be uploaded because no images exist at the specified URLs',
 						i18nOptions
 					);
 					break;
 				case MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE:
-					message = this.translate(
+					message = this.props.translate(
 						'%d file could not be uploaded because it exceeds the maximum upload size.',
 						'%d files could not be uploaded because they exceed the maximum upload size.',
 						i18nOptions
@@ -123,7 +121,7 @@ const MediaLibraryContent = React.createClass( {
 				case MediaValidationErrors.NOT_ENOUGH_SPACE:
 					upgradeNudgeName = 'plan-media-storage-error';
 					upgradeNudgeFeature = 'extra-storage';
-					message = this.translate(
+					message = this.props.translate(
 						'%d file could not be uploaded because there is not enough space left.',
 						'%d files could not be uploaded because there is not enough space left.',
 						i18nOptions
@@ -132,7 +130,7 @@ const MediaLibraryContent = React.createClass( {
 				case MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT:
 					upgradeNudgeName = 'plan-media-storage-error';
 					upgradeNudgeFeature = 'extra-storage';
-					message = this.translate(
+					message = this.props.translate(
 						'%d file could not be uploaded because you have reached your plan storage limit.',
 						'%d files could not be uploaded because you have reached your plan storage limit.',
 						i18nOptions
@@ -143,7 +141,7 @@ const MediaLibraryContent = React.createClass( {
 					tryAgain = true;
 					break;
 				default:
-					message = this.translate(
+					message = this.props.translate(
 						'%d file could not be uploaded because an error occurred while uploading.',
 						'%d files could not be uploaded because errors occurred while uploading.',
 						i18nOptions
@@ -160,21 +158,21 @@ const MediaLibraryContent = React.createClass( {
 		} );
 
 		return createFragment( notices );
-	},
+	};
 
-	renderTryAgain() {
+	renderTryAgain = () => {
 		return (
 			<NoticeAction onClick={ this.retryList }>
 				{ translate( 'Retry' ) }
 			</NoticeAction>
 		);
-	},
+	};
 
-	retryList() {
+	retryList = () => {
 		MediaActions.sourceChanged( this.props.site.ID );
-	},
+	};
 
-	renderNoticeAction( upgradeNudgeName, upgradeNudgeFeature ) {
+	renderNoticeAction = (upgradeNudgeName, upgradeNudgeFeature) => {
 		if ( !upgradeNudgeName ) {
 			return null;
 		}
@@ -184,27 +182,27 @@ const MediaLibraryContent = React.createClass( {
 			cta_feature: upgradeNudgeFeature
 		};
 		return (
-			<NoticeAction
+		    <NoticeAction
 				external={ true }
 				href={ upgradeNudgeFeature ? `/plans/compare/${ this.props.siteSlug }?feature=${ upgradeNudgeFeature }` : `/plans/${ this.props.siteSlug }` }
 				onClick={ this.recordPlansNavigation.bind( this, 'calypso_upgrade_nudge_cta_click', eventProperties ) }>
-				{ this.translate( 'Upgrade Plan' ) }
+				{ this.props.translate( 'Upgrade Plan' ) }
 				<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
 			</NoticeAction>
 		);
-	},
+	};
 
-	recordPlansNavigation( tracksEvent, tracksData ) {
+	recordPlansNavigation = (tracksEvent, tracksData) => {
 		analytics.ga.recordEvent( 'Media', 'Clicked Upload Error Action' );
 		analytics.tracks.recordEvent( tracksEvent, tracksData );
-	},
+	};
 
-	goToSharing( ev ) {
+	goToSharing = ev => {
 		ev.preventDefault();
 		page( `/sharing/${ this.props.site.slug }` );
-	},
+	};
 
-	renderExternalMedia() {
+	renderExternalMedia = () => {
 		const connectMessage = translate(
 			'To show Photos from Google, you need to connect your Google account. Do that from {{link}}your Sharing settings{{/link}}.', {
 				components: {
@@ -219,9 +217,9 @@ const MediaLibraryContent = React.createClass( {
 				<p>{ connectMessage }</p>
 			</div>
 		);
-	},
+	};
 
-	getThumbnailType() {
+	getThumbnailType = () => {
 		if ( this.props.source !== '' ) {
 			return MEDIA_IMAGE_THUMBNAIL;
 		}
@@ -231,9 +229,9 @@ const MediaLibraryContent = React.createClass( {
 		}
 
 		return MEDIA_IMAGE_PHOTON;
-	},
+	};
 
-	renderMediaList: function() {
+	renderMediaList = () => {
 		if ( ! this.props.site || this.props.isRequesting ) {
 			return <MediaLibraryList key="list-loading" filterRequiresUpgrade={ this.props.filterRequiresUpgrade } />;
 		}
@@ -264,9 +262,9 @@ const MediaLibraryContent = React.createClass( {
 				</MediaLibrarySelectedData>
 			</MediaListData>
 		);
-	},
+	};
 
-	renderHeader() {
+	renderHeader = () => {
 		if ( this.props.source !== '' ) {
 			return (
 				<MediaLibraryExternalHeader
@@ -294,9 +292,9 @@ const MediaLibraryContent = React.createClass( {
 		}
 
 		return null;
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="media-library__content">
 				{ this.renderHeader() }
@@ -305,7 +303,7 @@ const MediaLibraryContent = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect( ( state, ownProps ) => {
 	return {
@@ -315,4 +313,4 @@ export default connect( ( state, ownProps ) => {
 	};
 }, {
 	requestKeyringConnections,
-}, null, { pure: false } )( MediaLibraryContent );
+}, null, { pure: false } )( localize(MediaLibraryContent) );

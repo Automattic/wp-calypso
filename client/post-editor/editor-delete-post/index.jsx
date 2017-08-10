@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -13,22 +14,20 @@ import accept from 'lib/accept';
 import utils from 'lib/posts/utils';
 import Button from 'components/button';
 
-export default React.createClass( {
-	displayName: 'EditorDeletePost',
+export default localize(class extends React.Component {
+    static displayName = 'EditorDeletePost';
 
-	propTypes: {
+	static propTypes = {
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
 		onTrashingPost: React.PropTypes.func
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			isTrashing: false,
-		};
-	},
+	state = {
+		isTrashing: false,
+	};
 
-	sendToTrash() {
+	sendToTrash = () => {
 		this.setState( { isTrashing: true } );
 
 		const handleTrashingPost = function( error ) {
@@ -45,26 +44,26 @@ export default React.createClass( {
 			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 			actions.trash( this.props.post, handleTrashingPost );
 		}
-	},
+	};
 
-	onSendToTrash() {
+	onSendToTrash = () => {
 		let message;
 		if ( this.state.isTrashing ) {
 			return;
 		}
 
 		if ( this.props.post.type === 'page' ) {
-			message = this.translate( 'Are you sure you want to trash this page?' );
+			message = this.props.translate( 'Are you sure you want to trash this page?' );
 		} else {
-			message = this.translate( 'Are you sure you want to trash this post?' );
+			message = this.props.translate( 'Are you sure you want to trash this post?' );
 		}
 
 		accept( message, ( accepted ) => {
 			if ( accepted ) {
 				this.sendToTrash();
 			}
-		}, this.translate( 'Move to trash' ), this.translate( 'Back' ) );
-	},
+		}, this.props.translate( 'Move to trash' ), this.props.translate( 'Back' ) );
+	};
 
 	render() {
 		const { post } = this.props;
@@ -73,7 +72,7 @@ export default React.createClass( {
 		}
 
 		const classes = classnames( 'editor-delete-post__button', { 'is-trashing': this.state.isTrashing } );
-		const label = this.state.isTrashing ? this.translate( 'Trashing...' ) : this.translate( 'Move to trash' );
+		const label = this.state.isTrashing ? this.props.translate( 'Trashing...' ) : this.props.translate( 'Move to trash' );
 
 		return (
 			<div className="editor-delete-post">
@@ -89,4 +88,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+});

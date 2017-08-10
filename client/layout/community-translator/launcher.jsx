@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+var React = require( 'react' );
 import Gridicon from 'gridicons';
+
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,24 +14,20 @@ var translator = require( 'lib/translator-jumpstart' ),
 	Dialog = require( 'components/dialog' ),
 	analytics = require( 'lib/analytics' );
 
-module.exports = React.createClass( {
-	displayName: 'TranslatorLauncher',
+module.exports = localize(class extends React.PureComponent {
+    static displayName = 'TranslatorLauncher';
 
-	propTypes: {
+	static propTypes = {
 		isActive: React.PropTypes.bool.isRequired,
 		isEnabled: React.PropTypes.bool.isRequired
-	},
+	};
 
-	mixins: [ PureRenderMixin ],
+	state = {
+		infoDialogVisible: false,
+		firstActivation: true
+	};
 
-	getInitialState: function() {
-		return {
-			infoDialogVisible: false,
-			firstActivation: true
-		};
-	},
-
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps(nextProps) {
 		if ( ! this.props.isActive && nextProps.isActive ) {
 			// Activating
 			if ( ! localStorageHelper.get( 'translator_hide_infodialog' ) ) {
@@ -42,23 +39,23 @@ module.exports = React.createClass( {
 				this.setState( { firstActivation: false } );
 			}
 		}
-	},
+	}
 
-	toggleInfoCheckbox: function( event ) {
+	toggleInfoCheckbox = event => {
 		localStorageHelper.set( 'translator_hide_infodialog', event.target.checked );
-	},
+	};
 
-	infoDialogClose: function() {
+	infoDialogClose = () => {
 		this.setState( { infoDialogVisible: false } );
-	},
+	};
 
-	toggle: function( event ) {
+	toggle = event => {
 		event.preventDefault();
 		analytics.mc.bumpStat( 'calypso_translator_toggle', this.props.isActive ? 'off' : 'on' );
 		translator.toggle();
-	},
+	};
 
-	render: function() {
+	render() {
 		let launcherClasses = 'community-translator';
 		let toggleString;
 
@@ -67,25 +64,25 @@ module.exports = React.createClass( {
 		}
 
 		if ( this.props.isActive ) {
-			toggleString = this.translate( 'Disable Translator' );
+			toggleString = this.props.translate( 'Disable Translator' );
 			launcherClasses += ' is-active';
 		} else {
-			toggleString = this.translate( 'Enable Translator' );
+			toggleString = this.props.translate( 'Enable Translator' );
 		}
 
-		const infoDialogButtons = [ { action: 'cancel', label: this.translate( 'Ok' ) }, ];
+		const infoDialogButtons = [ { action: 'cancel', label: this.props.translate( 'Ok' ) }, ];
 
 		return (
-			<div>
+		    <div>
 				<Dialog isVisible={ this.state.infoDialogVisible } buttons={ infoDialogButtons } onClose={ this.infoDialogClose } additionalClassNames="community-translator__modal">
-					<h1>{ this.translate( 'Community Translator' ) }</h1>
-					<p>{ this.translate( 'You have now enabled the translator.  Right click highlighted text to translate it.' ) }</p>
+					<h1>{ this.props.translate( 'Community Translator' ) }</h1>
+					<p>{ this.props.translate( 'You have now enabled the translator.  Right click highlighted text to translate it.' ) }</p>
 					<p>
-						<label><input type="checkbox" onClick={ this.toggleInfoCheckbox } /><span>{ this.translate( "Don't show again" ) }</span></label>
+						<label><input type="checkbox" onClick={ this.toggleInfoCheckbox } /><span>{ this.props.translate( "Don't show again" ) }</span></label>
 					</p>
 				</Dialog>
 				<div className={ launcherClasses }>
-					<a className="community-translator__button" onClick={ this.toggle } title={ this.translate( 'Community Translator' ) }>
+					<a className="community-translator__button" onClick={ this.toggle } title={ this.props.translate( 'Community Translator' ) }>
 						<Gridicon icon="globe" />
 						<div className="community-translator__text">{ toggleString }</div>
 					</a>
@@ -93,4 +90,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+});

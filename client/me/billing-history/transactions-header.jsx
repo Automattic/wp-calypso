@@ -8,7 +8,10 @@ var React = require( 'react' ),
 	closest = require( 'component-closest' ),
 	last = require( 'lodash/last' ),
 	classNames = require( 'classnames' );
+var createReactClass = require('create-react-class');
 import Gridicon from 'gridicons';
+
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,7 +19,7 @@ import Gridicon from 'gridicons';
 var tableRows = require( './table-rows' ),
 	eventRecorder = require( 'me/event-recorder' );
 
-module.exports = React.createClass( {
+module.exports = localize(createReactClass({
 	displayName: 'TransactionsHeader',
 
 	mixins: [ eventRecorder ],
@@ -87,12 +90,12 @@ module.exports = React.createClass( {
 			}, this );
 
 		return (
-			<div className={ classes }>
+		    <div className={ classes }>
 				<strong
 					className="filter-popover-toggle date-toggle"
 					onClick={ this.recordClickEvent( 'Toggle Date Popover in Billing History', this.togglePopover.bind( this, 'date' ) ) }
 				>
-					{ this.translate( 'Date' ) }
+					{ this.props.translate( 'Date' ) }
 					<Gridicon icon="chevron-down" size={ 18 } />
 				</strong>
 				<div className="filter-popover-content datepicker">
@@ -100,22 +103,22 @@ module.exports = React.createClass( {
 						<table>
 							<thead>
 								<tr>
-									<th colSpan="2">{ this.translate( 'Recent Transactions' ) }</th>
+									<th colSpan="2">{ this.props.translate( 'Recent Transactions' ) }</th>
 								</tr>
 							</thead>
 							<tbody>
-								{ this.renderDatePicker( '5 Newest', this.translate( '5 Newest' ), { newest: 5 } ) }
-								{ this.renderDatePicker( '10 Newest', this.translate( '10 Newest' ), { newest: 10 } ) }
+								{ this.renderDatePicker( '5 Newest', this.props.translate( '5 Newest' ), { newest: 5 } ) }
+								{ this.renderDatePicker( '10 Newest', this.props.translate( '10 Newest' ), { newest: 10 } ) }
 							</tbody>
 							<thead>
 								<tr>
-									<th>{ this.translate( 'By Month' ) }</th>
-									<th className="transactions-header__count">{ this.translate( 'Transactions' ) }</th>
+									<th>{ this.props.translate( 'By Month' ) }</th>
+									<th className="transactions-header__count">{ this.props.translate( 'Transactions' ) }</th>
 								</tr>
 							</thead>
 							<tbody>
 								{ monthPickers }
-								{ this.renderDatePicker( 'Older', this.translate( 'Older' ), { before: last( previousMonths ) } ) }
+								{ this.renderDatePicker( 'Older', this.props.translate( 'Older' ), { before: last( previousMonths ) } ) }
 							</tbody>
 						</table>
 					</div>
@@ -190,23 +193,23 @@ module.exports = React.createClass( {
 			}, this );
 
 		return (
-			<div className={ classes }>
+		    <div className={ classes }>
 				<strong
 					className="filter-popover-toggle app-toggle"
 					onClick={ this.recordClickEvent( 'Toggle Apps Popover in Billing History', this.togglePopover.bind( this, 'apps' ) ) }>
-					{ this.translate( 'All Apps' ) }
+					{ this.props.translate( 'All Apps' ) }
 					<Gridicon icon="chevron-down" size={ 18 } />
 				</strong>
 				<div className="filter-popover-content app-list">
 					<table>
 						<thead>
 							<tr>
-								<th>{ this.translate( 'App Name' ) }</th>
-								<th>{ this.translate( 'Transactions' ) }</th>
+								<th>{ this.props.translate( 'App Name' ) }</th>
+								<th>{ this.props.translate( 'Transactions' ) }</th>
 							</tr>
 						</thead>
 						<tbody>
-							{ this.renderAppPicker( this.translate( 'All Apps' ), 'all' ) }
+							{ this.renderAppPicker( this.props.translate( 'All Apps' ), 'all' ) }
 							{ appPickers }
 						</tbody>
 					</table>
@@ -233,4 +236,4 @@ module.exports = React.createClass( {
 			</tr>
 		);
 	}
-} );
+}));
