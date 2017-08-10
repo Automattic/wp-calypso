@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import { get, isUndefined } from 'lodash';
-
 import React from 'react';
-import { isJetpackMonthlyPlan } from 'lib/products-values';
+import { get, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { isJetpackMonthlyPlan } from 'lib/products-values';
 import WpcomPlanPrice from 'my-sites/plans/wpcom-plan-price';
 
 const PlanPrice = React.createClass( {

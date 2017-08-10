@@ -8,7 +8,6 @@ import Gridicon from 'gridicons';
  * Internal Dependencies
  */
 import { camelCase, forOwn, kebabCase, mapKeys, values } from 'lodash';
-
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import CreditCardFormFields from 'components/credit-card-form-fields';

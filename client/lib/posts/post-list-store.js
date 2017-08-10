@@ -253,7 +253,7 @@ export default function( id ) {
 		}
 	}
 
-	return new (class extends EventEmitter {
+	return new ( class extends EventEmitter {
 		constructor() {
 			super();
 			this.id = id;
@@ -452,5 +452,5 @@ export default function( id ) {
 					break;
 			}
 		}
-	})();
+	} )();
 }
