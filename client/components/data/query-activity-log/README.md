@@ -16,9 +16,28 @@ This component renders nothing. It ensures that any activity logs for the given 
 
 ### `siteId`
 
-<table>
-	<tr><th>Type</th><td>Number</td></tr>
-	<tr><th>Required</th><td>Yes</td></tr>
-</table>
+| Type     | Number |
+| Required | Yes    |
 
 Site to fetch activities for.
+
+### `dateEnd`
+
+| Type     | Number |
+| Required | No     |
+
+Unix millisecond timestamp to fetch activity on or before.
+
+### `dateStart`
+
+| Type     | Number |
+| Required | No     |
+
+Unix millisecond timestamp to fetch activity on or after.
+
+### `number`
+
+| Type     | Number |
+| Required | No     |
+
+Number of results to fetch.

@@ -14,15 +14,31 @@ import {
 	activityLogUpdate,
 } from 'state/activity-log/actions';
 
+const KNOWN_PARAMS = [
+	'action',
+	'date_end',
+	'date_start',
+	'group',
+	'name',
+	'number',
+];
+
 export const handleActivityLogRequest = ( { dispatch }, action ) => {
+	const { params, siteId } = action;
+
+	if ( params.dateEnd ) {
+		params.date_end = params.dateEnd;
+	}
+
+	if ( params.dateStart ) {
+		params.date_start = params.dateStart;
+	}
+
 	dispatch( http( {
 		apiVersion: '1',
 		method: 'GET',
-		path: `/sites/${ action.siteId }/activity`,
-		query: {
-			number: 1000,
-			...action.params,
-		},
+		path: `/sites/${ siteId }/activity`,
+		query: pick( KNOWN_PARAMS, params ),
 	}, action ) );
 };
 
