@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -18,14 +19,14 @@ module.exports = localize(class extends React.Component {
     static displayName = 'SharingButtonsTray';
 
 	static propTypes = {
-		buttons: React.PropTypes.array,
-		style: React.PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
-		visibility: React.PropTypes.oneOf( [ 'visible', 'hidden' ] ),
-		onButtonsChange: React.PropTypes.func,
-		onButtonChange: React.PropTypes.func,
-		onClose: React.PropTypes.func,
-		active: React.PropTypes.bool,
-		limited: React.PropTypes.bool
+		buttons: PropTypes.array,
+		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
+		visibility: PropTypes.oneOf( [ 'visible', 'hidden' ] ),
+		onButtonsChange: PropTypes.func,
+		onButtonChange: PropTypes.func,
+		onClose: PropTypes.func,
+		active: PropTypes.bool,
+		limited: PropTypes.bool
 	};
 
 	static defaultProps = {

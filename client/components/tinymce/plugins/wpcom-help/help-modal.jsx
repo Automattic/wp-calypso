@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable no-multi-spaces */
 
 /**
@@ -14,9 +15,9 @@ const Dialog = require( 'components/dialog' ),
 
 class HelpModal extends React.Component {
     static propTypes = {
-		onClose: React.PropTypes.func,
-		macosx: React.PropTypes.bool,
-		showDialog: React.PropTypes.bool
+		onClose: PropTypes.func,
+		macosx: PropTypes.bool,
+		showDialog: PropTypes.bool
 	};
 
 	defaultShortcuts = () => {

@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -12,9 +13,9 @@ module.exports = localize(class extends React.Component {
     static displayName = 'SharingButtonsStyle';
 
 	static propTypes = {
-		onChange: React.PropTypes.func,
-		value: React.PropTypes.string,
-		disabled: React.PropTypes.bool
+		onChange: PropTypes.func,
+		value: PropTypes.string,
+		disabled: PropTypes.bool
 	};
 
 	static defaultProps = {

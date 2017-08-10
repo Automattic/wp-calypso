@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -16,10 +18,10 @@ export default localize(class extends React.PureComponent {
     static displayName = 'StatusLabel';
 
 	static propTypes = {
-		onClick: React.PropTypes.func,
-		post: React.PropTypes.object,
-		type: React.PropTypes.string,
-		advancedStatus: React.PropTypes.bool
+		onClick: PropTypes.func,
+		post: PropTypes.object,
+		type: PropTypes.string,
+		advancedStatus: PropTypes.bool
 	};
 
 	static defaultProps = {

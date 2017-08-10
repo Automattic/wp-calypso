@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import createReactClass from 'create-react-class';
@@ -30,7 +32,7 @@ const EmailForwardingAddNew = createReactClass({
     displayName: 'EmailForwardingAddNew',
 
     propTypes: {
-		initialShowForm: React.PropTypes.bool
+		initialShowForm: PropTypes.bool
 	},
 
     mixins: [ analyticsMixin( 'domainManagement', 'emailForwarding' ) ],

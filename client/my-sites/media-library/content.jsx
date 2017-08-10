@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import createFragment from 'react-addons-create-fragment';
@@ -38,19 +40,19 @@ const isConnected = props => some( props.connectedServices, item => item.service
 
 class MediaLibraryContent extends React.Component {
     static propTypes = {
-		site: React.PropTypes.object,
-		mediaValidationErrors: React.PropTypes.object,
-		filter: React.PropTypes.string,
-		filterRequiresUpgrade: React.PropTypes.bool,
-		search: React.PropTypes.string,
-		source: React.PropTypes.string,
-		containerWidth: React.PropTypes.number,
-		single: React.PropTypes.bool,
-		scrollable: React.PropTypes.bool,
-		onAddMedia: React.PropTypes.func,
-		onMediaScaleChange: React.PropTypes.func,
-		onEditItem: React.PropTypes.func,
-		postId: React.PropTypes.number
+		site: PropTypes.object,
+		mediaValidationErrors: PropTypes.object,
+		filter: PropTypes.string,
+		filterRequiresUpgrade: PropTypes.bool,
+		search: PropTypes.string,
+		source: PropTypes.string,
+		containerWidth: PropTypes.number,
+		single: PropTypes.bool,
+		scrollable: PropTypes.bool,
+		onAddMedia: PropTypes.func,
+		onMediaScaleChange: PropTypes.func,
+		onEditItem: PropTypes.func,
+		postId: PropTypes.number
 	};
 
 	static defaultProps = {

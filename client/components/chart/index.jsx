@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
@@ -19,11 +21,11 @@ module.exports = localize(createReactClass({
 	mixins: [ observe( 'dataList' ) ],
 
 	propTypes: {
-		loading: React.PropTypes.bool,
-		data: React.PropTypes.array,
-		minTouchBarWidth: React.PropTypes.number,
-		minBarWidth: React.PropTypes.number,
-		barClick: React.PropTypes.func
+		loading: PropTypes.bool,
+		data: PropTypes.array,
+		minTouchBarWidth: PropTypes.number,
+		minBarWidth: PropTypes.number,
+		barClick: PropTypes.func
 	},
 
 	getInitialState: function() {

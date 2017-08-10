@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -14,7 +15,7 @@ module.exports = localize(class extends React.Component {
     static displayName = 'Security2faInitialSetup';
 
 	static propTypes = {
-		onSuccess: React.PropTypes.func.isRequired,
+		onSuccess: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {

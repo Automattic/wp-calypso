@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -26,9 +27,9 @@ export default localize(class extends React.Component {
     static displayName = 'EditorDiscussion';
 
 	static propTypes = {
-		isNew: React.PropTypes.bool,
-		post: React.PropTypes.object,
-		site: React.PropTypes.object
+		isNew: PropTypes.bool,
+		post: PropTypes.object,
+		site: PropTypes.object
 	};
 
 	static defaultProps = {

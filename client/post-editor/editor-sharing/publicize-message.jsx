@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -19,12 +21,12 @@ export default localize(class extends React.Component {
     static displayName = 'PublicizeMessage';
 
 	static propTypes = {
-		disabled: React.PropTypes.bool,
-		message: React.PropTypes.string,
-		preview: React.PropTypes.string,
-		acceptableLength: React.PropTypes.number,
-		requireCount: React.PropTypes.bool,
-		onChange: React.PropTypes.func
+		disabled: PropTypes.bool,
+		message: PropTypes.string,
+		preview: PropTypes.string,
+		acceptableLength: PropTypes.number,
+		requireCount: PropTypes.bool,
+		onChange: PropTypes.func
 	};
 
 	static defaultProps = {

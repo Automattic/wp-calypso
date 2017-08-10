@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -18,8 +19,8 @@ module.exports = localize(class extends React.PureComponent {
     static displayName = 'TranslatorLauncher';
 
 	static propTypes = {
-		isActive: React.PropTypes.bool.isRequired,
-		isEnabled: React.PropTypes.bool.isRequired
+		isActive: PropTypes.bool.isRequired,
+		isEnabled: PropTypes.bool.isRequired
 	};
 
 	state = {

@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -16,7 +17,7 @@ import { localize } from 'i18n-calypso';
 
 class FreeCartPaymentBox extends React.Component {
     static propTypes = {
-		products: React.PropTypes.object.isRequired
+		products: PropTypes.object.isRequired
 	};
 
 	content = () => {

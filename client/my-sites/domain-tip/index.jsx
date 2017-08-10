@@ -1,10 +1,13 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { noop } from 'lodash';
+
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 /**
@@ -32,10 +35,10 @@ function getQueryObject( site, siteSlug ) {
 
 class DomainTip extends React.Component {
     static propTypes = {
-		className: React.PropTypes.string,
-		event: React.PropTypes.string.isRequired,
-		siteId: React.PropTypes.number.isRequired,
-		domainsWithPlansOnly: React.PropTypes.bool.isRequired
+		className: PropTypes.string,
+		event: PropTypes.string.isRequired,
+		siteId: PropTypes.number.isRequired,
+		domainsWithPlansOnly: PropTypes.bool.isRequired
 	};
 
 	static defaultProps = {

@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import url from 'url';
 import { connect } from 'react-redux';
@@ -28,7 +30,7 @@ import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
 
 class SiteNotice extends React.Component {
     static propTypes = {
-		site: React.PropTypes.object
+		site: PropTypes.object
 	};
 
 	static defaultProps = {

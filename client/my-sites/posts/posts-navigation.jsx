@@ -1,6 +1,8 @@
 /**
  * External Dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
@@ -38,10 +40,10 @@ const PostsNavigation = createReactClass({
 	displayName: 'PostsNavigation',
 
 	propTypes: {
-		context: React.PropTypes.object.isRequired,
-		author: React.PropTypes.number,
-		statusSlug: React.PropTypes.string,
-		search: React.PropTypes.string
+		context: PropTypes.object.isRequired,
+		author: PropTypes.number,
+		statusSlug: PropTypes.string,
+		search: PropTypes.string
 	},
 
 	mixins: [ URLSearch ],

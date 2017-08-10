@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
@@ -20,8 +22,8 @@ export default localize(createReactClass({
 	mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
 
 	propTypes: {
-		showingForm: React.PropTypes.bool,
-		showPopoverMenu: React.PropTypes.bool
+		showingForm: PropTypes.bool,
+		showPopoverMenu: PropTypes.bool
 	},
 
 	getDefaultProps() {

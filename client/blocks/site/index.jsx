@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -39,19 +41,19 @@ class Site extends React.Component {
 	};
 
 	static propTypes = {
-		href: React.PropTypes.string,
-		externalLink: React.PropTypes.bool,
-		indicator: React.PropTypes.bool,
-		onSelect: React.PropTypes.func,
-		onMouseEnter: React.PropTypes.func,
-		onMouseLeave: React.PropTypes.func,
-		isSelected: React.PropTypes.bool,
-		isHighlighted: React.PropTypes.bool,
-		site: React.PropTypes.object,
-		siteId: React.PropTypes.number,
-		homeLink: React.PropTypes.bool,
-		showHomeIcon: React.PropTypes.bool,
-		compact: React.PropTypes.bool
+		href: PropTypes.string,
+		externalLink: PropTypes.bool,
+		indicator: PropTypes.bool,
+		onSelect: PropTypes.func,
+		onMouseEnter: PropTypes.func,
+		onMouseLeave: PropTypes.func,
+		isSelected: PropTypes.bool,
+		isHighlighted: PropTypes.bool,
+		site: PropTypes.object,
+		siteId: PropTypes.number,
+		homeLink: PropTypes.bool,
+		showHomeIcon: PropTypes.bool,
+		compact: PropTypes.bool
 	};
 
 	onSelect = event => {

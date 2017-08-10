@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -15,9 +17,9 @@ export default localize(class extends React.Component {
     static displayName = 'Alert';
 
 	static propTypes = {
-		isVisible: React.PropTypes.bool.isRequired,
-		onClose: React.PropTypes.func.isRequired,
-		message: React.PropTypes.string.isRequired,
+		isVisible: PropTypes.bool.isRequired,
+		onClose: PropTypes.func.isRequired,
+		message: PropTypes.string.isRequired,
 	};
 
 	splitMessage = () => {

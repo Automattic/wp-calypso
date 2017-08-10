@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -19,12 +20,12 @@ var SharingButtonsPreviewButtons = module.exports = localize(class extends React
     static displayName = 'SharingButtonsPreviewButtons';
 
 	static propTypes = {
-		buttons: React.PropTypes.array,
-		visibility: React.PropTypes.oneOf( [ 'hidden', 'visible' ] ),
-		style: React.PropTypes.oneOf( [ 'icon', 'icon-text', 'text', 'official' ] ),
-		onButtonClick: React.PropTypes.func,
-		showMore: React.PropTypes.bool,
-		forceMorePreviewVisible: React.PropTypes.bool
+		buttons: PropTypes.array,
+		visibility: PropTypes.oneOf( [ 'hidden', 'visible' ] ),
+		style: PropTypes.oneOf( [ 'icon', 'icon-text', 'text', 'official' ] ),
+		onButtonClick: PropTypes.func,
+		showMore: PropTypes.bool,
+		forceMorePreviewVisible: PropTypes.bool
 	};
 
 	static defaultProps = {

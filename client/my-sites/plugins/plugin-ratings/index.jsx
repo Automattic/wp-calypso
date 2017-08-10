@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import createReactClass from 'create-react-class';
@@ -18,11 +20,11 @@ export default localize(createReactClass({
 	displayName: 'PluginRatings',
 
 	propTypes: {
-		rating: React.PropTypes.number,
-		ratings: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.array ] ),
-		downloaded: React.PropTypes.number,
-		slug: React.PropTypes.string,
-		numRatings: React.PropTypes.number
+		rating: PropTypes.number,
+		ratings: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ),
+		downloaded: PropTypes.number,
+		slug: PropTypes.string,
+		numRatings: PropTypes.number
 	},
 
 	ratingTiers: [ 5, 4, 3, 2, 1 ],

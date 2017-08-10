@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -23,10 +24,10 @@ module.exports = localize(createReactClass({
 	mixins: [ LinkedStateMixin ],
 
 	propTypes: {
-		storedEmail: React.PropTypes.string,
-		onSave: React.PropTypes.func,
-		onCancel: React.PropTypes.func,
-		onDelete: React.PropTypes.func
+		storedEmail: PropTypes.string,
+		onSave: PropTypes.func,
+		onCancel: PropTypes.func,
+		onDelete: PropTypes.func
 	},
 
 	getDefaultProps: function() {

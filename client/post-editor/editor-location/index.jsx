@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -25,7 +26,7 @@ export default localize(class extends React.Component {
     static displayName = 'EditorLocation';
 
 	static propTypes = {
-		label: React.PropTypes.string,
+		label: PropTypes.string,
 		coordinates: function( props, propName ) {
 			var prop = props[ propName ];
 			if ( prop && ( ! Array.isArray( prop ) || 2 !== prop.length || 2 !== prop.filter( Number ).length ) ) {

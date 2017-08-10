@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -40,8 +41,8 @@ const AddEmailAddressesCard = createReactClass({
     mixins: [ analyticsMixin( 'domainManagement', 'addGoogleApps' ) ],
 
     propTypes: {
-		domains: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string
+		domains: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string
 	},
 
     getInitialState() {

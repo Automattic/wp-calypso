@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 import { connect } from 'react-redux';
 import { defer } from 'lodash';
 import page from 'page';
@@ -45,7 +47,7 @@ class DomainsStep extends React.Component {
 	};
 
 	static contextTypes = {
-		store: React.PropTypes.object
+		store: PropTypes.object
 	};
 
 	state = { products: productsList.get() };

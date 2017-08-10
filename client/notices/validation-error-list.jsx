@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -8,7 +9,7 @@ module.exports = localize(class extends React.Component {
     static displayName = 'ValidationErrorList';
 
 	static propTypes = {
-		messages: React.PropTypes.array.isRequired
+		messages: PropTypes.array.isRequired
 	};
 
 	render() {

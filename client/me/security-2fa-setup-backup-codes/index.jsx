@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -26,7 +27,7 @@ module.exports = localize(createReactClass({
 	mixins: [ eventRecorder ],
 
 	propTypes: {
-		onFinished: React.PropTypes.func.isRequired
+		onFinished: PropTypes.func.isRequired
 	},
 
 	componentDidMount: function() {

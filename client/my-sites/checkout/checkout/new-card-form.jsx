@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -15,9 +16,9 @@ module.exports = localize(class extends React.Component {
     static displayName = 'NewCardForm';
 
 	static propTypes = {
-		countriesList: React.PropTypes.object.isRequired,
-		hasStoredCards: React.PropTypes.bool.isRequired,
-		transaction: React.PropTypes.object.isRequired
+		countriesList: PropTypes.object.isRequired,
+		hasStoredCards: PropTypes.bool.isRequired,
+		transaction: PropTypes.object.isRequired
 	};
 
 	isFieldInvalid = fieldName => {

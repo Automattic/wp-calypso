@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -9,8 +11,8 @@ export default localize(class extends React.PureComponent {
     static displayName = 'EditorRevisions';
 
 	static propTypes = {
-		adminUrl: React.PropTypes.string,
-		revisions: React.PropTypes.array
+		adminUrl: PropTypes.string,
+		revisions: PropTypes.array
 	};
 
 	static defaultProps = {

@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
@@ -18,9 +20,9 @@ export default localize(class extends React.Component {
     static displayName = 'EditorDeletePost';
 
 	static propTypes = {
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		onTrashingPost: React.PropTypes.func
+		site: PropTypes.object,
+		post: PropTypes.object,
+		onTrashingPost: PropTypes.func
 	};
 
 	state = {

@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -32,7 +33,7 @@ module.exports = localize(class extends React.Component {
 	};
 
 	static propTypes = {
-		onNextStep: React.PropTypes.func.isRequired
+		onNextStep: PropTypes.func.isRequired
 	};
 
 	state = {

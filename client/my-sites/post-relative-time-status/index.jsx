@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -12,10 +13,10 @@ module.exports = localize(class extends React.PureComponent {
     static displayName = 'PostRelativeTime';
 
 	static propTypes = {
-		post: React.PropTypes.object.isRequired,
-		includeNonDraftStatuses: React.PropTypes.bool,
-		link: React.PropTypes.string,
-		target: React.PropTypes.string
+		post: PropTypes.object.isRequired,
+		includeNonDraftStatuses: PropTypes.bool,
+		link: PropTypes.string,
+		target: PropTypes.string
 	};
 
 	static defaultProps = {

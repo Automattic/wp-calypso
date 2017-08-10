@@ -11,6 +11,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
@@ -25,9 +27,9 @@ export default localize(class extends React.Component {
     static displayName = 'CharMap';
 
 	static propTypes = {
-		onClose: React.PropTypes.func,
-		showDialog: React.PropTypes.bool,
-		editor: React.PropTypes.object
+		onClose: PropTypes.func,
+		showDialog: PropTypes.bool,
+		editor: PropTypes.object
 	};
 
 	defaultCharMap = () => {

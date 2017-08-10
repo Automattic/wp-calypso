@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -30,8 +32,8 @@ class PushNotificationSettings extends React.Component {
     static displayName = 'PushNotificationSettings';
 
 	static propTypes = {
-		toggleEnabled: React.PropTypes.func.isRequired,
-		toggleUnblockInstructions: React.PropTypes.func.isRequired
+		toggleEnabled: PropTypes.func.isRequired,
+		toggleUnblockInstructions: PropTypes.func.isRequired
 	};
 
 	clickHandler = () => {

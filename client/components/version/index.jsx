@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -9,11 +11,11 @@ export default localize(class extends React.Component {
     static displayName = 'Version';
 
 	static propTypes = {
-		version: React.PropTypes.oneOfType( [
-			React.PropTypes.string,
-			React.PropTypes.number,
+		version: PropTypes.oneOfType( [
+			PropTypes.string,
+			PropTypes.number,
 		] ).isRequired,
-		icon: React.PropTypes.string
+		icon: PropTypes.string
 	};
 
 	renderIcon = () => {

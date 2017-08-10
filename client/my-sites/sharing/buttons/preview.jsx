@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /**
  * External dependencies
  */
@@ -19,14 +20,14 @@ module.exports = localize(class extends React.Component {
     static displayName = 'SharingButtonsPreview';
 
 	static propTypes = {
-		isPrivateSite: React.PropTypes.bool,
-		style: React.PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
-		label: React.PropTypes.string,
-		buttons: React.PropTypes.array,
-		showLike: React.PropTypes.bool,
-		showReblog: React.PropTypes.bool,
-		onLabelChange: React.PropTypes.func,
-		onButtonsChange: React.PropTypes.func
+		isPrivateSite: PropTypes.bool,
+		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
+		label: PropTypes.string,
+		buttons: PropTypes.array,
+		showLike: PropTypes.bool,
+		showReblog: PropTypes.bool,
+		onLabelChange: PropTypes.func,
+		onButtonsChange: PropTypes.func
 	};
 
 	static defaultProps = {

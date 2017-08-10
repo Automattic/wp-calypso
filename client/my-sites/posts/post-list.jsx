@@ -1,7 +1,9 @@
+var React = require( 'react' ), debug = require( 'debug' )( 'calypso:my-sites:posts' );
+
 /**
  * External dependencies
  */
-var React = require( 'react' ), debug = require( 'debug' )( 'calypso:my-sites:posts' );
+import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -29,14 +31,14 @@ var GUESSED_POST_HEIGHT = 250;
 
 class PostList extends React.PureComponent {
     static propTypes = {
-		context: React.PropTypes.object,
-		search: React.PropTypes.string,
-		category: React.PropTypes.string,
-		tag: React.PropTypes.string,
-		hasSites: React.PropTypes.bool,
-		statusSlug: React.PropTypes.string,
-		siteId: React.PropTypes.number,
-		author: React.PropTypes.number
+		context: PropTypes.object,
+		search: PropTypes.string,
+		category: PropTypes.string,
+		tag: PropTypes.string,
+		hasSites: PropTypes.bool,
+		statusSlug: PropTypes.string,
+		siteId: PropTypes.number,
+		author: PropTypes.number
 	};
 
 	render() {
@@ -61,19 +63,19 @@ class PostList extends React.PureComponent {
 
 var Posts = localize(class extends React.Component {
     static propTypes = {
-		author: React.PropTypes.number,
-		context: React.PropTypes.object.isRequired,
-		hasRecentError: React.PropTypes.bool.isRequired,
-		lastPage: React.PropTypes.bool.isRequired,
-		loading: React.PropTypes.bool.isRequired,
-		page: React.PropTypes.number.isRequired,
-		postImages: React.PropTypes.object.isRequired,
-		posts: React.PropTypes.array.isRequired,
-		search: React.PropTypes.string,
-		siteId: React.PropTypes.number,
-		hasSites: React.PropTypes.bool.isRequired,
-		statusSlug: React.PropTypes.string,
-		trackScrollPage: React.PropTypes.func.isRequired
+		author: PropTypes.number,
+		context: PropTypes.object.isRequired,
+		hasRecentError: PropTypes.bool.isRequired,
+		lastPage: PropTypes.bool.isRequired,
+		loading: PropTypes.bool.isRequired,
+		page: PropTypes.number.isRequired,
+		postImages: PropTypes.object.isRequired,
+		posts: PropTypes.array.isRequired,
+		search: PropTypes.string,
+		siteId: PropTypes.number,
+		hasSites: PropTypes.bool.isRequired,
+		statusSlug: PropTypes.string,
+		trackScrollPage: PropTypes.func.isRequired
 	};
 
 	static defaultProps = {

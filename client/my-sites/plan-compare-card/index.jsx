@@ -1,9 +1,12 @@
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+
 /**
  * External dependencies
  */
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React from 'react';
 import { noop } from 'lodash';
 import Gridicon from 'gridicons';
 

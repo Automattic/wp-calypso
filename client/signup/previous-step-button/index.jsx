@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import { find } from 'lodash';
 import i18n, { localize } from 'i18n-calypso';
@@ -15,11 +17,11 @@ export default localize(class extends React.Component {
     static displayName = 'PreviousStepButton';
 
 	static propTypes = {
-		flowName: React.PropTypes.string.isRequired,
-		stepName: React.PropTypes.string.isRequired,
-		previousPath: React.PropTypes.string,
-		positionInFlow: React.PropTypes.number.isRequired,
-		signupProgress: React.PropTypes.array.isRequired
+		flowName: PropTypes.string.isRequired,
+		stepName: PropTypes.string.isRequired,
+		previousPath: PropTypes.string,
+		positionInFlow: PropTypes.number.isRequired,
+		signupProgress: PropTypes.array.isRequired
 	};
 
 	backUrl = () => {
