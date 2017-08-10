@@ -232,8 +232,12 @@ const Signup = React.createClass( {
 		}
 	},
 
-	handleLogin( dependencies, destination ) {
+	handleLogin( dependencies, destination, overwrittenDestination ) {
 		const userIsLoggedIn = Boolean( user.get() );
+
+		if ( overwrittenDestination ) {
+			destination = overwrittenDestination;
+		}
 
 		if ( userIsLoggedIn ) {
 			// deferred in case the user is logged in and the redirect triggers a dispatch
@@ -424,12 +428,13 @@ const Signup = React.createClass( {
 			<div className="signup__step" key={ stepKey }>
 				{ this.localeSuggestions() }
 				{
-					this.state.loadingScreenStartTime
+					this.state.loadingScreenStartTime || true
 					? <SignupProcessingScreen
 						hasCartItems={ this.state.hasCartItems }
 						steps={ this.state.progress }
 						user={ this.state.user }
 						loginHandler={ this.state.loginHandler }
+						signupDependencies={ this.props.signupDependencies }
 					/>
 					: <CurrentComponent
 						path={ this.props.path }

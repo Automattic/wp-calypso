@@ -1,16 +1,20 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import find from 'lodash/find';
+import get from 'lodash/get';
 import Gridicon from 'gridicons';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Notice from 'components/notice';
+import { abtest } from 'lib/abtest';
 
 export class SignupProcessingScreen extends Component {
 	static propTypes = {
@@ -18,7 +22,22 @@ export class SignupProcessingScreen extends Component {
 		loginHandler: PropTypes.func,
 		steps: PropTypes.array.isRequired,
 		user: PropTypes.object,
+		signupProgress: PropTypes.array,
 	};
+
+	constructor() {
+		super();
+		this.state = {
+			siteSlug: ''
+		};
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		const siteSlug = get( nextProps, [ 'signupDependencies', 'siteSlug' ], '' );
+		if ( siteSlug ) {
+			this.setState( { siteSlug } );
+		}
+	}
 
 	renderConfirmationNotice() {
 		if ( this.props.user && this.props.user.email_verified ) {
@@ -124,7 +143,76 @@ export class SignupProcessingScreen extends Component {
 			} );
 	}
 
+	handleClickUpgradeButton = () => {
+		if ( ! this.props.loginHandler ) {
+			return;
+		}
+
+		if ( this.state.siteSlug ) {
+			this.props.loginHandler( `/plans/${ this.state.siteSlug }` );
+		} else {
+			this.props.loginHandler();
+		}
+	}
+
+	renderUpgradeNudge() {
+		/* Do NOT translate the strings in this function until the abtest is finished. */
+
+		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
+		return (
+			<div className="signup-pricessing__upgrade-nudge">
+				<p className="signup-pricessing__title-subdomain">Your subdomain</p>
+				<div className="signup-pricessing__address-bar">
+					<Gridicon icon="refresh" size={ 24 } />
+					<Gridicon icon="house" size={ 24 } />
+					<p className={ classnames( 'signup-pricessing__address-field', { 'is-placeholder': ! this.state.siteSlug } ) }>{ this.state.siteSlug }</p>
+				</div>
+				<div className="signup-pricessing__bubble">
+					<svg className="signup-pricessing__bubble-tail" viewBox="0 0 47 31" xmlns="http://www.w3.org/2000/svg"><path d="M.261 30.428S14.931 6.646 46.066.528l-11.852 29.9H.26z" fillRule="evenodd" /></svg>
+					<p>Search engines like Google or Bing prefer websites with their own web address and place them higher in search results.</p>
+				</div>
+				<p className="signup-pricessing__nudge-message">
+					Looks like your new online home doesn't have its own domain name.
+				</p>
+				<Button disabled={ ! this.props.loginHandler } className="signup-pricessing__upgrade-button" onClick={ this.handleClickUpgradeButton }>Upgrade Plan & Get A Domain</Button>
+			</div>
+		);
+		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
+	}
+
+	renderUpgradeScreen() {
+		/* Do NOT translate the strings in this function until the abtest is finished. */
+
+		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
+		return (
+			<div>
+				{ this.renderFloaties() }
+
+				<div className="signup-processing__content">
+					<img src="/calypso/images/signup/confetti.svg" className="signup-process-screen__confetti" />
+					<p className="signup-process-screen__title signup-process-screen__title-test">Congratulations! Your new site is now live.</p>
+
+					{ this.props.loginHandler
+						?	<Button primary className="email-confirmation__button" onClick={ this.props.loginHandler }>View My Site</Button>
+						:	<Button primary disabled className="email-confirmation__button">{ this.props.translate( 'Please wait…' ) }</Button>
+					}
+
+					{ this.renderUpgradeNudge() }
+				</div>
+				<div className="signup-processing-screen__loader">{ this.props.translate( 'Loading…' ) }</div>
+			</div>
+		);
+		/* eslint-enable max-len, wpcalypso/jsx-classname-namespace */
+	}
+
 	render() {
+		const dependencies = this.props.signupDependencies || {};
+		const hasPaidSubscription = dependencies.cartItem || dependencies.domainItem;
+
+		if ( abtest( 'postSignupUpgradeScreen' ) === 'modified' && ! hasPaidSubscription ) {
+			return this.renderUpgradeScreen();
+		}
+
 		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
