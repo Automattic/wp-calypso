@@ -414,13 +414,6 @@ export default connect( ( state, { siteId } ) => {
 		siteId = getSelectedSiteId( state );
 	}
 
-	const productFormValues = getProductFormValues( state );
-	let isProductImageBeingUploaded = false;
-
-	if ( productFormValues ) {
-		isProductImageBeingUploaded = productFormValues.featuredImageId === 'uploading';
-	}
-
 	return {
 		siteId,
 		paymentButtons: getSimplePayments( state, siteId ),
@@ -429,7 +422,6 @@ export default connect( ( state, { siteId } ) => {
 		isJetpackNotSupported:
 			isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' ),
 		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
-		formCanBeSubmitted:
-			isProductFormValid( state ) && isProductFormDirty( state ) && ! isProductImageBeingUploaded,
+		formCanBeSubmitted: isProductFormValid( state ) && isProductFormDirty( state ),
 	};
 } )( localize( SimplePaymentsDialog ) );

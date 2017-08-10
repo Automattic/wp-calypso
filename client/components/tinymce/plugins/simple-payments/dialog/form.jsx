@@ -52,6 +52,10 @@ const validate = ( values, props ) => {
 		} );
 	}
 
+	if ( values.featuredImageId && values.featuredImageId === 'uploading' ) {
+		errors.featuredImageId = 'uploading';
+	}
+
 	return errors;
 };
 
