@@ -113,6 +113,8 @@ export class WebPreviewContent extends Component {
 				return;
 			case 'focus':
 				this.removeSelection();
+				// we will fake a click here to close the dropdown
+				this.wrapperElementRef && this.wrapperElementRef.click();
 				return;
 			case 'loading':
 				this.setState( { isLoadingSubpage: true } );
@@ -123,6 +125,10 @@ export class WebPreviewContent extends Component {
 	handleLocationChange = ( payload ) => {
 		this.props.onLocationUpdate( payload.pathname );
 		this.setState( { isLoadingSubpage: false } );
+	}
+
+	setWrapperElement = ( el ) => {
+		this.wrapperElementRef = el;
 	}
 
 	removeSelection = () => {
@@ -240,7 +246,7 @@ export class WebPreviewContent extends Component {
 		);
 
 		return (
-			<div className={ className }>
+			<div className={ className } ref={ this.setWrapperElement }>
 				<Toolbar setDeviceViewport={ this.setDeviceViewport }
 					device={ this.state.device }
 					{ ...this.props }
