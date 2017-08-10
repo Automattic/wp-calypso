@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,32 +26,30 @@ import QueryPlans from 'components/data/query-plans';
 let exclusiveViewLock = null;
 
 class PremiumPopover extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		className: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object, PropTypes.array ] ),
 		onClose: PropTypes.func,
 		isVisible: PropTypes.bool,
 		position: PropTypes.string.isRequired,
-		textLabel: PropTypes.string
+		textLabel: PropTypes.string,
 	};
 
 	state = {
 		visibleByClick: false,
-		visibleByHover: false
+		visibleByHover: false,
 	};
 
 	isVisible = () => {
 		return (
-			this.props.isVisible ||
-			this.state.visibleByClick ||
-			this.state.visibleByHover
-		) &&
-			( ! exclusiveViewLock || exclusiveViewLock === this );
+			( this.props.isVisible || this.state.visibleByClick || this.state.visibleByHover ) &&
+			( ! exclusiveViewLock || exclusiveViewLock === this )
+		);
 	};
 
 	priceMessage = price => {
 		return this.props.translate( '%(cost)s {{small}}/year{{/small}}', {
 			args: { cost: price },
-			components: { small: <small /> }
+			components: { small: <small /> },
 		} );
 	};
 
@@ -80,7 +79,7 @@ class PremiumPopover extends React.Component {
 
 		this.setState( {
 			visibleByClick: false,
-			visibleByHover: false
+			visibleByHover: false,
 		} );
 
 		if ( this.props.onClose ) {
@@ -94,14 +93,15 @@ class PremiumPopover extends React.Component {
 		const context = this.refs && this.refs[ 'popover-premium-reference' ];
 
 		return (
-		    <div>
+			<div>
 				<QueryPlans />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				<span
 					onClick={ this.handleClick }
 					onMouseEnter={ this.handleMouseEnter }
 					ref="popover-premium-reference"
-					onMouseLeave={ this.handleMouseLeave }>
+					onMouseLeave={ this.handleMouseLeave }
+				>
 					{ this.props.textLabel }
 				</span>
 
@@ -115,7 +115,9 @@ class PremiumPopover extends React.Component {
 				>
 					<div className="premium-popover__content">
 						<div className="premium-popover__header">
-							<h3>{ this.props.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
+							<h3>
+								{ this.props.translate( 'Premium', { context: 'Premium Plan' } ) }
+							</h3>
 							{ premiumPlan
 								? <PlanPrice plan={ premiumPlan } sitePlan={ premiumSitePlan } />
 								: <h5>Loading</h5> }
@@ -127,23 +129,25 @@ class PremiumPopover extends React.Component {
 								this.props.translate( '13GB of space for file and media' ),
 								this.props.translate( 'Video Uploads' ),
 								this.props.translate( 'No Ads' ),
-								this.props.translate( 'Email and live chat support' )
-							].map( ( message, i ) => <li key={ i }><Gridicon icon="checkmark" size={ 18 } /> { message }
-							</li> ) }
+								this.props.translate( 'Email and live chat support' ),
+							].map( ( message, i ) =>
+								<li key={ i }>
+									<Gridicon icon="checkmark" size={ 18 } /> { message }
+								</li>
+							) }
 						</ul>
 					</div>
-
 				</Popover>
 			</div>
 		);
 	}
 }
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		selectedSiteId,
 		premiumPlan: getPlanBySlug( state, PLAN_PREMIUM ),
-		premiumSitePlan: getSitePlan( state, selectedSiteId, PLAN_PREMIUM )
+		premiumSitePlan: getSitePlan( state, selectedSiteId, PLAN_PREMIUM ),
 	};
-} )( localize(PremiumPopover) );
+} )( localize( PremiumPopover ) );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,154 +15,160 @@ import Gridicon from 'gridicons';
 import postUtils from 'lib/posts/utils';
 import EditorStatusLabelPlaceholder from './placeholder';
 
-export default localize(class extends React.PureComponent {
-    static displayName = 'StatusLabel';
+export default localize(
+	class extends React.PureComponent {
+		static displayName = 'StatusLabel';
 
-	static propTypes = {
-		onClick: PropTypes.func,
-		post: PropTypes.object,
-		type: PropTypes.string,
-		advancedStatus: PropTypes.bool
-	};
+		static propTypes = {
+			onClick: PropTypes.func,
+			post: PropTypes.object,
+			type: PropTypes.string,
+			advancedStatus: PropTypes.bool,
+		};
 
-	static defaultProps = {
-		onClick: null,
-		post: null,
-		advancedStatus: false,
-		type: 'post'
-	};
+		static defaultProps = {
+			onClick: null,
+			post: null,
+			advancedStatus: false,
+			type: 'post',
+		};
 
-	state = {
-		currentTime: Date.now()
-	};
+		state = {
+			currentTime: Date.now(),
+		};
 
-	componentDidMount() {
-		// update the `currentTime` every minute
-		this.currentTimeTimer = setInterval( this.updateCurrentTime, 60000 );
-	}
-
-	componentWillReceiveProps(nextProps) {
-		if ( nextProps.post !== this.props.post ) {
-			// the post has been updated, so update the current time so that
-			// it will be the most up-to-date when re-rendering
-			this.updateCurrentTime();
-		}
-	}
-
-	componentWillUnmount() {
-		clearInterval( this.currentTimeTimer );
-	}
-
-	render() {
-		let statusClass = 'editor-status-label';
-
-		if ( ! this.props.post ) {
-			return <EditorStatusLabelPlaceholder className={ statusClass } />;
+		componentDidMount() {
+			// update the `currentTime` every minute
+			this.currentTimeTimer = setInterval( this.updateCurrentTime, 60000 );
 		}
 
-		statusClass = classNames( statusClass, 'is-' + this.props.post.status );
+		componentWillReceiveProps( nextProps ) {
+			if ( nextProps.post !== this.props.post ) {
+				// the post has been updated, so update the current time so that
+				// it will be the most up-to-date when re-rendering
+				this.updateCurrentTime();
+			}
+		}
 
-		if ( ! this.props.onClick ) {
+		componentWillUnmount() {
+			clearInterval( this.currentTimeTimer );
+		}
+
+		render() {
+			let statusClass = 'editor-status-label';
+
+			if ( ! this.props.post ) {
+				return <EditorStatusLabelPlaceholder className={ statusClass } />;
+			}
+
+			statusClass = classNames( statusClass, 'is-' + this.props.post.status );
+
+			if ( ! this.props.onClick ) {
+				return (
+					<span className={ classNames( statusClass, 'is-plain' ) }>
+						{ this.renderLabel() }
+					</span>
+				);
+			}
+
 			return (
-				<span className={ classNames( statusClass, 'is-plain' ) }>
+				<button
+					className={ statusClass }
+					onClick={ this.props.onClick }
+					ref="statusLabel"
+					aria-label={ this.props.translate( 'Show advanced status details' ) }
+					aria-pressed={ !! this.props.advancedStatus }
+					role="alert"
+					aria-live="polite"
+				>
+					<Gridicon icon="cog" size={ 18 } />
 					{ this.renderLabel() }
-				</span>
+				</button>
 			);
 		}
 
-		return (
-		    <button
-				className={ statusClass }
-				onClick={ this.props.onClick }
-				ref="statusLabel"
-				aria-label={ this.props.translate( 'Show advanced status details' ) }
-				aria-pressed={ !! this.props.advancedStatus }
-				role="alert"
-				aria-live="polite"
-			>
-				<Gridicon icon="cog" size={ 18 } />
-				{ this.renderLabel() }
-			</button>
-		);
+		renderLabel = () => {
+			var post = this.props.post,
+				editedTime = this.moment( postUtils.getEditedTime( post ) ),
+				label;
+
+			if ( ! post.modified ) {
+				return this.props.translate( 'New Draft' );
+			}
+
+			// prevent JP sites from showing a draft as saved in the future
+			if ( 'draft' === post.status && editedTime.isAfter( this.state.currentTime ) ) {
+				editedTime = this.moment( this.state.currentTime );
+			}
+
+			const timeFromNow = editedTime.from( this.state.currentTime );
+
+			switch ( post.status ) {
+				case 'publish':
+					label = this.props.translate( '{{strong}}Published{{/strong}} %(relativeTimeFromNow)s', {
+						args: { relativeTimeFromNow: timeFromNow },
+						components: {
+							strong: <strong />,
+						},
+					} );
+					break;
+				case 'private':
+					label = this.props.translate(
+						'{{strong}}Published Privately{{/strong}} %(relativeTimeFromNow)s',
+						{
+							args: { relativeTimeFromNow: timeFromNow },
+							components: {
+								strong: <strong />,
+							},
+						}
+					);
+					break;
+				case 'draft':
+					label = this.props.translate( '{{strong}}Saved{{/strong}} %(relativeTimeFromNow)s', {
+						args: { relativeTimeFromNow: timeFromNow },
+						components: {
+							strong: <strong />,
+						},
+					} );
+					break;
+				case 'pending':
+					label = this.props.translate(
+						'{{strong}}Pending Review{{/strong}} %(relativeTimeFromNow)s',
+						{
+							args: { relativeTimeFromNow: timeFromNow },
+							components: {
+								strong: <strong />,
+							},
+						}
+					);
+					break;
+				case 'future':
+					label = this.props.translate( '{{strong}}Scheduled{{/strong}} %(relativeTimeFromNow)s', {
+						args: { relativeTimeFromNow: timeFromNow },
+						components: {
+							strong: <strong />,
+						},
+					} );
+					break;
+				case 'trash':
+					label = this.props.translate( '{{strong}}Trashed{{/strong}}', {
+						components: {
+							strong: <strong />,
+						},
+					} );
+					break;
+				default:
+					label = '';
+					break;
+			}
+
+			return label;
+		};
+
+		updateCurrentTime = () => {
+			this.setState( {
+				currentTime: Date.now(),
+			} );
+		};
 	}
-
-	renderLabel = () => {
-		var post = this.props.post,
-			editedTime = this.moment( postUtils.getEditedTime( post ) ),
-			label;
-
-		if ( ! post.modified ) {
-			return this.props.translate( 'New Draft' );
-		}
-
-		// prevent JP sites from showing a draft as saved in the future
-		if ( 'draft' === post.status &&
-				editedTime.isAfter( this.state.currentTime )
-		) {
-			editedTime = this.moment( this.state.currentTime );
-		}
-
-		const timeFromNow = editedTime.from( this.state.currentTime );
-
-		switch ( post.status ) {
-			case 'publish':
-				label = this.props.translate( '{{strong}}Published{{/strong}} %(relativeTimeFromNow)s', {
-					args: { relativeTimeFromNow: timeFromNow },
-					components: {
-						strong: <strong />
-					}
-				} );
-				break;
-			case 'private':
-				label = this.props.translate( '{{strong}}Published Privately{{/strong}} %(relativeTimeFromNow)s', {
-					args: { relativeTimeFromNow: timeFromNow },
-					components: {
-						strong: <strong />
-					}
-				} );
-				break;
-			case 'draft':
-				label = this.props.translate( '{{strong}}Saved{{/strong}} %(relativeTimeFromNow)s', {
-					args: { relativeTimeFromNow: timeFromNow },
-					components: {
-						strong: <strong />
-					}
-				} );
-				break;
-			case 'pending':
-				label = this.props.translate( '{{strong}}Pending Review{{/strong}} %(relativeTimeFromNow)s', {
-					args: { relativeTimeFromNow: timeFromNow },
-					components: {
-						strong: <strong />
-					}
-				} );
-				break;
-			case 'future':
-				label = this.props.translate( '{{strong}}Scheduled{{/strong}} %(relativeTimeFromNow)s', {
-					args: { relativeTimeFromNow: timeFromNow },
-					components: {
-						strong: <strong />
-					}
-				} );
-				break;
-			case 'trash':
-				label = this.props.translate( '{{strong}}Trashed{{/strong}}', {
-					components: {
-						strong: <strong />
-					}
-				} );
-				break;
-			default:
-				label = '';
-				break;
-		}
-
-		return label;
-	};
-
-	updateCurrentTime = () => {
-		this.setState( {
-			currentTime: Date.now()
-		} );
-	};
-});
+);

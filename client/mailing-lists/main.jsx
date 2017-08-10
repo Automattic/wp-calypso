@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,11 +20,11 @@ import { preventWidows } from 'lib/formatting';
  */
 
 class MainComponent extends React.Component {
-    static displayName = 'MainComponent';
+	static displayName = 'MainComponent';
 
 	state = {
 		isError: false,
-		isSubscribed: true
+		isSubscribed: true,
 	};
 
 	componentDidMount() {
@@ -33,62 +34,70 @@ class MainComponent extends React.Component {
 		this.onUnsubscribeClick();
 	}
 
-	componentDidUpdate(prevProps, prevState) {
+	componentDidUpdate( prevProps, prevState ) {
 		if ( this.state.isSubscribed !== prevState.isSubscribed ) {
-			notices.success( this.state.isSubscribed
-				? this.getSubscribedMessage()
-				: this.getUnsubscribedMessage(),
-				{ overlay: false, showDismiss: false } );
+			notices.success(
+				this.state.isSubscribed ? this.getSubscribedMessage() : this.getUnsubscribedMessage(),
+				{ overlay: false, showDismiss: false }
+			);
 		} else if ( this.state.isError ) {
-			notices.error( this.state.isSubscribed
-				? this.getUnsubscribedErrorMessage()
-				: this.getSubscribedErrorMessage(),
-				{ overlay: false, showDismiss: false } );
+			notices.error(
+				this.state.isSubscribed
+					? this.getUnsubscribedErrorMessage()
+					: this.getSubscribedErrorMessage(),
+				{ overlay: false, showDismiss: false }
+			);
 		}
 	}
 
 	getSubscribedMessage = () => {
 		return this.props.translate( 'Subscribed to {{em}}%(categoryName)s{{/em}}', {
 			args: {
-				categoryName: this.getCategoryName()
+				categoryName: this.getCategoryName(),
 			},
 			components: {
-				em: <em />
-			}
+				em: <em />,
+			},
 		} );
 	};
 
 	getUnsubscribedMessage = () => {
 		return this.props.translate( 'Unsubscribed from {{em}}%(categoryName)s{{/em}}', {
 			args: {
-				categoryName: this.getCategoryName()
+				categoryName: this.getCategoryName(),
 			},
 			components: {
-				em: <em />
-			}
+				em: <em />,
+			},
 		} );
 	};
 
 	getSubscribedErrorMessage = () => {
-		return this.props.translate( 'Error subscribing to {{em}}%(categoryName)s{{/em}} mailing list! Try again later.', {
-			args: {
-				categoryName: this.getCategoryName()
-			},
-			components: {
-				em: <em />
+		return this.props.translate(
+			'Error subscribing to {{em}}%(categoryName)s{{/em}} mailing list! Try again later.',
+			{
+				args: {
+					categoryName: this.getCategoryName(),
+				},
+				components: {
+					em: <em />,
+				},
 			}
-		} );
+		);
 	};
 
 	getUnsubscribedErrorMessage = () => {
-		return this.props.translate( 'Error unsubscribing from {{em}}%(categoryName)s{{/em}} mailing list! Try again later.', {
-			args: {
-				categoryName: this.getCategoryName()
-			},
-			components: {
-				em: <em />
+		return this.props.translate(
+			'Error unsubscribing from {{em}}%(categoryName)s{{/em}} mailing list! Try again later.',
+			{
+				args: {
+					categoryName: this.getCategoryName(),
+				},
+				components: {
+					em: <em />,
+				},
 			}
-		} );
+		);
 	};
 
 	getCategoryName = () => {
@@ -109,9 +118,13 @@ class MainComponent extends React.Component {
 		if ( 'marketing' === this.props.category ) {
 			return this.props.translate( 'Tips for getting the most out of WordPress.com.' );
 		} else if ( 'research' === this.props.category ) {
-			return this.props.translate( 'Opportunities to participate in WordPress.com research & surveys.' );
+			return this.props.translate(
+				'Opportunities to participate in WordPress.com research & surveys.'
+			);
 		} else if ( 'community' === this.props.category ) {
-			return this.props.translate( 'Information on WordPress.com courses and events (online & in-person).' );
+			return this.props.translate(
+				'Information on WordPress.com courses and events (online & in-person).'
+			);
 		} else if ( 'digest' === this.props.category ) {
 			return this.props.translate( 'Reading & writing digests, tailored for you.' );
 		}
@@ -120,19 +133,30 @@ class MainComponent extends React.Component {
 	};
 
 	onUnsubscribeClick = () => {
-		utils.deleteSubscriber( this.props.category, this.props.email, this.props.hmac, this.props.context ).then( () => {
-			this.setState( { isError: false, isSubscribed: false } );
-		} ).catch( () => {
-			this.setState( { isError: true } );
-		} );
+		utils
+			.deleteSubscriber(
+				this.props.category,
+				this.props.email,
+				this.props.hmac,
+				this.props.context
+			)
+			.then( () => {
+				this.setState( { isError: false, isSubscribed: false } );
+			} )
+			.catch( () => {
+				this.setState( { isError: true } );
+			} );
 	};
 
 	onResubscribeClick = () => {
-		utils.addSubscriber( this.props.category, this.props.email, this.props.hmac, this.props.context ).then( () => {
-			this.setState( { isError: false, isSubscribed: true } );
-		} ).catch( () => {
-			this.setState( { isError: true } );
-		} );
+		utils
+			.addSubscriber( this.props.category, this.props.email, this.props.hmac, this.props.context )
+			.then( () => {
+				this.setState( { isError: false, isSubscribed: true } );
+			} )
+			.catch( () => {
+				this.setState( { isError: true } );
+			} );
 	};
 
 	onManageUpdatesClick = () => {
@@ -143,35 +167,49 @@ class MainComponent extends React.Component {
 
 	render() {
 		var headingLabel = this.state.isSubscribed
-								? this.props.translate( 'You\'re subscribed' )
-								: this.props.translate( 'We\'ve unsubscribed your email.' ),
+				? this.props.translate( "You're subscribed" )
+				: this.props.translate( "We've unsubscribed your email." ),
 			messageLabel = this.state.isSubscribed
-								? this.props.translate( 'We\'ll send you updates for this mailing list.' )
-								: this.props.translate( 'You will no longer receive updates for this mailing list.' );
+				? this.props.translate( "We'll send you updates for this mailing list." )
+				: this.props.translate( 'You will no longer receive updates for this mailing list.' );
 
 		return (
-		    <div className="mailing-lists">
+			<div className="mailing-lists">
 				<div className="mailing-lists__header">
 					<Gridicon icon="mail" size={ 54 } />
-					{ this.state.isSubscribed
-						? null
-						: <Gridicon icon="cross" size={ 24 } /> }
-					<h1>{ preventWidows( headingLabel, 2 ) }</h1>
-					<p>{ preventWidows( messageLabel, 2 ) }</p>
+					{ this.state.isSubscribed ? null : <Gridicon icon="cross" size={ 24 } /> }
+					<h1>
+						{ preventWidows( headingLabel, 2 ) }
+					</h1>
+					<p>
+						{ preventWidows( messageLabel, 2 ) }
+					</p>
 				</div>
 
 				<Card className="mailing-lists__details">
-					<h4>{ this.getCategoryName() }</h4>
-					<p>{ this.getCategoryDescription() }</p>
+					<h4>
+						{ this.getCategoryName() }
+					</h4>
+					<p>
+						{ this.getCategoryDescription() }
+					</p>
 					{ this.state.isSubscribed
-						? <button className="button is-primary" onClick={ this.onUnsubscribeClick }>{ this.props.translate( 'Unsubscribe' ) }</button>
-						: <button className="button" onClick={ this.onResubscribeClick }>{ this.props.translate( 'Resubscribe' ) }</button> }
+						? <button className="button is-primary" onClick={ this.onUnsubscribeClick }>
+								{ this.props.translate( 'Unsubscribe' ) }
+							</button>
+						: <button className="button" onClick={ this.onResubscribeClick }>
+								{ this.props.translate( 'Resubscribe' ) }
+							</button> }
 				</Card>
 
-				<p className="mailing-lists__manage-link"><button className="button is-link" onClick={ this.onManageUpdatesClick }>{ this.props.translate( 'Manage all your email subscriptions' ) }</button></p>
+				<p className="mailing-lists__manage-link">
+					<button className="button is-link" onClick={ this.onManageUpdatesClick }>
+						{ this.props.translate( 'Manage all your email subscriptions' ) }
+					</button>
+				</p>
 			</div>
 		);
 	}
 }
 
-export default localize(MainComponent);
+export default localize( MainComponent );

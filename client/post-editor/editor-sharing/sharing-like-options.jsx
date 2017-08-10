@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,12 +20,12 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive } from 'state/sites/selectors';
 
 class SharingLikeOptions extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		site: PropTypes.object,
 		post: PropTypes.object,
 		isSharingButtonsEnabled: PropTypes.bool,
 		isLikesEnabled: PropTypes.bool,
-		isNew: PropTypes.bool
+		isNew: PropTypes.bool,
 	};
 
 	isShowingSharingButtons = () => {
@@ -57,12 +58,15 @@ class SharingLikeOptions extends React.Component {
 		}
 
 		return (
-		    <label>
+			<label>
 				<FormCheckbox
-					name='sharing_enabled'
+					name="sharing_enabled"
 					checked={ this.isShowingSharingButtons() }
-					onChange={ this.onChange } />
-				<span>{ this.props.translate( 'Show Sharing Buttons', { context: 'Post Editor' } ) }</span>
+					onChange={ this.onChange }
+				/>
+				<span>
+					{ this.props.translate( 'Show Sharing Buttons', { context: 'Post Editor' } ) }
+				</span>
 			</label>
 		);
 	};
@@ -73,12 +77,15 @@ class SharingLikeOptions extends React.Component {
 		}
 
 		return (
-		    <label>
+			<label>
 				<FormCheckbox
-					name='likes_enabled'
+					name="likes_enabled"
 					checked={ this.isShowingLikeButton() }
-					onChange={ this.onChange } />
-				<span>{ this.props.translate( 'Show Like Button', { context: 'Post Editor' } ) }</span>
+					onChange={ this.onChange }
+				/>
+				<span>
+					{ this.props.translate( 'Show Like Button', { context: 'Post Editor' } ) }
+				</span>
 			</label>
 		);
 	};
@@ -86,7 +93,7 @@ class SharingLikeOptions extends React.Component {
 	onChange = event => {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
-			[ event.target.name ]: event.target.checked
+			[ event.target.name ]: event.target.checked,
 		} );
 
 		this.recordStats( event );
@@ -109,7 +116,7 @@ class SharingLikeOptions extends React.Component {
 		}
 
 		return (
-		    <EditorFieldset
+			<EditorFieldset
 				className="editor-sharing__sharing-like-options"
 				legend={ this.props.translate( 'Sharing Buttons & Likes' ) }
 			>
@@ -120,12 +127,12 @@ class SharingLikeOptions extends React.Component {
 	}
 }
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
 		isSharingButtonsEnabled: false !== isJetpackModuleActive( state, siteId, 'sharedaddy' ),
 		isLikesEnabled: false !== isJetpackModuleActive( state, siteId, 'likes' ),
-		isNew: isEditorNewPost( state )
+		isNew: isEditorNewPost( state ),
 	};
-} )( localize(SharingLikeOptions) );
+} )( localize( SharingLikeOptions ) );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,14 +23,14 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
 
 class EditorPostFormats extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		siteId: PropTypes.number,
 		value: PropTypes.string,
-		postFormats: PropTypes.object
+		postFormats: PropTypes.object,
 	};
 
 	static defaultProps = {
-		value: 'standard'
+		value: 'standard',
 	};
 
 	getSelectedPostFormat = () => {
@@ -42,8 +43,8 @@ class EditorPostFormats extends React.Component {
 	getPostFormats = () => {
 		let formats = {
 			standard: this.props.translate( 'Standard', {
-				context: 'Post format'
-			} )
+				context: 'Post format',
+			} ),
 		};
 
 		if ( this.props.postFormats ) {
@@ -63,7 +64,7 @@ class EditorPostFormats extends React.Component {
 			gallery: 'image-multiple',
 			status: 'pencil',
 			audio: 'audio',
-			chat: 'comment'
+			chat: 'comment',
 		};
 
 		return icons[ postFormatSlug ] ? icons[ postFormatSlug ] : 'posts';
@@ -72,7 +73,7 @@ class EditorPostFormats extends React.Component {
 	onChange = event => {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
-			format: event.target.value
+			format: event.target.value,
 		} );
 
 		recordStat( 'post_format_changed' );
@@ -93,7 +94,7 @@ class EditorPostFormats extends React.Component {
 							onChange={ this.onChange }
 						/>
 						<span className="editor-post-formats__format-label">
-							<span className={ 'editor-post-formats__format-icon' } >
+							<span className={ 'editor-post-formats__format-icon' }>
 								<Gridicon icon={ this.getPostFormatIcon( postFormatSlug ) } size={ 18 } />
 							</span>
 							{ postFormatLabel }
@@ -117,13 +118,11 @@ class EditorPostFormats extends React.Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			siteId,
-			postFormats: getPostFormats( state, siteId )
-		};
-	}
-)( localize(EditorPostFormats) );
+	return {
+		siteId,
+		postFormats: getPostFormats( state, siteId ),
+	};
+} )( localize( EditorPostFormats ) );

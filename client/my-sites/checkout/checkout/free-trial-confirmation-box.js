@@ -1,3 +1,4 @@
+/** @format */
 
 /**
  * External dependencies
@@ -14,28 +15,26 @@ var isPlan = require( 'lib/products-values' ).isPlan,
 	TermsOfService = require( './terms-of-service' );
 
 class FreeTrialConfirmationBox extends React.Component {
-    content = () => {
+	content = () => {
 		return (
-		    <form onSubmit={ this.props.onSubmit }>
+			<form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
 					<h6>
-					{
-						this.props.translate( 'Get started with %(productName)s', { args: { productName: this.getProductName() } } )
-					}
+						{ this.props.translate( 'Get started with %(productName)s', {
+							args: { productName: this.getProductName() },
+						} ) }
 					</h6>
 
 					<span>
-					{
-						this.props.translate( 'Enjoy your free trial with no strings attached: your site will simply revert to the free plan when the period is over.' )
-					}
+						{ this.props.translate(
+							'Enjoy your free trial with no strings attached: your site will simply revert to the free plan when the period is over.'
+						) }
 					</span>
 				</div>
 
 				<TermsOfService />
 				<div className="payment-box-actions">
-					<PayButton
-						cart={ this.props.cart }
-						transactionStep={ this.props.transactionStep } />
+					<PayButton cart={ this.props.cart } transactionStep={ this.props.transactionStep } />
 				</div>
 			</form>
 		);
@@ -56,4 +55,4 @@ class FreeTrialConfirmationBox extends React.Component {
 	}
 }
 
-module.exports = localize(FreeTrialConfirmationBox);
+module.exports = localize( FreeTrialConfirmationBox );

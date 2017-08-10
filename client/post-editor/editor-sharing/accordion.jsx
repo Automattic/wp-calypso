@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -30,7 +31,7 @@ import { hasBrokenSiteUserConnection, isPublicizeEnabled } from 'state/selectors
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class EditorSharingAccordion extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		site: PropTypes.object,
 		post: PropTypes.object,
 		isNew: PropTypes.bool,
@@ -38,7 +39,7 @@ class EditorSharingAccordion extends React.Component {
 		hasBrokenConnection: PropTypes.bool,
 		isPublicizeEnabled: PropTypes.bool,
 		isSharingActive: PropTypes.bool,
-		isLikesActive: PropTypes.bool
+		isLikesActive: PropTypes.bool,
 	};
 
 	getSubtitle = () => {
@@ -49,19 +50,23 @@ class EditorSharingAccordion extends React.Component {
 
 		const skipped = PostMetadata.publicizeSkipped( post );
 
-		return reduce( connections, ( memo, connection ) => {
-			const { keyring_connection_ID: id, label } = connection;
-			if ( ! includes( skipped, id ) && ! includes( memo, label ) ) {
-				memo.push( label );
-			}
+		return reduce(
+			connections,
+			( memo, connection ) => {
+				const { keyring_connection_ID: id, label } = connection;
+				if ( ! includes( skipped, id ) && ! includes( memo, label ) ) {
+					memo.push( label );
+				}
 
-			return memo;
-		}, [] ).join( ', ' );
+				return memo;
+			},
+			[]
+		).join( ', ' );
 	};
 
 	renderShortUrl = () => {
 		const classes = classNames( 'editor-sharing__shortlink', {
-			'is-standalone': this.hideSharing()
+			'is-standalone': this.hideSharing(),
 		} );
 
 		if ( ! postUtils.isPublished( this.props.post ) ) {
@@ -69,11 +74,8 @@ class EditorSharingAccordion extends React.Component {
 		}
 
 		return (
-		    <div className={ classes }>
-				<label
-					className="editor-sharing__shortlink-label"
-					htmlFor="shortlink-field"
-				>
+			<div className={ classes }>
+				<label className="editor-sharing__shortlink-label" htmlFor="shortlink-field">
 					{ this.props.translate( 'Shortlink' ) }
 				</label>
 				<FormTextInput
@@ -96,7 +98,7 @@ class EditorSharingAccordion extends React.Component {
 	render() {
 		const hideSharing = this.hideSharing();
 		const classes = classNames( 'editor-sharing__accordion', this.props.className, {
-			'is-loading': ! this.props.post || ! this.props.connections
+			'is-loading': ! this.props.post || ! this.props.connections,
 		} );
 
 		// if sharing is hidden, and post is not published (no short URL yet),
@@ -110,27 +112,24 @@ class EditorSharingAccordion extends React.Component {
 			status = {
 				type: 'warning',
 				text: this.props.translate( 'A broken connection requires repair', {
-					comment: 'Publicize connection deauthorized, needs user action to fix'
+					comment: 'Publicize connection deauthorized, needs user action to fix',
 				} ),
 				url: `/sharing/${ this.props.site.slug }`,
 				position: isMobile() ? 'top left' : 'top',
-				onClick: this.props.onStatusClick
+				onClick: this.props.onStatusClick,
 			};
 		}
 
 		return (
-		    <Accordion
+			<Accordion
 				title={ this.props.translate( 'Sharing' ) }
 				subtitle={ this.getSubtitle() }
 				status={ status }
-				className={ classes }>
-				{ this.props.site && (
-					<QueryPublicizeConnections siteId={ this.props.site.ID } />
-				) }
+				className={ classes }
+			>
+				{ this.props.site && <QueryPublicizeConnections siteId={ this.props.site.ID } /> }
 				<AccordionSection>
-					{ ! hideSharing && (
-						<Sharing site={ this.props.site } post={ this.props.post } />
-					) }
+					{ ! hideSharing && <Sharing site={ this.props.site } post={ this.props.post } /> }
 					{ this.renderShortUrl() }
 				</AccordionSection>
 			</Accordion>
@@ -139,7 +138,7 @@ class EditorSharingAccordion extends React.Component {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const userId = getCurrentUserId( state );
 		const postId = getEditorPostId( state );
@@ -156,6 +155,6 @@ export default connect(
 		};
 	},
 	{
-		onStatusClick: () => recordGoogleEvent( 'Editor', 'Clicked Accordion Broken Status' )
+		onStatusClick: () => recordGoogleEvent( 'Editor', 'Clicked Accordion Broken Status' ),
 	}
-)( localize(EditorSharingAccordion) );
+)( localize( EditorSharingAccordion ) );

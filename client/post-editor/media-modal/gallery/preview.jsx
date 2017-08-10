@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,89 +18,91 @@ import EditorMediaModalGalleryEdit from './edit';
 import EditorMediaModalGalleryPreviewShortcode from './preview-shortcode';
 import EditorMediaModalGalleryPreviewIndividual from './preview-individual';
 
-export default localize(class extends React.Component {
-    static displayName = 'EditorMediaModalGalleryPreview';
+export default localize(
+	class extends React.Component {
+		static displayName = 'EditorMediaModalGalleryPreview';
 
-	static propTypes = {
-		site: PropTypes.object,
-		settings: PropTypes.object,
-		onUpdateSetting: PropTypes.func,
-		invalidItemDropped: PropTypes.bool,
-		onDismissInvalidItemDropped: PropTypes.func
-	};
+		static propTypes = {
+			site: PropTypes.object,
+			settings: PropTypes.object,
+			onUpdateSetting: PropTypes.func,
+			invalidItemDropped: PropTypes.bool,
+			onDismissInvalidItemDropped: PropTypes.func,
+		};
 
-	static defaultProps = {
-		settings: Object.freeze( {} ),
-		onUpdateSetting: () => {},
-		invalidItemDropped: false,
-		onDismissInvalidItemDropped: () => {}
-	};
+		static defaultProps = {
+			settings: Object.freeze( {} ),
+			onUpdateSetting: () => {},
+			invalidItemDropped: false,
+			onDismissInvalidItemDropped: () => {},
+		};
 
-	state = {
-		isEditing: false
-	};
+		state = {
+			isEditing: false,
+		};
 
-	renderPreviewModeToggle = () => {
-		return (
-		    <SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact={ true }>
-				<SegmentedControlItem
-					selected={ ! this.state.isEditing }
-					onClick={ () => this.setState( { isEditing: false } ) }>
-					{ this.props.translate( 'Preview' ) }
-				</SegmentedControlItem>
-				<SegmentedControlItem
-					selected={ this.state.isEditing }
-					onClick={ () => this.setState( { isEditing: true } ) }>
-					{ this.props.translate( 'Edit' ) }
-				</SegmentedControlItem>
-			</SegmentedControl>
-		);
-	};
-
-	renderPreview = () => {
-		const { site, settings, onUpdateSetting } = this.props;
-
-		if ( ! site || ! settings.items ) {
-			return;
-		}
-
-		if ( this.state.isEditing ) {
+		renderPreviewModeToggle = () => {
 			return (
-				<EditorMediaModalGalleryEdit
-					site={ site }
-					settings={ settings }
-					onUpdateSetting={ onUpdateSetting } />
+				<SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact={ true }>
+					<SegmentedControlItem
+						selected={ ! this.state.isEditing }
+						onClick={ () => this.setState( { isEditing: false } ) }
+					>
+						{ this.props.translate( 'Preview' ) }
+					</SegmentedControlItem>
+					<SegmentedControlItem
+						selected={ this.state.isEditing }
+						onClick={ () => this.setState( { isEditing: true } ) }
+					>
+						{ this.props.translate( 'Edit' ) }
+					</SegmentedControlItem>
+				</SegmentedControl>
 			);
-		}
+		};
 
-		if ( 'individual' === settings.type ) {
+		renderPreview = () => {
+			const { site, settings, onUpdateSetting } = this.props;
+
+			if ( ! site || ! settings.items ) {
+				return;
+			}
+
+			if ( this.state.isEditing ) {
+				return (
+					<EditorMediaModalGalleryEdit
+						site={ site }
+						settings={ settings }
+						onUpdateSetting={ onUpdateSetting }
+					/>
+				);
+			}
+
+			if ( 'individual' === settings.type ) {
+				return <EditorMediaModalGalleryPreviewIndividual items={ settings.items } />;
+			}
+
+			return <EditorMediaModalGalleryPreviewShortcode siteId={ site.ID } settings={ settings } />;
+		};
+
+		render() {
 			return (
-				<EditorMediaModalGalleryPreviewIndividual
-					items={ settings.items } />
-			);
-		}
-
-		return (
-			<EditorMediaModalGalleryPreviewShortcode
-				siteId={ site.ID }
-				settings={ settings } />
-		);
-	};
-
-	render() {
-		return (
-		    <div className="editor-media-modal-gallery__preview">
-				{ this.props.invalidItemDropped && (
-					<Notice status="is-warning" onDismissClick={ this.props.onDismissInvalidItemDropped } isCompact>
-						{ this.props.translate( 'Galleries can only include images. All other uploads will be added to your media library.' ) }
-					</Notice>
-				) }
-				<div className="editor-media-modal-gallery__preview-wrapper">
-					{ this.renderPreview() }
+				<div className="editor-media-modal-gallery__preview">
+					{ this.props.invalidItemDropped &&
+						<Notice
+							status="is-warning"
+							onDismissClick={ this.props.onDismissInvalidItemDropped }
+							isCompact
+						>
+							{ this.props.translate(
+								'Galleries can only include images. All other uploads will be added to your media library.'
+							) }
+						</Notice> }
+					<div className="editor-media-modal-gallery__preview-wrapper">
+						{ this.renderPreview() }
+					</div>
+					{ this.renderPreviewModeToggle() }
 				</div>
-				{ this.renderPreviewModeToggle() }
-			</div>
-		);
+			);
+		}
 	}
-});
-
+);

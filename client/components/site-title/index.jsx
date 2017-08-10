@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 
 class SiteTitleControl extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		blogname: PropTypes.string,
 		blogdescription: PropTypes.string,
 		onChange: PropTypes.func.isRequired,
@@ -40,14 +41,23 @@ class SiteTitleControl extends React.Component {
 
 	render() {
 		return (
-		    <div className="site-title">
+			<div className="site-title">
 				<FormFieldset>
-					<FormLabel htmlFor="blogname">{ this.props.translate( 'Site Title' ) }</FormLabel>
-					<FormTextInput name="blogname" value={ this.props.blogname } onChange={ this.onChangeSiteTitle } />
+					<FormLabel htmlFor="blogname">
+						{ this.props.translate( 'Site Title' ) }
+					</FormLabel>
+					<FormTextInput
+						name="blogname"
+						value={ this.props.blogname }
+						onChange={ this.onChangeSiteTitle }
+					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="blogdescription">{ this.props.translate( 'Tagline' ) }</FormLabel>
-					<FormTextInput name="blogdescription"
+					<FormLabel htmlFor="blogdescription">
+						{ this.props.translate( 'Tagline' ) }
+					</FormLabel>
+					<FormTextInput
+						name="blogdescription"
 						value={ this.props.blogdescription }
 						onChange={ this.onChangeDescription }
 					/>
@@ -57,4 +67,4 @@ class SiteTitleControl extends React.Component {
 	}
 }
 
-export default localize(SiteTitleControl);
+export default localize( SiteTitleControl );

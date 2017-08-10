@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,30 +22,32 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getSiteStatsPostStreakData,
 	getSiteStatsMaxPostsByDay,
-	getSiteStatsTotalPostsForStreakQuery
+	getSiteStatsTotalPostsForStreakQuery,
 } from 'state/stats/lists/selectors';
 
 class PostTrends extends React.Component {
-    static displayName = 'PostTrends';
+	static displayName = 'PostTrends';
 
 	static propTypes = {
 		siteId: PropTypes.number,
-		query: PropTypes.object
+		query: PropTypes.object,
 	};
 
 	state = {
 		canScrollLeft: false,
-		canScrollRight: false
+		canScrollRight: false,
 	};
 
 	componentDidMount() {
 		var node = this.refs.wrapper,
 			yearNode = this.refs.year,
 			computedStyle = window.getComputedStyle( yearNode ),
-			margin = parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) + parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 );
+			margin =
+				parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
+				parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 );
 
 		// Initially scroll all the way to the left
-		yearNode.style.left = ( 0 - yearNode.scrollWidth + node.clientWidth - margin ) + 'px';
+		yearNode.style.left = 0 - yearNode.scrollWidth + node.clientWidth - margin + 'px';
 
 		// Add resize listener
 		this.resize = throttle( this.resize, 400 );
@@ -57,10 +60,12 @@ class PostTrends extends React.Component {
 		window.removeEventListener( 'resize', this.resize );
 	}
 
-	shouldComponentUpdate(nextProps) {
+	shouldComponentUpdate( nextProps ) {
 		// only update if the total number of posts, or query.endDate has changed
-		return nextProps.totalPosts !== this.props.totalPosts ||
-			nextProps.query.endDate !== this.props.query.endDate;
+		return (
+			nextProps.totalPosts !== this.props.totalPosts ||
+			nextProps.query.endDate !== this.props.query.endDate
+		);
 	}
 
 	resize = () => {
@@ -68,13 +73,15 @@ class PostTrends extends React.Component {
 			node = this.refs.wrapper,
 			yearNode = this.refs.year,
 			computedStyle = window.getComputedStyle( yearNode ),
-			margin = parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) + parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 ),
+			margin =
+				parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
+				parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 ),
 			left = parseInt( yearNode.style.left, 10 );
 
 		scrollProps.canScrollLeft = left < 0;
-		scrollProps.canScrollRight = ( left > ( 0 - yearNode.scrollWidth + node.clientWidth - margin ) );
+		scrollProps.canScrollRight = left > 0 - yearNode.scrollWidth + node.clientWidth - margin;
 
-		if ( this.state.canScrollLeft && node.clientWidth >= ( yearNode.scrollWidth - margin ) ) {
+		if ( this.state.canScrollLeft && node.clientWidth >= yearNode.scrollWidth - margin ) {
 			yearNode.style.left = '0px';
 		}
 
@@ -85,7 +92,9 @@ class PostTrends extends React.Component {
 		var node = this.refs.wrapper,
 			yearNode = this.refs.year,
 			computedStyle = window.getComputedStyle( yearNode ),
-			margin = parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) + parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 ),
+			margin =
+				parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
+				parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 ),
 			left = parseInt( computedStyle.getPropertyValue( 'left' ), 10 );
 
 		if ( 1 !== direction ) {
@@ -98,8 +107,8 @@ class PostTrends extends React.Component {
 		// enforce bounds
 		if ( left > 0 ) {
 			left = 0;
-		} else if ( left < ( 0 - yearNode.scrollWidth + node.clientWidth - margin ) ) {
-			left = ( 0 - yearNode.scrollWidth + node.clientWidth - margin );
+		} else if ( left < 0 - yearNode.scrollWidth + node.clientWidth - margin ) {
+			left = 0 - yearNode.scrollWidth + node.clientWidth - margin;
 		}
 
 		yearNode.style.left = left + 'px';
@@ -139,34 +148,46 @@ class PostTrends extends React.Component {
 		const { siteId, query } = this.props;
 
 		const leftClass = classNames( 'post-trends__scroll-left', {
-			'is-active': this.state.canScrollLeft
+			'is-active': this.state.canScrollLeft,
 		} );
 
 		const rightClass = classNames( 'post-trends__scroll-right', {
-			'is-active': this.state.canScrollRight
+			'is-active': this.state.canScrollRight,
 		} );
 
 		return (
-		    <div className="post-trends">
+			<div className="post-trends">
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
-				<SectionHeader label={ this.props.translate( 'Posting Activity' ) }></SectionHeader>
+				<SectionHeader label={ this.props.translate( 'Posting Activity' ) } />
 				<Card>
-					<div className={ leftClass } onClick={ this.scrollLeft }><span className="left-arrow"></span></div>
-					<div className={ rightClass } onClick={ this.scrollRight }><span className="right-arrow"></span></div>
+					<div className={ leftClass } onClick={ this.scrollLeft }>
+						<span className="left-arrow" />
+					</div>
+					<div className={ rightClass } onClick={ this.scrollRight }>
+						<span className="right-arrow" />
+					</div>
 					<div ref="wrapper" className="post-trends__wrapper">
 						<div ref="year" className="post-trends__year">
 							{ this.getMonthComponents() }
 						</div>
 						<div className="post-trends__key-container">
-							<span className="post-trends__key-label">{ this.props.translate( 'Fewer Posts', { context: 'Legend label in stats post trends visualization' } ) }</span>
+							<span className="post-trends__key-label">
+								{ this.props.translate( 'Fewer Posts', {
+									context: 'Legend label in stats post trends visualization',
+								} ) }
+							</span>
 							<ul className="post-trends__key">
-								<li className="post-trends__key-day is-today"></li>
-								<li className="post-trends__key-day is-level-1"></li>
-								<li className="post-trends__key-day is-level-2"></li>
-								<li className="post-trends__key-day is-level-3"></li>
-								<li className="post-trends__key-day is-level-4"></li>
+								<li className="post-trends__key-day is-today" />
+								<li className="post-trends__key-day is-level-1" />
+								<li className="post-trends__key-day is-level-2" />
+								<li className="post-trends__key-day is-level-3" />
+								<li className="post-trends__key-day is-level-4" />
 							</ul>
-							<span className="post-trends__key-label">{ this.props.translate( 'More Posts', { context: 'Legend label in stats post trends visualization' } ) }</span>
+							<span className="post-trends__key-label">
+								{ this.props.translate( 'More Posts', {
+									context: 'Legend label in stats post trends visualization',
+								} ) }
+							</span>
 						</div>
 					</div>
 				</Card>
@@ -175,13 +196,18 @@ class PostTrends extends React.Component {
 	}
 }
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const query = {
-		startDate: i18n.moment().locale( 'en' ).subtract( 1, 'year' ).startOf( 'month' ).format( 'YYYY-MM-DD' ),
+		startDate: i18n
+			.moment()
+			.locale( 'en' )
+			.subtract( 1, 'year' )
+			.startOf( 'month' )
+			.format( 'YYYY-MM-DD' ),
 		endDate: i18n.moment().locale( 'en' ).endOf( 'month' ).format( 'YYYY-MM-DD' ),
 		gmtOffset: getSiteOption( state, siteId, 'gmt_offset' ),
-		max: 3000
+		max: 3000,
 	};
 
 	return {
@@ -189,6 +215,6 @@ export default connect( ( state ) => {
 		max: getSiteStatsMaxPostsByDay( state, siteId, query ),
 		totalPosts: getSiteStatsTotalPostsForStreakQuery( state, siteId, query ),
 		query,
-		siteId
+		siteId,
 	};
-} )( localize(PostTrends) );
+} )( localize( PostTrends ) );

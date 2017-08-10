@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -5,7 +6,7 @@ import PropTypes from 'prop-types';
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { noop } from 'lodash';
 import Gridicon from 'gridicons';
@@ -15,10 +16,10 @@ import Gridicon from 'gridicons';
  */
 import SiteIcon from 'blocks/site-icon';
 import SiteIndicator from 'my-sites/site-indicator';
-import { getSite } from 'state/sites/selectors';
+import { getSite } from 'state/sites/selectors';
 
 class Site extends React.Component {
-    static defaultProps = {
+	static defaultProps = {
 		// onSelect callback
 		onSelect: noop,
 		// mouse event callbacks
@@ -37,7 +38,7 @@ class Site extends React.Component {
 		homeLink: false,
 		// if homeLink is enabled
 		showHomeIcon: true,
-		compact: false
+		compact: false,
 	};
 
 	static propTypes = {
@@ -53,7 +54,7 @@ class Site extends React.Component {
 		siteId: PropTypes.number,
 		homeLink: PropTypes.bool,
 		showHomeIcon: PropTypes.bool,
-		compact: PropTypes.bool
+		compact: PropTypes.bool,
 	};
 
 	onSelect = event => {
@@ -88,25 +89,28 @@ class Site extends React.Component {
 		} );
 
 		return (
-		    <div className={ siteClass }>
-				<a className="site__content"
+			<div className={ siteClass }>
+				<a
+					className="site__content"
 					href={ this.props.homeLink ? site.URL : this.props.href }
 					data-tip-target={ this.props.tipTarget }
 					target={ this.props.externalLink && '_blank' }
-					title={ this.props.homeLink
-						? this.props.translate( 'View this site' )
-						: this.props.translate( 'Select this site' )
+					title={
+						this.props.homeLink
+							? this.props.translate( 'View this site' )
+							: this.props.translate( 'Select this site' )
 					}
 					onClick={ this.onSelect }
 					onMouseEnter={ this.onMouseEnter }
 					onMouseLeave={ this.onMouseLeave }
-					aria-label={ this.props.homeLink && site.is_previewable
-						? this.props.translate( 'Open site %(domain)s in a preview', {
-							args: { domain: site.domain }
-						} )
-						: this.props.translate( 'Open site %(domain)s in new tab', {
-							args: { domain: site.domain }
-						} )
+					aria-label={
+						this.props.homeLink && site.is_previewable
+							? this.props.translate( 'Open site %(domain)s in a preview', {
+									args: { domain: site.domain },
+								} )
+							: this.props.translate( 'Open site %(domain)s in new tab', {
+									args: { domain: site.domain },
+								} )
 					}
 				>
 					<SiteIcon site={ site } size={ this.props.compact ? 24 : 32 } />
@@ -116,38 +120,36 @@ class Site extends React.Component {
 							{ this.props.site.is_private &&
 								<span className="site__badge">
 									<Gridicon icon="lock" size={ 14 } />
-								</span>
-							}
-							{ site.options && site.options.is_redirect &&
+								</span> }
+							{ site.options &&
+								site.options.is_redirect &&
 								<span className="site__badge">
 									<Gridicon icon="block" size={ 14 } />
-								</span>
-							}
-							{ site.options && site.options.is_domain_only &&
+								</span> }
+							{ site.options &&
+								site.options.is_domain_only &&
 								<span className="site__badge">
 									<Gridicon icon="domains" size={ 14 } />
-								</span>
-							}
+								</span> }
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 							{ site.title }
 						</div>
-						<div className="site__domain">{ site.domain }</div>
+						<div className="site__domain">
+							{ site.domain }
+						</div>
 					</div>
-					{ this.props.homeLink && this.props.showHomeIcon &&
+					{ this.props.homeLink &&
+						this.props.showHomeIcon &&
 						<span className="site__home">
 							<Gridicon icon="house" size={ 18 } />
-						</span>
-					}
+						</span> }
 				</a>
-				{ this.props.indicator
-					? <SiteIndicator site={ site } />
-					: null
-				}
+				{ this.props.indicator ? <SiteIndicator site={ site } /> : null }
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, { siteId, site } ) => ( {
-	site: siteId ? getSite( state, siteId ) : site
-} ) )( localize(Site) );
+export default connect( ( state, { siteId, site } ) => ( {
+	site: siteId ? getSite( state, siteId ) : site,
+} ) )( localize( Site ) );

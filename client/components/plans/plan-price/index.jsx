@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,14 +13,16 @@ import { isJetpackMonthlyPlan } from 'lib/products-values';
 import WpcomPlanPrice from 'my-sites/plans/wpcom-plan-price';
 
 class PlanPrice extends React.Component {
-    getFormattedPrice = plan => {
+	getFormattedPrice = plan => {
 		let rawPrice, formattedPrice, months;
 
 		if ( plan ) {
 			// the properties of a plan object from sites-list is snake_case
 			// the properties of a plan object from the global state are camelCase
 			rawPrice = isUndefined( plan.rawPrice ) ? plan.raw_price : plan.rawPrice;
-			formattedPrice = isUndefined( plan.formattedPrice ) ? plan.formatted_price : plan.formattedPrice;
+			formattedPrice = isUndefined( plan.formattedPrice )
+				? plan.formatted_price
+				: plan.formattedPrice;
 
 			if ( rawPrice === 0 ) {
 				return this.props.translate( 'Free', { context: 'Zero cost product price' } );
@@ -29,9 +32,14 @@ class PlanPrice extends React.Component {
 
 			// could get $5.95, A$4.13, ¥298, €3,50, etc…
 			const getCurrencySymbol = price => /(\D+)\d+/.exec( price )[ 1 ];
-			const currencyDigits = currencySymbol => get( {
-				'¥': 0
-			}, currencySymbol, 2 );
+			const currencyDigits = currencySymbol =>
+				get(
+					{
+						'¥': 0,
+					},
+					currencySymbol,
+					2
+				);
 
 			const currencySymbol = getCurrencySymbol( formattedPrice );
 			const monthlyPrice = ( rawPrice / months ).toFixed( currencyDigits( currencySymbol ) );
@@ -47,10 +55,18 @@ class PlanPrice extends React.Component {
 			discountedPrice = this.getFormattedPrice( this.props.sitePlan );
 
 		if ( this.props.sitePlan && this.props.sitePlan.rawDiscount > 0 ) {
-			return ( <span><span className="plan-price__discounted">{ standardPrice }</span> { discountedPrice }</span> );
+			return (
+				<span>
+					<span className="plan-price__discounted">{ standardPrice }</span> { discountedPrice }
+				</span>
+			);
 		}
 
-		return ( <span>{ standardPrice }</span> );
+		return (
+			<span>
+				{ standardPrice }
+			</span>
+		);
 	};
 
 	render() {
@@ -71,16 +87,19 @@ class PlanPrice extends React.Component {
 				periodLabel = this.props.translate( 'per month, billed yearly' );
 			}
 		} else {
-			periodLabel = hasDiscount ? this.props.translate( 'due today when you upgrade' ) : plan.bill_period_label;
+			periodLabel = hasDiscount
+				? this.props.translate( 'due today when you upgrade' )
+				: plan.bill_period_label;
 		}
 
 		return (
 			<WpcomPlanPrice
 				getPrice={ this.getPrice }
 				hasDiscount={ hasDiscount }
-				periodLabel={ periodLabel } />
+				periodLabel={ periodLabel }
+			/>
 		);
 	}
 }
 
-export default localize(PlanPrice);
+export default localize( PlanPrice );

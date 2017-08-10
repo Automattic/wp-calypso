@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,16 +7,17 @@ var React = require( 'react' ),
 	startsWith = require( 'lodash/startsWith' );
 
 class CartEmpty extends React.Component {
-    render() {
+	render() {
 		return (
-		    <div>
+			<div>
 				<div className="cart-empty">
 					{ this.props.translate( 'There are no items in your cart.' ) }
 				</div>
 				<div className="cart-buttons">
-					<button className="cart-checkout-button button is-primary"
-							onClick={ this.handleClick }>
-							{ this.shouldShowPlanButton() ? this.props.translate( 'Add a Plan' ) : this.props.translate( 'Add a Domain' ) }
+					<button className="cart-checkout-button button is-primary" onClick={ this.handleClick }>
+						{ this.shouldShowPlanButton()
+							? this.props.translate( 'Add a Plan' )
+							: this.props.translate( 'Add a Domain' ) }
 					</button>
 				</div>
 			</div>
@@ -32,8 +34,10 @@ class CartEmpty extends React.Component {
 	handleClick = event => {
 		event.preventDefault();
 
-		page( ( this.shouldShowPlanButton() ? '/plans/' : '/domains/add/' ) + this.props.selectedSite.slug );
+		page(
+			( this.shouldShowPlanButton() ? '/plans/' : '/domains/add/' ) + this.props.selectedSite.slug
+		);
 	};
 }
 
-module.exports = localize(CartEmpty);
+module.exports = localize( CartEmpty );

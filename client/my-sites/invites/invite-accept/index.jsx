@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -35,11 +36,11 @@ const debug = new Debug( 'calypso:invite-accept' );
 const userModule = _user();
 
 class InviteAccept extends React.Component {
-    state = {
+	state = {
 		invite: false,
 		error: false,
 		user: userModule.get(),
-		matchEmailError: false
+		matchEmailError: false,
 	};
 
 	componentWillMount() {
@@ -69,7 +70,7 @@ class InviteAccept extends React.Component {
 			// add subscription-related keys to the invite
 			Object.assign( invite, {
 				activationKey: this.props.activationKey,
-				authKey: this.props.authKey
+				authKey: this.props.authKey,
 			} );
 		}
 		this.setState( { invite, error } );
@@ -89,7 +90,9 @@ class InviteAccept extends React.Component {
 	};
 
 	decline = () => {
-		this.props.infoNotice( this.props.translate( 'You declined to join.' ), { displayOnNextPage: true } );
+		this.props.infoNotice( this.props.translate( 'You declined to join.' ), {
+			displayOnNextPage: true,
+		} );
 		page( '/' );
 	};
 
@@ -114,9 +117,7 @@ class InviteAccept extends React.Component {
 			return;
 		}
 
-		return (
-			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
-		);
+		return <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />;
 	};
 
 	renderForm = () => {
@@ -132,12 +133,10 @@ class InviteAccept extends React.Component {
 			redirectTo: getRedirectAfterAccept( this.state.invite ),
 			decline: this.decline,
 			signInLink: this.signInLink(),
-			forceMatchingEmail: this.isMatchEmailError()
+			forceMatchingEmail: this.isMatchEmailError(),
 		};
 
-		return user
-			? <LoggedIn { ... props } user={ this.state.user } />
-			: <LoggedOut { ... props } />;
+		return user ? <LoggedIn { ...props } user={ this.state.user } /> : <LoggedOut { ...props } />;
 	};
 
 	renderError = () => {
@@ -145,15 +144,13 @@ class InviteAccept extends React.Component {
 		debug( 'Rendering error: ' + JSON.stringify( error ) );
 
 		let props = {
-			title: this.props.translate(
-				'Oops, that invite is not valid',
-				{ context: 'Title that is display to users when attempting to accept an invalid invite.' }
-			),
-			line: this.props.translate(
-				"We weren't able to verify that invitation.",
-				{ context: 'Message that is displayed to users when an invitation is invalid.' }
-			),
-			illustration: '/calypso/images/drake/drake-whoops.svg'
+			title: this.props.translate( 'Oops, that invite is not valid', {
+				context: 'Title that is display to users when attempting to accept an invalid invite.',
+			} ),
+			line: this.props.translate( "We weren't able to verify that invitation.", {
+				context: 'Message that is displayed to users when an invitation is invalid.',
+			} ),
+			illustration: '/calypso/images/drake/drake-whoops.svg',
 		};
 
 		if ( error.error && error.message ) {
@@ -162,7 +159,9 @@ class InviteAccept extends React.Component {
 				case 'already_subscribed':
 					Object.assign( props, {
 						title: error.message, // "You are already a (follower|member) of this site"
-						line: this.props.translate( 'Would you like to accept the invite with a different account?' ),
+						line: this.props.translate(
+							'Would you like to accept the invite with a different account?'
+						),
 						action: this.props.translate( 'Switch Accounts' ),
 						actionURL: login( { redirectTo: window.location.href } ),
 					} );
@@ -176,15 +175,13 @@ class InviteAccept extends React.Component {
 					break;
 				default:
 					Object.assign( props, {
-						line: error.message
+						line: error.message,
 					} );
 					break;
 			}
 		}
 
-		return (
-			<EmptyContent { ...props } />
-		);
+		return <EmptyContent { ...props } />;
 	};
 
 	renderNoticeAction = () => {
@@ -208,29 +205,34 @@ class InviteAccept extends React.Component {
 		}
 
 		return (
-			<NoticeAction { ... props } >
+			<NoticeAction { ...props }>
 				{ actionText }
 			</NoticeAction>
 		);
 	};
 
 	render() {
-		const formClasses = classNames( 'invite-accept__form', { 'is-error': !! this.isInvalidInvite() } ),
+		const formClasses = classNames( 'invite-accept__form', {
+				'is-error': !! this.isInvalidInvite(),
+			} ),
 			{ invite, user } = this.state;
 
 		return (
-		    <div className="invite-accept">
+			<div className="invite-accept">
 				{ this.localeSuggestions() }
 				<div className={ formClasses }>
-					{ this.isMatchEmailError() && user &&
+					{ this.isMatchEmailError() &&
+						user &&
 						<Notice
-							text={ this.props.translate( 'This invite is only valid for %(email)s.', { args: { email: invite.sentTo } } ) }
+							text={ this.props.translate( 'This invite is only valid for %(email)s.', {
+								args: { email: invite.sentTo },
+							} ) }
 							status="is-error"
-							showDismiss={ false } >
+							showDismiss={ false }
+						>
 							{ this.renderNoticeAction() }
-						</Notice>
-					}
-					{ ! this.isInvalidInvite() && <InviteHeader { ... invite } /> }
+						</Notice> }
+					{ ! this.isInvalidInvite() && <InviteHeader { ...invite } /> }
 					{ this.isInvalidInvite() ? this.renderError() : this.renderForm() }
 				</div>
 			</div>
@@ -238,7 +240,6 @@ class InviteAccept extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { successNotice, infoNotice }, dispatch )
-)( localize(InviteAccept) );
+export default connect( null, dispatch =>
+	bindActionCreators( { successNotice, infoNotice }, dispatch )
+)( localize( InviteAccept ) );

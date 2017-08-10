@@ -1,4 +1,5 @@
-const PropTypes = require('prop-types');
+/** @format */
+const PropTypes = require( 'prop-types' );
 /**
  * External dependencies
  */
@@ -10,19 +11,17 @@ const React = require( 'react' );
 const { getGoogleAppsSupportedDomains } = require( 'lib/domains' );
 
 class DomainsSelect extends React.Component {
-    static propTypes = {
-		domains: PropTypes.object.isRequired
+	static propTypes = {
+		domains: PropTypes.object.isRequired,
 	};
 
 	render() {
-		let domainRegistrations,
-			disabled,
-			options;
+		let domainRegistrations, disabled, options;
 
 		if ( this.props.domains.hasLoadedFromServer ) {
 			domainRegistrations = getGoogleAppsSupportedDomains( this.props.domains.list );
 			disabled = false;
-			options = domainRegistrations.map( ( domain ) => {
+			options = domainRegistrations.map( domain => {
 				return (
 					<option value={ domain.name } key={ domain.name }>
 						@{ domain.name }
@@ -31,18 +30,24 @@ class DomainsSelect extends React.Component {
 			} );
 		} else {
 			disabled = true;
-			options = <option>{ this.props.translate( 'Loading' ) }...</option>;
+			options = (
+				<option>
+					{ this.props.translate( 'Loading' ) }...
+				</option>
+			);
 		}
 
 		return (
-			<select value={ this.props.value }
+			<select
+				value={ this.props.value }
 				onChange={ this.props.onChange }
 				onFocus={ this.props.onFocus }
-				disabled={ disabled }>
+				disabled={ disabled }
+			>
 				{ options }
 			</select>
 		);
 	}
 }
 
-module.exports = localize(DomainsSelect);
+module.exports = localize( DomainsSelect );

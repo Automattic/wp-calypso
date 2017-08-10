@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,13 +22,10 @@ import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 
 class EmailForwarding extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		emailForwarding: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.bool
-		] ).isRequired
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
 	render() {
@@ -35,38 +33,39 @@ class EmailForwarding extends React.Component {
 			return <MainPlaceholder goBack={ this.goToEditEmail } />;
 		}
 		return (
-		    <Main className="email-forwarding">
-				<Header
-					onClick={ this.goToEditEmail }
-					selectedDomainName={ this.props.selectedDomainName }>
+			<Main className="email-forwarding">
+				<Header onClick={ this.goToEditEmail } selectedDomainName={ this.props.selectedDomainName }>
 					{ this.props.translate( 'Email Forwarding' ) }
 				</Header>
 
 				<SectionHeader label={ this.props.translate( 'Email Forwarding' ) } />
 				<Card className="email-forwarding-card">
-					<EmailForwardingDetails
-						selectedDomainName={ this.props.selectedDomainName } />
+					<EmailForwardingDetails selectedDomainName={ this.props.selectedDomainName } />
 
 					<EmailForwardingList
 						selectedSite={ this.props.selectedSite }
-						emailForwarding={ this.props.emailForwarding } />
+						emailForwarding={ this.props.emailForwarding }
+					/>
 
 					<EmailForwardingAddNew
 						emailForwarding={ this.props.emailForwarding }
 						selectedDomainName={ this.props.selectedDomainName }
-						selectedSite={ this.props.selectedSite } />
+						selectedSite={ this.props.selectedSite }
+					/>
 				</Card>
 			</Main>
 		);
 	}
 
 	isDataLoading = () => {
-		return ( ! this.props.emailForwarding.hasLoadedFromServer );
+		return ! this.props.emailForwarding.hasLoadedFromServer;
 	};
 
 	goToEditEmail = () => {
-		page( paths.domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(
+			paths.domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName )
+		);
 	};
 }
 
-export default localize(EmailForwarding);
+export default localize( EmailForwarding );

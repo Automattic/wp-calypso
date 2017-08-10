@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +7,7 @@ var React = require( 'react' ),
 	bindActionCreators = require( 'redux' ).bindActionCreators,
 	connect = require( 'react-redux' ).connect;
 
-var createReactClass = require('create-react-class');
+var createReactClass = require( 'create-react-class' );
 
 /**
  * Internal dependencies
@@ -22,15 +23,14 @@ var ConnectedAppItem = require( 'me/connected-application-item' ),
 	Main = require( 'components/main' ),
 	successNotice = require( 'state/notices/actions' ).successNotice;
 
-const ConnectedApplications = createReactClass({
-
+const ConnectedApplications = createReactClass( {
 	displayName: 'ConnectedApplications',
 
 	mixins: [ observe( 'connectedAppsData' ) ],
 
 	getDefaultProps: function() {
 		return {
-			applicationID: 0
+			applicationID: 0,
 		};
 	},
 
@@ -45,35 +45,51 @@ const ConnectedApplications = createReactClass({
 	revokeConnection: function( applicationID, callback ) {
 		var application = this.props.connectedAppsData.getApplication( applicationID );
 		if ( 'undefined' !== typeof application ) {
-			this.props.connectedAppsData.revoke( parseInt( applicationID, 10 ), function( error ) {
-				debug( 'API call to revoke application is completed.' );
-				if ( error ) {
-					debug( 'There was an error revoking an application.' );
-					notices.clearNotices( 'notices' );
-					callback( error );
-				} else {
-					debug( 'Application connection was successfully revoked.' );
-					this.props.successNotice(
-						this.props.translate( '%(applicationTitle)s no longer has access to your WordPress.com account.', {
-							args: {
-								applicationTitle: application.title
-							}
-						} )
-					);
-				}
-			}.bind( this ) );
+			this.props.connectedAppsData.revoke(
+				parseInt( applicationID, 10 ),
+				function( error ) {
+					debug( 'API call to revoke application is completed.' );
+					if ( error ) {
+						debug( 'There was an error revoking an application.' );
+						notices.clearNotices( 'notices' );
+						callback( error );
+					} else {
+						debug( 'Application connection was successfully revoked.' );
+						this.props.successNotice(
+							this.props.translate(
+								'%(applicationTitle)s no longer has access to your WordPress.com account.',
+								{
+									args: {
+										applicationTitle: application.title,
+									},
+								}
+							)
+						);
+					}
+				}.bind( this )
+			);
 		}
 	},
 
 	renderEmptyContent: function() {
 		return (
-		    <EmptyContent
+			<EmptyContent
 				title={ this.props.translate( "You haven't connected any apps yet." ) }
-				line={ this.props.translate( 'You can get started with the {{link}}WordPress mobile apps!{{/link}}', {
-					components: {
-						link: <a href="https://apps.wordpress.org/" target="_blank" rel="noopener noreferrer" title="WordPress Mobile Apps" />
+				line={ this.props.translate(
+					'You can get started with the {{link}}WordPress mobile apps!{{/link}}',
+					{
+						components: {
+							link: (
+								<a
+									href="https://apps.wordpress.org/"
+									target="_blank"
+									rel="noopener noreferrer"
+									title="WordPress Mobile Apps"
+								/>
+							),
+						},
 					}
-				} ) }
+				) }
 			/>
 		);
 	},
@@ -87,7 +103,7 @@ const ConnectedApplications = createReactClass({
 				<ConnectedAppItem
 					connection={ {
 						ID: i,
-						title: this.props.translate( 'Loading Connected Applications' )
+						title: this.props.translate( 'Loading Connected Applications' ),
 					} }
 					key={ i }
 					isPlaceholder
@@ -100,16 +116,17 @@ const ConnectedApplications = createReactClass({
 
 	renderConnectedApps: function() {
 		return this.props.connectedAppsData.initialized
-		? this.props.connectedAppsData.get().map( function( connection ) {
-				return (
-					<ConnectedAppItem
-						connection={ connection }
-						key={ connection.ID }
-						connectedApplications={ this.props.connectedAppsData }
-						revoke={ this.revokeConnection } />
-				);
-			}, this )
-		: this.renderPlaceholders();
+			? this.props.connectedAppsData.get().map( function( connection ) {
+					return (
+						<ConnectedAppItem
+							connection={ connection }
+							key={ connection.ID }
+							connectedApplications={ this.props.connectedAppsData }
+							revoke={ this.revokeConnection }
+						/>
+					);
+				}, this )
+			: this.renderPlaceholders();
 	},
 
 	renderConnectedAppsList: function() {
@@ -140,10 +157,9 @@ const ConnectedApplications = createReactClass({
 				{ this.renderConnectedAppsList() }
 			</Main>
 		);
-	}
-});
+	},
+} );
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { successNotice }, dispatch )
-)( localize(ConnectedApplications) );
+export default connect( null, dispatch => bindActionCreators( { successNotice }, dispatch ) )(
+	localize( ConnectedApplications )
+);

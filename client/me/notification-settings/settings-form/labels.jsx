@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,23 +14,25 @@ import { localize } from 'i18n-calypso';
 import StreamHeader from './stream-header';
 import LabelsList from './labels-list';
 
-export default localize(class extends React.Component {
-    static displayName = 'NotificationSettingsFormLabels';
+export default localize(
+	class extends React.Component {
+		static displayName = 'NotificationSettingsFormLabels';
 
-	static propTypes = {
-		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired
-	};
+		static propTypes = {
+			settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
+		};
 
-	shouldComponentUpdate() {
-		return false;
+		shouldComponentUpdate() {
+			return false;
+		}
+
+		render() {
+			return (
+				<div className="notification-settings-form-labels">
+					<StreamHeader title={ this.props.translate( 'notifications' ) } />
+					<LabelsList settingKeys={ this.props.settingKeys } />
+				</div>
+			);
+		}
 	}
-
-	render() {
-		return (
-		    <div className="notification-settings-form-labels">
-				<StreamHeader title={ this.props.translate( 'notifications' ) } />
-				<LabelsList settingKeys={ this.props.settingKeys } />
-			</div>
-		);
-	}
-});
+);

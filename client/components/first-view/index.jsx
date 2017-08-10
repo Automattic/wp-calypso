@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,13 +21,13 @@ import { isEnabled } from 'config';
 
 // component to avoid having a wrapper element for the transition
 // see: https://facebook.github.io/react/docs/animation.html#rendering-a-single-child
-const TransitionGroupComponent = ( props ) => {
+const TransitionGroupComponent = props => {
 	const children = React.Children.toArray( props.children );
 	return children[ 0 ] || null;
 };
 
 class FirstView extends React.PureComponent {
-    state = {
+	state = {
 		isEnabled: false,
 	};
 
@@ -46,35 +47,41 @@ class FirstView extends React.PureComponent {
 
 	render() {
 		const classes = classNames( 'first-view', {
-			'is-visible': this.props.isVisible
+			'is-visible': this.props.isVisible,
 		} );
 		const firstViewContentClasses = classNames( 'first-view__content' );
 		const firstViewHidePreferenceClasses = classNames( 'first-view__hide-preference' );
 
 		return (
-		    <RootChild className={ classes }>
-				<ReactCSSTransitionGroup transitionName="first-view-transition"
-						component={ TransitionGroupComponent }
-						transitionEnter={ false } transitionEnterTimeout={ 0 }
-						transitionLeaveTimeout={ 250 }>
-					{ this.props.isVisible && (
+			<RootChild className={ classes }>
+				<ReactCSSTransitionGroup
+					transitionName="first-view-transition"
+					component={ TransitionGroupComponent }
+					transitionEnter={ false }
+					transitionEnterTimeout={ 0 }
+					transitionLeaveTimeout={ 250 }
+				>
+					{ this.props.isVisible &&
 						<Card key="content" className={ firstViewContentClasses }>
 							{ this.props.children }
 
 							<Button primary onClick={ this.hide }>
-								{ this.props.translate( 'Got It!', { context: 'Button that dismisses the introduction overlay.' } ) }
+								{ this.props.translate( 'Got It!', {
+									context: 'Button that dismisses the introduction overlay.',
+								} ) }
 							</Button>
 
 							<div className={ firstViewHidePreferenceClasses }>
 								<label>
-									<input type="checkbox"
-											checked={ ! this.state.isEnabled }
-											onChange={ this.enableOrDisableNextTime } />
+									<input
+										type="checkbox"
+										checked={ ! this.state.isEnabled }
+										onChange={ this.enableOrDisableNextTime }
+									/>
 									{ this.props.translate( "Don't show this again" ) }
 								</label>
 							</div>
-						</Card>
-					) }
+						</Card> }
 				</ReactCSSTransitionGroup>
 			</RootChild>
 		);
@@ -86,7 +93,7 @@ class FirstView extends React.PureComponent {
 
 	enableOrDisableNextTime = event => {
 		this.setState( {
-			isEnabled: ! event.target.checked
+			isEnabled: ! event.target.checked,
 		} );
 	};
 
@@ -121,13 +128,13 @@ class FirstView extends React.PureComponent {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		return {
 			sectionName: getSectionName( state ),
 			isVisible: isEnabled( 'ui/first-view' ) && shouldViewBeVisible( state ),
 		};
 	},
 	{
-		hideView
+		hideView,
 	}
-)( localize(FirstView) );
+)( localize( FirstView ) );

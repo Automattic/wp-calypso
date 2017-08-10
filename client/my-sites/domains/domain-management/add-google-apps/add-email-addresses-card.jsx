@@ -1,4 +1,5 @@
-const PropTypes = require('prop-types');
+/** @format */
+const PropTypes = require( 'prop-types' );
 /**
  * External dependencies
  */
@@ -11,7 +12,7 @@ const React = require( 'react' ),
 	find = require( 'lodash/find' ),
 	isEmpty = require( 'lodash/isEmpty' );
 
-const createReactClass = require('create-react-class');
+const createReactClass = require( 'create-react-class' );
 
 /**
  * Internal dependencies
@@ -36,23 +37,23 @@ import Notice from 'components/notice';
 
 import { localize } from 'i18n-calypso';
 
-const AddEmailAddressesCard = createReactClass({
-    displayName: 'AddEmailAddressesCard',
-    mixins: [ analyticsMixin( 'domainManagement', 'addGoogleApps' ) ],
+const AddEmailAddressesCard = createReactClass( {
+	displayName: 'AddEmailAddressesCard',
+	mixins: [ analyticsMixin( 'domainManagement', 'addGoogleApps' ) ],
 
-    propTypes: {
+	propTypes: {
 		domains: PropTypes.object.isRequired,
-		selectedDomainName: PropTypes.string
+		selectedDomainName: PropTypes.string,
 	},
 
-    getInitialState() {
+	getInitialState() {
 		return {
 			fieldsets: [ this.getNewFieldset() ],
-			validationErrors: null
+			validationErrors: null,
 		};
 	},
 
-    getNewFieldset() {
+	getNewFieldset() {
 		let domain;
 
 		if ( this.props.selectedDomainName ) {
@@ -65,15 +66,15 @@ const AddEmailAddressesCard = createReactClass({
 
 		return {
 			username: { value: '' },
-			domain: { value: domain }
+			domain: { value: domain },
 		};
 	},
 
-    removeValidationErrors: function() {
+	removeValidationErrors: function() {
 		this.setState( { validationErrors: null } );
 	},
 
-    validationErrors: function() {
+	validationErrors: function() {
 		if ( this.state.validationErrors ) {
 			return (
 				<Notice onDismissClick={ this.removeValidationErrors } status="is-error">
@@ -83,13 +84,13 @@ const AddEmailAddressesCard = createReactClass({
 		}
 	},
 
-    componentDidUpdate( prevProps ) {
+	componentDidUpdate( prevProps ) {
 		if ( this.needsToUpdateDomainFields( prevProps ) ) {
 			this.setDomainFieldsToFirstDomainName();
 		}
 	},
 
-    needsToUpdateDomainFields( prevProps ) {
+	needsToUpdateDomainFields( prevProps ) {
 		return (
 			! this.props.selectedDomainName &&
 			! prevProps.domains.hasLoadedFromServer &&
@@ -97,30 +98,32 @@ const AddEmailAddressesCard = createReactClass({
 		);
 	},
 
-    getFirstDomainName() {
+	getFirstDomainName() {
 		const domains = getGoogleAppsSupportedDomains( this.props.domains.list );
 		return domains[ 0 ].name;
 	},
 
-    setDomainFieldsToFirstDomainName() {
+	setDomainFieldsToFirstDomainName() {
 		const firstDomainName = this.getFirstDomainName(),
-			nextFieldsets = this.state.fieldsets.map( ( fieldset ) => {
+			nextFieldsets = this.state.fieldsets.map( fieldset => {
 				return update( fieldset, {
-					domain: { value: { $set: firstDomainName } }
+					domain: { value: { $set: firstDomainName } },
 				} );
 			} );
 
 		this.setState( { fieldsets: nextFieldsets } );
 	},
 
-    render() {
+	render() {
 		return (
-		    <div className="add-email-addresses-card">
+			<div className="add-email-addresses-card">
 				{ this.validationErrors() }
 
 				<Card className="add-email-addresses-card__inner">
 					<form className="add-email-addresses-card__form">
-						<FormLabel>{ this.props.translate( 'Add Email Addresses' ) }</FormLabel>
+						<FormLabel>
+							{ this.props.translate( 'Add Email Addresses' ) }
+						</FormLabel>
 
 						{ this.allEmailAddressFieldsets() }
 						{ this.addAnotherEmailAddressLink() }
@@ -131,7 +134,7 @@ const AddEmailAddressesCard = createReactClass({
 		);
 	},
 
-    allEmailAddressFieldsets() {
+	allEmailAddressFieldsets() {
 		return (
 			<div className="add-email-addresses-card__email-address-fieldsets">
 				{ this.state.fieldsets.map( ( _, index ) => this.emailAddressFieldset( index ) ) }
@@ -139,9 +142,12 @@ const AddEmailAddressesCard = createReactClass({
 		);
 	},
 
-    emailAddressFieldset( index ) {
+	emailAddressFieldset( index ) {
 		const field = this.state.fieldsets[ index ],
-			contactText = this.props.translate( 'contact', { context: 'part of e-mail address', comment: 'As it would be part of an e-mail address contact@example.com' } );
+			contactText = this.props.translate( 'contact', {
+				context: 'part of e-mail address',
+				comment: 'As it would be part of an e-mail address contact@example.com',
+			} );
 		let suffix, select;
 
 		if ( this.props.selectedDomainName ) {
@@ -152,26 +158,30 @@ const AddEmailAddressesCard = createReactClass({
 					domains={ this.props.domains }
 					value={ this.state.fieldsets[ index ].domain.value }
 					onChange={ this.handleFieldChange.bind( this, 'domain', index ) }
-					onFocus={ this.handleFieldFocus.bind( this, 'Domain', index ) } />
+					onFocus={ this.handleFieldFocus.bind( this, 'Domain', index ) }
+				/>
 			);
 		}
 
 		return (
-		    <div className="add-email-addresses-card__email-address-fieldset" key={ index }>
+			<div className="add-email-addresses-card__email-address-fieldset" key={ index }>
 				<FormTextInputWithAffixes
 					onChange={ this.handleFieldChange.bind( this, 'username', index ) }
 					onFocus={ this.handleFieldFocus.bind( this, 'Email', index ) }
-					placeholder={ this.props.translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
+					placeholder={ this.props.translate( 'e.g. %(example)s', {
+						args: { example: contactText },
+					} ) }
 					suffix={ suffix }
 					type="text"
-					value={ field.username.value } />
+					value={ field.username.value }
+				/>
 
 				{ select }
 			</div>
 		);
 	},
 
-    handleFieldChange( fieldName, index, event ) {
+	handleFieldChange( fieldName, index, event ) {
 		const newValue = event.target.value;
 		let command = { fieldsets: {} };
 
@@ -185,36 +195,39 @@ const AddEmailAddressesCard = createReactClass({
 		this.setState( update( this.state, command ) );
 	},
 
-    handleFieldFocus( fieldName, index ) {
+	handleFieldFocus( fieldName, index ) {
 		this.recordEvent( 'inputFocus', this.props.selectedDomainName, fieldName, index );
 	},
 
-    addAnotherEmailAddressLink() {
+	addAnotherEmailAddressLink() {
 		return (
-		    <a className="add-email-addresses-card__add-another-email-address-link"
+			<a
+				className="add-email-addresses-card__add-another-email-address-link"
 				href="#"
-				onClick={ this.handleAddAnotherEmailAddress }>
+				onClick={ this.handleAddAnotherEmailAddress }
+			>
 				{ this.props.translate( '+ Add another email address' ) }
 			</a>
 		);
 	},
 
-    handleAddAnotherEmailAddress( event ) {
+	handleAddAnotherEmailAddress( event ) {
 		event.preventDefault();
 
 		this.setState( {
-			fieldsets: this.state.fieldsets.concat( [ this.getNewFieldset() ] )
+			fieldsets: this.state.fieldsets.concat( [ this.getNewFieldset() ] ),
 		} );
 
 		this.recordEvent( 'addAnotherEmailAddressClick', this.props.selectedDomainName );
 	},
 
-    formButtons() {
+	formButtons() {
 		return (
-		    <FormFooter className="add-email-addresses-card__footer">
+			<FormFooter className="add-email-addresses-card__footer">
 				<FormButton
 					onClick={ this.handleContinue }
-					disabled={ ! this.props.domains.hasLoadedFromServer }>
+					disabled={ ! this.props.domains.hasLoadedFromServer }
+				>
 					{ this.props.translate( 'Continue' ) }
 				</FormButton>
 
@@ -222,29 +235,30 @@ const AddEmailAddressesCard = createReactClass({
 					type="button"
 					isPrimary={ false }
 					onClick={ this.handleCancel }
-					disabled={ ! this.props.domains.hasLoadedFromServer }>
+					disabled={ ! this.props.domains.hasLoadedFromServer }
+				>
 					{ this.props.translate( 'Cancel' ) }
 				</FormButton>
 			</FormFooter>
 		);
 	},
 
-    getFields() {
+	getFields() {
 		return { username: this.props.translate( 'User Name' ) };
 	},
 
-    handleContinue( event ) {
+	handleContinue( event ) {
 		event.preventDefault();
 
 		const validation = validateUsers( {
 			users: this.state.fieldsets,
-			fields: this.getFields()
+			fields: this.getFields(),
 		} );
 
 		if ( ! isEmpty( validation.errors ) ) {
 			this.setState( {
 				validationErrors: validation.errors,
-				fieldsets: validation.users
+				fieldsets: validation.users,
 			} );
 		}
 
@@ -260,29 +274,31 @@ const AddEmailAddressesCard = createReactClass({
 		}
 	},
 
-    addProductsAndGoToCheckout() {
+	addProductsAndGoToCheckout() {
 		let googleAppsCartItems;
 
 		googleAppsCartItems = getGoogleAppsCartItems( {
 			domains: this.props.domains,
 			fieldsets: filterUsers( {
 				users: this.state.fieldsets,
-				fields: this.getFields()
-			} )
+				fields: this.getFields(),
+			} ),
 		} );
 		googleAppsCartItems.forEach( upgradesActions.addItem );
 
 		page( '/checkout/' + this.props.selectedSite.slug );
 	},
 
-    handleCancel( event ) {
+	handleCancel( event ) {
 		event.preventDefault();
 
 		this.recordEvent( 'cancelClick', this.props.selectedDomainName );
 
-		page( paths.domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
-	}
-});
+		page(
+			paths.domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName )
+		);
+	},
+} );
 
 function getGoogleAppsCartItems( { domains, fieldsets } ) {
 	let groups = groupBy( fieldsets, function( fieldset ) {
@@ -292,7 +308,7 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 	groups = mapValues( groups, function( group ) {
 		return map( group, function( fieldset ) {
 			return {
-				email: `${ fieldset.username.value }@${ fieldset.domain.value }`.toLowerCase()
+				email: `${ fieldset.username.value }@${ fieldset.domain.value }`.toLowerCase(),
 			};
 		} );
 	} );
@@ -311,4 +327,4 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 	} );
 }
 
-module.exports = localize(AddEmailAddressesCard);
+module.exports = localize( AddEmailAddressesCard );

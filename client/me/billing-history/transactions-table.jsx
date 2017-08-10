@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,14 +20,14 @@ import SearchCard from 'components/search-card';
 import { localize } from 'i18n-calypso';
 
 class TransactionsTable extends React.Component {
-    static displayName = 'TransactionsTable';
+	static displayName = 'TransactionsTable';
 
 	static defaultProps = {
-		header: false
+		header: false,
 	};
 
-	constructor(props) {
-	    super(props);
+	constructor( props ) {
+		super( props );
 		var initialTransactions;
 
 		if ( props.transactions ) {
@@ -35,7 +36,7 @@ class TransactionsTable extends React.Component {
 
 		this.state = {
 			transactions: initialTransactions,
-			filter: props.initialFilter
+			filter: props.initialFilter,
 		};
 	}
 
@@ -69,7 +70,7 @@ class TransactionsTable extends React.Component {
 
 		this.setState( {
 			transactions: newTransactions,
-			filter: newFilter
+			filter: newFilter,
 		} );
 	};
 
@@ -81,29 +82,33 @@ class TransactionsTable extends React.Component {
 		var header;
 
 		if ( false !== this.props.header ) {
-			header = <TransactionsHeader
-				onNewFilter={ this.filterTransactions }
-				transactions={ this.props.transactions }
-				filter={ this.state.filter } />;
+			header = (
+				<TransactionsHeader
+					onNewFilter={ this.filterTransactions }
+					transactions={ this.props.transactions }
+					filter={ this.state.filter }
+				/>
+			);
 		}
 
 		return (
-		    <div>
+			<div>
 				<SearchCard
 					placeholder={ this.props.translate( 'Search all receipts…', { textOnly: true } ) }
 					onSearch={ this.onSearch }
 				/>
 				<table className="billing-history__transactions">
 					{ header }
-					<tbody>{ this.renderRows() }</tbody>
+					<tbody>
+						{ this.renderRows() }
+					</tbody>
 				</table>
 			</div>
 		);
 	}
 
 	serviceName = transaction => {
-		var item,
-			name;
+		var item, name;
 
 		if ( ! transaction.items ) {
 			name = this.serviceNameDescription( transaction );
@@ -112,7 +117,11 @@ class TransactionsTable extends React.Component {
 			item.plan = capitalPDangit( titleCase( item.variation ) );
 			name = this.serviceNameDescription( item );
 		} else {
-			name = <strong>{ this.props.translate( 'Multiple items' ) }</strong>;
+			name = (
+				<strong>
+					{ this.props.translate( 'Multiple items' ) }
+				</strong>
+			);
 		}
 
 		return name;
@@ -123,12 +132,20 @@ class TransactionsTable extends React.Component {
 		if ( transaction.domain ) {
 			description = (
 				<div>
-					<strong>{ transaction.plan }</strong>
-					<small>{ transaction.domain }</small>
+					<strong>
+						{ transaction.plan }
+					</strong>
+					<small>
+						{ transaction.domain }
+					</small>
 				</div>
 			);
 		} else {
-			description = <strong>{ transaction.product } { transaction.plan }</strong>;
+			description = (
+				<strong>
+					{ transaction.product } { transaction.plan }
+				</strong>
+			);
 		}
 
 		return description;
@@ -164,7 +181,9 @@ class TransactionsTable extends React.Component {
 			}
 			return (
 				<tr className="billing-history__no-results">
-					<td className="billing-history__no-results-cell" colSpan="3">{ noResultsText }</td>
+					<td className="billing-history__no-results-cell" colSpan="3">
+						{ noResultsText }
+					</td>
 				</tr>
 			);
 		}
@@ -174,20 +193,26 @@ class TransactionsTable extends React.Component {
 
 			return (
 				<tr key={ transaction.id } className="billing-history__transaction">
-					<td className="date">{ date }</td>
+					<td className="date">
+						{ date }
+					</td>
 					<td className="billing-history__trans-app">
 						<div className="billing-history__trans-wrap">
 							<div className="billing-history__service-description">
-								<div className="billing-history__service-name">{ this.serviceName( transaction ) }</div>
+								<div className="billing-history__service-name">
+									{ this.serviceName( transaction ) }
+								</div>
 								{ this.props.transactionRenderer( transaction ) }
 							</div>
 						</div>
 					</td>
-					<td className="billing-history__amount">{ transaction.amount }</td>
+					<td className="billing-history__amount">
+						{ transaction.amount }
+					</td>
 				</tr>
 			);
 		}, this );
 	};
 }
 
-module.exports = localize(TransactionsTable);
+module.exports = localize( TransactionsTable );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,11 +26,7 @@ import TransactionStepsMixin from './transaction-steps-mixin';
 import upgradesActions from 'lib/upgrades/actions';
 import countriesList from 'lib/countries-list';
 import debugFactory from 'debug';
-import cartValues, {
-	isPaidForFullyInCredits,
-	isFree,
-	cartItems
-} from 'lib/cart-values';
+import cartValues, { isPaidForFullyInCredits, isFree, cartItems } from 'lib/cart-values';
 import Notice from 'components/notice';
 import { preventWidows } from 'lib/formatting';
 
@@ -40,26 +37,27 @@ const { hasFreeTrial } = cartItems;
 const countriesListForPayments = countriesList.forPayments();
 const debug = debugFactory( 'calypso:checkout:payment' );
 
-const SecurePaymentForm = createReactClass({
-    displayName: 'SecurePaymentForm',
-    mixins: [ TransactionStepsMixin ],
+const SecurePaymentForm = createReactClass( {
+	displayName: 'SecurePaymentForm',
+	mixins: [ TransactionStepsMixin ],
 
-    propTypes: {
+	propTypes: {
 		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
 		products: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
 	},
 
-    getInitialState() {
+	getInitialState() {
 		return {
 			userSelectedPaymentBox: null,
 			visiblePaymentBox: this.getVisiblePaymentBox( this.props.cart, this.props.paymentMethods ),
-			previousCart: null
+			previousCart: null,
 		};
 	},
 
-    getVisiblePaymentBox( cart, paymentMethods ) {
-		const primary = 0, secondary = 1;
+	getVisiblePaymentBox( cart, paymentMethods ) {
+		const primary = 0,
+			secondary = 1;
 
 		if ( isPaidForFullyInCredits( cart ) ) {
 			return 'credits';
@@ -78,38 +76,38 @@ const SecurePaymentForm = createReactClass({
 		return null;
 	},
 
-    componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.transaction.step.name !== 'before-submit' ) {
 			return;
 		}
 
 		this.setState( {
-			visiblePaymentBox: this.getVisiblePaymentBox( nextProps.cart, nextProps.paymentMethods )
+			visiblePaymentBox: this.getVisiblePaymentBox( nextProps.cart, nextProps.paymentMethods ),
 		} );
 	},
 
-    handlePaymentBoxSubmit( event ) {
+	handlePaymentBoxSubmit( event ) {
 		analytics.ga.recordEvent( 'Upgrades', 'Submitted Checkout Form' );
 
 		// `submitTransaction` comes from the `TransactionStepsMixin`
 		this.submitTransaction( event );
 	},
 
-    getInitialCard() {
+	getInitialCard() {
 		return this.props.cards[ 0 ];
 	},
 
-    componentWillMount() {
+	componentWillMount() {
 		this.setInitialPaymentDetails();
 	},
 
-    componentDidUpdate( prevProps, prevState ) {
+	componentDidUpdate( prevProps, prevState ) {
 		if ( this.state.visiblePaymentBox !== prevState.visiblePaymentBox ) {
 			this.setInitialPaymentDetails();
 		}
 	},
 
-    setInitialPaymentDetails() {
+	setInitialPaymentDetails() {
 		let newPayment;
 
 		switch ( this.state.visiblePaymentBox ) {
@@ -144,43 +142,46 @@ const SecurePaymentForm = createReactClass({
 		}
 	},
 
-    selectPaymentBox( paymentBox ) {
+	selectPaymentBox( paymentBox ) {
 		this.setState( {
 			userSelectedPaymentBox: paymentBox,
-			visiblePaymentBox: paymentBox
+			visiblePaymentBox: paymentBox,
 		} );
 	},
 
-    renderCreditsPayentBox() {
+	renderCreditsPayentBox() {
 		return (
 			<CreditsPaymentBox
 				cart={ this.props.cart }
 				onSubmit={ this.handlePaymentBoxSubmit }
-				transactionStep={ this.props.transaction.step } />
+				transactionStep={ this.props.transaction.step }
+			/>
 		);
 	},
 
-    renderFreeTrialConfirmationBox() {
+	renderFreeTrialConfirmationBox() {
 		return (
 			<FreeTrialConfirmationBox
 				cart={ this.props.cart }
 				onSubmit={ this.handlePaymentBoxSubmit }
-				transactionStep={ this.props.transaction.step } />
+				transactionStep={ this.props.transaction.step }
+			/>
 		);
 	},
 
-    renderFreeCartPaymentBox() {
+	renderFreeCartPaymentBox() {
 		return (
 			<FreeCartPaymentBox
 				cart={ this.props.cart }
 				onSubmit={ this.handlePaymentBoxSubmit }
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
-				transactionStep={ this.props.transaction.step } />
+				transactionStep={ this.props.transaction.step }
+			/>
 		);
 	},
 
-    renderCreditCardPaymentBox() {
+	renderCreditCardPaymentBox() {
 		return (
 			<CreditCardPaymentBox
 				cards={ this.props.cards }
@@ -191,11 +192,12 @@ const SecurePaymentForm = createReactClass({
 				selectedSite={ this.props.selectedSite }
 				onToggle={ this.selectPaymentBox }
 				onSubmit={ this.handlePaymentBoxSubmit }
-				transactionStep={ this.props.transaction.step } />
+				transactionStep={ this.props.transaction.step }
+			/>
 		);
 	},
 
-    renderPayPalPaymentBox() {
+	renderPayPalPaymentBox() {
 		return (
 			<PayPalPaymentBox
 				cart={ this.props.cart }
@@ -203,28 +205,35 @@ const SecurePaymentForm = createReactClass({
 				countriesList={ countriesListForPayments }
 				selectedSite={ this.props.selectedSite }
 				onToggle={ this.selectPaymentBox }
-				redirectTo={ this.props.redirectTo } />
+				redirectTo={ this.props.redirectTo }
+			/>
 		);
 	},
 
-    renderGetDotBlogNotice() {
-		const hasProductFromGetDotBlogSignup = find( this.props.cart.products, product => (
-			product.extra && product.extra.source === 'get-dot-blog-signup'
-		) );
+	renderGetDotBlogNotice() {
+		const hasProductFromGetDotBlogSignup = find(
+			this.props.cart.products,
+			product => product.extra && product.extra.source === 'get-dot-blog-signup'
+		);
 
 		if ( this.state.visiblePaymentBox !== 'credit-card' || ! hasProductFromGetDotBlogSignup ) {
 			return;
 		}
 
 		return (
-		    <Notice icon="notice" showDismiss={ false }>
-				{ preventWidows( this.props.translate( 'You can reuse the payment information you entered on get.blog, ' +
-					'a WordPress.com service. Confirm your order below.' ), 4 ) }
+			<Notice icon="notice" showDismiss={ false }>
+				{ preventWidows(
+					this.props.translate(
+						'You can reuse the payment information you entered on get.blog, ' +
+							'a WordPress.com service. Confirm your order below.'
+					),
+					4
+				) }
 			</Notice>
 		);
 	},
 
-    renderPaymentBox() {
+	renderPaymentBox() {
 		const { visiblePaymentBox } = this.state;
 		debug( 'getting %o payment box ...', visiblePaymentBox );
 
@@ -249,15 +258,18 @@ const SecurePaymentForm = createReactClass({
 		}
 	},
 
-    render() {
+	render() {
 		if ( this.state.visiblePaymentBox === null ) {
 			return (
-			    <EmptyContent
+				<EmptyContent
 					illustration="/calypso/images/illustrations/illustration-500.svg"
 					title={ this.props.translate( 'Checkout is not available' ) }
-					line={ this.props.translate( "We're hard at work on the issue. Please check back shortly." ) }
+					line={ this.props.translate(
+						"We're hard at work on the issue. Please check back shortly."
+					) }
 					action={ this.props.translate( 'Back to Plans' ) }
-					actionURL={ '/plans/' + this.props.selectedSite.slug } />
+					actionURL={ '/plans/' + this.props.selectedSite.slug }
+				/>
 			);
 		}
 
@@ -267,8 +279,7 @@ const SecurePaymentForm = createReactClass({
 				{ this.renderPaymentBox() }
 			</div>
 		);
-	}
-});
+	},
+} );
 
-export default localize(SecurePaymentForm);
-
+export default localize( SecurePaymentForm );

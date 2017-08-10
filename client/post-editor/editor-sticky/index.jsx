@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,16 +22,16 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 
 class EditorSticky extends React.Component {
-    static displayName = 'EditorSticky';
+	static displayName = 'EditorSticky';
 
 	static propTypes = {
 		postId: PropTypes.number,
 		siteId: PropTypes.number,
-		sticky: PropTypes.bool
+		sticky: PropTypes.bool,
 	};
 
 	state = {
-		tooltip: false
+		tooltip: false,
 	};
 
 	toggleStickyStatus = () => {
@@ -49,7 +50,7 @@ class EditorSticky extends React.Component {
 		recordEvent( 'Changed Sticky Setting', stickyEventLabel );
 
 		this.props.editPost( this.props.siteId, this.props.postId, {
-			sticky: ! this.props.sticky
+			sticky: ! this.props.sticky,
 		} );
 		this.setState( { tooltip: false } );
 	};
@@ -63,13 +64,10 @@ class EditorSticky extends React.Component {
 	};
 
 	render() {
-		const classes = classnames(
-			'editor-sticky',
-			{ 'is-sticky': this.props.sticky }
-		);
+		const classes = classnames( 'editor-sticky', { 'is-sticky': this.props.sticky } );
 
 		return (
-		    <Button
+			<Button
 				borderless
 				className={ classes }
 				onClick={ this.toggleStickyStatus }
@@ -86,16 +84,17 @@ class EditorSticky extends React.Component {
 						isVisible={ this.state.tooltip }
 						position="bottom left"
 					>
-						<span>{ this.props.translate( 'Marked as sticky' ) }</span>
-					</Tooltip>
-				}
+						<span>
+							{ this.props.translate( 'Marked as sticky' ) }
+						</span>
+					</Tooltip> }
 			</Button>
 		);
 	}
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const postId = getEditorPostId( state );
 		const siteId = getSelectedSiteId( state );
 		const sticky = getEditedPostValue( state, siteId, postId, 'sticky' );
@@ -103,8 +102,8 @@ export default connect(
 		return {
 			postId,
 			siteId,
-			sticky
+			sticky,
 		};
 	},
 	{ editPost }
-)( localize(EditorSticky) );
+)( localize( EditorSticky ) );

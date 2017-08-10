@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,14 +26,11 @@ import SectionHeader from 'components/section-header';
 import { registrar as registrarNames } from 'lib/domains/constants';
 
 class EditContactInfo extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		domains: PropTypes.object.isRequired,
 		whois: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.bool
-		] ).isRequired
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
 	render() {
@@ -41,10 +39,11 @@ class EditContactInfo extends React.Component {
 		}
 
 		return (
-		    <Main className="domain-management-edit-contact-info">
+			<Main className="domain-management-edit-contact-info">
 				<Header
 					onClick={ this.goToContactsPrivacy }
-					selectedDomainName={ this.props.selectedDomainName }>
+					selectedDomainName={ this.props.selectedDomainName }
+				>
 					{ this.props.translate( 'Edit Contact Info' ) }
 				</Header>
 				{ this.getCard() }
@@ -53,7 +52,7 @@ class EditContactInfo extends React.Component {
 	}
 
 	isDataLoading = () => {
-		return ( ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer );
+		return ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer;
 	};
 
 	getCard = () => {
@@ -73,19 +72,25 @@ class EditContactInfo extends React.Component {
 		}
 
 		return (
-		    <div>
+			<div>
 				<SectionHeader label={ this.props.translate( 'Edit Contact Info' ) } />
 				<EditContactInfoFormCard
 					contactInformation={ findRegistrantWhois( this.props.whois.data ) }
 					selectedDomain={ getSelectedDomain( this.props ) }
-					selectedSite={ this.props.selectedSite } />
+					selectedSite={ this.props.selectedSite }
+				/>
 			</div>
 		);
 	};
 
 	goToContactsPrivacy = () => {
-		page( paths.domainManagementContactsPrivacy( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(
+			paths.domainManagementContactsPrivacy(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName
+			)
+		);
 	};
 }
 
-export default localize(EditContactInfo);
+export default localize( EditContactInfo );

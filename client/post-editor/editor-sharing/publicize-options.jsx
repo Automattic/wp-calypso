@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -32,13 +33,13 @@ import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
 
 class EditorSharingPublicizeOptions extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		site: PropTypes.object,
 		post: PropTypes.object,
 		siteId: PropTypes.number,
 		isPublicizeEnabled: PropTypes.bool,
 		connections: PropTypes.array,
-		requestConnections: PropTypes.func
+		requestConnections: PropTypes.func,
 	};
 
 	connectionPopupMonitor = false;
@@ -123,20 +124,20 @@ class EditorSharingPublicizeOptions extends React.Component {
 		}
 
 		return (
-			<PublicizeServices
-				post={ this.props.post }
-				newConnectionPopup={ this.newConnectionPopup } />
+			<PublicizeServices post={ this.props.post } newConnectionPopup={ this.newConnectionPopup } />
 		);
 	};
 
 	renderMessage = () => {
 		var preview = get( this.props.post, 'title' ),
 			skipped = this.hasConnections() ? PostMetadata.publicizeSkipped( this.props.post ) : [],
-			targeted = this.hasConnections() ? this.props.connections.filter( function( connection ) {
-				return skipped && -1 === skipped.indexOf( connection.keyring_connection_ID );
-			} ) : [],
+			targeted = this.hasConnections()
+				? this.props.connections.filter( function( connection ) {
+						return skipped && -1 === skipped.indexOf( connection.keyring_connection_ID );
+					} )
+				: [],
 			requireCount = includes( map( targeted, 'service' ), 'twitter' ),
-			acceptableLength = ( requireCount ) ? 140 - 23 - 23 : null;
+			acceptableLength = requireCount ? 140 - 23 - 23 : null;
 
 		if ( ! this.hasConnections() ) {
 			return;
@@ -147,7 +148,8 @@ class EditorSharingPublicizeOptions extends React.Component {
 				message={ PostMetadata.publicizeMessage( this.props.post ) }
 				preview={ preview }
 				requireCount={ requireCount }
-				acceptableLength={ acceptableLength } />
+				acceptableLength={ acceptableLength }
+			/>
 		);
 	};
 
@@ -158,7 +160,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 		}
 
 		return (
-		    <Button borderless compact onClick={ this.newConnection }>
+			<Button borderless compact onClick={ this.newConnection }>
 				<Gridicon icon="add" /> { this.props.translate( 'Connect new service' ) }
 				<span className="editor-sharing__external-link-indicator">
 					<Gridicon icon="external" size={ 18 } />
@@ -175,8 +177,10 @@ class EditorSharingPublicizeOptions extends React.Component {
 		}
 
 		return (
-		    <p className="editor-drawer__description">
-				{ this.props.translate( 'Connect and select social media services to automatically share this post.' ) }
+			<p className="editor-drawer__description">
+				{ this.props.translate(
+					'Connect and select social media services to automatically share this post.'
+				) }
 			</p>
 		);
 	};
@@ -192,19 +196,30 @@ class EditorSharingPublicizeOptions extends React.Component {
 
 		if ( this.props.site && this.props.site.options.publicize_permanently_disabled ) {
 			return (
-			    <div className="editor-sharing__publicize-disabled">
-					<p><span>{ this.props.translate( 'Publicize is disabled on this site.' ) }</span></p>
+				<div className="editor-sharing__publicize-disabled">
+					<p>
+						<span>
+							{ this.props.translate( 'Publicize is disabled on this site.' ) }
+						</span>
+					</p>
 				</div>
 			);
 		}
 
 		if ( this.props.site && this.props.site.jetpack && ! this.props.isPublicizeEnabled ) {
 			return (
-			    <div className="editor-sharing__publicize-disabled">
-					<p><span>{ this.props.translate( 'Enable the Publicize module to automatically share new posts to social networks.' ) }</span></p>
+				<div className="editor-sharing__publicize-disabled">
+					<p>
+						<span>
+							{ this.props.translate(
+								'Enable the Publicize module to automatically share new posts to social networks.'
+							) }
+						</span>
+					</p>
 					<button
-							className="editor-sharing__jetpack-modules-button button is-secondary"
-							onClick={ this.jetpackModulePopup } >
+						className="editor-sharing__jetpack-modules-button button is-secondary"
+						onClick={ this.jetpackModulePopup }
+					>
 						{ this.props.translate( 'View Module Settings' ) }
 					</button>
 				</div>
@@ -213,7 +228,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 
 		const classes = classNames( 'editor-sharing__publicize-options', {
 			'has-connections': this.hasConnections(),
-			'has-add-option': siteUtils.userCan( 'publish_posts', this.props.site )
+			'has-add-option': siteUtils.userCan( 'publish_posts', this.props.site ),
 		} );
 
 		return (
@@ -229,21 +244,20 @@ class EditorSharingPublicizeOptions extends React.Component {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const userId = getCurrentUserId( state );
 		const postId = getEditorPostId( state );
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );
-		const isPublicizeEnabled = (
+		const isPublicizeEnabled =
 			false !== isJetpackModuleActive( state, siteId, 'publicize' ) &&
-			postTypeSupports( state, siteId, postType, 'publicize' )
-		);
+			postTypeSupports( state, siteId, postType, 'publicize' );
 
 		return {
 			siteId,
 			isPublicizeEnabled,
-			connections: getSiteUserConnections( state, siteId, userId )
+			connections: getSiteUserConnections( state, siteId, userId ),
 		};
 	},
 	{ requestConnections }
-)( localize(EditorSharingPublicizeOptions) );
+)( localize( EditorSharingPublicizeOptions ) );

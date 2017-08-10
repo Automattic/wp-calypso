@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +20,7 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
 export class EditorMediaModalDetail extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		site: PropTypes.object,
 		items: PropTypes.array,
 		selectedIndex: PropTypes.number,
@@ -31,7 +32,7 @@ export class EditorMediaModalDetail extends React.Component {
 
 	static defaultProps = {
 		selectedIndex: 0,
-		onSelectedIndexChange: noop
+		onSelectedIndexChange: noop,
 	};
 
 	componentDidMount() {
@@ -45,7 +46,7 @@ export class EditorMediaModalDetail extends React.Component {
 	preloadImages = () => {
 		MediaUtils.filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function( image ) {
 			var src = MediaUtils.url( image, {
-				photon: this.props.site && ! this.props.site.is_private
+				photon: this.props.site && ! this.props.site.is_private,
 			} );
 
 			preloadImage( src );
@@ -72,8 +73,11 @@ export class EditorMediaModalDetail extends React.Component {
 		const mimePrefix = MediaUtils.getMimePrefix( item );
 
 		return (
-		    <div className="editor-media-modal-detail">
-				<HeaderCake onClick={ onReturnToList } backText={ this.props.translate( 'Media Library' ) } />
+			<div className="editor-media-modal-detail">
+				<HeaderCake
+					onClick={ onReturnToList }
+					backText={ this.props.translate( 'Media Library' ) }
+				/>
 				<DetailItem
 					site={ site }
 					item={ item }
@@ -82,7 +86,8 @@ export class EditorMediaModalDetail extends React.Component {
 					onShowPreviousItem={ this.incrementIndex.bind( this, -1 ) }
 					onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
 					onRestore={ onRestoreItem }
-					onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem } />
+					onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem }
+				/>
 			</div>
 		);
 	}
@@ -92,4 +97,4 @@ export default connect( null, {
 	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
 	onEditImageItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 	onEditVideoItem: partial( setEditorMediaModalView, ModalViews.VIDEO_EDITOR ),
-} )( localize(EditorMediaModalDetail) );
+} )( localize( EditorMediaModalDetail ) );

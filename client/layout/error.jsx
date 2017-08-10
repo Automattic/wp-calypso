@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,12 +23,12 @@ var analytics = require( 'lib/analytics' ),
 const log = debug( 'calypso:layout' );
 
 class LoadingError extends React.Component {
-    static isRetry() {
+	static isRetry() {
 		var parsed = url.parse( location.href, true );
 		return parsed.query.retry === '1';
 	}
 
-	static retry(chunkName) {
+	static retry( chunkName ) {
 		var parsed;
 		if ( ! LoadingError.isRetry() ) {
 			parsed = url.parse( location.href, true );
@@ -39,7 +40,7 @@ class LoadingError extends React.Component {
 		}
 	}
 
-	static show(chunkName) {
+	static show( chunkName ) {
 		log( 'Chunk %s could not be loaded', chunkName );
 		analytics.mc.bumpStat( 'calypso_chunk_error', chunkName );
 		ReactDom.render(
@@ -50,11 +51,12 @@ class LoadingError extends React.Component {
 
 	render() {
 		return (
-		    <EmptyContent
+			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-500.svg"
-				title={ this.props.translate( 'We\'re sorry, but an unexpected error has occurred' ) } />
+				title={ this.props.translate( "We're sorry, but an unexpected error has occurred" ) }
+			/>
 		);
 	}
 }
 
-module.exports = localize(LoadingError);
+module.exports = localize( LoadingError );

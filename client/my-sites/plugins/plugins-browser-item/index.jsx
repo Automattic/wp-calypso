@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,8 +19,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
 class PluginsBrowserListElement extends React.Component {
-    static defaultProps = {
-		iconSize: 40
+	static defaultProps = {
+		iconSize: 40,
 	};
 
 	getPluginLink = () => {
@@ -40,7 +41,7 @@ class PluginsBrowserListElement extends React.Component {
 	trackPluginLinkClick = () => {
 		analytics.tracks.recordEvent( 'calypso_plugin_browser_item_click', {
 			site: this.props.site,
-			plugin: this.props.plugin.slug
+			plugin: this.props.plugin.slug,
 		} );
 	};
 
@@ -56,11 +57,11 @@ class PluginsBrowserListElement extends React.Component {
 
 	renderInstalledIn = () => {
 		var sites = this.getSites();
-		if ( sites && sites.length > 0 || this.isWpcomPreinstalled() ) {
+		if ( ( sites && sites.length > 0 ) || this.isWpcomPreinstalled() ) {
 			return (
-			    <div className="plugins-browser-item__installed">
-						<Gridicon icon='checkmark' size={ 18 } />
-						{ this.props.translate( 'Installed' ) }
+				<div className="plugins-browser-item__installed">
+					<Gridicon icon="checkmark" size={ 18 } />
+					{ this.props.translate( 'Installed' ) }
 				</div>
 			);
 		}
@@ -70,7 +71,7 @@ class PluginsBrowserListElement extends React.Component {
 	renderPlaceholder = () => {
 		return (
 			<li className="plugins-browser-item is-placeholder">
-				<span className="plugins-browser-item__link" >
+				<span className="plugins-browser-item__link">
 					<div className="plugins-browser-item__info">
 						<PluginIcon size={ this.props.iconSize } isPlaceholder={ true } />
 						<div className="plugins-browser-item__title">…</div>
@@ -88,11 +89,23 @@ class PluginsBrowserListElement extends React.Component {
 		}
 		return (
 			<li className="plugins-browser-item">
-				<a href={ this.getPluginLink() } className="plugins-browser-item__link" onClick={ this.trackPluginLinkClick }>
+				<a
+					href={ this.getPluginLink() }
+					className="plugins-browser-item__link"
+					onClick={ this.trackPluginLinkClick }
+				>
 					<div className="plugins-browser-item__info">
-						<PluginIcon size={ this.props.iconSize } image={ this.props.plugin.icon } isPlaceholder={ this.props.isPlaceholder } />
-						<div className="plugins-browser-item__title">{ this.props.plugin.name }</div>
-						<div className="plugins-browser-item__author">{ this.props.plugin.author_name }</div>
+						<PluginIcon
+							size={ this.props.iconSize }
+							image={ this.props.plugin.icon }
+							isPlaceholder={ this.props.isPlaceholder }
+						/>
+						<div className="plugins-browser-item__title">
+							{ this.props.plugin.name }
+						</div>
+						<div className="plugins-browser-item__author">
+							{ this.props.plugin.author_name }
+						</div>
 						{ this.renderInstalledIn() }
 					</div>
 					<Rating rating={ this.props.plugin.rating } />
@@ -102,12 +115,10 @@ class PluginsBrowserListElement extends React.Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
 
-		return {
-			isJetpackSite: isJetpackSite( state, selectedSiteId ),
-		};
-	}
-)( localize(PluginsBrowserListElement) );
+	return {
+		isJetpackSite: isJetpackSite( state, selectedSiteId ),
+	};
+} )( localize( PluginsBrowserListElement ) );

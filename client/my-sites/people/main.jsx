@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,10 +22,7 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import {
-	isJetpackMinimumVersion,
-	isJetpackSite,
-} from 'state/sites/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser, isPrivateSite } from 'state/selectors';
 
 /**
@@ -33,7 +31,8 @@ import { canCurrentUser, isPrivateSite } from 'state/selectors';
 const debug = debugModule( 'calypso:my-sites:people:main' );
 
 // TODO: port to es6 once we remove the last observe
-export const People = createReactClass({ // eslint-disable-line react/prefer-es6-class
+export const People = createReactClass( {
+	// eslint-disable-line react/prefer-es6-class
 
 	displayName: 'People',
 
@@ -51,11 +50,12 @@ export const People = createReactClass({ // eslint-disable-line react/prefer-es6
 				return <FollowersList site={ site } label={ this.props.translate( 'Followers' ) } />;
 			case 'email-followers':
 				return (
-				    <FollowersList
+					<FollowersList
 						site={ site }
 						search={ this.props.search }
 						label={ this.props.translate( 'Email Followers' ) }
-						type="email" />
+						type="email"
+					/>
 				);
 			case 'viewers':
 				return <ViewersList site={ site } label={ this.props.translate( 'Viewers' ) } />;
@@ -73,7 +73,7 @@ export const People = createReactClass({ // eslint-disable-line react/prefer-es6
 			site,
 			search,
 			filter,
-			isPrivate
+			isPrivate,
 		} = this.props;
 
 		// Jetpack 3.7 is necessary to manage people
@@ -81,17 +81,13 @@ export const People = createReactClass({ // eslint-disable-line react/prefer-es6
 			return (
 				<Main>
 					<SidebarNavigation />
-					<JetpackManageErrorPage
-						template="updateJetpack"
-						siteId={ siteId }
-						version="3.7"
-					/>
+					<JetpackManageErrorPage template="updateJetpack" siteId={ siteId } version="3.7" />
 				</Main>
 			);
 		}
 		if ( siteId && ! canViewPeople ) {
 			return (
-			    <Main>
+				<Main>
 					<SidebarNavigation />
 					<EmptyContent
 						title={ this.props.translate( 'You are not authorized to view this page' ) }
@@ -104,32 +100,33 @@ export const People = createReactClass({ // eslint-disable-line react/prefer-es6
 			<Main>
 				<SidebarNavigation />
 				<div>
-					{ <PeopleSectionNav
-						isJetpack={ isJetpack }
-						isPrivate={ isPrivate }
-						jetpackPeopleSupported={ jetpackPeopleSupported }
-						canViewPeople={ canViewPeople }
-						search={ search }
-						filter={ filter }
-						site={ site } /> }
+					{
+						<PeopleSectionNav
+							isJetpack={ isJetpack }
+							isPrivate={ isPrivate }
+							jetpackPeopleSupported={ jetpackPeopleSupported }
+							canViewPeople={ canViewPeople }
+							search={ search }
+							filter={ filter }
+							site={ site }
+						/>
+					}
 					<PeopleNotices />
 					{ this.renderPeopleList( site ) }
 				</div>
 			</Main>
 		);
-	}
-});
+	},
+} );
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		return {
-			siteId,
-			site: getSelectedSite( state ),
-			isJetpack: isJetpackSite( state, siteId ),
-			isPrivate: isPrivateSite( state, siteId ),
-			canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
-			jetpackPeopleSupported: isJetpackMinimumVersion( state, siteId, '3.7.0-beta' ),
-		};
-	}
-)( localize(People) );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		siteId,
+		site: getSelectedSite( state ),
+		isJetpack: isJetpackSite( state, siteId ),
+		isPrivate: isPrivateSite( state, siteId ),
+		canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
+		jetpackPeopleSupported: isJetpackMinimumVersion( state, siteId, '3.7.0-beta' ),
+	};
+} )( localize( People ) );

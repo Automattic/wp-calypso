@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,54 +13,58 @@ import { requestCode, resetCode } from 'lib/auth-code-request-store/actions';
 import { default as Store, requestState } from 'lib/auth-code-request-store';
 import Notice from 'components/notice';
 
-export default localize(class extends React.Component {
-    state = Store.get();
+export default localize(
+	class extends React.Component {
+		state = Store.get();
 
-	componentDidMount() {
-		Store.on( 'change', this.refreshData );
-	}
-
-	componentWillUnmount() {
-		Store.off( 'change', this.refreshData );
-	}
-
-	refreshData = () => {
-		this.setState( Store.get() );
-	};
-
-	requestSMSCode = e => {
-		e.preventDefault();
-		requestCode( this.props.username, this.props.password );
-	};
-
-	render() {
-		const { status, errorLevel, errorMessage } = this.state;
-
-		var noticeStatus = 'is-info';
-		var showDismiss = false;
-		var message = (
-			<a href="#" onClick={ this.requestSMSCode }>{ this.props.translate( 'Send code via text message.' ) }</a>
-		);
-
-		if ( status === requestState.REQUESTING ) {
-			message = this.props.translate( 'Requesting code.' );
+		componentDidMount() {
+			Store.on( 'change', this.refreshData );
 		}
 
-		if ( status === requestState.COMPLETE ) {
-			noticeStatus = 'is-success';
-			message = this.props.translate( 'Code sent.' );
+		componentWillUnmount() {
+			Store.off( 'change', this.refreshData );
 		}
 
-		if ( errorLevel !== false ) {
-			noticeStatus = errorLevel;
-			message = errorMessage;
-			showDismiss = true;
-		}
+		refreshData = () => {
+			this.setState( Store.get() );
+		};
 
-		return (
-			<Notice showDismiss={ showDismiss } status={ noticeStatus } onDismissClick={ resetCode } >
-				{ message }
-			</Notice>
-		);
+		requestSMSCode = e => {
+			e.preventDefault();
+			requestCode( this.props.username, this.props.password );
+		};
+
+		render() {
+			const { status, errorLevel, errorMessage } = this.state;
+
+			var noticeStatus = 'is-info';
+			var showDismiss = false;
+			var message = (
+				<a href="#" onClick={ this.requestSMSCode }>
+					{ this.props.translate( 'Send code via text message.' ) }
+				</a>
+			);
+
+			if ( status === requestState.REQUESTING ) {
+				message = this.props.translate( 'Requesting code.' );
+			}
+
+			if ( status === requestState.COMPLETE ) {
+				noticeStatus = 'is-success';
+				message = this.props.translate( 'Code sent.' );
+			}
+
+			if ( errorLevel !== false ) {
+				noticeStatus = errorLevel;
+				message = errorMessage;
+				showDismiss = true;
+			}
+
+			return (
+				<Notice showDismiss={ showDismiss } status={ noticeStatus } onDismissClick={ resetCode }>
+					{ message }
+				</Notice>
+			);
+		}
 	}
-});
+);

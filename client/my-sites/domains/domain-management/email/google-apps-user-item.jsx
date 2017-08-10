@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,12 +14,12 @@ import { localize } from 'i18n-calypso';
 import ExternalLink from 'components/external-link';
 
 class GoogleAppsUserItem extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		user: PropTypes.object.isRequired,
-		onClick: PropTypes.func
+		onClick: PropTypes.func,
 	};
 
-	shouldComponentUpdate(nextProps) {
+	shouldComponentUpdate( nextProps ) {
 		return this.props.user !== nextProps.user || this.props.onClick !== nextProps.onClick;
 	}
 
@@ -29,7 +30,7 @@ class GoogleAppsUserItem extends React.Component {
 
 	render() {
 		return (
-		    <li>
+			<li>
 				<span className="google-apps-user-item__email">
 					{ this.props.user.email }
 				</span>
@@ -40,7 +41,8 @@ class GoogleAppsUserItem extends React.Component {
 					href={ this.getLoginLink() }
 					onClick={ this.props.onClick }
 					target="_blank"
-					rel="noopener noreferrer">
+					rel="noopener noreferrer"
+				>
 					{ this.props.translate( 'Manage', { context: 'G Suite user item' } ) }
 				</ExternalLink>
 			</li>
@@ -48,4 +50,4 @@ class GoogleAppsUserItem extends React.Component {
 	}
 }
 
-export default localize(GoogleAppsUserItem);
+export default localize( GoogleAppsUserItem );

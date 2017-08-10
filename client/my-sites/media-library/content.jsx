@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -39,7 +40,7 @@ import {
 const isConnected = props => some( props.connectedServices, item => item.service === props.source );
 
 class MediaLibraryContent extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		site: PropTypes.object,
 		mediaValidationErrors: PropTypes.object,
 		filter: PropTypes.string,
@@ -52,7 +53,7 @@ class MediaLibraryContent extends React.Component {
 		onAddMedia: PropTypes.func,
 		onMediaScaleChange: PropTypes.func,
 		onEditItem: PropTypes.func,
-		postId: PropTypes.number
+		postId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -62,7 +63,11 @@ class MediaLibraryContent extends React.Component {
 	};
 
 	componentWillMount() {
-		if ( ! this.props.isRequesting && this.props.source !== '' && this.props.connectedServices.length === 0 ) {
+		if (
+			! this.props.isRequesting &&
+			this.props.source !== '' &&
+			this.props.connectedServices.length === 0
+		) {
 			// Are we connected to anything yet?
 			this.props.requestKeyringConnections();
 		}
@@ -76,11 +81,15 @@ class MediaLibraryContent extends React.Component {
 			let message, onDismiss;
 			const i18nOptions = {
 				count: occurrences.length,
-				args: occurrences.length
+				args: occurrences.length,
 			};
 
 			if ( this.props.site ) {
-				onDismiss = MediaActions.clearValidationErrorsByType.bind( null, this.props.site.ID, errorType );
+				onDismiss = MediaActions.clearValidationErrorsByType.bind(
+					null,
+					this.props.site.ID,
+					errorType
+				);
 			}
 
 			let status = 'is-error';
@@ -152,7 +161,7 @@ class MediaLibraryContent extends React.Component {
 			}
 
 			return (
-				<Notice status={ status } text={ message } onDismissClick={ onDismiss } >
+				<Notice status={ status } text={ message } onDismissClick={ onDismiss }>
 					{ this.renderNoticeAction( upgradeNudgeName, upgradeNudgeFeature ) }
 					{ tryAgain && this.renderTryAgain() }
 				</Notice>
@@ -174,27 +183,36 @@ class MediaLibraryContent extends React.Component {
 		MediaActions.sourceChanged( this.props.site.ID );
 	};
 
-	renderNoticeAction = (upgradeNudgeName, upgradeNudgeFeature) => {
-		if ( !upgradeNudgeName ) {
+	renderNoticeAction = ( upgradeNudgeName, upgradeNudgeFeature ) => {
+		if ( ! upgradeNudgeName ) {
 			return null;
 		}
 		const eventName = 'calypso_upgrade_nudge_impression';
 		const eventProperties = {
 			cta_name: upgradeNudgeName,
-			cta_feature: upgradeNudgeFeature
+			cta_feature: upgradeNudgeFeature,
 		};
 		return (
-		    <NoticeAction
+			<NoticeAction
 				external={ true }
-				href={ upgradeNudgeFeature ? `/plans/compare/${ this.props.siteSlug }?feature=${ upgradeNudgeFeature }` : `/plans/${ this.props.siteSlug }` }
-				onClick={ this.recordPlansNavigation.bind( this, 'calypso_upgrade_nudge_cta_click', eventProperties ) }>
+				href={
+					upgradeNudgeFeature
+						? `/plans/compare/${ this.props.siteSlug }?feature=${ upgradeNudgeFeature }`
+						: `/plans/${ this.props.siteSlug }`
+				}
+				onClick={ this.recordPlansNavigation.bind(
+					this,
+					'calypso_upgrade_nudge_cta_click',
+					eventProperties
+				) }
+			>
 				{ this.props.translate( 'Upgrade Plan' ) }
 				<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
 			</NoticeAction>
 		);
 	};
 
-	recordPlansNavigation = (tracksEvent, tracksData) => {
+	recordPlansNavigation = ( tracksEvent, tracksData ) => {
 		analytics.ga.recordEvent( 'Media', 'Clicked Upload Error Action' );
 		analytics.tracks.recordEvent( tracksEvent, tracksData );
 	};
@@ -206,17 +224,22 @@ class MediaLibraryContent extends React.Component {
 
 	renderExternalMedia = () => {
 		const connectMessage = translate(
-			'To show Photos from Google, you need to connect your Google account. Do that from {{link}}your Sharing settings{{/link}}.', {
+			'To show Photos from Google, you need to connect your Google account. Do that from {{link}}your Sharing settings{{/link}}.',
+			{
 				components: {
-					link: <a href={ `/sharing/${ this.props.site.slug }` } onClick={ this.goToSharing } />
-				}
+					link: <a href={ `/sharing/${ this.props.site.slug }` } onClick={ this.goToSharing } />,
+				},
 			}
 		);
 
 		return (
 			<div className="media-library__connect-message">
-				<p><img src="/calypso/images/sharing/google-photos-logo.svg" width="96" height="96" /></p>
-				<p>{ connectMessage }</p>
+				<p>
+					<img src="/calypso/images/sharing/google-photos-logo.svg" width="96" height="96" />
+				</p>
+				<p>
+					{ connectMessage }
+				</p>
 			</div>
 		);
 	};
@@ -235,7 +258,12 @@ class MediaLibraryContent extends React.Component {
 
 	renderMediaList = () => {
 		if ( ! this.props.site || this.props.isRequesting ) {
-			return <MediaLibraryList key="list-loading" filterRequiresUpgrade={ this.props.filterRequiresUpgrade } />;
+			return (
+				<MediaLibraryList
+					key="list-loading"
+					filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
+				/>
+			);
 		}
 
 		if ( this.props.source !== '' && ! isConnected( this.props ) ) {
@@ -248,10 +276,11 @@ class MediaLibraryContent extends React.Component {
 				postId={ this.props.postId }
 				filter={ this.props.filter }
 				search={ this.props.search }
-				source={ this.props.source }>
+				source={ this.props.source }
+			>
 				<MediaLibrarySelectedData siteId={ this.props.site.ID }>
 					<MediaLibraryList
-						key={ 'list-' + ( [ this.props.site.ID, this.props.search, this.props.filter ].join() ) }
+						key={ 'list-' + [ this.props.site.ID, this.props.search, this.props.filter ].join() }
 						site={ this.props.site }
 						filter={ this.props.filter }
 						filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
@@ -260,7 +289,8 @@ class MediaLibraryContent extends React.Component {
 						thumbnailType={ this.getThumbnailType() }
 						single={ this.props.single }
 						scrollable={ this.props.scrollable }
-						onEditItem={ this.props.onEditItem } />
+						onEditItem={ this.props.onEditItem }
+					/>
 				</MediaLibrarySelectedData>
 			</MediaListData>
 		);
@@ -307,12 +337,19 @@ class MediaLibraryContent extends React.Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	return {
-		siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
-		connectedServices: toArray( getKeyringConnections( state ) ).filter( item => item.type === 'other' && item.status === 'ok' ),
-		isRequesting: isKeyringConnectionsFetching( state ),
-	};
-}, {
-	requestKeyringConnections,
-}, null, { pure: false } )( localize(MediaLibraryContent) );
+export default connect(
+	( state, ownProps ) => {
+		return {
+			siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
+			connectedServices: toArray( getKeyringConnections( state ) ).filter(
+				item => item.type === 'other' && item.status === 'ok'
+			),
+			isRequesting: isKeyringConnectionsFetching( state ),
+		};
+	},
+	{
+		requestKeyringConnections,
+	},
+	null,
+	{ pure: false }
+)( localize( MediaLibraryContent ) );

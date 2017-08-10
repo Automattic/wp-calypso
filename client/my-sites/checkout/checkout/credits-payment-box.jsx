@@ -1,11 +1,10 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import {
-	some,
-} from 'lodash';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +20,7 @@ import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 
 class CreditsPaymentBox extends React.Component {
-    content = () => {
+	content = () => {
 		const { cart, transactionStep } = this.props;
 		const hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } );
 		const showPaymentChatButton =
@@ -30,38 +29,38 @@ class CreditsPaymentBox extends React.Component {
 			hasBusinessPlanInCart;
 
 		return (
-		    <form onSubmit={ this.props.onSubmit }>
+			<form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
-					<h6>{ this.props.translate( 'WordPress.com Credits' ) }</h6>
+					<h6>
+						{ this.props.translate( 'WordPress.com Credits' ) }
+					</h6>
 
 					<span>
-						{ this.props.translate( 'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
+						{ this.props.translate(
+							'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
 							{
 								args: {
 									credits: cart.credits,
-									currency: cart.currency
+									currency: cart.currency,
 								},
 								components: {
-									strong: <strong />
-								}
-							} )
-						}
+									strong: <strong />,
+								},
+							}
+						) }
 					</span>
 				</div>
 
 				<TermsOfService />
 
 				<div className="payment-box-actions">
-					<PayButton
-						cart={ this.props.cart }
-						transactionStep={ transactionStep } />
-					{
-						showPaymentChatButton &&
+					<PayButton cart={ this.props.cart } transactionStep={ transactionStep } />
+					{ showPaymentChatButton &&
 						<PaymentChatButton
 							paymentType="credits"
 							cart={ cart }
-							transactionStep={ transactionStep } />
-					}
+							transactionStep={ transactionStep }
+						/> }
 				</div>
 
 				<CartCoupon cart={ cart } />
@@ -73,13 +72,11 @@ class CreditsPaymentBox extends React.Component {
 
 	render() {
 		return (
-		    <PaymentBox
-				classSet="credits-payment-box"
-				title={ this.props.translate( 'Secure Payment' ) }>
+			<PaymentBox classSet="credits-payment-box" title={ this.props.translate( 'Secure Payment' ) }>
 				{ this.content() }
 			</PaymentBox>
 		);
 	}
 }
 
-module.exports = localize(CreditsPaymentBox);
+module.exports = localize( CreditsPaymentBox );

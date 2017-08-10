@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,65 +23,61 @@ import GoogleAppsUserItem from './google-apps-user-item';
 import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'lib/domains';
 import support from 'lib/url/support';
 
-const GoogleAppsUsers = createReactClass({
-    displayName: 'GoogleAppsUsers',
-    mixins: [ analyticsMixin( 'domainManagement', 'googleApps' ) ],
+const GoogleAppsUsers = createReactClass( {
+	displayName: 'GoogleAppsUsers',
+	mixins: [ analyticsMixin( 'domainManagement', 'googleApps' ) ],
 
-    propTypes: {
+	propTypes: {
 		domains: PropTypes.object.isRequired,
 		googleAppsUsers: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string,
-		selectedSite: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.bool
-		] ).isRequired,
-		user: PropTypes.object.isRequired
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		user: PropTypes.object.isRequired,
 	},
 
-    getDomainsAsList() {
+	getDomainsAsList() {
 		return this.props.selectedDomainName
 			? [ getSelectedDomain( this.props ) ]
 			: this.props.domains.list;
 	},
 
-    canAddUsers() {
-		return this.getDomainsAsList().some( domain =>
-			domain.googleAppsSubscription.ownedByUserId === this.props.user.ID
+	canAddUsers() {
+		return this.getDomainsAsList().some(
+			domain => domain.googleAppsSubscription.ownedByUserId === this.props.user.ID
 		);
 	},
 
-    isNewUser( user ) {
+	isNewUser( user ) {
 		const domain = find( this.props.domains.list, { name: user.domain } );
 
-		return this.moment().subtract( 1, 'day' ).isBefore( domain.googleAppsSubscription.subscribedDate );
+		return this.moment()
+			.subtract( 1, 'day' )
+			.isBefore( domain.googleAppsSubscription.subscribedDate );
 	},
 
-    generateClickHandler( user ) {
+	generateClickHandler( user ) {
 		return () => {
 			this.recordEvent( 'manageClick', this.props.selectedDomainName, user );
 		};
 	},
 
-    goToAddGoogleApps() {
+	goToAddGoogleApps() {
 		this.recordEvent( 'addGoogleAppsUserClick', this.props.selectedDomainName );
 	},
 
-    renderDomain( domain, users ) {
+	renderDomain( domain, users ) {
 		return (
-		    <div key={ `google-apps-user-${ domain }` } className="google-apps-users-card">
-				<SectionHeader
-					label={ domain }>
-					{ this.canAddUsers() && (
+			<div key={ `google-apps-user-${ domain }` } className="google-apps-users-card">
+				<SectionHeader label={ domain }>
+					{ this.canAddUsers() &&
 						<Button
 							primary
 							compact
-							href={ paths.domainManagementAddGoogleApps(
-								this.props.selectedSite.slug, domain
-							) }
-							onClick={ this.goToAddGoogleApps }>
+							href={ paths.domainManagementAddGoogleApps( this.props.selectedSite.slug, domain ) }
+							onClick={ this.goToAddGoogleApps }
+						>
 							{ this.props.translate( 'Add G Suite User' ) }
-						</Button>
-					) }
+						</Button> }
 				</SectionHeader>
 				<CompactCard className="google-apps-users-card__user-list">
 					<ul className="google-apps-users-card__user-list-inner">
@@ -91,11 +88,17 @@ const GoogleAppsUsers = createReactClass({
 		);
 	},
 
-    renderUser( user, index ) {
+	renderUser( user, index ) {
 		if ( user.error ) {
 			let status = 'is-warning',
 				text = user.error,
-				supportLink = <a href={ support.CALYPSO_CONTACT }><strong>{ this.props.translate( 'Please contact support' ) }</strong></a>;
+				supportLink = (
+					<a href={ support.CALYPSO_CONTACT }>
+						<strong>
+							{ this.props.translate( 'Please contact support' ) }
+						</strong>
+					</a>
+				);
 
 			if ( this.isNewUser( user ) ) {
 				status = null;
@@ -110,7 +113,8 @@ const GoogleAppsUsers = createReactClass({
 				<Notice
 					key={ `google-apps-user-notice-${ user.domain }-${ index }` }
 					showDismiss={ false }
-					status={ status }>
+					status={ status }
+				>
 					{ text } { supportLink }
 				</Notice>
 			);
@@ -120,11 +124,12 @@ const GoogleAppsUsers = createReactClass({
 			<GoogleAppsUserItem
 				key={ `google-apps-user-${ user.domain }-${ index }` }
 				user={ user }
-				onClick={ this.generateClickHandler( user ) }/>
+				onClick={ this.generateClickHandler( user ) }
+			/>
 		);
 	},
 
-    render() {
+	render() {
 		const pendingDomains = this.getDomainsAsList().filter( hasPendingGoogleAppsUsers ),
 			usersByDomain = groupBy( this.props.googleAppsUsers, 'domain' );
 
@@ -135,13 +140,15 @@ const GoogleAppsUsers = createReactClass({
 						key="pending-gapps-tos-notice"
 						siteSlug={ this.props.selectedSite.slug }
 						domains={ pendingDomains }
-						section="google-apps" />
-				}
+						section="google-apps"
+					/> }
 
-				{ Object.keys( usersByDomain ).map( ( domain ) => this.renderDomain( domain, usersByDomain[ domain ] ) ) }
+				{ Object.keys( usersByDomain ).map( domain =>
+					this.renderDomain( domain, usersByDomain[ domain ] )
+				) }
 			</div>
 		);
-	}
-});
+	},
+} );
 
-export default localize(GoogleAppsUsers);
+export default localize( GoogleAppsUsers );

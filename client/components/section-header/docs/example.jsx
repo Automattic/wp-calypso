@@ -1,3 +1,4 @@
+/** @format */
 /**
 * External dependencies
 */
@@ -10,11 +11,11 @@ var SectionHeader = require( 'components/section-header' ),
 	Button = require( 'components/button' );
 
 class Cards extends React.PureComponent {
-    static displayName = 'SectionHeader';
+	static displayName = 'SectionHeader';
 
 	render() {
 		return (
-		    <div>
+			<div>
 				<SectionHeader label={ this.props.translate( 'Team' ) } count={ 10 }>
 					<Button compact primary>
 						{ this.props.translate( 'Primary Action' ) }
@@ -34,8 +35,11 @@ class Cards extends React.PureComponent {
 
 				<h3>Clickable SectionHeader</h3>
 
-				<SectionHeader label={ this.props.translate( 'Team' ) } count={ 10 } href="/devdocs/design/section-header">
-				</SectionHeader>
+				<SectionHeader
+					label={ this.props.translate( 'Team' ) }
+					count={ 10 }
+					href="/devdocs/design/section-header"
+				/>
 
 				<h3>Empty SectionHeader</h3>
 				<SectionHeader />
@@ -44,4 +48,4 @@ class Cards extends React.PureComponent {
 	}
 }
 
-module.exports = localize(Cards);
+module.exports = localize( Cards );

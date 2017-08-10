@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -29,37 +30,36 @@ import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { logoutUser } from 'state/login/actions';
 
-const MeSidebar = createReactClass({
-    displayName: 'MeSidebar',
-    mixins: [ eventRecorder ],
+const MeSidebar = createReactClass( {
+	displayName: 'MeSidebar',
+	mixins: [ eventRecorder ],
 
-    componentDidMount: function() {
+	componentDidMount: function() {
 		debug( 'The MeSidebar React component is mounted.' );
 	},
 
-    onNavigate: function() {
+	onNavigate: function() {
 		this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
 	},
 
-    onSignOut: function() {
+	onSignOut: function() {
 		const currentUser = this.props.currentUser;
 
 		// If user is using en locale, redirect to app promo page on sign out
-		const isEnLocale = ( currentUser && currentUser.localeSlug === 'en' );
+		const isEnLocale = currentUser && currentUser.localeSlug === 'en';
 		let redirect = null;
 		if ( isEnLocale && ! config.isEnabled( 'desktop' ) ) {
 			redirect = '/?apppromo';
 		}
 
 		if ( config.isEnabled( 'login/wp-login' ) ) {
-			this.props.logoutUser( redirect )
-				.then(
-					( { redirect_to } ) => user.clear( () => location.href = redirect_to || '/' ),
-					// The logout endpoint might fail if the nonce has expired.
-					// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
-					() => userUtilities.logout( redirect )
-				);
+			this.props.logoutUser( redirect ).then(
+				( { redirect_to } ) => user.clear( () => ( location.href = redirect_to || '/' ) ),
+				// The logout endpoint might fail if the nonce has expired.
+				// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
+				() => userUtilities.logout( redirect )
+			);
 		} else {
 			userUtilities.logout( redirect );
 		}
@@ -67,7 +67,7 @@ const MeSidebar = createReactClass({
 		this.recordClickEvent( 'Sidebar Sign Out Link' );
 	},
 
-    render: function() {
+	render: function() {
 		const { context } = this.props;
 		const filterMap = {
 			'/me': 'profile',
@@ -81,7 +81,7 @@ const MeSidebar = createReactClass({
 			[ purchasesPaths.purchasesRoot() ]: 'purchases',
 			[ purchasesPaths.billingHistory() ]: 'purchases',
 			[ purchasesPaths.addCreditCard() ]: 'purchases',
-			'/me/chat': 'happychat'
+			'/me/chat': 'happychat',
 		};
 		const filteredPath = context.path.replace( /\/\d+$/, '' ); // Remove ID from end of path
 		let selected;
@@ -99,7 +99,7 @@ const MeSidebar = createReactClass({
 		}
 
 		return (
-		    <Sidebar>
+			<Sidebar>
 				<ProfileGravatar user={ this.props.currentUser } />
 				<div className="me-sidebar__signout">
 					<Button
@@ -112,11 +112,15 @@ const MeSidebar = createReactClass({
 					</Button>
 				</div>
 				<SidebarMenu>
-					<SidebarHeading>{ this.props.translate( 'Profile' ) }</SidebarHeading>
+					<SidebarHeading>
+						{ this.props.translate( 'Profile' ) }
+					</SidebarHeading>
 					<ul>
 						<SidebarItem
 							selected={ selected === 'profile' }
-							link={ config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile' }
+							link={
+								config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile'
+							}
 							label={ this.props.translate( 'My Profile' ) }
 							icon="user"
 							onNavigate={ this.onNavigate }
@@ -124,7 +128,9 @@ const MeSidebar = createReactClass({
 
 						<SidebarItem
 							selected={ selected === 'account' }
-							link={ config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account' }
+							link={
+								config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account'
+							}
 							label={ this.props.translate( 'Account Settings' ) }
 							icon="cog"
 							onNavigate={ this.onNavigate }
@@ -151,17 +157,22 @@ const MeSidebar = createReactClass({
 
 						<SidebarItem
 							selected={ selected === 'notifications' }
-							link={ config.isEnabled( 'me/notifications' ) ? '/me/notifications' : '//wordpress.com/me/notifications' }
+							link={
+								config.isEnabled( 'me/notifications' )
+									? '/me/notifications'
+									: '//wordpress.com/me/notifications'
+							}
 							label={ this.props.translate( 'Notification Settings' ) }
 							icon="bell"
 							onNavigate={ this.onNavigate }
 							preloadSectionName="notification-settings"
 						/>
-
 					</ul>
 				</SidebarMenu>
 				<SidebarMenu>
-					<SidebarHeading>{ this.props.translate( 'Special' ) }</SidebarHeading>
+					<SidebarHeading>
+						{ this.props.translate( 'Special' ) }
+					</SidebarHeading>
 					<ul>
 						<SidebarItem
 							selected={ selected === 'get-apps' }
@@ -178,11 +189,11 @@ const MeSidebar = createReactClass({
 		);
 	},
 
-    renderNextStepsItem: function( selected ) {
+	renderNextStepsItem: function( selected ) {
 		const currentUser = this.props.currentUser;
 		if ( config.isEnabled( 'me/next-steps' ) && currentUser && currentUser.site_count > 0 ) {
 			return (
-			    <SidebarItem
+				<SidebarItem
 					selected={ selected === 'next' }
 					link="/me/next"
 					label={ this.props.translate( 'Next Steps' ) }
@@ -191,8 +202,8 @@ const MeSidebar = createReactClass({
 				/>
 			);
 		}
-	}
-});
+	},
+} );
 
 function mapStateToProps( state ) {
 	return {
@@ -200,4 +211,6 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, { logoutUser, setNextLayoutFocus } )( localize(MeSidebar) );
+export default connect( mapStateToProps, { logoutUser, setNextLayoutFocus } )(
+	localize( MeSidebar )
+);

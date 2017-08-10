@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,26 +16,22 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import paths from 'my-sites/domains/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
-import {
-	canCurrentUser,
-	isEligibleForFreeToPaidUpsell,
-} from 'state/selectors';
+import { canCurrentUser, isEligibleForFreeToPaidUpsell } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import {
 	isStarted as isJetpackPluginsStarted,
-	isFinished as isJetpackPluginsFinished
+	isFinished as isJetpackPluginsFinished,
 } from 'state/plugins/premium/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
 
 class SiteNotice extends React.Component {
-    static propTypes = {
-		site: PropTypes.object
+	static propTypes = {
+		site: PropTypes.object,
 	};
 
-	static defaultProps = {
-	};
+	static defaultProps = {};
 
 	getSiteRedirectNotice = site => {
 		if ( ! site ) {
@@ -45,14 +42,10 @@ class SiteNotice extends React.Component {
 		}
 		const { hostname } = url.parse( site.URL );
 		return (
-		    <Notice
-				showDismiss={ false }
-				icon="info-outline"
-				isCompact
-			>
+			<Notice showDismiss={ false } icon="info-outline" isCompact>
 				{ this.props.translate( 'Redirects to {{a}}%(url)s{{/a}}', {
 					args: { url: hostname },
-					components: { a: <a href={ site.URL }/> }
+					components: { a: <a href={ site.URL } /> },
 				} ) }
 				<NoticeAction href={ paths.domainManagementList( site.domain ) }>
 					{ this.props.translate( 'Edit' ) }
@@ -69,7 +62,7 @@ class SiteNotice extends React.Component {
 		const eventName = 'calypso_domain_credit_reminder_impression';
 		const eventProperties = { cta_name: 'current_site_domain_notice' };
 		return (
-		    <Notice isCompact status="is-success" icon="info-outline">
+			<Notice isCompact status="is-success" icon="info-outline">
 				{ this.props.translate( 'Free domain available' ) }
 				<NoticeAction
 					onClick={ this.props.clickClaimDomainNotice }
@@ -89,7 +82,7 @@ class SiteNotice extends React.Component {
 		const eventName = 'calypso_upgrade_nudge_impression';
 		const eventProperties = { cta_name: 'free-to-paid-sidebar' };
 		return (
-		    <Notice isCompact status="is-success" icon="info-outline">
+			<Notice isCompact status="is-success" icon="info-outline">
 				{ this.props.translate( 'Free domain with a plan' ) }
 				<NoticeAction
 					onClick={ this.props.clickFreeToPaidPlanNotice }
@@ -103,17 +96,19 @@ class SiteNotice extends React.Component {
 	};
 
 	jetpackPluginsSetupNotice = () => {
-		if ( ! this.props.pausedJetpackPluginsSetup || this.props.site.plan.product_slug === 'jetpack_free' ) {
+		if (
+			! this.props.pausedJetpackPluginsSetup ||
+			this.props.site.plan.product_slug === 'jetpack_free'
+		) {
 			return null;
 		}
 
 		return (
-		    <Notice isCompact status="is-info" icon="plugins">
-				{ this.props.translate(
-					'Your %(plan)s plan needs setting up!',
-					{ args: { plan: this.props.site.plan.product_name_short } }
-				) }
-				<NoticeAction href={ `/plugins/setup/${ this.props.site.slug }` } >
+			<Notice isCompact status="is-info" icon="plugins">
+				{ this.props.translate( 'Your %(plan)s plan needs setting up!', {
+					args: { plan: this.props.site.plan.product_name_short },
+				} ) }
+				<NoticeAction href={ `/plugins/setup/${ this.props.site.slug }` }>
 					{ this.props.translate( 'Finish' ) }
 				</NoticeAction>
 			</Notice>
@@ -138,25 +133,31 @@ class SiteNotice extends React.Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
-	return {
-		isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId, i18n.moment() ),
-		hasDomainCredit: hasDomainCredit( state, siteId ),
-		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
-		pausedJetpackPluginsSetup: isJetpackPluginsStarted( state, siteId ) && ! isJetpackPluginsFinished( state, siteId )
-	};
-}, ( dispatch ) => {
-	return {
-		clickClaimDomainNotice: () => dispatch( recordTracksEvent(
-			'calypso_domain_credit_reminder_click', {
-				cta_name: 'current_site_domain_notice'
-			}
-		) ),
-		clickFreeToPaidPlanNotice: () => dispatch( recordTracksEvent(
-			'calypso_upgrade_nudge_cta_click', {
-				cta_name: 'free-to-paid-sidebar'
-			}
-		) ),
-	};
-} )( localize(SiteNotice) );
+export default connect(
+	( state, ownProps ) => {
+		const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
+		return {
+			isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId, i18n.moment() ),
+			hasDomainCredit: hasDomainCredit( state, siteId ),
+			canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
+			pausedJetpackPluginsSetup:
+				isJetpackPluginsStarted( state, siteId ) && ! isJetpackPluginsFinished( state, siteId ),
+		};
+	},
+	dispatch => {
+		return {
+			clickClaimDomainNotice: () =>
+				dispatch(
+					recordTracksEvent( 'calypso_domain_credit_reminder_click', {
+						cta_name: 'current_site_domain_notice',
+					} )
+				),
+			clickFreeToPaidPlanNotice: () =>
+				dispatch(
+					recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
+						cta_name: 'free-to-paid-sidebar',
+					} )
+				),
+		};
+	}
+)( localize( SiteNotice ) );

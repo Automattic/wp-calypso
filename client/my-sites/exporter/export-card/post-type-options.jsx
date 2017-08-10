@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -47,22 +48,14 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
  */
 
 class PostTypeOptions extends React.PureComponent {
-    static displayName = 'PostTypeOptions';
+	static displayName = 'PostTypeOptions';
 
 	static propTypes = {
 		legend: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const {
-			description,
-			legend,
-			isDateValid,
-			isEnabled,
-			onSelect,
-			postType,
-			siteId,
-		} = this.props;
+		const { description, legend, isDateValid, isEnabled, onSelect, postType, siteId } = this.props;
 
 		const fields = [ 'author', 'status', 'start_date', 'end_date', 'category' ];
 
@@ -73,30 +66,31 @@ class PostTypeOptions extends React.PureComponent {
 		};
 
 		return (
-		    <div className="export-card__option-fieldset">
-
+			<div className="export-card__option-fieldset">
 				<Label className="export-card__option-fieldset-legend">
-					<FormRadio
-						checked={ isEnabled }
-						onChange={ onSelect }/>
-					<span className="export-card__option-fieldset-legend-text">{ legend }</span>
+					<FormRadio checked={ isEnabled } onChange={ onSelect } />
+					<span className="export-card__option-fieldset-legend-text">
+						{ legend }
+					</span>
 				</Label>
 
 				{ description &&
 					<p className="export-card__option-fieldset-description">
 						{ description }
-					</p>
-				}
+					</p> }
 
 				<div className="export-card__option-fieldset-fields">
 					{ fields.map( fieldName =>
-						<Select key={ fieldName }
+						<Select
+							key={ fieldName }
 							ref={ setRef( fieldName ) }
 							siteId={ siteId }
 							postType={ postType }
 							fieldName={ fieldName }
 							isEnabled={ isEnabled }
-							isError={ ( fieldName === 'start_date' || fieldName === 'end_date' ) && ! isDateValid }
+							isError={
+								( fieldName === 'start_date' || fieldName === 'end_date' ) && ! isDateValid
+							}
 						/>
 					) }
 				</div>
@@ -104,12 +98,13 @@ class PostTypeOptions extends React.PureComponent {
 				<Tooltip
 					context={ this._startDate }
 					status="error"
-					isVisible={ isEnabled && ! this.props.isDateValid }>
-						{ this.props.translate( 'Selected start date is later than the end date' ) }
+					isVisible={ isEnabled && ! this.props.isDateValid }
+				>
+					{ this.props.translate( 'Selected start date is later than the end date' ) }
 				</Tooltip>
 			</div>
 		);
 	}
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize(PostTypeOptions) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PostTypeOptions ) );

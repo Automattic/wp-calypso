@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,39 +16,41 @@ var MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	SecuritySectionNav = require( 'me/security-section-nav' ),
 	Main = require( 'components/main' );
 
-module.exports = localize(class extends React.Component {
-    static displayName = 'Security';
+module.exports = localize(
+	class extends React.Component {
+		static displayName = 'Security';
 
-	componentDidMount() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
+		componentDidMount() {
+			debug( this.constructor.displayName + ' React component is mounted.' );
+		}
+
+		componentWillUnmount() {
+			debug( this.constructor.displayName + ' React component is unmounting.' );
+		}
+
+		render() {
+			return (
+				<Main className="security">
+					<MeSidebarNavigation />
+
+					<SecuritySectionNav path={ this.props.path } />
+
+					<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+					<Card className="me-security-settings">
+						<p>
+							{ this.props.translate(
+								'To update your password enter a new one below. Your password should be at least six characters long. ' +
+									'To make it stronger, use upper and lower case letters, numbers and symbols like ! " ? $ % ^ & ).'
+							) }
+						</p>
+
+						<AccountPassword
+							userSettings={ this.props.userSettings }
+							accountPasswordData={ this.props.accountPasswordData }
+						/>
+					</Card>
+				</Main>
+			);
+		}
 	}
-
-	componentWillUnmount() {
-		debug( this.constructor.displayName + ' React component is unmounting.' );
-	}
-
-	render() {
-		return (
-		    <Main className="security">
-				<MeSidebarNavigation />
-
-				<SecuritySectionNav path={ this.props.path } />
-
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<Card className="me-security-settings">
-					<p>
-						{ this.props.translate(
-							'To update your password enter a new one below. Your password should be at least six characters long. ' +
-							'To make it stronger, use upper and lower case letters, numbers and symbols like ! " ? $ % ^ & ).'
-						) }
-					</p>
-
-					<AccountPassword
-						userSettings={ this.props.userSettings }
-						accountPasswordData={ this.props.accountPasswordData }
-					/>
-				</Card>
-			</Main>
-		);
-	}
-});
+);

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,10 +20,10 @@ import QuerySiteStats from 'components/data/query-site-stats';
 import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
-const StatsSiteOverview = createReactClass({
-    displayName: 'StatsSiteOverview',
+const StatsSiteOverview = createReactClass( {
+	displayName: 'StatsSiteOverview',
 
-    proptypes: {
+	proptypes: {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		period: PropTypes.string,
@@ -31,21 +32,21 @@ const StatsSiteOverview = createReactClass({
 		query: PropTypes.object,
 		summaryData: PropTypes.object,
 		insights: PropTypes.bool,
-		title: PropTypes.string
+		title: PropTypes.string,
 	},
 
-    isValueLow( value ) {
+	isValueLow( value ) {
 		return ! value || 0 === value;
 	},
 
-    render() {
+	render() {
 		const { siteId, siteSlug, path, summaryData, query, title } = this.props;
 		const { views, visitors, likes, comments } = summaryData;
 		const siteStatsPath = [ path, siteSlug ].join( '/' );
 		let headerPath = siteStatsPath;
 
 		return (
-		    <div>
+			<div>
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsSummary" query={ query } /> }
 				<SectionHeader label={ title } href={ headerPath } />
 				<Card className="stats__overview stats-module is-site-overview">
@@ -55,37 +56,41 @@ const StatsSiteOverview = createReactClass({
 							href={ siteStatsPath }
 							gridicon="visible"
 							label={ this.props.translate( 'Views', { context: 'noun' } ) }
-							value={ views } />
+							value={ views }
+						/>
 						<StatsTab
 							className={ this.isValueLow( visitors ) ? 'is-low' : null }
 							href={ siteStatsPath + '?tab=visitors' }
 							gridicon="user"
 							label={ this.props.translate( 'Visitors', { context: 'noun' } ) }
-							value={ visitors } />
+							value={ visitors }
+						/>
 						<StatsTab
 							className={ this.isValueLow( likes ) ? 'is-low' : null }
 							href={ siteStatsPath + '?tab=likes' }
 							gridicon="star"
 							label={ this.props.translate( 'Likes', { context: 'noun' } ) }
-							value={ likes } />
+							value={ likes }
+						/>
 						<StatsTab
 							className={ this.isValueLow( comments ) ? 'is-low' : null }
 							href={ siteStatsPath + '?tab=comments' }
 							gridicon="comment"
 							label={ this.props.translate( 'Comments', { context: 'noun' } ) }
-							value={ comments } />
+							value={ comments }
+						/>
 					</StatsTabs>
 				</Card>
 			</div>
 		);
-	}
-});
+	},
+} );
 
 export default connect( ( state, ownProps ) => {
 	const { siteId, date, period, siteSlug } = ownProps;
 	const query = {
 		date,
-		period
+		period,
 	};
 	// It seems not all sites are in the sites/items subtree consistently
 	const slug = getSiteSlug( state, siteId ) || siteSlug;
@@ -93,7 +98,6 @@ export default connect( ( state, ownProps ) => {
 	return {
 		summaryData: getSiteStatsForQuery( state, siteId, 'statsSummary', query ) || {},
 		siteSlug: slug,
-		query
+		query,
 	};
-} )( localize(StatsSiteOverview) );
-
+} )( localize( StatsSiteOverview ) );

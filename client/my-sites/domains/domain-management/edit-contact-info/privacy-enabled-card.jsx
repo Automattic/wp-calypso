@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,17 +13,17 @@ import Card from 'components/card';
 import support from 'lib/url/support';
 
 class EditContactInfoPrivacyEnabledCard extends React.Component {
-    render() {
+	render() {
 		return (
-		    <Card className="edit-contact-info-privacy-enabled-card">
+			<Card className="edit-contact-info-privacy-enabled-card">
 				<p className="edit-contact-info-privacy-enabled-card__settings-explanation">
 					{ this.props.translate(
 						'This domain is currently using Privacy Protection to keep your information from showing up in public record searches. ' +
-						'If you need to make a change to your domain\'s contact info, please {{a}}contact support{{/a}}.',
+							"If you need to make a change to your domain's contact info, please {{a}}contact support{{/a}}.",
 						{
 							components: {
-								a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />
-							}
+								a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
+							},
 						}
 					) }
 				</p>
@@ -31,4 +32,4 @@ class EditContactInfoPrivacyEnabledCard extends React.Component {
 	}
 }
 
-export default localize(EditContactInfoPrivacyEnabledCard);
+export default localize( EditContactInfoPrivacyEnabledCard );

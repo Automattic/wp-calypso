@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -62,19 +63,19 @@ const POST_TYPE_SUPPORTS = {
 		'post-formats': true,
 		'geo-location': true,
 		tags: true,
-		comments: true
+		comments: true,
 	},
 	page: {
 		thumbnail: true,
 		'page-attributes': true,
 		'geo-location': true,
 		excerpt: true,
-		comments: true
-	}
+		comments: true,
+	},
 };
 
 class EditorDrawer extends React.Component {
-    static propTypes = {
+	static propTypes = {
 		site: PropTypes.object,
 		savedPost: PropTypes.object,
 		post: PropTypes.object,
@@ -125,9 +126,7 @@ class EditorDrawer extends React.Component {
 		// Categories & Tags
 		let categories;
 		if ( 'post' === type || typeSupportsTags ) {
-			categories = (
-				<CategoriesTagsAccordion />
-			);
+			categories = <CategoriesTagsAccordion />;
 		}
 
 		// Custom Taxonomies
@@ -158,7 +157,8 @@ class EditorDrawer extends React.Component {
 			<AsyncLoad
 				require="post-editor/editor-sharing/accordion"
 				site={ this.props.site }
-				post={ this.props.post } />
+				post={ this.props.post }
+			/>
 		);
 	};
 
@@ -168,11 +168,7 @@ class EditorDrawer extends React.Component {
 		}
 
 		return (
-			<AsyncLoad
-				require="./featured-image"
-				site={ this.props.site }
-				post={ this.props.post }
-			/>
+			<AsyncLoad require="./featured-image" site={ this.props.site } post={ this.props.post } />
 		);
 	};
 
@@ -188,10 +184,12 @@ class EditorDrawer extends React.Component {
 		}
 
 		return (
-		    <AccordionSection>
+			<AccordionSection>
 				<EditorDrawerLabel
 					labelText={ this.props.translate( 'Excerpt' ) }
-					helpText={ this.props.translate( 'Excerpts are optional hand-crafted summaries of your content.' ) }
+					helpText={ this.props.translate(
+						'Excerpts are optional hand-crafted summaries of your content.'
+					) }
 				>
 					<TrackInputChanges onNewValue={ this.recordExcerptChangeStats }>
 						<FormTextarea
@@ -218,7 +216,7 @@ class EditorDrawer extends React.Component {
 		}
 
 		return (
-		    <AccordionSection>
+			<AccordionSection>
 				<EditorDrawerLabel labelText={ this.props.translate( 'Location' ) } />
 				<AsyncLoad
 					require="post-editor/editor-location"
@@ -295,7 +293,7 @@ class EditorDrawer extends React.Component {
 		}
 
 		return (
-		    <Accordion
+			<Accordion
 				title={ this.props.translate( 'More Options' ) }
 				className="editor-drawer__more-options"
 			>
@@ -322,7 +320,7 @@ class EditorDrawer extends React.Component {
 		const postStatus = get( this.props.post, 'status', null );
 
 		return (
-		    <Accordion title={ this.props.translate( 'Status' ) }>
+			<Accordion title={ this.props.translate( 'Status' ) }>
 				<EditPostStatus
 					savedPost={ this.props.savedPost }
 					postDate={ postDate }
@@ -345,12 +343,8 @@ class EditorDrawer extends React.Component {
 
 		return (
 			<div className="editor-drawer">
-				{ site && (
-					<QueryPostTypes siteId={ site.ID } />
-				) }
-				{ site && (
-					<QuerySiteSettings siteId={ site.ID } />
-				) }
+				{ site && <QueryPostTypes siteId={ site.ID } /> }
+				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 				{ this.renderStatus() }
 				{ this.renderTaxonomies() }
 				{ this.renderFeaturedImage() }
@@ -365,7 +359,7 @@ class EditorDrawer extends React.Component {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
 
@@ -381,4 +375,4 @@ export default connect(
 	null,
 	null,
 	{ pure: false }
-)( localize(EditorDrawer) );
+)( localize( EditorDrawer ) );
