@@ -19,9 +19,10 @@ import ReaderPopoverMenu from 'components/reader-popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'gridicons';
 import * as stats from 'reader/stats';
-import SitesPopover from 'components/sites-popover';
 import { preload as preloadSection } from 'sections-preload';
 import User from 'lib/user';
+import { hasTouch } from 'lib/touch-detect';
+import SiteSelector from 'components/site-selector';
 
 /**
  * Local variables
@@ -198,48 +199,42 @@ class ReaderShare extends React.Component {
 					</span>
 				</span>,
 				this.state.showingMenu &&
-					( canShareToWordPress()
-						? <SitesPopover
-								key="menu"
-								header={
-									<div>
-										{ this.props.translate( 'Share on:' ) }
-									</div>
-								}
-								context={ this.refs && this.refs.shareButton }
-								visible={ this.state.showingMenu }
-								groups={ true }
-								onSiteSelect={ this.pickSiteToShareTo }
-								onClose={ this.closeMenu }
-								position={ this.props.position }
-								className="reader-share__sites-popover"
-							/>
-						: <ReaderPopoverMenu
-								key="menu"
-								context={ this.refs && this.refs.shareButton }
-								isVisible={ this.state.showingMenu }
-								onClose={ this.closeExternalShareMenu }
-								position={ this.props.position }
-								className="popover reader-share__popover"
-								popoverTitle={ translate( 'Share on' ) }
-							>
-								<PopoverMenuItem
-									action="twitter"
-									className="reader-share__popover-item"
-									title={ translate( 'Share on Twitter' ) }
-								>
-									<SocialLogo icon="twitter" />
-									<span>Twitter</span>
-								</PopoverMenuItem>
-								<PopoverMenuItem
-									action="facebook"
-									className="reader-share__popover-item"
-									title={ translate( 'Share on Facebook' ) }
-								>
-									<SocialLogo icon="facebook" />
-									<span>Facebook</span>
-								</PopoverMenuItem>
-							</ReaderPopoverMenu> ),
+					<ReaderPopoverMenu
+						key="menu"
+						context={ this.refs && this.refs.shareButton }
+						isVisible={ this.state.showingMenu }
+						onClose={ this.closeExternalShareMenu }
+						position={ this.props.position }
+						className="popover reader-share__popover"
+						popoverTitle={ translate( 'Share on' ) }
+					>
+						<PopoverMenuItem
+							action="twitter"
+							className="reader-share__popover-item"
+							title={ translate( 'Share on Twitter' ) }
+						>
+							<SocialLogo icon="twitter" />
+							<span>Twitter</span>
+						</PopoverMenuItem>
+						<PopoverMenuItem
+							action="facebook"
+							className="reader-share__popover-item"
+							title={ translate( 'Share on Facebook' ) }
+						>
+							<SocialLogo icon="facebook" />
+							<span>Facebook</span>
+						</PopoverMenuItem>
+						<SiteSelector
+							className="reader-share__site-selector"
+							siteBasePath="/post"
+							onSiteSelect={ this.pickSiteToShareTo }
+							showAddNewSite={ false }
+							indicator={ false }
+							autoFocus={ ! hasTouch() }
+							groups={ true }
+							onClose={ this.closeMenu }
+						/>
+					</ReaderPopoverMenu>,
 			]
 		);
 	}

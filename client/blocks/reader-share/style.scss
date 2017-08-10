@@ -94,6 +94,8 @@
 	}
 }
 
-.sites-popover.reader-share__sites-popover .site-selector__sites {
+.reader-share__site-selector .site-selector__sites {
 	max-height: 25vh;
+	overflow-y: auto;
+	text-align: left;
 }
