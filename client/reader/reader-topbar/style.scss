@@ -57,7 +57,7 @@
 }
 
 .reader-topbar__navigation .select-dropdown {
-	max-width: 100px;
+	max-width: 120px;
 
 	&.is-open {
 		max-width: none;
@@ -97,6 +97,11 @@
 
 .reader-topbar .is-open.has-open-icon.search {
 	max-height: 50px;
+}
+
+.reader-topbar__tags-header {
+	display: flex;
+	justify-content: space-between;
 }
 
 .reader-topbar .search__input,

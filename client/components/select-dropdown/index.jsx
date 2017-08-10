@@ -252,7 +252,7 @@ class SelectDropdown extends Component {
 									? selectedIcon
 									: null
 							}
-							{ selectedText }
+							{ selectedText || this.props.selectedComponent }
 						</span>
 						{
 							'number' === typeof this.props.selectedCount &&

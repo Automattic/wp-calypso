@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import { noop, values, trim } from 'lodash';
 import page from 'page';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
@@ -42,7 +43,7 @@ export const NAV_TYPES = {
 const WIDE_DISPLAY_CUTOFF = 660;
 
 const updateQueryArg = params =>
-	page.replace( addQueryArgs( params, window.location.pathname + window.location.search ) );
+	page.replace( addQueryArgs( params, '/read/search' + window.location.search ) );
 
 class ReaderTopbar extends Component {
 	static propTypes = {
@@ -218,7 +219,16 @@ class ReaderTopbar extends Component {
 							</SectionNav>
 						</div>
 						<SelectDropdown
-							selectedText={ translate( 'Tags' ) }
+							selectedComponent={
+								<span className="reader-topbar__tags-header">
+									<span>
+										{ translate( 'Tags' ) }{' '}
+									</span>
+									<span>
+										<Gridicon icon="add-outline" size={ 18 } />
+									</span>
+								</span>
+							}
 							className="reader-topbar__tags-dropdown"
 						>
 							{ followedTags &&
