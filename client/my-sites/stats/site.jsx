@@ -22,9 +22,9 @@ import titlecase from 'to-title-case';
 import StatsFirstView from './stats-first-view';
 import StickyPanel from 'components/sticky-panel';
 import config from 'config';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 class StatsSite extends Component {
 	constructor( props ) {
