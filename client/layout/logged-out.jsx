@@ -10,12 +10,15 @@ import { connect } from 'react-redux';
  */
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import { getSection } from 'state/ui/selectors';
+import OauthClientLayout from 'layout/oauth-client';
+import { getOauthClientId } from 'state/login/selectors';
 
 const LayoutLoggedOut = ( {
 	primary,
 	secondary,
 	section,
 	redirectUri,
+	oauthClientId,
 } ) => {
 	const classes = classNames( 'layout', {
 		[ 'is-group-' + section.group ]: !! section,
@@ -24,6 +27,12 @@ const LayoutLoggedOut = ( {
 		'has-no-sidebar': true, // Logged-out never has a sidebar
 		'wp-singletree-layout': !! primary,
 	} );
+
+	if ( oauthClientId ) {
+		return (
+			<OauthClientLayout primary={ primary } />
+		);
+	}
 
 	return (
 		<div className={ classes }>
@@ -48,11 +57,13 @@ LayoutLoggedOut.propTypes = {
 		React.PropTypes.bool,
 		React.PropTypes.object,
 	] ),
-	redirectUri: React.PropTypes.string
+	redirectUri: React.PropTypes.string,
+	oauthClientId: React.PropTypes.number,
 };
 
 export default connect(
 	state => ( {
-		section: getSection( state )
+		section: getSection( state ),
+		oauthClientId: getOauthClientId( state ),
 	} )
 )( LayoutLoggedOut );
