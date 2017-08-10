@@ -45,8 +45,8 @@ const getDialogButtons = ( mode, dismissModal, savePackage, onRemove, translate 
 };
 
 const OuterDimensionsToggle = ( { siteId, toggleOuterDimensions, translate } ) => {
-	const onClick = ( evt ) => {
-		evt.preventDefault();
+	const onClick = ( event ) => {
+		event.preventDefault();
 		toggleOuterDimensions( siteId );
 	};
 
@@ -247,16 +247,25 @@ const AddPackageDialog = ( props ) => {
 };
 
 AddPackageDialog.propTypes = {
-	siteId: PropTypes.number,
+	siteId: PropTypes.number.isRequired,
 	dismissModal: PropTypes.func.isRequired,
 	form: PropTypes.object.isRequired,
 	updatePackagesField: PropTypes.func.isRequired,
 	showOuterDimensions: PropTypes.bool,
 	toggleOuterDimensions: PropTypes.func.isRequired,
 	savePackage: PropTypes.func.isRequired,
-	packageData: PropTypes.object,
+	packageData: PropTypes.shape( {
+		index: PropTypes.number.isRequired,
+		name: PropTypes.string.isRequired,
+		inner_dimensions: PropTypes.string.isRequired,
+		outer_dimensions: PropTypes.string.isRequired,
+		box_weight: PropTypes.number.isRequired,
+		max_weight: PropTypes.number.isRequired,
+		is_user_defined: PropTypes.bool.isRequired,
+		is_letter: PropTypes.bool.isRequired,
+	} ),
 	setModalErrors: PropTypes.func.isRequired,
-	removePackage: PropTypes.func,
+	removePackage: PropTypes.func.isRequired,
 };
 
 export default localize( AddPackageDialog );

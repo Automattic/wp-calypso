@@ -29,7 +29,7 @@ const checkDuplicateName = ( name, boxNames ) => {
 const numberRegex = /^\d+(\.\d+)?$/;
 const checkAndConvertNumber = ( value ) => {
 	if ( ! numberRegex.test( value ) ) {
-		return 'fail';
+		return null;
 	}
 
 	return Number.parseFloat( value );

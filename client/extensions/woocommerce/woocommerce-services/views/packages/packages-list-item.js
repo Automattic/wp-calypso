@@ -102,7 +102,7 @@ const PackagesListItem = ( {
 };
 
 PackagesListItem.propTypes = {
-	siteId: PropTypes.number,
+	siteId: PropTypes.number.isRequired,
 	isPlaceholder: PropTypes.bool,
 	index: PropTypes.number.isRequired,
 	data: PropTypes.shape( {

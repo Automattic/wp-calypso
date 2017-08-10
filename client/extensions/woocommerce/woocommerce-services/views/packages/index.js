@@ -3,21 +3,21 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { difference, filter, forEach, reject, some } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import AddPackageDialog from './add-package';
 import BulkSelect from 'woocommerce/components/bulk-select';
 import Button from 'components/button';
 import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import FoldableCard from 'components/foldable-card';
 import PackagesList from './packages-list';
-import AddPackageDialog from './add-package';
 import * as PackagesActions from '../../state/packages/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPackagesForm } from '../../state/packages/selectors';
@@ -30,7 +30,7 @@ class Packages extends Component {
 	}
 
 	componentWillReceiveProps( props ) {
-		if ( props.siteId !== this.props.siteId ) {
+		if ( props.siteId && props.siteId !== this.props.siteId ) {
 			this.props.fetchSettings( props.siteId );
 		}
 	}
@@ -90,10 +90,10 @@ class Packages extends Component {
 		const { siteId, isFetching, translate, form } = this.props;
 
 		if ( isFetching ) {
-			return [ {}, {} ].map( ( o, i ) => (
+			return [ {}, {} ].map( ( empty, index ) => (
 				<FoldableCard
 					className="packages__predefined-packages placeholder"
-					key={ i }
+					key={ index }
 					header={ this.renderPredefHeader( true ) }
 					summary={ <p /> }
 					clickableHeader={ true }
@@ -158,7 +158,7 @@ class Packages extends Component {
 				</ExtendedHeader>
 				<Card className="packages__packages">
 					<PackagesList
-						siteId={ this.props.siteId }
+						siteId={ siteId }
 						isFetching={ isFetching }
 						packages={ ( form.packages || {} ).custom }
 						dimensionUnit={ form.dimensionUnit }
@@ -186,7 +186,13 @@ Packages.propTypes = {
 	toggleOuterDimensions: PropTypes.func.isRequired,
 	setModalErrors: PropTypes.func.isRequired,
 	showModal: PropTypes.bool,
-	form: PropTypes.object,
+	form: PropTypes.shape( {
+		packages: PropTypes.object,
+		dimensionUnit: PropTypes.string,
+		weightUnit: PropTypes.string,
+		packageSchema: PropTypes.object,
+		predefinedSchema: PropTypes.object,
+	} ).isRequired,
 };
 
 export default connect(
