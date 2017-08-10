@@ -218,7 +218,7 @@ const AddPackageDialog = ( props ) => {
 					<FormTextInput
 						id="box_weight"
 						name="box_weight"
-						placeholder={ translate( 'Weight of box' ) }
+						placeholder={ translate( 'Package weight' ) }
 						value={ box_weight || '' }
 						onChange={ updateTextField }
 						disabled={ ! is_user_defined }
@@ -241,7 +241,7 @@ const AddPackageDialog = ( props ) => {
 					{ fieldInfo( 'max_weight' ) }
 				</div>
 				<FormSettingExplanation>
-					{ translate( 'Defines both the weight of the empty box and the max weight it can hold' ) }
+					{ translate( 'Defines both the weight of the empty package and the max weight it can hold' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		</Dialog>
