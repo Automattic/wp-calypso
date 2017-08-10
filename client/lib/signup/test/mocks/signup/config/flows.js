@@ -1,4 +1,4 @@
-var flows = {
+const flows = {
 	simple_flow: {
 		steps: [ 'stepA', 'stepB' ],
 		destination: '/'
@@ -29,7 +29,7 @@ var flows = {
 	}
 };
 
-module.exports = {
+export default {
 	defaultFlowName: 'simple_flow',
 
 	getFlow: function( flowName ) {
