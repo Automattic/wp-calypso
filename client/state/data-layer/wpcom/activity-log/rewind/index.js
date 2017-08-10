@@ -32,6 +32,7 @@ const fromApi = response => ( {
 	firstBackupDate: response.first_backup_when,
 	isPressable: Boolean( response.is_pressable ),
 	plan: response.plan,
+	credentials: response.credentials
 } );
 
 export const receiveRewindStatus = ( { dispatch }, { siteId }, data ) => {
