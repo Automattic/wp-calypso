@@ -36,7 +36,6 @@ const StatsNavigation = ( props ) => {
 	if ( isStore ) {
 		statsControl = (
 			<SegmentedControl
-				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 				className="stats-navigation__control is-store"
 				initialSelected="site"
 				options={ [
