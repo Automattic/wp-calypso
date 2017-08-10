@@ -166,6 +166,7 @@
 
 .editor-simple-payments-modal__figure {
 	display: flex;
+	justify-content: center;
 	align-items: center;
 	border: 1px solid lighten( $gray, 10% );
 	background-color: lighten( $gray, 30% );
