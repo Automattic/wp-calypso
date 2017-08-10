@@ -11,17 +11,21 @@
 .conversations__stream .reader-post-card__title {
 	line-height: 1.2;
 	max-height: 16px * 1.6;
+	margin-top: 2px;
 	overflow: hidden;
 	position: relative;
-	width: calc( 100% - 120px );
 	white-space: nowrap;
 
 	&::after{
-		@include long-content-fade( $size: 10% );
+		@include long-content-fade( $size: 35px );
 	}
 
 	.reader-post-card__title-link {
 		font-size: 17px;
+	}
+
+	.reader-excerpt__content {
+		margin-top: 2px;
 	}
 }
 
@@ -41,6 +45,10 @@
 
 .conversations__stream .comments__comment-author .gravatar {
 	top: 5px;
+}
+
+.conversations__stream .comments__comment-content img {
+	margin-top: 10px;
 }
 
 .conversations__comment-list-ul {
