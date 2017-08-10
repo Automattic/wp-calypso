@@ -2,6 +2,10 @@
  * External dependencies
  */
 import { get, noop } from 'lodash';
+import {
+	initiatorWithFreshness,
+	onSuccessWithFreshness,
+} from './freshness-verifier';
 
 /**
  * Returns response data from an HTTP request success action if available
@@ -66,28 +70,42 @@ export const getProgress = action => get( action, 'meta.dataLayer.progress', nul
  *   onError    :: ReduxStore -> Action -> Dispatcher -> ErrorData
  *   onProgress :: ReduxStore -> Action -> Dispatcher -> ProgressData
  *
- * @param {Function} initiator called if action lacks response meta; should create HTTP request
- * @param {Function} onSuccess called if the action meta includes response data
- * @param {Function} onError called if the action meta includes error data
+ * @param {Function} initiator    called if action lacks response meta; should create HTTP request
+ * @param {Function} onSuccess    called if the action meta includes response data
+ * @param {Function} onError      called if the action meta includes error data
  * @param {Function} [onProgress] called on progress events when uploading. The default
  *                                behavior of this optional handler is to do nothing.
+ * @param {Object} options        Options object
+
  * @returns {?*} please ignore return values, they are undefined
  */
-export const dispatchRequest = ( initiator, onSuccess, onError, onProgress = noop ) => ( store, action, next ) => {
-	const error = getError( action );
-	if ( error ) {
-		return onError( store, action, next, error );
-	}
 
-	const data = getData( action );
-	if ( data ) {
-		return onSuccess( store, action, next, data );
+export const dispatchRequest = ( initiator, onSuccess, onError, onProgress = noop, options = {} ) => {
+	const { freshness } = options;
+	let initiatorToUse, onSuccessToUse;
+	if ( freshness ) {
+		initiatorToUse = initiatorWithFreshness( initiator, freshness );
+		onSuccessToUse = onSuccessWithFreshness( onSuccess );
+	} else {
+		initiatorToUse = initiator;
+		onSuccessToUse = onSuccess;
 	}
+	return ( store, action, next, ignoreAction ) => {
+		const error = getError( action );
+		if ( error ) {
+			return onError( store, action, next, error );
+		}
 
-	const progress = getProgress( action );
-	if ( progress ) {
-		return onProgress( store, action, next, progress );
-	}
+		const data = getData( action );
+		if ( data ) {
+			return onSuccessToUse( store, action, next, data );
+		}
 
-	return initiator( store, action, next );
+		const progress = getProgress( action );
+		if ( progress ) {
+			return onProgress( store, action, next, progress );
+		}
+
+		return initiatorToUse( store, action, next, ignoreAction );
+	};
 };
