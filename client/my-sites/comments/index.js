@@ -11,6 +11,10 @@ import { clearCommentNotices, comments, redirect } from './controller';
 import config from 'config';
 
 export default function() {
+	if ( ! config.isEnabled( 'comments/management' ) ) {
+		page( '/stats' );
+	}
+
 	if ( config.isEnabled( 'comments/management' ) ) {
 		page( '/comments/:status?',
 			controller.siteSelection,
