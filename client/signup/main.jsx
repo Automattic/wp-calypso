@@ -29,6 +29,7 @@ const user = userModule();
 import analytics from 'lib/analytics';
 import SignupProcessingScreen from 'signup/processing-screen';
 import utils from './utils';
+import { abtest } from 'lib/abtest';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import * as oauthToken from 'lib/oauth-token';
@@ -333,10 +334,17 @@ const Signup = React.createClass( {
 	},
 
 	goToNextStep() {
-		const flowSteps = flows.getFlow( this.props.flowName, this.props.stepName ).steps,
-			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
-			nextStepName = flowSteps[ currentStepIndex + 1 ],
-			nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
+		const flowSteps = flows.getFlow( this.props.flowName, this.props.stepName ).steps;
+
+		let currentStepIndex = indexOf( flowSteps, this.props.stepName );
+		let nextStepName = flowSteps[ currentStepIndex + 1 ];
+
+		if ( abtest( 'skipThemesSelectionModal' ) === 'skip' && 'themes' === nextStepName ) {
+			currentStepIndex++;
+			nextStepName = flowSteps[ currentStepIndex + 1 ];
+		}
+
+		const nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
 			nextStepSection = nextProgressItem && nextProgressItem.stepSectionName || '';
 
 		this.goToStep( nextStepName, nextStepSection );

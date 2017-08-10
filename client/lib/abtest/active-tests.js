@@ -105,4 +105,14 @@ module.exports = {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	skipThemesSelectionModal: {
+		datestamp: '20170831',
+		variations: {
+			skip: 50,
+			show: 50,
+		},
+		defaultVariation: 'show',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	}
 };
