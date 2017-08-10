@@ -331,8 +331,8 @@ class ActivityLog extends Component {
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation
-					siteId={ siteId }
 					section="activity"
+					siteId={ siteId }
 					slug={ slug }
 				/>
 				{ this.renderErrorMessage() }

@@ -110,8 +110,8 @@ class StatsSite extends Component {
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation
-					siteId={ siteId }
 					section={ period }
+					siteId={ siteId }
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
