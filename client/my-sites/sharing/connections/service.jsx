@@ -398,13 +398,11 @@ export class SharingService extends Component {
 
 		return (
 			<li>
-				<div>
-					<AccountDialog
-						isVisible={ this.state.isSelectingAccount }
-						service={ this.props.service }
-						accounts={ accounts }
-						onAccountSelected={ this.addConnection } />
-				</div>
+				<AccountDialog
+					isVisible={ this.state.isSelectingAccount }
+					service={ this.props.service }
+					accounts={ accounts }
+					onAccountSelected={ this.addConnection } />
 				<FoldableCard
 					className={ classNames }
 					header={ header }
