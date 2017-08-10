@@ -108,6 +108,15 @@ const Site = React.createClass( {
 					onClick={ this.onSelect }
 					onMouseEnter={ this.onMouseEnter }
 					onMouseLeave={ this.onMouseLeave }
+					aria-label={
+						this.props.homeLink
+							? translate( 'View site %(domain)s', {
+									args: { domain: site.domain },
+								} )
+							: translate( 'Select site %(domain)s', {
+									args: { domain: site.domain },
+								} )
+					}
 				>
 					<SiteIcon site={ site } size={ this.props.compact ? 24 : 32 } />
 					<div className="site__info">
