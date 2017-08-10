@@ -1,6 +1,12 @@
+/**
+ * External dependencies
+ */
 import { find } from 'lodash';
 import { fromJS } from 'immutable';
 
+/**
+ * Internal dependencies
+ */
 import { appStates } from 'state/imports/constants';
 
 // Left( UI ) - Right( API )

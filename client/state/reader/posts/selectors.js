@@ -1,4 +1,7 @@
 /** @format */
+/**
+ * External dependencies
+ */
 import { filter, keyBy } from 'lodash';
 
 /**
