@@ -3,6 +3,11 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import ThankYouCard from 'components/thank-you-card';
 
 class RebrandCitiesThankYou extends Component {
@@ -11,13 +16,14 @@ class RebrandCitiesThankYou extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { receipt, translate } = this.props;
+		const displayPrice = get( receipt, 'data.displayPrice' );
 
 		return (
 			<div className="plan-thank-you-card checkout-thank-you__rebrand-cities">
 				<ThankYouCard
 					name={ translate( 'Rebrand Cities package' ) }
-					price="$299.00"
+					price={ displayPrice }
 					heading={ translate( 'Your acccount has been created' ) }
 					descriptionWithHTML={
 						<div>
