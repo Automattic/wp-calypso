@@ -1,11 +1,11 @@
-const ReactDom = require( 'react-dom' ), React = require( 'react' ), page = require( 'page' );
-import { debounce, throttle, get } from 'lodash';
-
 /**
  * External dependencies
  */
+import React from 'react';
+import ReactDom from 'react-dom';
+import page from 'page';
 import PropTypes from 'prop-types';
-
+import { debounce, throttle, get } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
@@ -15,24 +15,23 @@ import tinyMce from 'tinymce/tinymce';
 /**
  * Internal dependencies
  */
-const actions = require( 'lib/posts/actions' ),
-	route = require( 'lib/route' ),
-	PostEditStore = require( 'lib/posts/post-edit-store' ),
-	EditorActionBar = require( 'post-editor/editor-action-bar' ),
-	FeaturedImage = require( 'post-editor/editor-featured-image' ),
-	EditorTitle = require( 'post-editor/editor-title' ),
-	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
-	TinyMCE = require( 'components/tinymce' ),
-	SegmentedControl = require( 'components/segmented-control' ),
-	SegmentedControlItem = require( 'components/segmented-control/item' ),
-	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
-	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
-	VerifyEmailDialog = require( 'components/email-verification/email-verification-dialog' ),
-	utils = require( 'lib/posts/utils' ),
-	EditorPreview = require( './editor-preview' ),
-	stats = require( 'lib/posts/stats' ),
-	analytics = require( 'lib/analytics' );
-
+import actions from 'lib/posts/actions';
+import route from 'lib/route';
+import PostEditStore from 'lib/posts/post-edit-store';
+import EditorActionBar from 'post-editor/editor-action-bar';
+import FeaturedImage from 'post-editor/editor-featured-image';
+import EditorTitle from 'post-editor/editor-title';
+import EditorPageSlug from 'post-editor/editor-page-slug';
+import TinyMCE from 'components/tinymce';
+import SegmentedControl from 'components/segmented-control';
+import SegmentedControlItem from 'components/segmented-control/item';
+import InvalidURLDialog from 'post-editor/invalid-url-dialog';
+import RestorePostDialog from 'post-editor/restore-post-dialog';
+import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
+import utils from 'lib/posts/utils';
+import EditorPreview from './editor-preview';
+import stats from 'lib/posts/stats';
+import analytics from 'lib/analytics';
 import config from 'config';
 import { abtest } from 'lib/abtest';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';

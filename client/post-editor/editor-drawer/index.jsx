@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-
 import React from 'react';
+import PropTypes from 'prop-types';
 import createFragment from 'react-addons-create-fragment';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
