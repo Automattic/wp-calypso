@@ -11,15 +11,6 @@
 		font-weight: bold;
 	}
 
-	.order-customer__container {
-		display: flex;
-	}
-
-	.order-customer__billing,
-	.order-customer__shipping {
-		flex: 1 0 50%;
-	}
-
 	.order-customer__shipping {
 		.order__shipping-address {
 			margin-bottom: 0;
