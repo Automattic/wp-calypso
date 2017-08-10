@@ -93,6 +93,7 @@
 		"settings/theme-setup": false,
 		"signup/domain-first-flow": true,
 		"signup/social": false,
+		"simple-payments": true,
 		"support-user": true,
 		"sync-handler": true,
 		"ui/first-view": true,
