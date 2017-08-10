@@ -12,7 +12,6 @@ import {
 	removePackage,
 	editPackage,
 	dismissModal,
-	setSelectedPreset,
 	updatePackagesField,
 	toggleOuterDimensions,
 	savePackage,
@@ -113,25 +112,6 @@ describe( 'Packages form reducer', () => {
 			modalErrors: {},
 			showModal: false,
 			showOuterDimensions: false,
-		} );
-	} );
-
-	it( 'SET_SELECTED_PRESET', () => {
-		let state = {};
-
-		state = reducer( state, setSelectedPreset( siteId, 'a' ) );
-		expect( state ).to.eql( {
-			selectedPreset: 'a',
-		} );
-
-		state = reducer( state, setSelectedPreset( siteId, 'aaa' ) );
-		expect( state ).to.eql( {
-			selectedPreset: 'aaa',
-		} );
-
-		state = reducer( state, setSelectedPreset( siteId, '1112' ) );
-		expect( state ).to.eql( {
-			selectedPreset: '1112',
 		} );
 	} );
 

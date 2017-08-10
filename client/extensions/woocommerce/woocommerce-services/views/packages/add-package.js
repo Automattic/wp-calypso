@@ -10,17 +10,17 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import checkInputs from './modal-errors';
+import Dialog from 'components/dialog';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
+import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
-import Dialog from 'components/dialog';
-import AddPackagePresets from './add-package-presets';
-import checkInputs from './modal-errors';
-import inputFilters from './input-filters';
 import FieldError from '../../components/field-error';
+import inputFilters from './input-filters';
 
 const getDialogButtons = ( mode, dismissModal, savePackage, onRemove, translate ) => {
 	const buttons = [
@@ -93,6 +93,7 @@ const AddPackageDialog = ( props ) => {
 		box_weight,
 		max_weight,
 		is_user_defined,
+		is_letter,
 	} = packageData;
 
 	const isOuterDimensionsVisible = showOuterDimensions || outer_dimensions;
@@ -142,6 +143,21 @@ const AddPackageDialog = ( props ) => {
 	const onClose = () => ( dismissModal( siteId ) );
 	const onRemove = () => removePackage( siteId, index );
 
+	const onPackageTypeSelect = ( event ) => {
+		updatePackagesField( siteId, { is_letter: 'envelope' === event.target.value } );
+	};
+	const renderTypeSelection = () => {
+		return (
+			<FormFieldset>
+				<FormLabel htmlFor="package_type">{ translate( 'Type of package' ) }</FormLabel>
+				<FormSelect id="package_type" onChange={ onPackageTypeSelect } value={ is_letter ? 'envelope' : 'box' }>
+					<option value="box">{ translate( 'Box' ) }</option>
+					<option value="envelope">{ translate( 'Envelope' ) }</option>
+				</FormSelect>
+			</FormFieldset>
+		);
+	};
+
 	return (
 		<Dialog
 			isVisible={ showModal }
@@ -151,7 +167,7 @@ const AddPackageDialog = ( props ) => {
 			<FormSectionHeading>
 				{ ( 'edit' === mode ) ? translate( 'Edit package' ) : translate( 'Add a package' ) }
 			</FormSectionHeading>
-			{ ( 'add' === mode ) ? <AddPackagePresets { ...props } /> : null }
+			{ ( 'add' === mode ) ? renderTypeSelection() : null }
 			<FormFieldset>
 				<FormLabel htmlFor="name">{ translate( 'Package name' ) }</FormLabel>
 				<FormTextInput

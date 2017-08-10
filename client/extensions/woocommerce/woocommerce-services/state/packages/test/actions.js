@@ -12,7 +12,6 @@ import {
 	WOOCOMMERCE_SERVICES_PACKAGES_EDIT_PACKAGE,
 	WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL,
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_SAVING,
-	WOOCOMMERCE_SERVICES_PACKAGES_SET_SELECTED_PRESET,
 	WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PACKAGE,
 	WOOCOMMERCE_SERVICES_PACKAGES_UPDATE_PACKAGES_FIELD,
 	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_OUTER_DIMENSIONS,
@@ -23,7 +22,6 @@ import {
 	removePackage,
 	editPackage,
 	dismissModal,
-	setSelectedPreset,
 	savePackage,
 	updatePackagesField,
 	toggleOuterDimensions,
@@ -57,20 +55,6 @@ describe( 'Packages state actions', () => {
 	it( '#dismissModal()', () => {
 		expect( dismissModal( siteId ) ).to.eql( {
 			type: WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL,
-			siteId,
-		} );
-	} );
-
-	it( '#setSelectedPreset()', () => {
-		expect( setSelectedPreset( siteId, 'a' ) ).to.eql( {
-			type: WOOCOMMERCE_SERVICES_PACKAGES_SET_SELECTED_PRESET,
-			value: 'a',
-			siteId,
-		} );
-
-		expect( setSelectedPreset( siteId, 'ab' ) ).to.eql( {
-			type: WOOCOMMERCE_SERVICES_PACKAGES_SET_SELECTED_PRESET,
-			value: 'ab',
 			siteId,
 		} );
 	} );

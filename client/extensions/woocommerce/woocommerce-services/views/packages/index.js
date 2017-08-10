@@ -181,7 +181,6 @@ Packages.propTypes = {
 	removePackage: PropTypes.func.isRequired,
 	editPackage: PropTypes.func.isRequired,
 	dismissModal: PropTypes.func.isRequired,
-	setSelectedPreset: PropTypes.func.isRequired,
 	savePackage: PropTypes.func.isRequired,
 	updatePackagesField: PropTypes.func.isRequired,
 	toggleOuterDimensions: PropTypes.func.isRequired,
