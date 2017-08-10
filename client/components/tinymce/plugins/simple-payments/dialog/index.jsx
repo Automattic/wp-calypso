@@ -37,9 +37,9 @@ import {
 } from 'state/simple-payments/product-list/actions';
 import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
+import EmptyContentComponent from 'components/empty-content';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
@@ -350,10 +350,6 @@ class SimplePaymentsDialog extends Component {
 		);
 	}
 
-	returnTrue() {
-		return true;
-	}
-
 	render() {
 		const {
 			showDialog,
@@ -386,23 +382,16 @@ class SimplePaymentsDialog extends Component {
 
 		if ( ! shouldQuerySitePlans && ! planHasSimplePaymentsFeature ) {
 			return this.renderEmptyDialog(
-				<div className="editor-simple-payments-modal__nudge-wrapper">
-					<div className="editor-simple-payments-modal__nudge-title">
-						{ translate( 'Insert payment button' ) }
-					</div>
-					<div className="editor-simple-payments-modal__nudge-subtitle">
-						{ translate( 'To insert Payment Button to your site, upgrade your plan.' ) }
-					</div>
-					<UpgradeNudge
-						className="editor-simple-payments-modal__nudge-nudge"
-						title={ translate( 'Upgrade to a Premium Plan!' ) }
-						message={ translate(
-							'And get simple payments, advanced social media, your own domain, and more.'
-						) }
-						feature={ FEATURE_SIMPLE_PAYMENTS }
-						shouldDisplay={ this.returnTrue }
-					/>
-				</div>
+				<EmptyContentComponent
+					illustration="/calypso/images/illustrations/type-e-Commerce.svg"
+					illustrationWidth="40%"
+					title={ translate( 'To insert Payment Button to your site, upgrade your plan.' ) }
+					line={ translate(
+						'And get simple payments, advanced social media, your own domain, and more.'
+					) }
+					action={ translate( 'Upgrade to a Premium Plan!' ) }
+					actionURL={ '/plans' }
+				/>
 			);
 		}
 
