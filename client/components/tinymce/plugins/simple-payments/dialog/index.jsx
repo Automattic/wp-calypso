@@ -247,21 +247,29 @@ class SimplePaymentsDialog extends Component {
 	handleTrash = paymentId => {
 		const { translate } = this.props;
 		const areYouSure = translate(
-			'Are you sure you want to permanently delete this payment button?'
+			'Are you sure you want to delete this item? It will be disabled and removed from all locations where it currently appears.'
 		);
-		accept( areYouSure, accepted => {
-			if ( ! accepted ) {
-				return;
+		accept(
+			areYouSure,
+			accepted => {
+				if ( ! accepted ) {
+					return;
+				}
+
+				this.setIsSubmitting( true );
+
+				const { siteId, dispatch } = this.props;
+
+				dispatch( trashPaymentButton( siteId, paymentId ) )
+					.catch( () => this.showError( translate( 'The payment button could not be deleted.' ) ) )
+					.then( () => this.setIsSubmitting( false ) );
+			},
+			translate( 'Delete' ),
+			null,
+			{
+				isScary: true,
 			}
-
-			this.setIsSubmitting( true );
-
-			const { siteId, dispatch } = this.props;
-
-			dispatch( trashPaymentButton( siteId, paymentId ) )
-				.catch( () => this.showError( translate( 'The payment button could not be deleted.' ) ) )
-				.then( () => this.setIsSubmitting( false ) );
-		} );
+		);
 	};
 
 	getActionButtons() {

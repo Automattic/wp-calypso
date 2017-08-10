@@ -11,6 +11,11 @@ Accept is a stylized substitute to the browser `confirm` dialog.
 * `callback` - A callback that gets called after confirms or cancels the dialog.
 * `confirmButtonText` - Optional confirm button text, defaults to 'OK'.
 * `cancelButtonText` - Optional cancel button text, defaults to 'Cancel'.
+* `options` - Optional parameters
+
+## Options
+
+* `isScary` - if `true`, confirm button will look scary.
 
 ## Usage
 
@@ -25,5 +30,21 @@ accept( 'Are you sure you want to perform this action?', function( accepted ) {
 	} else {
 		// User cancelled or otherwise closed the prompt
 	}
+} );
+```
+
+This will make the confirmation button look scary:
+
+```js
+var accept = require( 'lib/accept' );
+
+accept( 'Are you sure you want to perform this action?', function( accepted ) {
+	if ( accepted ) {
+		// User accepted the prompt
+	} else {
+		// User cancelled or otherwise closed the prompt
+	}
+}, translate( 'Destroy Everything' ), translate( 'Nevermind' ), {
+	isScary: true
 } );
 ```

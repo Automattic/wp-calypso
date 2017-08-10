@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -15,7 +16,8 @@ const AcceptDialog = React.createClass( {
 		message: PropTypes.node,
 		onClose: PropTypes.func.isRequired,
 		confirmButtonText: PropTypes.node,
-		cancelButtonText: PropTypes.node
+		cancelButtonText: PropTypes.node,
+		options: PropTypes.object
 	},
 
 	getInitialState: function() {
@@ -31,6 +33,9 @@ const AcceptDialog = React.createClass( {
 	},
 
 	getActionButtons: function() {
+		const { options } = this.props;
+		const isScary = options && options.isScary;
+		const additionalClassNames = classnames( { 'is-scary': isScary } );
 		return [
 			{
 				action: 'cancel',
@@ -39,7 +44,8 @@ const AcceptDialog = React.createClass( {
 			{
 				action: 'accept',
 				label: this.props.confirmButtonText ? this.props.confirmButtonText : this.props.translate( 'OK' ),
-				isPrimary: true
+				isPrimary: true,
+				additionalClassNames
 			}
 		];
 	},
