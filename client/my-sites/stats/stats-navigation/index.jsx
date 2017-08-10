@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,6 +14,8 @@ import NavItem from 'components/section-nav/item';
 import FollowersCount from 'blocks/followers-count';
 import SegmentedControl from 'components/segmented-control';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import { isPluginActive } from 'state/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import config from 'config';
 
 const StatsNavigation = ( props ) => {
@@ -90,4 +93,15 @@ StatsNavigation.propTypes = {
 	siteId: PropTypes.number,
 };
 
-export default localize( StatsNavigation );
+const localized = localize( StatsNavigation );
+
+export default connect(
+	( state, { siteId } ) => {
+		const isJetpack = isJetpackSite( state, siteId );
+		return {
+			isJetpack,
+			isStore: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
+			siteId,
+		};
+	}
+)( localized );

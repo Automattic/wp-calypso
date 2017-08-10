@@ -15,7 +15,7 @@ import { isRequestingForSites } from 'state/plugins/installed/selectors';
 class QueryJetpackPlugins extends Component {
 	static propTypes = {
 		siteIds: PropTypes.arrayOf(
-			PropTypes.oneOf( [ PropTypes.string, PropTypes.number ] ).isRequired
+			PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired
 		).isRequired,
 		isRequestingForSites: PropTypes.bool,
 		fetchPlugins: PropTypes.func,
