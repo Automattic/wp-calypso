@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import filter from 'lodash/filter';
+import { filter } from 'lodash';
 import sinon from 'sinon';
 
 /**

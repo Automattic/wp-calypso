@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import omit from 'lodash/omit';
+import { omit } from 'lodash';
 import React from 'react';
 import { setSection } from 'state/ui/actions';
 

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import values from 'lodash/values';
+import { values } from 'lodash';
 
 /**
  * Internal dependencies

@@ -1,11 +1,7 @@
 /**
  * External Dependencies
  */
-import find from 'lodash/find';
-import map from 'lodash/map';
-import startsWith from 'lodash/startsWith';
-import includes from 'lodash/includes';
-import flatten from 'lodash/flatten';
+import { find, flatten, includes, map, startsWith } from 'lodash';
 import debugFactory from 'debug';
 import { countries, dialCodeMap } from './data';
 

@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import find from 'lodash/find';
-import includes from 'lodash/includes';
+import { find, includes } from 'lodash';
+
 import moment from 'moment';
 import i18n from 'i18n-calypso';
 

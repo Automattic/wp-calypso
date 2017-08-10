@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { omit } from 'lodash/object';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies

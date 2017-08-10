@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import map from 'lodash/map';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies

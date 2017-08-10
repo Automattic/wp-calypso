@@ -1,6 +1,12 @@
 /** @format */
-import isArray from 'lodash/isArray';
+/**
+ * External dependencies
+ */
+import { isArray } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import wpcom from 'lib/wp';
 
 import {

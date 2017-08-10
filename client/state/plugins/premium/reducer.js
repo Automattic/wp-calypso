@@ -1,7 +1,7 @@
 /**
 * External dependencies
 */
-import forEach from 'lodash/forEach';
+import { forEach } from 'lodash';
 
 /**
  * Internal dependencies

@@ -4,7 +4,7 @@
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import debugFactory from 'debug';
-import startsWith from 'lodash/startsWith';
+import { startsWith } from 'lodash';
 
 /**
  * Internal Dependencies

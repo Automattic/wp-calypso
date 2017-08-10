@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import camelCase from 'lodash/camelCase';
+import { camelCase } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**

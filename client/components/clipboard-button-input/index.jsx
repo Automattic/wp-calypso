@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import omit from 'lodash/omit';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies

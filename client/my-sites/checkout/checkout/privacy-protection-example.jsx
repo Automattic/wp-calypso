@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import find from 'lodash/find';
+import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 const PrivacyProtectionExample = ( { translate, fields, countriesList } ) => {

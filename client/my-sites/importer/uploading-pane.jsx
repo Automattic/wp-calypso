@@ -4,9 +4,7 @@
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
-import flowRight from 'lodash/flowRight';
-import noop from 'lodash/noop';
-import includes from 'lodash/includes';
+import { flowRight, includes, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**

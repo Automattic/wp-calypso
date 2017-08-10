@@ -3,7 +3,7 @@
  */
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
-import mapValues from 'lodash/mapValues';
+import { mapValues } from 'lodash';
 
 /**
  * Internal dependencies

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
-import includes from 'lodash/includes';
+import { includes } from 'lodash';
 import { moment, translate } from 'i18n-calypso';
 
 /**

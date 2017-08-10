@@ -2,11 +2,10 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import defer from 'lodash/defer';
+import { capitalize, defer } from 'lodash';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { capitalize } from 'lodash';
 
 /**
  * Internal dependencies

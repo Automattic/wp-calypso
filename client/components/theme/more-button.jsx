@@ -3,8 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import isFunction from 'lodash/isFunction';
-import map from 'lodash/map';
+import { isFunction, map } from 'lodash';
 
 /**
  * Internal dependencies

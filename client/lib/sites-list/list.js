@@ -3,10 +3,7 @@
  */
 import debugModule from 'debug';
 import store from 'store';
-import assign from 'lodash/assign';
-import find from 'lodash/find';
-import isEmpty from 'lodash/isEmpty';
-import some from 'lodash/some';
+import { assign, find, isEmpty, some } from 'lodash';
 
 /**
  * Internal dependencies

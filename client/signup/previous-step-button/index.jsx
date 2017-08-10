@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import find from 'lodash/find';
+import { find } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**

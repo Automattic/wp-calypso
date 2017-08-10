@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import defer from 'lodash/defer';
+import { defer } from 'lodash';
 import { expect } from 'chai';
 import { spy } from 'sinon';
 import querystring from 'querystring';

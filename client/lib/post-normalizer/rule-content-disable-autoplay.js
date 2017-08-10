@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import forEach from 'lodash/forEach';
+import { forEach } from 'lodash';
 import url from 'url';
 
 /**

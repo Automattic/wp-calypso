@@ -5,9 +5,7 @@ import React from 'react';
 import page from 'page';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import filter from 'lodash/filter';
-import range from 'lodash/range';
-import get from 'lodash/get';
+import { filter, get, range } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
