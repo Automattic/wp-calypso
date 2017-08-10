@@ -1,7 +1,13 @@
+/** @format *
 /**
  * External dependencies
  */
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import createSelector from 'lib/create-selector';
 
 /**
  * Returns list of Activity Log items.
@@ -10,10 +16,16 @@ import { get } from 'lodash';
  * @param {number|string} siteId the site ID
  * @return {?array} Activity log item objects. Null if no data.
  */
-export default function getActivityLogs( state, siteId ) {
-	return get( state, [
-		'activityLog',
-		'logItems',
-		siteId,
-	], null );
-}
+const getActivityLogs = createSelector(
+	( state, siteId ) => {
+		const manager = get( state, [ 'activityLog', 'logItems', siteId ], null );
+		if ( ! manager ) {
+			return null;
+		}
+
+		return manager.getItems();
+	},
+	( state, siteId ) => get( state, [ 'activityLog', 'logItems', siteId ] )
+);
+
+export default getActivityLogs;

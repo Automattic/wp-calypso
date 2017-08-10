@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -87,11 +88,13 @@ export function activityLogError( siteId, error ) {
 	};
 }
 
-export function activityLogUpdate( siteId, data ) {
+export function activityLogUpdate( siteId, data, found, query ) {
 	return {
 		type: ACTIVITY_LOG_UPDATE,
-		siteId,
 		data,
+		query,
+		siteId,
+		found,
 	};
 }
 
