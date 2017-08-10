@@ -60,9 +60,17 @@
 	align-items: stretch;
 	position: relative;
 
+	@include breakpoint( "<480px" ) {
+		flex-wrap: wrap;
+	}
+
 	.section-nav {
 		flex: 1 auto;
 		z-index: z-index( 'root', '.media-library .search.is-expanded-to-container' );
+
+		@include breakpoint( "<480px" ) {
+			width: auto;
+		}
 	}
 
 	.plan-storage {
@@ -90,6 +98,87 @@
 			margin-bottom: 17px;
 		}
 	}
+
+	.media-library__datasource {
+		box-shadow:
+		  0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		  0 1px 2px lighten( $gray, 30% );
+		background-color: $white;
+		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		width: 65px;
+		min-height: 50px;
+		min-width: 65px;
+		margin-bottom: 17px;
+
+		@include breakpoint( "<480px" ) {
+			margin-bottom: 9px;
+			align-items: normal;
+			padding-top: 6px;
+		}
+	}
+}
+
+.editor-media-modal .media-library__datasource {
+	margin-bottom: 16px;
+
+	@include breakpoint( "<480px" ) {
+		margin-bottom: 9px;
+	}
+}
+
+.media-library__source-button.is-borderless {
+	padding: 5px;
+	padding-left: 12px;
+	height: 38px;
+
+	img {
+		min-width: 24px;
+		min-height: 24px;
+		margin-top: 2px;
+	}
+
+	.gridicons-chevron-down {
+		top: -3px;
+	}
+
+	.gridicon {
+		top: 4px;
+	}
+
+	&:after {
+		@include noticon( '\f431', 20px );
+		line-height: 16px;
+		color: rgba( $gray, 0.5 );
+		padding-top: 6px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		.gridicons-chevron-down {
+			width: 18px;
+			height: 18px;
+			color: rgba( $gray, 0.5 );
+		}
+
+		.gridicon {
+			top: 2px;
+		}
+
+		&:after {
+			padding-top: 3px;
+		}
+	}
+}
+
+.media-library__source-button.is-open.is-borderless {
+	&:after {
+		@include noticon( '\f432', 20px );
+	}
+
+	.gridicon {
+		color: $gray-dark;
+	}
 }
 
 .editor-media-modal .media-library__filter-bar {
@@ -114,6 +203,17 @@
 
 .media-library__upload-buttons {
 	display: inline;
+}
+
+.media-library__header-popover {
+	.popover__menu-item {
+		padding-left: 12px;
+	}
+
+	.popover__menu img, .popover__menu svg {
+		margin-right: 8px;
+		vertical-align: middle;
+	}
 }
 
 .media-library__scale-toggle {
