@@ -3,8 +3,8 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 const FieldError = ( { text, type = 'input-validation' } ) => {
 	return (
@@ -18,7 +18,7 @@ const FieldError = ( { text, type = 'input-validation' } ) => {
 };
 
 FieldError.propTypes = {
-	text: PropTypes.string,
+	text: PropTypes.string.isRequired,
 	type: PropTypes.string,
 };
 

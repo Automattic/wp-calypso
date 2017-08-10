@@ -8,9 +8,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SelectOptGroups from 'components/forms/select-opt-groups';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
+import SelectOptGroups from 'components/forms/select-opt-groups';
 
 const defaultPackages = {
 	label: 'Custom box',
@@ -99,7 +99,7 @@ const AddPackagePresets = ( { siteId, selectedPreset, setSelectedPreset, presets
 };
 
 AddPackagePresets.propTypes = {
-	siteId: PropTypes.number,
+	siteId: PropTypes.number.isRequired,
 	selectedPreset: PropTypes.string,
 	setSelectedPreset: PropTypes.func.isRequired,
 	presets: PropTypes.object,
