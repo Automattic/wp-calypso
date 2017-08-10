@@ -180,6 +180,9 @@ class PostComment extends Component {
 
 		// Trackback / Pingback
 		if ( comment.type === 'trackback' || comment.type === 'pingback' ) {
+			if ( this.props.hidePingbacksAndTrackbacks ) {
+				return null;
+			}
 			return <PostTrackback { ...this.props } />;
 		}
 
@@ -282,6 +285,7 @@ PostComment.propTypes = {
 	onCommentSubmit: React.PropTypes.func,
 	maxDepth: React.PropTypes.number,
 	showNestingReplyArrow: React.PropTypes.bool,
+	hidePingbacksAndTrackbacks: React.PropTypes.bool,
 
 	// connect()ed props:
 	currentUser: React.PropTypes.object.isRequired,
@@ -295,6 +299,7 @@ PostComment.defaultProps = {
 	maxChildrenToShow: 5,
 	onCommentSubmit: noop,
 	showNestingReplyArrow: false,
+	hidePingbacksAndTrackbacks: false,
 };
 
 export default connect( state => ( {

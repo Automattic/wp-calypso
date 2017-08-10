@@ -58,6 +58,7 @@ class PostCommentList extends React.Component {
 		commentsTree: React.PropTypes.object,
 		requestPostComments: React.PropTypes.func.isRequired,
 		requestComment: React.PropTypes.func.isRequired,
+		hidePingbacksAndTrackbacks: React.PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -66,6 +67,7 @@ class PostCommentList extends React.Component {
 		showCommentCount: true,
 		maxDepth: Infinity,
 		showNestingReplyArrow: false,
+		hidePingbacksAndTrackbacks: false,
 	};
 
 	state = {
