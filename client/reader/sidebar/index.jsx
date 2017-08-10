@@ -191,7 +191,7 @@ export const ReaderSidebar = createReactClass( {
 										href="/read/conversations"
 										onClick={ this.handleReaderSidebarConversationsClicked }
 									>
-										<Gridicon icon="comment" size={ 24 } />
+										<Gridicon icon="chat" size={ 24 } />
 										<span className="menu-link-text">
 											{ this.props.translate( 'Conversations' ) }
 										</span>
