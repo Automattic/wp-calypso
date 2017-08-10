@@ -1,10 +1,11 @@
+const ReactDom = require( 'react-dom' ), React = require( 'react' ), page = require( 'page' );
+import { debounce, throttle, get } from 'lodash';
+
 /**
  * External dependencies
  */
-const ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	page = require( 'page' );
-import { debounce, throttle, get } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
@@ -65,20 +66,20 @@ import { NESTED_SIDEBAR_NONE } from 'post-editor/editor-sidebar/constants';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
-		siteId: React.PropTypes.number,
-		preferences: React.PropTypes.object,
-		setEditorModePreference: React.PropTypes.func,
-		setEditorSidebar: React.PropTypes.func,
-		setLayoutFocus: React.PropTypes.func.isRequired,
-		editorModePreference: React.PropTypes.string,
-		editorSidebarPreference: React.PropTypes.string,
-		user: React.PropTypes.object,
-		userUtils: React.PropTypes.object,
-		editPath: React.PropTypes.string,
-		markChanged: React.PropTypes.func.isRequired,
-		markSaved: React.PropTypes.func.isRequired,
-		translate: React.PropTypes.func.isRequired,
-		hasBrokenPublicizeConnection: React.PropTypes.bool,
+		siteId: PropTypes.number,
+		preferences: PropTypes.object,
+		setEditorModePreference: PropTypes.func,
+		setEditorSidebar: PropTypes.func,
+		setLayoutFocus: PropTypes.func.isRequired,
+		editorModePreference: PropTypes.string,
+		editorSidebarPreference: PropTypes.string,
+		user: PropTypes.object,
+		userUtils: PropTypes.object,
+		editPath: PropTypes.string,
+		markChanged: PropTypes.func.isRequired,
+		markSaved: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+		hasBrokenPublicizeConnection: PropTypes.bool,
 	},
 
 	_previewWindow: null,

@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
+
 import React from 'react';
 import createFragment from 'react-addons-create-fragment';
 import { connect } from 'react-redux';
@@ -72,18 +74,18 @@ const POST_TYPE_SUPPORTS = {
 
 const EditorDrawer = React.createClass( {
 	propTypes: {
-		site: React.PropTypes.object,
-		savedPost: React.PropTypes.object,
-		post: React.PropTypes.object,
-		canJetpackUseTaxonomies: React.PropTypes.bool,
-		typeObject: React.PropTypes.object,
-		isNew: React.PropTypes.bool,
-		type: React.PropTypes.string,
-		setPostDate: React.PropTypes.func,
-		onSave: React.PropTypes.func,
-		isPostPrivate: React.PropTypes.bool,
-		confirmationSidebarStatus: React.PropTypes.string,
-		toggleNestedSidebar: React.PropTypes.func,
+		site: PropTypes.object,
+		savedPost: PropTypes.object,
+		post: PropTypes.object,
+		canJetpackUseTaxonomies: PropTypes.bool,
+		typeObject: PropTypes.object,
+		isNew: PropTypes.bool,
+		type: PropTypes.string,
+		setPostDate: PropTypes.func,
+		onSave: PropTypes.func,
+		isPostPrivate: PropTypes.bool,
+		confirmationSidebarStatus: PropTypes.string,
+		toggleNestedSidebar: PropTypes.func,
 	},
 
 	onExcerptChange: function( event ) {
