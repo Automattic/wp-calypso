@@ -39,6 +39,7 @@ class ActivityLogItem extends Component {
 				'menu',
 				'plugin',
 				'post',
+				'rewind',
 				'term',
 				'theme',
 				'user',
@@ -77,6 +78,11 @@ class ActivityLogItem extends Component {
 				core: PropTypes.shape( {
 					new_version: PropTypes.string,
 					old_version: PropTypes.string,
+				} ),
+
+				error: PropTypes.shape( {
+					error_code: PropTypes.string,
+					error_message: PropTypes.string,
 				} ),
 
 				menu: PropTypes.shape( {

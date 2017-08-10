@@ -16,13 +16,14 @@ export default class ActivityIcon extends PureComponent {
 			'menu',
 			'plugin',
 			'post',
+			'rewind',
 			'term',
 			'theme',
 			'user',
 			'widget',
 		] ).isRequired,
 		name: PropTypes.string.isRequired,
-		object: PropTypes.object.isRequired,
+		object: PropTypes.object,
 	};
 
 	getIcon() {
