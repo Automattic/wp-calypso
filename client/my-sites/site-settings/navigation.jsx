@@ -29,6 +29,7 @@ export class SiteSettingsNavigation extends Component {
 			discussion: translate( 'Discussion', { context: 'settings screen' } ),
 			traffic: translate( 'Traffic', { context: 'settings screen' } ),
 			security: translate( 'Security', { context: 'settings screen' } ),
+			backups: translate( 'Backups', { context: 'backups screen' } ),
 		};
 	}
 
@@ -85,6 +86,15 @@ export class SiteSettingsNavigation extends Component {
 								{ strings.security }
 						</NavItem>
 					}
+
+					<NavItem
+						path={ `/settings/backups/${ site.slug }` }
+						preloadSectionName="settings-backups"
+						selected={ section === 'backups' }
+					>
+						{ strings.backups }
+					</NavItem>
+
 				</NavTabs>
 			</SectionNav>
 		);
