@@ -34,7 +34,7 @@ describe( '#updateSettings()', () => {
 	it( 'should dispatch notification settings', () => {
 		const dispatch = spy();
 
-		updateSettings( { dispatch }, null, null, {} );
+		updateSettings( { dispatch }, null, {} );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( {

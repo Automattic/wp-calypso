@@ -64,20 +64,6 @@ describe( 'comment-email-subscriptions', () => {
 	} );
 
 	describe( 'receiveUpdatePostEmailSubscription', () => {
-		it( 'should do nothing on success', () => {
-			const dispatch = spy();
-			receiveUpdatePostEmailSubscription(
-				{ dispatch },
-				{
-					payload: { blogId: 1234 },
-					meta: { previousState: 'instantly' },
-				},
-				null,
-				{ success: true }
-			);
-			expect( dispatch ).to.have.not.been.called;
-		} );
-
 		it( 'should dispatch an update with the previous state if it is called with null', () => {
 			const dispatch = spy();
 			const previousState = 'instantly';
@@ -87,7 +73,6 @@ describe( 'comment-email-subscriptions', () => {
 					payload: { blogId: 1234 },
 					meta: { previousState },
 				},
-				null,
 				null
 			);
 			expect( dispatch ).to.have.been.calledWith(
@@ -104,7 +89,6 @@ describe( 'comment-email-subscriptions', () => {
 					payload: { blogId: 1234 },
 					meta: { previousState },
 				},
-				null,
 				{ success: false }
 			);
 			expect( dispatch ).to.have.been.calledWith(
@@ -122,8 +106,7 @@ describe( 'comment-email-subscriptions', () => {
 				{
 					payload: { blogId: 1234 },
 					meta: { previousState },
-				},
-				null
+				}
 			);
 			expect( dispatch ).to.have.been.calledWith(
 				local( updateNewPostEmailSubscription( 1234, previousState ) )

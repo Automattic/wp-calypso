@@ -91,7 +91,7 @@ describe( 'WordPress.com API Middleware', () => {
 	} );
 
 	it( 'should allow continuing the action down the chain', () => {
-		const adder = spy( ( _store, _action, _next ) => _next( _action ) );
+		const adder = spy( () => {} );
 		const handlers = mergeHandlers( {
 			[ 'ADD' ]: [ adder ],
 		} );

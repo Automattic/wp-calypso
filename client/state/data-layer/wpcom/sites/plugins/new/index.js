@@ -63,7 +63,7 @@ const showErrorNotice = ( dispatch, error ) => {
 	dispatch( errorNotice( translate( 'Problem installing the plugin.' ) ) );
 };
 
-export const uploadComplete = ( { dispatch }, { siteId }, next, data ) => {
+export const uploadComplete = ( { dispatch }, { siteId }, data ) => {
 	const { slug: pluginId } = data;
 
 	dispatch( recordTracksEvent( 'calypso_plugin_upload_complete', {
@@ -81,8 +81,7 @@ export const uploadComplete = ( { dispatch }, { siteId }, next, data ) => {
 	showSuccessNotice( dispatch, data );
 };
 
-export const receiveError = ( { dispatch }, { siteId }, next, error ) => {
-
+export const receiveError = ( { dispatch }, { siteId }, error ) => {
 	dispatch( recordTracksEvent( 'calypso_plugin_upload_error', {
 		error_code: error.error,
 		error_message: error.message
@@ -92,7 +91,7 @@ export const receiveError = ( { dispatch }, { siteId }, next, error ) => {
 	dispatch( pluginUploadError( siteId, error ) );
 };
 
-export const updateUploadProgress = ( { dispatch }, { siteId }, next, { loaded, total } ) => {
+export const updateUploadProgress = ( { dispatch }, { siteId }, { loaded, total } ) => {
 	const progress = total ? ( loaded / total ) * 100 : total;
 	dispatch( updatePluginUploadProgress( siteId, progress ) );
 };

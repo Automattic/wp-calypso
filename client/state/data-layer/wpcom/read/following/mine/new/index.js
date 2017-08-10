@@ -47,16 +47,16 @@ export function requestFollow( { dispatch, getState }, action ) {
 	);
 }
 
-export function receiveFollow( store, action, next, response ) {
+export function receiveFollow( store, action, response ) {
 	if ( response && response.subscribed ) {
 		const subscription = subscriptionFromApi( response.subscription );
 		store.dispatch( local( follow( action.payload.feedUrl, subscription ) ) );
 	} else {
-		followError( store, action, next, response );
+		followError( store, action, response );
 	}
 }
 
-export function followError( { dispatch }, action, next, response ) {
+export function followError( { dispatch }, action, response ) {
 	dispatch(
 		errorNotice(
 			translate( 'Sorry, there was a problem following %(url)s. Please try again.', {

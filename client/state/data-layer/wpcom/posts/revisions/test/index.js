@@ -115,7 +115,7 @@ describe( '#receiveSuccess', () => {
 		const action = requestPostRevisions( 12345678, 10 );
 		const dispatch = sinon.spy();
 
-		receiveSuccess( { dispatch }, action, null, successfulPostRevisionsResponse );
+		receiveSuccess( { dispatch }, action, successfulPostRevisionsResponse );
 
 		const expectedRevisions = cloneDeep( normalizedPostRevisions );
 		forEach( expectedRevisions, revision => {
@@ -134,7 +134,7 @@ describe( '#receiveError', () => {
 		const dispatch = sinon.spy();
 		const rawError = new Error( 'Foo Bar' );
 
-		receiveError( { dispatch }, action, null, rawError );
+		receiveError( { dispatch }, action, rawError );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( receivePostRevisionsFailure( 12345678, 10, rawError ) );

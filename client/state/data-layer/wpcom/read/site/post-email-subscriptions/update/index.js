@@ -39,7 +39,7 @@ export function requestUpdatePostEmailSubscription( { dispatch, getState }, acti
 	);
 }
 
-export function receiveUpdatePostEmailSubscription( store, action, next, response ) {
+export function receiveUpdatePostEmailSubscription( store, action, response ) {
 	if ( ! ( response && response.success ) ) {
 		// revert
 		receiveUpdatePostEmailSubscriptionError( store, action );

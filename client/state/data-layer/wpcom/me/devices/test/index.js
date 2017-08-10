@@ -40,7 +40,7 @@ describe( 'wpcom-api', () => {
 				];
 				const dispatch = spy();
 
-				handleSuccess( { dispatch }, null, null, devices );
+				handleSuccess( { dispatch }, null, devices );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith( {

@@ -40,7 +40,7 @@ describe( 'send-email-verification', () => {
 		const message = 'This is an error message.';
 		const rawError = Error( message );
 
-		handleError( { dispatch: dispatchSpy }, null, null, rawError );
+		handleError( { dispatch: dispatchSpy }, null, rawError );
 
 		it( 'should dispatch failure action with error message', () => {
 			expect( dispatchSpy ).to.have.been.calledWith( {

@@ -59,7 +59,7 @@ const ERROR_RESPONSE = deepFreeze( {
 describe( 'receiveActivityLog', () => {
 	it( 'should dispatch activity log update action', () => {
 		const dispatch = sinon.spy();
-		receiveActivityLog( { dispatch }, { siteId: SITE_ID }, null, SUCCESS_RESPONSE );
+		receiveActivityLog( { dispatch }, { siteId: SITE_ID }, SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.calledWithMatch(
 			activityLogUpdate( SITE_ID, [
 				{
@@ -93,7 +93,7 @@ describe( 'receiveActivityLog', () => {
 describe( 'receiveActivityLogError', () => {
 	it( 'should dispatch activity log error action', () => {
 		const dispatch = sinon.spy();
-		receiveActivityLogError( { dispatch }, { siteId: SITE_ID }, null, ERROR_RESPONSE );
+		receiveActivityLogError( { dispatch }, { siteId: SITE_ID }, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
 			activityLogError( SITE_ID, {
 				error: 'unknown_blog',

@@ -68,7 +68,7 @@ describe( 'recommended sites', () => {
 			const dispatch = spy();
 			const action = requestRecommendedSitesAction( { seed } );
 
-			receiveRecommendedSitesResponse( { dispatch }, action, null, response );
+			receiveRecommendedSitesResponse( { dispatch }, action, response );
 			expect( dispatch ).calledWith(
 				receiveRecommendedSites( {
 					sites: fromApi( response ),

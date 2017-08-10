@@ -97,7 +97,7 @@ describe( 'utility functions', () => {
 			};
 			const comment = { ID: 1, content: 'this is the content' };
 
-			updatePlaceholderComment( { dispatch }, action, null, comment );
+			updatePlaceholderComment( { dispatch }, action, comment );
 
 			expect( dispatch ).to.have.been.calledThrice;
 			expect( dispatch ).to.have.been.calledWith( {
@@ -118,7 +118,7 @@ describe( 'utility functions', () => {
 			};
 			const comment = { ID: 1, content: 'this is the content' };
 
-			updatePlaceholderComment( { dispatch }, action, null, comment );
+			updatePlaceholderComment( { dispatch }, action, comment );
 
 			expect( dispatch ).to.have.been.calledThrice;
 			expect( dispatch ).to.have.been.calledWith( {
@@ -140,7 +140,7 @@ describe( 'utility functions', () => {
 			};
 			const comment = { ID: 1, content: 'this is the content' };
 
-			updatePlaceholderComment( { dispatch }, action, null, comment );
+			updatePlaceholderComment( { dispatch }, action, comment );
 
 			expect( dispatch ).to.have.been.calledThrice;
 			expect( dispatch ).to.have.been.calledWith( {

@@ -89,7 +89,7 @@ describe( '#receiveSuccess', () => {
 		const action = requestUsers( 12345678, [ 10, 11 ] );
 		const dispatch = sinon.spy();
 
-		receiveSuccess( { dispatch }, action, null, [
+		receiveSuccess( { dispatch }, action, [
 			{ id: 10 },
 			{ id: 11 },
 		] );
@@ -125,7 +125,6 @@ describe( '#receiveSuccess', () => {
 					},
 				},
 			},
-			null,
 			usersChunks[ 0 ]
 		);
 
@@ -171,7 +170,6 @@ describe( '#receiveSuccess', () => {
 					},
 				},
 			},
-			null,
 			usersChunks[ 0 ]
 		);
 

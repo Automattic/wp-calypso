@@ -25,7 +25,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { local } from 'state/data-layer/utils';
 import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
 
-/***
+/**
  * Module constants
  */
 const POLL_APP_PUSH_INTERVAL_SECONDS = 5;
@@ -58,15 +58,14 @@ const requestTwoFactorPushNotificationStatus = ( store, action ) => {
 const receivedTwoFactorPushNotificationApproved = ( { dispatch } ) =>
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } );
 
-/***
+/**
  * Receive error from the two factor push notification status http request
  *
  * @param {Object}	 store  Global redux store
  * @param {Object}	 action dispatched action
- * @param {Function} next   dispatches to next middleware in chain
  * @param {Object}	 error  the error object
  */
-const receivedTwoFactorPushNotificationError = ( store, action, next, error ) => {
+const receivedTwoFactorPushNotificationError = ( store, action, error ) => {
 	const isNetworkFailure = ! error.status;
 	const twoStepNonce = get( error, 'response.body.data.two_step_nonce' );
 

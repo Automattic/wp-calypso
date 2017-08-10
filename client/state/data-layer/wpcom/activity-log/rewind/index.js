@@ -34,11 +34,11 @@ const fromApi = response => ( {
 	plan: response.plan,
 } );
 
-export const receiveRewindStatus = ( { dispatch }, { siteId }, next, data ) => {
+export const receiveRewindStatus = ( { dispatch }, { siteId }, data ) => {
 	dispatch( updateRewindStatus( siteId, fromApi( data ) ) );
 };
 
-export const receiveRewindStatusError = ( { dispatch }, { siteId }, next, error ) => {
+export const receiveRewindStatusError = ( { dispatch }, { siteId }, error ) => {
 	dispatch( rewindStatusError(
 		siteId,
 		pick( error, [ 'error', 'status', 'message' ] )
