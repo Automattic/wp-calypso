@@ -25,7 +25,8 @@ class Media extends Component {
 	static propTypes = {
 		selectedSite: PropTypes.object,
 		filter: PropTypes.string,
-		search: PropTypes.string
+		search: PropTypes.string,
+		source: PropTypes.string,
 	};
 
 	state = {
@@ -33,6 +34,7 @@ class Media extends Component {
 		editedImageItem: null,
 		editedVideoItem: null,
 		selectedItems: [],
+		source: '',
 	};
 
 	componentDidMount() {
@@ -221,6 +223,11 @@ class Media extends Component {
 		this.deleteMedia();
 	};
 
+	handleSourceChange = ( source, cb ) => {
+		MediaActions.sourceChanged( this.props.selectedSite.ID );
+		this.setState( { source }, cb );
+	};
+
 	deleteMediaByItemDetail = () => {
 		this.deleteMedia( () => this.closeDetailsModal() );
 	};
@@ -289,9 +296,11 @@ class Media extends Component {
 							site={ site }
 							single={ false }
 							filter={ this.props.filter }
+							source={ this.state.source }
 							onEditItem={ this.openDetailsModalForASingleImage }
 							onViewDetails={ this.openDetailsModalForAllSelected }
 							onDeleteItem={ this.handleDeleteMediaEvent }
+							onSourceChange={ this.handleSourceChange }
 							modal={ false }
 							containerWidth={ this.state.containerWidth } />
 					</MediaLibrarySelectedData>
