@@ -67,6 +67,10 @@
 	}
 
 	&.selectable {
+		&:first-child {
+			border-top: 1px solid $gray-light;
+		}
+
 		.form-checkbox {
 			margin-left: 16px;
 

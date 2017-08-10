@@ -5,7 +5,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -59,24 +58,19 @@ const PackagesList = ( {
 			return null;
 		}
 
-		const className = classNames( 'packages__packages-row packages__packages-header', {
-			selectable: ! editable
-		} );
-
 		return (
-			<div className={ className }>
-				{ ! editable && <div className="packages__packages-row-actions" /> }
+			<div className="packages__packages-row packages__packages-header">
 				<div className="packages__packages-row-icon"></div>
 				<div className="packages__packages-row-details">{ translate( 'Name' ) }</div>
 				<div className="packages__packages-row-dimensions">{ translate( 'Dimensions' ) }</div>
-				{ editable && <div className="packages__packages-row-actions" /> }
+				<div className="packages__packages-row-actions" />
 			</div>
 		);
 	};
 
 	return (
 		<div>
-			{ renderHeader() }
+			{ editable && renderHeader() }
 			{ renderList() }
 		</div>
 	);
