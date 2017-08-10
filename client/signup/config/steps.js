@@ -99,6 +99,31 @@ export default {
 		},
 	},
 
+	'jpo-site-title': {
+		stepName: 'jpo-site-title',
+		providesDependencies: [ 'jpoSiteTitle' ],
+	},
+
+	'jpo-site-type': {
+		stepName: 'jpo-site-type',
+		providesDependencies: [ 'jpoSiteType' ],
+	},
+
+	'jpo-homepage': {
+		stepName: 'jpo-homepage',
+		providesDependencies: [ 'jpoHomepage' ],
+	},
+
+	'jpo-contact-form': {
+		stepName: 'jpo-contact-form',
+		providesDependencies: [ 'jpoContactForm' ],
+	},
+
+	'jpo-summary': {
+		stepName: 'jpo-summary',
+		providesDependencies: [ 'jpoSummary' ],
+	},
+
 	'site-title': {
 		stepName: 'site-title',
 		providesDependencies: [ 'siteTitle' ]
