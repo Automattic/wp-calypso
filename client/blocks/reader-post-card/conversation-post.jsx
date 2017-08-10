@@ -3,8 +3,9 @@
  * External Dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, takeRight } from 'lodash';
+import { map, takeRight, filter } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -15,12 +16,22 @@ import { getDateSortedPostComments } from 'state/comments/selectors';
 
 class ConversationPost extends React.Component {
 	static propTypes = {
-		post: React.PropTypes.object.isRequired,
-		comments: React.PropTypes.array.isRequired,
+		post: PropTypes.object.isRequired,
+		comments: PropTypes.array.isRequired,
 	};
 
 	render() {
-		const commentIdsToShow = map( takeRight( this.props.comments, 3 ), 'ID' );
+		const commentIdsToShow = map(
+			takeRight(
+				filter(
+					this.props.comments,
+					comment => comment.type !== 'trackback' && comment.type !== 'pingback'
+				),
+				3
+			),
+			'ID'
+		);
+
 		return (
 			<div className="reader-post-card__conversation-post">
 				<CompactPostCard { ...this.props } />

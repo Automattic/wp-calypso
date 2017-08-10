@@ -36,7 +36,6 @@ export class ConversationCommentList extends React.Component {
 						return (
 							<PostComment
 								showNestingReplyArrow
-								hidePingbacksAndTrackbacks
 								commentsTree={ commentsTree }
 								key={ commentId }
 								commentId={ commentId }
