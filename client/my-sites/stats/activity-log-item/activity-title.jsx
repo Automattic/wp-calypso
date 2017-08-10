@@ -18,18 +18,6 @@ class ActivityTitle extends Component {
 			login: PropTypes.string,
 		} ),
 
-		group: PropTypes.oneOf( [
-			'attachment',
-			'comment',
-			'core',
-			'menu',
-			'plugin',
-			'post',
-			'term',
-			'theme',
-			'user',
-			'widget',
-		] ).isRequired,
 		name: PropTypes.string.isRequired,
 
 		object: PropTypes.shape( {

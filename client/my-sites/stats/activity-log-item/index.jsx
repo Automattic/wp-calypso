@@ -220,7 +220,6 @@ class ActivityLogItem extends Component {
 	renderHeader() {
 		const {
 			action,
-			group,
 			name,
 		} = this.props.log;
 		const actor = get( this.props, [ 'log', 'actor' ] );
@@ -232,7 +231,6 @@ class ActivityLogItem extends Component {
 				<ActivityTitle
 					action={ action }
 					actor={ actor }
-					group={ group }
 					name={ name }
 					object={ object }
 				/>
