@@ -42,6 +42,7 @@
 		"help": true,
 		"jetpack/happychat": true,
 		"jetpack_core_inline_update": true,
+		"jitms": false,
 		"login/wp-login": true,
 		"keyboard-shortcuts": true,
 		"manage/customize": true,
