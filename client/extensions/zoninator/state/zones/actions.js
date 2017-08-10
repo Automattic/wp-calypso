@@ -38,6 +38,7 @@ export const updateZones = ( siteId, data ) => ( { type: ZONINATOR_UPDATE_ZONES,
  * Returns an action object to indicate that a zone should be updated.
  *
  * @param  {Number} siteId Site ID
+ * @param  {Number} zoneId Zone ID
  * @param  {Object} data   Zone details
  * @return {Object}        Action object
  */
