@@ -30,7 +30,7 @@ import RestorePostDialog from 'post-editor/restore-post-dialog';
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
 import utils from 'lib/posts/utils';
 import EditorPreview from './editor-preview';
-import stats from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'lib/posts/stats';
 import analytics from 'lib/analytics';
 import config from 'config';
 import { abtest } from 'lib/abtest';
@@ -237,13 +237,13 @@ export const PostEditor = React.createClass( {
 		if ( this.props.layoutFocus === 'sidebar' ) {
 			this.props.setEditorSidebar( 'closed' );
 			this.props.setLayoutFocus( 'content' );
-			stats.recordStat( 'close-sidebar' );
-			stats.recordEvent( 'Sidebar Toggle', 'close' );
+			recordStat( 'close-sidebar' );
+			recordEvent( 'Sidebar Toggle', 'close' );
 		} else {
 			this.props.setEditorSidebar( 'open' );
 			this.props.setLayoutFocus( 'sidebar' );
-			stats.recordStat( 'open-sidebar' );
-			stats.recordEvent( 'Sidebar Toggle', 'open' );
+			recordStat( 'open-sidebar' );
+			recordEvent( 'Sidebar Toggle', 'open' );
 		}
 	},
 
@@ -645,8 +645,8 @@ export const PostEditor = React.createClass( {
 				}
 			} );
 		} else {
-			stats.recordStat( isPage ? 'page_trashed' : 'post_trashed' );
-			stats.recordEvent( isPage ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
+			recordStat( isPage ? 'page_trashed' : 'post_trashed' );
+			recordEvent( isPage ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
 			this.props.markSaved();
 			this.onClose();
 		}
