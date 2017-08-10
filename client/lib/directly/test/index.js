@@ -35,6 +35,7 @@ describe( 'index', () => {
 			script.remove();
 		}
 		window.DirectlyRTM = undefined;
+		// We need to reset local state in directly library
 		jest.resetModules();
 	} );
 
