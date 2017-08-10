@@ -98,6 +98,10 @@ const webpackConfig = {
 				exclude: /(node_modules|devdocs[\/\\]search-index)/,
 				loader: [ jsLoader ]
 			},
+			{
+				test: /\.(ml|re)$/,
+				loader: 'bs-loader',
+			},
 		]
 	},
 	resolve: {
@@ -108,7 +112,7 @@ const webpackConfig = {
 			path.join( __dirname, 'client', 'extensions' ),
 			'node_modules',
 		],
-		extensions: [ '.json', '.js', '.jsx' ],
+		extensions: [ '.json', '.js', '.jsx', '.ml', '.re' ],
 	},
 	node: {
 		// Tell webpack we want to supply absolute paths for server code,
