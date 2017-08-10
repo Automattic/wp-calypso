@@ -24,7 +24,7 @@ const needsInstall = () => {
 };
 
 if ( needsInstall() ) {
-	const installResult = spawnSync( 'lerna', [ 'bootstrap', '--hoist' ], {
+	const installResult = spawnSync( 'npm', [ 'install' ], {
 		shell: true,
 		stdio: 'inherit',
 	} ).status;
