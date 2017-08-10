@@ -279,6 +279,8 @@ export class CommentList extends Component {
 				} );
 				if ( previousIsLiked ) {
 					this.props.likeComment( commentId, postId );
+				} else if ( ! previousIsLiked && 'approved' !== previousStatus ) {
+					this.props.unlikeComment( commentId, postId );
 				}
 			},
 		};
@@ -301,12 +303,8 @@ export class CommentList extends Component {
 		this.props.likeComment( commentId, postId, { alsoApprove } );
 
 		if ( alsoApprove ) {
-			const updatedComment = {
-				...comment,
-				isLiked: true,
-			};
 			this.props.removeNotice( `comment-notice-${ commentId }` );
-			this.setCommentStatus( updatedComment, 'approved' );
+			this.setCommentStatus( comment, 'approved', { doPersist: true, showNotice: true } );
 			this.updatePersistedComments( commentId );
 		}
 	}
