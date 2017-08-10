@@ -3,7 +3,6 @@
  */
 import sinon from 'sinon';
 import { expect } from 'chai';
-import useMockery from 'test/helpers/use-mockery';
 
 /**
  * Internal dependencies
@@ -934,42 +933,6 @@ describe( 'actions', () => {
 					error: sinon.match.truthy,
 				} );
 			} );
-		} );
-	} );
-
-	describe.skip( '#tryAndCustomizeTheme', () => {
-		const pageSpy = sinon.spy();
-		const isJetpackSiteSpy = ( state, siteId ) => {
-			if ( siteId === 2211667 ) {
-				return true;
-			}
-			return false;
-		};
-		const getCanonicalThemeSpy = ( state, siteId, themeId ) => {
-			if ( themeId === 'karuna' ) {
-				return { theme: themeId };
-			}
-			return null;
-		};
-
-		// we import it again with different name because we want to mock functions inside.
-		let _tryAndCustomize;
-
-		useMockery( ( mockery ) => {
-			mockery.registerMock( 'page', pageSpy );
-			mockery.registerMock( 'state/sites/selectors', {
-				isJetpackSite: isJetpackSiteSpy
-			} );
-			mockery.registerMock( './selectors', {
-				getThemeCustomizeUrl: () => 'customizer/url',
-				getCanonicalTheme: getCanonicalThemeSpy,
-			} );
-			_tryAndCustomize = require( '../actions' ).tryAndCustomizeTheme;
-		} );
-
-		it( 'page should be called, when theme is available', () => {
-			_tryAndCustomize( 'karuna-wpcom', 2211667 )( spy, () => {} );
-			expect( pageSpy.calledWith( 'customizer/url' ) ).to.be.true;
 		} );
 	} );
 
