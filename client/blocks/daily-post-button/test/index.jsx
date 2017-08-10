@@ -1,4 +1,7 @@
-/** @format */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 jest.mock( 'reader/stats', () => ( {
 	pageViewForPost: () => {},
 	recordAction: () => {},
@@ -7,14 +10,11 @@ jest.mock( 'reader/stats', () => ( {
 } ) );
 jest.mock( 'lib/analytics', () => ( {
 	mc: {
-		bumpStat: () => {}
-	}
+		bumpStat: () => {},
+	},
 } ) );
+jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'page', () => require( 'sinon' ).spy() );
-jest.mock( 'components/sites-popover', () => {
-	const React = require( 'react' );
-	return props => <span { ...props } />;
-} );
 
 /**
  * External  dependencies

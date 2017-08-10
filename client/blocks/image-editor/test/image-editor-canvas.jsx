@@ -3,9 +3,6 @@ jest.mock( 'blocks/image-editor/image-editor-crop', () => {
 	const { Component } = require( 'react' );
 
 	class ImageEditorCropMock extends Component {
-		constructor( props ) {
-			super( props );
-		}
 		render() {
 			return <dfn />;
 		}
