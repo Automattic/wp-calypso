@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import find from 'lodash/find';
-import get from 'lodash/get';
-import values from 'lodash/values';
+import { find, get, values } from 'lodash';
 
 /**
  * Returns true if a network request is in-progress for the specified site ID,

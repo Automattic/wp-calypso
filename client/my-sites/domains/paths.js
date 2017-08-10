@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import startsWith from 'lodash/startsWith';
-import filter from 'lodash/filter';
+import { filter, startsWith } from 'lodash';
 
 function domainManagementRoot() {
 	return '/domains/manage';

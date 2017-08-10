@@ -4,7 +4,7 @@
 var url = require( 'url' ),
 	i18n = require( 'i18n-calypso' ),
 	moment = require( 'moment-timezone' );
-import includes from 'lodash/includes';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies

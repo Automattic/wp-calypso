@@ -1,14 +1,7 @@
 /**
  * External dependencies
  */
-import isEqual from 'lodash/isEqual';
-import reduce from 'lodash/reduce';
-import values from 'lodash/values';
-import omit from 'lodash/omit';
-import map from 'lodash/map';
-import cloneDeep from 'lodash/cloneDeep';
-import difference from 'lodash/difference';
-import get from 'lodash/get';
+import { cloneDeep, difference, get, isEqual, map, omit, reduce, values } from 'lodash';
 
 /**
  * Internal dependencies

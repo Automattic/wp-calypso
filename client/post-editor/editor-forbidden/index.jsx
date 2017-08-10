@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import get from 'lodash/get';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies

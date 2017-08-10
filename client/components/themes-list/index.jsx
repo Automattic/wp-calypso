@@ -2,9 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import times from 'lodash/times';
+import { isEqual, noop, times } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { isEqual, noop } from 'lodash';
 
 /**
  * Internal dependencies

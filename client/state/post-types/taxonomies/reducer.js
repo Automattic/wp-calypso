@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import merge from 'lodash/merge';
-import keyBy from 'lodash/keyBy';
+import { keyBy, merge } from 'lodash';
 
 /**
  * Internal dependencies

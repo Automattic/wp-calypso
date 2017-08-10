@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import merge from 'lodash/merge';
-import set from 'lodash/set';
+import { merge, set } from 'lodash';
 
 const analyticsMocks = [
 	'ga.recordEvent',

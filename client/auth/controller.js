@@ -3,7 +3,7 @@
  */
 import ReactDom from 'react-dom';
 import React from 'react';
-import startsWith from 'lodash/startsWith';
+import { startsWith } from 'lodash';
 import page from 'page';
 
 /**

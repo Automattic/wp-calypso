@@ -4,13 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import createFragment from 'react-addons-create-fragment';
-import noop from 'lodash/noop';
-import head from 'lodash/head';
-import values from 'lodash/values';
-import mapValues from 'lodash/mapValues';
-import groupBy from 'lodash/groupBy';
-import toArray from 'lodash/toArray';
-import some from 'lodash/some';
+import { groupBy, head, mapValues, noop, some, toArray, values } from 'lodash';
 import { translate } from 'i18n-calypso';
 import page from 'page';
 

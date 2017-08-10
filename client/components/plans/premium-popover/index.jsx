@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import omit from 'lodash/omit';
+import { omit } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';

@@ -1,6 +1,5 @@
 /** @format */
-import keyBy from 'lodash/keyBy';
-import filter from 'lodash/filter';
+import { filter, keyBy } from 'lodash';
 
 /**
  * Returns a single post.

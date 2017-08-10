@@ -5,7 +5,7 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import store from 'store';
 import page from 'page';
-import get from 'lodash/get';
+import { find, get, isEmpty, pick } from 'lodash';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
 
@@ -20,9 +20,6 @@ import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import { acceptInvite as acceptInviteAction } from 'lib/invites/actions';
 import _user from 'lib/user';
 import i18nUtils from 'lib/i18n-utils';
-import pick from 'lodash/pick';
-import find from 'lodash/find';
-import isEmpty from 'lodash/isEmpty';
 
 /**
  * Module variables

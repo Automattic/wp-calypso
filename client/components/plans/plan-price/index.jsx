@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import isUndefined from 'lodash/isUndefined';
+import { get, isUndefined } from 'lodash';
+
 import React from 'react';
-import get from 'lodash/get';
 import { isJetpackMonthlyPlan } from 'lib/products-values';
 
 /**

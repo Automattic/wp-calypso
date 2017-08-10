@@ -4,8 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import get from 'lodash/get';
-import some from 'lodash/some';
+import { get, some } from 'lodash';
 
 /**
  * Internal dependencies

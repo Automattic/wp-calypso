@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { partition, sortBy } from 'lodash/fp';
+import { fp as partition } from 'lodash';
 
 /**
  * Internal dependencies

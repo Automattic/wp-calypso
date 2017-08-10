@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 import React from 'react';
 
 /**

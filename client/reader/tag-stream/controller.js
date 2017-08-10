@@ -3,7 +3,7 @@
  * External dependencies
  */
 import React from 'react';
-import trim from 'lodash/trim';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies

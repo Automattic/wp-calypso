@@ -1,7 +1,7 @@
 /**
  * Externel dependencies
  */
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**

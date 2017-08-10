@@ -1,4 +1,4 @@
-import find from 'lodash/find';
+import { find } from 'lodash';
 import { fromJS } from 'immutable';
 
 import { appStates } from 'state/imports/constants';

@@ -3,7 +3,7 @@
  */
 import ReactDom from 'react-dom';
 import React from 'react';
-import includes from 'lodash/includes';
+import { includes } from 'lodash';
 import page from 'page';
 import i18n from 'i18n-calypso';
 

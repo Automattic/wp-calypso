@@ -4,11 +4,10 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flowRight, includes, noop } from 'lodash';
+import { flowRight, get, includes, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 import Gridicon from 'gridicons';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies

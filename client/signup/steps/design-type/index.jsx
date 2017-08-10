@@ -4,9 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import identity from 'lodash/identity';
-import memoize from 'lodash/memoize';
-import transform from 'lodash/transform';
+import { identity, memoize, transform } from 'lodash';
 
 /**
  * Internal dependencies

@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React, { Component, PropTypes } from 'react';
 import { Container } from 'flux/utils';
-import pick from 'lodash/pick';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies

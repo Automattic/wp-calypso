@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import get from 'lodash/get';
+import { get } from 'lodash';
 
 function getPreviewDataForSite( state, siteId ) {
 	return get( state, [ 'preview', siteId ], {} );

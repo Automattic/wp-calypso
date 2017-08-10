@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import assign from 'lodash/assign';
+import { assign } from 'lodash';
 import mockery from 'mockery';
 import sinon from 'sinon';
 

@@ -2,9 +2,7 @@
 /**
  * External Dependencies
  */
-import assign from 'lodash/assign';
-import partial from 'lodash/partial';
-import map from 'lodash/map';
+import { assign, map, partial } from 'lodash';
 
 /**
  * Internal Dependencies

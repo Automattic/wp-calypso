@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import omit from 'lodash/omit';
-import reduce from 'lodash/reduce';
+import { omit, reduce } from 'lodash';
 
 /**
  * Internal dependencies

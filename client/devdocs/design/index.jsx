@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import page from 'page';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
-import trim from 'lodash/trim';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies

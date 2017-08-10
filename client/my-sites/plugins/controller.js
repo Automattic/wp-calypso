@@ -4,8 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
-import some from 'lodash/some';
-import capitalize from 'lodash/capitalize';
+import { capitalize, some } from 'lodash';
 
 /**
  * Internal Dependencies

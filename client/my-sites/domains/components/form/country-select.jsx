@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty } from 'lodash';
 import ReactDom from 'react-dom';
 import observe from 'lib/mixins/data-observe';
 

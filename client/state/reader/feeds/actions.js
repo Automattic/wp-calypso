@@ -1,5 +1,5 @@
 /** @format */
-import isArray from 'lodash/isArray';
+import { isArray } from 'lodash';
 
 import wpcom from 'lib/wp';
 

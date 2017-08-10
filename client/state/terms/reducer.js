@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import mapValues from 'lodash/mapValues';
-import merge from 'lodash/merge';
+import { mapValues, merge } from 'lodash';
 
 /**
  * Internal dependencies

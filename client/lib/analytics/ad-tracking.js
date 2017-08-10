@@ -2,12 +2,9 @@
  * External dependencies
  */
 import async from 'async';
-import noop from 'lodash/noop';
-import some from 'lodash/some';
-import assign from 'lodash/assign';
+import { assign, clone, cloneDeep, noop, some } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:analytics:ad-tracking' );
-import { clone, cloneDeep } from 'lodash';
 import cookie from 'cookie';
 import { v4 as uuid } from 'uuid';
 

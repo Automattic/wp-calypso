@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import qs from 'qs';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash';
 import page from 'page';
 import url from 'url';
 

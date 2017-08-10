@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 
 /**
  * An empty function that at a high level should look like the olark api provided by https://www.olark.com/api

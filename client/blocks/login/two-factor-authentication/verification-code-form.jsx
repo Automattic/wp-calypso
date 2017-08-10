@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import defer from 'lodash/defer';
+import { defer } from 'lodash';
 import classNames from 'classnames';
 
 /**
