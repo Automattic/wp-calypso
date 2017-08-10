@@ -92,13 +92,19 @@ export const setIsSaving = ( siteId, isSaving ) => ( {
 	siteId,
 } );
 
+export const setIsFetching = ( siteId, isFetching ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCHING,
+	isFetching,
+	siteId,
+} );
+
 export const fetchSettings = ( siteId ) => ( dispatch, getState ) => {
 	const form = getPackagesForm( getState(), siteId );
 
 	if ( form && ( form.packages || form.isFetching ) ) {
 		return;
 	}
-	dispatch( { type: WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCHING, isFetching: true, siteId } );
+	dispatch( setIsFetching( siteId, true ) );
 
 	api.get( siteId, api.url.packages )
 		.then( ( { formData, formSchema, storeOptions } ) => {
@@ -113,9 +119,10 @@ export const fetchSettings = ( siteId ) => ( dispatch, getState ) => {
 			} );
 		} )
 		.catch( ( error ) => {
+			//TODO: add better error handling
 			console.error( error ); // eslint-disable-line no-console
 		} )
-		.then( () => dispatch( { type: WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCHING, isFetching: false, siteId } ) );
+		.then( () => dispatch( setIsFetching( siteId, false ) ) );
 };
 
 export const submit = ( siteId, onSaveSuccess, onSaveFailure ) => ( dispatch, getState ) => {
