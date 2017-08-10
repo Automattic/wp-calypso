@@ -90,7 +90,7 @@ StatsNavigation.propTypes = {
 	isStore: PropTypes.bool,
 	section: PropTypes.string.isRequired,
 	slug: PropTypes.string,
-	siteId: PropTypes.number,
+	siteId: PropTypes.number.isRequired,
 };
 
 const localized = localize( StatsNavigation );
