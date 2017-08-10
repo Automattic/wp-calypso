@@ -139,7 +139,7 @@ export const receiveCommentError = ( { dispatch, getState }, { siteId, commentId
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
 export const fetchCommentsList = ( { dispatch }, action ) => {
-	if ( ! action.query || 'site' !== action.query.listType ) {
+	if ( 'site' !== get( action, 'query.listType' ) ) {
 		return;
 	}
 
