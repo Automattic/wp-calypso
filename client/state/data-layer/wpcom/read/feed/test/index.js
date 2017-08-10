@@ -86,7 +86,7 @@ describe( 'wpcom-api', () => {
 				const dispatch = sinon.spy();
 				const apiResponse = { feeds, total: 500 };
 
-				receiveFeeds( { dispatch }, action, null, apiResponse );
+				receiveFeeds( { dispatch }, action, apiResponse );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith(

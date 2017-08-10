@@ -29,7 +29,7 @@ export function requestBlogStickerList( { dispatch }, action ) {
 	);
 }
 
-export function receiveBlogStickerList( store, action, next, response ) {
+export function receiveBlogStickerList( store, action, response ) {
 	// validate that it worked
 	if ( ! response || ! isArray( response ) ) {
 		receiveBlogStickerListError( store, action );

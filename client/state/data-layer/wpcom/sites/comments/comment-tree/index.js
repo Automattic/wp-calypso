@@ -35,7 +35,7 @@ const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 	);
 };
 
-const addCommentsTree = ( { dispatch }, { query }, next, data ) => {
+const addCommentsTree = ( { dispatch }, { query }, data ) => {
 	const { siteId, status } = query;
 	const commentsTree = data[ 1 ];
 

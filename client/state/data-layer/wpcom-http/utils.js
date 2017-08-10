@@ -73,21 +73,21 @@ export const getProgress = action => get( action, 'meta.dataLayer.progress', nul
  *                                behavior of this optional handler is to do nothing.
  * @returns {?*} please ignore return values, they are undefined
  */
-export const dispatchRequest = ( initiator, onSuccess, onError, onProgress = noop ) => ( store, action, next ) => {
+export const dispatchRequest = ( initiator, onSuccess, onError, onProgress = noop ) => ( store, action ) => {
 	const error = getError( action );
 	if ( error ) {
-		return onError( store, action, next, error );
+		return onError( store, action, error );
 	}
 
 	const data = getData( action );
 	if ( data ) {
-		return onSuccess( store, action, next, data );
+		return onSuccess( store, action, data );
 	}
 
 	const progress = getProgress( action );
 	if ( progress ) {
-		return onProgress( store, action, next, progress );
+		return onProgress( store, action, progress );
 	}
 
-	return initiator( store, action, next );
+	return initiator( store, action );
 };

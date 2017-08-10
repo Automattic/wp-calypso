@@ -44,7 +44,7 @@ export const requestUserSettings = ( { dispatch }, action ) => dispatch( http( {
 /*
  * Store the fetched user settings to Redux state
  */
-export const storeFetchedUserSettings = ( { dispatch }, action, next, data ) => {
+export const storeFetchedUserSettings = ( { dispatch }, action, data ) => {
 	dispatch( updateUserSettings( fromApi( data ) ) );
 };
 
@@ -69,7 +69,7 @@ export function saveUserSettings( { dispatch, getState }, action ) {
  * After settings were successfully saved, update the settings stored in the Redux state,
  * clear the unsaved settings list, and re-fetch info about the user.
  */
-export const finishUserSettingsSave = ( { dispatch }, { settingsOverride }, next, data ) => {
+export const finishUserSettingsSave = ( { dispatch }, { settingsOverride }, data ) => {
 	dispatch( updateUserSettings( fromApi( data ) ) );
 	dispatch( clearUnsavedUserSettings( settingsOverride ? keys( settingsOverride ) : null ) );
 

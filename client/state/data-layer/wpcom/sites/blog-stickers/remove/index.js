@@ -27,7 +27,7 @@ export function requestBlogStickerRemove( { dispatch }, action ) {
 	);
 }
 
-export function receiveBlogStickerRemove( store, action, next, response ) {
+export function receiveBlogStickerRemove( store, action, response ) {
 	// validate that it worked
 	const isRemoved = !! ( response && response.success );
 	if ( ! isRemoved ) {

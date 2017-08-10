@@ -93,7 +93,7 @@ export const requestComment = ( store, action ) => {
 	);
 };
 
-export const receiveCommentSuccess = ( store, action, next, response ) => {
+export const receiveCommentSuccess = ( store, action, response ) => {
 	const { siteId } = action;
 	const postId = response && response.post && response.post.ID;
 	store.dispatch( {
@@ -164,7 +164,7 @@ export const fetchCommentsList = ( { dispatch }, action ) => {
 	);
 };
 
-export const addComments = ( { dispatch }, { query: { siteId, status } }, next, { comments } ) => {
+export const addComments = ( { dispatch }, { query: { siteId, status } }, { comments } ) => {
 	// Initialize the comments tree to let CommentList know if a tree is actually loaded and empty.
 	// This is needed as a workaround for Jetpack sites populating their comments trees
 	// via `fetchCommentsList` instead of `fetchCommentsTreeForSite`.

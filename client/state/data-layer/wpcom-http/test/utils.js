@@ -66,7 +66,6 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			let onProgress;
 			let dispatcher;
 			let store;
-			let next;
 
 			beforeEach( () => {
 				initiator = spy();
@@ -75,57 +74,56 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				onProgress = spy();
 				dispatcher = dispatchRequest( initiator, onSuccess, onFailure, onProgress );
 				store = spy();
-				next = spy();
 			} );
 
 			it( 'should call the initiator if meta information missing', () => {
-				dispatcher( store, empty, next );
+				dispatcher( store, empty );
 
-				expect( initiator ).to.have.been.calledWith( store, empty, next );
+				expect( initiator ).to.have.been.calledWith( store, empty );
 				expect( onSuccess ).to.not.have.been.called;
 				expect( onFailure ).to.not.have.been.called;
 				expect( onProgress ).to.not.have.been.called;
 			} );
 
 			it( 'should call onSuccess if meta includes response data', () => {
-				dispatcher( store, success, next );
+				dispatcher( store, success );
 
 				expect( initiator ).to.not.have.been.called;
-				expect( onSuccess ).to.have.been.calledWith( store, success, next, data );
+				expect( onSuccess ).to.have.been.calledWith( store, success, data );
 				expect( onFailure ).to.not.have.been.called;
 				expect( onProgress ).to.not.have.been.called;
 			} );
 
 			it( 'should call onFailure if meta includes error data', () => {
-				dispatcher( store, failure, next );
+				dispatcher( store, failure );
 
 				expect( initiator ).to.not.have.been.called;
 				expect( onSuccess ).to.not.have.been.called;
-				expect( onFailure ).to.have.been.calledWith( store, failure, next, error );
+				expect( onFailure ).to.have.been.calledWith( store, failure, error );
 				expect( onProgress ).to.not.have.been.called;
 			} );
 
 			it( 'should call onFailure if meta includes both response data and error data', () => {
-				dispatcher( store, both, next );
+				dispatcher( store, both );
 
 				expect( initiator ).to.not.have.been.called;
 				expect( onSuccess ).to.not.have.been.called;
-				expect( onFailure ).to.have.been.calledWith( store, both, next, error );
+				expect( onFailure ).to.have.been.calledWith( store, both, error );
 				expect( onProgress ).to.not.have.been.called;
 			} );
 
 			it( 'should call onProgress if meta includes progress data', () => {
-				dispatcher( store, progress, next );
+				dispatcher( store, progress );
 
 				expect( initiator ).to.not.have.been.called;
 				expect( onSuccess ).to.not.have.been.called;
 				expect( onFailure ).to.not.have.been.called;
-				expect( onProgress ).to.have.been.calledWith( store, progress, next, progressInfo );
+				expect( onProgress ).to.have.been.calledWith( store, progress, progressInfo );
 			} );
 
 			it( 'should not throw runtime error if onProgress is not specified', () => {
 				dispatcher = dispatchRequest( initiator, onSuccess, onFailure );
-				expect( () => dispatcher( store, progress, next ) ).to.not.throw( TypeError );
+				expect( () => dispatcher( store, progress ) ).to.not.throw( TypeError );
 			} );
 		} );
 	} );

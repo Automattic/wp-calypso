@@ -115,7 +115,7 @@ export const writePostComment = ( { dispatch }, action ) => {
 	);
 };
 
-export const addComments = ( { dispatch }, action, next, { comments, found } ) => {
+export const addComments = ( { dispatch }, action, { comments, found } ) => {
 	const { siteId, postId, direction } = action;
 	dispatch( {
 		type: COMMENTS_RECEIVE,
@@ -142,7 +142,6 @@ export const addComments = ( { dispatch }, action, next, { comments, found } ) =
 export const writePostCommentSuccess = (
 	{ dispatch },
 	{ siteId, postId, parentCommentId, placeholderId },
-	next,
 	comment,
 ) => {
 	// remove placeholder from state

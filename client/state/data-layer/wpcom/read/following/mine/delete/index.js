@@ -49,7 +49,7 @@ export function requestUnfollow( { dispatch, getState }, action ) {
 	);
 }
 
-export function receiveUnfollow( store, action, next, response ) {
+export function receiveUnfollow( store, action, response ) {
 	if ( response && ! response.subscribed ) {
 		store.dispatch( local( action ) );
 	} else {

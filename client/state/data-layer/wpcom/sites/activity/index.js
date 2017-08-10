@@ -29,11 +29,11 @@ export const handleActivityLogRequest = ( { dispatch }, action ) => {
 // FIXME: Implement fromApi
 const fromApi = ( { activities } ) => activities;
 
-export const receiveActivityLog = ( { dispatch }, { siteId }, next, data ) => {
+export const receiveActivityLog = ( { dispatch }, { siteId }, data ) => {
 	dispatch( activityLogUpdate( siteId, fromApi( data ) ) );
 };
 
-export const receiveActivityLogError = ( { dispatch }, { siteId }, next, error ) => {
+export const receiveActivityLogError = ( { dispatch }, { siteId }, error ) => {
 	dispatch( activityLogError(
 		siteId,
 		pick( error, [ 'error', 'status', 'message' ]

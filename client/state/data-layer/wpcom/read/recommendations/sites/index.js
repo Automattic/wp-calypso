@@ -42,7 +42,7 @@ export const fromApi = response => {
 	} ) );
 };
 
-export const receiveRecommendedSitesResponse = ( store, action, next, response ) => {
+export const receiveRecommendedSitesResponse = ( store, action, response ) => {
 	if ( ! response.sites ) {
 		return;
 	}
