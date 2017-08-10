@@ -55,7 +55,7 @@ class App extends Component {
 
 		if ( 'wpcalypso' !== config( 'env_id' ) && 'development' !== config( 'env_id' ) ) {
 			// Show stats page for non Atomic sites for now
-			if ( ! isAtomicSite ) {
+			if ( ! isAtomicSite && ! config.isEnabled( 'woocommerce/store-on-non-atomic-sites' ) ) {
 				this.redirect();
 				return null;
 			}
