@@ -418,7 +418,7 @@ const Signup = React.createClass( {
 			<div className="signup__step" key={ stepKey }>
 				{ this.localeSuggestions() }
 				{
-					this.state.loadingScreenStartTime || true
+					this.state.loadingScreenStartTime
 					? <SignupProcessingScreen
 						hasCartItems={ this.state.hasCartItems }
 						steps={ this.state.progress }
