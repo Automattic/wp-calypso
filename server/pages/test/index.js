@@ -6,7 +6,7 @@ import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import mockery from 'mockery';
 import useMockery from 'test/helpers/use-mockery';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
