@@ -1,8 +1,7 @@
 {
   "lerna": "2.0.0",
   "packages": [
-    "client/components",
-    "."
+    "client/components"
   ],
   "version": "independent"
 }
