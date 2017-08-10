@@ -10,8 +10,7 @@ import { get, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import getPostRevision from 'state/selectors/get-post-revision';
-import getPostRevisionChanges from 'state/selectors/get-post-revision-changes';
+import { getPostRevision, getPostRevisionChanges } from 'state/selectors';
 
 const EditorDiffViewer = ( { contentChanges, revision } ) => (
 	<div className="editor-diff-viewer">
@@ -43,8 +42,8 @@ EditorDiffViewer.propTypes = {
 };
 
 export default connect(
-	( state, ownProps ) => ( {
-		contentChanges: getPostRevisionChanges( state, ownProps.siteId, ownProps.postId, ownProps.selectedRevisionId ),
-		revision: getPostRevision( state, ownProps.siteId, ownProps.postId, ownProps.selectedRevisionId, 'editing' ),
+	( state, { siteId, postId, selectedRevisionId } ) => ( {
+		contentChanges: getPostRevisionChanges( state, siteId, postId, selectedRevisionId ),
+		revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'editing' ),
 	} )
 )( EditorDiffViewer );

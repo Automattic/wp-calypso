@@ -13,11 +13,10 @@ import { map } from 'lodash';
 import EditorRevisionsListHeader from './header';
 import EditorRevisionsListItem from './item';
 import QueryPostRevisions from 'components/data/query-post-revisions';
-import getPostRevision from 'state/selectors/get-post-revision';
-import getPostRevisions from 'state/selectors/get-post-revisions';
+import { getPostRevision, getPostRevisions } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
-import viewport from 'lib/viewport';
+import { isWithinBreakpoint } from 'lib/viewport';
 
 class EditorRevisionsList extends PureComponent {
 	loadRevision = () => {
@@ -28,7 +27,7 @@ class EditorRevisionsList extends PureComponent {
 		if (
 			this.props.selectedRevisionId === null &&
 			this.props.revisions.length > 0 &&
-			viewport.isWithinBreakpoint( '>660px' )
+			isWithinBreakpoint( '>660px' )
 		) {
 			this.props.selectRevision( this.props.revisions[ 0 ].id );
 		}
@@ -87,14 +86,14 @@ EditorRevisionsList.propTypes = {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	( state, { selectedRevisionId } ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		return {
 			postId,
 			revisions: getPostRevisions( state, siteId, postId, 'display' ),
 			selectedRevision: getPostRevision(
-				state, siteId, postId, ownProps.selectedRevisionId, 'editing'
+				state, siteId, postId, selectedRevisionId, 'editing'
 			),
 			siteId,
 		};
