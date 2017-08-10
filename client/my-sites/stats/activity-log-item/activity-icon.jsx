@@ -54,6 +54,9 @@ export default class ActivityIcon extends PureComponent {
 			case 'post':
 				return 'posts';
 
+			case 'rewind':
+				return 'history';
+
 			case 'term':
 				return 'folder';
 
