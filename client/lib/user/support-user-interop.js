@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -35,12 +36,12 @@ const STORAGE_KEY = 'boot_support_user';
 export const isEnabled = () => config.isEnabled( 'support-user' );
 
 let _setReduxStore = noop;
-const reduxStoreReady = new Promise( ( resolve ) => {
+const reduxStoreReady = new Promise( resolve => {
 	if ( ! isEnabled() ) {
 		return;
 	}
 
-	_setReduxStore = ( reduxStore ) => resolve( reduxStore );
+	_setReduxStore = reduxStore => resolve( reduxStore );
 } );
 export const setReduxStore = _setReduxStore;
 
@@ -55,7 +56,7 @@ const getPrefillUsername = () => {
 	// Remove the initial ? character
 	const query = qs.parse( queryString.slice( 1 ) );
 	return query.support_user || null;
-}
+};
 
 // Check if we should prefill the support user login box
 reduxStoreReady.then( reduxStore => {
@@ -116,7 +117,7 @@ export const rebootWithToken = ( user, token ) => {
 };
 
 // Called when an API call fails due to a token error
-const onTokenError = ( error ) => {
+const onTokenError = error => {
 	debug( 'Deactivating support user and rebooting due to token error', error.message );
 	rebootNormally();
 };
@@ -140,13 +141,13 @@ export const boot = () => {
 	const allowedKeys = [ STORAGE_KEY, 'debug' ];
 	localStorageBypass( allowedKeys );
 
-	const errorHandler = ( error ) => onTokenError( error );
+	const errorHandler = error => onTokenError( error );
 
 	wpcom.setSupportUserToken( user, token, errorHandler );
 
 	// boot() is called before the redux store is ready, so we need to
 	// wait for it to become available
-	reduxStoreReady.then( ( reduxStore ) => {
+	reduxStoreReady.then( reduxStore => {
 		reduxStore.dispatch( supportUserActivate() );
 	} );
 };
@@ -158,18 +159,19 @@ export const fetchToken = ( user, password ) => {
 
 	debug( 'Fetching support user token' );
 
-	return reduxStoreReady.then( ( reduxStore ) => {
+	return reduxStoreReady.then( reduxStore => {
 		reduxStore.dispatch( supportUserTokenFetch( user ) );
 
-		const setToken = ( response ) => {
+		const setToken = response => {
 			rebootWithToken( response.username, response.token );
 		};
 
-		const errorFetchingToken = ( error ) => {
+		const errorFetchingToken = error => {
 			reduxStore.dispatch( supportUserError( error.message ) );
 		};
 
-		return wpcom.fetchSupportUserToken( user, password )
+		return wpcom
+			.fetchSupportUserToken( user, password )
 			.then( setToken )
 			.catch( errorFetchingToken );
 	} );

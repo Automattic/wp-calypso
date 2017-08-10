@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,11 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	SELECTED_SITE_SET,
-	ROUTE_SET,
-	NOTIFICATIONS_PANEL_TOGGLE
-} from 'state/action-types';
+import { SELECTED_SITE_SET, ROUTE_SET, NOTIFICATIONS_PANEL_TOGGLE } from 'state/action-types';
 import { setSelectedSiteId, setRoute, toggleNotificationsPanel } from '../actions';
 
 describe( 'actions', () => {
@@ -20,7 +17,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: SELECTED_SITE_SET,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 		} );
 	} );
@@ -32,7 +29,7 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: ROUTE_SET,
 				path: '/foo',
-				query: {}
+				query: {},
 			} );
 		} );
 	} );

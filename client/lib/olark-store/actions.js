@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,33 +29,33 @@ const olarkActions = {
 
 	setReady() {
 		dispatcher.handleServerAction( {
-			type: ActionTypes.OLARK_READY
+			type: ActionTypes.OLARK_READY,
 		} );
 	},
 
 	setOperatorsAvailable() {
 		dispatcher.handleServerAction( {
-			type: ActionTypes.OLARK_OPERATORS_AVAILABLE
+			type: ActionTypes.OLARK_OPERATORS_AVAILABLE,
 		} );
 	},
 
 	setOperatorsAway() {
 		dispatcher.handleServerAction( {
-			type: ActionTypes.OLARK_OPERATORS_AWAY
+			type: ActionTypes.OLARK_OPERATORS_AWAY,
 		} );
 	},
 
 	setClosed( isSupportClosed ) {
 		dispatcher.handleServerAction( {
 			isSupportClosed,
-			type: ActionTypes.OLARK_SET_CLOSED
+			type: ActionTypes.OLARK_SET_CLOSED,
 		} );
 	},
 
 	setExpanded( isOlarkExpanded ) {
 		dispatcher.handleServerAction( {
 			isOlarkExpanded,
-			type: ActionTypes.OLARK_SET_EXPANDED
+			type: ActionTypes.OLARK_SET_EXPANDED,
 		} );
 	},
 
@@ -84,8 +85,7 @@ const olarkActions = {
 
 	focusBox() {
 		// Do nothing since olark is deprecated
-	}
+	},
 };
 
 export default olarkActions;
-

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -51,11 +52,12 @@ export class CommentDetailAuthor extends Component {
 		display_name: this.props.authorDisplayName,
 	} );
 
-	getFormattedDate = () => convertDateToUserLocation(
-		( this.props.commentDate || new Date() ),
-		timezone( this.props.site ),
-		gmtOffset( this.props.site )
-	).format( 'll LT' );
+	getFormattedDate = () =>
+		convertDateToUserLocation(
+			this.props.commentDate || new Date(),
+			timezone( this.props.site ),
+			gmtOffset( this.props.site )
+		).format( 'll LT' );
 
 	authorMoreInfo() {
 		if ( ! this.props.showAuthorInfo ) {
@@ -116,10 +118,9 @@ export class CommentDetailAuthor extends Component {
 						onClick={ blockUser }
 					>
 						<Gridicon icon="block" />
-						<span>{ authorIsBlocked
-							? translate( 'Unblock user' )
-							: translate( 'Block user' )
-						}</span>
+						<span>
+							{ authorIsBlocked ? translate( 'Unblock user' ) : translate( 'Block user' ) }
+						</span>
 					</a>
 				</div>
 			</div>
@@ -164,14 +165,11 @@ export class CommentDetailAuthor extends Component {
 					{ 'unapproved' === commentStatus &&
 						<div className="comment-detail__status-label is-unapproved">
 							{ translate( 'Pending' ) }
-						</div>
-					}
-					{
-						showAuthorInfo &&
+						</div> }
+					{ showAuthorInfo &&
 						<a className="comment-detail__author-more-info-toggle" onClick={ this.toggleExpanded }>
 							<Gridicon icon="info-outline" />
-						</a>
-					}
+						</a> }
 				</div>
 				{ this.authorMoreInfo() }
 			</div>

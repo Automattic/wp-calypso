@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -32,13 +33,13 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 		const line = [
 			emailAddress
 				? translate( 'We just emailed a link to %(emailAddress)s.', {
-					args: {
-						emailAddress
-					}
-				} )
+						args: {
+							emailAddress,
+						},
+					} )
 				: translate( 'We just emailed you a link.' ),
-			( ' ' ),
-			translate( 'Please check your inbox and click the link to log in.' )
+			' ',
+			translate( 'Please check your inbox and click the link to log in.' ),
 		];
 
 		this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
@@ -56,7 +57,8 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 				<Card className="magic-login__form">
 					<img
 						src="/calypso/images/login/check-email.svg"
-						className="magic-login__check-email-image" />
+						className="magic-login__check-email-image"
+					/>
 					<p>
 						{ line }
 					</p>

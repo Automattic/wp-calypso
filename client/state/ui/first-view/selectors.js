@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,23 +17,22 @@ import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 import { getCurrentUserDate } from 'state/current-user/selectors';
 import findOngoingTour from 'state/ui/guided-tours/selectors/find-ongoing-tour';
 
-const getConfigForPath = memoize( path =>
-	find( FIRST_VIEW_CONFIG, entry =>
-		some( entry.paths, entryPath =>
-			startsWith( path, entryPath ) ) ) || false );
-
-export const getConfigForCurrentView = createSelector(
-	state => {
-		const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
-		if ( ! currentRoute ) {
-			return false;
-		}
-
-		const path = currentRoute.path ? currentRoute.path : '';
-		return getConfigForPath( path );
-	},
-	getActionLog
+const getConfigForPath = memoize(
+	path =>
+		find( FIRST_VIEW_CONFIG, entry =>
+			some( entry.paths, entryPath => startsWith( path, entryPath ) )
+		) || false
 );
+
+export const getConfigForCurrentView = createSelector( state => {
+	const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
+	if ( ! currentRoute ) {
+		return false;
+	}
+
+	const path = currentRoute.path ? currentRoute.path : '';
+	return getConfigForPath( path );
+}, getActionLog );
 
 export function isUserEligible( state, config ) {
 	const userStartDate = getCurrentUserDate( state );
@@ -63,24 +63,33 @@ export function isViewEnabled( state, config ) {
 		return false;
 	}
 
-	const latestFirstViewHistory = findLast( getPreference( state, 'firstViewHistory' ), { view: config.name } );
-	const isViewDisabled = latestFirstViewHistory ? ( !! latestFirstViewHistory.disabled ) : false;
+	const latestFirstViewHistory = findLast( getPreference( state, 'firstViewHistory' ), {
+		view: config.name,
+	} );
+	const isViewDisabled = latestFirstViewHistory ? !! latestFirstViewHistory.disabled : false;
 
 	// If the view is disabled, we want to return false, regardless of state
 	if ( isViewDisabled ) {
 		return false;
 	}
 
-	return isQueryStringEnabled( state, config ) || ( config.enabled && isUserEligible( state, config ) );
+	return (
+		isQueryStringEnabled( state, config ) || ( config.enabled && isUserEligible( state, config ) )
+	);
 }
 
 export function wasFirstViewHiddenSinceEnteringCurrentSection( state, config ) {
-	const actionsSinceEnteringCurrentSection = takeRightWhile( getActionLog( state ), ( action ) => {
-		return ( action.type !== ROUTE_SET ) || ( action.type === ROUTE_SET && routeSetIsInCurrentSection( state, action ) );
+	const actionsSinceEnteringCurrentSection = takeRightWhile( getActionLog( state ), action => {
+		return (
+			action.type !== ROUTE_SET ||
+			( action.type === ROUTE_SET && routeSetIsInCurrentSection( state, action ) )
+		);
 	} );
 
-	return some( actionsSinceEnteringCurrentSection,
-		action => action.type === FIRST_VIEW_HIDE && action.view === config.name );
+	return some(
+		actionsSinceEnteringCurrentSection,
+		action => action.type === FIRST_VIEW_HIDE && action.view === config.name
+	);
 }
 
 function routeSetIsInCurrentSection( state, routeSet ) {
@@ -91,11 +100,13 @@ function routeSetIsInCurrentSection( state, routeSet ) {
 export function shouldViewBeVisible( state ) {
 	const firstViewConfig = getConfigForCurrentView( state );
 
-	return ! findOngoingTour( state ) &&
+	return (
+		! findOngoingTour( state ) &&
 		firstViewConfig &&
 		isViewEnabled( state, firstViewConfig ) &&
 		! wasFirstViewHiddenSinceEnteringCurrentSection( state, firstViewConfig ) &&
-		! isSectionLoading( state );
+		! isSectionLoading( state )
+	);
 }
 
 export function secondsSpentOnCurrentView( state, now = Date.now() ) {

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,9 +15,7 @@ function wpcomHelpPlugin( editor ) {
 	var node;
 
 	editor.on( 'init', function() {
-		node = editor.getContainer().appendChild(
-			document.createElement( 'div' )
-		);
+		node = editor.getContainer().appendChild( document.createElement( 'div' ) );
 	} );
 
 	editor.on( 'remove', function() {
@@ -36,7 +35,7 @@ function wpcomHelpPlugin( editor ) {
 				React.createElement( HelpModal, {
 					showDialog: visibility === 'show' ? true : false,
 					onClose: onClose,
-					macosx: tinymce.Env.mac
+					macosx: tinymce.Env.mac,
 				} ),
 				node
 			);

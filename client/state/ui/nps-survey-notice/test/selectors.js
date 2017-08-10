@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,18 +7,16 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isNpsSurveyDialogShowing,
-} from '../selectors';
+import { isNpsSurveyDialogShowing } from '../selectors';
 
 describe( 'isNpsSurveyDialogShowing', () => {
 	it( 'should return true if the NPS survey dialog is showing', () => {
 		const isShowing = isNpsSurveyDialogShowing( {
 			ui: {
 				npsSurveyNotice: {
-					isNpsSurveyDialogShowing: true
-				}
-			}
+					isNpsSurveyDialogShowing: true,
+				},
+			},
 		} );
 
 		expect( isShowing ).to.be.true;
@@ -27,9 +26,9 @@ describe( 'isNpsSurveyDialogShowing', () => {
 		const isShowing = isNpsSurveyDialogShowing( {
 			ui: {
 				npsSurveyNotice: {
-					isNpsSurveyDialogShowing: false
-				}
-			}
+					isNpsSurveyDialogShowing: false,
+				},
+			},
 		} );
 
 		expect( isShowing ).to.be.false;

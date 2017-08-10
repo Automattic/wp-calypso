@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +22,10 @@ import { getSurveyVertical } from 'state/signup/steps/survey/selectors.js';
 import analyticsMixin from 'lib/mixins/analytics';
 import signupUtils from 'signup/utils';
 import { getUsernameSuggestion } from 'lib/signup/step-actions';
-import { recordAddDomainButtonClick, recordAddDomainButtonClickInMapDomain } from 'state/domains/actions';
+import {
+	recordAddDomainButtonClick,
+	recordAddDomainButtonClickInMapDomain,
+} from 'state/domains/actions';
 
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
@@ -45,7 +49,7 @@ const DomainsStep = React.createClass( {
 	},
 
 	contextTypes: {
-		store: React.PropTypes.object
+		store: React.PropTypes.object,
 	},
 
 	showDomainSearch: function() {
@@ -53,7 +57,12 @@ const DomainsStep = React.createClass( {
 	},
 
 	getMapDomainUrl: function() {
-		return signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'mapping', this.props.locale );
+		return signupUtils.getStepUrl(
+			this.props.flowName,
+			this.props.stepName,
+			'mapping',
+			this.props.locale
+		);
 	},
 
 	getInitialState: function() {
@@ -99,8 +108,8 @@ const DomainsStep = React.createClass( {
 		const themeSlug = this.getThemeSlug(),
 			themeSlugWithRepo = this.getThemeSlugWithRepo( themeSlug ),
 			themeItem = this.isPurchasingTheme()
-			? cartItems.themeItem( themeSlug, 'signup-with-theme' )
-			: undefined;
+				? cartItems.themeItem( themeSlug, 'signup-with-theme' )
+				: undefined;
 
 		return { themeSlug, themeSlugWithRepo, themeItem };
 	},
@@ -110,7 +119,7 @@ const DomainsStep = React.createClass( {
 			return undefined;
 		}
 		const repo = this.isPurchasingTheme() ? 'premium' : 'pub';
-		return `${repo}/${themeSlug}`;
+		return `${ repo }/${ themeSlug }`;
 	},
 
 	submitWithDomain: function( googleAppsCartItem ) {
@@ -121,22 +130,29 @@ const DomainsStep = React.createClass( {
 				: suggestion.domain_name.replace( '.wordpress.com', '' ),
 			domainItem = isPurchasingItem
 				? cartItems.domainRegistration( {
-					domain: suggestion.domain_name,
-					productSlug: suggestion.product_slug,
-				} )
+						domain: suggestion.domain_name,
+						productSlug: suggestion.product_slug,
+					} )
 				: undefined;
 
 		registerDomainAnalytics.recordEvent( 'submitDomainStepSelection', suggestion, 'signup' );
 
-		SignupActions.submitSignupStep( Object.assign( {
-			processingMessage: this.translate( 'Adding your domain' ),
-			stepName: this.props.stepName,
-			domainItem,
-			googleAppsCartItem,
-			isPurchasingItem,
-			siteUrl,
-			stepSectionName: this.props.stepSectionName,
-		}, this.getThemeArgs() ), [], { domainItem } );
+		SignupActions.submitSignupStep(
+			Object.assign(
+				{
+					processingMessage: this.translate( 'Adding your domain' ),
+					stepName: this.props.stepName,
+					domainItem,
+					googleAppsCartItem,
+					isPurchasingItem,
+					siteUrl,
+					stepSectionName: this.props.stepSectionName,
+				},
+				this.getThemeArgs()
+			),
+			[],
+			{ domainItem }
+		);
 
 		this.props.goToNextStep();
 
@@ -150,15 +166,20 @@ const DomainsStep = React.createClass( {
 
 		this.props.recordAddDomainButtonClickInMapDomain( domain, 'signup' );
 
-		SignupActions.submitSignupStep( Object.assign( {
-			processingMessage: this.translate( 'Adding your domain mapping' ),
-			stepName: this.props.stepName,
-			[ sectionName ]: state,
-			domainItem,
-			isPurchasingItem,
-			siteUrl: domain,
-			stepSectionName: this.props.stepSectionName,
-		}, this.getThemeArgs() ) );
+		SignupActions.submitSignupStep(
+			Object.assign(
+				{
+					processingMessage: this.translate( 'Adding your domain mapping' ),
+					stepName: this.props.stepName,
+					[ sectionName ]: state,
+					domainItem,
+					isPurchasingItem,
+					siteUrl: domain,
+					stepSectionName: this.props.stepSectionName,
+				},
+				this.getThemeArgs()
+			)
+		);
 
 		this.props.goToNextStep();
 	},
@@ -173,7 +194,7 @@ const DomainsStep = React.createClass( {
 
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
-		const includeDotBlogSubdomain = ( this.props.flowName === 'subdomain' );
+		const includeDotBlogSubdomain = this.props.flowName === 'subdomain';
 
 		return (
 			<RegisterDomainStep
@@ -201,7 +222,8 @@ const DomainsStep = React.createClass( {
 
 	mappingForm: function() {
 		const initialState = this.props.step ? this.props.step.mappingForm : undefined,
-			initialQuery = this.props.step && this.props.step.domainForm && this.props.step.domainForm.lastQuery;
+			initialQuery =
+				this.props.step && this.props.step.domainForm && this.props.step.domainForm.lastQuery;
 
 		return (
 			<div className="domains-step__section-wrapper">
@@ -223,7 +245,12 @@ const DomainsStep = React.createClass( {
 	render: function() {
 		let content;
 		const backUrl = this.props.stepSectionName
-			? signupUtils.getStepUrl( this.props.flowName, this.props.stepName, undefined, i18n.getLocaleSlug() )
+			? signupUtils.getStepUrl(
+					this.props.flowName,
+					this.props.stepName,
+					undefined,
+					i18n.getLocaleSlug()
+				)
 			: undefined;
 
 		if ( 'mapping' === this.props.stepSectionName ) {
@@ -252,21 +279,24 @@ const DomainsStep = React.createClass( {
 				backUrl={ backUrl }
 				positionInFlow={ this.props.positionInFlow }
 				signupProgress={ this.props.signupProgress }
-				subHeaderText={ this.translate( 'First up, let\'s find a domain.' ) }
-				fallbackHeaderText={ this.translate( 'Let\'s give your site an address.' ) }
+				subHeaderText={ this.translate( "First up, let's find a domain." ) }
+				fallbackHeaderText={ this.translate( "Let's give your site an address." ) }
 				fallbackSubHeaderText={ this.translate(
-					'Enter your site\'s name, or some key words that describe it - ' +
-					'we\'ll use this to create your new site\'s address.' ) }
+					"Enter your site's name, or some key words that describe it - " +
+						"we'll use this to create your new site's address."
+				) }
 				stepContent={ content }
 			/>
 		);
-	}
+	},
 } );
 
 module.exports = connect(
-	( state ) => ( {
+	state => ( {
 		// no user = DOMAINS_WITH_PLANS_ONLY
-		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true,
+		domainsWithPlansOnly: getCurrentUser( state )
+			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+			: true,
 		surveyVertical: getSurveyVertical( state ),
 	} ),
 	{

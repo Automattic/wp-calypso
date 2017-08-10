@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Return user's stored cards from state object
  *
@@ -12,9 +13,8 @@ export const getStoredCards = state => state.storedCards.items;
  * @param  {Number} cardId  the card id
  * @return {Object} the matching card if there is one
  */
-export const getStoredCardById = ( state, cardId ) => (
-	getStoredCards( state ).filter( card => card.stored_details_id === cardId ).shift()
-);
+export const getStoredCardById = ( state, cardId ) =>
+	getStoredCards( state ).filter( card => card.stored_details_id === cardId ).shift();
 
 export const hasLoadedStoredCardsFromServer = state => state.storedCards.hasLoadedFromServer;
 

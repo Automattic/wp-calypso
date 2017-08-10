@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,7 +23,10 @@ import { getSiteUserConnectionsForService } from './publicize/selectors';
 export function getAvailableExternalAccounts( state, service ) {
 	const isConnected = ( keyring_connection_ID, external_ID ) => {
 		const siteUserConnectionsForService = getSiteUserConnectionsForService(
-			state, getSelectedSiteId( state ), getCurrentUserId( state ), service
+			state,
+			getSelectedSiteId( state ),
+			getCurrentUserId( state ),
+			service
 		);
 
 		return some( siteUserConnectionsForService, { keyring_connection_ID, external_ID } );
@@ -30,19 +34,27 @@ export function getAvailableExternalAccounts( state, service ) {
 
 	// Iterate over Keyring connections for this service and generate a
 	// flattened array of all accounts, including external users
-	return getKeyringConnectionsByName( state, service ).reduce( ( memo, keyringConnection ) =>
-		memo.concat( [ {
-			name: keyringConnection.external_display || keyringConnection.external_name,
-			picture: keyringConnection.external_profile_picture,
-			keyringConnectionId: keyringConnection.ID,
-			isConnected: isConnected( keyringConnection.ID, keyringConnection.external_ID ),
-		} ] )
-		.concat( keyringConnection.additional_external_users.map( ( externalUser ) => ( {
-			ID: externalUser.external_ID,
-			name: externalUser.external_name,
-			picture: externalUser.external_profile_picture,
-			keyringConnectionId: keyringConnection.ID,
-			isConnected: isConnected( keyringConnection.ID, externalUser.external_ID ),
-			isExternal: true,
-		} ) ) ), [] );
+	return getKeyringConnectionsByName( state, service ).reduce(
+		( memo, keyringConnection ) =>
+			memo
+				.concat( [
+					{
+						name: keyringConnection.external_display || keyringConnection.external_name,
+						picture: keyringConnection.external_profile_picture,
+						keyringConnectionId: keyringConnection.ID,
+						isConnected: isConnected( keyringConnection.ID, keyringConnection.external_ID ),
+					},
+				] )
+				.concat(
+					keyringConnection.additional_external_users.map( externalUser => ( {
+						ID: externalUser.external_ID,
+						name: externalUser.external_name,
+						picture: externalUser.external_profile_picture,
+						keyringConnectionId: keyringConnection.ID,
+						isConnected: isConnected( keyringConnection.ID, externalUser.external_ID ),
+						isExternal: true,
+					} ) )
+				),
+		[]
+	);
 }

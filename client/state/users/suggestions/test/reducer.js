@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,9 +26,7 @@ describe( 'reducer', () => {
 
 		it( 'should insert a new suggestion', () => {
 			const original = {
-				124: [
-					{ user_login: 'wordpress1' }
-				]
+				124: [ { user_login: 'wordpress1' } ],
 			};
 			const newSuggestion = {
 				user_login: 'wordpress2',
@@ -35,7 +34,7 @@ describe( 'reducer', () => {
 			const state = items( original, {
 				type: USER_SUGGESTIONS_RECEIVE,
 				suggestions: [ newSuggestion ],
-				siteId: 123
+				siteId: 123,
 			} );
 
 			expect( state[ 123 ][ 0 ] ).to.eql( newSuggestion );
@@ -55,37 +54,37 @@ describe( 'reducer', () => {
 				siteId,
 			} );
 			expect( state ).to.eql( {
-				123: true
+				123: true,
 			} );
 		} );
 
 		it( 'should accumulate requesting state for sites', () => {
 			const original = deepFreeze( {
-				124: false
+				124: false,
 			} );
 			const state = requesting( original, {
 				type: USER_SUGGESTIONS_REQUEST,
-				siteId: 123
+				siteId: 123,
 			} );
 			expect( state ).to.eql( {
 				124: false,
-				123: true
+				123: true,
 			} );
 		} );
 
 		it( 'should override previous requesting state', () => {
 			const original = deepFreeze( {
 				124: false,
-				123: true
+				123: true,
 			} );
 			const state = requesting( original, {
 				type: USER_SUGGESTIONS_REQUEST_SUCCESS,
-				siteId: 123
+				siteId: 123,
 			} );
 
 			expect( state ).to.eql( {
 				124: false,
-				123: false
+				123: false,
 			} );
 		} );
 
@@ -93,7 +92,7 @@ describe( 'reducer', () => {
 			it( 'never persists state', () => {
 				const original = deepFreeze( {
 					124: false,
-					123: true
+					123: true,
 				} );
 				const state = requesting( original, { type: SERIALIZE } );
 				expect( state ).to.eql( {} );
@@ -102,7 +101,7 @@ describe( 'reducer', () => {
 			it( 'never loads persisted state', () => {
 				const original = deepFreeze( {
 					124: false,
-					123: true
+					123: true,
 				} );
 				const state = requesting( original, { type: DESERIALIZE } );
 				expect( state ).to.eql( {} );

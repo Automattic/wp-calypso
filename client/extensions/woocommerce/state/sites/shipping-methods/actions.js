@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -7,10 +8,7 @@ import {
 	WOOCOMMERCE_SHIPPING_METHODS_REQUEST,
 	WOOCOMMERCE_SHIPPING_METHODS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import {
-	areShippingMethodsLoaded,
-	areShippingMethodsLoading,
-} from './selectors';
+import { areShippingMethodsLoaded, areShippingMethodsLoading } from './selectors';
 
 export const fetchShippingMethodsSuccess = ( siteId, data ) => {
 	return {
@@ -20,8 +18,11 @@ export const fetchShippingMethodsSuccess = ( siteId, data ) => {
 	};
 };
 
-export const fetchShippingMethods = ( siteId ) => ( dispatch, getState ) => {
-	if ( areShippingMethodsLoaded( getState(), siteId ) || areShippingMethodsLoading( getState(), siteId ) ) {
+export const fetchShippingMethods = siteId => ( dispatch, getState ) => {
+	if (
+		areShippingMethodsLoaded( getState(), siteId ) ||
+		areShippingMethodsLoading( getState(), siteId )
+	) {
 		return;
 	}
 
@@ -32,8 +33,9 @@ export const fetchShippingMethods = ( siteId ) => ( dispatch, getState ) => {
 
 	dispatch( getAction );
 
-	return request( siteId ).get( 'shipping_methods' )
-		.then( ( data ) => {
+	return request( siteId )
+		.get( 'shipping_methods' )
+		.then( data => {
 			dispatch( fetchShippingMethodsSuccess( siteId, data ) );
 		} )
 		.catch( err => {

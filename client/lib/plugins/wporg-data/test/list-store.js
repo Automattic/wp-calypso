@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -76,14 +77,14 @@ describe( 'WPORG Plugins Lists Store', () => {
 			assert.lengthOf( newPlugins.list, 1 );
 		} );
 
-		it( 'should not read from localStorage if the category isn\'t in the to-be-cached list', () => {
+		it( "should not read from localStorage if the category isn't in the to-be-cached list", () => {
 			Dispatcher.handleServerAction( actionsData.fetchedNewPluginsList );
 			resetListsStore();
 			PluginsListsStore.getShortList( 'new' );
 			assert.isFalse( localStorageSpies.get.called );
 		} );
 
-		it( 'should not store on localStorage if the category isn\'t in the to-be-cached list', () => {
+		it( "should not store on localStorage if the category isn't in the to-be-cached list", () => {
 			Dispatcher.handleServerAction( actionsData.fetchedNewPluginsList );
 			assert.isFalse( localStorageSpies.set.called );
 		} );
@@ -95,7 +96,7 @@ describe( 'WPORG Plugins Lists Store', () => {
 			assert.isTrue( localStorageSpies.get.called );
 		} );
 
-		it( 'should not be stored on localStorage if the category isn\'t in the to-be-cached list', () => {
+		it( "should not be stored on localStorage if the category isn't in the to-be-cached list", () => {
 			Dispatcher.handleServerAction( actionsData.fetchedPopularPluginsList );
 			resetListsStore();
 			PluginsListsStore.getShortList( 'popular' );
@@ -121,7 +122,7 @@ describe( 'WPORG Plugins Lists Store', () => {
 			assert.isTrue( actionsSpies.fetchPluginsList.called );
 		} );
 
-		it( 'should fetch from wporg if the category list is already in storage but it\'s already after its TTL', () => {
+		it( "should fetch from wporg if the category list is already in storage but it's already after its TTL", () => {
 			const clock = sinon.useFakeTimers();
 			Dispatcher.handleServerAction( actionsData.fetchedPopularPluginsList );
 			resetListsStore();

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,11 +10,11 @@ export default React.createClass( {
 	displayName: 'RootChild',
 
 	propTypes: {
-		children: PropTypes.node
+		children: PropTypes.node,
 	},
 
 	contextTypes: {
-		store: PropTypes.object
+		store: PropTypes.object,
 	},
 
 	componentDidMount: function() {
@@ -39,10 +40,12 @@ export default React.createClass( {
 	renderChildren: function() {
 		var content;
 
-		if ( this.props &&
-			( Object.keys( this.props ).length > 1 || ! this.props.children )
-		) {
-			content = <div { ...this.props }>{ this.props.children }</div>;
+		if ( this.props && ( Object.keys( this.props ).length > 1 || ! this.props.children ) ) {
+			content = (
+				<div { ...this.props }>
+					{ this.props.children }
+				</div>
+			);
 		} else {
 			content = this.props.children;
 		}
@@ -62,5 +65,5 @@ export default React.createClass( {
 
 	render: function() {
 		return null;
-	}
+	},
 } );

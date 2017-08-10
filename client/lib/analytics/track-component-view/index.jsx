@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,12 +15,12 @@ class TrackComponentView extends Component {
 		eventName: PropTypes.string,
 		eventProperties: PropTypes.object,
 		recordTracksEvent: PropTypes.func,
-		bumpStat: PropTypes.func
+		bumpStat: PropTypes.func,
 	};
 
 	static defaultProps = {
 		recordTracksEvent: () => {},
-		bumpStat: () => {}
+		bumpStat: () => {},
 	};
 
 	componentWillMount() {
@@ -39,7 +40,4 @@ class TrackComponentView extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ bumpStat, recordTracksEvent }
-)( TrackComponentView );
+export default connect( null, { bumpStat, recordTracksEvent } )( TrackComponentView );

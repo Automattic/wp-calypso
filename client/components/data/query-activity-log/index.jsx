@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -38,5 +39,5 @@ class QueryActivityLog extends Component {
 }
 
 export default connect( null, {
-	activityLogRequest: activityLogRequestAction
+	activityLogRequest: activityLogRequestAction,
 } )( QueryActivityLog );

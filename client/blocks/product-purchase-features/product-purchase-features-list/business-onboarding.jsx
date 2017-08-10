@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,12 +17,10 @@ export default localize( ( { translate, onClick = noop } ) => {
 			<PurchaseDetail
 				icon="help"
 				title={ translate( 'Get personalized help' ) }
-				description={
-					translate(
-						'Schedule a one-on-one orientation with a Happiness Engineer ' +
+				description={ translate(
+					'Schedule a one-on-one orientation with a Happiness Engineer ' +
 						'to set up your site and learn more about WordPress.com.'
-					)
-				}
+				) }
 				buttonText={ translate( 'Schedule a session' ) }
 				href={ 'https://calendly.com/wordpressdotcom/wordpress-com-business-site-setup/' }
 				onClick={ onClick }

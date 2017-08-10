@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,10 +20,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
 import Placeholder from 'my-sites/site-settings/placeholder';
 
-const SiteSettingsComponent = ( {
-	siteId,
-	translate
-} ) => {
+const SiteSettingsComponent = ( { siteId, translate } ) => {
 	if ( ! siteId ) {
 		return <Placeholder />;
 	}
@@ -45,8 +43,6 @@ SiteSettingsComponent.propTypes = {
 	siteId: PropTypes.number,
 };
 
-export default connect(
-	( state ) => ( {
-		siteId: getSelectedSiteId( state ),
-	} )
-)( localize( SiteSettingsComponent ) );
+export default connect( state => ( {
+	siteId: getSelectedSiteId( state ),
+} ) )( localize( SiteSettingsComponent ) );

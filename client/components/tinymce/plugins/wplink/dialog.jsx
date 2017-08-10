@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -81,7 +82,9 @@ var LinkDialog = React.createClass( {
 
 	updateEditor: function() {
 		var editor = this.props.editor,
-			attrs, link, linkText;
+			attrs,
+			link,
+			linkText;
 
 		editor.focus();
 
@@ -98,7 +101,7 @@ var LinkDialog = React.createClass( {
 		linkText = this.state.linkText;
 		attrs = {
 			href: this.getCorrectedUrl(),
-			target: this.state.newWindow ? '_blank' : ''
+			target: this.state.newWindow ? '_blank' : '',
 		};
 
 		if ( link ) {
@@ -124,10 +127,14 @@ var LinkDialog = React.createClass( {
 	hasSelectedText: function( linkNode ) {
 		var editor = this.props.editor,
 			html = editor.selection.getContent(),
-			nodes, i;
+			nodes,
+			i;
 
 		// Partial html and not a fully selected anchor element
-		if ( /</.test( html ) && ( ! /^<a [^>]+>[^<]+<\/a>$/.test( html ) || html.indexOf( 'href=' ) === -1 ) ) {
+		if (
+			/</.test( html ) &&
+			( ! /^<a [^>]+>[^<]+<\/a>$/.test( html ) || html.indexOf( 'href=' ) === -1 )
+		) {
 			return false;
 		}
 
@@ -150,7 +157,9 @@ var LinkDialog = React.createClass( {
 
 	getInferredUrl: function() {
 		var selectedText = this.props.editor.selection.getContent(),
-			selectedNode, parsedImage, knownImage;
+			selectedNode,
+			parsedImage,
+			knownImage;
 
 		if ( REGEXP_EMAIL.test( selectedText ) ) {
 			return 'mailto:' + selectedText;
@@ -162,9 +171,10 @@ var LinkDialog = React.createClass( {
 		if ( selectedNode && 'IMG' === selectedNode.nodeName ) {
 			parsedImage = MediaSerialization.deserialize( selectedNode );
 			if ( this.props.site && parsedImage.media.ID ) {
-				knownImage = MediaStore.get( this.props.site.ID, parsedImage.media.ID ) || parsedImage.media;
+				knownImage =
+					MediaStore.get( this.props.site.ID, parsedImage.media.ID ) || parsedImage.media;
 				return MediaUtils.url( knownImage, {
-					size: 'full'
+					size: 'full',
 				} );
 			} else if ( parsedImage.media.URL ) {
 				return parsedImage.media.URL;
@@ -183,7 +193,7 @@ var LinkDialog = React.createClass( {
 				showLinkText: true,
 				linkText: '',
 				url: '',
-				isUserDefinedLinkText: false
+				isUserDefinedLinkText: false,
 			};
 
 		if ( linkNode ) {
@@ -217,7 +227,7 @@ var LinkDialog = React.createClass( {
 	setLinkText: function( event ) {
 		this.setState( {
 			linkText: event.target.value,
-			isUserDefinedLinkText: true
+			isUserDefinedLinkText: true,
 		} );
 	},
 
@@ -247,17 +257,12 @@ var LinkDialog = React.createClass( {
 		}
 
 		buttons = [
-			<FormButton
-				key="save"
-				onClick={ this.updateEditor }>
-					{ buttonText }
+			<FormButton key="save" onClick={ this.updateEditor }>
+				{ buttonText }
 			</FormButton>,
-			<FormButton
-				key="cancel"
-				isPrimary={ false }
-				onClick={ this.closeDialog }>
-					{ this.translate( 'Cancel' ) }
-			</FormButton>
+			<FormButton key="cancel" isPrimary={ false } onClick={ this.closeDialog }>
+				{ this.translate( 'Cancel' ) }
+			</FormButton>,
 		];
 
 		if ( this.state.url && ! this.state.isNew ) {
@@ -274,15 +279,14 @@ var LinkDialog = React.createClass( {
 
 	setExistingContent( post ) {
 		let state = { url: post.URL };
-		const shouldSetLinkText = (
+		const shouldSetLinkText =
 			! this.state.isUserDefinedLinkText &&
 			! this.props.editor.selection.getContent() &&
-			! this.getLink()
-		);
+			! this.getLink();
 
 		if ( shouldSetLinkText ) {
 			Object.assign( state, {
-				linkText: decodeEntities( post.title )
+				linkText: decodeEntities( post.title ),
 			} );
 		}
 
@@ -314,7 +318,9 @@ var LinkDialog = React.createClass( {
 			>
 				<FormFieldset>
 					<FormLabel>
-						<span>{ this.translate( 'URL' ) }</span>
+						<span>
+							{ this.translate( 'URL' ) }
+						</span>
 						<FormTextInput
 							ref="url"
 							autoFocus={ true }
@@ -323,27 +329,33 @@ var LinkDialog = React.createClass( {
 							onKeyDown={ this.onInputKeyDown }
 						/>
 					</FormLabel>
-					{ this.state.showLinkText ?
-						<FormLabel>
-							<span>{ this.translate( 'Link Text' ) }</span>
-							<FormTextInput
-								onChange={ this.setLinkText }
-								value={ this.state.linkText }
-								onKeyDown={ this.onInputKeyDown }
-							/>
-						</FormLabel>
-					: null }
+					{ this.state.showLinkText
+						? <FormLabel>
+								<span>
+									{ this.translate( 'Link Text' ) }
+								</span>
+								<FormTextInput
+									onChange={ this.setLinkText }
+									value={ this.state.linkText }
+									onKeyDown={ this.onInputKeyDown }
+								/>
+							</FormLabel>
+						: null }
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
 						<FormCheckbox onChange={ this.setNewWindow } checked={ this.state.newWindow } />
-						<span>{ this.translate( 'Open link in a new window/tab' ) }</span>
+						<span>
+							{ this.translate( 'Open link in a new window/tab' ) }
+						</span>
 					</FormLabel>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
-						<span>{ this.translate( 'Link to existing content' ) }</span>
-						{ this.props.site && (
+						<span>
+							{ this.translate( 'Link to existing content' ) }
+						</span>
+						{ this.props.site &&
 							<PostSelector
 								siteId={ this.props.site.ID }
 								type="any"
@@ -354,19 +366,19 @@ var LinkDialog = React.createClass( {
 								selected={ this.getSelectedPostId() }
 								onChange={ this.setExistingContent }
 								suppressFirstPageLoad={ ! this.props.firstLoad }
-								emptyMessage={ this.translate( 'No posts found' ) } />
-						) }
+								emptyMessage={ this.translate( 'No posts found' ) }
+							/> }
 					</FormLabel>
 				</FormFieldset>
 			</Dialog>
 		);
-	}
+	},
 } );
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const selectedSite = getSelectedSite( state );
 	return {
 		site: selectedSite,
-		sitePosts: selectedSite ? getSitePosts( state, selectedSite.ID ) : null
+		sitePosts: selectedSite ? getSitePosts( state, selectedSite.ID ) : null,
 	};
 } )( LinkDialog );

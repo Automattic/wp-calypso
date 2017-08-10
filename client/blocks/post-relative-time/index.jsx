@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,15 +22,12 @@ export function PostRelativeTime( { moment, post } ) {
 	}
 
 	const classes = classNames( 'post-relative-time', {
-		'is-placeholder': ! post
+		'is-placeholder': ! post,
 	} );
 
 	return (
 		<span className={ classes }>
-			<Gridicon
-				icon="time"
-				size={ 18 }
-				className="post-relative-time__icon" />
+			<Gridicon icon="time" size={ 18 } className="post-relative-time__icon" />
 			<span className="post-relative-time__text">
 				{ moment( time ).fromNow() }
 			</span>
@@ -40,11 +38,11 @@ export function PostRelativeTime( { moment, post } ) {
 PostRelativeTime.propTypes = {
 	globalId: PropTypes.string,
 	moment: PropTypes.func,
-	post: PropTypes.object
+	post: PropTypes.object,
 };
 
 export default connect( ( state, { globalId } ) => {
 	return {
-		post: getNormalizedPost( state, globalId )
+		post: getNormalizedPost( state, globalId ),
 	};
 } )( localize( PostRelativeTime ) );

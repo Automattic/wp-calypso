@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,10 +16,7 @@ import { preventWidows } from 'lib/formatting';
 import { isJetpackSite } from 'state/sites/selectors';
 import FeatureExample from 'components/feature-example';
 import Banner from 'components/banner';
-import {
-	PLAN_BUSINESS,
-	PLAN_JETPACK_BUSINESS
-} from 'lib/plans/constants';
+import { PLAN_BUSINESS, PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
 
 const SeoPreviewNudge = ( { translate, isJetpack = false } ) => {
 	return (
@@ -27,11 +25,11 @@ const SeoPreviewNudge = ( { translate, isJetpack = false } ) => {
 			<TrackComponentView eventName="calypso_seo_preview_upgrade_nudge_impression" />
 
 			<Banner
-					plan={ isJetpack ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS }
-					title={ translate( 'Upgrade to a Business Plan to unlock the power of our SEO tools!' ) }
-					event="site_preview_seo_plan_upgrade"
-					className="preview-upgrade-nudge__banner"
-				/>
+				plan={ isJetpack ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS }
+				title={ translate( 'Upgrade to a Business Plan to unlock the power of our SEO tools!' ) }
+				event="site_preview_seo_plan_upgrade"
+				className="preview-upgrade-nudge__banner"
+			/>
 
 			<div className="preview-upgrade-nudge__features">
 				<FeatureExample>
@@ -40,27 +38,41 @@ const SeoPreviewNudge = ( { translate, isJetpack = false } ) => {
 				<div className="preview-upgrade-nudge__features-details">
 					<ul className="preview-upgrade-nudge__features-list">
 						<li className="preview-upgrade-nudge__features-list-item">
-							<Gridicon className="preview-upgrade-nudge__features-list-item-checkmark" icon="checkmark" />
-							{ preventWidows( translate(
-								'Preview your site\'s content as it will appear on Facebook, Twitter, and the WordPress.com Reader.'
-							) ) }
+							<Gridicon
+								className="preview-upgrade-nudge__features-list-item-checkmark"
+								icon="checkmark"
+							/>
+							{ preventWidows(
+								translate(
+									"Preview your site's content as it will appear on Facebook, Twitter, and the WordPress.com Reader."
+								)
+							) }
 						</li>
 						<li className="preview-upgrade-nudge__features-list-item">
-							<Gridicon className="preview-upgrade-nudge__features-list-item-checkmark" icon="checkmark" />
-							{ preventWidows( translate(
-								'Control how page titles will appear on Google search results and social networks.'
-							) ) }
+							<Gridicon
+								className="preview-upgrade-nudge__features-list-item-checkmark"
+								icon="checkmark"
+							/>
+							{ preventWidows(
+								translate(
+									'Control how page titles will appear on Google search results and social networks.'
+								)
+							) }
 						</li>
 						<li className="preview-upgrade-nudge__features-list-item">
-							<Gridicon className="preview-upgrade-nudge__features-list-item-checkmark" icon="checkmark" />
-							{ preventWidows( translate(
-								'Customize your front page meta data to change how your site appears to search engines.'
-							) ) }
+							<Gridicon
+								className="preview-upgrade-nudge__features-list-item-checkmark"
+								icon="checkmark"
+							/>
+							{ preventWidows(
+								translate(
+									'Customize your front page meta data to change how your site appears to search engines.'
+								)
+							) }
 						</li>
 					</ul>
 				</div>
 			</div>
-
 		</div>
 	);
 };

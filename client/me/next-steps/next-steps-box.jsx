@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +15,7 @@ module.exports = React.createClass( {
 		analytics.ga.recordEvent( 'Me > Next > Box', this.props.stepName );
 		analytics.tracks.recordEvent( 'calypso_me_next_click', {
 			module: this.props.stepName,
-			is_welcome: this.props.isWelcome
+			is_welcome: this.props.isWelcome,
 		} );
 	},
 
@@ -31,19 +32,25 @@ module.exports = React.createClass( {
 		return (
 			<div className={ boxClassNames }>
 				<div className="next-steps-box__step-header">
-					<h2>{ this.props.step.title }</h2>
+					<h2>
+						{ this.props.step.title }
+					</h2>
 				</div>
 
 				<div className={ bodyClassNames }>
 					{ this.props.step.body }
 
 					<div className="next-steps-box__step-action">
-						<a className={ buttonClassNames } href={ this.props.step.buttonURL } onClick={ this.recordEvent }>
+						<a
+							className={ buttonClassNames }
+							href={ this.props.step.buttonURL }
+							onClick={ this.recordEvent }
+						>
 							{ this.props.step.buttonText }
 						</a>
 					</div>
 				</div>
 			</div>
 		);
-	}
+	},
 } );

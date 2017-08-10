@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +15,7 @@ export default React.createClass( {
 	displayName: 'ViewersData',
 
 	propTypes: {
-		siteId: React.PropTypes.number.isRequired
+		siteId: React.PropTypes.number.isRequired,
 	},
 
 	getInitialState() {
@@ -22,7 +23,7 @@ export default React.createClass( {
 			viewers: false,
 			totalViewers: false,
 			currentPage: false,
-			fetchInitialized: false
+			fetchInitialized: false,
 		};
 	},
 
@@ -90,11 +91,11 @@ export default React.createClass( {
 		this.setState( {
 			viewers: ViewersStore.getViewers( siteId ),
 			totalViewers: ViewersStore.getPaginationData( siteId ).totalViewers,
-			currentPage: ViewersStore.getPaginationData( siteId ).currentViewersPage
+			currentPage: ViewersStore.getPaginationData( siteId ).currentViewersPage,
 		} );
 	},
 
 	render() {
 		return passToChildren( this, Object.assign( {}, this.state, { fetching: this.isFetching() } ) );
-	}
+	},
 } );

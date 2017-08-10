@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,7 +19,7 @@ export default class InfoPopover extends Component {
 		gaEventCategory: PropTypes.string,
 		id: PropTypes.string,
 		ignoreContext: PropTypes.shape( {
-			getDOMNode: PropTypes.func
+			getDOMNode: PropTypes.func,
 		} ),
 		popoverName: PropTypes.string,
 		position: PropTypes.oneOf( [
@@ -41,10 +42,10 @@ export default class InfoPopover extends Component {
 
 	state = { showPopover: false };
 
-	handleClick = ( event ) => {
+	handleClick = event => {
 		event.preventDefault();
 		this.setState( { showPopover: ! this.state.showPopover }, this.recordStats );
-	}
+	};
 
 	handleClose = () => this.setState( { showPopover: false }, this.recordStats );
 
@@ -55,7 +56,7 @@ export default class InfoPopover extends Component {
 			const dialogState = this.state.showPopover ? ' Opened' : ' Closed';
 			analytics.ga.recordEvent( gaEventCategory, 'InfoPopover: ' + popoverName + dialogState );
 		}
-	}
+	};
 
 	render() {
 		return (
@@ -65,8 +66,8 @@ export default class InfoPopover extends Component {
 				className={ classNames(
 					'info-popover',
 					{ is_active: this.state.showPopover },
-					this.props.className )
-				}
+					this.props.className
+				) }
 			>
 				<Gridicon icon="info-outline" size={ 18 } />
 				<Popover
@@ -77,11 +78,7 @@ export default class InfoPopover extends Component {
 					ignoreContext={ this.props.ignoreContext }
 					position={ this.props.position }
 					onClose={ this.handleClose }
-					className={ classNames(
-						'popover',
-						'info-popover__tooltip',
-						this.props.className
-					) }
+					className={ classNames( 'popover', 'info-popover__tooltip', this.props.className ) }
 					rootClassName={ this.props.rootClassName }
 				>
 					{ this.props.children }

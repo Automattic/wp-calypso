@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,7 +27,7 @@ import {
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
-	POSTS_REQUEST_FAILURE
+	POSTS_REQUEST_FAILURE,
 } from 'state/action-types';
 
 /**
@@ -50,7 +51,7 @@ export function receivePost( post ) {
 export function receivePosts( posts ) {
 	return {
 		type: POSTS_RECEIVE,
-		posts
+		posts,
 	};
 }
 
@@ -62,11 +63,11 @@ export function receivePosts( posts ) {
  * @return {Function}        Action thunk
  */
 export function requestSitePosts( siteId, query = {} ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: POSTS_REQUEST,
 			siteId,
-			query
+			query,
 		} );
 
 		let source = wpcom;
@@ -80,23 +81,26 @@ export function requestSitePosts( siteId, query = {} ) {
 			source = source.me();
 		}
 
-		return source.postsList( { ...query } ).then( ( { found, posts } ) => {
-			dispatch( receivePosts( posts ) );
-			dispatch( {
-				type: POSTS_REQUEST_SUCCESS,
-				siteId,
-				query,
-				found,
-				posts
+		return source
+			.postsList( { ...query } )
+			.then( ( { found, posts } ) => {
+				dispatch( receivePosts( posts ) );
+				dispatch( {
+					type: POSTS_REQUEST_SUCCESS,
+					siteId,
+					query,
+					found,
+					posts,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: POSTS_REQUEST_FAILURE,
+					siteId,
+					query,
+					error,
+				} );
 			} );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: POSTS_REQUEST_FAILURE,
-				siteId,
-				query,
-				error
-			} );
-		} );
 	};
 }
 
@@ -108,28 +112,33 @@ export function requestSitePosts( siteId, query = {} ) {
  * @return {Function}        Action thunk
  */
 export function requestSitePost( siteId, postId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: POST_REQUEST,
 			siteId,
-			postId
+			postId,
 		} );
 
-		return wpcom.site( siteId ).post( postId ).get().then( ( post ) => {
-			dispatch( receivePost( post ) );
-			dispatch( {
-				type: POST_REQUEST_SUCCESS,
-				siteId,
-				postId
+		return wpcom
+			.site( siteId )
+			.post( postId )
+			.get()
+			.then( post => {
+				dispatch( receivePost( post ) );
+				dispatch( {
+					type: POST_REQUEST_SUCCESS,
+					siteId,
+					postId,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: POST_REQUEST_FAILURE,
+					siteId,
+					postId,
+					error,
+				} );
 			} );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: POST_REQUEST_FAILURE,
-				siteId,
-				postId,
-				error
-			} );
-		} );
 	};
 }
 
@@ -158,7 +167,7 @@ export function editPost( siteId, postId = null, post ) {
 		type: POST_EDIT,
 		post,
 		siteId,
-		postId
+		postId,
 	};
 }
 
@@ -177,7 +186,7 @@ export function savePostSuccess( siteId, postId = null, savedPost, post ) {
 		siteId,
 		postId,
 		savedPost,
-		post
+		post,
 	};
 }
 
@@ -191,28 +200,30 @@ export function savePostSuccess( siteId, postId = null, savedPost, post ) {
  * @return {Function}        Action thunk
  */
 export function savePost( siteId, postId = null, post ) {
-	return async ( dispatch ) => {
+	return async dispatch => {
 		dispatch( {
 			type: POST_SAVE,
 			siteId,
 			postId,
-			post
+			post,
 		} );
 
 		let postHandle = wpcom.site( siteId ).post( postId );
 		const normalizedPost = normalizePostForApi( post );
 		postHandle = postHandle[ postId ? 'update' : 'add' ].bind( postHandle );
-		return postHandle( { apiVersion: '1.2' }, normalizedPost ).then( ( savedPost ) => {
-			dispatch( savePostSuccess( siteId, postId, savedPost, post ) );
-			dispatch( receivePost( savedPost ) );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: POST_SAVE_FAILURE,
-				siteId,
-				postId,
-				error
+		return postHandle( { apiVersion: '1.2' }, normalizedPost )
+			.then( savedPost => {
+				dispatch( savePostSuccess( siteId, postId, savedPost, post ) );
+				dispatch( receivePost( savedPost ) );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: POST_SAVE_FAILURE,
+					siteId,
+					postId,
+					error,
+				} );
 			} );
-		} );
 	};
 }
 
@@ -238,27 +249,32 @@ export function trashPost( siteId, postId ) {
  * @return {Function}        Action thunk
  */
 export function deletePost( siteId, postId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: POST_DELETE,
 			siteId,
-			postId
+			postId,
 		} );
 
-		return wpcom.site( siteId ).post( postId ).delete().then( () => {
-			dispatch( {
-				type: POST_DELETE_SUCCESS,
-				siteId,
-				postId
+		return wpcom
+			.site( siteId )
+			.post( postId )
+			.delete()
+			.then( () => {
+				dispatch( {
+					type: POST_DELETE_SUCCESS,
+					siteId,
+					postId,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: POST_DELETE_FAILURE,
+					siteId,
+					postId,
+					error,
+				} );
 			} );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: POST_DELETE_FAILURE,
-				siteId,
-				postId,
-				error
-			} );
-		} );
 	};
 }
 
@@ -271,28 +287,33 @@ export function deletePost( siteId, postId ) {
  * @return {Function}        Action thunk
  */
 export function restorePost( siteId, postId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: POST_RESTORE,
 			siteId,
-			postId
+			postId,
 		} );
 
-		return wpcom.site( siteId ).post( postId ).restore().then( ( restoredPost ) => {
-			dispatch( {
-				type: POST_RESTORE_SUCCESS,
-				siteId,
-				postId
+		return wpcom
+			.site( siteId )
+			.post( postId )
+			.restore()
+			.then( restoredPost => {
+				dispatch( {
+					type: POST_RESTORE_SUCCESS,
+					siteId,
+					postId,
+				} );
+				dispatch( receivePost( restoredPost ) );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: POST_RESTORE_FAILURE,
+					siteId,
+					postId,
+					error,
+				} );
 			} );
-			dispatch( receivePost( restoredPost ) );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: POST_RESTORE_FAILURE,
-				siteId,
-				postId,
-				error
-			} );
-		} );
 	};
 }
 
@@ -321,10 +342,12 @@ export function addTermForPost( siteId, taxonomy, term, postId ) {
 		const taxonomyTerms = toArray( postTerms[ taxonomy ] );
 		taxonomyTerms.push( term );
 
-		dispatch( editPost( siteId, postId, {
-			terms: {
-				[ taxonomy ]: taxonomyTerms
-			}
-		} ) );
+		dispatch(
+			editPost( siteId, postId, {
+				terms: {
+					[ taxonomy ]: taxonomyTerms,
+				},
+			} )
+		);
 	};
 }

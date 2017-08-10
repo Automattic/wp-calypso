@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +18,6 @@ import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
  * Component
  */
 export const ThemesList = React.createClass( {
-
 	mixins: [ InfiniteScroll( 'fetchNextPage' ) ],
 
 	propTypes: {
@@ -34,7 +34,7 @@ export const ThemesList = React.createClass( {
 		isInstalling: React.PropTypes.func,
 		// i18n function provided by localize()
 		translate: React.PropTypes.func,
-		placeholderCount: React.PropTypes.number
+		placeholderCount: React.PropTypes.number,
 	},
 
 	fetchNextPage( options ) {
@@ -51,37 +51,50 @@ export const ThemesList = React.createClass( {
 			getActionLabel: () => '',
 			isActive: () => false,
 			getPrice: () => '',
-			isInstalling: () => false
+			isInstalling: () => false,
 		};
 	},
 
 	shouldComponentUpdate( nextProps ) {
-		return nextProps.loading !== this.props.loading ||
+		return (
+			nextProps.loading !== this.props.loading ||
 			! isEqual( nextProps.themes, this.props.themes ) ||
-			( nextProps.getButtonOptions !== this.props.getButtonOptions ) ||
-			( nextProps.getScreenshotUrl !== this.props.getScreenshotUrl ) ||
-			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
-			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
+			nextProps.getButtonOptions !== this.props.getButtonOptions ||
+			nextProps.getScreenshotUrl !== this.props.getScreenshotUrl ||
+			nextProps.onScreenshotClick !== this.props.onScreenshotClick ||
+			nextProps.onMoreButtonClick !== this.props.onMoreButtonClick
+		);
 	},
 
 	renderTheme( theme, index ) {
-		return <Theme
-			key={ 'theme-' + theme.id }
-			buttonContents={ this.props.getButtonOptions( theme.id ) }
-			screenshotClickUrl={ this.props.getScreenshotUrl && this.props.getScreenshotUrl( theme.id ) }
-			onScreenshotClick={ this.props.onScreenshotClick }
-			onMoreButtonClick={ this.props.onMoreButtonClick }
-			actionLabel={ this.props.getActionLabel( theme.id ) }
-			index={ index }
-			theme={ theme }
-			active={ this.props.isActive( theme.id ) }
-			price={ this.props.getPrice( theme.id ) }
-			installing={ this.props.isInstalling( theme.id ) } />;
+		return (
+			<Theme
+				key={ 'theme-' + theme.id }
+				buttonContents={ this.props.getButtonOptions( theme.id ) }
+				screenshotClickUrl={
+					this.props.getScreenshotUrl && this.props.getScreenshotUrl( theme.id )
+				}
+				onScreenshotClick={ this.props.onScreenshotClick }
+				onMoreButtonClick={ this.props.onMoreButtonClick }
+				actionLabel={ this.props.getActionLabel( theme.id ) }
+				index={ index }
+				theme={ theme }
+				active={ this.props.isActive( theme.id ) }
+				price={ this.props.getPrice( theme.id ) }
+				installing={ this.props.isInstalling( theme.id ) }
+			/>
+		);
 	},
 
 	renderLoadingPlaceholders() {
 		return times( this.props.placeholderCount, function( i ) {
-			return <Theme key={ 'placeholder-' + i } theme={ { id: 'placeholder-' + i, name: 'Loading…' } } isPlaceholder={ true } />;
+			return (
+				<Theme
+					key={ 'placeholder-' + i }
+					theme={ { id: 'placeholder-' + i, name: 'Loading…' } }
+					isPlaceholder={ true }
+				/>
+			);
 		} );
 	},
 
@@ -94,12 +107,14 @@ export const ThemesList = React.createClass( {
 	},
 
 	renderEmpty() {
-		return this.props.emptyContent ||
+		return (
+			this.props.emptyContent ||
 			<EmptyContent
 				illustration="/calypso/images/illustrations/no-themes-drake.svg"
 				title={ this.props.translate( 'Sorry, no themes found.' ) }
 				line={ this.props.translate( 'Try a different search or more filters?' ) }
-				/>;
+			/>
+		);
 	},
 
 	render() {
@@ -114,7 +129,7 @@ export const ThemesList = React.createClass( {
 				{ this.renderTrailingItems() }
 			</div>
 		);
-	}
+	},
 } );
 
 export default localize( ThemesList );

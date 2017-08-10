@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -32,10 +33,7 @@ const loadingMethodsAndLoadingLocationsState = {
 		woocommerce: {
 			sites: {
 				123: {
-					shippingZones: [
-						{ id: 1, methodIds: [ 3 ] },
-						{ id: 2, methodIds: LOADING },
-					],
+					shippingZones: [ { id: 1, methodIds: [ 3 ] }, { id: 2, methodIds: LOADING } ],
 					shippingZoneLocations: {
 						1: LOADING,
 						2: { country: [], continent: [], state: [], postcode: [] },
@@ -51,10 +49,7 @@ const loadedWithMethodsAndLoadingLocationsState = {
 		woocommerce: {
 			sites: {
 				123: {
-					shippingZones: [
-						{ id: 1, methodIds: [ 3 ] },
-						{ id: 2, methodIds: [ 7, 42 ] },
-					],
+					shippingZones: [ { id: 1, methodIds: [ 3 ] }, { id: 2, methodIds: [ 7, 42 ] } ],
 					shippingZoneLocations: {
 						1: LOADING,
 						2: { country: [], continent: [], state: [], postcode: [] },
@@ -70,10 +65,7 @@ const loadingMethodsAndLoadedLocationsState = {
 		woocommerce: {
 			sites: {
 				123: {
-					shippingZones: [
-						{ id: 1, methodIds: [ 3 ] },
-						{ id: 2, methodIds: LOADING },
-					],
+					shippingZones: [ { id: 1, methodIds: [ 3 ] }, { id: 2, methodIds: LOADING } ],
 					shippingZoneLocations: {
 						1: { country: [], continent: [], state: [], postcode: [] },
 						2: { country: [], continent: [], state: [], postcode: [] },
@@ -89,10 +81,7 @@ const loadedWithMethodsAndLocationsState = {
 		woocommerce: {
 			sites: {
 				123: {
-					shippingZones: [
-						{ id: 1, methodIds: [ 3 ] },
-						{ id: 2, methodIds: [ 7, 42 ] },
-					],
+					shippingZones: [ { id: 1, methodIds: [ 3 ] }, { id: 2, methodIds: [ 7, 42 ] } ],
 					shippingZoneLocations: {
 						1: { country: [], continent: [], state: [], postcode: [] },
 						2: { country: [], continent: [], state: [], postcode: [] },
@@ -132,7 +121,8 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return true when zones and methods are loaded but some locations are not.', () => {
-			expect( areShippingZonesLoading( loadedWithMethodsAndLoadingLocationsState, 123 ) ).to.be.true;
+			expect( areShippingZonesLoading( loadedWithMethodsAndLoadingLocationsState, 123 ) ).to.be
+				.true;
 		} );
 
 		it( 'should return true when zones and locations are loaded but some methods are not.', () => {
@@ -170,7 +160,8 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return false when zones and methods are loaded but some locations are not.', () => {
-			expect( areShippingZonesLoaded( loadedWithMethodsAndLoadingLocationsState, 123 ) ).to.be.false;
+			expect( areShippingZonesLoaded( loadedWithMethodsAndLoadingLocationsState, 123 ) ).to.be
+				.false;
 		} );
 
 		it( 'should return false when zones and locations are loaded but some methods are not.', () => {

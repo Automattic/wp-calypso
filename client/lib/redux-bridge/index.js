@@ -1,3 +1,4 @@
+/** @format */
 let reduxStore = null;
 
 export function setReduxStore( store ) {

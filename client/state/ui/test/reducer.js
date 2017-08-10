@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,11 +13,7 @@ import {
 	DESERIALIZE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
-import reducer, {
-	isNotificationsOpen,
-	selectedSiteId,
-	siteSelectionInitialized,
-} from '../reducer';
+import reducer, { isNotificationsOpen, selectedSiteId, siteSelectionInitialized } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
@@ -45,17 +42,23 @@ describe( 'reducer', () => {
 	} );
 
 	it( 'should refuse to persist any state', () => {
-		const state = reducer( {
-			selectedSiteId: 2916284
-		}, { type: SERIALIZE } );
+		const state = reducer(
+			{
+				selectedSiteId: 2916284,
+			},
+			{ type: SERIALIZE }
+		);
 
 		expect( state ).to.eql( {} );
 	} );
 
 	it( 'should refuse to restore any persisted state', () => {
-		const state = reducer( {
-			selectedSiteId: 2916284
-		}, { type: DESERIALIZE } );
+		const state = reducer(
+			{
+				selectedSiteId: 2916284,
+			},
+			{ type: DESERIALIZE }
+		);
 
 		expect( state ).to.eql( {} );
 	} );
@@ -70,7 +73,7 @@ describe( 'reducer', () => {
 		it( 'should set the selected site ID', () => {
 			const state = selectedSiteId( null, {
 				type: SELECTED_SITE_SET,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.equal( 2916284 );
@@ -79,7 +82,7 @@ describe( 'reducer', () => {
 		it( 'should set to null if siteId is undefined', () => {
 			const state = selectedSiteId( null, {
 				type: SELECTED_SITE_SET,
-				siteId: undefined
+				siteId: undefined,
 			} );
 
 			expect( state ).to.be.null;

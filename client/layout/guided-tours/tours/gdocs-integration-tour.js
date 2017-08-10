@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -30,16 +31,21 @@ export const GDocsIntegrationTour = makeTour(
 		when={ hasUserPastedFromGoogleDocs }
 	>
 		<Step name="init" placement="right">
-			<p>{ translate( 'Did you know you can create drafts from Google Docs?' ) }</p>
+			<p>
+				{ translate( 'Did you know you can create drafts from Google Docs?' ) }
+			</p>
 			<ButtonRow>
 				<LinkQuit
 					primary
 					target="_blank"
 					onClick={ trackUserInterest }
-					href="https://apps.wordpress.com/google-docs/">
+					href="https://apps.wordpress.com/google-docs/"
+				>
 					{ translate( 'Learn more' ) }
 				</LinkQuit>
-				<Quit>{ translate( 'No thanks' ) }</Quit>
+				<Quit>
+					{ translate( 'No thanks' ) }
+				</Quit>
 			</ButtonRow>
 		</Step>
 	</Tour>

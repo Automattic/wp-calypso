@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -9,14 +10,13 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATE,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED,
 } from 'woocommerce/state/action-types';
-import {
-	areShippingZoneLocationsLoaded,
-	areShippingZoneLocationsLoading,
-} from './selectors';
+import { areShippingZoneLocationsLoaded, areShippingZoneLocationsLoading } from './selectors';
 
 export const fetchShippingZoneLocations = ( siteId, zoneId ) => ( dispatch, getState ) => {
-	if ( areShippingZoneLocationsLoaded( getState(), zoneId, siteId ) ||
-		areShippingZoneLocationsLoading( getState(), zoneId, siteId ) ) {
+	if (
+		areShippingZoneLocationsLoaded( getState(), zoneId, siteId ) ||
+		areShippingZoneLocationsLoading( getState(), zoneId, siteId )
+	) {
 		return;
 	}
 
@@ -39,8 +39,9 @@ export const fetchShippingZoneLocations = ( siteId, zoneId ) => ( dispatch, getS
 
 	dispatch( getAction );
 
-	return request( siteId ).get( 'shipping/zones/' + zoneId + '/locations' )
-		.then( ( data ) => {
+	return request( siteId )
+		.get( 'shipping/zones/' + zoneId + '/locations' )
+		.then( data => {
 			dispatch( {
 				type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS,
 				siteId,
@@ -53,7 +54,13 @@ export const fetchShippingZoneLocations = ( siteId, zoneId ) => ( dispatch, getS
 		} );
 };
 
-export function updateShippingZoneLocations( siteId, zoneId, locations, successAction, failureAction ) {
+export function updateShippingZoneLocations(
+	siteId,
+	zoneId,
+	locations,
+	successAction,
+	failureAction
+) {
 	return {
 		type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATE,
 		siteId,

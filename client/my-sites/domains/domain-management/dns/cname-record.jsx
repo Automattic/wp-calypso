@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +20,7 @@ class CnameRecord extends React.Component {
 		fieldValues: React.PropTypes.object.isRequired,
 		onChange: React.PropTypes.func.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
-		show: React.PropTypes.bool.isRequired
+		show: React.PropTypes.bool.isRequired,
 	};
 
 	static initialFields = {
@@ -41,25 +42,16 @@ class CnameRecord extends React.Component {
 					</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
-						placeholder={
-							translate(
-								'Enter subdomain (required)',
-								{
-									context: 'Placeholder shown when entering the required subdomain part of a new DNS record'
-								}
-							)
-						}
+						placeholder={ translate( 'Enter subdomain (required)', {
+							context:
+								'Placeholder shown when entering the required subdomain part of a new DNS record',
+						} ) }
 						isError={ ! isNameValid }
 						onChange={ onChange }
 						value={ fieldValues.name }
 						suffix={ '.' + selectedDomainName }
 					/>
-					{ ! isNameValid &&
-						<FormInputValidation
-							text={ translate( 'Invalid Name' ) }
-							isError
-						/>
-					}
+					{ ! isNameValid && <FormInputValidation text={ translate( 'Invalid Name' ) } isError /> }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -74,11 +66,7 @@ class CnameRecord extends React.Component {
 						placeholder={ translate( 'e.g. %(example)s', { args: { example: 'example.com' } } ) }
 					/>
 					{ ! isDataValid &&
-						<FormInputValidation
-							text={ translate( 'Invalid Target Host' ) }
-							isError
-						/>
-					}
+						<FormInputValidation text={ translate( 'Invalid Target Host' ) } isError /> }
 				</FormFieldset>
 			</div>
 		);

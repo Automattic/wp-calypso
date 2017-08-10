@@ -1,3 +1,4 @@
+/** @format */
 const getPlugin = function( state, pluginSlug ) {
 	if ( ! state || ! state[ pluginSlug ] ) {
 		return null;

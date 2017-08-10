@@ -1,13 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
-import {
-	flowRight,
-	isEqual,
-	omit,
-	pick,
-} from 'lodash';
+import { flowRight, isEqual, omit, pick } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -17,21 +13,11 @@ import { localize } from 'i18n-calypso';
 import { protectForm } from 'lib/protect-form';
 import trackForm from 'lib/track-form';
 import QuerySettings from './data/query-settings';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-} from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { deleteCache } from '../state/cache/actions';
-import {
-	errorNotice,
-	removeNotice,
-	successNotice,
-} from 'state/notices/actions';
+import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { saveSettings } from '../state/settings/actions';
-import {
-	isCacheDeleteSuccessful,
-	isDeletingCache,
-} from '../state/cache/selectors';
+import { isCacheDeleteSuccessful, isDeletingCache } from '../state/cache/selectors';
 import {
 	getSettings,
 	isRequestingSettings,
@@ -62,10 +48,9 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 			if ( ! this.props.isSaving && prevProps.isSaving ) {
 				if ( this.props.isSaveSuccessful ) {
-					this.props.successNotice(
-						this.props.translate( 'Settings saved!' ),
-						{ id: 'wpsc-settings-save' }
-					);
+					this.props.successNotice( this.props.translate( 'Settings saved!' ), {
+						id: 'wpsc-settings-save',
+					} );
 				} else {
 					this.props.errorNotice(
 						this.props.translate( 'There was a problem saving your changes. Please try again.' ),
@@ -83,7 +68,9 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 			// Compute the dirty fields by comparing the persisted and the current fields
 			const previousDirtyFields = this.props.dirtyFields;
-			const nextDirtyFields = previousDirtyFields.filter( field => ! isEqual( currentFields[ field ], persistedFields[ field ] ) );
+			const nextDirtyFields = previousDirtyFields.filter(
+				field => ! isEqual( currentFields[ field ], persistedFields[ field ] )
+			);
 
 			// Update the dirty fields state without updating their values
 			if ( 0 === nextDirtyFields.length ) {
@@ -100,22 +87,20 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.replaceFields( nextNonDirtyFields );
 		}
 
-		showCacheDeleteNotice = ( prevProps ) => {
+		showCacheDeleteNotice = prevProps => {
 			if ( this.props.isDeleting || ! prevProps.isDeleting ) {
 				return;
 			}
 
-			const {
-				isDeleteSuccessful,
-				site,
-				translate,
-			} = this.props;
+			const { isDeleteSuccessful, site, translate } = this.props;
 
 			this.props.removeNotice( 'wpsc-settings-save' );
 
 			if ( isDeleteSuccessful ) {
 				this.props.successNotice(
-					translate( 'Cache successfully deleted on %(site)s.', { args: { site: site && site.title } } ),
+					translate( 'Cache successfully deleted on %(site)s.', {
+						args: { site: site && site.title },
+					} ),
 					{ id: 'wpsc-cache-delete' }
 				);
 			} else {
@@ -164,16 +149,16 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		// Delete an element from an array field.
 		deleteFieldArrayValue = ( name, index ) => () => {
 			const currentValue = this.props.fields[ name ];
-			const newValue = [
-				...currentValue.slice( 0, index ),
-				...currentValue.slice( index + 1 ),
-			];
+			const newValue = [ ...currentValue.slice( 0, index ), ...currentValue.slice( index + 1 ) ];
 
-			this.props.updateFields( {
-				[ name ]: newValue,
-			}, () => {
-				this.submitForm();
-			} );
+			this.props.updateFields(
+				{
+					[ name ]: newValue,
+				},
+				() => {
+					this.submitForm();
+				}
+			);
 		};
 
 		handleSubmitForm = event => {
@@ -182,10 +167,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		};
 
 		submitForm = () => {
-			const {
-				fields,
-				siteId,
-			} = this.props;
+			const { fields, siteId } = this.props;
 
 			this.props.removeNotice( 'wpsc-cache-delete' );
 			this.props.removeNotice( 'wpsc-settings-save' );
@@ -195,7 +177,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		handleDeleteCache = ( deleteAll, deleteExpired ) => {
 			this.props.removeNotice( 'wpsc-cache-delete' );
 			this.props.deleteCache( this.props.siteId, deleteAll, deleteExpired );
-		}
+		};
 
 		render() {
 			const utils = {
@@ -250,12 +232,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		}
 	);
 
-	return flowRight(
-		connectComponent,
-		localize,
-		trackForm,
-		protectForm,
-	)( WrappedSettingsForm );
+	return flowRight( connectComponent, localize, trackForm, protectForm )( WrappedSettingsForm );
 };
 
 export default wrapSettingsForm;

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +11,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 
 export default class SiteOrDomainChoice extends Component {
-	handleClickChoice = ( event ) => {
+	handleClickChoice = event => {
 		event.preventDefault();
 
 		this.props.handleClickChoice( this.props.choice.type );
@@ -21,7 +22,10 @@ export default class SiteOrDomainChoice extends Component {
 
 		if ( isPlaceholder ) {
 			return (
-				<div className="site-or-domain__choice site-or-domain__choice-is-placeholder" key={ choice.type }>
+				<div
+					className="site-or-domain__choice site-or-domain__choice-is-placeholder"
+					key={ choice.type }
+				>
 					<Card compact className="site-or-domain__choice-image site-or-domain__is-placeholder" />
 					<Card compact className="site-or-domain__choice-text">
 						<div className="site-or-domain__choice-button">
@@ -41,9 +45,13 @@ export default class SiteOrDomainChoice extends Component {
 					</Card>
 					<Card compact className="site-or-domain__choice-text">
 						<div className="site-or-domain__choice-button">
-							<Button>{ choice.label }</Button>
+							<Button>
+								{ choice.label }
+							</Button>
 						</div>
-						<p>{ choice.description }</p>
+						<p>
+							{ choice.description }
+						</p>
 					</Card>
 				</a>
 			</div>

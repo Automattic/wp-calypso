@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -29,7 +30,9 @@ export default function switchLocale( localeSlug ) {
 
 	request.get( languageFileUrl( localeSlug ) ).end( function( error, response ) {
 		if ( error ) {
-			debug( 'Encountered an error loading locale file for ' + localeSlug + '. Falling back to English.' );
+			debug(
+				'Encountered an error loading locale file for ' + localeSlug + '. Falling back to English.'
+			);
 			return;
 		}
 		i18n.setLocale( response.body );

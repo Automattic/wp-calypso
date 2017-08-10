@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -32,7 +33,7 @@ const MySitesNavigation = React.createClass( {
 				/>
 			</div>
 		);
-	}
+	},
 } );
 
 module.exports = MySitesNavigation;

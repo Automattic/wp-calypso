@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,8 @@ function isCustomizeEnabled() {
 
 function getCustomizeLink( selectedSite ) {
 	const adminUrl = selectedSite.URL + '/wp-admin/',
-		customizerInAdmin = adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
+		customizerInAdmin =
+			adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
 
 	return isCustomizeEnabled() ? '/customize/' + selectedSite.slug : customizerInAdmin;
 }
@@ -27,12 +29,10 @@ export default localize( ( { selectedSite, translate } ) => {
 			<PurchaseDetail
 				icon="customize"
 				title={ translate( 'Customize your theme' ) }
-				description={
-					translate(
-						"You now have direct control over your site's fonts and colors in the customizer. " +
+				description={ translate(
+					"You now have direct control over your site's fonts and colors in the customizer. " +
 						"Change your site's entire look in a few clicks."
-					)
-				}
+				) }
 				buttonText={ translate( 'Start customizing' ) }
 				href={ getCustomizeLink( selectedSite ) }
 				target={ isCustomizeEnabled() ? undefined : '_blank' }

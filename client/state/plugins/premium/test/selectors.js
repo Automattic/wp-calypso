@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,10 +23,10 @@ const state = deepFreeze( {
 				'start.site': initSite,
 				'installing.site': installingSite,
 				'finished.site': finishedSite,
-				'config.site': configuringSite
-			}
-		}
-	}
+				'config.site': configuringSite,
+			},
+		},
+	},
 } );
 
 describe( 'Premium Plugin Selectors', function() {
@@ -157,7 +158,7 @@ describe( 'Premium Plugin Selectors', function() {
 			assert.equal( selectors.getNextPlugin( state, 'no.site' ), false );
 		} );
 
-		it( 'Should get the first plugin in the list if the requested site hasn\'t started yet', function() {
+		it( "Should get the first plugin in the list if the requested site hasn't started yet", function() {
 			assert.equal( selectors.getNextPlugin( state, 'start.site' ).slug, 'vaultpress' );
 		} );
 

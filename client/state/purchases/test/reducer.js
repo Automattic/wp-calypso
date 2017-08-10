@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,7 @@ import {
 	PURCHASES_SITE_FETCH_COMPLETED,
 	PURCHASES_USER_FETCH_COMPLETED,
 	PRIVACY_PROTECTION_CANCEL_COMPLETED,
-	PRIVACY_PROTECTION_CANCEL_FAILED
+	PRIVACY_PROTECTION_CANCEL_FAILED,
 } from 'state/action-types';
 import reducer from '../reducer';
 
@@ -27,7 +28,7 @@ describe( 'reducer', () => {
 			isFetchingSitePurchases: false,
 			isFetchingUserPurchases: false,
 			hasLoadedSitePurchasesFromServer: false,
-			hasLoadedUserPurchasesFromServer: false
+			hasLoadedUserPurchasesFromServer: false,
 		} );
 	} );
 
@@ -38,31 +39,38 @@ describe( 'reducer', () => {
 			isFetchingSitePurchases: false,
 			isFetchingUserPurchases: true,
 			hasLoadedSitePurchasesFromServer: false,
-			hasLoadedUserPurchasesFromServer: false
+			hasLoadedUserPurchasesFromServer: false,
 		} );
 	} );
 
 	it( 'should return an object with the list of purchases when fetching completed', () => {
 		let state = reducer( undefined, {
 			type: PURCHASES_USER_FETCH_COMPLETED,
-			purchases: [ { ID: '1', blog_id: siteId, user_id: userId }, { ID: '2', blog_id: siteId, user_id: userId } ]
+			purchases: [
+				{ ID: '1', blog_id: siteId, user_id: userId },
+				{ ID: '2', blog_id: siteId, user_id: userId },
+			],
 		} );
 
 		state = reducer( state, {
 			type: PURCHASES_SITE_FETCH_COMPLETED,
-			purchases: [ { ID: '2', blog_id: siteId, user_id: userId }, { ID: '3', blog_id: siteId, user_id: userId } ]
+			purchases: [
+				{ ID: '2', blog_id: siteId, user_id: userId },
+				{ ID: '3', blog_id: siteId, user_id: userId },
+			],
 		} );
 
 		expect( state ).to.be.eql( {
 			data: [
 				{ ID: '2', blog_id: siteId, user_id: userId },
 				{ ID: '3', blog_id: siteId, user_id: userId },
-				{ ID: '1', blog_id: siteId, user_id: userId } ],
+				{ ID: '1', blog_id: siteId, user_id: userId },
+			],
 			error: null,
 			isFetchingSitePurchases: false,
 			isFetchingUserPurchases: false,
 			hasLoadedSitePurchasesFromServer: true,
-			hasLoadedUserPurchasesFromServer: true
+			hasLoadedUserPurchasesFromServer: true,
 		} );
 	} );
 
@@ -71,12 +79,13 @@ describe( 'reducer', () => {
 			data: [
 				{ ID: '2', blog_id: siteId, user_id: userId },
 				{ ID: '3', blog_id: siteId, user_id: userId },
-				{ ID: '1', blog_id: siteId, user_id: userId } ],
+				{ ID: '1', blog_id: siteId, user_id: userId },
+			],
 			error: null,
 			isFetchingSitePurchases: false,
 			isFetchingUserPurchases: false,
 			hasLoadedSitePurchasesFromServer: true,
-			hasLoadedUserPurchasesFromServer: true
+			hasLoadedUserPurchasesFromServer: true,
 		};
 
 		const newPurchase = { ID: '4', blog_id: 2702, user_id: userId };
@@ -86,57 +95,55 @@ describe( 'reducer', () => {
 			purchases: [
 				{ ID: '1', blog_id: siteId, user_id: userId },
 				{ ID: '2', blog_id: siteId, user_id: userId },
-				newPurchase // include purchase with new `siteId`
+				newPurchase, // include purchase with new `siteId`
 			],
-			userId: Number( userId )
+			userId: Number( userId ),
 		} );
 
 		expect( state ).to.be.eql( {
 			data: [
 				{ ID: '1', blog_id: siteId, user_id: userId },
 				{ ID: '2', blog_id: siteId, user_id: userId },
-				newPurchase // purchase with ID 3 was removed, `newPurchase` was added
+				newPurchase, // purchase with ID 3 was removed, `newPurchase` was added
 			],
 			error: null,
 			isFetchingSitePurchases: false,
 			isFetchingUserPurchases: false,
 			hasLoadedSitePurchasesFromServer: true,
-			hasLoadedUserPurchasesFromServer: true
+			hasLoadedUserPurchasesFromServer: true,
 		} );
 
 		state = reducer( state, {
 			type: PURCHASES_SITE_FETCH_COMPLETED,
 			purchases: [ { ID: '2', blog_id: siteId, user_id: userId } ],
-			siteId: Number( siteId )
+			siteId: Number( siteId ),
 		} );
 
 		expect( state ).to.be.eql( {
 			data: [
 				{ ID: '2', blog_id: siteId, user_id: userId },
-				{ ID: '4', blog_id: 2702, user_id: userId } // the new purchase was not removed because it has a different `blog_id`
+				{ ID: '4', blog_id: 2702, user_id: userId }, // the new purchase was not removed because it has a different `blog_id`
 			],
 			error: null,
 			isFetchingSitePurchases: false,
 			isFetchingUserPurchases: false,
 			hasLoadedSitePurchasesFromServer: true,
-			hasLoadedUserPurchasesFromServer: true
+			hasLoadedUserPurchasesFromServer: true,
 		} );
 
 		state = reducer( state, {
 			type: PURCHASE_REMOVE_COMPLETED,
 			purchases: [ state.data[ 0 ] ],
-			userId
+			userId,
 		} );
 
 		expect( state ).to.be.eql( {
-			data: [
-				{ ID: '2', blog_id: siteId, user_id: userId }
-			],
+			data: [ { ID: '2', blog_id: siteId, user_id: userId } ],
 			error: null,
 			isFetchingSitePurchases: false,
 			isFetchingUserPurchases: false,
 			hasLoadedSitePurchasesFromServer: true,
-			hasLoadedUserPurchasesFromServer: true
+			hasLoadedUserPurchasesFromServer: true,
 		} );
 	} );
 
@@ -144,19 +151,19 @@ describe( 'reducer', () => {
 		let state = {
 			data: [
 				{ ID: '2', blog_id: siteId, user_id: userId },
-				{ ID: '4', blog_id: 2702, user_id: userId }
+				{ ID: '4', blog_id: 2702, user_id: userId },
 			],
 			error: null,
 			isFetchingSitePurchases: false,
 			isFetchingUserPurchases: false,
 			hasLoadedSitePurchasesFromServer: true,
-			hasLoadedUserPurchasesFromServer: true
+			hasLoadedUserPurchasesFromServer: true,
 		};
 
 		state = reducer( state, {
 			type: PRIVACY_PROTECTION_CANCEL_FAILED,
 			error: 'Unable to fetch stored cards',
-			purchaseId: '2'
+			purchaseId: '2',
 		} );
 
 		expect( state ).to.be.eql( {
@@ -165,19 +172,19 @@ describe( 'reducer', () => {
 					ID: '2',
 					blog_id: siteId,
 					user_id: userId,
-					error: 'Unable to fetch stored cards'
+					error: 'Unable to fetch stored cards',
 				},
 				{
 					ID: '4',
 					blog_id: 2702,
-					user_id: userId
-				}
+					user_id: userId,
+				},
 			],
 			error: null,
 			isFetchingSitePurchases: false,
 			isFetchingUserPurchases: false,
 			hasLoadedSitePurchasesFromServer: true,
-			hasLoadedUserPurchasesFromServer: true
+			hasLoadedUserPurchasesFromServer: true,
 		} );
 	} );
 
@@ -185,13 +192,13 @@ describe( 'reducer', () => {
 		let state = {
 			data: [
 				{ ID: '2', blog_id: siteId, user_id: userId },
-				{ ID: '4', blog_id: 2702, user_id: userId }
+				{ ID: '4', blog_id: 2702, user_id: userId },
 			],
 			error: null,
 			isFetchingSitePurchases: false,
 			isFetchingUserPurchases: false,
 			hasLoadedSitePurchasesFromServer: true,
-			hasLoadedUserPurchasesFromServer: true
+			hasLoadedUserPurchasesFromServer: true,
 		};
 
 		state = reducer( state, {
@@ -203,7 +210,7 @@ describe( 'reducer', () => {
 				amount: 2200,
 				error: null,
 				has_private_registration: false,
-			}
+			},
 		} );
 
 		expect( state ).to.be.eql( {
@@ -214,19 +221,19 @@ describe( 'reducer', () => {
 					user_id: userId,
 					amount: 2200,
 					error: null,
-					has_private_registration: false
+					has_private_registration: false,
 				},
 				{
 					ID: '4',
 					blog_id: 2702,
-					user_id: userId
-				}
+					user_id: userId,
+				},
 			],
 			error: null,
 			isFetchingSitePurchases: false,
 			isFetchingUserPurchases: false,
 			hasLoadedSitePurchasesFromServer: true,
-			hasLoadedUserPurchasesFromServer: true
+			hasLoadedUserPurchasesFromServer: true,
 		} );
 	} );
 } );

@@ -1,14 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import {
-	includes,
-	noop,
-	size,
-} from 'lodash';
+import { includes, noop, size } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -36,7 +33,6 @@ import PlanPrice from 'my-sites/plan-price';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
 class Banner extends Component {
-
 	static propTypes = {
 		callToAction: PropTypes.string,
 		className: PropTypes.string,
@@ -63,11 +59,7 @@ class Banner extends Component {
 	};
 
 	getHref() {
-		const {
-			href,
-			feature,
-			siteSlug,
-		} = this.props;
+		const { href, feature, siteSlug } = this.props;
 
 		if ( ! href && siteSlug ) {
 			if ( feature ) {
@@ -78,30 +70,22 @@ class Banner extends Component {
 		return href;
 	}
 
-	handleClick = ( e ) => {
-		const {
-			event,
-			feature,
-			onClick,
-		} = this.props;
+	handleClick = e => {
+		const { event, feature, onClick } = this.props;
 
 		if ( event ) {
-			this.props.recordTracksEvent(
-				'calypso_banner_cta_click', {
-					cta_name: event,
-					cta_feature: feature,
-					cta_size: 'regular'
-				} );
+			this.props.recordTracksEvent( 'calypso_banner_cta_click', {
+				cta_name: event,
+				cta_feature: feature,
+				cta_size: 'regular',
+			} );
 		}
 
 		onClick( e );
-	}
+	};
 
 	getIcon() {
-		const {
-			icon,
-			plan,
-		} = this.props;
+		const { icon, plan } = this.props;
 
 		if ( plan && ! icon ) {
 			return (
@@ -124,32 +108,21 @@ class Banner extends Component {
 	}
 
 	getContent() {
-		const {
-			callToAction,
-			description,
-			event,
-			feature,
-			list,
-			price,
-			title,
-		} = this.props;
+		const { callToAction, description, event, feature, list, price, title } = this.props;
 
-		const prices = Array.isArray( price ) ? price : [ price ];
+		const prices = Array.isArray( price ) ? price : [ price ];
 
 		return (
 			<div className="banner__content">
-				{
-					event && <TrackComponentView
+				{ event &&
+					<TrackComponentView
 						eventName={ 'calypso_banner_cta_impression' }
-						eventProperties={
-							{
-								cta_name: event,
-								cta_feature: feature,
-								cta_size: 'regular'
-							}
-						}
-					/>
-				}
+						eventProperties={ {
+							cta_name: event,
+							cta_feature: feature,
+							cta_size: 'regular',
+						} }
+					/> }
 				<div className="banner__info">
 					<div className="banner__title">
 						{ title }
@@ -157,8 +130,7 @@ class Banner extends Component {
 					{ description &&
 						<div className="banner__description">
 							{ description }
-						</div>
-					}
+						</div> }
 					{ size( list ) > 0 &&
 						<ul className="banner__list">
 							{ list.map( ( item, key ) =>
@@ -167,32 +139,21 @@ class Banner extends Component {
 									{ item }
 								</li>
 							) }
-						</ul>
-					}
+						</ul> }
 				</div>
 				{ ( callToAction || price ) &&
 					<div className="banner__action">
-						{ size( prices ) === 1 &&
-							<PlanPrice rawPrice={ prices[ 0 ] } />
-						}
+						{ size( prices ) === 1 && <PlanPrice rawPrice={ prices[ 0 ] } /> }
 						{ size( prices ) === 2 &&
 							<div className="banner__prices">
 								<PlanPrice rawPrice={ prices[ 0 ] } original />
 								<PlanPrice rawPrice={ prices[ 1 ] } discounted />
-							</div>
-						}
+							</div> }
 						{ callToAction &&
-							<Button
-								compact
-								href={ this.getHref() }
-								onClick={ this.handleClick }
-								primary
-							>
+							<Button compact href={ this.getHref() } onClick={ this.handleClick } primary>
 								{ callToAction }
-							</Button>
-						}
-					</div>
-				}
+							</Button> }
+					</div> }
 			</div>
 		);
 	}
@@ -211,25 +172,23 @@ class Banner extends Component {
 			'banner',
 			className,
 			{ 'has-call-to-action': callToAction },
-			{ 'is-upgrade-personal':
-				includes( [
-					PLAN_PERSONAL,
-					PLAN_JETPACK_PERSONAL,
-					PLAN_JETPACK_PERSONAL_MONTHLY,
-				], plan )
+			{
+				'is-upgrade-personal': includes(
+					[ PLAN_PERSONAL, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ],
+					plan
+				),
 			},
-			{ 'is-upgrade-premium':
-				includes( [
-					PLAN_PREMIUM,
-					PLAN_JETPACK_PREMIUM,
-					PLAN_JETPACK_PREMIUM_MONTHLY,
-				], plan ) },
-			{ 'is-upgrade-business':
-				includes( [
-					PLAN_BUSINESS,
-					PLAN_JETPACK_BUSINESS,
-					PLAN_JETPACK_BUSINESS_MONTHLY,
-				], plan )
+			{
+				'is-upgrade-premium': includes(
+					[ PLAN_PREMIUM, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ],
+					plan
+				),
+			},
+			{
+				'is-upgrade-business': includes(
+					[ PLAN_BUSINESS, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ],
+					plan
+				),
 			},
 			{ 'is-dismissible': dismissPreferenceName }
 		);
@@ -258,14 +217,10 @@ class Banner extends Component {
 			</Card>
 		);
 	}
-
 }
 
 const mapStateToProps = ( state, ownProps ) => ( {
 	siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 } );
 
-export default connect(
-	mapStateToProps,
-	{ recordTracksEvent }
-)( Banner );
+export default connect( mapStateToProps, { recordTracksEvent } )( Banner );

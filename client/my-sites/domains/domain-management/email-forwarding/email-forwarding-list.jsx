@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,25 +15,33 @@ var EmailForwardingList = React.createClass( {
 			{ list, hasLoadedFromServer } = this.props.emailForwarding;
 
 		if ( ! list && ! hasLoadedFromServer ) {
-			return <span>{ this.translate( 'Loading…' ) }</span>;
+			return (
+				<span>
+					{ this.translate( 'Loading…' ) }
+				</span>
+			);
 		}
 
 		if ( ! list ) {
 			return null;
 		}
 
-		emailForwardingItems = list.map( ( emailForwarding ) => {
+		emailForwardingItems = list.map( emailForwarding => {
 			return (
 				<EmailForwardingItem
 					key={ emailForwarding.email }
 					emailData={ emailForwarding }
 					selectedSite={ this.props.selectedSite }
-					/>
+				/>
 			);
 		} );
 
-		return <ul className="email-forwarding__list">{ emailForwardingItems }</ul>;
-	}
+		return (
+			<ul className="email-forwarding__list">
+				{ emailForwardingItems }
+			</ul>
+		);
+	},
 } );
 
 module.exports = EmailForwardingList;

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,7 +29,7 @@ class RequiredPluginsInstallView extends Component {
 	static propTypes = {
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
-		} )
+		} ),
 	};
 
 	constructor( props ) {
@@ -46,11 +47,11 @@ class RequiredPluginsInstallView extends Component {
 
 	componentDidMount = () => {
 		this.createUpdateTimer();
-	}
+	};
 
 	componentWillUnmount = () => {
 		this.destroyUpdateTimer();
-	}
+	};
 
 	createUpdateTimer = () => {
 		if ( this.updateTimer ) {
@@ -60,14 +61,14 @@ class RequiredPluginsInstallView extends Component {
 		this.updateTimer = window.setInterval( () => {
 			this.updateEngine();
 		}, 1000 );
-	}
+	};
 
 	destroyUpdateTimer = () => {
 		if ( this.updateTimer ) {
 			window.clearInterval( this.updateTimer );
 			this.updateTimer = false;
 		}
-	}
+	};
 
 	getRequiredPluginsList = () => {
 		const { translate } = this.props;
@@ -77,9 +78,11 @@ class RequiredPluginsInstallView extends Component {
 			'wc-api-dev': translate( 'WooCommerce API Dev' ),
 			'woocommerce-gateway-stripe': translate( 'WooCommerce Stripe Gateway' ),
 			'woocommerce-services': translate( 'WooCommerce Services' ),
-			'taxjar-simplified-taxes-for-woocommerce': translate( 'TaxJar - Sales Tax Automation for WooCommerce' ),
+			'taxjar-simplified-taxes-for-woocommerce': translate(
+				'TaxJar - Sales Tax Automation for WooCommerce'
+			),
 		};
-	}
+	};
 
 	doInitialization = () => {
 		const { site, sitePlugins, translate, wporg } = this.props;
@@ -167,7 +170,7 @@ class RequiredPluginsInstallView extends Component {
 			engineState: 'DONESUCCESS',
 			message: '',
 		} );
-	}
+	};
 
 	doInstallation = () => {
 		const { site, sitePlugins, translate, wporg } = this.props;
@@ -190,18 +193,22 @@ class RequiredPluginsInstallView extends Component {
 			const workingOn = toInstall.shift();
 			if ( 'wc-api-dev' === workingOn ) {
 				// Special handling for wc-api-dev
-				wp.req.post( {
-					path: `/sites/${ site.ID }/woocommerce/install-api-dev-plugin`
-				} ).then( () => {
-					this.props.fetchPlugins( [ site.ID ] );
-				} );
+				wp.req
+					.post( {
+						path: `/sites/${ site.ID }/woocommerce/install-api-dev-plugin`,
+					} )
+					.then( () => {
+						this.props.fetchPlugins( [ site.ID ] );
+					} );
 			} else {
 				// Otherwise, handle plugin installation the normal way
 				this.props.installPlugin( site.ID, getPlugin( wporg, workingOn ) );
 			}
 
 			this.setState( {
-				message: translate( 'Installing %(plugin)s', { args: { plugin: requiredPlugins[ workingOn ] } } ),
+				message: translate( 'Installing %(plugin)s', {
+					args: { plugin: requiredPlugins[ workingOn ] },
+				} ),
 				toInstall,
 				workingOn,
 			} );
@@ -215,7 +222,7 @@ class RequiredPluginsInstallView extends Component {
 				workingOn: '',
 			} );
 		}
-	}
+	};
 
 	doActivation = () => {
 		const { site, sitePlugins, translate } = this.props;
@@ -254,7 +261,9 @@ class RequiredPluginsInstallView extends Component {
 			this.props.activatePlugin( site.ID, pluginToActivate );
 
 			this.setState( {
-				message: translate( 'Activating %(plugin)s', { args: { plugin: requiredPlugins[ workingOn ] } } ),
+				message: translate( 'Activating %(plugin)s', {
+					args: { plugin: requiredPlugins[ workingOn ] },
+				} ),
 				toActivate,
 				workingOn,
 			} );
@@ -268,7 +277,7 @@ class RequiredPluginsInstallView extends Component {
 				workingOn: '',
 			} );
 		}
-	}
+	};
 
 	doneSuccess = () => {
 		const { site, translate } = this.props;
@@ -279,7 +288,7 @@ class RequiredPluginsInstallView extends Component {
 			message: translate( 'All required plugins are installed and activated' ),
 			progress: 100,
 		} );
-	}
+	};
 
 	updateEngine = () => {
 		switch ( this.state.engineState ) {
@@ -296,7 +305,7 @@ class RequiredPluginsInstallView extends Component {
 				this.doneSuccess();
 				break;
 		}
-	}
+	};
 
 	getProgress = () => {
 		const { engineState, toActivate, toInstall } = this.state;
@@ -319,7 +328,7 @@ class RequiredPluginsInstallView extends Component {
 		}
 
 		return 100;
-	}
+	};
 
 	startSetup = () => {
 		analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
@@ -328,7 +337,7 @@ class RequiredPluginsInstallView extends Component {
 		this.setState( {
 			engineState: 'INITIALIZING',
 		} );
-	}
+	};
 
 	renderConfirmScreen = () => {
 		const { translate } = this.props;
@@ -339,11 +348,11 @@ class RequiredPluginsInstallView extends Component {
 					imageWidth={ 160 }
 					title={ translate( 'Have something to sell?' ) }
 					subtitle={ translate(
-						'If you\'re located in the {{strong}}United States{{/strong}} ' +
-						'or {{strong}}Canada{{/strong}}, you can now add a store to sell your physical ' +
-						'products right on your site!',
+						"If you're located in the {{strong}}United States{{/strong}} " +
+							'or {{strong}}Canada{{/strong}}, you can now add a store to sell your physical ' +
+							'products right on your site!',
 						{
-							components: { strong: <strong /> }
+							components: { strong: <strong /> },
 						}
 					) }
 				>
@@ -353,7 +362,7 @@ class RequiredPluginsInstallView extends Component {
 				</SetupHeader>
 			</div>
 		);
-	}
+	};
 
 	render = () => {
 		const { site, translate } = this.props;
@@ -372,7 +381,7 @@ class RequiredPluginsInstallView extends Component {
 					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
 					imageWidth={ 160 }
 					title={ translate( 'Setting up your store' ) }
-					subtitle={ translate( 'Give us a minute and we\'ll move right along.' ) }
+					subtitle={ translate( "Give us a minute and we'll move right along." ) }
 				>
 					<ProgressBar value={ progress } isPulsing />
 					<p>
@@ -381,7 +390,7 @@ class RequiredPluginsInstallView extends Component {
 				</SetupHeader>
 			</div>
 		);
-	}
+	};
 }
 
 function mapStateToProps( state ) {
@@ -408,4 +417,6 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( RequiredPluginsInstallView ) );
+export default connect( mapStateToProps, mapDispatchToProps )(
+	localize( RequiredPluginsInstallView )
+);

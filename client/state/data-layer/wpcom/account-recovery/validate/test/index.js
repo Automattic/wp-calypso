@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,19 +27,18 @@ describe( 'handleValidateRequest()', () => {
 	const key = 'a-super-secret-key';
 
 	describe( 'success', () => {
-		useNock( nock => (
-			nock( apiBaseUrl )
-				.persist()
-				.post( endpoint )
-				.reply( 200, { success: true } )
-		) );
+		useNock( nock =>
+			nock( apiBaseUrl ).persist().post( endpoint ).reply( 200, { success: true } )
+		);
 
-		it( 'should dispatch SUCCESS action on success', ( done ) => {
-			const dispatch = sinon.spy( ( action ) => {
+		it( 'should dispatch SUCCESS action on success', done => {
+			const dispatch = sinon.spy( action => {
 				if ( action.type === ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS ) {
-					assert.isTrue( dispatch.calledWith( {
-						type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
-					} ) );
+					assert.isTrue(
+						dispatch.calledWith( {
+							type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
+						} )
+					);
 
 					done();
 				}
@@ -47,13 +47,15 @@ describe( 'handleValidateRequest()', () => {
 			handleValidateRequest( { dispatch }, { userData, method, key } );
 		} );
 
-		it( 'should dispatch SET_VALIDATION_KEY action on success', ( done ) => {
-			const dispatch = sinon.spy( ( action ) => {
+		it( 'should dispatch SET_VALIDATION_KEY action on success', done => {
+			const dispatch = sinon.spy( action => {
 				if ( action.type === ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY ) {
-					assert.isTrue( dispatch.calledWith( {
-						type: ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY,
-						key: key,
-					} ) );
+					assert.isTrue(
+						dispatch.calledWith( {
+							type: ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY,
+							key: key,
+						} )
+					);
 
 					done();
 				}
@@ -69,18 +71,18 @@ describe( 'handleValidateRequest()', () => {
 			message: 'Something wrong!',
 		};
 
-		useNock( nock => (
-			nock( apiBaseUrl )
-				.post( endpoint )
-				.reply( errorResponse.status, errorResponse )
-		) );
+		useNock( nock =>
+			nock( apiBaseUrl ).post( endpoint ).reply( errorResponse.status, errorResponse )
+		);
 
-		it( 'should dispatch ERROR action on failure', ( done ) => {
+		it( 'should dispatch ERROR action on failure', done => {
 			const dispatch = sinon.spy( () => {
-				assert.isTrue( dispatch.calledWithMatch( {
-					type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
-					error: errorResponse,
-				} ) )
+				assert.isTrue(
+					dispatch.calledWithMatch( {
+						type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
+						error: errorResponse,
+					} )
+				);
 
 				done();
 			} );
@@ -89,4 +91,3 @@ describe( 'handleValidateRequest()', () => {
 		} );
 	} );
 } );
-

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -5,7 +6,7 @@ import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
-	DOCUMENT_HEAD_UNREAD_COUNT_SET
+	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 } from 'state/action-types';
 
 /**
@@ -18,7 +19,7 @@ import {
 export function setDocumentHeadTitle( title ) {
 	return {
 		type: DOCUMENT_HEAD_TITLE_SET,
-		title
+		title,
 	};
 }
 
@@ -32,7 +33,7 @@ export function setDocumentHeadTitle( title ) {
 export function setDocumentHeadUnreadCount( count ) {
 	return {
 		type: DOCUMENT_HEAD_UNREAD_COUNT_SET,
-		count
+		count,
 	};
 }
 
@@ -46,7 +47,7 @@ export function setDocumentHeadUnreadCount( count ) {
 export function setDocumentHeadLink( link ) {
 	return {
 		type: DOCUMENT_HEAD_LINK_SET,
-		link
+		link,
 	};
 }
 
@@ -60,6 +61,6 @@ export function setDocumentHeadLink( link ) {
 export function setDocumentHeadMeta( meta ) {
 	return {
 		type: DOCUMENT_HEAD_META_SET,
-		meta
+		meta,
 	};
 }

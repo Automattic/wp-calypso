@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -78,6 +79,6 @@ export default connect(
 				likeComment,
 				unlikeComment,
 			},
-			dispatch,
-		),
+			dispatch
+		)
 )( CommentLikeButtonContainer );

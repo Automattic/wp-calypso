@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Mapping from Calypso panel slug to tuple of focus key and value.
  *

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,17 +9,16 @@ import React from 'react';
  */
 import Button from 'components/button';
 
-const CartItemLoadingPlaceholder = () => (
+const CartItemLoadingPlaceholder = () =>
 	<div className="cart-item__loading-placeholder cart-item">
 		<div className="primary-details">
-			<span className="product-name"></span>
-			<span className="product-domain"></span>
+			<span className="product-name" />
+			<span className="product-domain" />
 		</div>
 		<div className="secondary-details">
-			<span className="product-price"></span>
+			<span className="product-price" />
 			<Button className="cart-item__loading-placeholder-remove-item remove-item" />
 		</div>
-	</div>
-);
+	</div>;
 
 export default CartItemLoadingPlaceholder;

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -36,7 +37,7 @@ var SearchDemo = React.createClass( {
 				/>
 			</div>
 		);
-	}
+	},
 } );
 
 module.exports = SearchDemo;

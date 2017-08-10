@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,7 +26,9 @@ export default {
 		context.store.dispatch( setTitle( i18n.translate( 'Password', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		if ( context.query && context.query.updated === 'password' ) {
-			notices.success( i18n.translate( 'Your password was saved successfully.' ), { displayOnNextPage: true } );
+			notices.success( i18n.translate( 'Your password was saved successfully.' ), {
+				displayOnNextPage: true,
+			} );
 
 			page.replace( window.location.pathname );
 		}
@@ -33,13 +36,11 @@ export default {
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Password' );
 
 		renderWithReduxStore(
-			React.createElement( PasswordComponent,
-				{
-					userSettings: userSettings,
-					path: context.path,
-					accountPasswordData: accountPasswordData
-				}
-			),
+			React.createElement( PasswordComponent, {
+				userSettings: userSettings,
+				path: context.path,
+				accountPasswordData: accountPasswordData,
+			} ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -50,18 +51,18 @@ export default {
 			basePath = context.path,
 			appPasswordsData = require( 'lib/application-passwords-data' );
 
-		context.store.dispatch( setTitle( i18n.translate( 'Two-Step Authentication', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch(
+			setTitle( i18n.translate( 'Two-Step Authentication', { textOnly: true } ) )
+		); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Two-Step Authentication' );
 
 		renderWithReduxStore(
-			React.createElement( TwoStepComponent,
-				{
-					userSettings: userSettings,
-					path: context.path,
-					appPasswordsData: appPasswordsData
-				}
-			),
+			React.createElement( TwoStepComponent, {
+				userSettings: userSettings,
+				path: context.path,
+				appPasswordsData: appPasswordsData,
+			} ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -72,18 +73,18 @@ export default {
 			basePath = context.path,
 			connectedAppsData = require( 'lib/connected-applications-data' );
 
-		context.store.dispatch( setTitle( i18n.translate( 'Connected Applications', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch(
+			setTitle( i18n.translate( 'Connected Applications', { textOnly: true } ) )
+		); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Connected Applications' );
 
 		renderWithReduxStore(
-			React.createElement( ConnectedAppsComponent,
-				{
-					userSettings: userSettings,
-					path: context.path,
-					connectedAppsData: connectedAppsData
-				}
-			),
+			React.createElement( ConnectedAppsComponent, {
+				userSettings: userSettings,
+				path: context.path,
+				connectedAppsData: connectedAppsData,
+			} ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -98,14 +99,12 @@ export default {
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Account Recovery' );
 
 		renderWithReduxStore(
-			React.createElement( AccountRecoveryComponent,
-				{
-					userSettings: userSettings,
-					path: context.path
-				}
-			),
+			React.createElement( AccountRecoveryComponent, {
+				userSettings: userSettings,
+				path: context.path,
+			} ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };

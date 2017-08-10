@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,11 +20,8 @@ function PostItemExample( { primarySiteId, globalId } ) {
 		<div>
 			{ primarySiteId && <QuerySites siteId={ primarySiteId } /> }
 
-			{ primarySiteId && (
-				<QueryPosts
-					siteId={ primarySiteId }
-					query={ { number: 1, type: 'any' } } />
-			) }
+			{ primarySiteId &&
+				<QueryPosts siteId={ primarySiteId } query={ { number: 1, type: 'any' } } /> }
 			<p>
 				<strong>Standard</strong>
 				{ ! globalId && <em style={ { display: 'block' } }>No posts found</em> }
@@ -37,12 +35,12 @@ function PostItemExample( { primarySiteId, globalId } ) {
 	);
 }
 
-const ConnectedPostItemExample = connect( ( state ) => {
+const ConnectedPostItemExample = connect( state => {
 	const primarySiteId = get( getCurrentUser( state ), 'primary_blog' );
 
 	return {
 		primarySiteId,
-		globalId: get( getSitePosts( state, primarySiteId ), [ 0, 'global_ID' ] )
+		globalId: get( getSitePosts( state, primarySiteId ), [ 0, 'global_ID' ] ),
 	};
 } )( PostItemExample );
 

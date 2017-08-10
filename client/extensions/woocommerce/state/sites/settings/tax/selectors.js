@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,11 +25,11 @@ export const areTaxSettingsLoading = ( state, siteId = getSelectedSiteId( state 
 export function getPricesIncludeTax( state, siteId = getSelectedSiteId( state ) ) {
 	const taxSettings = getRawTaxSettings( state, siteId );
 	const pricesIncludeTax = find( taxSettings, { id: 'woocommerce_prices_include_tax' } );
-	return ( pricesIncludeTax && 'yes' === pricesIncludeTax.value );
+	return pricesIncludeTax && 'yes' === pricesIncludeTax.value;
 }
 
 export function getShippingIsTaxFree( state, siteId = getSelectedSiteId( state ) ) {
 	const taxSettings = getRawTaxSettings( state, siteId );
 	const shippingIsTaxFree = find( taxSettings, { id: 'woocommerce_shipping_tax_class' } );
-	return ( shippingIsTaxFree && 'zero-rate' === shippingIsTaxFree.value );
+	return shippingIsTaxFree && 'zero-rate' === shippingIsTaxFree.value;
 }

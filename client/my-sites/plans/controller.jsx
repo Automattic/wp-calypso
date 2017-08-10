@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -56,5 +57,5 @@ export default {
 		}
 
 		return page.redirect( '/plans' );
-	}
+	},
 };

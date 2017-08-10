@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,17 +9,14 @@ import classNames from 'classnames';
 class WidgetGroup extends Component {
 	static defaultProps = {
 		maxColumns: 2,
-	}
+	};
 
 	static propTypes = {
-		children: PropTypes.oneOfType( [
-			PropTypes.arrayOf( PropTypes.node ),
-			PropTypes.node
-		] ),
+		children: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.node ), PropTypes.node ] ),
 		className: PropTypes.string,
 		maxColumns: PropTypes.number,
 		title: PropTypes.string,
-	}
+	};
 
 	/*
 	 * We render a single row of widgets (using cloneElement to
@@ -37,7 +35,7 @@ class WidgetGroup extends Component {
 				} ) }
 			</div>
 		);
-	}
+	};
 
 	/*
 	 * A widget group will have one or more children. This method slices
@@ -71,19 +69,22 @@ class WidgetGroup extends Component {
 				{ rows }
 			</div>
 		);
-	}
+	};
 
 	render = () => {
 		const { children, className, title } = this.props;
 		const classes = classNames( 'widget-group__group-container', className );
 
 		return (
-			<div className={ classes } >
-				{ title && ( <h2>{ title }</h2> ) }
+			<div className={ classes }>
+				{ title &&
+					<h2>
+						{ title }
+					</h2> }
 				{ children && this.renderChildren() }
 			</div>
 		);
-	}
+	};
 }
 
 export default WidgetGroup;

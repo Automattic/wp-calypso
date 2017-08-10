@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -33,36 +34,30 @@ class ResetPasswordConfirmForm extends Component {
 		};
 	}
 
-	submitNewPassword = ( event ) => {
-		const {
-			userData,
-			selectedMethod,
-			validationKey,
-		} = this.props;
+	submitNewPassword = event => {
+		const { userData, selectedMethod, validationKey } = this.props;
 
 		const { newPassword } = this.state;
 
 		this.props.requestResetPassword( userData, selectedMethod, validationKey, newPassword );
 
 		event.preventDefault();
-	}
+	};
 
-	updateNewPassword = ( event ) => {
+	updateNewPassword = event => {
 		this.setState( { newPassword: event.target.value } );
-	}
+	};
 
 	render() {
-		const {
-			translate,
-			isRequesting,
-			error,
-		} = this.props;
+		const { translate, isRequesting, error } = this.props;
 
 		const { newPassword } = this.state;
 
 		return (
 			<Card>
-				<h2 className="reset-password-confirm-form__title">{ translate( 'Reset your password' ) }</h2>
+				<h2 className="reset-password-confirm-form__title">
+					{ translate( 'Reset your password' ) }
+				</h2>
 				<form onSubmit={ this.submitNewPassword }>
 					<FormLabel className="reset-password-confirm-form__text-input-label" htmlFor="password">
 						{ translate( 'New password' ) }
@@ -84,7 +79,7 @@ class ResetPasswordConfirmForm extends Component {
 					<p className="reset-password-confirm-form__description">
 						{ translate(
 							'{{a}}Great passwords{{/a}} use upper and lower case characters, numbers, ' +
-							'and symbols like {{em}}%(symbols)s{{/em}}.',
+								'and symbols like {{em}}%(symbols)s{{/em}}.',
 							{
 								args: {
 									symbols: '!/"$%&',
@@ -92,7 +87,7 @@ class ResetPasswordConfirmForm extends Component {
 								components: {
 									a: <a href={ STRONG_PASSWORD } target="_blank" rel="noopener noreferrer" />,
 									em: <em />,
-								}
+								},
 							}
 						) }
 					</p>
@@ -115,7 +110,7 @@ ResetPasswordConfirmForm.defaultProps = {
 };
 
 export default connect(
-	( state ) => ( {
+	state => ( {
 		userData: getAccountRecoveryResetUserData( state ),
 		selectedMethod: getAccountRecoveryResetSelectedMethod( state ),
 		validationKey: getAccountRecoveryValidationKey( state ),

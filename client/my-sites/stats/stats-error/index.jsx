@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,16 +13,20 @@ export default React.createClass( {
 
 	propTypes: {
 		message: PropTypes.string,
-		className: PropTypes.string
+		className: PropTypes.string,
 	},
 
 	render() {
-		const message = this.props.message || this.translate( "Some stats didn't load in time. Please try again later." );
+		const message =
+			this.props.message ||
+			this.translate( "Some stats didn't load in time. Please try again later." );
 
 		return (
 			<div className={ classNames( 'module-content-text', 'is-error', this.props.className ) }>
-				<p>{ message }</p>
+				<p>
+					{ message }
+				</p>
 			</div>
 		);
-	}
+	},
 } );

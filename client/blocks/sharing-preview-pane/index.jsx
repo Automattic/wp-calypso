@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -30,11 +31,10 @@ const serviceNames = {
 	twitter: 'Twitter',
 	google_plus: 'Google Plus',
 	linkedin: 'LinkedIn',
-	tumblr: 'Tumblr'
+	tumblr: 'Tumblr',
 };
 
 class SharingPreviewPane extends PureComponent {
-
 	static propTypes = {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
@@ -48,17 +48,17 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	static defaultProps = {
-		services: Object.keys( serviceNames )
+		services: Object.keys( serviceNames ),
 	};
 
 	constructor( props ) {
 		super( props );
 		this.state = {
-			selectedService: props.selectedService || props.services[ 0 ]
+			selectedService: props.selectedService || props.services[ 0 ],
 		};
 	}
 
-	selectPreview = ( selectedService ) => {
+	selectPreview = selectedService => {
 		this.setState( { selectedService } );
 	};
 
@@ -67,13 +67,19 @@ class SharingPreviewPane extends PureComponent {
 		const { selectedService } = this.state;
 		const connection = find( connections, { service: selectedService } );
 		if ( ! connection ) {
-			return <Notice
-				text={ translate( 'Connect to %s to see the preview', { args: serviceNames[ selectedService ] } ) }
-				status="is-info"
-				showDismiss={ false }
-			>
-				<NoticeAction href={ '/sharing/' + siteSlug } >{ translate( 'Settings' ) }</NoticeAction>
-			</Notice>;
+			return (
+				<Notice
+					text={ translate( 'Connect to %s to see the preview', {
+						args: serviceNames[ selectedService ],
+					} ) }
+					status="is-info"
+					showDismiss={ false }
+				>
+					<NoticeAction href={ '/sharing/' + siteSlug }>
+						{ translate( 'Settings' ) }
+					</NoticeAction>
+				</Notice>
+			);
 		}
 
 		const articleUrl = get( post, 'URL', '' );
@@ -111,9 +117,7 @@ class SharingPreviewPane extends PureComponent {
 			case 'linkedin':
 				return <LinkedinSharePreview { ...previewProps } />;
 			case 'twitter':
-				return <TwitterSharePreview
-					{ ...previewProps }
-					externalDisplay={ externalDisplay } />;
+				return <TwitterSharePreview { ...previewProps } externalDisplay={ externalDisplay } />;
 			default:
 				return null;
 		}
@@ -133,11 +137,12 @@ class SharingPreviewPane extends PureComponent {
 						<p className="sharing-preview-pane__description">
 							{ translate(
 								'This is how your post will appear ' +
-								'when people view or share it on any of ' +
-								'the networks below' ) }
+									'when people view or share it on any of ' +
+									'the networks below'
+							) }
 						</p>
 					</div>
-					<VerticalMenu onClick={ this.selectPreview } initialItemIndex={ initialMenuItemIndex } >
+					<VerticalMenu onClick={ this.selectPreview } initialItemIndex={ initialMenuItemIndex }>
 						{ services.map( service => <SocialItem { ...{ key: service, service } } /> ) }
 					</VerticalMenu>
 				</div>

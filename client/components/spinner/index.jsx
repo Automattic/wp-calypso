@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -27,14 +28,14 @@ export default class Spinner extends PureComponent {
 	static propTypes = {
 		className: React.PropTypes.string,
 		size: React.PropTypes.number,
-		duration: React.PropTypes.number
+		duration: React.PropTypes.number,
 	};
 
 	static instances = 0;
 
 	static defaultProps = {
 		size: 20,
-		duration: 3000
+		duration: 3000,
 	};
 
 	constructor() {
@@ -43,13 +44,13 @@ export default class Spinner extends PureComponent {
 			// We won't always have access to user-agent in server-side context, so
 			// initialize the spinner with fallback animations and check for support
 			// in componentDidMount()
-			isSVGCSSAnimationSupported: false
+			isSVGCSSAnimationSupported: false,
 		};
 	}
 
 	componentWillMount() {
 		this.setState( {
-			instanceId: ++Spinner.instances
+			instanceId: ++Spinner.instances,
 		} );
 	}
 
@@ -59,27 +60,27 @@ export default class Spinner extends PureComponent {
 			// a re-render if we're progressively enhancing with SVG animations.
 			// eslint-disable-next-line react/no-did-mount-set-state
 			this.setState( {
-				isSVGCSSAnimationSupported: isSVGCSSAnimationSupported
+				isSVGCSSAnimationSupported: isSVGCSSAnimationSupported,
 			} );
 		}
 	}
 
 	getClassName() {
 		return classNames( 'spinner', this.props.className, {
-			'is-fallback': ! this.state.isSVGCSSAnimationSupported
+			'is-fallback': ! this.state.isSVGCSSAnimationSupported,
 		} );
 	}
 
 	renderFallback() {
 		const style = {
 			width: this.props.size,
-			height: this.props.size
+			height: this.props.size,
 		};
 
 		return (
 			<div className={ this.getClassName() } style={ style }>
-				<span className="spinner__progress is-left"></span>
-				<span className="spinner__progress is-right"></span>
+				<span className="spinner__progress is-left" />
+				<span className="spinner__progress is-right" />
 			</div>
 		);
 	}
@@ -93,10 +94,12 @@ export default class Spinner extends PureComponent {
 
 		return (
 			<div className={ this.getClassName() }>
-				<svg className="spinner__image"
+				<svg
+					className="spinner__image"
 					width={ this.props.size }
 					height={ this.props.size }
-					viewBox="0 0 100 100">
+					viewBox="0 0 100 100"
+				>
 					<defs>
 						<mask id={ `maskBorder${ instanceId }` }>
 							<rect x="0" y="0" width="100%" height="100%" fill="white" />
@@ -114,13 +117,25 @@ export default class Spinner extends PureComponent {
 							<rect x="50%" y="0" width="50%" height="100%" fill="white" />
 						</mask>
 					</defs>
-					<circle className="spinner__border" r="50%" cx="50%" cy="50%" mask={ `url( #maskBorder${ instanceId } )` } />
+					<circle
+						className="spinner__border"
+						r="50%"
+						cx="50%"
+						cy="50%"
+						mask={ `url( #maskBorder${ instanceId } )` }
+					/>
 					<g mask={ `url( #maskDonut${ instanceId } )` }>
 						<g mask={ `url( #maskLeft${ instanceId } )` }>
 							<rect className="spinner__progress is-left" x="0" y="0" width="50%" height="100%" />
 						</g>
 						<g mask={ `url( #maskRight${ instanceId } )` }>
-							<rect className="spinner__progress is-right" x="50%" y="0" width="50%" height="100%" />
+							<rect
+								className="spinner__progress is-right"
+								x="50%"
+								y="0"
+								width="50%"
+								height="100%"
+							/>
 						</g>
 					</g>
 				</svg>

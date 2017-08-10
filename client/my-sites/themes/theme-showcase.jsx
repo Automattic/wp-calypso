@@ -1,8 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { compact, pickBy } from 'lodash';
@@ -44,14 +45,14 @@ const subjectsMeta = {
 	minimal: { icon: 'minus-small', order: 7 },
 	travel: { icon: 'globe', order: 8 },
 	food: { icon: 'flip-horizontal', order: 9 },
-	music: { icon: 'audio', order: 10 }
+	music: { icon: 'audio', order: 10 },
 };
 
 const optionShape = PropTypes.shape( {
 	label: PropTypes.string,
 	header: PropTypes.string,
 	getUrl: PropTypes.func,
-	action: PropTypes.func
+	action: PropTypes.func,
 } );
 
 const ThemeShowcase = React.createClass( {
@@ -74,7 +75,7 @@ const ThemeShowcase = React.createClass( {
 			tier: '',
 			search: '',
 			emptyContent: null,
-			showUploadButton: true
+			showUploadButton: true,
 		};
 	},
 
@@ -90,7 +91,7 @@ const ThemeShowcase = React.createClass( {
 		const { filterToTermTable } = this.props;
 
 		const filters = searchBoxContent.match( filterRegex ) || [];
-		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
+		const validFilters = filters.map( filter => filterToTermTable[ filter ] );
 
 		const url = this.constructUrl( {
 			filter: compact( validFilters ).join( '+' ),
@@ -113,17 +114,11 @@ const ThemeShowcase = React.createClass( {
 	 * @returns {String} Theme showcase url
 	 */
 	constructUrl( sections ) {
-		const {
-			vertical,
-			tier,
-			filter,
-			siteSlug,
-			searchString
-		} = { ...this.props, ...sections };
+		const { vertical, tier, filter, siteSlug, searchString } = { ...this.props, ...sections };
 
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
-		const tierSection = ( tier && tier !== 'all' ) ? `/${ tier }` : '';
+		const tierSection = tier && tier !== 'all' ? `/${ tier }` : '';
 
 		let filterSection = filter ? `/filter/${ filter }` : '';
 		filterSection = filterSection.replace( /\s/g, '+' );
@@ -148,11 +143,7 @@ const ThemeShowcase = React.createClass( {
 	showUploadButton() {
 		const { isMultisite, isLoggedIn } = this.props;
 
-		return (
-			config.isEnabled( 'manage/themes/upload' ) &&
-			isLoggedIn &&
-			! isMultisite
-		);
+		return config.isEnabled( 'manage/themes/upload' ) && isLoggedIn && ! isMultisite;
 	},
 
 	render() {
@@ -178,23 +169,28 @@ const ThemeShowcase = React.createClass( {
 			{ property: 'og:title', content: title },
 			{ property: 'og:url', content: canonicalUrl },
 			{ property: 'og:type', content: 'website' },
-			{ property: 'og:site_name', content: 'WordPress.com' }
+			{ property: 'og:site_name', content: 'WordPress.com' },
 		];
 
 		const links = [ { rel: 'canonical', href: canonicalUrl } ];
 
-		const headerIcons = [ {
-			label: 'new',
-			uri: this.constructUrl( { vertical: '' } ),
-			icon: 'star'
-		} ].concat(
+		const headerIcons = [
+			{
+				label: 'new',
+				uri: this.constructUrl( { vertical: '' } ),
+				icon: 'star',
+			},
+		].concat(
 			Object.keys( this.props.subjects )
-				.map( subject => subjectsMeta[ subject ] && {
-					label: subject,
-					uri: this.constructUrl( { vertical: subject } ),
-					icon: subjectsMeta[ subject ].icon,
-					order: subjectsMeta[ subject ].order
-				} )
+				.map(
+					subject =>
+						subjectsMeta[ subject ] && {
+							label: subject,
+							uri: this.constructUrl( { vertical: subject } ),
+							icon: subjectsMeta[ subject ].icon,
+							order: subjectsMeta[ subject ].order,
+						}
+				)
 				.filter( icon => !! icon )
 				.sort( ( a, b ) => a.order - b.order )
 		);
@@ -202,28 +198,36 @@ const ThemeShowcase = React.createClass( {
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<Main className="themes">
-				<DocumentHead title={ title } meta={ metas } link={ links } />
-				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle } />
-				{ ! isLoggedIn && (
+				<DocumentHead title={ title } meta={ metas } link={ links } />
+				<PageViewTracker
+					path={ this.props.analyticsPath }
+					title={ this.props.analyticsPageTitle }
+				/>
+				{ ! isLoggedIn &&
 					<SubMasterbarNav
 						options={ headerIcons }
 						fallback={ headerIcons[ 0 ] }
-						uri={ this.constructUrl() } />
-				)}
+						uri={ this.constructUrl() }
+					/> }
 				<div className="themes__content">
 					<QueryThemeFilters />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }
 						tier={ tier }
-						select={ this.onTierSelect } />
-					{ this.showUploadButton() && <Button className="themes__upload-button" compact icon
-						onClick={ this.onUploadClick }
-						href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }>
-						<Gridicon icon="cloud-upload" />
-						{ translate( 'Upload Theme' ) }
-					</Button>
-					}
+						select={ this.onTierSelect }
+					/>
+					{ this.showUploadButton() &&
+						<Button
+							className="themes__upload-button"
+							compact
+							icon
+							onClick={ this.onUploadClick }
+							href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
+						>
+							<Gridicon icon="cloud-upload" />
+							{ translate( 'Upload Theme' ) }
+						</Button> }
 					<ThemesSelection
 						search={ search }
 						tier={ this.props.tier }
@@ -253,7 +257,8 @@ const ThemeShowcase = React.createClass( {
 							return pickBy(
 								addTracking( options ),
 								option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-							); } }
+							);
+						} }
 						trackScrollPage={ this.props.trackScrollPage }
 						emptyContent={ this.props.emptyContent }
 					/>
@@ -262,20 +267,20 @@ const ThemeShowcase = React.createClass( {
 				</div>
 			</Main>
 		);
-	}
+	},
 } );
 
 const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	isLoggedIn: !! getCurrentUserId( state ),
 	siteSlug: getSiteSlug( state, siteId ),
-	description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
-	title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
+	description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
+	title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
 	subjects: getThemeFilterTerms( state, 'subject' ) || {},
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
 } );
 
 const mapDispatchToProps = {
-	trackATUploadClick: () => recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' )
+	trackATUploadClick: () => recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' ),
 };
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemeShowcase ) );

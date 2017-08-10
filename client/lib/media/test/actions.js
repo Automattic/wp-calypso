@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -27,21 +28,31 @@ const DUMMY_SITE_ID = 1,
 	},
 	DUMMY_BLOB_UPLOAD = {
 		fileContents: {
-			size: 123456
+			size: 123456,
 		},
 		fileName: 'blob-file.jpg',
-		mimeType: 'image/jpeg'
+		mimeType: 'image/jpeg',
 	},
 	DUMMY_URL = 'https://wordpress.com/i/stats-icon.gif',
 	DUMMY_API_RESPONSE = {
 		media: [ { title: 'Image' } ],
-		meta: { next_page: 'value%3D2015-03-04T14%253A38%253A21%252B00%253A00%26id%3D2135' }
+		meta: { next_page: 'value%3D2015-03-04T14%253A38%253A21%252B00%253A00%26id%3D2135' },
 	},
 	DUMMY_QUERY = { mime_type: 'audio/' };
 
 describe( 'MediaActions', function() {
-	let mediaGet, mediaList, mediaAdd, mediaAddUrls, mediaUpdate, mediaDelete, mediaListExternal,
-		MediaActions, sandbox, Dispatcher, PostEditStore, MediaListStore,
+	let mediaGet,
+		mediaList,
+		mediaAdd,
+		mediaAddUrls,
+		mediaUpdate,
+		mediaDelete,
+		mediaListExternal,
+		MediaActions,
+		sandbox,
+		Dispatcher,
+		PostEditStore,
+		MediaListStore,
 		mediaAddExternal;
 
 	useFakeDom();
@@ -51,16 +62,16 @@ describe( 'MediaActions', function() {
 		mockery.registerMock( './library-selected-store', {
 			getAll: function() {
 				return [ DUMMY_ITEM ];
-			}
+			},
 		} );
 		mockery.registerMock( './store', {
 			get: function() {
 				return DUMMY_ITEM;
-			}
+			},
 		} );
 		mockery.registerMock( 'lib/wp', {
 			me: () => ( {
-				get: noop
+				get: noop,
 			} ),
 			site: function( siteId ) {
 				return {
@@ -72,15 +83,15 @@ describe( 'MediaActions', function() {
 							get: mediaGet.bind( [ siteId, mediaId ].join() ),
 							update: mediaUpdate.bind( [ siteId, mediaId ].join() ),
 							edit: mediaUpdate.bind( [ siteId, mediaId ].join() ),
-							'delete': mediaDelete.bind( [ siteId, mediaId ].join() )
+							delete: mediaDelete.bind( [ siteId, mediaId ].join() ),
 						};
-					}
+					},
 				};
 			},
 			undocumented: siteId => ( {
 				externalMediaList: mediaListExternal.bind( siteId ),
 				site: () => ( {
-					uploadExternalMedia: mediaAddExternal
+					uploadExternalMedia: mediaAddExternal,
 				} ),
 			} ),
 		} );
@@ -139,7 +150,7 @@ describe( 'MediaActions', function() {
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
 				type: 'SET_MEDIA_QUERY',
 				siteId: DUMMY_SITE_ID,
-				query: DUMMY_QUERY
+				query: DUMMY_QUERY,
 			} );
 		} );
 	} );
@@ -148,7 +159,9 @@ describe( 'MediaActions', function() {
 		it( 'should call to the WordPress.com REST API', function( done ) {
 			Dispatcher.handleViewAction.restore();
 			sandbox.stub( Dispatcher, 'handleViewAction', function() {
-				expect( MediaActions._fetching ).to.have.all.keys( [ [ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join() ] );
+				expect( MediaActions._fetching ).to.have.all.keys( [
+					[ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join(),
+				] );
 			} );
 
 			MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID );
@@ -160,7 +173,7 @@ describe( 'MediaActions', function() {
 					type: 'RECEIVE_MEDIA_ITEM',
 					error: null,
 					siteId: DUMMY_SITE_ID,
-					data: DUMMY_API_RESPONSE
+					data: DUMMY_API_RESPONSE,
 				} );
 
 				done();
@@ -195,7 +208,7 @@ describe( 'MediaActions', function() {
 					error: null,
 					siteId: DUMMY_SITE_ID,
 					data: DUMMY_API_RESPONSE,
-					query: query
+					query: query,
 				} );
 
 				done();
@@ -217,7 +230,7 @@ describe( 'MediaActions', function() {
 					error: null,
 					siteId: DUMMY_SITE_ID,
 					data: DUMMY_API_RESPONSE,
-					query: query
+					query: query,
 				} );
 
 				done();
@@ -230,7 +243,7 @@ describe( 'MediaActions', function() {
 			MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD );
 			expect( Dispatcher.handleViewAction ).to.have.been.calledOnce;
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'CREATE_MEDIA_ITEM'
+				type: 'CREATE_MEDIA_ITEM',
 			} );
 		} );
 
@@ -238,7 +251,7 @@ describe( 'MediaActions', function() {
 			MediaActions.add( DUMMY_SITE_ID, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] );
 			expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
 			expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
-				type: 'CREATE_MEDIA_ITEM'
+				type: 'CREATE_MEDIA_ITEM',
 			} );
 		} );
 
@@ -254,7 +267,7 @@ describe( 'MediaActions', function() {
 			MediaActions.add( DUMMY_SITE_ID, uploads );
 			expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
 			expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
-				type: 'CREATE_MEDIA_ITEM'
+				type: 'CREATE_MEDIA_ITEM',
 			} );
 		} );
 
@@ -265,7 +278,7 @@ describe( 'MediaActions', function() {
 					type: 'RECEIVE_MEDIA_ITEM',
 					siteId: DUMMY_SITE_ID,
 					id: 'media-1',
-					data: DUMMY_API_RESPONSE.media[ 0 ]
+					data: DUMMY_API_RESPONSE.media[ 0 ],
 				} );
 			} );
 		} );
@@ -277,7 +290,7 @@ describe( 'MediaActions', function() {
 					type: 'RECEIVE_MEDIA_ITEM',
 					siteId: DUMMY_SITE_ID,
 					id: 'media-1',
-					data: DUMMY_API_RESPONSE.media[ 0 ]
+					data: DUMMY_API_RESPONSE.media[ 0 ],
 				} );
 			} );
 		} );
@@ -290,8 +303,8 @@ describe( 'MediaActions', function() {
 				data: {
 					ID: 'media-1',
 					file: DUMMY_UPLOAD.name,
-					'transient': true
-				}
+					transient: true,
+				},
 			} );
 		} );
 
@@ -299,10 +312,13 @@ describe( 'MediaActions', function() {
 			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
 
 			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
-				expect( mediaAdd ).to.have.been.calledWithMatch( {}, {
-					file: DUMMY_UPLOAD,
-					parent_id: 200
-				} );
+				expect( mediaAdd ).to.have.been.calledWithMatch(
+					{},
+					{
+						file: DUMMY_UPLOAD,
+						parent_id: 200,
+					}
+				);
 			} );
 		} );
 
@@ -310,10 +326,13 @@ describe( 'MediaActions', function() {
 			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
 
 			return MediaActions.add( DUMMY_SITE_ID, DUMMY_URL ).then( () => {
-				expect( mediaAddUrls ).to.have.been.calledWithMatch( {}, {
-					url: DUMMY_URL,
-					parent_id: 200
-				} );
+				expect( mediaAddUrls ).to.have.been.calledWithMatch(
+					{},
+					{
+						url: DUMMY_URL,
+						parent_id: 200,
+					}
+				);
 			} );
 		} );
 
@@ -324,23 +343,27 @@ describe( 'MediaActions', function() {
 			Dispatcher.handleServerAction.restore();
 			sandbox.stub( Dispatcher, 'handleServerAction' ).throws();
 
-			return MediaActions.add( DUMMY_SITE_ID, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] ).then( () => {
-				expect( Dispatcher.handleServerAction ).to.have.thrown;
-			} ).catch( () => {
-				expect( mediaAdd ).to.have.been.calledOnce;
-			} );
+			return MediaActions.add( DUMMY_SITE_ID, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] )
+				.then( () => {
+					expect( Dispatcher.handleServerAction ).to.have.thrown;
+				} )
+				.catch( () => {
+					expect( mediaAdd ).to.have.been.calledOnce;
+				} );
 		} );
 	} );
 
 	describe( '#addExternal()', () => {
 		it( 'should accept an upload', () => {
 			return MediaActions.addExternal( DUMMY_SITE_ID, [ DUMMY_UPLOAD ], 'external' ).then( () => {
-				expect( mediaAddExternal ).to.have.been.calledWithMatch( 'external', [ DUMMY_UPLOAD.guid ] );
+				expect( mediaAddExternal ).to.have.been.calledWithMatch( 'external', [
+					DUMMY_UPLOAD.guid,
+				] );
 				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 					type: 'RECEIVE_MEDIA_ITEM',
 					siteId: DUMMY_SITE_ID,
 					id: 'media-1',
-					data: DUMMY_API_RESPONSE.media[ 0 ]
+					data: DUMMY_API_RESPONSE.media[ 0 ],
 				} );
 			} );
 		} );
@@ -355,7 +378,7 @@ describe( 'MediaActions', function() {
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
 				type: 'RECEIVE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
-				data: assign( {}, DUMMY_ITEM, item )
+				data: assign( {}, DUMMY_ITEM, item ),
 			} );
 		} );
 	} );
@@ -380,7 +403,7 @@ describe( 'MediaActions', function() {
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
 				type: 'RECEIVE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
-				data: assign( {}, DUMMY_ITEM, item )
+				data: assign( {}, DUMMY_ITEM, item ),
 			} );
 		} );
 
@@ -394,7 +417,7 @@ describe( 'MediaActions', function() {
 					type: 'RECEIVE_MEDIA_ITEM',
 					error: null,
 					siteId: DUMMY_SITE_ID,
-					data: DUMMY_API_RESPONSE
+					data: DUMMY_API_RESPONSE,
 				} );
 
 				done();
@@ -424,7 +447,7 @@ describe( 'MediaActions', function() {
 					type: 'REMOVE_MEDIA_ITEM',
 					error: null,
 					siteId: DUMMY_SITE_ID,
-					data: DUMMY_API_RESPONSE
+					data: DUMMY_API_RESPONSE,
 				} );
 
 				done();
@@ -437,7 +460,7 @@ describe( 'MediaActions', function() {
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
 				type: 'REMOVE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
-				data: item
+				data: item,
 			} );
 		} );
 	} );
@@ -449,7 +472,7 @@ describe( 'MediaActions', function() {
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
 				type: 'CLEAR_MEDIA_VALIDATION_ERRORS',
 				siteId: DUMMY_SITE_ID,
-				itemId: undefined
+				itemId: undefined,
 			} );
 		} );
 
@@ -459,7 +482,7 @@ describe( 'MediaActions', function() {
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
 				type: 'CLEAR_MEDIA_VALIDATION_ERRORS',
 				siteId: DUMMY_SITE_ID,
-				itemId: DUMMY_ITEM.ID
+				itemId: DUMMY_ITEM.ID,
 			} );
 		} );
 	} );

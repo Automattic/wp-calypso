@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -41,7 +42,6 @@ function _getLayoutTitle( context ) {
 }
 
 module.exports = {
-
 	redirect: function( context ) {
 		page.redirect( '/ads/earnings/' + context.params.site_id );
 		return;
@@ -79,5 +79,5 @@ module.exports = {
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };

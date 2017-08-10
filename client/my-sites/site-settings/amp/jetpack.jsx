@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,7 +21,7 @@ const AmpJetpack = ( {
 	site,
 	siteId,
 	siteSlug,
-	translate
+	translate,
 } ) => {
 	let linkUrl, linkText;
 	if ( ampPluginInstalled && ampPluginInstalled.active ) {
@@ -45,32 +46,28 @@ const AmpJetpack = ( {
 				<p>
 					{ translate(
 						'AMP enables the creation of websites and ads that load near instantly, ' +
-						'giving site visitors a smooth, more engaging experience on mobile and desktop.'
+							'giving site visitors a smooth, more engaging experience on mobile and desktop.'
 					) }
 				</p>
 			</CompactCard>
 
-			{
-				! requestingPlugins &&
+			{ ! requestingPlugins &&
 				<CompactCard href={ linkUrl }>
 					{ linkText }
-				</CompactCard>
-			}
+				</CompactCard> }
 		</div>
 	);
 };
 
-export default connect(
-	( state ) => {
-		const site = getSelectedSite( state );
-		const siteId = getSelectedSiteId( state );
+export default connect( state => {
+	const site = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			site,
-			siteId,
-			ampPluginInstalled: getPluginOnSite( state, site, 'amp' ),
-			requestingPlugins: isRequesting( state, siteId ),
-			siteSlug: getSelectedSiteSlug( state ),
-		};
-	}
-)( localize( AmpJetpack ) );
+	return {
+		site,
+		siteId,
+		ampPluginInstalled: getPluginOnSite( state, site, 'amp' ),
+		requestingPlugins: isRequesting( state, siteId ),
+		siteSlug: getSelectedSiteSlug( state ),
+	};
+} )( localize( AmpJetpack ) );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,12 +8,11 @@ import React from 'react';
  */
 import Count from 'components/count';
 
-const count = () => (
+const count = () =>
 	<div>
 		<Count count={ 65365 } />
 		<Count primary count={ 65366 } />
-	</div>
-)
+	</div>;
 
 count.displayName = 'Count';
 

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,8 +24,8 @@ class ErrorNotice extends Component {
 		twoFactorAuthRequestError: PropTypes.object,
 	};
 
-	componentWillReceiveProps = ( nextProps ) => {
-		const receiveNewError = ( key ) => {
+	componentWillReceiveProps = nextProps => {
+		const receiveNewError = key => {
 			return this.props[ key ] !== nextProps[ key ];
 		};
 
@@ -36,7 +37,7 @@ class ErrorNotice extends Component {
 		) {
 			window.scrollTo( 0, 0 );
 		}
-	}
+	};
 
 	getCreateAccountError() {
 		const { createAccountError } = this.props;
@@ -51,7 +52,12 @@ class ErrorNotice extends Component {
 	getError() {
 		const { requestAccountError, requestError, twoFactorAuthRequestError } = this.props;
 
-		return requestError || twoFactorAuthRequestError || requestAccountError || this.getCreateAccountError();
+		return (
+			requestError ||
+			twoFactorAuthRequestError ||
+			requestAccountError ||
+			this.getCreateAccountError()
+		);
 	}
 
 	render() {
@@ -77,11 +83,9 @@ class ErrorNotice extends Component {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		createAccountError: getCreateSocialAccountError( state ),
-		requestAccountError: getRequestSocialAccountError( state ),
-		requestError: getRequestError( state ),
-		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
-	} )
-)( ErrorNotice );
+export default connect( state => ( {
+	createAccountError: getCreateSocialAccountError( state ),
+	requestAccountError: getRequestSocialAccountError( state ),
+	requestError: getRequestError( state ),
+	twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
+} ) )( ErrorNotice );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,10 +23,7 @@ import { toggleDialog } from 'state/ui/theme-setup/actions';
 
 class ThemeSetup extends Component {
 	componentDidUpdate( prevProps ) {
-		const {
-			siteIsJetpack,
-			siteId,
-		} = this.props;
+		const { siteIsJetpack, siteId } = this.props;
 
 		if ( siteId !== prevProps.siteId && siteIsJetpack ) {
 			this.redirectToGeneral();
@@ -38,12 +36,7 @@ class ThemeSetup extends Component {
 	};
 
 	render() {
-		const {
-			siteId,
-			theme,
-			themeId,
-			translate,
-		} = this.props;
+		const { siteId, theme, themeId, translate } = this.props;
 
 		return (
 			<Main className="theme-setup">
@@ -51,20 +44,20 @@ class ThemeSetup extends Component {
 				{ themeId && <QueryTheme siteId="wpcom" themeId={ themeId } /> }
 
 				<HeaderCake onClick={ this.redirectToGeneral }>
-					<h1>{ translate( 'Theme Setup' ) }</h1>
+					<h1>
+						{ translate( 'Theme Setup' ) }
+					</h1>
 				</HeaderCake>
 
 				{ siteId && theme
-					? <ThemeSetupCard
-						onClick={ this.props.toggleDialog }
-						theme={ theme } />
+					? <ThemeSetupCard onClick={ this.props.toggleDialog } theme={ theme } />
 					: <ThemeSetupPlaceholder /> }
 			</Main>
 		);
 	}
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const siteSlug = getSelectedSiteSlug( state ) || '';
@@ -79,7 +72,4 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ toggleDialog }
-)( localize( ThemeSetup ) );
+export default connect( mapStateToProps, { toggleDialog } )( localize( ThemeSetup ) );

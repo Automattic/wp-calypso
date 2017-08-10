@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +24,7 @@ class BlogSettings extends Component {
 		hasUnsavedChanges: PropTypes.bool.isRequired,
 		onToggle: PropTypes.func.isRequired,
 		onSave: PropTypes.func.isRequired,
-		onSaveToAll: PropTypes.func.isRequired
+		onSaveToAll: PropTypes.func.isRequired,
 	};
 
 	state = { isExpanded: false };
@@ -42,42 +43,43 @@ class BlogSettings extends Component {
 			hasUnsavedChanges,
 			onToggle,
 			onSave,
-			onSaveToAll
+			onSaveToAll,
 		} = this.props;
 
 		const { isExpanded } = this.state;
 
 		const styles = classNames( 'notification-settings-blog-settings', {
 			'is-compact': ! isExpanded,
-			'is-expanded': isExpanded
+			'is-expanded': isExpanded,
 		} );
 
 		return (
 			<Card className={ styles }>
-				<Header
-					{ ...{ site, settings, disableToggle } }
-					onToggle={ this.onToggle } />
+				<Header { ...{ site, settings, disableToggle } } onToggle={ this.onToggle } />
 				{ ( () => {
 					if ( isExpanded || disableToggle ) {
-						return <SettingsForm
-							{ ...{
-								sourceId,
-								settings,
-								hasUnsavedChanges,
-								isApplyAllVisible: ! disableToggle,
-								onToggle,
-								onSave,
-								onSaveToAll
-							} }
-							settingKeys={ [
-								'new_comment',
-								'comment_like',
-								'post_like',
-								'follow',
-								'achievement',
-								'mentions',
-								'scheduled_publicize',
-							] } />;
+						return (
+							<SettingsForm
+								{ ...{
+									sourceId,
+									settings,
+									hasUnsavedChanges,
+									isApplyAllVisible: ! disableToggle,
+									onToggle,
+									onSave,
+									onSaveToAll,
+								} }
+								settingKeys={ [
+									'new_comment',
+									'comment_like',
+									'post_like',
+									'follow',
+									'achievement',
+									'mentions',
+									'scheduled_publicize',
+								] }
+							/>
+						);
 					}
 				} )() }
 			</Card>
@@ -86,7 +88,7 @@ class BlogSettings extends Component {
 }
 
 const mapStateToProps = ( state, { siteId } ) => ( {
-	site: getSite( state, siteId )
+	site: getSite( state, siteId ),
 } );
 
 export default connect( mapStateToProps )( BlogSettings );

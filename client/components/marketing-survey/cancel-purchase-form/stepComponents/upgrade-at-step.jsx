@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,15 +21,15 @@ export class UpgradeATStep extends Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object.isRequired,
 		translate: PropTypes.func.isRequired,
-	}
+	};
 
 	static defaultProps = {
 		translate: noop,
-	}
+	};
 
 	onClick = () => {
 		this.props.recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
-	}
+	};
 
 	render() {
 		const { translate, selectedSite } = this.props;
@@ -41,17 +42,15 @@ export class UpgradeATStep extends Component {
 				</FormSectionHeading>
 				<FormFieldset>
 					<p>
-						{
-							translate(
-								'Did you know that you can now use third-party plugins and themes on the WordPress.com Business plan? ' +
+						{ translate(
+							'Did you know that you can now use third-party plugins and themes on the WordPress.com Business plan? ' +
 								'Claim a 25% discount when you upgrade your site today - {{b}}enter the code BIZC25 at checkout{{/b}}.',
-								{
-									components: {
-										b: <strong />
-									}
-								}
-							)
-						}
+							{
+								components: {
+									b: <strong />,
+								},
+							}
+						) }
 					</p>
 					<Button primary href={ href } onClick={ this.onClick }>
 						{ translate( 'Upgrade My Site' ) }
@@ -62,12 +61,9 @@ export class UpgradeATStep extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => ( {
-	selectedSite: getSelectedSite( state )
+const mapStateToProps = state => ( {
+	selectedSite: getSelectedSite( state ),
 } );
 const mapDispatchToProps = { recordTracksEvent };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-)( localize( UpgradeATStep ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( UpgradeATStep ) );

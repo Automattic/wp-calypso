@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,13 +15,13 @@ module.exports = React.createClass( {
 
 	propTypes: {
 		labelWidth: React.PropTypes.number.isRequired,
-		data: React.PropTypes.array.isRequired
+		data: React.PropTypes.array.isRequired,
 	},
 
 	getInitialState: function() {
 		return {
 			divisor: 1,
-			spacing: this.props.labelWidth
+			spacing: this.props.labelWidth,
 		};
 	},
 
@@ -67,7 +68,7 @@ module.exports = React.createClass( {
 
 		this.setState( {
 			divisor: divisor,
-			spacing: spacing
+			spacing: spacing,
 		} );
 	},
 
@@ -75,19 +76,23 @@ module.exports = React.createClass( {
 		const data = this.props.data;
 
 		const labels = data.map( function( item, index ) {
-			const x = ( index * this.state.spacing ) + ( ( this.state.spacing - this.props.labelWidth ) / 2 ),
+			const x = index * this.state.spacing + ( this.state.spacing - this.props.labelWidth ) / 2,
 				rightIndex = data.length - index - 1;
 			let label;
 
 			if ( rightIndex % this.state.divisor === 0 ) {
-				label = <Label key={ index } label={ item.label } width={ this.props.labelWidth } x={ x } />;
+				label = (
+					<Label key={ index } label={ item.label } width={ this.props.labelWidth } x={ x } />
+				);
 			}
 
 			return label;
 		}, this );
 
 		return (
-			<div ref="axis" className="chart__x-axis">{ labels }</div>
+			<div ref="axis" className="chart__x-axis">
+				{ labels }
+			</div>
 		);
-	}
+	},
 } );

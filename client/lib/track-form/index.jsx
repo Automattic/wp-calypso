@@ -1,57 +1,59 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import { union } from 'lodash';
 
-export const trackForm = WrappedComponent => class TrackFormComponent extends Component {
-	state = {
-		dirtyFields: [],
-		fields: {}
-	};
-
-	updateFields = ( fields, callback ) => {
-		const newState = {
-			dirtyFields: union( this.state.dirtyFields, Object.keys( fields ) ),
-			fields: {
-				...this.state.fields,
-				...fields
-			}
+export const trackForm = WrappedComponent =>
+	class TrackFormComponent extends Component {
+		state = {
+			dirtyFields: [],
+			fields: {},
 		};
 
-		this.setState( newState, callback );
-	};
+		updateFields = ( fields, callback ) => {
+			const newState = {
+				dirtyFields: union( this.state.dirtyFields, Object.keys( fields ) ),
+				fields: {
+					...this.state.fields,
+					...fields,
+				},
+			};
 
-	replaceFields = ( fields, callback, keepPrevFields = true ) => {
-		const prevFields = keepPrevFields ? this.state.fields : {};
-		const newFields = {
-			...prevFields,
-			...fields
+			this.setState( newState, callback );
 		};
 
-		this.setState( { fields: newFields }, callback );
+		replaceFields = ( fields, callback, keepPrevFields = true ) => {
+			const prevFields = keepPrevFields ? this.state.fields : {};
+			const newFields = {
+				...prevFields,
+				...fields,
+			};
+
+			this.setState( { fields: newFields }, callback );
+		};
+
+		clearDirtyFields = () => {
+			this.setState( {
+				dirtyFields: [],
+			} );
+		};
+
+		render() {
+			const { fields, dirtyFields } = this.state;
+
+			return (
+				<WrappedComponent
+					fields={ fields }
+					dirtyFields={ dirtyFields }
+					updateFields={ this.updateFields }
+					replaceFields={ this.replaceFields }
+					clearDirtyFields={ this.clearDirtyFields }
+					{ ...this.props }
+				/>
+			);
+		}
 	};
-
-	clearDirtyFields = () => {
-		this.setState( {
-			dirtyFields: []
-		} );
-	};
-
-	render() {
-		const { fields, dirtyFields } = this.state;
-
-		return (
-			<WrappedComponent
-				fields={ fields }
-				dirtyFields={ dirtyFields }
-				updateFields={ this.updateFields }
-				replaceFields={ this.replaceFields }
-				clearDirtyFields={ this.clearDirtyFields }
-				{ ...this.props }
-			/>
-		);
-	}
-};
 
 export default trackForm;

@@ -1,16 +1,17 @@
+/** @format */
 export const itemsSchema = {
 	type: 'object',
 	patternProperties: {
 		'^\\w+$': {
 			type: 'array',
 			items: {
-				type: 'number'
+				type: 'number',
 			},
 			minItems: 2,
-			maxItems: 2
-		}
+			maxItems: 2,
+		},
 	},
-	additionalProperties: false
+	additionalProperties: false,
 };
 
 export const queriesSchema = {
@@ -25,7 +26,7 @@ export const queriesSchema = {
 					required: [ 'items', 'queries' ],
 					properties: {
 						items: {
-							type: 'object'
+							type: 'object',
 						},
 						queries: {
 							patternProperties: {
@@ -35,29 +36,29 @@ export const queriesSchema = {
 									required: [ 'itemKeys' ],
 									properties: {
 										itemKeys: {
-											type: 'array'
+											type: 'array',
 										},
 										found: {
-											type: 'number'
-										}
-									}
-								}
+											type: 'number',
+										},
+									},
+								},
 							},
-							additionalProperties: false
-						}
-					}
+							additionalProperties: false,
+						},
+					},
 				},
 				options: {
 					type: 'object',
 					required: [ 'itemKey' ],
 					properties: {
 						itemKey: {
-							type: 'string'
-						}
-					}
-				}
-			}
-		}
+							type: 'string',
+						},
+					},
+				},
+			},
+		},
 	},
-	additionalProperties: false
+	additionalProperties: false,
 };

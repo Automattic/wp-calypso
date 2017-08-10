@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,17 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	getSelectedSite,
-	getSelectedSiteId
-} from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { canCurrentUser } from 'state/selectors';
-import {
-	isPremium,
-	isBusiness,
-	isEnterprise
-} from 'lib/products-values';
+import { isPremium, isBusiness, isEnterprise } from 'lib/products-values';
 import JetpackPluginsPanel from './jetpack-plugins-panel';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
@@ -43,7 +37,7 @@ export const PluginPanel = ( {
 			title: translate( 'Not Available' ),
 			line: translate( 'The page you requested could not be found' ),
 			illustration: '/calypso/images/illustrations/illustration-404.svg',
-			fullWidth: true
+			fullWidth: true,
 		};
 		return (
 			<MainComponent>
@@ -54,7 +48,6 @@ export const PluginPanel = ( {
 
 	return (
 		<div className="plugins-wpcom__panel">
-
 			<PageViewTracker path="/plugins/:site" title="Plugins > WPCOM Site" />
 
 			{ ! hasBusiness &&
@@ -63,17 +56,17 @@ export const PluginPanel = ( {
 					event={ 'calypso_plugins_page_upgrade_nudge' }
 					plan={ PLAN_BUSINESS }
 					title={ translate( 'Upgrade to the Business plan to install plugins.' ) }
-				/>
-			}
+				/> }
 
-			<JetpackPluginsPanel { ...{
-				siteSlug,
-				hasBusiness,
-				hasPremium,
-				category,
-				search,
-			} } />
-
+			<JetpackPluginsPanel
+				{ ...{
+					siteSlug,
+					hasBusiness,
+					hasPremium,
+					category,
+					search,
+				} }
+			/>
 		</div>
 	);
 };

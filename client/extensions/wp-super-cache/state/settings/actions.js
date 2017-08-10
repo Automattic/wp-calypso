@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -31,7 +32,11 @@ import { getSiteTitle } from 'state/sites/selectors';
  * @param  {Object} settings Settings object
  * @return {Object} Action object
  */
-export const receiveSettings = ( siteId, settings ) => ( { type: WP_SUPER_CACHE_RECEIVE_SETTINGS, siteId, settings } );
+export const receiveSettings = ( siteId, settings ) => ( {
+	type: WP_SUPER_CACHE_RECEIVE_SETTINGS,
+	siteId,
+	settings,
+} );
 
 /*
  * Retrieves settings for a site.
@@ -39,14 +44,18 @@ export const receiveSettings = ( siteId, settings ) => ( { type: WP_SUPER_CACHE_
  * @param  {Number} siteId Site ID
  * @returns {Function} Action thunk that requests settings for a given site
  */
-export const requestSettings = ( siteId ) => {
-	return ( dispatch ) => {
+export const requestSettings = siteId => {
+	return dispatch => {
 		dispatch( {
 			type: WP_SUPER_CACHE_REQUEST_SETTINGS,
 			siteId,
 		} );
 
-		return wp.req.get( { path: `/jetpack-blogs/${ siteId }/rest-api/` }, { path: '/wp-super-cache/v1/settings' } )
+		return wp.req
+			.get(
+				{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
+				{ path: '/wp-super-cache/v1/settings' }
+			)
 			.then( ( { data } ) => {
 				dispatch( receiveSettings( siteId, normalizeSettings( data ) || {} ) );
 				dispatch( {
@@ -72,12 +81,18 @@ export const requestSettings = ( siteId ) => {
  * @returns {Function} Action thunk that updates the settings for a given site
  */
 export const saveSettings = ( siteId, settings ) => {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( { type: WP_SUPER_CACHE_SAVE_SETTINGS, siteId } );
 
-		return wp.req.post(
-			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
-			{ path: '/wp-super-cache/v1/settings', body: JSON.stringify( sanitizeSettings( settings ) ), json: true } )
+		return wp.req
+			.post(
+				{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
+				{
+					path: '/wp-super-cache/v1/settings',
+					body: JSON.stringify( sanitizeSettings( settings ) ),
+					json: true,
+				}
+			)
 			.then( ( { data } ) => {
 				dispatch( receiveSettings( siteId, normalizeSettings( data ) || {} ) );
 				dispatch( { type: WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS, siteId } );
@@ -95,30 +110,38 @@ export const saveSettings = ( siteId, settings ) => {
  * @param  {Number} siteId Site ID
  * @returns {Function} Action thunk that restores the settings for a given site
  */
-export const restoreSettings = ( siteId ) => {
+export const restoreSettings = siteId => {
 	return ( dispatch, getState ) => {
 		dispatch( { type: WP_SUPER_CACHE_RESTORE_SETTINGS, siteId } );
 		dispatch( removeNotice( 'wpsc-restore-defaults' ) );
 
-		return wp.req.post(
-			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
-			{ path: '/wp-super-cache/v1/settings', body: JSON.stringify( { reset: true } ), json: true } )
+		return wp.req
+			.post(
+				{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
+				{ path: '/wp-super-cache/v1/settings', body: JSON.stringify( { reset: true } ), json: true }
+			)
 			.then( ( { data } ) => {
 				dispatch( receiveSettings( siteId, normalizeSettings( data ) || {} ) );
 				dispatch( { type: WP_SUPER_CACHE_RESTORE_SETTINGS_SUCCESS, siteId } );
-				dispatch( successNotice(
-					translate( 'Default configuration restored successfully on %(siteTitle)s.',
-						{ args: { siteTitle: getSiteTitle( getState(), siteId ) } }
-					),
-					{ id: 'wpsc-restore-defaults' }
-				) );
+				dispatch(
+					successNotice(
+						translate( 'Default configuration restored successfully on %(siteTitle)s.', {
+							args: { siteTitle: getSiteTitle( getState(), siteId ) },
+						} ),
+						{ id: 'wpsc-restore-defaults' }
+					)
+				);
 			} )
 			.catch( () => {
 				dispatch( { type: WP_SUPER_CACHE_RESTORE_SETTINGS_FAILURE, siteId } );
-				dispatch( errorNotice(
-					translate( 'There was a problem restoring the default configuration. Please try again.' ),
-					{ id: 'wpsc-restore-defaults' }
-				) );
+				dispatch(
+					errorNotice(
+						translate(
+							'There was a problem restoring the default configuration. Please try again.'
+						),
+						{ id: 'wpsc-restore-defaults' }
+					)
+				);
 			} );
 	};
 };

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,11 +13,8 @@ import Button from 'components/button';
 import Card from 'components/card';
 import { clearResetMethod } from 'state/account-recovery/reset/actions';
 
-const ResetPasswordEmailSent = ( props ) => {
-	const {
-		email,
-		translate,
-	} = props;
+const ResetPasswordEmailSent = props => {
+	const { email, translate } = props;
 
 	return (
 		<Card>
@@ -28,14 +26,16 @@ const ResetPasswordEmailSent = ( props ) => {
 					"We've sent an email to {{strong}}%(email)s{{/strong}} with a link to complete your password reset.",
 					{
 						components: { strong: <strong /> },
-						args: { email }
+						args: { email },
 					}
 				) }
 			</p>
 			<p>
 				{ translate( "If you haven't received it, please check your spam or junk folder." ) }
 			</p>
-			<Button onClick={ props.clearResetMethod } borderless>{ translate( "Didn't receive it?" ) }</Button>
+			<Button onClick={ props.clearResetMethod } borderless>
+				{ translate( "Didn't receive it?" ) }
+			</Button>
 		</Card>
 	);
 };

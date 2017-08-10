@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,25 +22,20 @@ import { settingsPath } from '../../../app/util';
 
 const placeholderCount = 5;
 
-const ZonesDashboard = ( { isRequesting, siteSlug, translate, zones } ) => (
+const ZonesDashboard = ( { isRequesting, siteSlug, translate, zones } ) =>
 	<div>
-		<HeaderCake backHref={ `/plugins/zoninator/${ siteSlug }` }>
-			Zoninator Settings
-		</HeaderCake>
+		<HeaderCake backHref={ `/plugins/zoninator/${ siteSlug }` }>Zoninator Settings</HeaderCake>
 
 		<SectionHeader label={ translate( 'Zones' ) }>
 			<Button compact href={ `${ settingsPath }/new/${ siteSlug }` }>
 				{ translate( 'Add a zone' ) }
 			</Button>
 		</SectionHeader>
-		{ isRequesting && zones.length === 0 && times( placeholderCount, i => (
-			<ZonePlaceholder key={ i } />
-		) ) }
-		{ zones.map( ( zone ) => (
-			<ZoneItem key={ zone.slug } zone={ zone } />
-		) ) }
-	</div>
-);
+		{ isRequesting &&
+			zones.length === 0 &&
+			times( placeholderCount, i => <ZonePlaceholder key={ i } /> ) }
+		{ zones.map( zone => <ZoneItem key={ zone.slug } zone={ zone } /> ) }
+	</div>;
 
 ZonesDashboard.propTypes = {
 	siteSlug: PropTypes.string,
@@ -56,7 +52,4 @@ const connectComponent = connect( state => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( ZonesDashboard );
+export default flowRight( connectComponent, localize )( ZonesDashboard );

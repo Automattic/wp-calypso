@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,8 +16,6 @@ module.exports = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render: function() {
-		return (
-			<Gauge percentage={ 27 } metric={ 'test' } />
-		);
-	}
+		return <Gauge percentage={ 27 } metric={ 'test' } />;
+	},
 } );

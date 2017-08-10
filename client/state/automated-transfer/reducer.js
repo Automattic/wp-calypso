@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,13 +19,18 @@ import {
 	THEME_TRANSFER_STATUS_RECEIVE as TRANSFER_UPDATE,
 } from 'state/action-types';
 
-export const status = ( state = null, action ) => get( {
-	[ ELIGIBILITY_UPDATE ]: state || transferStates.INQUIRING,
-	[ INITIATE ]: transferStates.START,
-	[ INITIATE_FAILURE ]: transferStates.FAILURE,
-	[ SET_STATUS ]: action.status,
-	[ TRANSFER_UPDATE ]: 'complete' === action.status ? transferStates.COMPLETE : state,
-}, action.type, state );
+export const status = ( state = null, action ) =>
+	get(
+		{
+			[ ELIGIBILITY_UPDATE ]: state || transferStates.INQUIRING,
+			[ INITIATE ]: transferStates.START,
+			[ INITIATE_FAILURE ]: transferStates.FAILURE,
+			[ SET_STATUS ]: action.status,
+			[ TRANSFER_UPDATE ]: 'complete' === action.status ? transferStates.COMPLETE : state,
+		},
+		action.type,
+		state
+	);
 
 export const siteReducer = combineReducers( {
 	eligibility,
@@ -33,7 +39,4 @@ export const siteReducer = combineReducers( {
 
 // state is a map of transfer sub-states
 // keyed by the associated site id
-export default withSchemaValidation(
-	schema,
-	keyedReducer( 'siteId', siteReducer ),
-);
+export default withSchemaValidation( schema, keyedReducer( 'siteId', siteReducer ) );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -113,7 +114,7 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 				siteId: 123,
 				page: 1,
-				error: {}
+				error: {},
 			};
 
 			const newState = productsRequestFailure( { isLoading: { 1: true } }, action );
@@ -152,7 +153,10 @@ describe( 'reducer', () => {
 				totalProducts: 28,
 				query: 'testing',
 			};
-			const newState = productsSearchRequestSuccess( { search: { isLoading: { 1: true } } }, action );
+			const newState = productsSearchRequestSuccess(
+				{ search: { isLoading: { 1: true } } },
+				action
+			);
 			expect( newState.search.isLoading ).to.eql( { 1: false } );
 		} );
 		it( 'should store the products in state', () => {
@@ -207,10 +211,13 @@ describe( 'reducer', () => {
 				siteId: 123,
 				page: 1,
 				query: 'testing',
-				error: {}
+				error: {},
 			};
 
-			const newState = productsSearchRequestFailure( { search: { isLoading: { 1: true } } }, action );
+			const newState = productsSearchRequestFailure(
+				{ search: { isLoading: { 1: true } } },
+				action
+			);
 			expect( newState.search.isLoading ).to.eql( { 1: false } );
 		} );
 	} );
@@ -234,7 +241,10 @@ describe( 'reducer', () => {
 			};
 
 			const additionalProducts = [ product ];
-			const newState = productsDeleteSuccess( { products: [ ...products, ...additionalProducts ] }, action );
+			const newState = productsDeleteSuccess(
+				{ products: [ ...products, ...additionalProducts ] },
+				action
+			);
 			expect( newState.products ).to.eql( products );
 		} );
 	} );

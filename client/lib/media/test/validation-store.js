@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -39,10 +40,10 @@ describe( 'MediaValidationStore', function() {
 					return {
 						options: {
 							allowed_file_types: [ 'gif', 'pdf', 'avi' ],
-							max_upload_size: 1024
-						}
+							max_upload_size: 1024,
+						},
 					};
-				}
+				},
 			};
 		} );
 
@@ -68,28 +69,34 @@ describe( 'MediaValidationStore', function() {
 				error: {
 					error: error,
 				},
-			}
+			},
 		} );
 	}
 
 	function dispatchCreateMediaItem( action ) {
 		handler( {
-			action: assign( {
-				type: 'CREATE_MEDIA_ITEM',
-				siteId: DUMMY_SITE_ID,
-				data: DUMMY_MEDIA_OBJECT
-			}, action )
+			action: assign(
+				{
+					type: 'CREATE_MEDIA_ITEM',
+					siteId: DUMMY_SITE_ID,
+					data: DUMMY_MEDIA_OBJECT,
+				},
+				action
+			),
 		} );
 	}
 
 	function dispatchReceiveMediaItem( action ) {
 		handler( {
-			action: assign( {
-				type: 'RECEIVE_MEDIA_ITEM',
-				siteId: DUMMY_SITE_ID,
-				id: DUMMY_MEDIA_OBJECT.ID,
-				data: DUMMY_MEDIA_OBJECT
-			}, action )
+			action: assign(
+				{
+					type: 'RECEIVE_MEDIA_ITEM',
+					siteId: DUMMY_SITE_ID,
+					id: DUMMY_MEDIA_OBJECT.ID,
+					data: DUMMY_MEDIA_OBJECT,
+				},
+				action
+			),
 		} );
 	}
 
@@ -98,8 +105,8 @@ describe( 'MediaValidationStore', function() {
 			action: {
 				type: 'CLEAR_MEDIA_VALIDATION_ERRORS',
 				siteId: DUMMY_SITE_ID,
-				itemId: itemId
-			}
+				itemId: itemId,
+			},
 		} );
 	}
 
@@ -121,18 +128,21 @@ describe( 'MediaValidationStore', function() {
 
 			expect( MediaValidationStore._errors ).to.eql( {
 				[ DUMMY_SITE_ID ]: {
-					[ DUMMY_MEDIA_OBJECT.ID ]: [ MediaValidationErrors.FILE_TYPE_UNSUPPORTED ]
-				}
+					[ DUMMY_MEDIA_OBJECT.ID ]: [ MediaValidationErrors.FILE_TYPE_UNSUPPORTED ],
+				},
 			} );
 		} );
 
 		it( 'should set an error array for a file exceeding acceptable size', function() {
-			validateItem( DUMMY_SITE_ID, Object.assign( {}, DUMMY_MEDIA_OBJECT, { size: 2048, extension: 'gif' } ) );
+			validateItem(
+				DUMMY_SITE_ID,
+				Object.assign( {}, DUMMY_MEDIA_OBJECT, { size: 2048, extension: 'gif' } )
+			);
 
 			expect( MediaValidationStore._errors ).to.eql( {
 				[ DUMMY_SITE_ID ]: {
-					[ DUMMY_MEDIA_OBJECT.ID ]: [ MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE ]
-				}
+					[ DUMMY_MEDIA_OBJECT.ID ]: [ MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE ],
+				},
 			} );
 		} );
 
@@ -143,9 +153,9 @@ describe( 'MediaValidationStore', function() {
 				[ DUMMY_SITE_ID ]: {
 					[ DUMMY_MEDIA_OBJECT.ID ]: [
 						MediaValidationErrors.FILE_TYPE_UNSUPPORTED,
-						MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE
-					]
-				}
+						MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE,
+					],
+				},
 			} );
 		} );
 	} );
@@ -163,7 +173,7 @@ describe( 'MediaValidationStore', function() {
 			clearValidationErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
 
 			expect( MediaValidationStore._errors ).to.eql( {
-				[ DUMMY_SITE_ID ]: {}
+				[ DUMMY_SITE_ID ]: {},
 			} );
 		} );
 
@@ -186,15 +196,17 @@ describe( 'MediaValidationStore', function() {
 		it( 'should remove errors for all items containing that error type on a given site', function() {
 			dispatchCreateMediaItem();
 			dispatchCreateMediaItem( {
-				data: assign( {}, DUMMY_MEDIA_OBJECT, { ID: DUMMY_MEDIA_OBJECT.ID + 1 } )
+				data: assign( {}, DUMMY_MEDIA_OBJECT, { ID: DUMMY_MEDIA_OBJECT.ID + 1 } ),
 			} );
 
-			expect( Object.keys( MediaValidationStore.getAllErrors( DUMMY_SITE_ID ) ).length ).to.equal( 2 );
+			expect( Object.keys( MediaValidationStore.getAllErrors( DUMMY_SITE_ID ) ).length ).to.equal(
+				2
+			);
 
 			clearValidationErrorsByType( DUMMY_SITE_ID, MediaValidationErrors.FILE_TYPE_UNSUPPORTED );
 
 			expect( MediaValidationStore._errors ).to.eql( {
-				[ DUMMY_SITE_ID ]: {}
+				[ DUMMY_SITE_ID ]: {},
 			} );
 		} );
 	} );
@@ -213,7 +225,7 @@ describe( 'MediaValidationStore', function() {
 			errors = MediaValidationStore.getAllErrors( DUMMY_SITE_ID );
 
 			expect( errors ).to.eql( {
-				[ DUMMY_MEDIA_OBJECT.ID ]: [ MediaValidationErrors.FILE_TYPE_UNSUPPORTED ]
+				[ DUMMY_MEDIA_OBJECT.ID ]: [ MediaValidationErrors.FILE_TYPE_UNSUPPORTED ],
 			} );
 		} );
 	} );
@@ -259,12 +271,14 @@ describe( 'MediaValidationStore', function() {
 			dispatchReceiveMediaItem( {
 				error: {
 					statusCode: 400,
-					errors: [ {
-						error: 'http_404',
-						file: 'https://wordpress.com/invalid.gif',
-						message: 'Not Found'
-					} ]
-				}
+					errors: [
+						{
+							error: 'http_404',
+							file: 'https://wordpress.com/invalid.gif',
+							message: 'Not Found',
+						},
+					],
+				},
 			} );
 			errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
 
@@ -277,12 +291,14 @@ describe( 'MediaValidationStore', function() {
 			dispatchReceiveMediaItem( {
 				error: {
 					statusCode: 400,
-					errors: [ {
-						error: 'upload_error',
-						file: 'https://wordpress.com/hifive.gif',
-						message: 'Not enough space to upload. 20 KB needed.'
-					} ]
-				}
+					errors: [
+						{
+							error: 'upload_error',
+							file: 'https://wordpress.com/hifive.gif',
+							message: 'Not enough space to upload. 20 KB needed.',
+						},
+					],
+				},
 			} );
 			errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
 
@@ -295,12 +311,14 @@ describe( 'MediaValidationStore', function() {
 			dispatchReceiveMediaItem( {
 				error: {
 					statusCode: 400,
-					errors: [ {
-						error: 'upload_error',
-						file: 'https://wordpress.com/hifive.gif',
-						message: 'You have used your space quota. Please delete files before uploading.'
-					} ]
-				}
+					errors: [
+						{
+							error: 'upload_error',
+							file: 'https://wordpress.com/hifive.gif',
+							message: 'You have used your space quota. Please delete files before uploading.',
+						},
+					],
+				},
 			} );
 			errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
 
@@ -311,7 +329,7 @@ describe( 'MediaValidationStore', function() {
 			var errors;
 
 			dispatchReceiveMediaItem( {
-				error: new Error()
+				error: new Error(),
 			} );
 			errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
 
@@ -322,13 +340,13 @@ describe( 'MediaValidationStore', function() {
 			var action = {
 				type: 'CREATE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
-				data: DUMMY_MEDIA_OBJECT
+				data: DUMMY_MEDIA_OBJECT,
 			};
 
 			handler( { action } );
 
 			expect( action.error ).to.eql( {
-				[ DUMMY_MEDIA_OBJECT.ID ]: [ MediaValidationErrors.FILE_TYPE_UNSUPPORTED ]
+				[ DUMMY_MEDIA_OBJECT.ID ]: [ MediaValidationErrors.FILE_TYPE_UNSUPPORTED ],
 			} );
 		} );
 
@@ -336,22 +354,22 @@ describe( 'MediaValidationStore', function() {
 			var action = {
 				type: 'CREATE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
-				data: DUMMY_MEDIA_OBJECT
+				data: DUMMY_MEDIA_OBJECT,
 			};
 
 			handler( {
 				action: {
 					type: 'CREATE_MEDIA_ITEM',
 					siteId: DUMMY_SITE_ID,
-					data: assign( {}, DUMMY_MEDIA_OBJECT, { ID: 101 } )
-				}
+					data: assign( {}, DUMMY_MEDIA_OBJECT, { ID: 101 } ),
+				},
 			} );
 
 			handler( { action } );
 
 			expect( action.error ).to.eql( {
 				[ DUMMY_MEDIA_OBJECT.ID ]: [ MediaValidationErrors.FILE_TYPE_UNSUPPORTED ],
-				101: [ MediaValidationErrors.FILE_TYPE_UNSUPPORTED ]
+				101: [ MediaValidationErrors.FILE_TYPE_UNSUPPORTED ],
 			} );
 		} );
 

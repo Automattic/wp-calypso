@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,12 +14,11 @@ import FormButton from 'components/forms/form-button';
 import { getSiteFragment } from 'lib/route/path';
 
 export default React.createClass( {
-
 	displayName: 'EditorTrashedDialog',
 
 	getInitialState() {
 		return {
-			isPage: this.isPage()
+			isPage: this.isPage(),
 		};
 	},
 
@@ -29,30 +29,24 @@ export default React.createClass( {
 	getDefaultProps() {
 		return {
 			onClose: noop,
-			onSave: noop
+			onSave: noop,
 		};
 	},
 
 	propTypes: {
 		onClose: React.PropTypes.func,
-		onSave: React.PropTypes.func
+		onSave: React.PropTypes.func,
 	},
 
 	getDialogButtons() {
 		const newText = this.state.isPage ? this.translate( 'New Page' ) : this.translate( 'New Post' );
 		return [
-			<FormButton
-				key="startNewPage"
-				isPrimary={ true }
-				onClick={ this.startNewPage }>
-					{ newText }
+			<FormButton key="startNewPage" isPrimary={ true } onClick={ this.startNewPage }>
+				{ newText }
 			</FormButton>,
-			<FormButton
-				key="back"
-				isPrimary={ false }
-				onClick={ this.props.onClose }>
-					{ this.translate( 'Close' ) }
-			</FormButton>
+			<FormButton key="back" isPrimary={ false } onClick={ this.props.onClose }>
+				{ this.translate( 'Close' ) }
+			</FormButton>,
 		];
 	},
 
@@ -66,25 +60,30 @@ export default React.createClass( {
 		if ( isPage ) {
 			return {
 				dialogTitle: this.translate( 'Invalid Page Address' ),
-				dialogContent: this.translate( 'This page cannot be found. Check the web address or start a new page.' ),
+				dialogContent: this.translate(
+					'This page cannot be found. Check the web address or start a new page.'
+				),
 			};
 		}
 		return {
 			dialogTitle: this.translate( 'Invalid Post Address' ),
-			dialogContent: this.translate( 'This post cannot be found. Check the web address or start a new post.' ),
+			dialogContent: this.translate(
+				'This post cannot be found. Check the web address or start a new post.'
+			),
 		};
 	},
 
 	render() {
 		const strings = this.getStrings( this.state.isPage );
 		return (
-			<Dialog
-				isVisible={ true }
-				buttons={ this.getDialogButtons() }
-			>
-				<h1>{ strings.dialogTitle }</h1>
-				<p>{ strings.dialogContent }</p>
+			<Dialog isVisible={ true } buttons={ this.getDialogButtons() }>
+				<h1>
+					{ strings.dialogTitle }
+				</h1>
+				<p>
+					{ strings.dialogContent }
+				</p>
 			</Dialog>
 		);
-	}
+	},
 } );

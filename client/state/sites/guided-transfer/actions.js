@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -39,7 +40,7 @@ export function receiveGuidedTransferStatus( siteId, guidedTransferStatus ) {
  * @returns {Thunk} Action thunk
  */
 export function requestGuidedTransferStatus( siteId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( { type: GUIDED_TRANSFER_STATUS_REQUEST, siteId } );
 
 		const success = response => {
@@ -47,19 +48,23 @@ export function requestGuidedTransferStatus( siteId ) {
 
 			dispatch( {
 				type: GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
-				siteId
+				siteId,
 			} );
 
 			dispatch( receiveGuidedTransferStatus( siteId, guidedTransferStatus ) );
 		};
 
-		const failure = error => dispatch( {
-			type: GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
-			siteId,
-			error,
-		} );
+		const failure = error =>
+			dispatch( {
+				type: GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
+				siteId,
+				error,
+			} );
 
-		return wpcom.undocumented().site( siteId ).getGuidedTransferStatus()
+		return wpcom
+			.undocumented()
+			.site( siteId )
+			.getGuidedTransferStatus()
 			.then( success )
 			.catch( failure );
 	};
@@ -82,7 +87,7 @@ export function saveHostDetailsFailure( siteId, error = {} ) {
  * @returns {Thunk} Action thunk
  */
 export function saveHostDetails( siteId, data ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: GUIDED_TRANSFER_HOST_DETAILS_SAVE,
 			siteId,
@@ -94,9 +99,7 @@ export function saveHostDetails( siteId, data ) {
 
 		const success = response => {
 			// The success response is the updated status of the guided transfer
-			dispatch( receiveGuidedTransferStatus(
-				siteId, omit( response, '_headers' )
-			) );
+			dispatch( receiveGuidedTransferStatus( siteId, omit( response, '_headers' ) ) );
 
 			if ( ! response.host_details_entered ) {
 				return failure();
@@ -108,7 +111,10 @@ export function saveHostDetails( siteId, data ) {
 			} );
 		};
 
-		return wpcom.undocumented().site( siteId ).saveGuidedTransferHostDetails( data )
+		return wpcom
+			.undocumented()
+			.site( siteId )
+			.saveGuidedTransferHostDetails( data )
 			.then( success )
 			.catch( failure );
 	};

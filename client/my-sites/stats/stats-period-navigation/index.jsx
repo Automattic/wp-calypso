@@ -1,9 +1,10 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import { flowRight } from 'lodash';
-import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -23,33 +24,32 @@ const StatsPeriodNavigation = props => {
 
 	return (
 		<div className="stats-period-navigation">
-			<a className="stats-period-navigation__previous"
+			<a
+				className="stats-period-navigation__previous"
 				href={ `${ url }?startDate=${ previousDay }` }
-				onClick={ clickArrow( 'previous' ) }>
+				onClick={ clickArrow( 'previous' ) }
+			>
 				<Gridicon icon="arrow-left" size={ 18 } />
 			</a>
 			<div className="stats-period-navigation__children">
 				{ children }
 			</div>
 			{ ! isToday &&
-				<a className="stats-period-navigation__next"
+				<a
+					className="stats-period-navigation__next"
 					href={ `${ url }?startDate=${ nextDay }` }
-					onClick={ clickArrow( 'next' ) }>
+					onClick={ clickArrow( 'next' ) }
+				>
 					<Gridicon icon="arrow-right" size={ 18 } />
-				</a>
-			}
+				</a> }
 			{ isToday &&
 				<span className="stats-period-navigation__next is-disabled">
 					<Gridicon icon="arrow-right" size={ 18 } />
-				</span>
-			}
+				</span> }
 		</div>
 	);
 };
 
 const connectComponent = connect( undefined, { recordGoogleEvent } );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( StatsPeriodNavigation );
+export default flowRight( connectComponent, localize )( StatsPeriodNavigation );

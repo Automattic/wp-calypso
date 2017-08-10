@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +22,7 @@ const debug = debugFactory( 'calypso:cart-data:cart-synchronizer' );
 function preprocessCartFromServer( cart ) {
 	return assign( {}, cart, {
 		client_metadata: createClientMetadata(),
-		products: castProductIDsToNumbers( cart.products )
+		products: castProductIDsToNumbers( cart.products ),
 	} );
 }
 
@@ -45,7 +46,15 @@ function castProductIDsToNumbers( cartItems ) {
 function preprocessCartForServer( cart ) {
 	let newCart;
 
-	newCart = pick( cart, 'products', 'coupon', 'is_coupon_applied', 'currency', 'temporary', 'extra' );
+	newCart = pick(
+		cart,
+		'products',
+		'coupon',
+		'is_coupon_applied',
+		'currency',
+		'temporary',
+		'extra'
+	);
 
 	const newCartItems = cart.products.map( function( cartItem ) {
 		return pick( cartItem, 'product_id', 'meta', 'free_trial', 'volume', 'extra' );
@@ -150,7 +159,10 @@ CartSynchronizer.prototype._processQueuedChanges = function() {
 };
 
 CartSynchronizer.prototype._postToServer = function( callback ) {
-	this._wpcom.cart( this._cartKey, 'POST', preprocessCartForServer( this._latestValue ), function( error, newValue ) {
+	this._wpcom.cart( this._cartKey, 'POST', preprocessCartForServer( this._latestValue ), function(
+		error,
+		newValue
+	) {
 		if ( error ) {
 			callback( error );
 			return;
@@ -193,34 +205,36 @@ CartSynchronizer.prototype._performRequest = function( type, requestFunction ) {
 	const request = {
 		id: requestCounter++,
 		type: type,
-		state: 'pending'
+		state: 'pending',
 	};
 
 	this._activeRequest = request;
 
 	debug( request.id + ': starting ' + request.type );
 
-	requestFunction( function onResponse( error, newValue ) {
-		if ( request.state === 'canceled' ) {
-			debug( request.id + ': canceled ' + request.type );
-			return;
-		}
+	requestFunction(
+		function onResponse( error, newValue ) {
+			if ( request.state === 'canceled' ) {
+				debug( request.id + ': canceled ' + request.type );
+				return;
+			}
 
-		if ( error ) {
-			throw error;
-		}
-		debug( request.id + ': finishing ' + request.type );
+			if ( error ) {
+				throw error;
+			}
+			debug( request.id + ': finishing ' + request.type );
 
-		this._latestValue = newValue;
-		request.state = 'completed';
+			this._latestValue = newValue;
+			request.state = 'completed';
 
-		if ( ! this._hasLoadedFromServer ) {
-			this._processQueuedChanges();
-			this._hasLoadedFromServer = true;
-		}
+			if ( ! this._hasLoadedFromServer ) {
+				this._processQueuedChanges();
+				this._hasLoadedFromServer = true;
+			}
 
-		this.emit( 'change' );
-	}.bind( this ) );
+			this.emit( 'change' );
+		}.bind( this )
+	);
 };
 
 CartSynchronizer.prototype.getLatestValue = function() {

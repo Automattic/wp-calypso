@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,7 +23,7 @@ export default function injectTestHelper( element ) {
 				debug( 'Switching test variant', test.experimentId, variation );
 				localStorage.setItem( 'ABTests', JSON.stringify( testSettings ) );
 				window.location.reload();
-			}
+			},
 		} ),
 		element
 	);

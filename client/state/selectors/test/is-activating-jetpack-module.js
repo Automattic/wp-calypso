@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,9 +15,9 @@ describe( 'isActivatingJetpackModule()', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
-						requests: REQUESTS_FIXTURE
-					}
-				}
+						requests: REQUESTS_FIXTURE,
+					},
+				},
 			},
 			siteId = 123456;
 		const output = isActivatingJetpackModule( stateIn, siteId, 'module-b' );
@@ -27,9 +28,9 @@ describe( 'isActivatingJetpackModule()', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
-						requests: REQUESTS_FIXTURE
-					}
-				}
+						requests: REQUESTS_FIXTURE,
+					},
+				},
 			},
 			siteId = 123456;
 		const output = isActivatingJetpackModule( stateIn, siteId, 'module-a' );
@@ -40,9 +41,9 @@ describe( 'isActivatingJetpackModule()', () => {
 		const stateIn = {
 				jetpack: {
 					modules: {
-						requests: REQUESTS_FIXTURE
-					}
-				}
+						requests: REQUESTS_FIXTURE,
+					},
+				},
 			},
 			siteId = 123456;
 		const output = isActivatingJetpackModule( stateIn, siteId, 'module-z' );

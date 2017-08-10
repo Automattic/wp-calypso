@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,10 +24,8 @@ const AddGoogleAppsCard = React.createClass( {
 	propTypes: {
 		products: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired
+		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] )
+			.isRequired,
 	},
 
 	mixins: [ analyticsMixin( 'domainManagement', 'email' ) ],
@@ -58,45 +57,34 @@ const AddGoogleAppsCard = React.createClass( {
 							</h2>
 
 							<p className="email__add-google-apps-card-sub-title">
-								{
-									translate(
-										"We've partnered with Google to offer you email, " +
+								{ translate(
+									"We've partnered with Google to offer you email, " +
 										'storage, docs, calendars, and more integrated with your site.'
-									)
-								}
+								) }
 							</p>
 
 							<div className="email__add-google-apps-card-price">
 								<h4 className="email__add-google-apps-card-price-per-user">
 									<span>
-										{
-											translate(
-												'{{strong}}%(price)s{{/strong}} per user / month',
-												{
-													components: {
-														strong: <strong />
-													},
-													args: {
-														price: monthlyPrice
-													}
-												}
-											)
-										}
+										{ translate( '{{strong}}%(price)s{{/strong}} per user / month', {
+											components: {
+												strong: <strong />,
+											},
+											args: {
+												price: monthlyPrice,
+											},
+										} ) }
 									</span>
 								</h4>
 
 								{ this.renderAddGoogleAppsButton() }
 
 								<h5 className="email__add-google-apps-card-billing-period">
-									{
-										translate( '%(price)s billed yearly (2 months free!)',
-											{
-												args: {
-													price: annualPrice
-												}
-											}
-										)
-									}
+									{ translate( '%(price)s billed yearly (2 months free!)', {
+										args: {
+											price: annualPrice,
+										},
+									} ) }
 								</h5>
 							</div>
 						</div>
@@ -114,18 +102,15 @@ const AddGoogleAppsCard = React.createClass( {
 							</div>
 							<div className="email__add-google-apps-card-feature-block">
 								<h5 className="email__add-google-apps-card-feature-header">
-									{
-										translate(
-											'Gmail for @%(domain)s',
-											{
-												args: {
-													domain: selectedDomainName
-												}
-											}
-										)
-									}
+									{ translate( 'Gmail for @%(domain)s', {
+										args: {
+											domain: selectedDomainName,
+										},
+									} ) }
 								</h5>
-								<p>{ translate( 'Professional ad-free email that works with most email clients.' ) }</p>
+								<p>
+									{ translate( 'Professional ad-free email that works with most email clients.' ) }
+								</p>
 							</div>
 						</div>
 
@@ -137,7 +122,9 @@ const AddGoogleAppsCard = React.createClass( {
 								<h5 className="email__add-google-apps-card-feature-header">
 									{ translate( 'Keep all your files secure' ) }
 								</h5>
-								<p>{ translate( 'Get 30GB of storage for all your files synced across devices.' ) }</p>
+								<p>
+									{ translate( 'Get 30GB of storage for all your files synced across devices.' ) }
+								</p>
 							</div>
 						</div>
 
@@ -149,7 +136,9 @@ const AddGoogleAppsCard = React.createClass( {
 								<h5 className="email__add-google-apps-card-feature-header">
 									{ translate( 'Docs, spreadsheets and forms' ) }
 								</h5>
-								<p>{ translate( 'Create and edit documents to get your work done faster.' ) }</p>
+								<p>
+									{ translate( 'Create and edit documents to get your work done faster.' ) }
+								</p>
 							</div>
 						</div>
 
@@ -161,7 +150,11 @@ const AddGoogleAppsCard = React.createClass( {
 								<h5 className="email__add-google-apps-card-feature-header">
 									{ translate( 'Connect with your team' ) }
 								</h5>
-								<p>{ translate( 'Use text chats, voice calls, or video calls, with built in screen sharing' ) }</p>
+								<p>
+									{ translate(
+										'Use text chats, voice calls, or video calls, with built in screen sharing'
+									) }
+								</p>
 							</div>
 						</div>
 					</div>
@@ -172,23 +165,23 @@ const AddGoogleAppsCard = React.createClass( {
 
 					<div className="email__add-google-apps-card-learn-more">
 						<p>
-							{
-								translate(
-									'{{strong}}No setup or software required.{{/strong}} ' +
+							{ translate(
+								'{{strong}}No setup or software required.{{/strong}} ' +
 									'{{a}}Learn more about integrating G Suite with your site.{{/a}}',
-									{
-										components: {
-											strong: <strong />,
-											a: (
-												<a href={ googleAppsSupportUrl }
-													target="_blank"
-													rel="noopener noreferrer"
-													onClick={ this.handleLearnMoreClick } />
-											)
-										}
-									}
-								)
-							}
+								{
+									components: {
+										strong: <strong />,
+										a: (
+											<a
+												href={ googleAppsSupportUrl }
+												target="_blank"
+												rel="noopener noreferrer"
+												onClick={ this.handleLearnMoreClick }
+											/>
+										),
+									},
+								}
+							) }
 						</p>
 					</div>
 				</CompactCard>
@@ -204,9 +197,7 @@ const AddGoogleAppsCard = React.createClass( {
 		}
 
 		return (
-			<Button
-				type="button"
-				onClick={ this.goToAddGoogleApps }>
+			<Button type="button" onClick={ this.goToAddGoogleApps }>
 				{ translate( 'Add G Suite' ) }
 			</Button>
 		);
@@ -221,12 +212,15 @@ const AddGoogleAppsCard = React.createClass( {
 	},
 
 	goToAddGoogleApps() {
-		page( paths.domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.selectedDomainName ) );
-	}
+		page(
+			paths.domainManagementAddGoogleApps(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName
+			)
+		);
+	},
 } );
 
-export default connect(
-	( state ) => ( {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-	} )
-)( localize( AddGoogleAppsCard ) );
+export default connect( state => ( {
+	currencyCode: getCurrentUserCurrencyCode( state ),
+} ) )( localize( AddGoogleAppsCard ) );

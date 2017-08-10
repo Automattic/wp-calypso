@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -32,5 +33,5 @@ export default combineReducers( {
 	imageEditor,
 	videoEditor,
 	lastDraft,
-	contactForm
+	contactForm,
 } );

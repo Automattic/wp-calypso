@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -38,11 +39,10 @@ const loadedListState = {
 							currentPage: 2,
 							requestedPage: 3,
 							productIds: [ 15, 389 ],
-						}
+						},
 					},
 					401: {
-						list: {
-						},
+						list: {},
 					},
 				},
 			},
@@ -50,14 +50,14 @@ const loadedListState = {
 				123: {
 					products: {
 						products,
-					}
+					},
 				},
 				401: {
 					products: {
 						products: {},
 					},
 				},
-			}
+			},
 		},
 	},
 };
@@ -74,11 +74,10 @@ const loadedSearchState = {
 							currentPage: 2,
 							requestedPage: 3,
 							productIds: [ 15, 389 ],
-						}
+						},
 					},
 					401: {
-						search: {
-						},
+						search: {},
 					},
 				},
 			},
@@ -86,14 +85,14 @@ const loadedSearchState = {
 				123: {
 					products: {
 						products,
-					}
+					},
 				},
 				401: {
 					products: {
 						products: {},
 					},
 				},
-			}
+			},
 		},
 	},
 };
@@ -111,21 +110,17 @@ describe( 'selectors', () => {
 					sites: {
 						123: {
 							products: {
-								products: [
-									{ id: 1, type: 'simple', name: 'Product 1' },
-								]
+								products: [ { id: 1, type: 'simple', name: 'Product 1' } ],
 							},
 						},
 					},
 					ui: {
 						products: {
 							123: {
-								list: {
-								},
-								search: {
-								},
-							}
-						}
+								list: {},
+								search: {},
+							},
+						},
 					},
 				},
 			},

@@ -1,3 +1,4 @@
+/** @format */
 module.exports = {
 	ID: 8,
 	avatar_URL: 'https://1.gravatar.com/avatar',
@@ -7,5 +8,5 @@ module.exports = {
 	nice_name: 'test8',
 	profile_URL: 'http://en.gravatar.com',
 	roles: [ 'editor' ],
-	site_ID: 1234
+	site_ID: 1234,
 };

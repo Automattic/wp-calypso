@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +20,7 @@ class ShortcodeData extends Component {
 		const { siteId, shortcode } = props;
 
 		return {
-			data: ShortcodesStore.get( siteId, shortcode )
+			data: ShortcodesStore.get( siteId, shortcode ),
 		};
 	}
 
@@ -33,11 +34,11 @@ class ShortcodeData extends Component {
 ShortcodeData.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	shortcode: PropTypes.string.isRequired,
-	filterRenderResult: PropTypes.func
+	filterRenderResult: PropTypes.func,
 };
 
 ShortcodeData.defaultProps = {
-	filterRenderResult: ( props ) => props
+	filterRenderResult: props => props,
 };
 
 export default Container.create( ShortcodeData, { withProps: true } );

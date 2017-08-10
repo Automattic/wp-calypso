@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,11 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isOrderWaitingPayment,
-	isOrderWaitingFulfillment,
-	isOrderFinished,
-} from '../index';
+import { isOrderWaitingPayment, isOrderWaitingFulfillment, isOrderFinished } from '../index';
 
 describe( 'isOrderWaitingPayment', () => {
 	it( 'should be true for a pending order', () => {

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,11 +11,7 @@ import { connect } from 'react-redux';
  */
 import QueryMediaStorage from 'components/data/query-media-storage';
 import { getMediaStorage } from 'state/sites/media-storage/selectors';
-import {
-	getSitePlanSlug,
-	getSiteSlug,
-	isJetpackSite
-} from 'state/sites/selectors';
+import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 
 import PlanStorageBar from './bar';
@@ -29,13 +26,7 @@ class PlanStorage extends Component {
 	};
 
 	render() {
-		const {
-			className,
-			jetpackSite,
-			siteId,
-			sitePlanSlug,
-			siteSlug,
-		} = this.props;
+		const { className, jetpackSite, siteId, sitePlanSlug, siteSlug } = this.props;
 
 		if ( jetpackSite || ! sitePlanSlug ) {
 			return null;
@@ -46,7 +37,7 @@ class PlanStorage extends Component {
 		}
 
 		return (
-			<div className={ classNames( className, 'plan-storage' ) } >
+			<div className={ classNames( className, 'plan-storage' ) }>
 				<QueryMediaStorage siteId={ siteId } />
 				<PlanStorageBar
 					siteSlug={ siteSlug }

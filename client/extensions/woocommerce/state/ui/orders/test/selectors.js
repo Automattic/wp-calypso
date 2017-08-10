@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,15 +7,12 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getOrdersCurrentPage,
-	getOrdersCurrentSearch
-} from '../selectors';
+import { getOrdersCurrentPage, getOrdersCurrentSearch } from '../selectors';
 
 const preInitializedState = {
 	extensions: {
-		woocommerce: {}
-	}
+		woocommerce: {},
+	},
 };
 
 const state = {

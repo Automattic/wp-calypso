@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,24 +14,25 @@ export default {
 	survey: {
 		stepName: 'survey',
 		props: {
-			surveySiteType: ( current && current.toString().match( /\/start\/(blog|delta-blog)/ ) ) ? 'blog' : 'site'
+			surveySiteType:
+				current && current.toString().match( /\/start\/(blog|delta-blog)/ ) ? 'blog' : 'site',
 		},
-		providesDependencies: [ 'surveySiteType', 'surveyQuestion' ]
+		providesDependencies: [ 'surveySiteType', 'surveyQuestion' ],
 	},
 
 	themes: {
 		stepName: 'themes',
 		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'themeSlugWithRepo' ]
+		providesDependencies: [ 'themeSlugWithRepo' ],
 	},
 
 	'portfolio-themes': {
 		stepName: 'portfolio-themes',
 		props: {
-			designType: 'grid'
+			designType: 'grid',
 		},
 		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'themeSlugWithRepo' ]
+		providesDependencies: [ 'themeSlugWithRepo' ],
 	},
 
 	// `themes` does not update the theme for an existing site as we normally
@@ -43,30 +45,30 @@ export default {
 		apiRequestFunction: stepActions.setThemeOnSite,
 		props: {
 			headerText: i18n.translate( 'Choose a theme for your new site.' ),
-		}
+		},
 	},
 
 	'plans-site-selected': {
 		stepName: 'plans-site-selected',
 		apiRequestFunction: stepActions.addPlanToCart,
 		dependencies: [ 'siteSlug', 'siteId' ],
-		providesDependencies: [ 'cartItem', 'privacyItem' ]
+		providesDependencies: [ 'cartItem', 'privacyItem' ],
 	},
 
 	'design-type': {
 		stepName: 'design-type',
-		providesDependencies: [ 'designType' ]
+		providesDependencies: [ 'designType' ],
 	},
 
 	'design-type-with-store': {
 		stepName: 'design-type-with-store',
-		providesDependencies: [ 'designType' ]
+		providesDependencies: [ 'designType' ],
 	},
 
 	site: {
 		stepName: 'site',
 		apiRequestFunction: stepActions.createSite,
-		providesDependencies: [ 'siteSlug' ]
+		providesDependencies: [ 'siteSlug' ],
 	},
 
 	'rebrand-cities-welcome': {
@@ -74,9 +76,9 @@ export default {
 		apiRequestFunction: stepActions.createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		props: {
-			isDomainOnly: false
+			isDomainOnly: false,
 		},
-		delayApiRequestUntilComplete: true
+		delayApiRequestUntilComplete: true,
 	},
 
 	user: {
@@ -95,24 +97,24 @@ export default {
 		unstorableDependencies: [ 'bearer_token' ],
 		props: {
 			headerText: i18n.translate( 'Create your account.' ),
-			isSocialSignupEnabled: true
+			isSocialSignupEnabled: true,
 		},
 	},
 
 	'site-title': {
 		stepName: 'site-title',
-		providesDependencies: [ 'siteTitle' ]
+		providesDependencies: [ 'siteTitle' ],
 	},
 
 	test: {
-		stepName: 'test'
+		stepName: 'test',
 	},
 
 	plans: {
 		stepName: 'plans',
 		apiRequestFunction: stepActions.addPlanToCart,
 		dependencies: [ 'siteSlug', 'siteId', 'domainItem' ],
-		providesDependencies: [ 'cartItem', 'privacyItem' ]
+		providesDependencies: [ 'cartItem', 'privacyItem' ],
 	},
 
 	domains: {
@@ -120,10 +122,10 @@ export default {
 		apiRequestFunction: stepActions.createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		props: {
-			isDomainOnly: false
+			isDomainOnly: false,
 		},
 		dependencies: [ 'themeSlugWithRepo' ],
-		delayApiRequestUntilComplete: true
+		delayApiRequestUntilComplete: true,
 	},
 
 	'domains-theme-preselected': {
@@ -131,9 +133,9 @@ export default {
 		apiRequestFunction: stepActions.createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		props: {
-			isDomainOnly: false
+			isDomainOnly: false,
 		},
-		delayApiRequestUntilComplete: true
+		delayApiRequestUntilComplete: true,
 	},
 
 	'jetpack-user': {
@@ -142,25 +144,32 @@ export default {
 		providesToken: true,
 		props: {
 			headerText: i18n.translate( 'Create an account for Jetpack' ),
-			subHeaderText: i18n.translate( 'You\'re moments away from connecting Jetpack.' )
+			subHeaderText: i18n.translate( "You're moments away from connecting Jetpack." ),
 		},
-		providesDependencies: [ 'bearer_token', 'username' ]
+		providesDependencies: [ 'bearer_token', 'username' ],
 	},
 
 	'get-dot-blog-plans': {
 		apiRequestFunction: stepActions.createSiteWithCart,
 		stepName: 'get-dot-blog-plans',
 		dependencies: [ 'cartItem' ],
-		providesDependencies: [ 'cartItem', 'siteSlug', 'siteId', 'domainItem', 'themeItem', 'privacyItem' ]
+		providesDependencies: [
+			'cartItem',
+			'siteSlug',
+			'siteId',
+			'domainItem',
+			'themeItem',
+			'privacyItem',
+		],
 	},
 
 	'get-dot-blog-themes': {
 		stepName: 'get-dot-blog-themes',
 		props: {
-			designType: 'blog'
+			designType: 'blog',
 		},
 		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'themeSlugWithRepo' ]
+		providesDependencies: [ 'themeSlugWithRepo' ],
 	},
 
 	// Currently, these two steps explicitly submit other steps to skip them, and
@@ -169,9 +178,18 @@ export default {
 		stepName: 'site-or-domain',
 		props: {
 			headerText: i18n.translate( 'Choose how you want to use your domain.' ),
-			subHeaderText: i18n.translate( "Don't worry you can easily add a site later if you're not ready." )
+			subHeaderText: i18n.translate(
+				"Don't worry you can easily add a site later if you're not ready."
+			),
 		},
-		providesDependencies: [ 'designType', 'siteId', 'siteSlug', 'siteUrl', 'domainItem', 'themeSlugWithRepo' ],
+		providesDependencies: [
+			'designType',
+			'siteId',
+			'siteSlug',
+			'siteUrl',
+			'domainItem',
+			'themeSlugWithRepo',
+		],
 	},
 	'site-picker': {
 		stepName: 'site-picker',
@@ -180,7 +198,14 @@ export default {
 			headerText: i18n.translate( 'Choose your site?' ),
 		},
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
-		dependencies: [ 'cartItem', 'designType', 'domainItem', 'privacyItem', 'siteUrl', 'themeSlugWithRepo' ],
-		delayApiRequestUntilComplete: true
+		dependencies: [
+			'cartItem',
+			'designType',
+			'domainItem',
+			'privacyItem',
+			'siteUrl',
+			'themeSlugWithRepo',
+		],
+		delayApiRequestUntilComplete: true,
 	},
 };

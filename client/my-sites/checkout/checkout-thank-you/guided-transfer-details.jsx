@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,8 +17,8 @@ const GuidedTransferDetails = ( { translate } ) =>
 		title={ translate( 'When will it be ready?' ) }
 		description={ translate(
 			'A Guided Transfer occurs over a 24 hour period. A Happiness Engineer ' +
-			'will work with you to set up a day (during the work week) to perform ' +
-			'the transfer.'
+				'will work with you to set up a day (during the work week) to perform ' +
+				'the transfer.'
 		) }
 		buttonText={ translate( 'Learn more about Guided Transfers' ) }
 		href={ supportUrls.GUIDED_TRANSFER }

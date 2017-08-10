@@ -1,3 +1,4 @@
+/** @format */
 export const itemsSchema = {
 	type: 'object',
 	additionalProperties: false,
@@ -28,7 +29,7 @@ export const itemsSchema = {
 				job_manager_submit_job_form_page_id: { type: 'integer' },
 				job_manager_job_dashboard_page_id: { type: 'integer' },
 				job_manager_jobs_page_id: { type: 'integer' },
-			}
-		}
-	}
+			},
+		},
+	},
 };

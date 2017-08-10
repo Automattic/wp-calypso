@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -9,7 +10,7 @@ export default function( router ) {
 
 // Set up the locale in case it has ended up in the flow param
 function setUpLocale( context, next ) {
-	let { flowName, stepName, stepSectionName, lang } = context.params;
+	let { flowName, stepName, stepSectionName, lang } = context.params;
 
 	if ( ! lang && stepSectionName && getLanguage( stepSectionName ) ) {
 		lang = stepSectionName;
@@ -22,11 +23,12 @@ function setUpLocale( context, next ) {
 		flowName = undefined;
 	}
 
-	context.params = Object.assign(
-		{},
-		context.params,
-		{ flowName, stepName, stepSectionName, lang }
-	);
+	context.params = Object.assign( {}, context.params, {
+		flowName,
+		stepName,
+		stepSectionName,
+		lang,
+	} );
 
 	const language = getLanguage( lang );
 	if ( language ) {

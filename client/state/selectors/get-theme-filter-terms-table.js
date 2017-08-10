@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,16 +18,16 @@ import { isAmbiguousThemeFilterTerm, getThemeFilters } from 'state/selectors';
  * @return {Object} a table of terms to taxonomies.
  */
 export default createSelector(
-	( state ) => {
+	state => {
 		const termTable = {};
 		const taxonomies = mapValues( getThemeFilters( state ), keys );
 		forIn( taxonomies, ( terms, taxonomy ) => {
-			terms.forEach( ( term ) => {
+			terms.forEach( term => {
 				const key = isAmbiguousThemeFilterTerm( state, term ) ? `${ taxonomy }:${ term }` : term;
 				termTable[ key ] = taxonomy;
 			} );
 		} );
 		return termTable;
 	},
-	( state ) => [ getThemeFilters( state ) ]
+	state => [ getThemeFilters( state ) ]
 );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns the current layout focus area
  *

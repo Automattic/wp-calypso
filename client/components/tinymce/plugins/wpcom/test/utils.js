@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -30,7 +31,10 @@ describe( 'remove empty spaces in paragraphs', () => {
 	it( 'should remove &nbsp; from paragraphs without content and not ones with content', () => {
 		const content = '<div>&nbsp;</div><p>&nbsp;</p><p>chicken&nbsp;ribs</p>';
 
-		assert.equal( '<div>&nbsp;</div><p><br /></p><p>chicken&nbsp;ribs</p>', removeEmptySpacesInParagraphs( content ) );
+		assert.equal(
+			'<div>&nbsp;</div><p><br /></p><p>chicken&nbsp;ribs</p>',
+			removeEmptySpacesInParagraphs( content )
+		);
 	} );
 
 	it( 'should remove unicode spaces from empty paragraphs', () => {

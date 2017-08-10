@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,12 +19,15 @@ const wait = ( { condition, consequence, delay = 0, onError = noop } ) => {
 		return;
 	}
 
-	window.setTimeout( wait.bind( null, {
-		condition,
-		consequence,
-		delay: delay ? delay * WAIT_MULTIPLIER : WAIT_INITIAL,
-		onError,
-	} ), delay );
+	window.setTimeout(
+		wait.bind( null, {
+			condition,
+			consequence,
+			delay: delay ? delay * WAIT_MULTIPLIER : WAIT_INITIAL,
+			onError,
+		} ),
+		delay
+	);
 };
 
 export default wait;

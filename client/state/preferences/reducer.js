@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,7 @@ import {
 	PREFERENCES_FETCH,
 	PREFERENCES_FETCH_SUCCESS,
 	PREFERENCES_FETCH_FAILURE,
-	PREFERENCES_SAVE_SUCCESS
+	PREFERENCES_SAVE_SUCCESS,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 import { remoteValuesSchema } from './schema';
@@ -27,18 +28,21 @@ import { remoteValuesSchema } from './schema';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const localValues = createReducer( {}, {
-	[ PREFERENCES_SET ]: ( state, { key, value } ) => {
-		if ( state[ key ] === value ) {
-			return state;
-		}
+export const localValues = createReducer(
+	{},
+	{
+		[ PREFERENCES_SET ]: ( state, { key, value } ) => {
+			if ( state[ key ] === value ) {
+				return state;
+			}
 
-		return { ...state, [ key ]: value };
-	},
-	[ PREFERENCES_SAVE_SUCCESS ]: ( state, { key } ) => {
-		return omit( state, key );
+			return { ...state, [ key ]: value };
+		},
+		[ PREFERENCES_SAVE_SUCCESS ]: ( state, { key } ) => {
+			return omit( state, key );
+		},
 	}
-} );
+);
 
 /**
  * Returns the updated remote values state after an action has been dispatched.
@@ -49,9 +53,13 @@ export const localValues = createReducer( {}, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const remoteValues = createReducer( null, {
-	[ PREFERENCES_RECEIVE ]: ( state, { values } ) => values
-}, remoteValuesSchema );
+export const remoteValues = createReducer(
+	null,
+	{
+		[ PREFERENCES_RECEIVE ]: ( state, { values } ) => values,
+	},
+	remoteValuesSchema
+);
 
 export const fetching = createReducer( false, {
 	[ PREFERENCES_FETCH_SUCCESS ]: () => false,

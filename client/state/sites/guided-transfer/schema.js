@@ -1,3 +1,4 @@
+/** @format */
 export const guidedTransferStatusSchema = {
 	type: 'object',
 	additionalProperties: false,
@@ -18,6 +19,6 @@ export const guidedTransferStatusSchema = {
 				upgrade_purchased: { type: 'boolean' },
 				host_details_entered: { type: 'boolean' },
 			},
-		}
-	}
+		},
+	},
 };

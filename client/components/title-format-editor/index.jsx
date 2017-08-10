@@ -1,17 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import {
-	get,
-	head,
-	map,
-	max,
-	min,
-	noop,
-} from 'lodash';
+import { get, head, map, max, min, noop } from 'lodash';
 import moment from 'moment';
 
 // The following polyfills exist for the draft-js editor, since
@@ -27,10 +21,10 @@ if ( ! String.prototype.endsWith ) {
 	String.prototype.endsWith = function( searchString, position ) {
 		const subjectString = this.toString();
 		if (
-			( typeof position !== 'number' ) ||
-			( ! isFinite( position ) ) ||
-			( Math.floor( position ) !== position ) ||
-			( position > subjectString.length )
+			typeof position !== 'number' ||
+			! isFinite( position ) ||
+			Math.floor( position ) !== position ||
+			position > subjectString.length
 		) {
 			position = subjectString.length;
 		}
@@ -66,20 +60,14 @@ if ( ! Array.prototype.fill ) {
 		const relativeStart = start >> 0;
 
 		// Step 8.
-		let k = relativeStart < 0
-			? Math.max( len + relativeStart, 0 )
-			: Math.min( relativeStart, len );
+		let k = relativeStart < 0 ? Math.max( len + relativeStart, 0 ) : Math.min( relativeStart, len );
 
 		// Steps 9-10.
 		const end = arguments[ 2 ];
-		const relativeEnd = end === undefined
-			? len
-			: end >> 0;
+		const relativeEnd = end === undefined ? len : end >> 0;
 
 		// Step 11.
-		const final = relativeEnd < 0
-			? Math.max( len + relativeEnd, 0 )
-			: Math.min( relativeEnd, len );
+		const final = relativeEnd < 0 ? Math.max( len + relativeEnd, 0 ) : Math.min( relativeEnd, len );
 
 		// Step 12.
 		while ( k < final ) {
@@ -104,11 +92,7 @@ const {
 } = require( 'draft-js' );
 
 // Parser also requires draft-js. Lets load it after the polyfills are created too.
-const {
-	fromEditor,
-	mapTokenTitleForEditor,
-	toEditor,
-} = require( './parser' );
+const { fromEditor, mapTokenTitleForEditor, toEditor } = require( './parser' );
 
 import Token from './token';
 import { buildSeoTitle } from 'state/sites/selectors';
@@ -145,18 +129,14 @@ export class TitleFormatEditor extends Component {
 		this.skipOverTokens = this.skipOverTokens.bind( this );
 
 		this.state = {
-			editorState: EditorState.moveSelectionToEnd(
-				this.editorStateFrom( props )
-			)
+			editorState: EditorState.moveSelectionToEnd( this.editorStateFrom( props ) ),
 		};
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.disabled && ! nextProps.disabled ) {
 			this.setState( {
-				editorState: EditorState.moveSelectionToEnd(
-					this.editorStateFrom( nextProps )
-				)
+				editorState: EditorState.moveSelectionToEnd( this.editorStateFrom( nextProps ) ),
 			} );
 		}
 	}
@@ -166,10 +146,12 @@ export class TitleFormatEditor extends Component {
 
 		return EditorState.createWithContent(
 			toEditor( props.titleFormats, props.tokens ),
-			new CompositeDecorator( [ {
-				strategy: this.renderTokens,
-				component: Chip( disabled ? noop : this.removeToken )
-			} ] )
+			new CompositeDecorator( [
+				{
+					strategy: this.renderTokens,
+					component: Chip( disabled ? noop : this.removeToken ),
+				},
+			] )
 		);
 	}
 
@@ -189,10 +171,7 @@ export class TitleFormatEditor extends Component {
 		const before = this.state.editorState.getSelection();
 		const offset = selection.getFocusOffset();
 
-		if (
-			( before.getFocusKey() === selection.getFocusKey() ) &&
-			( before.getFocusOffset() === offset )
-		) {
+		if ( before.getFocusKey() === selection.getFocusKey() && before.getFocusOffset() === offset ) {
 			return editorState;
 		}
 
@@ -211,13 +190,9 @@ export class TitleFormatEditor extends Component {
 		}
 
 		// get characters in entity
-		const indices = block
-			.getCharacterList()
-			.reduce( ( ids, value, key ) => {
-				return entityKey === value.entity
-					? [ ...ids, key ]
-					: ids;
-			}, [] );
+		const indices = block.getCharacterList().reduce( ( ids, value, key ) => {
+			return entityKey === value.entity ? [ ...ids, key ] : ids;
+		}, [] );
 
 		// okay if cursor is at the spot
 		// right before the token
@@ -225,15 +200,14 @@ export class TitleFormatEditor extends Component {
 			return editorState;
 		}
 
-		const outside = direction > 0
-			? Math.min( max( indices ) + 1, block.getLength() )
-			: Math.max( min( indices ), 0 );
+		const outside =
+			direction > 0
+				? Math.min( max( indices ) + 1, block.getLength() )
+				: Math.max( min( indices ), 0 );
 
 		return EditorState.forceSelection(
 			editorState,
-			selection
-				.set( 'anchorOffset', outside )
-				.set( 'focusOffset', outside )
+			selection.set( 'anchorOffset', outside ).set( 'focusOffset', outside )
 		);
 	}
 
@@ -248,13 +222,10 @@ export class TitleFormatEditor extends Component {
 
 		const editorState = this.skipOverTokens( rawEditorState );
 
-		this.setState(
-			{ editorState },
-			() => {
-				doFocus && this.focusEditor();
-				onChange( type.value, fromEditor( currentContent ) );
-			}
-		);
+		this.setState( { editorState }, () => {
+			doFocus && this.focusEditor();
+			onChange( type.value, fromEditor( currentContent ) );
+		} );
 	}
 
 	addToken( title, name ) {
@@ -272,11 +243,9 @@ export class TitleFormatEditor extends Component {
 				tokenEntity
 			);
 
-			this.updateEditor( EditorState.push(
-				editorState,
-				contentState,
-				'add-token'
-			), { doFocus: true } );
+			this.updateEditor( EditorState.push( editorState, contentState, 'add-token' ), {
+				doFocus: true,
+			} );
 		};
 	}
 
@@ -289,34 +258,23 @@ export class TitleFormatEditor extends Component {
 			const block = currentContent.getBlockForKey( currentSelection.focusKey );
 
 			// get characters in entity
-			const indices = block
-				.getCharacterList()
-				.reduce( ( ids, value, key ) => {
-					return entityKey === value.entity
-						? [ ...ids, key ]
-						: ids;
-				}, [] );
+			const indices = block.getCharacterList().reduce( ( ids, value, key ) => {
+				return entityKey === value.entity ? [ ...ids, key ] : ids;
+			}, [] );
 
-			const range = SelectionState
-				.createEmpty( block.key )
+			const range = SelectionState.createEmpty( block.key )
 				.set( 'anchorOffset', min( indices ) )
 				.set( 'focusOffset', max( indices ) );
 
 			const withoutToken = EditorState.push(
 				editorState,
-				Modifier.removeRange(
-					currentContent,
-					range,
-					'forward'
-				),
+				Modifier.removeRange( currentContent, range, 'forward' ),
 				'remove-range'
 			);
 
 			const selectionBeforeToken = EditorState.forceSelection(
 				withoutToken,
-				range
-					.set( 'anchorOffset', min( indices ) )
-					.set( 'focusOffset', min( indices ) )
+				range.set( 'anchorOffset', min( indices ) ).set( 'focusOffset', min( indices ) )
 			);
 
 			this.updateEditor( selectionBeforeToken );
@@ -324,48 +282,43 @@ export class TitleFormatEditor extends Component {
 	}
 
 	renderTokens( contentBlock, callback ) {
-		contentBlock.findEntityRanges(
-			character => {
-				const entity = character.getEntity();
+		contentBlock.findEntityRanges( character => {
+			const entity = character.getEntity();
 
-				if ( null === entity ) {
-					return false;
-				}
+			if ( null === entity ) {
+				return false;
+			}
 
-				return 'TOKEN' === Entity.get( entity ).getType();
-			},
-			callback
-		);
+			return 'TOKEN' === Entity.get( entity ).getType();
+		}, callback );
 	}
 
 	render() {
 		const { editorState } = this.state;
-		const {
-			disabled,
-			placeholder,
-			titleData,
-			translate,
-			tokens,
-			type
-		} = this.props;
+		const { disabled, placeholder, titleData, translate, tokens, type } = this.props;
 
-		const previewText = type.value && editorState.getCurrentContent().hasText()
-			? buildSeoTitle( { [ type.value ]: fromEditor( editorState.getCurrentContent() ) }, type.value, titleData )
-			: '';
+		const previewText =
+			type.value && editorState.getCurrentContent().hasText()
+				? buildSeoTitle(
+						{ [ type.value ]: fromEditor( editorState.getCurrentContent() ) },
+						type.value,
+						titleData
+					)
+				: '';
 
-		const formattedPreview = previewText
-			? `${ translate( 'Preview' ) }: ${ previewText }`
-			: '';
+		const formattedPreview = previewText ? `${ translate( 'Preview' ) }: ${ previewText }` : '';
 
 		const editorClassNames = classNames( 'title-format-editor', {
-			disabled
+			disabled,
 		} );
 
 		return (
 			<div className={ editorClassNames }>
 				<div className="title-format-editor__header">
-					<span className="title-format-editor__title">{ type.label }</span>
-					{ map( tokens, ( title, name ) => (
+					<span className="title-format-editor__title">
+						{ type.label }
+					</span>
+					{ map( tokens, ( title, name ) =>
 						<span
 							key={ name }
 							className="title-format-editor__button"
@@ -373,7 +326,7 @@ export class TitleFormatEditor extends Component {
 						>
 							{ title }
 						</span>
-					) ) }
+					) }
 				</div>
 				<div className="title-format-editor__editor-wrapper">
 					<Editor
@@ -384,7 +337,9 @@ export class TitleFormatEditor extends Component {
 						ref={ this.storeEditorReference }
 					/>
 				</div>
-				<div className="title-format-editor__preview">{ formattedPreview }</div>
+				<div className="title-format-editor__preview">
+					{ formattedPreview }
+				</div>
 			</div>
 		);
 	}
@@ -396,14 +351,14 @@ const mapStateToProps = ( state, ownProps ) => {
 	const formattedDate = moment().locale( get( site, 'lang', '' ) ).format( 'MMMM YYYY' );
 
 	// Add example content for post/page title, tag name and archive dates
-	return ( {
+	return {
 		titleData: {
 			site,
 			post: { title: translate( 'Example Title' ) },
 			tag: translate( 'Example Tag' ),
-			date: formattedDate
-		}
-	} );
+			date: formattedDate,
+		},
+	};
 };
 
 export default localize( connect( mapStateToProps )( TitleFormatEditor ) );

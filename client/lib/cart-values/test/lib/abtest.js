@@ -1,1 +1,2 @@
+/** @format */
 module.exports = function() {};

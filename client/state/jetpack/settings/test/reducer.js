@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,7 +23,7 @@ import {
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
 	JETPACK_SETTINGS_UPDATE_FAILURE,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
 import {
 	items as itemsReducer,
@@ -30,10 +31,7 @@ import {
 	saveRequests as saveRequestsReducer,
 } from '../reducer';
 
-import {
-	settings as SETTINGS_FIXTURE,
-	requests as REQUESTS_FIXTURE
-} from './fixture';
+import { settings as SETTINGS_FIXTURE, requests as REQUESTS_FIXTURE } from './fixture';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {
@@ -48,23 +46,23 @@ describe( 'reducer', () => {
 				action = {
 					type: JETPACK_SETTINGS_RECEIVE,
 					siteId,
-					settings: SETTINGS_FIXTURE[ siteId ]
+					settings: SETTINGS_FIXTURE[ siteId ],
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
-				12345678: SETTINGS_FIXTURE[ siteId ]
+				12345678: SETTINGS_FIXTURE[ siteId ],
 			} );
 		} );
 
 		it( 'should store new settings to the items object for the right site', () => {
 			const siteId = 87654321,
 				stateIn = {
-					12345678: SETTINGS_FIXTURE[ 12345678 ]
+					12345678: SETTINGS_FIXTURE[ 12345678 ],
 				},
 				action = {
 					type: JETPACK_SETTINGS_RECEIVE,
 					siteId,
-					settings: SETTINGS_FIXTURE[ siteId ]
+					settings: SETTINGS_FIXTURE[ siteId ],
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( SETTINGS_FIXTURE );
@@ -76,7 +74,7 @@ describe( 'reducer', () => {
 				action = {
 					type: JETPACK_SETTINGS_RECEIVE,
 					siteId,
-					settings: SETTINGS_FIXTURE[ 87654321 ]
+					settings: SETTINGS_FIXTURE[ 87654321 ],
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
@@ -88,32 +86,32 @@ describe( 'reducer', () => {
 		it( 'should replace settings in the items object when settings are already loaded for a site', () => {
 			const siteId = 12345678,
 				stateIn = {
-					12345678: SETTINGS_FIXTURE[ siteId ]
+					12345678: SETTINGS_FIXTURE[ siteId ],
 				},
 				action = {
 					type: JETPACK_SETTINGS_RECEIVE,
 					siteId,
-					settings: { ...SETTINGS_FIXTURE[ siteId ], test_setting: 123 }
+					settings: { ...SETTINGS_FIXTURE[ siteId ], test_setting: 123 },
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
-				12345678: { ...SETTINGS_FIXTURE[ siteId ], test_setting: 123 }
+				12345678: { ...SETTINGS_FIXTURE[ siteId ], test_setting: 123 },
 			} );
 		} );
 
 		it( 'should update settings in the items object', () => {
 			const siteId = 12345678,
 				stateIn = {
-					12345678: SETTINGS_FIXTURE[ siteId ]
+					12345678: SETTINGS_FIXTURE[ siteId ],
 				},
 				action = {
 					type: JETPACK_SETTINGS_UPDATE_SUCCESS,
 					siteId,
-					settings: { test_setting: 123 }
+					settings: { test_setting: 123 },
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
-				12345678: { ...SETTINGS_FIXTURE[ siteId ], test_setting: 123 }
+				12345678: { ...SETTINGS_FIXTURE[ siteId ], test_setting: 123 },
 			} );
 		} );
 
@@ -122,20 +120,20 @@ describe( 'reducer', () => {
 				stateIn = {
 					12345678: {
 						setting_123: 'test',
-						'module-a': false
-					}
+						'module-a': false,
+					},
 				},
 				action = {
 					type: JETPACK_MODULE_ACTIVATE_SUCCESS,
 					siteId,
-					moduleSlug: 'module-a'
+					moduleSlug: 'module-a',
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				12345678: {
 					setting_123: 'test',
-					'module-a': true
-				}
+					'module-a': true,
+				},
 			} );
 		} );
 
@@ -144,20 +142,20 @@ describe( 'reducer', () => {
 				stateIn = {
 					12345678: {
 						setting_123: 'test',
-						'module-a': true
-					}
+						'module-a': true,
+					},
 				},
 				action = {
 					type: JETPACK_MODULE_DEACTIVATE_SUCCESS,
 					siteId,
-					moduleSlug: 'module-a'
+					moduleSlug: 'module-a',
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				12345678: {
 					setting_123: 'test',
-					'module-a': false
-				}
+					'module-a': false,
+				},
 			} );
 		} );
 
@@ -167,20 +165,20 @@ describe( 'reducer', () => {
 					12345678: {
 						setting_123: 'test',
 						'module-a': true,
-						'module-b': false
-					}
+						'module-b': false,
+					},
 				},
 				action = {
 					type: JETPACK_MODULES_RECEIVE,
 					siteId,
 					modules: {
 						'module-a': {
-							active: false
+							active: false,
 						},
 						'module-b': {
-							active: true
-						}
-					}
+							active: true,
+						},
+					},
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
@@ -188,7 +186,7 @@ describe( 'reducer', () => {
 					setting_123: 'test',
 					'module-a': false,
 					'module-b': true,
-				}
+				},
 			} );
 		} );
 
@@ -197,7 +195,7 @@ describe( 'reducer', () => {
 				stateIn = {
 					12345678: {
 						setting_123: 'test',
-					}
+					},
 				},
 				action = {
 					type: JETPACK_MODULES_RECEIVE,
@@ -212,9 +210,9 @@ describe( 'reducer', () => {
 								some_other_option: {
 									current_value: '123',
 								},
-							}
-						}
-					}
+							},
+						},
+					},
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
@@ -222,8 +220,8 @@ describe( 'reducer', () => {
 					setting_123: 'test',
 					minileven: true,
 					wp_mobile_excerpt: true,
-					some_other_option: '123'
-				}
+					some_other_option: '123',
+				},
 			} );
 		} );
 
@@ -233,26 +231,26 @@ describe( 'reducer', () => {
 					12345678: {
 						setting_123: 'test',
 						post_by_email_address: 'example1234@automattic.com',
-					}
+					},
 				},
 				action = {
 					type: JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS,
 					siteId,
-					email: 'example5678@automattic.com'
+					email: 'example5678@automattic.com',
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				12345678: {
 					setting_123: 'test',
 					post_by_email_address: 'example5678@automattic.com',
-				}
+				},
 			} );
 		} );
 
 		it( 'should not persist state', () => {
 			const stateIn = SETTINGS_FIXTURE,
 				action = {
-					type: SERIALIZE
+					type: SERIALIZE,
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {} );
@@ -261,7 +259,7 @@ describe( 'reducer', () => {
 		it( 'should not load persisted state', () => {
 			const stateIn = SETTINGS_FIXTURE,
 				action = {
-					type: DESERIALIZE
+					type: DESERIALIZE,
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {} );
@@ -377,7 +375,7 @@ describe( 'reducer', () => {
 		it( 'should not persist state', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				action = {
-					type: SERIALIZE
+					type: SERIALIZE,
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {} );
@@ -386,7 +384,7 @@ describe( 'reducer', () => {
 		it( 'should not load persisted state', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				action = {
-					type: DESERIALIZE
+					type: DESERIALIZE,
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {} );
@@ -403,64 +401,64 @@ describe( 'reducer', () => {
 		it( 'should set request status to pending if request in progress', () => {
 			const state = saveRequestsReducer( undefined, {
 				type: JETPACK_SETTINGS_UPDATE,
-				siteId: 12345678
+				siteId: 12345678,
 			} );
 
 			expect( state ).to.eql( {
-				12345678: { saving: true, status: 'pending', error: false }
+				12345678: { saving: true, status: 'pending', error: false },
 			} );
 		} );
 
 		it( 'should accumulate save requests statuses', () => {
 			const previousState = deepFreeze( {
-				12345678: { saving: true, status: 'pending', error: false }
+				12345678: { saving: true, status: 'pending', error: false },
 			} );
 			const state = saveRequestsReducer( previousState, {
 				type: JETPACK_SETTINGS_UPDATE,
-				siteId: 87654321
+				siteId: 87654321,
 			} );
 
 			expect( state ).to.eql( {
 				12345678: { saving: true, status: 'pending', error: false },
-				87654321: { saving: true, status: 'pending', error: false }
+				87654321: { saving: true, status: 'pending', error: false },
 			} );
 		} );
 
 		it( 'should set save request to success if request finishes successfully', () => {
 			const previousState = deepFreeze( {
-				12345678: { saving: true, status: 'pending', error: false }
+				12345678: { saving: true, status: 'pending', error: false },
 			} );
 			const state = saveRequestsReducer( previousState, {
 				type: JETPACK_SETTINGS_UPDATE_SUCCESS,
-				siteId: 12345678
+				siteId: 12345678,
 			} );
 
 			expect( state ).to.eql( {
-				12345678: { saving: false, status: 'success', error: false }
+				12345678: { saving: false, status: 'success', error: false },
 			} );
 		} );
 
 		it( 'should set save request to error if request finishes with failure', () => {
 			const previousState = deepFreeze( {
-				12345678: { saving: true, status: 'pending', error: false }
+				12345678: { saving: true, status: 'pending', error: false },
 			} );
 			const state = saveRequestsReducer( previousState, {
 				type: JETPACK_SETTINGS_UPDATE_FAILURE,
 				siteId: 12345678,
-				error: 'my error'
+				error: 'my error',
 			} );
 
 			expect( state ).to.eql( {
-				12345678: { saving: false, status: 'error', error: 'my error' }
+				12345678: { saving: false, status: 'error', error: 'my error' },
 			} );
 		} );
 
 		it( 'should not persist state', () => {
 			const previousState = deepFreeze( {
-				12345678: { saving: true, status: 'pending', error: false }
+				12345678: { saving: true, status: 'pending', error: false },
 			} );
 			const state = saveRequestsReducer( previousState, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.eql( {} );
@@ -468,10 +466,10 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const previousState = deepFreeze( {
-				12345678: { saving: true, status: 'pending', error: false }
+				12345678: { saving: true, status: 'pending', error: false },
 			} );
 			const state = saveRequestsReducer( previousState, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.eql( {} );

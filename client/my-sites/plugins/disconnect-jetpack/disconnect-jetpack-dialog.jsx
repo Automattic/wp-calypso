@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +20,7 @@ class DisconnectJetpackDialog extends Component {
 		super( props );
 
 		this.state = {
-			showJetpackDisconnectDialog: false
+			showJetpackDisconnectDialog: false,
 		};
 
 		this.open = this.open.bind( this );
@@ -29,13 +30,13 @@ class DisconnectJetpackDialog extends Component {
 
 	open() {
 		this.setState( {
-			showJetpackDisconnectDialog: true
+			showJetpackDisconnectDialog: true,
 		} );
 	}
 
 	close( action ) {
 		this.setState( {
-			showJetpackDisconnectDialog: false
+			showJetpackDisconnectDialog: false,
 		} );
 
 		if ( action === 'continue' ) {
@@ -59,7 +60,9 @@ class DisconnectJetpackDialog extends Component {
 				return;
 			}
 		} else if ( this.props.sites ) {
-			this.props.sites.getSelectedOrAllWithPlugins().forEach( siteItem => SitesListActions.disconnect( siteItem ) );
+			this.props.sites
+				.getSelectedOrAllWithPlugins()
+				.forEach( siteItem => SitesListActions.disconnect( siteItem ) );
 		}
 
 		if ( selectedSite.ID === site.ID ) {
@@ -72,38 +75,47 @@ class DisconnectJetpackDialog extends Component {
 
 		if ( ! site ) {
 			return translate( 'Disconnecting Jetpack will remove access to WordPress.com features.', {
-				context: 'Jetpack: Warning message displayed prior to disconnecting multiple Jetpack Sites.'
+				context:
+					'Jetpack: Warning message displayed prior to disconnecting multiple Jetpack Sites.',
 			} );
 		}
 
-		return translate( 'Disconnecting Jetpack will remove access to WordPress.com features for %(siteName)s.', {
-			args: {
-				siteName: site.name || site.title
-			},
-			context: 'Jetpack: Warning message displayed prior to disconnecting a Jetpack Site.'
-		} );
+		return translate(
+			'Disconnecting Jetpack will remove access to WordPress.com features for %(siteName)s.',
+			{
+				args: {
+					siteName: site.name || site.title,
+				},
+				context: 'Jetpack: Warning message displayed prior to disconnecting a Jetpack Site.',
+			}
+		);
 	}
 
 	render() {
 		const deactivationButtons = [
 			{
 				action: 'cancel',
-				label: translate( 'Cancel' )
+				label: translate( 'Cancel' ),
 			},
 			{
 				action: 'continue',
 				label: translate( 'Disconnect' ),
-				isPrimary: true
-			}
+				isPrimary: true,
+			},
 		];
 
 		return (
 			<Dialog
 				isVisible={ this.state.showJetpackDisconnectDialog }
 				buttons={ deactivationButtons }
-				onClose={ this.close }>
-				<h1>{ translate( 'Disconnect Jetpack' ) }</h1>
-				<p>{ this.renderInfo() }</p>
+				onClose={ this.close }
+			>
+				<h1>
+					{ translate( 'Disconnect Jetpack' ) }
+				</h1>
+				<p>
+					{ this.renderInfo() }
+				</p>
 			</Dialog>
 		);
 	}
@@ -111,13 +123,13 @@ class DisconnectJetpackDialog extends Component {
 
 export default connect(
 	state => ( {
-		selectedSite: getSelectedSite( state )
+		selectedSite: getSelectedSite( state ),
 	} ),
 	{
-		recordGoogleEvent
+		recordGoogleEvent,
 	},
 	null,
 	{
-		withRef: true
+		withRef: true,
 	}
 )( DisconnectJetpackDialog );

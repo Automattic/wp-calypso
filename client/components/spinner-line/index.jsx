@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,12 +9,10 @@ export default class SpinnerLine extends PureComponent {
 	render() {
 		const classes = classnames( 'spinner-line', this.props.className );
 
-		return (
-			<hr className={ classes } />
-		);
+		return <hr className={ classes } />;
 	}
 }
 
 SpinnerLine.propTypes = {
-	className: PropTypes.string
+	className: PropTypes.string,
 };

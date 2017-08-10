@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -22,17 +23,10 @@ import { HTTP_REQUEST } from 'state/action-types';
  * @param {?Object} action default action to dispatch on HTTP success/failure
  * @returns {Object} raw http action
  */
-export const http = ( {
-	url,
-	method,
-	headers,
-	queryParams,
-	body,
-	withCredentials,
-	onSuccess,
-	onFailure,
-	...options,
-}, action = null ) => ( {
+export const http = (
+	{ url, method, headers, queryParams, body, withCredentials, onSuccess, onFailure, ...options },
+	action = null
+) => ( {
 	type: HTTP_REQUEST,
 	url,
 	method,

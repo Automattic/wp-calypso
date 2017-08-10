@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,9 +22,9 @@ describe( 'getSiteDefaultPostFormat()', () => {
 					[ siteId ]: {
 						options: {
 							default_post_format: 'image',
-						}
+						},
 					},
-				}
+				},
 			},
 		};
 		const output = getSiteDefaultPostFormat( state, siteId );
@@ -40,8 +41,8 @@ describe( 'getSiteDefaultPostFormat()', () => {
 				},
 			},
 			sites: {
-				items: {}
-			}
+				items: {},
+			},
 		};
 		const output = getSiteDefaultPostFormat( state, siteId );
 		expect( output ).to.eql( 'aside' );
@@ -61,10 +62,10 @@ describe( 'getSiteDefaultPostFormat()', () => {
 					[ siteId ]: {
 						options: {
 							default_post_format: 'image',
-						}
+						},
 					},
-				}
-			}
+				},
+			},
 		};
 		const output = getSiteDefaultPostFormat( state, siteId );
 		expect( output ).to.eql( 'aside' );
@@ -80,10 +81,10 @@ describe( 'getSiteDefaultPostFormat()', () => {
 					[ siteId ]: {
 						options: {
 							default_post_format: '0',
-						}
+						},
 					},
-				}
-			}
+				},
+			},
 		};
 		const output = getSiteDefaultPostFormat( state, siteId );
 		expect( output ).to.eql( 'standard' );
@@ -99,10 +100,10 @@ describe( 'getSiteDefaultPostFormat()', () => {
 					[ siteId ]: {
 						options: {
 							default_post_format: '',
-						}
+						},
 					},
-				}
-			}
+				},
+			},
 		};
 		const output = getSiteDefaultPostFormat( state, siteId );
 		expect( output ).to.eql( 'standard' );
@@ -118,10 +119,10 @@ describe( 'getSiteDefaultPostFormat()', () => {
 					[ siteId ]: {
 						options: {
 							exampleOption: 'exampleValue',
-						}
+						},
 					},
-				}
-			}
+				},
+			},
 		};
 		const output = getSiteDefaultPostFormat( state, siteId );
 		expect( output ).to.eql( 'standard' );
@@ -134,13 +135,13 @@ describe( 'getSiteDefaultPostFormat()', () => {
 					[ siteId ]: {
 						options: {
 							some_option: 'example',
-						}
+						},
 					},
 				},
 			},
 			sites: {
-				items: {}
-			}
+				items: {},
+			},
 		};
 		const output = getSiteDefaultPostFormat( state, siteId );
 		expect( output ).to.eql( 'standard' );
@@ -156,10 +157,10 @@ describe( 'getSiteDefaultPostFormat()', () => {
 					77203074: {
 						options: {
 							default_post_format: 'image',
-						}
+						},
 					},
-				}
-			}
+				},
+			},
 		};
 		const output = getSiteDefaultPostFormat( state, siteId );
 		expect( output ).to.be.null;

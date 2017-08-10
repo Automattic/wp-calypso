@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +12,9 @@ const DISCOVER_BLOG_ID = 53424024;
  * @return {Object}      - the post with discover properties
  */
 export default function( post ) {
-	const isDiscover = !! ( get( post, 'discover_metadata' ) || DISCOVER_BLOG_ID === get( post, 'site_ID' ) );
+	const isDiscover = !! (
+		get( post, 'discover_metadata' ) || DISCOVER_BLOG_ID === get( post, 'site_ID' )
+	);
 	let discoverFormat;
 
 	if ( isDiscover ) {
@@ -27,4 +30,3 @@ export default function( post ) {
 
 	return post;
 }
-

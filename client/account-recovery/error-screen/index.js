@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,19 +25,16 @@ const getErrorContent = ( errorIdentifier, translate ) => {
 
 	return {
 		title: translate( "We've run into an unexpected error. We're sorry! " ),
-		line: translate( 'Contact WordPress.com Support and one of our Happiness Engineers will get you back on track.' ),
+		line: translate(
+			'Contact WordPress.com Support and one of our Happiness Engineers will get you back on track.'
+		),
 		action: translate( 'Contact us' ),
 		actionURL: config( 'login_url' ) + '?action=recovery',
 	};
 };
 
-const AccountRecoveryErrorScreen = ( props ) => {
-	const {
-		title,
-		line,
-		action,
-		actionURL,
-	} = getErrorContent( props.error.name, props.translate );
+const AccountRecoveryErrorScreen = props => {
+	const { title, line, action, actionURL } = getErrorContent( props.error.name, props.translate );
 
 	return (
 		<EmptyContent

@@ -1,10 +1,11 @@
+/** @format */
 /**
  * Internal dependencies
  */
 import {
 	getSiteOption,
 	isJetpackSiteMainNetworkSite,
-	isJetpackSiteSecondaryNetworkSite
+	isJetpackSiteSecondaryNetworkSite,
 } from 'state/sites/selectors';
 import { withoutHttp } from 'lib/url';
 
@@ -18,8 +19,10 @@ import { withoutHttp } from 'lib/url';
  * @return {?Boolean}	            		Whether site with id equal to mainSiteId is main site of site with id equal to secondarySiteId
  */
 export default ( state, mainSiteId, secondarySiteId ) => {
-	return isJetpackSiteMainNetworkSite( state, mainSiteId ) &&
+	return (
+		isJetpackSiteMainNetworkSite( state, mainSiteId ) &&
 		isJetpackSiteSecondaryNetworkSite( state, secondarySiteId ) &&
 		withoutHttp( getSiteOption( state, mainSiteId, 'unmapped_url' ) ) ===
-		withoutHttp( getSiteOption( state, secondarySiteId, 'main_network_site' ) );
+			withoutHttp( getSiteOption( state, secondarySiteId, 'main_network_site' ) )
+	);
 };

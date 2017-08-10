@@ -1,3 +1,4 @@
+/** @format */
 /**
 * External dependencies
 */
@@ -26,7 +27,9 @@ module.exports = React.createClass( {
 	},
 
 	getInitialState() {
-		return { elements: [ { title: 'Apples', selected: true }, { title: 'Oranges', selected: false } ] };
+		return {
+			elements: [ { title: 'Apples', selected: true }, { title: 'Oranges', selected: false } ],
+		};
 	},
 
 	getSelectedElementsNumber: function() {
@@ -44,7 +47,9 @@ module.exports = React.createClass( {
 			return (
 				<label key={ index }>
 					<input type="checkbox" onClick={ onClick } checked={ element.selected } readOnly />
-					<span>{ element.title }</span>
+					<span>
+						{ element.title }
+					</span>
 				</label>
 			);
 		} );
@@ -54,10 +59,14 @@ module.exports = React.createClass( {
 		return (
 			<Card>
 				<div>
-					<BulkSelect totalElements={ this.state.elements.length } selectedElements={ this.getSelectedElementsNumber() } onToggle={ this.handleToggleAll } />
+					<BulkSelect
+						totalElements={ this.state.elements.length }
+						selectedElements={ this.getSelectedElementsNumber() }
+						onToggle={ this.handleToggleAll }
+					/>
 				</div>
 				{ this.renderElements() }
 			</Card>
 		);
-	}
+	},
 } );

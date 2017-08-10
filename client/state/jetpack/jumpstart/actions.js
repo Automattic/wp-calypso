@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -11,79 +12,88 @@ import {
 	JETPACK_JUMPSTART_STATUS_RECEIVE,
 	JETPACK_JUMPSTART_STATUS_REQUEST,
 	JETPACK_JUMPSTART_STATUS_REQUEST_SUCCESS,
-	JETPACK_JUMPSTART_STATUS_REQUEST_FAILURE
+	JETPACK_JUMPSTART_STATUS_REQUEST_FAILURE,
 } from 'state/action-types';
 import wp from 'lib/wp';
 
-export const activateJumpstart = ( siteId ) => {
-	return ( dispatch ) => {
+export const activateJumpstart = siteId => {
+	return dispatch => {
 		dispatch( {
 			type: JETPACK_JUMPSTART_ACTIVATE,
-			siteId
+			siteId,
 		} );
 
-		return wp.undocumented().updateJetpackJumpstart( siteId, true )
+		return wp
+			.undocumented()
+			.updateJetpackJumpstart( siteId, true )
 			.then( () => {
 				dispatch( {
 					type: JETPACK_JUMPSTART_ACTIVATE_SUCCESS,
-					siteId
+					siteId,
 				} );
-			} ).catch( error => {
+			} )
+			.catch( error => {
 				dispatch( {
 					type: JETPACK_JUMPSTART_ACTIVATE_FAILURE,
 					siteId,
-					error: error.message
+					error: error.message,
 				} );
 			} );
 	};
 };
 
-export const deactivateJumpstart = ( siteId ) => {
-	return ( dispatch ) => {
+export const deactivateJumpstart = siteId => {
+	return dispatch => {
 		dispatch( {
 			type: JETPACK_JUMPSTART_DEACTIVATE,
-			siteId
+			siteId,
 		} );
 
-		return wp.undocumented().updateJetpackJumpstart( siteId, false )
+		return wp
+			.undocumented()
+			.updateJetpackJumpstart( siteId, false )
 			.then( () => {
 				dispatch( {
 					type: JETPACK_JUMPSTART_DEACTIVATE_SUCCESS,
-					siteId
+					siteId,
 				} );
-			} ).catch( error => {
+			} )
+			.catch( error => {
 				dispatch( {
 					type: JETPACK_JUMPSTART_DEACTIVATE_FAILURE,
 					siteId,
-					error: error.message
+					error: error.message,
 				} );
 			} );
 	};
 };
 
-export const requestJumpstartStatus = ( siteId ) => {
-	return ( dispatch ) => {
+export const requestJumpstartStatus = siteId => {
+	return dispatch => {
 		dispatch( {
 			type: JETPACK_JUMPSTART_STATUS_REQUEST,
-			siteId
+			siteId,
 		} );
 
-		return wp.undocumented().getJetpackJumpstart( siteId )
+		return wp
+			.undocumented()
+			.getJetpackJumpstart( siteId )
 			.then( ( { status } ) => {
 				dispatch( {
 					type: JETPACK_JUMPSTART_STATUS_RECEIVE,
 					siteId,
-					status
+					status,
 				} );
 				dispatch( {
 					type: JETPACK_JUMPSTART_STATUS_REQUEST_SUCCESS,
-					siteId
+					siteId,
 				} );
-			} ).catch( error => {
+			} )
+			.catch( error => {
 				dispatch( {
 					type: JETPACK_JUMPSTART_STATUS_REQUEST_FAILURE,
 					siteId,
-					error: error.message
+					error: error.message,
 				} );
 			} );
 	};

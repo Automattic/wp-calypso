@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,10 +20,11 @@ function trackPaste( editor ) {
 	const store = editor.getParam( 'redux_store' );
 
 	const isGoogleDocsType = type =>
-		( type === 'application/x-vnd.google-docs-image-clip+wrapped' ) ||
-		( type === 'application/x-vnd.google-docs-document-slice-clip+wrapped' );
+		type === 'application/x-vnd.google-docs-image-clip+wrapped' ||
+		type === 'application/x-vnd.google-docs-document-slice-clip+wrapped';
 
-	const getSource = types => types.some( isGoogleDocsType ) ? SOURCE_GOOGLE_DOCS : SOURCE_UNKNOWN;
+	const getSource = types =>
+		types.some( isGoogleDocsType ) ? SOURCE_GOOGLE_DOCS : SOURCE_UNKNOWN;
 
 	/**
 	* Although types should be an array, some browsers -as Firefox- will pass a DOMStringList instead.
@@ -38,18 +40,22 @@ function trackPaste( editor ) {
 		const typesAsArray = Array.from( types );
 		const source = getSource( typesAsArray );
 
-		store.dispatch( withAnalytics(
-			recordTracksEvent( 'calypso_editor_content_paste', {
-				mode,
-				types: typesAsArray.join( ', ' ),
-				source
-			} ),
-			pasteEvent( source )
-		) );
+		store.dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_editor_content_paste', {
+					mode,
+					types: typesAsArray.join( ', ' ),
+					source,
+				} ),
+				pasteEvent( source )
+			)
+		);
 	};
 
-	const onPasteFromTinyMCEEditor = event => event.clipboardData && recordPasteEvent( 'visual-editor', event.clipboardData.types );
-	const onPasteFromHTMLEditor = event => event.clipboardData && recordPasteEvent( 'html-editor', event.clipboardData.types );
+	const onPasteFromTinyMCEEditor = event =>
+		event.clipboardData && recordPasteEvent( 'visual-editor', event.clipboardData.types );
+	const onPasteFromHTMLEditor = event =>
+		event.clipboardData && recordPasteEvent( 'html-editor', event.clipboardData.types );
 
 	editor.on( 'paste', onPasteFromTinyMCEEditor );
 	const textarea = editor.getParam( 'textarea' );
@@ -63,6 +69,6 @@ function trackPaste( editor ) {
 	} );
 }
 
-export default ( ) => {
+export default () => {
 	tinymce.PluginManager.add( 'wpcom/trackpaste', trackPaste );
 };

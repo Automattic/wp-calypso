@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,16 +17,12 @@ import SectionHeader from 'components/section-header';
 import { cartItems } from 'lib/cart-values';
 import upgradesActions from 'lib/upgrades/actions';
 import page from 'page';
-import {
-	saveHostDetails,
-} from 'state/sites/guided-transfer/actions';
+import { saveHostDetails } from 'state/sites/guided-transfer/actions';
 import {
 	isGuidedTransferSavingHostDetails,
 	isGuidedTransferAwaitingPurchase,
 } from 'state/sites/guided-transfer/selectors';
-import {
-	getSiteSlug,
-} from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 class HostCredentialsPage extends Component {
 	static propTypes = {
@@ -35,20 +32,22 @@ class HostCredentialsPage extends Component {
 	state = { fieldValues: {} };
 
 	setFieldValue = ( fieldName, fieldValue ) => {
-		this.setState( { fieldValues: {
-			...this.state.fieldValues,
-			[ fieldName ]: fieldValue,
-		} } );
-	}
+		this.setState( {
+			fieldValues: {
+				...this.state.fieldValues,
+				[ fieldName ]: fieldValue,
+			},
+		} );
+	};
 
 	onFieldChange = fieldName => e => {
 		this.setFieldValue( fieldName, e.target.value );
-	}
+	};
 
 	redirectToCart = () => {
 		upgradesActions.addItem( cartItems.guidedTransferItem() );
 		page.redirect( `/checkout/${ this.props.siteSlug }` );
-	}
+	};
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.isAwaitingPurchase ) {
@@ -59,11 +58,11 @@ class HostCredentialsPage extends Component {
 	submit = () => {
 		const payload = {
 			...this.state.fieldValues,
-			host_slug: this.props.hostSlug
+			host_slug: this.props.hostSlug,
 		};
 
 		this.props.submit( payload );
-	}
+	};
 
 	getHostForm() {
 		const props = {
@@ -109,6 +108,4 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	submit: data => dispatch( saveHostDetails( siteId, data ) ),
 } );
 
-export default localize(
-	connect( mapStateToProps, mapDispatchToProps )( HostCredentialsPage )
-);
+export default localize( connect( mapStateToProps, mapDispatchToProps )( HostCredentialsPage ) );

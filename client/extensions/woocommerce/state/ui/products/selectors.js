@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,10 +24,10 @@ export function getAllProductEdits( state, siteId ) {
  */
 export function getProductEdits( state, productId, siteId = getSelectedSiteId( state ) ) {
 	const edits = getAllProductEdits( state, siteId );
-	const bucket = ( isObject( productId ) ? 'creates' : 'updates' );
+	const bucket = isObject( productId ) ? 'creates' : 'updates';
 	const array = get( edits, bucket, [] );
 
-	return find( array, ( p ) => isEqual( productId, p.id ) );
+	return find( array, p => isEqual( productId, p.id ) );
 }
 
 /**
@@ -43,7 +44,7 @@ export function getProductWithLocalEdits( state, productId, siteId = getSelected
 	const product = existing && getProduct( state, productId );
 	const productEdits = getProductEdits( state, productId, siteId );
 
-	return ( product || productEdits ) && { ...product, ...productEdits } || undefined;
+	return ( ( product || productEdits ) && { ...product, ...productEdits } ) || undefined;
 }
 
 /**
@@ -81,7 +82,11 @@ export function getCurrentlyEditingProduct( state, siteId = getSelectedSiteId( s
  * @return {Number} Current product list page (defaul: 1)
  */
 export function getProductListCurrentPage( state, siteId = getSelectedSiteId( state ) ) {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'currentPage' ], 1 );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'currentPage' ],
+		1
+	);
 }
 
 /**
@@ -92,10 +97,18 @@ export function getProductListCurrentPage( state, siteId = getSelectedSiteId( st
  * @return {array|false} Array of products or false if products are not available.
  */
 export function getProductListProducts( state, siteId = getSelectedSiteId( state ) ) {
-	const products = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ], {} );
-	const productIds = get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'productIds' ], [] );
+	const products = get(
+		state,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ],
+		{}
+	);
+	const productIds = get(
+		state,
+		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'productIds' ],
+		[]
+	);
 	if ( productIds.length ) {
-		return productIds.map( id => find( products, ( p ) => isEqual( id, p.id ) ) );
+		return productIds.map( id => find( products, p => isEqual( id, p.id ) ) );
 	}
 	return false;
 }
@@ -108,7 +121,11 @@ export function getProductListProducts( state, siteId = getSelectedSiteId( state
  * @return {number|null} Requested product list page
  */
 export function getProductListRequestedPage( state, siteId = getSelectedSiteId( state ) ) {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'requestedPage' ], null );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'requestedPage' ],
+		null
+	);
 }
 
 /**
@@ -119,7 +136,11 @@ export function getProductListRequestedPage( state, siteId = getSelectedSiteId( 
  * @return {Number} Current product search page (default: 1)
  */
 export function getProductSearchCurrentPage( state, siteId = getSelectedSiteId( state ) ) {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'search', 'currentPage' ], 1 );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'search', 'currentPage' ],
+		1
+	);
 }
 
 /**
@@ -130,10 +151,18 @@ export function getProductSearchCurrentPage( state, siteId = getSelectedSiteId( 
  * @return {array|false} Array of products or false if products are not available.
  */
 export function getProductSearchResults( state, siteId = getSelectedSiteId( state ) ) {
-	const products = get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ], {} );
-	const productIds = get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'search', 'productIds' ], [] );
+	const products = get(
+		state,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ],
+		{}
+	);
+	const productIds = get(
+		state,
+		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'search', 'productIds' ],
+		[]
+	);
 	if ( productIds.length ) {
-		return productIds.map( id => find( products, ( p ) => isEqual( id, p.id ) ) );
+		return productIds.map( id => find( products, p => isEqual( id, p.id ) ) );
 	}
 	return false;
 }
@@ -146,5 +175,9 @@ export function getProductSearchResults( state, siteId = getSelectedSiteId( stat
  * @return {number|null} Requested product search page
  */
 export function getProductSearchRequestedPage( state, siteId = getSelectedSiteId( state ) ) {
-	return get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'search', 'requestedPage' ], null );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'search', 'requestedPage' ],
+		null
+	);
 }

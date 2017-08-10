@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,7 +23,7 @@ export default React.createClass( {
 	displayName: 'FollowersData',
 
 	propTypes: {
-		fetchOptions: React.PropTypes.object.isRequired
+		fetchOptions: React.PropTypes.object.isRequired,
 	},
 
 	getInitialState() {
@@ -30,7 +31,7 @@ export default React.createClass( {
 			followers: false,
 			totalFollowers: false,
 			currentPage: false,
-			fetchInitialized: false
+			fetchInitialized: false,
 		};
 	},
 
@@ -112,11 +113,11 @@ export default React.createClass( {
 		this.setState( {
 			followers: FollowersStore.getFollowers( fetchOptions ),
 			totalFollowers: FollowersStore.getPaginationData( fetchOptions ).totalFollowers,
-			currentPage: FollowersStore.getPaginationData( fetchOptions ).followersCurrentPage
+			currentPage: FollowersStore.getPaginationData( fetchOptions ).followersCurrentPage,
 		} );
 	},
 
 	render() {
 		return passToChildren( this, Object.assign( {}, this.state, { fetching: this.isFetching() } ) );
-	}
+	},
 } );

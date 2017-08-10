@@ -1,8 +1,9 @@
+/** @format */
 /**
  * Local variables
  */
 var defaults = {
-	localeSlug: 'de'
+	localeSlug: 'de',
 };
 
 /**

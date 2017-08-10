@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,7 +19,6 @@ var Security2faBackupCodesPrompt = require( 'me/security-2fa-backup-codes-prompt
 import Notice from 'components/notice';
 
 module.exports = React.createClass( {
-
 	displayName: 'Security2faBackupCodes',
 
 	mixins: [ eventRecorder ],
@@ -39,7 +39,7 @@ module.exports = React.createClass( {
 			verified: printed,
 			showPrompt: ! printed,
 			backupCodes: [],
-			generatingCodes: false
+			generatingCodes: false,
 		};
 	},
 
@@ -47,7 +47,7 @@ module.exports = React.createClass( {
 		this.setState( {
 			generatingCodes: true,
 			verified: false,
-			showPrompt: true
+			showPrompt: true,
 		} );
 
 		twoStepAuthorization.backupCodes( this.onRequestComplete );
@@ -56,14 +56,14 @@ module.exports = React.createClass( {
 	onRequestComplete: function( error, data ) {
 		if ( error ) {
 			this.setState( {
-				lastError: this.translate( 'Unable to obtain backup codes.  Please try again later.' )
+				lastError: this.translate( 'Unable to obtain backup codes.  Please try again later.' ),
 			} );
 			return;
 		}
 
 		this.setState( {
 			backupCodes: data.codes,
-			generatingCodes: false
+			generatingCodes: false,
 		} );
 	},
 
@@ -78,7 +78,7 @@ module.exports = React.createClass( {
 		this.setState( {
 			printed: true,
 			verified: true,
-			showPrompt: false
+			showPrompt: false,
 		} );
 	},
 
@@ -128,20 +128,16 @@ module.exports = React.createClass( {
 		return (
 			<div>
 				<p>
-					{
-						this.translate(
-							'Backup codes let you access your account if your phone is ' +
+					{ this.translate(
+						'Backup codes let you access your account if your phone is ' +
 							'lost, stolen, or if you run it through the washing ' +
-							'machine and the bag of rice trick doesn\'t work.'
-						)
-					}
+							"machine and the bag of rice trick doesn't work."
+					) }
 				</p>
 
 				{ this.renderStatus() }
 
-				{ this.state.showPrompt &&
-					<Security2faBackupCodesPrompt onSuccess={ this.onVerified } />
-				}
+				{ this.state.showPrompt && <Security2faBackupCodesPrompt onSuccess={ this.onVerified } /> }
 			</div>
 		);
 	},
@@ -159,13 +155,11 @@ module.exports = React.createClass( {
 					</Button>
 				</SectionHeader>
 				<Card>
-					{
-						this.state.generatingCodes || this.state.backupCodes.length
+					{ this.state.generatingCodes || this.state.backupCodes.length
 						? this.renderList()
-						: this.renderPrompt()
-					}
+						: this.renderPrompt() }
 				</Card>
 			</div>
 		);
-	}
+	},
 } );

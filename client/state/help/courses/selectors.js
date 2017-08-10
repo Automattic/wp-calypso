@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns an array of course objects.
  *

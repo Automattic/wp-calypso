@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,25 +24,28 @@ class PlansNavigation extends React.Component {
 	static propTypes = {
 		cart: React.PropTypes.object,
 		path: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired
+		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] )
+			.isRequired,
 	};
 
 	state = {
 		cartVisible: false,
-		cartShowKeepSearching: false
+		cartShowKeepSearching: false,
 	};
 
 	componentWillMount() {
-		this.dispatchToken = Dispatcher.register( function( payload ) {
-			if ( payload.action.type === upgradesActionTypes.CART_POPUP_OPEN ) {
-				this.setState( { cartVisible: true, cartShowKeepSearching: payload.action.options.showKeepSearching } );
-			} else if ( payload.action.type === upgradesActionTypes.CART_POPUP_CLOSE ) {
-				this.setState( { cartVisible: false } );
-			}
-		}.bind( this ) );
+		this.dispatchToken = Dispatcher.register(
+			function( payload ) {
+				if ( payload.action.type === upgradesActionTypes.CART_POPUP_OPEN ) {
+					this.setState( {
+						cartVisible: true,
+						cartShowKeepSearching: payload.action.options.showKeepSearching,
+					} );
+				} else if ( payload.action.type === upgradesActionTypes.CART_POPUP_CLOSE ) {
+					this.setState( { cartVisible: false } );
+				}
+			}.bind( this )
+		);
 	}
 
 	componentWillUnmount() {
@@ -80,37 +84,49 @@ class PlansNavigation extends React.Component {
 
 		return (
 			<SectionNav
-					hasPinnedItems={ viewport.isMobile() }
-					selectedText={ sectionTitle }
-					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }>
+				hasPinnedItems={ viewport.isMobile() }
+				selectedText={ sectionTitle }
+				onMobileNavPanelOpen={ this.onMobileNavPanelOpen }
+			>
 				<NavTabs label="Section" selectedText={ sectionTitle }>
 					{ hasPlan &&
-						<NavItem path={ `/plans/my-plan/${ site.slug }` } key="myPlan" selected={ path === '/plans/my-plan' }>
+						<NavItem
+							path={ `/plans/my-plan/${ site.slug }` }
+							key="myPlan"
+							selected={ path === '/plans/my-plan' }
+						>
 							{ translate( 'My Plan' ) }
-						</NavItem>
-					}
-					<NavItem path={ `/plans/${ site.slug }` } key="plans" selected={ path === '/plans' || path === '/plans/monthly' }>
+						</NavItem> }
+					<NavItem
+						path={ `/plans/${ site.slug }` }
+						key="plans"
+						selected={ path === '/plans' || path === '/plans/monthly' }
+					>
 						{ translate( 'Plans' ) }
 					</NavItem>
 					{ canManageDomain &&
-						<NavItem path={ `/domains/manage/${ site.slug }` } key="domains"
-							selected={ path === '/domains/manage' || path === '/domains/add' }>
+						<NavItem
+							path={ `/domains/manage/${ site.slug }` }
+							key="domains"
+							selected={ path === '/domains/manage' || path === '/domains/add' }
+						>
 							{ translate( 'Domains' ) }
-						</NavItem>
-					}
+						</NavItem> }
 					{ canManageDomain &&
-						<NavItem path={ `/domains/manage/email/${ site.slug }` } key="googleApps"
-							selected={ path === '/domains/manage/email' }>
+						<NavItem
+							path={ `/domains/manage/email/${ site.slug }` }
+							key="googleApps"
+							selected={ path === '/domains/manage/email' }
+						>
 							{ translate( 'Email' ) }
-						</NavItem>
-					}
+						</NavItem> }
 				</NavTabs>
 				{ this.cartToggleButton() }
 			</SectionNav>
 		);
 	}
 
-	toggleCartVisibility = ( event ) => {
+	toggleCartVisibility = event => {
 		if ( event ) {
 			event.preventDefault();
 		}
@@ -140,7 +156,8 @@ class PlansNavigation extends React.Component {
 				visible={ this.state.cartVisible }
 				showKeepSearching={ this.state.cartShowKeepSearching }
 				onKeepSearchingClick={ this.onKeepSearchingClick }
-				path={ this.props.path } />
+				path={ this.props.path }
+			/>
 		);
 	}
 }

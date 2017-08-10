@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -30,7 +31,8 @@ class LegendItem extends PureComponent {
 						onChange={ this.clickHandler }
 						type="checkbox"
 					/>
-					<span className={ this.props.className }></span>{ this.props.label }
+					<span className={ this.props.className } />
+					{ this.props.label }
 				</label>
 			</li>
 		);
@@ -63,17 +65,19 @@ class Legend extends Component {
 
 		const legendItems = this.props.availableCharts.map( function( legendItem, index ) {
 			const colorClass = legendColors[ index ],
-				checked = ( -1 !== this.props.activeCharts.indexOf( legendItem ) ),
+				checked = -1 !== this.props.activeCharts.indexOf( legendItem ),
 				tab = find( this.props.tabs, { attr: legendItem } );
 
-			return <LegendItem
-				key={ index }
-				className={ colorClass }
-				label={ tab.label }
-				attr={ tab.attr }
-				changeHandler={ this.onFilterChange }
-				checked={ checked }
-			/>;
+			return (
+				<LegendItem
+					key={ index }
+					className={ colorClass }
+					label={ tab.label }
+					attr={ tab.attr }
+					changeHandler={ this.onFilterChange }
+					checked={ checked }
+				/>
+			);
 		}, this );
 
 		return (
@@ -81,7 +85,7 @@ class Legend extends Component {
 				<ul className="chart__legend-options">
 					<li className="chart__legend-option" key="default-tab">
 						<span className="chart__legend-label">
-							<span className="chart__legend-color is-wordpress-blue"></span>
+							<span className="chart__legend-color is-wordpress-blue" />
 							{ activeTab.label }
 						</span>
 					</li>

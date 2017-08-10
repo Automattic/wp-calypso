@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,8 +17,7 @@ class QueryPostCounts extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId &&
-				this.props.type === nextProps.type ) {
+		if ( this.props.siteId === nextProps.siteId && this.props.type === nextProps.type ) {
 			return;
 		}
 
@@ -41,14 +41,14 @@ QueryPostCounts.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	type: PropTypes.string.isRequired,
 	requesting: PropTypes.bool,
-	requestPostCounts: PropTypes.func
+	requestPostCounts: PropTypes.func,
 };
 
 export default connect(
 	( state, ownProps ) => {
 		const { siteId, type } = ownProps;
 		return {
-			requesting: isRequestingPostCounts( state, siteId, type )
+			requesting: isRequestingPostCounts( state, siteId, type ),
 		};
 	},
 	{ requestPostCounts }

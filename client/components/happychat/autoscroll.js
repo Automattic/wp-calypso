@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Mixin that will scroll to the bottom of a scrollable container whenever it's rendered.
  * When the scrollable element is scrolled manually by the user autoscroll is disabled until the
@@ -66,5 +67,5 @@ export default {
 		if ( this._autoscroll_enabled !== enable ) {
 			this._autoscroll_enabled = enable;
 		}
-	}
+	},
 };

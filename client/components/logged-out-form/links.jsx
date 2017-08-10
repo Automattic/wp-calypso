@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +11,7 @@ export default React.createClass( {
 
 	propTypes: {
 		children: React.PropTypes.node.isRequired,
-		className: React.PropTypes.string
+		className: React.PropTypes.string,
 	},
 
 	render() {
@@ -22,5 +23,5 @@ export default React.createClass( {
 				{ this.props.children }
 			</div>
 		);
-	}
+	},
 } );

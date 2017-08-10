@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,7 +25,7 @@ var DEFAULT_FILES = [
 	'docs/coding-guidelines.md',
 	'docs/coding-guidelines/javascript.md',
 	'docs/coding-guidelines/css.md',
-	'docs/coding-guidelines/html.md'
+	'docs/coding-guidelines/html.md',
 ];
 
 /**
@@ -36,12 +37,12 @@ const log = debug( 'calypso:devdocs' );
 module.exports = React.createClass( {
 	displayName: 'Devdocs',
 	propTypes: {
-		term: React.PropTypes.string
+		term: React.PropTypes.string,
 	},
 
 	getDefaultProps: function() {
 		return {
-			term: ''
+			term: '',
 		};
 	},
 
@@ -51,7 +52,7 @@ module.exports = React.createClass( {
 			results: [],
 			defaultResults: [],
 			inputValue: '',
-			searching: false
+			searching: false,
 		};
 	},
 
@@ -61,13 +62,16 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		DocService.list( DEFAULT_FILES, function( err, results ) {
-			if ( !err && this.isMounted() ) {
-				this.setState( {
-					defaultResults: results
-				} );
-			}
-		}.bind( this ) );
+		DocService.list(
+			DEFAULT_FILES,
+			function( err, results ) {
+				if ( ! err && this.isMounted() ) {
+					this.setState( {
+						defaultResults: results,
+					} );
+				}
+			}.bind( this )
+		);
 	},
 
 	componentDidMount: function() {
@@ -87,14 +91,19 @@ module.exports = React.createClass( {
 	},
 
 	notFound: function() {
-		return this.state.inputValue && this.state.term && ! this.state.results.length && ! this.state.searching;
+		return (
+			this.state.inputValue &&
+			this.state.term &&
+			! this.state.results.length &&
+			! this.state.searching
+		);
 	},
 
 	onSearchChange: function( term ) {
 		this.setState( {
 			inputValue: term,
 			term: term,
-			searching: !! term
+			searching: !! term,
 		} );
 	},
 
@@ -102,16 +111,19 @@ module.exports = React.createClass( {
 		if ( ! term ) {
 			return;
 		}
-		DocService.search( term, function( err, results ) {
-			if ( err ) {
-				log( 'search error: %o', err );
-			}
+		DocService.search(
+			term,
+			function( err, results ) {
+				if ( err ) {
+					log( 'search error: %o', err );
+				}
 
-			this.setState( {
-				results: results,
-				searching: false
-			} );
-		}.bind( this ) );
+				this.setState( {
+					results: results,
+					searching: false,
+				} );
+			}.bind( this )
+		);
 	},
 
 	results: function() {
@@ -133,9 +145,13 @@ module.exports = React.createClass( {
 				<Card compact className="devdocs__result" key={ result.path }>
 					<header className="devdocs__result-header">
 						<h1 className="devdocs__result-title">
-							<a className="devdocs__result-link" href={ url }>{ result.title }</a>
+							<a className="devdocs__result-link" href={ url }>
+								{ result.title }
+							</a>
 						</h1>
-						<h2 className="devdocs__result-path">{ result.path }</h2>
+						<h2 className="devdocs__result-path">
+							{ result.path }
+						</h2>
 					</header>
 					{ this.snippet( result ) }
 				</Card>
@@ -145,14 +161,18 @@ module.exports = React.createClass( {
 
 	snippet: function( result ) {
 		// split around <mark> tags to avoid setting unescaped inner HTML
-		var parts = result.snippet.split(/(<mark>.*?<\/mark>)/);
+		var parts = result.snippet.split( /(<mark>.*?<\/mark>)/ );
 
 		return (
 			<div className="devdocs__result-snippet" key={ 'snippet' + result.path }>
 				{ parts.map( function( part, i ) {
 					var markMatch = part.match( /<mark>(.*?)<\/mark>/ );
 					if ( markMatch ) {
-						return <mark key={ 'mark' + i }>{ markMatch[ 1 ] }</mark>;
+						return (
+							<mark key={ 'mark' + i }>
+								{ markMatch[ 1 ] }
+							</mark>
+						);
 					} else {
 						return part;
 					}
@@ -178,5 +198,5 @@ module.exports = React.createClass( {
 				</div>
 			</Main>
 		);
-	}
+	},
 } );

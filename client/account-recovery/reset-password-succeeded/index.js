@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +11,7 @@ import config from 'config';
  */
 import EmptyContent from 'components/empty-content';
 
-const ResetPasswordSucceeded = ( props ) => {
+const ResetPasswordSucceeded = props => {
 	const { translate } = props;
 
 	return (
@@ -21,7 +22,7 @@ const ResetPasswordSucceeded = ( props ) => {
 			action={ translate( 'Log in' ) }
 			actionURL={ config( 'login_url' ) }
 		/>
-    );
+	);
 };
 
 export default localize( ResetPasswordSucceeded );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,11 +16,7 @@ import SectionHeader from 'components/section-header';
 import SectionNav from 'components/section-nav';
 
 const Placeholder = ( { translate } ) => {
-	const header = (
-		<div className="site-settings__placeholder-item">
-			General Settings
-		</div>
-	);
+	const header = <div className="site-settings__placeholder-item">General Settings</div>;
 
 	return (
 		<Main className="site-settings__placeholder">
@@ -56,9 +53,7 @@ const Placeholder = ( { translate } ) => {
 			<SectionHeader label={ header } />
 
 			<Card>
-				<div className="site-settings__placeholder-item">
-					Example content here
-				</div>
+				<div className="site-settings__placeholder-item">Example content here</div>
 				<div className="site-settings__placeholder-item">
 					Example content here<br />
 					Example content here<br />

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -40,19 +41,28 @@ const SiteTitleControl = React.createClass( {
 		return (
 			<div className="site-title">
 				<FormFieldset>
-					<FormLabel htmlFor="blogname">{ this.translate( 'Site Title' ) }</FormLabel>
-					<FormTextInput name="blogname" value={ this.props.blogname } onChange={ this.onChangeSiteTitle } />
+					<FormLabel htmlFor="blogname">
+						{ this.translate( 'Site Title' ) }
+					</FormLabel>
+					<FormTextInput
+						name="blogname"
+						value={ this.props.blogname }
+						onChange={ this.onChangeSiteTitle }
+					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="blogdescription">{ this.translate( 'Tagline' ) }</FormLabel>
-					<FormTextInput name="blogdescription"
+					<FormLabel htmlFor="blogdescription">
+						{ this.translate( 'Tagline' ) }
+					</FormLabel>
+					<FormTextInput
+						name="blogdescription"
 						value={ this.props.blogdescription }
 						onChange={ this.onChangeDescription }
 					/>
 				</FormFieldset>
 			</div>
 		);
-	}
+	},
 } );
 
 export default SiteTitleControl;

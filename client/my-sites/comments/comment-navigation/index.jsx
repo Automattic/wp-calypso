@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,18 +22,14 @@ import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 import UrlSearch from 'lib/url-search';
 import { isEnabled } from 'config';
-import {
-	bumpStat,
-	composeAnalytics,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 const bulkActions = {
-	unapproved: [ 'approve', 'spam', 'trash' ],
-	approved: [ 'unapprove', 'spam', 'trash' ],
-	spam: [ 'approve', 'delete' ],
-	trash: [ 'approve', 'spam', 'delete' ],
-	all: [ 'approve', 'unapprove', 'spam', 'trash' ],
+	unapproved: [ 'approve', 'spam', 'trash' ],
+	approved: [ 'unapprove', 'spam', 'trash' ],
+	spam: [ 'approve', 'delete' ],
+	trash: [ 'approve', 'spam', 'delete' ],
+	all: [ 'approve', 'unapprove', 'spam', 'trash' ],
 };
 
 export class CommentNavigation extends Component {
@@ -68,11 +65,12 @@ export class CommentNavigation extends Component {
 		}
 
 		return navItems;
-	}
+	};
 
-	getStatusPath = status => 'unapproved' !== status
-		? `/comments/${ status }/${ this.props.siteFragment }`
-		: `/comments/pending/${ this.props.siteFragment }`;
+	getStatusPath = status =>
+		'unapproved' !== status
+			? `/comments/${ status }/${ this.props.siteFragment }`
+			: `/comments/pending/${ this.props.siteFragment }`;
 
 	statusHasAction = action => includes( bulkActions[ this.props.status ], action );
 
@@ -95,74 +93,66 @@ export class CommentNavigation extends Component {
 
 		if ( isBulkEdit ) {
 			return (
-			<SectionNav className="comment-navigation is-bulk-edit">
-				<CommentNavigationTab className="comment-navigation__bulk-count">
-					<FormCheckbox
-						checked={ isSelectedAll }
-						onChange={ toggleSelectAll }
-					/>
-					<Count count={ selectedCount } />
-				</CommentNavigationTab>
-				<CommentNavigationTab className="comment-navigation__actions">
-					<ButtonGroup>
-						{ this.statusHasAction( 'approve' ) &&
-							<Button
-								compact
-								disabled={ ! selectedCount }
-								onClick={ setBulkStatus( 'approved' ) }
-							>
-								{ translate( 'Approve' ) }
-							</Button>
-						}
-						{ this.statusHasAction( 'unapprove' ) &&
-							<Button
-								compact
-								disabled={ ! selectedCount }
-								onClick={ setBulkStatus( 'unapproved' ) }
-							>
-								{ translate( 'Unapprove' ) }
-							</Button>
-						}
-					</ButtonGroup>
-					<ButtonGroup>
-						{ this.statusHasAction( 'spam' ) &&
-							<Button
-								compact
-								scary
-								disabled={ ! selectedCount }
-								onClick={ setBulkStatus( 'spam' ) }
-							>
-								{ translate( 'Spam' ) }
-							</Button>
-						}
-						{ this.statusHasAction( 'trash' ) &&
-							<Button
-								compact
-								scary
-								disabled={ ! selectedCount }
-								onClick={ setBulkStatus( 'trash' ) }
-							>
-								{ translate( 'Trash' ) }
-							</Button>
-						}
-						{ this.statusHasAction( 'delete' ) &&
-							<Button
-								compact
-								scary
-								disabled={ ! selectedCount }
-								onClick={ setBulkStatus( 'delete' ) }
-							>
-								{ translate( 'Delete' ) }
-							</Button>
-						}
-					</ButtonGroup>
-				</CommentNavigationTab>
-				<CommentNavigationTab className="comment-navigation__close-bulk">
-					<a onClick={ toggleBulkEdit }>
-						<Gridicon icon="cross" />
-					</a>
-				</CommentNavigationTab>
-			</SectionNav>
+				<SectionNav className="comment-navigation is-bulk-edit">
+					<CommentNavigationTab className="comment-navigation__bulk-count">
+						<FormCheckbox checked={ isSelectedAll } onChange={ toggleSelectAll } />
+						<Count count={ selectedCount } />
+					</CommentNavigationTab>
+					<CommentNavigationTab className="comment-navigation__actions">
+						<ButtonGroup>
+							{ this.statusHasAction( 'approve' ) &&
+								<Button
+									compact
+									disabled={ ! selectedCount }
+									onClick={ setBulkStatus( 'approved' ) }
+								>
+									{ translate( 'Approve' ) }
+								</Button> }
+							{ this.statusHasAction( 'unapprove' ) &&
+								<Button
+									compact
+									disabled={ ! selectedCount }
+									onClick={ setBulkStatus( 'unapproved' ) }
+								>
+									{ translate( 'Unapprove' ) }
+								</Button> }
+						</ButtonGroup>
+						<ButtonGroup>
+							{ this.statusHasAction( 'spam' ) &&
+								<Button
+									compact
+									scary
+									disabled={ ! selectedCount }
+									onClick={ setBulkStatus( 'spam' ) }
+								>
+									{ translate( 'Spam' ) }
+								</Button> }
+							{ this.statusHasAction( 'trash' ) &&
+								<Button
+									compact
+									scary
+									disabled={ ! selectedCount }
+									onClick={ setBulkStatus( 'trash' ) }
+								>
+									{ translate( 'Trash' ) }
+								</Button> }
+							{ this.statusHasAction( 'delete' ) &&
+								<Button
+									compact
+									scary
+									disabled={ ! selectedCount }
+									onClick={ setBulkStatus( 'delete' ) }
+								>
+									{ translate( 'Delete' ) }
+								</Button> }
+						</ButtonGroup>
+					</CommentNavigationTab>
+					<CommentNavigationTab className="comment-navigation__close-bulk">
+						<a onClick={ toggleBulkEdit }>
+							<Gridicon icon="cross" />
+						</a>
+					</CommentNavigationTab>
+				</SectionNav>
 			);
 		}
 
@@ -186,28 +176,21 @@ export class CommentNavigation extends Component {
 						<Button compact onClick={ toggleBulkEdit }>
 							{ translate( 'Bulk Edit' ) }
 						</Button>
-					</CommentNavigationTab>
-				}
+					</CommentNavigationTab> }
 
 				{ hasSearch &&
-					<Search
-						delaySearch
-						fitsContainer
-						initialValue={ query }
-						onSearch={ doSearch }
-						pinned
-					/>
-				}
+					<Search delaySearch fitsContainer initialValue={ query } onSearch={ doSearch } pinned /> }
 			</SectionNav>
 		);
 	}
 }
 
 const mapDispatchToProps = {
-	recordChangeFilter: status => composeAnalytics(
-		recordTracksEvent( 'calypso_comment_management_change_filter', { status } ),
-		bumpStat( 'calypso_comment_management', 'change_filter_to_' + status )
-	),
+	recordChangeFilter: status =>
+		composeAnalytics(
+			recordTracksEvent( 'calypso_comment_management_change_filter', { status } ),
+			bumpStat( 'calypso_comment_management', 'change_filter_to_' + status )
+		),
 };
 
 export default connect( null, mapDispatchToProps )( localize( UrlSearch( CommentNavigation ) ) );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,9 +12,7 @@ import { createStore } from 'redux';
 import { reducer } from 'state';
 
 describe( 'dependency-store', function() {
-	let SignupProgressStore,
-		SignupDependencyStore,
-		SignupActions;
+	let SignupProgressStore, SignupDependencyStore, SignupActions;
 
 	useFakeDom();
 	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
@@ -45,7 +44,9 @@ describe( 'dependency-store', function() {
 
 		assert.deepEqual( SignupDependencyStore.get(), { bearer_token: 'TOKEN' } );
 
-		SignupActions.processedSignupStep( { stepName: 'userCreation', }, [], { bearer_token: 'TOKEN2' } );
+		SignupActions.processedSignupStep( { stepName: 'userCreation' }, [], {
+			bearer_token: 'TOKEN2',
+		} );
 
 		assert.deepEqual( SignupDependencyStore.get(), { bearer_token: 'TOKEN2' } );
 	} );
@@ -53,7 +54,7 @@ describe( 'dependency-store', function() {
 	it( 'should store dependencies if they are provided in the `PROVIDE_SIGNUP_DEPENDENCIES` action', () => {
 		const dependencies = {
 			foo: 'bar',
-			baz: 'test'
+			baz: 'test',
 		};
 
 		SignupActions.provideDependencies( dependencies );

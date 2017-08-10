@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -22,7 +23,7 @@ function core() {
 			}
 
 			return next;
-		}
+		},
 	};
 }
 

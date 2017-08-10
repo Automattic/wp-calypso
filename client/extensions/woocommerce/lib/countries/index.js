@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,13 +19,10 @@ import US from './US';
 // to ../../my-sites/sidebar/sidebar.jsx in the allowedCountryCodes
 
 export const getCountries = () => {
-	return [
-		US(),
-		CA(),
-	];
+	return [ US(), CA() ];
 };
 
-export const getCountryData = ( country ) => {
+export const getCountryData = country => {
 	const countryData = find( getCountries(), { code: country } );
 	if ( ! countryData ) {
 		return null;

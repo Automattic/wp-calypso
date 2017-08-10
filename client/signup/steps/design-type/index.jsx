@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,17 +22,21 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 export class DesignTypeStep extends Component {
 	static propTypes = {
-		translate: PropTypes.func
+		translate: PropTypes.func,
 	};
 
 	static defaultProps = {
-		translate: identity
+		translate: identity,
 	};
 
-	getChoiceHandlers = memoize( ( ) =>
-		transform( this.getChoices(), ( handlers, choice ) => {
-			handlers[ choice.type ] = ( event ) => this.handleChoiceClick( event, choice.type );
-		}, {} )
+	getChoiceHandlers = memoize( () =>
+		transform(
+			this.getChoices(),
+			( handlers, choice ) => {
+				handlers[ choice.type ] = event => this.handleChoiceClick( event, choice.type );
+			},
+			{}
+		)
 	);
 
 	getChoices() {
@@ -41,13 +46,17 @@ export class DesignTypeStep extends Component {
 			{
 				type: 'blog',
 				label: translate( 'Start with a blog' ),
-				description: translate( 'To share your ideas, stories, and photographs with your followers.' ),
+				description: translate(
+					'To share your ideas, stories, and photographs with your followers.'
+				),
 				image: <BlogImage />,
 			},
 			{
 				type: 'page',
 				label: translate( 'Start with a website' ),
-				description: translate( 'To promote your business, organization, or brand and connect with your audience.' ),
+				description: translate(
+					'To promote your business, organization, or brand and connect with your audience.'
+				),
 				image: <PageImage />,
 			},
 			{
@@ -59,7 +68,7 @@ export class DesignTypeStep extends Component {
 		];
 	}
 
-	renderChoice = ( choice ) => {
+	renderChoice = choice => {
 		const choiceHandlers = this.getChoiceHandlers();
 
 		return (
@@ -73,12 +82,16 @@ export class DesignTypeStep extends Component {
 					{ choice.image }
 				</div>
 				<div className="design-type__choice-copy">
-					<span className="button is-compact design-type__cta">{ choice.label }</span>
-					<p className="design-type__choice-description">{ choice.description }</p>
+					<span className="button is-compact design-type__cta">
+						{ choice.label }
+					</span>
+					<p className="design-type__choice-description">
+						{ choice.description }
+					</p>
 				</div>
 			</Card>
 		);
-	}
+	};
 
 	renderChoices() {
 		return (
@@ -86,7 +99,9 @@ export class DesignTypeStep extends Component {
 				{ this.getChoices().map( this.renderChoice ) }
 				<div className="design-type__choice is-spacergif" />
 				<p className="design-type__disclaimer">
-					{ this.props.translate( 'Not sure? Pick the closest option. You can always change your settings later.' ) }
+					{ this.props.translate(
+						'Not sure? Pick the closest option. You can always change your settings later.'
+					) }
 				</p>
 			</div>
 		);
@@ -102,11 +117,14 @@ export class DesignTypeStep extends Component {
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
 					fallbackHeaderText={ translate( 'What would you like your homepage to look like?' ) }
-					fallbackSubHeaderText={ translate( 'This will help us figure out what kinds of designs to show you.' ) }
-					headerText={ translate( 'Hello! Let\'s create your new site.' ) }
+					fallbackSubHeaderText={ translate(
+						'This will help us figure out what kinds of designs to show you.'
+					) }
+					headerText={ translate( "Hello! Let's create your new site." ) }
 					subHeaderText={ translate( 'What kind of site do you need? Choose an option below:' ) }
 					signupProgress={ this.props.signupProgress }
-					stepContent={ this.renderChoices() } />
+					stepContent={ this.renderChoices() }
+				/>
 			</div>
 		);
 	}
@@ -125,9 +143,6 @@ export class DesignTypeStep extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent
-	}
-)( localize( DesignTypeStep ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( DesignTypeStep ) );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,16 +18,13 @@ export default React.createClass( {
 
 	propTypes: {
 		siteId: PropTypes.number.isRequired,
-		itemId: PropTypes.oneOfType( [
-			PropTypes.number,
-			PropTypes.string
-		] ).isRequired,
-		maxWidth: PropTypes.number
+		itemId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ).isRequired,
+		maxWidth: PropTypes.number,
 	},
 
 	getInitialState: function() {
 		return {
-			image: null
+			image: null,
 		};
 	},
 
@@ -72,7 +70,7 @@ export default React.createClass( {
 			if ( image && image.ID !== this.props.itemId ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				PostActions.edit( {
-					featured_image: image.ID
+					featured_image: image.ID,
 				} );
 			}
 		} );
@@ -80,9 +78,7 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<EditorFeaturedImagePreview
-				image={ this.state.image }
-				maxWidth={ this.props.maxWidth } />
+			<EditorFeaturedImagePreview image={ this.state.image } maxWidth={ this.props.maxWidth } />
 		);
-	}
+	},
 } );

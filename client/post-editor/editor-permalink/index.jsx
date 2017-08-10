@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +24,7 @@ class EditorPermalink extends Component {
 		path: PropTypes.string,
 		isEditable: PropTypes.bool,
 		translate: PropTypes.func,
-		slug: PropTypes.string
+		slug: PropTypes.string,
 	};
 
 	constructor() {
@@ -38,7 +39,7 @@ class EditorPermalink extends Component {
 			showPopover: false,
 			popoverVisible: false,
 			showCopyConfirmation: false,
-			tooltip: false
+			tooltip: false,
 		};
 	}
 
@@ -48,7 +49,7 @@ class EditorPermalink extends Component {
 			// DOM after its `componentDidUpdate` finishes executing, so we
 			// wait to render the clipboard button until after the update.
 			this.setState( {
-				popoverVisible: this.state.showPopover
+				popoverVisible: this.state.showPopover,
 			} );
 		}
 	}
@@ -60,7 +61,7 @@ class EditorPermalink extends Component {
 	showPopover() {
 		this.setState( {
 			showPopover: ! this.state.showPopover,
-			tooltip: false
+			tooltip: false,
 		} );
 	}
 
@@ -72,13 +73,13 @@ class EditorPermalink extends Component {
 
 	onCopy() {
 		this.setState( {
-			showCopyConfirmation: true
+			showCopyConfirmation: true,
 		} );
 
 		clearTimeout( this.dismissCopyConfirmation );
 		this.dismissCopyConfirmation = setTimeout( () => {
 			this.setState( {
-				showCopyConfirmation: false
+				showCopyConfirmation: false,
 			} );
 		}, 4000 );
 	}
@@ -105,10 +106,7 @@ class EditorPermalink extends Component {
 		}
 
 		return (
-			<ClipboardButton
-				text={ path + slug }
-				onCopy={ this.onCopy }
-				compact>
+			<ClipboardButton text={ path + slug } onCopy={ this.onCopy } compact>
 				{ label }
 			</ClipboardButton>
 		);
@@ -125,7 +123,11 @@ class EditorPermalink extends Component {
 		}
 
 		return (
-			<div className="editor-permalink" onMouseEnter={ this.showTooltip } onMouseLeave={ this.hideTooltip }>
+			<div
+				className="editor-permalink"
+				onMouseEnter={ this.showTooltip }
+				onMouseLeave={ this.hideTooltip }
+			>
 				<Gridicon
 					className="editor-permalink__toggle"
 					icon="link"
@@ -158,13 +160,11 @@ class EditorPermalink extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
 
-		return {
-			slug: getEditedPostSlug( state, siteId, postId )
-		};
-	},
-)( localize( EditorPermalink ) );
+	return {
+		slug: getEditedPostSlug( state, siteId, postId ),
+	};
+} )( localize( EditorPermalink ) );

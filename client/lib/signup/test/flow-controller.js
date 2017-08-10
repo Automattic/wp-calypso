@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -39,13 +40,15 @@ describe( 'flow-controller', function() {
 	} );
 
 	describe( 'controlling a simple flow', function() {
-		it( 'should run the onComplete callback with the flow destination when the flow is completed', function( done ) {
+		it( 'should run the onComplete callback with the flow destination when the flow is completed', function(
+			done
+		) {
 			signupFlowController = SignupFlowController( {
 				flowName: 'simple_flow',
 				onComplete: function( dependencies, destination ) {
 					assert.equal( destination, '/' );
 					done();
-				}
+				},
 			} );
 
 			SignupActions.submitSignupStep( { stepName: 'stepA' } );
@@ -63,7 +66,7 @@ describe( 'flow-controller', function() {
 
 			SignupActions.submitSignupStep( {
 				stepName: 'asyncStep',
-				done: done
+				done: done,
 			} );
 		} );
 
@@ -71,7 +74,7 @@ describe( 'flow-controller', function() {
 			SignupActions.submitSignupStep( { stepName: 'userCreation' }, [], { bearer_token: 'TOKEN' } );
 			SignupActions.submitSignupStep( {
 				stepName: 'asyncStep',
-				done: done
+				done: done,
 			} );
 
 			// resubmit the first step to initiate another call to SignupFlowController#_process
@@ -87,25 +90,25 @@ describe( 'flow-controller', function() {
 				onComplete: function( dependencies, destination ) {
 					assert.equal( destination, '/checkout/testsite.wordpress.com' );
 					done();
-				}
+				},
 			} );
 
 			SignupActions.submitSignupStep( {
 				stepName: 'siteCreation',
 				stepCallback: function( dependencies ) {
 					assert.deepEqual( dependencies, { bearer_token: 'TOKEN' } );
-				}
+				},
 			} );
 
 			SignupActions.submitSignupStep( {
-				stepName: 'userCreation'
+				stepName: 'userCreation',
 			} );
 		} );
 
 		it( 'should throw an error when the flow is completed without all dependencies provided', function() {
 			signupFlowController = SignupFlowController( {
 				flowName: 'invalid_flow_with_dependencies',
-				onComplete: function() {}
+				onComplete: function() {},
 			} );
 
 			SignupActions.submitSignupStep( { stepName: 'siteCreation' } );
@@ -116,16 +119,19 @@ describe( 'flow-controller', function() {
 	} );
 
 	describe( 'controlling a flow w/ a delayed step', function() {
-		it( 'should submit steps with the delayApiRequestUntilComplete once the flow is complete', function( done ) {
+		it( 'should submit steps with the delayApiRequestUntilComplete once the flow is complete', function(
+			done
+		) {
 			signupFlowController = SignupFlowController( {
 				flowName: 'flowWithDelay',
-				onComplete: ary( done, 0 )
+				onComplete: ary( done, 0 ),
 			} );
 
 			SignupActions.submitSignupStep( {
-				stepName: 'delayedStep', stepCallback: function() {
+				stepName: 'delayedStep',
+				stepCallback: function() {
 					assert.equal( SignupProgressStore.get().length, 2 );
-				}
+				},
 			} );
 
 			defer( function() {
@@ -136,13 +142,14 @@ describe( 'flow-controller', function() {
 		it( 'should not submit delayed steps if some steps are in-progress', function( done ) {
 			signupFlowController = SignupFlowController( {
 				flowName: 'flowWithDelay',
-				onComplete: ary( done, 0 )
+				onComplete: ary( done, 0 ),
 			} );
 
 			SignupActions.submitSignupStep( {
-				stepName: 'delayedStep', stepCallback: function() {
+				stepName: 'delayedStep',
+				stepCallback: function() {
 					assert.equal( SignupProgressStore.get()[ 1 ].status, 'completed' );
-				}
+				},
 			} );
 
 			defer( function() {
@@ -161,7 +168,7 @@ describe( 'flow-controller', function() {
 		it( 'should throw an error if the given flow requires dependencies from query but none are given', function() {
 			assert.throws( function() {
 				SignupFlowController( {
-					flowName: 'flowWithProvidedDependencies'
+					flowName: 'flowWithProvidedDependencies',
 				} );
 			} );
 		} );
@@ -170,11 +177,11 @@ describe( 'flow-controller', function() {
 			signupFlowController = SignupFlowController( {
 				flowName: 'flowWithProvidedDependencies',
 				providedDependencies: { siteSlug: 'foo' },
-				onComplete: ary( done, 0 )
+				onComplete: ary( done, 0 ),
 			} );
 
 			SignupActions.submitSignupStep( {
-				stepName: 'stepRequiringSiteSlug'
+				stepName: 'stepRequiringSiteSlug',
 			} );
 		} );
 	} );

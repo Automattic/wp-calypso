@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Module exports.
  */
@@ -15,6 +16,9 @@ module.exports = {
 	 */
 	hasTouch: function() {
 		/* global DocumentTouch:true */
-		return window && ( ( 'ontouchstart' in window ) || window.DocumentTouch && document instanceof DocumentTouch );
-	}
+		return (
+			window &&
+			( 'ontouchstart' in window || ( window.DocumentTouch && document instanceof DocumentTouch ) )
+		);
+	},
 };

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,15 +10,15 @@ import React from 'react';
 import CountedTextarea from 'components/forms/counted-textarea';
 
 export default class extends React.PureComponent {
-    static displayName = 'CountedTextareas';
+	static displayName = 'CountedTextareas';
 
 	state = {
-		value: 'Hello World!'
+		value: 'Hello World!',
 	};
 
 	onChange = event => {
 		this.setState( {
-			value: event.target.value
+			value: event.target.value,
 		} );
 	};
 
@@ -26,7 +27,8 @@ export default class extends React.PureComponent {
 			<CountedTextarea
 				value={ this.state.value }
 				onChange={ this.onChange }
-				acceptableLength={ 20 } />
+				acceptableLength={ 20 }
+			/>
 		);
 	}
 }

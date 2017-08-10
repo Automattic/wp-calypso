@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,16 +18,11 @@ class PaginationPage extends Component {
 		currentPage: React.PropTypes.number.isRequired,
 		totalPages: React.PropTypes.number.isRequired,
 		pageClick: React.PropTypes.func.isRequired,
-	}
+	};
 
-	clickHandler = ( event ) => {
+	clickHandler = event => {
 		event.stopPropagation();
-		const {
-			currentPage,
-			pageClick,
-			pageNumber,
-			totalPages
-		} = this.props;
+		const { currentPage, pageClick, pageNumber, totalPages } = this.props;
 
 		switch ( pageNumber ) {
 			case 'previous':
@@ -48,15 +44,10 @@ class PaginationPage extends Component {
 				pageClick( pageNumber );
 				break;
 		}
-	}
+	};
 
 	render() {
-		const {
-			currentPage,
-			numberFormat,
-			pageNumber,
-			totalPages,
-		} = this.props;
+		const { currentPage, numberFormat, pageNumber, totalPages } = this.props;
 
 		switch ( pageNumber ) {
 			case 'more':

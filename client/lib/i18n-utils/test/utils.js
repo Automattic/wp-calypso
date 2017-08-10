@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -38,7 +39,7 @@ describe( 'utils', function() {
 		it( 'adds a locale to the path, keeping query string intact', function() {
 			assert.equal(
 				addLocaleToPath( '/start/flow/step?foo=bar', 'fr' ),
-				'/start/flow/step/fr?foo=bar',
+				'/start/flow/step/fr?foo=bar'
 			);
 		} );
 	} );
@@ -54,7 +55,7 @@ describe( 'utils', function() {
 			assert.equal( removeLocaleFromPath( '/log-in/pl?foo=bar' ), '/log-in?foo=bar' );
 			assert.equal(
 				removeLocaleFromPath( '/start/flow/step/fr?foo=bar' ),
-				'/start/flow/step?foo=bar',
+				'/start/flow/step?foo=bar'
 			);
 		} );
 
@@ -62,7 +63,7 @@ describe( 'utils', function() {
 			assert.equal( removeLocaleFromPath( '/log-in' ), '/log-in' );
 			assert.equal(
 				removeLocaleFromPath( '/start/flow/step?foo=bar' ),
-				'/start/flow/step?foo=bar',
+				'/start/flow/step?foo=bar'
 			);
 		} );
 
@@ -78,11 +79,11 @@ describe( 'utils', function() {
 		it( 'should not remove keys from an invite', function() {
 			assert.equal(
 				removeLocaleFromPath( '/accept-invite/site.wordpress.com/123456/es' ),
-				'/accept-invite/site.wordpress.com/123456',
+				'/accept-invite/site.wordpress.com/123456'
 			);
 			assert.equal(
 				removeLocaleFromPath( '/accept-invite/site.wordpress.com/123456/123456/123456/es' ),
-				'/accept-invite/site.wordpress.com/123456/123456/123456',
+				'/accept-invite/site.wordpress.com/123456/123456/123456'
 			);
 		} );
 	} );
@@ -96,7 +97,7 @@ describe( 'utils', function() {
 			assert.equal( getLocaleFromPath( '/start/es' ), 'es' );
 			assert.equal(
 				getLocaleFromPath( '/accept-invite/site.wordpress.com/123456/123456/123456/es' ),
-				'es',
+				'es'
 			);
 		} );
 	} );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,11 +8,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import React from 'react';
 import classNames from 'classnames';
-import {
-	endsWith,
-	includes,
-	times
-} from 'lodash';
+import { endsWith, includes, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,10 +29,7 @@ class DomainSearchResults extends React.Component {
 		cart: React.PropTypes.object,
 		products: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.object,
-		availableDomain: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ),
+		availableDomain: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] ),
 		suggestions: React.PropTypes.array,
 		placeholderQuantity: React.PropTypes.number.isRequired,
 		buttonLabel: React.PropTypes.string,
@@ -46,14 +40,14 @@ class DomainSearchResults extends React.Component {
 		onClickMapping: React.PropTypes.func,
 		isSignupStep: React.PropTypes.bool,
 		railcarSeed: React.PropTypes.string,
-		fetchAlgo: React.PropTypes.string
+		fetchAlgo: React.PropTypes.string,
 	};
 
 	renderDomainAvailability() {
 		const { availableDomain, lastDomainStatus, lastDomainSearched: domain, translate } = this.props;
 		const availabilityElementClasses = classNames( {
 			'domain-search-results__domain-is-available': availableDomain,
-			'domain-search-results__domain-not-available': ! availableDomain
+			'domain-search-results__domain-not-available': ! availableDomain,
 		} );
 		const suggestions = this.props.suggestions || [];
 		const { MAPPABLE, UNKNOWN } = domainAvailability;
@@ -63,9 +57,7 @@ class DomainSearchResults extends React.Component {
 		if ( availableDomain ) {
 			// should use real notice component or custom class
 			availabilityElement = (
-				<Notice
-					status="is-success"
-					showDismiss={ false }>
+				<Notice status="is-success" showDismiss={ false }>
 					{ translate( '%(domain)s is available!', { args: { domain } } ) }
 				</Notice>
 			);
@@ -79,9 +71,14 @@ class DomainSearchResults extends React.Component {
 					selectedSite={ this.props.selectedSite }
 					cart={ this.props.cart }
 					isSignupStep={ this.props.isSignupStep }
-					onButtonClick={ this.props.onClickResult } />
-				);
-		} else if ( suggestions.length !== 0 && includes( [ MAPPABLE, UNKNOWN ], lastDomainStatus ) && this.props.products.domain_map ) {
+					onButtonClick={ this.props.onClickResult }
+				/>
+			);
+		} else if (
+			suggestions.length !== 0 &&
+			includes( [ MAPPABLE, UNKNOWN ], lastDomainStatus ) &&
+			this.props.products.domain_map
+		) {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
 			if ( isNextDomainFree( this.props.cart ) ) {
@@ -101,15 +98,16 @@ class DomainSearchResults extends React.Component {
 				);
 			}
 
-			const domainUnavailableMessage = lastDomainStatus === UNKNOWN
-				? translate( '.%(tld)s domains are not offered on WordPress.com.', { args: { tld: getTld( domain ) } } )
-				: translate( '%(domain)s is taken.', { args: { domain } } );
+			const domainUnavailableMessage =
+				lastDomainStatus === UNKNOWN
+					? translate( '.%(tld)s domains are not offered on WordPress.com.', {
+							args: { tld: getTld( domain ) },
+						} )
+					: translate( '%(domain)s is taken.', { args: { domain } } );
 
 			if ( this.props.offerMappingOption ) {
 				availabilityElement = (
-					<Notice
-						status="is-warning"
-						showDismiss={ false }>
+					<Notice status="is-warning" showDismiss={ false }>
 						{ domainUnavailableMessage } { mappingOffer }
 					</Notice>
 				);
@@ -151,9 +149,12 @@ class DomainSearchResults extends React.Component {
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						railcarId={ `${ this.props.railcarSeed }-registration-suggestion-${ i }` }
 						uiPosition={ i }
-						fetchAlgo={ endsWith( suggestion.domain_name, '.wordpress.com' ) ? 'wpcom' : this.props.fetchAlgo }
+						fetchAlgo={
+							endsWith( suggestion.domain_name, '.wordpress.com' ) ? 'wpcom' : this.props.fetchAlgo
+						}
 						query={ this.props.lastDomainSearched }
-						onButtonClick={ this.props.onClickResult } />
+						onButtonClick={ this.props.onClickResult }
+					/>
 				);
 			}, this );
 
@@ -191,13 +192,11 @@ class DomainSearchResults extends React.Component {
 	}
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = state => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		isSiteOnPaidPlan: isSiteOnPaidPlan( state, selectedSiteId ),
 	};
 };
 
-export default connect(
-	mapStateToProps
-)( localize( DomainSearchResults ) );
+export default connect( mapStateToProps )( localize( DomainSearchResults ) );

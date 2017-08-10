@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -33,7 +34,6 @@ import {
 } from 'state/sites/selectors';
 
 class PluginUpload extends React.Component {
-
 	componentDidMount() {
 		const { siteId, inProgress } = this.props;
 		! inProgress && this.props.clearPluginUpload( siteId );
@@ -52,15 +52,15 @@ class PluginUpload extends React.Component {
 
 	back = () => {
 		page.back();
-	}
+	};
 
 	renderUploadCard() {
 		const { inProgress, complete, isJetpack } = this.props;
 		return (
 			<Card>
-				{ ! inProgress && ! complete && <UploadDropZone
-					doUpload={ this.props.uploadPlugin }
-					disabled={ ! isJetpack } /> }
+				{ ! inProgress &&
+					! complete &&
+					<UploadDropZone doUpload={ this.props.uploadPlugin } disabled={ ! isJetpack } /> }
 				{ inProgress && this.renderProgressBar() }
 			</Card>
 		);
@@ -100,21 +100,20 @@ class PluginUpload extends React.Component {
 	}
 
 	render() {
-		const {
-			translate,
-			isJetpackMultisite,
-			upgradeJetpack,
-			siteId,
-		} = this.props;
+		const { translate, isJetpackMultisite, upgradeJetpack, siteId } = this.props;
 
 		return (
 			<Main>
-				<HeaderCake onClick={ this.back }>{ translate( 'Upload plugin' ) }</HeaderCake>
-				{ upgradeJetpack && <JetpackManageErrorPage
-					template="updateJetpack"
-					siteId={ siteId }
-					featureExample={ this.renderUploadCard() }
-					version="5.1" /> }
+				<HeaderCake onClick={ this.back }>
+					{ translate( 'Upload plugin' ) }
+				</HeaderCake>
+				{ upgradeJetpack &&
+					<JetpackManageErrorPage
+						template="updateJetpack"
+						siteId={ siteId }
+						featureExample={ this.renderUploadCard() }
+						version="5.1"
+					/> }
 				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
 				{ ! upgradeJetpack && ! isJetpackMultisite && this.renderUploadCard() }
 			</Main>
@@ -123,7 +122,7 @@ class PluginUpload extends React.Component {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const error = getPluginUploadError( state, siteId );
 		const progress = getPluginUploadProgress( state, siteId );
@@ -140,11 +139,11 @@ export default connect(
 			error,
 			progress,
 			installing: progress === 100,
-			upgradeJetpack: isJetpack && ! isJetpackMultisite && ! isJetpackMinimumVersion( state, siteId, '5.1' ),
+			upgradeJetpack:
+				isJetpack && ! isJetpackMultisite && ! isJetpackMinimumVersion( state, siteId, '5.1' ),
 			isJetpackMultisite,
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		};
 	},
 	{ uploadPlugin, clearPluginUpload }
 )( localize( PluginUpload ) );
-

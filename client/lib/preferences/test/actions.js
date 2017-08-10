@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +24,7 @@ describe( 'PreferencesActions', function() {
 	const store = { get: noop, set: noop };
 	const Dispatcher = { handleViewAction: noop, handleServerAction: noop };
 
-	useSandbox( ( _sandbox ) => sandbox = _sandbox );
+	useSandbox( _sandbox => ( sandbox = _sandbox ) );
 	useMockery();
 	useNock();
 
@@ -39,13 +40,13 @@ describe( 'PreferencesActions', function() {
 							settings: function() {
 								return {
 									get: getSettings,
-									update: postSettings
+									update: postSettings,
 								};
-							}
+							},
 						};
-					}
+					},
 				};
-			}
+			},
 		} );
 
 		PreferencesActions = require( '../actions' );
@@ -59,13 +60,15 @@ describe( 'PreferencesActions', function() {
 		sandbox.stub( Dispatcher, 'handleServerAction' );
 
 		getSettings = sandbox.stub().callsArgWithAsync( 0, null, {
-			[ USER_SETTING_KEY ]: DUMMY_PERSISTED_PREFERENCES
+			[ USER_SETTING_KEY ]: DUMMY_PERSISTED_PREFERENCES,
 		} );
 		postSettings = sandbox.stub().callsArgAsync( 1 );
 	} );
 
 	describe( '#fetch()', function() {
-		it( 'should retrieve from localStorage and trigger a request to the REST API', function( done ) {
+		it( 'should retrieve from localStorage and trigger a request to the REST API', function(
+			done
+		) {
 			store.get.restore();
 			sandbox.stub( store, 'get' ).returns( DUMMY_PERSISTED_PREFERENCES );
 
@@ -75,13 +78,16 @@ describe( 'PreferencesActions', function() {
 			expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 				type: 'RECEIVE_ME_SETTINGS',
 				data: {
-					[ USER_SETTING_KEY ]: DUMMY_PERSISTED_PREFERENCES
-				}
+					[ USER_SETTING_KEY ]: DUMMY_PERSISTED_PREFERENCES,
+				},
 			} );
 
 			process.nextTick( function() {
 				expect( Dispatcher.handleServerAction ).to.have.been.calledTwice;
-				expect( store.set ).to.have.been.calledWith( LOCALSTORAGE_KEY, DUMMY_PERSISTED_PREFERENCES );
+				expect( store.set ).to.have.been.calledWith(
+					LOCALSTORAGE_KEY,
+					DUMMY_PERSISTED_PREFERENCES
+				);
 				done();
 			} );
 		} );
@@ -124,15 +130,17 @@ describe( 'PreferencesActions', function() {
 
 			expect( store.set ).to.have.been.calledWith( LOCALSTORAGE_KEY, { one: 1 } );
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
-				type: 'UPDATE_ME_SETTINGS'
+				type: 'UPDATE_ME_SETTINGS',
 			} );
-			expect( postSettings ).to.have.been.calledWithMatch( JSON.stringify( {
-				[ USER_SETTING_KEY ]: { one: 1 }
-			} ) );
+			expect( postSettings ).to.have.been.calledWithMatch(
+				JSON.stringify( {
+					[ USER_SETTING_KEY ]: { one: 1 },
+				} )
+			);
 
 			process.nextTick( function() {
 				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-					type: 'RECEIVE_ME_SETTINGS'
+					type: 'RECEIVE_ME_SETTINGS',
 				} );
 				done();
 			} );
@@ -147,8 +155,8 @@ describe( 'PreferencesActions', function() {
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
 				type: 'UPDATE_ME_SETTINGS',
 				data: {
-					[ USER_SETTING_KEY ]: { two: 2 }
-				}
+					[ USER_SETTING_KEY ]: { two: 2 },
+				},
 			} );
 		} );
 
@@ -161,8 +169,8 @@ describe( 'PreferencesActions', function() {
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
 				type: 'UPDATE_ME_SETTINGS',
 				data: {
-					[ USER_SETTING_KEY ]: { one: null }
-				}
+					[ USER_SETTING_KEY ]: { one: null },
+				},
 			} );
 		} );
 
@@ -173,7 +181,9 @@ describe( 'PreferencesActions', function() {
 			process.nextTick( function() {
 				expect( postSettings ).to.have.been.calledTwice;
 				expect( Dispatcher.handleServerAction ).to.have.been.calledOnce;
-				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( { type: 'RECEIVE_ME_SETTINGS' } );
+				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
+					type: 'RECEIVE_ME_SETTINGS',
+				} );
 				done();
 			} );
 		} );
@@ -188,16 +198,18 @@ describe( 'PreferencesActions', function() {
 			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
 				type: 'UPDATE_ME_SETTINGS',
 				data: {
-					[ USER_SETTING_KEY ]: { one: 1 }
-				}
+					[ USER_SETTING_KEY ]: { one: 1 },
+				},
 			} );
-			expect( postSettings ).to.have.been.calledWithMatch( JSON.stringify( {
-				[ USER_SETTING_KEY ]: { one: 1 }
-			} ) );
+			expect( postSettings ).to.have.been.calledWithMatch(
+				JSON.stringify( {
+					[ USER_SETTING_KEY ]: { one: 1 },
+				} )
+			);
 
 			process.nextTick( function() {
 				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-					type: 'RECEIVE_ME_SETTINGS'
+					type: 'RECEIVE_ME_SETTINGS',
 				} );
 
 				done();

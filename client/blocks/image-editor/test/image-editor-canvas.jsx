@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,8 +24,7 @@ class ImageEditorCropMock extends Component {
 describe( 'ImageEditorToolbar', () => {
 	useFakeDom();
 
-	let ImageEditorCanvas,
-		wrapper;
+	let ImageEditorCanvas, wrapper;
 
 	useMockery( mockery => {
 		mockery.registerMock( './image-editor-crop', ImageEditorCropMock );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -40,7 +41,7 @@ class AddressView extends Component {
 			postcode: '',
 		},
 		isEditable: false,
-	}
+	};
 
 	renderEditable = () => {
 		const { onChange, translate } = this.props;
@@ -58,62 +59,52 @@ class AddressView extends Component {
 		return (
 			<div className="address-view__fields-editable">
 				<FormFieldSet>
-					<FormLabel>{ translate( 'Street address' ) }</FormLabel>
-					<FormTextInput
-						name="street"
-						onChange={ onChange }
-						value={ street }
-					/>
+					<FormLabel>
+						{ translate( 'Street address' ) }
+					</FormLabel>
+					<FormTextInput name="street" onChange={ onChange } value={ street } />
 				</FormFieldSet>
 				<FormFieldSet>
-					<FormTextInput
-						name="street2"
-						onChange={ onChange }
-						value={ street2 }
-					/>
+					<FormTextInput name="street2" onChange={ onChange } value={ street2 } />
 				</FormFieldSet>
 				<div className="address-view__editable-city-state-postcode">
 					<FormFieldSet>
-						<FormLabel>{ translate( 'City' ) }</FormLabel>
-						<FormTextInput
-							name="city"
-							onChange={ onChange }
-							value={ city }
-						/>
+						<FormLabel>
+							{ translate( 'City' ) }
+						</FormLabel>
+						<FormTextInput name="city" onChange={ onChange } value={ city } />
 					</FormFieldSet>
 					<FormFieldSet className="address-view__editable-state">
-						<FormLabel>{ statesLabel }</FormLabel>
-						<FormSelect
-							name="state"
-							onChange={ onChange }
-							value={ state }
-						>
-							{ states.map( ( option ) => {
+						<FormLabel>
+							{ statesLabel }
+						</FormLabel>
+						<FormSelect name="state" onChange={ onChange } value={ state }>
+							{ states.map( option => {
 								return (
-									<option key={ option.code } value={ option.code }>{ option.name }</option>
+									<option key={ option.code } value={ option.code }>
+										{ option.name }
+									</option>
 								);
 							} ) }
 						</FormSelect>
 					</FormFieldSet>
 					<FormFieldSet>
-						<FormLabel>{ translate( 'Postal code' ) }</FormLabel>
-						<FormTextInput
-							name="postcode"
-							onChange={ onChange }
-							value={ postcode }
-						/>
+						<FormLabel>
+							{ translate( 'Postal code' ) }
+						</FormLabel>
+						<FormTextInput name="postcode" onChange={ onChange } value={ postcode } />
 					</FormFieldSet>
 				</div>
 				<FormFieldSet className="address-view__country">
-					<FormLabel>{ translate( 'Country' ) }</FormLabel>
-					<FormSelect
-						name="country"
-						onChange={ onChange }
-						value={ country || 'US' }
-					>
-						{ getCountries().map( ( option ) => {
+					<FormLabel>
+						{ translate( 'Country' ) }
+					</FormLabel>
+					<FormSelect name="country" onChange={ onChange } value={ country || 'US' }>
+						{ getCountries().map( option => {
 							return (
-								<option key={ option.code } value={ option.code }>{ option.name }</option>
+								<option key={ option.code } value={ option.code }>
+									{ option.name }
+								</option>
 							);
 						} ) }
 						<option key="XX" value="XX" disabled="disabled">
@@ -123,7 +114,7 @@ class AddressView extends Component {
 				</FormFieldSet>
 			</div>
 		);
-	}
+	};
 
 	renderStatic = () => {
 		const { name, street, street2, city, state, postcode, country } = this.props.address;
@@ -135,18 +126,30 @@ class AddressView extends Component {
 				<p>
 					{ street }
 				</p>
-				{	street2 && <p>{ street2 }</p> }
+				{ street2 &&
+					<p>
+						{ street2 }
+					</p> }
 				<p>
-					{ city && ( <span className="address-view__city">{ city }</span> ) }
-					{ state && ( <span className="address-view__state">{ state }</span> ) }
-					{ postcode && ( <span className="address-view__postcode">{ postcode }</span> ) }
+					{ city &&
+						<span className="address-view__city">
+							{ city }
+						</span> }
+					{ state &&
+						<span className="address-view__state">
+							{ state }
+						</span> }
+					{ postcode &&
+						<span className="address-view__postcode">
+							{ postcode }
+						</span> }
 				</p>
 				<p>
 					{ country }
 				</p>
 			</div>
 		);
-	}
+	};
 
 	render = () => {
 		const { className, isEditable } = this.props;
@@ -157,7 +160,7 @@ class AddressView extends Component {
 				{ isEditable ? this.renderEditable() : this.renderStatic() }
 			</div>
 		);
-	}
+	};
 }
 
 export default localize( AddressView );

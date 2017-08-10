@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,20 +7,20 @@ import { identity, noop } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import sinon from 'sinon';
-import TestUtils from 'react-addons-test-utils' ;
+import TestUtils from 'react-addons-test-utils';
 
 /**
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery' ;
+import useMockery from 'test/helpers/use-mockery';
 
 describe( '#signupStep User', () => {
 	let User, testElement, rendered, EMPTY_COMPONENT;
 
 	useFakeDom();
 
-	useMockery( ( mockery ) => {
+	useMockery( mockery => {
 		EMPTY_COMPONENT = require( 'test/helpers/react/empty-component' );
 
 		mockery.registerMock( 'lib/abtest', noop );
@@ -41,7 +42,7 @@ describe( '#signupStep User', () => {
 			},
 			getNextStepName: identity,
 			getStepUrl: identity,
-			getPreviousStepName: identity
+			getPreviousStepName: identity,
 		} );
 	} );
 
@@ -52,17 +53,19 @@ describe( '#signupStep User', () => {
 	it( 'should show community subheader text if User step is first in the flow', () => {
 		testElement = React.createElement( User, {
 			subHeaderText: 'first subheader message',
-			flowName: 'userAsFirstStepInFlow'
+			flowName: 'userAsFirstStepInFlow',
 		} );
 		rendered = TestUtils.renderIntoDocument( testElement );
 
-		expect( rendered.state.subHeaderText ).to.equal( 'Welcome to the wonderful WordPress.com community' );
+		expect( rendered.state.subHeaderText ).to.equal(
+			'Welcome to the wonderful WordPress.com community'
+		);
 	} );
 
 	it( 'should show provided subheader text if User step is not first in the flow', () => {
 		testElement = React.createElement( User, {
 			subHeaderText: 'test subheader message',
-			flowName: 'someOtherFlow'
+			flowName: 'someOtherFlow',
 		} );
 		rendered = TestUtils.renderIntoDocument( testElement );
 
@@ -79,7 +82,7 @@ describe( '#signupStep User', () => {
 
 			const element = React.createElement( User, {
 				subHeaderText: 'test subheader message',
-				flowName: 'someOtherFlow'
+				flowName: 'someOtherFlow',
 			} );
 			component = ReactDOM.render( element, node );
 		} );
@@ -91,7 +94,7 @@ describe( '#signupStep User', () => {
 		it( 'should show community subheader text when new flow has user as first step', () => {
 			const testProps = {
 				subHeaderText: 'My test message',
-				flowName: 'userAsFirstStepInFlow'
+				flowName: 'userAsFirstStepInFlow',
 			};
 
 			expect( spyComponentProps.calledOnce ).to.equal( false );
@@ -99,13 +102,15 @@ describe( '#signupStep User', () => {
 			ReactDOM.render( React.createElement( User, testProps ), node );
 
 			expect( spyComponentProps.calledOnce ).to.equal( true );
-			expect( component.state.subHeaderText ).to.equal( 'Welcome to the wonderful WordPress.com community' );
+			expect( component.state.subHeaderText ).to.equal(
+				'Welcome to the wonderful WordPress.com community'
+			);
 		} );
 
-		it( 'should show provided subheader text when new flow doesn\'t have user as first step', () => {
+		it( "should show provided subheader text when new flow doesn't have user as first step", () => {
 			const testProps = {
 				subHeaderText: 'My test message',
-				flowName: 'another test message test'
+				flowName: 'another test message test',
 			};
 
 			expect( spyComponentProps.calledOnce ).to.equal( false );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,11 +7,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	COMMENTS_DELETE,
-	COMMENTS_RECEIVE,
-	COMMENTS_COUNT_INCREMENT,
-} from 'state/action-types';
+import { COMMENTS_DELETE, COMMENTS_RECEIVE, COMMENTS_COUNT_INCREMENT } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { errorNotice } from 'state/notices/actions';
@@ -26,15 +23,15 @@ import { errorNotice } from 'state/notices/actions';
  * @returns {Object}                           comment placeholder
  */
 export const createPlaceholderComment = ( commentText, postId, parentCommentId ) => ( {
-	ID: 'placeholder-' + ( new Date().getTime() ),
+	ID: 'placeholder-' + new Date().getTime(),
 	parent: parentCommentId ? { ID: parentCommentId } : false,
-	date: ( new Date() ).toISOString(),
+	date: new Date().toISOString(),
 	content: commentText,
 	status: 'pending',
 	type: 'comment',
 	post: { ID: postId },
 	isPlaceholder: true,
-	placeholderState: 'PENDING'
+	placeholderState: 'PENDING',
 } );
 
 /**
@@ -56,22 +53,24 @@ export const dispatchNewCommentRequest = ( dispatch, action, path ) => {
 		siteId,
 		postId,
 		comments: [ placeholder ],
-		skipSort: !! parentCommentId
+		skipSort: !! parentCommentId,
 	} );
 
-	dispatch( http( {
-		method: 'POST',
-		apiVersion: '1.1',
-		path,
-		body: {
-			content: commentText
-		},
-		onSuccess: {
-			...action,
-			placeholderId: placeholder.ID
-		},
-		onFailure: action
-	} ) );
+	dispatch(
+		http( {
+			method: 'POST',
+			apiVersion: '1.1',
+			path,
+			body: {
+				content: commentText,
+			},
+			onSuccess: {
+				...action,
+				placeholderId: placeholder.ID,
+			},
+			onFailure: action,
+		} )
+	);
 };
 
 /**
@@ -81,11 +80,21 @@ export const dispatchNewCommentRequest = ( dispatch, action, path ) => {
  * @param {Object}   action   redux action
  * @param {Object}   comment  updated comment from the request response
  */
-export const updatePlaceholderComment = ( { dispatch }, { siteId, postId, parentCommentId, placeholderId }, comment ) => {
+export const updatePlaceholderComment = (
+	{ dispatch },
+	{ siteId, postId, parentCommentId, placeholderId },
+	comment
+) => {
 	// remove placeholder from state
 	dispatch( { type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId } );
 	// add new comment to state with updated values from server
-	dispatch( { type: COMMENTS_RECEIVE, siteId, postId, comments: [ comment ], skipSort: !! parentCommentId } );
+	dispatch( {
+		type: COMMENTS_RECEIVE,
+		siteId,
+		postId,
+		comments: [ comment ],
+		skipSort: !! parentCommentId,
+	} );
 	// increment comments count
 	dispatch( { type: COMMENTS_COUNT_INCREMENT, siteId, postId } );
 };

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns true if currently requesting post formats for the specified site ID, or
  * false otherwise.

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,16 +27,15 @@ const MAX_ACTIONBAR_HEIGHT = 57;
 const MIN_ACTIONBAR_WIDTH = 600;
 
 export class PluginsListHeader extends PureComponent {
-
 	state = {
 		actionBarVisible: true,
-		addPluginTooltip: false
-	}
+		addPluginTooltip: false,
+	};
 
 	static defaultProps = {
 		isMock: false,
 		disabled: false,
-	}
+	};
 
 	static propTypes = {
 		label: PropTypes.string,
@@ -57,8 +57,8 @@ export class PluginsListHeader extends PureComponent {
 		bulkManagement: PropTypes.bool,
 		selectedSiteSlug: PropTypes.string,
 		plugins: PropTypes.array.isRequired,
-		selected: PropTypes.array.isRequired
-	}
+		selected: PropTypes.array.isRequired,
+	};
 
 	componentDidMount() {
 		this.debouncedAfterResize = debounce( this.afterResize, 100 );
@@ -82,34 +82,37 @@ export class PluginsListHeader extends PureComponent {
 
 	showPluginTooltip = () => {
 		this.setState( { addPluginTooltip: true } );
-	}
+	};
 
 	hidePluginTooltip = () => {
 		this.setState( { addPluginTooltip: false } );
-	}
+	};
 
 	toggleBulkManagement = () => {
 		this.props.toggleBulkManagement();
 
 		this.maybeMakeActionBarVisible();
-	}
+	};
 
 	afterResize = () => {
 		if ( this.props.isBulkManagementActive ) {
 			this.maybeMakeActionBarVisible();
 		}
-	}
+	};
 
 	onBrowserLinkClick = () => {
 		analytics.ga.recordEvent( 'Plugins', 'Clicked Add New Plugins' );
-	}
+	};
 
 	unselectOrSelectAll = () => {
 		const { plugins, selected } = this.props;
 		const someSelected = selected.length > 0;
 		this.props.setSelectionState( plugins, ! someSelected );
-		analytics.ga.recordEvent( 'Plugins', someSelected ? 'Clicked to Uncheck All Plugins' : 'Clicked to Check All Plugins' );
-	}
+		analytics.ga.recordEvent(
+			'Plugins',
+			someSelected ? 'Clicked to Uncheck All Plugins' : 'Clicked to Check All Plugins'
+		);
+	};
 
 	isJetpackSelected() {
 		return this.props.selected.some( plugin => 'jetpack' === plugin.slug );
@@ -137,20 +140,14 @@ export class PluginsListHeader extends PureComponent {
 			if ( 0 < this.props.pluginUpdateCount ) {
 				rightSideButtons.push(
 					<ButtonGroup key="plugin-list-header__buttons-update-all">
-						<Button compact primary onClick={ this.props.updateAllPlugins } >
-							{
-								translate(
-									'Update %(numUpdates)d Plugin',
-									'Update %(numUpdates)d Plugins',
-									{
-										context: 'button label',
-										count: this.props.pluginUpdateCount,
-										args: {
-											numUpdates: this.props.pluginUpdateCount
-										}
-									}
-								)
-							}
+						<Button compact primary onClick={ this.props.updateAllPlugins }>
+							{ translate( 'Update %(numUpdates)d Plugin', 'Update %(numUpdates)d Plugins', {
+								context: 'button label',
+								count: this.props.pluginUpdateCount,
+								args: {
+									numUpdates: this.props.pluginUpdateCount,
+								},
+							} ) }
 						</Button>
 					</ButtonGroup>
 				);
@@ -162,7 +159,9 @@ export class PluginsListHeader extends PureComponent {
 					</Button>
 				</ButtonGroup>
 			);
-			const browserUrl = '/plugins/browse' + ( this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '' );
+			const browserUrl =
+				'/plugins/browse' +
+				( this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '' );
 
 			rightSideButtons.push(
 				<ButtonGroup key="plugin-list-header__buttons-browser">
@@ -174,12 +173,15 @@ export class PluginsListHeader extends PureComponent {
 						onMouseEnter={ this.showPluginTooltip }
 						onMouseLeave={ this.hidePluginTooltip }
 						ref="addPluginButton"
-						aria-label={ translate( 'Browse all plugins', { context: 'button label' } ) }>
-						<Gridicon key="plus-icon" icon="plus-small" size={ 18 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
+						aria-label={ translate( 'Browse all plugins', { context: 'button label' } ) }
+					>
+						<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
+						<Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
 						<Tooltip
 							isVisible={ this.state.addPluginTooltip }
 							context={ this.refs && this.refs.addPluginButton }
-							position="bottom">
+							position="bottom"
+						>
 							{ translate( 'Browse all plugins', { context: 'button tooltip' } ) }
 						</Tooltip>
 					</Button>
@@ -190,72 +192,101 @@ export class PluginsListHeader extends PureComponent {
 				<Button
 					key="plugin-list-header__buttons-update"
 					disabled={ ! this.props.haveUpdatesSelected }
-					compact primary
-					onClick={ this.props.updateSelected }>
+					compact
+					primary
+					onClick={ this.props.updateSelected }
+				>
 					{ translate( 'Update' ) }
 				</Button>
 			);
-			leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-update-button">{ updateButton }</ButtonGroup> );
+			leftSideButtons.push(
+				<ButtonGroup key="plugin-list-header__buttons-update-button">
+					{ updateButton }
+				</ButtonGroup>
+			);
 
 			activateButtons.push(
 				<Button
 					key="plugin-list-header__buttons-activate"
 					disabled={ ! this.props.haveInactiveSelected }
 					onClick={ this.props.activateSelected }
-					compact >
+					compact
+				>
 					{ translate( 'Activate' ) }
 				</Button>
 			);
 
 			activateButtons.push(
-				<Button compact
+				<Button
+					compact
 					key="plugin-list-header__buttons-deactivate"
 					disabled={ ! this.props.haveActiveSelected }
-					onClick={ isJetpackSelected
-						? this.props.deactiveAndDisconnectSelected
-						: this.props.deactivateSelected
-						} >
+					onClick={
+						isJetpackSelected
+							? this.props.deactiveAndDisconnectSelected
+							: this.props.deactivateSelected
+					}
+				>
 					{ translate( 'Deactivate' ) }
 				</Button>
 			);
 
 			if ( ! ( isJetpackSelected && this.props.selected.length === 1 ) ) {
-				leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-activate-buttons">{ activateButtons }</ButtonGroup> );
+				leftSideButtons.push(
+					<ButtonGroup key="plugin-list-header__buttons-activate-buttons">
+						{ activateButtons }
+					</ButtonGroup>
+				);
 			}
 
 			autoupdateButtons.push(
-				<Button key="plugin-list-header__buttons-autoupdate-on"
+				<Button
+					key="plugin-list-header__buttons-autoupdate-on"
 					disabled={ ! this.canUpdatePlugins() }
 					compact
-					onClick={ this.props.setAutoupdateSelected }>
+					onClick={ this.props.setAutoupdateSelected }
+				>
 					{ translate( 'Autoupdate' ) }
 				</Button>
 			);
 			autoupdateButtons.push(
-				<Button key="plugin-list-header__buttons-autoupdate-off"
+				<Button
+					key="plugin-list-header__buttons-autoupdate-off"
 					disabled={ ! this.canUpdatePlugins() }
 					compact
-					onClick={ this.props.unsetAutoupdateSelected }>
+					onClick={ this.props.unsetAutoupdateSelected }
+				>
 					{ translate( 'Disable Autoupdates' ) }
 				</Button>
 			);
 
-			leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-update-buttons">{ autoupdateButtons }</ButtonGroup> );
+			leftSideButtons.push(
+				<ButtonGroup key="plugin-list-header__buttons-update-buttons">
+					{ autoupdateButtons }
+				</ButtonGroup>
+			);
 			leftSideButtons.push(
 				<ButtonGroup key="plugin-list-header__buttons-remove-button">
-					<Button compact scary
+					<Button
+						compact
+						scary
 						disabled={ ! needsRemoveButton }
-						onClick={ this.props.removePluginNotice }>
+						onClick={ this.props.removePluginNotice }
+					>
 						{ translate( 'Remove' ) }
 					</Button>
 				</ButtonGroup>
 			);
 
 			rightSideButtons.push(
-				<button key="plugin-list-header__buttons-close-button"
+				<button
+					key="plugin-list-header__buttons-close-button"
 					className="plugin-list-header__section-actions-close"
-					onClick={ this.props.toggleBulkManagement }>
-					<span className="plugin-list-header__screen-reader-text">{ translate( 'Close' ) }</span>
+					onClick={ this.props.toggleBulkManagement }
+				>
+					<span className="plugin-list-header__screen-reader-text">
+						{ translate( 'Close' ) }
+					</span>
 					<Gridicon icon="cross" />
 				</button>
 			);
@@ -264,7 +295,8 @@ export class PluginsListHeader extends PureComponent {
 		buttons.push(
 			<span
 				key="plugin-list-header__buttons-action-buttons"
-				className="plugin-list-header__action-buttons">
+				className="plugin-list-header__action-buttons"
+			>
 				{ leftSideButtons }
 			</span>
 		);
@@ -272,7 +304,8 @@ export class PluginsListHeader extends PureComponent {
 		buttons.push(
 			<span
 				key="plugin-list-header__buttons-global-buttons"
-				className="plugin-list-header__mode-buttons">
+				className="plugin-list-header__mode-buttons"
+			>
 				{ rightSideButtons }
 			</span>
 		);
@@ -290,52 +323,63 @@ export class PluginsListHeader extends PureComponent {
 		const needsRemoveButton = this.needsRemoveButton();
 		const isJetpackOnlySelected = ! ( isJetpackSelected && selected.length === 1 );
 		return (
-			<SelectDropdown compact
+			<SelectDropdown
+				compact
 				className="plugin-list-header__actions-dropdown"
 				key="plugin-list-header__actions_dropdown"
-				selectedText={ translate( 'Actions' ) } >
-
+				selectedText={ translate( 'Actions' ) }
+			>
 				<DropdownItem key="plugin__actions_title" selected={ true } value="Actions">
 					{ translate( 'Actions' ) }
 				</DropdownItem>
 
 				<DropdownSeparator key="plugin__actions_separator_1" />
 
-				<DropdownItem key="plugin__actions_activate"
-						disabled={ ! this.props.haveUpdatesSelected }
-						onClick={ this.props.updateSelected }>
+				<DropdownItem
+					key="plugin__actions_activate"
+					disabled={ ! this.props.haveUpdatesSelected }
+					onClick={ this.props.updateSelected }
+				>
 					{ translate( 'Update' ) }
 				</DropdownItem>
 
 				<DropdownSeparator key="plugin__actions_separator_1" />
 				{ isJetpackOnlySelected &&
-					<DropdownItem key="plugin__actions_activate"
-							disabled={ ! this.props.haveInactiveSelected }
-							onClick={ this.props.activateSelected }>
+					<DropdownItem
+						key="plugin__actions_activate"
+						disabled={ ! this.props.haveInactiveSelected }
+						onClick={ this.props.activateSelected }
+					>
 						{ translate( 'Activate' ) }
-					</DropdownItem>
-				}
+					</DropdownItem> }
 				{ isJetpackOnlySelected &&
-					<DropdownItem key="plugin__actions_disconnect"
-							disabled={ ! this.props.haveActiveSelected }
-							onClick={ isJetpackSelected
+					<DropdownItem
+						key="plugin__actions_disconnect"
+						disabled={ ! this.props.haveActiveSelected }
+						onClick={
+							isJetpackSelected
 								? this.props.deactiveAndDisconnectSelected
-								: this.props.deactivateSelected }>
+								: this.props.deactivateSelected
+						}
+					>
 						{ translate( 'Deactivate' ) }
-					</DropdownItem>
-				}
+					</DropdownItem> }
 
 				<DropdownSeparator key="plugin__actions_separator_2" />
 
-				<DropdownItem key="plugin__actions_autoupdate"
-						disabled={ ! this.canUpdatePlugins() }
-						onClick={ this.props.setAutoupdateSelected }>
+				<DropdownItem
+					key="plugin__actions_autoupdate"
+					disabled={ ! this.canUpdatePlugins() }
+					onClick={ this.props.setAutoupdateSelected }
+				>
 					{ translate( 'Autoupdate' ) }
 				</DropdownItem>
 
-				<DropdownItem key="plugin__actions_disable_autoupdate"
-						disabled={ ! this.canUpdatePlugins() }
-						onClick={ this.props.unsetAutoupdateSelected }>
+				<DropdownItem
+					key="plugin__actions_disable_autoupdate"
+					disabled={ ! this.canUpdatePlugins() }
+					onClick={ this.props.unsetAutoupdateSelected }
+				>
 					{ translate( 'Disable Autoupdates' ) }
 				</DropdownItem>
 
@@ -345,7 +389,8 @@ export class PluginsListHeader extends PureComponent {
 					key="plugin__actions_remove"
 					className="plugin-list-header__actions-remove-item"
 					disabled={ ! needsRemoveButton }
-					onClick={ this.props.removePluginNotice } >
+					onClick={ this.props.removePluginNotice }
+				>
 					{ translate( 'Remove' ) }
 				</DropdownItem>
 			</SelectDropdown>
@@ -357,17 +402,17 @@ export class PluginsListHeader extends PureComponent {
 		const sectionClasses = classNames( {
 			'plugin-list-header': true,
 			'is-bulk-editing': isBulkManagementActive,
-			'is-action-bar-visible': this.state.actionBarVisible
+			'is-action-bar-visible': this.state.actionBarVisible,
 		} );
 		return (
 			<SectionHeader label={ label } className={ sectionClasses }>
-				{
-					isBulkManagementActive &&
-						<BulkSelect key="plugin-list-header__bulk-select"
-							totalElements={ plugins.length }
-							selectedElements={ selected.length }
-							onToggle={ this.unselectOrSelectAll } />
-				}
+				{ isBulkManagementActive &&
+					<BulkSelect
+						key="plugin-list-header__bulk-select"
+						totalElements={ plugins.length }
+						selectedElements={ selected.length }
+						onToggle={ this.unselectOrSelectAll }
+					/> }
 				{ this.renderCurrentActionDropdown() }
 				{ this.renderCurrentActionButtons() }
 			</SectionHeader>

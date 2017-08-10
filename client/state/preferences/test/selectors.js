@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,58 +12,70 @@ import { isFetchingPreferences, getPreference, hasReceivedRemotePreferences } fr
 describe( 'selectors', () => {
 	describe( 'isFetchingPreferences()', () => {
 		it( 'should return preferences fetching status', () => {
-			const state = {	preferences: { fetching: true } };
+			const state = { preferences: { fetching: true } };
 			expect( isFetchingPreferences( state ) ).to.equal( true );
 		} );
 	} );
 
 	describe( 'getPreference()', () => {
 		it( 'should return null if none of local, remote, or default values contains key', () => {
-			const preference = getPreference( {
-				preferences: {
-					localValues: {},
-					remoteValues: {}
-				}
-			}, '__unknown' );
+			const preference = getPreference(
+				{
+					preferences: {
+						localValues: {},
+						remoteValues: {},
+					},
+				},
+				'__unknown'
+			);
 
 			expect( preference ).to.be.null;
 		} );
 
 		it( 'should return a default value if neither local nor remote values contain key', () => {
-			const preference = getPreference( {
-				preferences: {
-					localValues: {},
-					remoteValues: {}
-				}
-			}, 'mediaModalGalleryInstructionsDismissed' );
+			const preference = getPreference(
+				{
+					preferences: {
+						localValues: {},
+						remoteValues: {},
+					},
+				},
+				'mediaModalGalleryInstructionsDismissed'
+			);
 
 			expect( preference ).to.be.false;
 		} );
 
 		it( 'should return the remote value if local does not contain key', () => {
-			const preference = getPreference( {
-				preferences: {
-					localValues: {},
-					remoteValues: {
-						foo: 'baz'
-					}
-				}
-			}, 'foo' );
+			const preference = getPreference(
+				{
+					preferences: {
+						localValues: {},
+						remoteValues: {
+							foo: 'baz',
+						},
+					},
+				},
+				'foo'
+			);
 
 			expect( preference ).to.equal( 'baz' );
 		} );
 
 		it( 'should prefer a local value over remote or default values', () => {
-			const preference = getPreference( {
-				preferences: {
-					localValues: {
-						foo: 'qux'
+			const preference = getPreference(
+				{
+					preferences: {
+						localValues: {
+							foo: 'qux',
+						},
+						remoteValues: {
+							foo: 'baz',
+						},
 					},
-					remoteValues: {
-						foo: 'baz'
-					}
-				}
-			}, 'foo' );
+				},
+				'foo'
+			);
 
 			expect( preference ).to.equal( 'qux' );
 		} );
@@ -72,8 +85,8 @@ describe( 'selectors', () => {
 		it( 'should return false if preferences have not yet been received', () => {
 			const hasReceived = hasReceivedRemotePreferences( {
 				preferences: {
-					remoteValues: null
-				}
+					remoteValues: null,
+				},
 			} );
 
 			expect( hasReceived ).to.be.false;
@@ -82,8 +95,8 @@ describe( 'selectors', () => {
 		it( 'should return false if preferences have been received', () => {
 			const hasReceived = hasReceivedRemotePreferences( {
 				preferences: {
-					remoteValues: {}
-				}
+					remoteValues: {},
+				},
 			} );
 
 			expect( hasReceived ).to.be.true;

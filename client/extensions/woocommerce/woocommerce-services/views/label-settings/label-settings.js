@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -41,12 +42,10 @@ class ShippingLabels extends Component {
 					<FormSelect />
 				</FormFieldSet>
 				<FormFieldSet>
-					<FormLabel
-						className="label-settings__cards-label">
+					<FormLabel className="label-settings__cards-label">
 						<span />
 					</FormLabel>
-					<p className="label-settings__credit-card-description">
-					</p>
+					<p className="label-settings__credit-card-description" />
 					<PaymentMethod selected={ false } isLoading={ true } />
 					<PaymentMethod selected={ false } isLoading={ true } />
 					<Button compact />
@@ -59,36 +58,44 @@ class ShippingLabels extends Component {
 		const { paymentMethods, setFormDataValue, selectedPaymentMethod, translate } = this.props;
 
 		if ( ! this.state.expanded ) {
-			const expand = ( event ) => {
+			const expand = event => {
 				event.preventDefault();
 				this.setState( { expanded: true } );
 			};
 
-			const {
-				card_type: selectedType,
-				card_digits: selectedDigits,
-			} = find( paymentMethods, { payment_method_id: selectedPaymentMethod } );
+			const { card_type: selectedType, card_digits: selectedDigits } = find( paymentMethods, {
+				payment_method_id: selectedPaymentMethod,
+			} );
 
 			return (
 				<div>
 					<p className="label-settings__credit-card-description">
-						{ translate( 'We\'ll charge the credit card on your ' +
-							'account (%(card)s) to pay for the labels you print', { args: {
-								card: getPaymentMethodTitle( translate, selectedType, selectedDigits ),
-							} } ) }
+						{ translate(
+							"We'll charge the credit card on your " +
+								'account (%(card)s) to pay for the labels you print',
+							{
+								args: {
+									card: getPaymentMethodTitle( translate, selectedType, selectedDigits ),
+								},
+							}
+						) }
 					</p>
 					<p className="label-settings__credit-card-description">
-						<a href="#" onClick={ expand }>{ translate( 'Choose a different card' ) }</a>
+						<a href="#" onClick={ expand }>
+							{ translate( 'Choose a different card' ) }
+						</a>
 					</p>
 				</div>
 			);
 		}
 
-		const onPaymentMethodChange = ( value ) => setFormDataValue( 'selected_payment_method_id', value );
+		const onPaymentMethodChange = value => setFormDataValue( 'selected_payment_method_id', value );
 
 		let description, buttonLabel;
 		if ( paymentMethods.length ) {
-			description = translate( 'Use your credit card on file to pay for the labels you print or add a new one.' );
+			description = translate(
+				'Use your credit card on file to pay for the labels you print or add a new one.'
+			);
 			buttonLabel = translate( 'Add another credit card' );
 		} else {
 			description = translate( 'To pay for the shipping labels you print, add a credit card.' );
@@ -105,7 +112,8 @@ class ShippingLabels extends Component {
 					name={ method.name }
 					digits={ method.card_digits }
 					expiry={ method.expiry }
-					onSelect={ onSelect } />
+					onSelect={ onSelect }
+				/>
 			);
 		};
 
@@ -129,30 +137,29 @@ class ShippingLabels extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const onPaperSizeChange = ( event ) => setFormDataValue( 'paper_size', event.target.value );
+		const onPaperSizeChange = event => setFormDataValue( 'paper_size', event.target.value );
 		const paperSizes = getPaperSizes( storeOptions.origin_country );
 
 		return (
 			<div>
 				<FormFieldSet>
-					<FormLabel
-						className="label-settings__cards-label">
+					<FormLabel className="label-settings__cards-label">
 						{ translate( 'Paper size' ) }
 					</FormLabel>
 					<FormSelect onChange={ onPaperSizeChange } value={ paperSize }>
-						{ Object.keys( paperSizes ).map( ( size ) => (
-							<option value={ size } key={ size }>{ paperSizes[ size ] }</option>
-						) ) }
+						{ Object.keys( paperSizes ).map( size =>
+							<option value={ size } key={ size }>
+								{ paperSizes[ size ] }
+							</option>
+						) }
 					</FormSelect>
 				</FormFieldSet>
 				<FormFieldSet>
-					<FormLabel
-						className="label-settings__cards-label">
+					<FormLabel className="label-settings__cards-label">
 						{ translate( 'Payment' ) }
 					</FormLabel>
 					{ this.renderPaymentsSection() }
 				</FormFieldSet>
-
 			</div>
 		);
 	};
@@ -164,7 +171,6 @@ class ShippingLabels extends Component {
 			</div>
 		);
 	}
-
 }
 
 ShippingLabels.propTypes = {

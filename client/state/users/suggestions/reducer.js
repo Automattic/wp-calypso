@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -18,17 +19,20 @@ import { itemsSchema } from './schema';
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const requesting = createReducer( {}, {
-	[ USER_SUGGESTIONS_REQUEST ]: ( state, { siteId } ) => {
-		return { ...state, [ siteId ]: true };
-	},
-	[ USER_SUGGESTIONS_REQUEST_FAILURE ]: ( state, { siteId } ) => {
-		return { ...state, [ siteId ]: false };
-	},
-	[ USER_SUGGESTIONS_REQUEST_SUCCESS ]: ( state, { siteId } ) => {
-		return { ...state, [ siteId ]: false };
-	},
-} );
+export const requesting = createReducer(
+	{},
+	{
+		[ USER_SUGGESTIONS_REQUEST ]: ( state, { siteId } ) => {
+			return { ...state, [ siteId ]: true };
+		},
+		[ USER_SUGGESTIONS_REQUEST_FAILURE ]: ( state, { siteId } ) => {
+			return { ...state, [ siteId ]: false };
+		},
+		[ USER_SUGGESTIONS_REQUEST_SUCCESS ]: ( state, { siteId } ) => {
+			return { ...state, [ siteId ]: false };
+		},
+	}
+);
 
 /**
  * Returns the updated items state after an action has been dispatched. Items
@@ -39,11 +43,15 @@ export const requesting = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const items = createReducer( {}, {
-	[ USER_SUGGESTIONS_RECEIVE ]: ( state, { siteId, suggestions } ) => {
-		return { ...state, [ siteId ]: suggestions };
+export const items = createReducer(
+	{},
+	{
+		[ USER_SUGGESTIONS_RECEIVE ]: ( state, { siteId, suggestions } ) => {
+			return { ...state, [ siteId ]: suggestions };
+		},
 	},
-}, itemsSchema );
+	itemsSchema
+);
 
 export default combineReducers( {
 	requesting,

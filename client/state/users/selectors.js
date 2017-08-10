@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns a user object by user ID.
  *

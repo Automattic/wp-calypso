@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,6 +9,9 @@ import { combineReducers, keyedReducer } from 'state/utils';
  */
 import labelSettings from './label-settings/reducer';
 
-export default keyedReducer( 'siteId', combineReducers( {
-	labelSettings,
-} ) );
+export default keyedReducer(
+	'siteId',
+	combineReducers( {
+		labelSettings,
+	} )
+);

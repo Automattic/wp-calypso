@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,10 +10,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-} from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import config from 'config';
 import notices from 'notices';
 import urlSearch from 'lib/url-search';
@@ -28,15 +26,14 @@ const debug = debugFactory( 'calypso:my-sites:pages:pages' );
 const statuses = [ 'published', 'drafts', 'scheduled', 'trashed' ];
 
 class PagesMain extends React.Component {
-
 	static displayName = 'Pages';
 
 	static propTypes = {
-		trackScrollPage: React.PropTypes.func.isRequired
+		trackScrollPage: React.PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
-		perPage: 20
+		perPage: 20,
 	};
 
 	componentWillMount() {
@@ -52,23 +49,31 @@ class PagesMain extends React.Component {
 	}
 
 	render() {
-		const {
-			doSearch,
-			search,
-			translate,
-		} = this.props;
+		const { doSearch, search, translate } = this.props;
 		const status = this.props.status || 'published';
 		const filterStrings = {
 			published: translate( 'Published', { context: 'Filter label for pages list' } ),
 			drafts: translate( 'Drafts', { context: 'Filter label for pages list' } ),
 			scheduled: translate( 'Scheduled', { context: 'Filter label for pages list' } ),
-			trashed: translate( 'Trashed', { context: 'Filter label for pages list' } )
+			trashed: translate( 'Trashed', { context: 'Filter label for pages list' } ),
 		};
 		const searchStrings = {
-			published: translate( 'Search Published…', { context: 'Search placeholder for pages list', textOnly: true } ),
-			drafts: translate( 'Search Drafts…', { context: 'Search placeholder for pages list', textOnly: true } ),
-			scheduled: translate( 'Search Scheduled…', { context: 'Search placeholder for pages list', textOnly: true } ),
-			trashed: translate( 'Search Trashed…', { context: 'Search placeholder for pages list', textOnly: true } )
+			published: translate( 'Search Published…', {
+				context: 'Search placeholder for pages list',
+				textOnly: true,
+			} ),
+			drafts: translate( 'Search Drafts…', {
+				context: 'Search placeholder for pages list',
+				textOnly: true,
+			} ),
+			scheduled: translate( 'Search Scheduled…', {
+				context: 'Search placeholder for pages list',
+				textOnly: true,
+			} ),
+			trashed: translate( 'Search Trashed…', {
+				context: 'Search placeholder for pages list',
+				textOnly: true,
+			} ),
 		};
 		return (
 			<Main classname="pages">
@@ -93,11 +98,8 @@ class PagesMain extends React.Component {
 	}
 
 	getNavItems( filterStrings, currentStatus ) {
-		const {
-			site,
-			siteId,
-		} = this.props;
-		const sitePart = site && site.slug || siteId;
+		const { site, siteId } = this.props;
+		const sitePart = ( site && site.slug ) || siteId;
 		const siteFilter = sitePart ? '/' + sitePart : '';
 
 		return statuses.map( function( status ) {
@@ -109,7 +111,8 @@ class PagesMain extends React.Component {
 				<NavItem
 					path={ path }
 					selected={ currentStatus === status }
-					key={ `page-filter-${ status }` }>
+					key={ `page-filter-${ status }` }
+				>
 					{ filterStrings[ status ] }
 				</NavItem>
 			);
@@ -120,16 +123,22 @@ class PagesMain extends React.Component {
 		const { translate } = this.props;
 		if ( selectedSite && selectedSite.jetpack && ! selectedSite.hasMinimumJetpackVersion ) {
 			notices.warning(
-				translate( 'Jetpack %(version)s is required to take full advantage of all page editing features.', {
-					args: { version: config( 'jetpack_min_version' ) }
-				} ),
-				{ button: translate( 'Update now' ), href: selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade' }
+				translate(
+					'Jetpack %(version)s is required to take full advantage of all page editing features.',
+					{
+						args: { version: config( 'jetpack_min_version' ) },
+					}
+				),
+				{
+					button: translate( 'Update now' ),
+					href: selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade',
+				}
 			);
 		}
 	}
 }
 
-const mapState = ( state ) => ( {
+const mapState = state => ( {
 	site: getSelectedSite( state ),
 	siteId: getSelectedSiteId( state ),
 } );

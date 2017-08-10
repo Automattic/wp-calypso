@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,10 +24,8 @@ class ContactsPrivacy extends React.PureComponent {
 		domains: React.PropTypes.object.isRequired,
 		whois: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired
+		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] )
+			.isRequired,
 	};
 
 	render() {
@@ -43,16 +42,13 @@ class ContactsPrivacy extends React.PureComponent {
 
 		return (
 			<Main className="domain-management-contacts-privacy">
-				<Header
-					onClick={ this.goToEdit }
-					selectedDomainName={ this.props.selectedDomainName }
-				>
+				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
 					{ translate( 'Contacts and Privacy' ) }
 				</Header>
 
 				<VerticalNav>
 					<ContactsPrivacyCard
-						contactInformation= { contactInformation }
+						contactInformation={ contactInformation }
 						selectedDomainName={ this.props.selectedDomainName }
 						selectedSite={ this.props.selectedSite }
 						hasPrivacyProtection={ hasPrivacyProtection }
@@ -70,7 +66,8 @@ class ContactsPrivacy extends React.PureComponent {
 						{ translate( 'Edit Contact Info' ) }
 					</VerticalNavItem>
 
-					{ ! hasPrivacyProtection && privacyAvailable && (
+					{ ! hasPrivacyProtection &&
+						privacyAvailable &&
 						<VerticalNavItem
 							path={ paths.domainManagementPrivacyProtection(
 								this.props.selectedSite.slug,
@@ -78,20 +75,21 @@ class ContactsPrivacy extends React.PureComponent {
 							) }
 						>
 							{ translate( 'Privacy Protection' ) }
-						</VerticalNavItem>
-					) }
+						</VerticalNavItem> }
 				</VerticalNav>
 			</Main>
 		);
 	}
 
 	isDataLoading() {
-		return ( ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer );
+		return ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer;
 	}
 
 	goToEdit = () => {
-		page( paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
-	}
+		page(
+			paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName )
+		);
+	};
 }
 
 export default localize( ContactsPrivacy );

@@ -1,3 +1,4 @@
+/** @format */
 var plugins = require( './plugins' ),
 	updatePluginsList = require( './plugins-updated' ),
 	site = require( './site' ),
@@ -10,21 +11,21 @@ module.exports = {
 		type: 'RECEIVE_PLUGINS',
 		site: site,
 		data: { plugins: plugins },
-		error: null
+		error: null,
 	},
 
 	fetchedMultiSite: {
 		type: 'RECEIVE_PLUGINS',
 		site: multiSite,
 		data: { plugins: plugins },
-		error: null
+		error: null,
 	},
 
 	fetchedAgain: {
 		type: 'RECEIVE_PLUGINS',
 		site: site,
 		data: { plugins: updatePluginsList },
-		error: null
+		error: null,
 	},
 
 	fetchedError: {
@@ -34,15 +35,15 @@ module.exports = {
 		error: {
 			error: 'unauthorized_full_access',
 			message: 'Full management mode is off for this site.',
-			name: 'UnauthorizedFullAccessError'
-		}
+			name: 'UnauthorizedFullAccessError',
+		},
 	},
 
 	fetchedNotAllowed: {
 		type: 'NOT_ALLOWED_TO_RECEIVE_PLUGINS',
 		site: { ID: 123 },
 		data: undefined,
-		error: undefined
+		error: undefined,
 	},
 
 	// Update
@@ -50,7 +51,7 @@ module.exports = {
 		type: 'UPDATE_PLUGIN',
 		action: 'UPDATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 2 ] // hello dolly
+		plugin: plugins[ 2 ], // hello dolly
 	},
 
 	updatedPlugin: {
@@ -59,14 +60,14 @@ module.exports = {
 		site: site,
 		plugin: plugins[ 2 ],
 		data: updatePluginData,
-		error: null
+		error: null,
 	},
 
 	clearPluginUpdate: {
 		type: 'REMOVE_PLUGINS_UPDATE_INFO',
 		action: 'REMOVE_PLUGINS_UPDATE_INFO',
 		site: site,
-		plugin: plugins[ 2 ]
+		plugin: plugins[ 2 ],
 	},
 
 	updatedPluginError: {
@@ -78,8 +79,8 @@ module.exports = {
 		error: {
 			error: 'unauthorized_full_access',
 			message: 'Full management mode is off for this site.',
-			name: 'UnauthorizedFullAccessError'
-		}
+			name: 'UnauthorizedFullAccessError',
+		},
 	},
 
 	// Remove Plugin
@@ -87,7 +88,7 @@ module.exports = {
 		type: 'REMOVE_PLUGIN',
 		action: 'REMOVE_PLUGIN',
 		site: site,
-		plugin: plugins[ 2 ]
+		plugin: plugins[ 2 ],
 	},
 
 	removedPluginError: {
@@ -96,7 +97,7 @@ module.exports = {
 		site: site,
 		plugin: plugins[ 2 ],
 		data: null,
-		error: { error: 'not allowed' }
+		error: { error: 'not allowed' },
 	},
 
 	// Remove Plugin
@@ -104,7 +105,7 @@ module.exports = {
 		type: 'RECEIVE_REMOVE_PLUGIN',
 		action: 'REMOVE_PLUGIN',
 		site: site,
-		plugin: plugins[ 2 ]
+		plugin: plugins[ 2 ],
 	},
 
 	// Activate
@@ -112,7 +113,7 @@ module.exports = {
 		type: 'ACTIVATE_PLUGIN',
 		action: 'ACTIVATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ] // developer
+		plugin: plugins[ 1 ], // developer
 	},
 
 	activatedPlugin: {
@@ -131,9 +132,9 @@ module.exports = {
 			network: false,
 			plugin_url: 'http://wordpress.org/extend/plugins/developer/',
 			slug: 'developer',
-			version: '1.2.5'
+			version: '1.2.5',
 		},
-		error: null
+		error: null,
 	},
 
 	activatedPluginError: {
@@ -145,8 +146,8 @@ module.exports = {
 		error: {
 			error: 'unauthorized_full_access',
 			message: 'Full management mode is off for this site.',
-			name: 'UnauthorizedFullAccessError'
-		}
+			name: 'UnauthorizedFullAccessError',
+		},
 	},
 
 	activatedBrokenPluginError: {
@@ -155,7 +156,7 @@ module.exports = {
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: [],
-		error: null
+		error: null,
 	},
 
 	activatedPluginErrorAlreadyActive: {
@@ -166,15 +167,15 @@ module.exports = {
 		data: null,
 		error: {
 			error: 'activation_error',
-			message: 'The Plugin is already active.'
-		}
+			message: 'The Plugin is already active.',
+		},
 	},
 	// Deactivate
 	deactivatePlugin: {
 		type: 'DEACTIVATE_PLUGIN',
 		action: 'DEACTIVATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ] // developer
+		plugin: plugins[ 1 ], // developer
 	},
 
 	deactivatedPlugin: {
@@ -193,9 +194,9 @@ module.exports = {
 			network: false,
 			plugin_url: 'http://wordpress.org/extend/plugins/developer/',
 			slug: 'developer',
-			version: '1.2.5'
+			version: '1.2.5',
 		},
-		error: null
+		error: null,
 	},
 
 	deactivatedPluginError: {
@@ -207,8 +208,8 @@ module.exports = {
 		error: {
 			error: 'unauthorized_full_access',
 			message: 'Full management mode is off for this site.',
-			name: 'UnauthorizedFullAccessError'
-		}
+			name: 'UnauthorizedFullAccessError',
+		},
 	},
 
 	deactivatedPluginErrorAlreadyNotActive: {
@@ -218,15 +219,15 @@ module.exports = {
 		data: null,
 		error: {
 			error: 'deactivation_error',
-			message: 'The Plugin is already not active.'
-		}
+			message: 'The Plugin is already not active.',
+		},
 	},
 	// Enable Autoupdate
 	enableAutoupdatePlugin: {
 		type: 'ENABLE_AUTOUPDATE_PLUGIN',
 		action: 'ENABLE_AUTOUPDATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ] // developer
+		plugin: plugins[ 1 ], // developer
 	},
 
 	enabledAutoupdatePlugin: {
@@ -245,9 +246,9 @@ module.exports = {
 			network: false,
 			plugin_url: 'http://wordpress.org/extend/plugins/developer/',
 			slug: 'developer',
-			version: '1.2.5'
+			version: '1.2.5',
 		},
-		error: null
+		error: null,
 	},
 
 	enabledAutoupdatePluginError: {
@@ -259,15 +260,15 @@ module.exports = {
 		error: {
 			error: 'unauthorized_full_access',
 			message: 'Full management mode is off for this site.',
-			name: 'UnauthorizedFullAccessError'
-		}
+			name: 'UnauthorizedFullAccessError',
+		},
 	},
 	// Disable Autoupdate
 	disableAutoupdatePlugin: {
 		type: 'DISABLE_AUTOUPDATE_PLUGIN',
 		action: 'DISABLE_AUTOUPDATE_PLUGIN',
 		site: site,
-		plugin: plugins[ 1 ] // developer
+		plugin: plugins[ 1 ], // developer
 	},
 
 	disabledAutoupdatePlugin: {
@@ -286,9 +287,9 @@ module.exports = {
 			network: false,
 			plugin_url: 'http://wordpress.org/extend/plugins/developer/',
 			slug: 'developer',
-			version: '1.2.5'
+			version: '1.2.5',
 		},
-		error: null
+		error: null,
 	},
 
 	disabledAutoupdatePluginError: {
@@ -300,13 +301,12 @@ module.exports = {
 		error: {
 			error: 'unauthorized_full_access',
 			message: 'Full management mode is off for this site.',
-			name: 'UnauthorizedFullAccessError'
-		}
+			name: 'UnauthorizedFullAccessError',
+		},
 	},
 
 	removeErrorNotice: {
 		type: 'REMOVE_PLUGINS_NOTICES',
-		logs: [ { status: 'error', action: 'UPDATE_PLUGIN', site: site, plugin: plugins[ 2 ] } ]
-	}
-
+		logs: [ { status: 'error', action: 'UPDATE_PLUGIN', site: site, plugin: plugins[ 2 ] } ],
+	},
 };

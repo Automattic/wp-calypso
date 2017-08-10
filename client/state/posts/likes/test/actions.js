@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,30 +14,28 @@ import {
 	POST_LIKES_RECEIVE,
 	POST_LIKES_REQUEST,
 	POST_LIKES_REQUEST_SUCCESS,
-	POST_LIKES_REQUEST_FAILURE
+	POST_LIKES_REQUEST_FAILURE,
 } from 'state/action-types';
 import { requestPostLikes } from '../actions';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => spy = sandbox.spy() );
+	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	describe( 'requestPostLikes()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/12345678/posts/50/likes' )
 				.reply( 200, {
-					likes: [
-						{ id: 1, login: 'chicken' }
-					],
+					likes: [ { id: 1, login: 'chicken' } ],
 					found: 2,
 					i_like: false,
 				} )
 				.get( '/rest/v1.1/sites/87654321/posts/50/likes' )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'User cannot access this private blog.'
+					message: 'User cannot access this private blog.',
 				} );
 		} );
 
@@ -46,7 +45,7 @@ describe( 'actions', () => {
 			expect( spy ).to.have.been.calledWith( {
 				type: POST_LIKES_REQUEST,
 				siteId: 12345678,
-				postId: 50
+				postId: 50,
 			} );
 		} );
 
@@ -56,9 +55,7 @@ describe( 'actions', () => {
 					type: POST_LIKES_RECEIVE,
 					siteId: 12345678,
 					postId: 50,
-					likes: [
-						{ id: 1, login: 'chicken' }
-					],
+					likes: [ { id: 1, login: 'chicken' } ],
 					found: 2,
 					iLike: false,
 				} );
@@ -82,8 +79,8 @@ describe( 'actions', () => {
 					siteId: 87654321,
 					postId: 50,
 					error: sinon.match( {
-						message: 'User cannot access this private blog.'
-					} )
+						message: 'User cannot access this private blog.',
+					} ),
 				} );
 			} );
 		} );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -33,7 +34,10 @@ module.exports = React.createClass( {
 			site.unfollow();
 		}
 
-		analytics.ga.recordEvent( 'Stats', 'Clicked ' + gaEvent + ' in ' + this.props.moduleName + ' List' );
+		analytics.ga.recordEvent(
+			'Stats',
+			'Clicked ' + gaEvent + ' in ' + this.props.moduleName + ' List'
+		);
 	},
 
 	render: function() {
@@ -41,27 +45,42 @@ module.exports = React.createClass( {
 			following = site.is_following,
 			wrapperClass = classNames( 'module-content-list-item-action-wrapper', {
 				follow: ! following,
-				following: following
+				following: following,
 			} ),
-			label = following ?
-				this.translate( 'Following', {
-					context: 'Stats: Follow action / Following status'
-				} ) :
-				this.translate( 'Follow', {
-					context: 'Stats: Follow action / Following status'
-				} ),
+			label = following
+				? this.translate( 'Following', {
+						context: 'Stats: Follow action / Following status',
+					} )
+				: this.translate( 'Follow', {
+						context: 'Stats: Follow action / Following status',
+					} ),
 			gridiconType = following ? 'reader-following' : 'reader-follow',
 			wrapperClassSet;
 
 		wrapperClassSet = classNames( wrapperClass );
 
 		return (
-			<li className='module-content-list-item-action'>
-				<a href='#' onClick={ this.clickHandler } className={ wrapperClassSet } title={ site.blog_domain } aria-label={ this.translate( 'Follow or unfollow user', { textOnly: true, context: 'Stats ARIA label: Follow/Unfollow action' } ) } >
-					<span className='module-content-list-item-action-label'><Gridicon icon={ gridiconType } size={ 18 } />{ label }</span>
-					<span className='module-content-list-item-action-label unfollow'><Gridicon icon="cross" size={ 18 } />{ this.translate( 'Unfollow', { context: 'Stats ARIA label: Unfollow action' } ) }</span>
+			<li className="module-content-list-item-action">
+				<a
+					href="#"
+					onClick={ this.clickHandler }
+					className={ wrapperClassSet }
+					title={ site.blog_domain }
+					aria-label={ this.translate( 'Follow or unfollow user', {
+						textOnly: true,
+						context: 'Stats ARIA label: Follow/Unfollow action',
+					} ) }
+				>
+					<span className="module-content-list-item-action-label">
+						<Gridicon icon={ gridiconType } size={ 18 } />
+						{ label }
+					</span>
+					<span className="module-content-list-item-action-label unfollow">
+						<Gridicon icon="cross" size={ 18 } />
+						{ this.translate( 'Unfollow', { context: 'Stats ARIA label: Unfollow action' } ) }
+					</span>
 				</a>
 			</li>
 		);
-	}
+	},
 } );

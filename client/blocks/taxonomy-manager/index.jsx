@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,12 +29,12 @@ export class TaxonomyManager extends Component {
 	};
 
 	static defaultProps = {
-		postType: 'post'
+		postType: 'post',
 	};
 
 	state = {
 		search: null,
-		termFormDialogOpened: false
+		termFormDialogOpened: false,
 	};
 
 	closeTermFormDialog = () => {
@@ -46,7 +47,7 @@ export class TaxonomyManager extends Component {
 		this.props.bumpStat( 'taxonomy_manager', `clicked_add_${ taxonomy }` );
 		this.setState( {
 			termFormDialogOpened: true,
-			selectedTerm: undefined
+			selectedTerm: undefined,
 		} );
 	};
 
@@ -56,14 +57,14 @@ export class TaxonomyManager extends Component {
 		this.props.bumpStat( 'taxonomy_manager', `clicked_edit_${ taxonomy }` );
 		this.setState( {
 			termFormDialogOpened: true,
-			selectedTerm: term
+			selectedTerm: term,
 		} );
 	};
 
 	onSearch = searchTerm => {
 		if ( searchTerm !== this.state.search ) {
 			this.setState( {
-				search: searchTerm
+				search: searchTerm,
 			} );
 		}
 	};

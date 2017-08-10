@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +10,10 @@ import { translate } from 'i18n-calypso';
  */
 import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getAPIShippingZones, areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
+import {
+	getAPIShippingZones,
+	areShippingZonesLoaded,
+} from 'woocommerce/state/sites/shipping-zones/selectors';
 import { getShippingZoneMethods } from './methods/selectors';
 import {
 	getCurrentlyEditingShippingZoneLocationsList,
@@ -21,7 +25,7 @@ export const getShippingZonesEdits = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'zones' ] );
 };
 
-const orderShippingZones = ( zones ) => {
+const orderShippingZones = zones => {
 	return [ ...zones ].sort( ( z1, z2 ) => {
 		//newly added zones should be on top and sorted by creation order
 		if ( ! isNumber( z1.id ) && ! isNumber( z2.id ) ) {
@@ -75,7 +79,7 @@ export const getShippingZones = createSelector(
 		// Overlay the current edits on top of (a copy of) the wc-api zones
 		const { creates, updates, deletes } = edits;
 		deletes.forEach( ( { id } ) => remove( zones, { id } ) );
-		updates.forEach( ( update ) => {
+		updates.forEach( update => {
 			const index = findIndex( zones, { id: update.id } );
 			if ( -1 === index ) {
 				return;
@@ -130,19 +134,19 @@ export const getCurrentlyEditingShippingZone = createSelector(
  * @param {Array} locations List of locations for the zone.
  * @return {String} The auto-generated name for the zone.
  */
-const generateZoneNameFromLocations = ( locations ) => {
+const generateZoneNameFromLocations = locations => {
 	if ( ! locations || ! locations.length ) {
 		return translate( 'New shipping zone' );
 	}
 
-	const locationNames = locations.map( ( { name, postcodeFilter } ) => (
+	const locationNames = locations.map( ( { name, postcodeFilter } ) =>
 		decodeEntities( postcodeFilter ? `${ name } (${ postcodeFilter })` : name )
-	) );
+	);
 
 	if ( locationNames.length > 10 ) {
 		const remaining = locationNames.length - 10;
 		const listed = locationNames.slice( 0, 10 );
-		return ( translate(
+		return translate(
 			'%(locationList)s and %(count)s other region',
 			'%(locationList)s and %(count)s other regions',
 			{
@@ -150,9 +154,9 @@ const generateZoneNameFromLocations = ( locations ) => {
 				args: {
 					locationList: listed.join( ', ' ),
 					count: remaining,
-				}
+				},
 			}
-		) );
+		);
 	}
 
 	return locationNames.join( ', ' );
@@ -199,7 +203,7 @@ export const areAnyShippingMethodsEnabled = ( state, siteId = getSelectedSiteId(
  * @return {Boolean} Whether this zone is considered "editable". As a rule, every zone is editable,
  * except the "Locations not covered by your other zones" zone, which always has id = 0.
  */
-const isEditableShippingZone = ( zoneId ) => ! isNumber( zoneId ) || 0 !== zoneId;
+const isEditableShippingZone = zoneId => ! isNumber( zoneId ) || 0 !== zoneId;
 
 /**
  * @param {Number|Object} zoneId Zone ID (can be a temporal ID)

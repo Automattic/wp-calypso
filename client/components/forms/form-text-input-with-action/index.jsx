@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -46,7 +47,7 @@ export default class FormTextInputWithAction extends Component {
 		};
 	}
 
-	handleFocus = ( e ) => {
+	handleFocus = e => {
 		this.setState( {
 			focused: true,
 		} );
@@ -54,7 +55,7 @@ export default class FormTextInputWithAction extends Component {
 		this.props.onFocus( e );
 	};
 
-	handleBlur = ( e ) => {
+	handleBlur = e => {
 		this.setState( {
 			focused: false,
 		} );
@@ -62,14 +63,14 @@ export default class FormTextInputWithAction extends Component {
 		this.props.onBlur( e );
 	};
 
-	handleKeyDown = ( e ) => {
+	handleKeyDown = e => {
 		this.props.onKeyDown( e );
 		if ( e.which === 13 && this.getValue() !== '' ) {
 			this.handleAction( e );
 		}
 	};
 
-	handleChange = ( e ) => {
+	handleChange = e => {
 		this.setState( {
 			value: e.target.value,
 		} );
@@ -77,7 +78,7 @@ export default class FormTextInputWithAction extends Component {
 		this.props.onChange( e.target.value, e );
 	};
 
-	handleAction = ( e ) => {
+	handleAction = e => {
 		this.props.onAction( this.getValue(), e );
 	};
 

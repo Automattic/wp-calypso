@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -59,15 +60,15 @@ describe( 'middleware', () => {
 					2647731: {
 						ID: 2647731,
 						name: 'Manual Automattic Updates',
-					}
-				}
-			}
+					},
+				},
+			},
 		} );
 
 		useSandbox( sandbox => {
 			connection = {
 				on: sandbox.stub(),
-				open: sandbox.stub().returns( Promise.resolve() )
+				open: sandbox.stub().returns( Promise.resolve() ),
 			};
 			// Need to add return value after re-assignment, otherwise it will return
 			// a reference to the previous (undefined) connection variable.
@@ -95,43 +96,53 @@ describe( 'middleware', () => {
 
 			it( 'should attempt to connect', () => {
 				getState.returns( uninitializedState );
-				return connectChat( connection, { dispatch, getState } )
-					.then( () => {
-						expect( connection.open ).to.have.been.calledOnce;
-						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_CONNECTING } );
-					} );
+				return connectChat( connection, { dispatch, getState } ).then( () => {
+					expect( connection.open ).to.have.been.calledOnce;
+					expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_CONNECTING } );
+				} );
 			} );
 
 			it( 'should set up listeners for various connection events', () => {
-				return connectChat( connection, { dispatch, getState } )
-					.then( () => {
-						expect( connection.on.callCount ).to.equal( 6 );
+				return connectChat( connection, { dispatch, getState } ).then( () => {
+					expect( connection.on.callCount ).to.equal( 6 );
 
-						// Ensure 'connect' listener was connected by executing a fake message event
-						connection.on.withArgs( 'connected' ).firstCall.args[ 1 ]( true );
-						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_CONNECTED } );
-						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_TRANSCRIPT_REQUEST } );
+					// Ensure 'connect' listener was connected by executing a fake message event
+					connection.on.withArgs( 'connected' ).firstCall.args[ 1 ]( true );
+					expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_CONNECTED } );
+					expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_TRANSCRIPT_REQUEST } );
 
-						// Ensure 'disconnect' listener was connected by executing a fake message event
-						connection.on.withArgs( 'disconnect' ).firstCall.args[ 1 ]( 'abc' );
-						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_DISCONNECTED, errorStatus: 'abc' } );
-
-						// Ensure 'reconnecting' listener was connected by executing a fake message event
-						connection.on.withArgs( 'reconnecting' ).firstCall.args[ 1 ]();
-						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_RECONNECTING } );
-
-						// Ensure 'accept' listener was connected by executing a fake message event
-						connection.on.withArgs( 'accept' ).firstCall.args[ 1 ]( true );
-						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_SET_AVAILABLE, isAvailable: true } );
-
-						// Ensure 'message' listener was connected by executing a fake message event
-						connection.on.withArgs( 'message' ).firstCall.args[ 1 ]( 'some event' );
-						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_RECEIVE_EVENT, event: 'some event' } );
-
-						// Ensure 'message' listener was connected by executing a fake message event
-						connection.on.withArgs( 'status' ).firstCall.args[ 1 ]( 'ready' );
-						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_SET_CHAT_STATUS, status: 'ready' } );
+					// Ensure 'disconnect' listener was connected by executing a fake message event
+					connection.on.withArgs( 'disconnect' ).firstCall.args[ 1 ]( 'abc' );
+					expect( dispatch ).to.have.been.calledWith( {
+						type: HAPPYCHAT_DISCONNECTED,
+						errorStatus: 'abc',
 					} );
+
+					// Ensure 'reconnecting' listener was connected by executing a fake message event
+					connection.on.withArgs( 'reconnecting' ).firstCall.args[ 1 ]();
+					expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_RECONNECTING } );
+
+					// Ensure 'accept' listener was connected by executing a fake message event
+					connection.on.withArgs( 'accept' ).firstCall.args[ 1 ]( true );
+					expect( dispatch ).to.have.been.calledWith( {
+						type: HAPPYCHAT_SET_AVAILABLE,
+						isAvailable: true,
+					} );
+
+					// Ensure 'message' listener was connected by executing a fake message event
+					connection.on.withArgs( 'message' ).firstCall.args[ 1 ]( 'some event' );
+					expect( dispatch ).to.have.been.calledWith( {
+						type: HAPPYCHAT_RECEIVE_EVENT,
+						event: 'some event',
+					} );
+
+					// Ensure 'message' listener was connected by executing a fake message event
+					connection.on.withArgs( 'status' ).firstCall.args[ 1 ]( 'ready' );
+					expect( dispatch ).to.have.been.calledWith( {
+						type: HAPPYCHAT_SET_CHAT_STATUS,
+						status: 'ready',
+					} );
+				} );
 			} );
 		} );
 	} );
@@ -140,9 +151,9 @@ describe( 'middleware', () => {
 		const state = {
 			happychat: {
 				geoLocation: {
-					city: 'Timisoara'
-				}
-			}
+					city: 'Timisoara',
+				},
+			},
 		};
 
 		it( 'should send relevant browser information to the connection', () => {
@@ -152,7 +163,9 @@ describe( 'middleware', () => {
 			sendInfo( connection, { getState }, action );
 
 			expect( connection.info ).to.have.been.calledOnce;
-			expect( connection.info.firstCall.args[ 0 ].text ).to.include( state.happychat.geoLocation.city );
+			expect( connection.info.firstCall.args[ 0 ].text ).to.include(
+				state.happychat.geoLocation.city
+			);
 		} );
 	} );
 
@@ -172,16 +185,16 @@ describe( 'middleware', () => {
 					2647731: {
 						ID: 2647731,
 						name: 'Manual Automattic Updates',
-					}
-				}
-			}
+					},
+				},
+			},
 		} );
 		let connection, store;
 
 		useSandbox( sandbox => {
 			sandbox.stub( selectors, 'wasHappychatRecentlyActive' );
 			connection = {
-				on: sandbox.stub()
+				on: sandbox.stub(),
 			};
 			// Need to add return value after re-assignment, otherwise it will return
 			// a reference to the previous (undefined) connection variable.
@@ -237,13 +250,11 @@ describe( 'middleware', () => {
 		it( 'should fetch transcript from connection and dispatch receive action', () => {
 			const state = deepFreeze( {
 				happychat: {
-					timeline: []
-				}
+					timeline: [],
+				},
 			} );
 			const response = {
-				messages: [
-					{ text: 'hello' }
-				],
+				messages: [ { text: 'hello' } ],
 				timestamp: 100000,
 			};
 
@@ -251,15 +262,14 @@ describe( 'middleware', () => {
 			const dispatch = stub();
 			const getState = stub().returns( state );
 
-			return requestTranscript( connection, { getState, dispatch } )
-				.then( () => {
-					expect( connection.transcript ).to.have.been.called;
+			return requestTranscript( connection, { getState, dispatch } ).then( () => {
+				expect( connection.transcript ).to.have.been.called;
 
-					expect( dispatch ).to.have.been.calledWith( {
-						type: HAPPYCHAT_TRANSCRIPT_RECEIVE,
-						...response,
-					} );
+				expect( dispatch ).to.have.been.calledWith( {
+					type: HAPPYCHAT_TRANSCRIPT_RECEIVE,
+					...response,
 				} );
+			} );
 		} );
 	} );
 
@@ -267,16 +277,16 @@ describe( 'middleware', () => {
 		it( 'should send the locale and groups through the connection and send a preferences signal', () => {
 			const state = {
 				happychat: {
-					connectionStatus: 'connected'
+					connectionStatus: 'connected',
 				},
 				currentUser: {
 					locale: 'en',
 				},
 				sites: {
 					items: {
-						1: { ID: 1 }
-					}
-				}
+						1: { ID: 1 },
+					},
+				},
 			};
 			const getState = () => state;
 			const connection = {
@@ -293,9 +303,9 @@ describe( 'middleware', () => {
 				},
 				sites: {
 					items: {
-						1: { ID: 1 }
-					}
-				}
+						1: { ID: 1 },
+					},
+				},
 			};
 			const getState = () => state;
 			const connection = {
@@ -311,18 +321,18 @@ describe( 'middleware', () => {
 		const action = { path: '/me' };
 		const state = {
 			currentUser: {
-				id: '2'
+				id: '2',
 			},
 			users: {
 				items: {
-					2: { username: 'Link' }
-				}
+					2: { username: 'Link' },
+				},
 			},
 			happychat: {
 				connectionStatus: 'connected',
 				isAvailable: true,
-				chatStatus: HAPPYCHAT_CHAT_STATUS_ASSIGNED
-			}
+				chatStatus: HAPPYCHAT_CHAT_STATUS_ASSIGNED,
+			},
 		};
 		beforeEach( () => {
 			connection = { sendEvent: stub() };
@@ -335,18 +345,14 @@ describe( 'middleware', () => {
 			);
 		} );
 		it( 'should not sent the page URL the user is in when client not connected', () => {
-			const getState = () => Object.assign( {},
-				state,
-				{ happychat: { connectionStatus: 'uninitialized' } }
-			);
+			const getState = () =>
+				Object.assign( {}, state, { happychat: { connectionStatus: 'uninitialized' } } );
 			sendRouteSetEventMessage( connection, { getState }, action );
 			expect( connection.sendEvent ).to.not.have.been.called;
 		} );
 		it( 'should not sent the page URL the user is in when chat is not assigned', () => {
-			const getState = () => Object.assign( {},
-				state,
-				{ happychat: { chatStatus: HAPPYCHAT_CHAT_STATUS_PENDING } }
-			);
+			const getState = () =>
+				Object.assign( {}, state, { happychat: { chatStatus: HAPPYCHAT_CHAT_STATUS_PENDING } } );
 			sendRouteSetEventMessage( connection, { getState }, action );
 			expect( connection.sendEvent ).to.not.have.been.called;
 		} );
@@ -390,11 +396,19 @@ describe( 'middleware', () => {
 
 		it( 'should only send a timeline event for whitelisted tracks events', () => {
 			const analyticsMeta = [
-				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'calypso_add_new_wordpress_click' } },
+				{
+					type: ANALYTICS_EVENT_RECORD,
+					payload: { service: 'tracks', name: 'calypso_add_new_wordpress_click' },
+				},
 				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'abc' } },
-				{ type: ANALYTICS_EVENT_RECORD, payload: {
-					service: 'tracks', name: 'calypso_themeshowcase_theme_activate', properties: {}
-				} },
+				{
+					type: ANALYTICS_EVENT_RECORD,
+					payload: {
+						service: 'tracks',
+						name: 'calypso_themeshowcase_theme_activate',
+						properties: {},
+					},
+				},
 				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'def' } },
 			];
 			sendAnalyticsLogEvent( connection, { meta: { analytics: analyticsMeta } } );
@@ -407,19 +421,19 @@ describe( 'middleware', () => {
 		const assignedState = deepFreeze( {
 			happychat: {
 				connectionStatus: 'connected',
-				chatStatus: HAPPYCHAT_CHAT_STATUS_ASSIGNED
+				chatStatus: HAPPYCHAT_CHAT_STATUS_ASSIGNED,
 			},
 		} );
 		const unassignedState = deepFreeze( {
 			happychat: {
 				connectionStatus: 'connected',
-				chatStatus: HAPPYCHAT_CHAT_STATUS_DEFAULT
+				chatStatus: HAPPYCHAT_CHAT_STATUS_DEFAULT,
 			},
 		} );
 		const unconnectedState = deepFreeze( {
 			happychat: {
 				connectionStatus: 'uninitialized',
-				chatStatus: HAPPYCHAT_CHAT_STATUS_DEFAULT
+				chatStatus: HAPPYCHAT_CHAT_STATUS_DEFAULT,
 			},
 		} );
 
@@ -438,14 +452,14 @@ describe( 'middleware', () => {
 			getState.returns( assignedState );
 		} );
 
-		it( 'should not send events if there\'s no Happychat connection', () => {
+		it( "should not send events if there's no Happychat connection", () => {
 			const action = {
 				type: HAPPYCHAT_BLUR,
 				meta: {
 					analytics: [
 						{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'abc' } },
-					]
-				}
+					],
+				},
 			};
 			getState.returns( unconnectedState );
 			sendActionLogsAndEvents( connection, { getState }, action );
@@ -460,8 +474,8 @@ describe( 'middleware', () => {
 				meta: {
 					analytics: [
 						{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'abc' } },
-					]
-				}
+					],
+				},
 			};
 			getState.returns( unassignedState );
 			sendActionLogsAndEvents( connection, { getState }, action );
@@ -475,14 +489,22 @@ describe( 'middleware', () => {
 				type: HAPPYCHAT_BLUR,
 				meta: {
 					analytics: [
-						{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'calypso_add_new_wordpress_click' } },
+						{
+							type: ANALYTICS_EVENT_RECORD,
+							payload: { service: 'tracks', name: 'calypso_add_new_wordpress_click' },
+						},
 						{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'abc' } },
-						{ type: ANALYTICS_EVENT_RECORD, payload: {
-							service: 'tracks', name: 'calypso_themeshowcase_theme_activate', properties: {}
-						} },
+						{
+							type: ANALYTICS_EVENT_RECORD,
+							payload: {
+								service: 'tracks',
+								name: 'calypso_themeshowcase_theme_activate',
+								properties: {},
+							},
+						},
 						{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'def' } },
-					]
-				}
+					],
+				},
 			};
 			getState.returns( assignedState );
 			sendActionLogsAndEvents( connection, { getState }, action );

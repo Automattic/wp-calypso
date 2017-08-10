@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -7,9 +8,4 @@ import requestReset from './request-reset';
 import reset from './reset';
 import validate from './validate';
 
-export default mergeHandlers(
-	lookup,
-	requestReset,
-	reset,
-	validate,
-);
+export default mergeHandlers( lookup, requestReset, reset, validate );

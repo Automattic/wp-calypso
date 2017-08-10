@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,19 +20,19 @@ export default React.createClass( {
 		value: PropTypes.string,
 		disabled: PropTypes.bool,
 		className: PropTypes.string,
-		hideHttp: PropTypes.bool
+		hideHttp: PropTypes.bool,
 	},
 
 	getInitialState() {
 		return {
 			isCopied: false,
-			disabled: false
+			disabled: false,
 		};
 	},
 
 	getDefaultProps() {
 		return {
-			value: ''
+			value: '',
 		};
 	},
 
@@ -42,12 +43,12 @@ export default React.createClass( {
 
 	showConfirmation() {
 		this.setState( {
-			isCopied: true
+			isCopied: true,
 		} );
 
 		this.confirmationTimeout = setTimeout( () => {
 			this.setState( {
-				isCopied: false
+				isCopied: false,
 			} );
 		}, 4000 );
 	},
@@ -63,17 +64,19 @@ export default React.createClass( {
 					value={ hideHttp ? withoutHttp( value ) : value }
 					type="text"
 					selectOnFocus
-					readOnly />
+					readOnly
+				/>
 				<ClipboardButton
 					text={ value }
 					onCopy={ this.showConfirmation }
 					disabled={ disabled }
-					compact>
+					compact
+				>
 					{ this.state.isCopied
 						? this.translate( 'Copied!' )
 						: this.translate( 'Copy', { context: 'verb' } ) }
 				</ClipboardButton>
 			</span>
 		);
-	}
+	},
 } );

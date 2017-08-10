@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -12,10 +13,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONES_REQUEST,
 	WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import {
-	areShippingZonesLoaded,
-	areShippingZonesLoading,
-} from './selectors';
+import { areShippingZonesLoaded, areShippingZonesLoading } from './selectors';
 import { fetchShippingZoneMethods } from '../shipping-zone-methods/actions';
 import { fetchShippingZoneLocations } from '../shipping-zone-locations/actions';
 
@@ -27,8 +25,11 @@ export const fetchShippingZonesSuccess = ( siteId, data ) => {
 	};
 };
 
-export const fetchShippingZones = ( siteId ) => ( dispatch, getState ) => {
-	if ( areShippingZonesLoaded( getState(), siteId ) || areShippingZonesLoading( getState(), siteId ) ) {
+export const fetchShippingZones = siteId => ( dispatch, getState ) => {
+	if (
+		areShippingZonesLoaded( getState(), siteId ) ||
+		areShippingZonesLoading( getState(), siteId )
+	) {
 		return;
 	}
 
@@ -39,20 +40,27 @@ export const fetchShippingZones = ( siteId ) => ( dispatch, getState ) => {
 
 	dispatch( getAction );
 
-	return request( siteId ).get( 'shipping/zones' )
+	return request( siteId )
+		.get( 'shipping/zones' )
 		.catch( err => {
 			dispatch( setError( siteId, getAction, err ) );
 		} )
-		.then( ( data ) => {
+		.then( data => {
 			if ( ! data ) {
 				return;
 			}
 			dispatch( fetchShippingZonesSuccess( siteId, data ) );
-			return Promise.all( data.map( zone => {
-				return fetchShippingZoneMethods( siteId, zone.id )( dispatch, getState );
-			} ).concat( data.map( zone => {
-				return fetchShippingZoneLocations( siteId, zone.id )( dispatch, getState );
-			} ) ) );
+			return Promise.all(
+				data
+					.map( zone => {
+						return fetchShippingZoneMethods( siteId, zone.id )( dispatch, getState );
+					} )
+					.concat(
+						data.map( zone => {
+							return fetchShippingZoneLocations( siteId, zone.id )( dispatch, getState );
+						} )
+					)
+			);
 		} );
 };
 

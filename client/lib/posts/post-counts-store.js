@@ -1,3 +1,4 @@
+/** @format */
 
 /**
  * External dependencies
@@ -7,11 +8,10 @@ var isEqual = require( 'lodash/isEqual' ),
 	debug = require( 'debug' )( 'calypso:posts:post-counts-store' );
 
 const sum = obj => {
-	return Object.keys( obj )
-		.reduce( function( _sum, key ) {
-			return _sum + parseFloat( obj[ key ] );
-		}, 0 );
-}
+	return Object.keys( obj ).reduce( function( _sum, key ) {
+		return _sum + parseFloat( obj[ key ] );
+	}, 0 );
+};
 
 /**
  * Internal dependencies
@@ -49,7 +49,6 @@ function getSiteId( id ) {
  * PostCountsStore
  */
 PostCountsStore = {
-
 	/**
 	 * Return statuses of current site
 	 *
@@ -94,7 +93,7 @@ PostCountsStore = {
 		debug( '[%s][%s] total: %o ', siteId, scope, total );
 
 		return total;
-	}
+	},
 };
 
 emitter( PostCountsStore );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -8,7 +9,9 @@ import { localize } from 'i18n-calypso';
 const BlogStickersList = ( { stickers, translate } ) => {
 	return (
 		<div className="blog-stickers__list">
-			<h3 className="blog-stickers__list-title">{ translate( 'Blog Stickers' ) }</h3>
+			<h3 className="blog-stickers__list-title">
+				{ translate( 'Blog Stickers' ) }
+			</h3>
 			<ul className="blog-stickers__list-ul">
 				{ map( stickers, sticker => {
 					return (

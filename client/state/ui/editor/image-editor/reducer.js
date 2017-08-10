@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -12,7 +13,7 @@ import {
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_STATE_RESET,
 	IMAGE_EDITOR_STATE_RESET_ALL,
-	IMAGE_EDITOR_IMAGE_HAS_LOADED
+	IMAGE_EDITOR_IMAGE_HAS_LOADED,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 import { AspectRatios } from './constants';
@@ -20,28 +21,28 @@ import { AspectRatios } from './constants';
 export const defaultTransform = {
 	degrees: 0,
 	scaleX: 1,
-	scaleY: 1
+	scaleY: 1,
 };
 
 export const defaultFileInfo = {
 	src: '',
 	fileName: 'default',
 	mimeType: 'image/png',
-	title: 'default'
+	title: 'default',
 };
 
 export const defaultCropBounds = {
 	topBound: 0,
 	leftBound: 0,
 	bottomBound: 100,
-	rightBound: 100
+	rightBound: 100,
 };
 
 export const defaultCrop = {
 	topRatio: 0,
 	leftRatio: 0,
 	widthRatio: 1,
-	heightRatio: 1
+	heightRatio: 1,
 };
 
 export function hasChanges( state = false, action ) {
@@ -68,7 +69,7 @@ export const originalAspectRatio = createReducer( null, {
 	[ IMAGE_EDITOR_IMAGE_HAS_LOADED ]: ( state, { width, height } ) => {
 		return { width, height };
 	},
-	[ IMAGE_EDITOR_STATE_RESET_ALL ]: () => null
+	[ IMAGE_EDITOR_STATE_RESET_ALL ]: () => null,
 } );
 
 export function imageIsLoading( state = true, action ) {
@@ -92,7 +93,7 @@ export function fileInfo( state = defaultFileInfo, action ) {
 		case IMAGE_EDITOR_STATE_RESET_ALL:
 			return {
 				...state,
-				...defaultFileInfo
+				...defaultFileInfo,
 			};
 	}
 
@@ -120,7 +121,7 @@ export function cropBounds( state = defaultCropBounds, action ) {
 				topBound: action.topBound,
 				leftBound: action.leftBound,
 				bottomBound: action.bottomBound,
-				rightBound: action.rightBound
+				rightBound: action.rightBound,
 			} );
 	}
 
@@ -135,18 +136,18 @@ export function crop( state = defaultCrop, action ) {
 				topRatio: action.topRatio,
 				leftRatio: action.leftRatio,
 				widthRatio: action.widthRatio,
-				heightRatio: action.heightRatio
+				heightRatio: action.heightRatio,
 			} );
 		case IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE:
 			return {
 				topRatio: 1 - state.widthRatio - state.leftRatio,
 				leftRatio: state.topRatio,
 				widthRatio: state.heightRatio,
-				heightRatio: state.widthRatio
+				heightRatio: state.widthRatio,
 			};
 		case IMAGE_EDITOR_FLIP:
 			return Object.assign( {}, state, {
-				leftRatio: 1 - state.widthRatio - state.leftRatio
+				leftRatio: 1 - state.widthRatio - state.leftRatio,
 			} );
 		case IMAGE_EDITOR_STATE_RESET:
 		case IMAGE_EDITOR_STATE_RESET_ALL:
@@ -184,5 +185,5 @@ export default combineReducers( {
 	crop,
 	aspectRatio,
 	originalAspectRatio,
-	imageIsLoading
+	imageIsLoading,
 } );

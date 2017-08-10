@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,10 +16,7 @@ class QueryPostRevisions extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if (
-			this.props.siteId === prevProps.siteId &&
-			this.props.postId === prevProps.postId
-		) {
+		if ( this.props.siteId === prevProps.siteId && this.props.postId === prevProps.postId ) {
 			return;
 		}
 
@@ -40,7 +38,4 @@ QueryPostRevisions.propTypes = {
 	requestPostRevisions: PropTypes.func,
 };
 
-export default connect(
-	() => ( {} ),
-	{ requestPostRevisions }
-)( QueryPostRevisions );
+export default connect( () => ( {} ), { requestPostRevisions } )( QueryPostRevisions );

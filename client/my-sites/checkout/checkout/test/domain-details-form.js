@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -27,7 +28,7 @@ describe( 'Domain Details Form', () => {
 	// needed, because some dependency of dependency uses `window`
 	useFakeDom();
 
-	useMockery( ( mockery ) => {
+	useMockery( mockery => {
 		mockery.registerMock( 'lib/analytics', {} );
 		mockery.registerMock( 'i18n-calypso', { localize: identity } );
 		mockery.registerMock( 'lib/wp', wpcomMock );
@@ -40,8 +41,7 @@ describe( 'Domain Details Form', () => {
 		cart: {
 			products: [],
 		},
-		contactDetails: {
-		},
+		contactDetails: {},
 		translate: identity,
 	};
 
@@ -54,14 +54,14 @@ describe( 'Domain Details Form', () => {
 		productSlug: 'normal_domain',
 		domain: 'test.test',
 		extra: {
-			privacy_available: true
+			privacy_available: true,
 		},
 	} );
 
 	const domainProductWithoutPrivacy = domainRegistration( {
 		productSlug: 'unprivate_domain',
 		extra: {
-			privacy_available: false
+			privacy_available: false,
 		},
 	} );
 
@@ -89,11 +89,9 @@ describe( 'Domain Details Form', () => {
 	} );
 
 	it( 'should render the privacy upsell with a domain with privacy support', () => {
-		const propsWithDomain = merge(
-			{},
-			defaultProps,
-			{ cart: { products: [ domainProductWithExplicitPrivacy ] } }
-		);
+		const propsWithDomain = merge( {}, defaultProps, {
+			cart: { products: [ domainProductWithExplicitPrivacy ] },
+		} );
 
 		const wrapper = shallow( <DomainDetailsForm { ...propsWithDomain } /> );
 
@@ -103,11 +101,9 @@ describe( 'Domain Details Form', () => {
 	it( 'should render privacy upsell for domain with support and privacy product', () => {
 		const privacyProduct = domainPrivacyProtection( { domain: 'test.test' } );
 
-		const propsWithDomainWithPrivacy = merge(
-			{},
-			defaultProps,
-			{ cart: { products: [ domainProduct, privacyProduct ] } }
-		);
+		const propsWithDomainWithPrivacy = merge( {}, defaultProps, {
+			cart: { products: [ domainProduct, privacyProduct ] },
+		} );
 
 		const wrapper = shallow( <DomainDetailsForm { ...propsWithDomainWithPrivacy } /> );
 
@@ -115,33 +111,25 @@ describe( 'Domain Details Form', () => {
 	} );
 
 	it( "should not render the privacy upsell with a domain that doesn't support privacy", () => {
-		const propsWithDomainWithNoPrivacy = merge(
-			{},
-			defaultProps,
-			{ cart: { products: [ domainProductWithoutPrivacy ] } }
-		);
+		const propsWithDomainWithNoPrivacy = merge( {}, defaultProps, {
+			cart: { products: [ domainProductWithoutPrivacy ] },
+		} );
 		const wrapper = shallow( <DomainDetailsForm { ...propsWithDomainWithNoPrivacy } /> );
 
 		expect( wrapper.find( 'PrivacyProtection' ) ).to.have.length( 0 );
 	} );
 
 	it( 'should not render the privacy upsell with mixed privacy support', () => {
-		const mixedSupportProps = merge(
-			{},
-			defaultProps,
-			{ cart: { products: [ domainProductWithExplicitPrivacy, domainProductWithoutPrivacy ] } }
-		);
+		const mixedSupportProps = merge( {}, defaultProps, {
+			cart: { products: [ domainProductWithExplicitPrivacy, domainProductWithoutPrivacy ] },
+		} );
 		const wrapper = shallow( <DomainDetailsForm { ...mixedSupportProps } /> );
 
 		expect( wrapper.find( 'PrivacyProtection' ) ).to.have.length( 0 );
 	} );
 
 	it( 'should render privacy upsell without explicit privacy support', () => {
-		const mixedSupportProps = merge(
-			{},
-			defaultProps,
-			{ cart: { products: [ domainProduct ] } }
-		);
+		const mixedSupportProps = merge( {}, defaultProps, { cart: { products: [ domainProduct ] } } );
 		const wrapper = shallow( <DomainDetailsForm { ...mixedSupportProps } /> );
 
 		expect( wrapper.find( 'PrivacyProtection' ) ).to.have.length( 1 );

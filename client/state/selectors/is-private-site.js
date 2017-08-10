@@ -1,7 +1,8 @@
+/** @format */
 /**
  * Internal dependencies
  */
-import { getRawSite } from 'state/sites/selectors';
+import { getRawSite } from 'state/sites/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 
 /**

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,4 +12,4 @@ import controller from './controller';
 
 export default function() {
 	page( '/me/account', meController.sidebar, controller.account );
-};
+}

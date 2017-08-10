@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -6,10 +7,7 @@ import React from 'react';
 import page from 'page';
 import Debug from 'debug';
 import { translate } from 'i18n-calypso';
-import {
-	get,
-	isEmpty,
-} from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -42,21 +40,26 @@ const analyticsPageTitleByType = {
 	pro: 'Jetpack Install Pro',
 };
 
-const removeSidebar = ( context ) => {
+const removeSidebar = context => {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 
-	context.store.dispatch( setSection( { name: 'jetpackConnect' }, {
-		hasSidebar: false
-	} ) );
+	context.store.dispatch(
+		setSection(
+			{ name: 'jetpackConnect' },
+			{
+				hasSidebar: false,
+			}
+		)
+	);
 };
 
-const jetpackNewSiteSelector = ( context ) => {
+const jetpackNewSiteSelector = context => {
 	removeSidebar( context );
 	renderWithReduxStore(
 		React.createElement( JetpackNewSite, {
 			path: context.path,
 			context: context,
-			locale: context.params.locale
+			locale: context.params.locale,
 		} ),
 		document.getElementById( 'primary' ),
 		context.store
@@ -79,7 +82,7 @@ export default {
 			debug( 'set initial query object', context.query );
 			context.store.dispatch( {
 				type: JETPACK_CONNECT_QUERY_SET,
-				queryObject: context.query
+				queryObject: context.query,
 			} );
 			page.redirect( context.pathname );
 		}
@@ -93,11 +96,7 @@ export default {
 	},
 
 	connect( context ) {
-		const {
-			path,
-			pathname,
-			params
-		} = context;
+		const { path, pathname, params } = context;
 		const { type = false } = params;
 		const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
 
@@ -141,11 +140,7 @@ export default {
 
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 		renderWithReduxStore(
-			<JetpackConnectAuthorizeForm
-				path={ context.path }
-				interval={ interval }
-				locale={ locale }
-			/>,
+			<JetpackConnectAuthorizeForm path={ context.path } interval={ interval } locale={ locale } />,
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -167,7 +162,7 @@ export default {
 				locale: context.params.locale,
 				userModule: userModule,
 				siteId: context.params.siteId,
-				ssoNonce: context.params.ssoNonce
+				ssoNonce: context.params.ssoNonce,
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
@@ -227,7 +222,8 @@ export default {
 					context={ context }
 					destinationType={ context.params.destinationType }
 					basePlansPath={ '/jetpack/connect/plans' }
-					interval={ context.params.interval } />
+					interval={ context.params.interval }
+				/>
 			</CheckoutData>,
 			document.getElementById( 'primary' ),
 			context.store
@@ -247,7 +243,8 @@ export default {
 			<Plans
 				context={ context }
 				showFirst={ true }
-				destinationType={ context.params.destinationType } />,
+				destinationType={ context.params.destinationType }
+			/>,
 			document.getElementById( 'primary' ),
 			context.store
 		);

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,20 +10,11 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import {
-	ButtonRow,
-	makeTour,
-	Step,
-	Tour,
-	Quit,
-} from 'layout/guided-tours/config-elements';
-import {
-	hasUserRegisteredBefore,
-} from 'state/ui/guided-tours/contexts';
+import { ButtonRow, makeTour, Step, Tour, Quit } from 'layout/guided-tours/config-elements';
+import { hasUserRegisteredBefore } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
 
 class RepositioningStep extends Step {
-
 	componentDidMount() {
 		super.componentDidMount();
 		this.interval = setInterval( () => {
@@ -34,7 +26,6 @@ class RepositioningStep extends Step {
 		super.componentWillUnmount();
 		clearInterval( this.interval );
 	}
-
 }
 
 export const EditorInsertMenuTour = makeTour(
@@ -42,10 +33,7 @@ export const EditorInsertMenuTour = makeTour(
 		name="editorInsertMenu"
 		path={ [ '/post/', '/page/' ] }
 		version="20161215"
-		when={ and(
-			hasUserRegisteredBefore( new Date( '2016-12-15' ) ),
-			isDesktop,
-		) }
+		when={ and( hasUserRegisteredBefore( new Date( '2016-12-15' ) ), isDesktop ) }
 	>
 		<RepositioningStep
 			arrow="left-top"
@@ -59,21 +47,21 @@ export const EditorInsertMenuTour = makeTour(
 			} }
 		>
 			<p>
-				{ translate(
-					'{{strong}}Add Media{{/strong}} has moved to a new button.', {
-						components: { strong: <strong /> },
-						comment: 'Title of the Guided Tour for the Editor Insert Menu button.'
-					}
-				) }
+				{ translate( '{{strong}}Add Media{{/strong}} has moved to a new button.', {
+					components: { strong: <strong /> },
+					comment: 'Title of the Guided Tour for the Editor Insert Menu button.',
+				} ) }
 			</p>
 			<p>
 				{ translate( 'Click {{icon/}} to add media and other kinds of content.', {
 					components: { icon: <Gridicon icon="chevron-down" /> },
-					comment: 'Refers to the Insert Content button and dropdown in the post editor.'
+					comment: 'Refers to the Insert Content button and dropdown in the post editor.',
 				} ) }
 			</p>
 			<ButtonRow>
-				<Quit primary>{ translate( 'Got it' ) }</Quit>
+				<Quit primary>
+					{ translate( 'Got it' ) }
+				</Quit>
 			</ButtonRow>
 		</RepositioningStep>
 	</Tour>

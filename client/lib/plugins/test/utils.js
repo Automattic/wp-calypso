@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,13 +25,13 @@ describe( 'Plugins Utils', () => {
 		} );
 
 		it( 'should add the author name to the plugins object', () => {
-			const plugin = JSON.parse( '{"author":"<a href=\\"http:\/\/jetpack.me\\">Automattic<\/a>"}' ),
+			const plugin = JSON.parse( '{"author":"<a href=\\"http://jetpack.me\\">Automattic</a>"}' ),
 				normalizedPlugin = PluginUtils.normalizePluginData( plugin );
 			assert.equal( normalizedPlugin.author_name, 'Automattic' );
 		} );
 
 		it( 'should add the author url to the plugins object', () => {
-			const plugin = JSON.parse( '{"author":"<a href=\\"http:\/\/jetpack.me\\">Automattic<\/a>"}' ),
+			const plugin = JSON.parse( '{"author":"<a href=\\"http://jetpack.me\\">Automattic</a>"}' ),
 				normalizedPlugin = PluginUtils.normalizePluginData( plugin );
 			assert.equal( normalizedPlugin.author_url, 'http://jetpack.me' );
 		} );
@@ -66,7 +67,7 @@ describe( 'Plugins Utils', () => {
 				slug: 'developer',
 				version: '1.2.5',
 				update: {},
-				updating: false
+				updating: false,
 			};
 			assert.deepEqual( PluginUtils.whiteListPluginData( plugin ), plugin );
 		} );
@@ -74,35 +75,45 @@ describe( 'Plugins Utils', () => {
 
 	describe( 'extractAuthorName', () => {
 		it( 'should extract the author from the .org api response', () => {
-			const jetpackAuthorObj = JSON.parse( '{"author":"<a href=\\"http:\/\/jetpack.me\\">Automattic<\/a>"}' );
+			const jetpackAuthorObj = JSON.parse(
+				'{"author":"<a href=\\"http://jetpack.me\\">Automattic</a>"}'
+			);
 			assert.equal( PluginUtils.extractAuthorName( jetpackAuthorObj.author ), 'Automattic' );
 		} );
 
 		it( 'should support names with special chars', () => {
-			const plugin = JSON.parse( '{"author":"<a href=\\"http:\/\/test.com\/\\">&#209;&#225;&#240;<\/a>"}' );
+			const plugin = JSON.parse(
+				'{"author":"<a href=\\"http://test.com/\\">&#209;&#225;&#240;</a>"}'
+			);
 			assert.equal( PluginUtils.extractAuthorName( plugin.author ), 'Ñáð' );
 		} );
 	} );
 
 	describe( 'extractScreenshots', () => {
 		it( 'should extract the screenshot data from the .org api response', () => {
-			const screenshotData = JSON.parse( '{"screenshots":"<ul><li><a href=\\"http:\/\/jetpack.me\\"><img src=\\"http:\/\/url-toscreenshot.com\\" \/><\/a><p>Caption!<\/p><\/li></ul>"}' ),
+			const screenshotData = JSON.parse(
+					'{"screenshots":"<ul><li><a href=\\"http://jetpack.me\\"><img src=\\"http://url-toscreenshot.com\\" /></a><p>Caption!</p></li></ul>"}'
+				),
 				extractedScreenshotData = PluginUtils.extractScreenshots( screenshotData.screenshots );
 			assert.isArray( extractedScreenshotData );
-			assert.equal( extractedScreenshotData[ 0 ].url, 'http:\/\/url-toscreenshot.com/' );
+			assert.equal( extractedScreenshotData[ 0 ].url, 'http://url-toscreenshot.com/' );
 			assert.equal( extractedScreenshotData[ 0 ].caption, 'Caption!' );
 		} );
 
 		it( 'should extract the screenshot data from the .org api response with removed items', () => {
-			const screenshotData = JSON.parse( '{"screenshots":"<ul><li><a href=\\"http:\/\/jetpack.me\\"><img \/><\/a><p>Caption!<\/p><\/li><li><a href=\\"http:\/\/jetpack.me\\"><img src=\\"http:\/\/url-toscreenshot.com\\" \/><\/a><p>Caption!<\/p><\/li></ul>"}' ),
+			const screenshotData = JSON.parse(
+					'{"screenshots":"<ul><li><a href=\\"http://jetpack.me\\"><img /></a><p>Caption!</p></li><li><a href=\\"http://jetpack.me\\"><img src=\\"http://url-toscreenshot.com\\" /></a><p>Caption!</p></li></ul>"}'
+				),
 				extractedScreenshotData = PluginUtils.extractScreenshots( screenshotData.screenshots );
 			assert.isArray( extractedScreenshotData );
-			assert.equal( extractedScreenshotData[ 0 ].url, 'http:\/\/url-toscreenshot.com/' );
+			assert.equal( extractedScreenshotData[ 0 ].url, 'http://url-toscreenshot.com/' );
 			assert.equal( extractedScreenshotData[ 0 ].caption, 'Caption!' );
 		} );
 
 		it( 'should extract the screenshot data from the .org api response but if no screenshots urls then return null', () => {
-			const screenshotData = JSON.parse( '{"screenshots":"<ul><li><a href=\\"http:\/\/jetpack.me\\"><img \/><\/a><p>Caption!<\/p><\/li></ul>"}' ),
+			const screenshotData = JSON.parse(
+					'{"screenshots":"<ul><li><a href=\\"http://jetpack.me\\"><img /></a><p>Caption!</p></li></ul>"}'
+				),
 				extractedScreenshotData = PluginUtils.extractScreenshots( screenshotData.screenshots );
 			assert.isNull( extractedScreenshotData );
 		} );
@@ -135,7 +146,7 @@ describe( 'Plugins Utils', () => {
 					'1.1.3': {},
 					'01.1.4': {},
 					10.3: {},
-					1.5: {}
+					1.5: {},
 				},
 				orderedCompatibility = PluginUtils.normalizeCompatibilityList( compatibility );
 			assert.equal( orderedCompatibility.length, 4 );
@@ -152,19 +163,19 @@ describe( 'Plugins Utils', () => {
 					status: 'status',
 					action: 'action',
 					site: { ID: '123' },
-					plugin: { slug: 'jetpack' }
+					plugin: { slug: 'jetpack' },
 				},
 				{
 					status: 'status',
 					action: 'action',
 					site: { ID: '321' },
-					plugin: {}
-				}
+					plugin: {},
+				},
 			];
 		} );
 
 		it( 'should return a list of notices that match the site', () => {
-			logs[ 0 ].plugin = { };
+			logs[ 0 ].plugin = {};
 			const log = PluginUtils.filterNotices( logs, { ID: '123' }, null );
 			assert.deepEqual( log, [ logs[ 0 ] ] );
 		} );

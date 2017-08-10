@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -103,7 +104,8 @@ const ConfirmCancelDomain = React.createClass( {
 	onSubmit( event ) {
 		event.preventDefault();
 
-		const purchase = getPurchase( this.props ), purchaseName = getDomainName( purchase );
+		const purchase = getPurchase( this.props ),
+			purchaseName = getDomainName( purchase );
 
 		const data = {
 			domain_cancel_reason: this.state.selectedReason.value,
@@ -233,7 +235,8 @@ const ConfirmCancelDomain = React.createClass( {
 			);
 		}
 
-		const selectedReason = this.state.selectedReason, confirmed = this.state.confirmed;
+		const selectedReason = this.state.selectedReason,
+			confirmed = this.state.confirmed;
 
 		if ( selectedReason && 'misspelled' === selectedReason.value ) {
 			return (

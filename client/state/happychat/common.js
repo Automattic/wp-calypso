@@ -1,3 +1,4 @@
+/** @format */
 /**
  * This is a temporary file to hold common functions while they're being used
  * in both actions.js and middleware.js. Once we've finished refactoring

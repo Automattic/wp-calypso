@@ -1,14 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { PropTypes, PureComponent } from 'react';
 import { compact } from 'lodash';
 
-import {
-	firstValid,
-	hardTruncation,
-	shortEnough
-} from '../helpers';
+import { firstValid, hardTruncation, shortEnough } from '../helpers';
 
 const TITLE_LENGTH = 80;
 const DESCRIPTION_LENGTH = 270;
@@ -18,10 +15,7 @@ const baseDomain = url =>
 		.replace( /^[^/]+[/]*/, '' ) // strip leading protocol
 		.replace( /\/.*$/, '' ); // strip everything after the domain
 
-const facebookTitle = firstValid(
-	shortEnough( TITLE_LENGTH ),
-	hardTruncation( TITLE_LENGTH )
-);
+const facebookTitle = firstValid( shortEnough( TITLE_LENGTH ), hardTruncation( TITLE_LENGTH ) );
 
 const facebookDescription = firstValid(
 	shortEnough( DESCRIPTION_LENGTH ),
@@ -30,14 +24,7 @@ const facebookDescription = firstValid(
 
 export class FacebookPreview extends PureComponent {
 	render() {
-		const {
-			url,
-			type,
-			title,
-			description,
-			image,
-			author
-		} = this.props;
+		const { url, type, title, description, image, author } = this.props;
 
 		return (
 			<div className={ `facebook-preview facebook-preview__${ type }` }>
@@ -45,8 +32,7 @@ export class FacebookPreview extends PureComponent {
 					{ image &&
 						<div className="facebook-preview__image">
 							<img src={ image } />
-						</div>
-					}
+						</div> }
 					<div className="facebook-preview__body">
 						<div className="facebook-preview__title">
 							{ facebookTitle( title || '' ) }
@@ -70,7 +56,7 @@ FacebookPreview.propTypes = {
 	title: PropTypes.string,
 	description: PropTypes.string,
 	image: PropTypes.string,
-	author: PropTypes.string
+	author: PropTypes.string,
 };
 
 export default FacebookPreview;

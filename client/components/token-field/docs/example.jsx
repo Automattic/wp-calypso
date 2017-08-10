@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,10 +15,64 @@ var TokenField = require( 'components/token-field' ),
  * Module variables
  */
 var suggestions = [
-	'the', 'of', 'and', 'to', 'a', 'in', 'for', 'is', 'on', 'that', 'by', 'this', 'with', 'i', 'you', 'it',
-	'not', 'or', 'be', 'are', 'from', 'at', 'as', 'your', 'all', 'have', 'new', 'more', 'an', 'was', 'we',
-	'will', 'home', 'can', 'us', 'about', 'if', 'page', 'my', 'has', 'search', 'free', 'but', 'our', 'one',
-	'other', 'do', 'no', 'information', 'time', 'they', 'site', 'he', 'up', 'may', 'what', 'which', 'their'
+	'the',
+	'of',
+	'and',
+	'to',
+	'a',
+	'in',
+	'for',
+	'is',
+	'on',
+	'that',
+	'by',
+	'this',
+	'with',
+	'i',
+	'you',
+	'it',
+	'not',
+	'or',
+	'be',
+	'are',
+	'from',
+	'at',
+	'as',
+	'your',
+	'all',
+	'have',
+	'new',
+	'more',
+	'an',
+	'was',
+	'we',
+	'will',
+	'home',
+	'can',
+	'us',
+	'about',
+	'if',
+	'page',
+	'my',
+	'has',
+	'search',
+	'free',
+	'but',
+	'our',
+	'one',
+	'other',
+	'do',
+	'no',
+	'information',
+	'time',
+	'they',
+	'site',
+	'he',
+	'up',
+	'may',
+	'what',
+	'which',
+	'their',
 ];
 
 var TokenFields = React.createClass( {
@@ -31,7 +86,7 @@ var TokenFields = React.createClass( {
 			tokens: Object.freeze( [ 'foo', 'bar' ] ),
 			placeholderTokens: [],
 			disabledTokens: [ 'foo', 'bar' ],
-			statusTokens: Object.freeze( [ 'success', 'error', 'validating', 'none' ] )
+			statusTokens: Object.freeze( [ 'success', 'error', 'validating', 'none' ] ),
 		};
 	},
 
@@ -39,9 +94,9 @@ var TokenFields = React.createClass( {
 		return (
 			<div>
 				<p>
-					The <code>TokenField</code> is a field similar to the tags and categories
-					fields in the interim editor chrome, or the "to" field in Mail on OS X.
-					Tokens can be entered by typing them or selecting them from a list of suggested tokens.
+					The <code>TokenField</code> is a field similar to the tags and categories fields in the
+					interim editor chrome, or the "to" field in Mail on OS X. Tokens can be entered by typing
+					them or selecting them from a list of suggested tokens.
 				</p>
 
 				<Card>
@@ -50,7 +105,8 @@ var TokenFields = React.createClass( {
 						isBorderless={ this.state.isBorderless }
 						suggestions={ this.state.tokenSuggestions }
 						value={ this.state.tokens }
-						onChange={ this._onTokensChange } />
+						onChange={ this._onTokensChange }
+					/>
 				</Card>
 
 				<Card>
@@ -58,15 +114,13 @@ var TokenFields = React.createClass( {
 					<TokenField
 						isBorderless
 						value={ this._getStatusTokens() }
-						onChange={ this._onStatusTokensChange } />
+						onChange={ this._onStatusTokensChange }
+					/>
 				</Card>
 
 				<Card>
 					<h3>Borderless and Disabled TokenField</h3>
-					<TokenField
-						disabled
-						isBorderless
-						value={ this.state.disabledTokens } />
+					<TokenField disabled isBorderless value={ this.state.disabledTokens } />
 				</Card>
 
 				<Card>
@@ -74,14 +128,15 @@ var TokenFields = React.createClass( {
 					<TokenField
 						placeholder="Red, Green, Blue"
 						value={ this.state.placeholderTokens }
-						onChange={ this._onPlaceholderTokensChange } />
+						onChange={ this._onPlaceholderTokensChange }
+					/>
 				</Card>
 			</div>
 		);
 	},
 
 	_getStatusTokens() {
-		return this.state.statusTokens.map( ( token ) => {
+		return this.state.statusTokens.map( token => {
 			let returnToken;
 			switch ( token ) {
 				case 'error':
@@ -89,7 +144,7 @@ var TokenFields = React.createClass( {
 				case 'success':
 					returnToken = {
 						value: token,
-						status: token
+						status: token,
 					};
 					break;
 				default:
@@ -102,7 +157,7 @@ var TokenFields = React.createClass( {
 	},
 
 	_onStatusTokensChange( value ) {
-		const filteredTokens = value.map( ( token ) => {
+		const filteredTokens = value.map( token => {
 			if ( 'object' === typeof token ) {
 				return token.value;
 			}

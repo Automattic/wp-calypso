@@ -1,12 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import {
-	get,
-	find,
-	identity,
-	trim
-} from 'lodash';
+import { get, find, identity, trim } from 'lodash';
 import striptags from 'striptags';
 
 /**
@@ -18,7 +14,7 @@ import { parseHtml } from 'lib/formatting';
 
 const PREVIEW_IMAGE_WIDTH = 512;
 
-export const getPostImage = ( post ) => {
+export const getPostImage = post => {
 	if ( ! post ) {
 		return null;
 	}
@@ -42,19 +38,19 @@ export const getPostImage = ( post ) => {
 		null
 	);
 
-	return imageUrl
-		? `${ imageUrl }?s=${ PREVIEW_IMAGE_WIDTH }`
-		: null;
+	return imageUrl ? `${ imageUrl }?s=${ PREVIEW_IMAGE_WIDTH }` : null;
 };
 
-export const getExcerptForPost = ( post ) => {
+export const getExcerptForPost = post => {
 	if ( ! post ) {
 		return null;
 	}
 
-	return trim( striptags( formatExcerpt( find( [
-		PostMetadata.metaDescription( post ),
-		post.excerpt,
-		post.content
-	], identity ) ) ) );
+	return trim(
+		striptags(
+			formatExcerpt(
+				find( [ PostMetadata.metaDescription( post ), post.excerpt, post.content ], identity )
+			)
+		)
+	);
 };

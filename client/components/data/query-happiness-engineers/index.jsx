@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,17 +25,17 @@ class QueryHappinessEngineers extends Component {
 
 QueryHappinessEngineers.propTypes = {
 	isRequestingHappinessEngineers: PropTypes.bool,
-	fetchHappinessEngineers: PropTypes.func
+	fetchHappinessEngineers: PropTypes.func,
 };
 
 QueryHappinessEngineers.defaultProps = {
-	fetchHappinessEngineers: () => {}
+	fetchHappinessEngineers: () => {},
 };
 
 export default connect(
 	state => {
 		return {
-			isRequestingHappinessEngineers: isRequestingHappinessEngineers( state )
+			isRequestingHappinessEngineers: isRequestingHappinessEngineers( state ),
 		};
 	},
 	{ fetchHappinessEngineers }

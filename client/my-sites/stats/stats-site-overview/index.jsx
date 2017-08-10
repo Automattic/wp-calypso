@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,7 +26,7 @@ const StatsSiteOverview = React.createClass( {
 		query: PropTypes.object,
 		summaryData: PropTypes.object,
 		insights: PropTypes.bool,
-		title: PropTypes.string
+		title: PropTypes.string,
 	},
 
 	isValueLow( value ) {
@@ -49,37 +50,41 @@ const StatsSiteOverview = React.createClass( {
 							href={ siteStatsPath }
 							gridicon="visible"
 							label={ this.translate( 'Views', { context: 'noun' } ) }
-							value={ views } />
+							value={ views }
+						/>
 						<StatsTab
 							className={ this.isValueLow( visitors ) ? 'is-low' : null }
 							href={ siteStatsPath + '?tab=visitors' }
 							gridicon="user"
 							label={ this.translate( 'Visitors', { context: 'noun' } ) }
-							value={ visitors } />
+							value={ visitors }
+						/>
 						<StatsTab
 							className={ this.isValueLow( likes ) ? 'is-low' : null }
 							href={ siteStatsPath + '?tab=likes' }
 							gridicon="star"
 							label={ this.translate( 'Likes', { context: 'noun' } ) }
-							value={ likes } />
+							value={ likes }
+						/>
 						<StatsTab
 							className={ this.isValueLow( comments ) ? 'is-low' : null }
 							href={ siteStatsPath + '?tab=comments' }
 							gridicon="comment"
 							label={ this.translate( 'Comments', { context: 'noun' } ) }
-							value={ comments } />
+							value={ comments }
+						/>
 					</StatsTabs>
 				</Card>
 			</div>
 		);
-	}
+	},
 } );
 
 export default connect( ( state, ownProps ) => {
 	const { siteId, date, period, siteSlug } = ownProps;
 	const query = {
 		date,
-		period
+		period,
 	};
 	// It seems not all sites are in the sites/items subtree consistently
 	const slug = getSiteSlug( state, siteId ) || siteSlug;
@@ -87,7 +92,6 @@ export default connect( ( state, ownProps ) => {
 	return {
 		summaryData: getSiteStatsForQuery( state, siteId, 'statsSummary', query ) || {},
 		siteSlug: slug,
-		query
+		query,
 	};
 } )( StatsSiteOverview );
-

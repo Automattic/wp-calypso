@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -50,7 +51,7 @@ class QueryUsersSuggestions extends Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
-			isRequesting: isRequesting( state, ownProps.siteId )
+			isRequesting: isRequesting( state, ownProps.siteId ),
 		};
 	},
 	{ requestUserSuggestions }

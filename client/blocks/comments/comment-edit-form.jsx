@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -76,7 +77,7 @@ class PostCommentForm extends Component {
 				this.props.deleteComment(
 					this.props.post.site_ID,
 					this.props.post.ID,
-					this.props.placeholderId,
+					this.props.placeholderId
 				);
 			}
 		}
@@ -131,7 +132,7 @@ class PostCommentForm extends Component {
 		switch ( error.error ) {
 			case 'comment_duplicate':
 				message = translate(
-					"Duplicate comment detected. It looks like you've already said that!",
+					"Duplicate comment detected. It looks like you've already said that!"
 				);
 				break;
 

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -40,43 +41,48 @@ class ThemeSetupDialog extends React.Component {
 		};
 
 		if ( isActive || 'success' === result.result ) {
-			return [
-				backToSetup,
-				viewSite
-			];
+			return [ backToSetup, viewSite ];
 		}
-		return [
-			cancel,
-			keepContent,
-		];
+		return [ cancel, keepContent ];
 	}
 
 	renderContent( { isActive, result, site, translate } ) {
 		const keepContent = (
 			<div>
-				<h1>{ translate( 'Theme Setup' ) }</h1>
+				<h1>
+					{ translate( 'Theme Setup' ) }
+				</h1>
 				<p>
-					{ translate( 'Settings will be changed on {{strong}}%(site)s{{/strong}}, and these changes will be live immmediately. Do you want to proceed?', {
-						components: {
-							strong: <strong />,
-						},
-						args: {
-							site: site.domain,
+					{ translate(
+						'Settings will be changed on {{strong}}%(site)s{{/strong}}, and these changes will be live immmediately. Do you want to proceed?',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								site: site.domain,
+							},
 						}
-					} ) }
+					) }
 				</p>
 			</div>
 		);
 		const loading = (
 			<div>
-				<h1>{ translate( 'Theme Setup' ) }</h1>
-				<p>{ translate( 'Running Theme Setup. This may take up to a minute.' ) }</p>
+				<h1>
+					{ translate( 'Theme Setup' ) }
+				</h1>
+				<p>
+					{ translate( 'Running Theme Setup. This may take up to a minute.' ) }
+				</p>
 				<PulsingDot active={ true } />
 			</div>
 		);
 		const success = (
 			<div>
-				<h1>{ translate( 'Theme Setup' ) }</h1>
+				<h1>
+					{ translate( 'Theme Setup' ) }
+				</h1>
 				<p>
 					{ translate( 'Success! Your theme is all set up like the demo.' ) }
 				</p>
@@ -84,7 +90,9 @@ class ThemeSetupDialog extends React.Component {
 		);
 		const failure = (
 			<div>
-				<h1>{ translate( 'Theme Setup' ) }</h1>
+				<h1>
+					{ translate( 'Theme Setup' ) }
+				</h1>
 				<p>
 					{ translate( 'We encountered a problem – would you like to try again?' ) }
 				</p>
@@ -94,17 +102,19 @@ class ThemeSetupDialog extends React.Component {
 			return loading;
 		}
 		if ( result ) {
-			return ( 'success' === result.result ) ? success : failure;
+			return 'success' === result.result ? success : failure;
 		}
 		return keepContent;
 	}
 
 	render() {
 		return (
-			<Dialog className="theme-setup-dialog"
+			<Dialog
+				className="theme-setup-dialog"
 				isVisible={ this.props.isDialogVisible }
 				buttons={ this.renderButtons( this.props ) }
-				onClose={ this.props.isActive ? null : this.props.toggleDialog }>
+				onClose={ this.props.isActive ? null : this.props.toggleDialog }
+			>
 				{ this.renderContent( this.props ) }
 			</Dialog>
 		);
@@ -113,7 +123,7 @@ class ThemeSetupDialog extends React.Component {
 
 ThemeSetupDialog = localize( ThemeSetupDialog );
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = state => {
 	const isDialogVisible = state.ui.themeSetup.isDialogVisible;
 	const isActive = state.ui.themeSetup.active;
 	const result = state.ui.themeSetup.result;
@@ -127,4 +137,3 @@ const mapStateToProps = ( state ) => {
 };
 
 export default connect( mapStateToProps, { toggleDialog, runThemeSetup } )( ThemeSetupDialog );
-

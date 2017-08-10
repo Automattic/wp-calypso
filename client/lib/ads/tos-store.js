@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +32,7 @@ WordadsTosStore = {
 			tos: _tos.hasOwnProperty( siteId ) ? _tos[ siteId ] : null,
 			isLoading: _isLoading,
 			error: _loadingError,
-			notice: _notice
+			notice: _notice,
 		};
 	},
 
@@ -54,7 +55,7 @@ WordadsTosStore = {
 
 	emitChange: function() {
 		this.emit( 'change' );
-	}
+	},
 };
 
 function updateTos( siteId, data ) {

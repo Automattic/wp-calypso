@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -43,11 +44,11 @@ function handleMetadataOperation( key, value, operation ) {
 		// Normalize a string or array of string keys to an object of key value
 		// pairs. To accomodate both, we coerce the key into an array before
 		// mapping to pull the object pairs.
-		key = fromPairs( [].concat( key ).map( ( meta ) => [ meta, value ] ) );
+		key = fromPairs( [].concat( key ).map( meta => [ meta, value ] ) );
 	}
 
 	// Overwrite duplicates based on key
-	metadata = ( post.metadata || [] ).filter( ( meta ) => ! key.hasOwnProperty( meta.key ) );
+	metadata = ( post.metadata || [] ).filter( meta => ! key.hasOwnProperty( meta.key ) );
 
 	Object.keys( key ).forEach( function( objectKey ) {
 		// `update` is a sufficient operation for new metadata, as it will add
@@ -56,7 +57,7 @@ function handleMetadataOperation( key, value, operation ) {
 		// since this will effectively noop.
 		var meta = {
 			key: objectKey,
-			operation: operation
+			operation: operation,
 		};
 
 		if ( 'delete' !== operation ) {
@@ -69,8 +70,8 @@ function handleMetadataOperation( key, value, operation ) {
 	Dispatcher.handleViewAction( {
 		type: 'EDIT_POST',
 		post: {
-			metadata: metadata
-		}
+			metadata: metadata,
+		},
 	} );
 }
 
@@ -133,7 +134,7 @@ PostActions = {
 		Dispatcher.handleViewAction( {
 			type: 'START_EDITING_POST',
 			siteId: siteId,
-			postId: postId
+			postId: postId,
 		} );
 
 		postHandle = wpcom.site( siteId ).post( postId );
@@ -142,7 +143,7 @@ PostActions = {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_POST_TO_EDIT',
 				error: error,
-				post: data
+				post: data,
 			} );
 		} );
 	},
@@ -152,7 +153,7 @@ PostActions = {
 	 */
 	stopEditing: function() {
 		Dispatcher.handleViewAction( {
-			type: 'STOP_EDITING_POST'
+			type: 'STOP_EDITING_POST',
 		} );
 	},
 
@@ -174,28 +175,36 @@ PostActions = {
 		if ( utils.isPublished( savedPost ) || utils.isPublished( post ) ) {
 			site = sites.getSite( post.site_ID );
 
-			if ( ! post.ID || ! site || site.jetpack && versionCompare( site.options.jetpack_version, '3.7.0-dev', '<' ) ) {
+			if (
+				! post.ID ||
+				! site ||
+				( site.jetpack && versionCompare( site.options.jetpack_version, '3.7.0-dev', '<' ) )
+			) {
 				return callback( new Error( 'NO_AUTOSAVE' ) );
 			}
 
 			Dispatcher.handleViewAction( {
 				type: 'POST_AUTOSAVE',
-				post: post
+				post: post,
 			} );
 
-			siteHandle.postAutosave( post.ID, {
-				content: post.content,
-				title: post.title,
-				excerpt: post.excerpt
-			}, function( error, data ) {
-				Dispatcher.handleServerAction( {
-					type: 'RECEIVE_POST_AUTOSAVE',
-					error: error,
-					autosave: data
-				} );
+			siteHandle.postAutosave(
+				post.ID,
+				{
+					content: post.content,
+					title: post.title,
+					excerpt: post.excerpt,
+				},
+				function( error, data ) {
+					Dispatcher.handleServerAction( {
+						type: 'RECEIVE_POST_AUTOSAVE',
+						error: error,
+						autosave: data,
+					} );
 
-				callback( error, data );
-			} );
+					callback( error, data );
+				}
+			);
 		} else {
 			PostActions.saveEdited( null, null, callback, { recordSaveEvent: false } );
 		}
@@ -209,7 +218,7 @@ PostActions = {
 	blockSave: function( key ) {
 		Dispatcher.handleViewAction( {
 			type: 'BLOCK_EDIT_POST_SAVE',
-			key: key
+			key: key,
 		} );
 	},
 
@@ -221,7 +230,7 @@ PostActions = {
 	unblockSave: function( key ) {
 		Dispatcher.handleViewAction( {
 			type: 'UNBLOCK_EDIT_POST_SAVE',
-			key: key
+			key: key,
 		} );
 	},
 
@@ -233,7 +242,7 @@ PostActions = {
 	edit: function( attributes ) {
 		Dispatcher.handleViewAction( {
 			type: 'EDIT_POST',
-			post: attributes
+			post: attributes,
 		} );
 	},
 
@@ -245,7 +254,7 @@ PostActions = {
 	editRawContent: function( content ) {
 		Dispatcher.handleViewAction( {
 			type: 'EDIT_POST_RAW_CONTENT',
-			content: content
+			content: content,
 		} );
 	},
 
@@ -254,7 +263,7 @@ PostActions = {
 	 */
 	resetRawContent: function() {
 		Dispatcher.handleViewAction( {
-			type: 'RESET_POST_RAW_CONTENT'
+			type: 'RESET_POST_RAW_CONTENT',
 		} );
 	},
 
@@ -290,7 +299,7 @@ PostActions = {
 
 		Dispatcher.handleViewAction( {
 			type: 'EDIT_POST',
-			post: attributes
+			post: attributes,
 		} );
 
 		post = PostEditStore.get();
@@ -325,20 +334,23 @@ PostActions = {
 		// There is a separate action dispatched here because we need to queue changes
 		// that occur while the subsequent AJAX request is in-flight
 		Dispatcher.handleViewAction( {
-			type: 'EDIT_POST_SAVE'
+			type: 'EDIT_POST_SAVE',
 		} );
 
 		postHandle = wpcom.site( post.site_ID ).post( post.ID );
 		query = {
 			context: 'edit',
-			apiVersion: '1.2'
+			apiVersion: '1.2',
 		};
 
 		if ( ! options || options.recordSaveEvent !== false ) {
 			stats.recordSaveEvent( context ); // do this before changing status from 'future'
 		}
 
-		if ( ( changedAttributes && changedAttributes.status === 'future' && utils.isFutureDated( post ) ) ||
+		if (
+			( changedAttributes &&
+				changedAttributes.status === 'future' &&
+				utils.isFutureDated( post ) ) ||
 			( changedAttributes && changedAttributes.status === 'publish' && utils.isBackDated( post ) )
 		) {
 			// HACK: This is necessary because for some reason v1.1 and v1.2 of the update post endpoints
@@ -349,7 +361,7 @@ PostActions = {
 			// here /public.api/rest/json-endpoints/class.wpcom-json-api-update-post-v1-2-endpoint.php#L102
 			changedAttributes = assign( {}, changedAttributes, {
 				status: 'publish',
-				date: post.date
+				date: post.date,
 			} );
 		}
 
@@ -371,7 +383,7 @@ PostActions = {
 				rawContent: mode === currentMode ? rawContent : null,
 				isNew: isNew,
 				original: original,
-				post: data
+				post: data,
 			} );
 
 			callback( error, data );
@@ -420,7 +432,7 @@ PostActions = {
 		Dispatcher.handleViewAction( {
 			type: 'QUERY_POSTS',
 			options: options,
-			postListStoreId: postListStoreId
+			postListStoreId: postListStoreId,
 		} );
 	},
 
@@ -438,7 +450,7 @@ PostActions = {
 
 		Dispatcher.handleViewAction( {
 			type: 'FETCH_NEXT_POSTS_PAGE',
-			postListStoreId: postListStoreId
+			postListStoreId: postListStoreId,
 		} );
 
 		const id = postListStore.getID();
@@ -450,9 +462,7 @@ PostActions = {
 				.site( siteId )
 				.postsList( params, PostActions.receivePage.bind( null, id, postListStoreId ) );
 		} else {
-			wpcom
-				.me()
-				.postsList( params, PostActions.receivePage.bind( null, id, postListStoreId ) );
+			wpcom.me().postsList( params, PostActions.receivePage.bind( null, id, postListStoreId ) );
 		}
 	},
 
@@ -462,7 +472,7 @@ PostActions = {
 			id: id,
 			postListStoreId: postListStoreId,
 			error: error,
-			data: data
+			data: data,
 		} );
 	},
 
@@ -475,7 +485,7 @@ PostActions = {
 
 		Dispatcher.handleViewAction( {
 			type: 'FETCH_UPDATED_POSTS',
-			postListStoreId: postListStoreId
+			postListStoreId: postListStoreId,
 		} );
 
 		const id = postListStore.getID();
@@ -483,15 +493,18 @@ PostActions = {
 		const siteId = postListStore.getSiteId();
 
 		if ( siteId ) {
-			debug( 'Fetching posts that have been updated for %s since %s %o', siteId, params.modified_after, params );
+			debug(
+				'Fetching posts that have been updated for %s since %s %o',
+				siteId,
+				params.modified_after,
+				params
+			);
 			wpcom
 				.site( siteId )
 				.postsList( params, PostActions.receiveUpdated.bind( null, id, postListStoreId ) );
 		} else {
 			debug( 'Fetching posts that have been updated since %s %o', params.modified_after, params );
-			wpcom
-				.me()
-				.postsList( params, PostActions.receiveUpdated.bind( null, id, postListStoreId ) );
+			wpcom.me().postsList( params, PostActions.receiveUpdated.bind( null, id, postListStoreId ) );
 		}
 	},
 
@@ -501,7 +514,7 @@ PostActions = {
 			id: id,
 			postListStoreId: postListStoreId,
 			error: error,
-			data: data
+			data: data,
 		} );
 	},
 
@@ -516,7 +529,7 @@ PostActions = {
 			type: 'RECEIVE_UPDATED_POST',
 			error: error,
 			original: original,
-			post: data
+			post: data,
 		} );
 		callback( error, data );
 	},
@@ -524,7 +537,7 @@ PostActions = {
 	fetchCounts: function( siteId, options ) {
 		Dispatcher.handleViewAction( {
 			type: 'FETCH_POST_COUNTS',
-			siteId: siteId
+			siteId: siteId,
 		} );
 
 		wpcom.undocumented().site( siteId ).postCounts( options, function( error, data ) {
@@ -532,10 +545,10 @@ PostActions = {
 				type: 'RECEIVE_POST_COUNTS',
 				error: error,
 				data: data,
-				siteId: siteId
+				siteId: siteId,
 			} );
 		} );
-	}
+	},
 };
 
 module.exports = PostActions;

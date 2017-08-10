@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,7 +23,7 @@ export default memoize( () => {
 		return 'native';
 	}
 
-	const getActiveXObject = ( name ) => {
+	const getActiveXObject = name => {
 		try {
 			return new ActiveXObject( name ); /*eslint no-undef: 0 */
 		} catch ( e ) {

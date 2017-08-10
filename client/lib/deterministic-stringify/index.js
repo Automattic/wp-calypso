@@ -1,3 +1,4 @@
+/** @format */
 function deterministStringify( source ) {
 	var namespace = [],
 		keys;

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Given a media filter, returns the associated mime type prefix, or undefined
  * if media filter isn't supported.

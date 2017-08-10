@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,16 +22,12 @@ import Main from 'components/main';
 import PulsingDot from 'components/pulsing-dot';
 
 export default {
-
 	oauthLogin: function() {
 		if ( config.isEnabled( 'oauth' ) ) {
 			if ( OAuthToken.getToken() ) {
 				page( '/' );
 			} else {
-				ReactDom.render(
-					<OAuthLogin />,
-					document.getElementById( 'primary' )
-				);
+				ReactDom.render( <OAuthLogin />, document.getElementById( 'primary' ) );
 			}
 		} else {
 			page( '/' );
@@ -38,7 +35,13 @@ export default {
 	},
 
 	checkToken: function( context, next ) {
-		const loggedOutRoutes = [ '/oauth-login', '/oauth', '/start', '/authorize', '/api/oauth/token' ],
+		const loggedOutRoutes = [
+				'/oauth-login',
+				'/oauth',
+				'/start',
+				'/authorize',
+				'/api/oauth/token',
+			],
 			isValidSection = loggedOutRoutes.some( route => startsWith( context.path, route ) );
 
 		// Check we have an OAuth token, otherwise redirect to auth/login page
@@ -64,8 +67,8 @@ export default {
 				client_id: config( 'oauth_client_id' ),
 				client_secret: 'n/a',
 				url: {
-					redirect: 'http://calypso.localhost:3000/api/oauth/token'
-				}
+					redirect: 'http://calypso.localhost:3000/api/oauth/token',
+				},
 			};
 
 			const wpoauth = WPOAuth( oauthSettings );
@@ -74,7 +77,7 @@ export default {
 
 		ReactDom.render(
 			React.createElement( ConnectComponent, {
-				authUrl: authUrl
+				authUrl: authUrl,
 			} ),
 			document.getElementById( 'primary' )
 		);
@@ -92,14 +95,13 @@ export default {
 		}
 
 		// Extract this into a component...
-		ReactDom.render( (
+		ReactDom.render(
 			<Main className="auth">
-				<p className="auth__welcome">
-					Loading user...
-				</p>
+				<p className="auth__welcome">Loading user...</p>
 				<PulsingDot active />
-			</Main>
-		), document.getElementById( 'primary' ) );
+			</Main>,
+			document.getElementById( 'primary' )
+		);
 
 		// Fetch user and redirect to /sites on success.
 		const user = userFactory();
@@ -112,5 +114,5 @@ export default {
 				window.location = '/';
 			}
 		} );
-	}
+	},
 };

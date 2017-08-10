@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,21 +22,21 @@ import wplinkPlugin from 'components/tinymce/plugins/wplink/plugin';
 class CompactTinyMCE extends Component {
 	static contextTypes = {
 		store: PropTypes.object,
-	}
+	};
 
 	static propTypes = {
 		onContentsChange: PropTypes.func.isRequired,
 		height: PropTypes.number,
 		className: PropTypes.string,
 		initialValue: PropTypes.string,
-	}
+	};
 
 	static defaultProps = {
 		height: 250,
 		className: '',
 		initialValue: '',
 		onContentsChange: noop,
-	}
+	};
 
 	// See this.localize()
 	DUMMY_LANG_URL = '/do-not-load/';
@@ -151,11 +152,7 @@ class CompactTinyMCE extends Component {
 		const className = classNames( 'compact-tinymce', this.props.className );
 		return (
 			<div className={ className }>
-				<textarea
-					ref="text"
-					className={ tinyMCEClassName }
-					id={ this._id }
-				/>
+				<textarea ref="text" className={ tinyMCEClassName } id={ this._id } />
 			</div>
 		);
 	}

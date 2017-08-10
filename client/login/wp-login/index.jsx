@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -84,17 +85,10 @@ export class Login extends React.Component {
 	}
 
 	renderContent() {
-		const {
-			isLoggedIn,
-			privateSite,
-			socialConnect,
-			twoFactorAuthType,
-		} = this.props;
+		const { isLoggedIn, privateSite, socialConnect, twoFactorAuthType } = this.props;
 
 		if ( privateSite && isLoggedIn ) {
-			return (
-				<PrivateSite />
-			);
+			return <PrivateSite />;
 		}
 
 		return (
@@ -107,13 +101,7 @@ export class Login extends React.Component {
 	}
 
 	render() {
-		const {
-			locale,
-			privateSite,
-			socialConnect,
-			translate,
-			twoFactorAuthType,
-		} = this.props;
+		const { locale, privateSite, socialConnect, translate, twoFactorAuthType } = this.props;
 		const canonicalUrl = `https://${ locale !== 'en' ? locale + '.' : '' }wordpress.com/login`;
 
 		return (
@@ -123,7 +111,8 @@ export class Login extends React.Component {
 
 					<DocumentHead
 						title={ translate( 'Log In', { textOnly: true } ) }
-						link={ [ { rel: 'canonical', href: canonicalUrl } ] } />
+						link={ [ { rel: 'canonical', href: canonicalUrl } ] }
+					/>
 
 					<GlobalNotices id="notices" notices={ notices.list } />
 
@@ -133,8 +122,11 @@ export class Login extends React.Component {
 						</div>
 
 						{ ! socialConnect &&
-							<LoginLinks locale={ locale } twoFactorAuthType={ twoFactorAuthType } privateSite={ privateSite } />
-						}
+							<LoginLinks
+								locale={ locale }
+								twoFactorAuthType={ twoFactorAuthType }
+								privateSite={ privateSite }
+							/> }
 					</div>
 				</Main>
 
@@ -145,8 +137,8 @@ export class Login extends React.Component {
 }
 
 export default connect(
-	( state ) => ( {
-		isLoggedIn: Boolean( getCurrentUserId( state ) )
+	state => ( {
+		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 	} ),
 	{
 		recordPageView,

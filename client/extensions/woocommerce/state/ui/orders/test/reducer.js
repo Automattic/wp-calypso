@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -46,7 +47,7 @@ describe( 'reducer', () => {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 123,
 			query: {
-				search: 'example'
+				search: 'example',
 			},
 		};
 		const originalState = deepFreeze( { 123: { currentPage: 3, currentSearch: '' } } );
@@ -59,14 +60,14 @@ describe( 'reducer', () => {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 234,
 			query: {
-				search: 'test'
+				search: 'test',
 			},
 		};
 		const originalState = deepFreeze( { 123: { currentPage: 3, currentSearch: '' } } );
 		const newState = reducer( originalState, action );
 		expect( newState ).to.eql( {
 			123: { currentPage: 3, currentSearch: '' },
-			234: { currentPage: 1, currentSearch: 'test' }
+			234: { currentPage: 1, currentSearch: 'test' },
 		} );
 	} );
 
@@ -76,7 +77,7 @@ describe( 'reducer', () => {
 			siteId: 123,
 			query: {
 				page: 1,
-			}
+			},
 		};
 		const originalState = deepFreeze( { 123: { currentPage: 3, currentSearch: '' } } );
 		const newState = reducer( originalState, action );
@@ -89,7 +90,7 @@ describe( 'reducer', () => {
 			siteId: 123,
 			query: {
 				search: '',
-			}
+			},
 		};
 		const originalState = deepFreeze( { 123: { currentPage: 1, currentSearch: 'test' } } );
 		const newState = reducer( originalState, action );

@@ -1,9 +1,10 @@
+/** @format */
 /**
  * Internal dependencies
  */
 import { canCurrentUser } from 'state/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 
 /**
  * Returns the menus admin URL for the given site ID

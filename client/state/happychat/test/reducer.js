@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,12 +18,7 @@ import {
 	DESERIALIZE,
 	HAPPYCHAT_SET_GEO_LOCATION,
 } from 'state/action-types';
-import {
-	lastActivityTimestamp,
-	lostFocusAt,
-	message,
-	geoLocation,
-} from '../reducer';
+import { lastActivityTimestamp, lostFocusAt, message, geoLocation } from '../reducer';
 
 // Simulate the time Feb 27, 2017 05:25 UTC
 const NOW = 1488173100125;
@@ -98,16 +94,19 @@ describe( 'reducers', () => {
 		it( 'should set the current user geolocation', () => {
 			const state = geoLocation( null, {
 				type: HAPPYCHAT_SET_GEO_LOCATION,
-				geoLocation: { city: 'Timisoara' }
+				geoLocation: { city: 'Timisoara' },
 			} );
 
 			expect( state ).to.eql( { city: 'Timisoara' } );
 		} );
 
 		it( 'returns valid geolocation', () => {
-			const state = geoLocation( { city: 'Timisoara' }, {
-				type: DESERIALIZE
-			} );
+			const state = geoLocation(
+				{ city: 'Timisoara' },
+				{
+					type: DESERIALIZE,
+				}
+			);
 
 			expect( state ).to.eql( { city: 'Timisoara' } );
 		} );

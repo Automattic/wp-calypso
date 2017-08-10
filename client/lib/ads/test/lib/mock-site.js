@@ -1,3 +1,4 @@
+/** @format */
 module.exports = {
 	ID: 91234567890,
 	URL: 'http://example.com/',
@@ -27,5 +28,5 @@ module.exports = {
 	jp_version: '3.8',
 	user_can_manage: true,
 	visible: true,
-	wpcom_url: 'example.wordpress.com'
+	wpcom_url: 'example.wordpress.com',
 };

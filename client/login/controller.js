@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,7 +21,8 @@ export default {
 				path={ path }
 				twoFactorAuthType={ twoFactorAuthType }
 				socialConnect={ flow === 'social-connect' }
-				privateSite={ flow === 'private-site' } />
+				privateSite={ flow === 'private-site' }
+			/>
 		);
 
 		next();
@@ -32,12 +34,7 @@ export default {
 	},
 
 	magicLoginUse( context, next ) {
-		const {
-			client_id,
-			email,
-			token,
-			tt,
-		} = context.query;
+		const { client_id, email, token, tt } = context.query;
 
 		context.primary = (
 			<HandleEmailedLinkForm

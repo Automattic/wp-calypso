@@ -1,9 +1,10 @@
+/** @format */
 /**
  * External dependencies
  **/
 import React from 'react';
 import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
+import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -24,24 +25,27 @@ export const PostLikes = props => {
 	return (
 		<div className="post-likes">
 			<QueryPostLikes siteId={ siteId } postId={ postId } />
-			{ likes && !! likes.length && likes
-				.map( like =>
-					<a
-						key={ like.ID }
-						href={ getLikeUrl( like ) }
-						rel="noopener noreferrer"
-						target="_blank"
-						className="post-likes__item"
-						onClick={ trackLikeClick }
-					>
-						<Gravatar user={ like } size={ 24 } />
-					</a>
-				).concat(
-					countLikes > likes.length && <span key="placeholder" className="post-likes__placeholder">
-						{ `+ ${ countLikes - likes.length }` }
-					</span>
-				)
-			}
+			{ likes &&
+				!! likes.length &&
+				likes
+					.map( like =>
+						<a
+							key={ like.ID }
+							href={ getLikeUrl( like ) }
+							rel="noopener noreferrer"
+							target="_blank"
+							className="post-likes__item"
+							onClick={ trackLikeClick }
+						>
+							<Gravatar user={ like } size={ 24 } />
+						</a>
+					)
+					.concat(
+						countLikes > likes.length &&
+							<span key="placeholder" className="post-likes__placeholder">
+								{ `+ ${ countLikes - likes.length }` }
+							</span>
+					) }
 			{ countLikes === 0 && ! isRequesting && translate( 'There are no likes on this post yet.' ) }
 		</div>
 	);
@@ -61,7 +65,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( PostLikes );
+export default flowRight( connectComponent, localize )( PostLikes );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -34,7 +35,7 @@ class TermFormDialog extends Component {
 		isTopLevel: true,
 		isValid: false,
 		errors: {},
-		saving: false
+		saving: false,
 	};
 
 	static propTypes = {
@@ -58,7 +59,7 @@ class TermFormDialog extends Component {
 		onClose: noop,
 		onSuccess: noop,
 		showDescriptionInput: false,
-		showDialog: false
+		showDialog: false,
 	};
 
 	onSearch = searchTerm => {
@@ -73,28 +74,34 @@ class TermFormDialog extends Component {
 	};
 
 	onParentChange = item => {
-		this.setState( {
-			selectedParent: [ item.ID ],
-			isTopLevel: false
-		}, this.isValid );
+		this.setState(
+			{
+				selectedParent: [ item.ID ],
+				isTopLevel: false,
+			},
+			this.isValid
+		);
 	};
 
 	onTopLevelChange = () => {
-		this.setState( {
-			isTopLevel: ! this.state.isTopLevel,
-			selectedParent: []
-		}, this.isValid );
+		this.setState(
+			{
+				isTopLevel: ! this.state.isTopLevel,
+				selectedParent: [],
+			},
+			this.isValid
+		);
 	};
 
 	onNameChange = event => {
 		this.setState( {
-			name: event.target.value
+			name: event.target.value,
 		} );
 	};
 
 	onDescriptionChange = event => {
 		this.setState( {
-			description: event.target.value
+			description: event.target.value,
 		} );
 	};
 
@@ -104,7 +111,7 @@ class TermFormDialog extends Component {
 		} else {
 			this.isValid();
 		}
-	}
+	};
 
 	saveTerm = () => {
 		const term = this.getFormValues();
@@ -116,7 +123,7 @@ class TermFormDialog extends Component {
 		const { siteId, taxonomy } = this.props;
 		const statLabels = {
 			mc: `edited_${ taxonomy }`,
-			ga: `Edited ${ taxonomy }`
+			ga: `Edited ${ taxonomy }`,
 		};
 
 		const isNew = ! this.props.term;
@@ -131,12 +138,11 @@ class TermFormDialog extends Component {
 		this.props.bumpStat( 'taxonomy_manager', statLabels.mc );
 		this.props.recordGoogleEvent( 'Taxonomy Manager', statLabels.ga );
 
-		savePromise
-			.then( savedTerm => {
-				this.setState( { saving: false } );
-				this.props.onSuccess( savedTerm );
-				this.closeDialog();
-			} );
+		savePromise.then( savedTerm => {
+			this.setState( { saving: false } );
+			this.props.onSuccess( savedTerm );
+			this.closeDialog();
+		} );
 	};
 
 	constructor( props ) {
@@ -147,9 +153,12 @@ class TermFormDialog extends Component {
 	init( props ) {
 		if ( ! props.term ) {
 			if ( props.searchTerm && props.searchTerm.trim().length ) {
-				this.setState( assign( {}, this.constructor.initialState, {
-					name: props.searchTerm,
-				} ), this.isValid );
+				this.setState(
+					assign( {}, this.constructor.initialState, {
+						name: props.searchTerm,
+					} ),
+					this.isValid
+				);
 				return;
 			}
 
@@ -158,18 +167,20 @@ class TermFormDialog extends Component {
 		}
 
 		const { name, description, parent = false } = props.term;
-		this.setState( assign( {}, this.constructor.initialState, {
-			name,
-			description,
-			isTopLevel: parent ? false : true,
-			selectedParent: parent ? [ parent ] : []
-		} ) );
+		this.setState(
+			assign( {}, this.constructor.initialState, {
+				name,
+				description,
+				isTopLevel: parent ? false : true,
+				selectedParent: parent ? [ parent ] : [],
+			} )
+		);
 	}
 
 	componentWillReceiveProps( newProps ) {
 		if (
 			this.props.term !== newProps.term ||
-			this.props.showDialog !== newProps.showDialog && newProps.showDialog
+			( this.props.showDialog !== newProps.showDialog && newProps.showDialog )
 		) {
 			this.init( newProps );
 		}
@@ -202,7 +213,7 @@ class TermFormDialog extends Component {
 			errors.name = this.props.translate( 'Name required', { textOnly: true } );
 		}
 		const lowerCasedTermName = values.name.toLowerCase();
-		const matchingTerm = find( this.props.terms, ( term ) => {
+		const matchingTerm = find( this.props.terms, term => {
 			return (
 				term.name.toLowerCase() === lowerCasedTermName &&
 				( ! this.props.term || term.ID !== this.props.term.ID )
@@ -211,7 +222,7 @@ class TermFormDialog extends Component {
 		if ( matchingTerm ) {
 			errors.name = this.props.translate( 'Name already exists', {
 				context: 'Terms: Add term error message - duplicate term name exists',
-				textOnly: true
+				textOnly: true,
 			} );
 		}
 
@@ -219,14 +230,14 @@ class TermFormDialog extends Component {
 		if ( this.props.isHierarchical && ! this.state.isTopLevel && ! values.parent ) {
 			errors.parent = this.props.translate( 'Parent item required when "Top level" is unchecked', {
 				context: 'Terms: Add term error message',
-				textOnly: true
+				textOnly: true,
 			} );
 		}
 
 		const isValid = ! Object.keys( errors ).length;
 		this.setState( {
 			errors,
-			isValid
+			isValid,
 		} );
 
 		return isValid;
@@ -254,8 +265,14 @@ class TermFormDialog extends Component {
 					{ labels.parent_item }
 				</FormLegend>
 				<FormLabel>
-					<FormCheckbox ref="topLevel" checked={ this.state.isTopLevel } onChange={ this.onTopLevelChange } />
-					<span>{ translate( 'Top level', { context: 'Terms: New term being created is top level' } ) }</span>
+					<FormCheckbox
+						ref="topLevel"
+						checked={ this.state.isTopLevel }
+						onChange={ this.onTopLevelChange }
+					/>
+					<span>
+						{ translate( 'Top level', { context: 'Terms: New term being created is top level' } ) }
+					</span>
 				</FormLabel>
 				<TermTreeSelectorTerms
 					siteId={ siteId }
@@ -273,20 +290,30 @@ class TermFormDialog extends Component {
 	}
 
 	render() {
-		const { isHierarchical, labels, term, translate, showDescriptionInput, showDialog } = this.props;
+		const {
+			isHierarchical,
+			labels,
+			term,
+			translate,
+			showDescriptionInput,
+			showDialog,
+		} = this.props;
 		const { name, description } = this.state;
 		const isNew = ! term;
 		const submitLabel = isNew ? translate( 'Add' ) : translate( 'Update' );
-		const buttons = [ {
-			action: 'cancel',
-			label: translate( 'Cancel' )
-		}, {
-			action: isNew ? 'add' : 'update',
-			label: this.state.saving ? translate( 'Saving…' ) : submitLabel,
-			isPrimary: true,
-			disabled: ! this.state.isValid || this.state.saving,
-			onClick: this.saveTerm
-		} ];
+		const buttons = [
+			{
+				action: 'cancel',
+				label: translate( 'Cancel' ),
+			},
+			{
+				action: isNew ? 'add' : 'update',
+				label: this.state.saving ? translate( 'Saving…' ) : submitLabel,
+				isPrimary: true,
+				disabled: ! this.state.isValid || this.state.saving,
+				onClick: this.saveTerm,
+			},
+		];
 
 		const isError = !! this.state.errors.name;
 
@@ -296,8 +323,11 @@ class TermFormDialog extends Component {
 				isVisible={ showDialog }
 				buttons={ buttons }
 				onClose={ this.closeDialog }
-				additionalClassNames="term-form-dialog">
-				<FormSectionHeading>{ isNew ? labels.add_new_item : labels.edit_item }</FormSectionHeading>
+				additionalClassNames="term-form-dialog"
+			>
+				<FormSectionHeading>
+					{ isNew ? labels.add_new_item : labels.edit_item }
+				</FormSectionHeading>
 				<FormFieldset>
 					<FormTextInput
 						autoFocus={ showDialog && ! viewport.isMobile() }
@@ -310,7 +340,8 @@ class TermFormDialog extends Component {
 					/>
 					{ isError && <FormInputValidation isError text={ this.state.errors.name } /> }
 				</FormFieldset>
-				{ showDescriptionInput && <FormFieldset>
+				{ showDescriptionInput &&
+					<FormFieldset>
 						<FormLegend>
 							{ translate( 'Description', { context: 'Terms: Term description label' } ) }
 						</FormLegend>
@@ -320,8 +351,7 @@ class TermFormDialog extends Component {
 							value={ description }
 							onChange={ this.onDescriptionChange }
 						/>
-					</FormFieldset>
-				}
+					</FormFieldset> }
 				{ isHierarchical && this.renderParentSelector() }
 			</Dialog>
 		);
@@ -340,7 +370,7 @@ export default connect(
 			terms: getTerms( state, siteId, taxonomy ),
 			isHierarchical,
 			labels,
-			siteId
+			siteId,
 		};
 	},
 	{ addTerm, updateTerm, recordGoogleEvent, bumpStat }

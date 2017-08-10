@@ -1,3 +1,4 @@
+/** @format */
 /**
  * PRNG-based functions providing enhanced versions of simple delay
  * formulas in order to spread out an array of failing operations
@@ -27,7 +28,7 @@ import { random } from 'lodash';
  * @returns {Number} ms delay until next attempt
  */
 export const decorrelatedJitter = ( baseDelay, retryCount ) => {
-	const delay = Math.round( ( baseDelay * Math.pow( 2, retryCount - 1 ) ) / 2 );
+	const delay = Math.round( baseDelay * Math.pow( 2, retryCount - 1 ) / 2 );
 	const jitter = delay + random( 0, delay );
 
 	return random( baseDelay, jitter * 3 );

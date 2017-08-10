@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,12 +24,12 @@ const EditorSticky = React.createClass( {
 	propTypes: {
 		postId: React.PropTypes.number,
 		siteId: React.PropTypes.number,
-		sticky: React.PropTypes.bool
+		sticky: React.PropTypes.bool,
 	},
 
 	getInitialState: function() {
 		return {
-			tooltip: false
+			tooltip: false,
 		};
 	},
 
@@ -48,7 +49,7 @@ const EditorSticky = React.createClass( {
 		recordEvent( 'Changed Sticky Setting', stickyEventLabel );
 
 		this.props.editPost( this.props.siteId, this.props.postId, {
-			sticky: ! this.props.sticky
+			sticky: ! this.props.sticky,
 		} );
 		this.setState( { tooltip: false } );
 	},
@@ -62,10 +63,7 @@ const EditorSticky = React.createClass( {
 	},
 
 	render: function() {
-		const classes = classnames(
-			'editor-sticky',
-			{ 'is-sticky': this.props.sticky }
-		);
+		const classes = classnames( 'editor-sticky', { 'is-sticky': this.props.sticky } );
 
 		return (
 			<Button
@@ -85,16 +83,17 @@ const EditorSticky = React.createClass( {
 						isVisible={ this.state.tooltip }
 						position="bottom left"
 					>
-						<span>{ this.translate( 'Marked as sticky' ) }</span>
-					</Tooltip>
-				}
+						<span>
+							{ this.translate( 'Marked as sticky' ) }
+						</span>
+					</Tooltip> }
 			</Button>
 		);
-	}
+	},
 } );
 
 export default connect(
-	( state ) => {
+	state => {
 		const postId = getEditorPostId( state );
 		const siteId = getSelectedSiteId( state );
 		const sticky = getEditedPostValue( state, siteId, postId, 'sticky' );
@@ -102,7 +101,7 @@ export default connect(
 		return {
 			postId,
 			siteId,
-			sticky
+			sticky,
 		};
 	},
 	{ editPost }

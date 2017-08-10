@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,16 +20,10 @@ import {
 	JETPACK_JUMPSTART_STATUS_REQUEST_SUCCESS,
 	JETPACK_JUMPSTART_STATUS_REQUEST_FAILURE,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
-import {
-	items as itemsReducer,
-	requests as requestsReducer
-} from '../reducer';
-import {
-	items as ITEMS_FIXTURE,
-	requests as REQUESTS_FIXTURE
-} from './fixture';
+import { items as itemsReducer, requests as requestsReducer } from '../reducer';
+import { items as ITEMS_FIXTURE, requests as REQUESTS_FIXTURE } from './fixture';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {
@@ -42,11 +37,11 @@ describe( 'reducer', () => {
 				siteId = 12345678,
 				action = {
 					type: JETPACK_JUMPSTART_ACTIVATE_SUCCESS,
-					siteId
+					siteId,
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
-				[ siteId ]: 'jumpstart_activated'
+				[ siteId ]: 'jumpstart_activated',
 			} );
 		} );
 
@@ -55,12 +50,12 @@ describe( 'reducer', () => {
 				siteId = 87654321,
 				action = {
 					type: JETPACK_JUMPSTART_ACTIVATE_SUCCESS,
-					siteId
+					siteId,
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...ITEMS_FIXTURE,
-				[ siteId ]: 'jumpstart_activated'
+				[ siteId ]: 'jumpstart_activated',
 			} );
 		} );
 
@@ -69,12 +64,12 @@ describe( 'reducer', () => {
 				siteId = 12345678,
 				action = {
 					type: JETPACK_JUMPSTART_DEACTIVATE_SUCCESS,
-					siteId
+					siteId,
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...ITEMS_FIXTURE,
-				12345678: 'jumpstart_dismissed'
+				12345678: 'jumpstart_dismissed',
 			} );
 		} );
 
@@ -84,7 +79,7 @@ describe( 'reducer', () => {
 				action = {
 					type: JETPACK_JUMPSTART_STATUS_RECEIVE,
 					siteId,
-					status: 'example_status'
+					status: 'example_status',
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
@@ -99,19 +94,19 @@ describe( 'reducer', () => {
 				action = {
 					type: JETPACK_JUMPSTART_STATUS_RECEIVE,
 					siteId,
-					status: 'example_status'
+					status: 'example_status',
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...ITEMS_FIXTURE,
-				[ siteId ]: 'example_status'
+				[ siteId ]: 'example_status',
 			} );
 		} );
 
 		it( 'should not persist state', () => {
 			const stateIn = ITEMS_FIXTURE,
 				action = {
-					type: SERIALIZE
+					type: SERIALIZE,
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {} );
@@ -120,7 +115,7 @@ describe( 'reducer', () => {
 		it( 'should not load persisted state', () => {
 			const stateIn = ITEMS_FIXTURE,
 				action = {
-					type: DESERIALIZE
+					type: DESERIALIZE,
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {} );
@@ -138,15 +133,15 @@ describe( 'reducer', () => {
 				siteId = 87654321,
 				action = {
 					type: JETPACK_JUMPSTART_ACTIVATE,
-					siteId
+					siteId,
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
 				[ siteId ]: {
 					...REQUESTS_FIXTURE[ siteId ],
-					activating: true
-				}
+					activating: true,
+				},
 			} );
 		} );
 
@@ -155,15 +150,15 @@ describe( 'reducer', () => {
 				siteId = 12345678,
 				action = {
 					type: JETPACK_JUMPSTART_ACTIVATE_SUCCESS,
-					siteId
+					siteId,
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
 				[ siteId ]: {
 					...REQUESTS_FIXTURE[ siteId ],
-					activating: false
-				}
+					activating: false,
+				},
 			} );
 		} );
 
@@ -172,15 +167,15 @@ describe( 'reducer', () => {
 				siteId = 12345678,
 				action = {
 					type: JETPACK_JUMPSTART_ACTIVATE_FAILURE,
-					siteId
+					siteId,
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
 				[ siteId ]: {
 					...REQUESTS_FIXTURE[ siteId ],
-					activating: false
-				}
+					activating: false,
+				},
 			} );
 		} );
 
@@ -189,15 +184,15 @@ describe( 'reducer', () => {
 				siteId = 12345678,
 				action = {
 					type: JETPACK_JUMPSTART_DEACTIVATE,
-					siteId
+					siteId,
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
 				[ siteId ]: {
 					...REQUESTS_FIXTURE[ siteId ],
-					deactivating: true
-				}
+					deactivating: true,
+				},
 			} );
 		} );
 
@@ -206,15 +201,15 @@ describe( 'reducer', () => {
 				siteId = 87654321,
 				action = {
 					type: JETPACK_JUMPSTART_DEACTIVATE_SUCCESS,
-					siteId
+					siteId,
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
 				[ siteId ]: {
 					...REQUESTS_FIXTURE[ siteId ],
-					deactivating: false
-				}
+					deactivating: false,
+				},
 			} );
 		} );
 
@@ -223,15 +218,15 @@ describe( 'reducer', () => {
 				siteId = 87654321,
 				action = {
 					type: JETPACK_JUMPSTART_DEACTIVATE_FAILURE,
-					siteId
+					siteId,
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
 				[ siteId ]: {
 					...REQUESTS_FIXTURE[ siteId ],
-					deactivating: false
-				}
+					deactivating: false,
+				},
 			} );
 		} );
 
@@ -240,15 +235,15 @@ describe( 'reducer', () => {
 				siteId = 12345678,
 				action = {
 					type: JETPACK_JUMPSTART_STATUS_REQUEST,
-					siteId
+					siteId,
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
 				[ siteId ]: {
 					...REQUESTS_FIXTURE[ siteId ],
-					requesting: true
-				}
+					requesting: true,
+				},
 			} );
 		} );
 
@@ -257,15 +252,15 @@ describe( 'reducer', () => {
 				siteId = 11223344,
 				action = {
 					type: JETPACK_JUMPSTART_STATUS_REQUEST_SUCCESS,
-					siteId
+					siteId,
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
 				[ siteId ]: {
 					...REQUESTS_FIXTURE[ siteId ],
-					requesting: false
-				}
+					requesting: false,
+				},
 			} );
 		} );
 
@@ -274,22 +269,22 @@ describe( 'reducer', () => {
 				siteId = 11223344,
 				action = {
 					type: JETPACK_JUMPSTART_STATUS_REQUEST_FAILURE,
-					siteId
+					siteId,
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
 				[ siteId ]: {
 					...REQUESTS_FIXTURE[ siteId ],
-					requesting: false
-				}
+					requesting: false,
+				},
 			} );
 		} );
 
 		it( 'should not persist state', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				action = {
-					type: SERIALIZE
+					type: SERIALIZE,
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {} );
@@ -298,7 +293,7 @@ describe( 'reducer', () => {
 		it( 'should not load persisted state', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				action = {
-					type: DESERIALIZE
+					type: DESERIALIZE,
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {} );

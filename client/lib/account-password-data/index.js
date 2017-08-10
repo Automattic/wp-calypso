@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -40,25 +41,25 @@ AccountPasswordData.prototype.validate = function( password, callback ) {
 		return;
 	}
 
-	wpcom.me().validatePassword( password, function( error, data ) {
-		if ( error ) {
-			debug( 'Password is not valid. Please try again.' );
-			callback( error );
-			return;
-		}
+	wpcom.me().validatePassword(
+		password,
+		function( error, data ) {
+			if ( error ) {
+				debug( 'Password is not valid. Please try again.' );
+				callback( error );
+				return;
+			}
 
-		// Store the results from the API call as well as the password
-		// string in this.validatedPassword
-		this.validatedPassword = merge(
-			{ password: password },
-			data
-		);
+			// Store the results from the API call as well as the password
+			// string in this.validatedPassword
+			this.validatedPassword = merge( { password: password }, data );
 
-		debug( JSON.stringify( this.validatedPassword ) );
+			debug( JSON.stringify( this.validatedPassword ) );
 
-		this.emit( 'change' );
-		callback( null, error );
-	}.bind( this ) );
+			this.emit( 'change' );
+			callback( null, error );
+		}.bind( this )
+	);
 };
 
 AccountPasswordData.prototype.passwordValidationSuccess = function() {
@@ -96,7 +97,8 @@ AccountPasswordData.prototype.getValidationFailures = function() {
 AccountPasswordData.prototype.generate = function() {
 	var i,
 		length = random( 12, 35 ),
-		chars = map( this.charsets, function( charset ) { // Ensure one character from each character set is in the password
+		chars = map( this.charsets, function( charset ) {
+			// Ensure one character from each character set is in the password
 			return sample( charset );
 		} );
 

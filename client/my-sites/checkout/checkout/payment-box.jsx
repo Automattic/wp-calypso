@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,10 +25,9 @@ export default class PaymentBox extends PureComponent {
 				transitionAppearTimeout={ 400 }
 				transitionEnter={ true }
 				transitionEnterTimeout={ 400 }
-				transitionLeave={ false } >
-
-				<div className="checkout__payment-box-container"
-					key={ this.props.currentPage } >
+				transitionLeave={ false }
+			>
+				<div className="checkout__payment-box-container" key={ this.props.currentPage }>
 					<SectionHeader label={ this.props.title } />
 					<Card className={ cardClass }>
 						<div className="checkout__box-padding">

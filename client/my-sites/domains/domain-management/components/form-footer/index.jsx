@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ const DomainManagementFormFooter = React.createClass( {
 				{ this.props.children }
 			</FormButtonsBar>
 		);
-	}
+	},
 } );
 
 export default DomainManagementFormFooter;

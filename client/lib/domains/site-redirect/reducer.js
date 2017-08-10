@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,8 +14,8 @@ function updateStateForSite( state, siteId, data ) {
 
 	return update( state, {
 		[ siteId ]: {
-			[ command ]: data
-		}
+			[ command ]: data,
+		},
 	} );
 }
 
@@ -23,7 +24,7 @@ function getInitialStateForSite() {
 		isFetching: false,
 		isUpdating: false,
 		notice: null,
-		value: null
+		value: null,
 	};
 }
 
@@ -33,14 +34,14 @@ function reducer( state, payload ) {
 	switch ( action.type ) {
 		case ActionTypes.SITE_REDIRECT_NOTICE_CLOSE:
 			state = updateStateForSite( state, action.siteId, {
-				notice: null
+				notice: null,
 			} );
 
 			break;
 
 		case ActionTypes.SITE_REDIRECT_FETCH:
 			state = updateStateForSite( state, action.siteId, {
-				isFetching: true
+				isFetching: true,
 			} );
 
 			break;
@@ -49,7 +50,7 @@ function reducer( state, payload ) {
 			state = updateStateForSite( state, action.siteId, {
 				isFetching: false,
 				notice: null,
-				value: action.location
+				value: action.location,
 			} );
 
 			break;
@@ -59,15 +60,15 @@ function reducer( state, payload ) {
 				isFetching: false,
 				notice: {
 					error: true,
-					text: action.error
-				}
+					text: action.error,
+				},
 			} );
 
 			break;
 
 		case ActionTypes.SITE_REDIRECT_UPDATE:
 			state = updateStateForSite( state, action.siteId, {
-				isUpdating: true
+				isUpdating: true,
 			} );
 
 			break;
@@ -77,9 +78,9 @@ function reducer( state, payload ) {
 				isUpdating: false,
 				notice: {
 					success: true,
-					text: action.success
+					text: action.success,
 				},
-				value: action.location
+				value: action.location,
 			} );
 
 			break;
@@ -89,8 +90,8 @@ function reducer( state, payload ) {
 				isUpdating: false,
 				notice: {
 					error: true,
-					text: action.error
-				}
+					text: action.error,
+				},
 			} );
 
 			break;
@@ -99,7 +100,4 @@ function reducer( state, payload ) {
 	return state;
 }
 
-export {
-	getInitialStateForSite,
-	reducer
-};
+export { getInitialStateForSite, reducer };

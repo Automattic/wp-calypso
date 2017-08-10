@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns all of the reader teams for a user
  *

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,19 +23,15 @@ class ReduxFormTextInput extends Component {
 			<FormTextInput
 				{ ...otherProps }
 				onChange={ this.updateTextInput( onChange ) }
-				value={ value } />
+				value={ value }
+			/>
 		);
-	}
+	};
 
 	updateTextInput = onChange => event => onChange( event.target.value );
 
 	render() {
-		return (
-			<Field
-				{ ...this.props }
-				component={ this.renderTextInput }
-				name={ this.props.name } />
-		);
+		return <Field { ...this.props } component={ this.renderTextInput } name={ this.props.name } />;
 	}
 }
 

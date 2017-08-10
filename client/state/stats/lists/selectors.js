@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,12 +9,8 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import {
-	getSerializedStatsQuery,
-	normalizers,
-	buildExportArray,
-} from './utils';
-import { getSite } from 'state/sites/selectors';
+import { getSerializedStatsQuery, normalizers, buildExportArray } from './utils';
+import { getSite } from 'state/sites/selectors';
 
 /**
  * Returns true if currently requesting stats for the statType and query combo, or false
@@ -42,7 +39,9 @@ export function isRequestingSiteStatsForQuery( state, siteId, statType, query ) 
  */
 export function hasSiteStatsQueryFailed( state, siteId, statType, query ) {
 	const serializedQuery = getSerializedStatsQuery( query );
-	return get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'status' ] ) === 'error';
+	return (
+		get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'status' ] ) === 'error'
+	);
 }
 
 /**
@@ -77,11 +76,11 @@ export const getSiteStatsPostStreakData = createSelector(
 		const streakData = getSiteStatsForQuery( state, siteId, 'statsStreak', query );
 		// ensure streakData.data exists and it is not an array
 		if ( streakData && streakData.data && ! isArray( streakData.data ) ) {
-			Object.keys( streakData.data ).forEach( ( timestamp ) => {
+			Object.keys( streakData.data ).forEach( timestamp => {
 				const postDay = i18n.moment.unix( timestamp ).locale( 'en' );
 				const datestamp = postDay.utcOffset( gmtOffset ).format( 'YYYY-MM-DD' );
 
-				if ( 'undefined' === typeof( response[ datestamp ] ) ) {
+				if ( 'undefined' === typeof response[ datestamp ] ) {
 					response[ datestamp ] = 0;
 				}
 
@@ -135,9 +134,13 @@ export const getSiteStatsMaxPostsByDay = createSelector(
  */
 export const getSiteStatsTotalPostsForStreakQuery = createSelector(
 	( state, siteId, query ) => {
-		return reduce( getSiteStatsPostStreakData( state, siteId, query ), ( posts, sum ) => {
-			return sum + posts;
-		}, 0 );
+		return reduce(
+			getSiteStatsPostStreakData( state, siteId, query ),
+			( posts, sum ) => {
+				return sum + posts;
+			},
+			0
+		);
 	},
 	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
 	( state, siteId, query ) => {
@@ -201,7 +204,9 @@ export function getSiteStatsCSVData( state, siteId, statType, query ) {
 		return [];
 	}
 
-	return flatten( map( data, ( item ) => {
-		return buildExportArray( item );
-	} ) );
+	return flatten(
+		map( data, item => {
+			return buildExportArray( item );
+		} )
+	);
 }

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -54,11 +55,7 @@ export const WpcomPluginInstallButton = props => {
 	}
 
 	return (
-		<Button
-			onClick={ installButtonAction }
-			primary={ true }
-			disabled={ disabled }
-		>
+		<Button onClick={ installButtonAction } primary={ true } disabled={ disabled }>
 			{ translate( 'Install' ) }
 		</Button>
 	);
@@ -77,12 +74,13 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
 	initiateTransfer: initiateThemeTransfer,
-	trackButtonAction: ( plugin ) => recordTracksEvent( 'calypso_automated_transfer_click_plugin_install', { plugin } )
+	trackButtonAction: plugin =>
+		recordTracksEvent( 'calypso_automated_transfer_click_plugin_install', { plugin } ),
 };
 
-const withNavigation = WrappedComponent => props => <WrappedComponent { ...{ ...props, navigateTo: page } } />;
+const withNavigation = WrappedComponent => props =>
+	<WrappedComponent { ...{ ...props, navigateTo: page } } />;
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( withNavigation( localize( WpcomPluginInstallButton ) ) );
+export default connect( mapStateToProps, mapDispatchToProps )(
+	withNavigation( localize( WpcomPluginInstallButton ) )
+);

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,7 +23,7 @@ var _transaction = createInitialTransaction();
 var TransactionStore = {
 	get: function() {
 		return _transaction;
-	}
+	},
 };
 
 Emitter( TransactionStore );
@@ -37,7 +38,7 @@ function createInitialTransaction() {
 		errors: {},
 		newCardFormFields: {},
 		step: { name: transactionStepTypes.BEFORE_SUBMIT },
-		domainDetails: null
+		domainDetails: null,
 	};
 }
 
@@ -54,10 +55,12 @@ function setPayment( payment ) {
 }
 
 function setStep( step ) {
-	replaceData( assign( {}, _transaction, {
-		step: step,
-		errors: ( step.error ? step.error.message : {} )
-	} ) );
+	replaceData(
+		assign( {}, _transaction, {
+			step: step,
+			errors: step.error ? step.error.message : {},
+		} )
+	);
 }
 
 function setNewCreditCardDetails( options ) {
@@ -67,7 +70,7 @@ function setNewCreditCardDetails( options ) {
 
 	var newTransaction = update( _transaction, {
 		payment: { newCardDetails: { $merge: options.rawDetails } },
-		newCardFormFields: { $merge: options.maskedDetails }
+		newCardFormFields: { $merge: options.maskedDetails },
 	} );
 
 	replaceData( newTransaction );
@@ -88,7 +91,7 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case UpgradesActionTypes.TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:
 			setNewCreditCardDetails( {
 				rawDetails: action.rawDetails,
-				maskedDetails: action.maskedDetails
+				maskedDetails: action.maskedDetails,
 			} );
 			break;
 
@@ -103,7 +106,10 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case UpgradesActionTypes.CART_ITEM_REMOVE:
 			Dispatcher.waitFor( [ CartStore.dispatchToken ] );
 
-			if ( ! cartItems.hasDomainRegistration( CartStore.get() ) && hasDomainDetails( TransactionStore.get() ) ) {
+			if (
+				! cartItems.hasDomainRegistration( CartStore.get() ) &&
+				hasDomainDetails( TransactionStore.get() )
+			) {
 				setDomainDetails( null );
 			}
 			break;

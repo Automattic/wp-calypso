@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,11 +10,11 @@ import { forEach, get, omit } from 'lodash';
  * @param  {Object}   settings   Raw settings.
  * @return {Object}              Normalized settings.
  */
-export const normalizeSettings = ( settings ) => {
+export const normalizeSettings = settings => {
 	return Object.keys( settings ).reduce( ( memo, key ) => {
 		switch ( key ) {
 			case 'carousel_background_color':
-				memo[ key ] = settings [ key ] === '' ? 'black' : settings[ key ];
+				memo[ key ] = settings[ key ] === '' ? 'black' : settings[ key ];
 				break;
 			case 'custom-content-types':
 			case 'jetpack_testimonial':
@@ -51,7 +52,7 @@ export const normalizeSettings = ( settings ) => {
  * @param  {Object}   settings   Settings.
  * @return {Object}              Normalized settings.
  */
-export const sanitizeSettings = ( settings ) => {
+export const sanitizeSettings = settings => {
 	return Object.keys( settings ).reduce( ( memo, key ) => {
 		switch ( key ) {
 			// Jetpack's settings endpoint in version 4.9 does not support receiving 'akismet' among the settings
@@ -86,32 +87,18 @@ export const sanitizeSettings = ( settings ) => {
  * @param  {Object}   settings   Settings.
  * @return {Object}              Normalized settings.
  */
-export const filterSettingsByActiveModules = ( settings ) => {
+export const filterSettingsByActiveModules = settings => {
 	const moduleSettingsList = {
-		minileven: [
-			'wp_mobile_excerpt',
-			'wp_mobile_featured_images',
-			'wp_mobile_app_promos',
-		],
-		subscriptions: [
-			'stb_enabled',
-			'stc_enabled',
-		],
+		minileven: [ 'wp_mobile_excerpt', 'wp_mobile_featured_images', 'wp_mobile_app_promos' ],
+		subscriptions: [ 'stb_enabled', 'stc_enabled' ],
 		likes: [
 			'social_notifications_like',
 			'social_notifications_reblog',
 			'social_notifications_subscribe',
 		],
-		markdown: [
-			'wpcom_publish_comments_with_markdown',
-		],
-		protect: [
-			'jetpack_protect_global_whitelist',
-		],
-		sso: [
-			'jetpack_sso_match_by_email',
-			'jetpack_sso_require_two_step',
-		],
+		markdown: [ 'wpcom_publish_comments_with_markdown' ],
+		protect: [ 'jetpack_protect_global_whitelist' ],
+		sso: [ 'jetpack_sso_match_by_email', 'jetpack_sso_require_two_step' ],
 		'after-the-deadline': [
 			'onpublish',
 			'onupdate',
@@ -128,20 +115,9 @@ export const filterSettingsByActiveModules = ( settings ) => {
 			'Redundant Expression',
 			'ignored_phrases',
 		],
-		comments: [
-			'highlander_comment_form_prompt',
-			'jetpack_comment_form_color_scheme'
-		],
-		carousel: [
-			'carousel_background_color',
-			'carousel_display_exif'
-		],
-		stats: [
-			'admin_bar',
-			'hide_smile',
-			'count_roles',
-			'roles',
-		]
+		comments: [ 'highlander_comment_form_prompt', 'jetpack_comment_form_color_scheme' ],
+		carousel: [ 'carousel_background_color', 'carousel_display_exif' ],
+		stats: [ 'admin_bar', 'hide_smile', 'count_roles', 'roles' ],
 	};
 	let filteredSettings = { ...settings };
 

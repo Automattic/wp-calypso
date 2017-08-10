@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +18,6 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 
 class PaymentMethodPaypal extends Component {
-
 	static propTypes = {
 		method: PropTypes.shape( {
 			settings: PropTypes.shape( {
@@ -35,13 +35,18 @@ class PaymentMethodPaypal extends Component {
 		onDone: PropTypes.func.isRequired,
 	};
 
-	onEditFieldHandler = ( e ) => {
+	onEditFieldHandler = e => {
 		this.props.onEditField( e.target.name, e.target.value );
-	}
+	};
 
 	buttons = [
 		{ action: 'cancel', label: this.props.translate( 'Cancel' ), onClick: this.props.onCancel },
-		{ action: 'save', label: this.props.translate( 'Done' ), onClick: this.props.onDone, isPrimary: true },
+		{
+			action: 'save',
+			label: this.props.translate( 'Done' ),
+			onClick: this.props.onDone,
+			isPrimary: true,
+		},
 	];
 
 	render() {
@@ -50,9 +55,12 @@ class PaymentMethodPaypal extends Component {
 			<Dialog
 				additionalClassNames="payments__dialog woocommerce"
 				buttons={ this.buttons }
-				isVisible>
+				isVisible
+			>
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>{ translate( 'Your Paypal ID' ) }</FormLabel>
+					<FormLabel>
+						{ translate( 'Your Paypal ID' ) }
+					</FormLabel>
 					<FormTextInput
 						name="email"
 						onChange={ this.onEditFieldHandler }
@@ -60,29 +68,37 @@ class PaymentMethodPaypal extends Component {
 					/>
 					<FormSettingExplanation>
 						{ translate(
-							'If you don\'t have a PayPal account yet you ' +
-							'will receive instructions on how to sign up ' +
-							'when you receive your first order via PayPal'
+							"If you don't have a PayPal account yet you " +
+								'will receive instructions on how to sign up ' +
+								'when you receive your first order via PayPal'
 						) }
 					</FormSettingExplanation>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
-					<FormLegend>{ translate( 'Payment authorization' ) }</FormLegend>
+					<FormLegend>
+						{ translate( 'Payment authorization' ) }
+					</FormLegend>
 					<FormLabel>
 						<FormRadio
 							name="paymentaction"
 							value="sale"
 							checked={ 'sale' === settings.paymentaction.value }
-							onChange={ this.onEditFieldHandler } />
-						<span>{ translate( 'Authorize and charge the customers credit card automatically' ) }</span>
+							onChange={ this.onEditFieldHandler }
+						/>
+						<span>
+							{ translate( 'Authorize and charge the customers credit card automatically' ) }
+						</span>
 					</FormLabel>
 					<FormLabel>
 						<FormRadio
 							name="paymentaction"
 							value="authorization"
 							checked={ 'authorization' === settings.paymentaction.value }
-							onChange={ this.onEditFieldHandler } />
-						<span>{ translate( 'Authorize the customers credit card but charge manually' ) }</span>
+							onChange={ this.onEditFieldHandler }
+						/>
+						<span>
+							{ translate( 'Authorize the customers credit card but charge manually' ) }
+						</span>
 					</FormLabel>
 				</FormFieldset>
 			</Dialog>

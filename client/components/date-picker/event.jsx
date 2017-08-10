@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -6,7 +7,8 @@ import Gridicon from 'gridicons';
 import SocialLogo from 'social-logos';
 import classNames from 'classnames';
 
-const renderIcon = icon => icon &&
+const renderIcon = icon =>
+	icon &&
 	<span className={ `date-picker__icon-wrapper date-picker__icon-wrapper-${ icon }` }>
 		<Gridicon icon={ icon } size={ 18 } />
 	</span>;
@@ -29,18 +31,15 @@ const renderSocialIcon = ( icon, color ) => {
 	);
 };
 
-export const CalendarEvent = ( {
-	icon,
-	socialIcon,
-	socialIconColor = true,
-	title,
-} ) => {
+export const CalendarEvent = ( { icon, socialIcon, socialIconColor = true, title } ) => {
 	return (
 		<div className="date-picker__calendar-event">
 			{ renderIcon( icon ) }
 			{ renderSocialIcon( socialIcon, socialIconColor ) }
 
-			<span className="date-picker__event-title">{ title }</span>
+			<span className="date-picker__event-title">
+				{ title }
+			</span>
 		</div>
 	);
 };

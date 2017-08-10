@@ -1,3 +1,4 @@
+/** @format */
 /**
  *  Global interval action runner
  *
@@ -48,9 +49,9 @@ const initialState = fromJS( {
 		EVERY_FIVE_SECONDS: null,
 		EVERY_TEN_SECONDS: null,
 		EVERY_THIRTY_SECONDS: null,
-		EVERY_MINUTE: null
+		EVERY_MINUTE: null,
 	},
-	actions: []
+	actions: [],
 } );
 let state = initialState;
 
@@ -65,9 +66,7 @@ const removeFromList = id => list => list.filterNot( o => o.get( 'id' ) === id )
  * intended to help with testing code.
  */
 export const resetForTesting = () => {
-	state
-		.get( 'periodTimers' )
-		.forEach( clearTimeout );
+	state.get( 'periodTimers' ).forEach( clearTimeout );
 
 	state = initialState;
 };
@@ -111,15 +110,11 @@ function removeFromQueue( id ) {
 }
 
 function getPeriodActions( period ) {
-	return state
-		.get( 'actions' )
-		.filter( a => a.get( 'period' ) === period );
+	return state.get( 'actions' ).filter( a => a.get( 'period' ) === period );
 }
 
 function hasPeriodActions( period ) {
-	return state
-		.get( 'actions' )
-		.some( a => a.get( 'period' ) === period );
+	return state.get( 'actions' ).some( a => a.get( 'period' ) === period );
 }
 
 function executePeriodActions( period ) {
@@ -134,16 +129,21 @@ function executePeriodActions( period ) {
 }
 
 function scheduleNextRun() {
-	[ EVERY_SECOND, EVERY_FIVE_SECONDS, EVERY_TEN_SECONDS, EVERY_THIRTY_SECONDS, EVERY_MINUTE ]
-		.forEach( p => {
-			if ( ! hasPeriodActions( p ) ) {
-				state = state.updateIn( [ 'periodTimers', p ], clearTimeout );
-				return;
-			}
+	[
+		EVERY_SECOND,
+		EVERY_FIVE_SECONDS,
+		EVERY_TEN_SECONDS,
+		EVERY_THIRTY_SECONDS,
+		EVERY_MINUTE,
+	].forEach( p => {
+		if ( ! hasPeriodActions( p ) ) {
+			state = state.updateIn( [ 'periodTimers', p ], clearTimeout );
+			return;
+		}
 
-			if ( ! state.get( 'periodTimers' ).get( p ) ) {
-				// Note that the second `p` in the call here gets passed as an arg to `executePeriodActions`
-				state = state.setIn( [ 'periodTimers', p ], setTimeout( executePeriodActions, p, p ) );
-			}
-		} );
+		if ( ! state.get( 'periodTimers' ).get( p ) ) {
+			// Note that the second `p` in the call here gets passed as an arg to `executePeriodActions`
+			state = state.setIn( [ 'periodTimers', p ], setTimeout( executePeriodActions, p, p ) );
+		}
+	} );
 }

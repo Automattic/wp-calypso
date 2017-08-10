@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,12 +15,14 @@ export default React.createClass( {
 	displayName: 'CompactCard',
 
 	render: function() {
-		const props = assign( {}, this.props, { className: classnames( this.props.className, 'is-compact' ) } );
+		const props = assign( {}, this.props, {
+			className: classnames( this.props.className, 'is-compact' ),
+		} );
 
 		return (
 			<Card { ...props }>
 				{ this.props.children }
 			</Card>
 		);
-	}
+	},
 } );

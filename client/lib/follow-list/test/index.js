@@ -1,3 +1,4 @@
+/** @format */
 var assert = require( 'chai' ).assert,
 	sinon = require( 'sinon' ),
 	useFilesystemMocks = require( 'test/helpers/use-filesystem-mocks' ),

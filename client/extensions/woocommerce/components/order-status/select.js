@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,9 @@ function OrderStatusSelect( { onChange, value } ) {
 		<FormSelect id="select" value={ value } onChange={ onChange }>
 			{ statuses.map( ( status, i ) => {
 				return (
-					<option key={ i } value={ status.value }>{ status.name }</option>
+					<option key={ i } value={ status.value }>
+						{ status.name }
+					</option>
 				);
 			} ) }
 		</FormSelect>

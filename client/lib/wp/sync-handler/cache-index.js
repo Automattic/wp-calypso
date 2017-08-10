@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -39,15 +40,10 @@ export const cacheIndex = {
 	 */
 	getAllExcluding( key ) {
 		debug( 'getAllExcluding()', key );
-		const dropMatches = records => filter( records,
-			negate( matchesProperty( 'key', key ) )
-		);
+		const dropMatches = records => filter( records, negate( matchesProperty( 'key', key ) ) );
 
 		return new Promise( ( resolve, reject ) => {
-			this.getAll()
-				.then( dropMatches )
-				.then( resolve )
-				.catch( reject );
+			this.getAll().then( dropMatches ).then( resolve ).catch( reject );
 		} );
 	},
 
@@ -67,15 +63,12 @@ export const cacheIndex = {
 			const record = {
 				key,
 				reqParams,
-				timestamp: Date.now()
+				timestamp: Date.now(),
 			};
 			if ( pageSeriesKey ) {
-				record.pageSeriesKey = pageSeriesKey
+				record.pageSeriesKey = pageSeriesKey;
 			}
-			return localforage.setItem( RECORDS_LIST_KEY, [
-				...records,
-				record
-			] );
+			return localforage.setItem( RECORDS_LIST_KEY, [ ...records, record ] );
 		} );
 	},
 
@@ -99,8 +92,9 @@ export const cacheIndex = {
 			const syncHandlerKeys = keys.filter( isSyncRecordKey );
 			const itemsPromises = syncHandlerKeys.map( key => localforage.removeItem( key ) );
 			const recordsPromise = localforage.removeItem( RECORDS_LIST_KEY );
-			return Promise.all( [ ...itemsPromises, recordsPromise ] )
-				.then( debug( '%o records removed', syncHandlerKeys.length + 1 ) );
+			return Promise.all( [ ...itemsPromises, recordsPromise ] ).then(
+				debug( '%o records removed', syncHandlerKeys.length + 1 )
+			);
 		} );
 	},
 
@@ -111,17 +105,16 @@ export const cacheIndex = {
 	 */
 	removeRecordsByList( data ) {
 		debug( 'removeRecordsByList()', data );
-		return new Promise( ( resolve ) => {
+		return new Promise( resolve => {
 			const { removeList, retainList } = data;
 			if ( ! removeList.length ) {
 				debug( 'No records to remove' );
 				resolve();
 			}
 			const droppedPromises = removeList.map( item => localforage.removeItem( item.key ) );
-			const recordsListPromise = localforage.setItem( RECORDS_LIST_KEY, retainList )
-			return Promise.all( [ ...droppedPromises, recordsListPromise ] )
-			.then( () => {
-				debug( '%o records removed', removeList.length )
+			const recordsListPromise = localforage.setItem( RECORDS_LIST_KEY, retainList );
+			return Promise.all( [ ...droppedPromises, recordsListPromise ] ).then( () => {
+				debug( '%o records removed', removeList.length );
 				resolve();
 			} );
 		} );
@@ -135,15 +128,12 @@ export const cacheIndex = {
 
 			return {
 				removeList,
-				retainList: difference( records, removeList )
-			}
+				retainList: difference( records, removeList ),
+			};
 		};
 
 		return new Promise( ( resolve, reject ) => {
-			this.getAll()
-			.then( constructRecordsList )
-			.then( resolve )
-			.catch( reject );
+			this.getAll().then( constructRecordsList ).then( resolve ).catch( reject );
 		} );
 	},
 
@@ -154,9 +144,7 @@ export const cacheIndex = {
 	 * @return {Promise} promise
 	 */
 	pruneStaleRecords( lifetime = LIFETIME ) {
-		lifetime = typeof lifetime === 'number'
-			? lifetime
-			: ms( lifetime );
+		lifetime = typeof lifetime === 'number' ? lifetime : ms( lifetime );
 
 		debug( 'start to prune records older than %s', ms( lifetime, { long: true } ) );
 
@@ -165,7 +153,7 @@ export const cacheIndex = {
 
 	findPageSeriesRecords( pageSeriesKey ) {
 		debug( 'dropPageSeries()' );
-		const pickPageSeries = ( records ) => {
+		const pickPageSeries = records => {
 			const removeList = filter( records, record => record.pageSeriesKey === pageSeriesKey );
 			const combinedResponse = {
 				removeList,
@@ -173,13 +161,10 @@ export const cacheIndex = {
 			};
 			debug( 'pickPageSeries()', combinedResponse );
 			return combinedResponse;
-		}
+		};
 
 		return new Promise( ( resolve, reject ) => {
-			this.getAll()
-				.then( pickPageSeries )
-				.then( resolve )
-				.catch( reject );
+			this.getAll().then( pickPageSeries ).then( resolve ).catch( reject );
 		} );
 	},
 
@@ -196,25 +181,25 @@ export const cacheIndex = {
 	 */
 	clearRecordsByParamFilter( paramsFilter ) {
 		debug( 'clearRecordsByParamFilter()', filter );
-		const findRecordsByFilter = ( records ) => {
-			const removeList = filter( records, ( record ) => {
+		const findRecordsByFilter = records => {
+			const removeList = filter( records, record => {
 				if ( ! record.reqParams ) {
 					return false;
 				}
-				return( paramsFilter( record.reqParams ) );
+				return paramsFilter( record.reqParams );
 			} );
 			const combinedResponse = {
 				removeList,
-				retainList: difference( records, removeList )
-			}
+				retainList: difference( records, removeList ),
+			};
 			debug( 'findRecordsByFilter()', combinedResponse );
 			return combinedResponse;
-		}
+		};
 		return new Promise( ( resolve, reject ) => {
 			this.getAll().then( records => {
 				const combinedResponse = findRecordsByFilter( records );
 				this.removeRecordsByList( combinedResponse ).then( resolve ).catch( reject );
 			} );
 		} );
-	}
-}
+	},
+};

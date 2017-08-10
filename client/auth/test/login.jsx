@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,10 +16,10 @@ describe( 'LoginTest', function() {
 	let Login, loginStub, page, React, ReactDom, ReactClass, TestUtils;
 
 	useFakeDom.withContainer();
-	useMockery( ( mockery ) => {
+	useMockery( mockery => {
 		loginStub = stub();
 		mockery.registerMock( 'lib/oauth-store/actions', {
-			login: loginStub
+			login: loginStub,
 		} );
 		mockery.registerMock( 'lib/analytics', { ga: { recordEvent: noop } } );
 	} );

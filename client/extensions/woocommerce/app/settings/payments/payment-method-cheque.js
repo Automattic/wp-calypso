@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,6 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 
 class PaymentMethodCheque extends Component {
-
 	static propTypes = {
 		method: PropTypes.shape( {
 			settings: PropTypes.shape( {
@@ -33,13 +33,18 @@ class PaymentMethodCheque extends Component {
 		onDone: PropTypes.func.isRequired,
 	};
 
-	onEditFieldHandler = ( e ) => {
+	onEditFieldHandler = e => {
 		this.props.onEditField( e.target.name, e.target.value );
-	}
+	};
 
 	buttons = [
 		{ action: 'cancel', label: this.props.translate( 'Cancel' ), onClick: this.props.onCancel },
-		{ action: 'save', label: this.props.translate( 'Done' ), onClick: this.props.onDone, isPrimary: true },
+		{
+			action: 'save',
+			label: this.props.translate( 'Done' ),
+			onClick: this.props.onDone,
+			isPrimary: true,
+		},
 	];
 
 	render() {
@@ -48,17 +53,22 @@ class PaymentMethodCheque extends Component {
 			<Dialog
 				additionalClassNames="payments__dialog woocommerce"
 				buttons={ this.buttons }
-				isVisible>
-				<FormFieldset className="payments__method-edit-field-container" >
-					<FormLabel>{ translate( 'Title' ) }</FormLabel>
+				isVisible
+			>
+				<FormFieldset className="payments__method-edit-field-container">
+					<FormLabel>
+						{ translate( 'Title' ) }
+					</FormLabel>
 					<FormTextInput
 						name="title"
 						onChange={ this.onEditFieldHandler }
 						value={ settings.title.value }
 					/>
 				</FormFieldset>
-				<FormFieldset className="payments__method-edit-field-container" >
-					<FormLabel>{ translate( 'Instructions for customer at checkout' ) }</FormLabel>
+				<FormFieldset className="payments__method-edit-field-container">
+					<FormLabel>
+						{ translate( 'Instructions for customer at checkout' ) }
+					</FormLabel>
 					<FormTextarea
 						name="description"
 						onChange={ this.onEditFieldHandler }
@@ -66,8 +76,10 @@ class PaymentMethodCheque extends Component {
 						placeholder={ translate( 'Pay for this order by check.' ) }
 					/>
 				</FormFieldset>
-				<FormFieldset className="payments__method-edit-field-container" >
-					<FormLabel>{ translate( 'Instructions for customer in order email notification' ) }</FormLabel>
+				<FormFieldset className="payments__method-edit-field-container">
+					<FormLabel>
+						{ translate( 'Instructions for customer in order email notification' ) }
+					</FormLabel>
 					<FormTextarea
 						name="instructions"
 						onChange={ this.onEditFieldHandler }

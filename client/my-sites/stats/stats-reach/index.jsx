@@ -1,3 +1,4 @@
+/** @format */
 /**
 * External dependencies
 */
@@ -18,7 +19,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData
+	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
 
 export const StatsReach = props => {
@@ -27,9 +28,13 @@ export const StatsReach = props => {
 	const isLoadingFollowData = ! followData;
 	const wpcomFollowCount = get( followData, 'total_wpcom', 0 );
 	const emailFollowCount = get( followData, 'total_email', 0 );
-	const publicizeFollowCount = reduce( publicizeData, ( sum, item ) => {
-		return sum + item.value;
-	}, 0 );
+	const publicizeFollowCount = reduce(
+		publicizeData,
+		( sum, item ) => {
+			return sum + item.value;
+		},
+		0
+	);
 
 	return (
 		<div>
@@ -44,31 +49,35 @@ export const StatsReach = props => {
 						loading={ isLoadingFollowData }
 						href={ `/people/followers/${ siteSlug }` }
 						value={ wpcomFollowCount }
-						compact />
+						compact
+					/>
 					<StatsTab
 						gridicon="mail"
 						label={ translate( 'Email' ) }
 						loading={ isLoadingFollowData }
 						href={ `/people/email-followers/${ siteSlug }` }
 						value={ emailFollowCount }
-						compact />
+						compact
+					/>
 					<StatsTab
 						gridicon="share"
 						label={ translate( 'Social' ) }
 						loading={ isLoadingPublicize }
 						value={ publicizeFollowCount }
-						compact />
+						compact
+					/>
 				</StatsTabs>
 			</Card>
 		</div>
 	);
 };
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const followData = getSiteStatsNormalizedData( state, siteId, 'statsFollowers' );
 	const publicizeData = getSiteStatsNormalizedData( state, siteId, 'statsPublicize' );
-	const isLoadingPublicize = isRequestingSiteStatsForQuery( state, siteId, 'statsPublicize' ) && ! publicizeData.length;
+	const isLoadingPublicize =
+		isRequestingSiteStatsForQuery( state, siteId, 'statsPublicize' ) && ! publicizeData.length;
 	const siteSlug = getSiteSlug( state, siteId );
 
 	return {

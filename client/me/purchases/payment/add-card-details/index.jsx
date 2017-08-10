@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -57,7 +58,9 @@ class AddCardDetails extends PurchaseCardDetails {
 
 		return (
 			<Main>
-				<HeaderCake onClick={ this.goToManagePurchase }>{ titles.addCardDetails }</HeaderCake>
+				<HeaderCake onClick={ this.goToManagePurchase }>
+					{ titles.addCardDetails }
+				</HeaderCake>
 
 				<CreditCardForm
 					apiParams={ this.getApiParams() }

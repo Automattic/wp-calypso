@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -34,10 +35,7 @@ describe( 'reducer', () => {
 		const action = {
 			type: WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
 			siteId,
-			data: [
-				{ id: 'foo', title: 'foo' },
-				{ id: 'bar', title: 'bar' },
-			],
+			data: [ { id: 'foo', title: 'foo' }, { id: 'bar', title: 'bar' } ],
 		};
 
 		const newState = reducer( state, action );
@@ -50,9 +48,11 @@ describe( 'reducer', () => {
 
 	it( 'should store data from the action', () => {
 		const siteId = 123;
-		const state = { [ siteId ]: {
-			paymentMethods: [ { id: 'bar', title: 'bar' } ]
-		} };
+		const state = {
+			[ siteId ]: {
+				paymentMethods: [ { id: 'bar', title: 'bar' } ],
+			},
+		};
 		const action = {
 			type: WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS,
 			siteId,

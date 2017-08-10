@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns true if a network request is in progress to delete the specified site, or
  * false otherwise.

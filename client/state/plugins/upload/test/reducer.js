@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,12 +14,7 @@ import {
 	updatePluginUploadProgress,
 	uploadPlugin,
 } from '../actions';
-import {
-	inProgress,
-	progressPercent,
-	uploadedPluginId,
-	uploadError,
-} from '../reducer';
+import { inProgress, progressPercent, uploadedPluginId, uploadError } from '../reducer';
 
 const siteId = 2916284;
 const pluginId = 'hello-dolly';

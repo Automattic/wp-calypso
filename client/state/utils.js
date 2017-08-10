@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,10 +9,7 @@ import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcal
 /**
  * Internal dependencies
  */
-import {
-	DESERIALIZE,
-	SERIALIZE,
-} from './action-types';
+import { DESERIALIZE, SERIALIZE } from './action-types';
 import warn from 'lib/warn';
 
 export function isValidStateWithSchema( state, schema ) {
@@ -78,15 +76,21 @@ export function isValidStateWithSchema( state, schema ) {
 export const keyedReducer = ( keyName, reducer ) => {
 	// some keys are invalid
 	if ( 'string' !== typeof keyName ) {
-		throw new TypeError( `Key name passed into ``keyedReducer`` must be a string but I detected a ${ typeof keyName }` );
+		throw new TypeError(
+			`Key name passed into ``keyedReducer`` must be a string but I detected a ${ typeof keyName }`
+		);
 	}
 
 	if ( ! keyName.length ) {
-		throw new TypeError( 'Key name passed into `keyedReducer` must have a non-zero length but I detected an empty string' );
+		throw new TypeError(
+			'Key name passed into `keyedReducer` must have a non-zero length but I detected an empty string'
+		);
 	}
 
 	if ( 'function' !== typeof reducer ) {
-		throw new TypeError( `Reducer passed into ``keyedReducer`` must be a function but I detected a ${ typeof reducer }` );
+		throw new TypeError(
+			`Reducer passed into ``keyedReducer`` must be a function but I detected a ${ typeof reducer }`
+		);
 	}
 
 	return ( state = {}, action ) => {
@@ -119,9 +123,7 @@ export const keyedReducer = ( keyName, reducer ) => {
 		// remove key from state if setting to undefined or back to initial state
 		// if it didn't exist anyway, then do nothing.
 		if ( undefined === newItemState || isEqual( newItemState, initialState ) ) {
-			return state.hasOwnProperty( itemKey )
-				? omit( state, itemKey )
-				: state;
+			return state.hasOwnProperty( itemKey ) ? omit( state, itemKey ) : state;
 		}
 
 		// otherwise immutably update the super-state
@@ -145,7 +147,7 @@ export function extendAction( action, data ) {
 		return merge( {}, action, data );
 	}
 
-	return ( dispatch ) => {
+	return dispatch => {
 		const newDispatch = flow( partialRight( extendAction, data ), dispatch );
 		return action( newDispatch );
 	};
@@ -171,8 +173,8 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 	let defaultHandlers;
 	if ( schema ) {
 		defaultHandlers = {
-			[ SERIALIZE ]: ( state ) => state,
-			[ DESERIALIZE ]: ( state ) => {
+			[ SERIALIZE ]: state => state,
+			[ DESERIALIZE ]: state => {
 				if ( isValidStateWithSchema( state, schema ) ) {
 					return state;
 				}
@@ -180,18 +182,18 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 				warn( 'state validation failed - check schema used for:', customHandlers );
 
 				return initialState;
-			}
+			},
 		};
 	} else {
 		defaultHandlers = {
 			[ SERIALIZE ]: () => initialState,
-			[ DESERIALIZE ]: () => initialState
+			[ DESERIALIZE ]: () => initialState,
 		};
 	}
 
 	const handlers = {
 		...defaultHandlers,
-		...customHandlers
+		...customHandlers,
 	};
 
 	// When custom serialization behavior is provided, we assume that it may
@@ -215,8 +217,10 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 		const { type } = action;
 
 		if ( 'production' !== process.env.NODE_ENV && 'type' in action && ! type ) {
-			throw new TypeError( 'Reducer called with undefined type.' +
-				' Verify that the action type is defined in state/action-types.js' );
+			throw new TypeError(
+				'Reducer called with undefined type.' +
+					' Verify that the action type is defined in state/action-types.js'
+			);
 		}
 
 		if ( handlers.hasOwnProperty( type ) ) {
@@ -369,10 +373,17 @@ export const withSchemaValidation = ( schema, reducer ) => {
  * @returns {function} - Returns the combined reducer function
  */
 export function combineReducers( reducers ) {
-	const validatedReducers = reduce( reducers, ( validated, next, key ) => {
-		const { schema, hasCustomPersistence } = next;
-		return { ...validated, [ key ]: hasCustomPersistence ? next : withSchemaValidation( schema, next ) };
-	}, {} );
+	const validatedReducers = reduce(
+		reducers,
+		( validated, next, key ) => {
+			const { schema, hasCustomPersistence } = next;
+			return {
+				...validated,
+				[ key ]: hasCustomPersistence ? next : withSchemaValidation( schema, next ),
+			};
+		},
+		{}
+	);
 	const combined = combine( validatedReducers );
 	combined.hasCustomPersistence = true;
 	return combined;

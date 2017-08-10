@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -47,7 +48,9 @@ describe( 'reducer', () => {
 				siteId: 12345,
 				productId: 'best-product',
 			};
-			const initialState = { 12345: [ { ID: 'cool-thing' }, { ID: 'best-product' }, { ID: 'worst-product' } ] };
+			const initialState = {
+				12345: [ { ID: 'cool-thing' }, { ID: 'best-product' }, { ID: 'worst-product' } ],
+			};
 			const state = items( initialState, action );
 			expect( state[ 12345 ] ).to.eql( [ { ID: 'cool-thing' }, { ID: 'worst-product' } ] );
 		} );
@@ -59,10 +62,18 @@ describe( 'reducer', () => {
 				product: { ID: 'best-product', flavor: 'blue' },
 			};
 			const initialState = {
-				12345: [ { ID: 'cool-thing' }, { ID: 'best-product', flavor: 'green' }, { ID: 'worst-product' } ],
+				12345: [
+					{ ID: 'cool-thing' },
+					{ ID: 'best-product', flavor: 'green' },
+					{ ID: 'worst-product' },
+				],
 			};
 			const state = items( initialState, action );
-			expect( state[ 12345 ] ).to.eql( [ { ID: 'cool-thing' }, { ID: 'best-product', flavor: 'blue' }, { ID: 'worst-product' } ] );
+			expect( state[ 12345 ] ).to.eql( [
+				{ ID: 'cool-thing' },
+				{ ID: 'best-product', flavor: 'blue' },
+				{ ID: 'worst-product' },
+			] );
 		} );
 
 		it( 'adds product to front if product does not exist when updated', () => {
@@ -75,7 +86,12 @@ describe( 'reducer', () => {
 				12345: [ { ID: 'cool-thing' }, { ID: 'best-product' }, { ID: 'worst-product' } ],
 			};
 			const state = items( initialState, action );
-			expect( state[ 12345 ] ).to.eql( [ action.product, { ID: 'cool-thing' }, { ID: 'best-product' }, { ID: 'worst-product' } ] );
+			expect( state[ 12345 ] ).to.eql( [
+				action.product,
+				{ ID: 'cool-thing' },
+				{ ID: 'best-product' },
+				{ ID: 'worst-product' },
+			] );
 		} );
 
 		it( 'adds product if product does not exist when updated and state is empty', () => {

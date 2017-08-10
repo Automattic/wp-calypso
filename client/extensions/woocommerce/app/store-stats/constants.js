@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,36 +8,36 @@ const sparkWidgetList1 = [
 	{
 		key: 'products',
 		title: translate( 'Products Purchased' ),
-		format: 'number'
+		format: 'number',
 	},
 	{
 		key: 'avg_products_per_order',
 		title: translate( 'Products Per Order' ),
-		format: 'number'
+		format: 'number',
 	},
 	{
 		key: 'coupons',
 		title: translate( 'Coupons Used' ),
-		format: 'number'
-	}
+		format: 'number',
+	},
 ];
 
 const sparkWidgetList2 = [
 	{
 		key: 'total_refund',
 		title: translate( 'Refunds' ),
-		format: 'currency'
+		format: 'currency',
 	},
 	{
 		key: 'total_shipping',
 		title: translate( 'Shipping' ),
-		format: 'currency'
+		format: 'currency',
 	},
 	{
 		key: 'total_tax',
 		title: translate( 'Tax' ),
-		format: 'currency'
-	}
+		format: 'currency',
+	},
 ];
 
 export const sparkWidgets = [ sparkWidgetList1, sparkWidgetList2 ];
@@ -85,7 +86,7 @@ export const UNITS = {
 		format: 'YYYY-MM-DD',
 		sinceFormat: 'MMM D',
 		chartFormat: 'labelDay',
-		title: translate( 'Days' )
+		title: translate( 'Days' ),
 	},
 	week: {
 		quantity: 30,
@@ -94,16 +95,16 @@ export const UNITS = {
 		format: 'YYYY-[W]WW',
 		sinceFormat: 'MMM D',
 		chartFormat: 'labelWeek',
-		title: translate( 'Weeks' )
+		title: translate( 'Weeks' ),
 	},
 	month: {
 		quantity: 12,
 		label: 'months',
 		durationFn: 'asMonths',
 		format: 'YYYY-MM',
-		sinceFormat: 'MMM [\']YY',
+		sinceFormat: "MMM [']YY",
 		chartFormat: 'labelMonth',
-		title: translate( 'Months' )
+		title: translate( 'Months' ),
 	},
 	year: {
 		quantity: 10,
@@ -112,8 +113,8 @@ export const UNITS = {
 		format: 'YYYY',
 		sinceFormat: 'YYYY',
 		chartFormat: 'labelYear',
-		title: translate( 'Years' )
-	}
+		title: translate( 'Years' ),
+	},
 };
 
 export const chartTabs = [

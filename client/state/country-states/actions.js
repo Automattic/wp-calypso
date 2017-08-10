@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -22,24 +23,28 @@ export function receiveCountryStates( countryStates, countryCode ) {
 export function requestCountryStates( countryCode ) {
 	countryCode = countryCode.toLowerCase();
 
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: COUNTRY_STATES_REQUEST,
 			countryCode,
 		} );
 
-		return wpcom.undocumented().getDomainRegistrationSupportedStates( countryCode )
-			.then( ( countryStates ) => {
+		return wpcom
+			.undocumented()
+			.getDomainRegistrationSupportedStates( countryCode )
+			.then( countryStates => {
 				dispatch( receiveCountryStates( countryStates, countryCode ) );
 				dispatch( {
 					type: COUNTRY_STATES_REQUEST_SUCCESS,
 					countryCode,
 				} );
 			} )
-			.catch( ( error ) => dispatch( {
-				type: COUNTRY_STATES_REQUEST_FAILURE,
-				countryCode,
-				error,
-			} ) );
+			.catch( error =>
+				dispatch( {
+					type: COUNTRY_STATES_REQUEST_FAILURE,
+					countryCode,
+					error,
+				} )
+			);
 	};
 }

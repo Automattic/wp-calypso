@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Needed for store test
  */
@@ -12,6 +13,6 @@ module.exports = function() {
 		},
 		getNetworkSites: function() {
 			return [];
-		}
+		},
 	};
 };

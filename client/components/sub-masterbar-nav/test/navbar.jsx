@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,13 +15,11 @@ import Item from '../item';
 describe( 'Navbar', () => {
 	const options = [
 		{ label: 'sites', uri: '/sites', icon: 'star' },
-		{ label: 'more', uri: '/more', icon: 'star' }
+		{ label: 'more', uri: '/more', icon: 'star' },
 	];
 
 	it( 'should render a navbar given a list of options', () => {
-		const wrapper = shallow(
-			<Navbar options={ options } />
-		);
+		const wrapper = shallow( <Navbar options={ options } /> );
 
 		const items = wrapper.find( Item );
 
@@ -37,9 +36,7 @@ describe( 'Navbar', () => {
 	} );
 
 	it( 'should higlight currently selected option', () => {
-		const wrapper = shallow(
-			<Navbar selected={ options[ 1 ] } options={ options } />
-		);
+		const wrapper = shallow( <Navbar selected={ options[ 1 ] } options={ options } /> );
 
 		const items = wrapper.find( Item );
 

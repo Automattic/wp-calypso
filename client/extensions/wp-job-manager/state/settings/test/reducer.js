@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,10 +21,7 @@ describe( 'reducer', () => {
 	const secondarySiteId = 456789;
 
 	it( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'fetching',
-			'items',
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'fetching', 'items' ] );
 	} );
 
 	describe( 'fetching()', () => {

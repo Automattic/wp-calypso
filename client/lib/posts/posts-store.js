@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -50,7 +51,7 @@ function setAll( posts, responseSource ) {
 PostsStore = {
 	get: function( globalID ) {
 		return _posts[ globalID ];
-	}
+	},
 };
 
 PostsStore.dispatchToken = Dispatcher.register( function( payload ) {

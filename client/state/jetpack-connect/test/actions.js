@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -32,7 +33,8 @@ import path from 'lib/route/path';
 
 describe( 'actions', () => {
 	let actions, sandbox, spy;
-	const mySitesPath = '/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active';
+	const mySitesPath =
+		'/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active';
 
 	useFakeDom();
 
@@ -55,7 +57,7 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
-				status: jetpackStatus
+				status: jetpackStatus,
 			} );
 		} );
 	} );
@@ -69,7 +71,7 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: JETPACK_CONNECT_DISMISS_URL_STATUS,
-				url: url
+				url: url,
 			} );
 		} );
 	} );
@@ -83,7 +85,7 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: JETPACK_CONNECT_REDIRECT,
-				url: url
+				url: url,
 			} );
 		} );
 	} );
@@ -97,7 +99,7 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: JETPACK_CONNECT_REDIRECT,
-				url: url
+				url: url,
 			} );
 		} );
 	} );
@@ -111,7 +113,7 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: JETPACK_CONNECT_REDIRECT,
-				url: url
+				url: url,
 			} );
 		} );
 	} );
@@ -135,16 +137,17 @@ describe( 'actions', () => {
 			const queryObject = {
 				state: '12345678',
 				redirect_uri: 'https://example.com/',
-				authorizeError: {}
+				authorizeError: {},
 			};
 			const authorizationCode = 'abcdefgh';
-			const url = queryObject.redirect_uri + '?code=' + authorizationCode + '&state=' + queryObject.state;
+			const url =
+				queryObject.redirect_uri + '?code=' + authorizationCode + '&state=' + queryObject.state;
 
 			goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
-				url
+				url,
 			} );
 		} );
 	} );
@@ -159,7 +162,7 @@ describe( 'actions', () => {
 			expect( spy ).to.have.been.calledWith( {
 				type: JETPACK_CONNECT_RETRY_AUTH,
 				slug: 'example.com',
-				attemptNumber: 0
+				attemptNumber: 0,
 			} );
 		} );
 	} );
@@ -171,13 +174,13 @@ describe( 'actions', () => {
 			redirect_uri: 'https://example.com/',
 			scope: 'auth',
 			secret: '1234abcd',
-			state: 12345678
+			state: 12345678,
 		};
 		const code = 'abcdefghi1234';
 		const { _wp_nonce, client_id, redirect_uri, scope, secret, state } = queryObject;
 
 		describe( 'success', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + client_id + '/jetpack-login' )
@@ -185,13 +188,17 @@ describe( 'actions', () => {
 						_wp_nonce,
 						redirect_uri,
 						scope,
-						state
+						state,
 					} )
-					.reply( 200, {
-						code
-					}, {
-						'Content-Type': 'application/json'
-					} );
+					.reply(
+						200,
+						{
+							code,
+						},
+						{
+							'Content-Type': 'application/json',
+						}
+					);
 
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
@@ -199,24 +206,32 @@ describe( 'actions', () => {
 						code,
 						state,
 						redirect_uri,
-						secret
+						secret,
 					} )
-					.reply( 200, {
-						result: 'connected',
-						plans_url: '/plans/example.com'
-					}, {
-						'Content-Type': 'application/json'
-					} );
+					.reply(
+						200,
+						{
+							result: 'connected',
+							plans_url: '/plans/example.com',
+						},
+						{
+							'Content-Type': 'application/json',
+						}
+					);
 
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.filteringPath( () => mySitesPath )
 					.get( mySitesPath )
-					.reply( 200, {
-						sites: [ client_id ]
-					}, {
-						'Content-Type': 'application/json'
-					} );
+					.reply(
+						200,
+						{
+							sites: [ client_id ],
+						},
+						{
+							'Content-Type': 'application/json',
+						}
+					);
 			} );
 
 			it( 'should dispatch authorize request action when thunk triggered', () => {
@@ -226,7 +241,7 @@ describe( 'actions', () => {
 
 				expect( spy ).to.have.been.calledWith( {
 					type: JETPACK_CONNECT_AUTHORIZE,
-					queryObject
+					queryObject,
 				} );
 			} );
 
@@ -237,8 +252,8 @@ describe( 'actions', () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 						data: {
-							code: 'abcdefghi1234'
-						}
+							code: 'abcdefghi1234',
+						},
 					} );
 				} );
 			} );
@@ -252,9 +267,9 @@ describe( 'actions', () => {
 						siteId: client_id,
 						data: {
 							result: 'connected',
-							plans_url: '/plans/example.com'
+							plans_url: '/plans/example.com',
 						},
-						error: null
+						error: null,
 					} );
 				} );
 			} );
@@ -265,7 +280,7 @@ describe( 'actions', () => {
 				return authorize( queryObject )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITES_RECEIVE,
-						sites: [ client_id ]
+						sites: [ client_id ],
 					} );
 				} );
 			} );
@@ -277,15 +292,15 @@ describe( 'actions', () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 						data: {
-							sites: [ client_id ]
-						}
+							sites: [ client_id ],
+						},
 					} );
 				} );
 			} );
 		} );
 
 		describe( 'failure', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + client_id + '/jetpack-login' )
@@ -293,14 +308,18 @@ describe( 'actions', () => {
 						_wp_nonce,
 						redirect_uri,
 						scope,
-						state
+						state,
 					} )
-					.reply( 400, {
-						error: 'not_verified',
-						message: 'Could not verify your request.'
-					}, {
-						'Content-Type': 'application/json'
-					} );
+					.reply(
+						400,
+						{
+							error: 'not_verified',
+							message: 'Could not verify your request.',
+						},
+						{
+							'Content-Type': 'application/json',
+						}
+					);
 			} );
 
 			it( 'should dispatch authorize receive action when request completes', () => {
@@ -314,8 +333,8 @@ describe( 'actions', () => {
 						error: {
 							error: 'not_verified',
 							message: 'Could not verify your request.',
-							status: 400
-						}
+							status: 400,
+						},
 					} );
 				} );
 			} );
@@ -334,7 +353,7 @@ describe( 'actions', () => {
 			},
 			URL: 'https://example.wordpress.com',
 			is_vip: false,
-			admin_url: 'https://example.wordpress.com/wp-admin'
+			admin_url: 'https://example.wordpress.com/wp-admin',
 		};
 
 		const sharedDetails = {
@@ -347,23 +366,27 @@ describe( 'actions', () => {
 			display_name: 'bestbbqtester',
 			description: 'I like BBQ, a lot.',
 			two_step_enabled: 0,
-			external_user_id: 1
+			external_user_id: 1,
 		};
 
 		describe( 'success', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/sso-validate', {
-						sso_nonce: ssoNonce
+						sso_nonce: ssoNonce,
 					} )
-					.reply( 200, {
-						success: true,
-						blog_details: blogDetails,
-						shared_details: sharedDetails
-					}, {
-						'Content-Type': 'application/json'
-					} );
+					.reply(
+						200,
+						{
+							success: true,
+							blog_details: blogDetails,
+							shared_details: sharedDetails,
+						},
+						{
+							'Content-Type': 'application/json',
+						}
+					);
 			} );
 
 			it( 'should dispatch validate action when thunk triggered', () => {
@@ -372,7 +395,7 @@ describe( 'actions', () => {
 				validateSSONonce( siteId, ssoNonce )( spy );
 				expect( spy ).to.have.been.calledWith( {
 					siteId: siteId,
-					type: JETPACK_CONNECT_SSO_VALIDATION_REQUEST
+					type: JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 				} );
 			} );
 
@@ -384,25 +407,29 @@ describe( 'actions', () => {
 						success: true,
 						blogDetails: blogDetails,
 						sharedDetails: sharedDetails,
-						type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS
+						type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 					} );
 				} );
 			} );
 		} );
 
 		describe( 'failure', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/sso-validate', {
-						sso_nonce: ssoNonce
+						sso_nonce: ssoNonce,
 					} )
-					.reply( 400, {
-						error: 'invalid_input',
-						message: 'sso_nonce is a required parameter for this endpoint'
-					}, {
-						'Content-Type': 'application/json'
-					} );
+					.reply(
+						400,
+						{
+							error: 'invalid_input',
+							message: 'sso_nonce is a required parameter for this endpoint',
+						},
+						{
+							'Content-Type': 'application/json',
+						}
+					);
 			} );
 
 			it( 'should dispatch receive action when request completes', () => {
@@ -413,9 +440,9 @@ describe( 'actions', () => {
 						error: {
 							error: 'invalid_input',
 							message: 'sso_nonce is a required parameter for this endpoint',
-							status: 400
+							status: 400,
 						},
-						type: JETPACK_CONNECT_SSO_VALIDATION_ERROR
+						type: JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 					} );
 				} );
 			} );
@@ -428,17 +455,21 @@ describe( 'actions', () => {
 		const ssoUrl = 'http://example.wordpress.com';
 
 		describe( 'success', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/sso-authorize', {
-						sso_nonce: ssoNonce
+						sso_nonce: ssoNonce,
 					} )
-					.reply( 200, {
-						sso_url: ssoUrl
-					}, {
-						'Content-Type': 'application/json'
-					} );
+					.reply(
+						200,
+						{
+							sso_url: ssoUrl,
+						},
+						{
+							'Content-Type': 'application/json',
+						}
+					);
 			} );
 
 			it( 'should dispatch validate action when thunk triggered', () => {
@@ -447,7 +478,7 @@ describe( 'actions', () => {
 				authorizeSSO( siteId, ssoNonce, ssoUrl )( spy );
 				expect( spy ).to.have.been.calledWith( {
 					siteId: siteId,
-					type: JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST
+					type: JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 				} );
 			} );
 
@@ -458,25 +489,29 @@ describe( 'actions', () => {
 					expect( spy ).to.have.been.calledWith( {
 						ssoUrl,
 						siteUrl: ssoUrl,
-						type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS
+						type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 					} );
 				} );
 			} );
 		} );
 
 		describe( 'failure', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/sso-authorize', {
-						sso_nonce: ssoNonce
+						sso_nonce: ssoNonce,
 					} )
-					.reply( 400, {
-						error: 'invalid_input',
-						message: 'sso_nonce is a required parameter for this endpoint'
-					}, {
-						'Content-Type': 'application/json'
-					} );
+					.reply(
+						400,
+						{
+							error: 'invalid_input',
+							message: 'sso_nonce is a required parameter for this endpoint',
+						},
+						{
+							'Content-Type': 'application/json',
+						}
+					);
 			} );
 
 			it( 'should dispatch receive action when request completes', () => {
@@ -487,9 +522,9 @@ describe( 'actions', () => {
 						error: {
 							error: 'invalid_input',
 							message: 'sso_nonce is a required parameter for this endpoint',
-							status: 400
+							status: 400,
 						},
-						type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR
+						type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 					} );
 				} );
 			} );

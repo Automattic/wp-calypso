@@ -1,9 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import {
-	flowRight as compose,
-} from 'lodash';
+import { flowRight as compose } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -18,9 +17,7 @@ import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
  * @returns {?boolean} is transfer currently failed? null if unknown
  */
 export const isFailed = status =>
-	status
-		? status === transferStates.CONFLICTS || status === transferStates.FAILURE
-		: null;
+	status ? status === transferStates.CONFLICTS || status === transferStates.FAILURE : null;
 
 /**
  * Indicates whether or not an automated transfer is failed for a given site
@@ -29,9 +26,6 @@ export const isFailed = status =>
  * @param {Number} siteId site of interest
  * @returns {?boolean} whether or not transfer is failed, or null if not known
  */
-export const isAutomatedTransferFailed = compose(
-	isFailed,
-	getAutomatedTransferStatus,
-);
+export const isAutomatedTransferFailed = compose( isFailed, getAutomatedTransferStatus );
 
 export default isAutomatedTransferFailed;

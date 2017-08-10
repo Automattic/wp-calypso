@@ -1,3 +1,4 @@
+/** @format */
 
 /**
  * External dependencies
@@ -40,11 +41,9 @@ class Tooltip extends PureComponent {
 
 		return (
 			<div>
-				<label>Position
-					<select
-						value={ this.state.position }
-						onChange={ this.changePosition }
-					>
+				<label>
+					Position
+					<select value={ this.state.position } onChange={ this.changePosition }>
 						<option value="top">top</option>
 						<option value="top left">top left</option>
 						<option value="top right">top right</option>
@@ -80,7 +79,6 @@ class Tooltip extends PureComponent {
 					>
 						T
 					</span>
-
 					<TooltipComponent
 						id="tooltip__example"
 						isVisible={ this.state.show }
@@ -88,9 +86,7 @@ class Tooltip extends PureComponent {
 						position={ this.state.position }
 						context={ this.refs && this.refs[ 'tooltip-reference' ] }
 					>
-						<div style={ { padding: '10px' } }>
-							Simple Tooltip Instance
-						</div>
+						<div style={ { padding: '10px' } }>Simple Tooltip Instance</div>
 					</TooltipComponent>
 				</div>
 			</div>

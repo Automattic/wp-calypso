@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +18,7 @@ import {
 	range,
 	difference,
 	isEqual,
-	includes
+	includes,
 } from 'lodash';
 
 /**
@@ -31,7 +32,7 @@ import {
 	getSitePostsForQueryIgnoringPage,
 	isRequestingSitePostsForQueryIgnoringPage,
 	getSitePostsFoundForQuery,
-	getSitePostsLastPageForQuery
+	getSitePostsLastPageForQuery,
 } from 'state/posts/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
 import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
@@ -62,13 +63,13 @@ const PostSelectorPosts = React.createClass( {
 		onSearch: PropTypes.func,
 		onChange: PropTypes.func,
 		multiple: PropTypes.bool,
-		showTypeLabels: PropTypes.bool
+		showTypeLabels: PropTypes.bool,
 	},
 
 	getInitialState() {
 		return {
 			searchTerm: '',
-			requestedPages: [ 1 ]
+			requestedPages: [ 1 ],
 		};
 	},
 
@@ -80,7 +81,7 @@ const PostSelectorPosts = React.createClass( {
 			emptyMessage: '',
 			posts: [],
 			onSearch: () => {},
-			onChange: () => {}
+			onChange: () => {},
 		};
 	},
 
@@ -97,10 +98,12 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! isEqual( this.props.queryWithVersion, nextProps.queryWithVersion ) ||
-				this.props.siteId !== nextProps.siteId ) {
+		if (
+			! isEqual( this.props.queryWithVersion, nextProps.queryWithVersion ) ||
+			this.props.siteId !== nextProps.siteId
+		) {
 			this.setState( {
-				requestedPages: [ 1 ]
+				requestedPages: [ 1 ],
 			} );
 		}
 
@@ -111,10 +114,8 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	componentDidUpdate( prevProps ) {
-		const forceUpdate = (
-			prevProps.selected !== this.props.selected ||
-			prevProps.loading && ! this.props.loading
-		);
+		const forceUpdate =
+			prevProps.selected !== this.props.selected || ( prevProps.loading && ! this.props.loading );
 
 		if ( forceUpdate ) {
 			this.list.forceUpdateGrid();
@@ -165,9 +166,11 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	hasNoSearchResults() {
-		return ! this.props.loading &&
+		return (
+			! this.props.loading &&
 			( this.props.posts && ! this.props.posts.length ) &&
-			this.state.searchTerm;
+			this.state.searchTerm
+		);
 	},
 
 	hasNoPosts() {
@@ -220,9 +223,13 @@ const PostSelectorPosts = React.createClass( {
 			return this.itemHeights[ item.global_ID ];
 		}
 
-		return reduce( this.getPostChildren( item.ID ), ( memo, nestedItem ) => {
-			return memo + this.getItemHeight( nestedItem, true );
-		}, ITEM_HEIGHT );
+		return reduce(
+			this.getPostChildren( item.ID ),
+			( memo, nestedItem ) => {
+				return memo + this.getItemHeight( nestedItem, true );
+			},
+			ITEM_HEIGHT
+		);
 	},
 
 	getRowHeight( { index } ) {
@@ -259,17 +266,20 @@ const PostSelectorPosts = React.createClass( {
 
 	setRequestedPages( { startIndex, stopIndex } ) {
 		const { requestedPages } = this.state;
-		const pagesToRequest = difference( range(
-			this.getPageForIndex( startIndex - LOAD_OFFSET ),
-			this.getPageForIndex( stopIndex + LOAD_OFFSET ) + 1
-		), requestedPages );
+		const pagesToRequest = difference(
+			range(
+				this.getPageForIndex( startIndex - LOAD_OFFSET ),
+				this.getPageForIndex( stopIndex + LOAD_OFFSET ) + 1
+			),
+			requestedPages
+		);
 
 		if ( ! pagesToRequest.length ) {
 			return;
 		}
 
 		this.setState( {
-			requestedPages: requestedPages.concat( pagesToRequest )
+			requestedPages: requestedPages.concat( pagesToRequest ),
 		} );
 	},
 
@@ -302,10 +312,7 @@ const PostSelectorPosts = React.createClass( {
 		const children = this.getPostChildren( item.ID );
 
 		return (
-			<div
-				key={ item.global_ID }
-				ref={ setItemRef }
-				className="post-selector__list-item">
+			<div key={ item.global_ID } ref={ setItemRef } className="post-selector__list-item">
 				<label>
 					<input
 						name="posts"
@@ -313,31 +320,27 @@ const PostSelectorPosts = React.createClass( {
 						value={ item.ID }
 						onChange={ onChange }
 						checked={ this.props.selected === item.ID }
-						className="post-selector__input" />
+						className="post-selector__input"
+					/>
 					<span className="post-selector__label">
 						{ decodeEntities( item.title || this.translate( 'Untitled' ) ) }
-						{ this.isTypeLabelsVisible() && (
+						{ this.isTypeLabelsVisible() &&
 							<span
 								className="post-selector__label-type"
 								style={ {
-									paddingRight: this.isCompact() ? 0 : getScrollbarSize()
-								} }>
+									paddingRight: this.isCompact() ? 0 : getScrollbarSize(),
+								} }
+							>
 								{ decodeEntities(
-									get( this.props.postTypes, [
-										item.type,
-										'labels',
-										'singular_name'
-									], '' )
+									get( this.props.postTypes, [ item.type, 'labels', 'singular_name' ], '' )
 								) }
-							</span>
-						) }
+							</span> }
 					</span>
 				</label>
-				{ children.length > 0 && (
+				{ children.length > 0 &&
 					<div className="post-selector__nested-list">
-						{ children.map( ( child ) => this.renderItem( child, true ) ) }
-					</div>
-				) }
+						{ children.map( child => this.renderItem( child, true ) ) }
+					</div> }
 			</div>
 		);
 	},
@@ -348,7 +351,8 @@ const PostSelectorPosts = React.createClass( {
 			message = (
 				<NoResults
 					createLink={ this.props.createLink }
-					noResultsMessage={ this.props.noResultsMessage } />
+					noResultsMessage={ this.props.noResultsMessage }
+				/>
 			);
 		} else if ( this.hasNoPosts() ) {
 			message = this.props.emptyMessage;
@@ -377,7 +381,8 @@ const PostSelectorPosts = React.createClass( {
 					<input
 						type={ this.props.multiple ? 'checkbox' : 'radio' }
 						disabled
-						className="post-selector__input" />
+						className="post-selector__input"
+					/>
 					<span className="post-selector__label">
 						{ this.translate( 'Loading…' ) }
 					</span>
@@ -395,17 +400,24 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	render() {
-		const { className, siteId, queryWithVersion, suppressFirstPageLoad, posts, postTypes } = this.props;
+		const {
+			className,
+			siteId,
+			queryWithVersion,
+			suppressFirstPageLoad,
+			posts,
+			postTypes,
+		} = this.props;
 		const { requestedPages, searchTerm } = this.state;
 		const isCompact = this.isCompact();
 		const isTypeLabelsVisible = this.isTypeLabelsVisible();
 		const showSearch = searchTerm.length > 0 || ! isCompact;
 		const classes = classNames( 'post-selector', className, {
 			'is-compact': isCompact,
-			'is-type-labels-visible': isTypeLabelsVisible
+			'is-type-labels-visible': isTypeLabelsVisible,
 		} );
 
-		const pagesToRequest = filter( requestedPages, ( page ) => {
+		const pagesToRequest = filter( requestedPages, page => {
 			if ( page !== 1 || ! suppressFirstPageLoad ) {
 				return true;
 			}
@@ -414,25 +426,18 @@ const PostSelectorPosts = React.createClass( {
 
 		return (
 			<div className={ classes }>
-				{ pagesToRequest.map( ( page ) => (
+				{ pagesToRequest.map( page =>
 					<QueryPosts
 						key={ `page-${ page }` }
 						siteId={ siteId }
-						query={ { ...queryWithVersion, page } } />
-				) ) }
-				{ isTypeLabelsVisible && siteId && ! postTypes && (
-					<QueryPostTypes siteId={ siteId } />
+						query={ { ...queryWithVersion, page } }
+					/>
 				) }
-				{ showSearch && (
-					<Search
-						searchTerm={ searchTerm }
-						onSearch={ this.onSearch } />
-				) }
+				{ isTypeLabelsVisible && siteId && ! postTypes && <QueryPostTypes siteId={ siteId } /> }
+				{ showSearch && <Search searchTerm={ searchTerm } onSearch={ this.onSearch } /> }
 				<div className="post-selector__results">
-					<AutoSizer
-						key={ JSON.stringify( queryWithVersion ) }
-						disableHeight={ isCompact }>
-						{ ( { height, width } ) => (
+					<AutoSizer key={ JSON.stringify( queryWithVersion ) } disableHeight={ isCompact }>
+						{ ( { height, width } ) =>
 							<List
 								ref={ this.setListRef }
 								width={ width }
@@ -442,21 +447,22 @@ const PostSelectorPosts = React.createClass( {
 								rowCount={ this.getRowCount() }
 								estimatedRowSize={ ITEM_HEIGHT }
 								rowHeight={ this.getRowHeight }
-								rowRenderer={ this.cellRendererWrapper } />
-						) }
+								rowRenderer={ this.cellRendererWrapper }
+							/> }
 					</AutoSizer>
 				</div>
 			</div>
 		);
-	}
+	},
 } );
 
 export default connect( ( state, ownProps ) => {
 	const { siteId, query } = ownProps;
 
-	const apiVersion = ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.0' )
-		? '1.2'
-		: undefined;
+	const apiVersion =
+		! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.0' )
+			? '1.2'
+			: undefined;
 	const queryWithVersion = { ...query, apiVersion };
 
 	return {
@@ -465,6 +471,6 @@ export default connect( ( state, ownProps ) => {
 		lastPage: getSitePostsLastPageForQuery( state, siteId, queryWithVersion ),
 		loading: isRequestingSitePostsForQueryIgnoringPage( state, siteId, queryWithVersion ),
 		postTypes: getPostTypes( state, siteId ),
-		queryWithVersion: queryWithVersion
+		queryWithVersion: queryWithVersion,
 	};
 } )( PostSelectorPosts );

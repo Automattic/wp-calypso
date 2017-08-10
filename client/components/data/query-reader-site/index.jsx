@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +20,7 @@ class QueryReaderSite extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.shouldSiteBeFetched || ( this.props.siteId === nextProps.siteId ) ) {
+		if ( ! nextProps.shouldSiteBeFetched || this.props.siteId === nextProps.siteId ) {
 			return;
 		}
 
@@ -34,23 +35,26 @@ class QueryReaderSite extends Component {
 QueryReaderSite.propTypes = {
 	siteId: PropTypes.number,
 	shouldSiteBeFetched: PropTypes.bool,
-	requestSite: PropTypes.func
+	requestSite: PropTypes.func,
 };
 
 QueryReaderSite.defaultProps = {
-	requestSite: () => {}
+	requestSite: () => {},
 };
 
 export default connect(
 	( state, ownProps ) => {
 		const { siteId } = ownProps;
 		return {
-			shouldSiteBeFetched: shouldSiteBeFetched( state, siteId )
+			shouldSiteBeFetched: shouldSiteBeFetched( state, siteId ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			requestSite
-		}, dispatch );
+	dispatch => {
+		return bindActionCreators(
+			{
+				requestSite,
+			},
+			dispatch
+		);
 	}
 )( QueryReaderSite );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -34,14 +35,13 @@ const debug = new Debug( 'calypso:invite-accept' );
 const userModule = _user();
 
 let InviteAccept = React.createClass( {
-
 	getInitialState() {
 		return {
 			invite: false,
 			error: false,
 			user: userModule.get(),
-			matchEmailError: false
-		}
+			matchEmailError: false,
+		};
 	},
 
 	componentWillMount() {
@@ -71,7 +71,7 @@ let InviteAccept = React.createClass( {
 			// add subscription-related keys to the invite
 			Object.assign( invite, {
 				activationKey: this.props.activationKey,
-				authKey: this.props.authKey
+				authKey: this.props.authKey,
 			} );
 		}
 		this.setState( { invite, error } );
@@ -116,9 +116,7 @@ let InviteAccept = React.createClass( {
 			return;
 		}
 
-		return (
-			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
-		);
+		return <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />;
 	},
 
 	renderForm() {
@@ -134,12 +132,10 @@ let InviteAccept = React.createClass( {
 			redirectTo: getRedirectAfterAccept( this.state.invite ),
 			decline: this.decline,
 			signInLink: this.signInLink(),
-			forceMatchingEmail: this.isMatchEmailError()
+			forceMatchingEmail: this.isMatchEmailError(),
 		};
 
-		return user
-			? <LoggedIn { ... props } user={ this.state.user } />
-			: <LoggedOut { ... props } />;
+		return user ? <LoggedIn { ...props } user={ this.state.user } /> : <LoggedOut { ...props } />;
 	},
 
 	renderError() {
@@ -147,15 +143,13 @@ let InviteAccept = React.createClass( {
 		debug( 'Rendering error: ' + JSON.stringify( error ) );
 
 		let props = {
-			title: this.translate(
-				'Oops, that invite is not valid',
-				{ context: 'Title that is display to users when attempting to accept an invalid invite.' }
-			),
-			line: this.translate(
-				"We weren't able to verify that invitation.",
-				{ context: 'Message that is displayed to users when an invitation is invalid.' }
-			),
-			illustration: '/calypso/images/drake/drake-whoops.svg'
+			title: this.translate( 'Oops, that invite is not valid', {
+				context: 'Title that is display to users when attempting to accept an invalid invite.',
+			} ),
+			line: this.translate( "We weren't able to verify that invitation.", {
+				context: 'Message that is displayed to users when an invitation is invalid.',
+			} ),
+			illustration: '/calypso/images/drake/drake-whoops.svg',
 		};
 
 		if ( error.error && error.message ) {
@@ -178,15 +172,13 @@ let InviteAccept = React.createClass( {
 					break;
 				default:
 					Object.assign( props, {
-						line: error.message
+						line: error.message,
 					} );
 					break;
 			}
 		}
 
-		return (
-			<EmptyContent { ...props } />
-		);
+		return <EmptyContent { ...props } />;
 	},
 
 	renderNoticeAction() {
@@ -210,37 +202,41 @@ let InviteAccept = React.createClass( {
 		}
 
 		return (
-			<NoticeAction { ... props } >
+			<NoticeAction { ...props }>
 				{ actionText }
 			</NoticeAction>
 		);
 	},
 
 	render() {
-		const formClasses = classNames( 'invite-accept__form', { 'is-error': !! this.isInvalidInvite() } ),
+		const formClasses = classNames( 'invite-accept__form', {
+				'is-error': !! this.isInvalidInvite(),
+			} ),
 			{ invite, user } = this.state;
 
 		return (
 			<div className="invite-accept">
 				{ this.localeSuggestions() }
 				<div className={ formClasses }>
-					{ this.isMatchEmailError() && user &&
+					{ this.isMatchEmailError() &&
+						user &&
 						<Notice
-							text={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: invite.sentTo } } ) }
+							text={ this.translate( 'This invite is only valid for %(email)s.', {
+								args: { email: invite.sentTo },
+							} ) }
 							status="is-error"
-							showDismiss={ false } >
+							showDismiss={ false }
+						>
 							{ this.renderNoticeAction() }
-						</Notice>
-					}
-					{ ! this.isInvalidInvite() && <InviteHeader { ... invite } /> }
+						</Notice> }
+					{ ! this.isInvalidInvite() && <InviteHeader { ...invite } /> }
 					{ this.isInvalidInvite() ? this.renderError() : this.renderForm() }
 				</div>
 			</div>
 		);
-	}
+	},
 } );
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { successNotice, infoNotice }, dispatch )
+export default connect( null, dispatch =>
+	bindActionCreators( { successNotice, infoNotice }, dispatch )
 )( InviteAccept );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,7 +29,7 @@ describe( 'oAuthStore', function() {
 			inProgress: true,
 			requires2fa: false,
 			errorMessage: false,
-			errorLevel: false
+			errorLevel: false,
 		} );
 	} );
 
@@ -37,14 +38,14 @@ describe( 'oAuthStore', function() {
 		Dispatcher.handleViewAction( {
 			type: actions.RECEIVE_AUTH_LOGIN,
 			error: { message: 'error' },
-			data: false
+			data: false,
 		} );
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: false,
 			requires2fa: false,
 			errorMessage: 'error',
-			errorLevel: 'is-error'
+			errorLevel: 'is-error',
 		} );
 	} );
 
@@ -56,16 +57,16 @@ describe( 'oAuthStore', function() {
 			data: {
 				body: {
 					error: 'needs_2fa',
-					error_description: 'error'
-				}
-			}
+					error_description: 'error',
+				},
+			},
 		} );
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: false,
 			requires2fa: true,
 			errorMessage: 'error',
-			errorLevel: 'is-info'
+			errorLevel: 'is-info',
 		} );
 	} );
 
@@ -77,44 +78,47 @@ describe( 'oAuthStore', function() {
 			data: {
 				body: {
 					error: 'invalid_otp',
-					error_description: 'error'
-				}
-			}
+					error_description: 'error',
+				},
+			},
 		} );
 
 		expect( oAuthStore.get() ).to.deep.equal( {
 			inProgress: false,
 			requires2fa: true,
 			errorMessage: 'error',
-			errorLevel: 'is-error'
+			errorLevel: 'is-error',
 		} );
 	} );
 
-	it( 'sets OAuth token when login is correct', sinon.test( function() {
-		this.stub( global.document.location, 'replace' );
-		this.stub( oAuthToken, 'setToken' );
+	it(
+		'sets OAuth token when login is correct',
+		sinon.test( function() {
+			this.stub( global.document.location, 'replace' );
+			this.stub( oAuthToken, 'setToken' );
 
-		Dispatcher.handleViewAction( { type: actions.AUTH_LOGIN } );
-		Dispatcher.handleViewAction( {
-			type: actions.RECEIVE_AUTH_LOGIN,
-			error: false,
-			data: {
-				body: {
-					access_token: 'token'
-				}
-			}
-		} );
+			Dispatcher.handleViewAction( { type: actions.AUTH_LOGIN } );
+			Dispatcher.handleViewAction( {
+				type: actions.RECEIVE_AUTH_LOGIN,
+				error: false,
+				data: {
+					body: {
+						access_token: 'token',
+					},
+				},
+			} );
 
-		expect( oAuthToken.setToken ).to.have.been.calledOnce;
-		expect( oAuthToken.setToken ).to.have.been.calledWith( 'token' );
-		expect( global.document.location.replace ).to.have.been.calledOnce;
-		expect( global.document.location.replace ).to.have.been.calledWith( '/' );
+			expect( oAuthToken.setToken ).to.have.been.calledOnce;
+			expect( oAuthToken.setToken ).to.have.been.calledWith( 'token' );
+			expect( global.document.location.replace ).to.have.been.calledOnce;
+			expect( global.document.location.replace ).to.have.been.calledWith( '/' );
 
-		expect( oAuthStore.get() ).to.deep.equal( {
-			inProgress: true,
-			requires2fa: true,
-			errorMessage: false,
-			errorLevel: false
-		} );
-	} ) );
+			expect( oAuthStore.get() ).to.deep.equal( {
+				inProgress: true,
+				requires2fa: true,
+				errorMessage: false,
+				errorLevel: false,
+			} );
+		} )
+	);
 } );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -39,7 +40,9 @@ describe( 'ReaderAuthorLink', () => {
 
 	it( 'should accept a custom class of `test__ace`', () => {
 		const wrapper = shallow(
-			<ReaderAuthorLink author={ author } className="test__ace">xyz</ReaderAuthorLink>
+			<ReaderAuthorLink author={ author } className="test__ace">
+				xyz
+			</ReaderAuthorLink>
 		);
 		expect( wrapper.is( '.test__ace' ) ).to.equal( true );
 	} );
@@ -59,7 +62,9 @@ describe( 'ReaderAuthorLink', () => {
 	it( 'should use siteUrl if provided', () => {
 		const siteUrl = 'http://discover.wordpress.com';
 		const wrapper = shallow(
-			<ReaderAuthorLink author={ author } siteUrl={ siteUrl }>xyz</ReaderAuthorLink>
+			<ReaderAuthorLink author={ author } siteUrl={ siteUrl }>
+				xyz
+			</ReaderAuthorLink>
 		);
 		expect( wrapper.find( '.reader-author-link' ) ).to.have.prop( 'href' ).equal( siteUrl );
 	} );

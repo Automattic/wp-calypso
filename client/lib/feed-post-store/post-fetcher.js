@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -10,20 +11,25 @@ import Immutable from 'immutable';
 import FeedPostStore from './';
 
 function PostFetcher( options ) {
-	assign( this, {
-		onFetch: noop,
-		onPostReceived: noop,
-		onError: noop
-	}, options );
+	assign(
+		this,
+		{
+			onFetch: noop,
+			onPostReceived: noop,
+			onError: noop,
+		},
+		options
+	);
 
 	this.postsToFetch = Immutable.OrderedSet(); // eslint-disable-line new-cap
 	this.batchQueued = false;
 }
 
 assign( PostFetcher.prototype, {
-
 	add: function( postKey ) {
-		this.postsToFetch = this.postsToFetch.add( Immutable.fromJS( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) ) );
+		this.postsToFetch = this.postsToFetch.add(
+			Immutable.fromJS( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) )
+		);
 
 		if ( ! this.batchQueued ) {
 			this.batchQueued = setTimeout( this.run.bind( this ), 100 );
@@ -31,7 +37,9 @@ assign( PostFetcher.prototype, {
 	},
 
 	remove: function( postKey ) {
-		this.postsToFetch = this.postsToFetch.delete( Immutable.fromJS( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) ) );
+		this.postsToFetch = this.postsToFetch.delete(
+			Immutable.fromJS( pick( postKey, [ 'feedId', 'blogId', 'postId' ] ) )
+		);
 	},
 
 	run: function() {
@@ -64,7 +72,7 @@ assign( PostFetcher.prototype, {
 		}, this );
 
 		this.postsToFetch = Immutable.OrderedSet(); // eslint-disable-line new-cap
-	}
+	},
 } );
 
 module.exports = PostFetcher;

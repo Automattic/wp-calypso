@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,13 +17,12 @@ var Security2faBackupCodesList = require( 'me/security-2fa-backup-codes-list' ),
 import Notice from 'components/notice';
 
 module.exports = React.createClass( {
-
 	displayName: 'Security2faSetupBackupCodes',
 
 	mixins: [ eventRecorder ],
 
 	propTypes: {
-		onFinished: React.PropTypes.func.isRequired
+		onFinished: React.PropTypes.func.isRequired,
 	},
 
 	componentDidMount: function() {
@@ -37,7 +37,7 @@ module.exports = React.createClass( {
 	getInitialState: function() {
 		return {
 			backupCodes: [],
-			lastError: false
+			lastError: false,
 		};
 	},
 
@@ -73,18 +73,12 @@ module.exports = React.createClass( {
 							href={ support.CALYPSO_CONTACT }
 							onClick={ this.recordClickEvent( 'No Backup Codes Contact Support Link' ) }
 						/>
-					)
-				}
+					),
+				},
 			}
 		);
 
-		return (
-			<Notice
-				showDismiss={ false }
-				status="is-error"
-				text={ errorMessage }
-			/>
-		);
+		return <Notice showDismiss={ false } status="is-error" text={ errorMessage } />;
 	},
 
 	renderList: function() {
@@ -106,18 +100,16 @@ module.exports = React.createClass( {
 			<div>
 				<Security2faProgress step={ 3 } />
 				<p>
-					{
-						this.translate(
-							'Backup codes let you access your account if your phone is ' +
+					{ this.translate(
+						'Backup codes let you access your account if your phone is ' +
 							'lost, stolen, or if you run it through the washing ' +
-							'machine and the bag of rice trick doesn\'t work.'
-						)
-					}
+							"machine and the bag of rice trick doesn't work."
+					) }
 				</p>
 
 				{ this.possiblyRenderError() }
 				{ this.renderList() }
 			</div>
 		);
-	}
+	},
 } );

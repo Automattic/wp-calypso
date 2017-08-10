@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ import Popover from 'components/popover';
 
 class ContactFormDialogFieldEditButton extends PureComponent {
 	static propTypes = {
-		expanded: PropTypes.bool.isRequired
+		expanded: PropTypes.bool.isRequired,
 	};
 
 	constructor() {
@@ -36,11 +37,11 @@ class ContactFormDialogFieldEditButton extends PureComponent {
 	render() {
 		const { expanded, translate } = this.props;
 		const classes = classNames( 'editor-contact-form-modal-field__edit', {
-			'is-expanded': expanded
+			'is-expanded': expanded,
 		} );
 
 		return (
-			<div className="editor-contact-form-modal-field__edit-wrapper foldable-card__expand" >
+			<div className="editor-contact-form-modal-field__edit-wrapper foldable-card__expand">
 				<Button
 					className="editor-contact-form-modal-field__edit-wrapper-button"
 					ref="editField"
@@ -48,7 +49,7 @@ class ContactFormDialogFieldEditButton extends PureComponent {
 					onMouseEnter={ this.handleMouseEnter }
 					onMouseLeave={ this.handleMouseLeave }
 				>
-						<Gridicon icon="pencil" className={ classes } />
+					<Gridicon icon="pencil" className={ classes } />
 				</Button>
 				<Popover
 					isVisible={ this.state.showTooltip }
@@ -57,7 +58,7 @@ class ContactFormDialogFieldEditButton extends PureComponent {
 					position="bottom"
 					className="popover tooltip is-dialog-visible"
 				>
-						{ translate( 'Edit Field', { context: 'button tooltip' } ) }
+					{ translate( 'Edit Field', { context: 'button tooltip' } ) }
 				</Popover>
 			</div>
 		);

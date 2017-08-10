@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,11 +14,7 @@ import {
 	plansRequestFailureAction,
 	plansRequestSuccessAction,
 } from 'state/plans/actions';
-import {
-	receivePlans,
-	receiveError,
-	requestPlans,
-} from '../';
+import { receivePlans, receiveError, requestPlans } from '../';
 
 import { WPCOM_RESPONSE } from 'state/plans/test/fixture';
 
@@ -31,13 +28,15 @@ describe( 'wpcom-api', () => {
 				requestPlans( { dispatch }, action );
 
 				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( http( {
-					apiVersion: '1.4',
-					method: 'GET',
-					path: '/plans',
-					onSuccess: action,
-					onFailure: action,
-				} ) );
+				expect( dispatch ).to.have.been.calledWith(
+					http( {
+						apiVersion: '1.4',
+						method: 'GET',
+						path: '/plans',
+						onSuccess: action,
+						onFailure: action,
+					} )
+				);
 			} );
 		} );
 

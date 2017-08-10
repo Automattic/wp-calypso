@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -35,7 +36,8 @@ const TableRow = ( { className, isHeader, href, children, ...props } ) => {
 			tabIndex="0"
 			onClick={ goToHref }
 			onKeyDown={ getKeyboardHandler( goToHref ) }
-			{ ...props }>
+			{ ...props }
+		>
 			{ children }
 		</tr>
 	);

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +8,6 @@ import { localize } from 'i18n-calypso';
 import { truncateArticleContent } from '../helpers';
 
 export class GooglePlusSharePreview extends PureComponent {
-
 	static propTypes = {
 		articleUrl: PropTypes.string,
 		externalProfilePicture: PropTypes.string,
@@ -26,7 +26,7 @@ export class GooglePlusSharePreview extends PureComponent {
 			externalProfileUrl,
 			externalName,
 			imageUrl,
-			message
+			message,
 		} = this.props;
 
 		const summary = truncateArticleContent( 255, articleContent );
@@ -54,23 +54,19 @@ export class GooglePlusSharePreview extends PureComponent {
 							{ message }
 						</div>
 						<div className="google-plus-share-preview__article-summary">
-						{ summary }
+							{ summary }
 						</div>
 						<div className="google-plus-share-preview__article-title">
 							<a className="google-plus-share-preview__article-url" href={ articleUrl }>
-							{ articleTitle }
+								{ articleTitle }
 							</a>
 						</div>
 						{ imageUrl &&
 							<div className="google-plus-share-preview__image-wrapper">
 								<a href={ articleUrl }>
-								<img
-									className="google-plus-share-preview__image"
-									src={ imageUrl }
-								/>
+									<img className="google-plus-share-preview__image" src={ imageUrl } />
 								</a>
-							</div>
-						}
+							</div> }
 					</div>
 				</div>
 			</div>

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -27,25 +28,24 @@ class SiteRedirectStep extends React.Component {
 	state = { searchQuery: '' };
 
 	render() {
-		const price = this.props.products.offsite_redirect ? this.props.products.offsite_redirect.cost_display : null;
+		const price = this.props.products.offsite_redirect
+			? this.props.products.offsite_redirect.cost_display
+			: null;
 		const { translate } = this.props;
 
 		return (
 			<div className="site-redirect-step">
 				<form className="site-redirect-step__form card" onSubmit={ this.handleFormSubmit }>
-
 					<div className="site-redirect-step__domain-description">
 						<p>
 							{ translate( 'Redirect {{strong}}%(domain)s{{/strong}} to this domain', {
 								components: { strong: <strong /> },
-								args: { domain: this.props.selectedSite.slug }
+								args: { domain: this.props.selectedSite.slug },
 							} ) }
 						</p>
 					</div>
 
-					<DomainProductPrice
-						price={ price }
-						requiresPlan={ false } />
+					<DomainProductPrice price={ price } requiresPlan={ false } />
 
 					<fieldset>
 						<input
@@ -54,11 +54,14 @@ class SiteRedirectStep extends React.Component {
 							value={ this.state.searchQuery }
 							placeholder={ translate( 'Enter a domain', { textOnly: true } ) }
 							onChange={ this.setSearchQuery }
-							onClick={ this.recordInputFocus } />
-						<button className="site-redirect-step__go button is-primary"
-								onClick={ this.recordGoButtonClick }>
+							onClick={ this.recordInputFocus }
+						/>
+						<button
+							className="site-redirect-step__go button is-primary"
+							onClick={ this.recordGoButtonClick }
+						>
 							{ translate( 'Go', {
-								context: 'Upgrades: Label for adding Site Redirect'
+								context: 'Upgrades: Label for adding Site Redirect',
 							} ) }
 						</button>
 					</fieldset>
@@ -75,11 +78,11 @@ class SiteRedirectStep extends React.Component {
 		this.props.recordGoButtonClick( this.state.searchQuery );
 	};
 
-	setSearchQuery = ( event ) => {
+	setSearchQuery = event => {
 		this.setState( { searchQuery: withoutHttp( event.target.value ) } );
 	};
 
-	handleFormSubmit = ( event ) => {
+	handleFormSubmit = event => {
 		event.preventDefault();
 
 		const domain = this.state.searchQuery;
@@ -87,21 +90,27 @@ class SiteRedirectStep extends React.Component {
 		this.props.recordFormSubmit( domain );
 
 		if ( cartItems.hasProduct( this.props.cart, 'offsite_redirect' ) ) {
-			this.props.errorNotice( this.getValidationErrorMessage( domain, { code: 'already_in_cart' } ) );
+			this.props.errorNotice(
+				this.getValidationErrorMessage( domain, { code: 'already_in_cart' } )
+			);
 			return;
 		}
 
-		canRedirect( this.props.selectedSite.ID, domain, function( error ) {
-			if ( error ) {
-				this.props.errorNotice( this.getValidationErrorMessage( domain, error ) );
-				return;
-			}
+		canRedirect(
+			this.props.selectedSite.ID,
+			domain,
+			function( error ) {
+				if ( error ) {
+					this.props.errorNotice( this.getValidationErrorMessage( domain, error ) );
+					return;
+				}
 
-			this.addSiteRedirectToCart( domain );
-		}.bind( this ) );
+				this.addSiteRedirectToCart( domain );
+			}.bind( this )
+		);
 	};
 
-	addSiteRedirectToCart = ( domain ) => {
+	addSiteRedirectToCart = domain => {
 		upgradesActions.addItem( cartItems.siteRedirect( { domain: domain } ) );
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
@@ -112,58 +121,62 @@ class SiteRedirectStep extends React.Component {
 		switch ( error.code ) {
 			case 'invalid_domain':
 				return translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
-					args: { domain: domain }
+					args: { domain: domain },
 				} );
 
 			case 'invalid_tld':
 				return translate( 'Sorry, %(domain)s does not end with a valid domain extension.', {
-					args: { domain: domain }
+					args: { domain: domain },
 				} );
 
 			case 'empty_query':
 				return translate( 'Please enter a domain name or keyword.' );
 
 			case 'has_subscription':
-				return translate( "You already have Site Redirect upgrade and can't add another one to the same site." );
+				return translate(
+					"You already have Site Redirect upgrade and can't add another one to the same site."
+				);
 
 			case 'already_in_cart':
-				return translate( "You already have Site Redirect upgrade in the Shopping Cart and can't add another one" );
+				return translate(
+					"You already have Site Redirect upgrade in the Shopping Cart and can't add another one"
+				);
 
 			default:
 				return translate( 'There is a problem adding Site Redirect that points to %(domain)s.', {
-					args: { domain: domain }
+					args: { domain: domain },
 				} );
 		}
 	};
 }
 
-const recordInputFocus = ( searchBoxValue ) => recordGoogleEvent(
-	'Domain Search',
-	'Focused On Search Box Input in Site Redirect',
-	'Search Box Value',
-	searchBoxValue
-);
+const recordInputFocus = searchBoxValue =>
+	recordGoogleEvent(
+		'Domain Search',
+		'Focused On Search Box Input in Site Redirect',
+		'Search Box Value',
+		searchBoxValue
+	);
 
-const recordGoButtonClick = ( searchBoxValue ) => recordGoogleEvent(
-	'Domain Search',
-	'Clicked "Go" Button in Site Redirect',
-	'Search Box Value',
-	searchBoxValue
-);
+const recordGoButtonClick = searchBoxValue =>
+	recordGoogleEvent(
+		'Domain Search',
+		'Clicked "Go" Button in Site Redirect',
+		'Search Box Value',
+		searchBoxValue
+	);
 
-const recordFormSubmit = ( searchBoxValue ) => recordGoogleEvent(
-	'Domain Search',
-	'Submitted Form in Site Redirect',
-	'Search Box Value',
-	searchBoxValue
-);
+const recordFormSubmit = searchBoxValue =>
+	recordGoogleEvent(
+		'Domain Search',
+		'Submitted Form in Site Redirect',
+		'Search Box Value',
+		searchBoxValue
+	);
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		recordInputFocus,
-		recordGoButtonClick,
-		recordFormSubmit,
-	}
-)( localize( SiteRedirectStep ) );
+export default connect( null, {
+	errorNotice,
+	recordInputFocus,
+	recordGoButtonClick,
+	recordFormSubmit,
+} )( localize( SiteRedirectStep ) );

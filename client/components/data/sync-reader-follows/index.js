@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -31,8 +32,8 @@ class SyncReaderFollows extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		shouldSync: shouldSyncReaderFollows( state )
+	state => ( {
+		shouldSync: shouldSyncReaderFollows( state ),
 	} ),
 	{ requestFollows }
 )( SyncReaderFollows );

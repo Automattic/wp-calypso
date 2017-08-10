@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,8 +18,8 @@ export default class Draggable extends Component {
 			top: PropTypes.number,
 			left: PropTypes.number,
 			bottom: PropTypes.number,
-			right: PropTypes.number
-		} )
+			right: PropTypes.number,
+		} ),
 	};
 
 	static defaultProps = {
@@ -29,7 +30,7 @@ export default class Draggable extends Component {
 		x: 0,
 		y: 0,
 		controlled: false,
-		bounds: null
+		bounds: null,
 	};
 
 	constructor( props ) {
@@ -37,7 +38,7 @@ export default class Draggable extends Component {
 
 		this.state = {
 			x: this.props.x,
-			y: this.props.y
+			y: this.props.y,
 		};
 
 		this.onTouchStartHandler = this.onTouchStartHandler.bind( this );
@@ -53,7 +54,7 @@ export default class Draggable extends Component {
 		if ( this.state.x !== newProps.x || this.state.y !== newProps.y ) {
 			this.setState( {
 				x: newProps.x,
-				y: newProps.y
+				y: newProps.y,
 			} );
 		}
 	}
@@ -73,7 +74,7 @@ export default class Draggable extends Component {
 
 		this.relativePos = {
 			x: coords.pageX - this.state.x,
-			y: coords.pageY - this.state.y
+			y: coords.pageY - this.state.y,
 		};
 
 		cancelAnimationFrame( this.frameRequestId );
@@ -82,8 +83,7 @@ export default class Draggable extends Component {
 
 	isTouchEvent( event ) {
 		return (
-			( ! event.pageX || ! event.pageY ) &&
-			( event.targetTouches && event.targetTouches.length )
+			( ! event.pageX || ! event.pageY ) && ( event.targetTouches && event.targetTouches.length )
 		);
 	}
 
@@ -100,7 +100,7 @@ export default class Draggable extends Component {
 		this.mousePos = { x, y };
 	}
 
-	draggingEndedHandler( ) {
+	draggingEndedHandler() {
 		this.dragging = false;
 		this.mousePos = null;
 
@@ -166,7 +166,7 @@ export default class Draggable extends Component {
 	render() {
 		const elementProps = omit( this.props, Object.keys( this.constructor.propTypes ) ),
 			style = {
-				transform: 'translate(' + this.state.x + 'px, ' + this.state.y + 'px)'
+				transform: 'translate(' + this.state.x + 'px, ' + this.state.y + 'px)',
 			};
 
 		if ( this.props.width || this.props.height ) {
@@ -180,8 +180,7 @@ export default class Draggable extends Component {
 				style={ style }
 				onMouseDown={ this.onMouseDownHandler }
 				onTouchStart={ this.onTouchStartHandler }
-			>
-			</div>
+			/>
 		);
 	}
 }

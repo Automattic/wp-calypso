@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Detect error looking in the reponse data object.
  *
@@ -5,7 +6,7 @@
  * @return {Function} handler wrapper
  */
 export function requestHandler( handler ) {
-	return ( params, fn ) => (
+	return ( params, fn ) =>
 		handler( params, ( err, response ) => {
 			const { code, message, data = {} } = response || {};
 			const { status } = data;
@@ -13,16 +14,18 @@ export function requestHandler( handler ) {
 			// Create Error object if the response
 			// has `code`, `message` and `status` properties
 			if (
-				code && typeof code === 'string' &&
-				message && typeof message === 'string' &&
-				status && typeof status === 'number'
+				code &&
+				typeof code === 'string' &&
+				message &&
+				typeof message === 'string' &&
+				status &&
+				typeof status === 'number'
 			) {
 				return fn( new Error( message ) );
 			}
 
 			return fn( err, response );
-		} )
-	);
+		} );
 }
 
 /**
@@ -36,6 +39,6 @@ export function injectHandler( wpcom ) {
 	const request = wpcom.request.bind( wpcom );
 
 	return Object.assign( wpcom, {
-		request: requestHandler( request )
+		request: requestHandler( request ),
 	} );
 }

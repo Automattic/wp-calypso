@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -57,15 +58,14 @@ const ExpiryTime = ( {
 					onChange={ handleChange( 'cache_max_time' ) }
 					step="1"
 					type="number"
-					value={ cache_max_time || 0 } />
+					value={ cache_max_time || 0 }
+				/>
 				{ translate( 'seconds' ) }
 				<FormSettingExplanation>
-					{
-						translate(
-							'How long should cached pages remain fresh? Set to 0 to disable garbage collection. ' +
+					{ translate(
+						'How long should cached pages remain fresh? Set to 0 to disable garbage collection. ' +
 							'A good starting point is 3600 seconds.'
-						)
-					}
+					) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		);
@@ -84,16 +84,18 @@ const ExpiryTime = ( {
 						disabled={ isDisabled }
 						name="cache_schedule_type"
 						onChange={ handleRadio }
-						value="interval" />
+						value="interval"
+					/>
 					<span>
 						{ translate( 'Timer' ) }
 						<FormTextInput
-							disabled={ isDisabled || ( 'interval' !== cache_schedule_type ) }
+							disabled={ isDisabled || 'interval' !== cache_schedule_type }
 							min="1"
 							onChange={ handleChange( 'cache_time_interval' ) }
 							step="1"
 							type="number"
-							value={ cache_time_interval || '' } />
+							value={ cache_time_interval || '' }
+						/>
 						{ translate( 'seconds' ) }
 					</span>
 				</FormLabel>
@@ -107,19 +109,23 @@ const ExpiryTime = ( {
 						disabled={ isDisabled }
 						name="cache_schedule_type"
 						onChange={ handleRadio }
-						value="time" />
+						value="time"
+					/>
 					<span>
 						{ translate( 'Clock' ) }
 						<FormTextInput
-							disabled={ isDisabled || ( 'time' !== cache_schedule_type ) }
+							disabled={ isDisabled || 'time' !== cache_schedule_type }
 							onChange={ handleChange( 'cache_scheduled_time' ) }
-							value={ cache_scheduled_time || '' } />
+							value={ cache_scheduled_time || '' }
+						/>
 						{ translate( 'HH:MM' ) }
 					</span>
 				</FormLabel>
 				<FormSettingExplanation isIndented>
-					{ translate( 'Check for stale cached files at this time (UTC) or starting at this time ' +
-						'every interval below.' ) }
+					{ translate(
+						'Check for stale cached files at this time (UTC) or starting at this time ' +
+							'every interval below.'
+					) }
 				</FormSettingExplanation>
 
 				<div className="wp-super-cache__interval">
@@ -128,18 +134,33 @@ const ExpiryTime = ( {
 					</FormLabel>
 
 					<FormSelect
-						disabled={ isDisabled || ( 'time' !== cache_schedule_type ) }
+						disabled={ isDisabled || 'time' !== cache_schedule_type }
 						id="cache_schedule_interval"
 						name="cache_schedule_interval"
 						onChange={ handleSelect }
-						value={ cache_schedule_interval || 'five_minutes_interval' }>
-						<option value="five_minutes_interval">{ translate( 'Once every five minutes' ) }</option>
-						<option value="jetpack_sync_interval">{ translate( 'Every 5 minutes' ) }</option>
-						<option value="minutes_10">{ translate( 'Every 10 minutes' ) }</option>
-						<option value="minutes_30">{ translate( 'Every 30 minutes' ) }</option>
-						<option value="hourly">{ translate( 'Once Hourly' ) }</option>
-						<option value="twicedaily">{ translate( 'Twice Daily' ) }</option>
-						<option value="daily">{ translate( 'Once Daily' ) }</option>
+						value={ cache_schedule_interval || 'five_minutes_interval' }
+					>
+						<option value="five_minutes_interval">
+							{ translate( 'Once every five minutes' ) }
+						</option>
+						<option value="jetpack_sync_interval">
+							{ translate( 'Every 5 minutes' ) }
+						</option>
+						<option value="minutes_10">
+							{ translate( 'Every 10 minutes' ) }
+						</option>
+						<option value="minutes_30">
+							{ translate( 'Every 30 minutes' ) }
+						</option>
+						<option value="hourly">
+							{ translate( 'Once Hourly' ) }
+						</option>
+						<option value="twicedaily">
+							{ translate( 'Twice Daily' ) }
+						</option>
+						<option value="daily">
+							{ translate( 'Once Daily' ) }
+						</option>
 					</FormSelect>
 				</div>
 			</FormFieldset>
@@ -157,7 +178,8 @@ const ExpiryTime = ( {
 					checked={ !! cache_gc_email_me }
 					disabled={ isDisabled }
 					id="cache_gc_email_me"
-					onChange={ handleAutosavingToggle( 'cache_gc_email_me' ) }>
+					onChange={ handleAutosavingToggle( 'cache_gc_email_me' ) }
+				>
 					<span>
 						{ translate( 'Email me when the garbage collection runs.' ) }
 					</span>
@@ -166,7 +188,7 @@ const ExpiryTime = ( {
 		);
 	};
 
-	const formatUnixTimestamp = ( timestamp ) => {
+	const formatUnixTimestamp = timestamp => {
 		if ( ! timestamp ) {
 			return;
 		}
@@ -177,15 +199,8 @@ const ExpiryTime = ( {
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Expiry Time & Garbage Collection' ) }>
-				<Button
-					compact
-					primary
-					disabled={ isDisabled }
-					onClick={ handleSubmitForm }>
-					{ isSaving
-						? translate( 'Saving…' )
-						: translate( 'Save Settings' )
-					}
+				<Button compact primary disabled={ isDisabled } onClick={ handleSubmitForm }>
+					{ isSaving ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
 			<Card>
@@ -196,20 +211,19 @@ const ExpiryTime = ( {
 				</p>
 				{ cache_next_gc &&
 					<p>
-						{ translate( 'Next scheduled garbage collection will be at ' ) + `${ formatUnixTimestamp( cache_next_gc ) } UTC` }
-					</p>
-				}
+						{ translate( 'Next scheduled garbage collection will be at ' ) +
+							`${ formatUnixTimestamp( cache_next_gc ) } UTC` }
+					</p> }
 				{ preload_on &&
 					<p>
 						{ translate(
 							'Warning! {{strong}}PRELOAD MODE{{/strong}} activated. Supercache files will not be ' +
-							'deleted regardless of age.',
+								'deleted regardless of age.',
 							{
-								components: { strong: <strong /> }
+								components: { strong: <strong /> },
 							}
 						) }
-					</p>
-				}
+					</p> }
 				<form>
 					{ renderCacheTimeout() }
 					{ renderScheduler() }

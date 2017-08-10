@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,12 +21,14 @@ describe( 'selectors', () => {
 		it( 'should access an existing action list', () => {
 			const actionList = {
 				prevSteps: [
-					{ description: fxt.stepA.description, startTime: fxt.time.stepAStart, endTime: fxt.time.stepAEnd },
+					{
+						description: fxt.stepA.description,
+						startTime: fxt.time.stepAStart,
+						endTime: fxt.time.stepAEnd,
+					},
 				],
 				currentStep: { description: fxt.stepB.description, startTime: fxt.time.stepBStart },
-				nextSteps: [
-					{ description: fxt.stepC.description },
-				],
+				nextSteps: [ { description: fxt.stepC.description } ],
 			};
 
 			const rootState = {};
@@ -45,12 +48,14 @@ describe( 'selectors', () => {
 		it( 'should return the currently running step in the action list', () => {
 			const actionList = {
 				prevSteps: [
-					{ description: fxt.stepA.description, startTime: fxt.time.stepAStart, endTime: fxt.time.stepAEnd },
+					{
+						description: fxt.stepA.description,
+						startTime: fxt.time.stepAStart,
+						endTime: fxt.time.stepAEnd,
+					},
 				],
 				currentStep: { description: fxt.stepB.description, startTime: fxt.time.stepBStart },
-				nextSteps: [
-					{ description: fxt.stepC.description },
-				],
+				nextSteps: [ { description: fxt.stepC.description } ],
 			};
 
 			expect( getCurrentStepIndex( actionList ) ).to.equal( 2 );
@@ -59,13 +64,19 @@ describe( 'selectors', () => {
 		it( 'should return the last run step in the action list if there is no current step', () => {
 			const actionList = {
 				prevSteps: [
-					{ description: fxt.stepA.description, startTime: fxt.time.stepAStart, endTime: fxt.time.stepAEnd },
-					{ description: fxt.stepB.description, startTime: fxt.time.stepBStart, endTime: fxt.time.stepBEnd },
+					{
+						description: fxt.stepA.description,
+						startTime: fxt.time.stepAStart,
+						endTime: fxt.time.stepAEnd,
+					},
+					{
+						description: fxt.stepB.description,
+						startTime: fxt.time.stepBStart,
+						endTime: fxt.time.stepBEnd,
+					},
 				],
 				currentStep: null,
-				nextSteps: [
-					{ description: fxt.stepC.description },
-				],
+				nextSteps: [ { description: fxt.stepC.description } ],
 			};
 
 			expect( getCurrentStepIndex( actionList ) ).to.equal( 2 );
@@ -88,12 +99,14 @@ describe( 'selectors', () => {
 		it( 'should return a count of all previous, current, and next steps', () => {
 			const actionList = {
 				prevSteps: [
-					{ description: fxt.stepA.description, startTime: fxt.time.stepAStart, endTime: fxt.time.stepAEnd },
+					{
+						description: fxt.stepA.description,
+						startTime: fxt.time.stepAStart,
+						endTime: fxt.time.stepAEnd,
+					},
 				],
 				currentStep: { description: fxt.stepB.description, startTime: fxt.time.stepBStart },
-				nextSteps: [
-					{ description: fxt.stepC.description },
-				],
+				nextSteps: [ { description: fxt.stepC.description } ],
 			};
 
 			expect( getTotalStepCount( actionList ) ).to.equal( 3 );
@@ -101,12 +114,9 @@ describe( 'selectors', () => {
 
 		it( 'should handle an empty prevSteps list', () => {
 			const actionList = {
-				prevSteps: [
-				],
+				prevSteps: [],
 				currentStep: { description: fxt.stepB.description, startTime: fxt.time.stepBStart },
-				nextSteps: [
-					{ description: fxt.stepC.description },
-				],
+				nextSteps: [ { description: fxt.stepC.description } ],
 			};
 
 			expect( getTotalStepCount( actionList ) ).to.equal( 2 );
@@ -128,8 +138,7 @@ describe( 'selectors', () => {
 
 		it( 'should return array length if no steps have been yet completed', () => {
 			const actionList = {
-				prevSteps: [
-				],
+				prevSteps: [],
 				currentStep: { description: fxt.stepA.description, startTime: fxt.time.stepAStart },
 				nextSteps: [
 					{ description: fxt.stepB.description },
@@ -143,9 +152,21 @@ describe( 'selectors', () => {
 		it( 'should return zero if all steps are completed', () => {
 			const actionList = {
 				prevSteps: [
-					{ description: fxt.stepA.description, startTime: fxt.time.stepAStart, endTime: fxt.time.stepAEnd },
-					{ description: fxt.stepB.description, startTime: fxt.time.stepBStart, endTime: fxt.time.stepBEnd },
-					{ description: fxt.stepC.description, startTime: fxt.time.stepCStart, endTime: fxt.time.stepCEnd },
+					{
+						description: fxt.stepA.description,
+						startTime: fxt.time.stepAStart,
+						endTime: fxt.time.stepAEnd,
+					},
+					{
+						description: fxt.stepB.description,
+						startTime: fxt.time.stepBStart,
+						endTime: fxt.time.stepBEnd,
+					},
+					{
+						description: fxt.stepC.description,
+						startTime: fxt.time.stepCStart,
+						endTime: fxt.time.stepCEnd,
+					},
 				],
 				currentStep: null,
 				nextSteps: [],
@@ -155,4 +176,3 @@ describe( 'selectors', () => {
 		} );
 	} );
 } );
-

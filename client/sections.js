@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +14,9 @@ const extensions = require( 'extensions' );
 
 const extensionSections = extensions.map( extension => {
 	try {
-		const pkg = JSON.parse( fs.readFileSync( path.join( __dirname, 'extensions', extension, 'package.json' ) ) );
+		const pkg = JSON.parse(
+			fs.readFileSync( path.join( __dirname, 'extensions', extension, 'package.json' ) )
+		);
 
 		return Object.assign( {}, pkg.section, { envId: pkg.env_id } );
 	} catch ( e ) {
@@ -26,7 +29,7 @@ sections.push( {
 	paths: [ '/devdocs' ],
 	module: 'devdocs',
 	secondary: true,
-	enableLoggedOut: true
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -34,7 +37,7 @@ sections.push( {
 	paths: [ '/devdocs/start' ],
 	module: 'devdocs',
 	secondary: false,
-	enableLoggedOut: true
+	enableLoggedOut: true,
 } );
 
 module.exports = sections.concat( extensionSections.filter( Boolean ) );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,18 +10,20 @@ export default React.createClass( {
 
 	propTypes: {
 		searchTerm: PropTypes.string,
-		onSearch: PropTypes.func.isRequired
+		onSearch: PropTypes.func.isRequired,
 	},
 
 	render() {
 		return (
 			<div className="post-selector__search">
 				<Gridicon icon="search" size={ 18 } />
-				<input type="search"
+				<input
+					type="search"
 					placeholder={ this.translate( 'Search…', { textOnly: true } ) }
 					value={ this.props.searchTerm }
-					onChange={ this.props.onSearch } />
+					onChange={ this.props.onSearch }
+				/>
 			</div>
 		);
-	}
+	},
 } );

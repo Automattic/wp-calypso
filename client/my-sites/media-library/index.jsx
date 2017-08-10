@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -99,10 +100,10 @@ module.exports = React.createClass( {
 		const { filter, site } = this.props;
 		switch ( filter ) {
 			case 'audio':
-				return ! ( site && site.options.upgraded_filetypes_enabled || site.jetpack );
+				return ! ( ( site && site.options.upgraded_filetypes_enabled ) || site.jetpack );
 
 			case 'videos':
-				return ! ( site && site.options.videopress_enabled || site.jetpack );
+				return ! ( ( site && site.options.videopress_enabled ) || site.jetpack );
 		}
 
 		return false;
@@ -118,7 +119,8 @@ module.exports = React.createClass( {
 				site={ this.props.site }
 				filter={ this.props.filter }
 				fullScreen={ this.props.fullScreenDropZone }
-				onAddMedia={ this.onAddMedia } />
+				onAddMedia={ this.onAddMedia }
+			/>
 		);
 	},
 
@@ -142,7 +144,8 @@ module.exports = React.createClass( {
 				onDeleteItem={ this.props.onDeleteItem }
 				onEditItem={ this.props.onEditItem }
 				onViewDetails={ this.props.onViewDetails }
-				postId={ this.props.postId } />
+				postId={ this.props.postId }
+			/>
 		);
 
 		if ( this.props.site ) {
@@ -156,7 +159,7 @@ module.exports = React.createClass( {
 		classes = classNames(
 			'media-library',
 			{ 'is-single': this.props.single },
-			this.props.className,
+			this.props.className
 		);
 
 		return (
@@ -172,9 +175,10 @@ module.exports = React.createClass( {
 					onFilterChange={ this.props.onFilterChange }
 					source={ this.props.source }
 					onSearch={ this.doSearch }
-					post={ !! this.props.postId } />
+					post={ !! this.props.postId }
+				/>
 				{ content }
 			</div>
 		);
-	}
+	},
 } );

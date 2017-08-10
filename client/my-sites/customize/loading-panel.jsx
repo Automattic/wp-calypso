@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,7 +25,7 @@ export default React.createClass( {
 
 	render: function() {
 		const noticeClassNames = classnames( 'customizer-loading-panel__notice', {
-			'is-iframe-loaded': this.props.isLoaded
+			'is-iframe-loaded': this.props.isLoaded,
 		} );
 
 		return (
@@ -35,5 +36,5 @@ export default React.createClass( {
 				</div>
 			</div>
 		);
-	}
+	},
 } );

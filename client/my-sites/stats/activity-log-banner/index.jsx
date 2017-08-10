@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,12 +17,7 @@ class ActivityLogBanner extends Component {
 		icon: PropTypes.string,
 		isDismissable: PropTypes.bool.isRequired,
 		onDismissClick: PropTypes.func,
-		status: PropTypes.oneOf( [
-			'error',
-			'info',
-			'success',
-			'warning',
-		] ),
+		status: PropTypes.oneOf( [ 'error', 'info', 'success', 'warning' ] ),
 		title: PropTypes.node.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
@@ -56,45 +52,33 @@ class ActivityLogBanner extends Component {
 	}
 
 	render() {
-		const {
-			isDismissable,
-			onDismissClick,
-			children,
-			title,
-			translate,
-			status,
-		} = this.props;
+		const { isDismissable, onDismissClick, children, title, translate, status } = this.props;
 
 		const icon = this.getIcon();
 
 		return (
-			<Card
-				className="activity-log-banner"
-				highlight={ status }
-			>
-				{ icon && (
+			<Card className="activity-log-banner" highlight={ status }>
+				{ icon &&
 					<div className="activity-log-banner__icon">
 						<Gridicon icon={ icon } size={ 24 } />
-					</div>
-				) }
+					</div> }
 				<div className="activity-log-banner__content">
-					{ title && (
-						<h2 className="activity-log-banner__title">{ title }</h2>
-					) }
-					{ children && (
-						<div className="activity-log-banner__body">{ children }</div>
-					) }
+					{ title &&
+						<h2 className="activity-log-banner__title">
+							{ title }
+						</h2> }
+					{ children &&
+						<div className="activity-log-banner__body">
+							{ children }
+						</div> }
 				</div>
-				{ isDismissable && (
-					<button
-						className="activity-log-banner__dismiss"
-						onClick={ onDismissClick }
-						type="button"
-					>
-						<span className="activity-log-banner__screen-reader-text screen-reader-text">{ translate( 'Dismiss' ) }</span>
+				{ isDismissable &&
+					<button className="activity-log-banner__dismiss" onClick={ onDismissClick } type="button">
+						<span className="activity-log-banner__screen-reader-text screen-reader-text">
+							{ translate( 'Dismiss' ) }
+						</span>
 						<Gridicon icon="cross" size={ 24 } />
-					</button>
-				) }
+					</button> }
 			</Card>
 		);
 	}

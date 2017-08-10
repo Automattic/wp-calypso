@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -58,7 +59,8 @@ function filterNoticesBy( site, pluginSlug, log ) {
 
 PluginUtils = {
 	whiteListPluginData: function( plugin ) {
-		return pick( plugin,
+		return pick(
+			plugin,
 			'action_links',
 			'active',
 			'author',
@@ -94,12 +96,12 @@ PluginUtils = {
 		if ( ! authorElementSource ) {
 			return '';
 		}
-		return decodeEntities( authorElementSource.replace( /(<([^>]+)>)/ig, '' ) );
+		return decodeEntities( authorElementSource.replace( /(<([^>]+)>)/gi, '' ) );
 	},
 
 	extractAuthorUrl: function( authorElementSource ) {
 		var match = /<a\s+(?:[^>]*?\s+)?href="([^"]*)"/.exec( authorElementSource );
-		return ( match && match[ 1 ] ? match[ 1 ] : '' );
+		return match && match[ 1 ] ? match[ 1 ] : '';
 	},
 
 	extractScreenshots: function( screenshotsHtml ) {
@@ -116,7 +118,7 @@ PluginUtils = {
 			if ( img[ 0 ] && img[ 0 ].src ) {
 				return {
 					url: img[ 0 ].src,
-					caption: captionP[ 0 ] ? captionP[ 0 ].textContent : null
+					caption: captionP[ 0 ] ? captionP[ 0 ].textContent : null,
 				};
 			}
 		} );
@@ -136,7 +138,11 @@ PluginUtils = {
 			}
 			return splittedVersion;
 		}
-		let sortedCompatibility = sortBy( Object.keys( compatibilityList ).map( splitInNumbers ), [ 0, 1, 2 ] );
+		let sortedCompatibility = sortBy( Object.keys( compatibilityList ).map( splitInNumbers ), [
+			0,
+			1,
+			2,
+		] );
 		return sortedCompatibility.map( function( version ) {
 			if ( version.length && version[ version.length - 1 ] === 0 ) {
 				version.pop();
@@ -165,7 +171,23 @@ PluginUtils = {
 					let cleanItem = {};
 					for ( let sectionKey of Object.keys( item ) ) {
 						cleanItem[ sectionKey ] = sanitizeHtml( item[ sectionKey ], {
-							allowedTags: [ 'h4', 'h5', 'h6', 'blockquote', 'code', 'b', 'i', 'em', 'strong', 'a', 'p', 'img', 'ul', 'ol', 'li' ],
+							allowedTags: [
+								'h4',
+								'h5',
+								'h6',
+								'blockquote',
+								'code',
+								'b',
+								'i',
+								'em',
+								'strong',
+								'a',
+								'p',
+								'img',
+								'ul',
+								'ol',
+								'li',
+							],
 							allowedAttributes: { a: [ 'href', 'target', 'rel' ], img: [ 'src' ] },
 							allowedSchemes: [ 'http', 'https' ],
 							transformTags: {
@@ -177,15 +199,17 @@ PluginUtils = {
 										attribs: {
 											...pick( attribs, [ 'href' ] ),
 											target: '_blank',
-											rel: 'external noopener noreferrer'
-										}
+											rel: 'external noopener noreferrer',
+										},
 									};
-								}
-							}
+								},
+							},
 						} );
 					}
 					returnData.sections = cleanItem;
-					returnData.screenshots = cleanItem.screenshots ? PluginUtils.extractScreenshots( cleanItem.screenshots ) : null;
+					returnData.screenshots = cleanItem.screenshots
+						? PluginUtils.extractScreenshots( cleanItem.screenshots )
+						: null;
 					break;
 				case 'num_ratings':
 				case 'rating':
@@ -235,7 +259,7 @@ PluginUtils = {
 	 */
 	filterNotices: function( logs, site, pluginSlug ) {
 		return filter( logs, filterNoticesBy.bind( this, site, pluginSlug ) );
-	}
+	},
 };
 
 module.exports = PluginUtils;

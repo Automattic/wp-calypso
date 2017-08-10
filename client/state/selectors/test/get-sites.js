@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,15 +11,15 @@ import { getSites } from '../';
 
 const currentUserState = {
 	currentUser: {
-		id: 12345678
+		id: 12345678,
 	},
 	users: {
 		items: {
 			12345678: {
-				primary_blog: 2916288
-			}
-		}
-	}
+				primary_blog: 2916288,
+			},
+		},
+	},
 };
 
 describe( 'getSites()', () => {
@@ -26,8 +27,8 @@ describe( 'getSites()', () => {
 		const state = {
 			...currentUserState,
 			sites: {
-				items: {}
-			}
+				items: {},
+			},
 		};
 		const sites = getSites( state );
 		expect( sites ).to.eql( [] );
@@ -38,9 +39,9 @@ describe( 'getSites()', () => {
 			...currentUserState,
 			sites: {
 				items: {
-					2916288: { ID: 2916288, name: 'WordPress.com Example Blog' }
-				}
-			}
+					2916288: { ID: 2916288, name: 'WordPress.com Example Blog' },
+				},
+			},
 		};
 
 		const sites = getSites( state );
@@ -53,9 +54,9 @@ describe( 'getSites()', () => {
 			sites: {
 				items: {
 					2916287: { ID: 2916287, name: 'WordPress.com Example Blog' },
-					2916286: { ID: 2916286, name: 'WordPress.com Example Blog' }
-				}
-			}
+					2916286: { ID: 2916286, name: 'WordPress.com Example Blog' },
+				},
+			},
 		};
 
 		const sites = getSites( state );
@@ -68,8 +69,8 @@ describe( 'getSites()', () => {
 			sites: {
 				items: {
 					2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
-					2916285: { ID: 2916285, name: 'WordPress.com Way Better Example Blog' }
-				}
+					2916285: { ID: 2916285, name: 'WordPress.com Way Better Example Blog' },
+				},
 			},
 			siteSettings: {
 				items: {},
@@ -88,8 +89,8 @@ describe( 'getSites()', () => {
 				items: {
 					2916287: { ID: 2916287, name: 'WordPress.com Example Blog' },
 					2916288: { ID: 2916288, name: 'WordPress.com Way Better Example Blog' },
-					2916289: { ID: 2916289, name: 'WordPress.com Another Example Blog' }
-				}
+					2916289: { ID: 2916289, name: 'WordPress.com Another Example Blog' },
+				},
 			},
 			siteSettings: {
 				items: {},
@@ -113,9 +114,17 @@ describe( 'getSites()', () => {
 					2916291: { ID: 2916291, name: 'WordPress.com 0 Site', URL: '' },
 					2916292: { ID: 2916292, name: '', URL: 'https://z-site-with-no-name.wordpress.com' },
 					2916293: { ID: 2916293, name: '', URL: 'https://0-site-with-no-name.wordpress.com' },
-					2916294: { ID: 2916294, name: 'WordPress.com B Site', URL: 'https://site-with-same-name-2.wordpress.com' },
-					2916295: { ID: 2916295, name: 'WordPress.com B Site', URL: 'https://site-with-same-name-1.wordpress.com' }
-				}
+					2916294: {
+						ID: 2916294,
+						name: 'WordPress.com B Site',
+						URL: 'https://site-with-same-name-2.wordpress.com',
+					},
+					2916295: {
+						ID: 2916295,
+						name: 'WordPress.com B Site',
+						URL: 'https://site-with-same-name-1.wordpress.com',
+					},
+				},
 			},
 			siteSettings: {
 				items: {},

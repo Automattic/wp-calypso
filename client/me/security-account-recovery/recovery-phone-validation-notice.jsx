@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -27,26 +28,22 @@ class RecoveryPhoneValidationNotice extends Component {
 		event.preventDefault();
 	}
 
-	onValidate = ( event ) => {
+	onValidate = event => {
 		event.preventDefault();
 
 		this.props.onValidate( this.state.candidateCode );
-	}
+	};
 
-	onChange = ( event ) => {
+	onChange = event => {
 		event.preventDefault();
 
 		this.setState( {
 			candidateCode: event.target.value,
 		} );
-	}
+	};
 
 	render() {
-		const {
-			translate,
-			isValidating,
-			hasSent,
-		} = this.props;
+		const { translate, isValidating, hasSent } = this.props;
 
 		const { candidateCode } = this.state;
 
@@ -59,14 +56,15 @@ class RecoveryPhoneValidationNotice extends Component {
 				<Notice
 					className="security-account-recovery__validation-notice"
 					status="is-warning"
-					text={ translate( 'Please validate your recovery SMS number. Check your phone for a validation code.' ) }
+					text={ translate(
+						'Please validate your recovery SMS number. Check your phone for a validation code.'
+					) }
 					showDismiss={ false }
 				>
 					{ ! hasSent &&
 						<NoticeAction href="#" onClick={ this.props.onResend }>
 							{ translate( 'Resend' ) }
-						</NoticeAction>
-					}
+						</NoticeAction> }
 				</Notice>
 				<FormLabel className="security-account-recovery__recovery-phone-validation-label">
 					{ translate( 'Enter the code you receive via SMS:' ) }

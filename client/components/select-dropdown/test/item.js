@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,12 +29,16 @@ describe( 'item', function() {
 		} );
 
 		it( 'should not have `tabindex` attribute, when the parent dropdown is closed', function() {
-			const dropdownItem = shallow( <SelectDropdownItem isDropdownOpen={ false }>Published</SelectDropdownItem> );
+			const dropdownItem = shallow(
+				<SelectDropdownItem isDropdownOpen={ false }>Published</SelectDropdownItem>
+			);
 			expect( dropdownItem.children( { tabIndex: 0 } ).length ).to.eql( 0 );
 		} );
 
 		it( 'should have `tabindex` attribute set to `0`, only when the parent dropdown is open (issue#9206)', function() {
-			const dropdownItem = shallow( <SelectDropdownItem isDropdownOpen={ true }>Published</SelectDropdownItem> );
+			const dropdownItem = shallow(
+				<SelectDropdownItem isDropdownOpen={ true }>Published</SelectDropdownItem>
+			);
 			expect( dropdownItem.children( { tabIndex: 0 } ).length ).to.eql( 1 );
 		} );
 	} );
@@ -41,7 +46,11 @@ describe( 'item', function() {
 	describe( 'when the component is clicked', function() {
 		it( 'should do nothing when is disabled', function() {
 			const onClickSpy = sinon.spy();
-			const dropdownItem = shallow( <SelectDropdownItem disabled={ true } onClick={ onClickSpy }>Published</SelectDropdownItem> );
+			const dropdownItem = shallow(
+				<SelectDropdownItem disabled={ true } onClick={ onClickSpy }>
+					Published
+				</SelectDropdownItem>
+			);
 
 			const link = dropdownItem.children( 'a.select-dropdown__item' );
 			expect( link.hasClass( 'is-disabled' ) ).to.be.true;
@@ -52,7 +61,9 @@ describe( 'item', function() {
 
 		it( 'should run the `onClick` hook', function() {
 			const onClickSpy = sinon.spy();
-			const dropdownItem = shallow( <SelectDropdownItem onClick={ onClickSpy }>Published</SelectDropdownItem> );
+			const dropdownItem = shallow(
+				<SelectDropdownItem onClick={ onClickSpy }>Published</SelectDropdownItem>
+			);
 			dropdownItem.children( 'a.select-dropdown__item' ).simulate( 'click' );
 			sinon.assert.calledOnce( onClickSpy );
 		} );

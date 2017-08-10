@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -54,13 +55,14 @@ export const getRawSite = ( state, siteId ) => {
  * @return {?Object}           Site object
  */
 export const getSiteBySlug = createSelector(
-	( state, siteSlug ) => (
-		find( state.sites.items, ( item, siteId ) => (
-			// find always passes the siteId as a string. We need it as a integer
-			getSiteSlug( state, parseInt( siteId, 10 ) ) === siteSlug
-		) ) || null
-	),
-	( state ) => state.sites.items
+	( state, siteSlug ) =>
+		find(
+			state.sites.items,
+			( item, siteId ) =>
+				// find always passes the siteId as a string. We need it as a integer
+				getSiteSlug( state, parseInt( siteId, 10 ) ) === siteSlug
+		) || null,
+	state => state.sites.items
 );
 
 /**
@@ -72,29 +74,27 @@ export const getSiteBySlug = createSelector(
  * @param  {Number}  siteId Site ID
  * @return {?Object}        Site object
  */
-export const getSite = createSelector(
-	( state, siteId ) => {
-		let site = getRawSite( state, siteId ) ||
-			// Support for non-ID site retrieval
-			// Replaces SitesList#getSite
-			getSiteBySlug( state, siteId );
+export const getSite = createSelector( ( state, siteId ) => {
+	let site =
+		getRawSite( state, siteId ) ||
+		// Support for non-ID site retrieval
+		// Replaces SitesList#getSite
+		getSiteBySlug( state, siteId );
 
-		if ( ! site ) {
-			return null;
-		}
+	if ( ! site ) {
+		return null;
+	}
 
-		// To avoid mutating the original site object, create a shallow clone
-		// before assigning computed properties
-		site = { ...site };
-		site.hasConflict = isSiteConflicting( state, siteId );
-		assign( site, getComputedAttributes( site ) );
-		assign( site, getJetpackComputedAttributes( state, siteId ) );
-		site.is_previewable = isSitePreviewable( state, siteId );
+	// To avoid mutating the original site object, create a shallow clone
+	// before assigning computed properties
+	site = { ...site };
+	site.hasConflict = isSiteConflicting( state, siteId );
+	assign( site, getComputedAttributes( site ) );
+	assign( site, getJetpackComputedAttributes( state, siteId ) );
+	site.is_previewable = isSitePreviewable( state, siteId );
 
-		return site;
-	},
-	( state ) => state.sites.items
-);
+	return site;
+}, state => state.sites.items );
 
 export function getJetpackComputedAttributes( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {
@@ -118,20 +118,20 @@ export function getJetpackComputedAttributes( state, siteId ) {
  * @param  {Object}   state Global state tree
  * @return {Number[]}       WordPress.com site IDs with collisions
  */
-export const getSiteCollisions = createSelector(
-	( state ) => {
-		return map( filter( state.sites.items, ( wpcomSite ) => {
+export const getSiteCollisions = createSelector( state => {
+	return map(
+		filter( state.sites.items, wpcomSite => {
 			const wpcomSiteUrlSansProtocol = withoutHttp( wpcomSite.URL );
-			return ! wpcomSite.jetpack && some( state.sites.items, ( jetpackSite ) => {
-				return (
-					jetpackSite.jetpack &&
-					wpcomSiteUrlSansProtocol === withoutHttp( jetpackSite.URL )
-				);
-			} );
-		} ), 'ID' );
-	},
-	( state ) => state.sites.items
-);
+			return (
+				! wpcomSite.jetpack &&
+				some( state.sites.items, jetpackSite => {
+					return jetpackSite.jetpack && wpcomSiteUrlSansProtocol === withoutHttp( jetpackSite.URL );
+				} )
+			);
+		} ),
+		'ID'
+	);
+}, state => state.sites.items );
 
 /**
  * Returns true if a collision exists for the specified WordPress.com site ID.
@@ -368,54 +368,55 @@ export const getSeoTitleFormatsForSite = compose(
  * @param  {Number} siteId Selected site
  * @return {Object} Formats by type e.g. { frontPage: { type: 'siteName' } }
  */
-export const getSeoTitleFormats = compose(
-	getSeoTitleFormatsForSite,
-	getRawSite
-);
+export const getSeoTitleFormats = compose( getSeoTitleFormatsForSite, getRawSite );
 
 export const buildSeoTitle = ( titleFormats, type, { site, post = {}, tag = '', date = '' } ) => {
 	const processPiece = ( piece = {}, data ) =>
-		'string' === piece.type
-			? piece.value
-			: get( data, piece.type, '' );
+		'string' === piece.type ? piece.value : get( data, piece.type, '' );
 
 	const buildTitle = ( format, data ) =>
-		get( titleFormats, format, [] )
-			.reduce( ( title, piece ) => title + processPiece( piece, data ), '' );
+		get( titleFormats, format, [] ).reduce(
+			( title, piece ) => title + processPiece( piece, data ),
+			''
+		);
 
 	switch ( type ) {
 		case 'frontPage':
-			return buildTitle( 'frontPage', {
-				siteName: site.name,
-				tagline: site.description
-			} ) || site.name;
+			return (
+				buildTitle( 'frontPage', {
+					siteName: site.name,
+					tagline: site.description,
+				} ) || site.name
+			);
 
 		case 'posts':
-			return buildTitle( 'posts', {
-				siteName: site.name,
-				tagline: site.description,
-				postTitle: get( post, 'title', '' )
-			} ) || get( post, 'title', '' );
+			return (
+				buildTitle( 'posts', {
+					siteName: site.name,
+					tagline: site.description,
+					postTitle: get( post, 'title', '' ),
+				} ) || get( post, 'title', '' )
+			);
 
 		case 'pages':
 			return buildTitle( 'pages', {
 				siteName: site.name,
 				tagline: site.description,
-				pageTitle: get( post, 'title', '' )
+				pageTitle: get( post, 'title', '' ),
 			} );
 
 		case 'groups':
 			return buildTitle( 'groups', {
 				siteName: site.name,
 				tagline: site.description,
-				groupTitle: tag
+				groupTitle: tag,
 			} );
 
 		case 'archives':
 			return buildTitle( 'archives', {
 				siteName: site.name,
 				tagline: site.description,
-				date: date
+				date: date,
 			} );
 
 		default:
@@ -497,7 +498,7 @@ export function getSitePlan( state, siteId ) {
 				product_slug: 'jetpack_free',
 				product_name_short: 'Free',
 				free_trial: false,
-				expired: false
+				expired: false,
 			};
 		}
 
@@ -506,7 +507,7 @@ export function getSitePlan( state, siteId ) {
 			product_slug: 'free_plan',
 			product_name_short: 'Free',
 			free_trial: false,
-			expired: false
+			expired: false,
 		};
 	}
 
@@ -907,27 +908,38 @@ export function getJetpackSiteUpdateFilesDisabledReasons( state, siteId, action 
 
 	const fileModDisabled = getSiteOption( state, siteId, 'file_mod_disabled' );
 
-	return compact( fileModDisabled.map( clue => {
-		if ( action === 'modifyFiles' || action === 'autoupdateFiles' || action === 'autoupdateCore' ) {
-			if ( clue === 'has_no_file_system_write_access' ) {
-				return i18n.translate( 'The file permissions on this host prevent editing files.' );
+	return compact(
+		fileModDisabled.map( clue => {
+			if (
+				action === 'modifyFiles' ||
+				action === 'autoupdateFiles' ||
+				action === 'autoupdateCore'
+			) {
+				if ( clue === 'has_no_file_system_write_access' ) {
+					return i18n.translate( 'The file permissions on this host prevent editing files.' );
+				}
+				if ( clue === 'disallow_file_mods' ) {
+					return i18n.translate(
+						'File modifications are explicitly disabled by a site administrator.'
+					);
+				}
 			}
-			if ( clue === 'disallow_file_mods' ) {
-				return i18n.translate( 'File modifications are explicitly disabled by a site administrator.' );
+
+			if (
+				( action === 'autoupdateFiles' || action === 'autoupdateCore' ) &&
+				clue === 'automatic_updater_disabled'
+			) {
+				return i18n.translate( 'Any autoupdates are explicitly disabled by a site administrator.' );
 			}
-		}
 
-		if ( ( action === 'autoupdateFiles' || action === 'autoupdateCore' ) &&
-			clue === 'automatic_updater_disabled' ) {
-			return i18n.translate( 'Any autoupdates are explicitly disabled by a site administrator.' );
-		}
-
-		if ( action === 'autoupdateCore' &&
-			clue === 'wp_auto_update_core_disabled' ) {
-			return i18n.translate( 'Core autoupdates are explicitly disabled by a site administrator.' );
-		}
-		return null;
-	} ) );
+			if ( action === 'autoupdateCore' && clue === 'wp_auto_update_core_disabled' ) {
+				return i18n.translate(
+					'Core autoupdates are explicitly disabled by a site administrator.'
+				);
+			}
+			return null;
+		} )
+	);
 }
 
 /**
@@ -998,10 +1010,13 @@ export function getCustomizerUrl( state, siteId, panel ) {
 		returnUrl = window.location.href;
 	}
 
-	return addQueryArgs( {
-		'return': returnUrl,
-		...getCustomizerFocus( panel )
-	}, adminUrl );
+	return addQueryArgs(
+		{
+			return: returnUrl,
+			...getCustomizerFocus( panel ),
+		},
+		adminUrl
+	);
 }
 
 /**

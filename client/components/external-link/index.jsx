@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +9,6 @@ import { assign, omit } from 'lodash';
 import Gridicon from 'gridicons';
 
 export default React.createClass( {
-
 	displayName: 'ExternalLink',
 
 	mixins: [ PureRenderMixin ],
@@ -27,7 +27,7 @@ export default React.createClass( {
 	getDefaultProps() {
 		return {
 			iconSize: 18,
-			showIconFirst: false
+			showIconFirst: false,
 		};
 	},
 
@@ -35,16 +35,26 @@ export default React.createClass( {
 		const classes = classnames( 'external-link', this.props.className, {
 			'has-icon': !! this.props.icon,
 		} );
-		const props = assign( {}, omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName' ), {
-			className: classes,
-			rel: 'external'
-		} );
+		const props = assign(
+			{},
+			omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName' ),
+			{
+				className: classes,
+				rel: 'external',
+			}
+		);
 
 		if ( props.target ) {
 			props.rel = props.rel.concat( ' noopener noreferrer' );
 		}
 
-		const iconComponent = <Gridicon className={ this.props.iconClassName } icon="external" size={ this.props.iconSize } />;
+		const iconComponent = (
+			<Gridicon
+				className={ this.props.iconClassName }
+				icon="external"
+				size={ this.props.iconSize }
+			/>
+		);
 
 		return (
 			<a { ...props }>
@@ -53,5 +63,5 @@ export default React.createClass( {
 				{ this.props.icon && ! this.props.showIconFirst && iconComponent }
 			</a>
 		);
-	}
+	},
 } );

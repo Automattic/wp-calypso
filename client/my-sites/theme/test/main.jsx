@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,10 +8,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 import mockery from 'mockery';
 import { noop } from 'lodash';
-import {
-	receiveTheme,
-	themeRequestFailure,
-} from 'state/themes/actions';
+import { receiveTheme, themeRequestFailure } from 'state/themes/actions';
 
 /**
  * Internal dependencies
@@ -32,10 +30,10 @@ describe( 'main', function() {
 			mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
 			mockery.registerMock( 'lib/wp', {
 				me: () => ( {
-					get: noop
+					get: noop,
 				} ),
 				undocumented: () => ( {
-					getProducts: noop
+					getProducts: noop,
 				} ),
 			} );
 
@@ -46,13 +44,15 @@ describe( 'main', function() {
 			this.themeData = {
 				name: 'Twenty Sixteen',
 				author: 'the WordPress team',
-				screenshot: 'https://i0.wp.com/theme.wordpress.com/wp-content/themes/pub/twentysixteen/screenshot.png',
-				description: 'Twenty Sixteen is a modernized take on an ever-popular WordPress layout — ...',
+				screenshot:
+					'https://i0.wp.com/theme.wordpress.com/wp-content/themes/pub/twentysixteen/screenshot.png',
+				description:
+					'Twenty Sixteen is a modernized take on an ever-popular WordPress layout — ...',
 				descriptionLong: '<p>Mumble Mumble</p>',
 				download: 'https://public-api.wordpress.com/rest/v1/themes/download/twentysixteen.zip',
 				taxonomies: {},
 				stylesheet: 'pub/twentysixteen',
-				demo_uri: 'https://twentysixteendemo.wordpress.com/'
+				demo_uri: 'https://twentysixteendemo.wordpress.com/',
 			};
 		} );
 

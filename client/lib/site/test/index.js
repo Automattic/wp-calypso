@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,8 +15,8 @@ describe( 'Calypso Site', () => {
 			description: 'Hunting bugs is fun.',
 			icon: {
 				img: 'https://secure.gravatar.com/blavatar/0d6c430459af115394a012d20b6711d6',
-				ico: 'https://secure.gravatar.com/blavatar/662db33e9076ddbb8852ae35a845bfb4'
-			}
+				ico: 'https://secure.gravatar.com/blavatar/662db33e9076ddbb8852ae35a845bfb4',
+			},
 		};
 
 		it( 'attribute changed', () => {
@@ -50,13 +51,13 @@ describe( 'Calypso Site', () => {
 			const changeCallback = sinon.spy();
 			const nestedSiteData = Object.assign( {}, mockSiteData, {
 				name: 'Hello, again',
-				description: 'Still hunting bugs.'
+				description: 'Still hunting bugs.',
 			} );
 
 			const site = Site( nestedSiteData );
 			site.set( {
 				name: 'Hello, again',
-				description: 'Still hunting bugs.'
+				description: 'Still hunting bugs.',
 			} );
 
 			site.once( 'change', changeCallback );

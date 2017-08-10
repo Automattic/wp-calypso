@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -11,5 +12,5 @@ export default combineReducers( {
 	connection,
 	jumpstart,
 	modules,
-	settings
+	settings,
 } );

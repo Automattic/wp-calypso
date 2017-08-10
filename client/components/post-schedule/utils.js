@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,7 @@ import { moment } from 'i18n-calypso';
  * @param  {String}  timeFormat Time format.
  * @return {Boolean}            Whether it's a 12-hour time format.
  */
-const is12hr = ( timeFormat ) => timeFormat && /[gh]|[aA]$/.test( timeFormat );
+const is12hr = timeFormat => timeFormat && /[gh]|[aA]$/.test( timeFormat );
 
 /**
  * Check whether is a valid gmtOffset value.
@@ -62,13 +63,11 @@ const convertDateToUserLocation = ( date, tz, gmt ) => {
 		return moment( date );
 	}
 
-	return getDateInLocalUTC( date )
-		.subtract( getTimeOffset( date, tz, gmt ), 'minute' );
+	return getDateInLocalUTC( date ).subtract( getTimeOffset( date, tz, gmt ), 'minute' );
 };
 
 const convertDateToGivenOffset = ( date, tz, gmt ) => {
-	date = getLocalizedDate( date, tz, gmt )
-		.add( getTimeOffset( date, tz, gmt ), 'minute' );
+	date = getLocalizedDate( date, tz, gmt ).add( getTimeOffset( date, tz, gmt ), 'minute' );
 
 	if ( ! tz && isValidGMTOffset( gmt ) ) {
 		date.utcOffset( gmt );
@@ -94,7 +93,7 @@ const convertMinutesToHHMM = minutes => {
 	}
 
 	minutes = Math.abs( minutes % 60 );
-	const mm = ( minutes < 10 ? ( '0' + minutes ) : minutes );
+	const mm = minutes < 10 ? '0' + minutes : minutes;
 
 	return `${ sign }${ hours }:${ mm }`;
 };

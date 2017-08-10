@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +24,7 @@ class QueryPostStats extends Component {
 		fields: PropTypes.array,
 		requestingPostStats: PropTypes.bool,
 		requestPostStats: PropTypes.func,
-		heartbeat: PropTypes.number
+		heartbeat: PropTypes.number,
 	};
 
 	componentWillMount() {
@@ -45,7 +46,7 @@ class QueryPostStats extends Component {
 				postId === nextProps.postId &&
 				isEqual( fields, nextProps.fields ) &&
 				heartbeat === nextProps.heartbeat )
-			) {
+		) {
 			return;
 		}
 
@@ -77,9 +78,7 @@ class QueryPostStats extends Component {
 export default connect(
 	( state, { siteId, postId, fields } ) => {
 		return {
-			requestingPostStats: isRequestingPostStats(
-				state, siteId, postId, fields
-			)
+			requestingPostStats: isRequestingPostStats( state, siteId, postId, fields ),
 		};
 	},
 	{ requestPostStats }

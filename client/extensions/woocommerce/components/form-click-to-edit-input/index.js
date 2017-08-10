@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +15,6 @@ import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
 
 class FormClickToEditInput extends Component {
-
 	static propTypes = {
 		onChange: PropTypes.func,
 		value: PropTypes.string,
@@ -42,9 +42,9 @@ class FormClickToEditInput extends Component {
 		const { value } = this.props;
 		this.setState( {
 			isEditing: true,
-			value
+			value,
 		} );
-	}
+	};
 
 	editEnd = () => {
 		const { onChange } = this.props;
@@ -56,16 +56,17 @@ class FormClickToEditInput extends Component {
 			isEditing: false,
 			value: '',
 		} );
-	}
+	};
 
-	onInputChange = ( e ) => {
+	onInputChange = e => {
 		this.setState( {
-			value: e.target.value
+			value: e.target.value,
 		} );
-	}
+	};
 
 	renderInput() {
-		const props = { ...this.props,
+		const props = {
+			...this.props,
 			onChange: this.onInputChange,
 			value: this.state.value,
 		};
@@ -77,11 +78,7 @@ class FormClickToEditInput extends Component {
 					autoFocus
 					className="form-click-to-edit-input__input"
 				/>
-				<Button
-					borderless
-					onClick={ this.editEnd }
-					aria-label={ this.props.updateAriaLabel }
-				>
+				<Button borderless onClick={ this.editEnd } aria-label={ this.props.updateAriaLabel }>
 					<Gridicon icon="checkmark" />
 				</Button>
 			</span>
@@ -91,27 +88,19 @@ class FormClickToEditInput extends Component {
 	renderText() {
 		const { value, placeholder, disabled, editAriaLabel } = this.props;
 		const classes = classNames( 'form-click-to-edit-input__wrapper', {
-			'is-empty': ! ( value ),
-			'has-value': ( value ),
+			'is-empty': ! value,
+			'has-value': value,
 		} );
 		return (
 			<span className={ classes }>
-				<span
-					className="form-click-to-edit-input__text"
-					onClick={ ! disabled && this.editStart }
-				>
+				<span className="form-click-to-edit-input__text" onClick={ ! disabled && this.editStart }>
 					{ value || placeholder }
 				</span>
 
-				{ ! disabled && (
-					<Button
-						borderless
-						onClick={ this.editStart }
-						aria-label={ editAriaLabel }
-					>
+				{ ! disabled &&
+					<Button borderless onClick={ this.editStart } aria-label={ editAriaLabel }>
 						<Gridicon icon="pencil" />
-					</Button>
-				) }
+					</Button> }
 			</span>
 		);
 	}

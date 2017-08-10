@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,7 +21,7 @@ describe( 'PluginAutoupdateToggle', function() {
 	const mockedProps = {
 		recordGoogleEvent: spy(),
 		recordTracksEvent: spy(),
-		translate: spy()
+		translate: spy(),
 	};
 	let PluginAutoupdateToggle;
 
@@ -33,7 +34,8 @@ describe( 'PluginAutoupdateToggle', function() {
 		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
 		mockery.registerSubstitute( 'query', 'component-query' );
 
-		PluginAutoupdateToggle = require( 'my-sites/plugins/plugin-autoupdate-toggle' ).PluginAutoUpdateToggle;
+		PluginAutoupdateToggle = require( 'my-sites/plugins/plugin-autoupdate-toggle' )
+			.PluginAutoUpdateToggle;
 	} );
 
 	afterEach( function() {

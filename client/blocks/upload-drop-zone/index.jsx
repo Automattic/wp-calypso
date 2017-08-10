@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,22 +16,19 @@ import DropZone from 'components/drop-zone';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import notices from 'notices';
 import debugFactory from 'debug';
-import {
-	MAX_UPLOAD_ZIP_SIZE
-} from 'lib/automated-transfer/constants';
+import { MAX_UPLOAD_ZIP_SIZE } from 'lib/automated-transfer/constants';
 
 const debug = debugFactory( 'calypso:upload-drop-zone' );
 
 class UploadDropZone extends Component {
-
 	static propTypes = {
 		doUpload: PropTypes.func.isRequired,
 		disabled: PropTypes.bool,
 		// Connected
 		siteId: PropTypes.number,
-	}
+	};
 
-	onFileSelect = ( files ) => {
+	onFileSelect = files => {
 		const { translate, siteId, doUpload } = this.props;
 
 		if ( files.length !== 1 ) {
@@ -43,23 +41,17 @@ class UploadDropZone extends Component {
 		debug( 'zip file:', file );
 
 		if ( file.size > MAX_UPLOAD_ZIP_SIZE ) {
-			notices.error(
-				translate( 'Zip file is too large. Please upload a file under 50 MB.' )
-			);
+			notices.error( translate( 'Zip file is too large. Please upload a file under 50 MB.' ) );
 			return;
 		}
 
 		doUpload( siteId, file );
-	}
+	};
 
 	render() {
 		const { translate, disabled } = this.props;
-		const dropText = translate(
-			'Drop files or click here to upload'
-		);
-		const uploadInstructionsText = translate(
-			'Only single .zip files are accepted.'
-		);
+		const dropText = translate( 'Drop files or click here to upload' );
+		const uploadInstructionsText = translate( 'Only single .zip files are accepted.' );
 
 		const className = classNames( 'upload-drop-zone', {
 			'is-disabled': disabled,
@@ -69,13 +61,12 @@ class UploadDropZone extends Component {
 			<div className={ className }>
 				<div className="upload-drop-zone__dropzone">
 					<DropZone onFilesDrop={ this.onFileSelect } />
-					<FilePicker accept="application/zip" onPick={ this.onFileSelect } >
-						<Gridicon
-							className="upload-drop-zone__icon"
-							icon="cloud-upload"
-							size={ 48 } />
+					<FilePicker accept="application/zip" onPick={ this.onFileSelect }>
+						<Gridicon className="upload-drop-zone__icon" icon="cloud-upload" size={ 48 } />
 						{ dropText }
-						<span className="upload-drop-zone__instructions">{ uploadInstructionsText }</span>
+						<span className="upload-drop-zone__instructions">
+							{ uploadInstructionsText }
+						</span>
 					</FilePicker>
 				</div>
 			</div>
@@ -83,8 +74,6 @@ class UploadDropZone extends Component {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		siteId: getSelectedSiteId( state ),
-	} )
-)( localize( UploadDropZone ) );
+export default connect( state => ( {
+	siteId: getSelectedSiteId( state ),
+} ) )( localize( UploadDropZone ) );

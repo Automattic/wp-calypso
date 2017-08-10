@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,7 +23,7 @@ var LocaleSuggestionStore = {
 	receiveLocaleSuggestions: function( newLocaleSuggestions ) {
 		localeSuggestions = newLocaleSuggestions;
 		LocaleSuggestionStore.emit( 'change' );
-	}
+	},
 };
 
 Emitter( LocaleSuggestionStore );

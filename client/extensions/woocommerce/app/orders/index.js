@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +15,13 @@ import OrdersList from './orders-list';
 function Orders( { className, params, translate } ) {
 	return (
 		<Main className={ className }>
-			<ActionHeader breadcrumbs={ ( <span>{ translate( 'Orders' ) }</span> ) } />
+			<ActionHeader
+				breadcrumbs={
+					<span>
+						{ translate( 'Orders' ) }
+					</span>
+				}
+			/>
 			<OrdersList currentStatus={ params && params.filter } />
 		</Main>
 	);

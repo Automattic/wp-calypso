@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +24,7 @@ import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-s
 class NotificationSettings extends Component {
 	state = {
 		settings: null,
-		hasUnsavedChanges: false
+		hasUnsavedChanges: false,
 	};
 
 	componentDidMount() {
@@ -39,7 +40,9 @@ class NotificationSettings extends Component {
 		const state = store.getStateFor( 'blogs' );
 
 		if ( state.error ) {
-			this.props.errorNotice( this.props.translate( 'There was a problem saving your changes. Please, try again.' ) );
+			this.props.errorNotice(
+				this.props.translate( 'There was a problem saving your changes. Please, try again.' )
+			);
 		}
 
 		if ( state.status === 'success' ) {
@@ -50,7 +53,8 @@ class NotificationSettings extends Component {
 	};
 
 	render() {
-		const findSettingsForBlog = blogId => this.state.settings.find( blog => blog.get( 'blog_id' ) === parseInt( blogId, 10 ) );
+		const findSettingsForBlog = blogId =>
+			this.state.settings.find( blog => blog.get( 'blog_id' ) === parseInt( blogId, 10 ) );
 		const onSave = blogId => saveSettings( 'blogs', findSettingsForBlog( blogId ) );
 		const onSaveToAll = blogId => saveSettings( 'blogs', findSettingsForBlog( blogId ), true );
 
@@ -66,13 +70,11 @@ class NotificationSettings extends Component {
 					hasUnsavedChanges={ this.state.hasUnsavedChanges }
 					onToggle={ toggle }
 					onSave={ onSave }
-					onSaveToAll={ onSaveToAll } />
+					onSaveToAll={ onSaveToAll }
+				/>
 			</Main>
 		);
 	}
 }
 
-export default connect(
-	null,
-	{ successNotice, errorNotice }
-)( localize( NotificationSettings ) );
+export default connect( null, { successNotice, errorNotice } )( localize( NotificationSettings ) );

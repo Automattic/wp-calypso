@@ -1,15 +1,13 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import classnames from 'classnames';
 
-const FormFieldset = ( { className, children, ...otherProps } ) => (
-	<fieldset { ...otherProps }
-		className={ classnames( className, 'form-fieldset' ) }
-	>
+const FormFieldset = ( { className, children, ...otherProps } ) =>
+	<fieldset { ...otherProps } className={ classnames( className, 'form-fieldset' ) }>
 		{ children }
-	</fieldset>
-);
+	</fieldset>;
 
 export default FormFieldset;

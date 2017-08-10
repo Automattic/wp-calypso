@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,8 +23,9 @@ function isValidParameters( context ) {
 		type: [ 'orders', 'products', 'categories', 'coupons' ],
 		unit: [ 'day', 'week', 'month', 'year' ],
 	};
-	return Object.keys( validParameters )
-		.every( param => includes( validParameters[ param ], context.params[ param ] ) );
+	return Object.keys( validParameters ).every( param =>
+		includes( validParameters[ param ], context.params[ param ] )
+	);
 }
 
 export default function StatsController( context ) {
@@ -52,24 +54,21 @@ export default function StatsController( context ) {
 
 	analytics.tracks.recordEvent( `calypso_woocommerce_stats_${ props.type }_page`, props );
 
-	const asyncComponent = ( props.type === 'orders' )
-		? <AsyncLoad
-			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			placeholder={ <StatsPagePlaceholder className="woocommerce" /> }
-			/* eslint-enable wpcalypso/jsx-classname-namespace */
-			require="extensions/woocommerce/app/store-stats"
-			{ ...props }
-		/>
-		: <AsyncLoad
-			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			placeholder={ <StatsPagePlaceholder className="woocommerce" /> }
-			/* eslint-enable wpcalypso/jsx-classname-namespace */
-			require="extensions/woocommerce/app/store-stats/listview"
-			{ ...props }
-		/>;
-	renderWithReduxStore(
-		asyncComponent,
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	const asyncComponent =
+		props.type === 'orders'
+			? <AsyncLoad
+					/* eslint-disable wpcalypso/jsx-classname-namespace */
+					placeholder={ <StatsPagePlaceholder className="woocommerce" /> }
+					/* eslint-enable wpcalypso/jsx-classname-namespace */
+					require="extensions/woocommerce/app/store-stats"
+					{ ...props }
+				/>
+			: <AsyncLoad
+					/* eslint-disable wpcalypso/jsx-classname-namespace */
+					placeholder={ <StatsPagePlaceholder className="woocommerce" /> }
+					/* eslint-enable wpcalypso/jsx-classname-namespace */
+					require="extensions/woocommerce/app/store-stats/listview"
+					{ ...props }
+				/>;
+	renderWithReduxStore( asyncComponent, document.getElementById( 'primary' ), context.store );
 }

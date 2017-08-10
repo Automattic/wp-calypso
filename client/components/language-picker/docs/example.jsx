@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,29 +18,29 @@ class LanguagePickerExample extends PureComponent {
 	state = {
 		disabled: false,
 		loading: false,
-		language: 'en'
-	}
+		language: 'en',
+	};
 
-	selectLanguage = ( event ) => {
+	selectLanguage = event => {
 		this.setState( { language: event.target.value } );
-	}
+	};
 
 	toggleDisabled = () => {
 		this.setState( { disabled: ! this.state.disabled } );
-	}
+	};
 
 	triggerLoading = () => {
 		if ( ! this.state.loading ) {
 			this.setState( { loading: true } );
 			setTimeout( () => this.setState( { loading: false } ), 2000 );
 		}
-	}
+	};
 
 	render() {
 		const { disabled, loading, language } = this.state;
 
 		const loadingCls = classNames( 'docs__design-toggle button', {
-			'is-busy': loading
+			'is-busy': loading,
 		} );
 
 		return (
@@ -51,7 +52,9 @@ class LanguagePickerExample extends PureComponent {
 					className={ loadingCls }
 					style={ { marginRight: '8px' } }
 					onClick={ this.triggerLoading }
-				>Test Loading</a>
+				>
+					Test Loading
+				</a>
 				<Card>
 					<LanguagePicker
 						languages={ config( 'languages' ) }

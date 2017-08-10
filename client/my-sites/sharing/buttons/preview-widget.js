@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -33,5 +34,5 @@ module.exports = {
 		}
 
 		return baseUrl + '?' + qs.stringify( query );
-	}
+	},
 };

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -43,7 +44,9 @@ class AddCreditCard extends Component {
 			<Main>
 				<DocumentHead title={ concatTitle( titles.purchases, titles.addCreditCard ) } />
 
-				<HeaderCake onClick={ this.goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
+				<HeaderCake onClick={ this.goToBillingHistory }>
+					{ titles.addCreditCard }
+				</HeaderCake>
 
 				<CreditCardForm
 					createPaygateToken={ this.createPaygateToken }

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,44 +17,50 @@ describe( 'selectors', () => {
 	} );
 
 	it( 'should return chosen vertical from the state', () => {
-		expect( getSurveyVertical( {
-			signup: {
-				steps: {
-					survey: {
-						vertical: 'test-survey',
-						otherText: 'test-other-text',
-						siteType: 'test-site-type',
-					}
-				}
-			}
-		} ) ).to.be.eql( 'test-survey' );
+		expect(
+			getSurveyVertical( {
+				signup: {
+					steps: {
+						survey: {
+							vertical: 'test-survey',
+							otherText: 'test-other-text',
+							siteType: 'test-site-type',
+						},
+					},
+				},
+			} )
+		).to.be.eql( 'test-survey' );
 	} );
 
 	it( 'should return typed other text from the state', () => {
-		expect( getSurveyOtherText( {
-			signup: {
-				steps: {
-					survey: {
-						vertical: 'test-survey',
-						otherText: 'test-other-text',
-						siteType: 'test-site-type',
-					}
-				}
-			}
-		} ) ).to.be.eql( 'test-other-text' );
+		expect(
+			getSurveyOtherText( {
+				signup: {
+					steps: {
+						survey: {
+							vertical: 'test-survey',
+							otherText: 'test-other-text',
+							siteType: 'test-site-type',
+						},
+					},
+				},
+			} )
+		).to.be.eql( 'test-other-text' );
 	} );
 
 	it( 'should return site type from the state', () => {
-		expect( getSurveySiteType( {
-			signup: {
-				steps: {
-					survey: {
-						vertical: 'test-survey',
-						otherText: 'test-other-text',
-						siteType: 'test-site-type',
-					}
-				}
-			}
-		} ) ).to.be.eql( 'test-site-type' );
+		expect(
+			getSurveySiteType( {
+				signup: {
+					steps: {
+						survey: {
+							vertical: 'test-survey',
+							otherText: 'test-other-text',
+							siteType: 'test-site-type',
+						},
+					},
+				},
+			} )
+		).to.be.eql( 'test-site-type' );
 	} );
 } );

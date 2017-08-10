@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,8 +16,6 @@ module.exports = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render: function() {
-		return (
-			<Rating rating={ 65 } size={ 50 } />
-		);
-	}
+		return <Rating rating={ 65 } size={ 50 } />;
+	},
 } );

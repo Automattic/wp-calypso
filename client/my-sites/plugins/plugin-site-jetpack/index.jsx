@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -42,14 +43,21 @@ const PluginSiteJetpack = React.createClass( {
 	},
 
 	renderInstallButton: function() {
-		var installInProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, 'INSTALL_PLUGIN' );
+		var installInProgress = PluginsLog.isInProgressAction(
+			this.props.site.ID,
+			this.props.plugin.slug,
+			'INSTALL_PLUGIN'
+		);
 
-		return <PluginInstallButton
-			isEmbed={ true }
-			notices={ this.props.notices }
-			selectedSite={ this.props.site }
-			plugin={ this.props.plugin }
-			isInstalling={ installInProgress } />;
+		return (
+			<PluginInstallButton
+				isEmbed={ true }
+				notices={ this.props.notices }
+				selectedSite={ this.props.site }
+				plugin={ this.props.plugin }
+				isInstalling={ installInProgress }
+			/>
+		);
 	},
 
 	renderInstallPlugin: function() {
@@ -58,8 +66,8 @@ const PluginSiteJetpack = React.createClass( {
 				compact
 				className="plugin-site-jetpack"
 				header={ <Site site={ this.props.site } indicator={ false } /> }
-				actionButton={ this.renderInstallButton() } >
-			</FoldableCard>
+				actionButton={ this.renderInstallButton() }
+			/>
 		);
 	},
 
@@ -73,36 +81,55 @@ const PluginSiteJetpack = React.createClass( {
 		const showAutoManagedMessage = this.props.isAutoManaged;
 
 		return (
-			<FoldableCard compact
+			<FoldableCard
+				compact
 				clickableHeader
 				className="plugin-site-jetpack"
 				header={ <Site site={ this.props.site } indicator={ false } /> }
-				summary={ <PluginUpdateIndicator site={ this.props.site } plugin={ this.props.plugin } notices={ this.props.notices } expanded={ false } /> }
-				expandedSummary={ <PluginUpdateIndicator site={ this.props.site } plugin={ this.props.plugin } notices={ this.props.notices } expanded={ true } /> }
-				>
-				<div>
-					{ canToggleActivation && <PluginActivateToggle
+				summary={
+					<PluginUpdateIndicator
 						site={ this.props.site }
-						plugin={ this.props.site.plugin }
-						notices={ this.props.notices } /> }
-					{ canToggleAutoupdate && <PluginAutoupdateToggle
-						site={ this.props.site }
-						plugin={ this.props.site.plugin }
+						plugin={ this.props.plugin }
 						notices={ this.props.notices }
-						wporg={ true } /> }
-					{ canToggleRemove && <PluginRemoveButton
-						plugin={ this.props.site.plugin }
+						expanded={ false }
+					/>
+				}
+				expandedSummary={
+					<PluginUpdateIndicator
 						site={ this.props.site }
-						notices={ this.props.notices } /> }
+						plugin={ this.props.plugin }
+						notices={ this.props.notices }
+						expanded={ true }
+					/>
+				}
+			>
+				<div>
+					{ canToggleActivation &&
+						<PluginActivateToggle
+							site={ this.props.site }
+							plugin={ this.props.site.plugin }
+							notices={ this.props.notices }
+						/> }
+					{ canToggleAutoupdate &&
+						<PluginAutoupdateToggle
+							site={ this.props.site }
+							plugin={ this.props.site.plugin }
+							notices={ this.props.notices }
+							wporg={ true }
+						/> }
+					{ canToggleRemove &&
+						<PluginRemoveButton
+							plugin={ this.props.site.plugin }
+							site={ this.props.site }
+							notices={ this.props.notices }
+						/> }
 
 					{ showAutoManagedMessage &&
 						<div className="plugin-site-jetpack__automanage-notice">
-						{ this.props.translate( '%(pluginName)s is automatically managed on this site',
-							{ args: { pluginName: this.props.plugin.name } } )
-						}
-						</div>
-					}
-
+							{ this.props.translate( '%(pluginName)s is automatically managed on this site', {
+								args: { pluginName: this.props.plugin.name },
+							} ) }
+						</div> }
 				</div>
 			</FoldableCard>
 		);
@@ -114,7 +141,10 @@ const PluginSiteJetpack = React.createClass( {
 				compact
 				className="plugin-site-jetpack has-manage-error"
 				header={ <Site site={ this.props.site } indicator={ false } /> }
-				actionButton={ <PluginSiteDisabledManage site={ this.props.site } plugin={ this.props.plugin } /> } />
+				actionButton={
+					<PluginSiteDisabledManage site={ this.props.site } plugin={ this.props.plugin } />
+				}
+			/>
 		);
 	},
 
@@ -132,7 +162,7 @@ const PluginSiteJetpack = React.createClass( {
 		}
 
 		return this.renderPluginSite();
-	}
+	},
 } );
 
 export default localize( PluginSiteJetpack );

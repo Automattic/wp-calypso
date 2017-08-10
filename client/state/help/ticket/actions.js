@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -10,28 +11,30 @@ import {
 	HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
 } from 'state/action-types';
 
-export const ticketSupportConfigurationRequestSuccess = ( configuration ) => {
+export const ticketSupportConfigurationRequestSuccess = configuration => {
 	return {
 		type: HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
 		configuration,
 	};
 };
 
-export const ticketSupportConfigurationRequestFailure = ( error ) => {
+export const ticketSupportConfigurationRequestFailure = error => {
 	return {
 		type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
 		error,
 	};
 };
 
-export const ticketSupportConfigurationRequest = () => ( dispatch ) => {
+export const ticketSupportConfigurationRequest = () => dispatch => {
 	dispatch( { type: HELP_TICKET_CONFIGURATION_REQUEST } );
 
-	return wpcom.undocumented().getKayakoConfiguration()
-		.then( ( configuration ) => {
+	return wpcom
+		.undocumented()
+		.getKayakoConfiguration()
+		.then( configuration => {
 			dispatch( ticketSupportConfigurationRequestSuccess( configuration ) );
 		} )
-		.catch( ( error ) => {
+		.catch( error => {
 			dispatch( ticketSupportConfigurationRequestFailure( error ) );
 		} );
 };

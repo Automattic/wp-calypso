@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,7 +19,7 @@ import {
 	SITE_PLANS_REMOVE,
 	SITE_PLANS_TRIAL_CANCEL,
 	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
-	SITE_PLANS_TRIAL_CANCEL_FAILED
+	SITE_PLANS_TRIAL_CANCEL_FAILED,
 } from 'state/action-types';
 import wpcom from 'lib/wp';
 
@@ -30,10 +31,10 @@ import wpcom from 'lib/wp';
  * @returns {Function} a promise that will resolve once updating is completed
  */
 export function cancelSitePlanTrial( siteId, planId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: SITE_PLANS_TRIAL_CANCEL,
-			siteId
+			siteId,
 		} );
 
 		return new Promise( ( resolve, reject ) => {
@@ -42,21 +43,23 @@ export function cancelSitePlanTrial( siteId, planId ) {
 					dispatch( {
 						type: SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 						siteId,
-						plans: map( data.plans, createSitePlanObject )
+						plans: map( data.plans, createSitePlanObject ),
 					} );
 
 					resolve();
 				} else {
 					debug( 'Canceling site plan trial failed: ', error );
 
-					const errorMessage = error.message || i18n.translate(
-						'There was a problem canceling the plan trial. Please try again later or contact support.'
-					);
+					const errorMessage =
+						error.message ||
+						i18n.translate(
+							'There was a problem canceling the plan trial. Please try again later or contact support.'
+						);
 
 					dispatch( {
 						type: SITE_PLANS_TRIAL_CANCEL_FAILED,
 						siteId,
-						error: errorMessage
+						error: errorMessage,
 					} );
 
 					reject( errorMessage );
@@ -75,7 +78,7 @@ export function cancelSitePlanTrial( siteId, planId ) {
 export function clearSitePlans( siteId ) {
 	return {
 		type: SITE_PLANS_REMOVE,
-		siteId
+		siteId,
 	};
 }
 
@@ -86,25 +89,27 @@ export function clearSitePlans( siteId ) {
  * @returns {Function} a promise that will resolve once fetching is completed
  */
 export function fetchSitePlans( siteId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: SITE_PLANS_FETCH,
-			siteId
+			siteId,
 		} );
 
-		return new Promise( ( resolve ) => {
+		return new Promise( resolve => {
 			wpcom.undocumented().getSitePlans( siteId, ( error, data ) => {
 				if ( error ) {
 					debug( 'Fetching site plans failed: ', error );
 
-					const errorMessage = error.message || i18n.translate(
-						'There was a problem fetching site plans. Please try again later or contact support.'
-					);
+					const errorMessage =
+						error.message ||
+						i18n.translate(
+							'There was a problem fetching site plans. Please try again later or contact support.'
+						);
 
 					dispatch( {
 						type: SITE_PLANS_FETCH_FAILED,
 						siteId,
-						error: errorMessage
+						error: errorMessage,
 					} );
 				} else {
 					dispatch( fetchSitePlansCompleted( siteId, data ) );
@@ -128,7 +133,7 @@ export function fetchSitePlansCompleted( siteId, plans ) {
 	return {
 		type: SITE_PLANS_FETCH_COMPLETED,
 		siteId,
-		plans: map( plans, createSitePlanObject )
+		plans: map( plans, createSitePlanObject ),
 	};
 }
 
@@ -139,7 +144,7 @@ export function fetchSitePlansCompleted( siteId, plans ) {
  * @returns {Function} the corresponding action thunk
  */
 export function refreshSitePlans( siteId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( clearSitePlans( siteId ) );
 		dispatch( fetchSitePlans( siteId ) );
 	};

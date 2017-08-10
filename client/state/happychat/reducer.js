@@ -1,15 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import {
-	concat,
-	filter,
-	find,
-	map,
-	get,
-	sortBy,
-	takeRight,
-} from 'lodash';
+import { concat, filter, find, map, get, sortBy, takeRight } from 'lodash';
 import validator from 'is-my-json-valid';
 
 /**
@@ -33,9 +26,7 @@ import {
 	HAPPYCHAT_SET_GEO_LOCATION,
 } from 'state/action-types';
 import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
-import {
-	HAPPYCHAT_CHAT_STATUS_DEFAULT,
-} from './selectors';
+import { HAPPYCHAT_CHAT_STATUS_DEFAULT } from './selectors';
 import { HAPPYCHAT_MAX_STORED_MESSAGES } from './constants';
 import { timelineSchema, geoLocationSchema } from './schema';
 
@@ -51,17 +42,20 @@ const timeline_event = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_RECEIVE_EVENT:
 			const event = action.event;
-			return Object.assign( {}, {
-				id: event.id,
-				source: event.source,
-				message: event.text,
-				name: event.user.name,
-				image: event.user.avatarURL,
-				timestamp: event.timestamp,
-				user_id: event.user.id,
-				type: get( event, 'type', 'message' ),
-				links: get( event, 'meta.links' )
-			} );
+			return Object.assign(
+				{},
+				{
+					id: event.id,
+					source: event.source,
+					message: event.text,
+					name: event.user.name,
+					image: event.user.avatarURL,
+					timestamp: event.timestamp,
+					user_id: event.user.id,
+					type: get( event, 'type', 'message' ),
+					links: get( event, 'meta.links' ),
+				}
+			);
 	}
 	return state;
 };
@@ -76,9 +70,13 @@ const sortTimeline = timeline => sortBy( timeline, event => parseInt( event.time
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const geoLocation = createReducer( null, {
-	[ HAPPYCHAT_SET_GEO_LOCATION ]: ( state, action ) => action.geoLocation
-}, geoLocationSchema );
+export const geoLocation = createReducer(
+	null,
+	{
+		[ HAPPYCHAT_SET_GEO_LOCATION ]: ( state, action ) => action.geoLocation,
+	},
+	geoLocationSchema
+);
 
 /**
  * Adds timeline events for happychat
@@ -119,19 +117,23 @@ const timeline = ( state = [], action ) => {
 
 				return ! find( state, { id: message.id } );
 			} );
-			return sortTimeline( state.concat( map( messages, message => {
-				return Object.assign( {
-					id: message.id,
-					source: message.source,
-					message: message.text,
-					name: message.user.name,
-					image: message.user.picture,
-					timestamp: message.timestamp,
-					user_id: message.user.id,
-					type: get( message, 'type', 'message' ),
-					links: get( message, 'meta.links' )
-				} );
-			} ) ) );
+			return sortTimeline(
+				state.concat(
+					map( messages, message => {
+						return Object.assign( {
+							id: message.id,
+							source: message.source,
+							message: message.text,
+							name: message.user.name,
+							image: message.user.picture,
+							timestamp: message.timestamp,
+							user_id: message.user.id,
+							type: get( message, 'type', 'message' ),
+							links: get( message, 'meta.links' ),
+						} );
+					} )
+				)
+			);
 	}
 	return state;
 };

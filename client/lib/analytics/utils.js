@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Whether Do Not Track is enabled in the user's browser.
  *
@@ -41,12 +42,12 @@ function isPiiUrl() {
 
 	const match = pattern => {
 		return href.indexOf( pattern ) !== -1;
-	}
+	};
 
 	return forbiddenPiiPatterns.some( match ) || forbiddenPiiPatternsEnc.some( match );
 }
 
 module.exports = {
 	doNotTrack: doNotTrack,
-	isPiiUrl: isPiiUrl
+	isPiiUrl: isPiiUrl,
 };

@@ -1,10 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { findIndex, findLastIndex, flatten, flowRight, get, range } from 'lodash';
+import { findIndex, findLastIndex, flatten, flowRight, get, range } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,10 +29,11 @@ class StatsPostSummary extends Component {
 	};
 
 	selectPeriod( period ) {
-		return () => this.setState( {
-			selectedRecord: undefined,
-			period
-		} );
+		return () =>
+			this.setState( {
+				selectedRecord: undefined,
+				period,
+			} );
 	}
 
 	selectRecord = record => {
@@ -39,7 +41,7 @@ class StatsPostSummary extends Component {
 	};
 
 	getChartData() {
-		const { moment, stats } = this.props;
+		const { moment, stats } = this.props;
 		if ( ! stats ) {
 			return [];
 		}
@@ -131,7 +133,11 @@ class StatsPostSummary extends Component {
 				<SectionNav>
 					<SegmentedControl compact>
 						{ periods.map( ( { id, label } ) =>
-							<ControlItem key={ id } onClick={ this.selectPeriod( id ) } selected={ this.state.period === id }>
+							<ControlItem
+								key={ id }
+								onClick={ this.selectPeriod( id ) }
+								selected={ this.state.period === id }
+							>
 								{ label }
 							</ControlItem>
 						) }
@@ -155,16 +161,11 @@ class StatsPostSummary extends Component {
 	}
 }
 
-const connectComponent = connect(
-	( state, { siteId, postId } ) => {
-		return {
-			stats: getPostStats( state, siteId, postId ),
-			isRequesting: isRequestingPostStats( state, siteId, postId ),
-		};
-	}
-);
+const connectComponent = connect( ( state, { siteId, postId } ) => {
+	return {
+		stats: getPostStats( state, siteId, postId ),
+		isRequesting: isRequestingPostStats( state, siteId, postId ),
+	};
+} );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsPostSummary );
+export default flowRight( connectComponent, localize )( StatsPostSummary );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,24 +16,16 @@ export function concatTitle( ...parts ) {
 }
 
 export function renderPage( context, component ) {
-	renderWithReduxStore(
-		component,
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	renderWithReduxStore( component, document.getElementById( 'primary' ), context.store );
 }
 
 export function recordPageView( path, ...title ) {
-	analytics.pageView.record(
-		path,
-		concatTitle( ...title )
-	);
+	analytics.pageView.record( path, concatTitle( ...title ) );
 }
 
 export function renderWithReduxStore( reactElement, domContainer, reduxStore ) {
-	const domContainerNode = ( 'string' === typeof domContainer )
-			? document.getElementById( domContainer )
-			: domContainer;
+	const domContainerNode =
+		'string' === typeof domContainer ? document.getElementById( domContainer ) : domContainer;
 
 	return ReactDom.render(
 		React.createElement( ReduxProvider, { store: reduxStore }, reactElement ),

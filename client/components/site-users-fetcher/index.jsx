@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,7 +21,7 @@ var UsersStore = require( 'lib/users/store' ),
  */
 var defaultOptions = {
 	number: 100,
-	offset: 0
+	offset: 0,
 };
 
 module.exports = React.createClass( {
@@ -30,8 +31,8 @@ module.exports = React.createClass( {
 		fetchOptions: React.PropTypes.object.isRequired,
 		exclude: React.PropTypes.oneOfType( [
 			React.PropTypes.arrayOf( React.PropTypes.number ),
-			React.PropTypes.func
-		] )
+			React.PropTypes.func,
+		] ),
 	},
 
 	getInitialState: function() {
@@ -92,19 +93,22 @@ module.exports = React.createClass( {
 			// Partition will return an array of two arrays.
 			// users[0] will be a list of the users that were not excluded.
 			// users[1] will be a list of the excluded users.
-			users = partition( users, function( user ) {
-				if ( 'function' === typeof this.props.exclude ) {
-					return ! this.props.exclude( user );
-				}
+			users = partition(
+				users,
+				function( user ) {
+					if ( 'function' === typeof this.props.exclude ) {
+						return ! this.props.exclude( user );
+					}
 
-				return ! includes( this.props.exclude, user.ID );
-			}.bind( this ) );
+					return ! includes( this.props.exclude, user.ID );
+				}.bind( this )
+			);
 		}
 
 		return Object.assign( {}, paginationData, {
 			users: this.props.exclude ? users[ 0 ] : users,
 			fetchOptions: fetchOptions,
-			excludedUsers: this.props.exclude ? users[ 1 ] : []
+			excludedUsers: this.props.exclude ? users[ 1 ] : [],
 		} );
 	},
 
@@ -126,5 +130,5 @@ module.exports = React.createClass( {
 			}
 			UsersActions.fetchUsers( fetchOptions );
 		}, 0 );
-	}
+	},
 } );

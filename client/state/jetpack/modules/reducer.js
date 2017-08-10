@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,14 +23,14 @@ import {
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 
-const createItemsReducer = ( active ) => {
+const createItemsReducer = active => {
 	return ( state, { siteId, moduleSlug } ) => {
 		return merge( {}, state, {
 			[ siteId ]: {
 				[ moduleSlug ]: {
-					active
-				}
-			}
+					active,
+				},
+			},
 		} );
 	};
 };
@@ -37,27 +38,27 @@ const createItemsReducer = ( active ) => {
 const createItemsListReducer = () => {
 	return ( state, { siteId, modules } ) => {
 		return merge( {}, state, {
-			[ siteId ]: modules
+			[ siteId ]: modules,
 		} );
 	};
 };
 
-const createRequestsReducer = ( data ) => {
+const createRequestsReducer = data => {
 	return ( state, { siteId, moduleSlug } ) => {
 		return merge( {}, state, {
 			[ siteId ]: {
-				[ moduleSlug ]: data
-			}
+				[ moduleSlug ]: data,
+			},
 		} );
 	};
 };
 
-const createModuleListRequestReducer = ( fetchingModules ) => {
+const createModuleListRequestReducer = fetchingModules => {
 	return ( state, { siteId } ) => {
 		return merge( {}, state, {
 			[ siteId ]: {
-				fetchingModules
-			}
+				fetchingModules,
+			},
 		} );
 	};
 };
@@ -75,9 +76,9 @@ const createSettingsItemsReducer = () => {
 					...updatedState[ siteId ],
 					[ moduleSlug ]: {
 						...updatedState[ siteId ][ moduleSlug ],
-						active
-					}
-				}
+						active,
+					},
+				},
 			} );
 		} );
 
@@ -93,13 +94,16 @@ const createSettingsItemsReducer = () => {
  * @param  {Object} action action
  * @return {Array}         Updated state
  */
-export const items = createReducer( {}, {
-	[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: createItemsReducer( true ),
-	[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: createItemsReducer( false ),
-	[ JETPACK_MODULES_RECEIVE ]: createItemsListReducer(),
-	[ JETPACK_SETTINGS_RECEIVE ]: createSettingsItemsReducer(),
-	[ JETPACK_SETTINGS_UPDATE_SUCCESS ]: createSettingsItemsReducer()
-} );
+export const items = createReducer(
+	{},
+	{
+		[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: createItemsReducer( true ),
+		[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: createItemsReducer( false ),
+		[ JETPACK_MODULES_RECEIVE ]: createItemsListReducer(),
+		[ JETPACK_SETTINGS_RECEIVE ]: createSettingsItemsReducer(),
+		[ JETPACK_SETTINGS_UPDATE_SUCCESS ]: createSettingsItemsReducer(),
+	}
+);
 
 /**
  * `Reducer` function which handles request/response actions
@@ -109,19 +113,22 @@ export const items = createReducer( {}, {
  * @param {Object} action - action
  * @return {Object} updated state
  */
-export const requests = createReducer( {}, {
-	[ JETPACK_MODULE_ACTIVATE ]: createRequestsReducer( { activating: true } ),
-	[ JETPACK_MODULE_ACTIVATE_FAILURE ]: createRequestsReducer( { activating: false } ),
-	[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: createRequestsReducer( { activating: false } ),
-	[ JETPACK_MODULE_DEACTIVATE ]: createRequestsReducer( { deactivating: true } ),
-	[ JETPACK_MODULE_DEACTIVATE_FAILURE ]: createRequestsReducer( { deactivating: false } ),
-	[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: createRequestsReducer( { deactivating: false } ),
-	[ JETPACK_MODULES_REQUEST ]: createModuleListRequestReducer( true ),
-	[ JETPACK_MODULES_REQUEST_FAILURE ]: createModuleListRequestReducer( false ),
-	[ JETPACK_MODULES_REQUEST_SUCCESS ]: createModuleListRequestReducer( false )
-} );
+export const requests = createReducer(
+	{},
+	{
+		[ JETPACK_MODULE_ACTIVATE ]: createRequestsReducer( { activating: true } ),
+		[ JETPACK_MODULE_ACTIVATE_FAILURE ]: createRequestsReducer( { activating: false } ),
+		[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: createRequestsReducer( { activating: false } ),
+		[ JETPACK_MODULE_DEACTIVATE ]: createRequestsReducer( { deactivating: true } ),
+		[ JETPACK_MODULE_DEACTIVATE_FAILURE ]: createRequestsReducer( { deactivating: false } ),
+		[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: createRequestsReducer( { deactivating: false } ),
+		[ JETPACK_MODULES_REQUEST ]: createModuleListRequestReducer( true ),
+		[ JETPACK_MODULES_REQUEST_FAILURE ]: createModuleListRequestReducer( false ),
+		[ JETPACK_MODULES_REQUEST_SUCCESS ]: createModuleListRequestReducer( false ),
+	}
+);
 
 export const reducer = combineReducers( {
 	items,
-	requests
+	requests,
 } );

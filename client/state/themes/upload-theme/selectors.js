@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,10 +23,7 @@ export function isUploadInProgress( state, siteId ) {
  * @return {Boolean} -- True if upload has completed
  */
 export function isUploadComplete( state, siteId ) {
-	return !! (
-		( ! isUploadInProgress( state, siteId ) ) &&
-		getUploadedThemeId( state, siteId )
-	);
+	return !! ( ! isUploadInProgress( state, siteId ) && getUploadedThemeId( state, siteId ) );
 }
 
 /**
@@ -100,6 +98,5 @@ export function getUploadProgressLoaded( state, siteId ) {
  * @return {Boolean} -- True install is in progress
  */
 export function isInstallInProgress( state, siteId ) {
-	return getUploadProgressTotal( state, siteId ) ===
-		getUploadProgressLoaded( state, siteId );
+	return getUploadProgressTotal( state, siteId ) === getUploadProgressLoaded( state, siteId );
 }

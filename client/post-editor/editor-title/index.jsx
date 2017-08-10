@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -36,12 +37,12 @@ class EditorTitle extends Component {
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		tabIndex: PropTypes.number,
-		translate: PropTypes.func
+		translate: PropTypes.func,
 	};
 
 	static defaultProps = {
 		isNew: true,
-		onChange: () => {}
+		onChange: () => {},
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -51,8 +52,7 @@ class EditorTitle extends Component {
 
 		// If next post is new, or the next site is different, focus title
 		const { isNew, siteId } = this.props;
-		if ( ( isNew && ! prevProps.isNew ) ||
-				( isNew && prevProps.siteId !== siteId ) ) {
+		if ( ( isNew && ! prevProps.isNew ) || ( isNew && prevProps.siteId !== siteId ) ) {
 			const input = ReactDom.findDOMNode( this.refs.titleInput );
 			input.focus();
 		}
@@ -62,7 +62,7 @@ class EditorTitle extends Component {
 		const { siteId, editedPostId } = this.props;
 		const newTitle = event.target.value.replace( REGEXP_NEWLINES, ' ' );
 		this.props.editPost( siteId, editedPostId, {
-			title: newTitle
+			title: newTitle,
 		} );
 		this.props.onChange( newTitle );
 	};
@@ -85,16 +85,18 @@ class EditorTitle extends Component {
 		const { post, isPermalinkEditable, isNew, tabIndex, translate } = this.props;
 
 		const classes = classNames( 'editor-title', {
-			'is-loading': ! post
+			'is-loading': ! post,
 		} );
 
 		return (
 			<div className={ classes }>
-				{ post && post.ID && ! PostUtils.isPage( post ) &&
+				{ post &&
+					post.ID &&
+					! PostUtils.isPage( post ) &&
 					<EditorPermalink
 						path={ isPermalinkEditable ? PostUtils.getPermalinkBasePath( post ) : post.URL }
-						isEditable={ isPermalinkEditable } />
-				}
+						isEditable={ isPermalinkEditable }
+					/> }
 				<TrackInputChanges onNewValue={ this.recordChangeStats }>
 					<TextareaAutosize
 						tabIndex={ tabIndex }
@@ -107,7 +109,8 @@ class EditorTitle extends Component {
 						value={ post && post.title ? post.title : '' }
 						aria-label={ translate( 'Edit title' ) }
 						ref="titleInput"
-						rows="1" />
+						rows="1"
+					/>
 				</TrackInputChanges>
 			</div>
 		);
@@ -127,7 +130,7 @@ export default connect(
 			isPermalinkEditable,
 			isNew,
 			post,
-			siteId
+			siteId,
 		};
 	},
 	{ editPost }

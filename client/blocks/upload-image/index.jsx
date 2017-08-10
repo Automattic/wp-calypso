@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -91,8 +92,8 @@ class UploadImage extends Component {
 			this.handleError(
 				ERROR_UNSUPPORTED_FILE,
 				translate(
-					'File you are trying to upload is not supported. Please select a valid image file.',
-				),
+					'File you are trying to upload is not supported. Please select a valid image file.'
+				)
 			);
 
 			return;
@@ -115,7 +116,7 @@ class UploadImage extends Component {
 		if ( errorCode === ERROR_UPLOADING_IMAGE ) {
 			if ( error.length && error[ 0 ] === ValidationErrors.SERVER_ERROR ) {
 				message = translate(
-					'File could not be uploaded because an error occurred while uploading.',
+					'File could not be uploaded because an error occurred while uploading.'
 				);
 			}
 		}
@@ -237,9 +238,9 @@ class UploadImage extends Component {
 		const media = isEditingDefaultImage
 			? defaultImage
 			: {
-				src: selectedImage,
-				file: selectedImageName,
-			};
+					src: selectedImage,
+					file: selectedImageName,
+				};
 
 		return (
 			<Dialog additionalClassNames={ classes } isVisible={ true }>
@@ -440,5 +441,5 @@ export default connect(
 	},
 	{
 		resetAllImageEditorState,
-	},
+	}
 )( localize( UploadImage ) );

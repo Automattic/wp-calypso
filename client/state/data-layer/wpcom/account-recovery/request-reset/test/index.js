@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,19 +26,18 @@ describe( 'handleRequestReset()', () => {
 	const method = 'primary-email';
 
 	describe( 'success', () => {
-		useNock( nock => (
-			nock( apiBaseUrl )
-				.persist()
-				.post( endpoint )
-				.reply( 200, { success: true } )
-		) );
+		useNock( nock =>
+			nock( apiBaseUrl ).persist().post( endpoint ).reply( 200, { success: true } )
+		);
 
-		it( 'should dispatch SUCCESS action on success', ( done ) => {
-			const dispatch = sinon.spy( ( action ) => {
+		it( 'should dispatch SUCCESS action on success', done => {
+			const dispatch = sinon.spy( action => {
 				if ( action.type === ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS ) {
-					assert.isTrue( dispatch.calledWith( {
-						type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
-					} ) );
+					assert.isTrue(
+						dispatch.calledWith( {
+							type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+						} )
+					);
 
 					done();
 				}
@@ -46,13 +46,15 @@ describe( 'handleRequestReset()', () => {
 			handleRequestReset( { dispatch }, { userData, method } );
 		} );
 
-		it( 'should dispatch SET_METHOD action on success', ( done ) => {
-			const dispatch = sinon.spy( ( action ) => {
+		it( 'should dispatch SET_METHOD action on success', done => {
+			const dispatch = sinon.spy( action => {
 				if ( action.type === ACCOUNT_RECOVERY_RESET_SET_METHOD ) {
-					assert.isTrue( dispatch.calledWith( {
-						type: ACCOUNT_RECOVERY_RESET_SET_METHOD,
-						method,
-					} ) );
+					assert.isTrue(
+						dispatch.calledWith( {
+							type: ACCOUNT_RECOVERY_RESET_SET_METHOD,
+							method,
+						} )
+					);
 
 					done();
 				}
@@ -68,18 +70,18 @@ describe( 'handleRequestReset()', () => {
 			message: 'Something wrong!',
 		};
 
-		useNock( nock => (
-			nock( apiBaseUrl )
-				.post( endpoint )
-				.reply( errorResponse.status, errorResponse )
-		) );
+		useNock( nock =>
+			nock( apiBaseUrl ).post( endpoint ).reply( errorResponse.status, errorResponse )
+		);
 
 		it( 'should dispatch ERROR action on failure', () => {
 			const dispatch = sinon.spy( () => {
-				assert.isTrue( dispatch.calledWithMatch( {
-					type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
-					error: errorResponse,
-				} ) )
+				assert.isTrue(
+					dispatch.calledWithMatch( {
+						type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+						error: errorResponse,
+					} )
+				);
 			} );
 
 			handleRequestReset( { dispatch }, { userData, method } );

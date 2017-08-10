@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +22,7 @@ describe( 'PluginActivateToggle', function() {
 	const analyticsMock = {
 		recordGoogleEvent: spy(),
 		recordTracksEvent: spy(),
-		translate: spy()
+		translate: spy(),
 	};
 	let PluginActivateToggle;
 
@@ -31,9 +32,13 @@ describe( 'PluginActivateToggle', function() {
 	before( function() {
 		mockery.registerMock( 'my-sites/plugins/plugin-action/plugin-action', mockedPluginAction );
 		mockery.registerMock( 'lib/plugins/actions', mockedActions );
-		mockery.registerMock( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button', EmptyComponent );
+		mockery.registerMock(
+			'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button',
+			EmptyComponent
+		);
 
-		PluginActivateToggle = require( 'my-sites/plugins/plugin-activate-toggle' ).PluginActivateToggle;
+		PluginActivateToggle = require( 'my-sites/plugins/plugin-activate-toggle' )
+			.PluginActivateToggle;
 	} );
 
 	afterEach( function() {

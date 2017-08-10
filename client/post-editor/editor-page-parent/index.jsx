@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,7 +27,7 @@ class EditorPageParent extends Component {
 		parentId: PropTypes.number,
 		postType: PropTypes.string,
 		translate: PropTypes.func,
-		labels: PropTypes.object
+		labels: PropTypes.object,
 	};
 
 	constructor( props ) {
@@ -45,11 +46,15 @@ class EditorPageParent extends Component {
 		return (
 			<AccordionSection className="editor-page-parent">
 				<FormLabel>
-					<span className="editor-page-parent__label-text">{ labels.parent || translate( 'Parent Page' ) }</span>
+					<span className="editor-page-parent__label-text">
+						{ labels.parent || translate( 'Parent Page' ) }
+					</span>
 				</FormLabel>
 				<FormLabel className="editor-page-parent__top-level">
 					<span className="editor-page-parent__top-level-label">
-						{ translate( 'Top level', { context: 'Editor: Page being edited is top level i.e. has no parent' } ) }
+						{ translate( 'Top level', {
+							context: 'Editor: Page being edited is top level i.e. has no parent',
+						} ) }
 					</span>
 					<FormToggle
 						checked={ ! parentId }
@@ -71,7 +76,7 @@ class EditorPageParent extends Component {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );

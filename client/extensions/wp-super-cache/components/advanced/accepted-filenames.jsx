@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -37,31 +38,24 @@ class AcceptedFilenames extends Component {
 	};
 
 	renderToggle = ( fieldName, fieldLabel ) => {
-		const {
-			fields: { pages },
-			isReadOnly,
-			isRequesting,
-			isSaving,
-		} = this.props;
+		const { fields: { pages }, isReadOnly, isRequesting, isSaving } = this.props;
 
 		return (
 			<FormToggle
 				checked={ !! pages && !! pages[ fieldName ] }
 				disabled={ isRequesting || isSaving || isReadOnly }
-				onChange={ this.handleToggle( fieldName ) }>
+				onChange={ this.handleToggle( fieldName ) }
+			>
 				<span>
 					{ fieldLabel }
 				</span>
 			</FormToggle>
 		);
-	}
+	};
 
-	handleToggle = ( fieldName ) => {
+	handleToggle = fieldName => {
 		return () => {
-			const {
-				fields,
-				setFieldValue,
-			} = this.props;
+			const { fields, setFieldValue } = this.props;
 			const groupName = 'pages';
 			const groupFields = fields[ groupName ] ? fields[ groupName ] : {};
 
@@ -84,24 +78,14 @@ class AcceptedFilenames extends Component {
 			isSaving,
 			translate,
 		} = this.props;
-		const {
-			cache_acceptable_files,
-			cache_rejected_uri,
-		} = fields;
+		const { cache_acceptable_files, cache_rejected_uri } = fields;
 		const isDisabled = isRequesting || isSaving || isReadOnly;
 
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Accepted Filenames & Rejected URIs' ) }>
-					<Button
-						compact
-						primary
-						disabled={ isDisabled }
-						onClick={ handleSubmitForm }>
-						{ isSaving
-							? translate( 'Saving…' )
-							: translate( 'Save Settings' )
-						}
+					<Button compact primary disabled={ isDisabled } onClick={ handleSubmitForm }>
+						{ isSaving ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 					</Button>
 				</SectionHeader>
 				<Card>
@@ -113,7 +97,7 @@ class AcceptedFilenames extends Component {
 						<FormSettingExplanation className="wp-super-cache__condition-settings-explanation">
 							{ translate(
 								' See the {{a}}Conditional Tags{{/a}} ' +
-								'documentation for a complete discussion on each type.',
+									'documentation for a complete discussion on each type.',
 								{
 									components: {
 										a: (
@@ -123,7 +107,7 @@ class AcceptedFilenames extends Component {
 												href="http://codex.wordpress.org/Conditional_Tags"
 											/>
 										),
-									}
+									},
 								}
 							) }
 						</FormSettingExplanation>
@@ -148,13 +132,14 @@ class AcceptedFilenames extends Component {
 							<FormTextarea
 								disabled={ isDisabled }
 								onChange={ handleChange( 'cache_rejected_uri' ) }
-								value={ cache_rejected_uri } />
+								value={ cache_rejected_uri }
+							/>
 							<FormSettingExplanation>
 								{ translate(
 									'Add here strings (not a filename) that forces a page not to be cached. For example, ' +
-									'if your URLs include year and you dont want to cache last year posts, it’s enough ' +
-									'to specify the year, i.e. ’/2004/’. WP-Cache will search if that string is part ' +
-									'of the URI and if so, it will not cache that page.'
+										'if your URLs include year and you dont want to cache last year posts, it’s enough ' +
+										'to specify the year, i.e. ’/2004/’. WP-Cache will search if that string is part ' +
+										'of the URI and if so, it will not cache that page.'
 								) }
 							</FormSettingExplanation>
 						</FormFieldset>
@@ -166,11 +151,12 @@ class AcceptedFilenames extends Component {
 							<FormTextarea
 								disabled={ isDisabled }
 								onChange={ handleChange( 'cache_acceptable_files' ) }
-								value={ cache_acceptable_files } />
+								value={ cache_acceptable_files }
+							/>
 							<FormSettingExplanation>
 								{ translate(
 									'Add here those filenames that can be cached, even if they match one of the rejected ' +
-									'substring specified above.'
+										'substring specified above.'
 								) }
 							</FormSettingExplanation>
 						</FormFieldset>
@@ -182,11 +168,7 @@ class AcceptedFilenames extends Component {
 }
 
 const getFormSettings = settings => {
-	return pick( settings, [
-		'cache_acceptable_files',
-		'cache_rejected_uri',
-		'pages',
-	] );
+	return pick( settings, [ 'cache_acceptable_files', 'cache_rejected_uri', 'pages' ] );
 };
 
 export default WrapSettingsForm( getFormSettings )( AcceptedFilenames );

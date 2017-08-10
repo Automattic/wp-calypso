@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -92,48 +93,83 @@ assign( SignupFlowController.prototype, {
 	},
 
 	_assertFlowProvidedDependenciesFromConfig: function( providedDependencies ) {
-		const dependencyDiff = difference( this._flow.providesDependenciesInQuery, keys( providedDependencies ) );
+		const dependencyDiff = difference(
+			this._flow.providesDependenciesInQuery,
+			keys( providedDependencies )
+		);
 		if ( dependencyDiff.length > 0 ) {
-			throw new Error( this._flowName + ' did not provide the query dependencies [' + dependencyDiff + '] it is configured to.' );
+			throw new Error(
+				this._flowName +
+					' did not provide the query dependencies [' +
+					dependencyDiff +
+					'] it is configured to.'
+			);
 		}
 	},
 
 	_assertFlowHasValidDependencies: function() {
-		return every( pick( steps, this._flow.steps ), function( step ) {
-			if ( ! step.dependencies ) {
-				return true;
-			}
-
-			const dependenciesFound = pick( SignupDependencyStore.get(), step.dependencies );
-			const dependenciesNotProvided = difference( step.dependencies, keys( dependenciesFound ), this._getFlowProvidesDependencies() );
-			if ( ! isEmpty( dependenciesNotProvided ) ) {
-
-				if ( this._flowName !== flows.defaultFlowName ) {
-					// redirect to the default signup flow, hopefully it will be valid
-					page( utils.getStepUrl() );
+		return every(
+			pick( steps, this._flow.steps ),
+			function( step ) {
+				if ( ! step.dependencies ) {
+					return true;
 				}
 
-				throw new Error( 'The ' + step.stepName + ' step requires dependencies [' + dependenciesNotProvided + '] which ' +
-				'are not provided in the ' + this._flowName + ' flow and are not already present in the store.' );
-			}
-			return true;
-		}.bind( this ) );
+				const dependenciesFound = pick( SignupDependencyStore.get(), step.dependencies );
+				const dependenciesNotProvided = difference(
+					step.dependencies,
+					keys( dependenciesFound ),
+					this._getFlowProvidesDependencies()
+				);
+				if ( ! isEmpty( dependenciesNotProvided ) ) {
+					if ( this._flowName !== flows.defaultFlowName ) {
+						// redirect to the default signup flow, hopefully it will be valid
+						page( utils.getStepUrl() );
+					}
+
+					throw new Error(
+						'The ' +
+							step.stepName +
+							' step requires dependencies [' +
+							dependenciesNotProvided +
+							'] which ' +
+							'are not provided in the ' +
+							this._flowName +
+							' flow and are not already present in the store.'
+					);
+				}
+				return true;
+			}.bind( this )
+		);
 	},
 
 	_assertFlowProvidedRequiredDependencies: function() {
-		return every( pick( steps, this._flow.steps ), function( step ) {
-			var dependenciesNotProvided;
-			if ( ! step.providesDependencies ) {
-				return true;
-			}
+		return every(
+			pick( steps, this._flow.steps ),
+			function( step ) {
+				var dependenciesNotProvided;
+				if ( ! step.providesDependencies ) {
+					return true;
+				}
 
-			dependenciesNotProvided = difference( step.providesDependencies, keys( SignupDependencyStore.get() ) );
-			if ( ! isEmpty( dependenciesNotProvided ) ) {
-				throw new Error( 'The dependencies [' + dependenciesNotProvided + '] were listed as provided by the ' + step.stepName +
-				' step but were not provided by it [ current flow: ' + this._flowName + ' ].' );
-			}
-			return true;
-		}.bind( this ) );
+				dependenciesNotProvided = difference(
+					step.providesDependencies,
+					keys( SignupDependencyStore.get() )
+				);
+				if ( ! isEmpty( dependenciesNotProvided ) ) {
+					throw new Error(
+						'The dependencies [' +
+							dependenciesNotProvided +
+							'] were listed as provided by the ' +
+							step.stepName +
+							' step but were not provided by it [ current flow: ' +
+							this._flowName +
+							' ].'
+					);
+				}
+				return true;
+			}.bind( this )
+		);
 	},
 
 	_canMakeAuthenticatedRequests: function() {
@@ -146,16 +182,20 @@ assign( SignupFlowController.prototype, {
 	 * @return {array} a list of dependency names
 	 */
 	_getFlowProvidesDependencies: function() {
-		return flatten( compact( map( this._flow.steps, function( step ) {
-			return steps[ step ].providesDependencies;
-		} ) ) ).concat( this._flow.providesDependenciesInQuery );
+		return flatten(
+			compact(
+				map( this._flow.steps, function( step ) {
+					return steps[ step ].providesDependencies;
+				} )
+			)
+		).concat( this._flow.providesDependenciesInQuery );
 	},
 
 	_process: function() {
 		var currentSteps = this._flow.steps,
 			signupProgress = filter(
 				SignupProgressStore.get(),
-				step => ( -1 !== currentSteps.indexOf( step.stepName ) ),
+				step => -1 !== currentSteps.indexOf( step.stepName )
 			),
 			pendingSteps = filter( signupProgress, { status: 'pending' } ),
 			completedSteps = filter( signupProgress, { status: 'completed' } ),
@@ -189,16 +229,19 @@ assign( SignupFlowController.prototype, {
 			currentSteps = this._flow.steps,
 			signupProgress = filter(
 				SignupProgressStore.get(),
-				_step => ( -1 !== currentSteps.indexOf( _step.stepName ) ),
+				_step => -1 !== currentSteps.indexOf( _step.stepName )
 			),
-			allStepsSubmitted = reject( signupProgress, {
-				status: 'in-progress'
-			} ).length === currentSteps.length;
+			allStepsSubmitted =
+				reject( signupProgress, {
+					status: 'in-progress',
+				} ).length === currentSteps.length;
 
-		return dependenciesSatisfied &&
+		return (
+			dependenciesSatisfied &&
 			! this._processingSteps[ step.stepName ] &&
 			( providesToken || this._canMakeAuthenticatedRequests() ) &&
-			( ! steps[ step.stepName ].delayApiRequestUntilComplete || allStepsSubmitted );
+			( ! steps[ step.stepName ].delayApiRequestUntilComplete || allStepsSubmitted )
+		);
 	},
 
 	_processStep: function( step ) {
@@ -212,10 +255,15 @@ assign( SignupFlowController.prototype, {
 
 			const apiFunction = steps[ step.stepName ].apiRequestFunction;
 
-			apiFunction( ( errors, providedDependencies ) => {
-				this._processingSteps[ step.stepName ] = false;
-				SignupActions.processedSignupStep( step, errors, providedDependencies );
-			}, dependenciesFound, step, this._reduxStore );
+			apiFunction(
+				( errors, providedDependencies ) => {
+					this._processingSteps[ step.stepName ] = false;
+					SignupActions.processedSignupStep( step, errors, providedDependencies );
+				},
+				dependenciesFound,
+				step,
+				this._reduxStore
+			);
 		}
 	},
 
@@ -234,7 +282,10 @@ assign( SignupFlowController.prototype, {
 		}, [] );
 
 		return SignupProgressStore.get().reduce(
-			( current, step ) => ( { ...current, ...pick( step.providedDependencies, requiredDependencies ) } ),
+			( current, step ) => ( {
+				...current,
+				...pick( step.providedDependencies, requiredDependencies ),
+			} ),
 			{}
 		);
 	},
@@ -248,7 +299,7 @@ assign( SignupFlowController.prototype, {
 
 		SignupProgressStore.reset();
 		SignupDependencyStore.reset();
-	}
+	},
 } );
 
 module.exports = SignupFlowController;

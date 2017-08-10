@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,9 +32,11 @@ const WpcomDomain = React.createClass( {
 		return (
 			<VerticalNav>
 				<VerticalNavItem
-					path={ `https://${ this.props.domain.name }/wp-admin/index.php?page=my-blogs#blog_row_${ this.props.selectedSite.ID }` }
+					path={ `https://${ this.props.domain
+						.name }/wp-admin/index.php?page=my-blogs#blog_row_${ this.props.selectedSite.ID }` }
 					external={ true }
-					onClick={ this.handleEditSiteAddressClick }>
+					onClick={ this.handleEditSiteAddressClick }
+				>
 					{ this.translate( 'Edit Site Address' ) }
 				</VerticalNavItem>
 			</VerticalNav>
@@ -51,15 +54,22 @@ const WpcomDomain = React.createClass( {
 							{ this.translate( 'Included with Site' ) }
 						</Property>
 
-						<Property label={ this.translate( 'Renews on', { comment: 'The corresponding date is in a different cell in the UI, the date is not included within the translated string' } ) }>
-							<em>{ this.translate( 'Never Expires' ) }</em>
+						<Property
+							label={ this.translate( 'Renews on', {
+								comment:
+									'The corresponding date is in a different cell in the UI, the date is not included within the translated string',
+							} ) }
+						>
+							<em>
+								{ this.translate( 'Never Expires' ) }
+							</em>
 						</Property>
 					</Card>
 				</div>
 				{ this.getEditSiteAddressBlock() }
 			</div>
 		);
-	}
+	},
 } );
 
 export default WpcomDomain;

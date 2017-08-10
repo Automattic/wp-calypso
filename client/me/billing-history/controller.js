@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -30,5 +31,5 @@ export default {
 				context.store
 			);
 		}
-	}
+	},
 };

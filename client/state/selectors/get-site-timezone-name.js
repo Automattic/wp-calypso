@@ -1,11 +1,9 @@
+/** @format */
 
 /**
  * Internal dependencies
  */
-import {
-	getSiteGmtOffset,
-	getSiteTimezoneValue
-} from 'state/selectors';
+import { getSiteGmtOffset, getSiteTimezoneValue } from 'state/selectors';
 
 /**
  * Returns either the site's timezone name (eg 'America/Araguaina').
@@ -27,5 +25,5 @@ export default function getSiteTimezoneName( state, siteId ) {
 		return null;
 	}
 
-	return `UTC${ ( /\-/.test( gmt_offset ) ? '' : '+' ) }${ gmt_offset }`;
+	return `UTC${ /\-/.test( gmt_offset ) ? '' : '+' }${ gmt_offset }`;
 }

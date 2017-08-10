@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -27,22 +28,25 @@ class QueryReaderLists extends Component {
 
 QueryReaderLists.propTypes = {
 	isRequestingSubscribedLists: PropTypes.bool,
-	requestSubscribedLists: PropTypes.func
+	requestSubscribedLists: PropTypes.func,
 };
 
 QueryReaderLists.defaultProps = {
-	requestSubscribedLists: () => {}
+	requestSubscribedLists: () => {},
 };
 
 export default connect(
-	( state ) => {
+	state => {
 		return {
-			isRequestingSubscribedLists: isRequestingSubscribedLists( state )
+			isRequestingSubscribedLists: isRequestingSubscribedLists( state ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			requestSubscribedLists
-		}, dispatch );
+	dispatch => {
+		return bindActionCreators(
+			{
+				requestSubscribedLists,
+			},
+			dispatch
+		);
 	}
 )( QueryReaderLists );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -43,30 +44,30 @@ class Draft extends Component {
 
 		// via `updatePostStatus`
 		updatePostStatus: PropTypes.func.isRequired,
-	}
+	};
 
 	static defaultProps = {
 		showAllActions: false,
 		onTitleClick: noop,
 		selected: false,
 		showAuthor: false,
-	}
+	};
 
 	state = {
 		fullImage: false,
 		showPopoverMenu: false,
 		isRestoring: false,
 		hasError: false,
-	}
+	};
 
 	toggleImageState = () => {
 		this.setState( { fullImage: ! this.state.fullImage } );
-	}
+	};
 
 	trashPost = () => {
 		this.setState( {
 			showPopoverMenu: false,
-			isTrashing: true
+			isTrashing: true,
 		} );
 
 		const updateStatus = function( error ) {
@@ -77,7 +78,7 @@ class Draft extends Component {
 			if ( error ) {
 				return this.setState( {
 					isTrashing: false,
-					hasError: true
+					hasError: true,
 				} );
 			}
 
@@ -87,12 +88,12 @@ class Draft extends Component {
 		if ( utils.userCan( 'delete_post', this.props.post ) ) {
 			actions.trash( this.props.post, updateStatus );
 		}
-	}
+	};
 
 	restorePost = () => {
 		this.setState( {
 			showPopoverMenu: false,
-			isRestoring: true
+			isRestoring: true,
 		} );
 
 		const updateStatus = function( error ) {
@@ -103,7 +104,7 @@ class Draft extends Component {
 			if ( error ) {
 				return this.setState( {
 					isRestoring: false,
-					hasError: true
+					hasError: true,
 				} );
 			}
 
@@ -113,24 +114,24 @@ class Draft extends Component {
 		if ( utils.userCan( 'delete_post', this.props.post ) ) {
 			actions.restore( this.props.post, updateStatus );
 		}
-	}
+	};
 
 	previewPost = () => {
 		window.open( utils.getPreviewURL( this.props.post ) );
-	}
+	};
 
 	publishPost = () => {
-		this.setState( { showPopoverMenu: false	} );
+		this.setState( { showPopoverMenu: false } );
 		if ( utils.userCan( 'publish_post', this.props.post ) ) {
 			this.props.updatePostStatus( 'publish' );
 		}
-	}
+	};
 
 	togglePopoverMenu = () => {
 		this.setState( {
-			showPopoverMenu: ! this.state.showPopoverMenu
+			showPopoverMenu: ! this.state.showPopoverMenu,
 		} );
-	}
+	};
 
 	render() {
 		const { post } = this.props;
@@ -173,7 +174,11 @@ class Draft extends Component {
 			'is-selected': this.props.selected,
 		} );
 
-		const title = post.title || <span className="draft__untitled">{ this.props.translate( 'Untitled' ) }</span>;
+		const title =
+			post.title ||
+			<span className="draft__untitled">
+				{ this.props.translate( 'Untitled' ) }
+			</span>;
 
 		// Render each Post
 		return (
@@ -181,7 +186,9 @@ class Draft extends Component {
 				{ this.showStatusChange() }
 				<h3 className="draft__title">
 					{ post.status === 'pending' &&
-						<span className="draft__pending-label">{ this.props.translate( 'Pending' ) }</span> }
+						<span className="draft__pending-label">
+							{ this.props.translate( 'Pending' ) }
+						</span> }
 					{ this.props.showAuthor && <Gravatar user={ post.author } size={ 22 } /> }
 					<a href={ editPostURL } onClick={ this.props.onTitleClick }>
 						{ title }
@@ -189,9 +196,10 @@ class Draft extends Component {
 				</h3>
 				{ post.excerpt &&
 					<span className="draft__excerpt">
-						<a href={ editPostURL } onClick={ this.props.onTitleClick }>{ post.excerpt }</a>
-					</span>
-				}
+						<a href={ editPostURL } onClick={ this.props.onTitleClick }>
+							{ post.excerpt }
+						</a>
+					</span> }
 				{ this.props.selectedSiteId ? this.draftActions() : <SiteIcon site={ site } size={ 32 } /> }
 				{ image ? this.renderImage( imageUrl ) : null }
 				{ this.props.post.status === 'trash' ? this.restoreButton() : null }
@@ -207,10 +215,8 @@ class Draft extends Component {
 		}
 
 		return (
-			<div className="draft__featured-image" style={ style } onClick={ this.toggleImageState } >
-				{ this.state.fullImage &&
-					<img className="draft__image" src={ image } />
-				}
+			<div className="draft__featured-image" style={ style } onClick={ this.toggleImageState }>
+				{ this.state.fullImage && <img className="draft__image" src={ image } /> }
 			</div>
 		);
 	}
@@ -231,21 +237,27 @@ class Draft extends Component {
 	showStatusChange() {
 		if ( this.props.post.status === 'publish' ) {
 			return (
-					<Notice isCompact = { true }
-						status="is-success"
-						text={ 'Post successfully published.' }
-						button={ 'View' }
-						showDismiss={ false }>
-						<NoticeAction href={ this.props.post.URL }>
-							{ 'View' }
-						</NoticeAction>
-					</Notice>
-					);
+				<Notice
+					isCompact={ true }
+					status="is-success"
+					text={ 'Post successfully published.' }
+					button={ 'View' }
+					showDismiss={ false }
+				>
+					<NoticeAction href={ this.props.post.URL }>
+						{ 'View' }
+					</NoticeAction>
+				</Notice>
+			);
 		} else if ( this.state.hasError ) {
-			return <Notice isCompact = { true }
-						status="is-error"
-						text={ 'There was a problem.' }
-						showDismiss={ false } />;
+			return (
+				<Notice
+					isCompact={ true }
+					status="is-error"
+					text={ 'There was a problem.' }
+					showDismiss={ false }
+				/>
+			);
 		}
 	}
 
@@ -255,7 +267,10 @@ class Draft extends Component {
 				<h3 className="draft__title" />
 				<div className="draft__actions">
 					<p className="post-relative-time-status">
-						<span className="time"><span className="noticon noticon-time" /><span className="time-text" /></span>
+						<span className="time">
+							<span className="noticon noticon-time" />
+							<span className="time-text" />
+						</span>
 					</p>
 				</div>
 			</CompactCard>
@@ -293,8 +308,12 @@ class Draft extends Component {
 					position={ 'bottom left' }
 					context={ this.refs && this.refs.popoverMenuButton }
 				>
-					<PopoverMenuItem onClick={ this.previewPost }>{ this.props.translate( 'Preview' ) }</PopoverMenuItem>
-					<PopoverMenuItem onClick={ this.publishPost }>{ this.props.translate( 'Publish' ) }</PopoverMenuItem>
+					<PopoverMenuItem onClick={ this.previewPost }>
+						{ this.props.translate( 'Preview' ) }
+					</PopoverMenuItem>
+					<PopoverMenuItem onClick={ this.publishPost }>
+						{ this.props.translate( 'Publish' ) }
+					</PopoverMenuItem>
 					<PopoverMenuItem className="draft__trash-item" onClick={ this.trashPost }>
 						{ this.props.translate( 'Send to Trash' ) }
 					</PopoverMenuItem>
@@ -308,13 +327,9 @@ class Draft extends Component {
 	}
 }
 
-const mapState = ( state, { siteId } ) => ( {
+const mapState = ( state, { siteId } ) => ( {
 	site: getSite( state, siteId ),
 	selectedSiteId: getSelectedSiteId( state ),
 } );
 
-export default flow(
-	localize,
-	updatePostStatus,
-	connect( mapState )
-)( Draft );
+export default flow( localize, updatePostStatus, connect( mapState ) )( Draft );

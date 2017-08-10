@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,7 +25,7 @@ class PostActionsEllipsisMenuTrash extends Component {
 		status: PropTypes.string,
 		canDelete: PropTypes.bool,
 		trashPost: PropTypes.func,
-		deletePost: PropTypes.func
+		deletePost: PropTypes.func,
 	};
 
 	constructor() {
@@ -78,7 +79,11 @@ export default connect(
 			postId: post.ID,
 			siteId: post.site_ID,
 			status: post.status,
-			canDelete: canCurrentUser( state, post.site_ID, isAuthor ? 'delete_posts' : 'delete_others_posts' )
+			canDelete: canCurrentUser(
+				state,
+				post.site_ID,
+				isAuthor ? 'delete_posts' : 'delete_others_posts'
+			),
 		};
 	},
 	{ trashPost, deletePost }

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,5 +14,5 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return <ListItemFileDetails { ...this.props } icon="audio" />;
-	}
+	},
 } );

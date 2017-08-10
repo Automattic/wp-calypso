@@ -1,18 +1,15 @@
+/** @format */
 /**
  * Internal dependencies
  */
-import {
-	RECEIPT_FETCH,
-	RECEIPT_FETCH_COMPLETED,
-	RECEIPT_FETCH_FAILED,
-} from 'state/action-types';
+import { RECEIPT_FETCH, RECEIPT_FETCH_COMPLETED, RECEIPT_FETCH_FAILED } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
 export const initialReceiptState = {
 	data: null,
 	error: null,
 	hasLoadedFromServer: false,
-	isRequesting: false
+	isRequesting: false,
 };
 
 /**
@@ -25,7 +22,7 @@ export const initialReceiptState = {
  */
 function updateReceiptState( state, receiptId, attributes ) {
 	return Object.assign( {}, state, {
-		[ receiptId ]: Object.assign( {}, initialReceiptState, state[ receiptId ], attributes )
+		[ receiptId ]: Object.assign( {}, initialReceiptState, state[ receiptId ], attributes ),
 	} );
 }
 
@@ -33,19 +30,19 @@ export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case RECEIPT_FETCH:
 			return updateReceiptState( state, action.receiptId, {
-				isRequesting: true
+				isRequesting: true,
 			} );
 		case RECEIPT_FETCH_COMPLETED:
 			return updateReceiptState( state, action.receiptId, {
 				data: action.receipt,
 				error: null,
 				hasLoadedFromServer: true,
-				isRequesting: false
+				isRequesting: false,
 			} );
 		case RECEIPT_FETCH_FAILED:
 			return updateReceiptState( state, action.receiptId, {
 				error: action.error,
-				isRequesting: false
+				isRequesting: false,
 			} );
 	}
 
@@ -53,5 +50,5 @@ export function items( state = {}, action ) {
 }
 
 export default combineReducers( {
-	items
+	items,
 } );

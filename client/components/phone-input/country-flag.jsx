@@ -1,3 +1,4 @@
+/** @format */
 /** External Dependencies */
 import React from 'react';
 import Gridicon from 'gridicons';
@@ -7,12 +8,12 @@ import Spinner from 'components/spinner';
 
 export default React.createClass( {
 	propTypes: {
-		countryCode: React.PropTypes.string.isRequired
+		countryCode: React.PropTypes.string.isRequired,
 	},
 	getInitialState() {
 		return {
 			ready: false,
-			error: false
+			error: false,
 		};
 	},
 
@@ -63,5 +64,5 @@ export default React.createClass( {
 				<Gridicon icon="chevron-down" size={ 12 } className="phone-input__flag-selector-icon" />
 			</div>
 		);
-	}
+	},
 } );

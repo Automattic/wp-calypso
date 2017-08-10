@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,5 +19,5 @@ export default React.createClass( {
 				<HappinessSupport />
 			</Card>
 		);
-	}
+	},
 } );

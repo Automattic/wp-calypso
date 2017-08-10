@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +15,7 @@ function touchScrollToolbar( editor ) {
 	 */
 	function disableToolbarTouchEvents() {
 		editor.$( '.mce-toolbar:not(.mce-menubar)', document.body ).each( ( i, toolbar ) => {
-			toolbar.addEventListener( 'touchstart', ( event ) => {
+			toolbar.addEventListener( 'touchstart', event => {
 				event.stopImmediatePropagation();
 			} );
 		} );
@@ -26,28 +27,33 @@ function touchScrollToolbar( editor ) {
 	 * maximum scroll offset.
 	 */
 	function hideToolbarFadeOnFullScroll() {
-		editor.$( [
-			editor.$( '.mce-inline-toolbar-grp .mce-container-body', document.body ),
-			editor.$( '.mce-toolbar-grp', editor.theme.panel.getEl() )
-		] ).each( ( i, toolbar ) => {
-			toolbar.on( 'scroll', throttle( ( { target } ) => {
-				let action;
-				if ( target.scrollLeft === target.scrollWidth - target.clientWidth ) {
-					action = 'add';
-				} else if ( tinymce.DOM.hasClass( target, 'is-scrolled-full' ) ) {
-					action = 'remove';
-				}
+		editor
+			.$( [
+				editor.$( '.mce-inline-toolbar-grp .mce-container-body', document.body ),
+				editor.$( '.mce-toolbar-grp', editor.theme.panel.getEl() ),
+			] )
+			.each( ( i, toolbar ) => {
+				toolbar.on(
+					'scroll',
+					throttle( ( { target } ) => {
+						let action;
+						if ( target.scrollLeft === target.scrollWidth - target.clientWidth ) {
+							action = 'add';
+						} else if ( tinymce.DOM.hasClass( target, 'is-scrolled-full' ) ) {
+							action = 'remove';
+						}
 
-				if ( action ) {
-					let elements = editor.$( target );
-					if ( ! elements.hasClass( 'mce-container-body' ) ) {
-						elements.add( tinymce.DOM.getParent( target, '.mce-container-body' ) );
-					}
+						if ( action ) {
+							let elements = editor.$( target );
+							if ( ! elements.hasClass( 'mce-container-body' ) ) {
+								elements.add( tinymce.DOM.getParent( target, '.mce-container-body' ) );
+							}
 
-					elements[ action + 'Class' ]( 'is-scrolled-full' );
-				}
-			}, 200 ) );
-		} );
+							elements[ action + 'Class' ]( 'is-scrolled-full' );
+						}
+					}, 200 )
+				);
+			} );
 	}
 
 	/**
@@ -68,7 +74,7 @@ function touchScrollToolbar( editor ) {
 		// Since some toolbars are hidden by default and report inaccurate
 		// dimensions when forced to be shown, we instead bind to the event
 		// when it's expected that they'll be visible
-		editor.on( 'wptoolbar', ( event ) => {
+		editor.on( 'wptoolbar', event => {
 			// Since an event handler is expected to set the toolbar property,
 			// set a timeout to wait until the toolbar has been assigned
 			setTimeout( () => {

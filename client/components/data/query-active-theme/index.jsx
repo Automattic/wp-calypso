@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,7 @@ class QueryActiveTheme extends Component {
 		// Connected props
 		isRequesting: PropTypes.bool.isRequired,
 		requestActiveTheme: PropTypes.func.isRequired,
-	}
+	};
 
 	componentDidMount() {
 		this.request( this.props );

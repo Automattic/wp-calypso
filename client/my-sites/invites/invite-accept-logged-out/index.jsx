@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,7 +29,6 @@ import FormButton from 'components/forms/form-button';
 const debug = debugModule( 'calypso:invite-accept:logged-out' );
 
 let InviteAcceptLoggedOut = React.createClass( {
-
 	getInitialState() {
 		return { error: false, bearerToken: false, userData: false, submitting: false };
 	},
@@ -68,17 +68,11 @@ let InviteAcceptLoggedOut = React.createClass( {
 			}
 		};
 
-		this.props.createAccount(
-			userData,
-			this.props.invite,
-			createAccountCallback
-		);
+		this.props.createAccount( userData, this.props.invite, createAccountCallback );
 	},
 
 	renderFormHeader() {
-		return (
-			<InviteFormHeader { ...this.props.invite } />
-		);
+		return <InviteFormHeader { ...this.props.invite } />;
 	},
 
 	loginUser() {
@@ -87,23 +81,25 @@ let InviteAcceptLoggedOut = React.createClass( {
 			<WpcomLoginForm
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
-				redirectTo={ window.location.href } />
+				redirectTo={ window.location.href }
+			/>
 		);
 	},
 
 	subscribeUserByEmailOnly() {
 		const { invite } = this.props;
 		this.setState( { submitting: true } );
-		this.props.acceptInvite(
-			invite,
-			( error ) => {
-				if ( error ) {
-					this.setState( { error } );
-				} else {
-					window.location = 'https://subscribe.wordpress.com?update=activate&email=' + encodeURIComponent( invite.sentTo ) + '&key=' + invite.authKey;
-				}
+		this.props.acceptInvite( invite, error => {
+			if ( error ) {
+				this.setState( { error } );
+			} else {
+				window.location =
+					'https://subscribe.wordpress.com?update=activate&email=' +
+					encodeURIComponent( invite.sentTo ) +
+					'&key=' +
+					invite.authKey;
 			}
-		);
+		} );
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_out_follow_by_email_click' );
 	},
 
@@ -163,15 +159,16 @@ let InviteAcceptLoggedOut = React.createClass( {
 					footerLink={ this.renderFooterLink() }
 					email={ this.props.invite.sentTo }
 					disableEmailInput={ this.props.forceMatchingEmail }
-					disableEmailExplanation={ this.translate( 'This invite is only valid for %(email)s.', { args: { email: this.props.invite.sentTo } } ) } />
+					disableEmailExplanation={ this.translate( 'This invite is only valid for %(email)s.', {
+						args: { email: this.props.invite.sentTo },
+					} ) }
+				/>
 				{ this.state.userData && this.loginUser() }
 			</div>
 		);
-	}
-
+	},
 } );
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
+export default connect( null, dispatch =>
+	bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
 )( InviteAcceptLoggedOut );

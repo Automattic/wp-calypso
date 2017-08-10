@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -34,8 +35,8 @@ export class QueryAutomatedTransferEligibility extends Component {
 	}
 }
 
-export const mapDispatchToProps = ( {
+export const mapDispatchToProps = {
 	requestEligibility,
-} );
+};
 
 export default connect( null, mapDispatchToProps )( QueryAutomatedTransferEligibility );

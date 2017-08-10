@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -37,10 +38,12 @@ function normalizePost( post, transforms, callback ) {
 	postDebug( 'running transforms' );
 
 	async.eachSeries(
-		transforms, function( transform, transformCallback ) {
+		transforms,
+		function( transform, transformCallback ) {
 			postDebug( 'running transform ' + ( transform.name || 'anonymous' ) );
 			transform( normalizedPost, transformCallback );
-		}, function( err ) {
+		},
+		function( err ) {
 			postDebug( 'transforms complete' );
 			if ( err ) {
 				callback( err );
@@ -83,11 +86,14 @@ normalizePost.safeImageProperties = function( maxWidth ) {
 
 import waitForImagesToLoad from './rule-wait-for-images-to-load';
 normalizePost.waitForImagesToLoad = function waitForImagesToLoadAdapter( post, callback ) {
-	waitForImagesToLoad( post ).then( () => {
-		callback();
-	}, err => {
-		callback( err );
-	} );
+	waitForImagesToLoad( post ).then(
+		() => {
+			callback();
+		},
+		err => {
+			callback( err );
+		}
+	);
 };
 
 import keepValidImages from './rule-keep-valid-images';
@@ -122,7 +128,7 @@ normalizePost.content = {
 	detectMedia,
 	disableAutoPlayOnMedia,
 	disableAutoPlayOnEmbeds,
-	detectPolls
+	detectPolls,
 };
 
 module.exports = normalizePost;

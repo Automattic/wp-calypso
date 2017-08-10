@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -17,85 +18,94 @@ import {
 } from 'state/action-types';
 import wp from 'lib/wp';
 
-export const requestJetpackConnectionStatus = ( siteId ) => {
-	return ( dispatch ) => {
+export const requestJetpackConnectionStatus = siteId => {
+	return dispatch => {
 		dispatch( {
 			type: JETPACK_CONNECTION_STATUS_REQUEST,
-			siteId
+			siteId,
 		} );
 
-		return wp.undocumented().getJetpackConnectionStatus( siteId )
-			.then( ( response ) => {
+		return wp
+			.undocumented()
+			.getJetpackConnectionStatus( siteId )
+			.then( response => {
 				dispatch( {
 					type: JETPACK_CONNECTION_STATUS_RECEIVE,
 					siteId,
-					status: response.data
+					status: response.data,
 				} );
 				dispatch( {
 					type: JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS,
-					siteId
+					siteId,
 				} );
-			} ).catch( error => {
+			} )
+			.catch( error => {
 				dispatch( {
 					type: JETPACK_CONNECTION_STATUS_REQUEST_FAILURE,
 					siteId,
-					error: error.message
+					error: error.message,
 				} );
 			} );
 	};
 };
 
-export const requestJetpackUserConnectionData = ( siteId ) => {
-	return ( dispatch ) => {
+export const requestJetpackUserConnectionData = siteId => {
+	return dispatch => {
 		dispatch( {
 			type: JETPACK_USER_CONNECTION_DATA_REQUEST,
-			siteId
+			siteId,
 		} );
 
-		return wp.undocumented().getJetpackUserConnectionData( siteId )
-			.then( ( response ) => {
+		return wp
+			.undocumented()
+			.getJetpackUserConnectionData( siteId )
+			.then( response => {
 				dispatch( {
 					type: JETPACK_USER_CONNECTION_DATA_RECEIVE,
 					siteId,
-					data: response.data.currentUser
+					data: response.data.currentUser,
 				} );
 				dispatch( {
 					type: JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
-					siteId
+					siteId,
 				} );
-			} ).catch( error => {
+			} )
+			.catch( error => {
 				dispatch( {
 					type: JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE,
 					siteId,
-					error: error.message
+					error: error.message,
 				} );
 			} );
 	};
 };
 
-export const disconnect = ( siteId ) => {
-	return ( dispatch ) => {
+export const disconnect = siteId => {
+	return dispatch => {
 		dispatch( {
 			type: JETPACK_DISCONNECT_REQUEST,
-			siteId
+			siteId,
 		} );
 
-		return wp.undocumented().disconnectJetpack( siteId )
-			.then( ( response ) => {
+		return wp
+			.undocumented()
+			.disconnectJetpack( siteId )
+			.then( response => {
 				dispatch( {
 					type: JETPACK_DISCONNECT_RECEIVE,
 					siteId,
-					status: response
+					status: response,
 				} );
 				dispatch( {
 					type: JETPACK_DISCONNECT_REQUEST_SUCCESS,
-					siteId
+					siteId,
 				} );
-			} ).catch( error => {
+			} )
+			.catch( error => {
 				dispatch( {
 					type: JETPACK_DISCONNECT_REQUEST_FAILURE,
 					siteId,
-					error: error.message
+					error: error.message,
 				} );
 			} );
 	};

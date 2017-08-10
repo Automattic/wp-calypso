@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns media for a specified site ID and query.
  *

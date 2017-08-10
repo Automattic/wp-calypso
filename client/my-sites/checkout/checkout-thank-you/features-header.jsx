@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +18,7 @@ import {
 
 const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedPurchases } ) => {
 	const classes = classNames( 'checkout-thank-you__features-header', {
-		'is-placeholder': ! isDataLoaded
+		'is-placeholder': ! isDataLoaded,
 	} );
 
 	if ( ! isDataLoaded ) {
@@ -28,7 +29,8 @@ const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedP
 		return <div />;
 	}
 
-	const shouldHideFeaturesHeading = hasFailedPurchases ||
+	const shouldHideFeaturesHeading =
+		hasFailedPurchases ||
 		purchases.some( isGoogleApps ) ||
 		purchases.some( isDomainRegistration ) ||
 		purchases.some( isDomainMapping ) ||
@@ -38,16 +40,17 @@ const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedP
 		return <div />;
 	}
 
-	return <div className={ classes }>{ i18n.translate( 'What now?' ) }</div>;
+	return (
+		<div className={ classes }>
+			{ i18n.translate( 'What now?' ) }
+		</div>
+	);
 };
 
 FeaturesHeader.propTypes = {
 	isDataLoaded: React.PropTypes.bool.isRequired,
 	isGenericReceipt: React.PropTypes.bool,
-	purchases: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.array
-	] )
+	purchases: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.array ] ),
 };
 
 export default FeaturesHeader;

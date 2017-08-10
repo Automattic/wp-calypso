@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,20 +14,19 @@ import { localize } from 'i18n-calypso';
 const COLLAPSED_ITEMS_COUNT = 2;
 
 export class CartItems extends React.Component {
-
 	static propTypes = {
-		collapse: React.PropTypes.bool.isRequired
+		collapse: React.PropTypes.bool.isRequired,
 	};
 
 	constructor( props ) {
 		super( props );
 
 		this.state = {
-			isCollapsed: props.collapse
+			isCollapsed: props.collapse,
 		};
 	}
 
-	handleExpand = ( event ) => {
+	handleExpand = event => {
 		event.preventDefault();
 
 		// If we call setState here directly, it would remove the expander from DOM,
@@ -36,7 +36,7 @@ export class CartItems extends React.Component {
 		setTimeout( () => {
 			this.setState( { isCollapsed: false } );
 		} );
-	}
+	};
 
 	collapseItems( items ) {
 		var collapsedItemsCount = items.length - COLLAPSED_ITEMS_COUNT,
@@ -45,14 +45,10 @@ export class CartItems extends React.Component {
 		collapsedItems.push(
 			<li key="items-expander">
 				<a className="cart-items__expander" href="#" onClick={ this.handleExpand }>
-					{ this.props.translate(
-						'+ %(count)d more item',
-						'+ %(count)d more items',
-						{
-							count: collapsedItemsCount,
-							args: { count: collapsedItemsCount }
-						}
-					) }
+					{ this.props.translate( '+ %(count)d more item', '+ %(count)d more items', {
+						count: collapsedItemsCount,
+						args: { count: collapsedItemsCount },
+					} ) }
 				</a>
 			</li>
 		);
@@ -73,7 +69,8 @@ export class CartItems extends React.Component {
 					cart={ cart }
 					cartItem={ cartItem }
 					selectedSite={ this.props.selectedSite }
-					key={ cartItem.product_id + '-' + cartItem.meta } />
+					key={ cartItem.product_id + '-' + cartItem.meta }
+				/>
 			);
 		} );
 
@@ -81,9 +78,12 @@ export class CartItems extends React.Component {
 			items = this.collapseItems( items );
 		}
 
-		return <ul className="cart-items">{ items }</ul>;
+		return (
+			<ul className="cart-items">
+				{ items }
+			</ul>
+		);
 	}
 }
 
 export default localize( CartItems );
-

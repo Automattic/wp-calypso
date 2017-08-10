@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,7 @@ import AsyncInitialize from 'lib/form-state/examples/async-initialize';
 
 const COMPONENTS = {
 	SyncInitialize,
-	AsyncInitialize
+	AsyncInitialize,
 };
 
 class FormStateExamples extends React.Component {
@@ -21,7 +22,7 @@ class FormStateExamples extends React.Component {
 	}
 
 	list() {
-		const items = Object.keys( COMPONENTS ).map( ( componentName ) => {
+		const items = Object.keys( COMPONENTS ).map( componentName => {
 			return (
 				<li key={ componentName }>
 					<a href={ 'form-state-examples/' + kebabCase( componentName ) }>
@@ -34,7 +35,9 @@ class FormStateExamples extends React.Component {
 		return (
 			<div>
 				<h1>Form State Examples</h1>
-				<ul>{ items }</ul>
+				<ul>
+					{ items }
+				</ul>
 			</div>
 		);
 	}
@@ -45,7 +48,9 @@ class FormStateExamples extends React.Component {
 
 		return (
 			<div>
-				<h1>{ componentName }</h1>
+				<h1>
+					{ componentName }
+				</h1>
 				<ComponentClass />
 			</div>
 		);

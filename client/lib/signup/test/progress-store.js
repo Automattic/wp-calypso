@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +11,7 @@ import { defer, find, last, omit } from 'lodash';
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery' ;
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'progress-store', function() {
 	let SignupProgressStore, SignupActions, Dispatcher;
@@ -21,10 +22,10 @@ describe( 'progress-store', function() {
 	before( () => {
 		Dispatcher = require( 'dispatcher' );
 
-		useMockery( ( mockery ) => {
+		useMockery( mockery => {
 			mockery.registerMock( 'dispatcher', Dispatcher );
 			mockery.registerMock( './dependency-store', {
-				dispatchToken: Dispatcher.register( ()=> {} )
+				dispatchToken: Dispatcher.register( () => {} ),
 			} );
 		} );
 
@@ -39,7 +40,7 @@ describe( 'progress-store', function() {
 	it( 'should store a new step', function() {
 		SignupActions.submitSignupStep( {
 			stepName: 'site-selection',
-			formData: { url: 'my-site.wordpress.com' }
+			formData: { url: 'my-site.wordpress.com' },
 		} );
 
 		assert.equal( SignupProgressStore.get().length, 1 );
@@ -59,8 +60,8 @@ describe( 'progress-store', function() {
 			Dispatcher.handleViewAction( {
 				type: 'SAVE_SIGNUP_STEP',
 				data: {
-					stepName: 'site-selection'
-				}
+					stepName: 'site-selection',
+				},
 			} );
 
 			assert.equal( SignupProgressStore.get()[ 0 ].lastUpdated, 12345 );
@@ -74,7 +75,7 @@ describe( 'progress-store', function() {
 		assert.deepEqual( omit( SignupProgressStore.get()[ 0 ], 'lastUpdated' ), {
 			stepName: 'site-selection',
 			formData: { url: 'my-site.wordpress.com' },
-			status: 'completed'
+			status: 'completed',
 		} );
 	} );
 
@@ -98,12 +99,15 @@ describe( 'progress-store', function() {
 	it( 'should mark submitted steps without an API request method as completed', function() {
 		SignupActions.submitSignupStep( { stepName: 'step-without-api' } );
 
-		assert.equal( find( SignupProgressStore.get(), { stepName: 'step-without-api' } ).status, 'completed' );
+		assert.equal(
+			find( SignupProgressStore.get(), { stepName: 'step-without-api' } ).status,
+			'completed'
+		);
 	} );
 
 	it( 'should mark submitted steps with an API request method as pending', function() {
 		SignupActions.submitSignupStep( {
-			stepName: 'asyncStep'
+			stepName: 'asyncStep',
 		} );
 
 		assert.equal( find( SignupProgressStore.get(), { stepName: 'asyncStep' } ).status, 'pending' );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,10 +17,7 @@ import Notice from 'components/notice';
 import ProgressBar from 'components/progress-bar';
 import { getSelectedSite } from 'state/ui/selectors';
 import syncSelectors from 'state/jetpack-sync/selectors';
-import {
-	getSyncStatus,
-	scheduleJetpackFullysync
-} from 'state/jetpack-sync/actions';
+import { getSyncStatus, scheduleJetpackFullysync } from 'state/jetpack-sync/actions';
 import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
 import NoticeAction from 'components/notice/notice-action';
 import analytics from 'lib/analytics';
@@ -44,7 +42,7 @@ const JetpackSyncPanel = React.createClass( {
 	isErrored() {
 		const syncRequestError = get( this.props, 'fullSyncRequest.error' );
 		const syncStatusErrorCount = get( this.props, 'syncStatus.errorCounter', 0 );
-		return !! ( syncRequestError || ( syncStatusErrorCount >= SYNC_STATUS_ERROR_NOTICE_THRESHOLD ) );
+		return !! ( syncRequestError || syncStatusErrorCount >= SYNC_STATUS_ERROR_NOTICE_THRESHOLD );
 	},
 
 	shouldDisableSync() {
@@ -63,7 +61,7 @@ const JetpackSyncPanel = React.createClass( {
 		debug( 'Try again button clicked' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_try_again_button_clicked', {
 			errorCode: get( this.props, 'fullSyncRequest.error.error', '' ),
-			errorMsg: get( this.props, 'fullSyncRequest.error.message', '' )
+			errorMsg: get( this.props, 'fullSyncRequest.error.message', '' ),
 		} );
 		this.props.scheduleJetpackFullysync( this.props.siteId );
 	},
@@ -72,7 +70,7 @@ const JetpackSyncPanel = React.createClass( {
 		debug( 'Clicked check connection button' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_check_connection_button_clicked', {
 			errorCode: get( this.props, 'syncStatus.error.error', '' ),
-			errorMsg: get( this.props, 'syncStatus.error.message', '' )
+			errorMsg: get( this.props, 'syncStatus.error.message', '' ),
 		} );
 	},
 
@@ -88,36 +86,33 @@ const JetpackSyncPanel = React.createClass( {
 				<Notice isCompact status="is-error" className="jetpack-sync-panel__error-notice">
 					{ translate( '%(site)s is unresponsive.', {
 						args: {
-							site: get( this.props, 'site.name' )
-						}
+							site: get( this.props, 'site.name' ),
+						},
 					} ) }
-					{
-						adminUrl &&
-						<NoticeAction onClick={ this.onClickDebug } href={ adminUrl + 'admin.php?page=jetpack-debugger' }>
+					{ adminUrl &&
+						<NoticeAction
+							onClick={ this.onClickDebug }
+							href={ adminUrl + 'admin.php?page=jetpack-debugger' }
+						>
 							{ translate( 'Check connection' ) }
-						</NoticeAction>
-					}
+						</NoticeAction> }
 				</Notice>
 			);
 		} else if ( syncRequestError ) {
 			errorNotice = (
 				<Notice isCompact status="is-error" className="jetpack-sync-panel__error-notice">
-					{
-						syncRequestError.message
+					{ syncRequestError.message
 						? syncRequestError.message
-						: translate( 'There was an error scheduling a full sync.' )
-					}
-					{
-						// We show a Try again action for a generic error on the assumption
-						// that the error was a network issue.
-						//
-						// If an error message was returned from the API, then there's likely
-						// a good reason the request failed, such as an unauthorized user.
-						! syncRequestError.message &&
+						: translate( 'There was an error scheduling a full sync.' ) }
+					{ // We show a Try again action for a generic error on the assumption
+					// that the error was a network issue.
+					//
+					// If an error message was returned from the API, then there's likely
+					// a good reason the request failed, such as an unauthorized user.
+					! syncRequestError.message &&
 						<NoticeAction onClick={ this.onTryAgainClick }>
 							{ translate( 'Try again' ) }
-						</NoticeAction>
-					}
+						</NoticeAction> }
 				</Notice>
 			);
 		}
@@ -142,8 +137,8 @@ const JetpackSyncPanel = React.createClass( {
 		} else if ( finishedTimestamp.isValid() ) {
 			text = translate( 'Last fully synced %(ago)s', {
 				args: {
-					ago: finishedTimestamp.fromNow()
-				}
+					ago: finishedTimestamp.fromNow(),
+				},
 			} );
 		}
 
@@ -163,9 +158,7 @@ const JetpackSyncPanel = React.createClass( {
 			return null;
 		}
 
-		return (
-			<ProgressBar isPulsing value={ this.props.syncProgress || 0 } />
-		);
+		return <ProgressBar isPulsing value={ this.props.syncProgress || 0 } />;
 	},
 
 	render() {
@@ -175,31 +168,33 @@ const JetpackSyncPanel = React.createClass( {
 				<div className="jetpack-sync-panel__action">
 					{ translate(
 						'Jetpack Sync keeps your WordPress.com dashboard up to date. ' +
-						'Data is sent from your site to the WordPress.com dashboard regularly to provide a faster experience. ',
+							'Data is sent from your site to the WordPress.com dashboard regularly to provide a faster experience. ',
 						{
 							components: {
-								strong: <strong />
-							}
+								strong: <strong />,
+							},
 						}
 					) }
 
-					{
-						! this.shouldDisableSync() &&
-						translate( 'If you suspect some data is missing, you can {{link}}initiate a sync manually{{/link}}.', {
-							components: {
-								link: <a href="" onClick={ this.onSyncRequestButtonClick } />
+					{ ! this.shouldDisableSync() &&
+						translate(
+							'If you suspect some data is missing, you can {{link}}initiate a sync manually{{/link}}.',
+							{
+								components: {
+									link: <a href="" onClick={ this.onSyncRequestButtonClick } />,
+								},
 							}
-						} )
-					}
+						) }
 				</div>
 
 				{ this.renderErrorNotice() }
 				{ this.renderStatusNotice() }
 				{ this.renderProgressBar() }
-				{ this.shouldDisableSync() && <Interval onTick={ this.fetchSyncStatus } period={ EVERY_TEN_SECONDS } /> }
+				{ this.shouldDisableSync() &&
+					<Interval onTick={ this.fetchSyncStatus } period={ EVERY_TEN_SECONDS } /> }
 			</CompactCard>
 		);
-	}
+	},
 } );
 
 export default connect(
@@ -213,7 +208,7 @@ export default connect(
 			fullSyncRequest: syncSelectors.getFullSyncRequest( state, siteId ),
 			isPendingSyncStart: syncSelectors.isPendingSyncStart( state, siteId ),
 			isFullSyncing: syncSelectors.isFullSyncing( state, siteId ),
-			syncProgress: syncSelectors.getSyncProgressPercentage( state, siteId )
+			syncProgress: syncSelectors.getSyncProgressPercentage( state, siteId ),
 		};
 	},
 	dispatch => bindActionCreators( { getSyncStatus, scheduleJetpackFullysync }, dispatch )

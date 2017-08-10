@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +32,7 @@ module.exports = function( message, callback, confirmButtonText, cancelButtonTex
 			onClose: onClose,
 			confirmButtonText: confirmButtonText,
 			cancelButtonText: cancelButtonText,
-			options
+			options,
 		} ),
 		wrapper
 	);

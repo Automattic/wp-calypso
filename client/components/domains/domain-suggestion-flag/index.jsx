@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,9 +11,7 @@ import Notice from 'components/notice';
 
 function DomainSuggestionFlag( { content, status = 'info' } ) {
 	return (
-		<Notice
-			isCompact
-			status={ `is-${ status }` }>
+		<Notice isCompact status={ `is-${ status }` }>
 			{ content }
 		</Notice>
 	);

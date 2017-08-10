@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,12 +9,7 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	isLoading,
-	isSaving,
-	items,
-	orders,
-} from '../reducer';
+import { isLoading, isSaving, items, orders } from '../reducer';
 import {
 	WOOCOMMERCE_ORDER_NOTE_CREATE,
 	WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE,
@@ -166,7 +162,7 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { 45: [ 1, 2 ] } );
 		} );
 
-		it( 'should add a second order\'s notes as a second list', () => {
+		it( "should add a second order's notes as a second list", () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
 				siteId: 123,

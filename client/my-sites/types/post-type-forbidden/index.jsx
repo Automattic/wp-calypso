@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,12 +15,13 @@ function PostTypeForbidden( { translate } ) {
 		<EmptyContent
 			illustration="/calypso/images/drake/drake-whoops.svg"
 			title={ translate( 'You need permission to manage this post type' ) }
-			line={ translate( 'Ask your site administrator to grant you access' ) } />
+			line={ translate( 'Ask your site administrator to grant you access' ) }
+		/>
 	);
 }
 
 PostTypeForbidden.propTypes = {
-	translate: PropTypes.func
+	translate: PropTypes.func,
 };
 
 export default localize( PostTypeForbidden );

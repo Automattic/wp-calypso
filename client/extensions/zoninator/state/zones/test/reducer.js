@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,10 +21,7 @@ describe( 'reducer', () => {
 	const secondarySiteId = 234567;
 
 	it( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'requesting',
-			'items',
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );
 	} );
 
 	describe( 'requesting', () => {
@@ -100,15 +98,19 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'items()', () => {
-		const primaryZones = [ {
-			name: 'Test zone',
-			description: 'A test zone',
-			slug: 'test-zone',
-		} ];
-		const secondaryZones = [ {
-			name: 'Test zone 2',
-			description: 'Another test zone',
-		} ];
+		const primaryZones = [
+			{
+				name: 'Test zone',
+				description: 'A test zone',
+				slug: 'test-zone',
+			},
+		];
+		const secondaryZones = [
+			{
+				name: 'Test zone 2',
+				description: 'Another test zone',
+			},
+		];
 
 		const previousState = deepFreeze( {
 			[ primarySiteId ]: primaryZones,

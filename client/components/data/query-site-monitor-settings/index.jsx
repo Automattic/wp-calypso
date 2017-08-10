@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ class QuerySiteMonitorSettings extends Component {
 		siteId: PropTypes.number.isRequired,
 		// Connected props
 		requestingSiteMonitorSettings: PropTypes.bool,
-		requestSiteMonitorSettings: PropTypes.func
+		requestSiteMonitorSettings: PropTypes.func,
 	};
 
 	componentDidMount() {

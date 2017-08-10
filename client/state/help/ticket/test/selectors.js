@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -60,13 +61,15 @@ describe( 'ticket-support/configuration/selectors', () => {
 
 	describe( '#isRequestingTicketSupportConfiguration', () => {
 		it( 'should return true', () => {
-			assert.isTrue( isRequestingTicketSupportConfiguration( {
-				help: {
-					ticket: {
-						isRequesting: true,
+			assert.isTrue(
+				isRequestingTicketSupportConfiguration( {
+					help: {
+						ticket: {
+							isRequesting: true,
+						},
 					},
-				},
-			} ) );
+				} )
+			);
 		} );
 	} );
 

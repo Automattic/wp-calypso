@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,8 +11,8 @@ import { localize } from 'i18n-calypso';
 import CourseVideo from './course-video';
 import Card from 'components/card';
 
-export default localize( ( props ) => {
-	const {	videos, translate } = props;
+export default localize( props => {
+	const { videos, translate } = props;
 
 	if ( videos.length === 0 ) {
 		return null;
@@ -19,8 +20,10 @@ export default localize( ( props ) => {
 
 	return (
 		<div className="help-courses__course-videos">
-			<Card compact className="help-courses__course-videos-label">{ translate( 'Latest course' ) }</Card>
-			{ videos.map( ( video, key ) => <CourseVideo { ...video } key={ key }/> ) }
+			<Card compact className="help-courses__course-videos-label">
+				{ translate( 'Latest course' ) }
+			</Card>
+			{ videos.map( ( video, key ) => <CourseVideo { ...video } key={ key } /> ) }
 		</div>
 	);
 } );

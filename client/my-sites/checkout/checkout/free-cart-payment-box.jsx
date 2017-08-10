@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +15,7 @@ import CartToggle from './cart-toggle';
 
 var FreeCartPaymentBox = React.createClass( {
 	propTypes: {
-		products: React.PropTypes.object.isRequired
+		products: React.PropTypes.object.isRequired,
 	},
 
 	content: function() {
@@ -23,16 +24,19 @@ var FreeCartPaymentBox = React.createClass( {
 		return (
 			<form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
-					<h6>{
-						cart.has_bundle_credit ?
-							this.translate( 'You have a free domain credit!' ) :
-							this.translate( "Woohoo! You don't owe us anything!" ) }
+					<h6>
+						{ cart.has_bundle_credit
+							? this.translate( 'You have a free domain credit!' )
+							: this.translate( "Woohoo! You don't owe us anything!" ) }
 					</h6>
 
-					<span>{
-						cart.has_bundle_credit ?
-							this.translate( 'You get one free domain with your subscription to %(productName)s. Time to celebrate!', { args: { productName: this.getProductName() } } ) :
-							this.translate( 'Just complete checkout to add these upgrades to your site.' ) }
+					<span>
+						{ cart.has_bundle_credit
+							? this.translate(
+									'You get one free domain with your subscription to %(productName)s. Time to celebrate!',
+									{ args: { productName: this.getProductName() } }
+								)
+							: this.translate( 'Just complete checkout to add these upgrades to your site.' ) }
 					</span>
 				</div>
 
@@ -44,7 +48,8 @@ var FreeCartPaymentBox = React.createClass( {
 					<PayButton
 						cart={ cart }
 						transactionStep={ this.props.transactionStep }
-						beforeSubmitText={ this.translate( 'Complete Checkout' ) } />
+						beforeSubmitText={ this.translate( 'Complete Checkout' ) }
+					/>
 				</div>
 			</form>
 		);
@@ -67,13 +72,11 @@ var FreeCartPaymentBox = React.createClass( {
 
 	render: function() {
 		return (
-			<PaymentBox
-				classSet="credits-payment-box"
-				title={ this.translate( 'Secure Payment' ) }>
+			<PaymentBox classSet="credits-payment-box" title={ this.translate( 'Secure Payment' ) }>
 				{ this.content() }
 			</PaymentBox>
 		);
-	}
+	},
 } );
 
 module.exports = FreeCartPaymentBox;

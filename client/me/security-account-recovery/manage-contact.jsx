@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +14,7 @@ import analytics from 'lib/analytics';
 
 const views = keyMirror( {
 	VIEWING: null,
-	EDITING: null
+	EDITING: null,
 } );
 
 class ManageContact extends Component {
@@ -21,7 +22,7 @@ class ManageContact extends Component {
 		super( props );
 
 		this.state = {
-			currentView: views.VIEWING
+			currentView: views.VIEWING,
 		};
 	}
 
@@ -32,28 +33,27 @@ class ManageContact extends Component {
 		return (
 			<div className="security-account-recovery-contact__header">
 				<div className="security-account-recovery-contact__header-info">
-					<span className="security-account-recovery-contact__header-title">{ this.props.title }</span>
-					{
-						isEditing
+					<span className="security-account-recovery-contact__header-title">
+						{ this.props.title }
+					</span>
+					{ isEditing
 						? null
-						: <span className="security-account-recovery-contact__header-subtitle">{ this.props.subtitle }</span>
-					}
+						: <span className="security-account-recovery-contact__header-subtitle">
+								{ this.props.subtitle }
+							</span> }
 				</div>
 
-				{
-					isEditing
+				{ isEditing
 					? null
-					: (
-						<div className="security-account-recovery-contact__header-action">
+					: <div className="security-account-recovery-contact__header-action">
 							<FormButton
 								disabled={ this.props.disabled }
 								isPrimary={ false }
-								onClick={ this.onEdit }>
+								onClick={ this.onEdit }
+							>
 								{ this.props.hasValue ? translate( 'Edit' ) : translate( 'Add' ) }
 							</FormButton>
-						</div>
-					)
-				}
+						</div> }
 			</div>
 		);
 	}
@@ -64,13 +64,11 @@ class ManageContact extends Component {
 		if ( views.EDITING === this.state.currentView ) {
 			view = (
 				<div className="security-account-recovery-contact__detail">
-					{
-						React.cloneElement( this.props.children, {
-							onCancel: this.onCancel,
-							onSave: this.onSave,
-							onDelete: this.onDelete
-						} )
-					}
+					{ React.cloneElement( this.props.children, {
+						onCancel: this.onCancel,
+						onSave: this.onSave,
+						onDelete: this.onDelete,
+					} ) }
 				</div>
 			);
 		}
@@ -104,27 +102,27 @@ class ManageContact extends Component {
 		this.setState( { currentView: views.EDITING }, function() {
 			this.recordEvent( this.props.hasValue ? 'edit' : 'add' );
 		} );
-	}
+	};
 
 	onCancel = () => {
 		this.setState( { currentView: views.VIEWING }, function() {
 			this.recordEvent( 'cancel' );
 		} );
-	}
+	};
 
-	onSave = ( data ) => {
+	onSave = data => {
 		this.setState( { currentView: views.VIEWING }, function() {
 			this.props.onSave( data );
 			this.recordEvent( 'save' );
 		} );
-	}
+	};
 
 	onDelete = () => {
 		this.setState( { currentView: views.VIEWING }, function() {
 			this.props.onDelete();
 			this.recordEvent( 'delete' );
 		} );
-	}
+	};
 
 	recordEvent( action ) {
 		const event = `calypso_security_account-recovery_${ this.props.type }_${ action }_click`;
@@ -134,7 +132,7 @@ class ManageContact extends Component {
 
 ManageContact.propTypes = {
 	type: React.PropTypes.string,
-	disabled: React.PropTypes.bool
+	disabled: React.PropTypes.bool,
 };
 
 export default localize( ManageContact );

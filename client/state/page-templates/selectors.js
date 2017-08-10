@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns true if a request is in progress to retrieve the page templates for
  * the specified site, or false otherwise.

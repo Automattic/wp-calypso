@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -15,5 +16,5 @@ export const Tabs = {
 	PAGES: {
 		label: translate( 'Pages' ),
 		slug: 'pages',
-	}
+	},
 };

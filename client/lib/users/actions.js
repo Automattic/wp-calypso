@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +20,7 @@ const UsersActions = {
 		debug( 'fetchUsers', fetchOptions );
 		Dispatcher.handleViewAction( {
 			type: 'FETCHING_USERS',
-			fetchOptions: fetchOptions
+			fetchOptions: fetchOptions,
 		} );
 
 		wpcom.site( fetchOptions.siteId ).usersList( fetchOptions, ( error, data ) => {
@@ -27,7 +28,7 @@ const UsersActions = {
 				type: 'RECEIVE_USERS',
 				fetchOptions: fetchOptions,
 				data: data,
-				error: error
+				error: error,
 			} );
 		} );
 	},
@@ -40,7 +41,7 @@ const UsersActions = {
 
 		Dispatcher.handleViewAction( {
 			type: 'FETCHING_UPDATED_USERS',
-			fetchOptions: fetchOptions
+			fetchOptions: fetchOptions,
 		} );
 
 		const updatedFetchOptions = UsersStore.getUpdatedParams( fetchOptions );
@@ -51,7 +52,7 @@ const UsersActions = {
 				type: 'RECEIVE_UPDATED_USERS',
 				fetchOptions: fetchOptions,
 				data: data,
-				error: error
+				error: error,
 			} );
 		} );
 	},
@@ -65,13 +66,13 @@ const UsersActions = {
 		Dispatcher.handleViewAction( {
 			type: 'DELETE_SITE_USER',
 			siteId: siteId,
-			user: user
+			user: user,
 		} );
 
 		let attributes;
 		if ( 'undefined' !== typeof reassignUserId ) {
 			attributes = {
-				reassign: reassignUserId
+				reassign: reassignUserId,
 			};
 		}
 
@@ -82,7 +83,7 @@ const UsersActions = {
 					action: 'DELETE_SITE_USER',
 					siteId: siteId,
 					user: user,
-					error: error
+					error: error,
 				} );
 			} else {
 				Dispatcher.handleServerAction( {
@@ -90,7 +91,7 @@ const UsersActions = {
 					action: 'DELETE_SITE_USER',
 					siteId: siteId,
 					user: user,
-					data: data
+					data: data,
 				} );
 			}
 		} );
@@ -108,7 +109,7 @@ const UsersActions = {
 		Dispatcher.handleViewAction( {
 			type: 'UPDATE_SITE_USER',
 			siteId: siteId,
-			user: updatedUser
+			user: updatedUser,
 		} );
 		wpcom.undocumented().site( siteId ).updateUser( userId, attributes, ( error, data ) => {
 			if ( error ) {
@@ -118,7 +119,7 @@ const UsersActions = {
 					action: 'UPDATE_SITE_USER',
 					siteId: siteId,
 					user: user,
-					error: error
+					error: error,
 				} );
 			} else {
 				Dispatcher.handleServerAction( {
@@ -126,7 +127,7 @@ const UsersActions = {
 					action: 'UPDATE_SITE_USER',
 					siteId: siteId,
 					user: user,
-					data: data
+					data: data,
 				} );
 			}
 		} );
@@ -137,7 +138,7 @@ const UsersActions = {
 
 		Dispatcher.handleViewAction( {
 			type: 'FETCHING_USERS',
-			fetchOptions: fetchOptions
+			fetchOptions: fetchOptions,
 		} );
 
 		wpcom.undocumented().site( fetchOptions.siteId ).getUser( login, ( error, data ) => {
@@ -147,18 +148,17 @@ const UsersActions = {
 					fetchOptions: fetchOptions,
 					siteId: fetchOptions.siteId,
 					login: login,
-					error: error
+					error: error,
 				} );
 			} else {
 				Dispatcher.handleServerAction( {
 					type: 'RECEIVE_SINGLE_USER',
 					fetchOptions: fetchOptions,
-					user: data
+					user: data,
 				} );
 			}
 		} );
-	}
-
+	},
 };
 
 module.exports = UsersActions;

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +14,7 @@ export default React.createClass( {
 	displayName: 'NotificationSettingsFormLabels',
 
 	propTypes: {
-		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired
+		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
 	},
 
 	shouldComponentUpdate() {
@@ -27,5 +28,5 @@ export default React.createClass( {
 				<LabelsList settingKeys={ this.props.settingKeys } />
 			</div>
 		);
-	}
+	},
 } );

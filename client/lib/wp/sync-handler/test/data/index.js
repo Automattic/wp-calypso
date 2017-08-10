@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -12,7 +13,8 @@ export const postListDifferentSiteKey = 'sync-record-47c8614e439761ed4406915f31b
 export const postListWithSearchKey = 'sync-record-5c73482c2934a7f40601935c92e734748026fe70';
 
 export const postListPageSeriesKey = 'sync-record-c8234aa4facc43d9bf2a2ef4037c595200f282f2';
-export const postListDifferentPageSeriesKey = 'sync-record-5c73482c2934a7f40601935c92e734748026fe70';
+export const postListDifferentPageSeriesKey =
+	'sync-record-5c73482c2934a7f40601935c92e734748026fe70';
 
 /*
  * Request Parameters
@@ -23,7 +25,8 @@ export const postListParams = {
 	apiVersion: '1.1',
 	method: 'GET',
 	path: `/sites/${ postListSiteId }/posts`,
-	query: 'status=publish%2Cprivate&order_by=date&order=DESC&author=6617482&type=post&site_visibility=visible&meta=counts',
+	query:
+		'status=publish%2Cprivate&order_by=date&order=DESC&author=6617482&type=post&site_visibility=visible&meta=counts',
 };
 
 // the same query parameters but in a different order
@@ -31,7 +34,8 @@ export const postListDifferentOrderParams = {
 	apiVersion: '1.1',
 	method: 'GET',
 	path: `/sites/${ postListSiteId }/posts`,
-	query: 'order_by=date&order=DESC&author=6617482&type=post&site_visibility=visible&meta=counts&status=publish%2Cprivate',
+	query:
+		'order_by=date&order=DESC&author=6617482&type=post&site_visibility=visible&meta=counts&status=publish%2Cprivate',
 };
 
 // the same parameters, but with a page_handle
@@ -39,13 +43,18 @@ export const postListNextPageParams = {
 	apiVersion: '1.1',
 	method: 'GET',
 	path: `/sites/${ postListSiteId }/posts`,
-	query: 'status=publish%2Cprivate&order_by=date&order=DESC&author=6617482&type=post&site_visibility=visible&meta=counts&page_handle=2014-11-24T13%3A39%3A39-08%3A00%26id=1307',
+	query:
+		'status=publish%2Cprivate&order_by=date&order=DESC&author=6617482&type=post&site_visibility=visible&meta=counts&page_handle=2014-11-24T13%3A39%3A39-08%3A00%26id=1307',
 };
 
 // the same post-list request but against a different site
-export const postListDifferentSiteParams = Object.assign( {}, postListParams, { path: '/sites/bobinprogress2.wordpress.com/posts' } );
+export const postListDifferentSiteParams = Object.assign( {}, postListParams, {
+	path: '/sites/bobinprogress2.wordpress.com/posts',
+} );
 
-export const postListWithSearchParams = Object.assign( {}, postListParams, { query: 'search=test' } );
+export const postListWithSearchParams = Object.assign( {}, postListParams, {
+	query: 'search=test',
+} );
 
 export const nonWhiteListedRequest = {
 	apiVersion: '1.1',
@@ -64,10 +73,7 @@ export const postListResponseBody = {
 		links: {},
 		next_page: 'value=2014-11-24T13%3A39%3A39-08%3A00&id=9900',
 	},
-	posts: [
-		{ ID: 9900 },
-		{ ID: 9901 },
-	],
+	posts: [ { ID: 9900 }, { ID: 9901 } ],
 };
 
 export const postListNextPageResponseBody = {
@@ -77,11 +83,7 @@ export const postListNextPageResponseBody = {
 		links: {},
 		next_page: 'value=2014-10-24T13%3A39%3A39-08%3A00&id=9897',
 	},
-	posts: [
-		{ ID: 9897 },
-		{ ID: 9898 },
-		{ ID: 9899}
-	],
+	posts: [ { ID: 9897 }, { ID: 9898 }, { ID: 9899 } ],
 };
 
 export const postListDifferentSiteResponseBody = {
@@ -91,10 +93,8 @@ export const postListDifferentSiteResponseBody = {
 		links: {},
 		next_page: 'value=2015-11-24T13%3A39%3A39-08%3A00&id=1234',
 	},
-	posts: [
-		{ ID: 1234 }
-	],
-}
+	posts: [ { ID: 1234 } ],
+};
 
 export const postListWithSearchResponseBody = {
 	found: 2,
@@ -103,10 +103,7 @@ export const postListWithSearchResponseBody = {
 		links: {},
 		next_page: 'value=2015-11-24T13%3A39%3A39-08%3A00&id=2000',
 	},
-	posts: [
-		{ ID: 2000 },
-		{ ID: 2001 },
-	],
+	posts: [ { ID: 2000 }, { ID: 2001 } ],
 };
 
 export const postListFreshResponseBody = {
@@ -116,12 +113,8 @@ export const postListFreshResponseBody = {
 		links: {},
 		next_page: 'value=2014-11-26T13%3A39%3A39-08%3A00&id=9899',
 	},
-	posts: [
-		{ ID: 9899 },
-		{ ID: 9900 },
-		{ ID: 9901 },
-	]
-}
+	posts: [ { ID: 9899 }, { ID: 9900 }, { ID: 9901 } ],
+};
 
 export const postListNoHandleResponseBody = Object.assign( {}, postListResponseBody, { meta: {} } );
 
@@ -157,7 +150,7 @@ export const postListDifferentSiteLocalRecord = {
 	},
 	body: postListDifferentSiteResponseBody,
 	params: Object.assign( {}, postListDifferentSiteParams ),
-}
+};
 
 export const postListWithSearchLocalRecord = {
 	__sync: {
@@ -192,4 +185,4 @@ export const localDataFull = {
 	[ postListNextPageKey ]: postListNextPageLocalRecord,
 	[ postListWithSearchKey ]: postListWithSearchLocalRecord,
 	[ RECORDS_LIST_KEY ]: recordsList,
-}
+};

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -51,12 +52,13 @@ class ConnectionsList extends PureComponent {
 		return (
 			<div className="post-share__connections">
 				{ connections.map( connection =>
-					<Connection { ...{
-						connection,
-						onToggle,
-						isActive: connection.isActive,
-						key: connection.keyring_connection_ID,
-					} }
+					<Connection
+						{ ...{
+							connection,
+							onToggle,
+							isActive: connection.isActive,
+							key: connection.keyring_connection_ID,
+						} }
 					/>
 				) }
 			</div>
@@ -64,7 +66,7 @@ class ConnectionsList extends PureComponent {
 	}
 }
 
-export const NoConnectionsNotice = ( { siteSlug, translate } ) => (
+export const NoConnectionsNotice = ( { siteSlug, translate } ) =>
 	<Notice
 		status="is-warning"
 		showDismiss={ false }
@@ -73,7 +75,6 @@ export const NoConnectionsNotice = ( { siteSlug, translate } ) => (
 		<NoticeAction href={ `/sharing/${ siteSlug }` }>
 			{ translate( 'Settings' ) }
 		</NoticeAction>
-	</Notice>
-);
+	</Notice>;
 
 export default localize( ConnectionsList );

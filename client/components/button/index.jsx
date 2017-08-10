@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,11 +16,11 @@ export default class Button extends PureComponent {
 		href: PropTypes.string,
 		borderless: PropTypes.bool,
 		target: PropTypes.string,
-		rel: PropTypes.string
+		rel: PropTypes.string,
 	};
 
 	static defaultProps = {
-		type: 'button'
+		type: 'button',
 	};
 
 	render() {
@@ -38,11 +39,9 @@ export default class Button extends PureComponent {
 
 		// Block referrers when external link
 		if ( props.target ) {
-			props.rel = uniq( compact( [
-				...( props.rel || '' ).split( ' ' ),
-				'noopener',
-				'noreferrer'
-			] ) ).join( ' ' );
+			props.rel = uniq(
+				compact( [ ...( props.rel || '' ).split( ' ' ), 'noopener', 'noreferrer' ] )
+			).join( ' ' );
 		}
 
 		return createElement( tag, {
@@ -52,8 +51,8 @@ export default class Button extends PureComponent {
 				'is-primary': this.props.primary,
 				'is-scary': this.props.scary,
 				'is-busy': this.props.busy,
-				'is-borderless': this.props.borderless
-			} )
+				'is-borderless': this.props.borderless,
+			} ),
 		} );
 	}
 }

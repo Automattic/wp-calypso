@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,7 @@ import { recordPageView } from 'state/analytics/actions';
 
 export const PageViewTracker = React.createClass( {
 	getInitialState: () => ( {
-		timer: null
+		timer: null,
 	} ),
 
 	componentDidMount() {
@@ -24,12 +25,7 @@ export const PageViewTracker = React.createClass( {
 	},
 
 	queuePageView() {
-		const {
-			delay = 0,
-			path,
-			recorder = noop,
-			title
-		} = this.props;
+		const { delay = 0, path, recorder = noop, title } = this.props;
 
 		if ( this.state.timer ) {
 			return;
@@ -40,22 +36,22 @@ export const PageViewTracker = React.createClass( {
 		}
 
 		this.setState( {
-			timer: setTimeout( () => recorder( path, title ), delay )
+			timer: setTimeout( () => recorder( path, title ), delay ),
 		} );
 	},
 
-	render: () => null
+	render: () => null,
 } );
 
 PageViewTracker.propTypes = {
 	delay: PropTypes.number,
 	path: PropTypes.string.isRequired,
 	recorder: PropTypes.func,
-	title: PropTypes.string.isRequired
+	title: PropTypes.string.isRequired,
 };
 
 const mapDispatchToProps = dispatch => ( {
-	recorder: flowRight( dispatch, recordPageView )
+	recorder: flowRight( dispatch, recordPageView ),
 } );
 
 export default connect( null, mapDispatchToProps )( PageViewTracker );

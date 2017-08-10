@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -25,22 +26,23 @@ import { WPCOM_HTTP_REQUEST } from 'state/action-types';
  * @param {?Object} action default action to call on HTTP events
  * @returns {Object} Redux action describing WordPress.com API HTTP request
  */
-export const http = ( {
-	apiVersion,
-	apiNamespace,
-	body,
-	method,
-	path,
-	query = {},
-	formData,
-	onSuccess,
-	onFailure,
-	onProgress,
-	...options,
-}, action = null ) => {
-	const version = apiNamespace
-		? { apiNamespace }
-		: { apiVersion };
+export const http = (
+	{
+		apiVersion,
+		apiNamespace,
+		body,
+		method,
+		path,
+		query = {},
+		formData,
+		onSuccess,
+		onFailure,
+		onProgress,
+		...options
+	},
+	action = null
+) => {
+	const version = apiNamespace ? { apiNamespace } : { apiVersion };
 
 	return {
 		type: WPCOM_HTTP_REQUEST,

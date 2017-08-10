@@ -1,7 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { identity, noop } from 'lodash';
 import classNames from 'classnames';
@@ -18,7 +19,7 @@ import Popover from 'components/popover';
 import Site from 'blocks/site';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import { recordEvent, recordStat } from 'lib/posts/stats';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
@@ -48,7 +49,7 @@ export class EditorGroundControl extends PureComponent {
 		toggleSidebar: PropTypes.func,
 		translate: PropTypes.func,
 		type: PropTypes.string,
-	}
+	};
 
 	static defaultProps = {
 		hasContent: false,
@@ -67,13 +68,14 @@ export class EditorGroundControl extends PureComponent {
 		user: null,
 		userUtils: null,
 		setPostDate: noop,
-	}
+	};
 
 	state = {
 		showSchedulePopover: false,
 		showAdvanceStatus: false,
-		needsVerification: this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
-	}
+		needsVerification:
+			this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
+	};
 
 	componentDidMount() {
 		if ( ! this.props.user ) {
@@ -97,13 +99,15 @@ export class EditorGroundControl extends PureComponent {
 
 	updateNeedsVerification = () => {
 		this.setState( {
-			needsVerification: this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
+			needsVerification:
+				this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
 		} );
-	}
+	};
 
 	componentWillReceiveProps( nextProps ) {
 		this.setState( {
-			needsVerification: nextProps.userUtils && nextProps.userUtils.needsVerificationForSite( nextProps.site ),
+			needsVerification:
+				nextProps.userUtils && nextProps.userUtils.needsVerificationForSite( nextProps.site ),
 		} );
 
 		if ( this.props.user ) {
@@ -128,12 +132,18 @@ export class EditorGroundControl extends PureComponent {
 	}
 
 	getVerificationNoticeLabel() {
-		const primaryButtonState = getPublishButtonStatus( this.props.site, this.props.post, this.props.savedPost ),
+		const primaryButtonState = getPublishButtonStatus(
+				this.props.site,
+				this.props.post,
+				this.props.savedPost
+			),
 			buttonLabels = {
 				update: i18n.translate( 'To update, check your email and confirm your address.' ),
 				schedule: i18n.translate( 'To schedule, check your email and confirm your address.' ),
 				publish: i18n.translate( 'To publish, check your email and confirm your address.' ),
-				requestReview: i18n.translate( 'To submit for review, check your email and confirm your address.' ),
+				requestReview: i18n.translate(
+					'To submit for review, check your email and confirm your address.'
+				),
 			};
 
 		return buttonLabels[ primaryButtonState ];
@@ -141,19 +151,20 @@ export class EditorGroundControl extends PureComponent {
 
 	toggleSchedulePopover = () => {
 		this.setState( { showSchedulePopover: ! this.state.showSchedulePopover } );
-	}
+	};
 
-	closeSchedulePopover = ( wasCanceled ) => {
+	closeSchedulePopover = wasCanceled => {
 		if ( wasCanceled ) {
-			const date = this.props.savedPost && this.props.savedPost.date
-				? this.props.moment( this.props.savedPost.date )
-				: null;
+			const date =
+				this.props.savedPost && this.props.savedPost.date
+					? this.props.moment( this.props.savedPost.date )
+					: null;
 
 			this.props.setPostDate( date );
 		}
 
 		this.setState( { showSchedulePopover: false } );
-	}
+	};
 
 	schedulePostPopover() {
 		return (
@@ -165,10 +176,12 @@ export class EditorGroundControl extends PureComponent {
 				id="editor-post-schedule"
 				className="editor-ground-control__post-schedule-popover"
 			>
-				<PostScheduler initialDate={ this.props.moment() }
-					post={ this.props.post }
-					setPostDate= { this.props.setPostDate }
-					site={ this.props.site } />
+				<PostScheduler
+					initialDate={ this.props.moment() }
+					post={ this.props.post }
+					setPostDate={ this.props.setPostDate }
+					site={ this.props.site }
+				/>
 			</Popover>
 		);
 	}
@@ -186,18 +199,22 @@ export class EditorGroundControl extends PureComponent {
 	}
 
 	isSaveEnabled() {
-		return ! this.props.isSaving &&
+		return (
+			! this.props.isSaving &&
 			! this.props.isSaveBlocked &&
 			this.props.isDirty &&
 			this.props.hasContent &&
 			!! this.props.post &&
-			! postUtils.isPublished( this.props.post );
+			! postUtils.isPublished( this.props.post )
+		);
 	}
 
 	isPreviewEnabled() {
-		return this.props.hasContent &&
+		return (
+			this.props.hasContent &&
 			! ( this.props.isNew && ! this.props.isDirty ) &&
-			! this.props.isSaveBlocked;
+			! this.props.isSaveBlocked
+		);
 	}
 
 	canPublishPost() {
@@ -206,22 +223,26 @@ export class EditorGroundControl extends PureComponent {
 
 	toggleAdvancedStatus = () => {
 		this.setState( { showAdvanceStatus: ! this.state.showAdvanceStatus } );
-	}
+	};
 
 	onSaveButtonClick = () => {
 		this.props.onSave();
-		const eventLabel = postUtils.isPage( this.props.page ) ? 'Clicked Save Page Button' : 'Clicked Save Post Button';
+		const eventLabel = postUtils.isPage( this.props.page )
+			? 'Clicked Save Page Button'
+			: 'Clicked Save Post Button';
 		recordEvent( eventLabel );
 		recordStat( 'save_draft_clicked' );
-	}
+	};
 
-	onPreviewButtonClick = ( event ) => {
+	onPreviewButtonClick = event => {
 		if ( this.isPreviewEnabled() ) {
 			this.props.onPreview( event );
-			const eventLabel = postUtils.isPage( this.props.page ) ? 'Clicked Preview Page Button' : 'Clicked Preview Post Button';
+			const eventLabel = postUtils.isPage( this.props.page )
+				? 'Clicked Preview Page Button'
+				: 'Clicked Preview Post Button';
 			recordEvent( eventLabel );
 		}
-	}
+	};
 
 	renderGroundControlActionButtons() {
 		if ( this.props.confirmationSidebarStatus === 'open' ) {
@@ -229,7 +250,7 @@ export class EditorGroundControl extends PureComponent {
 		}
 
 		const publishComboClasses = classNames( 'editor-ground-control__publish-combo', {
-			'is-standalone': ! this.canPublishPost() || this.props.isConfirmationSidebarEnabled
+			'is-standalone': ! this.canPublishPost() || this.props.isConfirmationSidebarEnabled,
 		} );
 
 		return (
@@ -241,14 +262,18 @@ export class EditorGroundControl extends PureComponent {
 					onClick={ this.onPreviewButtonClick }
 					tabIndex={ 4 }
 				>
-					<Gridicon icon="visible" /> <span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
+					<Gridicon icon="visible" />{' '}
+					<span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
 				</Button>
 				<Button
 					borderless
 					className="editor-ground-control__toggle-sidebar"
 					onClick={ this.props.toggleSidebar }
 				>
-					<Gridicon icon="cog" /> <span className="editor-ground-control__button-label"><EditorPostType isSettings /></span>
+					<Gridicon icon="cog" />{' '}
+					<span className="editor-ground-control__button-label">
+						<EditorPostType isSettings />
+					</span>
 				</Button>
 				<div className={ publishComboClasses }>
 					<EditorPublishButton
@@ -263,38 +288,37 @@ export class EditorGroundControl extends PureComponent {
 						isSaveBlocked={ this.props.isSaveBlocked }
 						hasContent={ this.props.hasContent }
 						needsVerification={ this.state.needsVerification }
-						busy={ this.props.isPublishing || ( postUtils.isPublished( this.props.savedPost ) && this.props.isSaving ) }
+						busy={
+							this.props.isPublishing ||
+							( postUtils.isPublished( this.props.savedPost ) && this.props.isSaving )
+						}
 					/>
 					{ this.canPublishPost() &&
-					! this.props.isConfirmationSidebarEnabled &&
-					<Button
-						primary
-						compact
-						ref="schedulePost"
-						className="editor-ground-control__time-button"
-						onClick={ this.toggleSchedulePopover }
-						aria-label={ this.props.translate( 'Schedule date and time to publish post.' ) }
-						aria-pressed={ !! this.state.showSchedulePopover }
-						title={ this.props.translate( 'Set date and time' ) }
-						tabIndex={ 6 }
-					>
-						{ postUtils.isFutureDated( this.props.post )
-							? <Gridicon icon="scheduled" />
-							: <Gridicon icon="calendar" />
-						}
-						<span className="editor-ground-control__time-button-label">
-										{ postUtils.isFutureDated( this.props.post )
-											? this.props.moment( this.props.post.date ).calendar()
-											: this.props.translate( 'Choose Date' )
-										}
-									</span>
-					</Button>
-					}
+						! this.props.isConfirmationSidebarEnabled &&
+						<Button
+							primary
+							compact
+							ref="schedulePost"
+							className="editor-ground-control__time-button"
+							onClick={ this.toggleSchedulePopover }
+							aria-label={ this.props.translate( 'Schedule date and time to publish post.' ) }
+							aria-pressed={ !! this.state.showSchedulePopover }
+							title={ this.props.translate( 'Set date and time' ) }
+							tabIndex={ 6 }
+						>
+							{ postUtils.isFutureDated( this.props.post )
+								? <Gridicon icon="scheduled" />
+								: <Gridicon icon="calendar" /> }
+							<span className="editor-ground-control__time-button-label">
+								{ postUtils.isFutureDated( this.props.post )
+									? this.props.moment( this.props.post.date ).calendar()
+									: this.props.translate( 'Choose Date' ) }
+							</span>
+						</Button> }
 				</div>
 				{ this.canPublishPost() &&
-				! this.props.isConfirmationSidebarEnabled &&
-				this.schedulePostPopover()
-				}
+					! this.props.isConfirmationSidebarEnabled &&
+					this.schedulePostPopover() }
 			</div>
 		);
 	}
@@ -319,19 +343,20 @@ export class EditorGroundControl extends PureComponent {
 					externalLink={ true }
 				/>
 				{ this.state.needsVerification &&
-					<div className="editor-ground-control__email-verification-notice"
+					<div
+						className="editor-ground-control__email-verification-notice"
 						tabIndex={ 7 }
-						onClick={ this.props.onMoreInfoAboutEmailVerify }>
+						onClick={ this.props.onMoreInfoAboutEmailVerify }
+					>
 						<Gridicon
 							icon="info"
-							className="editor-ground-control__email-verification-notice-icon" />
-						{ this.getVerificationNoticeLabel() }
-						{ ' ' }
+							className="editor-ground-control__email-verification-notice-icon"
+						/>
+						{ this.getVerificationNoticeLabel() }{' '}
 						<span className="editor-ground-control__email-verification-notice-more">
 							{ this.props.translate( 'Learn More' ) }
 						</span>
-					</div>
-				}
+					</div> }
 				<div className="editor-ground-control__status">
 					{ this.isSaveEnabled() &&
 						<button
@@ -340,13 +365,11 @@ export class EditorGroundControl extends PureComponent {
 							tabIndex={ 3 }
 						>
 							{ this.props.translate( 'Save' ) }
-						</button>
-					}
+						</button> }
 					{ ! this.isSaveEnabled() &&
 						<span className="editor-ground-control__save-status">
 							{ this.getSaveStatusLabel() }
-						</span>
-					}
+						</span> }
 				</div>
 				{ this.renderGroundControlActionButtons() }
 			</Card>

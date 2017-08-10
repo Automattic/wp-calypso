@@ -1,3 +1,4 @@
+/** @format */
 var clone = require( 'lodash/clone' ),
 	noop = require( 'lodash/noop' );
 

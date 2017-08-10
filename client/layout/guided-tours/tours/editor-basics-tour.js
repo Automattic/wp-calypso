@@ -1,11 +1,10 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import {
-	overEvery as and,
-} from 'lodash';
+import { overEvery as and } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -20,9 +19,7 @@ import {
 	Quit,
 	Link,
 } from 'layout/guided-tours/config-elements';
-import {
-	isNewUser,
-} from 'state/ui/guided-tours/contexts';
+import { isNewUser } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
 
 export const EditorBasicsTour = makeTour(
@@ -37,7 +34,7 @@ export const EditorBasicsTour = makeTour(
 			arrow="top-left"
 			target=".editor-title"
 			placement="below"
-			style={ { animationDelay: '5s', } }
+			style={ { animationDelay: '5s' } }
 		>
 			<p>
 				{ translate( 'Welcome to the editor! Add a title here.' ) }
@@ -74,13 +71,11 @@ export const EditorBasicsTour = makeTour(
 			style={ { marginLeft: '-10px', zIndex: 'auto' } }
 		>
 			<p>
-				{
-					translate( 'Click the {{icon/}} to add images.', {
-						components: {
-							icon: <Gridicon icon="add-outline" />,
-						}
-					} )
-				}
+				{ translate( 'Click the {{icon/}} to add images.', {
+					components: {
+						icon: <Gridicon icon="add-outline" />,
+					},
+				} ) }
 			</p>
 			<ButtonRow>
 				<Next step="sidebar-options" />
@@ -98,14 +93,11 @@ export const EditorBasicsTour = makeTour(
 				{ translate( 'Add tags, categories, and a featured image from the sidebar.' ) }
 			</p>
 			<p>
-				{
-					translate( 'Click the {{icon/}} to show or hide these settings.', {
-						components: {
-							icon: <Gridicon icon="cog" />,
-						}
-					} )
-				}
-
+				{ translate( 'Click the {{icon/}} to show or hide these settings.', {
+					components: {
+						icon: <Gridicon icon="cog" />,
+					},
+				} ) }
 			</p>
 			<ButtonRow>
 				<Next step="publish" />
@@ -120,15 +112,15 @@ export const EditorBasicsTour = makeTour(
 			style={ { marginTop: '-17px' } }
 		>
 			<p>
-				{
-					translate( 'Your changes are saved automatically. ' +
-							'Click {{strong}}Publish{{/strong}} to share your work with the world!',
-						{
-							components: {
-								strong: <strong />,
-							}
-						} )
-				}
+				{ translate(
+					'Your changes are saved automatically. ' +
+						'Click {{strong}}Publish{{/strong}} to share your work with the world!',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				) }
 			</p>
 			<ButtonRow>
 				<Quit primary>

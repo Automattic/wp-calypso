@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +14,10 @@ export default function EditorDrawerLabel( { children, labelText, helpText } ) {
 		<label className="editor-drawer__label">
 			<span className="editor-drawer__label-text">
 				{ labelText }
-				{ helpText && <InfoPopover position="top left">{ helpText }</InfoPopover> }
+				{ helpText &&
+					<InfoPopover position="top left">
+						{ helpText }
+					</InfoPopover> }
 			</span>
 			{ children }
 		</label>
@@ -23,5 +27,5 @@ export default function EditorDrawerLabel( { children, labelText, helpText } ) {
 EditorDrawerLabel.propTypes = {
 	children: PropTypes.node,
 	helpText: PropTypes.string,
-	labelText: PropTypes.string
+	labelText: PropTypes.string,
 };

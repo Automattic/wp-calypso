@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,6 @@ import Card from 'components/card';
 import Ribbon from 'components/ribbon';
 
 export default React.createClass( {
-
 	displayName: 'PlanCompareCard',
 
 	propTypes: {
@@ -25,14 +25,14 @@ export default React.createClass( {
 		line: PropTypes.string.isRequired,
 		buttonName: PropTypes.string.isRequired,
 		currentPlan: PropTypes.bool,
-		popularRibbon: PropTypes.bool
+		popularRibbon: PropTypes.bool,
 	},
 
 	getDefaultProps() {
 		return {
 			onClick: noop,
 			currentPlan: true,
-			popularRibbon: false
+			popularRibbon: false,
 		};
 	},
 
@@ -45,14 +45,21 @@ export default React.createClass( {
 	render() {
 		const classes = classNames( this.props.className, 'plan-compare-card' );
 		const buttonClasses = classNames( 'plan-compare-card__button', {
-			'is-current': this.props.currentPlan
+			'is-current': this.props.currentPlan,
 		} );
 		return (
-			<div className={ classes } >
-				{ this.props.popularRibbon && <Ribbon>{ this.translate( 'popular' ) }</Ribbon> }
+			<div className={ classes }>
+				{ this.props.popularRibbon &&
+					<Ribbon>
+						{ this.translate( 'popular' ) }
+					</Ribbon> }
 				<Card className="plan-compare-card__header">
-					<div className="plan-compare-card__title">{ this.props.title }</div>
-					<div className="plan-compare-card__line">{ this.props.line }</div>
+					<div className="plan-compare-card__title">
+						{ this.props.title }
+					</div>
+					<div className="plan-compare-card__line">
+						{ this.props.line }
+					</div>
 				</Card>
 				<Card className="plan-compare-card__features">
 					<ul className="plan-compare-card__features-list">
@@ -64,12 +71,14 @@ export default React.createClass( {
 						className={ buttonClasses }
 						disabled={ this.props.currentPlan }
 						primary={ ! this.props.currentPlan }
-						onClick={ this.buttonClick }>
-						{ this.props.currentPlan && <Gridicon className="plan-compare-card__button-checkmark" icon="checkmark" /> }
+						onClick={ this.buttonClick }
+					>
+						{ this.props.currentPlan &&
+							<Gridicon className="plan-compare-card__button-checkmark" icon="checkmark" /> }
 						{ this.props.buttonName }
 					</Button>
 				</Card>
 			</div>
 		);
-	}
+	},
 } );

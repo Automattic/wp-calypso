@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,8 +12,9 @@ import { connectOptions } from './theme-options';
 
 const ConnectedThemeShowcase = connectOptions( ThemeShowcase );
 
-export default props => (
-	<ConnectedThemeShowcase { ...props }
+export default props =>
+	<ConnectedThemeShowcase
+		{ ...props }
 		origin="wpcom"
 		defaultOption="signup"
 		getScreenshotOption={ function() {
@@ -20,5 +22,4 @@ export default props => (
 		} }
 		source="showcase"
 		showUploadButton={ false }
-	/>
-);
+	/>;

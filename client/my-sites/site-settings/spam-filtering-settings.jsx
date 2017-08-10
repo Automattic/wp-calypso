@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,10 +23,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getJetpackSettingsSaveError, getJetpackSettingsSaveRequestStatus } from 'state/selectors';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { hasFeature } from 'state/sites/plans/selectors';
-import {
-	FEATURE_SPAM_AKISMET_PLUS,
-	PLAN_JETPACK_PERSONAL,
-} from 'lib/plans/constants';
+import { FEATURE_SPAM_AKISMET_PLUS, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';
 
 const SpamFilteringSettings = ( {
 	currentAkismetKey,
@@ -46,7 +44,9 @@ const SpamFilteringSettings = ( {
 		( wordpress_api_key && isStoredKey ) ||
 		( wordpress_api_key && isDirty && isStoredKey && ! hasAkismetKeyError );
 	const isInvalidKey = isDirty && hasAkismetKeyError && ! isStoredKey;
-	let validationText, className, header = null;
+	let validationText,
+		className,
+		header = null;
 
 	if ( ! inTransition && ! hasAkismetFeature && ! isValidKey ) {
 		return (
@@ -98,7 +98,9 @@ const SpamFilteringSettings = ( {
 							</ExternalLink>
 						</InfoPopover>
 					</div>
-					<FormLabel htmlFor="wordpress_api_key">{ translate( 'Your API Key' ) }</FormLabel>
+					<FormLabel htmlFor="wordpress_api_key">
+						{ translate( 'Your API Key' ) }
+					</FormLabel>
 					<FormTextInput
 						name="wordpress_api_key"
 						className={ className }

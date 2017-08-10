@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +15,6 @@ import WebPreview from 'components/web-preview';
 import WebPreviewContent from 'components/web-preview/content';
 
 const EditorPreview = React.createClass( {
-
 	_hasTouch: false,
 
 	propTypes: {
@@ -40,11 +40,12 @@ const EditorPreview = React.createClass( {
 			this.setState( { iframeUrl: 'about:blank' } );
 		}
 
-		if ( this.props.previewUrl && (
-			this.didFinishSaving( prevProps ) ||
-			this.didLoad( prevProps ) ||
-			this.didShowSavedPreviewViaTouch( prevProps )
-		) ) {
+		if (
+			this.props.previewUrl &&
+			( this.didFinishSaving( prevProps ) ||
+				this.didLoad( prevProps ) ||
+				this.didShowSavedPreviewViaTouch( prevProps ) )
+		) {
 			this.setState( { iframeUrl: this.getIframePreviewUrl() } );
 		}
 	},
@@ -71,11 +72,13 @@ const EditorPreview = React.createClass( {
 
 	didShowSavedPreviewViaTouch( prevProps ) {
 		// Find state change where preview is shown and we're not saving or loading
-		return this._hasTouch &&
+		return (
+			this._hasTouch &&
 			! prevProps.showPreview &&
 			this.props.showPreview &&
 			! this.props.isSaving &&
-			! this.props.isLoading;
+			! this.props.isLoading
+		);
 	},
 
 	getIframePreviewUrl() {
@@ -111,11 +114,10 @@ const EditorPreview = React.createClass( {
 							previewUrl={ this.state.iframeUrl }
 							editUrl={ this.props.editUrl }
 							externalUrl={ this.cleanExternalUrl( this.props.externalUrl ) }
-							loadingMessage={
-								this.props.translate( '{{strong}}One moment, please…{{/strong}} loading your new post.',
-									{ components: { strong: <strong /> } }
-								)
-							}
+							loadingMessage={ this.props.translate(
+								'{{strong}}One moment, please…{{/strong}} loading your new post.',
+								{ components: { strong: <strong /> } }
+							) }
 						/>
 					: <WebPreview
 							showPreview={ this.props.showPreview }
@@ -123,11 +125,10 @@ const EditorPreview = React.createClass( {
 							onClose={ this.props.onClose }
 							previewUrl={ this.state.iframeUrl }
 							externalUrl={ this.cleanExternalUrl( this.props.externalUrl ) }
-						/>
-				}
+						/> }
 			</div>
 		);
-	}
+	},
 } );
 
 module.exports = localize( EditorPreview );

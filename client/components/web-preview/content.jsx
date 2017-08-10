@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -32,12 +33,12 @@ export class WebPreviewContent extends Component {
 		iframeUrl: null,
 		device: this.props.defaultViewportDevice || 'computer',
 		loaded: false,
-		isLoadingSubpage: false
+		isLoadingSubpage: false,
 	};
 
-	setIframeInstance = ( ref ) => {
+	setIframeInstance = ref => {
 		this.iframe = ref;
-	}
+	};
 
 	componentWillMount() {
 		// Cache touch and mobile detection for the entire lifecycle of the component
@@ -84,7 +85,7 @@ export class WebPreviewContent extends Component {
 		}
 	}
 
-	handleMessage = ( e ) => {
+	handleMessage = e => {
 		let data;
 		try {
 			data = JSON.parse( e.data );
@@ -120,16 +121,16 @@ export class WebPreviewContent extends Component {
 				this.setState( { isLoadingSubpage: true } );
 				return;
 		}
-	}
+	};
 
-	handleLocationChange = ( payload ) => {
+	handleLocationChange = payload => {
 		this.props.onLocationUpdate( payload.pathname );
 		this.setState( { isLoadingSubpage: false } );
-	}
+	};
 
-	setWrapperElement = ( el ) => {
+	setWrapperElement = el => {
 		this.wrapperElementRef = el;
-	}
+	};
 
 	removeSelection = () => {
 		// remove all textual selections when user gives focus to preview iframe
@@ -146,7 +147,7 @@ export class WebPreviewContent extends Component {
 				document.selection.empty();
 			}
 		}
-	}
+	};
 
 	focusIfNeeded = () => {
 		// focus content unless we are running in closed modal or on empty page
@@ -154,7 +155,7 @@ export class WebPreviewContent extends Component {
 			debug( 'focusing iframe contents' );
 			this.iframe.contentWindow.focus();
 		}
-	}
+	};
 
 	setIframeMarkup( content ) {
 		if ( ! this.iframe ) {
@@ -167,7 +168,7 @@ export class WebPreviewContent extends Component {
 		this.iframe.contentDocument.close();
 	}
 
-	setIframeUrl = ( iframeUrl ) => {
+	setIframeUrl = iframeUrl => {
 		if ( ! this.iframe || ( ! this.props.showPreview && this.props.isModalWindow ) ) {
 			return;
 		}
@@ -179,16 +180,17 @@ export class WebPreviewContent extends Component {
 
 		debug( 'setIframeUrl', iframeUrl );
 		try {
-			const newUrl = iframeUrl === 'about:blank'
-				? iframeUrl
-				: addQueryArgs( { calypso_token: this.previewId }, iframeUrl );
+			const newUrl =
+				iframeUrl === 'about:blank'
+					? iframeUrl
+					: addQueryArgs( { calypso_token: this.previewId }, iframeUrl );
 			this.iframe.contentWindow.location.replace( newUrl );
 			this.setState( {
 				loaded: false,
 				iframeUrl: iframeUrl,
 			} );
 		} catch ( e ) {}
-	}
+	};
 
 	setDeviceViewport = ( device = 'computer' ) => {
 		this.setState( { device } );
@@ -198,11 +200,11 @@ export class WebPreviewContent extends Component {
 		if ( typeof this.props.onDeviceUpdate === 'function' ) {
 			this.props.onDeviceUpdate( device );
 		}
-	}
+	};
 
 	selectSEO = () => {
 		this.setDeviceViewport( 'seo' );
-	}
+	};
 
 	setLoaded = () => {
 		if ( this.state.loaded && ! this.state.isLoadingSubpage ) {
@@ -222,7 +224,7 @@ export class WebPreviewContent extends Component {
 		this.setState( { loaded: true, isLoadingSubpage: false } );
 
 		this.focusIfNeeded();
-	}
+	};
 
 	render() {
 		const { translate } = this.props;
@@ -238,39 +240,36 @@ export class WebPreviewContent extends Component {
 			'is-loaded': this.state.loaded,
 		} );
 
-		const showLoadingMessage = (
+		const showLoadingMessage =
 			! this.state.loaded &&
 			this.props.loadingMessage &&
 			( this.props.showPreview || ! this.props.isModalWindow ) &&
-			this.state.device !== 'seo'
-		);
+			this.state.device !== 'seo';
 
 		return (
 			<div className={ className } ref={ this.setWrapperElement }>
-				<Toolbar setDeviceViewport={ this.setDeviceViewport }
+				<Toolbar
+					setDeviceViewport={ this.setDeviceViewport }
 					device={ this.state.device }
 					{ ...this.props }
-					showExternal={ ( this.props.previewUrl ? this.props.showExternal : false ) }
+					showExternal={ this.props.previewUrl ? this.props.showExternal : false }
 					showDeviceSwitcher={ this.props.showDeviceSwitcher && isWithinBreakpoint( '>660px' ) }
 					selectSeoPreview={ this.selectSEO }
 					isLoading={ this.state.isLoadingSubpage }
 				/>
-				{ ( ! this.state.loaded || this.state.isLoadingSubpage ) &&
-					<SpinnerLine />
-				}
+				{ ( ! this.state.loaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
 				<div className="web-preview__placeholder">
 					{ showLoadingMessage &&
 						<div className="web-preview__loading-message-wrapper">
 							<span className="web-preview__loading-message">
 								{ this.props.loadingMessage }
 							</span>
-						</div>
-					}
+						</div> }
 					<div
 						className={ classNames( 'web-preview__frame-wrapper', {
-							'is-resizable': ! this.props.isModalWindow
+							'is-resizable': ! this.props.isModalWindow,
 						} ) }
-						style={ { display: ( 'seo' === this.state.device ? 'none' : 'inherit' ) } }
+						style={ { display: 'seo' === this.state.device ? 'none' : 'inherit' } }
 					>
 						<iframe
 							ref={ this.setIframeInstance }
@@ -281,10 +280,7 @@ export class WebPreviewContent extends Component {
 						/>
 					</div>
 					{ 'seo' === this.state.device &&
-						<SeoPreviewPane
-							frontPageMetaDescription={ this.props.frontPageMetaDescription }
-						/>
-					}
+						<SeoPreviewPane frontPageMetaDescription={ this.props.frontPageMetaDescription } /> }
 				</div>
 			</div>
 		);

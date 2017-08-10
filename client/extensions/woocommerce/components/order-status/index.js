@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -38,8 +39,16 @@ function OrderStatus( { showPayment = true, showShipping = true, status, transla
 
 	return (
 		<span className={ classes }>
-			{ ( shippingLabel && showShipping ) ? <span className="order-status__shipping">{ shippingLabel }</span> : null }
-			{ showPayment ? <span className="order-status__payment">{ paymentLabel }</span> : null }
+			{ shippingLabel && showShipping
+				? <span className="order-status__shipping">
+						{ shippingLabel }
+					</span>
+				: null }
+			{ showPayment
+				? <span className="order-status__payment">
+						{ paymentLabel }
+					</span>
+				: null }
 		</span>
 	);
 }

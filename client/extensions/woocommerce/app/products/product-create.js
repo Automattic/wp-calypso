@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +32,7 @@ import { getActionList } from 'woocommerce/state/action-list/selectors';
 import {
 	getCurrentlyEditingId,
 	getProductWithLocalEdits,
-	getProductEdits
+	getProductEdits,
 } from 'woocommerce/state/ui/products/selectors';
 import { getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
@@ -77,8 +78,8 @@ class ProductCreate extends React.Component {
 
 	componentWillReceiveProps( newProps ) {
 		const { site } = this.props;
-		const newSiteId = newProps.site && newProps.site.ID || null;
-		const oldSiteId = site && site.ID || null;
+		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
+		const oldSiteId = ( site && site.ID ) || null;
 		if ( oldSiteId !== newSiteId ) {
 			this.props.editProduct( newSiteId, null, {} );
 			this.props.fetchProductCategories( newSiteId );
@@ -99,7 +100,7 @@ class ProductCreate extends React.Component {
 	onSave = () => {
 		const { site, product, finishedInitialSetup, translate } = this.props;
 
-		const getSuccessNotice = ( newProduct ) => {
+		const getSuccessNotice = newProduct => {
 			if ( ! finishedInitialSetup ) {
 				return successNotice(
 					translate( '%(product)s successfully created. {{productLink}}View{{/productLink}}', {
@@ -107,14 +108,16 @@ class ProductCreate extends React.Component {
 							product: newProduct.name,
 						},
 						components: {
-							productLink: <a href={ newProduct.permalink } target="_blank" rel="noopener noreferrer" />,
+							productLink: (
+								<a href={ newProduct.permalink } target="_blank" rel="noopener noreferrer" />
+							),
 						},
 					} ),
 					{
 						displayOnNextPage: true,
 						showDismiss: false,
 						button: translate( 'Back to dashboard' ),
-						href: getLink( '/store/:site', site )
+						href: getLink( '/store/:site', site ),
 					}
 				);
 			}
@@ -134,7 +137,7 @@ class ProductCreate extends React.Component {
 			);
 		};
 
-		const successAction = ( products ) => {
+		const successAction = products => {
 			const newProduct = head( products );
 			page.redirect( getLink( '/store/products/:site', site ) );
 			return getSuccessNotice( newProduct );
@@ -151,15 +154,22 @@ class ProductCreate extends React.Component {
 			this.props.editProduct( site.ID, product, { type: 'simple' } );
 		}
 		this.props.createProductActionList( successAction, failureAction );
-	}
+	};
 
 	isProductValid( product = this.props.product ) {
-		return product &&
-			product.name && product.name.length > 0;
+		return product && product.name && product.name.length > 0;
 	}
 
 	render() {
-		const { site, product, hasEdits, className, variations, productCategories, actionList } = this.props;
+		const {
+			site,
+			product,
+			hasEdits,
+			className,
+			variations,
+			productCategories,
+			actionList,
+		} = this.props;
 
 		const isValid = 'undefined' !== site && this.isProductValid();
 		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.

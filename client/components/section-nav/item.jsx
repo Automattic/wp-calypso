@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -15,7 +16,6 @@ import { preload } from 'sections-preload';
  * Main
  */
 var NavItem = React.createClass( {
-
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
@@ -26,12 +26,9 @@ var NavItem = React.createClass( {
 		onClick: React.PropTypes.func,
 		isExternalLink: React.PropTypes.bool,
 		disabled: React.PropTypes.bool,
-		count: React.PropTypes.oneOfType( [
-			React.PropTypes.number,
-			React.PropTypes.bool,
-		] ),
+		count: React.PropTypes.oneOfType( [ React.PropTypes.number, React.PropTypes.bool ] ),
 		className: React.PropTypes.string,
-		preloadSectionName: React.PropTypes.string
+		preloadSectionName: React.PropTypes.string,
 	},
 
 	_preloaded: false,
@@ -44,15 +41,13 @@ var NavItem = React.createClass( {
 	},
 
 	render: function() {
-		var itemClassPrefix = this.props.itemType
-			? this.props.itemType
-			: 'tab',
-
-			itemClassName, target, onClick,
-
+		var itemClassPrefix = this.props.itemType ? this.props.itemType : 'tab',
+			itemClassName,
+			target,
+			onClick,
 			itemClasses = {
 				'is-selected': this.props.selected,
-				'is-external': this.props.isExternalLink
+				'is-external': this.props.isExternalLink,
 			};
 
 		itemClasses[ 'section-nav-' + itemClassPrefix ] = true;
@@ -78,18 +73,16 @@ var NavItem = React.createClass( {
 					aria-selected={ this.props.selected }
 					disabled={ this.props.disabled }
 					role="menuitem"
-					rel={ this.props.isExternalLink ? 'external' : null }>
+					rel={ this.props.isExternalLink ? 'external' : null }
+				>
 					<span className={ 'section-nav-' + itemClassPrefix + '__text' }>
 						{ this.props.children }
-						{
-							'number' === typeof this.props.count &&
-							<Count count={ this.props.count } />
-						}
+						{ 'number' === typeof this.props.count && <Count count={ this.props.count } /> }
 					</span>
 				</a>
 			</li>
 		);
-	}
+	},
 } );
 
 module.exports = NavItem;

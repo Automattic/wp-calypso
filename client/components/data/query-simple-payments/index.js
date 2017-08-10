@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -27,10 +28,7 @@ class QuerySimplePayments extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if (
-			nextProps.siteId !== this.props.siteId ||
-			nextProps.productId !== this.props.productId
-		) {
+		if ( nextProps.siteId !== this.props.siteId || nextProps.productId !== this.props.productId ) {
 			this.request( nextProps );
 		}
 	}

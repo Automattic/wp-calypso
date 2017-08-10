@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,7 +19,7 @@ const EmailCategory = React.createClass( {
 			name: React.PropTypes.string,
 			isEnabled: React.PropTypes.bool,
 			title: React.PropTypes.string,
-			description: React.PropTypes.string
+			description: React.PropTypes.string,
 		};
 	},
 
@@ -29,14 +30,18 @@ const EmailCategory = React.createClass( {
 	render() {
 		return (
 			<FormFieldset>
-				<FormLegend>{ this.props.title }</FormLegend>
+				<FormLegend>
+					{ this.props.title }
+				</FormLegend>
 				<FormLabel>
 					<FormCheckbox checked={ this.props.isEnabled } onChange={ this.toggleSetting } />
-					<span>{ this.props.description }</span>
+					<span>
+						{ this.props.description }
+					</span>
 				</FormLabel>
 			</FormFieldset>
 		);
-	}
+	},
 } );
 
 export default EmailCategory;

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -35,7 +36,7 @@ export default React.createClass( {
 		return {
 			plugin: {
 				rating: 0,
-			}
+			},
 		};
 	},
 
@@ -45,17 +46,26 @@ export default React.createClass( {
 		}
 
 		// Does the plugin_url point to .org page
-		if ( this.props.plugin.plugin_url.search( this._WPORG_PLUGINS_URL + this.props.plugin.slug ) !== -1 ) {
+		if (
+			this.props.plugin.plugin_url.search( this._WPORG_PLUGINS_URL + this.props.plugin.slug ) !== -1
+		) {
 			return;
 		}
-		const recordEvent = analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked Plugin Homepage Link', 'Plugin Name', this.props.plugin.slug );
+		const recordEvent = analytics.ga.recordEvent.bind(
+			analytics,
+			'Plugins',
+			'Clicked Plugin Homepage Link',
+			'Plugin Name',
+			this.props.plugin.slug
+		);
 		return (
 			<ExternalLink
 				icon={ true }
 				href={ this.props.plugin.plugin_url }
 				onClick={ recordEvent }
 				target="_blank"
-				className="plugin-information__external-link" >
+				className="plugin-information__external-link"
+			>
 				{ this.translate( 'Plugin homepage' ) }
 			</ExternalLink>
 		);
@@ -65,14 +75,21 @@ export default React.createClass( {
 		if ( ! this.props.plugin.slug ) {
 			return;
 		}
-		const recordEvent = analytics.ga.recordEvent.bind( analytics, 'Plugins', 'Clicked wp.org Plugin Link', 'Plugin Name', this.props.plugin.slug );
+		const recordEvent = analytics.ga.recordEvent.bind(
+			analytics,
+			'Plugins',
+			'Clicked wp.org Plugin Link',
+			'Plugin Name',
+			this.props.plugin.slug
+		);
 		return (
 			<ExternalLink
 				icon={ true }
 				href={ 'https://' + this._WPORG_PLUGINS_URL + this.props.plugin.slug + '/' }
 				onClick={ recordEvent }
 				target="_blank"
-				className="plugin-information__external-link" >
+				className="plugin-information__external-link"
+			>
 				{ this.translate( 'WordPress.org Plugin page' ) }
 			</ExternalLink>
 		);
@@ -80,19 +97,27 @@ export default React.createClass( {
 
 	renderLastUpdated() {
 		if ( this.props.plugin && this.props.plugin.last_updated ) {
-			const dateFromNow = i18n.moment.utc( this.props.plugin.last_updated, 'YYYY-MM-DD hh:mma' ).fromNow();
+			const dateFromNow = i18n.moment
+				.utc( this.props.plugin.last_updated, 'YYYY-MM-DD hh:mma' )
+				.fromNow();
 			const syncIcon = this.props.hasUpdate ? <Gridicon icon="sync" size={ 18 } /> : null;
 
-			return <div className="plugin-information__last-updated">
-				{ syncIcon }
-				{ this.translate( 'Released %(dateFromNow)s', { args: { dateFromNow } } ) }
-			</div>;
+			return (
+				<div className="plugin-information__last-updated">
+					{ syncIcon }
+					{ this.translate( 'Released %(dateFromNow)s', { args: { dateFromNow } } ) }
+				</div>
+			);
 		}
 	},
 
 	renderSiteVersion() {
 		return this.props.siteVersion
-			? <Version version={ this.props.siteVersion } icon="my-sites" className="plugin-information__version" />
+			? <Version
+					version={ this.props.siteVersion }
+					icon="my-sites"
+					className="plugin-information__version"
+				/>
 			: null;
 	},
 
@@ -109,28 +134,33 @@ export default React.createClass( {
 			}
 		}
 		if ( limits.minVersion && limits.maxVersion && limits.minVersion !== limits.maxVersion ) {
-			versionView = <div className="plugin-information__version-limit" >
-				{ this.translate( '{{wpIcon/}}  Compatible with %(minVersion)s to {{span}} %(maxVersion)s {{versionCheck/}}{{/span}}',
-					{
-						args: { minVersion: limits.minVersion, maxVersion: limits.maxVersion },
-						components: {
-							wpIcon: this.props.siteVersion ? null : <Gridicon icon="my-sites" size={ 18 } />,
-							span: <span className="plugin-information__version-limit-state" />,
-							versionCheck
+			versionView = (
+				<div className="plugin-information__version-limit">
+					{ this.translate(
+						'{{wpIcon/}}  Compatible with %(minVersion)s to {{span}} %(maxVersion)s {{versionCheck/}}{{/span}}',
+						{
+							args: { minVersion: limits.minVersion, maxVersion: limits.maxVersion },
+							components: {
+								wpIcon: this.props.siteVersion ? null : <Gridicon icon="my-sites" size={ 18 } />,
+								span: <span className="plugin-information__version-limit-state" />,
+								versionCheck,
+							},
 						}
-					}
-				) }
-			</div>;
+					) }
+				</div>
+			);
 		}
 		if ( limits.minVersion && limits.maxVersion && limits.minVersion === limits.maxVersion ) {
-			versionView = <div className="plugin-information__version-limit">
-				{ this.translate( '{{wpIcon/}} Compatible with %(maxVersion)s',
-					{
+			versionView = (
+				<div className="plugin-information__version-limit">
+					{ this.translate( '{{wpIcon/}} Compatible with %(maxVersion)s', {
 						args: { maxVersion: limits.maxVersion },
-						components: { wpIcon: this.props.siteVersion ? null : <Gridicon icon="my-sites" size={ 18 } /> }
-					}
-				) }
-			</div>;
+						components: {
+							wpIcon: this.props.siteVersion ? null : <Gridicon icon="my-sites" size={ 18 } />,
+						},
+					} ) }
+				</div>
+			);
 		}
 		return (
 			<div className="plugin-information__versions">
@@ -142,8 +172,8 @@ export default React.createClass( {
 	getCompatibilityLimits() {
 		if ( this.props.plugin.compatibility && this.props.plugin.compatibility.length ) {
 			return {
-				maxVersion: this.props.plugin.compatibility[ this.props.plugin.compatibility .length - 1 ],
-				minVersion: this.props.plugin.compatibility[ 0 ]
+				maxVersion: this.props.plugin.compatibility[ this.props.plugin.compatibility.length - 1 ],
+				minVersion: this.props.plugin.compatibility[ 0 ],
 			};
 		}
 		return {};
@@ -157,40 +187,42 @@ export default React.createClass( {
 			adminUrl += 'admin.php?page=vaultpress'; // adminUrl has a trailing slash
 		}
 
-		return adminUrl
-			? { [ i18n.translate( 'WP Admin' ) ]: adminUrl }
-			: null;
+		return adminUrl ? { [ i18n.translate( 'WP Admin' ) ]: adminUrl } : null;
 	},
 
 	renderPlaceholder() {
 		const classes = classNames( { 'plugin-information': true, 'is-placeholder': true } );
 		return (
-			<div className={ classes } >
-					<div className="plugin-information__wrapper">
-						<div className="plugin-information__version-info">
-							<div className="plugin-information__version-shell">
-								{ this.props.pluginVersion
-									? <Version version={ this.props.pluginVersion } icon="plugins" className="plugin-information__version" />
-									: null
-								}
-							</div>
-							<div className="plugin-information__version-shell">
-								{ this.renderSiteVersion() }
-								{ this.renderLimits() }
-							</div>
+			<div className={ classes }>
+				<div className="plugin-information__wrapper">
+					<div className="plugin-information__version-info">
+						<div className="plugin-information__version-shell">
+							{ this.props.pluginVersion
+								? <Version
+										version={ this.props.pluginVersion }
+										icon="plugins"
+										className="plugin-information__version"
+									/>
+								: null }
 						</div>
-						<div className="plugin-information__links">
-							{ this.renderWporgLink() }
-							{ this.renderHomepageLink() }
+						<div className="plugin-information__version-shell">
+							{ this.renderSiteVersion() }
+							{ this.renderLimits() }
 						</div>
 					</div>
-					<PluginRatings
-						rating={ this.props.plugin.rating }
-						ratings={ this.props.plugin.ratings }
-						downloaded={ this.props.plugin.downloaded }
-						numRatings={ this.props.plugin.num_ratings }
-						slug={ this.props.plugin.slug }
-						placeholder={ true } />
+					<div className="plugin-information__links">
+						{ this.renderWporgLink() }
+						{ this.renderHomepageLink() }
+					</div>
+				</div>
+				<PluginRatings
+					rating={ this.props.plugin.rating }
+					ratings={ this.props.plugin.ratings }
+					downloaded={ this.props.plugin.downloaded }
+					numRatings={ this.props.plugin.num_ratings }
+					slug={ this.props.plugin.slug }
+					placeholder={ true }
+				/>
 			</div>
 		);
 	},
@@ -207,10 +239,10 @@ export default React.createClass( {
 
 		const classes = classNames( {
 			'plugin-information__version-info': true,
-			'is-singlesite': !! this.props.siteVersion
+			'is-singlesite': !! this.props.siteVersion,
 		} );
 
-		const { plugin } = this.props;
+		const { plugin } = this.props;
 		let actionLinks = get( plugin, 'action_links' );
 
 		if ( get( plugin, 'active' ) && isEmpty( actionLinks ) ) {
@@ -222,7 +254,12 @@ export default React.createClass( {
 				<div className="plugin-information__wrapper">
 					<div className={ classes }>
 						<div className="plugin-information__version-shell">
-							{ this.props.pluginVersion && <Version version={ this.props.pluginVersion } icon="plugins" className="plugin-information__version" /> }
+							{ this.props.pluginVersion &&
+								<Version
+									version={ this.props.pluginVersion }
+									icon="plugins"
+									className="plugin-information__version"
+								/> }
 							{ this.renderLastUpdated() }
 						</div>
 						<div className="plugin-information__version-shell">
@@ -232,18 +269,20 @@ export default React.createClass( {
 					</div>
 
 					{ ! isEmpty( actionLinks ) &&
-					<div className="plugin-information__action-links">
-						{ Object.keys( actionLinks ).map( ( linkTitle, index ) => (
-							<Button compact icon
-								href={ actionLinks[ linkTitle ] }
-								target="_blank"
-								key={ 'action-link-' + index }
-								rel="noopener noreferrer">
+						<div className="plugin-information__action-links">
+							{ Object.keys( actionLinks ).map( ( linkTitle, index ) =>
+								<Button
+									compact
+									icon
+									href={ actionLinks[ linkTitle ] }
+									target="_blank"
+									key={ 'action-link-' + index }
+									rel="noopener noreferrer"
+								>
 									{ linkTitle } <Gridicon icon="external" />
-							</Button>
-						) ) }
-					</div>
-					}
+								</Button>
+							) }
+						</div> }
 
 					<div className="plugin-information__links">
 						{ this.renderWporgLink() }
@@ -255,8 +294,9 @@ export default React.createClass( {
 					ratings={ this.props.plugin.ratings }
 					downloaded={ this.props.plugin.downloaded }
 					numRatings={ this.props.plugin.num_ratings }
-					slug={ this.props.plugin.slug } />
+					slug={ this.props.plugin.slug }
+				/>
 			</Card>
 		);
-	}
+	},
 } );

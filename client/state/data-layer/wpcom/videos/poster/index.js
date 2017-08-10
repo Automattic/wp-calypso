@@ -1,14 +1,11 @@
+/** @format */
 /**
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { VIDEO_EDITOR_UPDATE_POSTER } from 'state/action-types';
-import {
-	setPosterUrl,
-	showError,
-	showUploadProgress,
-} from 'state/ui/editor/video-editor/actions';
+import { setPosterUrl, showError, showUploadProgress } from 'state/ui/editor/video-editor/actions';
 
 /**
  * Updates the poster for a video.
@@ -29,7 +26,7 @@ export const updatePoster = ( { dispatch }, action ) => {
 			path: `/videos/${ action.videoId }/poster`,
 		},
 		file && { formData: [ [ 'poster', file ] ] },
-		atTime !== undefined && { body: { at_time: atTime } },
+		atTime !== undefined && { body: { at_time: atTime } }
 	);
 
 	dispatch( http( params, action ) );
@@ -53,8 +50,12 @@ export const receiveUploadProgress = ( { dispatch }, action, progress ) => {
 	dispatch( showUploadProgress( percentage ) );
 };
 
-export const dispatchPosterRequest =
-	dispatchRequest( updatePoster, receivePosterUrl, receivePosterError, receiveUploadProgress );
+export const dispatchPosterRequest = dispatchRequest(
+	updatePoster,
+	receivePosterUrl,
+	receivePosterError,
+	receiveUploadProgress
+);
 
 export default {
 	[ VIDEO_EDITOR_UPDATE_POSTER ]: [ dispatchPosterRequest ],

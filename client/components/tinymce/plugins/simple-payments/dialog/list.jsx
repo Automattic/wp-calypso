@@ -1,3 +1,4 @@
+/** @format */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
@@ -57,7 +58,7 @@ class ProductList extends Component {
 				onSelectedChange={ onSelectedChange }
 				onEditClick={ onEditClick }
 				onTrashClick={ onTrashClick }
-			/>,
+			/>
 		);
 	}
 

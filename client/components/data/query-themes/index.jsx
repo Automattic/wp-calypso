@@ -1,9 +1,10 @@
+/** @format */
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { isEmpty, isEqual } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,10 +14,8 @@ import { getThemesForQuery, isRequestingThemesForQuery } from 'state/themes/sele
 
 class QueryThemes extends Component {
 	static propTypes = {
-		siteId: PropTypes.oneOfType( [
-			PropTypes.number,
-			PropTypes.oneOf( [ 'wpcom', 'wporg' ] )
-		] ).isRequired,
+		siteId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] )
+			.isRequired,
 		// A theme query. Note that on Jetpack sites, only the `search` argument is supported.
 		query: PropTypes.shape( {
 			// The search string
@@ -28,22 +27,20 @@ class QueryThemes extends Component {
 			// Which page of the results list to display
 			page: PropTypes.number,
 			// How many results per page
-			number: PropTypes.number
-
+			number: PropTypes.number,
 		} ),
 		// Connected props
 		hasThemes: PropTypes.bool.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
 		requestThemes: PropTypes.func.isRequired,
-	}
+	};
 
 	componentDidMount() {
 		this.request();
 	}
 
 	shouldComponentUpdate( nextProps ) {
-		return this.props.siteId !== nextProps.siteId ||
-			! isEqual( this.props.query, nextProps.query );
+		return this.props.siteId !== nextProps.siteId || ! isEqual( this.props.query, nextProps.query );
 	}
 
 	componentDidUpdate() {
@@ -62,7 +59,7 @@ class QueryThemes extends Component {
 }
 
 export default connect(
-	( state, { query, siteId } ) => ( {
+	( state, { query, siteId } ) => ( {
 		hasThemes: ! isEmpty( getThemesForQuery( state, siteId, query ) ),
 		isRequesting: isRequestingThemesForQuery( state, siteId, query ),
 	} ),

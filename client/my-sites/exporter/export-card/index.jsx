@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -38,10 +39,7 @@ class ExportCard extends Component {
 	}
 
 	render() {
-		const {
-			translate,
-			fetchStatus,
-		} = this.props;
+		const { translate, fetchStatus } = this.props;
 
 		const exportButton = (
 			<SpinnerButton
@@ -50,7 +48,8 @@ class ExportCard extends Component {
 				isPrimary={ true }
 				onClick={ this.props.exportAll }
 				text={ translate( 'Export All' ) }
-				loadingText={ translate( 'Exporting…' ) } />
+				loadingText={ translate( 'Exporting…' ) }
+			/>
 		);
 
 		return (
@@ -89,7 +88,8 @@ const mapStateToProps = ( state, { siteId } ) => ( {
 	isExporting: isExporting( state, siteId ),
 } );
 
-const trackExportClick = ( scope = 'all' ) => recordTracksEvent( 'calypso_export_start_button_click', { scope } );
+const trackExportClick = ( scope = 'all' ) =>
+	recordTracksEvent( 'calypso_export_start_button_click', { scope } );
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	advancedSettingsFetch: flowRight( dispatch, advancedSettingsFetch ),
@@ -97,10 +97,10 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	fetchStatus: () => dispatch( exportStatusFetch( siteId ) ),
 
 	exportAll: () => dispatch( withAnalytics( trackExportClick(), startExport( siteId ) ) ),
-	exportSelectedItems: () => dispatch( withAnalytics(
-		trackExportClick( 'selected' ),
-		startExport( siteId, { exportAll: false } )
-	) ),
+	exportSelectedItems: () =>
+		dispatch(
+			withAnalytics( trackExportClick( 'selected' ), startExport( siteId, { exportAll: false } ) )
+		),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ExportCard ) );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -37,17 +38,9 @@ module.exports = function() {
 		checkoutController.checkoutThankYou
 	);
 
-	page(
-		'/checkout/no-site',
-		controller.noSite,
-		checkoutController.sitelessCheckout
-	);
+	page( '/checkout/no-site', controller.noSite, checkoutController.sitelessCheckout );
 
-	page(
-		'/checkout/:domain/:product?',
-		controller.siteSelection,
-		checkoutController.checkout
-	);
+	page( '/checkout/:domain/:product?', controller.siteSelection, checkoutController.checkout );
 
 	page(
 		'/checkout/:product/renew/:purchaseId/:domain',

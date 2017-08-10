@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,21 +15,21 @@ const SitesListActions = {
 	removeSitesNotices( logs ) {
 		Dispatcher.handleViewAction( {
 			type: 'REMOVE_SITES_NOTICES',
-			logs
+			logs,
 		} );
 	},
 	// A way to remove a Disconnected Site from the old list store
 	disconnectedSite( site ) {
 		Dispatcher.handleViewAction( {
 			type: 'DISCONNECT_SITE',
-			site
+			site,
 		} );
 	},
 
 	deleteSite( site, onComplete ) {
 		Dispatcher.handleViewAction( {
 			type: 'DELETE_SITE',
-			site: site
+			site: site,
 		} );
 
 		debug( 'Deleting site', site );
@@ -37,7 +38,7 @@ const SitesListActions = {
 			if ( error ) {
 				Dispatcher.handleServerAction( {
 					type: 'RECEIVE_DELETED_SITE_ERROR',
-					error
+					error,
 				} );
 			} else {
 				SitesListActions.receiveDeletedSite( site );
@@ -50,13 +51,13 @@ const SitesListActions = {
 	receiveDeletedSite( site ) {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_DELETED_SITE',
-			site
+			site,
 		} );
 	},
 
 	clearDeleteSiteStore() {
 		Dispatcher.handleViewAction( { type: 'CLEAR_DELETED_SITE' } );
-	}
+	},
 };
 
 export default SitesListActions;

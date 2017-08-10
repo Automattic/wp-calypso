@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -122,11 +123,14 @@ describe( 'WordPress.com API Middleware', () => {
 	it( 'should call all given handlers (different lists)', () => {
 		const adder = spy();
 		const doubler = spy();
-		const handlers = mergeHandlers( {
-			[ 'MATHS' ]: [ adder ],
-		}, {
-			[ 'MATHS' ]: [ doubler ],
-		} );
+		const handlers = mergeHandlers(
+			{
+				[ 'MATHS' ]: [ adder ],
+			},
+			{
+				[ 'MATHS' ]: [ doubler ],
+			}
+		);
 		const action = { type: 'MATHS' };
 
 		middleware( handlers )( store )( next )( action );
@@ -144,7 +148,7 @@ describe( 'WordPress.com API Middleware', () => {
 		beforeEach( () => {
 			adder = spy();
 			handlers = mergeHandlers( {
-				[ 'ADD' ]: [ adder ]
+				[ 'ADD' ]: [ adder ],
 			} );
 		} );
 

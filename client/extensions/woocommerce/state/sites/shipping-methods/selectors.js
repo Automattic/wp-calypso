@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -62,7 +63,7 @@ export const getShippingMethod = ( state, id, siteId = getSelectedSiteId( state 
 export const getShippingMethodNameMap = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
 		if ( ! areShippingMethodsLoaded( state, siteId ) ) {
-			return ( typeId ) => ( typeId );
+			return typeId => typeId;
 		}
 
 		const map = getShippingMethods( state, siteId ).reduce( ( result, { id, title } ) => {
@@ -70,7 +71,7 @@ export const getShippingMethodNameMap = createSelector(
 			return result;
 		}, {} );
 
-		return ( typeId ) => ( map[ typeId ] || typeId );
+		return typeId => map[ typeId ] || typeId;
 	},
 	[ areShippingMethodsLoaded, getShippingMethods ]
 );

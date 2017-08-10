@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,14 +9,7 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	isLoading,
-	isQueryLoading,
-	isUpdating,
-	items,
-	queries,
-	total,
-} from '../reducer';
+import { isLoading, isQueryLoading, isUpdating, items, queries, total } from '../reducer';
 import {
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,

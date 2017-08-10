@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -21,7 +22,7 @@ describe( 'MapDomain component', () => {
 	// needed, because some dependency of dependency uses `window`
 	useFakeDom();
 
-	useMockery( ( mockery ) => {
+	useMockery( mockery => {
 		mockery.registerMock( 'page', pageSpy );
 		MapDomain = require( '..' ).MapDomain;
 		MapDomainStep = require( 'components/domains/map-domain-step' );
@@ -79,8 +80,13 @@ describe( 'MapDomain component', () => {
 	} );
 
 	it( 'goes back to domain management for VIP sites', () => {
-		const wrapper = shallow( <MapDomain { ...defaultProps } selectedSiteSlug="baba"
-											selectedSite={ { ...defaultProps.selectedSite, is_vip: true } } /> );
+		const wrapper = shallow(
+			<MapDomain
+				{ ...defaultProps }
+				selectedSiteSlug="baba"
+				selectedSite={ { ...defaultProps.selectedSite, is_vip: true } }
+			/>
+		);
 		wrapper.instance().goBack();
 		expect( pageSpy ).to.have.been.calledWith( paths.domainManagementList( 'baba' ) );
 	} );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -31,14 +32,14 @@ export const handlers = {
 		} else if ( 'start' === status ) {
 			pauseFetching();
 		}
-	}
+	},
 };
 
 /**
  * Middleware
  */
 
-export default ( { dispatch, getState } ) => ( next ) => ( action ) => {
+export default ( { dispatch, getState } ) => next => action => {
 	if ( handlers.hasOwnProperty( action.type ) ) {
 		handlers[ action.type ]( dispatch, action, getState );
 	}

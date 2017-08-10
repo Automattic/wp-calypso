@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,10 +26,7 @@ class PrivacyProtection extends Component {
 	static propTypes = {
 		domains: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.bool
-		] ).isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -48,14 +46,19 @@ class PrivacyProtection extends Component {
 		}
 
 		if ( ! this.canAddPrivacyProtection() ) {
-			page( paths.domainManagementContactsPrivacy( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+			page(
+				paths.domainManagementContactsPrivacy(
+					this.props.selectedSite.slug,
+					this.props.selectedDomainName
+				)
+			);
 		}
 	}
 
 	canAddPrivacyProtection() {
 		const domain = getSelectedDomain( this.props );
 
-		return ( domain && domain.type === domainTypes.REGISTERED && ! domain.hasPrivacyProtection );
+		return domain && domain.type === domainTypes.REGISTERED && ! domain.hasPrivacyProtection;
 	}
 
 	render() {
@@ -69,9 +72,7 @@ class PrivacyProtection extends Component {
 			<Main className="domain-management-privacy-protection">
 				<QueryProductsList />
 
-				<Header
-					onClick={ this.goToPreviousSection }
-					selectedDomainName={ selectedDomainName }>
+				<Header onClick={ this.goToPreviousSection } selectedDomainName={ selectedDomainName }>
 					{ translate( 'Privacy Protection' ) }
 				</Header>
 
@@ -81,13 +82,9 @@ class PrivacyProtection extends Component {
 							displayCost={ displayCost }
 							selectedDomainName={ selectedDomainName }
 							selectedSite={ selectedSite }
-						/>
-					}
+						/> }
 
-					<CardContent
-						selectedDomainName={ selectedDomainName }
-						selectedSite={ selectedSite }
-					/>
+					<CardContent selectedDomainName={ selectedDomainName } selectedSite={ selectedSite } />
 				</Card>
 			</Main>
 		);
@@ -104,15 +101,10 @@ class PrivacyProtection extends Component {
 			path = paths.domainManagementEdit;
 		}
 
-		page( path(
-			this.props.selectedSite.slug,
-			this.props.selectedDomainName
-		) );
-	}
+		page( path( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+	};
 }
 
-export default connect(
-	state => ( {
-		displayCost: getProductDisplayCost( state, 'private_whois' ),
-	} )
-)( localize( PrivacyProtection ) );
+export default connect( state => ( {
+	displayCost: getProductDisplayCost( state, 'private_whois' ),
+} ) )( localize( PrivacyProtection ) );

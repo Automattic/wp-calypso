@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,8 +27,8 @@ function PostTotalViews( { clickHandler, numberFormat, post, slug, translate, vi
 		viewsTitle = translate( '%(count)s Total View', '%(count)s Total Views', {
 			count: viewCount,
 			args: {
-				count: viewCount
-			}
+				count: viewCount,
+			},
 		} );
 	} else {
 		viewsTitle = translate( 'Total Views' );
@@ -38,16 +39,20 @@ function PostTotalViews( { clickHandler, numberFormat, post, slug, translate, vi
 	}
 
 	return (
-		<a href={ `/stats/post/${ postId }/${ slug }` }
+		<a
+			href={ `/stats/post/${ postId }/${ slug }` }
 			className={ classNames( {
 				'post__total-views': true,
-				'is-empty': ! viewsCountDisplay
+				'is-empty': ! viewsCountDisplay,
 			} ) }
 			title={ viewsTitle }
-			onClick={ clickHandler }>
-			<QueryPostStats siteId= { siteId } postId={ postId } fields={ [ 'views' ] } />
+			onClick={ clickHandler }
+		>
+			<QueryPostStats siteId={ siteId } postId={ postId } fields={ [ 'views' ] } />
 			<Gridicon icon="visible" size={ 24 } />
-			<StatUpdateIndicator updateOn={ viewsCountDisplay }>{ viewsCountDisplay }</StatUpdateIndicator>
+			<StatUpdateIndicator updateOn={ viewsCountDisplay }>
+				{ viewsCountDisplay }
+			</StatUpdateIndicator>
 		</a>
 	);
 }
@@ -58,7 +63,7 @@ PostTotalViews.propTypes = {
 	post: PropTypes.object.isRequired,
 	slug: PropTypes.string,
 	translate: PropTypes.func,
-	viewCount: PropTypes.number
+	viewCount: PropTypes.number,
 };
 
 export default connect( ( state, ownProps ) => {
@@ -67,6 +72,6 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		slug: getSiteSlug( state, post.site_ID ),
-		viewCount
+		viewCount,
 	};
 } )( localize( PostTotalViews ) );

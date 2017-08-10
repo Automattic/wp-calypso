@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,5 +24,5 @@ module.exports = React.createClass( {
 				</div>
 			</div>
 		);
-	}
+	},
 } );

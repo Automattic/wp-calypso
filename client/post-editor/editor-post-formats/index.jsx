@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,12 +23,12 @@ const EditorPostFormats = React.createClass( {
 	propTypes: {
 		siteId: PropTypes.number,
 		value: PropTypes.string,
-		postFormats: PropTypes.object
+		postFormats: PropTypes.object,
 	},
 
 	getDefaultProps() {
 		return {
-			value: 'standard'
+			value: 'standard',
 		};
 	},
 
@@ -41,8 +42,8 @@ const EditorPostFormats = React.createClass( {
 	getPostFormats() {
 		let formats = {
 			standard: this.translate( 'Standard', {
-				context: 'Post format'
-			} )
+				context: 'Post format',
+			} ),
 		};
 
 		if ( this.props.postFormats ) {
@@ -62,7 +63,7 @@ const EditorPostFormats = React.createClass( {
 			gallery: 'image-multiple',
 			status: 'pencil',
 			audio: 'audio',
-			chat: 'comment'
+			chat: 'comment',
 		};
 
 		return icons[ postFormatSlug ] ? icons[ postFormatSlug ] : 'posts';
@@ -71,7 +72,7 @@ const EditorPostFormats = React.createClass( {
 	onChange( event ) {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
-			format: event.target.value
+			format: event.target.value,
 		} );
 
 		recordStat( 'post_format_changed' );
@@ -92,7 +93,7 @@ const EditorPostFormats = React.createClass( {
 							onChange={ this.onChange }
 						/>
 						<span className="editor-post-formats__format-label">
-							<span className={ 'editor-post-formats__format-icon' } >
+							<span className={ 'editor-post-formats__format-icon' }>
 								<Gridicon icon={ this.getPostFormatIcon( postFormatSlug ) } size={ 18 } />
 							</span>
 							{ postFormatLabel }
@@ -113,16 +114,14 @@ const EditorPostFormats = React.createClass( {
 				</ul>
 			</AccordionSection>
 		);
-	}
+	},
 } );
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			siteId,
-			postFormats: getPostFormats( state, siteId )
-		};
-	}
-)( EditorPostFormats );
+	return {
+		siteId,
+		postFormats: getPostFormats( state, siteId ),
+	};
+} )( EditorPostFormats );

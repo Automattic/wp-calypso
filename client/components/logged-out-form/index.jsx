@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,16 +16,16 @@ export default React.createClass( {
 
 	propTypes: {
 		children: React.PropTypes.node.isRequired,
-		className: React.PropTypes.string
+		className: React.PropTypes.string,
 	},
 
 	render() {
 		return (
-			<Card className={ classnames( 'logged-out-form', this.props.className ) } >
+			<Card className={ classnames( 'logged-out-form', this.props.className ) }>
 				<form { ...omit( this.props, 'className' ) }>
 					{ this.props.children }
 				</form>
 			</Card>
 		);
-	}
+	},
 } );

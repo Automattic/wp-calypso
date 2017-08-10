@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,10 +16,7 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 } from 'state/action-types';
-import reducer, {
-	items,
-	isFetching,
-} from '../reducer';
+import reducer, { items, isFetching } from '../reducer';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const originalKeyringServices = {
@@ -28,7 +26,7 @@ const originalKeyringServices = {
 		description: 'Publish your posts to your Facebook timeline or page.',
 		genericon: {
 			class: 'facebook-alt', // eslint-disable-line quote-props
-			unicode: '\f203'
+			unicode: '\f203',
 		},
 		icon: 'http://i.wordpress.com/wp-content/admin-plugins/publicize/assets/publicize-fb-2x.png',
 		jetpack_module_required: 'publicize',
@@ -45,7 +43,8 @@ const originalKeyringServices = {
 			class: 'twitter', // eslint-disable-line quote-props
 			unicode: '\f202',
 		},
-		icon: 'http://i.wordpress.com/wp-content/admin-plugins/publicize/assets/publicize-twitter-2x.png',
+		icon:
+			'http://i.wordpress.com/wp-content/admin-plugins/publicize/assets/publicize-twitter-2x.png',
 		jetpack_module_required: 'publicize',
 		jetpack_support: true,
 		label: 'Twitter',
@@ -55,13 +54,10 @@ const originalKeyringServices = {
 };
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
+	useSandbox( sandbox => sandbox.stub( console, 'warn' ) );
 
 	it( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'items',
-			'isFetching'
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'isFetching' ] );
 	} );
 
 	describe( '#statesList()', () => {
@@ -72,10 +68,13 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should store the states list received', () => {
-			const state = items( {}, {
-				type: KEYRING_SERVICES_RECEIVE,
-				services: originalKeyringServices
-			} );
+			const state = items(
+				{},
+				{
+					type: KEYRING_SERVICES_RECEIVE,
+					services: originalKeyringServices,
+				}
+			);
 
 			expect( state ).to.eql( originalKeyringServices );
 		} );
@@ -96,10 +95,7 @@ describe( 'reducer', () => {
 			} );
 
 			it( 'loads default state when schema does not match', () => {
-				const original = deepFreeze( [
-					{ ID: 'facebook' },
-					{ ID: 'twitter' },
-				] );
+				const original = deepFreeze( [ { ID: 'facebook' }, { ID: 'twitter' } ] );
 				const services = items( original, { type: DESERIALIZE } );
 
 				expect( services ).to.eql( {} );

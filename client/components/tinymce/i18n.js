@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +9,6 @@ const i18n = require( 'i18n-calypso' );
  * In short, TinyMCE uses these strings to translate its internal strings
  */
 module.exports = {
-
 	Formats: i18n.translate( 'Formats', { context: 'TinyMCE' } ),
 	Headings: i18n.translate( 'Headings', { context: 'TinyMCE' } ),
 	'Heading 1': i18n.translate( 'Heading 1' ),
@@ -57,10 +57,23 @@ module.exports = {
 	Close: i18n.translate( 'Close' ),
 	'Visual aids': i18n.translate( 'Visual aids' ),
 
-	'Paste is now in plain text mode. Contents will now be pasted as plain text until you toggle this option off.': i18n.translate( 'Paste is now in plain text mode. Contents will now be pasted as plain text until you toggle this option off.' ) + '\n\n' + i18n.translate( 'If you’re looking to paste rich content from Microsoft Word, try turning this option off. The editor will clean up text pasted from Word automatically.' ),
-	'Rich Text Area. Press ALT-F9 for menu. Press ALT-F10 for toolbar. Press ALT-0 for help': i18n.translate( 'Rich Text Area. Press Alt-Shift-H for help' ),
-	'You have unsaved changes are you sure you want to navigate away?': i18n.translate( 'The changes you made will be lost if you navigate away from this page.' ),
-	'Your browser doesn\'t support direct access to the clipboard. Please use the Ctrl+X/C/V keyboard shortcuts instead.': i18n.translate( 'Your browser does not support direct access to the clipboard. Please use keyboard shortcuts or your browser’s edit menu instead.' ),
+	'Paste is now in plain text mode. Contents will now be pasted as plain text until you toggle this option off.':
+		i18n.translate(
+			'Paste is now in plain text mode. Contents will now be pasted as plain text until you toggle this option off.'
+		) +
+		'\n\n' +
+		i18n.translate(
+			'If you’re looking to paste rich content from Microsoft Word, try turning this option off. The editor will clean up text pasted from Word automatically.'
+		),
+	'Rich Text Area. Press ALT-F9 for menu. Press ALT-F10 for toolbar. Press ALT-0 for help': i18n.translate(
+		'Rich Text Area. Press Alt-Shift-H for help'
+	),
+	'You have unsaved changes are you sure you want to navigate away?': i18n.translate(
+		'The changes you made will be lost if you navigate away from this page.'
+	),
+	"Your browser doesn't support direct access to the clipboard. Please use the Ctrl+X/C/V keyboard shortcuts instead.": i18n.translate(
+		'Your browser does not support direct access to the clipboard. Please use keyboard shortcuts or your browser’s edit menu instead.'
+	),
 	'Bullet list': i18n.translate( 'Bulleted list' ),
 	'Numbered list': i18n.translate( 'Numbered list' ),
 
@@ -75,5 +88,5 @@ module.exports = {
 	'Edit ': i18n.translate( 'Edit' ), // eslint-disable-line
 	'Horizontal line': i18n.translate( 'Horizontal line' ),
 	'Text color': i18n.translate( 'Text color' ),
-	'Paste as text': i18n.translate( 'Paste as text' )
+	'Paste as text': i18n.translate( 'Paste as text' ),
 };

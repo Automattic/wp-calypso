@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,187 +13,223 @@ import { editedPostHasContent } from '../';
 
 describe( 'editedPostHasContent()', () => {
 	it( 'should return false if there are no edits and no post', () => {
-		const hasContent = editedPostHasContent( {
-			posts: {
-				queries: {},
-				edits: {}
-			}
-		}, 2916284, 841 );
+		const hasContent = editedPostHasContent(
+			{
+				posts: {
+					queries: {},
+					edits: {},
+				},
+			},
+			2916284,
+			841
+		);
 
 		expect( hasContent ).to.be.false;
 	} );
 
 	it( 'should return false if there are no edits and post has empty content', () => {
-		const hasContent = editedPostHasContent( {
-			posts: {
-				queries: {
-					2916284: new PostQueryManager( {
-						items: {
-							841: {
-								ID: 841,
-								site_ID: 2916284,
-								global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-								type: 'post'
-							}
-						}
-					} )
+		const hasContent = editedPostHasContent(
+			{
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									type: 'post',
+								},
+							},
+						} ),
+					},
+					edits: {},
 				},
-				edits: {}
-			}
-		}, 2916284, 841 );
+			},
+			2916284,
+			841
+		);
 
 		expect( hasContent ).to.be.false;
 	} );
 
 	it( 'should return true if there are no edits and the post has a title', () => {
-		const hasContent = editedPostHasContent( {
-			posts: {
-				queries: {
-					2916284: new PostQueryManager( {
-						items: {
-							841: {
-								ID: 841,
-								site_ID: 2916284,
-								global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-								type: 'post',
-								title: 'chiken'
-							}
-						}
-					} )
+		const hasContent = editedPostHasContent(
+			{
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									type: 'post',
+									title: 'chiken',
+								},
+							},
+						} ),
+					},
+					edits: {},
 				},
-				edits: {}
-			}
-		}, 2916284, 841 );
+			},
+			2916284,
+			841
+		);
 
 		expect( hasContent ).to.be.true;
 	} );
 
 	it( 'should return true if there are no edits and the post has content', () => {
-		const hasContent = editedPostHasContent( {
-			posts: {
-				queries: {
-					2916284: new PostQueryManager( {
-						items: {
-							841: {
-								ID: 841,
-								site_ID: 2916284,
-								global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-								type: 'post',
-								content: 'ribs'
-							}
-						}
-					} )
+		const hasContent = editedPostHasContent(
+			{
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									type: 'post',
+									content: 'ribs',
+								},
+							},
+						} ),
+					},
+					edits: {},
 				},
-				edits: {}
-			}
-		}, 2916284, 841 );
+			},
+			2916284,
+			841
+		);
 
 		expect( hasContent ).to.be.true;
 	} );
 
 	it( 'should return true if there are no edits and the post has an excerpt', () => {
-		const hasContent = editedPostHasContent( {
-			posts: {
-				queries: {
-					2916284: new PostQueryManager( {
-						items: {
-							841: {
-								ID: 841,
-								site_ID: 2916284,
-								global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-								type: 'post',
-								excerpt: 'chicken ribs'
-							}
-						}
-					} )
+		const hasContent = editedPostHasContent(
+			{
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									type: 'post',
+									excerpt: 'chicken ribs',
+								},
+							},
+						} ),
+					},
+					edits: {},
 				},
-				edits: {}
-			}
-		}, 2916284, 841 );
+			},
+			2916284,
+			841
+		);
 
 		expect( hasContent ).to.be.true;
 	} );
 
 	it( 'should return false if there are empty edits that overrides the post attributes', () => {
-		const hasContent = editedPostHasContent( {
-			posts: {
-				queries: {
-					2916284: new PostQueryManager( {
-						items: {
+		const hasContent = editedPostHasContent(
+			{
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									type: 'post',
+									title: 'chicken',
+									content: 'ribs',
+									excerpt: 'chicken ribs',
+								},
+							},
+						} ),
+					},
+					edits: {
+						2916284: {
 							841: {
-								ID: 841,
-								site_ID: 2916284,
-								global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-								type: 'post',
-								title: 'chicken',
-								content: 'ribs',
-								excerpt: 'chicken ribs'
-							}
-						}
-					} )
+								title: '',
+								content: '',
+								excerpt: '',
+							},
+						},
+					},
 				},
-				edits: {
-					2916284: {
-						841: {
-							title: '',
-							content: '',
-							excerpt: ''
-						}
-					}
-				}
-			}
-		}, 2916284, 841 );
+			},
+			2916284,
+			841
+		);
 
 		expect( hasContent ).to.be.false;
 	} );
 
 	it( 'should return true if there are title edits', () => {
-		const hasContent = editedPostHasContent( {
-			posts: {
-				queries: {},
-				edits: {
-					2916284: {
-						841: {
-							title: 'chicken'
-						}
-					}
-				}
-			}
-		}, 2916284, 841 );
+		const hasContent = editedPostHasContent(
+			{
+				posts: {
+					queries: {},
+					edits: {
+						2916284: {
+							841: {
+								title: 'chicken',
+							},
+						},
+					},
+				},
+			},
+			2916284,
+			841
+		);
 
 		expect( hasContent ).to.be.true;
 	} );
 
 	it( 'should return true if there are content edits', () => {
-		const hasContent = editedPostHasContent( {
-			posts: {
-				queries: {},
-				edits: {
-					2916284: {
-						841: {
-							content: 'ribs'
-						}
-					}
-				}
-			}
-		}, 2916284, 841 );
+		const hasContent = editedPostHasContent(
+			{
+				posts: {
+					queries: {},
+					edits: {
+						2916284: {
+							841: {
+								content: 'ribs',
+							},
+						},
+					},
+				},
+			},
+			2916284,
+			841
+		);
 
 		expect( hasContent ).to.be.true;
 	} );
 
 	it( 'should return true if there are excerpt edits', () => {
-		const hasContent = editedPostHasContent( {
-			posts: {
-				queries: {},
-				edits: {
-					2916284: {
-						841: {
-							excerpt: 'chicken ribs'
-						}
-					}
-				}
-			}
-		}, 2916284, 841 );
+		const hasContent = editedPostHasContent(
+			{
+				posts: {
+					queries: {},
+					edits: {
+						2916284: {
+							841: {
+								excerpt: 'chicken ribs',
+							},
+						},
+					},
+				},
+			},
+			2916284,
+			841
+		);
 
 		expect( hasContent ).to.be.true;
 	} );

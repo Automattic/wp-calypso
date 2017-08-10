@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,18 +8,16 @@ import React from 'react';
 const PaymentLogo = React.createClass( {
 	propTypes: {
 		type: React.PropTypes.string.isRequired,
-		isCompact: React.PropTypes.bool
+		isCompact: React.PropTypes.bool,
 	},
 
 	render: function() {
 		const classes = classNames( 'payment-logo', `is-${ this.props.type }`, {
-			'is-compact': this.props.isCompact
+			'is-compact': this.props.isCompact,
 		} );
 
-		return (
-			<div className={ classes } />
-		);
-	}
+		return <div className={ classes } />;
+	},
 } );
 
 module.exports = PaymentLogo;

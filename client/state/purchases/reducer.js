@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -18,7 +19,7 @@ import {
 	PURCHASES_SITE_FETCH_FAILED,
 	PURCHASES_USER_FETCH_FAILED,
 	PRIVACY_PROTECTION_CANCEL_COMPLETED,
-	PRIVACY_PROTECTION_CANCEL_FAILED
+	PRIVACY_PROTECTION_CANCEL_FAILED,
 } from 'state/action-types';
 
 /**
@@ -30,7 +31,7 @@ const initialState = {
 	isFetchingSitePurchases: false,
 	isFetchingUserPurchases: false,
 	hasLoadedSitePurchasesFromServer: false,
-	hasLoadedUserPurchasesFromServer: false
+	hasLoadedUserPurchasesFromServer: false,
 };
 
 function updatePurchaseById( state, id, properties ) {
@@ -41,7 +42,7 @@ function updatePurchaseById( state, id, properties ) {
 				return { ...purchase, ...properties };
 			}
 			return purchase;
-		} )
+		} ),
 	};
 }
 
@@ -97,8 +98,10 @@ function updatePurchases( existingPurchases, action ) {
 		predicate = { blog_id: String( action.siteId ) };
 	}
 
-	if ( PURCHASES_USER_FETCH_COMPLETED === action.type ||
-		PURCHASE_REMOVE_COMPLETED === action.type ) {
+	if (
+		PURCHASES_USER_FETCH_COMPLETED === action.type ||
+		PURCHASE_REMOVE_COMPLETED === action.type
+	) {
 		predicate = { user_id: String( action.userId ) };
 	}
 
@@ -111,16 +114,16 @@ function updatePurchases( existingPurchases, action ) {
 const assignError = ( state, action ) => ( { ...state, error: action.error } );
 
 export default createReducer( initialState, {
-	[ PURCHASES_REMOVE ]: ( state ) => ( {
+	[ PURCHASES_REMOVE ]: state => ( {
 		...state,
 		data: [],
 		hasLoadedSitePurchasesFromServer: false,
-		hasLoadedUserPurchasesFromServer: false
+		hasLoadedUserPurchasesFromServer: false,
 	} ),
 
-	[ PURCHASES_SITE_FETCH ]: ( state ) => ( { ...state, isFetchingSitePurchases: true } ),
+	[ PURCHASES_SITE_FETCH ]: state => ( { ...state, isFetchingSitePurchases: true } ),
 
-	[ PURCHASES_USER_FETCH ]: ( state ) => ( { ...state, isFetchingUserPurchases: true } ),
+	[ PURCHASES_USER_FETCH ]: state => ( { ...state, isFetchingUserPurchases: true } ),
 
 	[ PURCHASE_REMOVE_COMPLETED ]: ( state, action ) => ( {
 		...state,
@@ -129,7 +132,7 @@ export default createReducer( initialState, {
 		isFetchingSitePurchases: false,
 		isFetchingUserPurchases: false,
 		hasLoadedSitePurchasesFromServer: true,
-		hasLoadedUserPurchasesFromServer: true
+		hasLoadedUserPurchasesFromServer: true,
 	} ),
 
 	[ PURCHASES_SITE_FETCH_COMPLETED ]: ( state, action ) => ( {
@@ -137,7 +140,7 @@ export default createReducer( initialState, {
 		data: updatePurchases( state.data, action ),
 		error: null,
 		isFetchingSitePurchases: false,
-		hasLoadedSitePurchasesFromServer: true
+		hasLoadedSitePurchasesFromServer: true,
 	} ),
 
 	[ PURCHASES_USER_FETCH_COMPLETED ]: ( state, action ) => ( {
@@ -145,16 +148,18 @@ export default createReducer( initialState, {
 		data: updatePurchases( state.data, action ),
 		error: null,
 		isFetchingUserPurchases: false,
-		hasLoadedUserPurchasesFromServer: true
+		hasLoadedUserPurchasesFromServer: true,
 	} ),
 
 	[ PURCHASE_REMOVE_FAILED ]: assignError,
 	[ PURCHASES_SITE_FETCH_FAILED ]: assignError,
 	[ PURCHASES_USER_FETCH_FAILED ]: assignError,
 
-	[ PRIVACY_PROTECTION_CANCEL_COMPLETED ]: ( state, action ) => updatePurchaseById( state, action.purchase.ID, action.purchase ),
+	[ PRIVACY_PROTECTION_CANCEL_COMPLETED ]: ( state, action ) =>
+		updatePurchaseById( state, action.purchase.ID, action.purchase ),
 
-	[ PRIVACY_PROTECTION_CANCEL_FAILED ]: ( state, action ) => updatePurchaseById( state, action.purchaseId, {
-		error: action.error
-	} )
+	[ PRIVACY_PROTECTION_CANCEL_FAILED ]: ( state, action ) =>
+		updatePurchaseById( state, action.purchaseId, {
+			error: action.error,
+		} ),
 } );

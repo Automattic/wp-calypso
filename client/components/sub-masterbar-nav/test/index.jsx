@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ import Navbar from '../navbar';
 describe( 'SubMasterbarNav', () => {
 	const options = [
 		{ label: 'sites', uri: '/sites', icon: 'star' },
-		{ label: 'more', uri: '/more', icon: 'star' }
+		{ label: 'more', uri: '/more', icon: 'star' },
 	];
 
 	it( 'should render a navbar and a dropdown with the given options', () => {
@@ -38,7 +39,9 @@ describe( 'SubMasterbarNav', () => {
 	it( 'should pass the fallback as selected to the dropdown if none of the options is selected', () => {
 		const fallback = { label: 'Select...', uri: '#' };
 
-		const wrapper = shallow( <SubMasterbarNav options={ options } uri="/foo" fallback={ fallback } /> );
+		const wrapper = shallow(
+			<SubMasterbarNav options={ options } uri="/foo" fallback={ fallback } />
+		);
 		const dropdown = wrapper.find( Dropdown );
 
 		expect( dropdown.prop( 'options' ) ).to.equal( options );
@@ -56,7 +59,9 @@ describe( 'SubMasterbarNav', () => {
 	it( 'should not pass the fallback as selected to the navbar when nothing is selected', () => {
 		const fallback = { label: 'Select...', uri: '#' };
 
-		const wrapper = shallow( <SubMasterbarNav options={ options } uri="/foo" fallback={ fallback } /> );
+		const wrapper = shallow(
+			<SubMasterbarNav options={ options } uri="/foo" fallback={ fallback } />
+		);
 		const navbar = wrapper.find( Navbar );
 
 		expect( navbar.prop( 'options' ) ).to.equal( options );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -32,10 +33,7 @@ import RoleSelect from 'my-sites/people/role-select';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PeopleLogStore from 'lib/people/log-store';
-import {
-	isJetpackSiteMultiSite,
-	isJetpackSite,
-} from 'state/sites/selectors';
+import { isJetpackSiteMultiSite, isJetpackSite } from 'state/sites/selectors';
 
 /**
  * Module Variables
@@ -63,18 +61,17 @@ const EditUserForm = React.createClass( {
 	getStateObject( props ) {
 		props = 'undefined' !== typeof props ? props : this.props;
 		const role = this.getRole( props.roles );
-		return assign(
-			omit( props, 'site' ),
-			{ roles: role }
-		);
+		return assign( omit( props, 'site' ), { roles: role } );
 	},
 
 	getChangedSettings() {
 		const originalUser = this.getStateObject( this.props.user );
-		const changedKeys = filter( this.getAllowedSettingsToChange(), ( setting ) => {
-			return 'undefined' !== typeof originalUser[ setting ] &&
+		const changedKeys = filter( this.getAllowedSettingsToChange(), setting => {
+			return (
+				'undefined' !== typeof originalUser[ setting ] &&
 				'undefined' !== typeof this.state[ setting ] &&
-				originalUser[ setting ] !== this.state[ setting ];
+				originalUser[ setting ] !== this.state[ setting ]
+			);
 		} );
 
 		return pick( this.state, changedKeys );
@@ -122,7 +119,9 @@ const EditUserForm = React.createClass( {
 		UsersActions.updateUser(
 			this.props.siteId,
 			this.state.ID,
-			changedSettings.roles ? Object.assign( changedSettings, { roles: [ changedSettings.roles ] } ) : changedSettings
+			changedSettings.roles
+				? Object.assign( changedSettings, { roles: [ changedSettings.roles ] } )
+				: changedSettings
 		);
 		analytics.ga.recordEvent( 'People', 'Clicked Save Changes Button on User Edit' );
 	},
@@ -133,7 +132,7 @@ const EditUserForm = React.createClass( {
 
 	handleChange( event ) {
 		this.setState( {
-			[ event.target.name ]: event.target.value
+			[ event.target.name ]: event.target.value,
 		} );
 	},
 
@@ -157,7 +156,9 @@ const EditUserForm = React.createClass( {
 				returnField = (
 					<FormFieldset key="first_name">
 						<FormLabel htmlFor="first_name">
-							{ this.translate( 'First Name', { context: 'Text that is displayed in a label of a form.' } ) }
+							{ this.translate( 'First Name', {
+								context: 'Text that is displayed in a label of a form.',
+							} ) }
 						</FormLabel>
 						<FormTextInput
 							id="first_name"
@@ -173,7 +174,9 @@ const EditUserForm = React.createClass( {
 				returnField = (
 					<FormFieldset key="last_name">
 						<FormLabel htmlFor="last_name">
-							{ this.translate( 'Last Name', { context: 'Text that is displayed in a label of a form.' } ) }
+							{ this.translate( 'Last Name', {
+								context: 'Text that is displayed in a label of a form.',
+							} ) }
 						</FormLabel>
 						<FormTextInput
 							id="last_name"
@@ -189,7 +192,9 @@ const EditUserForm = React.createClass( {
 				returnField = (
 					<FormFieldset key="name">
 						<FormLabel htmlFor="name">
-							{ this.translate( 'Public Display Name', { context: 'Text that is displayed in a label of a form.' } ) }
+							{ this.translate( 'Public Display Name', {
+								context: 'Text that is displayed in a label of a form.',
+							} ) }
 						</FormLabel>
 						<FormTextInput
 							id="name"
@@ -218,7 +223,7 @@ const EditUserForm = React.createClass( {
 			return null;
 		}
 
-		editableFields = editableFields.map( ( fieldId ) => {
+		editableFields = editableFields.map( fieldId => {
 			return this.renderField( fieldId );
 		} );
 
@@ -232,12 +237,14 @@ const EditUserForm = React.createClass( {
 				{ editableFields }
 				<FormButtonsBar>
 					<FormButton disabled={ ! this.hasUnsavedSettings() }>
-						{ this.translate( 'Save changes', { context: 'Button label that prompts user to save form' } ) }
+						{ this.translate( 'Save changes', {
+							context: 'Button label that prompts user to save form',
+						} ) }
 					</FormButton>
 				</FormButtonsBar>
 			</form>
 		);
-	}
+	},
 } );
 
 export class EditTeamMemberForm extends Component {
@@ -284,14 +291,17 @@ export class EditTeamMemberForm extends Component {
 		const peopleUser = UsersStore.getUserByLogin( props.siteId, props.userLogin );
 
 		this.setState( {
-			user: peopleUser
+			user: peopleUser,
 		} );
 	};
 
 	redirectIfError = () => {
 		if ( this.props.siteId ) {
 			const fetchUserError = PeopleLogStore.getErrors(
-				log => this.props.siteId === log.siteId && 'RECEIVE_USER_FAILED' === log.action && this.props.userLogin === log.user
+				log =>
+					this.props.siteId === log.siteId &&
+					'RECEIVE_USER_FAILED' === log.action &&
+					this.props.userLogin === log.user
 			);
 			if ( fetchUserError.length ) {
 				page.redirect( `/people/team/${ this.props.siteSlug }` );
@@ -304,10 +314,12 @@ export class EditTeamMemberForm extends Component {
 			return;
 		}
 
-		const removeUserSuccessful = PeopleLog.getCompleted( ( log ) => {
-			return 'RECEIVE_DELETE_SITE_USER_SUCCESS' === log.action &&
+		const removeUserSuccessful = PeopleLog.getCompleted( log => {
+			return (
+				'RECEIVE_DELETE_SITE_USER_SUCCESS' === log.action &&
 				this.props.siteId === log.siteId &&
-				this.props.userLogin === log.user.login;
+				this.props.userLogin === log.user.login
+			);
 		} );
 
 		if ( removeUserSuccessful.length ) {
@@ -316,15 +328,19 @@ export class EditTeamMemberForm extends Component {
 			page.redirect( redirect );
 		}
 
-		const removeUserInProgress = PeopleLog.getInProgress( function( log ) {
-			return 'DELETE_SITE_USER' === log.action &&
-				this.props.siteId === log.siteId &&
-				this.props.userLogin === log.user.login;
-		}.bind( this ) );
+		const removeUserInProgress = PeopleLog.getInProgress(
+			function( log ) {
+				return (
+					'DELETE_SITE_USER' === log.action &&
+					this.props.siteId === log.siteId &&
+					this.props.userLogin === log.user.login
+				);
+			}.bind( this )
+		);
 
 		if ( !! removeUserInProgress.length !== this.state.removingUser ) {
 			this.setState( {
-				removingUser: ! this.state.removingUser
+				removingUser: ! this.state.removingUser,
 			} );
 		}
 	};
@@ -350,9 +366,7 @@ export class EditTeamMemberForm extends Component {
 		if ( ! this.state.user ) {
 			return;
 		}
-		return (
-			<PeopleNotices user={ this.state.user } />
-		);
+		return <PeopleNotices user={ this.state.user } />;
 	}
 
 	render() {
@@ -372,28 +386,24 @@ export class EditTeamMemberForm extends Component {
 						markSaved={ this.props.markSaved }
 					/>
 				</Card>
-				{
-					this.state.user &&
+				{ this.state.user &&
 					<DeleteUser
 						{ ...pick( this.props, [ 'siteId', 'isJetpack', 'isMultisite' ] ) }
 						currentUser={ user.get() }
 						user={ this.state.user }
-					/>
-				}
+					/> }
 			</Main>
 		);
 	}
 }
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			siteId,
-			siteSlug: getSelectedSiteSlug( state ),
-			isJetpack: isJetpackSite( state, siteId ),
-			isMultisite: isJetpackSiteMultiSite( state, siteId ),
-		};
-	}
-)( protectForm( EditTeamMemberForm ) );
+	return {
+		siteId,
+		siteSlug: getSelectedSiteSlug( state ),
+		isJetpack: isJetpackSite( state, siteId ),
+		isMultisite: isJetpackSiteMultiSite( state, siteId ),
+	};
+} )( protectForm( EditTeamMemberForm ) );

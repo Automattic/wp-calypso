@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Stub wp module to avoid its dependency on the browser
  **/
@@ -14,7 +15,7 @@ module.exports = {
 	batch: function() {
 		return {
 			add: returnSelf,
-			run: returnSelf
+			run: returnSelf,
 		};
-	}
+	},
 };

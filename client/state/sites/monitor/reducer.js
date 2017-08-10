@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,21 +19,39 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 } from 'state/action-types';
 
-export const items = createReducer( {}, {
-	[ SITE_MONITOR_SETTINGS_RECEIVE ]: ( state, { siteId, settings } ) => ( { ...state, [ siteId ]: settings } ),
-} );
+export const items = createReducer(
+	{},
+	{
+		[ SITE_MONITOR_SETTINGS_RECEIVE ]: ( state, { siteId, settings } ) => ( {
+			...state,
+			[ siteId ]: settings,
+		} ),
+	}
+);
 
-export const requesting = keyedReducer( 'siteId', createReducer( {}, {
-	[ SITE_MONITOR_SETTINGS_REQUEST ]: stubTrue,
-	[ SITE_MONITOR_SETTINGS_REQUEST_SUCCESS ]: stubFalse,
-	[ SITE_MONITOR_SETTINGS_REQUEST_FAILURE ]: stubFalse,
-} ) );
+export const requesting = keyedReducer(
+	'siteId',
+	createReducer(
+		{},
+		{
+			[ SITE_MONITOR_SETTINGS_REQUEST ]: stubTrue,
+			[ SITE_MONITOR_SETTINGS_REQUEST_SUCCESS ]: stubFalse,
+			[ SITE_MONITOR_SETTINGS_REQUEST_FAILURE ]: stubFalse,
+		}
+	)
+);
 
-export const updating = keyedReducer( 'siteId', createReducer( {}, {
-	[ SITE_MONITOR_SETTINGS_UPDATE ]: stubTrue,
-	[ SITE_MONITOR_SETTINGS_UPDATE_SUCCESS ]: stubFalse,
-	[ SITE_MONITOR_SETTINGS_UPDATE_FAILURE ]: stubFalse,
-} ) );
+export const updating = keyedReducer(
+	'siteId',
+	createReducer(
+		{},
+		{
+			[ SITE_MONITOR_SETTINGS_UPDATE ]: stubTrue,
+			[ SITE_MONITOR_SETTINGS_UPDATE_SUCCESS ]: stubFalse,
+			[ SITE_MONITOR_SETTINGS_UPDATE_FAILURE ]: stubFalse,
+		}
+	)
+);
 
 export default combineReducers( {
 	items,

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +15,7 @@ const initialDomainState = {
 	hasLoadedFromServer: false,
 	isFetching: false,
 	list: null,
-	needsUpdate: true
+	needsUpdate: true,
 };
 
 /**
@@ -28,8 +29,8 @@ const initialDomainState = {
 function updateDomainState( state, domainName, data ) {
 	const command = {
 		[ domainName ]: {
-			$set: Object.assign( {}, state[ domainName ] || initialDomainState, data )
-		}
+			$set: Object.assign( {}, state[ domainName ] || initialDomainState, data ),
+		},
 	};
 
 	return update( state, command );
@@ -53,8 +54,8 @@ function deleteTemporaryMailbox( state, domainName, mailbox ) {
 	const command = {
 		[ domainName ]: {
 			list: { $splice: [ [ index, 1 ] ] },
-			needsUpdate: { $set: true }
-		}
+			needsUpdate: { $set: true },
+		},
 	};
 
 	return update( state, command );
@@ -72,10 +73,10 @@ function addTemporaryMailbox( state, domainName, mailboxData ) {
 	const command = {
 		[ domainName ]: {
 			list: {
-				$apply: oldList => sortBy( oldList.concat( [ mailboxData ] ), 'mailbox' )
+				$apply: oldList => sortBy( oldList.concat( [ mailboxData ] ), 'mailbox' ),
 			},
-			needsUpdate: { $set: true }
-		}
+			needsUpdate: { $set: true },
+		},
 	};
 
 	return update( state, command );
@@ -88,13 +89,13 @@ function reducer( state, payload ) {
 		case UpgradesActionTypes.EMAIL_FORWARDING_FETCH:
 			state = updateDomainState( state, action.domainName, {
 				isFetching: true,
-				needsUpdate: false
+				needsUpdate: false,
 			} );
 			break;
 		case UpgradesActionTypes.EMAIL_FORWARDING_FETCH_FAILED:
 			state = updateDomainState( state, action.domainName, {
 				isFetching: false,
-				needsUpdate: true
+				needsUpdate: true,
 			} );
 			break;
 		case UpgradesActionTypes.EMAIL_FORWARDING_FETCH_COMPLETED:
@@ -102,7 +103,7 @@ function reducer( state, payload ) {
 				hasLoadedFromServer: true,
 				isFetching: false,
 				list: action.forwards || [],
-				needsUpdate: false
+				needsUpdate: false,
 			} );
 			break;
 		case UpgradesActionTypes.EMAIL_FORWARDING_ADD_COMPLETED:
@@ -112,7 +113,7 @@ function reducer( state, payload ) {
 				email: `${ action.mailbox }@${ action.domainName }`,
 				mailbox: action.mailbox,
 				forward_address: action.destination,
-				temporary: true
+				temporary: true,
 			} );
 			break;
 		case UpgradesActionTypes.EMAIL_FORWARDING_DELETE_COMPLETED:
@@ -123,7 +124,4 @@ function reducer( state, payload ) {
 	return state;
 }
 
-export {
-	initialDomainState,
-	reducer
-};
+export { initialDomainState, reducer };

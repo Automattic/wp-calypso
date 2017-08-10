@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,16 +29,22 @@ const HappinessSupport = React.createClass( {
 
 	getDefaultProps() {
 		return {
-			showLiveChatButton: false
+			showLiveChatButton: false,
 		};
 	},
 
 	getInitialState() {
 		return {
 			user: sample( [
-				{ display_name: 'Spencer', avatar_URL: '//gravatar.com/avatar/368dd11821ca7e9293d1707ab838f5c7' },
-				{ display_name: 'Luca', avatar_URL: '//gravatar.com/avatar/7f7ba3ba8305287770e0cba76d1eb3db' }
-			] )
+				{
+					display_name: 'Spencer',
+					avatar_URL: '//gravatar.com/avatar/368dd11821ca7e9293d1707ab838f5c7',
+				},
+				{
+					display_name: 'Luca',
+					avatar_URL: '//gravatar.com/avatar/7f7ba3ba8305287770e0cba76d1eb3db',
+				},
+			] ),
 		};
 	},
 
@@ -99,7 +106,7 @@ const HappinessSupport = React.createClass( {
 	render() {
 		const classes = {
 			'happiness-support': true,
-			'is-placeholder': this.props.isPlaceholder
+			'is-placeholder': this.props.isPlaceholder,
 		};
 		const { liveChatAvailable, showLiveChatButton } = this.props;
 
@@ -116,26 +123,26 @@ const HappinessSupport = React.createClass( {
 						'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site, your account or how to do just about anything.',
 						{
 							components: {
-								strong: <strong />
-							}
+								strong: <strong />,
+							},
 						}
 					) }
 				</p>
 
 				<div className="happiness-support__buttons">
 					{ showLiveChatButton && <HappychatConnection /> }
-					{ showLiveChatButton && liveChatAvailable ? this.renderLiveChatButton() : this.renderContactButton() }
+					{ showLiveChatButton && liveChatAvailable
+						? this.renderLiveChatButton()
+						: this.renderContactButton() }
 					{ this.renderSupportButton() }
 				</div>
 			</div>
 		);
-	}
+	},
 } );
 
-export default connect(
-	state => {
-		return {
-			liveChatAvailable: isHappychatAvailable( state ),
-		};
-	}
-)( localize( HappinessSupport ) );
+export default connect( state => {
+	return {
+		liveChatAvailable: isHappychatAvailable( state ),
+	};
+} )( localize( HappinessSupport ) );

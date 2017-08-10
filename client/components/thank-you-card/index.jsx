@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +9,16 @@ import React, { PropTypes } from 'react';
 // Non standard gridicon sizes are used here because we use them as background pattern with various sizes and rotation
 /* eslint-disable wpcalypso/jsx-gridicon-size */
 
-const ThankYouCard = ( { heading, description, buttonUrl, buttonText, price, name, icon, action } ) => {
+const ThankYouCard = ( {
+	heading,
+	description,
+	buttonUrl,
+	buttonText,
+	price,
+	name,
+	icon,
+	action,
+} ) => {
 	const renderAction = () => {
 		if ( action ) {
 			return action;
@@ -17,7 +27,8 @@ const ThankYouCard = ( { heading, description, buttonUrl, buttonText, price, nam
 		return (
 			<a
 				className={ classnames( 'thank-you-card__button', { 'is-placeholder': ! buttonUrl } ) }
-				href={ buttonUrl }>
+				href={ buttonUrl }
+			>
 				{ buttonText }
 			</a>
 		);
@@ -26,11 +37,15 @@ const ThankYouCard = ( { heading, description, buttonUrl, buttonText, price, nam
 	return (
 		<div className="thank-you-card">
 			<div className="thank-you-card__header">
-				{
-					icon
-					? <div className="thank-you-card__main-icon">{ icon }</div>
-					: <Gridicon className="thank-you-card__main-icon" icon="checkmark-circle" size={ 140 } />
-				}
+				{ icon
+					? <div className="thank-you-card__main-icon">
+							{ icon }
+						</div>
+					: <Gridicon
+							className="thank-you-card__main-icon"
+							icon="checkmark-circle"
+							size={ 140 }
+						/> }
 
 				<div className="thank-you-card__header-detail">
 					<div className={ classnames( 'thank-you-card__name', { 'is-placeholder': ! name } ) }>
@@ -81,7 +96,7 @@ ThankYouCard.propTypes = {
 	name: PropTypes.string,
 	price: PropTypes.string,
 	icon: PropTypes.node,
-	action: PropTypes.node
+	action: PropTypes.node,
 };
 
 export default ThankYouCard;

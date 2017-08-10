@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,22 +16,22 @@ const VerticalNavItem = React.createClass( {
 		external: React.PropTypes.bool,
 		isPlaceholder: React.PropTypes.bool,
 		onClick: React.PropTypes.func,
-		path: React.PropTypes.string
+		path: React.PropTypes.string,
 	},
 
 	getDefaultProps() {
 		return {
 			external: false,
 			isPlaceholder: false,
-			onClick: noop
+			onClick: noop,
 		};
 	},
 
 	placeholder() {
 		return (
 			<CompactCard className="vertical-nav-item is-placeholder">
-				<span></span>
-				<span></span>
+				<span />
+				<span />
 			</CompactCard>
 		);
 	},
@@ -44,10 +45,13 @@ const VerticalNavItem = React.createClass( {
 			<a
 				href={ this.props.path }
 				onClick={ this.props.onClick }
-				target={ this.props.external ? '_blank' : null }>
+				target={ this.props.external ? '_blank' : null }
+			>
 				<CompactCard className="vertical-nav-item">
 					{ this.getIcon() }
-					<span>{ this.props.children }</span>
+					<span>
+						{ this.props.children }
+					</span>
 				</CompactCard>
 			</a>
 		);
@@ -59,7 +63,7 @@ const VerticalNavItem = React.createClass( {
 		}
 
 		return <Gridicon icon="chevron-right" />;
-	}
+	},
 } );
 
 export default VerticalNavItem;

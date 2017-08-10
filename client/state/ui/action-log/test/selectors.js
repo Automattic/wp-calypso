@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,15 +7,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getActionLog,
-	getLastAction,
-} from '../selectors';
+import { getActionLog, getLastAction } from '../selectors';
 
-import {
-	GUIDED_TOUR_UPDATE,
-	ROUTE_SET,
-} from 'state/action-types';
+import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'state/action-types';
 
 describe( 'selectors', () => {
 	describe( 'getActionLog', () => {
@@ -22,10 +17,10 @@ describe( 'selectors', () => {
 			const log = getActionLog( {
 				ui: {
 					actionLog: [],
-				}
+				},
 			} );
 
-			expect( log ).to.eql( [] );
+			expect( log ).to.eql( [] );
 		} );
 
 		it( 'should retrieve all actions from the log', () => {
@@ -37,7 +32,7 @@ describe( 'selectors', () => {
 				{
 					type: ROUTE_SET,
 					path: '/menus/77203074',
-				}
+				},
 			];
 			const log = getActionLog( {
 				ui: {
@@ -45,7 +40,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( log ).to.eql( actions );
+			expect( log ).to.eql( actions );
 		} );
 	} );
 
@@ -54,7 +49,7 @@ describe( 'selectors', () => {
 			const action = getLastAction( {
 				ui: {
 					actionLog: [],
-				}
+				},
 			} );
 
 			expect( action ).to.be.false;
@@ -66,7 +61,7 @@ describe( 'selectors', () => {
 			const action = getLastAction( {
 				ui: {
 					actionLog: [ navToMenus, navToDesign ],
-				}
+				},
 			} );
 
 			expect( action ).to.equal( navToDesign );

@@ -1,3 +1,4 @@
+/** @format */
 export const logItemsSchema = {
 	type: 'object',
 	patternProperties: {
@@ -5,10 +6,7 @@ export const logItemsSchema = {
 			type: 'array',
 			items: {
 				type: 'object',
-				required: [
-					'name',
-					'ts_utc',
-				],
+				required: [ 'name', 'ts_utc' ],
 				properties: {
 					actor: { type: 'object' },
 					group: { type: 'string' },
@@ -16,7 +14,7 @@ export const logItemsSchema = {
 					object: { type: 'object' },
 					ts_utc: { type: 'integer' },
 				},
-			}
+			},
 		},
 	},
 	additionalProperties: false,

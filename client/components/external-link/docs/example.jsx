@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,9 +16,15 @@ export default React.createClass( {
 	render() {
 		return (
 			<Card>
-				<p><ExternalLink icon={ true } href="https://wordpress.org" >WordPress.org</ExternalLink></p>
-				<p><ExternalLink href="https://wordpress.org">WordPress.org</ExternalLink></p>
+				<p>
+					<ExternalLink icon={ true } href="https://wordpress.org">
+						WordPress.org
+					</ExternalLink>
+				</p>
+				<p>
+					<ExternalLink href="https://wordpress.org">WordPress.org</ExternalLink>
+				</p>
 			</Card>
 		);
-	}
+	},
 } );

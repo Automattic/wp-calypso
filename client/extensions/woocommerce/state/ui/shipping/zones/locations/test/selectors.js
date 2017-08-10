@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -92,33 +93,37 @@ const locations = [
 	},
 ];
 
-const createEditState = ( { zoneLocations, locationEdits } ) => createState( {
-	site: {
-		shippingZones: Object.keys( zoneLocations ).map( zoneId => ( { id: Number( zoneId ), methodIds: [] } ) ),
-		shippingZoneLocations: zoneLocations,
-		locations,
-	},
-	ui: {
-		shipping: {
-			zones: {
-				creates: [], updates: [], deletes: [],
-				currentlyEditingId: 1,
-				currentlyEditingChanges: {
-					locations: locationEdits,
+const createEditState = ( { zoneLocations, locationEdits } ) =>
+	createState( {
+		site: {
+			shippingZones: Object.keys( zoneLocations ).map( zoneId => ( {
+				id: Number( zoneId ),
+				methodIds: [],
+			} ) ),
+			shippingZoneLocations: zoneLocations,
+			locations,
+		},
+		ui: {
+			shipping: {
+				zones: {
+					creates: [],
+					updates: [],
+					deletes: [],
+					currentlyEditingId: 1,
+					currentlyEditingChanges: {
+						locations: locationEdits,
+					},
 				},
 			},
 		},
-	},
-} );
+	} );
 
 describe( 'selectors', () => {
 	describe( 'getShippingZoneLocationsWithEdits', () => {
 		it( 'should return null when the shipping zones are not fully loaded', () => {
 			const state = createState( {
 				site: {
-					shippingZones: [
-						{ id: 1, methodIds: [] },
-					],
+					shippingZones: [ { id: 1, methodIds: [] } ],
 					shippingZoneLocations: { 1: LOADING },
 				},
 				ui: {},
@@ -130,15 +135,15 @@ describe( 'selectors', () => {
 		it( 'should return null when there is no zone currently being edited', () => {
 			const state = createState( {
 				site: {
-					shippingZones: [
-						{ id: 1, methodIds: [] },
-					],
+					shippingZones: [ { id: 1, methodIds: [] } ],
 					shippingZoneLocations: { 1: { continent: [], country: [], state: [], postcode: [] } },
 				},
 				ui: {
 					shipping: {
 						zones: {
-							creates: [], updates: [], deletes: [],
+							creates: [],
+							updates: [],
+							deletes: [],
 							currentlyEditingId: null,
 						},
 					},
@@ -157,9 +162,11 @@ describe( 'selectors', () => {
 				ui: {
 					shipping: {
 						zones: {
-							creates: [], updates: [], deletes: [],
+							creates: [],
+							updates: [],
+							deletes: [],
 							currentlyEditingId: { index: 0 },
-							currentlyEditingChanges: { locations: initialState }
+							currentlyEditingChanges: { locations: initialState },
 						},
 					},
 				},
@@ -169,7 +176,7 @@ describe( 'selectors', () => {
 				continent: [],
 				country: [],
 				state: [],
-				postcode: []
+				postcode: [],
 			} );
 		} );
 
@@ -236,9 +243,7 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.REMOVE_CONTINENT, code: 'EU' },
-					],
+					journal: [ { action: JOURNAL_ACTIONS.REMOVE_CONTINENT, code: 'EU' } ],
 					states: null,
 					postcode: null,
 					pristine: false,
@@ -253,7 +258,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should add all the continent\'s countries instead of the continent if the locations already include countries', () => {
+		it( "should add all the continent's countries instead of the continent if the locations already include countries", () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -264,9 +269,7 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.ADD_CONTINENT, code: 'NA' },
-					],
+					journal: [ { action: JOURNAL_ACTIONS.ADD_CONTINENT, code: 'NA' } ],
 					states: null,
 					postcode: null,
 					pristine: false,
@@ -298,9 +301,7 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.ADD_CONTINENT, code: 'EU' },
-					],
+					journal: [ { action: JOURNAL_ACTIONS.ADD_CONTINENT, code: 'EU' } ],
 					states: null,
 					postcode: null,
 					pristine: false,
@@ -315,7 +316,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should add remove all the continent\'s countries when adding the whole continent', () => {
+		it( "should add remove all the continent's countries when adding the whole continent", () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -326,9 +327,7 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.ADD_CONTINENT, code: 'EU' },
-					],
+					journal: [ { action: JOURNAL_ACTIONS.ADD_CONTINENT, code: 'EU' } ],
 					states: null,
 					postcode: null,
 					pristine: false,
@@ -412,9 +411,7 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' },
-					],
+					journal: [ { action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' } ],
 					states: null,
 					postcode: null,
 					pristine: false,
@@ -446,9 +443,7 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' },
-					],
+					journal: [ { action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' } ],
 					states: null,
 					postcode: null,
 					pristine: false,
@@ -545,9 +540,7 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'UK' },
-					],
+					journal: [ { action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'UK' } ],
 					states: null,
 					postcode: null,
 					pristine: false,
@@ -579,9 +572,7 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'UK' },
-					],
+					journal: [ { action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'UK' } ],
 					states: null,
 					postcode: null,
 					pristine: false,
@@ -639,9 +630,7 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' },
-					],
+					journal: [ { action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' } ],
 					states: null,
 					postcode: null,
 					pristine: false,
@@ -667,9 +656,7 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' },
-					],
+					journal: [ { action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' } ],
 					states: null,
 					postcode: null,
 					pristine: false,
@@ -867,20 +854,16 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' },
-					],
+					journal: [ { action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' } ],
 					states: null,
 					postcode: null,
 					pristine: false,
 					temporaryChanges: {
-						journal: [
-							{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'FR' },
-						],
+						journal: [ { action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'FR' } ],
 						states: null,
 						postcode: null,
 						pristine: false,
-					}
+					},
 				},
 			} );
 
@@ -903,20 +886,16 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' },
-					],
+					journal: [ { action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' } ],
 					states: null,
 					postcode: null,
 					pristine: false,
 					temporaryChanges: {
-						journal: [
-							{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'FR' },
-						],
+						journal: [ { action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'FR' } ],
 						states: null,
 						postcode: null,
 						pristine: false,
-					}
+					},
 				},
 			} );
 
@@ -933,15 +912,15 @@ describe( 'selectors', () => {
 		it( 'should return false when there is no shipping zone being edited', () => {
 			const state = createState( {
 				site: {
-					shippingZones: [
-						{ id: 1, methodIds: [] },
-					],
+					shippingZones: [ { id: 1, methodIds: [] } ],
 					shippingZoneLocations: { 1: { continent: [], country: [], state: [], postcode: [] } },
 				},
 				ui: {
 					shipping: {
 						zones: {
-							creates: [], updates: [], deletes: [],
+							creates: [],
+							updates: [],
+							deletes: [],
 							currentlyEditingId: null,
 						},
 					},
@@ -1030,9 +1009,7 @@ describe( 'selectors', () => {
 				locationEdits: {
 					...initialState,
 					temporaryChanges: {
-						journal: [
-							{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
-						],
+						journal: [ { action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' } ],
 						states: null,
 						postcode: null,
 						pristine: false,
@@ -1093,7 +1070,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCurrentSelectedCountryZoneOwner', () => {
-		it( 'should return null when the zone locations can\'t be filtered', () => {
+		it( "should return null when the zone locations can't be filtered", () => {
 			const state = createEditState( {
 				zoneLocations: {
 					1: {
@@ -1137,7 +1114,7 @@ describe( 'selectors', () => {
 						states: null,
 						postcode: null,
 						pristine: true,
-					}
+					},
 				},
 			} );
 
@@ -1246,9 +1223,7 @@ describe( 'selectors', () => {
 				locationEdits: {
 					...initialState,
 					temporaryChanges: {
-						journal: [
-							{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
-						],
+						journal: [ { action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' } ],
 						states: null,
 						postcode: null,
 						pristine: false,
@@ -1386,9 +1361,7 @@ describe( 'selectors', () => {
 				locationEdits: {
 					...initialState,
 					temporaryChanges: {
-						journal: [
-							{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
-						],
+						journal: [ { action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' } ],
 						states: null,
 						postcode: null,
 						pristine: false,
@@ -1474,7 +1447,7 @@ describe( 'selectors', () => {
 						states: null,
 						postcode: null,
 						pristine: false,
-					}
+					},
 				},
 			} );
 
@@ -1566,7 +1539,7 @@ describe( 'selectors', () => {
 						states: null,
 						postcode: '12345',
 						pristine: false,
-					}
+					},
 				},
 			} );
 
@@ -1620,9 +1593,7 @@ describe( 'selectors', () => {
 				locationEdits: {
 					...initialState,
 					temporaryChanges: {
-						journal: [
-							{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
-						],
+						journal: [ { action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' } ],
 						states: null,
 						postcode: null,
 						pristine: false,
@@ -1833,9 +1804,7 @@ describe( 'selectors', () => {
 				locationEdits: {
 					...initialState,
 					temporaryChanges: {
-						journal: [
-							{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
-						],
+						journal: [ { action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' } ],
 						states: null,
 						postcode: null,
 						pristine: false,
@@ -2089,16 +2058,12 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' },
-					],
+					journal: [ { action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' } ],
 					states: null,
 					postcode: null,
 					pristine: false,
 					temporaryChanges: {
-						journal: [
-							{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
-						],
+						journal: [ { action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' } ],
 						states: null,
 						postcode: null,
 						pristine: false,
@@ -2347,9 +2312,7 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
-					],
+					journal: [ { action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' } ],
 					states: null,
 					postcode: null,
 					pristine: false,
@@ -2511,16 +2474,12 @@ describe( 'selectors', () => {
 					},
 				},
 				locationEdits: {
-					journal: [
-						{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
-					],
+					journal: [ { action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' } ],
 					states: null,
 					postcode: null,
 					pristine: false,
 					temporaryChanges: {
-						journal: [
-							{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' },
-						],
+						journal: [ { action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'UK' } ],
 						states: null,
 						postcode: null,
 						pristine: false,
@@ -2536,9 +2495,7 @@ describe( 'selectors', () => {
 		it( 'should return an empty list if the zone does not have locations', () => {
 			const state = createState( {
 				site: {
-					shippingZones: [
-						{ id: 1, methodIds: [] },
-					],
+					shippingZones: [ { id: 1, methodIds: [] } ],
 					shippingZoneLocations: {
 						1: {
 							continent: [],
@@ -2552,13 +2509,13 @@ describe( 'selectors', () => {
 				ui: {
 					shipping: {
 						zones: {
-							creates: [], updates: [], deletes: [],
+							creates: [],
+							updates: [],
+							deletes: [],
 							currentlyEditingId: 1,
 							currentlyEditingChanges: {
 								locations: {
-									journal: [
-										{ action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' },
-									],
+									journal: [ { action: JOURNAL_ACTIONS.REMOVE_COUNTRY, code: 'US' } ],
 									states: null,
 									postcode: null,
 									pristine: false,
@@ -2575,9 +2532,7 @@ describe( 'selectors', () => {
 		it( 'should return a move operation if the zone locations edits have made it change priority', () => {
 			const state = createState( {
 				site: {
-					shippingZones: [
-						{ id: 1, order: 3, methodIds: [] },
-					],
+					shippingZones: [ { id: 1, order: 3, methodIds: [] } ],
 					shippingZoneLocations: {
 						1: {
 							continent: [],
@@ -2591,7 +2546,9 @@ describe( 'selectors', () => {
 				ui: {
 					shipping: {
 						zones: {
-							creates: [], updates: [], deletes: [],
+							creates: [],
+							updates: [],
+							deletes: [],
 							currentlyEditingId: 1,
 							currentlyEditingChanges: {
 								locations: {
@@ -2648,7 +2605,9 @@ describe( 'selectors', () => {
 				ui: {
 					shipping: {
 						zones: {
-							creates: [], updates: [], deletes: [],
+							creates: [],
+							updates: [],
+							deletes: [],
 							currentlyEditingId: 1,
 							currentlyEditingChanges: {
 								locations: {

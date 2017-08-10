@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,14 +9,8 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	receiveRestoreSuccess,
-	receiveRestoreError,
-} from '../';
-import {
-	getRewindRestoreProgress,
-	rewindRestoreUpdateError,
-} from 'state/activity-log/actions';
+import { receiveRestoreSuccess, receiveRestoreError } from '../';
+import { getRewindRestoreProgress, rewindRestoreUpdateError } from 'state/activity-log/actions';
 
 const siteId = 77203074;
 const timestamp = 1496768464;
@@ -48,13 +43,11 @@ describe( 'receiveRestoreError', () => {
 		const dispatch = sinon.spy();
 		receiveRestoreError( { dispatch }, { siteId, timestamp }, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
-			rewindRestoreUpdateError(
-				siteId, timestamp, {
-					error: 'vp_api_error',
-					message: 'Invalid signature.',
-					status: 400,
-				}
-			)
+			rewindRestoreUpdateError( siteId, timestamp, {
+				error: 'vp_api_error',
+				message: 'Invalid signature.',
+				status: 400,
+			} )
 		);
 	} );
 } );

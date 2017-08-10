@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,11 +17,13 @@ export default localize(
 
 		getOptions( countriesList ) {
 			if ( isEmpty( countriesList ) ) {
-				return [ {
-					key: '',
-					label: this.props.translate( 'Loading…' ),
-					disabled: true,
-				} ];
+				return [
+					{
+						key: '',
+						label: this.props.translate( 'Loading…' ),
+						disabled: true,
+					},
+				];
 			}
 			return countriesList.map( ( { code, name }, idx ) => ( {
 				key: idx,

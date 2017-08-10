@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -14,5 +15,5 @@ export default {
 	...freeTrials,
 	...domainManagement,
 	...domainSearch,
-	...purchases
+	...purchases,
 };

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,19 +13,10 @@ import page from 'page';
  */
 import notices from 'notices';
 import { login } from 'lib/paths';
-import {
-	CHECK_YOUR_EMAIL_PAGE,
-} from 'state/login/magic-login/constants';
-import {
-	getMagicLoginCurrentView,
-} from 'state/selectors';
-import {
-	hideMagicLoginRequestForm,
-} from 'state/login/magic-login/actions';
-import {
-	recordPageView,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
+import { getMagicLoginCurrentView } from 'state/selectors';
+import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
+import { recordPageView, recordTracksEvent } from 'state/analytics/actions';
 import Main from 'components/main';
 import RequestLoginEmailForm from './request-login-email-form';
 import GlobalNotices from 'components/global-notices';
@@ -52,20 +44,17 @@ class MagicLogin extends React.Component {
 	};
 
 	render() {
-		const {
-			showCheckYourEmail,
-			translate,
-		} = this.props;
+		const { showCheckYourEmail, translate } = this.props;
 
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
 
-		const footer = ! showCheckYourEmail && (
+		const footer =
+			! showCheckYourEmail &&
 			<div className="magic-login__footer">
 				<a href="#" onClick={ this.onClickEnterPasswordInstead }>
 					<Gridicon icon="arrow-left" size={ 18 } /> { translate( 'Enter a password instead' ) }
 				</a>
-			</div>
-		);
+			</div>;
 
 		const classes = classNames( 'magic-login', 'magic-login__request-link' );
 
@@ -79,7 +68,7 @@ class MagicLogin extends React.Component {
 	}
 }
 
-const mapState = ( state ) => ( {
+const mapState = state => ( {
 	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 } );
 

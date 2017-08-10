@@ -1,8 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,7 +14,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { getSiteAdminUrl } from 'state/sites/selectors';
 
-const JetpackUpgradeMessage = ( { siteId, translate, adminUrl } ) => (
+const JetpackUpgradeMessage = ( { siteId, translate, adminUrl } ) =>
 	<Main className="themes">
 		<SidebarNavigation />
 		<JetpackManageErrorPage
@@ -24,11 +25,8 @@ const JetpackUpgradeMessage = ( { siteId, translate, adminUrl } ) => (
 			secondaryActionURL={ adminUrl }
 			secondaryActionTarget="_blank"
 		/>
-	</Main>
-);
+	</Main>;
 
-export default connect(
-	( state, { siteId } ) => ( {
-		adminUrl: getSiteAdminUrl( state, siteId, 'themes.php' )
-	} )
-)( localize( JetpackUpgradeMessage ) );
+export default connect( ( state, { siteId } ) => ( {
+	adminUrl: getSiteAdminUrl( state, siteId, 'themes.php' ),
+} ) )( localize( JetpackUpgradeMessage ) );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,10 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	isCurrentUserUploadingGravatar,
-	getUserTempGravatar,
-} from '../selectors';
+import { isCurrentUserUploadingGravatar, getUserTempGravatar } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isCurrentUserUploadingGravatar', () => {
@@ -21,22 +19,20 @@ describe( 'selectors', () => {
 			const uploadingState = {
 				currentUser: {
 					gravatarStatus: {
-						isUploading: true
-					}
-				}
+						isUploading: true,
+					},
+				},
 			};
-			expect( isCurrentUserUploadingGravatar( uploadingState ) )
-				.to.equal( true );
+			expect( isCurrentUserUploadingGravatar( uploadingState ) ).to.equal( true );
 
 			const notUploadingState = {
 				currentUser: {
 					gravatarStatus: {
-						isUploading: false
-					}
-				}
+						isUploading: false,
+					},
+				},
 			};
-			expect( isCurrentUserUploadingGravatar( notUploadingState ) )
-				.to.equal( false );
+			expect( isCurrentUserUploadingGravatar( notUploadingState ) ).to.equal( false );
 		} );
 	} );
 
@@ -50,11 +46,11 @@ describe( 'selectors', () => {
 				currentUser: {
 					gravatarStatus: {
 						tempImage: {
-							src: imageSrc
-						}
+							src: imageSrc,
+						},
 					},
-					id: currentUserId
-				}
+					id: currentUserId,
+				},
 			};
 			expect( getUserTempGravatar( state ) ).to.equal( false );
 			expect( getUserTempGravatar( state, false ) ).to.equal( false );
@@ -65,11 +61,11 @@ describe( 'selectors', () => {
 				currentUser: {
 					gravatarStatus: {
 						tempImage: {
-							src: imageSrc
-						}
+							src: imageSrc,
+						},
 					},
-					id: currentUserId
-				}
+					id: currentUserId,
+				},
 			};
 			expect( getUserTempGravatar( state, anotherUserId ) ).to.equal( false );
 		} );
@@ -78,13 +74,12 @@ describe( 'selectors', () => {
 			const emptyTempImage = {
 				currentUser: {
 					gravatarStatus: {
-						tempImage: {}
+						tempImage: {},
 					},
-					id: currentUserId
-				}
+					id: currentUserId,
+				},
 			};
-			expect( getUserTempGravatar( emptyTempImage, currentUserId ) )
-				.to.equal( false );
+			expect( getUserTempGravatar( emptyTempImage, currentUserId ) ).to.equal( false );
 		} );
 
 		it( 'returns image src if given the current user ID, and the current user has a temp image set', () => {
@@ -92,11 +87,11 @@ describe( 'selectors', () => {
 				currentUser: {
 					gravatarStatus: {
 						tempImage: {
-							src: imageSrc
-						}
+							src: imageSrc,
+						},
 					},
-					id: currentUserId
-				}
+					id: currentUserId,
+				},
 			};
 			expect( getUserTempGravatar( state, currentUserId ) ).to.equal( imageSrc );
 		} );

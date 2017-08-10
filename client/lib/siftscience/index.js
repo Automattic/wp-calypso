@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -35,5 +36,5 @@ module.exports = {
 				}
 			} );
 		}
-	}
+	},
 };

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -6,7 +7,7 @@ import {
 	POST_TYPES_RECEIVE,
 	POST_TYPES_REQUEST,
 	POST_TYPES_REQUEST_SUCCESS,
-	POST_TYPES_REQUEST_FAILURE
+	POST_TYPES_REQUEST_FAILURE,
 } from 'state/action-types';
 
 /**
@@ -21,7 +22,7 @@ export function receivePostTypes( siteId, types ) {
 	return {
 		type: POST_TYPES_RECEIVE,
 		siteId,
-		types
+		types,
 	};
 }
 
@@ -33,24 +34,28 @@ export function receivePostTypes( siteId, types ) {
  * @return {Function}        Action thunk
  */
 export function requestPostTypes( siteId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: POST_TYPES_REQUEST,
-			siteId
+			siteId,
 		} );
 
-		return wpcom.site( siteId ).postTypesList().then( ( { post_types: types } ) => {
-			dispatch( receivePostTypes( siteId, types ) );
-			dispatch( {
-				type: POST_TYPES_REQUEST_SUCCESS,
-				siteId
+		return wpcom
+			.site( siteId )
+			.postTypesList()
+			.then( ( { post_types: types } ) => {
+				dispatch( receivePostTypes( siteId, types ) );
+				dispatch( {
+					type: POST_TYPES_REQUEST_SUCCESS,
+					siteId,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: POST_TYPES_REQUEST_FAILURE,
+					siteId,
+					error,
+				} );
 			} );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: POST_TYPES_REQUEST_FAILURE,
-				siteId,
-				error
-			} );
-		} );
 	};
 }

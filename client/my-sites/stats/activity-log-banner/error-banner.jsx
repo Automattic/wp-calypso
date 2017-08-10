@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -38,12 +39,7 @@ class ErrorBanner extends PureComponent {
 	handleDismiss = () => this.props.dismissRewindRestoreProgress( this.props.siteId );
 
 	render() {
-		const {
-			errorCode,
-			failureReason,
-			timestamp,
-			translate,
-		} = this.props;
+		const { errorCode, failureReason, timestamp, translate } = this.props;
 
 		return (
 			<ActivityLogBanner
@@ -52,12 +48,17 @@ class ErrorBanner extends PureComponent {
 				status="error"
 				title={ translate( 'Problem restoring your site' ) }
 			>
-				<TrackComponentView eventName="calypso_activitylog_errorbanner_impression" eventProperties={ {
-					error_code: errorCode,
-					failure_reason: failureReason,
-					restore_to: timestamp,
-				} } />
-				<p>{ translate( 'We came across a problem while trying to restore your site.' ) }</p>
+				<TrackComponentView
+					eventName="calypso_activitylog_errorbanner_impression"
+					eventProperties={ {
+						error_code: errorCode,
+						failure_reason: failureReason,
+						restore_to: timestamp,
+					} }
+				/>
+				<p>
+					{ translate( 'We came across a problem while trying to restore your site.' ) }
+				</p>
 				<Button primary onClick={ this.handleClickRestore }>
 					{ translate( 'Try again' ) }
 				</Button>

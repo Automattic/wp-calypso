@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,5 +27,5 @@ export default React.createClass( {
 				<PostEditButton post={ post } site={ site } />
 			</div>
 		);
-	}
+	},
 } );

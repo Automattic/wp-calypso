@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +8,10 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPaymentCurrencySettings, areSettingsGeneralLoaded } from 'woocommerce/state/sites/settings/general/selectors';
+import {
+	getPaymentCurrencySettings,
+	areSettingsGeneralLoaded,
+} from 'woocommerce/state/sites/settings/general/selectors';
 
 const getCurrencyEdits = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'payments', siteId, 'currency' ] );

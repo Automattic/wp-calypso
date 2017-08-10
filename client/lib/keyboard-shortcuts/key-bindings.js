@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -29,49 +30,46 @@ KeyBindings.prototype.get = function() {
 				keys: [ 'j' ],
 				description: {
 					keys: [ 'j' ],
-					text: i18n.translate( 'Move selection down' )
-				}
+					text: i18n.translate( 'Move selection down' ),
+				},
 			},
 			{
 				eventName: 'move-selection-up',
 				keys: [ 'k' ],
 				description: {
 					keys: [ 'k' ],
-					text: i18n.translate( 'Move selection up' )
-				}
+					text: i18n.translate( 'Move selection up' ),
+				},
 			},
 			{
 				eventName: 'open-selection',
 				keys: [ 'enter' ],
 				description: {
 					keys: [ 'enter' ],
-					text: i18n.translate( 'Open selection' )
-				}
+					text: i18n.translate( 'Open selection' ),
+				},
 			},
 			{
 				eventName: 'go-to-top',
 				keys: [ '.' ],
 				description: {
 					keys: [ '.' ],
-					text: i18n.translate( 'Go to top' )
+					text: i18n.translate( 'Go to top' ),
 				},
-			}
+			},
 		],
 
 		siteNavigation: [
 			{
 				eventName: 'open-keyboard-shortcuts-menu',
-				keys: [
-					[ 'shift', '/' ],
-					[ 'shift', ',' ]
-				],
+				keys: [ [ 'shift', '/' ], [ 'shift', ',' ] ],
 				// On Win/Webkit `?` is incorrectly identified as upside-down
 				// question mark. https://bugs.webkit.org/show_bug.cgi?id=19906
 				checkKeys: [ '?', '\u00BF', '\u00BC' ],
 				description: {
 					keys: [ '?' ],
-					text: i18n.translate( 'This menu' )
-				}
+					text: i18n.translate( 'This menu' ),
+				},
 			},
 			{
 				eventName: 'go-to-reader',
@@ -79,8 +77,8 @@ KeyBindings.prototype.get = function() {
 				type: 'sequence',
 				description: {
 					keys: [ 'g', 'r' ],
-					text: i18n.translate( 'Go to Reader' )
-				}
+					text: i18n.translate( 'Go to Reader' ),
+				},
 			},
 			{
 				eventName: 'go-to-my-likes',
@@ -88,8 +86,8 @@ KeyBindings.prototype.get = function() {
 				type: 'sequence',
 				description: {
 					keys: [ 'g', 'l' ],
-					text: i18n.translate( 'Go to My Likes' )
-				}
+					text: i18n.translate( 'Go to My Likes' ),
+				},
 			},
 			{
 				eventName: 'go-to-stats',
@@ -97,8 +95,8 @@ KeyBindings.prototype.get = function() {
 				type: 'sequence',
 				description: {
 					keys: [ 'g', 's' ],
-					text: i18n.translate( 'Go to Stats' )
-				}
+					text: i18n.translate( 'Go to Stats' ),
+				},
 			},
 			{
 				eventName: 'go-to-blog-posts',
@@ -106,8 +104,8 @@ KeyBindings.prototype.get = function() {
 				type: 'sequence',
 				description: {
 					keys: [ 'g', 'b' ],
-					text: i18n.translate( 'Go to Blog Posts' )
-				}
+					text: i18n.translate( 'Go to Blog Posts' ),
+				},
 			},
 			{
 				eventName: 'go-to-pages',
@@ -115,16 +113,16 @@ KeyBindings.prototype.get = function() {
 				type: 'sequence',
 				description: {
 					keys: [ 'g', 'p' ],
-					text: i18n.translate( 'Go to Pages' )
-				}
+					text: i18n.translate( 'Go to Pages' ),
+				},
 			},
 			{
 				eventName: 'open-notifications',
 				keys: [ 'n' ],
 				description: {
 					keys: [ 'n' ],
-					text: i18n.translate( 'Open Notifications' )
-				}
+					text: i18n.translate( 'Open Notifications' ),
+				},
 			},
 			{
 				eventName: 'open-support-user',
@@ -133,8 +131,8 @@ KeyBindings.prototype.get = function() {
 				description: {
 					keys: [],
 					text: '',
-				}
-			}
+				},
+			},
 		],
 
 		reader: [
@@ -143,17 +141,17 @@ KeyBindings.prototype.get = function() {
 				keys: [ 'l' ],
 				description: {
 					keys: [ 'l' ],
-					text: i18n.translate( 'Like post' )
-				}
+					text: i18n.translate( 'Like post' ),
+				},
 			},
 			{
 				eventName: 'close-full-post',
 				keys: [ 'esc' ],
 				description: {
 					keys: [ 'esc' ],
-					text: i18n.translate( 'Close full post' )
-				}
-			}
+					text: i18n.translate( 'Close full post' ),
+				},
+			},
 		],
 
 		blogPostsAndPages: [
@@ -162,17 +160,17 @@ KeyBindings.prototype.get = function() {
 				keys: [ 'e' ],
 				description: {
 					keys: [ 'e' ],
-					text: i18n.translate( 'Edit selection' )
-				}
+					text: i18n.translate( 'Edit selection' ),
+				},
 			},
 			{
 				eventName: 'open-stats-page',
 				keys: [ 's' ],
 				description: {
 					keys: [ 's' ],
-					text: i18n.translate( 'Open stats page' )
-				}
-			}
+					text: i18n.translate( 'Open stats page' ),
+				},
+			},
 		],
 
 		developer: [
@@ -182,10 +180,10 @@ KeyBindings.prototype.get = function() {
 				type: 'sequence',
 				description: {
 					keys: [ 'g', 'd' ],
-					text: i18n.translate( 'Go to DevDocs' )
-				}
-			}
-		]
+					text: i18n.translate( 'Go to DevDocs' ),
+				},
+			},
+		],
 	};
 };
 

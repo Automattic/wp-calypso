@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,12 +12,9 @@ import {
 	POST_TYPES_TAXONOMIES_RECEIVE,
 	POST_TYPES_TAXONOMIES_REQUEST,
 	POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
-	POST_TYPES_TAXONOMIES_REQUEST_FAILURE
+	POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
 } from 'state/action-types';
-import {
-	receivePostTypeTaxonomies,
-	requestPostTypeTaxonomies
-} from '../actions';
+import { receivePostTypeTaxonomies, requestPostTypeTaxonomies } from '../actions';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
@@ -29,20 +27,20 @@ describe( 'actions', () => {
 	describe( '#receivePostTypeTaxonomies()', () => {
 		it( 'should return an action object', () => {
 			const action = receivePostTypeTaxonomies( 2916284, 'post', [
-				{ name: 'category', label: 'Categories' }
+				{ name: 'category', label: 'Categories' },
 			] );
 
 			expect( action ).to.eql( {
 				type: POST_TYPES_TAXONOMIES_RECEIVE,
 				siteId: 2916284,
 				postType: 'post',
-				taxonomies: [ { name: 'category', label: 'Categories' } ]
+				taxonomies: [ { name: 'category', label: 'Categories' } ],
 			} );
 		} );
 	} );
 
 	describe( '#requestPostTypeTaxonomies()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/post-types/post/taxonomies' )
@@ -50,13 +48,13 @@ describe( 'actions', () => {
 					found: 2,
 					taxonomies: [
 						{ name: 'category', label: 'Categories' },
-						{ name: 'post_tag', label: 'Tags' }
-					]
+						{ name: 'post_tag', label: 'Tags' },
+					],
 				} )
 				.get( '/rest/v1.1/sites/2916284/post-types/foo/taxonomies' )
 				.reply( 404, {
 					error: 'unknown_post_type',
-					message: 'Unknown post type'
+					message: 'Unknown post type',
 				} );
 		} );
 
@@ -66,7 +64,7 @@ describe( 'actions', () => {
 			expect( spy ).to.have.been.calledWith( {
 				type: POST_TYPES_TAXONOMIES_REQUEST,
 				siteId: 2916284,
-				postType: 'post'
+				postType: 'post',
 			} );
 		} );
 
@@ -75,7 +73,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith(
 					receivePostTypeTaxonomies( 2916284, 'post', [
 						{ name: 'category', label: 'Categories' },
-						{ name: 'post_tag', label: 'Tags' }
+						{ name: 'post_tag', label: 'Tags' },
 					] )
 				);
 			} );
@@ -86,7 +84,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
 					siteId: 2916284,
-					postType: 'post'
+					postType: 'post',
 				} );
 			} );
 		} );
@@ -97,7 +95,7 @@ describe( 'actions', () => {
 					type: POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
 					siteId: 2916284,
 					postType: 'foo',
-					error: sinon.match( { message: 'Unknown post type' } )
+					error: sinon.match( { message: 'Unknown post type' } ),
 				} );
 			} );
 		} );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +15,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 
 class UploadImageExample extends Component {
 	state = {
-		editedImageDataUrl: null
+		editedImageDataUrl: null,
 	};
 
 	onImageEditorDone = ( imageBlob, imageEditorProps ) => {
@@ -27,7 +28,7 @@ class UploadImageExample extends Component {
 		console.log( 'Image Editor props:', imageEditorProps );
 	};
 
-	onImageUploadDone = ( uploadedImage ) => {
+	onImageUploadDone = uploadedImage => {
 		console.log( 'Uploaded image:', uploadedImage );
 	};
 
@@ -39,8 +40,11 @@ class UploadImageExample extends Component {
 		}
 	};
 
-	onImageRemove = ( uploadedImage ) => {
-		console.log( 'The following uploaded image is going to be removed from screen:', uploadedImage );
+	onImageRemove = uploadedImage => {
+		console.log(
+			'The following uploaded image is going to be removed from screen:',
+			uploadedImage
+		);
 	};
 
 	render() {
@@ -49,7 +53,6 @@ class UploadImageExample extends Component {
 		return (
 			<div className="docs__design-assets-group">
 				Note: image will be uploaded to your primary site's Media library.
-
 				<UploadImage
 					siteId={ primarySiteId }
 					onImageEditorDone={ this.onImageEditorDone }
@@ -66,12 +69,12 @@ const ConnectedUploadImageExample = connect( state => {
 	const user = getCurrentUser( state );
 
 	if ( ! user ) {
-		return {}
+		return {};
 	}
 
 	return {
 		primarySiteId: user.primary_blog,
-	}
+	};
 } )( UploadImageExample );
 
 ConnectedUploadImageExample.displayName = 'UploadImage';

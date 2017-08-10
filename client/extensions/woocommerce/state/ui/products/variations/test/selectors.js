@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -32,15 +33,14 @@ describe( 'selectors', () => {
 								products,
 							},
 							productVariations,
-						}
+						},
 					},
 					ui: {
 						products: {
 							123: {
-								variations: {
-								}
-							}
-						}
+								variations: {},
+							},
+						},
 					},
 				},
 			},
@@ -112,12 +112,14 @@ describe( 'selectors', () => {
 			const uiVariations = state.extensions.woocommerce.ui.products.variations;
 			set( uiVariations, 'edits[0].productId', 42 );
 			expect( getVariationWithLocalEdits( state, 42, 201202 ) ).to.not.exist;
-			expect( getVariationWithLocalEdits( state, 42, { placeholder: 'product_variation_55' } ) ).to.not.exist;
+			expect( getVariationWithLocalEdits( state, 42, { placeholder: 'product_variation_55' } ) ).to
+				.not.exist;
 		} );
 
 		it( 'should return undefined if no product is found for productId', () => {
 			expect( getVariationWithLocalEdits( state, 42, 102382 ) ).to.not.exist;
-			expect( getVariationWithLocalEdits( state, 42, { placeholder: 'product_variation_55' } ) ).to.not.exist;
+			expect( getVariationWithLocalEdits( state, 42, { placeholder: 'product_variation_55' } ) ).to
+				.not.exist;
 		} );
 	} );
 
@@ -131,7 +133,11 @@ describe( 'selectors', () => {
 			const uiProducts = state.extensions.woocommerce.ui.products;
 			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'productId' ], 15 );
 			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'creates' ], [ newVariation ] );
-			set( uiProducts, [ siteId, 'variations', 'edits', '0', 'currentlyEditingId' ], newVariation.id );
+			set(
+				uiProducts,
+				[ siteId, 'variations', 'edits', '0', 'currentlyEditingId' ],
+				newVariation.id
+			);
 
 			expect( getCurrentlyEditingVariation( state, 15 ) ).to.eql( newVariation );
 		} );

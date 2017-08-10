@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,11 +12,7 @@ import plansController from './controller';
 import currentPlanController from './current-plan/controller';
 
 export default function() {
-	page(
-		'/plans',
-		controller.siteSelection,
-		controller.sites
-	);
+	page( '/plans', controller.siteSelection, controller.sites );
 
 	page(
 		'/plans/compare',
@@ -45,10 +42,7 @@ export default function() {
 		plansController.redirectToPlans
 	);
 
-	page(
-		'/plans/features/:feature/:domain',
-		plansController.features
-	);
+	page( '/plans/features/:feature/:domain', plansController.features );
 
 	page(
 		'/plans/my-plan',

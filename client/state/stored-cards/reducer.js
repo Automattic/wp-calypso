@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -8,7 +9,7 @@ import {
 	STORED_CARDS_FETCH_FAILED,
 	STORED_CARDS_DELETE,
 	STORED_CARDS_DELETE_COMPLETED,
-	STORED_CARDS_DELETE_FAILED
+	STORED_CARDS_DELETE_FAILED,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 import { storedCardsSchema } from './schema';
@@ -21,14 +22,18 @@ import { storedCardsSchema } from './schema';
  * @param  {Object} action storeCard action
  * @return {Array}         Updated state
  */
-export const items = createReducer( [], {
-	[ STORED_CARDS_ADD_COMPLETED ]: ( state, { item } ) => [ ...state, item ],
+export const items = createReducer(
+	[],
+	{
+		[ STORED_CARDS_ADD_COMPLETED ]: ( state, { item } ) => [ ...state, item ],
 
-	[ STORED_CARDS_FETCH_COMPLETED ]: ( state, { list } ) => list,
+		[ STORED_CARDS_FETCH_COMPLETED ]: ( state, { list } ) => list,
 
-	[ STORED_CARDS_DELETE_COMPLETED ]: ( state, { card } ) =>
-		state.filter( item => item.stored_details_id !== card.stored_details_id )
-}, storedCardsSchema );
+		[ STORED_CARDS_DELETE_COMPLETED ]: ( state, { card } ) =>
+			state.filter( item => item.stored_details_id !== card.stored_details_id ),
+	},
+	storedCardsSchema
+);
 
 /**
  * Returns whether the list of stored cards has been loaded from the server in reaction to the specified action.
@@ -92,5 +97,5 @@ export default combineReducers( {
 	hasLoadedFromServer,
 	isDeleting,
 	isFetching,
-	items
+	items,
 } );

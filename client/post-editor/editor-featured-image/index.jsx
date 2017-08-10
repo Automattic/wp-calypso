@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -36,11 +37,11 @@ class EditorFeaturedImage extends Component {
 
 	static defaultProps = {
 		maxWidth: 450,
-		onImageSelected: () => {}
+		onImageSelected: () => {},
 	};
 
 	state = {
-		isSelecting: false
+		isSelecting: false,
 	};
 
 	showMediaModal = () => {
@@ -51,17 +52,17 @@ class EditorFeaturedImage extends Component {
 		}
 
 		this.setState( {
-			isSelecting: true
+			isSelecting: true,
 		} );
 	};
 
 	hideMediaModal = () => {
 		this.setState( {
-			isSelecting: false
+			isSelecting: false,
 		} );
 	};
 
-	setImage = ( value ) => {
+	setImage = value => {
 		this.hideMediaModal();
 		this.props.onImageSelected();
 
@@ -70,7 +71,7 @@ class EditorFeaturedImage extends Component {
 		}
 
 		PostActions.edit( {
-			featured_image: value.items[ 0 ].ID
+			featured_image: value.items[ 0 ].ID,
 		} );
 
 		stats.recordStat( 'featured_image_set' );
@@ -78,7 +79,7 @@ class EditorFeaturedImage extends Component {
 
 		this.props.recordTracksEvent( 'calypso_editor_featured_image_upload', {
 			source: 'medialibrary',
-			type: 'click'
+			type: 'click',
 		} );
 	};
 
@@ -95,7 +96,8 @@ class EditorFeaturedImage extends Component {
 					site={ this.props.site }
 					labels={ { confirm: this.props.translate( 'Set Featured Image' ) } }
 					enabledFilters={ [ 'images' ] }
-					single />
+					single
+				/>
 			</MediaLibrarySelectedData>
 		);
 	};
@@ -114,7 +116,8 @@ class EditorFeaturedImage extends Component {
 			<EditorFeaturedImagePreviewContainer
 				siteId={ this.props.site.ID }
 				itemId={ itemId }
-				maxWidth={ this.props.maxWidth } />
+				maxWidth={ this.props.maxWidth }
+			/>
 		);
 	};
 
@@ -122,26 +125,23 @@ class EditorFeaturedImage extends Component {
 		const { site, post } = this.props;
 		const featuredImageId = getFeaturedImageId( post );
 		const classes = classnames( 'editor-featured-image', {
-			'is-assigned': !! PostUtils.getFeaturedImageId( this.props.post )
+			'is-assigned': !! PostUtils.getFeaturedImageId( this.props.post ),
 		} );
 
 		return (
 			<div className={ classes }>
-				{
-					site && featuredImageId && isNumber( featuredImageId )
-						? <QueryMedia siteId={ site.ID } mediaId={ featuredImageId } />
-						: null
-				}
+				{ site && featuredImageId && isNumber( featuredImageId )
+					? <QueryMedia siteId={ site.ID } mediaId={ featuredImageId } />
+					: null }
 				{ this.renderMediaModal() }
 				<Button
-						className="editor-featured-image__current-image"
-						onClick={ this.showMediaModal }
-						borderless
-						compact>
+					className="editor-featured-image__current-image"
+					onClick={ this.showMediaModal }
+					borderless
+					compact
+				>
 					{ this.renderCurrentImage() }
-					<Gridicon
-						icon="pencil"
-						className="editor-featured-image__edit-icon" />
+					<Gridicon icon="pencil" className="editor-featured-image__edit-icon" />
 				</Button>
 			</div>
 		);
@@ -159,6 +159,6 @@ export default connect(
 		};
 	},
 	{
-		recordTracksEvent
+		recordTracksEvent,
 	}
 )( localize( EditorFeaturedImage ) );

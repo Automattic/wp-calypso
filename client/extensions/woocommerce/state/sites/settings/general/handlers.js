@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -63,14 +64,18 @@ export const handleCurrencyUpdate = ( store, action ) => {
 		dispatch( successAction );
 	};
 
-	store.dispatch( put( siteId, 'settings/general/woocommerce_currency', payload, updatedAction, failureAction ) );
+	store.dispatch(
+		put( siteId, 'settings/general/woocommerce_currency', payload, updatedAction, failureAction )
+	);
 };
 
 export default {
-	[ WOOCOMMERCE_SETTINGS_GENERAL_REQUEST ]: [ dispatchRequest(
-		handleSettingsGeneral,
-		handleSettingsGeneralSuccess,
-		handleSettingsGeneralError
-	) ],
+	[ WOOCOMMERCE_SETTINGS_GENERAL_REQUEST ]: [
+		dispatchRequest(
+			handleSettingsGeneral,
+			handleSettingsGeneralSuccess,
+			handleSettingsGeneralError
+		),
+	],
 	[ WOOCOMMERCE_CURRENCY_UPDATE ]: [ handleCurrencyUpdate ],
 };

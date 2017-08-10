@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,10 +17,7 @@ import accessibleFocus from 'lib/accessible-focus';
 import { bindState as bindWpLocaleState } from 'lib/wp/localization';
 import config from 'config';
 import { receiveUser } from 'state/users/actions';
-import {
-	setCurrentUserId,
-	setCurrentUserFlags
-} from 'state/current-user/actions';
+import { setCurrentUserId, setCurrentUserFlags } from 'state/current-user/actions';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 import touchDetect from 'lib/touch-detect';
@@ -97,9 +95,8 @@ const loggedOutMiddleware = currentUser => {
 	const validSections = sections.get().reduce( ( acc, section ) => {
 		return section.enableLoggedOut ? acc.concat( section.paths ) : acc;
 	}, [] );
-	const isValidSection = sectionPath => some(
-		validSections, validPath => startsWith( sectionPath, validPath )
-	);
+	const isValidSection = sectionPath =>
+		some( validSections, validPath => startsWith( sectionPath, validPath ) );
 
 	page( '*', ( context, next ) => {
 		if ( isValidSection( context.path ) ) {
@@ -117,10 +114,7 @@ const oauthTokenMiddleware = () => {
 
 const setRouteMiddleware = () => {
 	page( '*', ( context, next ) => {
-		context.store.dispatch( setRouteAction(
-			context.pathname,
-			context.query
-		) );
+		context.store.dispatch( setRouteAction( context.pathname, context.query ) );
 
 		next();
 	} );
@@ -191,7 +185,9 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'lib/network-connection', networkConnection => networkConnection.init( reduxStore ) );
+		asyncRequire( 'lib/network-connection', networkConnection =>
+			networkConnection.init( reduxStore )
+		);
 	}
 };
 

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -25,32 +26,36 @@ function Transfer( props ) {
 		<Main className="domain-management-transfer">
 			<Header
 				selectedDomainName={ selectedDomainName }
-				backHref={ paths.domainManagementEdit( slug, selectedDomainName ) }>
+				backHref={ paths.domainManagementEdit( slug, selectedDomainName ) }
+			>
 				{ translate( 'Transfer Domain' ) }
 			</Header>
 			<VerticalNav>
 				<VerticalNavItem path={ paths.domainManagementTransferOut( slug, selectedDomainName ) }>
 					{ translate( 'Transfer to another registrar' ) }
 				</VerticalNavItem>
-				{ ! isAutomatedTransfer && ! isDomainOnly &&
-					<VerticalNavItem path={ paths.domainManagementTransferToAnotherUser( slug, selectedDomainName ) }>
-						{ translate( 'Transfer to another user' ) }
-					</VerticalNavItem>
-				}
 				{ ! isAutomatedTransfer &&
-					<VerticalNavItem path={ paths.domainManagementTransferToOtherSite( slug, selectedDomainName ) }>
+					! isDomainOnly &&
+					<VerticalNavItem
+						path={ paths.domainManagementTransferToAnotherUser( slug, selectedDomainName ) }
+					>
+						{ translate( 'Transfer to another user' ) }
+					</VerticalNavItem> }
+				{ ! isAutomatedTransfer &&
+					<VerticalNavItem
+						path={ paths.domainManagementTransferToOtherSite( slug, selectedDomainName ) }
+					>
 						{ translate( 'Transfer to another WordPress.com site' ) }
-					</VerticalNavItem>
-				}
+					</VerticalNavItem> }
 			</VerticalNav>
 		</Main>
 	);
 }
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		isAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
-		isDomainOnly: isDomainOnlySite( state, siteId )
+		isDomainOnly: isDomainOnlySite( state, siteId ),
 	};
 } )( localize( Transfer ) );

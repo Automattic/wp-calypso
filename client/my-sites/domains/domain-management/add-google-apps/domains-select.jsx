@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,18 +11,16 @@ const { getGoogleAppsSupportedDomains } = require( 'lib/domains' );
 
 const DomainsSelect = React.createClass( {
 	propTypes: {
-		domains: React.PropTypes.object.isRequired
+		domains: React.PropTypes.object.isRequired,
 	},
 
 	render() {
-		let domainRegistrations,
-			disabled,
-			options;
+		let domainRegistrations, disabled, options;
 
 		if ( this.props.domains.hasLoadedFromServer ) {
 			domainRegistrations = getGoogleAppsSupportedDomains( this.props.domains.list );
 			disabled = false;
-			options = domainRegistrations.map( ( domain ) => {
+			options = domainRegistrations.map( domain => {
 				return (
 					<option value={ domain.name } key={ domain.name }>
 						@{ domain.name }
@@ -30,18 +29,24 @@ const DomainsSelect = React.createClass( {
 			} );
 		} else {
 			disabled = true;
-			options = <option>{ this.translate( 'Loading' ) }...</option>;
+			options = (
+				<option>
+					{ this.translate( 'Loading' ) }...
+				</option>
+			);
 		}
 
 		return (
-			<select value={ this.props.value }
+			<select
+				value={ this.props.value }
 				onChange={ this.props.onChange }
 				onFocus={ this.props.onFocus }
-				disabled={ disabled }>
+				disabled={ disabled }
+			>
 				{ options }
 			</select>
 		);
-	}
+	},
 } );
 
 module.exports = DomainsSelect;

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Every selector contained within this directory should have its default
  * export included in the list below. Please keep this list alphabetized for

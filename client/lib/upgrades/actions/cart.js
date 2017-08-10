@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,13 +22,13 @@ function disableCart() {
 function openCartPopup( options ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_POPUP_OPEN,
-		options: options || {}
+		options: options || {},
 	} );
 }
 
 function closeCartPopup() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CART_POPUP_CLOSE
+		type: ActionTypes.CART_POPUP_CLOSE,
 	} );
 }
 
@@ -40,13 +41,13 @@ function showCartOnMobile( show ) {
 
 function addPrivacyToAllDomains() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CART_PRIVACY_PROTECTION_ADD
+		type: ActionTypes.CART_PRIVACY_PROTECTION_ADD,
 	} );
 }
 
 function removePrivacyFromAllDomains() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CART_PRIVACY_PROTECTION_REMOVE
+		type: ActionTypes.CART_PRIVACY_PROTECTION_REMOVE,
 	} );
 }
 
@@ -55,16 +56,16 @@ function addItem( item ) {
 }
 
 function addItems( items ) {
-	const extendedItems = items.map( ( item ) => {
+	const extendedItems = items.map( item => {
 		const extra = assign( {}, item.extra, {
-			context: 'calypstore'
+			context: 'calypstore',
 		} );
 		return assign( {}, item, { extra } );
 	} );
 
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_ITEMS_ADD,
-		cartItems: extendedItems
+		cartItems: extendedItems,
 	} );
 }
 
@@ -72,35 +73,39 @@ function removeItem( item, domainsWithPlansOnly ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_ITEM_REMOVE,
 		cartItem: item,
-		domainsWithPlansOnly
+		domainsWithPlansOnly,
 	} );
 }
 
 function addDomainToCart( domainSuggestion ) {
-	addItem( cartItems.domainRegistration( {
-		domain: domainSuggestion.domain_name,
-		productSlug: domainSuggestion.product_slug
-	} ) );
+	addItem(
+		cartItems.domainRegistration( {
+			domain: domainSuggestion.domain_name,
+			productSlug: domainSuggestion.product_slug,
+		} )
+	);
 }
 
 function addGoogleAppsRegistrationData( registrationData ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.GOOGLE_APPS_REGISTRATION_DATA_ADD,
-		registrationData: registrationData
+		registrationData: registrationData,
 	} );
 }
 
 function removeDomainFromCart( domainSuggestion ) {
-	removeItem( cartItems.domainRegistration( {
-		domain: domainSuggestion.domain_name,
-		productSlug: domainSuggestion.product_slug
-	} ) );
+	removeItem(
+		cartItems.domainRegistration( {
+			domain: domainSuggestion.domain_name,
+			productSlug: domainSuggestion.product_slug,
+		} )
+	);
 }
 
 function applyCoupon( coupon ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_COUPON_APPLY,
-		coupon
+		coupon,
 	} );
 }
 

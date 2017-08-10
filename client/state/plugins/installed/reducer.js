@@ -1,10 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import {
-	omit,
-	findIndex,
-} from 'lodash';
+import { omit, findIndex } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -46,7 +44,7 @@ export function isRequesting( state = {}, action ) {
 const updatePlugin = function( state, action ) {
 	if ( typeof state[ action.siteId ] !== 'undefined' ) {
 		return Object.assign( {}, state, {
-			[ action.siteId ]: pluginsForSite( state[ action.siteId ], action )
+			[ action.siteId ]: pluginsForSite( state[ action.siteId ], action ),
 		} );
 	}
 	return state;
@@ -55,21 +53,25 @@ const updatePlugin = function( state, action ) {
 /*
  * Tracks all known installed plugin objects indexed by site ID.
  */
-export const plugins = createReducer( {}, {
-	[ PLUGINS_REQUEST_SUCCESS ]: ( state, action ) => {
-		return { ...state, [ action.siteId ]: action.data };
+export const plugins = createReducer(
+	{},
+	{
+		[ PLUGINS_REQUEST_SUCCESS ]: ( state, action ) => {
+			return { ...state, [ action.siteId ]: action.data };
+		},
+		[ PLUGINS_REQUEST_FAILURE ]: ( state, action ) => {
+			return { ...state, [ action.siteId ]: [] };
+		},
+		[ PLUGIN_ACTIVATE_REQUEST_SUCCESS ]: updatePlugin,
+		[ PLUGIN_DEACTIVATE_REQUEST_SUCCESS ]: updatePlugin,
+		[ PLUGIN_UPDATE_REQUEST_SUCCESS ]: updatePlugin,
+		[ PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS ]: updatePlugin,
+		[ PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS ]: updatePlugin,
+		[ PLUGIN_INSTALL_REQUEST_SUCCESS ]: updatePlugin,
+		[ PLUGIN_REMOVE_REQUEST_SUCCESS ]: updatePlugin,
 	},
-	[ PLUGINS_REQUEST_FAILURE ]: ( state, action ) => {
-		return { ...state, [ action.siteId ]: [] };
-	},
-	[ PLUGIN_ACTIVATE_REQUEST_SUCCESS ]: updatePlugin,
-	[ PLUGIN_DEACTIVATE_REQUEST_SUCCESS ]: updatePlugin,
-	[ PLUGIN_UPDATE_REQUEST_SUCCESS ]: updatePlugin,
-	[ PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS ]: updatePlugin,
-	[ PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS ]: updatePlugin,
-	[ PLUGIN_INSTALL_REQUEST_SUCCESS ]: updatePlugin,
-	[ PLUGIN_REMOVE_REQUEST_SUCCESS ]: updatePlugin,
-}, pluginsSchema );
+	pluginsSchema
+);
 
 /*
  * Tracks the list of premium plugin objects for a single site
@@ -83,16 +85,10 @@ function pluginsForSite( state = [], action ) {
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS:
 			return state.map( p => plugin( p, action ) );
 		case PLUGIN_INSTALL_REQUEST_SUCCESS:
-			return [
-				...state,
-				action.data
-			];
+			return [ ...state, action.data ];
 		case PLUGIN_REMOVE_REQUEST_SUCCESS:
 			const index = findIndex( state, { id: action.pluginId } );
-			return [
-				...state.slice( 0, index ),
-				...state.slice( index + 1 )
-			];
+			return [ ...state.slice( 0, index ), ...state.slice( index + 1 ) ];
 		default:
 			return state;
 	}
@@ -124,5 +120,5 @@ function plugin( state, action ) {
 export default combineReducers( {
 	isRequesting,
 	plugins,
-	status
+	status,
 } );

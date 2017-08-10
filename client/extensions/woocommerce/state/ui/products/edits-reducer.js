@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -33,21 +34,23 @@ function productUpdatedAction( edits, action ) {
 	const { originatingAction } = action;
 	let bucket = null;
 
-	bucket = ( WOOCOMMERCE_PRODUCT_CREATE === originatingAction.type ? 'creates' : bucket );
-	bucket = ( WOOCOMMERCE_PRODUCT_UPDATE === originatingAction.type ? 'updates' : bucket );
+	bucket = WOOCOMMERCE_PRODUCT_CREATE === originatingAction.type ? 'creates' : bucket;
+	bucket = WOOCOMMERCE_PRODUCT_UPDATE === originatingAction.type ? 'updates' : bucket;
 
 	if ( bucket ) {
 		const productId = originatingAction.product.id;
 		const prevEdits = edits || {};
 		const prevBucketEdits = prevEdits[ bucket ] || [];
 
-		const newBucketEdits = compact( prevBucketEdits.map( ( productEdit ) => {
-			return ( isEqual( productId, productEdit.id ) ? undefined : productEdit );
-		} ) );
+		const newBucketEdits = compact(
+			prevBucketEdits.map( productEdit => {
+				return isEqual( productId, productEdit.id ) ? undefined : productEdit;
+			} )
+		);
 
 		return {
 			...prevEdits,
-			[ bucket ]: ( newBucketEdits.length ? newBucketEdits : undefined ),
+			[ bucket ]: newBucketEdits.length ? newBucketEdits : undefined,
 		};
 	}
 
@@ -62,12 +65,12 @@ function productCategoryUpdatedAction( edits, action ) {
 		const newCategoryId = data.id;
 		const prevEdits = edits || {};
 
-		const buckets = [ 'creates', 'updates' ].map( ( bucket ) => {
+		const buckets = [ 'creates', 'updates' ].map( bucket => {
 			const prevBucket = prevEdits[ bucket ] || [];
 
-			const newBucket = prevBucket.map( ( product ) => {
+			const newBucket = prevBucket.map( product => {
 				const prevCategories = product.categories || [];
-				const newCategories = prevCategories.map( ( category ) => {
+				const newCategories = prevCategories.map( category => {
 					if ( isEqual( prevCategoryId, category.id ) ) {
 						return { ...category, id: newCategoryId };
 					}
@@ -76,7 +79,7 @@ function productCategoryUpdatedAction( edits, action ) {
 				return { ...product, categories: newCategories };
 			} );
 
-			return ( newBucket.length ? newBucket : undefined );
+			return newBucket.length ? newBucket : undefined;
 		} );
 
 		return {
@@ -138,7 +141,7 @@ function editProduct( array, product, data ) {
 	let found = false;
 
 	// Look for this object in the appropriate create or edit array first.
-	const _array = prevArray.map( ( p ) => {
+	const _array = prevArray.map( p => {
 		if ( isEqual( product.id, p.id ) ) {
 			found = true;
 			return { ...p, ...data };
@@ -158,12 +161,12 @@ function editProduct( array, product, data ) {
 export function editProductAttribute( attributes, attribute, data ) {
 	const prevAttributes = attributes || [];
 	const name = attribute && attribute.name;
-	const uid = attribute && attribute.uid || uniqueId( 'edit_' ) + ( new Date().getTime() );
+	const uid = ( attribute && attribute.uid ) || uniqueId( 'edit_' ) + new Date().getTime();
 
 	let found = false;
 
 	// Look for this attribute in the array of attributes first.
-	const _attributes = prevAttributes.map( ( a ) => {
+	const _attributes = prevAttributes.map( a => {
 		if ( ( uid && isEqual( uid, a.uid ) ) || ( name && isEqual( name, a.name ) ) ) {
 			found = true;
 			return { ...attribute, ...data, uid };
@@ -186,7 +189,8 @@ export function deleteProductAction( edits, action ) {
 
 	if ( prevEdits && prevEdits.updates ) {
 		const newUpdates = filter( prevEdits.updates, product => product.id !== productId );
-		return { ...prevEdits,
+		return {
+			...prevEdits,
 			updates: newUpdates,
 		};
 	}

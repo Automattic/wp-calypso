@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,10 +16,8 @@ import upgradesActions from 'lib/upgrades/actions';
 class AddButton extends React.PureComponent {
 	static propTypes = {
 		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired
+		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] )
+			.isRequired,
 	};
 
 	render() {
@@ -27,10 +26,7 @@ class AddButton extends React.PureComponent {
 		}
 
 		return (
-			<button
-				type="button"
-				className="button is-primary"
-				onClick={ this.addPrivacyProtection }>
+			<button type="button" className="button is-primary" onClick={ this.addPrivacyProtection }>
 				{ this.props.translate( 'Add Privacy Protection' ) }
 			</button>
 		);
@@ -42,7 +38,7 @@ class AddButton extends React.PureComponent {
 		);
 
 		page( '/checkout/' + this.props.selectedSite.slug );
-	}
+	};
 }
 
 export default localize( AddButton );

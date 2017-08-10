@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,16 +11,12 @@ import { localize } from 'i18n-calypso';
  */
 import Toggle from 'components/forms/form-toggle';
 import support from 'lib/url/support';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 class NameserversToggle extends React.PureComponent {
 	static propTypes = {
 		onToggle: React.PropTypes.func.isRequired,
-		enabled: React.PropTypes.bool.isRequired
+		enabled: React.PropTypes.bool.isRequired,
 	};
 
 	render() {
@@ -45,7 +42,10 @@ class NameserversToggle extends React.PureComponent {
 	}
 
 	handleToggle = () => {
-		this.props.wpcomNameServersToggleButtonClick( this.props.selectedDomainName, ! this.props.enabled );
+		this.props.wpcomNameServersToggleButtonClick(
+			this.props.selectedDomainName,
+			! this.props.enabled
+		);
 		this.props.onToggle();
 	};
 
@@ -58,17 +58,18 @@ class NameserversToggle extends React.PureComponent {
 			<p className="name-servers__explanation">
 				{ this.props.translate(
 					'Name servers point your domain to the right website host, like WordPress.com. ' +
-					'{{a}}Learn more.{{/a}}',
+						'{{a}}Learn more.{{/a}}',
 					{
 						components: {
 							a: (
-								<a href={ support.CHANGE_NAME_SERVERS }
+								<a
+									href={ support.CHANGE_NAME_SERVERS }
 									target="_blank"
 									rel="noopener noreferrer"
 									onClick={ this.handleLearnMoreClick }
 								/>
-							)
-						}
+							),
+						},
 					}
 				) }
 			</p>
@@ -94,29 +95,27 @@ const wpcomNameServersToggleButtonClick = ( domainName, enabled ) => {
 			'calypso_domain_management_name_servers_wpcom_name_servers_toggle_button_click',
 			{
 				domain_name: domainName,
-				enabled
+				enabled,
 			}
-		),
+		)
 	);
 };
 
-const wpcomNameServersLearnMoreClick = ( domainName ) => composeAnalytics(
-	recordGoogleEvent(
-		'Domain Management',
-		'Clicked "Learn More" link in "Use WordPress.com Name Servers" Section in Name Servers and DNS',
-		'Domain Name',
-		domainName
-	),
-	recordTracksEvent(
-		'calypso_domain_management_name_servers_wpcom_name_servers_learn_more_click',
-		{ domain_name: domainName }
-	),
-);
+const wpcomNameServersLearnMoreClick = domainName =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Clicked "Learn More" link in "Use WordPress.com Name Servers" Section in Name Servers and DNS',
+			'Domain Name',
+			domainName
+		),
+		recordTracksEvent(
+			'calypso_domain_management_name_servers_wpcom_name_servers_learn_more_click',
+			{ domain_name: domainName }
+		)
+	);
 
-export default connect(
-	null,
-	{
-		wpcomNameServersLearnMoreClick,
-		wpcomNameServersToggleButtonClick,
-	}
-)( localize( NameserversToggle ) );
+export default connect( null, {
+	wpcomNameServersLearnMoreClick,
+	wpcomNameServersToggleButtonClick,
+} )( localize( NameserversToggle ) );

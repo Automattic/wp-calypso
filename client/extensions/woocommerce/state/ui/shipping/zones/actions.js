@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -19,7 +20,7 @@ import {
  * @param {Number} siteId Site ID.
  * @return {Object} Action object.
  */
-export const addNewShippingZone = ( siteId ) => {
+export const addNewShippingZone = siteId => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_ADD, siteId };
 };
 
@@ -38,7 +39,7 @@ export const openShippingZoneForEdit = ( siteId, id ) => {
  * @param {Number} siteId Site ID.
  * @return {Object} Action object.
  */
-export const closeEditingShippingZone = ( siteId ) => {
+export const closeEditingShippingZone = siteId => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_CLOSE, siteId };
 };
 
@@ -48,7 +49,7 @@ export const closeEditingShippingZone = ( siteId ) => {
  * @param {Number} siteId Site ID.
  * @return {Object} Action object.
  */
-export const cancelEditingShippingZone = ( siteId ) => {
+export const cancelEditingShippingZone = siteId => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_CANCEL, siteId };
 };
 
@@ -84,11 +85,11 @@ export const deleteShippingZone = ( siteId, id ) => {
  * @return {Object} Action object.
  */
 export function createShippingZoneSaveActionList(
-		successAction,
-		failureAction,
-		locationsFailAction,
-		methodsFailAction,
-	) {
+	successAction,
+	failureAction,
+	locationsFailAction,
+	methodsFailAction
+) {
 	return {
 		type: WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE_SAVE,
 		successAction,
@@ -106,10 +107,7 @@ export function createShippingZoneSaveActionList(
  * @param {Function} [failureAction] Action to be dispatched upon failure of execution.
  * @return {Object} Action object.
  */
-export function createShippingZoneDeleteActionList(
-	successAction,
-	failureAction,
-) {
+export function createShippingZoneDeleteActionList( successAction, failureAction ) {
 	return {
 		type: WOOCOMMERCE_SHIPPING_ZONE_ACTION_LIST_CREATE_DELETE,
 		successAction,

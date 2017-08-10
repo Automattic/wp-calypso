@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,16 +22,15 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
 class ShippingSettingsSaveButton extends Component {
-
 	componentDidMount = () => {
 		const { site } = this.props;
 
 		if ( site && site.ID ) {
 			this.props.fetchSetupChoices( site.ID );
 		}
-	}
+	};
 
-	componentWillReceiveProps = ( newProps ) => {
+	componentWillReceiveProps = newProps => {
 		const { site } = this.props;
 
 		const newSiteId = newProps.site ? newProps.site.ID : null;
@@ -39,17 +39,17 @@ class ShippingSettingsSaveButton extends Component {
 		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchSetupChoices( newSiteId );
 		}
-	}
+	};
 
 	save = () => {
 		return null;
-	}
+	};
 
 	redirect = () => {
 		const { site } = this.props;
 		this.save();
 		page.redirect( getLink( '/store/:site', site ) );
-	}
+	};
 
 	render() {
 		const { translate, loading, site, finishedInitialSetup } = this.props;
@@ -61,11 +61,17 @@ class ShippingSettingsSaveButton extends Component {
 
 		if ( finishedInitialSetup ) {
 			return wcsEnabled
-				? <Button onClick={ this.save } primary>{ translate( 'Save' ) }</Button>
+				? <Button onClick={ this.save } primary>
+						{ translate( 'Save' ) }
+					</Button>
 				: null;
 		}
-		const label = wcsEnabled ? translate( 'Save and finish' ) : translate( 'I\'m Finished' );
-		return <Button onClick={ this.redirect } primary>{ label }</Button>;
+		const label = wcsEnabled ? translate( 'Save and finish' ) : translate( "I'm Finished" );
+		return (
+			<Button onClick={ this.redirect } primary>
+				{ label }
+			</Button>
+		);
 	}
 }
 
@@ -89,4 +95,6 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ShippingSettingsSaveButton ) );
+export default connect( mapStateToProps, mapDispatchToProps )(
+	localize( ShippingSettingsSaveButton )
+);

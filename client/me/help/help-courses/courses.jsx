@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -29,13 +30,7 @@ class Courses extends Component {
 	}
 
 	render() {
-		const {
-			translate,
-			userId,
-			isBusinessPlanUser,
-			courses,
-			isLoading
-		} = this.props;
+		const { translate, userId, isBusinessPlanUser, courses, isLoading } = this.props;
 
 		return (
 			<Main className="help-courses">

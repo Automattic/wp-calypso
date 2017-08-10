@@ -1,3 +1,4 @@
+/** @format */
 /**
  * A little module for loading a external script
  */
@@ -90,5 +91,5 @@ module.exports = {
 	loadScript: loadScript,
 	loadjQueryDependentScript: loadjQueryDependentScript,
 	removeScriptCallback: removeScriptCallback,
-	JQUERY_URL: JQUERY_URL
+	JQUERY_URL: JQUERY_URL,
 };

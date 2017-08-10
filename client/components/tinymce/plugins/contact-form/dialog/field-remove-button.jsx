@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,12 +18,12 @@ export default React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
-		onRemove: PropTypes.func.isRequired
+		onRemove: PropTypes.func.isRequired,
 	},
 
 	getInitialState: function() {
 		return {
-			showTooltip: false
+			showTooltip: false,
 		};
 	},
 
@@ -34,7 +35,8 @@ export default React.createClass( {
 					borderless
 					onMouseEnter={ () => this.setState( { showTooltip: true } ) }
 					onMouseLeave={ () => this.setState( { showTooltip: false } ) }
-					onClick={ this.props.onRemove }>
+					onClick={ this.props.onRemove }
+				>
 					<Gridicon icon="trash" className="editor-contact-form-modal-field__remove" />
 				</Button>
 				<Popover
@@ -42,10 +44,11 @@ export default React.createClass( {
 					context={ this.refs && this.refs.removeField }
 					onClose={ () => {} }
 					position="bottom"
-					className="popover tooltip is-dialog-visible">
+					className="popover tooltip is-dialog-visible"
+				>
 					{ this.translate( 'Remove Field', { context: 'button tooltip' } ) }
 				</Popover>
 			</div>
 		);
-	}
+	},
 } );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -7,9 +8,4 @@ import notification from './notification';
 import settings from './settings';
 import sendVerificationEmail from './send-verification-email';
 
-export default mergeHandlers(
-	devices,
-	notification,
-	settings,
-	sendVerificationEmail,
-);
+export default mergeHandlers( devices, notification, settings, sendVerificationEmail );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -48,7 +49,7 @@ Shortcode.parseAttributes = memoize( function( text ) {
 
 	return {
 		named: named,
-		numeric: numeric
+		numeric: numeric,
 	};
 } );
 
@@ -68,7 +69,10 @@ Shortcode.normalizeAttributes = function( attributes ) {
 		return Shortcode.parseAttributes( attributes );
 	} else if ( Array.isArray( attributes ) ) {
 		numeric = attributes;
-	} else if ( 'object' === typeof attributes && isEqual( Object.keys( attributes ), [ 'named', 'numeric' ] ) ) {
+	} else if (
+		'object' === typeof attributes &&
+		isEqual( Object.keys( attributes ), [ 'named', 'numeric' ] )
+	) {
 		return attributes;
 	} else if ( 'object' === typeof attributes ) {
 		named = attributes;
@@ -76,7 +80,7 @@ Shortcode.normalizeAttributes = function( attributes ) {
 
 	return {
 		named: named || {},
-		numeric: numeric || []
+		numeric: numeric || [],
 	};
 };
 
@@ -130,7 +134,8 @@ Shortcode.stringify = function( shortcode ) {
  */
 Shortcode.parse = function( shortcode ) {
 	var match = shortcode.match( REGEXP_SHORTCODE ),
-		type, parsed;
+		type,
+		parsed;
 
 	if ( ! match ) {
 		return null;
@@ -146,7 +151,7 @@ Shortcode.parse = function( shortcode ) {
 
 	parsed = {
 		tag: match[ 2 ],
-		type: type
+		type: type,
 	};
 
 	if ( /\S/.test( match[ 3 ] ) ) {
@@ -180,7 +185,12 @@ Shortcode.parse = function( shortcode ) {
  * @return {RegExp} regular expression
  */
 Shortcode.regexp = memoize( function( tag ) {
-	return new RegExp( '\\[(\\[?)(' + tag + ')(?![\\w-])([^\\]\\/]*(?:\\/(?!\\])[^\\]\\/]*)*?)(?:(\\/)\\]|\\](?:([^\\[]*(?:\\[(?!\\/\\2\\])[^\\[]*)*)(\\[\\/\\2\\]))?)(\\]?)', 'g' );
+	return new RegExp(
+		'\\[(\\[?)(' +
+			tag +
+			')(?![\\w-])([^\\]\\/]*(?:\\/(?!\\])[^\\]\\/]*)*?)(?:(\\/)\\]|\\](?:([^\\[]*(?:\\[(?!\\/\\2\\])[^\\[]*)*)(\\[\\/\\2\\]))?)(\\]?)',
+		'g'
+	);
 } );
 
 /**
@@ -200,7 +210,8 @@ Shortcode.regexp = memoize( function( tag ) {
  */
 Shortcode.next = function( tag, text, index ) {
 	var re = Shortcode.regexp( tag ),
-		match, result;
+		match,
+		result;
 
 	re.lastIndex = index || 0;
 	match = re.exec( text );
@@ -217,7 +228,7 @@ Shortcode.next = function( tag, text, index ) {
 	result = {
 		index: match.index,
 		content: match[ 0 ],
-		shortcode: Shortcode.parse( match[ 0 ] )
+		shortcode: Shortcode.parse( match[ 0 ] ),
 	};
 
 	// If we matched a leading `[`, strip it from the match

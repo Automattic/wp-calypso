@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -9,7 +10,7 @@ import {
 	getSiteTitle,
 	isJetpackSite,
 	isSiteConflicting,
-	isSitePreviewable
+	isSitePreviewable,
 } from 'state/sites/selectors';
 import { canCurrentUser, getSiteOptions } from 'state/selectors';
 import { withoutHttp } from 'lib/url';
@@ -34,7 +35,7 @@ export const getSiteComputedAttributes = ( state, siteId ) => {
 		is_previewable: !! isSitePreviewable( state, siteId ),
 		options: getSiteOptions( state, siteId ),
 		slug: getSiteSlug( state, siteId ),
-		title: getSiteTitle( state, siteId )
+		title: getSiteTitle( state, siteId ),
 	};
 
 	if ( getSiteOption( state, siteId, 'is_mapped_domain' ) && ! isJetpackSite( state, siteId ) ) {

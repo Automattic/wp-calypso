@@ -1,19 +1,20 @@
+/** @format */
 export function keyForPost( post ) {
 	if ( post.feed_ID && post.feed_item_ID ) {
 		return {
 			feedId: post.feed_ID,
-			postId: post.feed_item_ID
+			postId: post.feed_item_ID,
 		};
 	}
 	if ( post.is_external ) {
 		return {
 			feedId: post.feed_ID || post.site_ID,
-			postId: post.feed_item_ID || post.ID
+			postId: post.feed_item_ID || post.ID,
 		};
 	}
 	return {
 		blogId: post.site_ID,
-		postId: post.ID
+		postId: post.ID,
 	};
 }
 
@@ -24,7 +25,7 @@ export function keysAreEqual( a, b ) {
 	if ( ( ! a && b ) || ( a && ! b ) ) {
 		return false;
 	}
-	if ( a.isGap && ! b.isGap || ( ! a.isGap && b.isGap ) ) {
+	if ( ( a.isGap && ! b.isGap ) || ( ! a.isGap && b.isGap ) ) {
 		return false;
 	}
 	if ( a.isGap && b.isGap ) {

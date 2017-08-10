@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,14 +18,16 @@ const DesignMenuPanel = React.createClass( {
 		return (
 			<div className="design-menu-panel">
 				<Card compact className="design-menu-panel__label">
-					<span>{ this.props.label }</span>
+					<span>
+						{ this.props.label }
+					</span>
 				</Card>
 				<Card compact className="design-menu-panel__content">
 					{ this.props.children }
 				</Card>
 			</div>
 		);
-	}
+	},
 } );
 
 export default DesignMenuPanel;

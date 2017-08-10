@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,15 +20,16 @@ class DomainProductPrice extends React.Component {
 		price: React.PropTypes.string,
 		freeWithPlan: React.PropTypes.bool,
 		requiresPlan: React.PropTypes.bool,
-		domainsWithPlansOnly: React.PropTypes.bool.isRequired
+		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
 	};
 
 	renderFreeWithPlan() {
 		return (
-			<div className={ classnames(
-					'domain-product-price',
-					'is-free-domain',
-					{ 'no-price': this.props.domainsWithPlansOnly } ) }>
+			<div
+				className={ classnames( 'domain-product-price', 'is-free-domain', {
+					'no-price': this.props.domainsWithPlansOnly,
+				} ) }
+			>
 				{ ! this.props.domainsWithPlansOnly && this.renderFreeWithPlanPrice() }
 				<span className="domain-product-price__free-text" ref="subMessage">
 					{ this.props.translate( 'Free with your plan' ) }
@@ -39,12 +41,10 @@ class DomainProductPrice extends React.Component {
 	renderFreeWithPlanPrice() {
 		return (
 			<span className="domain-product-price__price">
-				{
-					this.props.translate( '%(cost)s {{small}}/year{{/small}}', {
-						args: { cost: this.props.price },
-						components: { small: <small /> }
-					} )
-				}
+				{ this.props.translate( '%(cost)s {{small}}/year{{/small}}', {
+					args: { cost: this.props.price },
+					components: { small: <small /> },
+				} ) }
 			</span>
 		);
 	}
@@ -76,12 +76,10 @@ class DomainProductPrice extends React.Component {
 		return (
 			<div className="domain-product-price">
 				<span className="domain-product-price__price">
-					{
-						this.props.translate( '%(cost)s {{small}}/year{{/small}}', {
-							args: { cost: this.props.price },
-							components: { small: <small /> }
-						} )
-					}
+					{ this.props.translate( '%(cost)s {{small}}/year{{/small}}', {
+						args: { cost: this.props.price },
+						components: { small: <small /> },
+					} ) }
 				</span>
 			</div>
 		);
@@ -89,7 +87,11 @@ class DomainProductPrice extends React.Component {
 
 	render() {
 		if ( this.props.isLoading ) {
-			return <div className="domain-product-price is-placeholder">{ this.props.translate( 'Loading…' ) }</div>;
+			return (
+				<div className="domain-product-price is-placeholder">
+					{ this.props.translate( 'Loading…' ) }
+				</div>
+			);
 		}
 
 		switch ( this.props.rule ) {
@@ -106,11 +108,8 @@ class DomainProductPrice extends React.Component {
 	}
 }
 
-export default connect(
-	state => (
-		{ domainsWithPlansOnly: getCurrentUser( state )
-			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
-			: true
-		}
-	)
-)( localize( DomainProductPrice ) );
+export default connect( state => ( {
+	domainsWithPlansOnly: getCurrentUser( state )
+		? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+		: true,
+} ) )( localize( DomainProductPrice ) );

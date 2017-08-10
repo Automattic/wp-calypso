@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,10 @@ const getTicket = () => store.get( GUEST_TICKET_LOCALFORAGE_KEY );
 export const deleteOldTicket = () => {
 	const existingTicket = getTicket();
 
-	if ( existingTicket && existingTicket.createdDate < Date.now() - GUEST_TICKET_VALIDITY_DURATION ) {
+	if (
+		existingTicket &&
+		existingTicket.createdDate < Date.now() - GUEST_TICKET_VALIDITY_DURATION
+	) {
 		store.remove( GUEST_TICKET_LOCALFORAGE_KEY );
 	}
 };
@@ -25,7 +29,7 @@ export const deleteOldTicket = () => {
  *
  * @param {Object} wpcom Original WPCOM instance
  */
-export const injectGuestSandboxTicketHandler = ( wpcom ) => {
+export const injectGuestSandboxTicketHandler = wpcom => {
 	const request = wpcom.request.bind( wpcom );
 
 	Object.assign( wpcom, {
@@ -36,12 +40,12 @@ export const injectGuestSandboxTicketHandler = ( wpcom ) => {
 				const query = qs.parse( params.query );
 
 				params = Object.assign( {}, params, {
-					query: qs.stringify( Object.assign( query, { store_sandbox_ticket: ticket.value } ) )
+					query: qs.stringify( Object.assign( query, { store_sandbox_ticket: ticket.value } ) ),
 				} );
 			}
 
 			return request( params, callback );
-		}
+		},
 	} );
 };
 
@@ -58,13 +62,10 @@ const initialize = () => {
 	const queryObject = qs.decode( window.location.search.replace( '?', '' ) );
 
 	if ( queryObject.guest_ticket ) {
-		store.set(
-			GUEST_TICKET_LOCALFORAGE_KEY,
-			{
-				createdDate: Date.now(),
-				value: queryObject.guest_ticket
-			}
-		);
+		store.set( GUEST_TICKET_LOCALFORAGE_KEY, {
+			createdDate: Date.now(),
+			value: queryObject.guest_ticket,
+		} );
 	}
 };
 

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -27,7 +28,7 @@ describe( 'NavigationLink', () => {
 			{ stepName: 'test:step3', stepSectionName: 'test:section3', wasSkipped: false },
 		],
 		goToNextStep: stub(),
-		translate: ( str ) => `translated:${ str }`,
+		translate: str => `translated:${ str }`,
 	};
 	const signupUtils = { getStepUrl: stub() };
 	let NavigationLink, props;
@@ -90,7 +91,12 @@ describe( 'NavigationLink', () => {
 
 		// It should call signupUtils.getStepUrl()
 		expect( signupUtils.getStepUrl ).to.has.been.called;
-		expect( signupUtils.getStepUrl ).to.has.been.calledWith( 'test:flow', 'test:step1', 'test:section1', 'en' );
+		expect( signupUtils.getStepUrl ).to.has.been.calledWith(
+			'test:flow',
+			'test:step1',
+			'test:section1',
+			'en'
+		);
 
 		// when it is the first step
 		signupUtils.getStepUrl = stub();

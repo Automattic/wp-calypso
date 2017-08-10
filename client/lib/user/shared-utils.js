@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -57,18 +58,13 @@ module.exports = {
 				'primary_blog',
 				'primary_blog_url',
 				'meta',
-				'is_new_reader'
+				'is_new_reader',
 			],
-			decodeWhitelist = [
-				'display_name',
-				'description',
-				'user_URL'
-			];
+			decodeWhitelist = [ 'display_name', 'description', 'user_URL' ];
 
 		allowedKeys.forEach( function( key ) {
-			user[ key ] = obj[ key ] && includes( decodeWhitelist, key )
-				? decodeEntities( obj[ key ] )
-				: obj[ key ];
+			user[ key ] =
+				obj[ key ] && includes( decodeWhitelist, key ) ? decodeEntities( obj[ key ] ) : obj[ key ];
 		} );
 
 		return assign( user, this.getComputedAttributes( obj ) );
@@ -80,8 +76,7 @@ module.exports = {
 		return {
 			primarySiteSlug: getSiteSlug( primayBlogUrl ),
 			localeSlug: attributes.language,
-			isRTL: !! ( language && language.rtl )
+			isRTL: !! ( language && language.rtl ),
 		};
-	}
-
+	},
 };

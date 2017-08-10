@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,9 @@ export default localize( ( { selectedSite, translate } ) => {
 			<PurchaseDetail
 				icon="customize"
 				title={ translate( 'Find a new theme' ) }
-				description={ translate( 'All our premium themes are now available at no extra cost. Try them out now.' ) }
+				description={ translate(
+					'All our premium themes are now available at no extra cost. Try them out now.'
+				) }
 				buttonText={ translate( 'Browse premium themes' ) }
 				href={ '/themes/' + selectedSite.slug }
 			/>

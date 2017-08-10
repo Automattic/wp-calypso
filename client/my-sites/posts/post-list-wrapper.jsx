@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,15 +14,12 @@ import config from 'config';
 import { mapPostStatus } from 'lib/route/path';
 
 class PostListWrapper extends React.Component {
-
 	constructor( props ) {
 		super( props );
 	}
 
 	renderPostList() {
-		return (
-			<PostList { ...this.props } />
-		);
+		return <PostList { ...this.props } />;
 	}
 
 	renderPostTypeList() {
@@ -60,9 +58,7 @@ class PostListWrapper extends React.Component {
 			<div>
 				{ config.isEnabled( 'posts/post-type-list' )
 					? this.renderPostTypeList()
-					: this.renderPostList()
-
-				}
+					: this.renderPostList() }
 			</div>
 		);
 	}

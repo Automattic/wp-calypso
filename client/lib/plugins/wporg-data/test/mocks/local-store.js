@@ -1,3 +1,4 @@
+/** @format */
 
 import sinon from 'sinon';
 
@@ -10,5 +11,5 @@ export default {
 	reset() {
 		get.reset();
 		set.reset();
-	}
-}
+	},
+};

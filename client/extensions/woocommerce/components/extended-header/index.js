@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,8 +15,12 @@ class ExtendedHeader extends Component {
 
 		const labelContent = (
 			<div>
-				<div className="extended-header__header">{ label }</div>
-				<div className="extended-header__header-description">{ description }</div>
+				<div className="extended-header__header">
+					{ label }
+				</div>
+				<div className="extended-header__header-description">
+					{ description }
+				</div>
 			</div>
 		);
 

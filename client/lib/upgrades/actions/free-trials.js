@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -21,7 +22,7 @@ const productsList = productsListFactory();
 function submitFreeTransaction( partialCart, onComplete ) {
 	const cart = fillInAllCartItemAttributes( partialCart, productsList.get() ),
 		transaction = {
-			payment: fullCreditsPayment()
+			payment: fullCreditsPayment(),
 		};
 
 	submitTransaction( { cart, transaction }, onComplete );

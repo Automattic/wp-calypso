@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -27,8 +28,8 @@ export const UploadingPane = React.createClass( {
 		importerStatus: PropTypes.shape( {
 			filename: PropTypes.string,
 			importerState: PropTypes.string.isRequired,
-			percentComplete: PropTypes.number
-		} )
+			percentComplete: PropTypes.number,
+		} ),
 	},
 
 	componentWillUnmount: function() {
@@ -45,18 +46,22 @@ export const UploadingPane = React.createClass( {
 		switch ( importerState ) {
 			case appStates.READY_FOR_UPLOAD:
 			case appStates.UPLOAD_FAILURE:
-				return <p>{ this.translate( 'Drag a file here, or click to upload a file' ) }</p>;
+				return (
+					<p>
+						{ this.translate( 'Drag a file here, or click to upload a file' ) }
+					</p>
+				);
 
 			case appStates.UPLOADING:
 				let uploadPercent = percentComplete,
 					progressClasses = classNames( 'importer__upload-progress', {
-						'is-complete': uploadPercent > 95
+						'is-complete': uploadPercent > 95,
 					} ),
 					uploaderPrompt;
 
 				if ( uploadPercent < 99 ) {
 					uploaderPrompt = this.translate( 'Uploading %(filename)s\u2026', {
-						args: { filename }
+						args: { filename },
 					} );
 				} else {
 					uploaderPrompt = this.translate( 'Processing uploaded file\u2026' );
@@ -64,7 +69,9 @@ export const UploadingPane = React.createClass( {
 
 				return (
 					<div>
-						<p>{ uploaderPrompt }</p>
+						<p>
+							{ uploaderPrompt }
+						</p>
 						<ProgressBar className={ progressClasses } value={ uploadPercent } total={ 100 } />
 					</div>
 				);
@@ -72,7 +79,9 @@ export const UploadingPane = React.createClass( {
 			case appStates.UPLOAD_SUCCESS:
 				return (
 					<div>
-						<p>{ this.translate( 'Success! File uploaded.' ) }</p>
+						<p>
+							{ this.translate( 'Success! File uploaded.' ) }
+						</p>
 						<Button
 							className="importer__start"
 							onClick={ () => startMappingAuthors( this.props.importerStatus.importerId ) }
@@ -119,24 +128,34 @@ export const UploadingPane = React.createClass( {
 	render: function() {
 		return (
 			<div>
-				<p>{ this.props.description }</p>
-				<div className="importer__uploading-pane" onClick={ this.isReadyForImport() ? this.openFileSelector : null }>
+				<p>
+					{ this.props.description }
+				</p>
+				<div
+					className="importer__uploading-pane"
+					onClick={ this.isReadyForImport() ? this.openFileSelector : null }
+				>
 					<div className="importer__upload-content">
 						<Gridicon className="importer__upload-icon" icon="cloud-upload" />
 						{ this.getMessage() }
 					</div>
 					{ this.isReadyForImport()
-						? <input ref="fileSelector" type="file" name="exportFile" onChange={ this.initiateFromForm } />
+						? <input
+								ref="fileSelector"
+								type="file"
+								name="exportFile"
+								onChange={ this.initiateFromForm }
+							/>
 						: null }
 					<DropZone onFilesDrop={ this.isReadyForImport() ? this.initiateFromDrop : noop } />
 				</div>
 			</div>
 		);
-	}
+	},
 } );
 
 const mapDispatchToProps = dispatch => ( {
-	startUpload: flowRight( dispatch, startUpload )
+	startUpload: flowRight( dispatch, startUpload ),
 } );
 
 export default connectDispatcher( null, mapDispatchToProps )( UploadingPane );

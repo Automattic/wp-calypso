@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Media modal views
  *

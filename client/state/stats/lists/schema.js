@@ -1,3 +1,4 @@
+/** @format */
 export const itemSchema = {
 	type: 'object',
 	patternProperties: {
@@ -8,13 +9,13 @@ export const itemSchema = {
 					type: 'object',
 					patternProperties: {
 						'^\\{[^\\}]*\\}$': {
-							type: 'object'
-						}
-					}
-				}
+							type: 'object',
+						},
+					},
+				},
 			},
-			additionalProperties: false
-		}
+			additionalProperties: false,
+		},
 	},
-	additionalProperties: false
+	additionalProperties: false,
 };

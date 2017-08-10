@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,10 +27,9 @@ class AddGoogleApps extends React.Component {
 	}
 
 	ensureCanAddEmail() {
-		const needsRedirect = (
+		const needsRedirect =
 			this.props.domains.hasLoadedFromServer &&
-			! hasGoogleAppsSupportedDomain( this.props.domains.list )
-		);
+			! hasGoogleAppsSupportedDomain( this.props.domains.list );
 
 		if ( needsRedirect ) {
 			const path = paths.domainManagementEmail(
@@ -46,20 +46,20 @@ class AddGoogleApps extends React.Component {
 
 		return (
 			<Main>
-				<Header
-					onClick={ this.goToEmail }
-					selectedDomainName={ this.props.selectedDomainName }>
+				<Header onClick={ this.goToEmail } selectedDomainName={ this.props.selectedDomainName }>
 					{ translate( 'Add G Suite' ) }
 				</Header>
 
 				<EmailVerificationGate
 					noticeText={ translate( 'You must verify your email to purchase G Suite.' ) }
-					noticeStatus="is-info">
+					noticeStatus="is-info"
+				>
 					<SectionHeader label={ translate( 'Add G Suite' ) } />
 					<AddEmailAddressesCard
 						domains={ this.props.domains }
 						selectedDomainName={ this.props.selectedDomainName }
-						selectedSite={ this.props.selectedSite } />
+						selectedSite={ this.props.selectedSite }
+					/>
 				</EmailVerificationGate>
 			</Main>
 		);

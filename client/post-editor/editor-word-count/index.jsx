@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,11 +19,11 @@ const user = userModule();
 
 export class EditorWordCount extends PureComponent {
 	static propTypes = {
-		selectedText: React.PropTypes.string
+		selectedText: React.PropTypes.string,
 	};
 
 	state = {
-		rawContent: ''
+		rawContent: '',
 	};
 
 	componentWillMount() {
@@ -39,9 +40,9 @@ export class EditorWordCount extends PureComponent {
 
 	onRawContentChange = () => {
 		this.setState( {
-			rawContent: PostEditStore.getRawContent()
+			rawContent: PostEditStore.getRawContent(),
 		} );
-	}
+	};
 
 	getSelectedTextCount = () => {
 		const selectedText = countWords( this.props.selectedText );
@@ -50,27 +51,25 @@ export class EditorWordCount extends PureComponent {
 			return null;
 		}
 
-		return (
-			this.props.translate(
-				'%(selectedText)s word selected {{span}}%(separator)s{{/span}}',
-				'%(selectedText)s words selected {{span}}%(separator)s{{/span}}',
-				{
-					count: selectedText,
-					args: {
-						selectedText: selectedText,
-						separator: '/ ',
-					},
-					components: {
-						span: <span className="editor-word-count__separator" />
-					}
-				}
-			)
+		return this.props.translate(
+			'%(selectedText)s word selected {{span}}%(separator)s{{/span}}',
+			'%(selectedText)s words selected {{span}}%(separator)s{{/span}}',
+			{
+				count: selectedText,
+				args: {
+					selectedText: selectedText,
+					separator: '/ ',
+				},
+				components: {
+					span: <span className="editor-word-count__separator" />,
+				},
+			}
 		);
-	}
+	};
 
 	render() {
 		const currentUser = user.get();
-		const localeSlug = currentUser && currentUser.localeSlug || 'en';
+		const localeSlug = ( currentUser && currentUser.localeSlug ) || 'en';
 
 		switch ( localeSlug ) {
 			case 'ja':
@@ -91,15 +90,15 @@ export class EditorWordCount extends PureComponent {
 
 		return (
 			<div className="editor-word-count">
-				<span className="editor-word-count__is-selected-text"><strong>{ this.getSelectedTextCount() }</strong></span>
-				{ this.props.translate(
-					'%d word',
-					'%d words',
-					{
-						count: wordCount,
-						args: [ wordCount ]
-					}
-				) }
+				<span className="editor-word-count__is-selected-text">
+					<strong>
+						{ this.getSelectedTextCount() }
+					</strong>
+				</span>
+				{ this.props.translate( '%d word', '%d words', {
+					count: wordCount,
+					args: [ wordCount ],
+				} ) }
 			</div>
 		);
 	}

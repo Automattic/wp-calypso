@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,57 +12,73 @@ import { getShortcode, isRequestingShortcode } from '../selectors';
 describe( 'selectors', () => {
 	describe( '#isRequestingShortcode()', () => {
 		it( 'should return false if shortcodes have never been fetched for that site', () => {
-			const isRequesting = isRequestingShortcode( {
-				shortcodes: {
-					requesting: {
-						87654321: {
-							test_shortcode: true
-						}
-					}
-				}
-			}, 12345678, 'test_shortcode' );
+			const isRequesting = isRequestingShortcode(
+				{
+					shortcodes: {
+						requesting: {
+							87654321: {
+								test_shortcode: true,
+							},
+						},
+					},
+				},
+				12345678,
+				'test_shortcode'
+			);
 
 			expect( isRequesting ).to.be.false;
 		} );
 
 		it( 'should return false if the shortcode is not being fetched for that site', () => {
-			const isRequesting = isRequestingShortcode( {
-				shortcodes: {
-					requesting: {
-						12345678: {
-							test_shortcode: false
-						}
-					}
-				}
-			}, 12345678, 'test_shortcode' );
+			const isRequesting = isRequestingShortcode(
+				{
+					shortcodes: {
+						requesting: {
+							12345678: {
+								test_shortcode: false,
+							},
+						},
+					},
+				},
+				12345678,
+				'test_shortcode'
+			);
 
 			expect( isRequesting ).to.be.false;
 		} );
 
 		it( 'should return false if the shortcode is being fetched only for another site', () => {
-			const isRequesting = isRequestingShortcode( {
-				shortcodes: {
-					requesting: {
-						87654321: {
-							test_shortcode: false
-						}
-					}
-				}
-			}, 12345678, 'test_shortcode' );
+			const isRequesting = isRequestingShortcode(
+				{
+					shortcodes: {
+						requesting: {
+							87654321: {
+								test_shortcode: false,
+							},
+						},
+					},
+				},
+				12345678,
+				'test_shortcode'
+			);
 
 			expect( isRequesting ).to.be.false;
 		} );
 
 		it( 'should return true if the shortcode is being fetched for that site', () => {
-			const isRequesting = isRequestingShortcode( {
-				shortcodes: {
-					requesting: {
-						12345678: {
-							test_shortcode: true
-						}
-					}
-				}
-			}, 12345678, 'test_shortcode' );
+			const isRequesting = isRequestingShortcode(
+				{
+					shortcodes: {
+						requesting: {
+							12345678: {
+								test_shortcode: true,
+							},
+						},
+					},
+				},
+				12345678,
+				'test_shortcode'
+			);
 
 			expect( isRequesting ).to.be.true;
 		} );
@@ -76,11 +93,11 @@ describe( 'selectors', () => {
 							result: '<html></html>',
 							shortcode: '[gallery ids="1,2,3"]',
 							scripts: {},
-							styles: {}
+							styles: {},
 						},
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 
 		it( 'should return the shortcode object for the site ID', () => {
@@ -90,7 +107,7 @@ describe( 'selectors', () => {
 				result: '<html></html>',
 				shortcode: '[gallery ids="1,2,3"]',
 				scripts: {},
-				styles: {}
+				styles: {},
 			} );
 		} );
 

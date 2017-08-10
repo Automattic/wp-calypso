@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +9,7 @@ import { get, includes } from 'lodash';
  */
 import { findThemeFilterTerm, getThemeFilterTerm } from './';
 
-export default function getThemeShowcaseTitle( state, { filter, tier, vertical } = {} ) {
+export default function getThemeShowcaseTitle( state, { filter, tier, vertical } = {} ) {
 	if ( vertical ) {
 		const name = get( getThemeFilterTerm( state, 'subject', vertical ), 'name' );
 		if ( name ) {

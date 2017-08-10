@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,30 +24,32 @@ let exclusiveViewLock = null;
 
 const PremiumPopover = React.createClass( {
 	propTypes: {
-		className: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.object, React.PropTypes.array ] ),
+		className: React.PropTypes.oneOfType( [
+			React.PropTypes.string,
+			React.PropTypes.object,
+			React.PropTypes.array,
+		] ),
 		onClose: React.PropTypes.func,
 		isVisible: React.PropTypes.bool,
 		position: React.PropTypes.string.isRequired,
-		textLabel: React.PropTypes.string
+		textLabel: React.PropTypes.string,
 	},
 	getInitialState() {
 		return {
 			visibleByClick: false,
-			visibleByHover: false
+			visibleByHover: false,
 		};
 	},
 	isVisible() {
 		return (
-			this.props.isVisible ||
-			this.state.visibleByClick ||
-			this.state.visibleByHover
-		) &&
-			( ! exclusiveViewLock || exclusiveViewLock === this );
+			( this.props.isVisible || this.state.visibleByClick || this.state.visibleByHover ) &&
+			( ! exclusiveViewLock || exclusiveViewLock === this )
+		);
 	},
 	priceMessage( price ) {
 		return this.translate( '%(cost)s {{small}}/year{{/small}}', {
 			args: { cost: price },
-			components: { small: <small /> }
+			components: { small: <small /> },
 		} );
 	},
 	componentWillUnmount() {
@@ -71,7 +74,7 @@ const PremiumPopover = React.createClass( {
 
 		this.setState( {
 			visibleByClick: false,
-			visibleByHover: false
+			visibleByHover: false,
 		} );
 
 		if ( this.props.onClose ) {
@@ -91,7 +94,8 @@ const PremiumPopover = React.createClass( {
 					onClick={ this.handleClick }
 					onMouseEnter={ this.handleMouseEnter }
 					ref="popover-premium-reference"
-					onMouseLeave={ this.handleMouseLeave }>
+					onMouseLeave={ this.handleMouseLeave }
+				>
 					{ this.props.textLabel }
 				</span>
 
@@ -105,7 +109,9 @@ const PremiumPopover = React.createClass( {
 				>
 					<div className="premium-popover__content">
 						<div className="premium-popover__header">
-							<h3>{ this.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
+							<h3>
+								{ this.translate( 'Premium', { context: 'Premium Plan' } ) }
+							</h3>
 							{ premiumPlan
 								? <PlanPrice plan={ premiumPlan } sitePlan={ premiumSitePlan } />
 								: <h5>Loading</h5> }
@@ -117,23 +123,25 @@ const PremiumPopover = React.createClass( {
 								this.translate( '13GB of space for file and media' ),
 								this.translate( 'Video Uploads' ),
 								this.translate( 'No Ads' ),
-								this.translate( 'Email and live chat support' )
-							].map( ( message, i ) => <li key={ i }><Gridicon icon="checkmark" size={ 18 } /> { message }
-							</li> ) }
+								this.translate( 'Email and live chat support' ),
+							].map( ( message, i ) =>
+								<li key={ i }>
+									<Gridicon icon="checkmark" size={ 18 } /> { message }
+								</li>
+							) }
 						</ul>
 					</div>
-
 				</Popover>
 			</div>
 		);
-	}
+	},
 } );
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		selectedSiteId,
 		premiumPlan: getPlanBySlug( state, PLAN_PREMIUM ),
-		premiumSitePlan: getSitePlan( state, selectedSiteId, PLAN_PREMIUM )
+		premiumSitePlan: getSitePlan( state, selectedSiteId, PLAN_PREMIUM ),
 	};
 } )( PremiumPopover );

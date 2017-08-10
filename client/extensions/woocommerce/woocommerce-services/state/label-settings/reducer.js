@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -20,33 +21,44 @@ export const initialState = {
 
 const reducers = {};
 
-reducers[ WOOCOMMERCE_SERVICES_LABELS_INIT_FORM ] = ( state, { storeOptions, formData, formMeta } ) => {
-	return { ...state,
+reducers[ WOOCOMMERCE_SERVICES_LABELS_INIT_FORM ] = (
+	state,
+	{ storeOptions, formData, formMeta }
+) => {
+	return {
+		...state,
 		storeOptions,
-		meta: { ...state.meta,
+		meta: {
+			...state.meta,
 			...formMeta,
 			pristine: true,
 		},
-		data: { ...state.data,
+		data: {
+			...state.data,
 			...formData,
 		},
 	};
 };
 
 reducers[ WOOCOMMERCE_SERVICES_LABELS_SET_FORM_DATA_VALUE ] = ( state, { key, value } ) => {
-	return { ...state,
-		meta: { ...state.meta,
+	return {
+		...state,
+		meta: {
+			...state.meta,
 			pristine: false,
 		},
-		data: { ...state.data,
+		data: {
+			...state.data,
 			[ key ]: value,
 		},
 	};
 };
 
 reducers[ WOOCOMMERCE_SERVICES_LABELS_SET_FORM_META_PROPERTY ] = ( state, { key, value } ) => {
-	return { ...state,
-		meta: { ...state.meta,
+	return {
+		...state,
+		meta: {
+			...state.meta,
 			[ key ]: value,
 		},
 	};

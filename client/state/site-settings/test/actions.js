@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,18 +18,18 @@ import {
 	SITE_SETTINGS_SAVE,
 	SITE_SETTINGS_SAVE_FAILURE,
 	SITE_SETTINGS_SAVE_SUCCESS,
-	SITE_SETTINGS_UPDATE
+	SITE_SETTINGS_UPDATE,
 } from 'state/action-types';
 import {
 	receiveSiteSettings,
 	requestSiteSettings,
 	saveSiteSettings,
-	updateSiteSettings
+	updateSiteSettings,
 } from '../actions';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => spy = sandbox.spy() );
+	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	describe( 'receiveSiteSettings()', () => {
 		it( 'should return an action object', () => {
@@ -38,7 +39,7 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: SITE_SETTINGS_RECEIVE,
 				siteId: 2916284,
-				settings
+				settings,
 			} );
 		} );
 	} );
@@ -51,25 +52,25 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: SITE_SETTINGS_UPDATE,
 				siteId: 2916284,
-				settings
+				settings,
 			} );
 		} );
 	} );
 
 	describe( 'requestSiteSettings()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/settings' )
 				.reply( 200, {
 					name: 'blog name',
 					description: 'blog description',
-					settings: { settingKey: 'cat' }
+					settings: { settingKey: 'cat' },
 				} )
 				.get( '/rest/v1.1/sites/2916285/settings' )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'User cannot access this private blog.'
+					message: 'User cannot access this private blog.',
 				} );
 		} );
 
@@ -78,7 +79,7 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: SITE_SETTINGS_REQUEST,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 		} );
 
@@ -88,7 +89,7 @@ describe( 'actions', () => {
 					receiveSiteSettings( 2916284, {
 						blogname: 'blog name',
 						blogdescription: 'blog description',
-						settingKey: 'cat'
+						settingKey: 'cat',
 					} )
 				);
 			} );
@@ -98,7 +99,7 @@ describe( 'actions', () => {
 			return requestSiteSettings( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_SETTINGS_REQUEST_SUCCESS,
-					siteId: 2916284
+					siteId: 2916284,
 				} );
 			} );
 		} );
@@ -108,24 +109,24 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_SETTINGS_REQUEST_FAILURE,
 					siteId: 2916285,
-					error: sinon.match( { message: 'User cannot access this private blog.' } )
+					error: sinon.match( { message: 'User cannot access this private blog.' } ),
 				} );
 			} );
 		} );
 	} );
 
 	describe( 'saveSiteSettings()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/settings' )
 				.reply( 200, {
-					updated: { real_update: 'ribs' }
+					updated: { real_update: 'ribs' },
 				} )
 				.post( '/rest/v1.1/sites/2916285/settings' )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'User cannot access this private blog.'
+					message: 'User cannot access this private blog.',
 				} );
 		} );
 
@@ -134,7 +135,7 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: SITE_SETTINGS_SAVE,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 		} );
 
@@ -142,7 +143,7 @@ describe( 'actions', () => {
 			return saveSiteSettings( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
 					updateSiteSettings( 2916284, {
-						real_update: 'ribs'
+						real_update: 'ribs',
 					} )
 				);
 			} );
@@ -152,7 +153,7 @@ describe( 'actions', () => {
 			return saveSiteSettings( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_SETTINGS_SAVE_SUCCESS,
-					siteId: 2916284
+					siteId: 2916284,
 				} );
 			} );
 		} );
@@ -162,7 +163,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_SETTINGS_SAVE_FAILURE,
 					siteId: 2916285,
-					error: sinon.match( { message: 'User cannot access this private blog.' } )
+					error: sinon.match( { message: 'User cannot access this private blog.' } ),
 				} );
 			} );
 		} );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -21,7 +22,9 @@ import {
 } from 'lib/products-values';
 
 const ProductLink = ( { selectedPurchase, selectedSite, productUrl } ) => {
-	let props = {}, url, text;
+	let props = {},
+		url,
+		text;
 
 	if ( ! selectedSite ) {
 		return <span />;

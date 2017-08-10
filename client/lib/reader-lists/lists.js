@@ -1,3 +1,4 @@
+/** @format */
 // External dependencies
 import { decodeEntities } from 'lib/formatting';
 import dispatcher from 'dispatcher';

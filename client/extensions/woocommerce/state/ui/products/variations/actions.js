@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -38,4 +39,3 @@ export function clearProductVariationEdits( siteId ) {
 		siteId,
 	};
 }
-

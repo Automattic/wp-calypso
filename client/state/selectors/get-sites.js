@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,15 +19,9 @@ const sortByNameAndUrl = list => sortBy( list, [ 'name', 'URL' ] );
  * @param {Object} state  Global state tree
  * @return {Array}        Sites objects
  */
-export default createSelector(
-	( state ) => {
-		const primarySiteId = getPrimarySiteId( state );
-		const [ primarySite, sites ] = partition( state.sites.items, { ID: primarySiteId } );
+export default createSelector( state => {
+	const primarySiteId = getPrimarySiteId( state );
+	const [ primarySite, sites ] = partition( state.sites.items, { ID: primarySiteId } );
 
-		return [
-			...primarySite,
-			...sortByNameAndUrl( sites )
-		].map( site => getSite( state, site.ID ) );
-	},
-	( state ) => state.sites.items
-);
+	return [ ...primarySite, ...sortByNameAndUrl( sites ) ].map( site => getSite( state, site.ID ) );
+}, state => state.sites.items );

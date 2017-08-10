@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -47,11 +48,11 @@ class MediaLibraryScale extends Component {
 		mediaScale: PropTypes.number,
 		onChange: PropTypes.func,
 		setMediaScalePreference: PropTypes.func,
-		saveMediaScalePreference: PropTypes.func
+		saveMediaScalePreference: PropTypes.func,
 	};
 
 	static defaultProps = {
-		onChange: () => {}
+		onChange: () => {},
 	};
 
 	constructor() {
@@ -119,17 +120,13 @@ class MediaLibraryScale extends Component {
 		return (
 			<div className="media-library__scale">
 				<SegmentedControl className="media-library__scale-toggle" compact>
-					<SegmentedControlItem
-						selected={ 1 !== scale }
-						onClick={ this.setScaleToMobileGrid }>
+					<SegmentedControlItem selected={ 1 !== scale } onClick={ this.setScaleToMobileGrid }>
 						<span className="media-library__scale-toggle-label">
 							{ translate( 'Grid' ) }
 						</span>
 						<Gridicon icon="grid" size={ 18 } />
 					</SegmentedControlItem>
-					<SegmentedControlItem
-						selected={ 1 === scale }
-						onClick={ this.setScaleToMobileFull }>
+					<SegmentedControlItem selected={ 1 === scale } onClick={ this.setScaleToMobileFull }>
 						<span className="media-library__scale-toggle-label">
 							{ translate( 'List' ) }
 						</span>
@@ -144,18 +141,19 @@ class MediaLibraryScale extends Component {
 					maxContent={ <Gridicon icon="image" size={ 24 } /> }
 					value={ this.getSliderPosition() }
 					onChange={ this.onScaleChange }
-					className="media-library__scale-range" />
+					className="media-library__scale-range"
+				/>
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state ) => ( {
-		scale: getPreference( state, 'mediaScale' )
+	state => ( {
+		scale: getPreference( state, 'mediaScale' ),
 	} ),
 	{
 		setMediaScalePreference: partial( setPreference, 'mediaScale' ),
-		saveMediaScalePreference: partial( savePreference, 'mediaScale' )
+		saveMediaScalePreference: partial( savePreference, 'mediaScale' ),
 	}
 )( localize( MediaLibraryScale ) );

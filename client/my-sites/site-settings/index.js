@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,18 +13,14 @@ import controller from 'my-sites/site-settings/controller';
 import settingsController from 'my-sites/site-settings/settings-controller';
 
 module.exports = function() {
-	page(
-		'/settings',
-		mySitesController.siteSelection,
-		controller.redirectToGeneral
-	);
+	page( '/settings', mySitesController.siteSelection, controller.redirectToGeneral );
 	page(
 		'/settings/general/:site_id',
 		mySitesController.siteSelection,
 		mySitesController.navigation,
 		settingsController.setScroll,
 		settingsController.siteSettings,
-		controller.general,
+		controller.general
 	);
 
 	page(

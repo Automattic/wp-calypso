@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -18,7 +19,7 @@ var _infiniteListPositions = {},
 		get: function( url ) {
 			debug( 'positions-store:get(): ', url, _infiniteListPositions );
 			return _infiniteListPositions[ url ];
-		}
+		},
 	};
 
 emitter( InfiniteListPositionsStore );

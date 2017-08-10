@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -36,7 +37,7 @@ var SignupProgressStore = {
 	reset: function() {
 		signupProgress = [];
 		store.remove( STORAGE_KEY );
-	}
+	},
 };
 
 emitter( SignupProgressStore );
@@ -78,10 +79,12 @@ function updateOrAddStep( step ) {
 }
 
 function setStepInvalid( step, errors ) {
-	updateOrAddStep( assign( {}, step, {
-		status: 'invalid',
-		errors: errors
-	} ) );
+	updateOrAddStep(
+		assign( {}, step, {
+			status: 'invalid',
+			errors: errors,
+		} )
+	);
 }
 
 function saveStep( step ) {
@@ -93,7 +96,8 @@ function saveStep( step ) {
 }
 
 function submitStep( step ) {
-	const stepHasApiRequestFunction = steps[ step.stepName ] && steps[ step.stepName ].apiRequestFunction,
+	const stepHasApiRequestFunction =
+			steps[ step.stepName ] && steps[ step.stepName ].apiRequestFunction,
 		status = stepHasApiRequestFunction ? 'pending' : 'completed';
 
 	updateOrAddStep( assign( {}, step, { status } ) );

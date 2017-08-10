@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -84,7 +85,8 @@ class MediaLibraryUploadUrl extends Component {
 					onKeyDown={ this.onKeyDown }
 					isError={ this.state.isError }
 					autoFocus
-					required />
+					required
+				/>
 
 				<div className="media-library__upload-url-button-group">
 					<button type="submit" className="button is-primary">
@@ -104,4 +106,3 @@ class MediaLibraryUploadUrl extends Component {
 }
 
 export default localize( MediaLibraryUploadUrl );
-

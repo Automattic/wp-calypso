@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -6,7 +7,7 @@ import {
 	PAGE_TEMPLATES_RECEIVE,
 	PAGE_TEMPLATES_REQUEST,
 	PAGE_TEMPLATES_REQUEST_FAILURE,
-	PAGE_TEMPLATES_REQUEST_SUCCESS
+	PAGE_TEMPLATES_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -21,7 +22,7 @@ export function receivePageTemplates( siteId, templates ) {
 	return {
 		type: PAGE_TEMPLATES_RECEIVE,
 		siteId,
-		templates
+		templates,
 	};
 }
 
@@ -33,24 +34,28 @@ export function receivePageTemplates( siteId, templates ) {
  * @return {Function}        Action thunk
  */
 export function requestPageTemplates( siteId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: PAGE_TEMPLATES_REQUEST,
-			siteId
+			siteId,
 		} );
 
-		return wpcom.site( siteId ).pageTemplates().then( ( { templates } ) => {
-			dispatch( receivePageTemplates( siteId, templates ) );
-			dispatch( {
-				type: PAGE_TEMPLATES_REQUEST_SUCCESS,
-				siteId
+		return wpcom
+			.site( siteId )
+			.pageTemplates()
+			.then( ( { templates } ) => {
+				dispatch( receivePageTemplates( siteId, templates ) );
+				dispatch( {
+					type: PAGE_TEMPLATES_REQUEST_SUCCESS,
+					siteId,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: PAGE_TEMPLATES_REQUEST_FAILURE,
+					siteId,
+					error,
+				} );
 			} );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: PAGE_TEMPLATES_REQUEST_FAILURE,
-				siteId,
-				error
-			} );
-		} );
 	};
 }

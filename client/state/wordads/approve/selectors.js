@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns true if we're currently requesting WordAds approval
  * @param   {Object} state  Global State

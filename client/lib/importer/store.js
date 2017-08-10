@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -39,15 +40,16 @@ const initialState = Immutable.fromJS( {
 	api: {
 		isHydrated: false,
 		isFetching: false,
-		retryCount: 0
-	}
+		retryCount: 0,
+	},
 } );
 
 const equals = ( a, b ) => a === b;
 const increment = a => a + 1;
 
 const removableStates = [ appStates.CANCEL_PENDING, appStates.DEFUNCT ];
-const shouldRemove = importer => removableStates.some( partial( equals, importer.get( 'importerState' ) ) );
+const shouldRemove = importer =>
+	removableStates.some( partial( equals, importer.get( 'importerState' ) ) );
 
 const adjustImporterLock = ( state, { action } ) => {
 	switch ( action.type ) {
@@ -94,36 +96,49 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 		case IMPORTS_IMPORT_RESET:
 			// Remove the specified importer from the list of current importers
 			newState = state.update( 'importers', importers => {
-				return importers.filterNot( importer => importer.get( 'importerId' ) === action.importerId );
+				return importers.filterNot(
+					importer => importer.get( 'importerId' ) === action.importerId
+				);
 			} );
 			break;
 
 		case IMPORTS_UPLOAD_FAILED:
 			newState = state
 				.setIn( [ 'importers', action.importerId, 'importerState' ], appStates.UPLOAD_FAILURE )
-				.setIn( [ 'importers', action.importerId, 'errorData' ], { type: 'uploadError', description: action.error } );
+				.setIn( [ 'importers', action.importerId, 'errorData' ], {
+					type: 'uploadError',
+					description: action.error,
+				} );
 			break;
 
 		case IMPORTS_UPLOAD_COMPLETED:
 			newState = state
 				.deleteIn( [ 'importers' ], action.importerId )
-				.setIn( [ 'importers', action.importerStatus.importerId ], Immutable.fromJS( action.importerStatus ) );
+				.setIn(
+					[ 'importers', action.importerStatus.importerId ],
+					Immutable.fromJS( action.importerStatus )
+				);
 			break;
 
 		case IMPORTS_AUTHORS_START_MAPPING:
-			newState = state.setIn( [ 'importers', action.importerId, 'importerState' ], appStates.MAP_AUTHORS );
+			newState = state.setIn(
+				[ 'importers', action.importerId, 'importerState' ],
+				appStates.MAP_AUTHORS
+			);
 			break;
 
 		case IMPORTS_AUTHORS_SET_MAPPING:
-			newState = state.updateIn( [ 'importers', action.importerId, 'customData', 'sourceAuthors' ], authors => (
-				authors.map( author => {
-					if ( action.sourceAuthor.id !== author.get( 'id' ) ) {
-						return author;
-					}
+			newState = state.updateIn(
+				[ 'importers', action.importerId, 'customData', 'sourceAuthors' ],
+				authors =>
+					authors.map( author => {
+						if ( action.sourceAuthor.id !== author.get( 'id' ) ) {
+							return author;
+						}
 
-					return author.set( 'mappedTo', action.targetAuthor );
-				} )
-			) );
+						return author.set( 'mappedTo', action.targetAuthor );
+					} )
+			);
 			break;
 
 		case IMPORTS_IMPORT_RECEIVE:
@@ -134,18 +149,21 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			}
 
 			if ( action.importerStatus.importerState === appStates.DEFUNCT ) {
-				newState = newState
-					.deleteIn( [ 'importers', action.importerStatus.importerId ] );
+				newState = newState.deleteIn( [ 'importers', action.importerStatus.importerId ] );
 				break;
 			}
 
 			newState = newState
-				.setIn( [ 'importers', action.importerStatus.importerId ], Immutable.fromJS( action.importerStatus ) )
+				.setIn(
+					[ 'importers', action.importerStatus.importerId ],
+					Immutable.fromJS( action.importerStatus )
+				)
 				.update( 'importers', importers => importers.filterNot( shouldRemove ) );
 			break;
 
 		case IMPORTS_UPLOAD_SET_PROGRESS:
-			newState = state.setIn( [ 'importers', action.importerId, 'percentComplete' ],
+			newState = state.setIn(
+				[ 'importers', action.importerId, 'percentComplete' ],
 				action.uploadLoaded / ( action.uploadTotal + Number.EPSILON ) * 100
 			);
 			break;
@@ -155,7 +173,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				importerId: action.importerId,
 				type: action.importerType,
 				importerState: appStates.READY_FOR_UPLOAD,
-				site: { ID: action.siteId }
+				site: { ID: action.siteId },
 			} );
 
 			newState = state
@@ -164,8 +182,10 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			break;
 
 		case IMPORTS_START_IMPORTING:
-			newState = state
-				.setIn( [ 'importers', action.importerId, 'importerState' ], appStates.IMPORTING );
+			newState = state.setIn(
+				[ 'importers', action.importerId, 'importerState' ],
+				appStates.IMPORTING
+			);
 			break;
 
 		case IMPORTS_UPLOAD_START:

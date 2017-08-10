@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -64,7 +65,9 @@ module.exports = React.createClass( {
 		}
 		const allowedFileTypesForSite = MediaUtils.getAllowedFileTypesForSite( this.props.site );
 
-		return uniq( allowedFileTypesForSite.concat( VideoPressFileTypes ) ).map( ( type ) => `.${type}` ).join();
+		return uniq( allowedFileTypesForSite.concat( VideoPressFileTypes ) )
+			.map( type => `.${ type }` )
+			.join();
 	},
 
 	render: function() {
@@ -79,8 +82,9 @@ module.exports = React.createClass( {
 					multiple
 					onChange={ this.uploadFiles }
 					onClick={ this.onClick }
-					className="media-library__upload-button-input" />
+					className="media-library__upload-button-input"
+				/>
 			</form>
 		);
-	}
+	},
 } );

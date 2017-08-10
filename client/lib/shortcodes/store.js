@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -34,9 +35,9 @@ class ShortcodesStore extends ReduceStore {
 				state = Object.assign( {}, state, {
 					[ action.payload.siteId ]: Object.assign( {}, state[ action.payload.siteId ], {
 						[ action.payload.shortcode ]: {
-							status: LoadStatus.LOADING
-						}
-					} )
+							status: LoadStatus.LOADING,
+						},
+					} ),
 				} );
 				break;
 
@@ -44,16 +45,16 @@ class ShortcodesStore extends ReduceStore {
 				state = Object.assign( {}, state, {
 					[ action.payload.siteId ]: Object.assign( {}, state[ action.payload.siteId ], {
 						[ action.payload.shortcode ]: {
-							status: action.error ? LoadStatus.ERROR : LoadStatus.LOADED
-						}
-					} )
+							status: action.error ? LoadStatus.ERROR : LoadStatus.LOADED,
+						},
+					} ),
 				} );
 
 				if ( ! action.error ) {
 					Object.assign( state[ action.payload.siteId ][ action.payload.shortcode ], {
 						body: action.payload.data.result,
 						scripts: action.payload.data.scripts,
-						styles: action.payload.data.styles
+						styles: action.payload.data.styles,
 					} );
 				}
 				break;
@@ -76,7 +77,7 @@ class ShortcodesStore extends ReduceStore {
 					media = [ action.data ];
 				}
 
-				const updatedIds = media.map( ( item ) => item.ID.toString() );
+				const updatedIds = media.map( item => item.ID.toString() );
 
 				state = Object.assign( {}, state, {
 					[ action.siteId ]: pickBy( state[ action.siteId ], ( status, shortcode ) => {
@@ -87,7 +88,7 @@ class ShortcodesStore extends ReduceStore {
 
 						const ids = parsed.attrs.named.ids.split( ',' );
 						return ! intersection( ids, updatedIds ).length;
-					} )
+					} ),
 				} );
 				break;
 		}

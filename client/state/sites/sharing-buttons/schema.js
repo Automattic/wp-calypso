@@ -1,3 +1,4 @@
+/** @format */
 export const items = {
 	type: 'object',
 	additionalProperties: false,
@@ -7,7 +8,7 @@ export const items = {
 			type: 'array',
 			items: {
 				type: 'object',
-			}
-		}
-	}
+			},
+		},
+	},
 };

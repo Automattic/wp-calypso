@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -32,10 +33,7 @@ import {
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
 } from 'state/action-types';
-import {
-	getSerializedThemesQuery,
-	getThemeIdFromStylesheet
-} from './utils';
+import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
 import {
 	queriesSchema,
 	activeThemesSchema,
@@ -54,17 +52,20 @@ import uploadTheme from './upload-theme/reducer';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const activeThemes = createReducer( {}, {
-	[ THEME_ACTIVATE_SUCCESS ]: ( state, { siteId, themeStylesheet } ) => ( {
-		...state,
-		[ siteId ]: getThemeIdFromStylesheet( themeStylesheet )
-	} ),
-	[ ACTIVE_THEME_REQUEST_SUCCESS ]: ( state, { siteId, theme } ) => ( {
-		...state,
-		[ siteId ]: theme.id
-	} ) },
+export const activeThemes = createReducer(
+	{},
+	{
+		[ THEME_ACTIVATE_SUCCESS ]: ( state, { siteId, themeStylesheet } ) => ( {
+			...state,
+			[ siteId ]: getThemeIdFromStylesheet( themeStylesheet ),
+		} ),
+		[ ACTIVE_THEME_REQUEST_SUCCESS ]: ( state, { siteId, theme } ) => ( {
+			...state,
+			[ siteId ]: theme.id,
+		} ),
+	},
 	activeThemesSchema
- );
+);
 
 /**
  * Returns the updated theme activation state after an action has been
@@ -82,7 +83,7 @@ export function activationRequests( state = {}, action ) {
 		case THEME_ACTIVATE_FAILURE:
 			return {
 				...state,
-				[ action.siteId ]: THEME_ACTIVATE === action.type
+				[ action.siteId ]: THEME_ACTIVATE === action.type,
 			};
 	}
 
@@ -98,15 +99,18 @@ export function activationRequests( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const completedActivationRequests = createReducer( {}, {
-	[ THEME_ACTIVATE_SUCCESS ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: true,
-	} ),
-	[ THEME_CLEAR_ACTIVATED ]: ( state, { siteId } ) => ( {
-		...state,
-		[ siteId ]: false,
-	} ) }
+export const completedActivationRequests = createReducer(
+	{},
+	{
+		[ THEME_ACTIVATE_SUCCESS ]: ( state, { siteId } ) => ( {
+			...state,
+			[ siteId ]: true,
+		} ),
+		[ THEME_CLEAR_ACTIVATED ]: ( state, { siteId } ) => ( {
+			...state,
+			[ siteId ]: false,
+		} ),
+	}
 );
 
 /**
@@ -125,7 +129,7 @@ export function activeThemeRequests( state = {}, action ) {
 		case ACTIVE_THEME_REQUEST_FAILURE:
 			return {
 				...state,
-				[ action.siteId ]: ACTIVE_THEME_REQUEST === action.type
+				[ action.siteId ]: ACTIVE_THEME_REQUEST === action.type,
 			};
 	}
 
@@ -148,8 +152,8 @@ export function themeRequests( state = {}, action ) {
 		case THEME_REQUEST_FAILURE:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
-					[ action.themeId ]: THEME_REQUEST === action.type
-				} )
+					[ action.themeId ]: THEME_REQUEST === action.type,
+				} ),
 			} );
 	}
 
@@ -172,8 +176,8 @@ export function themeInstalls( state = {}, action ) {
 		case THEME_INSTALL_FAILURE:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
-					[ action.themeId ]: THEME_INSTALL === action.type
-				} )
+					[ action.themeId ]: THEME_INSTALL === action.type,
+				} ),
 			} );
 	}
 
@@ -189,19 +193,23 @@ export function themeInstalls( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const themeRequestErrors = createReducer( {}, {
-	[ THEME_REQUEST_FAILURE ]: ( state, { siteId, themeId, error } ) => ( {
-		...state,
-		[ siteId ]: {
-			...state[ siteId ],
-			[ themeId ]: error
-		}
-	} ),
-	[ THEME_REQUEST_SUCCESS ]: ( state, { siteId, themeId } ) => ( {
-		...state,
-		[ siteId ]: omit( state[ siteId ], themeId ),
-	} )
-}, themeRequestErrorsSchema );
+export const themeRequestErrors = createReducer(
+	{},
+	{
+		[ THEME_REQUEST_FAILURE ]: ( state, { siteId, themeId, error } ) => ( {
+			...state,
+			[ siteId ]: {
+				...state[ siteId ],
+				[ themeId ]: error,
+			},
+		} ),
+		[ THEME_REQUEST_SUCCESS ]: ( state, { siteId, themeId } ) => ( {
+			...state,
+			[ siteId ]: omit( state[ siteId ], themeId ),
+		} ),
+	},
+	themeRequestErrorsSchema
+);
 
 /**
  * Returns the updated theme query requesting state after an action has been
@@ -219,7 +227,7 @@ export function queryRequests( state = {}, action ) {
 		case THEMES_REQUEST_FAILURE:
 			const serializedQuery = getSerializedThemesQuery( action.query, action.siteId );
 			return Object.assign( {}, state, {
-				[ serializedQuery ]: THEMES_REQUEST === action.type
+				[ serializedQuery ]: THEMES_REQUEST === action.type,
 			} );
 	}
 
@@ -235,25 +243,28 @@ export function queryRequests( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const queryRequestErrors = createReducer( {}, {
-	[ THEMES_REQUEST_FAILURE ]: ( state, { siteId, query, error } ) => {
-		const serializedQuery = getSerializedThemesQuery( query, siteId );
-		return {
-			...state,
-			[ siteId ]: {
-				...state[ siteId ],
-				[ serializedQuery ]: error
-			}
-		};
-	},
-	[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query } ) => {
-		const serializedQuery = getSerializedThemesQuery( query, siteId );
-		return {
-			...state,
-			[ siteId ]: omit( state[ siteId ], serializedQuery ),
-		};
+export const queryRequestErrors = createReducer(
+	{},
+	{
+		[ THEMES_REQUEST_FAILURE ]: ( state, { siteId, query, error } ) => {
+			const serializedQuery = getSerializedThemesQuery( query, siteId );
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					[ serializedQuery ]: error,
+				},
+			};
+		},
+		[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query } ) => {
+			const serializedQuery = getSerializedThemesQuery( query, siteId );
+			return {
+				...state,
+				[ siteId ]: omit( state[ siteId ], serializedQuery ),
+			};
+		},
 	}
-} );
+);
 
 /**
  * Returns the updated theme query state after an action has been dispatched.
@@ -273,7 +284,7 @@ export const queries = ( () => {
 
 			return {
 				...state,
-				[ siteId ]: ( new ThemeQueryManager( null, { itemKey: 'id' } ) )[ method ]( ...args )
+				[ siteId ]: new ThemeQueryManager( null, { itemKey: 'id' } )[ method ]( ...args ),
 			};
 		}
 
@@ -284,7 +295,7 @@ export const queries = ( () => {
 
 		return {
 			...state,
-			[ siteId ]: nextManager
+			[ siteId ]: nextManager,
 		};
 	}
 
@@ -292,35 +303,43 @@ export const queries = ( () => {
 	// days * hours_in_day * minutes_in_hour * seconds_in_minute * miliseconds_in_second
 	const MAX_THEMES_AGE = 1 * 24 * 60 * 60 * 1000;
 
-	return createReducer( {}, {
-		[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
-			return applyToManager(
-				// Always 'patch' to avoid overwriting existing fields when receiving
-				// from a less rich endpoint such as /mine
-				state, siteId, 'receive', true, themes, { query, found, patch: true }
-			);
-		},
-		[ THEME_DELETE_SUCCESS ]: ( state, { siteId, themeId } ) => {
-			return applyToManager( state, siteId, 'removeItem', false, themeId );
-		},
-		[ SERIALIZE ]: ( state ) => {
-			const serializedState = mapValues( state, ( { data, options } ) => ( { data, options } ) );
-			return { ...serializedState, _timestamp: Date.now() };
-		},
-		[ DESERIALIZE ]: ( state ) => {
-			if ( state._timestamp && state._timestamp + MAX_THEMES_AGE < Date.now() ) {
-				return {};
-			}
-			const noTimestampState = omit( state, '_timestamp' );
-			if ( ! isValidStateWithSchema( noTimestampState, queriesSchema ) ) {
-				return {};
-			}
+	return createReducer(
+		{},
+		{
+			[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
+				return applyToManager(
+					// Always 'patch' to avoid overwriting existing fields when receiving
+					// from a less rich endpoint such as /mine
+					state,
+					siteId,
+					'receive',
+					true,
+					themes,
+					{ query, found, patch: true }
+				);
+			},
+			[ THEME_DELETE_SUCCESS ]: ( state, { siteId, themeId } ) => {
+				return applyToManager( state, siteId, 'removeItem', false, themeId );
+			},
+			[ SERIALIZE ]: state => {
+				const serializedState = mapValues( state, ( { data, options } ) => ( { data, options } ) );
+				return { ...serializedState, _timestamp: Date.now() };
+			},
+			[ DESERIALIZE ]: state => {
+				if ( state._timestamp && state._timestamp + MAX_THEMES_AGE < Date.now() ) {
+					return {};
+				}
+				const noTimestampState = omit( state, '_timestamp' );
+				if ( ! isValidStateWithSchema( noTimestampState, queriesSchema ) ) {
+					return {};
+				}
 
-			return mapValues( noTimestampState, ( { data, options } ) => {
-				return new ThemeQueryManager( data, options );
-			} );
-		},
-	} );
+				return mapValues( noTimestampState, ( { data, options } ) => {
+					return new ThemeQueryManager( data, options );
+				} );
+			},
+		}
+	);
 } )();
 
 /**
@@ -331,12 +350,15 @@ export const queries = ( () => {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const lastQuery = createReducer( {}, {
-	[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query } ) => ( {
-		...state,
-		[ siteId ]: query
-	} )
-} );
+export const lastQuery = createReducer(
+	{},
+	{
+		[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query } ) => ( {
+			...state,
+			[ siteId ]: query,
+		} ),
+	}
+);
 
 /**
  * Returns the updated previewing theme state
@@ -346,12 +368,15 @@ export const lastQuery = createReducer( {}, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const themePreviewOptions = createReducer( {}, {
-	[ THEME_PREVIEW_OPTIONS ]: ( state, { primary, secondary } ) => ( {
-		primary,
-		secondary
-	} )
-} );
+export const themePreviewOptions = createReducer(
+	{},
+	{
+		[ THEME_PREVIEW_OPTIONS ]: ( state, { primary, secondary } ) => ( {
+			primary,
+			secondary,
+		} ),
+	}
+);
 
 /**
  * Returns the updated previewing theme state
@@ -362,12 +387,16 @@ export const themePreviewOptions = createReducer( {}, {
  * @return {Bool}          Updated state
  */
 export const themePreviewVisibility = createReducer( null, {
-	[ THEME_PREVIEW_STATE ]: ( state, { themeId } ) => ( themeId )
+	[ THEME_PREVIEW_STATE ]: ( state, { themeId } ) => themeId,
 } );
 
-export const themeFilters = createReducer( {}, {
-	[ THEME_FILTERS_ADD ]: ( state, { filters } ) => ( filters )
-}, themeFiltersSchema );
+export const themeFilters = createReducer(
+	{},
+	{
+		[ THEME_FILTERS_ADD ]: ( state, { filters } ) => filters,
+	},
+	themeFiltersSchema
+);
 
 export default combineReducers( {
 	queries,

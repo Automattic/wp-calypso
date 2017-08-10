@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,9 +17,7 @@ import {
 	SITE_SETTINGS_RECEIVE,
 } from 'state/action-types';
 
-const relevantAnalyticsEvents = [
-	'calypso_themeshowcase_theme_click',
-];
+const relevantAnalyticsEvents = [ 'calypso_themeshowcase_theme_click' ];
 
 const relevantTypes = {
 	// to catch all actions of a type:
@@ -34,30 +33,23 @@ const relevantTypes = {
 	SITE_SETTINGS_RECEIVE,
 };
 
-const hasRelevantAnalytics = ( action ) =>
+const hasRelevantAnalytics = action =>
 	get( action, 'meta.analytics', [] ).some( record =>
-		includes( relevantAnalyticsEvents, record.payload.name ) );
+		includes( relevantAnalyticsEvents, record.payload.name )
+	);
 
-const isRelevantActionType = ( action ) =>
-	has( relevantTypes, action.type ) && (
-		! isFunction( relevantTypes[ action.type ] ) ||
-		relevantTypes[ action.type ]( action ) );
+const isRelevantActionType = action =>
+	has( relevantTypes, action.type ) &&
+	( ! isFunction( relevantTypes[ action.type ] ) || relevantTypes[ action.type ]( action ) );
 
-const isRelevantAction = overSome( [
-	isRelevantActionType,
-	hasRelevantAnalytics,
-] );
+const isRelevantAction = overSome( [ isRelevantActionType, hasRelevantAnalytics ] );
 
-const newAction = ( action ) => ( {
-	...action, timestamp: Date.now()
+const newAction = action => ( {
+	...action,
+	timestamp: Date.now(),
 } );
 
-const maybeAdd = ( state, action ) =>
-	action
-		? takeRight( [ ...state, action ], 50 )
-		: state;
+const maybeAdd = ( state, action ) => ( action ? takeRight( [ ...state, action ], 50 ) : state );
 
 export default ( state = [], action ) =>
-	isRelevantAction( action )
-		? maybeAdd( state, newAction( action ) )
-		: state;
+	isRelevantAction( action ) ? maybeAdd( state, newAction( action ) ) : state;

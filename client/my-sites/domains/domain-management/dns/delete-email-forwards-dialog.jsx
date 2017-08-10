@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,11 +15,9 @@ class DeleteEmailForwardsDialog extends React.Component {
 	static propTypes = {
 		onClose: React.PropTypes.func,
 		visible: React.PropTypes.bool.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired
+		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] )
+			.isRequired,
+		selectedDomainName: React.PropTypes.string.isRequired,
 	};
 
 	closeDeleteForwards = () => {
@@ -37,35 +36,36 @@ class DeleteEmailForwardsDialog extends React.Component {
 				action: 'delete',
 				label: translate( 'Deactivate Email Forwards and Remove Records' ),
 				isPrimary: true,
-				onClick: this.closeDeleteForwards
+				onClick: this.closeDeleteForwards,
 			},
 			{
 				action: 'keep',
-				label: translate( 'Keep Records and Email Forwards' )
-			}
+				label: translate( 'Keep Records and Email Forwards' ),
+			},
 		];
 
 		return (
 			<Dialog
-					isVisible={ visible }
-					buttons={ buttons }
-					onClose={ this.close }
-					className="cancel-purchase-button__warning-dialog"
+				isVisible={ visible }
+				buttons={ buttons }
+				onClose={ this.close }
+				className="cancel-purchase-button__warning-dialog"
 			>
 				<h1>
 					{ translate( 'Are you sure?' ) }
 				</h1>
 				<p>
-				{ translate(
-					'Removing this record will delete your current {{a}}Email Forwards{{/a}}.',
-					{
+					{ translate( 'Removing this record will delete your current {{a}}Email Forwards{{/a}}.', {
 						components: {
-							a: <a target="_blank" rel="noopener noreferrer"
-								href={ this.getEmailForwardingPath() }
-							/>
-						}
-					}
-				) }
+							a: (
+								<a
+									target="_blank"
+									rel="noopener noreferrer"
+									href={ this.getEmailForwardingPath() }
+								/>
+							),
+						},
+					} ) }
 				</p>
 			</Dialog>
 		);

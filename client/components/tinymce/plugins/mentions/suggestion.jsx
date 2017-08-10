@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,7 +23,11 @@ const Suggestion = ( { avatarUrl, fullName, query, username } ) => {
 			}
 
 			if ( query.toLowerCase() === item.toLowerCase() ) {
-				return <mark className="mentions__highlight" key={ index }>{ item }</mark>;
+				return (
+					<mark className="mentions__highlight" key={ index }>
+						{ item }
+					</mark>
+				);
 			}
 
 			return item;
@@ -37,8 +42,12 @@ const Suggestion = ( { avatarUrl, fullName, query, username } ) => {
 	return (
 		<div>
 			<img className="mentions__avatar" src={ avatarUrl } />
-			<span className="mentions__username">{ highlightedUsername }</span>
-			<small className="mentions__fullname">{ highlightedFullName }</small>
+			<span className="mentions__username">
+				{ highlightedUsername }
+			</span>
+			<small className="mentions__fullname">
+				{ highlightedFullName }
+			</small>
 		</div>
 	);
 };

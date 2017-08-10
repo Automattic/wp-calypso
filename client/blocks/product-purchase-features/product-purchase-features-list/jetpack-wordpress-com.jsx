@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,11 +18,11 @@ export default localize( ( { selectedSite, translate } ) => {
 				title={ translate( 'Get the most from WordPress.com' ) }
 				description={ translate(
 					'Enable plugin auto-updates, browse your stats, try the improved WordPress.com editor, ' +
-					'{{a}}Download WordPress.com apps{{/a}}.',
+						'{{a}}Download WordPress.com apps{{/a}}.',
 					{
 						components: {
-							a: <a href="https://apps.wordpress.com/" />
-						}
+							a: <a href="https://apps.wordpress.com/" />,
+						},
 					}
 				) }
 				buttonText={ translate( 'Turn on autoupdates' ) }

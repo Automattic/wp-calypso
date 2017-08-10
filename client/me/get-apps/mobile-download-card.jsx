@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,19 +17,33 @@ const MobileDownloadCard = ( { translate, trackIosClick, trackAndroidClick } ) =
 	return (
 		<Card className="get-apps__mobile">
 			<div className="get-apps__card-text">
-				<h3 className="get-apps__card-title">{ translate( 'Mobile Apps' ) }</h3>
-				<p className="get-apps__description">{ translate( 'WordPress at your fingertips.' ) }</p>
+				<h3 className="get-apps__card-title">
+					{ translate( 'Mobile Apps' ) }
+				</h3>
+				<p className="get-apps__description">
+					{ translate( 'WordPress at your fingertips.' ) }
+				</p>
 			</div>
 			<div className="get-apps__badges">
-				<a href={ 'https://itunes.apple.com/us/app/wordpress/id335703880?mt=8' } onClick={ trackIosClick }>
-					<img src={ '/calypso/images/me/get-apps-app-store.png' }
+				<a
+					href={ 'https://itunes.apple.com/us/app/wordpress/id335703880?mt=8' }
+					onClick={ trackIosClick }
+				>
+					<img
+						src={ '/calypso/images/me/get-apps-app-store.png' }
 						title={ translate( 'Download the WordPress iOS mobile app.' ) }
-						alt={ translate( 'Apple App Store download badge' ) } />
+						alt={ translate( 'Apple App Store download badge' ) }
+					/>
 				</a>
-				<a href={ 'https://play.google.com/store/apps/details?id=org.wordpress.android' } onClick={ trackAndroidClick }>
-					<img src={ '/calypso/images/me/get-apps-google-play.png' }
+				<a
+					href={ 'https://play.google.com/store/apps/details?id=org.wordpress.android' }
+					onClick={ trackAndroidClick }
+				>
+					<img
+						src={ '/calypso/images/me/get-apps-google-play.png' }
 						title={ translate( 'Download the WordPress Android mobile app.' ) }
-						alt={ translate( 'Google Play Store download badge' ) } />
+						alt={ translate( 'Google Play Store download badge' ) }
+					/>
 				</a>
 			</div>
 		</Card>
@@ -52,7 +67,4 @@ const mapDispatchToProps = {
 	trackAndroidClick: () => recordTracksEvent( 'calypso_app_download_android_click' ),
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( MobileDownloadCard ) );
+export default connect( null, mapDispatchToProps )( localize( MobileDownloadCard ) );

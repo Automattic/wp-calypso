@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,8 +23,8 @@ const state = {
 							{
 								id: 'woocommerce_currency',
 								value: 'USD',
-							}
-						]
+							},
+						],
 					},
 				},
 			},
@@ -42,14 +43,12 @@ const state = {
 describe( 'selectors', () => {
 	describe( 'getCurrencyWithEdits', () => {
 		it( 'should return currency from sites state if no edits', () => {
-			expect( getCurrencyWithEdits( state, 123 ) )
-				.to.deep.equal( 'USD' );
+			expect( getCurrencyWithEdits( state, 123 ) ).to.deep.equal( 'USD' );
 		} );
 
 		it( 'should return currency from ui state if edits', () => {
 			uiState.currency = 'WAS';
-			expect( getCurrencyWithEdits( state, 123 ) )
-				.to.deep.equal( 'WAS' );
+			expect( getCurrencyWithEdits( state, 123 ) ).to.deep.equal( 'WAS' );
 		} );
 	} );
 } );

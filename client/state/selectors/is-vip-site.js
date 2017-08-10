@@ -1,7 +1,8 @@
+/** @format */
 /**
  * Internal dependencies
  */
-import { getRawSite } from 'state/sites/selectors';
+import { getRawSite } from 'state/sites/selectors';
 
 /**
  * Returns true if the site is VIP

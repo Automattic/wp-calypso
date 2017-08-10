@@ -1,3 +1,4 @@
+/** @format */
 /**
 * External dependencies
 */
@@ -8,13 +9,12 @@ import React from 'react';
  */
 import ReaderImportButtonBlock from 'blocks/reader-import-button';
 
-const ReaderImportButton = () => (
+const ReaderImportButton = () =>
 	<div className="design-assets__group">
 		<div>
 			<ReaderImportButtonBlock />
 		</div>
-	</div>
-);
+	</div>;
 
 ReaderImportButton.displayName = 'ReaderImportButton';
 

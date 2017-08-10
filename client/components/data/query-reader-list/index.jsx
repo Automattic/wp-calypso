@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,9 +20,10 @@ class QueryReaderList extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.isRequestingList || (
-				this.props.owner === nextProps.owner &&
-				this.props.slug === nextProps.slug ) ) {
+		if (
+			nextProps.isRequestingList ||
+			( this.props.owner === nextProps.owner && this.props.slug === nextProps.slug )
+		) {
 			return;
 		}
 
@@ -37,23 +39,26 @@ QueryReaderList.propTypes = {
 	owner: PropTypes.string,
 	slug: PropTypes.string,
 	isRequestingList: PropTypes.bool,
-	requestList: PropTypes.func
+	requestList: PropTypes.func,
 };
 
 QueryReaderList.defaultProps = {
-	requestList: () => {}
+	requestList: () => {},
 };
 
 export default connect(
 	( state, ownProps ) => {
 		const { owner, slug } = ownProps;
 		return {
-			isRequestingList: isRequestingList( state, owner, slug )
+			isRequestingList: isRequestingList( state, owner, slug ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			requestList
-		}, dispatch );
+	dispatch => {
+		return bindActionCreators(
+			{
+				requestList,
+			},
+			dispatch
+		);
 	}
 )( QueryReaderList );

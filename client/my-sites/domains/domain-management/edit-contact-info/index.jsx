@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,10 +27,8 @@ const EditContactInfo = React.createClass( {
 		domains: React.PropTypes.object.isRequired,
 		whois: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired
+		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] )
+			.isRequired,
 	},
 
 	render() {
@@ -41,7 +40,8 @@ const EditContactInfo = React.createClass( {
 			<Main className="domain-management-edit-contact-info">
 				<Header
 					onClick={ this.goToContactsPrivacy }
-					selectedDomainName={ this.props.selectedDomainName }>
+					selectedDomainName={ this.props.selectedDomainName }
+				>
 					{ this.translate( 'Edit Contact Info' ) }
 				</Header>
 				{ this.getCard() }
@@ -50,7 +50,7 @@ const EditContactInfo = React.createClass( {
 	},
 
 	isDataLoading() {
-		return ( ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer );
+		return ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer;
 	},
 
 	getCard() {
@@ -75,14 +75,20 @@ const EditContactInfo = React.createClass( {
 				<EditContactInfoFormCard
 					contactInformation={ findRegistrantWhois( this.props.whois.data ) }
 					selectedDomain={ getSelectedDomain( this.props ) }
-					selectedSite={ this.props.selectedSite } />
+					selectedSite={ this.props.selectedSite }
+				/>
 			</div>
 		);
 	},
 
 	goToContactsPrivacy() {
-		page( paths.domainManagementContactsPrivacy( this.props.selectedSite.slug, this.props.selectedDomainName ) );
-	}
+		page(
+			paths.domainManagementContactsPrivacy(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName
+			)
+		);
+	},
 } );
 
 export default EditContactInfo;

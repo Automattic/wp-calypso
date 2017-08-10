@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,16 +14,16 @@ import {
 	POST_FORMATS_RECEIVE,
 	POST_FORMATS_REQUEST,
 	POST_FORMATS_REQUEST_SUCCESS,
-	POST_FORMATS_REQUEST_FAILURE
+	POST_FORMATS_REQUEST_FAILURE,
 } from 'state/action-types';
 import { requestPostFormats } from '../actions';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => spy = sandbox.spy() );
+	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	describe( '#requestPostFormats()', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/12345678/post-formats' )
@@ -30,13 +31,13 @@ describe( 'actions', () => {
 					formats: {
 						image: 'Image',
 						video: 'Video',
-						link: 'Link'
-					}
+						link: 'Link',
+					},
 				} )
 				.get( '/rest/v1.1/sites/87654321/post-formats' )
 				.reply( 403, {
 					error: 'authorization_required',
-					message: 'User cannot access this private blog.'
+					message: 'User cannot access this private blog.',
 				} );
 		} );
 
@@ -45,7 +46,7 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: POST_FORMATS_REQUEST,
-				siteId: 12345678
+				siteId: 12345678,
 			} );
 		} );
 
@@ -57,8 +58,8 @@ describe( 'actions', () => {
 					formats: {
 						image: 'Image',
 						video: 'Video',
-						link: 'Link'
-					}
+						link: 'Link',
+					},
 				} );
 			} );
 		} );
@@ -67,7 +68,7 @@ describe( 'actions', () => {
 			return requestPostFormats( 12345678 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_FORMATS_REQUEST_SUCCESS,
-					siteId: 12345678
+					siteId: 12345678,
 				} );
 			} );
 		} );
@@ -78,8 +79,8 @@ describe( 'actions', () => {
 					type: POST_FORMATS_REQUEST_FAILURE,
 					siteId: 87654321,
 					error: sinon.match( {
-						message: 'User cannot access this private blog.'
-					} )
+						message: 'User cannot access this private blog.',
+					} ),
 				} );
 			} );
 		} );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Given a deserialized media object, returns itself.
  *

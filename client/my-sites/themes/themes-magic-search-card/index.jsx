@@ -1,10 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { PropTypes } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
-import { connect } from 'react-redux';
-import { debounce, intersection, difference, includes } from 'lodash';
+import { connect } from 'react-redux';
+import { debounce, intersection, difference, includes } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -54,13 +55,13 @@ class ThemesMagicSearchCard extends React.Component {
 
 	onSearchOpen = () => {
 		this.setState( { searchIsOpen: true } );
-	}
+	};
 
 	onSearchClose = () => {
 		this.setState( { searchIsOpen: false } );
-	}
+	};
 
-	onKeyDown = ( event ) => {
+	onKeyDown = event => {
 		const txt = event.target.value;
 		this.findTextForSuggestions( txt );
 
@@ -79,18 +80,18 @@ class ThemesMagicSearchCard extends React.Component {
 			this.refs[ 'url-search' ].blur();
 			this.setState( { searchIsOpen: false } );
 		}
-	}
+	};
 
-	onClick = ( event ) => {
+	onClick = event => {
 		this.findTextForSuggestions( event.target.value );
-	}
+	};
 
 	// Check if char before cursor in input is a space.
 	isPreviousCharWhitespace = () => {
 		const { value, selectionStart } = this.refs[ 'url-search' ].refs.searchInput;
 		const cursorPosition = value.slice( 0, selectionStart ).length;
 		return value[ cursorPosition - 1 ] === ' ';
-	}
+	};
 
 	findEditedTokenIndex = ( tokens, cursorPosition ) => {
 		let tokenEnd = 0;
@@ -121,12 +122,15 @@ class ThemesMagicSearchCard extends React.Component {
 		}
 
 		return '';
-	}
+	};
 
-	findTextForSuggestions = ( input ) => {
+	findTextForSuggestions = input => {
 		const val = input;
 		window.requestAnimationFrame( () => {
-			this.setState( { cursorPosition: val.slice( 0, this.refs[ 'url-search' ].refs.searchInput.selectionStart ).length } );
+			this.setState( {
+				cursorPosition: val.slice( 0, this.refs[ 'url-search' ].refs.searchInput.selectionStart )
+					.length,
+			} );
 			const tokens = input.split( /(\s+)/ );
 
 			// Get rid of empty match at end
@@ -139,31 +143,32 @@ class ThemesMagicSearchCard extends React.Component {
 			const text = tokens[ tokenIndex ].trim();
 			this.setState( { editedSearchElement: text } );
 		} );
-	}
+	};
 
-	insertSuggestion = ( suggestion ) => {
+	insertSuggestion = suggestion => {
 		const tokens = this.state.searchInput.split( /(\s+)/ );
 		// Get rid of empty match at end
 		tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
 		const tokenIndex = this.findEditedTokenIndex( tokens, this.state.cursorPosition );
 		// Check if we want to add additional sapce after suggestion so next suggestions card can be opened immediately
-		const hasNextTokenFirstSpace = tokens[ tokenIndex + 1 ] && tokens[ tokenIndex + 1 ][ 0 ] === ' ';
+		const hasNextTokenFirstSpace =
+			tokens[ tokenIndex + 1 ] && tokens[ tokenIndex + 1 ][ 0 ] === ' ';
 		tokens[ tokenIndex ] = hasNextTokenFirstSpace ? suggestion : suggestion + ' ';
 		return tokens.join( '' );
-	}
+	};
 
-	insertTextAtCursor = ( text ) => {
+	insertTextAtCursor = text => {
 		const input = this.state.searchInput;
 		const position = this.state.cursorPosition;
 		return input.slice( 0, position ) + text + input.slice( position );
-	}
+	};
 
-	onSearchChange = ( input ) => {
+	onSearchChange = input => {
 		this.findTextForSuggestions( input );
 		this.setState( { searchInput: input } );
-	}
+	};
 
-	searchTokens = ( input ) => {
+	searchTokens = input => {
 		//We are not able to scroll overlay on Edge so just create empty div
 		if ( global.window && /(Edge)/.test( global.window.navigator.userAgent ) ) {
 			return <div />;
@@ -171,53 +176,65 @@ class ThemesMagicSearchCard extends React.Component {
 
 		const tokens = input.split( /(\s+)/ );
 
-		return (
-			tokens.map( ( token, i ) => {
-				if ( token.trim() === '' ) {
-					return <span className="themes-magic-search-card__search-white-space" key={ i }>{ token }</span>; // use shortid for key
-				} else if ( includes( this.props.allValidFilters, token ) ) {
-					const separator = ':';
-					const [ taxonomy, filter ] = token.split( separator );
-					const themesTokenTypeClass = classNames(
-						'themes-magic-search-card__token',
-						'themes-magic-search-card__token-type-' + taxonomy
-					);
-					return (
-						<span className={ themesTokenTypeClass } key={ i }>
-							<span className="themes-magic-search-card__token-taxonomy">{ taxonomy }</span>
-							<span className="themes-magic-search-card__token-separator">{ separator }</span>
-							<span className="themes-magic-search-card__token-filter">{ filter }</span>
+		return tokens.map( ( token, i ) => {
+			if ( token.trim() === '' ) {
+				return (
+					<span className="themes-magic-search-card__search-white-space" key={ i }>
+						{ token }
+					</span>
+				); // use shortid for key
+			} else if ( includes( this.props.allValidFilters, token ) ) {
+				const separator = ':';
+				const [ taxonomy, filter ] = token.split( separator );
+				const themesTokenTypeClass = classNames(
+					'themes-magic-search-card__token',
+					'themes-magic-search-card__token-type-' + taxonomy
+				);
+				return (
+					<span className={ themesTokenTypeClass } key={ i }>
+						<span className="themes-magic-search-card__token-taxonomy">
+							{ taxonomy }
 						</span>
-					);
-				}
-				return <span className="themes-magic-search-card__search-text" key={ i }>{ token }</span>; // use shortid for key
-			} )
-		);
-	}
+						<span className="themes-magic-search-card__token-separator">
+							{ separator }
+						</span>
+						<span className="themes-magic-search-card__token-filter">
+							{ filter }
+						</span>
+					</span>
+				);
+			}
+			return (
+				<span className="themes-magic-search-card__search-text" key={ i }>
+					{ token }
+				</span>
+			); // use shortid for key
+		} );
+	};
 
-	updateInput = ( updatedInput ) => {
+	updateInput = updatedInput => {
 		this.setState( { searchInput: updatedInput } );
 		this.refs[ 'url-search' ].clear();
-	}
+	};
 
-	suggest = ( suggestion ) => {
+	suggest = suggestion => {
 		const updatedInput = this.insertSuggestion( suggestion );
 		this.updateInput( updatedInput );
-	}
+	};
 
-	insertTextInInput = ( text ) => {
+	insertTextInInput = text => {
 		const updatedInput = this.insertTextAtCursor( text );
 		this.updateInput( updatedInput );
-	}
+	};
 
 	focusOnInput = () => {
 		this.refs[ 'url-search' ].focus();
-	}
+	};
 
 	clearSearch = () => {
 		this.updateInput( '' );
 		this.focusOnInput();
-	}
+	};
 
 	handleClickOutside() {
 		this.setState( { searchIsOpen: false } );
@@ -225,10 +242,10 @@ class ThemesMagicSearchCard extends React.Component {
 
 	handleClickInside = () => {
 		this.focusOnInput();
-	}
+	};
 
 	render() {
-		const { translate, filters } = this.props;
+		const { translate, filters } = this.props;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 
 		const tiers = [
@@ -239,7 +256,7 @@ class ThemesMagicSearchCard extends React.Component {
 
 		const filtersKeys = [
 			...intersection( preferredOrderOfTaxonomies, Object.keys( filters ) ),
-			...difference( Object.keys( filters ), preferredOrderOfTaxonomies )
+			...difference( Object.keys( filters ), preferredOrderOfTaxonomies ),
 		];
 
 		const searchField = (
@@ -263,11 +280,11 @@ class ThemesMagicSearchCard extends React.Component {
 		);
 
 		const magicSearchClass = classNames( 'themes-magic-search', {
-			'has-suggestions': this.state.searchIsOpen
+			'has-suggestions': this.state.searchIsOpen,
 		} );
 
 		const themesSearchCardClass = classNames( 'themes-magic-search-card', {
-			'has-highlight': this.state.searchIsOpen
+			'has-highlight': this.state.searchIsOpen,
 		} );
 
 		// Check if we want to render suggestions or welcome banner
@@ -279,10 +296,12 @@ class ThemesMagicSearchCard extends React.Component {
 					<div
 						className={ themesSearchCardClass }
 						data-tip-target="themes-search-card"
-						onClick={ this.handleClickInside } >
+						onClick={ this.handleClickInside }
+					>
 						{ searchField }
-						{ ! isMobile() && this.state.searchInput !== '' &&
-							<div className="themes-magic-search-card__icon" >
+						{ ! isMobile() &&
+							this.state.searchInput !== '' &&
+							<div className="themes-magic-search-card__icon">
 								<Gridicon
 									icon="cross"
 									className="themes-magic-search-card__icon-close"
@@ -291,16 +310,13 @@ class ThemesMagicSearchCard extends React.Component {
 									aria-controls={ 'search-component-magic-search' }
 									aria-label={ translate( 'Clear Search' ) }
 								/>
-							</div>
-						}
-						{
-							isPremiumThemesEnabled &&
-								<SegmentedControl
-									initialSelected={ this.props.tier }
-									options={ tiers }
-									onSelect={ this.props.select }
-								/>
-						}
+							</div> }
+						{ isPremiumThemesEnabled &&
+							<SegmentedControl
+								initialSelected={ this.props.tier }
+								options={ tiers }
+								onSelect={ this.props.select }
+							/> }
 					</div>
 				</StickyPanel>
 				<div onClick={ this.handleClickInside }>
@@ -310,16 +326,14 @@ class ThemesMagicSearchCard extends React.Component {
 							terms={ this.props.filters }
 							input={ this.state.editedSearchElement }
 							suggest={ this.suggest }
-						/>
-					}
+						/> }
 					{ ! renderSuggestions &&
 						<MagicSearchWelcome
 							ref="welcome"
 							taxonomies={ filtersKeys }
 							topSearches={ [] }
 							suggestionsCallback={ this.insertTextInInput }
-						/>
-					}
+						/> }
 				</div>
 			</div>
 		);
@@ -332,16 +346,14 @@ ThemesMagicSearchCard.propTypes = {
 	siteId: PropTypes.number,
 	onSearch: PropTypes.func.isRequired,
 	search: PropTypes.string,
-	translate: PropTypes.func.isRequired
+	translate: PropTypes.func.isRequired,
 };
 
 ThemesMagicSearchCard.defaultProps = {
 	tier: 'all',
 };
 
-export default connect(
-	( state ) => ( {
-		filters: getThemeFilters( state ),
-		allValidFilters: Object.keys( getThemeFilterToTermTable( state ) ),
-	} )
-)( localize( wrapWithClickOutside( ThemesMagicSearchCard ) ) );
+export default connect( state => ( {
+	filters: getThemeFilters( state ),
+	allValidFilters: Object.keys( getThemeFilterToTermTable( state ) ),
+} ) )( localize( wrapWithClickOutside( ThemesMagicSearchCard ) ) );

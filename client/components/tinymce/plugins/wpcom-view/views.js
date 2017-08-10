@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,7 +29,7 @@ if ( isEnabled( 'simple-payments' ) ) {
 	views.simplePayments = SimplePaymentsView;
 }
 
-const components = mapValues( views, ( view ) => {
+const components = mapValues( views, view => {
 	if ( 'function' === typeof view.getComponent ) {
 		return view.getComponent();
 	}
@@ -36,10 +37,9 @@ const components = mapValues( views, ( view ) => {
 	return view;
 } );
 
-const emitters = values( views ).filter( ( view ) => view instanceof EventEmitter );
+const emitters = values( views ).filter( view => view instanceof EventEmitter );
 
 export default {
-
 	/**
 	 * Scans a given string for each view's pattern,
 	 * replacing any matches with markers,
@@ -77,8 +77,13 @@ export default {
 
 					// Add the processed piece for the match.
 					pieces.push( {
-						content: '<p class="wpview-marker" data-wpview-text="' + view.serialize( result.content, result.options ) + '" data-wpview-type="' + type + '">.</p>',
-						processed: true
+						content:
+							'<p class="wpview-marker" data-wpview-text="' +
+							view.serialize( result.content, result.options ) +
+							'" data-wpview-type="' +
+							type +
+							'">.</p>',
+						processed: true,
 					} );
 
 					// Update the remaining content.
@@ -94,7 +99,9 @@ export default {
 		} );
 
 		content = map( pieces, 'content' ).join( '' );
-		return content.replace( /<p>\s*<p data-wpview-marker=/g, '<p data-wpview-marker=' ).replace( /<\/p>\s*<\/p>/g, '</p>' );
+		return content
+			.replace( /<p>\s*<p data-wpview-marker=/g, '<p data-wpview-marker=' )
+			.replace( /<\/p>\s*<\/p>/g, '</p>' );
 	},
 
 	isEditable( type ) {
@@ -111,6 +118,5 @@ export default {
 
 	components: components,
 
-	emitters: emitters
-
+	emitters: emitters,
 };

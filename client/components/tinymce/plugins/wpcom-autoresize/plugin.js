@@ -1,3 +1,4 @@
+/** @format */
 /**
  * WordPress TinyMCE Auto Resize plugin
  *
@@ -13,7 +14,8 @@
 var tinymce = require( 'tinymce/tinymce' );
 
 function wcpomAutoResize( editor ) {
-	var settings = editor.settings, oldSize = 0;
+	var settings = editor.settings,
+		oldSize = 0;
 
 	function isFullscreen() {
 		return editor.plugins.fullscreen && editor.plugins.fullscreen.isFullscreen();
@@ -46,11 +48,22 @@ function wcpomAutoResize( editor ) {
 	}
 
 	function resize( e ) {
-		var deltaSize, doc, body, docElm, DOM = tinymce.DOM, resizeHeight, myHeight,
-			marginTop, marginBottom, paddingTop, paddingBottom, borderTop, borderBottom;
+		var deltaSize,
+			doc,
+			body,
+			docElm,
+			DOM = tinymce.DOM,
+			resizeHeight,
+			myHeight,
+			marginTop,
+			marginBottom,
+			paddingTop,
+			paddingBottom,
+			borderTop,
+			borderBottom;
 
 		doc = editor.getDoc();
-		if ( !doc ) {
+		if ( ! doc ) {
 			return;
 		}
 
@@ -58,7 +71,7 @@ function wcpomAutoResize( editor ) {
 		docElm = doc.documentElement;
 		resizeHeight = settings.autoresize_min_height;
 
-		if ( !body || ( e && e.type === 'setcontent' && e.initial ) || isFullscreen() ) {
+		if ( ! body || ( e && e.type === 'setcontent' && e.initial ) || isFullscreen() ) {
 			if ( body && docElm ) {
 				body.style.overflowY = 'auto';
 				docElm.style.overflowY = 'auto'; // Old IE
@@ -77,9 +90,14 @@ function wcpomAutoResize( editor ) {
 		// autoresize_bottom_margin directly here
 		paddingBottom = editor.getParam( 'autoresize_bottom_margin', 50 );
 
-		myHeight = body.offsetHeight + parseInt( marginTop, 10 ) + parseInt( marginBottom, 10 ) +
-			parseInt( paddingTop, 10 ) + parseInt( paddingBottom, 10 ) +
-			parseInt( borderTop, 10 ) + parseInt( borderBottom, 10 );
+		myHeight =
+			body.offsetHeight +
+			parseInt( marginTop, 10 ) +
+			parseInt( marginBottom, 10 ) +
+			parseInt( paddingTop, 10 ) +
+			parseInt( paddingBottom, 10 ) +
+			parseInt( borderTop, 10 ) +
+			parseInt( borderBottom, 10 );
 
 		// IE < 11, other?
 		if ( myHeight && myHeight < docElm.offsetHeight ) {
@@ -126,8 +144,10 @@ function wcpomAutoResize( editor ) {
 				resize( e );
 			}
 
-			if ( e && e.type === 'keyup' ||
-				( e && e.type === 'nodechange' && e.element && e.element.tagName === 'BR' ) ) {
+			if (
+				( e && e.type === 'keyup' ) ||
+				( e && e.type === 'nodechange' && e.element && e.element.tagName === 'BR' )
+			) {
 				if ( isEndOfEditor() ) {
 					window.scrollTo( 0, document.body.scrollHeight );
 				}
@@ -148,7 +168,10 @@ function wcpomAutoResize( editor ) {
 	}
 
 	// Define minimum height
-	settings.autoresize_min_height = parseInt( editor.getParam( 'autoresize_min_height', editor.getElement().offsetHeight ), 10 );
+	settings.autoresize_min_height = parseInt(
+		editor.getParam( 'autoresize_min_height', editor.getElement().offsetHeight ),
+		10
+	);
 
 	// Define maximum height
 	settings.autoresize_max_height = parseInt( editor.getParam( 'autoresize_max_height', 0 ), 10 );
@@ -163,13 +186,13 @@ function wcpomAutoResize( editor ) {
 		if ( overflowPadding !== false ) {
 			editor.dom.setStyles( editor.getBody(), {
 				paddingLeft: overflowPadding,
-				paddingRight: overflowPadding
+				paddingRight: overflowPadding,
 			} );
 		}
 
 		if ( bottomMargin !== false ) {
 			editor.dom.setStyles( editor.getBody(), {
-				paddingBottom: bottomMargin
+				paddingBottom: bottomMargin,
 			} );
 		}
 	} );

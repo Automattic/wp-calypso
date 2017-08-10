@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,10 +25,9 @@ class QueryProductsList extends Component {
 
 QueryProductsList.propTypes = {
 	isFetching: PropTypes.bool,
-	requestProductsList: PropTypes.func
+	requestProductsList: PropTypes.func,
 };
 
-export default connect(
-	state => ( { isFetching: isFetching( state ) } ),
-	{ requestProductsList }
-)( QueryProductsList );
+export default connect( state => ( { isFetching: isFetching( state ) } ), { requestProductsList } )(
+	QueryProductsList
+);

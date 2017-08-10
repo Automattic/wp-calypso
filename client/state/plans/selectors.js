@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -36,7 +37,7 @@ export const isRequestingPlans = state => {
  */
 export const getPlan = createSelector(
 	( state, productId ) => find( getPlans( state ), { product_id: productId } ),
-	( state ) => getPlans( state )
+	state => getPlans( state )
 );
 
 /**
@@ -47,7 +48,7 @@ export const getPlan = createSelector(
  */
 export const getPlanBySlug = createSelector(
 	( state, planSlug ) => find( getPlans( state ), { product_slug: planSlug } ),
-	( state ) => getPlans( state )
+	state => getPlans( state )
 );
 
 /**

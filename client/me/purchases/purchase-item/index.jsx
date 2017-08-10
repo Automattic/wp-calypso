@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,7 +27,7 @@ import Gridicon from 'gridicons';
 import paths from '../paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
-const eventProperties = ( warning ) => ( { warning, position: 'purchase-list' } );
+const eventProperties = warning => ( { warning, position: 'purchase-list' } );
 
 class PurchaseItem extends Component {
 	trackImpression( warning ) {
@@ -64,7 +65,8 @@ class PurchaseItem extends Component {
 							args: {
 								timeUntilExpiry: purchase.expiryMoment.fromNow(),
 							},
-							context: 'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+							context:
+								'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 						} ) }
 						{ this.trackImpression( 'purchase-expiring' ) }
 					</Notice>
@@ -88,7 +90,8 @@ class PurchaseItem extends Component {
 						args: {
 							timeSinceExpiry: expiredText,
 						},
-						context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+						context:
+							'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 					} ) }
 					{ this.trackImpression( 'purchase-expired' ) }
 				</Notice>

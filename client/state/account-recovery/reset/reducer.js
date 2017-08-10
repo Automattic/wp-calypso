@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -46,9 +47,12 @@ const options = combineReducers( {
 	} ),
 } );
 
-const userData = createReducer( {}, {
-	[ ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA ]: ( state, action ) => action.userData,
-} );
+const userData = createReducer(
+	{},
+	{
+		[ ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA ]: ( state, action ) => action.userData,
+	}
+);
 
 const method = createReducer( null, {
 	[ ACCOUNT_RECOVERY_RESET_SET_METHOD ]: ( state, action ) => action.method,

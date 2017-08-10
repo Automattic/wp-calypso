@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,11 +7,7 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	EDITOR_PASTE_EVENT,
-	EDITOR_START,
-	EDITOR_STOP,
-} from 'state/action-types';
+import { EDITOR_PASTE_EVENT, EDITOR_START, EDITOR_STOP } from 'state/action-types';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setMediaModalView } from 'state/ui/media-modal/actions';
 import { withAnalytics, bumpStat, recordTracksEvent } from 'state/analytics/actions';
@@ -107,18 +104,22 @@ export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 		const disabledSites = getPreference( getState(), 'editorConfirmationDisabledSites' );
 
 		if ( isEnabled ) {
-			dispatch( savePreference( 'editorConfirmationDisabledSites', filter(
-				disabledSites,
-				_siteId => siteId !== _siteId
-			) ) );
+			dispatch(
+				savePreference(
+					'editorConfirmationDisabledSites',
+					filter( disabledSites, _siteId => siteId !== _siteId )
+				)
+			);
 		} else {
 			dispatch( savePreference( 'editorConfirmationDisabledSites', [ ...disabledSites, siteId ] ) );
 		}
 
 		dispatch(
-			recordTracksEvent( isEnabled
-				? 'calypso_publish_confirmation_preference_enable'
-				: 'calypso_publish_confirmation_preference_disable' )
+			recordTracksEvent(
+				isEnabled
+					? 'calypso_publish_confirmation_preference_enable'
+					: 'calypso_publish_confirmation_preference_disable'
+			)
 		);
 
 		dispatch( bumpStat( 'calypso_publish_confirmation', isEnabled ? 'enabled' : 'disabled' ) );

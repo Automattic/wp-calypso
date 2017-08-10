@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +8,10 @@ import { get, find, isNumber } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getProductCategory, getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
+import {
+	getProductCategory,
+	getProductCategories,
+} from 'woocommerce/state/sites/product-categories/selectors';
 import { getBucket } from '../helpers';
 
 /**
@@ -18,7 +22,11 @@ import { getBucket } from '../helpers';
  * @return {Object} All product category edits in the form of { creates: [], updates: [] }
  */
 export function getAllProductCategoryEdits( rootState, siteId = getSelectedSiteId( rootState ) ) {
-	return get( rootState, [ 'extensions', 'woocommerce', 'ui', 'productCategories', siteId, 'edits' ], {} );
+	return get(
+		rootState,
+		[ 'extensions', 'woocommerce', 'ui', 'productCategories', siteId, 'edits' ],
+		{}
+	);
 }
 
 /**
@@ -51,7 +59,7 @@ export function getProductCategoryWithLocalEdits( rootState, categoryId, siteId 
 	const category = existing && getProductCategory( rootState, categoryId, siteId );
 	const categoryEdits = getProductCategoryEdits( rootState, categoryId, siteId );
 
-	return ( ( category || categoryEdits ) ? { ...category, ...categoryEdits } : undefined );
+	return category || categoryEdits ? { ...category, ...categoryEdits } : undefined;
 }
 
 /**
@@ -66,8 +74,8 @@ export function getProductCategoryWithLocalEdits( rootState, categoryId, siteId 
  */
 export function getProductCategoriesWithLocalEdits( rootState, siteId ) {
 	const categoryCreates = getAllProductCategoryEdits( rootState, siteId ).creates || [];
-	const fetchedCategoriesWithUpdates = getProductCategories( rootState, siteId ).map(
-		( c ) => getProductCategoryWithLocalEdits( rootState, c.id, siteId )
+	const fetchedCategoriesWithUpdates = getProductCategories( rootState, siteId ).map( c =>
+		getProductCategoryWithLocalEdits( rootState, c.id, siteId )
 	);
 
 	return [ ...categoryCreates, ...fetchedCategoriesWithUpdates ];
@@ -85,4 +93,3 @@ export function getCurrentlyEditingProductCategory( rootState, siteId ) {
 
 	return getProductCategoryWithLocalEdits( rootState, currentlyEditingId, siteId );
 }
-

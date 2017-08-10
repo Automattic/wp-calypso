@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,11 +7,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import List from 'react-virtualized/List';
 import AutoSizer from 'react-virtualized/AutoSizer';
-import {
-	debounce,
-	noop,
-	range,
-} from 'lodash';
+import { debounce, noop, range } from 'lodash';
 
 export class VirtualList extends Component {
 	static propTypes = {
@@ -25,7 +22,7 @@ export class VirtualList extends Component {
 		query: PropTypes.object,
 		defaultRowHeight: PropTypes.number,
 		height: PropTypes.number,
-		scrollTop: PropTypes.number
+		scrollTop: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -36,7 +33,7 @@ export class VirtualList extends Component {
 		renderRow: noop,
 		perPage: 100,
 		loadOffset: 10,
-		query: {}
+		query: {},
 	};
 
 	state = {};
@@ -49,10 +46,8 @@ export class VirtualList extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const forceUpdate = (
-			prevProps.loading && ! this.props.loading ||
-			( ! prevProps.items && this.props.items )
-		);
+		const forceUpdate =
+			( prevProps.loading && ! this.props.loading ) || ( ! prevProps.items && this.props.items );
 
 		if ( forceUpdate ) {
 			this.list.forceUpdateGrid();
@@ -91,12 +86,14 @@ export class VirtualList extends Component {
 		}
 
 		onRequestPages( pagesToRequest );
-	}
+	};
 
 	hasNoSearchResults() {
-		return ! this.props.loading &&
+		return (
+			! this.props.loading &&
 			( this.props.items && ! this.props.items.length ) &&
-			( this.props.query.search && !! this.props.query.search.length );
+			( this.props.query.search && !! this.props.query.search.length )
+		);
 	}
 
 	hasNoRows() {
@@ -119,7 +116,7 @@ export class VirtualList extends Component {
 
 	setListRef = ref => {
 		this.list = ref;
-	}
+	};
 
 	renderNoResults = () => {
 		if ( this.hasNoRows() ) {
@@ -129,7 +126,7 @@ export class VirtualList extends Component {
 				</div>
 			);
 		}
-	}
+	};
 
 	setRowRef = ( index, rowRef ) => {
 		if ( ! rowRef ) {
@@ -147,7 +144,7 @@ export class VirtualList extends Component {
 		if ( height !== nextHeight ) {
 			this.queueRecomputeRowHeights();
 		}
-	}
+	};
 
 	renderRow = props => {
 		const element = this.props.renderRow( props );
@@ -156,7 +153,7 @@ export class VirtualList extends Component {
 		}
 		const setRowRef = ( ...args ) => this.setRowRef( props.index, ...args );
 		return React.cloneElement( element, { ref: setRowRef } );
-	}
+	};
 
 	cellRendererWrapper = ( { key, style, ...rest } ) => {
 		return (
@@ -164,18 +161,18 @@ export class VirtualList extends Component {
 				{ this.renderRow( rest ) }
 			</div>
 		);
-	}
+	};
 
 	render() {
 		const rowCount = this.getRowCount();
 		const { className, loading, defaultRowHeight, getRowHeight, height, scrollTop } = this.props;
 		const classes = classNames( 'virtual-list', className, {
-			'is-loading': loading
+			'is-loading': loading,
 		} );
 
 		return (
 			<AutoSizer disableHeight>
-				{ ( { width } ) => (
+				{ ( { width } ) =>
 					<div className={ classes }>
 						<List
 							ref={ this.setListRef }
@@ -191,8 +188,7 @@ export class VirtualList extends Component {
 							scrollTop={ scrollTop }
 							autoHeight
 						/>
-					</div>
-				) }
+					</div> }
 			</AutoSizer>
 		);
 	}

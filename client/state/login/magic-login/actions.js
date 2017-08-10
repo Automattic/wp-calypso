@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -58,20 +59,24 @@ export const hideMagicLoginRequestNotice = () => {
 export const fetchMagicLoginRequestEmail = email => dispatch => {
 	dispatch( { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH } );
 
-	return wpcom.undocumented().requestMagicLoginEmail( {
-		email,
-	} ).then( () => {
-		dispatch( { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS } );
-		dispatch( {
-			type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
-			email
+	return wpcom
+		.undocumented()
+		.requestMagicLoginEmail( {
+			email,
+		} )
+		.then( () => {
+			dispatch( { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS } );
+			dispatch( {
+				type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
+				email,
+			} );
+		} )
+		.catch( error => {
+			dispatch( {
+				type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
+				error: error.message,
+			} );
 		} );
-	} ).catch( ( error ) => {
-		dispatch( {
-			type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
-			error: error.message,
-		} );
-	} );
 };
 
 // @TODO should this move to `/state/data-layer`..?
@@ -92,7 +97,7 @@ export const fetchMagicLoginAuthenticate = ( email, token, tt ) => dispatch => {
 			token,
 			tt,
 		} )
-		.then( ( response ) => {
+		.then( response => {
 			dispatch( {
 				type: LOGIN_REQUEST_SUCCESS,
 				data: get( response, 'body.data' ),
@@ -103,7 +108,7 @@ export const fetchMagicLoginAuthenticate = ( email, token, tt ) => dispatch => {
 				type: MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
 			} );
 		} )
-		.catch( ( error ) => {
+		.catch( error => {
 			const { status } = error;
 			dispatch( {
 				type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,

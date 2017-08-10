@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,7 +29,7 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 					<p className="shipping__zones-row-location-name" />
 					<p className="shipping__zones-row-location-description" />
 				</div>
-				<div className="shipping__zones-row-methods" >
+				<div className="shipping__zones-row-methods">
 					<div className="shipping__zones-row-method">
 						<p className="shipping__zones-row-method-name" />
 						<p className="shipping__zones-row-method-description" />
@@ -38,8 +39,10 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 						<p className="shipping__zones-row-method-description" />
 					</div>
 				</div>
-				<div className="shipping__zones-row-actions" >
-					<Button compact>{ translate( 'Edit' ) }</Button>
+				<div className="shipping__zones-row-actions">
+					<Button compact>
+						{ translate( 'Edit' ) }
+					</Button>
 				</div>
 			</div>
 		);
@@ -48,13 +51,17 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 	const renderMethodCell = ( title, summary = '', key = 0 ) => {
 		return (
 			<div key={ key } className="shipping__zones-row-method">
-				<p className="shipping__zones-row-method-name">{ title }</p>
-				<p className="shipping__zones-row-method-description">{ summary }</p>
+				<p className="shipping__zones-row-method-name">
+					{ title }
+				</p>
+				<p className="shipping__zones-row-method-description">
+					{ summary }
+				</p>
 			</div>
 		);
 	};
 
-	const renderMethod = ( methodKey ) => {
+	const renderMethod = methodKey => {
 		const method = methods[ methodKey ];
 		let summary = getMethodSummary( method, currency );
 		if ( ! method.enabled ) {
@@ -68,7 +75,7 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 
 	const icon = 0 === id ? 'globe' : 'location';
 
-	const onEditClick = ( event ) => {
+	const onEditClick = event => {
 		if ( ! isValid ) {
 			event.preventDefault();
 		}
@@ -80,7 +87,9 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 				<Gridicon icon={ icon } size={ 24 } />
 			</div>
 			<div className="shipping__zones-row-location">
-				<p className="shipping__zones-row-location-name">{ name }</p>
+				<p className="shipping__zones-row-location-name">
+					{ name }
+				</p>
 				{ /*<p className="shipping__zones-row-location-description">{ locationDescription }</p>*/ }
 			</div>
 			<div className="shipping__zones-row-methods">
@@ -93,7 +102,8 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 					compact
 					href={ getLink( `/store/settings/shipping/zone/:site/${ id }`, site ) }
 					disabled={ ! isValid }
-					onClick={ onEditClick }>
+					onClick={ onEditClick }
+				>
 					{ translate( 'Edit' ) }
 				</Button>
 			</div>
@@ -108,10 +118,8 @@ ShippingZoneEntry.propTypes = {
 	isValid: PropTypes.bool.isRequired,
 };
 
-export default connect(
-	( state, ownProps ) => ( {
-		site: getSelectedSite( state ),
-		methods: ownProps.loaded && getShippingZoneMethods( state, ownProps.id ),
-		currency: ownProps.loaded && getCurrencyWithEdits( state ),
-	} )
-)( localize( ShippingZoneEntry ) );
+export default connect( ( state, ownProps ) => ( {
+	site: getSelectedSite( state ),
+	methods: ownProps.loaded && getShippingZoneMethods( state, ownProps.id ),
+	currency: ownProps.loaded && getCurrencyWithEdits( state ),
+} ) )( localize( ShippingZoneEntry ) );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -14,7 +15,9 @@ export function getFollowersForQuery( state, query ) {
 	if ( ! state.followers.queries[ serializedQuery ] ) {
 		return null;
 	}
-	return state.followers.queries[ serializedQuery ].map( ( Id ) => {
-		return state.followers.items[ Id ];
-	} ).filter( Boolean );
+	return state.followers.queries[ serializedQuery ]
+		.map( Id => {
+			return state.followers.items[ Id ];
+		} )
+		.filter( Boolean );
 }

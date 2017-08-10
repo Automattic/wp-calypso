@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,7 +19,7 @@ describe( 'reducer', () => {
 		const siteId = 123;
 		const action = {
 			type: WOOCOMMERCE_CURRENCIES_REQUEST,
-			siteId
+			siteId,
 		};
 
 		const newSiteData = reducer( {}, action );

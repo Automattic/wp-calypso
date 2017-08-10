@@ -1,8 +1,9 @@
+/** @format */
 /**
  * External Dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 import Debug from 'debug';
 
 /**
@@ -19,7 +20,7 @@ import Gravatar from 'components/gravatar';
 import userLib from 'lib/user';
 import { areAllSitesSingleUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
+import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 
 const debug = new Debug( 'calypso:posts-navigation' );
 const user = userLib();
@@ -29,7 +30,7 @@ const statusToDescription = {
 	publish: 'published',
 	draft: 'drafts',
 	future: 'scheduled',
-	trash: 'trashed'
+	trash: 'trashed',
 };
 
 const PostsNavigation = React.createClass( {
@@ -39,7 +40,7 @@ const PostsNavigation = React.createClass( {
 		context: React.PropTypes.object.isRequired,
 		author: React.PropTypes.number,
 		statusSlug: React.PropTypes.string,
-		search: React.PropTypes.string
+		search: React.PropTypes.string,
 	},
 
 	mixins: [ URLSearch ],
@@ -49,9 +50,7 @@ const PostsNavigation = React.createClass( {
 			state = {
 				show: true,
 				loading: true,
-				counts: ! this.props.siteId
-					? this._defaultCounts()
-					: this._getCounts()
+				counts: ! this.props.siteId ? this._defaultCounts() : this._getCounts(),
 			};
 
 		if ( ! this.props.siteId || Object.keys( counts ).length ) {
@@ -70,9 +69,11 @@ const PostsNavigation = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ||
+		if (
+			this.props.siteId !== nextProps.siteId ||
 			this.props.author !== nextProps.author ||
-			this.props.statusSlug !== nextProps.statusSlug ) {
+			this.props.statusSlug !== nextProps.statusSlug
+		) {
 			this._setPostCounts( nextProps.siteId, nextProps.author ? 'mine' : 'all' );
 		}
 	},
@@ -83,7 +84,7 @@ const PostsNavigation = React.createClass( {
 		}
 
 		if ( this.state.loading ) {
-			return ( <SectionNav /> );
+			return <SectionNav />;
 		}
 
 		const author = this.props.author ? '/my' : '',
@@ -96,12 +97,12 @@ const PostsNavigation = React.createClass( {
 			publish: this.translate( 'Published', { context: 'Filter label for posts list' } ),
 			draft: this.translate( 'Drafts', { context: 'Filter label for posts list' } ),
 			future: this.translate( 'Scheduled', { context: 'Filter label for posts list' } ),
-			trash: this.translate( 'Trashed', { context: 'Filter label for posts list' } )
+			trash: this.translate( 'Trashed', { context: 'Filter label for posts list' } ),
 		};
 
 		this.filterScope = {
 			me: this.translate( 'Me', { context: 'Filter label for posts list' } ),
-			everyone: this.translate( 'Everyone', { context: 'Filter label for posts list' } )
+			everyone: this.translate( 'Everyone', { context: 'Filter label for posts list' } ),
 		};
 
 		this.strings = {
@@ -121,15 +122,15 @@ const PostsNavigation = React.createClass( {
 		}
 
 		let mobileHeaderText = this._getMobileHeaderText(
-			showMyFilter, statusTabs.selectedText, authorSegmented.selectedText
+			showMyFilter,
+			statusTabs.selectedText,
+			authorSegmented.selectedText
 		);
 
 		return (
 			<SectionNav selectedText={ mobileHeaderText }>
 				{ statusTabs.element }
-				{ ( showMyFilter ) ?
-					authorSegmented.element : null
-				}
+				{ showMyFilter ? authorSegmented.element : null }
 				<Search
 					pinned
 					fitsContainer
@@ -137,21 +138,26 @@ const PostsNavigation = React.createClass( {
 					initialValue={ this.props.search }
 					placeholder={ 'Search ' + statusTabs.selectedText + '...' }
 					analyticsGroup="Posts"
-					delaySearch={ true } />
+					delaySearch={ true }
+				/>
 			</SectionNav>
 		);
 	},
 
 	_getStatusTabs( author, siteFilter ) {
 		var statusItems = [],
-			status, selectedText, selectedCount;
+			status,
+			selectedText,
+			selectedCount;
 
 		for ( status in this.filterStatuses ) {
 			if ( 'undefined' === typeof this.state.counts[ status ] && 'publish' !== status ) {
 				continue;
 			}
 
-			let path = '/posts' + author +
+			let path =
+				'/posts' +
+				author +
 				( 'publish' === status ? '' : '/' + statusToDescription[ status ] ) +
 				siteFilter;
 
@@ -180,7 +186,8 @@ const PostsNavigation = React.createClass( {
 					path={ path }
 					count={ this.props.siteId && count }
 					value={ textItem }
-					selected={ path === this.props.context.pathname }>
+					selected={ path === this.props.context.pathname }
+				>
 					{ textItem }
 				</NavItem>
 			);
@@ -202,13 +209,14 @@ const PostsNavigation = React.createClass( {
 
 		return {
 			element: tabs,
-			selectedText: selectedText
+			selectedText: selectedText,
 		};
 	},
 
 	_getAuthorSegmented( statusSlug, siteFilter ) {
 		var scopeItems = [],
-			selectedText, scope;
+			selectedText,
+			scope;
 
 		for ( scope in this.filterScope ) {
 			let textItem = this.filterScope[ scope ];
@@ -237,7 +245,7 @@ const PostsNavigation = React.createClass( {
 					{ scopeItems }
 				</NavSegmented>
 			),
-			selectedText: selectedText
+			selectedText: selectedText,
 		};
 	},
 
@@ -248,8 +256,12 @@ const PostsNavigation = React.createClass( {
 
 		return (
 			<span>
-				<span>{ statusSelectedText }</span>
-				<small>{ authorSelectedText }</small>
+				<span>
+					{ statusSelectedText }
+				</span>
+				<small>
+					{ authorSelectedText }
+				</small>
 			</span>
 		);
 	},
@@ -269,7 +281,7 @@ const PostsNavigation = React.createClass( {
 		this.setState( {
 			show: true,
 			loading: false,
-			counts: this._defaultCounts()
+			counts: this._defaultCounts(),
 		} );
 	},
 
@@ -289,14 +301,14 @@ const PostsNavigation = React.createClass( {
 		if ( ! PostCountsStore.getTotalCount( siteId, 'all' ) ) {
 			return this.setState( {
 				show: true,
-				loading: true
+				loading: true,
 			} );
 		}
 
 		this.setState( {
 			show: true,
 			loading: false,
-			counts: this._getCounts( siteId, scope )
+			counts: this._getCounts( siteId, scope ),
 		} );
 	},
 
@@ -311,7 +323,7 @@ const PostsNavigation = React.createClass( {
 		const state = {
 			show: true,
 			loading: false,
-			counts: {}
+			counts: {},
 		};
 
 		if ( PostCountsStore.getTotalCount( siteId, 'all' ) ) {
@@ -345,9 +357,7 @@ const PostsNavigation = React.createClass( {
 
 		// make a copy of counts object
 		for ( status in all ) {
-			counts[ status ] = 'all' === scope ?
-				all[ status ] :
-				( mine[ status ] || 0 );
+			counts[ status ] = 'all' === scope ? all[ status ] : mine[ status ] || 0;
 		}
 
 		// join 'draft' and 'pending' statuses in 'draft'
@@ -373,18 +383,16 @@ const PostsNavigation = React.createClass( {
 	 */
 	getCountByStatus( status ) {
 		const count = this.state.counts[ status ];
-		return ( count !== false ) ? count : null;
-	}
+		return count !== false ? count : null;
+	},
 } );
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		return {
-			allSingleSites: areAllSitesSingleUser( state ),
-			isJetpack: isJetpackSite( state, siteId ),
-			isSingleUser: isSingleUserSite( state, siteId ),
-			siteId
-		};
-	}
-)( PostsNavigation );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		allSingleSites: areAllSitesSingleUser( state ),
+		isJetpack: isJetpackSite( state, siteId ),
+		isSingleUser: isSingleUserSite( state, siteId ),
+		siteId,
+	};
+} )( PostsNavigation );

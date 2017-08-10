@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -21,13 +22,9 @@ export const items = ( state = {}, action ) => {
 	const { siteId } = action;
 	switch ( action.type ) {
 		case SITE_DOMAINS_RECEIVE:
-			return Object.assign(
-				{},
-				state,
-				{
-					[ siteId ]: action.domains
-				}
-			);
+			return Object.assign( {}, state, {
+				[ siteId ]: action.domains,
+			} );
 	}
 
 	return state;
@@ -48,7 +45,7 @@ export const requesting = ( state = {}, action ) => {
 		case SITE_DOMAINS_REQUEST_SUCCESS:
 		case SITE_DOMAINS_REQUEST_FAILURE:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: action.type === SITE_DOMAINS_REQUEST
+				[ action.siteId ]: action.type === SITE_DOMAINS_REQUEST,
 			} );
 	}
 
@@ -67,12 +64,12 @@ export const errors = ( state = {}, action ) => {
 		case SITE_DOMAINS_REQUEST:
 		case SITE_DOMAINS_REQUEST_SUCCESS:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: null
+				[ action.siteId ]: null,
 			} );
 
 		case SITE_DOMAINS_REQUEST_FAILURE:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: action.error
+				[ action.siteId ]: action.error,
 			} );
 	}
 
@@ -82,5 +79,5 @@ export const errors = ( state = {}, action ) => {
 export default combineReducers( {
 	items,
 	requesting,
-	errors
+	errors,
 } );

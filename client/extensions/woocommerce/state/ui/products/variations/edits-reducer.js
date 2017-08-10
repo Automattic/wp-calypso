@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -56,7 +57,7 @@ function updateProductEdits( edits, productId, doUpdate ) {
 	const prevEdits = edits || [];
 	let found = false;
 
-	const newEdits = prevEdits.map( ( productEdits ) => {
+	const newEdits = prevEdits.map( productEdits => {
 		if ( isEqual( productId, productEdits.productId ) ) {
 			found = true;
 			return doUpdate( productEdits );
@@ -78,7 +79,7 @@ function editProductAction( edits, action ) {
 		// Ensure there are no variation edits for this product,
 		// and that any existing ones have deletes.
 		return updateProductEdits( edits, product.id, () => {
-			const deletes = ( productVariations ? productVariations.map( ( v ) => v.id ) : undefined );
+			const deletes = productVariations ? productVariations.map( v => v.id ) : undefined;
 			return { deletes };
 		} );
 	}
@@ -98,10 +99,12 @@ function editProductVariationAction( edits, action ) {
 	let found = false;
 
 	// Look for an existing product edits first.
-	const _edits = prevEdits.map( ( productEdits ) => {
+	const _edits = prevEdits.map( productEdits => {
 		if ( isEqual( productId, productEdits.productId ) ) {
 			found = true;
-			const variationId = variation && variation.id || { placeholder: uniqueId( 'product_variation_' ) };
+			const variationId = ( variation && variation.id ) || {
+				placeholder: uniqueId( 'product_variation_' ),
+			};
 			const _variation = variation || { id: variationId };
 			const _array = editProductVariation( productEdits[ bucket ], _variation, data );
 			return {
@@ -116,7 +119,9 @@ function editProductVariationAction( edits, action ) {
 
 	if ( ! found ) {
 		// product not in edits, so add it now.
-		const variationId = variation && variation.id || { placeholder: uniqueId( 'product_variation_' ) };
+		const variationId = ( variation && variation.id ) || {
+			placeholder: uniqueId( 'product_variation_' ),
+		};
 		const _variation = variation || { id: variationId };
 
 		const _array = editProductVariation( null, _variation, data );
@@ -137,7 +142,7 @@ function editProductVariation( array, variation, data ) {
 	let found = false;
 
 	// Look for this object in the appropriate create or edit array first.
-	const _array = prevArray.map( ( v ) => {
+	const _array = prevArray.map( v => {
 		if ( isEqual( variation.id, v.id ) ) {
 			found = true;
 			return { ...v, ...data };
@@ -159,9 +164,9 @@ function editProductAttributeAction( edits, action ) {
 	const attributes = editProductAttribute( product.attributes, attribute, data );
 	const calculatedVariations = generateVariations( { ...product, attributes }, productVariations );
 
-	return updateProductEdits( edits, product.id, ( productEdits ) => {
-		const creates = ( productEdits ? productEdits.creates : [] );
-		const updates = ( productEdits ? productEdits.updates : [] );
+	return updateProductEdits( edits, product.id, productEdits => {
+		const creates = productEdits ? productEdits.creates : [];
+		const updates = productEdits ? productEdits.updates : [];
 		const newCreates = updateVariationCreates( creates, calculatedVariations, productVariations );
 		const newUpdates = updateVariationUpdates( updates, calculatedVariations, productVariations );
 		const newDeletes = updateVariationDeletes( calculatedVariations, productVariations );
@@ -177,57 +182,67 @@ function editProductAttributeAction( edits, action ) {
 }
 
 function updateVariationCreates( creates, calculatedVariations, productVariations ) {
-	const newCreates = compact( calculatedVariations.map( ( calculatedVariation ) => {
-		const foundCreate = find( creates, { attributes: calculatedVariation.attributes } );
+	const newCreates = compact(
+		calculatedVariations.map( calculatedVariation => {
+			const foundCreate = find( creates, { attributes: calculatedVariation.attributes } );
 
-		if ( foundCreate ) {
-			return foundCreate;
-		}
+			if ( foundCreate ) {
+				return foundCreate;
+			}
 
-		if ( ! find( productVariations, { attributes: calculatedVariation.attributes } ) ) {
-			// This calculated variation doesn't exist in server data, but it should now. Create it.
-			return {
-				id: { placeholder: uniqueId( 'product_variation_' ) },
-				attributes: calculatedVariation.attributes,
-				sku: calculatedVariation.sku,
-				status: 'publish',
-			};
-		}
-	} ) );
+			if ( ! find( productVariations, { attributes: calculatedVariation.attributes } ) ) {
+				// This calculated variation doesn't exist in server data, but it should now. Create it.
+				return {
+					id: { placeholder: uniqueId( 'product_variation_' ) },
+					attributes: calculatedVariation.attributes,
+					sku: calculatedVariation.sku,
+					status: 'publish',
+				};
+			}
+		} )
+	);
 
-	return ( newCreates.length ? newCreates : undefined );
+	return newCreates.length ? newCreates : undefined;
 }
 
 function updateVariationUpdates( updates, calculatedVariations, productVariations ) {
-	const newUpdates = compact( calculatedVariations.map( ( calculatedVariation ) => {
-		const productVariation = find( productVariations, { attributes: calculatedVariation.attributes } );
+	const newUpdates = compact(
+		calculatedVariations.map( calculatedVariation => {
+			const productVariation = find( productVariations, {
+				attributes: calculatedVariation.attributes,
+			} );
 
-		if ( productVariation ) {
-			// If we've made it this far, it's valid to have updates on this product variation.
-			return find( updates, { id: productVariation.id } );
-		}
-	} ) );
+			if ( productVariation ) {
+				// If we've made it this far, it's valid to have updates on this product variation.
+				return find( updates, { id: productVariation.id } );
+			}
+		} )
+	);
 
-	return ( newUpdates.length ? newUpdates : undefined );
+	return newUpdates.length ? newUpdates : undefined;
 }
 
 function updateVariationDeletes( calculatedVariations, productVariations ) {
 	if ( productVariations ) {
-		const newDeletes = compact( productVariations.map( ( productVariation ) => {
-			const foundInCalculated = find( calculatedVariations, { attributes: productVariation.attributes } );
+		const newDeletes = compact(
+			productVariations.map( productVariation => {
+				const foundInCalculated = find( calculatedVariations, {
+					attributes: productVariation.attributes,
+				} );
 
-			if ( ! foundInCalculated ) {
-				// We only delete those variations that don't show up in our calculated set.
-				// Even if it was supposed to be deleted before, but now our set includes it, we
-				// won't delete it.
-				//
-				// Note: This will not support the user deleting a variation that is valid within the
-				// calculated set of variations. It can't be done this way.
-				return productVariation.id;
-			}
-		} ) );
+				if ( ! foundInCalculated ) {
+					// We only delete those variations that don't show up in our calculated set.
+					// Even if it was supposed to be deleted before, but now our set includes it, we
+					// won't delete it.
+					//
+					// Note: This will not support the user deleting a variation that is valid within the
+					// calculated set of variations. It can't be done this way.
+					return productVariation.id;
+				}
+			} )
+		);
 
-		return ( newDeletes.length ? newDeletes : undefined );
+		return newDeletes.length ? newDeletes : undefined;
 	}
 }
 
@@ -239,7 +254,7 @@ export function productUpdatedAction( edits, action ) {
 		const prevProductId = originatingAction.product.id;
 		const newProductId = data.id;
 
-		const newEdits = prevEdits.map( ( productEdits ) => {
+		const newEdits = prevEdits.map( productEdits => {
 			if ( isEqual( prevProductId, productEdits.productId ) ) {
 				return { ...productEdits, productId: newProductId };
 			}
@@ -256,8 +271,8 @@ export function productVariationUpdatedAction( edits, action ) {
 	const { originatingAction } = action;
 	let bucket = null;
 
-	bucket = ( WOOCOMMERCE_PRODUCT_VARIATION_CREATE === originatingAction.type ? 'creates' : bucket );
-	bucket = ( WOOCOMMERCE_PRODUCT_VARIATION_UPDATE === originatingAction.type ? 'updates' : bucket );
+	bucket = WOOCOMMERCE_PRODUCT_VARIATION_CREATE === originatingAction.type ? 'creates' : bucket;
+	bucket = WOOCOMMERCE_PRODUCT_VARIATION_UPDATE === originatingAction.type ? 'updates' : bucket;
 
 	if ( bucket ) {
 		const { productId } = originatingAction;
@@ -272,29 +287,33 @@ export function productVariationUpdatedAction( edits, action ) {
 function removeVariationEdit( edits, bucket, productId, variationId ) {
 	const prevEdits = edits || [];
 
-	const newEdits = compact( prevEdits.map( ( editsForProduct ) => {
-		if ( isEqual( productId, editsForProduct.productId ) ) {
-			return removeVariationEditFromEditsForProduct( editsForProduct, bucket, variationId );
-		}
-		return editsForProduct;
-	} ) );
+	const newEdits = compact(
+		prevEdits.map( editsForProduct => {
+			if ( isEqual( productId, editsForProduct.productId ) ) {
+				return removeVariationEditFromEditsForProduct( editsForProduct, bucket, variationId );
+			}
+			return editsForProduct;
+		} )
+	);
 
-	return ( newEdits.length ? newEdits : null );
+	return newEdits.length ? newEdits : null;
 }
 
 function removeVariationEditFromEditsForProduct( editsForProduct, bucket, variationId ) {
 	const prevBucketEdits = editsForProduct[ bucket ] || [];
 
-	const newBucketEdits = compact( prevBucketEdits.map( ( variationEdit ) => {
-		if ( isEqual( variationId, variationEdit.id ) ) {
-			return undefined;
-		}
-		return variationEdit;
-	} ) );
+	const newBucketEdits = compact(
+		prevBucketEdits.map( variationEdit => {
+			if ( isEqual( variationId, variationEdit.id ) ) {
+				return undefined;
+			}
+			return variationEdit;
+		} )
+	);
 
 	const newEditsForProduct = {
 		...editsForProduct,
-		[ bucket ]: ( newBucketEdits.length ? newBucketEdits : undefined ),
+		[ bucket ]: newBucketEdits.length ? newBucketEdits : undefined,
 	};
 
 	// Only send back something if we have a remaining edit somewhere.
@@ -303,4 +322,3 @@ function removeVariationEditFromEditsForProduct( editsForProduct, bucket, variat
 	}
 	return undefined;
 }
-

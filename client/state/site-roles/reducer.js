@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -7,7 +8,7 @@ import {
 	SITE_ROLES_RECEIVE,
 	SITE_ROLES_REQUEST,
 	SITE_ROLES_REQUEST_FAILURE,
-	SITE_ROLES_REQUEST_SUCCESS
+	SITE_ROLES_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -19,11 +20,14 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const requesting = createReducer( {}, {
-	[ SITE_ROLES_REQUEST ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-	[ SITE_ROLES_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-	[ SITE_ROLES_REQUEST_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
-} );
+export const requesting = createReducer(
+	{},
+	{
+		[ SITE_ROLES_REQUEST ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+		[ SITE_ROLES_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+		[ SITE_ROLES_REQUEST_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	}
+);
 
 /**
  * Returns the updated items state after an action has been dispatched. The
@@ -33,11 +37,15 @@ export const requesting = createReducer( {}, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer( {}, {
-	[ SITE_ROLES_RECEIVE ]: ( state, { siteId, roles } ) => ( { ...state, [ siteId ]: roles } )
-}, siteRolesSchema );
+export const items = createReducer(
+	{},
+	{
+		[ SITE_ROLES_RECEIVE ]: ( state, { siteId, roles } ) => ( { ...state, [ siteId ]: roles } ),
+	},
+	siteRolesSchema
+);
 
 export default combineReducers( {
 	requesting,
-	items
+	items,
 } );

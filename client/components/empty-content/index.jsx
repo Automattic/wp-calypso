@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -130,8 +131,16 @@ class EmptyContent extends Component {
 				} ) }
 			>
 				{ illustration }
-				{ this.props.title ? <h2 className="empty-content__title">{ this.props.title }</h2> : null }
-				{ this.props.line ? <h3 className="empty-content__line">{ this.props.line }</h3> : null }
+				{ this.props.title
+					? <h2 className="empty-content__title">
+							{ this.props.title }
+						</h2>
+					: null }
+				{ this.props.line
+					? <h3 className="empty-content__line">
+							{ this.props.line }
+						</h3>
+					: null }
 				{ action }
 				{ secondaryAction }
 			</div>

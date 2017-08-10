@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,17 +16,18 @@ const ChargebackDetails = ( { selectedSite } ) => {
 		<PurchaseDetail
 			icon="create"
 			title={ i18n.translate( 'Get back to posting' ) }
-			description={ i18n.translate( 'You can now use the full features of your site, without limits.' ) }
+			description={ i18n.translate(
+				'You can now use the full features of your site, without limits.'
+			) }
 			buttonText={ i18n.translate( 'Write a Post' ) }
-			href={ paths.newPost( selectedSite ) } />
+			href={ paths.newPost( selectedSite ) }
+		/>
 	);
 };
 
 ChargebackDetails.propTypes = {
-	selectedSite: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.object
-	] ).isRequired
+	selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] )
+		.isRequired,
 };
 
 export default ChargebackDetails;

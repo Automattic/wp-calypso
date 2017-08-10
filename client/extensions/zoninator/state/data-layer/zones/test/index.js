@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +18,7 @@ const apiResponse = {
 			name: 'Test zone',
 			slug: 'test-zone',
 			description: 'A test zone.',
-		}
+		},
 	],
 };
 
@@ -32,13 +33,18 @@ describe( '#requestZonesList()', () => {
 		requestZonesList( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'GET',
-			path: '/jetpack-blogs/123456/rest-api/',
-			query: {
-				path: '/zoninator/v1/zones',
-			}
-		}, action ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					method: 'GET',
+					path: '/jetpack-blogs/123456/rest-api/',
+					query: {
+						path: '/zoninator/v1/zones',
+					},
+				},
+				action
+			)
+		);
 	} );
 } );
 
@@ -50,13 +56,15 @@ describe( '#updateZonesList', () => {
 		updateZonesList( { dispatch }, action, null, apiResponse );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( updateZones( 123456, [
-			{
-				name: 'Test zone',
-				slug: 'test-zone',
-				description: 'A test zone.',
-			}
-		] ) );
+		expect( dispatch ).to.have.been.calledWith(
+			updateZones( 123456, [
+				{
+					name: 'Test zone',
+					slug: 'test-zone',
+					description: 'A test zone.',
+				},
+			] )
+		);
 	} );
 } );
 

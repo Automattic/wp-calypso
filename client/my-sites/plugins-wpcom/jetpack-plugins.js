@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,7 @@ const jetpackPlugins = ( translate = identity ) => [
 			{
 				name: translate( 'Stats' ),
 				link: 'https://support.wordpress.com/stats/',
-				description: translate( 'View your site\'s visits, referrers, and more.' ),
+				description: translate( "View your site's visits, referrers, and more." ),
 				plan: 'standard',
 			},
 			{
@@ -20,14 +21,16 @@ const jetpackPlugins = ( translate = identity ) => [
 				link: 'https://support.wordpress.com/seo-tools/',
 				description: translate( 'Custom meta descriptions, social media previews, and more.' ),
 				plan: 'business',
-				feature: 'advanced-seo'
+				feature: 'advanced-seo',
 			},
 			{
 				name: translate( 'Google Analytics' ),
 				link: 'https://support.wordpress.com/google-analytics/',
-				description: translate( 'Advanced features to complement WordPress.com stats. Funnel reports, goal conversion, and more.' ),
+				description: translate(
+					'Advanced features to complement WordPress.com stats. Funnel reports, goal conversion, and more.'
+				),
 				plan: 'business',
-				feature: 'google-analytics'
+				feature: 'google-analytics',
 			},
 			{
 				name: translate( 'Social Media' ),
@@ -38,19 +41,25 @@ const jetpackPlugins = ( translate = identity ) => [
 			{
 				name: translate( 'Publicize' ),
 				link: 'https://support.wordpress.com/publicize/',
-				description: translate( 'Automatically share your posts on Facebook, Twitter, Tumblr, and more.' ),
+				description: translate(
+					'Automatically share your posts on Facebook, Twitter, Tumblr, and more.'
+				),
 				plan: 'standard',
 			},
 			{
 				name: translate( 'Email Subscriptions' ),
 				link: 'https://support.wordpress.com/follow-blog-widget/',
-				description: translate( 'Enables your readers to sign up to receive your posts via email.' ),
+				description: translate(
+					'Enables your readers to sign up to receive your posts via email.'
+				),
 				plan: 'standard',
 			},
 			{
 				name: translate( 'Related Posts' ),
 				link: 'https://support.wordpress.com/related-posts/',
-				description: translate( 'Pulls relevant content from your blog to display at the bottom of your posts.' ),
+				description: translate(
+					'Pulls relevant content from your blog to display at the bottom of your posts.'
+				),
 				plan: 'standard',
 			},
 			{
@@ -112,9 +121,11 @@ const jetpackPlugins = ( translate = identity ) => [
 			{
 				name: translate( 'Custom Design' ),
 				link: 'https://support.wordpress.com/custom-design/',
-				description: translate( 'Customize your blog\'s look with custom fonts, a CSS editor, and more.' ),
+				description: translate(
+					"Customize your blog's look with custom fonts, a CSS editor, and more."
+				),
 				plan: 'premium',
-				feature: 'advanced-design'
+				feature: 'advanced-design',
 			},
 			{
 				name: translate( 'Extended Widgets' ),
@@ -125,7 +136,9 @@ const jetpackPlugins = ( translate = identity ) => [
 			{
 				name: translate( 'Infinite Scroll' ),
 				link: 'https://support.wordpress.com/infinite-scroll/',
-				description: translate( 'Load more posts when you reach the bottom of a page on your site.' ),
+				description: translate(
+					'Load more posts when you reach the bottom of a page on your site.'
+				),
 				plan: 'standard',
 			},
 			{
@@ -158,12 +171,14 @@ const jetpackPlugins = ( translate = identity ) => [
 				link: 'https://support.wordpress.com/videopress/',
 				description: translate( 'Upload and host your video files on your site with VideoPress.' ),
 				plan: 'premium',
-				feature: 'video-upload'
+				feature: 'video-upload',
 			},
 			{
 				name: translate( 'Importer' ),
 				link: 'https://support.wordpress.com/import/',
-				description: translate( 'Import your blog content from a variety of other blogging platforms.' ),
+				description: translate(
+					'Import your blog content from a variety of other blogging platforms.'
+				),
 				plan: 'standard',
 			},
 			{

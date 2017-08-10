@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +22,7 @@ export class Instagram extends SharingService {
 		deleteStoredKeyringConnection: () => {},
 	};
 
-	createOrUpdateConnection = () => { };
+	createOrUpdateConnection = () => {};
 
 	/**
 	 * Deletes the passed connections.
@@ -53,10 +54,13 @@ export class Instagram extends SharingService {
 
 		if ( this.didKeyringConnectionSucceed( availableExternalAccounts ) ) {
 			this.setState( { isConnecting: false } );
-			this.props.successNotice( this.props.translate( 'The %(service)s account was successfully connected.', {
-				args: { service: this.props.service.label },
-				context: 'Sharing: Publicize connection confirmation',
-			} ), { id: 'publicize' } );
+			this.props.successNotice(
+				this.props.translate( 'The %(service)s account was successfully connected.', {
+					args: { service: this.props.service.label },
+					context: 'Sharing: Publicize connection confirmation',
+				} ),
+				{ id: 'publicize' }
+			);
 		}
 	}
 }
@@ -68,7 +72,10 @@ export default connectFor(
 			...props,
 			removableConnections: props.keyringConnections,
 			fetchConnection: props.requestKeyringConnections,
-			siteUserConnections: props.keyringConnections.map( conn => ( { ...conn, keyring_connection_ID: conn.ID } ) ),
+			siteUserConnections: props.keyringConnections.map( conn => ( {
+				...conn,
+				keyring_connection_ID: conn.ID,
+			} ) ),
 		};
 	},
 	{

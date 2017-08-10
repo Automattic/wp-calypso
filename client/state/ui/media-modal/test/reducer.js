@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,9 +13,7 @@ import reducer, { view } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'view'
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'view' ] );
 	} );
 
 	describe( 'view()', () => {
@@ -27,7 +26,7 @@ describe( 'reducer', () => {
 		it( 'should track current view', () => {
 			const state = view( undefined, {
 				type: MEDIA_MODAL_VIEW_SET,
-				view: ModalViews.DETAIL
+				view: ModalViews.DETAIL,
 			} );
 
 			expect( state ).to.equal( ModalViews.DETAIL );

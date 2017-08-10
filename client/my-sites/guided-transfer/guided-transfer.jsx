@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -27,13 +28,13 @@ const guidedTransferHosts = {
 	siteground: {
 		logo: '/calypso/images/guided-transfer/siteground-logo.png',
 		label: i18n.translate( 'SiteGround' ),
-		url: 'https://www.siteground.com/wordpress-hosting.htm?afcode=134c903505c0a2296bd25772edebf669'
+		url: 'https://www.siteground.com/wordpress-hosting.htm?afcode=134c903505c0a2296bd25772edebf669',
 	},
 	pressable: {
 		logo: '/calypso/images/guided-transfer/pressable-logo.png',
 		label: i18n.translate( 'Pressable' ),
-		url: 'https://pressable.com'
-	}
+		url: 'https://pressable.com',
+	},
 };
 
 export default React.createClass( {
@@ -42,19 +43,19 @@ export default React.createClass( {
 	propTypes: {
 		hostSlug: PropTypes.string,
 		siteId: PropTypes.number.isRequired,
-		siteSlug: PropTypes.string.isRequired
+		siteSlug: PropTypes.string.isRequired,
 	},
 
 	showExporter() {
-		page( `/settings/export/${this.props.siteSlug}` );
+		page( `/settings/export/${ this.props.siteSlug }` );
 	},
 
 	showHostSelection() {
-		page( `/settings/export/guided/${this.props.siteSlug}` );
+		page( `/settings/export/guided/${ this.props.siteSlug }` );
 	},
 
 	showHost( hostSlug ) {
-		page( `/settings/export/guided/${hostSlug}/${this.props.siteSlug}` );
+		page( `/settings/export/guided/${ hostSlug }/${ this.props.siteSlug }` );
 	},
 
 	goBack() {
@@ -75,7 +76,7 @@ export default React.createClass( {
 		const hosts = Object.keys( guidedTransferHosts ).map( hostSlug => {
 			return {
 				...guidedTransferHosts[ hostSlug ],
-				showHost: () => this.showHost( hostSlug )
+				showHost: () => this.showHost( hostSlug ),
 			};
 		} );
 
@@ -83,11 +84,8 @@ export default React.createClass( {
 			<Main className="guided-transfer__main site-settings">
 				<QuerySiteGuidedTransfer siteId={ siteId } />
 				<div className="guided-transfer__header-nav">
-					<HeaderCake
-						onClick={ this.goBack }
-						isCompact={ true }
-					>
-							{ this.translate( 'Guided Transfer' ) }
+					<HeaderCake onClick={ this.goBack } isCompact={ true }>
+						{ this.translate( 'Guided Transfer' ) }
 					</HeaderCake>
 				</div>
 
@@ -95,17 +93,16 @@ export default React.createClass( {
 
 				{ this.props.isEligibleForGuidedTransfer
 					? <div className="guided-transfer__content">
-						{ hostInfo
-							? <HostCredentialsPage
-								siteId={ this.props.siteId }
-								hostSlug={ this.props.hostSlug }
-								hostInfo={ hostInfo } />
-							: <HostSelect hosts={ hosts } />
-						}
-					</div>
-					: <TransferUnavailableCard siteId={ siteId } siteSlug={ siteSlug } />
-				}
+							{ hostInfo
+								? <HostCredentialsPage
+										siteId={ this.props.siteId }
+										hostSlug={ this.props.hostSlug }
+										hostInfo={ hostInfo }
+									/>
+								: <HostSelect hosts={ hosts } /> }
+						</div>
+					: <TransferUnavailableCard siteId={ siteId } siteSlug={ siteSlug } /> }
 			</Main>
 		);
-	}
+	},
 } );

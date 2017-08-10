@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,25 +17,25 @@ import createSelector from 'lib/create-selector';
  * @param {int}    simplePaymentId The ID of the Simple Payment to get. Optional.
  * @return {Array|Object|null}     Array of Simple Payment objects or an object if `simplePaymentId` specified.
  */
-export default createSelector(
-	( state, siteId, simplePaymentId = null ) => {
-		if ( ! siteId ) {
-			return null;
-		}
+export default createSelector( ( state, siteId, simplePaymentId = null ) => {
+	if ( ! siteId ) {
+		return null;
+	}
 
-		const simplePaymentProducts = get( state, `simplePayments.productList.items.${ siteId }`, null );
+	const simplePaymentProducts = get( state, `simplePayments.productList.items.${ siteId }`, null );
 
-		if ( ! simplePaymentId ) {
-			return simplePaymentProducts;
-		}
+	if ( ! simplePaymentId ) {
+		return simplePaymentProducts;
+	}
 
-		const simplePaymentProduct = find( simplePaymentProducts, ( product ) => product.ID === simplePaymentId );
+	const simplePaymentProduct = find(
+		simplePaymentProducts,
+		product => product.ID === simplePaymentId
+	);
 
-		if ( ! simplePaymentProduct ) {
-			return null;
-		}
+	if ( ! simplePaymentProduct ) {
+		return null;
+	}
 
-		return simplePaymentProduct;
-	},
-	( state ) => state.simplePayments.productList.items
-);
+	return simplePaymentProduct;
+}, state => state.simplePayments.productList.items );

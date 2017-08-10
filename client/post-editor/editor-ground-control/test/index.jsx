@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,9 +20,9 @@ import useFakeDom from 'test/helpers/use-fake-dom';
  */
 const MOCK_SITE = {
 	capabilities: {
-		publish_posts: true
+		publish_posts: true,
 	},
-	options: {}
+	options: {},
 };
 
 describe( 'EditorGroundControl', function() {
@@ -41,7 +42,7 @@ describe( 'EditorGroundControl', function() {
 		mockery.registerMock( 'lib/posts/actions', { edit: noop } );
 		mockery.registerMock( 'lib/posts/stats', {
 			recordEvent: noop,
-			recordStat: noop
+			recordStat: noop,
 		} );
 		EditorGroundControl = require( '../' ).EditorGroundControl;
 	} );
@@ -49,10 +50,7 @@ describe( 'EditorGroundControl', function() {
 	describe( '#getPreviewLabel()', function() {
 		it( 'should return View if the site is a Jetpack site and the post is published', function() {
 			var tree = shallow(
-				<EditorGroundControl
-					savedPost={ { status: 'publish' } }
-					site={ { jetpack: true } }
-				/>
+				<EditorGroundControl savedPost={ { status: 'publish' } } site={ { jetpack: true } } />
 			).instance();
 
 			expect( tree.getPreviewLabel() ).to.equal( 'View' );
@@ -85,13 +83,17 @@ describe( 'EditorGroundControl', function() {
 		} );
 
 		it( 'should return false if post does not exist', function() {
-			var tree = shallow( <EditorGroundControl isSaving={ false } hasContent isDirty /> ).instance();
+			var tree = shallow(
+				<EditorGroundControl isSaving={ false } hasContent isDirty />
+			).instance();
 
 			expect( tree.isSaveEnabled() ).to.be.false;
 		} );
 
 		it( 'should return true if dirty and post has content and post is not published', function() {
-			var tree = shallow( <EditorGroundControl isSaving={ false } post={ {} } hasContent isDirty /> ).instance();
+			var tree = shallow(
+				<EditorGroundControl isSaving={ false } post={ {} } hasContent isDirty />
+			).instance();
 
 			expect( tree.isSaveEnabled() ).to.be.true;
 		} );
@@ -103,7 +105,9 @@ describe( 'EditorGroundControl', function() {
 		} );
 
 		it( 'should return false if dirty and post is published', function() {
-			var tree = shallow( <EditorGroundControl isSaving={ false } post={ { status: 'publish' } } isDirty /> ).instance();
+			var tree = shallow(
+				<EditorGroundControl isSaving={ false } post={ { status: 'publish' } } isDirty />
+			).instance();
 
 			expect( tree.isSaveEnabled() ).to.be.false;
 		} );

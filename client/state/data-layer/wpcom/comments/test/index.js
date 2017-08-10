@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -47,8 +48,8 @@ describe( 'wpcom-api', () => {
 							path: '/sites/2916284/posts/1010/replies',
 							query,
 						},
-						action,
-					),
+						action
+					)
 				);
 			} );
 
@@ -92,8 +93,8 @@ describe( 'wpcom-api', () => {
 								before: '2017-05-25T19:41:25.841Z',
 							},
 						},
-						action,
-					),
+						action
+					)
 				);
 			} );
 		} );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -108,7 +109,7 @@ describe( 'reducer', () => {
 
 		it( 'should not persist state', () => {
 			const state = isRequesting( true, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.be.false;
@@ -116,7 +117,7 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const state = isRequesting( true, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.false;
@@ -166,7 +167,7 @@ describe( 'reducer', () => {
 
 		it( 'should not persist state', () => {
 			const state = isRequesting( true, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.be.false;
@@ -174,7 +175,7 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const state = isRequesting( true, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.false;
@@ -214,7 +215,7 @@ describe( 'reducer', () => {
 
 		it( 'should not persist state', () => {
 			const state = isRequestingTwoFactorAuth( true, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.be.false;
@@ -222,7 +223,7 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const state = isRequestingTwoFactorAuth( true, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.false;
@@ -267,14 +268,14 @@ describe( 'reducer', () => {
 		it( 'should store the error in requestError if a request is unsuccessful', () => {
 			let state = requestError( 'some error', {
 				type: LOGIN_REQUEST_FAILURE,
-				error: 'another error'
+				error: 'another error',
 			} );
 
 			expect( state ).to.eql( 'another error' );
 
 			state = requestError( 'some error', {
 				type: SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
-				error: 'yet another error'
+				error: 'yet another error',
 			} );
 
 			expect( state ).to.eql( 'yet another error' );
@@ -282,7 +283,7 @@ describe( 'reducer', () => {
 
 		it( 'should reset the error to null when switching routes', () => {
 			const state = requestError( 'some error', {
-				type: ROUTE_SET
+				type: ROUTE_SET,
 			} );
 
 			expect( state ).to.be.null;
@@ -290,7 +291,7 @@ describe( 'reducer', () => {
 
 		it( 'should not persist state', () => {
 			const state = requestError( 'some error', {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
@@ -298,7 +299,7 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const state = requestError( 'some error', {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
@@ -331,7 +332,7 @@ describe( 'reducer', () => {
 		it( 'should store the error in requestError if a request is unsuccessful', () => {
 			const state = twoFactorAuthRequestError( 'some error', {
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
-				error: 'another error'
+				error: 'another error',
 			} );
 
 			expect( state ).to.eql( 'another error' );
@@ -339,7 +340,7 @@ describe( 'reducer', () => {
 
 		it( 'should reset the error to null when switching routes', () => {
 			const state = twoFactorAuthRequestError( 'some error', {
-				type: ROUTE_SET
+				type: ROUTE_SET,
 			} );
 
 			expect( state ).to.be.null;
@@ -347,7 +348,7 @@ describe( 'reducer', () => {
 
 		it( 'should not persist state', () => {
 			const state = twoFactorAuthRequestError( 'some error', {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
@@ -355,7 +356,7 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const state = twoFactorAuthRequestError( 'some error', {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
@@ -373,12 +374,12 @@ describe( 'reducer', () => {
 			const state = requestNotice( null, {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 				notice: {
-					message: 'foo'
-				}
+					message: 'foo',
+				},
 			} );
 
 			expect( state ).to.eql( {
-				message: 'foo'
+				message: 'foo',
 			} );
 		} );
 
@@ -386,12 +387,12 @@ describe( 'reducer', () => {
 			const state = requestNotice( null, {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 				notice: {
-					message: 'foo'
-				}
+					message: 'foo',
+				},
 			} );
 
 			expect( state ).to.eql( {
-				message: 'foo'
+				message: 'foo',
 			} );
 		} );
 
@@ -405,7 +406,7 @@ describe( 'reducer', () => {
 
 		it( 'should not persist state', () => {
 			const state = requestNotice( true, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
@@ -413,7 +414,7 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const state = requestNotice( true, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
@@ -453,7 +454,7 @@ describe( 'reducer', () => {
 
 		it( 'should not persist state', () => {
 			const state = requestSuccess( true, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
@@ -461,7 +462,7 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const state = requestSuccess( true, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
@@ -492,7 +493,7 @@ describe( 'reducer', () => {
 			const state = twoFactorAuth( null, {
 				type: LOGIN_REQUEST_SUCCESS,
 				data,
-				rememberMe: true
+				rememberMe: true,
 			} );
 
 			expect( state ).to.eql( { ...data } );
@@ -515,18 +516,18 @@ describe( 'reducer', () => {
 			const state = twoFactorAuth( data, {
 				type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 				twoStepNonce: 'foo',
-				nonceType: 'authenticator'
+				nonceType: 'authenticator',
 			} );
 
 			expect( state ).to.eql( {
 				two_step_id: 12345678,
-				two_step_nonce_authenticator: 'foo'
+				two_step_nonce_authenticator: 'foo',
 			} );
 		} );
 
 		it( 'should not persist state', () => {
 			const state = twoFactorAuth( true, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
@@ -534,7 +535,7 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const state = twoFactorAuth( true, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.be.null;
@@ -542,7 +543,7 @@ describe( 'reducer', () => {
 
 		it( 'should reset the "notice" value when an SMS code request is made', () => {
 			const state = requestSuccess( null, {
-				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST
+				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 			} );
 
 			expect( state ).to.eql( null );
@@ -556,12 +557,12 @@ describe( 'reducer', () => {
 
 			const state = twoFactorAuth( data, {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
-				twoStepNonce: 'foo'
+				twoStepNonce: 'foo',
 			} );
 
 			expect( state ).to.eql( {
 				two_step_id: 12345678,
-				two_step_nonce_sms: 'foo'
+				two_step_nonce_sms: 'foo',
 			} );
 		} );
 
@@ -573,12 +574,12 @@ describe( 'reducer', () => {
 
 			const state = twoFactorAuth( data, {
 				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
-				twoStepNonce: 'foo'
+				twoStepNonce: 'foo',
 			} );
 
 			expect( state ).to.eql( {
 				two_step_id: 12345678,
-				two_step_nonce_sms: 'foo'
+				two_step_nonce_sms: 'foo',
 			} );
 		} );
 	} );

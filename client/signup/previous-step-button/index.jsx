@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +20,7 @@ export default React.createClass( {
 		stepName: React.PropTypes.string.isRequired,
 		previousPath: React.PropTypes.string,
 		positionInFlow: React.PropTypes.number.isRequired,
-		signupProgress: React.PropTypes.array.isRequired
+		signupProgress: React.PropTypes.array.isRequired,
 	},
 
 	backUrl() {
@@ -27,16 +28,24 @@ export default React.createClass( {
 			return this.props.backUrl;
 		}
 
-		const previousStepName = signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName ),
+		const previousStepName = signupUtils.getPreviousStepName(
+				this.props.flowName,
+				this.props.stepName
+			),
 			{ stepSectionName } = find( this.props.signupProgress, { stepName: previousStepName } );
 
-		return signupUtils.getStepUrl( this.props.flowName, previousStepName, stepSectionName, i18n.getLocaleSlug() );
+		return signupUtils.getStepUrl(
+			this.props.flowName,
+			previousStepName,
+			stepSectionName,
+			i18n.getLocaleSlug()
+		);
 	},
 
 	recordClick() {
 		analytics.tracks.recordEvent( 'calypso_signup_previous_step_button_click', {
 			flow: this.props.flowName,
-			step: this.props.stepName
+			step: this.props.stepName,
 		} );
 	},
 
@@ -52,5 +61,5 @@ export default React.createClass( {
 		}
 
 		return null;
-	}
+	},
 } );

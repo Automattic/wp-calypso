@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,8 +23,8 @@ describe( 'UserUtils', () => {
 		mockery.registerMock( 'config', configMock );
 		mockery.registerMock( 'lib/wp', {
 			me: () => ( {
-				get: noop
-			} )
+				get: noop,
+			} ),
 		} );
 	} );
 
@@ -38,9 +39,7 @@ describe( 'UserUtils', () => {
 
 	context( 'without logout url', () => {
 		before( () => {
-			configMock.isEnabled
-				.withArgs( 'always_use_logout_url' )
-				.returns( false );
+			configMock.isEnabled.withArgs( 'always_use_logout_url' ).returns( false );
 		} );
 
 		it( 'uses userData.logout_URL when available', () => {
@@ -52,9 +51,7 @@ describe( 'UserUtils', () => {
 
 	context( 'with logout url', () => {
 		before( () => {
-			configMock.isEnabled
-				.withArgs( 'always_use_logout_url' )
-				.returns( true );
+			configMock.isEnabled.withArgs( 'always_use_logout_url' ).returns( true );
 		} );
 
 		it( 'works when |subdomain| is not present', () => {

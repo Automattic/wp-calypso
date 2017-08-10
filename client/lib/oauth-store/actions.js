@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,20 +14,18 @@ import analytics from 'lib/analytics';
 
 export function login( username, password, auth_code ) {
 	Dispatcher.handleViewAction( {
-		type: actions.AUTH_LOGIN
+		type: actions.AUTH_LOGIN,
 	} );
 
-	request.post( '/oauth' )
-		.send( { username, password, auth_code } )
-		.end( ( error, data ) => {
-			bumpStats( error, data );
+	request.post( '/oauth' ).send( { username, password, auth_code } ).end( ( error, data ) => {
+		bumpStats( error, data );
 
-			Dispatcher.handleServerAction( {
-				type: actions.RECEIVE_AUTH_LOGIN,
-				data,
-				error
-			} );
+		Dispatcher.handleServerAction( {
+			type: actions.RECEIVE_AUTH_LOGIN,
+			data,
+			error,
 		} );
+	} );
 }
 
 function bumpStats( error, data ) {
@@ -45,12 +44,12 @@ function bumpStats( error, data ) {
 		analytics.mc.bumpStat( 'calypso_oauth_login', 'success-needs-2fa' );
 	} else if ( errorType ) {
 		analytics.tracks.recordEvent( 'calypso_oauth_login_fail', {
-			error: error.error
+			error: error.error,
 		} );
 
 		analytics.mc.bumpStat( {
 			calypso_oauth_login_error: errorType,
-			calypso_oauth_login: 'error'
+			calypso_oauth_login: 'error',
 		} );
 	} else {
 		analytics.tracks.recordEvent( 'calypso_oauth_login_success' );

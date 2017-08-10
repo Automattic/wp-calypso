@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -36,8 +37,8 @@ export function revisions( state = {}, action ) {
 			...state,
 			[ siteId ]: {
 				...state[ siteId ],
-				[ postId ]: keyBy( action.revisions, 'id' )
-			}
+				[ postId ]: keyBy( action.revisions, 'id' ),
+			},
 		};
 	}
 

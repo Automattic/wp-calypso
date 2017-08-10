@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,21 +9,9 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	sendChatMessage,
-	setChatMessage,
-} from 'state/happychat/actions';
-import {
-	canUserSendMessages,
-} from 'state/happychat/selectors';
-import {
-	when,
-	forEach,
-	compose,
-	propEquals,
-	call,
-	prop
-} from './functional';
+import { sendChatMessage, setChatMessage } from 'state/happychat/actions';
+import { canUserSendMessages } from 'state/happychat/selectors';
+import { when, forEach, compose, propEquals, call, prop } from './functional';
 import scrollbleed from './scrollbleed';
 import { translate } from 'i18n-calypso';
 
@@ -43,13 +32,14 @@ export const Composer = React.createClass( {
 		const onChange = compose( prop( 'target.value' ), onUpdateChatMessage );
 		const onKeyDown = when( returnPressed, forEach( preventDefault, sendMessage ) );
 		const composerClasses = classNames( 'happychat__composer', {
-			'is-disabled': disabled
+			'is-disabled': disabled,
 		} );
 		return (
-			<div className={ composerClasses }
+			<div
+				className={ composerClasses }
 				onMouseEnter={ this.scrollbleedLock }
 				onMouseLeave={ this.scrollbleedUnlock }
-				>
+			>
 				<div className="happychat__message">
 					<textarea
 						aria-label="Enter your support request"
@@ -60,16 +50,17 @@ export const Composer = React.createClass( {
 						onChange={ onChange }
 						onKeyDown={ onKeyDown }
 						disabled={ disabled }
-						value={ message } />
+						value={ message }
+					/>
 				</div>
-				<button className="happychat__submit"
-						disabled={ disabled }
-						onClick={ sendMessage }>
-						<svg viewBox="0 0 24 24" width="24" height="24"><path d="M2 21l21-9L2 3v7l15 2-15 2z" /></svg>
+				<button className="happychat__submit" disabled={ disabled } onClick={ sendMessage }>
+					<svg viewBox="0 0 24 24" width="24" height="24">
+						<path d="M2 21l21-9L2 3v7l15 2-15 2z" />
+					</svg>
 				</button>
 			</div>
 		);
-	}
+	},
 } );
 
 const mapState = state => ( {
@@ -77,13 +68,13 @@ const mapState = state => ( {
 	message: state.happychat.message,
 } );
 
-const mapDispatch = ( dispatch ) => ( {
+const mapDispatch = dispatch => ( {
 	onUpdateChatMessage( message ) {
 		dispatch( setChatMessage( message ) );
 	},
 	onSendChatMessage( message ) {
 		dispatch( sendChatMessage( message ) );
-	}
+	},
 } );
 
 export default connect( mapState, mapDispatch )( Composer );

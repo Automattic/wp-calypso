@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -86,7 +87,7 @@ class PostCommentForm extends React.Component {
 				this.props.deleteComment(
 					this.props.post.site_ID,
 					this.props.post.ID,
-					this.props.placeholderId,
+					this.props.placeholderId
 				);
 			}
 		}
@@ -160,7 +161,7 @@ class PostCommentForm extends React.Component {
 		switch ( error.error ) {
 			case 'comment_duplicate':
 				message = translate(
-					"Duplicate comment detected. It looks like you've already said that!",
+					"Duplicate comment detected. It looks like you've already said that!"
 				);
 				break;
 
@@ -277,5 +278,5 @@ export default connect(
 	state => ( {
 		currentUser: getCurrentUser( state ),
 	} ),
-	{ writeComment, deleteComment, replyComment },
+	{ writeComment, deleteComment, replyComment }
 )( PostCommentForm );

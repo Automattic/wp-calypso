@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,13 +16,13 @@ module.exports = React.createClass( {
 	propTypes: {
 		path: React.PropTypes.string.isRequired,
 		term: React.PropTypes.string,
-		sectionId: React.PropTypes.string
+		sectionId: React.PropTypes.string,
 	},
 	timeoutID: null,
 
 	getInitialState: function() {
 		return {
-			body: ''
+			body: '',
 		};
 	},
 
@@ -44,16 +45,19 @@ module.exports = React.createClass( {
 
 	fetch: function() {
 		this.setState( {
-			body: ''
+			body: '',
 		} );
 		this.delayLoadingMessage();
-		DocService.fetch( this.props.path, function( err, body ) {
-			if ( this.isMounted() ) {
-				this.setState( {
-					body: ( err || body )
-				} );
-			}
-		}.bind( this ) );
+		DocService.fetch(
+			this.props.path,
+			function( err, body ) {
+				if ( this.isMounted() ) {
+					this.setState( {
+						body: err || body,
+					} );
+				}
+			}.bind( this )
+		);
 	},
 
 	setBodyScrollPosition: function() {
@@ -68,13 +72,16 @@ module.exports = React.createClass( {
 
 	delayLoadingMessage: function() {
 		this.clearLoadingMessage();
-		this.timeoutID = setTimeout( function() {
-			if ( ! this.state.body ) {
-				this.setState( {
-					body: 'Loading…'
-				} );
-			}
-		}.bind( this ), 1000 );
+		this.timeoutID = setTimeout(
+			function() {
+				if ( ! this.state.body ) {
+					this.setState( {
+						body: 'Loading…',
+					} );
+				}
+			}.bind( this ),
+			1000
+		);
 	},
 
 	clearLoadingMessage: function() {
@@ -85,22 +92,24 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-
-		var editURL = encodeURI( 'https://github.com/Automattic/wp-calypso/edit/master/' + this.props.path ) +
+		var editURL =
+			encodeURI( 'https://github.com/Automattic/wp-calypso/edit/master/' + this.props.path ) +
 			'?message=Documentation: <title>&description=What did you change and why&target_branch=update/docs-your-title';
 
 		return (
 			<div className="devdocs devdocs__doc">
 				<CompactCard className="devdocs__doc-header">
 					Path: <code>{ this.props.path }</code>
-					<a href={ editURL } target="_blank" rel="noopener noreferrer">Improve this document on GitHub &rarr;</a>
+					<a href={ editURL } target="_blank" rel="noopener noreferrer">
+						Improve this document on GitHub &rarr;
+					</a>
 				</CompactCard>
 				<div
 					className="devdocs__doc-content"
 					ref="body"
-					dangerouslySetInnerHTML={{ __html: highlight( this.props.term, this.state.body ) }} //eslint-disable-line react/no-danger
+					dangerouslySetInnerHTML={ { __html: highlight( this.props.term, this.state.body ) } } //eslint-disable-line react/no-danger
 				/>
 			</div>
 		);
-	}
+	},
 } );

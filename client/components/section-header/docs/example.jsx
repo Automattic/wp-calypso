@@ -1,3 +1,4 @@
+/** @format */
 /**
 * External dependencies
 */
@@ -37,14 +38,17 @@ var Cards = React.createClass( {
 
 				<h3>Clickable SectionHeader</h3>
 
-				<SectionHeader label={ this.translate( 'Team' ) } count={ 10 } href="/devdocs/design/section-header">
-				</SectionHeader>
+				<SectionHeader
+					label={ this.translate( 'Team' ) }
+					count={ 10 }
+					href="/devdocs/design/section-header"
+				/>
 
 				<h3>Empty SectionHeader</h3>
 				<SectionHeader />
 			</div>
 		);
-	}
+	},
 } );
 
 module.exports = Cards;

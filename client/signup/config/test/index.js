@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,9 +14,9 @@ describe( 'index', () => {
 	let flows, steps;
 
 	useFilesystemMocks( __dirname );
-	useMockery( ( mockery ) => {
+	useMockery( mockery => {
 		mockery.registerMock( 'lib/abtest', {
-			abtest: () => ''
+			abtest: () => '',
 		} );
 		flows = require( '../flows' );
 		steps = require( '../steps' );
@@ -25,8 +26,11 @@ describe( 'index', () => {
 		const overlappingNames = intersection( keys( steps ), keys( flows.getFlows() ) );
 
 		if ( ! isEmpty( overlappingNames ) ) {
-			throw new Error( 'Step and flow names must be unique. The following names are used as both step and flow names: [' +
-				overlappingNames + '].' );
+			throw new Error(
+				'Step and flow names must be unique. The following names are used as both step and flow names: [' +
+					overlappingNames +
+					'].'
+			);
 		}
 	} );
 } );

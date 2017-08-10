@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,8 +19,8 @@ describe( 'selectors', () => {
 				extensions: {
 					zoninator: {
 						zones: undefined,
-					}
-				}
+					},
+				},
 			};
 
 			const isRequesting = isRequestingZones( state, primarySiteId );
@@ -34,10 +35,10 @@ describe( 'selectors', () => {
 						zones: {
 							requesting: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const isRequesting = isRequestingZones( state, secondarySiteId );
@@ -52,10 +53,10 @@ describe( 'selectors', () => {
 						zones: {
 							requesting: {
 								[ primarySiteId ]: false,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const isRequesting = isRequestingZones( state, primarySiteId );
@@ -70,10 +71,10 @@ describe( 'selectors', () => {
 						zones: {
 							requesting: {
 								[ primarySiteId ]: true,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const isRequesting = isRequestingZones( state, primarySiteId );
@@ -83,18 +84,20 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSettings()', () => {
-		const primaryZones = [ {
-			name: 'Foo',
-			description: 'A test zone.',
-		} ];
+		const primaryZones = [
+			{
+				name: 'Foo',
+				description: 'A test zone.',
+			},
+		];
 
 		it( 'should return an empty array if no state exists', () => {
 			const state = {
 				extensions: {
 					zoninator: {
 						zones: undefined,
-					}
-				}
+					},
+				},
 			};
 
 			const zones = getZones( state, primarySiteId );
@@ -109,10 +112,10 @@ describe( 'selectors', () => {
 						zones: {
 							items: {
 								[ primarySiteId ]: primaryZones,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const zones = getZones( state, secondarySiteId );
@@ -127,10 +130,10 @@ describe( 'selectors', () => {
 						zones: {
 							items: {
 								[ primarySiteId ]: primaryZones,
-							}
-						}
-					}
-				}
+							},
+						},
+					},
+				},
 			};
 
 			const zones = getZones( state, primarySiteId );

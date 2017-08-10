@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -5,8 +6,8 @@ var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	debug = require( 'debug' )( 'calypso:my-sites:posts' );
 
-import { connect } from 'react-redux';
-import { debounce, isEqual, omit } from 'lodash';
+import { connect } from 'react-redux';
+import { debounce, isEqual, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,7 +30,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 var GUESSED_POST_HEIGHT = 250;
 
 var PostList = React.createClass( {
-
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
@@ -40,7 +40,7 @@ var PostList = React.createClass( {
 		hasSites: React.PropTypes.bool,
 		statusSlug: React.PropTypes.string,
 		siteId: React.PropTypes.number,
-		author: React.PropTypes.number
+		author: React.PropTypes.number,
 	},
 
 	render: function() {
@@ -55,16 +55,13 @@ var PostList = React.createClass( {
 				category={ this.props.category }
 				tag={ this.props.tag }
 			>
-				<Posts
-					{ ...omit( this.props, 'children' ) }
-				/>
+				<Posts { ...omit( this.props, 'children' ) } />
 			</PostListFetcher>
 		);
-	}
+	},
 } );
 
 var Posts = React.createClass( {
-
 	propTypes: {
 		author: React.PropTypes.number,
 		context: React.PropTypes.object.isRequired,
@@ -78,7 +75,7 @@ var Posts = React.createClass( {
 		siteId: React.PropTypes.number,
 		hasSites: React.PropTypes.bool.isRequired,
 		statusSlug: React.PropTypes.string,
-		trackScrollPage: React.PropTypes.func.isRequired
+		trackScrollPage: React.PropTypes.func.isRequired,
 	},
 
 	getDefaultProps: function() {
@@ -89,13 +86,13 @@ var Posts = React.createClass( {
 			page: 0,
 			postImages: {},
 			posts: [],
-			trackScrollPage: function() {}
+			trackScrollPage: function() {},
 		};
 	},
 
 	getInitialState: function() {
 		return {
-			postsAtFullWidth: window.innerWidth >= 960
+			postsAtFullWidth: window.innerWidth >= 960,
 		};
 	},
 
@@ -122,7 +119,9 @@ var Posts = React.createClass( {
 		if ( nextProps.statusSlug !== this.props.statusSlug ) {
 			return true;
 		}
-		if ( ! isEqual( nextProps.posts.map( post => post.ID ), this.props.posts.map( post => post.ID ) ) ) {
+		if (
+			! isEqual( nextProps.posts.map( post => post.ID ), this.props.posts.map( post => post.ID ) )
+		) {
 			return true;
 		}
 		return false;
@@ -133,7 +132,7 @@ var Posts = React.createClass( {
 
 		if ( this.state.postsAtFullWidth !== arePostsAtFullWidth ) {
 			this.setState( {
-				postsAtFullWidth: arePostsAtFullWidth
+				postsAtFullWidth: arePostsAtFullWidth,
 			} );
 		}
 	},
@@ -152,53 +151,58 @@ var Posts = React.createClass( {
 		var attributes, newPostLink;
 
 		if ( this.props.search ) {
-			return <NoResults
-				image="/calypso/images/posts/illustration-posts.svg"
-				text={
-					this.translate( 'No posts match your search for {{searchTerm/}}.', {
+			return (
+				<NoResults
+					image="/calypso/images/posts/illustration-posts.svg"
+					text={ this.translate( 'No posts match your search for {{searchTerm/}}.', {
 						components: {
-							searchTerm: <em>{ this.props.search }</em>
-						}
-					} )	}
-			/>;
+							searchTerm: (
+								<em>
+									{ this.props.search }
+								</em>
+							),
+						},
+					} ) }
+				/>
+			);
 		} else {
 			newPostLink = this.props.siteId ? '/post/' + this.props.siteId : '/post';
 
 			if ( this.props.hasRecentError ) {
 				attributes = {
-					title: this.translate( 'Oh, no! We couldn\'t fetch your posts.' ),
-					line: this.translate( 'Please check your internet connection.' )
+					title: this.translate( "Oh, no! We couldn't fetch your posts." ),
+					line: this.translate( 'Please check your internet connection.' ),
 				};
 			} else {
 				switch ( this.props.statusSlug ) {
 					case 'drafts':
 						attributes = {
-							title: this.translate( 'You don\'t have any drafts.' ),
+							title: this.translate( "You don't have any drafts." ),
 							line: this.translate( 'Would you like to create one?' ),
 							action: this.translate( 'Start a Post' ),
-							actionURL: newPostLink
+							actionURL: newPostLink,
 						};
 						break;
 					case 'scheduled':
 						attributes = {
-							title: this.translate( 'You don\'t have any scheduled posts.' ),
+							title: this.translate( "You don't have any scheduled posts." ),
 							line: this.translate( 'Would you like to schedule a draft to publish?' ),
 							action: this.translate( 'Edit Drafts' ),
-							actionURL: ( this.props.siteId ) ? '/posts/drafts/' + this.props.siteId : '/posts/drafts'
+							actionURL: this.props.siteId ? '/posts/drafts/' + this.props.siteId : '/posts/drafts',
 						};
 						break;
 					case 'trashed':
 						attributes = {
-							title: this.translate( 'You don\'t have any posts in your trash folder.' ),
-							line: this.translate( 'Everything you write is solid gold.' )
+							title: this.translate( "You don't have any posts in your trash folder." ),
+							line: this.translate( 'Everything you write is solid gold.' ),
 						};
 						break;
 					default:
 						attributes = {
-							title: this.translate( 'You haven\'t published any posts yet.' ),
+							title: this.translate( "You haven't published any posts yet." ),
 							line: this.translate( 'Would you like to publish your first post?' ),
 							action: this.translate( 'Start a Post' ),
-							actionURL: newPostLink
+							actionURL: newPostLink,
 						};
 				}
 			}
@@ -207,14 +211,16 @@ var Posts = React.createClass( {
 		attributes.illustration = '/calypso/images/posts/illustration-posts.svg';
 		attributes.illustrationWidth = 150;
 
-		return <EmptyContent
-			title={ attributes.title }
-			line={ attributes.line }
-			action={ attributes.action }
-			actionURL={ attributes.actionURL }
-			illustration={ attributes.illustration }
-			illustrationWidth={ attributes.illustrationWidth }
-		/>;
+		return (
+			<EmptyContent
+				title={ attributes.title }
+				line={ attributes.line }
+				action={ attributes.action }
+				actionURL={ attributes.actionURL }
+				illustration={ attributes.illustration }
+				illustrationWidth={ attributes.illustrationWidth }
+			/>
+		);
 	},
 
 	getPostRef: function( post ) {
@@ -222,9 +228,7 @@ var Posts = React.createClass( {
 	},
 
 	renderLoadingPlaceholders: function() {
-		return (
-			<PostPlaceholder key={ 'placeholder-scroll-' + this.props.page } />
-		);
+		return <PostPlaceholder key={ 'placeholder-scroll-' + this.props.page } />;
 	},
 
 	renderPost: function( post, index ) {
@@ -302,12 +306,10 @@ var Posts = React.createClass( {
 				{ this.props.lastPage && posts.length ? <ListEnd /> : null }
 			</div>
 		);
-	}
+	},
 } );
 
-export default connect(
-	( state ) => ( {
-		selectedSiteId: getSelectedSiteId( state ),
-		hasSites: hasInitializedSites( state )
-	} )
-)( PostList );
+export default connect( state => ( {
+	selectedSiteId: getSelectedSiteId( state ),
+	hasSites: hasInitializedSites( state ),
+} ) )( PostList );

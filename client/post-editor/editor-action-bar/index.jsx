@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,7 +21,6 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 
 class EditorActionBar extends Component {
-
 	static propTypes = {
 		isNew: React.PropTypes.bool,
 		onPrivatePublish: React.PropTypes.func,
@@ -33,7 +33,7 @@ class EditorActionBar extends Component {
 	};
 
 	state = {
-		viewLinkTooltip: false
+		viewLinkTooltip: false,
 	};
 
 	render() {
@@ -60,15 +60,15 @@ class EditorActionBar extends Component {
 							post={ this.props.post }
 							isNew={ this.props.isNew }
 							postAuthor={ postAuthor }
-						/>
-					}
+						/> }
 				</div>
 				<div className="editor-action-bar__cell is-right">
-					{ this.props.post && this.props.type === 'post' &&
-						! isPasswordProtected && ! isPostPrivate &&
-						<EditorSticky />
-					}
-					{ utils.isPublished( this.props.savedPost ) && (
+					{ this.props.post &&
+						this.props.type === 'post' &&
+						! isPasswordProtected &&
+						! isPostPrivate &&
+						<EditorSticky /> }
+					{ utils.isPublished( this.props.savedPost ) &&
 						<Button
 							href={ this.props.savedPost.URL }
 							target="_blank"
@@ -87,24 +87,21 @@ class EditorActionBar extends Component {
 							>
 								<EditorActionBarViewLabel />
 							</Tooltip>
-						</Button>
-					) }
+						</Button> }
 				</div>
 			</div>
 		);
 	}
 }
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const post = getEditedPost( state, siteId, postId );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
+	const post = getEditedPost( state, siteId, postId );
 
-		return {
-			siteId,
-			postId,
-			post
-		};
-	},
-)( EditorActionBar );
+	return {
+		siteId,
+		postId,
+		post,
+	};
+} )( EditorActionBar );

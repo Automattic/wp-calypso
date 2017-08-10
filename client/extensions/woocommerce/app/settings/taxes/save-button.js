@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +22,6 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
 class TaxSettingsSaveButton extends Component {
-
 	static propTypes = {
 		onSave: PropTypes.func.isRequired,
 	};
@@ -32,9 +32,9 @@ class TaxSettingsSaveButton extends Component {
 		if ( site && site.ID ) {
 			this.props.fetchSetupChoices( site.ID );
 		}
-	}
+	};
 
-	componentWillReceiveProps = ( newProps ) => {
+	componentWillReceiveProps = newProps => {
 		const { site } = this.props;
 
 		const newSiteId = newProps.site ? newProps.site.ID : null;
@@ -43,9 +43,9 @@ class TaxSettingsSaveButton extends Component {
 		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchSetupChoices( newSiteId );
 		}
-	}
+	};
 
-	onSave = ( e ) => {
+	onSave = e => {
 		const { onSave, finishedInitialSetup, site } = this.props;
 
 		let onSuccessExtra = null;
@@ -56,7 +56,7 @@ class TaxSettingsSaveButton extends Component {
 		}
 
 		onSave( e, onSuccessExtra );
-	}
+	};
 
 	render() {
 		const { translate, loading, site, finishedInitialSetup } = this.props;

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,12 +18,12 @@ export default React.createClass( {
 
 	propTypes: {
 		site: PropTypes.object,
-		onInvalidItemAdded: PropTypes.func
+		onInvalidItemAdded: PropTypes.func,
 	},
 
 	getDefaultProps() {
 		return {
-			onInvalidItemAdded: () => {}
+			onInvalidItemAdded: () => {},
 		};
 	},
 
@@ -46,7 +47,8 @@ export default React.createClass( {
 			<MediaLibraryDropZone
 				site={ this.props.site }
 				onAddMedia={ this.filterDroppedImagesSelected }
-				fullScreen={ false } />
+				fullScreen={ false }
+			/>
 		);
-	}
+	},
 } );

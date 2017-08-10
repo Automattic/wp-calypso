@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,12 +14,7 @@ import accept from 'lib/accept';
 
 class RecoveryEmail extends Component {
 	render() {
-		const {
-			primaryEmail,
-			email,
-			translate,
-			isLoading,
-		} = this.props;
+		const { primaryEmail, email, translate, isLoading } = this.props;
 
 		return (
 			<ManageContact
@@ -27,34 +23,27 @@ class RecoveryEmail extends Component {
 				title={ translate( 'Recovery Email Address' ) }
 				subtitle={ email ? email : translate( 'Not set' ) }
 				hasValue={ !! email }
-
 				onSave={ this.onSave }
 				onDelete={ this.onDelete }
-				>
-					<EditEmail
-						primaryEmail={ primaryEmail }
-						storedEmail={ email || '' }
-						/>
-				</ManageContact>
+			>
+				<EditEmail primaryEmail={ primaryEmail } storedEmail={ email || '' } />
+			</ManageContact>
 		);
 	}
 
-	onSave = ( newEmail ) => {
+	onSave = newEmail => {
 		this.props.updateEmail( newEmail );
-	}
+	};
 
 	onDelete = () => {
-		const {
-			translate,
-			deleteEmail,
-		} = this.props;
+		const { translate, deleteEmail } = this.props;
 
-		accept( translate( 'Are you sure you want to remove the email address?' ), ( accepted ) => {
+		accept( translate( 'Are you sure you want to remove the email address?' ), accepted => {
 			if ( accepted ) {
 				deleteEmail();
 			}
 		} );
-	}
+	};
 }
 
 export default localize( RecoveryEmail );

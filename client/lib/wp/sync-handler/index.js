@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +32,11 @@ export const hasPaginationChanged = ( serverResponseBody, localResponseBody ) =>
 	if ( ! localResponseBody ) {
 		return false;
 	}
-	if ( localResponseBody && localResponseBody.meta && localResponseBody.meta.next_page === serverResponseBody.meta.next_page ) {
+	if (
+		localResponseBody &&
+		localResponseBody.meta &&
+		localResponseBody.meta.next_page === serverResponseBody.meta.next_page
+	) {
 		return false;
 	}
 	return true;
@@ -91,7 +96,12 @@ export class SyncHandler {
 				// let's be optimistic
 				debug( 'localResponseHandler()', localRecord );
 				if ( localRecord && localRecord.body ) {
-					debug( 'local callback run => %o, params (%o), response (%o)', path, reqParams, localRecord );
+					debug(
+						'local callback run => %o, params (%o), response (%o)',
+						path,
+						reqParams,
+						localRecord
+					);
 					// try/catch in case cached record does not match expected schema
 					localRecord.body.__sync = { requestKey, responseSource: 'local' };
 					try {
@@ -201,10 +211,10 @@ export class SyncHandler {
 					__sync: {
 						requestKey,
 						synced: Date.now(),
-						syncing: false
+						syncing: false,
 					},
 					body: responseWithoutHeaders,
-					params: reqParams
+					params: reqParams,
 				};
 
 				// add/override gotten data from server-side
@@ -256,14 +266,12 @@ export class SyncHandler {
 		// add this record to history
 		return cacheIndex
 			.addItem( requestKey, reqParams, pageSeriesKey )
-				.then( localforage.setItem( requestKey, data ) );
+			.then( localforage.setItem( requestKey, data ) );
 	}
 
 	removeRecord( requestKey ) {
 		debug( 'removing %o requestKey\n', requestKey );
-		return localforage
-			.removeItem( requestKey )
-				.then( cacheIndex.removeItem( requestKey ) );
+		return localforage.removeItem( requestKey ).then( cacheIndex.removeItem( requestKey ) );
 	}
 }
 
@@ -284,15 +292,18 @@ export function syncOptOut( wpcom ) {
 
 		request( params, callback ) {
 			if ( this.__skipLocalSyncRequest ) {
-				params = Object.assign( {
-					__skipLocalSyncRequest: true
-				}, params );
+				params = Object.assign(
+					{
+						__skipLocalSyncRequest: true,
+					},
+					params
+				);
 
 				this.__skipLocalSyncRequest = false;
 			}
 
 			return request( params, callback );
-		}
+		},
 	} );
 }
 

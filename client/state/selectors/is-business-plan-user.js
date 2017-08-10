@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -11,7 +12,7 @@ import { PLAN_BUSINESS } from 'lib/plans/constants';
  * @param {Object}   state Global state tree
  * @return {Boolean} If the current user is a business plan user.
  */
-export default ( state ) => {
+export default state => {
 	const userId = getCurrentUserId( state );
 
 	if ( ! userId ) {
@@ -24,5 +25,5 @@ export default ( state ) => {
 		return false;
 	}
 
-	return purchases.some( ( purchase ) => PLAN_BUSINESS === purchase.productSlug );
+	return purchases.some( purchase => PLAN_BUSINESS === purchase.productSlug );
 };

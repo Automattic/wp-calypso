@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,7 +26,10 @@ const siteId = 123;
 describe( 'reducer', () => {
 	describe( 'addMethodToShippingZone', () => {
 		it( 'should create a shipping method in currentlyEditingChanges and mark it as new', () => {
-			const newState = reducer( initialState, addMethodToShippingZone( siteId, 'flat_rate', 'Flat rate' ) );
+			const newState = reducer(
+				initialState,
+				addMethodToShippingZone( siteId, 'flat_rate', 'Flat rate' )
+			);
 			expect( newState.currentlyEditingId ).to.deep.equal( { index: 0 } );
 			expect( newState.currentlyEditingNew ).to.equal( true );
 			expect( newState.creates.length ).to.equal( 0 );
@@ -82,7 +86,10 @@ describe( 'reducer', () => {
 				currentlyEditingChangedType: false,
 			};
 
-			const newState = reducer( state, changeShippingZoneMethodType( siteId, 'flat_rate', 'Flat rate' ) );
+			const newState = reducer(
+				state,
+				changeShippingZoneMethodType( siteId, 'flat_rate', 'Flat rate' )
+			);
 			expect( newState.currentlyEditingChanges.methodType ).to.equal( 'flat_rate' );
 			expect( newState.currentlyEditingChanges.title ).to.equal( 'Flat rate' );
 			expect( newState.currentlyEditingChangedType ).to.equal( true );
@@ -100,7 +107,10 @@ describe( 'reducer', () => {
 				currentlyEditingChangedType: false,
 			};
 
-			const newState = reducer( state, changeShippingZoneMethodType( siteId, 'flat_rate', 'Flat rate' ) );
+			const newState = reducer(
+				state,
+				changeShippingZoneMethodType( siteId, 'flat_rate', 'Flat rate' )
+			);
 			expect( newState.currentlyEditingChanges.methodType ).to.equal( 'flat_rate' );
 			expect( newState.currentlyEditingChanges.title ).to.equal( 'Flat rate' );
 			expect( newState.currentlyEditingChangedType ).to.equal( true );
@@ -145,7 +155,7 @@ describe( 'reducer', () => {
 				updates: [],
 				deletes: [],
 				currentlyEditingId: null,
-				currentlyEditingChanges: { title: 'New Title' }
+				currentlyEditingChanges: { title: 'New Title' },
 			};
 
 			const newState = reducer( state, openShippingZoneMethod( siteId, 1 ) );
@@ -175,7 +185,7 @@ describe( 'reducer', () => {
 				updates: [ { id: 1, title: 'Old Title' } ],
 				deletes: [],
 				currentlyEditingId: 1,
-				currentlyEditingChanges: { title: 'New Title' }
+				currentlyEditingChanges: { title: 'New Title' },
 			};
 
 			const newState = reducer( state, cancelShippingZoneMethod( siteId ) );
@@ -215,51 +225,57 @@ describe( 'reducer', () => {
 			expect( newState.creates[ 0 ].title ).to.equal( 'abc' );
 		} );
 
-		it( 'method type changed - should add the old method to "deletes" and add the new one to "creates" ' +
-			'if it had a server-side ID', () => {
-			const state = {
-				creates: [],
-				updates: [ { id: 7, methodType: 'free_shipping', title: 'MyMethod' } ],
-				deletes: [],
-				currentlyEditingId: 7,
-				currentlyEditingChanges: { id: 7, methodType: 'flat_rate' },
-				currentlyEditingChangedType: true,
-			};
+		it(
+			'method type changed - should add the old method to "deletes" and add the new one to "creates" ' +
+				'if it had a server-side ID',
+			() => {
+				const state = {
+					creates: [],
+					updates: [ { id: 7, methodType: 'free_shipping', title: 'MyMethod' } ],
+					deletes: [],
+					currentlyEditingId: 7,
+					currentlyEditingChanges: { id: 7, methodType: 'flat_rate' },
+					currentlyEditingChangedType: true,
+				};
 
-			const newState = reducer( state, closeShippingZoneMethod( siteId ) );
-			expect( newState.currentlyEditingId ).to.equal( null );
-			expect( newState.updates ).to.be.empty;
-			expect( newState.deletes ).to.deep.equal( [ { id: 7 } ] );
-			expect( newState.creates.length ).to.equal( 1 );
-			expect( newState.creates[ 0 ].id ).to.deep.equal( { index: 0 } );
-			expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
-			expect( newState.creates[ 0 ]._originalId ).to.equal( 7 );
-			// Check that the method was initialized:
-			expect( newState.creates[ 0 ].cost ).to.be.a.number;
-		} );
+				const newState = reducer( state, closeShippingZoneMethod( siteId ) );
+				expect( newState.currentlyEditingId ).to.equal( null );
+				expect( newState.updates ).to.be.empty;
+				expect( newState.deletes ).to.deep.equal( [ { id: 7 } ] );
+				expect( newState.creates.length ).to.equal( 1 );
+				expect( newState.creates[ 0 ].id ).to.deep.equal( { index: 0 } );
+				expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
+				expect( newState.creates[ 0 ]._originalId ).to.equal( 7 );
+				// Check that the method was initialized:
+				expect( newState.creates[ 0 ].cost ).to.be.a.number;
+			}
+		);
 
-		it( 'method type changed - should remove the old method from "creates" and replace it with the new one ' +
-			'if it had a provisional ID', () => {
-			const state = {
-				creates: [ { id: { index: 0 }, methodType: 'free_shipping', title: 'MyMethod' } ],
-				updates: [],
-				deletes: [],
-				currentlyEditingId: { index: 0 },
-				currentlyEditingChanges: { id: { index: 0 }, methodType: 'flat_rate' },
-				currentlyEditingChangedType: true,
-			};
+		it(
+			'method type changed - should remove the old method from "creates" and replace it with the new one ' +
+				'if it had a provisional ID',
+			() => {
+				const state = {
+					creates: [ { id: { index: 0 }, methodType: 'free_shipping', title: 'MyMethod' } ],
+					updates: [],
+					deletes: [],
+					currentlyEditingId: { index: 0 },
+					currentlyEditingChanges: { id: { index: 0 }, methodType: 'flat_rate' },
+					currentlyEditingChangedType: true,
+				};
 
-			const newState = reducer( state, closeShippingZoneMethod( siteId ) );
-			expect( newState.currentlyEditingId ).to.equal( null );
-			expect( newState.updates ).to.be.empty;
-			expect( newState.deletes ).to.be.empty;
-			expect( newState.creates.length ).to.equal( 1 );
-			expect( newState.creates[ 0 ].id ).to.deep.equal( { index: 0 } );
-			expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
-			expect( newState.creates[ 0 ]._originalId ).to.deep.equal( { index: 0 } );
-			// Check that the method was initialized:
-			expect( newState.creates[ 0 ].cost ).to.be.a.number;
-		} );
+				const newState = reducer( state, closeShippingZoneMethod( siteId ) );
+				expect( newState.currentlyEditingId ).to.equal( null );
+				expect( newState.updates ).to.be.empty;
+				expect( newState.deletes ).to.be.empty;
+				expect( newState.creates.length ).to.equal( 1 );
+				expect( newState.creates[ 0 ].id ).to.deep.equal( { index: 0 } );
+				expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
+				expect( newState.creates[ 0 ]._originalId ).to.deep.equal( { index: 0 } );
+				// Check that the method was initialized:
+				expect( newState.creates[ 0 ].cost ).to.be.a.number;
+			}
+		);
 
 		it( 'method type changed - should preserve the _originalId field if the method had already changed type before', () => {
 			const state = {
@@ -296,22 +312,25 @@ describe( 'reducer', () => {
 			expect( newState.updates ).to.deep.equal( [ { id: 1, title: 'New Title' } ] );
 		} );
 
-		it( 'title change - should add an entry on "updates" if the method has a server-side ID ' +
-			'and it has not been edited', () => {
-			const state = {
-				creates: [],
-				updates: [],
-				deletes: [],
-				currentlyEditingId: 1,
-				currentlyEditingChanges: { title: 'New Title' },
-			};
+		it(
+			'title change - should add an entry on "updates" if the method has a server-side ID ' +
+				'and it has not been edited',
+			() => {
+				const state = {
+					creates: [],
+					updates: [],
+					deletes: [],
+					currentlyEditingId: 1,
+					currentlyEditingChanges: { title: 'New Title' },
+				};
 
-			const newState = reducer( state, closeShippingZoneMethod( siteId ) );
-			expect( newState.currentlyEditingId ).to.equal( null );
-			expect( newState.creates ).to.be.empty;
-			expect( newState.deletes ).to.be.empty;
-			expect( newState.updates ).to.deep.equal( [ { id: 1, title: 'New Title' } ] );
-		} );
+				const newState = reducer( state, closeShippingZoneMethod( siteId ) );
+				expect( newState.currentlyEditingId ).to.equal( null );
+				expect( newState.creates ).to.be.empty;
+				expect( newState.deletes ).to.be.empty;
+				expect( newState.updates ).to.deep.equal( [ { id: 1, title: 'New Title' } ] );
+			}
+		);
 
 		it( 'title change - should change the entry in "creates" if the method has a provisional ID', () => {
 			const state = {
@@ -425,7 +444,10 @@ describe( 'reducer', () => {
 				updates: [],
 				deletes: [],
 			};
-			const newState = reducer( state, toggleShippingZoneMethodEnabled( siteId, { index: 0 }, true ) );
+			const newState = reducer(
+				state,
+				toggleShippingZoneMethodEnabled( siteId, { index: 0 }, true )
+			);
 			expect( newState.updates ).to.be.empty;
 			expect( newState.deletes ).to.be.empty;
 			expect( newState.creates ).to.deep.equal( [ { id: { index: 0 }, enabled: true } ] );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,20 +17,22 @@ import support from 'lib/url/support';
 
 class IcannVerification extends React.Component {
 	state = {
-		submitting: false
+		submitting: false,
 	};
 
 	handleClick = () => {
 		this.setState( { submitting: true } );
 
-		resendIcannVerification( this.props.selectedDomainName, ( error ) => {
+		resendIcannVerification( this.props.selectedDomainName, error => {
 			if ( error ) {
 				notices.error( error.message );
 			} else {
-				notices.success( this.props.translate(
-					'We sent the ICANN verification email to your ' +
-					'email address. Please check your inbox and click the link in the email.'
-				) );
+				notices.success(
+					this.props.translate(
+						'We sent the ICANN verification email to your ' +
+							'email address. Please check your inbox and click the link in the email.'
+					)
+				);
 			}
 
 			this.setState( { submitting: false } );
@@ -42,25 +45,26 @@ class IcannVerification extends React.Component {
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Transfer Domain' ) }>
-					<Button
-						onClick={ this.handleClick }
-						disabled={ this.state.submitting }
-						compact
-						primary>{ translate( 'Resend Verification Email' ) }</Button>
+					<Button onClick={ this.handleClick } disabled={ this.state.submitting } compact primary>
+						{ translate( 'Resend Verification Email' ) }
+					</Button>
 				</SectionHeader>
 
 				<Card className="transfer-card">
 					<p>
 						{ translate(
 							'You must verify your email address before you can transfer this domain. ' +
-							'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
+								'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 							{
 								components: {
-									learnMoreLink: <a
-										href={ support.TRANSFER_DOMAIN_REGISTRATION }
-										target="_blank"
-										rel="noopener noreferrer" />
-								}
+									learnMoreLink: (
+										<a
+											href={ support.TRANSFER_DOMAIN_REGISTRATION }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
 							}
 						) }
 					</p>
