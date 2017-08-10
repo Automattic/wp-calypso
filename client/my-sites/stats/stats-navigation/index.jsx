@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -5,6 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,9 +19,10 @@ import SegmentedControl from 'components/segmented-control';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import { isPluginActive } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { UNITS as StoreStatsTabs } from 'extensions/woocommerce/app/store-stats/constants';
 import config from 'config';
 
-const StatsNavigation = ( props ) => {
+const StatsNavigation = props => {
 	const { translate, section, slug, siteId, isJetpack, isStore } = props;
 	const siteFragment = slug ? '/' + slug : '';
 	const sectionTitles = {
@@ -34,6 +37,7 @@ const StatsNavigation = ( props ) => {
 	let statsControl;
 
 	if ( isStore ) {
+		const validSection = includes( Object.keys( StoreStatsTabs ), section ) ? section : 'day';
 		statsControl = (
 			<SegmentedControl
 				className="stats-navigation__control is-store"
@@ -41,22 +45,24 @@ const StatsNavigation = ( props ) => {
 				options={ [
 					{
 						value: 'site',
-						label: translate( 'Site' )
+						label: translate( 'Site' ),
 					},
 					{
 						value: 'store',
 						label: translate( 'Store' ),
-						path: `/store/stats/orders/${ section }/${ slug }` }
+						path: `/store/stats/orders/${ validSection }/${ slug }`,
+					},
 				] }
 			/>
 		);
 	}
 
-	const ActivityTab = config.isEnabled( 'jetpack/activity-log' ) && isJetpack
-		? <NavItem path={ '/stats/activity' + siteFragment } selected={ section === 'activity' }>
-				{ sectionTitles.activity }
-			</NavItem>
-		: null;
+	const ActivityTab =
+		config.isEnabled( 'jetpack/activity-log' ) && isJetpack
+			? <NavItem path={ '/stats/activity' + siteFragment } selected={ section === 'activity' }>
+					{ sectionTitles.activity }
+				</NavItem>
+			: null;
 
 	return (
 		<SectionNav selectedText={ sectionTitles[ section ] }>
@@ -90,18 +96,16 @@ StatsNavigation.propTypes = {
 	isStore: PropTypes.bool,
 	section: PropTypes.string.isRequired,
 	slug: PropTypes.string,
-	siteId: PropTypes.number.isRequired,
+	siteId: PropTypes.number,
 };
 
 const localized = localize( StatsNavigation );
 
-export default connect(
-	( state, { siteId } ) => {
-		const isJetpack = isJetpackSite( state, siteId );
-		return {
-			isJetpack,
-			isStore: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
-			siteId,
-		};
-	}
-)( localized );
+export default connect( ( state, { siteId } ) => {
+	const isJetpack = isJetpackSite( state, siteId );
+	return {
+		isJetpack,
+		isStore: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
+		siteId,
+	};
+} )( localized );
