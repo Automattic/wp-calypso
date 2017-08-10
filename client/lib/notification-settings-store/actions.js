@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -10,15 +11,15 @@ function buildSavePayload( source, settings ) {
 	switch ( source ) {
 		case 'wpcom':
 			return {
-				wpcom: settings.toObject()
+				wpcom: settings.toObject(),
 			};
 		case 'other':
 			return {
-				other: settings.toJS()
+				other: settings.toJS(),
 			};
 		default:
 			return {
-				blogs: [].concat( settings.toJS() )
+				blogs: [].concat( settings.toJS() ),
 			};
 	}
 }
@@ -32,7 +33,7 @@ export function toggle( source, stream, setting ) {
 		action: actionTypes.TOGGLE_SETTING,
 		source,
 		stream,
-		setting
+		setting,
 	} );
 }
 
@@ -43,7 +44,7 @@ export function fetchSettings() {
 		Dispatcher.handleServerAction( {
 			action: error ? actionTypes.FETCH_SETTINGS_FAILED : actionTypes.FETCH_SETTINGS_COMPLETE,
 			error,
-			data
+			data,
 		} );
 	} );
 }
@@ -51,11 +52,18 @@ export function fetchSettings() {
 export function saveSettings( source, settings, applyToAll = false ) {
 	Dispatcher.handleViewAction( { action: actionTypes.SAVE_SETTINGS } );
 
-	wpcom.undocumented().me().updateNotificationSettings( buildSavePayload( source, settings ), applyToAll, ( error, data ) => {
-		Dispatcher.handleServerAction( {
-			action: error ? actionTypes.SAVE_SETTINGS_FAILED : actionTypes.SAVE_SETTINGS_COMPLETE,
-			error,
-			data
-		} );
-	} );
+	wpcom
+		.undocumented()
+		.me()
+		.updateNotificationSettings(
+			buildSavePayload( source, settings ),
+			applyToAll,
+			( error, data ) => {
+				Dispatcher.handleServerAction( {
+					action: error ? actionTypes.SAVE_SETTINGS_FAILED : actionTypes.SAVE_SETTINGS_COMPLETE,
+					error,
+					data,
+				} );
+			}
+		);
 }

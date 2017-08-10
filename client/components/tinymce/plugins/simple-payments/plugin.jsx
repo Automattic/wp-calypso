@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -39,11 +40,7 @@ const simplePayments = editor => {
 					showDialog: visibility === 'show',
 					editPaymentId,
 					onInsert( productData ) {
-						editor.execCommand(
-							'mceInsertContent',
-							false,
-							serialize( productData )
-						);
+						editor.execCommand( 'mceInsertContent', false, serialize( productData ) );
 						renderModal( 'hide' );
 					},
 					onClose() {
@@ -52,7 +49,7 @@ const simplePayments = editor => {
 					},
 				} ),
 				node,
-				store,
+				store
 			);
 		}
 

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns media storage information for a given site.
  * @param   {Object}  state  Global state tree

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,25 +7,27 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
 const PluginIcon = ( { className, image, isPlaceholder } ) => {
-	const classes = classNames( {
-		'plugin-icon': true,
-		'is-placeholder': isPlaceholder,
-		'is-fallback': ! image,
-	}, className );
+	const classes = classNames(
+		{
+			'plugin-icon': true,
+			'is-placeholder': isPlaceholder,
+			'is-fallback': ! image,
+		},
+		className
+	);
 
 	return (
-		<div className={ classes } >
+		<div className={ classes }>
 			{ isPlaceholder || ! image
 				? <Gridicon icon="plugins" />
-				: <img className="plugin-icon__img" src={ image } />
-			}
+				: <img className="plugin-icon__img" src={ image } /> }
 		</div>
 	);
 };
 
 PluginIcon.propTypes = {
 	image: PropTypes.string,
-	isPlaceholder: PropTypes.bool
+	isPlaceholder: PropTypes.bool,
 };
 
 export default PluginIcon;

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,13 +13,13 @@ import { isPluginActive } from '../';
 const helloDolly = {
 	id: 'hello-dolly/hello',
 	slug: 'hello-dolly',
-	active: false
+	active: false,
 };
 
 export const jetpack = {
 	id: 'jetpack/jetpack',
 	slug: 'jetpack',
-	active: true
+	active: true,
 };
 
 const state = deepFreeze( {
@@ -27,9 +28,9 @@ const state = deepFreeze( {
 			plugins: {
 				'site.one': [ helloDolly ],
 				'site.two': [ jetpack, helloDolly ],
-			}
-		}
-	}
+			},
+		},
+	},
 } );
 
 describe( 'isPluginActive', () => {

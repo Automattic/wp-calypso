@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,22 +12,20 @@ import StoreConnection from 'components/data/store-connection';
 import SiteRedirectStore from 'lib/domains/site-redirect/store';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const stores = [
-	SiteRedirectStore
-];
+const stores = [ SiteRedirectStore ];
 
 function getStateFromStores( props ) {
 	return {
 		location: SiteRedirectStore.getBySite( props.selectedSite.domain ),
 		selectedDomainName: props.selectedDomainName,
-		selectedSite: props.selectedSite
+		selectedSite: props.selectedSite,
 	};
 }
 
 class SiteRedirectData extends Component {
 	static propTypes = {
 		component: PropTypes.func.isRequired,
-		selectedDomainName: PropTypes.string.isRequired
+		selectedDomainName: PropTypes.string.isRequired,
 	};
 
 	render() {
@@ -36,13 +35,14 @@ class SiteRedirectData extends Component {
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
 				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.selectedSite } />
+				selectedSite={ this.props.selectedSite }
+			/>
 		);
 	}
 }
 
-export default connect( ( state ) => {
+export default connect( state => {
 	return {
-		selectedSite: getSelectedSite( state )
+		selectedSite: getSelectedSite( state ),
 	};
 } )( SiteRedirectData );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +18,7 @@ class OrderTotalRow extends Component {
 			total_tax: PropTypes.string.isRequired,
 		} ),
 		showTax: PropTypes.bool,
-	}
+	};
 
 	render() {
 		const { order, showTax, translate } = this.props;
@@ -33,7 +34,9 @@ class OrderTotalRow extends Component {
 
 		return (
 			<div className="order__details-total">
-				<div className="order__details-totals-label">{ translate( 'Total' ) }</div>
+				<div className="order__details-totals-label">
+					{ translate( 'Total' ) }
+				</div>
 				{ showTax && tax }
 				<div className="order__details-totals-value">
 					{ formatCurrency( order.total, order.currency ) }

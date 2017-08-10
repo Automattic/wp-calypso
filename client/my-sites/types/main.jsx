@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,24 +25,15 @@ function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
 	return (
 		<Main>
 			<DocumentHead title={ get( postType, 'label' ) } />
-			<PageViewTracker
-				path={ siteId ? '/types/:site' : '/types' }
-				title="Custom Post Type" />
+			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
 			<SidebarNavigation />
-			{ false !== userCanEdit && false !== postTypeSupported && [
-				<PostTypeFilter
-					key="filter"
-					query={ userCanEdit ? query : null } />,
-				<PostTypeList
-					key="list"
-					query={ userCanEdit ? query : null } />
+			{ false !== userCanEdit &&
+			false !== postTypeSupported && [
+				<PostTypeFilter key="filter" query={ userCanEdit ? query : null } />,
+				<PostTypeList key="list" query={ userCanEdit ? query : null } />,
 			] }
-			{ false === postTypeSupported && (
-				<PostTypeUnsupported type={ query.type } />
-			) }
-			{ false === userCanEdit && (
-				<PostTypeForbidden />
-			) }
+			{ false === postTypeSupported && <PostTypeUnsupported type={ query.type } /> }
+			{ false === userCanEdit && <PostTypeForbidden /> }
 		</Main>
 	);
 }
@@ -51,7 +43,7 @@ Types.propTypes = {
 	query: PropTypes.object,
 	postType: PropTypes.object,
 	postTypeSupported: PropTypes.bool,
-	userCanEdit: PropTypes.bool
+	userCanEdit: PropTypes.bool,
 };
 
 export default connect( ( state, ownProps ) => {
@@ -63,6 +55,6 @@ export default connect( ( state, ownProps ) => {
 		siteId,
 		postType,
 		postTypeSupported: isPostTypeSupported( state, siteId, ownProps.query.type ),
-		userCanEdit: canCurrentUser( state, siteId, capability )
+		userCanEdit: canCurrentUser( state, siteId, capability ),
 	};
 } )( Types );

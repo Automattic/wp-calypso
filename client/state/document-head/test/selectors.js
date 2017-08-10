@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,7 @@ import {
 	getDocumentHeadCappedUnreadCount,
 	getDocumentHeadFormattedTitle,
 	getDocumentHeadMeta,
-	getDocumentHeadLink
+	getDocumentHeadLink,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -24,8 +25,8 @@ describe( 'selectors', () => {
 		it( 'should return the currently set title', () => {
 			const title = getDocumentHeadTitle( {
 				documentHead: {
-					title: 'My Section Title'
-				}
+					title: 'My Section Title',
+				},
 			} );
 
 			expect( title ).to.equal( 'My Section Title' );
@@ -36,8 +37,8 @@ describe( 'selectors', () => {
 		it( 'should return the unread posts counter', () => {
 			const unreadCount = getDocumentHeadUnreadCount( {
 				documentHead: {
-					unreadCount: 3
-				}
+					unreadCount: 3,
+				},
 			} );
 
 			expect( unreadCount ).to.equal( 3 );
@@ -48,8 +49,8 @@ describe( 'selectors', () => {
 		it( 'should return the capped unread posts counter', () => {
 			const unreadCount = getDocumentHeadCappedUnreadCount( {
 				documentHead: {
-					unreadCount: 45
-				}
+					unreadCount: 45,
+				},
 			} );
 
 			expect( unreadCount ).to.equal( '40+' );
@@ -63,8 +64,12 @@ describe( 'selectors', () => {
 					documentHead: {},
 					sites: {
 						items: {
-							2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'http://yourgroovydomain.com' }
-						}
+							2916284: {
+								ID: 2916284,
+								name: 'WordPress.com Example Blog',
+								URL: 'http://yourgroovydomain.com',
+							},
+						},
 					},
 					ui: {
 						selectedSiteId: 2916284,
@@ -73,9 +78,9 @@ describe( 'selectors', () => {
 							paths: [ '/', '/read' ],
 							module: 'reader',
 							group: 'reader',
-							secondary: true
-						}
-					}
+							secondary: true,
+						},
+					},
 				} );
 
 				expect( formattedTitle ).to.equal( 'WordPress.com' );
@@ -88,8 +93,12 @@ describe( 'selectors', () => {
 					},
 					sites: {
 						items: {
-							2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'http://yourgroovydomain.com' }
-						}
+							2916284: {
+								ID: 2916284,
+								name: 'WordPress.com Example Blog',
+								URL: 'http://yourgroovydomain.com',
+							},
+						},
 					},
 					ui: {
 						selectedSiteId: 2916284,
@@ -98,9 +107,9 @@ describe( 'selectors', () => {
 							paths: [ '/', '/read' ],
 							module: 'reader',
 							group: 'reader',
-							secondary: true
-						}
-					}
+							secondary: true,
+						},
+					},
 				} );
 
 				expect( formattedTitle ).to.equal( 'Reader — WordPress.com' );
@@ -110,12 +119,16 @@ describe( 'selectors', () => {
 				const formattedTitle = getDocumentHeadFormattedTitle( {
 					documentHead: {
 						title: 'Reader',
-						unreadCount: '12'
+						unreadCount: '12',
 					},
 					sites: {
 						items: {
-							2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'http://yourgroovydomain.com' }
-						}
+							2916284: {
+								ID: 2916284,
+								name: 'WordPress.com Example Blog',
+								URL: 'http://yourgroovydomain.com',
+							},
+						},
 					},
 					ui: {
 						selectedSiteId: 2916284,
@@ -124,9 +137,9 @@ describe( 'selectors', () => {
 							paths: [ '/', '/read' ],
 							module: 'reader',
 							group: 'reader',
-							secondary: true
-						}
-					}
+							secondary: true,
+						},
+					},
 				} );
 
 				expect( formattedTitle ).to.equal( '(12) Reader — WordPress.com' );
@@ -139,8 +152,12 @@ describe( 'selectors', () => {
 					documentHead: {},
 					sites: {
 						items: {
-							2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'http://yourgroovydomain.com' }
-						}
+							2916284: {
+								ID: 2916284,
+								name: 'WordPress.com Example Blog',
+								URL: 'http://yourgroovydomain.com',
+							},
+						},
 					},
 					ui: {
 						selectedSiteId: null,
@@ -149,9 +166,9 @@ describe( 'selectors', () => {
 							paths: [ '/themes' ],
 							module: 'my-sites/themes',
 							group: 'sites',
-							secondary: true
-						}
-					}
+							secondary: true,
+						},
+					},
 				} );
 
 				expect( formattedTitle ).to.equal( 'WordPress.com' );
@@ -164,8 +181,12 @@ describe( 'selectors', () => {
 					},
 					sites: {
 						items: {
-							2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'http://yourgroovydomain.com' }
-						}
+							2916284: {
+								ID: 2916284,
+								name: 'WordPress.com Example Blog',
+								URL: 'http://yourgroovydomain.com',
+							},
+						},
 					},
 					ui: {
 						selectedSiteId: null,
@@ -174,9 +195,9 @@ describe( 'selectors', () => {
 							paths: [ '/themes' ],
 							module: 'my-sites/themes',
 							group: 'sites',
-							secondary: true
-						}
-					}
+							secondary: true,
+						},
+					},
 				} );
 
 				expect( formattedTitle ).to.equal( 'Themes — WordPress.com' );
@@ -184,12 +205,15 @@ describe( 'selectors', () => {
 
 			it( 'should return formatted title made up of site only, for unset title', () => {
 				const formattedTitle = getDocumentHeadFormattedTitle( {
-					documentHead: {
-					},
+					documentHead: {},
 					sites: {
 						items: {
-							2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'http://yourgroovydomain.com' }
-						}
+							2916284: {
+								ID: 2916284,
+								name: 'WordPress.com Example Blog',
+								URL: 'http://yourgroovydomain.com',
+							},
+						},
 					},
 					ui: {
 						selectedSiteId: 2916284,
@@ -198,9 +222,9 @@ describe( 'selectors', () => {
 							paths: [ '/themes' ],
 							module: 'my-sites/themes',
 							group: 'sites',
-							secondary: true
-						}
-					}
+							secondary: true,
+						},
+					},
 				} );
 
 				expect( formattedTitle ).to.equal( 'WordPress.com Example Blog — WordPress.com' );
@@ -213,8 +237,12 @@ describe( 'selectors', () => {
 					},
 					sites: {
 						items: {
-							2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'http://yourgroovydomain.com' }
-						}
+							2916284: {
+								ID: 2916284,
+								name: 'WordPress.com Example Blog',
+								URL: 'http://yourgroovydomain.com',
+							},
+						},
 					},
 					ui: {
 						selectedSiteId: 2916284,
@@ -223,9 +251,9 @@ describe( 'selectors', () => {
 							paths: [ '/themes' ],
 							module: 'my-sites/themes',
 							group: 'sites',
-							secondary: true
-						}
-					}
+							secondary: true,
+						},
+					},
 				} );
 
 				expect( formattedTitle ).to.equal( 'Themes ‹ WordPress.com Example Blog — WordPress.com' );
@@ -239,14 +267,14 @@ describe( 'selectors', () => {
 				documentHead: {
 					meta: [
 						{ property: 'og:site_name', content: 'WordPress.com' },
-						{ property: 'og:type', content: 'website' }
-					]
-				}
+						{ property: 'og:type', content: 'website' },
+					],
+				},
 			} );
 
 			expect( meta ).to.eql( [
 				{ property: 'og:site_name', content: 'WordPress.com' },
-				{ property: 'og:type', content: 'website' }
+				{ property: 'og:type', content: 'website' },
 			] );
 		} );
 	} );
@@ -255,15 +283,11 @@ describe( 'selectors', () => {
 		it( 'should return the currently set links', () => {
 			const link = getDocumentHeadLink( {
 				documentHead: {
-					link: [
-						{ rel: 'canonical', href: 'https://wordpress.com' }
-					]
-				}
+					link: [ { rel: 'canonical', href: 'https://wordpress.com' } ],
+				},
 			} );
 
-			expect( link ).to.eql( [
-				{ rel: 'canonical', href: 'https://wordpress.com' }
-			] );
+			expect( link ).to.eql( [ { rel: 'canonical', href: 'https://wordpress.com' } ] );
 		} );
 	} );
 } );

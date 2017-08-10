@@ -1,10 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -18,22 +19,17 @@ import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData
+	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
 
-const StatModuleVideoDetails = ( props ) => {
+const StatModuleVideoDetails = props => {
 	const { data, query, requesting, siteId, translate } = props;
 	const isLoading = requesting && ! data;
 
-	const classes = classNames(
-		'stats-module',
-		'is-expanded',
-		'summary',
-		{
-			'is-loading': isLoading,
-			'has-no-data': ! data
-		}
-	);
+	const classes = classNames( 'stats-module', 'is-expanded', 'summary', {
+		'is-loading': isLoading,
+		'has-no-data': ! data,
+	} );
 
 	return (
 		<Card className={ classes }>
@@ -41,22 +37,19 @@ const StatModuleVideoDetails = ( props ) => {
 			<StatsModuleHeader title={ translate( 'Video Embeds' ) } showActions={ false } />
 			<StatsListLegend label={ translate( 'Page' ) } />
 			<StatsModulePlaceholder isLoading={ isLoading } />
-			<StatsList
-				moduleName="Video Details"
-				data={ data ? data.pages : [] }
-			/>
+			<StatsList moduleName="Video Details" data={ data ? data.pages : [] } />
 		</Card>
 	);
 };
 
-export default connect( ( state, {  postId } ) => {
+export default connect( ( state, { postId } ) => {
 	const siteId = getSelectedSiteId( state );
-	const query = { postId };
+	const query = { postId };
 
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, 'statsVideo', query ),
 		data: getSiteStatsNormalizedData( state, siteId, 'statsVideo', query ),
 		query,
-		siteId
+		siteId,
 	};
 } )( localize( StatModuleVideoDetails ) );

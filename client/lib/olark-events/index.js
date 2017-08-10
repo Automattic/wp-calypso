@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +24,7 @@ var olarkEvents = [
 		'api.chat.onMessageToOperator',
 		'api.chat.onMessageToVisitor',
 		'api.chat.onCommandFromOperator',
-		'api.chat.onOfflineMessageToOperator'
+		'api.chat.onOfflineMessageToOperator',
 	],
 	debug = debugModule( 'calypso:olark:events' ),
 	boundEvents = {},
@@ -47,7 +48,7 @@ var OlarkEventEmitter = {
 		initialized = true;
 
 		// add a listener for each of the events we care about
-		olarkEvents.forEach( ( event ) => this.addOlarkEventListener( event ) );
+		olarkEvents.forEach( event => this.addOlarkEventListener( event ) );
 
 		debug( 'Initalized' );
 	},
@@ -75,7 +76,7 @@ var OlarkEventEmitter = {
 	olarkEventListener: function( event, ...args ) {
 		debug( 'Olark event: %s', event );
 		this.emit( event, ...args );
-	}
+	},
 };
 
 // Inherit from EventEmitter

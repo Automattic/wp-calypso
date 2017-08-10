@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -21,7 +22,7 @@ import {
 } from 'state/action-types';
 
 export function fetchPostShareActionsScheduled( siteId, postId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST,
 			siteId,
@@ -36,19 +37,29 @@ export function fetchPostShareActionsScheduled( siteId, postId ) {
 			},
 			( error, data ) => {
 				if ( error || ! data.items ) {
-					return dispatch( { type: PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST_FAILURE, siteId, postId, error } );
+					return dispatch( {
+						type: PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST_FAILURE,
+						siteId,
+						postId,
+						error,
+					} );
 				}
 
 				const actions = {};
 				data.items.forEach( action => ( actions[ action.ID ] = action ) );
-				dispatch( { type: PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST_SUCCESS, siteId, postId, actions } );
+				dispatch( {
+					type: PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST_SUCCESS,
+					siteId,
+					postId,
+					actions,
+				} );
 			}
 		);
 	};
 }
 
 export function fetchPostShareActionsPublished( siteId, postId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST,
 			siteId,
@@ -61,25 +72,37 @@ export function fetchPostShareActionsPublished( siteId, postId ) {
 				path: getPublishedPath,
 				apiNamespace: 'wpcom/v2',
 				method: 'GET',
-			}, ( error, data ) => {
-			if ( error || ! data.items ) {
-				return dispatch( { type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_FAILURE, siteId, postId, error } );
-			}
+			},
+			( error, data ) => {
+				if ( error || ! data.items ) {
+					return dispatch( {
+						type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_FAILURE,
+						siteId,
+						postId,
+						error,
+					} );
+				}
 
-			const actions = {};
-			data.items.forEach( action => ( actions[ action.ID ] = action ) );
-			dispatch( { type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_SUCCESS, siteId, postId, actions } );
-		} );
+				const actions = {};
+				data.items.forEach( action => ( actions[ action.ID ] = action ) );
+				dispatch( {
+					type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_SUCCESS,
+					siteId,
+					postId,
+					actions,
+				} );
+			}
+		);
 	};
 }
 
 export function deletePostShareAction( siteId, postId, actionId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: PUBLICIZE_SHARE_ACTION_DELETE,
 			siteId,
 			postId,
-			actionId
+			actionId,
 		} );
 
 		const deleteActionPath = `/sites/${ siteId }/posts/${ postId }/publicize/scheduled-actions/${ actionId }`;
@@ -91,7 +114,13 @@ export function deletePostShareAction( siteId, postId, actionId ) {
 			},
 			( error, data ) => {
 				if ( error || ! data ) {
-					return dispatch( { type: PUBLICIZE_SHARE_ACTION_DELETE_FAILURE, siteId, postId, actionId, error } );
+					return dispatch( {
+						type: PUBLICIZE_SHARE_ACTION_DELETE_FAILURE,
+						siteId,
+						postId,
+						actionId,
+						error,
+					} );
 				}
 
 				dispatch( { type: PUBLICIZE_SHARE_ACTION_DELETE_SUCCESS, siteId, postId, actionId } );
@@ -101,7 +130,7 @@ export function deletePostShareAction( siteId, postId, actionId ) {
 }
 
 export function editPostShareAction( siteId, postId, actionId, message, share_date ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: PUBLICIZE_SHARE_ACTION_EDIT,
 			siteId,
@@ -119,19 +148,31 @@ export function editPostShareAction( siteId, postId, actionId, message, share_da
 			( error, data ) => {
 				if ( error || ! data.item ) {
 					// TODO: consider return an WP_Error instance istead of `! data.item`
-					return dispatch( { type: PUBLICIZE_SHARE_ACTION_EDIT_FAILURE, siteId, postId, actionId, error } );
+					return dispatch( {
+						type: PUBLICIZE_SHARE_ACTION_EDIT_FAILURE,
+						siteId,
+						postId,
+						actionId,
+						error,
+					} );
 				}
 
 				// TODO: until we have proper data coming
 				data.item.ID = actionId;
-				dispatch( { type: PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS, siteId, postId, actionId, item: data.item } );
+				dispatch( {
+					type: PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS,
+					siteId,
+					postId,
+					actionId,
+					item: data.item,
+				} );
 			}
 		);
 	};
 }
 
 export function schedulePostShareAction( siteId, postId, message, share_date, connections ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: PUBLICIZE_SHARE_ACTION_SCHEDULE,
 			siteId,
@@ -140,26 +181,32 @@ export function schedulePostShareAction( siteId, postId, message, share_date, co
 		} );
 
 		return Promise.all(
-			connections.map( connection_id => wpcom.req.post( {
-				path: `/sites/${ siteId }/posts/${ postId }/publicize/scheduled-actions/`,
-				body: { message, share_date, connection_id },
-				apiNamespace: 'wpcom/v2',
-			} ) )
+			connections.map( connection_id =>
+				wpcom.req.post( {
+					path: `/sites/${ siteId }/posts/${ postId }/publicize/scheduled-actions/`,
+					body: { message, share_date, connection_id },
+					apiNamespace: 'wpcom/v2',
+				} )
+			)
 		)
-			.catch( error => dispatch( {
-				type: PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
-				siteId,
-				postId,
-				error,
-				connections
-			} ) )
-			.then( items => dispatch( {
-				type: PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
-				siteId,
-				postId,
-				share_date,
-				items,
-				connections
-			} ) );
+			.catch( error =>
+				dispatch( {
+					type: PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
+					siteId,
+					postId,
+					error,
+					connections,
+				} )
+			)
+			.then( items =>
+				dispatch( {
+					type: PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
+					siteId,
+					postId,
+					share_date,
+					items,
+					connections,
+				} )
+			);
 	};
 }

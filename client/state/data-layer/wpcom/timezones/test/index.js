@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,15 +9,12 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import useNock from 'test/helpers/use-nock';
-import {
-	TIMEZONES_RECEIVE,
-	TIMEZONES_REQUEST_SUCCESS,
-} from 'state/action-types';
+import { TIMEZONES_RECEIVE, TIMEZONES_REQUEST_SUCCESS } from 'state/action-types';
 
 const WP_REST_API = {
 	hostname: 'https://public-api.wordpress.com',
 	namespace: '/wpcom/v2',
-	endpoint: '/timezones'
+	endpoint: '/timezones',
 };
 
 /*
@@ -26,7 +24,7 @@ import { fetchTimezones } from '../';
 
 describe( 'request', () => {
 	describe( 'successful requests', () => {
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( WP_REST_API.hostname )
 				.persist()
 				.get( WP_REST_API.namespace + WP_REST_API.endpoint )
@@ -43,17 +41,13 @@ describe( 'request', () => {
 						{ value: 'Indian/Comoro', label: 'Comoro' },
 					],
 					timezones_by_continent: {
-						Asia: [
-							{ value: 'Asia/Aqtobe', label: 'Aqtobe' },
-						],
+						Asia: [ { value: 'Asia/Aqtobe', label: 'Aqtobe' } ],
 						America: [
 							{ value: 'America/Blanc-Sablon', label: 'Blanc-Sablon' },
 							{ value: 'America/Boa_Vista', label: 'Boa Vista' },
 						],
-						Indian: [
-							{ value: 'Indian/Comoro', label: 'Comoro' },
-						]
-					}
+						Indian: [ { value: 'Indian/Comoro', label: 'Comoro' } ],
+					},
 				} );
 		} );
 
@@ -61,7 +55,7 @@ describe( 'request', () => {
 			const dispatch = sinon.spy( action => {
 				if ( action.type === TIMEZONES_REQUEST_SUCCESS ) {
 					expect( dispatch ).to.have.been.calledWith( {
-						type: TIMEZONES_REQUEST_SUCCESS
+						type: TIMEZONES_REQUEST_SUCCESS,
 					} );
 					done();
 				}
@@ -84,16 +78,9 @@ describe( 'request', () => {
 					'Indian/Comoro': 'Comoro',
 				},
 				byContinents: {
-					Asia: [
-						'Asia/Aqtobe',
-					],
-					America: [
-						'America/Blanc-Sablon',
-						'America/Boa_Vista',
-					],
-					Indian: [
-						'Indian/Comoro',
-					],
+					Asia: [ 'Asia/Aqtobe' ],
+					America: [ 'America/Blanc-Sablon', 'America/Boa_Vista' ],
+					Indian: [ 'Indian/Comoro' ],
 				},
 			};
 

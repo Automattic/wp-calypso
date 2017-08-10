@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,7 +19,7 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: SITE_PLANS_FETCH_COMPLETED,
 				siteId,
-				plans: []
+				plans: [],
 			} );
 		} );
 	} );

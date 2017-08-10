@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -29,17 +30,27 @@ export const getPaymentMethodTitle = ( translate, paymentType, digits ) => {
 		return supportedTypes[ paymentType ];
 	}
 
-	return translate( '%(card)s ****%(digits)s', { args: {
-		card: supportedTypes[ paymentType ],
-		digits
-	} } );
+	return translate( '%(card)s ****%(digits)s', {
+		args: {
+			card: supportedTypes[ paymentType ],
+			digits,
+		},
+	} );
 };
 
-const PaymentMethod = ( { translate, selected, isLoading, type, digits, name, expiry, onSelect } ) => {
-	const renderPlaceholder = () => (
+const PaymentMethod = ( {
+	translate,
+	selected,
+	isLoading,
+	type,
+	digits,
+	name,
+	expiry,
+	onSelect,
+} ) => {
+	const renderPlaceholder = () =>
 		<CompactCard className="label-settings__card">
-			<FormCheckbox
-				className="label-settings__card-checkbox" />
+			<FormCheckbox className="label-settings__card-checkbox" />
 			<PaymentLogo className="label-settings__card-logo" type="placeholder" />
 			<div className="label-settings__card-details">
 				<p className="label-settings__card-number" />
@@ -48,8 +59,7 @@ const PaymentMethod = ( { translate, selected, isLoading, type, digits, name, ex
 			<div className="label-settings__card-date">
 				<p />
 			</div>
-		</CompactCard>
-	);
+		</CompactCard>;
 
 	if ( isLoading ) {
 		return renderPlaceholder();
@@ -68,8 +78,12 @@ const PaymentMethod = ( { translate, selected, isLoading, type, digits, name, ex
 			/>
 			<PaymentLogo className="label-settings__card-logo" type={ typeId } />
 			<div className="label-settings__card-details">
-				<p className="label-settings__card-number">{ typeName }</p>
-				<p className="label-settings__card-name">{ name }</p>
+				<p className="label-settings__card-number">
+					{ typeName }
+				</p>
+				<p className="label-settings__card-name">
+					{ name }
+				</p>
 			</div>
 			<div className="label-settings__card-date">
 				{ translate( 'Expires %(date)s', {

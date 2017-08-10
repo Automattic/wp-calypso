@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +18,7 @@ class DnsRecord extends React.Component {
 	static propTypes = {
 		onDeleteDns: React.PropTypes.func.isRequired,
 		dnsRecord: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired
+		selectedDomainName: React.PropTypes.string.isRequired,
 	};
 
 	handledBy() {
@@ -39,37 +40,38 @@ class DnsRecord extends React.Component {
 			case 'AAAA':
 				return translate( 'Points to %(data)s', {
 					args: {
-						data
-					}
+						data,
+					},
 				} );
 
 			case 'CNAME':
 				return translate( 'Alias of %(data)s', {
 					args: {
-						data
-					}
+						data,
+					},
 				} );
 
 			case 'MX':
 				return translate( 'Mail handled by %(data)s with priority %(aux)s', {
 					args: {
 						data,
-						aux
-					}
+						aux,
+					},
 				} );
 
 			case 'SRV':
 				return translate(
 					'Service %(service)s (%(protocol)s) on target %(target)s:%(port)s, ' +
-					'with priority %(aux)s and weight %(weight)s', {
+						'with priority %(aux)s and weight %(weight)s',
+					{
 						args: {
 							service,
 							protocol,
 							target,
 							port,
 							aux,
-							weight
-						}
+							weight,
+						},
 					}
 				);
 		}

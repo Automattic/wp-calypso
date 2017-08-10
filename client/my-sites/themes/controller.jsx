@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -24,18 +25,10 @@ const debug = debugFactory( 'calypso:themes' );
 function getProps( context ) {
 	const { tier, filter, vertical, site_id: siteId } = context.params;
 
-	const { basePath, analyticsPageTitle } = getAnalyticsData(
-		context.path,
-		tier,
-		siteId
-	);
+	const { basePath, analyticsPageTitle } = getAnalyticsData( context.path, tier, siteId );
 
 	const boundTrackScrollPage = function() {
-		trackScrollPage(
-			basePath,
-			analyticsPageTitle,
-			'Themes'
-		);
+		trackScrollPage( basePath, analyticsPageTitle, 'Themes' );
 	};
 
 	return {
@@ -46,14 +39,16 @@ function getProps( context ) {
 		analyticsPath: basePath,
 		search: context.query.s,
 		pathName: context.pathname,
-		trackScrollPage: boundTrackScrollPage
+		trackScrollPage: boundTrackScrollPage,
 	};
 }
 
 export function upload( context, next ) {
 	// Store previous path to return to only if it was main showcase page
-	if ( startsWith( context.prevPath, '/themes' ) &&
-		! startsWith( context.prevPath, '/themes/upload' ) ) {
+	if (
+		startsWith( context.prevPath, '/themes' ) &&
+		! startsWith( context.prevPath, '/themes/upload' )
+	) {
 		context.store.dispatch( setBackPath( context.prevPath ) );
 	}
 
@@ -109,7 +104,7 @@ export function fetchThemeData( context, next ) {
 }
 
 export function fetchThemeFilters( context, next ) {
-	const { store } = context;
+	const { store } = context;
 
 	if ( ! isEmpty( getThemeFilters( store.getState() ) ) ) {
 		debug( 'found theme filters in cache' );
@@ -127,33 +122,33 @@ export function fetchThemeFilters( context, next ) {
 
 // Legacy (Atlas-based Theme Showcase v4) route redirects
 
-export function redirectSearchAndType( { res, params: { site, search, tier } } ) {
-	const target = '/themes/' + compact( [ tier, site ] ).join( '/' ); // tier before site!
+export function redirectSearchAndType( { res, params: { site, search, tier } } ) {
+	const target = '/themes/' + compact( [ tier, site ] ).join( '/' ); // tier before site!
 	if ( search ) {
-		res.redirect( `${ target }?s=${ search }` );
+		res.redirect( `${ target }?s=${ search }` );
 	} else {
 		res.redirect( target );
 	}
 }
 
-export function redirectFilterAndType( { res, params: { site, filter, tier } } ) {
+export function redirectFilterAndType( { res, params: { site, filter, tier } } ) {
 	let parts;
 	if ( filter ) {
 		parts = [ tier, 'filter', filter, site ];
 	} else {
-		parts = [ tier, site ];
+		parts = [ tier, site ];
 	}
 	res.redirect( '/themes/' + compact( parts ).join( '/' ) );
 }
 
-export function redirectToThemeDetails( { res, params: { site, theme, section } }, next ) {
+export function redirectToThemeDetails( { res, params: { site, theme, section } }, next ) {
 	// Make sure we aren't matching a site -- e.g. /themes/example.wordpress.com or /themes/1234567
-	if ( includes( theme, '.' ) || isFinite( theme ) ) {
+	if ( includes( theme, '.' ) || isFinite( theme ) ) {
 		return next();
 	}
 	let redirectedSection;
 	if ( section === 'support' ) {
 		redirectedSection = 'setup';
 	}
-	res.redirect( '/theme/' + compact( [ theme, redirectedSection, site ] ).join( '/' ) );
+	res.redirect( '/theme/' + compact( [ theme, redirectedSection, site ] ).join( '/' ) );
 }

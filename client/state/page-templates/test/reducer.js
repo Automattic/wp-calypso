@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,18 +15,15 @@ import {
 	PAGE_TEMPLATES_REQUEST_FAILURE,
 	PAGE_TEMPLATES_REQUEST_SUCCESS,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
 import reducer, { requesting, items } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
+	useSandbox( sandbox => sandbox.stub( console, 'warn' ) );
 
 	it( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'requesting',
-			'items'
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );
 	} );
 
 	describe( 'requesting()', () => {
@@ -38,63 +36,63 @@ describe( 'reducer', () => {
 		it( 'should set site ID to true value if request in progress', () => {
 			const state = requesting( undefined, {
 				type: PAGE_TEMPLATES_REQUEST,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
-				2916284: true
+				2916284: true,
 			} );
 		} );
 
 		it( 'should accumulate requesting values', () => {
 			const original = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = requesting( original, {
 				type: PAGE_TEMPLATES_REQUEST,
-				siteId: 77203074
+				siteId: 77203074,
 			} );
 
 			expect( state ).to.eql( {
 				2916284: true,
-				77203074: true
+				77203074: true,
 			} );
 		} );
 
 		it( 'should set site ID to false if request finishes successfully', () => {
 			const original = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = requesting( original, {
 				type: PAGE_TEMPLATES_REQUEST_SUCCESS,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
-				2916284: false
+				2916284: false,
 			} );
 		} );
 
 		it( 'should set site ID to false if request finishes with failure', () => {
 			const original = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = requesting( original, {
 				type: PAGE_TEMPLATES_REQUEST_FAILURE,
-				siteId: 2916284
+				siteId: 2916284,
 			} );
 
 			expect( state ).to.eql( {
-				2916284: false
+				2916284: false,
 			} );
 		} );
 
 		it( 'should not persist state', () => {
 			const original = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = requesting( original, {
-				type: SERIALIZE
+				type: SERIALIZE,
 			} );
 
 			expect( state ).to.eql( {} );
@@ -102,10 +100,10 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const original = deepFreeze( {
-				2916284: true
+				2916284: true,
 			} );
 			const state = requesting( original, {
-				type: DESERIALIZE
+				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.eql( {} );
@@ -125,15 +123,15 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 				templates: [
 					{ label: 'Full Width, No Sidebar', file: 'fullwidth-page.php' },
-					{ label: 'Portfolio Page Template', file: 'portfolio-page.php' }
-				]
+					{ label: 'Portfolio Page Template', file: 'portfolio-page.php' },
+				],
 			} );
 
 			expect( state ).to.eql( {
 				2916284: [
 					{ label: 'Full Width, No Sidebar', file: 'fullwidth-page.php' },
-					{ label: 'Portfolio Page Template', file: 'portfolio-page.php' }
-				]
+					{ label: 'Portfolio Page Template', file: 'portfolio-page.php' },
+				],
 			} );
 		} );
 
@@ -141,25 +139,21 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				2916284: [
 					{ label: 'Full Width, No Sidebar', file: 'fullwidth-page.php' },
-					{ label: 'Portfolio Page Template', file: 'portfolio-page.php' }
-				]
+					{ label: 'Portfolio Page Template', file: 'portfolio-page.php' },
+				],
 			} );
 			const state = items( original, {
 				type: PAGE_TEMPLATES_RECEIVE,
 				siteId: 77203074,
-				templates: [
-					{ label: 'Full Width', file: 'fullwidth.php' }
-				]
+				templates: [ { label: 'Full Width', file: 'fullwidth.php' } ],
 			} );
 
 			expect( state ).to.eql( {
 				2916284: [
 					{ label: 'Full Width, No Sidebar', file: 'fullwidth-page.php' },
-					{ label: 'Portfolio Page Template', file: 'portfolio-page.php' }
+					{ label: 'Portfolio Page Template', file: 'portfolio-page.php' },
 				],
-				77203074: [
-					{ label: 'Full Width', file: 'fullwidth.php' },
-				]
+				77203074: [ { label: 'Full Width', file: 'fullwidth.php' } ],
 			} );
 		} );
 
@@ -167,59 +161,45 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				2916284: [
 					{ label: 'Full Width, No Sidebar', file: 'fullwidth-page.php' },
-					{ label: 'Portfolio Page Template', file: 'portfolio-page.php' }
-				]
+					{ label: 'Portfolio Page Template', file: 'portfolio-page.php' },
+				],
 			} );
 			const state = items( original, {
 				type: PAGE_TEMPLATES_RECEIVE,
 				siteId: 2916284,
-				templates: [
-					{ label: 'Full Width', file: 'fullwidth.php' }
-				]
+				templates: [ { label: 'Full Width', file: 'fullwidth.php' } ],
 			} );
 
 			expect( state ).to.eql( {
-				2916284: [
-					{ label: 'Full Width', file: 'fullwidth.php' },
-				]
+				2916284: [ { label: 'Full Width', file: 'fullwidth.php' } ],
 			} );
 		} );
 
 		it( 'should persist state', () => {
 			const original = deepFreeze( {
-				2916284: [
-					{ label: 'Full Width', file: 'fullwidth.php' },
-				]
+				2916284: [ { label: 'Full Width', file: 'fullwidth.php' } ],
 			} );
 			const state = items( original, { type: SERIALIZE } );
 
 			expect( state ).to.eql( {
-				2916284: [
-					{ label: 'Full Width', file: 'fullwidth.php' },
-				]
+				2916284: [ { label: 'Full Width', file: 'fullwidth.php' } ],
 			} );
 		} );
 
 		it( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
-				2916284: [
-					{ label: 'Full Width', file: 'fullwidth.php' },
-				]
+				2916284: [ { label: 'Full Width', file: 'fullwidth.php' } ],
 			} );
 			const state = items( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {
-				2916284: [
-					{ label: 'Full Width', file: 'fullwidth.php' },
-				]
+				2916284: [ { label: 'Full Width', file: 'fullwidth.php' } ],
 			} );
 		} );
 
 		it( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
-				2916284: [
-					{ label: 'Full Width' },
-				]
+				2916284: [ { label: 'Full Width' } ],
 			} );
 			const state = items( original, { type: DESERIALIZE } );
 

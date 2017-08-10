@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +20,6 @@ function FollowList() {
 	}
 	this.data = [];
 }
-
 
 /**
  * Adds a new follower object to the data store

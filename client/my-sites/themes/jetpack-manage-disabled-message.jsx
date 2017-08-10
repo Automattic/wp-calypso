@@ -1,8 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -19,7 +20,7 @@ import { getSiteAdminUrl } from 'state/sites/selectors';
 class JetpackManageDisabledMessage extends Component {
 	clickOnActivate = () => {
 		analytics.ga.recordEvent( 'Jetpack', 'Activate manage', 'Site', this.props.siteId );
-	}
+	};
 
 	renderMockThemes() {
 		const exampleThemesData = [
@@ -33,16 +34,19 @@ class JetpackManageDisabledMessage extends Component {
 			{ name: 'Publication', slug: 'publication' },
 			{ name: 'Harmonic', slug: 'harmonic' },
 		];
-		const themes = exampleThemesData.map( ( { name, slug: id } ) => ( {
+		const themes = exampleThemesData.map( ( { name, slug: id } ) => ( {
 			id,
 			name,
-			screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + id + '/screenshot.png?w=660'
+			screenshot:
+				'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + id + '/screenshot.png?w=660',
 		} ) );
 		return (
-			<ThemesList themes={ themes }
+			<ThemesList
+				themes={ themes }
 				getButtonOptions={ noop }
-				onScreenshotClick= { noop }
-				onMoreButtonClick= { noop } />
+				onScreenshotClick={ noop }
+				onMoreButtonClick={ noop }
+			/>
 		);
 	}
 
@@ -52,21 +56,20 @@ class JetpackManageDisabledMessage extends Component {
 				<SidebarNavigation />
 				<JetpackManageErrorPage
 					template="optInManage"
-					title={ this.props.translate( 'Looking to manage this site\'s themes?' ) }
+					title={ this.props.translate( "Looking to manage this site's themes?" ) }
 					siteId={ this.props.siteId }
 					section="themes"
 					secondaryAction={ this.props.translate( 'Open Site Theme Browser' ) }
 					secondaryActionURL={ this.props.adminUrl }
 					secondaryActionTarget="_blank"
 					actionCallback={ this.clickOnActivate }
-					featureExample={ this.renderMockThemes() } />
+					featureExample={ this.renderMockThemes() }
+				/>
 			</Main>
 		);
 	}
 }
 
-export default connect(
-	( state, { siteId } ) => ( {
-		adminUrl: getSiteAdminUrl( state, siteId, 'themes.php' )
-	} )
-)( localize( JetpackManageDisabledMessage ) );
+export default connect( ( state, { siteId } ) => ( {
+	adminUrl: getSiteAdminUrl( state, siteId, 'themes.php' ),
+} ) )( localize( JetpackManageDisabledMessage ) );

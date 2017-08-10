@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -38,20 +39,22 @@ TrophiesData.prototype.get = function() {
 };
 
 TrophiesData.prototype.fetch = function() {
-	wpcom.me().getTrophies( function( error, data ) {
-		if ( error ) {
-			debug( error.error, error.message );
-		}
+	wpcom.me().getTrophies(
+		function( error, data ) {
+			if ( error ) {
+				debug( error.error, error.message );
+			}
 
-		this.data = data;
+			this.data = data;
 
-		if ( ! this.initialized ) {
-			this.initialized = true;
-			this.emit( 'change' );
-		}
+			if ( ! this.initialized ) {
+				this.initialized = true;
+				this.emit( 'change' );
+			}
 
-		store.set( 'TrophiesData', data );
-	}.bind( this ) );
+			store.set( 'TrophiesData', data );
+		}.bind( this )
+	);
 };
 
 TrophiesData.prototype.initialize = function( TrophiesData ) {

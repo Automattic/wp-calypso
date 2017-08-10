@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,8 +19,8 @@ const initialState = {};
 function updateSiteState( state, siteId, attributes ) {
 	return update( state, {
 		[ siteId ]: {
-			$apply: ( value ) => Object.assign( {}, value, attributes )
-		}
+			$apply: value => Object.assign( {}, value, attributes ),
+		},
 	} );
 }
 
@@ -27,15 +28,16 @@ function updateDomainState( state, siteId, domainName, attributes ) {
 	return update( state, {
 		[ siteId ]: {
 			list: {
-				$apply: domains => domains.map( ( domain ) => {
-					if ( domain.name !== domainName ) {
-						return domain;
-					}
+				$apply: domains =>
+					domains.map( domain => {
+						if ( domain.name !== domainName ) {
+							return domain;
+						}
 
-					return Object.assign( {}, domain, attributes );
-				} )
-			}
-		}
+						return Object.assign( {}, domain, attributes );
+					} ),
+			},
+		},
 	} );
 }
 
@@ -54,12 +56,12 @@ function reducer( state, payload ) {
 			return updateSiteState( state, siteId, {
 				isFetching: false,
 				hasLoadedFromServer: false,
-				list: null
+				list: null,
 			} );
 
 		case UpgradesActionTypes.DOMAINS_FETCH:
 			return updateSiteState( state, siteId, {
-				isFetching: true
+				isFetching: true,
 			} );
 
 		case UpgradesActionTypes.DOMAINS_FETCH_COMPLETED:
@@ -67,48 +69,51 @@ function reducer( state, payload ) {
 				isFetching: false,
 				hasLoadedFromServer: true,
 				list: action.domains,
-				settingPrimaryDomain: false
+				settingPrimaryDomain: false,
 			} );
 
 		case UpgradesActionTypes.DOMAINS_FETCH_FAILED:
 			debug( action.error );
 
 			return updateSiteState( state, siteId, {
-				isFetching: false
+				isFetching: false,
 			} );
 
 		case UpgradesActionTypes.PRIMARY_DOMAIN_SET:
 			return updateSiteState( state, siteId, {
-				settingPrimaryDomain: true
+				settingPrimaryDomain: true,
 			} );
 
 		case UpgradesActionTypes.PRIMARY_DOMAIN_SET_COMPLETED:
 			return updateSiteState( state, siteId, {
 				settingPrimaryDomain: false,
-				list: sortBy( getBySite( state, siteId ).list.map( domain => {
-					return Object.assign( {}, domain, { isPrimary: domain.name === action.domainName } );
-				} ), domain => ! domain.isPrimary )
+				list: sortBy(
+					getBySite( state, siteId ).list.map( domain => {
+						return Object.assign( {}, domain, { isPrimary: domain.name === action.domainName } );
+					} ),
+					domain => ! domain.isPrimary
+				),
 			} );
 
 		case UpgradesActionTypes.PRIMARY_DOMAIN_SET_FAILED:
 			return updateSiteState( state, siteId, {
-				settingPrimaryDomain: false
+				settingPrimaryDomain: false,
 			} );
 
 		case UpgradesActionTypes.PRIVACY_PROTECTION_ENABLE_COMPLETED:
 			return updateDomainState( state, action.siteId, action.domainName, {
-				privateDomain: true
+				privateDomain: true,
 			} );
 
 		case UpgradesActionTypes.DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED:
 			domainData = getSelectedDomain( {
 				domains: getBySite( state, action.siteId ),
-				selectedDomainName: action.domainName
+				selectedDomainName: action.domainName,
 			} );
-			privateDomain = ( ! action.disablePrivacy ) && domainData.privateDomain;
+			privateDomain = ! action.disablePrivacy && domainData.privateDomain;
 
 			return updateDomainState( state, action.siteId, action.domainName, {
-				privateDomain
+				privateDomain,
 			} );
 
 		default:
@@ -120,8 +125,4 @@ function getBySite( state, siteId ) {
 	return state[ siteId ];
 }
 
-export {
-	getBySite,
-	initialState,
-	reducer
-};
+export { getBySite, initialState, reducer };

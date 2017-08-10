@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -118,4 +119,3 @@ describe( 'parseAndValidateNumber', () => {
 		expect( parseAndValidateNumber( '99' ) ).to.equal( 99 );
 	} );
 } );
-

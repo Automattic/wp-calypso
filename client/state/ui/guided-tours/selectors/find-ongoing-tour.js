@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,6 +16,5 @@ import { GUIDED_TOUR_UPDATE } from 'state/action-types';
  */
 export default state => {
 	const last = findLast( getActionLog( state ), { type: GUIDED_TOUR_UPDATE } );
-	return last && ( last.shouldShow === undefined ) && last.tour;
+	return last && last.shouldShow === undefined && last.tour;
 };
-

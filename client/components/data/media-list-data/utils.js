@@ -1,3 +1,4 @@
+/** @format */
 module.exports = {
 	/**
 	 * Given a media filter, returns a partial mime type that can be used to
@@ -32,5 +33,5 @@ module.exports = {
 		}
 
 		return mime;
-	}
+	},
 };

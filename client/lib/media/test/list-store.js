@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,10 +14,15 @@ import useMockery from 'test/helpers/use-mockery';
 
 const DUMMY_SITE_ID = 1,
 	DUMMY_MEDIA_ID = 10,
-	DUMMY_MEDIA_OBJECT = { ID: DUMMY_MEDIA_ID, title: 'Image', date: '2015-06-19T09:36:09-04:00', mime_type: 'image/png' },
+	DUMMY_MEDIA_OBJECT = {
+		ID: DUMMY_MEDIA_ID,
+		title: 'Image',
+		date: '2015-06-19T09:36:09-04:00',
+		mime_type: 'image/png',
+	},
 	DUMMY_MEDIA_RESPONSE = {
 		media: [ DUMMY_MEDIA_OBJECT ],
-		meta: { next_page: 'value%3D2015-03-04T14%253A38%253A21%252B00%253A00%26id%3D2135' }
+		meta: { next_page: 'value%3D2015-03-04T14%253A38%253A21%252B00%253A00%26id%3D2135' },
 	};
 
 describe( 'MediaListStore', function() {
@@ -26,9 +32,9 @@ describe( 'MediaListStore', function() {
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/wp', {
 			me: () => ( {
-				get: noop
+				get: noop,
 			} ),
-			site: noop
+			site: noop,
 		} );
 	} );
 
@@ -60,50 +66,67 @@ describe( 'MediaListStore', function() {
 
 	function dispatchSetQuery( action ) {
 		handler( {
-			action: assign( {
-				type: 'SET_MEDIA_QUERY',
-				siteId: DUMMY_SITE_ID
-			}, action )
+			action: assign(
+				{
+					type: 'SET_MEDIA_QUERY',
+					siteId: DUMMY_SITE_ID,
+				},
+				action
+			),
 		} );
 	}
 
 	function dispatchFetchMedia( action ) {
 		handler( {
-			action: assign( {
-				type: 'FETCH_MEDIA_ITEMS',
-				siteId: DUMMY_SITE_ID
-			}, action )
+			action: assign(
+				{
+					type: 'FETCH_MEDIA_ITEMS',
+					siteId: DUMMY_SITE_ID,
+				},
+				action
+			),
 		} );
 	}
 
 	function dispatchReceiveMediaItems( action ) {
 		handler( {
-			action: assign( {
-				type: 'RECEIVE_MEDIA_ITEMS',
-				siteId: DUMMY_SITE_ID,
-				data: DUMMY_MEDIA_RESPONSE,
-				query: MediaListStore.getNextPageQuery( action && action.siteId ? action.siteId : DUMMY_SITE_ID )
-			}, action )
+			action: assign(
+				{
+					type: 'RECEIVE_MEDIA_ITEMS',
+					siteId: DUMMY_SITE_ID,
+					data: DUMMY_MEDIA_RESPONSE,
+					query: MediaListStore.getNextPageQuery(
+						action && action.siteId ? action.siteId : DUMMY_SITE_ID
+					),
+				},
+				action
+			),
 		} );
 	}
 
 	function dispatchReceiveMediaItem( action ) {
 		handler( {
-			action: assign( {
-				type: 'RECEIVE_MEDIA_ITEM',
-				siteId: DUMMY_SITE_ID,
-				data: DUMMY_MEDIA_OBJECT
-			}, action )
+			action: assign(
+				{
+					type: 'RECEIVE_MEDIA_ITEM',
+					siteId: DUMMY_SITE_ID,
+					data: DUMMY_MEDIA_OBJECT,
+				},
+				action
+			),
 		} );
 	}
 
 	function dispatchRemoveMediaItem( action ) {
 		handler( {
-			action: assign( {
-				type: 'REMOVE_MEDIA_ITEM',
-				siteId: DUMMY_SITE_ID,
-				data: DUMMY_MEDIA_OBJECT
-			}, action )
+			action: assign(
+				{
+					type: 'REMOVE_MEDIA_ITEM',
+					siteId: DUMMY_SITE_ID,
+					data: DUMMY_MEDIA_OBJECT,
+				},
+				action
+			),
 		} );
 	}
 
@@ -129,7 +152,7 @@ describe( 'MediaListStore', function() {
 		it( 'should sort media by date, with newest first', function() {
 			var media = [
 				DUMMY_MEDIA_OBJECT,
-				assign( {}, DUMMY_MEDIA_OBJECT, { ID: 20, date: '2015-06-19T11:36:09-04:00' } )
+				assign( {}, DUMMY_MEDIA_OBJECT, { ID: 20, date: '2015-06-19T11:36:09-04:00' } ),
 			];
 
 			MediaStore.get.restore();
@@ -145,7 +168,7 @@ describe( 'MediaListStore', function() {
 		it( 'should secondary sort media by ID, with larger first', function() {
 			var media = [
 				DUMMY_MEDIA_OBJECT,
-				assign( {}, DUMMY_MEDIA_OBJECT, { ID: 20, date: DUMMY_MEDIA_OBJECT.date } )
+				assign( {}, DUMMY_MEDIA_OBJECT, { ID: 20, date: DUMMY_MEDIA_OBJECT.date } ),
 			];
 
 			MediaStore.get.restore();
@@ -173,7 +196,9 @@ describe( 'MediaListStore', function() {
 
 	describe( '#getNextPageQuery()', function() {
 		it( 'should include default parameters if no query provided', function() {
-			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql( MediaListStore.DEFAULT_QUERY );
+			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql(
+				MediaListStore.DEFAULT_QUERY
+			);
 		} );
 
 		it( 'should include page_handle if the previous response included next_page meta', function() {
@@ -181,7 +206,7 @@ describe( 'MediaListStore', function() {
 
 			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql( {
 				number: MediaListStore.DEFAULT_QUERY.number,
-				page_handle: DUMMY_MEDIA_RESPONSE.meta.next_page
+				page_handle: DUMMY_MEDIA_RESPONSE.meta.next_page,
 			} );
 		} );
 
@@ -191,10 +216,15 @@ describe( 'MediaListStore', function() {
 			dispatchFetchMedia();
 			dispatchReceiveMediaItems();
 
-			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql( assign( {
-				number: MediaListStore.DEFAULT_QUERY.number,
-				page_handle: DUMMY_MEDIA_RESPONSE.meta.next_page
-			}, query ) );
+			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql(
+				assign(
+					{
+						number: MediaListStore.DEFAULT_QUERY.number,
+						page_handle: DUMMY_MEDIA_RESPONSE.meta.next_page,
+					},
+					query
+				)
+			);
 		} );
 
 		it( 'should reset the page handle when the query changes', function() {
@@ -202,10 +232,12 @@ describe( 'MediaListStore', function() {
 			dispatchReceiveMediaItems();
 			dispatchSetQuery( { query: query } );
 
-			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql( assign( {}, query, {
-				number: MediaListStore.DEFAULT_QUERY.number,
-				page_handle: undefined
-			} ) );
+			expect( MediaListStore.getNextPageQuery( DUMMY_SITE_ID ) ).to.eql(
+				assign( {}, query, {
+					number: MediaListStore.DEFAULT_QUERY.number,
+					page_handle: undefined,
+				} )
+			);
 		} );
 	} );
 
@@ -266,7 +298,7 @@ describe( 'MediaListStore', function() {
 			expect( matches ).to.be.true;
 		} );
 
-		it( 'should return false if a search query is specified, but the item doesn\'t match', function() {
+		it( "should return false if a search query is specified, but the item doesn't match", function() {
 			var matches;
 			dispatchSetQuery( { query: { search: 'Notmyitem' } } );
 
@@ -302,7 +334,7 @@ describe( 'MediaListStore', function() {
 			expect( matches ).to.be.false;
 		} );
 
-		it( 'should return false if a mime_type is specified, but the item doesn\'t match', function() {
+		it( "should return false if a mime_type is specified, but the item doesn't match", function() {
 			var matches;
 			dispatchSetQuery( { query: { mime_type: 'audio/' } } );
 

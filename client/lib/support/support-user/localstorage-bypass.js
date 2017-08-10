@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -5,23 +6,23 @@ import debugModule from 'debug';
 
 const debug = debugModule( 'calypso:support-user' );
 
-export const length = ( memoryStore ) => {
+export const length = memoryStore => {
 	return () => {
 		debug( 'Bypassing localStorage', 'length property' );
 		return Object.keys( memoryStore ).length;
-	}
-}
+	};
+};
 
-export const key = ( memoryStore ) => {
-	return ( index ) => {
+export const key = memoryStore => {
+	return index => {
 		debug( 'Bypassing localStorage', 'key' );
 		if ( index >= Object.keys( memoryStore ).length ) {
 			return null;
 		}
 
 		return Object.keys( memoryStore )[ index ];
-	}
-}
+	};
+};
 
 export const setItem = ( memoryStore, allowedKeys, original ) => {
 	return ( _key, value ) => {
@@ -32,22 +33,22 @@ export const setItem = ( memoryStore, allowedKeys, original ) => {
 
 		debug( 'Bypassing localStorage', 'setItem', _key );
 		memoryStore[ _key ] = value;
-	}
-}
+	};
+};
 
 export const getItem = ( memoryStore, allowedKeys, original ) => {
-	return ( _key ) => {
+	return _key => {
 		if ( allowedKeys.indexOf( _key ) > -1 ) {
 			return original( _key );
 		}
 
 		debug( 'Bypassing localStorage', 'getItem', _key );
 		return memoryStore[ _key ] || null;
-	}
-}
+	};
+};
 
 export const removeItem = ( memoryStore, allowedKeys, original ) => {
-	return ( _key ) => {
+	return _key => {
 		if ( allowedKeys.indexOf( _key ) > -1 ) {
 			original( _key );
 			return;
@@ -58,7 +59,7 @@ export const removeItem = ( memoryStore, allowedKeys, original ) => {
 	};
 };
 
-export const clear = ( memoryStore ) => {
+export const clear = memoryStore => {
 	return () => {
 		debug( 'Bypassing localStorage', 'clear' );
 

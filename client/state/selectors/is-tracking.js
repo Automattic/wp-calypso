@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns true if tracking is enabled for a given tracking tool
  *
@@ -7,5 +8,5 @@
  */
 
 export default function isTracking( state, trackingTool ) {
-	return !! state.analyticsTracking[ trackingTool ];
+	return !! state.analyticsTracking[ trackingTool ];
 }

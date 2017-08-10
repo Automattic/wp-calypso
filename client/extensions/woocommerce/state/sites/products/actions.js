@@ -1,3 +1,4 @@
+/** @format */
 import { trim } from 'lodash';
 
 /**
@@ -99,12 +100,10 @@ export function productUpdated( siteId, data, originatingAction ) {
  * @param {String} [failureAction=undefined] Optional action object to be dispatched upon error.
  * @return {Object} Action object
  */
-export const deleteProduct = (
-	siteId,
-	productId,
-	successAction = null,
-	failureAction = null,
-) => ( dispatch, getState ) => {
+export const deleteProduct = ( siteId, productId, successAction = null, failureAction = null ) => (
+	dispatch,
+	getState
+) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
@@ -120,8 +119,9 @@ export const deleteProduct = (
 
 	// ?force=true deletes a product instead of trashing
 	// In v1, we don't have trash management. Later we can trash instead.
-	return request( siteId ).del( `products/${ productId }?force=true` )
-		.then( ( data ) => {
+	return request( siteId )
+		.del( `products/${ productId }?force=true` )
+		.then( data => {
 			dispatch( deleteProductSuccess( siteId, data ) );
 			if ( successAction ) {
 				dispatch( successAction( data ) );
@@ -170,27 +170,30 @@ export const fetchProducts = ( siteId, page ) => ( dispatch, getState ) => {
 	};
 	dispatch( fetchAction );
 
-	return request( siteId ).getWithHeaders( `products?page=${ page }&per_page=10` ).then( ( response ) => {
-		const { headers, data } = response;
-		const totalPages = headers[ 'X-WP-TotalPages' ];
-		const totalProducts = headers[ 'X-WP-Total' ];
-		dispatch( {
-			type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
-			siteId,
-			page,
-			totalPages,
-			totalProducts,
-			products: data,
+	return request( siteId )
+		.getWithHeaders( `products?page=${ page }&per_page=10` )
+		.then( response => {
+			const { headers, data } = response;
+			const totalPages = headers[ 'X-WP-TotalPages' ];
+			const totalProducts = headers[ 'X-WP-Total' ];
+			dispatch( {
+				type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+				siteId,
+				page,
+				totalPages,
+				totalProducts,
+				products: data,
+			} );
+		} )
+		.catch( error => {
+			dispatch( setError( siteId, fetchAction, error ) );
+			dispatch( {
+				type: WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
+				siteId,
+				page,
+				error,
+			} );
 		} );
-	} ).catch( error => {
-		dispatch( setError( siteId, fetchAction, error ) );
-		dispatch( {
-			type: WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
-			siteId,
-			page,
-			error,
-		} );
-	} );
 };
 
 export const fetchProductSearchResults = ( siteId, page, query ) => ( dispatch, getState ) => {
@@ -215,27 +218,30 @@ export const fetchProductSearchResults = ( siteId, page, query ) => ( dispatch, 
 	};
 	dispatch( fetchAction );
 
-	return request( siteId ).getWithHeaders( `products?page=${ page }&per_page=10&search=${ queryForURL }` ).then( ( response ) => {
-		const { headers, data } = response;
-		const totalProducts = headers[ 'X-WP-Total' ];
-		dispatch( {
-			type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
-			siteId,
-			query,
-			page,
-			totalProducts,
-			products: data,
+	return request( siteId )
+		.getWithHeaders( `products?page=${ page }&per_page=10&search=${ queryForURL }` )
+		.then( response => {
+			const { headers, data } = response;
+			const totalProducts = headers[ 'X-WP-Total' ];
+			dispatch( {
+				type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_SUCCESS,
+				siteId,
+				query,
+				page,
+				totalProducts,
+				products: data,
+			} );
+		} )
+		.catch( error => {
+			dispatch( setError( siteId, fetchAction, error ) );
+			dispatch( {
+				type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_FAILURE,
+				siteId,
+				query,
+				page,
+				error,
+			} );
 		} );
-	} ).catch( error => {
-		dispatch( setError( siteId, fetchAction, error ) );
-		dispatch( {
-			type: WOOCOMMERCE_PRODUCTS_SEARCH_REQUEST_FAILURE,
-			siteId,
-			query,
-			page,
-			error,
-		} );
-	} );
 };
 
 export function clearProductSearch( siteId ) {

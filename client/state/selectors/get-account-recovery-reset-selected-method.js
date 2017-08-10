@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,4 +10,4 @@ import { get } from 'lodash';
  * @param  {Object} state Global app state.
  * @return {?String}      The string representation of the currently picked password reset method.
  */
-export default ( state ) => get( state, 'accountRecovery.reset.method', null );
+export default state => get( state, 'accountRecovery.reset.method', null );

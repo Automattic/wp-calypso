@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,44 +13,47 @@ import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 
 export default React.createClass( {
-
 	displayName: 'AddProfileLinksButtons',
 
 	mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
 
 	propTypes: {
 		showingForm: React.PropTypes.bool,
-		showPopoverMenu: React.PropTypes.bool
+		showPopoverMenu: React.PropTypes.bool,
 	},
 
 	getDefaultProps() {
 		return {
-			showingForm: false
+			showingForm: false,
 		};
 	},
 
 	getInitialState() {
 		return {
-			popoverPosition: 'top'
+			popoverPosition: 'top',
 		};
 	},
 
 	render() {
-		return(
+		return (
 			<div>
-
 				<PopoverMenu
 					isVisible={ this.props.showPopoverMenu }
 					onClose={ this.props.onClosePopoverMenu }
 					position={ this.state.popoverPosition }
 					context={ this.refs && this.refs.popoverMenuButton }
-					>
+				>
 					<PopoverMenuItem
-						onClick={ this.recordClickEvent( 'Add a WordPress Site Button', this.props.onShowAddWordPress ) }>
+						onClick={ this.recordClickEvent(
+							'Add a WordPress Site Button',
+							this.props.onShowAddWordPress
+						) }
+					>
 						{ this.translate( 'Add WordPress Site' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem
-						onClick={ this.recordClickEvent( 'Add Other Site Button', this.props.onShowAddOther ) }>
+						onClick={ this.recordClickEvent( 'Add Other Site Button', this.props.onShowAddOther ) }
+					>
 						{ this.translate( 'Add URL' ) }
 					</PopoverMenuItem>
 				</PopoverMenu>
@@ -58,11 +62,12 @@ export default React.createClass( {
 					compact
 					ref="popoverMenuButton"
 					className="popover-icon"
-					onClick={ this.props.onShowPopoverMenu }>
-						<Gridicon icon="add-outline" />
-						{ this.translate( 'Add' ) }
+					onClick={ this.props.onShowPopoverMenu }
+				>
+					<Gridicon icon="add-outline" />
+					{ this.translate( 'Add' ) }
 				</Button>
 			</div>
 		);
-	}
+	},
 } );

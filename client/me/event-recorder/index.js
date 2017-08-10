@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -61,5 +62,5 @@ module.exports = {
 				callback( event );
 			}
 		};
-	}
+	},
 };

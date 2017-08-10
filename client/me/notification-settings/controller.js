@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -30,7 +31,7 @@ export default {
 		renderWithReduxStore(
 			React.createElement( NotificationsComponent, {
 				userSettings: userSettings,
-				path: context.path
+				path: context.path,
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
@@ -41,16 +42,19 @@ export default {
 		const basePath = context.path;
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Comments on other sites', { textOnly: true } ) ) );
+		context.store.dispatch(
+			setTitle( i18n.translate( 'Comments on other sites', { textOnly: true } ) )
+		);
 
-		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites' );
+		analytics.pageView.record(
+			basePath,
+			ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites'
+		);
 
 		renderWithReduxStore(
-			React.createElement( CommentSettingsComponent,
-				{
-					path: context.path
-				}
-			),
+			React.createElement( CommentSettingsComponent, {
+				path: context.path,
+			} ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -60,16 +64,19 @@ export default {
 		const basePath = context.path;
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Updates from WordPress.com', { textOnly: true } ) ) );
+		context.store.dispatch(
+			setTitle( i18n.translate( 'Updates from WordPress.com', { textOnly: true } ) )
+		);
 
-		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Updates from WordPress.com' );
+		analytics.pageView.record(
+			basePath,
+			ANALYTICS_PAGE_TITLE + ' > Notifications > Updates from WordPress.com'
+		);
 
 		renderWithReduxStore(
-			React.createElement( WPcomSettingsComponent,
-				{
-					path: context.path
-				}
-			),
+			React.createElement( WPcomSettingsComponent, {
+				path: context.path,
+			} ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -81,17 +88,18 @@ export default {
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) );
 
-		analytics.ga.recordPageView( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites' );
+		analytics.ga.recordPageView(
+			basePath,
+			ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites'
+		);
 
 		renderWithReduxStore(
-			React.createElement( NotificationSubscriptions,
-				{
-					userSettings: userSettings,
-					path: context.path
-				}
-			),
+			React.createElement( NotificationSubscriptions, {
+				userSettings: userSettings,
+				path: context.path,
+			} ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };

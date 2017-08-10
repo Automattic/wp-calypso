@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,9 +15,13 @@ export function getAllVariationEdits( state, siteId = getSelectedSiteId( state )
 	return get( woocommerce, [ 'ui', 'products', siteId, 'variations', 'edits' ], [] );
 }
 
-export function getVariationEditsStateForProduct( state, productId, siteId = getSelectedSiteId( state ) ) {
+export function getVariationEditsStateForProduct(
+	state,
+	productId,
+	siteId = getSelectedSiteId( state )
+) {
 	const variations = getAllVariationEdits( state, siteId );
-	return find( variations, ( v ) => isEqual( productId, v.productId ) );
+	return find( variations, v => isEqual( productId, v.productId ) );
 }
 
 /**
@@ -28,11 +33,16 @@ export function getVariationEditsStateForProduct( state, productId, siteId = get
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object} The current accumulated edits
  */
-export function getVariationEdits( state, productId, variationId, siteId = getSelectedSiteId( state ) ) {
+export function getVariationEdits(
+	state,
+	productId,
+	variationId,
+	siteId = getSelectedSiteId( state )
+) {
 	const edits = getVariationEditsStateForProduct( state, productId, siteId );
-	const bucket = isNumber( variationId ) && 'updates' || 'creates';
+	const bucket = ( isNumber( variationId ) && 'updates' ) || 'creates';
 	const array = get( edits, bucket, [] );
-	return find( array, ( v ) => isEqual( variationId, v.id ) );
+	return find( array, v => isEqual( variationId, v.id ) );
 }
 
 /**
@@ -44,13 +54,18 @@ export function getVariationEdits( state, productId, variationId, siteId = getSe
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object} The product data merged between the fetched data and edits
  */
-export function getVariationWithLocalEdits( state, productId, variationId, siteId = getSelectedSiteId( state ) ) {
+export function getVariationWithLocalEdits(
+	state,
+	productId,
+	variationId,
+	siteId = getSelectedSiteId( state )
+) {
 	const existing = isNumber( variationId );
 	const variations = existing && getVariationsForProduct( state, productId, siteId );
 	const variation = variations && variations[ variationId ];
 	const variationEdits = getVariationEdits( state, productId, variationId, siteId );
 
-	return ( variation || variationEdits ) && { ...variation, ...variationEdits } || undefined;
+	return ( ( variation || variationEdits ) && { ...variation, ...variationEdits } ) || undefined;
 }
 
 /**
@@ -61,7 +76,11 @@ export function getVariationWithLocalEdits( state, productId, variationId, siteI
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object} Variation object that is merged between fetched data and edits
  */
-export function getCurrentlyEditingVariation( state, productId, siteId = getSelectedSiteId( state ) ) {
+export function getCurrentlyEditingVariation(
+	state,
+	productId,
+	siteId = getSelectedSiteId( state )
+) {
 	const edits = getVariationEditsStateForProduct( state, productId, siteId ) || {};
 	const { currentlyEditingId } = edits;
 
@@ -76,23 +95,31 @@ export function getCurrentlyEditingVariation( state, productId, siteId = getSele
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Array} Array of variation objects.
  */
-export function getProductVariationsWithLocalEdits( state, productId, siteId = getSelectedSiteId( state ) ) {
+export function getProductVariationsWithLocalEdits(
+	state,
+	productId,
+	siteId = getSelectedSiteId( state )
+) {
 	const variations = getVariationsForProduct( state, productId, siteId );
 	const edits = getVariationEditsStateForProduct( state, productId, siteId );
 	const creates = get( edits, 'creates', undefined );
 	const updates = get( edits, 'updates', undefined );
 	const deletes = get( edits, 'deletes', undefined );
 
-	const updatedVariations = compact( ( variations || [] ).map( ( variation ) => {
-		const isDeleted = Boolean( find( deletes, ( deletedId ) => isEqual( variation.id, deletedId ) ) );
+	const updatedVariations = compact(
+		( variations || [] ).map( variation => {
+			const isDeleted = Boolean( find( deletes, deletedId => isEqual( variation.id, deletedId ) ) );
 
-		if ( isDeleted ) {
-			return undefined;
-		}
+			if ( isDeleted ) {
+				return undefined;
+			}
 
-		const update = find( updates, { id: variation.id } );
-		return { ...variation, ...update };
-	} ) );
+			const update = find( updates, { id: variation.id } );
+			return { ...variation, ...update };
+		} )
+	);
 
-	return creates || variations ? [ ...( creates || [] ), ...( updatedVariations || [] ) ] : undefined;
+	return creates || variations
+		? [ ...( creates || [] ), ...( updatedVariations || [] ) ]
+		: undefined;
 }

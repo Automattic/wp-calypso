@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,15 +29,16 @@ const user = new User(),
 		contentChangedCallback() {},
 		glotPress: {
 			url: 'https://translate.wordpress.com',
-			project: 'test'
-		}
+			project: 'test',
+		},
 	};
 
 /**
  * Local variables
  */
 
-var	injectUrl, initialized,
+var injectUrl,
+	initialized,
 	previousEnabledSetting,
 	_shouldWrapTranslations = false;
 
@@ -88,7 +90,7 @@ const communityTranslatorJumpstart = {
 
 		const props = {
 			className: 'translatable',
-			'data-singular': originalFromPage
+			'data-singular': originalFromPage,
 		};
 
 		// Has Context
@@ -156,7 +158,8 @@ const communityTranslatorJumpstart = {
 
 		debug( 'Translator Jumpstart: loading locale file for ' + localeCode );
 		translationDataFromPage.localeCode = localeCode;
-		translationDataFromPage.pluralForms = languageJson[ '' ].plural_forms ||
+		translationDataFromPage.pluralForms =
+			languageJson[ '' ].plural_forms ||
 			languageJson[ '' ][ 'Plural-Forms' ] ||
 			languageJson[ '' ][ 'plural-forms' ] ||
 			translationDataFromPage.pluralForms;
@@ -164,7 +167,10 @@ const communityTranslatorJumpstart = {
 
 		const currentLocale = find( languages, lang => lang.langSlug === localeCode );
 		if ( currentLocale ) {
-			translationDataFromPage.languageName = currentLocale.name.replace( /^(?:[a-z]{2,3}|[a-z]{2}-[a-z]{2})\s+-\s+/, '' );
+			translationDataFromPage.languageName = currentLocale.name.replace(
+				/^(?:[a-z]{2,3}|[a-z]{2}-[a-z]{2})\s+-\s+/,
+				''
+			);
 		}
 
 		this.setInjectionURL( 'community-translator.min.js' );
@@ -226,7 +232,8 @@ const communityTranslatorJumpstart = {
 				debug( 'Script loaded!' );
 
 				window.communityTranslator.registerTranslatedCallback(
-					communityTranslatorJumpstart.updateTranslation );
+					communityTranslatorJumpstart.updateTranslation
+				);
 				activate();
 			} );
 			return false;
@@ -249,8 +256,14 @@ const communityTranslatorJumpstart = {
 			translations = newTranslation.translations;
 		// jed expects:
 		// 'context\004singular': [plural, translatedSingular, translatedPlural...]
-		debug( 'Updating ', newTranslation.singular, 'from', locale[ key ],
-			'to', [ plural ].concat( translations ) );
+		debug(
+			'Updating ',
+			newTranslation.singular,
+			'from',
+			locale[ key ],
+			'to',
+			[ plural ].concat( translations )
+		);
 		locale[ key ] = [ plural ].concat( translations );
 
 		i18n.setLocale( locale );
@@ -262,7 +275,7 @@ const communityTranslatorJumpstart = {
 		}
 
 		return true;
-	}
+	},
 };
 
 // wrap translations from i18n

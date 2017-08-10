@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,16 +11,22 @@ export default React.createClass( {
 
 	propTypes: {
 		className: React.PropTypes.string,
-		onClick: React.PropTypes.func
+		onClick: React.PropTypes.func,
 	},
 
 	render: function() {
-		const hasRegions = React.Children.toArray( this.props.children ).some( el => el.type === SidebarRegion );
+		const hasRegions = React.Children
+			.toArray( this.props.children )
+			.some( el => el.type === SidebarRegion );
 
 		return (
-			<ul className={ classNames( 'sidebar', this.props.className, { 'has-regions': hasRegions } ) } onClick={ this.props.onClick } data-tip-target="sidebar">
+			<ul
+				className={ classNames( 'sidebar', this.props.className, { 'has-regions': hasRegions } ) }
+				onClick={ this.props.onClick }
+				data-tip-target="sidebar"
+			>
 				{ this.props.children }
 			</ul>
 		);
-	}
+	},
 } );

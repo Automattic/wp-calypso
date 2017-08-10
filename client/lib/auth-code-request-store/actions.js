@@ -1,14 +1,15 @@
-import request from 'superagent'
+/** @format */
+import request from 'superagent';
 
-import Dispatcher from 'dispatcher'
-import { actions } from './constants'
+import Dispatcher from 'dispatcher';
+import { actions } from './constants';
 
 var timeout;
 
 export function resetCode() {
 	timeout = null;
 	Dispatcher.handleViewAction( {
-		type: actions.RESET_AUTH_CODE_REQUEST
+		type: actions.RESET_AUTH_CODE_REQUEST,
 	} );
 }
 
@@ -18,18 +19,16 @@ export function requestCode( username, password ) {
 	}
 
 	Dispatcher.handleViewAction( {
-		type: actions.AUTH_CODE_REQUEST
+		type: actions.AUTH_CODE_REQUEST,
 	} );
 
-	request.post( '/sms' )
-		.send( { username, password } )
-		.end( ( error, data ) => {
-			timeout = setTimeout( resetCode, 1000 * 30 );
+	request.post( '/sms' ).send( { username, password } ).end( ( error, data ) => {
+		timeout = setTimeout( resetCode, 1000 * 30 );
 
-			Dispatcher.handleServerAction( {
-				type: actions.RECEIVE_AUTH_CODE_REQUEST,
-				data,
-				error
-			} );
+		Dispatcher.handleServerAction( {
+			type: actions.RECEIVE_AUTH_CODE_REQUEST,
+			data,
+			error,
 		} );
+	} );
 }

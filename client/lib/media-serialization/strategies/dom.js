@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -21,10 +22,10 @@ function parseImage( node, _parsed ) {
 	_parsed.type = MediaTypes.IMAGE;
 	_parsed.media.URL = node.getAttribute( 'src' );
 	_parsed.media.alt = node.getAttribute( 'alt' );
-	_parsed.media.transient = ( 0 === ( _parsed.media.URL || '' ).indexOf( 'blob:' ) );
+	_parsed.media.transient = 0 === ( _parsed.media.URL || '' ).indexOf( 'blob:' );
 
 	// Parse dimensions
-	[ 'width', 'height' ].forEach( ( dimension ) => {
+	[ 'width', 'height' ].forEach( dimension => {
 		var natural = 'natural' + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ),
 			value = node.getAttribute( dimension ) || node[ natural ] || node[ dimension ];
 

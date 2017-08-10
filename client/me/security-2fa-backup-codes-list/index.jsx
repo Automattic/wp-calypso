@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,7 +25,6 @@ const FormButton = require( 'components/forms/form-button' ),
 	Tooltip = require( 'components/tooltip' );
 
 module.exports = React.createClass( {
-
 	displayName: 'Security2faBackupCodesList',
 
 	popup: false,
@@ -35,7 +35,7 @@ module.exports = React.createClass( {
 		// Configure clipboard to be triggered on clipboard button press
 		const button = ReactDom.findDOMNode( this.refs.copyCodesBtn );
 		this.clipboard = new Clipboard( button, {
-			text: () => this.getBackupCodePlainText( this.props.backupCodes )
+			text: () => this.getBackupCodePlainText( this.props.backupCodes ),
 		} );
 		this.clipboard.on( 'success', this.onCopy );
 	},
@@ -50,12 +50,12 @@ module.exports = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			backupCodes: []
+			backupCodes: [],
 		};
 	},
 
 	propTypes: {
-		onNextStep: React.PropTypes.func.isRequired
+		onNextStep: React.PropTypes.func.isRequired,
 	},
 
 	getInitialState: function() {
@@ -63,7 +63,7 @@ module.exports = React.createClass( {
 			userAgrees: false,
 			printCodesTooltip: false,
 			downloadCodesTooltip: false,
-			copyCodesTooltip: false
+			copyCodesTooltip: false,
 		};
 	},
 
@@ -71,11 +71,9 @@ module.exports = React.createClass( {
 		this.popup = window.open();
 
 		if ( null === this.popup ) {
-			this.setState(
-				{
-					lastError: this.translate( 'Please disable your pop-up blocker and try again.' )
-				}
-			);
+			this.setState( {
+				lastError: this.translate( 'Please disable your pop-up blocker and try again.' ),
+			} );
 			return false;
 		}
 
@@ -108,7 +106,7 @@ module.exports = React.createClass( {
 
 		const backupCodes = this.props.backupCodes.join( '\n' );
 		const toSave = new Blob( [ backupCodes ], { type: 'text/plain;charset=utf-8' } );
-		saveAs( toSave, `${username}-backup-codes.txt` );
+		saveAs( toSave, `${ username }-backup-codes.txt` );
 	},
 
 	getBackupCodePlainText: function( backupCodes ) {
@@ -151,42 +149,44 @@ module.exports = React.createClass( {
 		html += '<body style="font-family:sans-serif">';
 
 		html += '<div style="padding:10px; border:1px dashed black; display:inline-block">';
-		html += (
+		html +=
 			'<p style="margin-top:0"><strong>' +
 			this.translate( 'Backup verification codes' ) +
-			'</strong></p>'
-		);
+			'</strong></p>';
 
 		html += '<table style="border-spacing:30px 5px">';
 		html += '<tbody>';
 
 		for ( row = 0; row < 5; row++ ) {
-			html += (
+			html +=
 				'<tr>' +
-				'<td>' + ( row + 1 ) + '. ' +
-				'<strong>' + codes[ row * 2 ] + '</strong>' +
+				'<td>' +
+				( row + 1 ) +
+				'. ' +
+				'<strong>' +
+				codes[ row * 2 ] +
+				'</strong>' +
 				'</td>' +
-				'<td>' + ( row + 6 ) + '. ' +
-				'<strong>' + codes[ row * 2 + 1 ] + '</strong>' +
+				'<td>' +
+				( row + 6 ) +
+				'. ' +
+				'<strong>' +
+				codes[ row * 2 + 1 ] +
+				'</strong>' +
 				'</td>' +
-				'</tr>'
-			);
+				'</tr>';
 		}
 
 		html += '</tbody></table>';
 
-		html += (
+		html +=
 			'<p style="margin-bottom:0">' +
-			this.translate(
-				'Printed: %(datePrinted)s',
-				{
-					args: {
-						datePrinted: datePrinted
-					}
-				}
-			) +
-			'</p>'
-		);
+			this.translate( 'Printed: %(datePrinted)s', {
+				args: {
+					datePrinted: datePrinted,
+				},
+			} ) +
+			'</p>';
 
 		html += '</div></body></html>';
 		return html;
@@ -200,10 +200,13 @@ module.exports = React.createClass( {
 
 		/* this code takes advantage of setTimeout not running until after the
 		print dialog is dismissed - it is more reliable than using focus tricks */
-		setTimeout( function() {
-			this.popup.close();
-			this.popup = false;
-		}.bind( this ), 100 );
+		setTimeout(
+			function() {
+				this.popup.close();
+				this.popup = false;
+			}.bind( this ),
+			100
+		);
 	},
 
 	onNextStep: function( event ) {
@@ -232,18 +235,16 @@ module.exports = React.createClass( {
 
 	renderList: function() {
 		const backupCodes = this.props.backupCodes.length
-							? this.props.backupCodes
-							: this.getPlaceholders();
+			? this.props.backupCodes
+			: this.getPlaceholders();
 
 		return (
 			<div>
 				<p>
-					{
-						this.translate(
-							'We ask that you print this list of ten unique, ' +
+					{ this.translate(
+						'We ask that you print this list of ten unique, ' +
 							'one-time-use backup codes and keep the list in a safe place.'
-						)
-					}
+					) }
 				</p>
 				<ol className="security-2fa-backup-codes-list__codes">
 					{ backupCodes.map( function( backupCode, index ) {
@@ -251,7 +252,10 @@ module.exports = React.createClass( {
 						// we add a space to each backup code so that if the user wants to copy and paste the entire list
 						// the backup codes aren't placed in the clipboard as a single long number
 						return (
-							<li key={ index } className={ this.props.backupCodes.length ? null : 'is-placeholder' } >
+							<li
+								key={ index }
+								className={ this.props.backupCodes.length ? null : 'is-placeholder' }
+							>
 								<span>
 									{ spacedCode }
 								</span>
@@ -262,7 +266,9 @@ module.exports = React.createClass( {
 
 				<p className="security-2fa-backup-codes-list__warning">
 					<Gridicon icon="notice" />
-					{ this.translate( 'Without access to the app, your phone, or a backup code, you will lose access to your account.' ) }
+					{ this.translate(
+						'Without access to the app, your phone, or a backup code, you will lose access to your account.'
+					) }
 				</p>
 
 				{ this.possiblyRenderError() }
@@ -274,10 +280,9 @@ module.exports = React.createClass( {
 							onChange={ this.onUserAgreesChange }
 						/>
 						<span>
-							{
-								this.translate( 'I have printed or saved these codes',
-								{ context: 'The codes are the backup codes for Two-Step Authentication.' } )
-							}
+							{ this.translate( 'I have printed or saved these codes', {
+								context: 'The codes are the backup codes for Two-Step Authentication.',
+							} ) }
 						</span>
 					</FormLabel>
 
@@ -289,10 +294,9 @@ module.exports = React.createClass( {
 						}.bind( this ) }
 						disabled={ this.getSubmitDisabled() }
 					>
-						{
-							this.translate( 'All Finished!',
-							{ context: 'The user presses the All Finished button at the end of Two-Step setup.' } )
-						}
+						{ this.translate( 'All Finished!', {
+							context: 'The user presses the All Finished button at the end of Two-Step setup.',
+						} ) }
 					</FormButton>
 					<ButtonGroup className="security-2fa-backup-codes-list__btn-group">
 						<Button
@@ -312,7 +316,8 @@ module.exports = React.createClass( {
 							</Tooltip>
 						</Button>
 
-						<Button className="security-2fa-backup-codes-list__print"
+						<Button
+							className="security-2fa-backup-codes-list__print"
 							disabled={ ! this.props.backupCodes.length }
 							onClick={ this.onPrint }
 							onMouseEnter={ this.enablePrintCodesTooltip }
@@ -329,7 +334,8 @@ module.exports = React.createClass( {
 							</Tooltip>
 						</Button>
 
-						<Button className="security-2fa-backup-codes-list__download"
+						<Button
+							className="security-2fa-backup-codes-list__download"
 							disabled={ ! this.props.backupCodes.length }
 							onClick={ this.saveCodesToFile }
 							onMouseEnter={ this.enableDownloadCodesTooltip }
@@ -375,5 +381,5 @@ module.exports = React.createClass( {
 				{ this.renderList() }
 			</div>
 		);
-	}
+	},
 } );

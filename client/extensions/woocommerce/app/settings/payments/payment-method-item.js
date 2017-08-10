@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -64,25 +65,21 @@ class PaymentMethodItem extends Component {
 
 	onCancel = () => {
 		this.props.cancelEditingPaymentMethod( this.props.site.ID, this.props.method.id );
-	}
+	};
 
 	onEdit = () => {
 		this.props.openPaymentMethodForEdit( this.props.site.ID, this.props.method.id );
-	}
+	};
 
 	onEditField = ( field, value ) => {
 		this.props.changePaymentMethodField( this.props.site.ID, field, value );
-	}
+	};
 
-	onChangeEnabled = ( e ) => {
+	onChangeEnabled = e => {
 		const { method, site } = this.props;
 
 		const enabled = 'yes' === e.target.value;
-		this.props.changePaymentMethodEnabled(
-			site.ID,
-			method.id,
-			enabled
-		);
+		this.props.changePaymentMethodEnabled( site.ID, method.id, enabled );
 
 		if ( enabled ) {
 			analytics.tracks.recordEvent( 'calypso_woocommerce_payment_method_enabled', {
@@ -93,12 +90,12 @@ class PaymentMethodItem extends Component {
 				payment_method: method.id,
 			} );
 		}
-	}
+	};
 
 	onDone = () => {
 		const { method, site } = this.props;
 		this.props.closeEditingPaymentMethod( site.ID, method.id );
-	}
+	};
 
 	outputEditComponent = () => {
 		const { currentlyEditingMethod, method, site } = this.props;
@@ -108,7 +105,8 @@ class PaymentMethodItem extends Component {
 					method={ currentlyEditingMethod }
 					onCancel={ this.onCancel }
 					onEditField={ this.onEditField }
-					onDone={ this.onDone } />
+					onDone={ this.onDone }
+				/>
 			);
 		}
 		if ( method.id === 'stripe' ) {
@@ -118,7 +116,8 @@ class PaymentMethodItem extends Component {
 					onCancel={ this.onCancel }
 					onEditField={ this.onEditField }
 					onDone={ this.onDone }
-					site={ site } />
+					site={ site }
+				/>
 			);
 		}
 		if ( method.id === 'cheque' ) {
@@ -127,7 +126,8 @@ class PaymentMethodItem extends Component {
 					method={ currentlyEditingMethod }
 					onCancel={ this.onCancel }
 					onEditField={ this.onEditField }
-					onDone={ this.onDone } />
+					onDone={ this.onDone }
+				/>
 			);
 		}
 		return (
@@ -135,22 +135,24 @@ class PaymentMethodItem extends Component {
 				method={ currentlyEditingMethod }
 				onCancel={ this.onCancel }
 				onEditField={ this.onEditField }
-				onDone={ this.onDone } />
+				onDone={ this.onDone }
+			/>
 		);
-	}
+	};
 
-	renderEnabledField = ( isEnabled ) => {
+	renderEnabledField = isEnabled => {
 		return (
 			<PaymentMethodEditFormToggle
 				checked={ isEnabled }
 				name="enabled"
-				onChange={ this.onChangeEnabled } />
+				onChange={ this.onChangeEnabled }
+			/>
 		);
-	}
+	};
 
 	render() {
-		const currentlyEditingId = this.props.currentlyEditingMethod &&
-			this.props.currentlyEditingMethod.id;
+		const currentlyEditingId =
+			this.props.currentlyEditingMethod && this.props.currentlyEditingMethod.id;
 		const { method, translate } = this.props;
 		let editButtonText = method.enabled ? translate( 'Manage' ) : translate( 'Set up' );
 		if ( currentlyEditingId === method.id ) {
@@ -161,33 +163,32 @@ class PaymentMethodItem extends Component {
 		return (
 			<ListItem>
 				<ListItemField className="payments__method-method-suggested-container">
-					{
-						method.isSuggested &&
-						(
-							<p className="payments__method-suggested">
-								{ translate( 'Suggested Method' ) }
-							</p>
-						)
-					}
-					<p className={ methodTitle }>{ method.title }</p>
+					{ method.isSuggested &&
+						<p className="payments__method-suggested">
+							{ translate( 'Suggested Method' ) }
+						</p> }
+					<p className={ methodTitle }>
+						{ method.title }
+					</p>
 				</ListItemField>
 				<ListItemField className="payments__method-method-information-container">
-					{ method.fees && (
-						<p className="payments__method-information">{ method.fees }</p>
-					) }
-					{ method.informationUrl && (
+					{ method.fees &&
+						<p className="payments__method-information">
+							{ method.fees }
+						</p> }
+					{ method.informationUrl &&
 						<p className="payments__method-information">
 							<a href={ method.informationUrl }>
 								{ translate( 'More Information' ) }
 							</a>
-						</p>
-					) }
-
+						</p> }
 				</ListItemField>
 				<ListItemField className="payments__method-enable-container">
 					<FormFieldset className="payments__method-enable">
 						<div>
-							<FormLabel>{ translate( 'Enabled' ) }</FormLabel>
+							<FormLabel>
+								{ translate( 'Enabled' ) }
+							</FormLabel>
 							{ this.renderEnabledField( method.enabled ) }
 						</div>
 					</FormFieldset>
@@ -197,9 +198,7 @@ class PaymentMethodItem extends Component {
 						{ editButtonText }
 					</Button>
 				</ListItemField>
-				{ currentlyEditingId === method.id && (
-					this.outputEditComponent()
-				) }
+				{ currentlyEditingId === method.id && this.outputEditComponent() }
 			</ListItem>
 		);
 	}
@@ -227,6 +226,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default localize(
-	connect( mapStateToProps, mapDispatchToProps )( PaymentMethodItem )
-);
+export default localize( connect( mapStateToProps, mapDispatchToProps )( PaymentMethodItem ) );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -29,21 +30,14 @@ import WpcomPluginPanel from 'my-sites/plugins-wpcom';
 import PluginsBrowser from './plugins-browser';
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
-import {
-	canCurrentUser,
-	canCurrentUserManagePlugins
-} from 'state/selectors';
+import { canCurrentUser, canCurrentUserManagePlugins } from 'state/selectors';
 import {
 	canJetpackSiteManage,
 	canJetpackSiteUpdateFiles,
 	isJetpackSite,
-	isRequestingSites
+	isRequestingSites,
 } from 'state/sites/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug
-} from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 const PluginsMain = React.createClass( {
 	mixins: [ URLSearch ],
@@ -68,7 +62,7 @@ const PluginsMain = React.createClass( {
 
 	getPluginsFromStore( nextProps, sites ) {
 		const props = nextProps || this.props;
-		let	plugins = null;
+		let plugins = null;
 		if ( ! props.selectedSiteSlug ) {
 			plugins = PluginsStore.getPlugins( sites.filter( site => site.visible ), props.filter );
 		} else {
@@ -103,7 +97,7 @@ const PluginsMain = React.createClass( {
 		return {
 			plugins: this.getPluginsFromStore( nextProps, sites ),
 			pluginUpdateCount: pluginUpdate && pluginUpdate.length,
-			selectedAction: 'Actions'
+			selectedAction: 'Actions',
 		};
 	},
 
@@ -113,8 +107,8 @@ const PluginsMain = React.createClass( {
 
 	matchSearchTerms( search, plugin ) {
 		search = search.toLowerCase();
-		return [ 'name', 'description', 'author' ].some( attribute =>
-			plugin[ attribute ] && plugin[ attribute ].toLowerCase().indexOf( search ) !== -1
+		return [ 'name', 'description', 'author' ].some(
+			attribute => plugin[ attribute ] && plugin[ attribute ].toLowerCase().indexOf( search ) !== -1
 		);
 	},
 
@@ -125,23 +119,23 @@ const PluginsMain = React.createClass( {
 			{
 				title: this.translate( 'All', { context: 'Filter label for plugins list' } ),
 				path: '/plugins' + siteFilter,
-				id: 'all'
+				id: 'all',
 			},
 			{
 				title: this.translate( 'Active', { context: 'Filter label for plugins list' } ),
 				path: '/plugins/active' + siteFilter,
-				id: 'active'
+				id: 'active',
 			},
 			{
 				title: this.translate( 'Inactive', { context: 'Filter label for plugins list' } ),
 				path: '/plugins/inactive' + siteFilter,
-				id: 'inactive'
+				id: 'inactive',
 			},
 			{
 				title: this.translate( 'Updates', { context: 'Filter label for plugins list' } ),
 				path: '/plugins/updates' + siteFilter,
-				id: 'updates'
-			}
+				id: 'updates',
+			},
 		];
 	},
 
@@ -179,12 +173,15 @@ const PluginsMain = React.createClass( {
 			{ selectedSite } = this.props;
 
 		if ( selectedSite ) {
-			emptyContentData.title = this.translate( 'All plugins on %(siteName)s are {{span}}up to date.{{/span}}', {
-				textOnly: true,
-				args: { siteName: selectedSite.title },
-				components: { span: <span className="plugins__plugin-list-state" /> },
-				comment: 'The span tags prevents single words from showing on a single line.'
-			} );
+			emptyContentData.title = this.translate(
+				'All plugins on %(siteName)s are {{span}}up to date.{{/span}}',
+				{
+					textOnly: true,
+					args: { siteName: selectedSite.title },
+					components: { span: <span className="plugins__plugin-list-state" /> },
+					comment: 'The span tags prevents single words from showing on a single line.',
+				}
+			);
 		} else {
 			emptyContentData.title = this.translate( 'All plugins are up to date.', { textOnly: true } );
 		}
@@ -199,20 +196,24 @@ const PluginsMain = React.createClass( {
 			emptyContentData.actionURL = '/plugins/' + selectedSite.slug;
 			if ( this.props.selectedSiteIsJetpack ) {
 				emptyContentData.illustration = '/calypso/images/illustrations/illustration-jetpack.svg';
-				emptyContentData.title = this.translate( 'Plugins can\'t be updated on %(siteName)s.', {
+				emptyContentData.title = this.translate( "Plugins can't be updated on %(siteName)s.", {
 					textOnly: true,
-					args: { siteName: selectedSite.title }
+					args: { siteName: selectedSite.title },
 				} );
 			} else {
 				// buisness plan sites
-				emptyContentData.title = this.translate( 'Plugins are updated automatically on %(siteName)s.', {
-					textOnly: true,
-					args: { siteName: selectedSite.title }
-				} );
+				emptyContentData.title = this.translate(
+					'Plugins are updated automatically on %(siteName)s.',
+					{
+						textOnly: true,
+						args: { siteName: selectedSite.title },
+					}
+				);
 			}
 		} else {
 			emptyContentData.title = this.translate( 'No updates are available.', { textOnly: true } );
-			emptyContentData.illustration = '/calypso/images/illustrations/illustration-empty-results.svg';
+			emptyContentData.illustration =
+				'/calypso/images/illustrations/illustration-empty-results.svg';
 			emptyContentData.actionURL = '/plugins';
 		}
 
@@ -220,7 +221,9 @@ const PluginsMain = React.createClass( {
 	},
 
 	getEmptyContentData() {
-		let emptyContentData = { illustration: '/calypso/images/illustrations/illustration-empty-results.svg', };
+		let emptyContentData = {
+			illustration: '/calypso/images/illustrations/illustration-empty-results.svg',
+		};
 
 		switch ( this.props.filter ) {
 			case 'active':
@@ -247,7 +250,10 @@ const PluginsMain = React.createClass( {
 
 		return some(
 			this.props.sites.getSelectedOrAllWithPlugins(),
-			site => site && this.props.isJetpackSite( site.ID ) && this.props.canJetpackSiteUpdateFiles( site.ID )
+			site =>
+				site &&
+				this.props.isJetpackSite( site.ID ) &&
+				this.props.canJetpackSiteUpdateFiles( site.ID )
 		);
 	},
 
@@ -270,11 +276,12 @@ const PluginsMain = React.createClass( {
 				const searchTitle = this.translate( 'Suggested plugins for: %(searchQuery)s', {
 					textOnly: true,
 					args: {
-						searchQuery: this.props.search
-					}
+						searchQuery: this.props.search,
+					},
 				} );
 
-				return <PluginsBrowser
+				return (
+					<PluginsBrowser
 						hideSearchForm
 						site={ selectedSite ? selectedSite.slug : null }
 						path={ this.context.path }
@@ -282,16 +289,20 @@ const PluginsMain = React.createClass( {
 						search={ this.props.search }
 						store={ this.context.store }
 						searchTitle={ searchTitle }
-					/>;
+					/>
+				);
 			}
 
 			const emptyContentData = this.getEmptyContentData();
 			if ( emptyContentData ) {
-				return <EmptyContent
-					title={ emptyContentData.title }
-					illustration={ emptyContentData.illustration }
-					actionURL={ emptyContentData.actionURL }
-					action={ emptyContentData.action } />;
+				return (
+					<EmptyContent
+						title={ emptyContentData.title }
+						illustration={ emptyContentData.illustration }
+						actionURL={ emptyContentData.actionURL }
+						action={ emptyContentData.action }
+					/>
+				);
 			}
 		}
 		return (
@@ -301,52 +312,55 @@ const PluginsMain = React.createClass( {
 					plugins={ plugins }
 					sites={ this.props.sites }
 					pluginUpdateCount={ this.state.pluginUpdateCount }
-					isPlaceholder= { this.shouldShowPluginListPlaceholders() } />
+					isPlaceholder={ this.shouldShowPluginListPlaceholders() }
+				/>
 			</div>
 		);
 	},
 
 	getMockPluginItems() {
-		const plugins = [ {
-			slug: 'akismet',
-			name: 'Akismet',
-			icon: '//ps.w.org/akismet/assets/icon-256x256.png',
-			wporg: true
-		}, {
-			slug: 'wp-super-cache',
-			name: 'WP Super Cache',
-			icon: '//ps.w.org/wp-super-cache/assets/icon-256x256.png',
-			wporg: true
-		}, {
-			slug: 'jetpack',
-			name: 'Jetpack by WordPress.com',
-			icon: '//ps.w.org/jetpack/assets/icon-256x256.png',
-			wporg: true
-		} ];
+		const plugins = [
+			{
+				slug: 'akismet',
+				name: 'Akismet',
+				icon: '//ps.w.org/akismet/assets/icon-256x256.png',
+				wporg: true,
+			},
+			{
+				slug: 'wp-super-cache',
+				name: 'WP Super Cache',
+				icon: '//ps.w.org/wp-super-cache/assets/icon-256x256.png',
+				wporg: true,
+			},
+			{
+				slug: 'jetpack',
+				name: 'Jetpack by WordPress.com',
+				icon: '//ps.w.org/jetpack/assets/icon-256x256.png',
+				wporg: true,
+			},
+		];
 		const selectedSite = {
 			slug: 'no-slug',
 			canUpdateFiles: true,
-			name: 'Not a real site'
+			name: 'Not a real site',
 		};
 
 		return plugins.map( plugin => {
-			return <PluginItem
-				key={ 'plugin-item-mock-' + plugin.slug }
-				plugin={ plugin }
-				sites={ [] }
-				selectedSite={ selectedSite }
-				progress={ [] }
-				isMock={ true } />;
+			return (
+				<PluginItem
+					key={ 'plugin-item-mock-' + plugin.slug }
+					plugin={ plugin }
+					sites={ [] }
+					selectedSite={ selectedSite }
+					progress={ [] }
+					isMock={ true }
+				/>
+			);
 		} );
 	},
 
 	render() {
-		const {
-			category,
-			search,
-			selectedSite,
-			selectedSiteId,
-		} = this.props;
+		const { category, search, selectedSite, selectedSiteId } = this.props;
 
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
@@ -357,10 +371,12 @@ const PluginsMain = React.createClass( {
 				<Main>
 					{ this.renderDocumentHead() }
 					<SidebarNavigation />
-					<WpcomPluginPanel { ...{
-						category,
-						search,
-					} } />
+					<WpcomPluginPanel
+						{ ...{
+							category,
+							search,
+						} }
+					/>
 				</Main>
 			);
 		}
@@ -373,9 +389,10 @@ const PluginsMain = React.createClass( {
 					<JetpackManageErrorPage
 						template="optInManage"
 						siteId={ selectedSiteId }
-						title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
+						title={ this.translate( "Looking to manage this site's plugins?" ) }
 						section="plugins"
-						featureExample={ this.getMockPluginItems() } />
+						featureExample={ this.getMockPluginItems() }
+					/>
 				</Main>
 			);
 		}
@@ -383,7 +400,7 @@ const PluginsMain = React.createClass( {
 		const containerClass = classNames( {
 			'main-column': true,
 			plugins: true,
-			'search-open': this.getSearchOpen()
+			'search-open': this.getSearchOpen(),
 		} );
 
 		return (
@@ -408,7 +425,7 @@ const PluginsMain = React.createClass( {
 								attr.count = this.state.pluginUpdateCount;
 							}
 							return (
-								<NavItem { ...attr } >
+								<NavItem { ...attr }>
 									{ filterItem.title }
 								</NavItem>
 							);
@@ -422,12 +439,13 @@ const PluginsMain = React.createClass( {
 						initialValue={ this.props.search }
 						ref="url-search"
 						analyticsGroup="Plugins"
-						placeholder={ this.getSearchPlaceholder() } />
+						placeholder={ this.getSearchPlaceholder() }
+					/>
 				</SectionNav>
 				{ this.renderPluginsContent() }
 			</Main>
 		);
-	}
+	},
 } );
 
 export default connect(
@@ -440,14 +458,15 @@ export default connect(
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSiteId ),
 			canSelectedJetpackSiteManage: selectedSite && canJetpackSiteManage( state, selectedSiteId ),
-			canSelectedJetpackSiteUpdateFiles: selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
+			canSelectedJetpackSiteUpdateFiles:
+				selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
 			canJetpackSiteUpdateFiles: siteId => canJetpackSiteUpdateFiles( state, siteId ),
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
 			wporgPlugins: state.plugins.wporg.items,
 			isRequestingSites: isRequestingSites( state ),
-			userCanManagePlugins: ( selectedSiteId
+			userCanManagePlugins: selectedSiteId
 				? canCurrentUser( state, selectedSiteId, 'manage_options' )
-				: canCurrentUserManagePlugins( state ) )
+				: canCurrentUserManagePlugins( state ),
 		};
 	},
 	{ wporgFetchPluginData }

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Tells whether the Directly RTM widget has started initialization
  *

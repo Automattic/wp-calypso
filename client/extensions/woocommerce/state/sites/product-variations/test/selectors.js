@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,9 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	getVariationsForProduct,
-} from '../selectors';
+import { getVariationsForProduct } from '../selectors';
 import productVariations from './fixtures/variations';
 
 const loadedState = {
@@ -16,12 +15,12 @@ const loadedState = {
 		woocommerce: {
 			sites: {
 				123: {
-					products: { },
+					products: {},
 					productVariations,
-				}
-			}
-		}
-	}
+				},
+			},
+		},
+	},
 };
 
 describe( 'selectors', () => {

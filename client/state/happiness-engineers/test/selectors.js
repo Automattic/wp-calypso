@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,30 +10,27 @@ import assert from 'assert';
 import {
 	isRequestingHappinessEngineers,
 	getHappinessEngineers,
-	hasReceivedHappinessEngineers
+	hasReceivedHappinessEngineers,
 } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'isRequestingHappinessEngineers()', () => {
 		it( 'should return the value', () => {
-			assert( isRequestingHappinessEngineers( { happinessEngineers: { requesting: false } } ) === false );
+			assert(
+				isRequestingHappinessEngineers( { happinessEngineers: { requesting: false } } ) === false
+			);
 		} );
 	} );
 
-	const getState = () => (
-		{
-			happinessEngineers: {
-				items: [ 'test 1', 'test 2' ]
-			}
-		}
-	);
+	const getState = () => ( {
+		happinessEngineers: {
+			items: [ 'test 1', 'test 2' ],
+		},
+	} );
 
 	describe( 'getHappinessEngineers()', () => {
 		it( 'should return happiness engineers', () => {
-			assert.deepEqual(
-				getHappinessEngineers( getState() ),
-				[ 'test 1', 'test 2' ]
-			);
+			assert.deepEqual( getHappinessEngineers( getState() ), [ 'test 1', 'test 2' ] );
 		} );
 	} );
 

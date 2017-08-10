@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -15,7 +16,7 @@ import { getSite } from 'state/sites/selectors';
  */
 export function getSelectedSiteWithFallback( state ) {
 	let siteId = getSelectedSiteId( state );
-	if ( ! siteId && ( 1 === getCurrentUserSiteCount( state ) ) ) {
+	if ( ! siteId && 1 === getCurrentUserSiteCount( state ) ) {
 		siteId = getPrimarySiteId( state );
 	}
 	return getSite( state, siteId );

@@ -1,16 +1,10 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import {
-	find,
-	identity,
-	includes,
-	matchesProperty,
-	overSome,
-	some,
-} from 'lodash';
+import { find, identity, includes, matchesProperty, overSome, some } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -38,21 +32,22 @@ const filterGroup = category => group => {
 	return true;
 };
 
-const searchPlugins = search => overSome(
-	( { name } ) => includes( name.toLocaleLowerCase(), search.toLocaleLowerCase() ),
-	( { description } ) => includes( description.toLocaleLowerCase(), search.toLocaleLowerCase() )
-);
+const searchPlugins = search =>
+	overSome(
+		( { name } ) => includes( name.toLocaleLowerCase(), search.toLocaleLowerCase() ),
+		( { description } ) => includes( description.toLocaleLowerCase(), search.toLocaleLowerCase() )
+	);
 
-const isPluginActive = ( plugin, hasPremium, hasBusiness ) => some( [
-	'standard' === plugin.plan,
-	'premium' === plugin.plan && hasPremium,
-	'business' === plugin.plan && hasBusiness,
-] );
+const isPluginActive = ( plugin, hasPremium, hasBusiness ) =>
+	some( [
+		'standard' === plugin.plan,
+		'premium' === plugin.plan && hasPremium,
+		'business' === plugin.plan && hasBusiness,
+	] );
 
 class JetpackPluginsPanel extends Component {
-
 	state = {
-		addPluginTooltip: false
+		addPluginTooltip: false,
 	};
 
 	static propTypes = {
@@ -127,26 +122,16 @@ class JetpackPluginsPanel extends Component {
 	hidePluginTooltip = () => this.setState( { addPluginTooltip: false } );
 
 	render() {
-		const {
-			translate,
-			doSearch,
-			category,
-			siteSlug,
-			search,
-			hasPremium,
-			hasBusiness
-		} = this.props;
+		const { translate, doSearch, category, siteSlug, search, hasPremium, hasBusiness } = this.props;
 
 		const filteredPlugins = jetpackPlugins( translate )
 			.filter( filterGroup( category ) )
 			.map( group => ( {
 				...group,
-				plugins: group.plugins
-					.filter( searchPlugins( search ) )
-					.map( plugin => ( {
-						...plugin,
-						isActive: isPluginActive( plugin, hasPremium, hasBusiness ),
-					} ) )
+				plugins: group.plugins.filter( searchPlugins( search ) ).map( plugin => ( {
+					...plugin,
+					isActive: isPluginActive( plugin, hasPremium, hasBusiness ),
+				} ) ),
 			} ) )
 			.filter( group => group.plugins.length > 0 );
 
@@ -154,7 +139,6 @@ class JetpackPluginsPanel extends Component {
 
 		return (
 			<div className="plugins-wpcom__jetpack-plugins-panel">
-
 				<SectionNav selectedText={ this.getSelectedText( category ) }>
 					<NavTabs selectedText={ this.getSelectedText( category ) }>
 						{ this.getNavItems().map( item =>
@@ -180,13 +164,15 @@ class JetpackPluginsPanel extends Component {
 							onMouseEnter={ this.showPluginTooltip }
 							onMouseLeave={ this.hidePluginTooltip }
 							ref="addPluginButton"
-							aria-label={ translate( 'Browse all plugins', { context: 'button label' } ) }>
+							aria-label={ translate( 'Browse all plugins', { context: 'button label' } ) }
+						>
 							<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
 							<Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
 							<Tooltip
 								isVisible={ this.state.addPluginTooltip }
 								context={ this.refs && this.refs.addPluginButton }
-								position="bottom">
+								position="bottom"
+							>
 								{ translate( 'Browse all plugins' ) }
 							</Tooltip>
 						</Button>
@@ -201,48 +187,48 @@ class JetpackPluginsPanel extends Component {
 								{ translate( 'Jetpack by WordPress.com' ) }
 							</div>
 							<div className="plugins-wpcom__plugin-description">
-								{ translate( 'Jetpack simplifies managing WordPress sites by giving you visitor stats, security services, SEO tools, and more.' ) }
+								{ translate(
+									'Jetpack simplifies managing WordPress sites by giving you visitor stats, security services, SEO tools, and more.'
+								) }
 							</div>
 						</div>
 					</div>
 					<div className="plugins-wpcom__plugin-actions">
 						<Button className="plugins-wpcom__plugin-is-active is-active-plugin" compact borderless>
-							<Gridicon icon="checkmark" />{ translate( 'Active' ) }
+							<Gridicon icon="checkmark" />
+							{ translate( 'Active' ) }
 						</Button>
 					</div>
 				</CompactCard>
 
 				<CompactCard className="plugins-wpcom__jetpack-plugins-list">
 					{ filteredPlugins.length > 0 &&
-						filteredPlugins.map( group => (
-						<div key={ group.category }>
-							<CompactCard className="plugins-wpcom__jetpack-category-header">
-								<Gridicon icon={ group.icon } />
-								<span>
-									{ group.name }
-								</span>
-							</CompactCard>
-							{ group.plugins.map( ( plugin, index ) => (
-							<JetpackPluginItem
-								{ ...{
-									key: index,
-									plugin,
-									siteSlug,
-								} }
-							/>
-							) ) }
-						</div>
-						) )
-					}
+						filteredPlugins.map( group =>
+							<div key={ group.category }>
+								<CompactCard className="plugins-wpcom__jetpack-category-header">
+									<Gridicon icon={ group.icon } />
+									<span>
+										{ group.name }
+									</span>
+								</CompactCard>
+								{ group.plugins.map( ( plugin, index ) =>
+									<JetpackPluginItem
+										{ ...{
+											key: index,
+											plugin,
+											siteSlug,
+										} }
+									/>
+								) }
+							</div>
+						) }
 					{ filteredPlugins.length === 0 &&
 						<div className="plugins-wpcom__empty-results">
-							{ translate( 'No features match your search for \'%s\'.', {
-								args: [ search ]
-							} )}
-						</div>
-					}
+							{ translate( "No features match your search for '%s'.", {
+								args: [ search ],
+							} ) }
+						</div> }
 				</CompactCard>
-
 			</div>
 		);
 	}

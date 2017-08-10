@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,7 +21,11 @@ export default React.createClass( {
 
 	splitMessage() {
 		const lines = this.props.message.split( '\n\n' );
-		return lines.map( ( line, i ) => <p key={ 'alert-' + i }>{ line }</p> );
+		return lines.map( ( line, i ) =>
+			<p key={ 'alert-' + i }>
+				{ line }
+			</p>
+		);
 	},
 
 	getButtons() {
@@ -31,7 +36,7 @@ export default React.createClass( {
 				onClick={ this.props.onClose }
 			>
 				{ this.translate( 'OK' ) }
-			</FormButton>
+			</FormButton>,
 		];
 	},
 
@@ -46,5 +51,5 @@ export default React.createClass( {
 				{ this.splitMessage() }
 			</Dialog>
 		);
-	}
+	},
 } );

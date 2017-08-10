@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,21 +22,23 @@ export default React.createClass( {
 
 	onFilesDrop( files ) {
 		this.setState( {
-			lastDroppedFiles: files
+			lastDroppedFiles: files,
 		} );
 	},
 
 	renderContainerContent() {
 		const style = {
 			lineHeight: '100px',
-			textAlign: 'center'
+			textAlign: 'center',
 		};
 		let fileNames;
 
 		if ( this.state.lastDroppedFiles ) {
-			fileNames = this.state.lastDroppedFiles.map( function( file ) {
-				return file.name;
-			} ).join( ', ' );
+			fileNames = this.state.lastDroppedFiles
+				.map( function( file ) {
+					return file.name;
+				} )
+				.join( ', ' );
 		}
 
 		return (
@@ -50,7 +53,7 @@ export default React.createClass( {
 	renderContainer() {
 		const style = {
 			position: 'relative',
-			height: '150px'
+			height: '150px',
 		};
 
 		return (
@@ -63,5 +66,5 @@ export default React.createClass( {
 
 	render() {
 		return this.renderContainer();
-	}
+	},
 } );

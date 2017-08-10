@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -31,14 +32,14 @@ class SupportUserLoginDialog extends Component {
 
 		this.props.onChangeUser( this.props.username, this.state.password );
 		this.setState( { password: '' } );
-	}
+	};
 
 	onCancel = () => {
 		this.setState( { password: '' } );
 		this.props.toggleDialog();
-	}
+	};
 
-	onInputKeyDown = ( event ) => {
+	onInputKeyDown = event => {
 		if ( event.key === 'Enter' ) {
 			event.preventDefault();
 
@@ -52,25 +53,25 @@ class SupportUserLoginDialog extends Component {
 					break;
 			}
 		}
-	}
+	};
 
 	componentDidUpdate( prevProps ) {
 		if ( ! this.props.isBusy && prevProps.isBusy ) {
 			setTimeout( () => {
-				this.supportPasswordInput.focus()
+				this.supportPasswordInput.focus();
 			}, 0 );
 		}
 	}
 
-	onEditUsername = ( event ) => {
+	onEditUsername = event => {
 		this.props.setUsername( get( event, 'target.value', '' ) );
-	}
+	};
 
-	onEditPassword = ( event ) => {
+	onEditPassword = event => {
 		this.setState( {
-			password: get( event, 'target.value', '' )
+			password: get( event, 'target.value', '' ),
 		} );
-	}
+	};
 
 	autoFocusField() {
 		if ( this.props.username ) {
@@ -88,19 +89,16 @@ class SupportUserLoginDialog extends Component {
 			<FormButton
 				key="supportuser"
 				disabled={ isBusy || ! username || ! password }
-				onClick={ this.onSubmit }>
-					{ isBusy ? 'Switching...' : 'Change user' }
+				onClick={ this.onSubmit }
+			>
+				{ isBusy ? 'Switching...' : 'Change user' }
 			</FormButton>,
-			<FormButton
-				key="cancel"
-				type="button"
-				isPrimary={ false }
-				onClick={ this.onCancel }>
-					Cancel
-			</FormButton>
+			<FormButton key="cancel" type="button" isPrimary={ false } onClick={ this.onCancel }>
+				Cancel
+			</FormButton>,
 		];
 
-		const supportPasswordRef = ( ref ) => this.supportPasswordInput = ref;
+		const supportPasswordRef = ref => ( this.supportPasswordInput = ref );
 
 		return (
 			<Dialog
@@ -108,15 +106,10 @@ class SupportUserLoginDialog extends Component {
 				onClose={ this.onCancel }
 				buttons={ buttons }
 				autoFocus={ false }
-				additionalClassNames="support-user__login-dialog">
+				additionalClassNames="support-user__login-dialog"
+			>
 				<h2 className="support-user__heading">Support user</h2>
-				{ errorMessage &&
-					<Notice
-						status="is-error"
-						text={ errorMessage }
-						showDismiss={ false }
-					/>
-				}
+				{ errorMessage && <Notice status="is-error" text={ errorMessage } showDismiss={ false } /> }
 				<FormFieldset>
 					<FormLabel>
 						<span>Username</span>
@@ -128,13 +121,14 @@ class SupportUserLoginDialog extends Component {
 							placeholder="Username"
 							onKeyDown={ this.onInputKeyDown }
 							onChange={ this.onEditUsername }
-							value={ username || '' } />
+							value={ username || '' }
+						/>
 					</FormLabel>
 
 					<FormLabel>
 						<span>Support user password</span>
 						<FormPasswordInput
-							autoFocus={ this.autoFocusField() === 'password'  }
+							autoFocus={ this.autoFocusField() === 'password' }
 							name="supportPassword"
 							id="supportPassword"
 							disabled={ isBusy }

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +22,6 @@ import MultiCheckbox from 'components/forms/multi-checkbox';
 import QueryPosts from 'components/data/query-posts';
 
 class ReadingWidget extends Component {
-
 	state = {
 		emailAddress: '',
 		roles: [ 'storeOwner' ],
@@ -38,7 +38,7 @@ class ReadingWidget extends Component {
 	static defaultProps = {
 		query: { category: 'start-your-store', number: 3 },
 		siteId: config( 'woocommerce_blog_id' ),
-	}
+	};
 
 	getRolesAndLabels = () => {
 		const { translate } = this.props;
@@ -53,98 +53,107 @@ class ReadingWidget extends Component {
 
 	handleSubscriptionEmailFocus = () => {
 		this.setState( { subscriptionFormExpanded: true } );
-	}
+	};
 
 	renderHeading = () => {
 		const { text, title } = this.props;
 		return (
 			<div className="reading-widget__heading">
-				<h2>{ title }</h2>
-				<p>{ text }</p>
+				<h2>
+					{ title }
+				</h2>
+				<p>
+					{ text }
+				</p>
 			</div>
 		);
-	}
+	};
 
 	renderArticleList = () => {
 		const { posts, query, siteId } = this.props;
 
 		return (
 			<div>
-				<QueryPosts
-					query={ query }
-					siteId={ siteId }
-				/>
+				<QueryPosts query={ query } siteId={ siteId } />
 				<ul className="reading-widget__article-list">
-					{
-						( posts && posts.map( post => {
+					{ posts &&
+						posts.map( post => {
 							const { date, ID, title, URL } = post;
 							return (
 								<li key={ ID }>
-									<ExternalLink icon={ true } href={ URL } rel="noopener noreferrer" target="_blank">
+									<ExternalLink
+										icon={ true }
+										href={ URL }
+										rel="noopener noreferrer"
+										target="_blank"
+									>
 										{ title }
 									</ExternalLink>
-									<span>{ humanDate( date ) }</span>
+									<span>
+										{ humanDate( date ) }
+									</span>
 								</li>
 							);
-						} ) )
-					}
+						} ) }
 				</ul>
 			</div>
 		);
-	}
+	};
 
-	renderSubscriptionFormExplanation = ( expanded ) => {
+	renderSubscriptionFormExplanation = expanded => {
 		const { translate } = this.props;
 
 		return (
 			<div className="reading-widget__subscription-form-explanation">
 				<p>
-					{ translate( 'Subscribe to our newsletter and get the latest' +
-						' news delivered to your inbox' ) }
+					{ translate(
+						'Subscribe to our newsletter and get the latest' + ' news delivered to your inbox'
+					) }
 				</p>
-				{
-					expanded && ( <p>
-						{ translate( 'Before you subscribe, please specify your role(s)' +
-							' in eCommerce and we\'ll send you the most relevant news & info' ) }
-					</p> )
-				}
+				{ expanded &&
+					<p>
+						{ translate(
+							'Before you subscribe, please specify your role(s)' +
+								" in eCommerce and we'll send you the most relevant news & info"
+						) }
+					</p> }
 			</div>
 		);
-	}
+	};
 
 	onEmailFocus = () => {
 		this.setState( {
 			subscriptionFormExpanded: true,
 		} );
-	}
+	};
 
-	onEmailChange = ( e ) => {
+	onEmailChange = e => {
 		this.setState( {
-			emailAddress: e.target.value
+			emailAddress: e.target.value,
 		} );
-	}
+	};
 
-	onRolesChange = ( e ) => {
+	onRolesChange = e => {
 		this.setState( {
-			roles: e.value
+			roles: e.value,
 		} );
-	}
+	};
 
 	isFormSubmittable = () => {
 		const emailValidates = emailValidator.validate( this.state.emailAddress );
-		const roleSelected = ( 0 < this.state.roles.length );
+		const roleSelected = 0 < this.state.roles.length;
 
 		return emailValidates && roleSelected;
-	}
+	};
 
 	onSubmit = () => {
 		// TODO
 		analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
 			action: 'subscribe',
 		} );
-	}
+	};
 
-	renderSubscriptionFormFields = ( expanded ) => {
+	renderSubscriptionFormFields = expanded => {
 		const { translate } = this.props;
 		return (
 			<div className="reading-widget__subscription-form-fields">
@@ -154,21 +163,19 @@ class ReadingWidget extends Component {
 					placeholder={ translate( 'hello@email.com' ) }
 					value={ this.state.emailAddress }
 				/>
-				{ expanded && (
+				{ expanded &&
 					<MultiCheckbox
 						checked={ this.state.roles }
 						onChange={ this.onRolesChange }
 						options={ this.getRolesAndLabels() }
-					/>
-				) }
-				{ expanded && (
+					/> }
+				{ expanded &&
 					<Button disabled={ ! this.isFormSubmittable() } onClick={ this.onSubmit }>
 						{ translate( 'Subscribe' ) }
-					</Button>
-				) }
+					</Button> }
 			</div>
 		);
-	}
+	};
 
 	renderSubscriptionForm = () => {
 		const expanded = this.state.subscriptionFormExpanded;
@@ -179,7 +186,7 @@ class ReadingWidget extends Component {
 				{ this.renderSubscriptionFormFields( expanded ) }
 			</div>
 		);
-	}
+	};
 
 	render = () => {
 		return (
@@ -189,7 +196,7 @@ class ReadingWidget extends Component {
 				{ this.renderSubscriptionForm() }
 			</div>
 		);
-	}
+	};
 }
 
 export default connect( ( state, ownProps ) => {

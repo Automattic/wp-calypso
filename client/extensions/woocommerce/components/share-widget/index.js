@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +14,7 @@ class ShareWidget extends Component {
 		text: PropTypes.string,
 		title: PropTypes.string,
 		urlToShare: PropTypes.string,
-	}
+	};
 
 	renderServiceIcons = () => {
 		const { translate, urlToShare } = this.props;
@@ -51,7 +52,7 @@ class ShareWidget extends Component {
 					pathname: '/share',
 					query: {
 						url: urlToShare,
-					}
+					},
 				},
 			},
 			{
@@ -63,7 +64,7 @@ class ShareWidget extends Component {
 					query: {
 						url: urlToShare,
 						mini: 'true',
-					}
+					},
 				},
 			},
 			{
@@ -77,7 +78,7 @@ class ShareWidget extends Component {
 						posttype: 'link',
 						shareSource: 'legacy',
 						url: urlToShare,
-					}
+					},
 				},
 			},
 			{
@@ -88,40 +89,42 @@ class ShareWidget extends Component {
 					pathname: 'pin/create/button',
 					query: {
 						url: urlToShare,
-					}
+					},
 				},
 			},
 		];
 
 		return (
 			<ul className="share-widget__services">
-				{
-					services.map( ( service ) => {
-						const link = url.format( service.urlProperties );
-						return (
-							<li className="share-widget__service" key={ service.icon }>
-								<a href={ link } rel="noopener noreferrer" target="_blank">
-									<SocialLogo icon={ service.icon } size={ 48 } />
-								</a>
-							</li>
-						);
-					} )
-				}
+				{ services.map( service => {
+					const link = url.format( service.urlProperties );
+					return (
+						<li className="share-widget__service" key={ service.icon }>
+							<a href={ link } rel="noopener noreferrer" target="_blank">
+								<SocialLogo icon={ service.icon } size={ 48 } />
+							</a>
+						</li>
+					);
+				} ) }
 			</ul>
 		);
-	}
+	};
 
 	render = () => {
 		const { text, title, urlToShare } = this.props;
 		return (
 			<div className="share-widget__container card">
-				<h2>{ title }</h2>
-				<p>{ text }</p>
+				<h2>
+					{ title }
+				</h2>
+				<p>
+					{ text }
+				</p>
 				{ this.renderServiceIcons( urlToShare ) }
 				<img src="/calypso/images/extensions/woocommerce/woocommerce-share.svg" />
 			</div>
 		);
-	}
+	};
 }
 
 export default localize( ShareWidget );

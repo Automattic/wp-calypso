@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,11 +15,7 @@ import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 
-const possibleDevices = [
-	'computer',
-	'tablet',
-	'phone'
-];
+const possibleDevices = [ 'computer', 'tablet', 'phone' ];
 
 class PreviewToolbar extends Component {
 	static propTypes = {
@@ -49,7 +46,7 @@ class PreviewToolbar extends Component {
 	};
 
 	static defaultProps = {
-		showSEO: true
+		showSEO: true,
 	};
 
 	constructor( props ) {
@@ -59,7 +56,7 @@ class PreviewToolbar extends Component {
 			computer: { title: props.translate( 'Desktop' ), icon: 'computer' },
 			tablet: { title: props.translate( 'Tablet' ), icon: 'tablet' },
 			phone: { title: props.translate( 'Phone' ), icon: 'phone' },
-			seo: { title: props.translate( 'Search & Social' ), icon: 'globe' }
+			seo: { title: props.translate( 'Search & Social' ), icon: 'globe' },
 		};
 	}
 
@@ -79,7 +76,7 @@ class PreviewToolbar extends Component {
 			showEdit,
 			showExternal,
 			showSEO,
-			translate
+			translate,
 		} = this.props;
 
 		const selectedDevice = this.devices[ currentDevice ];
@@ -96,8 +93,7 @@ class PreviewToolbar extends Component {
 						onClick={ onClose }
 					>
 						<Gridicon icon={ isModalWindow ? 'cross' : 'arrow-left' } />
-					</Button>
-				}
+					</Button> }
 				{ showDeviceSwitcher &&
 					<SelectDropdown
 						compact
@@ -106,7 +102,7 @@ class PreviewToolbar extends Component {
 						selectedIcon={ <Gridicon size={ 18 } icon={ selectedDevice.icon } /> }
 						ref={ this.setDropdown }
 					>
-						{ devicesToShow.map( device => (
+						{ devicesToShow.map( device =>
 							<DropdownItem
 								key={ device }
 								selected={ device === currentDevice }
@@ -115,27 +111,19 @@ class PreviewToolbar extends Component {
 							>
 								{ this.devices[ device ].title }
 							</DropdownItem>
-						) ) }
-					</SelectDropdown>
-				}
+						) }
+					</SelectDropdown> }
 				{ showUrl &&
 					<ClipboardButtonInput
 						className="web-preview__url-clipboard-input"
 						value={ externalUrl || previewUrl }
 						hideHttp
-					/>
-				}
+					/> }
 				<div className="web-preview__toolbar-actions">
 					{ showEdit &&
-						<Button
-							borderless
-							className="web-preview__edit"
-							href={ editUrl }
-							onClick={ onEdit }
-						>
+						<Button borderless className="web-preview__edit" href={ editUrl } onClick={ onEdit }>
 							<Gridicon icon="pencil" /> { translate( 'Edit' ) }
-						</Button>
-					}
+						</Button> }
 					{ showExternal &&
 						<Button
 							borderless
@@ -145,8 +133,7 @@ class PreviewToolbar extends Component {
 							rel="noopener noreferrer"
 						>
 							<Gridicon icon="external" />
-						</Button>
-					}
+						</Button> }
 					<div className="web-preview__toolbar-tray">
 						{ this.props.children }
 					</div>

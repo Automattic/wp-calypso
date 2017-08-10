@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,9 +16,9 @@ describe( 'getUploadedPluginId', () => {
 		const state = {
 			plugins: {
 				upload: {
-					uploadedPluginId: {}
-				}
-			}
+					uploadedPluginId: {},
+				},
+			},
 		};
 		expect( getUploadedPluginId( state, siteId ) ).to.be.null;
 	} );
@@ -28,9 +29,9 @@ describe( 'getUploadedPluginId', () => {
 				upload: {
 					uploadedPluginId: {
 						[ siteId ]: 'hello-dolly',
-					}
-				}
-			}
+					},
+				},
+			},
 		};
 		expect( getUploadedPluginId( state, siteId ) ).to.be.equal( 'hello-dolly' );
 	} );

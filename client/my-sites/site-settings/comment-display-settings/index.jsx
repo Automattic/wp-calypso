@@ -1,3 +1,4 @@
+/** @format */
 /**
 * External dependencies
 */
@@ -24,13 +25,7 @@ class CommentDisplaySettings extends Component {
 	}
 
 	render() {
-		const {
-			fields,
-			onChangeField,
-			selectedSiteId,
-			submittingForm,
-			translate,
-		} = this.props;
+		const { fields, onChangeField, selectedSiteId, submittingForm, translate } = this.props;
 
 		return (
 			<FormFieldset className="comment-display-settings">
@@ -41,30 +36,42 @@ class CommentDisplaySettings extends Component {
 						'Allow readers to leave comments using their WordPress.com, Twitter, Facebook, or Google+ accounts'
 					) }
 					disabled={ !! submittingForm }
-					/>
+				/>
 				<div className="comment-display-settings__module-setting is-indented">
-					<FormLabel htmlFor="highlander_comment_form_prompt">{ translate( 'Comments Label' ) }</FormLabel>
+					<FormLabel htmlFor="highlander_comment_form_prompt">
+						{ translate( 'Comments Label' ) }
+					</FormLabel>
 					<FormTextInput
 						name="highlander_comment_form_prompt"
 						type="text"
 						id="highlander_comment_form_prompt"
 						value={ fields.highlander_comment_form_prompt || '' }
 						onChange={ onChangeField( 'highlander_comment_form_prompt' ) }
-						disabled={ this.shouldEnableSettings() } />
+						disabled={ this.shouldEnableSettings() }
+					/>
 					<FormSettingExplanation>
 						{ translate( 'A few catchy words to motivate your readers to comment.' ) }
 					</FormSettingExplanation>
 				</div>
 				<div className="comment-display-settings__module-setting is-indented">
-					<FormLabel htmlFor="jetpack_comment_form_color_scheme">{ translate( 'Color Scheme' ) }</FormLabel>
+					<FormLabel htmlFor="jetpack_comment_form_color_scheme">
+						{ translate( 'Color Scheme' ) }
+					</FormLabel>
 					<FormSelect
 						name="jetpack_comment_form_color_scheme"
 						value={ fields.jetpack_comment_form_color_scheme || 'light' }
 						onChange={ onChangeField( 'jetpack_comment_form_color_scheme' ) }
-						disabled={ this.shouldEnableSettings() }>
-						<option value="light">{ translate( 'Light' ) }</option>
-						<option value="dark">{ translate( 'Dark' ) }</option>
-						<option value="transparent">{ translate( 'Transparent' ) }</option>
+						disabled={ this.shouldEnableSettings() }
+					>
+						<option value="light">
+							{ translate( 'Light' ) }
+						</option>
+						<option value="dark">
+							{ translate( 'Dark' ) }
+						</option>
+						<option value="transparent">
+							{ translate( 'Transparent' ) }
+						</option>
 					</FormSelect>
 				</div>
 			</FormFieldset>
@@ -72,13 +79,11 @@ class CommentDisplaySettings extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
 
-		return {
-			selectedSiteId,
-			isCommentsModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'comments' ),
-		};
-	}
-)( localize( CommentDisplaySettings ) );
+	return {
+		selectedSiteId,
+		isCommentsModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'comments' ),
+	};
+} )( localize( CommentDisplaySettings ) );

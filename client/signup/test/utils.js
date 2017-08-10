@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,9 +27,9 @@ describe( 'utils', function() {
 	useFilesystemMocks( __dirname );
 	useFakeDom();
 
-	useMockery( ( mockery ) => {
+	useMockery( mockery => {
 		mockery.registerMock( 'lib/abtest', {
-			abtest: () => ''
+			abtest: () => '',
 		} );
 	} );
 
@@ -36,7 +37,7 @@ describe( 'utils', function() {
 		flows = require( 'signup/config/flows' );
 
 		sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
-		sinon.stub( flows, 'preloadABTestVariationsForStep', ()=>{} );
+		sinon.stub( flows, 'preloadABTestVariationsForStep', () => {} );
 		sinon.stub( flows, 'getABTestFilteredFlow', ( flowName, flow ) => {
 			return flow;
 		} );
@@ -52,10 +53,13 @@ describe( 'utils', function() {
 		} );
 
 		it( 'should return undefined if no locale is present in the params', function() {
-			assert.equal( utils.getLocale( {
-				stepName: 'theme-selection',
-				flowName: 'flow-one'
-			} ), undefined );
+			assert.equal(
+				utils.getLocale( {
+					stepName: 'theme-selection',
+					flowName: 'flow-one',
+				} ),
+				undefined
+			);
 		} );
 	} );
 
@@ -130,54 +134,72 @@ describe( 'utils', function() {
 		} );
 
 		it( 'should redirect invalid steps to the default flow if no flow is present', function() {
-			assert.equal( utils.getValidPath( {
-				stepName: 'fr',
-				stepSectionName: 'fr'
-			} ), '/start/user/fr' );
+			assert.equal(
+				utils.getValidPath( {
+					stepName: 'fr',
+					stepSectionName: 'fr',
+				} ),
+				'/start/user/fr'
+			);
 		} );
 
 		it( 'should preserve a valid locale to the default flow if one is specified', function() {
-			assert.equal( utils.getValidPath( {
-				stepName: 'fr',
-				stepSectionName: 'abc'
-			} ), '/start/user/abc/fr' );
+			assert.equal(
+				utils.getValidPath( {
+					stepName: 'fr',
+					stepSectionName: 'abc',
+				} ),
+				'/start/user/abc/fr'
+			);
 		} );
 
 		it( 'should redirect invalid steps to the current flow default', function() {
-			assert.equal( utils.getValidPath( {
-				flowName: 'account',
-				stepName: 'fr',
-				stepSectionName: 'fr'
-			} ), '/start/account/user/fr' );
+			assert.equal(
+				utils.getValidPath( {
+					flowName: 'account',
+					stepName: 'fr',
+					stepSectionName: 'fr',
+				} ),
+				'/start/account/user/fr'
+			);
 		} );
 
 		it( 'should preserve a valid locale if one is specified', function() {
-			assert.equal( utils.getValidPath( {
-				flowName: 'account',
-				stepName: 'fr',
-				stepSectionName: 'abc'
-			} ), '/start/account/user/abc/fr' );
+			assert.equal(
+				utils.getValidPath( {
+					flowName: 'account',
+					stepName: 'fr',
+					stepSectionName: 'abc',
+				} ),
+				'/start/account/user/abc/fr'
+			);
 		} );
 
 		it( 'should handle arbitrary step section names', function() {
 			const randomStepSectionName = 'random-step-section-' + Math.random();
 
-			assert.equal( utils.getValidPath( {
-				flowName: 'account',
-				stepName: 'user',
-				stepSectionName: randomStepSectionName,
-				lang: 'fr'
-			} ), '/start/account/user/' + randomStepSectionName + '/fr' );
+			assert.equal(
+				utils.getValidPath( {
+					flowName: 'account',
+					stepName: 'user',
+					stepSectionName: randomStepSectionName,
+					lang: 'fr',
+				} ),
+				'/start/account/user/' + randomStepSectionName + '/fr'
+			);
 		} );
 
 		it( 'should handle arbitrary step section names in the default flow', function() {
 			const randomStepSectionName = 'random-step-section-' + Math.random();
 
-			assert.equal( utils.getValidPath( {
-				stepName: 'user',
-				stepSectionName: randomStepSectionName,
-				lang: 'fr'
-			} ), '/start/user/' + randomStepSectionName + '/fr' );
+			assert.equal(
+				utils.getValidPath( {
+					stepName: 'user',
+					stepSectionName: randomStepSectionName,
+					lang: 'fr',
+				} ),
+				'/start/user/' + randomStepSectionName + '/fr'
+			);
 		} );
 	} );
 
@@ -186,7 +208,7 @@ describe( 'utils', function() {
 		const config = {
 			stepName: 'site',
 			fieldName: 'site',
-			signupProgress
+			signupProgress,
 		};
 
 		it( 'should return the value of the field if it exists', function() {
@@ -202,14 +224,14 @@ describe( 'utils', function() {
 	describe( 'mergeFormWithValue', function() {
 		const config = {
 			fieldName: 'username',
-			fieldValue: 'calypso'
+			fieldValue: 'calypso',
 		};
 
-		it( 'should return the form with the field added if the field doesn\'t have a value', function() {
+		it( "should return the form with the field added if the field doesn't have a value", function() {
 			const form = { username: {} };
 			config.form = form;
 			assert.deepEqual( utils.mergeFormWithValue( config ), {
-				username: { value: 'calypso' }
+				username: { value: 'calypso' },
 			} );
 		} );
 

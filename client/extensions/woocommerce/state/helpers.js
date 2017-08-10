@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,4 +26,3 @@ export function dispatchWithProps( dispatch, getState, action, props ) {
 		dispatch( { ...action, ...props } );
 	}
 }
-

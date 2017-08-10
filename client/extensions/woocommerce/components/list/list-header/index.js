@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +7,7 @@ import classNames from 'classnames';
 
 const ListHeader = ( { className, children } ) => {
 	return (
-		<li className={ classNames( 'list-header', className ) } >
+		<li className={ classNames( 'list-header', className ) }>
 			{ children }
 		</li>
 	);

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +14,11 @@ import config from 'config';
 module.exports = function() {
 	if ( config.isEnabled( 'paladin' ) ) {
 		page( '/paladin', controller.siteSelection, controller.sites );
-		page( '/paladin/:domain', controller.siteSelection, controller.navigation, paladinController.activate );
+		page(
+			'/paladin/:domain',
+			controller.siteSelection,
+			controller.navigation,
+			paladinController.activate
+		);
 	}
 };
-

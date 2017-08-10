@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -59,14 +60,12 @@ class ManageConnection extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
-			siteIsJetpack: isJetpackSite( state, siteId ),
-			siteSlug: getSelectedSiteSlug( state ),
-		};
-	}
-)( localize( ManageConnection ) );
+	return {
+		siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
+		siteIsJetpack: isJetpackSite( state, siteId ),
+		siteSlug: getSelectedSiteSlug( state ),
+	};
+} )( localize( ManageConnection ) );

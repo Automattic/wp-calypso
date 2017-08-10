@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -24,7 +25,13 @@ const isEligibleForFreeToPaidUpsell = ( state, siteId, moment ) => {
 	const registrationDaysIsWithinRange = isUserRegistrationDaysWithinRange( state, moment, 0, 180 );
 	const siteIsVipSite = isVipSite( state, siteId );
 
-	return userCanManageOptions && ! siteHasMappedDomain && siteIsOnFreePlan && ! siteIsVipSite && registrationDaysIsWithinRange;
+	return (
+		userCanManageOptions &&
+		! siteHasMappedDomain &&
+		siteIsOnFreePlan &&
+		! siteIsVipSite &&
+		registrationDaysIsWithinRange
+	);
 };
 
 export default isEligibleForFreeToPaidUpsell;

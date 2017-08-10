@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,21 +14,20 @@ import i18n from 'i18n-calypso';
 import { taxonomiesWelcomeWhitelist, taxonomyToGridicon } from './taxonomies-config.js';
 
 class MagicSearchWelcome extends React.Component {
-
 	constructor( props ) {
 		super( props );
 		this.visibleTaxonomies = [];
 	}
 
-	state = { suggestionPosition: -1 }
+	state = { suggestionPosition: -1 };
 
-	onMouseDown = ( event ) => {
+	onMouseDown = event => {
 		this.props.suggestionsCallback( event.target.textContent + ':' );
 		event.stopPropagation();
 		event.preventDefault();
-	}
+	};
 
-	movePositionBy = ( moveDirection ) => {
+	movePositionBy = moveDirection => {
 		let newPosition = this.state.suggestionPosition + moveDirection;
 
 		// Loop around
@@ -38,9 +38,9 @@ class MagicSearchWelcome extends React.Component {
 		}
 
 		this.setState( {
-			suggestionPosition: newPosition
+			suggestionPosition: newPosition,
 		} );
-	}
+	};
 
 	/**
 	 * Provides keybord support for component by managing items highlith position
@@ -49,17 +49,17 @@ class MagicSearchWelcome extends React.Component {
 	 * @param  {Object} event  Keybord event
 	 * @return {Bool}          true indicates suggestion was chosen and send to parent using suggestionsCallback prop callback
 	 */
-	handleKeyEvent = ( event ) => {
+	handleKeyEvent = event => {
 		switch ( event.key ) {
-			case 'ArrowDown' :
+			case 'ArrowDown':
 				this.movePositionBy( +1 );
 				event.preventDefault();
 				break;
-			case 'ArrowUp' :
+			case 'ArrowUp':
 				this.movePositionBy( -1 );
 				event.preventDefault();
 				break;
-			case 'Enter' :
+			case 'Enter':
 				const position = this.state.suggestionPosition;
 				if ( position !== -1 ) {
 					this.props.suggestionsCallback( this.visibleTaxonomies[ position ] + ':' );
@@ -70,14 +70,16 @@ class MagicSearchWelcome extends React.Component {
 				break;
 		}
 		return false;
-	}
+	};
 
-	renderToken = ( taxonomy ) => {
+	renderToken = taxonomy => {
 		const themesTokenTypeClass = classNames(
 			'themes-magic-search-card__welcome-taxonomy',
 			'themes-magic-search-card__welcome-taxonomy-type-' + taxonomy,
-			{ 'themes-magic-search-card__welcome-taxonomy-highlight':
-				this.visibleTaxonomies[ this.state.suggestionPosition ] === taxonomy }
+			{
+				'themes-magic-search-card__welcome-taxonomy-highlight':
+					this.visibleTaxonomies[ this.state.suggestionPosition ] === taxonomy,
+			}
 		);
 
 		return (
@@ -86,22 +88,28 @@ class MagicSearchWelcome extends React.Component {
 				onMouseDownCapture={ this.onMouseDown }
 				key={ taxonomy }
 			>
-				<Gridicon icon={ taxonomyToGridicon( taxonomy ) } className="themes-magic-search-card__welcome-taxonomy-icon" size={ 18 } />
+				<Gridicon
+					icon={ taxonomyToGridicon( taxonomy ) }
+					className="themes-magic-search-card__welcome-taxonomy-icon"
+					size={ 18 }
+				/>
 				{ taxonomy }
 			</div>
 		);
-	}
+	};
 
 	renderTaxonomies = () => {
 		const { taxonomies } = this.props;
 		this.visibleTaxonomies = intersection( taxonomies, taxonomiesWelcomeWhitelist );
-		return this.visibleTaxonomies.map( ( taxonomy ) => this.renderToken( taxonomy ) );
-	}
+		return this.visibleTaxonomies.map( taxonomy => this.renderToken( taxonomy ) );
+	};
 
 	render() {
 		return (
-			<div className="themes-magic-search-card__welcome" >
-				<div className="themes-magic-search-card__welcome-header">{ i18n.translate( 'Search by' ) }</div>
+			<div className="themes-magic-search-card__welcome">
+				<div className="themes-magic-search-card__welcome-header">
+					{ i18n.translate( 'Search by' ) }
+				</div>
 				<div className="themes-magic-search-card__welcome-taxonomies">
 					{ this.renderTaxonomies() }
 				</div>
@@ -119,7 +127,7 @@ MagicSearchWelcome.propTypes = {
 MagicSearchWelcome.defaultProps = {
 	taxonomies: [],
 	topSearches: [],
-	suggestionsCallback: noop
+	suggestionsCallback: noop,
 };
 
 export default MagicSearchWelcome;

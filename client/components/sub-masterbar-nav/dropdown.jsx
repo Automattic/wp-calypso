@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,18 +14,17 @@ import Item from './item';
 const OptionShape = PropTypes.shape( {
 	label: PropTypes.string.isRequired,
 	uri: PropTypes.string.isRequired,
-	icon: PropTypes.string
+	icon: PropTypes.string,
 } );
 
 export default class Dropdown extends Component {
-
 	static propTypes = {
 		selected: OptionShape,
-		options: PropTypes.arrayOf( OptionShape )
+		options: PropTypes.arrayOf( OptionShape ),
 	};
 
 	state = {
-		collapsed: true
+		collapsed: true,
 	};
 
 	componentDidMount() {
@@ -36,10 +36,9 @@ export default class Dropdown extends Component {
 	}
 
 	render() {
-		const className = classNames(
-			'sub-masterbar-nav__dropdown',
-			{ 'is-collapsed': this.state.collapsed }
-		);
+		const className = classNames( 'sub-masterbar-nav__dropdown', {
+			'is-collapsed': this.state.collapsed,
+		} );
 
 		return (
 			<div className={ className }>
@@ -70,17 +69,17 @@ export default class Dropdown extends Component {
 				href={ item.uri }
 			/>
 		);
-	}
+	};
 
 	toggle = () => {
-		this.setState( ( state ) => ( {
-			collapsed: ! state.collapsed
+		this.setState( state => ( {
+			collapsed: ! state.collapsed,
 		} ) );
-	}
+	};
 
 	collapse = () => {
 		this.setState( () => ( {
-			collapsed: true
+			collapsed: true,
 		} ) );
-	}
+	};
 }

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -79,7 +80,7 @@ export class CountedTextarea extends React.Component {
 						'countPlaceholderLength',
 						'moment',
 						'numberFormat',
-						'translate',
+						'translate'
 					) }
 					className="counted-textarea__input"
 				/>

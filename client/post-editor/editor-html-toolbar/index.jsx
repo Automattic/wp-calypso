@@ -1,14 +1,10 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import {
-	get,
-	map,
-	reduce,
-	throttle,
-} from 'lodash';
+import { get, map, reduce, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -31,7 +27,7 @@ import {
 	fieldAdd,
 	fieldRemove,
 	fieldUpdate,
-	settingsUpdate
+	settingsUpdate,
 } from 'state/ui/editor/contact-form/actions';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
@@ -48,7 +44,6 @@ import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dia
 const TOOLBAR_HEIGHT = 39;
 
 export class EditorHtmlToolbar extends Component {
-
 	static propTypes = {
 		contactForm: PropTypes.object,
 		content: PropTypes.object,
@@ -75,7 +70,7 @@ export class EditorHtmlToolbar extends Component {
 		showMediaModal: false,
 		source: '',
 		showSimplePaymentsDialog: false,
-		simplePaymentsDialogTab: 'addNew'
+		simplePaymentsDialogTab: 'addNew',
 	};
 
 	componentDidMount() {
@@ -103,16 +98,16 @@ export class EditorHtmlToolbar extends Component {
 
 	bindButtonsRef = div => {
 		this.buttons = div;
-	}
+	};
 
 	bindInsertContentButtonsRef = div => {
 		this.insertContentButtons = div;
-	}
+	};
 
 	onWindowResize = () => {
 		this.disablePinOnSmallScreens();
 		this.toggleToolbarScrollableOnResize();
-	}
+	};
 
 	pinToolbarOnScroll = () => {
 		if ( isWithinBreakpoint( '<660px' ) ) {
@@ -127,20 +122,20 @@ export class EditorHtmlToolbar extends Component {
 		} else if ( ! isPinned && window.pageYOffset > offsetTop - TOOLBAR_HEIGHT ) {
 			this.setState( { isPinned: true } );
 		}
-	}
+	};
 
 	disablePinOnSmallScreens = () => {
 		if ( this.state.isPinned && isWithinBreakpoint( '<660px' ) ) {
 			this.setState( { isPinned: false } );
 		}
-	}
+	};
 
 	toggleToolbarScrollableOnResize = () => {
 		const isScrollable = this.buttons.scrollWidth > this.buttons.clientWidth;
 		if ( isScrollable !== this.state.isScrollable ) {
 			this.setState( { isScrollable } );
 		}
-	}
+	};
 
 	hideToolbarFadeOnFullScroll = event => {
 		const { scrollLeft, scrollWidth, clientWidth } = event.target;
@@ -150,20 +145,19 @@ export class EditorHtmlToolbar extends Component {
 		if ( isScrolledFull !== this.state.isScrolledFull ) {
 			this.setState( { isScrolledFull } );
 		}
-	}
+	};
 
 	clickOutsideInsertContentMenu = event => {
-		if ( this.state.showInsertContentMenu && ! this.insertContentButtons.contains( event.target ) ) {
+		if (
+			this.state.showInsertContentMenu &&
+			! this.insertContentButtons.contains( event.target )
+		) {
 			this.setState( { showInsertContentMenu: false } );
 		}
-	}
+	};
 
 	splitEditorContent() {
-		const { content: {
-			selectionEnd,
-			selectionStart,
-			value,
-		} } = this.props;
+		const { content: { selectionEnd, selectionStart, value } } = this.props;
 		return {
 			before: value.substring( 0, selectionStart ),
 			inner: value.substring( selectionStart, selectionEnd ),
@@ -194,7 +188,7 @@ export class EditorHtmlToolbar extends Component {
 		}
 
 		return this.insertEditorContent( before, newContent, after );
-	}
+	};
 
 	insertEditorContent( before, newContent, after ) {
 		const { content, onToolbarChangeContent } = this.props;
@@ -222,14 +216,15 @@ export class EditorHtmlToolbar extends Component {
 		this.setCursorPosition( selectionEnd, fullContent.length - value.length );
 	}
 
-	attributesToString = ( attributes = {} ) => reduce(
-		attributes,
-		( attributesString, attributeValue, attributeName ) =>
-			attributeValue
-				? attributesString + ` ${ attributeName }="${ attributeValue }"`
-				: attributesString,
-		''
-	);
+	attributesToString = ( attributes = {} ) =>
+		reduce(
+			attributes,
+			( attributesString, attributeValue, attributeName ) =>
+				attributeValue
+					? attributesString + ` ${ attributeName }="${ attributeValue }"`
+					: attributesString,
+			''
+		);
 
 	openHtmlTag = ( { name, attributes = {}, options = {} } ) =>
 		( options.paragraph ? '\n' : '' ) +
@@ -238,9 +233,7 @@ export class EditorHtmlToolbar extends Component {
 		( options.paragraph ? '\n' : '' );
 
 	closeHtmlTag = ( { name, options = {} } ) =>
-		`</${ name }>` +
-		( options.newLineAfter ? '\n' : '' ) +
-		( options.paragraph ? '\n\n' : '' );
+		`</${ name }>` + ( options.newLineAfter ? '\n' : '' ) + ( options.paragraph ? '\n\n' : '' );
 
 	insertHtmlTagOpen( tag ) {
 		const { openTags } = this.state;
@@ -258,38 +251,38 @@ export class EditorHtmlToolbar extends Component {
 
 	insertHtmlTagOpenClose( tag ) {
 		const { before, inner, after } = this.splitEditorContent();
-		this.updateEditorContent( before, this.openHtmlTag( tag ) + inner + this.closeHtmlTag( tag ), after );
+		this.updateEditorContent(
+			before,
+			this.openHtmlTag( tag ) + inner + this.closeHtmlTag( tag ),
+			after
+		);
 	}
 
 	insertHtmlTagSelfClosed( tag ) {
 		const { before, inner, after } = this.splitEditorContent();
 		const selfClosedTag = `<${ tag.name }${ this.attributesToString( tag.attributes ) } />`;
-		const content = tag.options && tag.options.paragraph
-			? '\n' + selfClosedTag + '\n\n'
-			: selfClosedTag;
+		const content =
+			tag.options && tag.options.paragraph ? '\n' + selfClosedTag + '\n\n' : selfClosedTag;
 		this.updateEditorContent( before, inner + content, after );
 	}
 
 	insertHtmlTagWithText( tag ) {
 		const { before, after } = this.splitEditorContent();
-		this.updateEditorContent( before, this.openHtmlTag( tag ) + tag.options.text + this.closeHtmlTag( tag ), after );
+		this.updateEditorContent(
+			before,
+			this.openHtmlTag( tag ) + tag.options.text + this.closeHtmlTag( tag ),
+			after
+		);
 	}
 
 	insertCustomContent( content, options = {} ) {
 		const { before, inner, after } = this.splitEditorContent();
 		const paragraph = options.paragraph ? '\n' : '';
-		this.updateEditorContent(
-			before,
-			inner + paragraph + content + paragraph + paragraph,
-			after
-		);
+		this.updateEditorContent( before, inner + paragraph + content + paragraph + paragraph, after );
 	}
 
 	insertHtmlTag( tag ) {
-		const { content: {
-			selectionEnd,
-			selectionStart,
-		} } = this.props;
+		const { content: { selectionEnd, selectionStart } } = this.props;
 		if ( selectionEnd === selectionStart ) {
 			this.isTagOpen( tag.name ) ? this.insertHtmlTagClose( tag ) : this.insertHtmlTagOpen( tag );
 		} else {
@@ -299,11 +292,11 @@ export class EditorHtmlToolbar extends Component {
 
 	onClickBold = () => {
 		this.insertHtmlTag( { name: 'strong' } );
-	}
+	};
 
 	onClickItalic = () => {
 		this.insertHtmlTag( { name: 'em' } );
-	}
+	};
 
 	onClickLink = ( attributes, text ) => {
 		if ( text ) {
@@ -317,41 +310,41 @@ export class EditorHtmlToolbar extends Component {
 
 	onClickQuote = () => {
 		this.insertHtmlTag( { name: 'blockquote', options: { paragraph: true } } );
-	}
+	};
 
 	onClickDelete = () => {
 		const datetime = this.props.moment().format();
 		this.insertHtmlTag( { name: 'del', attributes: { datetime } } );
-	}
+	};
 
 	onClickInsert = () => {
 		const datetime = this.props.moment().format();
 		this.insertHtmlTag( { name: 'ins', attributes: { datetime } } );
-	}
+	};
 
 	onClickImage = attributes => {
 		this.insertHtmlTagSelfClosed( { name: 'img', attributes } );
-	}
+	};
 
 	onClickUnorderedList = () => {
 		this.insertHtmlTag( { name: 'ul', options: { paragraph: true } } );
-	}
+	};
 
 	onClickOrderedList = () => {
 		this.insertHtmlTag( { name: 'ol', options: { paragraph: true } } );
-	}
+	};
 
 	onClickListItem = () => {
 		this.insertHtmlTag( { name: 'li', options: { indent: true, newLineAfter: true } } );
-	}
+	};
 
 	onClickCode = () => {
 		this.insertHtmlTag( { name: 'code' } );
-	}
+	};
 
 	onClickMore = () => {
 		this.insertCustomContent( '<!--more-->', { paragraph: true } );
-	}
+	};
 
 	onClickCloseTags = () => {
 		const closedTags = reduce(
@@ -361,24 +354,24 @@ export class EditorHtmlToolbar extends Component {
 		);
 		this.insertCustomContent( closedTags );
 		this.setState( { openTags: [] } );
-	}
+	};
 
 	onInsertMedia = media => {
 		this.insertCustomContent( media );
-	}
+	};
 
 	onInsertContactForm = () => {
 		this.insertCustomContent( serializeContactForm( this.props.contactForm ), { paragraph: true } );
 		this.closeContactFormDialog();
-	}
+	};
 
 	openImageDialog = () => {
 		this.setState( { showImageDialog: true } );
-	}
+	};
 
 	closeImageDialog = () => {
 		this.setState( { showImageDialog: false } );
-	}
+	};
 
 	openLinkDialog = () => {
 		const { inner: selectedText } = this.splitEditorContent();
@@ -386,15 +379,15 @@ export class EditorHtmlToolbar extends Component {
 			selectedText,
 			showLinkDialog: true,
 		} );
-	}
+	};
 
 	closeLinkDialog = () => {
 		this.setState( { showLinkDialog: false } );
-	}
+	};
 
 	toggleInsertContentMenu = () => {
 		this.setState( { showInsertContentMenu: ! this.state.showInsertContentMenu } );
-	}
+	};
 
 	openContactFormDialog = () => {
 		this.setState( {
@@ -402,19 +395,17 @@ export class EditorHtmlToolbar extends Component {
 			showContactFormDialog: true,
 			showInsertContentMenu: false,
 		} );
-	}
+	};
 
 	toggleContactFormDialogTab = () => {
 		this.setState( {
-			contactFormDialogTab: 'fields' === this.state.contactFormDialogTab
-				? 'settings'
-				: 'fields',
+			contactFormDialogTab: 'fields' === this.state.contactFormDialogTab ? 'settings' : 'fields',
 		} );
-	}
+	};
 
 	closeContactFormDialog = () => {
 		this.setState( { showContactFormDialog: false } );
-	}
+	};
 
 	openMediaModal = () => {
 		this.setState( {
@@ -422,7 +413,7 @@ export class EditorHtmlToolbar extends Component {
 			showMediaModal: true,
 			source: '',
 		} );
-	}
+	};
 
 	openGoogleModal = () => {
 		this.setState( {
@@ -430,11 +421,11 @@ export class EditorHtmlToolbar extends Component {
 			showMediaModal: true,
 			source: 'google_photos',
 		} );
-	}
+	};
 
 	closeMediaModal = () => {
 		this.setState( { showMediaModal: false } );
-	}
+	};
 
 	openSimplePaymentsDialog = () => {
 		this.setState( {
@@ -448,13 +439,13 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( { showSimplePaymentsDialog: false } );
 	};
 
-	changeSimplePaymentsDialogTab = ( tab ) => {
+	changeSimplePaymentsDialogTab = tab => {
 		this.setState( {
 			simplePaymentsDialogTab: tab,
 		} );
 	};
 
-	insertSimplePayment = ( productData ) => {
+	insertSimplePayment = productData => {
 		this.insertCustomContent( serializeSimplePayment( productData ), { paragraph: true } );
 		this.closeSimplePaymentsDialog();
 	};
@@ -464,7 +455,8 @@ export class EditorHtmlToolbar extends Component {
 		// Find selected images. Non-images will still be uploaded, but not
 		// inserted directly into the post contents.
 		const selectedItems = MediaLibrarySelectedStore.getAll( site.ID );
-		const isSingleImage = 1 === selectedItems.length && 'image' === MediaUtils.getMimePrefix( selectedItems[ 0 ] );
+		const isSingleImage =
+			1 === selectedItems.length && 'image' === MediaUtils.getMimePrefix( selectedItems[ 0 ] );
 
 		if ( isSingleImage && ! MediaValidationStore.hasErrors( site.ID ) ) {
 			// For single image upload, insert into post content, blocking save
@@ -479,7 +471,7 @@ export class EditorHtmlToolbar extends Component {
 			// In all other cases, show the media modal list view
 			this.openMediaModal();
 		}
-	}
+	};
 
 	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
 
@@ -496,7 +488,9 @@ export class EditorHtmlToolbar extends Component {
 				onClick={ this.openGoogleModal }
 			>
 				<Gridicon icon="add-image" />
-				<span data-e2e-insert-type="google-media">{ translate( 'Add from Google' ) }</span>
+				<span data-e2e-insert-type="google-media">
+					{ translate( 'Add from Google' ) }
+				</span>
 			</div>
 		);
 	}
@@ -514,25 +508,24 @@ export class EditorHtmlToolbar extends Component {
 				onClick={ this.openSimplePaymentsDialog }
 			>
 				<Gridicon icon="money" />
-				<span data-e2e-insert-type="payment-button">{ translate( 'Add Payment Button' ) }</span>
+				<span data-e2e-insert-type="payment-button">
+					{ translate( 'Add Payment Button' ) }
+				</span>
 			</div>
 		);
 	}
 
 	render() {
-		const {
-			site,
-			translate,
-		} = this.props;
+		const { site, translate } = this.props;
 
 		const classes = classNames( 'editor-html-toolbar', {
 			'is-pinned': this.state.isPinned,
 			'is-scrollable': this.state.isScrollable,
 			'is-scrolled-full': this.state.isScrolledFull,
 		} );
-		const insertContentClasses = classNames( 'editor-html-toolbar__insert-content-dropdown',
-			{ 'is-visible': this.state.showInsertContentMenu }
-		);
+		const insertContentClasses = classNames( 'editor-html-toolbar__insert-content-dropdown', {
+			'is-visible': this.state.showInsertContentMenu,
+		} );
 
 		const buttons = {
 			strong: {
@@ -586,11 +579,11 @@ export class EditorHtmlToolbar extends Component {
 			<div className={ classes }>
 				<div className="editor-html-toolbar__wrapper">
 					<div className="editor-html-toolbar__wrapper-buttons">
-						<div
-							className="editor-html-toolbar__buttons"
-							ref={ this.bindButtonsRef }
-						>
-							<div className="editor-html-toolbar__button-insert-content" ref={ this.bindInsertContentButtonsRef }>
+						<div className="editor-html-toolbar__buttons" ref={ this.bindButtonsRef }>
+							<div
+								className="editor-html-toolbar__button-insert-content"
+								ref={ this.bindInsertContentButtonsRef }
+							>
 								<Button
 									borderless
 									className="editor-html-toolbar__button-insert-media"
@@ -605,13 +598,17 @@ export class EditorHtmlToolbar extends Component {
 									compact
 									onClick={ this.toggleInsertContentMenu }
 								>
-									<Gridicon icon={ this.state.showInsertContentMenu ? 'chevron-up' : 'chevron-down' } />
+									<Gridicon
+										icon={ this.state.showInsertContentMenu ? 'chevron-up' : 'chevron-down' }
+									/>
 								</Button>
 							</div>
 							{ map( buttons, ( { disabled, label, onClick }, tag ) =>
 								<Button
 									borderless
-									className={ `editor-html-toolbar__button-${ tag } ${ this.isTagOpen( tag ) ? 'is-tag-open' : '' }` }
+									className={ `editor-html-toolbar__button-${ tag } ${ this.isTagOpen( tag )
+										? 'is-tag-open'
+										: '' }` }
 									compact
 									disabled={ disabled }
 									key={ tag }
@@ -628,7 +625,9 @@ export class EditorHtmlToolbar extends Component {
 								onClick={ this.openMediaModal }
 							>
 								<Gridicon icon="add-image" />
-								<span data-e2e-insert-type="media">{ translate( 'Add Media' ) }</span>
+								<span data-e2e-insert-type="media">
+									{ translate( 'Add Media' ) }
+								</span>
 							</div>
 
 							{ this.renderExternal() }
@@ -638,7 +637,9 @@ export class EditorHtmlToolbar extends Component {
 								onClick={ this.openContactFormDialog }
 							>
 								<Gridicon icon="mention" />
-								<span data-e2e-insert-type="contact-form">{ translate( 'Add Contact Form' ) }</span>
+								<span data-e2e-insert-type="contact-form">
+									{ translate( 'Add Contact Form' ) }
+								</span>
 							</div>
 
 							{ this.renderSimplePaymentsButton() }
@@ -679,10 +680,7 @@ export class EditorHtmlToolbar extends Component {
 					source={ this.state.source }
 				/>
 
-				<MediaLibraryDropZone
-					onAddMedia={ this.onFilesDrop }
-					site={ site }
-				/>
+				<MediaLibraryDropZone onAddMedia={ this.onFilesDrop } site={ site } />
 
 				<SimplePaymentsDialog
 					showDialog={ this.state.showSimplePaymentsDialog }

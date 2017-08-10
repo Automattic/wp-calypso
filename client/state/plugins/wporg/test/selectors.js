@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,16 +11,16 @@ import deepFreeze from 'deep-freeze';
 import selectors from '../selectors';
 
 const items = deepFreeze( {
-	test: { slug: 'test'},
+	test: { slug: 'test' },
 	fetchingTest: { slug: 'fetchingTest' },
 	fetchedTest: { slug: 'fetchingTest', fetched: true },
-	fetchedTest2: { slug: 'fetchingTest', fetched: true }
+	fetchedTest2: { slug: 'fetchingTest', fetched: true },
 } );
 const fetchingItems = deepFreeze( {
 	test: false,
 	fetchingTest: true,
 	fetchedTest: false,
-	fetchedTest2: true
+	fetchedTest2: true,
 } );
 
 describe( 'WPorg Selectors', function() {
@@ -74,7 +75,7 @@ describe( 'WPorg Selectors', function() {
 			assert.equal( selectors.isFetched( items, 'fetchedTest' ), true );
 		} );
 
-		it( 'Should get `true` if the requested plugin has being fetched even if it\'s being fetche again', function() {
+		it( "Should get `true` if the requested plugin has being fetched even if it's being fetche again", function() {
 			assert.equal( selectors.isFetched( items, 'fetchedTest2' ), true );
 		} );
 	} );

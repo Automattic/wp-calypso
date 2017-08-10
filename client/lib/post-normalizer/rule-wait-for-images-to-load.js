@@ -1,15 +1,8 @@
+/** @format */
 /**
  * External Dependencies
  */
-import {
-	filter,
-	find,
-	flow,
-	forEach,
-	map,
-	pull,
-	take,
-} from 'lodash';
+import { filter, find, flow, forEach, map, pull, take } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -24,7 +17,7 @@ function convertImageToObject( image ) {
 		src: image.src,
 		// use natural height and width
 		width: image.naturalWidth,
-		height: image.naturalHeight
+		height: image.naturalHeight,
 	};
 }
 
@@ -47,7 +40,7 @@ function promiseForImage( image ) {
 const promiseForURL = flow( imageForURL, promiseForImage );
 
 export default function waitForImagesToLoad( post ) {
-	return new Promise( ( resolve ) => {
+	return new Promise( resolve => {
 		function acceptLoadedImages( images ) {
 			if ( post.featured_image ) {
 				if ( ! find( images, { src: post.featured_image } ) ) {
@@ -58,12 +51,15 @@ export default function waitForImagesToLoad( post ) {
 
 			post.images = map( images, convertImageToObject );
 
-			post.content_images = filter( map( post.content_images, function( image ) {
-				return find( post.images, { src: image.src } );
-			} ), Boolean );
+			post.content_images = filter(
+				map( post.content_images, function( image ) {
+					return find( post.images, { src: image.src } );
+				} ),
+				Boolean
+			);
 
 			// this adds adds height/width to images
-			post.content_media = map( post.content_media, ( media ) => {
+			post.content_media = map( post.content_media, media => {
 				if ( media.mediaType === 'image' ) {
 					const img = find( post.images, { src: media.src } );
 					return { ...media, ...img };
@@ -90,7 +86,7 @@ export default function waitForImagesToLoad( post ) {
 				knownImages[ image.src ] = {
 					src: image.src,
 					naturalWidth: knownDimensions.width,
-					naturalHeight: knownDimensions.height
+					naturalHeight: knownDimensions.height,
 				};
 			}
 			imagesToCheck.push( image.src );
@@ -105,7 +101,7 @@ export default function waitForImagesToLoad( post ) {
 
 		// convert to image objects to start the load process
 		// only check the first 5 images
-		let promises = map( take( imagesToCheck, 5 ), ( imageUrl ) => {
+		let promises = map( take( imagesToCheck, 5 ), imageUrl => {
 			if ( imageUrl in knownImages ) {
 				return Promise.resolve( knownImages[ imageUrl ] );
 			}
@@ -113,26 +109,33 @@ export default function waitForImagesToLoad( post ) {
 		} );
 
 		forEach( promises, promise => {
-			promise.then( image => {
-				// keep track of what loaded successfully. Note these will be out of order.
-				imagesLoaded[ image.src ] = image;
-			} ).catch( err => {
-				// ignore what did not, but return the promise chain to success
-				debug( 'failed to load image', err, post );
-				return null;
-			} ).then( () => {
-				// check to see if all of the promises have settled
-				// if so, accept what loaded and resolve the main promise
-				promises = pull( promises, promise );
-				if ( promises.length === 0 ) {
-					const imagesInOrder = filter( map( imagesToCheck, src => {
-						return imagesLoaded[ src ];
-					} ), Boolean );
-					acceptLoadedImages( imagesInOrder );
-				}
-			} ).catch( err => {
-				debug( 'Fulfilling promise failed', err );
-			} );
+			promise
+				.then( image => {
+					// keep track of what loaded successfully. Note these will be out of order.
+					imagesLoaded[ image.src ] = image;
+				} )
+				.catch( err => {
+					// ignore what did not, but return the promise chain to success
+					debug( 'failed to load image', err, post );
+					return null;
+				} )
+				.then( () => {
+					// check to see if all of the promises have settled
+					// if so, accept what loaded and resolve the main promise
+					promises = pull( promises, promise );
+					if ( promises.length === 0 ) {
+						const imagesInOrder = filter(
+							map( imagesToCheck, src => {
+								return imagesLoaded[ src ];
+							} ),
+							Boolean
+						);
+						acceptLoadedImages( imagesInOrder );
+					}
+				} )
+				.catch( err => {
+					debug( 'Fulfilling promise failed', err );
+				} );
 		} );
 	} );
 }

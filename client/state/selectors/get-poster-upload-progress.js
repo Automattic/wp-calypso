@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns the poster upload progress.
  *

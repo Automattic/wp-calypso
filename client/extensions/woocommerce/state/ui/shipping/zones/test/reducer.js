@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -112,9 +113,7 @@ describe( 'reducer', () => {
 
 			const newState = reducer( state, closeEditingShippingZone( siteId ) );
 			expect( newState.creates ).to.be.empty;
-			expect( newState.updates ).to.deep.equal( [
-				{ id: 1, ...emptyChanges, name: 'Hi There' },
-			] );
+			expect( newState.updates ).to.deep.equal( [ { id: 1, ...emptyChanges, name: 'Hi There' } ] );
 			expect( newState.currentlyEditingId ).to.be.null;
 		} );
 
@@ -203,8 +202,13 @@ describe( 'reducer', () => {
 
 			const newState = reducer( state, changeShippingZoneName( siteId, 'New Name' ) );
 			expect( newState.creates ).to.be.empty;
-			expect( newState.updates ).to.deep.equal( [ { id: 1, ...emptyChanges, name: 'Previous Name' } ] );
-			expect( newState.currentlyEditingChanges ).to.deep.equal( { ...emptyChanges, name: 'New Name' } );
+			expect( newState.updates ).to.deep.equal( [
+				{ id: 1, ...emptyChanges, name: 'Previous Name' },
+			] );
+			expect( newState.currentlyEditingChanges ).to.deep.equal( {
+				...emptyChanges,
+				name: 'New Name',
+			} );
 			expect( newState.currentlyEditingId ).to.equal( 1 );
 		} );
 	} );
@@ -264,4 +268,3 @@ describe( 'reducer', () => {
 		} );
 	} );
 } );
-

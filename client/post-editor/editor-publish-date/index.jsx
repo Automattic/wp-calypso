@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,6 @@ import PostSchedule from 'components/post-schedule';
 import utils from 'lib/posts/utils';
 
 export class EditorPublishDate extends React.Component {
-
 	static propTypes = {
 		post: React.PropTypes.object,
 		postDate: React.PropTypes.string,
@@ -45,22 +45,25 @@ export class EditorPublishDate extends React.Component {
 
 	handleOutsideClick = event => {
 		const targetClasses = event.target.className.split( /\s/ );
-		const hasDatePickerDayClass = intersection( targetClasses, [ 'DayPicker-Day', 'date-picker__day' ] ).length > 0;
-		const isChildOfPublishDate = ReactDom.findDOMNode( this.refs.editorPublishDateWrapper ).contains( event.target );
+		const hasDatePickerDayClass =
+			intersection( targetClasses, [ 'DayPicker-Day', 'date-picker__day' ] ).length > 0;
+		const isChildOfPublishDate = ReactDom.findDOMNode(
+			this.refs.editorPublishDateWrapper
+		).contains( event.target );
 
 		if ( ! hasDatePickerDayClass && ! isChildOfPublishDate ) {
 			this.setState( { isOpen: false } );
 		}
-	}
+	};
 
 	setImmediate = () => {
 		this.props.setPostDate( null );
 		this.setState( { isOpen: false } );
-	}
+	};
 
 	toggleOpenState = () => {
 		this.setState( { isOpen: ! this.state.isOpen } );
-	}
+	};
 
 	getHeaderDescription() {
 		const isScheduled = utils.isFutureDated( this.props.post );
@@ -104,7 +107,11 @@ export class EditorPublishDate extends React.Component {
 		}
 
 		return (
-			<Button borderless={ true } className="editor-publish-date__immediate" onClick={ this.setImmediate }>
+			<Button
+				borderless={ true }
+				className="editor-publish-date__immediate"
+				onClick={ this.setImmediate }
+			>
 				{ this.props.translate( 'Publish Immediately' ) }
 			</Button>
 		);
@@ -119,9 +126,7 @@ export class EditorPublishDate extends React.Component {
 			'is-back-dated': isBackDated,
 			'is-published': isPublished,
 		} );
-		const selectedDay = this.props.post && this.props.post.date
-			? this.props.post.date
-			: null;
+		const selectedDay = this.props.post && this.props.post.date ? this.props.post.date : null;
 
 		return (
 			<div className={ className } onClick={ this.toggleOpenState }>
@@ -130,20 +135,17 @@ export class EditorPublishDate extends React.Component {
 					<div className="editor-publish-date__header-description">
 						{ this.getHeaderDescription() }
 					</div>
-					{ ( isScheduled || isBackDated || isPublished ) && (
+					{ ( isScheduled || isBackDated || isPublished ) &&
 						<div className="editor-publish-date__header-chrono">
 							{ this.props.moment( selectedDay ).calendar() }
-						</div>
-					) }
+						</div> }
 				</div>
 			</div>
 		);
 	}
 
 	renderSchedule() {
-		const selectedDay = this.props.post && this.props.post.date
-			? this.props.post.date
-			: null;
+		const selectedDay = this.props.post && this.props.post.date ? this.props.post.date : null;
 
 		return (
 			<div className="editor-publish-date__schedule">
@@ -152,7 +154,7 @@ export class EditorPublishDate extends React.Component {
 					displayInputChrono={ false }
 					onDateChange={ this.props.setPostDate }
 					selectedDay={ selectedDay }
-					/>
+				/>
 			</div>
 		);
 	}
@@ -171,7 +173,6 @@ export class EditorPublishDate extends React.Component {
 			</div>
 		);
 	}
-
 }
 
 export default localize( EditorPublishDate );

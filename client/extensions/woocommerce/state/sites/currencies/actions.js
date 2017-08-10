@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -7,12 +8,9 @@ import {
 	WOOCOMMERCE_CURRENCIES_REQUEST,
 	WOOCOMMERCE_CURRENCIES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import {
-	areCurrenciesLoaded,
-	areCurrenciesLoading,
-} from './selectors';
+import { areCurrenciesLoaded, areCurrenciesLoading } from './selectors';
 
-export const fetchCurrencies = ( siteId ) => ( dispatch, getState ) => {
+export const fetchCurrencies = siteId => ( dispatch, getState ) => {
 	if ( areCurrenciesLoaded( getState(), siteId ) || areCurrenciesLoading( getState(), siteId ) ) {
 		return;
 	}
@@ -24,8 +22,9 @@ export const fetchCurrencies = ( siteId ) => ( dispatch, getState ) => {
 
 	dispatch( getAction );
 
-	return request( siteId ).get( 'data/currencies' )
-		.then( ( data ) => {
+	return request( siteId )
+		.get( 'data/currencies' )
+		.then( data => {
 			dispatch( {
 				type: WOOCOMMERCE_CURRENCIES_REQUEST_SUCCESS,
 				siteId,

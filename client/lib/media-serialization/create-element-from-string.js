@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Given a string, attempts to generate the equivalent HTMLElement
  *
@@ -10,7 +11,7 @@ export default function( string ) {
 		wrapper = document.implementation.createHTMLDocument( '' ).body;
 	} else if ( 'undefined' !== typeof DOMParser ) {
 		try {
-			return ( new DOMParser() ).parseFromString( string, 'text/html' ).body.firstChild;
+			return new DOMParser().parseFromString( string, 'text/html' ).body.firstChild;
 		} catch ( e ) {} // eslint-disable-line no-empty
 	}
 

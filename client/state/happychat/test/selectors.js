@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -27,10 +28,7 @@ import {
 	getGeoLocation,
 	getGroups,
 } from '../selectors';
-import {
-	HAPPYCHAT_GROUP_WPCOM,
-	HAPPYCHAT_GROUP_JPOP
-} from '../constants';
+import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from '../constants';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 
 const TIME_SECOND = 1000;
@@ -49,8 +47,8 @@ describe( 'selectors', () => {
 		it( 'should return false if no activity', () => {
 			const result = wasHappychatRecentlyActive( {
 				happychat: {
-					lastActivityTimestamp: null
-				}
+					lastActivityTimestamp: null,
+				},
 			} );
 
 			expect( result ).to.be.false;
@@ -59,8 +57,8 @@ describe( 'selectors', () => {
 		it( 'should return false if last activity was 3 hours ago', () => {
 			const result = wasHappychatRecentlyActive( {
 				happychat: {
-					lastActivityTimestamp: NOW - ( TIME_HOUR * 3 )
-				}
+					lastActivityTimestamp: NOW - TIME_HOUR * 3,
+				},
 			} );
 
 			expect( result ).to.be.false;
@@ -69,8 +67,8 @@ describe( 'selectors', () => {
 		it( 'should return true if last activity was 5 minutes ago', () => {
 			const result = wasHappychatRecentlyActive( {
 				happychat: {
-					lastActivityTimestamp: NOW - ( TIME_MINUTE * 5 )
-				}
+					lastActivityTimestamp: NOW - TIME_MINUTE * 5,
+				},
 			} );
 
 			expect( result ).to.be.true;
@@ -96,8 +94,8 @@ describe( 'selectors', () => {
 			const state = deepFreeze( {
 				happychat: {
 					connectionStatus: 'uninitialized',
-					chatStatus: HAPPYCHAT_CHAT_STATUS_NEW
-				}
+					chatStatus: HAPPYCHAT_CHAT_STATUS_NEW,
+				},
 			} );
 			expect( canUserSendMessages( state ) ).to.be.false;
 		} );
@@ -107,8 +105,8 @@ describe( 'selectors', () => {
 				const state = deepFreeze( {
 					happychat: {
 						connectionStatus: 'connected',
-						chatStatus: status
-					}
+						chatStatus: status,
+					},
 				} );
 				expect( canUserSendMessages( state ) ).to.be.false;
 			} );
@@ -119,8 +117,8 @@ describe( 'selectors', () => {
 				const state = deepFreeze( {
 					happychat: {
 						connectionStatus: 'connected',
-						chatStatus: status
-					}
+						chatStatus: status,
+					},
 				} );
 				expect( canUserSendMessages( state ) ).to.be.true;
 			} );
@@ -135,7 +133,7 @@ describe( 'selectors', () => {
 					connectionStatus: 'connected',
 					chatStatus: HAPPYCHAT_CHAT_STATUS_NEW,
 					isAvailable: false,
-				}
+				},
 			} );
 			expect( canUserSendMessages( state ) ).to.be.true;
 		} );
@@ -157,15 +155,15 @@ describe( 'selectors', () => {
 		const timeline = [
 			{ timestamp: ( NOW - FIVE_MINUTES ) / 1000 },
 			{ timestamp: ( NOW - ONE_MINUTE ) / 1000 },
-			{ timestamp: ( NOW ) / 1000 },
+			{ timestamp: NOW / 1000 },
 		];
 
 		it( 'returns false if Happychat is focused', () => {
 			const state = deepFreeze( {
 				happychat: {
 					timeline,
-					lostFocusAt: null
-				}
+					lostFocusAt: null,
+				},
 			} );
 			expect( hasUnreadMessages( state ) ).to.be.false;
 		} );
@@ -174,8 +172,8 @@ describe( 'selectors', () => {
 			const state = deepFreeze( {
 				happychat: {
 					timeline,
-					lostFocusAt: NOW + ONE_MINUTE
-				}
+					lostFocusAt: NOW + ONE_MINUTE,
+				},
 			} );
 			expect( hasUnreadMessages( state ) ).to.be.false;
 		} );
@@ -184,8 +182,8 @@ describe( 'selectors', () => {
 			const state = deepFreeze( {
 				happychat: {
 					timeline,
-					lostFocusAt: NOW - ONE_MINUTE - ONE_MINUTE
-				}
+					lostFocusAt: NOW - ONE_MINUTE - ONE_MINUTE,
+				},
 			} );
 			expect( hasUnreadMessages( state ) ).to.be.true;
 		} );
@@ -226,8 +224,8 @@ describe( 'selectors', () => {
 			const state = deepFreeze( {
 				happychat: {
 					connectionStatus: 'uninitialized',
-					isAvailable: true
-				}
+					isAvailable: true,
+				},
 			} );
 			expect( isHappychatAvailable( state ) ).to.be.false;
 		} );
@@ -236,8 +234,8 @@ describe( 'selectors', () => {
 			const state = deepFreeze( {
 				happychat: {
 					connectionStatus: 'connected',
-					isAvailable: false
-				}
+					isAvailable: false,
+				},
 			} );
 			expect( isHappychatAvailable( state ) ).to.be.false;
 		} );
@@ -246,8 +244,8 @@ describe( 'selectors', () => {
 			const state = deepFreeze( {
 				happychat: {
 					connectionStatus: 'connected',
-					isAvailable: true
-				}
+					isAvailable: true,
+				},
 			} );
 			expect( isHappychatAvailable( state ) ).to.be.true;
 		} );
@@ -257,8 +255,8 @@ describe( 'selectors', () => {
 		it( 'should return null if geoLocation is not set', () => {
 			const selected = getGeoLocation( {
 				happychat: {
-					geoLocation: null
-				}
+					geoLocation: null,
+				},
 			} );
 			expect( selected ).to.equal( null );
 		} );
@@ -266,9 +264,9 @@ describe( 'selectors', () => {
 			const selected = getGeoLocation( {
 				happychat: {
 					geoLocation: {
-						city: 'Timisoara'
-					}
-				}
+						city: 'Timisoara',
+					},
+				},
 			} );
 			expect( selected.city ).to.equal( 'Timisoara' );
 		} );
@@ -290,8 +288,8 @@ describe( 'selectors', () => {
 			const siteId = 1;
 			const state = {
 				sites: {
-					items: {}
-				}
+					items: {},
+				},
 			};
 
 			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );
@@ -302,9 +300,9 @@ describe( 'selectors', () => {
 			const state = {
 				sites: {
 					items: {
-						1: {}
-					}
-				}
+						1: {},
+					},
+				},
 			};
 
 			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );
@@ -317,9 +315,9 @@ describe( 'selectors', () => {
 					id: 1,
 					capabilities: {
 						[ siteId ]: {
-							manage_options: true
-						}
-					}
+							manage_options: true,
+						},
+					},
 				},
 				sites: {
 					items: {
@@ -327,11 +325,11 @@ describe( 'selectors', () => {
 							jetpack: true,
 							plan: {
 								product_id: 2005,
-								product_slug: 'jetpack_personal'
-							}
-						}
-					}
-				}
+								product_slug: 'jetpack_personal',
+							},
+						},
+					},
+				},
 			};
 
 			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_JPOP ] );
@@ -344,19 +342,19 @@ describe( 'selectors', () => {
 					id: 1,
 					capabilities: {
 						[ siteId ]: {
-							manage_options: true
-						}
-					}
+							manage_options: true,
+						},
+					},
 				},
 				sites: {
 					items: {
 						[ siteId ]: {
 							jetpack: true,
 							options: { is_automated_transfer: true },
-							plan: { product_slug: PLAN_BUSINESS }
-						}
-					}
-				}
+							plan: { product_slug: PLAN_BUSINESS },
+						},
+					},
+				},
 			};
 
 			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );

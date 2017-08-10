@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,9 +17,7 @@ import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
 const RejectedUserAgents = ( {
-	fields: {
-		cache_rejected_user_agent,
-	},
+	fields: { cache_rejected_user_agent },
 	handleChange,
 	handleSubmitForm,
 	isReadOnly,
@@ -31,15 +30,8 @@ const RejectedUserAgents = ( {
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Rejected User Agents' ) }>
-				<Button
-					compact
-					primary
-					disabled={ isDisabled }
-					onClick={ handleSubmitForm }>
-					{ isSaving
-						? translate( 'Saving…' )
-						: translate( 'Save Settings' )
-					}
+				<Button compact primary disabled={ isDisabled } onClick={ handleSubmitForm }>
+					{ isSaving ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
 			<Card>
@@ -48,12 +40,13 @@ const RejectedUserAgents = ( {
 						<FormTextarea
 							disabled={ isDisabled }
 							onChange={ handleChange( 'cache_rejected_user_agent' ) }
-							value={ cache_rejected_user_agent } />
+							value={ cache_rejected_user_agent }
+						/>
 						<FormSettingExplanation>
 							{ translate(
 								'Strings in the HTTP ’User Agent’ header that prevent WP-Cache from caching bot, ' +
-								'spiders, and crawlers’ requests. Note that super cached files are still sent to ' +
-								'these agents if they already exists.'
+									'spiders, and crawlers’ requests. Note that super cached files are still sent to ' +
+									'these agents if they already exists.'
 							) }
 						</FormSettingExplanation>
 					</FormFieldset>
@@ -64,9 +57,7 @@ const RejectedUserAgents = ( {
 };
 
 const getFormSettings = settings => {
-	return pick( settings, [
-		'cache_rejected_user_agent',
-	] );
+	return pick( settings, [ 'cache_rejected_user_agent' ] );
 };
 
 export default WrapSettingsForm( getFormSettings )( RejectedUserAgents );

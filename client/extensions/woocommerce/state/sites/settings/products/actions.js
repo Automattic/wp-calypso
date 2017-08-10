@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -7,12 +8,9 @@ import {
 	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import {
-	areSettingsProductsLoaded,
-	areSettingsProductsLoading,
-} from './selectors';
+import { areSettingsProductsLoaded, areSettingsProductsLoading } from './selectors';
 
-export const fetchSettingsProducts = ( siteId ) => ( dispatch, getState ) => {
+export const fetchSettingsProducts = siteId => ( dispatch, getState ) => {
 	if (
 		areSettingsProductsLoaded( getState(), siteId ) ||
 		areSettingsProductsLoading( getState(), siteId )
@@ -27,8 +25,9 @@ export const fetchSettingsProducts = ( siteId ) => ( dispatch, getState ) => {
 
 	dispatch( getAction );
 
-	return request( siteId ).get( 'settings/products' )
-		.then( ( data ) => {
+	return request( siteId )
+		.get( 'settings/products' )
+		.then( data => {
 			dispatch( {
 				type: WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
 				siteId,

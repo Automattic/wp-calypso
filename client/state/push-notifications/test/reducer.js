@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,9 +11,9 @@ import deepFreeze from 'deep-freeze';
 import {
 	SERIALIZE,
 	DESERIALIZE,
-	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE
+	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 } from 'state/action-types';
-import reducer, {} from '../reducer';
+import reducer from '../reducer';
 
 const wpcomSubscription = {
 	ID: '42',
@@ -20,9 +21,9 @@ const wpcomSubscription = {
 		comments: {
 			desc: 'Comments',
 			long_desc: '"Someone comments one of my posts"',
-			value: '1'
-		}
-	}
+			value: '1',
+		},
+	},
 };
 
 describe( 'system reducer', () => {
@@ -43,7 +44,7 @@ describe( 'system reducer', () => {
 				authorizationLoaded: true,
 				blocked: false,
 				wpcomSubscription: wpcomSubscription,
-			}
+			},
 		};
 		deepFreeze( previousState );
 		const action = { type: SERIALIZE };
@@ -72,7 +73,7 @@ describe( 'system reducer', () => {
 				authorizationLoaded: true,
 				blocked: false,
 				wpcomSubscription: wpcomSubscriptionId,
-			}
+			},
 		};
 		deepFreeze( previousState );
 		const action = { type: DESERIALIZE };
@@ -88,8 +89,8 @@ describe( 'system reducer', () => {
 			type: PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 			data: {
 				ID: parseInt( wpcomSubscription.ID ),
-				settings: wpcomSubscription.settings
-			}
+				settings: wpcomSubscription.settings,
+			},
 		};
 		const newState = reducer( {}, action );
 
@@ -104,7 +105,7 @@ describe( 'settings reducer', () => {
 				enabled: false,
 				dismissedNotice: true,
 				dismissedNoticeAt: 1466067124796,
-			}
+			},
 		};
 		deepFreeze( previousState );
 		const action = { type: SERIALIZE };
@@ -122,7 +123,7 @@ describe( 'settings reducer', () => {
 			settings: {
 				enabled: true,
 				showingUnblockInstructions: true,
-			}
+			},
 		};
 		deepFreeze( previousState );
 		const action = { type: SERIALIZE };
@@ -139,7 +140,7 @@ describe( 'settings reducer', () => {
 				enabled: false,
 				dismissedNotice: true,
 				dismissedNoticeAt: 1466067124796,
-			}
+			},
 		};
 		deepFreeze( previousState );
 		const newState = reducer( previousState, { type: DESERIALIZE } );
@@ -156,7 +157,7 @@ describe( 'settings reducer', () => {
 			settings: {
 				enabled: true,
 				showingUnblockInstructions: true,
-			}
+			},
 		};
 		deepFreeze( previousState );
 		const action = { type: DESERIALIZE };

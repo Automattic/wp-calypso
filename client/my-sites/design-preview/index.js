@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +20,11 @@ import { updatePreviewWithChanges } from 'lib/design-preview';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreviewUrl } from 'state/ui/preview/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'state/preview/selectors';
+import {
+	getPreviewMarkup,
+	getPreviewCustomizations,
+	isPreviewUnsaved,
+} from 'state/preview/selectors';
 import { closePreview } from 'state/ui/preview/actions';
 import DesignMenu from 'blocks/design-menu';
 import { getSiteFragment } from 'lib/route/path';
@@ -80,12 +85,14 @@ export default function designPreview( WebPreview ) {
 		shouldReloadPreview( prevProps ) {
 			const customizations = this.props.customizations;
 			const prevCustomizations = prevProps.customizations || {};
-			return ( JSON.stringify( customizations.homePage ) !==
-				JSON.stringify( prevCustomizations.homePage ) );
+			return (
+				JSON.stringify( customizations.homePage ) !== JSON.stringify( prevCustomizations.homePage )
+			);
 		}
 
 		haveCustomizationsBeenRemoved( prevProps ) {
-			return ( this.props.previewMarkup &&
+			return (
+				this.props.previewMarkup &&
 				this.props.customizations &&
 				this.props.previewMarkup === prevProps.previewMarkup &&
 				prevProps.customizations &&
@@ -99,7 +106,11 @@ export default function designPreview( WebPreview ) {
 				return;
 			}
 			debug( 'loading preview with customizations', this.props.customizations );
-			this.props.fetchPreviewMarkup( this.props.selectedSiteId, this.props.previewUrl, this.props.customizations );
+			this.props.fetchPreviewMarkup(
+				this.props.selectedSiteId,
+				this.props.previewUrl,
+				this.props.customizations
+			);
 		}
 
 		undoCustomization() {
@@ -113,8 +124,9 @@ export default function designPreview( WebPreview ) {
 
 		onClosePreview() {
 			if ( this.props.customizations && this.props.isUnsaved ) {
-				const unsavedMessage =
-					this.props.translate( 'You have unsaved changes. Are you sure you want to close the preview?' );
+				const unsavedMessage = this.props.translate(
+					'You have unsaved changes. Are you sure you want to close the preview?'
+				);
 				return accept( unsavedMessage, accepted => {
 					if ( accepted ) {
 						this.cleanAndClosePreview();
@@ -127,10 +139,11 @@ export default function designPreview( WebPreview ) {
 		cleanAndClosePreview() {
 			this.props.closePreview();
 			const siteFragment = getSiteFragment( page.current );
-			const isEmptyRoute = includes( page.current, '/customize' ) || includes( page.current, '/paladin' );
+			const isEmptyRoute =
+				includes( page.current, '/customize' ) || includes( page.current, '/paladin' );
 			// If this route has nothing but the preview, redirect to somewhere else
 			if ( isEmptyRoute ) {
-				page.redirect( `/stats/${siteFragment}` );
+				page.redirect( `/stats/${ siteFragment }` );
 			}
 		}
 
@@ -162,10 +175,7 @@ export default function designPreview( WebPreview ) {
 						onClose={ this.onClosePreview }
 						onLoad={ this.onLoad }
 					>
-						<button
-							className="design-preview__mobile-show-sidebar"
-							onClick={ showSidebar }
-						>
+						<button className="design-preview__mobile-show-sidebar" onClick={ showSidebar }>
 							<Gridicon icon="arrow-left" />
 							<span className="design-preview__mobile-show-sidebar-label">
 								{ this.props.translate( 'EDIT' ) }
@@ -214,8 +224,10 @@ export default function designPreview( WebPreview ) {
 		};
 	}
 
-	return connect(
-		mapStateToProps,
-		{ fetchPreviewMarkup, undoCustomization, closePreview, setLayoutFocus }
-	)( localize( DesignPreview ) );
+	return connect( mapStateToProps, {
+		fetchPreviewMarkup,
+		undoCustomization,
+		closePreview,
+		setLayoutFocus,
+	} )( localize( DesignPreview ) );
 }

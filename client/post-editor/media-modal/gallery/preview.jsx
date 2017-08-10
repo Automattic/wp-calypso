@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,12 +22,12 @@ export default React.createClass( {
 		settings: PropTypes.object,
 		onUpdateSetting: PropTypes.func,
 		invalidItemDropped: PropTypes.bool,
-		onDismissInvalidItemDropped: PropTypes.func
+		onDismissInvalidItemDropped: PropTypes.func,
 	},
 
 	getInitialState() {
 		return {
-			isEditing: false
+			isEditing: false,
 		};
 	},
 
@@ -35,7 +36,7 @@ export default React.createClass( {
 			settings: Object.freeze( {} ),
 			onUpdateSetting: () => {},
 			invalidItemDropped: false,
-			onDismissInvalidItemDropped: () => {}
+			onDismissInvalidItemDropped: () => {},
 		};
 	},
 
@@ -44,12 +45,14 @@ export default React.createClass( {
 			<SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact={ true }>
 				<SegmentedControlItem
 					selected={ ! this.state.isEditing }
-					onClick={ () => this.setState( { isEditing: false } ) }>
+					onClick={ () => this.setState( { isEditing: false } ) }
+				>
 					{ this.translate( 'Preview' ) }
 				</SegmentedControlItem>
 				<SegmentedControlItem
 					selected={ this.state.isEditing }
-					onClick={ () => this.setState( { isEditing: true } ) }>
+					onClick={ () => this.setState( { isEditing: true } ) }
+				>
 					{ this.translate( 'Edit' ) }
 				</SegmentedControlItem>
 			</SegmentedControl>
@@ -68,38 +71,36 @@ export default React.createClass( {
 				<EditorMediaModalGalleryEdit
 					site={ site }
 					settings={ settings }
-					onUpdateSetting={ onUpdateSetting } />
+					onUpdateSetting={ onUpdateSetting }
+				/>
 			);
 		}
 
 		if ( 'individual' === settings.type ) {
-			return (
-				<EditorMediaModalGalleryPreviewIndividual
-					items={ settings.items } />
-			);
+			return <EditorMediaModalGalleryPreviewIndividual items={ settings.items } />;
 		}
 
-		return (
-			<EditorMediaModalGalleryPreviewShortcode
-				siteId={ site.ID }
-				settings={ settings } />
-		);
+		return <EditorMediaModalGalleryPreviewShortcode siteId={ site.ID } settings={ settings } />;
 	},
 
 	render() {
 		return (
 			<div className="editor-media-modal-gallery__preview">
-				{ this.props.invalidItemDropped && (
-					<Notice status="is-warning" onDismissClick={ this.props.onDismissInvalidItemDropped } isCompact>
-						{ this.translate( 'Galleries can only include images. All other uploads will be added to your media library.' ) }
-					</Notice>
-				) }
+				{ this.props.invalidItemDropped &&
+					<Notice
+						status="is-warning"
+						onDismissClick={ this.props.onDismissInvalidItemDropped }
+						isCompact
+					>
+						{ this.translate(
+							'Galleries can only include images. All other uploads will be added to your media library.'
+						) }
+					</Notice> }
 				<div className="editor-media-modal-gallery__preview-wrapper">
 					{ this.renderPreview() }
 				</div>
 				{ this.renderPreviewModeToggle() }
 			</div>
 		);
-	}
+	},
 } );
-

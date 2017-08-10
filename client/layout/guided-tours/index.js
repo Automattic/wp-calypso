@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +32,7 @@ class GuidedTours extends Component {
 				tour_version,
 			} );
 		}
-	}
+	};
 
 	next = ( { step, tour, tourVersion, nextStepName, skipping = false } ) => {
 		if ( ! skipping && step ) {
@@ -48,7 +49,7 @@ class GuidedTours extends Component {
 				stepName: nextStepName,
 			} );
 		} );
-	}
+	};
 
 	quit = ( { step, tour, tourVersion: tour_version, isLastStep } ) => {
 		if ( step ) {
@@ -70,14 +71,10 @@ class GuidedTours extends Component {
 			stepName: step,
 			finished: isLastStep,
 		} );
-	}
+	};
 
 	render() {
-		const {
-			tour: tourName,
-			stepName = 'init',
-			shouldShow
-		} = this.props.tourState;
+		const { tour: tourName, stepName = 'init', shouldShow } = this.props.tourState;
 
 		if ( ! shouldShow ) {
 			return null;
@@ -88,28 +85,32 @@ class GuidedTours extends Component {
 				<div className="guided-tours">
 					<QueryPreferences />
 					<AllTours
-							sectionName={ this.props.sectionName }
-							shouldPause={ this.props.isSectionLoading }
-							tourName={ tourName }
-							stepName={ stepName }
-							lastAction={ this.props.lastAction }
-							isValid={ this.props.isValid }
-							next={ this.next }
-							quit={ this.quit }
-							start={ this.start } />
+						sectionName={ this.props.sectionName }
+						shouldPause={ this.props.isSectionLoading }
+						tourName={ tourName }
+						stepName={ stepName }
+						lastAction={ this.props.lastAction }
+						isValid={ this.props.isValid }
+						next={ this.next }
+						quit={ this.quit }
+						start={ this.start }
+					/>
 				</div>
 			</RootChild>
 		);
 	}
 }
 
-export default connect( ( state ) => ( {
-	sectionName: getSectionName( state ),
-	isSectionLoading: isSectionLoading( state ),
-	tourState: getGuidedTourState( state ),
-	isValid: ( when ) => !! when( state ),
-	lastAction: getLastAction( state ),
-} ), {
-	nextGuidedTourStep,
-	quitGuidedTour,
-} )( localize( GuidedTours ) );
+export default connect(
+	state => ( {
+		sectionName: getSectionName( state ),
+		isSectionLoading: isSectionLoading( state ),
+		tourState: getGuidedTourState( state ),
+		isValid: when => !! when( state ),
+		lastAction: getLastAction( state ),
+	} ),
+	{
+		nextGuidedTourStep,
+		quitGuidedTour,
+	}
+)( localize( GuidedTours ) );

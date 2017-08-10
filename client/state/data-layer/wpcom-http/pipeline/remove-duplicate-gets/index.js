@@ -1,15 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import {
-	compact,
-	get,
-	head,
-	isEqual,
-	sortBy,
-	toPairs,
-	unionWith,
-} from 'lodash';
+import { compact, get, head, isEqual, sortBy, toPairs, unionWith } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:data-layer:remove-duplicate-gets' );
 
@@ -57,12 +50,8 @@ const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCa
  * @param {Object<String, *>} query GET query string
  * @returns {String} unique key up to duplicate request descriptions
  */
-export const buildKey = ( { path, apiNamespace, apiVersion, query } ) => JSON.stringify( [
-	path,
-	apiNamespace,
-	apiVersion,
-	sortBy( toPairs( query ), head ),
-] );
+export const buildKey = ( { path, apiNamespace, apiVersion, query } ) =>
+	JSON.stringify( [ path, apiNamespace, apiVersion, sortBy( toPairs( query ), head ) ] );
 
 /**
  * Joins a responder action into a unique list of responder actions
@@ -103,9 +92,7 @@ export const removeDuplicateGets = outboundData => {
 
 	requestQueue.set( key, request );
 
-	return queued
-		? { ...outboundData, nextRequest: null }
-		: outboundData;
+	return queued ? { ...outboundData, nextRequest: null } : outboundData;
 };
 
 /**
@@ -131,8 +118,8 @@ export const applyDuplicatesHandlers = inboundData => {
 	if ( ! queued ) {
 		debug(
 			'applyDuplicatesHandler has entered an impossible state! ' +
-			'A HTTP request is exiting the http pipeline without having entered it. ' +
-			'There must be a bug somewhere'
+				'A HTTP request is exiting the http pipeline without having entered it. ' +
+				'There must be a bug somewhere'
 		);
 		return inboundData;
 	}

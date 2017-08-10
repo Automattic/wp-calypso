@@ -1,3 +1,4 @@
+/** @format */
 export const SITE_ID_0 = 2916284;
 export const SITE_ID_1 = 77203074;
 export const USER_ID = 73705554;
@@ -8,29 +9,26 @@ export const VOUCHER_0 = {
 	assigned: new Date().toISOString(),
 	assigned_by: USER_ID,
 	code: 'A73T-8JS7-GS5Y',
-	status: 'assigned'
+	status: 'assigned',
 };
 
 export const VOUCHER_1 = {
 	assigned: new Date().toISOString(),
 	assigned_by: USER_ID,
 	code: 'OT6D-LO7A-I7XG',
-	status: 'assigned'
+	status: 'assigned',
 };
 
 export const AD_CREDITS_0 = {
-	[ SERVICE_TYPE ]: [ VOUCHER_0 ]
+	[ SERVICE_TYPE ]: [ VOUCHER_0 ],
 };
 
 export const AD_CREDITS_1 = {
-	[ SERVICE_TYPE ]: [ VOUCHER_1 ]
+	[ SERVICE_TYPE ]: [ VOUCHER_1 ],
 };
 
 export const AD_CREDITS = {
-	[ SERVICE_TYPE ]: [
-		VOUCHER_0,
-		VOUCHER_1
-	]
+	[ SERVICE_TYPE ]: [ VOUCHER_0, VOUCHER_1 ],
 };
 
 // WP REST-API error response
@@ -40,25 +38,25 @@ export const ERROR_OBJECT = new Error( 'There was a problem fetching site vouche
 export const REST_API_RESPONSE = {
 	headers: {
 		'Content-Type': 'application/json',
-		Date: new Date().toGMTString()
+		Date: new Date().toGMTString(),
 	},
-	vouchers: AD_CREDITS
+	vouchers: AD_CREDITS,
 };
 
 // WP RESP-API POST response - assign a SERVICE_TYPE voucher
 export const REST_API_ASSIGN_VOUCHER_RESPONSE = {
 	headers: {
 		'Content-Type': 'application/json',
-		Date: new Date().toGMTString()
+		Date: new Date().toGMTString(),
 	},
 	service_type: SERVICE_TYPE,
-	voucher: VOUCHER_0
+	voucher: VOUCHER_0,
 };
 
 // WP RESP-API response
 export const REST_API_ERROR_RESPONSE = {
 	error: 'authorization_required',
-	message: 'User or Token does not have access to specified site.'
+	message: 'User or Token does not have access to specified site.',
 };
 
 /**
@@ -74,18 +72,18 @@ export const getStateInstance = () => {
 			vouchers: {
 				items: {
 					[ SITE_ID_0 ]: {
-						[ SERVICE_TYPE ]: [ VOUCHER_0 ]
+						[ SERVICE_TYPE ]: [ VOUCHER_0 ],
 					},
 					[ SITE_ID_1 ]: {
-						[ SERVICE_TYPE ]: [ VOUCHER_1 ]
-					}
+						[ SERVICE_TYPE ]: [ VOUCHER_1 ],
+					},
 				},
 
 				requesting: {
 					[ SITE_ID_0 ]: false,
-					[ SITE_ID_1 ]: true
-				}
-			}
-		}
+					[ SITE_ID_1 ]: true,
+				},
+			},
+		},
 	};
 };

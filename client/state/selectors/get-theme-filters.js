@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns the list of available theme filters
  *

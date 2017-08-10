@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -65,7 +66,8 @@ module.exports = React.createClass( {
 	 * This is also a callback for the api.chat.onReady event
 	 */
 	bindOlarkWidget: function() {
-		var olarkWidget, dom = window.document;
+		var olarkWidget,
+			dom = window.document;
 
 		// Check if our component is still mounted
 		if ( ! this.isMounted() ) {
@@ -122,8 +124,6 @@ module.exports = React.createClass( {
 	 * @return {object} jsx object
 	 */
 	render: function() {
-		return (
-			<div className="olark-chatbox__container" />
-		);
-	}
+		return <div className="olark-chatbox__container" />;
+	},
 } );

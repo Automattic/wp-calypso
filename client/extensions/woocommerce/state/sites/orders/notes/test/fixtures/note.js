@@ -1,3 +1,4 @@
+/** @format */
 /* eslint-disable */
 export default {
 	id: 3,

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,9 +10,14 @@ import { values } from 'lodash';
  */
 import { navigation, sites, siteSelection } from 'my-sites/controller';
 import { settings } from './app/controller';
-import { Tabs } from './app/constants';
+import { Tabs } from './app/constants';
 
 export default function() {
 	page( '/extensions/wp-super-cache', sites );
-	page( `/extensions/wp-super-cache/:tab(${ values( Tabs ).join( '|' ) })?/:site`, siteSelection, navigation, settings );
+	page(
+		`/extensions/wp-super-cache/:tab(${ values( Tabs ).join( '|' ) })?/:site`,
+		siteSelection,
+		navigation,
+		settings
+	);
 }

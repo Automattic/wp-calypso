@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns all user settings as one object
  *

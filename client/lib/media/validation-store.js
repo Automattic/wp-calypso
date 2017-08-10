@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,7 @@ import { ValidationErrors as MediaValidationErrors } from './constants';
  * Module variables
  */
 const MediaValidationStore = {
-	_errors: {}
+	_errors: {},
 };
 const sites = Sites();
 const ERROR_GLOBAL_ITEM_ID = 0;
@@ -103,15 +104,15 @@ MediaValidationStore.clearValidationErrorsByType = function( siteId, errorType )
 	}
 
 	MediaValidationStore._errors[ siteId ] = pickBy(
-		mapValues( MediaValidationStore._errors[ siteId ], ( errors ) => without( errors, errorType ) ),
-		( errors ) => ! isEmpty( errors )
+		mapValues( MediaValidationStore._errors[ siteId ], errors => without( errors, errorType ) ),
+		errors => ! isEmpty( errors )
 	);
 };
 
 function receiveServerError( siteId, itemId, errors ) {
 	ensureErrorsObjectForSite( siteId );
 
-	MediaValidationStore._errors[ siteId ][ itemId ] = errors.map( ( error ) => {
+	MediaValidationStore._errors[ siteId ][ itemId ] = errors.map( error => {
 		switch ( error.error ) {
 			case 'http_404':
 				return MediaValidationErrors.UPLOAD_VIA_URL_404;
@@ -153,7 +154,8 @@ MediaValidationStore.hasErrors = function( siteId, itemId ) {
 
 MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
 	var action = payload.action,
-		items, errors;
+		items,
+		errors;
 
 	switch ( action.type ) {
 		case 'CREATE_MEDIA_ITEM':

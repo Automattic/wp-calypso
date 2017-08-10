@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,14 +14,14 @@ import { getSelectedDomain } from 'lib/domains';
 const initialDomainState = {
 	hasLoadedFromServer: false,
 	data: null,
-	needsUpdate: true
+	needsUpdate: true,
 };
 
 function updateDomainState( state, domainName, data ) {
 	const command = {
 		[ domainName ]: {
-			$set: Object.assign( {}, state[ domainName ] || initialDomainState, data )
-		}
+			$set: Object.assign( {}, state[ domainName ] || initialDomainState, data ),
+		},
 	};
 
 	return update( state, command );
@@ -32,58 +33,58 @@ function reducer( state, payload ) {
 	switch ( action.type ) {
 		case UpgradesActionTypes.WAPI_DOMAIN_INFO_FETCH:
 			return updateDomainState( state, action.domainName, {
-				needsUpdate: false
+				needsUpdate: false,
 			} );
 
 		case UpgradesActionTypes.WAPI_DOMAIN_INFO_FETCH_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				hasLoadedFromServer: true,
 				data: action.status,
-				needsUpdate: false
+				needsUpdate: false,
 			} );
 
 		case UpgradesActionTypes.WAPI_DOMAIN_INFO_FETCH_FAILED:
 			return updateDomainState( state, action.domainName, {
-				needsUpdate: true
+				needsUpdate: true,
 			} );
 
 		case UpgradesActionTypes.DOMAIN_LOCKING_ENABLE_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
 					locked: true,
-					pendingTransfer: false
-				} )
+					pendingTransfer: false,
+				} ),
 			} );
 
 		case UpgradesActionTypes.PRIVACY_PROTECTION_ENABLE_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
-					pendingTransfer: false
-				} )
+					pendingTransfer: false,
+				} ),
 			} );
 
 		case UpgradesActionTypes.DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED:
 			const { data } = state[ action.domainName ],
 				domainData = getSelectedDomain( {
 					domains: DomainsStore.getBySite( action.siteId ),
-					selectedDomainName: action.domainName
+					selectedDomainName: action.domainName,
 				} ),
-				locked = ( ! action.unlock ) && data.locked,
+				locked = ! action.unlock && data.locked,
 				pendingTransfer = ! domainData.privateDomain && ! locked;
 
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
 					locked,
-					pendingTransfer
-				} )
+					pendingTransfer,
+				} ),
 			} );
 
 		case UpgradesActionTypes.DOMAIN_TRANSFER_ACCEPT_COMPLETED:
 		case UpgradesActionTypes.DOMAIN_TRANSFER_DECLINE_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
-					pendingTransfer: false
-				} )
+					pendingTransfer: false,
+				} ),
 			} );
 
 		default:
@@ -91,7 +92,4 @@ function reducer( state, payload ) {
 	}
 }
 
-export {
-	initialDomainState,
-	reducer
-};
+export { initialDomainState, reducer };

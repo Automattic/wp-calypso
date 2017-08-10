@@ -1,7 +1,2 @@
-export const ALLOWED_FILE_EXTENSIONS = [
-	'jpg',
-	'jpeg',
-	'png',
-	'gif',
-	'bmp',
-];
+/** @format */
+export const ALLOWED_FILE_EXTENSIONS = [ 'jpg', 'jpeg', 'png', 'gif', 'bmp' ];

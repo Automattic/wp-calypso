@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +14,7 @@ import {
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
-	MEDIA_REQUESTING
+	MEDIA_REQUESTING,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 import MediaQueryManager from 'lib/query-manager/media';
@@ -27,7 +28,7 @@ export const queries = ( () => {
 
 			return {
 				...state,
-				[ siteId ]: ( new MediaQueryManager() )[ method ]( ...args )
+				[ siteId ]: new MediaQueryManager()[ method ]( ...args ),
 			};
 		}
 
@@ -39,43 +40,49 @@ export const queries = ( () => {
 
 		return {
 			...state,
-			[ siteId ]: nextManager
+			[ siteId ]: nextManager,
 		};
 	}
 
-	return createReducer( {}, {
-		[ MEDIA_RECEIVE ]: ( state, { siteId, media, found, query } ) => {
-			return applyToManager( state, siteId, 'receive', true, media, { found, query } );
-		},
-		[ MEDIA_DELETE ]: ( state, { siteId, mediaIds } ) => {
-			return applyToManager( state, siteId, 'removeItems', true, mediaIds );
+	return createReducer(
+		{},
+		{
+			[ MEDIA_RECEIVE ]: ( state, { siteId, media, found, query } ) => {
+				return applyToManager( state, siteId, 'receive', true, media, { found, query } );
+			},
+			[ MEDIA_DELETE ]: ( state, { siteId, mediaIds } ) => {
+				return applyToManager( state, siteId, 'removeItems', true, mediaIds );
+			},
 		}
-	} );
+	);
 } )();
 
-export const queryRequests = createReducer( {}, {
-	[ MEDIA_REQUESTING ]: ( state, { siteId, query } ) => {
-		return {
-			...state,
-			[ siteId ]: {
-				...state[ siteId ],
-				[ MediaQueryManager.QueryKey.stringify( query ) ]: true
-			}
-		};
-	},
-	[ MEDIA_REQUEST_SUCCESS ]: ( state, { siteId, query } ) => {
-		return {
-			...state,
-			[ siteId ]: omit( state[ siteId ], MediaQueryManager.QueryKey.stringify( query ) )
-		};
-	},
-	[ MEDIA_REQUEST_FAILURE ]: ( state, { siteId, query } ) => {
-		return {
-			...state,
-			[ siteId ]: omit( state[ siteId ], MediaQueryManager.QueryKey.stringify( query ) )
-		};
+export const queryRequests = createReducer(
+	{},
+	{
+		[ MEDIA_REQUESTING ]: ( state, { siteId, query } ) => {
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					[ MediaQueryManager.QueryKey.stringify( query ) ]: true,
+				},
+			};
+		},
+		[ MEDIA_REQUEST_SUCCESS ]: ( state, { siteId, query } ) => {
+			return {
+				...state,
+				[ siteId ]: omit( state[ siteId ], MediaQueryManager.QueryKey.stringify( query ) ),
+			};
+		},
+		[ MEDIA_REQUEST_FAILURE ]: ( state, { siteId, query } ) => {
+			return {
+				...state,
+				[ siteId ]: omit( state[ siteId ], MediaQueryManager.QueryKey.stringify( query ) ),
+			};
+		},
 	}
-} );
+);
 
 /**
  * Returns the updated site post requests state after an action has been
@@ -86,32 +93,35 @@ export const queryRequests = createReducer( {}, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const mediaItemRequests = createReducer( {}, {
-	[ MEDIA_ITEM_REQUESTING ]: ( state, { siteId, mediaId } ) => {
-		return {
-			...state,
-			[ siteId ]: {
-				...state[ siteId ],
-				[ mediaId ]: true
-			}
-		};
-	},
-	[ MEDIA_ITEM_REQUEST_SUCCESS ]: ( state, { siteId, mediaId } ) => {
-		return {
-			...state,
-			[ siteId ]: omit( state[ siteId ], mediaId )
-		};
-	},
-	[ MEDIA_ITEM_REQUEST_FAILURE ]: ( state, { siteId, mediaId } ) => {
-		return {
-			...state,
-			[ siteId ]: omit( state[ siteId ], mediaId )
-		};
+export const mediaItemRequests = createReducer(
+	{},
+	{
+		[ MEDIA_ITEM_REQUESTING ]: ( state, { siteId, mediaId } ) => {
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					[ mediaId ]: true,
+				},
+			};
+		},
+		[ MEDIA_ITEM_REQUEST_SUCCESS ]: ( state, { siteId, mediaId } ) => {
+			return {
+				...state,
+				[ siteId ]: omit( state[ siteId ], mediaId ),
+			};
+		},
+		[ MEDIA_ITEM_REQUEST_FAILURE ]: ( state, { siteId, mediaId } ) => {
+			return {
+				...state,
+				[ siteId ]: omit( state[ siteId ], mediaId ),
+			};
+		},
 	}
-} );
+);
 
 export default combineReducers( {
 	queries,
 	queryRequests,
-	mediaItemRequests
+	mediaItemRequests,
 } );

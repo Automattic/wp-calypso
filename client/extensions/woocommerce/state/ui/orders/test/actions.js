@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +22,7 @@ describe( 'actions', () => {
 			expect( dispatch ).to.have.been.calledWith( {
 				type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 				siteId,
-				query: { page: 2, search: 'test' }
+				query: { page: 2, search: 'test' },
 			} );
 		} );
 	} );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -16,7 +17,7 @@ const debug = debugFactory( 'calypso:components:embed-container' );
 const embedsToLookFor = {
 	'blockquote[class^="instagram-"]': embedInstagram,
 	'blockquote[class^="twitter-"], a[class^="twitter-"]': embedTwitter,
-	'fb\\\:post, [class^=fb-]': embedFacebook,
+	'fb\\:post, [class^=fb-]': embedFacebook,
 	'[class^=tumblr-]': embedTumblr,
 	'.jetpack-slideshow': embedSlideshow,
 	'.embed-reddit': embedReddit,
@@ -99,10 +100,7 @@ function embedTwitter( domNode ) {
 		return;
 	}
 
-	loadAndRun(
-		'https://platform.twitter.com/widgets.js',
-		embedTwitter.bind( null, domNode )
-	);
+	loadAndRun( 'https://platform.twitter.com/widgets.js', embedTwitter.bind( null, domNode ) );
 }
 
 function embedFacebook( domNode ) {
@@ -131,9 +129,7 @@ function embedTumblr( domNode ) {
 
 	function removeScript() {
 		forEach(
-			document.querySelectorAll(
-				'script[src="https://secure.assets.tumblr.com/post.js"]'
-			),
+			document.querySelectorAll( 'script[src="https://secure.assets.tumblr.com/post.js"]' ),
 			function( el ) {
 				el.parentNode.removeChild( el );
 			}
@@ -161,9 +157,7 @@ function createSlideshow() {
 	} );
 }
 
-let slideshowCSSPresent = document.head.querySelector(
-	`link[href="${ SLIDESHOW_URLS.CSS }"]`
-);
+let slideshowCSSPresent = document.head.querySelector( `link[href="${ SLIDESHOW_URLS.CSS }"]` );
 
 function embedSlideshow( domNode ) {
 	debug( 'processing slideshow for', domNode );
@@ -179,9 +173,7 @@ function embedSlideshow( domNode ) {
 	}
 
 	// Remove no JS warning so user doesn't have to look at it while several scripts load
-	const warningElements = domNode.parentNode.getElementsByClassName(
-		'jetpack-slideshow-noscript'
-	);
+	const warningElements = domNode.parentNode.getElementsByClassName( 'jetpack-slideshow-noscript' );
 	forEach( warningElements, el => {
 		el.classList.add( 'hidden' );
 	} );

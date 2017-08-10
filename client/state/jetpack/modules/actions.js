@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,63 +17,69 @@ import {
 	JETPACK_MODULES_RECEIVE,
 	JETPACK_MODULES_REQUEST,
 	JETPACK_MODULES_REQUEST_FAILURE,
-	JETPACK_MODULES_REQUEST_SUCCESS
+	JETPACK_MODULES_REQUEST_SUCCESS,
 } from 'state/action-types';
 import wp from 'lib/wp';
 
 export const activateModule = ( siteId, moduleSlug, silent = false ) => {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: JETPACK_MODULE_ACTIVATE,
 			siteId,
 			moduleSlug,
-			silent
+			silent,
 		} );
 
-		return wp.undocumented().jetpackModuleActivate( siteId, moduleSlug )
+		return wp
+			.undocumented()
+			.jetpackModuleActivate( siteId, moduleSlug )
 			.then( () => {
 				dispatch( {
 					type: JETPACK_MODULE_ACTIVATE_SUCCESS,
 					siteId,
 					moduleSlug,
-					silent
+					silent,
 				} );
-			} ).catch( error => {
+			} )
+			.catch( error => {
 				dispatch( {
 					type: JETPACK_MODULE_ACTIVATE_FAILURE,
 					siteId,
 					moduleSlug,
 					silent,
-					error: error.message
+					error: error.message,
 				} );
 			} );
 	};
 };
 
 export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: JETPACK_MODULE_DEACTIVATE,
 			siteId,
 			moduleSlug,
-			silent
+			silent,
 		} );
 
-		return wp.undocumented().jetpackModuleDeactivate( siteId, moduleSlug )
+		return wp
+			.undocumented()
+			.jetpackModuleDeactivate( siteId, moduleSlug )
 			.then( () => {
 				dispatch( {
 					type: JETPACK_MODULE_DEACTIVATE_SUCCESS,
 					siteId,
 					moduleSlug,
-					silent
+					silent,
 				} );
-			} ).catch( error => {
+			} )
+			.catch( error => {
 				dispatch( {
 					type: JETPACK_MODULE_DEACTIVATE_FAILURE,
 					siteId,
 					moduleSlug,
 					silent,
-					error: error.message
+					error: error.message,
 				} );
 			} );
 	};
@@ -90,37 +97,37 @@ export function receiveJetpackModules( siteId, modules ) {
 	return {
 		type: JETPACK_MODULES_RECEIVE,
 		siteId,
-		modules
+		modules,
 	};
 }
 
-export const fetchModuleList = ( siteId ) => {
-	return ( dispatch ) => {
+export const fetchModuleList = siteId => {
+	return dispatch => {
 		dispatch( {
 			type: JETPACK_MODULES_REQUEST,
-			siteId
+			siteId,
 		} );
 
-		return wp.undocumented().getJetpackModules( siteId )
+		return wp
+			.undocumented()
+			.getJetpackModules( siteId )
 			.then( ( { data } ) => {
-				const modules = mapValues(
-					data,
-					( module ) => ( {
-						active: module.activated,
-						...omit( module, 'activated' )
-					} )
-				);
+				const modules = mapValues( data, module => ( {
+					active: module.activated,
+					...omit( module, 'activated' ),
+				} ) );
 
 				dispatch( receiveJetpackModules( siteId, modules ) );
 				dispatch( {
 					type: JETPACK_MODULES_REQUEST_SUCCESS,
-					siteId
+					siteId,
 				} );
-			} ).catch( error => {
+			} )
+			.catch( error => {
 				dispatch( {
 					type: JETPACK_MODULES_REQUEST_FAILURE,
 					siteId,
-					error: error.message
+					error: error.message,
 				} );
 			} );
 	};

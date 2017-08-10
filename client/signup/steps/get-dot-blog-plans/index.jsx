@@ -1,3 +1,4 @@
+/** @format */
 // External dependencies
 import React, { PropTypes } from 'react';
 
@@ -5,20 +6,19 @@ import React, { PropTypes } from 'react';
 import { cartItems } from 'lib/cart-values';
 import PlansStep from 'signup/steps/plans';
 
-const GetDotBlogPlansStep = ( { queryObject, ...props } ) => (
+const GetDotBlogPlansStep = ( { queryObject, ...props } ) =>
 	<PlansStep
 		additionalStepData={ {
 			isPurchasingItem: true,
 			domainItem: cartItems.domainMapping( {
 				domain: queryObject.domain,
-				source: 'get-dot-blog-signup'
+				source: 'get-dot-blog-signup',
 			} ),
-			siteUrl: queryObject.domain.replace( /\W+/g, '' )
+			siteUrl: queryObject.domain.replace( /\W+/g, '' ),
 		} }
 		{ ...props }
 		hideFreePlan
-	/>
-);
+	/>;
 
 GetDotBlogPlansStep.propTypes = {
 	queryObject: PropTypes.object.isRequired,

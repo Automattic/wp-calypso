@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,10 +27,10 @@ const PurchaseDetail = ( {
 	requiredText,
 	target,
 	rel,
-	title
+	title,
 } ) => {
 	const classes = classNames( 'purchase-detail', {
-		'is-placeholder': isPlaceholder
+		'is-placeholder': isPlaceholder,
 	} );
 
 	let buttonElement;
@@ -42,37 +43,43 @@ const PurchaseDetail = ( {
 				onClick={ onClick }
 				target={ target }
 				rel={ rel }
-				text={ buttonText } />
+				text={ buttonText }
+			/>
 		);
 	}
 
 	return (
 		<div className={ classes } id={ id || null }>
-			{ requiredText && (
+			{ requiredText &&
 				<div className="purchase-detail__required-notice">
-					<em>{ requiredText }</em>
-				</div>
-			) }
+					<em>
+						{ requiredText }
+					</em>
+				</div> }
 			<div className="purchase-detail__content">
-				{ icon && (
+				{ icon &&
 					<div className="purchase-detail__icon">
 						<Gridicon icon={ icon } />
 						{ isRequired && <Gridicon className="purchase-detail__notice-icon" icon="notice" /> }
-					</div>
-				) }
+					</div> }
 
 				<div className="purchase-detail__text">
-					<h3 className="purchase-detail__title">{ title }</h3>
-					<div className="purchase-detail__description">{ description }</div>
+					<h3 className="purchase-detail__title">
+						{ title }
+					</h3>
+					<div className="purchase-detail__description">
+						{ description }
+					</div>
 				</div>
 
 				{ body
-					? <div className="purchase-detail__body">{ body }</div>
+					? <div className="purchase-detail__body">
+							{ body }
+						</div>
 					: <div className="purchase-detail__body">
-						{ buttonElement }
-						{ info && <TipInfo info={ info } /> }
-					</div>
-				}
+							{ buttonElement }
+							{ info && <TipInfo info={ info } /> }
+						</div> }
 			</div>
 		</div>
 	);
@@ -80,11 +87,7 @@ const PurchaseDetail = ( {
 
 PurchaseDetail.propTypes = {
 	buttonText: PropTypes.string,
-	description: PropTypes.oneOfType( [
-		PropTypes.array,
-		PropTypes.string,
-		PropTypes.object
-	] ),
+	description: PropTypes.oneOfType( [ PropTypes.array, PropTypes.string, PropTypes.object ] ),
 	href: PropTypes.string,
 	icon: PropTypes.string,
 	isPlaceholder: PropTypes.bool,
@@ -94,7 +97,7 @@ PurchaseDetail.propTypes = {
 	requiredText: PropTypes.string,
 	target: PropTypes.string,
 	rel: PropTypes.string,
-	title: PropTypes.string
+	title: PropTypes.string,
 };
 
 PurchaseDetail.defaultProps = {

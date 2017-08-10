@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,7 +25,7 @@ export const Sites = React.createClass( {
 	mixins: [ observe( 'user' ) ],
 
 	propTypes: {
-		path: React.PropTypes.string.isRequired
+		path: React.PropTypes.string.isRequired,
 	},
 
 	filterSites( site ) {
@@ -96,11 +97,11 @@ export const Sites = React.createClass( {
 
 		return i18n.translate( 'Please select a site to open {{strong}}%(path)s{{/strong}}', {
 			args: {
-				path: path
+				path: path,
 			},
 			components: {
-				strong: <strong />
-			}
+				strong: <strong />,
+			},
 		} );
 	},
 
@@ -121,18 +122,16 @@ export const Sites = React.createClass( {
 				</Card>
 			</Main>
 		);
-	}
+	},
 } );
 
 const selectSite = ( siteId, rawPath ) => ( dispatch, getState ) => {
-	const path = ( rawPath === '/sites' )
-		? '/stats/insights'
-		: rawPath;
+	const path = rawPath === '/sites' ? '/stats/insights' : rawPath;
 	page( addSiteFragment( path, getSiteSlug( getState(), siteId ) ) );
 };
 
 export default connect(
-	( state ) => {
+	state => {
 		return {
 			selectedSite: getSelectedSite( state ),
 			sites: getSites( state ),

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,23 +23,31 @@ export default React.createClass( {
 		post: PropTypes.object,
 		connection: PropTypes.object,
 		onRefresh: PropTypes.func,
-		label: PropTypes.string
+		label: PropTypes.string,
 	},
 
 	getDefaultProps() {
 		return {
-			onRefresh: () => {}
+			onRefresh: () => {},
 		};
 	},
 
 	isConnectionSkipped() {
 		const { post, connection } = this.props;
-		return post && connection && includes( PostMetadata.publicizeSkipped( post ), connection.keyring_connection_ID );
+		return (
+			post &&
+			connection &&
+			includes( PostMetadata.publicizeSkipped( post ), connection.keyring_connection_ID )
+		);
 	},
 
 	isConnectionDone() {
 		const { post, connection } = this.props;
-		return post && connection && includes( PostMetadata.publicizeDone( post ), connection.keyring_connection_ID );
+		return (
+			post &&
+			connection &&
+			includes( PostMetadata.publicizeDone( post ), connection.keyring_connection_ID )
+		);
 	},
 
 	isDisabled() {
@@ -72,9 +81,16 @@ export default React.createClass( {
 		}
 
 		return (
-			<Notice isCompact className="editor-sharing__broken-publicize-connection" status="is-warning" showDismiss={ false }>
+			<Notice
+				isCompact
+				className="editor-sharing__broken-publicize-connection"
+				status="is-warning"
+				showDismiss={ false }
+			>
 				{ this.translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
-				<NoticeAction onClick={ this.props.onRefresh }>Reconnect <Gridicon icon="external" size={ 18 } /></NoticeAction>
+				<NoticeAction onClick={ this.props.onRefresh }>
+					Reconnect <Gridicon icon="external" size={ 18 } />
+				</NoticeAction>
 			</Notice>
 		);
 	},
@@ -88,11 +104,14 @@ export default React.createClass( {
 					<FormCheckbox
 						checked={ ! this.isConnectionSkipped() }
 						disabled={ this.isDisabled() }
-						onChange={ this.onChange } />
-					<span data-e2e-service={ label }>{ connection && connection.external_display }</span>
+						onChange={ this.onChange }
+					/>
+					<span data-e2e-service={ label }>
+						{ connection && connection.external_display }
+					</span>
 				</label>
 				{ this.renderBrokenConnection() }
 			</div>
 		);
-	}
+	},
 } );

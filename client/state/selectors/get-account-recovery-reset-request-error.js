@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,4 +10,4 @@ import { get } from 'lodash';
  * @param {Object} state Global app state
  * @return {?Object} An object containing error info
  */
-export default ( state ) => get( state, 'accountRecovery.reset.requestReset.error', null );
+export default state => get( state, 'accountRecovery.reset.requestReset.error', null );

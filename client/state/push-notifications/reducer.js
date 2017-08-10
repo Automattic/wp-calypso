@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,10 +10,7 @@ import { omit } from 'lodash';
  */
 import { combineReducers, isValidStateWithSchema } from 'state/utils';
 
-import {
-	settingsSchema,
-	systemSchema,
-} from './schema';
+import { settingsSchema, systemSchema } from './schema';
 
 import {
 	DESERIALIZE,
@@ -29,12 +27,7 @@ import {
 const debug = debugFactory( 'calypso:push-notifications' );
 
 // If you change this, also change the corresponding test
-const UNPERSISTED_SYSTEM_NODES = [
-	'apiReady',
-	'authorized',
-	'authorizationLoaded',
-	'blocked',
-];
+const UNPERSISTED_SYSTEM_NODES = [ 'apiReady', 'authorized', 'authorizationLoaded', 'blocked' ];
 function system( state = {}, action ) {
 	switch ( action.type ) {
 		// System state is not persisted
@@ -59,7 +52,7 @@ function system( state = {}, action ) {
 		case PUSH_NOTIFICATIONS_API_READY: {
 			debug( 'API is ready' );
 			return Object.assign( {}, state, {
-				apiReady: true
+				apiReady: true,
 			} );
 		}
 
@@ -67,7 +60,7 @@ function system( state = {}, action ) {
 			return Object.assign( {}, state, {
 				authorized: true,
 				authorizationLoaded: true,
-				blocked: false
+				blocked: false,
 			} );
 		}
 
@@ -75,7 +68,7 @@ function system( state = {}, action ) {
 			return Object.assign( {}, state, {
 				authorized: false,
 				authorizationLoaded: true,
-				blocked: true
+				blocked: true,
 			} );
 		}
 
@@ -83,14 +76,14 @@ function system( state = {}, action ) {
 			return Object.assign( {}, state, {
 				authorized: false,
 				authorizationLoaded: true,
-				blocked: false
+				blocked: false,
 			} );
 		}
 
 		case PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE: {
 			const { data } = action;
 			if ( ! data.success ) {
-				debug( 'Couldn\'t unregister device', data );
+				debug( "Couldn't unregister device", data );
 			}
 			debug( 'Deleted WPCOM subscription', data );
 			return omit( state, [ 'wpcomSubscription' ] );
@@ -108,7 +101,8 @@ function system( state = {}, action ) {
 			return Object.assign( {}, state, {
 				wpcomSubscription: {
 					ID: data.ID.toString(),
-					settings: data.settings }
+					settings: data.settings,
+				},
 			} );
 		}
 	}
@@ -143,25 +137,25 @@ function settings( state = {}, action ) {
 			}
 			debug( 'INVALID settings state during SERIALIZE', newState );
 			return {
-				enabled: false
+				enabled: false,
 			};
 		}
 
 		case PUSH_NOTIFICATIONS_TOGGLE_ENABLED: {
 			return Object.assign( {}, state, {
-				enabled: ! state.enabled
+				enabled: ! state.enabled,
 			} );
 		}
 
 		case PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS: {
 			return Object.assign( {}, state, {
-				showingUnblockInstructions: ! state.showingUnblockInstructions
+				showingUnblockInstructions: ! state.showingUnblockInstructions,
 			} );
 		}
 
 		case PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE: {
 			return Object.assign( {}, state, {
-				enabled: true
+				enabled: true,
 			} );
 		}
 	}
@@ -172,5 +166,5 @@ settings.hasCustomPersistence = true;
 
 export default combineReducers( {
 	settings,
-	system
+	system,
 } );

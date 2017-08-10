@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -30,7 +31,7 @@ class FormButton extends React.Component {
 
 		return (
 			<Button
-				{ ...omit( props, [ 'isSubmitting', 'moment', 'numberFormat', 'translate' ] ) }
+				{ ...omit( props, [ 'isSubmitting', 'moment', 'numberFormat', 'translate' ] ) }
 				primary={ isPrimary }
 				className={ buttonClasses }
 			>

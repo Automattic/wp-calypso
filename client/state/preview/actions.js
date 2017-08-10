@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -27,8 +28,10 @@ export function fetchPreviewMarkup( site, slug, customizations ) {
 			}
 		}
 		debug( 'fetching preview markup', site, slug, customizations, 'postData', postData );
-		wpcom.undocumented().fetchPreviewMarkup( site, slug, postData )
-		.then( markup => dispatch( gotMarkup( site, markup ) ) );
+		wpcom
+			.undocumented()
+			.fetchPreviewMarkup( site, slug, postData )
+			.then( markup => dispatch( gotMarkup( site, markup ) ) );
 		// TODO: handle errors
 	};
 }
@@ -63,9 +66,11 @@ export function saveCustomizations() {
 		const siteId = ui.selectedSiteId;
 		const customizations = preview[ siteId ].customizations;
 		debug( 'saving customizations', customizations );
-		Object.keys( customizations ).map( id => saveCustomizationsFor( id, customizations[ id ], siteId, dispatch ) );
+		Object.keys( customizations ).map( id =>
+			saveCustomizationsFor( id, customizations[ id ], siteId, dispatch )
+		);
 		dispatch( customizationsSaved( siteId ) );
-	}
+	};
 }
 
 function saveCustomizationsFor( id, customizations, siteId, dispatch ) {

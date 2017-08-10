@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,8 +23,8 @@ class FilteredList extends Component {
 	render() {
 		const { items, placeholder, customFilter, filterBy, renderItem, className } = this.props;
 
-		const onFilterChange = ( event ) => ( this.setState( { filter: event.target.value } ) );
-		const filterFunc = ( item ) => {
+		const onFilterChange = event => this.setState( { filter: event.target.value } );
+		const filterFunc = item => {
 			if ( customFilter ) {
 				return customFilter( item, this.state.filter );
 			}
@@ -37,7 +38,8 @@ class FilteredList extends Component {
 				<FormTextInput
 					value={ this.state.filter }
 					onChange={ onFilterChange }
-					placeholder={ placeholder } />
+					placeholder={ placeholder }
+				/>
 				<div className="filtered-list__container">
 					<ul className={ classNames( 'filtered-list__list', className ) }>
 						{ itemsToRender.map( renderItem ) }

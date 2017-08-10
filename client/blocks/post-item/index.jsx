@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +24,7 @@ function PostItem( { translate, globalId, post, editUrl, className, compact } ) 
 	const classes = classnames( 'post-item', className, {
 		'is-untitled': ! title,
 		'is-mini': compact,
-		'is-placeholder': ! globalId
+		'is-placeholder': ! globalId,
 	} );
 
 	return (
@@ -53,7 +54,7 @@ PostItem.propTypes = {
 	globalId: PropTypes.string,
 	post: PropTypes.object,
 	className: PropTypes.string,
-	compact: PropTypes.bool
+	compact: PropTypes.bool,
 };
 
 export default connect( ( state, ownProps ) => {
@@ -64,6 +65,6 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		post,
-		editUrl: getEditorPath( state, post.site_ID, post.ID )
+		editUrl: getEditorPath( state, post.site_ID, post.ID ),
 	};
 } )( localize( PostItem ) );

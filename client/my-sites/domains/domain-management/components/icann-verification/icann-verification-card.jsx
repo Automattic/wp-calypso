@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -44,12 +45,12 @@ class IcannVerificationCard extends React.Component {
 		this.setState( { emailSent: false } );
 	};
 
-	handleSubmit = ( event ) => {
+	handleSubmit = event => {
 		event.preventDefault();
 
 		this.setState( { submitting: true } );
 
-		upgradesActions.resendIcannVerification( this.props.selectedDomainName, ( error ) => {
+		upgradesActions.resendIcannVerification( this.props.selectedDomainName, error => {
 			if ( error ) {
 				this.props.errorNotice( error.message );
 			} else {
@@ -66,21 +67,25 @@ class IcannVerificationCard extends React.Component {
 		if ( explanationContext === 'name-servers' ) {
 			return translate(
 				'You have to verify the email address used to register this domain before you ' +
-				'are able to update the name servers for your domain. ' +
-				'Look for the verification message in your email inbox.'
+					'are able to update the name servers for your domain. ' +
+					'Look for the verification message in your email inbox.'
 			);
 		}
 
 		return translate(
 			'We need to check your contact information to make sure you can be reached. Please verify your ' +
-			'details using the email we sent you, or your domain will stop working. ' +
-			'{{learnMoreLink}}Learn more.{{/learnMoreLink}}', {
+				'details using the email we sent you, or your domain will stop working. ' +
+				'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
+			{
 				components: {
-					learnMoreLink: <a href={ support.EMAIL_VALIDATION_AND_VERIFICATION }
-						target="_blank"
-						rel="noopener noreferrer"
-					/>
-				}
+					learnMoreLink: (
+						<a
+							href={ support.EMAIL_VALIDATION_AND_VERIFICATION }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
 			}
 		);
 	}
@@ -117,20 +122,16 @@ class IcannVerificationCard extends React.Component {
 								compact
 								busy={ submitting }
 								disabled={ submitting }
-								onClick={ this.handleSubmit }>
+								onClick={ this.handleSubmit }
+							>
 								{ submitting ? translate( 'Sending…' ) : translate( 'Send Again' ) }
 							</Button>
 
-							<Button
-								compact
-								href={ changeEmailHref }
-								onClick={ this.props.onClick }>
+							<Button compact href={ changeEmailHref } onClick={ this.props.onClick }>
 								{ this.props.translate( 'Change Email Address' ) }
 							</Button>
-						</div>
-					}
+						</div> }
 				</div>
-
 			</div>
 		);
 	}

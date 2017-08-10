@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,16 +25,18 @@ const _request = ( method, path, siteId, body, namespace = 'wc/v3' ) => {
 	// WPCOM API breaks if query parameters are passed after "?" instead of "&". Hide this hack from the calling code
 	path = path.replace( '?', '&' );
 
-	return wp.req[ 'get' === method ? 'get' : 'post' ](
-		{
-			path: `/jetpack-blogs/${ siteId }/rest-api/`
-		},
-		{
-			path: `/${ namespace }/${ path }&_method=${ method }`,
-			body: body && JSON.stringify( body ),
-			json: true,
-		}
-	).then( ( { data } ) => omitDeep( data, '_links' ) );
+	return wp.req
+		[ 'get' === method ? 'get' : 'post' ](
+			{
+				path: `/jetpack-blogs/${ siteId }/rest-api/`,
+			},
+			{
+				path: `/${ namespace }/${ path }&_method=${ method }`,
+				body: body && JSON.stringify( body ),
+				json: true,
+			}
+		)
+		.then( ( { data } ) => omitDeep( data, '_links' ) );
 };
 
 const _requestWithHeaders = ( method, path, siteId, sendBody, namespace = 'wc/v3' ) => {
@@ -59,7 +62,7 @@ const _requestWithHeaders = ( method, path, siteId, sendBody, namespace = 'wc/v3
  * @return {Object} An object with the properties "get", "post", "put" and "del", which are functions to
  * make an HTTP GET, POST, PUT and DELETE request, respectively.
  */
-export default ( siteId ) => ( {
+export default siteId => ( {
 	/**
 	 * Sends a GET request to the API
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
@@ -74,7 +77,8 @@ export default ( siteId ) => ( {
 	 * @param {String} namespace URL namespace, defaults to 'wc/v3'
 	 * @return {Promise} Resolves with the JSON response, or rejects with an error
 	 */
-	getWithHeaders: ( path, namespace ) => _requestWithHeaders( 'get', path, siteId, undefined, namespace ),
+	getWithHeaders: ( path, namespace ) =>
+		_requestWithHeaders( 'get', path, siteId, undefined, namespace ),
 
 	/**
 	 * Sends a POST request to the API

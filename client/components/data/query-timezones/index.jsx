@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +14,7 @@ import { isRequestingTimezones } from 'state/selectors';
 export class QueryTimezones extends Component {
 	static propTypes = {
 		isRequesting: PropTypes.bool,
-		requestTimezones: PropTypes.func
+		requestTimezones: PropTypes.func,
 	};
 
 	componentDidMount() {
@@ -30,8 +31,8 @@ export class QueryTimezones extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		requesting: isRequestingTimezones( state )
+	state => ( {
+		requesting: isRequestingTimezones( state ),
 	} ),
 	{ requestTimezones }
 )( QueryTimezones );

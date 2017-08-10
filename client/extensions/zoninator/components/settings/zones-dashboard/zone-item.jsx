@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,8 +18,14 @@ const ZoneItem = ( { siteSlug, zone } ) => {
 
 	return (
 		<CompactCard href={ `${ settingsPath }/${ siteSlug }/${ slug }` }>
-			<div className="zones-dashboard__zone-label">{ name }</div>
-			<div className="zones-dashboard__zone-description"><small>{ description }</small></div>
+			<div className="zones-dashboard__zone-label">
+				{ name }
+			</div>
+			<div className="zones-dashboard__zone-description">
+				<small>
+					{ description }
+				</small>
+			</div>
 		</CompactCard>
 	);
 };

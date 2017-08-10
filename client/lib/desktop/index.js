@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +10,7 @@ var debug = require( 'debug' )( 'calypso:desktop' ),
  */
 var paths = require( 'lib/paths' ),
 	user = require( 'lib/user' )(),
-	ipc = require( 'electron' ).ipcRenderer,          // From Electron
+	ipc = require( 'electron' ).ipcRenderer, // From Electron
 	store = require( 'store' ),
 	oAuthToken = require( 'lib/oauth-token' ),
 	userUtilities = require( 'lib/user/utils' ),
@@ -99,7 +100,11 @@ var Desktop = {
 	clearNotificationBar: function() {
 		// TODO: find a better way. seems to be react component state based
 		const notificationsLink = this.getNotificationLinkElement();
-		if ( notificationsLink && notificationsLink.className && notificationsLink.className.indexOf( 'is-active' ) !== -1 ) {
+		if (
+			notificationsLink &&
+			notificationsLink.className &&
+			notificationsLink.className.indexOf( 'is-active' ) !== -1
+		) {
 			notificationsLink.click();
 		}
 	},
@@ -166,7 +171,7 @@ var Desktop = {
 
 	print: function( title, html ) {
 		ipc.send( 'print', title, html );
-	}
+	},
 };
 
 module.exports = Desktop;

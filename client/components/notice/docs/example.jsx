@@ -1,3 +1,4 @@
+/** @format */
 /**
 * External dependencies
 */
@@ -15,7 +16,7 @@ var Notices = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			compactNotices: false
+			compactNotices: false,
 		};
 	},
 
@@ -24,11 +25,11 @@ var Notices = React.createClass( {
 
 		return (
 			<div>
-				<a className="docs__design-toggle button" onClick={ this.toggleNotices }>{ toggleNoticesText }</a>
+				<a className="docs__design-toggle button" onClick={ this.toggleNotices }>
+					{ toggleNoticesText }
+				</a>
 				<div>
-					<Notice
-						showDismiss={ false }
-						isCompact={ this.state.compactNotices ? true : null }>
+					<Notice showDismiss={ false } isCompact={ this.state.compactNotices ? true : null }>
 						I'm a notice with no status and <a>a link</a>.
 					</Notice>
 				</div>
@@ -36,9 +37,10 @@ var Notices = React.createClass( {
 					<Notice
 						text="I'm a notice with no status and an action."
 						showDismiss={ false }
-						isCompact={ this.state.compactNotices ? true : null }>
+						isCompact={ this.state.compactNotices ? true : null }
+					>
 						<NoticeAction href="#">
-							{ "Update" }
+							{ 'Update' }
 						</NoticeAction>
 					</Notice>
 				</div>
@@ -47,7 +49,8 @@ var Notices = React.createClass( {
 						status="is-info"
 						text="I'm an `is-info` notice with custom icon."
 						icon="heart"
-						isCompact={ this.state.compactNotices ? true : null } />
+						isCompact={ this.state.compactNotices ? true : null }
+					/>
 				</div>
 				<div>
 					<Notice
@@ -55,23 +58,29 @@ var Notices = React.createClass( {
 						showDismiss={ false }
 						text="I'm an `is-info` notice with custom icon and an action."
 						icon="heart"
-						isCompact={ this.state.compactNotices ? true : null }>
+						isCompact={ this.state.compactNotices ? true : null }
+					>
 						<NoticeAction href="#">
-							{ "Update" }
+							{ 'Update' }
 						</NoticeAction>
 					</Notice>
 				</div>
 				<div>
-					<Notice status="is-success" text="I'm an `is-success` notice." isCompact={ this.state.compactNotices ? true : null } />
+					<Notice
+						status="is-success"
+						text="I'm an `is-success` notice."
+						isCompact={ this.state.compactNotices ? true : null }
+					/>
 				</div>
 				<div>
 					<Notice
 						status="is-error"
 						showDismiss={ false }
 						text="I'm an `is-error` notice."
-						isCompact={ this.state.compactNotices ? true : null }>
+						isCompact={ this.state.compactNotices ? true : null }
+					>
 						<NoticeAction href="#">
-							{ "Update" }
+							{ 'Update' }
 						</NoticeAction>
 					</Notice>
 				</div>
@@ -80,16 +89,18 @@ var Notices = React.createClass( {
 						status="is-warning"
 						icon="mention"
 						text="I'm an `is-warning` notice with custom icon."
-						isCompact={ this.state.compactNotices ? true : null } />
+						isCompact={ this.state.compactNotices ? true : null }
+					/>
 				</div>
 				<div>
 					<Notice
 						status="is-warning"
 						isCompact={ this.state.compactNotices ? true : null }
 						showDismiss={ false }
-						text={ "I'm an `is-warning` notice with an action." }>
+						text={ "I'm an `is-warning` notice with an action." }
+					>
 						<NoticeAction href="#">
-							{ "Update" }
+							{ 'Update' }
 						</NoticeAction>
 					</Notice>
 				</div>
@@ -98,9 +109,10 @@ var Notices = React.createClass( {
 						status="is-success"
 						isCompact={ this.state.compactNotices ? true : null }
 						showDismiss={ false }
-						text={ "I'm an `is-success` notice with an arrow link." }>
+						text={ "I'm an `is-success` notice with an arrow link." }
+					>
 						<NoticeAction href="#" external={ true }>
-							{ "Preview" }
+							{ 'Preview' }
 						</NoticeAction>
 					</Notice>
 				</div>
@@ -110,7 +122,7 @@ var Notices = React.createClass( {
 
 	toggleNotices: function() {
 		this.setState( { compactNotices: ! this.state.compactNotices } );
-	}
+	},
 } );
 
 module.exports = Notices;

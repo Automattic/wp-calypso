@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,14 +12,13 @@ import Timezone from 'components/timezone';
 import Card from 'components/card';
 
 export default React.createClass( {
-
 	mixins: [ PureRenderMixin ],
 
 	displayName: 'Timezone',
 
 	getInitialState() {
 		return {
-			timezone: 'America/Argentina/La_Rioja'
+			timezone: 'America/Argentina/La_Rioja',
 		};
 	},
 
@@ -29,11 +29,8 @@ export default React.createClass( {
 	render() {
 		return (
 			<Card style={ { width: '300px', height: '350px', margin: 0 } }>
-				<Timezone
-					selectedZone={ this.state.timezone }
-					onSelect={ this.onTimezoneSelect }
-				/>
+				<Timezone selectedZone={ this.state.timezone } onSelect={ this.onTimezoneSelect } />
 			</Card>
 		);
-	}
+	},
 } );

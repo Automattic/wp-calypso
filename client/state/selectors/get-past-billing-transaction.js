@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,11 +18,8 @@ import { getPastBillingTransactions } from './';
  * @param  {String}  id      ID of the transaction
  * @return {?Object}         The transaction object
  */
-const getPastBillingTransaction = createSelector(
-	( state, id ) => {
-		return find( getPastBillingTransactions( state ), { id } ) || null;
-	},
-	getPastBillingTransactions
-);
+const getPastBillingTransaction = createSelector( ( state, id ) => {
+	return find( getPastBillingTransactions( state ), { id } ) || null;
+}, getPastBillingTransactions );
 
 export default getPastBillingTransaction;

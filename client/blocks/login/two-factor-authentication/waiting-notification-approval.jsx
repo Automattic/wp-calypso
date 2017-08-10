@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,16 +25,19 @@ class WaitingTwoFactorNotificationApproval extends Component {
 					<p>
 						{ translate(
 							'We sent a push notification to your {{strong}}WordPress mobile app{{/strong}}. ' +
-							'Once you get it and swipe or tap to confirm, this page will update.', {
+								'Once you get it and swipe or tap to confirm, this page will update.',
+							{
 								components: {
-									strong: <strong />
-								}
-							} )
-						}
+									strong: <strong />,
+								},
+							}
+						) }
 					</p>
 					<div>
-						<img className="two-factor-authentication__auth-code-preview"
-							src="/calypso/images/login/pushauth.svg" />
+						<img
+							className="two-factor-authentication__auth-code-preview"
+							src="/calypso/images/login/pushauth.svg"
+						/>
 					</div>
 				</Card>
 

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,8 +11,8 @@ export default React.createClass( {
 				<div className="feature-example__content">
 					{ this.props.children }
 				</div>
-				<div className="feature-example__gradient"></div>
+				<div className="feature-example__gradient" />
 			</div>
 		);
-	}
+	},
 } );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -54,7 +55,7 @@ class Login extends Component {
 		window.scrollTo( 0, 0 );
 	};
 
-	componentWillReceiveProps = ( nextProps ) => {
+	componentWillReceiveProps = nextProps => {
 		const hasNotice = this.props.requestNotice !== nextProps.requestNotice;
 		const isNewPage = this.props.twoFactorAuthType !== nextProps.twoFactorAuthType;
 
@@ -65,16 +66,23 @@ class Login extends Component {
 
 	handleValidUsernamePassword = () => {
 		if ( this.props.twoFactorEnabled ) {
-			page( login( {
-				isNative: true,
-				// If no notification is sent, the user is using the authenticator for 2FA by default
-				twoFactorAuthType: this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' )
-			} ) );
+			page(
+				login( {
+					isNative: true,
+					// If no notification is sent, the user is using the authenticator for 2FA by default
+					twoFactorAuthType: this.props.twoFactorNotificationSent.replace(
+						'none',
+						'authenticator'
+					),
+				} )
+			);
 		} else if ( this.props.linkingSocialUser ) {
-			page( login( {
-				isNative: true,
-				socialConnect: true,
-			} ) );
+			page(
+				login( {
+					isNative: true,
+					socialConnect: true,
+				} )
+			);
 		} else {
 			this.rebootAfterLogin();
 		}
@@ -82,10 +90,12 @@ class Login extends Component {
 
 	handleValid2FACode = () => {
 		if ( this.props.linkingSocialUser ) {
-			page( login( {
-				isNative: true,
-				socialConnect: true,
-			} ) );
+			page(
+				login( {
+					isNative: true,
+					socialConnect: true,
+				} )
+			);
 		} else {
 			this.rebootAfterLogin();
 		}
@@ -127,7 +137,7 @@ class Login extends Component {
 			headerText = translate( 'Connect your %(service)s account.', {
 				args: {
 					service: capitalize( linkingSocialService ),
-				}
+				},
 			} );
 		} else if ( privateSite ) {
 			headerText = translate( 'This is a private WordPress.com site.' );
@@ -174,7 +184,8 @@ class Login extends Component {
 					{ poller }
 					<VerificationCodeForm
 						onSuccess={ this.handleValid2FACode }
-						twoFactorAuthType={ twoFactorAuthType } />
+						twoFactorAuthType={ twoFactorAuthType }
+					/>
 				</div>
 			);
 		}
@@ -189,14 +200,10 @@ class Login extends Component {
 		}
 
 		if ( socialConnect ) {
-			return (
-				<SocialConnectPrompt onSuccess={ this.rebootAfterLogin } />
-			);
+			return <SocialConnectPrompt onSuccess={ this.rebootAfterLogin } />;
 		}
 
-		return (
-			<LoginForm onSuccess={ this.handleValidUsernamePassword } privateSite={ privateSite } />
-		);
+		return <LoginForm onSuccess={ this.handleValidUsernamePassword } privateSite={ privateSite } />;
 	}
 
 	render() {
@@ -215,14 +222,15 @@ class Login extends Component {
 }
 
 export default connect(
-	( state ) => ( {
+	state => ( {
 		redirectTo: getRedirectTo( state ),
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		linkingSocialUser: getLinkingSocialUser( state ),
 		linkingSocialService: getLinkingSocialService( state ),
-	} ), {
+	} ),
+	{
 		recordTracksEvent,
 	}
 )( localize( Login ) );

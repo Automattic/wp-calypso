@@ -1,3 +1,4 @@
+/** @format */
 
 /**
  * External dependencies
@@ -43,7 +44,7 @@ class PopoverExample extends PureComponent {
 
 	showPopoverMenu() {
 		this.setState( {
-			showPopoverMenu: ! this.state.showPopoverMenu
+			showPopoverMenu: ! this.state.showPopoverMenu,
 		} );
 	}
 
@@ -54,11 +55,7 @@ class PopoverExample extends PureComponent {
 	renderPopover() {
 		return (
 			<div>
-				<button
-					className="button"
-					ref="popoverButton"
-					onClick={ this.swapPopoverVisibility }
-				>
+				<button className="button" ref="popoverButton" onClick={ this.swapPopoverVisibility }>
 					Show Popover
 				</button>
 
@@ -69,9 +66,7 @@ class PopoverExample extends PureComponent {
 					position={ this.state.popoverPosition }
 					context={ this.refs && this.refs.popoverButton }
 				>
-					<div style={ { padding: '10px' } }>
-						Simple Popover Instance
-					</div>
+					<div style={ { padding: '10px' } }>Simple Popover Instance</div>
 				</Popover>
 			</div>
 		);
@@ -80,11 +75,7 @@ class PopoverExample extends PureComponent {
 	renderMenuPopover() {
 		return (
 			<div>
-				<button
-					className="button"
-					ref="popoverMenuButton"
-					onClick={ this.showPopoverMenu }
-				>
+				<button className="button" ref="popoverMenuButton" onClick={ this.showPopoverMenu }>
 					Show Popover Menu
 				</button>
 
@@ -108,11 +99,9 @@ class PopoverExample extends PureComponent {
 	render() {
 		return (
 			<div>
-				<label>Position
-					<select
-						value={ this.state.popoverPosition }
-						onChange={ this.changePopoverPosition }
-					>
+				<label>
+					Position
+					<select value={ this.state.popoverPosition } onChange={ this.changePopoverPosition }>
 						<option value="top">top</option>
 						<option value="top left">top left</option>
 						<option value="top right">top right</option>

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +14,9 @@ const EmojifyExample = () => {
 
 	return (
 		<div className="design-assets__group">
-			<Emojify>{ textToEmojify }</Emojify>
+			<Emojify>
+				{ textToEmojify }
+			</Emojify>
 		</div>
 	);
 };

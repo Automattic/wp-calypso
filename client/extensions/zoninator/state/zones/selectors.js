@@ -1,9 +1,10 @@
+/** @format */
 /**
  * External dependencies
  */
 import { get } from 'lodash';
 
-const getZonesState = ( state ) => state.extensions.zoninator.zones;
+const getZonesState = state => state.extensions.zoninator.zones;
 
 /**
  * Returns true if zones are being requested for the specified site ID.
@@ -22,5 +23,4 @@ export const isRequestingZones = ( state, siteId ) =>
  * @param  {Number} siteId Site ID
  * @return {Array}         Zones
  */
-export const getZones = ( state, siteId ) =>
-	get( getZonesState( state ), [ 'items', siteId ], [] );
+export const getZones = ( state, siteId ) => get( getZonesState( state ), [ 'items', siteId ], [] );

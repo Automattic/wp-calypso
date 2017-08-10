@@ -1,3 +1,4 @@
+/** @format */
 /**
  * A legacy route is a path that Calypso should ignore, allowing the browser
  * to reload the page.
@@ -29,9 +30,8 @@ const legacyRoutes = [
  * @returns {boolean} True if legacy path, false otherwise
  */
 export function isLegacyRoute( path ) {
-	return legacyRoutes.some( ( {
-		match,
-		noMatch = { test: () => false },
-		predicate = () => true
-	} ) => predicate( path ) && match.test( path ) && ! noMatch.test( path ) );
+	return legacyRoutes.some(
+		( { match, noMatch = { test: () => false }, predicate = () => true } ) =>
+			predicate( path ) && match.test( path ) && ! noMatch.test( path )
+	);
 }

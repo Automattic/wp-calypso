@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,10 +19,14 @@ export const bindActionCreatorsWithSiteId = ( actionCreators, dispatch, siteId )
 	}
 
 	return bindActionCreators(
-		reduce( actionCreators, ( accumulator, action, key ) => {
-			accumulator[ key ] = action.bind( null, siteId );
-			return accumulator;
-		}, {} ),
+		reduce(
+			actionCreators,
+			( accumulator, action, key ) => {
+				accumulator[ key ] = action.bind( null, siteId );
+				return accumulator;
+			},
+			{}
+		),
 		dispatch
 	);
 };

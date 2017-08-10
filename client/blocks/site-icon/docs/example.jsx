@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,8 +22,8 @@ const EN_BLOG_SITE_ID = 3584907;
 
 const SiteIconExample = ( { siteId } ) => <SiteIcon siteId={ siteId || EN_BLOG_SITE_ID } />;
 
-const ConnectedSiteIconExample = connect( ( state ) => ( {
-	siteId: get( getCurrentUser( state ), 'primary_blog' )
+const ConnectedSiteIconExample = connect( state => ( {
+	siteId: get( getCurrentUser( state ), 'primary_blog' ),
 } ) )( SiteIconExample );
 
 ConnectedSiteIconExample.displayName = 'SiteIcon';

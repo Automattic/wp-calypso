@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,18 +19,20 @@ import StandardPluginsPanel from './standard-plugins-panel';
 
 import { defaultStandardPlugins } from './default-plugins';
 
-export const PluginsList = ( { siteSlug, translate } ) => (
+export const PluginsList = ( { siteSlug, translate } ) =>
 	<div className="wpcom-plugin-panel wpcom-plugins-expanded">
-		<PageViewTracker path="/plugins/category/standard/:site" title="Plugins > WPCOM Site > Standard Plugins" />
+		<PageViewTracker
+			path="/plugins/category/standard/:site"
+			title="Plugins > WPCOM Site > Standard Plugins"
+		/>
 		<HeaderCake backHref={ `/plugins/${ siteSlug }` } onClick={ noop }>
 			{ translate( 'Standard Plugins' ) }
 		</HeaderCake>
 		<StandardPluginsPanel plugins={ defaultStandardPlugins } />
-	</div>
-);
+	</div>;
 
 const mapStateToProps = state => ( {
-	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) )
+	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
 } );
 
 export default connect( mapStateToProps )( localize( PluginsList ) );

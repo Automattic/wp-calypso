@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -16,13 +17,13 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'cart-buttons', function() {
 	let recordStub, onKeepSearchingClickStub, CartButtons;
 
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		recordStub = sandbox.stub();
 		onKeepSearchingClickStub = sandbox.stub();
 	} );
 
 	const AnalyticsMixinStub = () => ( {
-		recordEvent: recordStub
+		recordEvent: recordStub,
 	} );
 
 	useFakeDom();
@@ -36,11 +37,11 @@ describe( 'cart-buttons', function() {
 		beforeEach( function() {
 			this.cartButtonsComponent = mount(
 				<CartButtons
-					selectedSite={ {slug: 'example.com'} }
+					selectedSite={ { slug: 'example.com' } }
 					showKeepSearching={ true }
 					onKeepSearchingClick={ onKeepSearchingClickStub }
 					translate={ identity }
-					/>
+				/>
 			);
 		} );
 
@@ -57,10 +58,7 @@ describe( 'cart-buttons', function() {
 	describe( 'Click on Checkout Button', function() {
 		beforeEach( function() {
 			this.cartButtonsComponent = mount(
-				<CartButtons
-					selectedSite={ {slug: 'example.com'} }
-					translate={ identity }
-					/>
+				<CartButtons selectedSite={ { slug: 'example.com' } } translate={ identity } />
 			);
 		} );
 

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -32,7 +33,13 @@ describe( 'SubmitStepButton', () => {
 
 	it( 'should trigger both submitSignupStep action creator and goToNextStep prop when clicked.', () => {
 		const goToNextStep = stub();
-		const wrapper = shallow( <SubmitStepButton buttonText="buttonText" stepName="test:step:1" goToNextStep={ goToNextStep } /> );
+		const wrapper = shallow(
+			<SubmitStepButton
+				buttonText="buttonText"
+				stepName="test:step:1"
+				goToNextStep={ goToNextStep }
+			/>
+		);
 
 		expect( submitSignupStep ).not.to.have.been.called;
 		expect( goToNextStep ).not.to.have.been.called;

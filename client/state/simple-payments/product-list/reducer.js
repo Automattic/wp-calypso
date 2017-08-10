@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -40,17 +41,29 @@ function addOrEditProduct( list = [], newProduct ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer( {}, {
-	[ SIMPLE_PAYMENTS_PRODUCT_RECEIVE ]:
-		( state, { siteId, product } ) => ( { ...state, [ siteId ]: addOrEditProduct( state[ siteId ], product ) } ),
-	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE ]: ( state, { siteId, products } ) => ( { ...state, [ siteId ]: products } ),
-	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE ]:
-		( state, { siteId, product } ) => ( { ...state, [ siteId ]: addOrEditProduct( state[ siteId ], product ) } ),
-	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE ]: ( state, { siteId, productId } ) => ( { ...state, [ siteId ]: state[ siteId ].filter(
-		product => product.ID !== productId
-	) } ),
-}, productListSchema );
+export const items = createReducer(
+	{},
+	{
+		[ SIMPLE_PAYMENTS_PRODUCT_RECEIVE ]: ( state, { siteId, product } ) => ( {
+			...state,
+			[ siteId ]: addOrEditProduct( state[ siteId ], product ),
+		} ),
+		[ SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE ]: ( state, { siteId, products } ) => ( {
+			...state,
+			[ siteId ]: products,
+		} ),
+		[ SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE ]: ( state, { siteId, product } ) => ( {
+			...state,
+			[ siteId ]: addOrEditProduct( state[ siteId ], product ),
+		} ),
+		[ SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE ]: ( state, { siteId, productId } ) => ( {
+			...state,
+			[ siteId ]: state[ siteId ].filter( product => product.ID !== productId ),
+		} ),
+	},
+	productListSchema
+);
 
 export default combineReducers( {
-	items
+	items,
 } );

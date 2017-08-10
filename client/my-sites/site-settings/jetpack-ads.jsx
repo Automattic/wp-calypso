@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,16 +22,13 @@ import SectionHeader from 'components/section-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
-import {
-	FEATURE_WORDADS_INSTANT,
-	PLAN_JETPACK_PREMIUM
-} from 'lib/plans/constants';
+import { FEATURE_WORDADS_INSTANT, PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
 
 class JetpackAds extends Component {
 	static defaultProps = {
 		isSavingSettings: false,
 		isRequestingSettings: true,
-		fields: {}
+		fields: {},
 	};
 
 	static propTypes = {
@@ -41,10 +39,7 @@ class JetpackAds extends Component {
 	};
 
 	isFormPending() {
-		const {
-			isRequestingSettings,
-			isSavingSettings,
-		} = this.props;
+		const { isRequestingSettings, isSavingSettings } = this.props;
 
 		return isRequestingSettings || isSavingSettings;
 	}
@@ -54,7 +49,9 @@ class JetpackAds extends Component {
 
 		return (
 			<Banner
-				description={ translate( 'Add advertising to your site through our WordAds program and earn money from impressions.' ) }
+				description={ translate(
+					'Add advertising to your site through our WordAds program and earn money from impressions.'
+				) }
 				event={ 'calypso_wordads_settings_upgrade_nudge' }
 				feature={ FEATURE_WORDADS_INSTANT }
 				plan={ PLAN_JETPACK_PREMIUM }
@@ -92,12 +89,13 @@ class JetpackAds extends Component {
 				<div>
 					{ translate(
 						'Show ads on the first article on your home page or at the end of every page and post. ' +
-						'Place additional ads at the top of your site and to any widget area to increase your earnings.'
+							'Place additional ads at the top of your site and to any widget area to increase your earnings.'
 					) }
 				</div>
 				<FormSettingExplanation>
-					{
-						translate( 'By activating ads, you agree to the Automattic Ads {{link}}Terms of Service{{/link}}.', {
+					{ translate(
+						'By activating ads, you agree to the Automattic Ads {{link}}Terms of Service{{/link}}.',
+						{
 							components: {
 								link: (
 									<ExternalLink
@@ -105,22 +103,17 @@ class JetpackAds extends Component {
 										icon={ false }
 										target="_blank"
 									/>
-								)
-							}
-						} )
-					}
+								),
+							},
+						}
+					) }
 				</FormSettingExplanation>
 			</div>
 		);
 	}
 
 	renderSettings() {
-		const {
-			selectedSiteId,
-			selectedSiteSlug,
-			wordadsModuleActive,
-			translate
-		} = this.props;
+		const { selectedSiteId, selectedSiteSlug, wordadsModuleActive, translate } = this.props;
 		const formPending = this.isFormPending();
 
 		return (
@@ -136,60 +129,48 @@ class JetpackAds extends Component {
 							moduleSlug="wordads"
 							label={ translate( 'Enable ads and display an ad below each post' ) }
 							disabled={ formPending }
-							/>
+						/>
 
 						<div className="site-settings__child-settings">
-							{
-								this.renderToggle( 'enable_header_ad', ! wordadsModuleActive, translate(
-									'Display an additional ad at the top of each page'
-								) )
-							}
+							{ this.renderToggle(
+								'enable_header_ad',
+								! wordadsModuleActive,
+								translate( 'Display an additional ad at the top of each page' )
+							) }
 						</div>
 					</FormFieldset>
 				</Card>
 
-				{
-					wordadsModuleActive && (
-						<CompactCard href={ `/ads/earnings/${ selectedSiteSlug }` }>
-							{ translate( 'View your earnings' ) }
-						</CompactCard>
-					)
-				}
+				{ wordadsModuleActive &&
+					<CompactCard href={ `/ads/earnings/${ selectedSiteSlug }` }>
+						{ translate( 'View your earnings' ) }
+					</CompactCard> }
 			</div>
 		);
 	}
 
 	render() {
-		const {
-			hasWordadsFeature,
-			translate
-		} = this.props;
+		const { hasWordadsFeature, translate } = this.props;
 
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Ads' ) } />
 
-				{
-					hasWordadsFeature
-						? this.renderSettings()
-						: this.renderUpgradeBanner()
-				}
+				{ hasWordadsFeature ? this.renderSettings() : this.renderUpgradeBanner() }
 			</div>
 		);
 	}
 }
 
-export default connect(
-	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const selectedSiteSlug = getSelectedSiteSlug( state );
-		const hasWordadsFeature = hasFeature( state, selectedSiteId, FEATURE_WORDADS_INSTANT );
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const selectedSiteSlug = getSelectedSiteSlug( state );
+	const hasWordadsFeature = hasFeature( state, selectedSiteId, FEATURE_WORDADS_INSTANT );
 
-		return {
-			hasWordadsFeature,
-			selectedSiteId,
-			selectedSiteSlug,
-			wordadsModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'wordads' ),
-		};
-	}
-)( localize( JetpackAds ) );
+	return {
+		hasWordadsFeature,
+		selectedSiteId,
+		selectedSiteSlug,
+		wordadsModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'wordads' ),
+	};
+} )( localize( JetpackAds ) );

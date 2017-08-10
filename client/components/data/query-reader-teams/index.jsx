@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -27,17 +28,13 @@ class QueryReaderTeams extends Component {
 
 QueryReaderTeams.propTypes = {
 	isRequesting: PropTypes.bool,
-	request: PropTypes.func
+	request: PropTypes.func,
 };
 
 const mapStateToProps = state => ( {
-	requesting: isRequestingReaderTeams( state )
+	requesting: isRequestingReaderTeams( state ),
 } );
 
-const mapDispatchToProps = dispatch =>
-	bindActionCreators( { requestTeams }, dispatch );
+const mapDispatchToProps = dispatch => bindActionCreators( { requestTeams }, dispatch );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-)( QueryReaderTeams );
+export default connect( mapStateToProps, mapDispatchToProps )( QueryReaderTeams );

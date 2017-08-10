@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -45,7 +46,7 @@ class HappychatButton extends Component {
 		translate: identity,
 	};
 
-	onClick = ( event ) => {
+	onClick = event => {
 		if ( this.props.allowMobileRedirect && viewport.isMobile() ) {
 			// For mobile clients, happychat will always use the
 			// page componet instead of the sidebar
@@ -55,17 +56,26 @@ class HappychatButton extends Component {
 		}
 
 		this.props.onClick( event );
-	}
+	};
 
 	componentDidMount() {
 		this.props.connectChat();
 	}
 
 	render() {
-		const { translate, children, className, primary, borderless, hasUnread, isChatAvailable, isChatActive } = this.props;
+		const {
+			translate,
+			children,
+			className,
+			primary,
+			borderless,
+			hasUnread,
+			isChatAvailable,
+			isChatActive,
+		} = this.props;
 		const showButton = isChatAvailable || isChatActive;
 		const classes = classnames( 'happychat__button', className, {
-			'has-unread': hasUnread
+			'has-unread': hasUnread,
 		} );
 
 		if ( ! showButton ) {
@@ -78,7 +88,8 @@ class HappychatButton extends Component {
 				primary={ primary }
 				borderless={ borderless }
 				onClick={ this.onClick }
-				title={ translate( 'Support Chat' ) }>
+				title={ translate( 'Support Chat' ) }
+			>
 				{ children || <Gridicon icon="chat" /> }
 			</Button>
 		);

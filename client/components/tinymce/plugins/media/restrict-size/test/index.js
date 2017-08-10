@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -53,39 +54,64 @@ describe( 'restrictSize', () => {
 
 	describe( '#resetImages()', () => {
 		it( 'should restore all instances of replaced images', () => {
-			const value = resetImages( '<p><img src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg?w=1024" class="alignnone size-large wp-image-5823" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>' );
-			expect( value ).to.equal( '<p><img src="https://wordpress.com/2015/11/forest.jpg?w=1024" class="alignnone size-large wp-image-5823" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>' );
+			const value = resetImages(
+				'<p><img src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg?w=1024" class="alignnone size-large wp-image-5823" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>'
+			);
+			expect( value ).to.equal(
+				'<p><img src="https://wordpress.com/2015/11/forest.jpg?w=1024" class="alignnone size-large wp-image-5823" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>'
+			);
 		} );
 
 		it( 'should handle multiple images from content', () => {
-			const value = resetImages( '<p><img src="https://example.com/bird.jpg?w=680" data-wpmedia-src="https://example.com/bird.jpg"><img src="https://example.com/forest.jpg?w=680" data-wpmedia-src="https://example.com/forest.jpg"></p>' );
-			expect( value ).to.equal( '<p><img src="https://example.com/bird.jpg"><img src="https://example.com/forest.jpg"></p>' );
+			const value = resetImages(
+				'<p><img src="https://example.com/bird.jpg?w=680" data-wpmedia-src="https://example.com/bird.jpg"><img src="https://example.com/forest.jpg?w=680" data-wpmedia-src="https://example.com/forest.jpg"></p>'
+			);
+			expect( value ).to.equal(
+				'<p><img src="https://example.com/bird.jpg"><img src="https://example.com/forest.jpg"></p>'
+			);
 		} );
 
 		it( 'should ignore non-replaced images in handling multiple images', () => {
-			const value = resetImages( '<p><img src="https://example.com/bird.jpg?w=300"><img src="https://example.com/forest.jpg?w=680" data-wpmedia-src="https://example.com/forest.jpg"></p>' );
-			expect( value ).to.equal( '<p><img src="https://example.com/bird.jpg?w=300"><img src="https://example.com/forest.jpg"></p>' );
+			const value = resetImages(
+				'<p><img src="https://example.com/bird.jpg?w=300"><img src="https://example.com/forest.jpg?w=680" data-wpmedia-src="https://example.com/forest.jpg"></p>'
+			);
+			expect( value ).to.equal(
+				'<p><img src="https://example.com/bird.jpg?w=300"><img src="https://example.com/forest.jpg"></p>'
+			);
 		} );
 	} );
 
 	describe( '#setImages()', () => {
 		it( 'should replace all instances of large images', () => {
-			const value = setImages( '<p><img src="https://wordpress.com/2015/11/forest.jpg?w=1024" class="alignnone size-large wp-image-5823" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>' );
-			expect( value ).to.equal( '<p><img src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg?w=1024" class="alignnone size-large wp-image-5823" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>' );
+			const value = setImages(
+				'<p><img src="https://wordpress.com/2015/11/forest.jpg?w=1024" class="alignnone size-large wp-image-5823" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>'
+			);
+			expect( value ).to.equal(
+				'<p><img src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg?w=1024" class="alignnone size-large wp-image-5823" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>'
+			);
 		} );
 
 		it( 'should not replace already-replaced instances', () => {
-			const value = setImages( '<p><img class="alignnone size-large wp-image-5823" src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg?w=1024" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>' );
-			expect( value ).to.equal( '<p><img class="alignnone size-large wp-image-5823" src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg?w=1024" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>' );
+			const value = setImages(
+				'<p><img class="alignnone size-large wp-image-5823" src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg?w=1024" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>'
+			);
+			expect( value ).to.equal(
+				'<p><img class="alignnone size-large wp-image-5823" src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg?w=1024" alt="forest" width="1024" height="683" data-mce-src="https://wordpress.com/2015/11/forest.jpg?w=680" data-mce-selected="1"></p>'
+			);
 		} );
 
 		it( 'should replace images with indeterminate widths', () => {
-			const value = setImages( '<p><img src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail wp-image-5823" data-mce-selected="1"></p>' );
-			expect( value ).to.equal( '<p><img src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail wp-image-5823" data-mce-selected="1"></p>' );
+			const value = setImages(
+				'<p><img src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail wp-image-5823" data-mce-selected="1"></p>'
+			);
+			expect( value ).to.equal(
+				'<p><img src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail wp-image-5823" data-mce-selected="1"></p>'
+			);
 		} );
 
 		it( 'should not replace external images (those without media ID)', () => {
-			const markup = '<p><img src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail"></p>';
+			const markup =
+				'<p><img src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail"></p>';
 
 			const value = setImages( markup );
 			expect( value ).to.equal( markup );

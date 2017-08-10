@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,7 @@ import {
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
-	MEDIA_REQUESTING
+	MEDIA_REQUESTING,
 } from 'state/action-types';
 
 /**
@@ -35,7 +36,7 @@ export function receiveMedia( siteId, media, found, query ) {
 		siteId,
 		media: castArray( media ),
 		found,
-		query
+		query,
 	};
 }
 
@@ -51,7 +52,7 @@ export function requestMedia( siteId, query ) {
 	return {
 		type: MEDIA_REQUEST,
 		siteId,
-		query
+		query,
 	};
 }
 
@@ -67,7 +68,7 @@ export function requestingMedia( siteId, query ) {
 	return {
 		type: MEDIA_REQUESTING,
 		siteId,
-		query
+		query,
 	};
 }
 
@@ -83,7 +84,7 @@ export function failMediaRequest( siteId, query ) {
 	return {
 		type: MEDIA_REQUEST_FAILURE,
 		siteId,
-		query
+		query,
 	};
 }
 
@@ -99,7 +100,7 @@ export function successMediaRequest( siteId, query ) {
 	return {
 		type: MEDIA_REQUEST_SUCCESS,
 		siteId,
-		query
+		query,
 	};
 }
 
@@ -115,7 +116,7 @@ export function requestMediaItem( siteId, mediaId ) {
 	return {
 		type: MEDIA_ITEM_REQUEST,
 		siteId,
-		mediaId
+		mediaId,
 	};
 }
 
@@ -131,7 +132,7 @@ export function requestingMediaItem( siteId, mediaId ) {
 	return {
 		type: MEDIA_ITEM_REQUESTING,
 		siteId,
-		mediaId
+		mediaId,
 	};
 }
 
@@ -147,7 +148,7 @@ export function failMediaItemRequest( siteId, mediaId ) {
 	return {
 		type: MEDIA_ITEM_REQUEST_FAILURE,
 		siteId,
-		mediaId
+		mediaId,
 	};
 }
 
@@ -163,7 +164,7 @@ export function successMediaItemRequest( siteId, mediaId ) {
 	return {
 		type: MEDIA_ITEM_REQUEST_SUCCESS,
 		siteId,
-		mediaId
+		mediaId,
 	};
 }
 
@@ -183,6 +184,6 @@ export function deleteMedia( siteId, mediaIds ) {
 	return {
 		type: MEDIA_DELETE,
 		mediaIds: castArray( mediaIds ),
-		siteId
+		siteId,
 	};
 }

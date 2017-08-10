@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,7 +27,6 @@ import EmptyContent from 'components/empty-content';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const devdocs = {
-
 	/*
 	 * Documentation is rendered on #primary and doesn't expect a sidebar to exist
 	 * so #secondary needs to be cleaned up
@@ -63,10 +63,7 @@ const devdocs = {
 				newUrl += '?' + queryString;
 			}
 
-			page.replace( newUrl,
-				context.state,
-				false,
-				false );
+			page.replace( newUrl, context.state, false, false );
 		}
 
 		ReactDom.render(
@@ -74,7 +71,7 @@ const devdocs = {
 				term: context.query.term,
 				// we debounce with wait time of 0, so that the search doesn’t happen
 				// in the same tick as the keyUp event and possibly cause typing lag
-				onSearchChange: debounce( onSearchChange, 0 )
+				onSearchChange: debounce( onSearchChange, 0 ),
 			} ),
 			document.getElementById( 'primary' )
 		);
@@ -88,7 +85,7 @@ const devdocs = {
 			React.createElement( SingleDocComponent, {
 				path: context.params.path,
 				term: context.query.term,
-				sectionId: Object.keys( context.hash )[ 0 ]
+				sectionId: Object.keys( context.hash )[ 0 ],
 			} ),
 			document.getElementById( 'primary' )
 		);
@@ -98,7 +95,7 @@ const devdocs = {
 	design: function( context ) {
 		renderWithReduxStore(
 			React.createElement( DesignAssetsComponent, {
-				component: context.params.component
+				component: context.params.component,
 			} ),
 			'primary',
 			context.store
@@ -109,7 +106,7 @@ const devdocs = {
 	blocks: function( context ) {
 		renderWithReduxStore(
 			React.createElement( Blocks, {
-				component: context.params.component
+				component: context.params.component,
 			} ),
 			'primary',
 			context.store
@@ -120,7 +117,7 @@ const devdocs = {
 		renderWithReduxStore(
 			React.createElement( DocsSelectors, {
 				selector: context.params.selector,
-				search: context.query.search
+				search: context.query.search,
 			} ),
 			'primary',
 			context.store
@@ -130,7 +127,7 @@ const devdocs = {
 	typography: function( context ) {
 		ReactDom.render(
 			React.createElement( Typography, {
-				component: context.params.component
+				component: context.params.component,
 			} ),
 			document.getElementById( 'primary' )
 		);
@@ -139,13 +136,14 @@ const devdocs = {
 	formStateExamples: function( context ) {
 		ReactDom.render(
 			React.createElement( FormStateExamplesComponent, {
-				component: context.params.component
+				component: context.params.component,
 			} ),
 			document.getElementById( 'primary' )
 		);
 	},
 
-	pleaseLogIn: function( context ) { // eslint-disable-line no-unused-vars
+	pleaseLogIn: function( context ) {
+		// eslint-disable-line no-unused-vars
 		const currentUrl = url.parse( location.href );
 		const redirectTo = currentUrl.protocol + '//' + currentUrl.host + '/devdocs/welcome';
 
@@ -156,22 +154,23 @@ const devdocs = {
 				title: 'Log In to start hacking',
 				line: 'Required to access the WordPress.com API',
 				action: 'Log In to WordPress.com',
-				actionURL: login( { isNative: config.isEnabled( 'login/native-login-links' ), redirectTo } ),
+				actionURL: login( {
+					isNative: config.isEnabled( 'login/native-login-links' ),
+					redirectTo,
+				} ),
 				secondaryAction: 'Register',
 				secondaryActionURL: '/start/developer',
-				illustration: '/calypso/images/illustrations/illustration-nosites.svg'
+				illustration: '/calypso/images/illustrations/illustration-nosites.svg',
 			} ),
 			document.getElementById( 'primary' )
 		);
 	},
 
 	// Welcome screen
-	welcome: function( context ) { // eslint-disable-line no-unused-vars
-		ReactDom.render(
-			React.createElement( DevWelcome, {} ),
-			document.getElementById( 'primary' )
-		);
-	}
+	welcome: function( context ) {
+		// eslint-disable-line no-unused-vars
+		ReactDom.render( React.createElement( DevWelcome, {} ), document.getElementById( 'primary' ) );
+	},
 };
 
 module.exports = devdocs;

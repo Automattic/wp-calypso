@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,11 +16,7 @@ import { fetchUsers } from 'lib/users/actions';
 import { fetchDomains, fetchWapiDomainInfo } from 'lib/upgrades/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const stores = [
-	DomainsStore,
-	WapiDomainInfoStore,
-	UsersStore
-];
+const stores = [ DomainsStore, WapiDomainInfoStore, UsersStore ];
 
 function getStateFromStores( props ) {
 	let domains, users;
@@ -34,14 +31,14 @@ function getStateFromStores( props ) {
 		users,
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
-		wapiDomainInfo: WapiDomainInfoStore.getByDomainName( props.selectedDomainName )
+		wapiDomainInfo: WapiDomainInfoStore.getByDomainName( props.selectedDomainName ),
 	};
 }
 
 class TransferData extends Component {
 	static propTypes = {
 		component: PropTypes.func.isRequired,
-		selectedDomainName: PropTypes.string.isRequired
+		selectedDomainName: PropTypes.string.isRequired,
 	};
 
 	componentWillMount() {
@@ -71,13 +68,14 @@ class TransferData extends Component {
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
 				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.selectedSite } />
+				selectedSite={ this.props.selectedSite }
+			/>
 		);
 	}
 }
 
-export default connect( ( state ) => {
+export default connect( state => {
 	return {
-		selectedSite: getSelectedSite( state )
+		selectedSite: getSelectedSite( state ),
 	};
 } )( TransferData );

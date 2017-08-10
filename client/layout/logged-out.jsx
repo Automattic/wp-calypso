@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,12 +12,7 @@ import { connect } from 'react-redux';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import { getSection } from 'state/ui/selectors';
 
-const LayoutLoggedOut = ( {
-	primary,
-	secondary,
-	section,
-	redirectUri,
-} ) => {
+const LayoutLoggedOut = ( { primary, secondary, section, redirectUri } ) => {
 	const classes = classNames( 'layout', {
 		[ 'is-group-' + section.group ]: !! section,
 		[ 'is-section-' + section.name ]: !! section,
@@ -27,7 +23,11 @@ const LayoutLoggedOut = ( {
 
 	return (
 		<div className={ classes }>
-			<MasterbarLoggedOut title={ section.title } sectionName={ section.name } redirectUri={ redirectUri } />
+			<MasterbarLoggedOut
+				title={ section.title }
+				sectionName={ section.name }
+				redirectUri={ redirectUri }
+			/>
 			<div id="content" className="layout__content">
 				<div id="primary" className="layout__primary">
 					{ primary }
@@ -44,15 +44,10 @@ LayoutLoggedOut.displayName = 'LayoutLoggedOut';
 LayoutLoggedOut.propTypes = {
 	primary: React.PropTypes.element,
 	secondary: React.PropTypes.element,
-	section: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.object,
-	] ),
-	redirectUri: React.PropTypes.string
+	section: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] ),
+	redirectUri: React.PropTypes.string,
 };
 
-export default connect(
-	state => ( {
-		section: getSection( state )
-	} )
-)( LayoutLoggedOut );
+export default connect( state => ( {
+	section: getSection( state ),
+} ) )( LayoutLoggedOut );

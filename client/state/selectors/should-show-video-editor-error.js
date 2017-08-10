@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns true if an error should be shown in the video editor.
  *

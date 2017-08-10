@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -73,13 +74,15 @@ const CancelPurchase = React.createClass( {
 			return true;
 		}
 
-		const purchase = getPurchase( props ), selectedSite = getSelectedSite( props );
+		const purchase = getPurchase( props ),
+			selectedSite = getSelectedSite( props );
 
 		return selectedSite && purchase && isCancelable( purchase );
 	},
 
 	redirect( props ) {
-		const purchase = getPurchase( props ), selectedSite = getSelectedSite( props );
+		const purchase = getPurchase( props ),
+			selectedSite = getSelectedSite( props );
 		let redirectPath = paths.purchasesRoot();
 
 		if ( selectedSite && purchase && ! isCancelable( purchase ) ) {
@@ -90,7 +93,8 @@ const CancelPurchase = React.createClass( {
 	},
 
 	renderFooterText() {
-		const purchase = getPurchase( this.props ), { refundText, renewDate } = purchase;
+		const purchase = getPurchase( this.props ),
+			{ refundText, renewDate } = purchase;
 
 		if ( isRefundable( purchase ) ) {
 			return this.props.translate( '%(refundText)s to be refunded', {
@@ -162,8 +166,12 @@ const CancelPurchase = React.createClass( {
 				</Card>
 
 				<CompactCard className="cancel-purchase__product-information">
-					<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
-					<div className="cancel-purchase__site-title">{ siteName || siteDomain }</div>
+					<div className="cancel-purchase__purchase-name">
+						{ purchaseName }
+					</div>
+					<div className="cancel-purchase__site-title">
+						{ siteName || siteDomain }
+					</div>
 					<ProductLink selectedPurchase={ purchase } selectedSite={ this.props.selectedSite } />
 				</CompactCard>
 				<CompactCard className="cancel-purchase__footer">

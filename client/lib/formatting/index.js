@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -91,7 +92,8 @@ function preventWidows( text, wordsToKeep = 2 ) {
  * @return {string}        html string with HTML paragraphs instead of double line-breaks
  */
 function wpautop( pee ) {
-	const blocklist = 'table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre' +
+	const blocklist =
+		'table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre' +
 		'|form|map|area|blockquote|address|math|style|p|h[1-6]|hr|fieldset|legend|section' +
 		'|article|aside|hgroup|header|footer|nav|figure|figcaption|details|menu|summary';
 
@@ -142,7 +144,10 @@ function wpautop( pee ) {
 	pee = pee.replace( /\n\s*\n+/g, '\n\n' );
 	pee = pee.replace( /([\s\S]+?)\n\n/g, '<p>$1</p>\n' );
 	pee = pee.replace( /<p>\s*?<\/p>/gi, '' );
-	pee = pee.replace( new RegExp( '<p>\\s*(</?(?:' + blocklist + ')(?: [^>]*)?>)\\s*</p>', 'gi' ), '$1' );
+	pee = pee.replace(
+		new RegExp( '<p>\\s*(</?(?:' + blocklist + ')(?: [^>]*)?>)\\s*</p>', 'gi' ),
+		'$1'
+	);
 	pee = pee.replace( /<p>(<li.+?)<\/p>/gi, '$1' );
 	pee = pee.replace( /<p>\s*<blockquote([^>]*)>/gi, '<blockquote$1><p>' );
 	pee = pee.replace( /<\/blockquote>\s*<\/p>/gi, '</p></blockquote>' );
@@ -151,7 +156,10 @@ function wpautop( pee ) {
 	pee = pee.replace( /\s*\n/gi, '<br />\n' );
 	pee = pee.replace( new RegExp( '(</?(?:' + blocklist + ')[^>]*>)\\s*<br />', 'gi' ), '$1' );
 	pee = pee.replace( /<br \/>(\s*<\/?(?:p|li|div|dl|dd|dt|th|pre|td|ul|ol)>)/gi, '$1' );
-	pee = pee.replace( /(?:<p>|<br ?\/?>)*\s*\[caption([^\[]+)\[\/caption\]\s*(?:<\/p>|<br ?\/?>)*/gi, '[caption$1[/caption]' );
+	pee = pee.replace(
+		/(?:<p>|<br ?\/?>)*\s*\[caption([^\[]+)\[\/caption\]\s*(?:<\/p>|<br ?\/?>)*/gi,
+		'[caption$1[/caption]'
+	);
 
 	pee = pee.replace( /(<(?:div|th|td|form|fieldset|dd)[^>]*>)(.*?)<\/p>/g, function( a, b, c ) {
 		if ( c.match( /<p( [^>]*)?>/ ) ) {
@@ -225,7 +233,10 @@ function removep( html ) {
 	html = html.replace( /\s*\[caption([^\[]+)\[\/caption\]\s*/gi, '\n\n[caption$1[/caption]\n\n' );
 	html = html.replace( /caption\]\n\n+\[caption/g, 'caption]\n\n[caption' );
 
-	html = html.replace( new RegExp( '\\s*<((?:' + blocklist2 + ')(?: [^>]*)?)\\s*>', 'g' ), '\n<$1>' );
+	html = html.replace(
+		new RegExp( '\\s*<((?:' + blocklist2 + ')(?: [^>]*)?)\\s*>', 'g' ),
+		'\n<$1>'
+	);
 	html = html.replace( new RegExp( '\\s*</(' + blocklist2 + ')>\\s*', 'g' ), '</$1>\n' );
 	html = html.replace( /<li([^>]*)>/g, '\t<li$1>' );
 

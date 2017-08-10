@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -5,11 +6,12 @@ import {
 	PLANS_RECEIVE,
 	PLANS_REQUEST,
 	PLANS_REQUEST_SUCCESS,
-	PLANS_REQUEST_FAILURE
+	PLANS_REQUEST_FAILURE,
 } from 'state/action-types';
 
 // WP REST-API error response
-export const ERROR_MESSAGE_RESPONSE = 'There was a problem fetching plans. Please try again later or contact support.';
+export const ERROR_MESSAGE_RESPONSE =
+	'There was a problem fetching plans. Please try again later or contact support.';
 
 export const PLAN_1 = {
 	product_id: 1,
@@ -19,8 +21,10 @@ export const PLAN_1 = {
 	product_name_short: 'Free',
 	product_slug: 'free_plan',
 	tagline: 'Just get started',
-	shortdesc: 'Get a free blog and be on your way to publishing your first post in less than five minutes.',
-	description: 'Just start blogging: get a free blog and be on your way to publishing your first post in less than five minutes.',
+	shortdesc:
+		'Get a free blog and be on your way to publishing your first post in less than five minutes.',
+	description:
+		'Just start blogging: get a free blog and be on your way to publishing your first post in less than five minutes.',
 	icon: 'https://s0.wordpress.com/i/store/plan-free.png',
 	icon_active: 'https://s0.wordpress.com/i/store/plan-free-active.png',
 	capability: 'manage_options',
@@ -33,17 +37,13 @@ export const PLAN_1 = {
 	store: 0,
 	features_highlight: [
 		{
-			items: [
-				'free-blog',
-				'space',
-				'support'
-			]
-		}
+			items: [ 'free-blog', 'space', 'support' ],
+		},
 	],
 	bill_period_label: 'for life',
 	price: '$0',
 	formatted_price: '$0',
-	raw_price: 0
+	raw_price: 0,
 };
 
 export const PLAN_1003 = {
@@ -51,13 +51,21 @@ export const PLAN_1003 = {
 	product_name: 'WordPress.com Premium',
 	product_name_en: 'WordPress.com Premium',
 	prices: {
-		USD: 99, NZD: 139, AUD: 129, CAD: 129, JPY: 11800, EUR: 99, GBP: 85
+		USD: 99,
+		NZD: 139,
+		AUD: 129,
+		CAD: 129,
+		JPY: 11800,
+		EUR: 99,
+		GBP: 85,
 	},
 	product_name_short: 'Premium',
 	product_slug: 'value_bundle',
 	tagline: 'Supercharge your site',
-	shortdesc: 'Your own domain name, powerful customization options, and lots of space for audio and video.',
-	description: 'Get all of these great features to super-charge your blog. ' +
+	shortdesc:
+		'Your own domain name, powerful customization options, and lots of space for audio and video.',
+	description:
+		'Get all of these great features to super-charge your blog. ' +
 		'Includes a domain name of your choice or domain mapping for an existing domain, ' +
 		'VideoPress, Custom Design, 10GB Space Upgrade, and No Ads.',
 	icon: 'https://s0.wordpress.com/i/store/plan-premium.png',
@@ -78,28 +86,49 @@ export const PLAN_1003 = {
 				'support',
 				'space',
 				'custom-domain',
-				'no-adverts/no-adverts.php'
-			]
+				'no-adverts/no-adverts.php',
+			],
 		},
 		{
-			items: [
-				'free-blog'
-			]
-		}
+			items: [ 'free-blog' ],
+		},
 	],
 	width: 500,
 	height: 250,
 	multi: 0,
 	support_document: 'bundles',
 	bundle_product_ids: [
-		9, 12, 45, 15, 5, 6, 46, 54, 56, 57, 58, 59,
-		60, 61, 62, 63, 64, 65, 66, 67, 68,
-		72, 73, 74, 75, 16
+		9,
+		12,
+		45,
+		15,
+		5,
+		6,
+		46,
+		54,
+		56,
+		57,
+		58,
+		59,
+		60,
+		61,
+		62,
+		63,
+		64,
+		65,
+		66,
+		67,
+		68,
+		72,
+		73,
+		74,
+		75,
+		16,
 	],
 	bill_period_label: 'per year',
 	price: '$99',
 	formatted_price: '$99',
-	raw_price: 99
+	raw_price: 99,
 };
 
 export const PLAN_1008 = {
@@ -107,13 +136,21 @@ export const PLAN_1008 = {
 	product_name: 'WordPress.com Business',
 	product_name_en: 'WordPress.com Business',
 	prices: {
-		USD: 299, NZD: 399, AUD: 399, CAD: 389, JPY: 35800, EUR: 299, GBP: 250
+		USD: 299,
+		NZD: 399,
+		AUD: 399,
+		CAD: 389,
+		JPY: 35800,
+		EUR: 299,
+		GBP: 250,
 	},
 	product_name_short: 'Business',
 	product_slug: 'business-bundle',
 	tagline: 'Take it to the next level',
-	shortdesc: 'Everything included with Premium, as well as live chat support, and unlimited access to our premium themes.',
-	description: 'All you need to build a great website:' +
+	shortdesc:
+		'Everything included with Premium, as well as live chat support, and unlimited access to our premium themes.',
+	description:
+		'All you need to build a great website:' +
 		'<ul><li>Chat live with a WordPress.com specialist, ' +
 		'Monday to Friday between 7am and 7pm Eastern time.</li>' +
 		'<li>Try any premium theme and change as often as you like, no extra charge.</li>' +
@@ -131,27 +168,16 @@ export const PLAN_1008 = {
 	android_sku: 'sub_test_plan_business_001',
 	features_highlight: [
 		{
-			items: [
-				'premium-themes',
-				'space',
-				'support'
-			]
+			items: [ 'premium-themes', 'space', 'support' ],
 		},
 		{
 			title: 'Includes WordPress.com Premium features:',
-			items: [
-				'custom-design',
-				'videopress',
-				'no-adverts/no-adverts.php',
-				'custom-domain'
-			]
+			items: [ 'custom-design', 'videopress', 'no-adverts/no-adverts.php', 'custom-domain' ],
 		},
 		{
 			title: 'Included with all plans:',
-			items: [
-				'free-blog'
-			]
-		}
+			items: [ 'free-blog' ],
+		},
 	],
 	bill_period: 365,
 	width: 500,
@@ -159,22 +185,46 @@ export const PLAN_1008 = {
 	product_type: 'bundle',
 	available: 'yes',
 	bundle_product_ids: [
-		12, 45, 15, 48, 50, 49, 5, 6, 46,
-		54, 56, 57, 58, 59,
-		60, 61, 62, 63, 64, 65, 66, 67, 68,
-		72, 73, 74, 75, 16
+		12,
+		45,
+		15,
+		48,
+		50,
+		49,
+		5,
+		6,
+		46,
+		54,
+		56,
+		57,
+		58,
+		59,
+		60,
+		61,
+		62,
+		63,
+		64,
+		65,
+		66,
+		67,
+		68,
+		72,
+		73,
+		74,
+		75,
+		16,
 	],
 	bill_period_label: 'per year',
 	price: '$299',
 	formatted_price: '$299',
-	raw_price: 299
+	raw_price: 299,
 };
 
 export const PLAN_1009 = {
 	product_id: 1009,
 	product_name: 'WordPress.com Personal',
 	prices: {
-		USD: 71.88
+		USD: 71.88,
 	},
 	product_name_short: 'Personal',
 	product_slug: 'personal-bundle',
@@ -188,12 +238,12 @@ export const PLAN_1009 = {
 	android_sku: 'sub_test_plan_personal_001',
 	features_highlight: [
 		{
-			items: [ 'no-adverts/no-adverts.php', 'custom-domain', 'support', 'space' ]
+			items: [ 'no-adverts/no-adverts.php', 'custom-domain', 'support', 'space' ],
 		},
 		{
 			title: 'Included with all plans:',
-			items: [ 'free-blog' ]
-		}
+			items: [ 'free-blog' ],
+		},
 	],
 	bill_period: 365,
 	product_type: 'bundle',
@@ -223,13 +273,13 @@ export const PLAN_1009 = {
 		73,
 		74,
 		75,
-		16
+		16,
 	],
 	bill_period_label: 'per year',
 	price: '$71.88',
 	formatted_price: '$71.88',
 	raw_price: 71.88,
-	currency_code: 'USD'
+	currency_code: 'USD',
 };
 
 export const PLAN_2000 = {
@@ -240,7 +290,8 @@ export const PLAN_2000 = {
 	product_name_short: 'Premium',
 	product_slug: 'jetpack_premium',
 	tagline: 'Backup and spam protection',
-	shortdesc: 'Keep your site\'s content backed up and secure, and enable state-of-the-art spam filtering.',
+	shortdesc:
+		"Keep your site's content backed up and secure, and enable state-of-the-art spam filtering.",
 	description: 'Daily Backups, Automated Restores and Spam Protection',
 	icon: 'https://s0.wordpress.com/i/store/plan-premium.png',
 	icon_active: 'https://s0.wordpress.com/i/store/plan-premium-active.png',
@@ -261,7 +312,7 @@ export const PLAN_2000 = {
 	price: '$99',
 	formatted_price: '$99',
 	formatted_original_price: '$114',
-	raw_price: 99
+	raw_price: 99,
 };
 
 export const PLAN_2001 = {
@@ -272,7 +323,8 @@ export const PLAN_2001 = {
 	product_name_short: 'Business',
 	product_slug: 'jetpack_business',
 	tagline: 'Faster backups, security scans, and repairs',
-	shortdesc: 'Get everything included with Premium, as well as real-time backups, security scans, and more.',
+	shortdesc:
+		'Get everything included with Premium, as well as real-time backups, security scans, and more.',
 	description: 'Daily Backups, Security Scanning, Spam Protection, Polls and Surveys',
 	icon: 'https://s0.wordpress.com/i/store/plan-business.png',
 	icon_active: 'https://s0.wordpress.com/i/store/plan-business-active.png',
@@ -293,7 +345,7 @@ export const PLAN_2001 = {
 	price: '$299',
 	formatted_price: '$299',
 	formatted_original_price: '$915',
-	raw_price: 299
+	raw_price: 299,
 };
 
 export const PLAN_2002 = {
@@ -304,7 +356,8 @@ export const PLAN_2002 = {
 	product_name_short: 'Free',
 	product_slug: 'jetpack_free',
 	tagline: 'Get started',
-	shortdesc: 'Jetpack (free) speeds up your site\'s images, secures it, and enables traffic and customization tools.',
+	shortdesc:
+		"Jetpack (free) speeds up your site's images, secures it, and enables traffic and customization tools.",
 	description: 'Spam Protection',
 	icon: 'https://s0.wordpress.com/i/store/plan-free.png',
 	icon_active: 'https://s0.wordpress.com/i/store/plan-free-active.png',
@@ -319,11 +372,17 @@ export const PLAN_2002 = {
 	bill_period_label: 'for life',
 	price: '$0',
 	formatted_price: '$0',
-	raw_price: 0
+	raw_price: 0,
 };
 
 export const WPCOM_RESPONSE = [
-	PLAN_1, PLAN_1003, PLAN_1008, PLAN_1009, PLAN_2000, PLAN_2001, PLAN_2002
+	PLAN_1,
+	PLAN_1003,
+	PLAN_1008,
+	PLAN_1009,
+	PLAN_2000,
+	PLAN_2001,
+	PLAN_2002,
 ];
 
 export const PLANS = WPCOM_RESPONSE;
@@ -331,20 +390,20 @@ export const PLANS = WPCOM_RESPONSE;
 // actions
 export const ACTION_PLANS_RECEIVE = {
 	type: PLANS_RECEIVE,
-	plans: PLANS
+	plans: PLANS,
 };
 
 export const ACTION_PLANS_REQUEST = {
-	type: PLANS_REQUEST
+	type: PLANS_REQUEST,
 };
 
 export const ACTION_PLANS_REQUEST_SUCCESS = {
-	type: PLANS_REQUEST_SUCCESS
+	type: PLANS_REQUEST_SUCCESS,
 };
 
 export const ACTION_PLANS_REQUEST_FAILURE = {
 	type: PLANS_REQUEST_FAILURE,
-	error: ERROR_MESSAGE_RESPONSE
+	error: ERROR_MESSAGE_RESPONSE,
 };
 
 /**
@@ -360,7 +419,7 @@ export const getStateInstance = () => {
 		plans: {
 			items: [ ...PLANS ],
 			requesting: false,
-			error: false
-		}
+			error: false,
+		},
 	};
 };

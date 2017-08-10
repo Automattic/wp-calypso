@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,7 @@ import { requestThemeFilters } from 'state/themes/actions';
 export class QueryThemeFilters extends Component {
 	static propTypes = {
 		requestThemeFilters: PropTypes.func.isRequired,
-	}
+	};
 
 	componentDidMount() {
 		this.props.requestThemeFilters();
@@ -23,6 +24,4 @@ export class QueryThemeFilters extends Component {
 	}
 }
 
-export default connect(
-	null, { requestThemeFilters }
-)( QueryThemeFilters );
+export default connect( null, { requestThemeFilters } )( QueryThemeFilters );

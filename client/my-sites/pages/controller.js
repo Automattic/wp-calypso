@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -16,7 +17,6 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const controller = {
-
 	pages: function( context ) {
 		var Pages = require( 'my-sites/pages/main' ),
 			siteID = route.getSiteFragment( context.path ),
@@ -26,7 +26,7 @@ const controller = {
 			analyticsPageTitle = 'Pages',
 			baseAnalyticsPath;
 
-		status = ( ! status || status === siteID ) ? '' : status;
+		status = ! status || status === siteID ? '' : status;
 		context.store.dispatch( setTitle( i18n.translate( 'Pages', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		if ( siteID ) {
@@ -53,12 +53,12 @@ const controller = {
 					baseAnalyticsPath,
 					analyticsPageTitle,
 					'Pages'
-				)
+				),
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };
 
 module.exports = controller;

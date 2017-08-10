@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -17,7 +18,8 @@ const isRequesting = createReducer( false, {
 } );
 
 const isUserEligible = createReducer( false, {
-	[ HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS ]: ( state, { configuration } ) => configuration.is_user_eligible,
+	[ HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS ]: ( state, { configuration } ) =>
+		configuration.is_user_eligible,
 } );
 
 const isReady = createReducer( false, {

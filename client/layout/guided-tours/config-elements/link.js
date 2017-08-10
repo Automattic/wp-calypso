@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +18,9 @@ class Link extends Component {
 		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<div className="guided-tours__external-link">
-				<ExternalLink target="_blank" icon={ true } href={ this.props.href }>{ this.props.children }</ExternalLink>
+				<ExternalLink target="_blank" icon={ true } href={ this.props.href }>
+					{ this.props.children }
+				</ExternalLink>
 			</div>
 		);
 		/* eslint-enable react/jsx-no-target-blank */

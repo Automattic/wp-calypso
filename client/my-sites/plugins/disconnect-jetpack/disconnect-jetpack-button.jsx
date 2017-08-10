@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -27,12 +28,9 @@ class DisconnectJetpackButton extends Component {
 		this.state = { dialogVisible: false };
 	}
 
-	handleClick = ( event ) => {
+	handleClick = event => {
 		event.preventDefault();
-		const {
-			isMock,
-			recordGoogleEvent: recordGAEvent
-		} = this.props;
+		const { isMock, recordGoogleEvent: recordGAEvent } = this.props;
 
 		if ( isMock ) {
 			return;
@@ -45,7 +43,7 @@ class DisconnectJetpackButton extends Component {
 		const { recordGoogleEvent: recordGAEvent } = this.props;
 		this.setState( { dialogVisible: false } );
 		recordGAEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
-	}
+	};
 
 	disconnectJetpack = () => {
 		const {
@@ -56,72 +54,91 @@ class DisconnectJetpackButton extends Component {
 			infoNotice: showInfoNotice,
 			removeNotice: removeInfoNotice,
 			disconnect: disconnectSite,
-			recordGoogleEvent: recordGAEvent
+			recordGoogleEvent: recordGAEvent,
 		} = this.props;
 
 		this.setState( { dialogVisible: false } );
 		recordGAEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
 
 		const { notice } = showInfoNotice(
-			translate( 'Disconnecting %(siteName)s.', { args: { siteName: site.title } } )
-			, { isPersistent: true, showDismiss: false }
+			translate( 'Disconnecting %(siteName)s.', { args: { siteName: site.title } } ),
+			{ isPersistent: true, showDismiss: false }
 		);
 
-		disconnectSite( site.ID ).then( () => {
-			// Removing the domain from a domain-only site results
-			// in the site being deleted entirely. We need to call
-			// `receiveDeletedSiteDeprecated` here because the site
-			// exists in `sites-list` as well as the global store.
-			disconnectedSiteDeprecated( site );
-			this.props.setAllSitesSelected();
-			removeInfoNotice( notice.noticeId );
-			showSuccessNotice( translate( 'Successfully disconnected %(siteName)s.', { args: { siteName: site.title } } ) );
-			recordGAEvent( 'Jetpack', 'Successfully Disconnected' );
-		}, () => {
-			removeInfoNotice( notice.noticeId );
-			showErrorNotice( translate( '%(siteName)s failed to disconnect', { args: { siteName: site.title } } ) );
-			recordGAEvent( 'Jetpack', 'Failed Disconnected Site' );
-		}, );
+		disconnectSite( site.ID ).then(
+			() => {
+				// Removing the domain from a domain-only site results
+				// in the site being deleted entirely. We need to call
+				// `receiveDeletedSiteDeprecated` here because the site
+				// exists in `sites-list` as well as the global store.
+				disconnectedSiteDeprecated( site );
+				this.props.setAllSitesSelected();
+				removeInfoNotice( notice.noticeId );
+				showSuccessNotice(
+					translate( 'Successfully disconnected %(siteName)s.', { args: { siteName: site.title } } )
+				);
+				recordGAEvent( 'Jetpack', 'Successfully Disconnected' );
+			},
+			() => {
+				removeInfoNotice( notice.noticeId );
+				showErrorNotice(
+					translate( '%(siteName)s failed to disconnect', { args: { siteName: site.title } } )
+				);
+				recordGAEvent( 'Jetpack', 'Failed Disconnected Site' );
+			}
+		);
 
 		page.redirect( this.props.redirect );
-	}
+	};
 
 	render() {
 		const { site, linkDisplay, planClass } = this.props;
 
-		const pickProps = [ 'compact', 'primary', 'scary', 'busy', 'type', 'href', 'borderless', 'target', 'rel' ];
+		const pickProps = [
+			'compact',
+			'primary',
+			'scary',
+			'busy',
+			'type',
+			'href',
+			'borderless',
+			'target',
+			'rel',
+		];
 
 		const buttonProps = {
-			...pick( this.props, pickProps, ),
+			...pick( this.props, pickProps ),
 			id: `disconnect-jetpack-${ site.ID }`,
 			className: 'disconnect-jetpack-button',
 			compact: true,
 			disabled: this.props.disabled,
 			scary: true,
 			borderless: linkDisplay,
-			onClick: this.handleClick
+			onClick: this.handleClick,
 		};
 
 		let { text } = this.props;
 
 		if ( ! text ) {
 			text = this.props.translate( 'Disconnect', {
-				context: 'Jetpack: Action user takes to disconnect Jetpack site from .com'
+				context: 'Jetpack: Action user takes to disconnect Jetpack site from .com',
 			} );
 		}
 
-		return <Button { ...buttonProps }>
-			{ text }
-			<QuerySitePlans siteId={ site.ID } />
-			<DisconnectJetpackDialog
-				isVisible={ this.state.dialogVisible }
-				onDisconnect={ this.disconnectJetpack }
-				onClose={ this.hideDialog }
-				plan= { planClass }
-				isBroken={ false }
-				siteName={ site.slug }
+		return (
+			<Button { ...buttonProps }>
+				{ text }
+				<QuerySitePlans siteId={ site.ID } />
+				<DisconnectJetpackDialog
+					isVisible={ this.state.dialogVisible }
+					onDisconnect={ this.disconnectJetpack }
+					onClose={ this.hideDialog }
+					plan={ planClass }
+					isBroken={ false }
+					siteName={ site.slug }
 				/>
-		</Button>;
+			</Button>
+		);
 	}
 }
 
@@ -131,21 +148,19 @@ DisconnectJetpackButton.propTypes = {
 	disabled: PropTypes.bool,
 	linkDisplay: PropTypes.bool,
 	isMock: PropTypes.bool,
-	text: PropTypes.string
+	text: PropTypes.string,
 };
 
 DisconnectJetpackButton.defaultProps = {
-	linkDisplay: true
+	linkDisplay: true,
 };
 
 export default connect(
 	( state, ownProps ) => {
 		const plan = getCurrentPlan( state, ownProps.site.ID );
-		const planClass = plan && plan.productSlug
-			? getPlanClass( plan.productSlug )
-			: 'is-free-plan';
+		const planClass = plan && plan.productSlug ? getPlanClass( plan.productSlug ) : 'is-free-plan';
 		return {
-			planClass
+			planClass,
 		};
 	},
 	{
@@ -155,6 +170,6 @@ export default connect(
 		successNotice,
 		errorNotice,
 		infoNotice,
-		removeNotice
+		removeNotice,
 	}
 )( localize( DisconnectJetpackButton ) );

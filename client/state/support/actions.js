@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -19,14 +20,14 @@ import {
 export function supportUserTokenFetch( supportUser ) {
 	return {
 		type: SUPPORT_USER_TOKEN_FETCH,
-		supportUser
+		supportUser,
 	};
 }
 
 export function supportUserActivate() {
 	return {
-		type: SUPPORT_USER_ACTIVATE
-	}
+		type: SUPPORT_USER_ACTIVATE,
+	};
 }
 
 /**
@@ -61,12 +62,12 @@ export function supportUserSetUsername( username ) {
 export function supportUserError( errorMessage = null ) {
 	return {
 		type: SUPPORT_USER_ERROR,
-		errorMessage
-	}
+		errorMessage,
+	};
 }
 
 export function supportUserToggleDialog() {
 	return {
-		type: SUPPORT_USER_TOGGLE_DIALOG
-	}
+		type: SUPPORT_USER_TOGGLE_DIALOG,
+	};
 }

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -46,27 +47,29 @@ CountriesList.prototype.fetch = function() {
 	this.isFetching = true;
 
 	// Sends a request to the API endpoint defined in the subclass
-	this.requestFromEndpoint( function( error, countriesList ) {
-		if ( error ) {
-			debug( 'Unable to fetch ' + this.key + ' from api', error );
+	this.requestFromEndpoint(
+		function( error, countriesList ) {
+			if ( error ) {
+				debug( 'Unable to fetch ' + this.key + ' from api', error );
 
-			return;
-		}
+				return;
+			}
 
-		debug( this.key + ' fetched from api successfully:', countriesList );
+			debug( this.key + ' fetched from api successfully:', countriesList );
 
-		if ( ! this.initialized ) {
-			this.initialize( countriesList );
-		} else {
-			this.data = countriesList;
-		}
+			if ( ! this.initialized ) {
+				this.initialize( countriesList );
+			} else {
+				this.data = countriesList;
+			}
 
-		this.isFetching = false;
+			this.isFetching = false;
 
-		this.emit( 'change' );
+			this.emit( 'change' );
 
-		store.set( this.key, countriesList );
-	}.bind( this ) );
+			store.set( this.key, countriesList );
+		}.bind( this )
+	);
 };
 
 /**
@@ -173,5 +176,5 @@ module.exports = {
 	},
 	forSms: function() {
 		return smsCountriesList;
-	}
+	},
 };

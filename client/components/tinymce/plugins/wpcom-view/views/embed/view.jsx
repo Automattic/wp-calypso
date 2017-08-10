@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -29,9 +30,13 @@ class EmbedView extends Component {
 		//
 		// TODO: Investigate and evaluate whether we need to avoid rendering
 		//       the iframe on the initial render pass
-		this.setState( { // eslint-disable-line react/no-did-mount-set-state
-			wrapper: this.refs.view
-		}, this.setHtml );
+		this.setState(
+			{
+				// eslint-disable-line react/no-did-mount-set-state
+				wrapper: this.refs.view,
+			},
+			this.setHtml
+		);
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
@@ -94,7 +99,15 @@ class EmbedView extends Component {
 			return;
 		}
 
-		return <ResizableIframe ref="iframe" onResize={ this.props.onResize } frameBorder="0" seamless width="100%" />;
+		return (
+			<ResizableIframe
+				ref="iframe"
+				onResize={ this.props.onResize }
+				frameBorder="0"
+				seamless
+				width="100%"
+			/>
+		);
 	}
 
 	render() {
@@ -104,17 +117,16 @@ class EmbedView extends Component {
 			</div>
 		);
 	}
-
 }
 
 EmbedView.propTypes = {
 	siteId: PropTypes.number,
 	content: PropTypes.string,
-	onResize: PropTypes.func
+	onResize: PropTypes.func,
 };
 
 EmbedView.defaultProps = {
-	onResize: () => {}
+	onResize: () => {},
 };
 
 const EmbedViewContainer = Container.create( EmbedView, { withProps: true } );

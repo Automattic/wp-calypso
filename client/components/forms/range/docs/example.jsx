@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,15 +11,15 @@ import Gridicon from 'gridicons';
 import FormRange from '../';
 
 export default class extends React.PureComponent {
-  static displayName = 'Ranges';
+	static displayName = 'Ranges';
 
 	state = {
-		rangeValue: 24
+		rangeValue: 24,
 	};
 
 	onChange = event => {
 		this.setState( {
-			rangeValue: event.target.value
+			rangeValue: event.target.value,
 		} );
 	};
 
@@ -30,7 +31,8 @@ export default class extends React.PureComponent {
 				max="100"
 				value={ this.state.rangeValue }
 				onChange={ this.onChange }
-				showValueLabel={ true } />
+				showValueLabel={ true }
+			/>
 		);
 	}
 }

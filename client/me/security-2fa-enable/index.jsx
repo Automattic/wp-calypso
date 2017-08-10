@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +24,6 @@ var FormButton = require( 'components/forms/form-button' ),
 import Notice from 'components/notice';
 
 module.exports = React.createClass( {
-
 	displayName: 'Security2faEnable',
 
 	mixins: [ LinkedStateMixin ],
@@ -32,7 +32,7 @@ module.exports = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			doSMSFlow: false
+			doSMSFlow: false,
 		};
 	},
 
@@ -52,7 +52,7 @@ module.exports = React.createClass( {
 			smsRequestPerformed: false,
 			submittingCode: false,
 			timeCode: false,
-			verificationCode: ''
+			verificationCode: '',
 		};
 	},
 
@@ -79,25 +79,23 @@ module.exports = React.createClass( {
 	},
 
 	requestSMS: function() {
-		this.setState(
-			{
-				smsRequestsAllowed: false,
-				lastError: false
-			}
-		);
+		this.setState( {
+			smsRequestsAllowed: false,
+			lastError: false,
+		} );
 		twoStepAuthorization.sendSMSCode( this.onSMSRequestResponse );
 		this.codeRequestTimer = setTimeout( this.allowSMSRequests, 60000 );
 	},
 
 	onSMSRequestResponse: function( error ) {
 		if ( error ) {
-			this.setState(
-				{
-					smsRequestPerformed: false,
-					lastError: this.translate( 'Unable to request a code via SMS right now. Please try again after one minute.' ),
-					lastErrorType: 'is-info'
-				}
-			);
+			this.setState( {
+				smsRequestPerformed: false,
+				lastError: this.translate(
+					'Unable to request a code via SMS right now. Please try again after one minute.'
+				),
+				lastErrorType: 'is-info',
+			} );
 		} else {
 			this.setState( { smsRequestPerformed: true } );
 		}
@@ -126,25 +124,23 @@ module.exports = React.createClass( {
 
 	onAppAuthCodesRequestResponse: function( error, data ) {
 		if ( error ) {
-			this.setState(
-				{
-					lastError: this.translate( 'Unable to obtain authorization application setup information. Please try again later.' ),
-					lastErrorType: 'is-error'
-				}
-			);
+			this.setState( {
+				lastError: this.translate(
+					'Unable to obtain authorization application setup information. Please try again later.'
+				),
+				lastErrorType: 'is-error',
+			} );
 			return;
 		}
 
-		this.setState(
-			{
-				otpAuthUri: data.otpauth_uri,
-				timeCode: data.time_code
-			}
-		);
+		this.setState( {
+			otpAuthUri: data.otpauth_uri,
+			timeCode: data.time_code,
+		} );
 	},
 
 	getFormDisabled: function() {
-		return ( this.state.submittingCode || 6 > this.state.verificationCode.trim().length );
+		return this.state.submittingCode || 6 > this.state.verificationCode.trim().length;
 	},
 
 	onCodeSubmit: function( event ) {
@@ -155,7 +151,7 @@ module.exports = React.createClass( {
 	onBeginCodeValidation: function() {
 		var args = {
 			code: this.state.verificationCode,
-			action: 'enable-two-step'
+			action: 'enable-two-step',
 		};
 
 		twoStepAuthorization.validateCode( args, this.onValidationResponseReceived );
@@ -165,19 +161,15 @@ module.exports = React.createClass( {
 		this.setState( { submittingCode: false } );
 
 		if ( error ) {
-			this.setState(
-				{
-					lastError: this.translate( 'An unexpected error occurred. Please try again later.' ),
-					lastErrorType: 'is-error'
-				}
-			);
+			this.setState( {
+				lastError: this.translate( 'An unexpected error occurred. Please try again later.' ),
+				lastErrorType: 'is-error',
+			} );
 		} else if ( ! data.success ) {
-			this.setState(
-				{
-					lastError: this.translate( 'You entered an invalid code. Please try again.' ),
-					lastErrorType: 'is-error'
-				}
-			);
+			this.setState( {
+				lastError: this.translate( 'You entered an invalid code. Please try again.' ),
+				lastErrorType: 'is-error',
+			} );
 		} else {
 			this.props.onSuccess();
 		}
@@ -189,7 +181,12 @@ module.exports = React.createClass( {
 				className="security-2fa-enable__toggle"
 				onClick={ function( event ) {
 					this.toggleMethod( event );
-					analytics.ga.recordEvent( 'Me', 'Clicked On Barcode Toggle Link', 'current-method', this.state.method );
+					analytics.ga.recordEvent(
+						'Me',
+						'Clicked On Barcode Toggle Link',
+						'current-method',
+						this.state.method
+					);
 				}.bind( this ) }
 			/>
 		);
@@ -197,26 +194,23 @@ module.exports = React.createClass( {
 
 	renderQRCode: function() {
 		var qrClasses = classNames( 'security-2fa-enable__qr-code', {
-			'is-placeholder': ! this.state.otpAuthUri
+			'is-placeholder': ! this.state.otpAuthUri,
 		} );
 
 		return (
 			<div className="security-2fa-enable__qr-code-block">
 				<p className="security-2fa-enable__qr-instruction">
-					{
-						this.translate(
-							"Scan this QR code with your mobile app. {{toggleMethodLink}}Can't scan the code?{{/toggleMethodLink}}", {
-								components: {
-									toggleMethodLink: this.getToggleLink()
-								}
-							}
-						)
-					}
+					{ this.translate(
+						"Scan this QR code with your mobile app. {{toggleMethodLink}}Can't scan the code?{{/toggleMethodLink}}",
+						{
+							components: {
+								toggleMethodLink: this.getToggleLink(),
+							},
+						}
+					) }
 				</p>
 				<div className={ qrClasses }>
-					{ this.state.otpAuthUri &&
-						<QRCode value={ this.state.otpAuthUri } size={ 150 } />
-					}
+					{ this.state.otpAuthUri && <QRCode value={ this.state.otpAuthUri } size={ 150 } /> }
 				</div>
 			</div>
 		);
@@ -226,15 +220,14 @@ module.exports = React.createClass( {
 		return (
 			<div className="security-2fa-enable__time-code-block">
 				<p className="security-2fa-enable__time-instruction">
-					{
-						this.translate(
-							'Enter this time code into your mobile app. {{toggleMethodLink}}Prefer to scan the code?{{/toggleMethodLink}}', {
-								components: {
-									toggleMethodLink: this.getToggleLink()
-								}
-							}
-						)
-					}
+					{ this.translate(
+						'Enter this time code into your mobile app. {{toggleMethodLink}}Prefer to scan the code?{{/toggleMethodLink}}',
+						{
+							components: {
+								toggleMethodLink: this.getToggleLink(),
+							},
+						}
+					) }
 				</p>
 				<p className="security-2fa-enable__time-code">
 					{ this.state.timeCode }
@@ -258,7 +251,9 @@ module.exports = React.createClass( {
 	renderInputHelp: function() {
 		if ( 'sms' === this.state.method ) {
 			return (
-				<FormLabel htmlFor="verification-code">{ this.translate( 'Enter the code you receive via SMS:' ) }</FormLabel>
+				<FormLabel htmlFor="verification-code">
+					{ this.translate( 'Enter the code you receive via SMS:' ) }
+				</FormLabel>
 			);
 		}
 
@@ -282,34 +277,39 @@ module.exports = React.createClass( {
 		return (
 			<div className="security-2fa-enable__app-options">
 				<p>
-					{
-						this.translate(
-							'Not sure what this screen means? You may need to download ' +
+					{ this.translate(
+						'Not sure what this screen means? You may need to download ' +
 							'{{authyLink}}Authy{{/authyLink}} or ' +
 							'{{googleAuthenticatorLink}}Google Authenticator{{/googleAuthenticatorLink}} ' +
 							'for your phone.',
-							{
-								components: {
-									authyLink: <a
+						{
+							components: {
+								authyLink: (
+									<a
 										href="https://www.authy.com/users/"
 										target="_blank"
 										rel="noopener noreferrer"
 										onClick={ function() {
 											analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Download Authy App Link' );
 										} }
-									/>,
-									googleAuthenticatorLink: <a
+									/>
+								),
+								googleAuthenticatorLink: (
+									<a
 										href="https://support.google.com/accounts/answer/1066447?hl=en"
 										target="_blank"
 										rel="noopener noreferrer"
 										onClick={ function() {
-											analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Download Google Authenticator Link' );
+											analytics.ga.recordEvent(
+												'Me',
+												'Clicked On 2fa Download Google Authenticator Link'
+											);
 										} }
 									/>
-								}
-							}
-						)
-					}
+								),
+							},
+						}
+					) }
 				</p>
 			</div>
 		);
@@ -342,26 +342,24 @@ module.exports = React.createClass( {
 					autoFocus
 					disabled={ this.state.submittingForm }
 					name="verification-code"
-					placeholder={ 'sms' === this.state.method ? constants.sevenDigit2faPlaceholder : constants.sixDigit2faPlaceholder }
+					placeholder={
+						'sms' === this.state.method
+							? constants.sevenDigit2faPlaceholder
+							: constants.sixDigit2faPlaceholder
+					}
 					valueLink={ this.linkState( 'verificationCode' ) }
 					onFocus={ function() {
 						analytics.ga.recordEvent( 'Me', 'Focused On 2fa Enable Verification Code Input' );
 					} }
 				/>
-				{
-					'sms' === this.state.method && this.state.smsRequestPerformed
-					? (
-						<FormSettingExplanation>
-							{
-								this.translate(
-									'A code has been sent to your device via SMS.  ' +
+				{ 'sms' === this.state.method && this.state.smsRequestPerformed
+					? <FormSettingExplanation>
+							{ this.translate(
+								'A code has been sent to your device via SMS.  ' +
 									'You may request another code after one minute.'
-								)
-							}
+							) }
 						</FormSettingExplanation>
-					)
-					: null
-				}
+					: null }
 				{ this.possiblyRenderError() }
 				{ this.renderInputOptions() }
 			</div>
@@ -375,27 +373,41 @@ module.exports = React.createClass( {
 					className="security-2fa-enable__verify"
 					disabled={ this.getFormDisabled() }
 					onClick={ function() {
-						analytics.ga.recordEvent( 'Me', 'Clicked On Enable 2fa Button', 'method', this.state.method );
+						analytics.ga.recordEvent(
+							'Me',
+							'Clicked On Enable 2fa Button',
+							'method',
+							this.state.method
+						);
 					}.bind( this ) }
 				>
-					{ this.state.submittingCode ? this.translate( 'Enabling…', { context: 'A button label used during Two-Step setup.' } ) : this.translate( 'Enable', { context: 'A button label used during Two-Step setup.' } ) }
+					{ this.state.submittingCode
+						? this.translate( 'Enabling…', {
+								context: 'A button label used during Two-Step setup.',
+							} )
+						: this.translate( 'Enable', {
+								context: 'A button label used during Two-Step setup.',
+							} ) }
 				</FormButton>
 
 				<FormButton
 					className="security-2fa-enable__cancel"
 					isPrimary={ false }
 					onClick={ function( event ) {
-						analytics.ga.recordEvent( 'Me', 'Clicked On Step 2 Cancel 2fa Button', 'method', this.state.method );
+						analytics.ga.recordEvent(
+							'Me',
+							'Clicked On Step 2 Cancel 2fa Button',
+							'method',
+							this.state.method
+						);
 						this.props.onCancel( event );
 					}.bind( this ) }
 				>
 					{ this.translate( 'Cancel' ) }
 				</FormButton>
 
-				{
-					'sms' === this.state.method
-					? (
-						<FormButton
+				{ 'sms' === this.state.method
+					? <FormButton
 							disabled={ ! this.state.smsRequestsAllowed }
 							isPrimary={ false }
 							onClick={ function( event ) {
@@ -403,22 +415,21 @@ module.exports = React.createClass( {
 								this.onResendCode( event );
 							}.bind( this ) }
 						>
-							{ this.translate( 'Resend Code', { context: 'A button label to let a user get the SMS code sent again.' } ) }
+							{ this.translate( 'Resend Code', {
+								context: 'A button label to let a user get the SMS code sent again.',
+							} ) }
 						</FormButton>
-					)
-					: (
-						<FormButton
+					: <FormButton
 							isPrimary={ false }
 							onClick={ function( event ) {
 								analytics.ga.recordEvent( 'Me', 'Clicked On Enable SMS Use SMS Button' );
 								this.onVerifyBySMS( event );
 							}.bind( this ) }
 						>
-							{ this.translate( 'Use SMS', { context: 'A button label to let a user switch to enabling Two-Step by SMS.' } ) }
-						</FormButton>
-					)
-
-				}
+							{ this.translate( 'Use SMS', {
+								context: 'A button label to let a user switch to enabling Two-Step by SMS.',
+							} ) }
+						</FormButton> }
 			</FormButtonsBar>
 		);
 	},
@@ -436,5 +447,5 @@ module.exports = React.createClass( {
 				</form>
 			</div>
 		);
-	}
+	},
 } );

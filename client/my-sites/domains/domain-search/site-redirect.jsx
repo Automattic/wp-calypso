@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -48,12 +49,7 @@ class SiteRedirect extends Component {
 	}
 
 	render() {
-		const {
-			cart,
-			selectedSite,
-			productsList,
-			translate,
-		} = this.props;
+		const { cart, selectedSite, productsList, translate } = this.props;
 
 		return (
 			<Main>
@@ -63,21 +59,16 @@ class SiteRedirect extends Component {
 					{ translate( 'Redirect a Site' ) }
 				</HeaderCake>
 
-				<SiteRedirectStep
-					cart={ cart }
-					products={ productsList }
-					selectedSite={ selectedSite } />
+				<SiteRedirectStep cart={ cart } products={ productsList } selectedSite={ selectedSite } />
 			</Main>
 		);
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		selectedSite: getSelectedSite( state ),
-		selectedSiteId: getSelectedSiteId( state ),
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-		isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
-		productsList: getProductsList( state ),
-	} )
-)( localize( SiteRedirect ) );
+export default connect( state => ( {
+	selectedSite: getSelectedSite( state ),
+	selectedSiteId: getSelectedSiteId( state ),
+	selectedSiteSlug: getSelectedSiteSlug( state ),
+	isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
+	productsList: getProductsList( state ),
+} ) )( localize( SiteRedirect ) );

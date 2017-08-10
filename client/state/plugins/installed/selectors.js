@@ -1,13 +1,5 @@
-import {
-	every,
-	filter,
-	find,
-	pick,
-	reduce,
-	some,
-	sortBy,
-	values
-} from 'lodash';
+/** @format */
+import { every, filter, find, pick, reduce, some, sortBy, values } from 'lodash';
 
 const _filters = {
 	none: function() {
@@ -33,7 +25,7 @@ const _filters = {
 	},
 	isEqual: function( pluginSlug, plugin ) {
 		return plugin.slug === pluginSlug;
-	}
+	},
 };
 
 export function isRequesting( state, siteId ) {
@@ -45,25 +37,29 @@ export function isRequesting( state, siteId ) {
 
 export function isRequestingForSites( state, sites ) {
 	// As long as any sites have isRequesting true, we consider this group requesting
-	return some( sites, ( siteId ) => isRequesting( state, siteId ) );
+	return some( sites, siteId => isRequesting( state, siteId ) );
 }
 
 export function getPlugins( state, sites, pluginFilter ) {
-	let pluginList = reduce( sites, ( memo, site ) => {
-		const list = state.plugins.installed.plugins[ site.ID ] || [];
-		list.forEach( ( item ) => {
-			const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update' ] );
-			if ( memo[ item.slug ] ) {
-				memo[ item.slug ].sites = {
-					...memo[ item.slug ].sites,
-					[ site.ID ]: sitePluginInfo
-				};
-			} else {
-				memo[ item.slug ] = { ...item, sites: { [ site.ID ]: sitePluginInfo } };
-			}
-		} );
-		return memo;
-	}, {} );
+	let pluginList = reduce(
+		sites,
+		( memo, site ) => {
+			const list = state.plugins.installed.plugins[ site.ID ] || [];
+			list.forEach( item => {
+				const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update' ] );
+				if ( memo[ item.slug ] ) {
+					memo[ item.slug ].sites = {
+						...memo[ item.slug ].sites,
+						[ site.ID ]: sitePluginInfo,
+					};
+				} else {
+					memo[ item.slug ] = { ...item, sites: { [ site.ID ]: sitePluginInfo } };
+				}
+			} );
+			return memo;
+		},
+		{}
+	);
 
 	if ( pluginFilter && _filters[ pluginFilter ] ) {
 		pluginList = filter( pluginList, _filters[ pluginFilter ] );
@@ -88,7 +84,7 @@ export function getSitesWithPlugin( state, sites, pluginSlug ) {
 	}
 
 	// Filter the requested sites list by the list of sites for this plugin
-	const pluginSites = filter( sites, ( site ) => {
+	const pluginSites = filter( sites, site => {
 		return plugin.sites.hasOwnProperty( site.ID );
 	} );
 
@@ -125,5 +121,5 @@ export function getStatusForPlugin( state, siteId, pluginId ) {
 
 export function isPluginDoingAction( state, siteId, pluginId ) {
 	const status = getStatusForPlugin( state, siteId, pluginId );
-	return ( !! status ) && ( 'inProgress' === status.status );
+	return !! status && 'inProgress' === status.status;
 }

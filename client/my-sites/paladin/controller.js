@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -16,6 +17,5 @@ module.exports = {
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };
-

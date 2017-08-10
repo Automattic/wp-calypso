@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,7 +23,12 @@ describe( 'AccordionStatus', function() {
 	} );
 
 	it( 'should render with explicit props', () => {
-		const status = { type: 'error', text: 'Warning!', url: 'https://wordpress.com', position: 'top left' };
+		const status = {
+			type: 'error',
+			text: 'Warning!',
+			url: 'https://wordpress.com',
+			position: 'top left',
+		};
 		const wrapper = shallow( <AccordionStatus { ...status } /> );
 
 		expect( wrapper ).to.have.prop( 'href' ).equal( 'https://wordpress.com' );

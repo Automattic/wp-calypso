@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +32,7 @@ export function getConnectionsBySiteId( state, siteId ) {
  * @return {Array}         User connections
  */
 export function getSiteUserConnections( state, siteId, userId ) {
-	return filter( state.sharing.publicize.connections, ( connection ) => {
+	return filter( state.sharing.publicize.connections, connection => {
 		const { site_ID, shared, keyring_connection_user_ID } = connection;
 		return site_ID === siteId && ( shared || keyring_connection_user_ID === userId );
 	} );
@@ -61,7 +62,9 @@ export function getSiteUserConnectionsForService( state, siteId, userId, service
  * @return {Array}          Broken user connections.
  */
 export function getBrokenSiteUserConnectionsForService( state, siteId, userId, service ) {
-	return filter( getSiteUserConnectionsForService( state, siteId, userId, service ), { status: 'broken' } );
+	return filter( getSiteUserConnectionsForService( state, siteId, userId, service ), {
+		status: 'broken',
+	} );
 }
 
 /**
@@ -80,7 +83,12 @@ export function getBrokenSiteUserConnectionsForService( state, siteId, userId, s
 export function getRemovableConnections( state, service ) {
 	const siteId = getSelectedSiteId( state );
 	const userId = getCurrentUserId( state );
-	const siteUserConnectionsForService = getSiteUserConnectionsForService( state, siteId, userId, service );
+	const siteUserConnectionsForService = getSiteUserConnectionsForService(
+		state,
+		siteId,
+		userId,
+		service
+	);
 
 	if ( canCurrentUser( state, siteId, 'edit_others_posts' ) ) {
 		return siteUserConnectionsForService;
@@ -131,5 +139,7 @@ export function sharePostSuccessMessage( state, siteId, postId ) {
 }
 
 export function sharePostFailure( state, siteId, postId ) {
-	return ( get( state.sharing.publicize.sharePostStatus, [ siteId, postId, 'error' ], false ) === true );
+	return (
+		get( state.sharing.publicize.sharePostStatus, [ siteId, postId, 'error' ], false ) === true
+	);
 }

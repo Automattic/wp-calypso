@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -33,7 +34,7 @@ module.exports = React.createClass( {
 	getInitialState: function() {
 		return {
 			helpLinks: [],
-			searchQuery: ''
+			searchQuery: '',
 		};
 	},
 
@@ -57,23 +58,35 @@ module.exports = React.createClass( {
 				<div className="help-results__placeholder">
 					<HelpResults
 						header="Dummy documentation header"
-						helpLinks={ [ {
-							title: '',
-							description: '',
-							link: '#',
-							disabled: true
-						} ] }
+						helpLinks={ [
+							{
+								title: '',
+								description: '',
+								link: '#',
+								disabled: true,
+							},
+						] }
 						footer="Dummy documentation footer"
 						iconTypeDescription=""
-						searchLink="#" />
+						searchLink="#"
+					/>
 				</div>
 			);
 		}
 
-		if ( isEmpty( this.state.helpLinks.wordpress_support_links ) && isEmpty( this.state.helpLinks.wordpress_forum_links ) && isEmpty( this.state.helpLinks.jetpack_support_links ) ) {
+		if (
+			isEmpty( this.state.helpLinks.wordpress_support_links ) &&
+			isEmpty( this.state.helpLinks.wordpress_forum_links ) &&
+			isEmpty( this.state.helpLinks.jetpack_support_links )
+		) {
 			return (
 				<CompactCard className="help-search__no-results">
-					<NoResults text={ this.translate( 'No results found for {{em}}%(searchQuery)s{{/em}}', { args: { searchQuery: this.state.searchQuery }, components: { em: <em /> } } ) } />
+					<NoResults
+						text={ this.translate( 'No results found for {{em}}%(searchQuery)s{{/em}}', {
+							args: { searchQuery: this.state.searchQuery },
+							components: { em: <em /> },
+						} ) }
+					/>
 				</CompactCard>
 			);
 		}
@@ -87,19 +100,22 @@ module.exports = React.createClass( {
 					helpLinks={ this.state.helpLinks.wordpress_support_links }
 					footer={ this.translate( 'See more from WordPress.com Documentation…' ) }
 					iconTypeDescription="book"
-					searchLink={ 'https://en.support.wordpress.com?s=' + this.state.searchQuery } />
+					searchLink={ 'https://en.support.wordpress.com?s=' + this.state.searchQuery }
+				/>
 				<HelpResults
 					header={ this.translate( 'Community Answers' ) }
 					helpLinks={ this.state.helpLinks.wordpress_forum_links }
 					footer={ this.translate( 'See more from Community Forum…' ) }
 					iconTypeDescription="comment"
-					searchLink={ localizedForumUrl + '/search.php?search=' + this.state.searchQuery } />
+					searchLink={ localizedForumUrl + '/search.php?search=' + this.state.searchQuery }
+				/>
 				<HelpResults
 					header={ this.translate( 'Jetpack Documentation' ) }
 					helpLinks={ this.state.helpLinks.jetpack_support_links }
 					footer={ this.translate( 'See more from Jetpack Documentation…' ) }
 					iconTypeDescription="jetpack"
-					searchLink="https://jetpack.me/support/" />
+					searchLink="https://jetpack.me/support/"
+				/>
 			</div>
 		);
 	},
@@ -112,9 +128,10 @@ module.exports = React.createClass( {
 					initialValue={ this.props.search }
 					placeholder={ this.translate( 'How can we help?' ) }
 					analyticsGroup="Help"
-					delaySearch={ true } />
+					delaySearch={ true }
+				/>
 				{ this.displaySearchResults() }
 			</div>
 		);
-	}
+	},
 } );

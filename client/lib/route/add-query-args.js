@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +15,7 @@ export default function( args, url ) {
 	}
 
 	// Remove any undefined query args
-	args = pickBy( args, ( arg ) => arg != null );
+	args = pickBy( args, arg => arg != null );
 
 	// Build new query object for url
 	const parsedUrl = urlModule.parse( url, true );
@@ -26,7 +27,7 @@ export default function( args, url ) {
 	// Note: we set search to false here to that our query object is processed
 	const updatedUrlObject = Object.assign( parsedUrl, {
 		query,
-		search: false
+		search: false,
 	} );
 
 	return urlModule.format( updatedUrlObject );

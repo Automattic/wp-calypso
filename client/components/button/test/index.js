@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -38,7 +39,11 @@ describe( 'Button', () => {
 		it( 'with child', () => {
 			const iconType = 'arrow-left';
 			const icon = <Gridicon size={ 18 } icon={ iconType } />;
-			const button = shallow( <Button>{ icon }</Button> );
+			const button = shallow(
+				<Button>
+					{ icon }
+				</Button>
+			);
 			expect( button ).to.contain( icon );
 			expect( button.find( Gridicon ) ).to.have.prop( 'icon' ).equal( iconType );
 		} );
@@ -59,7 +64,9 @@ describe( 'Button', () => {
 		} );
 
 		it( 'including target and rel props renders a link with target and rel attributes', () => {
-			const button = shallow( <Button href="https://wordpress.com/" target="_blank" rel="noopener noreferrer" /> );
+			const button = shallow(
+				<Button href="https://wordpress.com/" target="_blank" rel="noopener noreferrer" />
+			);
 
 			expect( button ).to.have.prop( 'target' ).equal( '_blank' );
 			expect( button ).to.have.prop( 'rel' ).equal( 'noopener noreferrer' );
@@ -87,7 +94,9 @@ describe( 'Button', () => {
 
 		it( 'renders button with type attribute set to type prop if specified', () => {
 			const typeProp = 'submit';
-			const submitButton = shallow( <Button target="_blank" rel="noopener noreferrer" type={ typeProp } /> );
+			const submitButton = shallow(
+				<Button target="_blank" rel="noopener noreferrer" type={ typeProp } />
+			);
 
 			expect( submitButton ).to.have.prop( 'type' ).equal( typeProp );
 		} );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +12,7 @@ import EditorSlug from 'post-editor/editor-slug';
 
 export default class PostEditorPageSlug extends PureComponent {
 	static propTypes = {
-		path: PropTypes.string
+		path: PropTypes.string,
 	};
 
 	render() {

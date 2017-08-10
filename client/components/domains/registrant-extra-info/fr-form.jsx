@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -34,12 +35,12 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
-	}
+	};
 
 	static defaultProps = {
 		isVisible: true,
 		onSubmit: noop,
-	}
+	};
 
 	componentWillMount() {
 		// We're pushing props out into the global state here because:
@@ -48,47 +49,60 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		//    fields so we can keep them together in one place
 		defaultRegistrantType = this.props.contactDetails.organization ? 'organization' : 'individual';
 
-		this.props.updateContactDetailsCache( { extra: {
-			registrantType: defaultRegistrantType
-		} } );
+		this.props.updateContactDetailsCache( {
+			extra: {
+				registrantType: defaultRegistrantType,
+			},
+		} );
 	}
 
-	handleChangeEvent = ( event ) => {
+	handleChangeEvent = event => {
 		debug( 'Setting ' + event.target.id + ' to ' + event.target.value );
 		this.props.updateContactDetailsCache( {
 			extra: { [ event.target.id ]: event.target.value },
 		} );
-	}
+	};
 
 	render() {
 		const translate = this.props.translate;
-		const registrantType = get( this.props.contactDetails, 'extra.registrantType', defaultRegistrantType );
+		const registrantType = get(
+			this.props.contactDetails,
+			'extra.registrantType',
+			defaultRegistrantType
+		);
 		return (
 			<form className="registrant-extra-info__form">
 				<p className="registrant-extra-info__form-desciption">
-					{ translate(
-						'Almost done! We need some extra details to register your %(tld)s domain.',
-						{ args: { tld: '.fr' } }
-					) }
+					{ translate( 'Almost done! We need some extra details to register your %(tld)s domain.', {
+						args: { tld: '.fr' },
+					} ) }
 				</p>
 				<FormFieldset>
 					<FormLegend>
 						{ translate( "Who's this domain for?" ) }
 					</FormLegend>
 					<FormLabel>
-						<FormRadio value="individual"
+						<FormRadio
+							value="individual"
 							id="registrantType"
 							checked={ 'individual' === registrantType }
-							onChange={ this.handleChangeEvent } />
-						<span>{ translate( 'An individual' ) }</span>
+							onChange={ this.handleChangeEvent }
+						/>
+						<span>
+							{ translate( 'An individual' ) }
+						</span>
 					</FormLabel>
 
 					<FormLabel>
-						<FormRadio value="organization"
+						<FormRadio
+							value="organization"
 							id="registrantType"
 							checked={ 'organization' === registrantType }
-							onChange={ this.handleChangeEvent } />
-						<span>{ translate( 'A company or organization' ) }</span>
+							onChange={ this.handleChangeEvent }
+						/>
+						<span>
+							{ translate( 'A company or organization' ) }
+						</span>
 					</FormLabel>
 				</FormFieldset>
 
@@ -102,17 +116,12 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	renderOrganizationFields() {
 		const translate = this.props.translate;
 		const { extra } = this.props.contactDetails;
-		const {
-			registrantVatId,
-			sirenSiret,
-			trademarkNumber
-		} = defaults( {}, extra, emptyValues );
+		const { registrantVatId, sirenSiret, trademarkNumber } = defaults( {}, extra, emptyValues );
 
 		return (
 			<div>
 				<FormFieldset>
-					<FormLabel className="registrant-extra-info__optional"
-						htmlFor="registrantVatId">
+					<FormLabel className="registrant-extra-info__optional" htmlFor="registrantVatId">
 						{ translate( 'VAT Number' ) }
 						{ this.renderOptional() }
 					</FormLabel>
@@ -123,32 +132,30 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoComplete="off"
 						autoCorrect="off"
 						placeholder={ translate( 'ex. XX123456789' ) }
-						onChange={ this.handleChangeEvent } />
+						onChange={ this.handleChangeEvent }
+					/>
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel className="registrant-extra-info__optional"
-						htmlFor="sirenSiret">
+					<FormLabel className="registrant-extra-info__optional" htmlFor="sirenSiret">
 						{ translate( 'SIREN or SIRET Number' ) }
 						{ this.renderOptional() }
 					</FormLabel>
 					<FormTextInput
 						id="sirenSiret"
 						value={ sirenSiret }
-						placeholder={
-							translate( 'ex. 123 456 789 or 123 456 789 01234',
-								{ comment: 'ex is short for "example". The numbers are examples of the EU VAT format' }
-							)
-						}
+						placeholder={ translate( 'ex. 123 456 789 or 123 456 789 01234', {
+							comment: 'ex is short for "example". The numbers are examples of the EU VAT format',
+						} ) }
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						onChange={ this.handleChangeEvent } />
+						onChange={ this.handleChangeEvent }
+					/>
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel className="registrant-extra-info__optional"
-						htmlFor="trademarkNumber">
+					<FormLabel className="registrant-extra-info__optional" htmlFor="trademarkNumber">
 						{ translate( 'EU Trademark Number' ) }
 						{ this.renderOptional() }
 					</FormLabel>
@@ -159,12 +166,11 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						placeholder={
-							translate( 'ex. 123456789',
-								{ comment: 'ex is short for example. The number is the EU trademark number format.' }
-							)
-						}
-						onChange={ this.handleChangeEvent } />
+						placeholder={ translate( 'ex. 123456789', {
+							comment: 'ex is short for example. The number is the EU trademark number format.',
+						} ) }
+						onChange={ this.handleChangeEvent }
+					/>
 				</FormFieldset>
 			</div>
 		);
@@ -172,12 +178,13 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 	renderOptional() {
 		return (
-			<span className="registrant-extra-info__optional-label">{ this.props.translate( 'Optional' ) }</span>
+			<span className="registrant-extra-info__optional-label">
+				{ this.props.translate( 'Optional' ) }
+			</span>
 		);
 	}
 }
 
-export default connect(
-	state => ( { contactDetails: getContactDetailsCache( state ) } ),
-	{ updateContactDetailsCache }
-)( localize( RegistrantExtraInfoFrForm ) );
+export default connect( state => ( { contactDetails: getContactDetailsCache( state ) } ), {
+	updateContactDetailsCache,
+} )( localize( RegistrantExtraInfoFrForm ) );

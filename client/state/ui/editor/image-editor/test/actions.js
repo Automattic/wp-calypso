@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +18,7 @@ import {
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_STATE_RESET,
 	IMAGE_EDITOR_STATE_RESET_ALL,
-	IMAGE_EDITOR_IMAGE_HAS_LOADED
+	IMAGE_EDITOR_IMAGE_HAS_LOADED,
 } from 'state/action-types';
 
 import {
@@ -31,7 +32,7 @@ import {
 	setImageEditorCropBounds,
 	imageEditorCrop,
 	imageEditorComputedCrop,
-	setImageEditorImageHasLoaded
+	setImageEditorImageHasLoaded,
 } from '../actions';
 import { AspectRatios } from '../constants';
 
@@ -42,7 +43,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: IMAGE_EDITOR_STATE_RESET,
-				additionalData: {}
+				additionalData: {},
 			} );
 		} );
 
@@ -52,8 +53,8 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: IMAGE_EDITOR_STATE_RESET,
 				additionalData: {
-					aspectRatio: AspectRatios.FREE
-				}
+					aspectRatio: AspectRatios.FREE,
+				},
 			} );
 		} );
 	} );
@@ -64,7 +65,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: IMAGE_EDITOR_STATE_RESET_ALL,
-				additionalData: {}
+				additionalData: {},
 			} );
 		} );
 
@@ -74,8 +75,8 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: IMAGE_EDITOR_STATE_RESET_ALL,
 				additionalData: {
-					aspectRatio: AspectRatios.FREE
-				}
+					aspectRatio: AspectRatios.FREE,
+				},
 			} );
 		} );
 	} );
@@ -85,7 +86,7 @@ describe( 'actions', () => {
 			const action = imageEditorRotateCounterclockwise();
 
 			expect( action ).to.eql( {
-				type: IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE
+				type: IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE,
 			} );
 		} );
 	} );
@@ -95,7 +96,7 @@ describe( 'actions', () => {
 			const action = imageEditorFlip();
 
 			expect( action ).to.eql( {
-				type: IMAGE_EDITOR_FLIP
+				type: IMAGE_EDITOR_FLIP,
 			} );
 		} );
 	} );
@@ -109,7 +110,7 @@ describe( 'actions', () => {
 				src: 'testSrc',
 				fileName: 'testFileName',
 				mimeType: 'image/jpg',
-				title: 'My Title'
+				title: 'My Title',
 			} );
 		} );
 	} );
@@ -123,7 +124,7 @@ describe( 'actions', () => {
 				topBound: 100,
 				leftBound: 200,
 				bottomBound: 300,
-				rightBound: 400
+				rightBound: 400,
 			} );
 		} );
 	} );
@@ -137,7 +138,7 @@ describe( 'actions', () => {
 				topRatio: 0.2,
 				leftRatio: 0.3,
 				widthRatio: 0.4,
-				heightRatio: 0.5
+				heightRatio: 0.5,
 			} );
 		} );
 	} );
@@ -150,7 +151,7 @@ describe( 'actions', () => {
 			topRatio: 0.2,
 			leftRatio: 0.3,
 			widthRatio: 0.4,
-			heightRatio: 0.5
+			heightRatio: 0.5,
 		} );
 	} );
 
@@ -160,7 +161,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: IMAGE_EDITOR_SET_ASPECT_RATIO,
-				ratio: AspectRatios.ORIGINAL
+				ratio: AspectRatios.ORIGINAL,
 			} );
 		} );
 	} );
@@ -171,7 +172,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO,
-				ratio: AspectRatios.ORIGINAL
+				ratio: AspectRatios.ORIGINAL,
 			} );
 		} );
 	} );
@@ -183,7 +184,7 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: IMAGE_EDITOR_IMAGE_HAS_LOADED,
 				width: 123,
-				height: 456
+				height: 456,
 			} );
 		} );
 	} );

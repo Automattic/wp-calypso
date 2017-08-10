@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,10 +22,10 @@ const GuidedTransferInProgress = ( { translate } ) =>
 			{ translate( 'Your site is being prepared for transfer' ) }
 		</h1>
 		<p>
-		{ translate(
-			'A Guided Transfer occurs over a 24 hour period. A Happiness Engineer ' +
-			'will work with you to set up a day to perform the transfer.'
-		) }
+			{ translate(
+				'A Guided Transfer occurs over a 24 hour period. A Happiness Engineer ' +
+					'will work with you to set up a day to perform the transfer.'
+			) }
 		</p>
 		<Button href={ supportUrls.GUIDED_TRANSFER }>
 			{ translate( 'Learn more about Guided Transfers' ) }

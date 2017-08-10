@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +32,7 @@ const Shipping = ( { className } ) => {
 };
 
 Shipping.propTypes = {
-	className: PropTypes.string
+	className: PropTypes.string,
 };
 
 export default Shipping;

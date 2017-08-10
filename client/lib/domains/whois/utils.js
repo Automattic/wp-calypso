@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,5 +19,5 @@ function findPrivacyServiceWhois( whoisContacts ) {
 
 export default {
 	findRegistrantWhois,
-	findPrivacyServiceWhois
+	findPrivacyServiceWhois,
 };

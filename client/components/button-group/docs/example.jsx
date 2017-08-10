@@ -1,3 +1,4 @@
+/** @format */
 /**
 * External dependencies
 */
@@ -19,7 +20,7 @@ var Buttons = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			compact: false
+			compact: false,
 		};
 	},
 
@@ -44,33 +45,53 @@ var Buttons = React.createClass( {
 						<ButtonGroup>
 							<Button compact={ this.state.compact }>Button one</Button>
 							<Button compact={ this.state.compact }>Button two</Button>
-							<Button compact={ this.state.compact } scary>Button Three</Button>
+							<Button compact={ this.state.compact } scary>
+								Button Three
+							</Button>
 						</ButtonGroup>
 					</div>
 					<div className="docs__design-button-group-row">
 						<ButtonGroup>
-							<Button compact={ this.state.compact }><Gridicon icon="add-image" /></Button>
-							<Button compact={ this.state.compact }><Gridicon icon="heart" /></Button>
-							<Button compact={ this.state.compact }><Gridicon icon="briefcase" /></Button>
-							<Button compact={ this.state.compact }><Gridicon icon="history" /></Button>
+							<Button compact={ this.state.compact }>
+								<Gridicon icon="add-image" />
+							</Button>
+							<Button compact={ this.state.compact }>
+								<Gridicon icon="heart" />
+							</Button>
+							<Button compact={ this.state.compact }>
+								<Gridicon icon="briefcase" />
+							</Button>
+							<Button compact={ this.state.compact }>
+								<Gridicon icon="history" />
+							</Button>
 						</ButtonGroup>
 					</div>
 					<div className="docs__design-button-group-row">
 						<ButtonGroup>
-							<Button primary compact={ this.state.compact }>Publish</Button>
-							<Button primary compact={ this.state.compact }><Gridicon icon="calendar" /></Button>
+							<Button primary compact={ this.state.compact }>
+								Publish
+							</Button>
+							<Button primary compact={ this.state.compact }>
+								<Gridicon icon="calendar" />
+							</Button>
 						</ButtonGroup>
 					</div>
 
 					<div className="docs__design-button-group-row">
 						<ButtonGroup busy>
 							<Button compact={ this.state.compact }>Busy</Button>
-							<Button compact={ this.state.compact }><Gridicon icon="calendar" /></Button>
+							<Button compact={ this.state.compact }>
+								<Gridicon icon="calendar" />
+							</Button>
 						</ButtonGroup>
 
 						<ButtonGroup busy primary>
-							<Button primary compact={ this.state.compact }>Primary Busy</Button>
-							<Button primary compact={ this.state.compact }><Gridicon icon="calendar" /></Button>
+							<Button primary compact={ this.state.compact }>
+								Primary Busy
+							</Button>
+							<Button primary compact={ this.state.compact }>
+								<Gridicon icon="calendar" />
+							</Button>
 						</ButtonGroup>
 					</div>
 				</Card>

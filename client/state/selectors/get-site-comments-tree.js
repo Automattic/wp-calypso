@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,9 +20,7 @@ import createSelector from 'lib/create-selector';
 export const getSiteCommentsTree = createSelector(
 	( state, siteId, status ) => {
 		const siteTree = get( state, [ 'comments', 'trees', siteId ] );
-		return status
-			? filter( siteTree, { status } )
-			: siteTree;
+		return status ? filter( siteTree, { status } ) : siteTree;
 	},
 	( state, siteId ) => [ get( state, [ 'comments', 'trees', siteId ] ) ]
 );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +22,7 @@ var SegmentedControlDemo = React.createClass( {
 	getInitialState: function() {
 		return {
 			childSelected: 'all',
-			compact: false
+			compact: false,
 		};
 	},
 
@@ -32,8 +33,8 @@ var SegmentedControlDemo = React.createClass( {
 				{ value: 'unread', label: 'Unread' },
 				{ value: 'comments', label: 'Comments' },
 				{ value: 'follows', label: 'Follows' },
-				{ value: 'likes', label: 'Likes' }
-			]
+				{ value: 'likes', label: 'Likes' },
+			],
 		};
 	},
 
@@ -47,8 +48,8 @@ var SegmentedControlDemo = React.createClass( {
 		return (
 			<div>
 				<a className="docs__design-toggle button" onClick={ this.toggleCompact }>
-						{ this.state.compact ? 'Normal' : 'Compact' }
-					</a>
+					{ this.state.compact ? 'Normal' : 'Compact' }
+				</a>
 
 				<h3>Items passed as options prop</h3>
 				<SegmentedControl
@@ -135,14 +136,14 @@ var SegmentedControlDemo = React.createClass( {
 	selectChildSegment: function( childSelected, event ) {
 		event.preventDefault();
 		this.setState( {
-			childSelected: childSelected
+			childSelected: childSelected,
 		} );
 		console.log( 'Segmented Control (selected):', childSelected );
 	},
 
 	selectSegment: function( option ) {
 		console.log( 'Segmented Control (selected):', option );
-	}
+	},
 } );
 
 module.exports = SegmentedControlDemo;

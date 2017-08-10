@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -68,7 +69,10 @@ export default {
 
 	redirectToFlow( context, next ) {
 		if ( context.pathname !== utils.getValidPath( context.params ) ) {
-			return page.redirect( utils.getValidPath( context.params ) + ( context.querystring ? '?' + context.querystring : '' ) );
+			return page.redirect(
+				utils.getValidPath( context.params ) +
+					( context.querystring ? '?' + context.querystring : '' )
+			);
 		}
 
 		next();
@@ -80,7 +84,10 @@ export default {
 			stepName = utils.getStepName( context.params ),
 			stepSectionName = utils.getStepSectionName( context.params );
 
-		analytics.pageView.record( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName );
+		analytics.pageView.record(
+			basePath,
+			basePageTitle + ' > Start > ' + flowName + ' > ' + stepName
+		);
 
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		context.store.dispatch( setLayoutFocus( 'content' ) );
@@ -93,10 +100,10 @@ export default {
 				locale: utils.getLocale( context.params ),
 				flowName: flowName,
 				stepName: stepName,
-				stepSectionName: stepSectionName
+				stepSectionName: stepSectionName,
 			} ),
 			'primary',
 			context.store
 		);
-	}
+	},
 };

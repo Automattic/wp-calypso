@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,7 @@ const DUMMY_SITE_ID = 1,
 	DUMMY_MEDIA_OBJECT = { ID: DUMMY_MEDIA_ID, title: 'Image' },
 	DUMMY_MEDIA_RESPONSE = {
 		media: [ DUMMY_MEDIA_OBJECT ],
-		meta: { next_page: 'value%3D2015-03-04T14%253A38%253A21%252B00%253A00%26id%3D2135' }
+		meta: { next_page: 'value%3D2015-03-04T14%253A38%253A21%252B00%253A00%26id%3D2135' },
 	};
 
 describe( 'MediaStore', function() {
@@ -26,9 +27,9 @@ describe( 'MediaStore', function() {
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/wp', {
 			me: () => ( {
-				get: noop
+				get: noop,
 			} ),
-			site: noop
+			site: noop,
 		} );
 	} );
 
@@ -57,8 +58,8 @@ describe( 'MediaStore', function() {
 			action: {
 				type: 'RECEIVE_MEDIA_ITEMS',
 				siteId: DUMMY_SITE_ID,
-				data: DUMMY_MEDIA_RESPONSE
-			}
+				data: DUMMY_MEDIA_RESPONSE,
+			},
 		} );
 	}
 
@@ -68,8 +69,8 @@ describe( 'MediaStore', function() {
 				type: 'RECEIVE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
 				id: id,
-				data: data || DUMMY_MEDIA_OBJECT
-			}
+				data: data || DUMMY_MEDIA_OBJECT,
+			},
 		} );
 	}
 
@@ -79,8 +80,8 @@ describe( 'MediaStore', function() {
 				error: error,
 				type: 'REMOVE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
-				data: DUMMY_MEDIA_OBJECT
-			}
+				data: DUMMY_MEDIA_OBJECT,
+			},
 		} );
 	}
 
@@ -98,13 +99,13 @@ describe( 'MediaStore', function() {
 		it( 'should resolve a pointer to another image item', function() {
 			MediaStore._media = {
 				[ DUMMY_SITE_ID ]: {
-					[ DUMMY_MEDIA_ID ]: DUMMY_MEDIA_OBJECT
-				}
+					[ DUMMY_MEDIA_ID ]: DUMMY_MEDIA_OBJECT,
+				},
 			};
 			MediaStore._pointers = {
 				[ DUMMY_SITE_ID ]: {
-					[ DUMMY_MEDIA_ID + 1 ]: DUMMY_MEDIA_ID
-				}
+					[ DUMMY_MEDIA_ID + 1 ]: DUMMY_MEDIA_ID,
+				},
 			};
 
 			expect( MediaStore.get( DUMMY_SITE_ID, DUMMY_MEDIA_ID + 1 ) ).to.equal( DUMMY_MEDIA_OBJECT );
@@ -138,7 +139,10 @@ describe( 'MediaStore', function() {
 			dispatchReceiveMediaItems();
 			dispatchRemoveMediaItem();
 
-			expect( MediaStore.get( DUMMY_SITE_ID, DUMMY_MEDIA_ID ) ).to.not.have.any.keys( 'guid', 'url' );
+			expect( MediaStore.get( DUMMY_SITE_ID, DUMMY_MEDIA_ID ) ).to.not.have.any.keys(
+				'guid',
+				'url'
+			);
 		} );
 
 		it( 'should re-add an item when REMOVE_MEDIA_ITEM errors and includes data', function() {
@@ -150,7 +154,7 @@ describe( 'MediaStore', function() {
 		it( 'should replace an item when RECEIVE_MEDIA_ITEM includes ID', function() {
 			const newItem = {
 				ID: DUMMY_MEDIA_ID + 1,
-				ok: true
+				ok: true,
 			};
 
 			dispatchReceiveMediaItem();
@@ -165,27 +169,27 @@ describe( 'MediaStore', function() {
 				action: {
 					type: 'FETCH_MEDIA_ITEM',
 					siteId: DUMMY_SITE_ID,
-					id: DUMMY_MEDIA_ID
-				}
+					id: DUMMY_MEDIA_ID,
+				},
 			} );
 
 			expect( MediaStore.get( DUMMY_SITE_ID, DUMMY_MEDIA_ID ) ).to.eql( {
-				ID: DUMMY_MEDIA_ID
+				ID: DUMMY_MEDIA_ID,
 			} );
 		} );
 
 		it( 'should clear all pointers when CHANGE_MEDIA_SOURCE called', () => {
 			MediaStore._pointers = {
 				[ DUMMY_SITE_ID ]: {
-					[ DUMMY_MEDIA_ID + 1 ]: DUMMY_MEDIA_ID
-				}
+					[ DUMMY_MEDIA_ID + 1 ]: DUMMY_MEDIA_ID,
+				},
 			};
 
 			handler( {
 				action: {
 					type: 'CHANGE_MEDIA_SOURCE',
 					siteId: DUMMY_SITE_ID,
-				}
+				},
 			} );
 
 			expect( MediaStore._pointers[ DUMMY_SITE_ID ] ).to.eql( {} );

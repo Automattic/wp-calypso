@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,7 +29,7 @@ var SectionNavigation = React.createClass( {
 			basicTabsSelectedIndex: 0,
 			manyTabsSelectedIndex: 0,
 			siblingTabsSelectedIndex: 0,
-			siblingSegmentedSelectedIndex: 0
+			siblingSegmentedSelectedIndex: 0,
 		};
 	},
 
@@ -39,12 +40,12 @@ var SectionNavigation = React.createClass( {
 				'Weeks',
 				{
 					name: 'Months',
-					count: 45
+					count: 45,
 				},
 				{
 					name: 'Years',
-					count: 11
-				}
+					count: 11,
+				},
 			],
 			manyTabs: [
 				'Staff Picks',
@@ -52,54 +53,54 @@ var SectionNavigation = React.createClass( {
 				'Blog',
 				{
 					name: 'Business',
-					count: 8761
+					count: 8761,
 				},
 				'Food',
 				'Music',
 				{
 					name: 'Travel',
-					count: 761
+					count: 761,
 				},
 				'Wedding',
 				'Minimal',
 				'Magazine',
-				'Photography'
+				'Photography',
 			],
 			siblingTabs: [
 				{
 					name: 'Published',
-					count: 8
+					count: 8,
 				},
 				'Scheduled',
 				'Drafts',
-				'Trashed'
+				'Trashed',
 			],
-			siblingSegmented: [
-				'Only Me',
-				'Everyone'
-			]
+			siblingSegmented: [ 'Only Me', 'Everyone' ],
 		};
 	},
 
 	render: function() {
 		var demoSections = {};
 
-		forEach( omit( this.props, 'isolated', 'uniqueInstance' ), function( prop, key ) {
-			demoSections[ key ] = [];
+		forEach(
+			omit( this.props, 'isolated', 'uniqueInstance' ),
+			function( prop, key ) {
+				demoSections[ key ] = [];
 
-			prop.forEach( function( item, index ) {
-				demoSections[ key ].push( (
-					<NavItem
-						key={ key + '-' + index }
-						count={ item.count }
-						selected={ this.state[ key + 'SelectedIndex' ] === index }
-						onClick={ this.handleNavItemClick( key, index ) }
-					>
-						{ 'object' === typeof item ? item.name : item }
-					</NavItem>
-				) );
-			}, this );
-		}.bind( this ) );
+				prop.forEach( function( item, index ) {
+					demoSections[ key ].push(
+						<NavItem
+							key={ key + '-' + index }
+							count={ item.count }
+							selected={ this.state[ key + 'SelectedIndex' ] === index }
+							onClick={ this.handleNavItemClick( key, index ) }
+						>
+							{ 'object' === typeof item ? item.name : item }
+						</NavItem>
+					);
+				}, this );
+			}.bind( this )
+		);
 
 		return (
 			<div>
@@ -159,16 +160,18 @@ var SectionNavigation = React.createClass( {
 		var selected = this.state[ section + 'SelectedIndex' ],
 			selectedItem = this.props[ section ][ selected ];
 
-		return 'object' === typeof selectedItem
-			? selectedItem.count || null
-			: null;
+		return 'object' === typeof selectedItem ? selectedItem.count || null : null;
 	},
 
 	getSiblingDemoSelectedText: function() {
 		return (
 			<span>
-				<span>{ this.getSelectedText( 'siblingTabs' ) }</span>
-				<small>{ this.getSelectedText( 'siblingSegmented' ) }</small>
+				<span>
+					{ this.getSelectedText( 'siblingTabs' ) }
+				</span>
+				<small>
+					{ this.getSelectedText( 'siblingSegmented' ) }
+				</small>
 			</span>
 		);
 	},
@@ -184,7 +187,7 @@ var SectionNavigation = React.createClass( {
 
 	demoSearch: function( keywords ) {
 		console.log( 'Section Nav Search (keywords):', keywords );
-	}
+	},
 } );
 
 module.exports = SectionNavigation;

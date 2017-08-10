@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -80,7 +81,9 @@ class LocaleSuggestions extends Component {
 		return (
 			<div className="locale-suggestions">
 				<Notice icon="globe" showDismiss={ true } onDismissClick={ this.dismiss }>
-					<div className="locale-suggestions__list">{ localeMarkup }</div>
+					<div className="locale-suggestions__list">
+						{ localeMarkup }
+					</div>
 				</Notice>
 			</div>
 		);

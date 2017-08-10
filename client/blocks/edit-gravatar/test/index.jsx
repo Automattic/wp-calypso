@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,21 +16,15 @@ import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'EditGravatar', function() {
-	let EditGravatar,
-		FilePicker,
-		Gravatar,
-		ImageEditor,
-		VerifyEmailDialog,
-		DropZone,
-		sandbox;
+	let EditGravatar, FilePicker, Gravatar, ImageEditor, VerifyEmailDialog, DropZone, sandbox;
 	const user = {
-		email_verified: false
+		email_verified: false,
 	};
 
 	useFakeDom();
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/oauth-token', {
-			getToken: () => 'bearerToken'
+			getToken: () => 'bearerToken',
 		} );
 		mockery.registerSubstitute( 'event', 'component-event' );
 		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
@@ -38,7 +33,7 @@ describe( 'EditGravatar', function() {
 		sandbox = newSandbox;
 		global.URL = {
 			revokeObjectURL: sandbox.stub(),
-			createObjectURL: sandbox.stub()
+			createObjectURL: sandbox.stub(),
 		};
 	} );
 
@@ -53,34 +48,19 @@ describe( 'EditGravatar', function() {
 
 	describe( 'component rendering', () => {
 		it( 'displays a Gravatar', () => {
-			const wrapper = shallow(
-				<EditGravatar
-					translate={ noop }
-					user={ user }
-				/>
-			);
+			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
 			expect( wrapper.find( Gravatar ).length ).to.equal( 1 );
 		} );
 
 		it( 'contains a file picker that accepts images', () => {
-			const wrapper = shallow(
-				<EditGravatar
-					translate={ noop }
-					user={ user }
-				/>
-			);
+			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
 			const filePicker = wrapper.find( FilePicker );
 			expect( filePicker.length ).to.equal( 1 );
 			expect( filePicker.prop( 'accept' ) ).to.equal( 'image/*' );
 		} );
 
 		it( 'does not display the image editor by default', () => {
-			const wrapper = shallow(
-				<EditGravatar
-					translate={ noop }
-					user={ user }
-				/>
-			);
+			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
 			expect( wrapper.find( ImageEditor ).length ).to.equal( 0 );
 		} );
 
@@ -90,7 +70,7 @@ describe( 'EditGravatar', function() {
 					<EditGravatar
 						translate={ noop }
 						user={ {
-							email_verified: false
+							email_verified: false,
 						} }
 					/>
 				);
@@ -102,7 +82,7 @@ describe( 'EditGravatar', function() {
 					<EditGravatar
 						translate={ noop }
 						user={ {
-							email_verified: true
+							email_verified: true,
 						} }
 					/>
 				);
@@ -115,15 +95,13 @@ describe( 'EditGravatar', function() {
 		describe( 'accepted file type', () => {
 			it( 'displays the image editor with square allowed aspect ratio', () => {
 				const wrapper = shallow(
-					<EditGravatar
-						translate={ noop }
-						user={ user }
-						recordReceiveImageEvent={ noop }
-					/>
+					<EditGravatar translate={ noop } user={ user } recordReceiveImageEvent={ noop } />
 				);
-				const files = [ {
-					name: 'filename.png'
-				} ];
+				const files = [
+					{
+						name: 'filename.png',
+					},
+				];
 
 				wrapper.instance().onReceiveFile( files );
 
@@ -146,9 +124,11 @@ describe( 'EditGravatar', function() {
 						recordReceiveImageEvent={ noop }
 					/>
 				);
-				const files = [ {
-					name: 'filename.tiff'
-				} ];
+				const files = [
+					{
+						name: 'filename.tiff',
+					},
+				];
 
 				wrapper.instance().onReceiveFile( files );
 
@@ -160,11 +140,13 @@ describe( 'EditGravatar', function() {
 
 	describe( 'after editing image', () => {
 		const imageEditorProps = {
-			resetAllImageEditorState: noop
+			resetAllImageEditorState: noop,
 		};
-		const files = [ {
-			name: 'filename.png'
-		} ];
+		const files = [
+			{
+				name: 'filename.png',
+			},
+		];
 
 		it( 'given no error, hides image editor and calls upload gravatar action creator', () => {
 			const receiveGravatarImageFailedSpy = sandbox.spy();
@@ -215,11 +197,7 @@ describe( 'EditGravatar', function() {
 	describe( 'unverified user', () => {
 		it( 'shows email verification dialog when clicked', () => {
 			const wrapper = shallow(
-				<EditGravatar
-					translate={ noop }
-					user={ user }
-					recordClickButtonEvent={ noop }
-				/>
+				<EditGravatar translate={ noop } user={ user } recordClickButtonEvent={ noop } />
 			);
 			// Enzyme requires simulate() to be called directly on the element with the click handler
 			const clickableWrapper = wrapper.find( '.edit-gravatar > div' ).first();

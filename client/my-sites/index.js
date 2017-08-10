@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,4 +11,4 @@ import controller from './controller';
 
 export default function() {
 	page( '/sites/:sitesFilter?', controller.siteSelection, controller.sites );
-};
+}

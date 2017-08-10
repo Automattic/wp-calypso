@@ -1,3 +1,4 @@
+/** @format */
 /* eslint-disable no-console */
 
 /**
@@ -35,18 +36,21 @@ self.addEventListener( 'push', function( event ) {
 	notification = event.data.json();
 
 	event.waitUntil(
-		self.registration.showNotification( notification.msg, {
-			tag: 'note_' + notification.note_id,
-			icon: notification.icon,
-			timestamp: notification.note_timestamp,
-			data: notification
-		} ).then( function() {
-			if ( notification.note_opened_pixel ) {
-				fetch( notification.note_opened_pixel, { mode: 'no-cors' } ).catch( function( err ) { // eslint-disable-line no-unused-vars
-					console.log( 'Could not load the pixel %s', notification.note_opened_pixel );
-				} );
-			}
-		} )
+		self.registration
+			.showNotification( notification.msg, {
+				tag: 'note_' + notification.note_id,
+				icon: notification.icon,
+				timestamp: notification.note_timestamp,
+				data: notification,
+			} )
+			.then( function() {
+				if ( notification.note_opened_pixel ) {
+					fetch( notification.note_opened_pixel, { mode: 'no-cors' } ).catch( function( err ) {
+						// eslint-disable-line no-unused-vars
+						console.log( 'Could not load the pixel %s', notification.note_opened_pixel );
+					} );
+				}
+			} )
 	);
 } );
 

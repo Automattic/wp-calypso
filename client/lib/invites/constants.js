@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,5 +22,5 @@ export const action = keyMirror( {
 	RECEIVE_SENDING_INVITES_SUCCESS: null,
 	CREATE_INVITE_VALIDATION: null,
 	RECEIVE_CREATE_INVITE_VALIDATION_ERROR: null,
-	RECEIVE_CREATE_INVITE_VALIDATION_SUCCESS: null
+	RECEIVE_CREATE_INVITE_VALIDATION_SUCCESS: null,
 } );

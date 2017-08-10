@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -36,7 +37,7 @@ class PlanThankYouCard extends Component {
 		}
 
 		return translate( '%(planName)s Plan', {
-			args: { planName: getPlan( plan.productSlug ).getTitle() }
+			args: { planName: getPlan( plan.productSlug ).getTitle() },
 		} );
 	}
 
@@ -73,9 +74,7 @@ class PlanThankYouCard extends Component {
 			return description;
 		}
 
-		return translate(
-			"Now that we've taken care of the plan, it's time to see your new site."
-		);
+		return translate( "Now that we've taken care of the plan, it's time to see your new site." );
 	}
 
 	render() {
@@ -106,7 +105,7 @@ PlanThankYouCard.propTypes = {
 	siteUrl: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	action: PropTypes.node,
-	description: PropTypes.string
+	description: PropTypes.string,
 };
 
 export default connect( ( state, ownProps ) => {
@@ -115,6 +114,6 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		plan,
-		siteUrl: site && site.URL
+		siteUrl: site && site.URL,
 	};
 } )( localize( PlanThankYouCard ) );

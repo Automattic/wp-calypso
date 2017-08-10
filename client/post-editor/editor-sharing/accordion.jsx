@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -35,7 +36,7 @@ const EditorSharingAccordion = React.createClass( {
 		hasBrokenConnection: PropTypes.bool,
 		isPublicizeEnabled: PropTypes.bool,
 		isSharingActive: PropTypes.bool,
-		isLikesActive: PropTypes.bool
+		isLikesActive: PropTypes.bool,
 	},
 
 	getSubtitle: function() {
@@ -46,19 +47,23 @@ const EditorSharingAccordion = React.createClass( {
 
 		const skipped = PostMetadata.publicizeSkipped( post );
 
-		return reduce( connections, ( memo, connection ) => {
-			const { keyring_connection_ID: id, label } = connection;
-			if ( ! includes( skipped, id ) && ! includes( memo, label ) ) {
-				memo.push( label );
-			}
+		return reduce(
+			connections,
+			( memo, connection ) => {
+				const { keyring_connection_ID: id, label } = connection;
+				if ( ! includes( skipped, id ) && ! includes( memo, label ) ) {
+					memo.push( label );
+				}
 
-			return memo;
-		}, [] ).join( ', ' );
+				return memo;
+			},
+			[]
+		).join( ', ' );
 	},
 
 	renderShortUrl: function() {
 		const classes = classNames( 'editor-sharing__shortlink', {
-			'is-standalone': this.hideSharing()
+			'is-standalone': this.hideSharing(),
 		} );
 
 		if ( ! postUtils.isPublished( this.props.post ) ) {
@@ -67,10 +72,7 @@ const EditorSharingAccordion = React.createClass( {
 
 		return (
 			<div className={ classes }>
-				<label
-					className="editor-sharing__shortlink-label"
-					htmlFor="shortlink-field"
-				>
+				<label className="editor-sharing__shortlink-label" htmlFor="shortlink-field">
 					{ this.translate( 'Shortlink' ) }
 				</label>
 				<FormTextInput
@@ -93,7 +95,7 @@ const EditorSharingAccordion = React.createClass( {
 	render: function() {
 		const hideSharing = this.hideSharing();
 		const classes = classNames( 'editor-sharing__accordion', this.props.className, {
-			'is-loading': ! this.props.post || ! this.props.connections
+			'is-loading': ! this.props.post || ! this.props.connections,
 		} );
 
 		// if sharing is hidden, and post is not published (no short URL yet),
@@ -107,11 +109,11 @@ const EditorSharingAccordion = React.createClass( {
 			status = {
 				type: 'warning',
 				text: this.translate( 'A broken connection requires repair', {
-					comment: 'Publicize connection deauthorized, needs user action to fix'
+					comment: 'Publicize connection deauthorized, needs user action to fix',
 				} ),
 				url: `/sharing/${ this.props.site.slug }`,
 				position: isMobile() ? 'top left' : 'top',
-				onClick: this.props.onStatusClick
+				onClick: this.props.onStatusClick,
 			};
 		}
 
@@ -120,23 +122,20 @@ const EditorSharingAccordion = React.createClass( {
 				title={ this.translate( 'Sharing' ) }
 				subtitle={ this.getSubtitle() }
 				status={ status }
-				className={ classes }>
-				{ this.props.site && (
-					<QueryPublicizeConnections siteId={ this.props.site.ID } />
-				) }
+				className={ classes }
+			>
+				{ this.props.site && <QueryPublicizeConnections siteId={ this.props.site.ID } /> }
 				<AccordionSection>
-					{ ! hideSharing && (
-						<Sharing site={ this.props.site } post={ this.props.post } />
-					) }
+					{ ! hideSharing && <Sharing site={ this.props.site } post={ this.props.post } /> }
 					{ this.renderShortUrl() }
 				</AccordionSection>
 			</Accordion>
 		);
-	}
+	},
 } );
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const userId = getCurrentUserId( state );
 		const postId = getEditorPostId( state );
@@ -153,6 +152,6 @@ export default connect(
 		};
 	},
 	{
-		onStatusClick: () => recordGoogleEvent( 'Editor', 'Clicked Accordion Broken Status' )
+		onStatusClick: () => recordGoogleEvent( 'Editor', 'Clicked Accordion Broken Status' ),
 	}
 )( EditorSharingAccordion );

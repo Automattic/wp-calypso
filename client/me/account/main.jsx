@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,12 +7,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import i18n, { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import emailValidator from 'email-validator';
-import {
-	debounce,
-	flowRight as compose,
-	map,
-	size,
-} from 'lodash';
+import { debounce, flowRight as compose, map, size } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -56,14 +52,9 @@ const user = _user();
 const debug = debugFactory( 'calypso:me:account' );
 
 const Account = React.createClass( {
-
 	displayName: 'Account',
 
-	mixins: [
-		formBase,
-		observe( 'userSettings', 'username' ),
-		eventRecorder
-	],
+	mixins: [ formBase, observe( 'userSettings', 'username' ), eventRecorder ],
 
 	propTypes: {
 		userSettings: PropTypes.object.isRequired,
@@ -119,11 +110,8 @@ const Account = React.createClass( {
 
 	updateEmailAddress( event ) {
 		const { value } = event.target;
-		const emailValidationError = (
-			( '' === value && 'empty' ) ||
-			( ! emailValidator.validate( value ) && 'invalid' ) ||
-			false
-		);
+		const emailValidationError =
+			( '' === value && 'empty' ) || ( ! emailValidator.validate( value ) && 'invalid' ) || false;
 		this.setState( { emailValidationError } );
 		this.updateUserSetting( 'user_email', value );
 	},
@@ -149,7 +137,9 @@ const Account = React.createClass( {
 		if ( showTranslator ) {
 			return (
 				<FormFieldset>
-					<FormLegend>{ translate( 'Community Translator' ) }</FormLegend>
+					<FormLegend>
+						{ translate( 'Community Translator' ) }
+					</FormLegend>
 					<FormLabel>
 						<FormCheckbox
 							checked={ this.getUserSetting( 'enable_translator' ) }
@@ -162,13 +152,15 @@ const Account = React.createClass( {
 						<span>
 							{ translate( 'Enable the in-page translator where available. {{a}}Learn more{{/a}}', {
 								components: {
-									a: <a
+									a: (
+										<a
 											target="_blank"
 											rel="noopener noreferrer"
 											href="https://en.support.wordpress.com/community-translator/"
 											onClick={ this.recordClickEvent( 'Community Translator Learn More Link' ) }
-									/>
-								}
+										/>
+									),
+								},
 							} ) }
 						</span>
 					</FormLabel>
@@ -191,18 +183,24 @@ const Account = React.createClass( {
 
 		const url = 'https://translate.wordpress.com/translators/?contributor_locale=' + locale;
 
-		return ( <FormSettingExplanation> {
-			translate( 'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}!', {
-				components: {
-					a: <a
-							target="_blank"
-							rel="noopener noreferrer"
-							href={ url }
-					/>,
-					language: <span>{ language.name }</span>
-				}
-			} ) }
-		</FormSettingExplanation> );
+		return (
+			<FormSettingExplanation>
+				{' '}
+				{ translate(
+					'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}!',
+					{
+						components: {
+							a: <a target="_blank" rel="noopener noreferrer" href={ url } />,
+							language: (
+								<span>
+									{ language.name }
+								</span>
+							),
+						},
+					}
+				) }
+			</FormSettingExplanation>
+		);
 	},
 
 	cancelEmailChange() {
@@ -210,7 +208,9 @@ const Account = React.createClass( {
 		userSettings.cancelPendingEmailChange( ( error, response ) => {
 			if ( error ) {
 				debug( 'Error canceling email change: ' + JSON.stringify( error ) );
-				this.props.errorNotice( translate( 'There was a problem canceling the email change. Please, try again.' ) );
+				this.props.errorNotice(
+					translate( 'There was a problem canceling the email change. Please, try again.' )
+				);
 			} else {
 				debug( JSON.stringify( 'Email change canceled successfully' + response ) );
 				this.props.successNotice( translate( 'The email change has been successfully canceled.' ) );
@@ -238,7 +238,7 @@ const Account = React.createClass( {
 	cancelUsernameChange() {
 		this.setState( {
 			userLoginConfirm: null,
-			usernameAction: null
+			usernameAction: null,
 		} );
 
 		this.props.username.clearValidation();
@@ -254,7 +254,7 @@ const Account = React.createClass( {
 		const action = null === this.state.usernameAction ? 'none' : this.state.usernameAction;
 
 		this.setState( { submittingForm: true } );
-		this.props.username.change( username, action, ( error ) => {
+		this.props.username.change( username, action, error => {
 			this.setState( { submittingForm: false } );
 			if ( error ) {
 				this.props.errorNotice( this.props.username.getValidationFailureMessage() );
@@ -281,12 +281,12 @@ const Account = React.createClass( {
 		const startDate = this.moment( {
 			year: today.year(),
 			month: 11,
-			day: 1
+			day: 1,
 		} );
 		const endDate = this.moment( {
 			year: today.year(),
 			month: 0,
-			day: 4
+			day: 4,
 		} );
 
 		if ( today.isBefore( startDate, 'day' ) && today.isAfter( endDate, 'day' ) ) {
@@ -295,7 +295,9 @@ const Account = React.createClass( {
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Holiday Snow' ) }</FormLegend>
+				<FormLegend>
+					{ translate( 'Holiday Snow' ) }
+				</FormLegend>
 				<FormLabel>
 					<FormCheckbox
 						checked={ this.getUserSetting( 'holidaysnow' ) }
@@ -305,7 +307,9 @@ const Account = React.createClass( {
 						name="holidaysnow"
 						onClick={ this.recordCheckboxEvent( 'Holiday Snow' ) }
 					/>
-					<span>{ translate( 'Show snowfall on WordPress.com sites.' ) }</span>
+					<span>
+						{ translate( 'Show snowfall on WordPress.com sites.' ) }
+					</span>
 				</FormLabel>
 			</FormFieldset>
 		);
@@ -317,14 +321,12 @@ const Account = React.createClass( {
 
 		return (
 			<span>
-				{
-					translate( 'Joined %(month)s %(year)s', {
-						args: {
-							month: dateMoment.format( 'MMMM' ),
-							year: dateMoment.format( 'YYYY' )
-						}
-					} )
-				}
+				{ translate( 'Joined %(month)s %(year)s', {
+					args: {
+						month: dateMoment.format( 'MMMM' ),
+						year: dateMoment.format( 'YYYY' ),
+					},
+				} ) }
 			</span>
 		);
 	},
@@ -344,13 +346,15 @@ const Account = React.createClass( {
 			<Notice
 				showDismiss={ false }
 				status="is-info"
-				text={
-					translate( 'There is a pending change of your email to %(email)s. Please check your inbox for a confirmation link.', {
+				text={ translate(
+					'There is a pending change of your email to %(email)s. Please check your inbox for a confirmation link.',
+					{
 						args: {
-							email: this.getUserSetting( 'new_user_email' )
-						}
-					} )
-				}>
+							email: this.getUserSetting( 'new_user_email' ),
+						},
+					}
+				) }
+			>
 				<NoticeAction onClick={ this.cancelEmailChange }>
 					{ translate( 'Cancel' ) }
 				</NoticeAction>
@@ -372,8 +376,8 @@ const Account = React.createClass( {
 					status="is-success"
 					text={ translate( '%(username)s is a valid username.', {
 						args: {
-							username: username.getValidatedUsername()
-						}
+							username: username.getValidatedUsername(),
+						},
 					} ) }
 				/>
 			);
@@ -400,13 +404,7 @@ const Account = React.createClass( {
 			return null;
 		}
 
-		return (
-			<Notice
-				showDismiss={ false }
-				status={ status }
-				text={ text }
-			/>
-		);
+		return <Notice showDismiss={ false } status={ status } text={ text } />;
 	},
 
 	renderPrimarySite() {
@@ -450,7 +448,7 @@ const Account = React.createClass( {
 		switch ( this.state.emailValidationError ) {
 			case 'invalid':
 				notice = translate( '%(email)s is not a valid email address.', {
-					args: { email: this.getUserSetting( 'user_email' ) }
+					args: { email: this.getUserSetting( 'user_email' ) },
 				} );
 				break;
 			case 'empty':
@@ -458,9 +456,7 @@ const Account = React.createClass( {
 				break;
 		}
 
-		return (
-			<FormTextValidation isError={ true } text={ notice } />
-		);
+		return <FormTextValidation isError={ true } text={ notice } />;
 	},
 
 	/*
@@ -469,13 +465,17 @@ const Account = React.createClass( {
 	renderAccountFields() {
 		const { translate, userSettings } = this.props;
 
-		const isSubmitButtonDisabled = ! userSettings.hasUnsavedSettings() ||
-			this.getDisabledState() || this.hasEmailValidationError();
+		const isSubmitButtonDisabled =
+			! userSettings.hasUnsavedSettings() ||
+			this.getDisabledState() ||
+			this.hasEmailValidationError();
 
 		return (
 			<div className="account__settings-form" key="settingsForm">
 				<FormFieldset>
-					<FormLabel htmlFor="user_email">{ translate( 'Email Address' ) }</FormLabel>
+					<FormLabel htmlFor="user_email">
+						{ translate( 'Email Address' ) }
+					</FormLabel>
 					<FormTextInput
 						disabled={ this.getDisabledState() || this.hasPendingEmailChange() }
 						id="user_email"
@@ -493,12 +493,16 @@ const Account = React.createClass( {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary Site' ) }</FormLabel>
+					<FormLabel htmlFor="primary_site_ID">
+						{ translate( 'Primary Site' ) }
+					</FormLabel>
 					{ this.renderPrimarySite() }
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="user_URL">{ translate( 'Web Address' ) }</FormLabel>
+					<FormLabel htmlFor="user_URL">
+						{ translate( 'Web Address' ) }
+					</FormLabel>
 					<FormTextInput
 						disabled={ this.getDisabledState() }
 						id="user_URL"
@@ -513,7 +517,9 @@ const Account = React.createClass( {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="language">{ translate( 'Interface Language' ) }</FormLabel>
+					<FormLabel htmlFor="language">
+						{ translate( 'Interface Language' ) }
+					</FormLabel>
 					<LanguageSelector
 						disabled={ this.getDisabledState() }
 						id="language"
@@ -536,7 +542,9 @@ const Account = React.createClass( {
 					disabled={ isSubmitButtonDisabled }
 					onClick={ this.recordClickEvent( 'Save Account Settings Button' ) }
 				>
-					{ this.state.submittingForm ? translate( 'Saving…' ) : translate( 'Save Account Settings' ) }
+					{ this.state.submittingForm
+						? translate( 'Saving…' )
+						: translate( 'Save Account Settings' ) }
 				</FormButton>
 			</div>
 		);
@@ -556,22 +564,24 @@ const Account = React.createClass( {
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Would you like a matching blog address too?' ) }</FormLegend>
-				{
-					// message is translated in the API
-					map( actions, ( message, key ) => (
-						<FormLabel key={ key }>
-							<FormRadio
-								name="usernameAction"
-								onChange={ this.handleRadioChange }
-								onClick={ this.recordRadioEvent( 'Username Change Blog Action' ) }
-								value={ key }
-								checked={ key === this.state.usernameAction }
-							/>
-							<span>{ message }</span>
-						</FormLabel>
-					) )
-				}
+				<FormLegend>
+					{ translate( 'Would you like a matching blog address too?' ) }
+				</FormLegend>
+				{ // message is translated in the API
+				map( actions, ( message, key ) =>
+					<FormLabel key={ key }>
+						<FormRadio
+							name="usernameAction"
+							onChange={ this.handleRadioChange }
+							onClick={ this.recordRadioEvent( 'Username Change Blog Action' ) }
+							value={ key }
+							checked={ key === this.state.usernameAction }
+						/>
+						<span>
+							{ message }
+						</span>
+					</FormLabel>
+				) }
 			</FormFieldset>
 		);
 	},
@@ -582,15 +592,17 @@ const Account = React.createClass( {
 	renderUsernameFields() {
 		const { translate, username } = this.props;
 
-		const isSaveButtonDisabled = ( this.getUserSetting( 'user_login' ) !== this.state.userLoginConfirm ) ||
-			! username.isUsernameValid() || this.state.submittingForm;
+		const isSaveButtonDisabled =
+			this.getUserSetting( 'user_login' ) !== this.state.userLoginConfirm ||
+			! username.isUsernameValid() ||
+			this.state.submittingForm;
 
 		return (
 			<div className="account__username-form" key="usernameForm">
 				<FormFieldset>
 					<FormLabel htmlFor="username_confirm">
 						{ translate( 'Confirm Username', {
-							context: 'User is being prompted to re-enter a string for verification.'
+							context: 'User is being prompted to re-enter a string for verification.',
 						} ) }
 					</FormLabel>
 					<FormTextInput
@@ -601,24 +613,28 @@ const Account = React.createClass( {
 						onChange={ this.updateUserLoginConfirm }
 					/>
 					{ this.renderUsernameConfirmNotice() }
-					<FormSettingExplanation>{ translate( 'Confirm new username' ) }</FormSettingExplanation>
+					<FormSettingExplanation>
+						{ translate( 'Confirm new username' ) }
+					</FormSettingExplanation>
 				</FormFieldset>
 
 				{ this.renderBlogActionFields() }
 
-				<FormSectionHeading>{ translate( 'Please Read Carefully' ) }</FormSectionHeading>
+				<FormSectionHeading>
+					{ translate( 'Please Read Carefully' ) }
+				</FormSectionHeading>
 
 				<p>
 					{ translate(
 						'You are about to change your username, which is currently {{strong}}%(username)s{{/strong}}. ' +
-						'You will not be able to change your username back.',
+							'You will not be able to change your username back.',
 						{
 							args: {
-								username: user.get().username
+								username: user.get().username,
 							},
 							components: {
-								strong: <strong />
-							}
+								strong: <strong />,
+							},
 						}
 					) }
 				</p>
@@ -626,22 +642,38 @@ const Account = React.createClass( {
 				<p>
 					{ translate(
 						'If you just want to change your display name, which is currently {{strong}}%(displayName)s{{/strong}}, ' +
-						'you can do so under {{myProfileLink}}My Profile{{/myProfileLink}}.',
+							'you can do so under {{myProfileLink}}My Profile{{/myProfileLink}}.',
 						{
 							args: {
-								displayName: user.get().display_name
+								displayName: user.get().display_name,
 							},
 							components: {
-								myProfileLink: <a href="/me" onClick={ this.recordClickEvent( 'My Profile Link in Username Change', this.props.markSaved ) } />,
-								strong: <strong />
-							}
+								myProfileLink: (
+									<a
+										href="/me"
+										onClick={ this.recordClickEvent(
+											'My Profile Link in Username Change',
+											this.props.markSaved
+										) }
+									/>
+								),
+								strong: <strong />,
+							},
 						}
 					) }
 				</p>
 
-				<p>{ translate( 'Changing your username will also affect your Gravatar profile and IntenseDebate profile addresses.' ) }</p>
+				<p>
+					{ translate(
+						'Changing your username will also affect your Gravatar profile and IntenseDebate profile addresses.'
+					) }
+				</p>
 
-				<p>{ translate( 'If you would still like to change your username, please save your changes. Otherwise, hit the cancel button below.' ) }</p>
+				<p>
+					{ translate(
+						'If you would still like to change your username, please save your changes. Otherwise, hit the cancel button below.'
+					) }
+				</p>
 
 				<FormButtonsBar>
 					<FormButton
@@ -655,7 +687,10 @@ const Account = React.createClass( {
 					<FormButton
 						isPrimary={ false }
 						type="button"
-						onClick={ this.recordClickEvent( 'Cancel Username Change Button', this.cancelUsernameChange ) }
+						onClick={ this.recordClickEvent(
+							'Cancel Username Change Button',
+							this.cancelUsernameChange
+						) }
 					>
 						{ translate( 'Cancel' ) }
 					</FormButton>
@@ -674,21 +709,27 @@ const Account = React.createClass( {
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<Card className="account__settings">
-					<form onChange={ markChanged } onSubmit={ this.submitForm } >
+					<form onChange={ markChanged } onSubmit={ this.submitForm }>
 						<FormFieldset>
-							<FormLabel htmlFor="user_login">{ translate( 'Username' ) }</FormLabel>
-								<FormTextInput
-									autoComplete="off"
-									className="account__username"
-									disabled={ this.getDisabledState() || ! this.getUserSetting( 'user_login_can_be_changed' ) }
-									id="user_login"
-									name="user_login"
-									onFocus={ this.recordFocusEvent( 'Username Field' ) }
-									onChange={ this.handleUsernameChange }
-									value={ this.getUserSetting( 'user_login' ) || '' }
-								/>
-								{ this.renderUsernameValidation() }
-								<FormSettingExplanation>{ this.renderJoinDate() }</FormSettingExplanation>
+							<FormLabel htmlFor="user_login">
+								{ translate( 'Username' ) }
+							</FormLabel>
+							<FormTextInput
+								autoComplete="off"
+								className="account__username"
+								disabled={
+									this.getDisabledState() || ! this.getUserSetting( 'user_login_can_be_changed' )
+								}
+								id="user_login"
+								name="user_login"
+								onFocus={ this.recordFocusEvent( 'Username Field' ) }
+								onChange={ this.handleUsernameChange }
+								value={ this.getUserSetting( 'user_login' ) || '' }
+							/>
+							{ this.renderUsernameValidation() }
+							<FormSettingExplanation>
+								{ this.renderJoinDate() }
+							</FormSettingExplanation>
 						</FormFieldset>
 
 						{ /* This is how we animate showing/hiding the form field sections */ }
@@ -703,14 +744,11 @@ const Account = React.createClass( {
 				</Card>
 			</Main>
 		);
-	}
+	},
 } );
 
 export default compose(
-	connect(
-		null,
-		dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch ),
-	),
+	connect( null, dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch ) ),
 	localize,
-	protectForm,
+	protectForm
 )( Account );

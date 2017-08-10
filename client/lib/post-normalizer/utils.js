@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -9,11 +10,8 @@ import url from 'url';
  */
 import safeImageURL from 'lib/safe-image-url';
 
-const IMAGE_SCALE_FACTOR = typeof window !== 'undefined' &&
-	window.devicePixelRatio &&
-	window.devicePixelRatio > 1
-	? 2
-	: 1;
+const IMAGE_SCALE_FACTOR =
+	typeof window !== 'undefined' && window.devicePixelRatio && window.devicePixelRatio > 1 ? 2 : 1;
 
 const DEFAULT_PHOTON_QUALITY = 80; // 80 was chosen after some heuristic testing as the best blend of size and quality
 
@@ -207,7 +205,7 @@ export function isFeaturedImageInContent( post ) {
 		const indexOfContentImage = findIndex(
 			post.images,
 			img => getPathname( img.src ) === featuredImagePath,
-			1,
+			1
 		); // skip first element in post.images because it is always the featuredImage
 
 		if ( indexOfContentImage > 0 ) {

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +32,7 @@ var CartStore = {
 
 		return assign( {}, value, {
 			hasLoadedFromServer: hasLoadedFromServer(),
-			hasPendingServerUpdates: hasPendingServerUpdates()
+			hasPendingServerUpdates: hasPendingServerUpdates(),
 		} );
 	},
 	setSelectedSiteId( selectedSiteId ) {
@@ -54,17 +55,17 @@ var CartStore = {
 		_synchronizer.on( 'change', emitChange );
 
 		_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
-	}
+	},
 };
 
 emitter( CartStore );
 
 function hasLoadedFromServer() {
-	return ( _synchronizer && _synchronizer.hasLoadedFromServer() );
+	return _synchronizer && _synchronizer.hasLoadedFromServer();
 }
 
 function hasPendingServerUpdates() {
-	return ( _synchronizer && _synchronizer.hasPendingServerUpdates() );
+	return _synchronizer && _synchronizer.hasPendingServerUpdates();
 }
 
 function emitChange() {
@@ -72,9 +73,7 @@ function emitChange() {
 }
 
 function update( changeFunction ) {
-	var wrappedFunction,
-		previousCart,
-		nextCart;
+	var wrappedFunction, previousCart, nextCart;
 
 	wrappedFunction = flowRight(
 		partialRight( cartValues.fillInAllCartItemAttributes, productsList.get() ),
@@ -99,7 +98,7 @@ function disable() {
 	_cartKey = null;
 }
 
-CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
+CartStore.dispatchToken = Dispatcher.register( payload => {
 	const { action } = payload;
 
 	switch ( action.type ) {
@@ -116,7 +115,9 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 			break;
 
 		case UpgradesActionTypes.GOOGLE_APPS_REGISTRATION_DATA_ADD:
-			update( cartItems.fillGoogleAppsRegistrationData( CartStore.get(), action.registrationData ) );
+			update(
+				cartItems.fillGoogleAppsRegistrationData( CartStore.get(), action.registrationData )
+			);
 			break;
 
 		case UpgradesActionTypes.CART_ITEMS_ADD:
@@ -128,7 +129,13 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 			break;
 
 		case UpgradesActionTypes.CART_ITEM_REMOVE:
-			update( cartItems.removeItemAndDependencies( action.cartItem, CartStore.get(), action.domainsWithPlansOnly ) );
+			update(
+				cartItems.removeItemAndDependencies(
+					action.cartItem,
+					CartStore.get(),
+					action.domainsWithPlansOnly
+				)
+			);
 			break;
 	}
 } );

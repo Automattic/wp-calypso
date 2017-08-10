@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,13 +29,13 @@ const MasterbarItemNew = React.createClass( {
 
 	getInitialState() {
 		return {
-			isShowingPopover: false
+			isShowingPopover: false,
 		};
 	},
 
 	setPostButtonContext( component ) {
 		this.setState( {
-			postButtonContext: component
+			postButtonContext: component,
 		} );
 	},
 
@@ -89,14 +90,15 @@ const MasterbarItemNew = React.createClass( {
 						context={ this.state.postButtonContext }
 						onClose={ this.toggleSitesPopover.bind( this, false ) }
 						groups={ true }
-						position={ this.getPopoverPosition() } />
+						position={ this.getPopoverPosition() }
+					/>
 				</MasterbarItem>
 				<AsyncLoad require="layout/masterbar/drafts" />
 			</div>
 		);
-	}
+	},
 } );
 
-export default connect( ( state ) => {
+export default connect( state => {
 	return { selectedSite: getSelectedSite( state ) };
 } )( MasterbarItemNew );

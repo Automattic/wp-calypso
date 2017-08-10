@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -24,23 +25,22 @@ export { setSection, setUpLocale } from './shared.js';
 
 const user = userFactory();
 
-export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => (
+export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) =>
 	<ReduxProvider store={ store }>
 		{ getCurrentUser( store.getState() )
-			? <Layout primary={ primary }
-				secondary={ secondary }
-				user={ user }
-				nuxWelcome={ nuxWelcome }
-				translatorInvitation={ translatorInvitation }
-			/>
+			? <Layout
+					primary={ primary }
+					secondary={ secondary }
+					user={ user }
+					nuxWelcome={ nuxWelcome }
+					translatorInvitation={ translatorInvitation }
+				/>
 			: <LayoutLoggedOut
-				primary={ primary }
-				secondary={ secondary }
-				redirectUri={ redirectUri }
-			/>
-		}
-	</ReduxProvider>
-);
+					primary={ primary }
+					secondary={ secondary }
+					redirectUri={ redirectUri }
+				/> }
+	</ReduxProvider>;
 
 export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
 
@@ -74,8 +74,5 @@ export function redirectLoggedIn( context, next ) {
 }
 
 function render( context ) {
-	ReactDom.render(
-		context.layout,
-		document.getElementById( 'wpcom' )
-	);
+	ReactDom.render( context.layout, document.getElementById( 'wpcom' ) );
 }

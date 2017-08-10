@@ -1,3 +1,4 @@
+/** @format */
 /**
  * sections-preload
  *

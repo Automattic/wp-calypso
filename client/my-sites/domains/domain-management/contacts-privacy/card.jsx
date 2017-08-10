@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,11 +21,9 @@ class ContactsPrivacyCard extends React.PureComponent {
 		privateDomain: React.PropTypes.bool.isRequired,
 		hasPrivacyProtection: React.PropTypes.bool.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired,
-		currentUserCanManage: React.PropTypes.bool.isRequired
+		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] )
+			.isRequired,
+		currentUserCanManage: React.PropTypes.bool.isRequired,
 	};
 
 	render() {
@@ -38,13 +37,17 @@ class ContactsPrivacyCard extends React.PureComponent {
 					<p className="settings-explanation">
 						{ translate(
 							'Domain owners are required to make their contact information available to the public. ' +
-							'{{a}}Learn more.{{/a}}',
+								'{{a}}Learn more.{{/a}}',
 							{
 								components: {
-									a: <a href={ support.PUBLIC_VS_PRIVATE }
-										target="_blank" rel="noopener noreferrer"
-									/>
-								}
+									a: (
+										<a
+											href={ support.PUBLIC_VS_PRIVATE }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
 							}
 						) }
 					</p>
@@ -64,7 +67,7 @@ class ContactsPrivacyCard extends React.PureComponent {
 			privateDomain,
 			selectedSite,
 			selectedDomainName,
-			translate
+			translate,
 		} = this.props;
 
 		if ( ! privacyAvailable ) {
@@ -76,11 +79,11 @@ class ContactsPrivacyCard extends React.PureComponent {
 				<Notice status="is-success" showDismiss={ false }>
 					{ translate(
 						'{{strong}}Privacy Protection{{/strong}} is turned on for this domain. ' +
-						'Your contact information is {{strong}}private{{/strong}}. ',
+							'Your contact information is {{strong}}private{{/strong}}. ',
 						{
 							components: {
-								strong: <strong />
-							}
+								strong: <strong />,
+							},
 						}
 					) }
 				</Notice>
@@ -90,19 +93,21 @@ class ContactsPrivacyCard extends React.PureComponent {
 				<Notice status="is-warning" showDismiss={ false }>
 					{ translate(
 						'{{strong}}Privacy Protection{{/strong}} is temporarily ' +
-						'disabled for this domain while the domain is being transferred. ' +
-						'Your contact information is {{strong}}public{{/strong}}. ' +
-						'{{a}}Cancel Transfer and Enable Privacy Protection{{/a}}',
+							'disabled for this domain while the domain is being transferred. ' +
+							'Your contact information is {{strong}}public{{/strong}}. ' +
+							'{{a}}Cancel Transfer and Enable Privacy Protection{{/a}}',
 						{
 							components: {
 								strong: <strong />,
-								a: <a href={
-									paths.domainManagementTransferOut(
-										selectedSite.slug,
-										selectedDomainName
-									) }
-								/>
-							}
+								a: (
+									<a
+										href={ paths.domainManagementTransferOut(
+											selectedSite.slug,
+											selectedDomainName
+										) }
+									/>
+								),
+							},
 						}
 					) }
 				</Notice>
@@ -113,18 +118,20 @@ class ContactsPrivacyCard extends React.PureComponent {
 			<Notice status="is-warning" showDismiss={ false }>
 				{ translate(
 					'{{strong}}Privacy Protection{{/strong}} is turned off for this domain. ' +
-					'Your contact information is {{strong}}public{{/strong}}. ' +
-					'{{a}}Enable Privacy Protection{{/a}}',
+						'Your contact information is {{strong}}public{{/strong}}. ' +
+						'{{a}}Enable Privacy Protection{{/a}}',
 					{
 						components: {
 							strong: <strong />,
-							a: <a href={
-								paths.domainManagementPrivacyProtection(
-									selectedSite.slug,
-									selectedDomainName
-								) }
-							/>
-						}
+							a: (
+								<a
+									href={ paths.domainManagementPrivacyProtection(
+										selectedSite.slug,
+										selectedDomainName
+									) }
+								/>
+							),
+						},
 					}
 				) }
 			</Notice>

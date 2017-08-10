@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,7 +25,7 @@ import { settingsPath } from '../../../app/util';
 
 const form = 'extensions.zoninator.newZone';
 
-const ZoneCreator = ( { siteSlug, translate } ) => (
+const ZoneCreator = ( { siteSlug, translate } ) =>
 	<div>
 		<HeaderCake backHref={ `${ settingsPath }/${ siteSlug }` }>
 			{ translate( 'Add a zone' ) }
@@ -32,22 +33,27 @@ const ZoneCreator = ( { siteSlug, translate } ) => (
 
 		<form>
 			<SectionHeader label={ translate( 'New zone' ) }>
-				<FormButton compact>{ translate( 'Save' ) }</FormButton>
+				<FormButton compact>
+					{ translate( 'Save' ) }
+				</FormButton>
 			</SectionHeader>
 			<CompactCard>
 				<FormFieldset>
-					<FormLabel htmlFor="zoneName">{ translate( 'Zone name' ) }</FormLabel>
+					<FormLabel htmlFor="zoneName">
+						{ translate( 'Zone name' ) }
+					</FormLabel>
 					<ReduxFormTextInput name="zoneName" />
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="zoneDescription">{ translate( 'Zone description' ) }</FormLabel>
+					<FormLabel htmlFor="zoneDescription">
+						{ translate( 'Zone description' ) }
+					</FormLabel>
 					<ReduxFormTextarea name="zoneDescription" />
 				</FormFieldset>
 			</CompactCard>
 		</form>
-	</div>
-);
+	</div>;
 
 ZoneCreator.propTypes = {
 	siteSlug: PropTypes.string,
@@ -62,8 +68,4 @@ const createReduxForm = reduxForm( {
 	form,
 } );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	createReduxForm,
-)( ZoneCreator );
+export default flowRight( connectComponent, localize, createReduxForm )( ZoneCreator );

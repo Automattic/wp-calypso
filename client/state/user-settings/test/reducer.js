@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,10 +18,7 @@ import reducer, { settings, unsavedSettings } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'settings',
-			'unsavedSettings',
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'settings', 'unsavedSettings' ] );
 	} );
 
 	describe( 'settings', () => {
@@ -33,27 +31,27 @@ describe( 'reducer', () => {
 		it( 'should store user settings after initial update', () => {
 			const state = settings( null, {
 				type: USER_SETTINGS_UPDATE,
-				settingValues: { foo: 'bar' }
+				settingValues: { foo: 'bar' },
 			} );
 
 			expect( state ).to.eql( {
-				foo: 'bar'
+				foo: 'bar',
 			} );
 		} );
 
 		it( 'should keep existing settings after update', () => {
 			const original = deepFreeze( {
-				foo: 'bar'
+				foo: 'bar',
 			} );
 
 			const state = settings( original, {
 				type: USER_SETTINGS_UPDATE,
-				settingValues: { baz: 'qux' }
+				settingValues: { baz: 'qux' },
 			} );
 
 			expect( state ).to.eql( {
 				foo: 'bar',
-				baz: 'qux'
+				baz: 'qux',
 			} );
 		} );
 	} );
@@ -69,55 +67,55 @@ describe( 'reducer', () => {
 			const state = unsavedSettings( undefined, {
 				type: USER_SETTINGS_UNSAVED_SET,
 				settingName: 'foo',
-				value: 'bar'
+				value: 'bar',
 			} );
 
 			expect( state ).to.eql( {
-				foo: 'bar'
+				foo: 'bar',
 			} );
 		} );
 
 		it( 'should store additional user setting after it is set', () => {
 			const original = deepFreeze( {
-				foo: 'bar'
+				foo: 'bar',
 			} );
 
 			const state = unsavedSettings( original, {
 				type: USER_SETTINGS_UNSAVED_SET,
 				settingName: 'baz',
-				value: 'qux'
+				value: 'qux',
 			} );
 
 			expect( state ).to.eql( {
 				foo: 'bar',
-				baz: 'qux'
+				baz: 'qux',
 			} );
 		} );
 
 		it( 'should remove a user setting', () => {
 			const original = deepFreeze( {
 				foo: 'bar',
-				baz: 'qux'
+				baz: 'qux',
 			} );
 
 			const state = unsavedSettings( original, {
 				type: USER_SETTINGS_UNSAVED_REMOVE,
-				settingName: 'baz'
+				settingName: 'baz',
 			} );
 
 			expect( state ).to.eql( {
-				foo: 'bar'
+				foo: 'bar',
 			} );
 		} );
 
 		it( 'should clear user settings after successful save', () => {
 			const original = deepFreeze( {
 				foo: 'bar',
-				baz: 'qux'
+				baz: 'qux',
 			} );
 
 			const state = unsavedSettings( original, {
-				type: USER_SETTINGS_UNSAVED_CLEAR
+				type: USER_SETTINGS_UNSAVED_CLEAR,
 			} );
 
 			expect( state ).to.eql( {} );
@@ -126,16 +124,16 @@ describe( 'reducer', () => {
 		it( 'should clear user settings after successful partial save', () => {
 			const original = deepFreeze( {
 				foo: 'bar',
-				baz: 'qux'
+				baz: 'qux',
 			} );
 
 			const state = unsavedSettings( original, {
 				type: USER_SETTINGS_UNSAVED_CLEAR,
-				settingNames: [ 'baz' ]
+				settingNames: [ 'baz' ],
 			} );
 
 			expect( state ).to.eql( {
-				foo: 'bar'
+				foo: 'bar',
 			} );
 		} );
 	} );

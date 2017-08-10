@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +15,7 @@ import {
 	updatePasswordResetUserData,
 } from 'state/account-recovery/reset/actions';
 
-export const fromApi = data => ( [
+export const fromApi = data => [
 	{
 		email: data.primary_email,
 		sms: data.primary_sms,
@@ -25,7 +26,7 @@ export const fromApi = data => ( [
 		sms: data.secondary_sms,
 		name: 'secondary',
 	},
-] );
+];
 
 export const validate = ( { primary_email, primary_sms, secondary_email, secondary_sms } ) => {
 	if ( ! [ primary_email, primary_sms, secondary_email, secondary_sms ].every( isString ) ) {
@@ -36,15 +37,17 @@ export const validate = ( { primary_email, primary_sms, secondary_email, seconda
 export const handleRequestResetOptions = ( { dispatch }, action ) => {
 	const { userData } = action;
 
-	wpcom.req.get( {
-		body: userData,
-		apiNamespace: 'wpcom/v2',
-		path: '/account-recovery/lookup',
-	} ).then( data => {
-		dispatch( fetchResetOptionsSuccess( fromApi( tap( data, validate ) ) ) );
-		dispatch( updatePasswordResetUserData( userData ) );
-	} )
-	.catch( error => dispatch( fetchResetOptionsError( error ) ) );
+	wpcom.req
+		.get( {
+			body: userData,
+			apiNamespace: 'wpcom/v2',
+			path: '/account-recovery/lookup',
+		} )
+		.then( data => {
+			dispatch( fetchResetOptionsSuccess( fromApi( tap( data, validate ) ) ) );
+			dispatch( updatePasswordResetUserData( userData ) );
+		} )
+		.catch( error => dispatch( fetchResetOptionsError( error ) ) );
 };
 
 export default {

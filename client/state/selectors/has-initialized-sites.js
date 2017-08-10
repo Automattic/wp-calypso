@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns true if site selection has occured, else false
  * @param  {Object}  state Global state tree

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,11 +11,10 @@ import { Field } from 'redux-form';
 import FormToggle from 'components/forms/form-toggle/compact';
 
 // eslint-disable-next-line no-unused-vars
-const RenderToggle = ( { input, meta, text, type, ...otherProps } ) => (
+const RenderToggle = ( { input, meta, text, type, ...otherProps } ) =>
 	<FormToggle { ...input } { ...otherProps }>
 		{ text }
-	</FormToggle>
-);
+	</FormToggle>;
 
 class ReduxFormToggle extends Component {
 	static propTypes = {

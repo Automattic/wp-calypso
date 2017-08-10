@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,22 +25,20 @@ const FINISHED_RESPONSE = deepFreeze( {
 		message: '',
 		percent: 100,
 		status: 'finished',
-	}
+	},
 } );
 
 describe( 'receiveRestoreProgress', () => {
 	it( 'should dispatch updateRewindRestoreProgress', () => {
 		const dispatch = sinon.spy();
 		receiveRestoreProgress( { dispatch }, { siteId, timestamp, restoreId }, FINISHED_RESPONSE );
-		const expectedAction = updateRewindRestoreProgress(
-			siteId, timestamp, restoreId, {
-				errorCode: '',
-				failureReason: '',
-				message: '',
-				percent: 100,
-				status: 'finished',
-			}
-		);
+		const expectedAction = updateRewindRestoreProgress( siteId, timestamp, restoreId, {
+			errorCode: '',
+			failureReason: '',
+			message: '',
+			percent: 100,
+			status: 'finished',
+		} );
 		expectedAction.freshness = sinon.match.number;
 		expect( dispatch ).to.have.been.calledWith( expectedAction );
 	} );

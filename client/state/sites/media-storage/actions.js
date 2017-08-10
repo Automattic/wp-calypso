@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -6,7 +7,7 @@ import {
 	SITE_MEDIA_STORAGE_RECEIVE,
 	SITE_MEDIA_STORAGE_REQUEST,
 	SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
-	SITE_MEDIA_STORAGE_REQUEST_FAILURE
+	SITE_MEDIA_STORAGE_REQUEST_FAILURE,
 } from 'state/action-types';
 
 /**
@@ -21,7 +22,7 @@ export function receiveMediaStorage( mediaStorage, siteId ) {
 	return {
 		type: SITE_MEDIA_STORAGE_RECEIVE,
 		mediaStorage,
-		siteId
+		siteId,
 	};
 }
 
@@ -31,23 +32,28 @@ export function receiveMediaStorage( mediaStorage, siteId ) {
  * @returns {Function}        Action thunk
  */
 export function requestMediaStorage( siteId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: SITE_MEDIA_STORAGE_REQUEST,
-			siteId
+			siteId,
 		} );
-		return wpcom.undocumented().site( siteId ).mediaStorage().then( ( mediaStorage ) => {
-			dispatch( receiveMediaStorage( mediaStorage, siteId ) );
-			dispatch( {
-				type: SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
-				siteId
+		return wpcom
+			.undocumented()
+			.site( siteId )
+			.mediaStorage()
+			.then( mediaStorage => {
+				dispatch( receiveMediaStorage( mediaStorage, siteId ) );
+				dispatch( {
+					type: SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
+					siteId,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: SITE_MEDIA_STORAGE_REQUEST_FAILURE,
+					siteId,
+					error,
+				} );
 			} );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: SITE_MEDIA_STORAGE_REQUEST_FAILURE,
-				siteId,
-				error
-			} );
-		} );
 	};
 }

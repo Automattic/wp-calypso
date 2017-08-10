@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -12,7 +13,7 @@ import Main from 'components/main';
 import {
 	getCurrentPlan,
 	isCurrentPlanExpiring,
-	isRequestingSitePlans
+	isRequestingSitePlans,
 } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -58,20 +59,24 @@ class CurrentPlan extends Component {
 		const planConstObj = getPlan( plan ),
 			title = translate( 'Your site is on a %(planName)s plan', {
 				args: {
-					planName: planConstObj.getTitle()
-				}
+					planName: planConstObj.getTitle(),
+				},
 			} );
 
-		let tagLine = translate( 'Unlock the full potential of your site with all the features included in your plan.' );
+		let tagLine = translate(
+			'Unlock the full potential of your site with all the features included in your plan.'
+		);
 
 		if ( plan === PLAN_BUSINESS ) {
-			tagLine = translate( 'Learn more about everything included with Business and take advantage of' +
-				' its professional features.' );
+			tagLine = translate(
+				'Learn more about everything included with Business and take advantage of' +
+					' its professional features.'
+			);
 		}
 
 		return {
 			title: title,
-			tagLine: tagLine
+			tagLine: tagLine,
 		};
 	}
 
@@ -105,12 +110,10 @@ class CurrentPlan extends Component {
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-				<PlansNavigation
-					path={ context.path }
-					selectedSite={ selectedSite }
-				/>
+				<PlansNavigation path={ context.path } selectedSite={ selectedSite } />
 
-				{ showDomainWarnings && <DomainWarnings
+				{ showDomainWarnings &&
+					<DomainWarnings
 						domains={ domains }
 						position="current-plan"
 						selectedSite={ selectedSite }
@@ -120,9 +123,9 @@ class CurrentPlan extends Component {
 							'unverifiedDomainsCanManage',
 							'pendingGappsTosAcceptanceDomains',
 							'unverifiedDomainsCannotManage',
-							'wrongNSMappedDomains'
-						] } />
-				}
+							'wrongNSMappedDomains',
+						] }
+					/> }
 
 				<ProductPurchaseFeatures>
 					<CurrentPlanHeader
@@ -135,10 +138,7 @@ class CurrentPlan extends Component {
 						isExpiring={ isExpiring }
 						isAutomatedTransfer={ isAutomatedTransfer }
 					/>
-					<ProductPurchaseFeaturesList
-						plan={ currentPlanSlug }
-						isPlaceholder={ isLoading }
-					/>
+					<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
 				</ProductPurchaseFeatures>
 
 				<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
@@ -147,26 +147,24 @@ class CurrentPlan extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const selectedSite = getSelectedSite( state );
-		const selectedSiteId = getSelectedSiteId( state );
-		const domains = getDecoratedSiteDomains( state, selectedSiteId );
+export default connect( ( state, ownProps ) => {
+	const selectedSite = getSelectedSite( state );
+	const selectedSiteId = getSelectedSiteId( state );
+	const domains = getDecoratedSiteDomains( state, selectedSiteId );
 
-		const isWpcom = ! isJetpackSite( state, selectedSiteId );
-		const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
+	const isWpcom = ! isJetpackSite( state, selectedSiteId );
+	const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
 
-		return {
-			selectedSite,
-			selectedSiteId,
-			domains,
-			isAutomatedTransfer,
-			context: ownProps.context,
-			currentPlan: getCurrentPlan( state, selectedSiteId ),
-			isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
-			shouldShowDomainWarnings: isWpcom || isAutomatedTransfer,
-			hasDomainsLoaded: !! domains,
-			isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
-		};
-	}
-)( localize( CurrentPlan ) );
+	return {
+		selectedSite,
+		selectedSiteId,
+		domains,
+		isAutomatedTransfer,
+		context: ownProps.context,
+		currentPlan: getCurrentPlan( state, selectedSiteId ),
+		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
+		shouldShowDomainWarnings: isWpcom || isAutomatedTransfer,
+		hasDomainsLoaded: !! domains,
+		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
+	};
+} )( localize( CurrentPlan ) );

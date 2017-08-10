@@ -1,1 +1,2 @@
-export default ( state ) => state.reader.follows.lastSyncTime;
+/** @format */
+export default state => state.reader.follows.lastSyncTime;

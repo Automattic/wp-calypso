@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,17 +12,8 @@ import FormToggle from 'components/forms/form-toggle/compact';
 import classNames from 'classnames';
 import SocialLogo from 'social-logos';
 
-const PostShareConnection = ( {
-	connection,
-	isActive,
-	onToggle,
-} ) => {
-	const {
-		external_display,
-		external_profile_picture,
-		keyring_connection_ID,
-		service,
-	} = connection;
+const PostShareConnection = ( { connection, isActive, onToggle } ) => {
+	const { external_display, external_profile_picture, keyring_connection_ID, service } = connection;
 
 	const toggle = () => onToggle( keyring_connection_ID );
 
@@ -29,17 +21,14 @@ const PostShareConnection = ( {
 		'post-share__service': true,
 		[ service ]: true,
 		'is-active': isActive,
-		'is-broken': status === 'broken'
+		'is-broken': status === 'broken',
 	} );
 
 	const backgroundImage = `url(${ cssSafeUrl( external_profile_picture ) })`;
 
 	return (
 		<div onClick={ toggle } className={ classes }>
-			<div
-				style={ { backgroundImage } }
-				className="post-share__service-account-image"
-			>
+			<div style={ { backgroundImage } } className="post-share__service-account-image">
 				&nbsp;
 			</div>
 
@@ -48,7 +37,9 @@ const PostShareConnection = ( {
 			</div>
 
 			<div className="post-share__service-account-name">
-				<span>{ external_display }</span>
+				<span>
+					{ external_display }
+				</span>
 			</div>
 			<FormToggle checked={ isActive } />
 		</div>

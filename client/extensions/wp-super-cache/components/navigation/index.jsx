@@ -1,8 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { get } from 'lodash';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -45,7 +46,7 @@ const Navigation = ( { activeTab, site, translate } ) => {
 		return tabs;
 	};
 
-	const renderTabItems = ( tabs ) => {
+	const renderTabItems = tabs => {
 		return tabs.map( tab => {
 			let path = '/extensions/wp-super-cache';
 
@@ -61,7 +62,8 @@ const Navigation = ( { activeTab, site, translate } ) => {
 				<SectionNavTabItem
 					key={ `wp-super-cache-${ tab }` }
 					path={ path }
-					selected={ ( activeTab || Tabs.EASY ) === tab }>
+					selected={ ( activeTab || Tabs.EASY ) === tab }
+				>
 					{ getLabel( tab ) }
 				</SectionNavTabItem>
 			);
@@ -71,8 +73,7 @@ const Navigation = ( { activeTab, site, translate } ) => {
 	const pluginUrl = addSiteFragment( '/plugins/wp-super-cache', get( site, 'slug' ) );
 	return (
 		<div>
-			<HeaderCake backText={ translate( 'Plugin Overview' ) }
-				backHref={ pluginUrl }>
+			<HeaderCake backText={ translate( 'Plugin Overview' ) } backHref={ pluginUrl }>
 				WP Super Cache
 			</HeaderCake>
 			<SectionNav selectedText="Settings">

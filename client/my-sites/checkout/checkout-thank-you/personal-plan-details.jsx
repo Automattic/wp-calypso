@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -27,7 +28,7 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 				title={ translate( 'Advertising Removed' ) }
 				description={ translate(
 					'With your plan, all WordPress.com advertising has been removed from your site. ' +
-					'You can upgrade to a Business plan to also remove the WordPress.com footer credit.'
+						'You can upgrade to a Business plan to also remove the WordPress.com footer credit.'
 				) }
 			/>
 		</div>
@@ -35,11 +36,9 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 };
 
 PersonalPlanDetails.propTypes = {
-	selectedSite: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.object
-	] ).isRequired,
-	sitePlans: React.PropTypes.object.isRequired
+	selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.bool, React.PropTypes.object ] )
+		.isRequired,
+	sitePlans: React.PropTypes.object.isRequired,
 };
 
 export default localize( PersonalPlanDetails );

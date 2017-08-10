@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,20 +29,16 @@ class JetpackPlansGrid extends Component {
 	};
 
 	renderConnectHeader() {
-		const {
-			isLanding,
-			showFirst,
-			translate,
-		} = this.props;
+		const { isLanding, showFirst, translate } = this.props;
 
 		let headerText = translate( 'Your site is now connected!' );
-		let subheaderText = translate( 'Now pick a plan that\'s right for you.' );
+		let subheaderText = translate( "Now pick a plan that's right for you." );
 
 		if ( showFirst ) {
 			headerText = translate( 'You are moments away from connecting your site' );
 		}
 		if ( isLanding ) {
-			headerText = translate( 'Pick a plan that\'s right for you.' );
+			headerText = translate( "Pick a plan that's right for you." );
 			subheaderText = '';
 		}
 		return (
@@ -49,7 +46,8 @@ class JetpackPlansGrid extends Component {
 				headerText={ headerText }
 				subHeaderText={ subheaderText }
 				step={ 1 }
-				steps={ 3 } />
+				steps={ 3 }
+			/>
 		);
 	}
 
@@ -67,7 +65,8 @@ class JetpackPlansGrid extends Component {
 							onUpgradeClick={ this.props.onSelect }
 							intervalType={ this.props.interval }
 							hideFreePlan={ this.props.hideFreePlan }
-							displayJetpackPlans={ true } />
+							displayJetpackPlans={ true }
+						/>
 					</div>
 				</div>
 			</Main>

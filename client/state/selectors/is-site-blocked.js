@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns true if a site is known to be blocked
  *

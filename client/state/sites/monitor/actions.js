@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -18,15 +19,17 @@ import wp from 'lib/wp';
  * @param  {Int}       siteId  ID of the site.
  * @return {Function}          Action thunk to request the Jetpack monitor settings when called.
  */
-export const requestSiteMonitorSettings = ( siteId ) => {
-	return ( dispatch ) => {
+export const requestSiteMonitorSettings = siteId => {
+	return dispatch => {
 		dispatch( {
 			type: SITE_MONITOR_SETTINGS_REQUEST,
-			siteId
+			siteId,
 		} );
 
-		return wp.undocumented().fetchMonitorSettings( siteId )
-			.then( ( response ) => {
+		return wp
+			.undocumented()
+			.fetchMonitorSettings( siteId )
+			.then( response => {
 				dispatch( {
 					type: SITE_MONITOR_SETTINGS_RECEIVE,
 					siteId,
@@ -37,7 +40,8 @@ export const requestSiteMonitorSettings = ( siteId ) => {
 					type: SITE_MONITOR_SETTINGS_REQUEST_SUCCESS,
 					siteId,
 				} );
-			} ).catch( ( error ) => {
+			} )
+			.catch( error => {
 				dispatch( {
 					type: SITE_MONITOR_SETTINGS_REQUEST_FAILURE,
 					siteId,
@@ -55,7 +59,7 @@ export const requestSiteMonitorSettings = ( siteId ) => {
  * @return {Function}            Action thunk to update the Jetpack monitor settings when called.
  */
 export const updateSiteMonitorSettings = ( siteId, settings ) => {
-	return ( dispatch ) => {
+	return dispatch => {
 		const { email_notifications, wp_note_notifications } = settings;
 
 		dispatch( {
@@ -64,14 +68,17 @@ export const updateSiteMonitorSettings = ( siteId, settings ) => {
 			settings,
 		} );
 
-		return wp.undocumented().updateMonitorSettings( siteId, email_notifications, wp_note_notifications )
+		return wp
+			.undocumented()
+			.updateMonitorSettings( siteId, email_notifications, wp_note_notifications )
 			.then( () => {
 				dispatch( {
 					type: SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 					siteId,
 					settings,
 				} );
-			} ).catch( ( error ) => {
+			} )
+			.catch( error => {
 				dispatch( {
 					type: SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 					siteId,

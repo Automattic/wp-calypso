@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,7 @@ export const getMethodSummary = ( method, currency ) => {
 			}
 
 			return translate( 'Minimum order amount: %s', {
-				args: [ formatCurrency( method.min_amount, currency ) || method.min_amount ]
+				args: [ formatCurrency( method.min_amount, currency ) || method.min_amount ],
 			} );
 		case 'flat_rate':
 		case 'local_pickup':

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,17 +13,11 @@ import {
 	EMAIL_VERIFY_REQUEST_FAILURE,
 	EMAIL_VERIFY_STATE_RESET,
 } from 'state/action-types';
-import reducer, {
-	status,
-	errorMessage,
-} from '../reducer';
+import reducer, { status, errorMessage } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'exports expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'status',
-			'errorMessage'
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'status', 'errorMessage' ] );
 	} );
 
 	describe( '#status', () => {
@@ -70,9 +65,7 @@ describe( 'reducer', () => {
 
 		it( 'returns the error message when there is an error sending an email', () => {
 			const message = 'This is an error message';
-			const result = errorMessage( undefined,
-				{ type: EMAIL_VERIFY_REQUEST_FAILURE, message }
-			);
+			const result = errorMessage( undefined, { type: EMAIL_VERIFY_REQUEST_FAILURE, message } );
 			expect( result ).to.equal( message );
 		} );
 

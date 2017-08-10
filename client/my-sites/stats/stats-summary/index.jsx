@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -30,7 +31,7 @@ class StatsSummaryChart extends Component {
 	};
 
 	static defaultProps = {
-		onClick: () => {}
+		onClick: () => {},
 	};
 
 	barClick = bar => {
@@ -43,21 +44,21 @@ class StatsSummaryChart extends Component {
 		const { data, labelClass, numberFormat, sectionClass, selected, tabLabel } = this.props;
 		return data.map( record => {
 			const className = classNames( {
-				'is-selected': isEqual( selected, record )
+				'is-selected': isEqual( selected, record ),
 			} );
 
 			const tooltipData = [
 				{
 					label: record.periodLabel || record.period,
 					className: 'is-date-label',
-					value: null
+					value: null,
 				},
 				{
 					label: tabLabel,
 					className: sectionClass,
 					value: numberFormat( record.value ),
-					icon: labelClass
-				}
+					icon: labelClass,
+				},
 			];
 
 			return {
@@ -66,28 +67,36 @@ class StatsSummaryChart extends Component {
 				nestedValue: null,
 				className: className,
 				data: record,
-				tooltipData
+				tooltipData,
 			};
 		} );
 	}
 
 	render() {
-		const { dataKey, isLoading, labelClass, labelKey, numberFormat, selected, tabLabel } = this.props;
+		const {
+			dataKey,
+			isLoading,
+			labelClass,
+			labelKey,
+			numberFormat,
+			selected,
+			tabLabel,
+		} = this.props;
 		const label = selected ? ': ' + selected[ labelKey ] : '';
 		const tabOptions = {
 			attr: labelKey,
 			value: selected ? numberFormat( selected[ dataKey ] ) : null,
 			selected: true,
 			gridicon: labelClass,
-			label: tabLabel + label
+			label: tabLabel + label,
 		};
 
 		return (
-			<Card className={ classNames( 'stats-module', 'is-summary-chart', { 'is-loading': isLoading } ) }>
+			<Card
+				className={ classNames( 'stats-module', 'is-summary-chart', { 'is-loading': isLoading } ) }
+			>
 				<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
-				<ElementChart
-					data={ this.buildChartData() }
-					barClick={ this.barClick } />
+				<ElementChart data={ this.buildChartData() } barClick={ this.barClick } />
 				<StatsTabs>
 					<StatsTab { ...tabOptions } />
 				</StatsTabs>
@@ -96,12 +105,6 @@ class StatsSummaryChart extends Component {
 	}
 }
 
-const connectComponent = connect(
-	() => ( {} ),
-	{ recordGoogleEvent }
-);
+const connectComponent = connect( () => ( {} ), { recordGoogleEvent } );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( StatsSummaryChart );
+export default flowRight( connectComponent, localize )( StatsSummaryChart );

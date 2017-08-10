@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Normalize API Settings
  * @param  {Object} settings Raw API settings

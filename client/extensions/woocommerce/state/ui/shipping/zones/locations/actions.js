@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -19,7 +20,7 @@ import {
  * @param {Number} siteId Site ID.
  * @return {Object} Action object.
  */
-export const openEditLocations = ( siteId ) => {
+export const openEditLocations = siteId => {
 	return {
 		type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_EDIT,
 		siteId,
@@ -31,7 +32,7 @@ export const openEditLocations = ( siteId ) => {
  * @param {Number} siteId Site ID.
  * @return {Object} Action object.
  */
-export const closeEditLocations = ( siteId ) => {
+export const closeEditLocations = siteId => {
 	return {
 		type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_CLOSE,
 		siteId,
@@ -43,7 +44,7 @@ export const closeEditLocations = ( siteId ) => {
  * @param {Number} siteId Site ID.
  * @return {Object} Action object.
  */
-export const cancelEditLocations = ( siteId ) => {
+export const cancelEditLocations = siteId => {
 	return {
 		type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_CANCEL,
 		siteId,
@@ -117,7 +118,7 @@ export const editPostcode = ( siteId, postcode ) => {
  * @param {Number} siteId Site ID.
  * @return {Object} Action object.
  */
-export const filterByWholeCountry = ( siteId ) => {
+export const filterByWholeCountry = siteId => {
 	return {
 		type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_FILTER_BY_WHOLE_COUNTRY,
 		siteId,
@@ -129,7 +130,7 @@ export const filterByWholeCountry = ( siteId ) => {
  * @param {Number} siteId Site ID.
  * @return {Object} Action object.
  */
-export const filterByState = ( siteId ) => {
+export const filterByState = siteId => {
 	return {
 		type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_FILTER_BY_STATE,
 		siteId,
@@ -141,7 +142,7 @@ export const filterByState = ( siteId ) => {
  * @param {Number} siteId Site ID.
  * @return {Object} Action object.
  */
-export const filterByPostcode = ( siteId ) => {
+export const filterByPostcode = siteId => {
 	return {
 		type: WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_FILTER_BY_POSTCODE,
 		siteId,

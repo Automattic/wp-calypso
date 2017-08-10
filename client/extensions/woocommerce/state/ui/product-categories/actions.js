@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -49,4 +50,3 @@ export function clearProductCategoryEdits( siteId ) {
 		siteId,
 	};
 }
-

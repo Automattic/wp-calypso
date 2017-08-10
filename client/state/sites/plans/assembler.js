@@ -1,16 +1,19 @@
+/** @format */
 /**
  * External dependencies
  */
 import moment from 'moment';
 
-const createSitePlanObject = ( plan ) => {
+const createSitePlanObject = plan => {
 	if ( ! plan ) {
 		return {};
 	}
 
 	return {
 		autoRenew: Boolean( plan.auto_renew ), // Always true for plans paid with credits.
-		autoRenewDateMoment: plan.auto_renew_date ? moment( plan.auto_renew_date ).startOf( 'day' ) : null,
+		autoRenewDateMoment: plan.auto_renew_date
+			? moment( plan.auto_renew_date ).startOf( 'day' )
+			: null,
 		canStartTrial: Boolean( plan.can_start_trial ),
 		currentPlan: Boolean( plan.current_plan ),
 		currencyCode: plan.currency_code,
@@ -35,10 +38,10 @@ const createSitePlanObject = ( plan ) => {
 		userFacingExpiryMoment: plan.user_facing_expiry
 			? moment( plan.user_facing_expiry ).startOf( 'day' )
 			: null,
-		userIsOwner: Boolean( plan.user_is_owner )
+		userIsOwner: Boolean( plan.user_is_owner ),
 	};
 };
 
 export default {
-	createSitePlanObject
+	createSitePlanObject,
 };

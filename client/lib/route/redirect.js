@@ -1,3 +1,4 @@
+/** @format */
 var page = require( 'page' ),
 	config = require( 'config' );
 

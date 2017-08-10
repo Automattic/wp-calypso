@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -53,7 +54,4 @@ function getDomainNameFromReceiptOrCart( receipt, cart ) {
 	return null;
 }
 
-export {
-	getDomainNameFromReceiptOrCart,
-	getDomainType,
-};
+export { getDomainNameFromReceiptOrCart, getDomainType };

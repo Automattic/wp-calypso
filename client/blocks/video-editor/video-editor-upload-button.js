@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -30,24 +31,19 @@ class VideoEditorUploadButton extends Component {
 		if ( file ) {
 			this.props.onUploadImage( file );
 		}
-	}
+	};
 
 	render() {
-		const {
-			children,
-			isPosterUpdating,
-			onClick,
-		} = this.props;
+		const { children, isPosterUpdating, onClick } = this.props;
 
 		return (
 			<form className="video-editor__upload-form">
-				<FilePicker
-					accept="image/*"
-					onPick={ this.uploadImage }>
+				<FilePicker accept="image/*" onPick={ this.uploadImage }>
 					<Button
 						className="video-editor__controls-button"
 						disabled={ isPosterUpdating }
-						onClick={ onClick }>
+						onClick={ onClick }
+					>
 						{ children }
 					</Button>
 				</FilePicker>

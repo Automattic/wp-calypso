@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Walks from a given node with `nextNodeProp` as the next node in a graph, summing the values in `valueProp`.
  * e.g. recursivelyWalkAndSum( node, 'offsetTop', 'offsetParent' ).
@@ -10,7 +11,7 @@
 function recursivelyWalkAndSum( node, valueProp, nextNodeProp, value = 0 ) {
 	value += node[ valueProp ];
 	if ( ! node[ nextNodeProp ] ) {
-		return value
+		return value;
 	}
 	return recursivelyWalkAndSum( node[ nextNodeProp ], valueProp, value );
 }

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -15,15 +16,10 @@ import LayoutLoggedOut from 'layout/logged-out';
  */
 export { setSection, setUpLocale } from './shared.js';
 
-const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri } ) => (
+const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri } ) =>
 	<ReduxProvider store={ store }>
-		<LayoutLoggedOut
-			primary={ primary }
-			secondary={ secondary }
-			redirectUri={ redirectUri }
-		/>
-	</ReduxProvider>
-);
+		<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+	</ReduxProvider>;
 
 /**
  * @param { object } context -- Middleware context

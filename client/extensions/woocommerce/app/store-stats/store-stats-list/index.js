@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,21 +19,25 @@ const StoreStatsList = ( { data, values } ) => {
 	const titles = (
 		<TableRow isHeader>
 			{ values.map( ( value, i ) => {
-				return <TableItem isHeader key={ i } isTitle={ 0 === i }>{ value.title }</TableItem>;
+				return (
+					<TableItem isHeader key={ i } isTitle={ 0 === i }>
+						{ value.title }
+					</TableItem>
+				);
 			} ) }
 		</TableRow>
 	);
 	return (
 		<Table header={ titles } compact>
-			{ data.map( ( row, i ) => (
+			{ data.map( ( row, i ) =>
 				<TableRow key={ i }>
-					{ values.map( ( value, j ) => (
+					{ values.map( ( value, j ) =>
 						<TableItem key={ value.key } isTitle={ 0 === j }>
 							{ formatValue( row[ value.key ], value.format, row.currency ) }
 						</TableItem>
-					) ) }
+					) }
 				</TableRow>
-			) ) }
+			) }
 		</Table>
 	);
 };
@@ -42,10 +47,8 @@ StoreStatsList.propTypes = {
 	values: PropTypes.array.isRequired,
 };
 
-export default connect(
-	( state, { siteId, statType, query } ) => {
-		return {
-			data: getSiteStatsNormalizedData( state, siteId, statType, query ),
-		};
-	}
-)( StoreStatsList );
+export default connect( ( state, { siteId, statType, query } ) => {
+	return {
+		data: getSiteStatsNormalizedData( state, siteId, statType, query ),
+	};
+} )( StoreStatsList );

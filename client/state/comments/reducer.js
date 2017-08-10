@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -92,7 +93,7 @@ export function items( state = {}, action ) {
 				...state,
 				[ stateKey ]: map(
 					state[ stateKey ],
-					updateComment( commentId, { i_like: true, like_count } ),
+					updateComment( commentId, { i_like: true, like_count } )
 				),
 			};
 		case COMMENTS_UNLIKE:
@@ -100,7 +101,7 @@ export function items( state = {}, action ) {
 				...state,
 				[ stateKey ]: map(
 					state[ stateKey ],
-					updateComment( commentId, { i_like: false, like_count } ),
+					updateComment( commentId, { i_like: false, like_count } )
 				),
 			};
 		case COMMENTS_ERROR:
@@ -112,7 +113,7 @@ export function items( state = {}, action ) {
 					updateComment( commentId, {
 						placeholderState: PLACEHOLDER_STATE.ERROR,
 						placeholderError: error,
-					} ),
+					} )
 				),
 			};
 	}
@@ -169,7 +170,7 @@ export const fetchStatus = createReducer(
 				? state
 				: { ...state, [ stateKey ]: nextState };
 		},
-	},
+	}
 );
 
 /***
@@ -189,7 +190,7 @@ export const totalCommentsCount = createReducer(
 			const key = getStateKey( action.siteId, action.postId );
 			return { ...state, [ key ]: state[ key ] + 1 };
 		},
-	},
+	}
 );
 
 /**
@@ -210,7 +211,7 @@ export const errors = createReducer(
 				[ key ]: { error: true },
 			};
 		},
-	},
+	}
 );
 
 export const treesInitializedReducer = ( state = {}, action ) => {
@@ -220,7 +221,10 @@ export const treesInitializedReducer = ( state = {}, action ) => {
 	return state;
 };
 
-export const treesInitialized = keyedReducer( 'siteId', keyedReducer( 'status', treesInitializedReducer ) );
+export const treesInitialized = keyedReducer(
+	'siteId',
+	keyedReducer( 'status', treesInitializedReducer )
+);
 
 export default combineReducers( {
 	items,

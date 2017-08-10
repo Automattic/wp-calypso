@@ -1,10 +1,8 @@
+/** @format */
 /**
  * Internal dependencies
  */
-import {
-	READER_SIDEBAR_LISTS_TOGGLE,
-	READER_SIDEBAR_TAGS_TOGGLE
-} from 'state/action-types';
+import { READER_SIDEBAR_LISTS_TOGGLE, READER_SIDEBAR_TAGS_TOGGLE } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
 export function isListsOpen( state = false, action ) {
@@ -27,5 +25,5 @@ export function isTagsOpen( state = false, action ) {
 
 export default combineReducers( {
 	isListsOpen,
-	isTagsOpen
+	isTagsOpen,
 } );

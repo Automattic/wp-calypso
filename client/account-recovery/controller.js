@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,30 +12,21 @@ import { ACCOUNT_RECOVERY_STEPS as STEPS } from 'account-recovery/constants';
 
 export const lostPassword = ( context, next ) => {
 	context.primary = (
-		<AccountRecoveryRoot
-			basePath={ context.path }
-			firstStep={ STEPS.LOST_PASSWORD }
-		/>
+		<AccountRecoveryRoot basePath={ context.path } firstStep={ STEPS.LOST_PASSWORD } />
 	);
 	next();
 };
 
 export const forgotUsername = ( context, next ) => {
 	context.primary = (
-		<AccountRecoveryRoot
-			basePath={ context.path }
-			firstStep={ STEPS.FORGOT_USERNAME }
-		/>
+		<AccountRecoveryRoot basePath={ context.path } firstStep={ STEPS.FORGOT_USERNAME } />
 	);
 	next();
 };
 
 export const validateResetCode = ( context, next ) => {
 	context.primary = (
-		<AccountRecoveryRoot
-			basePath={ context.path }
-			firstStep={ STEPS.VALIDATE_RESET_CODE }
-		/>
+		<AccountRecoveryRoot basePath={ context.path } firstStep={ STEPS.VALIDATE_RESET_CODE } />
 	);
 	next();
 };

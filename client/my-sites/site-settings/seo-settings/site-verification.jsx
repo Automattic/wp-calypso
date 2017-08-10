@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,7 +27,10 @@ import { activateModule } from 'state/jetpack/modules/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { isSiteSettingsSaveSuccessful, getSiteSettingsSaveError } from 'state/site-settings/selectors';
+import {
+	isSiteSettingsSaveSuccessful,
+	getSiteSettingsSaveError,
+} from 'state/site-settings/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSite } from 'state/sites/actions';
 import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
@@ -37,7 +41,7 @@ class SiteVerification extends Component {
 		google: 'google-site-verification',
 		bing: 'msvalidate.01',
 		pinterest: 'p:domain_verify',
-		yandex: 'yandex-verification'
+		yandex: 'yandex-verification',
 	};
 
 	state = {
@@ -58,14 +62,8 @@ class SiteVerification extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const {
-			siteId: prevSiteId,
-			translate
-		} = this.props;
-		const {
-			site: nextSite,
-			siteId: nextSiteId,
-		} = nextProps;
+		const { siteId: prevSiteId, translate } = this.props;
+		const { site: nextSite, siteId: nextSiteId } = nextProps;
 		const { dirtyFields } = this.state;
 
 		// save success
@@ -84,11 +82,14 @@ class SiteVerification extends Component {
 
 		// if we are changing sites, everything goes
 		if ( prevSiteId !== nextSiteId ) {
-			return this.setState( {
-				...this.stateForSite( nextSite ),
-				invalidatedSiteObject: nextSite,
-				dirtyFields: Set(),
-			}, this.refreshSite );
+			return this.setState(
+				{
+					...this.stateForSite( nextSite ),
+					invalidatedSiteObject: nextSite,
+					dirtyFields: Set(),
+				},
+				this.refreshSite
+			);
 		}
 
 		let nextState = {
@@ -99,7 +100,7 @@ class SiteVerification extends Component {
 		nextState = omit( nextState, dirtyFields.toArray() );
 
 		this.setState( {
-			...nextState
+			...nextState,
 		} );
 	}
 
@@ -114,15 +115,15 @@ class SiteVerification extends Component {
 	}
 
 	refreshSite() {
-		const {
-			site,
-			siteId
-		} = this.props;
+		const { site, siteId } = this.props;
 
 		if ( site ) {
-			this.setState( {
-				invalidatedSiteObject: site,
-			}, () => this.props.requestSite( siteId ) );
+			this.setState(
+				{
+					invalidatedSiteObject: site,
+				},
+				() => this.props.requestSite( siteId )
+			);
 		}
 	}
 
@@ -136,7 +137,11 @@ class SiteVerification extends Component {
 			return content;
 		}
 
-		return `<meta name="${ get( SiteVerification.serviceIds, serviceName, '' ) }" content="${ content }" />`;
+		return `<meta name="${ get(
+			SiteVerification.serviceIds,
+			serviceName,
+			''
+		) }" content="${ content }" />`;
 	}
 
 	isValidCode( serviceName = '', content = '' ) {
@@ -150,9 +155,7 @@ class SiteVerification extends Component {
 	}
 
 	hasError( service ) {
-		const {
-			invalidCodes = [],
-		} = this.state;
+		const { invalidCodes = [] } = this.state;
 
 		return includes( invalidCodes, service );
 	}
@@ -169,7 +172,7 @@ class SiteVerification extends Component {
 			if ( event.target.value.length === 1 ) {
 				this.setState( {
 					showPasteError: true,
-					invalidCodes: [ serviceCode.replace( 'Code', '' ) ]
+					invalidCodes: [ serviceCode.replace( 'Code', '' ) ],
 				} );
 				return;
 			}
@@ -178,7 +181,7 @@ class SiteVerification extends Component {
 				invalidCodes: [],
 				showPasteError: false,
 				[ serviceCode ]: event.target.value,
-				dirtyFields: dirtyFields.add( serviceCode )
+				dirtyFields: dirtyFields.add( serviceCode ),
 			} );
 		};
 	}
@@ -193,19 +196,19 @@ class SiteVerification extends Component {
 		const { translate } = this.props;
 
 		return (
-			<FormInputValidation isError={ true } text={
-				isPasteError
-					? translate( 'Verification code should be copied and pasted into this field.' )
-					: translate( 'Invalid site verification tag.' )
-			} />
+			<FormInputValidation
+				isError={ true }
+				text={
+					isPasteError
+						? translate( 'Verification code should be copied and pasted into this field.' )
+						: translate( 'Invalid site verification tag.' )
+				}
+			/>
 		);
 	}
 
-	handleFormSubmit = ( event ) => {
-		const {
-			siteId,
-			translate,
-		} = this.props;
+	handleFormSubmit = event => {
+		const { siteId, translate } = this.props;
 
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
 			event.preventDefault();
@@ -217,15 +220,12 @@ class SiteVerification extends Component {
 			google: this.state.googleCode,
 			bing: this.state.bingCode,
 			pinterest: this.state.pinterestCode,
-			yandex: this.state.yandexCode
+			yandex: this.state.yandexCode,
 		};
 
 		const filteredCodes = pickBy( verificationCodes, isString );
 		const invalidCodes = Object.keys(
-			pickBy(
-				filteredCodes,
-				( name, content ) => ! this.isValidCode( content, name )
-			)
+			pickBy( filteredCodes, ( name, content ) => ! this.isValidCode( content, name ) )
 		);
 
 		this.setState( { invalidCodes } );
@@ -235,16 +235,16 @@ class SiteVerification extends Component {
 		}
 
 		this.setState( {
-			isSubmittingForm: true
+			isSubmittingForm: true,
 		} );
 
 		const updatedOptions = {
-			verification_services_codes: filteredCodes
+			verification_services_codes: filteredCodes,
 		};
 
 		this.props.saveSiteSettings( siteId, updatedOptions );
 		this.props.trackFormSubmitted();
-	}
+	};
 
 	render() {
 		const {
@@ -252,7 +252,7 @@ class SiteVerification extends Component {
 			jetpackVersionSupportsSeo,
 			siteId,
 			siteIsJetpack,
-			translate
+			translate,
 		} = this.props;
 		const {
 			isSubmittingForm,
@@ -263,7 +263,8 @@ class SiteVerification extends Component {
 		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsSeo;
 		const isDisabled = isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
 		const isVerificationDisabled = isDisabled || isVerificationToolsActive === false;
-		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
+		const isSaveDisabled =
+			isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 		const placeholderTagContent = '1234';
 
 		// The API returns 'false' for an empty array value, so we force it to an empty string if needed
@@ -276,24 +277,19 @@ class SiteVerification extends Component {
 		return (
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
-				{
-					siteIsJetpack &&
-					<QueryJetpackModules siteId={ siteId } />
-				}
+				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
-				{ siteIsJetpack && isVerificationToolsActive === false &&
+				{ siteIsJetpack &&
+					isVerificationToolsActive === false &&
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
-						text={ translate(
-							'Site Verification Services are disabled in Jetpack.'
-						) }
+						text={ translate( 'Site Verification Services are disabled in Jetpack.' ) }
 					>
 						<NoticeAction onClick={ this.activateVerificationServices }>
 							{ translate( 'Enable' ) }
 						</NoticeAction>
-					</Notice>
-				}
+					</Notice> }
 
 				<SectionHeader label={ translate( 'Site Verification Services' ) }>
 					<Button
@@ -303,21 +299,18 @@ class SiteVerification extends Component {
 						type="submit"
 						disabled={ isSaveDisabled || isVerificationDisabled }
 					>
-						{ isSubmittingForm
-							? translate( 'Saving…' )
-							: translate( 'Save Settings' )
-						}
+						{ isSubmittingForm ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 					</Button>
 				</SectionHeader>
 				<Card>
 					<p>
 						{ translate(
 							'Note that {{b}}verifying your site with these services is not necessary{{/b}} in order' +
-							' for your site to be indexed by search engines. To use these advanced search engine tools' +
-							' and verify your site with a service, paste the HTML Tag code below. Read the' +
-							' {{support}}full instructions{{/support}} if you are having trouble. Supported verification services:' +
-							' {{google}}Google Search Console{{/google}}, {{bing}}Bing Webmaster Center{{/bing}},' +
-							' {{pinterest}}Pinterest Site Verification{{/pinterest}}, and {{yandex}}Yandex.Webmaster{{/yandex}}.',
+								' for your site to be indexed by search engines. To use these advanced search engine tools' +
+								' and verify your site with a service, paste the HTML Tag code below. Read the' +
+								' {{support}}full instructions{{/support}} if you are having trouble. Supported verification services:' +
+								' {{google}}Google Search Console{{/google}}, {{bing}}Bing Webmaster Center{{/bing}},' +
+								' {{pinterest}}Pinterest Site Verification{{/pinterest}}, and {{yandex}}Yandex.Webmaster{{/yandex}}.',
 							{
 								components: {
 									b: <strong />,
@@ -350,7 +343,7 @@ class SiteVerification extends Component {
 											href="https://webmaster.yandex.com/sites/"
 										/>
 									),
-								}
+								},
 							}
 						) }
 					</p>
@@ -366,7 +359,8 @@ class SiteVerification extends Component {
 								disabled={ isVerificationDisabled }
 								isError={ this.hasError( 'google' ) }
 								placeholder={ this.getMetaTag( 'google', placeholderTagContent ) }
-								onChange={ this.changeGoogleCode } />
+								onChange={ this.changeGoogleCode }
+							/>
 							{ this.hasError( 'google' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 						<FormFieldset>
@@ -380,7 +374,8 @@ class SiteVerification extends Component {
 								disabled={ isVerificationDisabled }
 								isError={ this.hasError( 'bing' ) }
 								placeholder={ this.getMetaTag( 'bing', placeholderTagContent ) }
-								onChange={ this.changeBingCode } />
+								onChange={ this.changeBingCode }
+							/>
 							{ this.hasError( 'bing' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 						<FormFieldset>
@@ -394,7 +389,8 @@ class SiteVerification extends Component {
 								disabled={ isVerificationDisabled }
 								isError={ this.hasError( 'pinterest' ) }
 								placeholder={ this.getMetaTag( 'pinterest', placeholderTagContent ) }
-								onChange={ this.changePinterestCode } />
+								onChange={ this.changePinterestCode }
+							/>
 							{ this.hasError( 'pinterest' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 						<FormFieldset>
@@ -408,7 +404,8 @@ class SiteVerification extends Component {
 								disabled={ isVerificationDisabled }
 								isError={ this.hasError( 'yandex' ) }
 								placeholder={ this.getMetaTag( 'yandex', placeholderTagContent ) }
-								onChange={ this.changeYandexCode } />
+								onChange={ this.changeYandexCode }
+							/>
 							{ this.hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 					</form>
@@ -419,7 +416,7 @@ class SiteVerification extends Component {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
 

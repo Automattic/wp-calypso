@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,12 +9,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	updateUploadProgress,
-	uploadComplete,
-	uploadPlugin,
-	receiveError,
-} from '../';
+import { updateUploadProgress, uploadComplete, uploadPlugin, receiveError } from '../';
 import {
 	completePluginUpload,
 	pluginUploadError,
@@ -59,9 +55,7 @@ describe( 'uploadComplete', () => {
 	it( 'should dispatch plugin upload complete action', () => {
 		const dispatch = sinon.spy();
 		uploadComplete( { dispatch }, { siteId }, SUCCESS_RESPONSE );
-		expect( dispatch ).to.have.been.calledWith(
-			completePluginUpload( siteId, pluginId )
-		);
+		expect( dispatch ).to.have.been.calledWith( completePluginUpload( siteId, pluginId ) );
 	} );
 
 	it( 'should dispatch plugin install request success', () => {
@@ -80,9 +74,7 @@ describe( 'receiveError', () => {
 	it( 'should dispatch plugin upload error', () => {
 		const dispatch = sinon.spy();
 		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
-		expect( dispatch ).to.have.been.calledWith(
-			pluginUploadError( siteId, ERROR_RESPONSE )
-		);
+		expect( dispatch ).to.have.been.calledWith( pluginUploadError( siteId, ERROR_RESPONSE ) );
 	} );
 } );
 
@@ -90,8 +82,6 @@ describe( 'updateUploadProgress', () => {
 	it( 'should dispatch plugin upload progress update', () => {
 		const dispatch = sinon.spy();
 		updateUploadProgress( { dispatch }, { siteId }, { loaded: 200, total: 400 } );
-		expect( dispatch ).to.have.been.calledWith(
-			updatePluginUploadProgress( siteId, 50 )
-		);
+		expect( dispatch ).to.have.been.calledWith( updatePluginUploadProgress( siteId, 50 ) );
 	} );
 } );

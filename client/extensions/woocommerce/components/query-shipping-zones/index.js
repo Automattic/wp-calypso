@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -47,22 +48,26 @@ QueryShippingZones.propTypes = {
 	siteId: PropTypes.number,
 };
 
-export const areShippingZonesFullyLoaded = ( state ) => {
-	return areShippingMethodsLoaded( state ) &&
+export const areShippingZonesFullyLoaded = state => {
+	return (
+		areShippingMethodsLoaded( state ) &&
 		areShippingZonesLoaded( state ) &&
-		areLocationsLoaded( state );
+		areLocationsLoaded( state )
+	);
 };
 
 export default connect(
-	( state ) => ( {
+	state => ( {
 		loaded: areShippingZonesFullyLoaded( state ),
 	} ),
-	( dispatch ) => ( {
+	dispatch => ( {
 		actions: bindActionCreators(
 			{
 				fetchShippingZones,
 				fetchLocations,
 				fetchShippingMethods,
-			}, dispatch
-		)
-	} ) )( QueryShippingZones );
+			},
+			dispatch
+		),
+	} )
+)( QueryShippingZones );

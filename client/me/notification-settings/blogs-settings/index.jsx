@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -30,7 +31,7 @@ class BlogsSettings extends Component {
 		hasUnsavedChanges: PropTypes.bool.isRequired,
 		onToggle: PropTypes.func.isRequired,
 		onSave: PropTypes.func.isRequired,
-		onSaveToAll: PropTypes.func.isRequired
+		onSaveToAll: PropTypes.func.isRequired,
 	};
 
 	render() {
@@ -41,12 +42,15 @@ class BlogsSettings extends Component {
 		}
 
 		if ( sites.length === 0 && ! requestingSites ) {
-			return <EmptyContentComponent
-				title={ translate( 'You don\'t have any WordPress sites yet.' ) }
-				line={ translate( 'Would you like to start one?' ) }
-				action={ translate( 'Create Site' ) }
-				actionURL={ config( 'signup_url' ) + '?ref=calypso-nosites' }
-				illustration={ '/calypso/images/illustrations/illustration-nosites.svg' } />;
+			return (
+				<EmptyContentComponent
+					title={ translate( "You don't have any WordPress sites yet." ) }
+					line={ translate( 'Would you like to start one?' ) }
+					action={ translate( 'Create Site' ) }
+					actionURL={ config( 'signup_url' ) + '?ref=calypso-nosites' }
+					illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+				/>
+			);
 		}
 
 		const renderBlog = ( site, index, disableToggle = false ) => {
@@ -62,7 +66,8 @@ class BlogsSettings extends Component {
 					settings={ this.props.settings.find( settings => settings.get( 'blog_id' ) === site.ID ) }
 					onToggle={ this.props.onToggle }
 					onSave={ onSave }
-					onSaveToAll={ onSaveToAll } />
+					onSaveToAll={ onSaveToAll }
+				/>
 			);
 		};
 
@@ -79,7 +84,8 @@ class BlogsSettings extends Component {
 				guessedItemHeight={ 69 }
 				getItemRef={ getItemRef }
 				renderItem={ renderBlog }
-				renderLoadingPlaceholders={ createPlaceholder } />
+				renderLoadingPlaceholders={ createPlaceholder }
+			/>
 		);
 	}
 }

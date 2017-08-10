@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,11 +14,9 @@ import SectionHeader from 'components/section-header';
 const Header = React.createClass( {
 	propTypes: {
 		domain: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired,
-		settingPrimaryDomain: React.PropTypes.bool.isRequired
+		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] )
+			.isRequired,
+		settingPrimaryDomain: React.PropTypes.bool.isRequired,
 	},
 
 	render() {
@@ -31,14 +30,16 @@ const Header = React.createClass( {
 			<SectionHeader label={ domain.name }>
 				<DomainPrimaryFlag domain={ domain } />
 
-				{ this.props.selectedSite && ! this.props.selectedSite.jetpack &&
-				<PrimaryDomainButton
-					domain={ domain }
-					selectedSite={ this.props.selectedSite }
-					settingPrimaryDomain={ this.props.settingPrimaryDomain } /> }
+				{ this.props.selectedSite &&
+					! this.props.selectedSite.jetpack &&
+					<PrimaryDomainButton
+						domain={ domain }
+						selectedSite={ this.props.selectedSite }
+						settingPrimaryDomain={ this.props.settingPrimaryDomain }
+					/> }
 			</SectionHeader>
 		);
-	}
+	},
 } );
 
 export default Header;

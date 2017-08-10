@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Reactified port of the TinyMCE charmap plugin.
  *
@@ -25,7 +26,7 @@ export default React.createClass( {
 	propTypes: {
 		onClose: React.PropTypes.func,
 		showDialog: React.PropTypes.bool,
-		editor: React.PropTypes.object
+		editor: React.PropTypes.object,
 	},
 
 	defaultCharMap() {
@@ -33,12 +34,12 @@ export default React.createClass( {
 			[ '160', 'no-break space' ],
 			[ '173', 'soft hyphen' ],
 			[ '34', 'quotation mark' ],
-		// finance
+			// finance
 			[ '162', 'cent sign' ],
 			[ '8364', 'euro sign' ],
 			[ '163', 'pound sign' ],
 			[ '165', 'yen sign' ],
-		// signs
+			// signs
 			[ '169', 'copyright sign' ],
 			[ '174', 'registered sign' ],
 			[ '8482', 'trade mark sign' ],
@@ -52,7 +53,7 @@ export default React.createClass( {
 			[ '167', 'section sign' ],
 			[ '182', 'paragraph sign' ],
 			[ '223', 'sharp s / ess-zed' ],
-		// quotations
+			// quotations
 			[ '8249', 'single left-pointing angle quotation mark' ],
 			[ '8250', 'single right-pointing angle quotation mark' ],
 			[ '171', 'left pointing guillemet' ],
@@ -90,7 +91,7 @@ export default React.createClass( {
 			[ '188', 'fraction one quarter' ],
 			[ '189', 'fraction one half' ],
 			[ '190', 'fraction three quarters' ],
-		// math / logical
+			// math / logical
 			[ '402', 'function / florin' ],
 			[ '8747', 'integral' ],
 			[ '8721', 'n-ary sumation' ],
@@ -118,14 +119,14 @@ export default React.createClass( {
 			[ '8727', 'asterisk operator' ],
 			[ '8733', 'proportional to' ],
 			[ '8736', 'angle' ],
-		// undefined
+			// undefined
 			[ '180', 'acute accent' ],
 			[ '184', 'cedilla' ],
 			[ '170', 'feminine ordinal indicator' ],
 			[ '186', 'masculine ordinal indicator' ],
 			[ '8224', 'dagger' ],
 			[ '8225', 'double dagger' ],
-		// alphabetical special chars
+			// alphabetical special chars
 			[ '192', 'A - grave' ],
 			[ '193', 'A - acute' ],
 			[ '194', 'A - circumflex' ],
@@ -241,14 +242,14 @@ export default React.createClass( {
 			[ '967', 'chi' ],
 			[ '968', 'psi' ],
 			[ '969', 'omega' ],
-		// symbols
+			// symbols
 			[ '8501', 'alef symbol' ],
 			[ '982', 'pi symbol' ],
 			[ '8476', 'real part symbol' ],
 			[ '978', 'upsilon - hook symbol' ],
 			[ '8472', 'Weierstrass p' ],
 			[ '8465', 'imaginary part' ],
-		// arrows
+			// arrows
 			[ '8592', 'leftwards arrow' ],
 			[ '8593', 'upwards arrow' ],
 			[ '8594', 'rightwards arrow' ],
@@ -287,7 +288,7 @@ export default React.createClass( {
 			[ '8204', 'zero width non-joiner' ],
 			[ '8205', 'zero width joiner' ],
 			[ '8206', 'left-to-right mark' ],
-			[ '8207', 'right-to-left mark' ]
+			[ '8207', 'right-to-left mark' ],
 		];
 	},
 
@@ -298,18 +299,15 @@ export default React.createClass( {
 				onClick={ this.onCellClick }
 				role="button"
 				title={ cell[ 1 ] }
-				className="wpcom-charmap__character">
-					{ String.fromCharCode( parseInt( cell[ 0 ], 10 ) ) }
+				className="wpcom-charmap__character"
+			>
+				{ String.fromCharCode( parseInt( cell[ 0 ], 10 ) ) }
 			</div>
 		);
 	},
 
 	onCellClick( event ) {
-		this.props.editor.execCommand(
-			'mceInsertContent',
-			false,
-			event.target.textContent.trim()
-		);
+		this.props.editor.execCommand( 'mceInsertContent', false, event.target.textContent.trim() );
 	},
 
 	getButtons() {
@@ -317,9 +315,10 @@ export default React.createClass( {
 			<FormButton
 				isPrimary={ false }
 				aria-label={ this.translate( 'Close special characters dialog' ) }
-				onClick={ this.props.onClose }>
-					{ this.translate( 'Close' ) }
-			</FormButton>
+				onClick={ this.props.onClose }
+			>
+				{ this.translate( 'Close' ) }
+			</FormButton>,
 		];
 	},
 
@@ -329,13 +328,15 @@ export default React.createClass( {
 				isVisible={ this.props.showDialog }
 				buttons={ this.getButtons() }
 				additionalClassNames="wpcom-charmap__dialog"
-				onClose={ this.props.onClose }>
-				<h2 className="wpcom-charmap__heading">{ this.translate( 'Special characters' ) }</h2>
+				onClose={ this.props.onClose }
+			>
+				<h2 className="wpcom-charmap__heading">
+					{ this.translate( 'Special characters' ) }
+				</h2>
 				<div className="wpcom-charmap__table">
 					{ this.defaultCharMap().map( this.renderCell, this ) }
 				</div>
 			</Dialog>
 		);
-	}
-
+	},
 } );

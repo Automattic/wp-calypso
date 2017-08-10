@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -34,10 +35,13 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js',
 	GOOGLE_CONVERSION_ID = config( 'google_adwords_conversion_id' ),
 	GOOGLE_CONVERSION_ID_JETPACK = config( 'google_adwords_conversion_id_jetpack' ),
-	ONE_BY_AOL_CONVERSION_PIXEL_URL = 'https://secure.ace-tag.advertising.com/action/type=132958/bins=1/rich=0/Mnum=1516/',
-	ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL = 'https://secure.leadback.advertising.com/adcedge/lb' +
+	ONE_BY_AOL_CONVERSION_PIXEL_URL =
+		'https://secure.ace-tag.advertising.com/action/type=132958/bins=1/rich=0/Mnum=1516/',
+	ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL =
+		'https://secure.leadback.advertising.com/adcedge/lb' +
 		'?site=695501&betr=sslbet_1472760417=[+]ssprlb_1472760417[720]|sslbet_1472760452=[+]ssprlb_1472760452[8760]',
-	PANDORA_CONVERSION_PIXEL_URL = 'https://data.adxcel-ec2.com/pixel/' +
+	PANDORA_CONVERSION_PIXEL_URL =
+		'https://data.adxcel-ec2.com/pixel/' +
 		'?ad_log=referer&action=purchase&pixid=7efc5994-458b-494f-94b3-31862eee9e26',
 	YAHOO_TRACKING_SCRIPT_URL = 'https://s.yimg.com/wi/ytc.js',
 	TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js',
@@ -58,13 +62,11 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		twitterPixelId: 'nvzbs',
 		dcmFloodlightAdvertiserId: '6355556',
 		linkedInPartnerId: '36622',
-		quoraPixelId: '420845cb70e444938cf0728887a74ca1'
+		quoraPixelId: '420845cb70e444938cf0728887a74ca1',
 	},
-
 	// This name is something we created to store a session id for DCM Floodlight session tracking
 	DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid',
 	DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800,
-
 	// For converting other currencies into USD for tracking purposes
 	EXCHANGE_RATES = {
 		USD: 1,
@@ -73,7 +75,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		AUD: 1.35,
 		CAD: 1.35,
 		GBP: 0.75,
-		BRL: 2.55
+		BRL: 2.55,
 	};
 
 /**
@@ -119,7 +121,7 @@ function initMediaWallah() {
 		account_id: 1015,
 		customer_id: 1012,
 		tag_action: 'visit',
-		timeout: 100 // in milliseconds
+		timeout: 100, // in milliseconds
 	};
 
 	window.setBrowserAttributeData();
@@ -135,7 +137,9 @@ function initMediaWallah() {
 		}
 	};
 
-	window.addEventListener ? window.addEventListener( 'load', init, false ) : window.attachEvent( 'onload', init );
+	window.addEventListener
+		? window.addEventListener( 'load', init, false )
+		: window.attachEvent( 'onload', init );
 }
 
 /**
@@ -143,9 +147,11 @@ function initMediaWallah() {
  * This is a rework of the obfuscated tracking code provided by Quora.
  */
 function setupQuoraGlobal() {
-	const quoraPixel = window.qp = function() {
-		quoraPixel.qp ? quoraPixel.qp.apply( quoraPixel, arguments ) : quoraPixel.queue.push( arguments );
-	};
+	const quoraPixel = ( window.qp = function() {
+		quoraPixel.qp
+			? quoraPixel.qp.apply( quoraPixel, arguments )
+			: quoraPixel.queue.push( arguments );
+	} );
 	quoraPixel.queue = [];
 }
 
@@ -154,13 +160,13 @@ function setupQuoraGlobal() {
  * More info here: https://www.facebook.com/business/help/952192354843755
  */
 function setUpFacebookGlobal() {
-	const facebookEvents = window.fbq = function() {
+	const facebookEvents = ( window.fbq = function() {
 		if ( facebookEvents.callMethod ) {
 			facebookEvents.callMethod.apply( facebookEvents, arguments );
 		} else {
 			facebookEvents.queue.push( arguments );
 		}
-	};
+	} );
 
 	if ( ! window._fbq ) {
 		window._fbq = facebookEvents;
@@ -177,9 +183,9 @@ function setUpFacebookGlobal() {
  * More info here: https://github.com/Automattic/wp-calypso/pull/10235
  */
 function setUpTwitterGlobal() {
-	const twq = window.twq = function() {
+	const twq = ( window.twq = function() {
 		twq.exe ? twq.exe.apply( twq, arguments ) : twq.queue.push( arguments );
-	};
+	} );
 	twq.version = '1.1';
 	twq.queue = [];
 }
@@ -187,72 +193,75 @@ function setUpTwitterGlobal() {
 function loadTrackingScripts( callback ) {
 	hasStartedFetchingScripts = true;
 
-	async.parallel( [
-		function( onComplete ) {
-			loadScript.loadScript( FACEBOOK_TRACKING_SCRIPT_URL, onComplete );
-		},
-		function( onComplete ) {
-			loadScript.loadScript( GOOGLE_TRACKING_SCRIPT_URL, onComplete );
-		},
-		function( onComplete ) {
-			loadScript.loadScript( BING_TRACKING_SCRIPT_URL, onComplete );
-		},
-		function( onComplete ) {
-			loadScript.loadScript( CRITEO_TRACKING_SCRIPT_URL, onComplete );
-		},
-		function( onComplete ) {
-			loadScript.loadScript( quantcastAsynchronousTagURL(), onComplete );
-		},
-		function( onComplete ) {
-			loadScript.loadScript( YAHOO_TRACKING_SCRIPT_URL, onComplete );
-		},
-		function( onComplete ) {
-			loadScript.loadScript( TWITTER_TRACKING_SCRIPT_URL, onComplete );
-		},
-		function( onComplete ) {
-			loadScript.loadScript( LINKED_IN_SCRIPT_URL, onComplete );
-		},
-		function( onComplete ) {
-			loadScript.loadScript( MEDIA_WALLAH_URL, onComplete );
-		},
-		function( onComplete ) {
-			loadScript.loadScript( QUORA_URL, onComplete );
-		}
-	], function( errors ) {
-		if ( ! some( errors ) ) {
-			// init Facebook's tracking global
-			window.fbq( 'init', TRACKING_IDS.facebookInit );
+	async.parallel(
+		[
+			function( onComplete ) {
+				loadScript.loadScript( FACEBOOK_TRACKING_SCRIPT_URL, onComplete );
+			},
+			function( onComplete ) {
+				loadScript.loadScript( GOOGLE_TRACKING_SCRIPT_URL, onComplete );
+			},
+			function( onComplete ) {
+				loadScript.loadScript( BING_TRACKING_SCRIPT_URL, onComplete );
+			},
+			function( onComplete ) {
+				loadScript.loadScript( CRITEO_TRACKING_SCRIPT_URL, onComplete );
+			},
+			function( onComplete ) {
+				loadScript.loadScript( quantcastAsynchronousTagURL(), onComplete );
+			},
+			function( onComplete ) {
+				loadScript.loadScript( YAHOO_TRACKING_SCRIPT_URL, onComplete );
+			},
+			function( onComplete ) {
+				loadScript.loadScript( TWITTER_TRACKING_SCRIPT_URL, onComplete );
+			},
+			function( onComplete ) {
+				loadScript.loadScript( LINKED_IN_SCRIPT_URL, onComplete );
+			},
+			function( onComplete ) {
+				loadScript.loadScript( MEDIA_WALLAH_URL, onComplete );
+			},
+			function( onComplete ) {
+				loadScript.loadScript( QUORA_URL, onComplete );
+			},
+		],
+		function( errors ) {
+			if ( ! some( errors ) ) {
+				// init Facebook's tracking global
+				window.fbq( 'init', TRACKING_IDS.facebookInit );
 
-			// init Bing's tracking global
-			const bingConfig = {
-				ti: TRACKING_IDS.bingInit,
-				q: window.uetq
-			};
+				// init Bing's tracking global
+				const bingConfig = {
+					ti: TRACKING_IDS.bingInit,
+					q: window.uetq,
+				};
 
-			// init Twitter's tracking global
-			window.twq( 'init', TRACKING_IDS.twitterPixelId );
+				// init Twitter's tracking global
+				window.twq( 'init', TRACKING_IDS.twitterPixelId );
 
-			// init Media Wallah tracking
-			initMediaWallah();
+				// init Media Wallah tracking
+				initMediaWallah();
 
-			// init Quora tracking
-			window.qp( 'init', TRACKING_IDS.quoraPixelId );
+				// init Quora tracking
+				window.qp( 'init', TRACKING_IDS.quoraPixelId );
 
-			if ( typeof UET !== 'undefined' ) {
-				// bing's script creates the UET global for us
-				window.uetq = new UET( bingConfig ); // eslint-disable-line
-				window.uetq.push( 'pageLoad' );
+				if ( typeof UET !== 'undefined' ) {
+					// bing's script creates the UET global for us
+					window.uetq = new UET( bingConfig ); // eslint-disable-line
+					window.uetq.push( 'pageLoad' );
+				}
+
+				hasFinishedFetchingScripts = true;
+
+				if ( typeof callback === 'function' ) {
+					callback();
+				}
+			} else {
+				debug( 'Some scripts failed to load: ', errors );
 			}
-
-			hasFinishedFetchingScripts = true;
-
-			if ( typeof callback === 'function' ) {
-				callback();
-			}
-		} else {
-			debug( 'Some scripts failed to load: ', errors );
 		}
-	} );
+	);
 }
 
 /**
@@ -303,14 +312,14 @@ function retarget() {
 	if ( window.google_trackConversion ) {
 		window.google_trackConversion( {
 			google_conversion_id: GOOGLE_CONVERSION_ID,
-			google_remarketing_only: true
+			google_remarketing_only: true,
 		} );
 	}
 
 	// Quantcast
 	window._qevents.push( {
 		qacct: TRACKING_IDS.quantcast,
-		event: 'refresh'
+		event: 'refresh',
 	} );
 
 	// One by AOL
@@ -328,11 +337,7 @@ function retarget() {
  * @returns {void}
  */
 function trackCustomFacebookConversionEvent( name, properties ) {
-	window.fbw && window.fbq(
-		'trackCustom',
-		name,
-		properties
-	);
+	window.fbw && window.fbq( 'trackCustom', name, properties );
 }
 
 /**
@@ -342,11 +347,12 @@ function trackCustomFacebookConversionEvent( name, properties ) {
  * @returns {void}
  */
 function trackCustomAdWordsRemarketingEvent( properties ) {
-	window.google_trackConversion && window.google_trackConversion( {
-		google_conversion_id: GOOGLE_CONVERSION_ID,
-		google_custom_params: properties,
-		google_remarketing_only: true
-	} );
+	window.google_trackConversion &&
+		window.google_trackConversion( {
+			google_conversion_id: GOOGLE_CONVERSION_ID,
+			google_custom_params: properties,
+			google_remarketing_only: true,
+		} );
 }
 
 /**
@@ -377,17 +383,13 @@ function recordAddToCart( cartItem ) {
 
 	debug( 'Recorded that this item was added to the cart', cartItem );
 
-	window.fbq(
-		'track',
-		'AddToCart',
-		{
-			product_slug: cartItem.product_slug,
-			free_trial: Boolean( cartItem.free_trial )
-		}
-	);
+	window.fbq( 'track', 'AddToCart', {
+		product_slug: cartItem.product_slug,
+		free_trial: Boolean( cartItem.free_trial ),
+	} );
 
 	recordInCriteo( 'viewItem', {
-		item: cartItem.product_id
+		item: cartItem.product_id,
 	} );
 }
 
@@ -466,38 +468,30 @@ function recordProduct( product, orderId ) {
 
 	try {
 		// Facebook
-		window.fbq(
-			'track',
-			'Purchase',
-			{
-				currency: product.currency,
-				product_slug: product.product_slug,
-				value: product.cost,
-				user_id: userId,
-				order_id: orderId
-			}
-		);
+		window.fbq( 'track', 'Purchase', {
+			currency: product.currency,
+			product_slug: product.product_slug,
+			value: product.cost,
+			user_id: userId,
+			order_id: orderId,
+		} );
 
 		// Twitter
-		window.twq(
-			'track',
-			'Purchase',
-			{
-				value: product.cost.toString(),
-				currency: product.currency,
-				content_name: product.product_name,
-				content_type: 'product',
-				content_ids: [ product.product_slug ],
-				num_items: product.volume,
-				order_id: orderId
-			}
-		);
+		window.twq( 'track', 'Purchase', {
+			value: product.cost.toString(),
+			currency: product.currency,
+			content_name: product.product_name,
+			content_type: 'product',
+			content_ids: [ product.product_slug ],
+			num_items: product.volume,
+			order_id: orderId,
+		} );
 
 		// Bing
 		if ( isSupportedCurrency( product.currency ) ) {
 			const bingParams = {
 				ec: 'purchase',
-				gv: costUSD
+				gv: costUSD,
 			};
 			if ( isJetpackPlan ) {
 				// `el` must be included only for jetpack plans
@@ -509,9 +503,7 @@ function recordProduct( product, orderId ) {
 		// Google AdWords
 		if ( window.google_trackConversion ) {
 			window.google_trackConversion( {
-				google_conversion_id: isJetpackPlan
-					? GOOGLE_CONVERSION_ID_JETPACK
-					: GOOGLE_CONVERSION_ID,
+				google_conversion_id: isJetpackPlan ? GOOGLE_CONVERSION_ID_JETPACK : GOOGLE_CONVERSION_ID,
 				google_conversion_label: isJetpackPlan
 					? TRACKING_IDS.googleConversionLabelJetpack
 					: TRACKING_IDS.googleConversionLabel,
@@ -520,9 +512,9 @@ function recordProduct( product, orderId ) {
 				google_custom_params: {
 					product_slug: product.product_slug,
 					user_id: userId,
-					order_id: orderId
+					order_id: orderId,
 				},
-				google_remarketing_only: false
+				google_remarketing_only: false,
 			} );
 		}
 
@@ -531,7 +523,7 @@ function recordProduct( product, orderId ) {
 			id: orderId,
 			name: product.product_slug,
 			price: product.cost,
-			currency: product.currency
+			currency: product.currency,
 		} );
 
 		if ( isSupportedCurrency( product.currency ) ) {
@@ -542,7 +534,7 @@ function recordProduct( product, orderId ) {
 				labels: '_fp.event.Purchase Confirmation,_fp.pcat.' + product.product_slug,
 				orderid: orderId.toString(),
 				revenue: costUSD.toString(),
-				event: 'refresh'
+				event: 'refresh',
 			} );
 
 			// Yahoo
@@ -550,19 +542,21 @@ function recordProduct( product, orderId ) {
 			// See: https://developer.yahoo.com/gemini/guide/dottags/installing-tags/
 
 			/*global YAHOO*/
-			YAHOO.ywa.I13N.fireBeacon( [ {
-				projectId: TRACKING_IDS.yahooProjectId,
-				properties: {
-					pixelId: TRACKING_IDS.yahooPixelId,
-					qstrings: {
-						et: 'custom',
-						ec: 'wordpress.com',
-						ea: 'purchase',
-						el: product.product_slug,
-						gv: costUSD.toString()
-					}
-				}
-			} ] );
+			YAHOO.ywa.I13N.fireBeacon( [
+				{
+					projectId: TRACKING_IDS.yahooProjectId,
+					properties: {
+						pixelId: TRACKING_IDS.yahooPixelId,
+						qstrings: {
+							et: 'custom',
+							ec: 'wordpress.com',
+							ea: 'purchase',
+							el: product.product_slug,
+							gv: costUSD.toString(),
+						},
+					},
+				},
+			] );
 		}
 	} catch ( err ) {
 		debug( 'Unable to save purchase tracking data', err );
@@ -591,15 +585,23 @@ function recordOrderInAtlas( cart, orderId ) {
 		revenue: cart.total_cost,
 		currency_code: cart.currency,
 		user_id: currentUser ? currentUser.ID : 0,
-		order_id: orderId
+		order_id: orderId,
 	};
 
-	const urlParams = Object.keys( params ).map( function( key ) {
-		return encodeURIComponent( key ) + '=' + encodeURIComponent( params[ key ] );
-	} ).join( '&' );
+	const urlParams = Object.keys( params )
+		.map( function( key ) {
+			return encodeURIComponent( key ) + '=' + encodeURIComponent( params[ key ] );
+		} )
+		.join( '&' );
 
-	const urlWithParams = ATLAS_TRACKING_SCRIPT_URL + ';m=' + TRACKING_IDS.atlasUniveralTagId +
-		';cache=' + Math.random() + '?' + urlParams;
+	const urlWithParams =
+		ATLAS_TRACKING_SCRIPT_URL +
+		';m=' +
+		TRACKING_IDS.atlasUniveralTagId +
+		';cache=' +
+		Math.random() +
+		'?' +
+		urlParams;
 
 	loadScript.loadScript( urlWithParams );
 }
@@ -625,7 +627,7 @@ function recordOrderInFloodlight( cart, orderId ) {
 		cost: cart.total_cost,
 		u2: cart.products.map( product => product.product_name ).join( ', ' ),
 		u3: cart.currency,
-		ord: orderId
+		ord: orderId,
 	};
 
 	recordParamsInFloodlight( params );
@@ -645,7 +647,7 @@ function recordAliasInFloodlight() {
 
 	const params = {
 		type: 'wordp0',
-		cat: 'alias0'
+		cat: 'alias0',
 	};
 
 	recordParamsInFloodlight( params );
@@ -665,7 +667,7 @@ function recordSignupStartInFloodlight() {
 
 	const params = {
 		type: 'wordp0',
-		cat: 'pre-p0'
+		cat: 'pre-p0',
 	};
 
 	recordParamsInFloodlight( params );
@@ -685,7 +687,7 @@ function recordSignupCompletionInFloodlight() {
 
 	const params = {
 		type: 'wordp0',
-		cat: 'signu0'
+		cat: 'signu0',
 	};
 
 	recordParamsInFloodlight( params );
@@ -708,7 +710,7 @@ function recordPageViewInFloodlight( urlPath ) {
 
 	// Set or bump the cookie's expiration date to maintain the session
 	document.cookie = cookie.serialize( DCM_FLOODLIGHT_SESSION_COOKIE_NAME, sessionId, {
-		maxAge: DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS
+		maxAge: DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS,
 	} );
 
 	recordParamsInFloodlight( {
@@ -716,14 +718,14 @@ function recordPageViewInFloodlight( urlPath ) {
 		cat: 'wpvisit',
 		u6: urlPath,
 		u7: sessionId,
-		ord: sessionId
+		ord: sessionId,
 	} );
 
 	recordParamsInFloodlight( {
 		type: 'wordp0',
 		cat: 'wppv',
 		u6: urlPath,
-		u7: sessionId
+		u7: sessionId,
 	} );
 }
 
@@ -811,9 +813,11 @@ function recordParamsInFloodlight( params ) {
 
 	// Note that we're not generating a URL with traditional query arguments
 	// Instead, each parameter is separated by a semicolon
-	const urlParams = Object.keys( params ).map( function( key ) {
-		return encodeURIComponent( key ) + '=' + encodeURIComponent( params[ key ] );
-	} ).join( ';' );
+	const urlParams = Object.keys( params )
+		.map( function( key ) {
+			return encodeURIComponent( key ) + '=' + encodeURIComponent( params[ key ] );
+		} )
+		.join( ';' );
 
 	// The implementation guidance includes the question mark at the end of the URL
 	const urlWithParams = DCM_FLOODLIGHT_IFRAME_URL + ';' + urlParams + '?';
@@ -852,7 +856,7 @@ function recordOrderInCriteo( cart, orderId ) {
 	recordInCriteo( 'trackTransaction', {
 		id: orderId,
 		currency: cart.currency,
-		item: cartToCriteoItems( cart )
+		item: cartToCriteoItems( cart ),
 	} );
 }
 
@@ -870,7 +874,7 @@ function recordViewCheckoutInCriteo( cart ) {
 	// Note that unlike `recordOrderInCriteo` above, this doesn't include the order id
 	recordInCriteo( 'viewBasket', {
 		currency: cart.currency,
-		item: cartToCriteoItems( cart )
+		item: cartToCriteoItems( cart ),
 	} );
 }
 
@@ -885,7 +889,7 @@ function cartToCriteoItems( cart ) {
 		return {
 			id: product.product_id,
 			price: product.cost,
-			quantity: product.volume
+			quantity: product.volume,
 		};
 	} );
 }
@@ -899,7 +903,7 @@ function recordPlansViewInCriteo() {
 	}
 
 	recordInCriteo( 'viewItem', {
-		item: '1'
+		item: '1',
 	} );
 }
 
@@ -976,7 +980,7 @@ function recordOrderInGoogleAnalytics( cart, orderId ) {
 		id: orderId,
 		affiliation: 'WordPress.com',
 		revenue: cart.total_cost,
-		currency: cart.currency
+		currency: cart.currency,
 	} );
 }
 
@@ -988,7 +992,8 @@ function recordOrderInGoogleAnalytics( cart, orderId ) {
  * @returns {String} The URL
  */
 function quantcastAsynchronousTagURL() {
-	const protocolAndSubdomain = document.location.protocol === 'https:' ? 'https://secure' : 'http://edge';
+	const protocolAndSubdomain =
+		document.location.protocol === 'https:' ? 'https://secure' : 'http://edge';
 
 	return protocolAndSubdomain + '.quantserve.com/quant.js';
 }

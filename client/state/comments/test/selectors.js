@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -51,7 +52,7 @@ describe( 'selectors', () => {
 					comments: { items: { '1-1': [] } },
 				},
 				1,
-				1,
+				1
 			);
 
 			expect( res ).to.be.eql( undefined );
@@ -71,7 +72,7 @@ describe( 'selectors', () => {
 					comments: { items: { '1-1': [] } },
 				},
 				1,
-				1,
+				1
 			);
 
 			expect( res ).to.be.eql( undefined );

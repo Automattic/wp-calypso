@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,18 +18,19 @@ import { getSitePostsForQuery } from 'state/posts/selectors';
 function PostStatusExample( { queries, primarySiteId, primarySiteUrl, globalIdByQueryLabel } ) {
 	return (
 		<Card>
-			{ primarySiteUrl && (
-				<p><small>Examples use results from primary site <strong>{ primarySiteUrl }</strong></small></p>
-			) }
+			{ primarySiteUrl &&
+				<p>
+					<small>
+						Examples use results from primary site <strong>{ primarySiteUrl }</strong>
+					</small>
+				</p> }
 			{ map( queries, ( query, label ) => {
 				return (
 					<p key={ label }>
-						<h3>{ label }</h3>
-						{ primarySiteId && (
-							<QueryPosts
-								siteId={ primarySiteId }
-								query={ query } />
-						) }
+						<h3>
+							{ label }
+						</h3>
+						{ primarySiteId && <QueryPosts siteId={ primarySiteId } query={ query } /> }
 						{ ! globalIdByQueryLabel[ label ] && <em>No matching post found</em> }
 						<PostStatus globalId={ globalIdByQueryLabel[ label ] } />
 					</p>
@@ -38,23 +40,23 @@ function PostStatusExample( { queries, primarySiteId, primarySiteUrl, globalIdBy
 	);
 }
 
-const ConnectedPostStatusExample = connect( ( state ) => {
+const ConnectedPostStatusExample = connect( state => {
 	const user = getCurrentUser( state );
 	const primarySiteId = get( user, 'primary_blog' );
 	const queries = {
 		Scheduled: { status: 'future', number: 1, type: 'any' },
 		Trashed: { status: 'trash', number: 1, type: 'any' },
 		'Pending Review': { status: 'pending', number: 1, type: 'any' },
-		Sticky: { sticky: 'require', number: 1, type: 'any' }
+		Sticky: { sticky: 'require', number: 1, type: 'any' },
 	};
 
 	return {
 		queries,
 		primarySiteId,
 		primarySiteUrl: get( user, 'primary_blog_url' ),
-		globalIdByQueryLabel: mapValues( queries, ( query ) => {
+		globalIdByQueryLabel: mapValues( queries, query => {
 			return get( getSitePostsForQuery( state, primarySiteId, query ), [ 0, 'global_ID' ] );
-		} )
+		} ),
 	};
 } )( PostStatusExample );
 

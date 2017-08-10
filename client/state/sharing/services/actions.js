@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -15,13 +16,15 @@ import {
  * @return {Function} Action thunk
  */
 export function requestKeyringServices() {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: KEYRING_SERVICES_REQUEST,
 		} );
 
-		return wpcom.undocumented().metaKeyring()
-			.then( ( response ) => {
+		return wpcom
+			.undocumented()
+			.metaKeyring()
+			.then( response => {
 				dispatch( {
 					type: KEYRING_SERVICES_RECEIVE,
 					services: response.services,
@@ -30,9 +33,11 @@ export function requestKeyringServices() {
 					type: KEYRING_SERVICES_REQUEST_SUCCESS,
 				} );
 			} )
-			.catch( ( error ) => dispatch( {
-				type: KEYRING_SERVICES_REQUEST_FAILURE,
-				error,
-			} ) );
+			.catch( error =>
+				dispatch( {
+					type: KEYRING_SERVICES_REQUEST_FAILURE,
+					error,
+				} )
+			);
 	};
 }

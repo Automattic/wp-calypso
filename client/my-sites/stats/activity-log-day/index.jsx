@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,22 +32,14 @@ class ActivityLogDay extends Component {
 		isRewindActive: true,
 	};
 
-	handleClickRestore = ( event ) => {
+	handleClickRestore = event => {
 		event.stopPropagation();
-		const {
-			tsEndOfSiteDay,
-			requestRestore,
-		} = this.props;
+		const { tsEndOfSiteDay, requestRestore } = this.props;
 		requestRestore( tsEndOfSiteDay, 'day' );
 	};
 
 	trackOpenDay = () => {
-		const {
-			logs,
-			moment,
-			recordTracksEvent,
-			tsEndOfSiteDay,
-		} = this.props;
+		const { logs, moment, recordTracksEvent, tsEndOfSiteDay } = this.props;
 
 		recordTracksEvent( 'calypso_activitylog_day_expand', {
 			log_count: logs.length,
@@ -62,10 +55,7 @@ class ActivityLogDay extends Component {
 	 * @returns { object } Button to display.
 	 */
 	getRewindButton( type = '' ) {
-		const {
-			disableRestore,
-			hideRestore,
-		} = this.props;
+		const { disableRestore, hideRestore } = this.props;
 
 		if ( hideRestore ) {
 			return null;
@@ -79,9 +69,7 @@ class ActivityLogDay extends Component {
 				onClick={ this.handleClickRestore }
 				primary={ 'primary' === type }
 			>
-				<Gridicon icon="history" size={ 18 } />
-				{ ' ' }
-				{ this.props.translate( 'Rewind to this day' ) }
+				<Gridicon icon="history" size={ 18 } /> { this.props.translate( 'Rewind to this day' ) }
 			</Button>
 		);
 	}
@@ -92,23 +80,19 @@ class ActivityLogDay extends Component {
 	 * @returns { object } Heading to display with date and number of events
 	 */
 	getEventsHeading() {
-		const {
-			applySiteOffset,
-			logs,
-			moment,
-			translate,
-			tsEndOfSiteDay,
-		} = this.props;
+		const { applySiteOffset, logs, moment, translate, tsEndOfSiteDay } = this.props;
 
 		return (
 			<div>
-				<div className="activity-log-day__day">{ applySiteOffset( moment.utc( tsEndOfSiteDay ) ).format( 'LL' ) }</div>
-				<div className="activity-log-day__events">{
-					translate( '%d Event', '%d Events', {
+				<div className="activity-log-day__day">
+					{ applySiteOffset( moment.utc( tsEndOfSiteDay ) ).format( 'LL' ) }
+				</div>
+				<div className="activity-log-day__events">
+					{ translate( '%d Event', '%d Events', {
 						args: logs.length,
 						count: logs.length,
-					} )
-				}</div>
+					} ) }
+				</div>
 			</div>
 		);
 	}
@@ -132,7 +116,7 @@ class ActivityLogDay extends Component {
 					onOpen={ this.trackOpenDay }
 					summary={ this.getRewindButton( 'primary' ) }
 				>
-					{ logs.map( ( log, index ) => (
+					{ logs.map( ( log, index ) =>
 						<ActivityLogItem
 							applySiteOffset={ applySiteOffset }
 							disableRestore={ disableRestore }
@@ -142,7 +126,7 @@ class ActivityLogDay extends Component {
 							requestRestore={ requestRestore }
 							siteId={ siteId }
 						/>
-					) ) }
+					) }
 				</FoldableCard>
 			</div>
 		);

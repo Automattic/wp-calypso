@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -17,7 +18,7 @@ describe( 'Domain Suggestion', function() {
 	let DomainSuggestion;
 
 	useFakeDom();
-	useMockery( ( mockery ) => {
+	useMockery( mockery => {
 		mockery.registerMock( 'components/plans/premium-popover', EmptyComponent );
 	} );
 
@@ -34,7 +35,8 @@ describe( 'Domain Suggestion', function() {
 					domain="example.com"
 					isAdded={ false }
 					onButtonClick={ noop }
-					priceRule="PRICE" />
+					priceRule="PRICE"
+				/>
 			);
 
 			expect( domainSuggestion.props()[ 'data-e2e-domain' ] ).to.equal( 'example.com' );

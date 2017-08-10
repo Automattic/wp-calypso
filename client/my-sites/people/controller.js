@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -44,7 +45,7 @@ export default {
 
 	person( context ) {
 		renderSingleTeamMember( context );
-	}
+	},
 };
 
 function redirectToTeam( context ) {
@@ -63,7 +64,7 @@ function renderPeopleList( filter, context ) {
 		React.createElement( PeopleList, {
 			peopleLog: PeopleLogStore,
 			filter: filter,
-			search: context.query.s
+			search: context.query.s,
 		} ),
 		document.getElementById( 'primary' ),
 		context.store
@@ -79,7 +80,7 @@ function renderInvitePeople( context ) {
 
 	renderWithReduxStore(
 		React.createElement( InvitePeople, {
-			site: site
+			site: site,
 		} ),
 		document.getElementById( 'primary' ),
 		context.store
@@ -92,7 +93,7 @@ function renderSingleTeamMember( context ) {
 	renderWithReduxStore(
 		React.createElement( EditTeamMember, {
 			userLogin: context.params.user_login,
-			prevPath: context.prevPath
+			prevPath: context.prevPath,
 		} ),
 		document.getElementById( 'primary' ),
 		context.store

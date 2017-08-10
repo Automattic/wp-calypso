@@ -1,3 +1,4 @@
+/** @format */
 // Here we make sure we’re not using Node’s core events module,
 // because it contains a `domain` property and it clashes with our
 // `Site` module that also has the same property.

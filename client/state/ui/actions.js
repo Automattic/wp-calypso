@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -6,7 +7,7 @@ import {
 	ROUTE_SET,
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
-	NOTIFICATIONS_PANEL_TOGGLE
+	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
 
 /**
@@ -19,7 +20,7 @@ import {
 export function setSelectedSiteId( siteId ) {
 	return {
 		type: SELECTED_SITE_SET,
-		siteId
+		siteId,
 	};
 }
 
@@ -32,7 +33,7 @@ export function setSelectedSiteId( siteId ) {
 export function setAllSitesSelected() {
 	return {
 		type: SELECTED_SITE_SET,
-		siteId: null
+		siteId: null,
 	};
 }
 
@@ -56,7 +57,7 @@ export function setSection( section, options = {} ) {
 	if ( section ) {
 		options.section = section;
 	}
-	options.hasSidebar = ( options.hasSidebar === false ) ? false : true;
+	options.hasSidebar = options.hasSidebar === false ? false : true;
 	return options;
 }
 
@@ -74,6 +75,6 @@ export function setPreviewShowing( isShowing ) {
  */
 export const toggleNotificationsPanel = () => {
 	return {
-		type: NOTIFICATIONS_PANEL_TOGGLE
+		type: NOTIFICATIONS_PANEL_TOGGLE,
 	};
 };

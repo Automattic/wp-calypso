@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,15 +14,20 @@ import { getSelectedSite } from 'state/ui/selectors';
 const EditorMediaModalGalleryPreviewIndividual = React.createClass( {
 	propTypes: {
 		items: PropTypes.arrayOf( PropTypes.object ),
-		site: PropTypes.object
+		site: PropTypes.object,
 	},
 
 	render() {
-		const items = this.props.items.map( ( item ) => {
+		const items = this.props.items.map( item => {
 			const caption = markup.caption( this.props.site, item );
 
 			if ( null === caption ) {
-				return <div key={ item.ID } dangerouslySetInnerHTML={ { __html: markup.get( this.props.site, item ) } } />; //eslint-disable-line react/no-danger
+				return (
+					<div
+						key={ item.ID }
+						dangerouslySetInnerHTML={ { __html: markup.get( this.props.site, item ) } }
+					/>
+				); //eslint-disable-line react/no-danger
 			}
 
 			return React.cloneElement( caption, { key: item.ID } );
@@ -34,14 +40,11 @@ const EditorMediaModalGalleryPreviewIndividual = React.createClass( {
 				</div>
 			</div>
 		);
-	}
-
+	},
 } );
 
-export default connect(
-	state => {
-		return {
-			site: getSelectedSite( state )
-		};
-	}
-)( EditorMediaModalGalleryPreviewIndividual );
+export default connect( state => {
+	return {
+		site: getSelectedSite( state ),
+	};
+} )( EditorMediaModalGalleryPreviewIndividual );

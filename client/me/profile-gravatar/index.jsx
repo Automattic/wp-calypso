@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,15 +24,11 @@ class ProfileGravatar extends Component {
 	}
 
 	handleImageClick = () => {
-		this.props.recordGoogleEvent( 'Me',
-			'Clicked on Unclickable Gravatar Image in Sidebar'
-		);
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Unclickable Gravatar Image in Sidebar' );
 	};
 
 	handleExternalLinkClick = () => {
-		this.props.recordGoogleEvent( 'Me',
-			'Clicked on Gravatar Update Profile Photo in Sidebar'
-		);
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Gravatar Update Profile Photo in Sidebar' );
 	};
 
 	render() {
@@ -46,12 +43,11 @@ class ProfileGravatar extends Component {
 					<div className="profile-gravatar__gravatar-container" onClick={ this.handleImageClick }>
 						<Gravatar user={ this.props.user } size={ 150 } imgSize={ GRAVATAR_IMG_SIZE } />
 					</div>
-					<h2 className="profile-gravatar__user-display-name">{ this.props.user.display_name }</h2>
+					<h2 className="profile-gravatar__user-display-name">
+						{ this.props.user.display_name }
+					</h2>
 					<div className="profile-gravatar__user-secondary-info">
-						<ExternalLink
-							href={ profileURL }
-							target="_blank"
-							rel="noopener noreferrer" >
+						<ExternalLink href={ profileURL } target="_blank" rel="noopener noreferrer">
 							@{ this.props.user.username }
 						</ExternalLink>
 					</div>
@@ -67,8 +63,8 @@ class ProfileGravatar extends Component {
 						target="_blank"
 						rel="noopener noreferrer"
 						className="profile-gravatar__edit"
-						onClick={ this.handleExternalLinkClick } >
-
+						onClick={ this.handleExternalLinkClick }
+					>
 						<Gravatar user={ this.props.user } size={ 150 } imgSize={ GRAVATAR_IMG_SIZE } />
 
 						<span className="profile-gravatar__edit-label-wrap">
@@ -78,12 +74,11 @@ class ProfileGravatar extends Component {
 						</span>
 					</ExternalLink>
 				</Animate>
-				<h2 className="profile-gravatar__user-display-name">{ this.props.user.display_name }</h2>
+				<h2 className="profile-gravatar__user-display-name">
+					{ this.props.user.display_name }
+				</h2>
 				<div className="profile-gravatar__user-secondary-info">
-					<ExternalLink
-						href={ profileURL }
-						target="_blank"
-						rel="noopener noreferrer" >
+					<ExternalLink href={ profileURL } target="_blank" rel="noopener noreferrer">
 						@{ this.props.user.username }
 					</ExternalLink>
 				</div>
@@ -93,5 +88,5 @@ class ProfileGravatar extends Component {
 }
 
 export default connect( null, {
-	recordGoogleEvent
+	recordGoogleEvent,
 } )( localize( ProfileGravatar ) );

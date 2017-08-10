@@ -1,13 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import {
-	flowRight as compose,
-	identity,
-} from 'lodash';
+import { flowRight as compose, identity } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -26,18 +24,19 @@ export const StandardPluginsPanel = ( {
 	onClick,
 	plugins = [],
 	translate = identity,
-} ) => (
+} ) =>
 	<div>
 		<SectionHeader label={ translate( 'Standard Plugins' ) }>
 			<Button className="is-active-plugin" compact borderless>
-				<Gridicon icon="checkmark" />{ translate( 'Active' ) }
+				<Gridicon icon="checkmark" />
+				{ translate( 'Active' ) }
 			</Button>
 		</SectionHeader>
 		<CompactCard className="wpcom-plugins__standard-panel">
 			<div className="wpcom-plugins__list">
 				{ plugins
 					.slice( 0, displayCount )
-					.map( ( { name, descriptionLink, icon, category, description } ) => (
+					.map( ( { name, descriptionLink, icon, category, description } ) =>
 						<Plugin
 							{ ...{
 								category,
@@ -49,27 +48,19 @@ export const StandardPluginsPanel = ( {
 								onClick,
 							} }
 						/>
-					)
-				) }
+					) }
 			</div>
 		</CompactCard>
 		<Notice
 			status="is-info"
 			showDismiss={ false }
-			text={ translate(
-				'Uploading your own plugins is ' +
-				'not available on WordPress.com.'
-			) }
+			text={ translate( 'Uploading your own plugins is ' + 'not available on WordPress.com.' ) }
 		>
-			<NoticeAction
-				href="https://en.support.wordpress.com/plugins/"
-				external={ true }
-			>
+			<NoticeAction href="https://en.support.wordpress.com/plugins/" external={ true }>
 				{ translate( 'Learn More' ) }
 			</NoticeAction>
 		</Notice>
-	</div>
-);
+	</div>;
 
 StandardPluginsPanel.propTypes = {
 	displayCount: PropTypes.number,

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,13 +29,13 @@ class PostEditorSlug extends Component {
 		instanceName: PropTypes.string,
 		translate: PropTypes.func,
 		siteId: PropTypes.number,
-		postId: PropTypes.number
+		postId: PropTypes.number,
 	};
 
 	static defaultProps = {
 		onEscEnter: () => {},
 		isEditable: true,
-		slug: ''
+		slug: '',
 	};
 
 	constructor() {
@@ -111,13 +112,15 @@ class PostEditorSlug extends Component {
 	render() {
 		const { className, translate, slug, children, path, isEditable } = this.props;
 		const wrapperClass = classNames( 'editor-slug', className, {
-			'is-focused': this.state.isSlugFocused
+			'is-focused': this.state.isSlugFocused,
 		} );
 
 		return (
 			<div className={ wrapperClass } onClick={ this.focusSlug }>
 				{ children }
-				<span className="editor-slug__url-path" onClick={ this.focusSlug }>{ path }</span>
+				<span className="editor-slug__url-path" onClick={ this.focusSlug }>
+					{ path }
+				</span>
 				{ isEditable &&
 					<TrackInputChanges onNewValue={ this.recordChangeStats }>
 						<FormTextInput
@@ -129,15 +132,14 @@ class PostEditorSlug extends Component {
 							onFocus={ this.onFocus }
 							aria-label={ translate( 'Enter slug' ) }
 						/>
-					</TrackInputChanges>
-				}
+					</TrackInputChanges> }
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const slug = getEditedPostSlug( state, siteId, postId );

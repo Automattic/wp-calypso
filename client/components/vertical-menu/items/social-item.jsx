@@ -1,13 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import {
-	get,
-	identity
-} from 'lodash';
+import { get, identity } from 'lodash';
 import SocialLogo from 'social-logos';
 
 const services = translate => ( {
@@ -17,23 +15,16 @@ const services = translate => ( {
 	linkedin: { icon: 'linkedin', label: translate( 'LinkedIn' ) },
 	tumblr: { icon: 'tumblr', label: translate( 'Tumblr' ) },
 	twitter: { icon: 'twitter', label: translate( 'Twitter' ) },
-	wordpress: { icon: 'wordpress', label: translate( 'WordPress.com Reader' ) }
+	wordpress: { icon: 'wordpress', label: translate( 'WordPress.com Reader' ) },
 } );
 
 export const SocialItem = props => {
-	const {
-		isSelected,
-		onClick,
-		service,
-		translate
-	} = props;
+	const { isSelected, onClick, service, translate } = props;
 
 	const { icon, label } = get( services( translate ), service );
-	const classes = classNames(
-		'vertical-menu__social-item',
-		'vertical-menu__items',
-		{ 'is-selected': isSelected }
-	);
+	const classes = classNames( 'vertical-menu__social-item', 'vertical-menu__items', {
+		'is-selected': isSelected,
+	} );
 
 	return (
 		<div className={ classes } onClick={ () => onClick( service ) }>
@@ -51,13 +42,13 @@ SocialItem.propTypes = {
 	isSelected: PropTypes.bool,
 	onClick: PropTypes.func,
 	service: PropTypes.oneOf( Object.keys( services( identity ) ) ).isRequired,
-	translate: PropTypes.func
+	translate: PropTypes.func,
 };
 
 SocialItem.defaultProps = {
 	isSelected: false,
 	onClick: identity,
-	translate: identity
+	translate: identity,
 };
 
 export default localize( SocialItem );

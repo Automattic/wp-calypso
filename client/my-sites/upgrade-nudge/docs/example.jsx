@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,18 +10,13 @@ import React from 'react';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 export default React.createClass( {
-
 	displayName: 'UpgradeNudge',
 
 	render: function() {
 		return (
 			<div>
 				<div>
-					<UpgradeNudge
-						feature="custom-domain"
-						href="#"
-						shouldDisplay={ () => true }
-					/>
+					<UpgradeNudge feature="custom-domain" href="#" shouldDisplay={ () => true } />
 				</div>
 				<div>
 					<UpgradeNudge
@@ -33,5 +29,5 @@ export default React.createClass( {
 				</div>
 			</div>
 		);
-	}
+	},
 } );

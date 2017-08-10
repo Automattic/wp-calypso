@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -97,7 +98,7 @@ class ActivityLogItem extends Component {
 							previous_version: PropTypes.string,
 							slug: PropTypes.string,
 							version: PropTypes.string,
-						} ),
+						} )
 					),
 				] ),
 
@@ -156,23 +157,13 @@ class ActivityLogItem extends Component {
 	};
 
 	handleClickRestore = () => {
-		const {
-			log,
-			requestRestore,
-		} = this.props;
+		const { log, requestRestore } = this.props;
 		requestRestore( log.ts_utc, 'item' );
 	};
 
 	handleOpen = () => {
-		const {
-			log,
-			recordTracksEvent,
-		} = this.props;
-		const {
-			group,
-			name,
-			ts_utc,
-		} = log;
+		const { log, recordTracksEvent } = this.props;
+		const { group, name, ts_utc } = log;
 
 		debug( 'opened log', log );
 
@@ -185,16 +176,8 @@ class ActivityLogItem extends Component {
 
 	// FIXME: Just for demonstration purposes
 	renderDescription() {
-		const {
-			log,
-			moment,
-			translate,
-			applySiteOffset,
-		} = this.props;
-		const {
-			name,
-			ts_utc,
-		} = log;
+		const { log, moment, translate, applySiteOffset } = this.props;
+		const { name, ts_utc } = log;
 
 		return (
 			<div>
@@ -203,20 +186,18 @@ class ActivityLogItem extends Component {
 						args: {
 							date: applySiteOffset( moment.utc( ts_utc ) ).format( 'LLL' ),
 							eventName: name,
-						}
+						},
 					} ) }
 				</div>
-				<div className="activity-log-item__id">ID { ts_utc }</div>
+				<div className="activity-log-item__id">
+					ID { ts_utc }
+				</div>
 			</div>
 		);
 	}
 
 	renderHeader() {
-		const {
-			action,
-			group,
-			name,
-		} = this.props.log;
+		const { action, group, name } = this.props.log;
 		const actor = get( this.props, [ 'log', 'actor' ] );
 		const object = get( this.props, [ 'log', 'object' ] );
 
@@ -235,11 +216,7 @@ class ActivityLogItem extends Component {
 	}
 
 	renderSummary() {
-		const {
-			disableRestore,
-			hideRestore,
-			translate,
-		} = this.props;
+		const { disableRestore, hideRestore, translate } = this.props;
 
 		if ( hideRestore ) {
 			return null;
@@ -247,10 +224,7 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div className="activity-log-item__action">
-				<EllipsisMenu
-					onClick={ stopPropagation }
-					position="bottom right"
-				>
+				<EllipsisMenu onClick={ stopPropagation } position="bottom right">
 					<PopoverMenuItem
 						disabled={ disableRestore }
 						icon="undo"
@@ -264,11 +238,7 @@ class ActivityLogItem extends Component {
 	}
 
 	renderTime() {
-		const {
-			moment,
-			log,
-			applySiteOffset,
-		} = this.props;
+		const { moment, log, applySiteOffset } = this.props;
 
 		return (
 			<div className="activity-log-item__time">
@@ -278,20 +248,13 @@ class ActivityLogItem extends Component {
 	}
 
 	render() {
-		const {
-			className,
-			log,
-		} = this.props;
-		const {
-			group,
-			name,
-			object,
-		} = log;
+		const { className, log } = this.props;
+		const { group, name, object } = log;
 
 		const classes = classNames( 'activity-log-item', className );
 
 		return (
-			<div className={ classes } >
+			<div className={ classes }>
 				<div className="activity-log-item__type">
 					{ this.renderTime() }
 					<ActivityIcon group={ group } name={ name } object={ object } />

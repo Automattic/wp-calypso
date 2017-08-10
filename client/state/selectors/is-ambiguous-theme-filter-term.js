@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,11 +22,9 @@ export default createSelector(
 	( state, term ) => {
 		const filters = getThemeFilters( state );
 
-		const results = filter( filters, ( terms ) => (
-			!! get( terms, term )
-		) );
+		const results = filter( filters, terms => !! get( terms, term ) );
 
 		return results.length > 1;
 	},
-	( state ) => [ getThemeFilters( state ) ]
+	state => [ getThemeFilters( state ) ]
 );

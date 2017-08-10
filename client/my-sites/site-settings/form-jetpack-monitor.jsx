@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,7 +29,7 @@ import {
 	isFetchingJetpackModules,
 	isJetpackModuleActive,
 	isRequestingSiteMonitorSettings,
-	isUpdatingSiteMonitorSettings
+	isUpdatingSiteMonitorSettings,
 } from 'state/selectors';
 
 class SiteSettingsFormJetpackMonitor extends Component {
@@ -40,25 +41,28 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		}
 	}
 
-	recordEvent = ( event ) => {
+	recordEvent = event => {
 		return () => {
 			this.props.trackEvent( event );
 		};
-	}
+	};
 
 	handleToggle = name => () => {
 		this.props.trackEvent( `Toggled ${ name }` );
-		this.setState( {
-			...this.state,
-			[ name ]: ! this.state[ name ],
-		}, this.saveSettings );
-	}
+		this.setState(
+			{
+				...this.state,
+				[ name ]: ! this.state[ name ],
+			},
+			this.saveSettings
+		);
+	};
 
 	saveSettings = () => {
 		const { siteId } = this.props;
 
 		this.props.updateSiteMonitorSettings( siteId, this.state );
-	}
+	};
 
 	settingsMonitorEmailCheckbox() {
 		const { monitorActive, translate } = this.props;
@@ -74,10 +78,12 @@ class SiteSettingsFormJetpackMonitor extends Component {
 						a: (
 							<a
 								href="/me/account"
-								onClick={ this.recordEvent( 'Clicked on Monitor Link to WordPress.com Email Address' ) }
+								onClick={ this.recordEvent(
+									'Clicked on Monitor Link to WordPress.com Email Address'
+								) }
 							/>
-						)
-					}
+						),
+					},
 				} ) }
 			</CompactFormToggle>
 		);
@@ -109,12 +115,12 @@ class SiteSettingsFormJetpackMonitor extends Component {
 	handleActivationButtonClick = () => {
 		const { siteId } = this.props;
 		this.props.activateModule( siteId, 'monitor', true );
-	}
+	};
 
 	handleDeactivationButtonClick = () => {
 		const { siteId } = this.props;
 		this.props.deactivateModule( siteId, 'monitor', true );
-	}
+	};
 
 	render() {
 		const { siteId, translate } = this.props;
@@ -142,23 +148,23 @@ class SiteSettingsFormJetpackMonitor extends Component {
 					<JetpackModuleToggle
 						siteId={ siteId }
 						moduleSlug="monitor"
-						label={ translate( 'Monitor your site\'s uptime' ) }
+						label={ translate( "Monitor your site's uptime" ) }
 						disabled={ this.disableForm() }
 					/>
 
 					<div className="site-settings__child-settings">
 						{ this.settingsMonitorEmailCheckbox() }
-						{ config.isEnabled( 'settings/security/monitor/wp-note' ) && this.settingsMonitorWpNoteCheckbox() }
+						{ config.isEnabled( 'settings/security/monitor/wp-note' ) &&
+							this.settingsMonitorWpNoteCheckbox() }
 					</div>
 				</Card>
 			</div>
-
 		);
 	}
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -174,6 +180,6 @@ export default connect(
 	},
 	{
 		trackEvent: partial( recordGoogleEvent, 'Site Settings' ),
-		updateSiteMonitorSettings
+		updateSiteMonitorSettings,
 	}
 )( localize( SiteSettingsFormJetpackMonitor ) );

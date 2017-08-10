@@ -1,3 +1,4 @@
+/** @format */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import tinymce from 'tinymce/tinymce';
@@ -15,7 +16,7 @@ const initialize = editor => {
 			cmd: item.cmd,
 			onPostRender() {
 				this.innerHtml( renderToString( item.item ) );
-			}
+			},
 		} )
 	);
 
@@ -26,11 +27,8 @@ const initialize = editor => {
 		cmd: menuItems[ 0 ].cmd,
 		menu: menuItems.map( ( { name } ) => editor.menuItems[ name ] ),
 		onPostRender() {
-			ReactDOM.render(
-				<Gridicon icon="add-outline" />,
-				this.$el[ 0 ].children[ 0 ]
-			);
-		}
+			ReactDOM.render( <Gridicon icon="add-outline" />, this.$el[ 0 ].children[ 0 ] );
+		},
 	} );
 };
 

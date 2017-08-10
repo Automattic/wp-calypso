@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,10 +10,7 @@ import { expect } from 'chai';
 import reducer from '../reducer';
 import * as fxt from 'woocommerce/state/action-list/test/fixtures';
 
-import {
-	actionListClear,
-	actionListAnnotate,
-} from '../actions';
+import { actionListClear, actionListAnnotate } from '../actions';
 
 describe( 'reducer', () => {
 	it( 'should initialize to null', () => {
@@ -28,12 +26,14 @@ describe( 'reducer', () => {
 
 		const expectedState = {
 			prevSteps: [
-				{ description: fxt.stepA.description, startTime: fxt.time.stepAStart, endTime: fxt.time.stepAEnd },
+				{
+					description: fxt.stepA.description,
+					startTime: fxt.time.stepAStart,
+					endTime: fxt.time.stepAEnd,
+				},
 			],
 			currentStep: { description: fxt.stepB.description, startTime: fxt.time.stepBStart },
-			nextSteps: [
-				{ description: fxt.stepC.description },
-			],
+			nextSteps: [ { description: fxt.stepC.description } ],
 		};
 
 		expect( reducer( undefined, actionListAnnotate( actionList ) ) ).to.eql( expectedState );
@@ -48,13 +48,19 @@ describe( 'reducer', () => {
 
 		const expectedState = {
 			prevSteps: [
-				{ description: fxt.stepA.description, startTime: fxt.time.stepAStart, endTime: fxt.time.stepAEnd },
-				{ description: fxt.stepB.description, startTime: fxt.time.stepBStart, endTime: fxt.time.stepBEnd },
+				{
+					description: fxt.stepA.description,
+					startTime: fxt.time.stepAStart,
+					endTime: fxt.time.stepAEnd,
+				},
+				{
+					description: fxt.stepB.description,
+					startTime: fxt.time.stepBStart,
+					endTime: fxt.time.stepBEnd,
+				},
 			],
 			currentStep: null,
-			nextSteps: [
-				{ description: fxt.stepC.description },
-			],
+			nextSteps: [ { description: fxt.stepC.description } ],
 		};
 
 		expect( reducer( undefined, actionListAnnotate( actionList ) ) ).to.eql( expectedState );
@@ -73,4 +79,3 @@ describe( 'reducer', () => {
 		expect( state2 ).to.be.null;
 	} );
 } );
-

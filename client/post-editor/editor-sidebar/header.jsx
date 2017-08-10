@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,11 +17,13 @@ function EditorSidebarHeader( { translate, toggleSidebar } ) {
 		<div className="editor-sidebar__header">
 			<EditorPostType isSettings />
 			<Button
-				compact borderless
+				compact
+				borderless
 				className="editor-sidebar__back"
 				onClick={ toggleSidebar }
 				title={ translate( 'Close sidebar' ) }
-				aria-label={ translate( 'Close sidebar' ) }>
+				aria-label={ translate( 'Close sidebar' ) }
+			>
 				<Gridicon icon="cross" />
 			</Button>
 		</div>

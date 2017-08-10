@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,8 +7,8 @@ import { endsWith, filter, find, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getRawSite, getSiteAdminUrl } from 'state/sites/selectors';
-import { getPostTypes } from 'state/post-types/selectors';
+import { getRawSite, getSiteAdminUrl } from 'state/sites/selectors';
+import { getPostTypes } from 'state/post-types/selectors';
 
 function getDefaultItemTypes( state, siteId ) {
 	const site = getRawSite( state, siteId );
@@ -24,7 +25,7 @@ function getDefaultItemTypes( state, siteId ) {
 			renderer: 'renderPostOptions',
 			show: true,
 			createLink: `/page/${ siteId }/new`,
-			gaEventLabel: 'Page'
+			gaEventLabel: 'Page',
 		},
 		{
 			name: 'custom',
@@ -32,7 +33,7 @@ function getDefaultItemTypes( state, siteId ) {
 			icon: 'link',
 			renderer: 'renderLinkOptions',
 			show: true,
-			gaEventLabel: 'Link'
+			gaEventLabel: 'Link',
 		},
 		{
 			name: 'category',
@@ -41,7 +42,7 @@ function getDefaultItemTypes( state, siteId ) {
 			renderer: 'renderTaxonomyOptions',
 			show: true,
 			createLink: `${ adminUrl }edit-tags.php?taxonomy=category`,
-			gaEventLabel: 'Category'
+			gaEventLabel: 'Category',
 		},
 		{
 			name: 'post_tag',
@@ -50,7 +51,7 @@ function getDefaultItemTypes( state, siteId ) {
 			renderer: 'renderTaxonomyOptions',
 			show: true,
 			createLink: `${ adminUrl }edit-tags.php?taxonomy=post_tag`,
-			gaEventLabel: 'Tag'
+			gaEventLabel: 'Tag',
 		},
 		{
 			name: 'post_format',
@@ -58,7 +59,7 @@ function getDefaultItemTypes( state, siteId ) {
 			icon: 'summary',
 			renderer: 'renderTaxonomyContents',
 			show: false,
-			gaEventLabel: 'Post Format'
+			gaEventLabel: 'Post Format',
 		},
 		{
 			name: 'post',
@@ -67,8 +68,8 @@ function getDefaultItemTypes( state, siteId ) {
 			renderer: 'renderPostOptions',
 			show: true,
 			createLink: `/post/${ siteId }/new`,
-			gaEventLabel: 'Post'
-		}
+			gaEventLabel: 'Post',
+		},
 	];
 }
 
@@ -79,10 +80,12 @@ export default function getMenuItemTypes( state, siteId ) {
 	}
 	const defaultItems = getDefaultItemTypes( state, siteId );
 	const postTypes = getPostTypes( state, siteId );
-	const postTypesItems = filter( postTypes, type =>
-		find( defaultItems, { name: type.name } ) === undefined &&
-		type.api_queryable === true &&
-		type.map_meta_cap === true
+	const postTypesItems = filter(
+		postTypes,
+		type =>
+			find( defaultItems, { name: type.name } ) === undefined &&
+			type.api_queryable === true &&
+			type.map_meta_cap === true
 	).map( type => {
 		const notFoundLabel = get( type, [ 'labels', 'not_found' ], '' );
 		return {
@@ -92,9 +95,10 @@ export default function getMenuItemTypes( state, siteId ) {
 			renderer: 'renderPostOptions',
 			show: true,
 			label: type.label, //FIXME: how do we handle i18n here?
-			notFoundLabel: notFoundLabel && endsWith( notFoundLabel, '.' ) ? notFoundLabel : notFoundLabel + '.',
+			notFoundLabel:
+				notFoundLabel && endsWith( notFoundLabel, '.' ) ? notFoundLabel : notFoundLabel + '.',
 			createLink: `/edit/${ type.name }/${ site.slug }`, // TODO: Use the getEditorNewPostPath() selector.
-			gaEventLabel: type.label
+			gaEventLabel: type.label,
 		};
 	} );
 

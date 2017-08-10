@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,9 +17,9 @@ class UpcomingChargesTable extends Component {
 	static propTypes = {
 		// Computed props
 		siteSlugs: PropTypes.object.isRequired,
-	}
+	};
 
-	renderTransaction = ( transaction ) => {
+	renderTransaction = transaction => {
 		const { translate } = this.props;
 		const siteSlug = this.props.siteSlugs[ Number( transaction.blog_id ) ];
 
@@ -33,14 +34,15 @@ class UpcomingChargesTable extends Component {
 				</a>
 			</div>
 		);
-	}
+	};
 
 	render() {
 		const { translate } = this.props;
 		const emptyTableText = translate(
 			'The upgrades on your account will not renew automatically. ' +
-			'To manage your upgrades or enable Auto Renew visit {{link}}My Upgrades{{/link}}.', {
-				components: { link: <a href={ purchasesPaths.purchasesRoot() } /> }
+				'To manage your upgrades or enable Auto Renew visit {{link}}My Upgrades{{/link}}.',
+			{
+				components: { link: <a href={ purchasesPaths.purchasesRoot() } /> },
 			}
 		);
 		const noFilterResultsText = translate( 'No upcoming charges found.' );
@@ -51,13 +53,12 @@ class UpcomingChargesTable extends Component {
 				initialFilter={ { date: { newest: 20 } } }
 				emptyTableText={ emptyTableText }
 				noFilterResultsText={ noFilterResultsText }
-				transactionRenderer={ this.renderTransaction } />
+				transactionRenderer={ this.renderTransaction }
+			/>
 		);
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		siteSlugs: getSiteSlugsForUpcomingTransactions( state ),
-	} )
-)( localize( UpcomingChargesTable ) );
+export default connect( state => ( {
+	siteSlugs: getSiteSlugsForUpcomingTransactions( state ),
+} ) )( localize( UpcomingChargesTable ) );

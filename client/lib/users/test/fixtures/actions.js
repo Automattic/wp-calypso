@@ -1,3 +1,4 @@
+/** @format */
 const site = require( './site' ),
 	usersData = require( './users' ),
 	moreUsersData = require( './more-users' ),
@@ -11,37 +12,37 @@ module.exports = {
 		type: 'RECEIVE_USERS',
 		fetchOptions: {
 			siteId: site.ID,
-			offset: 0
+			offset: 0,
 		},
 		data: usersData,
-		error: null
+		error: null,
 	},
 
 	fetchMoreUsers: {
 		type: 'RECEIVE_USERS',
 		fetchOptions: {
 			siteId: site.ID,
-			offset: 5
+			offset: 5,
 		},
 		data: moreUsersData,
-		error: null
+		error: null,
 	},
 
 	fetchAgainUserDeleted: {
 		type: 'RECEIVE_USERS',
 		fetchOptions: {
 			siteId: site.ID,
-			offset: 0
+			offset: 0,
 		},
 		data: deletedUserData,
-		error: null
+		error: null,
 	},
 
 	updateSingleUser: {
 		type: 'UPDATE_SITE_USER',
 		siteId: site.ID,
 		user: updatedUserData,
-		data: updatedUserData
+		data: updatedUserData,
 	},
 
 	deleteUser: {
@@ -56,7 +57,7 @@ module.exports = {
 		action: 'DELETE_SITE_USER',
 		siteId: site.ID,
 		user: usersData.users[ 0 ],
-		error: true
+		error: true,
 	},
 
 	deleteUserSuccess: {
@@ -64,23 +65,23 @@ module.exports = {
 		action: 'DELETE_SITE_USER',
 		siteId: site.ID,
 		user: usersData.users[ 0 ],
-		data: { success: true }
+		data: { success: true },
 	},
 
 	updateUserError: {
 		type: 'RECEIVE_UPDATE_SITE_USER_FAILURE',
 		siteId: site.ID,
 		user: usersData.users[ 0 ],
-		error: true
+		error: true,
 	},
 
 	receiveSingleUser: {
 		type: 'RECEIVE_SINGLE_USER',
 		fetchOptions: {
-			siteId: site.ID
+			siteId: site.ID,
 		},
 		user: singleUserData,
-		error: null
+		error: null,
 	},
 
 	receiveUpdatedUsers: {
@@ -88,9 +89,9 @@ module.exports = {
 		fetchOptions: {
 			siteId: site.ID,
 			offset: 0,
-			number: 7
+			number: 7,
 		},
 		data: pollingUsersData,
-		error: null
-	}
+		error: null,
+	},
 };

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,7 @@ import { isObject } from 'lodash';
  */
 export function nextBucketIndex( bucketEdits ) {
 	return {
-		index: ( bucketEdits || [] ).length
+		index: ( bucketEdits || [] ).length,
 	};
 }
 
@@ -22,5 +23,5 @@ export function nextBucketIndex( bucketEdits ) {
  * @return {String} 'updates' for existing objects, 'creates' for new objects.
  */
 export function getBucket( object ) {
-	return object && ! isObject( object.id ) && 'updates' || 'creates';
+	return ( object && ! isObject( object.id ) && 'updates' ) || 'creates';
 }

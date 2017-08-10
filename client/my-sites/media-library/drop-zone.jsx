@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,14 +20,14 @@ module.exports = React.createClass( {
 		site: React.PropTypes.object,
 		fullScreen: React.PropTypes.bool,
 		onAddMedia: React.PropTypes.func,
-		trackStats: React.PropTypes.bool
+		trackStats: React.PropTypes.bool,
 	},
 
 	getDefaultProps: function() {
 		return {
 			fullScreen: true,
 			onAddMedia: noop,
-			trackStats: true
+			trackStats: true,
 		};
 	},
 
@@ -76,7 +77,8 @@ module.exports = React.createClass( {
 			<DropZone
 				fullScreen={ this.props.fullScreen }
 				onVerifyValidTransfer={ this.isValidTransfer }
-				onFilesDrop={ this.uploadFiles } />
+				onFilesDrop={ this.uploadFiles }
+			/>
 		);
-	}
+	},
 } );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,7 +26,8 @@ function ThemeNotFoundError( { translate } ) {
 				title={ emptyContentTitle }
 				line={ emptyContentMessage }
 				action={ translate( 'View the showcase' ) }
-				actionURL="/themes" />
+				actionURL="/themes"
+			/>
 		</Main>
 	);
 }

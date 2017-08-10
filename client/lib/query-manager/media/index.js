@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -39,22 +40,22 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 					}
 
 					// See: https://developer.wordpress.org/reference/functions/wp_post_mime_type_where/
-					return new RegExp( `^${
-						value
+					return new RegExp(
+						`^${ value
 							// Replace wildcard-only, wildcard group, and empty
 							// group with wildcard pattern matching
 							.replace( /(^%|(\/)%?)$/, '$2.+' )
 							// Split subgroup and group to filter
 							.split( '/' )
 							// Remove invalid characters
-							.map( ( group ) => group.replace( /[^-*.+a-zA-Z0-9]/g, '' ) )
+							.map( group => group.replace( /[^-*.+a-zA-Z0-9]/g, '' ) )
 							// If no group, append wildcard match
 							.concat( '.+' )
 							// Take only subgroup and group
 							.slice( 0, 2 )
 							// Finally, merge back into string
-							.join( '/' )
-					}$` ).test( media.mime_type );
+							.join( '/' ) }$`
+					).test( media.mime_type );
 
 				case 'post_ID':
 					// Note that documentation specifies that query value of 0

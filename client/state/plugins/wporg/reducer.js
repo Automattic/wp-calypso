@@ -1,17 +1,14 @@
+/** @format */
 /**
  * Internal dependencies
  */
-import {
-	WPORG_PLUGIN_DATA_RECEIVE,
-	FETCH_WPORG_PLUGIN_DATA,
-} from 'state/action-types';
+import { WPORG_PLUGIN_DATA_RECEIVE, FETCH_WPORG_PLUGIN_DATA } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
 function updatePluginState( state = {}, pluginSlug, attributes ) {
-	return Object.assign( {},
-		state,
-		{ [ pluginSlug ]: Object.assign( {}, state[ pluginSlug ], attributes ) }
-	);
+	return Object.assign( {}, state, {
+		[ pluginSlug ]: Object.assign( {}, state[ pluginSlug ], attributes ),
+	} );
 }
 
 export function fetchingItems( state = {}, action ) {
@@ -29,9 +26,17 @@ export function items( state = {}, action ) {
 	switch ( type ) {
 		case WPORG_PLUGIN_DATA_RECEIVE:
 			if ( action.data ) {
-				return updatePluginState( state, pluginSlug, Object.assign( { fetched: true, wporg: true }, action.data ) );
+				return updatePluginState(
+					state,
+					pluginSlug,
+					Object.assign( { fetched: true, wporg: true }, action.data )
+				);
 			}
-			return updatePluginState( state, pluginSlug, Object.assign( { fetched: false, wporg: false } ) );
+			return updatePluginState(
+				state,
+				pluginSlug,
+				Object.assign( { fetched: false, wporg: false } )
+			);
 		default:
 			return state;
 	}
@@ -39,5 +44,5 @@ export function items( state = {}, action ) {
 
 export default combineReducers( {
 	items,
-	fetchingItems
+	fetchingItems,
 } );

@@ -1,3 +1,4 @@
+/** @format */
 module.exports = {
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',

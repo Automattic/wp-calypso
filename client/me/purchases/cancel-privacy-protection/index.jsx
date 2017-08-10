@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -72,7 +73,8 @@ const CancelPrivacyProtection = React.createClass( {
 			return true;
 		}
 
-		const { selectedSite } = props, purchase = getPurchase( props );
+		const { selectedSite } = props,
+			purchase = getPurchase( props );
 
 		return selectedSite && purchase && hasPrivacyProtection( purchase );
 	},
@@ -164,8 +166,7 @@ const CancelPrivacyProtection = React.createClass( {
 		if ( error ) {
 			return (
 				<Notice status="is-error" showDismiss={ false }>
-					{ error }
-					{ ' ' }
+					{ error }{' '}
 					{ translate( 'Please try again later or {{a}}contact support.{{/a}}', {
 						components: { a: <a href={ CALYPSO_CONTACT } /> },
 					} ) }
@@ -211,10 +212,14 @@ const CancelPrivacyProtection = React.createClass( {
 				{ notice }
 				<Card className={ classes }>
 					<div className="cancel-privacy-protection__text">
-						<span>{ descriptionText }</span>
+						<span>
+							{ descriptionText }
+						</span>
 					</div>
 					<div className="cancel-privacy-protection__text">
-						<span>{ warningText }</span>
+						<span>
+							{ warningText }
+						</span>
 					</div>
 
 					{ button }

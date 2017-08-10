@@ -1,7 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import { uniqBy } from 'lodash';
+import { uniqBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +18,7 @@ import {
 	SHARING_BUTTONS_SAVE,
 	SHARING_BUTTONS_SAVE_FAILURE,
 	SHARING_BUTTONS_SAVE_SUCCESS,
-	SHARING_BUTTONS_UPDATE
+	SHARING_BUTTONS_UPDATE,
 } from 'state/action-types';
 
 /**
@@ -28,11 +29,20 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const requesting = createReducer( {}, {
-	[ SHARING_BUTTONS_REQUEST ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-	[ SHARING_BUTTONS_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-	[ SHARING_BUTTONS_REQUEST_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
-} );
+export const requesting = createReducer(
+	{},
+	{
+		[ SHARING_BUTTONS_REQUEST ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+		[ SHARING_BUTTONS_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( {
+			...state,
+			[ siteId ]: false,
+		} ),
+		[ SHARING_BUTTONS_REQUEST_FAILURE ]: ( state, { siteId } ) => ( {
+			...state,
+			[ siteId ]: false,
+		} ),
+	}
+);
 
 /**
  * Returns the save Request status after an action has been dispatched. The
@@ -42,11 +52,23 @@ export const requesting = createReducer( {}, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const saveRequests = createReducer( {}, {
-	[ SHARING_BUTTONS_SAVE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: { saving: true, status: 'pending' } } ),
-	[ SHARING_BUTTONS_SAVE_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: { saving: false, status: 'success' } } ),
-	[ SHARING_BUTTONS_SAVE_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: { saving: false, status: 'error' } } )
-} );
+export const saveRequests = createReducer(
+	{},
+	{
+		[ SHARING_BUTTONS_SAVE ]: ( state, { siteId } ) => ( {
+			...state,
+			[ siteId ]: { saving: true, status: 'pending' },
+		} ),
+		[ SHARING_BUTTONS_SAVE_SUCCESS ]: ( state, { siteId } ) => ( {
+			...state,
+			[ siteId ]: { saving: false, status: 'success' },
+		} ),
+		[ SHARING_BUTTONS_SAVE_FAILURE ]: ( state, { siteId } ) => ( {
+			...state,
+			[ siteId ]: { saving: false, status: 'error' },
+		} ),
+	}
+);
 
 /**
  * Returns the updated items state after an action has been dispatched. The
@@ -56,16 +78,23 @@ export const saveRequests = createReducer( {}, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer( {}, {
-	[ SHARING_BUTTONS_RECEIVE ]: ( state, { siteId, settings } ) => ( { ...state, [ siteId ]: settings } ),
-	[ SHARING_BUTTONS_UPDATE ]: ( state, { siteId, settings } ) => ( {
-		...state,
-		[ siteId ]: uniqBy( settings.concat( state[ siteId ] || [] ), 'ID' )
-	} )
-}, itemSchemas );
+export const items = createReducer(
+	{},
+	{
+		[ SHARING_BUTTONS_RECEIVE ]: ( state, { siteId, settings } ) => ( {
+			...state,
+			[ siteId ]: settings,
+		} ),
+		[ SHARING_BUTTONS_UPDATE ]: ( state, { siteId, settings } ) => ( {
+			...state,
+			[ siteId ]: uniqBy( settings.concat( state[ siteId ] || [] ), 'ID' ),
+		} ),
+	},
+	itemSchemas
+);
 
 export default combineReducers( {
 	items,
 	requesting,
-	saveRequests
+	saveRequests,
 } );

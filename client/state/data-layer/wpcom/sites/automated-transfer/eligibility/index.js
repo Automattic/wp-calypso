@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,18 +8,11 @@ import { get, identity, isEmpty, map } from 'lodash';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import {
-	AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
-} from 'state/action-types';
+import { AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST } from 'state/action-types';
 
 import { updateEligibility } from 'state/automated-transfer/actions';
-import {
-	eligibilityHolds,
-} from 'state/automated-transfer/constants';
-import {
-	recordTracksEvent,
-	withAnalytics,
-} from 'state/analytics/actions';
+import { eligibilityHolds } from 'state/automated-transfer/constants';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 /**
  * Maps the constants used in the WordPress.com API with
@@ -52,9 +46,7 @@ const statusMapping = {
  * @returns {Array} list of hold constants associated with issues listed in API response
  */
 const eligibilityHoldsFromApi = ( { errors = [] } ) =>
-	errors
-		.map( ( { code } ) => get( statusMapping, code, '' ) )
-		.filter( identity );
+	errors.map( ( { code } ) => get( statusMapping, code, '' ) ).filter( identity );
 
 /**
  * Maps from API response the issues which trigger a confirmation for automated transfer
@@ -66,7 +58,11 @@ const eligibilityHoldsFromApi = ( { errors = [] } ) =>
 const eligibilityWarningsFromApi = ( { warnings = {} } ) =>
 	Object.keys( warnings )
 		.reduce( ( list, type ) => list.concat( warnings[ type ] ), [] ) // combine plugin and theme warnings into one list
-		.map( ( { description, name, support_url } ) => ( { name, description, supportUrl: support_url } ) );
+		.map( ( { description, name, support_url } ) => ( {
+			name,
+			description,
+			supportUrl: support_url,
+		} ) );
 
 /**
  * Maps from API response to internal representation of automated transfer eligibility data
@@ -115,10 +111,9 @@ const trackEligibility = data => {
  * @returns {Function} the handler function with site and dispatch partially applied
  */
 const apiResponse = ( dispatch, siteId ) => data => {
-	dispatch( withAnalytics(
-		trackEligibility( data ),
-		updateEligibility( siteId, fromApi( data ) )
-	) );
+	dispatch(
+		withAnalytics( trackEligibility( data ), updateEligibility( siteId, fromApi( data ) ) )
+	);
 };
 
 /**
@@ -139,7 +134,8 @@ const apiFailure = error => {
  * @returns {Promise} response promise from API fetch
  */
 export const fetchEligibility = ( { dispatch }, { siteId } ) =>
-	wpcom.req.get( `/sites/${ siteId }/automated-transfers/eligibility` )
+	wpcom.req
+		.get( `/sites/${ siteId }/automated-transfers/eligibility` )
 		.then( apiResponse( dispatch, siteId ) )
 		.catch( apiFailure );
 

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,9 +7,7 @@ import { uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	WOOCOMMERCE_API_REQUEST,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_API_REQUEST } from 'woocommerce/state/action-types';
 
 function _createRequestAction( method, siteId, path, body, onSuccessAction, onFailureAction ) {
 	const action = {
@@ -74,4 +73,3 @@ export function put( siteId, path, body, onSuccessAction, onFailureAction ) {
 export function del( siteId, path, onSuccessAction, onFailureAction ) {
 	return _createRequestAction( 'del', siteId, path, undefined, onSuccessAction, onFailureAction );
 }
-

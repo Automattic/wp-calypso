@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,20 +18,17 @@ import QueryContactDetailsCache from 'components/data/query-contact-details-cach
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const stores = [
-	DomainsStore,
-	CartStore
-];
+const stores = [ DomainsStore, CartStore ];
 
 function getStateFromStores( props ) {
 	return {
 		cart: CartStore.get(),
 		context: props.context,
-		domains: ( props.selectedSite ? DomainsStore.getBySite( props.selectedSite.ID ) : null ),
+		domains: props.selectedSite ? DomainsStore.getBySite( props.selectedSite.ID ) : null,
 		products: props.products,
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
-		sitePlans: props.sitePlans
+		sitePlans: props.sitePlans,
 	};
 }
 
@@ -40,7 +38,7 @@ const DomainManagementData = React.createClass( {
 		productsList: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string,
 		selectedSite: PropTypes.object,
-		sitePlans: PropTypes.object.isRequired
+		sitePlans: PropTypes.object.isRequired,
 	},
 
 	mixins: [ observe( 'productsList' ) ],
@@ -77,11 +75,10 @@ const DomainManagementData = React.createClass( {
 				/>
 				{ this.props.selectedSite &&
 					<QuerySitePlans siteId={ this.props.selectedSite.ID } /> &&
-					<QueryContactDetailsCache />
-				}
+					<QueryContactDetailsCache /> }
 			</div>
 		);
-	}
+	},
 } );
 
 const mapStateToProps = state => {

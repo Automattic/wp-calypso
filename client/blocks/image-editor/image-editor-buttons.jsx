@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import {
 	getImageEditorFileInfo,
-	imageEditorHasChanges
+	imageEditorHasChanges,
 } from 'state/ui/editor/image-editor/selectors';
 
 class ImageEditorButtons extends Component {
@@ -37,26 +38,14 @@ class ImageEditorButtons extends Component {
 	};
 
 	render() {
-		const {
-			hasChanges,
-			onCancel,
-			src,
-			onDone,
-			onReset,
-			translate,
-			doneButtonText,
-		} = this.props;
+		const { hasChanges, onCancel, src, onDone, onReset, translate, doneButtonText } = this.props;
 
 		return (
 			<div className="image-editor__buttons">
 				{ onCancel &&
-					<Button
-						className="image-editor__buttons-button"
-						onClick={ onCancel }
-					>
+					<Button className="image-editor__buttons-button" onClick={ onCancel }>
 						{ translate( 'Cancel' ) }
-					</Button>
-				}
+					</Button> }
 				<Button
 					className="image-editor__buttons-button"
 					disabled={ ! hasChanges }
@@ -77,14 +66,12 @@ class ImageEditorButtons extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const { src } = getImageEditorFileInfo( state ),
-			hasChanges = imageEditorHasChanges( state );
+export default connect( state => {
+	const { src } = getImageEditorFileInfo( state ),
+		hasChanges = imageEditorHasChanges( state );
 
-		return {
-			src,
-			hasChanges
-		};
-	}
-)( localize( ImageEditorButtons ) );
+	return {
+		src,
+		hasChanges,
+	};
+} )( localize( ImageEditorButtons ) );

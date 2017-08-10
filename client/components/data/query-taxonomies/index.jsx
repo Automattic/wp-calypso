@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,8 +17,7 @@ class QueryTaxonomies extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId &&
-				this.props.postType === nextProps.postType ) {
+		if ( this.props.siteId === nextProps.siteId && this.props.postType === nextProps.postType ) {
 			return;
 		}
 
@@ -45,16 +45,16 @@ QueryTaxonomies.propTypes = {
 	siteId: PropTypes.number,
 	postType: PropTypes.string.isRequired,
 	requesting: PropTypes.bool.isRequired,
-	requestPostTypeTaxonomies: PropTypes.func.isRequired
+	requestPostTypeTaxonomies: PropTypes.func.isRequired,
 };
 
 export default connect(
 	( state, ownProps ) => {
 		return {
-			requesting: isRequestingPostTypeTaxonomies( state, ownProps.siteId, ownProps.postType )
+			requesting: isRequestingPostTypeTaxonomies( state, ownProps.siteId, ownProps.postType ),
 		};
 	},
 	{
-		requestPostTypeTaxonomies
+		requestPostTypeTaxonomies,
 	}
 )( QueryTaxonomies );

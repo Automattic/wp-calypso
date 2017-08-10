@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,18 +11,22 @@ import { omit, startsWith, endsWith } from 'lodash';
  */
 import Gridicon from 'gridicons';
 
-const SharingButtonsPreviewAction = ( props ) => {
+const SharingButtonsPreviewAction = props => {
 	const { active, position, icon, children } = props;
 	const classes = classNames( 'sharing-buttons-preview-action', {
 		'is-active': active,
 		'is-top': startsWith( position, 'top' ),
 		'is-right': endsWith( position, '-right' ),
 		'is-bottom': startsWith( position, 'bottom' ),
-		'is-left': endsWith( position, '-left' )
+		'is-left': endsWith( position, '-left' ),
 	} );
 
 	return (
-		<button type="button" className={ classes } { ...omit( props, [ 'active', 'position', 'icon' ] ) }>
+		<button
+			type="button"
+			className={ classes }
+			{ ...omit( props, [ 'active', 'position', 'icon' ] ) }
+		>
 			{ icon && <Gridicon icon={ icon } size={ 18 } /> }
 			{ children }
 		</button>
@@ -30,20 +35,15 @@ const SharingButtonsPreviewAction = ( props ) => {
 
 SharingButtonsPreviewAction.propTypes = {
 	active: PropTypes.bool,
-	position: PropTypes.oneOf( [
-		'top-left',
-		'top-right',
-		'bottom-left',
-		'bottom-right'
-	] ),
+	position: PropTypes.oneOf( [ 'top-left', 'top-right', 'bottom-left', 'bottom-right' ] ),
 	icon: PropTypes.string,
-	onClick: PropTypes.func
+	onClick: PropTypes.func,
 };
 
 SharingButtonsPreviewAction.defaultProps = {
 	active: true,
 	position: 'top-left',
-	onClick: () => {}
+	onClick: () => {},
 };
 
 export default SharingButtonsPreviewAction;

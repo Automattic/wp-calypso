@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -18,7 +19,7 @@ import WPSuperCache from './main';
 export function settings( context ) {
 	const siteId = getSiteFragment( context.path );
 	const site = getSelectedSite( context.store.getState() );
-	const { tab = '' } = context.params;
+	const { tab = '' } = context.params;
 
 	context.store.dispatch( setTitle( i18n.translate( 'WP Super Cache', { textOnly: true } ) ) );
 

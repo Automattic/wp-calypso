@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,15 +22,18 @@ const DesignMenuHeader = ( { isUnsaved, onBack, onPreview, onSave, site, transla
 			</Button>
 			<SiteCard site={ site } />
 			<Card className="design-menu__header-buttons">
-				<Button primary compact
+				<Button
+					primary
+					compact
 					disabled={ ! isUnsaved }
 					className="design-menu__save"
 					onClick={ onSave }
-				>{ isUnsaved ? translate( 'Publish Changes' ) : translate( 'Saved' ) }</Button>
-				<Button compact
-					className="design-menu__preview"
-					onClick={ onPreview }
-				>{ translate( 'Preview changes' ) }</Button>
+				>
+					{ isUnsaved ? translate( 'Publish Changes' ) : translate( 'Saved' ) }
+				</Button>
+				<Button compact className="design-menu__preview" onClick={ onPreview }>
+					{ translate( 'Preview changes' ) }
+				</Button>
 			</Card>
 		</span>
 	);

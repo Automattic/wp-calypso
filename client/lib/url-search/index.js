@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -29,12 +30,7 @@ const debug = debugFactory( 'calypso:url-search' );
  * @returns {string} The built search url
  */
 export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
-	const parsedUrl = pick(
-		url.parse( uri, true ),
-		'pathname',
-		'hash',
-		'query',
-	);
+	const parsedUrl = pick( url.parse( uri, true ), 'pathname', 'hash', 'query' );
 
 	if ( search ) {
 		parsedUrl.query[ queryKey ] = search;
@@ -45,60 +41,61 @@ export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
 	return url.format( parsedUrl ).replace( /\%20/g, '+' );
 };
 
-const UrlSearch = Component => class extends React.Component {
-	static displayName = `UrlSearch(${ Component.displayName || Component.name || '' })`;
-	static defaultProps = {
-		search: '',
-		queryKey: 's',
-	}
+const UrlSearch = Component =>
+	class extends React.Component {
+		static displayName = `UrlSearch(${ Component.displayName || Component.name || '' })`;
+		static defaultProps = {
+			search: '',
+			queryKey: 's',
+		};
 
-	state = {
-		searchOpen: false
-	};
+		state = {
+			searchOpen: false,
+		};
 
-	componentWillReceiveProps( { search } ) {
-		return ! search && this.setState( { searchOpen: false } );
-	}
-
-	doSearch = ( query ) => {
-		this.setState( {
-			searchOpen: ( false !== query )
-		} );
-
-		if ( this.onSearch ) {
-			this.onSearch( query );
-			return;
+		componentWillReceiveProps( { search } ) {
+			return ! search && this.setState( { searchOpen: false } );
 		}
 
-		const searchURL = buildSearchUrl( {
-			uri: window.location.href,
-			search: query,
-			queryKey: this.props.queryKey
-		} );
+		doSearch = query => {
+			this.setState( {
+				searchOpen: false !== query,
+			} );
 
-		debug( 'search for: %s', query );
-		if ( this.props.search && query ) {
-			debug( 'replacing URL: %s', searchURL );
-			page.replace( searchURL );
-		} else {
-			debug( 'setting URL: %s', searchURL );
-			page( searchURL );
+			if ( this.onSearch ) {
+				this.onSearch( query );
+				return;
+			}
+
+			const searchURL = buildSearchUrl( {
+				uri: window.location.href,
+				search: query,
+				queryKey: this.props.queryKey,
+			} );
+
+			debug( 'search for: %s', query );
+			if ( this.props.search && query ) {
+				debug( 'replacing URL: %s', searchURL );
+				page.replace( searchURL );
+			} else {
+				debug( 'setting URL: %s', searchURL );
+				page( searchURL );
+			}
+		};
+
+		getSearchOpen = () => {
+			return this.state.searchOpen !== false || this.props.search;
+		};
+
+		render() {
+			return (
+				<Component
+					{ ...this.props }
+					doSearch={ this.doSearch }
+					getSearchOpen={ this.getSearchOpen }
+				/>
+			);
 		}
 	};
-
-	getSearchOpen = () => {
-		return ( this.state.searchOpen !== false || this.props.search );
-	}
-
-	render() {
-		return (
-			<Component
-				{ ...this.props }
-				doSearch = { this.doSearch }
-				getSearchOpen={ this.getSearchOpen }
-			/>
-		);
-	}
-};
 
 export default UrlSearch;

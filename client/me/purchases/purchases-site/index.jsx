@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,15 +32,13 @@ const PurchasesSite = ( {
 	if ( isPlaceholder ) {
 		items = times( 2, index => <PurchaseItem isPlaceholder key={ index } /> );
 	} else {
-		items = purchases.map(
-			purchase => (
-				<PurchaseItem
-					key={ purchase.id }
-					slug={ slug }
-					isDisconnectedSite={ ! site }
-					purchase={ purchase }
-				/>
-			)
+		items = purchases.map( purchase =>
+			<PurchaseItem
+				key={ purchase.id }
+				slug={ slug }
+				isDisconnectedSite={ ! site }
+				purchase={ purchase }
+			/>
 		);
 	}
 

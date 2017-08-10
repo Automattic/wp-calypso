@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,9 +9,13 @@ export default React.createClass( {
 
 	render() {
 		if ( this.props.required ) {
-			return ( <em>&nbsp;({ this.translate( 'required' ) })</em> );
+			return (
+				<em>
+					&nbsp;({ this.translate( 'required' ) })
+				</em>
+			);
 		}
 
 		return null;
-	}
+	},
 } );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +20,11 @@ export const getRawShippingZoneLocations = ( state, siteId = getSelectedSiteId( 
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the locations for the given zone have been successfully loaded from the server
  */
-export const areShippingZoneLocationsLoaded = ( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
+export const areShippingZoneLocationsLoaded = (
+	state,
+	zoneId,
+	siteId = getSelectedSiteId( state )
+) => {
 	const rawLocations = getRawShippingZoneLocations( state, siteId );
 	return rawLocations && isObject( rawLocations[ zoneId ] );
 };
@@ -30,7 +35,11 @@ export const areShippingZoneLocationsLoaded = ( state, zoneId, siteId = getSelec
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the locations for the given zone are currently being retrieved from the server
  */
-export const areShippingZoneLocationsLoading = ( state, zoneId, siteId = getSelectedSiteId( state ) ) => {
+export const areShippingZoneLocationsLoading = (
+	state,
+	zoneId,
+	siteId = getSelectedSiteId( state )
+) => {
 	const rawLocations = getRawShippingZoneLocations( state, siteId );
 	return rawLocations && LOADING === getRawShippingZoneLocations( state, siteId )[ zoneId ];
 };
@@ -45,7 +54,10 @@ export const areShippingZoneLocationsLoading = ( state, zoneId, siteId = getSele
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the shipping zones have valid locations to be edited in Calypso
  */
-export const areShippingZonesLocationsValid = ( reduxState, siteId = getSelectedSiteId( reduxState ) ) => {
+export const areShippingZonesLocationsValid = (
+	reduxState,
+	siteId = getSelectedSiteId( reduxState )
+) => {
 	const continentsSet = new Set();
 	const countriesSet = new Set();
 	const statesSet = new Set();
@@ -77,12 +89,14 @@ export const areShippingZonesLocationsValid = ( reduxState, siteId = getSelected
 			if ( ! isEmpty( state ) ) {
 				return false;
 			}
-			if ( ! isEmpty( postcode ) ) { // Single country + postcode is allowed
+			if ( ! isEmpty( postcode ) ) {
+				// Single country + postcode is allowed
 				// Only 1 postcode range is allowed in a zone
 				if ( 1 < country.length || 1 < postcode.length ) {
 					return false;
 				}
-			} else { // Whole country, or multiple countries
+			} else {
+				// Whole country, or multiple countries
 				for ( const c of country ) {
 					// 2 zones can't have the same country
 					if ( countriesSet.has( c ) ) {

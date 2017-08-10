@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +20,7 @@ export const areTaxRatesLoaded = ( state, siteId = getSelectedSiteId( state ) ) 
 		return false;
 	}
 	// combined_rate is present in all well formed responses
-	return ( 'combined_rate' in taxRates );
+	return 'combined_rate' in taxRates;
 };
 
 export const areTaxRatesLoading = ( state, siteId = getSelectedSiteId( state ) ) => {

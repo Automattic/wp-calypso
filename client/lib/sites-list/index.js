@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal Dependencies
  */
@@ -7,7 +8,7 @@ import { JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST } from 'state/action-types'
 import SitesList from './list';
 import PollerPool from 'lib/data-poller';
 import Dispatcher from 'dispatcher';
-let	_sites;
+let _sites;
 
 module.exports = function() {
 	if ( ! _sites ) {

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,11 +16,7 @@ import Notice from 'components/notice';
 import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
 import VideoEditorControls from './video-editor-controls';
 import { updatePoster } from 'state/ui/editor/video-editor/actions';
-import {
-	getPosterUploadProgress,
-	getPosterUrl,
-	shouldShowVideoEditorError,
-} from 'state/selectors';
+import { getPosterUploadProgress, getPosterUrl, shouldShowVideoEditorError } from 'state/selectors';
 
 class VideoEditor extends Component {
 	static propTypes = {
@@ -50,7 +47,7 @@ class VideoEditor extends Component {
 		if ( nextProps.shouldShowError && ! this.props.shouldShowError ) {
 			this.setState( {
 				error: true,
-				pauseVideo: false
+				pauseVideo: false,
 			} );
 
 			return;
@@ -74,13 +71,13 @@ class VideoEditor extends Component {
 			isSelectingFrame: true,
 			pauseVideo: true,
 		} );
-	}
+	};
 
 	/**
    * Updates the poster by selecting a particular frame of the video.
    * @param {number} currentTime - Time at which to capture the frame
    */
-	updatePoster = ( currentTime ) => {
+	updatePoster = currentTime => {
 		if ( ! this.state.isSelectingFrame ) {
 			return;
 		}
@@ -91,15 +88,15 @@ class VideoEditor extends Component {
 		if ( guid ) {
 			this.props.updatePoster( guid, { atTime: currentTime } );
 		}
-	}
+	};
 
 	setError = () => {
 		this.setState( { error: true } );
-	}
+	};
 
 	setIsLoading = () => {
 		this.setState( { isLoading: false } );
-	}
+	};
 
 	pauseVideo = () => {
 		this.setState( {
@@ -107,13 +104,13 @@ class VideoEditor extends Component {
 			isSelectingFrame: false,
 			pauseVideo: true,
 		} );
-	}
+	};
 
 	/**
    * Uploads an image to use as the poster for the video.
    * @param {object} file - Uploaded image
    */
-	uploadImage = ( file ) => {
+	uploadImage = file => {
 		if ( ! file ) {
 			return;
 		}
@@ -124,7 +121,7 @@ class VideoEditor extends Component {
 		if ( guid ) {
 			this.props.updatePoster( guid, { file } );
 		}
-	}
+	};
 
 	getVideoEditorProps( posterUrl ) {
 		const { media } = this.props;
@@ -138,10 +135,7 @@ class VideoEditor extends Component {
 	}
 
 	renderError() {
-		const {
-			onCancel,
-			translate,
-		} = this.props;
+		const { onCancel, translate } = this.props;
 
 		return (
 			<Notice
@@ -149,33 +143,20 @@ class VideoEditor extends Component {
 				showDismiss={ true }
 				text={ translate( 'We are unable to edit this video.' ) }
 				isCompact={ false }
-				onDismissClick={ onCancel } />
+				onDismissClick={ onCancel }
+			/>
 		);
 	}
 
 	render() {
-		const {
-			className,
-			media,
-			onCancel,
-			uploadProgress,
-			translate,
-		} = this.props;
-		const {
-			error,
-			isLoading,
-			isSelectingFrame,
-			pauseVideo,
-		} = this.state;
+		const { className, media, onCancel, uploadProgress, translate } = this.props;
+		const { error, isLoading, isSelectingFrame, pauseVideo } = this.state;
 
-		const classes = classNames(
-			'video-editor',
-			className,
-		);
+		const classes = classNames( 'video-editor', className );
 
 		return (
 			<div className={ classes }>
-			{ error && this.renderError() }
+				{ error && this.renderError() }
 
 				<figure>
 					<div className="video-editor__content">
@@ -189,13 +170,15 @@ class VideoEditor extends Component {
 								onVideoLoaded={ this.setIsLoading }
 							/>
 						</div>
-						{ uploadProgress && ! error && ! isSelectingFrame &&
+						{ uploadProgress &&
+							! error &&
+							! isSelectingFrame &&
 							<ProgressBar
 								className="video-editor__progress-bar"
 								isPulsing={ true }
 								total={ 100 }
-								value={ uploadProgress } />
-						}
+								value={ uploadProgress }
+							/> }
 						<span className="video-editor__text">
 							{ translate( 'Select a frame to use as the thumbnail image or upload your own.' ) }
 						</span>
@@ -215,7 +198,7 @@ class VideoEditor extends Component {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		return {
 			posterUrl: getPosterUrl( state ),
 			shouldShowError: shouldShowVideoEditorError( state ),

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -29,9 +30,10 @@ function EditorActionBarViewLabel( { translate, siteId, typeSlug, type } ) {
 
 	return (
 		<span className="editor-action-bar__view-label">
-			{ siteId && 'page' !== typeSlug && 'post' !== typeSlug && (
-				<QueryPostTypes siteId={ siteId } />
-			) }
+			{ siteId &&
+				'page' !== typeSlug &&
+				'post' !== typeSlug &&
+				<QueryPostTypes siteId={ siteId } /> }
 			{ label }
 		</span>
 	);
@@ -41,10 +43,10 @@ EditorActionBarViewLabel.propTypes = {
 	translate: PropTypes.func,
 	siteId: PropTypes.number,
 	typeSlug: PropTypes.string,
-	type: PropTypes.object
+	type: PropTypes.object,
 };
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const props = { siteId };
 	const post = getEditedPost( state, siteId, getEditorPostId( state ) );
@@ -54,6 +56,6 @@ export default connect( ( state ) => {
 
 	return Object.assign( props, {
 		typeSlug: post.type,
-		type: getPostType( state, siteId, post.type )
+		type: getPostType( state, siteId, post.type ),
 	} );
 } )( localize( EditorActionBarViewLabel ) );

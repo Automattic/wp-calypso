@@ -1,15 +1,11 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
-import {
-	firstValid,
-	hardTruncation,
-	shortEnough,
-	truncatedAtSpace
-} from '../helpers';
+import { firstValid, hardTruncation, shortEnough, truncatedAtSpace } from '../helpers';
 
 const TITLE_LENGTH = 63;
 const SNIPPET_LENGTH = 160;
@@ -32,15 +28,13 @@ export const SearchPreview = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render() {
-		const {
-			snippet,
-			title,
-			url
-		} = this.props;
+		const { snippet, title, url } = this.props;
 
 		return (
 			<div className="seo-search-preview">
-				<h2 className="seo-search-preview__header">{ this.translate( 'Search Preview' ) }</h2>
+				<h2 className="seo-search-preview__header">
+					{ this.translate( 'Search Preview' ) }
+				</h2>
 				<div className="seo-search-preview__display">
 					<div className="seo-search-preview__title">
 						{ googleTitle( title ) }
@@ -54,19 +48,19 @@ export const SearchPreview = React.createClass( {
 				</div>
 			</div>
 		);
-	}
+	},
 } );
 
 SearchPreview.propTypes = {
 	title: PropTypes.string,
 	url: PropTypes.string,
-	snippet: PropTypes.string
+	snippet: PropTypes.string,
 };
 
 SearchPreview.defaultProps = {
 	title: '',
 	url: '',
-	snippet: ''
+	snippet: '',
 };
 
 export default SearchPreview;

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,31 +10,33 @@ import { pickBy } from 'lodash';
 import Shortcode from 'lib/shortcode';
 
 export function serialize( { to, subject, fields = [] } = {} ) {
-	const content = fields.map( ( { label, type, options, required } ) => {
-		if ( ! label || ! type ) {
-			return;
-		}
+	const content = fields
+		.map( ( { label, type, options, required } ) => {
+			if ( ! label || ! type ) {
+				return;
+			}
 
-		let fieldShortcode = {
-			tag: 'contact-field',
-			type: 'self-closing',
-			attrs: pickBy( { label, type, options } )
-		};
+			let fieldShortcode = {
+				tag: 'contact-field',
+				type: 'self-closing',
+				attrs: pickBy( { label, type, options } ),
+			};
 
-		if ( required ) {
-			fieldShortcode.attrs.required = 1;
-		}
+			if ( required ) {
+				fieldShortcode.attrs.required = 1;
+			}
 
-		return Shortcode.stringify( fieldShortcode );
-	} ).join( '' );
+			return Shortcode.stringify( fieldShortcode );
+		} )
+		.join( '' );
 
 	return Shortcode.stringify( {
 		tag: 'contact-form',
 		type: 'closed',
 		content,
-		attrs: pickBy( { to, subject } )
+		attrs: pickBy( { to, subject } ),
 	} );
-};
+}
 
 export function deserialize( shortcode ) {
 	if ( ! shortcode ) {
@@ -56,7 +59,7 @@ export function deserialize( shortcode ) {
 					}
 					fields.push( field );
 				}
-				content = content.slice( parsedField.index + parsedField.content.length )
+				content = content.slice( parsedField.index + parsedField.content.length );
 			}
 
 			return pickBy( { to, subject, fields } );

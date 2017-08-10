@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,7 +26,8 @@ export const initialState = {
 
 function cancelAction( state ) {
 	// "Canceling" editing a method is equivalent at "closing" it without any changes
-	return closeAction( { ...state,
+	return closeAction( {
+		...state,
 		currentlyEditingChanges: {},
 	} );
 }
@@ -47,7 +49,8 @@ function changeEnabledAction( state, { methodId, enabled } ) {
 		newBucket.push( { id: methodId, enabled } );
 	}
 
-	return { ...state,
+	return {
+		...state,
 		[ bucket ]: newBucket,
 	};
 }
@@ -59,7 +62,8 @@ function closeAction( state ) {
 	}
 	if ( isEmpty( currentlyEditingChanges ) ) {
 		// Nothing to save, no need to go through the rest of the algorithm
-		return { ...state,
+		return {
+			...state,
 			currentlyEditingId: null,
 		};
 	}
@@ -79,7 +83,8 @@ function closeAction( state ) {
 		newBucket.push( { id: currentlyEditingId, ...currentlyEditingChanges } );
 	}
 
-	return { ...state,
+	return {
+		...state,
 		currentlyEditingId: null,
 		[ bucket ]: newBucket,
 	};
@@ -89,15 +94,18 @@ function editFieldAction( state, { field, value } ) {
 	if ( null === state.currentlyEditingId ) {
 		return state;
 	}
-	return { ...state,
-		currentlyEditingChanges: { ...state.currentlyEditingChanges,
+	return {
+		...state,
+		currentlyEditingChanges: {
+			...state.currentlyEditingChanges,
 			[ field ]: { value },
 		},
 	};
 }
 
 function openAction( state, { id } ) {
-	return { ...state,
+	return {
+		...state,
 		currentlyEditingId: id,
 		currentlyEditingChanges: {}, // Always reset the current changes
 	};

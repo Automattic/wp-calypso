@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,13 +14,12 @@ import { flowRight, noop } from 'lodash';
 import HeaderCake from 'components/header-cake';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
-const Zone = ( { siteSlug, translate } ) => (
+const Zone = ( { siteSlug, translate } ) =>
 	<div>
 		<HeaderCake backHref={ `/extensions/zoninator/${ siteSlug }` } onClick={ noop }>
 			{ translate( 'Edit zone' ) }
 		</HeaderCake>
-	</div>
-);
+	</div>;
 
 Zone.propTypes = {
 	siteSlug: PropTypes.string,
@@ -31,7 +31,4 @@ const connectComponent = connect( state => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( Zone );
+export default flowRight( connectComponent, localize )( Zone );

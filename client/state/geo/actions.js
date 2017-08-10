@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -6,7 +7,7 @@ import {
 	GEO_RECEIVE,
 	GEO_REQUEST,
 	GEO_REQUEST_FAILURE,
-	GEO_REQUEST_SUCCESS
+	GEO_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -24,7 +25,7 @@ export const GEO_ENDPOINT = 'https://public-api.wordpress.com/geo/';
 export function receiveGeo( geo ) {
 	return {
 		type: GEO_RECEIVE,
-		geo
+		geo,
 	};
 }
 
@@ -35,17 +36,20 @@ export function receiveGeo( geo ) {
  * @return {Function} Action thunk
  */
 export function requestGeo() {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( { type: GEO_REQUEST } );
 
-		return request.get( GEO_ENDPOINT ).then( ( { body: geo } ) => {
-			dispatch( { type: GEO_REQUEST_SUCCESS } );
-			dispatch( receiveGeo( geo ) );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: GEO_REQUEST_FAILURE,
-				error
+		return request
+			.get( GEO_ENDPOINT )
+			.then( ( { body: geo } ) => {
+				dispatch( { type: GEO_REQUEST_SUCCESS } );
+				dispatch( receiveGeo( geo ) );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: GEO_REQUEST_FAILURE,
+					error,
+				} );
 			} );
-		} );
 	};
 }

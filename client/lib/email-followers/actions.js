@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,24 +22,27 @@ var EmailFollowersActions = {
 		if ( ! silentUpdate ) {
 			Dispatcher.handleViewAction( {
 				type: 'FETCHING_EMAIL_FOLLOWERS',
-				fetchOptions: fetchOptions
+				fetchOptions: fetchOptions,
 			} );
 		}
-		wpcom.undocumented().site( fetchOptions.siteId ).fetchFollowers( fetchOptions, function( error, data ) {
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_EMAIL_FOLLOWERS',
-				fetchOptions: fetchOptions,
-				data: data,
-				error: error
+		wpcom
+			.undocumented()
+			.site( fetchOptions.siteId )
+			.fetchFollowers( fetchOptions, function( error, data ) {
+				Dispatcher.handleServerAction( {
+					type: 'RECEIVE_EMAIL_FOLLOWERS',
+					fetchOptions: fetchOptions,
+					data: data,
+					error: error,
+				} );
 			} );
-		} );
 	},
 
 	removeFollower: ( siteId, follower ) => {
 		Dispatcher.handleViewAction( {
 			type: 'REMOVE_EMAIL_FOLLOWER',
 			siteId: siteId,
-			follower: follower
+			follower: follower,
 		} );
 		wpcom.undocumented().site( siteId ).removeEmailFollower( follower.ID, function( error, data ) {
 			if ( error ) {
@@ -46,18 +50,18 @@ var EmailFollowersActions = {
 					type: 'RECEIVE_REMOVE_EMAIL_FOLLOWER_ERROR',
 					siteId: siteId,
 					follower: follower,
-					error: error
+					error: error,
 				} );
 			} else {
 				Dispatcher.handleServerAction( {
 					type: 'RECEIVE_REMOVE_EMAIL_FOLLOWER_SUCCESS',
 					siteId: siteId,
 					follower: follower,
-					data: data
+					data: data,
 				} );
 			}
 		} );
-	}
+	},
 };
 
 module.exports = EmailFollowersActions;

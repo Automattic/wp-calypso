@@ -1,3 +1,4 @@
+/** @format */
 
 /**
  * External Dependencies
@@ -6,7 +7,7 @@ var expect = require( 'chai' ).expect,
 	useFileSystemMocks = require( 'test/helpers/use-filesystem-mocks' ),
 	useFakeDom = require( 'test/helpers/use-fake-dom' );
 
-var	Dispatcher, FeedStreamActionType, FeedPostActionType, FeedPostStore;
+var Dispatcher, FeedStreamActionType, FeedPostActionType, FeedPostStore;
 
 describe( 'feed-post-store', function() {
 	useFakeDom();
@@ -32,33 +33,37 @@ describe( 'feed-post-store', function() {
 		Dispatcher.handleServerAction( {
 			type: FeedStreamActionType.RECEIVE_PAGE,
 			data: { posts: [ { feed_ID: 1, ID: 2 } ] },
-			error: null
+			error: null,
 		} );
 
-		expect( FeedPostStore.get( {
-			feedId: 1,
-			postId: 2
-		} ) ).to.be.ok;
+		expect(
+			FeedPostStore.get( {
+				feedId: 1,
+				postId: 2,
+			} )
+		).to.be.ok;
 	} );
 
 	it( 'should save a post from a blog page', function() {
 		Dispatcher.handleServerAction( {
 			type: FeedStreamActionType.RECEIVE_PAGE,
 			data: { posts: [ { site_ID: 1, ID: 2 } ] },
-			error: null
+			error: null,
 		} );
 
-		expect( FeedPostStore.get( {
-			blogId: 1,
-			postId: 2
-		} ) ).to.be.ok;
+		expect(
+			FeedPostStore.get( {
+				blogId: 1,
+				postId: 2,
+			} )
+		).to.be.ok;
 	} );
 
 	it( 'should ignore a post from a page without the right ID', function() {
 		Dispatcher.handleServerAction( {
 			type: FeedStreamActionType.RECEIVE_PAGE,
 			data: { posts: [ { junk: '' } ] },
-			error: null
+			error: null,
 		} );
 
 		expect( FeedPostStore._all() ).to.eql( {} );
@@ -68,7 +73,7 @@ describe( 'feed-post-store', function() {
 		Dispatcher.handleServerAction( {
 			type: FeedStreamActionType.RECEIVE_PAGE,
 			data: { posts: [ { global_ID: 1 } ] },
-			error: new Error()
+			error: new Error(),
 		} );
 
 		expect( FeedPostStore._all() ).to.be.empty;
@@ -81,21 +86,25 @@ describe( 'feed-post-store', function() {
 				feed_id: 1,
 				feed_item_ID: 2,
 				ID: 3, // notice this can and will be different for wpcom posts
-				title: 'chris & ben'
+				title: 'chris & ben',
 			},
 			feedId: 1,
 			postId: 2,
-			error: null
+			error: null,
 		} );
 
-		expect( FeedPostStore.get( {
-			feedId: 1,
-			postId: 2
-		} ) ).to.be.ok;
-		expect( FeedPostStore.get( {
-			feedId: 1,
-			postId: 2
-		} ).title ).to.equal( 'chris & ben' );
+		expect(
+			FeedPostStore.get( {
+				feedId: 1,
+				postId: 2,
+			} )
+		).to.be.ok;
+		expect(
+			FeedPostStore.get( {
+				feedId: 1,
+				postId: 2,
+			} ).title
+		).to.equal( 'chris & ben' );
 	} );
 
 	it( 'should index a post by the site_ID and ID if it is internal', function() {
@@ -106,21 +115,25 @@ describe( 'feed-post-store', function() {
 				feed_item_ID: 2,
 				ID: 3, // notice this can and will be different for wpcom posts
 				site_ID: 4,
-				title: 'a sample post'
+				title: 'a sample post',
 			},
 			feedId: 1,
 			postId: 2,
-			error: null
+			error: null,
 		} );
 
-		expect( FeedPostStore.get( {
-			feedId: 1,
-			postId: 2
-		} ) ).to.be.ok;
-		expect( FeedPostStore.get( {
-			blogId: 4,
-			postId: 3
-		} ) ).to.be.ok;
+		expect(
+			FeedPostStore.get( {
+				feedId: 1,
+				postId: 2,
+			} )
+		).to.be.ok;
+		expect(
+			FeedPostStore.get( {
+				blogId: 4,
+				postId: 3,
+			} )
+		).to.be.ok;
 	} );
 
 	it( 'should accept a post without a feed ID', function() {
@@ -129,20 +142,24 @@ describe( 'feed-post-store', function() {
 			data: {
 				ID: 3, // notice this can and will be different for wpcom posts
 				site_ID: 4,
-				title: 'a sample post'
+				title: 'a sample post',
 			},
 			blogId: 4,
 			postId: 3,
-			error: null
+			error: null,
 		} );
 
-		expect( FeedPostStore.get( {
-			feedId: 1,
-			postId: 2
-		} ) ).to.be.undefined;
-		expect( FeedPostStore.get( {
-			blogId: 4,
-			postId: 3
-		} ) ).to.be.ok;
+		expect(
+			FeedPostStore.get( {
+				feedId: 1,
+				postId: 2,
+			} )
+		).to.be.undefined;
+		expect(
+			FeedPostStore.get( {
+				blogId: 4,
+				postId: 3,
+			} )
+		).to.be.ok;
 	} );
 } );

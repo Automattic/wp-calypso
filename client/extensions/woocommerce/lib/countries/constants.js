@@ -1,3 +1,4 @@
+/** @format */
 
 /**
  * This file contains helper constants for countries.

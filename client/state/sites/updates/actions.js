@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -15,39 +16,42 @@ import wpcom from 'lib/wp';
 export const siteUpdatesReceiveAction = ( siteId, updates ) => ( {
 	type: SITE_UPDATES_RECEIVE,
 	siteId,
-	updates
+	updates,
 } );
 
 export const siteUpdatesRequestAction = siteId => ( {
 	type: SITE_UPDATES_REQUEST,
-	siteId
+	siteId,
 } );
 
 export const siteUpdatesRequestSuccessAction = siteId => ( {
 	type: SITE_UPDATES_REQUEST_SUCCESS,
-	siteId
+	siteId,
 } );
 
 export const siteUpdatesRequestFailureAction = ( siteId, error ) => ( {
 	type: SITE_UPDATES_REQUEST_FAILURE,
 	siteId,
-	error
+	error,
 } );
 
-export const updateWordPress = ( siteId ) => {
-	return ( dispatch ) => {
+export const updateWordPress = siteId => {
+	return dispatch => {
 		dispatch( {
 			type: SITE_WORDPRESS_UPDATE_REQUEST,
 			siteId,
 		} );
 
-		return wpcom.undocumented().updateWordPressCore( siteId )
+		return wpcom
+			.undocumented()
+			.updateWordPressCore( siteId )
 			.then( () => {
 				dispatch( {
 					type: SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
 					siteId,
 				} );
-			} ).catch( ( error ) => {
+			} )
+			.catch( error => {
 				dispatch( {
 					type: SITE_WORDPRESS_UPDATE_REQUEST_FAILURE,
 					siteId,

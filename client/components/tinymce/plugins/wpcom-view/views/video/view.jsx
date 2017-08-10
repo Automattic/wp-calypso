@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,13 +19,18 @@ function VideoView( { siteId, content, width } ) {
 		return null;
 	}
 
-	const shortcode = stringify( merge( {
-		attrs: {
-			named: {
-				w: width
-			}
-		}
-	}, parse( content ) ) );
+	const shortcode = stringify(
+		merge(
+			{
+				attrs: {
+					named: {
+						w: width,
+					},
+				},
+			},
+			parse( content )
+		)
+	);
 
 	return (
 		<Shortcode { ...{ siteId, width } }>
@@ -36,9 +42,9 @@ function VideoView( { siteId, content, width } ) {
 VideoView.propTypes = {
 	siteId: PropTypes.number,
 	content: PropTypes.string,
-	width: PropTypes.number
+	width: PropTypes.number,
 };
 
-export default connect( ( state ) => ( {
-	siteId: getSelectedSiteId( state )
+export default connect( state => ( {
+	siteId: getSelectedSiteId( state ),
 } ) )( resizableView( VideoView ) );

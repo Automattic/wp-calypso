@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,19 +21,18 @@ var PeopleListItem = require( 'my-sites/people/people-list-item' ),
 import ListEnd from 'components/list-end';
 
 let Viewers = React.createClass( {
-
 	displayName: 'Viewers',
 
 	getInitialState: function() {
 		return {
-			bulkEditing: false
+			bulkEditing: false,
 		};
 	},
 
 	mixins: [ PureRenderMixin ],
 
 	renderPlaceholders() {
-		return <PeopleListItem key="people-list-item-placeholder"/>;
+		return <PeopleListItem key="people-list-item-placeholder" />;
 	},
 
 	fetchNextPage() {
@@ -46,26 +46,29 @@ let Viewers = React.createClass( {
 
 	removeViewer: function( viewer ) {
 		analytics.ga.recordEvent( 'People', 'Clicked Remove Viewer Button On Viewers List' );
-		accept( (
+		accept(
 			<div>
 				<p>
-				{
-					this.translate(
+					{ this.translate(
 						'If you remove this viewer, he or she will not be able to visit this site.'
-					)
-				}
+					) }
 				</p>
 				<p>
 					{ this.translate( 'Would you still like to remove this viewer?' ) }
 				</p>
-			</div>
-			),
+			</div>,
 			accepted => {
 				if ( accepted ) {
-					analytics.ga.recordEvent( 'People', 'Clicked Remove Button In Remove Viewer Confirmation' );
+					analytics.ga.recordEvent(
+						'People',
+						'Clicked Remove Button In Remove Viewer Confirmation'
+					);
 					ViewersActions.remove( this.props.site.ID, viewer );
 				} else {
-					analytics.ga.recordEvent( 'People', 'Clicked Cancel Button In Remove Viewer Confirmation' );
+					analytics.ga.recordEvent(
+						'People',
+						'Clicked Cancel Button In Remove Viewer Confirmation'
+					);
 				}
 			},
 			this.translate( 'Remove', { context: 'Confirm Remove viewer button text.' } )
@@ -104,30 +107,26 @@ let Viewers = React.createClass( {
 	render() {
 		var viewers,
 			emptyContentArgs = {
-				title: this.props.site && this.props.site.jetpack
-					? this.translate( "Oops, Jetpack sites don't support viewers." )
-					: this.translate( "You don't have any viewers yet." )
+				title:
+					this.props.site && this.props.site.jetpack
+						? this.translate( "Oops, Jetpack sites don't support viewers." )
+						: this.translate( "You don't have any viewers yet." ),
 			},
-			listClass = ( this.state.bulkEditing ) ? 'bulk-editing' : null;
+			listClass = this.state.bulkEditing ? 'bulk-editing' : null;
 
 		if ( ! this.props.viewers.length && ! this.props.fetching ) {
 			if ( this.props.site && ! this.props.site.jetpack && ! this.props.site.is_private ) {
-				emptyContentArgs = Object.assign(
-					emptyContentArgs,
-					{
-						line: this.translate(
-							'Only private sites can have viewers. You can make your site private by ' +
+				emptyContentArgs = Object.assign( emptyContentArgs, {
+					line: this.translate(
+						'Only private sites can have viewers. You can make your site private by ' +
 							'changing its visibility settings.'
-						),
-						action: this.translate( 'Visit Site Settings' ),
-						actionURL: '/settings/general/' + this.props.site.slug
-					}
-				);
+					),
+					action: this.translate( 'Visit Site Settings' ),
+					actionURL: '/settings/general/' + this.props.site.slug,
+				} );
 			}
 
-			return (
-				<EmptyContent { ...emptyContentArgs } />
-			);
+			return <EmptyContent { ...emptyContentArgs } />;
 		}
 
 		if ( this.props.viewers.length ) {
@@ -143,8 +142,8 @@ let Viewers = React.createClass( {
 					getItemRef={ this.getViewerRef }
 					renderLoadingPlaceholders={ this.renderPlaceholders }
 					renderItem={ this.renderViewer }
-					guessedItemHeight={ 126 }>
-				</InfiniteList>
+					guessedItemHeight={ 126 }
+				/>
 			);
 		} else {
 			viewers = this.renderPlaceholders();
@@ -155,14 +154,15 @@ let Viewers = React.createClass( {
 				<PeopleListSectionHeader
 					label={ this.props.label }
 					site={ this.props.site }
-					count={ this.props.fetching ? null : this.props.totalViewers }/>
+					count={ this.props.fetching ? null : this.props.totalViewers }
+				/>
 				<Card className={ listClass }>
 					{ viewers }
 				</Card>
 				{ this.isLastPage() && <ListEnd /> }
 			</div>
 		);
-	}
+	},
 } );
 
 module.exports = React.createClass( {
@@ -172,9 +172,13 @@ module.exports = React.createClass( {
 
 	render() {
 		return (
-			<ViewersData site={ this.props.site } siteId={ this.props.site.ID } label={ this.props.label }>
+			<ViewersData
+				site={ this.props.site }
+				siteId={ this.props.site.ID }
+				label={ this.props.label }
+			>
 				<Viewers />
 			</ViewersData>
 		);
-	}
+	},
 } );

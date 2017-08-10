@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -32,9 +33,9 @@ const SignupSiteTitle = React.createClass( {
 			hideFieldErrorsOnChange: true,
 			initialState: {
 				siteTitle: {
-					value: this.props.siteTitle
-				}
-			}
+					value: this.props.siteTitle,
+				},
+			},
 		} );
 
 		this.setFormState( this.formStateController.getInitialState() );
@@ -47,7 +48,7 @@ const SignupSiteTitle = React.createClass( {
 	handleChangeEvent( event ) {
 		this.formStateController.handleFieldChange( {
 			name: event.target.name,
-			value: event.target.value
+			value: event.target.value,
 		} );
 	},
 
@@ -64,7 +65,9 @@ const SignupSiteTitle = React.createClass( {
 					value={ this.state.form.siteTitle.value }
 					onChange={ this.handleChangeEvent }
 				/>
-				<FormButton className="signup-site-title__button">{ translate( 'Continue' ) }</FormButton>
+				<FormButton className="signup-site-title__button">
+					{ translate( 'Continue' ) }
+				</FormButton>
 			</FormFieldset>
 		);
 	},
@@ -82,11 +85,9 @@ const SignupSiteTitle = React.createClass( {
 				{ this.formFields() }
 			</LoggedOutForm>
 		);
-	}
+	},
 } );
 
-export default connect(
-	state => ( {
-		siteTitle: getSiteTitle( state ),
-	} )
-)( SignupSiteTitle );
+export default connect( state => ( {
+	siteTitle: getSiteTitle( state ),
+} ) )( SignupSiteTitle );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */

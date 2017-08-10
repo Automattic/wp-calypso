@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,14 +20,10 @@ function DismissibleCardExample( { clearPreference } ) {
 			<h2>
 				<a href="/devdocs/blocks/dismissible-card">Dismissible Card</a>
 			</h2>
-			<DismissibleCard
-				preferenceName="example-local"
-				temporary>
+			<DismissibleCard preferenceName="example-local" temporary>
 				<span>I will be dismissed for a page load</span>
 			</DismissibleCard>
-			<DismissibleCard
-				preferenceName="example"
-			>
+			<DismissibleCard preferenceName="example">
 				<span>I can be dismissed forever!</span>
 			</DismissibleCard>
 			<Button onClick={ clearPreference }>Reset Dismiss Preference</Button>
@@ -34,10 +31,9 @@ function DismissibleCardExample( { clearPreference } ) {
 	);
 }
 
-const ConnectedDismissibleCardExample = connect(
-	null,
-	{ clearPreference: partial( savePreference, 'dismissible-card-example', null ) }
-)( DismissibleCardExample );
+const ConnectedDismissibleCardExample = connect( null, {
+	clearPreference: partial( savePreference, 'dismissible-card-example', null ),
+} )( DismissibleCardExample );
 
 ConnectedDismissibleCardExample.displayName = 'DismissibleCard';
 

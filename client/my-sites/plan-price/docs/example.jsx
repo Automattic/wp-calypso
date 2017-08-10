@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,4 +27,3 @@ function PlanPriceExample() {
 PlanPriceExample.displayName = 'PlanPrice';
 
 export default PlanPriceExample;
-

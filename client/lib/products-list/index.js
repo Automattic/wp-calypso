@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -64,31 +65,33 @@ ProductsList.prototype.fetch = function() {
 
 	this.isFetching = true;
 
-	wpcom.undocumented().getProducts( function( error, data ) {
-		var productsList;
+	wpcom.undocumented().getProducts(
+		function( error, data ) {
+			var productsList;
 
-		if ( error ) {
-			debug( 'error fetching ProductsList from api', error );
+			if ( error ) {
+				debug( 'error fetching ProductsList from api', error );
 
-			return;
-		}
+				return;
+			}
 
-		productsList = data;
+			productsList = data;
 
-		debug( 'ProductsList fetched from api:', productsList );
+			debug( 'ProductsList fetched from api:', productsList );
 
-		if ( ! this.initialized ) {
-			this.initialize( productsList );
-		} else {
-			this.data = productsList;
-		}
+			if ( ! this.initialized ) {
+				this.initialize( productsList );
+			} else {
+				this.data = productsList;
+			}
 
-		this.isFetching = false;
+			this.isFetching = false;
 
-		this.emit( 'change' );
+			this.emit( 'change' );
 
-		store.set( 'ProductsList', productsList );
-	}.bind( this ) );
+			store.set( 'ProductsList', productsList );
+		}.bind( this )
+	);
 };
 
 /**

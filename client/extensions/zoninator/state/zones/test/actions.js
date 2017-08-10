@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,11 +12,7 @@ import {
 	ZONINATOR_REQUEST_ERROR,
 	ZONINATOR_UPDATE_ZONES,
 } from '../../action-types';
-import {
-	requestZones,
-	requestError,
-	updateZones,
-} from '../actions';
+import { requestZones, requestError, updateZones } from '../actions';
 
 describe( 'actions', () => {
 	const siteId = 123456;

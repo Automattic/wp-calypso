@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,7 @@ import { moment, translate } from 'i18n-calypso';
 import Main from 'components/main';
 import Navigation from './store-stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Chart from './store-stats-chart';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import DatePicker from 'my-sites/stats/stats-date-picker';
@@ -25,7 +26,7 @@ import {
 	topProducts,
 	topCategories,
 	topCoupons,
-	UNITS
+	UNITS,
 } from 'woocommerce/app/store-stats/constants';
 import { getUnitPeriod, getEndPeriod } from './utils';
 import { getJetpackSites } from 'state/selectors';
@@ -44,7 +45,16 @@ class StoreStats extends Component {
 	};
 
 	render() {
-		const { jetPackSites, path, queryDate, selectedDate, siteId, slug, unit, querystring } = this.props;
+		const {
+			jetPackSites,
+			path,
+			queryDate,
+			selectedDate,
+			siteId,
+			slug,
+			unit,
+			querystring,
+		} = this.props;
 		const unitQueryDate = getUnitPeriod( queryDate, unit );
 		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
 		const endSelectedDate = getEndPeriod( selectedDate, unit );
@@ -64,8 +74,11 @@ class StoreStats extends Component {
 		return (
 			<Main className="store-stats woocommerce" wideLayout={ true }>
 				<QueryJetpackPlugins siteIds={ jetPackSites.map( site => site.ID ) } />
-				{ siteId && <QuerySiteStats statType="statsOrders" siteId={ siteId } query={ ordersQuery } /> }
-				<div className="store-stats__sidebar-nav"><SidebarNavigation /></div>
+				{ siteId &&
+					<QuerySiteStats statType="statsOrders" siteId={ siteId } query={ ordersQuery } /> }
+				<div className="store-stats__sidebar-nav">
+					<SidebarNavigation />
+				</div>
 				<Navigation unit={ unit } type="orders" slug={ slug } />
 				<Chart
 					path={ path }
@@ -83,7 +96,7 @@ class StoreStats extends Component {
 						period={ unit }
 						// this is needed to counter the +1d adjustment made in DatePicker for weeks
 						date={
-							( unit === 'week' )
+							unit === 'week'
 								? moment( selectedDate, 'YYYY-MM-DD' ).subtract( 1, 'days' ).format( 'YYYY-MM-DD' )
 								: selectedDate
 						}
@@ -93,7 +106,7 @@ class StoreStats extends Component {
 					/>
 				</StatsPeriodNavigation>
 				<div className="store-stats__widgets">
-					{ sparkWidgets.map( ( widget, index ) => (
+					{ sparkWidgets.map( ( widget, index ) =>
 						<div className="store-stats__widgets-column spark-widgets" key={ index }>
 							<Module
 								siteId={ siteId }
@@ -110,18 +123,19 @@ class StoreStats extends Component {
 								/>
 							</Module>
 						</div>
-					) ) }
+					) }
 					{ topWidgets.map( widget => {
 						const header = (
 							<SectionHeader href={ widget.basePath + widgetPath } label={ widget.title } />
 						);
 						return (
 							<div className="store-stats__widgets-column" key={ widget.basePath }>
-								{ siteId && <QuerySiteStats
-									statType={ widget.statType }
-									siteId={ siteId }
-									query={ topQuery }
-								/> }
+								{ siteId &&
+									<QuerySiteStats
+										statType={ widget.statType }
+										siteId={ siteId }
+										query={ topQuery }
+									/> }
 								<Module
 									siteId={ siteId }
 									header={ header }
@@ -145,10 +159,8 @@ class StoreStats extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
-		slug: getSelectedSiteSlug( state ),
-		siteId: getSelectedSiteId( state ),
-		jetPackSites: getJetpackSites( state ),
-	} )
-)( StoreStats );
+export default connect( state => ( {
+	slug: getSelectedSiteSlug( state ),
+	siteId: getSelectedSiteId( state ),
+	jetPackSites: getJetpackSites( state ),
+} ) )( StoreStats );

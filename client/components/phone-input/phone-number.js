@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -33,9 +34,10 @@ export const MIN_LENGTH_TO_FORMAT = 3;
 export const stripNonDigits = inputNumber => inputNumber.replace( /\D/g, '' );
 
 function prefixSearch( prefixQuery ) {
-	return flatten( Object.keys( dialCodeMap )
-		.filter( dialCode => startsWith( prefixQuery, dialCode ) )
-		.map( dialCode => dialCodeMap[ dialCode ] )
+	return flatten(
+		Object.keys( dialCodeMap )
+			.filter( dialCode => startsWith( prefixQuery, dialCode ) )
+			.map( dialCode => dialCodeMap[ dialCode ] )
 	);
 }
 
@@ -74,14 +76,13 @@ export function findCountryFromNumber( inputNumber ) {
 	return null;
 }
 
-export const findPattern = ( inputNumber, patterns ) => (
+export const findPattern = ( inputNumber, patterns ) =>
 	find( patterns, ( { match, leadingDigitPattern } ) => {
 		if ( leadingDigitPattern && inputNumber.search( leadingDigitPattern ) !== 0 ) {
 			return false;
 		}
 		return new RegExp( '^(?:' + match + ')$' ).test( inputNumber );
-	} )
-);
+	} );
 
 /**
  * Creates a template that is long enough to capture the length of phoneNumber
@@ -100,7 +101,9 @@ export function makeTemplate( phoneNumber, patterns ) {
 			return false;
 		}
 		debug( 'pattern.match = ', pattern );
-		const match = pattern.match.replace( CHARACTER_CLASS_PATTERN, '\\d' ).replace( STANDALONE_DIGIT_PATTERN, '\\d' );
+		const match = pattern.match
+			.replace( CHARACTER_CLASS_PATTERN, '\\d' )
+			.replace( STANDALONE_DIGIT_PATTERN, '\\d' );
 		const matchingNumber = LONGEST_NUMBER.match( new RegExp( match ) )[ 0 ];
 
 		return matchingNumber.length >= phoneNumber.length;
@@ -115,7 +118,10 @@ export function makeTemplate( phoneNumber, patterns ) {
 		.replace( STANDALONE_DIGIT_PATTERN, '\\d' );
 
 	const matchingNumber = LONGEST_NUMBER.match( new RegExp( selectedPatternMatch ) )[ 0 ];
-	const template = matchingNumber.replace( new RegExp( selectedPatternMatch, 'g' ), selectedPattern.replace );
+	const template = matchingNumber.replace(
+		new RegExp( selectedPatternMatch, 'g' ),
+		selectedPattern.replace
+	);
 	return template.replace( LONGEST_NUMBER_MATCH, DIGIT_PLACEHOLDER );
 }
 
@@ -139,7 +145,7 @@ export function applyTemplate( phoneNumber, template, positionTracking = { pos: 
 		} else {
 			res += template[ i ];
 			if ( phoneNumberIndex <= originalPosition ) {
-				positionTracking.pos ++;
+				positionTracking.pos++;
 			}
 		}
 	}
@@ -161,8 +167,10 @@ export function applyTemplate( phoneNumber, template, positionTracking = { pos: 
  */
 export function processNumber( inputNumber, numberRegion ) {
 	let prefix = numberRegion.nationalPrefix || '';
-	const nationalNumber = stripNonDigits( inputNumber )
-		.replace( new RegExp( '^(' + numberRegion.dialCode + ')?(' + numberRegion.nationalPrefix + ')?' ), '' );
+	const nationalNumber = stripNonDigits( inputNumber ).replace(
+		new RegExp( '^(' + numberRegion.dialCode + ')?(' + numberRegion.nationalPrefix + ')?' ),
+		''
+	);
 
 	debug( `National Number: ${ nationalNumber } for ${ inputNumber } in ${ numberRegion.isoCode }` );
 
@@ -214,11 +222,16 @@ export function formatNumber( inputNumber, country ) {
 
 	const { nationalNumber, prefix } = processNumber( inputNumber, country );
 
-	const patterns = includes( [ '+', '1' ], inputNumber[ 0 ] ) && country.internationalPatterns || country.patterns || [];
+	const patterns =
+		( includes( [ '+', '1' ], inputNumber[ 0 ] ) && country.internationalPatterns ) ||
+		country.patterns ||
+		[];
 	const pattern = findPattern( nationalNumber, patterns );
 
 	if ( pattern ) {
-		debug( `Will replace "${ nationalNumber }" with "${ pattern.match }" and "${ pattern.replace }" with prefix "${ prefix }"` );
+		debug(
+			`Will replace "${ nationalNumber }" with "${ pattern.match }" and "${ pattern.replace }" with prefix "${ prefix }"`
+		);
 		return prefix + nationalNumber.replace( new RegExp( pattern.match ), pattern.replace );
 	}
 

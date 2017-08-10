@@ -1,3 +1,4 @@
+/** @format */
 
 /**
  * External dependencies
@@ -7,9 +8,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	GUIDED_TOUR_UPDATE,
-} from 'state/action-types';
+import { GUIDED_TOUR_UPDATE } from 'state/action-types';
 
 export function guidedTour( state = {}, action ) {
 	switch ( action.type ) {

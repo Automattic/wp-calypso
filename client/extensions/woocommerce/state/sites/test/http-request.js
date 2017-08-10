@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -73,8 +74,7 @@ describe( 'request', () => {
 				method: 'POST', // Note that this stays POST
 				path: `/jetpack-blogs/${ siteId }/rest-api/`,
 			} );
-			expect( action.body ).to.be.null,
-			expect( action.query ).to.exist;
+			expect( action.body ).to.be.null, expect( action.query ).to.exist;
 			expect( action.query ).to.include( {
 				path: '/wc/v3/placeholder_endpoint&_method=DELETE',
 			} );

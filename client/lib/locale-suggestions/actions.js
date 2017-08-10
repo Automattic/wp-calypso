@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,10 +14,10 @@ var LocaleSuggestionActions = {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_LOCALE_SUGGESTIONS',
 				data: data,
-				error: error
+				error: error,
 			} );
 		} );
-	}
+	},
 };
 
 module.exports = LocaleSuggestionActions;

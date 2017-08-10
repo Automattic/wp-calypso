@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,10 +21,10 @@ const DomainMainPlaceholder = React.createClass( {
 
 				<VerticalNav>
 					<CompactCard className="domain-main-placeholder__card">
-						<p></p>
-						<p></p>
-						<p></p>
-						<p></p>
+						<p />
+						<p />
+						<p />
+						<p />
 					</CompactCard>
 
 					<VerticalNavItem isPlaceholder />
@@ -32,7 +33,7 @@ const DomainMainPlaceholder = React.createClass( {
 				</VerticalNav>
 			</Main>
 		);
-	}
+	},
 } );
 
 export default DomainMainPlaceholder;

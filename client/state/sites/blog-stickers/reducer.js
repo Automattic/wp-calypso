@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -48,7 +49,7 @@ export const items = createReducer(
 				[ blogId ]: reject( state[ blogId ], sticker => sticker === stickerName ),
 			};
 		},
-	},
+	}
 );
 
 export default combineReducers( {

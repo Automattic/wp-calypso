@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,8 @@ function getErrorFromApi( errorMessage ) {
 	if ( errorMessage ) {
 		const errorArray = errorMessage.split( /<a href="(.+)">(.+)<\/a>/ );
 
-		if ( errorArray.length === 4 ) { // This assumes we have only one link
+		if ( errorArray.length === 4 ) {
+			// This assumes we have only one link
 			const errorText1 = errorArray[ 0 ],
 				errorUrl = errorArray[ 1 ],
 				errorLinkText = errorArray[ 2 ],

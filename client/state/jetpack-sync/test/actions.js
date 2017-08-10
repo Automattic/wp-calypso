@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -46,7 +47,7 @@ describe( 'actions', () => {
 				users: 2,
 				posts: 15,
 				comments: 1,
-				updates: 6
+				updates: 6,
 			},
 			sent: {
 				constants: 1,
@@ -56,14 +57,14 @@ describe( 'actions', () => {
 				themes: 1,
 				users: 2,
 				posts: 15,
-				comments: 1
+				comments: 1,
 			},
-			is_scheduled: false
+			is_scheduled: false,
 		};
 		const reply = Object.assign( {}, data );
 
 		describe( 'success', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/sites/' + siteId + '/sync/status' )
@@ -76,7 +77,7 @@ describe( 'actions', () => {
 				getSyncStatus( siteId )( spy );
 				expect( spy ).to.have.been.calledWith( {
 					siteId: siteId,
-					type: JETPACK_SYNC_STATUS_REQUEST
+					type: JETPACK_SYNC_STATUS_REQUEST,
 				} );
 			} );
 
@@ -87,23 +88,27 @@ describe( 'actions', () => {
 					expect( spy ).to.have.been.calledWith( {
 						siteId: siteId,
 						type: JETPACK_SYNC_STATUS_SUCCESS,
-						data: data
+						data: data,
 					} );
 				} );
 			} );
 		} );
 
 		describe( 'failure', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/sites/' + siteId + '/sync/status' )
-					.reply( 403, {
-						error: 'unauthorized',
-						message: 'User cannot access this restricted blog'
-					}, {
-						'Content-Type': 'application/json'
-					} );
+					.reply(
+						403,
+						{
+							error: 'unauthorized',
+							message: 'User cannot access this restricted blog',
+						},
+						{
+							'Content-Type': 'application/json',
+						}
+					);
 			} );
 
 			it( 'should dispatch receive action when request completes', () => {
@@ -114,10 +119,10 @@ describe( 'actions', () => {
 						error: {
 							error: 'unauthorized',
 							message: 'User cannot access this restricted blog',
-							status: 403
+							status: 403,
 						},
 						type: JETPACK_SYNC_STATUS_ERROR,
-						siteId: siteId
+						siteId: siteId,
 					} );
 				} );
 			} );
@@ -127,12 +132,12 @@ describe( 'actions', () => {
 	describe( '#scheduleJetpackFullysync()', () => {
 		const siteId = '123456';
 		const data = {
-			scheduled: true
+			scheduled: true,
 		};
 		const reply = Object.assign( {}, data );
 
 		describe( 'success', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/sites/' + siteId + '/sync' )
@@ -145,7 +150,7 @@ describe( 'actions', () => {
 				scheduleJetpackFullysync( siteId )( spy );
 				expect( spy ).to.have.been.calledWith( {
 					siteId: siteId,
-					type: JETPACK_SYNC_START_REQUEST
+					type: JETPACK_SYNC_START_REQUEST,
 				} );
 			} );
 
@@ -156,23 +161,27 @@ describe( 'actions', () => {
 					expect( spy ).to.have.been.calledWith( {
 						siteId: siteId,
 						type: JETPACK_SYNC_START_SUCCESS,
-						data: data
+						data: data,
 					} );
 				} );
 			} );
 		} );
 
 		describe( 'failure', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/sites/' + siteId + '/sync' )
-					.reply( 403, {
-						error: 'unauthorized',
-						message: 'User cannot access this restricted blog'
-					}, {
-						'Content-Type': 'application/json'
-					} );
+					.reply(
+						403,
+						{
+							error: 'unauthorized',
+							message: 'User cannot access this restricted blog',
+						},
+						{
+							'Content-Type': 'application/json',
+						}
+					);
 			} );
 
 			it( 'should dispatch receive action when request completes', () => {
@@ -183,10 +192,10 @@ describe( 'actions', () => {
 						error: {
 							error: 'unauthorized',
 							message: 'User cannot access this restricted blog',
-							status: 403
+							status: 403,
 						},
 						type: JETPACK_SYNC_START_ERROR,
-						siteId: siteId
+						siteId: siteId,
 					} );
 				} );
 			} );

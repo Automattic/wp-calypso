@@ -1,3 +1,4 @@
+/** @format */
 const navUtils = {
 	/**
 	 * Returns a string with :site replaced with the site.slug
@@ -11,7 +12,7 @@ const navUtils = {
 			return '#unknownsite';
 		}
 		return path.replace( ':site', site.slug );
-	}
+	},
 };
 
 export default navUtils;

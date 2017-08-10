@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +20,6 @@ var MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	Main = require( 'components/main' );
 
 module.exports = React.createClass( {
-
 	displayName: 'TwoStep',
 
 	componentDidMount: function() {
@@ -36,7 +36,7 @@ module.exports = React.createClass( {
 	getInitialState: function() {
 		return {
 			initialized: false,
-			doingSetup: false
+			doingSetup: false,
 		};
 	},
 
@@ -48,7 +48,7 @@ module.exports = React.createClass( {
 		if ( ! this.state.initialized ) {
 			this.setState( {
 				initialized: true,
-				doingSetup: ! this.props.userSettings.isTwoStepEnabled()
+				doingSetup: ! this.props.userSettings.isTwoStepEnabled(),
 			} );
 			return;
 		}
@@ -64,7 +64,7 @@ module.exports = React.createClass( {
 	onSetupFinished: function() {
 		this.setState(
 			{
-				doingSetup: false
+				doingSetup: false,
 			},
 			this.refetchSettings
 		);
@@ -73,7 +73,7 @@ module.exports = React.createClass( {
 	onDisableFinished: function() {
 		this.setState(
 			{
-				doingSetup: true
+				doingSetup: true,
 			},
 			this.refetchSettings
 		);
@@ -88,7 +88,12 @@ module.exports = React.createClass( {
 			placeholders = [];
 
 		for ( i = 0; i < 5; i++ ) {
-			placeholders.push( <p className="two-step__placeholder-text" key={ '2fa-placeholder' + i } > &nbsp; </p> );
+			placeholders.push(
+				<p className="two-step__placeholder-text" key={ '2fa-placeholder' + i }>
+					{' '}
+					&nbsp;{' '}
+				</p>
+			);
 		}
 
 		return placeholders;
@@ -121,9 +126,7 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		return (
-			<AppPasswords appPasswordsData={ this.props.appPasswordsData } />
-		);
+		return <AppPasswords appPasswordsData={ this.props.appPasswordsData } />;
 	},
 
 	renderBackupCodes: function() {
@@ -131,9 +134,7 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		return (
-			<Security2faBackupCodes userSettings={ this.props.userSettings } />
-		);
+		return <Security2faBackupCodes userSettings={ this.props.userSettings } />;
 	},
 
 	render: function() {
@@ -152,5 +153,5 @@ module.exports = React.createClass( {
 				{ this.renderApplicationPasswords() }
 			</Main>
 		);
-	}
+	},
 } );

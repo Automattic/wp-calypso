@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +22,7 @@ const SharingLikeOptions = React.createClass( {
 		post: React.PropTypes.object,
 		isSharingButtonsEnabled: React.PropTypes.bool,
 		isLikesEnabled: React.PropTypes.bool,
-		isNew: React.PropTypes.bool
+		isNew: React.PropTypes.bool,
 	},
 
 	isShowingSharingButtons: function() {
@@ -56,10 +57,13 @@ const SharingLikeOptions = React.createClass( {
 		return (
 			<label>
 				<FormCheckbox
-					name='sharing_enabled'
+					name="sharing_enabled"
 					checked={ this.isShowingSharingButtons() }
-					onChange={ this.onChange } />
-				<span>{ this.translate( 'Show Sharing Buttons', { context: 'Post Editor' } ) }</span>
+					onChange={ this.onChange }
+				/>
+				<span>
+					{ this.translate( 'Show Sharing Buttons', { context: 'Post Editor' } ) }
+				</span>
 			</label>
 		);
 	},
@@ -70,20 +74,23 @@ const SharingLikeOptions = React.createClass( {
 		}
 
 		return (
-				<label>
-					<FormCheckbox
-						name='likes_enabled'
-						checked={ this.isShowingLikeButton() }
-						onChange={ this.onChange } />
-					<span>{ this.translate( 'Show Like Button', { context: 'Post Editor' } ) }</span>
-				</label>
+			<label>
+				<FormCheckbox
+					name="likes_enabled"
+					checked={ this.isShowingLikeButton() }
+					onChange={ this.onChange }
+				/>
+				<span>
+					{ this.translate( 'Show Like Button', { context: 'Post Editor' } ) }
+				</span>
+			</label>
 		);
 	},
 
 	onChange: function( event ) {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
-			[ event.target.name ]: event.target.checked
+			[ event.target.name ]: event.target.checked,
 		} );
 
 		this.recordStats( event );
@@ -114,15 +121,15 @@ const SharingLikeOptions = React.createClass( {
 				{ this.renderLikesButtonField() }
 			</EditorFieldset>
 		);
-	}
+	},
 } );
 
-export default connect( ( state ) => {
+export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
 		isSharingButtonsEnabled: false !== isJetpackModuleActive( state, siteId, 'sharedaddy' ),
 		isLikesEnabled: false !== isJetpackModuleActive( state, siteId, 'likes' ),
-		isNew: isEditorNewPost( state )
+		isNew: isEditorNewPost( state ),
 	};
 } )( SharingLikeOptions );

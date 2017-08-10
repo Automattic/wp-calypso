@@ -1,3 +1,4 @@
+/** @format */
 var untrailingslashit = require( './untrailingslashit' ),
 	page = require( 'page' );
 

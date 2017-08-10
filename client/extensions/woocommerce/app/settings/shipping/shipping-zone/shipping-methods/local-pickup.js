@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,28 +17,28 @@ import PriceInput from 'woocommerce/components/price-input';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import {
 	setShippingIsTaxable,
-	setShippingCost
+	setShippingCost,
 } from 'woocommerce/state/ui/shipping/zones/methods/local-pickup/actions';
 
 const LocalPickupMethod = ( { id, cost, tax_status, currency, translate, actions } ) => {
 	const isTaxable = 'taxable' === tax_status;
-	const onTaxableChange = () => ( actions.setShippingIsTaxable( id, ! isTaxable ) );
-	const onCostChange = ( event ) => ( actions.setShippingCost( id, event.target.value ) );
+	const onTaxableChange = () => actions.setShippingIsTaxable( id, ! isTaxable );
+	const onCostChange = event => actions.setShippingCost( id, event.target.value );
 
 	return (
 		<div className="shipping-methods__method-container shipping-methods__local-pickup">
 			<FormFieldSet>
-				<FormLabel>{ translate( 'How much will you charge for local pickup?' ) }</FormLabel>
-				<PriceInput
-					currency={ currency }
-					value={ cost }
-					onChange={ onCostChange } />
+				<FormLabel>
+					{ translate( 'How much will you charge for local pickup?' ) }
+				</FormLabel>
+				<PriceInput currency={ currency } value={ cost } onChange={ onCostChange } />
 			</FormFieldSet>
 			<FormFieldSet>
 				<FormCheckbox
 					checked={ isTaxable }
 					className="shipping-methods__checkbox"
-					onChange={ onTaxableChange } />
+					onChange={ onTaxableChange }
+				/>
 				{ translate( 'Taxable' ) }
 			</FormFieldSet>
 		</div>
@@ -52,12 +53,13 @@ LocalPickupMethod.propTypes = {
 	currency: PropTypes.string,
 };
 
-export default connect(
-	null,
-	( dispatch, ownProps ) => ( {
-		actions: bindActionCreatorsWithSiteId( {
+export default connect( null, ( dispatch, ownProps ) => ( {
+	actions: bindActionCreatorsWithSiteId(
+		{
 			setShippingIsTaxable,
-			setShippingCost
-		}, dispatch, ownProps.siteId )
-	} )
-)( localize( LocalPickupMethod ) );
+			setShippingCost,
+		},
+		dispatch,
+		ownProps.siteId
+	),
+} ) )( localize( LocalPickupMethod ) );

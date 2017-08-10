@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,12 +17,10 @@ export default localize( ( { selectedSite, translate } ) => {
 			<PurchaseDetail
 				icon="image-multiple"
 				title={ translate( 'Video and audio posts' ) }
-				description={
-					translate(
-						'Enrich your posts with video and audio, uploaded directly on your site. ' +
+				description={ translate(
+					'Enrich your posts with video and audio, uploaded directly on your site. ' +
 						'No ads or limits. The Premium plan also adds 10GB of file storage.'
-					)
-				}
+				) }
 				buttonText={ translate( 'Start a new post' ) }
 				href={ paths.newPost( selectedSite ) }
 			/>

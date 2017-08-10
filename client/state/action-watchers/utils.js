@@ -1,10 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import {
-	isArray,
-	mergeWith,
-} from 'lodash';
+import { isArray, mergeWith } from 'lodash';
 
 /**
  * Merge handler for lodash.mergeWith
@@ -22,10 +20,7 @@ import {
  * @param {Array<Function>} right new handlers to add
  * @returns {Array<Function>} combined handlers
  */
-const concatHandlers = ( left, right ) =>
-	isArray( left )
-		? left.concat( right )
-		: undefined;
+const concatHandlers = ( left, right ) => ( isArray( left ) ? left.concat( right ) : undefined );
 
 export const mergeHandlers = ( ...handlers ) =>
 	handlers.length > 1

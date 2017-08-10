@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,9 +15,7 @@ import MasterbarItem from './item';
 import Notifications from 'notifications';
 import store from 'store';
 import { recordTracksEvent } from 'state/analytics/actions';
-import {
-	toggleNotificationsPanel,
-} from 'state/ui/actions';
+import { toggleNotificationsPanel } from 'state/ui/actions';
 import { isNotificationsOpen } from 'state/selectors';
 
 class MasterbarItemNotifications extends Component {
@@ -41,14 +40,11 @@ class MasterbarItemNotifications extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const {
-			isNotificationsOpen: isOpen,
-			recordOpening,
-		} = nextProps;
+		const { isNotificationsOpen: isOpen, recordOpening } = nextProps;
 
 		if ( ! this.props.isNotificationsOpen && isOpen ) {
 			recordOpening( {
-				unread_notifications: store.get( 'wpnotes_unseen_count' )
+				unread_notifications: store.get( 'wpnotes_unseen_count' ),
 			} );
 			this.setNotesIndicator( 0 );
 		}
@@ -73,7 +69,7 @@ class MasterbarItemNotifications extends Component {
 		}
 	};
 
-	toggleNotesFrame = ( event ) => {
+	toggleNotesFrame = event => {
 		if ( event ) {
 			event.preventDefault && event.preventDefault();
 			event.stopPropagation && event.stopPropagation();
@@ -94,7 +90,7 @@ class MasterbarItemNotifications extends Component {
 	 *
 	 * @param {Number} currentUnseenCount Number of reported unseen notifications
 	 */
-	setNotesIndicator = ( currentUnseenCount ) => {
+	setNotesIndicator = currentUnseenCount => {
 		const existingUnseenCount = store.get( 'wpnotes_unseen_count' );
 		let newAnimationState = this.state.animationState;
 
@@ -104,14 +100,14 @@ class MasterbarItemNotifications extends Component {
 		} else if ( currentUnseenCount > existingUnseenCount ) {
 			// Animate the indicator bubble by swapping CSS classes through the animation state
 			// Note that we could have an animation state of `-1` indicating the initial load
-			newAnimationState = ( 1 - Math.abs( this.state.animationState ) );
+			newAnimationState = 1 - Math.abs( this.state.animationState );
 		}
 
 		store.set( 'wpnotes_unseen_count', currentUnseenCount );
 
 		this.setState( {
-			newNote: ( currentUnseenCount > 0 ),
-			animationState: newAnimationState
+			newNote: currentUnseenCount > 0,
+			animationState: newAnimationState,
 		} );
 	};
 
@@ -135,7 +131,9 @@ class MasterbarItemNotifications extends Component {
 					{ this.props.children }
 					<span
 						className="masterbar__notifications-bubble"
-						key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }
+						key={
+							'notification-indicator-animation-state-' + Math.abs( this.state.animationState )
+						}
 					/>
 				</MasterbarItem>
 				<Notifications
@@ -148,14 +146,14 @@ class MasterbarItemNotifications extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = state => {
 	return {
 		isNotificationsOpen: isNotificationsOpen( state ),
 	};
 };
 const mapDispatchToProps = {
 	toggleNotificationsPanel,
-	recordOpening: partial( recordTracksEvent, 'calypso_notification_open' )
+	recordOpening: partial( recordTracksEvent, 'calypso_notification_open' ),
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( MasterbarItemNotifications );

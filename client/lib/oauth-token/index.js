@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +9,7 @@ import store from 'store';
  * Module variables
  */
 const TOKEN_NAME = 'wpcom_token';
-const MAX_AGE = 365 * 24 * 60 * 60 * 1000;   // How long to store the OAuth cookie
+const MAX_AGE = 365 * 24 * 60 * 60 * 1000; // How long to store the OAuth cookie
 
 export function getToken() {
 	let cookies = cookie.parse( document.cookie );

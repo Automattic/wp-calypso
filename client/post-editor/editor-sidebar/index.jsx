@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,10 +27,11 @@ export default class EditorSidebar extends Component {
 		setPostDate: PropTypes.func,
 		isPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
-	}
+	};
 
 	render() {
-		const { toggleSidebar,
+		const {
+			toggleSidebar,
 			isNew,
 			onTrashingPost,
 			onPublish,
@@ -66,13 +68,9 @@ export default class EditorSidebar extends Component {
 					confirmationSidebarStatus={ confirmationSidebarStatus }
 				/>
 				<SidebarFooter>
-					<EditorDeletePost
-						post={ post }
-						onTrashingPost={ onTrashingPost }
-					/>
+					<EditorDeletePost post={ post } onTrashingPost={ onTrashingPost } />
 				</SidebarFooter>
 			</div>
 		);
 	}
-
 }

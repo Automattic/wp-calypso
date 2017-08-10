@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +12,6 @@ import { default as Store, requestState } from 'lib/auth-code-request-store';
 import Notice from 'components/notice';
 
 export default React.createClass( {
-
 	componentDidMount: function() {
 		Store.on( 'change', this.refreshData );
 	},
@@ -39,7 +39,9 @@ export default React.createClass( {
 		var noticeStatus = 'is-info';
 		var showDismiss = false;
 		var message = (
-			<a href="#" onClick={ this.requestSMSCode }>{ this.translate( 'Send code via text message.' ) }</a>
+			<a href="#" onClick={ this.requestSMSCode }>
+				{ this.translate( 'Send code via text message.' ) }
+			</a>
 		);
 
 		if ( status === requestState.REQUESTING ) {
@@ -58,10 +60,9 @@ export default React.createClass( {
 		}
 
 		return (
-			<Notice showDismiss={ showDismiss } status={ noticeStatus } onDismissClick={ resetCode } >
+			<Notice showDismiss={ showDismiss } status={ noticeStatus } onDismissClick={ resetCode }>
 				{ message }
 			</Notice>
 		);
-	}
-
-} )
+	},
+} );

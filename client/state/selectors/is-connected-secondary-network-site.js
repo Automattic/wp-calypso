@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,10 +19,7 @@ import { isMainSiteOf } from 'state/selectors';
  * @param  {Number}    siteId    The ID of the site we're querying
  * @return {Boolean}             Whether site with id equal to siteId is a connected secondary network site
  */
-export default createSelector(
-	( state, siteId ) => {
-		const siteIds = Object.keys( get( state, 'sites.items', {} ) );
-		return some( siteIds, ( mainSiteId ) => isMainSiteOf( state, mainSiteId, siteId ) );
-	},
-	( state ) => state.sites.items
-);
+export default createSelector( ( state, siteId ) => {
+	const siteIds = Object.keys( get( state, 'sites.items', {} ) );
+	return some( siteIds, mainSiteId => isMainSiteOf( state, mainSiteId, siteId ) );
+}, state => state.sites.items );

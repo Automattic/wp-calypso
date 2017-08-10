@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,11 +16,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 const PageDropdown = ( { dispatch, name, pages, ...otherProps } ) => {
 	return (
 		<ReduxFormSelect name={ name } { ...otherProps }>
-			{ pages.map( ( { ID, title } ) => (
+			{ pages.map( ( { ID, title } ) =>
 				<option key={ ID } value={ ID }>
 					{ title }
 				</option>
-			) ) }
+			) }
 		</ReduxFormSelect>
 	);
 };
@@ -29,14 +30,12 @@ PageDropdown.propTypes = {
 	pages: PropTypes.array,
 };
 
-const connectComponent = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+const connectComponent = connect( state => {
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			pages: ( siteId && getSitePosts( state, siteId ) ) || [],
-		};
-	}
-);
+	return {
+		pages: ( siteId && getSitePosts( state, siteId ) ) || [],
+	};
+} );
 
 export default connectComponent( PageDropdown );

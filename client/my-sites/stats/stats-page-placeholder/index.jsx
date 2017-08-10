@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +10,7 @@ import classnames from 'classnames';
  */
 import Card from 'components/card';
 
-const StatsPagePlaceholder = props => (
+const StatsPagePlaceholder = props =>
 	<div className={ classnames( 'main is-wide-layout', props.className ) }>
 		<Card className="stats-module stats-page-placeholder__header is-loading">
 			<div className="module-header">
@@ -21,11 +22,10 @@ const StatsPagePlaceholder = props => (
 				<h3 className="module-header-title" />
 			</div>
 		</Card>
-	</div>
-);
+	</div>;
 
 StatsPagePlaceholder.propTypes = {
-	className: PropTypes.string
+	className: PropTypes.string,
 };
 
 export default StatsPagePlaceholder;

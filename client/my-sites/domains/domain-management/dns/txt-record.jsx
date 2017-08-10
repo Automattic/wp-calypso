@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -42,22 +43,16 @@ class TxtRecord extends React.Component {
 					</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
-						placeholder={
-							translate(
-								'Enter subdomain (optional)',
-								{ context: 'Placeholder shown when entering the optional subdomain part of a new DNS record' }
-							)
-						}
+						placeholder={ translate( 'Enter subdomain (optional)', {
+							context:
+								'Placeholder shown when entering the optional subdomain part of a new DNS record',
+						} ) }
 						isError={ ! isNameValid }
 						onChange={ onChange }
 						value={ fieldValues.name }
-						suffix={ '.' + selectedDomainName } />
-					{ ! isNameValid &&
-						<FormInputValidation
-							text={ translate( 'Invalid Name' ) }
-							isError
-						/>
-					}
+						suffix={ '.' + selectedDomainName }
+					/>
+					{ ! isNameValid && <FormInputValidation text={ translate( 'Invalid Name' ) } isError /> }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -68,25 +63,17 @@ class TxtRecord extends React.Component {
 						name="data"
 						onChange={ onChange }
 						value={ fieldValues.data }
-						placeholder={
-							translate(
-								'e.g. %(example)s',
-								{ args: { example: 'v=spf1 include:example.com ~all' } }
-							)
-						}
+						placeholder={ translate( 'e.g. %(example)s', {
+							args: { example: 'v=spf1 include:example.com ~all' },
+						} ) }
 					/>
 					{ hasNonAsciiData &&
 						<FormInputValidation
 							text={ translate( 'TXT Record has non-ASCII data' ) }
 							isWarning
-						/>
-					}
+						/> }
 					{ ! isDataValid &&
-						<FormInputValidation
-							text={ translate( 'Invalid TXT Record' ) }
-							isError
-						/>
-					}
+						<FormInputValidation text={ translate( 'Invalid TXT Record' ) } isError /> }
 				</FormFieldset>
 			</div>
 		);

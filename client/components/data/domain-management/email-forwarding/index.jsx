@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,7 @@ function getStateFromStores( props ) {
 	return {
 		emailForwarding: EmailForwardingStore.getByDomainName( props.selectedDomainName ),
 		selectedDomainName: props.selectedDomainName,
-		selectedSite: props.selectedSite
+		selectedSite: props.selectedSite,
 	};
 }
 

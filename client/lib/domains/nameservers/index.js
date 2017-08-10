@@ -1,20 +1,18 @@
+/** @format */
 /**
  * External dependencies
  */
 import update from 'react-addons-update';
 import { every, reject } from 'lodash';
 
-const WPCOM_DEFAULTS = [
-	'ns1.wordpress.com',
-	'ns2.wordpress.com'
-];
+const WPCOM_DEFAULTS = [ 'ns1.wordpress.com', 'ns2.wordpress.com' ];
 
 function isWpcomDefaults( nameservers ) {
 	if ( nameservers.length === 0 ) {
 		return false;
 	}
 
-	return every( nameservers, ( nameserver ) => {
+	return every( nameservers, nameserver => {
 		return /^ns[1-4]\.wordpress\.com$/i.test( nameserver );
 	} );
 }
@@ -27,9 +25,4 @@ function remove( nameservers, removedIndex ) {
 	return reject( nameservers, ( _, index ) => index === removedIndex );
 }
 
-export {
-	WPCOM_DEFAULTS,
-	isWpcomDefaults,
-	change,
-	remove
-};
+export { WPCOM_DEFAULTS, isWpcomDefaults, change, remove };

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,8 +17,8 @@ import DocsSelectorsResult from './result';
 
 export default class DocsSelectorsSearch extends Component {
 	static propTypes = {
-		search: PropTypes.string
-	}
+		search: PropTypes.string,
+	};
 
 	state = {};
 
@@ -31,13 +32,11 @@ export default class DocsSelectorsSearch extends Component {
 		}
 	}
 
-	request = ( search ) => {
-		request.get( '/devdocs/service/selectors' )
-			.query( { search } )
-			.then( ( { body: results } ) => {
-				this.setState( { results } );
-			} );
-	}
+	request = search => {
+		request.get( '/devdocs/service/selectors' ).query( { search } ).then( ( { body: results } ) => {
+			this.setState( { results } );
+		} );
+	};
 
 	onSearch( search ) {
 		page( addQueryArgs( { search }, '/devdocs/selectors' ) );
@@ -55,20 +54,20 @@ export default class DocsSelectorsSearch extends Component {
 					analyticsGroup="Docs"
 					initialValue={ search }
 					delaySearch
-					onSearch={ this.onSearch } />
-				{ results && ! results.length && (
-					<EmptyContent
-						title="No selectors found"
-						line="Try another search query" />
-				) }
+					onSearch={ this.onSearch }
+				/>
+				{ results &&
+					! results.length &&
+					<EmptyContent title="No selectors found" line="Try another search query" /> }
 				<ul className="docs-selectors__results">
-					{ map( results, ( { name, description, tags } ) => (
+					{ map( results, ( { name, description, tags } ) =>
 						<li key={ name }>
 							<DocsSelectorsResult
 								{ ...{ name, description, tags } }
-								url={ addQueryArgs( { search }, `/devdocs/selectors/${ name }` ) } />
+								url={ addQueryArgs( { search }, `/devdocs/selectors/${ name }` ) }
+							/>
 						</li>
-					) ) }
+					) }
 				</ul>
 			</div>
 		);

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -45,78 +46,68 @@ export default React.createClass( {
 
 		switch ( role ) {
 			case 'administrator':
-				title = this.translate(
-					'Sign up to start managing {{siteLink/}}.', {
-						components: {
-							siteLink: this.getSiteLink()
-						}
-					}
-				);
+				title = this.translate( 'Sign up to start managing {{siteLink/}}.', {
+					components: {
+						siteLink: this.getSiteLink(),
+					},
+				} );
 				break;
 			case 'editor':
-				title = this.translate(
-					'Sign up to start editing {{siteLink/}}.', {
-						components: {
-							siteLink: this.getSiteLink()
-						}
-					}
-				);
+				title = this.translate( 'Sign up to start editing {{siteLink/}}.', {
+					components: {
+						siteLink: this.getSiteLink(),
+					},
+				} );
 				break;
 			case 'author':
-				title = this.translate(
-					'Sign up to start writing for {{siteLink/}}.', {
-						components: {
-							siteLink: this.getSiteLink()
-						}
-					}
-				);
+				title = this.translate( 'Sign up to start writing for {{siteLink/}}.', {
+					components: {
+						siteLink: this.getSiteLink(),
+					},
+				} );
 				break;
 			case 'contributor':
-				title = this.translate(
-					'Sign up to start contributing to {{siteLink/}}.', {
-						components: {
-							siteLink: this.getSiteLink()
-						}
-					}
-				);
+				title = this.translate( 'Sign up to start contributing to {{siteLink/}}.', {
+					components: {
+						siteLink: this.getSiteLink(),
+					},
+				} );
 				break;
 			case 'subscriber':
-				title = this.translate(
-					'Sign up to start your subscription to {{siteLink/}}.', {
-						components: {
-							siteLink: this.getSiteLink()
-						}
-					}
-				);
+				title = this.translate( 'Sign up to start your subscription to {{siteLink/}}.', {
+					components: {
+						siteLink: this.getSiteLink(),
+					},
+				} );
 				break;
 			case 'viewer':
-				title = this.translate(
-					'Sign up to begin viewing {{siteLink/}}.', {
-						components: {
-							siteLink: this.getSiteLink()
-						}
-					}
-				);
+				title = this.translate( 'Sign up to begin viewing {{siteLink/}}.', {
+					components: {
+						siteLink: this.getSiteLink(),
+					},
+				} );
 				break;
 			case 'follower':
 				title = this.translate(
-					'Sign up to start following {{siteLink/}} in the WordPress.com Reader.', {
+					'Sign up to start following {{siteLink/}} in the WordPress.com Reader.',
+					{
 						components: {
-							siteLink: this.getSiteLink()
-						}
+							siteLink: this.getSiteLink(),
+						},
 					}
 				);
 				break;
 			default:
 				title = this.translate(
-					'Sign up to join {{siteLink/}} as: {{strong}}%(siteRole)s{{/strong}}.', {
+					'Sign up to join {{siteLink/}} as: {{strong}}%(siteRole)s{{/strong}}.',
+					{
 						args: {
-							siteRole: role
+							siteRole: role,
 						},
 						components: {
 							siteLink: this.getSiteLink(),
-							strong: <strong />
-						}
+							strong: <strong />,
+						},
 					}
 				);
 		}
@@ -131,78 +122,68 @@ export default React.createClass( {
 
 		switch ( role ) {
 			case 'administrator':
-				title = this.translate(
-					'Would you like to start managing {{siteLink/}}?', {
-						components: {
-							siteLink: this.getSiteLink()
-						}
-					}
-				);
+				title = this.translate( 'Would you like to start managing {{siteLink/}}?', {
+					components: {
+						siteLink: this.getSiteLink(),
+					},
+				} );
 				break;
 			case 'editor':
-				title = this.translate(
-					'Would you like to start editing {{siteLink/}}?', {
-						components: {
-							siteLink: this.getSiteLink()
-						}
-					}
-				);
+				title = this.translate( 'Would you like to start editing {{siteLink/}}?', {
+					components: {
+						siteLink: this.getSiteLink(),
+					},
+				} );
 				break;
 			case 'author':
-				title = this.translate(
-					'Would you like to start writing for {{siteLink/}}?', {
-						components: {
-							siteLink: this.getSiteLink()
-						}
-					}
-				);
+				title = this.translate( 'Would you like to start writing for {{siteLink/}}?', {
+					components: {
+						siteLink: this.getSiteLink(),
+					},
+				} );
 				break;
 			case 'contributor':
-				title = this.translate(
-					'Would you like to start contributing to {{siteLink/}}?', {
-						components: {
-							siteLink: this.getSiteLink()
-						}
-					}
-				);
+				title = this.translate( 'Would you like to start contributing to {{siteLink/}}?', {
+					components: {
+						siteLink: this.getSiteLink(),
+					},
+				} );
 				break;
 			case 'subscriber':
 				title = this.translate(
-					'Would you like to start following {{siteLink/}} in the WordPress.com Reader?', {
+					'Would you like to start following {{siteLink/}} in the WordPress.com Reader?',
+					{
 						components: {
-							siteLink: this.getSiteLink()
-						}
+							siteLink: this.getSiteLink(),
+						},
 					}
 				);
 				break;
 			case 'viewer':
-				title = this.translate(
-					'Would you like to be able to view {{siteLink/}}?', {
-						components: {
-							siteLink: this.getSiteLink()
-						}
-					}
-				);
+				title = this.translate( 'Would you like to be able to view {{siteLink/}}?', {
+					components: {
+						siteLink: this.getSiteLink(),
+					},
+				} );
 				break;
 			case 'follower':
-				title = this.translate(
-					'Would you like to become a follower of {{siteLink/}}?', {
-						components: {
-							siteLink: this.getSiteLink()
-						}
-					}
-				);
+				title = this.translate( 'Would you like to become a follower of {{siteLink/}}?', {
+					components: {
+						siteLink: this.getSiteLink(),
+					},
+				} );
 				break;
 			default:
 				title = this.translate(
-					'Would you like to join {{siteLink/}} as: {{strong}}%(siteRole)s{{/strong}}?', {
+					'Would you like to join {{siteLink/}} as: {{strong}}%(siteRole)s{{/strong}}?',
+					{
 						args: {
-							siteRole: role
+							siteRole: role,
 						},
 						components: {
 							siteLink: this.getSiteLink(),
-							strong: <strong />
-						}
+							strong: <strong />,
+						},
 					}
 				);
 		}
@@ -216,10 +197,11 @@ export default React.createClass( {
 		switch ( this.props.role ) {
 			case 'administrator':
 				explanation = this.translate(
-					'As an administrator, you will be able to manage all aspects of %(siteName)s.', {
+					'As an administrator, you will be able to manage all aspects of %(siteName)s.',
+					{
 						args: {
-							siteName: this.getSiteName()
-						}
+							siteName: this.getSiteName(),
+						},
 					}
 				);
 				break;
@@ -240,31 +222,34 @@ export default React.createClass( {
 				break;
 			case 'subscriber':
 				explanation = this.translate(
-					'As a subscriber, you will be able to manage your profile on %(siteName)s.', {
+					'As a subscriber, you will be able to manage your profile on %(siteName)s.',
+					{
 						args: {
-							siteName: this.getSiteName()
-						}
+							siteName: this.getSiteName(),
+						},
 					}
 				);
 				break;
 			case 'viewer':
 				explanation = this.translate(
-					'As a viewer, you will be able to view the private site %(siteName)s.', {
+					'As a viewer, you will be able to view the private site %(siteName)s.',
+					{
 						args: {
-							siteName: this.getSiteName()
-						}
+							siteName: this.getSiteName(),
+						},
 					}
 				);
 				break;
 			case 'follower':
 				explanation = this.translate(
-					'As a follower, you can read the latest posts from %(siteName)s in the WordPress.com Reader.', {
+					'As a follower, you can read the latest posts from %(siteName)s in the WordPress.com Reader.',
+					{
 						args: {
-							siteName: this.getSiteName()
-						}
+							siteName: this.getSiteName(),
+						},
 					}
 				);
-				break
+				break;
 		}
 
 		return explanation;
@@ -280,9 +265,8 @@ export default React.createClass( {
 				{ roleExplanation &&
 					<p className="invite-form-header__explanation">
 						{ roleExplanation }
-					</p>
-				}
+					</p> }
 			</div>
-		)
-	}
+		);
+	},
 } );

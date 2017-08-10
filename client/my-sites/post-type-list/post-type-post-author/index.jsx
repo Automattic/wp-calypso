@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,10 +21,7 @@ function PostTypePostAuthor( { translate, singleUserSite, name } ) {
 
 	return (
 		<div className="post-type-post-author">
-			<Gridicon
-				icon="user"
-				size={ 18 }
-				className="post-type-post-author__icon" />
+			<Gridicon icon="user" size={ 18 } className="post-type-post-author__icon" />
 			{ translate( 'by %(name)s', { args: { name } } ) }
 		</div>
 	);
@@ -33,7 +31,7 @@ PostTypePostAuthor.propTypes = {
 	translate: PropTypes.func,
 	globalId: PropTypes.string,
 	singleUserSite: PropTypes.bool,
-	name: PropTypes.string
+	name: PropTypes.string,
 };
 
 export default connect( ( state, ownProps ) => {
@@ -46,6 +44,6 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		singleUserSite,
-		name: get( post, [ 'author', 'name' ] )
+		name: get( post, [ 'author', 'name' ] ),
 	};
 } )( localize( PostTypePostAuthor ) );

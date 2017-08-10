@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,12 +29,12 @@ export default React.createClass( {
 	propTypes: {
 		isNew: React.PropTypes.bool,
 		post: React.PropTypes.object,
-		site: React.PropTypes.object
+		site: React.PropTypes.object,
 	},
 
 	getDefaultProps: function() {
 		return {
-			isNew: false
+			isNew: false,
 		};
 	},
 
@@ -50,7 +51,7 @@ export default React.createClass( {
 
 			return {
 				comment_status: isPage ? 'closed' : booleanToStatus( defaultCommentStatus ),
-				ping_status: isPage ? 'closed' : booleanToStatus( defaultPingStatus )
+				ping_status: isPage ? 'closed' : booleanToStatus( defaultPingStatus ),
 			};
 		}
 
@@ -68,10 +69,14 @@ export default React.createClass( {
 
 		// There are other ways to construct these strings, but keeping them exactly as they are displayed in mc/ga aids in discovery via grok
 		if ( 'comment_status' === discussionType ) {
-			statName = event.target.checked ? 'advanced_comments_open_enabled' : 'advanced_comments_open_disabled';
+			statName = event.target.checked
+				? 'advanced_comments_open_enabled'
+				: 'advanced_comments_open_disabled';
 			gaEvent = 'Comment status changed';
 		} else {
-			statName = event.target.checked ? 'advanced_pings_open_enabled' : 'advanced_pings_open_disabled';
+			statName = event.target.checked
+				? 'advanced_pings_open_enabled'
+				: 'advanced_pings_open_disabled';
 			gaEvent = 'Trackback status changed';
 		}
 
@@ -80,7 +85,7 @@ export default React.createClass( {
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
-			discussion: discussion
+			discussion: discussion,
 		} );
 	},
 
@@ -94,11 +99,19 @@ export default React.createClass( {
 						name="comment_status"
 						checked={ statusToBoolean( discussion.comment_status ) }
 						disabled={ ! this.props.post }
-						onChange={ this.onChange } />
+						onChange={ this.onChange }
+					/>
 					<span>
 						{ this.translate( 'Allow comments' ) }
-						<InfoPopover position="top right" className="editor-comment_status__info" gaEventCategory="Editor" popoverName="CommentStatus">
-							{ this.translate( 'Provide a comment section to give readers the ability to respond.' ) }
+						<InfoPopover
+							position="top right"
+							className="editor-comment_status__info"
+							gaEventCategory="Editor"
+							popoverName="CommentStatus"
+						>
+							{ this.translate(
+								'Provide a comment section to give readers the ability to respond.'
+							) }
 						</InfoPopover>
 					</span>
 				</label>
@@ -107,10 +120,13 @@ export default React.createClass( {
 						name="ping_status"
 						checked={ statusToBoolean( discussion.ping_status ) }
 						disabled={ ! this.props.post }
-						onChange={ this.onChange } />
-					<span>{ this.translate( 'Allow Pingbacks & Trackbacks' ) }</span>
+						onChange={ this.onChange }
+					/>
+					<span>
+						{ this.translate( 'Allow Pingbacks & Trackbacks' ) }
+					</span>
 				</label>
 			</EditorFieldset>
 		);
-	}
+	},
 } );

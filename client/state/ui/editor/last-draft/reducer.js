@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -40,5 +41,5 @@ export function postId( state = null, action ) {
 
 export default combineReducers( {
 	siteId,
-	postId
+	postId,
 } );

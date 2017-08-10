@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +20,7 @@ import {
 	suggested as suggestPosition,
 	constrainLeft,
 	isElement as isDOMElement,
-	offset
+	offset,
 } from './util';
 import { isRtl as isRtlSelector } from 'state/selectors';
 
@@ -67,7 +68,7 @@ class Popover extends Component {
 		showDelay: 0,
 		onClose: noop,
 		onShow: noop,
-	}
+	};
 
 	constructor( props ) {
 		super( props );
@@ -85,7 +86,7 @@ class Popover extends Component {
 			show: props.isVisible,
 			left: -99999,
 			top: -99999,
-			positionClass: this.getPositionClass( props.position )
+			positionClass: this.getPositionClass( props.position ),
 		};
 	}
 
@@ -205,19 +206,14 @@ class Popover extends Component {
 	}
 
 	onClickout( event ) {
-		let shouldClose = (
-			this.domContext &&
-			this.domContext.contains &&
-			! this.domContext.contains( event.target )
-		);
+		let shouldClose =
+			this.domContext && this.domContext.contains && ! this.domContext.contains( event.target );
 
 		if ( this.props.ignoreContext && shouldClose ) {
 			const ignoreContext = ReactDom.findDOMNode( this.props.ignoreContext );
-			shouldClose = shouldClose && (
-				ignoreContext &&
-				ignoreContext.contains &&
-				! ignoreContext.contains( event.target )
-			);
+			shouldClose =
+				shouldClose &&
+				( ignoreContext && ignoreContext.contains && ! ignoreContext.contains( event.target ) );
 		}
 
 		if ( shouldClose ) {
@@ -344,10 +340,7 @@ class Popover extends Component {
 
 		const reposition = Object.assign(
 			{},
-			constrainLeft(
-				offset( suggestedPosition, domContainer, domContext ),
-				domContainer
-			),
+			constrainLeft( offset( suggestedPosition, domContainer, domContext ), domContainer ),
 			{ positionClass: this.getPositionClass( suggestedPosition ) }
 		);
 
@@ -433,21 +426,13 @@ class Popover extends Component {
 			return null;
 		}
 
-		const classes = classNames(
-			'popover',
-			this.props.className,
-			this.state.positionClass
-		);
+		const classes = classNames( 'popover', this.props.className, this.state.positionClass );
 
 		this.debug( 'rendering ...' );
 
 		return (
 			<RootChild className={ this.props.rootClassName }>
-				<div
-					style={ this.getStylePosition() }
-					className={ classes }
-					ref={ this.setDOMBehavior }
-				>
+				<div style={ this.getStylePosition() } className={ classes } ref={ this.setDOMBehavior }>
 					<div className="popover__arrow" />
 
 					<div className="popover__inner">
@@ -459,6 +444,6 @@ class Popover extends Component {
 	}
 }
 
-export default connect( ( state ) => ( {
+export default connect( state => ( {
 	isRtl: isRtlSelector( state ),
 } ) )( Popover );

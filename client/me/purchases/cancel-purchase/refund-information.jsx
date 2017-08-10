@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -34,7 +35,7 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 				text = [
 					i18n.translate(
 						'This plan includes mapping for the domain %(mappedDomain)s. ' +
-						"Cancelling will remove all the plan's features from your site, including the domain.",
+							"Cancelling will remove all the plan's features from your site, including the domain.",
 						{
 							args: {
 								mappedDomain: includedDomainPurchase.meta,
@@ -52,13 +53,13 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 					),
 					i18n.translate(
 						'The domain %(mappedDomain)s itself is not canceled. Only the connection between WordPress.com and ' +
-						'your domain is removed. %(mappedDomain)s is registered elsewhere and you can still use it with other sites.',
+							'your domain is removed. %(mappedDomain)s is registered elsewhere and you can still use it with other sites.',
 						{
 							args: {
 								mappedDomain: includedDomainPurchase.meta,
-							}
+							},
 						}
-					)
+					),
 				];
 
 				showSupportLink = false;
@@ -172,15 +173,17 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 	return (
 		<div className="cancel-purchase__info">
 			{ Array.isArray( text )
-				? text.map( ( paragraph, index ) => (
+				? text.map( ( paragraph, index ) =>
 						<p
 							key={ purchase.id + '_refund_p_' + index }
 							className="cancel-purchase__refund-information"
 						>
 							{ paragraph }
 						</p>
-					) )
-				: <p className="cancel-purchase__refund-information">{ text }</p> }
+					)
+				: <p className="cancel-purchase__refund-information">
+						{ text }
+					</p> }
 
 			{ showSupportLink &&
 				<strong className="cancel-purchase__support-information">

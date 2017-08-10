@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -66,7 +67,8 @@ export class CommentDetailComment extends Component {
 						siteId={ siteId }
 					/>
 					<AutoDirection>
-						<div className="comment-detail__comment-body"
+						<div
+							className="comment-detail__comment-body"
 							dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
 						/>
 					</AutoDirection>
@@ -75,10 +77,11 @@ export class CommentDetailComment extends Component {
 						<div className="comment-detail__comment-reply">
 							<a>
 								<Gridicon icon="reply" />
-								<span>{ translate( 'You replied to this comment' ) }</span>
+								<span>
+									{ translate( 'You replied to this comment' ) }
+								</span>
 							</a>
-						</div>
-					}
+						</div> }
 				</div>
 			</div>
 		);

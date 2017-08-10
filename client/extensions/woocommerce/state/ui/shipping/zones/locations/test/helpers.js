@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,9 +19,7 @@ describe( 'mergeLocationEdits', () => {
 			pristine: true,
 		};
 		const currentLocationEdits = {
-			journal: [
-				{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
-			],
+			journal: [ { action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' } ],
 			states: {
 				add: [ 'NY' ],
 				remove: [],
@@ -30,7 +29,9 @@ describe( 'mergeLocationEdits', () => {
 			pristine: false,
 		};
 
-		expect( mergeLocationEdits( zoneLocationEdits, currentLocationEdits ) ).to.deep.equal( currentLocationEdits );
+		expect( mergeLocationEdits( zoneLocationEdits, currentLocationEdits ) ).to.deep.equal(
+			currentLocationEdits
+		);
 	} );
 
 	it( 'should return the saved edits when there are no current edits', () => {
@@ -42,7 +43,9 @@ describe( 'mergeLocationEdits', () => {
 		};
 		const currentLocationEdits = null;
 
-		expect( mergeLocationEdits( zoneLocationEdits, currentLocationEdits ) ).to.deep.equal( zoneLocationEdits );
+		expect( mergeLocationEdits( zoneLocationEdits, currentLocationEdits ) ).to.deep.equal(
+			zoneLocationEdits
+		);
 	} );
 
 	it( 'should return the saved edits when there current edits are empty (pristine)', () => {
@@ -59,14 +62,14 @@ describe( 'mergeLocationEdits', () => {
 			pristine: true,
 		};
 
-		expect( mergeLocationEdits( zoneLocationEdits, currentLocationEdits ) ).to.deep.equal( zoneLocationEdits );
+		expect( mergeLocationEdits( zoneLocationEdits, currentLocationEdits ) ).to.deep.equal(
+			zoneLocationEdits
+		);
 	} );
 
 	it( 'should append the current journal entries to the saved journal entries', () => {
 		const zoneLocationEdits = {
-			journal: [
-				{ action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' },
-			],
+			journal: [ { action: JOURNAL_ACTIONS.ADD_COUNTRY, code: 'US' } ],
 			states: null,
 			postcode: '12345',
 			pristine: false,
@@ -124,7 +127,9 @@ describe( 'mergeLocationEdits', () => {
 			pristine: false,
 		};
 
-		expect( mergeLocationEdits( zoneLocationEdits, currentLocationEdits ).postcode ).to.equal( '54321' );
+		expect( mergeLocationEdits( zoneLocationEdits, currentLocationEdits ).postcode ).to.equal(
+			'54321'
+		);
 	} );
 
 	it( 'should merge the states add and remove operations', () => {

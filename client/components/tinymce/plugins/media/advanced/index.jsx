@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,9 +25,7 @@ export default function( editor ) {
 	let container;
 	function render( visible = true, item ) {
 		if ( ! container ) {
-			container = editor.getContainer().appendChild(
-				document.createElement( 'div' )
-			);
+			container = editor.getContainer().appendChild( document.createElement( 'div' ) );
 		}
 
 		if ( ! visible ) {
@@ -37,7 +36,8 @@ export default function( editor ) {
 			<EditorMediaAdvanced
 				{ ...{ visible, item } }
 				onClose={ hideModal }
-				insertMedia={ insertMedia } />,
+				insertMedia={ insertMedia }
+			/>,
 			container,
 			store
 		);
@@ -68,18 +68,20 @@ export default function( editor ) {
 		classes: 'toolbar-segment-start',
 
 		onPostRender() {
-			this.innerHtml( ReactDomServer.renderToStaticMarkup(
-				<button type="button" role="presentation" tabIndex="-1">
-					<Gridicon icon="pencil" size={ 18 } />
-				</button>
-			) );
+			this.innerHtml(
+				ReactDomServer.renderToStaticMarkup(
+					<button type="button" role="presentation" tabIndex="-1">
+						<Gridicon icon="pencil" size={ 18 } />
+					</button>
+				)
+			);
 		},
 
 		onClick() {
 			const node = editor.selection.getStart();
 			const item = MediaSerialization.deserialize( node );
 			showModal( item );
-		}
+		},
 	} );
 
 	editor.on( 'remove', unmount );

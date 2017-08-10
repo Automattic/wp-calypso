@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,7 @@ import {
 	POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
 	POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
 import { combineReducers, isValidStateWithSchema } from 'state/utils';
 import { itemsSchema } from './schema';
@@ -33,8 +34,8 @@ export function requesting( state = {}, action ) {
 		case POST_TYPES_TAXONOMIES_REQUEST_FAILURE:
 			return merge( {}, state, {
 				[ action.siteId ]: {
-					[ action.postType ]: POST_TYPES_TAXONOMIES_REQUEST === action.type
-				}
+					[ action.postType ]: POST_TYPES_TAXONOMIES_REQUEST === action.type,
+				},
 			} );
 	}
 
@@ -54,8 +55,8 @@ export function items( state = {}, action ) {
 		case POST_TYPES_TAXONOMIES_RECEIVE:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: {
-					[ action.postType ]: keyBy( action.taxonomies, 'name' )
-				}
+					[ action.postType ]: keyBy( action.taxonomies, 'name' ),
+				},
 			} );
 
 		case DESERIALIZE:
@@ -73,5 +74,5 @@ export function items( state = {}, action ) {
 
 export default combineReducers( {
 	requesting,
-	items
+	items,
 } );

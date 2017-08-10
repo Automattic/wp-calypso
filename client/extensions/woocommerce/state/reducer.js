@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -16,9 +17,11 @@ const reducers = {
 	actionList,
 };
 
-export default combineReducers( wcsEnabled
-	? {
-		...reducers,
-		woocommerceServices,
-	}
-	: reducers );
+export default combineReducers(
+	wcsEnabled
+		? {
+				...reducers,
+				woocommerceServices,
+			}
+		: reducers
+);

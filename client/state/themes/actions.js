@@ -1,7 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import { filter, map, property, delay, endsWith } from 'lodash';
+import { filter, map, property, delay, endsWith } from 'lodash';
 import debugFactory from 'debug';
 import page from 'page';
 
@@ -46,10 +47,7 @@ import {
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
 } from 'state/action-types';
-import {
-	recordTracksEvent,
-	withAnalytics
-} from 'state/analytics/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
 	getTheme,
 	getActiveTheme,
@@ -65,7 +63,7 @@ import {
 	isThemeFromWpcom,
 	normalizeJetpackTheme,
 	normalizeWpcomTheme,
-	normalizeWporgTheme
+	normalizeWporgTheme,
 } from './utils';
 import { getSiteTitle, isJetpackSite } from 'state/sites/selectors';
 import { isSiteAutomatedTransfer, prependThemeFilterKeys } from 'state/selectors';
@@ -118,10 +116,8 @@ export function receiveThemes( themes, siteId, query, foundCount ) {
 			const filterWpcom = shouldFilterWpcomThemes( getState(), siteId );
 			filteredThemes = filter(
 				themes,
-				theme => (
-					isThemeMatchingQuery( query, theme ) &&
-						! ( filterWpcom && isThemeFromWpcom( theme ) )
-				)
+				theme =>
+					isThemeMatchingQuery( query, theme ) && ! ( filterWpcom && isThemeFromWpcom( theme ) )
 			);
 			// Jetpack API returns all themes in one response (no paging)
 			found = filteredThemes.length;
@@ -157,7 +153,7 @@ export function requestThemes( siteId, query = {} ) {
 		dispatch( {
 			type: THEMES_REQUEST,
 			siteId,
-			query
+			query,
 		} );
 
 		let request;
@@ -173,43 +169,43 @@ export function requestThemes( siteId, query = {} ) {
 		// WP.com returns the number of results in a `found` attr, so we can use that right away.
 		// WP.org returns an `info` object containing a `results` number, so we destructure that
 		// and use it as default value for `found`.
-		return request().then( ( { themes: rawThemes, info: { results } = {}, found = results } ) => {
-			let themes;
-			if ( siteId === 'wporg' ) {
-				themes = map( rawThemes, normalizeWporgTheme );
-			} else if ( siteId === 'wpcom' ) {
-				themes = map( rawThemes, normalizeWpcomTheme );
-			} else { // Jetpack Site
-				themes = map( rawThemes, normalizeJetpackTheme );
-			}
+		return request()
+			.then( ( { themes: rawThemes, info: { results } = {}, found = results } ) => {
+				let themes;
+				if ( siteId === 'wporg' ) {
+					themes = map( rawThemes, normalizeWporgTheme );
+				} else if ( siteId === 'wpcom' ) {
+					themes = map( rawThemes, normalizeWpcomTheme );
+				} else {
+					// Jetpack Site
+					themes = map( rawThemes, normalizeJetpackTheme );
+				}
 
-			if ( ( query.search || query.filter ) && query.page === 1 ) {
-				const responseTime = ( new Date().getTime() ) - startTime;
-				const search_taxonomies = prependThemeFilterKeys( getState(), query.filter );
-				const search_term = search_taxonomies + ( query.search || '' );
-				const trackShowcaseSearch = recordTracksEvent(
-					'calypso_themeshowcase_search',
-					{
+				if ( ( query.search || query.filter ) && query.page === 1 ) {
+					const responseTime = new Date().getTime() - startTime;
+					const search_taxonomies = prependThemeFilterKeys( getState(), query.filter );
+					const search_term = search_taxonomies + ( query.search || '' );
+					const trackShowcaseSearch = recordTracksEvent( 'calypso_themeshowcase_search', {
 						search_term: search_term || null,
 						search_taxonomies,
 						tier: query.tier,
 						response_time_in_ms: responseTime,
 						result_count: found,
-						results_first_page: themes.map( property( 'id' ) ).join()
-					}
-				);
-				dispatch( trackShowcaseSearch );
-			}
+						results_first_page: themes.map( property( 'id' ) ).join(),
+					} );
+					dispatch( trackShowcaseSearch );
+				}
 
-			dispatch( receiveThemes( themes, siteId, query, found ) );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: THEMES_REQUEST_FAILURE,
-				siteId,
-				query,
-				error
+				dispatch( receiveThemes( themes, siteId, query, found ) );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: THEMES_REQUEST_FAILURE,
+					siteId,
+					query,
+					error,
+				} );
 			} );
-		} );
 	};
 }
 
@@ -218,7 +214,7 @@ export function themeRequestFailure( siteId, themeId, error ) {
 		type: THEME_REQUEST_FAILURE,
 		siteId,
 		themeId,
-		error
+		error,
 	};
 }
 
@@ -230,68 +226,77 @@ export function themeRequestFailure( siteId, themeId, error ) {
  * @return {Function}         Action thunk
  */
 export function requestTheme( themeId, siteId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: THEME_REQUEST,
 			siteId,
-			themeId
+			themeId,
 		} );
 
 		if ( siteId === 'wporg' ) {
-			return wporg.fetchThemeInformation( themeId ).then( ( theme ) => {
-				// Apparently, the WP.org REST API endpoint doesn't 404 but instead returns false
-				// if a theme can't be found.
-				if ( ! theme ) {
-					throw ( 'Theme not found' ); // Will be caught by .catch() below
-				}
-				dispatch( receiveTheme( normalizeWporgTheme( theme ), siteId ) );
-				dispatch( {
-					type: THEME_REQUEST_SUCCESS,
-					siteId,
-					themeId
+			return wporg
+				.fetchThemeInformation( themeId )
+				.then( theme => {
+					// Apparently, the WP.org REST API endpoint doesn't 404 but instead returns false
+					// if a theme can't be found.
+					if ( ! theme ) {
+						throw 'Theme not found'; // Will be caught by .catch() below
+					}
+					dispatch( receiveTheme( normalizeWporgTheme( theme ), siteId ) );
+					dispatch( {
+						type: THEME_REQUEST_SUCCESS,
+						siteId,
+						themeId,
+					} );
+				} )
+				.catch( error => {
+					dispatch( {
+						type: THEME_REQUEST_FAILURE,
+						siteId,
+						themeId,
+						error,
+					} );
 				} );
-			} ).catch( ( error ) => {
-				dispatch( {
-					type: THEME_REQUEST_FAILURE,
-					siteId,
-					themeId,
-					error
-				} );
-			} );
 		}
 
 		if ( siteId === 'wpcom' ) {
-			return wpcom.undocumented().themeDetails( themeId ).then( ( theme ) => {
-				dispatch( receiveTheme( normalizeWpcomTheme( theme ), siteId ) );
-				dispatch( {
-					type: THEME_REQUEST_SUCCESS,
-					siteId,
-					themeId
+			return wpcom
+				.undocumented()
+				.themeDetails( themeId )
+				.then( theme => {
+					dispatch( receiveTheme( normalizeWpcomTheme( theme ), siteId ) );
+					dispatch( {
+						type: THEME_REQUEST_SUCCESS,
+						siteId,
+						themeId,
+					} );
+				} )
+				.catch( error => {
+					dispatch( {
+						type: THEME_REQUEST_FAILURE,
+						siteId,
+						themeId,
+						error,
+					} );
 				} );
-			} ).catch( ( error ) => {
-				dispatch( {
-					type: THEME_REQUEST_FAILURE,
-					siteId,
-					themeId,
-					error
-				} );
-			} );
 		}
 
 		// See comment next to lib/wpcom-undocumented/lib/undocumented#jetpackThemeDetails() why we can't
 		// the regular themeDetails() method for Jetpack sites yet.
-		return wpcom.undocumented().jetpackThemeDetails( themeId, siteId ).then( ( { themes } ) => {
-			dispatch( receiveThemes( map( themes, normalizeJetpackTheme ), siteId ) );
-			dispatch( {
-				type: THEME_REQUEST_SUCCESS,
-				siteId,
-				themeId
+		return wpcom
+			.undocumented()
+			.jetpackThemeDetails( themeId, siteId )
+			.then( ( { themes } ) => {
+				dispatch( receiveThemes( map( themes, normalizeJetpackTheme ), siteId ) );
+				dispatch( {
+					type: THEME_REQUEST_SUCCESS,
+					siteId,
+					themeId,
+				} );
+			} )
+			.catch( error => {
+				dispatch( themeRequestFailure( siteId, themeId, error ) );
 			} );
-		} ).catch( ( error ) => {
-			dispatch(
-				themeRequestFailure( siteId, themeId, error )
-			);
-		} );
 	};
 }
 
@@ -310,7 +315,9 @@ export function requestActiveTheme( siteId ) {
 			siteId,
 		} );
 
-		return wpcom.undocumented().activeTheme( siteId )
+		return wpcom
+			.undocumented()
+			.activeTheme( siteId )
 			.then( theme => {
 				debug( 'Received current theme', theme );
 				// We want to store the theme object in the appropriate Redux subtree -- either 'wpcom'
@@ -320,9 +327,10 @@ export function requestActiveTheme( siteId ) {
 				dispatch( {
 					type: ACTIVE_THEME_REQUEST_SUCCESS,
 					siteId,
-					theme
+					theme,
 				} );
-			} ).catch( error => {
+			} )
+			.catch( error => {
 				dispatch( {
 					type: ACTIVE_THEME_REQUEST_FAILURE,
 					siteId,
@@ -372,8 +380,10 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 			siteId,
 		} );
 
-		return wpcom.undocumented().activateTheme( themeId, siteId )
-			.then( ( theme ) => {
+		return wpcom
+			.undocumented()
+			.activateTheme( themeId, siteId )
+			.then( theme => {
 				// Fall back to ID for Jetpack sites which don't return a stylesheet attr.
 				const themeStylesheet = theme.stylesheet || themeId;
 				dispatch( themeActivated( themeStylesheet, siteId, source, purchased ) );
@@ -411,17 +421,14 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 		const query = getLastThemeQuery( getState(), siteId );
 		const search_taxonomies = prependThemeFilterKeys( getState(), query.filter );
 		const search_term = search_taxonomies + ( query.search || '' );
-		const trackThemeActivation = recordTracksEvent(
-			'calypso_themeshowcase_theme_activate',
-			{
-				theme: getThemeIdFromStylesheet( themeStylesheet ),
-				previous_theme: previousThemeId,
-				source: source,
-				purchased: purchased,
-				search_term: search_term || null,
-				search_taxonomies
-			}
-		);
+		const trackThemeActivation = recordTracksEvent( 'calypso_themeshowcase_theme_activate', {
+			theme: getThemeIdFromStylesheet( themeStylesheet ),
+			previous_theme: previousThemeId,
+			source: source,
+			purchased: purchased,
+			search_term: search_term || null,
+			search_taxonomies,
+		} );
 		dispatch( withAnalytics( trackThemeActivation, action ) );
 	};
 	return themeActivatedThunk; // it is named function just for testing purposes
@@ -441,16 +448,18 @@ export function installTheme( themeId, siteId ) {
 		dispatch( {
 			type: THEME_INSTALL,
 			siteId,
-			themeId
+			themeId,
 		} );
 
-		return wpcom.undocumented().installThemeOnJetpack( siteId, themeId )
-			.then( ( theme ) => {
+		return wpcom
+			.undocumented()
+			.installThemeOnJetpack( siteId, themeId )
+			.then( theme => {
 				dispatch( receiveTheme( theme, siteId ) );
 				dispatch( {
 					type: THEME_INSTALL_SUCCESS,
 					siteId,
-					themeId
+					themeId,
 				} );
 
 				// Install parent theme if theme requires one
@@ -464,12 +473,12 @@ export function installTheme( themeId, siteId ) {
 					}
 				}
 			} )
-			.catch( ( error ) => {
+			.catch( error => {
 				dispatch( {
 					type: THEME_INSTALL_FAILURE,
 					siteId,
 					themeId,
-					error
+					error,
 				} );
 			} );
 	};
@@ -485,7 +494,7 @@ export function installTheme( themeId, siteId ) {
 export function clearActivated( siteId ) {
 	return {
 		type: THEME_CLEAR_ACTIVATED,
-		siteId
+		siteId,
 	};
 }
 
@@ -521,11 +530,10 @@ export function tryAndCustomize( themeId, siteId ) {
  * @return {Function}              Action thunk
  */
 export function installAndTryAndCustomizeTheme( themeId, siteId ) {
-	return ( dispatch ) => {
-		return dispatch( installTheme( themeId, siteId ) )
-			.then( () => {
-				dispatch( tryAndCustomizeTheme( themeId, siteId ) );
-			} );
+	return dispatch => {
+		return dispatch( installTheme( themeId, siteId ) ).then( () => {
+			dispatch( tryAndCustomizeTheme( themeId, siteId ) );
+		} );
 	};
 }
 
@@ -556,13 +564,12 @@ export function tryAndCustomizeTheme( themeId, siteId ) {
  * @return {Function}           Action thunk
  */
 export function installAndActivateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
-	return ( dispatch ) => {
-		return dispatch( installTheme( themeId, siteId ) )
-			.then( () => {
-				// This will be called even if `installTheme` silently fails. We rely on
-				// `activateTheme`'s own error handling here.
-				dispatch( activateTheme( themeId, siteId, source, purchased ) );
-			} );
+	return dispatch => {
+		return dispatch( installTheme( themeId, siteId ) ).then( () => {
+			// This will be called even if `installTheme` silently fails. We rely on
+			// `activateTheme`'s own error handling here.
+			dispatch( activateTheme( themeId, siteId, source, purchased ) );
+		} );
 	};
 }
 
@@ -580,15 +587,17 @@ export function uploadTheme( siteId, file ) {
 			type: THEME_UPLOAD_START,
 			siteId,
 		} );
-		return wpcom.undocumented().uploadTheme( siteId, file, ( event ) => {
-			dispatch( {
-				type: THEME_UPLOAD_PROGRESS,
-				siteId,
-				loaded: event.loaded,
-				total: event.total
-			} );
-		} )
-			.then( ( theme ) => {
+		return wpcom
+			.undocumented()
+			.uploadTheme( siteId, file, event => {
+				dispatch( {
+					type: THEME_UPLOAD_PROGRESS,
+					siteId,
+					loaded: event.loaded,
+					total: event.total,
+				} );
+			} )
+			.then( theme => {
 				dispatch( receiveTheme( theme, siteId ) );
 				dispatch( {
 					type: THEME_UPLOAD_SUCCESS,
@@ -600,7 +609,7 @@ export function uploadTheme( siteId, file ) {
 				dispatch( {
 					type: THEME_UPLOAD_FAILURE,
 					siteId,
-					error
+					error,
 				} );
 			} );
 	};
@@ -638,18 +647,22 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 			siteId,
 		};
 
-		dispatch( withAnalytics(
-			recordTracksEvent( 'calypso_automated_transfer_initiate_transfer', { plugin, context } ),
-			themeInitiateRequest
-		) );
-		return wpcom.undocumented().initiateTransfer( siteId, plugin, file, ( event ) => {
-			dispatch( {
-				type: THEME_TRANSFER_INITIATE_PROGRESS,
-				siteId,
-				loaded: event.loaded,
-				total: event.total,
-			} );
-		} )
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_automated_transfer_initiate_transfer', { plugin, context } ),
+				themeInitiateRequest
+			)
+		);
+		return wpcom
+			.undocumented()
+			.initiateTransfer( siteId, plugin, file, event => {
+				dispatch( {
+					type: THEME_TRANSFER_INITIATE_PROGRESS,
+					siteId,
+					loaded: event.loaded,
+					total: event.total,
+				} );
+			} )
 			.then( ( { transfer_id } ) => {
 				if ( ! transfer_id ) {
 					return dispatch(
@@ -661,10 +674,12 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 					siteId,
 					transferId: transfer_id,
 				};
-				dispatch( withAnalytics(
-					recordTracksEvent( 'calypso_automated_transfer_initiate_success', { plugin, context } ),
-					themeInitiateSuccessAction
-				) );
+				dispatch(
+					withAnalytics(
+						recordTracksEvent( 'calypso_automated_transfer_initiate_success', { plugin, context } ),
+						themeInitiateSuccessAction
+					)
+				);
 				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
 			} )
 			.catch( error => {
@@ -704,10 +719,12 @@ function transferInitiateFailure( siteId, error, plugin ) {
 			siteId,
 			error,
 		};
-		dispatch( withAnalytics(
-			recordTracksEvent( 'calypso_automated_transfer_initiate_failure', { plugin, context } ),
-			themeInitiateFailureAction
-		) );
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_automated_transfer_initiate_failure', { plugin, context } ),
+				themeInitiateFailureAction
+			)
+		);
 	};
 }
 /**
@@ -733,19 +750,26 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
 				dispatch( transferStatusFailure( siteId, transferId, 'client timeout' ) );
 				return resolve();
 			}
-			return wpcom.undocumented().transferStatus( siteId, transferId )
+			return wpcom
+				.undocumented()
+				.transferStatus( siteId, transferId )
 				.then( ( { status, message, uploaded_theme_slug } ) => {
 					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
 					if ( status === 'complete' ) {
 						// finished, stop polling
 						const context = !! uploaded_theme_slug ? 'themes' : 'plugins';
-						dispatch( recordTracksEvent( 'calypso_automated_transfer_complete', { transfer_id: transferId, context } ) );
+						dispatch(
+							recordTracksEvent( 'calypso_automated_transfer_complete', {
+								transfer_id: transferId,
+								context,
+							} )
+						);
 						return resolve();
 					}
 					// poll again
 					return delay( pollStatus, interval, resolve, reject );
 				} )
-				.catch( ( error ) => {
+				.catch( error => {
 					dispatch( transferStatusFailure( siteId, transferId, error ) );
 					// error, stop polling
 					return resolve();
@@ -770,8 +794,10 @@ export function deleteTheme( themeId, siteId ) {
 			themeId,
 			siteId,
 		} );
-		return wpcom.undocumented().deleteThemeFromJetpack( siteId, themeId )
-			.then( ( theme ) => {
+		return wpcom
+			.undocumented()
+			.deleteThemeFromJetpack( siteId, themeId )
+			.then( theme => {
 				dispatch( {
 					type: THEME_DELETE_SUCCESS,
 					themeId,
@@ -784,7 +810,7 @@ export function deleteTheme( themeId, siteId ) {
 					type: THEME_DELETE_FAILURE,
 					themeId,
 					siteId,
-					error
+					error,
 				} );
 			} );
 	};
@@ -804,17 +830,17 @@ export function confirmDelete( themeId, siteId ) {
 		const { name: themeName } = getTheme( getState(), siteId, themeId );
 		const siteTitle = getSiteTitle( getState(), siteId );
 		accept(
-			i18n.translate(
-				'Are you sure you want to delete %(themeName)s from %(siteTitle)s?',
-				{ args: { themeName, siteTitle }, comment: 'Themes: theme delete confirmation dialog' }
-			),
-			( accepted ) => {
+			i18n.translate( 'Are you sure you want to delete %(themeName)s from %(siteTitle)s?', {
+				args: { themeName, siteTitle },
+				comment: 'Themes: theme delete confirmation dialog',
+			} ),
+			accepted => {
 				accepted && dispatch( deleteTheme( themeId, siteId ) );
 			},
-			i18n.translate(
-				'Delete %(themeName)s',
-				{ args: { themeName }, comment: 'Themes: theme delete dialog confirm button' }
-			),
+			i18n.translate( 'Delete %(themeName)s', {
+				args: { themeName },
+				comment: 'Themes: theme delete dialog confirm button',
+			} ),
 			i18n.translate( 'Back', { context: 'go back (like the back button in a browser)' } )
 		);
 	};
@@ -824,21 +850,21 @@ export function setThemePreviewOptions( primary, secondary ) {
 	return {
 		type: THEME_PREVIEW_OPTIONS,
 		primary,
-		secondary
+		secondary,
 	};
 }
 
 export function showThemePreview( themeId ) {
 	return {
 		type: THEME_PREVIEW_STATE,
-		themeId
+		themeId,
 	};
 }
 
 export function hideThemePreview() {
 	return {
 		type: THEME_PREVIEW_STATE,
-		themeId: null
+		themeId: null,
 	};
 }
 

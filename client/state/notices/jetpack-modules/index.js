@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,10 @@ import {
 import { MODULE_NOTICES } from './constants';
 import { successNotice, errorNotice } from 'state/notices/actions';
 
-export const onJetpackModuleActivationActionMessage = ( dispatch, { type, moduleSlug, silent } ) => {
+export const onJetpackModuleActivationActionMessage = (
+	dispatch,
+	{ type, moduleSlug, silent }
+) => {
 	if ( silent ) {
 		return;
 	}
@@ -34,11 +38,13 @@ export const onJetpackModuleActivationActionMessage = ( dispatch, { type, module
 			messageType = 'success';
 			break;
 		case JETPACK_MODULE_ACTIVATE_FAILURE:
-			message = message || translate( 'There was a problem saving your changes. Please try again.' );
+			message =
+				message || translate( 'There was a problem saving your changes. Please try again.' );
 			messageType = 'error';
 			break;
 		case JETPACK_MODULE_DEACTIVATE_FAILURE:
-			message = message || translate( 'There was a problem saving your changes. Please try again.' );
+			message =
+				message || translate( 'There was a problem saving your changes. Please try again.' );
 			messageType = 'error';
 			break;
 	}

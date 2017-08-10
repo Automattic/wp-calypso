@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,14 +15,13 @@ var allSites = require( 'lib/sites-list' )(),
 	PluginsStore = require( 'lib/plugins/store' );
 
 module.exports = React.createClass( {
-
 	displayName: 'PluginSiteList',
 
 	propTypes: {
 		site: React.PropTypes.object,
 		plugin: React.PropTypes.object,
 		notices: React.PropTypes.object,
-		title: React.PropTypes.string
+		title: React.PropTypes.string,
 	},
 
 	getSecondaryPluginSites: function( site ) {
@@ -33,13 +33,16 @@ module.exports = React.createClass( {
 	},
 
 	renderPluginSite: function( site ) {
-		return <PluginSite
+		return (
+			<PluginSite
 				key={ 'pluginSite' + site.ID }
 				site={ site }
 				secondarySites={ this.getSecondaryPluginSites( site ) }
 				plugin={ this.props.plugin }
 				wporg={ this.props.wporg }
-				notices={ this.props.notices } />;
+				notices={ this.props.notices }
+			/>
+		);
 	},
 
 	render: function() {
@@ -56,10 +59,10 @@ module.exports = React.createClass( {
 			}, this );
 
 		return (
-			<div className={ classes } >
+			<div className={ classes }>
 				<SectionHeader label={ this.props.title } />
 				{ pluginSites }
 			</div>
 		);
-	}
+	},
 } );

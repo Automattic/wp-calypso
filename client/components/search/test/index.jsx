@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -34,7 +35,7 @@ describe( 'Search', function() {
 				this.initialValue = 'hello';
 				this.searchElement = React.createElement( this.searchClass, {
 					initialValue: this.initialValue,
-					onSearch: this.onSearch
+					onSearch: this.onSearch,
 				} );
 				this.rendered = TestUtils.renderIntoDocument( this.searchElement );
 			} );
@@ -46,7 +47,7 @@ describe( 'Search', function() {
 		context( 'without initialValue', function() {
 			beforeEach( function() {
 				this.searchElement = React.createElement( this.searchClass, {
-					onSearch: this.onSearch
+					onSearch: this.onSearch,
 				} );
 				this.rendered = TestUtils.renderIntoDocument( this.searchElement );
 			} );

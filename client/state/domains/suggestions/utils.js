@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns a serialized domains suggestions query, used as the key in the
  * `state.domains.suggestions` state object.
@@ -10,14 +11,21 @@ export function getSerializedDomainsSuggestionsQuery( queryObject ) {
 		return null;
 	}
 	const { query, quantity, vendor } = queryObject;
-	if ( ( ! query || query.length === 0 ) || ( ! quantity || quantity <= 0 ) || ( ! vendor || vendor.length === 0 ) ) {
+	if (
+		! query ||
+		query.length === 0 ||
+		( ! quantity || quantity <= 0 ) ||
+		( ! vendor || vendor.length === 0 )
+	) {
 		return null;
 	}
-	const include_wordpressdotcom = !! ( queryObject.include_wordpressdotcom || queryObject.includeSubdomain );
+	const include_wordpressdotcom = !! (
+		queryObject.include_wordpressdotcom || queryObject.includeSubdomain
+	);
 	return JSON.stringify( {
 		query,
 		quantity,
 		vendor,
-		include_wordpressdotcom
+		include_wordpressdotcom,
 	} ).toLocaleLowerCase();
 }

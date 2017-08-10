@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -29,7 +30,7 @@ const handlers = mergeHandlers(
 	shippingZoneLocations,
 	shippingZoneMethods,
 	shippingZones,
-	ui,
+	ui
 );
 
 export default function installActionHandlers() {

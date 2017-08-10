@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +9,7 @@ import { expect } from 'chai';
 /**
  * External dependencies
  */
-import { CountedTextarea } from '../';
+import { CountedTextarea } from '../';
 
 describe( 'index', function() {
 	let renderer;
@@ -44,7 +45,9 @@ describe( 'index', function() {
 		const value = 'Hello World!',
 			placeholder = 'placeholder test';
 
-		renderer.render( <CountedTextarea value={ value } className="custom-class" placeholder={ placeholder } /> );
+		renderer.render(
+			<CountedTextarea value={ value } className="custom-class" placeholder={ placeholder } />
+		);
 		const result = renderer.getRenderOutput();
 
 		expect( result.props.children ).to.have.length( 2 );
@@ -57,7 +60,9 @@ describe( 'index', function() {
 		const value = '';
 		const placeholder = 'placeholder test';
 
-		renderer.render( <CountedTextarea value={ value } className="custom-class" placeholder={ placeholder } /> );
+		renderer.render(
+			<CountedTextarea value={ value } className="custom-class" placeholder={ placeholder } />
+		);
 		const result = renderer.getRenderOutput();
 
 		expect( result.props.children[ 1 ].props.children[ 0 ] ).to.equal( '0 characters' );
@@ -68,10 +73,12 @@ describe( 'index', function() {
 		const placeholder = 'placeholder test';
 
 		renderer.render(
-			<CountedTextarea value={ value }
+			<CountedTextarea
+				value={ value }
 				className="custom-class"
 				placeholder={ placeholder }
-				countPlaceholderLength />
+				countPlaceholderLength
+			/>
 		);
 		const result = renderer.getRenderOutput();
 
@@ -82,7 +89,9 @@ describe( 'index', function() {
 		const value = 'Hello World!';
 		const placeholder = 'placeholder test';
 
-		renderer.render( <CountedTextarea value={ value } className="custom-class" placeholder={ placeholder } /> );
+		renderer.render(
+			<CountedTextarea value={ value } className="custom-class" placeholder={ placeholder } />
+		);
 		const result = renderer.getRenderOutput();
 
 		expect( result.props.children[ 1 ].props.children[ 0 ] ).to.equal( '12 characters' );
@@ -93,9 +102,11 @@ describe( 'index', function() {
 		const acceptableLength = 140;
 
 		renderer.render(
-			<CountedTextarea value={ value }
+			<CountedTextarea
+				value={ value }
 				className="custom-class"
-				acceptableLength={ acceptableLength } />
+				acceptableLength={ acceptableLength }
+			/>
 		);
 		const result = renderer.getRenderOutput();
 
@@ -109,7 +120,13 @@ describe( 'index', function() {
 		const value = 'Hello World!';
 		const acceptableLength = 140;
 
-		renderer.render( <CountedTextarea value={ value } acceptableLength={ acceptableLength } showRemainingCharacters={ true } /> );
+		renderer.render(
+			<CountedTextarea
+				value={ value }
+				acceptableLength={ acceptableLength }
+				showRemainingCharacters={ true }
+			/>
+		);
 		const result = renderer.getRenderOutput();
 
 		expect( result.props.className ).to.equal( 'counted-textarea' );
@@ -123,9 +140,11 @@ describe( 'index', function() {
 		const additionalPanelContent = 'Extra stuff';
 
 		renderer.render(
-			<CountedTextarea value={ value }
+			<CountedTextarea
+				value={ value }
 				acceptableLength={ acceptableLength }
-				showRemainingCharacters>
+				showRemainingCharacters
+			>
 				{ additionalPanelContent }
 			</CountedTextarea>
 		);

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -72,4 +73,3 @@ export default store => next => {
 		return configuration.handleAction( action );
 	};
 };
-

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,23 +13,20 @@ import { isRequestingTheme } from 'state/themes/selectors';
 
 class QueryTheme extends Component {
 	static propTypes = {
-		siteId: PropTypes.oneOfType( [
-			PropTypes.number,
-			PropTypes.oneOf( [ 'wpcom', 'wporg' ] )
-		] ).isRequired,
+		siteId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] )
+			.isRequired,
 		themeId: PropTypes.string.isRequired,
 		// Connected props
 		isRequesting: PropTypes.bool.isRequired,
 		requestTheme: PropTypes.func.isRequired,
-	}
+	};
 
 	componentDidMount() {
 		this.request( this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId &&
-			this.props.themeId === nextProps.themeId ) {
+		if ( this.props.siteId === nextProps.siteId && this.props.themeId === nextProps.themeId ) {
 			return;
 		}
 		this.request( nextProps );

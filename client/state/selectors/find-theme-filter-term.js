@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -18,22 +19,20 @@ import { getThemeFilters, getThemeFilterTerm } from './';
  */
 export default createSelector(
 	( state, search ) => {
-		const [ left, right ] = search.split( ':' );
+		const [ left, right ] = search.split( ':' );
 		if ( right ) {
 			return getThemeFilterTerm( state, left, right );
 		}
 
 		const filters = getThemeFilters( state );
 
-		const results = filter( filters, ( terms ) => (
-			!! get( terms, left )
-		) );
+		const results = filter( filters, terms => !! get( terms, left ) );
 
 		if ( results.length !== 1 ) {
 			// No or ambiguous results
 			return null;
 		}
-		return results[ 0 ][ left ];
+		return results[ 0 ][ left ];
 	},
-	( state ) => [ getThemeFilters( state ) ]
+	state => [ getThemeFilters( state ) ]
 );

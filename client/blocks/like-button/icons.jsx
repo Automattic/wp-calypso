@@ -1,15 +1,15 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import Gridicon from 'gridicons';
 
-const LikeIcons = ( { size } ) => (
+const LikeIcons = ( { size } ) =>
 	<span className="like-button__like-icons">
 		<Gridicon icon="star" size={ size } />
 		<Gridicon icon="star-outline" size={ size } />
-	</span>
-);
+	</span>;
 
 LikeIcons.propTypes = {
 	size: React.PropTypes.number,

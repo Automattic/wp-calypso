@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -19,7 +20,7 @@ export default {
 				enabled: method.enabled ? 'yes' : 'no',
 			};
 
-			Object.keys( method.settings ).map( ( settingKey ) => {
+			Object.keys( method.settings ).map( settingKey => {
 				settings[ settingKey ] = method.settings[ settingKey ].value;
 			} );
 
@@ -39,7 +40,9 @@ export default {
 				dispatch( successAction );
 			};
 
-			store.dispatch( put( siteId, `payment_gateways/${ method.id }`, payload, updatedAction, failureAction ) );
+			store.dispatch(
+				put( siteId, `payment_gateways/${ method.id }`, payload, updatedAction, failureAction )
+			);
 		},
 	],
 };

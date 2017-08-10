@@ -1,3 +1,4 @@
+/** @format */
 /***
  * Returns the recommended sites for a given seed.
  *

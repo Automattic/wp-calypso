@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -35,7 +36,7 @@ describe( 'reducer', () => {
 		it( 'should return an empty state when original state is undefined and action is unknown', () => {
 			const state = plans( undefined, {
 				type: 'SAY_HELLO',
-				siteId: 11111111
+				siteId: 11111111,
 			} );
 
 			expect( state ).to.eql( {} );
@@ -47,12 +48,12 @@ describe( 'reducer', () => {
 						data: [],
 						error: null,
 						hasLoadedFromServer: true,
-						isRequesting: false
-					}
+						isRequesting: false,
+					},
 				} ),
 				state = plans( original, {
 					type: 'MAKE_COFFEE',
-					siteId: 11111111
+					siteId: 11111111,
 				} );
 
 			expect( state ).to.eql( original );
@@ -61,7 +62,7 @@ describe( 'reducer', () => {
 		it( 'should return the initial state with requesting enabled when fetching is triggered', () => {
 			const state = plans( undefined, {
 				type: SITE_PLANS_FETCH,
-				siteId: 11111111
+				siteId: 11111111,
 			} );
 
 			expect( state ).to.eql( {
@@ -69,8 +70,8 @@ describe( 'reducer', () => {
 					data: null,
 					error: null,
 					hasLoadedFromServer: false,
-					isRequesting: true
-				}
+					isRequesting: true,
+				},
 			} );
 		} );
 
@@ -80,13 +81,13 @@ describe( 'reducer', () => {
 						data: [],
 						error: null,
 						hasLoadedFromServer: true,
-						isRequesting: true
-					}
+						isRequesting: true,
+					},
 				} ),
 				state = plans( original, {
 					type: SITE_PLANS_FETCH_FAILED,
 					siteId: 11111111,
-					error: 'Unable to fetch site plans'
+					error: 'Unable to fetch site plans',
 				} );
 
 			expect( state ).to.eql( {
@@ -94,8 +95,8 @@ describe( 'reducer', () => {
 					data: [],
 					error: 'Unable to fetch site plans',
 					hasLoadedFromServer: true,
-					isRequesting: false
-				}
+					isRequesting: false,
+				},
 			} );
 		} );
 
@@ -103,7 +104,7 @@ describe( 'reducer', () => {
 			const state = plans( undefined, {
 				type: SITE_PLANS_FETCH_COMPLETED,
 				siteId: 11111111,
-				plans: []
+				plans: [],
 			} );
 
 			expect( state ).to.eql( {
@@ -111,8 +112,8 @@ describe( 'reducer', () => {
 					data: [],
 					error: null,
 					hasLoadedFromServer: true,
-					isRequesting: false
-				}
+					isRequesting: false,
+				},
 			} );
 		} );
 
@@ -122,12 +123,12 @@ describe( 'reducer', () => {
 						data: [],
 						error: null,
 						hasLoadedFromServer: true,
-						isRequesting: false
-					}
+						isRequesting: false,
+					},
 				} ),
 				state = plans( original, {
 					type: SITE_PLANS_FETCH,
-					siteId: 55555555
+					siteId: 55555555,
 				} );
 
 			expect( state ).to.eql( {
@@ -135,14 +136,14 @@ describe( 'reducer', () => {
 					data: [],
 					error: null,
 					hasLoadedFromServer: true,
-					isRequesting: false
+					isRequesting: false,
 				},
 				55555555: {
 					data: null,
 					error: null,
 					hasLoadedFromServer: false,
-					isRequesting: true
-				}
+					isRequesting: true,
+				},
 			} );
 		} );
 
@@ -152,12 +153,12 @@ describe( 'reducer', () => {
 						data: null,
 						error: 'Unable to fetch site plans',
 						hasLoadedFromServer: false,
-						isRequesting: false
-					}
+						isRequesting: false,
+					},
 				} ),
 				state = plans( original, {
 					type: SITE_PLANS_FETCH,
-					siteId: 11111111
+					siteId: 11111111,
 				} );
 
 			expect( state ).to.eql( {
@@ -165,8 +166,8 @@ describe( 'reducer', () => {
 					data: null,
 					error: null,
 					hasLoadedFromServer: false,
-					isRequesting: true
-				}
+					isRequesting: true,
+				},
 			} );
 		} );
 
@@ -176,12 +177,12 @@ describe( 'reducer', () => {
 						data: [],
 						error: null,
 						hasLoadedFromServer: false,
-						isRequesting: false
-					}
+						isRequesting: false,
+					},
 				} ),
 				state = plans( original, {
 					type: SITE_PLANS_TRIAL_CANCEL,
-					siteId: 11111111
+					siteId: 11111111,
 				} );
 
 			expect( state ).to.eql( {
@@ -189,8 +190,8 @@ describe( 'reducer', () => {
 					data: [],
 					error: null,
 					hasLoadedFromServer: false,
-					isRequesting: true
-				}
+					isRequesting: true,
+				},
 			} );
 		} );
 
@@ -200,13 +201,13 @@ describe( 'reducer', () => {
 						data: [],
 						error: null,
 						hasLoadedFromServer: true,
-						isRequesting: true
-					}
+						isRequesting: true,
+					},
 				} ),
 				state = plans( original, {
 					type: SITE_PLANS_TRIAL_CANCEL_FAILED,
 					siteId: 11111111,
-					error: 'Unable to cancel plan trial'
+					error: 'Unable to cancel plan trial',
 				} );
 
 			expect( state ).to.eql( {
@@ -214,8 +215,8 @@ describe( 'reducer', () => {
 					data: [],
 					error: 'Unable to cancel plan trial',
 					hasLoadedFromServer: true,
-					isRequesting: false
-				}
+					isRequesting: false,
+				},
 			} );
 		} );
 
@@ -223,7 +224,7 @@ describe( 'reducer', () => {
 			const state = plans( undefined, {
 				type: SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 				siteId: 11111111,
-				plans: []
+				plans: [],
 			} );
 
 			expect( state ).to.eql( {
@@ -231,15 +232,15 @@ describe( 'reducer', () => {
 					data: [],
 					error: null,
 					hasLoadedFromServer: true,
-					isRequesting: false
-				}
+					isRequesting: false,
+				},
 			} );
 		} );
 
 		it( 'should return an empty state when original state is undefined and removal is triggered', () => {
 			const state = plans( undefined, {
 				type: SITE_PLANS_REMOVE,
-				siteId: 11111111
+				siteId: 11111111,
 			} );
 
 			expect( state ).to.eql( {} );
@@ -251,12 +252,12 @@ describe( 'reducer', () => {
 						data: null,
 						error: 'Unable to fetch site plans',
 						hasLoadedFromServer: false,
-						isRequesting: false
-					}
+						isRequesting: false,
+					},
 				} ),
 				state = plans( original, {
 					type: SITE_PLANS_REMOVE,
-					siteId: 22222222
+					siteId: 22222222,
 				} );
 
 			expect( state ).to.eql( original );
@@ -268,18 +269,18 @@ describe( 'reducer', () => {
 						data: null,
 						error: 'Unable to fetch site plans',
 						hasLoadedFromServer: false,
-						isRequesting: false
+						isRequesting: false,
 					},
 					22222222: {
 						data: [],
 						error: null,
 						hasLoadedFromServer: true,
-						isRequesting: false
-					}
+						isRequesting: false,
+					},
 				} ),
 				state = plans( original, {
 					type: SITE_PLANS_REMOVE,
-					siteId: 11111111
+					siteId: 11111111,
 				} );
 
 			expect( state ).to.eql( {
@@ -287,8 +288,8 @@ describe( 'reducer', () => {
 					data: [],
 					error: null,
 					hasLoadedFromServer: true,
-					isRequesting: false
-				}
+					isRequesting: false,
+				},
 			} );
 		} );
 	} );

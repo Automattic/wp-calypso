@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -23,7 +24,7 @@ export function requestBlogStickerAdd( { dispatch }, action ) {
 			apiVersion: '1.1',
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 }
 
@@ -45,14 +46,14 @@ export function receiveBlogStickerAdd( store, action, response ) {
 			} ),
 			{
 				duration: 5000,
-			},
-		),
+			}
+		)
 	);
 }
 
 export function receiveBlogStickerAddError( { dispatch }, action ) {
 	dispatch(
-		errorNotice( translate( 'Sorry, we had a problem adding that sticker. Please try again.' ) ),
+		errorNotice( translate( 'Sorry, we had a problem adding that sticker. Please try again.' ) )
 	);
 	dispatch( local( removeBlogSticker( action.payload.blogId, action.payload.stickerName ) ) );
 }

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -12,11 +13,8 @@ import { startsWith } from 'lodash';
 import ThemeSheetComponent from './main';
 import ThemeNotFoundError from './theme-not-found-error';
 import LayoutLoggedOut from 'layout/logged-out';
-import {
-	requestTheme,
-	setBackPath
-} from 'state/themes/actions';
-import { getTheme, getThemeRequestErrors } from 'state/themes/selectors';
+import { requestTheme, setBackPath } from 'state/themes/actions';
+import { getTheme, getThemeRequestErrors } from 'state/themes/selectors';
 import config from 'config';
 
 const debug = debugFactory( 'calypso:themes' );
@@ -34,7 +32,8 @@ export function fetchThemeDetailsData( context, next ) {
 		return next();
 	}
 
-	context.store.dispatch( requestTheme( themeSlug, 'wpcom' ) )
+	context.store
+		.dispatch( requestTheme( themeSlug, 'wpcom' ) )
 		.then( () => {
 			const themeDetails = getTheme( context.store.getState(), 'wpcom', themeSlug );
 			if ( ! themeDetails ) {
@@ -43,7 +42,7 @@ export function fetchThemeDetailsData( context, next ) {
 				const err = {
 					status: 404,
 					message: 'Theme Not Found',
-					themeSlug
+					themeSlug,
 				};
 				return next( err );
 			}
@@ -58,9 +57,9 @@ export function details( context, next ) {
 		context.store.dispatch( setBackPath( context.prevPath ) );
 	}
 
-	context.primary = <ThemeSheetComponent id={ slug }
-		section={ section }
-		pathName={ context.pathname } />;
+	context.primary = (
+		<ThemeSheetComponent id={ slug } section={ section } pathName={ context.pathname } />
+	);
 	context.secondary = null; // When we're logged in, we need to remove the sidebar.
 	next();
 }

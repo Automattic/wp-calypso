@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns an object representing the image editor transform
  *

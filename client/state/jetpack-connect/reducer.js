@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencis
  */
@@ -32,7 +33,7 @@ import {
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
 	SITE_REQUEST_FAILURE,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
 import { combineReducers, isValidStateWithSchema } from 'state/utils';
 import {
@@ -51,7 +52,7 @@ function buildDefaultAuthorizeState() {
 		authorizeSuccess: false,
 		authorizeError: false,
 		timestamp: Date.now(),
-		userAlreadyConnected: false
+		userAlreadyConnected: false,
 	};
 }
 
@@ -59,7 +60,7 @@ function buildUrlSessionObj( url, flowType ) {
 	const slug = urlToSlug( url );
 	const sessionValue = {
 		timestamp: Date.now(),
-		flowType: flowType || ''
+		flowType: flowType || '',
 	};
 	return { [ slug ]: sessionValue };
 }
@@ -70,7 +71,7 @@ export function jetpackConnectSessions( state = {}, action ) {
 			return Object.assign( {}, state, buildUrlSessionObj( action.url, action.flowType ) );
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, jetpackConnectSessionsSchema ) ) {
-				return pickBy( state, ( session ) => {
+				return pickBy( state, session => {
 					return ! isStale( session.timestamp );
 				} );
 			}
@@ -89,25 +90,25 @@ export function jetpackConnectSite( state = {}, action ) {
 		isFetched: false,
 		isDismissed: false,
 		installConfirmedByUser: null,
-		data: {}
+		data: {},
 	};
 	switch ( action.type ) {
 		case JETPACK_CONNECT_CHECK_URL:
-			return Object.assign(
-				{},
-				defaultState,
-				{
-					url: action.url,
-					isFetching: true,
-					isFetched: false,
-					isDismissed: false,
-					installConfirmedByUser: null,
-					data: {}
-				}
-			);
+			return Object.assign( {}, defaultState, {
+				url: action.url,
+				isFetching: true,
+				isFetched: false,
+				isDismissed: false,
+				installConfirmedByUser: null,
+				data: {},
+			} );
 		case JETPACK_CONNECT_CHECK_URL_RECEIVE:
 			if ( action.url === state.url ) {
-				return Object.assign( {}, state, { isFetching: false, isFetched: true, data: action.data } );
+				return Object.assign( {}, state, {
+					isFetching: false,
+					isFetched: true,
+					data: action.data,
+				} );
 			}
 			return state;
 		case JETPACK_CONNECT_DISMISS_URL_STATUS:
@@ -131,98 +132,66 @@ export function jetpackConnectSite( state = {}, action ) {
 export function jetpackConnectAuthorize( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_AUTHORIZE:
-			return Object.assign(
-				{},
-				omit( state, 'userData', 'bearerToken' ),
-				{
-					isAuthorizing: true,
-					authorizeSuccess: false,
-					authorizeError: false,
-					isRedirectingToWpAdmin: false,
-					autoAuthorize: false
-				}
-			);
+			return Object.assign( {}, omit( state, 'userData', 'bearerToken' ), {
+				isAuthorizing: true,
+				authorizeSuccess: false,
+				authorizeError: false,
+				isRedirectingToWpAdmin: false,
+				autoAuthorize: false,
+			} );
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
 			if ( isEmpty( action.error ) && action.data ) {
 				const { plans_url } = action.data;
-				return Object.assign(
-					{},
-					state,
-					{
-						authorizeError: false,
-						authorizeSuccess: true,
-						autoAuthorize: false,
-						plansUrl: plans_url,
-						siteReceived: false
-					}
-				);
+				return Object.assign( {}, state, {
+					authorizeError: false,
+					authorizeSuccess: true,
+					autoAuthorize: false,
+					plansUrl: plans_url,
+					siteReceived: false,
+				} );
 			}
-			return Object.assign(
-				{},
-				state,
-				{
-					isAuthorizing: false,
-					authorizeError: action.error,
-					authorizeSuccess: false,
-					autoAuthorize: false
-				}
-			);
+			return Object.assign( {}, state, {
+				isAuthorizing: false,
+				authorizeError: action.error,
+				authorizeSuccess: false,
+				autoAuthorize: false,
+			} );
 		case JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE:
 			return Object.assign( {}, state, { authorizationCode: action.data.code } );
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST:
 			const updateQueryObject = omit( state.queryObject, '_wp_nonce', 'secret', 'scope' );
-			return Object.assign(
-				{},
-				omit( state, 'queryObject' ),
-				{
-					siteReceived: true,
-					isAuthorizing: false,
-					queryObject: updateQueryObject
-				}
-			);
+			return Object.assign( {}, omit( state, 'queryObject' ), {
+				siteReceived: true,
+				isAuthorizing: false,
+				queryObject: updateQueryObject,
+			} );
 		case JETPACK_CONNECT_QUERY_SET:
 			const queryObject = Object.assign( {}, action.queryObject );
-			return Object.assign(
-				{},
-				buildDefaultAuthorizeState(),
-				{ queryObject: queryObject }
-			);
+			return Object.assign( {}, buildDefaultAuthorizeState(), { queryObject: queryObject } );
 		case JETPACK_CONNECT_CREATE_ACCOUNT:
-			return Object.assign(
-				{},
-				state,
-				{
-					isAuthorizing: true,
-					authorizeSuccess: false,
-					authorizeError: false,
-					autoAuthorize: true
-				}
-			);
+			return Object.assign( {}, state, {
+				isAuthorizing: true,
+				authorizeSuccess: false,
+				authorizeError: false,
+				autoAuthorize: true,
+			} );
 		case JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE:
 			if ( ! isEmpty( action.error ) ) {
-				return Object.assign(
-					{},
-					state,
-					{
-						isAuthorizing: false,
-						authorizeSuccess: false,
-						authorizeError: true,
-						autoAuthorize: false
-					}
-				);
-			}
-			return Object.assign(
-				{},
-				state,
-				{
-					isAuthorizing: true,
+				return Object.assign( {}, state, {
+					isAuthorizing: false,
 					authorizeSuccess: false,
-					authorizeError: false,
-					autoAuthorize: true,
-					userData: action.userData,
-					bearerToken: action.data.bearer_token
-				}
-			);
+					authorizeError: true,
+					autoAuthorize: false,
+				} );
+			}
+			return Object.assign( {}, state, {
+				isAuthorizing: true,
+				authorizeSuccess: false,
+				authorizeError: false,
+				autoAuthorize: true,
+				userData: action.userData,
+				bearerToken: action.data.bearer_token,
+			} );
 		case SITE_REQUEST_FAILURE:
 			if (
 				state.queryObject &&
@@ -262,7 +231,9 @@ export function jetpackAuthAttempts( state = {}, action ) {
 					attemptNumber = 0;
 				}
 			}
-			return Object.assign( {}, state, { [ slug ]: { attempt: attemptNumber, timestamp: currentTimestamp } } );
+			return Object.assign( {}, state, {
+				[ slug ]: { attempt: attemptNumber, timestamp: currentTimestamp },
+			} );
 		case JETPACK_CONNECT_COMPLETE_FLOW:
 			return {};
 	}
@@ -275,21 +246,33 @@ export function jetpackSSO( state = {}, action ) {
 		case JETPACK_CONNECT_SSO_VALIDATION_REQUEST:
 			return Object.assign( {}, state, { isValidating: true } );
 		case JETPACK_CONNECT_SSO_VALIDATION_SUCCESS:
-			return Object. assign( {}, state, {
+			return Object.assign( {}, state, {
 				isValidating: false,
 				validationError: false,
 				nonceValid: action.success,
 				blogDetails: action.blogDetails,
-				sharedDetails: action.sharedDetails
+				sharedDetails: action.sharedDetails,
 			} );
 		case JETPACK_CONNECT_SSO_VALIDATION_ERROR:
-			return Object.assign( {}, state, { isValidating: false, validationError: action.error, nonceValid: false } );
+			return Object.assign( {}, state, {
+				isValidating: false,
+				validationError: action.error,
+				nonceValid: false,
+			} );
 		case JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST:
 			return Object.assign( {}, state, { isAuthorizing: true } );
 		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
-			return Object.assign( {}, state, { isAuthorizing: false, authorizationError: false, ssoUrl: action.ssoUrl } );
+			return Object.assign( {}, state, {
+				isAuthorizing: false,
+				authorizationError: false,
+				ssoUrl: action.ssoUrl,
+			} );
 		case JETPACK_CONNECT_SSO_AUTHORIZE_ERROR:
-			return Object.assign( {}, state, { isAuthorizing: false, authorizationError: action.error, ssoUrl: false } );
+			return Object.assign( {}, state, {
+				isAuthorizing: false,
+				authorizationError: action.error,
+				ssoUrl: false,
+			} );
 	}
 	return state;
 }

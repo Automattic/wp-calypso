@@ -1,3 +1,4 @@
+/** @format */
 var keyboardNavigation = false,
 	keyboardNavigationKeycodes = [ 9, 32, 37, 38, 39, 40 ]; // keyCodes for tab, space, left, up, right, down respectively
 

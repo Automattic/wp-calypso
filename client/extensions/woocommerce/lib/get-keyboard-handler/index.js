@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Accessibility helper function for lists of navigation items which have onClick events.
  * This triggers a callback on a keydown event, only if the key pressed is space or enter
@@ -8,7 +9,7 @@
  * @return {Function} the callback to fire on a keydown event
  */
 export default function( callback ) {
-	return ( event ) => {
+	return event => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			event.preventDefault();
 			callback( event );

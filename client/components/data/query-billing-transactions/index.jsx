@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +14,7 @@ import { requestBillingTransactions } from 'state/billing-transactions/actions';
 class QueryBillingTransactions extends Component {
 	static propTypes = {
 		requestingBillingTransactions: PropTypes.bool,
-		requestBillingTransactions: PropTypes.func
+		requestBillingTransactions: PropTypes.func,
 	};
 
 	componentDidMount() {
@@ -30,8 +31,8 @@ class QueryBillingTransactions extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		requestingBillingTransactions: isRequestingBillingTransactions( state )
+	state => ( {
+		requestingBillingTransactions: isRequestingBillingTransactions( state ),
 	} ),
 	{ requestBillingTransactions }
 )( QueryBillingTransactions );

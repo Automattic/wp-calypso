@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,13 +17,13 @@ import {
 	BILLING_TRANSACTIONS_RECEIVE,
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
-	BILLING_TRANSACTIONS_REQUEST_FAILURE
+	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 } from 'state/action-types';
 import { requestBillingTransactions, sendBillingReceiptEmail } from '../actions';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => spy = sandbox.spy() );
+	useSandbox( sandbox => ( spy = sandbox.spy() ) );
 
 	describe( '#requestBillingTransactions()', () => {
 		describe( 'success', () => {
@@ -31,19 +32,19 @@ describe( 'actions', () => {
 					{
 						id: '12345678',
 						amount: '$1.23',
-						date: '2016-12-12T11:22:33+0000'
-					}
+						date: '2016-12-12T11:22:33+0000',
+					},
 				],
 				upcoming_charges: [
 					{
 						id: '87654321',
 						amount: '$4.56',
-						date: '2016-12-12T11:22:33+0000'
-					}
-				]
+						date: '2016-12-12T11:22:33+0000',
+					},
+				],
 			};
 
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/billing-history' )
@@ -63,7 +64,7 @@ describe( 'actions', () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: BILLING_TRANSACTIONS_RECEIVE,
 						past: successResponse.billing_history,
-						upcoming: successResponse.upcoming_charges
+						upcoming: successResponse.upcoming_charges,
 					} );
 				} );
 			} );
@@ -78,15 +79,16 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failure', () => {
-			const message = 'An active access token must be used to query information about the current user.';
+			const message =
+				'An active access token must be used to query information about the current user.';
 
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/billing-history' )
 					.reply( 403, {
 						error: 'authorization_required',
-						message
+						message,
 					} );
 			} );
 
@@ -95,8 +97,8 @@ describe( 'actions', () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: BILLING_TRANSACTIONS_REQUEST_FAILURE,
 						error: sinon.match( {
-							message
-						} )
+							message,
+						} ),
 					} );
 				} );
 			} );
@@ -107,7 +109,7 @@ describe( 'actions', () => {
 		const receiptId = 12345678;
 
 		describe( 'success', () => {
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '/email' )
@@ -134,15 +136,16 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failure', () => {
-			const message = 'An active access token must be used to query information about the current user.';
+			const message =
+				'An active access token must be used to query information about the current user.';
 
-			useNock( ( nock ) => {
+			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '/email' )
 					.reply( 403, {
 						error: 'authorization_required',
-						message
+						message,
 					} );
 			} );
 
@@ -152,8 +155,8 @@ describe( 'actions', () => {
 						type: BILLING_RECEIPT_EMAIL_SEND_FAILURE,
 						receiptId,
 						error: sinon.match( {
-							message
-						} )
+							message,
+						} ),
 					} );
 				} );
 			} );

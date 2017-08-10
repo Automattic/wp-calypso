@@ -1,9 +1,8 @@
+/** @format */
 /**
  * Internal dependencies
  */
-import {
-	HELP_CONTACT_FORM_SITE_SELECT,
-} from 'state/action-types';
+import { HELP_CONTACT_FORM_SITE_SELECT } from 'state/action-types';
 import courses from './courses/reducer';
 import { combineReducers } from 'state/utils';
 import directly from './directly/reducer';

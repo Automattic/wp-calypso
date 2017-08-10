@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -44,7 +45,7 @@ function storePluginsList( category, pluginsList ) {
 		let storedLists = localStore.get( _STORAGE_LIST_NAME ) || {};
 		storedLists[ category ] = {
 			list: pluginsList,
-			fetched: Date.now()
+			fetched: Date.now(),
 		};
 		localStore.set( _STORAGE_LIST_NAME, storedLists );
 	}
@@ -60,7 +61,7 @@ function getPluginsListFromStorage( category ) {
 }
 
 function isCachedListStillValid( storedList ) {
-	return ( Date.now() - storedList.fetched < _CACHE_TIME_TO_LIVE );
+	return Date.now() - storedList.fetched < _CACHE_TIME_TO_LIVE;
 }
 
 PluginsListsStore = {
@@ -79,7 +80,7 @@ PluginsListsStore = {
 		}
 		return {
 			fetching: !! _fetching[ category ],
-			list: _shortLists[ category ] || []
+			list: _shortLists[ category ] || [],
 		};
 	},
 
@@ -89,7 +90,7 @@ PluginsListsStore = {
 		}
 		return {
 			fetching: _fetching[ category ] !== false,
-			list: _fullLists[ category ] || []
+			list: _fullLists[ category ] || [],
 		};
 	},
 
@@ -108,13 +109,13 @@ PluginsListsStore = {
 		}
 		return {
 			fetching: isSearching,
-			list: _fullLists.search || []
+			list: _fullLists.search || [],
 		};
 	},
 
 	emitChange: function() {
 		this.emit( 'change' );
-	}
+	},
 };
 
 PluginsListsStore.dispatchToken = Dispatcher.register( function( payload ) {

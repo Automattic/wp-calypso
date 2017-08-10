@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -14,7 +15,7 @@ const StoreStatsNavigationTabs = props => {
 	const { label, selectedText, slug, type, unit, units } = props;
 	return (
 		<NavTabs label={ label } selectedText={ selectedText }>
-			{ Object.keys( units ).map( key => (
+			{ Object.keys( units ).map( key =>
 				<NavItem
 					key={ key }
 					path={ `/store/stats/${ type }/${ key }/${ slug }` }
@@ -22,7 +23,7 @@ const StoreStatsNavigationTabs = props => {
 				>
 					{ units[ key ].title }
 				</NavItem>
-			) ) }
+			) }
 		</NavTabs>
 	);
 };

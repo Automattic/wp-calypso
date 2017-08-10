@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -24,7 +25,7 @@ export function items( state = {}, action ) {
 			const serializedQuery = getSerializedDomainsSuggestionsQuery( action.queryObject );
 			if ( serializedQuery ) {
 				return Object.assign( {}, state, {
-					[ serializedQuery ]: action.suggestions
+					[ serializedQuery ]: action.suggestions,
 				} );
 			}
 			return state;
@@ -48,7 +49,7 @@ export function requesting( state = {}, action ) {
 			const serializedQuery = getSerializedDomainsSuggestionsQuery( action.queryObject );
 			if ( serializedQuery ) {
 				return Object.assign( {}, state, {
-					[ serializedQuery ]: action.type === DOMAINS_SUGGESTIONS_REQUEST
+					[ serializedQuery ]: action.type === DOMAINS_SUGGESTIONS_REQUEST,
 				} );
 			}
 			return state;
@@ -64,20 +65,21 @@ export function requesting( state = {}, action ) {
  * @return {Object}        Updated state
  */
 export function errors( state = {}, action ) {
-	const serializedQuery = action.queryObject && getSerializedDomainsSuggestionsQuery( action.queryObject );
+	const serializedQuery =
+		action.queryObject && getSerializedDomainsSuggestionsQuery( action.queryObject );
 	switch ( action.type ) {
 		case DOMAINS_SUGGESTIONS_REQUEST:
 		case DOMAINS_SUGGESTIONS_REQUEST_SUCCESS:
 			if ( serializedQuery ) {
 				return Object.assign( {}, state, {
-					[ serializedQuery ]: null
+					[ serializedQuery ]: null,
 				} );
 			}
 			return state;
 		case DOMAINS_SUGGESTIONS_REQUEST_FAILURE:
 			if ( serializedQuery ) {
 				return Object.assign( {}, state, {
-					[ serializedQuery ]: action.error
+					[ serializedQuery ]: action.error,
 				} );
 			}
 			return state;
@@ -88,5 +90,5 @@ export function errors( state = {}, action ) {
 export default combineReducers( {
 	items,
 	requesting,
-	errors
+	errors,
 } );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,4 +10,4 @@ import { get } from 'lodash';
  * @param {Object} state Global app state.
  * @return {Boolean} Whether the request is in progress.
  */
-export default ( state ) => get( state, 'accountRecovery.reset.requestReset.isRequesting', false );
+export default state => get( state, 'accountRecovery.reset.requestReset.isRequesting', false );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +15,7 @@ import { resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import {
 	getEditorLastDraftPost,
 	getEditorLastDraftSiteId,
-	getEditorLastDraftPostId
+	getEditorLastDraftPostId,
 } from 'state/ui/editor/last-draft/selectors';
 import { isRequestingSitePost } from 'state/posts/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
@@ -34,7 +35,7 @@ const ResumeEditing = React.createClass( {
 		draft: PropTypes.object,
 		editPath: PropTypes.string,
 		section: PropTypes.string,
-		translate: PropTypes.func
+		translate: PropTypes.func,
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -98,7 +99,7 @@ const ResumeEditing = React.createClass( {
 		}
 
 		const classes = classnames( 'resume-editing', {
-			'is-requesting': requesting
+			'is-requesting': requesting,
 		} );
 
 		return (
@@ -113,11 +114,11 @@ const ResumeEditing = React.createClass( {
 				</span>
 			</a>
 		);
-	}
+	},
 } );
 
 export default connect(
-	( state ) => {
+	state => {
 		const siteId = getEditorLastDraftSiteId( state );
 		const postId = getEditorLastDraftPostId( state );
 

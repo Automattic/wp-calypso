@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,13 +29,13 @@ class PeopleListSectionHeader extends Component {
 	};
 
 	static defaultProps = {
-		isFollower: false
+		isFollower: false,
 	};
 
 	constructor( props ) {
 		super( props );
 		this.state = {
-			addPeopleTooltip: false
+			addPeopleTooltip: false,
 		};
 	}
 
@@ -56,16 +57,10 @@ class PeopleListSectionHeader extends Component {
 	render() {
 		const { label, count, children, translate } = this.props;
 		const siteLink = this.getAddLink();
-		const classes = classNames(
-			this.props.className,
-			'people-list-section-header'
-		);
+		const classes = classNames( this.props.className, 'people-list-section-header' );
 
 		return (
-			<SectionHeader
-				className={ classes }
-				count={ count }
-				label={ label } >
+			<SectionHeader className={ classes } count={ count } label={ label }>
 				{ children }
 				{ siteLink &&
 					<ButtonGroup>
@@ -76,24 +71,25 @@ class PeopleListSectionHeader extends Component {
 							onMouseEnter={ this.showAddTooltip }
 							onMouseLeave={ this.hideAddTooltip }
 							ref="addPeopleButton"
-							aria-label={ translate( 'Invite user', { context: 'button label' } ) }>
-							<Gridicon icon="plus-small" size={ 18 } /><Gridicon icon="user" size={ 18 } />
+							aria-label={ translate( 'Invite user', { context: 'button label' } ) }
+						>
+							<Gridicon icon="plus-small" size={ 18 } />
+							<Gridicon icon="user" size={ 18 } />
 							<Tooltip
 								isVisible={ this.state.addPeopleTooltip }
 								context={ this.refs && this.refs.addPeopleButton }
-								position="bottom">
+								position="bottom"
+							>
 								{ translate( 'Invite user', { context: 'button tooltip' } ) }
 							</Tooltip>
 						</Button>
-					</ButtonGroup>
-
-				}
+					</ButtonGroup> }
 			</SectionHeader>
 		);
 	}
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = state => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),

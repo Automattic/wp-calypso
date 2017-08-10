@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,11 +20,17 @@ import { errorNotice } from 'state/notices/actions';
  * @param   {Object}   action   Redux action
  * @returns {Object}            dispatched http action
  */
-export const requestNotificationSettings = ( { dispatch }, action ) => dispatch( http( {
-	apiVersion: '1.1',
-	method: 'GET',
-	path: '/me/notifications/settings',
-}, action ) );
+export const requestNotificationSettings = ( { dispatch }, action ) =>
+	dispatch(
+		http(
+			{
+				apiVersion: '1.1',
+				method: 'GET',
+				path: '/me/notifications/settings',
+			},
+			action
+		)
+	);
 
 /**
  * Dispatches a notification settings receive action then the request succeeded.
@@ -33,9 +40,12 @@ export const requestNotificationSettings = ( { dispatch }, action ) => dispatch(
  * @param   {Object}   settings  raw notification settings object returned by the endpoint
  * @returns {Object}             disparched user devices add action
  */
-export const updateSettings = ( { dispatch }, action, settings ) => dispatch( updateNotificationSettings( {
-	settings
-} ) );
+export const updateSettings = ( { dispatch }, action, settings ) =>
+	dispatch(
+		updateNotificationSettings( {
+			settings,
+		} )
+	);
 
 /**
  * Dispatches a error notice action when the request fails
@@ -43,10 +53,13 @@ export const updateSettings = ( { dispatch }, action, settings ) => dispatch( up
  * @param   {Function} dispatch Redux dispatcher
  * @returns {Object}            dispatched error notice action
  */
-export const handleError = ( { dispatch } ) => dispatch(
-	errorNotice( translate( 'We couldn\'t load your notification settings, please try again.' ) )
-);
+export const handleError = ( { dispatch } ) =>
+	dispatch(
+		errorNotice( translate( "We couldn't load your notification settings, please try again." ) )
+	);
 
 export default {
-	[ NOTIFICATION_SETTINGS_REQUEST ]: [ dispatchRequest( requestNotificationSettings, updateSettings, handleError ) ],
+	[ NOTIFICATION_SETTINGS_REQUEST ]: [
+		dispatchRequest( requestNotificationSettings, updateSettings, handleError ),
+	],
 };

@@ -1,3 +1,4 @@
+/** @format */
 const root = 'https://support.wordpress.com';
 
 export default {
@@ -75,5 +76,5 @@ export default {
 	UPDATE_NAMESERVERS: `${ root }/domains/domain-management/#update-nameservers`,
 	USERS: `${ root }/category/users`,
 	USER_ROLES: `${ root }/user-roles`,
-	VIDEOS: `${ root }/videos`
+	VIDEOS: `${ root }/videos`,
 };

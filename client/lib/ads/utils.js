@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -16,9 +17,11 @@ export function canAccessWordads( site ) {
 		}
 
 		const jetpackPremium = site.jetpack && ( isPremium( site.plan ) || isBusiness( site.plan ) );
-		return site.options &&
+		return (
+			site.options &&
 			( site.options.wordads || jetpackPremium ) &&
-			userCan( 'manage_options', site );
+			userCan( 'manage_options', site )
+		);
 	}
 
 	return false;

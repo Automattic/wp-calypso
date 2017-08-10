@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,8 +13,8 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 	it( 'should return false if no sites exist in state', () => {
 		const state = {
 			sites: {
-				items: {}
-			}
+				items: {},
+			},
 		};
 		expect( isConnectedSecondaryNetworkSite( state, 1 ) ).be.false;
 	} );
@@ -28,11 +29,11 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://example.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
-					}
-				}
-			}
+							main_network_site: 'https://example.wordpress.com',
+						},
+					},
+				},
+			},
 		};
 		expect( isConnectedSecondaryNetworkSite( state, 2 ) ).be.false;
 	} );
@@ -48,11 +49,11 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://secondary.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
-					}
-				}
-			}
+							main_network_site: 'https://example.wordpress.com',
+						},
+					},
+				},
+			},
 		};
 		expect( isConnectedSecondaryNetworkSite( state, 2 ) ).be.false;
 	} );
@@ -67,11 +68,11 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://secondary.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
-					}
-				}
-			}
+							main_network_site: 'https://example.wordpress.com',
+						},
+					},
+				},
+			},
 		};
 		expect( isConnectedSecondaryNetworkSite( state, 2 ) ).be.false;
 	} );
@@ -86,11 +87,11 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://example.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
-					}
-				}
-			}
+							main_network_site: 'https://example.wordpress.com',
+						},
+					},
+				},
+			},
 		};
 		expect( isConnectedSecondaryNetworkSite( state, 1 ) ).be.false;
 	} );
@@ -105,8 +106,8 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://example.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
+							main_network_site: 'https://example.wordpress.com',
+						},
 					},
 					2: {
 						ID: 2,
@@ -114,11 +115,11 @@ describe( 'isConnectedSecondaryNetworkSite()', () => {
 						jetpack: true,
 						options: {
 							unmapped_url: 'https://secondary.wordpress.com',
-							main_network_site: 'https://example.wordpress.com'
-						}
-					}
-				}
-			}
+							main_network_site: 'https://example.wordpress.com',
+						},
+					},
+				},
+			},
 		};
 		expect( isConnectedSecondaryNetworkSite( state, 2 ) ).be.true;
 	} );

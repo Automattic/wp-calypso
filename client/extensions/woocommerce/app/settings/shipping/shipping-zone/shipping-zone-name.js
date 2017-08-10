@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,10 +20,20 @@ import {
 	getCurrentlyEditingShippingZone,
 	generateCurrentlyEditingZoneName,
 } from 'woocommerce/state/ui/shipping/zones/selectors';
-import { areSettingsGeneralLoaded, areSettingsGeneralLoadError } from 'woocommerce/state/sites/settings/general/selectors';
+import {
+	areSettingsGeneralLoaded,
+	areSettingsGeneralLoadError,
+} from 'woocommerce/state/sites/settings/general/selectors';
 
-const ShippingZoneName = ( { loaded, fetchError, zoneName, generatedZoneName, actions, translate } ) => {
-	const onNameChange = ( event ) => {
+const ShippingZoneName = ( {
+	loaded,
+	fetchError,
+	zoneName,
+	generatedZoneName,
+	actions,
+	translate,
+} ) => {
+	const onNameChange = event => {
 		actions.changeShippingZoneName( event.target.value );
 	};
 
@@ -44,7 +55,8 @@ const ShippingZoneName = ( { loaded, fetchError, zoneName, generatedZoneName, ac
 				<FormTextInput
 					value={ zoneName }
 					onChange={ onNameChange }
-					placeholder={ generatedZoneName } />
+					placeholder={ generatedZoneName }
+				/>
 			</div>
 		);
 	};
@@ -53,8 +65,11 @@ const ShippingZoneName = ( { loaded, fetchError, zoneName, generatedZoneName, ac
 		<div>
 			<ExtendedHeader
 				label={ translate( 'Zone name' ) }
-				description={ translate( 'Give the zone a name of your choosing, or just use the one we created for you.' +
-					' This is not visible to customers.' ) } />
+				description={ translate(
+					'Give the zone a name of your choosing, or just use the one we created for you.' +
+						' This is not visible to customers.'
+				) }
+			/>
 			<Card className="shipping-zone__name-container">
 				{ renderContent() }
 			</Card>
@@ -67,7 +82,7 @@ ShippingZoneName.PropTypes = {
 };
 
 export default connect(
-	( state ) => {
+	state => {
 		const loaded = areShippingZonesFullyLoaded( state ) && areSettingsGeneralLoaded( state );
 		const zone = loaded && getCurrentlyEditingShippingZone( state );
 		return {
@@ -78,8 +93,12 @@ export default connect(
 		};
 	},
 	( dispatch, ownProps ) => ( {
-		actions: bindActionCreatorsWithSiteId( {
-			changeShippingZoneName,
-		}, dispatch, ownProps.siteId ),
+		actions: bindActionCreatorsWithSiteId(
+			{
+				changeShippingZoneName,
+			},
+			dispatch,
+			ownProps.siteId
+		),
 	} )
 )( localize( ShippingZoneName ) );

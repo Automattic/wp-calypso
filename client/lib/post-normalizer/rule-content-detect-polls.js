@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -31,7 +32,12 @@ export default function detectPolls( post, dom ) {
 			const pollId = pollLink.href.match( /https?:\/\/polldaddy.com\/poll\/([0-9]+)/ )[ 1 ];
 			if ( pollId ) {
 				let p = document.createElement( 'p' );
-				p.innerHTML = '<a target="_blank" rel="external noopener noreferrer" href="https://polldaddy.com/poll/' + pollId + '">' + i18n.translate( 'Take our poll' ) + '</a>';
+				p.innerHTML =
+					'<a target="_blank" rel="external noopener noreferrer" href="https://polldaddy.com/poll/' +
+					pollId +
+					'">' +
+					i18n.translate( 'Take our poll' ) +
+					'</a>';
 				noscript.parentNode.replaceChild( p, noscript );
 			}
 		}

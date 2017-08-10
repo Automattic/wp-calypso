@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,7 +29,4 @@ class QueryReaderTag extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestTag: requestTags },
-)( QueryReaderTag );
+export default connect( null, { requestTag: requestTags } )( QueryReaderTag );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ class QueryShortcode extends Component {
 		siteId: PropTypes.number.isRequired,
 		shortcode: PropTypes.string.isRequired,
 		requestingShortcode: PropTypes.bool,
-		fetchShortcode: PropTypes.func
+		fetchShortcode: PropTypes.func,
 	};
 
 	componentWillMount() {
@@ -43,7 +44,7 @@ class QueryShortcode extends Component {
 
 export default connect(
 	( state, { siteId, shortcode } ) => ( {
-		requestingShortcode: isRequestingShortcode( state, siteId, shortcode )
+		requestingShortcode: isRequestingShortcode( state, siteId, shortcode ),
 	} ),
 	{ fetchShortcode }
 )( QueryShortcode );

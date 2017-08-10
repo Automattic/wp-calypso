@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,11 +21,17 @@ const ShippingPackage = ( { translate, type, name, dimensions } ) => {
 				<Gridicon icon={ icon } size={ 18 } />
 			</div>
 			<div className="packages__packages-row-details">
-				<div className="packages__packages-row-details-name">{ name }</div>
+				<div className="packages__packages-row-details-name">
+					{ name }
+				</div>
 			</div>
-			<div className="packages__packages-row-dimensions">{ dimensions }</div>
+			<div className="packages__packages-row-dimensions">
+				{ dimensions }
+			</div>
 			<div className="packages__packages-row-actions">
-				<Button compact>{ translate( 'Edit' ) }</Button>
+				<Button compact>
+					{ translate( 'Edit' ) }
+				</Button>
 			</div>
 		</div>
 	);
@@ -33,7 +40,7 @@ const ShippingPackage = ( { translate, type, name, dimensions } ) => {
 ShippingPackage.propTypes = {
 	type: PropTypes.string,
 	name: PropTypes.string,
-	dimensions: PropTypes.string
+	dimensions: PropTypes.string,
 };
 
 export default localize( ShippingPackage );

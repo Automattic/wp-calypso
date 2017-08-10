@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -43,9 +44,10 @@ export function getKeyringConnectionsByName( state, service ) {
  * @return {Array}         Site connections, if known.
  */
 export function getUserConnections( state, userId ) {
-	return filter( state.sharing.keyring.items, ( connection ) => (
-		connection.shared || connection.keyring_connection_user_ID === userId
-	) );
+	return filter(
+		state.sharing.keyring.items,
+		connection => connection.shared || connection.keyring_connection_user_ID === userId
+	);
 }
 
 /**

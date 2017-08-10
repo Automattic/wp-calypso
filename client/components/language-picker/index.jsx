@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,32 +13,31 @@ import { find, noop } from 'lodash';
 import LanguagePickerModal from './modal';
 
 class LanguagePicker extends PureComponent {
-
 	static propTypes = {
 		languages: PropTypes.array.isRequired,
 		valueKey: PropTypes.string,
 		value: PropTypes.any,
 		onChange: PropTypes.func,
-	}
+	};
 
 	static defaultProps = {
 		languages: [],
 		valueKey: 'value',
 		onChange: noop,
-	}
+	};
 
 	constructor( props ) {
 		super( props );
 
 		this.state = {
-			selectedLanguage: this.findLanguage( props.valueKey, props.value )
+			selectedLanguage: this.findLanguage( props.valueKey, props.value ),
 		};
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.value !== this.props.value || nextProps.valueKey !== this.props.valueKey ) {
 			this.setState( {
-				selectedLanguage: this.findLanguage( nextProps.valueKey, nextProps.value )
+				selectedLanguage: this.findLanguage( nextProps.valueKey, nextProps.value ),
 			} );
 		}
 	}
@@ -49,7 +49,7 @@ class LanguagePicker extends PureComponent {
 		} );
 	}
 
-	selectLanguage = ( languageSlug ) => {
+	selectLanguage = languageSlug => {
 		// Find the language by the slug
 		const language = this.findLanguage( 'langSlug', languageSlug );
 		if ( ! language ) {
@@ -63,17 +63,17 @@ class LanguagePicker extends PureComponent {
 		this.setState( {
 			selectedLanguage: language,
 		} );
-	}
+	};
 
 	toggleOpen = () => {
 		if ( ! this.props.disabled ) {
 			this.setState( { open: ! this.state.open } );
 		}
-	}
+	};
 
 	handleClose = () => {
 		this.setState( { open: false } );
-	}
+	};
 
 	renderPlaceholder() {
 		const classes = classNames( 'language-picker', 'is-loading' );
@@ -114,7 +114,7 @@ class LanguagePicker extends PureComponent {
 						<div className="language-picker__name-label">
 							{ langName }
 						</div>
-						<div className="language-picker__name-change" >
+						<div className="language-picker__name-change">
 							{ translate( 'Change' ) }
 						</div>
 					</div>

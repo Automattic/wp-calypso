@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ import route from 'lib/route';
 import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { canCurrentUser } from 'state/selectors';
+import { canCurrentUser } from 'state/selectors';
 
 const VALID_STATUSES = [ 'pending', 'approved', 'spam', 'trash' ];
 if ( config.isEnabled( 'comments/management/all-list' ) ) {

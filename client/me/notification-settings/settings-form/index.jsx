@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,17 +13,14 @@ import Actions from './actions';
 
 class NotificationSettingsForm extends Component {
 	static propTypes = {
-		sourceId: PropTypes.oneOfType( [
-			PropTypes.string,
-			PropTypes.number
-		] ).isRequired,
+		sourceId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
 		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		settings: PropTypes.instanceOf( Immutable.Map ),
 		isApplyAllVisible: PropTypes.bool,
 		hasUnsavedChanges: PropTypes.bool.isRequired,
 		onToggle: PropTypes.func.isRequired,
 		onSave: PropTypes.func.isRequired,
-		onSaveToAll: PropTypes.func
+		onSaveToAll: PropTypes.func,
 	};
 
 	render() {
@@ -32,14 +30,16 @@ class NotificationSettingsForm extends Component {
 					blogId={ this.props.sourceId }
 					settingKeys={ this.props.settingKeys }
 					settings={ this.props.settings }
-					onToggle={ this.props.onToggle } />
+					onToggle={ this.props.onToggle }
+				/>
 				<Actions
 					sourceId={ this.props.sourceId }
 					settings={ this.props.settings }
 					isApplyAllVisible={ this.props.isApplyAllVisible }
 					disabled={ ! this.props.hasUnsavedChanges }
 					onSave={ this.props.onSave }
-					onSaveToAll={ this.props.onSaveToAll } />
+					onSaveToAll={ this.props.onSaveToAll }
+				/>
 			</div>
 		);
 	}

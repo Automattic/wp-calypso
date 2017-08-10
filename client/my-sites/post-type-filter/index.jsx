@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -27,66 +28,65 @@ const PostTypeFilter = React.createClass( {
 		query: PropTypes.object,
 		jetpack: PropTypes.bool,
 		siteSlug: PropTypes.string,
-		counts: PropTypes.object
+		counts: PropTypes.object,
 	},
 
 	getDefaultProps() {
 		return {
-			query: {}
+			query: {},
 		};
 	},
 
 	getNavItems() {
 		const { query, siteSlug, jetpack, counts } = this.props;
 
-		return reduce( counts, ( memo, count, status ) => {
-			if ( ! jetpack && ! count && ! includes( [ 'publish', 'draft' ], status ) ) {
-				return memo;
-			}
+		return reduce(
+			counts,
+			( memo, count, status ) => {
+				if ( ! jetpack && ! count && ! includes( [ 'publish', 'draft' ], status ) ) {
+					return memo;
+				}
 
-			let label, pathStatus;
-			switch ( status ) {
-				case 'publish':
-					label = this.translate( 'Published', {
-						context: 'Filter label for posts list'
-					} );
-					break;
+				let label, pathStatus;
+				switch ( status ) {
+					case 'publish':
+						label = this.translate( 'Published', {
+							context: 'Filter label for posts list',
+						} );
+						break;
 
-				case 'draft':
-					label = this.translate( 'Drafts', {
-						context: 'Filter label for posts list'
-					} );
-					pathStatus = 'drafts';
-					break;
+					case 'draft':
+						label = this.translate( 'Drafts', {
+							context: 'Filter label for posts list',
+						} );
+						pathStatus = 'drafts';
+						break;
 
-				case 'future':
-					label = this.translate( 'Scheduled', {
-						context: 'Filter label for posts list'
-					} );
-					pathStatus = 'scheduled';
-					break;
+					case 'future':
+						label = this.translate( 'Scheduled', {
+							context: 'Filter label for posts list',
+						} );
+						pathStatus = 'scheduled';
+						break;
 
-				case 'trash':
-					label = this.translate( 'Trashed', {
-						context: 'Filter label for posts list'
-					} );
-					pathStatus = 'trashed';
-					break;
-			}
+					case 'trash':
+						label = this.translate( 'Trashed', {
+							context: 'Filter label for posts list',
+						} );
+						pathStatus = 'trashed';
+						break;
+				}
 
-			return memo.concat( {
-				count: jetpack ? null : count,
-				key: `filter-${ status }`,
-				path: [
-					'/types',
-					query.type,
-					pathStatus,
-					siteSlug
-				].filter( Boolean ).join( '/' ),
-				selected: mapPostStatus( pathStatus ) === query.status,
-				children: label
-			} );
-		}, [] );
+				return memo.concat( {
+					count: jetpack ? null : count,
+					key: `filter-${ status }`,
+					path: [ '/types', query.type, pathStatus, siteSlug ].filter( Boolean ).join( '/' ),
+					selected: mapPostStatus( pathStatus ) === query.status,
+					children: label,
+				} );
+			},
+			[]
+		);
 	},
 
 	render() {
@@ -96,21 +96,19 @@ const PostTypeFilter = React.createClass( {
 
 		return (
 			<div>
-				{ query && siteId && false === jetpack && (
-					<QueryPostCounts
-						siteId={ siteId }
-						type={ query.type } />
-				) }
-				<SectionNav
-					selectedText={ selectedItem.children }
-					selectedCount={ selectedItem.count }>
+				{ query &&
+					siteId &&
+					false === jetpack &&
+					<QueryPostCounts siteId={ siteId } type={ query.type } /> }
+				<SectionNav selectedText={ selectedItem.children } selectedCount={ selectedItem.count }>
 					{ query && [
 						<NavTabs
 							key="tabs"
 							label={ this.translate( 'Status', { context: 'Filter group label for tabs' } ) }
 							selectedText={ selectedItem.children }
-							selectedCount={ selectedItem.count }>
-							{ navItems.map( ( props ) => <NavItem { ...props } /> ) }
+							selectedCount={ selectedItem.count }
+						>
+							{ navItems.map( props => <NavItem { ...props } /> ) }
 						</NavTabs>,
 						<Search
 							key="search"
@@ -118,12 +116,13 @@ const PostTypeFilter = React.createClass( {
 							fitsContainer
 							onSearch={ this.doSearch }
 							placeholder={ this.translate( 'Search…' ) }
-							delaySearch={ true } />
+							delaySearch={ true }
+						/>,
 					] }
 				</SectionNav>
 			</div>
 		);
-	}
+	},
 } );
 
 export default connect( ( state, ownProps ) => {
@@ -131,7 +130,7 @@ export default connect( ( state, ownProps ) => {
 	const props = {
 		siteId,
 		jetpack: isJetpackSite( state, siteId ),
-		siteSlug: getSiteSlug( state, siteId )
+		siteSlug: getSiteSlug( state, siteId ),
 	};
 
 	if ( ! ownProps.query ) {
@@ -139,6 +138,6 @@ export default connect( ( state, ownProps ) => {
 	}
 
 	return Object.assign( props, {
-		counts: getNormalizedPostCounts( state, siteId, ownProps.query.type )
+		counts: getNormalizedPostCounts( state, siteId, ownProps.query.type ),
 	} );
 } )( PostTypeFilter );

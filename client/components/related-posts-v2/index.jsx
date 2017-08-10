@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -14,7 +15,16 @@ import { SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/utils';
 import RelatedPost from 'blocks/reader-related-card-v2';
 import QueryReaderRelatedPosts from 'components/data/query-reader-related-posts';
 
-function RelatedPosts( { siteId, postId, posts, title, scope, className = '', onPostClick = noop, onSiteClick = noop } ) {
+function RelatedPosts( {
+	siteId,
+	postId,
+	posts,
+	title,
+	scope,
+	className = '',
+	onPostClick = noop,
+	onSiteClick = noop,
+} ) {
 	let listItems;
 
 	if ( ! posts ) {
@@ -41,7 +51,9 @@ function RelatedPosts( { siteId, postId, posts, title, scope, className = '', on
 	return (
 		<div className={ classnames( 'reader-related-card-v2__blocks', className ) }>
 			{ ! posts && <QueryReaderRelatedPosts siteId={ siteId } postId={ postId } scope={ scope } /> }
-			<h1 className="reader-related-card-v2__heading">{ title }</h1>
+			<h1 className="reader-related-card-v2__heading">
+				{ title }
+			</h1>
 			<ul className="reader-related-card-v2__list">
 				{ listItems }
 			</ul>
@@ -49,20 +61,16 @@ function RelatedPosts( { siteId, postId, posts, title, scope, className = '', on
 	);
 }
 
-export const RelatedPostsFromSameSite = connect(
-	( state, ownProps ) => {
-		return {
-			posts: relatedPostsForPost( state, ownProps.siteId, ownProps.postId, SCOPE_SAME ),
-			scope: SCOPE_SAME
-		};
-	}
-)( RelatedPosts );
+export const RelatedPostsFromSameSite = connect( ( state, ownProps ) => {
+	return {
+		posts: relatedPostsForPost( state, ownProps.siteId, ownProps.postId, SCOPE_SAME ),
+		scope: SCOPE_SAME,
+	};
+} )( RelatedPosts );
 
-export const RelatedPostsFromOtherSites = connect(
-	( state, ownProps ) => {
-		return {
-			posts: relatedPostsForPost( state, ownProps.siteId, ownProps.postId, SCOPE_OTHER ),
-			scope: SCOPE_OTHER
-		};
-	}
-)( RelatedPosts );
+export const RelatedPostsFromOtherSites = connect( ( state, ownProps ) => {
+	return {
+		posts: relatedPostsForPost( state, ownProps.siteId, ownProps.postId, SCOPE_OTHER ),
+		scope: SCOPE_OTHER,
+	};
+} )( RelatedPosts );

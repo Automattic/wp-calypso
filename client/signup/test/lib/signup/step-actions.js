@@ -1,3 +1,4 @@
+/** @format */
 /**
  * StepActions stub
  */

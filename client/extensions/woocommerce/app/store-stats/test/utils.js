@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +14,7 @@ import {
 	getDelta,
 	getEndPeriod,
 	getQueryDate,
-	getUnitPeriod
+	getUnitPeriod,
 } from '../utils';
 import { UNITS } from '../constants';
 
@@ -87,7 +88,9 @@ describe( 'getQueryDate', () => {
 
 	it( 'should return a value for today given a startDate of less than the quantity', () => {
 		const quantity = UNITS.day.quantity;
-		const startDate = moment().subtract( Math.floor( quantity / 2 ), 'days' ).format( 'YYYY-MM-DD' );
+		const startDate = moment()
+			.subtract( Math.floor( quantity / 2 ), 'days' )
+			.format( 'YYYY-MM-DD' );
 		const context = {
 			params: { unit: 'day' },
 			query: { startDate },
@@ -213,24 +216,24 @@ const deltas = [
 		period: '2017-07-07',
 		right: {
 			right: true,
-			period: '2017-07-06'
+			period: '2017-07-06',
 		},
 		wrong: {
 			right: false,
-			period: '2017-07-06'
-		}
+			period: '2017-07-06',
+		},
 	},
 	{
 		period: '2017-07-06',
 		right: {
 			right: true,
-			period: '2017-07-06'
+			period: '2017-07-06',
 		},
 		wrong: {
 			right: false,
-			period: '2017-07-06'
-		}
-	}
+			period: '2017-07-06',
+		},
+	},
 ];
 describe( 'getDelta', () => {
 	it( 'should return an Object', () => {

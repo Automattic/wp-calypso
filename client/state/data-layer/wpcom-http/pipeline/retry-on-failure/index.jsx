@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -33,7 +34,7 @@ export const retryOnFailure = ( getDelay = defaultDelay ) => inboundData => {
 
 	setTimeout(
 		() => dispatch( merge( originalRequest, { meta: { dataLayer: { retryCount } } } ) ),
-		getDelay( delay, retryCount ),
+		getDelay( delay, retryCount )
 	);
 
 	return { ...inboundData, shouldAbort: true };

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,12 +9,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	fetchPostRevisions,
-	normalizeRevision,
-	receiveSuccess,
-	receiveError,
-} from '../';
+import { fetchPostRevisions, normalizeRevision, receiveSuccess, receiveError } from '../';
 import {
 	receivePostRevisions,
 	receivePostRevisionsSuccess,
@@ -58,29 +54,33 @@ const normalizedPostRevisions = [
 
 describe( '#normalizeRevision', () => {
 	it( 'should keep UTC dates formatted with a timezone marker (`Z`)', () => {
-		expect( normalizeRevision( {
-			date: '2017-04-20T12:14:40',
-			date_gmt: '2017-04-20T12:14:40',
-			modified: '2017-04-20T12:14:50',
-			modified_gmt: '2017-04-20T12:14:50',
-		} ) ).to.eql( {
+		expect(
+			normalizeRevision( {
+				date: '2017-04-20T12:14:40',
+				date_gmt: '2017-04-20T12:14:40',
+				modified: '2017-04-20T12:14:50',
+				modified_gmt: '2017-04-20T12:14:50',
+			} )
+		).to.eql( {
 			date: '2017-04-20T12:14:40Z',
 			modified: '2017-04-20T12:14:50Z',
 		} );
 	} );
 
 	it( 'should only keep the rendered version of `title`, `content` and `excerpt`', () => {
-		expect( normalizeRevision( {
-			title: {
-				rendered: 'Sed nobis ab earum',
-			},
-			content: {
-				rendered: '<p>Lorem ipsum</p>',
-			},
-			excerpt: {
-				rendered: '',
-			},
-		} ) ).to.eql( {
+		expect(
+			normalizeRevision( {
+				title: {
+					rendered: 'Sed nobis ab earum',
+				},
+				content: {
+					rendered: '<p>Lorem ipsum</p>',
+				},
+				excerpt: {
+					rendered: '',
+				},
+			} )
+		).to.eql( {
 			title: 'Sed nobis ab earum',
 			content: '<p>Lorem ipsum</p>',
 			excerpt: '',
@@ -88,7 +88,9 @@ describe( '#normalizeRevision', () => {
 	} );
 
 	it( 'should not have any additional property', () => {
-		expect( map( successfulPostRevisionsResponse, normalizeRevision ) ).to.eql( normalizedPostRevisions );
+		expect( map( successfulPostRevisionsResponse, normalizeRevision ) ).to.eql(
+			normalizedPostRevisions
+		);
 	} );
 } );
 
@@ -100,13 +102,18 @@ describe( '#fetchPostRevisions', () => {
 		fetchPostRevisions( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( http( {
-			method: 'GET',
-			path: '/sites/12345678/posts/10/revisions',
-			query: {
-				apiNamespace: 'wp/v2',
-			},
-		}, action ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					method: 'GET',
+					path: '/sites/12345678/posts/10/revisions',
+					query: {
+						apiNamespace: 'wp/v2',
+					},
+				},
+				action
+			)
+		);
 	} );
 } );
 
@@ -124,7 +131,9 @@ describe( '#receiveSuccess', () => {
 
 		expect( dispatch ).to.have.callCount( 2 );
 		expect( dispatch ).to.have.been.calledWith( receivePostRevisionsSuccess( 12345678, 10 ) );
-		expect( dispatch ).to.have.been.calledWith( receivePostRevisions( 12345678, 10, expectedRevisions ) );
+		expect( dispatch ).to.have.been.calledWith(
+			receivePostRevisions( 12345678, 10, expectedRevisions )
+		);
 	} );
 } );
 
@@ -137,6 +146,8 @@ describe( '#receiveError', () => {
 		receiveError( { dispatch }, action, rawError );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( receivePostRevisionsFailure( 12345678, 10, rawError ) );
+		expect( dispatch ).to.have.been.calledWith(
+			receivePostRevisionsFailure( 12345678, 10, rawError )
+		);
 	} );
 } );

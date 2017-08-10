@@ -1,10 +1,8 @@
+/** @format */
 /**
  * Internal dependencies
  */
-import {
-	COMPONENTS_USAGE_STATS_REQUEST,
-	COMPONENTS_USAGE_STATS_RECEIVE
-} from '../action-types';
+import { COMPONENTS_USAGE_STATS_REQUEST, COMPONENTS_USAGE_STATS_RECEIVE } from '../action-types';
 import request from 'superagent';
 
 /**
@@ -13,7 +11,7 @@ import request from 'superagent';
  */
 export function requestComponentsUsageStats() {
 	return {
-		type: COMPONENTS_USAGE_STATS_REQUEST
+		type: COMPONENTS_USAGE_STATS_REQUEST,
 	};
 }
 
@@ -25,7 +23,7 @@ export function requestComponentsUsageStats() {
 export function receiveComponentsUsageStats( componentsUsageStats ) {
 	return {
 		type: COMPONENTS_USAGE_STATS_RECEIVE,
-		componentsUsageStats
+		componentsUsageStats,
 	};
 }
 
@@ -36,13 +34,11 @@ export function receiveComponentsUsageStats( componentsUsageStats ) {
 export default function fetchComponentsUsageStats() {
 	return dispatch => {
 		dispatch( requestComponentsUsageStats() );
-		return request
-			.get( '/devdocs/service/components-usage-stats' )
-			.end( ( error, res ) => {
-				if ( ! res.ok ) {
-					return;
-				}
-				dispatch( receiveComponentsUsageStats( res.body ) );
-			} );
+		return request.get( '/devdocs/service/components-usage-stats' ).end( ( error, res ) => {
+			if ( ! res.ok ) {
+				return;
+			}
+			dispatch( receiveComponentsUsageStats( res.body ) );
+		} );
 	};
 }

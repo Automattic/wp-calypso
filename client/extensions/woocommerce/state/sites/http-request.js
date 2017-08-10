@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -17,16 +18,19 @@ const _request = ( method, path, siteId, body, action ) => {
 	// WPCOM API breaks if query parameters are passed after "?" instead of "&". Hide this hack from the calling code
 	path = path.replace( '?', '&' );
 	path = `/wc/v3/${ path }&_method=${ method }`;
-	return http( {
-		apiVersion: '1.1',
-		method: 'GET' === method ? 'GET' : 'POST',
-		path: `/jetpack-blogs/${ siteId }/rest-api/`,
-		query: {
-			path,
-			json: true,
+	return http(
+		{
+			apiVersion: '1.1',
+			method: 'GET' === method ? 'GET' : 'POST',
+			path: `/jetpack-blogs/${ siteId }/rest-api/`,
+			query: {
+				path,
+				json: true,
+			},
+			body: body && JSON.stringify( body ),
 		},
-		body: body && JSON.stringify( body ),
-	}, action );
+		action
+	);
 };
 
 /**
@@ -38,13 +42,12 @@ const _request = ( method, path, siteId, body, action ) => {
  * make an HTTP GET, POST, PUT and DELETE request, respectively.
  */
 export default ( siteId, action ) => ( {
-
 	/**
 	 * Sends a GET request to the API
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @return {Object} WPCOM_HTTP_REQUEST Action
 	 */
-	get: ( path ) => _request( 'GET', path, siteId, null, action ),
+	get: path => _request( 'GET', path, siteId, null, action ),
 
 	/**
 	 * Sends a POST request to the API
@@ -71,5 +74,5 @@ export default ( siteId, action ) => ( {
 	 * @param {String} path REST path to hit, omitting the "blog.url/wp-json/wc/v#/" prefix
 	 * @return {Object} WPCOM_HTTP_REQUEST Action
 	 */
-	del: ( path ) => _request( 'DELETE', path, siteId, null, action ),
+	del: path => _request( 'DELETE', path, siteId, null, action ),
 } );

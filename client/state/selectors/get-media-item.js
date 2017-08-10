@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns a media object by site ID, media ID, or null if not known
  *

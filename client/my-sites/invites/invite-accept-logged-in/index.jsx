@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,7 +22,6 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import analytics from 'lib/analytics';
 
 let InviteAcceptLoggedIn = React.createClass( {
-
 	getInitialState() {
 		return { submitting: false };
 	},
@@ -73,20 +73,20 @@ let InviteAcceptLoggedIn = React.createClass( {
 		if ( 'follower' === this.props.invite.role ) {
 			text = this.translate( 'Follow as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
 				components: {
-					usernameWrap: <span className="invite-accept-logged-in__join-as-username" />
+					usernameWrap: <span className="invite-accept-logged-in__join-as-username" />,
 				},
 				args: {
-					username: user && user.display_name
-				}
+					username: user && user.display_name,
+				},
 			} );
 		} else {
 			text = this.translate( 'Join as {{usernameWrap}}%(username)s{{/usernameWrap}}', {
 				components: {
-					usernameWrap: <span className="invite-accept-logged-in__join-as-username" />
+					usernameWrap: <span className="invite-accept-logged-in__join-as-username" />,
 				},
 				args: {
-					username: user && user.display_name
-				}
+					username: user && user.display_name,
+				},
 			} );
 		}
 
@@ -96,14 +96,18 @@ let InviteAcceptLoggedIn = React.createClass( {
 	renderMatchEmailError() {
 		return (
 			<Card>
-				<InviteFormHeader { ... this.props.invite } user={ this.props.user } matchEmailError />
+				<InviteFormHeader { ...this.props.invite } user={ this.props.user } matchEmailError />
 				<div className="invite-accept-logged-in__button-bar">
 					<Button onClick={ this.signInLink } href={ this.props.signInLink }>
-						{
-							this.props.invite.knownUser
-							? this.translate( 'Sign In as %(email)s', { context: 'button', args: { email: this.props.invite.sentTo } } )
-							: this.translate( 'Register as %(email)s', { context: 'button', args: { email: this.props.invite.sentTo } } )
-						}
+						{ this.props.invite.knownUser
+							? this.translate( 'Sign In as %(email)s', {
+									context: 'button',
+									args: { email: this.props.invite.sentTo },
+								} )
+							: this.translate( 'Register as %(email)s', {
+									context: 'button',
+									args: { email: this.props.invite.sentTo },
+								} ) }
 					</Button>
 				</div>
 			</Card>
@@ -114,7 +118,7 @@ let InviteAcceptLoggedIn = React.createClass( {
 		return (
 			<div>
 				<Card>
-					<InviteFormHeader { ... this.props.invite } user={ this.props.user } />
+					<InviteFormHeader { ...this.props.invite } user={ this.props.user } />
 					<div className="invite-accept-logged-in__join-as">
 						<Gravatar user={ this.props.user } size={ 72 } />
 						{ this.getJoinAsText() }
@@ -144,10 +148,9 @@ let InviteAcceptLoggedIn = React.createClass( {
 				{ this.props.forceMatchingEmail ? this.renderMatchEmailError() : this.renderAccept() }
 			</div>
 		);
-	}
+	},
 } );
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { acceptInvite }, dispatch )
-)( InviteAcceptLoggedIn );
+export default connect( null, dispatch => bindActionCreators( { acceptInvite }, dispatch ) )(
+	InviteAcceptLoggedIn
+);

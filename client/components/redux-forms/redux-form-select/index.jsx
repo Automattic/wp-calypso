@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,22 +20,14 @@ class ReduxFormSelect extends Component {
 		const otherProps = omit( this.props, 'name' );
 
 		return (
-			<FormSelect
-				{ ...otherProps }
-				onChange={ this.updateSelect( onChange ) }
-				value={ value } />
+			<FormSelect { ...otherProps } onChange={ this.updateSelect( onChange ) } value={ value } />
 		);
-	}
+	};
 
 	updateSelect = onChange => event => onChange( event.target.value );
 
 	render() {
-		return (
-			<Field
-				{ ...this.props }
-				component={ this.renderSelect }
-				name={ this.props.name } />
-		);
+		return <Field { ...this.props } component={ this.renderSelect } name={ this.props.name } />;
 	}
 }
 

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -11,15 +12,13 @@ import {
 	WOOCOMMERCE_PAYMENT_METHODS_REQUEST,
 	WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import {
-	arePaymentMethodsLoaded,
-	arePaymentMethodsLoading,
-} from './selectors';
+import { arePaymentMethodsLoaded, arePaymentMethodsLoading } from './selectors';
 
-const addPaymentMethodDetails = ( method ) => {
+const addPaymentMethodDetails = method => {
 	return {
 		...method,
-		...getPaymentMethodDetails( method.id ) };
+		...getPaymentMethodDetails( method.id ),
+	};
 };
 
 const fetchPaymentMethodsSuccess = ( siteId, data ) => {
@@ -31,7 +30,7 @@ const fetchPaymentMethodsSuccess = ( siteId, data ) => {
 	};
 };
 
-export const fetchPaymentMethods = ( siteId ) => ( dispatch, getState ) => {
+export const fetchPaymentMethods = siteId => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
@@ -47,8 +46,9 @@ export const fetchPaymentMethods = ( siteId ) => ( dispatch, getState ) => {
 
 	dispatch( getAction );
 
-	return request( siteId ).get( 'payment_gateways' )
-		.then( ( data ) => {
+	return request( siteId )
+		.get( 'payment_gateways' )
+		.then( data => {
 			dispatch( fetchPaymentMethodsSuccess( siteId, data ) );
 		} )
 		.catch( err => {

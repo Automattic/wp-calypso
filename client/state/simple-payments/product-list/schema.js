@@ -1,3 +1,4 @@
+/** @format */
 /**
  * These are the parameters kept in metadata (custom fields)
  */
@@ -23,7 +24,7 @@ const productSchema = {
 			ID: { type: 'number' },
 		},
 		metadataSchema
-	)
+	),
 };
 
 const productListSchema = {

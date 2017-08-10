@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -38,13 +39,14 @@ class OrderDetailsTable extends Component {
 			ID: PropTypes.number.isRequired,
 			slug: PropTypes.string.isRequired,
 		} ),
-	}
+	};
 
 	constructor( props ) {
 		super( props );
 		this.state = {
 			quantities: [],
-			shippingTotal: parseFloat( props.order.shipping_tax ) + parseFloat( props.order.shipping_total ),
+			shippingTotal:
+				parseFloat( props.order.shipping_tax ) + parseFloat( props.order.shipping_total ),
 		};
 	}
 
@@ -55,29 +57,33 @@ class OrderDetailsTable extends Component {
 		}
 		// If there are any items in `tax_lines`, we have taxes on this order.
 		return !! order.tax_lines.length;
-	}
+	};
 
 	recalculateRefund = () => {
 		if ( ! this.props.order ) {
 			return 0;
 		}
-		const subtotal = sum( this.state.quantities.map( ( q, i ) => {
-			if ( ! this.props.order.line_items[ i ] ) {
-				return 0;
-			}
-			const price = parseFloat( this.props.order.line_items[ i ].price );
-			const tax = parseFloat( this.props.order.line_items[ i ].total_tax ) / this.props.order.line_items[ i ].quantity;
-			const taxIncludedPrice = price + tax;
-			if ( this.props.order.prices_include_tax ) {
-				return price * q;
-			}
-			return taxIncludedPrice * q;
-		} ) );
+		const subtotal = sum(
+			this.state.quantities.map( ( q, i ) => {
+				if ( ! this.props.order.line_items[ i ] ) {
+					return 0;
+				}
+				const price = parseFloat( this.props.order.line_items[ i ].price );
+				const tax =
+					parseFloat( this.props.order.line_items[ i ].total_tax ) /
+					this.props.order.line_items[ i ].quantity;
+				const taxIncludedPrice = price + tax;
+				if ( this.props.order.prices_include_tax ) {
+					return price * q;
+				}
+				return taxIncludedPrice * q;
+			} )
+		);
 		const total = subtotal + ( parseFloat( this.state.shippingTotal ) || 0 );
 		this.props.onChange( total );
-	}
+	};
 
-	onChange = ( event ) => {
+	onChange = event => {
 		if ( 'shipping_total' === event.target.name ) {
 			const shippingTotal = event.target.value.replace( /[^0-9,.]/g, '' );
 			this.setState( { shippingTotal }, this.recalculateRefund );
@@ -88,51 +94,70 @@ class OrderDetailsTable extends Component {
 			newQuants[ i ] = event.target.value;
 			this.setState( { quantities: newQuants }, this.recalculateRefund );
 		}
-	}
+	};
 
 	renderTableHeader = () => {
 		const { translate } = this.props;
 		return (
 			<TableRow className="order__detail-header">
-				<TableItem isHeader className="order__detail-item-product">{ translate( 'Product' ) }</TableItem>
-				<TableItem isHeader className="order__detail-item-cost">{ translate( 'Cost' ) }</TableItem>
-				<TableItem isHeader className="order__detail-item-quantity">{ translate( 'Quantity' ) }</TableItem>
-				<TableItem isHeader className="order__detail-item-tax">{ translate( 'Tax' ) }</TableItem>
-				<TableItem isHeader className="order__detail-item-total">{ translate( 'Total' ) }</TableItem>
+				<TableItem isHeader className="order__detail-item-product">
+					{ translate( 'Product' ) }
+				</TableItem>
+				<TableItem isHeader className="order__detail-item-cost">
+					{ translate( 'Cost' ) }
+				</TableItem>
+				<TableItem isHeader className="order__detail-item-quantity">
+					{ translate( 'Quantity' ) }
+				</TableItem>
+				<TableItem isHeader className="order__detail-item-tax">
+					{ translate( 'Tax' ) }
+				</TableItem>
+				<TableItem isHeader className="order__detail-item-total">
+					{ translate( 'Total' ) }
+				</TableItem>
 			</TableRow>
 		);
-	}
+	};
 
 	renderOrderItems = ( item, i ) => {
 		const { isEditable, order, site } = this.props;
 		return (
 			<TableRow key={ i } className="order__detail-items">
 				<TableItem isRowHeader className="order__detail-item-product">
-					<a href={ getLink( `/store/product/:site/${ item.product_id }`, site ) } className="order__detail-item-link">
+					<a
+						href={ getLink( `/store/product/:site/${ item.product_id }`, site ) }
+						className="order__detail-item-link"
+					>
 						{ item.name }
 					</a>
-					<span className="order__detail-item-sku">{ item.sku }</span>
+					<span className="order__detail-item-sku">
+						{ item.sku }
+					</span>
 				</TableItem>
-				<TableItem className="order__detail-item-cost">{ formatCurrency( item.price, order.currency ) }</TableItem>
+				<TableItem className="order__detail-item-cost">
+					{ formatCurrency( item.price, order.currency ) }
+				</TableItem>
 				<TableItem className="order__detail-item-quantity">
 					{ isEditable
 						? <FormTextInput
-							type="number"
-							name={ `quantity-${ i }` }
-							onChange={ this.onChange }
-							min="0"
-							max={ item.quantity }
-							value={ this.state.quantities[ i ] || 0 } />
-						: item.quantity
-					}
+								type="number"
+								name={ `quantity-${ i }` }
+								onChange={ this.onChange }
+								min="0"
+								max={ item.quantity }
+								value={ this.state.quantities[ i ] || 0 }
+							/>
+						: item.quantity }
 				</TableItem>
 				<TableItem className="order__detail-item-tax">
 					{ formatCurrency( item.total_tax, order.currency ) }
 				</TableItem>
-				<TableItem className="order__detail-item-total">{ formatCurrency( item.total, order.currency ) }</TableItem>
+				<TableItem className="order__detail-item-total">
+					{ formatCurrency( item.total, order.currency ) }
+				</TableItem>
 			</TableRow>
 		);
-	}
+	};
 
 	render() {
 		const { isEditable, order } = this.props;
@@ -157,11 +182,11 @@ class OrderDetailsTable extends Component {
 					<OrderDiscountRow order={ order } showTax={ showTax } />
 					{ isEditable
 						? <OrderShippingRefundRow
-							currency={ order.currency }
-							onChange={ this.onChange }
-							shippingTotal={ this.state.shippingTotal } />
-						: <OrderShippingRow order={ order } showTax={ showTax } />
-					}
+								currency={ order.currency }
+								onChange={ this.onChange }
+								shippingTotal={ this.state.shippingTotal }
+							/>
+						: <OrderShippingRow order={ order } showTax={ showTax } /> }
 					<OrderTotalRow order={ order } showTax={ showTax } />
 					<OrderRefundRow order={ order } showTax={ showTax } />
 				</div>

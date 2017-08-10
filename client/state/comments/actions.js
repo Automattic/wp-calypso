@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -23,7 +24,7 @@ import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 export const requestComment = ( { siteId, commentId } ) => ( {
 	type: COMMENT_REQUEST,
 	siteId,
-	commentId
+	commentId,
 } );
 
 /***
@@ -37,7 +38,7 @@ export function requestPostComments( {
 	siteId,
 	postId,
 	status = 'approved',
-	direction = 'before'
+	direction = 'before',
 } ) {
 	if ( ! isEnabled( 'comments/filters-in-posts' ) ) {
 		status = 'approved';
@@ -193,7 +194,7 @@ export function editComment( siteId, postId, commentId, content ) {
 					postId,
 					commentId,
 					content: data.content,
-				} ),
+				} )
 			)
 			.catch( () =>
 				dispatch( {
@@ -201,7 +202,7 @@ export function editComment( siteId, postId, commentId, content ) {
 					siteId,
 					postId,
 					commentId,
-				} ),
+				} )
 			);
 	};
 }

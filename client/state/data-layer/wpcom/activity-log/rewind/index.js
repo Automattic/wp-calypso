@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,22 +10,22 @@ import { pick } from 'lodash';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import restoreHandler from './to';
 import restoreStatusHandler from './restore-status';
-import {
-	REWIND_STATUS_REQUEST,
-} from 'state/action-types';
-import {
-	rewindStatusError,
-	updateRewindStatus,
-} from 'state/activity-log/actions';
+import { REWIND_STATUS_REQUEST } from 'state/action-types';
+import { rewindStatusError, updateRewindStatus } from 'state/activity-log/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 const fetchRewindStatus = ( { dispatch }, action ) => {
-	dispatch( http( {
-		method: 'GET',
-		path: `/activity-log/${ action.siteId }/rewind`,
-		apiVersion: '1',
-	}, action ) );
+	dispatch(
+		http(
+			{
+				method: 'GET',
+				path: `/activity-log/${ action.siteId }/rewind`,
+				apiVersion: '1',
+			},
+			action
+		)
+	);
 };
 
 const fromApi = response => ( {
@@ -39,22 +40,13 @@ export const receiveRewindStatus = ( { dispatch }, { siteId }, data ) => {
 };
 
 export const receiveRewindStatusError = ( { dispatch }, { siteId }, error ) => {
-	dispatch( rewindStatusError(
-		siteId,
-		pick( error, [ 'error', 'status', 'message' ] )
-	) );
+	dispatch( rewindStatusError( siteId, pick( error, [ 'error', 'status', 'message' ] ) ) );
 };
 
 const statusHandler = {
-	[ REWIND_STATUS_REQUEST ]: [ dispatchRequest(
-		fetchRewindStatus,
-		receiveRewindStatus,
-		receiveRewindStatusError
-	) ],
+	[ REWIND_STATUS_REQUEST ]: [
+		dispatchRequest( fetchRewindStatus, receiveRewindStatus, receiveRewindStatusError ),
+	],
 };
 
-export default mergeHandlers(
-	restoreHandler,
-	restoreStatusHandler,
-	statusHandler
-);
+export default mergeHandlers( restoreHandler, restoreStatusHandler, statusHandler );

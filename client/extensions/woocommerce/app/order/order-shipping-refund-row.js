@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,29 +14,24 @@ class OrderShippingRefundRow extends Component {
 	static propTypes = {
 		currency: PropTypes.string.isRequired,
 		onChange: PropTypes.func.isRequired,
-		shippingTotal: PropTypes.oneOfType( [
-			PropTypes.string,
-			PropTypes.number,
-		] ).isRequired,
-	}
+		shippingTotal: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
+	};
 
 	render() {
-		const {
-			currency,
-			onChange,
-			shippingTotal,
-			translate
-		} = this.props;
+		const { currency, onChange, shippingTotal, translate } = this.props;
 
 		return (
 			<div className="order__details-total-shipping-refund">
-				<div className="order__details-totals-label">{ translate( 'Shipping' ) }</div>
+				<div className="order__details-totals-label">
+					{ translate( 'Shipping' ) }
+				</div>
 				<div className="order__details-totals-value">
 					<PriceInput
 						name="shipping_total"
 						onChange={ onChange }
 						currency={ currency }
-						value={ shippingTotal } />
+						value={ shippingTotal }
+					/>
 				</div>
 			</div>
 		);

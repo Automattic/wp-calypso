@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +14,7 @@ import MultiCheckbox from 'components/forms/multi-checkbox';
 import { getPostTypes } from 'state/post-types/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
-import { getSharingButtons } from 'state/selectors';
+import { getSharingButtons } from 'state/selectors';
 import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -37,7 +38,7 @@ class SharingButtonsOptions extends Component {
 		settings: Object.freeze( {} ),
 		onChange: () => {},
 		initialized: false,
-		saving: false
+		saving: false,
 	};
 
 	getSanitizedTwitterUsername( username ) {
@@ -53,12 +54,20 @@ class SharingButtonsOptions extends Component {
 		this.props.onChange( name, event.value.length ? event.value : null );
 		if ( delta.length ) {
 			const checked = -1 !== event.value.indexOf( delta[ 0 ] );
-			this.props.recordGoogleEvent( 'Sharing', 'Clicked Show Sharing Buttons On Page Checkbox', delta[ 0 ], checked ? 1 : 0 );
+			this.props.recordGoogleEvent(
+				'Sharing',
+				'Clicked Show Sharing Buttons On Page Checkbox',
+				delta[ 0 ],
+				checked ? 1 : 0
+			);
 		}
 	};
 
 	handleTwitterViaChange = event => {
-		this.props.onChange( event.target.name, this.getSanitizedTwitterUsername( event.target.value ) );
+		this.props.onChange(
+			event.target.name,
+			this.getSanitizedTwitterUsername( event.target.value )
+		);
 	};
 
 	handleChange = event => {
@@ -71,7 +80,10 @@ class SharingButtonsOptions extends Component {
 
 		if ( 'jetpack_comment_likes_enabled' === event.target.name ) {
 			this.props.recordGoogleEvent(
-				'Sharing', 'Clicked Comment Likes On For All Posts Checkbox', 'checked', event.target.checked ? 1 : 0
+				'Sharing',
+				'Clicked Comment Likes On For All Posts Checkbox',
+				'checked',
+				event.target.checked ? 1 : 0
 			);
 		}
 
@@ -83,7 +95,9 @@ class SharingButtonsOptions extends Component {
 
 		switch ( postType.name ) {
 			case 'index':
-				label = this.props.translate( 'Front Page, Archive Pages, and Search Results', { context: 'jetpack' } );
+				label = this.props.translate( 'Front Page, Archive Pages, and Search Results', {
+					context: 'jetpack',
+				} );
 				break;
 			case 'post':
 				label = this.props.translate( 'Posts' );
@@ -105,11 +119,9 @@ class SharingButtonsOptions extends Component {
 	}
 
 	getDisplayOptions() {
-		return [
-			{ name: 'index' }
-		].concat( this.props.postTypes ).map( ( postType ) => ( {
+		return [ { name: 'index' } ].concat( this.props.postTypes ).map( postType => ( {
 			value: postType.name,
-			label: this.getPostTypeLabel( postType )
+			label: this.getPostTypeLabel( postType ),
 		} ) );
 	}
 
@@ -118,7 +130,7 @@ class SharingButtonsOptions extends Component {
 	}
 
 	getTwitterViaOptionElement() {
-		const { isJetpack, initialized, isTwitterButtonAllowed, settings, translate } = this.props;
+		const { isJetpack, initialized, isTwitterButtonAllowed, settings, translate } = this.props;
 		if ( ! this.isTwitterButtonEnabled() || ! isTwitterButtonAllowed ) {
 			return;
 		}
@@ -127,7 +139,9 @@ class SharingButtonsOptions extends Component {
 
 		return (
 			<fieldset className="sharing-buttons__fieldset">
-				<legend className="sharing-buttons__fieldset-heading">{ translate( 'Twitter username' ) }</legend>
+				<legend className="sharing-buttons__fieldset-heading">
+					{ translate( 'Twitter username' ) }
+				</legend>
 				<input
 					name={ option }
 					type="text"
@@ -135,9 +149,12 @@ class SharingButtonsOptions extends Component {
 					value={ this.getSanitizedTwitterUsername( settings[ option ] ) }
 					onChange={ this.handleTwitterViaChange }
 					onFocus={ this.trackTwitterViaAnalyticsEvent }
-					disabled={ ! initialized } />
+					disabled={ ! initialized }
+				/>
 				<p className="sharing-buttons__fieldset-detail">
-					{ translate( 'This will be included in tweets when people share using the Twitter button.' ) }
+					{ translate(
+						'This will be included in tweets when people share using the Twitter button.'
+					) }
 				</p>
 			</fieldset>
 		);
@@ -158,13 +175,16 @@ class SharingButtonsOptions extends Component {
 					{ translate( 'Comment Likes', { context: 'Sharing options: Header' } ) }
 				</legend>
 				<label>
-					<input name="jetpack_comment_likes_enabled"
+					<input
+						name="jetpack_comment_likes_enabled"
 						type="checkbox"
 						checked={ checked }
 						onChange={ this.handleChange }
 						disabled={ ! initialized }
 					/>
-					<span>{ translate( 'On for all posts', { context: 'Sharing options: Comment Likes' } ) }</span>
+					<span>
+						{ translate( 'On for all posts', { context: 'Sharing options: Comment Likes' } ) }
+					</span>
 				</label>
 			</fieldset>
 		);
@@ -176,14 +196,17 @@ class SharingButtonsOptions extends Component {
 
 		return (
 			<div className="sharing-buttons__panel">
-				{ siteId && <QueryPostTypes siteId={ siteId } /> }
-				<h4>{ translate( 'Options' ) }</h4>
+				{ siteId && <QueryPostTypes siteId={ siteId } /> }
+				<h4>
+					{ translate( 'Options' ) }
+				</h4>
 				<div className="sharing-buttons__fieldset-group">
 					<fieldset className="sharing-buttons__fieldset">
 						<legend className="sharing-buttons__fieldset-heading">
 							{ translate( 'Show sharing buttons on', {
 								context: 'Sharing options: Header',
-								comment: 'Possible values are: "Front page, Archive Pages, and Search Results", "Posts", "Pages", "Media"'
+								comment:
+									'Possible values are: "Front page, Archive Pages, and Search Results", "Posts", "Pages", "Media"',
 							} ) }
 						</legend>
 						<MultiCheckbox
@@ -214,7 +237,8 @@ const connectComponent = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
-		const isTwitterButtonAllowed = ! isJetpack || isJetpackMinimumVersion( state, siteId, '3.4-dev' );
+		const isTwitterButtonAllowed =
+			! isJetpack || isJetpackMinimumVersion( state, siteId, '3.4-dev' );
 		const postTypes = values( getPostTypes( state, siteId ) );
 
 		return {
@@ -229,7 +253,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( SharingButtonsOptions );
+export default flowRight( connectComponent, localize )( SharingButtonsOptions );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,7 +21,8 @@ import {
  * Module vars
  */
 const debug = debugFactory( 'calypso:state:sites:domains:actions' );
-const errorMessage = 'There was a problem fetching site domains. Please try again later or contact support.';
+const errorMessage =
+	'There was a problem fetching site domains. Please try again later or contact support.';
 
 /**
  * Action creator function
@@ -37,7 +39,7 @@ export const domainsReceiveAction = ( siteId, domains ) => {
 	const action = {
 		type: SITE_DOMAINS_RECEIVE,
 		siteId,
-		domains: map( domains, createSiteDomainObject )
+		domains: map( domains, createSiteDomainObject ),
 	};
 
 	debug( 'returning action: %o', action );
@@ -55,7 +57,7 @@ export const domainsReceiveAction = ( siteId, domains ) => {
 export const domainsRequestAction = siteId => {
 	const action = {
 		type: SITE_DOMAINS_REQUEST,
-		siteId
+		siteId,
 	};
 
 	debug( 'returning action: %o', action );
@@ -73,7 +75,7 @@ export const domainsRequestAction = siteId => {
 export const domainsRequestSuccessAction = siteId => {
 	const action = {
 		type: SITE_DOMAINS_REQUEST_SUCCESS,
-		siteId
+		siteId,
 	};
 
 	debug( 'returning action: %o', action );
@@ -93,7 +95,7 @@ export const domainsRequestFailureAction = ( siteId, error ) => {
 	const action = {
 		type: SITE_DOMAINS_REQUEST_FAILURE,
 		siteId,
-		error
+		error,
 	};
 
 	debug( 'returning action: %o', action );
@@ -119,9 +121,7 @@ export function fetchSiteDomains( siteId ) {
 				dispatch( domainsReceiveAction( siteId, domains ) );
 			} )
 			.catch( ( error = errorMessage ) => {
-				const message = error instanceof Error
-					? error.message
-					: error;
+				const message = error instanceof Error ? error.message : error;
 
 				dispatch( domainsRequestFailureAction( siteId, message ) );
 			} );

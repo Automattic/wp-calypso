@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,10 +20,10 @@ export default function wpcomSupport( wpcom ) {
 
 		// Inject the credentials
 		query.support_user = supportUser;
-		query._support_token = supportToken
+		query._support_token = supportToken;
 
 		return Object.assign( {}, params, {
-			query: qs.stringify( query )
+			query: qs.stringify( query ),
 		} );
 	};
 
@@ -33,10 +34,10 @@ export default function wpcomSupport( wpcom ) {
 			return wpcom.req.post(
 				{
 					apiVersion: '1.1',
-					path: `/internal/support/${ username }/grant`
+					path: `/internal/support/${ username }/grant`,
 				},
 				{
-					password: password
+					password: password,
 				}
 			);
 		},
@@ -49,18 +50,21 @@ export default function wpcomSupport( wpcom ) {
 			if ( newUser !== supportUser || newToken !== supportToken ) {
 				supportUser = newUser;
 				supportToken = newToken;
-				interceptResponse = ( callback ) => {
+				interceptResponse = callback => {
 					return ( response, ...args ) => {
-						if ( response && response.error &&
+						if (
+							response &&
+							response.error &&
 							response.error === 'invalid_support_token' &&
-							typeof newTokenErrorCallback === 'function' ) {
+							typeof newTokenErrorCallback === 'function'
+						) {
 							newTokenErrorCallback( response );
 						} else {
 							// Call the original response callback
 							callback( response, ...args );
 						}
-					}
-				}
+					};
+				};
 				return true;
 			}
 			return false;
@@ -71,6 +75,6 @@ export default function wpcomSupport( wpcom ) {
 			}
 
 			return request( params, callback );
-		}
+		},
 	} );
-};
+}

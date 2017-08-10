@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -473,9 +474,7 @@ export default class FeedStream {
 			if ( postKeys.length > 0 ) {
 				this.pendingPostKeys = postKeys;
 				this.pendingDateAfter = moment(
-					this.keyMaker( data.posts[ data.posts.length - 1 ] )[
-						this.dateProperty
-					],
+					this.keyMaker( data.posts[ data.posts.length - 1 ] )[ this.dateProperty ]
 				);
 				this.emitChange();
 			}
@@ -492,9 +491,7 @@ export default class FeedStream {
 			postById.add( postKey.postId );
 		} );
 
-		const mostRecentPostDate = moment(
-			this.postKeys[ 0 ][ this.dateProperty ],
-		);
+		const mostRecentPostDate = moment( this.postKeys[ 0 ][ this.dateProperty ] );
 
 		if ( this.pendingDateAfter > mostRecentPostDate ) {
 			this.pendingPostKeys.push( {

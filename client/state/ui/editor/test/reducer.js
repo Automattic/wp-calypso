@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +32,7 @@ describe( 'reducer', () => {
 			const state = postId( undefined, {
 				type: EDITOR_START,
 				siteId: 1,
-				postId: 184
+				postId: 184,
 			} );
 
 			expect( state ).to.equal( 184 );
@@ -43,9 +44,9 @@ describe( 'reducer', () => {
 				siteId: 1,
 				postId: null,
 				savedPost: {
-					ID: 184
+					ID: 184,
 				},
-				post: {}
+				post: {},
 			} );
 
 			expect( state ).to.equal( 184 );
@@ -57,9 +58,9 @@ describe( 'reducer', () => {
 				siteId: 1,
 				postId: null,
 				savedPost: {
-					ID: 184
+					ID: 184,
 				},
-				post: {}
+				post: {},
 			} );
 
 			expect( state ).to.equal( 10 );

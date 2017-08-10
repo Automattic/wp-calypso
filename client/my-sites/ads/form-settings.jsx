@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -87,45 +88,45 @@ class AdsFormSettings extends Component {
 		} else {
 			notices.clearNotices( 'notices' );
 		}
-	}
+	};
 
-	handleChange = ( event ) => {
+	handleChange = event => {
 		const name = event.currentTarget.name;
 		const value = event.currentTarget.value;
 
 		this.setState( {
 			[ name ]: value,
 		} );
-	}
+	};
 
-	handleToggle = ( event ) => {
+	handleToggle = event => {
 		const name = event.currentTarget.name;
 
 		this.setState( {
 			[ name ]: ! this.state[ name ],
 		} );
-	}
+	};
 
 	handleResidentCheckbox = () => {
 		const isResident = ! this.state.us_checked;
 
 		this.setState( {
 			us_checked: isResident,
-			us_resident: isResident ? 'yes' : 'no'
+			us_resident: isResident ? 'yes' : 'no',
 		} );
-	}
+	};
 
-	handleSubmit = ( event ) => {
+	handleSubmit = event => {
 		const { site } = this.props;
 		event.preventDefault();
 
 		WordadsActions.updateSettings( site, this.packageState() );
 		this.setState( {
 			notice: null,
-			error: null
+			error: null,
 		} );
 		this.props.markSaved();
-	}
+	};
 
 	getSettingsFromStore( siteInstance ) {
 		const site = siteInstance || this.props.site,
@@ -159,7 +160,7 @@ class AdsFormSettings extends Component {
 			isLoading: false,
 			isSubmitting: false,
 			error: {},
-			notice: null
+			notice: null,
 		};
 	}
 
@@ -177,7 +178,7 @@ class AdsFormSettings extends Component {
 			tos: this.state.tos ? 'signed' : '',
 			us_resident: this.state.us_resident,
 			who_owns: this.state.who_owns,
-			zip: this.state.zip
+			zip: this.state.zip,
 		};
 	}
 
@@ -202,7 +203,9 @@ class AdsFormSettings extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Ads Visibility' ) }</FormLegend>
+				<FormLegend>
+					{ translate( 'Ads Visibility' ) }
+				</FormLegend>
 				<FormLabel>
 					<FormRadio
 						name="show_to_logged_in"
@@ -211,7 +214,9 @@ class AdsFormSettings extends Component {
 						onChange={ this.handleChange }
 						disabled={ this.state.isLoading }
 					/>
-					<span>{ translate( 'Run ads for all users' ) }</span>
+					<span>
+						{ translate( 'Run ads for all users' ) }
+					</span>
 				</FormLabel>
 
 				<FormLabel>
@@ -222,7 +227,9 @@ class AdsFormSettings extends Component {
 						onChange={ this.handleChange }
 						disabled={ this.state.isLoading }
 					/>
-					<span>{ translate( 'Run ads only for logged-out users (less revenue)' ) }</span>
+					<span>
+						{ translate( 'Run ads only for logged-out users (less revenue)' ) }
+					</span>
 				</FormLabel>
 
 				<FormLabel>
@@ -233,7 +240,9 @@ class AdsFormSettings extends Component {
 						onChange={ this.handleChange }
 						disabled={ this.state.isLoading }
 					/>
-					<span>{ translate( 'Pause ads (no revenue)' ) }</span>
+					<span>
+						{ translate( 'Pause ads (no revenue)' ) }
+					</span>
 				</FormLabel>
 			</FormFieldset>
 		);
@@ -244,7 +253,9 @@ class AdsFormSettings extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Additional Ads' ) }</FormLegend>
+				<FormLegend>
+					{ translate( 'Additional Ads' ) }
+				</FormLegend>
 				<FormLabel>
 					<FormCheckbox
 						name="optimized_ads"
@@ -269,7 +280,9 @@ class AdsFormSettings extends Component {
 		return (
 			<div>
 				<FormFieldset>
-					<FormLabel htmlFor="paypal">{ translate( 'PayPal E-mail Address' ) }</FormLabel>
+					<FormLabel htmlFor="paypal">
+						{ translate( 'PayPal E-mail Address' ) }
+					</FormLabel>
 					<FormTextInput
 						name="paypal"
 						id="paypal"
@@ -279,7 +292,9 @@ class AdsFormSettings extends Component {
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="who_owns">{ translate( 'Who owns this site?' ) }</FormLabel>
+					<FormLabel htmlFor="who_owns">
+						{ translate( 'Who owns this site?' ) }
+					</FormLabel>
 					<FormSelect
 						name="who_owns"
 						id="who_owns"
@@ -287,12 +302,24 @@ class AdsFormSettings extends Component {
 						onChange={ this.handleChange }
 						disabled={ this.state.isLoading }
 					>
-						<option value="">{ translate( 'Select who owns this site' ) }</option>
-						<option value="person">{ translate( 'An Individual/Sole Proprietor' ) }</option>
-						<option value="corp">{ translate( 'A Corporation' ) }</option>
-						<option value="partnership">{ translate( 'A Partnership' ) }</option>
-						<option value="llc">{ translate( 'An LLC' ) }</option>
-						<option value="tax_exempt">{ translate( 'A Tax-Exempt Entity' ) }</option>
+						<option value="">
+							{ translate( 'Select who owns this site' ) }
+						</option>
+						<option value="person">
+							{ translate( 'An Individual/Sole Proprietor' ) }
+						</option>
+						<option value="corp">
+							{ translate( 'A Corporation' ) }
+						</option>
+						<option value="partnership">
+							{ translate( 'A Partnership' ) }
+						</option>
+						<option value="llc">
+							{ translate( 'An LLC' ) }
+						</option>
+						<option value="tax_exempt">
+							{ translate( 'A Tax-Exempt Entity' ) }
+						</option>
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
@@ -303,7 +330,9 @@ class AdsFormSettings extends Component {
 							disabled={ this.state.isLoading }
 							onChange={ this.handleResidentCheckbox }
 						/>
-						<span>{ translate( 'US Resident or based in the US' ) }</span>
+						<span>
+							{ translate( 'US Resident or based in the US' ) }
+						</span>
 					</FormLabel>
 				</FormFieldset>
 			</div>
@@ -315,13 +344,21 @@ class AdsFormSettings extends Component {
 
 		return (
 			<div>
-				<FormSectionHeading>{ translate( 'Tax Reporting Information' ) }</FormSectionHeading>
+				<FormSectionHeading>
+					{ translate( 'Tax Reporting Information' ) }
+				</FormSectionHeading>
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="taxid">{ translate( 'Social Security Number or US Tax ID' ) }</FormLabel>
+					<FormLabel htmlFor="taxid">
+						{ translate( 'Social Security Number or US Tax ID' ) }
+					</FormLabel>
 					<FormTextInput
 						name="taxid"
 						id="taxid"
-						placeholder={ this.state.taxid_last4 ? 'On file. Last Four Digits: '.concat( this.state.taxid_last4 ) : '' }
+						placeholder={
+							this.state.taxid_last4
+								? 'On file. Last Four Digits: '.concat( this.state.taxid_last4 )
+								: ''
+						}
 						value={ this.state.taxid || '' }
 						onChange={ this.handleChange }
 						disabled={ this.state.isLoading }
@@ -329,7 +366,9 @@ class AdsFormSettings extends Component {
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="name">{ translate( 'Full Name or Business / Non-profit Name' ) }</FormLabel>
+					<FormLabel htmlFor="name">
+						{ translate( 'Full Name or Business / Non-profit Name' ) }
+					</FormLabel>
 					<FormTextInput
 						name="name"
 						id="name"
@@ -340,7 +379,9 @@ class AdsFormSettings extends Component {
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="addr1">{ translate( 'Postal Address' ) }</FormLabel>
+					<FormLabel htmlFor="addr1">
+						{ translate( 'Postal Address' ) }
+					</FormLabel>
 					<FormTextInput
 						name="addr1"
 						id="addr1"
@@ -363,7 +404,9 @@ class AdsFormSettings extends Component {
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="city">{ translate( 'City' ) }</FormLabel>
+					<FormLabel htmlFor="city">
+						{ translate( 'City' ) }
+					</FormLabel>
 					<FormTextInput
 						name="city"
 						id="city"
@@ -374,7 +417,9 @@ class AdsFormSettings extends Component {
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="state">{ translate( 'State / Territory' ) }</FormLabel>
+					<FormLabel htmlFor="state">
+						{ translate( 'State / Territory' ) }
+					</FormLabel>
 					<StateSelector
 						name="state"
 						id="state"
@@ -386,7 +431,9 @@ class AdsFormSettings extends Component {
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="zip">{ translate( 'Zip Code' ) }</FormLabel>
+					<FormLabel htmlFor="zip">
+						{ translate( 'Zip Code' ) }
+					</FormLabel>
 					<FormTextInput
 						name="zip"
 						id="zip"
@@ -412,13 +459,20 @@ class AdsFormSettings extends Component {
 						disabled={ this.state.isLoading || 'signed' === this.state.tos }
 					/>
 					<span>
-						{
-							translate( 'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}.', {
+						{ translate(
+							'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}.',
+							{
 								components: {
-									a: <a href="https://wordpress.com/automattic-ads-tos/" target="_blank" rel="noopener noreferrer" />
-								}
-							} )
-						}
+									a: (
+										<a
+											href="https://wordpress.com/automattic-ads-tos/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
 					</span>
 				</FormLabel>
 			</FormFieldset>
@@ -430,7 +484,11 @@ class AdsFormSettings extends Component {
 
 		return (
 			<Card>
-				<form id="wordads-settings" onSubmit={ this.handleSubmit } onChange={ this.props.markChanged }>
+				<form
+					id="wordads-settings"
+					onSubmit={ this.handleSubmit }
+					onChange={ this.props.markChanged }
+				>
 					<FormButtonsBar>
 						<FormButton disabled={ this.state.isLoading || this.state.isSubmitting }>
 							{ this.state.isSubmitting ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
@@ -439,11 +497,15 @@ class AdsFormSettings extends Component {
 
 					{ ! this.props.siteIsJetpack ? this.showAdsToOptions() : null }
 
-					<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
+					<FormSectionHeading>
+						{ translate( 'Site Owner Information' ) }
+					</FormSectionHeading>
 					{ this.siteOwnerOptions() }
 					{ this.state.us_checked ? this.taxOptions() : null }
 
-					<FormSectionHeading>{ translate( 'Terms of Service' ) }</FormSectionHeading>
+					<FormSectionHeading>
+						{ translate( 'Terms of Service' ) }
+					</FormSectionHeading>
 					{ this.acceptCheckbox() }
 
 					<FormButtonsBar>
@@ -459,12 +521,12 @@ class AdsFormSettings extends Component {
 
 export default compose(
 	connect(
-		( state ) => ( {
+		state => ( {
 			site: getSelectedSite( state ),
 			siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
 		} ),
-		{ dismissWordAdsSuccess },
+		{ dismissWordAdsSuccess }
 	),
 	localize,
-	protectForm,
+	protectForm
 )( AdsFormSettings );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -12,8 +13,8 @@ export function match( content ) {
 			index: nextMatch.index,
 			content: nextMatch.content,
 			options: {
-				shortcode: nextMatch.shortcode
-			}
+				shortcode: nextMatch.shortcode,
+			},
 		};
 	}
 }

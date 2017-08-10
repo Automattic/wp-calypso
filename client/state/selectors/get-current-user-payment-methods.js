@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,14 +22,14 @@ const DEFAULT_PAYMENT_METHODS = [ 'credit-card', 'paypal' ];
 const paymentMethods = {
 	byLocale: {
 		'de-DE': [ 'paypal', 'credit-card' ],
-		'en-DE': [ 'paypal', 'credit-card' ]
+		'en-DE': [ 'paypal', 'credit-card' ],
 	},
 
 	byCountry: {
-		US: DEFAULT_PAYMENT_METHODS
+		US: DEFAULT_PAYMENT_METHODS,
 	},
 
-	byWpcomLang: {}
+	byWpcomLang: {},
 };
 
 /**
@@ -42,8 +43,9 @@ export default function getCurrentUserPaymentMethods( state ) {
 	const wpcomLang = getCurrentUserLocale( state );
 	const generatedLocale = lowerCase( wpcomLang ) + '-' + upperCase( countryCode );
 
-	return paymentMethods.byLocale[ generatedLocale ] ||
+	return (
+		paymentMethods.byLocale[ generatedLocale ] ||
 		paymentMethods.byCountry[ countryCode ] ||
-		paymentMethods.byWpcomLang[ wpcomLang ] ||
-		[ ...DEFAULT_PAYMENT_METHODS ];
+		paymentMethods.byWpcomLang[ wpcomLang ] || [ ...DEFAULT_PAYMENT_METHODS ]
+	);
 }

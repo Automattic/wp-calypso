@@ -1,10 +1,11 @@
+/** @format */
 
 /**
  * Internal dependencies
  */
 import { canCurrentUser } from 'state/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getRawSite } from 'state/sites/selectors';
+import { getRawSite } from 'state/sites/selectors';
 
 /**
  * Returns true if the site can be upgraded by the user, false if the

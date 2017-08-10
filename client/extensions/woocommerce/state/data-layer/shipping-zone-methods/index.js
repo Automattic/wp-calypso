@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +9,10 @@ import { omit } from 'lodash';
  */
 import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { post, put, del } from 'woocommerce/state/data-layer/request/actions';
-import { shippingZoneMethodUpdated, shippingZoneMethodDeleted } from 'woocommerce/state/sites/shipping-zone-methods/actions';
+import {
+	shippingZoneMethodUpdated,
+	shippingZoneMethodDeleted,
+} from 'woocommerce/state/sites/shipping-zone-methods/actions';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CREATE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_DELETE,
@@ -28,7 +32,15 @@ export default {
 				dispatchWithProps( dispatch, getState, successAction, props );
 			};
 
-			store.dispatch( post( siteId, 'shipping/zones/' + zoneId + '/methods', payload, updatedAction, failureAction ) );
+			store.dispatch(
+				post(
+					siteId,
+					'shipping/zones/' + zoneId + '/methods',
+					payload,
+					updatedAction,
+					failureAction
+				)
+			);
 		},
 	],
 
@@ -47,7 +59,15 @@ export default {
 				dispatchWithProps( dispatch, getState, successAction, props );
 			};
 
-			store.dispatch( put( siteId, 'shipping/zones/' + zoneId + '/methods/' + methodId, payload, updatedAction, failureAction ) );
+			store.dispatch(
+				put(
+					siteId,
+					'shipping/zones/' + zoneId + '/methods/' + methodId,
+					payload,
+					updatedAction,
+					failureAction
+				)
+			);
 		},
 	],
 

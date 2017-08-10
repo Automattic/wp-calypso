@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -22,7 +23,8 @@ JetpackSite.prototype.updateComputedAttributes = function() {
 		this.modules = this.jetpack_modules;
 		delete this.jetpack_modules;
 	}
-	this.hasMinimumJetpackVersion = versionCompare( this.options.jetpack_version, config( 'jetpack_min_version' ) ) >= 0;
+	this.hasMinimumJetpackVersion =
+		versionCompare( this.options.jetpack_version, config( 'jetpack_min_version' ) ) >= 0;
 	// Only sites that have the minimum Jetpack Version and siteurl matches the main_network_site can update plugins
 	// unmapped_url is more likely to equal main_network_site because they should both be set to siteurl option
 	// is_multi_network checks to see that a site is not part of a multi network
@@ -50,13 +52,11 @@ JetpackSite.prototype.canManage = function() {
 };
 
 JetpackSite.prototype.isSecondaryNetworkSite = function() {
-	return this.options.is_multi_site &&
-		this.options.unmapped_url !== this.options.main_network_site;
+	return this.options.is_multi_site && this.options.unmapped_url !== this.options.main_network_site;
 };
 
 JetpackSite.prototype.isMainNetworkSite = function() {
-	return this.options.is_multi_site &&
-		this.options.unmapped_url === this.options.main_network_site;
+	return this.options.is_multi_site && this.options.unmapped_url === this.options.main_network_site;
 };
 
 JetpackSite.prototype.isModuleActive = function( moduleId ) {

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,9 +10,13 @@ export default React.createClass( {
 	render() {
 		return (
 			<span className="editor-media-modal__back-to-library">
-				<span className="is-mobile">{ this.translate( 'Library' ) }</span>
-				<span className="is-desktop">{ this.translate( 'Media Library' ) }</span>
+				<span className="is-mobile">
+					{ this.translate( 'Library' ) }
+				</span>
+				<span className="is-desktop">
+					{ this.translate( 'Media Library' ) }
+				</span>
 			</span>
 		);
-	}
+	},
 } );

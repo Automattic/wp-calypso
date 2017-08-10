@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Tells whether the user has asked a question through the Directly RTM widget.
  *

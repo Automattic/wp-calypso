@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -61,11 +62,7 @@ export default {
 
 		analytics.pageView.record( basePath, 'Help > Courses' );
 
-		renderWithReduxStore(
-			<CoursesComponent />,
-			'primary',
-			context.store
-		);
+		renderWithReduxStore( <CoursesComponent />, 'primary', context.store );
 	},
 
 	contact( context ) {
@@ -83,5 +80,5 @@ export default {
 			'primary',
 			context.store
 		);
-	}
+	},
 };

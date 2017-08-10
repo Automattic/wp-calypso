@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +18,7 @@ module.exports = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			spammed: false
+			spammed: false,
 		};
 	},
 
@@ -29,7 +30,7 @@ module.exports = React.createClass( {
 		event.preventDefault();
 		debug( this.state );
 		this.setState( {
-			spammed: ! this.state.spammed
+			spammed: ! this.state.spammed,
 		} );
 
 		if ( this.props.afterChange ) {
@@ -42,35 +43,44 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var label = this.state.spammed ? this.translate( 'Not Spam' ) : this.translate( 'Spam', {
-				context: 'Stats: Action to mark an item as spam',
-				comment: 'Default label (changes into "Not Spam").'
-			} ),
-			title = this.state.spammed ? this.translate( 'Not Spam', {
-				textOnly: true,
-				context: 'Stats: Action to undo marking an item as spam',
-				comment: 'Secondary label (default label is "Spam"). Recommended to use a very short label.'
-			} ) : this.translate( 'Spam', {
-				textOnly: true,
-				context: 'Stats: Action to mark an item as spam',
-				comment: 'Default label (changes into "Not Spam").'
-			} ),
-
-			wrapperClass = classNames(
-				'module-content-list-item-action-wrapper',
-				{
-					spam: ! this.state.spammed,
-					unspam: this.state.spammed
-				}
-			);
+		var label = this.state.spammed
+				? this.translate( 'Not Spam' )
+				: this.translate( 'Spam', {
+						context: 'Stats: Action to mark an item as spam',
+						comment: 'Default label (changes into "Not Spam").',
+					} ),
+			title = this.state.spammed
+				? this.translate( 'Not Spam', {
+						textOnly: true,
+						context: 'Stats: Action to undo marking an item as spam',
+						comment:
+							'Secondary label (default label is "Spam"). Recommended to use a very short label.',
+					} )
+				: this.translate( 'Spam', {
+						textOnly: true,
+						context: 'Stats: Action to mark an item as spam',
+						comment: 'Default label (changes into "Not Spam").',
+					} ),
+			wrapperClass = classNames( 'module-content-list-item-action-wrapper', {
+				spam: ! this.state.spammed,
+				unspam: this.state.spammed,
+			} );
 
 		return (
 			<li className="module-content-list-item-action">
-				<a href="#" onClick={ this.clickHandler } className={ wrapperClass } title={ title } aria-label={ title }>
+				<a
+					href="#"
+					onClick={ this.clickHandler }
+					className={ wrapperClass }
+					title={ title }
+					aria-label={ title }
+				>
 					<Gridicon icon="spam" size={ 18 } />
-					<span className="module-content-list-item-action-label">{ label }</span>
+					<span className="module-content-list-item-action-label">
+						{ label }
+					</span>
 				</a>
 			</li>
 		);
-	}
+	},
 } );

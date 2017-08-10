@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Feed post display types
  * @type {Object} Types of post for display
@@ -13,5 +14,5 @@ module.exports = {
 	VIDEO: 64,
 	THUMBNAIL: 128,
 	FEATURED_VIDEO: 512,
-	X_POST: 1024
+	X_POST: 1024,
 };

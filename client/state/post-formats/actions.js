@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -6,7 +7,7 @@ import {
 	POST_FORMATS_RECEIVE,
 	POST_FORMATS_REQUEST,
 	POST_FORMATS_REQUEST_SUCCESS,
-	POST_FORMATS_REQUEST_FAILURE
+	POST_FORMATS_REQUEST_FAILURE,
 } from 'state/action-types';
 
 /**
@@ -17,29 +18,34 @@ import {
  * @return {Function}        Action thunk
  */
 export function requestPostFormats( siteId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: POST_FORMATS_REQUEST,
-			siteId
+			siteId,
 		} );
 
-		return wpcom.undocumented().site( siteId ).postFormatsList().then( ( { formats } ) => {
-			dispatch( {
-				type: POST_FORMATS_RECEIVE,
-				siteId,
-				formats
-			} );
+		return wpcom
+			.undocumented()
+			.site( siteId )
+			.postFormatsList()
+			.then( ( { formats } ) => {
+				dispatch( {
+					type: POST_FORMATS_RECEIVE,
+					siteId,
+					formats,
+				} );
 
-			dispatch( {
-				type: POST_FORMATS_REQUEST_SUCCESS,
-				siteId
+				dispatch( {
+					type: POST_FORMATS_REQUEST_SUCCESS,
+					siteId,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: POST_FORMATS_REQUEST_FAILURE,
+					siteId,
+					error,
+				} );
 			} );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: POST_FORMATS_REQUEST_FAILURE,
-				siteId,
-				error
-			} );
-		} );
 	};
 }

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -67,18 +68,14 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		return false;
 	}
 
-	setVideoInstance = ref => this.video = ref;
+	setVideoInstance = ref => ( this.video = ref );
 
 	loadInitializeScript() {
 		loadScript( videoPressUrl, this.onScriptLoaded );
 	}
 
-	onScriptLoaded = ( error ) => {
-		const {
-			isPlaying,
-			item,
-			onScriptLoadError,
-		} = this.props;
+	onScriptLoaded = error => {
+		const { isPlaying, item, onScriptLoadError } = this.props;
 
 		if ( error ) {
 			log( `Script${ get( error, 'src', '' ) } failed to load.` );
@@ -87,36 +84,41 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 			return;
 		}
 
-		const {
-			height = 480,
-			videopress_guid,
-			width = 854,
-		} = item;
+		const { height = 480, videopress_guid, width = 854 } = item;
 
 		if ( ! videopress_guid ) {
 			return;
 		}
 
 		if ( typeof window !== 'undefined' && window.videopress ) {
-			this.player = window.videopress( videopress_guid, this.video, { autoPlay: isPlaying, height, width } );
+			this.player = window.videopress( videopress_guid, this.video, {
+				autoPlay: isPlaying,
+				height,
+				width,
+			} );
 		}
 	};
 
-	receiveMessage = ( event ) => {
+	receiveMessage = event => {
 		if ( event.origin && event.origin !== location.origin ) {
 			return;
 		}
 
 		const { data } = event;
 
-		if ( ! data || 'videopress_loading_state' !== data.event || ! ( 'state' in data ) || ! ( 'converting' in data ) ) {
+		if (
+			! data ||
+			'videopress_loading_state' !== data.event ||
+			! ( 'state' in data ) ||
+			! ( 'converting' in data )
+		) {
 			return;
 		}
 
-		if ( ( 'loaded' === data.state ) && ! data.converting ) {
+		if ( 'loaded' === data.state && ! data.converting ) {
 			this.props.onVideoLoaded();
 		}
-	}
+	};
 
 	destroy() {
 		window.removeEventListener( 'message', this.receiveMessage );
@@ -164,12 +166,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	render() {
 		const classes = classNames( this.props.className, 'is-video' );
 
-		return (
-			<div
-				className={ classes }
-				ref={ this.setVideoInstance }>
-			</div>
-		);
+		return <div className={ classes } ref={ this.setVideoInstance } />;
 	}
 }
 

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -36,7 +37,7 @@ function wpcomCharMapPlugin( editor ) {
 				React.createElement( CharMap, {
 					showDialog: visibility === 'show',
 					onClose: onClose,
-					editor: editor
+					editor: editor,
 				} ),
 				node
 			);

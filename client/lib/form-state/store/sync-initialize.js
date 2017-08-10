@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -29,7 +30,7 @@ function syncInitialize( { fieldNames } ) {
 			}
 
 			return next;
-		}
+		},
 	};
 }
 

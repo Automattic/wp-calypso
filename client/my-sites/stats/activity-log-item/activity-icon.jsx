@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +8,6 @@ import Gridicon from 'gridicons';
 import { get, startsWith } from 'lodash';
 
 export default class ActivityIcon extends PureComponent {
-
 	static propTypes = {
 		group: PropTypes.oneOf( [
 			'attachment',
@@ -26,10 +26,7 @@ export default class ActivityIcon extends PureComponent {
 	};
 
 	getIcon() {
-		const {
-			group,
-			object,
-		} = this.props;
+		const { group, object } = this.props;
 
 		switch ( group ) {
 			case 'attachment':

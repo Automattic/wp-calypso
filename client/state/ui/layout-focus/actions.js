@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -26,4 +27,3 @@ export function activateNextLayoutFocus() {
 		type: LAYOUT_NEXT_FOCUS_ACTIVATE,
 	};
 }
-

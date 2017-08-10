@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,7 +27,8 @@ function getSelectedSite( props ) {
 }
 
 function goToCancelPurchase( props ) {
-	const { id } = getPurchase( props ), { slug } = getSelectedSite( props );
+	const { id } = getPurchase( props ),
+		{ slug } = getSelectedSite( props );
 
 	page( paths.cancelPurchase( slug, id ) );
 }
@@ -36,7 +38,8 @@ function goToList() {
 }
 
 function goToManagePurchase( props ) {
-	const { id } = getPurchase( props ), { slug } = getSelectedSite( props );
+	const { id } = getPurchase( props ),
+		{ slug } = getSelectedSite( props );
 
 	page( paths.managePurchase( slug, id ) );
 }

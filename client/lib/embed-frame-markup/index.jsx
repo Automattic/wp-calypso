@@ -1,3 +1,4 @@
+/** @format */
 // Here be dragons...
 /* eslint-disable react/no-danger */
 
@@ -22,38 +23,48 @@ export default function generateEmbedFrameMarkup( { body, scripts, styles } = {}
 	return renderToStaticMarkup(
 		<html>
 			<head>
-				{ createFragment( mapValues( styles, ( style ) => {
-					return <link rel="stylesheet" media={ style.media } href={ style.src } />;
-				} ) ) }
+				{ createFragment(
+					mapValues( styles, style => {
+						return <link rel="stylesheet" media={ style.media } href={ style.src } />;
+					} )
+				) }
 				<style dangerouslySetInnerHTML={ { __html: 'a { cursor: default; }' } } />
 			</head>
 			<body style={ { margin: 0 } }>
 				<div dangerouslySetInnerHTML={ { __html: body } } />
 				{ /* Many embed/shortcode scripts assume jQuery is already defined */ }
 				<script src={ JQUERY_URL } />
-				<script dangerouslySetInnerHTML={ { __html: `
+				<script
+					dangerouslySetInnerHTML={ {
+						__html: `
 					[ 'click', 'dragstart' ].forEach( function( type ) {
 						document.addEventListener( type, function( event ) {
 							event.preventDefault();
 							event.stopImmediatePropagation();
 						}, true );
 					} );
-				` } } />
-				{ createFragment( mapValues( scripts, ( script ) => {
-					let extra;
-					if ( script.extra ) {
-						extra = (
-							<script dangerouslySetInnerHTML={ {
-								__html: script.extra
-							} } />
-						);
-					}
+				`,
+					} }
+				/>
+				{ createFragment(
+					mapValues( scripts, script => {
+						let extra;
+						if ( script.extra ) {
+							extra = (
+								<script
+									dangerouslySetInnerHTML={ {
+										__html: script.extra,
+									} }
+								/>
+							);
+						}
 
-					return createFragment( {
-						extra: extra,
-						script: <script src={ script.src } />
-					} );
-				} ) ) }
+						return createFragment( {
+							extra: extra,
+							script: <script src={ script.src } />,
+						} );
+					} )
+				) }
 			</body>
 		</html>
 	);

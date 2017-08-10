@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -9,7 +10,7 @@ import {
 	loggedOut,
 	redirectSearchAndType,
 	redirectFilterAndType,
-	redirectToThemeDetails
+	redirectToThemeDetails,
 } from './controller';
 import { validateFilters, validateVertical } from './validate-filters';
 
@@ -37,19 +38,22 @@ export default function( router ) {
 		);
 		router( [ '/themes/upload', '/themes/upload/*' ], makeLayout );
 		// Redirect legacy (Atlas-based Theme Showcase v4) routes
-		router( [
-			'/themes/:site?/search/:search',
-			'/themes/:site?/type/:tier(free|premium)',
-			'/themes/:site?/search/:search/type/:tier(free|premium)'
-		], redirectSearchAndType );
-		router( [
-			'/themes/:site?/filter/:filter',
-			'/themes/:site?/filter/:filter/type/:tier(free|premium)'
-		], redirectFilterAndType );
-		router( [
-			'/themes/:theme/:section(support)?',
-			'/themes/:site/:theme/:section(support)?'
-		], redirectToThemeDetails );
+		router(
+			[
+				'/themes/:site?/search/:search',
+				'/themes/:site?/type/:tier(free|premium)',
+				'/themes/:site?/search/:search/type/:tier(free|premium)',
+			],
+			redirectSearchAndType
+		);
+		router(
+			[ '/themes/:site?/filter/:filter', '/themes/:site?/filter/:filter/type/:tier(free|premium)' ],
+			redirectFilterAndType
+		);
+		router(
+			[ '/themes/:theme/:section(support)?', '/themes/:site/:theme/:section(support)?' ],
+			redirectToThemeDetails
+		);
 		// The following route definition is needed so direct hits on `/themes/<mysite>` don't result in a 404.
 		router( '/themes/*', fetchThemeData, loggedOut, makeLayout );
 	}

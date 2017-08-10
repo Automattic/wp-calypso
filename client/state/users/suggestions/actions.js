@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -33,14 +34,16 @@ export function receiveUserSuggestions( siteId, suggestions ) {
  * @return {Function}         Action thunk
  */
 export function requestUserSuggestions( siteId ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: USER_SUGGESTIONS_REQUEST,
 			siteId,
 		} );
 
-		return wpcom.users().suggest( { site_id: siteId } )
-			.then( ( data ) => {
+		return wpcom
+			.users()
+			.suggest( { site_id: siteId } )
+			.then( data => {
 				dispatch( receiveUserSuggestions( siteId, data.suggestions ) );
 				dispatch( {
 					type: USER_SUGGESTIONS_REQUEST_SUCCESS,
@@ -48,7 +51,7 @@ export function requestUserSuggestions( siteId ) {
 					data,
 				} );
 			} )
-			.catch( ( error ) =>
+			.catch( error =>
 				dispatch( {
 					type: USER_SUGGESTIONS_REQUEST_FAILURE,
 					siteId,

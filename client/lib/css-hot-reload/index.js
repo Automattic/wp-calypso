@@ -1,3 +1,4 @@
+/** @format */
 /* eslint-disable no-console */
 
 /**
@@ -14,7 +15,7 @@ const standardAttributes = [
 	'rel',
 	'sizes',
 	'title',
-	'type'
+	'type',
 ];
 
 /**
@@ -23,12 +24,11 @@ const standardAttributes = [
  */
 function bustHashForHrefs( { name, oldValue } ) {
 	// http://some.site.com/and/a/path?with=a&query -> http://some.site.com/and/a/path?v=13508135781
-	const value = 'href' === name
-		? `${ oldValue.split( '?' ).shift() }?v=${ new Date().getTime() }`
-		: oldValue;
+	const value =
+		'href' === name ? `${ oldValue.split( '?' ).shift() }?v=${ new Date().getTime() }` : oldValue;
 
 	return { name, value };
-};
+}
 
 /**
  * @return {Boolean}
@@ -48,12 +48,12 @@ export default function() {
 	const socket = io.connect( namespace );
 
 	socket.on( 'css-hot-reload', function( data ) {
-		switch( data.status ) {
+		switch ( data.status ) {
 			case 'reload':
 				// Turn HTMLCollection to standard list
 				const elems = [].slice.call( document.head.getElementsByTagName( 'link' ) );
 				elems.forEach( function( oldLink ) {
-					if ( ( 'href' in oldLink ) && isChanged( oldLink.href, data.changedFiles ) ) {
+					if ( 'href' in oldLink && isChanged( oldLink.href, data.changedFiles ) ) {
 						console.log( 'Reloading CSS: ', oldLink );
 						// Remove old .css and insert new one in the same spot
 						const newLink = document.createElement( 'link' );

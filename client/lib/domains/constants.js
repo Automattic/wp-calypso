@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,14 +8,14 @@ const type = keyMirror( {
 	MAPPED: null,
 	REGISTERED: null,
 	SITE_REDIRECT: null,
-	WPCOM: null
+	WPCOM: null,
 } );
 
 const registrar = {
 	OPENHRS: 'OpenHRS',
 	OPENSRS: 'OpenSRS',
 	WWD: 'WWD',
-	MAINTENANCE: 'Registrar TLD Maintenance'
+	MAINTENANCE: 'Registrar TLD Maintenance',
 };
 
 const domainAvailability = {
@@ -38,16 +39,16 @@ const domainAvailability = {
 const dnsTemplates = {
 	G_SUITE: {
 		PROVIDER: 'g-suite',
-		SERVICE: 'G-Suite'
+		SERVICE: 'G-Suite',
 	},
 	MICROSOFT_OFFICE365: {
 		PROVIDER: 'microsoft-office365',
-		SERVICE: 'O365'
+		SERVICE: 'O365',
 	},
 	ZOHO_MAIL: {
 		PROVIDER: 'zoho-mail',
-		SERVICE: 'Zoho'
-	}
+		SERVICE: 'Zoho',
+	},
 };
 
 export default {

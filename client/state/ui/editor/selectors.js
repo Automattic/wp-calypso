@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -41,9 +42,15 @@ export function isEditorNewPost( state ) {
 export function getEditorNewPostPath( state, siteId, type = 'post' ) {
 	let path;
 	switch ( type ) {
-		case 'post': path = '/post'; break;
-		case 'page': path = '/page'; break;
-		default: path = `/edit/${ type }`; break;
+		case 'post':
+			path = '/post';
+			break;
+		case 'page':
+			path = '/page';
+			break;
+		default:
+			path = `/edit/${ type }`;
+			break;
 	}
 
 	const siteSlug = getSiteSlug( state, siteId );

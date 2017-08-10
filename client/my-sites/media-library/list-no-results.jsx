@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,12 +14,12 @@ module.exports = React.createClass( {
 
 	propTypes: {
 		filter: React.PropTypes.string,
-		search: React.PropTypes.string
+		search: React.PropTypes.string,
 	},
 
 	getDefaultProps: function() {
 		return {
-			search: ''
+			search: '',
 		};
 	},
 
@@ -29,41 +30,61 @@ module.exports = React.createClass( {
 			case 'images':
 				label = this.translate( 'No images match your search for {{searchTerm/}}.', {
 					components: {
-						searchTerm: <em>{ this.props.search }</em>
+						searchTerm: (
+							<em>
+								{ this.props.search }
+							</em>
+						),
 					},
-					context: 'Media no search results'
+					context: 'Media no search results',
 				} );
 				break;
 			case 'videos':
 				label = this.translate( 'No videos match your search for {{searchTerm/}}.', {
 					components: {
-						searchTerm: <em>{ this.props.search }</em>
+						searchTerm: (
+							<em>
+								{ this.props.search }
+							</em>
+						),
 					},
-					context: 'Media no search results'
+					context: 'Media no search results',
 				} );
 				break;
 			case 'audio':
 				label = this.translate( 'No audio files match your search for {{searchTerm/}}.', {
 					components: {
-						searchTerm: <em>{ this.props.search }</em>
+						searchTerm: (
+							<em>
+								{ this.props.search }
+							</em>
+						),
 					},
-					context: 'Media no search results'
+					context: 'Media no search results',
 				} );
 				break;
 			case 'documents':
 				label = this.translate( 'No documents match your search for {{searchTerm/}}.', {
 					components: {
-						searchTerm: <em>{ this.props.search }</em>
+						searchTerm: (
+							<em>
+								{ this.props.search }
+							</em>
+						),
 					},
-					context: 'Media no search results'
+					context: 'Media no search results',
 				} );
 				break;
 			default:
 				label = this.translate( 'No media files match your search for {{searchTerm/}}.', {
 					components: {
-						searchTerm: <em>{ this.props.search }</em>
+						searchTerm: (
+							<em>
+								{ this.props.search }
+							</em>
+						),
 					},
-					context: 'Media no search results'
+					context: 'Media no search results',
 				} );
 				break;
 		}
@@ -73,9 +94,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<NoResults
-				text={ this.getLabel() }
-				image="/calypso/images/pages/illustration-pages.svg" />
+			<NoResults text={ this.getLabel() } image="/calypso/images/pages/illustration-pages.svg" />
 		);
-	}
+	},
 } );

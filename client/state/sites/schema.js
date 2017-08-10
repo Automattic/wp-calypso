@@ -1,3 +1,4 @@
+/** @format */
 export const sitesSchema = {
 	type: 'object',
 	patternProperties: {
@@ -15,8 +16,8 @@ export const sitesSchema = {
 					properties: {
 						img: { type: 'string' },
 						ico: { type: 'string' },
-						media_id: { type: 'number' }
-					}
+						media_id: { type: 'number' },
+					},
 				},
 				visible: { type: 'boolean' },
 				is_private: { type: 'boolean' },
@@ -27,8 +28,8 @@ export const sitesSchema = {
 				capabilities: {
 					type: 'object',
 					patternProperties: {
-						'^[a-z_]+$': { type: 'boolean' }
-					}
+						'^[a-z_]+$': { type: 'boolean' },
+					},
 				},
 				plan: {
 					type: 'object',
@@ -40,12 +41,12 @@ export const sitesSchema = {
 						free_trial: { type: 'boolean' },
 						expired: { type: 'boolean' },
 						user_is_owner: { type: 'boolean' },
-						is_free: { type: 'boolean' }
-					}
+						is_free: { type: 'boolean' },
+					},
 				},
 				single_user_site: { type: 'boolean' },
-			}
-		}
+			},
+		},
 	},
-	additionalProperties: false
+	additionalProperties: false,
 };

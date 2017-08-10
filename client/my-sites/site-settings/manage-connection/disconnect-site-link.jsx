@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,21 +26,21 @@ import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/noti
 class DisconnectSiteLink extends Component {
 	state = {
 		dialogVisible: false,
-	}
+	};
 
-	handleClick = ( event ) => {
+	handleClick = event => {
 		event.preventDefault();
 
 		this.setState( {
 			dialogVisible: true,
 		} );
-	}
+	};
 
 	handleHideDialog = () => {
 		this.setState( {
-			dialogVisible: false
+			dialogVisible: false,
 		} );
-	}
+	};
 
 	disconnectJetpack = () => {
 		const {
@@ -51,50 +52,51 @@ class DisconnectSiteLink extends Component {
 			infoNotice: showInfoNotice,
 			removeNotice: removeInfoNotice,
 			disconnect: disconnectSite,
-			recordGoogleEvent: recordGAEvent
+			recordGoogleEvent: recordGAEvent,
 		} = this.props;
 
 		this.setState( {
-			dialogVisible: false
+			dialogVisible: false,
 		} );
 
 		recordGAEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
 
 		const { notice } = showInfoNotice(
-			translate( 'Disconnecting %(siteName)s.', { args: { siteName: site.title } } ),	{
+			translate( 'Disconnecting %(siteName)s.', { args: { siteName: site.title } } ),
+			{
 				isPersistent: true,
 				showDismiss: false,
 			}
 		);
 
-		disconnectSite( siteId ).then( () => {
-			// Removing the domain from a domain-only site results
-			// in the site being deleted entirely. We need to call
-			// `receiveDeletedSiteDeprecated` here because the site
-			// exists in `sites-list` as well as the global store.
-			disconnectedSiteDeprecated( site );
-			this.props.setAllSitesSelected();
-			removeInfoNotice( notice.noticeId );
-			showSuccessNotice( translate( 'Successfully disconnected %(siteName)s.', { args: { siteName: site.title } } ) );
-			recordGAEvent( 'Jetpack', 'Successfully Disconnected' );
-		}, () => {
-			removeInfoNotice( notice.noticeId );
-			showErrorNotice( translate( '%(siteName)s failed to disconnect', { args: { siteName: site.title } } ) );
-			recordGAEvent( 'Jetpack', 'Failed Disconnected Site' );
-		}, );
+		disconnectSite( siteId ).then(
+			() => {
+				// Removing the domain from a domain-only site results
+				// in the site being deleted entirely. We need to call
+				// `receiveDeletedSiteDeprecated` here because the site
+				// exists in `sites-list` as well as the global store.
+				disconnectedSiteDeprecated( site );
+				this.props.setAllSitesSelected();
+				removeInfoNotice( notice.noticeId );
+				showSuccessNotice(
+					translate( 'Successfully disconnected %(siteName)s.', { args: { siteName: site.title } } )
+				);
+				recordGAEvent( 'Jetpack', 'Successfully Disconnected' );
+			},
+			() => {
+				removeInfoNotice( notice.noticeId );
+				showErrorNotice(
+					translate( '%(siteName)s failed to disconnect', { args: { siteName: site.title } } )
+				);
+				recordGAEvent( 'Jetpack', 'Failed Disconnected Site' );
+			}
+		);
 
 		page.redirect( '/stats' );
-	}
+	};
 
 	render() {
-		const {
-			isAutomatedTransfer,
-			planClass,
-			site,
-			siteId,
-			siteSlug,
-			translate
-		} = this.props;
+		const { isAutomatedTransfer, planClass, site, siteId, siteSlug, translate } = this.props;
 
 		if ( ! site || isAutomatedTransfer ) {
 			return null;
@@ -128,14 +130,12 @@ class DisconnectSiteLink extends Component {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSelectedSiteSlug( state );
 		const plan = getCurrentPlan( state, siteId );
-		const planClass = plan && plan.productSlug
-			? getPlanClass( plan.productSlug )
-			: 'is-free-plan';
+		const planClass = plan && plan.productSlug ? getPlanClass( plan.productSlug ) : 'is-free-plan';
 
 		return {
 			isAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
@@ -152,6 +152,6 @@ export default connect(
 		successNotice,
 		errorNotice,
 		infoNotice,
-		removeNotice
+		removeNotice,
 	}
 )( localize( DisconnectSiteLink ) );

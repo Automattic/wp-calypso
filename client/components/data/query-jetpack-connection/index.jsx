@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +15,7 @@ class QueryJetpackConnection extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		requestingJetpackConnectionStatus: PropTypes.bool,
-		requestJetpackConnectionStatus: PropTypes.func
+		requestJetpackConnectionStatus: PropTypes.func,
 	};
 
 	componentWillMount() {
@@ -43,7 +44,10 @@ class QueryJetpackConnection extends Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
-			requestingJetpackConnectionStatus: isRequestingJetpackConnectionStatus( state, ownProps.siteId )
+			requestingJetpackConnectionStatus: isRequestingJetpackConnectionStatus(
+				state,
+				ownProps.siteId
+			),
 		};
 	},
 	{ requestJetpackConnectionStatus }

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,7 @@ import {
 	getSerializedThemesQuery,
 	getDeserializedThemesQueryDetails,
 	getSerializedThemesQueryWithoutPage,
-	isThemeMatchingQuery
+	isThemeMatchingQuery,
 } from '../utils';
 
 describe( 'utils', () => {
@@ -28,7 +29,7 @@ describe( 'utils', () => {
 
 		it( 'given a theme object with no stylesheet attr, should return false', () => {
 			const premium = isPremium( {
-				id: 'twentysixteen'
+				id: 'twentysixteen',
 			} );
 			expect( premium ).to.be.false;
 		} );
@@ -36,7 +37,7 @@ describe( 'utils', () => {
 		it( 'given a theme object with a stylesheet attr that doesn\'t start with "premium/", should return false', () => {
 			const premium = isPremium( {
 				id: 'twentysixteen',
-				stylesheet: 'pub/twentysixteen'
+				stylesheet: 'pub/twentysixteen',
 			} );
 			expect( premium ).to.be.false;
 		} );
@@ -44,7 +45,7 @@ describe( 'utils', () => {
 		it( 'given a theme object with a stylesheet attr that starts with "premium/", should return true', () => {
 			const premium = isPremium( {
 				id: 'mood',
-				stylesheet: 'premium/mood'
+				stylesheet: 'premium/mood',
 			} );
 			expect( premium ).to.be.true;
 		} );
@@ -62,10 +63,7 @@ describe( 'utils', () => {
 				author: 'the WordPress team',
 				screenshot: 'twentyfifteen.png',
 				download: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
-				tags: [
-					'custom-header',
-					'two-columns'
-				]
+				tags: [ 'custom-header', 'two-columns' ],
 			} );
 			expect( normalizedTheme ).to.deep.equal( {
 				id: 'twentyfifteen',
@@ -74,11 +72,8 @@ describe( 'utils', () => {
 				screenshot: 'twentyfifteen.png',
 				download: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
 				taxonomies: {
-					theme_feature: [
-						{ slug: 'custom-header' },
-						{ slug: 'two-columns' }
-					]
-				}
+					theme_feature: [ { slug: 'custom-header' }, { slug: 'two-columns' } ],
+				},
 			} );
 		} );
 	} );
@@ -95,12 +90,13 @@ describe( 'utils', () => {
 				author: 'Automattic',
 				description: 'Mood is a business theme with positive vibe...',
 				description_long: '<p>Say hello to <em>Mood</em>, a business theme with a positive vibe...',
-				support_documentation: '<h2>Getting started</h2>↵<p>When you first activate <em>Mood</em>,...',
+				support_documentation:
+					'<h2>Getting started</h2>↵<p>When you first activate <em>Mood</em>,...',
 				screenshot: 'mood.jpg',
 				price: '$20',
 				stylesheet: 'premium/mood',
 				demo_uri: 'https://mooddemo.wordpress.com/',
-				author_uri: 'https://wordpress.com/themes/'
+				author_uri: 'https://wordpress.com/themes/',
 			} );
 			expect( normalizedTheme ).to.deep.equal( {
 				id: 'mood',
@@ -108,12 +104,13 @@ describe( 'utils', () => {
 				author: 'Automattic',
 				description: 'Mood is a business theme with positive vibe...',
 				descriptionLong: '<p>Say hello to <em>Mood</em>, a business theme with a positive vibe...',
-				supportDocumentation: '<h2>Getting started</h2>↵<p>When you first activate <em>Mood</em>,...',
+				supportDocumentation:
+					'<h2>Getting started</h2>↵<p>When you first activate <em>Mood</em>,...',
 				screenshot: 'mood.jpg',
 				price: '$20',
 				stylesheet: 'premium/mood',
 				demo_uri: 'https://mooddemo.wordpress.com/',
-				author_uri: 'https://wordpress.com/themes/'
+				author_uri: 'https://wordpress.com/themes/',
 			} );
 		} );
 	} );
@@ -130,18 +127,19 @@ describe( 'utils', () => {
 				name: 'Twenty Fifteen',
 				author: {
 					user_nicename: 'wordpressdotorg',
-					display_name: 'WordPress.org'
+					display_name: 'WordPress.org',
 				},
 				screenshot_url: '//ts.w.org/wp-content/themes/twentyfifteen/screenshot.png?ver=1.7',
 				preview_url: 'https://wp-themes.com/twentyfifteen',
 				download_link: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
 				sections: {
-					description: 'Our 2015 default theme is clean, blog-focused, and designed for clarity. ...'
+					description:
+						'Our 2015 default theme is clean, blog-focused, and designed for clarity. ...',
 				},
 				tags: {
 					'custom-header': 'Custom Header',
-					'two-columns': 'Two Columns'
-				}
+					'two-columns': 'Two Columns',
+				},
 			} );
 			expect( normalizedTheme ).to.deep.equal( {
 				id: 'twentyfifteen',
@@ -154,9 +152,9 @@ describe( 'utils', () => {
 				taxonomies: {
 					theme_feature: [
 						{ slug: 'custom-header', name: 'Custom Header' },
-						{ slug: 'two-columns', name: 'Two Columns' }
-					]
-				}
+						{ slug: 'two-columns', name: 'Two Columns' },
+					],
+				},
 			} );
 		} );
 	} );
@@ -167,12 +165,12 @@ describe( 'utils', () => {
 			expect( themeId ).to.be.undefined;
 		} );
 
-		it( 'should return the argument if it doesn\'t contain a slash (/)', () => {
+		it( "should return the argument if it doesn't contain a slash (/)", () => {
 			const themeId = getThemeIdFromStylesheet( 'twentysixteen' );
 			expect( themeId ).to.equal( 'twentysixteen' );
 		} );
 
-		it( 'should return argument\'s part after the slash if it does contain a slash (/)', () => {
+		it( "should return argument's part after the slash if it does contain a slash (/)", () => {
 			const themeId = getThemeIdFromStylesheet( 'pub/twentysixteen' );
 			expect( themeId ).to.equal( 'twentysixteen' );
 		} );
@@ -182,11 +180,11 @@ describe( 'utils', () => {
 		it( 'should exclude default values', () => {
 			const query = getNormalizedThemesQuery( {
 				page: 4,
-				number: 20
+				number: 20,
 			} );
 
 			expect( query ).to.eql( {
-				page: 4
+				page: 4,
 			} );
 		} );
 	} );
@@ -195,16 +193,19 @@ describe( 'utils', () => {
 		it( 'should return a JSON string of a normalized query', () => {
 			const serializedQuery = getSerializedThemesQuery( {
 				type: 'page',
-				page: 1
+				page: 1,
 			} );
 
 			expect( serializedQuery ).to.equal( '{"type":"page"}' );
 		} );
 
 		it( 'should prefix site ID if specified', () => {
-			const serializedQuery = getSerializedThemesQuery( {
-				search: 'Hello'
-			}, 2916284 );
+			const serializedQuery = getSerializedThemesQuery(
+				{
+					search: 'Hello',
+				},
+				2916284
+			);
 
 			expect( serializedQuery ).to.equal( '2916284:{"search":"Hello"}' );
 		} );
@@ -216,7 +217,7 @@ describe( 'utils', () => {
 
 			expect( queryDetails ).to.eql( {
 				siteId: undefined,
-				query: undefined
+				query: undefined,
 			} );
 		} );
 
@@ -225,7 +226,7 @@ describe( 'utils', () => {
 
 			expect( queryDetails ).to.eql( {
 				siteId: undefined,
-				query: { search: 'hello' }
+				query: { search: 'hello' },
 			} );
 		} );
 
@@ -234,7 +235,7 @@ describe( 'utils', () => {
 
 			expect( queryDetails ).to.eql( {
 				siteId: 2916284,
-				query: { search: 'hello' }
+				query: { search: 'hello' },
 			} );
 		} );
 	} );
@@ -243,17 +244,20 @@ describe( 'utils', () => {
 		it( 'should return a JSON string of a normalized query omitting page', () => {
 			const serializedQuery = getSerializedThemesQueryWithoutPage( {
 				type: 'page',
-				page: 2
+				page: 2,
 			} );
 
 			expect( serializedQuery ).to.equal( '{"type":"page"}' );
 		} );
 
 		it( 'should prefix site ID if specified', () => {
-			const serializedQuery = getSerializedThemesQueryWithoutPage( {
-				search: 'Hello',
-				page: 2
-			}, 2916284 );
+			const serializedQuery = getSerializedThemesQueryWithoutPage(
+				{
+					search: 'Hello',
+					page: 2,
+				},
+				2916284
+			);
 
 			expect( serializedQuery ).to.equal( '2916284:{"search":"Hello"}' );
 		} );
@@ -264,114 +268,146 @@ describe( 'utils', () => {
 			id: 'twentysomething',
 			name: 'Twenty Something',
 			author: 'the WordPress team',
-			screenshot: 'https://i0.wp.com/theme.wordpress.com/wp-content/themes/pub/twentysomething/screenshot.png',
-			screenshots: [ 'https://i0.wp.com/theme.files.wordpress.com/2015/12/twentysomething-featured-image.jpg?ssl=1' ],
+			screenshot:
+				'https://i0.wp.com/theme.wordpress.com/wp-content/themes/pub/twentysomething/screenshot.png',
+			screenshots: [
+				'https://i0.wp.com/theme.files.wordpress.com/2015/12/twentysomething-featured-image.jpg?ssl=1',
+			],
 			stylesheet: 'pub/twentysomething',
 			taxonomies: {
 				theme_feature: [
 					{
 						name: 'Custom Header',
-						slug: 'custom-header'
+						slug: 'custom-header',
 					},
 					{
 						name: 'Infinite Scroll',
-						slug: 'infinite-scroll'
-					}
+						slug: 'infinite-scroll',
+					},
 				],
 				theme_color: [
 					{
 						name: 'Black',
 						slug: 'black',
-						term_id: '59007'
+						term_id: '59007',
 					},
 					{
 						name: 'Blue',
 						slug: 'blue',
-						term_id: '9150'
+						term_id: '9150',
 					},
 					{
 						name: 'Gray',
 						slug: 'gray',
-						term_id: '147520'
-					}
-				]
+						term_id: '147520',
+					},
+				],
 			},
 			demo_uri: 'https://twentysomethingdemo.wordpress.com/',
-			descriptionLong: 'The annual WordPress theme for this year is a modern take on an ever-popular layout. ' +
+			descriptionLong:
+				'The annual WordPress theme for this year is a modern take on an ever-popular layout. ' +
 				'The horizontal header area with an optional right sidebar works perfectly for both blogs <em>and</em> websites.',
-			description: 'This is a modernized take on an ever-popular WordPress layout' +
-				' — the horizontal masthead with an optional right sidebar that works perfectly for blogs and websites.'
+			description:
+				'This is a modernized take on an ever-popular WordPress layout' +
+				' — the horizontal masthead with an optional right sidebar that works perfectly for blogs and websites.',
 		};
 
 		context( 'query.search', () => {
 			it( 'should return false for a non-matching search', () => {
-				const isMatch = isThemeMatchingQuery( {
-					search: 'nonexisting'
-				}, DEFAULT_THEME );
+				const isMatch = isThemeMatchingQuery(
+					{
+						search: 'nonexisting',
+					},
+					DEFAULT_THEME
+				);
 
 				expect( isMatch ).to.be.false;
 			} );
 
 			it( 'should return true for a falsey search', () => {
-				const isMatch = isThemeMatchingQuery( {
-					search: null
-				}, DEFAULT_THEME );
+				const isMatch = isThemeMatchingQuery(
+					{
+						search: null,
+					},
+					DEFAULT_THEME
+				);
 
 				expect( isMatch ).to.be.true;
 			} );
 
 			it( 'should return true for a matching ID search', () => {
-				const isMatch = isThemeMatchingQuery( {
-					search: 'twentysomething'
-				}, DEFAULT_THEME );
+				const isMatch = isThemeMatchingQuery(
+					{
+						search: 'twentysomething',
+					},
+					DEFAULT_THEME
+				);
 
 				expect( isMatch ).to.be.true;
 			} );
 
 			it( 'should return true for a matching title search', () => {
-				const isMatch = isThemeMatchingQuery( {
-					search: 'Twenty'
-				}, DEFAULT_THEME );
+				const isMatch = isThemeMatchingQuery(
+					{
+						search: 'Twenty',
+					},
+					DEFAULT_THEME
+				);
 
 				expect( isMatch ).to.be.true;
 			} );
 
 			it( 'should return true for a matching content search', () => {
-				const isMatch = isThemeMatchingQuery( {
-					search: 'modern'
-				}, DEFAULT_THEME );
+				const isMatch = isThemeMatchingQuery(
+					{
+						search: 'modern',
+					},
+					DEFAULT_THEME
+				);
 
 				expect( isMatch ).to.be.true;
 			} );
 
 			it( 'should return true for a matching author search', () => {
-				const isMatch = isThemeMatchingQuery( {
-					search: 'team'
-				}, DEFAULT_THEME );
+				const isMatch = isThemeMatchingQuery(
+					{
+						search: 'team',
+					},
+					DEFAULT_THEME
+				);
 
 				expect( isMatch ).to.be.true;
 			} );
 
 			it( 'should return true for a matching filter search', () => {
-				const isMatch = isThemeMatchingQuery( {
-					search: 'infinite'
-				}, DEFAULT_THEME );
+				const isMatch = isThemeMatchingQuery(
+					{
+						search: 'infinite',
+					},
+					DEFAULT_THEME
+				);
 
 				expect( isMatch ).to.be.true;
 			} );
 
 			it( 'should search case-insensitive', () => {
-				const isMatch = isThemeMatchingQuery( {
-					search: 'Sidebar'
-				}, DEFAULT_THEME );
+				const isMatch = isThemeMatchingQuery(
+					{
+						search: 'Sidebar',
+					},
+					DEFAULT_THEME
+				);
 
 				expect( isMatch ).to.be.true;
 			} );
 
 			it( 'should separately test title and content fields', () => {
-				const isMatch = isThemeMatchingQuery( {
-					search: 'TwentyThe'
-				}, DEFAULT_THEME );
+				const isMatch = isThemeMatchingQuery(
+					{
+						search: 'TwentyThe',
+					},
+					DEFAULT_THEME
+				);
 
 				expect( isMatch ).to.be.false;
 			} );
@@ -379,58 +415,79 @@ describe( 'utils', () => {
 
 		context( 'query.filter', () => {
 			it( 'should return false if theme does not include filter', () => {
-				const isMatch = isThemeMatchingQuery( {
-					filter: 'nosuchfilter'
-				}, DEFAULT_THEME );
+				const isMatch = isThemeMatchingQuery(
+					{
+						filter: 'nosuchfilter',
+					},
+					DEFAULT_THEME
+				);
 
 				expect( isMatch ).to.be.false;
 			} );
 
 			it( 'should return false on a partial match', () => {
-				const isMatch = isThemeMatchingQuery( {
-					filter: 'ourna'
-				}, DEFAULT_THEME );
+				const isMatch = isThemeMatchingQuery(
+					{
+						filter: 'ourna',
+					},
+					DEFAULT_THEME
+				);
 
 				expect( isMatch ).to.be.false;
 			} );
 
 			it( 'should return true if theme includes filter', () => {
-				const isMatch = isThemeMatchingQuery( {
-					filter: 'infinite-scroll'
-				}, DEFAULT_THEME );
+				const isMatch = isThemeMatchingQuery(
+					{
+						filter: 'infinite-scroll',
+					},
+					DEFAULT_THEME
+				);
 
 				expect( isMatch ).to.be.true;
 			} );
 
 			context( 'with multiple filters from a single taxonomy', () => {
-				it( 'should return false if theme doesn\'t match all filters', () => {
-					const isMatch = isThemeMatchingQuery( {
-						filter: 'infinite-scroll,business'
-					}, DEFAULT_THEME );
+				it( "should return false if theme doesn't match all filters", () => {
+					const isMatch = isThemeMatchingQuery(
+						{
+							filter: 'infinite-scroll,business',
+						},
+						DEFAULT_THEME
+					);
 
 					expect( isMatch ).to.be.false;
 				} );
 				it( 'should return true if theme matches all filters', () => {
-					const isMatch = isThemeMatchingQuery( {
-						filter: 'infinite-scroll,custom-header'
-					}, DEFAULT_THEME );
+					const isMatch = isThemeMatchingQuery(
+						{
+							filter: 'infinite-scroll,custom-header',
+						},
+						DEFAULT_THEME
+					);
 
 					expect( isMatch ).to.be.true;
 				} );
 			} );
 
 			context( 'with multiple filters from different taxonomies', () => {
-				it( 'should return false if theme doesn\'t match all filters', () => {
-					const isMatch = isThemeMatchingQuery( {
-						filter: 'infinite-scroll,green'
-					}, DEFAULT_THEME );
+				it( "should return false if theme doesn't match all filters", () => {
+					const isMatch = isThemeMatchingQuery(
+						{
+							filter: 'infinite-scroll,green',
+						},
+						DEFAULT_THEME
+					);
 
 					expect( isMatch ).to.be.false;
 				} );
 				it( 'should return true if theme matches all filters', () => {
-					const isMatch = isThemeMatchingQuery( {
-						filter: 'infinite-scroll,black'
-					}, DEFAULT_THEME );
+					const isMatch = isThemeMatchingQuery(
+						{
+							filter: 'infinite-scroll,black',
+						},
+						DEFAULT_THEME
+					);
 
 					expect( isMatch ).to.be.true;
 				} );

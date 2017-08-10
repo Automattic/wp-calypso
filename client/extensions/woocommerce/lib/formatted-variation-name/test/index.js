@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -30,10 +31,12 @@ describe( 'formattedVariationName', () => {
 		const variation = {
 			id: 1,
 			visible: true,
-			attributes: [ {
-				name: 'Color',
-				option: 'Red',
-			} ],
+			attributes: [
+				{
+					name: 'Color',
+					option: 'Red',
+				},
+			],
 		};
 		const name = formattedVariationName( variation );
 		expect( name ).to.eql( 'Red' );

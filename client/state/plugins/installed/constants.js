@@ -1,3 +1,4 @@
+/** @format */
 /* Notices use different action constants */
 export const INSTALL_PLUGIN = 'INSTALL_PLUGIN';
 export const REMOVE_PLUGIN = 'REMOVE_PLUGIN';

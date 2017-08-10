@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -22,8 +23,7 @@ export const getExportingState = ( state, siteId ) => {
 export function shouldShowProgress( state, siteId ) {
 	const exportingState = getExportingState( state, siteId );
 
-	return ( exportingState === States.STARTING ||
-		exportingState === States.EXPORTING );
+	return exportingState === States.STARTING || exportingState === States.EXPORTING;
 }
 
 /**
@@ -56,17 +56,22 @@ export function isDateRangeValid( state, siteId, postType ) {
 	return true;
 }
 
-export const getAdvancedSettings = ( state, siteId ) => state.siteSettings.exporter.advancedSettings[ siteId ];
-export const getSelectedPostType = ( state ) => state.siteSettings.exporter.selectedPostType;
+export const getAdvancedSettings = ( state, siteId ) =>
+	state.siteSettings.exporter.advancedSettings[ siteId ];
+export const getSelectedPostType = state => state.siteSettings.exporter.selectedPostType;
 export const getPostTypeFieldOptions = ( state, siteId, postType, fieldName ) => {
 	// Choose which set of options to return for the given field name
-	const optionSet = get( {
-		author: 'authors',
-		status: 'statuses',
-		start_date: 'dates',
-		end_date: 'dates',
-		category: 'categories',
-	}, fieldName, null );
+	const optionSet = get(
+		{
+			author: 'authors',
+			status: 'statuses',
+			start_date: 'dates',
+			end_date: 'dates',
+			category: 'categories',
+		},
+		fieldName,
+		null
+	);
 
 	const advancedSettings = getAdvancedSettings( state, siteId );
 	if ( ! advancedSettings ) {

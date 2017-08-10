@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ import {
 	isGoogleApps,
 	isGuidedTransfer,
 	isPlan,
-	isSiteRedirect
+	isSiteRedirect,
 } from 'lib/products-values';
 import { localize } from 'i18n-calypso';
 
@@ -48,9 +49,10 @@ class CheckoutThankYouHeader extends React.Component {
 		if ( isPlan( this.props.primaryPurchase ) ) {
 			return this.props.translate(
 				'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
-				"It's doing somersaults in excitement!", {
+					"It's doing somersaults in excitement!",
+				{
 					args: { productName: this.props.primaryPurchase.productName },
-					components: { strong: <strong /> }
+					components: { strong: <strong /> },
 				}
 			);
 		}
@@ -58,9 +60,10 @@ class CheckoutThankYouHeader extends React.Component {
 		if ( isDomainRegistration( this.props.primaryPurchase ) ) {
 			return this.props.translate(
 				'Your new domain {{strong}}%(domainName)s{{/strong}} is ' +
-				'being set up. Your site is doing somersaults in excitement!', {
+					'being set up. Your site is doing somersaults in excitement!',
+				{
 					args: { domainName: this.props.primaryPurchase.meta },
-					components: { strong: <strong /> }
+					components: { strong: <strong /> },
 				}
 			);
 		}
@@ -68,9 +71,10 @@ class CheckoutThankYouHeader extends React.Component {
 		if ( isDomainMapping( this.props.primaryPurchase ) ) {
 			return this.props.translate(
 				'Your domain {{strong}}%(domainName)s{{/strong}} was added to your site. ' +
-				'It may take a little while to start working – see below for more information.', {
+					'It may take a little while to start working – see below for more information.',
+				{
 					args: { domainName: this.props.primaryPurchase.meta },
-					components: { strong: <strong /> }
+					components: { strong: <strong /> },
 				}
 			);
 		}
@@ -78,25 +82,30 @@ class CheckoutThankYouHeader extends React.Component {
 		if ( isGoogleApps( this.props.primaryPurchase ) ) {
 			return this.props.translate(
 				'Your domain {{strong}}%(domainName)s{{/strong}} is now set up to use G Suite. ' +
-				"It's doing somersaults in excitement!", {
+					"It's doing somersaults in excitement!",
+				{
 					args: { domainName: this.props.primaryPurchase.meta },
-					components: { strong: <strong /> }
+					components: { strong: <strong /> },
 				}
 			);
 		}
 
 		if ( isGuidedTransfer( this.props.primaryPurchase ) ) {
 			if ( typeof this.props.primaryPurchase.meta === 'string' ) {
-				return this.props.translate( 'The guided transfer for {{strong}}%(siteName)s{{/strong}} ' +
-					'will begin very soon. We will be in touch with you via email.', {
+				return this.props.translate(
+					'The guided transfer for {{strong}}%(siteName)s{{/strong}} ' +
+						'will begin very soon. We will be in touch with you via email.',
+					{
 						args: { siteName: this.props.primaryPurchase.meta },
 						components: { strong: <strong /> },
 					}
 				);
 			}
 
-			return this.props.translate( 'The guided transfer for your site will ' +
-				'begin very soon. We will be in touch with you via email.', {
+			return this.props.translate(
+				'The guided transfer for your site will ' +
+					'begin very soon. We will be in touch with you via email.',
+				{
 					components: { strong: <strong /> },
 				}
 			);
@@ -105,25 +114,29 @@ class CheckoutThankYouHeader extends React.Component {
 		if ( isSiteRedirect( this.props.primaryPurchase ) ) {
 			return this.props.translate(
 				'Your site is now redirecting to {{strong}}%(domainName)s{{/strong}}. ' +
-				"It's doing somersaults in excitement!", {
+					"It's doing somersaults in excitement!",
+				{
 					args: { domainName: this.props.primaryPurchase.meta },
-					components: { strong: <strong /> }
+					components: { strong: <strong /> },
 				}
 			);
 		}
 
 		if ( isChargeback( this.props.primaryPurchase ) ) {
-			return this.props.translate( 'Your chargeback fee is paid. Your site is doing somersaults in excitement!' );
+			return this.props.translate(
+				'Your chargeback fee is paid. Your site is doing somersaults in excitement!'
+			);
 		}
 
 		return this.props.translate(
-			"You will receive an email confirmation shortly for your purchase of {{strong}}%(productName)s{{/strong}}. What's next?", {
+			"You will receive an email confirmation shortly for your purchase of {{strong}}%(productName)s{{/strong}}. What's next?",
+			{
 				args: {
-					productName: this.props.primaryPurchase.productName
+					productName: this.props.primaryPurchase.productName,
 				},
 				components: {
-					strong: <strong />
-				}
+					strong: <strong />,
+				},
 			}
 		);
 	}
@@ -132,7 +145,7 @@ class CheckoutThankYouHeader extends React.Component {
 		const icon = this.props.hasFailedPurchases ? 'notice' : 'trophy',
 			classes = {
 				'checkout-thank-you__header': true,
-				'is-placeholder': ! this.props.isDataLoaded
+				'is-placeholder': ! this.props.isDataLoaded,
 			};
 
 		return (
@@ -160,7 +173,7 @@ class CheckoutThankYouHeader extends React.Component {
 CheckoutThankYouHeader.propTypes = {
 	isDataLoaded: React.PropTypes.bool.isRequired,
 	primaryPurchase: React.PropTypes.object,
-	hasFailedPurchases: React.PropTypes.bool
+	hasFailedPurchases: React.PropTypes.bool,
 };
 
 export default localize( CheckoutThankYouHeader );

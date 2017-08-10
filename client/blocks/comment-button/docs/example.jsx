@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,5 +24,5 @@ export default React.createClass( {
 				</Card>
 			</div>
 		);
-	}
+	},
 } );

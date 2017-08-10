@@ -1,3 +1,2 @@
-export function retarget() {
-
-}
+/** @format */
+export function retarget() {}

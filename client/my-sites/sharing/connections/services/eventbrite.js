@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,7 +27,7 @@ export class Eventbrite extends SharingService {
 		deleteKeyringConnection: () => {},
 	};
 
-	createOrUpdateConnection = () => { };
+	createOrUpdateConnection = () => {};
 
 	/**
 	 * Deletes the passed connections.
@@ -58,20 +59,23 @@ export class Eventbrite extends SharingService {
 		} );
 
 		if ( this.didKeyringConnectionSucceed( availableExternalAccounts ) ) {
-			const savingSiteSettings = saveRequests[ this.props.siteId ] && saveRequests[ this.props.siteId ].saving;
+			const savingSiteSettings =
+				saveRequests[ this.props.siteId ] && saveRequests[ this.props.siteId ].saving;
 
 			if ( ! savingSiteSettings ) {
-				this.props.saveSiteSettings(
-					this.props.siteId,
-					{ eventbrite_api_token: last( availableExternalAccounts ).keyringConnectionId }
-				);
+				this.props.saveSiteSettings( this.props.siteId, {
+					eventbrite_api_token: last( availableExternalAccounts ).keyringConnectionId,
+				} );
 			}
 
 			this.setState( { isConnecting: false } );
-			this.props.successNotice( this.props.translate( 'The %(service)s account was successfully connected.', {
-				args: { service: this.props.service.label },
-				context: 'Sharing: Publicize connection confirmation',
-			} ), { id: 'publicize' } );
+			this.props.successNotice(
+				this.props.translate( 'The %(service)s account was successfully connected.', {
+					args: { service: this.props.service.label },
+					context: 'Sharing: Publicize connection confirmation',
+				} ),
+				{ id: 'publicize' }
+			);
 		}
 	}
 }
@@ -84,7 +88,10 @@ export default connectFor(
 			saveRequests: state.siteSettings.saveRequests,
 			removableConnections: props.keyringConnections,
 			fetchConnection: props.requestKeyringConnections,
-			siteUserConnections: props.keyringConnections.map( conn => ( { ...conn, keyring_connection_ID: conn.ID } ) ),
+			siteUserConnections: props.keyringConnections.map( conn => ( {
+				...conn,
+				keyring_connection_ID: conn.ID,
+			} ) ),
 		};
 	},
 	{

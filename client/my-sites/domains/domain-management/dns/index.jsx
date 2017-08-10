@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -26,14 +27,12 @@ class Dns extends React.Component {
 		domains: React.PropTypes.object.isRequired,
 		dns: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired
+		selectedSite: React.PropTypes.oneOfType( [ React.PropTypes.object, React.PropTypes.bool ] )
+			.isRequired,
 	};
 
 	state = {
-		addNew: true
+		addNew: true,
 	};
 
 	renderDnsTemplates() {
@@ -59,10 +58,7 @@ class Dns extends React.Component {
 
 		return (
 			<Main className="dns">
-				<Header
-					onClick={ this.goBack }
-					selectedDomainName={ selectedDomainName }
-				>
+				<Header onClick={ this.goBack } selectedDomainName={ selectedDomainName }>
 					{ translate( 'DNS Records' ) }
 				</Header>
 
@@ -95,12 +91,7 @@ class Dns extends React.Component {
 			path = paths.domainManagementEdit;
 		}
 
-		page(
-			path(
-				this.props.selectedSite.slug,
-				this.props.selectedDomainName
-			)
-		);
+		page( path( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	};
 }
 

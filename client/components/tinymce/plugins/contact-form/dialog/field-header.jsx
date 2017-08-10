@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,51 +26,65 @@ export default React.createClass( {
 			if ( this.props.required ) {
 				return this.translate(
 					'Required field "%(fieldName)s" with %(numOption)d option',
-					'Required field "%(fieldName)s" with %(numOption)d options', {
+					'Required field "%(fieldName)s" with %(numOption)d options',
+					{
 						count,
 						args: {
 							fieldName: getLabel( this.props.type ),
-							numOption: count
+							numOption: count,
 						},
-						comment: 'Explains to the user the field settings. If required, type, and how many options it has.'
-					} );
+						comment:
+							'Explains to the user the field settings. If required, type, and how many options it has.',
+					}
+				);
 			}
 
 			return this.translate(
 				'Optional field "%(fieldName)s" with %(numOption)d option',
-				'Optional field "%(fieldName)s" with %(numOption)d options', {
+				'Optional field "%(fieldName)s" with %(numOption)d options',
+				{
 					count,
 					args: {
 						fieldName: getLabel( this.props.type ),
-						numOption: count
+						numOption: count,
 					},
-					comment: 'Explains to the user the field settings. If required, type, and how many options it has.'
-				} );
+					comment:
+						'Explains to the user the field settings. If required, type, and how many options it has.',
+				}
+			);
 		}
 
 		if ( this.props.required ) {
 			return this.translate( 'Required field "%(fieldName)s"', {
 				args: {
-					fieldName: getLabel( this.props.type )
+					fieldName: getLabel( this.props.type ),
 				},
-				comment: 'Explain to the user the field settings for fields other than dropdown and select list.'
+				comment:
+					'Explain to the user the field settings for fields other than dropdown and select list.',
 			} );
 		}
 
 		return this.translate( 'Optional field "%(fieldName)s"', {
 			args: {
-				fieldName: getLabel( this.props.type )
+				fieldName: getLabel( this.props.type ),
 			},
-			comment: 'Explain to the user the field settings for fields other than dropdown and select list.'
+			comment:
+				'Explain to the user the field settings for fields other than dropdown and select list.',
 		} );
 	},
 
 	render() {
 		return (
 			<div>
-				<div>{ this.props.label }</div>
-				<div><small>{ this.getLegend() }</small></div>
+				<div>
+					{ this.props.label }
+				</div>
+				<div>
+					<small>
+						{ this.getLegend() }
+					</small>
+				</div>
 			</div>
 		);
-	}
+	},
 } );

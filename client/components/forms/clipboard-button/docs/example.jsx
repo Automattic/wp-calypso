@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,15 +10,15 @@ import React from 'react';
 import ClipboardButton from '../';
 
 export default class extends React.PureComponent {
-    static displayName = 'ClipboardButtons';
+	static displayName = 'ClipboardButtons';
 
 	state = {
-		isCopied: false
+		isCopied: false,
 	};
 
 	onCopy = () => {
 		this.setState( {
-			isCopied: true
+			isCopied: true,
 		} );
 	};
 
@@ -27,7 +28,8 @@ export default class extends React.PureComponent {
 				<ClipboardButton
 					onCopy={ this.onCopy }
 					text="This text was copied via ClipboardButton"
-					style={ { float: 'none' } }>
+					style={ { float: 'none' } }
+				>
 					{ this.state.isCopied ? 'Copied!' : 'Copy to clipboard' }
 				</ClipboardButton>
 			</div>

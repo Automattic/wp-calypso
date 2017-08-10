@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -30,13 +31,13 @@ const SitePicker = React.createClass( {
 	getInitialState: function() {
 		return {
 			isAutoFocused: false,
-			isOpened: false
+			isOpened: false,
 		};
 	},
 
 	getDefaultProps: function() {
 		return {
-			onClose: noop
+			onClose: noop,
 		};
 	},
 
@@ -93,7 +94,7 @@ const SitePicker = React.createClass( {
 				groups={ true }
 			/>
 		);
-	}
+	},
 } );
 
 function mapStateToProps( state ) {
@@ -102,4 +103,6 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus } )( wrapWithClickOutside( SitePicker ) );
+export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus } )(
+	wrapWithClickOutside( SitePicker )
+);

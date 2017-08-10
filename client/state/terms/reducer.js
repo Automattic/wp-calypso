@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +14,7 @@ import {
 	TERMS_REQUEST,
 	TERMS_REQUEST_FAILURE,
 	TERMS_REQUEST_SUCCESS,
-	SERIALIZE
+	SERIALIZE,
 } from 'state/action-types';
 import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
 import TermQueryManager from 'lib/query-manager/term';
@@ -38,9 +39,9 @@ export function queryRequests( state = {}, action ) {
 			return merge( {}, state, {
 				[ action.siteId ]: {
 					[ action.taxonomy ]: {
-						[ serializedQuery ]: TERMS_REQUEST === action.type
-					}
-				}
+						[ serializedQuery ]: TERMS_REQUEST === action.type,
+					},
+				},
 			} );
 	}
 
@@ -52,65 +53,68 @@ export function queryRequests( state = {}, action ) {
  * The state reflects a mapping of serialized query key to an array of term IDs
  * for the query, if a query response was successfully received.
  */
-export const queries = createReducer( {}, {
-	[ TERMS_RECEIVE ]: ( state, action ) => {
-		const { siteId, query, taxonomy, terms, found } = action;
-		const hasManager = state[ siteId ] && state[ siteId ][ taxonomy ];
-		const manager = hasManager ? state[ siteId ][ taxonomy ] : new TermQueryManager();
-		const nextManager = manager.receive( terms, { query, found } );
+export const queries = createReducer(
+	{},
+	{
+		[ TERMS_RECEIVE ]: ( state, action ) => {
+			const { siteId, query, taxonomy, terms, found } = action;
+			const hasManager = state[ siteId ] && state[ siteId ][ taxonomy ];
+			const manager = hasManager ? state[ siteId ][ taxonomy ] : new TermQueryManager();
+			const nextManager = manager.receive( terms, { query, found } );
 
-		if ( hasManager && nextManager === state[ siteId ][ taxonomy ] ) {
-			return state;
-		}
-
-		return {
-			...state,
-			[ siteId ]: {
-				...state[ siteId ],
-				[ taxonomy ]: nextManager
+			if ( hasManager && nextManager === state[ siteId ][ taxonomy ] ) {
+				return state;
 			}
-		};
-	},
-	[ TERM_REMOVE ]: ( state, action ) => {
-		const { siteId, taxonomy, termId } = action;
-		if ( ! state[ siteId ] || ! state[ siteId ][ taxonomy ] ) {
-			return state;
-		}
 
-		const nextManager = state[ siteId ][ taxonomy ].removeItem( termId );
-		if ( nextManager === state[ siteId ][ taxonomy ] ) {
-			return state;
-		}
-
-		return {
-			...state,
-			[ siteId ]: {
-				...state[ siteId ],
-				[ taxonomy ]: nextManager
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					[ taxonomy ]: nextManager,
+				},
+			};
+		},
+		[ TERM_REMOVE ]: ( state, action ) => {
+			const { siteId, taxonomy, termId } = action;
+			if ( ! state[ siteId ] || ! state[ siteId ][ taxonomy ] ) {
+				return state;
 			}
-		};
-	},
-	[ SERIALIZE ]: ( state ) => {
-		return mapValues( state, ( taxonomies ) => {
-			return mapValues( taxonomies, ( { data, options } ) => {
-				return { data, options };
-			} );
-		} );
-	},
-	[ DESERIALIZE ]: ( state ) => {
-		if ( ! isValidStateWithSchema( state, queriesSchema ) ) {
-			return {};
-		}
 
-		return mapValues( state, ( taxonomies ) => {
-			return mapValues( taxonomies, ( { data, options } ) => {
-				return new TermQueryManager( data, options );
+			const nextManager = state[ siteId ][ taxonomy ].removeItem( termId );
+			if ( nextManager === state[ siteId ][ taxonomy ] ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					[ taxonomy ]: nextManager,
+				},
+			};
+		},
+		[ SERIALIZE ]: state => {
+			return mapValues( state, taxonomies => {
+				return mapValues( taxonomies, ( { data, options } ) => {
+					return { data, options };
+				} );
 			} );
-		} );
+		},
+		[ DESERIALIZE ]: state => {
+			if ( ! isValidStateWithSchema( state, queriesSchema ) ) {
+				return {};
+			}
+
+			return mapValues( state, taxonomies => {
+				return mapValues( taxonomies, ( { data, options } ) => {
+					return new TermQueryManager( data, options );
+				} );
+			} );
+		},
 	}
-} );
+);
 
 export default combineReducers( {
 	queries,
-	queryRequests
+	queryRequests,
 } );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,10 +17,7 @@ import {
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 } from '../../action-types';
-import {
-	DESERIALIZE,
-	SERIALIZE,
-} from 'state/action-types';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import reducer from '../reducer';
 import { generating } from '../reducer';
 
@@ -27,7 +25,7 @@ describe( 'reducer', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	useSandbox( ( sandbox ) => {
+	useSandbox( sandbox => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -108,7 +106,7 @@ describe( 'reducer', () => {
 		const previousState = deepFreeze( {
 			deleting: {
 				[ primarySiteId ]: true,
-			}
+			},
 		} );
 
 		it( 'should default to an empty object', () => {
@@ -151,14 +149,14 @@ describe( 'reducer', () => {
 									files: 2,
 									lower_age: 5500,
 									upper_age: 10000,
-								}
+								},
 							},
 							expired: 0,
 							expired_list: {},
 							fsize: 0,
-						}
-					}
-				}
+						},
+					},
+				},
 			} );
 			const state = reducer( oldState, {
 				type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
@@ -208,7 +206,7 @@ describe( 'reducer', () => {
 			const previousState = deepFreeze( {
 				items: {
 					[ primarySiteId ]: primaryStats,
-				}
+				},
 			} );
 
 			it( 'should default to an empty object', () => {
@@ -294,7 +292,7 @@ describe( 'reducer', () => {
 				const previousInvalidState = deepFreeze( {
 					items: {
 						[ primarySiteId ]: 2,
-					}
+					},
 				} );
 				const state = reducer( previousInvalidState, {
 					type: DESERIALIZE,
@@ -316,7 +314,7 @@ describe( 'reducer', () => {
 										files: 2,
 										lower_age: 5500,
 										upper_age: 10000,
-									}
+									},
 								},
 								expired: 4,
 								expired_list: {
@@ -324,12 +322,12 @@ describe( 'reducer', () => {
 										files: 4,
 										lower_age: 535937,
 										upper_age: 538273,
-									}
+									},
 								},
 								fsize: 58272,
-							}
-						}
-					}
+							},
+						},
+					},
 				} );
 				const state = reducer( previousState, {
 					type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
@@ -348,13 +346,13 @@ describe( 'reducer', () => {
 									files: 2,
 									lower_age: 5500,
 									upper_age: 10000,
-								}
+								},
 							},
 							expired: 0,
 							expired_list: {},
 							fsize: 58272,
-						}
-					}
+						},
+					},
 				} );
 			} );
 
@@ -369,7 +367,7 @@ describe( 'reducer', () => {
 										files: 2,
 										lower_age: 5500,
 										upper_age: 10000,
-									}
+									},
 								},
 								expired: 4,
 								expired_list: {
@@ -377,12 +375,12 @@ describe( 'reducer', () => {
 										files: 4,
 										lower_age: 535937,
 										upper_age: 538273,
-									}
+									},
 								},
 								fsize: 58272,
-							}
-						}
-					}
+							},
+						},
+					},
 				} );
 				const state = reducer( previousState, {
 					type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
@@ -403,11 +401,11 @@ describe( 'reducer', () => {
 									files: 4,
 									lower_age: 535937,
 									upper_age: 538273,
-								}
+								},
 							},
 							fsize: 58272,
-						}
-					}
+						},
+					},
 				} );
 			} );
 
@@ -422,7 +420,7 @@ describe( 'reducer', () => {
 										files: 2,
 										lower_age: 5500,
 										upper_age: 10000,
-									}
+									},
 								},
 								expired: 4,
 								expired_list: {
@@ -430,12 +428,12 @@ describe( 'reducer', () => {
 										files: 4,
 										lower_age: 535937,
 										upper_age: 538273,
-									}
+									},
 								},
 								fsize: 58272,
-							}
-						}
-					}
+							},
+						},
+					},
 				} );
 				const state = reducer( previousState, {
 					type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
@@ -454,13 +452,13 @@ describe( 'reducer', () => {
 									files: 2,
 									lower_age: 5500,
 									upper_age: 10000,
-								}
+								},
 							},
 							expired: 0,
 							expired_list: {},
 							fsize: 58272,
-						}
-					}
+						},
+					},
 				} );
 			} );
 
@@ -475,7 +473,7 @@ describe( 'reducer', () => {
 										files: 2,
 										lower_age: 5500,
 										upper_age: 10000,
-									}
+									},
 								},
 								expired: 4,
 								expired_list: {
@@ -483,12 +481,12 @@ describe( 'reducer', () => {
 										files: 4,
 										lower_age: 535937,
 										upper_age: 538273,
-									}
+									},
 								},
 								fsize: 58272,
-							}
-						}
-					}
+							},
+						},
+					},
 				} );
 				const state = reducer( previousState, {
 					type: WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
@@ -509,11 +507,11 @@ describe( 'reducer', () => {
 									files: 4,
 									lower_age: 535937,
 									upper_age: 538273,
-								}
+								},
 							},
 							fsize: 58272,
-						}
-					}
+						},
+					},
 				} );
 			} );
 		} );

@@ -1,10 +1,10 @@
+/** @format */
 /**
  * External dependencies
  */
 var React = require( 'react' );
 
 module.exports = React.createClass( {
-
 	displayName: 'Rating',
 
 	getDefaultProps: function() {
@@ -13,7 +13,7 @@ module.exports = React.createClass( {
 
 	propTypes: {
 		rating: React.PropTypes.number,
-		size: React.PropTypes.number
+		size: React.PropTypes.number,
 	},
 
 	getStars: function() {
@@ -21,30 +21,20 @@ module.exports = React.createClass( {
 			stars = [],
 			ratingOverTen = Math.ceil( this.props.rating / 10 ),
 			numberOfStars = Math.floor( ratingOverTen / 2 ),
-			hasHalfStar = ( ( ratingOverTen / 2 ) % 1 >= 0.5 ),
+			hasHalfStar = ratingOverTen / 2 % 1 >= 0.5,
 			starStyles = {
-				fontSize: this.props.size
-					? this.props.size + 'px'
-					: 'inherit'
+				fontSize: this.props.size ? this.props.size + 'px' : 'inherit',
 			};
 
 		for ( i = 0; i < numberOfStars; i++ ) {
 			stars.push(
-				<span
-					key={ 'star_' + i }
-					className="noticon noticon-rating-full"
-					style={ starStyles }
-				/>
+				<span key={ 'star_' + i } className="noticon noticon-rating-full" style={ starStyles } />
 			);
 		}
 
 		if ( hasHalfStar ) {
 			stars.push(
-				<span
-					key="halfstar"
-					className="noticon noticon-rating-half"
-					style={ starStyles }
-				/>
+				<span key="halfstar" className="noticon noticon-rating-half" style={ starStyles } />
 			);
 		}
 
@@ -63,9 +53,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var ratingStyles = {
-			width: this.props.size
-				? ( this.props.size * 5 ) + 'px'
-				: '100%'
+			width: this.props.size ? this.props.size * 5 + 'px' : '100%',
 		};
 
 		return (
@@ -73,5 +61,5 @@ module.exports = React.createClass( {
 				{ this.getStars() }
 			</div>
 		);
-	}
+	},
 } );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns all unsaved user settings as one object
  *

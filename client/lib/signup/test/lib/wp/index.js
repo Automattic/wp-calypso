@@ -1,3 +1,4 @@
+/** @format */
 /**
  * lib/wp stub
  */
@@ -9,5 +10,5 @@ module.exports = {
 
 	isTokenLoaded: function() {
 		return this._token !== undefined;
-	}
+	},
 };

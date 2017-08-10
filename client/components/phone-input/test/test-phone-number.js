@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ import {
 	toIcannFormat,
 	DIGIT_PLACEHOLDER,
 	applyTemplate,
-	toE164
+	toE164,
 } from '../phone-number';
 
 import { countries } from '../data';
@@ -24,14 +25,17 @@ describe( 'metadata:', () => {
 	describe( 'data assertions:', () => {
 		const countriesShareDialCode = pickBy(
 			groupBy( Object.values( countries ), 'dialCode' ),
-			val => val.length > 1 );
+			val => val.length > 1
+		);
 
 		describe( 'countries sharing dial code should have priority data', () => {
 			forIn( countriesShareDialCode, ( countriesWithDialCode, dialCode ) => {
 				describe( 'Dialcode: ' + dialCode, () => {
 					countriesWithDialCode.forEach( country =>
 						it( country.isoCode, () =>
-							ok( country.priority, `"${ country.isoCode }" has no priority` ) ) );
+							ok( country.priority, `"${ country.isoCode }" has no priority` )
+						)
+					);
 				} );
 			} );
 		} );
@@ -45,14 +49,23 @@ describe( 'metadata:', () => {
 
 	describe( 'makeTemplate( pattern )', () => {
 		it( 'should be able to make templates', () => {
-			equal( makeTemplate( '4259999999', countries.US.patterns ), '(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ) );
-			equal( makeTemplate( '4259999', countries.US.patterns ), '...-....'.replace( /\./g, DIGIT_PLACEHOLDER ) );
+			equal(
+				makeTemplate( '4259999999', countries.US.patterns ),
+				'(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER )
+			);
+			equal(
+				makeTemplate( '4259999', countries.US.patterns ),
+				'...-....'.replace( /\./g, DIGIT_PLACEHOLDER )
+			);
 		} );
 	} );
 
 	describe( 'applyTemplate( number, template, positionTracking )', () => {
 		it( 'should be able to apply basic templates', () => {
-			equal( applyTemplate( '4259999999', '(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ) ), '(425) 999-9999' );
+			equal(
+				applyTemplate( '4259999999', '(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ) ),
+				'(425) 999-9999'
+			);
 		} );
 
 		it( 'should be able to partially apply templates', () => {
@@ -62,15 +75,27 @@ describe( 'metadata:', () => {
 		it( 'should be able to track the position of the cursor', () => {
 			// 425|9999999 -> pos: 3
 			const positionTracking = { pos: 3 };
-			applyTemplate( '4259999999', '(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ), positionTracking );
+			applyTemplate(
+				'4259999999',
+				'(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ),
+				positionTracking
+			);
 			equal( positionTracking.pos, 6 );
 
 			positionTracking.pos = 1;
-			applyTemplate( '4259999999', '(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ), positionTracking );
+			applyTemplate(
+				'4259999999',
+				'(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ),
+				positionTracking
+			);
 			equal( positionTracking.pos, 2 );
 
 			positionTracking.pos = 4;
-			applyTemplate( '4259999999', '(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ), positionTracking );
+			applyTemplate(
+				'4259999999',
+				'(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ),
+				positionTracking
+			);
 			equal( positionTracking.pos, 7 );
 		} );
 	} );
@@ -232,7 +257,6 @@ describe( 'metadata:', () => {
 		} );
 	} );
 
-
 	describe( 'toIcannFormat', () => {
 		it( 'should be able to handle NANPA', () => {
 			equal( toIcannFormat( '14256559999', countries.US ), '+1.4256559999' );
@@ -248,4 +272,3 @@ describe( 'metadata:', () => {
 		} );
 	} );
 } );
-

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,7 @@ const anExampleKey = 'day:2014-08-01';
 
 // helper functions
 function createLocalRecords( statList, qty ) {
-	for ( let i = 0; i < qty; i ++ ) {
+	for ( let i = 0; i < qty; i++ ) {
 		statList.set( anExampleKey + '||' + i, {} );
 	}
 }
@@ -130,8 +131,16 @@ describe( 'LocalList', function() {
 			statList.clear();
 			createLocalRecords( statList, 12 );
 			assert.lengthOf( statList.getData(), 10, 'localData should have 10 records' );
-			assert.equal( statList.getData()[ 9 ].key, anExampleKey + '||' + 11, 'the last record should be the last created' );
-			assert.equal( statList.getData()[ 0 ].key, anExampleKey + '||' + 2, 'the oldest record should be correct' );
+			assert.equal(
+				statList.getData()[ 9 ].key,
+				anExampleKey + '||' + 11,
+				'the last record should be the last created'
+			);
+			assert.equal(
+				statList.getData()[ 0 ].key,
+				anExampleKey + '||' + 2,
+				'the oldest record should be correct'
+			);
 		} );
 
 		it( 'should allow default limit to be overidden', function() {
@@ -139,12 +148,16 @@ describe( 'LocalList', function() {
 				statList2 = new LocalList( { localStoreKey: 'TestLocalListKey2', limit: limit } );
 			assert.equal( statList2.limit, limit );
 
-			for ( let i = 0; i < limit; i ++ ) {
+			for ( let i = 0; i < limit; i++ ) {
 				const key = anExampleKey + '||' + i;
 				statList2.set( key, {} );
 			}
 
-			assert.equal( statList2.getData().length, limit, 'localData should have ' + limit + ' records' );
+			assert.equal(
+				statList2.getData().length,
+				limit,
+				'localData should have ' + limit + ' records'
+			);
 		} );
 	} );
 

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -7,5 +8,5 @@ import lists from './lists/reducer';
 
 export default combineReducers( {
 	posts,
-	lists
+	lists,
 } );

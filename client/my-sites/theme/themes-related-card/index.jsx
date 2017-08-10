@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -11,14 +12,13 @@ import Card from 'components/card';
 import i18n from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
 import { getThemeDetailsUrl } from 'state/themes/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const THEME_THUMBNAIL_WIDTH = 660;
 
 const ThemesRelatedCard = React.createClass( {
-
 	propTypes: {
-		currentTheme: React.PropTypes.string.isRequired
+		currentTheme: React.PropTypes.string.isRequired,
 	},
 
 	getRelatedThemes() {
@@ -32,7 +32,7 @@ const ThemesRelatedCard = React.createClass( {
 			'edin',
 			'sela',
 			'pique',
-			'harmonic'
+			'harmonic',
 		] );
 
 		//Remove current theme so we will not show it as related
@@ -50,14 +50,14 @@ const ThemesRelatedCard = React.createClass( {
 	render() {
 		const themes = this.getRelatedThemes().map( slug => ( {
 			id: slug,
-			screenshot: `https://i1.wp.com/s0.wp.com/wp-content/themes/pub/${ slug }/screenshot.png`
+			screenshot: `https://i1.wp.com/s0.wp.com/wp-content/themes/pub/${ slug }/screenshot.png`,
 		} ) );
 
 		return (
 			<div>
 				<SectionHeader label={ i18n.translate( 'You might also like' ) } />
 				<ul className="themes-related-card__themes">
-					{ themes.map( theme => (
+					{ themes.map( theme =>
 						<li key={ theme.id }>
 							<Card className="themes-related-card__card">
 								<a href={ this.props.getDetailsUrl( theme.id ) }>
@@ -65,15 +65,13 @@ const ThemesRelatedCard = React.createClass( {
 								</a>
 							</Card>
 						</li>
-					) ) }
+					) }
 				</ul>
 			</div>
 		);
-	}
+	},
 } );
 
-export default connect(
-	state => ( {
-		getDetailsUrl: themeId => getThemeDetailsUrl( state, themeId, getSelectedSiteId( state ) )
-	} )
-)( ThemesRelatedCard );
+export default connect( state => ( {
+	getDetailsUrl: themeId => getThemeDetailsUrl( state, themeId, getSelectedSiteId( state ) ),
+} ) )( ThemesRelatedCard );

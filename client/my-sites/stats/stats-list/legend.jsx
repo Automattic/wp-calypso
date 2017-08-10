@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ export default React.createClass( {
 
 	propTypes: {
 		value: PropTypes.string,
-		label: PropTypes.string
+		label: PropTypes.string,
 	},
 
 	render() {
@@ -26,7 +27,9 @@ export default React.createClass( {
 		if ( value ) {
 			valueSpan = (
 				<span className="module-content-list-item-right">
-					<span className="module-content-list-item-value">{ value }</span>
+					<span className="module-content-list-item-value">
+						{ value }
+					</span>
 				</span>
 			);
 		}
@@ -36,10 +39,12 @@ export default React.createClass( {
 				<li className="module-content-list-item">
 					<span className="module-content-list-item-wrapper">
 						{ valueSpan }
-						<span className="module-content-list-item-label">{ label }</span>
+						<span className="module-content-list-item-label">
+							{ label }
+						</span>
 					</span>
 				</li>
 			</ul>
 		);
-	}
+	},
 } );

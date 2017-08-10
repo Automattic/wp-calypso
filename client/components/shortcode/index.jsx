@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -24,7 +25,7 @@ export default React.createClass( {
 		siteId: PropTypes.number.isRequired,
 		children: PropTypes.string.isRequired,
 		filterRenderResult: PropTypes.func,
-		className: PropTypes.string
+		className: PropTypes.string,
 	},
 
 	componentDidMount() {
@@ -79,5 +80,5 @@ export default React.createClass( {
 				/>
 			</ShortcodeData>
 		);
-	}
+	},
 } );

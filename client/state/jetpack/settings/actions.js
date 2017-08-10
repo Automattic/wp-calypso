@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -11,7 +12,7 @@ import {
 	JETPACK_SETTINGS_REQUEST_SUCCESS,
 	JETPACK_SETTINGS_UPDATE,
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
-	JETPACK_SETTINGS_UPDATE_FAILURE
+	JETPACK_SETTINGS_UPDATE_FAILURE,
 } from 'state/action-types';
 import wp from 'lib/wp';
 import { normalizeSettings, sanitizeSettings, filterSettingsByActiveModules } from './utils';
@@ -22,30 +23,33 @@ import { normalizeSettings, sanitizeSettings, filterSettingsByActiveModules } fr
  * @param  {Int}      siteId      ID of the site.
  * @return {Function}             Action thunk to fetch the Jetpack settings when called.
  */
-export const fetchSettings = ( siteId ) => {
-	return ( dispatch ) => {
+export const fetchSettings = siteId => {
+	return dispatch => {
 		dispatch( {
 			type: JETPACK_SETTINGS_REQUEST,
-			siteId
+			siteId,
 		} );
 
-		return wp.undocumented().fetchJetpackSettings( siteId )
-			.then( ( response ) => {
+		return wp
+			.undocumented()
+			.fetchJetpackSettings( siteId )
+			.then( response => {
 				const settings = normalizeSettings( response.data ) || {};
 				dispatch( {
 					type: JETPACK_SETTINGS_RECEIVE,
 					siteId,
-					settings
+					settings,
 				} );
 				dispatch( {
 					type: JETPACK_SETTINGS_REQUEST_SUCCESS,
-					siteId
+					siteId,
 				} );
-			} ).catch( error => {
+			} )
+			.catch( error => {
 				dispatch( {
 					type: JETPACK_SETTINGS_REQUEST_FAILURE,
 					siteId,
-					error: error.message
+					error: error.message,
 				} );
 			} );
 	};
@@ -59,26 +63,32 @@ export const fetchSettings = ( siteId ) => {
  * @return {Function}             Action thunk to update the Jetpack settings when called.
  */
 export const updateSettings = ( siteId, settings ) => {
-	return ( dispatch ) => {
+	return dispatch => {
 		dispatch( {
 			type: JETPACK_SETTINGS_UPDATE,
 			siteId,
-			settings
+			settings,
 		} );
 
-		return wp.undocumented().updateJetpackSettings( siteId, filterSettingsByActiveModules( sanitizeSettings( settings ) ) )
+		return wp
+			.undocumented()
+			.updateJetpackSettings(
+				siteId,
+				filterSettingsByActiveModules( sanitizeSettings( settings ) )
+			)
 			.then( () => {
 				dispatch( {
 					type: JETPACK_SETTINGS_UPDATE_SUCCESS,
 					siteId,
-					settings
+					settings,
 				} );
-			} ).catch( ( error ) => {
+			} )
+			.catch( error => {
 				dispatch( {
 					type: JETPACK_SETTINGS_UPDATE_FAILURE,
 					siteId,
 					settings,
-					error: error.message
+					error: error.message,
 				} );
 			} );
 	};
@@ -90,25 +100,28 @@ export const updateSettings = ( siteId, settings ) => {
  * @param  {Int}      siteId      ID of the site.
  * @return {Function}             Action thunk to regenerate the email when called.
  */
-export const regeneratePostByEmail = ( siteId ) => {
-	return ( dispatch ) => {
+export const regeneratePostByEmail = siteId => {
+	return dispatch => {
 		dispatch( {
 			type: JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL,
 			siteId,
 		} );
 
-		return wp.undocumented().updateJetpackSettings( siteId, { post_by_email_address: 'regenerate' } )
+		return wp
+			.undocumented()
+			.updateJetpackSettings( siteId, { post_by_email_address: 'regenerate' } )
 			.then( ( { data } ) => {
 				dispatch( {
 					type: JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS,
 					siteId,
-					email: data.post_by_email_address
+					email: data.post_by_email_address,
 				} );
-			} ).catch( ( error ) => {
+			} )
+			.catch( error => {
 				dispatch( {
 					type: JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_FAILURE,
 					siteId,
-					error: error.message
+					error: error.message,
 				} );
 			} );
 	};

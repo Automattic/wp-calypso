@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,7 +23,7 @@ class EditorDrawerWell extends Component {
 		onClick: PropTypes.func,
 		customDropZone: PropTypes.node,
 		onRemove: PropTypes.func,
-		translate: PropTypes.func
+		translate: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -35,51 +36,35 @@ class EditorDrawerWell extends Component {
 
 	render() {
 		const { empty, onRemove, onClick, disabled, icon, label, children, isHidden } = this.props;
-		const classes = classNames(
-			'editor-drawer-well',
-			{
-				'is-empty': empty,
-				'is-hidden': isHidden,
-			},
-		);
+		const classes = classNames( 'editor-drawer-well', {
+			'is-empty': empty,
+			'is-hidden': isHidden,
+		} );
 
 		return (
 			<div className={ classes }>
 				<div className="editor-drawer-well__content">
 					{ children }
-					{ onRemove && (
-						<Button
-							onClick={ onRemove }
-							compact
-							className="editor-drawer-well__remove">
+					{ onRemove &&
+						<Button onClick={ onRemove } compact className="editor-drawer-well__remove">
 							<span className="screen-reader-text">
 								{ this.props.translate( 'Remove' ) }
 							</span>
-							<Gridicon
-								icon="cross"
-								size={ 24 }
-								className="editor-drawer-well__remove-icon"
-							/>
-						</Button>
-					) }
+							<Gridicon icon="cross" size={ 24 } className="editor-drawer-well__remove-icon" />
+						</Button> }
 				</div>
-				{ empty && (
+				{ empty &&
 					<button
 						type="button"
 						onClick={ onClick }
 						disabled={ disabled }
-						className="editor-drawer-well__placeholder">
-						{ icon && (
-							<Gridicon
-								icon={ icon }
-								className="editor-drawer-well__icon"
-							/>
-						) }
+						className="editor-drawer-well__placeholder"
+					>
+						{ icon && <Gridicon icon={ icon } className="editor-drawer-well__icon" /> }
 						<span className="editor-drawer-well__button button is-secondary is-compact">
 							{ label }
 						</span>
-					</button>
-				) }
+					</button> }
 				{ this.props.customDropZone }
 			</div>
 		);

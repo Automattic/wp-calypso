@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,11 +11,10 @@ export function getLastApiError( rootState, siteId ) {
 
 export function getLastApiErrorCode( rootState, siteId ) {
 	const err = getLastApiError( rootState, siteId );
-	return ( err ? err.code : undefined );
+	return err ? err.code : undefined;
 }
 
 export function getLastApiErrorMessage( rootState, siteId ) {
 	const err = getLastApiError( rootState, siteId );
-	return ( err ? err.message : undefined );
+	return err ? err.message : undefined;
 }
-

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -47,9 +48,7 @@ class PressableStoreStep extends Component {
 
 	onEmailChange = ( { target: { value: email } } ) => {
 		const isValid = EmailValidator.validate( email );
-		const error = this.state.error && isValid
-			? null
-			: this.state.error;
+		const error = this.state.error && isValid ? null : this.state.error;
 		this.setState( {
 			email,
 			isValid,
@@ -57,7 +56,7 @@ class PressableStoreStep extends Component {
 		} );
 	};
 
-	onSubmit = ( event ) => {
+	onSubmit = event => {
 		event.preventDefault();
 
 		if ( ! this.state.isValid ) {
@@ -69,10 +68,14 @@ class PressableStoreStep extends Component {
 
 		this.props.partnerClickRecorder();
 
-		window.open( `https://my.pressable.com/signup/ecommerce-five-sites?email=${ encodeURIComponent( this.state.email ) }&utm_source=wordpresscom&utm_medium=signupref&utm_campaign=wpcomecomm3` );
+		window.open(
+			`https://my.pressable.com/signup/ecommerce-five-sites?email=${ encodeURIComponent(
+				this.state.email
+			) }&utm_source=wordpresscom&utm_medium=signupref&utm_campaign=wpcomecomm3`
+		);
 	};
 
-	onEmailInputRef = ( input ) => {
+	onEmailInputRef = input => {
 		this.input = input;
 	};
 
@@ -86,13 +89,15 @@ class PressableStoreStep extends Component {
 
 					<FormSectionHeading className="pressable-store__heading">
 						{ translate( 'Get your store for as low as %(price)s / month', {
-							args: { price: '$25' }
+							args: { price: '$25' },
 						} ) }
 					</FormSectionHeading>
 					<p className="pressable-store__copy">
-						{ translate( 'We\'ve partnered with Pressable, a top-notch WordPress hosting provider,' +
-							' and WooCommerce, the go-to eCommerce solution for WordPress, to make setting up ' +
-							'your store a snap.' ) }
+						{ translate(
+							"We've partnered with Pressable, a top-notch WordPress hosting provider," +
+								' and WooCommerce, the go-to eCommerce solution for WordPress, to make setting up ' +
+								'your store a snap.'
+						) }
 					</p>
 
 					<LoggedOutFormFooter>
@@ -115,7 +120,8 @@ class PressableStoreStep extends Component {
 								<Gridicon icon="external" size={ 12 } />
 							</FormButton>
 						</div>
-						{ this.state.error && <FormInputValidation isError={ true } text={ this.state.error } /> }
+						{ this.state.error &&
+							<FormInputValidation isError={ true } text={ this.state.error } /> }
 					</LoggedOutFormFooter>
 				</LoggedOutForm>
 				<LoggedOutFormLinks>
@@ -124,10 +130,9 @@ class PressableStoreStep extends Component {
 						target="__blank"
 						href="https://pressable.com/legal/privacy-policy/"
 					>
-						{ translate(
-							'Pressable Privacy Policy',
-							{ comment: '“Pressable” is the name of a WordPress.org hosting provider' }
-						) }
+						{ translate( 'Pressable Privacy Policy', {
+							comment: '“Pressable” is the name of a WordPress.org hosting provider',
+						} ) }
 						<Gridicon icon="external" size={ 12 } />
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>
@@ -154,12 +159,14 @@ class PressableStoreStep extends Component {
 
 PressableStoreStep.propTypes = {
 	onBackClick: PropTypes.func.isRequired,
-	setRef: PropTypes.func
+	setRef: PropTypes.func,
 };
 
 const mapDispatchToProps = dispatch => ( {
 	partnerClickRecorder: () =>
-		dispatch( recordTracksEvent( 'calypso_triforce_partner_redirect', { partner_name: 'Pressable' } ) )
+		dispatch(
+			recordTracksEvent( 'calypso_triforce_partner_redirect', { partner_name: 'Pressable' } )
+		),
 } );
 
 export default connect( null, mapDispatchToProps )( localize( PressableStoreStep ) );

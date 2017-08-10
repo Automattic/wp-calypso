@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -42,20 +43,20 @@ QuerySites.propTypes = {
 	requestingSites: PropTypes.bool,
 	requestingSite: PropTypes.bool,
 	requestSites: PropTypes.func,
-	requestSite: PropTypes.func
+	requestSite: PropTypes.func,
 };
 
 QuerySites.defaultProps = {
 	allSites: false,
 	requestSites: () => {},
-	requestSite: () => {}
+	requestSite: () => {},
 };
 
 export default connect(
 	( state, { siteId } ) => {
 		return {
 			requestingSites: isRequestingSites( state ),
-			requestingSite: isRequestingSite( state, siteId )
+			requestingSite: isRequestingSite( state, siteId ),
 		};
 	},
 	{ requestSites, requestSite }

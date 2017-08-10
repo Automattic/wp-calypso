@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,16 +24,16 @@ export const ValidationErrors = keyMirror( {
 export const ThumbnailSizeDimensions = {
 	thumbnail: {
 		width: 150,
-		height: 150
+		height: 150,
 	},
 	medium: {
 		width: 300,
-		height: 300
+		height: 300,
 	},
 	large: {
 		width: 1024,
-		height: 1024
-	}
+		height: 1024,
+	},
 };
 
 export const VideoPressFileTypes = [
@@ -44,7 +45,7 @@ export const VideoPressFileTypes = [
 	'avi',
 	'mpg',
 	'3gp',
-	'3g2'
+	'3g2',
 ];
 
 export const GalleryColumnedTypes = [ 'default', 'circle', 'square' ];
@@ -55,7 +56,7 @@ export const GalleryDefaultAttrs = {
 	columns: 3,
 	orderBy: 'menu_order',
 	link: '',
-	size: 'thumbnail'
+	size: 'thumbnail',
 };
 
 /**

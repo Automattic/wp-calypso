@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -47,6 +48,6 @@ export function countDiffWords( diffChanges ) {
 		{
 			added: 0,
 			removed: 0,
-		},
+		}
 	);
 }

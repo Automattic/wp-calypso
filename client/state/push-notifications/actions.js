@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -19,13 +20,7 @@ import {
 	PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
 } from 'state/action-types';
 
-import {
-	isApiReady,
-	getDeviceId,
-	getStatus,
-	isBlocked,
-	isEnabled,
-} from './selectors';
+import { isApiReady, getDeviceId, getStatus, isBlocked, isEnabled } from './selectors';
 import {
 	isOpera,
 	isPushNotificationsDenied,
@@ -34,13 +29,8 @@ import {
 	getChromeVersion,
 	getOperaVersion,
 } from './utils';
-import {
-	registerServerWorker,
-} from 'lib/service-worker';
-import {
-	recordTracksEvent,
-	bumpStat
-} from 'state/analytics/actions';
+import { registerServerWorker } from 'lib/service-worker';
+import { recordTracksEvent, bumpStat } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:push-notifications' );
 const serviceWorkerOptions = {
@@ -69,8 +59,11 @@ export function init() {
 		if ( isUnsupportedChromeVersion() ) {
 			debug( 'Push Notifications are not supported in Chrome 49 and below' );
 			const chromeVersion = getChromeVersion();
-			dispatch( bumpStat( 'calypso_push_notif_unsup_chrome',
-				( chromeVersion > 39 && chromeVersion < 50 ) ? chromeVersion : 'other' )
+			dispatch(
+				bumpStat(
+					'calypso_push_notif_unsup_chrome',
+					chromeVersion > 39 && chromeVersion < 50 ? chromeVersion : 'other'
+				)
 			);
 			dispatch( apiNotReady() );
 			return;
@@ -81,8 +74,11 @@ export function init() {
 		if ( isOpera() ) {
 			debug( 'Push Notifications are not supported in Opera' );
 			const operaVersion = getOperaVersion();
-			dispatch( bumpStat( 'calypso_push_notif_unsup_opera',
-				( operaVersion > 15 && operaVersion < 100 ) ? operaVersion : 'other' )
+			dispatch(
+				bumpStat(
+					'calypso_push_notif_unsup_opera',
+					operaVersion > 15 && operaVersion < 100 ? operaVersion : 'other'
+				)
 			);
 			dispatch( apiNotReady() );
 			return;
@@ -99,14 +95,14 @@ export function init() {
 
 export function apiNotReady() {
 	return {
-		type: PUSH_NOTIFICATIONS_API_NOT_READY
+		type: PUSH_NOTIFICATIONS_API_NOT_READY,
 	};
 }
 
 export function apiReady() {
 	return ( dispatch, getState ) => {
 		dispatch( {
-			type: PUSH_NOTIFICATIONS_API_READY
+			type: PUSH_NOTIFICATIONS_API_READY,
 		} );
 		const state = getState();
 
@@ -136,16 +132,17 @@ export function fetchAndLoadServiceWorker() {
 			.catch( err => {
 				debug( 'Error loading service worker!', err );
 				dispatch( apiNotReady() );
-			} )
-		;
+			} );
 	};
 }
 
 export function deactivateSubscription() {
 	return dispatch => {
-		navigator.serviceWorker.getRegistration( serviceWorkerOptions )
-			.then( ( serviceWorkerRegistration ) => {
-				serviceWorkerRegistration.pushManager.getSubscription()
+		navigator.serviceWorker
+			.getRegistration( serviceWorkerOptions )
+			.then( serviceWorkerRegistration => {
+				serviceWorkerRegistration.pushManager
+					.getSubscription()
 					.then( pushSubscription => {
 						dispatch( unregisterDevice() );
 
@@ -154,22 +151,20 @@ export function deactivateSubscription() {
 							return;
 						}
 
-						pushSubscription.unsubscribe()
+						pushSubscription
+							.unsubscribe()
 							.then( () => debug( 'Push subscription unsubscribed' ) )
-							.catch( err => debug( 'Error while unsubscribing', err ) )
-						;
+							.catch( err => debug( 'Error while unsubscribing', err ) );
 					} )
 					.catch( err => {
 						dispatch( unregisterDevice() );
 						debug( 'Error getting subscription to deactivate', err );
-					} )
-				;
+					} );
 			} )
 			.catch( err => {
 				dispatch( unregisterDevice() );
 				debug( 'Error getting ServiceWorkerRegistration to deactivate', err );
-			} )
-		;
+			} );
 	};
 }
 
@@ -178,7 +173,7 @@ export function receivePermissionState( permission ) {
 		if ( permission === 'granted' ) {
 			debug( 'Push notifications authorized' );
 			dispatch( {
-				type: PUSH_NOTIFICATIONS_AUTHORIZE
+				type: PUSH_NOTIFICATIONS_AUTHORIZE,
 			} );
 			dispatch( fetchPushManagerSubscription() );
 			return;
@@ -199,27 +194,26 @@ export function receivePermissionState( permission ) {
 
 export function mustPrompt() {
 	return {
-		type: PUSH_NOTIFICATIONS_MUST_PROMPT
+		type: PUSH_NOTIFICATIONS_MUST_PROMPT,
 	};
 }
 export function fetchPushManagerSubscription() {
 	return dispatch => {
 		window.navigator.serviceWorker.ready
-			.then( ( serviceWorkerRegistration ) => {
-				serviceWorkerRegistration.pushManager.getSubscription()
+			.then( serviceWorkerRegistration => {
+				serviceWorkerRegistration.pushManager
+					.getSubscription()
 					.then( pushSubscription => {
 						dispatch( sendSubscriptionToWPCOM( pushSubscription ) );
 					} )
-					.catch( err => debug( 'Error getting subscription', err ) )
-				;
+					.catch( err => debug( 'Error getting subscription', err ) );
 			} )
-			.catch( err => debug( 'Error fetching push manager subscription', err )	)
-		;
+			.catch( err => debug( 'Error fetching push manager subscription', err ) );
 	};
 }
 
 export function sendSubscriptionToWPCOM( pushSubscription ) {
-	return ( dispatch ) => {
+	return dispatch => {
 		if ( ! pushSubscription ) {
 			debug( 'No subscription to send to WPCOM' );
 			return;
@@ -229,13 +223,14 @@ export function sendSubscriptionToWPCOM( pushSubscription ) {
 		return wpcom
 			.undocumented()
 			.registerDevice( JSON.stringify( pushSubscription ), 'browser', 'Browser' )
-			.then( ( data, headers ) => dispatch( {
-				type: PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
-				data,
-				headers
-			} ) )
-			.catch( err => debug( 'Couldn\'t register device', err ) )
-		;
+			.then( ( data, headers ) =>
+				dispatch( {
+					type: PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
+					data,
+					headers,
+				} )
+			)
+			.catch( err => debug( "Couldn't register device", err ) );
 	};
 }
 
@@ -247,16 +242,15 @@ export function activateSubscription() {
 		}
 		window.navigator.serviceWorker.ready
 			.then( serviceWorkerRegistration => {
-				serviceWorkerRegistration.pushManager.subscribe( { userVisibleOnly: true } )
+				serviceWorkerRegistration.pushManager
+					.subscribe( { userVisibleOnly: true } )
 					.then( () => dispatch( checkPermissionsState() ) )
 					.catch( err => {
-						debug( 'Couldn\'t get subscription', err );
+						debug( "Couldn't get subscription", err );
 						dispatch( checkPermissionsState() );
-					} )
-				;
+					} );
 			} )
-			.catch( err => debug( 'Error activating subscription', err ) )
-		;
+			.catch( err => debug( 'Error activating subscription', err ) );
 	};
 }
 
@@ -264,17 +258,19 @@ export function unregisterDevice() {
 	return ( dispatch, getState ) => {
 		const deviceId = getDeviceId( getState() );
 		if ( ! deviceId ) {
-			debug( 'Couldn\'t unregister device. Unknown device ID' );
+			debug( "Couldn't unregister device. Unknown device ID" );
 			dispatch( receiveUnregisterDevice() );
 			return;
 		}
-		return wpcom.undocumented().unregisterDevice( deviceId )
-			.then( ( data ) => {
+		return wpcom
+			.undocumented()
+			.unregisterDevice( deviceId )
+			.then( data => {
 				debug( 'Successfully unregistered device', data );
 				dispatch( receiveUnregisterDevice( data ) );
 			} )
 			.catch( err => {
-				debug( 'Couldn\'t unregister device', err );
+				debug( "Couldn't unregister device", err );
 				dispatch( receiveUnregisterDevice() );
 			} );
 	};
@@ -283,15 +279,16 @@ export function unregisterDevice() {
 export function receiveUnregisterDevice( data ) {
 	return {
 		type: PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
-		data: data ? data : {}
+		data: data ? data : {},
 	};
 }
 
 export function checkPermissionsState() {
 	return dispatch => {
 		window.navigator.serviceWorker.ready
-			.then( ( serviceWorkerRegistration ) => {
-				serviceWorkerRegistration.pushManager.permissionState( { userVisibleOnly: true } )
+			.then( serviceWorkerRegistration => {
+				serviceWorkerRegistration.pushManager
+					.permissionState( { userVisibleOnly: true } )
 					.then( permissionState => {
 						debug( 'Received push messaging state', permissionState );
 						dispatch( receivePermissionState( permissionState ) );
@@ -299,18 +296,16 @@ export function checkPermissionsState() {
 					.catch( err => {
 						debug( 'Error checking permission state', err );
 						dispatch( receivePermissionState( 'denied' ) );
-					} )
-				;
+					} );
 			} )
-			.catch( err => debug( 'Error checking permission state -- not ready', err )	)
-		;
+			.catch( err => debug( 'Error checking permission state -- not ready', err ) );
 	};
 }
 
 export function block() {
 	return dispatch => {
 		dispatch( {
-			type: PUSH_NOTIFICATIONS_BLOCK
+			type: PUSH_NOTIFICATIONS_BLOCK,
 		} );
 		dispatch( deactivateSubscription() );
 		dispatch( recordTracksEvent( 'calypso_web_push_notifications_blocked' ) );
@@ -323,7 +318,7 @@ export function toggleEnabled() {
 		const doing = enabling ? 'enabling' : 'disabling';
 		debug( doing );
 		dispatch( {
-			type: PUSH_NOTIFICATIONS_TOGGLE_ENABLED
+			type: PUSH_NOTIFICATIONS_TOGGLE_ENABLED,
 		} );
 		if ( enabling ) {
 			dispatch( fetchAndLoadServiceWorker() );
@@ -337,6 +332,6 @@ export function toggleEnabled() {
 
 export function toggleUnblockInstructions() {
 	return {
-		type: PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS
+		type: PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
 	};
 }

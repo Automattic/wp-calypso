@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,15 +14,14 @@ import QueryKeyringServices from 'components/data/query-keyring-services';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import SharingServicesGroup from './services-group';
 
-const SharingConnections = ( { translate } ) => (
+const SharingConnections = ( { translate } ) =>
 	<div className="sharing-settings sharing-connections">
 		<QueryKeyringConnections />
 		<QueryKeyringServices />
 		<QueryPublicizeConnections selectedSite />
 		<SharingServicesGroup type="publicize" title={ translate( 'Publicize Your Posts' ) } />
 		<SharingServicesGroup type="other" title={ translate( 'Other Connections' ) } />
-	</div>
-);
+	</div>;
 
 SharingConnections.propTypes = {
 	translate: PropTypes.func,

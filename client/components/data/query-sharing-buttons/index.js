@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -40,13 +41,13 @@ class QuerySharingButtons extends Component {
 QuerySharingButtons.propTypes = {
 	siteId: PropTypes.number,
 	requestingSharingButtons: PropTypes.bool,
-	requestSharingButtons: PropTypes.func
+	requestSharingButtons: PropTypes.func,
 };
 
 export default connect(
 	( state, { siteId } ) => {
 		return {
-			requestingSharingButtons: isRequestingSharingButtons( state, siteId )
+			requestingSharingButtons: isRequestingSharingButtons( state, siteId ),
 		};
 	},
 	{ requestSharingButtons }

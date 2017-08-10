@@ -1,3 +1,4 @@
+/** @format */
 /**
 * External dependencies
 */
@@ -9,11 +10,10 @@ import React from 'react';
 import AllSites from 'my-sites/all-sites';
 import Card from 'components/card';
 
-const AllSitesExample = () => (
+const AllSitesExample = () =>
 	<Card style={ { padding: 0 } }>
 		<AllSites />
-	</Card>
-);
+	</Card>;
 
 AllSitesExample.displayName = 'AllSites';
 

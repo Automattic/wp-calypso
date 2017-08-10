@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -21,15 +22,13 @@ function ProgressBanner( {
 	freshness,
 	restoreId,
 } ) {
-	const restoreStatusDescription = status === 'queued'
-		? translate( 'Your restore will start in a moment.' )
-		: translate( 'We\'re on it! Your site is being restored.' );
+	const restoreStatusDescription =
+		status === 'queued'
+			? translate( 'Your restore will start in a moment.' )
+			: translate( "We're on it! Your site is being restored." );
 
 	return (
-		<ActivityLogBanner
-			status="info"
-			title={ translate( 'Currently restoring your site' ) }
-		>
+		<ActivityLogBanner status="info" title={ translate( 'Currently restoring your site' ) }>
 			<QueryRewindRestoreStatus
 				freshness={ freshness }
 				queryDelay={ 1500 }
@@ -37,20 +36,20 @@ function ProgressBanner( {
 				siteId={ siteId }
 				timestamp={ timestamp }
 			/>
-			<p>{ translate(
-				"We're in the process of restoring your site back to %s. " +
-				"You'll be notified once it's complete.",
-				{ args: moment( timestamp ).format( 'LLLL' ) }
-			) }</p>
+			<p>
+				{ translate(
+					"We're in the process of restoring your site back to %s. " +
+						"You'll be notified once it's complete.",
+					{ args: moment( timestamp ).format( 'LLLL' ) }
+				) }
+			</p>
 
 			<div>
-				<em>{ restoreStatusDescription }</em>
+				<em>
+					{ restoreStatusDescription }
+				</em>
 				<ProgressBar
-					className={
-						status === 'queued'
-							? 'activity-log-banner__progress-bar--queued'
-							: null
-					}
+					className={ status === 'queued' ? 'activity-log-banner__progress-bar--queued' : null }
 					isPulsing
 					value={ status === 'queued' ? 100 : percent }
 				/>
@@ -62,10 +61,7 @@ function ProgressBanner( {
 ProgressBanner.propTypes = {
 	percent: PropTypes.number.isRequired,
 	siteId: PropTypes.number,
-	status: PropTypes.oneOf( [
-		'queued',
-		'running',
-	] ).isRequired,
+	status: PropTypes.oneOf( [ 'queued', 'running' ] ).isRequired,
 	timestamp: PropTypes.number.isRequired,
 };
 

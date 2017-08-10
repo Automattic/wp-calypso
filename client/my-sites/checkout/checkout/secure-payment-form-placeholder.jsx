@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,14 +11,10 @@ import PaymentBox from './payment-box.jsx';
 
 const SecurePaymentFormPlaceholder = () => {
 	return (
-		<PaymentBox
-			classSet="selected is-empty"
-			contentClassSet="selected is-empty"
-		>
+		<PaymentBox classSet="selected is-empty" contentClassSet="selected is-empty">
 			<div className="payment-box-section">
-
-				<div className="placeholder-row placeholder"/>
-				<div className="placeholder-row placeholder"/>
+				<div className="placeholder-row placeholder" />
+				<div className="placeholder-row placeholder" />
 				<div className="placeholder-col-narrow placeholder-inline-pad">
 					<div className="placeholder" />
 				</div>
@@ -27,12 +24,12 @@ const SecurePaymentFormPlaceholder = () => {
 				<div className="placeholder-col-wide">
 					<div className="placeholder" />
 				</div>
-				<div className="placeholder-row placeholder"/>
+				<div className="placeholder-row placeholder" />
 			</div>
 			<div className="payment-box-hr" />
 			<div className="placeholder-button-container">
 				<div className="placeholder-col-narrow">
-					<div className="placeholder placeholder-button"></div>
+					<div className="placeholder placeholder-button" />
 				</div>
 			</div>
 		</PaymentBox>

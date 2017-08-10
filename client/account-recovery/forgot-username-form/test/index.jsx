@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -34,10 +35,8 @@ describe( 'ForgotUsername', () => {
 
 		it( 'should be disabled when isRequesting is on', function() {
 			const wrapper = mount(
-				<ForgotUsernameFormComponent
-					className="test__test"
-					isRequesting={ true }
-				/> );
+				<ForgotUsernameFormComponent className="test__test" isRequesting={ true } />
+			);
 
 			// Expect the fields to be disabled
 			inputSelectors.forEach( selector => {
@@ -94,15 +93,14 @@ describe( 'ForgotUsername', () => {
 			} );
 
 			// Expect the button to be enabled
-			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.not.be.ok;
+			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.not.be
+				.ok;
 		} );
 
 		it( 'should be disabled when submitted', function() {
 			const wrapper = mount(
-				<ForgotUsernameFormComponent
-					className="test__test"
-					isRequesting={ true }
-				/> );
+				<ForgotUsernameFormComponent className="test__test" isRequesting={ true } />
+			);
 			wrapper.setState( {
 				firstName: 'Foo',
 				lastName: 'Bar',

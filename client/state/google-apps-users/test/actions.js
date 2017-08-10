@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,12 +11,9 @@ import { expect } from 'chai';
 import {
 	GOOGLE_APPS_USERS_FETCH,
 	GOOGLE_APPS_USERS_FETCH_COMPLETED,
-	GOOGLE_APPS_USERS_FETCH_FAILED
+	GOOGLE_APPS_USERS_FETCH_FAILED,
 } from 'state/action-types';
-import {
-	fetchByDomain,
-	fetchBySiteId
-} from '../actions';
+import { fetchByDomain, fetchBySiteId } from '../actions';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
@@ -38,8 +36,8 @@ describe( 'actions', () => {
 						lastname: 'Test',
 						mailbox: 'test',
 						site_id: 123,
-						suspended: false
-					}
+						suspended: false,
+					},
 				],
 				licenses: {
 					license_cost: '€48.00',
@@ -47,16 +45,16 @@ describe( 'actions', () => {
 					licenses_in_use: '1',
 					purchase_license: 'https://wordpress.com/checkout/123/71/yesupgrade.com/?ref=google-apps',
 					purchased_licenses: '1',
-					suspended: true
-				}
+					suspended: true,
+				},
 			};
 
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/domains/${ noUpgradeDomain }/google-apps` )
 				.reply( 400, {
-					error: 'upgrade_required'
+					error: 'upgrade_required',
 				} )
 				.get( `/rest/v1.1/domains/${ upgradedDomain }/google-apps` )
 				.reply( 200, upgradeResponse );
@@ -67,7 +65,7 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: GOOGLE_APPS_USERS_FETCH,
-				domain: noUpgradeDomain
+				domain: noUpgradeDomain,
 			} );
 		} );
 
@@ -75,7 +73,7 @@ describe( 'actions', () => {
 			fetchByDomain( upgradedDomain )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: GOOGLE_APPS_USERS_FETCH_COMPLETED,
-					items: upgradeResponse.accounts
+					items: upgradeResponse.accounts,
 				} );
 			} );
 		} );
@@ -87,7 +85,7 @@ describe( 'actions', () => {
 					error: match( {
 						statusCode: 400,
 						error: 'upgrade_required',
-					} )
+					} ),
 				} );
 			} );
 		} );
@@ -106,17 +104,17 @@ describe( 'actions', () => {
 						lastname: 'Test',
 						mailbox: 'test',
 						site_id: 12345678,
-						suspended: false
-					}
-				]
+						suspended: false,
+					},
+				],
 			};
 
-		useNock( ( nock ) => {
+		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/sites/${ noUpgradeSiteId }/google-apps` )
 				.reply( 400, {
-					error: 'upgrade_required'
+					error: 'upgrade_required',
 				} )
 				.get( `/rest/v1.1/sites/${ upgradedSiteId }/google-apps` )
 				.reply( 200, upgradeResponse );
@@ -127,7 +125,7 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: GOOGLE_APPS_USERS_FETCH,
-				siteId: noUpgradeSiteId
+				siteId: noUpgradeSiteId,
 			} );
 		} );
 
@@ -135,7 +133,7 @@ describe( 'actions', () => {
 			fetchBySiteId( upgradedSiteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: GOOGLE_APPS_USERS_FETCH_COMPLETED,
-					items: upgradeResponse.accounts
+					items: upgradeResponse.accounts,
 				} );
 			} );
 		} );
@@ -147,7 +145,7 @@ describe( 'actions', () => {
 					error: match( {
 						statusCode: 400,
 						error: 'upgrade_required',
-					} )
+					} ),
 				} );
 			} );
 		} );

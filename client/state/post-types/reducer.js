@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,7 +17,7 @@ import {
 	POST_TYPES_RECEIVE,
 	POST_TYPES_REQUEST,
 	POST_TYPES_REQUEST_SUCCESS,
-	POST_TYPES_REQUEST_FAILURE
+	POST_TYPES_REQUEST_FAILURE,
 } from 'state/action-types';
 
 /**
@@ -33,7 +34,7 @@ export function requesting( state = {}, action ) {
 		case POST_TYPES_REQUEST_SUCCESS:
 		case POST_TYPES_REQUEST_FAILURE:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: POST_TYPES_REQUEST === action.type
+				[ action.siteId ]: POST_TYPES_REQUEST === action.type,
 			} );
 	}
 
@@ -53,7 +54,7 @@ export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case POST_TYPES_RECEIVE:
 			return Object.assign( {}, state, {
-				[ action.siteId ]: keyBy( action.types, 'name' )
+				[ action.siteId ]: keyBy( action.types, 'name' ),
 			} );
 
 		case DESERIALIZE:
@@ -72,5 +73,5 @@ items.hasCustomPersistence = true;
 export default combineReducers( {
 	requesting,
 	items,
-	taxonomies
+	taxonomies,
 } );

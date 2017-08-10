@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns all of the reader tags cached in calypso
  *

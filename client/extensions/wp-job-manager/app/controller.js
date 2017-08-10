@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -12,7 +13,7 @@ import { getSiteFragment, sectionify } from 'lib/route';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import Settings from '../components/settings';
 
-export const renderTab = ( component, tab = '' ) => ( context ) => {
+export const renderTab = ( component, tab = '' ) => context => {
 	const siteId = getSiteFragment( context.path );
 	const basePath = sectionify( context.path );
 	let baseAnalyticsPath;

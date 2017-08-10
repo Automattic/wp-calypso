@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,9 +16,9 @@ import {
 	getSerializedPostsQueryWithoutPage,
 	mergeIgnoringArrays,
 	normalizePostForEditing,
-	normalizePostForDisplay
+	normalizePostForDisplay,
 } from './utils';
-import { getSite } from 'state/sites/selectors';
+import { getSite } from 'state/sites/selectors';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import addQueryArgs from 'lib/route/add-query-args';
 
@@ -54,7 +55,7 @@ export function getPost( state, globalId ) {
  */
 export const getNormalizedPost = createSelector(
 	( state, globalId ) => normalizePostForDisplay( getPost( state, globalId ) ),
-	( state ) => [ state.posts.items, state.posts.queries ]
+	state => [ state.posts.items, state.posts.queries ]
 );
 
 /**
@@ -64,17 +65,14 @@ export const getNormalizedPost = createSelector(
  * @param  {Number} siteId Site ID
  * @return {Array}         Site posts
  */
-export const getSitePosts = createSelector(
-	( state, siteId ) => {
-		const manager = state.posts.queries[ siteId ];
-		if ( ! manager ) {
-			return [];
-		}
+export const getSitePosts = createSelector( ( state, siteId ) => {
+	const manager = state.posts.queries[ siteId ];
+	if ( ! manager ) {
+		return [];
+	}
 
-		return manager.getItems();
-	},
-	( state ) => state.posts.queries
-);
+	return manager.getItems();
+}, state => state.posts.queries );
 
 /**
  * Returns a post object by site ID, post ID pair.
@@ -84,17 +82,14 @@ export const getSitePosts = createSelector(
  * @param  {String}  postId Post ID
  * @return {?Object}        Post object
  */
-export const getSitePost = createSelector(
-	( state, siteId, postId ) => {
-		const manager = state.posts.queries[ siteId ];
-		if ( ! manager ) {
-			return null;
-		}
+export const getSitePost = createSelector( ( state, siteId, postId ) => {
+	const manager = state.posts.queries[ siteId ];
+	if ( ! manager ) {
+		return null;
+	}
 
-		return manager.getItem( postId );
-	},
-	( state ) => state.posts.queries
-);
+	return manager.getItem( postId );
+}, state => state.posts.queries );
 
 /**
  * Returns an array of normalized posts for the posts query, or null if no
@@ -128,7 +123,7 @@ export const getSitePostsForQuery = createSelector(
 
 		return posts.map( normalizePostForDisplay );
 	},
-	( state ) => state.posts.queries,
+	state => state.posts.queries,
 	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
 );
 
@@ -226,7 +221,7 @@ export const getSitePostsForQueryIgnoringPage = createSelector(
 
 		return itemsIgnoringPage.map( normalizePostForDisplay );
 	},
-	( state ) => state.posts.queries,
+	state => state.posts.queries,
 	( state, siteId, query ) => getSerializedPostsQueryWithoutPage( query, siteId )
 );
 
@@ -252,13 +247,10 @@ export const isRequestingSitePostsForQueryIgnoringPage = createSelector(
 				return false;
 			}
 
-			return isEqual(
-				normalizedQueryWithoutPage,
-				omit( queryDetails.query, 'page' )
-			);
+			return isEqual( normalizedQueryWithoutPage, omit( queryDetails.query, 'page' ) );
 		} );
 	},
-	( state ) => state.posts.queryRequests,
+	state => state.posts.queryRequests,
 	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
 );
 
@@ -301,7 +293,7 @@ export const getEditedPost = createSelector(
 
 		return mergeIgnoringArrays( {}, post, edits );
 	},
-	( state ) => [ state.posts.items, state.posts.edits ]
+	state => [ state.posts.items, state.posts.edits ]
 );
 
 /**
@@ -380,12 +372,11 @@ export const isEditedPostDirty = createSelector(
 			}
 
 			return (
-				! DEFAULT_NEW_POST_VALUES.hasOwnProperty( key ) ||
-				value !== DEFAULT_NEW_POST_VALUES[ key ]
+				! DEFAULT_NEW_POST_VALUES.hasOwnProperty( key ) || value !== DEFAULT_NEW_POST_VALUES[ key ]
 			);
 		} );
 	},
-	( state ) => [ state.posts.items, state.posts.edits ]
+	state => [ state.posts.items, state.posts.edits ]
 );
 
 /**
@@ -397,19 +388,18 @@ export const isEditedPostDirty = createSelector(
  * @param  {Number}  postId Post ID
  * @return {Boolean}        Whether post is published
  */
-export const isPostPublished = createSelector(
-	( state, siteId, postId ) => {
-		const post = getSitePost( state, siteId, postId );
+export const isPostPublished = createSelector( ( state, siteId, postId ) => {
+	const post = getSitePost( state, siteId, postId );
 
-		if ( ! post ) {
-			return null;
-		}
+	if ( ! post ) {
+		return null;
+	}
 
-		return includes( [ 'publish', 'private' ], post.status ) ||
-			( post.status === 'future' && moment( post.date ).isBefore( moment() ) );
-	},
-	( state ) => state.posts.queries
-);
+	return (
+		includes( [ 'publish', 'private' ], post.status ) ||
+		( post.status === 'future' && moment( post.date ).isBefore( moment() ) )
+	);
+}, state => state.posts.queries );
 
 /**
  * Returns the slug, or suggested_slug, for the edited post
@@ -457,9 +447,7 @@ export function getPostPreviewUrl( state, siteId, postId, options = false ) {
 	const rawPost = options.__forceUseRawPost;
 	const shouldUseRawPost = !! rawPost;
 
-	const post = shouldUseRawPost
-		? rawPost
-		: getSitePost( state, siteId, postId );
+	const post = shouldUseRawPost ? rawPost : getSitePost( state, siteId, postId );
 
 	if ( ! post ) {
 		return null;
@@ -476,9 +464,12 @@ export function getPostPreviewUrl( state, siteId, postId, options = false ) {
 
 	let previewUrl = url;
 	if ( 'publish' !== status ) {
-		previewUrl = addQueryArgs( {
-			preview: true
-		}, previewUrl );
+		previewUrl = addQueryArgs(
+			{
+				preview: true,
+			},
+			previewUrl
+		);
 	}
 
 	// Support mapped domains https
@@ -493,7 +484,10 @@ export function getPostPreviewUrl( state, siteId, postId, options = false ) {
 
 export function getSitePostsByTerm( state, siteId, taxonomy, termId ) {
 	return filter( getSitePosts( state, siteId ), post => {
-		return post.terms && post.terms[ taxonomy ] &&
-			find( post.terms[ taxonomy ], postTerm => postTerm.ID === termId );
+		return (
+			post.terms &&
+			post.terms[ taxonomy ] &&
+			find( post.terms[ taxonomy ], postTerm => postTerm.ID === termId )
+		);
 	} );
 }

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -5,7 +6,6 @@ import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
 
 export default {
-
 	fetch( siteId, url ) {
 		const siteHandle = wpcom.undocumented().site( siteId );
 		let args;
@@ -14,17 +14,17 @@ export default {
 			Dispatcher.handleViewAction( {
 				type: 'FETCH_EMBED',
 				siteId: siteId,
-				url: url
+				url: url,
 			} );
 
 			args = {
 				embed_url: url,
-				force: 'wpcom'
+				force: 'wpcom',
 			};
 		} else {
 			Dispatcher.handleViewAction( {
 				type: 'FETCH_EMBEDS',
-				siteId: siteId
+				siteId: siteId,
 			} );
 		}
 
@@ -35,17 +35,16 @@ export default {
 					siteId: siteId,
 					url: url,
 					data: data,
-					error: error
+					error: error,
 				} );
 			} else {
 				Dispatcher.handleServerAction( {
 					type: 'RECEIVE_EMBEDS',
 					siteId: siteId,
 					embeds: data ? data.embeds : null,
-					error: error
+					error: error,
 				} );
 			}
 		} );
-	}
-
+	},
 };

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -60,7 +61,8 @@ const SiteRedirect = React.createClass( {
 							type={ domain.type }
 							subscriptionId={ domain.subscriptionId }
 							siteSlug={ this.props.selectedSite.slug }
-							onClick={ this.handlePaymentSettingsClick } />
+							onClick={ this.handlePaymentSettingsClick }
+						/>
 					</Card>
 				</div>
 
@@ -73,11 +75,16 @@ const SiteRedirect = React.createClass( {
 
 	siteRedirectNavItem() {
 		return (
-			<VerticalNavItem path={ paths.domainManagementRedirectSettings( this.props.selectedSite.slug, this.props.domain.name ) }>
+			<VerticalNavItem
+				path={ paths.domainManagementRedirectSettings(
+					this.props.selectedSite.slug,
+					this.props.domain.name
+				) }
+			>
 				{ this.props.translate( 'Redirect Settings' ) }
 			</VerticalNavItem>
 		);
-	}
+	},
 } );
 
 export default localize( SiteRedirect );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -31,20 +32,29 @@ import {
 } from 'state/selectors';
 
 const getPageInfo = ( translate, step ) => {
-	const concatHeadTitle = ( parentTitle, childTitle ) => ( parentTitle + ' ‹ ' + childTitle );
+	const concatHeadTitle = ( parentTitle, childTitle ) => parentTitle + ' ‹ ' + childTitle;
 
 	const pageInfo = {
 		[ STEPS.LOST_PASSWORD ]: {
 			trackerTitle: 'Account Recovery > Lost Password',
-			documentHeadTitle: concatHeadTitle( translate( 'Lost Password' ), translate( 'Account Recovery' ) ),
+			documentHeadTitle: concatHeadTitle(
+				translate( 'Lost Password' ),
+				translate( 'Account Recovery' )
+			),
 		},
 		[ STEPS.FORGOT_USERNAME ]: {
 			trackerTitle: 'Account Recovery > Forgot Username',
-			documentHeadTitle: concatHeadTitle( translate( 'Forgot Username' ), translate( 'Account Recovery' ) ),
+			documentHeadTitle: concatHeadTitle(
+				translate( 'Forgot Username' ),
+				translate( 'Account Recovery' )
+			),
 		},
 		[ STEPS.RESET_PASSWORD ]: {
 			trackerTitle: 'Account Recovery > Reset Password',
-			documentHeadTitle: concatHeadTitle( translate( 'Reset Password' ), translate( 'Account Recovery' ) ),
+			documentHeadTitle: concatHeadTitle(
+				translate( 'Reset Password' ),
+				translate( 'Account Recovery' )
+			),
 		},
 		[ STEPS.RESET_PASSWORD_EMAIL ]: {
 			trackerTitle: 'Account Recovery > Reset Password Email',
@@ -52,11 +62,17 @@ const getPageInfo = ( translate, step ) => {
 		},
 		[ STEPS.RESET_PASSWORD_SMS ]: {
 			trackerTitle: 'Account Recovery > Reset Password Sms',
-			documentHeadTitle: concatHeadTitle( translate( 'Reset Password' ), translate( 'SMS Message' ) ),
+			documentHeadTitle: concatHeadTitle(
+				translate( 'Reset Password' ),
+				translate( 'SMS Message' )
+			),
 		},
 		[ STEPS.RESET_PASSWORD_CONFIRM ]: {
 			trackerTitle: 'Account Recovery > New Password',
-			documentHeadTitle: concatHeadTitle( translate( 'Reset Password' ), translate( 'New Password' ) ),
+			documentHeadTitle: concatHeadTitle(
+				translate( 'Reset Password' ),
+				translate( 'New Password' )
+			),
 		},
 		[ STEPS.RESET_PASSWORD_SUCCEEDED ]: {
 			trackerTitle: 'Account Recovery > Succeeded',
@@ -64,14 +80,17 @@ const getPageInfo = ( translate, step ) => {
 		},
 		[ STEPS.VALIDATE_RESET_CODE ]: {
 			trackerTitle: 'Account Recovery > Validate Reset Code',
-			documentHeadTitle: concatHeadTitle( translate( 'Reset Password' ), translate( 'Validating' ) ),
+			documentHeadTitle: concatHeadTitle(
+				translate( 'Reset Password' ),
+				translate( 'Validating' )
+			),
 		},
 	};
 
 	return pageInfo[ step ];
 };
 
-const getCurrentStep = ( props ) => {
+const getCurrentStep = props => {
 	const {
 		firstStep,
 		isUserDataReady,
@@ -104,7 +123,7 @@ const getCurrentStep = ( props ) => {
 	return firstStep;
 };
 
-const getForm = ( step ) => {
+const getForm = step => {
 	switch ( step ) {
 		case STEPS.LOST_PASSWORD:
 			return <LostPasswordForm />;
@@ -127,12 +146,8 @@ const getForm = ( step ) => {
 	return null;
 };
 
-const AccountRecoveryRoot = ( props ) => {
-	const {
-		className,
-		translate,
-		basePath,
-	} = props;
+const AccountRecoveryRoot = props => {
+	const { className, translate, basePath } = props;
 
 	const currentStep = getCurrentStep( props );
 	const { trackerTitle, documentHeadTitle } = getPageInfo( translate, currentStep );
@@ -146,12 +161,10 @@ const AccountRecoveryRoot = ( props ) => {
 	);
 };
 
-export default connect(
-	( state ) => ( {
-		isResetOptionsReady: isAccountRecoveryResetOptionsReady( state ),
-		isUserDataReady: isAccountRecoveryUserDataReady( state ),
-		isResetPasswordSucceeded: isAccountRecoveryResetPasswordSucceeded( state ),
-		selectedMethod: getAccountRecoveryResetSelectedMethod( state ),
-		validationKey: getAccountRecoveryValidationKey( state ),
-	} )
-)( localize( AccountRecoveryRoot ) );
+export default connect( state => ( {
+	isResetOptionsReady: isAccountRecoveryResetOptionsReady( state ),
+	isUserDataReady: isAccountRecoveryUserDataReady( state ),
+	isResetPasswordSucceeded: isAccountRecoveryResetPasswordSucceeded( state ),
+	selectedMethod: getAccountRecoveryResetSelectedMethod( state ),
+	validationKey: getAccountRecoveryValidationKey( state ),
+} ) )( localize( AccountRecoveryRoot ) );

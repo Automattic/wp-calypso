@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -8,14 +9,14 @@ import storeTransactions from 'lib/store-transactions';
 function setDomainDetails( domainDetails ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.TRANSACTION_DOMAIN_DETAILS_SET,
-		domainDetails
+		domainDetails,
 	} );
 }
 
 function setPayment( payment ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.TRANSACTION_PAYMENT_SET,
-		payment
+		payment,
 	} );
 }
 
@@ -25,7 +26,7 @@ function setNewCreditCardDetails( options ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
 		rawDetails,
-		maskedDetails
+		maskedDetails,
 	} );
 }
 
@@ -33,13 +34,13 @@ function submitTransaction( { cart, transaction }, onComplete ) {
 	const steps = storeTransactions.submit( {
 		cart: cart,
 		payment: transaction.payment,
-		domainDetails: transaction.domainDetails
+		domainDetails: transaction.domainDetails,
 	} );
 
-	steps.on( 'data', ( step ) => {
+	steps.on( 'data', step => {
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.TRANSACTION_STEP_SET,
-			step
+			step,
 		} );
 
 		if ( onComplete && step.name === 'received-wpcom-response' ) {
@@ -50,7 +51,7 @@ function submitTransaction( { cart, transaction }, onComplete ) {
 
 function resetTransaction() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.TRANSACTION_RESET
+		type: ActionTypes.TRANSACTION_RESET,
 	} );
 }
 
@@ -59,5 +60,5 @@ export {
 	setDomainDetails,
 	setNewCreditCardDetails,
 	setPayment,
-	submitTransaction
+	submitTransaction,
 };

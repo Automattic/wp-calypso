@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -46,20 +47,27 @@ export const SiteTitleTour = makeTour(
 	>
 		<Step name="init" placement="right" next="click-settings">
 			<p>
-				{
-					translate( "Hey there! We noticed you haven't changed the title of your site yet. Want to change it?" )
-				}
+				{ translate(
+					"Hey there! We noticed you haven't changed the title of your site yet. Want to change it?"
+				) }
 			</p>
 			<p>
-				{ translate( 'The site title appears in places like the top of your web browser and in search results.' ) }
+				{ translate(
+					'The site title appears in places like the top of your web browser and in search results.'
+				) }
 			</p>
 			<ButtonRow>
-				<Next step="click-settings">{ translate( 'Yes, please!' ) }</Next>
-				<Quit>{ translate( 'No, thanks.' ) }</Quit>
+				<Next step="click-settings">
+					{ translate( 'Yes, please!' ) }
+				</Next>
+				<Quit>
+					{ translate( 'No, thanks.' ) }
+				</Quit>
 			</ButtonRow>
 		</Step>
 
-		<Step name="click-settings"
+		<Step
+			name="click-settings"
 			target="settings"
 			arrow="left-top"
 			placement="beside"
@@ -67,53 +75,49 @@ export const SiteTitleTour = makeTour(
 			shouldScrollTo
 		>
 			<Continue target="settings" step="site-title-input" click>
-				{
-					translate( 'Click {{strong}}{{icon/}} Settings{{/strong}} to continue.', {
-						components: {
-							icon: <Gridicon icon="cog" />,
-							strong: <strong />
-						}
-					} )
-				}
+				{ translate( 'Click {{strong}}{{icon/}} Settings{{/strong}} to continue.', {
+					components: {
+						icon: <Gridicon icon="cog" />,
+						strong: <strong />,
+					},
+				} ) }
 			</Continue>
 		</Step>
 
-		<Step name="site-title-input"
-			target="site-title-input"
-			arrow="top-left"
-			placement="below"
-		>
+		<Step name="site-title-input" target="site-title-input" arrow="top-left" placement="below">
 			<p>
-				{ translate( 'You can change the site title here. A good title can help others find your site.' ) }
+				{ translate(
+					'You can change the site title here. A good title can help others find your site.'
+				) }
 			</p>
 			<ButtonRow>
-				<Next step="site-tagline-input">{ translate( 'Looks Good!' ) }</Next>
-				<Quit>{ translate( 'Cancel' ) }</Quit>
+				<Next step="site-tagline-input">
+					{ translate( 'Looks Good!' ) }
+				</Next>
+				<Quit>
+					{ translate( 'Cancel' ) }
+				</Quit>
 			</ButtonRow>
 		</Step>
 
-		<Step name="site-tagline-input"
-			target="site-tagline-input"
-			arrow="top-left"
-			placement="below"
-		>
+		<Step name="site-tagline-input" target="site-tagline-input" arrow="top-left" placement="below">
 			<p>
-				{
-					translate( "While you're at it, why not add a tagline? It should explain what your site is about in a few words. " +
-						'It usually appears right below your site title.' )
-				}
+				{ translate(
+					"While you're at it, why not add a tagline? It should explain what your site is about in a few words. " +
+						'It usually appears right below your site title.'
+				) }
 			</p>
 			<ButtonRow>
-				<Next step="click-save">{ translate( 'Great!' ) }</Next>
-				<Quit>{ translate( 'Cancel' ) }</Quit>
+				<Next step="click-save">
+					{ translate( 'Great!' ) }
+				</Next>
+				<Quit>
+					{ translate( 'Cancel' ) }
+				</Quit>
 			</ButtonRow>
 		</Step>
 
-		<Step name="click-save"
-			target="settings-site-profile-save"
-			arrow="top-right"
-			placement="below"
-		>
+		<Step name="click-save" target="settings-site-profile-save" arrow="top-right" placement="below">
 			<Continue target="settings-site-profile-save" step="finish" click>
 				{ translate( "Don't forget to save your changes." ) }
 			</Continue>
@@ -121,14 +125,19 @@ export const SiteTitleTour = makeTour(
 
 		<Step name="finish" placement="center">
 			<p>
-				{ translate( "{{strong}}That's it!{{/strong}} Your visitors can now easily identify your website by its title.", {
-					components: {
-						strong: <strong />
+				{ translate(
+					"{{strong}}That's it!{{/strong}} Your visitors can now easily identify your website by its title.",
+					{
+						components: {
+							strong: <strong />,
+						},
 					}
-				} ) }
+				) }
 			</p>
 			<ButtonRow>
-				<Quit primary>{ translate( "We're all done!" ) }</Quit>
+				<Quit primary>
+					{ translate( "We're all done!" ) }
+				</Quit>
 			</ButtonRow>
 			<Link href="https://en.support.wordpress.com/start">
 				{ translate( 'Learn more about WordPress.com' ) }

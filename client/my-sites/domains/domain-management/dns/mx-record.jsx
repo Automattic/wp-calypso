@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,20 +14,20 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import FormSettingExplanation from 'components/forms/form-setting-explanation' ;
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 class MxRecord extends React.Component {
 	static initialFields = {
 		name: '',
 		data: '',
-		aux: 10
+		aux: 10,
 	};
 
 	static propTypes = {
 		fieldValues: React.PropTypes.object.isRequired,
 		onChange: React.PropTypes.func.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
-		show: React.PropTypes.bool.isRequired
+		show: React.PropTypes.bool.isRequired,
 	};
 
 	render() {
@@ -44,22 +45,16 @@ class MxRecord extends React.Component {
 					</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
-						placeholder={
-							translate(
-								'Enter subdomain (optional)',
-								{ context: 'Placeholder shown when entering the optional subdomain part of a new DNS record' }
-							)
-						}
+						placeholder={ translate( 'Enter subdomain (optional)', {
+							context:
+								'Placeholder shown when entering the optional subdomain part of a new DNS record',
+						} ) }
 						isError={ ! isNameValid }
 						onChange={ onChange }
 						value={ fieldValues.name }
-						suffix={ '.' + selectedDomainName } />
-					{ ! isNameValid &&
-						<FormInputValidation
-							text={ translate( 'Invalid Name' ) }
-							isError
-						/>
-					}
+						suffix={ '.' + selectedDomainName }
+					/>
+					{ ! isNameValid && <FormInputValidation text={ translate( 'Invalid Name' ) } isError /> }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -71,24 +66,24 @@ class MxRecord extends React.Component {
 						isError={ ! isDataValid }
 						onChange={ onChange }
 						value={ fieldValues.data }
-						placeholder={ translate( 'e.g. %(example)s', { args: { example: 'mail.your-provider.com' } } ) } />
+						placeholder={ translate( 'e.g. %(example)s', {
+							args: { example: 'mail.your-provider.com' },
+						} ) }
+					/>
 					{ ! isDataValid &&
-						<FormInputValidation
-							text={ translate( 'Invalid Mail Server' ) }
-							isError
-						/>
-					}
+						<FormInputValidation text={ translate( 'Invalid Mail Server' ) } isError /> }
 					<FormSettingExplanation>
 						{ translate(
-							'Please use a domain name here (e.g. %(domain)s) - an IP address (e.g. %(ipAddress)s) will {{strong}}not{{/strong}} work.', {
+							'Please use a domain name here (e.g. %(domain)s) - an IP address (e.g. %(ipAddress)s) will {{strong}}not{{/strong}} work.',
+							{
 								args: {
 									domain: 'mail.your-provider.com',
-									ipAddress: '123.45.78.9'
+									ipAddress: '123.45.78.9',
 								},
 								components: {
-									strong: <strong />
+									strong: <strong />,
 								},
-								context: 'Hint for the \'Handled by\' field of a MX record'
+								context: "Hint for the 'Handled by' field of a MX record",
 							}
 						) }
 					</FormSettingExplanation>
@@ -103,13 +98,10 @@ class MxRecord extends React.Component {
 						isError={ ! isAuxValid }
 						onChange={ onChange }
 						value={ fieldValues.aux }
-						defaultValue="10" />
+						defaultValue="10"
+					/>
 					{ ! isAuxValid &&
-						<FormInputValidation
-							text={ translate( 'Invalid Priority' ) }
-							isError
-						/>
-					}
+						<FormInputValidation text={ translate( 'Invalid Priority' ) } isError /> }
 				</FormFieldset>
 			</div>
 		);

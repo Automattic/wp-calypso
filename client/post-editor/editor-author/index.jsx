@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,7 +23,6 @@ import { getSelectedSite } from 'state/ui/selectors';
 const user = userFactory();
 
 export class EditorAuthor extends Component {
-
 	static propTypes = {
 		post: React.PropTypes.object,
 		isNew: React.PropTypes.bool,
@@ -38,16 +38,16 @@ export class EditorAuthor extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const author = ( post && postAuthor ) ? postAuthor : user.get();
+		const author = post && postAuthor ? postAuthor : user.get();
 		const name = author.display_name || author.name;
 		const Wrapper = this.userCanAssignAuthor() ? AuthorSelector : 'div';
 		const popoverPosition = touchDetect.hasTouch() ? 'bottom right' : 'bottom left';
 		const wrapperProps = this.userCanAssignAuthor()
 			? {
-				siteId: site.ID,
-				onSelect: this.onSelect,
-				popoverPosition,
-			}
+					siteId: site.ID,
+					onSelect: this.onSelect,
+					popoverPosition,
+				}
 			: {};
 
 		return (
@@ -55,7 +55,7 @@ export class EditorAuthor extends Component {
 				<Wrapper { ...wrapperProps }>
 					<Gravatar size={ 26 } user={ author } />
 					<span className="editor-author__name">
-							{ translate( 'by %(name)s', { args: { name: name } } ) }
+						{ translate( 'by %(name)s', { args: { name: name } } ) }
 					</span>
 				</Wrapper>
 			</div>
@@ -71,7 +71,7 @@ export class EditorAuthor extends Component {
 		);
 	}
 
-	onSelect = ( author ) => {
+	onSelect = author => {
 		stats.recordStat( 'advanced_author_changed' );
 		stats.recordEvent( 'Changed Author' );
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
@@ -92,12 +92,8 @@ export class EditorAuthor extends Component {
 
 		return true;
 	}
-
 }
 
-export default connect(
-	( state ) => ( {
-		site: getSelectedSite( state )
-	} )
-)( localize( EditorAuthor ) );
-
+export default connect( state => ( {
+	site: getSelectedSite( state ),
+} ) )( localize( EditorAuthor ) );

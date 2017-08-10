@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -9,22 +10,15 @@ export const generateSuccessAndFailedTestsForThunk = ( {
 	thunk,
 	preCondition,
 	postConditionSuccess,
-	postConditionFailed
+	postConditionFailed,
 } ) => {
-	const {
-		method,
-		endpoint,
-		successResponse,
-		errorResponse,
-	} = nockSettings;
+	const { method, endpoint, successResponse, errorResponse } = nockSettings;
 
 	const apiUrl = 'https://public-api.wordpress.com:443';
 
 	describe( testBaseName + ' success', () => {
-		useNock( ( nock ) => {
-			nock( apiUrl )
-				[ method ]( endpoint )
-				.reply( 200, successResponse );
+		useNock( nock => {
+			nock( apiUrl )[ method ]( endpoint ).reply( 200, successResponse );
 		} );
 
 		it( 'should be successful.', () => {
@@ -37,10 +31,8 @@ export const generateSuccessAndFailedTestsForThunk = ( {
 	} );
 
 	describe( testBaseName + ' fail', () => {
-		useNock( ( nock ) => {
-			nock( apiUrl )
-				[ method ]( endpoint )
-				.reply( errorResponse.status, errorResponse );
+		useNock( nock => {
+			nock( apiUrl )[ method ]( endpoint ).reply( errorResponse.status, errorResponse );
 		} );
 
 		it( 'should be failed', () => {

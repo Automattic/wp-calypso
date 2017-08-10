@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,12 +17,9 @@ import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
 	DESERIALIZE,
-	SERIALIZE
+	SERIALIZE,
 } from 'state/action-types';
-import {
-	isFetching,
-	items
-} from '../reducer';
+import { isFetching, items } from '../reducer';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducers', () => {
@@ -73,66 +71,7 @@ describe( 'reducers', () => {
 		it( 'should index connections by ID', () => {
 			const state = items( null, {
 				type: KEYRING_CONNECTIONS_RECEIVE,
-				connections: [ { ID: 1, sites: [ '2916284' ] } ]
-			} );
-
-			expect( state ).to.eql( {
-				1: { ID: 1, sites: [ '2916284' ] }
-			} );
-		} );
-
-		it( 'should discard connections for the same site ID if no longer present', () => {
-			const state = items( deepFreeze( {
-				1: { ID: 1, sites: [ '2916284' ] }
-			} ), {
-				type: KEYRING_CONNECTIONS_RECEIVE,
-				connections: [ { ID: 2, sites: [ '77203074' ] } ]
-			} );
-
-			expect( state ).to.eql( {
-				2: { ID: 2, sites: [ '77203074' ] }
-			} );
-		} );
-
-		it( 'should override previous connections of same ID', () => {
-			const connection = { ID: 1, sites: [ '2916284' ], foo: true };
-			const state = items( deepFreeze( {
-				1: { ID: 1, sites: [ '2916284' ] }
-			} ), {
-				type: KEYRING_CONNECTIONS_RECEIVE,
-				connections: [ connection ]
-			} );
-
-			expect( state ).to.eql( {
-				1: connection
-			} );
-		} );
-
-		it( 'should accumulate connections for distinct sites', () => {
-			const state = items( deepFreeze( {
-				1: { ID: 1, sites: [ '2916284' ] }
-			} ), {
-				type: PUBLICIZE_CONNECTION_CREATE,
-				connection: {
-					keyring_connection_ID: 1,
-					site_ID: '77203074',
-				},
-			} );
-
-			expect( state ).to.eql( {
-				1: { ID: 1, sites: [ '2916284', '77203074' ] },
-			} );
-		} );
-
-		it( 'should remove connections for distinct sites', () => {
-			const state = items( deepFreeze( {
-				1: { ID: 1, sites: [ '2916284', '77203074' ] }
-			} ), {
-				type: PUBLICIZE_CONNECTION_DELETE,
-				connection: {
-					keyring_connection_ID: 1,
-					site_ID: 77203074,
-				},
+				connections: [ { ID: 1, sites: [ '2916284' ] } ],
 			} );
 
 			expect( state ).to.eql( {
@@ -140,17 +79,91 @@ describe( 'reducers', () => {
 			} );
 		} );
 
-		it( 'should remove deleted connection', () => {
-			const state = items( deepFreeze( {
-				1: { ID: 1, site_ID: 2916284 },
-				2: { ID: 2, site_ID: 2916284 },
-			} ), {
-				type: KEYRING_CONNECTION_DELETE,
-				connection: {
-					ID: 2,
-					site_ID: 2916284,
-				},
+		it( 'should discard connections for the same site ID if no longer present', () => {
+			const state = items(
+				deepFreeze( {
+					1: { ID: 1, sites: [ '2916284' ] },
+				} ),
+				{
+					type: KEYRING_CONNECTIONS_RECEIVE,
+					connections: [ { ID: 2, sites: [ '77203074' ] } ],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2: { ID: 2, sites: [ '77203074' ] },
 			} );
+		} );
+
+		it( 'should override previous connections of same ID', () => {
+			const connection = { ID: 1, sites: [ '2916284' ], foo: true };
+			const state = items(
+				deepFreeze( {
+					1: { ID: 1, sites: [ '2916284' ] },
+				} ),
+				{
+					type: KEYRING_CONNECTIONS_RECEIVE,
+					connections: [ connection ],
+				}
+			);
+
+			expect( state ).to.eql( {
+				1: connection,
+			} );
+		} );
+
+		it( 'should accumulate connections for distinct sites', () => {
+			const state = items(
+				deepFreeze( {
+					1: { ID: 1, sites: [ '2916284' ] },
+				} ),
+				{
+					type: PUBLICIZE_CONNECTION_CREATE,
+					connection: {
+						keyring_connection_ID: 1,
+						site_ID: '77203074',
+					},
+				}
+			);
+
+			expect( state ).to.eql( {
+				1: { ID: 1, sites: [ '2916284', '77203074' ] },
+			} );
+		} );
+
+		it( 'should remove connections for distinct sites', () => {
+			const state = items(
+				deepFreeze( {
+					1: { ID: 1, sites: [ '2916284', '77203074' ] },
+				} ),
+				{
+					type: PUBLICIZE_CONNECTION_DELETE,
+					connection: {
+						keyring_connection_ID: 1,
+						site_ID: 77203074,
+					},
+				}
+			);
+
+			expect( state ).to.eql( {
+				1: { ID: 1, sites: [ '2916284' ] },
+			} );
+		} );
+
+		it( 'should remove deleted connection', () => {
+			const state = items(
+				deepFreeze( {
+					1: { ID: 1, site_ID: 2916284 },
+					2: { ID: 2, site_ID: 2916284 },
+				} ),
+				{
+					type: KEYRING_CONNECTION_DELETE,
+					connection: {
+						ID: 2,
+						site_ID: 2916284,
+					},
+				}
+			);
 
 			expect( state ).to.eql( {
 				1: { ID: 1, site_ID: 2916284 },
@@ -158,7 +171,7 @@ describe( 'reducers', () => {
 		} );
 
 		describe( 'persistence', () => {
-			useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
+			useSandbox( sandbox => sandbox.stub( console, 'warn' ) );
 
 			it( 'should persist data', () => {
 				const state = deepFreeze( {
@@ -196,7 +209,7 @@ describe( 'reducers', () => {
 			it( 'should ignore loading data with invalid values', () => {
 				const persistedState = deepFreeze( {
 					1: { ID: 1, sites: 'foo' },
-					2: { ID: 2, sites: [ '77203074' ] }
+					2: { ID: 2, sites: [ '77203074' ] },
 				} );
 				const state = items( persistedState, {
 					type: DESERIALIZE,

@@ -1,3 +1,4 @@
+/** @format */
 /*
  * External dependencies
  */
@@ -99,7 +100,9 @@ export function recordSaveEvent( context ) {
 
 	debug(
 		'recordSaveEvent %s currentStatus=%s nextStatus=%s',
-		tracksEventName, currentStatus, nextStatus
+		tracksEventName,
+		currentStatus,
+		nextStatus
 	);
 
 	analytics.tracks.recordEvent( tracksEventName, {

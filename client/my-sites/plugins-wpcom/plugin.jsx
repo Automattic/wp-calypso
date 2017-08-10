@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -5,7 +6,7 @@ import React, { Component, PropTypes } from 'react';
 import { noop } from 'lodash';
 import Gridicon from 'gridicons';
 
-const hasHttpProtocol = url => ( /^https?:\/\//.test( url ) );
+const hasHttpProtocol = url => /^https?:\/\//.test( url );
 
 export class Plugin extends Component {
 	state = {
@@ -19,7 +20,7 @@ export class Plugin extends Component {
 		isActive: PropTypes.bool,
 		name: PropTypes.string.isRequired,
 		onClick: PropTypes.func,
-		descriptionLink: PropTypes.string.isRequired
+		descriptionLink: PropTypes.string.isRequired,
 	};
 
 	startHover = () => this.setState( { isUnderMouse: true } );
@@ -34,25 +35,19 @@ export class Plugin extends Component {
 			isActive = true,
 			name,
 			onClick = noop,
-			descriptionLink
+			descriptionLink,
 		} = this.props;
 
 		const { isUnderMouse } = this.state;
 
 		const isExternalLink = hasHttpProtocol( descriptionLink );
 
-		const target = isExternalLink
-			? '_blank'
-			: null;
+		const target = isExternalLink ? '_blank' : null;
 
-		const linkIcon = ( isExternalLink && isUnderMouse )
-			? 'external'
-			: icon;
+		const linkIcon = isExternalLink && isUnderMouse ? 'external' : icon;
 
 		return (
-			<div
-				className="wpcom-plugins__plugin-item"
-			>
+			<div className="wpcom-plugins__plugin-item">
 				<a
 					href={ descriptionLink }
 					onClick={ () => onClick( name ) }
@@ -62,12 +57,17 @@ export class Plugin extends Component {
 				>
 					<div className="wpcom-plugins__plugin-icon">
 						<Gridicon icon={ linkIcon } />
-						{ isActive &&
-							<Gridicon icon="checkmark-circle" size={ 18 } /> }
+						{ isActive && <Gridicon icon="checkmark-circle" size={ 18 } /> }
 					</div>
-					<div className="wpcom-plugins__plugin-title">{ name }</div>
-					<div className="wpcom-plugins__plugin-category">{ category }</div>
-					<p className="wpcom-plugins__plugin-description">{ description }</p>
+					<div className="wpcom-plugins__plugin-title">
+						{ name }
+					</div>
+					<div className="wpcom-plugins__plugin-category">
+						{ category }
+					</div>
+					<p className="wpcom-plugins__plugin-description">
+						{ description }
+					</p>
 				</a>
 			</div>
 		);

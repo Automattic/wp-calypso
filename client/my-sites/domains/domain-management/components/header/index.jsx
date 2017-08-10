@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -12,7 +13,11 @@ const DocumentHead = require( 'components/data/document-head' );
 const DomainManagementHeader = React.createClass( {
 	render() {
 		return (
-			<HeaderCake className="domain-management-header" onClick={ this.props.onClick } backHref={ this.props.backHref }>
+			<HeaderCake
+				className="domain-management-header"
+				onClick={ this.props.onClick }
+				backHref={ this.props.backHref }
+			>
 				<div className="domain-management-header__children">
 					{ this.domainName() }
 					<span className="domain-management-header__title">
@@ -29,8 +34,12 @@ const DomainManagementHeader = React.createClass( {
 			return null;
 		}
 
-		return <span>{ this.props.selectedDomainName }: </span>;
-	}
+		return (
+			<span>
+				{ this.props.selectedDomainName }:{' '}
+			</span>
+		);
+	},
 } );
 
 module.exports = DomainManagementHeader;

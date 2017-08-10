@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -6,8 +7,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getThemeFilterTerm } from '../';
-import { state } from './fixtures/theme-filters';
+import { getThemeFilterTerm } from '../';
+import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterTerm()', () => {
 	it( 'should return undefined for an inexistent filter slug', () => {
@@ -24,7 +25,8 @@ describe( 'getThemeFilterTerm()', () => {
 		const term = getThemeFilterTerm( state, 'subject', 'blog' );
 		expect( term ).to.deep.equal( {
 			name: 'Blog',
-			description: 'Whether you\'re authoring a personal blog, professional blog, or a business blog — ...'
+			description:
+				"Whether you're authoring a personal blog, professional blog, or a business blog — ...",
 		} );
 	} );
 } );

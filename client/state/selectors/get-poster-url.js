@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns the poster URL of the video.
  *

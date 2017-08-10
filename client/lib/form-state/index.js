@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -63,14 +64,16 @@ assign( Controller.prototype, {
 	},
 
 	_loadFieldValues: function() {
-		this._loadFunction( function( error, fieldValues ) {
-			if ( error ) {
-				this._onError( error );
-				return;
-			}
+		this._loadFunction(
+			function( error, fieldValues ) {
+				if ( error ) {
+					this._onError( error );
+					return;
+				}
 
-			this._setState( initializeFields( this._currentState, fieldValues ) );
-		}.bind( this ) );
+				this._setState( initializeFields( this._currentState, fieldValues ) );
+			}.bind( this )
+		);
 	},
 
 	handleFieldChange: function( change ) {
@@ -85,11 +88,10 @@ assign( Controller.prototype, {
 	},
 
 	handleSubmit: function( onComplete ) {
-		var isAlreadyValid = (
+		var isAlreadyValid =
 			! this._pendingValidation &&
 			! needsValidation( this._currentState ) &&
-			isEveryFieldInitialized( this._currentState )
-		);
+			isEveryFieldInitialized( this._currentState );
 
 		if ( isAlreadyValid ) {
 			onComplete( hasErrors( this._currentState ) );
@@ -119,9 +121,12 @@ assign( Controller.prototype, {
 			return;
 		}
 
-		this._sanitizerFunction( fieldValues, function( newFieldValues ) {
-			this._setState( changeFieldValues( this._currentState, newFieldValues ) );
-		}.bind( this ) );
+		this._sanitizerFunction(
+			fieldValues,
+			function( newFieldValues ) {
+				this._setState( changeFieldValues( this._currentState, newFieldValues ) );
+			}.bind( this )
+		);
 	},
 
 	validate: function() {
@@ -132,30 +137,35 @@ assign( Controller.prototype, {
 
 		this._pendingValidation = id;
 
-		this._validatorFunction( fieldValues, function( error, fieldErrors ) {
-			if ( id !== this._pendingValidation ) {
-				return;
-			}
+		this._validatorFunction(
+			fieldValues,
+			function( error, fieldErrors ) {
+				if ( id !== this._pendingValidation ) {
+					return;
+				}
 
-			if ( error ) {
-				this._onError( error );
-				return;
-			}
+				if ( error ) {
+					this._onError( error );
+					return;
+				}
 
-			this._pendingValidation = null;
-			this._setState( setFieldErrors( this._currentState, fieldErrors, this._hideFieldErrorsOnChange ) );
+				this._pendingValidation = null;
+				this._setState(
+					setFieldErrors( this._currentState, fieldErrors, this._hideFieldErrorsOnChange )
+				);
 
-			if ( this._onValidationComplete ) {
-				this._onValidationComplete();
-				this._onValidationComplete = null;
-			}
-		}.bind( this ) );
+				if ( this._onValidationComplete ) {
+					this._onValidationComplete();
+					this._onValidationComplete = null;
+				}
+			}.bind( this )
+		);
 	},
 
 	resetFields: function( fieldValues ) {
 		this._initialState = createInitialFormState( fieldValues );
 		this._setState( this._initialState );
-	}
+	},
 } );
 
 function changeFieldValue( formState, name, value, hideFieldErrorsOnChange ) {
@@ -173,8 +183,8 @@ function changeFieldValue( formState, name, value, hideFieldErrorsOnChange ) {
 			errors: errors,
 			isShowingErrors: ! hideFieldErrorsOnChange,
 			isPendingValidation: true,
-			isValidating: false
-		}
+			isValidating: false,
+		},
 	};
 
 	return update( formState, command );
@@ -199,31 +209,42 @@ function initializeFields( formState, fieldValues ) {
 }
 
 function setFieldsValidating( formState ) {
-	return assign( {}, formState, updateFields( formState, function() {
-		return { isValidating: true };
-	} ) );
+	return assign(
+		{},
+		formState,
+		updateFields( formState, function() {
+			return { isValidating: true };
+		} )
+	);
 }
 
 function setFieldErrors( formState, fieldErrors, hideFieldErrorsOnChange ) {
-	return assign( {}, formState, updateFields( getFieldsValidating( formState ), function( name ) {
-		var newFields = {
-			errors: fieldErrors[ name ] || [],
-			isPendingValidation: false,
-			isValidating: false
-		};
+	return assign(
+		{},
+		formState,
+		updateFields( getFieldsValidating( formState ), function( name ) {
+			var newFields = {
+				errors: fieldErrors[ name ] || [],
+				isPendingValidation: false,
+				isValidating: false,
+			};
 
-		if ( hideFieldErrorsOnChange ) {
-			newFields.isShowingErrors = Boolean( fieldErrors[ name ] );
-		}
+			if ( hideFieldErrorsOnChange ) {
+				newFields.isShowingErrors = Boolean( fieldErrors[ name ] );
+			}
 
-		return newFields;
-	} ) );
+			return newFields;
+		} )
+	);
 }
 
 function showAllErrors( formState ) {
-	return updateFields( initializeFields( formState, getAllFieldValues( formState ) ), constant( {
-		isShowingErrors: true
-	} ) );
+	return updateFields(
+		initializeFields( formState, getAllFieldValues( formState ) ),
+		constant( {
+			isShowingErrors: true,
+		} )
+	);
 }
 
 function hasErrors( formState ) {
@@ -250,7 +271,7 @@ function createInitialFormState( fieldValues ) {
 			errors: null,
 			isShowingErrors: false,
 			isPendingValidation: false,
-			isValidating: false
+			isValidating: false,
 		};
 	} );
 }
@@ -289,11 +310,7 @@ function isEveryFieldInitialized( formState ) {
 function isFieldInvalid( formState, fieldName ) {
 	var field = getField( formState, fieldName );
 
-	return (
-		isInitialized( field ) &&
-		field.isShowingErrors &&
-		! isEmpty( field.errors )
-	);
+	return isInitialized( field ) && field.isShowingErrors && ! isEmpty( field.errors );
 }
 
 function isFieldPendingValidation( formState, fieldName ) {
@@ -329,21 +346,26 @@ function isFieldDisabled( formState, fieldName ) {
 }
 
 function isFieldValid( formState, fieldName ) {
-	return ! isFieldInvalid( formState, fieldName ) &&
+	return (
+		! isFieldInvalid( formState, fieldName ) &&
 		! isEmpty( getFieldValue( formState, fieldName ) ) &&
-		! isFieldPendingValidation( formState, fieldName );
+		! isFieldPendingValidation( formState, fieldName )
+	);
 }
 
 function isFieldPossiblyValid( formState, fieldName ) {
-	return ! isEmpty( getFieldValue( formState, fieldName ) ) &&
-		( ! isFieldInvalid( formState, fieldName ) ||
-		isFieldPendingValidation( formState, fieldName ) );
+	return (
+		! isEmpty( getFieldValue( formState, fieldName ) ) &&
+		( ! isFieldInvalid( formState, fieldName ) || isFieldPendingValidation( formState, fieldName ) )
+	);
 }
 
 function showFieldValidationLoading( formState, fieldName ) {
-	return isFieldValidating( formState, fieldName ) &&
+	return (
+		isFieldValidating( formState, fieldName ) &&
 		getFieldValue( formState, fieldName ) &&
-		! isFieldValid( formState, fieldName );
+		! isFieldValid( formState, fieldName )
+	);
 }
 
 module.exports = {
@@ -367,5 +389,5 @@ module.exports = {
 	createInitialFormState: createInitialFormState,
 	createNullFieldValues: createNullFieldValues,
 	initializeFields: initializeFields,
-	changeFieldValue: changeFieldValue
+	changeFieldValue: changeFieldValue,
 };

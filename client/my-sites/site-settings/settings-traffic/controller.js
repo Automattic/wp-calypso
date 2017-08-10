@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -16,5 +17,5 @@ export default {
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
 };

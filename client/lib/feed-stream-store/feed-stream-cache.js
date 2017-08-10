@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -27,5 +28,5 @@ module.exports = {
 		} else {
 			cache.set( id, store );
 		}
-	}
+	},
 };

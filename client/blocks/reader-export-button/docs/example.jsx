@@ -1,3 +1,4 @@
+/** @format */
 /**
 * External dependencies
 */
@@ -8,13 +9,12 @@ import React from 'react';
  */
 import ReaderExportButtonBlock from 'blocks/reader-export-button';
 
-const ReaderExportButton = () => (
+const ReaderExportButton = () =>
 	<div className="design-assets__group">
 		<div>
 			<ReaderExportButtonBlock />
 		</div>
-	</div>
-);
+	</div>;
 
 ReaderExportButton.displayName = 'ReaderExportButton';
 

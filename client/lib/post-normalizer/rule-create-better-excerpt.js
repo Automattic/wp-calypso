@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -48,7 +49,8 @@ function buildStrippedDom( content ) {
 	const dom = domForHtml( content );
 
 	// Ditch any photo captions, styles, scripts
-	const stripSelectors = '.wp-caption, style, script, blockquote[class^="instagram-"], figure, .tiled-gallery';
+	const stripSelectors =
+		'.wp-caption, style, script, blockquote[class^="instagram-"], figure, .tiled-gallery';
 	forEach( dom.querySelectorAll( stripSelectors ), removeElement );
 	return dom.innerHTML;
 }
@@ -67,16 +69,18 @@ export function formatExcerpt( content ) {
 		.forEach( removeElement );
 
 	// remove styles for all p's that remain
-	toArray( dom.querySelectorAll( 'p' ) )
-		.forEach( element => {
-			element.removeAttribute( 'style' );
-			element.removeAttribute( 'align' );
-		} );
+	toArray( dom.querySelectorAll( 'p' ) ).forEach( element => {
+		element.removeAttribute( 'style' );
+		element.removeAttribute( 'align' );
+	} );
 
 	stripLeadingBreaklines( dom );
 
 	// now limit it to the first three elements
-	forEach( dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ), function( element, index ) {
+	forEach( dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ), function(
+		element,
+		index
+	) {
 		if ( index >= 3 ) {
 			element.parentNode && element.parentNode.removeChild( element );
 		}

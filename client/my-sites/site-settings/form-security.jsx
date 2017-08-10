@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,7 +21,7 @@ import { siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import {
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode
+	isJetpackSiteInDevelopmentMode,
 } from 'state/selectors';
 import SpamFilteringSettings from './spam-filtering-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
@@ -35,10 +36,10 @@ class SiteSettingsFormSecurity extends Component {
 						compact
 						primary
 						onClick={ this.props.handleSubmitForm }
-						disabled={ isRequestingSettings || isSavingSettings || disableButton }>
+						disabled={ isRequestingSettings || isSavingSettings || disableButton }
+					>
 						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				}
+					</Button> }
 			</SectionHeader>
 		);
 	}
@@ -77,7 +78,11 @@ class SiteSettingsFormSecurity extends Component {
 			>
 				<QueryJetpackModules siteId={ siteId } />
 
-				{ this.renderSectionHeader( translate( 'Prevent brute force login attacks' ), true, disableProtect ) }
+				{ this.renderSectionHeader(
+					translate( 'Prevent brute force login attacks' ),
+					true,
+					disableProtect
+				) }
 				<Protect
 					fields={ fields }
 					isSavingSettings={ isSavingSettings }
@@ -110,23 +115,29 @@ class SiteSettingsFormSecurity extends Component {
 	}
 }
 
-const connectComponent = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const protectModuleActive = !! isJetpackModuleActive( state, siteId, 'protect' );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
-		const protectIsUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, siteId, 'protect' );
-		const akismetIsUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, siteId, 'akismet' );
-		const jetpackSettingsUiSupported = siteSupportsJetpackSettingsUi( state, siteId );
+const connectComponent = connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const protectModuleActive = !! isJetpackModuleActive( state, siteId, 'protect' );
+	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
+	const protectIsUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+		state,
+		siteId,
+		'protect'
+	);
+	const akismetIsUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+		state,
+		siteId,
+		'akismet'
+	);
+	const jetpackSettingsUiSupported = siteSupportsJetpackSettingsUi( state, siteId );
 
-		return {
-			jetpackSettingsUiSupported,
-			protectModuleActive,
-			protectModuleUnavailable: siteInDevMode && protectIsUnavailableInDevMode,
-			akismetUnavailable: siteInDevMode && akismetIsUnavailableInDevMode,
-		};
-	}
-);
+	return {
+		jetpackSettingsUiSupported,
+		protectModuleActive,
+		protectModuleUnavailable: siteInDevMode && protectIsUnavailableInDevMode,
+		akismetUnavailable: siteInDevMode && akismetIsUnavailableInDevMode,
+	};
+} );
 
 const getFormSettings = partialRight( pick, [
 	'akismet',
@@ -135,11 +146,9 @@ const getFormSettings = partialRight( pick, [
 	'sso',
 	'jetpack_sso_match_by_email',
 	'jetpack_sso_require_two_step',
-	'wordpress_api_key'
+	'wordpress_api_key',
 ] );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	wrapSettingsForm( getFormSettings )
-)( SiteSettingsFormSecurity );
+export default flowRight( connectComponent, localize, wrapSettingsForm( getFormSettings ) )(
+	SiteSettingsFormSecurity
+);

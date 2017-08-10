@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -25,11 +26,11 @@ const getWpcomFollowerRole = ( { site, translate } ) => {
 
 	return {
 		display_name: displayName,
-		name: 'follower'
+		name: 'follower',
 	};
 };
 
-const RoleSelect = ( props ) => {
+const RoleSelect = props => {
 	let { siteRoles } = props;
 	const { site, includeFollower, siteId, id, explanation, translate } = props;
 	const omitProps = [
@@ -42,7 +43,7 @@ const RoleSelect = ( props ) => {
 		'dispatch',
 		'moment',
 		'numberFormat',
-		'translate'
+		'translate',
 	];
 
 	if ( site && siteRoles && includeFollower ) {
@@ -57,28 +58,24 @@ const RoleSelect = ( props ) => {
 				{ translate( 'Role' ) }
 			</FormLabel>
 			<FormSelect { ...omit( props, omitProps ) }>
-				{
-					siteRoles && map( siteRoles, ( role ) => {
+				{ siteRoles &&
+					map( siteRoles, role => {
 						return (
 							<option value={ role.name } key={ role.name }>
 								{ role.display_name }
 							</option>
 						);
-					} )
-				}
+					} ) }
 			</FormSelect>
 			{ explanation &&
 				<FormSettingExplanation>
 					{ explanation }
-				</FormSettingExplanation>
-			}
+				</FormSettingExplanation> }
 		</FormFieldset>
 	);
 };
 
-export default connect(
-	( state, ownProps ) => ( {
-		site: getSite( state, ownProps.siteId ),
-		siteRoles: getSiteRoles( state, ownProps.siteId ),
-	} )
-)( localize( RoleSelect ) );
+export default connect( ( state, ownProps ) => ( {
+	site: getSite( state, ownProps.siteId ),
+	siteRoles: getSiteRoles( state, ownProps.siteId ),
+} ) )( localize( RoleSelect ) );

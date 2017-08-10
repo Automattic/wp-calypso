@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -37,10 +38,11 @@ export default React.createClass( {
 			//
 			// This workaround is based on the following StackOverflow post:
 			// http://stackoverflow.com/a/19998430/821706
-			inputElement.addEventListener( 'touchstart', () => inputElement.pattern = '\\d*' );
+			inputElement.addEventListener( 'touchstart', () => ( inputElement.pattern = '\\d*' ) );
 
-			[ 'keydown', 'blur' ].forEach( ( eventName ) =>
-				inputElement.addEventListener( eventName, () => inputElement.pattern = '.*' ) );
+			[ 'keydown', 'blur' ].forEach( eventName =>
+				inputElement.addEventListener( eventName, () => ( inputElement.pattern = '.*' ) )
+			);
 		}
 	},
 
@@ -66,16 +68,27 @@ export default React.createClass( {
 
 	recordFieldClick() {
 		if ( this.props.eventFormName ) {
-			analytics.ga.recordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } Field`, this.props.name );
+			analytics.ga.recordEvent(
+				'Upgrades',
+				`Clicked ${ this.props.eventFormName } Field`,
+				this.props.name
+			);
 		}
 	},
 
 	render() {
-		const classes = classNames( this.props.additionalClasses, this.props.name, this.props.labelClass, this.props.classes );
+		const classes = classNames(
+			this.props.additionalClasses,
+			this.props.name,
+			this.props.labelClass,
+			this.props.classes
+		);
 
 		return (
 			<div className={ classes }>
-				<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
+				<FormLabel htmlFor={ this.props.name }>
+					{ this.props.label }
+				</FormLabel>
 				<FormTextInput
 					placeholder={ this.props.placeholder ? this.props.placeholder : this.props.label }
 					id={ this.props.name }
@@ -89,9 +102,11 @@ export default React.createClass( {
 					onChange={ this.props.onChange }
 					onClick={ this.recordFieldClick }
 					isError={ this.props.isError }
-					inputRef={ this.props.inputRef } />
-				{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
+					inputRef={ this.props.inputRef }
+				/>
+				{ this.props.errorMessage &&
+					<FormInputValidation text={ this.props.errorMessage } isError /> }
 			</div>
 		);
-	}
+	},
 } );

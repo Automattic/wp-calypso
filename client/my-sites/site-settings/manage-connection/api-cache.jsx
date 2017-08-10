@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,7 +23,7 @@ const ApiCache = ( {
 	isRequestingSettings,
 	isSavingSettings,
 	supportsApiCacheCheckbox,
-	translate
+	translate,
 } ) => {
 	if ( ! config.isEnabled( 'jetpack/api-cache' ) || ! supportsApiCacheCheckbox ) {
 		return null;
@@ -35,33 +36,26 @@ const ApiCache = ( {
 				disabled={ isRequestingSettings || isSavingSettings }
 				onChange={ handleAutosavingToggle( 'api_cache' ) }
 			>
-				{ translate(
-					'Use synchronized data to boost performance'
-				) } (a8c-only experimental feature)
+				{ translate( 'Use synchronized data to boost performance' ) } (a8c-only experimental
+				feature)
 			</CompactFormToggle>
 		</CompactCard>
 	);
 };
 
-const connectComponent = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const siteIsJetpack = isJetpackSite( state, siteId );
+const connectComponent = connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const siteIsJetpack = isJetpackSite( state, siteId );
 
-		return {
-			supportsApiCacheCheckbox: siteIsJetpack && isJetpackMinimumVersion( state, siteId, '4.4.1' ),
-		};
-	}
-);
+	return {
+		supportsApiCacheCheckbox: siteIsJetpack && isJetpackMinimumVersion( state, siteId, '4.4.1' ),
+	};
+} );
 
-const getFormSettings = ( settings ) => {
-	return pick( settings, [
-		'api_cache',
-	] );
+const getFormSettings = settings => {
+	return pick( settings, [ 'api_cache' ] );
 };
 
-export default flowRight(
-	connectComponent,
-	localize,
-	wrapSettingsForm( getFormSettings )
-)( ApiCache );
+export default flowRight( connectComponent, localize, wrapSettingsForm( getFormSettings ) )(
+	ApiCache
+);

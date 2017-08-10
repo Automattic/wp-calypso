@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -18,11 +19,7 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import productsFactory from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { canCurrentUser } from 'state/selectors';
-import {
-	getSelectedSiteId,
-	getSelectedSite,
-	getSelectedSiteSlug
-} from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 /**
@@ -46,7 +43,7 @@ const domainsAddRedirectHeader = ( context, next ) => {
 	next();
 };
 
-const domainSearch = ( context ) => {
+const domainSearch = context => {
 	const CartData = require( 'components/data/cart' );
 	const DomainSearch = require( './domain-search' );
 	const basePath = route.sectionify( context.path );
@@ -62,20 +59,15 @@ const domainSearch = ( context ) => {
 	}
 
 	renderWithReduxStore(
-		(
-			<CartData>
-				<DomainSearch
-					basePath={ basePath }
-					context={ context }
-				/>
-			</CartData>
-		),
+		<CartData>
+			<DomainSearch basePath={ basePath } context={ context } />
+		</CartData>,
 		document.getElementById( 'primary' ),
 		context.store
 	);
 };
 
-const siteRedirect = ( context ) => {
+const siteRedirect = context => {
 	const CartData = require( 'components/data/cart' );
 	const SiteRedirect = require( './domain-search/site-redirect' );
 	const basePath = route.sectionify( context.path );
@@ -86,17 +78,15 @@ const siteRedirect = ( context ) => {
 	analytics.pageView.record( basePath, 'Domain Search > Site Redirect' );
 
 	renderWithReduxStore(
-		(
-			<CartData>
-				<SiteRedirect />
-			</CartData>
-		),
+		<CartData>
+			<SiteRedirect />
+		</CartData>,
 		document.getElementById( 'primary' ),
 		context.store
 	);
 };
 
-const mapDomain = ( context ) => {
+const mapDomain = context => {
 	const CartData = require( 'components/data/cart' );
 	const MapDomain = require( 'my-sites/domains/map-domain' ).default;
 	const basePath = route.sectionify( context.path );
@@ -106,35 +96,33 @@ const mapDomain = ( context ) => {
 
 	analytics.pageView.record( basePath, 'Domain Search > Domain Mapping' );
 	renderWithReduxStore(
-		(
-			<Main>
-				<CartData>
-					<MapDomain
-						initialQuery={ context.query.initialQuery }
-					/>
-				</CartData>
-			</Main>
-		),
+		<Main>
+			<CartData>
+				<MapDomain initialQuery={ context.query.initialQuery } />
+			</CartData>
+		</Main>,
 		document.getElementById( 'primary' ),
 		context.store
 	);
 };
 
-const googleAppsWithRegistration = ( context ) => {
+const googleAppsWithRegistration = context => {
 	const CartData = require( 'components/data/cart' );
 	const GoogleApps = require( 'components/upgrades/google-apps' );
 
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle(
-		i18n.translate( 'Register %(domain)s', {
-			args: { domain: context.params.registerDomain }
-		} )
-	) );
+	context.store.dispatch(
+		setTitle(
+			i18n.translate( 'Register %(domain)s', {
+				args: { domain: context.params.registerDomain },
+			} )
+		)
+	);
 
 	const state = context.store.getState();
 	const siteSlug = getSelectedSiteSlug( state ) || '';
 
-	const handleAddGoogleApps = ( googleAppsCartItem ) => {
+	const handleAddGoogleApps = googleAppsCartItem => {
 		upgradesActions.addItem( googleAppsCartItem );
 		page( '/checkout/' + siteSlug );
 	};
@@ -147,28 +135,29 @@ const googleAppsWithRegistration = ( context ) => {
 		page( '/checkout/' + siteSlug );
 	};
 
-	analytics.pageView.record( '/domains/add/:site/google-apps', 'Domain Search > Domain Registration > Google Apps' );
+	analytics.pageView.record(
+		'/domains/add/:site/google-apps',
+		'Domain Search > Domain Registration > Google Apps'
+	);
 
 	renderWithReduxStore(
-		(
-			<Main>
-				<CartData>
-					<GoogleApps
-						productsList={ productsList }
-						domain={ context.params.registerDomain }
-						onGoBack={ handleGoBack }
-						onAddGoogleApps={ handleAddGoogleApps }
-						onClickSkip={ handleClickSkip }
-					/>
-				</CartData>
-			</Main>
-		),
+		<Main>
+			<CartData>
+				<GoogleApps
+					productsList={ productsList }
+					domain={ context.params.registerDomain }
+					onGoBack={ handleGoBack }
+					onAddGoogleApps={ handleAddGoogleApps }
+					onClickSkip={ handleClickSkip }
+				/>
+			</CartData>
+		</Main>,
 		document.getElementById( 'primary' ),
 		context.store
 	);
 };
 
-const redirectIfNoSite = ( redirectTo ) => {
+const redirectIfNoSite = redirectTo => {
 	return ( context, next ) => {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );

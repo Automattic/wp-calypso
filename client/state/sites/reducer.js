@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -60,7 +61,7 @@ export function items( state = {}, action ) {
 			const prevSite = state[ action.siteId ];
 			if ( prevSite ) {
 				return Object.assign( {}, state, {
-					[ action.siteId ]: merge( {}, prevSite, { options: { wordads: true } } )
+					[ action.siteId ]: merge( {}, prevSite, { options: { wordads: true } } ),
 				} );
 			}
 			return state;
@@ -75,30 +76,34 @@ export function items( state = {}, action ) {
 			// sites (replace existing state). Otherwise merge into state.
 			const initialNextState = SITES_RECEIVE === action.type ? {} : state;
 
-			return reduce( sites, ( memo, site ) => {
-				// If we're not already tracking the site upon an update, don't
-				// merge into state (we only currently maintain sites which
-				// have at one point been selected in state)
-				//
-				// TODO: Consider dropping condition once sites-list abolished
-				if ( SITES_UPDATE === action.type && ! memo[ site.ID ] ) {
+			return reduce(
+				sites,
+				( memo, site ) => {
+					// If we're not already tracking the site upon an update, don't
+					// merge into state (we only currently maintain sites which
+					// have at one point been selected in state)
+					//
+					// TODO: Consider dropping condition once sites-list abolished
+					if ( SITES_UPDATE === action.type && ! memo[ site.ID ] ) {
+						return memo;
+					}
+
+					// Bypass if site object hasn't change
+					const transformedSite = pick( site, VALID_SITE_KEYS );
+					if ( isEqual( memo[ site.ID ], transformedSite ) ) {
+						return memo;
+					}
+
+					// Avoid mutating state
+					if ( memo === state ) {
+						memo = { ...state };
+					}
+
+					memo[ site.ID ] = transformedSite;
 					return memo;
-				}
-
-				// Bypass if site object hasn't change
-				const transformedSite = pick( site, VALID_SITE_KEYS );
-				if ( isEqual( memo[ site.ID ], transformedSite ) ) {
-					return memo;
-				}
-
-				// Avoid mutating state
-				if ( memo === state ) {
-					memo = { ...state };
-				}
-
-				memo[ site.ID ] = transformedSite;
-				return memo;
-			}, initialNextState );
+				},
+				initialNextState
+			);
 
 		case SITE_DELETE_RECEIVE:
 			return omit( state, action.siteId );
@@ -117,9 +122,9 @@ export function items( state = {}, action ) {
 				...state,
 				[ siteId ]: merge( {}, site, {
 					options: {
-						theme_slug: themeStylesheet
-					}
-				} )
+						theme_slug: themeStylesheet,
+					},
+				} ),
 			};
 		}
 
@@ -134,59 +139,65 @@ export function items( state = {}, action ) {
 
 			let nextSite = site;
 
-			return reduce( [ 'blog_public', 'site_icon' ], ( memo, key ) => {
-				// A site settings update may or may not include the icon or blog_public property.
-				// If not, we should simply return state unchanged.
-				if ( ! settings.hasOwnProperty( key ) ) {
-					return memo;
-				}
+			return reduce(
+				[ 'blog_public', 'site_icon' ],
+				( memo, key ) => {
+					// A site settings update may or may not include the icon or blog_public property.
+					// If not, we should simply return state unchanged.
+					if ( ! settings.hasOwnProperty( key ) ) {
+						return memo;
+					}
 
-				switch ( key ) {
-					case 'blog_public':
-						const isPrivate = parseInt( settings.blog_public, 10 ) === -1;
+					switch ( key ) {
+						case 'blog_public':
+							const isPrivate = parseInt( settings.blog_public, 10 ) === -1;
 
-						if ( site.is_private === isPrivate ) {
-							return memo;
-						}
+							if ( site.is_private === isPrivate ) {
+								return memo;
+							}
 
-						nextSite = {
-							...nextSite,
-							is_private: isPrivate
-						};
-						break;
-					case 'site_icon':
-						const mediaId = settings.site_icon;
-						// Return unchanged if next icon matches current value,
-						// accounting for the fact that a non-existent icon property is
-						// equivalent to setting the media icon as null
-						if ( ( ! site.icon && null === mediaId ) ||
-								( site.icon && site.icon.media_id === mediaId ) ) {
-							return memo;
-						}
-
-						if ( null === mediaId ) {
-							// Unset icon
-							nextSite = omit( nextSite, 'icon' );
-						} else {
-							// Update icon, intentionally removing reference to the URL,
-							// shifting burden of URL lookup to selector
 							nextSite = {
 								...nextSite,
-								icon: {
-									media_id: mediaId
-								}
+								is_private: isPrivate,
 							};
-						}
-						break;
-				}
+							break;
+						case 'site_icon':
+							const mediaId = settings.site_icon;
+							// Return unchanged if next icon matches current value,
+							// accounting for the fact that a non-existent icon property is
+							// equivalent to setting the media icon as null
+							if (
+								( ! site.icon && null === mediaId ) ||
+								( site.icon && site.icon.media_id === mediaId )
+							) {
+								return memo;
+							}
 
-				if ( memo === state ) {
-					memo = { ...state };
-				}
+							if ( null === mediaId ) {
+								// Unset icon
+								nextSite = omit( nextSite, 'icon' );
+							} else {
+								// Update icon, intentionally removing reference to the URL,
+								// shifting burden of URL lookup to selector
+								nextSite = {
+									...nextSite,
+									icon: {
+										media_id: mediaId,
+									},
+								};
+							}
+							break;
+					}
 
-				memo[ siteId ] = nextSite;
-				return memo;
-			}, state );
+					if ( memo === state ) {
+						memo = { ...state };
+					}
+
+					memo[ siteId ] = nextSite;
+					return memo;
+				},
+				state
+			);
 		}
 
 		case MEDIA_DELETE: {
@@ -195,7 +206,7 @@ export function items( state = {}, action ) {
 			if ( siteIconId && includes( mediaIds, siteIconId ) ) {
 				return {
 					...state,
-					[ siteId ]: omit( state[ siteId ], 'icon' )
+					[ siteId ]: omit( state[ siteId ], 'icon' ),
 				};
 			}
 
@@ -219,7 +230,7 @@ items.schema = sitesSchema;
 export const requestingAll = createReducer( false, {
 	[ SITES_REQUEST ]: () => true,
 	[ SITES_REQUEST_FAILURE ]: () => false,
-	[ SITES_REQUEST_SUCCESS ]: () => false
+	[ SITES_REQUEST_SUCCESS ]: () => false,
 } );
 
 /**
@@ -230,17 +241,20 @@ export const requestingAll = createReducer( false, {
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const requesting = createReducer( {}, {
-	[ SITE_REQUEST ]: ( state, { siteId } ) => {
-		return { ...state, [ siteId ]: true };
-	},
-	[ SITE_REQUEST_FAILURE ]: ( state, { siteId } ) => {
-		return { ...state, [ siteId ]: false };
-	},
-	[ SITE_REQUEST_SUCCESS ]: ( state, { siteId } ) => {
-		return { ...state, [ siteId ]: false };
+export const requesting = createReducer(
+	{},
+	{
+		[ SITE_REQUEST ]: ( state, { siteId } ) => {
+			return { ...state, [ siteId ]: true };
+		},
+		[ SITE_REQUEST_FAILURE ]: ( state, { siteId } ) => {
+			return { ...state, [ siteId ]: false };
+		},
+		[ SITE_REQUEST_SUCCESS ]: ( state, { siteId } ) => {
+			return { ...state, [ siteId ]: false };
+		},
 	}
-} );
+);
 
 /**
  * Returns the updated deleting state after an action has been dispatched.
@@ -250,11 +264,17 @@ export const requesting = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const deleting = keyedReducer( 'siteId', createReducer( {}, {
-	[ SITE_DELETE ]: stubTrue,
-	[ SITE_DELETE_FAILURE ]: stubFalse,
-	[ SITE_DELETE_SUCCESS ]: stubFalse
-} ) );
+export const deleting = keyedReducer(
+	'siteId',
+	createReducer(
+		{},
+		{
+			[ SITE_DELETE ]: stubTrue,
+			[ SITE_DELETE_FAILURE ]: stubFalse,
+			[ SITE_DELETE_SUCCESS ]: stubFalse,
+		}
+	)
+);
 
 export default combineReducers( {
 	connection,

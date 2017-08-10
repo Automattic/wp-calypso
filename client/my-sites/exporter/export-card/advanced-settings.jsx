@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -28,7 +29,7 @@ const AdvancedSettings = React.createClass( {
 		onClickExport: PropTypes.func.isRequired,
 
 		// Data
-		postType: PropTypes.string
+		postType: PropTypes.string,
 	},
 
 	render() {
@@ -40,15 +41,17 @@ const AdvancedSettings = React.createClass( {
 				<p className="export-card__advanced-settings-description">
 					{ this.translate(
 						'Use the options below to select a specific content ' +
-						'type to download. You can select Posts, Pages, ' +
-						'or Feedback, and filter by the listed parameters. ' +
-						'After making your selection you can download your ' +
-						'content in an .xml file.' ) }
+							'type to download. You can select Posts, Pages, ' +
+							'or Feedback, and filter by the listed parameters. ' +
+							'After making your selection you can download your ' +
+							'content in an .xml file.'
+					) }
 				</p>
 				<div className="export-card__advanced-settings-row">
 					<PostTypeOptions postType="post" legend={ this.translate( 'Posts' ) } />
 					<PostTypeOptions postType="page" legend={ this.translate( 'Pages' ) } />
-					<PostTypeOptions postType="feedback"
+					<PostTypeOptions
+						postType="feedback"
 						legend={ this.translate( 'Feedback' ) }
 						description={ this.translate( 'Survey results etc.' ) }
 					/>
@@ -60,10 +63,11 @@ const AdvancedSettings = React.createClass( {
 					isPrimary={ true }
 					onClick={ this.props.onClickExport }
 					text={ this.translate( 'Export Selected Content' ) }
-					loadingText={ this.translate( 'Exporting…' ) } />
+					loadingText={ this.translate( 'Exporting…' ) }
+				/>
 			</div>
 		);
-	}
+	},
 } );
 
 const mapStateToProps = ( state, ownProps ) => {

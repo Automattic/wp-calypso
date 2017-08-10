@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -129,8 +130,8 @@ export function requestSimplePaymentsProduct( { dispatch }, action ) {
 				method: 'GET',
 				path: `/sites/${ siteId }/posts/${ productId }`,
 			},
-			action,
-		),
+			action
+		)
 	);
 }
 
@@ -153,8 +154,8 @@ export function requestSimplePaymentsProducts( { dispatch }, action ) {
 					status: 'publish',
 				},
 			},
-			action,
-		),
+			action
+		)
 	);
 }
 
@@ -173,8 +174,8 @@ export function requestSimplePaymentsProductAdd( { dispatch }, action ) {
 				path: `/sites/${ siteId }/posts/new`,
 				body: productToCustomPost( product ),
 			},
-			action,
-		),
+			action
+		)
 	);
 }
 
@@ -193,8 +194,8 @@ export function requestSimplePaymentsProductEdit( { dispatch }, action ) {
 				path: `/sites/${ siteId }/posts/${ productId }`,
 				body: productToCustomPost( product ),
 			},
-			action,
-		),
+			action
+		)
 	);
 }
 
@@ -212,8 +213,8 @@ export function requestSimplePaymentsProductDelete( { dispatch }, action ) {
 				method: 'POST',
 				path: `/sites/${ siteId }/posts/${ productId }/delete`,
 			},
-			action,
-		),
+			action
+		)
 	);
 }
 

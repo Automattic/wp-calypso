@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -22,12 +23,19 @@ import {
 	areCurrentlyEditingShippingZoneLocationsValid,
 } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 
-const ShippingZoneLocationDialog = ( { siteId, isVisible, isAdding, translate, actions, canSave } ) => {
+const ShippingZoneLocationDialog = ( {
+	siteId,
+	isVisible,
+	isAdding,
+	translate,
+	actions,
+	canSave,
+} ) => {
 	if ( ! isVisible ) {
 		return null;
 	}
 
-	const onCancel = () => ( actions.cancelEditLocations() );
+	const onCancel = () => actions.cancelEditLocations();
 	const onClose = () => {
 		if ( ! canSave ) {
 			return;
@@ -43,7 +51,7 @@ const ShippingZoneLocationDialog = ( { siteId, isVisible, isAdding, translate, a
 			label: isAdding ? translate( 'Add' ) : translate( 'Done' ),
 			onClick: onClose,
 			disabled: ! canSave,
-			isPrimary: true
+			isPrimary: true,
 		},
 	];
 
@@ -52,7 +60,8 @@ const ShippingZoneLocationDialog = ( { siteId, isVisible, isAdding, translate, a
 			additionalClassNames="shipping-zone__location-dialog woocommerce"
 			isVisible={ isVisible }
 			buttons={ buttons }
-			onClose={ onCancel } >
+			onClose={ onCancel }
+		>
 			<div className="shipping-zone__location-dialog-header">
 				{ translate( 'Edit location' ) }
 			</div>
@@ -68,14 +77,18 @@ ShippingZoneLocationDialog.propTypes = {
 };
 
 export default connect(
-	( state ) => ( {
+	state => ( {
 		isVisible: isEditLocationsModalOpen( state ),
 		canSave: areCurrentlyEditingShippingZoneLocationsValid( state ),
 	} ),
 	( dispatch, ownProps ) => ( {
-		actions: bindActionCreatorsWithSiteId( {
-			closeEditLocations,
-			cancelEditLocations,
-		}, dispatch, ownProps.siteId ),
+		actions: bindActionCreatorsWithSiteId(
+			{
+				closeEditLocations,
+				cancelEditLocations,
+			},
+			dispatch,
+			ownProps.siteId
+		),
 	} )
 )( localize( ShippingZoneLocationDialog ) );

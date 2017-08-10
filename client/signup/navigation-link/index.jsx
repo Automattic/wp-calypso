@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -36,7 +37,10 @@ export class NavigationLink extends Component {
 
 		const currentStepIndex = findIndex( signupProgress, { stepName } );
 
-		const previousStep = find( signupProgress.slice( 0, currentStepIndex ).reverse(), step => ! step.wasSkipped );
+		const previousStep = find(
+			signupProgress.slice( 0, currentStepIndex ).reverse(),
+			step => ! step.wasSkipped
+		);
 
 		return previousStep ? previousStep.stepName : null;
 	}
@@ -52,9 +56,18 @@ export class NavigationLink extends Component {
 
 		const previousStepName = this.getPreviousStepName();
 
-		const stepSectionName = get( find( this.props.signupProgress, { stepName: previousStepName } ), 'stepSectionName', '' );
+		const stepSectionName = get(
+			find( this.props.signupProgress, { stepName: previousStepName } ),
+			'stepSectionName',
+			''
+		);
 
-		return signupUtils.getStepUrl( this.props.flowName, previousStepName, stepSectionName, getLocaleSlug() );
+		return signupUtils.getStepUrl(
+			this.props.flowName,
+			previousStepName,
+			stepSectionName,
+			getLocaleSlug()
+		);
 	}
 
 	handleClick = () => {
@@ -65,7 +78,7 @@ export class NavigationLink extends Component {
 		}
 
 		this.recordClick();
-	}
+	};
 
 	recordClick() {
 		const tracksProps = {
@@ -83,7 +96,11 @@ export class NavigationLink extends Component {
 	}
 
 	render() {
-		if ( this.props.positionInFlow === 0 && this.props.direction === 'back' && ! this.props.stepSectionName ) {
+		if (
+			this.props.positionInFlow === 0 &&
+			this.props.direction === 'back' &&
+			! this.props.stepSectionName
+		) {
 			return null;
 		}
 
@@ -100,7 +117,13 @@ export class NavigationLink extends Component {
 		}
 
 		return (
-			<Button compact borderless className="navigation-link" href={ this.getBackUrl() } onClick={ this.handleClick }>
+			<Button
+				compact
+				borderless
+				className="navigation-link"
+				href={ this.getBackUrl() }
+				onClick={ this.handleClick }
+			>
 				{ backGridicon }
 				{ text }
 				{ forwardGridicon }

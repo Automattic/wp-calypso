@@ -1,12 +1,10 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import {
-	noop,
-	values as objectValues
-} from 'lodash';
+import { noop, values as objectValues } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
@@ -16,17 +14,12 @@ import classNames from 'classnames';
  */
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import {
-	AspectRatios,
-	MinimumImageDimensions,
-} from 'state/ui/editor/image-editor/constants';
-import {
-	getImageEditorAspectRatio
-} from 'state/ui/editor/image-editor/selectors';
+import { AspectRatios, MinimumImageDimensions } from 'state/ui/editor/image-editor/constants';
+import { getImageEditorAspectRatio } from 'state/ui/editor/image-editor/selectors';
 import {
 	imageEditorRotateCounterclockwise,
 	imageEditorFlip,
-	setImageEditorAspectRatio
+	setImageEditorAspectRatio,
 } from 'state/ui/editor/image-editor/actions';
 import { getImageEditorIsGreaterThanMinimumDimensions } from 'state/selectors';
 
@@ -38,7 +31,7 @@ export class ImageEditorToolbar extends Component {
 		setImageEditorAspectRatio: PropTypes.func,
 		allowedAspectRatios: PropTypes.array,
 		onShowNotice: PropTypes.func,
-		isAspectRatioDisabled: PropTypes.bool
+		isAspectRatioDisabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -47,14 +40,14 @@ export class ImageEditorToolbar extends Component {
 		setImageEditorAspectRatio: noop,
 		allowedAspectRatios: objectValues( AspectRatios ),
 		onShowNotice: noop,
-		isAspectRatioDisabled: false
+		isAspectRatioDisabled: false,
 	};
 
 	constructor( props ) {
 		super( props );
 
 		this.state = {
-			showAspectPopover: false
+			showAspectPopover: false,
 		};
 
 		this.setAspectMenuContext = this.setAspectMenuContext.bind( this );
@@ -75,11 +68,7 @@ export class ImageEditorToolbar extends Component {
 	onAspectOpen( event ) {
 		event.preventDefault();
 
-		const {
-			isAspectRatioDisabled,
-			onShowNotice,
-			translate
-		} = this.props;
+		const { isAspectRatioDisabled, onShowNotice, translate } = this.props;
 
 		if ( isAspectRatioDisabled ) {
 			const noticeText = translate(
@@ -87,12 +76,13 @@ export class ImageEditorToolbar extends Component {
 				{
 					args: {
 						width: MinimumImageDimensions.WIDTH,
-						height: MinimumImageDimensions.HEIGHT
+						height: MinimumImageDimensions.HEIGHT,
 					},
 					components: {
-						strong: <strong />
-					}
-				} );
+						strong: <strong />,
+					},
+				}
+			);
 			onShowNotice( noticeText );
 			return;
 		}
@@ -113,16 +103,9 @@ export class ImageEditorToolbar extends Component {
 	}
 
 	renderAspectMenu() {
-		const {
-			popoverContext,
-			showAspectPopover
-		} = this.state;
+		const { popoverContext, showAspectPopover } = this.state;
 
-		const {
-			translate,
-			aspectRatio,
-			allowedAspectRatios
-		} = this.props;
+		const { translate, aspectRatio, allowedAspectRatios } = this.props;
 
 		if ( ! popoverContext || allowedAspectRatios.length === 1 ) {
 			return;
@@ -131,103 +114,100 @@ export class ImageEditorToolbar extends Component {
 		const items = [
 			{
 				action: AspectRatios.FREE,
-				label: translate( 'Free' )
+				label: translate( 'Free' ),
 			},
 			{
 				action: AspectRatios.ORIGINAL,
-				label: translate( 'Original' )
+				label: translate( 'Original' ),
 			},
 			{
 				action: AspectRatios.ASPECT_1X1,
-				label: translate( 'Square' )
+				label: translate( 'Square' ),
 			},
 			{
 				action: AspectRatios.ASPECT_16X9,
-				label: translate( '16:9' )
+				label: translate( '16:9' ),
 			},
 			{
 				action: AspectRatios.ASPECT_4X3,
-				label: translate( '4:3' )
+				label: translate( '4:3' ),
 			},
 			{
 				action: AspectRatios.ASPECT_3X2,
-				label: translate( '3:2' )
-			}
+				label: translate( '3:2' ),
+			},
 		];
 
 		return (
-			<PopoverMenu isVisible={ showAspectPopover }
+			<PopoverMenu
+				isVisible={ showAspectPopover }
 				onClose={ this.onAspectClose }
 				position="top"
 				context={ popoverContext }
 				className="image-editor__toolbar-popover popover is-dialog-visible"
 			>
-				{ items.map( item => (
-					allowedAspectRatios.indexOf( item.action ) !== -1
-						? <PopoverMenuItem
-							key={ 'image-editor-toolbar-aspect-' + item.action }
-							action={ item.action }>
-							{
-								aspectRatio === item.action
-									? <Gridicon icon="checkmark" size={ 12 } />
-									: false
-							}
-							{ item.label }
-						</PopoverMenuItem>
-						: null
-				) ) }
+				{ items.map(
+					item =>
+						allowedAspectRatios.indexOf( item.action ) !== -1
+							? <PopoverMenuItem
+									key={ 'image-editor-toolbar-aspect-' + item.action }
+									action={ item.action }
+								>
+									{ aspectRatio === item.action
+										? <Gridicon icon="checkmark" size={ 12 } />
+										: false }
+									{ item.label }
+								</PopoverMenuItem>
+							: null
+				) }
 			</PopoverMenu>
 		);
 	}
 
 	renderButtons() {
-		const {
-			translate,
-			allowedAspectRatios,
-			isAspectRatioDisabled
-		} = this.props;
+		const { translate, allowedAspectRatios, isAspectRatioDisabled } = this.props;
 
 		const buttons = [
 			{
 				tool: 'rotate',
 				icon: 'rotate',
 				text: translate( 'Rotate' ),
-				onClick: this.rotate
+				onClick: this.rotate,
 			},
 			allowedAspectRatios.length === 1
 				? null
 				: {
-					tool: 'aspect',
-					ref: this.setAspectMenuContext,
-					icon: 'layout',
-					text: translate( 'Aspect' ),
-					onClick: this.onAspectOpen,
-					disabled: isAspectRatioDisabled
-				},
+						tool: 'aspect',
+						ref: this.setAspectMenuContext,
+						icon: 'layout',
+						text: translate( 'Aspect' ),
+						onClick: this.onAspectOpen,
+						disabled: isAspectRatioDisabled,
+					},
 			{
 				tool: 'flip-vertical',
 				icon: 'flip-vertical',
 				text: translate( 'Flip' ),
-				onClick: this.flip
-			}
+				onClick: this.flip,
+			},
 		];
 
 		return buttons.map( button => {
 			const buttonClasses = classNames( 'image-editor__toolbar-button', {
-				'is-disabled': button && button.disabled
+				'is-disabled': button && button.disabled,
 			} );
 			return button
-				? (
-					<button
+				? <button
 						key={ 'image-editor-toolbar-' + button.tool }
 						ref={ button.ref }
 						className={ buttonClasses }
 						onClick={ button.onClick }
 					>
 						<Gridicon icon={ button.icon } />
-						<span>{ button.text }</span>
+						<span>
+							{ button.text }
+						</span>
 					</button>
-				)
 				: null;
 		} );
 	}
@@ -243,18 +223,18 @@ export class ImageEditorToolbar extends Component {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		const aspectRatio = getImageEditorAspectRatio( state );
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions( state );
 
 		return {
 			aspectRatio,
-			isAspectRatioDisabled: ! isGreaterThanMinimumDimensions
+			isAspectRatioDisabled: ! isGreaterThanMinimumDimensions,
 		};
 	},
 	{
 		imageEditorRotateCounterclockwise,
 		imageEditorFlip,
-		setImageEditorAspectRatio
+		setImageEditorAspectRatio,
 	}
 )( localize( ImageEditorToolbar ) );

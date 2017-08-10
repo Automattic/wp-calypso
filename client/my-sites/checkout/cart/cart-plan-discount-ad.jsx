@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,7 +21,7 @@ class CartPlanDiscountAd extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
 		translate: PropTypes.func.isRequired,
-		sitePlans: PropTypes.object
+		sitePlans: PropTypes.object,
 	};
 
 	componentDidMount() {
@@ -31,7 +32,11 @@ class CartPlanDiscountAd extends Component {
 		const { cart, translate, sitePlans } = this.props;
 		let plan;
 
-		if ( ! sitePlans.hasLoadedFromServer || ! cart.hasLoadedFromServer || ! cartItems.hasPlan( cart ) ) {
+		if (
+			! sitePlans.hasLoadedFromServer ||
+			! cart.hasLoadedFromServer ||
+			! cartItems.hasPlan( cart )
+		) {
 			return null;
 		}
 
@@ -54,24 +59,28 @@ class CartPlanDiscountAd extends Component {
 		if ( plan.isDomainUpgrade ) {
 			return (
 				<CartAd>
-					<p className="cart__cart-plan-discount-ad-paragraph">{ translate(
-						"You're getting a %(discount)s discount off the regular price of the plan (%(originalPrice)s)" +
-						', because you already paid for the domain.',
-						{
-							args: {
-								discount: plan.formattedDiscount,
-								originalPrice: plan.formattedOriginalPrice
+					<p className="cart__cart-plan-discount-ad-paragraph">
+						{ translate(
+							"You're getting a %(discount)s discount off the regular price of the plan (%(originalPrice)s)" +
+								', because you already paid for the domain.',
+							{
+								args: {
+									discount: plan.formattedDiscount,
+									originalPrice: plan.formattedOriginalPrice,
+								},
 							}
-						}
-					) }</p>
-					<p className="cart__cart-plan-discount-ad-paragraph">{ translate(
-						'The plan and the domain can be renewed together for %(originalPrice)s / year.',
-						{
-							args: {
-								originalPrice: plan.formattedOriginalPrice
+						) }
+					</p>
+					<p className="cart__cart-plan-discount-ad-paragraph">
+						{ translate(
+							'The plan and the domain can be renewed together for %(originalPrice)s / year.',
+							{
+								args: {
+									originalPrice: plan.formattedOriginalPrice,
+								},
 							}
-						}
-					) }</p>
+						) }
+					</p>
 				</CartAd>
 			);
 		}
@@ -81,11 +90,10 @@ class CartPlanDiscountAd extends Component {
 				<strong>
 					{ translate( "You're saving %(discount)s!", {
 						args: {
-							discount: plan.formattedDiscount
-						}
+							discount: plan.formattedDiscount,
+						},
 					} ) }
-				</strong>
-				{ ' ' }
+				</strong>{' '}
 				{ plan.discountReason }
 			</CartAd>
 		);
@@ -95,16 +103,16 @@ class CartPlanDiscountAd extends Component {
 export default connect(
 	( state, { selectedSite } ) => {
 		return {
-			sitePlans: getPlansBySite( state, selectedSite )
+			sitePlans: getPlansBySite( state, selectedSite ),
 		};
 	},
-	( dispatch ) => {
+	dispatch => {
 		return {
 			fetchSitePlans: ( sitePlans, site ) => {
 				if ( shouldFetchSitePlans( sitePlans, site ) ) {
 					dispatch( fetchSitePlans( site.ID ) );
 				}
-			}
+			},
 		};
 	}
 )( localize( CartPlanDiscountAd ) );

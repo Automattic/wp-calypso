@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -36,9 +37,9 @@ describe( 'PreferencesStore', function() {
 			action: {
 				type: 'RECEIVE_ME_SETTINGS',
 				data: {
-					[ USER_SETTING_KEY ]: preferences
-				}
-			}
+					[ USER_SETTING_KEY ]: preferences,
+				},
+			},
 		} );
 	}
 
