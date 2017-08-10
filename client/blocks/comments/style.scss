@@ -299,8 +299,8 @@
 	.gridicon {
 		height: 24px;
 		fill: lighten( $gray, 10% );
-		margin-top: 4px;
 		margin-left: 4px;
+		margin-top: 4px;
 	}
 
 	@include breakpoint( "<480px" ) {
