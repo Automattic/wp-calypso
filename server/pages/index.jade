@@ -55,9 +55,6 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			else
 				link(rel='stylesheet', href=urls['style.css'])
 
-		if oauth
-			link(rel='stylesheet', href='/calypso/css/' + oauth + '.css')
-
 	body(class=isRTL ? 'rtl' : '')
 		if renderedLayout
 			#wpcom.wpcom-site!= renderedLayout
