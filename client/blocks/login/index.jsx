@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 import { includes, capitalize } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -121,7 +122,9 @@ class Login extends Component {
 			linkingSocialService,
 		} = this.props;
 
-		let headerText = translate( 'Log in to your account.' );
+		let headerText = translate( 'Log in to your account.' ),
+			preHeader = null,
+			postHeader = null;
 
 		if ( twoStepNonce ) {
 			headerText = translate( 'Two-Step Authentication' );
@@ -139,11 +142,29 @@ class Login extends Component {
 					clientTitle: oauth2ClientData.title
 				}
 			} );
+			if ( oauth2ClientData === 'woo' ) { //TODO
+				preHeader = (
+					<Gridicon icon="my-sites" size={ 72 } />
+				);
+				postHeader = (
+					<p>
+						{ translate( 'WooCommerce.com now uses WordPress.com Accounts. {{a}}Learn more about the benefits{{/a}}', {
+							components: {
+								a: <a href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/" />
+							}
+						} ) }
+					</p>
+				);
+			}
 		}
 
 		return (
-			<div className="login__form-header">
-				{ headerText }
+			<div className="login__form-header-wrapper">
+				{ preHeader }
+				<div className="login__form-header">
+					{ headerText }
+				</div>
+				{ postHeader }
 			</div>
 		);
 	}

@@ -38,7 +38,7 @@ export default {
 	},
 
 	checkToken: function( context, next ) {
-		const loggedOutRoutes = [ '/log-in', '/oauth-login', '/oauth', '/start', '/authorize', '/api/oauth/token' ],
+		const loggedOutRoutes = [ '/oauth-login', '/oauth', '/start', '/authorize', '/api/oauth/token' ],
 			isValidSection = loggedOutRoutes.some( route => startsWith( context.path, route ) );
 
 		// Check we have an OAuth token, otherwise redirect to auth/login page

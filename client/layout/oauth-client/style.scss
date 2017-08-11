@@ -1,0 +1,113 @@
+.woo {
+	.layout__content {
+		padding-top: 120px;
+	}
+
+	.oauth-client {
+		background-color: #fff;
+		height: 120px;
+		line-height: 120px;
+		box-sizing: border-box;
+		margin: 0 auto;
+		padding: 0 10px;
+		width: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
+ 		ul {
+			margin-top: 0;
+			margin-left: 0;
+			padding-left: 0;
+			li {
+				list-style-type: none;
+			}
+		}
+	}
+
+	.oauth-client a {
+		color: #fff;
+		float: left;
+		line-height: 55px;
+		padding: 0 15px;
+		text-decoration: none;
+		transition: 0.05 all ease-in-out;
+
+		&:active {
+			box-shadow: inset 0 -2px 6px rgba(0, 0, 0, 0.6);
+		}
+	}
+
+	.oauth-client__logo img {
+		max-width: none;
+		margin-top: 40px;
+		vertical-align: middle;
+	}
+
+	.oauth-client__main-nav {
+		margin: 0;
+	}
+
+	.oauth-client__woocommerce-close {
+		float: right;
+		padding-top: 30px;
+
+		a {
+			color: #999;
+			cursor: pointer;
+			float: right;
+			font-size: 0.9em;
+			text-decoration: none;
+			text-transform: uppercase;
+			font-weight: bold;
+		}
+	}
+
+	.button.is-primary {
+		background: #a46497;
+		border-radius: 100px;
+		border: none;
+		color: #fff;
+		cursor: pointer;
+		font-size: 1.1em;
+		padding: 15px 50px;
+		text-decoration: none;
+		text-transform: capitalize;
+
+		&:hover,
+		&:focus {
+			background: #696969;
+		}
+	}
+
+	input[type='text'],
+	input[type='email'],
+	input[type='password'],
+	textarea {
+		color: #666;
+		border: 1px solid #e6e6e6;
+		border-radius: 3px;
+		box-sizing: border-box;
+		font-size: 1.25em !important;
+		line-height: 1.563 !important;
+		padding: 0.7em !important;
+		transition: all ease-in-out 0.2;
+		width: 100%;
+		background-color: #fff;
+
+		&:focus {
+			border: 1px solid #e6e6e6;
+			box-shadow: 0 0 5px 0 rgba(113, 176, 47, 0.8) !important;
+			outline: 0 !important;
+		}
+	}
+
+	.form-password-input .form-password-input__toggle-visibility {
+		top: 18px;
+	}
+
+	.login__form-header-wrapper {
+		text-align: center;
+	}
+}
