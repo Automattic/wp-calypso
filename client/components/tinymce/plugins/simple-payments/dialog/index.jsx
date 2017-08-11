@@ -40,6 +40,7 @@ import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
+import EmptyContent from 'components/empty-content';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
@@ -333,7 +334,7 @@ class SimplePaymentsDialog extends Component {
 		return buttons;
 	}
 
-	renderEmptyDialog( content ) {
+	renderEmptyDialog( content, disableNavigation = false ) {
 		const { onClose, translate, showDialog } = this.props;
 		return (
 			<Dialog
@@ -347,7 +348,8 @@ class SimplePaymentsDialog extends Component {
 				additionalClassNames="editor-simple-payments-modal"
 			>
 				<TrackComponentView eventName="calypso_simple_payments_dialog_view" />
-				<Navigation activeTab={ 'list' } paymentButtons={ [] } onChangeTabs={ noop } />
+				{ ! disableNavigation &&
+					<Navigation activeTab={ 'list' } paymentButtons={ [] } onChangeTabs={ noop } /> }
 				{ content }
 			</Dialog>
 		);
@@ -389,23 +391,23 @@ class SimplePaymentsDialog extends Component {
 
 		if ( ! shouldQuerySitePlans && ! planHasSimplePaymentsFeature ) {
 			return this.renderEmptyDialog(
-				<div className="editor-simple-payments-modal__nudge-wrapper">
-					<div className="editor-simple-payments-modal__nudge-title">
-						{ translate( 'Insert payment button' ) }
-					</div>
-					<div className="editor-simple-payments-modal__nudge-subtitle">
-						{ translate( 'To insert Payment Button to your site, upgrade your plan.' ) }
-					</div>
-					<UpgradeNudge
-						className="editor-simple-payments-modal__nudge-nudge"
-						title={ translate( 'Upgrade to a Premium Plan!' ) }
-						message={ translate(
-							'And get simple payments, advanced social media, your own domain, and more.'
-						) }
-						feature={ FEATURE_SIMPLE_PAYMENTS }
-						shouldDisplay={ this.returnTrue }
-					/>
-				</div>
+				<EmptyContent
+					illustration="/calypso/images/illustrations/type-e-Commerce.svg"
+					illustrationWidth={ 300 }
+					title={ translate( 'Want to add a payment button to your site?' ) }
+					action={
+						<UpgradeNudge
+							className="editor-simple-payments-modal__nudge-nudge"
+							title={ translate( 'Upgrade your plan!' ) }
+							message={ translate(
+								'Get simple payments, advanced social media tools, your own domain, and more.'
+							) }
+							feature={ FEATURE_SIMPLE_PAYMENTS }
+							shouldDisplay={ this.returnTrue }
+						/>
+					}
+				/>,
+				true
 			);
 		}
 
