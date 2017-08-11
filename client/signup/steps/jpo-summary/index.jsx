@@ -4,12 +4,12 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 import Button from 'components/button';
 import { translate } from 'i18n-calypso';
 import { setJPOSummary } from 'state/signup/steps/jpo-summary/actions';
@@ -26,22 +26,19 @@ const JPOSummaryStep = React.createClass( {
 
 	getFormattedPayload() {
 		let payload = this.props.signupProgress;
-		
-		let formattedPayload = {
-			siteTitle: payload[0].jpoSiteTitle.siteTitle,
-			siteDescription: payload[0].jpoSiteTitle.siteDescription,
-			businessPersonal: payload[1].jpoSiteType.businessPersonal,
-			genre: payload[1].jpoSiteType.genre,
-			businessName: payload[1].jpoSiteType.addressInfo.businessName,
-			businessAddress: payload[1].jpoSiteType.addressInfo.streetAddress,
-			businessCity: payload[1].jpoSiteType.addressInfo.city,
-			businessState: payload[1].jpoSiteType.addressInfo.state,
-			businessZipCode: payload[1].jpoSiteType.addressInfo.zipCode,
-			homepageFormat: payload[2].jpoHomepage,
-			addContactForm: payload[3].jpoContactForm
+		return {
+			siteTitle: get( payload[ 0 ], [ 'jpoSiteTitle', 'siteTitle' ], '' ),
+			siteDescription: get( payload[ 0 ], [ 'jpoSiteTitle', 'siteDescription' ], '' ),
+			businessPersonal: get( payload[ 1 ], [ 'jpoSiteType', 'businessPersonal' ], '' ),
+			genre: get( payload[ 1 ], [ 'jpoSiteType', 'genre' ], '' ),
+			businessName: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'businessName' ], '' ),
+			businessAddress: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'streetAddress' ], '' ),
+			businessCity: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'city' ], '' ),
+			businessState: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'state' ], '' ),
+			businessZipCode: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'zipCode' ], '' ),
+			homepageFormat: get( payload[ 2 ], 'jpoHomepage', '' ),
+			addContactForm: get( payload[ 3 ], 'jpoContactForm', '' )
 		};
-
-		return formattedPayload;
 	},
 
 	completeOnboarding() {
