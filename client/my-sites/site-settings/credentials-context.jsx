@@ -119,6 +119,7 @@ export default React.createClass( {
 		 * to do with it
 		 */
 		console.log( 'Form payload: ', payload );
+		this.props.setCredentials( this.props.siteId, payload );
 	},
 
 	renderHeader: function() {

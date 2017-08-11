@@ -27,6 +27,7 @@ import {
 import SpamFilteringSettings from './spam-filtering-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 import Gridicon from 'gridicons';
+import { rewindSetCredentials as rewindSetCredentialsAction } from 'state/activity-log/actions';
 
 class SiteSettingsFormBackups extends Component {
 
@@ -64,6 +65,7 @@ class SiteSettingsFormBackups extends Component {
 					connectionTypeDescription={ translate( 'Secure Shell, the most complete and secure way to access your site.' ) }
 					isActiveConnection={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', 'ssh', 'credentials', 'enable' ], false ) ? true : false }
 					existingCreds={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', 'ssh', 'credentials' ], defaultCreds ) }
+					setCredentials={ this.props.rewindSetCredentials }
 				/>
 				<CredentialsContext
 					siteId={ siteId }
@@ -73,6 +75,7 @@ class SiteSettingsFormBackups extends Component {
 					isActiveConnection={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', 'sftp', 'credentials', 'enable' ], false ) ? true : false }
 					existingCreds={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', 'sftp', 'credentials' ], defaultCreds ) }
 					isPressable={ get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ) }
+					setCredentials={ this.props.rewindSetCredentials }
 				/>
 				<CredentialsContext
 					siteId={ siteId }
@@ -81,6 +84,7 @@ class SiteSettingsFormBackups extends Component {
 					connectionTypeDescription={ translate( 'File Transfer Protocol, the most common way to access your files.' ) }
 					isActiveConnection={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', 'ftp', 'credentials', 'enable' ], false ) ? true : false }
 					existingCreds={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', 'ftp', 'credentials' ], defaultCreds ) }
+					setCredentials={ this.props.rewindSetCredentials }
 				/>
 				<SectionHeader 
 					className="credentials-help"
@@ -107,6 +111,8 @@ const connectComponent = connect(
 			protectModuleUnavailable: siteInDevMode && protectIsUnavailableInDevMode,
 			akismetUnavailable: siteInDevMode && akismetIsUnavailableInDevMode,
 		};
+	}, {
+		rewindSetCredentials: rewindSetCredentialsAction,
 	}
 );
 
