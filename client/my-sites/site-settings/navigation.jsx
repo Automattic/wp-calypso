@@ -87,13 +87,16 @@ export class SiteSettingsNavigation extends Component {
 						</NavItem>
 					}
 
-					<NavItem
-						path={ `/settings/backups/${ site.slug }` }
-						preloadSectionName="settings-backups"
-						selected={ section === 'backups' }
-					>
-						{ strings.backups }
-					</NavItem>
+					{
+						config.isEnabled( 'jetpack/activity-log' ) && site.jetpack &&
+							<NavItem
+							path={ `/settings/backups/${ site.slug }` }
+							preloadSectionName="settings-backups"
+							selected={ section === 'backups' }
+							>
+								{ strings.backups }
+							</NavItem>
+					}
 
 				</NavTabs>
 			</SectionNav>
