@@ -12,14 +12,14 @@ import { connect } from 'react-redux';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import { getSection } from 'state/ui/selectors';
 import OauthClientLayout from 'layout/oauth-client';
-import { getOauthClientId } from 'state/login/selectors';
+import { showOAuth2Layout } from 'state/login/selectors';
 
 const LayoutLoggedOut = ( {
 	primary,
 	secondary,
 	section,
 	redirectUri,
-	oauthClientId,
+	useOAuth2Layout,
 } ) => {
 	const classes = classNames( 'layout', {
 		[ 'is-group-' + section.group ]: !! section,
@@ -29,7 +29,7 @@ const LayoutLoggedOut = ( {
 		'wp-singletree-layout': !! primary,
 	} );
 
-	if ( oauthClientId ) {
+	if ( useOAuth2Layout ) {
 		return (
 			<OauthClientLayout primary={ primary } />
 		);
@@ -59,12 +59,12 @@ LayoutLoggedOut.propTypes = {
 		PropTypes.object,
 	] ),
 	redirectUri: PropTypes.string,
-	oauthClientId: PropTypes.number,
+	showOAuth2Layout: PropTypes.bool,
 };
 
 export default connect(
 	state => ( {
 		section: getSection( state ),
-		oauthClientId: getOauthClientId( state ),
+		useOAuth2Layout: showOAuth2Layout( state ),
 	} )
 )( LayoutLoggedOut );

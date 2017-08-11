@@ -248,3 +248,11 @@ export const getLinkingSocialAuthInfo = ( state ) => get( state, 'login.socialAc
  * @return {Object}          OAuth2 client data
  */
 export const getOAuth2ClientData = ( state ) => get( state, 'login.oauth2ClientData', null );
+
+/***
+ * Determines if the OAuth2 layout should be used.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {Boolean}         Whether the OAuth2 layout should be used.
+ */
+export const showOAuth2Layout = ( state ) => get( state, 'login.showOAuth2Layout', false );

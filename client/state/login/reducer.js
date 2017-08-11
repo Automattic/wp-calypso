@@ -191,6 +191,10 @@ export const oauth2ClientData = createReducer( null, {
 	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => data,
 } );
 
+export const showOAuth2Layout = createReducer( null, {
+	[ OAUTH2_CLIENT_DATA_REQUEST ]: () => true,
+} );
+
 export default combineReducers( {
 	isRequesting,
 	isRequestingTwoFactorAuth,
@@ -206,4 +210,5 @@ export default combineReducers( {
 	twoFactorAuthPushPoll,
 	socialAccount,
 	oauth2ClientData,
+	showOAuth2Layout,
 } );

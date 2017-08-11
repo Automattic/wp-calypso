@@ -10,12 +10,12 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { getSection } from 'state/ui/selectors';
-import { getOauthClientId } from 'state/login/selectors';
+import { getOAuth2ClientData } from 'state/login/selectors';
 
 const OauthClientLayout = ( {
 	primary,
 	section,
-	oauthClientId,
+	oauth2ClientData,
 } ) => {
 	const clients = {
 		930: {
@@ -49,8 +49,8 @@ const OauthClientLayout = ( {
 	};
 
 	let client = false;
-	if ( oauthClientId in clients ) {
-		client = clients[ oauthClientId ];
+	if ( oauth2ClientData && oauth2ClientData.id in clients ) {
+		client = clients[ oauth2ClientData.id ];
 	}
 
 	const classes = classNames( 'layout', {
@@ -81,12 +81,12 @@ OauthClientLayout.propTypes = {
 		PropTypes.bool,
 		PropTypes.object,
 	] ),
-	oauthClientId: PropTypes.number,
+	oauth2ClientData: PropTypes.number,
 };
 
 export default connect(
 	state => ( {
 		section: getSection( state ),
-		oauthClientId: getOauthClientId( state ),
+		oauth2ClientData: getOAuth2ClientData( state ),
 	} )
 )( OauthClientLayout );
