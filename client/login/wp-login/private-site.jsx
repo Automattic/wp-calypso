@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import { addSchemeIfMissing } from 'lib/url';
 
 class PrivateSite extends Component {
 	static propTypes = {
@@ -16,7 +17,7 @@ class PrivateSite extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, site } = this.props;
 
 		return (
 			<Card className="wp-login__private-site">
@@ -25,7 +26,11 @@ class PrivateSite extends Component {
 				</div>
 
 				<h2 className="wp-login__private-site-header">
-					{ translate( 'This is a private WordPress.com site.' ) }
+					{ translate( 'The site %(site)s is a private WordPress.com site.', {
+						args: {
+							site: addSchemeIfMissing( site, 'https' )
+						}
+					} ) }
 				</h2>
 
 				<p>

@@ -87,13 +87,14 @@ export class Login extends React.Component {
 		const {
 			isLoggedIn,
 			privateSite,
+			site,
 			socialConnect,
 			twoFactorAuthType,
 		} = this.props;
 
 		if ( privateSite && isLoggedIn ) {
 			return (
-				<PrivateSite />
+				<PrivateSite site={ site } />
 			);
 		}
 
