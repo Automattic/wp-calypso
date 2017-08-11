@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -11,7 +12,7 @@ import { set } from 'lodash';
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 import useMockery from 'test/helpers/use-mockery';
 
-let PostListStore, FeedPostStore;
+let PostListStore, FeedPostStore, PostListFactory, FeedStreamCache;
 
 describe( 'FeedPostList', function() {
 	useFilesystemMocks( __dirname );
@@ -21,8 +22,10 @@ describe( 'FeedPostList', function() {
 	} );
 
 	before( function() {
+		PostListFactory = require( '../' );
 		PostListStore = require( '../feed-stream' );
 		FeedPostStore = require( 'lib/feed-post-store' );
+		FeedStreamCache = require( '../feed-stream-cache' );
 	} );
 
 	it( 'should require an id, a fetcher, a keyMaker', function() {
@@ -45,7 +48,7 @@ describe( 'FeedPostList', function() {
 		expect( function() {
 			return new PostListStore( {
 				id: 5,
-				fetcher: function() {}
+				fetcher: function() {},
 			} );
 		} ).to.throw( Error, /keyMaker/ );
 
@@ -55,7 +58,7 @@ describe( 'FeedPostList', function() {
 	} );
 
 	describe( 'A valid instance', function() {
-		var fetcherStub, store;
+		let fetcherStub, store;
 
 		beforeEach( function() {
 			fetcherStub = sinon.stub();
@@ -64,26 +67,28 @@ describe( 'FeedPostList', function() {
 				fetcher: fetcherStub,
 				keyMaker: function( post ) {
 					return post;
-				}
+				},
 			} );
 		} );
 
 		it( 'should receive a page', function() {
-			store.receivePage( 'test', null, { posts: [ { feed_ID: 1, ID: 1 }, { feed_ID: 1, ID: 2 } ] } );
+			store.receivePage( 'test', null, {
+				posts: [ { feed_ID: 1, ID: 1 }, { feed_ID: 1, ID: 2 } ],
+			} );
 
 			expect( store.get() ).to.have.lengthOf( 2 );
 		} );
 
 		describe( 'updates', function() {
 			beforeEach( function() {
-				let feedPostStoreStub = sinon.stub( FeedPostStore, 'get' );
+				const feedPostStoreStub = sinon.stub( FeedPostStore, 'get' );
 				feedPostStoreStub.returns( { date: '1999-12-31T23:58:00' } );
 				store.receiveUpdates( 'test', null, {
 					date_range: {
 						before: '1999-12-31T23:59:59',
-						after: '1999-12-31T23:58:00'
+						after: '1999-12-31T23:58:00',
 					},
-					posts: [ { feed_ID: 1, ID: 1 }, { feed_ID: 2, ID: 2 } ]
+					posts: [ { feed_ID: 1, ID: 1 }, { feed_ID: 2, ID: 2 } ],
 				} );
 			} );
 
@@ -96,33 +101,33 @@ describe( 'FeedPostList', function() {
 			} );
 
 			it( 'should treat each set of updates as definitive', function() {
-				var secondSet = {
+				const secondSet = {
 					date_range: {
 						before: '1999-12-31T23:59:59',
-						after: '1999-12-31T23:58:00'
+						after: '1999-12-31T23:58:00',
 					},
 					posts: [
 						{
 							feed_ID: 1,
 							ID: 6,
-							date: '1976-09-15T00:00:06+00:00'
+							date: '1976-09-15T00:00:06+00:00',
 						},
 						{
 							feed_ID: 1,
 							ID: 5,
-							date: '1976-09-15T00:00:05+00:00'
+							date: '1976-09-15T00:00:05+00:00',
 						},
 						{
 							feed_ID: 1,
 							ID: 4,
-							date: '1976-09-15T00:00:04+00:00'
+							date: '1976-09-15T00:00:04+00:00',
 						},
 						{
 							feed_ID: 1,
 							ID: 3,
-							date: '1976-09-15T00:00:03+00:00'
-						}
-					]
+							date: '1976-09-15T00:00:03+00:00',
+						},
+					],
 				};
 
 				// new updates, overlapping
@@ -133,7 +138,7 @@ describe( 'FeedPostList', function() {
 	} );
 
 	describe( 'Selected index', function() {
-		var fetcherStub, store, feedPostStoreStub, fakePosts;
+		let fetcherStub, store, feedPostStoreStub, fakePosts;
 		beforeEach( function() {
 			fetcherStub = sinon.stub();
 			feedPostStoreStub = sinon.stub( FeedPostStore, 'get' );
@@ -142,13 +147,13 @@ describe( 'FeedPostList', function() {
 				fetcher: fetcherStub,
 				keyMaker: function( post ) {
 					return post;
-				}
+				},
 			} );
 			fakePosts = [
 				{ feed_ID: 1, ID: 1 },
 				{ feed_ID: 1, ID: 2 },
 				{ feed_ID: 1, ID: 3 },
-				{ feed_ID: 1, ID: 4 }
+				{ feed_ID: 1, ID: 4 },
 			];
 			store.receivePage( 'test', null, { posts: fakePosts } );
 		} );
@@ -169,11 +174,16 @@ describe( 'FeedPostList', function() {
 
 		it( 'should select the next valid post', function() {
 			feedPostStoreStub
-				.onCall( 0 ).returns( {} )
-				.onCall( 1 ).returns( { _state: 'error'} )
-				.onCall( 2 ).returns( { _state: 'minimal' } )
-				.onCall( 3 ).returns( {} )
-				.onCall( 4 ).returns( {} );
+				.onCall( 0 )
+				.returns( {} )
+				.onCall( 1 )
+				.returns( { _state: 'error' } )
+				.onCall( 2 )
+				.returns( { _state: 'minimal' } )
+				.onCall( 3 )
+				.returns( {} )
+				.onCall( 4 )
+				.returns( {} );
 			store.selectItem( { feed_ID: 1, ID: 1 } );
 			store.selectNextItem();
 			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 4 } );
@@ -189,9 +199,12 @@ describe( 'FeedPostList', function() {
 
 		it( 'should select the prev valid post', function() {
 			feedPostStoreStub
-				.onCall( 0 ).returns( {} )
-				.onCall( 1 ).returns( { _state: 'error' } )
-				.onCall( 2 ).returns( {} );
+				.onCall( 0 )
+				.returns( {} )
+				.onCall( 1 )
+				.returns( { _state: 'error' } )
+				.onCall( 2 )
+				.returns( {} );
 			store.selectItem( { feed_ID: 1, ID: 3 } );
 			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 3 } );
 			store.selectPrevItem();
@@ -200,11 +213,7 @@ describe( 'FeedPostList', function() {
 	} );
 
 	describe( 'Filter followed x-posts', function() {
-		var fetcherStub,
-			store,
-			posts,
-			filteredPosts,
-			xPostedTo;
+		let fetcherStub, store, posts, filteredPosts, xPostedTo;
 		beforeEach( function() {
 			fetcherStub = sinon.stub();
 			sinon.stub( FeedPostStore, 'get' );
@@ -213,7 +222,7 @@ describe( 'FeedPostList', function() {
 				fetcher: fetcherStub,
 				keyMaker: function( post ) {
 					return post;
-				}
+				},
 			} );
 			posts = [
 				set( {}, 'meta.data.post', {
@@ -221,64 +230,64 @@ describe( 'FeedPostList', function() {
 					metadata: {
 						0: {
 							key: '_xpost_original_permalink',
-							value: 'https://restapiusertests.wordpress.com/2015/10/23/repeat-xposts'
-						}
+							value: 'https://restapiusertests.wordpress.com/2015/10/23/repeat-xposts',
+						},
 					},
 					site_name: 'Office Today',
-					site_URL: 'http://officetoday.wordpress.com'
+					site_URL: 'http://officetoday.wordpress.com',
 				} ),
 				set( {}, 'meta.data.post', {
 					tags: { 'p2-xpost': {} },
 					metadata: {
 						0: {
 							key: '_xpost_original_permalink',
-							value: 'https://restapiusertests.wordpress.com/2015/10/23/repeat-xposts'
-						}
+							value: 'https://restapiusertests.wordpress.com/2015/10/23/repeat-xposts',
+						},
 					},
 					site_name: 'WordPress.com News',
-					site_URL: 'http://en.blog.wordpress.com'
+					site_URL: 'http://en.blog.wordpress.com',
 				} ),
 				set( {}, 'meta.data.post', {
 					tags: { 'p2-xpost': {} },
 					metadata: {
 						0: {
 							key: '_xpost_original_permalink',
-							value: 'https://restapiusertests.wordpress.com/2015/10/23/repeat-xposts#comment-1234'
-						}
+							value: 'https://restapiusertests.wordpress.com/2015/10/23/repeat-xposts#comment-1234',
+						},
 					},
 					site_name: 'Foo Bar',
-					site_URL: 'http://foo.bar.com'
+					site_URL: 'http://foo.bar.com',
 				} ),
 				set( {}, 'meta.data.post', {
 					tags: { 'p2-xpost': {} },
 					metadata: {
 						0: {
 							key: '_xpost_original_permalink',
-							value: 'https://restapiusertests.wordpress.com/2015/10/23/repeat-xposts#comment-1234'
-						}
+							value: 'https://restapiusertests.wordpress.com/2015/10/23/repeat-xposts#comment-1234',
+						},
 					},
 					site_name: 'Developer Resources',
-					site_URL: 'https://developer.wordpress.com/blog'
+					site_URL: 'https://developer.wordpress.com/blog',
 				} ),
 				set( {}, 'meta.data.post', {
 					tags: { 'p2-xpost': {} },
 					metadata: {
 						0: {
 							key: '_xpost_original_permalink',
-							value: 'https://restapiusertests.wordpress.com/2015/10/23/repeat-xposts#comment-456'
-						}
+							value: 'https://restapiusertests.wordpress.com/2015/10/23/repeat-xposts#comment-456',
+						},
 					},
 					site_name: 'The Daily Post',
-					site_URL: 'http://dailypost.wordpress.com'
+					site_URL: 'http://dailypost.wordpress.com',
 				} ),
 				set( {}, 'meta.data.post', {
 					tags: { 'p2-xpost': {} },
 					metadata: false,
 					site_name: 'Example',
-					site_URL: 'http://example.wordpress.com'
+					site_URL: 'http://example.wordpress.com',
 				} ),
 				set( {}, 'meta.data.post', {
-					site_URL: 'https://restapiusertests.wordpress.com/'
+					site_URL: 'https://restapiusertests.wordpress.com/',
 				} ),
 			];
 		} );
@@ -294,46 +303,142 @@ describe( 'FeedPostList', function() {
 			expect( filteredPosts.length ).to.equal( 3 );
 		} );
 
-		it.skip( 'when following origin site, filters followed x-posts, but leaves comment notices', function() {
-			filteredPosts = store.filterFollowedXPosts( posts );
-			expect( filteredPosts.length ).to.equal( 3 );
-			expect( filteredPosts[ 0 ].meta.data.post.site_URL ).to.equal( 'http://foo.bar.com' );
-			expect( filteredPosts[ 1 ].meta.data.post.site_URL ).to.equal( 'http://dailypost.wordpress.com' );
-		} );
+		it.skip(
+			'when following origin site, filters followed x-posts, but leaves comment notices',
+			function() {
+				filteredPosts = store.filterFollowedXPosts( posts );
+				expect( filteredPosts.length ).to.equal( 3 );
+				expect( filteredPosts[ 0 ].meta.data.post.site_URL ).to.equal( 'http://foo.bar.com' );
+				expect( filteredPosts[ 1 ].meta.data.post.site_URL ).to.equal(
+					'http://dailypost.wordpress.com'
+				);
+			}
+		);
 
 		it.skip( 'updates sites x-posted to', function() {
 			filteredPosts = store.filterFollowedXPosts( posts );
-			xPostedTo = store.getSitesCrossPostedTo( 'https://restapiusertests.wordpress.com/2015/10/23/repeat-xposts' );
+			xPostedTo = store.getSitesCrossPostedTo(
+				'https://restapiusertests.wordpress.com/2015/10/23/repeat-xposts'
+			);
 			expect( xPostedTo.length ).to.equal( 5 );
 			expect( xPostedTo[ 0 ].siteName ).to.equal( '+officetoday' );
 			expect( xPostedTo[ 0 ].siteURL ).to.equal( 'http://officetoday.wordpress.com' );
 		} );
 
 		it.skip( 'filters xposts with no metadata', function() {
-			posts = [ set( {}, 'meta.data.post', {
-				tags: { 'p2-xpost': {} },
-				metadata: false,
-				site_name: 'Example',
-				site_URL: 'http://example.wordpress.com'
-			} ) ];
+			posts = [
+				set( {}, 'meta.data.post', {
+					tags: { 'p2-xpost': {} },
+					metadata: false,
+					site_name: 'Example',
+					site_URL: 'http://example.wordpress.com',
+				} ),
+			];
 			filteredPosts = store.filterFollowedXPosts( posts );
 			expect( filteredPosts.length ).to.equal( 0 );
 		} );
 
 		it.skip( 'filters xposts with missing xpost metadata', function() {
-			posts = [ set( {}, 'meta.data.post', {
-				tags: { 'p2-xpost': {} },
-				metadata: {
-					0: {
-						key: 'unrelated',
-						value: 'unrelated'
-					}
-				},
-				site_name: 'Example',
-				site_URL: 'http://example.wordpress.com'
-			} ) ];
+			posts = [
+				set( {}, 'meta.data.post', {
+					tags: { 'p2-xpost': {} },
+					metadata: {
+						0: {
+							key: 'unrelated',
+							value: 'unrelated',
+						},
+					},
+					site_name: 'Example',
+					site_URL: 'http://example.wordpress.com',
+				} ),
+			];
 			filteredPosts = store.filterFollowedXPosts( posts );
 			expect( filteredPosts.length ).to.equal( 0 );
+		} );
+	} );
+
+	describe( 'conversations store', () => {
+		let conversations;
+		beforeEach( () => {
+			FeedStreamCache.clear();
+			conversations = PostListFactory( 'conversations' );
+		} );
+
+		it( 'should build an instance', () => {
+			expect( conversations ).to.be.ok;
+		} );
+
+		context( 'when holding some posts', () => {
+			beforeEach( () => {
+				conversations.receivePage( conversations.id, null, {
+					posts: [
+						{
+							site_ID: 1,
+							ID: 1,
+							date: '2016-09-15T00:00:00Z',
+							last_comment_date_gmt: '2017-01-01T00:00:00Z',
+							comments: [ { ID: 1 }, { ID: 2 }, { ID: 3 } ],
+						},
+					],
+				} );
+				expect( conversations.postKeys ).to.have.lengthOf( 1 );
+			} );
+
+			it( 'should filter out posts that it already has which have the same comments', () => {
+				const filteredPosts = conversations.filterNewPosts( [
+					{
+						site_ID: 1,
+						ID: 1,
+						last_comment_date_gmt: '2017-01-01T00:00:00Z',
+						comments: [ { ID: 1 }, { ID: 2 }, { ID: 3 } ],
+					},
+				] );
+				expect( filteredPosts ).to.have.lengthOf( 0 );
+			} );
+
+			it( 'should retain posts that it already has with new comments', () => {
+				const filteredPosts = conversations.filterNewPosts( [
+					{
+						site_ID: 1,
+						ID: 1,
+						date: '2016-09-15T00:00:00Z',
+						last_comment_date_gmt: '2017-01-01T01:00:00Z',
+						comments: [ { ID: 2 }, { ID: 3 }, { ID: 4 } ],
+					},
+				] );
+				expect( filteredPosts ).to.have.lengthOf( 1 );
+				expect( filteredPosts ).to.eql( [
+					{
+						blogId: 1,
+						comments: [ 2, 3, 4 ],
+						date: new Date( '2016-09-15T00:00:00Z' ),
+						last_comment_date_gmt: '2017-01-01T01:00:00Z',
+						postId: 1,
+					},
+				] );
+			} );
+
+			it( 'should retain new posts', () => {
+				const filteredPosts = conversations.filterNewPosts( [
+					{
+						site_ID: 1,
+						ID: 2,
+						date: '2016-09-15T00:00:00Z',
+						last_comment_date_gmt: '2017-01-01T01:00:00Z',
+						comments: [ { ID: 5 } ],
+					},
+				] );
+				expect( filteredPosts ).to.have.lengthOf( 1 );
+				expect( filteredPosts ).to.eql( [
+					{
+						blogId: 1,
+						comments: [ 5 ],
+						date: new Date( '2016-09-15T00:00:00Z' ),
+						last_comment_date_gmt: '2017-01-01T01:00:00Z',
+						postId: 2,
+					},
+				] );
+			} );
 		} );
 	} );
 } );

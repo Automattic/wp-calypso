@@ -71,6 +71,27 @@ function conversationsPager( params ) {
 	params.page_handle = this.lastPageHandle;
 }
 
+function filterConversationsPosts( posts ) {
+	// turn the new ones into post keys
+	const newPosts = map( posts, this.keyMaker );
+	return filter( newPosts, post => {
+		// only keep things that we don't have or things that have new comments
+		if ( ! this.postById.has( post.postId ) ) {
+			return true; // new new
+		}
+		const existingPost = find( this.postKeys, { postId: post.postId } );
+		if ( ! existingPost ) {
+			// this should never happen
+			return true;
+		}
+
+		if ( isEqual( existingPost.comments, post.comments ) ) {
+			return false;
+		}
+		return true;
+	} );
+}
+
 function addMetaToNextPageFetch( params ) {
 	params.meta = 'post,discover_original_post';
 }
@@ -328,26 +349,7 @@ export default function feedStoreFactory( storeId ) {
 			dateProperty: 'last_comment_date_gmt',
 		} );
 		// monkey patching is the best patching
-		store.filterNewPosts = function filterConversationsPosts( posts ) {
-			// turn the new ones into post keys
-			const newPosts = map( posts, this.keyMaker );
-			return filter( newPosts, post => {
-				// only keep things that we don't have or things that have new comments
-				if ( ! this.postById.has( post.postId ) ) {
-					return true; // new new
-				}
-				const existingPost = find( this.postKeys, { postId: post.postId } );
-				if ( ! existingPost ) {
-					// this should never happen
-					return true;
-				}
-
-				if ( isEqual( existingPost.comments, post.comments ) ) {
-					return false;
-				}
-				return true;
-			} );
-		};
+		store.filterNewPosts = filterConversationsPosts;
 	} else if ( storeId === 'conversations-a8c' ) {
 		store = new FeedStream( {
 			id: storeId,
@@ -360,26 +362,7 @@ export default function feedStoreFactory( storeId ) {
 		} );
 
 		// monkey patching is the best patching
-		store.filterNewPosts = function filterConversationsPosts( posts ) {
-			// turn the new ones into post keys
-			const newPosts = map( posts, this.keyMaker );
-			return filter( newPosts, post => {
-				// only keep things that we don't have or things that have new comments
-				if ( ! this.postById.has( post.postId ) ) {
-					return true; // new new
-				}
-				const existingPost = find( this.postKeys, { postId: post.postId } );
-				if ( ! existingPost ) {
-					// this should never happen
-					return true;
-				}
-
-				if ( isEqual( existingPost.comments, post.comments ) ) {
-					return false;
-				}
-				return true;
-			} );
-		};
+		store.filterNewPosts = filterConversationsPosts;
 	} else if ( storeId === 'a8c' ) {
 		store = new FeedStream( {
 			id: storeId,
