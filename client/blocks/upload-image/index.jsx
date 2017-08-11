@@ -125,7 +125,7 @@ class UploadImage extends Component {
 
 	onImageEditorDone = ( error, imageBlob, imageEditorProps ) => {
 		if ( error ) {
-			this.handleError( ERROR_IMAGE_EDITOR_DONE, error );
+			return this.handleError( ERROR_IMAGE_EDITOR_DONE, error );
 		}
 
 		this.setState( {

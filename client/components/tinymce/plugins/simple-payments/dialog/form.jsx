@@ -84,6 +84,10 @@ const validate = ( values, props ) => {
 		} );
 	}
 
+	if ( values.featuredImageId && values.featuredImageId === 'uploading' ) {
+		errors.featuredImageId = 'uploading';
+	}
+
 	return errors;
 };
 
@@ -112,6 +116,7 @@ const renderField = memoize(
 
 // helper to render UploadImage as a form field
 class UploadImageField extends Component {
+	handleImageEditorDone = () => this.props.input.onChange( 'uploading' );
 	handleImageUploadDone = uploadedImage => this.props.input.onChange( uploadedImage.ID );
 	handleImageRemove = () => this.props.input.onChange( null );
 
@@ -119,6 +124,7 @@ class UploadImageField extends Component {
 		return (
 			<UploadImage
 				defaultImage={ this.props.input.value }
+				onImageEditorDone={ this.handleImageEditorDone }
 				onImageUploadDone={ this.handleImageUploadDone }
 				onImageRemove={ this.handleImageRemove }
 				onError={ this.props.onError }
