@@ -81,7 +81,7 @@ OauthClientLayout.propTypes = {
 		PropTypes.bool,
 		PropTypes.object,
 	] ),
-	oauth2ClientData: PropTypes.number,
+	oauth2ClientData: PropTypes.object,
 };
 
 export default connect(
