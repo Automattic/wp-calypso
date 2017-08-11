@@ -2,13 +2,13 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import { getSection } from 'state/ui/selectors';
 
 const OauthClientLayout = ( {
@@ -22,8 +22,6 @@ const OauthClientLayout = ( {
 		'has-no-sidebar': true, // Logged-out never has a sidebar
 		'wp-singletree-layout': !! primary,
 	} );
-
-	console.error('SUPER DUPER');
 
 	return (
 		<div className={ classes }>
@@ -39,10 +37,10 @@ const OauthClientLayout = ( {
 
 OauthClientLayout.displayName = 'OauthClientLayout';
 OauthClientLayout.propTypes = {
-	primary: React.PropTypes.element,
-	section: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.object,
+	primary: PropTypes.element,
+	section: PropTypes.oneOfType( [
+		PropTypes.bool,
+		PropTypes.object,
 	] ),
 };
 

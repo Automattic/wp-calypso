@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -51,14 +52,14 @@ const LayoutLoggedOut = ( {
 
 LayoutLoggedOut.displayName = 'LayoutLoggedOut';
 LayoutLoggedOut.propTypes = {
-	primary: React.PropTypes.element,
-	secondary: React.PropTypes.element,
-	section: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.object,
+	primary: PropTypes.element,
+	secondary: PropTypes.element,
+	section: PropTypes.oneOfType( [
+		PropTypes.bool,
+		PropTypes.object,
 	] ),
-	redirectUri: React.PropTypes.string,
-	oauthClientId: React.PropTypes.number,
+	redirectUri: PropTypes.string,
+	oauthClientId: PropTypes.number,
 };
 
 export default connect(
