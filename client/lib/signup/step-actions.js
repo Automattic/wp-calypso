@@ -14,6 +14,7 @@ import {
 import async from 'async';
 import { parse as parseURL } from 'url';
 import page from 'page';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -297,7 +298,9 @@ module.exports = {
 				id_token,
 				signup_flow_name: flowName,
 			}, ( error, response ) => {
-				const errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined;
+				const errors = error && error.error
+					? [ { error: error.error, message: error.message, email: get( error, 'data.email' ) } ]
+					: undefined;
 
 				if ( errors ) {
 					callback( errors );
