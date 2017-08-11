@@ -59,7 +59,8 @@ const OauthClientLayout = ( {
 		'focus-content': true,
 		'has-no-sidebar': true, // Logged-out never has a sidebar
 		'wp-singletree-layout': !! primary,
-		[ 'dops-' + client.name ]: !! client,
+		dops: !! client,
+		[ client.name ]: !! client,
 	} );
 
 	return (
