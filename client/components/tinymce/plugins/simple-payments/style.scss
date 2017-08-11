@@ -48,29 +48,53 @@
 		flex: none;
 		margin-bottom: 0;
 	}
+
+	.empty-content {
+		position: absolute;
+			top: 50%;
+			left: 50%;
+		transform: translate( -50%, -50% );
+		padding-top: 0;
+		padding-bottom: 73px;
+		margin: 0;
+		width: 80%;
+	}
+
+	.empty-content__illustration {
+		margin-bottom: 20px;
+	
+		@media ( max-height: 470px ) {
+			display: none;
+		}
+	
+		@include breakpoint( ">660px" ) {
+			@media ( max-height: 600px ) {
+				display: none;
+			}
+		}
+	}
 }
 
-.editor-simple-payments-modal__nudge-wrapper {
-	margin: 24px;
-}
+// .editor-simple-payments-modal__nudge-wrapper {
+// 	margin: 24px;
+// }
 
-.editor-simple-payments-modal__nudge-title {
-	text-align: center;
-	margin-top: 100px;
-	font-size: 40px;
-}
+// .editor-simple-payments-modal__nudge-title {
+// 	text-align: center;
+// 	margin-top: 100px;
+// 	font-size: 40px;
+// }
 
-.editor-simple-payments-modal__nudge-subtitle {
-	text-align: center;
-	font-size: 18px;
-	margin-top: 24px;
-	margin-bottom: 60px;
-}
+// .editor-simple-payments-modal__nudge-subtitle {
+// 	text-align: center;
+// 	font-size: 18px;
+// 	margin-top: 24px;
+// 	margin-bottom: 60px;
+// }
 
 .editor-simple-payments-modal__nudge-nudge {
 	text-decoration: none;
 }
-
 
 .editor-simple-payments-modal__navigation {
 	margin: 0;

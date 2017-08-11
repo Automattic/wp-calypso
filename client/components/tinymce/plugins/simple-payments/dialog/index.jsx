@@ -390,15 +390,14 @@ class SimplePaymentsDialog extends Component {
 			return this.renderEmptyDialog(
 				<EmptyContent
 					illustration="/calypso/images/illustrations/type-e-Commerce.svg"
-					illustrationWidth={ 250 }
-					title={ translate( 'Insert payment button' ) }
-					line={ translate( 'To insert Payment Button to your site, upgrade your plan.' ) }
+					illustrationWidth={ 300 }
+					title={ translate( 'Want to add a payment button to your site?' ) }
 					action={
 						<UpgradeNudge
 							className="editor-simple-payments-modal__nudge-nudge"
-							title={ translate( 'Upgrade to a Premium Plan!' ) }
+							title={ translate( 'Upgrade your plan!' ) }
 							message={ translate(
-								'And get simple payments, advanced social media, your own domain, and more.'
+								'Get simple payments, advanced social media tools, your own domain, and more.'
 							) }
 							feature={ FEATURE_SIMPLE_PAYMENTS }
 							shouldDisplay={ this.returnTrue }
