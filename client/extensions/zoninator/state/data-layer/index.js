@@ -2,15 +2,18 @@
  * Internal dependencies
  */
 import { addHandlers } from 'state/data-layer/extensions-middleware';
+import feeds from './feeds';
 import zones from './zones';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'zoninator:errors' );
 
 export default function installActionHandlers() {
-	const added = addHandlers( 'zoninator', zones );
+	if ( ! addHandlers( 'zoninator.zones', zones ) ) {
+		debug( 'Failed to add action handlers for "zoninator.zones"' );
+	}
 
-	if ( ! added ) {
-		debug( 'Failed to add action handlers for "zoninator"' );
+	if ( ! addHandlers( 'zoninator.feeds', feeds ) ) {
+		debug( 'Failed to add action handlers for "zoninator.feeds"' );
 	}
 }
