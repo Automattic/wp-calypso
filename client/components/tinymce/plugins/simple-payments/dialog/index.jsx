@@ -7,7 +7,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, isNumber, pick, noop } from 'lodash';
+import { find, isNumber, pick, noop, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,7 +23,7 @@ import Notice from 'components/notice';
 import Navigation from './navigation';
 import ProductForm, { getProductFormValues, isProductFormValid, isProductFormDirty } from './form';
 import ProductList from './list';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getCurrentUserCurrencyCode, getCurrentUserEmail } from 'state/current-user/selectors';
 import { getCurrencyDefaults } from 'lib/format-currency';
 import wpcom from 'lib/wp';
 import accept from 'lib/accept';
@@ -161,16 +161,19 @@ class SimplePaymentsDialog extends Component {
 	// or the default values for a new one.
 	getInitialFormFields( paymentId ) {
 		const { initialFields } = this.constructor;
+		const { paymentButtons, currentUserEmail } = this.props;
 
 		if ( isNumber( paymentId ) ) {
-			const editedPayment = find( this.props.paymentButtons, p => p.ID === paymentId );
+			const editedPayment = find( paymentButtons, p => p.ID === paymentId );
 			if ( editedPayment ) {
 				// Pick only the fields supported by the form -- drop the rest
 				return pick( editedPayment, Object.keys( initialFields ) );
 			}
 		}
 
-		return initialFields;
+		const initialEmail = get( paymentButtons, '0.email', currentUserEmail );
+
+		return { ...initialFields, email: initialEmail };
 	}
 
 	isDirectEdit() {
@@ -459,5 +462,6 @@ export default connect( ( state, { siteId } ) => {
 			isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' ),
 		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 		formCanBeSubmitted: isProductFormValid( state ) && isProductFormDirty( state ),
+		currentUserEmail: getCurrentUserEmail( state ),
 	};
 } )( localize( SimplePaymentsDialog ) );
