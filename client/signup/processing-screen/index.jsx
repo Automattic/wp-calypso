@@ -13,6 +13,7 @@ import classnames from 'classnames';
  */
 import Button from 'components/button';
 import Notice from 'components/notice';
+import analytics from 'lib/analytics';
 import { abtest } from 'lib/abtest';
 
 export class SignupProcessingScreen extends Component {
@@ -151,16 +152,28 @@ export class SignupProcessingScreen extends Component {
 			} );
 	}
 
-	handleClickUpgradeButton = () => {
+	handleClick( ctaName, redirectTo = '' ) {
 		if ( ! this.props.loginHandler ) {
 			return;
 		}
 
-		if ( this.state.siteSlug ) {
-			this.props.loginHandler( { redirectTo: `/plans/${ this.state.siteSlug }` } );
-		} else {
-			this.props.loginHandler();
-		}
+		analytics.tracks.recordEvent( 'calypso_signup_landing_cta_click', {
+			cta_name: ctaName
+		} );
+
+		redirectTo ? this.props.loginHandler( { redirectTo } ) : this.props.loginHandler();
+	}
+
+	handleClickViewSiteButton = () => {
+		this.handleClick( 'view_my_site' );
+	}
+
+	handleClickUpgradeButton = () => {
+		this.handleClick( 'upgrade_plan', this.state.siteSlug ? `/plans/${ this.state.siteSlug }` : '' );
+	}
+
+	handleClickOldContinueButton = () => {
+		this.handleClick( 'old_continue' );
 	}
 
 	renderUpgradeNudge() {
