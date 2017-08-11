@@ -214,7 +214,7 @@ export const ReaderSidebar = createReactClass( {
 										onClick={ this.handleReaderSidebarA8cConversationsClicked }
 									>
 										<svg
-											className={ 'gridicon gridicon-automattic' }
+											className={ 'gridicon gridicon-automattic-conversations' }
 											width="24"
 											height="24"
 											xmlns="http://www.w3.org/2000/svg"
