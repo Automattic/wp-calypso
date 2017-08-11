@@ -240,3 +240,11 @@ export const getLinkingSocialService = ( state ) => get( state, 'login.socialAcc
  * @return {?String}         Email address of the social account.
  */
 export const getLinkingSocialAuthInfo = ( state ) => get( state, 'login.socialAccount.authInfo', null );
+
+/***
+ * Gets the OAuth2 client data.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {Object}          OAuth2 client data
+ */
+export const getOAuth2ClientData = ( state ) => get( state, 'login.oauth2ClientData', null );
