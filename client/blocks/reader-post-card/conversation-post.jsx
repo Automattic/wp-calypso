@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { map, take } from 'lodash';
+import { map, takeRight } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -20,7 +20,7 @@ class ConversationPost extends React.Component {
 	};
 
 	render() {
-		const commentIdsToShow = map( take( this.props.comments, 3 ), 'ID' );
+		const commentIdsToShow = map( takeRight( this.props.comments, 3 ), 'ID' );
 		return (
 			<div className="reader-post-card__conversation-post">
 				<CompactPostCard { ...this.props } />
