@@ -68,8 +68,8 @@ module.exports = {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	showCartAbandonmentNotice: {
-		datestamp: '20170630',
+	jetpackConnectPlansCopyChanges: {
+		datestamp: '20170728',
 		variations: {
 			original: 50,
 			modified: 50,
