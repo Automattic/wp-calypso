@@ -209,20 +209,20 @@ class ReaderShare extends React.Component {
 						popoverTitle={ translate( 'Share on' ) }
 					>
 						<PopoverMenuItem
-							action="twitter"
-							className="reader-share__popover-item"
-							title={ translate( 'Share on Twitter' ) }
-						>
-							<SocialLogo icon="twitter" />
-							<span>Twitter</span>
-						</PopoverMenuItem>
-						<PopoverMenuItem
 							action="facebook"
 							className="reader-share__popover-item"
 							title={ translate( 'Share on Facebook' ) }
 						>
 							<SocialLogo icon="facebook" />
 							<span>Facebook</span>
+						</PopoverMenuItem>
+						<PopoverMenuItem
+							action="twitter"
+							className="reader-share__popover-item"
+							title={ translate( 'Share on Twitter' ) }
+						>
+							<SocialLogo icon="twitter" />
+							<span>Twitter</span>
 						</PopoverMenuItem>
 						<SiteSelector
 							className="reader-share__site-selector"
