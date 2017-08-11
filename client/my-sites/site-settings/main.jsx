@@ -18,7 +18,6 @@ import SiteSettingsNavigation from './navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
 import Placeholder from 'my-sites/site-settings/placeholder';
-import QueryActivityLog from 'components/data/query-activity-log';
 
 const SiteSettingsComponent = ( {
 	siteId,
@@ -35,7 +34,6 @@ const SiteSettingsComponent = ( {
 			<SidebarNavigation />
 			{ siteId && <SiteSettingsNavigation section={ 'general' } /> }
 			<QueryProductsList />
-			{ siteId && <QueryActivityLog siteId={ siteId } /> }
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			{ siteId && <GeneralSettings /> }
 		</Main>
