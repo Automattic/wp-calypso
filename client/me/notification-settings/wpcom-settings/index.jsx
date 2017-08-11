@@ -94,13 +94,13 @@ const WPCOMNotifications = React.createClass( {
 					name={ options.research }
 					isEnabled={ this.state.settings.get( options.research ) }
 					title={ this.translate( 'Research' ) }
-					description={ this.translate( 'Opportunities to participate in WordPress.com research & surveys.' ) }
+					description={ this.translate( 'Opportunities to participate in WordPress.com research and surveys.' ) }
 				/>
 
 				<EmailCategory
 					name={ options.community } isEnabled={ this.state.settings.get( options.community ) }
 					title={ this.translate( 'Community' ) }
-					description={ this.translate( 'Information on WordPress.com courses and events (online & in-person).' ) }
+					description={ this.translate( 'Information on WordPress.com courses and events (online and in-person).' ) }
 				/>
 
 				<EmailCategory
@@ -118,7 +118,7 @@ const WPCOMNotifications = React.createClass( {
 				<EmailCategory
 					name={ options.digest } isEnabled={ this.state.settings.get( options.digest ) }
 					title={ this.translate( 'Digests' ) }
-					description={ this.translate( 'A compilation of interesting tidbits from both your personal feed and your own writing.' ) }
+					description={ this.translate( 'Popular content from the blogs you follow, and reports on your own site and its performance.' ) }
 				/>
 
 				<ActionButtons

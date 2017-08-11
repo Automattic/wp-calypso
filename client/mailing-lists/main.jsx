@@ -110,11 +110,11 @@ const MainComponent = React.createClass( {
 		if ( 'marketing' === this.props.category ) {
 			return this.translate( 'Tips for getting the most out of WordPress.com.' );
 		} else if ( 'research' === this.props.category ) {
-			return this.translate( 'Opportunities to participate in WordPress.com research & surveys.' );
+			return this.translate( 'Opportunities to participate in WordPress.com research and surveys.' );
 		} else if ( 'community' === this.props.category ) {
-			return this.translate( 'Information on WordPress.com courses and events (online & in-person).' );
+			return this.translate( 'Information on WordPress.com courses and events (online and in-person).' );
 		} else if ( 'digest' === this.props.category ) {
-			return this.translate( 'A compilation of interesting tidbits from both your personal feed and your own writing.' );
+			return this.translate( 'Popular content from the blogs you follow, and reports on your own site and its performance.' );
 		}
 
 		return null;
