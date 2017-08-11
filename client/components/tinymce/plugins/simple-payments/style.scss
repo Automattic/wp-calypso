@@ -50,33 +50,30 @@
 	}
 
 	.empty-content {
-		position: absolute;
-			top: 50%;
-			left: 50%;
-		transform: translate( -50%, -50% );
-		padding-top: 0;
-		padding-bottom: 73px;
+		align-items: center;
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+		justify-content: center;
 		margin: 0;
-		width: 80%;
-		overflow: visible;
+		overflow-y: auto;
+		padding: 16px;
+
+		@include breakpoint( ">480px" ) {
+			padding: 24px;
+		}
 	}
 
 	.empty-content__illustration {
-		margin-bottom: 20px;
-	
-		@media ( max-height: 470px ) {
-			display: none;
-		}
-	
-		@include breakpoint( ">660px" ) {
-			@media ( max-height: 600px ) {
-				display: none;
-			}
-		}
+		margin-bottom: 16px;
+		min-height: 0;
 	}
 
-	.editor-simple-payments-modal__nudge-nudge {
+	.upgrade-nudge.card.editor-simple-payments-modal__nudge-nudge {
+		flex-shrink: 0;
+		margin: 0;
 		text-align: left;
+		width: 70%;
 	}
 }
 
