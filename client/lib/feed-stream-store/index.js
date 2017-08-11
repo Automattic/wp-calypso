@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { filter, forEach, isEqual, map, random, startsWith } from 'lodash';
+import { filter, find, forEach, isEqual, map, random, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -333,10 +333,10 @@ export default function feedStoreFactory( storeId ) {
 			const newPosts = map( posts, this.keyMaker );
 			return filter( newPosts, post => {
 				// only keep things that we don't have or things that have new comments
-				if ( ! this.postById.has( post.ID ) ) {
+				if ( ! this.postById.has( post.postId ) ) {
 					return true; // new new
 				}
-				const existingPost = find( this.postKeys, { ID: post.ID } );
+				const existingPost = find( this.postKeys, { postId: post.postId } );
 				if ( ! existingPost ) {
 					// this should never happen
 					return true;
@@ -358,6 +358,28 @@ export default function feedStoreFactory( storeId ) {
 			onGapFetch: limitSiteParamsForConversations,
 			dateProperty: 'last_comment_date_gmt',
 		} );
+
+		// monkey patching is the best patching
+		store.filterNewPosts = function filterConversationsPosts( posts ) {
+			// turn the new ones into post keys
+			const newPosts = map( posts, this.keyMaker );
+			return filter( newPosts, post => {
+				// only keep things that we don't have or things that have new comments
+				if ( ! this.postById.has( post.postId ) ) {
+					return true; // new new
+				}
+				const existingPost = find( this.postKeys, { postId: post.postId } );
+				if ( ! existingPost ) {
+					// this should never happen
+					return true;
+				}
+
+				if ( isEqual( existingPost.comments, post.comments ) ) {
+					return false;
+				}
+				return true;
+			} );
+		};
 	} else if ( storeId === 'a8c' ) {
 		store = new FeedStream( {
 			id: storeId,

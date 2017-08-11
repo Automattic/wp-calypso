@@ -500,7 +500,11 @@ export default class FeedStream {
 				to: this.pendingDateAfter,
 			} );
 		}
-		this.postKeys = uniqBy( this.pendingPostKeys.concat( this.postKeys ), postKey => postKey.ID );
+
+		this.postKeys = uniqBy(
+			this.pendingPostKeys.concat( this.postKeys ),
+			postKey => postKey.postId
+		);
 		if ( this.selectedIndex > -1 ) {
 			//we already scroll to top of content, so deselect so we don't
 			//try to scroll down again.
