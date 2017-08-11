@@ -106,7 +106,7 @@ module.exports = {
 		localeTargets: 'any',
 	},
 	skipThemesSelectionModal: {
-		datestamp: '20170831',
+		datestamp: '20170814',
 		variations: {
 			skip: 50,
 			show: 50,
