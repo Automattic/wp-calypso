@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, find } from 'lodash';
+import { get, find, orderBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -9,7 +9,8 @@ import { get, find } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
- * Get all Simple Payment or the one specified by `simplePaymentId`
+ * Get all Simple Payment or the one specified by `simplePaymentId`. They will be returned ordered by
+ * ID from the largest to the lowest number (the same as ordering by creation date DESC).
  *
  * @param {Object} state           Global state tree
  * @param {int}    siteId          Site which the Simple Payment belongs to.
@@ -25,7 +26,11 @@ export default createSelector(
 		const simplePaymentProducts = get( state, `simplePayments.productList.items.${ siteId }`, null );
 
 		if ( ! simplePaymentId ) {
-			return simplePaymentProducts;
+			if ( ! simplePaymentProducts ) {
+				return null;
+			}
+
+			return orderBy( simplePaymentProducts, 'ID', 'desc' );
 		}
 
 		const simplePaymentProduct = find( simplePaymentProducts, ( product ) => product.ID === simplePaymentId );
