@@ -164,19 +164,23 @@ const JPOSummaryStep = React.createClass( {
 					</tbody>
 				</table>
 				<div>
-					<Button primary onClick={ this.completeOnboarding }>Complete Onboarding</Button>
+					<Button primary onClick={ this.completeOnboarding }>
+						{
+							translate( 'Complete Onboarding' )
+						}
+					</Button>
 				</div>
 			</div>
 		);
 	},
 
 	render() {
-		let siteTitle = ( 'undefined' !== typeof this.props.signupProgress[0].jpoSiteTitle )
-			? this.props.signupProgress[0].jpoSiteTitle.siteTitle
-			: translate( 'your new site' );
-
-		const headerText = translate( 'Congratulations! ' ) + siteTitle + translate( ' is on its way.' );
-		const subHeaderText = translate( 'You enabled Jetpack and unlocked dozens of website-bolstering features. Continue preparing yoru site below.' );
+		const headerText = translate( 'Congratulations! %s is on its way.', {
+			args: get( this.props.signupProgress[ 0 ], [ 'jpoSiteTitle', 'siteTitle' ], false ) || translate( 'your new site' )
+		} );
+		const subHeaderText = translate(
+			'You enabled Jetpack and unlocked dozens of website-bolstering features. Continue preparing your site below.'
+		);
 
 		return (
 			<div>
