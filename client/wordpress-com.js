@@ -341,7 +341,14 @@ sections.push( {
 	module: 'login',
 	enableLoggedOut: true,
 	secondary: false,
-	isomorphic: true
+	isomorphic: {
+		cache: {
+			queryParams: {
+				include: [ 'client_id' ],
+				exclude: [ 'redirect_to' ],
+			}
+		}
+	}
 } );
 
 sections.push( {

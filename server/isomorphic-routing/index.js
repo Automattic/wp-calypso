@@ -3,6 +3,7 @@
  */
 import { serverRender } from 'render';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
+import { setRoute as setRouteAction } from 'state/ui/actions';
 
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function( route, ...middlewares ) {
@@ -29,12 +30,22 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 				setUpRoute,
 				combineMiddlewares(
 					setSectionMiddlewareFactory( section ),
+					setRouteMiddleware,
 					...middlewares
 				),
 				serverRender
 			);
 		}
 	};
+}
+
+function setRouteMiddleware( context, next ) {
+	context.store.dispatch( setRouteAction(
+		context.pathname,
+		context.query
+	) );
+
+	next();
 }
 
 function combineMiddlewares( ...middlewares ) {

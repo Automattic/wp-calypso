@@ -15,6 +15,7 @@ import {
 	getSectionGroup,
 	isSiteSection,
 	isSectionIsomorphic,
+	getIsomorphicSectionConfiguration,
 	hasSidebar
 } from '../selectors';
 
@@ -271,6 +272,90 @@ describe( 'selectors', () => {
 			} );
 
 			expect( selected ).to.be.true;
+		} );
+
+		it( 'should return true if current section is isomorphic and has an isomorphic configuration', () => {
+			const isomorphicConfiguration = {
+				cache: {
+					queryParams: {
+						include: [ 'cache_me' ],
+						exclude: [ 'ignore_me' ]
+					}
+				}
+			};
+
+			const section = {
+				enableLoggedOut: true,
+				group: 'sites',
+				isomorphic: isomorphicConfiguration,
+				module: 'my-sites/themes',
+				name: 'themes',
+				paths: [ '/themes' ],
+				secondary: false
+			};
+
+			const selected = isSectionIsomorphic( {
+				ui: { section }
+			} );
+
+			expect( selected ).to.be.true;
+		} );
+	} );
+
+	describe( '#getIsomorphicSectionConfiguration()', () => {
+		it( 'should return null if there is no section currently selected', () => {
+			const selected = getIsomorphicSectionConfiguration( {
+				ui: {
+					section: false
+				}
+			} );
+
+			expect( selected ).to.be.null;
+		} );
+
+		it( 'should return an empty object if the current section is isomorphic but has no configuration', () => {
+			const section = {
+				enableLoggedOut: true,
+				group: 'sites',
+				isomorphic: true,
+				module: 'my-sites/themes',
+				name: 'themes',
+				paths: [ '/themes' ],
+				secondary: false
+			};
+
+			const selected = getIsomorphicSectionConfiguration( {
+				ui: { section }
+			} );
+
+			expect( selected ).to.deep.equal( {} );
+		} );
+
+		it( 'should return the isomorphic configuration if current section has one', () => {
+			const isomorphicConfiguration = {
+				cache: {
+					queryParams: {
+						include: [ 'cache_me' ],
+						exclude: [ 'ignore_me' ]
+					}
+				}
+			};
+
+			const section = {
+				enableLoggedOut: true,
+				group: 'sites',
+				isomorphic: isomorphicConfiguration,
+				module: 'my-sites/themes',
+				name: 'themes',
+				paths: [ '/themes' ],
+				secondary: false
+			};
+
+			const selected = getIsomorphicSectionConfiguration( {
+				ui: { section }
+			} );
+
+			expect( selected ).to.deep.equal( isomorphicConfiguration );
 		} );
 	} );
 

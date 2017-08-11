@@ -4,7 +4,8 @@
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
-import { isEmpty, pick } from 'lodash';
+import { difference, get, isEmpty, pick } from 'lodash';
+import qs from 'qs';
 import debugFactory from 'debug';
 
 /**
@@ -12,7 +13,7 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import { isDefaultLocale } from 'lib/i18n-utils';
-import { isSectionIsomorphic } from 'state/ui/selectors';
+import { isSectionIsomorphic, getIsomorphicSectionConfiguration } from 'state/ui/selectors';
 import {
 	getDocumentHeadFormattedTitle,
 	getDocumentHeadMeta,
@@ -74,8 +75,40 @@ export function render( element, key = JSON.stringify( element ) ) {
 	//todo: render an error?
 }
 
+function getCacheKey( context ) {
+	if ( ! isSectionIsomorphic( context.store.getState() ) || context.user ) {
+		return false;
+	}
+
+	if ( isEmpty( context.query ) ) {
+		return context.pathname;
+	}
+
+	let queryParams = Object.keys( context.query );
+	const cacheConfiguration = get( getIsomorphicSectionConfiguration( context.store.getState() ), 'cache', null );
+
+	if ( cacheConfiguration && cacheConfiguration.queryParams === true ) {
+		return context.canonicalPath;
+	}
+
+	if ( cacheConfiguration && Array.isArray( cacheConfiguration.queryParams.exclude ) ) {
+		queryParams = difference( queryParams, cacheConfiguration.queryParams.exclude );
+	}
+
+	if ( isEmpty( queryParams ) ) {
+		return context.pathname;
+	}
+
+	if ( cacheConfiguration && isEmpty( difference( queryParams, cacheConfiguration.queryParams.include ) ) ) {
+		return context.pathname + '?' + qs.stringify( pick( context.query, queryParams ) );
+	}
+
+	return false;
+}
+
 export function serverRender( req, res ) {
 	const context = req.context;
+	const cacheKey = getCacheKey( context );
 	let title, metas = [], links = [];
 
 	if ( ! isDefaultLocale( context.lang ) ) {
@@ -86,15 +119,10 @@ export function serverRender( req, res ) {
 		config.isEnabled( 'server-side-rendering' ) &&
 		context.layout &&
 		! context.user &&
-		isEmpty( context.query ) &&
+		cacheKey &&
 		isDefaultLocale( context.lang )
 	) {
-		// context.pathname doesn't include querystring, so it's a suitable cache key.
-		let key = context.pathname;
-		if ( req.error ) {
-			key = req.error.message;
-		}
-		context.renderedLayout = render( context.layout, key );
+		context.renderedLayout = render( context.layout, req.error ? req.error.message : cacheKey );
 	}
 
 	if ( context.store ) {
@@ -103,6 +131,7 @@ export function serverRender( req, res ) {
 		links = getDocumentHeadLink( context.store.getState() );
 
 		let reduxSubtrees = [ 'documentHead' ];
+
 		// Send redux state only in logged-out scenario
 		if ( isSectionIsomorphic( context.store.getState() ) && ! context.user ) {
 			reduxSubtrees = reduxSubtrees.concat( [ 'ui', 'themes' ] );
@@ -111,10 +140,9 @@ export function serverRender( req, res ) {
 		// Send state to client
 		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
 		// And cache on the server, too
-		if ( isEmpty( context.query ) ) {
-			// Don't cache if we have query params
+		if ( cacheKey ) {
 			const serverState = reducer( context.initialReduxState, { type: SERIALIZE } );
-			stateCache.set( context.pathname, serverState );
+			stateCache.set( cacheKey, serverState );
 		}
 	}
 
