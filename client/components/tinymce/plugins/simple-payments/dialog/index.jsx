@@ -171,13 +171,9 @@ class SimplePaymentsDialog extends Component {
 			}
 		}
 
-		const lastPaymentButtonEmail = get( paymentButtons, '0.email', null );
+		const initialEmail = get( paymentButtons, '0.email', currentUserEmail );
 
-		if ( ! paymentButtons || ! paymentButtons.length ) {
-			return { ...initialFields, email: currentUserEmail || lastPaymentButtonEmail };
-		}
-
-		return { ...initialFields, email: lastPaymentButtonEmail };
+		return { ...initialFields, email: initialEmail };
 	}
 
 	isDirectEdit() {
