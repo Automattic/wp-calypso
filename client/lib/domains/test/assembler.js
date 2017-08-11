@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { assign } from 'lodash';
-
 const expect = require( 'chai' ).expect;
 
 /**

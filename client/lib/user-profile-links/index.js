@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { reject, some } from 'lodash';
-
 var debug = require( 'debug' )( 'calypso:user:profile-links' );
 
 /**

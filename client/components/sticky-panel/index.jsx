@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { throttle } from 'lodash';
-
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	classNames = require( 'classnames' );

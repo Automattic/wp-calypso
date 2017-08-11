@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { includes, startsWith } from 'lodash';
-
 const React = require( 'react' ),
 	ReactDom = require( 'react-dom' ),
 	store = require( 'store' ),

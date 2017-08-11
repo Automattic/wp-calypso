@@ -18,7 +18,6 @@ import {
 	some,
 	uniqueId
 } from 'lodash';
-
 var update = require( 'react-addons-update' );
 
 function Controller( options ) {

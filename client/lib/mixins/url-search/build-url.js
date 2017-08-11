@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { pick } from 'lodash';
-
 var url = require( 'url' );
 
 /**

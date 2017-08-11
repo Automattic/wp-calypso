@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { assign } from 'lodash';
-
 var debug = require( 'debug' )( 'calypso:media' );
 
 /**

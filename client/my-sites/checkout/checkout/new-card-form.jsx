@@ -2,8 +2,8 @@
  * External dependencies
  */
 import { isEmpty } from 'lodash';
-
-var React = require( 'react' ), classNames = require( 'classnames' );
+var React = require( 'react' ),
+	classNames = require( 'classnames' );
 
 /**
  * Internal dependencies

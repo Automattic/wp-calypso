@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { property, sortBy } from 'lodash';
-
 var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
 	classnames = require( 'classnames' );

@@ -11,7 +11,6 @@
  * External dependencies
  */
 import { debounce } from 'lodash';
-
 var tinymce = require( 'tinymce/tinymce' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),

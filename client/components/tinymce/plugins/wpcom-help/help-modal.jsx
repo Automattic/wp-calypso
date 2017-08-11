@@ -4,7 +4,6 @@
  * External dependencies
  */
 import { forEach } from 'lodash';
-
 const React = require( 'react' );
 
 /**

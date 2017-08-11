@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { omit } from 'lodash';
-
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:people:team-list' );
 

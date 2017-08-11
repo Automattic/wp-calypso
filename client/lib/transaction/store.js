@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { assign, cloneDeep, merge } from 'lodash';
-
 var update = require( 'react-addons-update' );
 
 /**

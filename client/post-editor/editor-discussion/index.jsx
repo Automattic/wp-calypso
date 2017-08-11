@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { get, pick } from 'lodash';
-
 const React = require( 'react' );
 
 /**

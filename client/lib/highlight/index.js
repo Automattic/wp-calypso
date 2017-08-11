@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { compact, toArray } from 'lodash';
-
 var debug = require( 'debug' )( 'calypso:highlight' );
 
 /**

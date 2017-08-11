@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { assign, filter, find } from 'lodash';
-
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
 

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { assign, filter, map, pick, sortBy, transform } from 'lodash';
-
 var sanitizeHtml = require( 'sanitize-html' );
 
 /**

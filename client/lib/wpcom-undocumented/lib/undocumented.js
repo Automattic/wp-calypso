@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
-
 var debug = require( 'debug' )( 'calypso:wpcom-undocumented:undocumented' ),
 	url = require( 'url' );
 

@@ -3,7 +3,6 @@
  */
 import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } from 'lodash';
 import cookie from 'cookie';
-
 const debug = require( 'debug' ),
 	url = require( 'url' ),
 	qs = require( 'qs' );

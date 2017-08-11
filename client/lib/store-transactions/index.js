@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { isEmpty, omit } from 'lodash';
-
 var debug = require( 'debug' )( 'calypso:store-transactions' ),
 	Readable = require( 'stream' ).Readable,
 	inherits = require( 'inherits' );

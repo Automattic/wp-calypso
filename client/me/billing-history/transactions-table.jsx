@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { defer, isEmpty, pick } from 'lodash';
-
 var React = require( 'react' ),
 	titleCase = require( 'to-title-case' ),
 	capitalPDangit = require( 'lib/formatting' ).capitalPDangit;

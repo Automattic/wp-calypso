@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { assign } from 'lodash';
-
 var React = require( 'react' ),
 	TestUtils = require( 'react-addons-test-utils' ),
 	expect = require( 'chai' ).expect;

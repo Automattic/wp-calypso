@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { forOwn } from 'lodash';
-
 var store = require( 'store' ),
 	wpcom = require( 'lib/wp' ).undocumented();
 

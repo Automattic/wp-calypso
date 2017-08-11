@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { assign, isEqual, noop, omit } from 'lodash';
-
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
 

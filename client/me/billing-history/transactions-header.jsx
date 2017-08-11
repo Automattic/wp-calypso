@@ -2,9 +2,7 @@
  * External dependencies
  */
 import { last, map, range, uniq } from 'lodash';
-
 import Gridicon from 'gridicons';
-
 var React = require( 'react' ),
 	closest = require( 'component-closest' ),
 	classNames = require( 'classnames' );

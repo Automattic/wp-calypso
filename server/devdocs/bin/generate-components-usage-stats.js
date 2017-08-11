@@ -6,7 +6,6 @@
  * as its input, and writes the index to server/devdocs/components-usage-stats.json
  */
 import { camelCase } from 'lodash';
-
 var async = require( 'async' ),
 	config = require( 'config' ),
 	fs = require( 'fs' ),

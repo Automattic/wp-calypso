@@ -4,7 +4,6 @@
  * External dependencies
  */
 import { find, isEqual, reject } from 'lodash';
-
 var Dispatcher = require( 'dispatcher' );
 
 /**

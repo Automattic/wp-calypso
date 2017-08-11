@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { compact } from 'lodash';
-
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
 

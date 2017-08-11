@@ -17,7 +17,6 @@ import {
 	pick,
 	reject
 } from 'lodash';
-
 var // eslint-disable-line no-unused-vars
     debug = require( 'debug' )( 'calypso:signup:flow-controller' ),
     store = require( 'store' ),

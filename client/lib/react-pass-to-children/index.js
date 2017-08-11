@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { assign } from 'lodash';
-
 var React = require( 'react' );
 
 module.exports = function( element, additionalProps ) {

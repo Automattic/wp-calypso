@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { filter, find } from 'lodash';
-
 const React = require( 'react' ),
 	titleCase = require( 'to-title-case' ),
 	classNames = require( 'classnames' );

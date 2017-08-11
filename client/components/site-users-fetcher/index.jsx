@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { includes, isEqual, omit, partition } from 'lodash';
-
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:site-users-fetcher' );
 

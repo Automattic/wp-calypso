@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { find, groupBy, isEmpty, map, mapValues } from 'lodash';
-
 const React = require( 'react' ),
 	update = require( 'react-addons-update' ),
 	page = require( 'page' );

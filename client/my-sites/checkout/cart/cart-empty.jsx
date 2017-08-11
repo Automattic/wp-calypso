@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { startsWith } from 'lodash';
-
 var React = require( 'react' ),
 	page = require( 'page' );
 

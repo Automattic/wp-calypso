@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { assign, pick } from 'lodash';
-
 var urls = require( 'url' );
 
 module.exports = function( url ) {

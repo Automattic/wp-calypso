@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { filter, some } from 'lodash';
-
 var React = require( 'react' );
 
 /**

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { debounce } from 'lodash';
-
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	classNames = require( 'classnames' );

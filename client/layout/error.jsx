@@ -3,7 +3,6 @@
  */
 import debug from 'debug';
 import { assign } from 'lodash';
-
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	url = require( 'url' ),

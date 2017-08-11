@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { isEqual } from 'lodash';
-
 var debug = require( 'debug' )( 'calypso:posts' );
 
 /**

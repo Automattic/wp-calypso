@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { clone, findIndex, indexOf, isArray, pullAt, reject } from 'lodash';
-
 var debug = require( 'debug' )( 'calypso:my-sites:plugins:log-store' );
 
 /**

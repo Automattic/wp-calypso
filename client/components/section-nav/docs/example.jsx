@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { forEach, omit } from 'lodash';
-
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' );
 

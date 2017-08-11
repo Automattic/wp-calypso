@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { find, isEqual, omit } from 'lodash';
-
 var debug = require( 'debug' )( 'calypso:site' ),
 	i18n = require( 'i18n-calypso' );
 

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { isEmpty } from 'lodash';
-
 var React = require( 'react' );
 
 /**

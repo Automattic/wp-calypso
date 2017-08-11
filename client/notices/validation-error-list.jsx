@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { map } from 'lodash';
-
 var React = require( 'react' );
 
 module.exports = React.createClass( {

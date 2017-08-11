@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { assign, forEach } from 'lodash';
-
 const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	classnames = require( 'classnames' ),

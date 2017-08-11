@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { assign, isEqual } from 'lodash';
-
 var React = require( 'react' );
 
 /**
