@@ -1,7 +1,9 @@
+$image-height: 47px;
+
 .is-section-login {
-	padding-bottom: 47px;
+	padding-bottom: $image-height;
 	position: relative;
-	min-height: calc( 100% - 47px );
+	min-height: calc( 100% - #{$image-height} );
 
 	.layout__content {
 		position: static;
@@ -38,8 +40,8 @@
 .wp-login__jetpack-footer {
 	background: #fff;
 	border-top: solid 1px #f9fbfc;
-	height: 47px;
-	line-height: 47px;
+	height: $image-height;
+	line-height: $image-height;
 	position: absolute;
 		bottom: 0;
 		left: 0;
