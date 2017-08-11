@@ -21,15 +21,21 @@ $image-height: 47px;
 	text-align: center;
 }
 
+.wp-login__links,
+.wp-login__footer {
+	a {
+		color: darken( $gray, 20% );
+		text-decoration: none;
+	}
+}
+
 .wp-login__links {
 	a {
 		border-bottom: 1px solid lighten( $gray, 20% );
-		color: darken( $gray, 20% );
 		display: block;
 		font-weight: 500;
 		line-height: 4em;
 		padding: 0 24px;
-		text-decoration: none;
 	}
 
 	a:last-of-type {
@@ -37,20 +43,32 @@ $image-height: 47px;
 	}
 }
 
-.wp-login__jetpack-footer {
-	background: #fff;
-	border-top: solid 1px #f9fbfc;
+.wp-login__footer {
+	position: absolute;
+	bottom: 0;
+	left: 0;
 	height: $image-height;
 	line-height: $image-height;
-	position: absolute;
-		bottom: 0;
-		left: 0;
-	text-align: center;
 	width: 100%;
+}
+
+.wp-login__footer--jetpack {
+	background: #fff;
+	border-top: solid 1px #f9fbfc;
+	text-align: center;
 
 	img {
 		display: block;
 		margin: 0 auto;
+	}
+}
+
+.wp-login__footer--oauth {
+	display: flex;
+	justify-content: center;
+
+	a {
+		padding: 0 1em;
 	}
 }
 
