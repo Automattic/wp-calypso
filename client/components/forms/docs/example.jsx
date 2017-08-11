@@ -245,6 +245,18 @@ class FormFields extends React.PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
+						<FormLabel htmlFor="telInput_valid">Form Tel Input</FormLabel>
+						<FormTelInput name="telInput" id="telInput_valid" placeholder="Placeholder text..." isValid />
+						<FormInputValidation text="The phone number can be saved." />
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="telInput_error">Form Tel Input</FormLabel>
+						<FormTelInput name="telInput" id="telInput_error" placeholder="Placeholder text..." isError />
+						<FormInputValidation isError text="The phone number is invalid." />
+					</FormFieldset>
+
+					<FormFieldset>
 						<FormLabel>Form Phone Input</FormLabel>
 						<FormPhoneInput
 							initialCountryCode="US"
@@ -274,8 +286,44 @@ class FormFields extends React.PureComponent {
 					</FormFieldset>
 
 					<FormFieldset>
+						<FormLabel htmlFor="currency_input_valid">Form Currency Input</FormLabel>
+						<FormCurrencyInput
+							name="currency_input"
+							id="currency_input_valid"
+							currencySymbolPrefix="$"
+							placeholder="Placeholder text..."
+							isValid
+						/>
+						<FormInputValidation text="The price is very good." />
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="currency_input_error">Form Currency Input</FormLabel>
+						<FormCurrencyInput
+							name="currency_input"
+							id="currency_input_error"
+							currencySymbolPrefix="$"
+							placeholder="Placeholder text..."
+							isError
+						/>
+						<FormInputValidation isError text="The price is invalid." />
+					</FormFieldset>
+
+					<FormFieldset>
 						<FormLabel htmlFor="textarea">Form Textarea</FormLabel>
 						<FormTextarea name="textarea" id="textarea" placeholder="Placeholder text..." />
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="textarea_valid">Form Textarea</FormLabel>
+						<FormTextarea name="textarea" id="textarea_valid" placeholder="Placeholder text..." isValid />
+						<FormInputValidation text="Your text can be saved." />
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="textarea_error">Form Textarea</FormLabel>
+						<FormTextarea name="textarea" id="textarea_error" placeholder="Placeholder text..." isError />
+						<FormInputValidation isError text="Your text is invalid." />
 					</FormFieldset>
 
 					<FormButtonsBar>
