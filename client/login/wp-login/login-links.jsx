@@ -158,7 +158,7 @@ export class LoginLinks extends React.Component {
 
 	render() {
 		return (
-			<div className="wp-login__footer">
+			<div className="wp-login__links">
 				{ this.renderLostPhoneLink() }
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
