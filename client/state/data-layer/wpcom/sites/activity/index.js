@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,19 +10,9 @@ import { pick } from 'lodash';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { ACTIVITY_LOG_REQUEST } from 'state/action-types';
-import {
-	activityLogError,
-	activityLogUpdate,
-} from 'state/activity-log/actions';
+import { activityLogError, activityLogUpdate } from 'state/activity-log/actions';
 
-const KNOWN_PARAMS = [
-	'action',
-	'date_end',
-	'date_start',
-	'group',
-	'name',
-	'number',
-];
+const KNOWN_PARAMS = [ 'action', 'date_end', 'date_start', 'group', 'name', 'number' ];
 
 export const handleActivityLogRequest = ( { dispatch }, action ) => {
 	const { params, siteId } = action;
@@ -34,12 +25,17 @@ export const handleActivityLogRequest = ( { dispatch }, action ) => {
 		params.date_start = params.dateStart;
 	}
 
-	dispatch( http( {
-		apiVersion: '1',
-		method: 'GET',
-		path: `/sites/${ siteId }/activity`,
-		query: pick( KNOWN_PARAMS, params ),
-	}, action ) );
+	dispatch(
+		http(
+			{
+				apiVersion: '1',
+				method: 'GET',
+				path: `/sites/${ siteId }/activity`,
+				query: pick( KNOWN_PARAMS, params ),
+			},
+			action
+		)
+	);
 };
 
 // FIXME: Implement fromApi
@@ -50,16 +46,11 @@ export const receiveActivityLog = ( { dispatch }, { siteId }, data ) => {
 };
 
 export const receiveActivityLogError = ( { dispatch }, { siteId }, error ) => {
-	dispatch( activityLogError(
-		siteId,
-		pick( error, [ 'error', 'status', 'message' ]
-	) ) );
+	dispatch( activityLogError( siteId, pick( error, [ 'error', 'status', 'message' ] ) ) );
 };
 
 export default {
-	[ ACTIVITY_LOG_REQUEST ]: [ dispatchRequest(
-		handleActivityLogRequest,
-		receiveActivityLog,
-		receiveActivityLogError
-	) ],
+	[ ACTIVITY_LOG_REQUEST ]: [
+		dispatchRequest( handleActivityLogRequest, receiveActivityLog, receiveActivityLogError ),
+	],
 };

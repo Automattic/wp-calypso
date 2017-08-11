@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -34,12 +35,7 @@ class QueryActivityLog extends PureComponent {
 		this.request( nextProps );
 	}
 
-	request( {
-		siteId,
-		dateEnd,
-		dateStart,
-		number,
-	} ) {
+	request( { siteId, dateEnd, dateStart, number } ) {
 		if ( siteId ) {
 			this.props.activityLogRequest( siteId, {
 				dateEnd,
@@ -55,5 +51,5 @@ class QueryActivityLog extends PureComponent {
 }
 
 export default connect( null, {
-	activityLogRequest: activityLogRequestAction
+	activityLogRequest: activityLogRequestAction,
 } )( QueryActivityLog );
