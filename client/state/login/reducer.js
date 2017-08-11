@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isEmpty, omit } from 'lodash';
+import { get, isEmpty, omit, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -192,6 +192,10 @@ export const oauth2ClientData = createReducer( null, {
 	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => data,
 } );
 
+export const showOAuth2Layout = createReducer( false, {
+	[ ROUTE_SET ]: ( state, { path, query } ) => startsWith( path, '/log-in' ) && !! query.client_id,
+} );
+
 export const socialAccountLink = createReducer( { isLinking: false }, {
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: ( state, { error, token, service } ) => {
 		if ( error.code === 'user_exists' ) {
@@ -224,5 +228,6 @@ export default combineReducers( {
 	twoFactorAuthPushPoll,
 	socialAccount,
 	oauth2ClientData,
+	showOAuth2Layout,
 	socialAccountLink,
 } );

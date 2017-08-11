@@ -9,10 +9,20 @@ import React from 'react';
 import WPLogin from './wp-login';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
+import { fetchOAuth2ClientData } from 'state/login/actions';
 
 export default {
 	login( context, next ) {
-		const { lang, path, params: { flow, twoFactorAuthType }, query } = context;
+		const {
+			lang,
+			path,
+			params: { flow, twoFactorAuthType },
+			query: { client_id }
+		} = context;
+
+		if ( client_id ) {
+			context.store.dispatch( fetchOAuth2ClientData( Number( client_id ) ) );
+		}
 
 		context.primary = (
 			<WPLogin
@@ -21,7 +31,7 @@ export default {
 				twoFactorAuthType={ twoFactorAuthType }
 				socialConnect={ flow === 'social-connect' }
 				privateSite={ flow === 'private-site' }
-				clientId={ query.client_id } />
+			/>
 		);
 
 		next();

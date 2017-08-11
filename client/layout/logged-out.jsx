@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -10,12 +11,14 @@ import { connect } from 'react-redux';
  */
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import { getSection } from 'state/ui/selectors';
+import OauthClientLayout from 'layout/oauth-client';
+import { showOAuth2Layout } from 'state/login/selectors';
 
 const LayoutLoggedOut = ( {
 	primary,
-	secondary,
 	section,
 	redirectUri,
+	useOAuth2Layout,
 } ) => {
 	const classes = classNames( 'layout', {
 		[ 'is-group-' + section.group ]: !! section,
@@ -25,6 +28,12 @@ const LayoutLoggedOut = ( {
 		'wp-singletree-layout': !! primary,
 	} );
 
+	if ( useOAuth2Layout ) {
+		return (
+			<OauthClientLayout primary={ primary } />
+		);
+	}
+
 	return (
 		<div className={ classes }>
 			<MasterbarLoggedOut title={ section.title } sectionName={ section.name } redirectUri={ redirectUri } />
@@ -33,7 +42,6 @@ const LayoutLoggedOut = ( {
 					{ primary }
 				</div>
 				<div id="secondary" className="layout__secondary">
-					{ secondary }
 				</div>
 			</div>
 		</div>
@@ -42,17 +50,19 @@ const LayoutLoggedOut = ( {
 
 LayoutLoggedOut.displayName = 'LayoutLoggedOut';
 LayoutLoggedOut.propTypes = {
-	primary: React.PropTypes.element,
-	secondary: React.PropTypes.element,
-	section: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.object,
+	primary: PropTypes.element,
+	secondary: PropTypes.element,
+	section: PropTypes.oneOfType( [
+		PropTypes.bool,
+		PropTypes.object,
 	] ),
-	redirectUri: React.PropTypes.string
+	redirectUri: PropTypes.string,
+	showOAuth2Layout: PropTypes.bool,
 };
 
 export default connect(
 	state => ( {
-		section: getSection( state )
+		section: getSection( state ),
+		useOAuth2Layout: showOAuth2Layout( state ),
 	} )
 )( LayoutLoggedOut );
