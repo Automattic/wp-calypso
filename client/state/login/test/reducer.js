@@ -25,7 +25,10 @@ import {
 	SOCIAL_CONNECT_ACCOUNT_REQUEST,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
+	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
 	ROUTE_SET,
+	USER_RECEIVE,
 } from 'state/action-types';
 import reducer, {
 	isRequesting,
@@ -36,6 +39,8 @@ import reducer, {
 	requestSuccess,
 	twoFactorAuth,
 	twoFactorAuthRequestError,
+	socialAccount,
+	socialAccountLink,
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -50,6 +55,7 @@ describe( 'reducer', () => {
 			'requestNotice',
 			'requestSuccess',
 			'socialAccount',
+			'socialAccountLink',
 			'twoFactorAuth',
 			'isRequestingTwoFactorAuth',
 			'twoFactorAuthRequestError',
@@ -582,6 +588,115 @@ describe( 'reducer', () => {
 				two_step_id: 12345678,
 				two_step_nonce_sms: 'foo'
 			} );
+		} );
+	} );
+
+	describe( 'socialAccount', () => {
+		it( 'should store error from create account failure', () => {
+			const error = { message: 'Bad', code: 'this_is_a_test' };
+			const service = 'google';
+			const token = '123';
+
+			const state = socialAccount( {}, {
+				type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+				error,
+				service,
+				token,
+			} );
+
+			expect( state.createError ).to.eql( error );
+		} );
+
+		it( 'default value for create error should be null', () => {
+			expect( socialAccount( undefined, { type: 'does not matter' } ).createError ).to.be.null;
+		} );
+
+		it( 'should reset create error on create success', () => {
+			const state = {
+				createError: { message: 'error' }
+			};
+
+			const newState = socialAccount(
+				state,
+				{
+					type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
+					data: { username: 'test', bearerToken: '123' }
+				}
+			);
+
+			expect( newState.createError ).to.be.null;
+		} );
+
+		it( 'should reset create error when user is received', () => {
+			const state = { createError: {} };
+
+			const newState = socialAccount(
+				state,
+				{
+					type: USER_RECEIVE,
+				}
+			);
+
+			expect( newState.createError ).to.be.null;
+		} );
+
+		it( 'should reset create error when login is performed', () => {
+			const state = { createError: {} };
+
+			const newState = socialAccount(	state, { type: LOGIN_REQUEST, } );
+
+			expect( newState.createError ).to.be.null;
+		} );
+	} );
+
+	describe( 'socialAccountLink', () => {
+		it( 'should set linking mode on user_exists create error', () => {
+			const error = { message: 'Bad', code: 'user_exists', email: 'hello@test.com' };
+			const service = 'google';
+			const token = '123';
+
+			const state = socialAccountLink( {}, {
+				type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+				error,
+				service,
+				token,
+			} );
+
+			expect( state ).to.eql( {
+				isLinking: true,
+				service,
+				token,
+				email: error.email
+			} );
+		} );
+
+		it( 'should reset linking mode on create success', () => {
+			const state = {
+				createError: { message: 'error' }
+			};
+
+			const newState = socialAccountLink(
+				state,
+				{
+					type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
+					data: { username: 'test', bearerToken: '123' }
+				}
+			);
+
+			expect( newState ).to.to.eql( { isLinking: false } );
+		} );
+
+		it( 'should reset linking mode when user is received', () => {
+			const state = { createError: {} };
+
+			const newState = socialAccountLink(
+				state,
+				{
+					type: USER_RECEIVE,
+				}
+			);
+
+			expect( newState ).to.to.eql( { isLinking: false } );
 		} );
 	} );
 } );

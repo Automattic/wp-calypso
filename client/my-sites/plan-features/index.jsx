@@ -530,7 +530,7 @@ PlanFeatures.defaultProps = {
 
 export default connect(
 	( state, ownProps ) => {
-		const { isInSignup, placeholder, plans, onUpgradeClick, isLandingPage, site, isInSignupTest } = ownProps;
+		const { isInSignup, placeholder, plans, onUpgradeClick, isLandingPage, site, isInSignupTest, displayJetpackPlans } = ownProps;
 		const selectedSiteId = site ? site.ID : null;
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
@@ -577,6 +577,10 @@ export default connect(
 								planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
 							}
 					}
+				}
+
+				if ( abtest( 'jetpackConnectPlansCopyChanges' ) === 'modified' && displayJetpackPlans ) {
+					planFeatures = getPlanFeaturesObject( planConstantObj.getNewSignupFeatures( abtest ) );
 				}
 
 				return {

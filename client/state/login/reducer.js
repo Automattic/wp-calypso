@@ -27,8 +27,8 @@ import {
 	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST,
-	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
+	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -167,13 +167,14 @@ export const twoFactorAuthPushPoll = createReducer( { inProgress: false, success
 	[ TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED ]: state => ( { ...state, inProgress: false, success: true } ),
 } );
 
-export const socialAccount = createReducer( { isCreating: false }, {
+export const socialAccount = createReducer( { isCreating: false, createError: null, }, {
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: () => ( { isCreating: true } ),
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => ( { isCreating: false, createError: error } ),
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: ( state, { data: { username, bearerToken } } ) => ( {
 		isCreating: false,
 		username,
-		bearerToken
+		bearerToken,
+		createError: null,
 	} ),
 	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: ( state, { error, authInfo } ) => ( {
 		...state,
@@ -181,7 +182,7 @@ export const socialAccount = createReducer( { isCreating: false }, {
 		email: error.email,
 		authInfo
 	} ),
-	[ USER_RECEIVE ]: state => ( { ...state, bearerToken: null, username: null } ),
+	[ USER_RECEIVE ]: state => ( { ...state, bearerToken: null, username: null, createError: null, } ),
 	[ LOGIN_REQUEST ]: state => ( { ...state, createError: null } ),
 } );
 
@@ -193,6 +194,23 @@ export const oauth2ClientData = createReducer( null, {
 
 export const showOAuth2Layout = createReducer( false, {
 	[ ROUTE_SET ]: ( state, { path, query } ) => startsWith( path, '/log-in' ) && !! query.client_id,
+} );
+
+export const socialAccountLink = createReducer( { isLinking: false }, {
+	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: ( state, { error, token, service } ) => {
+		if ( error.code === 'user_exists' ) {
+			return {
+				isLinking: true,
+				email: error.email,
+				token,
+				service,
+			};
+		}
+
+		return state;
+	},
+	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: () => ( { isLinking: false } ),
+	[ USER_RECEIVE ]: () => ( { isLinking: false } ),
 } );
 
 export default combineReducers( {
@@ -211,4 +229,5 @@ export default combineReducers( {
 	socialAccount,
 	oauth2ClientData,
 	showOAuth2Layout,
+	socialAccountLink,
 } );

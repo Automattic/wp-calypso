@@ -256,3 +256,27 @@ export const getOAuth2ClientData = ( state ) => get( state, 'login.oauth2ClientD
  * @return {Boolean}         Whether the OAuth2 layout should be used.
  */
 export const showOAuth2Layout = ( state ) => get( state, 'login.showOAuth2Layout', false );
+
+/***
+ * Gets social account linking status
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?Boolean}         Boolean describing social account linking status
+ */
+export const getSocialAccountIsLinking = ( state ) => get( state, 'login.socialAccountLink.isLinking', null );
+
+/***
+ * Gets social account linking email
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         wpcom email that is being linked
+ */
+export const getSocialAccountLinkEmail = ( state ) => get( state, 'login.socialAccountLink.email', null );
+
+/***
+ * Gets social account linking service
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         service name that is being linked
+ */
+export const getSocialAccountLinkService = ( state ) => get( state, 'login.socialAccountLink.service', null );
