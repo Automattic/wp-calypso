@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import DocumentHead from 'components/data/document-head';
 import LoginLinks from './login-links';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import { getOAuth2ClientData } from 'state/login/selectors';
 import Main from 'components/main';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoginBlock from 'blocks/login';
@@ -25,6 +26,7 @@ export class Login extends React.Component {
 		clientId: PropTypes.string,
 		isLoggedIn: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
+		oauth2ClientData: PropTypes.object,
 		path: PropTypes.string.isRequired,
 		privateSite: PropTypes.bool,
 		recordPageView: PropTypes.func.isRequired,
@@ -88,6 +90,7 @@ export class Login extends React.Component {
 		const {
 			clientId,
 			isLoggedIn,
+			oauth2ClientData,
 			privateSite,
 			socialConnect,
 			twoFactorAuthType,
@@ -105,6 +108,7 @@ export class Login extends React.Component {
 				socialConnect={ socialConnect }
 				privateSite={ privateSite }
 				clientId={ clientId }
+				oauth2ClientData={ oauth2ClientData }
 			/>
 		);
 	}
@@ -149,7 +153,8 @@ export class Login extends React.Component {
 
 export default connect(
 	( state ) => ( {
-		isLoggedIn: Boolean( getCurrentUserId( state ) )
+		isLoggedIn: Boolean( getCurrentUserId( state ) ),
+		oauth2ClientData: getOAuth2ClientData( state ),
 	} ),
 	{
 		recordPageView,
