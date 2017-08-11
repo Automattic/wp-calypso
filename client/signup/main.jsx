@@ -222,11 +222,11 @@ const Signup = React.createClass( {
 		}
 	},
 
-	handleLogin( dependencies, destination, overwrittenDestination ) {
+	handleLogin( dependencies, destination, event ) {
 		const userIsLoggedIn = Boolean( user.get() );
 
-		if ( overwrittenDestination ) {
-			destination = overwrittenDestination;
+		if ( event && event.redirectTo ) {
+			destination = event.redirectTo;
 		}
 
 		if ( userIsLoggedIn ) {

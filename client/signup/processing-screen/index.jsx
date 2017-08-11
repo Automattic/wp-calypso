@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { find, get } from 'lodash';
+import { find, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classnames from 'classnames';
@@ -24,18 +24,27 @@ export class SignupProcessingScreen extends Component {
 		signupProgress: PropTypes.array,
 	};
 
-	constructor() {
-		super();
+	componentWillMount() {
 		this.state = {
-			siteSlug: ''
+			siteSlug: '',
+			hasPaidSubscription: false,
 		};
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const siteSlug = get( nextProps, [ 'signupDependencies', 'siteSlug' ], '' );
+		const dependencies = nextProps.signupDependencies;
+
+		if ( isEmpty( dependencies ) ) {
+			return;
+		}
+
+		const siteSlug = dependencies.siteSlug;
 		if ( siteSlug ) {
 			this.setState( { siteSlug } );
 		}
+
+		const hasPaidSubscription = !! ( dependencies.cartItem || dependencies.domainItem );
+		this.setState( { hasPaidSubscription } );
 	}
 
 	renderConfirmationNotice() {
@@ -148,7 +157,7 @@ export class SignupProcessingScreen extends Component {
 		}
 
 		if ( this.state.siteSlug ) {
-			this.props.loginHandler( `/plans/${ this.state.siteSlug }` );
+			this.props.loginHandler( { redirectTo: `/plans/${ this.state.siteSlug }` } );
 		} else {
 			this.props.loginHandler();
 		}
@@ -205,10 +214,7 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	render() {
-		const dependencies = this.props.signupDependencies || {};
-		const hasPaidSubscription = dependencies.cartItem || dependencies.domainItem;
-
-		if ( abtest( 'postSignupUpgradeScreen' ) === 'modified' && ! hasPaidSubscription ) {
+		if ( abtest( 'postSignupUpgradeScreen' ) === 'modified' && ! this.state.hasPaidSubscription ) {
 			return this.renderUpgradeScreen();
 		}
 
