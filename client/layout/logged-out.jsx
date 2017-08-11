@@ -16,7 +16,6 @@ import { showOAuth2Layout } from 'state/login/selectors';
 
 const LayoutLoggedOut = ( {
 	primary,
-	secondary,
 	section,
 	redirectUri,
 	useOAuth2Layout,
@@ -43,7 +42,6 @@ const LayoutLoggedOut = ( {
 					{ primary }
 				</div>
 				<div id="secondary" className="layout__secondary">
-					{ secondary }
 				</div>
 			</div>
 		</div>

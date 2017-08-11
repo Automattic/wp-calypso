@@ -14,6 +14,7 @@ import { getOAuth2ClientData } from 'state/login/selectors';
 
 const OauthClientLayout = ( {
 	primary,
+	secondary,
 	section,
 	oauth2ClientData,
 } ) => {
@@ -65,10 +66,12 @@ const OauthClientLayout = ( {
 
 	return (
 		<div className={ classes }>
-
 			<div id="content" className="layout__content">
 				<div id="primary" className="layout__primary">
 					{ primary }
+				</div>
+				<div id="secondary" className="layout__secondary">
+					{ secondary }
 				</div>
 			</div>
 		</div>

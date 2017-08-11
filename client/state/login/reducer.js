@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isEmpty, omit } from 'lodash';
+import { get, isEmpty, omit, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -191,8 +191,8 @@ export const oauth2ClientData = createReducer( null, {
 	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => data,
 } );
 
-export const showOAuth2Layout = createReducer( null, {
-	[ OAUTH2_CLIENT_DATA_REQUEST ]: () => true,
+export const showOAuth2Layout = createReducer( false, {
+	[ ROUTE_SET ]: ( state, { path, query } ) => startsWith( path, '/log-in' ) && !! query.client_id,
 } );
 
 export default combineReducers( {
