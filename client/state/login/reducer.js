@@ -10,7 +10,6 @@ import { combineReducers, createReducer } from 'state/utils';
 import magicLogin from './magic-login/reducer';
 import {
 	LOGIN_FORM_UPDATE,
-	LOGIN_OAUTH_CLIENT_SET,
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
@@ -196,7 +195,6 @@ export default combineReducers( {
 	isRequesting,
 	isRequestingTwoFactorAuth,
 	magicLogin,
-	oauth,
 	redirectTo,
 	rememberMe,
 	isFormDisabled,
