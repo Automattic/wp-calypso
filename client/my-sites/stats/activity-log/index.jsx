@@ -22,7 +22,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getSiteSlug,
 	getSiteTitle,
-	isJetpackSite,
 } from 'state/sites/selectors';
 import StatsFirstView from '../stats-first-view';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -56,7 +55,6 @@ const debug = debugFactory( 'calypso:activity-log' );
 
 class ActivityLog extends Component {
 	static propTypes = {
-		isJetpack: PropTypes.bool,
 		restoreProgress: PropTypes.shape( {
 			errorCode: PropTypes.string.isRequired,
 			failureReason: PropTypes.string.isRequired,
@@ -318,7 +316,6 @@ class ActivityLog extends Component {
 
 	render() {
 		const {
-			isJetpack,
 			siteId,
 			siteTitle,
 			slug,
@@ -337,9 +334,9 @@ class ActivityLog extends Component {
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation
-					isJetpack={ isJetpack }
-					slug={ slug }
 					section="activity"
+					siteId={ siteId }
+					slug={ slug }
 				/>
 				{ this.renderErrorMessage() }
 				{ this.renderContent() }
@@ -361,7 +358,6 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			isJetpack: isJetpackSite( state, siteId ),
 			logs: getActivityLogs( state, siteId ),
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
