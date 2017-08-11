@@ -24,11 +24,11 @@ export default createSelector( ( state, siteId, simplePaymentId = null ) => {
 
 	const simplePaymentProducts = get( state, `simplePayments.productList.items.${ siteId }`, null );
 
-	if ( ! simplePaymentId ) {
-		if ( ! simplePaymentProducts ) {
-			return null;
-		}
+	if ( ! simplePaymentProducts ) {
+		return null;
+	}
 
+	if ( ! simplePaymentId ) {
 		return orderBy( simplePaymentProducts, 'ID', 'desc' );
 	}
 
