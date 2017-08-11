@@ -1,0 +1,39 @@
+.search-autocomplete {
+  &.has-highlight {
+    box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
+  }
+
+  .search.has-focus {
+    box-shadow: none;
+  }
+}
+
+.search-autocomplete__card {
+  padding: 11px 24px 10px;
+  min-height: 48px;
+}
+
+.search-autocomplete__suggestions {
+  position: absolute;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  left: 0;
+  top: 52px;
+  z-index: 10;
+}
+
+.search-autocomplete__suggestion {
+  display: flex;
+  padding: 10px 10px;
+  background: $white;
+  border: 1px solid darken( $gray-light, 10% );
+  border-top: 0px;
+  font-size: 15px;
+  cursor: pointer;
+
+  &.has-highlight {
+    background-color: $blue-medium;
+    color: $white;
+  }
+}
