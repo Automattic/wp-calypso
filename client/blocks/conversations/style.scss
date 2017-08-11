@@ -8,36 +8,69 @@
 		top: -16px;
 }
 
-.conversations__stream .reader-post-card.card.is-compact .reader-post-card__post-details {
-	margin-top: -2px;
-}
+.conversations__stream .reader-post-card.card.is-compact {
 
-.conversations__stream .reader-post-card__byline-details {
-	max-width: calc( 100% - 140px);
-}
+	.reader-post-card__post-details {
+		margin-top: -2px;
+	}
 
-.conversations__stream .reader-post-card .reader-post-card__title {
-	line-height: 1.2;
-	max-height: 16px * 1.6;
-	margin-top: 2px;
-	overflow: hidden;
-	position: relative;
-	white-space: nowrap;
-	width: calc( 100% - 20px );
+	.reader-post-card__byline-details {
+		flex-wrap: wrap;
+		max-height: none;
+		max-width: calc( 100% - 140px );
+	}
 
-	&::after{
-		@include long-content-fade( $size: 35px );
+	.reader-post-card__byline-author-site {
+		margin-right: 5px;
+	}
+
+	.reader-post-card__timestamp-and-tag  {
+		margin-left: 0;
+	}
+
+	.reader-post-card__title {
+		line-height: 1.2;
+		max-height: 16px * 1.6;
+		margin-top: 2px;
+		overflow: hidden;
+		position: relative;
+		white-space: nowrap;
+
+		&::after {
+			@include long-content-fade( $size: 35px );
+		}
 	}
 
 	.reader-post-card__title-link {
 		font-size: 17px;
 	}
-}
 
-.conversations__stream .reader-post-card .reader-excerpt__content {
-	margin-top: 2px;
-	white-space: nowrap;
-	width: calc( 100% - 20px );
+	.reader-excerpt__content {
+		margin-top: 2px;
+		white-space: nowrap;
+
+		&::before {
+			@include long-content-fade( $size: 35px );
+		}
+	}
+
+	.comments__comment-author .gravatar {
+		top: 5px;
+	}
+
+	.comments__comment-content img {
+		margin-top: 10px;
+	}
+
+	&:not( :first-child ) {
+		margin-top: 16px;
+	}
+
+	// Hides Follow button and tags in Conversations stream
+	.follow-button,
+	.reader-post-card__tags {
+		display: none;
+	}
 }
 
 .conversations__stream .reader-post-card.has-thumbnail .reader-post-card__title,
@@ -45,29 +78,11 @@
 	width: calc( 100% - 120px );
 }
 
-.conversations__stream .reader-featured-image {
-	max-height: 64px;
-}
-
-.conversations__stream .reader-post-card.card:not(:first-child) {
-	margin-top: 16px;
-}
-
-// Hides Follow button and tags in Conversations stream
-.conversations__stream .follow-button,
-.conversations__stream .reader-post-card__tags {
-	display: none;
-}
-
-.conversations__stream .comments__comment-author .gravatar {
-	top: 5px;
-}
-
-.conversations__stream .comments__comment-content img {
-	margin-top: 10px;
-}
-
 .conversations__comment-list-ul {
 	list-style-type: none;
 	margin-left: 0;
+}
+
+.is-group-reader .conversations__stream .like-button__label-status {
+	display: inline;
 }
