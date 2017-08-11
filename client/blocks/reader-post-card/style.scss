@@ -209,6 +209,12 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			color: $gray;
 		}
 
+		.reader-post-options-menu {
+			position: absolute;
+				right: 14px;
+				top: 0;
+		}
+
 		.reader-featured-image {
 			height: auto;
 			margin-bottom: 0;
