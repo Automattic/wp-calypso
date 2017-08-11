@@ -4,6 +4,7 @@
 }
 
 // Popover arrows
+.reader-popover.popover.is-bottom .popover__arrow,
 .reader-popover.popover.is-bottom-left .popover__arrow,
 .reader-popover.popover.is-bottom-right .popover__arrow,
 .reader-popover.popover.is-top-left .popover__arrow,
@@ -20,6 +21,7 @@
 	}
 }
 
+.reader-popover.popover.is-bottom .popover__arrow,
 .reader-popover.popover.is-bottom-left .popover__arrow,
 .reader-popover.popover.is-bottom-right .popover__arrow {
 
@@ -43,7 +45,6 @@
 .reader-popover__wrapper {
 	display: flex;
 	flex-direction: column;
-	min-width: 250px;
 }
 
 .reader-popover__header {
