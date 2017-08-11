@@ -21,7 +21,7 @@ export default {
 				twoFactorAuthType={ twoFactorAuthType }
 				socialConnect={ flow === 'social-connect' }
 				privateSite={ flow === 'private-site' }
-				clientId={ query.clientId } />
+				clientId={ query.client_id } />
 		);
 
 		next();
