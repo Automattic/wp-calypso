@@ -34,14 +34,14 @@ function removeKeydownListener() {
 
 function startCloseOnEscForComponent( component, onEscape ) {
 	components.push( { component, onEscape } );
-	if ( components.length > 0 ) {
+	if ( ! isEmpty( components ) ) {
 		addKeydownListener();
 	}
 }
 
 function stopCloseOnEscForComponent( component ) {
 	components = filter( components, item => item.component !== component );
-	if ( components.length < 1 ) {
+	if ( isEmpty( components ) ) {
 		removeKeydownListener();
 	}
 }
