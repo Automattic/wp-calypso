@@ -1072,17 +1072,17 @@ export const PostEditor = React.createClass( {
 		// Defer actions until next available tick to avoid
 		// dispatching inside a dispatch which can happen if for example the
 		// title field is focused when toggling the editor.
-		this._switchEditorTimeout = setTimeout( function() {
-			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-			actions.edit( { content: content } );
-
-			if ( mode === 'html' ) {
-				// Set raw content directly to avoid race conditions
-				actions.editRawContent( content );
-			} else {
-				this.saveRawContent();
-			}
-		}.bind( this ), 0 );
+		// this._switchEditorTimeout = setTimeout( function() {
+		// 	// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+		// 	actions.edit( { content: content } );
+		//
+		// 	if ( mode === 'html' ) {
+		// 		// Set raw content directly to avoid race conditions
+		// 		actions.editRawContent( content );
+		// 	} else {
+		// 		this.saveRawContent();
+		// 	}
+		// }.bind( this ), 0 );
 	}
 
 } );

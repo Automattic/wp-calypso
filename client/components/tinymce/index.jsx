@@ -368,12 +368,60 @@ module.exports = React.createClass( {
 		}.bind( this ) );
 	},
 
+	beforeSetContentHook: function( ed ) {
+		if ( ! ed ) {
+			return;
+		}
+
+		const htmlModeCursorStartPosition = ed.target.getElement().selectionStart;
+		const htmlModeCursorEndPosition = ed.target.getElement().selectionEnd;
+
+		let mode = 'single';
+		if ( htmlModeCursorStartPosition !== htmlModeCursorEndPosition ) {
+			mode = 'range';
+		}
+
+		let bookMarkStart = null;
+		if ( mode === 'single' ) {
+			// single mode - insert a single bookmark
+			bookMarkStart = '<span data-mce-type="bookmark"	' +
+				'id="mce_SELREST_start" ' +
+				'data-mce-style="overflow:hidden;line-height:0px" ' +
+				'style="overflow:hidden;line-height:0px">' +
+				'&#65279;' +
+				'</span>';
+		}
+		else {
+			debugger;
+		}
+
+		// TODO detect if you're not in a tag to not break things
+		ed.content = [
+			ed.content.slice( 0, htmlModeCursorStartPosition ),
+			bookMarkStart,
+			ed.content.slice( htmlModeCursorStartPosition )
+		].join( '' );
+
+		console.log(ed.content);
+
+		ed.target.off( 'BeforeSetContent', this.beforeSetContentHook );
+	},
+
 	toggleEditor: function( options = { autofocus: true } ) {
 		if ( ! this._editor ) {
 			return;
 		}
 
 		if ( this.props.mode === 'html' ) {
+			console.log( 'BEFORE SET CONTENT' );
+
+			this._editor.on( 'BeforeSetContent', this.beforeSetContentHook );
+
+
+			this._editor.on( 'SetContent', ( ed ) => {
+				console.log( 'CONTENT SET' );
+			} );
+
 			this._editor.hide();
 			this.doAutosizeUpdate();
 			if ( options.autofocus ) {
