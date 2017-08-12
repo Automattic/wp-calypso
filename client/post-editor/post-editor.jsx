@@ -59,7 +59,7 @@ import Site from 'blocks/site';
 import StatusLabel from 'post-editor/editor-status-label';
 import { editedPostHasContent } from 'state/selectors';
 import EditorGroundControl from 'post-editor/editor-ground-control';
-import { isWithinBreakpoint, isMobile } from 'lib/viewport';
+import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
 import EditorDiffViewer from 'post-editor/editor-diff-viewer';
 import { NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS } from 'post-editor/editor-sidebar/constants';
@@ -285,7 +285,7 @@ export const PostEditor = React.createClass( {
 	},
 
 	loadRevision: function( revision ) {
-		this.toggleNestedSidebar( NESTED_SIDEBAR_NONE );
+		this.setNestedSidebar( NESTED_SIDEBAR_NONE );
 		this.setState( { selectedRevisionId: null } );
 		this.restoreRevision( {
 			content: revision.content,
