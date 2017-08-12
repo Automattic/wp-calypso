@@ -2,7 +2,8 @@
  * External dependencies
  */
 import { filter, isEmpty, last, noop } from 'lodash';
-import { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
 const ESC_KEY_CODE = 27;
 let components = [];
