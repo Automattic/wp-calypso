@@ -74,6 +74,47 @@ export default {
 		next();
 	},
 
+	maybeOnboard( context, next ) {
+		if ( context.query.onboarding ) {
+			/**
+			 * The JPO flow has not been completed yet. Send the user to the flow but store the
+			 * connect URL so we can come back to it after the flow is complete.
+			 */
+			if ( ! localStorage.getItem( 'jpoFlowComplete' ) ) {
+				/**
+				 * Store the connect URL only on the first call, otherwise the localStorage
+				 * will be overwritten by itself without the query string
+				 */
+				if ( ! localStorage.getItem( 'jpoConnectUrl' ) ) {
+					localStorage.setItem( 'jpoConnectUrl', context.path );
+				}
+
+				// Do the redirect
+				return page.redirect( '/start/jetpack-onboarding/' );
+				/**
+				 * The onboarding flow is complete, and the user has returned here with the payload
+				 * stored in localStorage.
+				 */
+			}
+
+			const jpoPayload = JSON.parse( localStorage.getItem( 'jpoPayload' ) );
+
+			// Remove all the localStorage data. We don't need it anymore.
+			localStorage.removeItem( 'jpoPayload' );
+			localStorage.removeItem( 'jpoFlowComplete' );
+			localStorage.removeItem( 'jpoConnectUrl' );
+
+			/**
+			 * TBD - store the payload in authorize state, and upon authorization, make the
+			 * proper API requests to the site to set the site up as specified by the
+			 * onboarding flow.
+			 */
+			console.log( 'JPO Payload: ', jpoPayload );
+		}
+
+		next();
+	},
+
 	saveQueryObject( context, next ) {
 		if ( ! isEmpty( context.query ) && context.query.redirect_uri ) {
 			debug( 'set initial query object', context.query );
