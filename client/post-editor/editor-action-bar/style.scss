@@ -74,6 +74,10 @@
 	}
 }
 
+.editor-sidebar.is-nested-sidebar-focused .editor-action-bar {
+	display: none;
+}
+
 .editor-action-bar .button {
 	color: darken( $gray, 10% );
 	background: transparent;

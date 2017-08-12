@@ -1,53 +1,76 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
-export default React.createClass( {
+/**
+ * Internal dependencies
+ */
+import { isEnabled } from 'config';
+import { NESTED_SIDEBAR_REVISIONS } from 'post-editor/editor-sidebar/constants';
 
-	displayName: 'EditorRevisions',
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
-		adminUrl: React.PropTypes.string,
-		revisions: React.PropTypes.array
-	},
-
-	getDefaultProps() {
-		return {
-			revisions: []
-		};
-	},
+class EditorRevisions extends Component {
+	showRevisionsNestedSidebar = () => {
+		this.props.setNestedSidebar( NESTED_SIDEBAR_REVISIONS );
+	}
 
 	render() {
-		if ( ! this.props.revisions || ! this.props.revisions.length ) {
+		const { adminUrl, revisions, translate } = this.props;
+
+		if ( ! revisions || ! revisions.length ) {
 			return null;
 		}
 
-		const lastRevision = this.props.revisions[ 0 ];
-		const revisionsLink = this.props.adminUrl + 'revision.php?revision=' + lastRevision;
+		if ( isEnabled( 'post-editor/revisions' ) ) {
+			return (
+				<button
+					className="editor-revisions"
+					title={ translate( 'Open list of revisions' ) }
+					onClick={ this.showRevisionsNestedSidebar }
+				>
+					<Gridicon icon="history" size={ 18 } />
+					{ translate(
+						'%(revisions)d revision',
+						'%(revisions)d revisions', {
+							count: revisions.length,
+							args: { revisions: revisions.length },
+						}
+					) }
+				</button>
+			);
+		}
 
+		const lastRevision = revisions[ 0 ];
+		const revisionsLink = adminUrl + 'revision.php?revision=' + lastRevision;
 		return (
-			<a className="editor-revisions"
+			<a
+				className="editor-revisions"
 				href={ revisionsLink }
 				target="_blank"
 				rel="noopener noreferrer"
-				aria-label={ this.translate( 'Open list of revisions' ) }
+				aria-label={ translate( 'Open list of revisions' ) }
 			>
 				<Gridicon icon="history" size={ 18 } />
-				{ this.translate(
+				{ translate(
 					'%(revisions)d revision',
 					'%(revisions)d revisions', {
-						count: this.props.revisions.length,
-						args: {
-							revisions: this.props.revisions.length
-						}
+						count: revisions.length,
+						args: { revisions: revisions.length },
 					}
 				) }
 			</a>
 		);
 	}
-} );
+}
+
+EditorRevisions.propTypes = {
+	adminUrl: PropTypes.string,
+	revisions: PropTypes.array,
+	translate: PropTypes.func,
+	setNestedSidebar: PropTypes.func,
+};
+
+export default localize( EditorRevisions );

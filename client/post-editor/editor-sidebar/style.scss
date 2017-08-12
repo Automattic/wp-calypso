@@ -10,6 +10,7 @@
 	right: $sidebar-width-max;
 	left: auto;
 	transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
+	overflow-x: hidden;
 
 	.focus-sidebar & {
 		transform: translateX( -$sidebar-width-max );
@@ -42,18 +43,22 @@
 }
 
 .editor-sidebar__header {
+	align-items: center;
 	background: lighten( $gray, 30% );
-	display: none;
-	font-size: 13px;
 	color: $gray-dark;
+	display: flex;
+	flex-shrink: 0;
+	font-size: 13px;
 	font-weight: 500;
+	justify-content: space-between;
+	padding: 11px 15px 11px 16px;
 
-	@include breakpoint( ">660px" ) {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		flex-shrink: 0;
-		padding: 11px 15px 11px 16px;
+	@include breakpoint( '<660px' ) {
+		display: none;
+
+		.is-nested-sidebar-focused & {
+			display: flex;
+		}
 	}
 }
 
@@ -74,5 +79,65 @@
 	margin-left: 16px;
 	@include breakpoint( ">660px" ) {
 		display: none;
+	}
+}
+
+.editor-sidebar__parent-region {
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	top: 47px;
+	bottom: 47px;
+	width: 100%;
+	transition: transform 150ms cubic-bezier(0.075, 0.82, 0.165, 1);
+	overflow-y: auto;
+
+	.is-nested-sidebar-focused & {
+		transform: translateX( - ( $sidebar-width-max + 1 ) );
+	}
+
+	@include breakpoint( '<660px' ) {
+		position: relative;
+		top: 0;
+		left: 0;
+		transition: none;
+
+		.is-nested-sidebar-focused & {
+			transform: none;
+			display: none;
+		}
+	}
+}
+
+.editor-sidebar__nested-region {
+	transform: translateX( $sidebar-width-max + 1 );
+	transition: transform 150ms cubic-bezier( 0.075, 0.82, 0.165, 1 );
+
+	.is-nested-sidebar-focused & {
+		transform: translateX( 0 );
+	}
+
+	@include breakpoint( '<660px' ) {
+		display: none;
+		transition: none;
+
+		.is-nested-sidebar-focused & {
+			display: block;
+		}
+	}
+}
+
+.editor-sidebar__header-title {
+	padding: 0;
+	font-size: 13px;
+	line-height: inherit;
+
+	// Needed for extra specificity over .button style
+	&.button {
+		color: $gray-dark;
+
+		&:hover {
+			color: $blue-medium;
+		}
 	}
 }

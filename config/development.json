@@ -122,6 +122,7 @@
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
 		"post-editor/media-advanced": false,
+		"post-editor/revisions": true,
 		"post-editor/video-editor": true,
 		"posts/post-type-list": false,
 		"press-this": true,
