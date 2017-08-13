@@ -19,13 +19,13 @@ const KeyInputStep = localize( ( { translate, onChange, apiKey, isKeyCorrect } )
 			{ translate( 'Now that you\'re signed in to MailChimp, you need an API key to start the connection process' ) }
 		</div>
 		<div className="setup-steps__mailchimp-api-directions" >
-			<span>{ translate( 'To find your Mailchimp API key ' ) }</span>
+			<p><span>{ translate( 'To find your Mailchimp API key ' ) }</span>
 			<span className="setup-steps__mailchimp-api-directions-bold">
 				{ translate( 'click your profile picture, select \'Account\', and go to Extras > API keys.' ) }
 			</span>
-			<div>{ translate( 'From there, grab an existing key or generate a new one for your store.' ) } </div>
+			{ translate( ' From there, grab an existing key or generate a new one for your store.' ) }</p>
 		</div>
-		<FormLabel required={ ! isKeyCorrect }>
+		<FormLabel required >
 			{ translate( 'Mailchimp API Key:' ) }
 		</FormLabel>
 		<FormTextInput
@@ -35,7 +35,11 @@ const KeyInputStep = localize( ( { translate, onChange, apiKey, isKeyCorrect } )
 			onChange={ onChange }
 			value={ apiKey }
 		/>
-		{ ! isKeyCorrect && <FormInputValidation isError text="Key appears to be invalid" /> }
+		{ ! isKeyCorrect && (
+			apiKey
+			? <FormInputValidation isError text={ translate( 'Key appears to be invalid.' ) } />
+			: <FormInputValidation isError text={ translate( 'An API key is required to make a connection.' ) } />
+		) }
 	</FormFieldset>
 ) );
 

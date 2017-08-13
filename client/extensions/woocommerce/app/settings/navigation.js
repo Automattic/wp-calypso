@@ -3,7 +3,7 @@
  *
  * @format
  */
-
+import config from 'config';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -37,6 +37,14 @@ export const SettingsNavigation = ( { site, activeSection, translate } ) => {
 			title: translate( 'Taxes' ),
 		},
 	];
+
+	if ( config.isEnabled( 'woocommerce/extension-settings-email' ) ) {
+		items.push( {
+			id: 'email',
+			path: '/store/settings/email/:site',
+			title: translate( 'Email' ),
+		} );
+	}
 
 	const section = find( items, { id: activeSection } );
 	return (

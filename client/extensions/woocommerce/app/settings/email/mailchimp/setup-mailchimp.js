@@ -141,7 +141,7 @@ class MailChimpSetup extends React.Component {
 		if ( this.hasEmptyValues( settings ) ) {
 			return false;
 		}
-		if ( settings.store_phone.length <= 6 ) {
+		if ( settings.store_phone.length < 6 ) {
 			return false;
 		}
 
