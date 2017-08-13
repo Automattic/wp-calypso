@@ -1,4 +1,4 @@
-FROM       node:6.11.2-slim
+FROM       node:6.11.2
 MAINTAINER Automattic
 
 WORKDIR    /calypso
@@ -17,18 +17,7 @@ ENV        NODE_PATH=/calypso/server:/calypso/client
 #   used by systems to overwrite some defaults
 #   such as the apt and npm mirrors
 COPY       ./env-config.sh /tmp/env-config.sh
-RUN        true \
-           && bash /tmp/env-config.sh \
-           && apt-get -y update \
-           && apt-get -y install \
-                 git \
-           && apt-get autoremove -y \
-           && rm -rf /tmp/* \
-           && rm -rf /var/tmp/* \
-           && rm -rf /usr/share/{doc,doc-base,info,locale,man}/* \
-           && rm -rf /var/lib/apt/lists/* \
-           && rm -rf /var/lib/dpkg/info/* \
-           && true
+RUN        bash /tmp/env-config.sh
 
 # Build a "dependencies" layer
 #
