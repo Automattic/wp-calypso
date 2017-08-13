@@ -56,7 +56,11 @@ export class EditorShareADraft extends Component {
 							'so you can ask a trusted reader for feedback before you publish.',
 					) }
 				</p>
-				<FormToggle checked={ hasPostId && isEnabled } disabled={ ! hasPostId } onChange={ this.onToggleSharing }>
+				<FormToggle
+					checked={ hasPostId && isEnabled }
+					disabled={ ! hasPostId }
+					onChange={ this.onToggleSharing }
+				>
 					{ translate( 'Enable draft sharing' ) }
 				</FormToggle>
 				<FormTextInputWithAction
@@ -71,10 +75,7 @@ export class EditorShareADraft extends Component {
 	}
 }
 
-export default connect(
-	( state, { siteId, postId } ) => getDraftSharing( state, siteId, postId ),
-	{
-		enableDraftSharing,
-		disableDraftSharing,
-	},
-)( localize( EditorShareADraft ) );
+export default connect( ( state, { siteId, postId } ) => getDraftSharing( state, siteId, postId ), {
+	enableDraftSharing,
+	disableDraftSharing,
+} )( localize( EditorShareADraft ) );
