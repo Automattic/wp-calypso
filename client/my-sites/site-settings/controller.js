@@ -10,6 +10,7 @@ import React from 'react';
 import AsyncLoad from 'components/async-load';
 import config from 'config';
 import DeleteSite from './delete-site';
+import DisconnectSite from './disconnect-site';
 import purchasesPaths from 'me/purchases/paths';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import SiteSettingsMain from 'my-sites/site-settings/main';
@@ -119,6 +120,13 @@ const controller = {
 		renderPage(
 			context,
 			<DeleteSite path={ context.path } />
+		);
+	},
+
+	disconnectSite( context ) {
+		renderPage(
+			context,
+			<DisconnectSite />
 		);
 	},
 
