@@ -8,7 +8,7 @@ This document describes the REST API for the Share a Draft feature.
 
 | Name				| Type		| Description									|
 | ----------------- | --------- | --------------------------------------------- |
-| isEnabled			| boolean	| Indicates whether or not sharing is enabled.	|
+| is_enabled		| boolean	| Indicates whether or not sharing is enabled.	|
 | link				| URL		| A URL to review a draft. Read only.			|
 
 # Endpoints
@@ -23,7 +23,7 @@ Method: `GET`
 
 ```json
 {
-	"isEnabled": true,
+	"is_enabled": true,
 	"link": "https://example.com?p=123&draft-sharing=<id>",
 }
 ```
@@ -42,7 +42,7 @@ None
 
 ```json
 {
-	"isEnabled": true,
+	"is_enabled": true,
 	"link": "https://example.com?p=123&draft-sharing=<id>",
 }
 ```
@@ -57,7 +57,7 @@ Method: `PATCH`
 
 ```json
 {
-	"isEnabled": false
+	"is_enabled": false
 }
 ```
 

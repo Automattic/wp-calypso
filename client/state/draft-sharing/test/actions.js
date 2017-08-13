@@ -11,12 +11,14 @@ import {
 	POST_SHARE_A_DRAFT_ADD,
 	POST_SHARE_A_DRAFT_ENABLE,
 	POST_SHARE_A_DRAFT_DISABLE,
+	POST_SHARE_A_DRAFT_SET_ENABLED,
 } from 'state/action-types';
 import {
 	requestDraftSharing,
 	addDraftSharing,
 	enableDraftSharing,
 	disableDraftSharing,
+	setDraftSharingEnabled,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -70,6 +72,18 @@ describe( 'actions', () => {
 				type: POST_SHARE_A_DRAFT_DISABLE,
 				siteId: SITE_ID,
 				postId: POST_ID,
+			} );
+		} );
+	} );
+	describe( '#setDraftSharingEnabled', () => {
+		it( 'should return an action object', () => {
+			const action = setDraftSharingEnabled( SITE_ID, POST_ID, false );
+
+			expect( action ).to.eql( {
+				type: POST_SHARE_A_DRAFT_SET_ENABLED,
+				siteId: SITE_ID,
+				postId: POST_ID,
+				isEnabled: false,
 			} );
 		} );
 	} );

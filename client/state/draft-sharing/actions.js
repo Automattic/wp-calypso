@@ -6,6 +6,7 @@ import {
 	POST_SHARE_A_DRAFT_ADD,
 	POST_SHARE_A_DRAFT_ENABLE,
 	POST_SHARE_A_DRAFT_DISABLE,
+	POST_SHARE_A_DRAFT_SET_ENABLED,
 } from 'state/action-types';
 
 export const requestDraftSharing = ( siteId, postId ) => ( {
@@ -32,4 +33,11 @@ export const disableDraftSharing = ( siteId, postId ) => ( {
 	type: POST_SHARE_A_DRAFT_DISABLE,
 	siteId,
 	postId,
+} );
+
+export const setDraftSharingEnabled = ( siteId, postId, isEnabled ) => ( {
+	type: POST_SHARE_A_DRAFT_SET_ENABLED,
+	siteId,
+	postId,
+	isEnabled,
 } );
