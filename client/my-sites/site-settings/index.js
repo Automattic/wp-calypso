@@ -1,4 +1,4 @@
-/**
+ /**
  * External dependencies
  */
 import page from 'page';
@@ -56,6 +56,15 @@ module.exports = function() {
 		settingsController.setScroll,
 		controller.deleteSite
 	);
+
+	page(
+		'/settings/disconnect-site/:site_id',
+		mySitesController.siteSelection,
+		mySitesController.navigation,
+		settingsController.setScroll,
+		controller.disconnectSite
+	);
+
 	page(
 		'/settings/start-over/:site_id',
 		mySitesController.siteSelection,
