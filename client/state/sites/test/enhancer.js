@@ -13,6 +13,7 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { SITES_UPDATE, SITE_RECEIVE } from 'state/action-types';
 import sitesSync from '../enhancer';
+import { userState } from 'state/selectors/test/fixtures/user-state';
 
 /**
  * Example site used for testing mocked behavior.
@@ -27,6 +28,7 @@ const EXAMPLE_SITE = {
 describe( 'sitesSync()', () => {
 	let sitesListFactory, Site, store, sitesList;
 	const state = {
+		...userState,
 		sites: { items: {} },
 		siteSettings: { items: {} },
 	};

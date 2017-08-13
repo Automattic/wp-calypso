@@ -23,6 +23,7 @@ import {
 	hasFeature
 } from '../selectors';
 import { PLAN_PREMIUM, PLAN_BUSINESS, FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_BUSINESS_ONBOARDING } from 'lib/plans/constants';
+import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	describe( '#getPlansBySite()', () => {
@@ -63,6 +64,7 @@ describe( 'selectors', () => {
 		context( 'when no plan data is found for the given siteId', () => {
 			const siteId = 77203074;
 			const state = deepFreeze( {
+				...userState,
 				sites: {
 					plans: {
 						[ siteId ]: {}
@@ -81,6 +83,7 @@ describe( 'selectors', () => {
 				const siteId = 77203074;
 				const plan1 = { currentPlan: true };
 				const state = deepFreeze( {
+					...userState,
 					sites: {
 						plans: {
 							[ siteId ]: {
@@ -105,6 +108,7 @@ describe( 'selectors', () => {
 				const siteId = 77203074;
 				const plan1 = { currentPlan: false };
 				const state = deepFreeze( {
+					...userState,
 					sites: {
 						plans: {
 							[ siteId ]: {

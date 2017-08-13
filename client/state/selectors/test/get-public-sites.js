@@ -7,10 +7,12 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { getPublicSites } from '../';
+import { userState } from './fixtures/user-state';
 
 describe( 'getPublicSites()', () => {
 	it( 'should return an empty array if no sites in state', () => {
 		const state = {
+			...userState,
 			sites: {
 				items: {}
 			}
@@ -21,6 +23,7 @@ describe( 'getPublicSites()', () => {
 
 	it( 'should return the public sites in state', () => {
 		const state = {
+			...userState,
 			sites: {
 				items: {
 					2916284: {

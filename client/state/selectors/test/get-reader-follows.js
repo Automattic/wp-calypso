@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
+import { userState } from './fixtures/user-state';
 
 /**
  * Internal dependencies
@@ -23,6 +24,7 @@ describe( 'getReaderFollows()', () => {
 		feed_ID: 2,
 	};
 	const state = deepFreeze( {
+		...userState,
 		reader: {
 			follows: {
 				items: {
