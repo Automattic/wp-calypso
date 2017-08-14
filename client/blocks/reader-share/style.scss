@@ -44,10 +44,6 @@
 
 .reader-share__popover-item {
 
-	@include breakpoint( "<480px" ) {
-		width: 150px;
-	}
-
 	span {
 		display: inline-block;
 		line-height: 24px;
@@ -94,8 +90,29 @@
 	}
 }
 
+.reader-share__popover {
+	min-width: 240px;
+}
+
+.reader-share__site-selector.site-selector {
+	border-top: 1px solid lighten( $gray, 20% );
+}
+
 .reader-share__site-selector .site-selector__sites {
 	max-height: 25vh;
 	overflow-y: auto;
 	text-align: left;
+}
+
+.reader-share__site-selector .site__content {
+	padding: 12px 16px;
+}
+
+.reader-share__site-selector .site__title,
+.reader-share__site-selector .site__domain {
+
+	&::after {
+		background: linear-gradient(to right, rgba(255, 255, 255, 0), $gray-light 90%);
+		border-radius: 50%;
+	}
 }
