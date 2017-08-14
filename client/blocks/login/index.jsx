@@ -19,7 +19,6 @@ import {
 	isTwoFactorEnabled,
 	getLinkingSocialUser,
 	getLinkingSocialService,
-	getOAuth2ClientData,
 } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
@@ -231,7 +230,6 @@ export default connect(
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		linkingSocialUser: getLinkingSocialUser( state ),
 		linkingSocialService: getLinkingSocialService( state ),
-		oauth2ClientData: getOAuth2ClientData( state ),
 	} ), {
 		recordTracksEvent,
 	}
