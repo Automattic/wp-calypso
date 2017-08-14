@@ -18,18 +18,6 @@ class ActivityTitle extends Component {
 			login: PropTypes.string,
 		} ),
 
-		group: PropTypes.oneOf( [
-			'attachment',
-			'comment',
-			'core',
-			'menu',
-			'plugin',
-			'post',
-			'term',
-			'theme',
-			'user',
-			'widget',
-		] ).isRequired,
 		name: PropTypes.string.isRequired,
 
 		object: PropTypes.shape( {
@@ -363,6 +351,15 @@ class ActivityTitle extends Component {
 				const postTitle = this.getPostTitle();
 				return `${ actorName } modified post ${ postTitle }.`;
 			}
+
+			/**
+			 * Rewind
+			 * @FIXME: Need data from API and activity to produce relevant titles
+			 */
+			case 'rewind__complete':
+				return 'A rewind was completed.';
+			case 'rewind__error':
+				return 'There was an error during rewind.';
 
 			/**
 			 * Term

@@ -16,13 +16,14 @@ export default class ActivityIcon extends PureComponent {
 			'menu',
 			'plugin',
 			'post',
+			'rewind',
 			'term',
 			'theme',
 			'user',
 			'widget',
 		] ).isRequired,
 		name: PropTypes.string.isRequired,
-		object: PropTypes.object.isRequired,
+		object: PropTypes.object,
 	};
 
 	getIcon() {
@@ -52,6 +53,9 @@ export default class ActivityIcon extends PureComponent {
 
 			case 'post':
 				return 'posts';
+
+			case 'rewind':
+				return 'history';
 
 			case 'term':
 				return 'folder';
@@ -90,6 +94,7 @@ export default class ActivityIcon extends PureComponent {
 		const suffix = name.split( '__' )[ 1 ];
 		switch ( suffix ) {
 			case 'deleted':
+			case 'error':
 			case 'trashed':
 				return 'is-error';
 
