@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { omit, pick } from 'lodash';
+import { get, omit, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,14 +15,18 @@ import { activityLogError, activityLogUpdate } from 'state/activity-log/actions'
 const KNOWN_PARAMS = [ 'action', 'date_end', 'date_start', 'group', 'name', 'number' ];
 
 export const handleActivityLogRequest = ( { dispatch }, action ) => {
-	const { params, siteId } = action;
+	const { siteId } = action;
 
-	if ( params.dateEnd ) {
-		params.date_end = params.dateEnd;
+	const query = pick( action.params, KNOWN_PARAMS );
+
+	const dateEnd = get( action.params, 'dateEnd' );
+	if ( dateEnd ) {
+		query.date_end = dateEnd;
 	}
 
-	if ( params.dateStart ) {
-		params.date_start = params.dateStart;
+	const dateStart = get( action.params, 'dateStart' );
+	if ( dateStart ) {
+		query.date_start = dateStart;
 	}
 
 	dispatch(
@@ -31,7 +35,7 @@ export const handleActivityLogRequest = ( { dispatch }, action ) => {
 				apiVersion: '1',
 				method: 'GET',
 				path: `/sites/${ siteId }/activity`,
-				query: pick( KNOWN_PARAMS, params ),
+				query,
 			},
 			action
 		)
@@ -43,7 +47,12 @@ const fromApi = apiActivities => apiActivities;
 
 export const receiveActivityLog = ( { dispatch }, action, { activities, found } ) => {
 	dispatch(
-		activityLogUpdate( action.siteId, fromApi( activities ), found, omit( action, [ 'type', 'meta' ] ) )
+		activityLogUpdate(
+			action.siteId,
+			fromApi( activities ),
+			found,
+			omit( action, [ 'type', 'meta' ] )
+		)
 	);
 };
 
