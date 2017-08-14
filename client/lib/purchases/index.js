@@ -171,6 +171,14 @@ function isRemovable( purchase ) {
 	return isExpiring( purchase ) || isExpired( purchase );
 }
 
+/**
+ * Checks whether the purchase is in a renewable state per alot of underlying
+ * business logic like "have we captured an auth?", "are we within 90 days of expiry?",
+ * "is this part of a bundle?", etc.
+ *
+ * @param {Object} purchase - the purchase with which we are concerned
+ * @return {boolean} true if the purchase is renewable per business logic, false otherwise
+ */
 function isRenewable( purchase ) {
 	return purchase.isRenewable;
 }
@@ -202,6 +210,18 @@ function isPaidWithPayPalDirect( purchase ) {
 
 function hasCreditCardData( purchase ) {
 	return Boolean( purchase.payment.creditCard.expiryMoment );
+}
+
+/**
+ * Checks whether the purchase is capable of being renewed by intentional
+ * action (eg, a button press by user). Some purchases (eg, .fr domains)
+ * are only renewable via auto-renew.
+ *
+ * @param {Object} purchase - the purchase with which we are concerned
+ * @return {boolean} true if the purchase is capable of explicit renew
+ */
+function canExplicitRenew( purchase ) {
+	return purchase.canExplicitRenew;
 }
 
 function creditCardExpiresBeforeSubscription( purchase ) {
@@ -256,6 +276,7 @@ function showCreditCardExpiringWarning( purchase ) {
 }
 
 export {
+	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
 	getIncludedDomain,
 	getName,
