@@ -65,6 +65,7 @@ class SiteSettingsFormBackups extends Component {
 					connectionTypeDescription={ translate( 'Secure Shell, the most complete and secure way to access your site.' ) }
 					isActiveConnection={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', 'ssh', 'credentials', 'enable' ], false ) ? true : false }
 					existingCreds={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', 'ssh', 'credentials' ], defaultCreds ) }
+					isPressable={ get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ) }
 					setCredentials={ this.props.rewindSetCredentials }
 				/>
 				<CredentialsContext
@@ -84,6 +85,7 @@ class SiteSettingsFormBackups extends Component {
 					connectionTypeDescription={ translate( 'File Transfer Protocol, the most common way to access your files.' ) }
 					isActiveConnection={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', 'ftp', 'credentials', 'enable' ], false ) ? true : false }
 					existingCreds={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', 'ftp', 'credentials' ], defaultCreds ) }
+					isPressable={ get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ) }
 					setCredentials={ this.props.rewindSetCredentials }
 				/>
 				<SectionHeader 
