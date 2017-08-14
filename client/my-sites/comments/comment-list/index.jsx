@@ -14,6 +14,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {
 	changeCommentStatus,
 	deleteComment,
+	editComment,
 	likeComment,
 	replyComment,
 	unlikeComment,
@@ -416,6 +417,7 @@ export class CommentList extends Component {
 							siteId={ siteId }
 							toggleCommentLike={ this.toggleCommentLike }
 							toggleCommentSelected={ this.toggleCommentSelected }
+							updateComment={ this.props.editComment }
 						/>
 					) }
 
@@ -478,6 +480,14 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 			bumpStat( 'calypso_comment_management', 'comment_deleted' )
 		),
 		deleteComment( siteId, postId, commentId, options )
+	) ),
+
+	editComment: ( commentId, postId, commentData ) => dispatch( withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_comment_management_edit' ),
+			bumpStat( 'calypso_comment_management', 'comment_updated' )
+		),
+		editComment( siteId, postId, commentId, commentData )
 	) ),
 
 	likeComment: ( commentId, postId, analytics = { alsoApprove: false } ) => dispatch( withAnalytics(
