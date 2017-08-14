@@ -125,7 +125,7 @@ class JetpackConnectAuthorizeForm extends Component {
 	render() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 
-		if ( typeof queryObject === 'undefined' ) {
+		if ( 'undefined' === typeof queryObject ) {
 			return this.renderNoQueryArgsError();
 		}
 
