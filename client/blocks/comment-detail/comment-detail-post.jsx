@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,11 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import Gravatar from 'components/gravatar';
 import SiteIcon from 'blocks/site-icon';
-import {
-	bumpStat,
-	composeAnalytics,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 export const CommentDetailPost = ( {
 	commentId,
@@ -44,9 +41,10 @@ export const CommentDetailPost = ( {
 				<div className="comment-detail__post-info">
 					{ parentCommentAuthorDisplayName &&
 						<span>
-							{ translate( '%(authorName)s:', { args: { authorName: parentCommentAuthorDisplayName } } ) }
-						</span>
-					}
+							{ translate( '%(authorName)s:', {
+								args: { authorName: parentCommentAuthorDisplayName },
+							} ) }
+						</span> }
 					<a href={ `${ postUrl }#comment-${ commentId }` } onClick={ recordReaderCommentOpened }>
 						{ parentCommentContent }
 					</a>
@@ -62,8 +60,7 @@ export const CommentDetailPost = ( {
 				{ postAuthorDisplayName &&
 					<span>
 						{ translate( '%(authorName)s:', { args: { authorName: postAuthorDisplayName } } ) }
-					</span>
-				}
+					</span> }
 				<a href={ postUrl } onClick={ recordReaderArticleOpened }>
 					{ postTitle || translate( 'Untitled' ) }
 				</a>
@@ -73,14 +70,20 @@ export const CommentDetailPost = ( {
 };
 
 const mapDispatchToProps = dispatch => ( {
-	recordReaderArticleOpened: () => dispatch( composeAnalytics(
-		recordTracksEvent( 'calypso_comment_management_article_opened' ),
-		bumpStat( 'calypso_comment_management', 'article_opened' )
-	) ),
-	recordReaderCommentOpened: () => dispatch( composeAnalytics(
-		recordTracksEvent( 'calypso_comment_management_comment_opened' ),
-		bumpStat( 'calypso_comment_management', 'comment_opened' )
-	) ),
+	recordReaderArticleOpened: () =>
+		dispatch(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_comment_management_article_opened' ),
+				bumpStat( 'calypso_comment_management', 'article_opened' )
+			)
+		),
+	recordReaderCommentOpened: () =>
+		dispatch(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_comment_management_comment_opened' ),
+				bumpStat( 'calypso_comment_management', 'comment_opened' )
+			)
+		),
 } );
 
 export default connect( null, mapDispatchToProps )( localize( CommentDetailPost ) );

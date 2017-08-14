@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
@@ -66,7 +68,8 @@ export class CommentDetailComment extends Component {
 						siteId={ siteId }
 					/>
 					<AutoDirection>
-						<div className="comment-detail__comment-body"
+						<div
+							className="comment-detail__comment-body"
 							dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
 						/>
 					</AutoDirection>
@@ -75,10 +78,11 @@ export class CommentDetailComment extends Component {
 						<div className="comment-detail__comment-reply">
 							<a>
 								<Gridicon icon="reply" />
-								<span>{ translate( 'You replied to this comment' ) }</span>
+								<span>
+									{ translate( 'You replied to this comment' ) }
+								</span>
 							</a>
-						</div>
-					}
+						</div> }
 				</div>
 			</div>
 		);

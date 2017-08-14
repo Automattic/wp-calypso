@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +24,8 @@ const mockComment = {
 		nice_name: 'testuser',
 		URL: 'http://discover.wordpress.com',
 	},
-	content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contemnit enim disserendi elegantiam, confuse loquitur. Suo genere perveniant ad extremum; Id mihi magnum videtur. Vide, quantum, inquam, fallare, Torquate. Aliter homines, aliter philosophos loqui putas oportere? Perge porro; Quibus ego vehementer assentior. Tubulo putas dicere? Sed ille, ut dixi, vitiose. Refert tamen, quo modo. Quid nunc honeste dicit? Scrupulum, inquam, abeunti; Quam si explicavisset, non tam haesitaret. Sed quid sentiat, non videtis. At enim sequor utilitatem. Si longus, levis.',
+	content:
+		'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contemnit enim disserendi elegantiam, confuse loquitur. Suo genere perveniant ad extremum; Id mihi magnum videtur. Vide, quantum, inquam, fallare, Torquate. Aliter homines, aliter philosophos loqui putas oportere? Perge porro; Quibus ego vehementer assentior. Tubulo putas dicere? Sed ille, ut dixi, vitiose. Refert tamen, quo modo. Quid nunc honeste dicit? Scrupulum, inquam, abeunti; Quam si explicavisset, non tam haesitaret. Sed quid sentiat, non videtis. At enim sequor utilitatem. Si longus, levis.',
 	date: '2017-05-12 16:00:00',
 	ID: 12345678,
 	i_like: false,
@@ -35,7 +37,7 @@ const mockComment = {
 	replied: true,
 	status: 'approved',
 	URL: 'http://discover.wordpress.com',
-}
+};
 
 const mockSite = {
 	id: 3584907,
@@ -47,11 +49,7 @@ const mockComments = [
 	{ ...mockComment, ID: 3 },
 ];
 
-const CommentList = ( {
-	comments,
-	setCommentStatus,
-	toggleCommentLike,
-} ) =>
+const CommentList = ( { comments, setCommentStatus, toggleCommentLike } ) =>
 	<div>
 		{ map( comments, comment =>
 			<CommentDetail

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,10 +14,10 @@ import { includes } from 'lodash';
 import Button from 'components/button';
 
 const commentActions = {
-	unapproved: [ 'like', 'approve', 'spam', 'trash' ],
-	approved: [ 'like', 'approve', 'spam', 'trash' ],
-	spam: [ 'approve', 'delete' ],
-	trash: [ 'approve', 'spam', 'delete' ],
+	unapproved: [ 'like', 'approve', 'spam', 'trash' ],
+	approved: [ 'like', 'approve', 'spam', 'trash' ],
+	spam: [ 'approve', 'delete' ],
+	trash: [ 'approve', 'spam', 'delete' ],
 };
 
 const hasAction = ( status, action ) => includes( commentActions[ status ], action );
@@ -45,39 +46,32 @@ export const CommentDetailActions = ( {
 					onClick={ toggleLike }
 				>
 					<Gridicon icon={ commentIsLiked ? 'star' : 'star-outline' } />
-					<span>{
-						commentIsLiked
-							? translate( 'Liked' )
-							: translate( 'Like' )
-					}</span>
-				</Button>
-			}
+					<span>
+						{ commentIsLiked ? translate( 'Liked' ) : translate( 'Like' ) }
+					</span>
+				</Button> }
 
 			{ hasAction( commentStatus, 'approve' ) &&
 				<Button
 					borderless
-					className={ classNames( 'comment-detail__action-approve', { 'is-approved': isApproved } ) }
+					className={ classNames( 'comment-detail__action-approve', {
+						'is-approved': isApproved,
+					} ) }
 					onClick={ toggleApprove }
 				>
 					<Gridicon icon={ isApproved ? 'checkmark-circle' : 'checkmark' } />
-					<span>{
-						isApproved
-							? translate( 'Approved' )
-							: translate( 'Approve' )
-					}</span>
-				</Button>
-			}
+					<span>
+						{ isApproved ? translate( 'Approved' ) : translate( 'Approve' ) }
+					</span>
+				</Button> }
 
 			{ hasAction( commentStatus, 'edit' ) &&
-				<Button
-					borderless
-					className="comment-detail__action-edit"
-					onClick={ edit }
-				>
+				<Button borderless className="comment-detail__action-edit" onClick={ edit }>
 					<Gridicon icon="pencil" />
-					<span>{ translate( 'Edit' ) }</span>
-				</Button>
-			}
+					<span>
+						{ translate( 'Edit' ) }
+					</span>
+				</Button> }
 
 			{ hasAction( commentStatus, 'spam' ) &&
 				<Button
@@ -86,13 +80,10 @@ export const CommentDetailActions = ( {
 					onClick={ toggleSpam }
 				>
 					<Gridicon icon="spam" />
-					<span>{
-						isSpam
-							? translate( 'Spammed' )
-							: translate( 'Spam' )
-					}</span>
-				</Button>
-			}
+					<span>
+						{ isSpam ? translate( 'Spammed' ) : translate( 'Spam' ) }
+					</span>
+				</Button> }
 
 			{ hasAction( commentStatus, 'trash' ) &&
 				<Button
@@ -101,13 +92,10 @@ export const CommentDetailActions = ( {
 					onClick={ toggleTrash }
 				>
 					<Gridicon icon="trash" />
-					<span>{
-						isTrash
-							? translate( 'Trashed' )
-							: translate( 'Trash' )
-					}</span>
-				</Button>
-			}
+					<span>
+						{ isTrash ? translate( 'Trashed' ) : translate( 'Trash' ) }
+					</span>
+				</Button> }
 
 			{ hasAction( commentStatus, 'delete' ) &&
 				<Button
@@ -116,9 +104,10 @@ export const CommentDetailActions = ( {
 					onClick={ deleteCommentPermanently }
 				>
 					<Gridicon icon="trash" />
-					<span>{ translate( 'Delete Permanently' ) }</span>
-				</Button>
-			}
+					<span>
+						{ translate( 'Delete Permanently' ) }
+					</span>
+				</Button> }
 		</div>
 	);
 };
