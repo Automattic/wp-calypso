@@ -565,6 +565,33 @@ a.comment-detail__author-more-element {
 	}
 }
 
+.comment-detail__edit {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 16px 8px;
+
+	.form-fieldset {
+		padding: 0 8px;
+		width: 50%;
+	}
+
+	.form-textarea {
+		margin: 0px 8px 20px 8px;
+		transition: none;
+		width: 100%;
+	}
+
+	input[ type="text" ],
+	textarea {
+		font-size: 14px;
+	}
+
+	.comment-detail__edit-buttons {
+		padding: 0 8px;
+		width: 100%;
+	}
+}
+
 .comment-detail__placeholder {
 	@include placeholder();
 

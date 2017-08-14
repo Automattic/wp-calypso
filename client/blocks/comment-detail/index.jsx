@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get, isUndefined } from 'lodash';
+import { get, isUndefined, noop } from 'lodash';
 import ReactDom from 'react-dom';
 
 /**
@@ -15,6 +15,7 @@ import ReactDom from 'react-dom';
 import Card from 'components/card';
 import QueryComment from 'components/data/query-comment';
 import CommentDetailComment from './comment-detail-comment';
+import CommentDetailEdit from './comment-detail-edit';
 import CommentDetailHeader from './comment-detail-header';
 import CommentDetailPost from './comment-detail-post';
 import CommentDetailReply from './comment-detail-reply';
@@ -289,28 +290,43 @@ export class CommentDetail extends Component {
 							postUrl={ postUrl }
 							siteId={ siteId }
 						/>
-						<CommentDetailComment
-							authorAvatarUrl={ authorAvatarUrl }
-							authorDisplayName={ authorDisplayName }
-							authorEmail={ authorEmail }
-							authorIp={ authorIp }
-							authorIsBlocked={ authorIsBlocked }
-							authorUrl={ authorUrl }
-							authorUsername={ authorUsername }
-							blockUser={ this.blockUser }
-							commentContent={ commentContent }
-							commentDate={ commentDate }
-							commentStatus={ commentStatus }
-							commentUrl={ commentUrl }
-							repliedToComment={ repliedToComment }
-							siteId={ siteId }
-						/>
-						<CommentDetailReply
-							authorDisplayName={ authorDisplayName }
-							comment={ getCommentStatusAction( this.props ) }
-							postTitle={ postTitle }
-							replyComment={ replyComment }
-						/>
+
+						{ isEditMode &&
+							<CommentDetailEdit
+								authorDisplayName={ authorDisplayName }
+								authorUrl={ authorUrl }
+								closeEditMode={ this.edit }
+								commentContent={ commentContent }
+								updateComment={ noop }
+							/>
+						}
+
+						{ ! isEditMode &&
+							<div>
+								<CommentDetailComment
+									authorAvatarUrl={ authorAvatarUrl }
+									authorDisplayName={ authorDisplayName }
+									authorEmail={ authorEmail }
+									authorIp={ authorIp }
+									authorIsBlocked={ authorIsBlocked }
+									authorUrl={ authorUrl }
+									authorUsername={ authorUsername }
+									blockUser={ this.blockUser }
+									commentContent={ commentContent }
+									commentDate={ commentDate }
+									commentStatus={ commentStatus }
+									commentUrl={ commentUrl }
+									repliedToComment={ repliedToComment }
+									siteId={ siteId }
+								/>
+								<CommentDetailReply
+									authorDisplayName={ authorDisplayName }
+									comment={ getCommentStatusAction( this.props ) }
+									postTitle={ postTitle }
+									replyComment={ replyComment }
+								/>
+							</div>
+						}
 					</div>
 				}
 			</Card>
