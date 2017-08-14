@@ -4,12 +4,12 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
 import Button from 'components/button';
 import { translate } from 'i18n-calypso';
 import { setJPOSummary } from 'state/signup/steps/jpo-summary/actions';
@@ -26,22 +26,19 @@ const JPOSummaryStep = React.createClass( {
 
 	getFormattedPayload() {
 		let payload = this.props.signupProgress;
-		
-		let formattedPayload = {
-			siteTitle: payload[0].jpoSiteTitle.siteTitle,
-			siteDescription: payload[0].jpoSiteTitle.siteDescription,
-			businessPersonal: payload[1].jpoSiteType.businessPersonal,
-			genre: payload[1].jpoSiteType.genre,
-			businessName: payload[1].jpoSiteType.addressInfo.businessName,
-			businessAddress: payload[1].jpoSiteType.addressInfo.streetAddress,
-			businessCity: payload[1].jpoSiteType.addressInfo.city,
-			businessState: payload[1].jpoSiteType.addressInfo.state,
-			businessZipCode: payload[1].jpoSiteType.addressInfo.zipCode,
-			homepageFormat: payload[2].jpoHomepage,
-			addContactForm: payload[3].jpoContactForm
+		return {
+			siteTitle: get( payload[ 0 ], [ 'jpoSiteTitle', 'siteTitle' ], '' ),
+			siteDescription: get( payload[ 0 ], [ 'jpoSiteTitle', 'siteDescription' ], '' ),
+			businessPersonal: get( payload[ 1 ], [ 'jpoSiteType', 'businessPersonal' ], '' ),
+			genre: get( payload[ 1 ], [ 'jpoSiteType', 'genre' ], '' ),
+			businessName: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'businessName' ], '' ),
+			businessAddress: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'streetAddress' ], '' ),
+			businessCity: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'city' ], '' ),
+			businessState: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'state' ], '' ),
+			businessZipCode: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'zipCode' ], '' ),
+			homepageFormat: get( payload[ 2 ], 'jpoHomepage', '' ),
+			addContactForm: get( payload[ 3 ], 'jpoContactForm', '' )
 		};
-
-		return formattedPayload;
 	},
 
 	completeOnboarding() {
@@ -62,22 +59,6 @@ const JPOSummaryStep = React.createClass( {
 		window.location.href = jetpackConnectUrl;
 	},
 
-	goToStepOne() {
-		this.props.goToStep( 1 );
-	},
-
-	goToStepTwo() {
-		this.props.goToStep( 2 );
-	},
-
-	goToStepThree() {
-		this.props.goToStep( 3 );
-	},
-
-	goToStepFour() {
-		this.props.goToStep( 4 );
-	},
-
 	skipStep() {
 		this.props.goToNextStep();
 	},
@@ -87,7 +68,28 @@ const JPOSummaryStep = React.createClass( {
 
 		const checkMark = <Gridicon
 			className="plan-features__item-checkmark"
-			size={ 18 } icon="checkmark" />;
+			size={ 18 }
+			icon="checkmark"
+			/>;
+
+		const {
+			signupProgress: {
+				0: {
+					jpoSiteTitle
+				},
+				1: {
+					jpoSiteType
+				},
+				2: {
+					jpoHomepage
+				},
+				3: {
+					jpoContactForm
+				}
+			}
+		} = this.props;
+
+		const pathPrefix = '/start/jetpack-onboarding/';
 
 		return (
 			<div className="jpo__summary-wrapper">
@@ -95,22 +97,62 @@ const JPOSummaryStep = React.createClass( {
 					<tbody>
 						<tr>
 							<td>
-								<div className="jpo__summary-col-header">Steps you've completed:</div>
+								<div className="jpo__summary-col-header jpo-summary__col-header">
+									{
+										translate( "Steps you've completed:" )
+									}
+								</div>
 								<ul className="jpo-summary__completed-onboarding">
-									{ 'undefined' !== typeof this.props.signupProgress[0].jpoSiteTitle ? <li>{ checkMark } { translate( 'Site Title & Description' ) }</li> : null }
-									{ 'undefined' !== typeof this.props.signupProgress[1].jpoSiteType ? <li>{ checkMark } { translate( 'Type of Site' ) }</li> : null }
-									{ 'undefined' !== typeof this.props.signupProgress[2].jpoHomepage ? <li>{ checkMark } { translate( 'Type of Homepage' ) }</li> : null }
-									{ 'undefined' !== typeof this.props.signupProgress[3].jpoContactForm ? <li>{ checkMark } { translate( 'Contact Us Form' ) }</li> : null }
-									{ connectionToJetpackComplete ? <li>{ checkMark } { translate( 'Connection to Jetpack' ) }</li> : null }
+									{
+										jpoSiteTitle
+											? <li>{ checkMark } { translate( 'Site Title & Description' ) }</li>
+											: null
+									}
+									{
+										jpoSiteType
+											? <li>{ checkMark } { translate( 'Type of Site' ) }</li>
+											: null
+									}
+									{
+										jpoHomepage
+											? <li>{ checkMark } { translate( 'Type of Homepage' ) }</li>
+											: null
+									}
+									{
+										jpoContactForm
+											? <li>{ checkMark } { translate( 'Contact Us Form' ) }</li>
+											: null
+									}
+									{
+										connectionToJetpackComplete
+											? <li>{ checkMark } { translate( 'Connection to Jetpack' ) }</li>
+											: null
+									}
 								</ul>
 							</td>
 							<td>
 								<div className="jpo__summary-col-header">Configure more of your site:</div>
 								<ul className="jpo-summary__more-onboarding">
-									{ 'undefined' === typeof this.props.signupProgress[0].jpoSiteTitle ? <li onClick={ this.goToStepOne }>{ translate( 'Site Title & Description' ) }</li> : null }
-									{ 'undefined' === typeof this.props.signupProgress[1].jpoSiteType ? <li onClick={ this.goToStepTwo }>{ translate( 'Type of Site' ) }</li> : null }
-									{ 'undefined' === typeof this.props.signupProgress[2].jpoHomepage ? <li onClick={ this.goToStepThree }>{ translate( 'Type of Homepage' ) }</li> : null }
-									{ 'undefined' === typeof this.props.signupProgress[3].jpoContactForm ? <li onClick={ this.goToStepFour }>{ translate( 'Contact Us Form' ) }</li> : null }
+									{
+										jpoSiteTitle
+											? null
+											: <li><a href={ `${ pathPrefix }jpo-site-title` }>{ translate( 'Site Title & Description' ) }</a></li>
+									}
+									{
+										jpoSiteType
+											? null
+											: <li><a href={ `${ pathPrefix }jpo-site-type` }>{ translate( 'Type of Site' ) }</a></li>
+									}
+									{
+										jpoHomepage
+											? null
+											: <li><a href={ `${ pathPrefix }jpo-homepage` }>{ translate( 'Type of Homepage' ) }</a></li>
+									}
+									{
+										jpoContactForm
+											? null
+											: <li><a href={ `${ pathPrefix }jpo-contact-form` }>{ translate( 'Contact Us Form' ) }</a></li>
+									}
 									{ ! connectionToJetpackComplete ? <li>{ translate( 'Connection to Jetpack' ) }</li> : null }
 									<li>{ translate( 'Choose a Theme' ) }</li>
 									<li>{ translate( 'Add a Site Address' ) }</li>
@@ -122,19 +164,23 @@ const JPOSummaryStep = React.createClass( {
 					</tbody>
 				</table>
 				<div>
-					<Button primary onClick={ this.completeOnboarding }>Complete Onboarding</Button>
+					<Button primary onClick={ this.completeOnboarding }>
+						{
+							translate( 'Complete Onboarding' )
+						}
+					</Button>
 				</div>
 			</div>
 		);
 	},
 
 	render() {
-		let siteTitle = ( 'undefined' !== typeof this.props.signupProgress[0].jpoSiteTitle )
-			? this.props.signupProgress[0].jpoSiteTitle.siteTitle
-			: translate( 'your new site' );
-
-		const headerText = translate( 'Congratulations! ' ) + siteTitle + translate( ' is on its way.' );
-		const subHeaderText = translate( 'You enabled Jetpack and unlocked dozens of website-bolstering features. Continue preparing yoru site below.' );
+		const headerText = translate( 'Congratulations! %s is on its way.', {
+			args: get( this.props.signupProgress[ 0 ], [ 'jpoSiteTitle', 'siteTitle' ], false ) || translate( 'your new site' )
+		} );
+		const subHeaderText = translate(
+			'You enabled Jetpack and unlocked dozens of website-bolstering features. Continue preparing your site below.'
+		);
 
 		return (
 			<div>
