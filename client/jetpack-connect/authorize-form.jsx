@@ -27,8 +27,7 @@ import {
 	isRemoteSiteOnSitesList,
 	getAuthAttempts,
 	getSiteIdFromQueryObject,
-	getUserAlreadyConnected,
-	getOnboardingFromQueryObject
+	getUserAlreadyConnected
 } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -68,45 +67,6 @@ class JetpackConnectAuthorizeForm extends Component {
 	};
 
 	componentWillMount() {
-		// Handle JPO redirect
-		if ( this.props.onboarding ) {
-			/**
-			 * The JPO flow has not been completed yet. Send the user to the flow but store the
-			 * connect URL so we can come back to it after the flow is complete.
-			 */
-			if ( ! localStorage.getItem( 'jpoFlowComplete' ) ) {
-				/**
-				 * Store the connect URL only on the first call, otherwise the localStorage
-				 * will be overwritten by itself without the query string
-				 */
-				if ( ! localStorage.getItem( 'jpoConnectUrl' ) ) {
-					localStorage.setItem( 'jpoConnectUrl', this.props.path );
-				}
-
-				// Do the redirect
-				window.location.href = '/start/jetpack-onboarding/';
-				return false;
-			/**
-			 * The onboarding flow is complete, and the user has returned here with the payload
-			 * stored in localStorage.
-			 */
-			} else {
-				const jpoPayload = JSON.parse( localStorage.getItem( 'jpoPayload' ) );
-
-				// Remove all the localStorage data. We don't need it anymore.
-				localStorage.removeItem( 'jpoPayload' );
-				localStorage.removeItem( 'jpoFlowComplete' );
-				localStorage.removeItem( 'jpoConnectUrl' );
-
-				/**
-				 * TBD - store the payload in authorize state, and upon authorization, make the
-				 * proper API requests to the site to set the site up as specified by the
-				 * onboarding flow.
-				 */
-				console.log( 'JPO Payload: ', jpoPayload );
-			}
-		}
-
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
 	}
 
@@ -128,7 +88,7 @@ class JetpackConnectAuthorizeForm extends Component {
 
 	handleClickHelp = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
-	}
+	};
 
 	renderNoQueryArgsError() {
 		return (
@@ -167,7 +127,7 @@ class JetpackConnectAuthorizeForm extends Component {
 	render() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 
-		if ( typeof queryObject === 'undefined' ) {
+		if ( 'undefined' === typeof queryObject ) {
 			return this.renderNoQueryArgsError();
 		}
 
@@ -204,8 +164,7 @@ export default connect(
 			requestHasXmlrpcError,
 			siteSlug,
 			user: getCurrentUser( state ),
-			userAlreadyConnected: getUserAlreadyConnected( state ),
-			onboarding: getOnboardingFromQueryObject( state )
+			userAlreadyConnected: getUserAlreadyConnected( state )
 		};
 	},
 	{
