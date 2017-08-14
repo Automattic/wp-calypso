@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -224,7 +223,7 @@ export class CommentList extends Component {
 				unapproved: translate( 'All selected comments unapproved.' ),
 				spam: translate( 'All selected comments marked as spam.' ),
 				trash: translate( 'All selected comments moved to trash.' ),
-				delete: translate( 'All selected comments deleted permanently.' ),
+				'delete': translate( 'All selected comments deleted permanently.' ),
 			},
 			newStatus
 		);
@@ -323,9 +322,9 @@ export class CommentList extends Component {
 			selectedComments: this.isCommentSelected( commentId )
 				? omit( selectedComments, commentId )
 				: {
-						...selectedComments,
-						[ commentId ]: { i_like, status },
-					},
+					...selectedComments,
+					[ commentId ]: { i_like, status },
+				},
 		} );
 	};
 
