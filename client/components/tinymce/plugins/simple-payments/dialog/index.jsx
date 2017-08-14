@@ -4,7 +4,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, isNumber, pick, noop, get } from 'lodash';
@@ -174,11 +175,42 @@ class SimplePaymentsDialog extends Component {
 		return isNumber( this.props.editPaymentId );
 	}
 
+	checkUnsavedForm() {
+		const formIsUnsaved = this.state.activeTab === 'form' && this.props.formIsDirty;
+
+		if ( ! formIsUnsaved ) {
+			// No need to check anything, resolve to `accepted = true` right away.
+			return Promise.resolve( true );
+		}
+
+		// ask for confirmation
+		return new Promise( resolve => {
+			const { translate } = this.props;
+			accept(
+				translate( 'Wait! You have unsaved changes. Do you really want to discard them?' ),
+				resolve,
+				translate( 'Discard' ),
+				null,
+				{
+					isScary: true,
+				}
+			);
+		} );
+	}
+
+	handleDialogClose = () => {
+		// If there is a form that needs to be saved, ask for confirmation first.
+		// If not confirmed, the transition will be cancelled -- dialog remains opened.
+		this.checkUnsavedForm().then( accepted => accepted && this.props.onClose() );
+	};
+
 	handleChangeTabs = activeTab => {
 		if ( activeTab === 'form' ) {
 			this.showButtonForm( null );
 		} else {
-			this.showButtonList();
+			// If there is a form that needs to be saved, ask for confirmation first.
+			// If not confirmed, the transition will be cancelled -- tab is not switched.
+			this.checkUnsavedForm().then( accepted => accepted && this.showButtonList() );
 		}
 	};
 
@@ -239,20 +271,22 @@ class SimplePaymentsDialog extends Component {
 		const { siteId, dispatch, translate } = this.props;
 		const { editedPaymentId } = this.state;
 
+		// On successful update, finish the edit (by going back to list or closing the dialog).
+		// On save error, show error notice and keep the form displayed.
 		dispatch( updatePaymentButton( siteId, editedPaymentId ) )
-			.then( () => {
-				// On successful update, either go back to list or close the dialog.
-				// On save error, keep the form displayed, i.e., do nothing here.
-				if ( this.isDirectEdit() ) {
-					// after changes are saved, close the dialog...
-					this.props.onClose();
-				} else {
-					// ...or return to the list
-					this.showButtonList();
-				}
-			} )
+			.then( this.handleFormClose )
 			.catch( () => this.showError( translate( 'The payment button could not be updated.' ) ) )
 			.then( () => this.setIsSubmitting( false ) );
+	};
+
+	// After the form edit is finished (either sucessfully saved or cancelled), go back where
+	// we came from: either back to the list, or close the modal.
+	handleFormClose = () => {
+		if ( this.isDirectEdit() ) {
+			this.props.onClose();
+		} else {
+			this.showButtonList();
+		}
 	};
 
 	handleTrash = paymentId => {
@@ -285,46 +319,45 @@ class SimplePaymentsDialog extends Component {
 	};
 
 	getActionButtons() {
-		const { formCanBeSubmitted, onClose, translate } = this.props;
-		const { activeTab, isSubmitting } = this.state;
+		const { formIsValid, formIsDirty, translate } = this.props;
+		const { activeTab, editedPaymentId, isSubmitting } = this.state;
 
-		const buttons = [
-			<Button onClick={ onClose } disabled={ isSubmitting }>
-				{ translate( 'Cancel' ) }
-			</Button>,
-		];
+		const formCanBeSubmitted = formIsValid && formIsDirty;
 
-		// When editing an existing payment, show "Save" button. Otherwise, show "Insert"
-		const showSave = activeTab === 'form' && isNumber( this.state.editedPaymentId );
-		if ( showSave ) {
-			buttons.push(
-				<Button
-					onClick={ this.handleSave }
-					busy={ isSubmitting }
-					disabled={ isSubmitting || ! formCanBeSubmitted }
-					primary
-				>
-					{ translate( 'Save' ) }
-				</Button>
-			);
+		let cancelHandler, finishHandler, finishDisabled, finishLabel;
+		if ( activeTab === 'form' && isNumber( editedPaymentId ) ) {
+			// When editing an existing payment, show:
+			// - "Cancel" buttons that drops the changes and navigates back to where we came from
+			// - "Done" button that saves the changes and navigates.
+			cancelHandler = this.handleFormClose;
+			finishHandler = this.handleSave;
+			finishDisabled = ! formCanBeSubmitted;
+			finishLabel = translate( 'Done' );
 		} else {
-			const insertDisabled =
+			// Otherwise, when inserting, show:
+			// - "Cancel" button that closes the dialog
+			// - "Insert" button that inserts a shortcode and then closes the dialog
+			cancelHandler = this.props.onClose;
+			finishHandler = this.handleInsert;
+			finishDisabled =
 				( activeTab === 'form' && ! formCanBeSubmitted ) ||
 				( activeTab === 'list' && this.state.selectedPaymentId === null );
-
-			buttons.push(
-				<Button
-					onClick={ this.handleInsert }
-					busy={ isSubmitting }
-					disabled={ isSubmitting || insertDisabled }
-					primary
-				>
-					{ translate( 'Insert' ) }
-				</Button>
-			);
+			finishLabel = translate( 'Insert' );
 		}
 
-		return buttons;
+		return [
+			<Button onClick={ cancelHandler } disabled={ isSubmitting }>
+				{ translate( 'Cancel' ) }
+			</Button>,
+			<Button
+				onClick={ finishHandler }
+				busy={ isSubmitting }
+				disabled={ isSubmitting || finishDisabled }
+				primary
+			>
+				{ isSubmitting ? translate( 'Saving…' ) : finishLabel }
+			</Button>,
+		];
 	}
 
 	renderEmptyDialog( content, disableNavigation = false ) {
@@ -355,7 +388,6 @@ class SimplePaymentsDialog extends Component {
 	render() {
 		const {
 			showDialog,
-			onClose,
 			siteId,
 			siteSlug,
 			paymentButtons,
@@ -420,7 +452,7 @@ class SimplePaymentsDialog extends Component {
 		return (
 			<Dialog
 				isVisible={ showDialog }
-				onClose={ onClose }
+				onClose={ this.handleDialogClose }
 				buttons={ this.getActionButtons() }
 				additionalClassNames="editor-simple-payments-modal"
 			>
@@ -466,7 +498,8 @@ export default connect( ( state, { siteId } ) => {
 		isJetpackNotSupported:
 			isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' ),
 		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
-		formCanBeSubmitted: isProductFormValid( state ) && isProductFormDirty( state ),
+		formIsValid: isProductFormValid( state ),
+		formIsDirty: isProductFormDirty( state ),
 		currentUserEmail: getCurrentUserEmail( state ),
 	};
 } )( localize( SimplePaymentsDialog ) );
