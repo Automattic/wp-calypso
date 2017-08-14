@@ -21,7 +21,7 @@ import Button from 'components/button';
 import { translate } from 'i18n-calypso';
 
 import { setJPOSiteTitle } from 'state/signup/steps/jpo-site-title/actions';
-import { getJPOSiteTitle } from 'state/signup/steps/jpo-site-title/selectors';
+import { getJPOSiteTitle, getJPOSiteDescription } from 'state/signup/steps/jpo-site-title/selectors';
 
 const JPOSiteTitleStep = React.createClass( {
 	errorMessage: '',
@@ -36,6 +36,10 @@ const JPOSiteTitleStep = React.createClass( {
 	},
 
 	componentWillMount() {
+		const {
+			storeJpoSiteTitle,
+			storeJpoSiteDescription,
+		} = this.props;
 		this.formStateController = new formState.Controller( {
 			fieldNames: [ 'siteTitle', 'siteDescription' ],
 			validatorFunction: noop,
@@ -43,10 +47,10 @@ const JPOSiteTitleStep = React.createClass( {
 			hideFieldErrorsOnChange: true,
 			initialState: {
 				siteTitle: {
-					value: ''
+					value: storeJpoSiteTitle
 				},
 				siteDescription: {
-					value: ''
+					value: storeJpoSiteDescription
 				}
 			}
 		} );
@@ -93,8 +97,6 @@ const JPOSiteTitleStep = React.createClass( {
 			this.setState( { siteDescriptionInvalid: true } );
 		}
 
-		console.log( jpoSiteTitle.siteTitle, jpoSiteTitle.siteDescription );
-
 		if ( ! ( jpoSiteTitle.siteTitle && jpoSiteTitle.siteDescription ) ) {
 			return false;
 		}
@@ -115,6 +117,7 @@ const JPOSiteTitleStep = React.createClass( {
 	},
 
 	renderStepContent() {
+		const { siteTitle, siteDescription } = this.getPayload();
 		return (
 			<Card className="jpo__site-title-card">
 				<FormFieldset>
@@ -124,6 +127,7 @@ const JPOSiteTitleStep = React.createClass( {
 						className="jpo__site-title-input"
 						name="siteTitle"
 						onChange={ this.handleChangeEvent }
+						value={ siteTitle }
 					/>
 					<FormLabel>{ translate( 'Site Description' ) }</FormLabel>
 					<JPOTextarea
@@ -131,6 +135,7 @@ const JPOSiteTitleStep = React.createClass( {
 						className="jpo__site-description-input" 
 						name="siteDescription"
 						onChange={ this.handleChangeEvent }
+						value={ siteDescription }
 					/>
 					<FormLabel className="jpo__validation-error">{ this.errorMessage }</FormLabel>
 					<Button primary onClick={ this.submitStep } className="jpo__site-title-submit">{ translate( 'Next Step' ) }</Button>
@@ -163,6 +168,13 @@ const JPOSiteTitleStep = React.createClass( {
 } );
 
 export default connect(
-	null,
-	{ setJPOSiteTitle }
+	state => {
+		return {
+			storeJpoSiteTitle: getJPOSiteTitle( state ),
+			storeJpoSiteDescription: getJPOSiteDescription( state )
+		};
+	},
+	{
+		setJPOSiteTitle
+	}
 )( JPOSiteTitleStep );
