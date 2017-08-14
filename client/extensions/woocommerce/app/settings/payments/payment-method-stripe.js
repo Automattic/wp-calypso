@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
  */
 import APIKeysView from 'woocommerce/components/api-keys-view';
 import Dialog from 'components/dialog';
-import ControlItem from 'components/segmented-control/item';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
@@ -19,9 +18,9 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
-import SegmentedControl from 'components/segmented-control';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import TestLiveToggle from 'woocommerce/components/test-live-toggle';
 
 export function hasStripeValidCredentials( method ) {
 	const { settings } = method;
@@ -70,12 +69,12 @@ class PaymentMethodStripe extends Component {
 		this.props.onEditField( e.target.name, e.target.value );
 	}
 
-	onToggleTestMode = ( mode ) => {
-		const testmode = mode === 'test' ? 'yes' : 'no';
-		// return curried function
-		return () => {
-			this.props.onEditField( 'testmode', testmode );
-		};
+	onSelectLive = () => {
+		this.props.onEditField( 'testmode', 'no' );
+	}
+
+	onSelectTest = () => {
+		this.props.onEditField( 'testmode', 'yes' );
 	}
 
 	renderKeyFields = ( isLiveMode ) => {
@@ -154,24 +153,11 @@ class PaymentMethodStripe extends Component {
 					<Notice showDismiss={ false } text={ translate( 'To use Stripe you need to register an account' ) }>
 						<NoticeAction href="https://dashboard.stripe.com/register">{ translate( 'Sign up' ) }</NoticeAction>
 					</Notice>
-					<FormLabel>{ translate( 'Payment Mode' ) }</FormLabel>
-					<SegmentedControl
-						primary
-					>
-						<ControlItem
-							selected={ method.settings.testmode.value === 'yes' }
-							onClick={ this.onToggleTestMode( 'test' ) }
-						>
-							{ translate( 'Test Mode' ) }
-						</ControlItem>
-
-						<ControlItem
-							selected={ method.settings.testmode.value === 'no' }
-							onClick={ this.onToggleTestMode( 'live' ) }
-						>
-							{ translate( 'Live Mode' ) }
-						</ControlItem>
-					</SegmentedControl>
+					<TestLiveToggle
+						isTestMode={ method.settings.testmode.value === 'yes' }
+						onSelectLive={ this.onSelectLive }
+						onSelectTest={ this.onSelectTest }
+					/>
 				</FormFieldset>
 				{ method.settings.testmode.value === 'yes' && this.renderKeyFields( false ) }
 				{ method.settings.testmode.value === 'no' && this.renderKeyFields( true ) }
