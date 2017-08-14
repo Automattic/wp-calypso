@@ -28,10 +28,6 @@ class QueryActivityLog extends PureComponent {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId ) {
-			return;
-		}
-
 		this.request( nextProps );
 	}
 
