@@ -12,7 +12,7 @@ import {
 	OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
 } from 'state/action-types';
 
-const initialClientsData = {
+export const initialClientsData = {
 	930: {
 		id: 930,
 		name: 'vaultpress',
@@ -58,7 +58,7 @@ const initialClientsData = {
 };
 
 export const clients = createReducer( initialClientsData, {
-	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => Object.assign( state, { [ data.id ]: data } ),
+	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => Object.assign( {}, state, { [ data.id ]: data } ),
 } );
 
 export const currentClientId = createReducer( null, {
