@@ -512,3 +512,22 @@
 .site-settings__backups .credentials-context td {
 	padding: 10px;
 }
+
+.site-settings__backups .public-key-field {
+	height: 190px;
+	background: #333;
+	color: #fff;
+}
+
+.site-settings__backups .form-text-input {
+	margin-bottom: 1rem;
+}
+
+.site-settings__backups .form-password-input svg {
+	margin-top: -7px;
+}
+
+.site-settings__backups .server-address {
+	width: 80%;
+	padding-right: 5%;
+}

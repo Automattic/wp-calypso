@@ -84,6 +84,29 @@ export default React.createClass( {
 	},
 
 	handleChangeEvent: function( event ) {
+		const {
+			siteId,
+			connectionType
+		} = this.props;
+
+		switch ( event.target.name ) {
+			case 'serverAddress':
+				state.activityLog.rewindStatus[ siteId ].credentials[ connectionType ].credentials.host = event.target.value;
+				break;
+			case 'serverPort':
+				state.activityLog.rewindStatus[ siteId ].credentials[ connectionType ].credentials.port = event.target.value;
+				break;
+			case 'username':
+				state.activityLog.rewindStatus[ siteId ].credentials[ connectionType ].credentials.user = event.target.value;
+				break;
+			case 'password':
+				state.activityLog.rewindStatus[ siteId ].credentials[ connectionType ].credentials.pass = event.target.value;
+				break;
+			case 'uploadPath':
+				state.activityLog.rewindStatus[ siteId ].credentials[ connectionType ].credentials.upload_path = event.target.value;
+				break;
+		}
+
 		this.formStateController.handleFieldChange( {
 			name: event.target.name,
 			value: event.target.value
@@ -98,7 +121,6 @@ export default React.createClass( {
 			serverPort: formState.getFieldValue( this.state.form, 'serverPort' ),
 			username: formState.getFieldValue( this.state.form, 'username' ),
 			password: formState.getFieldValue( this.state.form, 'password' ),
-			publicKey: formState.getFieldValue( this.state.form, 'publicKey' ),
 			uploadPath: formState.getFieldValue( this.state.form, 'uploadPath' )
 		};
 	},
@@ -150,8 +172,19 @@ export default React.createClass( {
 	},
 
 	renderPublicKey: function() {
+		const { 
+			siteId,
+			connectionType
+		} = this.props;
+
 		return (
-			<FormTextarea onChange={ this.handleChangeEvent } name="publicKey" />
+			<FormTextarea 
+				onChange={ this.handleChangeEvent } 
+				name="publicKey" 
+				value={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', connectionType, 'credentials', 'kpub' ], '' ) }
+				readOnly
+				className="public-key-field"
+			/>
 		);
 	},
 
@@ -176,13 +209,14 @@ export default React.createClass( {
 				<table>
 					<tbody>
 						<tr>
-							<td>
+							<td className="server-address">
 								<FormLabel>{ translate( 'Server Address' ) }</FormLabel>
 								<FormTextInput
 									onChange={ this.handleChangeEvent }
 									name="serverAddress"
 									placeholder="yoursite.com"
-									value={ formState.getFieldValue( this.state.form, 'serverAddress' ) }
+									value={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', connectionType, 'credentials', 'host' ], '' ) }
+									readOnly={ isPressable }
 								/>
 							</td>
 							<td>
@@ -191,7 +225,8 @@ export default React.createClass( {
 									onChange={ this.handleChangeEvent }
 									name="serverPort"
 									placeholder="22"
-									value={ formState.getFieldValue( this.state.form, 'serverPort' ) }
+									value={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', connectionType, 'credentials', 'port' ], '' ) }
+									readOnly={ isPressable }
 								/>
 							</td>
 						</tr>
@@ -202,7 +237,8 @@ export default React.createClass( {
 									onChange={ this.handleChangeEvent }
 									name="username"
 									placeholder="username"
-									value={ formState.getFieldValue( this.state.form, 'username' ) }
+									value={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', connectionType, 'credentials', 'user' ], '' ) }
+									readOnly={ isPressable }
 								/>
 							</td>
 						</tr>
@@ -213,7 +249,8 @@ export default React.createClass( {
 									onChange={ this.handleChangeEvent }
 									name="password"
 									placeholder="password"
-									value={ formState.getFieldValue( this.state.form, 'password' ) }
+									value={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', connectionType, 'credentials', 'pass' ], '' ) }
+									readOnly={ isPressable }
 								/>
 							</td>
 						</tr>
@@ -224,7 +261,8 @@ export default React.createClass( {
 									onChange={ this.handleChangeEvent }
 									name="uploadPath"
 									placeholder="/var/www/yoursite.com/"
-									value={ formState.getFieldValue( this.state.form, 'uploadPath' ) }
+									value={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', connectionType, 'credentials', 'upload_path' ], '' ) }
+									readOnly={ isPressable }
 								/>
 							</td>
 						</tr>
