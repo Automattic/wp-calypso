@@ -57,13 +57,15 @@ module.exports = function() {
 		controller.deleteSite
 	);
 
-	page(
-		'/settings/disconnect-site/:site_id',
-		mySitesController.siteSelection,
-		mySitesController.navigation,
-		settingsController.setScroll,
-		controller.disconnectSite
-	);
+	if ( config.isEnabled( 'manage/site-settings/disconnect-flow' ) ) {
+		page(
+			'/settings/disconnect-site/:site_id',
+			mySitesController.siteSelection,
+			mySitesController.navigation,
+			settingsController.setScroll,
+			controller.disconnectSite
+		);
+	}
 
 	page(
 		'/settings/start-over/:site_id',
