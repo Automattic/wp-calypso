@@ -79,6 +79,8 @@ class PostShare extends Component {
 		post: PropTypes.object,
 		siteId: PropTypes.number,
 		disabled: PropTypes.bool,
+		showClose: PropTypes.bool,
+		onClose: PropTypes.func,
 
 		// connect prps
 		connections: PropTypes.array,
@@ -539,21 +541,24 @@ class PostShare extends Component {
 
 		const {
 			hasRepublicizeFeature,
+			hasFetchedConnections,
 			postId,
 			siteId,
 			siteSlug,
 			translate,
+			showClose,
+			onClose,
 		} = this.props;
 
 		if ( ! siteId || ! postId ) {
 			return null;
 		}
 
-		const classes = classNames(
-			'post-share__wrapper',
-			{ 'has-connections': this.hasConnections() },
-			{ 'has-republicize-scheduling-feature': hasRepublicizeFeature },
-		);
+		const classes = classNames( 'post-share__wrapper', {
+			'is-placeholder': ! this.hasFetchedConnections,
+			'has-connections': this.hasConnections(),
+			'has-republicize-scheduling-feature': hasRepublicizeFeature,
+		} );
 
 		return (
 			<div className="post-share">
@@ -577,6 +582,20 @@ class PostShare extends Component {
 							) }
 						</div>
 					</div>
+					{ showClose && (
+						<Button
+							borderless
+							aria-label={ translate( 'Close post sharing' ) }
+							className="post-share__close"
+							data-tip-target="post-share__close"
+							onClick={ onClose }
+						>
+							<Gridicon icon="cross" />
+						</Button>
+					) }
+					{ ! hasFetchedConnections && (
+						<div className="post-share__placeholder" />
+					) }
 					{ this.renderRequestSharingNotice() }
 					{ this.renderConnectionsWarning() }
 					{ this.renderPrimarySection() }
