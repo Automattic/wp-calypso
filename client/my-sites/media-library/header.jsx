@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -19,32 +20,18 @@ import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import StickyPanel from 'components/sticky-panel';
 
-export default React.createClass( {
-	displayName: 'MediaLibraryHeader',
+class MediaLibraryHeader extends Component {
+	constructor( props ) {
+		super( props );
 
-	propTypes: {
-		site: PropTypes.object,
-		filter: PropTypes.string,
-		sliderPositionCount: PropTypes.number,
-		onMediaScaleChange: React.PropTypes.func,
-		onAddMedia: PropTypes.func,
-		sticky: React.PropTypes.bool,
-	},
-
-	getInitialState() {
-		return {
+		this.handleGoogle = this.onClickGoogle.bind( this );
+		this.handleAddUrlOpenOpen = this.toggleAddViaUrl.bind( this, true );
+		this.handleMoreOptions = this.setMoreOptionsContext.bind( this );
+		this.state = {
 			addingViaUrl: false,
 			isMoreOptionsVisible: false
 		};
-	},
-
-	getDefaultProps() {
-		return {
-			onAddMedia: () => {},
-			sliderPositionCount: 100,
-			sticky: false,
-		};
-	},
+	}
 
 	setMoreOptionsContext( component ) {
 		if ( ! component ) {
@@ -54,23 +41,49 @@ export default React.createClass( {
 		this.setState( {
 			moreOptionsContext: component
 		} );
-	},
+	}
 
 	toggleAddViaUrl( state ) {
 		this.setState( {
 			addingViaUrl: state,
 			isMoreOptionsVisible: false
 		} );
-	},
+	}
 
 	toggleMoreOptions( state ) {
 		this.setState( {
 			isMoreOptionsVisible: state
 		} );
-	},
+	}
+
+	onClickGoogle() {
+		this.props.onSourceChange( 'google_photos' );
+	}
+
+	getPopoverButtons() {
+		const { translate } = this.props;
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		const buttons = [
+			<PopoverMenuItem onClick={ this.handleAddUrlOpen } key={ 0 }>
+				{ translate( 'Add via URL', { context: 'Media upload' } ) }
+			</PopoverMenuItem>
+		];
+
+		if ( this.props.onSourceChange ) {
+			buttons.push(
+				<PopoverMenuItem onClick={ this.handleGoogle } key={ 1 }>
+					{ translate( 'Add from Google', { context: 'Media upload' } ) }
+				</PopoverMenuItem>
+			);
+		}
+
+		return buttons;
+	}
 
 	renderUploadButtons() {
 		const { site, filter, onAddMedia } = this.props;
+		const { translate } = this.props;
 
 		if ( ! userCan( 'upload_files', site ) ) {
 			return;
@@ -84,15 +97,15 @@ export default React.createClass( {
 					onAddMedia={ onAddMedia }
 					className="button is-compact">
 					<Gridicon icon="add-image" />
-					<span className="is-desktop">{ this.translate( 'Add New', { context: 'Media upload' } ) }</span>
+					<span className="is-desktop">{ translate( 'Add New', { context: 'Media upload' } ) }</span>
 				</UploadButton>
 				<Button
 					compact
-					ref={ this.setMoreOptionsContext }
+					ref={ this.handleMoreOptions }
 					onClick={ this.toggleMoreOptions.bind( this, ! this.state.isMoreOptionsVisible ) }
 					className="button media-library__upload-more">
 					<span className="screen-reader-text">
-						{ this.translate( 'More Options' ) }
+						{ translate( 'More Options' ) }
 					</span>
 					<Gridicon icon="chevron-down" size={ 20 }/>
 					<PopoverMenu
@@ -101,14 +114,13 @@ export default React.createClass( {
 						onClose={ this.toggleMoreOptions.bind( this, false ) }
 						position="bottom right"
 						className="is-dialog-visible media-library__header-popover">
-						<PopoverMenuItem onClick={ this.toggleAddViaUrl.bind( this, true ) }>
-							{ this.translate( 'Add via URL', { context: 'Media upload' } ) }
-						</PopoverMenuItem>
+						{ this.getPopoverButtons() }
 					</PopoverMenu>
 				</Button>
 			</ButtonGroup>
 		);
-	},
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
 
 	render() {
 		const { site, onAddMedia } = this.props;
@@ -144,8 +156,26 @@ export default React.createClass( {
 					{ card }
 				</StickyPanel>
 			);
-		} else {
-			return card;
 		}
+
+		return card;
 	}
-} );
+}
+
+MediaLibraryHeader.propTypes = {
+	site: PropTypes.object,
+	filter: PropTypes.string,
+	sliderPositionCount: PropTypes.number,
+	onMediaScaleChange: React.PropTypes.func,
+	onSourceChange: React.PropTypes.func,
+	onAddMedia: PropTypes.func,
+	sticky: React.PropTypes.bool,
+};
+
+MediaLibraryHeader.defaultProps = {
+	onAddMedia: () => {},
+	sliderPositionCount: 100,
+	sticky: false,
+};
+
+export default localize( MediaLibraryHeader );
