@@ -9,7 +9,6 @@ import {
 	noop,
 	pull,
 } from 'lodash';
-import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -24,17 +23,17 @@ import TitleItem from './title-item';
 
 export class MediaLibraryFilterBar extends Component {
 	static propTypes = {
-		basePath: PropTypes.string,
-		enabledFilters: PropTypes.arrayOf( PropTypes.string ),
-		filter: PropTypes.string,
-		filterRequiresUpgrade: PropTypes.bool,
-		search: PropTypes.string,
-		source: PropTypes.string,
-		site: PropTypes.object,
-		onFilterChange: PropTypes.func,
-		onSearch: PropTypes.func,
-		translate: PropTypes.func,
-		post: PropTypes.bool,
+		basePath: React.PropTypes.string,
+		enabledFilters: React.PropTypes.arrayOf( React.PropTypes.string ),
+		filter: React.PropTypes.string,
+		filterRequiresUpgrade: React.PropTypes.bool,
+		search: React.PropTypes.string,
+		source: React.PropTypes.string,
+		site: React.PropTypes.object,
+		onFilterChange: React.PropTypes.func,
+		onSearch: React.PropTypes.func,
+		translate: React.PropTypes.func,
+		post: React.PropTypes.bool
 	};
 
 	static defaultProps ={
