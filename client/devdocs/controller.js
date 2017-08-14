@@ -23,7 +23,7 @@ import DevWelcome from './welcome';
 import Sidebar from './sidebar';
 import FormStateExamplesComponent from './form-state-examples';
 import EmptyContent from 'components/empty-content';
-import Wizard from 'components/wizard/docs/example';
+import WizardComponent from './wizard-component';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const devdocs = {
@@ -108,9 +108,7 @@ const devdocs = {
 
 	wizard: function( context ) {
 		renderWithReduxStore(
-			React.createElement( Wizard, {
-				stepName: context.params.stepName
-			} ),
+			<WizardComponent stepName={ context.params.stepName } />,
 			'primary',
 			context.store
 		);
