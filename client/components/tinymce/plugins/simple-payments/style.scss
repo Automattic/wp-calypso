@@ -73,7 +73,10 @@
 		flex-shrink: 0;
 		margin: 0;
 		text-align: left;
-		width: 70%;
+
+		@include breakpoint( ">480px" ) {
+			width: 70%;
+		}
 	}
 }
 
