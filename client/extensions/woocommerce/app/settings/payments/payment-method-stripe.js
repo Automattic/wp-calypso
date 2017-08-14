@@ -9,11 +9,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import APIKeysView from 'woocommerce/components/api-keys-view';
+import AuthCaptureToggle from 'woocommerce/components/auth-capture-toggle';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
@@ -67,6 +66,14 @@ class PaymentMethodStripe extends Component {
 		}
 		// All others may continue
 		this.props.onEditField( e.target.name, e.target.value );
+	}
+
+	onSelectAuthOnly = () => {
+		this.props.onEditField( 'capture', 'no' );
+	}
+
+	onSelectCapture = () => {
+		this.props.onEditField( 'capture', 'yes' );
 	}
 
 	onSelectLive = () => {
@@ -154,32 +161,18 @@ class PaymentMethodStripe extends Component {
 						<NoticeAction href="https://dashboard.stripe.com/register">{ translate( 'Sign up' ) }</NoticeAction>
 					</Notice>
 					<TestLiveToggle
-						isTestMode={ method.settings.testmode.value === 'yes' }
+						isTestMode={ 'yes' === method.settings.testmode.value }
 						onSelectLive={ this.onSelectLive }
 						onSelectTest={ this.onSelectTest }
 					/>
 				</FormFieldset>
 				{ method.settings.testmode.value === 'yes' && this.renderKeyFields( false ) }
 				{ method.settings.testmode.value === 'no' && this.renderKeyFields( true ) }
-				<FormFieldset className="payments__method-edit-field-container">
-					<FormLegend>{ translate( 'Payment authorization' ) }</FormLegend>
-					<FormLabel>
-						<FormRadio
-							name="capture"
-							value="yes"
-							checked={ 'yes' === method.settings.capture.value }
-							onChange={ this.onEditFieldHandler } />
-						<span>{ translate( 'Authorize and charge the customers credit card automatically' ) }</span>
-					</FormLabel>
-					<FormLabel>
-						<FormRadio
-							name="capture"
-							value="no"
-							checked={ 'no' === method.settings.capture.value }
-							onChange={ this.onEditFieldHandler } />
-						<span>{ translate( 'Authorize the customer\'s credit card but charge manually' ) }</span>
-					</FormLabel>
-				</FormFieldset>
+				<AuthCaptureToggle
+					isAuthOnlyMode={ 'yes' === method.settings.capture.value }
+					onSelectAuthOnly={ this.onSelectAuthOnly }
+					onSelectCapture={ this.onSelectCapture }
+				/>
 				<FormFieldset>
 					<FormLabel>
 						{ translate( 'Descriptor' ) }
