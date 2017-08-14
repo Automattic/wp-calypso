@@ -138,6 +138,19 @@ export const twoFactorAuth = createReducer( null, {
 		return null;
 	},
 	[ LOGIN_REQUEST_FAILURE ]: () => null,
+	[ SOCIAL_LOGIN_REQUEST ]: () => null,
+	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => {
+		if ( data ) {
+			const rest = omit( data, 'redirect_to' );
+
+			if ( ! isEmpty( rest ) ) {
+				return rest;
+			}
+		}
+
+		return null;
+	},
+	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => null,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: ( state, { twoStepNonce } ) =>
 		updateTwoStepNonce( state, { twoStepNonce, nonceType: 'sms' } ),
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: ( state, { twoStepNonce } ) =>
