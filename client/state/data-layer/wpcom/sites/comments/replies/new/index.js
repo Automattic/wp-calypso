@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -13,7 +14,7 @@ export const writeReplyComment = ( { dispatch }, action ) =>
 	dispatchNewCommentRequest(
 		dispatch,
 		action,
-		`/sites/${ action.siteId }/comments/${ action.parentCommentId }/replies/new`,
+		`/sites/${ action.siteId }/comments/${ action.parentCommentId }/replies/new`
 	);
 
 export default {

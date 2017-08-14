@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -20,16 +21,12 @@ export const unlikeComment = ( { dispatch }, action ) => {
 				apiVersion: '1.1',
 				path: `/sites/${ action.siteId }/comments/${ action.commentId }/likes/mine/delete`,
 			},
-			action,
-		),
+			action
+		)
 	);
 };
 
-export const updateCommentLikes = (
-	{ dispatch },
-	{ siteId, postId, commentId },
-	{ like_count },
-) =>
+export const updateCommentLikes = ( { dispatch }, { siteId, postId, commentId }, { like_count } ) =>
 	dispatch(
 		local( {
 			type: COMMENTS_UNLIKE,
@@ -37,7 +34,7 @@ export const updateCommentLikes = (
 			postId,
 			commentId,
 			like_count,
-		} ),
+		} )
 	);
 
 /***

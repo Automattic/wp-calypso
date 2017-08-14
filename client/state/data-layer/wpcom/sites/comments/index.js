@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -30,7 +31,10 @@ import { getSite as getReaderSite } from 'state/reader/sites/selectors';
 
 const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	const { siteId, commentId, status } = action;
-	const previousStatus = get( getSiteComment( getState(), action.siteId, action.commentId ), 'status' );
+	const previousStatus = get(
+		getSiteComment( getState(), action.siteId, action.commentId ),
+		'status'
+	);
 
 	dispatch(
 		http(
@@ -73,11 +77,13 @@ const announceStatusChangeFailure = ( { dispatch, getState }, action ) => {
 	};
 	const defaultErrorMessage = translate( "We couldn't update this comment." );
 
-	dispatch( errorNotice( get( errorMessage, status, defaultErrorMessage ), {
-		button: translate( 'Try again' ),
-		id: `comment-notice-error-${ commentId }`,
-		onClick: () => dispatch( omit( action, [ 'meta' ] ) ),
-	} ) );
+	dispatch(
+		errorNotice( get( errorMessage, status, defaultErrorMessage ), {
+			button: translate( 'Try again' ),
+			id: `comment-notice-error-${ commentId }`,
+			onClick: () => dispatch( omit( action, [ 'meta' ] ) ),
+		} )
+	);
 };
 
 export const requestComment = ( store, action ) => {
@@ -89,7 +95,7 @@ export const requestComment = ( store, action ) => {
 			apiVersion: '1.1',
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 };
 
@@ -123,8 +129,8 @@ export const receiveCommentError = ( { dispatch, getState }, { siteId, commentId
 		const error =
 			rawSite && rawSite.name
 				? translate( 'Failed to retrieve comment for site “%(siteName)s”', {
-					args: { siteName: rawSite.name },
-				} )
+						args: { siteName: rawSite.name },
+					} )
 				: translate( 'Failed to retrieve comment for your site' );
 
 		dispatch( errorNotice( error, { id: `request-comment-error-${ siteId }` } ) );
@@ -146,7 +152,7 @@ export const fetchCommentsList = ( { dispatch }, action ) => {
 	const { siteId, status = 'unapproved', type = 'comment' } = action.query;
 
 	const query = {
-		...omit( action.query, [ 'listType', 'siteId' ] ),
+		...omit( action.query, [ 'listType', 'siteId' ] ),
 		status,
 		type,
 	};
@@ -159,8 +165,8 @@ export const fetchCommentsList = ( { dispatch }, action ) => {
 				apiVersion: '1.1',
 				query,
 			},
-			action,
-		),
+			action
+		)
 	);
 };
 
@@ -187,7 +193,7 @@ export const addComments = ( { dispatch }, { query: { siteId, status } }, { comm
 			siteId,
 			postId: parseInt( postId, 10 ), // keyBy => object property names are strings
 			comments: postComments,
-		} ),
+		} )
 	);
 };
 
@@ -196,17 +202,25 @@ const announceFailure = ( { dispatch, getState }, { query: { siteId } } ) => {
 	const error =
 		site && site.name
 			? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
-				args: { siteName: site.name },
-			} )
+					args: { siteName: site.name },
+				} )
 			: translate( 'Failed to retrieve comments for your site' );
 
 	dispatch( errorNotice( error ) );
 };
 
 export const fetchHandler = {
-	[ COMMENTS_CHANGE_STATUS ]: [ dispatchRequest( changeCommentStatus, removeCommentStatusErrorNotice, announceStatusChangeFailure ) ],
+	[ COMMENTS_CHANGE_STATUS ]: [
+		dispatchRequest(
+			changeCommentStatus,
+			removeCommentStatusErrorNotice,
+			announceStatusChangeFailure
+		),
+	],
 	[ COMMENTS_LIST_REQUEST ]: [ dispatchRequest( fetchCommentsList, addComments, announceFailure ) ],
-	[ COMMENT_REQUEST ]: [ dispatchRequest( requestComment, receiveCommentSuccess, receiveCommentError ) ],
+	[ COMMENT_REQUEST ]: [
+		dispatchRequest( requestComment, receiveCommentSuccess, receiveCommentError ),
+	],
 };
 
 export default mergeHandlers( fetchHandler, replies, likes, trees );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -76,8 +77,8 @@ export const fetchPostComments = ( { dispatch, getState }, action ) => {
 					before,
 				} ),
 			},
-			action,
-		),
+			action
+		)
 	);
 };
 
@@ -111,7 +112,7 @@ export const writePostComment = ( { dispatch }, action ) => {
 				placeholderId: placeholder.ID,
 			},
 			onFailure: action,
-		} ),
+		} )
 	);
 };
 
@@ -142,7 +143,7 @@ export const addComments = ( { dispatch }, action, { comments, found } ) => {
 export const writePostCommentSuccess = (
 	{ dispatch },
 	{ siteId, postId, parentCommentId, placeholderId },
-	comment,
+	comment
 ) => {
 	// remove placeholder from state
 	dispatch( { type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId } );
@@ -195,13 +196,10 @@ export const deleteComment = ( { dispatch, getState }, action ) => {
 
 export const announceDeleteSuccess = ( { dispatch } ) => {
 	dispatch(
-		successNotice(
-			translate( 'Comment deleted permanently.' ),
-			{
-				duration: 5000,
-				isPersistent: true,
-			}
-		)
+		successNotice( translate( 'Comment deleted permanently.' ), {
+			duration: 5000,
+			isPersistent: true,
+		} )
 	);
 };
 
@@ -209,13 +207,10 @@ export const announceDeleteFailure = ( { dispatch, getState }, action ) => {
 	const { siteId, postId, comment } = action;
 
 	dispatch(
-		errorNotice(
-			translate( 'Could not delete the comment.' ),
-			{
-				duration: 5000,
-				isPersistent: true,
-			}
-		)
+		errorNotice( translate( 'Could not delete the comment.' ), {
+			duration: 5000,
+			isPersistent: true,
+		} )
 	);
 
 	if ( comment ) {
@@ -231,5 +226,7 @@ export const announceDeleteFailure = ( { dispatch, getState }, action ) => {
 
 export default {
 	[ COMMENTS_REQUEST ]: [ dispatchRequest( fetchPostComments, addComments, announceFailure ) ],
-	[ COMMENTS_DELETE ]: [ dispatchRequest( deleteComment, announceDeleteSuccess, announceDeleteFailure ) ],
+	[ COMMENTS_DELETE ]: [
+		dispatchRequest( deleteComment, announceDeleteSuccess, announceDeleteFailure ),
+	],
 };
