@@ -41,7 +41,9 @@ const wpcom = wpcomLib.undocumented();
 
 const trackSibylClick = ( event, helpLink ) => composeAnalytics(
 	bumpStat( 'sibyl_question_clicks', helpLink.id ),
-	recordTracksEvent( 'calypso_sibyl_question_click', {} )
+	recordTracksEvent( 'calypso_sibyl_question_click', {
+		question_id: helpLink.id
+	} )
 );
 
 export const HelpContactForm = React.createClass( {
