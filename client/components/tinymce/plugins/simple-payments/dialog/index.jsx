@@ -385,12 +385,12 @@ class SimplePaymentsDialog extends Component {
 		if ( ! shouldQuerySitePlans && isJetpackNotSupported ) {
 			return this.renderEmptyDialog(
 				<EmptyContent
+					className="upgrade-jetpack"
 					illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 					title={ translate( 'Upgrade Jetpack to use Simple Payments feature' ) }
 					illustrationWidth={ 600 }
 					action={
 						<Banner
-							className="upgrade-jetpack"
 							icon="star"
 							title={ translate( 'Upgrade your Jetpack!' ) }
 							description={ translate(

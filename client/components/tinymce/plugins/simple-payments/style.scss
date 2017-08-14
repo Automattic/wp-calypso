@@ -76,8 +76,15 @@
 		width: 70%;
 	}
 
-	.upgrade-jetpack.banner {
-		text-align: left;
+	.upgrade-jetpack {
+		.empty-content__illustration {
+			margin-bottom: -35px;
+			min-height: 0;
+		}
+		.banner {
+			text-align: left;
+			text-decoration: none;
+		}
 	}
 }
 
