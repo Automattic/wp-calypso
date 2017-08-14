@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -23,20 +23,14 @@ const components = {
 	[ STEPS.THIRD ]: <Third />,
 };
 
-export default class WizardExample extends Component {
-	render() {
-		const { stepName } = this.props;
+const WizardExample = ( { stepName = steps[ 0 ] } ) => (
+	<div>
+		<Wizard
+			basePath="/devdocs/design/wizard"
+			components={ components }
+			steps={ steps }
+			stepName={ stepName } />
+	</div>
+);
 
-		return (
-			<div>
-				<Wizard
-					basePath="/devdocs/design/wizard"
-					components={ components }
-					steps={ steps }
-					stepName={ stepName || steps[ 0 ] } />
-			</div>
-		);
-	}
-}
-
-WizardExample.displayName = 'Wizard';
+export default WizardExample;
