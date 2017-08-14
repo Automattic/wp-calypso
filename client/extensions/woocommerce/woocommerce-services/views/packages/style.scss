@@ -185,27 +185,6 @@
 		padding: 0;
 		border-top: 0;
 	}
-
-	&.placeholder {
-		@include placeholder();
-		pointer-events: none;
-		background: $white;
-
-		p, a, button {
-			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: lighten( $gray, 25% );
-			color: transparent;
-			cursor: default;
-		}
-
-		p {
-			display: inline-block;
-			margin-bottom: 0;
-			margin-right: 8px;
-			width: 100px;
-			height: 14px;
-		}
-	}
 }
 
 .packages__packages-row-details {
@@ -226,4 +205,8 @@
 
 .packages__delete {
 	float: left;
+}
+
+.packages__mode-select {
+	margin-bottom: 12px;
 }

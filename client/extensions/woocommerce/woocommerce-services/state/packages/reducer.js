@@ -18,6 +18,7 @@ import {
 	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_OUTER_DIMENSIONS,
 	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL,
 	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PACKAGE,
+	WOOCOMMERCE_SERVICES_PACKAGES_SET_ADD_MODE,
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCHING,
 	WOOCOMMERCE_SERVICES_PACKAGES_INIT_PACKAGES_FORM,
 } from '../action-types';
@@ -34,7 +35,7 @@ const reducers = {};
 reducers[ WOOCOMMERCE_SERVICES_PACKAGES_ADD_PACKAGE ] = ( state ) => {
 	const newState = Object.assign( {}, state, {
 		showModal: true,
-		mode: 'add',
+		mode: 'add-custom',
 	} );
 
 	if ( 'edit' === state.mode || ! newState.packageData ) {
@@ -99,7 +100,7 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PACKAGE ] = ( state, action ) => {
 	return {
 		...state,
 		showModal: false,
-		mode: 'add',
+		mode: 'add-custom',
 		packageData: {
 			is_user_defined: true,
 		},
@@ -174,6 +175,11 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PACKAGE ] = ( state, { serviceId,
 		pristine: false,
 	};
 };
+
+reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SET_ADD_MODE ] = ( state, { mode } ) => ( {
+	...state,
+	mode,
+} );
 
 reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_SAVING ] = ( state, action ) => {
 	return Object.assign( {}, state, {
