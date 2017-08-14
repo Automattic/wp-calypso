@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -26,12 +27,10 @@ const JPOSiteTypeStep = React.createClass( {
 	},
 
 	getInitialState() {
-		const siteTitle = ( 'undefined' !== typeof this.props.signupProgress[0].jpoSiteTitle )
-			? this.props.signupProgress[0].jpoSiteTitle.siteTitle
-			: translate( 'your new site' );
-
 		return {
-			headerText: translate( 'Let\'s shape ' ) + siteTitle + translate( '.' ),
+			headerText: translate( "Let's shape %s.", {
+				args: get( this.props.signupProgress[ 0 ], [ 'jpoSiteTitle', 'siteTitle' ], false ) || translate( 'your new site' )
+			} ),
 			subHeaderText: translate( 'What kind of site do you need? Choose an option below:' ),
 			currentScreen: 'genre',
 			payload: {
