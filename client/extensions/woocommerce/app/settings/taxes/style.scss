@@ -32,3 +32,11 @@
 		margin-bottom: 0;
 	}
 }
+
+.taxes__taxes-rates-table {
+	.table-row {
+		&:hover {
+			background-color: transparent;
+		}
+	}
+}
