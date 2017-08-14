@@ -159,16 +159,6 @@ const getSiteIdFromQueryObject = function( state ) {
 	return null;
 };
 
-const getOnboardingFromQueryObject = function( state ) {
-	const authorizationData = getAuthorizationData( state );
-
-	if ( authorizationData.queryObject && authorizationData.queryObject.onboarding ) {
-		return ( 1 === parseInt( authorizationData.queryObject.onboarding ) ) ? true : false;
-	} else {
-		return false;
-	}
-};
-
 export default {
 	getConnectingSite,
 	getAuthorizationData,
@@ -188,6 +178,5 @@ export default {
 	getGlobalSelectedPlan,
 	getAuthAttempts,
 	getSiteIdFromQueryObject,
-	getUserAlreadyConnected,
-	getOnboardingFromQueryObject
+	getUserAlreadyConnected
 };
