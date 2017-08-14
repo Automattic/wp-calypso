@@ -1,6 +1,8 @@
 .sticky-panel + .shipping-zone__locations-container,
 .sticky-panel + .shipping-zone__methods-container {
-	margin-top: 58px;
+	@include breakpoint( ">660px" ) {
+		margin-top: 58px;
+	}
 }
 
 .shipping-zone__name {
