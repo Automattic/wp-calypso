@@ -1,3 +1,4 @@
+/** @format */
 /***
  * External dependencies
  */
@@ -121,6 +122,18 @@ export const getPostCommentsTree = createSelector(
 	},
 	getPostCommentItems
 );
+
+const getAllParents = ( commentsTree, commentId ) =>
+	[ commentId ].concat( commentsTree[ commentId ].parent && commentsTree[ commentId ].parent.ID );
+
+export const getMinimumCommentsTree = ( state, siteId, postId, commentIds ) => {
+	const allItems = getPostCommentItems( state, siteId, postId );
+	const commentsTree = getPostCommentsTree( state, siteId, postId );
+
+	const parents = commentsIds.reduce( ( lst, id ) => lst.concat( getAllParents( commentsTree, id ) ), commentIds, [] );
+
+	return;
+};
 
 export const commentsFetchingStatus = ( state, siteId, postId, commentTotal = 0 ) => {
 	const fetchStatus = get(

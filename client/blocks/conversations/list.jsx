@@ -3,7 +3,19 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { get, size, takeRight, delay, map, filter } from 'lodash';
+import {
+	get,
+	size,
+	takeRight,
+	delay,
+	map,
+	filter,
+	compact,
+	reject,
+	includes,
+	uniq,
+	xor,
+} from 'lodash';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -16,11 +28,10 @@ import {
 	commentsFetchingStatus,
 	getDateSortedPostComments,
 } from 'state/comments/selectors';
-import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
+// import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { requestPostComments, requestComment } from 'state/comments/actions';
 import PostComment from 'blocks/comments/post-comment';
-import CommentCount from 'blocks/comments/comment-count';
 import PostCommentForm from 'blocks/comments/form';
 
 class PostCommentList extends React.Component {
@@ -50,9 +61,34 @@ class PostCommentList extends React.Component {
 		maxDepth: Infinity,
 	};
 
+	/***
+	 * Gets comments for display
+	 * @param {Immutable.List<Number>} commentIds The top level commentIds to take from
+	 * @param {Number} numberToTake How many top level comments to take
+	 * @returns {Object} that has the displayed comments + total displayed count including children
+	 */
+	getDisplayedComments = numberToTake => {
+		const latestComments = map(
+			takeRight(
+				filter(
+					this.props.comments,
+					comment => comment.type !== 'trackback' && comment.type !== 'pingback'
+				),
+				numberToTake
+			),
+			'ID'
+		);
+
+		return {
+			displayedComments: latestComments,
+			displayedCommentsCount: latestComments.length,
+		};
+	};
+
 	state = {
 		activeReplyCommentID: null,
 		amountOfCommentsToTake: this.props.initialSize,
+		displayedComments: this.getDisplayedComments( this.props.initialSize ),
 		activeEditCommentId: null,
 	};
 
@@ -93,7 +129,7 @@ class PostCommentList extends React.Component {
 		const propsExist = nextSiteId && nextPostId;
 		const propChanged = currentSiteId !== nextSiteId || currentPostId !== nextPostId;
 
-		return ( propsExist && propChanged );
+		return propsExist && propChanged;
 	};
 
 	componentWillMount() {
@@ -156,6 +192,7 @@ class PostCommentList extends React.Component {
 				depth={ 0 }
 				maxDepth={ this.props.maxDepth }
 				showNestingReplyArrow
+				showOnly={ this.state.displayedComments.displayedComments }
 			/>
 		);
 	};
@@ -240,30 +277,6 @@ class PostCommentList extends React.Component {
 		);
 	};
 
-	/***
-	 * Gets comments for display
-	 * @param {Immutable.List<Number>} commentIds The top level commentIds to take from
-	 * @param {Number} numberToTake How many top level comments to take
-	 * @returns {Object} that has the displayed comments + total displayed count including children
-	 */
-	getDisplayedComments = ( numberToTake ) => {
-		const displayedComments = map(
-			takeRight(
-				filter(
-					this.props.comments,
-					comment => comment.type !== 'trackback' && comment.type !== 'pingback'
-				),
-				numberToTake
-			),
-			'ID'
-		);
-
-		return {
-			displayedComments,
-			displayedCommentsCount: displayedComments.length,
-		};
-	};
-
 	viewEarlierCommentsHandler = () => {
 		const direction = this.props.commentsFetchingStatus.haveEarlierCommentsToFetch
 			? 'before'
@@ -281,8 +294,9 @@ class PostCommentList extends React.Component {
 	loadMoreCommentsHandler = direction => {
 		const { post: { ID: postId, site_ID: siteId } } = this.props;
 		const amountOfCommentsToTake = this.state.amountOfCommentsToTake + this.props.pageSize;
+		const displayedComments = this.getDisplayedComments( amountOfCommentsToTake );
 
-		this.setState( { amountOfCommentsToTake } );
+		this.setState( { amountOfCommentsToTake, displayedComments } );
 		this.props.requestPostComments( { siteId, postId, direction } );
 	};
 
@@ -301,9 +315,7 @@ class PostCommentList extends React.Component {
 			? Infinity
 			: this.state.amountOfCommentsToTake;
 
-		const { displayedComments, displayedCommentsCount } = this.getDisplayedComments(
-			amountOfCommentsToTake
-		);
+		const { displayedCommentsCount } = this.state.displayedComments;
 
 		// Note: we might show fewer comments than commentsCount because some comments might be
 		// orphans (parent deleted/unapproved), that comment will become unreachable but still counted.
@@ -334,7 +346,7 @@ class PostCommentList extends React.Component {
 								</span>
 							: null }
 					</div> }
-				{ this.renderCommentsList( displayedComments ) }
+				{ this.renderCommentsList( commentsTree.children ) }
 			</div>
 		);
 	}
