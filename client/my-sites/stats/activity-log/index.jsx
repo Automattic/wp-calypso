@@ -312,7 +312,7 @@ class ActivityLog extends Component {
 		return (
 			<Main wideLayout>
 				<QueryRewindStatus siteId={ siteId } />
-				<QueryActivityLog siteId={ siteId } dateStart={ queryStart } dateEnd={ queryEnd } />
+				<QueryActivityLog siteId={ siteId } dateStart={ queryStart } dateEnd={ queryEnd } number={ 1000 } />
 				<QuerySiteSettings siteId={ siteId } />
 				<StatsFirstView />
 				<SidebarNavigation />
