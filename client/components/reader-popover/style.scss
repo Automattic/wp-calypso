@@ -8,7 +8,7 @@
 .reader-popover.popover.is-bottom-left .popover__arrow,
 .reader-popover.popover.is-bottom-right .popover__arrow,
 .reader-popover.popover.is-top-left .popover__arrow,
-.reader-popover.popover.is-top .popover__arrow {
+.reader-popover.popover.is-top .popover__arrow  {
 
 	&::before {
 		border: 10px solid $gray-light;
@@ -18,6 +18,22 @@
 		margin-left: -10px;
 		position: absolute;
 			left: 50%;
+	}
+}
+
+.reader-popover.popover.is-left .popover__arrow,
+.reader-popover.popover.is-left-top .popover__arrow,
+.reader-popover.popover.is-bottom .popover__arrow {
+
+	&::before{
+		border: 10px solid $gray-light;
+		border-bottom-color: transparent;
+		border-right: none;
+		border-top-color: transparent;
+		content: " ";
+		margin-top: -10px;
+		position: absolute;
+			top: 50%;
 	}
 }
 
