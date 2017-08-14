@@ -3,12 +3,11 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
  */ 
-import analytics from 'lib/analytics';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import Card from 'components/card';
@@ -145,7 +144,7 @@ const JPOSiteTitleStep = React.createClass( {
 	},
 
 	render() {
-		const headerText = translate( 'Let\'s get started.' );
+		const headerText = translate( "Let's get started." );
 		const subHeaderText = translate( 'First up, what would you like to name your site and have as its public description?' );
 
 		return (
