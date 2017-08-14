@@ -18,14 +18,17 @@ const OauthClientLayout = ( {
 	section,
 	oauth2ClientData,
 } ) => {
+	const hasValidOAuth2ClientData = !! oauth2ClientData;
+	const oauthClientName = hasValidOAuth2ClientData && oauth2ClientData.name;
+
 	const classes = classNames( 'layout', {
 		[ 'is-group-' + section.group ]: !! section,
 		[ 'is-section-' + section.name ]: !! section,
 		'focus-content': true,
 		'has-no-sidebar': true, // Logged-out never has a sidebar
 		'wp-singletree-layout': !! primary,
-		dops: !! oauth2ClientData,
-		[ oauth2ClientData.name ]: !! oauth2ClientData,
+		dops: hasValidOAuth2ClientData,
+		[ oauthClientName ]: hasValidOAuth2ClientData,
 	} );
 
 	return (
