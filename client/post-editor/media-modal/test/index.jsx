@@ -258,8 +258,14 @@ describe( 'EditorMediaModal', function() {
 			tree.copyExternal = onClose;
 			tree.confirmSelection();
 
+			// EditorMediaModal will generate transient ID for the media selected
+			// by using uniqueId, which increments its value within the same session.
+			const transientItems = [
+				Object.assign( {}, DUMMY_MEDIA[ 0 ], { ID: 'media-1' } ),
+				Object.assign( {}, DUMMY_MEDIA[ 1 ], { ID: 'media-2' } )
+			];
 			process.nextTick( () => {
-				expect( onClose ).to.have.been.calledWith( DUMMY_MEDIA, 'external' );
+				expect( onClose ).to.have.been.calledWith( transientItems, 'external' );
 				done();
 			} );
 		} );
