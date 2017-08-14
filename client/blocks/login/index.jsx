@@ -19,8 +19,8 @@ import {
 	isTwoFactorEnabled,
 	getLinkingSocialUser,
 	getLinkingSocialService,
-	getOAuth2ClientData,
 } from 'state/login/selectors';
+import { getOAuth2ClientData } from 'state/login/oauth2/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';

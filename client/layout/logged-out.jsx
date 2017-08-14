@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import { getSection } from 'state/ui/selectors';
 import OauthClientLayout from 'layout/oauth-client';
-import { showOAuth2Layout } from 'state/login/selectors';
+import { showOAuth2Layout } from 'state/login/oauth2/selectors';
 
 const LayoutLoggedOut = ( {
 	primary,
