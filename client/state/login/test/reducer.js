@@ -60,8 +60,7 @@ describe( 'reducer', () => {
 			'isRequestingTwoFactorAuth',
 			'twoFactorAuthRequestError',
 			'twoFactorAuthPushPoll',
-			'oauth2ClientData',
-			'showOAuth2Layout',
+			'oauth2',
 		] );
 	} );
 
