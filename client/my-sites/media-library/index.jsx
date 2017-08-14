@@ -53,7 +53,7 @@ class MediaLibrary extends Component {
 		searchUrl( keywords, this.props.search, this.props.onSearch );
 	};
 
-	onAddMedia = () => {
+	onAddMedia() {
 		const selectedItems = MediaLibrarySelectedStore.getAll( this.props.site.ID );
 		let filteredItems = selectedItems;
 
