@@ -6,7 +6,7 @@ import React, { Component, PropTypes } from 'react';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, get, groupBy, includes, isEmpty, isNull, map } from 'lodash';
+import { get, groupBy, includes, isEmpty, isNull, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -238,13 +238,7 @@ class ActivityLog extends Component {
 
 		const applySiteOffset = this.getSiteOffsetFunc();
 
-		const YEAR_MONTH = 'YYYY-MM';
-		const selectedMonthAndYear = moment( startDate ).format( YEAR_MONTH );
-		const logsForMonth = filter( logs, ( { ts_utc } ) => {
-			return applySiteOffset( moment.utc( ts_utc ) ).format( YEAR_MONTH ) === selectedMonthAndYear;
-		} );
-
-		if ( isEmpty( logsForMonth ) ) {
+		if ( isEmpty( logs ) ) {
 			return (
 				<EmptyContent
 					title={ translate( 'No activity for %s', {
@@ -255,9 +249,7 @@ class ActivityLog extends Component {
 		}
 
 		const logsGroupedByDay = map(
-			groupBy( logsForMonth, log =>
-				applySiteOffset( moment.utc( log.ts_utc ) ).endOf( 'day' ).valueOf()
-			),
+			groupBy( logs, log => applySiteOffset( moment.utc( log.ts_utc ) ).endOf( 'day' ).valueOf() ),
 			( daily_logs, tsEndOfSiteDay ) =>
 				<ActivityLogDay
 					applySiteOffset={ applySiteOffset }
@@ -312,7 +304,12 @@ class ActivityLog extends Component {
 		return (
 			<Main wideLayout>
 				<QueryRewindStatus siteId={ siteId } />
-				<QueryActivityLog siteId={ siteId } dateStart={ queryStart } dateEnd={ queryEnd } number={ 1000 } />
+				<QueryActivityLog
+					siteId={ siteId }
+					dateStart={ queryStart }
+					dateEnd={ queryEnd }
+					number={ 1000 }
+				/>
 				<QuerySiteSettings siteId={ siteId } />
 				<StatsFirstView />
 				<SidebarNavigation />
