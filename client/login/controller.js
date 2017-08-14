@@ -9,7 +9,7 @@ import React from 'react';
 import WPLogin from './wp-login';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
-import { fetchOAuth2ClientData } from 'state/login/oauth2/actions';
+import { fetchOAuth2ClientData } from 'state/login/actions';
 
 export default {
 	login( context, next ) {
