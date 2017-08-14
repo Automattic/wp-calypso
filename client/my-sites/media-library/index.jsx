@@ -3,7 +3,10 @@
  */
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
+import { connect } from 'react-redux';
+import toArray from 'lodash/toArray';
+import some from 'lodash/some';
 import PropTypes from 'prop-types';
 
 /**
@@ -19,6 +22,14 @@ import FilterBar from './filter-bar';
 import MediaValidationData from 'components/data/media-validation-data';
 import QueryPreferences from 'components/data/query-preferences';
 import searchUrl from 'lib/search-url';
+import {
+	isKeyringConnectionsFetching,
+	getKeyringConnections,
+} from 'state/sharing/keyring/selectors';
+import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+
+const isConnected = props => props.source === '' || some( props.connectedServices, item => item.service === props.source );
+const needsKeyring = props => ! props.isRequesting && props.source !== '' && props.connectedServices.length === 0;
 
 class MediaLibrary extends Component {
 	static propTypes = {
@@ -52,6 +63,20 @@ class MediaLibrary extends Component {
 	doSearch = keywords => {
 		searchUrl( keywords, this.props.search, this.props.onSearch );
 	};
+
+	componentWillMount() {
+		if ( needsKeyring( this.props ) ) {
+			// Are we connected to anything yet?
+			this.props.requestKeyringConnections();
+		}
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( needsKeyring( nextProps ) && this.props.source === '' ) {
+			// If we have changed to an external data source then check for a keyring connection
+			this.props.requestKeyringConnections();
+		}
+	}
 
 	onAddMedia() {
 		const selectedItems = MediaLibrarySelectedStore.getAll( this.props.site.ID );
@@ -120,12 +145,14 @@ class MediaLibrary extends Component {
 				filterRequiresUpgrade={ this.filterRequiresUpgrade() }
 				search={ this.props.search }
 				source={ this.props.source }
+				isConnected={ isConnected( this.props ) }
 				containerWidth={ this.props.containerWidth }
 				single={ this.props.single }
 				scrollable={ this.props.scrollable }
 				onAddMedia={ this.onAddMedia }
 				onAddAndEditImage={ this.props.onAddAndEditImage }
 				onMediaScaleChange={ this.props.onScaleChange }
+				onSourceChange={ this.props.onSourceChange }
 				selectedItems={ this.props.mediaLibrarySelectedItems }
 				onDeleteItem={ this.props.onDeleteItem }
 				onEditItem={ this.props.onEditItem }
@@ -158,8 +185,10 @@ class MediaLibrary extends Component {
 					enabledFilters={ this.props.enabledFilters }
 					search={ this.props.search }
 					onFilterChange={ this.props.onFilterChange }
+					onSourceChange={ this.props.onSourceChange }
 					source={ this.props.source }
 					onSearch={ this.doSearch }
+					isConnected={ isConnected( this.props ) }
 					post={ !! this.props.postId } />
 				{ content }
 			</div>
@@ -167,4 +196,9 @@ class MediaLibrary extends Component {
 	}
 }
 
-export default MediaLibrary;
+export default connect( state => ( {
+	connectedServices: toArray( getKeyringConnections( state ) ).filter( item => item.type === 'other' && item.status === 'ok' ),
+	isRequesting: isKeyringConnectionsFetching( state ),
+} ), {
+	requestKeyringConnections,
+} )( MediaLibrary );

@@ -35,6 +35,7 @@ export class MediaLibraryFilterBar extends Component {
 		onSearch: PropTypes.func,
 		translate: PropTypes.func,
 		post: PropTypes.bool,
+		isConnected: PropTypes.bool,
 	};
 
 	static defaultProps ={
@@ -44,7 +45,8 @@ export class MediaLibraryFilterBar extends Component {
 		onSearch: noop,
 		translate: identity,
 		source: '',
-		post: false
+		post: false,
+		isConnected: true,
 	};
 
 	getSearchPlaceholderText() {
@@ -134,7 +136,7 @@ export class MediaLibraryFilterBar extends Component {
 	}
 
 	renderSearchSection() {
-		if ( this.props.filterRequiresUpgrade ) {
+		if ( this.props.filterRequiresUpgrade || ! this.props.isConnected ) {
 			return null;
 		}
 
