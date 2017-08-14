@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -44,15 +43,15 @@ export class CommentDetailReply extends Component {
 		if ( 'approved' !== status ) {
 			return authorDisplayName
 				? translate( 'Approve and reply to %(commentAuthor)s…', {
-						args: { commentAuthor: authorDisplayName },
-					} )
+					args: { commentAuthor: authorDisplayName },
+				} )
 				: translate( 'Approve and reply to comment…' );
 		}
 
 		return authorDisplayName
 			? translate( 'Reply to %(commentAuthor)s…', {
-					args: { commentAuthor: authorDisplayName },
-				} )
+				args: { commentAuthor: authorDisplayName },
+			} )
 			: translate( 'Reply to comment…' );
 	};
 
