@@ -164,8 +164,19 @@
 
 .editor-simple-payments-modal__list-label {
 	flex: auto;
+	min-width: 0;
 	font-family: $serif;
 	font-weight: bold;
+}
+
+.editor-simple-payments-modal__list-name {
+	white-space: nowrap;
+	overflow: hidden;
+	position: relative;
+
+	&::after {
+		@include long-content-fade();
+	}
 }
 
 .editor-simple-payments-modal__list-menu {

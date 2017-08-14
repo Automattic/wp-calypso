@@ -57,7 +57,7 @@ class ProductListItem extends Component {
 					onChange={ this.handleRadioChange }
 				/>
 				<label className="editor-simple-payments-modal__list-label" htmlFor={ radioId }>
-					<div>
+					<div className="editor-simple-payments-modal__list-name">
 						{ title }
 					</div>
 					<div>
