@@ -17,9 +17,6 @@ import {
 	LOGOUT_REQUEST,
 	LOGOUT_REQUEST_FAILURE,
 	LOGOUT_REQUEST_SUCCESS,
-	OAUTH2_CLIENT_DATA_REQUEST,
-	OAUTH2_CLIENT_DATA_REQUEST_FAILURE,
-	OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
@@ -430,25 +427,4 @@ export const logoutUser = ( redirectTo ) => ( dispatch, getState ) => {
 
 			return Promise.reject( error );
 		} );
-};
-
-export const fetchOAuth2ClientData = ( clientId ) => dispatch => {
-	dispatch( {
-		type: OAUTH2_CLIENT_DATA_REQUEST
-	} );
-
-	return wpcom.undocumented().oauth2ClientId( clientId ).then( wpcomResponse => {
-		dispatch( { type: OAUTH2_CLIENT_DATA_REQUEST_SUCCESS, data: wpcomResponse } );
-
-		return wpcomResponse;
-	}, wpcomError => {
-		const error = getErrorFromWPCOMError( wpcomError );
-
-		dispatch( {
-			type: OAUTH2_CLIENT_DATA_REQUEST_FAILURE,
-			error,
-		} );
-
-		return Promise.reject( error );
-	} );
 };

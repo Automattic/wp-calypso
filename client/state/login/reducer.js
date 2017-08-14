@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import { get, isEmpty, omit, startsWith } from 'lodash';
+import { get, isEmpty, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
 import magicLogin from './magic-login/reducer';
+import oauth2 from './oauth2/reducer';
 import {
 	LOGIN_FORM_UPDATE,
 	LOGIN_REQUEST,
@@ -17,9 +18,6 @@ import {
 	LOGOUT_REQUEST_FAILURE,
 	LOGOUT_REQUEST_SUCCESS,
 	ROUTE_SET,
-	OAUTH2_CLIENT_DATA_REQUEST,
-	OAUTH2_CLIENT_DATA_REQUEST_FAILURE,
-	OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
@@ -186,16 +184,6 @@ export const socialAccount = createReducer( { isCreating: false, createError: nu
 	[ LOGIN_REQUEST ]: state => ( { ...state, createError: null } ),
 } );
 
-export const oauth2ClientData = createReducer( null, {
-	[ OAUTH2_CLIENT_DATA_REQUEST ]: () => null,
-	[ OAUTH2_CLIENT_DATA_REQUEST_FAILURE ]: ( state, { error } ) => error,
-	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => data,
-} );
-
-export const showOAuth2Layout = createReducer( false, {
-	[ ROUTE_SET ]: ( state, { path, query } ) => startsWith( path, '/log-in' ) && !! query.client_id,
-} );
-
 export const socialAccountLink = createReducer( { isLinking: false }, {
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: ( state, { error, token, service } ) => {
 		if ( error.code === 'user_exists' ) {
@@ -227,7 +215,6 @@ export default combineReducers( {
 	twoFactorAuthRequestError,
 	twoFactorAuthPushPoll,
 	socialAccount,
-	oauth2ClientData,
-	showOAuth2Layout,
 	socialAccountLink,
+	oauth2,
 } );
