@@ -11,13 +11,13 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 
-const NavigationLink = ( { direction, onClick, translate } ) => {
+const NavigationLink = ( { direction, href, translate } ) => {
 	const text = ( direction === 'back' ) ? translate( 'Back' ) : translate( 'Skip for now' );
 
 	return (
 		<Button compact borderless
 			className="wizard__navigation-link"
-			onClick={ onClick }>
+			href={ href }>
 			{ direction === 'back' && <Gridicon icon="arrow-left" size={ 18 } /> }
 			{ text }
 			{ direction === 'forward' && <Gridicon icon="arrow-right" size={ 18 } /> }
@@ -27,7 +27,7 @@ const NavigationLink = ( { direction, onClick, translate } ) => {
 
 NavigationLink.propTypes = {
 	direction: PropTypes.oneOf( [ 'back', 'forward' ] ).isRequired,
-	onClick: PropTypes.func.isRequired,
+	href: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
 

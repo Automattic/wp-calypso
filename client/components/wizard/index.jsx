@@ -4,7 +4,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { get, indexOf } from 'lodash';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -26,7 +25,7 @@ class Wizard extends Component {
 
 	getStepIndex = () => indexOf( this.props.steps, this.props.stepName );
 
-	goBack = () => {
+	getBackUrl = () => {
 		const stepIndex = this.getStepIndex();
 
 		if ( stepIndex < 1 ) {
@@ -40,10 +39,10 @@ class Wizard extends Component {
 			return;
 		}
 
-		page( `${ basePath }/${ previousStepName }` );
+		return `${ basePath }/${ previousStepName }`;
 	}
 
-	skip = () => {
+	getSkipUrl = () => {
 		const { basePath, steps } = this.props;
 		const stepIndex = this.getStepIndex();
 
@@ -57,7 +56,7 @@ class Wizard extends Component {
 			return;
 		}
 
-		page( `${ basePath }/${ nextStepName }` );
+		return `${ basePath }/${ nextStepName }`;
 	}
 
 	render() {
@@ -65,6 +64,8 @@ class Wizard extends Component {
 		const component = get( components, stepName );
 		const stepIndex = this.getStepIndex();
 		const totalSteps = steps.length;
+		const backUrl = this.getBackUrl() || '';
+		const skipUrl = this.getSkipUrl() || '';
 
 		return (
 			<div className="wizard">
@@ -81,13 +82,13 @@ class Wizard extends Component {
 						{ stepIndex > 0 &&
 							<NavigationLink
 								direction="back"
-								onClick={ this.goBack } />
+								href={ backUrl } />
 						}
 
 						{ stepIndex < totalSteps - 1 &&
 							<NavigationLink
 								direction="forward"
-								onClick={ this.skip } />
+								href={ skipUrl } />
 						}
 					</div>
 				}
