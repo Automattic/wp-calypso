@@ -156,7 +156,7 @@ class MediaLibraryContent extends React.Component {
 		);
 	}
 
-	retryList() {
+	retryList = () => {
 		MediaActions.sourceChanged( this.props.site.ID );
 	}
 
@@ -185,7 +185,7 @@ class MediaLibraryContent extends React.Component {
 		analytics.tracks.recordEvent( tracksEvent, tracksData );
 	}
 
-	goToSharing( ev ) {
+	goToSharing = ev => {
 		ev.preventDefault();
 		page( `/sharing/${ this.props.site.slug }` );
 	}
