@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -59,8 +58,8 @@ const announceFailure = ( { dispatch, getState }, { query } ) => {
 	const error =
 		site && site.name
 			? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
-					args: { siteName: site.name },
-				} )
+				args: { siteName: site.name },
+			} )
 			: translate( 'Failed to retrieve comments for your site' );
 
 	dispatch( errorNotice( error ) );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -129,8 +128,8 @@ export const receiveCommentError = ( { dispatch, getState }, { siteId, commentId
 		const error =
 			rawSite && rawSite.name
 				? translate( 'Failed to retrieve comment for site “%(siteName)s”', {
-						args: { siteName: rawSite.name },
-					} )
+					args: { siteName: rawSite.name },
+				} )
 				: translate( 'Failed to retrieve comment for your site' );
 
 		dispatch( errorNotice( error, { id: `request-comment-error-${ siteId }` } ) );
@@ -202,8 +201,8 @@ const announceFailure = ( { dispatch, getState }, { query: { siteId } } ) => {
 	const error =
 		site && site.name
 			? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
-					args: { siteName: site.name },
-				} )
+				args: { siteName: site.name },
+			} )
 			: translate( 'Failed to retrieve comments for your site' );
 
 	dispatch( errorNotice( error ) );
