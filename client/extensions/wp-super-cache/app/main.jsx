@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import ExtensionRedirect from 'blocks/extension-redirect';
 import AdvancedTab from '../components/advanced';
 import CdnTab from '../components/cdn';
 import ContentsTab from '../components/contents';
@@ -65,6 +66,7 @@ class WPSuperCache extends Component {
 
 		return (
 			<Main className={ mainClassName }>
+				<ExtensionRedirect pluginId="wp-super-cache" siteId={ siteId } />
 				<QueryStatus siteId={ siteId } />
 
 				{ cacheDisabled &&
