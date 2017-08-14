@@ -306,3 +306,8 @@
 		display: none;
 	}
 }
+
+// Flips Conversations chat gridicon horizontally
+.sidebar-streams__conversations .gridicons-chat {
+	transform: rotateY( 180deg );
+}
