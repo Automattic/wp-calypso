@@ -238,41 +238,56 @@
 			}
 		}
 
-		&.comment-detail__action-like {
-			&:focus,
-			&:hover {
-				color: $orange-jazzy;
-			}
-		}
-
-		&.comment-detail__action-approve {
-			&:focus,
-			&:hover {
-				color: $alert-green;
-			}
-		}
-
-		&.comment-detail__action-spam,
-		&.comment-detail__action-trash,
-		&.comment-detail__action-delete {
-			&:focus,
-			&:hover {
-				color: $alert-red;
-			}
-		}
 
 		&.is-approved {
-			color: $alert-green;
+			color: lighten( $alert-green, 30% );
 		}
 		&.is-liked {
-			color: $orange-jazzy;
+			color: lighten( $orange-jazzy, 30% );
 		}
 		&.is-spam {
-			color: $alert-red;
+			color: lighten( $alert-red, 30% );
 		}
 		&.is-trash {
-			color: $gray-dark;
+			color: lighten( $gray-dark, 30% );
 		}
+	}
+}
+.comment-detail.card:not( .is-edit-mode ) .comment-detail__actions .button.is-borderless {
+	&.comment-detail__action-like {
+		&:focus,
+		&:hover {
+			color: $orange-jazzy;
+		}
+	}
+
+	&.comment-detail__action-approve {
+		&:focus,
+		&:hover {
+			color: $alert-green;
+		}
+	}
+
+	&.comment-detail__action-spam,
+	&.comment-detail__action-trash,
+	&.comment-detail__action-delete {
+		&:focus,
+		&:hover {
+			color: $alert-red;
+		}
+	}
+
+	&.is-approved {
+		color: $alert-green;
+	}
+	&.is-liked {
+		color: $orange-jazzy;
+	}
+	&.is-spam {
+		color: $alert-red;
+	}
+	&.is-trash {
+		color: $gray-dark;
 	}
 }
 
