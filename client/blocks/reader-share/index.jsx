@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import url from 'url';
 import { defer } from 'lodash';
 import config from 'config';
@@ -20,15 +21,13 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'gridicons';
 import * as stats from 'reader/stats';
 import { preload as preloadSection } from 'sections-preload';
-import User from 'lib/user';
 import { hasTouch } from 'lib/touch-detect';
 import SiteSelector from 'components/site-selector';
+import { getPrimarySiteId } from 'state/selectors';
 
 /**
  * Local variables
  */
-
-const user = User();
 const actionMap = {
 	twitter( post ) {
 		const twitterUrlProperties = {
@@ -80,10 +79,6 @@ function buildQuerystringForPost( post ) {
 	return qs.stringify( args );
 }
 
-function canShareToWordPress() {
-	return !! user.get().primarySiteSlug;
-}
-
 class ReaderShare extends React.Component {
 	static propTypes = {
 		iconSize: React.PropTypes.number,
@@ -130,11 +125,10 @@ class ReaderShare extends React.Component {
 	toggle = event => {
 		event.preventDefault();
 		if ( ! this.state.showingMenu ) {
-			const target = canShareToWordPress() ? 'wordpress' : 'external';
 			stats.recordAction( 'open_share' );
-			stats.recordGaEvent( 'Opened Share to ' + target );
+			stats.recordGaEvent( 'Opened Share' );
 			stats.recordTrack( 'calypso_reader_share_opened', {
-				target,
+				has_sites: this.props.hasSites,
 			} );
 		}
 		this.deferMenuChange( ! this.state.showingMenu );
@@ -224,20 +218,24 @@ class ReaderShare extends React.Component {
 							<SocialLogo icon="twitter" />
 							<span>Twitter</span>
 						</PopoverMenuItem>
-						<SiteSelector
-							className="reader-share__site-selector"
-							siteBasePath="/post"
-							onSiteSelect={ this.pickSiteToShareTo }
-							showAddNewSite={ false }
-							indicator={ false }
-							autoFocus={ ! hasTouch() }
-							groups={ true }
-							onClose={ this.closeMenu }
-						/>
+						{ this.props.hasSites
+							? <SiteSelector
+									className="reader-share__site-selector"
+									siteBasePath="/post"
+									onSiteSelect={ this.pickSiteToShareTo }
+									showAddNewSite={ false }
+									indicator={ false }
+									autoFocus={ ! hasTouch() }
+									groups={ true }
+									onClose={ this.closeMenu }
+								/>
+							: null }
 					</ReaderPopoverMenu>,
 			]
 		);
 	}
 }
 
-export default localize( ReaderShare );
+export default connect( state => ( {
+	hasSites: !! getPrimarySiteId( state ),
+} ) )( localize( ReaderShare ) );
