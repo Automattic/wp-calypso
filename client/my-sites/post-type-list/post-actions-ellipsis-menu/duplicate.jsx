@@ -12,25 +12,23 @@ import { get } from 'lodash';
  */
 import PopoverMenuItem from 'components/popover/menu-item';
 import QueryPostTypes from 'components/data/query-post-types';
-import { mc } from 'lib/analytics';
 import { canCurrentUser } from 'state/selectors';
 import { getPost } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import { getCurrentUserId, isValidCapability } from 'state/current-user/selectors';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
-import config from 'config';
+import { isEnabled } from 'config';
+import { bumpStat } from 'state/analytics/actions';
 
-function PostActionsEllipsisMenuDuplicate( { translate, siteId, canEdit, duplicateUrl, isKnownType } ) {
-	if ( ! config.isEnabled( 'posts/post-type-list' ) || ! canEdit ) {
+const bumpDuplicateStat = () => bumpStat( 'calypso_cpt_actions', 'duplicate' );
+
+function PostActionsEllipsisMenuDuplicate( { translate, siteId, canEdit, duplicateUrl, isKnownType, bumpDuplicateStat: handleStatBump } ) {
+	if ( ! isEnabled( 'posts/post-type-list' ) || ! canEdit ) {
 		return null;
 	}
 
-	function bumpStat() {
-		mc.bumpStat( 'calypso_cpt_actions', 'duplicate' );
-	}
-
 	return (
-		<PopoverMenuItem href={ duplicateUrl } onClick={ bumpStat } icon="pages">
+		<PopoverMenuItem href={ duplicateUrl } onClick={ handleStatBump } icon="pages">
 			{ siteId && ! isKnownType && <QueryPostTypes siteId={ siteId } /> }
 			{ translate( 'Duplicate', { context: 'verb' } ) }
 		</PopoverMenuItem>
@@ -44,11 +42,12 @@ PostActionsEllipsisMenuDuplicate.propTypes = {
 	canEdit: PropTypes.bool,
 	status: PropTypes.string,
 	duplicateUrl: PropTypes.string,
-	isKnownType: PropTypes.bool
+	isKnownType: PropTypes.bool,
+	bumpDuplicateStat: PropTypes.func,
 };
 
-export default connect( ( state, ownProps ) => {
-	const post = getPost( state, ownProps.globalId );
+export default connect( ( state, { globalId } ) => {
+	const post = getPost( state, globalId );
 	if ( ! post ) {
 		return {};
 	}
@@ -69,4 +68,4 @@ export default connect( ( state, ownProps ) => {
 		duplicateUrl: getEditorDuplicatePostPath( state, post.site_ID, post.ID ),
 		isKnownType: !! type
 	};
-} )( localize( PostActionsEllipsisMenuDuplicate ) );
+}, { bumpDuplicateStat } )( localize( PostActionsEllipsisMenuDuplicate ) );
