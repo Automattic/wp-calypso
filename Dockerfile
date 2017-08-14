@@ -11,7 +11,6 @@ RUN     apt-get -y update && apt-get -y install \
           wget \
           git \
           python \
-          make \
           build-essential
 
 ENV NODE_VERSION 6.11.2
