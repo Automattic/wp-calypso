@@ -27,7 +27,7 @@ export const logItems = keyedReducer(
 
 			return state
 				? state.receive( data, { found, query } )
-				: new ActivityQueryManager( data, { found, query } );
+				: new ActivityQueryManager( { items: data }, { found, query } );
 		},
 	} )
 );
