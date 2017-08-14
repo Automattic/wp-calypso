@@ -1,61 +1,73 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import classNames from 'classnames';
-import { isEqual } from 'lodash';
-import PropTypes from 'prop-types';
+var React = require( 'react' ),
+	classNames = require( 'classnames' ),
+	isEqual = require( 'lodash/isEqual' );
 
 /**
  * Internal dependencies
  */
-import Content from './content';
-import MediaActions from 'lib/media/actions';
-import MediaLibraryDropZone from './drop-zone';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import MediaUtils from 'lib/media/utils';
-import filterToMimePrefix from './filter-to-mime-prefix';
-import FilterBar from './filter-bar';
-import MediaValidationData from 'components/data/media-validation-data';
+var Content = require( './content' ),
+	MediaActions = require( 'lib/media/actions' ),
+	MediaLibraryDropZone = require( './drop-zone' ),
+	MediaLibrarySelectedStore = require( 'lib/media/library-selected-store' ),
+	MediaUtils = require( 'lib/media/utils' ),
+	filterToMimePrefix = require( './filter-to-mime-prefix' ),
+	FilterBar = require( './filter-bar' ).default,
+	MediaValidationData = require( 'components/data/media-validation-data' ),
+	urlSearch = require( 'lib/mixins/url-search' );
 import QueryPreferences from 'components/data/query-preferences';
-import searchUrl from 'lib/search-url';
 
-class MediaLibrary extends Component {
-	static propTypes = {
-		className: PropTypes.string,
-		site: PropTypes.object,
-		filter: PropTypes.string,
-		enabledFilters: PropTypes.arrayOf( PropTypes.string ),
-		search: PropTypes.string,
-		source: PropTypes.string,
-		onAddMedia: PropTypes.func,
-		onFilterChange: PropTypes.func,
-		onSourceChange: PropTypes.func,
-		onSearch: PropTypes.func,
-		onScaleChange: PropTypes.func,
-		onEditItem: PropTypes.func,
-		fullScreenDropZone: PropTypes.bool,
-		containerWidth: PropTypes.number,
-		single: PropTypes.bool,
-		scrollable: PropTypes.bool,
-		postId: PropTypes.number,
-	};
+module.exports = React.createClass( {
+	displayName: 'MediaLibrary',
 
-	static getDefaultProps = {
-		fullScreenDropZone: true,
-		onAddMedia: () => {},
-		onScaleChange: () => {},
-		scrollable: false,
-		source: '',
-	};
+	mixins: [ urlSearch ],
 
-	doSearch = keywords => {
-		searchUrl( keywords, this.props.search, this.props.onSearch );
-	};
+	propTypes: {
+		className: React.PropTypes.string,
+		site: React.PropTypes.object,
+		filter: React.PropTypes.string,
+		enabledFilters: React.PropTypes.arrayOf( React.PropTypes.string ),
+		search: React.PropTypes.string,
+		source: React.PropTypes.string,
+		onAddMedia: React.PropTypes.func,
+		onFilterChange: React.PropTypes.func,
+		onSearch: React.PropTypes.func,
+		onScaleChange: React.PropTypes.func,
+		onEditItem: React.PropTypes.func,
+		fullScreenDropZone: React.PropTypes.bool,
+		containerWidth: React.PropTypes.number,
+		single: React.PropTypes.bool,
+		scrollable: React.PropTypes.bool,
+		postId: React.PropTypes.number,
+	},
 
-	onAddMedia() {
-		const selectedItems = MediaLibrarySelectedStore.getAll( this.props.site.ID );
-		let filteredItems = selectedItems;
+	getDefaultProps: function() {
+		return {
+			fullScreenDropZone: true,
+			onAddMedia: () => {},
+			onScaleChange: () => {},
+			scrollable: false,
+			source: '',
+		};
+	},
+
+	componentDidMount: function() {
+		this.onSearch = this.props.onSearch;
+	},
+
+	componentDidUpdate: function() {
+		this.onSearch = this.props.onSearch;
+	},
+
+	componentWillUnmount: function() {
+		delete this.onSearch;
+	},
+
+	onAddMedia: function() {
+		let selectedItems = MediaLibrarySelectedStore.getAll( this.props.site.ID ),
+			filteredItems = selectedItems;
 
 		if ( ! this.props.site ) {
 			return;
@@ -81,9 +93,9 @@ class MediaLibrary extends Component {
 		}
 
 		this.props.onAddMedia();
-	}
+	},
 
-	filterRequiresUpgrade() {
+	filterRequiresUpgrade: function() {
 		const { filter, site } = this.props;
 		switch ( filter ) {
 			case 'audio':
@@ -94,9 +106,9 @@ class MediaLibrary extends Component {
 		}
 
 		return false;
-	}
+	},
 
-	renderDropZone() {
+	renderDropZone: function() {
 		if ( this.props.source !== '' ) {
 			return null;
 		}
@@ -108,10 +120,10 @@ class MediaLibrary extends Component {
 				fullScreen={ this.props.fullScreenDropZone }
 				onAddMedia={ this.onAddMedia } />
 		);
-	}
+	},
 
-	render() {
-		let content;
+	render: function() {
+		var classes, content;
 
 		content = (
 			<Content
@@ -141,7 +153,7 @@ class MediaLibrary extends Component {
 			);
 		}
 
-		const classes = classNames(
+		classes = classNames(
 			'media-library',
 			{ 'is-single': this.props.single },
 			this.props.className,
@@ -165,6 +177,4 @@ class MediaLibrary extends Component {
 			</div>
 		);
 	}
-}
-
-export default MediaLibrary;
+} );
