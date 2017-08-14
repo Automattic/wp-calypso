@@ -80,6 +80,7 @@ export class Login extends React.Component {
 	}
 
 	renderFooter() {
+		const { translate } = this.props;
 		const isOauthLogin = !! this.props.oauth2ClientData;
 		return (
 			<div
@@ -90,9 +91,30 @@ export class Login extends React.Component {
 			>
 				{ isOauthLogin ? (
 					<div className="wp-login__footer-links">
-						<a href="https://en.wordpress.com/about/" key="about">About</a>
-						<a href="https://automattic.com/privacy/" key="privacy">Privacy</a>
-						<a href="https://en.wordpress.com/tos/" key="tos">Terms of Service</a>
+						<a
+							href="https://wordpress.com/about/"
+							rel="noopener noreferrer"
+							target="_blank"
+							title={ translate( 'About' ) }
+						>
+							{ translate( 'About' ) }
+						</a>
+						<a
+							href="https://automattic.com/privacy/"
+							rel="noopener noreferrer"
+							target="_blank"
+							title={ translate( 'Privacy' ) }
+						>
+							{ translate( 'Privacy' ) }
+						</a>
+						<a
+							href="https://wordpress.com/tos/"
+							rel="noopener noreferrer"
+							target="_blank"
+							title={ translate( 'Terms of Service' ) }
+						>
+							{ translate( 'Terms of Service' ) }
+						</a>
 					</div>
 				) : (
 					<img src="/calypso/images/jetpack/powered-by-jetpack.svg" alt="Powered by Jetpack" />
