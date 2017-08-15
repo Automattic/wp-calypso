@@ -15,18 +15,26 @@ import Button from 'components/button';
 import { translate } from 'i18n-calypso';
 import { setJPOSummary } from 'state/signup/steps/jpo-summary/actions';
 
-const JPOSummaryStep = React.createClass( {
-	propTypes: {
+class JPOSummaryStep extends React.Component {
+
+	static propTypes = {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
 		setJPOSummary: PropTypes.func.isRequired,
 		signupProgress: PropTypes.array,
-		stepName: PropTypes.string,
-	},
+		stepName: PropTypes.string
+	};
+
+	constructor( props ) {
+		super( props );
+		this.getFormattedPayload = this.getFormattedPayload.bind( this );
+		this.completeOnboarding = this.completeOnboarding.bind( this );
+		this.renderStepContent = this.renderStepContent.bind( this );
+	}
 
 	getFormattedPayload() {
-		let payload = this.props.signupProgress;
+		const payload = this.props.signupProgress;
 		return {
 			siteTitle: get( payload[ 0 ], [ 'jpoSiteTitle', 'siteTitle' ], '' ),
 			siteDescription: get( payload[ 0 ], [ 'jpoSiteTitle', 'siteDescription' ], '' ),
@@ -40,7 +48,7 @@ const JPOSummaryStep = React.createClass( {
 			homepageFormat: get( payload[ 2 ], 'jpoHomepage', '' ),
 			addContactForm: get( payload[ 3 ], 'jpoContactForm', '' )
 		};
-	},
+	}
 
 	completeOnboarding() {
 		// Get the payload and original JPC url
@@ -55,7 +63,7 @@ const JPOSummaryStep = React.createClass( {
 
 		// Redirect to the original JPC URL
 		page.redirect( jetpackConnectUrl );
-	},
+	}
 
 	renderStepContent() {
 		const connectionToJetpackComplete = true;
@@ -125,7 +133,11 @@ const JPOSummaryStep = React.createClass( {
 								</ul>
 							</td>
 							<td>
-								<div className="jpo__summary-col-header">Configure more of your site:</div>
+								<div className="jpo__summary-col-header jpo-summary__col-header">
+									{
+										translate( 'Configure more of your site:' )
+									}
+								</div>
 								<ul className="jpo-summary__more-onboarding">
 									{
 										jpoSiteTitle
@@ -166,7 +178,7 @@ const JPOSummaryStep = React.createClass( {
 				</div>
 			</div>
 		);
-	},
+	}
 
 	render() {
 		const headerText = translate( 'Congratulations! %s is on its way.', {
@@ -193,7 +205,7 @@ const JPOSummaryStep = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect(
 	null,
