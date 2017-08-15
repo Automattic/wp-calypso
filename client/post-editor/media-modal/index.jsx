@@ -423,7 +423,7 @@ export class EditorMediaModal extends Component {
 		if ( this.state.source !== '' ) {
 			buttons.push( {
 				action: 'confirm',
-				label: this.props.labels.confirm || this.props.translate( 'Copy to media library' ),
+				label: this.props.translate( 'Copy to media library' ),
 				isPrimary: true,
 				disabled: isDisabled || 0 === selectedItems.length,
 				onClick: this.confirmSelection
