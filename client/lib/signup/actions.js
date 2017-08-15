@@ -68,7 +68,7 @@ const SignupActions = {
 			case 'page':
 				return 'pub/dara';
 			default:
-				return 'pub/twentyseventeen'
+				return 'pub/twentyseventeen';
 		}
 	},
 
