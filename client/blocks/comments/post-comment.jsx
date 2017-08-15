@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { get, noop, some } from 'lodash';
+import { get, noop, some, values } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -28,6 +28,13 @@ import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback.jsx';
 import CommentActions from './comment-actions';
 
+// values conveniently also correspond to css classNames to apply
+export const POST_COMMENT_DISPLAY_TYPES = {
+	singleLine: 'is-single-line',
+	excerpt: 'is-excerpt',
+	full: 'is-full',
+};
+
 class PostComment extends Component {
 	static propTypes = {
 		commentsTree: PropTypes.object.isRequired,
@@ -42,6 +49,7 @@ class PostComment extends Component {
 		onCommentSubmit: PropTypes.func,
 		maxDepth: PropTypes.number,
 		showNestingReplyArrow: PropTypes.bool,
+		displayType: PropTypes.oneOf( values( POST_COMMENT_DISPLAY_TYPES ) ),
 
 		// connect()ed props:
 		currentUser: PropTypes.object.isRequired,
@@ -55,6 +63,7 @@ class PostComment extends Component {
 		maxChildrenToShow: 5,
 		onCommentSubmit: noop,
 		showNestingReplyArrow: false,
+		displayType: POST_COMMENT_DISPLAY_TYPES.full,
 	};
 
 	state = {
@@ -221,7 +230,7 @@ class PostComment extends Component {
 			commentAuthorName: parentAuthorName,
 		} = this.getAuthorDetails( parentCommentId );
 
-		const postCommentClassnames = classnames( 'comments__comment', {
+		const postCommentClassnames = classnames( 'comments__comment', this.props.displayType, {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
 		} );
 
