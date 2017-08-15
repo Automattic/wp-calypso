@@ -116,6 +116,7 @@ export default React.createClass( {
 	getPayload: function() {
 		return {
 			siteId: this.props.siteId,
+			siteUrl: get( state, [ 'sites', 'items', this.props.siteId, 'URL' ], '' ),
 			connectionType: this.props.connectionType,
 			serverAddress: formState.getFieldValue( this.state.form, 'serverAddress' ),
 			serverPort: formState.getFieldValue( this.state.form, 'serverPort' ),
