@@ -50,6 +50,10 @@
 		}
 	}
 }
+.action-header__notice {
+		margin: 0;
+		width: 100%;
+}
 
 .sticky-panel {
 	@include breakpoint( ">960px" ) {
