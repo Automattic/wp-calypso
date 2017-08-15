@@ -1,5 +1,5 @@
-jest.mock( 'lib/wporg', () => require( './lib/mock-wporg' ) );
-jest.mock( 'lib/impureLodash', () => ( {
+jest.mock( 'lib/wporg', () => require( './mocks/lib/wporg' ) );
+jest.mock( 'lib/impure-lodash', () => ( {
 	debounce: cb => cb,
 } ) );
 

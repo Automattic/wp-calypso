@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import initialPackagesState from './initial-state';
+import initialPackagesState from './data/initial-state';
 import {
 	getAllSelectedPackages,
 	getCurrentlyEditingPredefinedPackages,
