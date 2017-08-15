@@ -13,6 +13,7 @@ import { find, isNumber, pick, noop, get } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSimplePayments } from 'state/selectors';
 import QuerySimplePayments from 'components/data/query-simple-payments';
@@ -35,12 +36,13 @@ import {
 	receiveUpdateProduct,
 	receiveDeleteProduct,
 } from 'state/simple-payments/product-list/actions';
-import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
+import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
+import Banner from 'components/banner';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
@@ -364,6 +366,7 @@ class SimplePaymentsDialog extends Component {
 			showDialog,
 			onClose,
 			siteId,
+			siteSlug,
 			paymentButtons,
 			currencyCode,
 			isJetpackNotSupported,
@@ -381,11 +384,23 @@ class SimplePaymentsDialog extends Component {
 
 		if ( ! shouldQuerySitePlans && isJetpackNotSupported ) {
 			return this.renderEmptyDialog(
-				<Notice
-					status="is-error"
-					text={ translate( 'Please upgrade to Jetpack 5.2 to use Simple Payments feature' ) }
-					onDismissClick={ onClose }
-				/>
+				<EmptyContent
+					className="upgrade-jetpack"
+					illustration="/calypso/images/illustrations/illustration-jetpack.svg"
+					title={ translate( 'Upgrade Jetpack to use Simple Payments' ) }
+					illustrationWidth={ 600 }
+					action={
+						<Banner
+							icon="star"
+							title={ translate( 'Upgrade your Jetpack!' ) }
+							description={ translate( 'Simple Payments requires Jetpack version 5.2 or later.' ) }
+							feature={ FEATURE_SIMPLE_PAYMENTS }
+							plan={ PLAN_PREMIUM }
+							href={ '../../plugins/jetpack/' + siteSlug }
+						/>
+					}
+				/>,
+				true
 			);
 		}
 
@@ -457,6 +472,7 @@ export default connect( ( state, { siteId } ) => {
 
 	return {
 		siteId,
+		siteSlug: getSiteSlug( state, siteId ),
 		paymentButtons: getSimplePayments( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		shouldQuerySitePlans: getSitePlanSlug( state, siteId ) === null,
