@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import get from 'lodash/get';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -49,14 +50,11 @@ const JPOSummaryStep = React.createClass( {
 		// Flag the flow as complete for use in JPC
 		localStorage.setItem( 'jpoFlowComplete', '1' );
 
-		/**
-		 * Store the payload in localStorage for use after the connection
-		 * to Jetpack has been authorized
-		 */
+		// Store the payload in localStorage for use after Jetpack is connected
 		localStorage.setItem( 'jpoPayload', JSON.stringify( payload ) );
 
 		// Redirect to the original JPC URL
-		window.location.href = jetpackConnectUrl;
+		page.redirect( jetpackConnectUrl );
 	},
 
 	skipStep() {
