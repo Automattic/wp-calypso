@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,8 +22,12 @@ import { bumpStat } from 'state/analytics/actions';
 
 const bumpDuplicateStat = () => bumpStat( 'calypso_cpt_actions', 'duplicate' );
 
-function PostActionsEllipsisMenuDuplicate( { translate, siteId, canEdit, duplicateUrl, isKnownType, bumpDuplicateStat: handleStatBump } ) {
-	if ( ! isEnabled( 'posts/post-type-list' ) || ! canEdit ) {
+function PostActionsEllipsisMenuDuplicate(
+	{ translate, siteId, canEdit, duplicateUrl, isKnownType, bumpDuplicateStat: handleStatBump, status }
+) {
+	const validStatus = includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], status );
+
+	if ( ! isEnabled( 'posts/post-type-list' ) || ! canEdit || ! validStatus ) {
 		return null;
 	}
 
@@ -63,6 +67,7 @@ export default connect( ( state, { globalId } ) => {
 	}
 
 	return {
+		status: post.status,
 		siteId: post.site_ID,
 		canEdit: canCurrentUser( state, post.site_ID, capability ),
 		duplicateUrl: getEditorDuplicatePostPath( state, post.site_ID, post.ID ),
