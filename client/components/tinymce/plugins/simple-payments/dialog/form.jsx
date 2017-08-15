@@ -14,14 +14,11 @@ import { flowRight as compose, padEnd } from 'lodash';
  * Internal dependencies
  */
 import ExternalLink from 'components/external-link';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormInputValidation from 'components/forms/form-input-validation';
+import ReduxFormFieldset, { RenderFieldset } from 'components/redux-forms/redux-form-fieldset';
 import UploadImage from 'blocks/upload-image';
 import { getCurrencyDefaults } from 'lib/format-currency';
 
@@ -92,43 +89,6 @@ const validate = ( values, props ) => {
 
 	return errors;
 };
-
-/*
- * Render a `FormFieldset` parametrized by the input field component type.
- * It accepts props that are compatible with what Redux Form `Field` passes down to renderers.
- */
-const RenderFieldset = ( {
-	inputComponent: InputComponent,
-	input,
-	meta,
-	label,
-	explanation,
-	...props
-} ) => {
-	const isError = !! ( meta.touched && meta.error );
-
-	return (
-		<FormFieldset>
-			{ label &&
-				<FormLabel htmlFor={ input.name }>
-					{ label }
-				</FormLabel> }
-			<InputComponent id={ input.name } isError={ isError } { ...input } { ...props } />
-			{ isError && <FormInputValidation isError text={ meta.error } /> }
-			{ explanation &&
-				<FormSettingExplanation>
-					{ explanation }
-				</FormSettingExplanation> }
-		</FormFieldset>
-	);
-};
-
-/*
- * Convenience wrapper around Redux Form `Field` to render a `FormFieldset`. Usage:
- *   <ReduxFormFieldset name="firstName" label="First Name" component={ FormTextInput } />
- */
-const ReduxFormFieldset = ( { component, ...props } ) =>
-	<Field component={ RenderFieldset } inputComponent={ component } { ...props } />;
 
 // The 'price' input displays data from two fields: `price` and `currency`. That's why we
 // render it using the `Fields` component instead of `Field`. We need this rendering wrapper
