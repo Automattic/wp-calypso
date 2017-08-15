@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { get, indexOf } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ class Wizard extends Component {
 	static propTypes = {
 		backText: PropTypes.string,
 		basePath: PropTypes.string,
-		components: PropTypes.objectOf( PropTypes.element ).isRequired,
+		components: PropTypes.objectOf( PropTypes.func ).isRequired,
 		forwardText: PropTypes.string,
 		steps: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		stepName: PropTypes.string.isRequired,
@@ -61,6 +62,8 @@ class Wizard extends Component {
 		return `${ basePath }/${ nextStepName }`;
 	}
 
+	goToStep = ( stepName ) => page( `${ this.props.basePath }/${ stepName }` );
+
 	render() {
 		const {
 			backText,
@@ -83,7 +86,7 @@ class Wizard extends Component {
 						totalSteps={ totalSteps } />
 				}
 
-				{ component }
+				{ component && React.createElement( component, { goToStep: this.goToStep } ) }
 
 				{ totalSteps > 1 &&
 					<div className="wizard__navigation-links">
