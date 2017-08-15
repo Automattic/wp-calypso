@@ -218,6 +218,7 @@
 
 // Individual Comment
 .comments__comment {
+	list-style-type: none;
 	margin-top: 20px;
 	position: relative;
 
@@ -376,6 +377,29 @@ a.comments__comment-username {
 	}
 }
 
+// Post comments line-clamping
+.comments__comment-content {
+
+	&.is-excerpt,
+	&.is-single-line {
+		overflow: hidden;
+		position: relative;
+
+		&::after{
+			@include long-content-fade( $size: 150px );
+			height: 20px;
+			top: auto;
+		}
+	}
+
+	&.is-excerpt {
+		max-height: 15px * 1.6 * 3;
+	}
+
+	&.is-single-line {
+		max-height: 15px * 1.6;
+	}
+}
 
 // Actions for Individual Comments
 .comments__comment-actions {
