@@ -41,9 +41,9 @@ export class LoginForm extends Component {
 		privateSite: PropTypes.bool,
 		redirectTo: PropTypes.string,
 		requestError: PropTypes.object,
-		socialAccountIsLinking: PropTypes.bool.isRequired,
-		socialAccountLinkEmail: PropTypes.string.isRequired,
-		socialAccountLinkService: PropTypes.string.isRequired,
+		socialAccountIsLinking: PropTypes.bool,
+		socialAccountLinkEmail: PropTypes.string,
+		socialAccountLinkService: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		isFormDisabled: PropTypes.bool,
 	};

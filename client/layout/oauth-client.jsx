@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { getSection } from 'state/ui/selectors';
-import { getOAuth2ClientData } from 'state/login/selectors';
+import { getOAuth2ClientData } from 'state/login/oauth2/selectors';
 
 const OauthClientLayout = ( {
 	primary,
@@ -18,41 +18,8 @@ const OauthClientLayout = ( {
 	section,
 	oauth2ClientData,
 } ) => {
-	const clients = {
-		930: {
-			name: 'vaultpress',
-			img_url: 'https://vaultpress.com/images/vaultpress-wpcc-nav-2x.png',
-		},
-		973: {
-			name: 'akismet',
-			img_url: 'https://akismet.com/img/akismet-wpcc-logo-2x.png',
-		},
-		978: {
-			name: 'polldaddy',
-			img_url: 'https://polldaddy.com/images/polldaddy-wpcc-logo-2x.png',
-		},
-		1854: {
-			name: 'gravatar',
-			img_url: 'https://gravatar.com/images/grav-logo-2x.png',
-		},
-		50019: {
-			name: 'woo',
-			img_url: 'https://woocommerce.com/wp-content/themes/woomattic/images/logo-woocommerce@2x.png',
-		},
-		50915: {
-			name: 'woo',
-			img_url: 'https://woocommerce.com/wp-content/themes/woomattic/images/logo-woocommerce@2x.png',
-		},
-		50916: {
-			name: 'woo',
-			img_url: 'https://woocommerce.com/wp-content/themes/woomattic/images/logo-woocommerce@2x.png',
-		},
-	};
-
-	let client = false;
-	if ( oauth2ClientData && oauth2ClientData.id in clients ) {
-		client = clients[ oauth2ClientData.id ];
-	}
+	const hasValidOAuth2ClientData = !! oauth2ClientData;
+	const oauthClientName = hasValidOAuth2ClientData && oauth2ClientData.name;
 
 	const classes = classNames( 'layout', {
 		[ 'is-group-' + section.group ]: !! section,
@@ -60,8 +27,8 @@ const OauthClientLayout = ( {
 		'focus-content': true,
 		'has-no-sidebar': true, // Logged-out never has a sidebar
 		'wp-singletree-layout': !! primary,
-		dops: !! client,
-		[ client.name ]: !! client,
+		dops: hasValidOAuth2ClientData,
+		[ oauthClientName ]: hasValidOAuth2ClientData,
 	} );
 
 	return (
