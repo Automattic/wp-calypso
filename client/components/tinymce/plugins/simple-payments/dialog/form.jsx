@@ -13,6 +13,7 @@ import { flowRight as compose, memoize } from 'lodash';
 /**
  * Internal dependencies
  */
+import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
@@ -173,7 +174,13 @@ class ProductForm extends Component {
 						label={ translate( 'Email' ) }
 						explanation={ translate(
 							'This is where PayPal will send your money.' +
-								" To claim a payment, you'll need a PayPal account connected to a bank account."
+								" To claim a payment, you'll need a {{paypalLink}}Paypal account{{/paypalLink}}" +
+								' connected to a bank account.',
+							{
+								components: {
+									paypalLink: <ExternalLink href="https://paypal.com" target="_blank" />,
+								},
+							}
 						) }
 						component={ renderField( FormTextInput ) }
 					/>
