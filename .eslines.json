@@ -1,8 +1,14 @@
 {
-    "rulesNotToDowngrade": ["no-unused-vars"],
-    "remote": "origin/master",
-    "processors": {
-	    "default": "lines-modified",
-	    "master": "parsing-errors"
+  "branches": {
+    "default": [ "downgrade-unmodified-lines", "enforce" ],
+    "master": [ "filter-parsing-errors" ]
+  },
+  "processors": {
+    "downgrade-unmodified-lines": {
+      "remote": "origin/master"
+    },
+    "enforce": {
+      "rules": [ "no-unused-vars" ]
     }
+  }
 }
