@@ -7,7 +7,6 @@
 // ==========================================================================
 
 @import 'layout/style';
-@import 'layout/oauth-client/style';
 
 @import 'account-recovery/components/account-recovery-error-message/style';
 @import 'account-recovery/forgot-username-form/style';
@@ -233,6 +232,7 @@
 @import 'components/happychat/agent-w/style';
 @import 'layout/community-translator/style';
 @import 'layout/masterbar/style';
+@import 'layout/masterbar/oauth-client-woo';
 @import 'layout/nps-survey-notice/style';
 @import 'layout/nux-welcome/style';
 @import 'layout/offline-status/style';

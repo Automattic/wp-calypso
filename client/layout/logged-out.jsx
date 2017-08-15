@@ -10,10 +10,9 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
-import { getOAuth2ClientData } from 'state/login/selectors';
 import { getSection } from 'state/ui/selectors';
-import OauthClientLayout from 'layout/oauth-client';
-import { showOAuth2Layout } from 'state/login/oauth2/selectors';
+import OauthClientMasterbar from 'layout/masterbar/oauth-client';
+import { getOAuth2ClientData, showOAuth2Layout } from 'state/login/oauth2/selectors';
 
 const LayoutLoggedOut = ( {
 	oauth2ClientData,
@@ -22,27 +21,25 @@ const LayoutLoggedOut = ( {
 	redirectUri,
 	useOAuth2Layout,
 } ) => {
-	let client = null;
-	if ( oauth2ClientData && oauth2ClientData.id in clients ) {
-		client = clients[ oauth2ClientData.id ];
-	}
-
 	const classNameObject = {
 		[ 'is-group-' + section.group ]: !! section,
 		[ 'is-section-' + section.name ]: !! section,
 		'focus-content': true,
 		'has-no-sidebar': true, // Logged-out never has a sidebar
 		'wp-singletree-layout': !! primary,
-		dops: !! client,
 	};
 
-	if ( client ) {
-		classNameObject[ client.name ] = !! client;
-	}
-
 	let masterbar = <MasterbarLoggedOut title={ section.title } sectionName={ section.name } redirectUri={ redirectUri } />;
-	if ( useOAuth2Layout && client ) {
-		masterbar = <OauthClientLayout client={ client } />;
+
+	if ( useOAuth2Layout ) {
+		const hasValidOAuth2ClientData = !! oauth2ClientData;
+		const oauthClientName = hasValidOAuth2ClientData && oauth2ClientData.name;
+		classNameObject.dops = hasValidOAuth2ClientData;
+		classNameObject[ oauthClientName ] = hasValidOAuth2ClientData;
+
+		if ( oauthClientName ) {
+			masterbar = <OauthClientMasterbar oauth2ClientData={ oauth2ClientData } />;
+		}
 	}
 
 	return (

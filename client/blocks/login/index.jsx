@@ -142,7 +142,7 @@ class Login extends Component {
 					clientTitle: oauth2ClientData.title
 				}
 			} );
-			if ( oauth2ClientData === 'woo' ) { //TODO
+			if ( oauth2ClientData.name && oauth2ClientData.name === 'woo' ) {
 				preHeader = (
 					<Gridicon icon="my-sites" size={ 72 } />
 				);
@@ -251,6 +251,7 @@ export default connect(
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		linkingSocialUser: getLinkingSocialUser( state ),
 		linkingSocialService: getLinkingSocialService( state ),
+		oauth2ClientData: getOAuth2ClientData( state ),
 	} ), {
 		recordTracksEvent,
 	}

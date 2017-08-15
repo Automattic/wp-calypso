@@ -17,7 +17,7 @@ export const initialClientsData = {
 		id: 930,
 		name: 'vaultpress',
 		title: 'Vaultpress',
-		icon: 'https://vaultpress.com/images/vaultpress-wpcc-nav-2x.png',
+		img_url: 'https://vaultpress.com/images/vaultpress-wpcc-nav-2x.png',
 		img_height: 50,
 		img_width: 70,
 	},
@@ -25,7 +25,7 @@ export const initialClientsData = {
 		id: 973,
 		name: 'akismet',
 		title: 'Akismet',
-		icon: 'https://akismet.com/img/akismet-wpcc-logo-2x.png',
+		img_url: 'https://akismet.com/img/akismet-wpcc-logo-2x.png',
 		img_height: 50,
 		img_width: 70,
 	},
@@ -33,7 +33,7 @@ export const initialClientsData = {
 		id: 978,
 		name: 'polldaddy',
 		title: 'Polldaddy',
-		icon: 'https://polldaddy.com/images/polldaddy-wpcc-logo-2x.png',
+		img_url: 'https://polldaddy.com/images/polldaddy-wpcc-logo-2x.png',
 		img_height: 50,
 		img_width: 70,
 	},
@@ -41,7 +41,7 @@ export const initialClientsData = {
 		id: 1854,
 		name: 'gravatar',
 		title: 'Gravatar',
-		icon: 'https://gravatar.com/images/grav-logo-2x.png',
+		img_url: 'https://gravatar.com/images/grav-logo-2x.png',
 		img_height: 50,
 		img_width: 70,
 	},
@@ -49,7 +49,7 @@ export const initialClientsData = {
 		id: 50019,
 		name: 'woo',
 		title: 'WooCommerce',
-		icon: 'https://woocommerce.com/wp-content/themes/woomattic/images/logo-woocommerce@2x.png',
+		img_url: 'https://woocommerce.com/wp-content/themes/woomattic/images/logo-woocommerce@2x.png',
 		img_height: 41,
 		img_width: 200,
 	},
@@ -57,7 +57,7 @@ export const initialClientsData = {
 		id: 50915,
 		name: 'woo',
 		title: 'WooCommerce',
-		icon: 'https://woocommerce.com/wp-content/themes/woomattic/images/logo-woocommerce@2x.png',
+		img_url: 'https://woocommerce.com/wp-content/themes/woomattic/images/logo-woocommerce@2x.png',
 		img_height: 41,
 		img_width: 200,
 	},
@@ -65,14 +65,17 @@ export const initialClientsData = {
 		id: 50916,
 		name: 'woo',
 		title: 'WooCommerce',
-		icon: 'https://woocommerce.com/wp-content/themes/woomattic/images/logo-woocommerce@2x.png',
+		img_url: 'https://woocommerce.com/wp-content/themes/woomattic/images/logo-woocommerce@2x.png',
 		img_height: 41,
 		img_width: 200,
 	},
 };
 
 export const clients = createReducer( initialClientsData, {
-	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => Object.assign( {}, state, { [ data.id ]: data } ),
+	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => {
+		const newData = Object.assign( {}, state[ data.id ], data );
+		return Object.assign( {}, state, { [ data.id ]: newData } );
+	}
 } );
 
 export const currentClientId = createReducer( null, {
