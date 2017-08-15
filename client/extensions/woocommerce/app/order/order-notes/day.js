@@ -30,9 +30,7 @@ class OrderNotesByDay extends Component {
 		const header = (
 			<div>
 				<h3>{ displayDate }</h3>
-				<div>
-					<small>{ translate( '%(count)s events', { args: { count } } ) }</small>
-				</div>
+				<small>{ translate( '%(count)s events', { args: { count } } ) }</small>
 			</div>
 		);
 
