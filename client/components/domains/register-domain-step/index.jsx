@@ -340,6 +340,7 @@ const RegisterDomainStep = React.createClass( {
 							status = result && result.status ? result.status : error,
 							{ AVAILABLE, UNKNOWN } = domainAvailability,
 							isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
+
 						this.setState( { lastDomainStatus: status } );
 						if ( isDomainAvailable ) {
 							this.setState( { notice: null } );
