@@ -5,10 +5,10 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { reduxForm, Field, getFormValues, isValid, isDirty } from 'redux-form';
+import { reduxForm, Field, Fields, getFormValues, isValid, isDirty } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import emailValidator from 'email-validator';
-import { flowRight as compose, memoize } from 'lodash';
+import { flowRight as compose, memoize, padEnd } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,6 +22,7 @@ import FormCurrencyInput from 'components/forms/form-currency-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormInputValidation from 'components/forms/form-input-validation';
 import UploadImage from 'blocks/upload-image';
+import { getCurrencyDefaults } from 'lib/format-currency';
 
 const REDUX_FORM_NAME = 'simplePaymentsForm';
 
@@ -42,8 +43,8 @@ function decimalPlaces( number ) {
 // Validation function for the form
 const validate = ( values, props ) => {
 	// The translate function was passed as a prop to the `reduxForm()` wrapped component
-	const { currencyDefaults, translate } = props;
-	const precision = currencyDefaults ? currencyDefaults.precision : 2;
+	const { translate } = props;
+	const { precision } = getCurrencyDefaults( values.currency );
 	const errors = {};
 
 	if ( ! values.title ) {
@@ -114,6 +115,20 @@ const renderField = memoize(
 	}
 );
 
+// The 'price' input displays data from two fields: `price` and `currency`. That's why we
+// render it using the `Fields` component instead of `Field`. We need this rendering wrapper
+// to transform the props from `{ price: { input, meta }, currency: { input, meta } }` that
+// `Fields` is receiving to `{ input, meta }` that `Field` expects.
+const renderPriceField = ( { price, currency, ...props } ) => {
+	const Input = renderField( FormCurrencyInput );
+	const { symbol, precision } = getCurrencyDefaults( currency.input.value );
+	// Tune the placeholder to the precision value: 0 -> '0', 1 -> '0.0', 2 -> '0.00'
+	const placeholder = precision > 0 ? padEnd( '0.', precision + 2, '0' ) : '0';
+	return (
+		<Input { ...price } { ...props } currencySymbolPrefix={ symbol } placeholder={ placeholder } />
+	);
+};
+
 // helper to render UploadImage as a form field
 class UploadImageField extends Component {
 	handleImageEditorDone = () => this.props.input.onChange( 'uploading' );
@@ -137,7 +152,7 @@ class ProductForm extends Component {
 	handleUploadImageError = ( errorCode, errorMessage ) => this.props.showError( errorMessage );
 
 	render() {
-		const { translate, currencyDefaults } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<form className="editor-simple-payments-modal__form">
@@ -158,12 +173,10 @@ class ProductForm extends Component {
 						label={ translate( 'Description' ) }
 						component={ renderField( FormTextarea ) }
 					/>
-					<Field
-						name="price"
+					<Fields
+						names={ [ 'price', 'currency' ] }
 						label={ translate( 'Price' ) }
-						currencySymbolPrefix={ currencyDefaults.symbol }
-						placeholder="0.00"
-						component={ renderField( FormCurrencyInput ) }
+						component={ renderPriceField }
 					/>
 					<Field name="multiple" type="checkbox" component={ renderField( CompactFormToggle ) }>
 						{ translate( 'Allow people to buy more than one item at a time.' ) }
