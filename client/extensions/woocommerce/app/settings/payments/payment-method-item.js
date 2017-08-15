@@ -100,6 +100,21 @@ class PaymentMethodItem extends Component {
 		this.props.closeEditingPaymentMethod( site.ID, method.id );
 	}
 
+	onDoneAndEnable = () => {
+		const { method, site } = this.props;
+		this.props.closeEditingPaymentMethod( site.ID, method.id );
+		if ( ! method.enabled ) {
+			this.props.changePaymentMethodEnabled(
+				site.ID,
+				method.id,
+				true
+			);
+			analytics.tracks.recordEvent( 'calypso_woocommerce_payment_method_enabled', {
+				payment_method: method.id,
+			} );
+		}
+	}
+
 	outputEditComponent = () => {
 		const { currentlyEditingMethod, method, site } = this.props;
 		if ( method.id === 'paypal' ) {
@@ -117,7 +132,7 @@ class PaymentMethodItem extends Component {
 					method={ currentlyEditingMethod }
 					onCancel={ this.onCancel }
 					onEditField={ this.onEditField }
-					onDone={ this.onDone }
+					onDone={ this.onDoneAndEnable }
 					site={ site } />
 			);
 		}
@@ -161,6 +176,9 @@ class PaymentMethodItem extends Component {
 			this.props.currentlyEditingMethod.id;
 		const { method, translate } = this.props;
 		let editButtonText = method.enabled ? translate( 'Manage' ) : translate( 'Set up' );
+		if ( method.id === 'stripe' && hasStripeValidCredentials( method ) ) {
+			editButtonText = translate( 'Manage' );
+		}
 		if ( currentlyEditingId === method.id ) {
 			editButtonText = translate( 'Cancel' );
 		}
