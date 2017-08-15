@@ -57,10 +57,6 @@ const JPOSummaryStep = React.createClass( {
 		page.redirect( jetpackConnectUrl );
 	},
 
-	skipStep() {
-		this.props.goToNextStep();
-	},
-
 	renderStepContent() {
 		const connectionToJetpackComplete = true;
 
@@ -192,7 +188,7 @@ const JPOSummaryStep = React.createClass( {
 					fallbackSubHeaderText={ subHeaderText }
 					signupProgress={ this.props.signupProgress }
 					stepContent={ this.renderStepContent() }
-					goToNextStep={ this.skipStep }
+					goToNextStep={ false }
 				/>
 			</div>
 		);
