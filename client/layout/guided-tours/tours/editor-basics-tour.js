@@ -83,6 +83,30 @@ export const EditorBasicsTour = makeTour(
 				}
 			</p>
 			<ButtonRow>
+				<Next step="add-other" />
+				<Quit />
+			</ButtonRow>
+		</Step>
+		<Step
+			name="add-other"
+			arrow="top-left"
+			target=".editor-html-toolbar__button-insert-media, .mce-wpcom-insert-menu button"
+			placement="below"
+			style={ { marginLeft: '22px', zIndex: 'auto' } }
+		>
+			<p>
+				{
+					translate( 'The {{icon/}} lets you add other things, such as a contact form. ' +
+						"If you're on a business plan, you can even add {{strong}}payment buttons{{/strong}}!", {
+							components: {
+								strong: <strong />,
+								icon: <Gridicon icon="chevron-down" />,
+							}
+						}
+					)
+				}
+			</p>
+			<ButtonRow>
 				<Next step="sidebar-options" />
 				<Quit />
 			</ButtonRow>
