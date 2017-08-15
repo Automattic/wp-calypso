@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -212,7 +213,8 @@ class PostComment extends Component {
 						commentId,
 						className: 'comments__comment-username',
 					} ) }
-					{ this.props.showNestingReplyArrow && parentAuthorName &&
+					{ this.props.showNestingReplyArrow &&
+						parentAuthorName &&
 						<span className="comments__comment-respondee">
 							<Gridicon icon="chevron-right" size={ 16 } />
 							{ this.renderAuthorTag( {
