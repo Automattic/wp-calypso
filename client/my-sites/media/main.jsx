@@ -19,6 +19,7 @@ import MediaUtils from 'lib/media/utils';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import accept from 'lib/accept';
+import searchUrl from 'lib/search-url';
 
 class Media extends Component {
 
@@ -224,6 +225,11 @@ class Media extends Component {
 	};
 
 	handleSourceChange = ( source, cb ) => {
+		if ( this.props.search ) {
+			// Before we change the source reset the search value - it is confusing to jump between sources while searching
+			searchUrl( '', this.props.search );
+		}
+
 		MediaActions.sourceChanged( this.props.selectedSite.ID );
 		this.setState( { source }, cb );
 	};
