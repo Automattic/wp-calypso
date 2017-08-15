@@ -77,8 +77,11 @@ export function render( element, key = JSON.stringify( element ) ) {
 
 export function serverRender( req, res ) {
 	const context = req.context;
-	const cacheKey = getCacheKey( context );
-	let title, metas = [], links = [];
+	let title, metas = [], links = [], cacheKey = false;
+
+	if ( isSectionIsomorphic( context.store.getState() ) && ! context.user ) {
+		cacheKey = getCacheKey( context );
+	}
 
 	if ( ! isDefaultLocale( context.lang ) ) {
 		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';

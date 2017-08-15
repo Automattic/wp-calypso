@@ -10,7 +10,6 @@ import qs from 'qs';
 import { serverRender } from 'render';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
 import { setRoute as setRouteAction } from 'state/ui/actions';
-import { isSectionIsomorphic } from 'state/ui/selectors';
 
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function( route, ...middlewares ) {
@@ -98,10 +97,6 @@ function compose( ...functions ) {
 }
 
 export function getCacheKey( context ) {
-	if ( ! isSectionIsomorphic( context.store.getState() ) || context.user ) {
-		return false;
-	}
-
 	if ( isEmpty( context.query ) ) {
 		return context.pathname;
 	}
