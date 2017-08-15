@@ -83,7 +83,7 @@ export const items = createReducer( {}, {
 		( state, { data } ) => {
 			return merge(
 				{},
-				state,
+				sanitizeExtra( state ),
 				{ _contactDetailsCache: sanitizeExtra( data ) }
 			);
 		},
@@ -121,7 +121,10 @@ export default combineReducers( {
  * @return {Object}        Sanitized contact details
  */
 function sanitizeExtra( data ) {
-	return data && isArray( data.extra )
-		? omit( data, 'extra' )
+	const path = data._contactDetailsCache
+		? [ '_contactDetailsCache', 'extra' ]
+		: 'extra';
+	return data && isArray( get( data, path ) )
+		? omit( data, path )
 		: data;
 }
