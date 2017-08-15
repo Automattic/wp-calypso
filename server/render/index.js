@@ -4,7 +4,7 @@
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
-import { difference, get, isEmpty, pick } from 'lodash';
+import { difference, isEmpty, pick } from 'lodash';
 import qs from 'qs';
 import debugFactory from 'debug';
 
@@ -13,7 +13,7 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import { isDefaultLocale } from 'lib/i18n-utils';
-import { isSectionIsomorphic, getIsomorphicSectionConfiguration } from 'state/ui/selectors';
+import { isSectionIsomorphic } from 'state/ui/selectors';
 import {
 	getDocumentHeadFormattedTitle,
 	getDocumentHeadMeta,
@@ -85,21 +85,8 @@ function getCacheKey( context ) {
 	}
 
 	let queryParams = Object.keys( context.query );
-	const cacheConfiguration = get( getIsomorphicSectionConfiguration( context.store.getState() ), 'cache', null );
 
-	if ( cacheConfiguration && cacheConfiguration.queryParams === true ) {
-		return context.canonicalPath;
-	}
-
-	if ( cacheConfiguration && Array.isArray( cacheConfiguration.queryParams.exclude ) ) {
-		queryParams = difference( queryParams, cacheConfiguration.queryParams.exclude );
-	}
-
-	if ( isEmpty( queryParams ) ) {
-		return context.pathname;
-	}
-
-	if ( cacheConfiguration && isEmpty( difference( queryParams, cacheConfiguration.queryParams.include ) ) ) {
+	if ( isEmpty( difference( queryParams, context.cacheQueryKeys ) ) ) {
 		return context.pathname + '?' + qs.stringify( pick( context.query, queryParams ) );
 	}
 

@@ -24,6 +24,8 @@ export default {
 			context.store.dispatch( fetchOAuth2ClientData( Number( client_id ) ) );
 		}
 
+		context.cacheQueryKeys = [ 'client_id' ];
+
 		context.primary = (
 			<WPLogin
 				locale={ lang }
