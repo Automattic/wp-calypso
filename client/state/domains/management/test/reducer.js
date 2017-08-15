@@ -155,6 +155,8 @@ describe( 'reducer', () => {
 			} );
 
 			it( 'should handle corrupt values', () => {
+				const initialState = {};
+
 				const dataSequence = [
 					{ before: "I'm still standing" },
 					[ '' ],
@@ -168,7 +170,7 @@ describe( 'reducer', () => {
 							type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
 							data: { extra: data }
 						} ),
-					{}
+					initialState
 				);
 
 				expect( state._contactDetailsCache ).to.have.property( 'extra' )
