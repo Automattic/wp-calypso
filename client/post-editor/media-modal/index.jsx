@@ -204,10 +204,10 @@ export class EditorMediaModal extends Component {
 		}
 
 		const confirmMessage = translate(
-			'Are you sure you want to delete this item? \
-It will be permanently removed from all other locations where it currently appears.',
-			'Are you sure you want to delete these items? \
-They will be permanently removed from all other locations where they currently appear.',
+			'Are you sure you want to delete this item? ' +
+			'It will be permanently removed from all other locations where it currently appears.',
+			'Are you sure you want to delete these items? ' +
+			'They will be permanently removed from all other locations where they currently appear.',
 			{ count: selectedCount }
 		);
 

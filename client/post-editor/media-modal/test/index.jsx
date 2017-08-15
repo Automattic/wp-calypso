@@ -77,8 +77,8 @@ describe( 'EditorMediaModal', function() {
 		).instance();
 		tree.deleteMedia();
 
-		expect( accept ).to.have.been.calledWith( 'Are you sure you want to delete this item? \
-It will be permanently removed from all other locations where it currently appears.' );
+		expect( accept ).to.have.been.calledWith( 'Are you sure you want to delete this item? ' +
+			'It will be permanently removed from all other locations where it currently appears.' );
 		process.nextTick( function() {
 			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
 			done();
@@ -91,8 +91,8 @@ It will be permanently removed from all other locations where it currently appea
 		).instance();
 		tree.deleteMedia();
 
-		expect( accept ).to.have.been.calledWith( 'Are you sure you want to delete these items? \
-They will be permanently removed from all other locations where they currently appear.' );
+		expect( accept ).to.have.been.calledWith( 'Are you sure you want to delete these items? ' +
+			'They will be permanently removed from all other locations where they currently appear.' );
 		process.nextTick( function() {
 			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA );
 			done();
@@ -108,8 +108,8 @@ They will be permanently removed from all other locations where they currently a
 		).instance();
 		tree.deleteMedia();
 
-		expect( accept ).to.have.been.calledWith( 'Are you sure you want to delete this item? \
-It will be permanently removed from all other locations where it currently appears.' );
+		expect( accept ).to.have.been.calledWith( 'Are you sure you want to delete this item? ' +
+			'It will be permanently removed from all other locations where it currently appears.' );
 		process.nextTick( function() {
 			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
 			done();
@@ -122,8 +122,8 @@ It will be permanently removed from all other locations where it currently appea
 		).instance();
 		tree.deleteMedia();
 
-		expect( accept ).to.have.been.calledWith( 'Are you sure you want to delete this item? \
-It will be permanently removed from all other locations where it currently appears.' );
+		expect( accept ).to.have.been.calledWith( 'Are you sure you want to delete this item? ' +
+			'It will be permanently removed from all other locations where it currently appears.' );
 		process.nextTick( function() {
 			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA[ 0 ] );
 			done();
