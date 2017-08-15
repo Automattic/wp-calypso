@@ -203,8 +203,8 @@ export class EditorMediaModal extends Component {
 		}
 
 		const confirmMessage = this.props.translate(
-			'Are you sure you want to permanently delete this item?',
-			'Are you sure you want to permanently delete these items?',
+			'All deleted media will stop functioning on your website. Are you sure you want to delete this item? This cannot be undone.',
+			'All deleted media will stop functioning on your website. Are you sure you want to delete these items? This cannot be undone.',
 			{ count: selectedCount }
 		);
 
