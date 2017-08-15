@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { get, noop, some } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
@@ -270,21 +271,21 @@ class PostComment extends Component {
 }
 
 PostComment.propTypes = {
-	commentsTree: React.PropTypes.object.isRequired,
-	commentId: React.PropTypes.oneOfType( [
-		React.PropTypes.string, // can be 'placeholder-123'
-		React.PropTypes.number,
+	commentsTree: PropTypes.object.isRequired,
+	commentId: PropTypes.oneOfType( [
+		PropTypes.string, // can be 'placeholder-123'
+		PropTypes.number,
 	] ).isRequired,
-	onReplyClick: React.PropTypes.func,
-	depth: React.PropTypes.number,
-	post: React.PropTypes.object,
-	maxChildrenToShow: React.PropTypes.number,
-	onCommentSubmit: React.PropTypes.func,
-	maxDepth: React.PropTypes.number,
-	showNestingReplyArrow: React.PropTypes.bool,
+	onReplyClick: PropTypes.func,
+	depth: PropTypes.number,
+	post: PropTypes.object,
+	maxChildrenToShow: PropTypes.number,
+	onCommentSubmit: PropTypes.func,
+	maxDepth: PropTypes.number,
+	showNestingReplyArrow: PropTypes.bool,
 
 	// connect()ed props:
-	currentUser: React.PropTypes.object.isRequired,
+	currentUser: PropTypes.object.isRequired,
 };
 
 PostComment.defaultProps = {
