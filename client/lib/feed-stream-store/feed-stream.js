@@ -2,7 +2,18 @@
 /**
  * External Dependencies
  */
-import { filter, findIndex, findLastIndex, forEach, get, map, noop, defer, uniqBy } from 'lodash';
+import {
+	filter,
+	findIndex,
+	findLastIndex,
+	forEach,
+	get,
+	map,
+	noop,
+	some,
+	defer,
+	uniqBy,
+} from 'lodash';
 import moment from 'moment';
 import debugFactory from 'debug';
 
@@ -16,6 +27,7 @@ import { action as ActionTypes } from './constants';
 import PollerPool from 'lib/data-poller';
 import { setLastStoreId } from 'reader/controller-helper';
 import * as stats from 'reader/stats';
+import { keyToString, keysAreEqual } from './post-key';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 
@@ -407,7 +419,7 @@ export default class FeedStream {
 	filterNewPosts( posts ) {
 		const postById = this.postById;
 		posts = filter( posts, function( post ) {
-			return ! postById.has( post.ID );
+			return ! postById.has( keyToString( this.keyMaker( post ) ) );
 		} );
 		posts = this.filterFollowedXPosts( posts );
 		return map( posts, this.keyMaker );
@@ -450,7 +462,7 @@ export default class FeedStream {
 		if ( postKeys.length ) {
 			const postById = this.postById;
 			forEach( postKeys, function( postKey ) {
-				postById.add( postKey.postId );
+				postById.add( keyToString( postKey ) );
 			} );
 			this.postKeys = this.postKeys.concat( postKeys );
 		}
@@ -488,12 +500,18 @@ export default class FeedStream {
 
 		const postById = this.postById;
 		forEach( this.pendingPostKeys, function( postKey ) {
-			postById.add( postKey.postId );
+			postById.add( keyToString( postKey ) );
 		} );
 
 		const mostRecentPostDate = moment( this.postKeys[ 0 ][ this.dateProperty ] );
 
-		if ( this.pendingDateAfter > mostRecentPostDate ) {
+		// if the first element in the current postKeys isn't also in the pending set,
+		// we have a possible gap
+		const firstKey = this.postKeys[ 0 ];
+		if (
+			! some( this.pendingPostKeys, pendingKey => keysAreEqual( pendingKey, firstKey ) ) &&
+			this.pendingDateAfter > mostRecentPostDate
+		) {
 			this.pendingPostKeys.push( {
 				isGap: true,
 				from: mostRecentPostDate,
@@ -501,9 +519,8 @@ export default class FeedStream {
 			} );
 		}
 
-		this.postKeys = uniqBy(
-			this.pendingPostKeys.concat( this.postKeys ),
-			postKey => postKey.postId
+		this.postKeys = uniqBy( this.pendingPostKeys.concat( this.postKeys ), postKey =>
+			keyToString( postKey )
 		);
 		if ( this.selectedIndex > -1 ) {
 			//we already scroll to top of content, so deselect so we don't

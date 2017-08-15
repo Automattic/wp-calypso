@@ -13,6 +13,7 @@ import PagedStream from './paged-stream';
 import FeedStreamCache from './feed-stream-cache';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
+import { keyToString, keysAreEqual } from './post-key';
 
 const wpcomUndoc = wpcom.undocumented();
 
@@ -58,7 +59,7 @@ const conversationsKeyMaker = ( function() {
 	const baseMaker = buildNamedKeyMaker( 'last_comment_date_gmt' );
 	return function keyMaker( post ) {
 		const key = baseMaker( post );
-		key.comments = map( post.comments, 'ID' );
+		key.comments = map( post.comments, 'ID' ).reverse();
 		return key;
 	};
 } )();
@@ -76,10 +77,10 @@ function filterConversationsPosts( posts ) {
 	const newPosts = map( posts, this.keyMaker );
 	return filter( newPosts, post => {
 		// only keep things that we don't have or things that have new comments
-		if ( ! this.postById.has( post.postId ) ) {
+		if ( ! this.postById.has( keyToString( post ) ) ) {
 			return true; // new new
 		}
-		const existingPost = find( this.postKeys, { postId: post.postId } );
+		const existingPost = find( this.postKeys, postKey => keysAreEqual( postKey, post ) );
 		if ( ! existingPost ) {
 			// this should never happen
 			return true;
