@@ -7,8 +7,8 @@ It keeps track of progress and enables navigating back or forward through the st
 
 ```js
 const components = {
-	'first': <First />,
-	'second': <Second />,
+	'first': First,
+	'second': Second,
 };
 const steps = [ 'first', 'second' ];
 
@@ -51,7 +51,7 @@ Used when navigating between steps. The URL that the user is sent to will be con
 	<tr><td>Required</td><td>Yes</td></tr>
 </table>
 
-An object of React components that will be rendered at each step in the wizard. Each key should map
+An object of React component types that will be rendered at each step in the wizard. Each key should map
 to one of the values in the `steps` array (see below).
 
 ### `forwardText`

@@ -18,9 +18,9 @@ const STEPS = {
 };
 const steps = [ STEPS.FIRST, STEPS.SECOND, STEPS.THIRD ];
 const components = {
-	[ STEPS.FIRST ]: <First />,
-	[ STEPS.SECOND ]: <Second />,
-	[ STEPS.THIRD ]: <Third />,
+	[ STEPS.FIRST ]: First,
+	[ STEPS.SECOND ]: Second,
+	[ STEPS.THIRD ]: Third,
 };
 
 const WizardExample = ( { stepName = steps[ 0 ] } ) => (
