@@ -230,7 +230,7 @@ class PostComment extends Component {
 			commentAuthorName: parentAuthorName,
 		} = this.getAuthorDetails( parentCommentId );
 
-		const postCommentClassnames = classnames( 'comments__comment', this.props.displayType, {
+		const postCommentClassnames = classnames( 'comments__comment', {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
 		} );
 
@@ -278,6 +278,7 @@ class PostComment extends Component {
 					<PostCommentContent
 						content={ comment.content }
 						isPlaceholder={ comment.isPlaceholder }
+						className={ this.props.displayType }
 					/> }
 
 				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
