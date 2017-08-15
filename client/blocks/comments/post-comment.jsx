@@ -29,6 +29,34 @@ import PostTrackback from './post-trackback.jsx';
 import CommentActions from './comment-actions';
 
 class PostComment extends Component {
+	static propTypes = {
+		commentsTree: PropTypes.object.isRequired,
+		commentId: PropTypes.oneOfType( [
+			PropTypes.string, // can be 'placeholder-123'
+			PropTypes.number,
+		] ).isRequired,
+		onReplyClick: PropTypes.func,
+		depth: PropTypes.number,
+		post: PropTypes.object,
+		maxChildrenToShow: PropTypes.number,
+		onCommentSubmit: PropTypes.func,
+		maxDepth: PropTypes.number,
+		showNestingReplyArrow: PropTypes.bool,
+
+		// connect()ed props:
+		currentUser: PropTypes.object.isRequired,
+	};
+
+	static defaultProps = {
+		onReplyClick: noop,
+		errors: [],
+		depth: 1,
+		maxDepth: Infinity,
+		maxChildrenToShow: 5,
+		onCommentSubmit: noop,
+		showNestingReplyArrow: false,
+	};
+
 	state = {
 		showReplies: false,
 	};
@@ -272,33 +300,9 @@ class PostComment extends Component {
 	}
 }
 
-PostComment.propTypes = {
-	commentsTree: PropTypes.object.isRequired,
-	commentId: PropTypes.oneOfType( [
-		PropTypes.string, // can be 'placeholder-123'
-		PropTypes.number,
-	] ).isRequired,
-	onReplyClick: PropTypes.func,
-	depth: PropTypes.number,
-	post: PropTypes.object,
-	maxChildrenToShow: PropTypes.number,
-	onCommentSubmit: PropTypes.func,
-	maxDepth: PropTypes.number,
-	showNestingReplyArrow: PropTypes.bool,
+PostComment.propTypes = {};
 
-	// connect()ed props:
-	currentUser: PropTypes.object.isRequired,
-};
-
-PostComment.defaultProps = {
-	onReplyClick: noop,
-	errors: [],
-	depth: 1,
-	maxDepth: Infinity,
-	maxChildrenToShow: 5,
-	onCommentSubmit: noop,
-	showNestingReplyArrow: false,
-};
+PostComment.defaultProps = {};
 
 export default connect( state => ( {
 	currentUser: getCurrentUser( state ),
