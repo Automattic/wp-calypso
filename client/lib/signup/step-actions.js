@@ -28,6 +28,7 @@ import analytics from 'lib/analytics';
 
 import {
 	SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
+	SITES_ONCE_CHANGED,
 } from 'state/action-types';
 
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
@@ -170,11 +171,12 @@ function fetchReduxSite( siteSlug, { dispatch, getState }, callback ) {
 		return;
 	}
 
-	// Have to manually call the thunk in order to access the promise on which
-	// to call `then`.
 	debug( 'fetchReduxSite: requesting all sites', siteSlug );
-	requestSites()( dispatch ).then( () =>
-		fetchReduxSite( siteSlug, { dispatch, getState }, callback ) );
+	dispatch( {
+		type: SITES_ONCE_CHANGED,
+		listener: () =>	fetchReduxSite( siteSlug, { dispatch, getState }, callback )
+	} );
+	dispatch( requestSites() );
 }
 
 function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
