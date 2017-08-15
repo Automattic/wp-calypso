@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { difference, isEmpty, pick } from 'lodash';
+import { isEmpty, pick } from 'lodash';
 import qs from 'qs';
 
 /**
@@ -97,15 +97,10 @@ function compose( ...functions ) {
 }
 
 export function getCacheKey( context ) {
-	if ( isEmpty( context.query ) ) {
+	if ( isEmpty( context.query ) || isEmpty( context.cacheQueryKeys ) ) {
 		return context.pathname;
 	}
 
-	const queryParams = Object.keys( context.query );
-
-	if ( isEmpty( difference( queryParams, context.cacheQueryKeys ) ) ) {
-		return context.pathname + '?' + qs.stringify( pick( context.query, queryParams ) );
-	}
-
-	return false;
+	const cachedQueryParams = pick( context.query, context.cacheQueryKeys );
+	return context.pathname + '?' + qs.stringify( cachedQueryParams );
 }
