@@ -148,11 +148,11 @@ describe( 'middleware', () => {
 		it( 'should send relevant browser information to the connection', () => {
 			const getState = () => state;
 			const connection = { sendInfo: spy() };
-			const action = { type: HAPPYCHAT_SEND_USER_INFO, siteUrl: 'http://butt.holdings/' };
+			const action = { type: HAPPYCHAT_SEND_USER_INFO, site: { URL: 'http://butt.holdings/' } };
 			sendInfo( connection, { getState }, action );
 
 			expect( connection.sendInfo ).to.have.been.calledOnce;
-			expect( connection.sendInfo.firstCall.args[ 0 ].text ).to.include( state.happychat.geoLocation.city );
+			expect( connection.sendInfo.firstCall.args[ 0 ].site.URL ).to.equal( action.site.URL );
 		} );
 	} );
 
