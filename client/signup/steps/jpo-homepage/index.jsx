@@ -52,19 +52,28 @@ const JPOHomepageStep = React.createClass( {
 	},
 
 	renderStepContent() {
+		console.log( this.props );
 		return (
 			<div className="jpo__homepage-wrapper">
 				<div className="jpo__homepage-row">
-					<Card>
-						<NewsGraphic />
-						<Button onClick={ this.onSelectNews }>{ translate( 'Recent news or updates' ) }</Button>
-						<div className="jpo__homepage-description">{ translate( 'We can pull the latest information into your homepage for you.' ) }</div>
-					</Card>
-					<Card>
-						<StaticGraphic />
-						<Button onClick={ this.onSelectStatic }>{ translate( 'A static welcome page' ) }</Button>
-						<div className="jpo__homepage-description">{ translate( 'Have your homepage stay the same as time goes on.' ) }</div>
-					</Card>
+					<a className="jpo-homepage__select-news" href="#" onClick={ this.onSelectNews }>
+						<Card>
+							<NewsGraphic />
+							<Button onClick={ this.onSelectNews }>{ translate( 'Recent news or updates' ) }</Button>
+							<div className="jpo__homepage-description">
+								{ translate( 'We can pull the latest information into your homepage for you.' ) }
+							</div>
+						</Card>
+					</a>
+					<a className="jpo-homepage__select-static" href="#" onClick={ this.onSelectStatic }>
+						<Card>
+							<StaticGraphic />
+							<Button onClick={ this.onSelectStatic }>{ translate( 'A static welcome page' ) }</Button>
+							<div className="jpo__homepage-description">
+								{ translate( 'Have your homepage stay the same as time goes on.' ) }
+							</div>
+						</Card>
+					</a>
 				</div>
 			</div>
 		);

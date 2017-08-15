@@ -1,20 +1,25 @@
 .jpo__contact-form-wrapper .card {
 	max-width: 320px;
 	text-align: center;
-}
 
-.jpo__contact-form-wrapper .card svg {
-	width: 100%;
-	height: auto;
-	margin-bottom: 1rem;
-}
+	&:hover,
+	&.is-selected {
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
+	}
 
-.jpo__contact-form-wrapper .card .button {
-	font-size: 1.25rem;
-	margin-bottom: 1rem;
-	color: $blue-wordpress;
-	padding: 7px;
-    line-height: 1;
+	svg {
+		width: 100%;
+		height: auto;
+		margin-bottom: 1rem;
+	}
+
+	.button {
+		font-size: 1.25rem;
+		margin-bottom: 1rem;
+		color: $blue-wordpress;
+		padding: 7px;
+		line-height: 1;
+	}
 }
 
 .jpo__contact-form-description {
