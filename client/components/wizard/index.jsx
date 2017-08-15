@@ -13,8 +13,10 @@ import ProgressIndicator from 'components/wizard/progress-indicator';
 
 class Wizard extends Component {
 	static propTypes = {
+		backText: PropTypes.string,
 		basePath: PropTypes.string,
 		components: PropTypes.objectOf( PropTypes.element ).isRequired,
+		forwardText: PropTypes.string,
 		steps: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		stepName: PropTypes.string.isRequired,
 	}
@@ -60,7 +62,13 @@ class Wizard extends Component {
 	}
 
 	render() {
-		const { components, steps, stepName } = this.props;
+		const {
+			backText,
+			components,
+			forwardText,
+			steps,
+			stepName,
+		} = this.props;
 		const component = get( components, stepName );
 		const stepIndex = this.getStepIndex();
 		const totalSteps = steps.length;
@@ -82,13 +90,15 @@ class Wizard extends Component {
 						{ stepIndex > 0 &&
 							<NavigationLink
 								direction="back"
-								href={ backUrl } />
+								href={ backUrl }
+								text={ backText } />
 						}
 
 						{ stepIndex < totalSteps - 1 &&
 							<NavigationLink
 								direction="forward"
-								href={ skipUrl } />
+								href={ skipUrl }
+								text={ forwardText } />
 						}
 					</div>
 				}
