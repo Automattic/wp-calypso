@@ -192,12 +192,14 @@ class Media extends Component {
 	 * @param  {Function} [callback] - callback function
 	 */
 	deleteMedia( callback ) {
-		const site = this.props.selectedSite;
-		const selected = MediaLibrarySelectedStore.getAll( site.ID );
+		const { selectedSite, translate } = this.props;
+		const selected = MediaLibrarySelectedStore.getAll( selectedSite.ID );
 		const selectedCount = selected.length;
-		const confirmMessage = this.props.translate(
-			'Are you sure you want to permanently delete this item?',
-			'Are you sure you want to permanently delete these items?',
+		const confirmMessage = translate(
+			'Are you sure you want to delete this item? ' +
+			'It will be permanently removed from all other locations where it currently appears.',
+			'Are you sure you want to delete these items? ' +
+			'They will be permanently removed from all other locations where they currently appear.',
 			{ count: selectedCount }
 		);
 
@@ -210,6 +212,8 @@ class Media extends Component {
 			if ( callback ) {
 				callback();
 			}
+		}, translate( 'Delete' ), null, {
+			isScary: true
 		} );
 	}
 
