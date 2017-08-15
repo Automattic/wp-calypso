@@ -187,11 +187,9 @@ export const socialAccount = createReducer( { isCreating: false, createError: nu
 		bearerToken,
 		createError: null,
 	} ),
-	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: ( state, { error, authInfo } ) => ( {
+	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: ( state, { error } ) => ( {
 		...state,
 		requestError: error,
-		email: error.email,
-		authInfo
 	} ),
 	[ USER_RECEIVE ]: state => ( { ...state, bearerToken: null, username: null, createError: null, } ),
 	[ LOGIN_REQUEST ]: state => ( { ...state, createError: null } ),
