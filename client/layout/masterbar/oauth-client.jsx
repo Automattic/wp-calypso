@@ -6,7 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const OauthClientMasterbar = ( { oauth2ClientData } ) => (
-	<div className="masterbar__oauth-client">
+	<header className="masterbar__oauth-client">
 		<nav>
 			<ul className="masterbar__oauth-client-main-nav">
 				<li className="masterbar__oauth-client-current">
@@ -27,7 +27,7 @@ const OauthClientMasterbar = ( { oauth2ClientData } ) => (
 				</li>
 			</ul>
 		</nav>
-	</div>
+	</header>
 );
 
 OauthClientMasterbar.displayName = 'OauthClientMasterbar';
