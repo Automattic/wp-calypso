@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isArray, merge, omit, stubFalse, stubTrue } from 'lodash';
+import { get, isArray, merge, omit, stubFalse, stubTrue } from 'lodash';
 
 /**
  * Internal dependencies

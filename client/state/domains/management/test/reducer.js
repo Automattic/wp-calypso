@@ -178,6 +178,34 @@ describe( 'reducer', () => {
 						after: 'better than I ever did'
 					} );
 			} );
+
+			it( 'should replace an existing corrupt value', () => {
+				const corruptExistingData = {
+					_contactDetailsCache: {
+						extra: [ '' ],
+					}
+				};
+
+				const newData = {
+					extra: {
+						newData: 'exists',
+					}
+				};
+
+				const result = items( corruptExistingData, {
+					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
+					data: newData,
+				} );
+
+				expect( result._contactDetailsCache )
+					.to.have.property( 'extra' )
+					.that.is.not.an( 'array' );
+
+				expect( result._contactDetailsCache ).to.have.deep.property(
+					'extra.newData',
+					'exists'
+				);
+			} );
 		} );
 	} );
 } );
