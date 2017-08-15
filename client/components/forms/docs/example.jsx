@@ -262,6 +262,7 @@ class FormFields extends React.PureComponent {
 							checked={ this.state.checkedRadio }
 							onChange={ this.handleRadioChange }
 						/>
+						<br />
 						<FormRadiosBarExample
 							isThumbnail={ true }
 							checked={ this.state.checkedRadio }
