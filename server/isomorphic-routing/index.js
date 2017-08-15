@@ -1,9 +1,16 @@
 /**
+ * External dependencies
+ */
+import { difference, isEmpty, pick } from 'lodash';
+import qs from 'qs';
+
+/**
  * Internal dependencies
  */
 import { serverRender } from 'render';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
 import { setRoute as setRouteAction } from 'state/ui/actions';
+import { isSectionIsomorphic } from 'state/ui/selectors';
 
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function( route, ...middlewares ) {
@@ -83,8 +90,27 @@ function applyMiddlewares( context, expressNext, ...middlewares ) {
 	} ) );
 	compose( ...liftedMiddlewares )();
 }
+
 function compose( ...functions ) {
 	return functions.reduceRight( ( composed, f ) => (
 		() => f( composed )
 	), () => {} );
+}
+
+export function getCacheKey( context ) {
+	if ( ! isSectionIsomorphic( context.store.getState() ) || context.user ) {
+		return false;
+	}
+
+	if ( isEmpty( context.query ) ) {
+		return context.pathname;
+	}
+
+	const queryParams = Object.keys( context.query );
+
+	if ( isEmpty( difference( queryParams, context.cacheQueryKeys ) ) ) {
+		return context.pathname + '?' + qs.stringify( pick( context.query, queryParams ) );
+	}
+
+	return false;
 }

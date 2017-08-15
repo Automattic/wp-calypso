@@ -4,8 +4,7 @@
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
-import { difference, isEmpty, pick } from 'lodash';
-import qs from 'qs';
+import { pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -22,6 +21,7 @@ import {
 import { reducer } from 'state';
 import { SERIALIZE } from 'state/action-types';
 import stateCache from 'state-cache';
+import { getCacheKey } from 'isomorphic-routing';
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;
@@ -73,24 +73,6 @@ export function render( element, key = JSON.stringify( element ) ) {
 		}
 	}
 	//todo: render an error?
-}
-
-function getCacheKey( context ) {
-	if ( ! isSectionIsomorphic( context.store.getState() ) || context.user ) {
-		return false;
-	}
-
-	if ( isEmpty( context.query ) ) {
-		return context.pathname;
-	}
-
-	let queryParams = Object.keys( context.query );
-
-	if ( isEmpty( difference( queryParams, context.cacheQueryKeys ) ) ) {
-		return context.pathname + '?' + qs.stringify( pick( context.query, queryParams ) );
-	}
-
-	return false;
 }
 
 export function serverRender( req, res ) {
