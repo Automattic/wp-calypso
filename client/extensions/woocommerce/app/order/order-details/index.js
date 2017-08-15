@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import { isOrderWaitingPayment } from 'woocommerce/lib/order-status';
-import OrderCreated from './order-created';
-import OrderDetailsTable from './order-details-table';
-import OrderFulfillment from './order-fulfillment';
-import OrderRefundCard from './order-refund-card';
+import OrderCreated from '../order-created';
+import OrderDetailsTable from './table';
+import OrderFulfillment from '../order-fulfillment';
+import OrderRefundCard from '../order-refund';
 import OrderStatus from 'woocommerce/components/order-status';
 import OrderStatusSelect from 'woocommerce/components/order-status/select';
 import SectionHeader from 'components/section-header';
@@ -56,11 +56,11 @@ class OrderDetails extends Component {
 		}
 
 		return (
-			<div className="order__details">
+			<div className="order-details">
 				<SectionHeader label={ translate( 'Order %(orderId)s Details', { args: { orderId: `#${ order.id }` } } ) }>
 					<span>{ this.renderStatus() }</span>
 				</SectionHeader>
-				<Card className="order__details-card">
+				<Card className="order-details__card">
 					<OrderCreated order={ order } site={ site } />
 					<OrderDetailsTable order={ order } site={ site } />
 					<OrderRefundCard order={ order } site={ site } />

@@ -20,7 +20,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import Notice from 'components/notice';
-import OrderDetailsTable from './order-details-table';
+import OrderDetailsTable from '../order-details/table';
 import PriceInput from 'woocommerce/components/price-input';
 import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
 
@@ -142,7 +142,7 @@ class OrderRefundCard extends Component {
 
 		if ( paymentMethod && ( -1 === paymentMethod.method_supports.indexOf( 'refunds' ) ) ) {
 			return (
-				<div className="order__refund-method">
+				<div className="order-refund__method">
 					<h3>{ translate( 'Manual Refund' ) }</h3>
 					<p>{ translate( 'This payment method doesn\'t support automated refunds and must be submitted manually.' ) }</p>
 				</div>
@@ -150,7 +150,7 @@ class OrderRefundCard extends Component {
 		}
 
 		return (
-			<div className="order__refund-method">
+			<div className="order-refund__method">
 				<h3>
 					{ translate( 'Refunding payment via %(method)s', {
 						args: {
@@ -183,12 +183,12 @@ class OrderRefundCard extends Component {
 		];
 
 		return (
-			<div className="order__details-refund">
-				<div className="order__details-refund-label">
+			<div className="order-refund">
+				<div className="order-refund__label">
 					<Gridicon icon="checkmark" />
 					{ this.getRefundStatus() }
 				</div>
-				<div className="order__details-refund-action">
+				<div className="order-refund__action">
 					{ ( 'refunded' !== order.status )
 						? <Button onClick={ this.toggleDialog }>{ translate( 'Submit Refund' ) }</Button>
 						: null
@@ -200,19 +200,19 @@ class OrderRefundCard extends Component {
 					onClose={ this.toggleDialog }
 					className={ dialogClass }
 					buttons={ dialogButtons }
-					additionalClassNames="order__refund-dialog woocommerce">
+					additionalClassNames="order-refund__dialog woocommerce">
 					<h1>{ translate( 'Refund order' ) }</h1>
 					<OrderDetailsTable order={ order } isEditable onChange={ this.recalculateRefund } site={ site } />
-					<form className="order__refund-container">
-						<FormLabel className="order__refund-note">
+					<form className="order-refund__container">
+						<FormLabel className="order-refund__note">
 							{ translate( 'Refund note' ) }
 							<FormTextarea onChange={ this.updateNote } name="refund_note" value={ refundNote } />
 						</FormLabel>
 
-						<FormFieldset className="order__refund-details">
-							<FormLabel className="order__refund-amount">
-								<span className="order__refund-amount-label">{ translate( 'Total refund amount' ) }</span>
-								<div className="order__refund-amount-value">
+						<FormFieldset className="order-refund__details">
+							<FormLabel className="order-refund__amount">
+								<span className="order-refund__amount-label">{ translate( 'Total refund amount' ) }</span>
+								<div className="order-refund__amount-value">
 									<PriceInput
 										name="refund_total"
 										readOnly

@@ -2,7 +2,8 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -26,16 +27,16 @@ class OrderTotalRow extends Component {
 		}
 
 		const tax = (
-			<div className="order__details-totals-tax">
+			<div className="order-details__totals-tax">
 				{ formatCurrency( order.total_tax, order.currency ) }
 			</div>
 		);
 
 		return (
-			<div className="order__details-total">
-				<div className="order__details-totals-label">{ translate( 'Total' ) }</div>
+			<div className="order-details__total">
+				<div className="order-details__totals-label">{ translate( 'Total' ) }</div>
 				{ showTax && tax }
-				<div className="order__details-totals-value">
+				<div className="order-details__totals-value">
 					{ formatCurrency( order.total, order.currency ) }
 				</div>
 			</div>

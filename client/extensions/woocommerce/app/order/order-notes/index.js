@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 
-class OrderActivityLog extends Component {
+class OrderNotes extends Component {
 	static propTypes = {
 		order: PropTypes.object,
 	}
@@ -23,7 +23,7 @@ class OrderActivityLog extends Component {
 		}
 
 		return (
-			<div className="order__activity-log">
+			<div className="order-notes">
 				<SectionHeader label={ translate( 'Activity Log' ) } />
 				<Card></Card>
 			</div>
@@ -31,4 +31,4 @@ class OrderActivityLog extends Component {
 	}
 }
 
-export default localize( OrderActivityLog );
+export default localize( OrderNotes );

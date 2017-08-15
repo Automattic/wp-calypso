@@ -109,7 +109,7 @@ class OrderFulfillment extends Component {
 	render() {
 		const { order, translate } = this.props;
 		const { errorMessage, showDialog, trackingNumber } = this.state;
-		const dialogClass = 'woocommerce order__fulfillment'; // eslint/css specificity hack
+		const dialogClass = 'woocommerce order-fulfillment'; // eslint/css specificity hack
 		if ( ! order ) {
 			return null;
 		}
@@ -120,17 +120,17 @@ class OrderFulfillment extends Component {
 		];
 
 		const classes = classNames( {
-			'order__details-fulfillment': true,
+			'order-fulfillment': true,
 			'is-completed': 'completed' === order.status,
 		} );
 
 		return (
 			<div className={ classes }>
-				<div className="order__details-fulfillment-label">
+				<div className="order-fulfillment__label">
 					<Gridicon icon={ 'completed' === order.status ? 'checkmark' : 'shipping' } />
 					{ this.getFulfillmentStatus() }
 				</div>
-				<div className="order__details-fulfillment-action">
+				<div className="order-fulfillment__action">
 					{ ( this.isShippable( order ) )
 						? <Button primary onClick={ this.toggleDialog }>{ translate( 'Fulfill' ) }</Button>
 						: null
@@ -140,18 +140,18 @@ class OrderFulfillment extends Component {
 				<Dialog isVisible={ showDialog } onClose={ this.toggleDialog } className={ dialogClass } buttons={ dialogButtons }>
 					<h1>{ translate( 'Fulfill order' ) }</h1>
 					<form>
-						<FormFieldset className="order__fulfillment-tracking">
-							<FormLabel className="order__fulfillment-tracking-label" htmlFor="tracking-number">
+						<FormFieldset className="order-fulfillment__tracking">
+							<FormLabel className="order-fulfillment__tracking-label" htmlFor="tracking-number">
 								{ translate( 'Enter a tracking number (optional)' ) }
 							</FormLabel>
 							<FormTextInput
 								id="tracking-number"
-								className="order__fulfillment-value"
+								className="order-fulfillment__value"
 								value={ trackingNumber }
 								onChange={ this.updateTrackingNumber }
 								placeholder={ translate( 'Tracking Number' ) } />
 						</FormFieldset>
-						<FormLabel className="order__fulfillment-email">
+						<FormLabel className="order-fulfillment__email">
 							<FormInputCheckbox checked={ this.state.shouldEmail } onChange={ this.updateCustomerEmail } />
 							<span>{ translate( 'Email tracking number to customer' ) }</span>
 						</FormLabel>

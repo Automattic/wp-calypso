@@ -13,11 +13,11 @@ import { sum } from 'lodash';
 import formatCurrency from 'lib/format-currency';
 import FormTextInput from 'components/forms/form-text-input';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import OrderDiscountRow from './order-discount-row';
-import OrderRefundRow from './order-refund-row';
-import OrderShippingRefundRow from './order-shipping-refund-row';
-import OrderShippingRow from './order-shipping-row';
-import OrderTotalRow from './order-total-row';
+import OrderDiscountRow from './row-discount';
+import OrderRefundRow from './row-refund';
+import OrderShippingRefundRow from './row-shipping-refund';
+import OrderShippingRow from './row-shipping';
+import OrderTotalRow from './row-total';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
@@ -93,12 +93,12 @@ class OrderDetailsTable extends Component {
 	renderTableHeader = () => {
 		const { translate } = this.props;
 		return (
-			<TableRow className="order__detail-header">
-				<TableItem isHeader className="order__detail-item-product">{ translate( 'Product' ) }</TableItem>
-				<TableItem isHeader className="order__detail-item-cost">{ translate( 'Cost' ) }</TableItem>
-				<TableItem isHeader className="order__detail-item-quantity">{ translate( 'Quantity' ) }</TableItem>
-				<TableItem isHeader className="order__detail-item-tax">{ translate( 'Tax' ) }</TableItem>
-				<TableItem isHeader className="order__detail-item-total">{ translate( 'Total' ) }</TableItem>
+			<TableRow className="order-details__header">
+				<TableItem isHeader className="order-details__item-product">{ translate( 'Product' ) }</TableItem>
+				<TableItem isHeader className="order-details__item-cost">{ translate( 'Cost' ) }</TableItem>
+				<TableItem isHeader className="order-details__item-quantity">{ translate( 'Quantity' ) }</TableItem>
+				<TableItem isHeader className="order-details__item-tax">{ translate( 'Tax' ) }</TableItem>
+				<TableItem isHeader className="order-details__item-total">{ translate( 'Total' ) }</TableItem>
 			</TableRow>
 		);
 	}
@@ -106,15 +106,15 @@ class OrderDetailsTable extends Component {
 	renderOrderItems = ( item, i ) => {
 		const { isEditable, order, site } = this.props;
 		return (
-			<TableRow key={ i } className="order__detail-items">
-				<TableItem isRowHeader className="order__detail-item-product">
-					<a href={ getLink( `/store/product/:site/${ item.product_id }`, site ) } className="order__detail-item-link">
+			<TableRow key={ i } className="order-details__items">
+				<TableItem isRowHeader className="order-details__item-product">
+					<a href={ getLink( `/store/product/:site/${ item.product_id }`, site ) } className="order-details__item-link">
 						{ item.name }
 					</a>
-					<span className="order__detail-item-sku">{ item.sku }</span>
+					<span className="order-details__item-sku">{ item.sku }</span>
 				</TableItem>
-				<TableItem className="order__detail-item-cost">{ formatCurrency( item.price, order.currency ) }</TableItem>
-				<TableItem className="order__detail-item-quantity">
+				<TableItem className="order-details__item-cost">{ formatCurrency( item.price, order.currency ) }</TableItem>
+				<TableItem className="order-details__item-quantity">
 					{ isEditable
 						? <FormTextInput
 							type="number"
@@ -126,10 +126,10 @@ class OrderDetailsTable extends Component {
 						: item.quantity
 					}
 				</TableItem>
-				<TableItem className="order__detail-item-tax">
+				<TableItem className="order-details__item-tax">
 					{ formatCurrency( item.total_tax, order.currency ) }
 				</TableItem>
-				<TableItem className="order__detail-item-total">{ formatCurrency( item.total, order.currency ) }</TableItem>
+				<TableItem className="order-details__item-total">{ formatCurrency( item.total, order.currency ) }</TableItem>
 			</TableRow>
 		);
 	}
@@ -142,14 +142,14 @@ class OrderDetailsTable extends Component {
 
 		const showTax = this.shouldShowTax();
 		const totalsClasses = classnames( {
-			'order__details-totals': true,
+			'order-details__totals': true,
 			'has-taxes': showTax,
 			'is-refund-modal': isEditable,
 		} );
 
 		return (
 			<div>
-				<Table className="order__details-table" header={ this.renderTableHeader() }>
+				<Table className="order-details__table" header={ this.renderTableHeader() }>
 					{ order.line_items.map( this.renderOrderItems ) }
 				</Table>
 
