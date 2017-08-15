@@ -236,7 +236,7 @@ class TaxesRates extends Component {
 		} );
 
 		return (
-			<Table>
+			<Table className="taxes__taxes-rates-table">
 				<TableRow isHeader>
 					<TableItem isHeader>
 						{ translate( 'Name' ) }
