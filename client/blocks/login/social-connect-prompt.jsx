@@ -13,8 +13,8 @@ import SocialLogo from 'social-logos';
 import Button from 'components/button';
 import Card from 'components/card';
 import {
-	getLinkingSocialAuthInfo,
-	getLinkingSocialService,
+	getSocialAccountLinkAuthInfo,
+	getSocialAccountLinkService,
 	getRedirectTo,
 } from 'state/login/selectors';
 import { connectSocialUser } from 'state/login/actions';
@@ -105,8 +105,8 @@ class SocialConnectPrompt extends Component {
 
 export default connect(
 	( state ) => ( {
-		linkingSocialAuthInfo: getLinkingSocialAuthInfo( state ),
-		linkingSocialService: getLinkingSocialService( state ),
+		linkingSocialAuthInfo: getSocialAccountLinkAuthInfo( state ),
+		linkingSocialService: getSocialAccountLinkService( state ),
 		redirectTo: getRedirectTo( state ),
 	} ),
 	{

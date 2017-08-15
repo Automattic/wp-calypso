@@ -144,8 +144,10 @@ class SignupForm extends Component {
 		const userExistsError = this.getUserExistsError( props );
 
 		if ( userExistsError ) {
-			const { service, token } = props.step;
-			this.props.createSocialUserFailed( service, token, userExistsError );
+			const { service, id_token, access_token } = props.step;
+			const socialInfo = { service, id_token, access_token };
+
+			this.props.createSocialUserFailed( socialInfo, userExistsError );
 			page(
 				login( {
 					isNative: config.isEnabled( 'login/native-login-links' ),

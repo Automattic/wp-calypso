@@ -682,20 +682,17 @@ describe( 'reducer', () => {
 	describe( 'socialAccountLink', () => {
 		it( 'should set linking mode on user_exists create error', () => {
 			const error = { message: 'Bad', code: 'user_exists', email: 'hello@test.com' };
-			const service = 'google';
-			const token = '123';
+			const authInfo = { id_token: '123', access_token: '123', service: 'google' };
 
 			const state = socialAccountLink( {}, {
 				type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
 				error,
-				service,
-				token,
+				authInfo
 			} );
 
 			expect( state ).to.eql( {
 				isLinking: true,
-				service,
-				token,
+				authInfo,
 				email: error.email
 			} );
 		} );

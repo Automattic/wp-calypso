@@ -22,9 +22,7 @@ import {
 	isTwoFactorAuthTypeSupported,
 	isTwoFactorEnabled,
 	isFormDisabled,
-	getLinkingSocialUser,
-	getLinkingSocialService,
-	getLinkingSocialAuthInfo,
+	getSocialAccountLinkAuthInfo,
 	getCreateSocialAccountError,
 	getSocialAccountIsLinking,
 	getSocialAccountLinkEmail,
@@ -299,46 +297,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'getLinkingSocialUser()', () => {
+	describe( 'getSocialAccountLinkAuthInfo()', () => {
 		it( 'should return null if there is no information yet', () => {
-			expect( getLinkingSocialUser( undefined ) ).to.be.null;
-		} );
-
-		it( 'should return the social user account when available', () => {
-			const account = 'foo@bar.baz';
-			expect( getLinkingSocialUser( {
-				login: {
-					socialAccount: {
-						email: account,
-					}
-				}
-			} ) ).to.eql( account );
-		} );
-	} );
-
-	describe( 'getLinkingSocialAuthInfo()', () => {
-		it( 'should return null if there is no information yet', () => {
-			expect( getLinkingSocialService( undefined ) ).to.be.null;
-		} );
-
-		it( 'should return the social service when available', () => {
-			expect( getLinkingSocialService( {
-				login: {
-					socialAccount: {
-						authInfo: {
-							service: 'google',
-							access_token: 'a_token',
-							id_token: 'another_token',
-						}
-					}
-				}
-			} ) ).to.eql( 'google' );
-		} );
-	} );
-
-	describe( 'getLinkingSocialAuthInfo()', () => {
-		it( 'should return null if there is no information yet', () => {
-			expect( getLinkingSocialAuthInfo( undefined ) ).to.be.null;
+			expect( getSocialAccountLinkAuthInfo( undefined ) ).to.be.null;
 		} );
 
 		it( 'should return the social account authentication information when available', () => {
@@ -347,9 +308,9 @@ describe( 'selectors', () => {
 				access_token: 'a_token',
 				id_token: 'another_token',
 			};
-			expect( getLinkingSocialAuthInfo( {
+			expect( getSocialAccountLinkAuthInfo( {
 				login: {
-					socialAccount: {
+					socialAccountLink: {
 						authInfo: socialAccountInfo,
 					}
 				}
@@ -410,7 +371,7 @@ describe( 'selectors', () => {
 
 	describe( 'getSocialAccountLinkService()', () => {
 		it( 'return social account linking service', () => {
-			const socialAccountLink = { service: 'google' };
+			const socialAccountLink = { authInfo: { service: 'google' } };
 
 			expect( getSocialAccountLinkService( {
 				login: {
