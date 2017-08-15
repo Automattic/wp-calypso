@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { get, noop, some, values } from 'lodash';
+import { get, noop, some, values, omit } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -139,7 +139,7 @@ class PostComment extends Component {
 					? <ol className="comments__list">
 							{ commentChildrenIds.map( childId =>
 								<PostComment
-									{ ...this.props }
+									{ ...omit( this.props, 'displayType' ) }
 									depth={ this.props.depth + 1 }
 									key={ childId }
 									commentId={ childId }

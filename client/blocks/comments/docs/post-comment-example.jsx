@@ -77,7 +77,7 @@ export default class PostCommentExample extends React.Component {
 						commentId={ 2 }
 						depth={ 0 }
 						commentsTree={ commentsTree }
-						displayType={ POST_COMMENT_DISPLAY_TYPES.full }
+						displayType={ POST_COMMENT_DISPLAY_TYPES.excerpt }
 					/>
 				</Card>
 			</div>
