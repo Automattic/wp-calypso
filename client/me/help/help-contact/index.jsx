@@ -128,9 +128,9 @@ const HelpContact = React.createClass( {
 
 	startHappychat: function( contactForm ) {
 		this.props.openHappychat();
-		const { message, site } = contactForm;
+		const { howCanWeHelp, howYouFeel, message, site } = contactForm;
 
-		this.props.sendUserInfo( site.URL );
+		this.props.sendUserInfo( howCanWeHelp, howYouFeel, site );
 		this.props.sendHappychatMessage( message );
 
 		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {

@@ -147,12 +147,12 @@ describe( 'middleware', () => {
 
 		it( 'should send relevant browser information to the connection', () => {
 			const getState = () => state;
-			const connection = { info: spy() };
+			const connection = { sendInfo: spy() };
 			const action = { type: HAPPYCHAT_SEND_USER_INFO, siteUrl: 'http://butt.holdings/' };
 			sendInfo( connection, { getState }, action );
 
-			expect( connection.info ).to.have.been.calledOnce;
-			expect( connection.info.firstCall.args[ 0 ].text ).to.include( state.happychat.geoLocation.city );
+			expect( connection.sendInfo ).to.have.been.calledOnce;
+			expect( connection.sendInfo.firstCall.args[ 0 ].text ).to.include( state.happychat.geoLocation.city );
 		} );
 	} );
 

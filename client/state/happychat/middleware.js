@@ -178,24 +178,45 @@ const sendMessage = ( connection, message ) => {
 	connection.notTyping();
 };
 
-export const sendInfo = ( connection, { getState }, siteUrl ) => {
-	const siteHelp = `\nSite I need help with: ${ siteUrl }`;
-	const screenRes = ( typeof screen === 'object' ) && `\nScreen Resolution: ${ screen.width }x${ screen.height }`;
-	const browserSize = ( typeof window === 'object' ) && `\nBrowser Size: ${ window.innerWidth }x${ window.innerHeight }`;
-	const userAgent = ( typeof navigator === 'object' ) && `\nUser Agent: ${ navigator.userAgent }`;
-	const localDateTime = `\nLocal Date: ${ moment().format( 'h:mm:ss a, MMMM Do YYYY' ) }`;
-
-	// Geo location
-	const state = getState();
-	const geoLocation = getGeoLocation( state );
-	const userLocation = ( null !== geoLocation ) ? `\nLocation: ${ geoLocation.city }, ${ geoLocation.country_long }` : '';
-
-	const msg = {
-		text: `Info\n ${ siteHelp } ${ screenRes } ${ browserSize } ${ userAgent } ${ localDateTime } ${ userLocation }`,
+export const sendInfo = ( connection, { getState }, action ) => {
+	const { howCanWeHelp, howYouFeel, site } = action;
+	const info = {
+		howCanWeHelp,
+		howYouFeel,
+		site,
+		localDateTime: moment().format( 'h:mm:ss a, MMMM Do YYYY' ),
 	};
 
-	debug( 'sending info message', msg );
-	connection.info( msg );
+	// add screen size
+	if ( 'object' === typeof ( screen ) ) {
+		info.screenSize = {
+			width: screen.width,
+			height: screen.height
+		};
+	}
+
+	// add browser size
+	if ( 'object' === typeof ( window ) ) {
+		info.browserSize = {
+			width: window.innerWidth,
+			height: window.innerHeight
+		};
+	}
+
+	// add user agent
+	if ( 'object' === typeof ( navigator ) ) {
+		info.userAgent = navigator.userAgent;
+	}
+
+	//  add geo location
+	const state = getState();
+	const geoLocation = getGeoLocation( state );
+	if ( null !== geoLocation ) {
+		info.geoLocation = geoLocation;
+	}
+
+	debug( 'sending info message', info );
+	connection.sendInfo( info );
 };
 
 export const connectIfRecentlyActive = ( connection, store ) => {
@@ -336,7 +357,7 @@ export default function( connection = null ) {
 				break;
 
 			case HAPPYCHAT_SEND_USER_INFO:
-				sendInfo( connection, store, action.siteUrl );
+				sendInfo( connection, store, action );
 				break;
 
 			case HAPPYCHAT_SEND_MESSAGE:
