@@ -3,70 +3,48 @@
 }
 
 .masterbar__oauth-client-wpcc-sign-in {
-  display: block;
-  color: #fff;
-  background-color: rgba(255, 255, 255, 0.15);
-  padding: 3px;
-  line-height: 100%;
-  position: relative;
-  top: 6px;
-  border-radius: 3px;
-  margin-right: 5px;
+	display: block;
+	color: #fff;
+	background-color: rgba(255, 255, 255, 0.15);
+	padding: 3px;
+	line-height: 100%;
+	position: relative;
+	top: 6px;
+	border-radius: 3px;
+	margin-right: 5px;
 }
 .masterbar__oauth-client-wpcc-sign-in:after {
-  content: " ";
-  display: block;
-  height: 0;
-  clear: both;
-  visibility: hidden;
+	content: " ";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
 }
 .masterbar__oauth-client-wpcom {
-  padding: 3px 10px;
-  float: left;
-  cursor: pointer;
-  line-height: 32px;
-  margin: -3px 5px -3px -3px;
-  color: rgba(255, 255, 255, 0.8);
+	padding: 3px 10px;
+	float: left;
+	cursor: pointer;
+	line-height: 32px;
+	margin: -3px 5px -3px -3px;
+	color: rgba(255, 255, 255, 0.8);
 }
 .masterbar__oauth-client-wpcom:hover {
-  color: #fff;
+	color: #fff;
 }
 .masterbar__oauth-client-wpcom .gridicon {
 	margin-bottom: 5px;
 	margin-right: 5px;
 	vertical-align: middle;
 }
-.masterbar__oauth-client-wpcc-sign-in .button {
-  float: right;
-  line-height: 30px;
-  background: #1e8cbe;
-  text-shadow: none;
-  color: #fff;
-  font-size: 14px;
-  border: 1px solid rgba(0, 0, 0, 0.6);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 3px rgba(0, 0, 0, 0.4);
-  -webkit-font-smoothing: antialiased;
-}
-.masterbar__oauth-client-wpcc-sign-in .button:hover {
-  background-color: #219cd4;
-  border: 1px solid #145b7c;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 4px rgba(0, 0, 0, 0.4);
-}
-.masterbar__oauth-client-wpcc-sign-in .button:active {
-  background-color: #176c92;
-  border-color: #104b66;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-}
 .masterbar__oauth-client-wpcc-sign-in:hover {
-  background: rgba(255, 255, 255, 0.2);
+	background: rgba(255, 255, 255, 0.2);
 }
 .masterbar__oauth-client-wpcc-sign-in.active {
-  background: rgba(0, 0, 0, 0.9);
-  box-shadow: inset 0 1px 3px black, 0 1px 0 rgba(255, 255, 255, 0.2);
+	background: rgba(0, 0, 0, 0.9);
+	box-shadow: inset 0 1px 3px black, 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 .masterbar__oauth-client-wpcc-sign-in.active .wpcom {
-  color: #fff;
+	color: #fff;
 }
 
 .woo {
