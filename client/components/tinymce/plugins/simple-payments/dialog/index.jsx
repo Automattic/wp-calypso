@@ -387,15 +387,13 @@ class SimplePaymentsDialog extends Component {
 				<EmptyContent
 					className="upgrade-jetpack"
 					illustration="/calypso/images/illustrations/illustration-jetpack.svg"
-					title={ translate( 'Upgrade Jetpack to use Simple Payments feature' ) }
+					title={ translate( 'Upgrade Jetpack to use Simple Payments' ) }
 					illustrationWidth={ 600 }
 					action={
 						<Banner
 							icon="star"
 							title={ translate( 'Upgrade your Jetpack!' ) }
-							description={ translate(
-								'Simple Payments feature requires Jetpack version 5.2 or later.'
-							) }
+							description={ translate( 'Simple Payments requires Jetpack version 5.2 or later.' ) }
 							feature={ FEATURE_SIMPLE_PAYMENTS }
 							plan={ PLAN_PREMIUM }
 							href={ '../../plugins/jetpack/' + siteSlug }
