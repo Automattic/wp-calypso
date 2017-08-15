@@ -25,7 +25,6 @@ import Navigation from './navigation';
 import ProductForm, { getProductFormValues, isProductFormValid, isProductFormDirty } from './form';
 import ProductList from './list';
 import { getCurrentUserCurrencyCode, getCurrentUserEmail } from 'state/current-user/selectors';
-import { getCurrencyDefaults } from 'lib/format-currency';
 import wpcom from 'lib/wp';
 import accept from 'lib/accept';
 import {
@@ -47,18 +46,9 @@ import Banner from 'components/banner';
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
 
-// Selector to get the form values, insert the missing field, and convert it to
-// a custom post data structure ready to be passed to `wpcom` API.
-const productFormToCustomPost = state => {
-	const currencyCode = getCurrentUserCurrencyCode( state );
-	const formValues = getProductFormValues( state );
-
-	if ( currencyCode ) {
-		formValues.currency = currencyCode;
-	}
-
-	return productToCustomPost( formValues );
-};
+// Selector to get the form values and convert them to a custom post data structure
+// ready to be passed to `wpcom` API.
+const productFormToCustomPost = state => productToCustomPost( getProductFormValues( state ) );
 
 // Thunk action creator to create a new button
 const createPaymentButton = siteId => ( dispatch, getState ) => {
@@ -108,9 +98,9 @@ class SimplePaymentsDialog extends Component {
 		title: '',
 		description: '',
 		price: '',
+		currency: 'USD',
 		multiple: false,
 		email: '',
-		currency: 'USD',
 		featuredImageId: null,
 	};
 
@@ -164,7 +154,7 @@ class SimplePaymentsDialog extends Component {
 	// or the default values for a new one.
 	getInitialFormFields( paymentId ) {
 		const { initialFields } = this.constructor;
-		const { paymentButtons, currentUserEmail } = this.props;
+		const { paymentButtons, currencyCode, currentUserEmail } = this.props;
 
 		if ( isNumber( paymentId ) ) {
 			const editedPayment = find( paymentButtons, p => p.ID === paymentId );
@@ -174,9 +164,10 @@ class SimplePaymentsDialog extends Component {
 			}
 		}
 
+		const initialCurrency = currencyCode || 'USD';
 		const initialEmail = get( paymentButtons, '0.email', currentUserEmail );
 
-		return { ...initialFields, email: initialEmail };
+		return { ...initialFields, currency: initialCurrency, email: initialEmail };
 	}
 
 	isDirectEdit() {
@@ -447,11 +438,7 @@ class SimplePaymentsDialog extends Component {
 				{ errorMessage &&
 					<Notice status="is-error" text={ errorMessage } onDismissClick={ this.dismissError } /> }
 				{ activeTab === 'form'
-					? <ProductForm
-							initialValues={ initialFormValues }
-							currencyDefaults={ getCurrencyDefaults( currencyCode ) }
-							showError={ this.showError }
-						/>
+					? <ProductForm initialValues={ initialFormValues } showError={ this.showError } />
 					: <ProductList
 							siteId={ siteId }
 							paymentButtons={ paymentButtons }
