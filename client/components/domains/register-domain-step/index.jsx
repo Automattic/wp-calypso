@@ -327,6 +327,7 @@ const RegisterDomainStep = React.createClass( {
 			[
 				callback => {
 					if ( ! domain.match( /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?\.[a-z]{2,63}$/i ) ) {
+						this.setState( { lastDomainStatus: null } );
 						return callback();
 					}
 					const timestamp = Date.now();
@@ -339,7 +340,6 @@ const RegisterDomainStep = React.createClass( {
 							status = result && result.status ? result.status : error,
 							{ AVAILABLE, UNKNOWN } = domainAvailability,
 							isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
-
 						this.setState( { lastDomainStatus: status } );
 						if ( isDomainAvailable ) {
 							this.setState( { notice: null } );
