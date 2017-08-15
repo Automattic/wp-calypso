@@ -33,4 +33,6 @@ const WizardExample = ( { stepName = steps[ 0 ] } ) => (
 	</div>
 );
 
+WizardExample.displayName = 'Wizard';
+
 export default WizardExample;
