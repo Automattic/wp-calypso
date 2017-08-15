@@ -64,10 +64,11 @@ class OrderNotes extends Component {
 	}
 
 	renderNotes = () => {
-		const { days, notesByDay } = this.props;
-		if ( ! days ) {
-			// @todo empty: We've loaded, but have no notes
-			return null;
+		const { days, notesByDay, translate } = this.props;
+		if ( ! days.length ) {
+			return (
+				<p>{ translate( 'No activity yet' ) }</p>
+			);
 		}
 
 		return days.map( ( day, index ) => {
@@ -95,7 +96,7 @@ class OrderNotes extends Component {
 				<Card>
 					{ areNotesLoaded
 						? this.renderNotes()
-						: 'Loading…'
+						: translate( 'Loading…' )
 					}
 				</Card>
 			</div>
