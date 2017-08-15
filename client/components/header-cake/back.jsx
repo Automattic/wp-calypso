@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import createReactClass from 'create-react-class';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -21,7 +22,7 @@ const HIDE_BACK_CRITERIA = {
 	characterLength: 8
 };
 
-export default React.createClass( {
+export default createReactClass( {
 
 	displayName: 'HeaderCakeBack',
 
