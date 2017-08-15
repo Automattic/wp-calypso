@@ -290,7 +290,7 @@ class PostComment extends Component {
 					/> }
 
 				<CommentActions
-					post={ this.props.post }
+					post={ this.props.post || {} }
 					comment={ comment }
 					showModerationTools={ this.props.showModerationTools }
 					activeEditCommentId={ this.props.activeEditCommentId }
@@ -308,10 +308,6 @@ class PostComment extends Component {
 		);
 	}
 }
-
-PostComment.propTypes = {};
-
-PostComment.defaultProps = {};
 
 export default connect( state => ( {
 	currentUser: getCurrentUser( state ),
