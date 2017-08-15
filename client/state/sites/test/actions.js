@@ -17,10 +17,8 @@ import {
 	SITE_REQUEST_FAILURE,
 	SITE_REQUEST_SUCCESS,
 	SITES_RECEIVE,
-	SITES_REQUEST,
-	SITES_REQUEST_FAILURE,
-	SITES_REQUEST_SUCCESS,
-	SITES_UPDATE
+	SITES_UPDATE,
+	SITES_REQUEST
 } from 'state/action-types';
 import {
 	deleteSite,
@@ -35,7 +33,6 @@ import {
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
-	const mySitesPath = '/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active';
 	let sandbox, spy;
 
 	useSandbox( newSandbox => {
@@ -82,65 +79,9 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSites()', () => {
-		describe( 'success', () => {
-			useNock( ( nock ) => {
-				nock( 'https://public-api.wordpress.com:443' )
-					.persist()
-					.filteringPath( () => mySitesPath )
-					.get( mySitesPath )
-					.reply( 200, {
-						sites: [
-							{ ID: 2916284, name: 'WordPress.com Example Blog' },
-							{ ID: 77203074, name: 'WordPress.com Example Blog 2' }
-						]
-					} );
-			} );
-
-			it( 'should dispatch request action when thunk triggered', () => {
-				requestSites()( spy );
-				expect( spy ).to.have.been.calledWith( {
-					type: SITES_REQUEST
-				} );
-			} );
-			it( 'should dispatch receive action when request completes', () => {
-				return requestSites()( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
-						type: SITES_RECEIVE,
-						sites: [
-							{ ID: 2916284, name: 'WordPress.com Example Blog' },
-							{ ID: 77203074, name: 'WordPress.com Example Blog 2' }
-						]
-					} );
-				} );
-			} );
-			it( 'should dispatch success action when request completes', () => {
-				return requestSites()( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
-						type: SITES_REQUEST_SUCCESS
-					} );
-				} );
-			} );
-		} );
-		describe( 'failure', () => {
-			useNock( ( nock ) => {
-				nock( 'https://public-api.wordpress.com:443' )
-					.persist()
-					.filteringPath( () => mySitesPath )
-					.get( mySitesPath )
-					.reply( 403, {
-						error: 'authorization_required',
-						message: 'An active access token must be used to access sites.'
-					} );
-			} );
-
-			it( 'should dispatch fail action when request fails', () => {
-				return requestSites()( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
-						type: SITES_REQUEST_FAILURE,
-						error: sandbox.match( { message: 'An active access token must be used to access sites.' } )
-					} );
-				} );
-			} );
+		const action = requestSites();
+		expect( action ).to.eql( {
+			type: SITES_REQUEST,
 		} );
 	} );
 
