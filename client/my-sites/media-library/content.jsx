@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import createFragment from 'react-addons-create-fragment';
-import { groupBy, head, mapValues, noop, some, toArray, values } from 'lodash';
+import { groupBy, head, mapValues, noop, values } from 'lodash';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import page from 'page';
@@ -29,13 +29,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 import MediaLibraryHeader from './header';
 import MediaLibraryExternalHeader from './external-media-header';
 import MediaLibraryList from './list';
-import { requestKeyringConnections } from 'state/sharing/keyring/actions';
-import {
-	isKeyringConnectionsFetching,
-	getKeyringConnections,
-} from 'state/sharing/keyring/selectors';
-
-const isConnected = props => some( props.connectedServices, item => item.service === props.source );
+import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
 
 class MediaLibraryContent extends React.Component {
 	static propTypes = {
@@ -52,19 +46,13 @@ class MediaLibraryContent extends React.Component {
 		onMediaScaleChange: PropTypes.func,
 		onEditItem: PropTypes.func,
 		postId: PropTypes.number,
+		isConnected: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		mediaValidationErrors: Object.freeze( {} ),
 		onAddMedia: noop,
 		source: '',
-	}
-
-	componentWillMount() {
-		if ( ! this.props.isRequesting && this.props.source !== '' && this.props.connectedServices.length === 0 ) {
-			// Are we connected to anything yet?
-			this.props.requestKeyringConnections();
-		}
 	}
 
 	renderErrors() {
@@ -231,11 +219,12 @@ class MediaLibraryContent extends React.Component {
 	}
 
 	renderMediaList() {
-		if ( ! this.props.site || this.props.isRequesting ) {
+		if ( ! this.props.site || ( this.props.isRequesting && ! this.hasRequested ) ) {
+			this.hasRequested = true;   // We only want to do this once
 			return <MediaLibraryList key="list-loading" filterRequiresUpgrade={ this.props.filterRequiresUpgrade } />;
 		}
 
-		if ( this.props.source !== '' && ! isConnected( this.props ) ) {
+		if ( this.props.source !== '' && ! this.props.isConnected ) {
 			return this.renderExternalMedia();
 		}
 
@@ -264,6 +253,10 @@ class MediaLibraryContent extends React.Component {
 	}
 
 	renderHeader() {
+		if ( ! this.props.isConnected ) {
+			return null;
+		}
+
 		if ( this.props.source !== '' ) {
 			return (
 				<MediaLibraryExternalHeader
@@ -304,12 +297,7 @@ class MediaLibraryContent extends React.Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	return {
-		siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
-		connectedServices: toArray( getKeyringConnections( state ) ).filter( item => item.type === 'other' && item.status === 'ok' ),
-		isRequesting: isKeyringConnectionsFetching( state ),
-	};
-}, {
-	requestKeyringConnections,
-}, null, { pure: false } )( MediaLibraryContent );
+export default connect( ( state, ownProps ) => ( {
+	siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
+	isRequesting: isKeyringConnectionsFetching( state ),
+} ), null, null, { pure: false } )( MediaLibraryContent );
