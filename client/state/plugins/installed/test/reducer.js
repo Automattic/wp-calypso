@@ -40,9 +40,17 @@ describe( 'reducer:', () => {
 			expect( state ).to.eql( { 'one.site': true } );
 		} );
 
-		it( 'should track when fetches end', () => {
+		it( 'should track when fetches end successfully', () => {
 			const state = isRequesting( undefined, {
-				type: PLUGINS_RECEIVE,
+				type: PLUGINS_REQUEST_SUCCESS,
+				siteId: 'one.site'
+			} );
+			expect( state ).to.eql( { 'one.site': false } );
+		} );
+
+		it( 'should track when fetches end unsuccessfully', () => {
+			const state = isRequesting( undefined, {
+				type: PLUGINS_REQUEST_FAILURE,
 				siteId: 'one.site'
 			} );
 			expect( state ).to.eql( { 'one.site': false } );
@@ -53,23 +61,11 @@ describe( 'reducer:', () => {
 		it( 'should load the plugins on this site', () => {
 			const originalState = deepFreeze( { 'one.site': [] } );
 			const state = plugins( originalState, {
-				type: PLUGINS_REQUEST_SUCCESS,
+				type: PLUGINS_RECEIVE,
 				siteId: 'one.site',
 				data: [ akismet ]
 			} );
 			expect( state ).to.eql( { 'one.site': [ akismet ] } );
-		} );
-
-		it( 'should load an empty set if there is an error', () => {
-			const originalState = deepFreeze( { 'one.site': [] } );
-			const testError = new Error( 'Could not fetch plugins for Site One.' );
-			testError.name = 'RequestError';
-			const state = plugins( originalState, {
-				type: PLUGINS_REQUEST_FAILURE,
-				siteId: 'one.site',
-				error: testError
-			} );
-			expect( state ).to.eql( { 'one.site': [] } );
 		} );
 
 		it( 'should show an activated plugin as active', () => {

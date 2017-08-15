@@ -32,7 +32,8 @@ export function isRequesting( state = {}, action ) {
 	switch ( action.type ) {
 		case PLUGINS_REQUEST:
 			return Object.assign( {}, state, { [ action.siteId ]: true } );
-		case PLUGINS_RECEIVE:
+		case PLUGINS_REQUEST_FAILURE:
+		case PLUGINS_REQUEST_SUCCESS:
 			return Object.assign( {}, state, { [ action.siteId ]: false } );
 		default:
 			return state;
@@ -56,11 +57,8 @@ const updatePlugin = function( state, action ) {
  * Tracks all known installed plugin objects indexed by site ID.
  */
 export const plugins = createReducer( {}, {
-	[ PLUGINS_REQUEST_SUCCESS ]: ( state, action ) => {
+	[ PLUGINS_RECEIVE ]: ( state, action ) => {
 		return { ...state, [ action.siteId ]: action.data };
-	},
-	[ PLUGINS_REQUEST_FAILURE ]: ( state, action ) => {
-		return { ...state, [ action.siteId ]: [] };
 	},
 	[ PLUGIN_ACTIVATE_REQUEST_SUCCESS ]: updatePlugin,
 	[ PLUGIN_DEACTIVATE_REQUEST_SUCCESS ]: updatePlugin,
