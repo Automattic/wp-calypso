@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { reduxForm, Field, Fields, getFormValues, isValid, isDirty } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import emailValidator from 'email-validator';
-import { flowRight as compose, memoize, padEnd } from 'lodash';
+import { flowRight as compose, padEnd } from 'lodash';
 
 /**
  * Internal dependencies
@@ -93,40 +93,59 @@ const validate = ( values, props ) => {
 	return errors;
 };
 
-// Render a `FormFieldset` with given `redux-form` values, parametrized by the input
-// field component type. Memoize the result to prevent creating a new component on
-// every render call.
-const renderField = memoize(
-	FieldComponent => ( { input, meta, label, explanation, ...props } ) => {
-		const isError = !! ( meta.touched && meta.error );
+/*
+ * Render a `FormFieldset` parametrized by the input field component type.
+ * It accepts props that are compatible with what Redux Form `Field` passes down to renderers.
+ */
+const RenderFieldset = ( {
+	inputComponent: InputComponent,
+	input,
+	meta,
+	label,
+	explanation,
+	...props
+} ) => {
+	const isError = !! ( meta.touched && meta.error );
 
-		return (
-			<FormFieldset>
+	return (
+		<FormFieldset>
+			{ label &&
 				<FormLabel htmlFor={ input.name }>
 					{ label }
-				</FormLabel>
-				<FieldComponent id={ input.name } isError={ isError } { ...input } { ...props } />
-				{ isError && <FormInputValidation isError text={ meta.error } /> }
-				{ explanation &&
-					<FormSettingExplanation>
-						{ explanation }
-					</FormSettingExplanation> }
-			</FormFieldset>
-		);
-	}
-);
+				</FormLabel> }
+			<InputComponent id={ input.name } isError={ isError } { ...input } { ...props } />
+			{ isError && <FormInputValidation isError text={ meta.error } /> }
+			{ explanation &&
+				<FormSettingExplanation>
+					{ explanation }
+				</FormSettingExplanation> }
+		</FormFieldset>
+	);
+};
+
+/*
+ * Convenience wrapper around Redux Form `Field` to render a `FormFieldset`. Usage:
+ *   <ReduxFormFieldset name="firstName" label="First Name" component={ FormTextInput } />
+ */
+const ReduxFormFieldset = ( { component, ...props } ) =>
+	<Field component={ RenderFieldset } inputComponent={ component } { ...props } />;
 
 // The 'price' input displays data from two fields: `price` and `currency`. That's why we
 // render it using the `Fields` component instead of `Field`. We need this rendering wrapper
 // to transform the props from `{ price: { input, meta }, currency: { input, meta } }` that
 // `Fields` is receiving to `{ input, meta }` that `Field` expects.
 const renderPriceField = ( { price, currency, ...props } ) => {
-	const Input = renderField( FormCurrencyInput );
 	const { symbol, precision } = getCurrencyDefaults( currency.input.value );
 	// Tune the placeholder to the precision value: 0 -> '0', 1 -> '0.0', 2 -> '0.00'
 	const placeholder = precision > 0 ? padEnd( '0.', precision + 2, '0' ) : '0';
 	return (
-		<Input { ...price } { ...props } currencySymbolPrefix={ symbol } placeholder={ placeholder } />
+		<RenderFieldset
+			inputComponent={ FormCurrencyInput }
+			{ ...price }
+			{ ...props }
+			currencySymbolPrefix={ symbol }
+			placeholder={ placeholder }
+		/>
 	);
 };
 
@@ -163,26 +182,26 @@ class ProductForm extends Component {
 					component={ UploadImageField }
 				/>
 				<div className="editor-simple-payments-modal__form-fields">
-					<Field
+					<ReduxFormFieldset
 						name="title"
 						label={ translate( 'What are you selling?' ) }
 						placeholder={ translate( 'Product name' ) }
-						component={ renderField( FormTextInput ) }
+						component={ FormTextInput }
 					/>
-					<Field
+					<ReduxFormFieldset
 						name="description"
 						label={ translate( 'Description' ) }
-						component={ renderField( FormTextarea ) }
+						component={ FormTextarea }
 					/>
 					<Fields
 						names={ [ 'price', 'currency' ] }
 						label={ translate( 'Price' ) }
 						component={ renderPriceField }
 					/>
-					<Field name="multiple" type="checkbox" component={ renderField( CompactFormToggle ) }>
+					<ReduxFormFieldset name="multiple" type="checkbox" component={ CompactFormToggle }>
 						{ translate( 'Allow people to buy more than one item at a time.' ) }
-					</Field>
-					<Field
+					</ReduxFormFieldset>
+					<ReduxFormFieldset
 						name="email"
 						label={ translate( 'Email' ) }
 						explanation={ translate(
@@ -195,7 +214,7 @@ class ProductForm extends Component {
 								},
 							}
 						) }
-						component={ renderField( FormTextInput ) }
+						component={ FormTextInput }
 					/>
 				</div>
 			</form>
