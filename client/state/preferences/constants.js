@@ -1,3 +1,4 @@
+/** @format */
 export const USER_SETTING_KEY = 'calypso_preferences';
 
 export const DEFAULT_PREFERENCE_VALUES = {
@@ -10,4 +11,5 @@ export const DEFAULT_PREFERENCE_VALUES = {
 	mediaScale: 0.157,
 	editorAdvancedVisible: false,
 	editorConfirmationDisabledSites: [],
+	colorScheme: 'default',
 };
