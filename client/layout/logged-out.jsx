@@ -29,7 +29,7 @@ const LayoutLoggedOut = ( {
 		'wp-singletree-layout': !! primary,
 	};
 
-	let masterbar = <MasterbarLoggedOut title={ section.title } sectionName={ section.name } redirectUri={ redirectUri } />;
+	let masterbar = null;
 
 	if ( useOAuth2Layout ) {
 		const hasValidOAuth2ClientData = !! oauth2ClientData;
@@ -40,6 +40,14 @@ const LayoutLoggedOut = ( {
 		if ( oauthClientName ) {
 			masterbar = <OauthClientMasterbar oauth2ClientData={ oauth2ClientData } />;
 		}
+	}
+
+	if ( ! masterbar ) {
+		masterbar = <MasterbarLoggedOut
+			title={ section.title }
+			sectionName={ section.name }
+			redirectUri={ redirectUri }
+		/>;
 	}
 
 	return (
