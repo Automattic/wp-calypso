@@ -4,7 +4,7 @@
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
-import { isEmpty, pick } from 'lodash';
+import { pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -21,6 +21,7 @@ import {
 import { reducer } from 'state';
 import { SERIALIZE } from 'state/action-types';
 import stateCache from 'state-cache';
+import { getCacheKey } from 'isomorphic-routing';
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;
@@ -76,7 +77,11 @@ export function render( element, key = JSON.stringify( element ) ) {
 
 export function serverRender( req, res ) {
 	const context = req.context;
-	let title, metas = [], links = [];
+	let title, metas = [], links = [], cacheKey = false;
+
+	if ( isSectionIsomorphic( context.store.getState() ) && ! context.user ) {
+		cacheKey = getCacheKey( context );
+	}
 
 	if ( ! isDefaultLocale( context.lang ) ) {
 		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
@@ -86,15 +91,10 @@ export function serverRender( req, res ) {
 		config.isEnabled( 'server-side-rendering' ) &&
 		context.layout &&
 		! context.user &&
-		isEmpty( context.query ) &&
+		cacheKey &&
 		isDefaultLocale( context.lang )
 	) {
-		// context.pathname doesn't include querystring, so it's a suitable cache key.
-		let key = context.pathname;
-		if ( req.error ) {
-			key = req.error.message;
-		}
-		context.renderedLayout = render( context.layout, key );
+		context.renderedLayout = render( context.layout, req.error ? req.error.message : cacheKey );
 	}
 
 	if ( context.store ) {
@@ -103,6 +103,7 @@ export function serverRender( req, res ) {
 		links = getDocumentHeadLink( context.store.getState() );
 
 		let reduxSubtrees = [ 'documentHead' ];
+
 		// Send redux state only in logged-out scenario
 		if ( isSectionIsomorphic( context.store.getState() ) && ! context.user ) {
 			reduxSubtrees = reduxSubtrees.concat( [ 'ui', 'themes' ] );
@@ -111,10 +112,9 @@ export function serverRender( req, res ) {
 		// Send state to client
 		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
 		// And cache on the server, too
-		if ( isEmpty( context.query ) ) {
-			// Don't cache if we have query params
+		if ( cacheKey ) {
 			const serverState = reducer( context.initialReduxState, { type: SERIALIZE } );
-			stateCache.set( context.pathname, serverState );
+			stateCache.set( cacheKey, serverState );
 		}
 	}
 
