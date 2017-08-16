@@ -113,4 +113,13 @@ module.exports = {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	postSignupUpgradeScreen: {
+		datestamp: '20170810',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
 };
