@@ -1,12 +1,16 @@
 /** @format */
+/**
+ * External dependencies
+ */
 import React from 'react';
-import ReactDOM from 'react-dom';
 import tinymce from 'tinymce/tinymce';
 import { renderToString } from 'react-dom/server';
 import i18n from 'i18n-calypso';
-
 import Gridicon from 'gridicons';
 
+/**
+ * Internal dependencies
+ */
 import menuItems from './menu-items';
 
 const initialize = editor => {
@@ -27,47 +31,34 @@ const initialize = editor => {
 		cmd: menuItems[ 0 ].cmd,
 		menu: menuItems.map( ( { name } ) => editor.menuItems[ name ] ),
 		onPostRender() {
-			ReactDOM.render( <Gridicon icon="add-outline" />, this.$el[ 0 ].children[ 0 ] );
+			const [ insertContentElm, insertSpecialElm ] = this.$el[ 0 ].children;
 
-			// Listen to `mouseenter` events on the (+) part of the Inserter menu to show
-			// the "Insert content" tooltip.
-			const insertContentElm = this.$el[ 0 ].children[ 0 ];
+			insertContentElm.innerHTML = renderToString( <Gridicon icon="add-outline" /> );
 
-			insertContentElm.addEventListener( 'mouseenter', () => {
-				// We need to select the tooltip during the `mouseenter` event and not outside.
-				// Otherwise, Tinymce renders an empty tooltip somewhere in the editor.
-				const btnTooltip = this.tooltip();
+			const addTooltipListener = ( el, text ) => {
+				el.addEventListener( 'mouseenter', () => {
+					// We need to select the tooltip during the `mouseenter` event and not outside.
+					// Otherwise, Tinymce renders an empty tooltip somewhere in the editor.
+					// The following code is very inspired by the `mouseenter` handler in TinyMCE
+					// (tinymce.core.ui.Widget.init)
+					const btnTooltip = this.tooltip();
 
-				btnTooltip.text( i18n.translate( 'Insert content' ) );
+					btnTooltip.text( text );
 
-				btnTooltip.moveBy( -10, 0 );
-			} );
+					const rel = btnTooltip.testMoveRel( el, [ 'bc-tc', 'bc-tl', 'bc-tr' ] );
 
-			insertContentElm.addEventListener( 'mouseleave', () => {
-				const btnTooltip = this.tooltip();
+					btnTooltip.classes.toggle( 'tooltip-n', rel === 'bc-tc' );
+					btnTooltip.classes.toggle( 'tooltip-nw', rel === 'bc-tl' );
+					btnTooltip.classes.toggle( 'tooltip-ne', rel === 'bc-tr' );
 
-				btnTooltip.moveBy( 10, 0 );
-			} );
+					btnTooltip.moveRel( el, rel );
+				} );
+			};
 
-			// Listen to `mouseenter` events on the (v) part of the Inserter menu to show
-			// the "Insert special" tooltip.
-			const insertSpecialElm = this.$el[ 0 ].children[ 1 ];
-
-			insertSpecialElm.addEventListener( 'mouseenter', () => {
-				// We need to select the tooltip during the `mouseenter` event and not outside.
-				// Otherwise, Tinymce renders an empty tooltip somewhere in the editor.
-				const btnTooltip = this.tooltip();
-
-				btnTooltip.text( i18n.translate( 'Insert special' ) );
-
-				btnTooltip.moveBy( 24, 0 );
-			} );
-
-			insertSpecialElm.addEventListener( 'mouseleave', () => {
-				const btnTooltip = this.tooltip();
-
-				btnTooltip.moveBy( -24, 0 );
-			} );
+			// Listen to `mouseenter` events on the (+) and (v) parts of the Inserter menu to show
+			// the "Insert content" or "Insert special" tooltip.
+			addTooltipListener( insertContentElm, i18n.translate( 'Insert content' ) );
+			addTooltipListener( insertSpecialElm, i18n.translate( 'Insert special' ) );
 		},
 	} );
 };
