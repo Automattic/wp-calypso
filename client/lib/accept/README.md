@@ -56,22 +56,6 @@ accept( 'Are you sure you want to perform this action?', function( accepted ) {
 } );
 ```
 
-This will make the confirmation button look scary:
-
-```js
-var accept = require( 'lib/accept' );
-
-accept( 'Are you sure you want to perform this action?', function( accepted ) {
-	if ( accepted ) {
-		// User accepted the prompt
-	} else {
-		// User cancelled or otherwise closed the prompt
-	}
-}, translate( 'Destroy Everything' ), translate( 'Nevermind' ), {
-	isScary: true
-} );
-```
-
 Alternate button example:
 
 ```js
