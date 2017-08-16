@@ -2,6 +2,7 @@
 /*
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Field } from 'redux-form';
 
@@ -16,6 +17,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 /*
  * Render a `FormFieldset` parametrized by the input field component type.
  * It accepts props that are compatible with what Redux Form `Field` passes down to renderers.
+ * See the `Field` documentation for info about the props.
  */
 export const RenderFieldset = ( {
 	inputComponent: InputComponent,
@@ -49,5 +51,13 @@ export const RenderFieldset = ( {
  */
 const ReduxFormFieldset = ( { component, ...props } ) =>
 	<Field component={ RenderFieldset } inputComponent={ component } { ...props } />;
+
+ReduxFormFieldset.propTypes = {
+	name: PropTypes.string.isRequired, // name of the Redux Form field to connect to
+	component: PropTypes.func.isRequired, // input component to render inside the Fieldset
+	label: PropTypes.node, // optional label for the field
+	explanation: PropTypes.node, // optional explanation for the field
+	// all other props will be passed to the input component
+};
 
 export default ReduxFormFieldset;
