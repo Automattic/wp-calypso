@@ -119,7 +119,11 @@
 	top: -3px;
 	width: 43px;
 	perspective-origin: 21.125px 6px;
-	font: normal normal 500 normal 10px / normal "Helvetica Neue",Helvetica, Arial, sans-serif;
+	font-family: "Helvetica Neue",Helvetica, Arial, sans-serif;
+	font-size: 10px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: normal;
 }
 
 .wpview-type-simple-payments_paypal-logo {
