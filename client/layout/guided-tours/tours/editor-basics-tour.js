@@ -96,8 +96,10 @@ export const EditorBasicsTour = makeTour(
 		>
 			<p>
 				{
-					translate( 'The {{icon/}} lets you add other things, like a contact form. ' +
-						'If your site is on the Premium or Business plan, you can even add {{strong}}payment buttons{{/strong}}!', {
+					translate(
+						'The {{icon/}} lets you add other things, like a contact form. ' +
+						'If your site is on the Premium or Business plan, you can even add {{strong}}payment buttons{{/strong}}!',
+						{
 							components: {
 								strong: <strong />,
 								icon: <Gridicon icon="chevron-down" />,
