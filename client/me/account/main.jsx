@@ -43,6 +43,7 @@ import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 import SitesDropdown from 'components/sites-dropdown';
+import ColorSchemePicker from 'blocks/color-scheme-picker';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLanguage } from 'lib/i18n-utils';
 import { isRequestingMissingSites } from 'state/selectors';
@@ -110,6 +111,10 @@ const Account = React.createClass( {
 		this.updateUserSetting( 'language', value );
 		const redirect = value !== originalLanguage ? '/me/account' : false;
 		this.setState( { redirect } );
+	},
+
+	updateColorScheme( colorScheme ) {
+		this.updateUserSetting( 'calypso_preferences.colorScheme', colorScheme );
 	},
 
 	getEmailAddress() {
@@ -530,6 +535,15 @@ const Account = React.createClass( {
 				</FormFieldset>
 
 				{ this.communityTranslator() }
+
+				{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
+					<FormFieldset>
+						<FormLabel htmlFor="color_scheme">{ translate( 'Admin Color Scheme' ) }</FormLabel>
+						<ColorSchemePicker
+							temporarySelection={ true }
+							onSelection={ this.updateColorScheme }
+						/>
+					</FormFieldset> }
 
 				{ this.renderHolidaySnow() }
 
