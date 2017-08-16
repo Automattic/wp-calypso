@@ -36,6 +36,14 @@
 	}
 }
 
+.login__form-header-wrapper {
+	text-align: center;
+
+	.gridicon {
+		color: $blue-wordpress;
+	}
+}
+
 .login__form-header {
 	font-size: 22px;
 	margin-bottom: 24px;
