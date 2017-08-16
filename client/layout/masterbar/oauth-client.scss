@@ -1,9 +1,11 @@
 .masterbar__oauth-client {
 	background-color: $blue-wordpress;
+	height: 50px;
 
 	nav {
 		display: flex;
 		justify-content: space-between;
+		width: 100%;
 	}
 
 	ul {
@@ -66,26 +68,32 @@
 
 .dops {
 	.locale-suggestions {
-		margin-top: -40px;
+		margin-top: 0;
 	}
 }
 
 .woo {
+	.layout__content {
+		padding-top: 100px;
+	}
+
 	.masterbar__oauth-client {
 		background-color: #fff;
+		border: none;
 		box-sizing: border-box;
 		height: 83px;
 		line-height: 83px;
 		margin: 0 auto;
-		z-index: 100;
-	}
-
-	.masterbar__oauth-client a {
-		color: #fff;
-		float: left;
-		line-height: 55px;
 		padding: 0 10px;
-		transition: 0.05 all ease-in-out;
+		z-index: 100;
+
+		a {
+			color: #fff;
+			float: left;
+			line-height: 55px;
+			padding: 0 10px;
+			transition: 0.05 all ease-in-out;
+		}
 	}
 
 	.masterbar__oauth-client-logo img {
