@@ -543,6 +543,7 @@ const MediaUtils = {
 				mime_type: file.mime_type,
 				guid: file.URL,
 				URL: file.URL,
+				external: true,
 			} );
 		} else {
 			// Handle the case where a an object has been passed that wraps a

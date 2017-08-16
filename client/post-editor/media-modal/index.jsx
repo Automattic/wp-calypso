@@ -52,7 +52,8 @@ function areMediaActionsDisabled( modalView, mediaItems ) {
 			// Transients can't be handled by the editor if they are being
 			// uploaded via an external URL
 			( ! MediaUtils.isTransientPreviewable( item ) ||
-			MediaUtils.getMimePrefix( item ) !== 'image' || ModalViews.GALLERY === modalView )
+			MediaUtils.getMimePrefix( item ) !== 'image' || modalView === ModalViews.GALLERY ||
+			item.external )
 		)
 	);
 }

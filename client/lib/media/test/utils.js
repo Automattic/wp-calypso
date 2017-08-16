@@ -44,6 +44,7 @@ const EXPECTED_FILE_OBJECT = {
 	mime_type: 'image/jpeg',
 	guid: DUMMY_FILENAME,
 	URL: DUMMY_FILENAME,
+	external: true,
 };
 
 describe( 'MediaUtils', function() {
