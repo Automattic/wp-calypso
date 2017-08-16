@@ -25,7 +25,7 @@ const AcceptDialog = React.createClass( {
 	},
 
 	onClose: function( action ) {
-		this.props.onClose( 'accept' === action );
+		this.props.onClose( 'accept' === action, action );
 
 		if ( this.isMounted() ) {
 			this.setState( { isVisible: false } );
@@ -36,7 +36,7 @@ const AcceptDialog = React.createClass( {
 		const { options } = this.props;
 		const isScary = options && options.isScary;
 		const additionalClassNames = classnames( { 'is-scary': isScary } );
-		return [
+		const buttons = [
 			{
 				action: 'cancel',
 				label: this.props.cancelButtonText ? this.props.cancelButtonText : this.props.translate( 'Cancel' ),
@@ -48,6 +48,21 @@ const AcceptDialog = React.createClass( {
 				additionalClassNames
 			}
 		];
+
+		const altButton = options && options.altButton;
+		if ( altButton && altButton.label ) {
+			buttons.unshift( {
+				action: altButton.action || 'alt',
+				label: altButton.label,
+				additionalClassNames: classnames( {
+					'is-scary': altButton.isScary,
+					'is-borderless': true,
+					'is-left-aligned': true
+				} )
+			} );
+		}
+
+		return buttons;
 	},
 
 	render: function() {

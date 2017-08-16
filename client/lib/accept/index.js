@@ -13,7 +13,7 @@ module.exports = function( message, callback, confirmButtonText, cancelButtonTex
 	var wrapper = document.createElement( 'div' );
 	document.body.appendChild( wrapper );
 
-	function onClose( result ) {
+	function onClose( result, action ) {
 		if ( wrapper ) {
 			ReactDom.unmountComponentAtNode( wrapper );
 			document.body.removeChild( wrapper );
@@ -21,7 +21,7 @@ module.exports = function( message, callback, confirmButtonText, cancelButtonTex
 		}
 
 		if ( callback ) {
-			callback( result );
+			callback( result, action );
 		}
 	}
 

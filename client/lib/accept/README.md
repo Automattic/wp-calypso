@@ -16,6 +16,13 @@ Accept is a stylized substitute to the browser `confirm` dialog.
 ## Options
 
 * `isScary` - if `true`, confirm button will look scary.
+* `altButton` - Optional alternate action button props.
+
+Currently supported `altButton` props are:
+
+* `label` - Alternate button label (required).
+* `action` - action value to return when clicked (defaults to `alt`).
+* `isScary` - if `true`, alternate button will look scary.
 
 ## Usage
 
@@ -46,5 +53,42 @@ accept( 'Are you sure you want to perform this action?', function( accepted ) {
 	}
 }, translate( 'Destroy Everything' ), translate( 'Nevermind' ), {
 	isScary: true
+} );
+```
+
+This will make the confirmation button look scary:
+
+```js
+var accept = require( 'lib/accept' );
+
+accept( 'Are you sure you want to perform this action?', function( accepted ) {
+	if ( accepted ) {
+		// User accepted the prompt
+	} else {
+		// User cancelled or otherwise closed the prompt
+	}
+}, translate( 'Destroy Everything' ), translate( 'Nevermind' ), {
+	isScary: true
+} );
+```
+
+Alternate button example:
+
+```js
+var accept = require( 'lib/accept' );
+
+accept( 'Are you sure you want to perform this action?', function( accepted, action ) {
+	if ( accepted ) {
+		// User accepted the prompt
+	} else if ( action === 'alt' ) {
+		// User chose alternate action
+	} else {
+		// User cancelled or otherwise closed the prompt
+	}
+}, translate( 'Destroy Everything' ), translate( 'Nevermind' ), {
+	isScary: true,
+	altButton: {
+		label: translate( 'Go back to Sleep' ) )
+	}
 } );
 ```
