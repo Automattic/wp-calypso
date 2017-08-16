@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import get from 'lodash/get';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -52,12 +53,15 @@ const JPOHomepageStep = React.createClass( {
 	},
 
 	renderStepContent() {
-		console.log( this.props );
 		return (
 			<div className="jpo__homepage-wrapper">
 				<div className="jpo__homepage-row">
 					<a className="jpo-homepage__select-news" href="#" onClick={ this.onSelectNews }>
-						<Card>
+						<Card
+							className={ classNames( {
+								'is-selected': 'news' === get( this.props.signupDependencies, 'jpoHomepage', '' )
+							} ) }
+							>
 							<NewsGraphic />
 							<Button onClick={ this.onSelectNews }>{ translate( 'Recent news or updates' ) }</Button>
 							<div className="jpo__homepage-description">
@@ -66,7 +70,11 @@ const JPOHomepageStep = React.createClass( {
 						</Card>
 					</a>
 					<a className="jpo-homepage__select-static" href="#" onClick={ this.onSelectStatic }>
-						<Card>
+						<Card
+							className={ classNames( {
+								'is-selected': 'static' === get( this.props.signupDependencies, 'jpoHomepage', '' )
+							} ) }
+							>
 							<StaticGraphic />
 							<Button onClick={ this.onSelectStatic }>{ translate( 'A static welcome page' ) }</Button>
 							<div className="jpo__homepage-description">
@@ -106,5 +114,7 @@ const JPOHomepageStep = React.createClass( {
 
 export default connect(
 	null,
-	{ setJPOHomepage }
+	{
+		setJPOHomepage
+	}
 )( JPOHomepageStep );
