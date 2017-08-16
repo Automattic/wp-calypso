@@ -12,7 +12,7 @@
 	}
 
 	.form-text-input-with-affixes {
-		width: 82%;
+		width: 90%;
 	}
 }
 
@@ -43,7 +43,7 @@
 .packages__packages-row {
 	display: flex;
 	flex-direction: row;
-	padding: 16px 0;
+	padding: 8px 0;
 	align-items: center;
 
 	&:not( :last-child ) {
@@ -70,6 +70,7 @@
 		.packages__packages-row-icon {
 			padding-left: 0;
 			text-align: center;
+			color: $gray-text-min;
 		}
 
 		.packages__packages-row-actions {
@@ -193,6 +194,7 @@
 
 .packages__packages-row-dimensions {
 	width: 30%;
+	font-size: 14px;
 }
 
 .packages__setting-explanation {
