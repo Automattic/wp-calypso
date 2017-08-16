@@ -10,6 +10,7 @@ import i18n from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
+import { isEnabled } from 'config';
 import { isBusiness } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
 
@@ -46,7 +47,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 					href={ '/themes/' + selectedSite.slug } />
 			}
 
-			{ ! selectedFeature &&
+			{ ! selectedFeature && isEnabled( 'manage/plugins/upload' ) &&
 				<PurchaseDetail
 					icon="plugins"
 					title={ i18n.translate( 'Upload a Plugin' ) }
