@@ -25,6 +25,12 @@ export class CommentDetailEdit extends Component {
 		updateComment: PropTypes.func,
 	};
 
+	state = {
+		authorDisplayName: '',
+		authorUrl: '',
+		commentContent: '',
+	};
+
 	componentWillMount() {
 		const { authorDisplayName, authorUrl, commentContent } = this.props;
 		this.setState( { authorDisplayName, authorUrl, commentContent } );
