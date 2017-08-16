@@ -102,5 +102,5 @@ export function getCacheKey( context ) {
 	}
 
 	const cachedQueryParams = pick( context.query, context.cacheQueryKeys );
-	return context.pathname + '?' + qs.stringify( cachedQueryParams );
+	return context.pathname + '?' + qs.stringify( cachedQueryParams, { sort: ( a, b ) => a.localCompare( b ) } );
 }
