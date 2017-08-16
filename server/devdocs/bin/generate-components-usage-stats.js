@@ -5,8 +5,8 @@
  * It accepts a newline-delimited list of .js and|or .jsx files
  * as its input, and writes the index to server/devdocs/components-usage-stats.json
  */
-import { camelCase } from 'lodash';
 var async = require( 'async' ),
+	camelCase = require( 'lodash' ).camelCase,
 	config = require( 'config' ),
 	fs = require( 'fs' ),
 	fspath = require( 'path' ),

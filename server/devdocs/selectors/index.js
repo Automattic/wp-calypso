@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import { camelCase, forEach } from 'lodash';
+const lodash = require( 'lodash' );
+const camelCase = lodash.camelCase;
+const forEach = lodash.forEach;
 const fs = require( 'fs' );
 const path = require( 'path' );
 const express = require( 'express' );
