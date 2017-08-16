@@ -7,9 +7,9 @@
 		z-index: -1;
 		position: absolute;
 		top: 0;
-		left: 41px;
+		left: 45px;
 		bottom: 0;
-		width: 1px;
+		width: 2px;
 		background: transparentize( lighten( $gray, 20% ), .5 );
 	}
 }
@@ -48,13 +48,16 @@
 		box-sizing: border-box;
 		margin-left: 16px;
 		padding: 12px 16px 16px;
-		font-size: 13px;
 		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 );
+	}
+	
+	.order-notes__note-type {
+		font-size: 12px;
+		color: $gray-text-min;
+		text-transform: uppercase;
 	}
 
 	.order-notes__note-content {
 		margin: 8px 8px 0 0;
-		padding-left: 8px;
-		border-left: 1px solid transparentize( lighten( $gray, 20% ), .5 );
 	}
 }
