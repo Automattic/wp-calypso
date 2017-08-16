@@ -6,7 +6,10 @@ const me = function() {
 				get( callback ) {
 					callback( false, {
 						test: false,
-						lang_id: false
+						lang_id: false,
+						testParent: {
+							testChild: false,
+						}
 					} );
 				},
 				update( settings, callback ) {
