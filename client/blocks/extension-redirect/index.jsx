@@ -47,7 +47,7 @@ export default connect(
 		const site = getSite( state, siteId );
 
 		return {
-			pluginActive: !! site && get( getPluginOnSite( state, site, pluginId ), 'active' ),
+			pluginActive: !! site && get( getPluginOnSite( state, site, pluginId ), 'active', false ),
 			requestingPlugins: isRequesting( state, siteId ),
 			siteSlug: getSiteSlug( state, siteId ),
 		};
