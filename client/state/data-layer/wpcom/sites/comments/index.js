@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { forEach, get, groupBy, omit } from 'lodash';
+import { forEach, get, groupBy, keys, omit, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +15,7 @@ import {
 	COMMENT_REQUEST,
 	COMMENTS_ERROR,
 	COMMENTS_TREE_SITE_ADD,
+	COMMENT_EDIT,
 } from 'state/action-types';
 import { local } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -202,10 +203,47 @@ const announceFailure = ( { dispatch, getState }, { query: { siteId } } ) => {
 	dispatch( errorNotice( error ) );
 };
 
+const editComment = ( { dispatch, getState }, action ) => {
+	const { siteId, commentId, commentData } = action;
+	const originalCommentData = pick(
+		getSiteComment( getState(), action.siteId, action.commentId ),
+		keys( commentData )
+	);
+
+	dispatch(
+		http(
+			{
+				method: 'POST',
+				path: `/sites/${ siteId }/comments/${ commentId }`,
+				apiVersion: '1.1',
+				body: commentData,
+			},
+			{
+				...action,
+				originalCommentData,
+			}
+		)
+	);
+};
+
+const announceEditFailure = ( { dispatch, getState }, action ) => {
+	dispatch(
+		local( {
+			...action,
+			commentData: action.originalCommentData,
+		} )
+	);
+	dispatch( removeNotice( `comment-notice-${ action.commentId }` ) );
+	dispatch( errorNotice( translate( "We couldn't update this comment." ), {
+		id: `comment-notice-error-${ action.commentId }`,
+	} ) );
+};
+
 export const fetchHandler = {
 	[ COMMENTS_CHANGE_STATUS ]: [ dispatchRequest( changeCommentStatus, removeCommentStatusErrorNotice, announceStatusChangeFailure ) ],
 	[ COMMENTS_LIST_REQUEST ]: [ dispatchRequest( fetchCommentsList, addComments, announceFailure ) ],
 	[ COMMENT_REQUEST ]: [ dispatchRequest( requestComment, receiveCommentSuccess, receiveCommentError ) ],
+	[ COMMENT_EDIT ]: [ dispatchRequest( editComment, removeCommentStatusErrorNotice, announceEditFailure ) ],
 };
 
 export default mergeHandlers( fetchHandler, replies, likes );
