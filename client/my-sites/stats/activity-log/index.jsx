@@ -233,11 +233,11 @@ class ActivityLog extends Component {
 
 		if ( isNull( logs ) ) {
 			return (
-				<div>
+				<section className="activity-log__wrapper" key="logs">
 					<ActivityLogDayPlaceholder />
 					<ActivityLogDayPlaceholder />
 					<ActivityLogDayPlaceholder />
-				</div>
+				</section>
 			);
 		}
 
