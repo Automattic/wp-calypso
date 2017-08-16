@@ -40,6 +40,15 @@
 	color: $gray;
 }
 
+.activity-log-day__placeholder {
+	@extend .activity-log-day;
+
+	.activity-log-day__day,
+	.activity-log-day__events {
+		@include placeholder();
+	}
+}
+
 .activity-log-day__rewind-button {
 	text-transform: uppercase;
 }
