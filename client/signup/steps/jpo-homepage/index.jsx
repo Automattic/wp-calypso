@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import get from 'lodash/get';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -55,16 +56,32 @@ const JPOHomepageStep = React.createClass( {
 		return (
 			<div className="jpo__homepage-wrapper">
 				<div className="jpo__homepage-row">
-					<Card>
-						<NewsGraphic />
-						<Button onClick={ this.onSelectNews }>{ translate( 'Recent news or updates' ) }</Button>
-						<div className="jpo__homepage-description">{ translate( 'We can pull the latest information into your homepage for you.' ) }</div>
-					</Card>
-					<Card>
-						<StaticGraphic />
-						<Button onClick={ this.onSelectStatic }>{ translate( 'A static welcome page' ) }</Button>
-						<div className="jpo__homepage-description">{ translate( 'Have your homepage stay the same as time goes on.' ) }</div>
-					</Card>
+					<a className="jpo-homepage__select-news" href="#" onClick={ this.onSelectNews }>
+						<Card
+							className={ classNames( {
+								'is-selected': 'news' === get( this.props.signupDependencies, 'jpoHomepage', '' )
+							} ) }
+							>
+							<NewsGraphic />
+							<Button onClick={ this.onSelectNews }>{ translate( 'Recent news or updates' ) }</Button>
+							<div className="jpo__homepage-description">
+								{ translate( 'We can pull the latest information into your homepage for you.' ) }
+							</div>
+						</Card>
+					</a>
+					<a className="jpo-homepage__select-static" href="#" onClick={ this.onSelectStatic }>
+						<Card
+							className={ classNames( {
+								'is-selected': 'static' === get( this.props.signupDependencies, 'jpoHomepage', '' )
+							} ) }
+							>
+							<StaticGraphic />
+							<Button onClick={ this.onSelectStatic }>{ translate( 'A static welcome page' ) }</Button>
+							<div className="jpo__homepage-description">
+								{ translate( 'Have your homepage stay the same as time goes on.' ) }
+							</div>
+						</Card>
+					</a>
 				</div>
 			</div>
 		);
@@ -97,5 +114,7 @@ const JPOHomepageStep = React.createClass( {
 
 export default connect(
 	null,
-	{ setJPOHomepage }
+	{
+		setJPOHomepage
+	}
 )( JPOHomepageStep );

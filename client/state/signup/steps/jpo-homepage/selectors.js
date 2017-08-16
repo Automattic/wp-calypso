@@ -1,8 +1,13 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import get from 'lodash/get';
 
-export function getHomepage( state ) {
-	return get( state, 'signup.steps.jpoHomepage', '' );
+/**
+ * Get stored home page as was last chosen by user.
+ * @param  {Object} state Global state tree
+ * @return {String} Site title in state tree.
+ */
+export function getJPOHomepage( state ) {
+	return get( state, [ 'signup', 'dependencyStore', 'jpoHomepage' ], '' );
 }

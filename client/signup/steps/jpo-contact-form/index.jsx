@@ -49,11 +49,21 @@ const JPOContactFormStep = React.createClass( {
 	renderStepContent() {
 		return (
 			<div className="jpo__contact-form-wrapper">
-				<Card>
-					<ContactUsGraphic />
-					<Button onClick={ this.onSelect }>Add a contact form</Button>
-					<div className="jpo__contact-form-description">Not sure? You can skip this step and add a contact form later.</div>
-				</Card>
+				<a className="jpo-homepage__select-news" href="#" onClick={ this.onSelect }>
+					<Card>
+						<ContactUsGraphic />
+						<Button onClick={ this.onSelect }>
+							{
+								translate( 'Add a contact form' )
+							}
+						</Button>
+						<div className="jpo__contact-form-description">
+							{
+								translate( 'Not sure? You can skip this step and add a contact form later.' )
+							}
+						</div>
+					</Card>
+				</a>
 			</div>
 		);
 	},
