@@ -203,6 +203,9 @@ export class SignupProcessingScreen extends Component {
 
 	renderUpgradeScreen() {
 		/* Do NOT translate the strings in this function until the abtest is finished. */
+		const title = this.props.loginHandler
+			? 'Congratulations! Your website is almost ready.'
+			: 'Congratulations! Your site is live.';
 
 		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
 		return (
@@ -211,7 +214,7 @@ export class SignupProcessingScreen extends Component {
 
 				<div className="signup-processing__content">
 					<img src="/calypso/images/signup/confetti.svg" className="signup-process-screen__confetti" />
-					<p className="signup-process-screen__title signup-process-screen__title-test">Congratulations! Your new site is now live.</p>
+					<p className="signup-process-screen__title signup-process-screen__title-test">{ title }</p>
 
 					{ this.props.loginHandler
 						?	<Button primary className="email-confirmation__button" onClick={ this.props.loginHandler }>View My Site</Button>
