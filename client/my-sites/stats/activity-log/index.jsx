@@ -14,6 +14,7 @@ import { filter, get, groupBy, includes, isEmpty, isNull, map } from 'lodash';
 import ActivityLogBanner from '../activity-log-banner';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import ActivityLogDay from '../activity-log-day';
+import ActivityLogDayPlaceholder from '../activity-log-day/placeholder';
 import ActivityLogRewindToggle from './activity-log-rewind-toggle';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import EmptyContent from 'components/empty-content';
@@ -231,7 +232,13 @@ class ActivityLog extends Component {
 		const { isPressable, isRewindActive, logs, moment, translate, siteId, startDate } = this.props;
 
 		if ( isNull( logs ) ) {
-			return null;
+			return (
+				<div>
+					<ActivityLogDayPlaceholder />
+					<ActivityLogDayPlaceholder />
+					<ActivityLogDayPlaceholder />
+				</div>
+			);
 		}
 
 		const disableRestore = this.isRestoreInProgress();
