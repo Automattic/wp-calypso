@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { concat, difference, omitBy, omit, trim, uniq } from 'lodash';
+import { cloneDeep, concat, difference, omitBy, omit, trim, uniq } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,6 +18,8 @@ import {
 	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_OUTER_DIMENSIONS,
 	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL,
 	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PACKAGE,
+	WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEF,
+	WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEF,
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_ADD_MODE,
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCHING,
 	WOOCOMMERCE_SERVICES_PACKAGES_INIT_PACKAGES_FORM,
@@ -33,10 +35,12 @@ const isNullOrEmpty = ( value ) => null === value || '' === trim( value );
 const reducers = {};
 
 reducers[ WOOCOMMERCE_SERVICES_PACKAGES_ADD_PACKAGE ] = ( state ) => {
-	const newState = Object.assign( {}, state, {
+	const newState = {
+		...state,
 		showModal: true,
 		mode: 'add-custom',
-	} );
+		currentlyEditingPredefinedPackages: cloneDeep( state.packages.predefined ),
+	};
 
 	if ( 'edit' === state.mode || ! newState.packageData ) {
 		newState.packageData = { is_user_defined: true };
@@ -97,9 +101,10 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PACKAGE ] = ( state, action ) => {
 		custom.push( packageData );
 	}
 
+	state = reducers[ WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL ]( state );
+
 	return {
 		...state,
-		showModal: false,
 		mode: 'add-custom',
 		packageData: {
 			is_user_defined: true,
@@ -108,8 +113,6 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PACKAGE ] = ( state, action ) => {
 			...state.packages,
 			custom,
 		},
-		showOuterDimensions: false,
-		selectedPreset: null,
 		pristine: false,
 	};
 };
@@ -137,24 +140,21 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PACKAGE ] = ( state, action ) => 
 
 reducers[ WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL ] = ( state, { serviceId, groupId, checked } ) => {
 	const groupPackages = state.predefinedSchema[ serviceId ][ groupId ].definitions.map( ( def ) => def.id );
-	const selected = state.packages.predefined[ serviceId ];
+	const selected = state.currentlyEditingPredefinedPackages[ serviceId ];
 	const newSelected = checked ? uniq( concat( selected, groupPackages ) ) : difference( selected, groupPackages );
 
-	const newPredefined = {	...state.packages.predefined };
+	const newPredefined = {	...state.currentlyEditingPredefinedPackages };
 	newPredefined[ serviceId ] = newSelected;
 
 	return {
 		...state,
-		packages: {
-			...state.packages,
-			predefined: newPredefined,
-		},
+		currentlyEditingPredefinedPackages: newPredefined,
 		pristine: false,
 	};
 };
 
 reducers[ WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PACKAGE ] = ( state, { serviceId, packageId } ) => {
-	const newPredefined = {	...state.packages.predefined };
+	const newPredefined = {	...state.currentlyEditingPredefinedPackages };
 	const newSelected = [ ...( newPredefined[ serviceId ] || [] ) ];
 	const packageIndex = newSelected.indexOf( packageId );
 
@@ -168,9 +168,40 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PACKAGE ] = ( state, { serviceId,
 
 	return {
 		...state,
+		currentlyEditingPredefinedPackages: newPredefined,
+		pristine: false,
+	};
+};
+
+reducers[ WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEF ] = ( state, { serviceId, packageId } ) => {
+	const newPredefined = {	...state.packages.predefined };
+	const newSelected = [ ...( newPredefined[ serviceId ] || [] ) ];
+	const packageIndex = newSelected.indexOf( packageId );
+
+	if ( -1 !== packageIndex ) {
+		newSelected.splice( packageIndex, 1 );
+	}
+
+	newPredefined[ serviceId ] = newSelected;
+
+	return {
+		...state,
 		packages: {
 			...state.packages,
 			predefined: newPredefined,
+		},
+		pristine: false,
+	};
+};
+
+reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEF ] = ( state ) => {
+	state = reducers[ WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL ]( state );
+
+	return {
+		...state,
+		packages: {
+			...state.packages,
+			predefined: state.currentlyEditingPredefinedPackages,
 		},
 		pristine: false,
 	};

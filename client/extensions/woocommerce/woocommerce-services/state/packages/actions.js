@@ -10,6 +10,8 @@ import {
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_SAVING,
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_MODAL_ERRORS,
 	WOOCOMMERCE_SERVICES_PACKAGES_UPDATE_PACKAGES_FIELD,
+	WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEF,
+	WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEF,
 	WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PACKAGE,
 	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_OUTER_DIMENSIONS,
 	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL,
@@ -69,6 +71,18 @@ export const toggleAll = ( siteId, serviceId, groupId, checked ) => ( {
 
 export const togglePackage = ( siteId, serviceId, packageId ) => ( {
 	type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PACKAGE,
+	serviceId,
+	packageId,
+	siteId,
+} );
+
+export const savePredefinedPackages = ( siteId ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEF,
+	siteId,
+} );
+
+export const removePredefinedPackage = ( siteId, serviceId, packageId ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEF,
 	serviceId,
 	packageId,
 	siteId,

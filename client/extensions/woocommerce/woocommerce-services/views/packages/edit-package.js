@@ -197,7 +197,6 @@ EditPackage.propTypes = {
 	showOuterDimensions: PropTypes.bool,
 	toggleOuterDimensions: PropTypes.func.isRequired,
 	packageData: PropTypes.shape( {
-		index: PropTypes.number.isRequired,
 		name: PropTypes.string.isRequired,
 		inner_dimensions: PropTypes.string.isRequired,
 		outer_dimensions: PropTypes.string.isRequired,

@@ -22,7 +22,7 @@ import SegmentedControl from 'components/segmented-control';
 const getDialogButtons = ( mode, dismissModal, savePackage, onRemove, translate ) => {
 	const buttons = [
 		<FormButton onClick={ savePackage }>
-			{ ( 'add' === mode ) ? translate( 'Add package' ) : translate( 'Apply changes' ) }
+			{ ( 'add-custom' === mode ) ? translate( 'Add package' ) : translate( 'Apply changes' ) }
 		</FormButton>,
 		<FormButton onClick={ dismissModal } isPrimary={ false }>
 			{ translate( 'Cancel' ) }
@@ -49,6 +49,7 @@ const AddPackageDialog = ( props ) => {
 		form,
 		setModalErrors,
 		savePackage,
+		savePredefinedPackages,
 		dismissModal,
 		removePackage,
 		setAddMode,
@@ -72,6 +73,11 @@ const AddPackageDialog = ( props ) => {
 	const customPackages = packages.custom;
 
 	const onSave = () => {
+		if ( 'add-predefined' === mode ) {
+			savePredefinedPackages( siteId );
+			return;
+		}
+
 		const editName = 'number' === typeof packageData.index ? customPackages[ packageData.index ].name : null;
 
 		//get reserved box names:

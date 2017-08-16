@@ -3,100 +3,84 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { difference, filter, forEach, reject, some } from 'lodash';
+import { forEach } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import BulkSelect from 'woocommerce/components/bulk-select';
 import FoldableCard from 'components/foldable-card';
-import PackagesList from './packages-list';
+import FormCheckbox from 'components/forms/form-checkbox';
+import PackagesListItem from './packages-list-item';
+import { getCurrentlyEditingPredefinedPackages } from '../../state/packages/selectors';
 
-const PredefinedPackages = ( props ) => {
-	const renderPredefHeader = ( title, selected, packages, serviceId, groupId ) => {
-		if ( ! selected ) {
-			return null;
-		}
+const PredefinedPackages = ( { siteId, form, toggleAll, togglePackage, currentlyEditingPredefinedPackages, translate } ) => {
+	const { dimensionUnit } = form;
 
+	const renderGroupHeader = ( group ) => {
 		const onToggle = ( state, event ) => {
 			event.stopPropagation();
-			props.toggleAll( props.siteId, serviceId, groupId, event.target.checked );
+			toggleAll( siteId, group.serviceId, group.groupId, event.target.checked );
 		};
 
 		return (
 			<div className="packages__group-header" >
 				<BulkSelect
-					totalElements={ packages.length }
-					selectedElements={ selected.length }
+					totalElements={ group.total }
+					selectedElements={ group.selected }
 					onToggle={ onToggle }
 					className="packages__group-header-checkbox" />
-				{ title }
+				{ group.title }
 			</div>
 		);
 	};
 
-	const predefSummary = ( serviceSelected, groupDefinitions ) => {
-		const groupPackageIds = groupDefinitions.map( ( def ) => def.id );
-		const diffLen = difference( groupPackageIds, serviceSelected ).length;
-		const { translate } = props;
-
-		if ( 0 >= diffLen ) {
+	const getSelectionSummary = ( selectedCount, totalCount ) => {
+		if ( selectedCount === totalCount ) {
 			return translate( 'All packages selected' );
 		}
 
-		const selectedCount = groupPackageIds.length - diffLen;
 		return translate( '%(selectedCount)d package selected', '%(selectedCount)d packages selected', {
 			count: selectedCount,
 			args: { selectedCount },
 		} );
 	};
 
-	const renderPredefinedPackages = () => {
+	const renderServicePackages = ( group ) => {
+		return group.packages.map( ( pckg, index ) => {
+			const onToggle = () => togglePackage( siteId, pckg.serviceId, pckg.id );
+
+			return ( <PackagesListItem
+				key={ index }
+				siteId={ siteId }
+				data={ pckg }
+				dimensionUnit={ dimensionUnit }
+				prefixActions >
+				<FormCheckbox checked={ pckg.selected } onChange={ onToggle } />
+			</PackagesListItem> );
+		} );
+	};
+
+	const renderContent = () => {
 		const elements = [];
-		const { siteId, translate, form } = props;
-		const {
-			predefinedSchema,
-			packages,
-			dimensionUnit
-		} = form;
 
-		forEach( predefinedSchema, ( servicePackages, serviceId ) => {
-			const serviceSelected = packages.predefined[ serviceId ] || [];
+		forEach( currentlyEditingPredefinedPackages, ( group, groupId ) => {
+			const summary = getSelectionSummary( group.selected, group.total );
 
-			forEach( servicePackages, ( predefGroup, groupId ) => {
-				const groupPackages = predefGroup.definitions;
-				const nonFlatRates = reject( groupPackages, 'is_flat_rate' );
-				if ( ! nonFlatRates.length ) {
-					return;
-				}
-
-				const groupSelected = filter( serviceSelected, selectedId => some( groupPackages, pckg => pckg.id === selectedId ) );
-				const summary = predefSummary( groupSelected, nonFlatRates );
-
-				elements.push( <FoldableCard
-					className="packages__predefined-packages"
-					key={ `${ serviceId }_${ groupId }` }
-					header={ renderPredefHeader( predefGroup.title, groupSelected, nonFlatRates, serviceId, groupId ) }
-					summary={ summary }
-					expandedSummary={ summary }
-					clickableHeader={ true }
-					expanded={ false }
-					screenReaderText={ translate( 'Expand Services' ) }
-					icon="chevron-down"
-				>
-					<PackagesList
-						siteId={ siteId }
-						packages={ groupPackages }
-						selected={ groupSelected }
-						serviceId={ serviceId }
-						groupId={ groupId }
-						toggleAll={ props.toggleAll }
-						togglePackage={ props.togglePackage }
-						dimensionUnit={ dimensionUnit }
-						editable={ false } />
-				</FoldableCard> );
-			} );
+			elements.push( <FoldableCard
+				className="packages__predefined-packages"
+				key={ groupId }
+				header={ renderGroupHeader( group ) }
+				summary={ summary }
+				expandedSummary={ summary }
+				clickableHeader={ true }
+				expanded={ false }
+				screenReaderText={ translate( 'Expand Services' ) }
+				icon="chevron-down" >
+				{ renderServicePackages( group ) }
+			</FoldableCard> );
 		} );
 
 		return elements;
@@ -104,7 +88,7 @@ const PredefinedPackages = ( props ) => {
 
 	return (
 		<div>
-			{ renderPredefinedPackages() }
+			{ renderContent() }
 		</div>
 	);
 };
@@ -114,10 +98,10 @@ PredefinedPackages.PropTypes = {
 	toggleAll: PropTypes.func.isRequired,
 	togglePackage: PropTypes.func.isRequired,
 	form: PropTypes.shape( {
-		packages: PropTypes.object,
 		dimensionUnit: PropTypes.string,
-		predefinedSchema: PropTypes.object,
 	} ).isRequired,
 };
 
-export default localize( PredefinedPackages );
+export default connect( ( state ) => ( {
+	currentlyEditingPredefinedPackages: getCurrentlyEditingPredefinedPackages( state ),
+} ) )( localize( PredefinedPackages ) );

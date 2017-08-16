@@ -14,10 +14,10 @@ import Button from 'components/button';
 import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import PackageDialog from './package-dialog';
-import PackagesList from './packages-list';
+import PackagesListItem from './packages-list-item';
 import * as PackagesActions from '../../state/packages/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPackagesForm } from '../../state/packages/selectors';
+import { getPackagesForm, getAllSelectedPackages } from '../../state/packages/selectors';
 
 class Packages extends Component {
 	componentWillMount() {
@@ -32,8 +32,51 @@ class Packages extends Component {
 		}
 	}
 
+	renderListHeader = ( packages ) => {
+		const { translate } = this.props;
+
+		if ( ! packages || ! packages.length ) {
+			return null;
+		}
+
+		return (
+			<div className="packages__packages-row packages__packages-header">
+				<div className="packages__packages-row-icon" />
+				<div className="packages__packages-row-details">{ translate( 'Name' ) }</div>
+				<div className="packages__packages-row-dimensions">{ translate( 'Dimensions' ) }</div>
+				<div className="packages__packages-row-actions" />
+			</div>
+		);
+	};
+
+	renderListItem = ( pckg, index ) => {
+		const { siteId, isFetching, form, translate } = this.props;
+		const { dimensionUnit } = form;
+
+		let button = null;
+		if ( pckg.is_user_defined ) {
+			const onEdit = () => this.props.editPackage( siteId, pckg );
+			button = <Button compact onClick={ onEdit }>{ translate( 'Edit' ) }</Button>;
+		} else {
+			const onRemove = () => this.props.removePredefinedPackage( siteId, pckg.serviceId, pckg.id );
+			button = <Button compact onClick={ onRemove }>{ translate( 'Remove' ) }</Button>;
+		}
+
+		return (
+			<PackagesListItem
+				key={ index }
+				siteId={ siteId }
+				isPlaceholder={ isFetching }
+				data={ pckg }
+				dimensionUnit={ dimensionUnit }>
+				{ button }
+			</PackagesListItem>
+		);
+	};
+
 	render() {
-		const { isFetching, siteId, form, translate } = this.props;
+		const { isFetching, siteId, allSelectedPackages, translate } = this.props;
+		const packages = isFetching ? [ {}, {}, {} ] : allSelectedPackages;
 
 		const addPackage = () => ( this.props.addPackage( siteId ) );
 
@@ -45,14 +88,8 @@ class Packages extends Component {
 					<Button onClick={ addPackage } disabled={ isFetching }>{ translate( 'Add package' ) }</Button>
 				</ExtendedHeader>
 				<Card className="packages__packages">
-					<PackagesList
-						siteId={ siteId }
-						isFetching={ isFetching }
-						packages={ ( form.packages || {} ).custom }
-						dimensionUnit={ form.dimensionUnit }
-						editable={ true }
-						removePackage={ this.props.removePackage }
-						editPackage={ this.props.editPackage } />
+					{ this.renderListHeader( packages ) }
+					{ packages.map( this.renderListItem ) }
 					{ ( ! isFetching ) && <PackageDialog { ...this.props } /> }
 				</Card>
 			</div>
@@ -87,6 +124,7 @@ export default connect(
 			siteId,
 			isFetching: ! form || ! form.packages || form.isFetching,
 			form,
+			allSelectedPackages: getAllSelectedPackages( state, siteId ),
 		};
 	},
 	( dispatch ) => (
