@@ -76,11 +76,11 @@ class OrderNotes extends Component {
 			return (
 				<OrderNotesByDay
 					key={ day }
+					count={ notes.length }
 					date={ day }
 					index={ index }
-					count={ notes.length }
-					onClick={ this.toggleOpenDay }
-					isOpen={ index === this.state.openIndex }>
+					isOpen={ index === this.state.openIndex }
+					onClick={ this.toggleOpenDay } >
 					{ notes.map( note => <OrderNote { ...note } key={ note.id } /> ) }
 				</OrderNotesByDay>
 			);

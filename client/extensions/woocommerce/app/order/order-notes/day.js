@@ -12,11 +12,11 @@ import FoldableCard from 'components/foldable-card';
 
 class OrderNotesByDay extends Component {
 	static propTypes = {
-		count: PropTypes.number,
-		date: PropTypes.string,
-		index: PropTypes.number,
-		isOpen: PropTypes.bool,
-		onClick: PropTypes.func,
+		count: PropTypes.number.isRequired,
+		date: PropTypes.string.isRequired,
+		index: PropTypes.number.isRequired,
+		isOpen: PropTypes.bool.isRequired,
+		onClick: PropTypes.func.isRequired,
 	}
 
 	onClick = () => {
@@ -25,12 +25,12 @@ class OrderNotesByDay extends Component {
 
 	render() {
 		const { count, date, isOpen, moment, translate } = this.props;
-		const displayDate = moment( date, 'YYYYMMDD' ).format( 'L' );
+		const displayDate = moment( date, 'YYYYMMDD' ).format( 'll' );
 
 		const header = (
 			<div>
 				<h3>{ displayDate }</h3>
-				<small>{ translate( '%(count)s events', { args: { count } } ) }</small>
+				<small>{ translate( '%(count)s event', '%(count)s events', { count, args: { count } } ) }</small>
 			</div>
 		);
 

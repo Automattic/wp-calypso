@@ -14,20 +14,20 @@ import { decodeEntities, stripHTML } from 'lib/formatting';
 class OrderNote extends Component {
 	static propTypes = {
 		customer_note: PropTypes.bool,
-		date_created: PropTypes.string,
-		date_created_gmt: PropTypes.string,
-		id: PropTypes.number,
-		note: PropTypes.string,
+		date_created_gmt: PropTypes.string.isRequired,
+		note: PropTypes.string.isRequired,
 	}
 
 	render() {
 		const {
 			customer_note,
-			date_created,
+			date_created_gmt,
 			note,
 			moment,
 			translate
 		} = this.props;
+
+		const createdMoment = moment( date_created_gmt + 'Z' );
 
 		// @todo Add comment author once we have that info
 		let icon = 'aside';
@@ -40,7 +40,7 @@ class OrderNote extends Component {
 		return (
 			<div className="order-notes__note">
 				<div className="order-notes__note-meta">
-					<span className="order-notes__note-time">{ moment( date_created ).format( 'LT' ) }</span>
+					<span className="order-notes__note-time">{ createdMoment.format( 'LT' ) }</span>
 					<Gridicon icon={ icon } size={ 24 } />
 				</div>
 				<div className="order-notes__note-body">
