@@ -15,7 +15,7 @@ import {
 	COMMENT_REQUEST,
 	COMMENTS_ERROR,
 	COMMENTS_TREE_SITE_ADD,
-	COMMENT_EDIT,
+	COMMENTS_EDIT,
 } from 'state/action-types';
 import { local } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -243,7 +243,7 @@ export const fetchHandler = {
 	[ COMMENTS_CHANGE_STATUS ]: [ dispatchRequest( changeCommentStatus, removeCommentStatusErrorNotice, announceStatusChangeFailure ) ],
 	[ COMMENTS_LIST_REQUEST ]: [ dispatchRequest( fetchCommentsList, addComments, announceFailure ) ],
 	[ COMMENT_REQUEST ]: [ dispatchRequest( requestComment, receiveCommentSuccess, receiveCommentError ) ],
-	[ COMMENT_EDIT ]: [ dispatchRequest( editComment, removeCommentStatusErrorNotice, announceEditFailure ) ],
+	[ COMMENTS_EDIT ]: [ dispatchRequest( editComment, removeCommentStatusErrorNotice, announceEditFailure ) ],
 };
 
 export default mergeHandlers( fetchHandler, replies, likes );

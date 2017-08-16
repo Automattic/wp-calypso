@@ -107,7 +107,7 @@ class PostCommentForm extends Component {
 			return false;
 		}
 
-		this.props.editComment( post.site_ID, post.ID, this.props.commentId, commentText );
+		this.props.editComment( post.site_ID, post.ID, this.props.commentId, { content: commentText } );
 
 		recordAction( 'edited_comment' );
 		recordGaEvent( 'Clicked Edit Comment Button' );
