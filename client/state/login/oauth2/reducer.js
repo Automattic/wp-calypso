@@ -64,7 +64,7 @@ export const initialClientsData = {
 	50916: {
 		id: 50916,
 		name: 'woo',
-		title: 'WooCommerce',
+		title: 'WooCommerce.com',
 		img_url: 'https://woocommerce.com/wp-content/themes/woomattic/images/logo-woocommerce@2x.png',
 		img_height: 41,
 		img_width: 200,
