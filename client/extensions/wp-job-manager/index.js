@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { navigation, sites, siteSelection } from 'my-sites/controller';
-import { renderTab } from './app/controller';
+import { renderSetupWizard, renderTab } from './app/controller';
 import { Tabs } from './constants';
 import JobListings from './components/settings/job-listings';
 import JobSubmission from './components/settings/job-submission';
@@ -29,6 +29,7 @@ export default function() {
 		renderTab( JobSubmission, jobSubmissionSlug ) );
 	page( `/extensions/wp-job-manager/${ pagesSlug }/:site`, siteSelection, navigation,
 		renderTab( Pages, pagesSlug ) );
+	page( '/extensions/wp-job-manager/setup/:site/:stepName?', siteSelection, navigation, renderSetupWizard );
 }
 
 initExtension();
