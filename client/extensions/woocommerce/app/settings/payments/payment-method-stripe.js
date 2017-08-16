@@ -77,18 +77,23 @@ class PaymentMethodStripe extends Component {
 		};
 	}
 
-	renderEditKeyTextbox = ( setting, placeholder ) => {
+	renderEditKeyTextbox = ( setting, label, placeholder ) => {
 		const isError = this.state.missingFieldsNotice && ! setting.value.trim();
 
 		return (
 			<div>
-				<FormTextInput
-					name={ setting.id }
-					onChange={ this.onEditFieldHandler }
-					isError={ isError }
-					value={ setting.value }
-					placeholder={ placeholder } />
+				<FormFieldset className="payments__method-edit-field-container">
+					<FormLabel required={ true }>
+						{ label }
+					</FormLabel>
+					<FormTextInput
+						name={ setting.id }
+						onChange={ this.onEditFieldHandler }
+						isError={ isError }
+						value={ setting.value }
+						placeholder={ placeholder } />
 					{ isError && <FormInputValidation isError text="This field is required." /> }
+				</FormFieldset>
 			</div>
 		);
 	}
@@ -100,24 +105,16 @@ class PaymentMethodStripe extends Component {
 
 		return (
 			<div>
-				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>
-						{ secretLabel }
-					</FormLabel>
 					{ this.renderEditKeyTextbox(
 						isLiveMode ? method.settings.secret_key : method.settings.test_secret_key,
+						secretLabel,
 						translate( 'Enter your secret key from your Stripe.com account' )
 					) }
-				</FormFieldset>
-				<FormFieldset className="payments__method-edit-field-container">
-					<FormLabel>
-						{ publishableLabel }
-					</FormLabel>
 					{ this.renderEditKeyTextbox(
 						isLiveMode ? method.settings.publishable_key : method.settings.test_publishable_key,
+						publishableLabel,
 						translate( 'Enter your publishable key from your Stripe.com account' )
 					) }
-				</FormFieldset>
 			</div>
 		);
 	}
