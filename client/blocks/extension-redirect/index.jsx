@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import page from 'page';
 
 /**
@@ -16,14 +17,16 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 class ExtensionRedirect extends Component {
 	static propTypes = {
 		pluginId: PropTypes.string.isRequired,
-		pluginInstalled: PropTypes.bool.isRequired,
+		siteId: PropTypes.number,
+		// Connected props
+		pluginActive: PropTypes.bool.isRequired,
 		requestingPlugins: PropTypes.bool.isRequired,
-		siteId: PropTypes.number
+		siteSlug: PropTypes.string,
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		// Has the request completed, and no data have been fetched?
-		if ( this.props.requestingPlugins && ! nextProps.requestingPlugins && ! nextProps.pluginInstalled ) {
+		// Has the request completed? Is the plugin active?
+		if ( this.props.requestingPlugins && ! nextProps.requestingPlugins && ! nextProps.pluginActive ) {
 			page.redirect( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
 		}
 	}
@@ -44,7 +47,7 @@ export default connect(
 		const site = getSite( state, siteId );
 
 		return {
-			pluginInstalled: !! ( site && getPluginOnSite( state, site, pluginId ) ),
+			pluginActive: !! site && get( getPluginOnSite( state, site, pluginId ), 'active' ),
 			requestingPlugins: isRequesting( state, siteId ),
 			siteSlug: getSiteSlug( state, siteId ),
 		};

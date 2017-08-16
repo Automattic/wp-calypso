@@ -3,7 +3,7 @@ Extension Redirect
 
 `<ExtensionRedirect />` is a React component that conditionally redirects a user from an
 extension page to the corresponding plugin installation page, if the corresponding plugin
-isn't installed on the given site.
+isn't installed or activated on the given site.
 
 ## Usage
 
@@ -27,4 +27,4 @@ The ID of the plugin for which to check.
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-The ID of the site on which to check whether the plugin is installed.
+The ID of the site on which to check whether the plugin is installed and activated.
