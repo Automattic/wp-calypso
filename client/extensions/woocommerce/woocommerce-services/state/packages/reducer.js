@@ -35,11 +35,15 @@ const isNullOrEmpty = ( value ) => null === value || '' === trim( value );
 const reducers = {};
 
 reducers[ WOOCOMMERCE_SERVICES_PACKAGES_ADD_PACKAGE ] = ( state ) => {
+	const selectedPredefinedPackages = state.packages && state.packages.predefined
+		? state.packages.predefined
+		: {};
+
 	const newState = {
 		...state,
 		showModal: true,
 		mode: 'add-custom',
-		currentlyEditingPredefinedPackages: cloneDeep( state.packages.predefined ),
+		currentlyEditingPredefinedPackages: cloneDeep( selectedPredefinedPackages ),
 	};
 
 	if ( 'edit' === state.mode || ! newState.packageData ) {
@@ -64,6 +68,7 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL ] = ( state ) => {
 		modalErrors: {},
 		showModal: false,
 		showOuterDimensions: false,
+		currentlyEditingPredefinedPackages: null,
 	} );
 };
 
@@ -195,13 +200,15 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEF ] = ( state, { serviceId, 
 };
 
 reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEF ] = ( state ) => {
+	const predefined = state.currentlyEditingPredefinedPackages;
+
 	state = reducers[ WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL ]( state );
 
 	return {
 		...state,
 		packages: {
 			...state.packages,
-			predefined: state.currentlyEditingPredefinedPackages,
+			predefined,
 		},
 		pristine: false,
 	};

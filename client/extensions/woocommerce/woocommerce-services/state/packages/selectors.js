@@ -29,13 +29,13 @@ const getPredefinedPackageServices = ( form ) => {
 export const getAllSelectedPackages = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
 		const form = getPackagesForm( state, siteId );
-		if ( ! form || ! form.predefinedSchema || ! form.packages || ! form.packages.predefined ) {
+		if ( ! form || ! form.predefinedSchema || ! form.packages ) {
 			return null;
 		}
 
 		const packageList = [];
 		forEach( form.predefinedSchema, ( serviceGroups, serviceId ) => {
-			const serviceSelectedIds = form.packages.predefined[ serviceId ] || [];
+			const serviceSelectedIds = ( form.packages.predefined || {} )[ serviceId ] || [];
 
 			forEach( serviceGroups, ( group ) => {
 				const definitions = group.definitions;
@@ -69,7 +69,7 @@ export const getAllSelectedPackages = createSelector(
 		const serviceIds = getPredefinedPackageServices( form );
 		return [
 			form.packages.custom,
-			...serviceIds.map( ( serviceId ) => form.packages.predefined[ serviceId ] )
+			...serviceIds.map( ( serviceId ) => ( form.packages.predefined || {} )[ serviceId ] )
 		];
 	} );
 
