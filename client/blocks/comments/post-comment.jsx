@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -7,6 +8,7 @@ import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -49,6 +51,18 @@ class PostComment extends Component {
 			comment_id: this.props.commentId,
 			author_url: event.target.href,
 		} );
+	};
+
+	getChildren = ( commentId = this.props.commentId ) => {
+		if ( ! commentId ) {
+			return;
+		}
+
+		const { commentsTree } = this.props;
+		const childrenArray = get( commentsTree, [ commentId, 'children' ], [] );
+		const children = new Set( childrenArray );
+		childrenArray.forEach( comment => children.add( Array.from( this.getChildren( comment ) ) ) );
+		return children;
 	};
 
 	renderRepliesList() {
@@ -158,6 +172,12 @@ class PostComment extends Component {
 		const { commentsTree, commentId, depth, maxDepth } = this.props;
 		const comment = get( commentsTree, [ commentId, 'data' ] );
 
+		const children = !! this.props.showOnly && this.getChildren();
+		console.error( children );
+		if ( this.props.showOnly && ! this.getChildren().has( commentId ) ) {
+			return null;
+		}
+
 		// todo: connect this constants to the state (new selector)
 		const haveReplyWithError = some(
 			get( commentsTree, [ this.props.commentId, 'children' ] ),
@@ -211,7 +231,8 @@ class PostComment extends Component {
 						commentId,
 						className: 'comments__comment-username',
 					} ) }
-					{ this.props.showNestingReplyArrow && parentAuthorName &&
+					{ this.props.showNestingReplyArrow &&
+						parentAuthorName &&
 						<span className="comments__comment-respondee">
 							<Gridicon icon="chevron-right" size={ 16 } />
 							{ this.renderAuthorTag( {
@@ -270,21 +291,22 @@ class PostComment extends Component {
 }
 
 PostComment.propTypes = {
-	commentsTree: React.PropTypes.object.isRequired,
-	commentId: React.PropTypes.oneOfType( [
-		React.PropTypes.string, // can be 'placeholder-123'
-		React.PropTypes.number,
+	commentsTree: PropTypes.object.isRequired,
+	commentId: PropTypes.oneOfType( [
+		PropTypes.string, // can be 'placeholder-123'
+		PropTypes.number,
 	] ).isRequired,
-	onReplyClick: React.PropTypes.func,
-	depth: React.PropTypes.number,
-	post: React.PropTypes.object,
-	maxChildrenToShow: React.PropTypes.number,
-	onCommentSubmit: React.PropTypes.func,
-	maxDepth: React.PropTypes.number,
-	showNestingReplyArrow: React.PropTypes.bool,
+	onReplyClick: PropTypes.func,
+	depth: PropTypes.number,
+	post: PropTypes.object,
+	maxChildrenToShow: PropTypes.number,
+	onCommentSubmit: PropTypes.func,
+	maxDepth: PropTypes.number,
+	showNestingReplyArrow: PropTypes.bool,
+	onlyShow: PropTypes.arrayOf( PropTypes.number ),
 
 	// connect()ed props:
-	currentUser: React.PropTypes.object.isRequired,
+	currentUser: PropTypes.object.isRequired,
 };
 
 PostComment.defaultProps = {
