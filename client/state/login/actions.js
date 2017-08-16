@@ -341,10 +341,9 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 	} );
 };
 
-export const createSocialUserFailed = ( service, token, error ) => ( {
+export const createSocialUserFailed = ( socialInfo, error ) => ( {
 	type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
-	service,
-	token,
+	authInfo: socialInfo,
 	error: error.field ? error : getErrorFromWPCOMError( error )
 } );
 

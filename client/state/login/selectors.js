@@ -218,30 +218,6 @@ export const getCreateSocialAccountError = ( state ) => get( state, 'login.socia
 export const getRequestSocialAccountError = ( state ) => get( state, 'login.socialAccount.requestError', null );
 
 /***
- * Gets the email address of the social account to be linked.
- *
- * @param  {Object}   state  Global state tree
- * @return {?String}         Email address of the social account.
- */
-export const getLinkingSocialUser = ( state ) => get( state, 'login.socialAccount.email', null );
-
-/***
- * Gets the Service name of the social account to be linked.
- *
- * @param  {Object}   state  Global state tree
- * @return {?String}         Service name of the social account.
- */
-export const getLinkingSocialService = ( state ) => get( state, 'login.socialAccount.authInfo.service', null );
-
-/***
- * Gets the auth information of the social account to be linked.
- *
- * @param  {Object}   state  Global state tree
- * @return {?String}         Email address of the social account.
- */
-export const getLinkingSocialAuthInfo = ( state ) => get( state, 'login.socialAccount.authInfo', null );
-
-/***
  * Gets social account linking status
  *
  * @param  {Object}   state  Global state tree
@@ -263,4 +239,12 @@ export const getSocialAccountLinkEmail = ( state ) => get( state, 'login.socialA
  * @param  {Object}   state  Global state tree
  * @return {?String}         service name that is being linked
  */
-export const getSocialAccountLinkService = ( state ) => get( state, 'login.socialAccountLink.service', null );
+export const getSocialAccountLinkService = ( state ) => get( state, 'login.socialAccountLink.authInfo.service', null );
+
+/***
+ * Gets the auth information of the social account to be linked.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         Email address of the social account.
+ */
+export const getSocialAccountLinkAuthInfo = ( state ) => get( state, 'login.socialAccountLink.authInfo', null );
