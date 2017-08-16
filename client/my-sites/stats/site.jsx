@@ -131,7 +131,7 @@ class StatsSite extends Component {
 							<DatePicker
 								period={ period }
 								date={ date }
-								query={ query }
+								query={ query }
 								statsType="statsTopPosts"
 								showQueryDate
 							/>
@@ -205,5 +205,5 @@ export default connect(
 			slug: getSelectedSiteSlug( state )
 		};
 	},
-	{  recordGoogleEvent }
+	{ recordGoogleEvent }
 )( localize( StatsSite ) );
