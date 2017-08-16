@@ -46,6 +46,17 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 					href={ '/themes/' + selectedSite.slug } />
 			}
 
+			{ ! selectedFeature &&
+				<PurchaseDetail
+					icon="plugins"
+					title={ i18n.translate( 'Upload a Plugin' ) }
+					description={ i18n.translate(
+						'You can now upload your own plugins, or ones you\'ve downloaded, directly through a drag and drop interface.'
+					) }
+					buttonText={ i18n.translate( 'Upload a plugin now' ) }
+					href={ '/plugins/upload/' + selectedSite.slug } />
+			}
+
 			<PurchaseDetail
 				icon="stats-alt"
 				title={ i18n.translate( 'Stats from Google Analytics' ) }
