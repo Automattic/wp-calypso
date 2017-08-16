@@ -35,6 +35,7 @@ import JetpackAntiSpam from './jetpack-anti-spam';
 import JetpackBackupSecurity from './jetpack-backup-security';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
 import JetpackWordPressCom from './jetpack-wordpress-com';
+import { isEnabled } from 'config';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -103,10 +104,12 @@ class ProductPurchaseFeaturesList extends Component {
 				selectedSite={ selectedSite }
 				key="findNewThemeFeature"
 			/>,
-			<UploadPlugins
-				selectedSite={ selectedSite }
-				key="uploadPluginsFeature"
-			/>,
+			isEnabled( 'manage/plugins/upload' )
+				? <UploadPlugins
+					selectedSite={ selectedSite }
+					key="uploadPluginsFeature"
+				/>
+				: null,
 			isWordadsInstantActivationEligible( selectedSite )
 				? <MonetizeSite
 					selectedSite={ selectedSite }
