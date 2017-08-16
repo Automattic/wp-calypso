@@ -387,6 +387,7 @@ a.comments__comment-username {
 
 		&::after{
 			@include long-content-fade( $size: 150px );
+			background: linear-gradient( to right, rgba( 255, 255, 255, 0 ) 0%, rgba( 255, 255, 255, 1 ) 50%, rgba( 255, 255, 255, 1 ) 96%, rgba( 255, 255, 255, 1) 98% );
 			height: 20px;
 			top: auto;
 		}
