@@ -241,7 +241,19 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 			dispatch( {
 				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
 				redirectTo: get( response, 'body.data.redirect_to' ),
+				data: get( response, 'body.data' )
 			} );
+
+			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
+				dispatch( {
+					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+					notice: {
+						message: getSMSMessageFromResponse( response ),
+						status: 'is-success'
+					},
+					twoStepNonce: get( response, 'body.data.two_step_nonce_sms' )
+				} );
+			}
 		} )
 		.catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );

@@ -490,6 +490,14 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
+		it( 'should set twoFactorAuth to null value if a social request is initiated', () => {
+			const state = twoFactorAuth( undefined, {
+				type: SOCIAL_LOGIN_REQUEST,
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
 		it( 'should set twoFactorAuth to the response value if a request was successful', () => {
 			const data = {
 				result: true,
@@ -508,6 +516,29 @@ describe( 'reducer', () => {
 		it( 'should set twoFactorAuth to null value if a request is unsuccessful', () => {
 			const state = twoFactorAuth( null, {
 				type: LOGIN_REQUEST_FAILURE,
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should set twoFactorAuth to the response value if a social request was successful', () => {
+			const data = {
+				result: true,
+				two_step_id: 12345678,
+				two_step_nonce: 'abcdefgh1234',
+			};
+			const state = twoFactorAuth( null, {
+				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
+				data,
+				rememberMe: true
+			} );
+
+			expect( state ).to.eql( { ...data } );
+		} );
+
+		it( 'should set twoFactorAuth to null value if a social request is unsuccessful', () => {
+			const state = twoFactorAuth( null, {
+				type: SOCIAL_LOGIN_REQUEST_FAILURE,
 			} );
 
 			expect( state ).to.be.null;
