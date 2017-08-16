@@ -79,4 +79,26 @@ describe( 'User Settings', () => {
 			} );
 		} );
 	} );
+
+	it( 'should support flat and deep settings', done => {
+		assert.isFalse( userSettings.settings.lang_id );
+		assert.isFalse( userSettings.settings.testParent.testChild );
+
+		assert.isTrue( userSettings.updateSetting( 'lang_id', true ) );
+		assert.isTrue( userSettings.updateSetting( 'testParent.testChild', true ) );
+
+		assert.isTrue( userSettings.unsavedSettings.lang_id );
+		assert.isTrue( userSettings.unsavedSettings.testParent.testChild );
+
+		userSettings.saveSettings( assertCorrectSettingIsSaved );
+
+		function assertCorrectSettingIsSaved() {
+			assert.isUndefined( userSettings.unsavedSettings.lang_id );
+			assert.isUndefined( userSettings.unsavedSettings.testParent );
+			assert.isTrue( userSettings.settings.lang_id );
+			assert.isTrue( userSettings.settings.testParent.testChild );
+			done();
+		}
+	} );
+
 } );
