@@ -21,5 +21,5 @@ const CommentDetail = ( { comment, commentId, siteId } ) =>
 | Name | Type | Description |
 | --- | --- | --- |
 | `commentId` | Number | The comment to request. |
-| `context` | String | The request context (default: "display")
+| `context` | String | The request context (default: "display") |
 | `siteId` | Number | The site ID for which the comment should be queried. |

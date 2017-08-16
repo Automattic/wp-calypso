@@ -11,6 +11,7 @@ import { requestCommentsList } from 'state/comments/actions';
 
 export class QuerySiteCommentsList extends PureComponent {
 	static propTypes = {
+		context: PropTypes.string,
 		listType: PropTypes.string,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
@@ -18,6 +19,7 @@ export class QuerySiteCommentsList extends PureComponent {
 	};
 
 	static defaultProps = {
+		context: 'display',
 		listType: 'site',
 		status: 'unapproved',
 		type: 'comment',
