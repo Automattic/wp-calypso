@@ -40,8 +40,8 @@ Unix millisecond timestamp to fetch activity on or after.
 
 ### `number`
 
-Type   | Required
------- | --------
-Number | No
+Type   | Required | Default
+------ | -------- | ---
+Number | No       | 20
 
 Number of results to fetch.

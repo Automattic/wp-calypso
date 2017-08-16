@@ -23,6 +23,10 @@ class QueryActivityLog extends PureComponent {
 		number: PropTypes.number,
 	};
 
+	static defaultProps = {
+		number: 20,
+	};
+
 	componentWillMount() {
 		this.request( this.props );
 	}
