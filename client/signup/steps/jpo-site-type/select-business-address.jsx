@@ -1,45 +1,82 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import { translate } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
 import Card from 'components/card';
 import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import FormTextarea from 'components/forms/form-textarea';
 
-import PersonalGraphic from './personal-graphic';
-import BusinessGraphic from './business-graphic';
+class SelectBusinessAddress extends React.Component {
 
-module.exports = React.createClass( {
+	static propTypes = {
+		signupDependencies: PropTypes.object,
+		handleBusinessInfo: PropTypes.func,
+		businessInfo: PropTypes.object,
+		required: PropTypes.bool,
+	};
 
-	displayName: 'SelectBusinessAddress',
-
-	propTypes: {
-		required: React.PropTypes.bool,
-	},
-
-	render: function() {
+	render() {
 		if ( ! this.props.current ) {
 			return ( <div /> );
 		}
+
+		const {
+			handleBusinessInfo,
+			businessInfo: {
+				businessName,
+				streetAddress,
+				city,
+				state,
+				zipCode
+			}
+		} = this.props;
 
 		return ( 
 			<div className="jpo__site-type-wrapper business-address">
 				<Card>
 					<FormLabel>{ translate( 'Business Name' ) }</FormLabel>
-					<FormTextInput onChange={ this.props.onInputBusinessName } />
+					<FormTextInput
+						name="businessName"
+						value={ businessName }
+						onChange={ handleBusinessInfo }
+						/>
 					<FormLabel>{ translate( 'Street Address' ) }</FormLabel>
-					<FormTextInput onChange={ this.props.onInputStreetAddress } />
+					<FormTextInput
+						name="streetAddress"
+						value={ streetAddress }
+						onChange={ handleBusinessInfo }
+						/>
 					<FormLabel>{ translate( 'City' ) }</FormLabel>
-					<FormTextInput onChange={ this.props.onInputCity } />
+					<FormTextInput
+						name="city"
+						value={ city }
+						onChange={ handleBusinessInfo }
+						/>
 					<FormLabel>{ translate( 'State' ) }</FormLabel>
-					<FormTextInput onChange={ this.props.onInputState } />
+					<FormTextInput
+						name="state"
+						value={ state }
+						onChange={ handleBusinessInfo }
+						/>
 					<FormLabel>{ translate( 'ZIP Code' ) }</FormLabel>
-					<FormTextInput onChange={ this.props.onInputZip } />
+					<FormTextInput
+						name="zipCode"
+						value={ zipCode }
+						onChange={ handleBusinessInfo }
+						/>
 					<Button primary onClick={ this.props.submitStep }>{ translate( 'Next Step' ) }</Button>
 				</Card>
 			</div>
 		);
 	}
 
-} );
+}
+
+export default SelectBusinessAddress;

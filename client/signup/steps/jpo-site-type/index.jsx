@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import noop from 'lodash/noop';
 import get from 'lodash/get';
 
 /**
@@ -12,6 +13,7 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import { translate } from 'i18n-calypso';
 import { setJPOSiteType } from 'state/signup/steps/jpo-site-type/actions';
+import formState from 'lib/form-state';
 import SelectGenre from './select-genre';
 import SelectBusinessPersonal from './select-business-personal';
 import SelectBusinessAddress from './select-business-address';
@@ -33,74 +35,111 @@ const JPOSiteTypeStep = React.createClass( {
 			} ),
 			subHeaderText: translate( 'What kind of site do you need? Choose an option below:' ),
 			currentScreen: 'genre',
-			payload: {
-				genre: '',
-				businessPersonal: '',
-				addressInfo: {
-					businessName: '',
-					streetAddress: '',
-					city: '',
-					state: '',
-					zipCode: '',
+			genre: '',
+			businessPersonal: ''
+		};
+	},
+
+	getPayload() {
+		return {
+			genre: this.state.genre,
+			businessPersonal: this.state.businessPersonal,
+			...this.getBusinessInfo()
+		};
+	},
+
+	componentWillMount() {
+		this.formStateController = new formState.Controller( {
+			fieldNames: [ 'businessName', 'streetAddress', 'city', 'state', 'zipCode' ],
+			validatorFunction: noop,
+			onNewState: this.setFormState,
+			hideFieldErrorsOnChange: true,
+			initialState: {
+				businessName: {
+					value: get( this.props.signupDependencies, [ 'jpoSiteType', 'businessName' ], '' )
+				},
+				streetAddress: {
+					value: get( this.props.signupDependencies, [ 'jpoSiteType', 'streetAddress' ], '' )
+				},
+				city: {
+					value: get( this.props.signupDependencies, [ 'jpoSiteType', 'city' ], '' )
+				},
+				state: {
+					value: get( this.props.signupDependencies, [ 'jpoSiteType', 'state' ], '' )
+				},
+				zipCode: {
+					value: get( this.props.signupDependencies, [ 'jpoSiteType', 'zipCode' ], '' )
 				}
 			}
+		} );
+
+		this.setFormState( this.formStateController.getInitialState() );
+	},
+
+	setFormState( state ) {
+		this.setState( { form: state } );
+	},
+
+	handleBusinessInfo( event ) {
+		const { name, value } = event.target;
+
+		this.formStateController.handleFieldChange( {
+			name: name,
+			value: value
+		} );
+	},
+
+	getBusinessInfo() {
+		return {
+			businessName: formState.getFieldValue( this.state.form, 'businessName' ),
+			streetAddress: formState.getFieldValue( this.state.form, 'streetAddress' ),
+			city: formState.getFieldValue( this.state.form, 'city' ),
+			state: formState.getFieldValue( this.state.form, 'state' ),
+			zipCode: formState.getFieldValue( this.state.form, 'zipCode' )
 		};
 	},
 
 	onSelectBlog() {
-		this.state.payload.genre = 'blog';
-		this.setState( { currentScreen: 'businesspersonal' } );
+		this.handleSiteKind( 'blog' );
 	},
 
 	onSelectWebsite() {
-		this.state.payload.genre = 'website';
-		this.setState( { currentScreen: 'businesspersonal' } );
+		this.handleSiteKind( 'website' );
 	},
 
 	onSelectPortfolio() {
-		this.state.payload.genre = 'portfolio';
-		this.setState( { currentScreen: 'businesspersonal' } );
+		this.handleSiteKind( 'portfolio' );
 	},
 
 	onSelectStore() {
-		this.state.payload.genre = 'store';
-		this.setState( { currentScreen: 'businesspersonal' } );
+		this.handleSiteKind( 'store' );
+	},
+
+	handleSiteKind( kind ) {
+		this.setState( {
+			genre: kind,
+			currentScreen: 'businesspersonal'
+		} );
 	},
 
 	onSelectPersonal() {
-		this.state.payload.businessPersonal = 'personal';
+		this.setState( {
+			businessPersonal: 'personal',
+		} );
 		this.submitStep();
 	},
 
 	onSelectBusiness() {
-		this.state.payload.businessPersonal = 'business';		
-		this.state.headerText = 'Add a business address.';
-		this.state.subHeaderText = 'Enter your business address to have a map added to your website.';
-		this.setState( { currentScreen: 'businessaddress' } );
-	},
-
-	onInputBusinessName( event ) {
-		this.state.payload.addressInfo.businessName = event.target.value;
-	},
-
-	onInputStreetAddress( event ) {
-		this.state.payload.addressInfo.streetAddress = event.target.value;
-	},
-
-	onInputCity( event ) {
-		this.state.payload.addressInfo.city = event.target.value;
-	},
-
-	onInputState( event ) {
-		this.state.payload.addressInfo.state = event.target.value;
-	},
-
-	onInputZip( event ) {
-		this.state.payload.addressInfo.zipCode = event.target.value;
+		this.setState( {
+			businessPersonal: 'business',
+			headerText: translate( 'Add a business address.' ),
+			subHeaderText: translate( 'Enter your business address to have a map added to your website.' ),
+			currentScreen: 'businessaddress'
+		} );
 	},
 
 	submitStep() {
-		const jpoSiteType = this.state.payload;
+		const jpoSiteType = this.getPayload();
 
 		this.props.setJPOSiteType( jpoSiteType );
 
@@ -126,20 +165,20 @@ const JPOSiteTypeStep = React.createClass( {
 					onSelectWebsite={ this.onSelectWebsite }
 					onSelectPortfolio={ this.onSelectPortfolio }
 					onSelectStore={ this.onSelectStore }
+					signupDependencies={ this.props.signupDependencies }
 				/>
 				<SelectBusinessPersonal 
 					current={ this.state.currentScreen === 'businesspersonal' }
 					onSelectPersonal={ this.onSelectPersonal }
 					onSelectBusiness={ this.onSelectBusiness }
+					signupDependencies={ this.props.signupDependencies }
 				/>
 				<SelectBusinessAddress 
 					current={ this.state.currentScreen === 'businessaddress' }
-					onInputBusinessName={ this.onInputBusinessName }
-					onInputStreetAddress={ this.onInputStreetAddress }
-					onInputCity={ this.onInputCity }
-					onInputState={ this.onInputState }
-					onInputZip={ this.onInputZip }
 					submitStep={ this.submitStep }
+					signupDependencies={ this.props.signupDependencies }
+					handleBusinessInfo={ this.handleBusinessInfo }
+					businessInfo={ this.getBusinessInfo() }
 				/>
 			</div>
 		);

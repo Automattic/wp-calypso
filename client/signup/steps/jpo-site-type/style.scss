@@ -1,13 +1,13 @@
-.jpo__site-type-wrapper {
+.jpo-site-type__wrapper {
 	margin-left: auto;
 	margin-right: auto;
 }
 
-.jpo__site-type-wrapper header {
+.jpo-site-type__wrapper header {
 	text-align: center;
 }
 
-.jpo__site-type-row {
+.jpo-site-type__row {
 	margin: 0 auto;
 	display: flex;
 	flex-flow: row wrap;
@@ -25,7 +25,7 @@
 	}
 }
 
-.jpo__site-type-row .card {
+.jpo-site-type__row .card {
 	width: 46%;
 	display: inline-block;
 	vertical-align: top;
@@ -38,16 +38,16 @@
 	}
 }
 
-.jpo__site-type-row .card svg {
+.jpo-site-type__row .card svg {
 	max-width: 100%;
 	max-height: 190px;
 }
 
-.jpo__site-type-row-small .card svg {
+.jpo-site-type__row-small .card svg {
 	max-height: 117px;
 }
 
-.jpo__site-type-row .card:first-child {
+.jpo-site-type__row .card:first-child {
 	@include breakpoint( ">480px" ) {
 		margin-right: 2%;
 	}
@@ -57,7 +57,7 @@
 	}
 }
 
-.jpo__site-type-row .card .button {
+.jpo-site-type__row .card .button {
 	font-size: 1.25rem;
 	margin-bottom: 1rem;
 	color: $blue-wordpress;
@@ -74,7 +74,7 @@
 	}
 }
 
-.jpo__site-type-row-small .card .button {
+.jpo-site-type__row-small .card .button {
 	text-transform: none;
 	margin-top: 1rem;
 	margin-bottom: 0;
@@ -82,7 +82,7 @@
     line-height: 1;
 }
 
-.button .design-type-with-store__cta {
+.button .jpo-site-type__cta {
 	@include breakpoint( ">480px" ) {
 		background: none;
 	    font-size: 1.1em;
@@ -94,7 +94,7 @@
 	}
 }
 
-p.jpo__site-type-description {
+p.jpo-site-type__description {
 	font-size: 1.25rem;
 	color: $gray;
 	margin: 0;
@@ -108,7 +108,7 @@ p.jpo__site-type-description {
 	}
 }
 
-.jpo__site-type-note {
+.jpo-site-type__note {
 	text-align: center;
 	color: darken( $gray, 20% );
 	font-size: 14px;
@@ -142,7 +142,7 @@ p.jpo__site-type-description {
 	}
 }
 
-.design-type-with-store__choice {
+.jpo-site-type__choice {
 	transition: all 100ms ease-in-out;
 	position: relative;
 	border: 1px solid lighten( $gray, 20% );
@@ -161,17 +161,18 @@ p.jpo__site-type-description {
 		flex-grow: 1;
 		border: 0;
 
-		&:hover {
+		&:hover,
+		&.is-selected {
 			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
 		}
 	}
 
 	&:active {
-		.design-type-with-store__cta {
+		.jpo-site-type__cta {
 			color: $blue-dark;
 		}
 
-		.design-type-with-store__choice-link:after {
+		.jpo-site-type__choice-link:after {
 			border-top-color: $blue-dark;
 			border-right-color: $blue-dark;
 		}
@@ -204,7 +205,7 @@ p.jpo__site-type-description {
 	}
 }
 
-.design-type-with-store__choice-copy {
+.jpo-site-type__choice-copy {
 	border-top: 1px solid rgba(200, 215, 225, 0.5);
 
 	@include breakpoint( "<480px" ) {
@@ -214,29 +215,29 @@ p.jpo__site-type-description {
 }
 
 @include breakpoint( ">480px" ) {
-	.design-type-with-store__choice-copy {
+	.jpo-site-type__choice-copy {
 		padding: 15px;
 		border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
 	}
 }
 
 
-.design-type-with-store__image {
+.jpo-site-type__image {
 	padding:15px;
 }
 
 	&:active {
-		.design-type-with-store__cta {
+		.jpo-site-type__cta {
 			color: $blue-dark;
 		}
 
-		.design-type-with-store__choice-link:after {
+		.jpo-site-type__choice-link:after {
 			border-top-color: $blue-dark;
 			border-right-color: $blue-dark;
 		}
 	}
 
-.design-type-with-store__choice-link {
+.jpo-site-type__choice-link {
 	padding-right: 40px;
 	display: block;
 	box-sizing: border-box;
