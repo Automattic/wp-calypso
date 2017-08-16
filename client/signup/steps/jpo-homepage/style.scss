@@ -1,37 +1,43 @@
 .jpo__homepage-wrapper {
 	margin-left: auto;
 	margin-right: auto;
+	display: flex;
 }
 
 .jpo__homepage-row {
 	max-width: 600px;
 	margin-left: auto;
 	margin-right: auto;
-}
 
-.jpo__homepage-row .card {
-	width: 49%;
-	display: inline-block;
-	vertical-align: top;
-	text-align: center;
-}
+	.card {
+		width: 49%;
+		display: inline-block;
+		vertical-align: top;
+		text-align: center;
 
-.jpo__homepage-row .card svg {
-	width: 94%;
-	height: auto;
-	margin-bottom: 1rem;
-}
+		&:hover,
+		&.is-selected {
+			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
+		}
 
-.jpo__homepage-row .card:first-child {
-	margin-right: 2%;
-}
+		svg {
+			width: 94%;
+			height: auto;
+			margin-bottom: 1rem;
+		}
 
-.jpo__homepage-row .card .button {
-	font-size: 1.25rem;
-	margin-bottom: 1rem;
-	color: $blue-wordpress;
-	padding: 7px;
-    line-height: 1;
+		.button {
+			font-size: 1.25rem;
+			margin-bottom: 1rem;
+			color: $blue-wordpress;
+			padding: 7px;
+			line-height: 1;
+		}
+	}
+
+	a:first-child .card {
+		margin-right: 2%;
+	}
 }
 
 .jpo__homepage-description {

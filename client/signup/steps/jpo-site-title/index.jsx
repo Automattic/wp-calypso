@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -20,7 +21,6 @@ import Button from 'components/button';
 import { translate } from 'i18n-calypso';
 
 import { setJPOSiteTitle } from 'state/signup/steps/jpo-site-title/actions';
-import { getJPOSiteTitle, getJPOSiteDescription } from 'state/signup/steps/jpo-site-title/selectors';
 
 const JPOSiteTitleStep = React.createClass( {
 	errorMessage: '',
@@ -35,10 +35,6 @@ const JPOSiteTitleStep = React.createClass( {
 	},
 
 	componentWillMount() {
-		const {
-			storeJpoSiteTitle,
-			storeJpoSiteDescription,
-		} = this.props;
 		this.formStateController = new formState.Controller( {
 			fieldNames: [ 'siteTitle', 'siteDescription' ],
 			validatorFunction: noop,
@@ -46,10 +42,10 @@ const JPOSiteTitleStep = React.createClass( {
 			hideFieldErrorsOnChange: true,
 			initialState: {
 				siteTitle: {
-					value: storeJpoSiteTitle
+					value: get( this.props.signupDependencies, [ 'jpoSiteTitle', 'siteTitle' ], '' )
 				},
 				siteDescription: {
-					value: storeJpoSiteDescription
+					value: get( this.props.signupDependencies, [ 'jpoSiteTitle', 'siteDescription' ], '' )
 				}
 			}
 		} );
@@ -167,12 +163,7 @@ const JPOSiteTitleStep = React.createClass( {
 } );
 
 export default connect(
-	state => {
-		return {
-			storeJpoSiteTitle: getJPOSiteTitle( state ),
-			storeJpoSiteDescription: getJPOSiteDescription( state )
-		};
-	},
+	null,
 	{
 		setJPOSiteTitle
 	}
