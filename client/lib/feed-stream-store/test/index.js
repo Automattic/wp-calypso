@@ -382,6 +382,7 @@ describe( 'FeedPostList', function() {
 					],
 				} );
 				expect( conversations.postKeys ).to.have.lengthOf( 1 );
+				expect( conversations.postKeys[ 0 ].comments ).to.eql( [ 3, 2, 1 ] );
 			} );
 
 			it( 'should filter out posts that it already has which have the same comments', () => {
@@ -410,7 +411,7 @@ describe( 'FeedPostList', function() {
 				expect( filteredPosts ).to.eql( [
 					{
 						blogId: 1,
-						comments: [ 2, 3, 4 ],
+						comments: [ 4, 3, 2 ],
 						date: new Date( '2016-09-15T00:00:00Z' ),
 						last_comment_date_gmt: '2017-01-01T01:00:00Z',
 						postId: 1,

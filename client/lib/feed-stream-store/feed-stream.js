@@ -418,7 +418,7 @@ export default class FeedStream {
 
 	filterNewPosts( posts ) {
 		const postById = this.postById;
-		posts = filter( posts, function( post ) {
+		posts = filter( posts, post => {
 			return ! postById.has( keyToString( this.keyMaker( post ) ) );
 		} );
 		posts = this.filterFollowedXPosts( posts );
