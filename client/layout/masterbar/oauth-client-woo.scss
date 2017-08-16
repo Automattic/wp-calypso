@@ -1,5 +1,27 @@
-.masterbar__oauth-client-user-nav {
-	float: right;
+.masterbar__oauth-client {
+	background-color: $blue-wordpress;
+
+	nav {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	ul {
+		margin: 0;
+		padding-left: 0;
+
+		li {
+			list-style-type: none;
+		}
+	}
+
+	a {
+		text-decoration: none;
+	}
+
+	img {
+		display: block;
+	}
 }
 
 .masterbar__oauth-client-wpcc-sign-in {
@@ -65,15 +87,6 @@
 		left: 0;
 		right: 0;
 		z-index: 100;
-
- 		ul {
-			margin: 0;
-			padding-left: 0;
-
-			li {
-				list-style-type: none;
-			}
-		}
 	}
 
 	.masterbar__oauth-client a {
@@ -81,7 +94,6 @@
 		float: left;
 		line-height: 55px;
 		padding: 0 15px;
-		text-decoration: none;
 		transition: 0.05 all ease-in-out;
 
 		&:active {
