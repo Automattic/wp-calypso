@@ -22,6 +22,7 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY
 } from 'lib/plans/constants';
 import FindNewTheme from './find-new-theme';
+import UploadPlugins from './upload-plugins';
 import AdvertisingRemoved from './advertising-removed';
 import GoogleVouchers from './google-vouchers';
 import CustomizeTheme from './customize-theme';
@@ -101,6 +102,10 @@ class ProductPurchaseFeaturesList extends Component {
 			<FindNewTheme
 				selectedSite={ selectedSite }
 				key="findNewThemeFeature"
+			/>,
+			<UploadPlugins
+				selectedSite={ selectedSite }
+				key="uploadPluginsFeature"
 			/>,
 			isWordadsInstantActivationEligible( selectedSite )
 				? <MonetizeSite
