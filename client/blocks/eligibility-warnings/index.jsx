@@ -16,7 +16,7 @@ import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'li
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Banner from 'components/banner';
 import Button from 'components/button';
 import Card from 'components/card';
@@ -146,10 +146,8 @@ EligibilityWarnings.defaultProps = {
 };
 
 const mapStateToProps = state => {
-	const {
-		ID: siteId,
-		slug: siteSlug,
-	} = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 	const eligibilityData = getEligibility( state, siteId );
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
 	const eligibilityHolds = get( eligibilityData, 'eligibilityHolds', [] );
