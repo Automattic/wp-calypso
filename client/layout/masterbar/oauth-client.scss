@@ -64,23 +64,19 @@
 	}
 }
 
-.woo {
-	.layout__content {
-		padding-top: 80px;
+.dops {
+	.locale-suggestions {
+		margin-top: -40px;
 	}
+}
 
+.woo {
 	.masterbar__oauth-client {
 		background-color: #fff;
 		box-sizing: border-box;
 		height: 83px;
 		line-height: 83px;
 		margin: 0 auto;
-		padding: 0 10px;
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		width: 100%;
 		z-index: 100;
 	}
 
