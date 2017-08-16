@@ -153,7 +153,7 @@ const EditPackage = ( props ) => {
 			}
 			<FormFieldset className="packages__add-package-weight-group">
 				<div className="packages__add-package-weight">
-					<FormLabel htmlFor="box_weight">{ translate( 'Package weight' ) }</FormLabel>
+					<FormLabel htmlFor="box_weight">{ translate( 'Weight of empty package' ) }</FormLabel>
 					<FormTextInputWithAffixes
 						id="box_weight"
 						name="box_weight"
@@ -168,7 +168,7 @@ const EditPackage = ( props ) => {
 					{ fieldInfo( 'box_weight' ) }
 				</div>
 				<div className="packages__add-package-weight">
-					<FormLabel htmlFor="max_weight">{ translate( 'Max weight' ) }</FormLabel>
+					<FormLabel htmlFor="max_weight">{ translate( 'Max weight package can hold' ) }</FormLabel>
 					<FormTextInputWithAffixes
 						id="max_weight"
 						name="max_weight"
