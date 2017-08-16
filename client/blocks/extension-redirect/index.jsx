@@ -11,7 +11,7 @@ import page from 'page';
  * Internal dependencies
  */
 import versionCompare from 'lib/version-compare';
-import { getSite, getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { getPluginOnSite, isRequesting } from 'state/plugins/installed/selectors';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 
@@ -57,14 +57,10 @@ class ExtensionRedirect extends Component {
 }
 
 export default connect(
-	( state, { pluginId, siteId } ) => {
-		const site = getSite( state, siteId );
-
-		return {
-			pluginActive: !! site && get( getPluginOnSite( state, site, pluginId ), 'active', false ),
-			pluginVersion: site && get( getPluginOnSite( state, site, pluginId ), 'version' ),
-			requestingPlugins: isRequesting( state, siteId ),
-			siteSlug: getSiteSlug( state, siteId ),
-		};
-	}
+	( state, { pluginId, siteId } ) => ( {
+		pluginActive: get( getPluginOnSite( state, siteId, pluginId ), 'active', false ),
+		pluginVersion: get( getPluginOnSite( state, siteId, pluginId ), 'version' ),
+		requestingPlugins: isRequesting( state, siteId ),
+		siteSlug: getSiteSlug( state, siteId ),
+	} )
 )( ExtensionRedirect );
