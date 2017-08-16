@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -56,9 +57,9 @@ export function rewindActivateFailure( siteId ) {
  *
  * @typdef {Object} ActivityParams
  *
- * @property {number} date_start Filter activity after this date (utc microtime timestamp).
- * @property {number} date_end   Filter activity before this date (utc microtime timestamp).
- * @property {number} number     Maximum number of results to return.
+ * @property {number} dateStart Filter activity after this date (Unix millisecond timestamp).
+ * @property {number} dateEnd   Filter activity before this date (Unix millisecond timestamp).
+ * @property {number} number    Maximum number of results to return.
  */
 
 /**
@@ -87,11 +88,13 @@ export function activityLogError( siteId, error ) {
 	};
 }
 
-export function activityLogUpdate( siteId, data ) {
+export function activityLogUpdate( siteId, data, found, query ) {
 	return {
 		type: ACTIVITY_LOG_UPDATE,
-		siteId,
 		data,
+		query,
+		siteId,
+		found,
 	};
 }
 

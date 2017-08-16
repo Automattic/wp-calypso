@@ -302,14 +302,17 @@ class ActivityLog extends Component {
 	}
 
 	render() {
-		const { isPressable, isRewindActive, siteId, siteTitle, slug } = this.props;
+		const { isPressable, isRewindActive, moment, siteId, siteTitle, slug, startDate } = this.props;
 		const { requestedRestoreTimestamp, showRestoreConfirmDialog } = this.state;
 		const applySiteOffset = this.getSiteOffsetFunc();
+
+		const queryStart = applySiteOffset( moment.utc( startDate ) ).startOf( 'month' ).valueOf();
+		const queryEnd = applySiteOffset( moment.utc( startDate ) ).endOf( 'month' ).valueOf();
 
 		return (
 			<Main wideLayout>
 				<QueryRewindStatus siteId={ siteId } />
-				<QueryActivityLog siteId={ siteId } />
+				<QueryActivityLog siteId={ siteId } dateStart={ queryStart } dateEnd={ queryEnd } number={ 1000 } />
 				<QuerySiteSettings siteId={ siteId } />
 				<StatsFirstView />
 				<SidebarNavigation />
