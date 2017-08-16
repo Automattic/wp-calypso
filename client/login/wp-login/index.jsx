@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import DocumentHead from 'components/data/document-head';
 import LoginLinks from './login-links';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getOAuth2ClientData } from 'state/login/selectors';
+import { getOAuth2ClientData } from 'state/login/oauth2/selectors';
 import Main from 'components/main';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoginBlock from 'blocks/login';
