@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
@@ -12,7 +13,12 @@ import { requestComment } from 'state/comments/actions';
 export class QueryComment extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
+		context: PropTypes.string,
 		siteId: PropTypes.number,
+	};
+
+	static defaultProps = {
+		context: 'display',
 	};
 
 	componentDidMount() {
@@ -26,9 +32,13 @@ export class QueryComment extends Component {
 	}
 
 	request() {
-		const { siteId, commentId } = this.props;
+		const { siteId, commentId, context } = this.props;
 		if ( siteId && commentId ) {
-			this.props.requestComment( { siteId, commentId } );
+			this.props.requestComment( {
+				siteId,
+				commentId,
+				query: { context },
+			} );
 		}
 	}
 

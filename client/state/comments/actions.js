@@ -19,10 +19,11 @@ import {
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
-export const requestComment = ( { siteId, commentId } ) => ( {
+export const requestComment = ( { siteId, commentId, query } ) => ( {
 	type: COMMENT_REQUEST,
 	siteId,
 	commentId,
+	query,
 } );
 
 /***
