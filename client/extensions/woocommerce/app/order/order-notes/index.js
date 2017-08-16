@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { bindActionCreators } from 'redux';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize, moment } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -87,16 +88,28 @@ class OrderNotes extends Component {
 		} );
 	}
 
+	renderPlaceholder = () => {
+		const noop = () => {};
+		return (
+			<OrderNotesByDay count={ 0 } date="" isOpen={ true } index={ 1 } onClick={ noop }>
+				<OrderNote note="" />
+			</OrderNotesByDay>
+		);
+	}
+
 	render() {
 		const { areNotesLoaded, translate } = this.props;
+		const classes = classNames( {
+			'is-placeholder': ! areNotesLoaded
+		} );
 
 		return (
 			<div className="order-notes">
 				<SectionHeader label={ translate( 'Activity Log' ) } />
-				<Card>
+				<Card className={ classes }>
 					{ areNotesLoaded
 						? this.renderNotes()
-						: translate( 'Loading…' )
+						: this.renderPlaceholder()
 					}
 				</Card>
 			</div>

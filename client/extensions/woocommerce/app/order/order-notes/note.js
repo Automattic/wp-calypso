@@ -14,7 +14,7 @@ import { decodeEntities, stripHTML } from 'lib/formatting';
 class OrderNote extends Component {
 	static propTypes = {
 		customer_note: PropTypes.bool,
-		date_created_gmt: PropTypes.string.isRequired,
+		date_created_gmt: PropTypes.string,
 		note: PropTypes.string.isRequired,
 	}
 
@@ -27,7 +27,7 @@ class OrderNote extends Component {
 			translate
 		} = this.props;
 
-		const createdMoment = moment( date_created_gmt + 'Z' );
+		const createdMoment = date_created_gmt ? moment( date_created_gmt + 'Z' ) : moment();
 
 		// @todo Add comment author once we have that info
 		let icon = 'aside';

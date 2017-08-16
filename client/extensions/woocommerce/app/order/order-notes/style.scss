@@ -14,6 +14,25 @@
 	}
 }
 
+.order-notes .is-placeholder {
+	.foldable-card__main h3,
+	.foldable-card__main small,
+	.order-notes__note-time,
+	.order-notes__note-type,
+	.order-notes__note-content,
+	.order-notes__note-meta .gridicon {
+		@include placeholder();
+	}
+
+	.order-notes__note-time {
+		height: 1.3em;
+	}
+
+	.order-notes__note-meta .gridicon {
+		fill: transparent;
+	}
+}
+
 .order-notes__note {
 	display: flex;
 
@@ -50,7 +69,7 @@
 		padding: 12px 16px 16px;
 		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 );
 	}
-	
+
 	.order-notes__note-type {
 		font-size: 12px;
 		color: $gray-text-min;
