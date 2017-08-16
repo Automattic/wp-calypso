@@ -107,6 +107,10 @@
 		display: block;
 		top: 14px;
 
+		&:hover {
+			background-color: rgba(0, 0, 0, 0.2);
+		}
+
 		@include breakpoint( "<480px" ) {
 			display: none;
 		}
