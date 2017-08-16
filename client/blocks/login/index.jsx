@@ -142,7 +142,7 @@ class Login extends Component {
 					clientTitle: oauth2ClientData.title
 				}
 			} );
-			if ( oauth2ClientData.name && oauth2ClientData.name === 'woo' ) {
+			if ( oauth2ClientData.name === 'woo' ) {
 				preHeader = (
 					<Gridicon icon="my-sites" size={ 72 } />
 				);
