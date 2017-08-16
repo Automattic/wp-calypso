@@ -68,7 +68,7 @@ export const getAllSelectedPackages = createSelector(
 
 		const serviceIds = getPredefinedPackageServices( form );
 		return [
-			form.packages.custom,
+			...( form.packages.custom || [] ),
 			...serviceIds.map( ( serviceId ) => ( form.packages.predefined || {} )[ serviceId ] )
 		];
 	} );
@@ -135,7 +135,6 @@ export const getCurrentlyEditingPredefinedPackages = createSelector(
 
 		const serviceIds = getPredefinedPackageServices( form );
 		return [
-			form.packages.custom,
 			...serviceIds.map( ( serviceId ) => form.currentlyEditingPredefinedPackages[ serviceId ] )
 		];
 	} );
