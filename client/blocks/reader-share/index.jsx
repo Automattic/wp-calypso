@@ -21,7 +21,6 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'gridicons';
 import * as stats from 'reader/stats';
 import { preload as preloadSection } from 'sections-preload';
-import { hasTouch } from 'lib/touch-detect';
 import SiteSelector from 'components/site-selector';
 import { getPrimarySiteId } from 'state/selectors';
 
@@ -206,6 +205,7 @@ class ReaderShare extends React.Component {
 							action="facebook"
 							className="reader-share__popover-item"
 							title={ translate( 'Share on Facebook' ) }
+							focusOnHover={ false }
 						>
 							<SocialLogo icon="facebook" />
 							<span>Facebook</span>
@@ -214,22 +214,21 @@ class ReaderShare extends React.Component {
 							action="twitter"
 							className="reader-share__popover-item"
 							title={ translate( 'Share on Twitter' ) }
+							focusOnHover={ false }
 						>
 							<SocialLogo icon="twitter" />
 							<span>Twitter</span>
 						</PopoverMenuItem>
-						{ this.props.hasSites
-							? <SiteSelector
-									className="reader-share__site-selector"
-									siteBasePath="/post"
-									onSiteSelect={ this.pickSiteToShareTo }
-									showAddNewSite={ false }
-									indicator={ false }
-									autoFocus={ ! hasTouch() }
-									groups={ true }
-									onClose={ this.closeMenu }
-								/>
-							: null }
+						{ this.props.hasSites &&
+							<SiteSelector
+								className="reader-share__site-selector"
+								siteBasePath="/post"
+								onSiteSelect={ this.pickSiteToShareTo }
+								showAddNewSite={ false }
+								indicator={ false }
+								autoFocus={ false }
+								groups={ true }
+							/> }
 					</ReaderPopoverMenu>,
 			]
 		);
