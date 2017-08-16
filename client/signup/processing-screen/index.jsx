@@ -204,8 +204,8 @@ export class SignupProcessingScreen extends Component {
 	renderUpgradeScreen() {
 		/* Do NOT translate the strings in this function until the abtest is finished. */
 		const title = this.props.loginHandler
-			? 'Congratulations! Your website is almost ready.'
-			: 'Congratulations! Your site is live.';
+			? 'Congratulations! Your site is live.'
+			: 'Congratulations! Your website is almost ready.';
 
 		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
 		return (
