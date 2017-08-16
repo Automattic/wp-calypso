@@ -68,7 +68,10 @@ class PostComment extends Component {
 
 	state = {
 		showReplies: false,
+		showFull: false,
 	};
+
+	handleReadMoreClicked = () => this.setState( { showFull: true } );
 
 	handleToggleRepliesClick = () => {
 		this.setState( { showReplies: ! this.state.showReplies } );
@@ -196,6 +199,9 @@ class PostComment extends Component {
 	render() {
 		const { commentsTree, commentId, depth, maxDepth } = this.props;
 		const comment = get( commentsTree, [ commentId, 'data' ] );
+		const displayType = this.state.showFull
+			? POST_COMMENT_DISPLAY_TYPES.full
+			: this.props.displayType;
 
 		// todo: connect this constants to the state (new selector)
 		const haveReplyWithError = some(
@@ -278,8 +284,12 @@ class PostComment extends Component {
 					<PostCommentContent
 						content={ comment.content }
 						isPlaceholder={ comment.isPlaceholder }
-						className={ this.props.displayType }
+						className={ displayType }
 					/> }
+				{ displayType !== POST_COMMENT_DISPLAY_TYPES.full &&
+					<span className="comments__comment-read-more" onClick={ this.handleReadMoreClicked }>
+						Read More
+					</span> }
 
 				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
 					this.props.activeEditCommentId === this.props.commentId &&

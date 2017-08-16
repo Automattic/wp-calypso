@@ -6,7 +6,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import AutoDirection from 'components/auto-direction';
 import classNames from 'classnames';
-
 export default class PostCommentContent extends React.Component {
 	static propTypes = {
 		content: PropTypes.string.isRequired,
