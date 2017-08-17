@@ -15,6 +15,7 @@ import {
 } from 'state/action-types';
 import { testSchema } from './mocks/schema';
 import useMockery from 'test/helpers/use-mockery';
+import { cachingActionCreatorFactory } from 'state/utils';
 
 describe( 'utils', () => {
 	const currentState = deepFreeze( {
@@ -680,6 +681,101 @@ describe( 'utils', () => {
 
 		it( 'should SERIALIZE to `null`', () => {
 			expect( wrapped( 10, { type: SERIALIZE } ) ).to.be.null;
+		} );
+	} );
+
+	describe.only( '#cachingActionCreatorFactory', () => {
+		let passThrough;
+		let dispatch;
+		let successfullWork;
+		let failingWork;
+		let loadingActionCreator;
+		let successActionCreator;
+		let failureActionCreator;
+
+		let connectedLoadingActionCreator;
+		let connectedSuccessActionCreator;
+		let connectedFailureActionCreator;
+
+		beforeEach( () => {
+			passThrough = pass => pass;
+
+			dispatch = spy( passThrough );
+			successfullWork = spy( () => Promise.resolve( 'success_data' ) );
+			failingWork = spy( () => Promise.reject( 'error_data' ) );
+
+			loadingActionCreator = spy( () => dispatch( { type: 'loading' } ) );
+			successActionCreator = spy( () => dispatch( { type: 'success' } ) );
+			failureActionCreator = spy( () => dispatch( { type: 'failure' } ) );
+
+			connectedLoadingActionCreator = () => loadingActionCreator;
+			connectedSuccessActionCreator = () => successActionCreator;
+			connectedFailureActionCreator = () => failureActionCreator;
+		} );
+
+		it( 'should call apropriate action creators on success', () => {
+			const actionCreator = cachingActionCreatorFactory(
+				successfullWork,
+				connectedLoadingActionCreator,
+				connectedSuccessActionCreator,
+				connectedFailureActionCreator
+			);
+
+			const dispatchResult = actionCreator( 123 )( dispatch );
+			expect( loadingActionCreator ).to.be.calledWith( 123 );
+
+			return dispatchResult.then( () => {
+				expect( successActionCreator ).to.be.calledWith( 'success_data' );
+				//console.log( 'spy', failureActionCreator.getCall( 0 ).args[ 0 ] );
+				expect( failureActionCreator ).not.to.be.called;
+			} );
+		} );
+
+		it( 'should call apropriate action creators on failure', () => {
+			const actionCreator = cachingActionCreatorFactory(
+				failingWork,
+				connectedLoadingActionCreator,
+				connectedSuccessActionCreator,
+				connectedFailureActionCreator
+			);
+
+			const dispatchResult = actionCreator( 123 )( dispatch );
+			expect( loadingActionCreator ).to.be.calledWith( 123 );
+
+			return dispatchResult.then( () => {
+				expect( failureActionCreator ).to.be.calledWith( 'error_data' );
+				expect( successActionCreator ).not.to.be.called;
+			} );
+		} );
+
+		it( 'should cache same parameters successful call', () => {
+			const actionCreator = cachingActionCreatorFactory(
+				successfullWork,
+				connectedLoadingActionCreator,
+				connectedSuccessActionCreator,
+				connectedFailureActionCreator
+			);
+
+			const firstCall = actionCreator( 123 )( dispatch );
+			const secondCall = firstCall.then( () => actionCreator( 123 )( dispatch ) );
+
+			return secondCall.then( () => expect( successfullWork ).to.be.calledOnce );
+		} );
+
+		it( 'should not cache same parameters failed call', () => {
+			const actionCreator = cachingActionCreatorFactory(
+				failingWork,
+				connectedLoadingActionCreator,
+				connectedSuccessActionCreator,
+				connectedFailureActionCreator
+			);
+
+			const callActionCreator = () => actionCreator( 123 )( dispatch );
+
+			const firstCall = callActionCreator();
+			const secondCall = firstCall.then( callActionCreator, callActionCreator );
+
+			return Promise.all( [ firstCall, secondCall ] ).then( () => expect( failingWork ).to.be.calledTwice );
 		} );
 	} );
 } );
