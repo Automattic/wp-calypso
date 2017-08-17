@@ -62,7 +62,7 @@ export default connect(
 
 		return {
 			pluginActive: !! site && get( getPluginOnSite( state, site, pluginId ), 'active', false ),
-			pluginVersion: !! site && get( getPluginOnSite( state, site, pluginId ), 'version' ),
+			pluginVersion: site && get( getPluginOnSite( state, site, pluginId ), 'version' ),
 			requestingPlugins: isRequesting( state, siteId ),
 			siteSlug: getSiteSlug( state, siteId ),
 		};
