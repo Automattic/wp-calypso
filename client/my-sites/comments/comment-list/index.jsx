@@ -64,8 +64,10 @@ export class CommentList extends Component {
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.status !== nextProps.status ) {
+		const { siteId, status } = this.props;
+		if ( siteId !== nextProps.siteId || status !== nextProps.status ) {
 			this.setState( {
+				isBulkEdit: false,
 				lastUndo: null,
 				page: 1,
 				persistedComments: [],
