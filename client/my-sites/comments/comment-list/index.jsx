@@ -115,9 +115,12 @@ export class CommentList extends Component {
 
 	isCommentPersisted = commentId => -1 !== this.state.persistedComments.indexOf( commentId );
 
-	isCommentSelected = () => false;
+	isCommentSelected = commentId => -1 !== this.state.selectedComments.indexOf( commentId );
 
-	isSelectedAll = () => false;
+	isSelectedAll = () => {
+		const visibleComments = this.getCommentsPage( this.getComments(), this.state.page );
+		return visibleComments.length === this.state.selectedComments.length;
+	};
 
 	removeFromPersistedComments = commentId => this.setState(
 		( { persistedComments } ) => ( {
@@ -265,7 +268,28 @@ export class CommentList extends Component {
 		}
 	}
 
-	toggleCommentSelected = () => noop;
+	toggleCommentSelected = commentId => {
+		if ( this.isCommentSelected( commentId ) ) {
+			return this.setState(
+				( { selectedComments } ) => ( {
+					selectedComments: selectedComments.filter( c => c !== commentId ),
+				} )
+			);
+		}
+		this.setState(
+			( { selectedComments } ) => ( {
+				selectedComments: selectedComments.concat( commentId ),
+			} )
+		);
+	}
+
+	toggleSelectAll = () => {
+		const visibleComments = this.getCommentsPage( this.getComments(), this.state.page );
+		if ( this.isSelectedAll() ) {
+			return this.setState( { selectedComments: [] } );
+		}
+		this.setState( { selectedComments: visibleComments } );
+	}
 
 	updatePersistedComments = ( commentId, isUndo ) => {
 		if ( isUndo ) {
