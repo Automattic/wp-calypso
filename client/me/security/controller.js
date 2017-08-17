@@ -70,8 +70,6 @@ export default {
 			basePath = context.path,
 			connectedAppsData = require( 'lib/connected-applications-data' );
 
-		context.store.dispatch( setTitle( i18n.translate( 'Connected Applications', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Connected Applications' );
 
 		renderWithReduxStore(
