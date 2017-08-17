@@ -171,6 +171,9 @@ const setChildDirection = ( child ) => {
 	if ( child && child.props.children ) {
 		let innerChildDirection = null;
 		const children = React.Children.map( child.props.children, innerChild => {
+			if ( ! innerChild ) {
+				return innerChild;
+			}
 			if ( innerChildDirection ) {
 				return innerChild;
 			}

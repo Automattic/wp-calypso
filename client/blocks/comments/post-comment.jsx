@@ -344,12 +344,9 @@ class PostComment extends Component {
 						isPlaceholder={ comment.isPlaceholder }
 						className={ displayType }
 						ref={ this.handleContentRef }
+						onMoreClick={ this.handleReadMoreClicked }
+						showMore={ this.props.overflowY && displayType !== POST_COMMENT_DISPLAY_TYPES.full }
 					/> }
-				{ this.props.overflowY &&
-					displayType !== POST_COMMENT_DISPLAY_TYPES.full &&
-					<span className="comments__comment-read-more" onClick={ this.handleReadMoreClicked }>
-						Read More
-					</span> }
 
 				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
 					this.props.activeEditCommentId === this.props.commentId &&

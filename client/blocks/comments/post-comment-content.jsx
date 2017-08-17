@@ -11,6 +11,8 @@ export default class PostCommentContent extends React.Component {
 		content: PropTypes.string.isRequired,
 		isPlaceholder: PropTypes.bool,
 		className: PropTypes.string,
+		onMoreClicked: PropTypes.func,
+		showMore: PropTypes.bool,
 	};
 
 	render() {
@@ -33,10 +35,16 @@ export default class PostCommentContent extends React.Component {
 		/*eslint-disable react/no-danger*/
 		return (
 			<AutoDirection>
-				<div
-					className={ classNames( 'comments__comment-content', this.props.className ) }
-					dangerouslySetInnerHTML={ { __html: this.props.content } }
-				/>
+				<div className="comments__comment-content-wrapper">
+					<div
+						className={ classNames( 'comments__comment-content', this.props.className ) }
+						dangerouslySetInnerHTML={ { __html: this.props.content } }
+					/>
+					{ this.props.showMore &&
+						<span className="comments__comment-read-more" onClick={ this.props.onMoreClicked }>
+							Read More
+						</span> }
+				</div>
 			</AutoDirection>
 		);
 		/*eslint-enable react/no-danger*/
