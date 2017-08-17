@@ -56,21 +56,21 @@ class PlanFeatures extends Component {
 	render() {
 		const {
 			planProperties,
-			isInSignup
+			isInSignupTest
 		} = this.props;
 		const tableClasses = classNames( 'plan-features__table',
 			`has-${ planProperties.length }-cols` );
 		const planClasses = classNames(
 			'plan-features',
-			{ 'plan-features--signup': isInSignup }
+			{ 'plan-features--signup': isInSignupTest }
 		);
 		const planWrapperClasses = classNames(
-			{ 'plans-wrapper': isInSignup }
+			{ 'plans-wrapper': isInSignupTest }
 		);
 		let mobileView, planDescriptions;
 		let bottomButtons = null;
 
-		if ( ! isInSignup ) {
+		if ( ! isInSignupTest ) {
 			mobileView = (
 				<div className="plan-features__mobile">
 					{ this.renderMobileView() }
@@ -117,12 +117,12 @@ class PlanFeatures extends Component {
 
 	setScrollLeft = ( plansWrapper ) => {
 		const {
-			isInSignup,
+			isInSignupTest,
 			displayJetpackPlans
 		} = this.props;
 
 		// center plans
-		if ( isInSignup && plansWrapper ) {
+		if ( isInSignupTest && plansWrapper ) {
 			displayJetpackPlans
 				? plansWrapper.scrollLeft = 190
 				: plansWrapper.scrollLeft = 495;
@@ -244,6 +244,7 @@ class PlanFeatures extends Component {
 			site,
 			basePlansPath,
 			isInSignup,
+			isInSignupTest,
 			siteType,
 			displayJetpackPlans
 		} = this.props;
@@ -265,7 +266,7 @@ class PlanFeatures extends Component {
 			let audience = planConstantObj.getAudience();
 			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
-			if ( isInSignup && ! displayJetpackPlans ) {
+			if ( isInSignupTest && ! displayJetpackPlans ) {
 				switch ( siteType ) {
 					case 'blog':
 						audience = planConstantObj.getBlogAudience();
@@ -278,7 +279,7 @@ class PlanFeatures extends Component {
 				}
 			}
 
-			if ( isInSignup && displayJetpackPlans ) {
+			if ( isInSignupTest && displayJetpackPlans ) {
 				billingTimeFrame = planConstantObj.getSignupBillingTimeFrame();
 			}
 
@@ -302,6 +303,7 @@ class PlanFeatures extends Component {
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						isInSignup={ isInSignup }
+						isInSignupTest= { isInSignupTest }
 					/>
 				</td>
 			);
@@ -511,6 +513,7 @@ PlanFeatures.propTypes = {
 	basePlansPath: PropTypes.string,
 	selectedFeature: PropTypes.string,
 	intervalType: PropTypes.string,
+	isInSignupTest: PropTypes.bool,
 	site: PropTypes.object,
 	displayJetpackPlans: PropTypes.bool,
 };
@@ -518,6 +521,7 @@ PlanFeatures.propTypes = {
 PlanFeatures.defaultProps = {
 	onUpgradeClick: noop,
 	isInSignup: false,
+	isInSignupTest: false,
 	basePlansPath: null,
 	intervalType: 'yearly',
 	site: {},
@@ -526,7 +530,7 @@ PlanFeatures.defaultProps = {
 
 export default connect(
 	( state, ownProps ) => {
-		const { isInSignup, placeholder, plans, onUpgradeClick, isLandingPage, site, displayJetpackPlans } = ownProps;
+		const { isInSignup, placeholder, plans, onUpgradeClick, isLandingPage, site, isInSignupTest, displayJetpackPlans } = ownProps;
 		const selectedSiteId = site ? site.ID : null;
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
@@ -554,7 +558,7 @@ export default connect(
 					isPlaceholder = true;
 				}
 
-				if ( isInSignup ) {
+				if ( isInSignupTest ) {
 					switch ( siteType ) {
 						case 'blog':
 							if ( planConstantObj.getBlogSignupFeatures ) {
