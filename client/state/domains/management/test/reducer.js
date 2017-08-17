@@ -3,12 +3,10 @@
  */
 import { expect } from 'chai';
 import { get, reduce } from 'lodash';
-// import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
@@ -18,10 +16,6 @@ import reducer, {
 } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
-	} );
-
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'items',
