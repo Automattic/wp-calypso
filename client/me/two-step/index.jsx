@@ -1,49 +1,56 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:two-step' );
+import debugFactory from 'debug';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
+const debug = debugFactory( 'calypso:me:two-step' );
 
 /**
  * Internal dependencies
  */
-var MeSidebarNavigation = require( 'me/sidebar-navigation' ),
-	Card = require( 'components/card' ),
-	AppPasswords = require( 'me/application-passwords' ),
-	Security2faBackupCodes = require( 'me/security-2fa-backup-codes' ),
-	Security2faDisable = require( 'me/security-2fa-disable' ),
-	Security2faSetup = require( 'me/security-2fa-setup' ),
-	ReauthRequired = require( 'me/reauth-required' ),
-	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	SecuritySectionNav = require( 'me/security-section-nav' ),
-	Main = require( 'components/main' );
+import AppPasswords from 'me/application-passwords';
+import Card from 'components/card';
+import DocumentHead from 'components/data/document-head';
+import Main from 'components/main';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import ReauthRequired from 'me/reauth-required';
+import Security2faBackupCodes from 'me/security-2fa-backup-codes';
+import Security2faDisable from 'me/security-2fa-disable';
+import Security2faSetup from 'me/security-2fa-setup';
+import SecuritySectionNav from 'me/security-section-nav';
+import twoStepAuthorization from 'lib/two-step-authorization';
 
-module.exports = React.createClass( {
+class TwoStep extends Component {
+	static displayName = 'TwoStep';
 
-	displayName: 'TwoStep',
+	static propTypes = {
+		translate: PropTypes.func.isRequired,
+	};
 
-	componentDidMount: function() {
+	state = {
+		initialized: false,
+		doingSetup: false
+	};
+
+	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
 		this.props.userSettings.on( 'change', this.onUserSettingsChange );
 		this.props.userSettings.fetchSettings();
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component is unmounting.' );
 		this.props.userSettings.off( 'change', this.onUserSettingsChange );
-	},
+	}
 
-	getInitialState: function() {
-		return {
-			initialized: false,
-			doingSetup: false
-		};
-	},
-
-	onUserSettingsChange: function() {
-		if ( ! this.isMounted() ) {
-			return;
-		}
+	onUserSettingsChange = () => {
+		// NOTE: This was removed to transform to React.Component.
+		// Ensure no behavior change from this omission.
+		// if ( ! this.isMounted() ) {
+		// 	return;
+		// }
 
 		if ( ! this.state.initialized ) {
 			this.setState( {
@@ -59,42 +66,46 @@ module.exports = React.createClass( {
 		}
 
 		this.forceUpdate();
-	},
+	};
 
-	onSetupFinished: function() {
+	onSetupFinished = () => {
 		this.setState(
 			{
 				doingSetup: false
 			},
 			this.refetchSettings
 		);
-	},
+	};
 
-	onDisableFinished: function() {
+	onDisableFinished = () => {
 		this.setState(
 			{
 				doingSetup: true
 			},
 			this.refetchSettings
 		);
-	},
+	};
 
-	refetchSettings: function() {
+	refetchSettings = () => {
 		this.props.userSettings.fetchSettings();
-	},
+	};
 
-	renderPlaceholders: function() {
-		var i,
-			placeholders = [];
+	renderPlaceholders = () => {
+		const placeholders = [];
 
-		for ( i = 0; i < 5; i++ ) {
-			placeholders.push( <p className="two-step__placeholder-text" key={ '2fa-placeholder' + i } > &nbsp; </p> );
+		for ( let i = 0; i < 5; i++ ) {
+			placeholders.push(
+				<p className="two-step__placeholder-text" key={ '2fa-placeholder' + i }>
+					{' '}
+					&nbsp;{' '}
+				</p>
+			);
 		}
 
 		return placeholders;
-	},
+	};
 
-	renderTwoStepSection: function() {
+	renderTwoStepSection = () => {
 		if ( ! this.state.initialized ) {
 			return this.renderPlaceholders();
 		}
@@ -114,9 +125,9 @@ module.exports = React.createClass( {
 				onFinished={ this.onDisableFinished }
 			/>
 		);
-	},
+	};
 
-	renderApplicationPasswords: function() {
+	renderApplicationPasswords = () => {
 		if ( ! this.state.initialized || this.state.doingSetup ) {
 			return null;
 		}
@@ -124,9 +135,9 @@ module.exports = React.createClass( {
 		return (
 			<AppPasswords appPasswordsData={ this.props.appPasswordsData } />
 		);
-	},
+	};
 
-	renderBackupCodes: function() {
+	renderBackupCodes = () => {
 		if ( ! this.state.initialized || this.state.doingSetup ) {
 			return null;
 		}
@@ -134,9 +145,9 @@ module.exports = React.createClass( {
 		return (
 			<Security2faBackupCodes userSettings={ this.props.userSettings } />
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<Main className="two-step">
 				<MeSidebarNavigation />
@@ -144,6 +155,11 @@ module.exports = React.createClass( {
 				<SecuritySectionNav path={ this.props.path } />
 
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+
+				<DocumentHead
+					title={ this.props.translate( 'Two-Step Authentication', { textOnly: true } ) }
+				/>
+
 				<Card>
 					{ this.renderTwoStepSection() }
 				</Card>
@@ -153,4 +169,6 @@ module.exports = React.createClass( {
 			</Main>
 		);
 	}
-} );
+}
+
+export default localize( TwoStep );

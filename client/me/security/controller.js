@@ -50,8 +50,6 @@ export default {
 			basePath = context.path,
 			appPasswordsData = require( 'lib/application-passwords-data' );
 
-		context.store.dispatch( setTitle( i18n.translate( 'Two-Step Authentication', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Two-Step Authentication' );
 
 		renderWithReduxStore(
