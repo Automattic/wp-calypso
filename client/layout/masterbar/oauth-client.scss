@@ -1,9 +1,11 @@
 .masterbar__oauth-client {
 	background-color: $blue-wordpress;
+	height: 50px;
 
 	nav {
 		display: flex;
 		justify-content: space-between;
+		width: 100%;
 	}
 
 	ul {
@@ -25,79 +27,72 @@
 }
 
 .masterbar__oauth-client-wpcc-sign-in {
-	display: block;
-	color: #fff;
 	background-color: rgba(255, 255, 255, 0.15);
-	padding: 3px;
+	border-radius: 3px;
+	color: #fff;
+	display: block;
 	line-height: 100%;
+	margin-right: 5px;
 	position: relative;
 	top: 6px;
-	border-radius: 3px;
-	margin-right: 5px;
-}
-.masterbar__oauth-client-wpcc-sign-in:after {
-	content: " ";
-	display: block;
-	height: 0;
-	clear: both;
-	visibility: hidden;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.2);
+	}
+
+	&:after {
+		clear: both;
+		content: " ";
+		display: block;
+		height: 0;
+		visibility: hidden;
+	}
 }
 .masterbar__oauth-client-wpcom {
-	padding: 3px 10px;
-	float: left;
-	cursor: pointer;
-	line-height: 32px;
-	margin: -3px 5px -3px -3px;
 	color: rgba(255, 255, 255, 0.8);
+	cursor: pointer;
+	float: left;
+	line-height: 32px;
+	padding: 3px 10px;
+
+	&:hover {
+		color: #fff;
+	}
+
+	.gridicon {
+		margin-bottom: 5px;
+		margin-right: 5px;
+		vertical-align: middle;
+	}
 }
-.masterbar__oauth-client-wpcom:hover {
-	color: #fff;
-}
-.masterbar__oauth-client-wpcom .gridicon {
-	margin-bottom: 5px;
-	margin-right: 5px;
-	vertical-align: middle;
-}
-.masterbar__oauth-client-wpcc-sign-in:hover {
-	background: rgba(255, 255, 255, 0.2);
-}
-.masterbar__oauth-client-wpcc-sign-in.active {
-	background: rgba(0, 0, 0, 0.9);
-	box-shadow: inset 0 1px 3px black, 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-.masterbar__oauth-client-wpcc-sign-in.active .wpcom {
-	color: #fff;
+
+.dops {
+	.locale-suggestions {
+		margin-top: 0;
+	}
 }
 
 .woo {
 	.layout__content {
-		padding-top: 120px;
+		padding-top: 100px;
 	}
 
 	.masterbar__oauth-client {
 		background-color: #fff;
+		border: none;
+		box-sizing: border-box;
 		height: 83px;
 		line-height: 83px;
-		box-sizing: border-box;
 		margin: 0 auto;
 		padding: 0 10px;
-		width: 100%;
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
 		z-index: 100;
-	}
 
-	.masterbar__oauth-client a {
-		color: #fff;
-		float: left;
-		line-height: 55px;
-		padding: 0 15px;
-		transition: 0.05 all ease-in-out;
-
-		&:active {
-			box-shadow: inset 0 -2px 6px rgba(0, 0, 0, 0.6);
+		a {
+			color: #fff;
+			float: left;
+			line-height: 55px;
+			padding: 0 10px;
+			transition: 0.05 all ease-in-out;
 		}
 	}
 
@@ -115,6 +110,14 @@
 		background-color: rgba(0, 0, 0, 0.15);
 		display: block;
 		top: 14px;
+
+		&:hover {
+			background-color: rgba(0, 0, 0, 0.2);
+		}
+
+		@include breakpoint( "<480px" ) {
+			display: none;
+		}
 	}
 
 	a.masterbar__oauth-client-wpcom {
@@ -142,16 +145,16 @@
 	input[type='email'],
 	input[type='password'],
 	textarea {
-		color: #666;
+		background-color: #fff;
 		border: 1px solid #e6e6e6;
 		border-radius: 3px;
 		box-sizing: border-box;
+		color: #666;
 		font-size: 1.25em !important;
 		line-height: 1.563 !important;
 		padding: 0.7em !important;
 		transition: all ease-in-out 0.2;
 		width: 100%;
-		background-color: #fff;
 
 		&:focus {
 			border: 1px solid #e6e6e6;
