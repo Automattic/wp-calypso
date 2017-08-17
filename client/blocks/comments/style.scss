@@ -311,20 +311,23 @@
 }
 
 // Post comments line-clamping
-.comments__comment-content {
+.comments__comment-content-wrapper {
+	display: inline-block;
+	position: relative;
 
-	&.is-excerpt,
-	&.is-single-line {
-		overflow: hidden;
-		position: relative;
+	&.is-single-line,
+	&.is-single-line .comments__comment-content {
+		max-height: 15px * 1.6;
 	}
 
-	&.is-excerpt {
+	&.is-excerpt,
+	&.is-excerpt .comments__comment-content {
 		max-height: 15px * 1.6 * 3;
 	}
 
-	&.is-single-line {
-		max-height: 15px * 1.6;
+	&.is-single-line .comments__comment-content,
+	&.is-excerpt .comments__comment-content {
+		overflow: hidden;
 	}
 }
 
@@ -332,12 +335,13 @@
 	background: linear-gradient( to right, rgba( 255, 255, 255, 0 ) 0%, rgba( 255, 255, 255, 1 ) 50%, rgba( 255, 255, 255, 1 ) 96%, rgba( 255, 255, 255, 1) 98% );
 	color: $blue-medium;
 	cursor: pointer;
+	display: inline-block;
 	float: right;
 	font-size: 15px;
 	max-height: 15px * 1.6 * 3;
 	min-width: 160px;
 	position: relative;
-		bottom: 24px;
+		top: -25px;
 	text-align: right;
 	width: 140px;
 
