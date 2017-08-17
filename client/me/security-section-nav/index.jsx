@@ -8,9 +8,10 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' );
+import config from 'config';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import SectionNav from 'components/section-nav';
 
 module.exports = React.createClass( {
 	propTypes: {
@@ -23,24 +24,28 @@ module.exports = React.createClass( {
 				title: i18n.translate( 'Password', { textOnly: true } ),
 				path: '/me/security',
 			},
-			{
+			config.isEnabled( 'signup/social-management' ) ? {
 				title: i18n.translate( 'Social Login', { textOnly: true } ),
 				path: '/me/security/social-login',
-			},
+			} : null,
 			{
 				title: i18n.translate( 'Two-Step Authentication', { textOnly: true } ),
 				path: '/me/security/two-step',
 			},
 			{
-				// This was shortened from 'Connected Applications' due to space constraints.
-				title: i18n.translate( 'Connected Apps', { textOnly: true } ),
+				title: (
+					config.isEnabled( 'signup/social-management' )
+					// This was shortened from 'Connected Applications' due to space constraints.
+					? i18n.translate( 'Connected Apps', { textOnly: true } )
+					: i18n.translate( 'Connected Applications', { textOnly: true } )
+				),
 				path: '/me/security/connected-applications',
 			},
 			{
 				title: i18n.translate( 'Account Recovery', { textOnly: true } ),
 				path: '/me/security/account-recovery',
 			},
-		];
+		].filter( tab => tab !== null );
 
 		return tabs;
 	},
