@@ -1,10 +1,9 @@
-
 /**
  * External dependencies
  */
 
 import { isEqual } from 'lodash';
-var debug = require( 'debug' )( 'calypso:posts:post-counts-store' );
+const debug = require( 'debug' )( 'calypso:posts:post-counts-store' );
 
 const sum = obj => {
 	return Object.keys( obj )

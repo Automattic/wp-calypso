@@ -1,9 +1,8 @@
-
 /**
  * External dependencies
  */
 import { find } from 'lodash';
-var React = require( 'react' );
+const React = require( 'react' );
 
 /**
  * Internal dependencies

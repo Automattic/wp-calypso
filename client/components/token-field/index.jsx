@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
-var React = require( 'react' ),
+const React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' ),
 	debug = require( 'debug' )( 'calypso:token-field' );

@@ -4,7 +4,7 @@
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import { clone, filter, findIndex, noop } from 'lodash';
-var ReactDom = require( 'react-dom' ),
+const ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
 
 /**

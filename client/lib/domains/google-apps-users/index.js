@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { compact, flatten, includes, isEmpty, mapValues, property, some, values } from 'lodash';
-var i18n = require( 'i18n-calypso' ),
+const i18n = require( 'i18n-calypso' ),
 	emailValidator = require( 'email-validator' );
 
 function filter( { users, fields } ) {
