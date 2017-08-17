@@ -7,10 +7,7 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	COMMENTS_TREE_SITE_ADD,
-	COMMENTS_TREE_SITE_REQUEST,
-} from 'state/action-types';
+import { COMMENTS_TREE_SITE_ADD, COMMENTS_TREE_SITE_REQUEST } from 'state/action-types';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
@@ -27,7 +24,7 @@ const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 				path: `/sites/${ siteId }/comments-tree`,
 				apiNamespace: 'wpcom/v2',
 				query: {
-					status: ( 'unapproved' === status ) ? 'pending' : status,
+					status: 'unapproved' === status ? 'pending' : status,
 				},
 			},
 			action
@@ -37,11 +34,11 @@ const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 
 const addCommentsTree = ( { dispatch }, { query }, data ) => {
 	const { siteId, status } = query;
-	const commentsTree = data[ 1 ];
+	const commentsTree = data[ 1 ];
 
 	const tree = map( commentsTree, comment => ( {
 		commentId: comment[ 0 ],
-		postId: comment[ 1 ],
+		postId: comment[ 1 ],
 		commentParentId: comment[ 2 ],
 		status,
 	} ) );
@@ -58,17 +55,20 @@ const announceFailure = ( { dispatch, getState }, { query } ) => {
 	const { siteId } = query;
 	const site = getRawSite( getState(), siteId );
 
-	const error = site && site.name
-		? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
-			args: { siteName: site.name },
-		} )
-		: translate( 'Failed to retrieve comments for your site' );
+	const error =
+		site && site.name
+			? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
+				args: { siteName: site.name },
+			} )
+			: translate( 'Failed to retrieve comments for your site' );
 
 	dispatch( errorNotice( error ) );
 };
 
 const treeHandlers = {
-	[ COMMENTS_TREE_SITE_REQUEST ]: [ dispatchRequest( fetchCommentsTreeForSite, addCommentsTree, announceFailure ) ],
+	[ COMMENTS_TREE_SITE_REQUEST ]: [
+		dispatchRequest( fetchCommentsTreeForSite, addCommentsTree, announceFailure ),
+	],
 };
 
 export default mergeHandlers( treeHandlers );
