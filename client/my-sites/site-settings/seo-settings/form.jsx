@@ -566,7 +566,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
-		activePlugins: getPlugins( state, [ { ID: siteId } ], 'active' ),
+		activePlugins: getPlugins( state, [ siteId ], 'active' ),
 		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
 		saveError: getSiteSettingsSaveError( state, siteId ),
