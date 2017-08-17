@@ -122,7 +122,7 @@ const EditPackage = ( props ) => {
 				<FormTextInput
 					id="name"
 					name="name"
-					placeholder={ translate( 'The customer will see this during checkout' ) }
+					placeholder={ translate( 'Unique package name' ) }
 					value={ name || '' }
 					onChange={ updateTextField }
 					isError={ modalErrors.name }
