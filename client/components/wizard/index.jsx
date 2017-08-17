@@ -17,12 +17,14 @@ class Wizard extends Component {
 		basePath: PropTypes.string,
 		components: PropTypes.objectOf( PropTypes.element ).isRequired,
 		forwardText: PropTypes.string,
+		hideNavigation: PropTypes.bool,
 		steps: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		stepName: PropTypes.string.isRequired,
 	}
 
 	static defaultProps = {
 		basePath: '',
+		hideNavigation: false,
 	}
 
 	getStepIndex = () => indexOf( this.props.steps, this.props.stepName );
@@ -66,6 +68,7 @@ class Wizard extends Component {
 			backText,
 			components,
 			forwardText,
+			hideNavigation,
 			steps,
 			stepName,
 		} = this.props;
@@ -85,7 +88,7 @@ class Wizard extends Component {
 
 				{ component }
 
-				{ totalSteps > 1 &&
+				{ ! hideNavigation && totalSteps > 1 &&
 					<div className="wizard__navigation-links">
 						{ stepIndex > 0 &&
 							<NavigationLink
