@@ -441,6 +441,7 @@ class SimplePaymentsDialog extends Component {
 								'Get simple payments, advanced social media tools, your own domain, and more.'
 							) }
 							feature={ FEATURE_SIMPLE_PAYMENTS }
+							event="editor_simple_payments_modal_nudge"
 							shouldDisplay={ this.returnTrue }
 						/>
 					}
