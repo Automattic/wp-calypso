@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -94,14 +96,17 @@ export class CommentDetail extends Component {
 
 	blockUser = () => {
 		this.setState( { authorIsBlocked: ! this.state.authorIsBlocked } );
-	}
+	};
 
 	deleteCommentPermanently = () => {
 		const { commentId, deleteCommentPermanently, postId, translate } = this.props;
-		if ( isUndefined( window ) || window.confirm( translate( 'Delete this comment permanently?' ) ) ) {
+		if (
+			isUndefined( window ) ||
+			window.confirm( translate( 'Delete this comment permanently?' ) )
+		) {
 			deleteCommentPermanently( commentId, postId );
 		}
-	}
+	};
 
 	edit = () => noop;
 
@@ -111,7 +116,7 @@ export class CommentDetail extends Component {
 
 		setCommentStatus(
 			getCommentStatusAction( this.props ),
-			( 'approved' === commentStatus ) ? 'unapproved' : 'approved',
+			'approved' === commentStatus ? 'unapproved' : 'approved',
 			{
 				doPersist: shouldPersist,
 				showNotice: true,
@@ -121,43 +126,46 @@ export class CommentDetail extends Component {
 		if ( shouldPersist ) {
 			this.setState( { isExpanded: false } );
 		}
-	}
+	};
 
 	toggleExpanded = () => {
 		if ( ! this.props.isLoading ) {
 			this.setState( ( { isExpanded } ) => ( { isExpanded: ! isExpanded } ) );
 		}
-	}
+	};
 
 	toggleLike = () => this.props.toggleCommentLike( getCommentStatusAction( this.props ) );
 
 	toggleSelected = () => {
 		const { commentId, toggleCommentSelected } = this.props;
 		toggleCommentSelected( commentId );
-	}
+	};
 
 	toggleSpam = () => {
 		const { commentStatus, setCommentStatus } = this.props;
 		setCommentStatus(
 			getCommentStatusAction( this.props ),
-			( 'spam' === commentStatus ) ? 'approved' : 'spam'
+			'spam' === commentStatus ? 'approved' : 'spam'
 		);
-	}
+	};
 
 	toggleTrash = () => {
 		const { commentStatus, setCommentStatus } = this.props;
 		setCommentStatus(
 			getCommentStatusAction( this.props ),
-			( 'trash' === commentStatus ) ? 'approved' : 'trash'
+			'trash' === commentStatus ? 'approved' : 'trash'
 		);
-	}
+	};
 
 	setCardRef = card => {
 		this.commentCard = card;
-	}
+	};
 
 	keyHandler = event => {
-		const commentHasFocus = document && this.commentCard && document.activeElement === ReactDom.findDOMNode( this.commentCard );
+		const commentHasFocus =
+			document &&
+			this.commentCard &&
+			document.activeElement === ReactDom.findDOMNode( this.commentCard );
 		if ( this.state.isExpanded && ! commentHasFocus ) {
 			return;
 		}
@@ -168,7 +176,7 @@ export class CommentDetail extends Component {
 				this.toggleExpanded();
 				break;
 		}
-	}
+	};
 
 	render() {
 		const {
@@ -203,10 +211,7 @@ export class CommentDetail extends Component {
 		const postUrl = `/read/blogs/${ siteId }/posts/${ postId }`;
 		const authorDisplayName = authorName || translate( 'Anonymous' );
 
-		const {
-			authorIsBlocked,
-			isExpanded,
-		} = this.state;
+		const { authorIsBlocked, isExpanded } = this.state;
 
 		const classes = classNames( 'comment-detail', {
 			'author-is-blocked': authorIsBlocked,
@@ -228,9 +233,7 @@ export class CommentDetail extends Component {
 				className={ classes }
 				tabIndex="0"
 			>
-				{ refreshCommentData &&
-					<QueryComment commentId={ commentId } siteId={ siteId } />
-				}
+				{ refreshCommentData && <QueryComment commentId={ commentId } siteId={ siteId } /> }
 
 				<CommentDetailHeader
 					authorAvatarUrl={ authorAvatarUrl }
@@ -286,8 +289,7 @@ export class CommentDetail extends Component {
 							postTitle={ postTitle }
 							replyComment={ replyComment }
 						/>
-					</div>
-				}
+					</div> }
 			</Card>
 		);
 	}
@@ -311,7 +313,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	// TODO: eventually it will be returned already decoded from the data layer.
 	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
 
-	return ( {
+	return {
 		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
 		authorEmail: get( comment, 'author.email' ),
 		authorId: get( comment, 'author.ID' ),
@@ -335,7 +337,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		postTitle,
 		repliedToComment: get( comment, 'replied' ), // TODO: not available in the current data structure
 		siteId: get( comment, 'siteId', siteId ),
-	} );
+	};
 };
 
 export default connect( mapStateToProps )( localize( CommentDetail ) );

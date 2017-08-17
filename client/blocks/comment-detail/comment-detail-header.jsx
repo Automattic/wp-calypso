@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -42,11 +43,7 @@ export const CommentDetailHeader = ( {
 	if ( isExpanded ) {
 		return (
 			<div className="comment-detail__header">
-				<Button
-					borderless
-					className="comment-detail__action-collapse"
-					onClick={ toggleExpanded }
-				>
+				<Button borderless className="comment-detail__action-collapse" onClick={ toggleExpanded }>
 					<Gridicon icon="cross" />
 				</Button>
 
@@ -71,14 +68,15 @@ export const CommentDetailHeader = ( {
 
 	return (
 		<div
-			className={ classNames( 'comment-detail__header', 'is-preview', { 'is-bulk-edit': isBulkEdit } ) }
+			className={ classNames( 'comment-detail__header', 'is-preview', {
+				'is-bulk-edit': isBulkEdit,
+			} ) }
 			onClick={ isBulkEdit ? toggleSelected : toggleExpanded }
 		>
 			{ isBulkEdit &&
 				<label className="comment-detail__checkbox">
 					<FormCheckbox checked={ commentIsSelected } onChange={ noop } />
-				</label>
-			}
+				</label> }
 			<div className="comment-detail__author-preview">
 				<Gravatar user={ author } />
 				<div className="comment-detail__author-info">
@@ -91,9 +89,11 @@ export const CommentDetailHeader = ( {
 						</span>
 					</div>
 					<div className="comment-detail__author-info-element">
-						{ translate( 'on %(postTitle)s', { args: {
-							postTitle: postTitle ? decodeEntities( postTitle ) : translate( 'Untitled' ),
-						} } ) }
+						{ translate( 'on %(postTitle)s', {
+							args: {
+								postTitle: postTitle ? decodeEntities( postTitle ) : translate( 'Untitled' ),
+							},
+						} ) }
 					</div>
 				</div>
 			</div>
