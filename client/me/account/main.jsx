@@ -24,6 +24,7 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import { protectForm } from 'lib/protect-form';
 import formBase from 'me/form-base';
 import config from 'config';
+import { supportsCssCustomProperties } from 'lib/feature-detection';
 import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
@@ -546,6 +547,7 @@ const Account = React.createClass( {
 				{ this.communityTranslator() }
 
 				{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
+					supportsCssCustomProperties() &&
 					<FormFieldset>
 						<FormLabel htmlFor="color_scheme">
 							{ translate( 'Admin Color Scheme' ) }
