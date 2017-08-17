@@ -35,9 +35,9 @@ export default class PostCommentContent extends React.Component {
 		/*eslint-disable react/no-danger*/
 		return (
 			<AutoDirection>
-				<div className="comments__comment-content-wrapper">
+				<div className={ classNames( 'comments__comment-content-wrapper', this.props.className ) }>
 					<div
-						className={ classNames( 'comments__comment-content', this.props.className ) }
+						className="comments__comment-content"
 						dangerouslySetInnerHTML={ { __html: this.props.content } }
 					/>
 					{ this.props.showMore &&
