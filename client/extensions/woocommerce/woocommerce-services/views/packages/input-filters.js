@@ -33,6 +33,18 @@ const dimensions = ( value ) => {
 	return value;
 };
 
+const checkDimension = ( dimension ) => {
+	if ( isNaN( dimension ) ) {
+		return '';
+	}
+
+	if ( dimension < 0 ) {
+		return '0';
+	}
+
+	return dimension;
+};
+
 const parseDimensions = ( value ) => {
 	let length = '';
 	let width = '';
@@ -40,9 +52,9 @@ const parseDimensions = ( value ) => {
 
 	const match = optionalDimensionRegex.exec( value );
 	if ( match && 4 === match.length ) {
-		length = match[ 1 ] || '';
-		width = match[ 2 ] || '';
-		height = match[ 3 ] || '';
+		length = checkDimension( match[ 1 ] );
+		width = checkDimension( match[ 2 ] );
+		height = checkDimension( match[ 3 ] );
 	}
 
 	return { length, width, height };
