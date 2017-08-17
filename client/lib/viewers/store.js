@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { assign, values } from 'lodash';
-var debug = require( 'debug' )( 'calypso:viewers:store' );
+const debug = require( 'debug' )( 'calypso:viewers:store' );
 
 /**
  * Internal dependencies

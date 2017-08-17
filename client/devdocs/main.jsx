@@ -3,7 +3,7 @@
  */
 import debug from 'debug';
 import { isFunction } from 'lodash';
-var React = require( 'react' );
+const React = require( 'react' );
 
 /**
  * Internal dependencies

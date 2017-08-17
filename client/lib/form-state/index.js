@@ -18,7 +18,7 @@ import {
 	some,
 	uniqueId
 } from 'lodash';
-var update = require( 'react-addons-update' );
+const update = require( 'react-addons-update' );
 
 function Controller( options ) {
 	var debounceWait;

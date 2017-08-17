@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { range } from 'lodash';
-var assert = require( 'chai' ).assert;
+const assert = require( 'chai' ).assert;
 
 /**
  * Internal dependencies
