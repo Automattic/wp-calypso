@@ -13,6 +13,7 @@ import { Steps } from './constants';
 import DocumentHead from 'components/data/document-head';
 import Intro from './intro';
 import Main from 'components/main';
+import PageSetup from './page-setup';
 import Wizard from 'components/wizard';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -22,9 +23,10 @@ const SetupWizard = ( {
 	stepName = Steps.INTRO,
 	translate,
 } ) => {
-	const steps = [ Steps.INTRO ];
+	const steps = [ Steps.INTRO, Steps.PAGE_SETUP ];
 	const components = {
 		[ Steps.INTRO ]: Intro,
+		[ Steps.PAGE_SETUP ]: PageSetup,
 	};
 
 	return (
