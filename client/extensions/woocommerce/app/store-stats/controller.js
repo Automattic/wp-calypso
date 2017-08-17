@@ -50,7 +50,29 @@ export default function StatsController( context ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( translate( 'Stats', { textOnly: true } ) ) );
 
-	analytics.tracks.recordEvent( `calypso_woocommerce_stats_${ props.type }_page`, props );
+	let tracksEvent;
+	switch ( props.type ) {
+		case 'orders':
+			tracksEvent = 'calypso_woocommerce_stats_orders_page';
+			break;
+		case 'products':
+			tracksEvent = 'calypso_woocommerce_stats_products_page';
+			break;
+		case 'categories':
+			tracksEvent = 'calypso_woocommerce_stats_categories_page';
+			break;
+		case 'coupons':
+			tracksEvent = 'calypso_woocommerce_stats_coupons_page';
+			break;
+	}
+	if ( tracksEvent ) {
+		analytics.tracks.recordEvent( tracksEvent, {
+			unit: props.unit,
+			path: props.path,
+			query_date: props.queryDate,
+			selected_date: props.selectedDate,
+		} );
+	}
 
 	const asyncComponent = ( props.type === 'orders' )
 		? <AsyncLoad
