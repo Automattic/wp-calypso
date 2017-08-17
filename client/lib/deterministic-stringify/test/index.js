@@ -1,46 +1,84 @@
-var deterministicStringify = require( 'lib/deterministic-stringify' );
+/**
+ * External dependencies
+ */
+import { expect } from 'chai';
 
-var assert = require( 'assert' );
+/**
+ * Internal dependencies
+ */
+import stringify from 'lib/deterministic-stringify';
 
-describe( 'index', function() {
-	it( 'should handle boolean', function() {
-		assert.equal( 'true', deterministicStringify( true ) );
-		assert.equal( 'false', deterministicStringify( false ) );
+describe( 'deterministicStringify', function() {
+	it( 'should stringify boolean', () => {
+		expect( stringify( true ) ).to.equal( 'true' );
+		expect( stringify( false ) ).to.equal( 'false' );
 	} );
-	it( 'should handle number', function() {
-		assert.equal( '1', deterministicStringify( 1 ) );
+
+	it( 'should produce an integer from a whole number', () => {
+		expect( stringify( 1 ) ).to.equal( '1' );
+		expect( stringify( -1 ) ).to.equal( '-1' );
+		expect( stringify( 1.0 ) ).to.equal( '1' );
 	} );
-	it( 'should handle null', function() {
-		assert.equal( 'null', deterministicStringify( null ) );
+
+	it( 'should product a fractional value from a floating-point number', () => {
+		expect( stringify( 1.2 ) ).to.equal( '1.2' );
 	} );
-	it( 'should handle undefined', function() {
-		assert.equal( 'undefined', deterministicStringify( undefined ) );
+
+	it( 'should stringify numeric extremes', () => {
+		expect( stringify( NaN ) ).to.equal( 'NaN' );
+		expect( stringify( Infinity ) ).to.equal( 'Infinity' );
+		expect( stringify( -Infinity ) ).to.equal( '-Infinity' );
 	} );
-	it( 'should sort arrays', function() {
-		assert.equal( '1,2,3', deterministicStringify( [ 2, 1, 3 ] ) );
+
+	it( 'should stringify null', () => {
+		expect( stringify( null ) ).to.equal( 'null' );
 	} );
-	it( 'should handle nested objects', function() {
-		assert.equal( '1,a=1', deterministicStringify( [ 1, { a: 1 } ] ) );
+
+	it( 'should stringify undefined', () => {
+		expect( stringify( undefined ) ).to.equal( 'undefined' );
 	} );
-	it( 'should handle boolean as object values', function() {
-		assert.equal( 'a=true', deterministicStringify( { a: true } ) );
+
+	it( 'should sort arrays', () => {
+		expect( stringify( [ 2, 1, 3 ] ) ).to.equal( '1,2,3' );
+		expect( stringify( [ 2, 1, 3 ] ) ).to.equal( stringify( [ 1, 2, 3 ] ) );
 	} );
-	it( 'should alphabetize object attributes', function() {
-		assert.equal( "a='a','b'&b=1", deterministicStringify( { b: 1, a: [ 'b', 'a' ] } ) );
+
+	/**
+	 * This test doesn't need to indicate nominal behavior so much
+	 * as check for changes in behavior and point out an aspect of
+	 * the function that may not be obvious to the caller.
+	 */
+	it( 'actually sorts lexicographically', () => {
+		expect( stringify( [ 10, 2 ] ) ).to.equal( '10,2' );
 	} );
-	it( 'should allow nesting and sort nested arrays', function() {
-		assert.equal( "a='a','blah','c'", deterministicStringify( { a: [ 'blah', 'a', 'c' ] } ) );
+
+	it( 'should handle nested objects', () => {
+		expect( stringify( [ 1, { a: 1 } ] ) ).to.equal( '1,a=1' );
 	} );
-	it( 'should produce deterministic strings regardless of attribute or array order', function() {
-		var options, optionsDifferentSort;
-		options = {
+
+	it( 'should handle boolean as object values', () => {
+		expect( stringify( { a: true } ) ).to.equal( 'a=true' );
+	} );
+
+	it( 'should alphabetize object attributes', () => {
+		expect( stringify( { b: 1, a: [ 'b', 'a' ] } ) ).to.equal( "a='a','b'&b=1" );
+	} );
+
+	it( 'should allow nesting and sort nested arrays', () => {
+		expect( stringify( { a: [ 'blah', 'a', 'c' ] } ) ).to.equal( "a='a','blah','c'" );
+	} );
+
+	it( 'should produce deterministic strings regardless of attribute or array order', () => {
+		const options = {
 			b: [ 2, 1 ],
 			a: true
 		};
-		optionsDifferentSort = {
+
+		const optionsDifferentSort = {
 			a: true,
 			b: [ 1, 2 ]
 		};
-		assert.equal( deterministicStringify( options ), deterministicStringify( optionsDifferentSort ) );
+
+		expect( stringify( options ) ).to.eql( stringify( optionsDifferentSort ) );
 	} );
 } );

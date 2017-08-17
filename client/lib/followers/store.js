@@ -8,9 +8,9 @@ var debug = require( 'debug' )( 'calypso:wpcom-followers-store' ),
 /**
  * Internal dependencies
  */
+import deterministicStringify from 'lib/deterministic-stringify';
 var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	deterministicStringify = require( 'lib/deterministic-stringify' );
+	emitter = require( 'lib/mixins/emitter' );
 
 var _fetchingFollowersByNamespace = {}, // store fetching state (boolean)
 	_followersBySite = {}, // store user objects

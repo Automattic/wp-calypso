@@ -20,11 +20,11 @@ const PeopleListItem = require( 'my-sites/people/people-list-item' ),
 	EmptyContent = require( 'components/empty-content' ),
 	FollowersStore = require( 'lib/followers/store' ),
 	EmailFollowersStore = require( 'lib/email-followers/store' ),
-	deterministicStringify = require( 'lib/deterministic-stringify' ),
 	accept = require( 'lib/accept' ),
 	analytics = require( 'lib/analytics' );
 import Button from 'components/button';
 import ListEnd from 'components/list-end';
+import deterministicStringify from 'lib/deterministic-stringify';
 
 const maxFollowers = 1000;
 
