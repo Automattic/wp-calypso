@@ -262,6 +262,11 @@ class MediaLibraryContent extends React.Component {
 					onMediaScaleChange={ this.props.onMediaScaleChange }
 					site={ this.props.site }
 					visible={ ! this.props.isRequesting }
+					canCopy={ this.props.postId === undefined }
+					source={ this.props.source }
+					onSourceChange={ this.props.onSourceChange }
+					selectedItems={ this.props.selectedItems }
+					sticky={ ! this.props.scrollable }
 				/>
 			);
 		}

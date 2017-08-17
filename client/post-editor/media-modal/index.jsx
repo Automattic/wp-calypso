@@ -52,7 +52,8 @@ function areMediaActionsDisabled( modalView, mediaItems ) {
 			// Transients can't be handled by the editor if they are being
 			// uploaded via an external URL
 			( ! MediaUtils.isTransientPreviewable( item ) ||
-			MediaUtils.getMimePrefix( item ) !== 'image' || ModalViews.GALLERY === modalView )
+			MediaUtils.getMimePrefix( item ) !== 'image' || modalView === ModalViews.GALLERY ||
+			item.external )
 		)
 	);
 }
@@ -365,6 +366,11 @@ export class EditorMediaModal extends Component {
 		} );
 	};
 
+	onSourceChange = source => {
+		MediaActions.sourceChanged( this.props.site.ID );
+		this.setState( { source, search: undefined } );
+	};
+
 	onClose = () => {
 		this.props.onClose();
 	};
@@ -418,7 +424,7 @@ export class EditorMediaModal extends Component {
 		if ( this.state.source !== '' ) {
 			buttons.push( {
 				action: 'confirm',
-				label: this.props.labels.confirm || this.props.translate( 'Copy to media library' ),
+				label: this.props.translate( 'Copy to media library' ),
 				isPrimary: true,
 				disabled: isDisabled || 0 === selectedItems.length,
 				onClick: this.confirmSelection
@@ -523,6 +529,7 @@ export class EditorMediaModal extends Component {
 						onAddAndEditImage={ this.onAddAndEditImage }
 						onFilterChange={ this.onFilterChange }
 						onScaleChange={ this.onScaleChange }
+						onSourceChange={ this.onSourceChange }
 						onSearch={ this.onSearch }
 						onEditItem={ this.editItem }
 						fullScreenDropZone={ false }
