@@ -25,7 +25,9 @@ export default {
 		context.store.dispatch( setTitle( i18n.translate( 'Password', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		if ( context.query && context.query.updated === 'password' ) {
-			notices.success( i18n.translate( 'Your password was saved successfully.' ), { displayOnNextPage: true } );
+			notices.success( i18n.translate( 'Your password was saved successfully.' ), {
+				displayOnNextPage: true,
+			} );
 
 			page.replace( window.location.pathname );
 		}
