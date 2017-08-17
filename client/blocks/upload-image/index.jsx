@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import path from 'path';
 import Gridicon from 'gridicons';
-import { noop } from 'lodash';
+import { noop, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,7 +33,6 @@ import MediaUtils from 'lib/media/utils';
 import MediaValidationStore from 'lib/media/validation-store';
 import { ValidationErrors } from 'lib/media/constants';
 import Button from 'components/button';
-import { uniqueId } from 'lib/impure-lodash';
 
 class UploadImage extends Component {
 	state = {

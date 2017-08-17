@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { head, partial, partialRight, isEqual, flow, compact, includes } from 'lodash';
+import { head, partial, partialRight, isEqual, flow, compact, includes, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,7 +40,6 @@ import {
 	isSiteSupportingImageEditor
 } from 'state/selectors';
 import { errorNotice } from 'state/notices/actions';
-import { uniqueId } from 'lib/impure-lodash';
 
 class SiteIconSetting extends Component {
 	static propTypes = {

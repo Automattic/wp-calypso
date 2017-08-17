@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { compact, find, isEqual } from 'lodash';
+import { compact, find, isEqual, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +18,6 @@ import {
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATED,
 } from 'woocommerce/state/action-types';
-import { uniqueId } from 'lib/impure-lodash';
 
 import { editProductAttribute } from '../edits-reducer';
 import { getBucket } from 'woocommerce/state/ui/helpers';

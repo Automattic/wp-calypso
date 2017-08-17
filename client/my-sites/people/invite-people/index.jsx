@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
-import { filter, get, groupBy, includes, isEmpty, pickBy, some } from 'lodash';
+import { filter, get, groupBy, includes, isEmpty, pickBy, some, uniqueId } from 'lodash';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -41,7 +41,6 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
 import { isActivatingJetpackModule, isJetpackModuleActive } from 'state/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { uniqueId } from 'lib/impure-lodash';
 
 /**
  * Module variables

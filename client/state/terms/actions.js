@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, get } from 'lodash';
+import { filter, get, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +19,6 @@ import { updateSiteSettings } from 'state/site-settings/actions';
 import { getSitePostsByTerm } from 'state/posts/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 import { getTerm, getTerms } from './selectors';
-import { uniqueId } from 'lib/impure-lodash';
 
 /**
  * Returns an action thunk, dispatching progress of a request to add a new term

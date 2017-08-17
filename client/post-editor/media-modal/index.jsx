@@ -17,6 +17,7 @@ import {
 	isEmpty,
 	identity,
 	includes,
+	uniqueId,
 } from 'lodash';
 
 /**
@@ -33,7 +34,6 @@ import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import Dialog from 'components/dialog';
 import accept from 'lib/accept';
-import { uniqueId } from 'lib/impure-lodash';
 
 import { getMediaModalView } from 'state/ui/media-modal/selectors';
 import { getSite } from 'state/sites/selectors';

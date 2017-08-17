@@ -1,11 +1,15 @@
 /**
+ * External dependencies
+ */
+import { uniqueId } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
 	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT_CLEAR,
 } from 'woocommerce/state/action-types';
-import { uniqueId } from 'lib/impure-lodash';
 
 /**
  * Generates a new product category placeholder ID
