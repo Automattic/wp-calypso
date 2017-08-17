@@ -44,7 +44,7 @@ class Wizard extends Component {
 		return `${ basePath }/${ previousStepName }`;
 	}
 
-	getSkipUrl = () => {
+	getForwardUrl = () => {
 		const { basePath, steps } = this.props;
 		const stepIndex = this.getStepIndex();
 
@@ -73,7 +73,7 @@ class Wizard extends Component {
 		const stepIndex = this.getStepIndex();
 		const totalSteps = steps.length;
 		const backUrl = this.getBackUrl() || '';
-		const skipUrl = this.getSkipUrl() || '';
+		const forwardUrl = this.getForwardUrl() || '';
 
 		return (
 			<div className="wizard">
@@ -97,7 +97,7 @@ class Wizard extends Component {
 						{ stepIndex < totalSteps - 1 &&
 							<NavigationLink
 								direction="forward"
-								href={ skipUrl }
+								href={ forwardUrl }
 								text={ forwardText } />
 						}
 					</div>
