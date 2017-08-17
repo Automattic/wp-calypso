@@ -4,8 +4,8 @@
 import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,18 +16,17 @@ import CustomNameserversForm from './custom-nameservers-form';
 import WpcomNameserversToggle from './wpcom-nameservers-toggle';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
 import DnsTemplates from './dns-templates';
-import notices from 'notices';
 import paths from 'my-sites/domains/paths';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { WPCOM_DEFAULTS, isWpcomDefaults } from 'lib/domains/nameservers';
 import { getSelectedDomain } from 'lib/domains';
-import isEmpty from 'lodash/isEmpty';
-import { successNotice } from 'state/notices/actions'
+import { isEmpty } from 'lodash';
+import { errorNotice, successNotice } from 'state/notices/actions';
 
-const NameServers = React.createClass( {
-	propTypes: {
+class NameServers extends React.Component {
+	static propTypes = {
 		domains: React.PropTypes.object.isRequired,
 		nameservers: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
@@ -35,47 +34,43 @@ const NameServers = React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired
-	},
+	};
 
-	getInitialState() {
-		const { nameservers } = this.props;
+	state = {
+		formSubmitting: false,
+		nameservers: this.props.nameservers.hasLoadedFromServer ? this.props.nameservers.list : null
+	};
 
-		return {
-			formSubmitting: false,
-			nameservers: nameservers.hasLoadedFromServer ? nameservers.list : null
-		};
-	},
+	componentWillReceiveProps( props ) {
+		this.setStateWhenLoadedFromServer( props );
+	}
 
-	hasWpcomNameservers() {
+	hasWpcomNameservers = () => {
 		if ( ! this.props.nameservers.hasLoadedFromServer ) {
 			return true;
 		}
 
 		return isWpcomDefaults( this.state.nameservers );
-	},
-
-	componentWillReceiveProps( props ) {
-		this.setStateWhenLoadedFromServer( props );
-	},
+	};
 
 	setStateWhenLoadedFromServer( props ) {
-		const prevNameservers = this.props.nameservers,
-			nextNameservers = props.nameservers,
-			finishedLoading = (
-				! prevNameservers.hasLoadedFromServer &&
-				nextNameservers.hasLoadedFromServer
-			);
+		const prevNameservers = this.props.nameservers;
+		const nextNameservers = props.nameservers;
+		const finishedLoading = (
+			! prevNameservers.hasLoadedFromServer &&
+			nextNameservers.hasLoadedFromServer
+		);
 
 		if ( ! finishedLoading ) {
 			return;
 		}
 
 		this.setState( { nameservers: nextNameservers.list } );
-	},
+	}
 
 	isLoading() {
 		return ! this.props.domains.hasLoadedFromServer || ! this.props.nameservers.hasLoadedFromServer;
-	},
+	}
 
 	render() {
 		const classes = classNames( 'name-servers', {
@@ -100,26 +95,27 @@ const NameServers = React.createClass( {
 				</VerticalNav>
 			</Main>
 		);
-	},
+	}
 
 	wpcomNameserversToggle() {
 		return (
 			<WpcomNameserversToggle
 				selectedDomainName={ this.props.selectedDomainName }
 				onToggle={ this.handleToggle }
-				enabled={ this.hasWpcomNameservers() } />
+				enabled={ this.hasWpcomNameservers() }
+			/>
 		);
-	},
+	}
 
-	handleToggle() {
+	handleToggle = () => {
 		if ( this.hasWpcomNameservers() ) {
 			this.setState( { nameservers: [] } );
 		} else {
 			this.resetToWpcomNameservers();
 		}
-	},
+	};
 
-	resetToWpcomNameservers() {
+	resetToWpcomNameservers = () => {
 		if ( isEmpty( this.state.nameservers ) ) {
 			this.setState( { nameservers: WPCOM_DEFAULTS } );
 		} else {
@@ -127,38 +123,43 @@ const NameServers = React.createClass( {
 				this.saveNameservers();
 			} );
 		}
-	},
+	};
 
-	saveNameservers() {
-		const { nameservers } = this.state,
-			{ selectedDomainName } = this.props;
+	saveNameservers = () => {
+		const { nameservers } = this.state;
+		const { selectedDomainName, translate } = this.props;
 
 		this.setState( { formSubmitting: true } );
 
 		upgradesActions.updateNameservers( selectedDomainName, nameservers, ( error ) => {
 			if ( error ) {
-				notices.error( error.message );
+				this.props.errorNotice( error.message );
 			} else {
-				this.props.successNotice( this.translate( 'Yay, the name servers have been successfully updated!' ) );
+				this.props.successNotice(
+					translate( 'Yay, the name servers have been successfully updated!' ),
+					{
+						duration: 5000,
+					}
+				);
 			}
 
 			this.setState( { formSubmitting: false } );
 		} );
-	},
+	};
 
 	header() {
 		return (
 			<Header
 				onClick={ this.back }
 				selectedDomainName={ this.props.selectedDomainName }>
-				{ this.translate( 'Name Servers and DNS' ) }
+				{ this.props.translate( 'Name Servers and DNS' ) }
 			</Header>
 		);
-	},
+	}
 
-	back() {
+	back = () => {
 		page( paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
-	},
+	};
 
 	customNameservers() {
 		if ( this.hasWpcomNameservers() ) {
@@ -169,7 +170,8 @@ const NameServers = React.createClass( {
 			return <IcannVerificationCard
 				selectedDomainName={ this.props.selectedDomainName }
 				selectedSiteSlug={ this.props.selectedSite.slug }
-				explanationContext="name-servers" />;
+				explanationContext="name-servers"
+			/>;
 		}
 
 		return (
@@ -180,9 +182,10 @@ const NameServers = React.createClass( {
 				onChange={ this.handleChange }
 				onReset={ this.handleReset }
 				onSubmit={ this.handleSubmit }
-				submitDisabled={ this.state.formSubmitting } />
+				submitDisabled={ this.state.formSubmitting }
+			/>
 		);
-	},
+	}
 
 	needsVerification() {
 		if ( ! this.props.domains.hasLoadedFromServer ) {
@@ -190,19 +193,19 @@ const NameServers = React.createClass( {
 		}
 
 		return getSelectedDomain( this.props ).isPendingIcannVerification;
-	},
+	}
 
-	handleChange( nameservers ) {
+	handleChange = ( nameservers ) => {
 		this.setState( { nameservers } );
-	},
+	};
 
-	handleReset() {
+	handleReset = () => {
 		this.resetToWpcomNameservers();
-	},
+	};
 
-	handleSubmit() {
+	handleSubmit = () => {
 		this.saveNameservers();
-	},
+	};
 
 	dnsRecordsNavItem() {
 		if ( ! this.hasWpcomNameservers() ) {
@@ -211,14 +214,19 @@ const NameServers = React.createClass( {
 
 		return (
 			<VerticalNavItem
-				path={ paths.domainManagementDns( this.props.selectedSite.slug, this.props.selectedDomainName ) }>
-				{ this.translate( 'DNS Records' ) }
+				isPlaceholder={ this.isLoading() }
+				path={ paths.domainManagementDns( this.props.selectedSite.slug, this.props.selectedDomainName ) }
+			>
+				{ this.props.translate( 'DNS Records' ) }
 			</VerticalNavItem>
 		);
 	}
-} );
+}
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { successNotice }, dispatch )
-)( NameServers );
+	{
+		errorNotice,
+		successNotice,
+	}
+)( localize( NameServers ) );

@@ -19,10 +19,12 @@ import Main from 'components/main';
 import upgradesActions from 'lib/upgrades/actions';
 import cartItems from 'lib/cart-values/cart-items';
 import { currentUserHasFlag } from 'state/current-user/selectors';
-import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
+import { isSiteUpgradeable } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
+import { getProductsList } from 'state/products-list/selectors';
 import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
+import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 
 class DomainSearch extends Component {
 	static propTypes = {
@@ -120,18 +122,22 @@ class DomainSearch extends Component {
 							cart={ this.props.cart }
 							selectedSite={ selectedSite } />
 
-						<RegisterDomainStep
-							path={ this.props.context.path }
-							suggestion={ this.props.context.params.suggestion }
-							domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-							onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
-							onAddDomain={ this.handleAddRemoveDomain }
-							onAddMapping={ this.handleAddMapping }
-							cart={ this.props.cart }
-							selectedSite={ selectedSite }
-							offerMappingOption
-							basePath={ this.props.basePath }
-							products={ this.props.productsList } />
+						<EmailVerificationGate
+							noticeText={ translate( 'You must verify your email to register new domains.' ) }
+							noticeStatus="is-info">
+							<RegisterDomainStep
+								path={ this.props.context.path }
+								suggestion={ this.props.context.params.suggestion }
+								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+								onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
+								onAddDomain={ this.handleAddRemoveDomain }
+								onAddMapping={ this.handleAddMapping }
+								cart={ this.props.cart }
+								selectedSite={ selectedSite }
+								offerMappingOption
+								basePath={ this.props.basePath }
+								products={ this.props.productsList } />
+						</EmailVerificationGate>
 					</div>
 				</span>
 			);
@@ -154,7 +160,7 @@ export default connect(
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 		isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
-		productsList: state.productsList.items,
+		productsList: getProductsList( state )
 	} ),
 	{
 		recordAddDomainButtonClick,

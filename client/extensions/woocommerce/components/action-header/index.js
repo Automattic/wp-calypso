@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { isArray } from 'lodash';
 
 /**
@@ -10,6 +11,8 @@ import { isArray } from 'lodash';
 import Card from 'components/card';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StickyPanel from 'components/sticky-panel';
+import Notice from 'components/notice';
+import config from 'config';
 
 const ActionHeader = ( { children, breadcrumbs } ) => {
 	// TODO: Implement proper breadcrumbs component.
@@ -25,9 +28,19 @@ const ActionHeader = ( { children, breadcrumbs } ) => {
 			);
 		} );
 	}
+
+	const showNonAtomicWarrningNotice = config.isEnabled( 'woocommerce/store-on-non-atomic-sites' );
+
 	return (
 		<StickyPanel>
 			<SidebarNavigation />
+			{ showNonAtomicWarrningNotice && <Notice
+				status="is-warning"
+				className="action-header__notice"
+				isCompact={ true }
+				text={ 'Store on non Atomic Jetpack site development mode!' }
+				showDismiss={ false } />
+			}
 			<Card className="action-header__header">
 				<span className="action-header__breadcrumbs">{ breadcrumbsOutput }</span>
 				<div className="action-header__actions">

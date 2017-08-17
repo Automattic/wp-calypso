@@ -14,19 +14,23 @@ import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'gridicons';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { recordPageView, recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { login } from 'lib/paths';
+import { getOAuth2ClientData } from 'state/login/oauth2/selectors';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
+		isLoggedIn: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
+		privateSite: PropTypes.bool,
 		recordPageView: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
+		oauth2ClientData: PropTypes.object,
 	};
 
 	recordBackToWpcomLinkClick = () => {
@@ -37,7 +41,7 @@ export class LoginLinks extends React.Component {
 		this.props.recordTracksEvent( 'calypso_login_help_link_click' );
 	};
 
-	recordLostPhoneLinkClick = ( event ) => {
+	handleLostPhoneLinkClick = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_lost_phone_link_click' );
@@ -45,7 +49,7 @@ export class LoginLinks extends React.Component {
 		page( login( { isNative: true, twoFactorAuthType: 'backup' } ) );
 	};
 
-	recordMagicLoginLinkClick = ( event ) => {
+	handleMagicLoginLinkClick = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
@@ -58,16 +62,33 @@ export class LoginLinks extends React.Component {
 		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
 	};
 
-	renderBackToWpcomLink() {
+	renderBackLink() {
+		const {
+			locale,
+			oauth2ClientData,
+			translate,
+		} = this.props;
+
+		let url = addLocaleToWpcomUrl( 'https://wordpress.com', locale );
+		let message = translate( 'Back to WordPress.com' );
+
+		if ( oauth2ClientData ) {
+			url = oauth2ClientData.url;
+			message = translate( 'Back to %(clientTitle)s', {
+				args: {
+					clientTitle: oauth2ClientData.title
+				}
+			} );
+		}
 		return (
 			<a
-				href={ addLocaleToWpcomUrl( 'https://wordpress.com', this.props.locale ) }
+				href={ url }
 				key="return-to-wpcom-link"
 				onClick={ this.recordBackToWpcomLinkClick }
 				rel="external"
 			>
 				<Gridicon icon="arrow-left" size={ 18 } />
-				{ this.props.translate( 'Back to WordPress.com' ) }
+				{ message }
 			</a>
 		);
 	}
@@ -83,7 +104,8 @@ export class LoginLinks extends React.Component {
 				icon={ true }
 				onClick={ this.recordHelpLinkClick }
 				target="_blank"
-				href="https://en.support.wordpress.com/security/two-step-authentication/">
+				href="https://en.support.wordpress.com/security/two-step-authentication/"
+			>
 				{ this.props.translate( 'Get help' ) }
 			</ExternalLink>
 		);
@@ -95,7 +117,7 @@ export class LoginLinks extends React.Component {
 		}
 
 		return (
-			<a href="#" key="lost-phone-link" onClick={ this.recordLostPhoneLinkClick }>
+			<a href="#" key="lost-phone-link" onClick={ this.handleLostPhoneLinkClick }>
 				{ this.props.translate( "I can't access my phone" ) }
 			</a>
 		);
@@ -106,19 +128,19 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
-		if ( this.props.currentUser ) {
+		if ( this.props.isLoggedIn ) {
 			return null;
 		}
 
 		return (
-			<a href="#" key="magic-login-link" onClick={ this.recordMagicLoginLinkClick }>
+			<a href="#" key="magic-login-link" onClick={ this.handleMagicLoginLinkClick }>
 				{ this.props.translate( 'Email me a login link' ) }
 			</a>
 		);
 	}
 
 	renderResetPasswordLink() {
-		if ( this.props.twoFactorAuthType ) {
+		if ( this.props.twoFactorAuthType || this.props.privateSite ) {
 			return null;
 		}
 
@@ -127,6 +149,7 @@ export class LoginLinks extends React.Component {
 				href={ addQueryArgs( { action: 'lostpassword' }, login( { locale: this.props.locale } ) ) }
 				key="lost-password-link"
 				onClick={ this.recordResetPasswordLinkClick }
+				rel="external"
 			>
 				{ this.props.translate( 'Lost your password?' ) }
 			</a>
@@ -135,19 +158,20 @@ export class LoginLinks extends React.Component {
 
 	render() {
 		return (
-			<div className="wp-login__footer">
+			<div className="wp-login__links">
 				{ this.renderLostPhoneLink() }
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
-				{ this.renderBackToWpcomLink() }
+				{ this.renderBackLink() }
 			</div>
 		);
 	}
 }
 
 const mapState = ( state ) => ( {
-	currentUser: getCurrentUser( state ),
+	isLoggedIn: Boolean( getCurrentUserId( state ) ),
+	oauth2ClientData: getOAuth2ClientData( state ),
 } );
 
 const mapDispatch = {

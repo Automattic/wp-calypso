@@ -8,7 +8,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, isEmpty, pick } from 'lodash';
+import { get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +17,7 @@ import config from 'config';
 import sanitize from 'sanitize';
 import utils from 'bundler/utils';
 import sectionsModule from '../../client/sections';
-import { serverRouter } from 'isomorphic-routing';
+import { serverRouter, getCacheKey } from 'isomorphic-routing';
 import { serverRender } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
@@ -123,10 +123,10 @@ function getCurrentCommitShortChecksum() {
 
 function getDefaultContext( request ) {
 	let initialServerState = {};
-	// We don't cache routes with query params
-	if ( isEmpty( request.query ) ) {
-		// context.pathname is set to request.path, see server/isomorphic-routing#getEnhancedContext()
-		const serializeCachedServerState = stateCache.get( request.path ) || {};
+	const cacheKey = getCacheKey( request );
+
+	if ( cacheKey ) {
+		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
 		initialServerState = getInitialServerState( serializeCachedServerState );
 	}
 

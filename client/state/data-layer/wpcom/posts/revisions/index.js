@@ -50,11 +50,10 @@ export function normalizeRevision( revision ) {
  * @param {Object} action Redux action
  * @param {String} action.siteId of the revisions
  * @param {String} action.postId of the revisions
- * @param {Function} next dispatches to next middleware in chain
  * @param {Object} rawError from HTTP request
  * @returns {Object} the dispatched action
  */
-export const receiveError = ( { dispatch }, { siteId, postId }, next, rawError ) =>
+export const receiveError = ( { dispatch }, { siteId, postId }, rawError ) =>
 	dispatch( receivePostRevisionsFailure( siteId, postId, rawError ) );
 
 /**
@@ -64,10 +63,9 @@ export const receiveError = ( { dispatch }, { siteId, postId }, next, rawError )
  * @param {Object} action Redux action
  * @param {String} action.siteId of the revisions
  * @param {String} action.postId of the revisions
- * @param {Function} next dispatches to next middleware in chain
  * @param {Array} revisions raw data from post revisions API
  */
-export const receiveSuccess = ( { dispatch }, { siteId, postId }, next, revisions ) => {
+export const receiveSuccess = ( { dispatch }, { siteId, postId }, revisions ) => {
 	const normalizedRevisions = map( revisions, normalizeRevision );
 
 	forEach( normalizedRevisions, ( revision, index ) => {

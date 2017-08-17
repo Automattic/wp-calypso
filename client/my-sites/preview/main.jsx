@@ -3,6 +3,7 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import React from 'react';
 import debugFactory from 'debug';
 
@@ -15,6 +16,8 @@ import {
 } from 'state/ui/selectors';
 import { isSitePreviewable } from 'state/sites/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { isWithinBreakpoint } from 'lib/viewport';
 
 import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
@@ -32,10 +35,28 @@ class PreviewMain extends React.Component {
 	state = {
 		previewUrl: null,
 		externalUrl: null,
+		showingClose: false,
 	};
 
 	componentWillMount() {
 		this.updateUrl();
+		this.updateLayout();
+	}
+
+	updateLayout = () => {
+		this.setState( {
+			showingClose: isWithinBreakpoint( '<660px' ),
+		} );
+	}
+
+	debouncedUpdateLayout = debounce( this.updateLayout, 50 );
+
+	componentDidMount() {
+		global.window && global.window.addEventListener( 'resize', this.debouncedUpdateLayout );
+	}
+
+	componentWillUnmount() {
+		global.window && global.window.removeEventListener( 'resize', this.debouncedUpdateLayout );
 	}
 
 	updateUrl() {
@@ -83,6 +104,10 @@ class PreviewMain extends React.Component {
 		} );
 	}
 
+	focusSidebar = () => {
+		this.props.setLayoutFocus( 'sidebar' );
+	}
+
 	render() {
 		const { translate, isPreviewable, site } = this.props;
 
@@ -112,13 +137,19 @@ class PreviewMain extends React.Component {
 
 		return (
 			<Main className="preview">
-				<DocumentHead title={ translate( 'Site Preview' ) } />
+				<DocumentHead title={ translate( 'Your Site' ) } />
 				<WebPreviewContent
 					onLocationUpdate={ this.updateSiteLocation }
 					showUrl={ !! this.state.externalUrl }
-					showClose={ false }
+					showClose={ this.state.showingClose }
+					onClose={ this.focusSidebar }
 					previewUrl={ this.state.previewUrl }
 					externalUrl={ this.state.externalUrl }
+					loadingMessage={
+						this.props.translate( '{{strong}}One moment, please…{{/strong}} loading your site.',
+							{ components: { strong: <strong /> } }
+						)
+					}
 				/>
 			</Main>
 		);
@@ -134,4 +165,4 @@ const mapState = ( state ) => {
 	};
 };
 
-export default connect( mapState )( localize( PreviewMain ) );
+export default connect( mapState, { setLayoutFocus } )( localize( PreviewMain ) );

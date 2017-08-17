@@ -17,7 +17,7 @@ export const requestEmailVerification = function( { dispatch }, action ) {
 	}, action ) );
 };
 
-export const handleError = ( { dispatch }, action, next, rawError ) => {
+export const handleError = ( { dispatch }, action, rawError ) => {
 	dispatch( {
 		type: EMAIL_VERIFY_REQUEST_FAILURE,
 		message: rawError.message,

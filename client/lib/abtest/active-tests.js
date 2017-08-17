@@ -71,26 +71,25 @@ module.exports = {
 	signupPlansCopyChanges: {
 		datestamp: '20170623',
 		variations: {
+			original: 0,
+			modified: 100, //Set to 100% while copy is translated
+		},
+		defaultVariation: 'original',
+	},
+	jetpackConnectPlansCopyChanges: {
+		datestamp: '20170728',
+		variations: {
 			original: 50,
 			modified: 50,
 		},
 		defaultVariation: 'original',
 	},
-	showCartAbandonmentNotice: {
-		datestamp: '20170630',
-		variations: {
-			doNotShowNotice: 50,
-			showNotice: 50,
-		},
-		defaultVariation: 'doNotShowNotice',
-		allowExistingUsers: true,
-	},
 	postPublishConfirmation: {
-		datestamp: '20170713',
+		datestamp: '20170801',
 		allowExistingUsers: true,
 		variations: {
-			showPublishConfirmation: 30,
-			noPublishConfirmation: 70,
+			showPublishConfirmation: 5,
+			noPublishConfirmation: 95,
 		},
 		defaultVariation: 'noPublishConfirmation',
 	},
@@ -113,5 +112,14 @@ module.exports = {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 		localeTargets: 'any',
+	},
+	postSignupUpgradeScreen: {
+		datestamp: '20170810',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
 	},
 };

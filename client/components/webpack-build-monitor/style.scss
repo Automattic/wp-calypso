@@ -1,0 +1,36 @@
+.webpack-build-monitor {
+	position: fixed;
+	bottom: 20px;
+	right: 83px;
+	z-index: z-index( 'root', '.webpack-build-monitor' );
+	font-size: 9px;
+	padding: 4px 6px;
+	background: $alert-green;
+	color: $white;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	border-radius: 3px;
+	display: flex;
+	align-items: center;
+	line-height: 11px;
+	&.is-error {
+		background: $alert-red;
+	}
+}
+
+.webpack-build-monitor__spinner {
+	margin-right: 6px;
+}
+
+.webpack-build-monitor__text {
+	margin-left: 6px;
+	display: block;
+}
+
+.webpack-build-monitor .spinner__progress {
+	fill: currentColor;
+}
+
+.webpack-build-monitor .spinner__border {
+	fill: lighten( $alert-green, 30% );
+}

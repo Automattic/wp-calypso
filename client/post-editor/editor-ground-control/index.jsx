@@ -23,15 +23,18 @@ import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
 import PostScheduler from './post-scheduler';
+import { NESTED_SIDEBAR_REVISIONS, NestedSidebarPropType } from 'post-editor/editor-sidebar/constants';
 
 export class EditorGroundControl extends PureComponent {
 	static propTypes = {
 		hasContent: PropTypes.bool,
 		isConfirmationSidebarEnabled: PropTypes.bool,
+		confirmationSidebarStatus: PropTypes.string,
 		isDirty: PropTypes.bool,
 		isSaveBlocked: PropTypes.bool,
 		isPublishing: PropTypes.bool,
 		isSaving: PropTypes.bool,
+		nestedSidebar: NestedSidebarPropType,
 		moment: PropTypes.func,
 		onPreview: PropTypes.func,
 		onPublish: PropTypes.func,
@@ -162,6 +165,7 @@ export class EditorGroundControl extends PureComponent {
 				position={ 'bottom left' }
 				context={ this.refs && this.refs.schedulePost }
 				id="editor-post-schedule"
+				className="editor-ground-control__post-schedule-popover"
 			>
 				<PostScheduler initialDate={ this.props.moment() }
 					post={ this.props.post }
@@ -222,6 +226,10 @@ export class EditorGroundControl extends PureComponent {
 	}
 
 	renderGroundControlActionButtons() {
+		if ( this.props.confirmationSidebarStatus === 'open' ) {
+			return;
+		}
+
 		const publishComboClasses = classNames( 'editor-ground-control__publish-combo', {
 			'is-standalone': ! this.canPublishPost() || this.props.isConfirmationSidebarEnabled
 		} );
@@ -242,7 +250,8 @@ export class EditorGroundControl extends PureComponent {
 					className="editor-ground-control__toggle-sidebar"
 					onClick={ this.props.toggleSidebar }
 				>
-					<Gridicon icon="cog" /> <span className="editor-ground-control__button-label"><EditorPostType isSettings /></span>
+					<Gridicon icon={ this.props.nestedSidebar === NESTED_SIDEBAR_REVISIONS ? 'history' : 'cog' } />
+					<span className="editor-ground-control__button-label"> <EditorPostType isSettings /></span>
 				</Button>
 				<div className={ publishComboClasses }>
 					<EditorPublishButton

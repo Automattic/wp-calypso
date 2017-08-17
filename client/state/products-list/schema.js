@@ -5,6 +5,7 @@ export const productsListSchema = {
 		'.+': {
 			type: 'object',
 			required: [
+				'available',
 				'product_id',
 				'product_name',
 				'product_slug',
@@ -12,6 +13,7 @@ export const productsListSchema = {
 				'is_domain_registration',
 				'cost_display' ],
 			properties: {
+				available: { type: 'boolean' },
 				product_id: { type: 'integer' },
 				product_name: { type: 'string' },
 				product_slug: { type: 'string' },

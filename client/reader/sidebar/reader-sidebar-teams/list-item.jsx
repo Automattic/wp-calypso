@@ -1,15 +1,27 @@
+/** @format */
 /**
  * External Dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
 import ReaderSidebarHelper from '../helper';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
-export const ReaderSidebarTeamsListItem = ( { path, team } ) => {
+const handleReaderSidebarTeamsListItemClicked = team => () => {
+	recordAction( 'clicked_reader_sidebar_teams_list_item' );
+	recordGaEvent( 'Clicked Reader Sidebar Teams List Item' );
+	recordTrack( 'calypso_reader_sidebar_teams_list_item_clicked', {
+		team: decodeURIComponent( team.slug ),
+	} );
+};
+
+export const ReaderSidebarTeamsListItem = ( { path, team, translate } ) => {
 	const teamUri = '/read/' + encodeURIComponent( team.slug );
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<li
 			key={ team.slug }
@@ -17,16 +29,25 @@ export const ReaderSidebarTeamsListItem = ( { path, team } ) => {
 				'sidebar-streams__team': true,
 			} ) }
 		>
-			<a href={ teamUri }>
+			<a
+				href={ teamUri }
+				onClick={ handleReaderSidebarTeamsListItemClicked( team ) }
+				title={ translate( "View team '%(currentTeamName)s'", {
+					args: {
+						currentTeamName: team.title,
+					},
+				} ) }
+			>
 				<svg
 					className={ 'gridicon gridicon-' + team.slug }
 					width="24"
 					height="24"
 					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 16 16"
+					viewBox="0 0 24 24"
 				>
-					<path d="M7.99 1.57C3.75 1.57 1 4.57 1 7.8v0.4c0 3.18 2.75 6.24 6.99 6.24 4.26 0 7.01-3.05 7.01-6.24V7.8C15 4.57 12.25 1.57 7.99 1.57zM12.74 8.13c0 2.32-1.69 4.42-4.74 4.42 -3.05 0-4.73-2.1-4.73-4.42V7.84c0-2.32 1.67-4.38 4.73-4.38 3.06 0 4.75 2.07 4.75 4.39V8.13z" />
-					<path d="M9.47 5.73C9.07 5.47 8.52 5.59 8.26 6L6.21 9.17c-0.26 0.41-0.15 0.95 0.26 1.21 0.4 0.26 0.95 0.14 1.21-0.26l2.05-3.17C9.99 6.53 9.88 5.99 9.47 5.73z" />
+					<path d="M12 21.5c-6.1 0-10-4.4-10-9V12c0-4.6 4-9 10-9 6.1 0 10.1 4.3 10.1 9v.6c0 4.5-3.9 8.9-10.1
+						8.9zm6.9-9.5c0-3.3-2.4-6.3-6.8-6.3s-6.8 3-6.8 6.3v.4c0 3.3 2.4 6.4 6.8 6.4s6.8-3 6.8-6.4V12z" />
+					<path d="M14.1 8.5c.6.4.7 1.2.4 1.7l-2.9 4.6c-.4.6-1.2.8-1.7.4-.7-.4-.9-1.2-.5-1.8l2.9-4.6c.4-.5 1.2-.7 1.8-.3z" />
 				</svg>
 				<span className="menu-link-text">
 					{ team.title }
@@ -34,6 +55,7 @@ export const ReaderSidebarTeamsListItem = ( { path, team } ) => {
 			</a>
 		</li>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 ReaderSidebarTeamsListItem.propTypes = {
@@ -41,4 +63,4 @@ ReaderSidebarTeamsListItem.propTypes = {
 	path: React.PropTypes.string.isRequired,
 };
 
-export default ReaderSidebarTeamsListItem;
+export default localize( ReaderSidebarTeamsListItem );

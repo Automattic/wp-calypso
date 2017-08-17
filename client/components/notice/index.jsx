@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 

@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
@@ -9,9 +11,20 @@ import { connect } from 'react-redux';
  */
 import { activityLogRequest as activityLogRequestAction } from 'state/activity-log/actions';
 
-class QueryActivityLog extends Component {
+class QueryActivityLog extends PureComponent {
 	static propTypes = {
 		siteId: PropTypes.number,
+
+		// Unix millisecond timestamps ( moment.valueOf() )
+		dateEnd: PropTypes.number,
+		dateStart: PropTypes.number,
+
+		// Number of results
+		number: PropTypes.number,
+	};
+
+	static defaultProps = {
+		number: 20,
 	};
 
 	componentWillMount() {
@@ -19,16 +32,16 @@ class QueryActivityLog extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId ) {
-			return;
-		}
-
 		this.request( nextProps );
 	}
 
-	request( { siteId } ) {
+	request( { siteId, dateEnd, dateStart, number } ) {
 		if ( siteId ) {
-			this.props.activityLogRequest( siteId );
+			this.props.activityLogRequest( siteId, {
+				dateEnd,
+				dateStart,
+				number,
+			} );
 		}
 	}
 
@@ -38,5 +51,5 @@ class QueryActivityLog extends Component {
 }
 
 export default connect( null, {
-	activityLogRequest: activityLogRequestAction
+	activityLogRequest: activityLogRequestAction,
 } )( QueryActivityLog );

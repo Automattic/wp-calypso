@@ -9,7 +9,9 @@ import {
 /**
  * Internal dependencies
  */
-import { AspectRatiosValues } from 'state/ui/editor/image-editor/constants';
+import {
+	AspectRatiosValues
+} from 'state/ui/editor/image-editor/constants';
 
 /**
  * Returns the default aspect ratio image editor should use.

@@ -27,7 +27,7 @@ class UploadImageExample extends Component {
 		console.log( 'Image Editor props:', imageEditorProps );
 	};
 
-	onUploadImageDone = ( uploadedImage ) => {
+	onImageUploadDone = ( uploadedImage ) => {
 		console.log( 'Uploaded image:', uploadedImage );
 	};
 
@@ -37,6 +37,10 @@ class UploadImageExample extends Component {
 		} else {
 			console.log( 'UploadImage error:', errorMessage );
 		}
+	};
+
+	onImageRemove = ( uploadedImage ) => {
+		console.log( 'The following uploaded image is going to be removed from screen:', uploadedImage );
 	};
 
 	render() {
@@ -49,7 +53,8 @@ class UploadImageExample extends Component {
 				<UploadImage
 					siteId={ primarySiteId }
 					onImageEditorDone={ this.onImageEditorDone }
-					onUploadImageDone={ this.onUploadImageDone }
+					onImageUploadDone={ this.onImageUploadDone }
+					onImageRemove={ this.onImageRemove }
 					onError={ this.onError }
 				/>
 			</div>

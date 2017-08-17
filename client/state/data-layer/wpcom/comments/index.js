@@ -16,7 +16,7 @@ import {
 } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { createNotice, errorNotice } from 'state/notices/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { getPostOldestCommentDate, getPostNewestCommentDate } from 'state/comments/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
@@ -115,7 +115,7 @@ export const writePostComment = ( { dispatch }, action ) => {
 	);
 };
 
-export const addComments = ( { dispatch }, action, next, { comments, found } ) => {
+export const addComments = ( { dispatch }, action, { comments, found } ) => {
 	const { siteId, postId, direction } = action;
 	dispatch( {
 		type: COMMENTS_RECEIVE,
@@ -142,7 +142,6 @@ export const addComments = ( { dispatch }, action, next, { comments, found } ) =
 export const writePostCommentSuccess = (
 	{ dispatch },
 	{ siteId, postId, parentCommentId, placeholderId },
-	next,
 	comment,
 ) => {
 	// remove placeholder from state
@@ -196,8 +195,7 @@ export const deleteComment = ( { dispatch, getState }, action ) => {
 
 export const announceDeleteSuccess = ( { dispatch } ) => {
 	dispatch(
-		createNotice(
-			'is-error',
+		successNotice(
 			translate( 'Comment deleted permanently.' ),
 			{
 				duration: 5000,

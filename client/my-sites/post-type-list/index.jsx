@@ -4,11 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import isEqual from 'lodash/isEqual';
-import includes from 'lodash/includes';
-import difference from 'lodash/difference';
-import range from 'lodash/range';
-import size from 'lodash/size';
+import { difference, includes, isEqual, range, size } from 'lodash';
 import AutoSizer from 'react-virtualized/AutoSizer';
 import WindowScroller from 'react-virtualized/WindowScroller';
 import List from 'react-virtualized/List';

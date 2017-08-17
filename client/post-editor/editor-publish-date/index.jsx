@@ -75,7 +75,7 @@ export class EditorPublishDate extends React.Component {
 			return this.props.translate( 'Schedule' );
 		}
 
-		if ( isPublished && isBackDated ) {
+		if ( isPublished ) {
 			return this.props.translate( 'Published' );
 		}
 
@@ -89,6 +89,11 @@ export class EditorPublishDate extends React.Component {
 	renderCalendarHeader() {
 		const isScheduled = utils.isFutureDated( this.props.post );
 		const isBackDated = utils.isBackDated( this.props.post );
+		const isPublished = utils.isPublished( this.props.post );
+
+		if ( isPublished ) {
+			return;
+		}
 
 		if ( ! isScheduled && ! isBackDated ) {
 			return (
@@ -108,9 +113,11 @@ export class EditorPublishDate extends React.Component {
 	renderHeader() {
 		const isScheduled = utils.isFutureDated( this.props.post );
 		const isBackDated = utils.isBackDated( this.props.post );
+		const isPublished = utils.isPublished( this.props.post );
 		const className = classNames( 'editor-publish-date__header', {
 			'is-scheduled': isScheduled,
 			'is-back-dated': isBackDated,
+			'is-published': isPublished,
 		} );
 		const selectedDay = this.props.post && this.props.post.date
 			? this.props.post.date
@@ -123,7 +130,7 @@ export class EditorPublishDate extends React.Component {
 					<div className="editor-publish-date__header-description">
 						{ this.getHeaderDescription() }
 					</div>
-					{ ( isScheduled || isBackDated ) && (
+					{ ( isScheduled || isBackDated || isPublished ) && (
 						<div className="editor-publish-date__header-chrono">
 							{ this.props.moment( selectedDay ).calendar() }
 						</div>

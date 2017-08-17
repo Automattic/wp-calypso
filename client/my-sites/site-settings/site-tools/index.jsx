@@ -76,7 +76,7 @@ class SiteTools extends Component {
 		);
 		const manageConnectionTitle = translate( 'Manage your connection' );
 		const manageConnectionText = translate(
-			'Sync your site content for a faster experience, change site owner, cycle or terminate your connection.'
+			'Sync your site content for a faster experience, change site owner, repair or terminate your connection.'
 		);
 
 		const importTitle = translate( 'Import' );

@@ -5,8 +5,6 @@ import { isEnabled } from 'config';
 import wpcom from 'lib/wp';
 import {
 	COMMENTS_CHANGE_STATUS,
-	COMMENTS_CHANGE_STATUS_FAILURE,
-	COMMENTS_CHANGE_STATUS_SUCESS,
 	COMMENTS_DELETE,
 	COMMENTS_EDIT,
 	COMMENTS_EDIT_FAILURE,
@@ -18,6 +16,7 @@ import {
 	COMMENTS_REPLY_WRITE,
 	COMMENTS_WRITE,
 	COMMENT_REQUEST,
+	COMMENTS_TREE_SITE_REQUEST,
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
@@ -57,8 +56,31 @@ export function requestPostComments( {
 	};
 }
 
+/**
+ * Creates an action that request a list of comments for a given query.
+ * Except the two query properties descibed here, this function accepts all query parameters
+ * listed in the API docs:
+ * @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
+ *
+ * @param {Object} query API call parameters
+ * @param {String} query.listType Type of list to return (required as 'site')
+ * @param {Number} query.siteId Site identifier
+ * @returns {Object} Action that requests a comment list
+ */
 export const requestCommentsList = query => ( {
 	type: COMMENTS_LIST_REQUEST,
+	query,
+} );
+
+/**
+ * Creates an action that requests the comments tree for a given site.
+ * @param {Object} query API call parameters
+ * @param {Number} query.siteId Site identifier
+ * @param {String} query.status Status filter
+ * @returns {Object} Action that requests a comment tree
+ */
+export const requestCommentsTreeForSite = query => ( {
+	type: COMMENTS_TREE_SITE_REQUEST,
 	query,
 } );
 
@@ -135,39 +157,21 @@ export const unlikeComment = ( siteId, postId, commentId ) => ( {
 	commentId,
 } );
 
-export function changeCommentStatus( siteId, postId, commentId, status ) {
-	return dispatch => {
-		dispatch( {
-			type: COMMENTS_CHANGE_STATUS,
-			siteId,
-			postId,
-			commentId,
-			status,
-		} );
-
-		return wpcom
-			.site( siteId )
-			.comment( commentId )
-			.update( { status } )
-			.then( data =>
-				dispatch( {
-					type: COMMENTS_CHANGE_STATUS_SUCESS,
-					siteId,
-					postId,
-					commentId,
-					status: data.status,
-				} ),
-			)
-			.catch( () =>
-				dispatch( {
-					type: COMMENTS_CHANGE_STATUS_FAILURE,
-					siteId,
-					postId,
-					commentId,
-				} ),
-			);
-	};
-}
+/**
+ * Creates an action that changes a comment status.
+ * @param {Number} siteId Site identifier
+ * @param {Number} postId Post identifier
+ * @param {Number} commentId Comment identifier
+ * @param {Number} status New status
+ * @returns {Object} Action that changes a comment status
+ */
+export const changeCommentStatus = ( siteId, postId, commentId, status ) => ( {
+	type: COMMENTS_CHANGE_STATUS,
+	siteId,
+	postId,
+	commentId,
+	status,
+} );
 
 export function editComment( siteId, postId, commentId, content ) {
 	return dispatch => {

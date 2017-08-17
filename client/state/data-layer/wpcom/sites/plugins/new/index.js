@@ -16,9 +16,12 @@ import {
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 export const uploadPlugin = ( { dispatch }, action ) => {
 	const { siteId, file } = action;
+
+	dispatch( recordTracksEvent( 'calypso_plugin_upload' ) );
 
 	dispatch( http( {
 		method: 'POST',
@@ -60,8 +63,13 @@ const showErrorNotice = ( dispatch, error ) => {
 	dispatch( errorNotice( translate( 'Problem installing the plugin.' ) ) );
 };
 
-export const uploadComplete = ( { dispatch }, { siteId }, next, data ) => {
+export const uploadComplete = ( { dispatch }, { siteId }, data ) => {
 	const { slug: pluginId } = data;
+
+	dispatch( recordTracksEvent( 'calypso_plugin_upload_complete', {
+		plugin_id: pluginId
+	} ) );
+
 	dispatch( completePluginUpload( siteId, pluginId ) );
 	dispatch( {
 		type: PLUGIN_INSTALL_REQUEST_SUCCESS,
@@ -73,12 +81,17 @@ export const uploadComplete = ( { dispatch }, { siteId }, next, data ) => {
 	showSuccessNotice( dispatch, data );
 };
 
-export const receiveError = ( { dispatch }, { siteId }, next, error ) => {
+export const receiveError = ( { dispatch }, { siteId }, error ) => {
+	dispatch( recordTracksEvent( 'calypso_plugin_upload_error', {
+		error_code: error.error,
+		error_message: error.message
+	} ) );
+
 	showErrorNotice( dispatch, error );
 	dispatch( pluginUploadError( siteId, error ) );
 };
 
-export const updateUploadProgress = ( { dispatch }, { siteId }, next, { loaded, total } ) => {
+export const updateUploadProgress = ( { dispatch }, { siteId }, { loaded, total } ) => {
 	const progress = total ? ( loaded / total ) * 100 : total;
 	dispatch( updatePluginUploadProgress( siteId, progress ) );
 };

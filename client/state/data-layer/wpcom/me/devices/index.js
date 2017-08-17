@@ -36,11 +36,10 @@ export const requestUserDevices = ( { dispatch }, action ) => dispatch( http( {
  *
  * @param   {Function} dispatch Redux dispatcher
  * @param   {Object}   action   Redux action
- * @param   {Function} next     data-layer-bypassing dispatcher
  * @param   {Array}    devices  array of raw device data returned from the endpoint
  * @returns {Object}            disparched user devices add action
  */
-export const handleSuccess = ( { dispatch }, action, next, devices ) => dispatch( userDevicesAdd( {
+export const handleSuccess = ( { dispatch }, action, devices ) => dispatch( userDevicesAdd( {
 	devices: devicesFromApi( devices )
 } ) );
 

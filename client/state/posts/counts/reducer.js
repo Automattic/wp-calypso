@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-import merge from 'lodash/merge';
-import pick from 'lodash/pick';
-import omit from 'lodash/omit';
-import get from 'lodash/get';
+import { get, merge, omit, pick } from 'lodash';
 
 /**
  * Internal dependencies

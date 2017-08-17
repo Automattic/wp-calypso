@@ -16,9 +16,11 @@ import {
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
+	COMMENTS_TREE_SITE_ADD,
 } from '../action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 import { PLACEHOLDER_STATE, NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
+import trees from './trees/reducer';
 
 const getCommentDate = ( { date } ) => new Date( date );
 
@@ -211,9 +213,20 @@ export const errors = createReducer(
 	},
 );
 
+export const treesInitializedReducer = ( state = {}, action ) => {
+	if ( action.type === COMMENTS_TREE_SITE_ADD ) {
+		return true;
+	}
+	return state;
+};
+
+export const treesInitialized = keyedReducer( 'siteId', keyedReducer( 'status', treesInitializedReducer ) );
+
 export default combineReducers( {
 	items,
 	fetchStatus,
 	errors,
 	totalCommentsCount,
+	trees,
+	treesInitialized,
 } );

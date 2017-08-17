@@ -18,6 +18,8 @@ import classNames from 'classnames';
 import page from 'page';
 import wpcom from 'lib/wp';
 import { get } from 'lodash';
+import 'config';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -25,6 +27,7 @@ import { get } from 'lodash';
 import analytics from 'lib/analytics';
 import config from 'config';
 import userLib from 'lib/user';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 import NotificationsPanel, { refreshNotes } from 'notifications-panel';
 
@@ -155,7 +158,42 @@ export class Notifications extends Component {
 		const customMiddleware = {
 			APP_RENDER_NOTES: [ ( store, { newNoteCount } ) => this.props.setIndicator( newNoteCount ) ],
 			OPEN_LINK: [ ( store, { href } ) => window.open( href, '_blank' ) ],
-			OPEN_POST: [ ( store, { href } ) => window.open( href, '_blank' ) ],
+			OPEN_POST: [ ( store, { siteId, postId, href } ) => {
+				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
+					this.props.checkToggle();
+					this.props.recordTracksEvent( 'calypso_notifications_open_post', {
+						site_id: siteId,
+						post_id: postId,
+					} );
+					page( `/read/blogs/${ siteId }/posts/${ postId }` );
+				} else {
+					window.open( href, '_blank' );
+				}
+			} ],
+			OPEN_COMMENT: [ ( store, { siteId, postId, href, commentId } ) => {
+				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
+					this.props.checkToggle();
+					this.props.recordTracksEvent( 'calypso_notifications_open_comment', {
+						site_id: siteId,
+						post_id: postId,
+						comment_id: commentId
+					} );
+					page( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
+				} else {
+					window.open( href, '_blank' );
+				}
+			} ],
+			OPEN_SITE: [ ( store, { siteId, href } ) => {
+				if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
+					this.props.checkToggle();
+					this.props.recordTracksEvent( 'calypso_notifications_open_site', {
+						site_id: siteId,
+					} );
+					page( `/read/blogs/${ siteId }` );
+				} else {
+					window.open( href, '_blank' );
+				}
+			} ],
 			VIEW_SETTINGS: [ () => {
 				this.props.checkToggle();
 				page( '/me/notifications' );
@@ -182,4 +220,4 @@ export class Notifications extends Component {
 	}
 }
 
-export default Notifications;
+export default connect( null, { recordTracksEvent } )( Notifications );

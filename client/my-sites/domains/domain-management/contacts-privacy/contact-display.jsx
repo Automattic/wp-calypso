@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
-const React = require( 'react' );
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
-const ContactDisplay = React.createClass( {
-	propTypes: {
+class ContactDisplay extends React.PureComponent {
+	static propTypes = {
 		contactInformation: React.PropTypes.object.isRequired
-	},
+	};
 
 	render() {
-		const contactInformation = this.props.contactInformation;
+		const { contactInformation, translate } = this.props;
 
 		return (
 			<div className="contact-display">
-				<h2>{ this.translate( 'Public Record Preview' ) }</h2>
+				<h2>{ translate( 'Public Record Preview' ) }</h2>
 
 				<div className="contact-display-content">
 					<p>{ contactInformation.firstName } { contactInformation.lastName }</p>
@@ -33,6 +34,6 @@ const ContactDisplay = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
-module.exports = ContactDisplay;
+export default localize( ContactDisplay );

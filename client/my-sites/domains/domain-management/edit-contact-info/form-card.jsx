@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import {
+	deburr,
 	endsWith,
 	isEqual,
 	keys,
@@ -55,6 +56,22 @@ class EditContactInfoFormCard extends React.Component {
 
 	constructor( props ) {
 		super( props );
+
+		this.fieldNames = [
+			'first-name',
+			'last-name',
+			'organization',
+			'email',
+			'phone',
+			'fax',
+			'country-code',
+			'address-1',
+			'address-2',
+			'city',
+			'state',
+			'postal-code',
+		];
+
 		this.state = {
 			form: null,
 			notice: null,
@@ -70,6 +87,7 @@ class EditContactInfoFormCard extends React.Component {
 
 		this.formStateController = formState.Controller( {
 			initialFields: contactInformation,
+			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: this.setFormState,
 			onError: this.handleFormControllerError
@@ -96,6 +114,22 @@ class EditContactInfoFormCard extends React.Component {
 				onComplete( null, data.messages || {} );
 			}
 		} );
+	}
+
+	sanitize = ( fieldValues, onComplete ) => {
+		const sanitizedFieldValues = Object.assign( {}, fieldValues );
+
+		this.fieldNames.forEach( ( fieldName ) => {
+			if ( typeof fieldValues[ fieldName ] === 'string' ) {
+				// TODO: Deep
+				sanitizedFieldValues[ fieldName ] = deburr( fieldValues[ fieldName ].trim() );
+				if ( fieldName === 'postal-code' ) {
+					sanitizedFieldValues[ fieldName ] = sanitizedFieldValues[ fieldName ].toUpperCase();
+				}
+			}
+		} );
+
+		onComplete( sanitizedFieldValues );
 	}
 
 	setFormState = ( state ) => {

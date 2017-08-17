@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
-import includes from 'lodash/includes';
+import { includes } from 'lodash';
 import { moment, translate } from 'i18n-calypso';
 
 /**
@@ -49,6 +49,8 @@ export default function StatsController( context ) {
 	};
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( translate( 'Stats', { textOnly: true } ) ) );
+
+	analytics.tracks.recordEvent( `calypso_woocommerce_stats_${ props.type }_page`, props );
 
 	const asyncComponent = ( props.type === 'orders' )
 		? <AsyncLoad

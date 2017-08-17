@@ -20,6 +20,7 @@ import {
 } from './constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getMediaItem } from 'state/selectors';
 import Dialog from 'components/dialog';
 import FilePicker from 'components/file-picker';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
@@ -31,6 +32,7 @@ import MediaStore from 'lib/media/store';
 import MediaUtils from 'lib/media/utils';
 import MediaValidationStore from 'lib/media/validation-store';
 import { ValidationErrors } from 'lib/media/constants';
+import Button from 'components/button';
 
 class UploadImage extends Component {
 	state = {
@@ -52,15 +54,17 @@ class UploadImage extends Component {
 
 		additionalImageEditorClasses: PropTypes.string,
 		additionalClasses: PropTypes.string,
-		placeholderContent: PropTypes.element,
+		imagePickerContent: PropTypes.element,
 		uploadingContent: PropTypes.element,
 		uploadingDoneContent: PropTypes.element,
 		doneButtonText: PropTypes.string,
 		addAnImageText: PropTypes.string,
 		dragUploadText: PropTypes.string,
+		defaultImage: PropTypes.any,
 		onError: PropTypes.func,
 		onImageEditorDone: PropTypes.func,
-		onUploadImageDone: PropTypes.func,
+		onImageUploadDone: PropTypes.func,
+		onImageRemove: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -69,6 +73,8 @@ class UploadImage extends Component {
 		},
 		backgroundContent: null,
 		onImageEditorDone: noop,
+		onImageUploadDone: noop,
+		onImageRemove: noop,
 		onError: noop,
 		isUploading: false,
 	};
@@ -119,7 +125,7 @@ class UploadImage extends Component {
 
 	onImageEditorDone = ( error, imageBlob, imageEditorProps ) => {
 		if ( error ) {
-			this.handleError( ERROR_IMAGE_EDITOR_DONE, error );
+			return this.handleError( ERROR_IMAGE_EDITOR_DONE, error );
 		}
 
 		this.setState( {
@@ -165,7 +171,7 @@ class UploadImage extends Component {
 
 	// Handle the uploading process.
 	handleMediaStoreChange = () => {
-		const { siteId, onUploadImageDone } = this.props;
+		const { siteId, onImageUploadDone } = this.props;
 
 		const { errors } = this.state;
 
@@ -188,7 +194,7 @@ class UploadImage extends Component {
 
 			MediaStore.off( 'change', this.handleMediaStoreChange );
 
-			onUploadImageDone( uploadedImage );
+			onImageUploadDone( uploadedImage );
 
 			return;
 		}
@@ -211,11 +217,11 @@ class UploadImage extends Component {
 		this.setState( {
 			isEditingImage: false,
 			selectedImage: null,
-			selectedImageName: '',
 		} );
 	};
 
 	renderImageEditor() {
+		const { defaultImage } = this.props;
 		const { isEditingImage, selectedImage, selectedImageName } = this.state;
 
 		if ( ! isEditingImage ) {
@@ -226,14 +232,20 @@ class UploadImage extends Component {
 
 		const classes = classnames( 'upload-image-modal', additionalImageEditorClasses );
 
+		const isEditingDefaultImage = defaultImage && selectedImage === defaultImage.URL;
+
+		const media = isEditingDefaultImage
+			? defaultImage
+			: {
+				src: selectedImage,
+				file: selectedImageName,
+			};
+
 		return (
 			<Dialog additionalClassNames={ classes } isVisible={ true }>
 				<ImageEditor
 					{ ...imageEditorProps }
-					media={ {
-						src: selectedImage,
-						file: selectedImageName,
-					} }
+					media={ media }
 					onDone={ this.onImageEditorDone }
 					onCancel={ this.hideImageEditor }
 					doneButtonText={ doneButtonText ? doneButtonText : 'Done' }
@@ -242,11 +254,49 @@ class UploadImage extends Component {
 		);
 	}
 
-	componentWillUnmount() {
+	removeUploadedImage = () => {
+		const { onImageRemove } = this.props;
+		const { uploadedImage } = this.state;
+
+		this.revokeImageObjects();
+
+		this.setState( {
+			selectedImage: null,
+			selectedImageName: '',
+			editedImage: null,
+			uploadedImage: null,
+		} );
+
+		onImageRemove( uploadedImage );
+	};
+
+	componentWillMount() {
+		// use defaultImage as uploadedImage if set.
+		const { defaultImage } = this.props;
+		if ( defaultImage ) {
+			this.setState( {
+				uploadedImage: defaultImage,
+				selectedImage: defaultImage.URL,
+				selectedImageName: path.basename( defaultImage.URL ),
+				editedImage: defaultImage.URL,
+			} );
+		}
+	}
+
+	revokeImageObjects = () => {
 		const { selectedImage, editedImage } = this.state;
 
-		URL.revokeObjectURL( selectedImage );
-		URL.revokeObjectURL( editedImage );
+		if ( selectedImage ) {
+			URL.revokeObjectURL( selectedImage );
+		}
+
+		if ( editedImage ) {
+			URL.revokeObjectURL( editedImage );
+		}
+	};
+
+	componentWillUnmount() {
+		this.revokeImageObjects();
 
 		MediaStore.off( 'change', this.handleMediaStoreChange );
 		MediaValidationStore.off( 'change', this.storeValidationErrors );
@@ -254,20 +304,31 @@ class UploadImage extends Component {
 		this.uploadingImageTransientId = null;
 	}
 
-	renderPlaceholderContent() {
-		const { placeholderContent, addAnImageText, translate } = this.props;
+	editUploadedImage = () => {
+		const { editedImage } = this.state;
 
-		if ( placeholderContent ) {
-			return placeholderContent;
+		this.setState( {
+			isEditingImage: true,
+			selectedImage: editedImage,
+		} );
+	};
+
+	renderImagePickerContent() {
+		const { imagePickerContent, addAnImageText, translate } = this.props;
+
+		if ( imagePickerContent ) {
+			return imagePickerContent;
 		}
 
 		return (
-			<div className="upload-image__placeholder">
-				<Gridicon icon="add-image" size={ 36 } />
-				<span>
-					{ addAnImageText || translate( 'Add an Image' ) }
-				</span>
-			</div>
+			<FilePicker accept="image/*" onPick={ this.receiveFiles }>
+				<div className="upload-image__image-picker">
+					<Gridicon icon="add-image" size={ 36 } />
+					<span>
+						{ addAnImageText || translate( 'Add an Image' ) }
+					</span>
+				</div>
+			</FilePicker>
 		);
 	}
 
@@ -282,7 +343,7 @@ class UploadImage extends Component {
 
 		return (
 			<div className="upload-image__uploading-container">
-				<img src={ editedImage } />
+				<img src={ editedImage } className="upload-image__uploading-image" />
 				<Spinner className="upload-image__spinner" size={ 20 } />
 			</div>
 		);
@@ -300,7 +361,31 @@ class UploadImage extends Component {
 		if ( uploadedImage && uploadedImage.URL ) {
 			return (
 				<div className="upload-image__uploading-done-container">
-					<img src={ uploadedImage.URL } />
+					<div className="upload-image__uploaded-image-wrapper">
+						<img src={ uploadedImage.URL } className="upload-image__uploaded-image" />
+						<Button
+							onClick={ this.editUploadedImage }
+							compact
+							className="upload-image__uploaded-image-edit-button"
+						>
+							<Gridicon
+								icon="pencil"
+								size={ 18 }
+								className="upload-image__uploaded-image-edit-icon"
+							/>
+						</Button>
+					</div>
+					<Button
+						onClick={ this.removeUploadedImage }
+						compact
+						className="upload-image__uploaded-image-remove"
+					>
+						<Gridicon
+							icon="cross"
+							size={ 24 }
+							className="upload-image__uploaded-image-remove-icon"
+						/>
+					</Button>
 				</div>
 			);
 		}
@@ -316,23 +401,21 @@ class UploadImage extends Component {
 		return (
 			<div className={ classnames( 'upload-image', additionalClasses ) }>
 				{ this.renderImageEditor() }
+				<div
+					className={ classnames( 'upload-image__image-container', {
+						'is-uploading': isUploading,
+						'is-uploaded': ! isUploading && uploadedImage,
+					} ) }
+				>
+					<DropZone
+						textLabel={ dragUploadText ? dragUploadText : translate( 'Drop to upload image' ) }
+						onFilesDrop={ this.receiveFiles }
+					/>
 
-				<FilePicker accept="image/*" onPick={ this.receiveFiles }>
-					<div
-						className={ classnames( 'upload-image__image-container', {
-							'is-uploading': isUploading,
-						} ) }
-					>
-						<DropZone
-							textLabel={ dragUploadText ? dragUploadText : translate( 'Drop to upload image' ) }
-							onFilesDrop={ this.receiveFiles }
-						/>
-
-						{ ! isUploading && ! uploadedImage && this.renderPlaceholderContent() }
-						{ isUploading && this.renderUploadingContent() }
-						{ ! isUploading && uploadedImage && this.renderUploadingDoneContent() }
-					</div>
-				</FilePicker>
+					{ ! isUploading && ! uploadedImage && this.renderImagePickerContent() }
+					{ isUploading && this.renderUploadingContent() }
+					{ ! isUploading && uploadedImage && this.renderUploadingDoneContent() }
+				</div>
 			</div>
 		);
 	}
@@ -340,14 +423,19 @@ class UploadImage extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		let { siteId } = ownProps;
+		let { siteId, defaultImage } = ownProps;
 
 		if ( ! siteId ) {
 			siteId = getSelectedSiteId( state );
 		}
 
+		if ( ! defaultImage || typeof defaultImage !== 'object' ) {
+			defaultImage = getMediaItem( state, siteId, defaultImage );
+		}
+
 		return {
 			siteId,
+			defaultImage,
 		};
 	},
 	{

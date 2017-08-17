@@ -2,8 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import groupBy from 'lodash/groupBy';
-import find from 'lodash/find';
+import { find, groupBy } from 'lodash';
 
 /**
  * Internal dependencies

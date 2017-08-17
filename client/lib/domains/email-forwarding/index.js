@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import mapValues from 'lodash/mapValues';
+import { mapValues } from 'lodash';
 import emailValidator from 'email-validator';
 
 /**

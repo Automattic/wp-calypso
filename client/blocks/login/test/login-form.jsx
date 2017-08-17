@@ -26,7 +26,7 @@ describe( 'LoginForm', function() {
 	context( 'component rendering', () => {
 		it( 'displays a login form', () => {
 			const wrapper = shallow(
-				<LoginForm translate={ noop } />
+				<LoginForm translate={ noop } socialAccountLink={ { isLinking: false } } />
 			);
 			expect( wrapper.find( FormTextInput ).length ).to.equal( 1 );
 			expect( wrapper.find( FormPasswordInput ).length ).to.equal( 1 );

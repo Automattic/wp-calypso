@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import groupBy from 'lodash/groupBy';
+import { groupBy } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**

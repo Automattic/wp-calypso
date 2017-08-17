@@ -2,7 +2,7 @@
  * External dependencies
  */
 import assert from 'assert';
-import flow from 'lodash/flow';
+import { flow } from 'lodash';
 
 /**
  * Internal dependencies

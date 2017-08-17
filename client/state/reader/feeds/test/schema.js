@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -70,7 +71,7 @@ describe( 'schema', () => {
 					subscribers_count: null,
 					meta: null,
 				},
-			} ),
+			} )
 		);
 	} );
 } );

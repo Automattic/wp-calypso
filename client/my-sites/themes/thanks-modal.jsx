@@ -151,7 +151,7 @@ const ThanksModal = React.createClass( {
 
 	renderLoading() {
 		return (
-			<div>
+			<div className="themes__thanks-modal-loading">
 				<PulsingDot active={ true } />
 			</div>
 		);
@@ -166,7 +166,7 @@ const ThanksModal = React.createClass( {
 		];
 
 		return (
-			<Dialog className="themes-thanks-modal"
+			<Dialog className="themes__thanks-modal"
 				isVisible={ isActivating || hasActivated }
 				buttons={ buttons }
 				onClose={ this.onCloseModal } >

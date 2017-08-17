@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import omit from 'lodash/omit';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies

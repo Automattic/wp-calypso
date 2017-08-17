@@ -24,6 +24,7 @@ const PeopleListItem = require( 'my-sites/people/people-list-item' ),
 	accept = require( 'lib/accept' ),
 	analytics = require( 'lib/analytics' );
 import Button from 'components/button';
+import ListEnd from 'components/list-end';
 
 const maxFollowers = 1000;
 
@@ -212,7 +213,7 @@ const Followers = localize( class FollowersComponent extends Component {
 				<Card className={ listClass }>
 					{ followers }
 				</Card>
-				{ this.isLastPage() && <div className="infinite-scroll-end" /> }
+				{ this.isLastPage() && <ListEnd /> }
 			</div>
 		);
 	}

@@ -22,6 +22,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import { isEditedPostPrivate, isPrivateEditedPostPasswordValid } from 'state/posts/selectors';
+import utils from 'lib/posts/utils';
 
 class EditorConfirmationSidebar extends React.Component {
 	static propTypes = {
@@ -92,7 +93,8 @@ class EditorConfirmationSidebar extends React.Component {
 			return;
 		}
 
-		const { password, type, status } = this.props.post || {};
+		const { password, type } = this.props.post || {};
+		const status = get( this.props.post, 'status', 'draft' );
 		const isPrivateSite = get( this.props, 'site.is_private' );
 		const savedStatus = get( this.props, 'savedPost.status' );
 		const savedPassword = get( this.props, 'savedPost.password' );
@@ -148,6 +150,44 @@ class EditorConfirmationSidebar extends React.Component {
 		);
 	}
 
+	renderSidebarHeader() {
+		const isScheduled = utils.isFutureDated( this.props.post );
+
+		if ( isScheduled ) {
+			return (
+				<div className="editor-confirmation-sidebar__header">
+					{
+						this.props.translate( '{{strong}}Almost there!{{/strong}} ' +
+							'You can double-check your post’s settings below. When you’re happy, ' +
+							'use the big green button to schedule your post!', {
+								comment: 'This string appears as the header for the confirmation sidebar ' +
+								'when a user schedules the publishing of a post or page.',
+								components: {
+									strong: <strong />
+								},
+							} )
+					}
+				</div>
+			);
+		}
+
+		return (
+			<div className="editor-confirmation-sidebar__header">
+				{
+					this.props.translate( '{{strong}}Almost there!{{/strong}} ' +
+						'You can double-check your post’s settings below. When you’re happy, ' +
+						'use the big green button to send your post out into the world!', {
+							comment: 'This string appears as the header for the confirmation sidebar ' +
+							'when a user publishes a post or page.',
+							components: {
+								strong: <strong />
+							},
+						} )
+				}
+			</div>
+		);
+	}
+
 	render() {
 		const isSidebarActive = this.props.status === 'open';
 		const isOverlayActive = this.props.status !== 'closed';
@@ -178,19 +218,7 @@ class EditorConfirmationSidebar extends React.Component {
 						</div>
 					</div>
 					<div className="editor-confirmation-sidebar__content-wrap">
-						<div className="editor-confirmation-sidebar__header">
-							{
-								this.props.translate( '{{strong}}Almost there!{{/strong}} ' +
-									'You can double-check your post’s settings below. When you’re happy, ' +
-									'use the big green button to send your post out into the world!', {
-										comment: 'This string appears as the header for the confirmation sidebar ' +
-										'when a user publishes a post or page.',
-										components: {
-											strong: <strong />
-										},
-									} )
-							}
-						</div>
+						{ this.renderSidebarHeader() }
 						<EditorPublishDate
 							post={ this.props.post }
 							setPostDate={ this.props.setPostDate }

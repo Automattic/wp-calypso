@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Feed post display types
  * @type {Object} Types of post for display

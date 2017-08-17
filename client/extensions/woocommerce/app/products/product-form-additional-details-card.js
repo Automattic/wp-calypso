@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce, find } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import React, { PropTypes, Component } from 'react';
 
 /**
  * Internal dependencies
@@ -173,8 +174,7 @@ class ProductFormAdditionalDetailsCard extends Component {
 			>
 				<p>
 					{ translate( 'Include additional details about your products, like \‘fabric\’ or \‘type\’ ' +
-						'for apparel. This will help customers find the right products by ' +
-						'filtering for their preferred options, like a cotton shirt in a women\’s cut.' ) }
+						'for apparel. These details will be displayed alongside your product.' ) }
 				</p>
 
 				<div className="products__additional-details-container">

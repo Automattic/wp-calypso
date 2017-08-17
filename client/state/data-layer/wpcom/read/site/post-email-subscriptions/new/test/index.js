@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -34,7 +35,7 @@ describe( 'comment-email-subscriptions', () => {
 					apiVersion: '1.2',
 					onSuccess: action,
 					onFailure: action,
-				} ),
+				} )
 			);
 		} );
 	} );
@@ -42,22 +43,26 @@ describe( 'comment-email-subscriptions', () => {
 	describe( 'receivePostEmailSubscription', () => {
 		it( 'should call next to update the subscription with the delivery frequency from the response', () => {
 			const dispatch = spy();
-			receivePostEmailSubscription( { dispatch }, subscribeToNewPostEmail( 1234 ), null, {
+			receivePostEmailSubscription( { dispatch }, subscribeToNewPostEmail( 1234 ), {
 				subscribed: true,
 				subscription: {
 					delivery_frequency: 'daily',
 				},
 			} );
 			expect( dispatch ).to.have.been.calledWith(
-				local( updateNewPostEmailSubscription( 1234, 'daily' ) ),
+				local( updateNewPostEmailSubscription( 1234, 'daily' ) )
 			);
 		} );
 
 		it( 'should dispatch an unsubscribe if it fails using next', () => {
 			const dispatch = spy();
-			receivePostEmailSubscription( { dispatch }, { payload: { blogId: 1234 } }, null, {
-				subscribed: false,
-			} );
+			receivePostEmailSubscription(
+				{ dispatch },
+				{ payload: { blogId: 1234 } },
+				{
+					subscribed: false,
+				}
+			);
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					text: 'Sorry, we had a problem subscribing. Please try again.',

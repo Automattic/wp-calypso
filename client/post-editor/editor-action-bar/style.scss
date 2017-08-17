@@ -60,16 +60,6 @@
 	&.is-right {
 		justify-content: flex-end;
 	}
-
-	.post-format__icon {
-		color: darken( $gray, 10% );
-		margin-left: 18px;
-		margin-top: 3px;
-
-		.gridicon {
-			vertical-align: top;
-		}
-	}
 }
 
 .post-editor__content .editor-action-bar {
@@ -82,6 +72,10 @@
 	@include breakpoint( ">660px" ) {
 		display: none;
 	}
+}
+
+.editor-sidebar.is-nested-sidebar-focused .editor-action-bar {
+	display: none;
 }
 
 .editor-action-bar .button {

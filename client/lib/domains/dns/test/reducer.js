@@ -3,7 +3,7 @@
  */
 import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
-import pick from 'lodash/pick';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies

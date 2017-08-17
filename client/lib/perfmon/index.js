@@ -6,9 +6,8 @@ import analytics from 'lib/analytics';
 /**
  * External dependencies
  */
-import each from 'lodash/each';
-import remove from 'lodash/remove';
-import debounce from 'lodash/debounce';
+import { debounce, each, remove } from 'lodash';
+
 import page from 'page';
 
 var debug = require( 'debug' )( 'calypso:perfmon' );

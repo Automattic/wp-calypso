@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -27,11 +28,11 @@ export function requestPostEmailSubscription( { dispatch }, action ) {
 			apiVersion: '1.2',
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 }
 
-export function receivePostEmailSubscription( store, action, next, response ) {
+export function receivePostEmailSubscription( store, action, response ) {
 	// validate that it worked
 	const subscribed = !! ( response && response.subscribed );
 	if ( ! subscribed ) {
@@ -44,9 +45,9 @@ export function receivePostEmailSubscription( store, action, next, response ) {
 		local(
 			updateNewPostEmailSubscription(
 				action.payload.blogId,
-				get( response, [ 'subscription', 'delivery_frequency' ] ),
-			),
-		),
+				get( response, [ 'subscription', 'delivery_frequency' ] )
+			)
+		)
 	);
 }
 
@@ -60,7 +61,7 @@ export default {
 		dispatchRequest(
 			requestPostEmailSubscription,
 			receivePostEmailSubscription,
-			receivePostEmailSubscriptionError,
+			receivePostEmailSubscriptionError
 		),
 	],
 };

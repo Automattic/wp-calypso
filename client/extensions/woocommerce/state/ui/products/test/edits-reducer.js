@@ -21,6 +21,9 @@ import {
 	createProductCategory,
 	productCategoryUpdated,
 } from 'woocommerce/state/sites/product-categories/actions';
+import {
+	WOOCOMMERCE_PRODUCT_DELETE,
+} from 'woocommerce/state/action-types';
 
 const siteId = 123;
 
@@ -363,5 +366,33 @@ describe( 'edits-reducer', () => {
 		expect( edits1.updates ).to.exist;
 		expect( edits1.deletes ).to.exist;
 		expect( edits2 ).to.equal( null );
+	} );
+
+	it( 'should clear product from updates upon successful delete', () => {
+		const product1 = {
+			id: 5,
+			name: 'Product 1',
+		};
+
+		const product2 = {
+			id: 6,
+			name: 'Product 2',
+		};
+
+		const edits1 = {
+			updates: [ product1, product2 ],
+		};
+
+		const action = {
+			type: WOOCOMMERCE_PRODUCT_DELETE,
+			siteId,
+			productId: 6,
+		};
+
+		const edits2 = reducer( edits1, action );
+
+		expect( edits1.updates[ 0 ] ).to.eql( product1 );
+		expect( edits1.updates[ 1 ] ).to.eql( product2 );
+		expect( edits2.updates.length ).to.eql( 1 );
 	} );
 } );

@@ -2,8 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import identity from 'lodash/identity';
-import isFunction from 'lodash/isFunction';
+import { identity, isFunction } from 'lodash';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 

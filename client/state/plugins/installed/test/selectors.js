@@ -55,6 +55,24 @@ const state = deepFreeze( {
 				}
 			}
 		}
+	},
+	sites: {
+		items: {
+			'site.one': {
+				ID: 'site.one',
+				jetpack: true,
+				visible: true,
+				isSecondaryNetworkSite: ( () => false ),
+				name: 'One Site',
+			},
+			'site.two': {
+				ID: 'site.two',
+				jetpack: true,
+				visible: true,
+				isSecondaryNetworkSite: ( () => false ),
+				name: 'Two Site'
+			}
+		}
 	}
 } );
 
@@ -129,116 +147,96 @@ describe( 'Installed plugin selectors', function() {
 
 	describe( 'getPlugins', function() {
 		it( 'Should get an empty array if the requested site is not in the current state', function() {
-			const plugins = selectors.getPlugins( state, [ { ID: 'no.site' } ] );
+			const plugins = selectors.getPlugins( state, [ 'no.site' ] );
 			expect( plugins ).to.have.lengthOf( 0 );
 		} );
 
 		it( 'Should get a plugin list of length 3 if both sites are requested', function() {
-			const plugins = selectors.getPlugins( state, [ { ID: 'site.one' }, { ID: 'site.two' } ] );
+			const plugins = selectors.getPlugins( state, [ 'site.one', 'site.two' ] );
 			expect( plugins ).to.have.lengthOf( 3 );
 		} );
 
 		it( 'Should get a plugin list containing jetpack if both sites are requested', function() {
-			const siteOneObj = { ID: 'site.one' };
-			const siteTwoObj = { ID: 'site.two' };
-			const plugins = selectors.getPlugins( state, [ siteOneObj, siteTwoObj ] );
-			const siteWithPlugin = { [ siteTwoObj.ID ]: pick( jetpack, [ 'active', 'autoupdate', 'update' ] ) };
+			const siteOneId = 'site.one';
+			const siteTwoId = 'site.two';
+			const plugins = selectors.getPlugins( state, [ siteOneId, siteTwoId ] );
+			const siteWithPlugin = { [ siteTwoId ]: pick( jetpack, [ 'active', 'autoupdate', 'update' ] ) };
 			expect( plugins ).to.deep.include( { ...jetpack, sites: siteWithPlugin } );
 		} );
 
 		it( 'Should get a plugin list of length 2 if only site 1 is requested', function() {
-			const plugins = selectors.getPlugins( state, [ { ID: 'site.one' } ] );
+			const plugins = selectors.getPlugins( state, [ 'site.one' ] );
 			expect( plugins ).to.have.lengthOf( 2 );
 		} );
 
 		it( 'Should get a plugin list of length 2 if active plugins on both sites are requested', function() {
-			const siteOneObj = { ID: 'site.one' };
-			const siteTwoObj = { ID: 'site.two' };
-			const plugins = selectors.getPlugins( state, [ siteOneObj, siteTwoObj ], 'active' );
+			const plugins = selectors.getPlugins( state, [ 'site.one', 'site.two' ], 'active' );
 			expect( plugins ).to.have.lengthOf( 2 );
 		} );
 
 		it( 'Should get a plugin list of length 1 if inactive plugins on site 1 is requested', function() {
-			const plugins = selectors.getPlugins( state, [ { ID: 'site.one' } ], 'inactive' );
+			const plugins = selectors.getPlugins( state, [ 'site.one' ], 'inactive' );
 			expect( plugins ).to.have.lengthOf( 1 );
 		} );
 	} );
 
 	describe( 'getPluginsWithUpdates', function() {
 		it( 'Should get an empty array if the requested site is not in the current state', function() {
-			const plugins = selectors.getPluginsWithUpdates( state, [ { ID: 'no.site' } ] );
+			const plugins = selectors.getPluginsWithUpdates( state, [ 'no.site' ] );
 			expect( plugins ).to.have.lengthOf( 0 );
 		} );
 
 		it( 'Should get a plugin list of length 1 when we can update files on the site', function() {
-			const plugins = selectors.getPluginsWithUpdates( state, [ {
-				ID: 'site.one',
-				canUpdateFiles: true
-			}, {
-				ID: 'site.two',
-				canUpdateFiles: true
-			} ] );
+			const plugins = selectors.getPluginsWithUpdates( state, [ 'site.one', 'site.two' ] );
 			expect( plugins ).to.have.lengthOf( 1 );
 		} );
 	} );
 
 	describe( 'getPluginOnSite', function() {
 		it( 'Should get an undefined value if the requested site is not in the current state', function() {
-			expect( selectors.getPluginOnSite( state, { ID: 'no.site' }, 'akismet' ) ).to.be.undefined;
+			expect( selectors.getPluginOnSite( state, 'no.site', 'akismet' ) ).to.be.undefined;
 		} );
 
 		it( 'Should get an undefined value if the requested plugin on this site is not in the current state', function() {
-			expect( selectors.getPluginOnSite( state, { ID: 'site.one' }, 'jetpack' ) ).to.be.undefined;
+			expect( selectors.getPluginOnSite( state, 'site.one', 'jetpack' ) ).to.be.undefined;
 		} );
 
 		it( 'Should get the plugin if the it exists on the requested site', function() {
-			const siteOneObj = { ID: 'site.one' };
-			const plugin = selectors.getPluginOnSite( state, siteOneObj, 'akismet' );
-			const siteWithPlugin = { [ siteOneObj.ID ]: pick( akismet, [ 'active', 'autoupdate', 'update' ] ) };
+			const siteOneId = 'site.one';
+			const plugin = selectors.getPluginOnSite( state, siteOneId, 'akismet' );
+			const siteWithPlugin = { [ siteOneId ]: pick( akismet, [ 'active', 'autoupdate', 'update' ] ) };
 			expect( plugin ).to.eql( { ...akismet, sites: siteWithPlugin } );
 		} );
 	} );
 
 	describe( 'getSitesWithPlugin', function() {
-		const siteList = [
-			{ ID: 'site.one', slug: 'site.one', jetpack: true, visible: true, isSecondaryNetworkSite: ( () => false ), title: 'One Site' },
-			{ ID: 'site.two', slug: 'site.two', jetpack: true, visible: true, isSecondaryNetworkSite: ( () => false ), title: 'Two Site' }
-		];
-
 		it( 'Should get an empty array if the requested site is not in the current state', function() {
-			expect( selectors.getSitesWithPlugin( state, [ { ID: 'no.site' } ], 'akismet' ) ).to.have.lengthOf( 0 );
+			expect( selectors.getSitesWithPlugin( state, [ 'no.site' ], 'akismet' ) ).to.have.lengthOf( 0 );
 		} );
 
 		it( 'Should get an empty array if the requested plugin doesn\'t exist on any sites\' state', function() {
-			expect( selectors.getSitesWithPlugin( state, siteList, 'vaultpress' ) ).to.have.lengthOf( 0 );
+			expect( selectors.getSitesWithPlugin( state, [ 'site.one', 'site.two' ], 'vaultpress' ) ).to.have.lengthOf( 0 );
 		} );
 
 		it( 'Should get an array of sites with the requested plugin', function() {
-			const siteWithPlugin = siteList[ 1 ];
-			const sites = selectors.getSitesWithPlugin( state, siteList, 'jetpack' );
-			expect( sites ).to.eql( [ siteWithPlugin ] );
+			const siteIds = selectors.getSitesWithPlugin( state, [ 'site.one', 'site.two' ], 'jetpack' );
+			expect( siteIds ).to.eql( [ 'site.two' ] );
 		} );
 	} );
 
 	describe( 'getSitesWithoutPlugin', function() {
-		const siteList = [
-			{ ID: 'site.one', slug: 'site.one', jetpack: true, visible: true, isSecondaryNetworkSite: ( () => false ), title: 'One Site' },
-			{ ID: 'site.two', slug: 'site.two', jetpack: true, visible: true, isSecondaryNetworkSite: ( () => false ), title: 'Two Site' }
-		];
-
 		it( 'Should get an empty array if the requested site is not in the current state', function() {
-			expect( selectors.getSitesWithoutPlugin( state, [ { ID: 'no.site' } ], 'akismet' ) ).to.have.lengthOf( 0 );
+			expect( selectors.getSitesWithoutPlugin( state, [ 'no.site' ], 'akismet' ) ).to.have.lengthOf( 0 );
 		} );
 
 		it( 'Should get an array of sites that don\'t have the plugin in their state', function() {
-			const siteWithoutPlugin = siteList[ 1 ];
-			const sites = selectors.getSitesWithoutPlugin( state, siteList, 'akismet' );
-			expect( sites ).to.eql( [ siteWithoutPlugin ] );
+			const siteIds = selectors.getSitesWithoutPlugin( state, [ 'site.one', 'site.two' ], 'akismet' );
+			expect( siteIds ).to.eql( [ 'site.two' ] );
 		} );
 
 		it( 'Should get an empty array if the requested plugin exists on all requested sites', function() {
-			const sites = selectors.getSitesWithoutPlugin( state, siteList, 'hello-dolly' );
-			expect( sites ).to.have.lengthOf( 0 );
+			const siteIds = selectors.getSitesWithoutPlugin( state, [ 'site.one', 'site.two' ], 'hello-dolly' );
+			expect( siteIds ).to.have.lengthOf( 0 );
 		} );
 	} );
 

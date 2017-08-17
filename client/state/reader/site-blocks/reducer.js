@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -26,8 +27,8 @@ export const items = keyedReducer(
 			[ READER_SITE_UNBLOCK_REQUEST ]: () => false, // optimistic update
 			[ READER_SITE_UNBLOCK_REQUEST_SUCCESS ]: () => false,
 			[ READER_SITE_UNBLOCK_REQUEST_FAILURE ]: () => true,
-		},
-	),
+		}
+	)
 );
 
 export default combineReducers( {

@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import includes from 'lodash/includes';
-import sampleSize from 'lodash/sampleSize';
+import { includes, sampleSize } from 'lodash';
 
 /**
  * Internal dependencies

@@ -1,3 +1,4 @@
+/** @format */
 /*
  * External dependencies
  */
@@ -84,7 +85,7 @@ describe( 'get follow subscriptions', () => {
 					query: { page: 1, number: 200, meta: '' },
 					onSuccess: action,
 					onError: action,
-				} ),
+				} )
 			);
 		} );
 	} );
@@ -96,7 +97,7 @@ describe( 'get follow subscriptions', () => {
 			const dispatch = sinon.spy();
 
 			syncReaderFollows( { dispatch }, startSyncAction );
-			receivePage( { dispatch }, action, null, successfulApiResponse );
+			receivePage( { dispatch }, action, successfulApiResponse );
 
 			expect( dispatch ).to.have.been.calledThrice;
 			expect( dispatch ).to.have.been.calledWith( requestPageAction( 1 ) );
@@ -105,7 +106,7 @@ describe( 'get follow subscriptions', () => {
 				receiveFollowsAction( {
 					follows: subscriptionsFromApi( successfulApiResponse ),
 					totalCount: successfulApiResponse.total_subscriptions,
-				} ),
+				} )
 			);
 		} );
 
@@ -130,8 +131,8 @@ describe( 'get follow subscriptions', () => {
 			} );
 
 			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction );
-			receivePage( { dispatch: ignoredDispatch }, action, null, successfulApiResponse );
-			receivePage( { dispatch, getState }, action, null, {
+			receivePage( { dispatch: ignoredDispatch }, action, successfulApiResponse );
+			receivePage( { dispatch, getState }, action, {
 				number: 0,
 				page: 2,
 				total_subscriptions: 10,
@@ -143,10 +144,10 @@ describe( 'get follow subscriptions', () => {
 				receiveFollowsAction( {
 					follows: [],
 					totalCount: 10,
-				} ),
+				} )
 			);
 			expect( dispatch ).to.have.been.calledWith(
-				syncComplete( [ 'http://readerpostcards.wordpress.com', 'https://fivethirtyeight.com/' ] ),
+				syncComplete( [ 'http://readerpostcards.wordpress.com', 'https://fivethirtyeight.com/' ] )
 			);
 		} );
 
@@ -171,11 +172,11 @@ describe( 'get follow subscriptions', () => {
 			} );
 
 			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction );
-			receivePage( { dispatch: ignoredDispatch }, action, null, successfulApiResponse );
+			receivePage( { dispatch: ignoredDispatch }, action, successfulApiResponse );
 
 			updateSeenOnFollow( { dispatch: ignoredDispatch }, follow( 'http://feed.example.com' ) );
 
-			receivePage( { dispatch, getState }, action, null, {
+			receivePage( { dispatch, getState }, action, {
 				number: 0,
 				page: 2,
 				total_subscriptions: 10,
@@ -187,7 +188,7 @@ describe( 'get follow subscriptions', () => {
 				receiveFollowsAction( {
 					follows: [],
 					totalCount: 10,
-				} ),
+				} )
 			);
 
 			expect( dispatch ).to.have.been.calledWith(
@@ -195,7 +196,7 @@ describe( 'get follow subscriptions', () => {
 					'http://readerpostcards.wordpress.com',
 					'https://fivethirtyeight.com/',
 					'http://feed.example.com',
-				] ),
+				] )
 			);
 		} );
 	} );

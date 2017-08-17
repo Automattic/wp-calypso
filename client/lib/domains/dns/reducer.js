@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import findIndex from 'lodash/findIndex';
-import pick from 'lodash/pick';
-import reject from 'lodash/reject';
+import { findIndex, pick, reject } from 'lodash';
+
 import update from 'react-addons-update';
 
 /**

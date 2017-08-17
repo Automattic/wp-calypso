@@ -67,6 +67,8 @@ class MediaLibraryListNoContent extends Component {
 					{ this.props.translate( 'Upload Media' ) }
 				</UploadButton>
 			);
+		} else if ( this.props.source ) {
+			line = this.props.translate( 'New photos may take a few minutes to appear.' );
 		}
 
 		return (

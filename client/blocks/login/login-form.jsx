@@ -2,11 +2,10 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import defer from 'lodash/defer';
+import { defer } from 'lodash';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { capitalize } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,33 +18,41 @@ import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { loginUser, formUpdate } from 'state/login/actions';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 import {
 	getRequestError,
 	isFormDisabled,
+	getSocialAccountIsLinking,
+	getSocialAccountLinkEmail,
+	getSocialAccountLinkService,
 } from 'state/login/selectors';
+import Notice from 'components/notice';
 import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
 		formUpdate: PropTypes.func.isRequired,
+		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
+		privateSite: PropTypes.bool,
 		redirectTo: PropTypes.string,
 		requestError: PropTypes.object,
+		socialAccountIsLinking: PropTypes.bool,
+		socialAccountLinkEmail: PropTypes.string,
+		socialAccountLinkService: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		isFormDisabled: PropTypes.bool,
 	};
 
 	state = {
 		isDisabledWhileLoading: true,
-		usernameOrEmail: '',
+		usernameOrEmail: this.props.socialAccountLinkEmail || '',
 		password: '',
 		rememberMe: false,
-		linkingSocialUser: false,
-		linkingSocialService: '',
 	};
 
 	componentDidMount() {
@@ -70,6 +77,15 @@ export class LoginForm extends Component {
 		}
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.socialAccountIsLinking !== nextProps.socialAccountIsLinking &&
+			nextProps.socialAccountIsLinking ) {
+			if ( ! this.state.usernameOrEmail ) {
+				this.setState( { usernameOrEmail: nextProps.socialAccountLinkEmail } );
+			}
+		}
+	}
+
 	onChangeField = ( event ) => {
 		this.props.formUpdate();
 		this.setState( {
@@ -88,10 +104,10 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		const { linkingSocialUser, password, usernameOrEmail } = this.state;
+		const { usernameOrEmail, password } = this.state;
 		const { onSuccess, redirectTo } = this.props;
 
-		const rememberMe = linkingSocialUser ? true : this.state.rememberMe;
+		const rememberMe = this.props.socialAccountIsLinking ? true : this.state.rememberMe;
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 
@@ -115,13 +131,17 @@ export class LoginForm extends Component {
 		this.usernameOrEmail = input;
 	};
 
-	linkSocialUser = ( service, usernameOrEmail ) => {
-		this.setState( {
-			usernameOrEmail: usernameOrEmail,
-			linkingSocialUser: true,
-			linkingSocialService: capitalize( service ),
-		} );
-	};
+	renderPrivateSiteNotice() {
+		if ( this.props.privateSite && ! this.props.isLoggedIn ) {
+			return (
+				<Notice status="is-info" showDismiss={ false } icon="lock">
+					{ this.props.translate( 'Log in to WordPress.com to proceed. ' +
+					"If you are not a member of this site, we'll send " +
+					'your username to the site owner for approval.' ) }
+				</Notice>
+			);
+		}
+	}
 
 	render() {
 		const isDisabled = {};
@@ -131,19 +151,22 @@ export class LoginForm extends Component {
 		}
 
 		const { requestError } = this.props;
+		const linkingSocialUser = this.props.socialAccountIsLinking;
 
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
+				{ this.renderPrivateSiteNotice() }
+
 				<Card className="login__form">
 					<div className="login__form-userdata">
-						{ this.state.linkingSocialUser && (
+						{ linkingSocialUser && (
 							<div className="login__form-link-social-notice">
 								<p>
 									{ this.props.translate( 'We found a WordPress.com account with the email address "%(email)s". ' +
 										'Log in to this account to connect it to your %(service)s profile.', {
 											args: {
-												email: this.state.usernameOrEmail,
-												service: this.state.linkingSocialService,
+												email: this.props.socialAccountLinkEmail,
+												service: this.props.socialAccountLinkService,
 											}
 										}
 									) }
@@ -196,7 +219,7 @@ export class LoginForm extends Component {
 						) }
 					</div>
 
-					{ ! this.state.linkingSocialUser && (
+					{ ! linkingSocialUser && (
 						<div className="login__form-remember-me">
 							<label>
 								<FormCheckbox
@@ -209,6 +232,7 @@ export class LoginForm extends Component {
 						</div>
 					) }
 
+					{ config.isEnabled( 'signup/social' ) && (
 					<p className="login__form-terms">
 						{
 							preventWidows( this.props.translate(
@@ -223,6 +247,7 @@ export class LoginForm extends Component {
 
 						}
 					</p>
+					) }
 
 					<div className="login__form-action">
 						<FormsButton primary { ...isDisabled }>
@@ -231,13 +256,13 @@ export class LoginForm extends Component {
 					</div>
 				</Card>
 				{ config.isEnabled( 'signup/social' ) && (
-					<Card>
-						<div className="login__form-social">
-							<SocialLoginForm
-								onSuccess={ this.props.onSuccess }
-								linkSocialUser={ this.linkSocialUser }
-								linkingSocialService={ this.state.linkingSocialService } />
-						</div>
+					<Card className="login__form-social">
+						<SocialLoginForm
+							onSuccess={ this.props.onSuccess }
+							linkingSocialService={ this.props.socialAccountIsLinking
+								? this.props.socialAccountLinkService
+								: null
+							} />
 					</Card>
 				) }
 			</form>
@@ -250,6 +275,10 @@ export default connect(
 		redirectTo: getCurrentQueryArguments( state ).redirect_to,
 		requestError: getRequestError( state ),
 		isFormDisabled: isFormDisabled( state ),
+		socialAccountIsLinking: getSocialAccountIsLinking( state ),
+		socialAccountLinkEmail: getSocialAccountLinkEmail( state ),
+		socialAccountLinkService: getSocialAccountLinkService( state ),
+		isLoggedIn: Boolean( getCurrentUserId( state ) )
 	} ),
 	{
 		formUpdate,

@@ -66,12 +66,13 @@ class MediaModalSecondaryActions extends Component {
 		} );
 
 		if ( ModalViews.GALLERY !== view && canDeleteItems ) {
+			const isButtonDisabled = disabled || some( selectedItems, 'transient' );
 			buttons.push( {
 				key: 'delete',
 				icon: 'trash',
 				className: 'editor-media-modal__delete',
-				disabled: disabled || some( selectedItems, 'transient' ),
-				onClick: onDelete
+				disabled: isButtonDisabled,
+				onClick: ( isButtonDisabled ) ? noop : onDelete
 			} );
 		}
 

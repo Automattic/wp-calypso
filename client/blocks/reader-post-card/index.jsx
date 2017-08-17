@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -19,7 +20,7 @@ import PostByline from './byline';
 import GalleryPost from './gallery';
 import PhotoPost from './photo';
 import StandardPost from './standard';
-import CompactPost from './compact';
+import ConversationPost from './conversation-post';
 import FollowButton from 'reader/follow-button';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
@@ -126,9 +127,9 @@ class ReaderPostCard extends React.Component {
 			compact,
 		} = this.props;
 
-		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
-		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY );
-		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO );
+		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
+		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
+		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
 		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const classes = classnames( 'reader-post-card', {
@@ -198,11 +199,12 @@ class ReaderPostCard extends React.Component {
 		let readerPostCard;
 		if ( compact ) {
 			readerPostCard = (
-				<CompactPost
+				<ConversationPost
 					post={ post }
 					title={ title }
 					isDiscover={ isDiscover }
 					postByline={ postByline }
+					commentIds={ postKey.comments }
 				/>
 			);
 		} else if ( isPhotoPost ) {
@@ -239,7 +241,7 @@ class ReaderPostCard extends React.Component {
 				>
 					{ isDailyPostChallengeOrPrompt( post ) &&
 						site &&
-						<DailyPostButton post={ post } site={ site } tagName="span" /> }
+						<DailyPostButton post={ post } site={ site } /> }
 					{ discoverFollowButton }
 					{ readerPostActions }
 				</StandardPost>
@@ -269,5 +271,5 @@ export default connect(
 	( state, ownProps ) => ( {
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 	} ),
-	{ expandCard: expandCardAction },
+	{ expandCard: expandCardAction }
 )( ReaderPostCard );

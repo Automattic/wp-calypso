@@ -94,5 +94,5 @@ export function getProductVariationsWithLocalEdits( state, productId, siteId = g
 		return { ...variation, ...update };
 	} ) );
 
-	return ( creates || variations ? [ ...creates || [], ...updatedVariations || [] ] : undefined );
+	return creates || variations ? [ ...( creates || [] ), ...( updatedVariations || [] ) ] : undefined;
 }

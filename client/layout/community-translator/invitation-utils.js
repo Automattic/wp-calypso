@@ -6,9 +6,8 @@
  * External dependencies
  */
 import Debug from 'debug';
-import includes from 'lodash/includes';
+import { includes, once } from 'lodash';
 import store from 'store';
-import once from 'lodash/once';
 
 /**
  * Internal dependencies

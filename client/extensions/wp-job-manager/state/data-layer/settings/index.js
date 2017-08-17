@@ -2,10 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import {
-	startSubmit as startSave,
-	stopSubmit as stopSave,
-} from 'redux-form';
+import { initialize, startSubmit as startSave, stopSubmit as stopSave } from 'redux-form';
 
 /**
  * Internal dependencies
@@ -51,8 +48,12 @@ export const saveSettings = ( { dispatch, getState }, action ) => {
 	}, action ) );
 };
 
-export const announceSuccess = ( { dispatch }, { form } ) => {
+export const announceSuccess = ( { dispatch }, { form, siteId }, next, { data } ) => {
+	const updatedData = fromApi( data );
+
 	dispatch( stopSave( form ) );
+	dispatch( initialize( form, updatedData ) );
+	dispatch( updateSettings( siteId, updatedData ) );
 	dispatch( successNotice( translate(
 		'Settings saved!' ),
 		{ id: 'wpjm-settings-save' }

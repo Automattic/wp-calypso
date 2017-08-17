@@ -14,8 +14,8 @@ import paths from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
 import support from 'lib/url/support';
 
-const ContactsPrivacyCard = React.createClass( {
-	propTypes: {
+class ContactsPrivacyCard extends React.PureComponent {
+	static propTypes = {
 		contactInformation: React.PropTypes.object.isRequired,
 		privateDomain: React.PropTypes.bool.isRequired,
 		hasPrivacyProtection: React.PropTypes.bool.isRequired,
@@ -25,37 +25,47 @@ const ContactsPrivacyCard = React.createClass( {
 			React.PropTypes.bool
 		] ).isRequired,
 		currentUserCanManage: React.PropTypes.bool.isRequired
-	},
+	};
 
 	render() {
+		const { contactInformation, currentUserCanManage, translate } = this.props;
+
 		return (
 			<div>
-				<SectionHeader label={ this.props.translate( 'Domain Contacts' ) } />
+				<SectionHeader label={ translate( 'Domain Contacts' ) } />
 
 				<CompactCard className="contacts-privacy-card">
 					<p className="settings-explanation">
-						{ this.props.translate(
+						{ translate(
 							'Domain owners are required to make their contact information available to the public. ' +
 							'{{a}}Learn more.{{/a}}',
 							{
 								components: {
-									a: <a href={ support.PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />
+									a: <a href={ support.PUBLIC_VS_PRIVATE }
+										target="_blank" rel="noopener noreferrer"
+									/>
 								}
 							}
 						) }
 					</p>
 
-					{ this.props.currentUserCanManage && this.getNotice() }
+					{ currentUserCanManage && this.getNotice() }
 
-					<ContactDisplay
-						contactInformation={ this.props.contactInformation } />
+					<ContactDisplay contactInformation={ contactInformation } />
 				</CompactCard>
 			</div>
 		);
-	},
+	}
 
 	getNotice() {
-		const { privacyAvailable, hasPrivacyProtection, privateDomain, translate, selectedSite, selectedDomainName } = this.props;
+		const {
+			hasPrivacyProtection,
+			privacyAvailable,
+			privateDomain,
+			selectedSite,
+			selectedDomainName,
+			translate
+		} = this.props;
 
 		if ( ! privacyAvailable ) {
 			return false;
@@ -86,7 +96,12 @@ const ContactsPrivacyCard = React.createClass( {
 						{
 							components: {
 								strong: <strong />,
-								a: <a href={ paths.domainManagementTransferOut( selectedSite.slug, selectedDomainName ) } />
+								a: <a href={
+									paths.domainManagementTransferOut(
+										selectedSite.slug,
+										selectedDomainName
+									) }
+								/>
 							}
 						}
 					) }
@@ -103,15 +118,18 @@ const ContactsPrivacyCard = React.createClass( {
 					{
 						components: {
 							strong: <strong />,
-							a: <a
-								href={ paths.domainManagementPrivacyProtection(
-									selectedSite.slug, selectedDomainName ) } />
+							a: <a href={
+								paths.domainManagementPrivacyProtection(
+									selectedSite.slug,
+									selectedDomainName
+								) }
+							/>
 						}
 					}
 				) }
 			</Notice>
 		);
 	}
-} );
+}
 
-module.exports = localize( ContactsPrivacyCard );
+export default localize( ContactsPrivacyCard );

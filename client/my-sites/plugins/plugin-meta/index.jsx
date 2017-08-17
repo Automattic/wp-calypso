@@ -5,9 +5,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
-import some from 'lodash/some';
-import get from 'lodash/get';
-import { find, includes } from 'lodash';
+import { find, get, includes, some } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
 import sectionsModule from 'sections';
@@ -436,7 +434,9 @@ class PluginMeta extends Component {
 			'is-placeholder': !! this.props.isPlaceholder
 		} );
 
-		const plugin = this.props.selectedSite && this.props.sites[ 0 ] ? this.props.sites[ 0 ].plugin : this.props.plugin;
+		const plugin = this.props.selectedSite && this.props.sites[ 0 ] && this.props.sites[ 0 ].plugin
+			? this.props.sites[ 0 ].plugin
+			: this.props.plugin;
 		const path = ( ! this.props.selectedSite || plugin.active ) && this.getExtensionSettingsPath( plugin );
 
 		return (
@@ -460,13 +460,13 @@ class PluginMeta extends Component {
 
 				{ path &&
 					<CompactCard
+						className="plugin-meta__settings-link"
 						href={ addSiteFragment( path, this.props.slug ) }>
 						{ this.props.translate( 'Edit plugin settings' ) }
 					</CompactCard>
 				}
 
 				{ ! this.props.isMock && get( this.props.selectedSite, 'jetpack' ) &&
-				<Card className="plugin-meta__plugin-information-wrapper">
 					<PluginInformation
 						plugin={ this.props.plugin }
 						isPlaceholder={ this.props.isPlaceholder }
@@ -475,7 +475,6 @@ class PluginMeta extends Component {
 						siteVersion={ this.props.selectedSite && this.props.selectedSite.options.software_version }
 						hasUpdate={ this.getAvailableNewVersions().length > 0 }
 					/>
-				</Card>
 				}
 
 				{ this.props.atEnabled &&

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -71,7 +72,7 @@ describe( 'actions', () => {
 				err => {
 					assert.fail( 'Errback should not be invoked!', err );
 					return err;
-				},
+				}
 			);
 		} );
 	} );
@@ -108,7 +109,7 @@ describe( 'actions', () => {
 						},
 						error: sinon.match.instanceOf( Error ),
 					} );
-				},
+				}
 			);
 		} );
 	} );

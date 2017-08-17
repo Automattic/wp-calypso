@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loadScript } from 'lib/load-script';
 import { localize } from 'i18n-calypso';
@@ -28,7 +29,7 @@ class GoogleLoginButton extends Component {
 	};
 
 	static defaultProps = {
-		scope: 'https://www.googleapis.com/auth/plus.login',
+		scope: 'https://www.googleapis.com/auth/userinfo.profile',
 		fetchBasicProfile: true,
 		onClick: noop,
 	};

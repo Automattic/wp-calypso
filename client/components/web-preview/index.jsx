@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 import shallowCompare from 'react-addons-shallow-compare';
 
 /**

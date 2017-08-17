@@ -56,6 +56,7 @@ import BusinessPlanDetails from './business-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import PurchaseDetail from 'components/purchase-detail';
 import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
+import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
 import ThankYouCard from 'components/thank-you-card';
@@ -63,7 +64,9 @@ import domainsPaths from 'my-sites/domains/paths';
 import config from 'config';
 import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 import {
+	PLAN_BUSINESS,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
@@ -239,6 +242,16 @@ const CheckoutThankYou = React.createClass( {
 				<div className="wpcom-site__logo noticon noticon-wordpress"></div>
 			);
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
+		}
+
+		// Rebrand Cities thanks page
+		if (
+			isRebrandCitiesSiteUrl( this.props.selectedSite.slug ) &&
+			PLAN_BUSINESS === this.props.selectedSite.plan.product_slug
+		) {
+			return (
+				<RebrandCitiesThankYou receipt={ this.props.receipt } />
+			);
 		}
 
 		// streamlined paid NUX thanks page

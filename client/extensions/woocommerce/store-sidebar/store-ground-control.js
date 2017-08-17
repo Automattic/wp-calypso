@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -40,8 +41,8 @@ const StoreGroundControl = ( { site, translate } ) => {
 };
 
 StoreGroundControl.propTypes = {
-	site: React.PropTypes.shape( {
-		slug: React.PropTypes.string,
+	site: PropTypes.shape( {
+		slug: PropTypes.string,
 	} ),
 };
 

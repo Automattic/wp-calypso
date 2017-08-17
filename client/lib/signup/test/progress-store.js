@@ -4,10 +4,7 @@
 import sinon from 'sinon';
 
 import assert from 'assert';
-import omit from 'lodash/omit';
-import find from 'lodash/find';
-import last from 'lodash/last';
-import defer from 'lodash/defer';
+import { defer, find, last, omit } from 'lodash';
 
 /**
  * Internal dependencies

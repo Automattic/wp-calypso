@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -88,7 +89,7 @@ class Dashboard extends Component {
 		} = this.props;
 
 		if ( ! finishedInstallOfRequiredPlugins ) {
-			return translate( 'Installing Plugins' );
+			return translate( 'Store' );
 		}
 
 		if ( ! finishedPageSetup && ! hasProducts ) {

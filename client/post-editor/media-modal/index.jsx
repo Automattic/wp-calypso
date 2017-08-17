@@ -17,6 +17,7 @@ import {
 	isEmpty,
 	identity,
 	includes,
+	uniqueId,
 } from 'lodash';
 
 /**
@@ -51,9 +52,9 @@ function areMediaActionsDisabled( modalView, mediaItems ) {
 		MediaUtils.isItemBeingUploaded( item ) && (
 			// Transients can't be handled by the editor if they are being
 			// uploaded via an external URL
-			! MediaUtils.isTransientPreviewable( item ) ||
-			MediaUtils.getMimePrefix( item ) !== 'image' ||
-			ModalViews.GALLERY === modalView
+			( ! MediaUtils.isTransientPreviewable( item ) ||
+			MediaUtils.getMimePrefix( item ) !== 'image' || modalView === ModalViews.GALLERY ||
+			item.external )
 		)
 	);
 }
@@ -146,16 +147,18 @@ export class EditorMediaModal extends Component {
 			return;
 		}
 
-		const value = mediaLibrarySelectedItems.length
+		if ( mediaLibrarySelectedItems.length && this.state.source !== '' ) {
+			const itemsWithTransientId = mediaLibrarySelectedItems.map(
+				( item ) => Object.assign( {}, item, { ID: uniqueId( 'media-' ) } )
+			);
+			this.copyExternal( itemsWithTransientId, this.state.source );
+		} else {
+			const value = mediaLibrarySelectedItems.length
 			? {
 				type: ModalViews.GALLERY === view ? 'gallery' : 'media',
 				items: mediaLibrarySelectedItems,
 				settings: this.state.gallerySettings
 			} : undefined;
-
-		if ( value && this.state.source !== '' ) {
-			this.copyExternal( mediaLibrarySelectedItems, this.state.source );
-		} else {
 			this.props.onClose( value );
 		}
 	};
@@ -195,21 +198,26 @@ export class EditorMediaModal extends Component {
 	};
 
 	deleteMedia = () => {
+		const { view, mediaLibrarySelectedItems, translate } = this.props;
 		let selectedCount;
 
-		if ( ModalViews.DETAIL === this.props.view ) {
+		if ( ModalViews.DETAIL === view ) {
 			selectedCount = 1;
 		} else {
-			selectedCount = this.props.mediaLibrarySelectedItems.length;
+			selectedCount = mediaLibrarySelectedItems.length;
 		}
 
-		const confirmMessage = this.props.translate(
-			'Are you sure you want to permanently delete this item?',
-			'Are you sure you want to permanently delete these items?',
+		const confirmMessage = translate(
+			'Are you sure you want to delete this item? ' +
+			'It will be permanently removed from all other locations where it currently appears.',
+			'Are you sure you want to delete these items? ' +
+			'They will be permanently removed from all other locations where they currently appear.',
 			{ count: selectedCount }
 		);
 
-		accept( confirmMessage, this.confirmDeleteMedia );
+		accept( confirmMessage, this.confirmDeleteMedia, translate( 'Delete' ), null, {
+			isScary: true
+		} );
 	};
 
 	onAddMedia = () => {
@@ -242,19 +250,25 @@ export class EditorMediaModal extends Component {
 			fileName,
 			site,
 			ID,
-			resetAllImageEditorState
+			resetAllImageEditorState,
+			width,
+			height
 		} = imageEditorProps;
 
 		const mimeType = MediaUtils.getMimeType( fileName );
 
-		const item = {
-			ID: ID,
-			media: {
-				fileName: fileName,
-				fileContents: blob,
-				mimeType: mimeType
-			}
-		};
+		const item = Object.assign(
+			{
+				ID: ID,
+				media: {
+					fileName: fileName,
+					fileContents: blob,
+					mimeType: mimeType
+				}
+			},
+			width && { width },
+			height && { height }
+		);
 
 		MediaActions.update( site.ID, item, true );
 
@@ -355,6 +369,11 @@ export class EditorMediaModal extends Component {
 		} );
 	};
 
+	onSourceChange = source => {
+		MediaActions.sourceChanged( this.props.site.ID );
+		this.setState( { source, search: undefined } );
+	};
+
 	onClose = () => {
 		this.props.onClose();
 	};
@@ -408,7 +427,7 @@ export class EditorMediaModal extends Component {
 		if ( this.state.source !== '' ) {
 			buttons.push( {
 				action: 'confirm',
-				label: this.props.labels.confirm || this.props.translate( 'Copy to media library' ),
+				label: this.props.translate( 'Copy to media library' ),
 				isPrimary: true,
 				disabled: isDisabled || 0 === selectedItems.length,
 				onClick: this.confirmSelection
@@ -513,6 +532,7 @@ export class EditorMediaModal extends Component {
 						onAddAndEditImage={ this.onAddAndEditImage }
 						onFilterChange={ this.onFilterChange }
 						onScaleChange={ this.onScaleChange }
+						onSourceChange={ this.onSourceChange }
 						onSearch={ this.onSearch }
 						onEditItem={ this.editItem }
 						fullScreenDropZone={ false }

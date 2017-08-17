@@ -2,9 +2,7 @@
  * External dependencies
  */
 import Dispatcher from 'dispatcher';
-import includes from 'lodash/includes';
-import flowRight from 'lodash/flowRight';
-import partial from 'lodash/partial';
+import { flowRight, includes, partial } from 'lodash';
 const wpcom = require( 'lib/wp' ).undocumented();
 
 /**

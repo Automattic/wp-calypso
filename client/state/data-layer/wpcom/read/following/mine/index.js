@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -58,13 +59,13 @@ export function requestPage( store, action ) {
 			},
 			onSuccess: action,
 			onError: action,
-		} ),
+		} )
 	);
 }
 
 const MAX_PAGES_TO_FETCH = MAX_ITEMS / ITEMS_PER_PAGE;
 
-export function receivePage( store, action, next, apiResponse ) {
+export function receivePage( store, action, apiResponse ) {
 	if ( ! isValidApiResponse( apiResponse ) ) {
 		receiveError( store );
 		return;
@@ -76,7 +77,7 @@ export function receivePage( store, action, next, apiResponse ) {
 		receiveFollowsAction( {
 			follows,
 			totalCount: apiResponse.total_subscriptions,
-		} ),
+		} )
 	);
 
 	forEach( follows, follow => {
@@ -104,7 +105,7 @@ export function updateSeenOnFollow( store, action ) {
 export function receiveError( store ) {
 	syncingFollows = false;
 	store.dispatch(
-		errorNotice( translate( 'Sorry, we had a problem fetching your Reader subscriptions.' ) ),
+		errorNotice( translate( 'Sorry, we had a problem fetching your Reader subscriptions.' ) )
 	);
 }
 

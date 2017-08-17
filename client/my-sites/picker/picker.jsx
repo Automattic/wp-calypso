@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import wrapWithClickOutside from 'react-click-outside';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 import closeOnEsc from 'lib/mixins/close-on-esc';
 import { connect } from 'react-redux';
 

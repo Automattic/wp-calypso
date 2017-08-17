@@ -1,11 +1,7 @@
 /**
  * External dependencies
  */
-import keyBy from 'lodash/keyBy';
-import union from 'lodash/union';
-import mapValues from 'lodash/mapValues';
-import without from 'lodash/without';
-import omit from 'lodash/omit';
+import { keyBy, mapValues, omit, union, without } from 'lodash';
 
 /**
  * Internal dependencies

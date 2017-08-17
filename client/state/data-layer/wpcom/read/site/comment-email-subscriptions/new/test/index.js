@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -33,7 +34,7 @@ describe( 'comment-email-subscriptions', () => {
 					apiVersion: '1.2',
 					onSuccess: action,
 					onFailure: action,
-				} ),
+				} )
 			);
 		} );
 	} );
@@ -41,15 +42,19 @@ describe( 'comment-email-subscriptions', () => {
 	describe( 'receiveCommentEmailSubscription', () => {
 		it( 'should do nothing if successful', () => {
 			const dispatch = spy();
-			receiveCommentEmailSubscription( { dispatch }, null, null, { subscribed: true } );
+			receiveCommentEmailSubscription( { dispatch }, null, { subscribed: true } );
 			expect( dispatch ).to.not.have.been.called;
 		} );
 
 		it( 'should dispatch an unsubscribe if it fails using next', () => {
 			const dispatch = spy();
-			receiveCommentEmailSubscription( { dispatch }, { payload: { blogId: 1234 } }, null, {
-				subscribed: false,
-			} );
+			receiveCommentEmailSubscription(
+				{ dispatch },
+				{ payload: { blogId: 1234 } },
+				{
+					subscribed: false,
+				}
+			);
 			expect( dispatch ).to.have.been.calledWith( local( unsubscribeToNewCommentEmail( 1234 ) ) );
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {

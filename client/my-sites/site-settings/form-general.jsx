@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { get, flowRight } from 'lodash';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +15,6 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
 import LanguageSelector from 'components/forms/language-selector';
-import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
 import SectionHeader from 'components/section-header';
 import config from 'config';
 import notices from 'notices';
@@ -231,25 +230,6 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	jetpackDisconnectOption() {
-		const { site, siteIsJetpack, translate } = this.props;
-		const isAutomatedTransfer = get( site, 'options.is_automated_transfer', false );
-
-		if ( ! siteIsJetpack || isAutomatedTransfer ) {
-			return null;
-		}
-
-		const disconnectText = translate( 'Disconnect Site', {
-			context: 'Jetpack: Action user takes to disconnect Jetpack site from .com link in general site settings'
-		} );
-
-		return <DisconnectJetpackButton
-				site={ site }
-				text= { disconnectText }
-				redirect= "/stats"
-				linkDisplay={ false } />;
-	}
-
 	holidaySnowOption() {
 		// Note that years and months below are zero indexed
 		const { fields, handleToggle, isRequestingSettings, moment, supportsHolidaySnowOption, translate } = this.props,
@@ -321,7 +301,7 @@ class SiteSettingsFormGeneral extends Component {
 			translate
 		} = this.props;
 		if ( siteIsJetpack && ! site.hasMinimumJetpackVersion ) {
-			return this.jetpackDisconnectOption();
+			return null;
 		}
 
 		const classes = classNames( 'site-settings__general-settings', {

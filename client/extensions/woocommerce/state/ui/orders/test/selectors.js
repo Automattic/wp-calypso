@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	getOrdersCurrentPage,
-	getOrdersCurrentStatus
+	getOrdersCurrentSearch
 } from '../selectors';
 
 const preInitializedState = {
@@ -25,11 +25,11 @@ const state = {
 				orders: {
 					123: {
 						currentPage: 2,
-						currentStatus: 'any',
+						currentSearch: 'example',
 					},
 					234: {
 						currentPage: 5,
-						currentStatus: 'pending',
+						currentSearch: 'test',
 					},
 				},
 			},
@@ -56,21 +56,21 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getOrdersCurrentStatus', () => {
+	describe( '#getOrdersCurrentSearch', () => {
 		it( 'should be any (default) when woocommerce state is not available', () => {
-			expect( getOrdersCurrentStatus( preInitializedState, 123 ) ).to.eql( 'any' );
+			expect( getOrdersCurrentSearch( preInitializedState, 123 ) ).to.eql( '' );
 		} );
 
-		it( 'should get the current order status', () => {
-			expect( getOrdersCurrentStatus( state, 123 ) ).to.eql( 'any' );
+		it( 'should get the current search term', () => {
+			expect( getOrdersCurrentSearch( state, 123 ) ).to.eql( 'example' );
 		} );
 
-		it( 'should get the current order status for a second site in the state', () => {
-			expect( getOrdersCurrentStatus( state, 234 ) ).to.eql( 'pending' );
+		it( 'should get the current search term for a second site in the state', () => {
+			expect( getOrdersCurrentSearch( state, 234 ) ).to.eql( 'test' );
 		} );
 
 		it( 'should get the siteId from the UI tree if not provided', () => {
-			expect( getOrdersCurrentStatus( state ) ).to.eql( 'any' );
+			expect( getOrdersCurrentSearch( state ) ).to.eql( 'example' );
 		} );
 	} );
 } );

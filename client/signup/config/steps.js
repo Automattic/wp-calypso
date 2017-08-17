@@ -24,6 +24,15 @@ export default {
 		providesDependencies: [ 'themeSlugWithRepo' ]
 	},
 
+	'portfolio-themes': {
+		stepName: 'portfolio-themes',
+		props: {
+			designType: 'grid'
+		},
+		dependencies: [ 'siteSlug' ],
+		providesDependencies: [ 'themeSlugWithRepo' ]
+	},
+
 	// `themes` does not update the theme for an existing site as we normally
 	// do this when the site is created. In flows where a site is merely being
 	// updated, we need to use a different API request function.
@@ -60,11 +69,22 @@ export default {
 		providesDependencies: [ 'siteSlug' ]
 	},
 
+	'rebrand-cities-welcome': {
+		stepName: 'rebrand-cities-welcome',
+		apiRequestFunction: stepActions.createSiteWithCart,
+		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+		props: {
+			isDomainOnly: false
+		},
+		delayApiRequestUntilComplete: true
+	},
+
 	user: {
 		stepName: 'user',
 		apiRequestFunction: stepActions.createAccount,
 		providesToken: true,
-		providesDependencies: [ 'bearer_token', 'username' ]
+		providesDependencies: [ 'bearer_token', 'username' ],
+		unstorableDependencies: [ 'bearer_token' ],
 	},
 
 	'user-social': {
@@ -72,6 +92,7 @@ export default {
 		apiRequestFunction: stepActions.createAccount,
 		providesToken: true,
 		providesDependencies: [ 'bearer_token', 'username' ],
+		unstorableDependencies: [ 'bearer_token' ],
 		props: {
 			headerText: i18n.translate( 'Create your account.' ),
 			isSocialSignupEnabled: true

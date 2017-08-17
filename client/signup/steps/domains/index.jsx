@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import defer from 'lodash/defer';
+import { defer } from 'lodash';
 import page from 'page';
 import i18n from 'i18n-calypso';
 
@@ -75,7 +75,7 @@ const DomainsStep = React.createClass( {
 	handleAddDomain: function( suggestion ) {
 		const stepData = {
 			stepName: this.props.stepName,
-			suggestion
+			suggestion,
 		};
 
 		this.props.recordAddDomainButtonClick( suggestion.domain_name, 'signup' );
@@ -122,7 +122,7 @@ const DomainsStep = React.createClass( {
 			domainItem = isPurchasingItem
 				? cartItems.domainRegistration( {
 					domain: suggestion.domain_name,
-					productSlug: suggestion.product_slug
+					productSlug: suggestion.product_slug,
 				} )
 				: undefined;
 
@@ -135,7 +135,7 @@ const DomainsStep = React.createClass( {
 			googleAppsCartItem,
 			isPurchasingItem,
 			siteUrl,
-			stepSectionName: this.props.stepSectionName
+			stepSectionName: this.props.stepSectionName,
 		}, this.getThemeArgs() ), [], { domainItem } );
 
 		this.props.goToNextStep();
@@ -157,7 +157,7 @@ const DomainsStep = React.createClass( {
 			domainItem,
 			isPurchasingItem,
 			siteUrl: domain,
-			stepSectionName: this.props.stepSectionName
+			stepSectionName: this.props.stepSectionName,
 		}, this.getThemeArgs() ) );
 
 		this.props.goToNextStep();
@@ -167,7 +167,7 @@ const DomainsStep = React.createClass( {
 		SignupActions.saveSignupStep( {
 			stepName: this.props.stepName,
 			stepSectionName: this.props.stepSectionName,
-			[ sectionName ]: state
+			[ sectionName ]: state,
 		} );
 	},
 
@@ -193,7 +193,9 @@ const DomainsStep = React.createClass( {
 				isSignupStep
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
-				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' } />
+				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' }
+				designType={ this.props.signupDependencies && this.props.signupDependencies.designType }
+			/>
 		);
 	},
 
@@ -212,7 +214,8 @@ const DomainsStep = React.createClass( {
 					products={ productsList.get() }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					initialQuery={ initialQuery }
-					analyticsSection="signup" />
+					analyticsSection="signup"
+				/>
 			</div>
 		);
 	},
@@ -254,7 +257,8 @@ const DomainsStep = React.createClass( {
 				fallbackSubHeaderText={ this.translate(
 					'Enter your site\'s name, or some key words that describe it - ' +
 					'we\'ll use this to create your new site\'s address.' ) }
-				stepContent={ content } />
+				stepContent={ content }
+			/>
 		);
 	}
 } );

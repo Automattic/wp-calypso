@@ -3,9 +3,8 @@
  */
 import React, { PropTypes, Component } from 'react';
 import classNames from 'classnames';
-import uniqBy from 'lodash/uniqBy';
+import { isEqual, uniqBy } from 'lodash';
 import { localize, moment } from 'i18n-calypso';
-import isEqual from 'lodash/isEqual';
 
 /**
  * Internal dependencies

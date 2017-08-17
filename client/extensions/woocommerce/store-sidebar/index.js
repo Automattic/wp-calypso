@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -118,9 +119,11 @@ class StoreSidebar extends Component {
 	orders = () => {
 		const { orders, site, siteSuffix, translate } = this.props;
 		const link = '/store/orders' + siteSuffix;
-		// We don't use the addLink yet, but this ensures the item is selected on single views
-		const addLink = '/store/order' + siteSuffix;
-		const selected = this.isItemLinkSelected( [ link, addLink ] );
+		const childLinks = [
+			'/store/order',
+			'/store/orders',
+		];
+		const selected = this.isItemLinkSelected( childLinks );
 		const classes = classNames( {
 			orders: true,
 			'is-placeholder': ! site,

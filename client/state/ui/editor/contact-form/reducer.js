@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import cloneDeep from 'lodash/cloneDeep';
-import merge from 'lodash/merge';
+import { cloneDeep, merge } from 'lodash';
+
 import i18n from 'i18n-calypso';
 
 /**

@@ -100,6 +100,6 @@ The way we use Git with Calypso is described in the [Git Workflow document](../g
 * [express.js](http://expressjs.com) – light server-side framework we use to serve the initial page
 * [lodash](https://lodash.com) – general purpose utility library; includes a ton of useful functions for dealing with arrays, objects, and collections
 * [webpack](http://webpack.github.io) – building a JavaScript bundle of all of our modules and making sure loading them works just fine
-* [make](http://www.gnu.org/software/make/manual/make.html) – our build tool of choice
+* [Babel](https://babeljs.io) – for transpiling ES2015+ and JSX
 
 Previous: [Hello, World!](hello-world.md) Next: [Glossary of Terms](glossary.md)

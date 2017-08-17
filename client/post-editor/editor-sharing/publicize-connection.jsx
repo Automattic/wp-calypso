@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import includes from 'lodash/includes';
+import { includes } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**

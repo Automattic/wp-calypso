@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-import partial from 'lodash/partial';
-import isFunction from 'lodash/isFunction';
+import { isFunction, partial } from 'lodash';
 
 function wrapFnWithWarning( fn, name ) {
 	const consoleFn = ( console.error || console.log ).bind( console );

@@ -7,18 +7,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import page from 'page';
-import startsWith from 'lodash/startsWith';
-import last from 'lodash/last';
-import find from 'lodash/find';
-import filter from 'lodash/filter';
-import some from 'lodash/some';
-import defer from 'lodash/defer';
-import delay from 'lodash/delay';
-import assign from 'lodash/assign';
-import matchesProperty from 'lodash/matchesProperty';
-import indexOf from 'lodash/indexOf';
+import { assign, defer, delay, filter, find, indexOf, last, matchesProperty, pick, some, startsWith } from 'lodash';
 import { setSurvey } from 'state/signup/steps/survey/actions';
-import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -232,8 +222,12 @@ const Signup = React.createClass( {
 		}
 	},
 
-	handleLogin( dependencies, destination ) {
+	handleLogin( dependencies, destination, event ) {
 		const userIsLoggedIn = Boolean( user.get() );
+
+		if ( event && event.redirectTo ) {
+			destination = event.redirectTo;
+		}
 
 		if ( userIsLoggedIn ) {
 			// deferred in case the user is logged in and the redirect triggers a dispatch
@@ -430,6 +424,7 @@ const Signup = React.createClass( {
 						steps={ this.state.progress }
 						user={ this.state.user }
 						loginHandler={ this.state.loginHandler }
+						signupDependencies={ this.props.signupDependencies }
 					/>
 					: <CurrentComponent
 						path={ this.props.path }
@@ -467,7 +462,8 @@ const Signup = React.createClass( {
 					! this.state.loadingScreenStartTime &&
 					<FlowProgressIndicator
 						positionInFlow={ this.positionInFlow() }
-						flowLength={ flow.steps.length } />
+						flowLength={ flow.steps.length }
+						flowName={ this.props.flowName } />
 				}
 				<ReactCSSTransitionGroup
 					className="signup__steps"

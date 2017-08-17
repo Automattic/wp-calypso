@@ -1,3 +1,4 @@
+/** @format */
 /*
  * External dependencies
  */
@@ -62,7 +63,7 @@ describe( 'follow tag request', () => {
 					path: `/read/tags/${ slug }/mine/new`,
 					onSuccess: action,
 					onFailure: action,
-				} ),
+				} )
 			);
 		} );
 	} );
@@ -72,7 +73,7 @@ describe( 'follow tag request', () => {
 			const action = requestFollowAction( slug );
 			const dispatch = sinon.spy();
 
-			receiveFollowTag( { dispatch }, action, null, successfulFollowResponse );
+			receiveFollowTag( { dispatch }, action, successfulFollowResponse );
 
 			const followedTagId = successfulFollowResponse.added_tag;
 			const followedTag = find( successfulFollowResponse.tags, { ID: followedTagId } );
@@ -85,7 +86,7 @@ describe( 'follow tag request', () => {
 			expect( dispatch ).to.have.been.calledWith(
 				receiveTagsAction( {
 					payload: [ normalizedFollowedTag ],
-				} ),
+				} )
 			);
 		} );
 
@@ -93,7 +94,7 @@ describe( 'follow tag request', () => {
 			const action = requestFollowAction( slug );
 			const dispatch = sinon.spy();
 
-			receiveFollowTag( { dispatch }, action, null, unsuccessfulResponse );
+			receiveFollowTag( { dispatch }, action, unsuccessfulResponse );
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				type: NOTICE_CREATE,
 			} );
@@ -106,7 +107,7 @@ describe( 'follow tag request', () => {
 			const dispatch = sinon.spy();
 			const error = 'could not find tag';
 
-			receiveError( { dispatch }, action, null, error );
+			receiveError( { dispatch }, action, error );
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWithMatch( {

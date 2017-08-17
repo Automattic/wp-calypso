@@ -1,6 +1,8 @@
 .sticky-panel + .shipping-zone__locations-container,
 .sticky-panel + .shipping-zone__methods-container {
-	margin-top: 58px;
+	@include breakpoint( ">660px" ) {
+		margin-top: 58px;
+	}
 }
 
 .shipping-zone__name {
@@ -221,6 +223,7 @@
 
 .shipping-zone__method-delete {
 	float: left;
+	margin-left: 0;
 }
 
 .shipping-zone__method-type-select {
@@ -263,14 +266,23 @@
 }
 
 .shipping-zone__method-dialog-header {
-	padding: 0 0 24px 0;
+	padding: 0 0 16px 0;
 	font-size: 18px;
+	display: flex;
+	justify-content: space-between;
+
+	.form-fieldset {
+		margin-bottom: 0;
+	}
+
+	& + .form-fieldset,
+	& + .form-fieldset .form-fieldset:last-child {
+		margin-bottom: 0;
+	}
 }
 
 .shipping-zone__enable {
-	position: absolute;
-	top: 30px;
-	right: 16px;
+	transform: translateY( 6px );
 
 	span {
 		margin-left: 6px;

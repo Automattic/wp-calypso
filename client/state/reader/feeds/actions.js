@@ -1,5 +1,12 @@
-import isArray from 'lodash/isArray';
+/** @format */
+/**
+ * External dependencies
+ */
+import { isArray } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import wpcom from 'lib/wp';
 
 import {
@@ -34,7 +41,7 @@ export function requestFeed( feedId ) {
 					error: err,
 				} );
 				throw err;
-			},
+			}
 		);
 	};
 }

@@ -7,6 +7,8 @@ import { map, forEach, head, includes, keys } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
+import page from 'page';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,6 +33,7 @@ import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import { mergeFormWithValue } from 'signup/utils';
 import SocialSignupForm from './social';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { createSocialUserFailed } from 'state/login/actions';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -113,7 +116,50 @@ class SignupForm extends Component {
 		const initialState = this.formStateController.getInitialState();
 		const stateWithFilledUsername = this.autoFillUsername( initialState );
 
+		this.maybeRedirectToSocialConnect( this.props );
+
 		this.setState( { form: stateWithFilledUsername } );
+	}
+
+	getUserExistsError( props ) {
+		const { step } = props;
+
+		if ( ! step || step.status !== 'invalid' ) {
+			return null;
+		}
+
+		const userExistsError = find( step.errors, error => error.error === 'user_exists' );
+
+		return userExistsError;
+	}
+
+	/***
+	 * If the step is invalid because we had an error that the user exists,
+	 * we should prompt user with a request to connect his social account
+	 * to his existing WPCOM account
+	 *
+	 * @param {Object} props react component props that has step info
+	 */
+	maybeRedirectToSocialConnect( props ) {
+		const userExistsError = this.getUserExistsError( props );
+
+		if ( userExistsError ) {
+			const { service, id_token, access_token } = props.step;
+			const socialInfo = { service, id_token, access_token };
+
+			this.props.createSocialUserFailed( socialInfo, userExistsError );
+			page(
+				login( {
+					isNative: config.isEnabled( 'login/native-login-links' ),
+				} )
+			);
+		}
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.step && nextProps.step && this.props.step.status !== nextProps.step.status ) {
+			this.maybeRedirectToSocialConnect( nextProps );
+		}
 	}
 
 	sanitizeEmail( email ) {
@@ -494,6 +540,10 @@ class SignupForm extends Component {
 	}
 
 	render() {
+		if ( this.getUserExistsError( this.props ) ) {
+			return null;
+		}
+
 		return (
 			<div className={ classNames( 'signup-form', this.props.className ) }>
 
@@ -525,6 +575,7 @@ class SignupForm extends Component {
 export default connect(
 	null,
 	{
-		trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' )
+		trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' ),
+		createSocialUserFailed
 	}
 )( localize( SignupForm ) );

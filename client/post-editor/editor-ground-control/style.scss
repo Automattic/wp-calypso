@@ -256,3 +256,10 @@
 	}
 
 }
+
+.popover {
+	&.editor-ground-control__post-schedule-popover {
+		/* applying a lower z-index to ensure it is layered behind global notice */
+		z-index: z-index( 'root', '.popover.editor-ground-control__post-schedule-popover' );
+	}
+}

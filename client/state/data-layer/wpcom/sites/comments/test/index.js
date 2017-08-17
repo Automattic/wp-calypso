@@ -29,16 +29,22 @@ describe( '#addComments', () => {
 
 	beforeEach( () => ( dispatch = spy() ) );
 
-	it( 'should dispatch no actions for no comments', () => {
-		addComments( { dispatch }, { query }, null, { comments: [] } );
+	it( 'should dispatch a tree initialization action for no comments', () => {
+		addComments( { dispatch }, { query }, { comments: [] } );
 
-		expect( dispatch ).to.have.not.been.called;
+		expect( dispatch ).to.have.been.calledOnce;
+		expect( dispatch.lastCall ).to.have.been.calledWith( {
+			type: 'COMMENTS_TREE_SITE_ADD',
+			siteId: query.siteId,
+			status: query.status,
+			tree: [],
+		} );
 	} );
 
 	it( 'should dispatch to add received comments into state', () => {
 		const comments = [ { ID: 5, post: { ID: 1 } }, { ID: 6, post: { ID: 1 } } ];
 
-		addComments( { dispatch }, { query }, null, { comments } );
+		addComments( { dispatch }, { query }, { comments } );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch.lastCall ).to.have.been.calledWith( {
@@ -56,7 +62,7 @@ describe( '#addComments', () => {
 			{ ID: 2, post: { ID: 1 } },
 		];
 
-		addComments( { dispatch }, { query }, null, { comments } );
+		addComments( { dispatch }, { query }, { comments } );
 
 		expect( dispatch ).to.have.been.calledTwice;
 
@@ -142,7 +148,7 @@ describe( '#receiveCommentSuccess', () => {
 		const response = { post: { ID: 1 } };
 		const action = requestCommentAction( { siteId, commentId } );
 
-		receiveCommentSuccess( { dispatch }, action, null, response );
+		receiveCommentSuccess( { dispatch }, action, response );
 
 		expect( dispatch ).calledWith( {
 			type: COMMENTS_RECEIVE,
@@ -173,7 +179,7 @@ describe( '#receiveCommentError', () => {
 			},
 		} );
 
-		receiveCommentError( { dispatch, getState }, action, null, response );
+		receiveCommentError( { dispatch, getState }, action, response );
 		expect( dispatch ).to.have.been.calledWithMatch( {
 			notice: {
 				text: 'Failed to retrieve comment for site “sqeeeeee!”',

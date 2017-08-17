@@ -16,7 +16,7 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { isOrderUpdating, getOrder } from 'woocommerce/state/sites/orders/selectors';
 import Main from 'components/main';
-import OrderCustomerInfo from './order-customer-info';
+import OrderCustomer from './order-customer';
 import OrderDetails from './order-details';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 
@@ -54,14 +54,14 @@ class Order extends Component {
 	}
 
 	render() {
-		const { className, isSaving, order, site, translate } = this.props;
+		const { className, isSaving, order, orderId, site, translate } = this.props;
 		if ( ! order ) {
 			return null;
 		}
 
 		const breadcrumbs = [
 			( <a href={ getLink( '/store/orders/:site/', site ) }>{ translate( 'Orders' ) }</a> ),
-			( <span>{ translate( 'Order Details' ) }</span> ),
+			( <span>{ translate( 'Order %(orderId)s Details', { args: { orderId: `#${ orderId }` } } ) }</span> ),
 		];
 		return (
 			<Main className={ className }>
@@ -71,7 +71,7 @@ class Order extends Component {
 
 				<div className="order__container">
 					<OrderDetails order={ order } onUpdate={ this.onUpdate } site={ site } />
-					<OrderCustomerInfo order={ order } />
+					<OrderCustomer order={ order } />
 				</div>
 			</Main>
 		);

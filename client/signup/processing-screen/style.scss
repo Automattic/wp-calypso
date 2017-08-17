@@ -260,6 +260,7 @@
 	z-index: 1;
 	max-width: 500px;
 	margin: 0 auto;
+	padding-bottom: 30px;
 }
 
 /* WP.com Logo */
@@ -333,4 +334,102 @@
 	100% {
 		transform: rotate( 360deg );
 	}
+}
+
+.signup-process-screen__confetti {
+	display: block;
+	width: 284px;
+	height: 99px;
+	margin: 2em auto;
+}
+.signup-process-screen__title-test {
+	font-size: 1.35em;
+	font-weight: 300;
+}
+.signup-pricessing__upgrade-nudge {
+	background: $white;
+	text-align: center;
+	outline: 30px solid $white;
+	margin-bottom: 30px;
+}
+.signup-pricessing__title-subdomain {
+	text-transform: uppercase;
+	color: darken( $gray, 20% );
+	font-size: 0.7em;
+	margin: 3px;
+	text-align: left;
+
+	@include breakpoint( "<480px" ) {
+		text-align: inherit;
+	}
+}
+.signup-pricessing__address-bar {
+	display: flex;
+	background: darken( $gray, 10% );
+	border-radius: 8px;
+	flex-direction: row;
+	padding: 10px;
+	text-align: left;
+
+	@include breakpoint( "<480px" ) {
+		border-radius: 0;
+	}
+}
+.signup-pricessing__address-bar .gridicon {
+	fill: $gray-dark;
+	margin-right: 10px;
+	align-self: center;
+}
+.signup-pricessing__address-field {
+	flex: 1;
+	background: $white;
+	margin: 0 0 0 5px;
+	padding: 8px;
+}
+.signup-pricessing__address-field.is-placeholder:after {
+	content: 'placeholder.wordpress.com';
+	color: transparent;
+	background-color: lighten( $gray, 30% );
+	animation: loading-fade 1.6s ease-in-out infinite;
+}
+.signup-pricessing__bubble {
+	position: relative;
+	background: #c2f4ff url('/calypso/images/signup/seo-guy.svg') no-repeat 28px 50%;
+	background-size: 121px auto;
+	border-radius: 28px;
+	color: $gray-dark;
+	width: 400px;
+	max-width: 96%;
+	padding: 28px;
+	margin: 50px auto 20px;
+	box-sizing: border-box;
+
+	p {
+		text-align: left;
+		padding-left: 140px;
+		margin: 0;
+	}
+
+	@include breakpoint( "<480px" ) {
+		background-size: 90px auto;
+
+		p {
+			padding-left: 115px;
+		}
+	}
+}
+.signup-pricessing__bubble-tail {
+	position: absolute;
+	fill: #c2f4ff;
+	width: 47px;
+	height: 31px;
+	top: -30px;
+	left: 30%;
+}
+.signup-pricessing__nudge-message {
+	width: 400px;
+	max-width: 96%;
+	color: darken( $gray, 10% );
+	margin: 1.5em auto;
+	box-sizing: border-box;
 }

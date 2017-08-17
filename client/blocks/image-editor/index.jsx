@@ -39,7 +39,9 @@ import {
 	AspectRatios,
 	AspectRatiosValues
 } from 'state/ui/editor/image-editor/constants';
-import { getDefaultAspectRatio } from './utils';
+import {
+	getDefaultAspectRatio
+} from './utils';
 
 const ImageEditor = React.createClass( {
 	mixins: [ closeOnEsc( 'onCancel' ) ],
@@ -79,7 +81,8 @@ const ImageEditor = React.createClass( {
 
 	getInitialState() {
 		return {
-			canvasError: null
+			noticeText: null,
+			noticeStatus: 'is-info'
 		};
 	},
 
@@ -138,20 +141,46 @@ const ImageEditor = React.createClass( {
 		this.props.setImageEditorFileInfo( src, fileName, mimeType, title );
 	},
 
+	convertBlobToImage( blob ) {
+		const { onDone } = this.props;
+
+		// Create a new image from the canvas blob
+		const transientImage = document.createElement( 'img' );
+		const transientImageUrl = URL.createObjectURL( blob );
+		const imageProperties = this.getImageEditorProps();
+
+		// Onload, extend imageProperties with the height and width
+		// of the newly edited image
+		transientImage.onload = () => {
+			URL.revokeObjectURL( transientImageUrl );
+
+			onDone( null, blob, {
+				...imageProperties,
+				width: transientImage.width,
+				height: transientImage.height
+			} );
+		};
+
+		// onerror, we send the image properties
+		// without the transient image's dimensions
+		transientImage.onerror = () => {
+			onDone( null, blob, imageProperties );
+		};
+
+		transientImage.src = transientImageUrl;
+	},
+
 	onDone() {
 		const { isImageLoaded, onDone } = this.props;
 
 		if ( ! isImageLoaded ) {
 			onDone( new Error( 'Image not loaded yet.' ), null, this.getImageEditorProps() );
-
 			return;
 		}
 
 		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
 
-		canvasComponent.toBlob( ( blob ) => {
-			onDone( null, blob, this.getImageEditorProps() );
-		} );
+		canvasComponent.toBlob( this.convertBlobToImage );
 	},
 
 	onCancel() {
@@ -190,22 +219,43 @@ const ImageEditor = React.createClass( {
 		return imageProperties;
 	},
 
-	onLoadCanvasError() {
-		const { translate } = this.props;
-
+	showNotice( noticeText, noticeStatus = 'is-info' ) {
 		this.setState( {
-			canvasError: translate( 'We are unable to edit this image.' )
+			noticeText,
+			noticeStatus
 		} );
 	},
 
-	renderError() {
+	clearNoticeState() {
+		this.setState( {
+			noticeText: null,
+			noticeStatus: 'is-info'
+		} );
+	},
+
+	renderNotice() {
+		if ( ! this.state.noticeText ) {
+			return null;
+		}
+
+		const showDismiss = this.state.noticeStatus === 'is-info';
+
 		return (
 			<Notice
-				status="is-error"
-				showDismiss={ true }
-				text={ this.state.canvasError }
+				status={ this.state.noticeStatus }
+				showDismiss={ showDismiss }
+				text={ this.state.noticeText }
 				isCompact={ false }
-				onDismissClick={ this.props.onImageEditorCancel } 	/>
+				onDismissClick={ this.clearNoticeState }
+				className="image-editor__notice" />
+		);
+	},
+
+	onLoadCanvasError() {
+		const { translate } = this.props;
+		this.showNotice(
+			translate( 'Sorry, there was a problem loading the image. Please close this editor and try selecting the image again.' ),
+			'is-error'
 		);
 	},
 
@@ -216,6 +266,10 @@ const ImageEditor = React.createClass( {
 			allowedAspectRatios
 		} = this.props;
 
+		const {
+			noticeText
+		} = this.state;
+
 		const classes = classNames(
 			'image-editor',
 			className
@@ -223,7 +277,7 @@ const ImageEditor = React.createClass( {
 
 		return (
 			<div className={ classes }>
-				{ this.state.canvasError && this.renderError() }
+				{ noticeText && this.renderNotice() }
 
 				<QuerySites siteId={ siteId } />
 
@@ -234,6 +288,7 @@ const ImageEditor = React.createClass( {
 							onLoadError={ this.onLoadCanvasError }
 						/>
 						<ImageEditorToolbar
+							onShowNotice={ this.showNotice }
 							allowedAspectRatios={ allowedAspectRatios }
 						/>
 						<ImageEditorButtons

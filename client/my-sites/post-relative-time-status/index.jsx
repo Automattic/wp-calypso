@@ -30,7 +30,7 @@ module.exports = React.createClass( {
 		};
 	},
 
-	getRelativeTimeText: function() {
+	getTimestamp: function() {
 		const status = this.props.post.status;
 
 		let time;
@@ -40,6 +40,11 @@ module.exports = React.createClass( {
 			time = this.props.post.date;
 		}
 
+		return time;
+	},
+
+	getRelativeTimeText: function() {
+		const time = this.getTimestamp();
 		if ( ! time ) {
 			return;
 		}
@@ -47,7 +52,7 @@ module.exports = React.createClass( {
 		return (
 			<span className="post-relative-time-status__time">
 				<Gridicon icon="time" size={ 18 } />
-				<time className="post-relative-time-status__time-text" dateTime={ time } title={ time }>
+				<time className="post-relative-time-status__time-text" dateTime={ time }>
 					{ this.moment( time ).fromNow() }
 				</time>
 			</span>
@@ -102,15 +107,19 @@ module.exports = React.createClass( {
 			statusText = this.getStatusText(),
 			realtiveTimeClass = ( timeText ) ? 'post-relative-time-status' : null,
 			innerText = ( <span>{ timeText }{ statusText }</span> ),
-			details;
+			time = this.getTimestamp();
 
 		if ( this.props.link ) {
 			const rel = this.props.target === '_blank' ? 'noopener noreferrer' : null;
-			details = ( <p className={ realtiveTimeClass }><a href={ this.props.link } target={ this.props.target } rel={ rel } onClick={ this.props.onClick }>{ innerText }</a></p> );
-		} else {
-			details = ( <p className={ realtiveTimeClass }>{ innerText }</p> );
+			innerText = (
+				<a href={ this.props.link } target={ this.props.target } rel={ rel } onClick={ this.props.onClick }>{ innerText }</a>
+			);
 		}
 
-		return details;
+		return (
+			<p className={ realtiveTimeClass } title={ time }>
+				{ innerText }
+			</p>
+		);
 	}
 } );

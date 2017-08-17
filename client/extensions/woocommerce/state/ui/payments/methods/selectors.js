@@ -58,6 +58,10 @@ export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( s
 				method.enabled = update[ updateKey ];
 				return;
 			}
+			if ( 'description' === updateKey ) {
+				method.description = update[ updateKey ].value;
+				return;
+			}
 			method.settings[ updateKey ] = {
 				...method.settings[ updateKey ],
 				value: update[ updateKey ].value,
@@ -113,10 +117,15 @@ export const getCurrentlyEditingPaymentMethod = ( state, siteId = getSelectedSit
 		return { ...method };
 	}
 	const settings = { ...method.settings };
+	let description = method.description;
 	Object.keys( edits.currentlyEditingChanges ).forEach( function( edit ) {
-		settings[ edit ] = { ...settings[ edit ], ...edits.currentlyEditingChanges[ edit ] };
+		if ( 'description' === edit ) {
+			description = edits.currentlyEditingChanges[ edit ].value;
+		} else {
+			settings[ edit ] = { ...settings[ edit ], ...edits.currentlyEditingChanges[ edit ] };
+		}
 	} );
-	return { ...method, settings };
+	return { ...method, settings, description };
 };
 
 /**

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -40,7 +41,7 @@ describe( 'following/mine/delete', () => {
 					},
 					onSuccess: action,
 					onFailure: action,
-				} ),
+				} )
 			);
 
 			expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE, notice: { status: null } } );
@@ -48,16 +49,6 @@ describe( 'following/mine/delete', () => {
 	} );
 
 	describe( 'receiveUnfollow', () => {
-		it( 'should next the original action', () => {
-			const dispatch = spy();
-			const action = unfollow( 'http://example.com' );
-			const response = {
-				subscribed: false,
-			};
-			receiveUnfollow( { dispatch }, action, null, response );
-			expect( dispatch ).to.be.calledWith( local( action ) );
-		} );
-
 		it( 'should dispatch an error notice and refollow when subscribed is true', () => {
 			const dispatch = spy();
 			const action = unfollow( 'http://example.com' );
@@ -75,7 +66,7 @@ describe( 'following/mine/delete', () => {
 				subscribed: true,
 			};
 
-			receiveUnfollow( { dispatch, getState }, action, null, response );
+			receiveUnfollow( { dispatch, getState }, action, response );
 			expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
 			expect( dispatch ).to.be.calledWith( local( follow( 'http://example.com' ) ) );
 		} );

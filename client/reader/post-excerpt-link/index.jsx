@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -52,7 +53,8 @@ class PostExcerptLink extends React.Component {
 			'post-excerpt-link': true,
 			'is-showing-notice': this.state.isShowingNotice,
 		} );
-
+		/*eslint-disable wpcalypso/jsx-classname-namespace*/
+		/*eslint-disable max-len*/
 		return (
 			<div className={ classes }>
 				{ this.props.translate( 'Visit {{siteName/}} for the full post.', {
@@ -69,7 +71,9 @@ class PostExcerptLink extends React.Component {
 				</svg>
 				<p className="post-excerpt-link__helper">
 					{ this.props.translate(
-						"The owner of this site only allows us to show a brief summary of their content. To view the full post, you'll have to visit their site.",
+						'The owner of this site only allows us to show a brief summary of their content.' +
+							' ' +
+							"To view the full post, you'll have to visit their site."
 					) }
 				</p>
 			</div>

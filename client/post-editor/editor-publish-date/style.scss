@@ -36,7 +36,8 @@
 	}
 
 	&.is-scheduled,
-	&.is-back-dated {
+	&.is-back-dated,
+	&.is-published {
 		color: $blue-wordpress;
 	}
 
@@ -74,13 +75,17 @@
 }
 
 .editor-publish-date__header-description {
+	position: absolute;
+		top: 0;
+	line-height: 40px;
+
 	.editor-publish-date__header.is-scheduled &,
-	.editor-publish-date__header.is-back-dated & {
-		margin-top: -4px;
+	.editor-publish-date__header.is-back-dated &,
+	.editor-publish-date__header.is-published & {
+		top: 6px;
 		font-size: 10px;
-		line-height: initial;
+		line-height: 12px;
 	}
-	line-height: initial;
 }
 
 .editor-publish-date__immediate.button {
@@ -106,8 +111,10 @@
 }
 
 .editor-publish-date__header-chrono {
+	position: absolute;
+		top: 16px;
 	font-size: 12px;
-	line-height: initial;
+	line-height: 18px;
 	color: $gray-dark;
 }
 

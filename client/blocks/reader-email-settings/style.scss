@@ -7,6 +7,7 @@
 }
 
 .reader-email-settings__button-label {
+	font-size: 14px;
 	margin-left: -2px;
 
 	@include breakpoint( "<660px" ) {
@@ -14,40 +15,7 @@
 	}
 }
 
-.reader-email-settings__popout.popover .popover__inner {
-	background-color: $gray-light;
-	border-color: lighten( $gray, 20% );
-}
-
-// Popover arrows
-.reader-email-settings__popout.popover.is-bottom-left .popover__arrow::before,
-.reader-email-settings__popout.popover.is-top-left .popover__arrow::before {
-	border: 10px solid $gray-light;
-	content: " ";
-	position: absolute;
-	left: 50%;
-	margin-left: -10px;
-	border-left-color: transparent;
-	border-right-color: transparent;
-}
-
-.reader-email-settings__popout.popover.is-bottom-left .popover__arrow::before {
-	top: 2px;
-	border-bottom-style: solid;
-	border-top: none;
-}
-
-.reader-email-settings__popout.popover.is-top-left .popover__arrow::before {
-	bottom: 2px;
-    border-top-style: solid;
-    border-bottom: none;
-}
-
-.reader-email-settings__popout-wrapper {
-	display: flex;
-	flex-direction: column;
-	min-width: 250px;
-
+.reader-popover__wrapper {
 	.segmented-control {
 		background: inherit;
 		padding: 0 12px 0 16px;
@@ -56,15 +24,6 @@
 	.segmented-control__link {
 		background: $white;
 	}
-}
-
-.reader-email-settings__popout-header {
-	border-bottom: 1px solid lighten( $gray, 20% );
-	font-size: 14px;
-	display: flex;
-	justify-content: flex-start;
-	color: $gray-dark;
-	padding: 10px 0 10px 15px;
 }
 
 .reader-email-settings__popout-toggle {

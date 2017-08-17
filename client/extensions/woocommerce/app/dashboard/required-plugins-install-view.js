@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { find, size } from 'lodash';
@@ -11,6 +12,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { activatePlugin, fetchPlugins, installPlugin } from 'state/plugins/installed/actions';
+import analytics from 'lib/analytics';
+import Button from 'components/button';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
@@ -31,7 +34,7 @@ class RequiredPluginsInstallView extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			engineState: 'INITIALIZING',
+			engineState: 'CONFIRMING',
 			message: '',
 			progress: 0,
 			toActivate: [],
@@ -318,8 +321,48 @@ class RequiredPluginsInstallView extends Component {
 		return 100;
 	}
 
+	startSetup = () => {
+		analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
+			action: 'initial-setup',
+		} );
+		this.setState( {
+			engineState: 'INITIALIZING',
+		} );
+	}
+
+	renderConfirmScreen = () => {
+		const { translate } = this.props;
+		return (
+			<div className="card dashboard__setup-wrapper dashboard__setup-confirm">
+				<SetupHeader
+					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
+					imageWidth={ 160 }
+					title={ translate( 'Have something to sell?' ) }
+					subtitle={ translate(
+						'If you\'re in the {{strong}}United States{{/strong}} ' +
+						'or {{strong}}Canada{{/strong}}, you can sell your products right on ' +
+						'your site and ship them to customers in a snap!',
+						{
+							components: { strong: <strong /> }
+						}
+					) }
+				>
+					<Button onClick={ this.startSetup } primary>
+						{ translate( 'Set up my store!' ) }
+					</Button>
+				</SetupHeader>
+			</div>
+		);
+	}
+
 	render = () => {
 		const { site, translate } = this.props;
+		const { engineState } = this.state;
+
+		if ( 'CONFIRMING' === engineState ) {
+			return this.renderConfirmScreen();
+		}
+
 		const progress = this.getProgress();
 
 		return (
@@ -343,7 +386,7 @@ class RequiredPluginsInstallView extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	const sitePlugins = site ? getPlugins( state, [ site ] ) : [];
+	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
 
 	return {
 		site,

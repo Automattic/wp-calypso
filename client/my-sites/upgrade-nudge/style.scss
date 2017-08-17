@@ -1,4 +1,4 @@
-.upgrade-nudge.card {
+.card.upgrade-nudge {
 	border-left: 3px solid $alert-yellow;
 	display: flex;
 	margin: 16px 0;
@@ -15,6 +15,10 @@
 	&.is-no-margin {
 		margin: 0;
 	}
+
+	&.is-card-link {
+		padding-right: 48px;
+	}
 }
 
 .upgrade-nudge__icon {
@@ -22,8 +26,9 @@
 	border-radius: 50%;
 	margin-right: 16px;
 	color: $white;
-	padding: 6px;
+	padding: 5px 7px 7px 5px;
 	align-self: center;
+	flex: 0 0 auto;
 }
 
 .upgrade-nudge.button {

@@ -2,8 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import noop from 'lodash/noop';
-import omit from 'lodash/omit';
+import { noop, omit } from 'lodash';
 
 export default class Draggable extends Component {
 	static propTypes = {

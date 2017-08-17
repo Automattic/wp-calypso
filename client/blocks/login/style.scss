@@ -1,4 +1,5 @@
-.card.login__form {
+.card.login__form,
+.card.login__form-social {
 	margin-bottom: 0;
 }
 
@@ -32,6 +33,14 @@
 
 	button {
 		width: 100%;
+	}
+}
+
+.login__form-header-wrapper {
+	text-align: center;
+
+	.gridicon {
+		color: $blue-wordpress;
 	}
 }
 
@@ -98,7 +107,7 @@
 	margin: 0 10px 10px;
 }
 
-.wp-login__footer {
+.wp-login__links {
 	a {
 		font-size: 14px;
 

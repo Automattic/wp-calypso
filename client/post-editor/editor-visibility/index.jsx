@@ -76,12 +76,14 @@ const EditorVisibility = React.createClass( {
 			return;
 		}
 
-		const oldPassword = this.props.password;
-		const newPassword = nextProps.password;
+		const currentPassword = this.props.password + ''; // force to string
+		const nextPassword = nextProps.password + '';     // force to string
 
-		const passwordIsValid =
-			oldPassword === '' && newPassword === ' ' || // visibility selection changed from public to private (without a saved password)
-			newPassword.trim().length > 0;
+		// visibility selection changed from public to private (without a saved password)
+		const isChangeFromPublicToPrivate = currentPassword === '' && nextPassword === ' ';
+		const isPasswordNotEmpty = nextPassword.trim().length > 0;
+
+		const passwordIsValid = isChangeFromPublicToPrivate || isPasswordNotEmpty;
 
 		this.setState( { passwordIsValid } );
 	},
@@ -180,11 +182,19 @@ const EditorVisibility = React.createClass( {
 		);
 	},
 
-	updateVisibility( event ) {
-		const { siteId, postId } = this.props;
+	updateVisibilityFromRadioButton( event ) {
+		this.updateVisibility( event.target.value );
+	},
+
+	updatePostStatus() {
 		const defaultVisibility = 'draft' === this.props.status ? 'draft' : 'publish';
-		const newVisibility = event.target.value;
 		const postEdits = { status: defaultVisibility };
+
+		postActions.edit( postEdits );
+	},
+
+	updateVisibility( newVisibility ) {
+		const { siteId, postId } = this.props;
 		let reduxPostEdits;
 
 		switch ( newVisibility ) {
@@ -195,6 +205,7 @@ const EditorVisibility = React.createClass( {
 			case 'password':
 				reduxPostEdits = {
 					password: this.props.savedPassword || ' ',
+					// Password protected posts cannot be sticky
 					sticky: false,
 				};
 				this.setState( { passwordIsValid: true } );
@@ -205,36 +216,10 @@ const EditorVisibility = React.createClass( {
 		recordEvent( 'Changed visibility', newVisibility );
 		tracks.recordEvent( 'calypso_editor_visibility_set', { context: this.props.context, visibility: newVisibility } );
 
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		postActions.edit( postEdits );
-		if ( reduxPostEdits ) {
-			this.props.editPost( siteId, postId, reduxPostEdits );
-		}
-	},
+		// This is necessary for cases when the post is changed from private to another visibility
+		// since private has its own post status.
+		this.updatePostStatus();
 
-	updateDropdownVisibility( newVisibility ) {
-		const { siteId, postId } = this.props;
-		const defaultVisibility = 'draft' === this.props.status ? 'draft' : 'publish';
-		const postEdits = { status: defaultVisibility };
-		let reduxPostEdits;
-
-		switch ( newVisibility ) {
-			case 'public':
-				reduxPostEdits = { password: '' };
-				break;
-
-			case 'password':
-				reduxPostEdits = { password: this.props.savedPassword || ' ' };
-				this.setState( { passwordIsValid: true } );
-				break;
-		}
-
-		recordStat( 'visibility-set-' + newVisibility );
-		recordEvent( 'Changed visibility', newVisibility );
-		tracks.recordEvent( 'calypso_editor_visibility_set', { context: this.props.context, visibility: newVisibility } );
-
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		postActions.edit( postEdits );
 		if ( reduxPostEdits ) {
 			this.props.editPost( siteId, postId, reduxPostEdits );
 		}
@@ -398,7 +383,7 @@ const EditorVisibility = React.createClass( {
 								<FormRadio
 									name="site-visibility"
 									value="public"
-									onChange={ this.updateVisibility }
+									onChange={ this.updateVisibilityFromRadioButton }
 									checked={ 'public' === visibility }
 								/>
 								<span>
@@ -438,7 +423,7 @@ const EditorVisibility = React.createClass( {
 								<FormRadio
 									name="site-visibility"
 									value="password"
-									onChange={ this.updateVisibility }
+									onChange={ this.updateVisibilityFromRadioButton }
 									checked={ 'password' === visibility }
 								/>
 								<span>
@@ -466,7 +451,7 @@ const EditorVisibility = React.createClass( {
 				icon: <Gridicon icon="globe" size={ 18 } />,
 				value: 'public',
 				onClick: () => {
-					this.updateDropdownVisibility( 'public' );
+					this.updateVisibility( 'public' );
 				}
 			},
 			{
@@ -480,7 +465,7 @@ const EditorVisibility = React.createClass( {
 				icon: <Gridicon icon="lock" size={ 18 } />,
 				value: 'password',
 				onClick: () => {
-					this.updateDropdownVisibility( 'password' );
+					this.updateVisibility( 'password' );
 				}
 			},
 		];

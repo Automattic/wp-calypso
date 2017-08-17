@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,42 +11,52 @@ import { map } from 'lodash';
  */
 import PostComment from 'blocks/comments/post-comment';
 import { getPostCommentsTree } from 'state/comments/selectors';
+import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 
 export class ConversationCommentList extends React.Component {
 	static propTypes = {
-		blogId: PropTypes.number.isRequired,
-		postId: PropTypes.number.isRequired,
+		post: PropTypes.object.isRequired, // required by PostComment
 		commentIds: PropTypes.array.isRequired,
-		post: PropTypes.object, // required by PostComment
+	};
+
+	static defaultProps = {
+		showCaterpillar: false,
 	};
 
 	render() {
-		const { commentIds, commentsTree, post } = this.props;
+		const { commentIds, commentsTree, post, showCaterpillar } = this.props;
 		if ( ! commentIds ) {
 			return null;
 		}
 
 		return (
-			<ul className="conversations__comment-list">
-				{ map( commentIds, commentId => {
-					return (
-						<PostComment
-							commentsTree={ commentsTree }
-							key={ commentId }
-							commentId={ commentId }
-							maxChildrenToShow={ 0 }
-							post={ post }
-						/>
-					);
-				} ) }
-			</ul>
+			<div className="conversations__comment-list">
+				<ul className="conversations__comment-list-ul">
+					{ map( commentIds, commentId => {
+						return (
+							<PostComment
+								showNestingReplyArrow
+								commentsTree={ commentsTree }
+								key={ commentId }
+								commentId={ commentId }
+								maxChildrenToShow={ 0 }
+								post={ post }
+							/>
+						);
+					} ) }
+				</ul>
+				{ showCaterpillar &&
+					<ConversationCaterpillar blogId={ post.site_ID } postId={ post.ID } /> }
+			</div>
 		);
 	}
 }
 
 const ConnectedConversationCommentList = connect( ( state, ownProps ) => {
+	const { site_ID: siteId, ID: postId } = ownProps.post;
+
 	return {
-		commentsTree: getPostCommentsTree( state, ownProps.blogId, ownProps.postId, 'all' ),
+		commentsTree: getPostCommentsTree( state, siteId, postId, 'all' ),
 	};
 } )( ConversationCommentList );
 

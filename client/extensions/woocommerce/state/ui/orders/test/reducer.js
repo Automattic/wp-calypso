@@ -25,10 +25,10 @@ describe( 'reducer', () => {
 			},
 		};
 		const newState = reducer( undefined, action );
-		expect( newState ).to.eql( { 123: { currentPage: 2, currentStatus: 'any' } } );
+		expect( newState ).to.eql( { 123: { currentPage: 2, currentSearch: '' } } );
 	} );
 
-	it( 'should should update the current page when changed', () => {
+	it( 'should update the current page when changed', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 123,
@@ -36,41 +36,41 @@ describe( 'reducer', () => {
 				page: 2,
 			},
 		};
-		const originalState = deepFreeze( { 123: { currentPage: 3, currentStatus: 'any' } } );
+		const originalState = deepFreeze( { 123: { currentPage: 3, currentSearch: '' } } );
 		const newState = reducer( originalState, action );
-		expect( newState ).to.eql( { 123: { currentPage: 2, currentStatus: 'any' } } );
+		expect( newState ).to.eql( { 123: { currentPage: 2, currentSearch: '' } } );
 	} );
 
-	it( 'should should update the current status when changed', () => {
+	it( 'should update the current search when changed', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 123,
 			query: {
-				status: 'completed'
+				search: 'example'
 			},
 		};
-		const originalState = deepFreeze( { 123: { currentPage: 3, currentStatus: 'any' } } );
+		const originalState = deepFreeze( { 123: { currentPage: 3, currentSearch: '' } } );
 		const newState = reducer( originalState, action );
-		expect( newState ).to.eql( { 123: { currentPage: 3, currentStatus: 'completed' } } );
+		expect( newState ).to.eql( { 123: { currentPage: 3, currentSearch: 'example' } } );
 	} );
 
-	it( 'should should store the current query for more than one site', () => {
+	it( 'should store the current query for more than one site', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 234,
 			query: {
-				status: 'on-hold'
+				search: 'test'
 			},
 		};
-		const originalState = deepFreeze( { 123: { currentPage: 3, currentStatus: 'any' } } );
+		const originalState = deepFreeze( { 123: { currentPage: 3, currentSearch: '' } } );
 		const newState = reducer( originalState, action );
 		expect( newState ).to.eql( {
-			123: { currentPage: 3, currentStatus: 'any' },
-			234: { currentPage: 1, currentStatus: 'on-hold' }
+			123: { currentPage: 3, currentSearch: '' },
+			234: { currentPage: 1, currentSearch: 'test' }
 		} );
 	} );
 
-	it( 'should should remove the key when re-set to initial state', () => {
+	it( 'should remove the key when page is re-set to initial state', () => {
 		const action = {
 			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 			siteId: 123,
@@ -78,7 +78,20 @@ describe( 'reducer', () => {
 				page: 1,
 			}
 		};
-		const originalState = deepFreeze( { 123: { currentPage: 3, currentStatus: 'any' } } );
+		const originalState = deepFreeze( { 123: { currentPage: 3, currentSearch: '' } } );
+		const newState = reducer( originalState, action );
+		expect( newState ).to.eql( {} );
+	} );
+
+	it( 'should remove the key when search is re-set to initial state', () => {
+		const action = {
+			type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
+			siteId: 123,
+			query: {
+				search: '',
+			}
+		};
+		const originalState = deepFreeze( { 123: { currentPage: 1, currentSearch: 'test' } } );
 		const newState = reducer( originalState, action );
 		expect( newState ).to.eql( {} );
 	} );

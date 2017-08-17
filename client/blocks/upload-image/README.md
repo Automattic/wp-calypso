@@ -25,6 +25,21 @@ render: function() {
 }
 ```
 
+To use as changable image:
+
+```js
+import UploadImage from 'blocks/upload-image';
+
+render: function() {
+	return
+		<UploadImage 
+			siteId={ <your-site-id> or currently selected siteId if not specified }
+			defaultImage={ default image or its id }
+			onUploadImageDone={ ( uploadedImage ) => console.log( uploadedImage.ID ) }
+		/>;
+}
+```
+
 To see a more complex example, have a look at `blocks/upload-image/docs/example`.
 
 #### Props
@@ -32,15 +47,17 @@ To see a more complex example, have a look at `blocks/upload-image/docs/example`
 - `imageEditorProps`: (default: allowedAspectRatios set to 1X1) object of additional props to send to `ImageEditor`
 	component.
 - `onImageEditorDone`: (default: `noop`) function to call when user clicks on the "Done" button in `ImageEditor`.
+- `onImageUploadDone`: (default: `noop`) function to call when the image is uploaded to specified `siteId` Media library.
+- `onImageRemove`: (default: `noop`) function to call when user clicked the (X) button to remove uploaded image.
 - `onError`: (default: `noop`) function to call when there's any error during file uploading/image editing.
-- `onUploadImageDone`: (default: `noop`) function to call when the image is uploaded to specified `siteId` Media library.
 - `additionalImageEditorClasses`: string of additional CSS class names to apply to the `ImageEditor` modal.
 - `additionalClasses`: string of additional CSS class names to apply to the `UploadImage` component.
 - `doneButtonText`: text on the "Done" button in Image Editor modal.
-- `addAnImageText`: text on the placeholder when selecting an image.
+- `addAnImageText`: text on the image picker when selecting an image.
 - `dragUploadText`: text which shows when dragging an image to upload.
+- `defaultImage`: previously uploaded image or its id to be used as default image.
 
-There's a way to design and supply your own HTML for the placeholder (when no image is selected) by supplying the
-`placeholderContent` prop and for the uploading process (when image is being uploaded) by supplying the
+There's a way to design and supply your own HTML for the image picker (when no image is selected) by supplying the
+`imagePickerContent` prop and for the uploading process (when image is being uploaded) by supplying the
 `uploadingContent` prop. You can also supply your own HTML for when image is uploaded to Media library by passing the
 `uploadingDoneContent` prop.

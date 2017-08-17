@@ -41,7 +41,7 @@ const fromApi = ( { restore_status = {} } ) => {
 	};
 };
 
-export const receiveRestoreProgress = ( { dispatch }, { siteId, timestamp, restoreId }, next, apiData ) => {
+export const receiveRestoreProgress = ( { dispatch }, { siteId, timestamp, restoreId }, apiData ) => {
 	const data = fromApi( apiData );
 
 	debug( 'Restore progress', data );
@@ -50,7 +50,7 @@ export const receiveRestoreProgress = ( { dispatch }, { siteId, timestamp, resto
 };
 
 // FIXME: Could be a network Error (instanceof Error) or an API error. Handle each case correctly.
-export const receiveRestoreError = ( { dispatch }, { siteId, timestamp, restoreId }, next, error ) => {
+export const receiveRestoreError = ( { dispatch }, { siteId, timestamp, restoreId }, error ) => {
 	debug( 'Restore progress error', error );
 
 	dispatch( createNotice(

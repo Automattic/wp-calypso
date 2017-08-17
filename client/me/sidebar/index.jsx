@@ -18,12 +18,14 @@ const Sidebar = require( 'layout/sidebar' ),
 	config = require( 'config' ),
 	ProfileGravatar = require( 'me/profile-gravatar' ),
 	eventRecorder = require( 'me/event-recorder' ),
+	user = require( 'lib/user' )(),
 	userUtilities = require( 'lib/user/utils' );
 
 import Button from 'components/button';
 import purchasesPaths from 'me/purchases/paths';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { logoutUser } from 'state/login/actions';
 
 const MeSidebar = React.createClass( {
 
@@ -47,7 +49,19 @@ const MeSidebar = React.createClass( {
 		if ( isEnLocale && ! config.isEnabled( 'desktop' ) ) {
 			redirect = '/?apppromo';
 		}
-		userUtilities.logout( redirect );
+
+		if ( config.isEnabled( 'login/wp-login' ) ) {
+			this.props.logoutUser( redirect )
+				.then(
+					( { redirect_to } ) => user.clear( () => location.href = redirect_to || '/' ),
+					// The logout endpoint might fail if the nonce has expired.
+					// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
+					() => userUtilities.logout( redirect )
+				);
+		} else {
+			userUtilities.logout( redirect );
+		}
+
 		this.recordClickEvent( 'Sidebar Sign Out Link' );
 	},
 
@@ -180,8 +194,8 @@ const MeSidebar = React.createClass( {
 
 function mapStateToProps( state ) {
 	return {
-		currentUser: getCurrentUser( state )
+		currentUser: getCurrentUser( state ),
 	};
 }
 
-export default connect( mapStateToProps, { setNextLayoutFocus } )( MeSidebar );
+export default connect( mapStateToProps, { logoutUser, setNextLayoutFocus } )( MeSidebar );

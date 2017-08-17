@@ -37,7 +37,6 @@ describe( 'blog-sticker-add', () => {
 			receiveBlogStickerAdd(
 				{ dispatch },
 				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
-				null,
 				{ success: true },
 			);
 			expect( dispatch ).to.have.been.calledWithMatch( {
@@ -52,7 +51,6 @@ describe( 'blog-sticker-add', () => {
 			receiveBlogStickerAdd(
 				{ dispatch },
 				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
-				null,
 				{
 					success: false,
 				},

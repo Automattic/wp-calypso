@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, noop } from 'lodash';
+import { filter, toPairs, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,36 +25,51 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
 import { isValidSimplePaymentsProduct } from 'lib/simple-payments/utils';
 import formatCurrency from 'lib/format-currency';
-import { getFeaturedImageId } from 'lib/posts/utils';
+import { getFeaturedImageId } from 'lib/posts/utils-ssr-ready';
+import { decodeEntities } from 'lib/formatting';
 
 /**
- * Reduce function for product attributes stored in post metadata
- * @param { Object }  sanitizedProductAttributes object with all sanitized attributes
- * @param { Object } current  item from post_meta to process
- * @returns { Object } sanitizedProductAttributes
+ * Convert custom post metadata array to product attributes
+ * @param { Array } metadata Array of post metadata
+ * @returns { Object } properties extracted from the metadata, to be merged into the product object
  */
-function reduceMetadata( sanitizedProductAttributes, current ) {
-	if ( metaKeyToSchemaKeyMap[ current.key ] ) {
-		sanitizedProductAttributes[ metaKeyToSchemaKeyMap[ current.key ] ] = current.value;
-	}
-	return sanitizedProductAttributes;
+function customPostMetadataToProductAttributes( metadata ) {
+	const productAttributes = {};
+
+	metadata.forEach( ( { key, value } ) => {
+		const schemaKey = metaKeyToSchemaKeyMap[ key ];
+		if ( ! schemaKey ) {
+			return;
+		}
+
+		// If the property's type is marked as boolean in the schema,
+		// convert the value from PHP-ish truthy/falsy numbers to a plain boolean.
+		// Strings "0" and "" are converted to false, "1" is converted to true.
+		if ( metadataSchema[ schemaKey ].type === 'boolean' ) {
+			value = !! Number( value );
+		}
+
+		productAttributes[ schemaKey ] = value;
+	} );
+
+	return productAttributes;
 }
 
 /**
- * Formats /posts endpoint response into a product list
- * @param { Object } product raw /post endpoint response to format
+ * Formats /posts endpoint response into a product object
+ * @param { Object } customPost raw /post endpoint response to format
  * @returns { Object } sanitized and formatted product
  */
-export function customPostToProduct( product ) {
-	return Object.assign(
-		{
-			ID: product.ID,
-			description: product.content,
-			title: product.title,
-			featuredImageId: getFeaturedImageId( product ),
-		},
-		product.metadata.reduce( reduceMetadata, {} ),
-	);
+export function customPostToProduct( customPost ) {
+	const metadataAttributes = customPostMetadataToProductAttributes( customPost.metadata );
+
+	return {
+		ID: customPost.ID,
+		description: decodeEntities( customPost.content ),
+		title: decodeEntities( customPost.title ),
+		featuredImageId: getFeaturedImageId( customPost ),
+		...metadataAttributes,
+	};
 }
 
 /**
@@ -63,35 +78,40 @@ export function customPostToProduct( product ) {
  * @returns { Object } custom post type data
  */
 export function productToCustomPost( product ) {
+	// Get the `product` object entries and filter only those that will go into metadata
+	const metadataEntries = toPairs( product ).filter( ( [ key ] ) => metadataSchema[ key ] );
+
 	// add formatted_price to display money correctly
 	if ( ! product.formatted_price ) {
-		product.formatted_price = formatCurrency( product.price, product.currency );
+		metadataEntries.push( [
+			'formatted_price',
+			formatCurrency( product.price, product.currency ),
+		] );
 	}
 
-	return Object.keys( product ).reduce(
-		function( payload, current ) {
-			if ( metadataSchema[ current ] ) {
-				let value = product[ current ];
+	// Convert the `product` entries into a metadata array
+	const metadata = metadataEntries.map( ( [ key, value ] ) => {
+		const entrySchema = metadataSchema[ key ];
 
-				if ( typeof( value ) === 'boolean' ) {
-					value = value ? 1 : 0;
-				}
+		// If the property's type is marked as boolean in the schema,
+		// convert the value to PHP-ish truthy/falsy numbers.
+		if ( entrySchema.type === 'boolean' ) {
+			value = value ? 1 : 0;
+		}
 
-				payload.metadata.push( {
-					key: metadataSchema[ current ].metaKey,
-					value
-				} );
-			}
-			return payload;
-		},
-		{
-			type: SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
-			metadata: [],
-			title: product.title,
-			content: product.description,
-			featured_image: product.featuredImageId || '',
-		},
-	);
+		return {
+			key: entrySchema.metaKey,
+			value,
+		};
+	} );
+
+	return {
+		type: SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
+		metadata,
+		title: product.title,
+		content: product.description,
+		featured_image: product.featuredImageId || '',
+	};
 }
 
 /**
@@ -197,13 +217,13 @@ export function requestSimplePaymentsProductDelete( { dispatch }, action ) {
 	);
 }
 
-export const addProduct = ( { dispatch }, { siteId }, next, newProduct ) =>
+export const addProduct = ( { dispatch }, { siteId }, newProduct ) =>
 	dispatch( receiveUpdateProduct( siteId, customPostToProduct( newProduct ) ) );
 
-export const deleteProduct = ( { dispatch }, { siteId }, next, deletedProduct ) =>
+export const deleteProduct = ( { dispatch }, { siteId }, deletedProduct ) =>
 	dispatch( receiveDeleteProduct( siteId, deletedProduct.ID ) );
 
-export const listProduct = ( { dispatch }, { siteId }, next, product ) => {
+export const listProduct = ( { dispatch }, { siteId }, product ) => {
 	if ( ! isValidSimplePaymentsProduct( product ) ) {
 		return;
 	}
@@ -211,7 +231,7 @@ export const listProduct = ( { dispatch }, { siteId }, next, product ) => {
 	dispatch( receiveProduct( siteId, customPostToProduct( product ) ) );
 };
 
-export const listProducts = ( { dispatch }, { siteId }, next, { posts: products } ) => {
+export const listProducts = ( { dispatch }, { siteId }, { posts: products } ) => {
 	const validProducts = filter( products, isValidSimplePaymentsProduct );
 
 	dispatch( receiveProductsList( siteId, validProducts.map( customPostToProduct ) ) );

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +11,7 @@ import { find, get } from 'lodash';
  */
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import Popover from 'components/popover/index';
+import ReaderPopover from 'components/reader-popover';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
 import FormToggle from 'components/forms/form-toggle';
@@ -97,49 +98,45 @@ class ReaderEmailSettings extends Component {
 					</span>
 				</span>
 
-				<Popover
+				<ReaderPopover
 					onClose={ this.closePopover }
 					isVisible={ this.state.showPopover }
 					context={ this.iconRef }
 					ignoreContext={ this.spanRef }
 					position={ 'bottom left' }
 					className="reader-email-settings__popout"
+					popoverTitle={ translate( 'Email me' ) }
 				>
-					<div className="reader-email-settings__popout-wrapper">
-						<h3 className="reader-email-settings__popout-header">
-							{ translate( 'Email me' ) }
-						</h3>
-						<div className="reader-email-settings__popout-toggle">
-							{ translate( 'New posts' ) }
-							<FormToggle onChange={ this.toggleNewPostEmail } checked={ notifyOnNewPosts } />
-						</div>
-						{ notifyOnNewPosts &&
-							<SegmentedControl>
-								<ControlItem
-									selected={ this.state.selected === 'instantly' }
-									onClick={ this.setSelected( 'instantly' ) }
-								>
-									{ translate( 'Instantly' ) }
-								</ControlItem>
-								<ControlItem
-									selected={ this.state.selected === 'daily' }
-									onClick={ this.setSelected( 'daily' ) }
-								>
-									{ translate( 'Daily' ) }
-								</ControlItem>
-								<ControlItem
-									selected={ this.state.selected === 'weekly' }
-									onClick={ this.setSelected( 'weekly' ) }
-								>
-									{ translate( 'Weekly' ) }
-								</ControlItem>
-							</SegmentedControl> }
-						<div className="reader-email-settings__popout-toggle">
-							{ translate( 'New comments' ) }
-							<FormToggle onChange={ this.toggleNewCommentEmail } checked={ notifyOnNewComments } />
-						</div>
+					<div className="reader-email-settings__popout-toggle">
+						{ translate( 'New posts' ) }
+						<FormToggle onChange={ this.toggleNewPostEmail } checked={ notifyOnNewPosts } />
 					</div>
-				</Popover>
+					{ notifyOnNewPosts &&
+						<SegmentedControl>
+							<ControlItem
+								selected={ this.state.selected === 'instantly' }
+								onClick={ this.setSelected( 'instantly' ) }
+							>
+								{ translate( 'Instantly' ) }
+							</ControlItem>
+							<ControlItem
+								selected={ this.state.selected === 'daily' }
+								onClick={ this.setSelected( 'daily' ) }
+							>
+								{ translate( 'Daily' ) }
+							</ControlItem>
+							<ControlItem
+								selected={ this.state.selected === 'weekly' }
+								onClick={ this.setSelected( 'weekly' ) }
+							>
+								{ translate( 'Weekly' ) }
+							</ControlItem>
+						</SegmentedControl> }
+					<div className="reader-email-settings__popout-toggle">
+						{ translate( 'New comments' ) }
+						<FormToggle onChange={ this.toggleNewCommentEmail } checked={ notifyOnNewComments } />
+					</div>
+				</ReaderPopover>
 			</div>
 		);
 	}

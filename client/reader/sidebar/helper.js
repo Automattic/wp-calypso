@@ -1,10 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
 import classNames from 'classnames';
-import some from 'lodash/some';
-import startsWith from 'lodash/startsWith';
-import assign from 'lodash/assign';
+import { assign, some, startsWith } from 'lodash';
 
 const exported = {
 	itemLinkClass: function( path, currentPath, additionalClasses ) {
@@ -31,8 +30,8 @@ const exported = {
 		return classNames(
 			assign(
 				{ selected: selected, 'is-action-button-selected': isActionButtonSelected },
-				additionalClasses,
-			),
+				additionalClasses
+			)
 		);
 	},
 

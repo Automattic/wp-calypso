@@ -3,30 +3,25 @@
  */
 import React from 'react';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
 import Button from 'components/button';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'state/analytics/actions';
 
-const CustomNameserversRow = React.createClass( {
-	mixins: [ analyticsMixin( 'domainManagement', 'nameServers' ) ],
-
-	propTypes: {
+class CustomNameserversRow extends React.PureComponent {
+	static propTypes = {
 		index: React.PropTypes.number,
 		nameserver: React.PropTypes.string,
 		onChange: React.PropTypes.func,
 		onRemove: React.PropTypes.func
-	},
-
-	handleRemove( event ) {
-		event.preventDefault();
-
-		this.recordEvent( 'removeClick', this.props.selectedDomainName );
-
-		this.props.onRemove( this.props.index );
-	},
+	};
 
 	renderRemoveIcon() {
 		if ( ! this.props.nameserver ) {
@@ -38,7 +33,7 @@ const CustomNameserversRow = React.createClass( {
 				<Gridicon icon="trash" />
 			</Button>
 		);
-	},
+	}
 
 	render() {
 		return (
@@ -54,17 +49,57 @@ const CustomNameserversRow = React.createClass( {
 				</fieldset>
 			</div>
 		);
-	},
+	}
 
-	handleChange( event ) {
+	handleChange = ( event ) => {
 		if ( this.props.onChange ) {
 			this.props.onChange( event.target.value, this.props.index );
 		}
-	},
+	};
 
-	handleFocus() {
-		this.recordEvent( 'customNameserverInputFocus', this.props.selectedDomainName );
+	handleFocus = () => {
+		this.props.customNameserverInputFocus( this.props.selectedDomainName );
+	};
+
+	handleRemove = ( event ) => {
+		event.preventDefault();
+
+		this.props.removeNameserversClick( this.props.selectedDomainName );
+
+		this.props.onRemove( this.props.index );
+	};
+}
+
+const customNameserverInputFocus = ( domainName ) => composeAnalytics(
+	recordGoogleEvent(
+		'Domain Management',
+		'Focused Input in "Use Custom Name Servers" Form in Name Servers and DNS',
+		'Domain Name',
+		domainName
+	),
+	recordTracksEvent(
+		'calypso_domain_management_name_servers_custom_name_server_input_focus',
+		{ domain_name: domainName }
+	),
+);
+
+const removeNameserversClick = ( domainName ) => composeAnalytics(
+	recordGoogleEvent(
+		'Domain Management',
+		'Clicked "Remove" in "Use Custom Name Servers" Form in Name Servers and DNS',
+		'Domain Name',
+		domainName
+	),
+	recordTracksEvent(
+		'calypso_domain_management_name_servers_remove_click',
+		{ domain_name: domainName }
+	),
+);
+
+export default connect(
+	null,
+	{
+		customNameserverInputFocus,
+		removeNameserversClick,
 	}
-} );
-
-module.exports = CustomNameserversRow;
+)( CustomNameserversRow );

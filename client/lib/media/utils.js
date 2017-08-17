@@ -20,7 +20,6 @@ import {
 	GalleryDefaultAttrs
 } from './constants';
 import Shortcode from 'lib/shortcode';
-import versionCompare from 'lib/version-compare';
 
 /**
  * Module variables
@@ -228,14 +227,14 @@ const MediaUtils = {
 	 * Returns true if the site can be trusted to accurately report its allowed
 	 * file types. Returns false otherwise.
 	 *
-	 * Jetpack versions 3.8.0 and earlier do not sync the allowed file types
+	 * Jetpack currently does not sync the allowed file types
 	 * option, so we must assume that all file types are supported.
 	 *
 	 * @param  {Object}  site Site object
 	 * @return {Boolean}      Site allowed file types are accurate
 	 */
 	isSiteAllowedFileTypesToBeTrusted: function( site ) {
-		return ! site || ! site.jetpack || versionCompare( site.options.jetpack_version, '3.8.1', '>=' );
+		return ! site || ! site.jetpack;
 	},
 
 	/**
@@ -544,6 +543,7 @@ const MediaUtils = {
 				mime_type: file.mime_type,
 				guid: file.URL,
 				URL: file.URL,
+				external: true,
 			} );
 		} else {
 			// Handle the case where a an object has been passed that wraps a

@@ -7,10 +7,14 @@ import page from 'page';
  * Internal dependencies
  */
 import controller from 'my-sites/controller';
-import { comments, redirect } from './controller';
+import { clearCommentNotices, comments, redirect } from './controller';
 import config from 'config';
 
 export default function() {
+	if ( ! config.isEnabled( 'comments/management' ) ) {
+		page( '/stats' );
+	}
+
 	if ( config.isEnabled( 'comments/management' ) ) {
 		page( '/comments/:status?',
 			controller.siteSelection,
@@ -24,5 +28,7 @@ export default function() {
 			controller.navigation,
 			comments
 		);
+
+		page.exit( '/comments/*', clearCommentNotices );
 	}
 }

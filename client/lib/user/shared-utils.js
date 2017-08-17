@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import assign from 'lodash/assign';
-import includes from 'lodash/includes';
+import { assign, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -53,6 +52,7 @@ module.exports = {
 				'email',
 				'email_verified',
 				'is_valid_google_apps_country',
+				'user_ip_country_code',
 				'logout_URL',
 				'primary_blog',
 				'primary_blog_url',

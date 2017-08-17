@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import filter from 'lodash/filter';
-import get from 'lodash/get';
+import { filter, get } from 'lodash';
 
 /**
  * Internal dependencies

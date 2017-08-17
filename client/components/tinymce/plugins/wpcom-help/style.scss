@@ -2,14 +2,6 @@
 	@include breakpoint( ">660px" ) {
 		max-width: 700px;
 	}
-	.dialog__content {
-		height: 70vh;
-		margin: 0 -24px;
-		padding: 0 24px;
-		overflow-y: scroll;
-		transform: translateZ(0);
-		pointer-events: all;
-	}
 }
 
 .wpcom-help__heading {

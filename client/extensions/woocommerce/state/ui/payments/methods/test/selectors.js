@@ -107,6 +107,22 @@ describe( 'selectors', () => {
 			] );
 		} );
 
+		it( 'should apply the description "edits" changes to the method list', () => {
+			siteState.paymentMethods = [
+				{ id: 1, enabled: true, description: 'test', settings: { name: { value: 'Method1' } } },
+			];
+			uiState.methods = {
+				creates: [],
+				deletes: [],
+				updates: [
+					{ id: 1, enabled: true, description: { value: 'update' } },
+				],
+			};
+			expect( getPaymentMethodsWithEdits( state ) ).to.deep.equal( [
+				{ id: 1, enabled: true, description: 'update', settings: { name: { value: 'Method1' } } },
+			] );
+		} );
+
 		it( 'should NOT apply the uncommited changes made in the modal', () => {
 			siteState.paymentMethods = [
 				{ id: 1, settings: { name: { value: 'Method1' } } },
@@ -169,16 +185,20 @@ describe( 'selectors', () => {
 
 		it( 'should return method with changes when there is a method being edited, with changes in that method', () => {
 			siteState.paymentMethods = [
-				{ id: 1, settings: { name: { value: 'MyMethod' } } },
+				{ id: 1, description: 'test', settings: { name: { value: 'MyMethod' } } },
 			];
 			uiState.methods = {
 				creates: [],
-				updates: [ { id: 1, name: { value: 'MyNewMethod' } } ],
+				updates: [ { id: 1, description: { value: 'update' }, name: { value: 'MyNewMethod' } } ],
 				deletes: [],
 				currentlyEditingId: 1,
 			};
 
-			expect( getCurrentlyEditingPaymentMethod( state ) ).to.deep.equal( { id: 1, settings: { name: { value: 'MyNewMethod' } } } );
+			expect( getCurrentlyEditingPaymentMethod( state ) ).to.deep.equal( {
+				id: 1,
+				description: 'update',
+				settings: { name: { value: 'MyNewMethod' } }
+			} );
 		} );
 
 		it( 'should return new method from creates when there is a newly created method being edited', () => {

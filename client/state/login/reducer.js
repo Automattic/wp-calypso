@@ -8,11 +8,15 @@ import { get, isEmpty, omit } from 'lodash';
  */
 import { combineReducers, createReducer } from 'state/utils';
 import magicLogin from './magic-login/reducer';
+import oauth2 from './oauth2/reducer';
 import {
 	LOGIN_FORM_UPDATE,
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
+	LOGOUT_REQUEST,
+	LOGOUT_REQUEST_FAILURE,
+	LOGOUT_REQUEST_SUCCESS,
 	ROUTE_SET,
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
@@ -21,8 +25,8 @@ import {
 	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST,
-	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
+	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -56,6 +60,9 @@ export const redirectTo = createReducer( null, {
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST ]: () => null,
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE ]: ( state, action ) => get( action, 'redirectTo', null ),
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => null,
+	[ LOGOUT_REQUEST ]: () => null,
+	[ LOGOUT_REQUEST_SUCCESS ]: () => ( state, { data } ) => get( data, 'redirect_to', null ),
+	[ LOGOUT_REQUEST_FAILURE ]: () => null,
 } );
 
 export const rememberMe = createReducer( null, {
@@ -131,6 +138,19 @@ export const twoFactorAuth = createReducer( null, {
 		return null;
 	},
 	[ LOGIN_REQUEST_FAILURE ]: () => null,
+	[ SOCIAL_LOGIN_REQUEST ]: () => null,
+	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => {
+		if ( data ) {
+			const rest = omit( data, 'redirect_to' );
+
+			if ( ! isEmpty( rest ) ) {
+				return rest;
+			}
+		}
+
+		return null;
+	},
+	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => null,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: ( state, { twoStepNonce } ) =>
 		updateTwoStepNonce( state, { twoStepNonce, nonceType: 'sms' } ),
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: ( state, { twoStepNonce } ) =>
@@ -158,23 +178,40 @@ export const twoFactorAuthPushPoll = createReducer( { inProgress: false, success
 	[ TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED ]: state => ( { ...state, inProgress: false, success: true } ),
 } );
 
-export const socialAccount = createReducer( { isCreating: false }, {
+export const socialAccount = createReducer( { isCreating: false, createError: null, }, {
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: () => ( { isCreating: true } ),
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: ( state, { error } ) => ( { isCreating: false, createError: error } ),
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: ( state, { data: { username, bearerToken } } ) => ( {
 		isCreating: false,
 		username,
-		bearerToken
+		bearerToken,
+		createError: null,
 	} ),
-	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: ( state, { error, service, token } ) => ( {
+	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: ( state, { error } ) => ( {
 		...state,
 		requestError: error,
-		email: error.email,
-		service: service,
-		token: token,
 	} ),
-	[ USER_RECEIVE ]: state => ( { ...state, bearerToken: null, username: null } ),
+	[ USER_RECEIVE ]: state => ( { ...state, bearerToken: null, username: null, createError: null, } ),
 	[ LOGIN_REQUEST ]: state => ( { ...state, createError: null } ),
+} );
+
+const userExistsErrorHandler = ( state, { error, authInfo } ) => {
+	if ( error.code === 'user_exists' ) {
+		return {
+			isLinking: true,
+			email: error.email,
+			authInfo,
+		};
+	}
+
+	return state;
+};
+
+export const socialAccountLink = createReducer( { isLinking: false }, {
+	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: userExistsErrorHandler,
+	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: userExistsErrorHandler,
+	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: () => ( { isLinking: false } ),
+	[ USER_RECEIVE ]: () => ( { isLinking: false } ),
 } );
 
 export default combineReducers( {
@@ -191,4 +228,6 @@ export default combineReducers( {
 	twoFactorAuthRequestError,
 	twoFactorAuthPushPoll,
 	socialAccount,
+	socialAccountLink,
+	oauth2,
 } );

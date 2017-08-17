@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -36,8 +37,6 @@ class TaxesOptions extends Component {
 							<FormCheckbox checked={ pricesIncludeTaxes || false } name="pricesIncludeTaxes" onChange={ onCheckboxChange } />
 								<span>{ translate( 'Taxes are included in product prices' ) }</span>
 						</FormLabel>
-					</FormFieldset>
-					<FormFieldset>
 						<FormLabel>
 							<FormCheckbox checked={ shippingIsTaxable || false } name="shippingIsTaxable" onChange={ onCheckboxChange } />
 								<span>{ translate( 'Charge taxes on shipping costs' ) }</span>

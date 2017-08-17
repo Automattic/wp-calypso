@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-const ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	page = require( 'page' );
+import React from 'react';
+import ReactDom from 'react-dom';
+import page from 'page';
+import PropTypes from 'prop-types';
 import { debounce, throttle, get } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -14,24 +15,23 @@ import tinyMce from 'tinymce/tinymce';
 /**
  * Internal dependencies
  */
-const actions = require( 'lib/posts/actions' ),
-	route = require( 'lib/route' ),
-	PostEditStore = require( 'lib/posts/post-edit-store' ),
-	EditorActionBar = require( 'post-editor/editor-action-bar' ),
-	FeaturedImage = require( 'post-editor/editor-featured-image' ),
-	EditorTitle = require( 'post-editor/editor-title' ),
-	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
-	TinyMCE = require( 'components/tinymce' ),
-	SegmentedControl = require( 'components/segmented-control' ),
-	SegmentedControlItem = require( 'components/segmented-control/item' ),
-	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
-	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
-	VerifyEmailDialog = require( 'components/email-verification/email-verification-dialog' ),
-	utils = require( 'lib/posts/utils' ),
-	EditorPreview = require( './editor-preview' ),
-	stats = require( 'lib/posts/stats' ),
-	analytics = require( 'lib/analytics' );
-
+import actions from 'lib/posts/actions';
+import route from 'lib/route';
+import PostEditStore from 'lib/posts/post-edit-store';
+import EditorActionBar from 'post-editor/editor-action-bar';
+import FeaturedImage from 'post-editor/editor-featured-image';
+import EditorTitle from 'post-editor/editor-title';
+import EditorPageSlug from 'post-editor/editor-page-slug';
+import TinyMCE from 'components/tinymce';
+import SegmentedControl from 'components/segmented-control';
+import SegmentedControlItem from 'components/segmented-control/item';
+import InvalidURLDialog from 'post-editor/invalid-url-dialog';
+import RestorePostDialog from 'post-editor/restore-post-dialog';
+import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
+import utils from 'lib/posts/utils';
+import EditorPreview from './editor-preview';
+import { recordStat, recordEvent } from 'lib/posts/stats';
+import analytics from 'lib/analytics';
 import config from 'config';
 import { abtest } from 'lib/abtest';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
@@ -61,23 +61,24 @@ import { editedPostHasContent } from 'state/selectors';
 import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
+import { NESTED_SIDEBAR_NONE } from 'post-editor/editor-sidebar/constants';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
-		siteId: React.PropTypes.number,
-		preferences: React.PropTypes.object,
-		setEditorModePreference: React.PropTypes.func,
-		setEditorSidebar: React.PropTypes.func,
-		setLayoutFocus: React.PropTypes.func.isRequired,
-		editorModePreference: React.PropTypes.string,
-		editorSidebarPreference: React.PropTypes.string,
-		user: React.PropTypes.object,
-		userUtils: React.PropTypes.object,
-		editPath: React.PropTypes.string,
-		markChanged: React.PropTypes.func.isRequired,
-		markSaved: React.PropTypes.func.isRequired,
-		translate: React.PropTypes.func.isRequired,
-		hasBrokenPublicizeConnection: React.PropTypes.bool,
+		siteId: PropTypes.number,
+		preferences: PropTypes.object,
+		setEditorModePreference: PropTypes.func,
+		setEditorSidebar: PropTypes.func,
+		setLayoutFocus: PropTypes.func.isRequired,
+		editorModePreference: PropTypes.string,
+		editorSidebarPreference: PropTypes.string,
+		user: PropTypes.object,
+		userUtils: PropTypes.object,
+		editPath: PropTypes.string,
+		markChanged: PropTypes.func.isRequired,
+		markSaved: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+		hasBrokenPublicizeConnection: PropTypes.bool,
 	},
 
 	_previewWindow: null,
@@ -99,7 +100,8 @@ export const PostEditor = React.createClass( {
 			isTitleFocused: false,
 			showPreview: false,
 			isPostPublishPreview: false,
-			previewAction: null
+			previewAction: null,
+			nestedSidebar: NESTED_SIDEBAR_NONE,
 		};
 	},
 
@@ -235,14 +237,18 @@ export const PostEditor = React.createClass( {
 		if ( this.props.layoutFocus === 'sidebar' ) {
 			this.props.setEditorSidebar( 'closed' );
 			this.props.setLayoutFocus( 'content' );
-			stats.recordStat( 'close-sidebar' );
-			stats.recordEvent( 'Sidebar Toggle', 'close' );
+			recordStat( 'close-sidebar' );
+			recordEvent( 'Sidebar Toggle', 'close' );
 		} else {
 			this.props.setEditorSidebar( 'open' );
 			this.props.setLayoutFocus( 'sidebar' );
-			stats.recordStat( 'open-sidebar' );
-			stats.recordEvent( 'Sidebar Toggle', 'open' );
+			recordStat( 'open-sidebar' );
+			recordEvent( 'Sidebar Toggle', 'open' );
 		}
+	},
+
+	setNestedSidebar: function( nestedSidebar ) {
+		this.setState( { nestedSidebar } );
 	},
 
 	render: function() {
@@ -290,6 +296,7 @@ export const PostEditor = React.createClass( {
 						setPostDate={ this.setPostDate }
 						hasContent={ this.state.hasContent }
 						isConfirmationSidebarEnabled={ isConfirmationFeatureEnabled }
+						confirmationSidebarStatus={ this.state.confirmationSidebar }
 						isDirty={ this.state.isDirty || this.props.dirty }
 						isSaveBlocked={ this.isSaveBlocked() }
 						isPublishing={ this.state.isPublishing }
@@ -307,6 +314,7 @@ export const PostEditor = React.createClass( {
 						type={ this.props.type }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 						allPostsUrl={ this.getAllPostsUrl() }
+						nestedSidebar={ this.state.nestedSidebar }
 					/>
 					<div className="post-editor__content">
 						<div className="post-editor__content-editor">
@@ -377,7 +385,7 @@ export const PostEditor = React.createClass( {
 								onFocus={ this.onEditorFocus }
 								onMouseUp={ this.copySelectedText }
 								onBlur={ this.copySelectedText }
-								onTextEditorChange={ this.onEditorContentChange } />
+								onTextEditorChange={ this.onEditorTextContentChange } />
 						</div>
 						<EditorWordCount
 							selectedText={ this.state.selectedText }
@@ -396,6 +404,8 @@ export const PostEditor = React.createClass( {
 						onSave={ this.onSave }
 						isPostPrivate={ utils.isPrivate( this.state.post ) }
 						confirmationSidebarStatus={ this.state.confirmationSidebar }
+						setNestedSidebar={ this.setNestedSidebar }
+						nestedSidebar={ this.state.nestedSidebar }
 						/>
 					{ this.props.isSitePreviewable
 						? <EditorPreview
@@ -406,7 +416,7 @@ export const PostEditor = React.createClass( {
 							isLoading={ this.state.isLoading }
 							isFullScreen={ this.state.isPostPublishPreview }
 							previewUrl={ this.getPreviewUrl() }
-							externalUrl={ this.getPreviewUrl() }
+							externalUrl={ this.getExternalUrl() }
 							editUrl={ this.props.editPath }
 							defaultViewportDevice={ this.state.isPostPublishPreview ? 'computer' : 'tablet' }
 							revision={ get( this.state, 'post.revisions.length', 0 ) }
@@ -521,6 +531,11 @@ export const PostEditor = React.createClass( {
 	},
 
 	onEditorContentChange: function() {
+		this.debouncedSaveRawContent();
+		this.debouncedAutosave();
+	},
+
+	onEditorTextContentChange: function() {
 		if ( 'open' === this.state.confirmationSidebar ) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'content_edit' } );
 		}
@@ -630,8 +645,8 @@ export const PostEditor = React.createClass( {
 				}
 			} );
 		} else {
-			stats.recordStat( isPage ? 'page_trashed' : 'post_trashed' );
-			stats.recordEvent( isPage ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
+			recordStat( isPage ? 'page_trashed' : 'post_trashed' );
+			recordEvent( isPage ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
 			this.props.markSaved();
 			this.onClose();
 		}
@@ -676,13 +691,23 @@ export const PostEditor = React.createClass( {
 	},
 
 	getPreviewUrl: function() {
-		const { isPostPublishPreview, post, previewAction, previewUrl } = this.state;
+		const { post, previewAction, previewUrl } = this.state;
 
-		if ( previewAction === 'view' || isPostPublishPreview ) {
+		if ( previewAction === 'view' && post ) {
 			return post.URL;
 		}
 
 		return previewUrl;
+	},
+
+	getExternalUrl: function() {
+		const { post } = this.state;
+
+		if ( post ) {
+			return post.URL;
+		}
+
+		return this.getPreviewUrl();
 	},
 
 	onPreview: function( action, event ) {
@@ -889,6 +914,15 @@ export const PostEditor = React.createClass( {
 			this.props.editPost( siteId, postId, { date: dateValue } );
 		}
 
+		if (
+			config.isEnabled( 'post-editor/delta-post-publish-flow' ) &&
+			this.isPostPublishConfirmationABTest
+		) {
+			analytics.tracks.recordEvent( 'calypso_editor_publish_date_change', {
+				context: 'open' === this.state.confirmationSidebar ? 'confirmation-sidebar' : 'post-settings',
+			} );
+		}
+
 		this.checkForDateChange( dateValue );
 	},
 
@@ -900,8 +934,13 @@ export const PostEditor = React.createClass( {
 		}
 
 		const currentDate = this.moment( date );
-		const ModifiedDate = this.moment( savedPost.date );
-		const diff = !! currentDate.diff( ModifiedDate );
+		const modifiedDate = this.moment( savedPost.date );
+		const dateChange = ! (
+			currentDate.get( 'date' ) === modifiedDate.get( 'date' ) &&
+			currentDate.get( 'month' ) === modifiedDate.get( 'month' ) &&
+			currentDate.get( 'year' ) === modifiedDate.get( 'year' )
+		);
+		const diff = !! currentDate.diff( modifiedDate ) && !! dateChange;
 
 		if ( savedPost.type === 'post' && utils.isPublished( savedPost ) && diff ) {
 			this.warnPublishDateChange();

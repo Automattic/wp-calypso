@@ -70,6 +70,7 @@ describe( 'selectors', () => {
 				active: false,
 				amount: NaN,
 				attachedToPurchaseId: NaN,
+				canExplicitRenew: false,
 				canDisableAutoRenew: false,
 				currencyCode: undefined,
 				currencySymbol: undefined,

@@ -12,7 +12,7 @@ import {
 /**
  * External dependencies
  */
-import includes from 'lodash/includes';
+import { includes } from 'lodash';
 
 /**
  * Returns an action object to be used in signalling that stats for a given type of stats and query

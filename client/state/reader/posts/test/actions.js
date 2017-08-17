@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -50,7 +51,7 @@ describe( 'actions', () => {
 					ID: 3,
 					feed_item_ID: 3,
 					is_external: true,
-				} ),
+				} )
 			).to.deep.equal( { feedId: 1, postId: 3 } );
 		} );
 
@@ -60,7 +61,7 @@ describe( 'actions', () => {
 					site_ID: 2,
 					ID: 4,
 					is_external: false,
-				} ),
+				} )
 			).to.deep.equal( { blogId: 2, postId: 4 } );
 		} );
 
@@ -72,7 +73,7 @@ describe( 'actions', () => {
 					ID: 4,
 					feed_item_ID: 3,
 					is_external: false,
-				} ),
+				} )
 			).to.deep.equal( { feedId: 1, postId: 3 } );
 		} );
 	} );

@@ -1,3 +1,4 @@
+/** @format */
 import percentageFactory from 'percentage-regex';
 
 const percentageRegex = percentageFactory( { exact: true } );

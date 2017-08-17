@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'lodash';
 
 /**
  * Internal dependencies

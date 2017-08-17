@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  */
@@ -48,7 +49,7 @@ const CompactPost = ( { post, postByline, children, isDiscover } ) => {
 
 CompactPost.propTypes = {
 	post: React.PropTypes.object.isRequired,
-	postByline: React.PropTypes.string,
+	postByline: React.PropTypes.object,
 	isDiscover: React.PropTypes.bool,
 };
 

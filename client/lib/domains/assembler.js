@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-import find from 'lodash/find';
-import without from 'lodash/without';
-import mapKeys from 'lodash/mapKeys';
-import camelCase from 'lodash/camelCase';
+import { camelCase, find, mapKeys, without } from 'lodash';
+
 import i18n from 'i18n-calypso';
 
 /**
@@ -23,6 +21,7 @@ function createDomainObjects( dataTransferObject ) {
 		return {
 			autoRenewalMoment: domain.auto_renewal_date && i18n.moment( domain.auto_renewal_date ),
 			currentUserCanManage: domain.current_user_can_manage,
+			domainLockingAvailable: domain.domain_locking_available,
 			expirationMoment: domain.expiry && i18n.moment( domain.expiry ),
 			expired: domain.expired,
 			expirySoon: domain.expiry_soon,

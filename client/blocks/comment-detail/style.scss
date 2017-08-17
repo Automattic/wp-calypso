@@ -4,6 +4,11 @@
 	padding: 0;
 	transition: margin .15s linear;
 
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 1px $blue-medium, 0 0 0 3px $blue-light;
+		z-index: z-index( 'root', '.comment-detail.card.accessible-focus:focus' );
+	}
+
 	&.is-expanded {
 		margin: 16px auto;
 
@@ -12,9 +17,11 @@
 		}
 	}
 
-	&.is-collapsed:hover {
-		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
-		z-index: 1;
+	&.is-collapsed {
+		&:hover {
+			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
+			z-index: z-index( 'root', '.comment-detail.card.is-collapsed:hover' );
+		}
 	}
 
 	// If the comment is unapproved and collapsed, color it yellow.
@@ -46,6 +53,7 @@
 
 	strong {
 		color: $gray-text;
+		float: left;
 		margin-right: 8px;
 	}
 
@@ -325,7 +333,6 @@
 	display: flex;
 	flex-flow: row nowrap;
 	padding: 0 16px;
-	transition: padding-bottom .3s linear;
 
 	.gravatar {
 		height: 32px;
@@ -516,25 +523,31 @@ a.comment-detail__author-more-element {
 		background-color: lighten( $gray, 30% );
 		color: transparent;
 		height: 32px;
-		margin: 0 8px;
 		&:after {
 			background: transparent;
 		}
 	}
 
-	&.is-expanded .comment-detail__header {
-		border: none;
+	.comment-detail__header.is-preview {
+		cursor: default;
 	}
 
 	.gravatar {
 		width: 32px;
 	}
 
+	.comment-detail__author-preview {
+		margin-left: 8px;
+		padding: 3px 0;
+		width: 40px;
+	}
+
 	.comment-detail__author-info {
-		text-overflow: initial;
+		display: none;
 	}
 
 	.comment-detail__comment-preview {
+		margin: 0 8px;
 		width: 100%;
 	}
 

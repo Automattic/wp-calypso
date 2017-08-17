@@ -1,83 +1,83 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var countriesList = require( 'lib/countries-list' ).forSms(),
-	Card = require( 'components/card' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	FormCountrySelect = require( 'components/forms/form-country-select' ),
-	FormCurrencyInput = require( 'components/forms/form-currency-input' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormInputValidation = require( 'components/forms/form-input-validation' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormLegend = require( 'components/forms/form-legend' ),
-	FormPasswordInput = require( 'components/forms/form-password-input' ),
-	FormPhoneInput = require( 'components/forms/form-phone-input' ),
-	FormRadio = require( 'components/forms/form-radio' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
-	FormSelect = require( 'components/forms/form-select' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
-	FormStateSelector = require( 'components/forms/us-state-selector' ),
-	FormTelInput = require( 'components/forms/form-tel-input' ),
-	FormTextarea = require( 'components/forms/form-textarea' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	FormTextInputWithAction = require( 'components/forms/form-text-input-with-action' ),
-	FormTextInputWithAffixes = require( 'components/forms/form-text-input-with-affixes' ),
-	FormToggle = require( 'components/forms/form-toggle' ),
-	PhoneInput = require( 'components/phone-input' ),
-	CompactFormToggle = require( 'components/forms/form-toggle/compact' );
+import Card from 'components/card';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormCountrySelect from 'components/forms/form-country-select';
+import FormCurrencyInput from 'components/forms/form-currency-input';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
+import FormLabel from 'components/forms/form-label';
+import FormLegend from 'components/forms/form-legend';
+import FormPasswordInput from 'components/forms/form-password-input';
+import FormPhoneInput from 'components/forms/form-phone-input';
+import FormRadio from 'components/forms/form-radio';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import FormSelect from 'components/forms/form-select';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormStateSelector from 'components/forms/us-state-selector';
+import FormTelInput from 'components/forms/form-tel-input';
+import FormTextarea from 'components/forms/form-textarea';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormToggle from 'components/forms/form-toggle';
+import PhoneInput from 'components/phone-input';
 
-var FormFields = React.createClass( {
-	displayName: 'FormFields',
+/**
+ * Internal dependencies
+ */
+var countriesList = require( 'lib/countries-list' ).forSms();
 
-	mixins: [ PureRenderMixin ],
+class FormFields extends React.PureComponent {
+	static displayName = 'FormFields'; // Needed for devdocs/design
 
-	getInitialState: function() {
-		return {
-			checkedRadio: 'first',
-			toggled: false,
-			compactToggled: false,
-			phoneInput: { countryCode: 'US', value: '' }
-		};
-	},
+	state = {
+		checkedRadio: 'first',
+		toggled: false,
+		compactToggled: false,
+		phoneInput: { countryCode: 'US', value: '' },
+	};
 
-	handleRadioChange: function( event ) {
+	handleRadioChange = event => {
 		this.setState( { checkedRadio: event.currentTarget.value } );
-	},
+	};
 
-	handleToggle: function() {
+	handleToggle = () => {
 		this.setState( { toggled: ! this.state.toggled } );
-	},
+	};
 
-	handleCompactToggle: function() {
+	handleCompactToggle = () => {
 		this.setState( { compactToggled: ! this.state.compactToggled } );
-	},
+	};
 
-	handleAction: function() {
+	handleAction = () => {
 		alert( 'Thank you.' );
-	},
+	};
 
-	handlePhoneInputChange( data ) {
+	handlePhoneInputChange = data => {
 		this.setState( { phoneInput: data } );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div>
 				<p>
-					The form fields components act as wrapper components to aid in componentizing CSS.
-					Here is an example of all of the form fields components and their expected markup.
+					The form fields components act as wrapper components to aid in componentizing CSS. Here is
+					an example of all of the form fields components and their expected markup.
 				</p>
 
 				<p>
-					The following form fields components are wrapped in Card components to demonstrate the FormSectionHeading component.
+					The following form fields components are wrapped in Card components to demonstrate the
+					FormSectionHeading component.
 				</p>
 
 				<Card>
@@ -104,7 +104,9 @@ var FormFields = React.createClass( {
 					<FormFieldset>
 						<FormLabel htmlFor="username">Form Text Input</FormLabel>
 						<FormTextInput id="username" name="username" placeholder="Placeholder text..." />
-						<FormSettingExplanation>This is an explanation of FormTextInput.</FormSettingExplanation>
+						<FormSettingExplanation>
+							This is an explanation of FormTextInput.
+						</FormSettingExplanation>
 					</FormFieldset>
 
 					<FormFieldset>
@@ -141,8 +143,11 @@ var FormFields = React.createClass( {
 							placeholder="Enter a name for your site"
 							action="Continue"
 							onAction={ this.handleAction }
-							/>
-						<FormSettingExplanation>Action becomes avaliable when filled. Can be triggered by clicking button or pressing enter.</FormSettingExplanation>
+						/>
+						<FormSettingExplanation>
+							Action becomes avaliable when filled. Can be triggered by clicking button or pressing
+							enter.
+						</FormSettingExplanation>
 					</FormFieldset>
 
 					<FormFieldset>
@@ -152,7 +157,7 @@ var FormFields = React.createClass( {
 							placeholder="Placeholder text..."
 							prefix="Prefix"
 							suffix="Suffix"
-							/>
+						/>
 					</FormFieldset>
 
 					<FormFieldset>
@@ -173,37 +178,23 @@ var FormFields = React.createClass( {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="password">{ this.translate( 'Form Password Input' ) }</FormLabel>
-						<FormPasswordInput
-							id="password"
-							name="password" />
+						<FormLabel htmlFor="password">Form Password Input</FormLabel>
+						<FormPasswordInput id="password" name="password" />
 					</FormFieldset>
 
 					<FormLegend>Form Toggle</FormLegend>
-					<FormToggle
-						checked={ this.state.toggled }
-						onChange={ this.handleToggle }
-					/>
+					<FormToggle checked={ this.state.toggled } onChange={ this.handleToggle } />
 					<br />
-					<FormToggle
-						checked={ false }
-						disabled={ true }
-					/>
+					<FormToggle checked={ false } disabled />
 					<br />
-					<FormToggle
-						checked={ true }
-						disabled={ true }
-					/>
+					<FormToggle checked={ true } disabled />
 					<br />
 					<CompactFormToggle
 						checked={ this.state.compactToggled }
 						onChange={ this.handleCompactToggle }
 					/>
 					<br />
-					<CompactFormToggle
-						checked={ false }
-						disabled={ true }
-					/>
+					<CompactFormToggle checked={ false } disabled />
 
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>
@@ -215,7 +206,11 @@ var FormFields = React.createClass( {
 
 					<FormFieldset>
 						<FormLabel htmlFor="country_code">Form Country Select</FormLabel>
-						<FormCountrySelect name="country_code" id="country_code" countriesList={ countriesList } />
+						<FormCountrySelect
+							name="country_code"
+							id="country_code"
+							countriesList={ countriesList }
+						/>
 					</FormFieldset>
 
 					<FormFieldset>
@@ -226,12 +221,20 @@ var FormFields = React.createClass( {
 					<FormFieldset>
 						<FormLegend>Form Radios</FormLegend>
 						<FormLabel>
-							<FormRadio value="first" checked={ 'first' === this.state.checkedRadio } onChange={ this.handleRadioChange } />
+							<FormRadio
+								value="first"
+								checked={ 'first' === this.state.checkedRadio }
+								onChange={ this.handleRadioChange }
+							/>
 							<span>First radio</span>
 						</FormLabel>
 
 						<FormLabel>
-							<FormRadio value="second" checked={ 'second' === this.state.checkedRadio } onChange={ this.handleRadioChange } />
+							<FormRadio
+								value="second"
+								checked={ 'second' === this.state.checkedRadio }
+								onChange={ this.handleRadioChange }
+							/>
 							<span>Second radio</span>
 						</FormLabel>
 					</FormFieldset>
@@ -242,17 +245,34 @@ var FormFields = React.createClass( {
 					</FormFieldset>
 
 					<FormFieldset>
+						<FormLabel htmlFor="telInput_valid">Form Tel Input</FormLabel>
+						<FormTelInput name="telInput" id="telInput_valid" placeholder="Placeholder text..." isValid />
+						<FormInputValidation text="The phone number can be saved." />
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="telInput_error">Form Tel Input</FormLabel>
+						<FormTelInput name="telInput" id="telInput_error" placeholder="Placeholder text..." isError />
+						<FormInputValidation isError text="The phone number is invalid." />
+					</FormFieldset>
+
+					<FormFieldset>
 						<FormLabel>Form Phone Input</FormLabel>
 						<FormPhoneInput
 							initialCountryCode="US"
 							initialPhoneNumber="8772733049"
 							countriesList={ countriesList }
-							/>
+						/>
 					</FormFieldset>
 
 					<FormFieldset>
 						<FormLabel>Form Media Phone Input</FormLabel>
-						<PhoneInput countryCode={ this.state.phoneInput.countryCode } value={ this.state.phoneInput.value } countriesList={ countriesList } onChange={ this.handlePhoneInputChange } />
+						<PhoneInput
+							countryCode={ this.state.phoneInput.countryCode }
+							value={ this.state.phoneInput.value }
+							countriesList={ countriesList }
+							onChange={ this.handlePhoneInputChange }
+						/>
 					</FormFieldset>
 
 					<FormFieldset>
@@ -266,18 +286,56 @@ var FormFields = React.createClass( {
 					</FormFieldset>
 
 					<FormFieldset>
+						<FormLabel htmlFor="currency_input_valid">Form Currency Input</FormLabel>
+						<FormCurrencyInput
+							name="currency_input"
+							id="currency_input_valid"
+							currencySymbolPrefix="$"
+							placeholder="Placeholder text..."
+							isValid
+						/>
+						<FormInputValidation text="The price is very good." />
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="currency_input_error">Form Currency Input</FormLabel>
+						<FormCurrencyInput
+							name="currency_input"
+							id="currency_input_error"
+							currencySymbolPrefix="$"
+							placeholder="Placeholder text..."
+							isError
+						/>
+						<FormInputValidation isError text="The price is invalid." />
+					</FormFieldset>
+
+					<FormFieldset>
 						<FormLabel htmlFor="textarea">Form Textarea</FormLabel>
-						<FormTextarea name="textarea" id="textarea" placeholder="Placeholder text..."></FormTextarea>
+						<FormTextarea name="textarea" id="textarea" placeholder="Placeholder text..." />
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="textarea_valid">Form Textarea</FormLabel>
+						<FormTextarea name="textarea" id="textarea_valid" placeholder="Placeholder text..." isValid />
+						<FormInputValidation text="Your text can be saved." />
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="textarea_error">Form Textarea</FormLabel>
+						<FormTextarea name="textarea" id="textarea_error" placeholder="Placeholder text..." isError />
+						<FormInputValidation isError text="Your text is invalid." />
 					</FormFieldset>
 
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>
-						<FormButton type="button" isPrimary={ false }>Secondary Form Button</FormButton>
+						<FormButton type="button" isPrimary={ false }>
+							Secondary Form Button
+						</FormButton>
 					</FormButtonsBar>
 				</Card>
 			</div>
 		);
 	}
-} );
+}
 
-module.exports = FormFields;
+export default FormFields;

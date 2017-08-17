@@ -125,16 +125,7 @@
 	margin: 0;
 
 	&.is-root {
-		margin-top: 0;
-	}
-
-	&.is-children {
-		margin-left: -2px;
-		border-left: 2px solid lighten( $gray, 10% );
-
-		.comments__comment-author .gravatar {
-			left: -15px;
-		}
+		margin-top: 20px;
 	}
 
 	.comments__form {
@@ -227,16 +218,16 @@
 
 // Individual Comment
 .comments__comment {
-	padding: 6px 0 0;
-	margin: 24px 0 0;
+	margin-top: 20px;
 	position: relative;
 
-	&.depth-0, &.depth-1, &.depth-2 {
-		padding-left: 48px;
-		margin-top: 12px;
+	&.depth-0,
+	&.depth-1,
+	&.depth-2 {
+		padding-left: 42px;
 
 		> .comments__comment-author .gravatar {
-			left: 8px;
+			left: 0;
 		}
 	}
 
@@ -259,67 +250,95 @@
 	}
 }
 
-.comments__comment-author {
-	font-weight: 600;
-	color: darken( $gray, 30% );
-
-	.gravatar {
-		position: absolute;
-			top: 14px;
-			left: -41px;
-		border-radius: 48px;
-
-		@include breakpoint( "<480px" ) {
-			top: 12px;
-		}
-	}
-}
-
-.comments__comment-trackbackicon {
-	position: absolute;
-		top: 12px;
-		left: 8px;
-	border-radius: 50%;
-	background-color: $gray-light;
-	width: 32px;
-	height: 32px;
+.comments__comment-respondee {
+	color: $gray;
+	margin-right: 12px;
 
 	.gridicon {
-		height: 24px;
-	  	fill: lighten( $gray, 10% );
-	  	position: absolute;
-	  		top: 50%;
-	  		margin-top: -12px;
-	  		left: 50%;
-	  		margin-left: -12px;
+		fill: $gray;
+		position: relative;
+			left: -5px;
+			top: 3px;
 	}
 }
 
-.comments__comment-username {
-	font-size: 15px;
-	color: darken( $gray, 30% );
-}
-
-a.comments__comment-username {
-	color: $blue-medium;
+.comments__comment-respondee .comments__comment-respondee-link {
+	color: $gray;
+	font-weight: normal;
+	margin-left: -2px;
 
 	&:hover {
 		color: $blue-light;
 	}
 }
 
-.comments__comment-timestamp {
-	margin-top: -8px;
+.comments__comment-author {
+	color: darken( $gray, 30% );
+	display: flex;
+	flex-wrap: wrap;
+	font-size: 14px;
+	font-weight: 500;
+
+	.gravatar {
+		border-radius: 48px;
+		position: absolute;
+			top: 8px;
+			left: -41px;
+	}
+}
+
+.comments__comment-trackbackicon {
+	background-color: $gray-light;
+	border-radius: 50%;
+	height: 32px;
+	margin-right: 9px;
+	position: absolute;
+		left: 1px;
+		top: -1px;
+	width: 32px;
+
+	.gridicon {
+		height: 24px;
+		fill: lighten( $gray, 10% );
+		margin-left: 4px;
+		margin-top: 4px;
+	}
 
 	@include breakpoint( "<480px" ) {
-		margin-top: -4px;
+		top: -4px;
+	}
+}
+
+// Avoids long trackback links from wrapping
+// Using General Sibling Selector so this doesn't affect regular comment usernames
+.comments__comment-trackbackicon ~ .comments__comment-username {
+	height: 16px * 1.6;
+	overflow: hidden;
+	white-space: nowrap;
+
+	&::after {
+		@include long-content-fade( $size: 35px );
+	}
+}
+
+.comments__comment-username {
+	color: darken( $gray, 30% );
+	height: 21px;
+	margin-right: 7px;
+}
+
+a.comments__comment-username {
+	color: $blue-medium;
+	height: 21px;
+
+	&:hover {
+		color: $blue-light;
 	}
 }
 
 .comments__comment-timestamp a {
+	color: $gray;
 	font-weight: normal;
-	font-size: 13px;
-	color: lighten( $gray, 10% );
 	text-decoration: none;
 
 	&:hover {
@@ -336,9 +355,8 @@ a.comments__comment-username {
 
 .comments__comment-content {
 	@extend %content-font;
-	padding-top: 4px;
 	font-size: 15px;
-	line-height: 1.8;
+	line-height: 25px;
 	word-break: break-word;
 
 	p {
@@ -362,9 +380,9 @@ a.comments__comment-username {
 // Actions for Individual Comments
 .comments__comment-actions {
 	list-style: none;
-	margin-left: -4px;
 	color: $gray;
 	font-size: 14px;
+	margin-top: 2px;
 
 	button {
 		display: inline-block;
@@ -380,11 +398,18 @@ a.comments__comment-username {
 			margin-right: 4px;
 		}
 
+		.gridicons-star,
+		.gridicons-star-outline {
+			top: 3px;
+		}
+
 		.like-button__like-icons {
 			margin-right: 18px;
 		}
 
 		&.comments__comment-actions-reply {
+			margin-left: -7px;
+
 			.gridicon {
 				transform: rotate( 180deg );
 			}

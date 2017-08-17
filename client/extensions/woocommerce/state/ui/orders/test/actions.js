@@ -17,11 +17,11 @@ describe( 'actions', () => {
 		it( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
-			updateCurrentOrdersQuery( siteId, { page: 2, status: 'completed' } )( dispatch, getState );
+			updateCurrentOrdersQuery( siteId, { page: 2, search: 'test' } )( dispatch, getState );
 			expect( dispatch ).to.have.been.calledWith( {
 				type: WOOCOMMERCE_UI_ORDERS_SET_QUERY,
 				siteId,
-				query: { page: 2, status: 'completed' }
+				query: { page: 2, search: 'test' }
 			} );
 		} );
 	} );

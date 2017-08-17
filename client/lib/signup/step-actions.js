@@ -14,6 +14,7 @@ import {
 import async from 'async';
 import { parse as parseURL } from 'url';
 import page from 'page';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -285,14 +286,21 @@ module.exports = {
 		SignupCart.addToCart( siteId, newCartItems, error => callback( error, { cartItem, privacyItem } ) );
 	},
 
-	createAccount( callback, dependencies, { userData, flowName, queryArgs, service, token }, reduxStore ) {
+	createAccount( callback, dependencies, { userData, flowName, queryArgs, service, access_token, id_token }, reduxStore ) {
 		const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 		const surveySiteType = getSurveySiteType( reduxStore.getState() ).trim();
 
 		if ( service ) {
 			// We're creating a new social account
-			wpcom.undocumented().usersSocialNew( service, token, flowName, ( error, response ) => {
-				const errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined;
+			wpcom.undocumented().usersSocialNew( {
+				service,
+				access_token,
+				id_token,
+				signup_flow_name: flowName,
+			}, ( error, response ) => {
+				const errors = error && error.error
+					? [ { error: error.error, message: error.message, email: get( error, 'data.email' ) } ]
+					: undefined;
 
 				if ( errors ) {
 					callback( errors );

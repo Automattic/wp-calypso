@@ -1,0 +1,37 @@
+.order-customer {
+	.order-customer__billing-details,
+	.order-customer__shipping-details {
+		margin-bottom: 16px;
+		color: $gray-text-min;
+		font-size: 12px;
+		text-transform: uppercase;
+	}
+
+	h4 {
+		font-weight: bold;
+	}
+
+	.order-customer__container {
+		display: flex;
+	}
+
+	.order-customer__billing,
+	.order-customer__shipping {
+		flex: 1 0 50%;
+	}
+
+	.order-customer__shipping {
+		.order__shipping-address {
+			margin-bottom: 0;
+		}
+	}
+
+	.order-customer__billing-address,
+	.order-customer__shipping-address {
+		margin-bottom: 1.5em;
+
+		p {
+			margin-bottom: 0;
+		}
+	}
+}

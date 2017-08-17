@@ -21,6 +21,7 @@ import { currentUserHasFlag } from 'state/current-user/selectors';
 import { isSiteUpgradeable } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
+import { getProductsList } from 'state/products-list/selectors';
 
 const wpcom = wp.undocumented();
 
@@ -156,6 +157,6 @@ export default connect(
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 		isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
-		productsList: state.productsList.items,
+		productsList: getProductsList( state ),
 	} )
 )( localize( MapDomain ) );

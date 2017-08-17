@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import clone from 'lodash/clone';
+import { clone } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 

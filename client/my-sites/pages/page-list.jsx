@@ -9,6 +9,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import ListEnd from 'components/list-end';
 import QueryPosts from 'components/data/query-posts';
 import Page from './page';
 import infiniteScroll from 'lib/mixins/infinite-scroll';
@@ -291,7 +292,7 @@ const Pages = localize( React.createClass( {
 
 			// Render each page
 			return (
-				<Page key={ 'page-' + page.global_ID } page={ page } multisite={ this.props.siteId === false } />
+				<Page key={ 'page-' + page.global_ID } page={ page } multisite={ this.props.siteId === null } />
 			);
 		}, this );
 
@@ -307,7 +308,7 @@ const Pages = localize( React.createClass( {
 			<div id="pages" className="pages__page-list">
 				{ blogPostsPage }
 				{ rows }
-				{ this.props.lastPage && pages.length ? <div className="infinite-scroll-end" /> : null }
+				{ this.props.lastPage && pages.length ? <ListEnd /> : null }
 			</div>
 		);
 	},
