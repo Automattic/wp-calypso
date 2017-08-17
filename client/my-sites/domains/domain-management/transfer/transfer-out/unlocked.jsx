@@ -18,16 +18,9 @@ import { displayRequestTransferCodeResponseNotice } from './shared';
 import support from 'lib/url/support';
 
 class Unlocked extends React.Component {
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			submitting: false,
-			// For protected domains, the flow in transfer-out/index will
-			// send users to transfer-out/locked and send an initial auth
-			// code request from there before the user gets here.
-			sent: ! this.isDomainAlwaysTransferrable(),
-		};
+	state = {
+		submitting: false,
+		sent: ! this.isDomainAlwaysTransferrable(),
 	}
 
 	componentWillUnmount() {
