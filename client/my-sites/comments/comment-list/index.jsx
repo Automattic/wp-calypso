@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, keyBy, keys, map, noop, omit, size, slice, uniq } from 'lodash';
+import { get, map, noop, size, slice, uniq } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -59,16 +60,16 @@ export class CommentList extends Component {
 		lastUndo: null,
 		page: 1,
 		persistedComments: [],
-		// TODO: replace {} with [] after persistedComments is merged
-		selectedComments: {},
+		selectedComments: [],
 	};
+
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.status !== nextProps.status ) {
 			this.setState( {
 				lastUndo: null,
 				page: 1,
 				persistedComments: [],
-				selectedComments: {},
+				selectedComments: [],
 			} );
 		}
 	}
@@ -79,7 +80,7 @@ export class CommentList extends Component {
 
 		this.setState( {
 			page,
-			selectedComments: {},
+			selectedComments: [],
 		} );
 	};
 
@@ -88,9 +89,6 @@ export class CommentList extends Component {
 
 		this.props.deleteComment( commentId, postId );
 	}
-
-	// TODO: remove after persistedComments is merged
-	getComment = commentId => find( this.getComments(), [ 'ID', commentId ] );
 
 	getComments = () => uniq( [ ...this.state.persistedComments, ...this.props.comments ] ).sort( ( a, b ) => b - a );
 
@@ -117,10 +115,9 @@ export class CommentList extends Component {
 
 	isCommentPersisted = commentId => -1 !== this.state.persistedComments.indexOf( commentId );
 
-	// TODO: replace with array logic after persistedComments is merged
-	isCommentSelected = commentId => !! this.state.selectedComments[ commentId ];
+	isCommentSelected = () => false;
 
-	isSelectedAll = () => this.getComments().length === size( this.state.selectedComments );
+	isSelectedAll = () => false;
 
 	removeFromPersistedComments = commentId => this.setState(
 		( { persistedComments } ) => ( {
@@ -157,19 +154,7 @@ export class CommentList extends Component {
 		this.props.replyComment( commentText, postId, parentCommentId, { alsoApprove } );
 	}
 
-	// TODO: rewrite after persistedComments is merged
-	setBulkStatus = status => () => {
-		this.props.removeNotice( 'comment-notice-bulk' );
-
-		this.props.setBulkStatus( keys( this.state.selectedComments ), status );
-
-		this.showBulkNotice( status, this.state.selectedComments );
-
-		this.setState( {
-			isBulkEdit: false,
-			selectedComments: {},
-		} );
-	};
+	setBulkStatus = () => noop;
 
 	setCommentStatus = ( comment, status, options = { isUndo: false, doPersist: false, showNotice: true } ) => {
 		const {
@@ -211,36 +196,7 @@ export class CommentList extends Component {
 		}
 	}
 
-	// TODO: rewrite after persistedComments is merged
-	showBulkNotice = ( newStatus, selectedComments ) => {
-		const { translate } = this.props;
-
-		const message = get( {
-			approved: translate( 'All selected comments approved.' ),
-			unapproved: translate( 'All selected comments unapproved.' ),
-			spam: translate( 'All selected comments marked as spam.' ),
-			trash: translate( 'All selected comments moved to trash.' ),
-			'delete': translate( 'All selected comments deleted permanently.' ),
-		}, newStatus );
-
-		if ( ! message ) {
-			return;
-		}
-
-		const options = Object.assign(
-			{
-				duration: 5000,
-				id: 'comment-notice-bulk',
-				isPersistent: true,
-			},
-			'delete' !== newStatus && {
-				button: translate( 'Undo' ),
-				onClick: () => this.undoBulkStatus( selectedComments ),
-			}
-		);
-
-		this.props.successNotice( message, options );
-	}
+	showBulkNotice = () => noop;
 
 	showNotice = ( comment, newStatus, options = { doPersist: false } ) => {
 		const { translate } = this.props;
@@ -288,7 +244,7 @@ export class CommentList extends Component {
 		this.props.successNotice( message, noticeOptions );
 	}
 
-	toggleBulkEdit = () => this.setState( { isBulkEdit: ! this.state.isBulkEdit } );
+	toggleBulkEdit = () => this.setState( ( { isBulkEdit } ) => ( { isBulkEdit: ! isBulkEdit } ) );
 
 	toggleCommentLike = comment => {
 		const { commentId, isLiked, postId, status } = comment;
@@ -309,36 +265,7 @@ export class CommentList extends Component {
 		}
 	}
 
-	// TODO: rewrite after persistedComments is merged
-	toggleCommentSelected = commentId => {
-		// TODO: Replace with Redux getComment()
-		const { i_like, status } = this.getComment( commentId );
-		const { selectedComments } = this.state;
-
-		this.setState( {
-			selectedComments: this.isCommentSelected( commentId )
-				? omit( selectedComments, commentId )
-				: {
-					...selectedComments,
-					[ commentId ]: { i_like, status },
-				},
-		} );
-	}
-
-	// TODO: rewrite after persistedComments is merged
-	toggleSelectAll = () => {
-		this.setState( {
-			selectedComments: this.isSelectedAll()
-				? {}
-				: keyBy( map( this.getComments(), ( { ID, i_like, status } ) => ( { ID, i_like, status } ) ), 'ID' ),
-		} );
-	}
-
-	// TODO: rewrite after persistedComments is merged
-	undoBulkStatus = selectedComments => {
-		this.props.removeNotice( 'comment-notice-bulk' );
-		this.props.undoBulkStatus( selectedComments );
-	}
+	toggleCommentSelected = () => noop;
 
 	updatePersistedComments = ( commentId, isUndo ) => {
 		if ( isUndo ) {
