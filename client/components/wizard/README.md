@@ -13,8 +13,10 @@ const components = {
 const steps = [ 'first', 'second' ];
 
 <Wizard
+	backText="Previous"
 	basePath="/section/wizard"
 	components={ components }
+	forwardText="Next"
 	steps={ steps }
 	stepName="first" />
 ```
@@ -22,6 +24,15 @@ const steps = [ 'first', 'second' ];
 ## Props
 
 The following props can be passed to the `Wizard` component:
+
+### `backText`
+
+<table>
+	<tr><td>Type</td><td>String</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+</table>
+
+Link text for navigating to the previous step in the wizard.
 
 ### `basePath`
 
@@ -42,6 +53,15 @@ Used when navigating between steps. The URL that the user is sent to will be con
 
 An object of React components that will be rendered at each step in the wizard. Each key should map
 to one of the values in the `steps` array (see below).
+
+### `forwardText`
+
+<table>
+	<tr><td>Type</td><td>String</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+</table>
+
+Link text for navigating to the next step in the wizard.
 
 ### `steps`
 

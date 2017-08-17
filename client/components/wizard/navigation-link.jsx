@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -11,24 +11,33 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 
-const NavigationLink = ( { direction, href, translate } ) => {
-	const text = ( direction === 'back' ) ? translate( 'Back' ) : translate( 'Skip for now' );
+class NavigationLink extends Component {
+	static propTypes = {
+		direction: PropTypes.oneOf( [ 'back', 'forward' ] ).isRequired,
+		href: PropTypes.string,
+		text: PropTypes.string,
+		translate: PropTypes.func.isRequired,
+	}
 
-	return (
-		<Button compact borderless
-			className="wizard__navigation-link"
-			href={ href }>
-			{ direction === 'back' && <Gridicon icon="arrow-left" size={ 18 } /> }
-			{ text }
-			{ direction === 'forward' && <Gridicon icon="arrow-right" size={ 18 } /> }
-		</Button>
-	);
-};
+	getText = () => {
+		const { direction, text, translate } = this.props;
 
-NavigationLink.propTypes = {
-	direction: PropTypes.oneOf( [ 'back', 'forward' ] ).isRequired,
-	href: PropTypes.string,
-	translate: PropTypes.func.isRequired,
-};
+		return text || ( direction === 'back' ? translate( 'Back' ) : translate( 'Skip for now' ) );
+	}
+
+	render() {
+		const { direction, href } = this.props;
+
+		return (
+			<Button compact borderless
+				className="wizard__navigation-link"
+				href={ href }>
+				{ direction === 'back' && <Gridicon icon="arrow-left" size={ 18 } /> }
+				{ this.getText() }
+				{ direction === 'forward' && <Gridicon icon="arrow-right" size={ 18 } /> }
+			</Button>
+		);
+	}
+}
 
 export default localize( NavigationLink );
