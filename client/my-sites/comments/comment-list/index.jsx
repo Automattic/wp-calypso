@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, map, noop, size, slice, uniq } from 'lodash';
+import { find, get, map, noop, size, slice, uniq } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -117,7 +117,7 @@ export class CommentList extends Component {
 
 	isCommentPersisted = commentId => -1 !== this.state.persistedComments.indexOf( commentId );
 
-	isCommentSelected = commentId => -1 !== this.state.selectedComments.indexOf( commentId );
+	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
 
 	isSelectedAll = () => {
 		const visibleComments = this.getCommentsPage( this.getComments(), this.state.page );
@@ -270,28 +270,22 @@ export class CommentList extends Component {
 		}
 	}
 
-	toggleCommentSelected = commentId => {
-		if ( this.isCommentSelected( commentId ) ) {
+	toggleCommentSelected = comment => {
+		if ( this.isCommentSelected( comment.commentId ) ) {
 			return this.setState(
 				( { selectedComments } ) => ( {
-					selectedComments: selectedComments.filter( c => c !== commentId ),
+					selectedComments: selectedComments.filter( ( { commentId } ) => comment.commentId !== commentId ),
 				} )
 			);
 		}
 		this.setState(
 			( { selectedComments } ) => ( {
-				selectedComments: selectedComments.concat( commentId ),
+				selectedComments: selectedComments.concat( comment ),
 			} )
 		);
 	}
 
-	toggleSelectAll = () => {
-		const visibleComments = this.getCommentsPage( this.getComments(), this.state.page );
-		if ( this.isSelectedAll() ) {
-			return this.setState( { selectedComments: [] } );
-		}
-		this.setState( { selectedComments: visibleComments } );
-	}
+	toggleSelectAll = selectedComments => this.setState( { selectedComments } );
 
 	updatePersistedComments = ( commentId, isUndo ) => {
 		if ( isUndo ) {
@@ -343,10 +337,12 @@ export class CommentList extends Component {
 				}
 
 				<CommentNavigation
+					commentsPage={ commentsPage }
 					isBulkEdit={ isBulkEdit }
 					isSelectedAll={ this.isSelectedAll() }
 					selectedCount={ size( selectedComments ) }
 					setBulkStatus={ this.setBulkStatus }
+					siteId={ siteId }
 					siteFragment={ siteFragment }
 					status={ status }
 					toggleBulkEdit={ this.toggleBulkEdit }

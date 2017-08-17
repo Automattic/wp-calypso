@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -131,10 +132,7 @@ export class CommentDetail extends Component {
 
 	toggleLike = () => this.props.toggleCommentLike( getCommentStatusAction( this.props ) );
 
-	toggleSelected = () => {
-		const { commentId, toggleCommentSelected } = this.props;
-		toggleCommentSelected( commentId );
-	}
+	toggleSelected = () => this.props.toggleCommentSelected( getCommentStatusAction( this.props ) );
 
 	toggleSpam = () => {
 		const { commentStatus, setCommentStatus } = this.props;
