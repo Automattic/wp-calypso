@@ -386,7 +386,7 @@ class RequiredPluginsInstallView extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	const sitePlugins = site ? getPlugins( state, [ site ] ) : [];
+	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
 
 	return {
 		site,
