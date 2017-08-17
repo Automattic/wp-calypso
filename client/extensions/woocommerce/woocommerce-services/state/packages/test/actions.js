@@ -14,12 +14,12 @@ import {
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_SAVING,
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_MODAL_ERRORS,
 	WOOCOMMERCE_SERVICES_PACKAGES_UPDATE_PACKAGES_FIELD,
-	WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEF,
-	WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEF,
+	WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEFINED,
+	WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEFINED,
 	WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PACKAGE,
 	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_OUTER_DIMENSIONS,
-	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL,
-	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PACKAGE,
+	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL_PREDEFINED,
+	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PREDEFINED,
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_ADD_MODE,
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCHING,
 } from '../../action-types';
@@ -153,7 +153,7 @@ describe( 'Packages state actions', () => {
 
 	it( '#removePredefinedPackage', () => {
 		expect( removePredefinedPackage( siteId, 'service', 'box' ) ).to.eql( {
-			type: WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEF,
+			type: WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEFINED,
 			serviceId: 'service',
 			packageId: 'box',
 			siteId,
@@ -162,14 +162,14 @@ describe( 'Packages state actions', () => {
 
 	it( '#savePredefinedPackages', () => {
 		expect( savePredefinedPackages( siteId ) ).to.eql( {
-			type: WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEF,
+			type: WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEFINED,
 			siteId,
 		} );
 	} );
 
 	it( '#toggleAll', () => {
 		expect( toggleAll( siteId, 'service', 'priority', true ) ).to.eql( {
-			type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL,
+			type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL_PREDEFINED,
 			serviceId: 'service',
 			groupId: 'priority',
 			checked: true,
@@ -179,7 +179,7 @@ describe( 'Packages state actions', () => {
 
 	it( '#togglePackage', () => {
 		expect( togglePackage( siteId, 'service', 'box' ) ).to.eql( {
-			type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PACKAGE,
+			type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PREDEFINED,
 			serviceId: 'service',
 			packageId: 'box',
 			siteId,
