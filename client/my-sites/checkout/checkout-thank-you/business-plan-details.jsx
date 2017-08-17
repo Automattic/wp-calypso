@@ -48,8 +48,10 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 
 			<PurchaseDetail
 				icon="stats-alt"
-				title={ i18n.translate( 'Stats from Google Analytics' ) }
-				description={ i18n.translate( 'Connect to Google Analytics for the perfect complement to WordPress.com stats.' ) }
+				title={ i18n.translate( 'Connect to Google Analytics' ) }
+				description={ i18n.translate(
+					'Complement WordPress.com\'s stats with Google\'s in-depth look at your visitors and traffic patterns.'
+				) }
 				buttonText={ i18n.translate( 'Connect Google Analytics' ) }
 				href={ '/settings/analytics/' + selectedSite.slug } />
 		</div>
