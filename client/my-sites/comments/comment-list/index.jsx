@@ -169,7 +169,7 @@ export class CommentList extends Component {
 
 		each( this.state.selectedComments, comment => {
 			if ( 'delete' === status ) {
-				this.deleteCommentPermanently( comment.commentId, comment.postId );
+				this.props.deleteComment( comment.commentId, comment.postId, { showSuccessNotice: false } );
 				return;
 			}
 
@@ -469,12 +469,12 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 
-	deleteComment: ( commentId, postId ) => dispatch( withAnalytics(
+	deleteComment: ( commentId, postId, options = { showSuccessNotice: true } ) => dispatch( withAnalytics(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_comment_management_delete' ),
 			bumpStat( 'calypso_comment_management', 'comment_deleted' )
 		),
-		deleteComment( siteId, postId, commentId )
+		deleteComment( siteId, postId, commentId, options )
 	) ),
 
 	likeComment: ( commentId, postId, analytics = { alsoApprove: false } ) => dispatch( withAnalytics(

@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { get, includes, map } from 'lodash';
+import { get, includes, isUndefined, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,6 +42,13 @@ export class CommentNavigation extends Component {
 		selectedCount: 0,
 		status: 'unapproved',
 	};
+
+	bulkDeletePermanently = () => {
+		const { setBulkStatus, translate } = this.props;
+		if ( isUndefined( window ) || window.confirm( translate( 'Delete these comments permanently?' ) ) ) {
+			setBulkStatus( 'delete' )();
+		}
+	}
 
 	changeFilter = status => () => this.props.recordChangeFilter( status );
 
@@ -158,7 +165,7 @@ export class CommentNavigation extends Component {
 								compact
 								scary
 								disabled={ ! selectedCount }
-								onClick={ setBulkStatus( 'delete' ) }
+								onClick={ this.bulkDeletePermanently }
 							>
 								{ translate( 'Delete' ) }
 							</Button>
