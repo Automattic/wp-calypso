@@ -29,6 +29,7 @@ import consoleDispatcher from './console-dispatch';
 import countries from './countries/reducer';
 import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
+import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
 import geo from './geo/reducer';
@@ -99,6 +100,7 @@ const reducers = {
 	countries,
 	countryStates,
 	currentUser,
+	dataRequests,
 	documentHead,
 	domains,
 	extensions,
