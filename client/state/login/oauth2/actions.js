@@ -7,18 +7,13 @@ import {
 	OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
 } from 'state/action-types';
 import wpcom from 'lib/wp';
+import { cachingActionCreatorFactory } from 'state/utils';
 
-export const fetchOAuth2ClientData = ( clientId ) => dispatch => {
-	dispatch( {
-		type: OAUTH2_CLIENT_DATA_REQUEST,
-		clientId,
-	} );
-
-	return wpcom.undocumented().oauth2ClientId( clientId ).then( wpcomResponse => {
-		dispatch( { type: OAUTH2_CLIENT_DATA_REQUEST_SUCCESS, data: wpcomResponse } );
-
-		return wpcomResponse;
-	}, wpcomError => {
+export const fetchOAuth2ClientData = cachingActionCreatorFactory(
+	clientId => wpcom.undocumented().oauth2ClientId( clientId ),
+	dispatch => clientId => dispatch( { type: OAUTH2_CLIENT_DATA_REQUEST, clientId, } ),
+	dispatch => wpcomResponse => dispatch( { type: OAUTH2_CLIENT_DATA_REQUEST_SUCCESS, data: wpcomResponse } ),
+	dispatch => wpcomError => {
 		const error = {
 			message: wpcomError.message,
 			code: wpcomError.error,
@@ -30,5 +25,5 @@ export const fetchOAuth2ClientData = ( clientId ) => dispatch => {
 		} );
 
 		return Promise.reject( error );
-	} );
-};
+	},
+);
