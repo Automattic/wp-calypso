@@ -103,10 +103,6 @@
 .store-sidebar__sidebar {
 	display: block;
 
-	.site {
-		padding: 6px 0;
-	}
-
 	.store-sidebar__ground-control {
 		align-items: center;
 		border-bottom: 1px solid darken( $sidebar-bg-color, 10% );
@@ -125,7 +121,7 @@
 		border-left: 1px solid darken( $sidebar-bg-color, 10% );
 		display: inline-block;
 		flex-grow: 1;
-		min-height: 58px;
+		min-height: 46px;
 	}
 
 	.sidebar__menu {
@@ -187,7 +183,7 @@
 			a {
 				position: fixed;
 				z-index: 1;
-				margin-top: 10px;
+				margin-top: 4px;
 				background: transparent;
 				border: none;
 			}

@@ -1,7 +1,7 @@
 .action-header__header {
 	width: 100%;
-	min-height: 58px;
-	padding: 8px 16px 7px;
+	min-height: 46px;
+	padding: 2px 16px 2px;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -39,6 +39,16 @@
 
 	.button {
 		white-space: nowrap;
+		padding: 5px 14px 7px;
+		
+		&.is-borderless {
+			padding: 0;
+			margin-top: -6px;
+		}
+		
+		&.is-borderless .gridicon{
+			margin-right: 2px;
+		}
 
 		&:not( :first-child ) {
 			margin-left: 24px;
