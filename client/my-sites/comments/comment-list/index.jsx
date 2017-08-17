@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, map, noop, size, slice, uniq } from 'lodash';
+import { each, find, get, map, noop, size, slice, uniq } from 'lodash';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /**
@@ -159,7 +159,31 @@ export class CommentList extends Component {
 		this.props.replyComment( commentText, postId, parentCommentId, { alsoApprove } );
 	}
 
-	setBulkStatus = () => noop;
+	setBulkStatus = status => () => {
+		const { status: listStatus } = this.props;
+		this.props.removeNotice( 'comment-notice-bulk' );
+
+		// Only persist comments if they toggle between approved and unapproved
+		const doPersist = ( 'approved' === listStatus && 'unapproved' === status ) ||
+			( 'unapproved' === listStatus && 'approved' === status );
+
+		each( this.state.selectedComments, comment => {
+			if ( 'delete' === status ) {
+				this.deleteCommentPermanently( comment.commentId, comment.postId );
+				return;
+			}
+
+			this.setCommentStatus( comment, status, {
+				isUndo: false,
+				doPersist,
+				showNotice: false,
+			} );
+		} );
+
+		this.showBulkNotice( status );
+
+		this.setState( { isBulkEdit: false, selectedComments: [] } );
+	};
 
 	setCommentStatus = ( comment, status, options = { isUndo: false, doPersist: false, showNotice: true } ) => {
 		const {
@@ -201,7 +225,29 @@ export class CommentList extends Component {
 		}
 	}
 
-	showBulkNotice = () => noop;
+	showBulkNotice = newStatus => {
+		const { translate } = this.props;
+
+		const message = get( {
+			approved: translate( 'All selected comments approved.' ),
+			unapproved: translate( 'All selected comments unapproved.' ),
+			spam: translate( 'All selected comments marked as spam.' ),
+			trash: translate( 'All selected comments moved to trash.' ),
+			'delete': translate( 'All selected comments deleted permanently.' ),
+		}, newStatus );
+
+		if ( ! message ) {
+			return;
+		}
+
+		const noticeOptions = {
+			duration: 5000,
+			id: 'comment-notice-bulk',
+			isPersistent: true,
+		};
+
+		this.props.successNotice( message, noticeOptions );
+	};
 
 	showNotice = ( comment, newStatus, options = { doPersist: false } ) => {
 		const { translate } = this.props;
