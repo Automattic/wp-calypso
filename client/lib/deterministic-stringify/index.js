@@ -1,32 +1,38 @@
-function deterministStringify( source ) {
-	var namespace = [],
-		keys;
-	if ( typeof source !== 'object' ) {
-		if ( typeof source === 'undefined' ) {
-			return 'undefined';
-		}
-		if ( typeof source === 'string' ) {
-			return "'" + source.toString() + "'";
-		}
-		return source.toString();
-	}
-	if ( Array.isArray( source ) ) {
-		source = source.sort();
-		source.forEach( function( item ) {
-			namespace.push( deterministStringify( item ) );
-		} );
-		return namespace.join( ',' );
-	}
+export function deterministicStringify( source ) {
 	if ( source === null ) {
 		return 'null';
 	}
 
-	keys = Object.keys( source );
-	keys.sort();
-	keys.forEach( function( key ) {
-		namespace.push( key + '=' + deterministStringify( source[ key ] ) );
-	} );
-	return namespace.join( '&' );
+	// Handle primitive data types:
+	// boolean, number, string, undefined
+	if ( typeof source !== 'object' ) {
+		if ( typeof source === 'undefined' ) {
+			return 'undefined';
+		}
+
+		if ( typeof source === 'string' ) {
+			return `'${ source.toString() }'`;
+		}
+
+		return source.toString();
+	}
+
+	// arrays are objects too so we have to
+	// manually ask if this is _also_ an array
+	if ( Array.isArray( source ) ) {
+		return source
+			.sort()
+			.map( deterministicStringify )
+			.join( ',' );
+	}
+
+	// else return stringified object with
+	// keys in alphabetical order
+	return Object
+		.keys( source )
+		.sort()
+		.map( key => `${ key }=${ deterministicStringify( source[ key ] ) }` )
+		.join( '&' );
 }
 
-module.exports = deterministStringify;
+export default deterministicStringify;
