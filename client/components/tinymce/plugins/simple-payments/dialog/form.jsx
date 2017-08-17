@@ -166,7 +166,7 @@ class ProductForm extends Component {
 						label={ translate( 'Email' ) }
 						explanation={ translate(
 							'This is where PayPal will send your money.' +
-								" To claim a payment, you'll need a {{paypalLink}}Paypal account{{/paypalLink}}" +
+								" To claim a payment, you'll need a {{paypalLink}}PayPal account{{/paypalLink}}" +
 								' connected to a bank account.',
 							{
 								components: {
