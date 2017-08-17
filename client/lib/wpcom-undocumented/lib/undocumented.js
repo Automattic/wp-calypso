@@ -1849,7 +1849,7 @@ Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {
 };
 
 Undocumented.prototype.requestTransferCode = function( options, fn ) {
-	var { domainName, unlock, disablePrivacy } = options,
+	const { domainName, unlock, disablePrivacy } = options,
 		data = {
 			domainStatus: JSON.stringify( {
 				command: 'send-code',
@@ -1863,13 +1863,14 @@ Undocumented.prototype.requestTransferCode = function( options, fn ) {
 	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
 };
 
-Undocumented.prototype.enableDomainLocking = function( { domainName, enablePrivacy, declineTransfer }, fn ) {
-	var data = {
+Undocumented.prototype.cancelTransferRequest = function( { domainName, enablePrivacy, declineTransfer, lockDomain }, fn ) {
+	const data = {
 		domainStatus: JSON.stringify( {
-			command: 'lock-domain',
+			command: 'cancel-transfer-request',
 			payload: {
 				enable_privacy: enablePrivacy,
-				decline_transfer: declineTransfer
+				decline_transfer: declineTransfer,
+				lock_domain: lockDomain,
 			}
 		} )
 	};
