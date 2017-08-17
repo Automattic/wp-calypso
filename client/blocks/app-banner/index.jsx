@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -14,7 +15,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import { getSectionName } from 'state/ui/selectors';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
-import { isNotificationsOpen } from 'state/selectors';
+import { isNotificationsOpen, getPrimarySiteId } from 'state/selectors';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -54,9 +55,9 @@ class AppBanner extends Component {
 		recordAppBannerOpen: PropTypes.func,
 		userAgent: PropTypes.string,
 		// connected
-		currentSection: React.PropTypes.string,
-		dismissedUntil: React.PropTypes.object,
-		fetchingPreferences: React.PropTypes.bool,
+		currentSection: PropTypes.string,
+		dismissedUntil: PropTypes.object,
+		fetchingPreferences: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -116,19 +117,22 @@ class AppBanner extends Component {
 	};
 
 	getDeepLink() {
-		const { currentSection } = this.props;
+		const { currentSection, siteId } = this.props;
 
 		if ( this.isAndroid() ) {
-			//TODO: update when section deep links are available.
 			switch ( currentSection ) {
 				case EDITOR:
-					return 'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return `intent://editor/?siteId=${ siteId }` +
+						'#Intent;scheme=wordpress;package=org.wordpress.android;end';
 				case NOTES:
-					return 'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return 'intent://viewnotifications/' +
+						'#Intent;scheme=wordpress;package=org.wordpress.android;end';
 				case READER:
-					return 'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return 'intent://viewpost/' +
+						'#Intent;scheme=wordpress;package=org.wordpress.android;end';
 				case STATS:
-					return 'intent://editor/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return `intent://editor/?siteId=${ siteId }` +
+						'#Intent;scheme=wordpress;package=org.wordpress.android;end';
 			}
 		}
 
@@ -203,7 +207,7 @@ const mapStateToProps = ( state ) => {
 		dismissedUntil: getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
 		currentSection: getCurrentSection( sectionName, isNotesOpen ),
 		fetchingPreferences: isFetchingPreferences( state ),
-		siteId: getSelectedSiteId( state ),
+		siteId: getSelectedSiteId( state ) || getPrimarySiteId( state ),
 	};
 };
 
