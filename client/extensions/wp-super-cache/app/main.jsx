@@ -66,7 +66,9 @@ class WPSuperCache extends Component {
 
 		return (
 			<Main className={ mainClassName }>
-				<ExtensionRedirect pluginId="wp-super-cache" siteId={ siteId } />
+				<ExtensionRedirect pluginId="wp-super-cache"
+					minimumVersion="1.5.3"
+					siteId={ siteId } />
 				<QueryStatus siteId={ siteId } />
 
 				{ cacheDisabled &&
