@@ -324,7 +324,7 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 		},
 	} );
 
-	return wpcom.undocumented().me().socialConnect( { ...socialInfo, redirectTo } ).then( wpcomResponse => {
+	return wpcom.undocumented().me().socialConnect( { ...socialInfo, redirect_to: redirectTo } ).then( wpcomResponse => {
 		dispatch( {
 			type: SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 			redirectTo: wpcomResponse.redirect_to,
