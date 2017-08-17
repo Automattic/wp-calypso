@@ -18,17 +18,22 @@ module.exports = React.createClass( {
 	},
 
 	getNavtabs: function() {
-		var tabs = [
+		const tabs = [
 			{
 				title: i18n.translate( 'Password', { textOnly: true } ),
 				path: '/me/security',
+			},
+			{
+				title: i18n.translate( 'Social Login', { textOnly: true } ),
+				path: '/me/security/social-login',
 			},
 			{
 				title: i18n.translate( 'Two-Step Authentication', { textOnly: true } ),
 				path: '/me/security/two-step',
 			},
 			{
-				title: i18n.translate( 'Connected Applications', { textOnly: true } ),
+				// This was shortened from 'Connected Applications' due to space constraints.
+				title: i18n.translate( 'Connected Apps', { textOnly: true } ),
 				path: '/me/security/connected-applications',
 			},
 			{
