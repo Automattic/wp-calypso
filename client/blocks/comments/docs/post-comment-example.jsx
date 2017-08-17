@@ -37,10 +37,22 @@ const mockComment = {
 	URL: 'http://discover.wordpress.com',
 };
 
+const mockShortComment = {
+	...mockComment,
+	content: 'Just this',
+};
+
+const mockMultipleShortLineComment = {
+	...mockComment,
+	content: 'A comment<br>with<br>many lines<br>that will<br>overflow',
+};
+
 const mockComments = [
 	{ ...mockComment, ID: 0 },
 	{ ...mockComment, ID: 1, content: repeat( mockComment.content, 5 ) },
 	{ ...mockComment, ID: 2, content: repeat( mockComment.content, 5 ) },
+	{ ...mockShortComment, ID: 3 },
+	{ ...mockMultipleShortLineComment, ID: 4 },
 ];
 
 const commentsTree = {
@@ -55,6 +67,14 @@ const commentsTree = {
 	'2': {
 		children: [],
 		data: mockComments[ 2 ],
+	},
+	'3': {
+		children: [ 1 ],
+		data: mockComments[ 3 ],
+	},
+	'4': {
+		children: [ 1 ],
+		data: mockComments[ 4 ],
 	},
 };
 
@@ -78,6 +98,34 @@ export default class PostCommentExample extends React.Component {
 						depth={ 0 }
 						commentsTree={ commentsTree }
 						displayType={ POST_COMMENT_DISPLAY_TYPES.excerpt }
+					/>
+					<PostComment
+						showNestingReplyArrow
+						commentId={ 3 }
+						depth={ 0 }
+						commentsTree={ commentsTree }
+						displayType={ POST_COMMENT_DISPLAY_TYPES.excerpt }
+					/>
+					<PostComment
+						showNestingReplyArrow
+						commentId={ 3 }
+						depth={ 0 }
+						commentsTree={ commentsTree }
+						displayType={ POST_COMMENT_DISPLAY_TYPES.singleLine }
+					/>
+					<PostComment
+						showNestingReplyArrow
+						commentId={ 4 }
+						depth={ 0 }
+						commentsTree={ commentsTree }
+						displayType={ POST_COMMENT_DISPLAY_TYPES.excerpt }
+					/>
+					<PostComment
+						showNestingReplyArrow
+						commentId={ 4 }
+						depth={ 0 }
+						commentsTree={ commentsTree }
+						displayType={ POST_COMMENT_DISPLAY_TYPES.singleLine }
 					/>
 				</Card>
 			</div>
