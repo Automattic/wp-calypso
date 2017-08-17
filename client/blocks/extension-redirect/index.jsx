@@ -22,6 +22,7 @@ class ExtensionRedirect extends Component {
 		siteId: PropTypes.number,
 		// Connected props
 		pluginActive: PropTypes.bool.isRequired,
+		pluginVersion: PropTypes.string,
 		requestingPlugins: PropTypes.bool.isRequired,
 		siteSlug: PropTypes.string,
 	}
