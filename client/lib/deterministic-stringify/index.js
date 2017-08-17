@@ -21,6 +21,7 @@ export function deterministicStringify( source ) {
 	// manually ask if this is _also_ an array
 	if ( Array.isArray( source ) ) {
 		return source
+			.slice() // sort mutates the original array!
 			.sort()
 			.map( deterministicStringify )
 			.join( ',' );
