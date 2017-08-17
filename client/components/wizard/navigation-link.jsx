@@ -22,7 +22,7 @@ class NavigationLink extends Component {
 	getText = () => {
 		const { direction, text, translate } = this.props;
 
-		return direction === 'back' ? text || translate( 'Back' ) : text || translate( 'Skip for now' );
+		return text || ( direction === 'back' ? translate( 'Back' ) : translate( 'Skip for now' ) );
 	}
 
 	render() {
