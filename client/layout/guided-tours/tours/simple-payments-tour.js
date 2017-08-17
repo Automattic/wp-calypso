@@ -39,8 +39,10 @@ export const SimplePaymentsTour = makeTour(
 		>
 			<p>
 				{
-					translate( 'Did you know? ' +
-						'If your site is on the Premium or Business plan, you can add {{strong}}payment buttons{{/strong}} here!', {
+					translate(
+						'Did you know? ' +
+						'If your site is on the Premium or Business plan, you can add {{strong}}payment buttons{{/strong}} here!',
+						{
 							components: {
 								strong: <strong />,
 							}
