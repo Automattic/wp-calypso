@@ -3,7 +3,7 @@
  */
 import classnames from 'classnames';
 import { assign, some } from 'lodash';
-var React = require( 'react' );
+const React = require( 'react' );
 
 /**
  * Internal dependencies

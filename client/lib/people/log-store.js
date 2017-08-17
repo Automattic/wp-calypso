@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { clone, find, reject } from 'lodash';
-var debug = require( 'debug' )( 'calypso:my-sites:people:log-store' );
+const debug = require( 'debug' )( 'calypso:my-sites:people:log-store' );
 
 /**
  * Internal dependencies

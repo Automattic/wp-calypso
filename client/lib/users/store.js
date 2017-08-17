@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { endsWith, find, omit } from 'lodash';
-var debug = require( 'debug' )( 'calypso:users:store' );
+const debug = require( 'debug' )( 'calypso:users:store' );
 
 /**
  * Internal dependencies

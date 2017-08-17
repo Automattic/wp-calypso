@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { find, isEqual, reject } from 'lodash';
-var Dispatcher = require( 'dispatcher' );
+const Dispatcher = require( 'dispatcher' );
 
 /**
  * Internal dependencies

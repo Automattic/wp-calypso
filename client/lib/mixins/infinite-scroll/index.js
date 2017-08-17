@@ -3,7 +3,7 @@
  */
 import { throttle } from 'lodash';
 
-var SCROLL_CHECK_RATE_IN_MS = 400;
+const SCROLL_CHECK_RATE_IN_MS = 400;
 
 module.exports = function( nextPageMethod ) {
 
