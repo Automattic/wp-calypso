@@ -9,9 +9,9 @@ var debug = require( 'debug' )( 'calypso:users:store' ),
 /**
  * Internal dependencies
  */
+import deterministicStringify from 'lib/deterministic-stringify';
 var Dispatcher = require( 'dispatcher' ),
 	emitter = require( 'lib/mixins/emitter' ),
-	deterministicStringify = require( 'lib/deterministic-stringify' );
 
 var _fetchingUsersByNamespace = {},        // store fetching state (boolean)
 	_fetchingUpdatedUsersByNamespace = {}, // store fetching state (boolean)
