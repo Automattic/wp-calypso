@@ -141,12 +141,15 @@ class PageSetup extends Component {
 									) }
 								</FormSettingExplanation>
 							</FormFieldset>
+
+							<Button compact primary>
+								{ translate( 'Create selected pages' ) }
+							</Button>
+							<Button compact>
+								{ translate( 'Skip this step' ) }
+							</Button>
 						</form>
 					</div>
-
-					<Button compact primary>
-						{ translate( 'Create selected pages' ) }
-					</Button>
 				</Card>
 			</div>
 		);
