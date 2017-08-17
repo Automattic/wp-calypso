@@ -2,9 +2,8 @@
  * External dependencies
  */
 import { assign, clone, find, get, isEmpty, map, omit } from 'lodash';
-var // eslint-disable-line no-unused-vars
-    debug = require( 'debug' )( 'calypso:signup-progress-store' ),
-    store = require( 'store' );
+const debug = require( 'debug' )( 'calypso:signup-progress-store' );
+const store = require( 'store' );
 
 /**
  * Internal dependencies

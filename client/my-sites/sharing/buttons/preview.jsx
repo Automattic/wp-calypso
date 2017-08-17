@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { filter, some } from 'lodash';
-var React = require( 'react' );
+const React = require( 'react' );
 
 /**
  * Internal dependencies

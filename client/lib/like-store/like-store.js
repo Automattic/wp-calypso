@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { assign, clone, isEqual } from 'lodash';
-var config = require( 'config' );
+const config = require( 'config' );
 
 /**
  * Internal dependencies

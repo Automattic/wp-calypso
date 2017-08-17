@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { endsWith, omit } from 'lodash';
-var debug = require( 'debug' )( 'calypso:wpcom-followers-store' );
+const debug = require( 'debug' )( 'calypso:wpcom-followers-store' );
 
 /**
  * Internal dependencies

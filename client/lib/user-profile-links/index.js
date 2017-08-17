@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { reject, some } from 'lodash';
-var debug = require( 'debug' )( 'calypso:user:profile-links' );
+const debug = require( 'debug' )( 'calypso:user:profile-links' );
 
 /**
  * Internal dependencies

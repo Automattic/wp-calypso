@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { assign, constant, mapValues, zipObject } from 'lodash';
-var assert = require( 'assert' );
+const assert = require( 'assert' );
 
 /**
  * Internal dependencies

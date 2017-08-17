@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { map, merge, pick, random, sample } from 'lodash';
-var debug = require( 'debug' )( 'calypso:password-generator' );
+const debug = require( 'debug' )( 'calypso:password-generator' );
 
 /**
  * Internal dependencies
