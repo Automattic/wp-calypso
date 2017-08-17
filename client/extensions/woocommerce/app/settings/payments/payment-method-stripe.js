@@ -204,7 +204,7 @@ class PaymentMethodStripe extends Component {
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
 					<FormLabel>
-						{ translate( 'Use ApplePay' ) }
+						{ translate( 'Use Apple Pay' ) }
 					</FormLabel>
 					<PaymentMethodEditFormToggle
 						checked={ method.settings.apple_pay.value === 'yes' ? true : false }
@@ -212,7 +212,7 @@ class PaymentMethodStripe extends Component {
 						onChange={ this.onEditFieldHandler } />
 					<span>
 						{ translate(
-							'By using ApplePay you agree to Stripe and ' +
+							'By using Apple Pay you agree to Stripe and ' +
 							'Apple\'s terms of service'
 						) }
 					</span>
