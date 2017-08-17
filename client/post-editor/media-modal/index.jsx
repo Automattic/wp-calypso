@@ -2,8 +2,8 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-
 import { connect } from 'react-redux';
 import {
 	findIndex,
@@ -61,19 +61,19 @@ function areMediaActionsDisabled( modalView, mediaItems ) {
 
 export class EditorMediaModal extends Component {
 	static propTypes = {
-		visible: React.PropTypes.bool,
-		mediaLibrarySelectedItems: React.PropTypes.arrayOf( React.PropTypes.object ),
-		onClose: React.PropTypes.func,
-		site: React.PropTypes.object,
-		siteId: React.PropTypes.number,
-		labels: React.PropTypes.object,
-		single: React.PropTypes.bool,
-		defaultFilter: React.PropTypes.string,
-		enabledFilters: React.PropTypes.arrayOf( React.PropTypes.string ),
-		view: React.PropTypes.oneOf( values( ModalViews ) ),
-		setView: React.PropTypes.func,
-		resetView: React.PropTypes.func,
-		postId: React.PropTypes.number,
+		visible: PropTypes.bool,
+		mediaLibrarySelectedItems: PropTypes.arrayOf( PropTypes.object ),
+		onClose: PropTypes.func,
+		site: PropTypes.object,
+		siteId: PropTypes.number,
+		labels: PropTypes.object,
+		single: PropTypes.bool,
+		defaultFilter: PropTypes.string,
+		enabledFilters: PropTypes.arrayOf( PropTypes.string ),
+		view: PropTypes.oneOf( values( ModalViews ) ),
+		setView: PropTypes.func,
+		resetView: PropTypes.func,
+		postId: PropTypes.number,
 	};
 
 	static defaultProps = {
