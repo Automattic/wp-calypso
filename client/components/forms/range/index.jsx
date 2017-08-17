@@ -3,13 +3,14 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { omit, uniqueId } from 'lodash';
+import { omit } from 'lodash';
 import classnames from 'classnames';
 
 /**
  * External dependencies
  */
 import FormRange from 'components/forms/form-range';
+import { uniqueId } from 'lib/impure-lodash';
 
 export default class extends React.Component {
 	static displayName = 'Range';

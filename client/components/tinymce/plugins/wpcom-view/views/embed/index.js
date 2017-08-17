@@ -2,7 +2,7 @@
  * External dependencies
  */
 import EventEmitter from 'events/';
-import { defer, uniqueId } from 'lodash';
+import { defer } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -15,6 +15,7 @@ import {
 	SELECTED_SITE_SUBSCRIBE,
 	SELECTED_SITE_UNSUBSCRIBE
 } from 'state/action-types';
+import { uniqueId } from 'lib/impure-lodash';
 
 export default class EmbedViewManager extends EventEmitter {
 	constructor() {

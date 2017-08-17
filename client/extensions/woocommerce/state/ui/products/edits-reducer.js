@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { compact, isEqual, uniqueId, filter } from 'lodash';
+import { compact, isEqual, filter } from 'lodash';
 import { createReducer } from 'state/utils';
 
 /**
@@ -19,6 +19,7 @@ import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
 } from 'woocommerce/state/action-types';
 import { getBucket } from '../helpers';
+import { uniqueId } from 'lib/impure-lodash';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCT_EDIT ]: editProductAction,

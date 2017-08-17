@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { head, uniqueId } from 'lodash';
+import { head } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,6 +14,7 @@ import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import MediaUtils from 'lib/media/utils';
 import PostActions from 'lib/posts/actions';
+import { uniqueId } from 'lib/impure-lodash';
 
 import FeaturedImageDropZoneIcon from './dropzone-icon';
 

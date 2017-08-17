@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { head, uniqueId, find, noop, trim } from 'lodash';
+import { head, find, noop, trim } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
@@ -21,6 +21,7 @@ import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import MediaStore from 'lib/media/store';
 import MediaValidationStore from 'lib/media/validation-store';
+import { uniqueId } from 'lib/impure-lodash';
 
 class ProductImageUploader extends Component {
 	static propTypes = {

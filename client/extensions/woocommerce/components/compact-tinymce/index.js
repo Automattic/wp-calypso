@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { assign, uniqueId, noop } from 'lodash';
+import { assign, noop } from 'lodash';
 import classNames from 'classnames';
 import tinymce from 'tinymce/tinymce';
 import 'tinymce/themes/modern/theme.js';
@@ -15,6 +15,7 @@ import 'tinymce/plugins/lists/plugin.js';
 import i18n from 'components/tinymce/i18n';
 import userFactory from 'lib/user';
 import { wpautop } from 'lib/formatting';
+import { uniqueId } from 'lib/impure-lodash';
 // TinyMCE plugins & dependencies
 import wplinkPlugin from 'components/tinymce/plugins/wplink/plugin';
 
