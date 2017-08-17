@@ -10,6 +10,7 @@ import initialPackagesState from './initial-state';
 import {
 	getAllSelectedPackages,
 	getCurrentlyEditingPredefinedPackages,
+	getPredefinedPackagesChangesSummary,
 } from '../selectors';
 
 const siteId = 123;
@@ -125,6 +126,65 @@ describe( 'Packages selectors', () => {
 					},
 				],
 			},
+		} );
+	} );
+
+	it( 'getPredefinedPackagesChangesSummary - no changes', () => {
+		const state = getState( {
+			...initialPackagesState,
+			currentlyEditingPredefinedPackages: initialPackagesState.packages.predefined,
+		} );
+		const result = getPredefinedPackagesChangesSummary( state, siteId );
+
+		expect( result ).to.eql( {
+			added: 0,
+			removed: 0,
+		} );
+	} );
+
+	it( 'getPredefinedPackagesChangesSummary - no preexisting packages', () => {
+		const state = getState( {
+			...initialPackagesState,
+			packages: {
+				...initialPackagesState.packages,
+				predefined: {},
+			},
+			currentlyEditingPredefinedPackages: initialPackagesState.packages.predefined,
+		} );
+
+		const result = getPredefinedPackagesChangesSummary( state, siteId );
+
+		expect( result ).to.eql( {
+			added: 3,
+			removed: 0,
+		} );
+	} );
+
+	it( 'getPredefinedPackagesChangesSummary - all packages removed', () => {
+		const state = getState( {
+			...initialPackagesState,
+			currentlyEditingPredefinedPackages: {},
+		} );
+
+		const result = getPredefinedPackagesChangesSummary( state, siteId );
+
+		expect( result ).to.eql( {
+			added: 0,
+			removed: 3,
+		} );
+	} );
+
+	it( 'getPredefinedPackagesChangesSummary - some packages removed, some added', () => {
+		const state = getState( {
+			...initialPackagesState,
+			currentlyEditingPredefinedPackages: { service: [ 'box2' ] },
+		} );
+
+		const result = getPredefinedPackagesChangesSummary( state, siteId );
+
+		expect( result ).to.eql( {
+			added: 1,
+			removed: 3,
 		} );
 	} );
 } );

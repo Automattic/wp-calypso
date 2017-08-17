@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, difference, flatten, map } from 'lodash';
 import Gridicon from 'gridicons';
@@ -18,35 +19,13 @@ import FormButton from 'components/forms/form-button';
 import inputFilters from './input-filters';
 import PredefinedPackages from './predefined-packages';
 import SegmentedControl from 'components/segmented-control';
-
-const getDialogButtons = ( mode, dismissModal, savePackage, onRemove, translate ) => {
-	const buttons = [
-		<FormButton onClick={ savePackage }>
-			{ ( 'add-custom' === mode ) ? translate( 'Add package' ) : translate( 'Apply changes' ) }
-		</FormButton>,
-		<FormButton onClick={ dismissModal } isPrimary={ false }>
-			{ translate( 'Cancel' ) }
-		</FormButton>,
-	];
-
-	if ( 'edit' === mode ) {
-		buttons.unshift( {
-			action: 'delete',
-			label: <span>{ translate( '{{icon/}} Delete this package', { components: {
-				icon: <Gridicon icon="trash" />,
-			} } ) }</span>,
-			onClick: onRemove,
-			additionalClassNames: 'packages__delete is-scary is-borderless'
-		} );
-	}
-
-	return buttons;
-};
+import { getPredefinedPackagesChangesSummary } from '../../state/packages/selectors';
 
 const AddPackageDialog = ( props ) => {
 	const {
 		siteId,
 		form,
+		predefinedPackagesSummary,
 		setModalErrors,
 		savePackage,
 		savePredefinedPackages,
@@ -116,13 +95,42 @@ const AddPackageDialog = ( props ) => {
 	const showSegmentedControl = 'add-custom' === mode || 'add-predefined' === mode;
 	const showEdit = 'add-custom' === mode || 'edit' === mode;
 	const showPredefined = 'add-predefined' === mode;
+	let doneButtonLabel;
+	if ( 'add-custom' === mode ||
+		( 'add-predefined' === mode && 0 === predefinedPackagesSummary.removed ) ) {
+		doneButtonLabel = translate( 'Add package', 'Add packages', {
+			count: 'add-custom' === mode ? 1 : predefinedPackagesSummary.added
+		} );
+	} else {
+		doneButtonLabel = translate( 'Done' );
+	}
+
+	const buttons = [
+		<FormButton onClick={ onSave }>
+			{ doneButtonLabel }
+		</FormButton>,
+		<FormButton onClick={ onClose } isPrimary={ false }>
+			{ translate( 'Cancel' ) }
+		</FormButton>,
+	];
+
+	if ( 'edit' === mode ) {
+		buttons.unshift( {
+			action: 'delete',
+			label: <span>{ translate( '{{icon/}} Delete this package', { components: {
+				icon: <Gridicon icon="trash" />,
+			} } ) }</span>,
+			onClick: onRemove,
+			additionalClassNames: 'packages__delete is-scary is-borderless'
+		} );
+	}
 
 	return (
 		<Dialog
 			isVisible={ showModal }
 			additionalClassNames="packages__add-edit-dialog woocommerce"
 			onClose={ onClose }
-			buttons={ getDialogButtons( mode, onClose, onSave, onRemove, translate ) }>
+			buttons={ buttons }>
 			<FormSectionHeading>{ heading }</FormSectionHeading>
 			{ showSegmentedControl && <SegmentedControl
 				className="packages__mode-select"
@@ -152,4 +160,6 @@ AddPackageDialog.propTypes = {
 	setAddMode: PropTypes.func.isRequired,
 };
 
-export default localize( AddPackageDialog );
+export default connect( ( state ) => ( {
+	predefinedPackagesSummary: getPredefinedPackagesChangesSummary( state ),
+} ) )( localize( AddPackageDialog ) );

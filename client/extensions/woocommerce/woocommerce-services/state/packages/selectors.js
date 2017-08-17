@@ -71,7 +71,8 @@ export const getAllSelectedPackages = createSelector(
 			...( form.packages.custom || [] ),
 			...serviceIds.map( ( serviceId ) => ( form.packages.predefined || {} )[ serviceId ] )
 		];
-	} );
+	}
+);
 
 /**
  * Returns currently edited predefined non-flat-rate packages, including their definitions,
@@ -137,4 +138,73 @@ export const getCurrentlyEditingPredefinedPackages = createSelector(
 		return [
 			...serviceIds.map( ( serviceId ) => form.currentlyEditingPredefinedPackages[ serviceId ] )
 		];
-	} );
+	}
+);
+
+/**
+ * Returns a summary of edits made to the predefined packages (added packages count, removed packages count)
+ * @param {Object} state - state tree
+ * @param {Number} siteId - site ID
+ * @returns {Object} an object containing the changes summary
+ */
+export const getPredefinedPackagesChangesSummary = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		let added = 0;
+		let removed = 0;
+
+		const form = getPackagesForm( state, siteId );
+		if ( ! form || ! form.currentlyEditingPredefinedPackages ) {
+			return { added, removed };
+		}
+
+		const existingPackages = form.packages && form.packages.predefined
+			? form.packages.predefined
+			: {};
+		const editedPackages = form.currentlyEditingPredefinedPackages;
+		Object.keys( editedPackages ).forEach( ( key ) => {
+			const existing = existingPackages[ key ];
+			const edited = editedPackages[ key ];
+
+			if ( ! existing ) {
+				added += edited.length;
+				return;
+			}
+
+			edited.forEach( ( packageId ) => {
+				if ( ! includes( existing, packageId ) ) {
+					added++;
+				}
+			} );
+		} );
+
+		Object.keys( existingPackages ).forEach( ( key ) => {
+			const existing = existingPackages[ key ];
+			const edited = editedPackages[ key ];
+
+			if ( ! edited ) {
+				removed += existing.length;
+				return;
+			}
+
+			existing.forEach( ( packageId ) => {
+				if ( ! includes( edited, packageId ) ) {
+					removed++;
+				}
+			} );
+		} );
+
+		return { added, removed };
+	},
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const form = getPackagesForm( state, siteId );
+		if ( ! form || ! form.currentlyEditingPredefinedPackages ) {
+			return [];
+		}
+
+		const serviceIds = getPredefinedPackageServices( form );
+		return [
+			...serviceIds.map( ( serviceId ) => form.packages && form.packages.predefined && form.packages.predefined[ serviceId ] ),
+			...serviceIds.map( ( serviceId ) => form.currentlyEditingPredefinedPackages[ serviceId ] )
+		];
+	}
+);
