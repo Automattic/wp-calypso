@@ -32,6 +32,7 @@ var AsyncLoad = require( 'components/async-load' ),
 	Layout,
 	SupportUser;
 
+import PropTypes from 'prop-types';
 import QuerySites from 'components/data/query-sites';
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
@@ -41,6 +42,7 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
 import AppBanner from 'blocks/app-banner';
+import { getPreference } from 'state/preferences/selectors';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -70,6 +72,7 @@ Layout = React.createClass( {
 			React.PropTypes.object,
 		] ),
 		isOffline: React.PropTypes.bool,
+		colorSchemePreference: PropTypes.string,
 	},
 
 	closeWelcome: function() {
@@ -134,7 +137,8 @@ Layout = React.createClass( {
 				{ 'is-support-user': this.props.isSupportUser },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
 				{ 'wp-singletree-layout': !! this.props.primary },
-				{ 'has-chat': this.props.chatIsOpen }
+				{ 'has-chat': this.props.chatIsOpen },
+				`is-${ this.props.colorSchemePreference }-theme`,
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
@@ -185,7 +189,8 @@ export default connect(
 			hasSidebar: hasSidebar( state ),
 			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
-			chatIsOpen: isHappychatOpen( state )
+			chatIsOpen: isHappychatOpen( state ),
+			colorSchemePreference: getPreference( state, 'colorScheme' ),
 		};
 	}
 )( Layout );
