@@ -52,6 +52,16 @@ describe( 'deterministicStringify', function() {
 		expect( stringify( [ 10, 2 ] ) ).to.equal( '10,2' );
 	} );
 
+	/**
+	 * This is another test used to indicate an actual behavior more
+	 * than a nominal behavior. It's worth noting that it's possible
+	 * that the behavior here is different across browsers, but in
+	 * the current Node version we're specifically testing V8
+	 */
+	it( 'probably sorts unstably', () => {
+		expect( stringify( [ 1, { b: 2 }, { c: 3 } ] ) ).to.not.eql( stringify( [ 1, { c: 3 }, { b: 2 } ] ) );
+	} );
+
 	it( 'should handle nested objects', () => {
 		expect( stringify( [ 1, { a: 1 } ] ) ).to.equal( '1,a=1' );
 	} );

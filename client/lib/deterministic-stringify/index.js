@@ -12,9 +12,7 @@
  *
  * The sort values are unstable so in some cases two values
  * could produce different keys even though we would consider
- * them to be otherwise equivalent. Since we aren't using a
- * multi-key sort or a custom comparison function, however,
- * this _may_ not affect us here.
+ * them to be otherwise equivalent.
  *
  * Additionally the built-in universal sort is lexicographic,
  * meaning that it won't properly sort numeric values, though
