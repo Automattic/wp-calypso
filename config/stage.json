@@ -100,7 +100,7 @@
 		"settings/security/monitor/wp-note": true,
 		"settings/theme-setup": false,
 		"signup/domain-first-flow": true,
-		"signup/social": false,
+		"signup/social": true,
 		"simple-payments": true,
 		"standalone-site-preview": true,
 		"support-user": true,
