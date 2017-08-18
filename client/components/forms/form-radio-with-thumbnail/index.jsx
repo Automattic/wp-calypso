@@ -9,7 +9,6 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-
 import FormRadio from 'components/forms/form-radio';
 import FormLabel from 'components/forms/form-label';
 import cssSafeUrl from 'lib/css-safe-url';
@@ -17,7 +16,7 @@ import cssSafeUrl from 'lib/css-safe-url';
 const FormRadioWithThumbnail = ( { label, thumbnail, ...otherProps } ) => {
 	const { cssClass, cssColor, imageUrl } = thumbnail;
 	const styles = {
-		backgroundColor: cssColor ? cssColor : '',
+		backgroundColor: cssColor,
 		backgroundImage: imageUrl ? 'url(' + cssSafeUrl( imageUrl ) + ')' : '',
 	};
 
@@ -39,7 +38,7 @@ const FormRadioWithThumbnail = ( { label, thumbnail, ...otherProps } ) => {
 
 FormRadioWithThumbnail.propTypes = {
 	label: PropTypes.string,
-	thumbnail: PropTypes.object,
+	thumbnail: PropTypes.object.isRequired,
 };
 
 export default FormRadioWithThumbnail;

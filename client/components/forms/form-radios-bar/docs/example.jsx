@@ -13,7 +13,7 @@ import { radios, radiosWithThumbnails } from 'components/forms/form-radios-bar/d
 const FormRadiosBarExample = ( { isThumbnail, checked, onChange } ) => {
 	return (
 		<FormRadiosBar
-			isThumbnail={ isThumbnail ? true : false }
+			isThumbnail={ isThumbnail }
 			checked={ checked }
 			onChange={ onChange }
 			items={ isThumbnail ? radiosWithThumbnails : radios }
