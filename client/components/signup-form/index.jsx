@@ -151,6 +151,7 @@ class SignupForm extends Component {
 			page(
 				login( {
 					isNative: config.isEnabled( 'login/native-login-links' ),
+					redirectTo: this.props.getRedirectToAfterLoginUrl,
 				} )
 			);
 		}

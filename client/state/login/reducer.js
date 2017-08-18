@@ -55,11 +55,11 @@ export const redirectTo = createReducer( null, {
 	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => get( data, 'redirect_to', null ),
 	[ LOGIN_REQUEST_FAILURE ]: () => null,
 	[ SOCIAL_LOGIN_REQUEST ]: () => null,
-	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, action ) => get( action, 'redirectTo', null ),
+	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => get( data, 'redirect_to', null ),
 	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => null,
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST ]: () => null,
-	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE ]: ( state, action ) => get( action, 'redirectTo', null ),
-	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => null,
+	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE ]: null,
+	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: ( state, action ) => get( action, 'redirect_to', null ),
 	[ LOGOUT_REQUEST ]: () => null,
 	[ LOGOUT_REQUEST_SUCCESS ]: () => ( state, { data } ) => get( data, 'redirect_to', null ),
 	[ LOGOUT_REQUEST_FAILURE ]: () => null,
@@ -151,6 +151,7 @@ export const twoFactorAuth = createReducer( null, {
 		return null;
 	},
 	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => null,
+	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => null,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: ( state, { twoStepNonce } ) =>
 		updateTwoStepNonce( state, { twoStepNonce, nonceType: 'sms' } ),
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS ]: ( state, { twoStepNonce } ) =>
@@ -211,6 +212,7 @@ export const socialAccountLink = createReducer( { isLinking: false }, {
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE ]: userExistsErrorHandler,
 	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: userExistsErrorHandler,
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: () => ( { isLinking: false } ),
+	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => ( { isLinking: false } ),
 	[ USER_RECEIVE ]: () => ( { isLinking: false } ),
 } );
 

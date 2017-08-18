@@ -240,7 +240,6 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 		.then( ( response ) => {
 			dispatch( {
 				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
-				redirectTo: get( response, 'body.data.redirect_to' ),
 				data: get( response, 'body.data' )
 			} );
 
@@ -262,7 +261,8 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 			dispatch( {
 				type: SOCIAL_LOGIN_REQUEST_FAILURE,
 				error,
-				authInfo: socialInfo
+				authInfo: socialInfo,
+				data: get( httpError, 'response.body.data' ),
 			} );
 
 			return Promise.reject( error );
@@ -324,10 +324,10 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 		},
 	} );
 
-	return wpcom.undocumented().me().socialConnect( { ...socialInfo, redirectTo } ).then( wpcomResponse => {
+	return wpcom.undocumented().me().socialConnect( { ...socialInfo, redirect_to: redirectTo } ).then( wpcomResponse => {
 		dispatch( {
 			type: SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
-			redirectTo: wpcomResponse.redirect_to,
+			redirect_to: wpcomResponse.redirect_to,
 		} );
 	}, wpcomError => {
 		const error = getErrorFromWPCOMError( wpcomError );
