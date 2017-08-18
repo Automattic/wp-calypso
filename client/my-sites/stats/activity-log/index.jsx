@@ -32,6 +32,7 @@ import StatsFirstView from '../stats-first-view';
 import StatsNavigation from '../stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
+import { adjustMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -154,15 +155,7 @@ class ActivityLog extends Component {
 	 */
 	getSiteOffsetFunc() {
 		const { timezone, gmtOffset } = this.props;
-		return moment => {
-			if ( timezone ) {
-				return moment.tz( timezone );
-			}
-			if ( gmtOffset ) {
-				return moment.utcOffset( gmtOffset );
-			}
-			return moment;
-		};
+		return moment => adjustMoment( { timezone, gmtOffset, moment } );
 	}
 
 	isRestoreInProgress() {
@@ -359,18 +352,18 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
+			gmtOffset: getSiteGmtOffset( state, siteId ),
+			isRewindActive: isRewindActiveSelector( state, siteId ),
 			logs: getActivityLogs( state, siteId ),
+			restoreProgress: getRestoreProgress( state, siteId ),
+			rewindStatusError: getRewindStatusError( state, siteId ),
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
-			rewindStatusError: getRewindStatusError( state, siteId ),
-			restoreProgress: getRestoreProgress( state, siteId ),
-			isRewindActive: isRewindActiveSelector( state, siteId ),
+			timezone: getSiteTimezoneValue( state, siteId ),
 
 			// FIXME: Testing only
 			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ),
-			timezone: getSiteTimezoneValue( state, siteId ),
-			gmtOffset: getSiteGmtOffset( state, siteId ),
 		};
 	},
 	{
