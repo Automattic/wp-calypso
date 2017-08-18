@@ -17,7 +17,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { getRawSite } from 'state/sites/selectors';
 
-const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
+export const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 	const { siteId, status = 'unapproved' } = action.query;
 
 	dispatch(
@@ -35,7 +35,7 @@ const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 	);
 };
 
-const addCommentsTree = ( { dispatch }, { query }, data ) => {
+export const addCommentsTree = ( { dispatch }, { query }, data ) => {
 	const { siteId, status } = query;
 	const { comments_tree: commentsTree } = data;
 
@@ -54,7 +54,7 @@ const addCommentsTree = ( { dispatch }, { query }, data ) => {
 	} );
 };
 
-const announceFailure = ( { dispatch, getState }, { query } ) => {
+export const announceFailure = ( { dispatch, getState }, { query } ) => {
 	const { siteId } = query;
 	const site = getRawSite( getState(), siteId );
 
