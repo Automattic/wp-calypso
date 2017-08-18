@@ -1,0 +1,60 @@
+
+/home/vagrant/wp-calypso/client/auth/auth-code-button.jsx
+  39:3  warning  Unexpected var, use let or const instead  no-var
+  40:3  warning  Unexpected var, use let or const instead  no-var
+  41:3  warning  Unexpected var, use let or const instead  no-var
+  67:4  warning  Missing semicolon                         semi
+
+/home/vagrant/wp-calypso/client/auth/connect.jsx
+  32:1  error    Line 32 exceeds the maximum line length of 140  max-len
+  36:1  error    Line 36 exceeds the maximum line length of 140  max-len
+  41:1  error    Line 41 exceeds the maximum line length of 140  max-len
+
+/home/vagrant/wp-calypso/client/auth/controller.js
+  45:11  warning  Unexpected 'else' after 'return'                                           no-else-return
+  53:10  warning  Unexpected 'else' after 'return'                                           no-else-return
+  98:10  warning  className should follow CSS namespace guidelines (expected auth__ prefix)  wpcalypso/jsx-classname-namespace
+
+/home/vagrant/wp-calypso/client/auth/login.jsx
+   43:1   error    Line 43 exceeds the maximum line length of 140                             max-len
+   46:1   error    Line 46 exceeds the maximum line length of 140                             max-len
+   47:1   error    Line 47 exceeds the maximum line length of 140                             max-len
+   50:1   error    Line 50 exceeds the maximum line length of 140                             max-len
+   52:1   error    Line 52 exceeds the maximum line length of 140                             max-len
+  120:40  warning  Unexpected space before function parentheses                               space-before-function-paren
+  121:2   warning  Mixed spaces and tabs                                                      no-mixed-spaces-and-tabs
+  121:6   warning  Expected indentation of 2 tab characters but found 1                       indent
+  121:6   warning  Unexpected var, use let or const instead                                   no-var
+  121:22  error    Unary operator '!' must be followed by whitespace                          space-unary-ops
+  122:2   warning  Mixed spaces and tabs                                                      no-mixed-spaces-and-tabs
+  122:6   warning  Expected indentation of 2 tab characters but found 1                       indent
+  129:10  warning  className should follow CSS namespace guidelines (expected auth__ prefix)  wpcalypso/jsx-classname-namespace
+  177:1   error    Line 177 exceeds the maximum line length of 140                            max-len
+
+/home/vagrant/wp-calypso/client/auth/test/login.jsx
+  43:3  warning  Unexpected var, use let or const instead  no-var
+  67:3  warning  Unexpected var, use let or const instead  no-var
+
+/home/vagrant/wp-calypso/client/components/accordion/index.jsx
+   4:1  warning  Unexpected var, use let or const instead  no-var
+  35:3  warning  Unexpected var, use let or const instead  no-var
+  63:3  warning  Unexpected var, use let or const instead  no-var
+  80:3  warning  Unexpected var, use let or const instead  no-var
+
+/home/vagrant/wp-calypso/client/components/accordion/section.jsx
+  7:33  error    There must be a space inside this paren  space-in-parens
+  8:10  error    Missing space before opening brace       space-before-blocks
+  9:3   warning  Expected space(s) after "return"         keyword-spacing
+
+/home/vagrant/wp-calypso/client/components/accordion/test/index.jsx
+   4:1  warning  Unexpected var, use let or const instead        no-var
+  12:1  warning  Unexpected var, use let or const instead        no-var
+  23:3  warning  Unexpected var, use let or const instead        no-var
+  36:3  warning  Unexpected var, use let or const instead        no-var
+  44:3  warning  Unexpected var, use let or const instead        no-var
+  52:3  warning  Unexpected var, use let or const instead        no-var
+  60:3  warning  Unexpected var, use let or const instead        no-var
+  75:1  error    Line 75 exceeds the maximum line length of 140  max-len
+  75:3  warning  Unexpected var, use let or const instead        no-var
+
+✖ 42 problems (13 errors, 29 warnings)
