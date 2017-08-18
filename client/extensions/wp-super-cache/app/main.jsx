@@ -39,15 +39,15 @@ class WPSuperCache extends Component {
 		const { tab } = this.props;
 
 		switch ( tab ) {
-			case Tabs.ADVANCED:
+			case Tabs.ADVANCED.slug:
 				return <AdvancedTab isReadOnly={ isReadOnly } />;
-			case Tabs.CDN:
+			case Tabs.CDN.slug:
 				return <CdnTab />;
-			case Tabs.CONTENTS:
+			case Tabs.CONTENTS.slug:
 				return <ContentsTab isReadOnly={ isReadOnly } />;
-			case Tabs.PRELOAD:
+			case Tabs.PRELOAD.slug:
 				return <PreloadTab />;
-			case Tabs.DEBUG:
+			case Tabs.DEBUG.slug:
 				return <DebugTab />;
 			default:
 				return <EasyTab isReadOnly={ isReadOnly } />;
