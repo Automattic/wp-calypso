@@ -1,0 +1,55 @@
+diff --git /home/vagrant/wp-calypso/.eslintrc.js /home/vagrant/wp-calypso/.eslintrc.js
+new file mode 100644
+index 1db5fe8..e71ba5e 100644
+--- /home/vagrant/wp-calypso/.eslintrc.js
++++ /home/vagrant/wp-calypso/.eslintrc.js
+@@ -68 +68 @@ module.exports = {
+-		'space-before-blocks': [ 1, 'always' ],
++		'space-before-blocks': [ 2, 'always' ],
+diff --git /home/vagrant/wp-calypso/bin/run-lint /home/vagrant/wp-calypso/bin/run-lint
+new file mode 100755
+index 38bb638..a790ebd 100755
+--- /home/vagrant/wp-calypso/bin/run-lint
++++ /home/vagrant/wp-calypso/bin/run-lint
+@@ -4,5 +4,3 @@ const path = require( 'path' );
+-var args = [ '--cache', '--quiet', '--ext=.js',  '--ext=.jsx' ];
+-if ( process.argv.length > 2 ) {
+-	args = args.concat( process.argv.slice( 2 ) );
+-} else {
+-	args = args.concat( [ '.' ] );
++var args = [ '--cache', '--quiet', '--ext=.js', '--ext=.jsx' ];
++if ( process.argv.length <= 2 ) {
++        process.exit( 0 );
+@@ -10,0 +9,2 @@ if ( process.argv.length > 2 ) {
++args = args.concat( process.argv.slice( 2 ) );
++
+diff --git /home/vagrant/wp-calypso/circle.yml /home/vagrant/wp-calypso/circle.yml
+new file mode 100644
+index 0c5eab6..4689529 100644
+--- /home/vagrant/wp-calypso/circle.yml
++++ /home/vagrant/wp-calypso/circle.yml
+@@ -9,7 +9 @@ test:
+-    - bin/run-lint :
+-        parallel: true
+-        files:
+-          - client/**/*.js
+-          - client/**/*.jsx
+-          - server/**/*.js
+-          - server/**/*.jsx
++    - bin/run-lint $(git diff --name-only $(git merge-base $(git rev-parse --abbrev-ref HEAD) origin/master)..HEAD *js *jsx)
+diff --git /home/vagrant/wp-calypso/client/components/accordion/section.jsx /home/vagrant/wp-calypso/client/components/accordion/section.jsx
+new file mode 100644
+index bf04b03..d696c91 100644
+--- /home/vagrant/wp-calypso/client/components/accordion/section.jsx
++++ /home/vagrant/wp-calypso/client/components/accordion/section.jsx
+@@ -8 +8 @@ export default React.createClass( {
+-	render() {
++	render(){
+diff --git /home/vagrant/wp-calypso/package.json /home/vagrant/wp-calypso/package.json
+new file mode 100644
+index f776e6c..653fdca 100644
+--- /home/vagrant/wp-calypso/package.json
++++ /home/vagrant/wp-calypso/package.json
+@@ -145 +145 @@
+-    "lint": "bin/run-lint",
++    "lint": "bin/run-lint .",

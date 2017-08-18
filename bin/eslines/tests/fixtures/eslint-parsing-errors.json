@@ -1,0 +1,459 @@
+[
+    {
+        "filePath": "/home/vagrant/wp-calypso/client/auth/auth-code-button.jsx",
+        "messages": [
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 39,
+                "column": 3,
+                "nodeType": "VariableDeclaration",
+                "source": "\t\tvar noticeStatus = 'is-info';"
+            },
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 40,
+                "column": 3,
+                "nodeType": "VariableDeclaration",
+                "source": "\t\tvar showDismiss = false;"
+            },
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 41,
+                "column": 3,
+                "nodeType": "VariableDeclaration",
+                "source": "\t\tvar message = ("
+            },
+            {
+                "ruleId": "semi",
+                "severity": 1,
+                "message": "Missing semicolon.",
+                "line": 67,
+                "column": 4,
+                "nodeType": "ExportDefaultDeclaration",
+                "source": "} )",
+                "fix": {
+                    "range": [
+                        1492,
+                        1492
+                    ],
+                    "text": ";"
+                }
+            }
+        ],
+        "errorCount": 0,
+        "warningCount": 4
+    },
+    {
+        "filePath": "/home/vagrant/wp-calypso/client/auth/connect.jsx",
+        "messages": [
+            {
+                "ruleId": "max-len",
+                "severity": 2,
+                "message": "Line 32 exceeds the maximum line length of 140.",
+                "line": 32,
+                "column": 1,
+                "nodeType": "Program",
+                "source": "\t\t\t\t\t\t<NoticeAction href=\"https://developer.wordpress.com/apps/\">{ this.translate( 'Go to Developer Resources' ) }</NoticeAction>"
+            },
+            {
+                "ruleId": "max-len",
+                "severity": 2,
+                "message": "Line 36 exceeds the maximum line length of 140.",
+                "line": 36,
+                "column": 1,
+                "nodeType": "Program",
+                "source": "\t\t\t\t\t\t\t{ this.translate( 'Welcome to Calypso. Authorize the application with your WordPress.com credentials to get started.' ) }"
+            },
+            {
+                "ruleId": "max-len",
+                "severity": 2,
+                "message": "Line 41 exceeds the maximum line length of 140.",
+                "line": 41,
+                "column": 1,
+                "nodeType": "Program",
+                "source": "\t\t\t\t<a className=\"auth__help\" target=\"_blank\" title={ this.translate( 'Visit the Calypso GitHub repository for help' ) } href=\"https://github.com/Automattic/wp-calypso\">"
+            }
+        ],
+        "errorCount": 3,
+        "warningCount": 0
+    },
+    {
+        "filePath": "/home/vagrant/wp-calypso/client/auth/controller.js",
+        "messages": [
+            {
+                "ruleId": "no-else-return",
+                "severity": 1,
+                "message": "Unexpected 'else' after 'return'.",
+                "line": 45,
+                "column": 11,
+                "nodeType": "BlockStatement",
+                "source": "\t\t\t} else {"
+            },
+            {
+                "ruleId": "no-else-return",
+                "severity": 1,
+                "message": "Unexpected 'else' after 'return'.",
+                "line": 53,
+                "column": 10,
+                "nodeType": "BlockStatement",
+                "source": "\t\t} else {"
+            },
+            {
+                "ruleId": "wpcalypso/jsx-classname-namespace",
+                "severity": 1,
+                "message": "className should follow CSS namespace guidelines (expected auth__ prefix)",
+                "line": 98,
+                "column": 10,
+                "nodeType": "JSXAttribute",
+                "source": "\t\t\t<Main className=\"auth\">"
+            }
+        ],
+        "errorCount": 0,
+        "warningCount": 3
+    },
+    {
+        "filePath": "/home/vagrant/wp-calypso/client/auth/index.js",
+        "messages": [],
+        "errorCount": 0,
+        "warningCount": 0
+    },
+    {
+        "filePath": "/home/vagrant/wp-calypso/client/auth/login.jsx",
+        "messages": [
+            {
+                "ruleId": "max-len",
+                "severity": 2,
+                "message": "Line 43 exceeds the maximum line length of 140.",
+                "line": 43,
+                "column": 1,
+                "nodeType": "Program",
+                "source": "\t\t\t\t<a href=\"#\" onClick={ this.props.onClickClose } className=\"auth__self-hosted-instructions-close\"><Gridicon icon=\"cross\" size={ 24 } /></a>"
+            },
+            {
+                "ruleId": "max-len",
+                "severity": 2,
+                "message": "Line 46 exceeds the maximum line length of 140.",
+                "line": 46,
+                "column": 1,
+                "nodeType": "Program",
+                "source": "\t\t\t\t<p>{ this.translate( 'By default when you sign into the WordPress.com app, you can edit blogs and sites hosted at WordPress.com' ) }</p>"
+            },
+            {
+                "ruleId": "max-len",
+                "severity": 2,
+                "message": "Line 47 exceeds the maximum line length of 140.",
+                "line": 47,
+                "column": 1,
+                "nodeType": "Program",
+                "source": "\t\t\t\t<p>{ this.translate( 'If you\\'d like to edit your self-hosted WordPress blog or site, you can do that by following these instructions:' ) }</p>"
+            },
+            {
+                "ruleId": "max-len",
+                "severity": 2,
+                "message": "Line 50 exceeds the maximum line length of 140.",
+                "line": 50,
+                "column": 1,
+                "nodeType": "Program",
+                "source": "\t\t\t\t\t<li><strong>{ this.translate( 'Install the Jetpack plugin.' ) }</strong><br /><a href=\"http://jetpack.me/install/\">{ this.translate( 'Please follow these instructions to install Jetpack' ) }</a>.</li>"
+            },
+            {
+                "ruleId": "max-len",
+                "severity": 2,
+                "message": "Line 52 exceeds the maximum line length of 140.",
+                "line": 52,
+                "column": 1,
+                "nodeType": "Program",
+                "source": "\t\t\t\t\t<li>{ this.translate( 'Now you can sign in to the app using the WordPress.com account Jetpack is connected to, and you can find your self-hosted site under the \"My Sites\" section.' ) }</li>"
+            },
+            {
+                "ruleId": "space-before-function-paren",
+                "severity": 1,
+                "message": "Unexpected space before function parentheses.",
+                "line": 120,
+                "column": 40,
+                "nodeType": "FunctionExpression",
+                "source": "\ttoggleSelfHostedInstructions: function () {",
+                "fix": {
+                    "range": [
+                        3718,
+                        3719
+                    ],
+                    "text": ""
+                }
+            },
+            {
+                "ruleId": "no-mixed-spaces-and-tabs",
+                "severity": 1,
+                "message": "Mixed spaces and tabs.",
+                "line": 121,
+                "column": 2,
+                "nodeType": "Program",
+                "source": "\t    var isShowing = !this.state.showInstructions;"
+            },
+            {
+                "ruleId": "indent",
+                "severity": 1,
+                "message": "Expected indentation of 2 tab characters but found 1.",
+                "line": 121,
+                "column": 6,
+                "nodeType": "VariableDeclaration",
+                "source": "\t    var isShowing = !this.state.showInstructions;",
+                "fix": {
+                    "range": [
+                        3729,
+                        3729
+                    ],
+                    "text": "\t"
+                }
+            },
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 121,
+                "column": 6,
+                "nodeType": "VariableDeclaration",
+                "source": "\t    var isShowing = !this.state.showInstructions;"
+            },
+            {
+                "ruleId": "space-unary-ops",
+                "severity": 2,
+                "message": "Unary operator '!' must be followed by whitespace.",
+                "line": 121,
+                "column": 22,
+                "nodeType": "UnaryExpression",
+                "source": "\t    var isShowing = !this.state.showInstructions;",
+                "fix": {
+                    "range": [
+                        3746,
+                        3746
+                    ],
+                    "text": " "
+                }
+            },
+            {
+                "ruleId": "no-mixed-spaces-and-tabs",
+                "severity": 1,
+                "message": "Mixed spaces and tabs.",
+                "line": 122,
+                "column": 2,
+                "nodeType": "Program",
+                "source": "\t    this.setState( { showInstructions: isShowing } );"
+            },
+            {
+                "ruleId": "indent",
+                "severity": 1,
+                "message": "Expected indentation of 2 tab characters but found 1.",
+                "line": 122,
+                "column": 6,
+                "nodeType": "ExpressionStatement",
+                "source": "\t    this.setState( { showInstructions: isShowing } );",
+                "fix": {
+                    "range": [
+                        3780,
+                        3780
+                    ],
+                    "text": "\t"
+                }
+            },
+            {
+                "ruleId": "wpcalypso/jsx-classname-namespace",
+                "severity": 1,
+                "message": "className should follow CSS namespace guidelines (expected auth__ prefix)",
+                "line": 129,
+                "column": 10,
+                "nodeType": "JSXAttribute",
+                "source": "\t\t\t<Main className=\"auth\">"
+            },
+            {
+                "ruleId": "max-len",
+                "severity": 2,
+                "message": "Line 177 exceeds the maximum line length of 140.",
+                "line": 177,
+                "column": 1,
+                "nodeType": "Program",
+                "source": "\t\t\t\t<a className=\"auth__help\" target=\"_blank\" title={ this.translate( 'Visit the WordPress.com support site for help' ) } href=\"https://en.support.wordpress.com/\">"
+            }
+        ],
+        "errorCount": 7,
+        "warningCount": 7
+    },
+    {
+        "filePath": "/home/vagrant/wp-calypso/client/auth/test/login.jsx",
+        "messages": [
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 43,
+                "column": 3,
+                "nodeType": "VariableDeclaration",
+                "source": "\t\tvar submit = TestUtils.findRenderedDOMComponentWithTag( page, 'button' );"
+            },
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 67,
+                "column": 3,
+                "nodeType": "VariableDeclaration",
+                "source": "\t\tvar submit = TestUtils.findRenderedDOMComponentWithTag( page, 'form' );"
+            }
+        ],
+        "errorCount": 0,
+        "warningCount": 2
+    },
+    {
+        "filePath": "/home/vagrant/wp-calypso/client/components/accordion/index.jsx",
+        "messages": [
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 4,
+                "column": 1,
+                "nodeType": "VariableDeclaration",
+                "source": "var React = require( 'react' ),"
+            },
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 35,
+                "column": 3,
+                "nodeType": "VariableDeclaration",
+                "source": "\t\tvar isExpanded = ! this.state.isExpanded;"
+            },
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 63,
+                "column": 3,
+                "nodeType": "VariableDeclaration",
+                "source": "\t\tvar classes = classNames( 'accordion__header', {"
+            },
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 80,
+                "column": 3,
+                "nodeType": "VariableDeclaration",
+                "source": "\t\tvar classes = classNames( 'accordion', this.props.className, {"
+            }
+        ],
+        "errorCount": 0,
+        "warningCount": 4
+    },
+    {
+        "filePath": "/home/vagrant/wp-calypso/client/components/accordion/section.jsx",
+        "messages": [
+            {
+                "ruleId": null,
+                "fatal": true,
+                "severity": 2,
+                "source": "xport default React.createClass( {",
+                "message": "Parsing error: Unexpected token",
+                "line": 7,
+                "column": 7
+            }
+        ],
+        "errorCount": 1,
+        "warningCount": 0
+    },
+    {
+        "filePath": "/home/vagrant/wp-calypso/client/components/accordion/test/index.jsx",
+        "messages": [
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 4,
+                "column": 1,
+                "nodeType": "VariableDeclaration",
+                "source": "var expect = require( 'chai' ).expect,"
+            },
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 12,
+                "column": 1,
+                "nodeType": "VariableDeclaration",
+                "source": "var Accordion = require( '../' );"
+            },
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 23,
+                "column": 3,
+                "nodeType": "VariableDeclaration",
+                "source": "\t\tvar tree = TestUtils.renderIntoDocument( <Accordion title=\"Section\">Content</Accordion> ),"
+            },
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 36,
+                "column": 3,
+                "nodeType": "VariableDeclaration",
+                "source": "\t\tvar tree = TestUtils.renderIntoDocument( <Accordion title=\"Section\" icon=\"time\">Content</Accordion> ),"
+            },
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 44,
+                "column": 3,
+                "nodeType": "VariableDeclaration",
+                "source": "\t\tvar tree = TestUtils.renderIntoDocument( <Accordion title=\"Section\" subtitle=\"Subtitle\">Content</Accordion> ),"
+            },
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 52,
+                "column": 3,
+                "nodeType": "VariableDeclaration",
+                "source": "\t\tvar tree = TestUtils.renderIntoDocument( <Accordion title=\"Section\">Content</Accordion> );"
+            },
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 60,
+                "column": 3,
+                "nodeType": "VariableDeclaration",
+                "source": "\t\tvar tree = TestUtils.renderIntoDocument( <Accordion title=\"Section\" onToggle={ finishTest }>Content</Accordion> );"
+            },
+            {
+                "ruleId": "max-len",
+                "severity": 2,
+                "message": "Line 75 exceeds the maximum line length of 140.",
+                "line": 75,
+                "column": 1,
+                "nodeType": "Program",
+                "source": "\t\tvar tree = TestUtils.renderIntoDocument( <Accordion initialExpanded={ true } title=\"Section\" onToggle={ finishTest }>Content</Accordion> );"
+            },
+            {
+                "ruleId": "no-var",
+                "severity": 1,
+                "message": "Unexpected var, use let or const instead.",
+                "line": 75,
+                "column": 3,
+                "nodeType": "VariableDeclaration",
+                "source": "\t\tvar tree = TestUtils.renderIntoDocument( <Accordion initialExpanded={ true } title=\"Section\" onToggle={ finishTest }>Content</Accordion> );"
+            }
+        ],
+        "errorCount": 1,
+        "warningCount": 8
+    }
+]
