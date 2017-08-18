@@ -86,9 +86,15 @@ export function items( state = {}, action ) {
  */
 export function orders( state = {}, action ) {
 	switch ( action.type ) {
-		case WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS:
+		case WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS: {
 			const idList = action.notes.map( note => note.id );
 			return Object.assign( {}, state, { [ action.orderId ]: idList } );
+		}
+		case WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS: {
+			const { note, orderId } = action;
+			const idList = [ ...state[ orderId ], note.id ];
+			return Object.assign( {}, state, { [ orderId ]: idList } );
+		}
 		default:
 			return state;
 	}
