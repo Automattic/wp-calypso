@@ -46,6 +46,10 @@ const trackSibylClick = ( event, helpLink ) => composeAnalytics(
 	} )
 );
 
+const trackSupportAfterSibylClick = () => composeAnalytics(
+	recordTracksEvent( 'calypso_sibyl_support_after_question_click' )
+);
+
 export const HelpContactForm = React.createClass( {
 	mixins: [ LinkedStateMixin, PureRenderMixin ],
 
@@ -94,6 +98,7 @@ export const HelpContactForm = React.createClass( {
 			howYouFeel: 'unspecified',
 			message: '',
 			subject: '',
+			sibylClicked: false,
 			qanda: [],
 		};
 	},
@@ -131,8 +136,13 @@ export const HelpContactForm = React.createClass( {
 	doQandASearch() {
 		const query = this.state.subject + ' ' + this.state.message;
 		wpcom.getQandA( query, config( 'happychat_support_blog' ) )
-			.then( qanda => this.setState( { qanda } ) )
-			.catch( () => this.setState( { qanda: [] } ) );
+			.then( qanda => this.setState( { qanda, sibylClicked: false } ) )
+			.catch( () => this.setState( { qanda: [], sibylClicked: false } ) );
+	},
+
+	trackSibylClick( event, helpLink ) {
+		this.props.trackSibylClick( event, helpLink );
+		this.setState( { sibylClicked: true } );
 	},
 
 	/**
@@ -207,6 +217,12 @@ export const HelpContactForm = React.createClass( {
 			message,
 			subject
 		} = this.state;
+
+		if ( this.state.sibylClicked ) {
+			// track that the user had clicked a Sibyl result, but still contacted support
+			this.props.trackSupportAfterSibylClick();
+			this.setState( { sibylClicked: false } );
+		}
 
 		this.props.onSubmit( {
 			howCanWeHelp,
@@ -304,7 +320,7 @@ export const HelpContactForm = React.createClass( {
 					header={ translate( 'Do you want the answer to any of these questions?' ) }
 					helpLinks={ this.state.qanda }
 					iconTypeDescription="book"
-					onClick={ this.props.trackSibylClick }
+					onClick={ this.trackSibylClick }
 				/>
 
 				<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>{ buttonLabel }</FormButton>
@@ -319,7 +335,8 @@ const mapStateToProps = ( state ) => ( {
 
 const mapDispatchToProps = {
 	onChangeSite: selectSiteId,
-	trackSibylClick
+	trackSibylClick,
+	trackSupportAfterSibylClick
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpContactForm ) );
