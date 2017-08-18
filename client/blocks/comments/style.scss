@@ -341,13 +341,21 @@
 	max-height: 15px * 1.6 * 3;
 	min-width: 160px;
 	position: relative;
-		top: -25px;
+		top: -24px;
 	text-align: right;
 	width: 140px;
 
 	&:hover {
 		color: $blue-light;
 	}
+}
+
+.comments__comment-content-wrapper.is-excerpt .comments__comment-content ~ .comments__comment-read-more {
+	top: -24px;
+}
+
+.comments__comment-content-wrapper.is-excerpt .comments__comment-content ~ .comments__comment-read-more {
+	top: -22px;
 }
 
 // Avoids long trackback links from wrapping
