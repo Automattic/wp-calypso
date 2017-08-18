@@ -143,7 +143,9 @@ class SetupTasks extends Component {
 				show: true,
 				actions: [
 					{
-						label: translate( 'Set up payments' ),
+						label: paymentsAreSetUp && (
+							translate( 'Review payments' )
+						) || translate( 'Set up payments' ),
 						path: getLink( '/store/settings/payments/:site', site ),
 						analyticsProp: 'set-up-payments',
 					}
