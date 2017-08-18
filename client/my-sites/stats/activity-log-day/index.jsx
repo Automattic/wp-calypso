@@ -127,6 +127,7 @@ class ActivityLogDay extends Component {
 			applySiteOffset,
 			disableRestore,
 			hideRestore,
+			isToday,
 			logs,
 			requestRestore,
 			siteId,
@@ -136,6 +137,7 @@ class ActivityLogDay extends Component {
 			<div className="activity-log-day">
 				<FoldableCard
 					clickableHeader
+					expanded={ isToday }
 					expandedSummary={ this.getRewindButton() }
 					header={ this.getEventsHeading() }
 					onOpen={ this.trackOpenDay }
