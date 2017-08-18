@@ -112,7 +112,7 @@ class SetupTasks extends Component {
 		return [
 			{
 				checked: hasProducts,
-				explanation: translate( 'Start by adding the first product to your store.' ),
+				explanation: translate( 'Start by adding the first product to your\u00a0store.' ),
 				label: translate( 'Add a product' ),
 				show: true,
 				actions: [
@@ -126,11 +126,11 @@ class SetupTasks extends Component {
 			{
 				checked: shippingIsSetUp,
 				explanation: translate( 'We\'ve set up shipping based on your store location.' ),
-				label: translate( 'Review shipping settings' ),
+				label: translate( 'Review shipping' ),
 				show: this.state.showShippingTask,
 				actions: [
 					{
-						label: translate( 'Review settings' ),
+						label: translate( 'Review shipping' ),
 						path: getLink( '/store/settings/shipping/:site', site ),
 						analyticsProp: 'set-up-shipping',
 					}
@@ -152,11 +152,11 @@ class SetupTasks extends Component {
 			{
 				checked: taxesAreSetUp,
 				explanation: translate( 'We\'ve set up automatic tax calculations for you.' ),
-				label: translate( 'Review tax settings' ),
+				label: translate( 'Review taxes' ),
 				show: true,
 				actions: [
 					{
-						label: translate( 'Review settings' ),
+						label: translate( 'Review taxes' ),
 						path: getLink( '/store/settings/taxes/:site', site ),
 						onClick: this.onClickTaxSettings,
 						analyticsProp: 'set-up-taxes',
@@ -170,7 +170,7 @@ class SetupTasks extends Component {
 				show: true,
 				actions: [
 					{
-						label: translate( 'Customize' ),
+						label: translate( 'View and customize' ),
 						path: getLink( 'https://:site/wp-admin/customize.php?return=' + encodeURIComponent( '//' + site.slug ), site ),
 						onClick: this.onClickOpenCustomizer,
 						analyticsProp: 'view-and-customize',
