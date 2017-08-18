@@ -1,10 +1,44 @@
+.jpo-site-type {
+	position: relative;
+	text-align: center;
+}
+
+.jpo-site-type__image {
+	display: none;
+
+	@include breakpoint( ">480px" ) {
+		display: block;
+	}
+}
+
+@include breakpoint( ">480px" ) {
+	.jpo-site-type__choice-copy {
+		padding: 15px;
+		border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+	}
+}
+
+.jpo-site-type__cta {
+	color: $blue-wordpress;
+
+	@include breakpoint( "<480px" ) {
+		background: none;
+		font-size: 1.1em;
+		border: 0;
+		padding: 0;
+		text-transform: none;
+		margin: 0;
+		line-height: 1.1em;
+	}
+}
+
 .jpo-site-type__wrapper {
 	margin-left: auto;
 	margin-right: auto;
-}
 
-.jpo-site-type__wrapper header {
-	text-align: center;
+	header {
+		text-align: center;
+	}
 }
 
 .jpo-site-type__row {
@@ -23,74 +57,74 @@
 		transform: translateZ( 0 ) translateX( -25% );
 		opacity: 0;
 	}
-}
 
-.jpo-site-type__row .card {
-	width: 46%;
-	display: inline-block;
-	vertical-align: top;
-	text-align: center;
-	padding: 0;
-
-	@media (max-width: 480px) {
-		width: 100%;
-		text-align: left;
-	}
-}
-
-.jpo-site-type__row .card svg {
-	max-width: 100%;
-	max-height: 190px;
-}
-
-.jpo-site-type__row-small .card svg {
-	max-height: 117px;
-}
-
-.jpo-site-type__row .card:first-child {
-	@include breakpoint( ">480px" ) {
-		margin-right: 2%;
-	}
-    
-    @media (max-width: 480px) {
-		margin-right: 10px;
-	}
-}
-
-.jpo-site-type__row .card .button {
-	font-size: 1.25rem;
-	margin-bottom: 1rem;
-	color: $blue-wordpress;
-    line-height: 1;
-
-	@include breakpoint( ">480px" ) {
-		padding: 7px;
-	}
-    
-    @media (max-width: 480px) {
-		margin-bottom: 0;
-		font-size:1.5rem;
+	.card {
+		width: 46%;
+		display: inline-block;
+		vertical-align: top;
+		text-align: center;
 		padding: 0;
+
+		@include breakpoint( "<480px" ) {
+			width: 100%;
+			text-align: left;
+		}
+
+		svg {
+			max-width: 100%;
+			max-height: 190px;
+		}
+
+		.button {
+			font-size: 1.25rem;
+			margin-bottom: 1rem;
+			color: $blue-wordpress;
+			line-height: 1;
+
+			@include breakpoint( ">480px" ) {
+				padding: 7px;
+			}
+
+			@media (max-width: 480px) {
+				margin-bottom: 0;
+				font-size:1.5rem;
+				padding: 0;
+			}
+
+			.jpo-site-type__cta {
+				@include breakpoint( ">480px" ) {
+					background: none;
+					font-size: 1.1em;
+					border: 0;
+					padding: 0;
+					text-transform: none;
+					margin: 0;
+					line-height: 1.1em;
+				}
+			}
+		}
+
+		&:first-child {
+			@include breakpoint( ">480px" ) {
+				margin-right: 2%;
+			}
+
+			@media (max-width: 480px) {
+				margin-right: 10px;
+			}
+		}
 	}
 }
 
-.jpo-site-type__row-small .card .button {
-	text-transform: none;
-	margin-top: 1rem;
-	margin-bottom: 0;
-	padding: 7px;
-    line-height: 1;
-}
+.jpo-site-type__row-small {
+	.card {
+		.button {
+			padding: 7px;
+		}
 
-.button .jpo-site-type__cta {
-	@include breakpoint( ">480px" ) {
-		background: none;
-	    font-size: 1.1em;
-	    border: 0;
-	    padding: 0;
-	    text-transform: none;
-	    margin: 0;
-	    line-height: 1.1em;
+		svg {
+			max-height: 117px;
+		}
 	}
 }
 
@@ -101,10 +135,6 @@ p.jpo-site-type__description {
 
 	@include breakpoint( ">480px" ) {
 		margin-top: 10px;
-	}
-
-	@media (max-width: 480px) {
-		text-align:left;
 	}
 }
 
@@ -118,27 +148,29 @@ p.jpo-site-type__description {
 	}
 }
 
-.business-address .card {
-	text-align: left;
-	max-width: 320px;
-}
+.business-address {
+	.card {
+		text-align: left;
+		max-width: 320px;
 
-.business-address .card input {
-	margin-bottom: 1rem;
-}
+		input {
+			margin-bottom: 1rem;
+		}
 
-.business-address .card .button {
-	width: 100%;
-	margin-top: 1rem;
+		.button {
+			width: 100%;
+			margin-top: 1rem;
 
-	@include breakpoint( "<480px" ) {
-		background: none;
-		font-size: 1.1em;
-		border: 0;
-		padding: 0;
-		text-transform: none;
-		margin: 0;
-		line-height: 1.1em;
+			@include breakpoint( "<480px" ) {
+				background: none;
+				font-size: 1.1em;
+				border: 0;
+				padding: 0;
+				text-transform: none;
+				margin: 0;
+				line-height: 1.1em;
+			}
+		}
 	}
 }
 
@@ -225,17 +257,6 @@ p.jpo-site-type__description {
 .jpo-site-type__image {
 	padding:15px;
 }
-
-	&:active {
-		.jpo-site-type__cta {
-			color: $blue-dark;
-		}
-
-		.jpo-site-type__choice-link:after {
-			border-top-color: $blue-dark;
-			border-right-color: $blue-dark;
-		}
-	}
 
 .jpo-site-type__choice-link {
 	padding-right: 40px;
