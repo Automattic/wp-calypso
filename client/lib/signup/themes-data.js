@@ -126,12 +126,12 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Harmonic',
-		slug: 'harmonic',
+		name: 'Twenty Seventeen',
+		slug: 'twentyseventeen',
 		repo: 'pub',
 		fallback: true,
 		design: 'page',
-		demo_uri: 'https://harmonicdemo.wordpress.com',
+		demo_uri: 'https://twentyseventeendemo.wordpress.com',
 		verticals: []
 	},
 	{
