@@ -23,6 +23,7 @@ export class SignupProcessingScreen extends Component {
 		steps: PropTypes.array.isRequired,
 		user: PropTypes.object,
 		signupProgress: PropTypes.array,
+		flow: PropTypes.string,
 	};
 
 	componentWillMount() {
@@ -230,7 +231,7 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	render() {
-		if ( abtest( 'postSignupUpgradeScreen' ) === 'modified' && ! this.state.hasPaidSubscription ) {
+		if ( abtest( 'postSignupUpgradeScreen' ) === 'modified' && ! this.state.hasPaidSubscription && this.props.flow !== 'rebrand-cities' ) {
 			return this.renderUpgradeScreen();
 		}
 
