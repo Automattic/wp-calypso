@@ -93,7 +93,7 @@
 		align-items: center;
 
 		&:before {
-			left: 48px;
+			left: 42px;
 		}
 	}
 
@@ -104,7 +104,7 @@
 
 	.dashboard__setup-task-status:empty {
 		background:  lighten( $gray, 30% );
-		border: 6px solid $white;
+		border: 4px solid $white;
 		box-sizing: border-box;
 	}
 
@@ -120,8 +120,8 @@
 		margin-top: 2px;
 
 		@include breakpoint( ">960px" ) {
-			height: 48px;
-			width: 48px;
+			height: 36px;
+			width: 36px;
 		}
 
 		.gridicon {
@@ -132,8 +132,8 @@
 
 			@include breakpoint( ">960px" ) {
 				padding: 6px;
-				height: 36px;
-				width: 36px;
+				height: 24px;
+				width: 24px;
 			}
 		}
 	}
