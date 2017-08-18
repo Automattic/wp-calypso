@@ -9,7 +9,7 @@ When the props `temporarySelection` and `onSelection` are provided, a selection 
 
 ## Usage
 
-```es6
+```jsx
 import ColorSchemePicker from 'blocks/color-scheme-picker';
 
 handleColorSchemeSelection = event => {
