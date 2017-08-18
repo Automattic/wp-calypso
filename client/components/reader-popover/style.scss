@@ -22,10 +22,10 @@
 }
 
 .reader-popover.popover.is-bottom .popover__arrow,
-.reader-popover.popover.is-bottom-left .popover__arrow
+.reader-popover.popover.is-bottom-left .popover__arrow,
 .reader-popover.popover.is-bottom-right .popover__arrow {
 
-	&::before{
+	&::before {
 		border: 10px solid $gray-light;
 		border-bottom-style: solid;
 		border-left-color: transparent;
@@ -56,6 +56,7 @@
 .reader-popover__wrapper {
 	display: flex;
 	flex-direction: column;
+	min-width: 200px;
 }
 
 .reader-popover__header {
