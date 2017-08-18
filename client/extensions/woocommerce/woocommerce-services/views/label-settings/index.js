@@ -21,7 +21,7 @@ import {
 	fetchSettings,
 	setFormDataValue,
 } from '../../state/label-settings/actions';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getLabelSettingsFormData,
 	getLabelSettingsFormMeta,
@@ -43,7 +43,7 @@ class AccountSettingsRootView extends Component {
 	}
 
 	render() {
-		const { formData, formMeta, storeOptions, siteId, site, translate } = this.props;
+		const { formData, formMeta, storeOptions, siteId, translate } = this.props;
 
 		if ( ! formMeta ) {
 			return null;
@@ -60,10 +60,15 @@ class AccountSettingsRootView extends Component {
 				);
 			}
 
-			if ( ! site.plan.user_is_owner ) {
+			if ( ! formMeta.isFetching && ! formMeta.can_manage_payments ) {
 				return (
 					<Notice showDismiss={ false } isCompact={ true }>
-						{ translate( 'Only the plan owner can manage shipping label settings.' ) }
+						{ translate( 'Only the plan owner, %(name)s (%(login)s), can manage shipping label settings.', {
+							args: {
+								name: formMeta.master_user_name,
+								login: formMeta.master_user_login,
+							},
+						} ) }
 					</Notice>
 				);
 			}
@@ -82,8 +87,9 @@ class AccountSettingsRootView extends Component {
 		};
 
 		//hide the toggle when the enabled flag is not present (older version of WCS) and respect the setting otherwise.
-		const renderToggle = formData && isBoolean( formData.enabled );
+		const renderToggle = formData && isBoolean( formData.enabled ) && formMeta.can_manage_payments;
 		const hidden = formData && isBoolean( formData.enabled ) && ! formData.enabled;
+
 
 		return (
 			<div>
@@ -107,7 +113,6 @@ AccountSettingsRootView.propTypes = {
 function mapStateToProps( state ) {
 	return {
 		siteId: getSelectedSiteId( state ),
-		site: getSelectedSite( state ),
 		storeOptions: getLabelSettingsStoreOptions( state ),
 		formData: getLabelSettingsFormData( state ),
 		formMeta: getLabelSettingsFormMeta( state ),
