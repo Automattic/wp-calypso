@@ -25,10 +25,7 @@ class ColorSchemePickerExample extends PureComponent {
 	render() {
 		return (
 			<Card>
-				<ColorSchemePicker
-					temporarySelection={ true }
-					onSelection={ this.handleColorSchemeSelection }
-				/>
+				<ColorSchemePicker temporarySelection onSelection={ this.handleColorSchemeSelection } />
 
 				{ this.state.selectedColorScheme &&
 					<Notice

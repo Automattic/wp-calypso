@@ -1,16 +1,12 @@
 .color-scheme-picker .form-radio-with-thumbnail__thumbnail {
-
 	height: 80px;
 	background-image: url( '/calypso/images/color-schemes/theme-default.png' );
 
 	&.is-light-theme {
-
 		background-image: url( '/calypso/images/color-schemes/theme-light.png' );
 	}
 
 	&.is-dark-theme {
-
 		background-image: url( '/calypso/images/color-schemes/theme-dark.png' );
-
 	}
 }
