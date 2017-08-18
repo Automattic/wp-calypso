@@ -86,7 +86,7 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
 				siteId: 123,
 				orderId: 45,
-				notes,
+				note,
 			};
 			const originalState = deepFreeze( { 45: true } );
 			const newState = isSaving( originalState, action );
