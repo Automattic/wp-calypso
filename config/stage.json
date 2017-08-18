@@ -121,6 +121,7 @@
 		"woocommerce/extension-settings": true,
 		"woocommerce/extension-settings-payments": true,
 		"woocommerce/extension-settings-shipping": true,
+		"woocommerce/extension-settings-stripe-connect-flows": false,
 		"woocommerce/extension-settings-tax": true,
 		"wpcom-user-bootstrap": true
 	},
