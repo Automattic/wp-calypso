@@ -327,6 +327,7 @@ class ActivityLog extends Component {
 				{ this.renderBanner() }
 				{ ! isRewindActive && !! isPressable && <ActivityLogRewindToggle siteId={ siteId } /> }
 				{ this.renderLogs() }
+				{ this.renderMonthNavigation() }
 
 				<ActivityLogConfirmDialog
 					applySiteOffset={ applySiteOffset }
