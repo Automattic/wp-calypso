@@ -17,11 +17,12 @@ import { getLabelSettingsFormMeta } from 'woocommerce/woocommerce-services/state
 import { getPackagesForm } from 'woocommerce/woocommerce-services/state/packages/selectors';
 import { submit as submitLabels } from 'woocommerce/woocommerce-services/state/label-settings/actions';
 import { submit as submitPackages } from 'woocommerce/woocommerce-services/state/packages/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 
 const getSaveLabelSettingsActionListSteps = ( state, siteId ) => {
+	const site = getSelectedSite( state );
 	const labelFormMeta = getLabelSettingsFormMeta( state, siteId );
-	if ( ! labelFormMeta || labelFormMeta.pristine ) {
+	if ( ! labelFormMeta || labelFormMeta.pristine || ! site.plan.user_is_owner ) {
 		return [];
 	}
 

@@ -15,12 +15,13 @@ import { isBoolean } from 'lodash';
 import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormToggle from 'components/forms/form-toggle';
+import Notice from 'components/notice';
 import LabelSettings from './label-settings';
 import {
 	fetchSettings,
 	setFormDataValue,
 } from '../../state/label-settings/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import {
 	getLabelSettingsFormData,
 	getLabelSettingsFormMeta,
@@ -42,7 +43,7 @@ class AccountSettingsRootView extends Component {
 	}
 
 	render() {
-		const { formData, formMeta, storeOptions, siteId, translate } = this.props;
+		const { formData, formMeta, storeOptions, siteId, site, translate } = this.props;
 
 		if ( ! formMeta ) {
 			return null;
@@ -56,6 +57,14 @@ class AccountSettingsRootView extends Component {
 					<p>
 						{ translate( 'Unable to get your settings. Please refresh the page to try again.' ) }
 					</p>
+				);
+			}
+
+			if ( ! site.plan.user_is_owner ) {
+				return (
+					<Notice showDismiss={ false } isCompact={ true }>
+						{ translate( 'Only the plan owner can manage shipping label settings.' ) }
+					</Notice>
 				);
 			}
 
@@ -98,6 +107,7 @@ AccountSettingsRootView.propTypes = {
 function mapStateToProps( state ) {
 	return {
 		siteId: getSelectedSiteId( state ),
+		site: getSelectedSite( state ),
 		storeOptions: getLabelSettingsStoreOptions( state ),
 		formData: getLabelSettingsFormData( state ),
 		formMeta: getLabelSettingsFormMeta( state ),
