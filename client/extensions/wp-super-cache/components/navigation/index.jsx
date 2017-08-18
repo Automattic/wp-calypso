@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import { get } from 'lodash';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,9 +14,10 @@ import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
 import { addSiteFragment } from 'lib/route/path';
+import { getSiteSlug } from 'state/sites/selectors';
 import { Tabs } from '../../app/constants';
 
-const Navigation = ( { activeTab, site, translate } ) => {
+const Navigation = ( { activeTab, siteSlug, translate } ) => {
 	const getLabel = tab => {
 		switch ( tab ) {
 			case Tabs.EASY:
@@ -53,14 +55,10 @@ const Navigation = ( { activeTab, site, translate } ) => {
 				path = `${ path }/${ tab }`;
 			}
 
-			if ( site ) {
-				path += `/${ site.slug }`;
-			}
-
 			return (
 				<SectionNavTabItem
 					key={ `wp-super-cache-${ tab }` }
-					path={ path }
+					path={ siteSlug && addSiteFragment( path, siteSlug ) }
 					selected={ ( activeTab || Tabs.EASY ) === tab }>
 					{ getLabel( tab ) }
 				</SectionNavTabItem>
@@ -68,11 +66,11 @@ const Navigation = ( { activeTab, site, translate } ) => {
 		} );
 	};
 
-	const pluginUrl = addSiteFragment( '/plugins/wp-super-cache', get( site, 'slug' ) );
+	const pluginPath = '/plugins/wp-super-cache';
 	return (
 		<div>
 			<HeaderCake backText={ translate( 'Plugin Overview' ) }
-				backHref={ pluginUrl }>
+				backHref={ siteSlug && addSiteFragment( pluginPath, siteSlug ) }>
 				WP Super Cache
 			</HeaderCake>
 			<SectionNav selectedText="Settings">
@@ -86,7 +84,9 @@ const Navigation = ( { activeTab, site, translate } ) => {
 
 Navigation.propTypes = {
 	activeTab: PropTypes.string,
-	site: PropTypes.object,
+	siteId: PropTypes.number,
+	// connected props
+	siteSlug: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
 
@@ -94,4 +94,10 @@ Navigation.defaultProps = {
 	activeTab: '',
 };
 
-export default localize( Navigation );
+const connectComponent = connect(
+	( state, { siteId } ) => ( {
+		siteSlug: getSiteSlug( state, siteId )
+	} )
+);
+
+export default connectComponent( localize( Navigation ) );
