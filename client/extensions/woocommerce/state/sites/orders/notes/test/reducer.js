@@ -136,6 +136,18 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { ...originalState, 3: note } );
 		} );
 
+		it( 'should add the created note to the note list', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
+				siteId: 123,
+				orderId: 50,
+				note,
+			};
+			const originalState = deepFreeze( keyBy( notes, 'id' ) );
+			const newState = items( originalState, action );
+			expect( newState ).to.eql( { ...originalState, 3: note } );
+		} );
+
 		it( 'should do nothing on a failure', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,

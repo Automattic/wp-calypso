@@ -64,11 +64,13 @@ export function isSaving( state = {}, action ) {
  * @return {Object}        Updated state
  */
 export function items( state = {}, action ) {
-	let notes;
 	switch ( action.type ) {
 		case WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS:
-			notes = keyBy( action.notes, 'id' );
+			const notes = keyBy( action.notes, 'id' );
 			return Object.assign( {}, state, notes );
+		case WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS:
+			const note = action.note;
+			return Object.assign( {}, state, { [ note.id ]: note } );
 		default:
 			return state;
 	}
