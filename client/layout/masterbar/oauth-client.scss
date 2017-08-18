@@ -59,6 +59,11 @@
 		color: #fff;
 	}
 
+	&:visited {
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+
 	.gridicon {
 		margin-bottom: 5px;
 		margin-right: 5px;
@@ -73,13 +78,15 @@
 }
 
 .woo {
+	background: #e6e6e6;
+
 	.layout__content {
-		padding-top: 100px;
+		padding-top: 150px;
 	}
 
 	.masterbar__oauth-client {
 		background-color: #fff;
-		border: none;
+		border: 1px solid #d3d3d3;
 		box-sizing: border-box;
 		height: 83px;
 		line-height: 83px;
@@ -106,22 +113,19 @@
 		margin: 0;
 	}
 
-	.masterbar__oauth-client-wpcc-sign-in {
-		background-color: rgba(0, 0, 0, 0.15);
-		display: block;
-		top: 14px;
+	.masterbar__oauth-client-close {
+		float: right;
+		padding-top: 13px;
 
-		&:hover {
-			background-color: rgba(0, 0, 0, 0.2);
+		a {
+			color: #999;
+			cursor: pointer;
+			float: right;
+			font-size: 0.9em;
+			text-decoration: none;
+			text-transform: uppercase;
+			font-weight: bold;
 		}
-
-		@include breakpoint( "<480px" ) {
-			display: none;
-		}
-	}
-
-	a.masterbar__oauth-client-wpcom {
-		color: #000;
 	}
 
 	.button.is-primary {
@@ -139,6 +143,11 @@
 		&:focus {
 			background: #696969;
 		}
+	}
+
+	button {
+		float: none;
+		max-width: 300px;
 	}
 
 	input[type='text'],
@@ -168,6 +177,39 @@
 	}
 
 	.login__form-header-wrapper {
+		text-align: center;
+	}
+
+	.login__form-action,
+	.login__social-buttons {
+		text-align: center;
+	}
+
+	.wp-login__main.main {
+		background: #fff;
+		border: 1px solid #d3d3d3;
+    	border-radius: 5px;
+    	box-sizing: border-box;
+		max-width: 778px;
+		padding: 20px 100px;
+		width: 100%;
+	}
+
+	.card {
+		box-shadow: none;
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.login__form-userdata label {
+		font-size: 16px;
+		font-weight: normal;
+	}
+
+	.wp-login__links a {
+		border: none;
+		font-size: 16px;
+		font-weight: normal;
 		text-align: center;
 	}
 }

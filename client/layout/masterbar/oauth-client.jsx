@@ -18,14 +18,20 @@ const OauthClientMasterbar = ( { oauth2ClientData } ) => (
 					</a>
 				</li>
 			</ul>
-			<ul className="masterbar__oauth-client-user-nav">
-				<li className="masterbar__oauth-client-wpcc-sign-in">
-					<a href="https://wordpress.com/" className="masterbar__oauth-client-wpcom">
-						<Gridicon icon="my-sites" size={ 24 } />
-						WordPress.com
-					</a>
+			{ oauth2ClientData.name === 'woo' ? (
+				<li className="masterbar__oauth-client-close">
+					<a href="https://woocommerce.com">Cancel <span>X</span></a>
 				</li>
-			</ul>
+			) : (
+				<ul className="masterbar__oauth-client-user-nav">
+					<li className="masterbar__oauth-client-wpcc-sign-in">
+						<a href="https://wordpress.com/" className="masterbar__oauth-client-wpcom">
+							<Gridicon icon="my-sites" size={ 24 } />
+							WordPress.com
+						</a>
+					</li>
+				</ul>
+			) }
 		</nav>
 	</header>
 );

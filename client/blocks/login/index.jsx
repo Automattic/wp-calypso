@@ -149,9 +149,10 @@ class Login extends Component {
 				);
 				postHeader = (
 					<p>
-						{ translate( 'WooCommerce.com now uses WordPress.com Accounts. {{a}}Learn more about the benefits{{/a}}', {
+						{ translate( 'WooCommerce.com now uses WordPress.com Accounts.{{br/}}{{a}}Learn more about the benefits{{/a}}', {
 							components: {
-								a: <a href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/" />
+								a: <a href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/" />,
+								br: <br />,
 							}
 						} ) }
 					</p>
