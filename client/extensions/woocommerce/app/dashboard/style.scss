@@ -61,6 +61,11 @@
 				display: none;
 			}
 		}
+
+		@include breakpoint( ">480px" ) {
+			padding-top: 16px;
+			padding-bottom: 16px;
+		}
 	}
 
 	&:before {
