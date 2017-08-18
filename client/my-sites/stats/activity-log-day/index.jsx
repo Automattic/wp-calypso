@@ -103,15 +103,20 @@ class ActivityLogDay extends Component {
 	getEventsHeading() {
 		const {
 			applySiteOffset,
+			isToday,
 			logs,
 			moment,
 			translate,
 			tsEndOfSiteDay,
 		} = this.props;
 
+		const formattedDate = applySiteOffset( moment.utc( tsEndOfSiteDay ) ).format( 'LL' );
+
 		return (
 			<div>
-				<div className="activity-log-day__day">{ applySiteOffset( moment.utc( tsEndOfSiteDay ) ).format( 'LL' ) }</div>
+				<div className="activity-log-day__day">
+					{ isToday ? translate( '%s — Today', { args: formattedDate } ) : formattedDate }
+				</div>
 				<div className="activity-log-day__events">{
 					translate( '%d Event', '%d Events', {
 						args: logs.length,
