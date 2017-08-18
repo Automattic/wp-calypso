@@ -10,10 +10,13 @@ import {
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_SAVING,
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_MODAL_ERRORS,
 	WOOCOMMERCE_SERVICES_PACKAGES_UPDATE_PACKAGES_FIELD,
+	WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEFINED,
+	WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEFINED,
 	WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PACKAGE,
 	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_OUTER_DIMENSIONS,
-	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL,
-	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PACKAGE,
+	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL_PREDEFINED,
+	WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PREDEFINED,
+	WOOCOMMERCE_SERVICES_PACKAGES_SET_ADD_MODE,
 	WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCHING,
 	WOOCOMMERCE_SERVICES_PACKAGES_INIT_PACKAGES_FORM,
 } from '../action-types';
@@ -59,7 +62,7 @@ export const toggleOuterDimensions = ( siteId ) => ( {
 } );
 
 export const toggleAll = ( siteId, serviceId, groupId, checked ) => ( {
-	type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL,
+	type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL_PREDEFINED,
 	serviceId,
 	groupId,
 	checked,
@@ -67,7 +70,19 @@ export const toggleAll = ( siteId, serviceId, groupId, checked ) => ( {
 } );
 
 export const togglePackage = ( siteId, serviceId, packageId ) => ( {
-	type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PACKAGE,
+	type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_PREDEFINED,
+	serviceId,
+	packageId,
+	siteId,
+} );
+
+export const savePredefinedPackages = ( siteId ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEFINED,
+	siteId,
+} );
+
+export const removePredefinedPackage = ( siteId, serviceId, packageId ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEFINED,
 	serviceId,
 	packageId,
 	siteId,
@@ -89,6 +104,12 @@ export const setIsFetching = ( siteId, isFetching ) => ( {
 	type: WOOCOMMERCE_SERVICES_PACKAGES_SET_IS_FETCHING,
 	isFetching,
 	siteId,
+} );
+
+export const setAddMode = ( siteId, mode ) => ( {
+	type: WOOCOMMERCE_SERVICES_PACKAGES_SET_ADD_MODE,
+	siteId,
+	mode,
 } );
 
 export const fetchSettings = ( siteId ) => ( dispatch, getState ) => {
