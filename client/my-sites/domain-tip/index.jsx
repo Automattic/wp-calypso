@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { noop, stubTrue } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -41,11 +41,6 @@ class DomainTip extends React.Component {
 
 	static defaultProps = {
 		quantity: noop,
-	};
-
-	noticeShouldDisplay = () => {
-		// bypass some of the upgrade nudge display logic
-		return true;
 	};
 
 	domainUpgradeNudge() {
@@ -91,7 +86,7 @@ class DomainTip extends React.Component {
 					suggestion
 						? <UpgradeNudge
 							event={ `domain_tip_${ event }` }
-							shouldDisplay={ this.noticeShouldDisplay }
+							shouldDisplay={ stubTrue }
 							feature={ FEATURE_CUSTOM_DOMAIN }
 							title={ translate( '{{span}}%(domain)s{{/span}} is available!', {
 								args: { domain: suggestion.domain_name },
