@@ -25,7 +25,7 @@ const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 			{
 				method: 'GET',
 				path: `/sites/${ siteId }/comments-tree`,
-				apiNamespace: 'wpcom/v2',
+				apiVersion: '1',
 				query: {
 					status: ( 'unapproved' === status ) ? 'pending' : status,
 				},
@@ -37,7 +37,7 @@ const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 
 const addCommentsTree = ( { dispatch }, { query }, data ) => {
 	const { siteId, status } = query;
-	const commentsTree = data[ 1 ];
+	const { comments_tree: commentsTree } = data;
 
 	const tree = map( commentsTree, comment => ( {
 		commentId: comment[ 0 ],
