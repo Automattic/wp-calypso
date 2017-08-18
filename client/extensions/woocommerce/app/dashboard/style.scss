@@ -48,9 +48,17 @@
 		background: lighten( $gray, 35% );
 
 		.dashboard__setup-task-label {
-			h2,
+			h2 {
+				color: $gray-text-min;
+				margin-bottom: 6px;
+
+				@include breakpoint( ">960px" ) {
+					margin-bottom: 0;
+				}
+			}
+
 			p {
-				color: $gray;
+				display: none;
 			}
 		}
 	}
@@ -109,7 +117,6 @@
 		@include breakpoint( ">960px" ) {
 			height: 48px;
 			width: 48px;
-			margin-top: -8px;
 		}
 
 		.gridicon {
@@ -130,6 +137,7 @@
 		@include breakpoint( ">960px" ) {
 			display: flex;
 			align-items: center;
+			width: 100%;
 		}
 	}
 
