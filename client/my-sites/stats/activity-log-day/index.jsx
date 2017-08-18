@@ -74,9 +74,10 @@ class ActivityLogDay extends Component {
 		const {
 			disableRestore,
 			hideRestore,
+			isToday,
 		} = this.props;
 
-		if ( hideRestore ) {
+		if ( hideRestore || isToday ) {
 			return null;
 		}
 
