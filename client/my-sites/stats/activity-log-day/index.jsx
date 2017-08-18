@@ -116,7 +116,13 @@ class ActivityLogDay extends Component {
 		return (
 			<div>
 				<div className="activity-log-day__day">
-					{ isToday ? translate( '%s — Today', { args: formattedDate } ) : formattedDate }
+					{ isToday
+						? translate( '%s — Today', {
+							args: formattedDate,
+							comment: 'Long date with today indicator, i.e. "January 1, 2017 — Today"',
+						} )
+						: formattedDate
+					}
 				</div>
 				<div className="activity-log-day__events">{
 					translate( '%d Event', '%d Events', {
