@@ -26,6 +26,7 @@ import MediaUtils, { isItemBeingUploaded } from 'lib/media/utils';
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
+import { isPrivateSite } from 'state/selectors';
 
 /**
  * This function return true if the image editor can be
@@ -123,6 +124,10 @@ class EditorMediaModalDetailItem extends Component {
 		} = this.props;
 
 		if ( ! userCan( 'upload_files', site ) ) {
+			return null;
+		}
+
+		if ( this.props.isPrivateSite ) {
 			return null;
 		}
 
@@ -353,6 +358,7 @@ const connectComponent = connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			isVideoPressEnabled: getSiteOption( state, siteId, 'videopress_enabled' ),
 			isVideoPressModuleActive: isJetpackModuleActive( state, siteId, 'videopress' ),
+			isPrivateSite: isPrivateSite( state, siteId ),
 			siteId,
 		};
 	}
