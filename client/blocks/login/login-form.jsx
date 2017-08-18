@@ -254,6 +254,16 @@ export class LoginForm extends Component {
 							{ this.props.translate( 'Log In' ) }
 						</FormsButton>
 					</div>
+
+					<div className="login__form-signup-link">
+						{ this.props.translate( 'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
+							{
+								components: {
+									signupLink: <a href={ config( 'signup_url' ) } />,
+								}
+							}
+						) }
+					</div>
 				</Card>
 				{ config.isEnabled( 'signup/social' ) && (
 					<Card className="login__form-social">

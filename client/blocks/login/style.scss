@@ -63,13 +63,19 @@
 	}
 }
 
-.login__form-terms {
+.login__form-terms,
+.login__form-signup-link {
 	font-size: 11px;
 	text-align: center;
 
 	a {
 		white-space: pre;
 	}
+}
+
+.login__form-signup-link {
+	font-size: 13px;
+	margin-top: 20px;
 }
 
 .login__social-text {
