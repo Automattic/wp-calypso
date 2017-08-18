@@ -252,7 +252,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Plugins' ) }
-				className={ this.itemLinkClass( '/plugins', 'plugins' ) }
+				className={ this.itemLinkClass( [ '/extensions', '/plugins' ], 'plugins' ) }
 				link={ pluginsLink }
 				onNavigate={ this.onNavigate }
 				icon="plugins"
