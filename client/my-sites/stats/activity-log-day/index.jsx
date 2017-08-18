@@ -14,6 +14,11 @@ import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
+/**
+ * Module constants
+ */
+const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
+
 class ActivityLogDay extends Component {
 	static propTypes = {
 		applySiteOffset: PropTypes.func.isRequired,
@@ -26,6 +31,7 @@ class ActivityLogDay extends Component {
 		tsEndOfSiteDay: PropTypes.number.isRequired,
 
 		// Connected props
+		isToday: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 	};
 
@@ -152,6 +158,13 @@ class ActivityLogDay extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent: recordTracksEventAction,
-} )( localize( ActivityLogDay ) );
+export default connect(
+	( state, { tsEndOfSiteDay } ) => ( {
+		isToday:
+			Date.now() <= tsEndOfSiteDay &&
+			tsEndOfSiteDay - DAY_IN_MILLISECONDS <= Date.now(),
+	} ),
+	{
+		recordTracksEvent: recordTracksEventAction,
+	}
+)( localize( ActivityLogDay ) );
