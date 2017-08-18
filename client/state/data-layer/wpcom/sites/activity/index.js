@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
 import { get, includes, pick, reduce } from 'lodash';
 
 /**
@@ -16,6 +17,7 @@ import { activityLogError, activityLogUpdate } from 'state/activity-log/actions'
 /**
  * Module constants
  */
+const debug = debugFactory( 'calypso:data-layer:activity' );
 const CALYPSO_TO_API_PARAMS = {
 	dateEnd: 'date_end',
 	dateStart: 'date_start',
@@ -41,6 +43,8 @@ export const handleActivityLogRequest = ( { dispatch }, action ) => {
 		},
 		{}
 	);
+
+	debug( 'Handling activity request', query );
 
 	dispatch(
 		http(
