@@ -538,11 +538,10 @@ const Account = React.createClass( {
 
 				{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
 					<FormFieldset>
-						<FormLabel htmlFor="color_scheme">{ translate( 'Admin Color Scheme' ) }</FormLabel>
-						<ColorSchemePicker
-							temporarySelection={ true }
-							onSelection={ this.updateColorScheme }
-						/>
+						<FormLabel htmlFor="color_scheme">
+							{ translate( 'Admin Color Scheme' ) }
+						</FormLabel>
+						<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
 					</FormFieldset> }
 
 				{ this.renderHolidaySnow() }
