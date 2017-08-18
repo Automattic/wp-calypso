@@ -167,11 +167,12 @@ class ActivityLogDay extends Component {
 }
 
 export default connect(
-	( state, { tsEndOfSiteDay } ) => ( {
-		isToday:
-			Date.now() <= tsEndOfSiteDay &&
-			tsEndOfSiteDay - DAY_IN_MILLISECONDS <= Date.now(),
-	} ),
+	( state, { tsEndOfSiteDay } ) => {
+		const now = Date.now();
+		return {
+			isToday: now <= tsEndOfSiteDay && tsEndOfSiteDay - DAY_IN_MILLISECONDS <= now,
+		};
+	},
 	{
 		recordTracksEvent: recordTracksEventAction,
 	}
