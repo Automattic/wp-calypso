@@ -190,20 +190,24 @@
 		max-width: 778px;
 	}
 
+	$woo-form-whitespace: 16px;
+	$woo-form-whitespace-480: 24px;
+	$woo-form-whitespace-660: 100px;
+
 	.wp-login__container {
 		background: #fff;
 		border: 1px solid #d3d3d3;
 		border-radius: 5px;
 		box-sizing: border-box;
-		padding: 20px 16px;
+		padding: 20px $woo-form-whitespace;
 		width: 100%;
 
 		@include breakpoint( '>480px' ) {
-			padding: 20px 24px;
+			padding: 20px $woo-form-whitespace-480;
 		}
 
 		@include breakpoint( '>660px' ) {
-			padding: 20px 100px;
+			padding: 20px $woo-form-whitespace-660;
 		}
 	}
 
@@ -220,6 +224,19 @@
 
 	.login__form-social {
 		border-top: 1px solid #e6e6e6;
+		margin: 10px -16px 0;
+		padding-top: 30px;
+		width: calc( 100% + ( $woo-form-whitespace * 2 ) );
+
+		@include breakpoint( '>480px' ) {
+			margin: 10px -24px 0;
+			width: calc( 100% + ( $woo-form-whitespace-480 * 2 ) );
+		}
+
+		@include breakpoint( '>660px' ) {
+			margin: 20px -100px 0;
+			width: calc( 100% + ( $woo-form-whitespace-660 * 2 ) );
+		}
 	}
 
 	.wp-login__links {
