@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { stubTrue } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ const UpgradeNudgeExample = () => {
 				<UpgradeNudge
 					feature="custom-domain"
 					href="#"
-					shouldDisplay={ () => true }
+					shouldDisplay={ stubTrue }
 				/>
 			</div>
 			<div>
@@ -23,14 +24,12 @@ const UpgradeNudgeExample = () => {
 					title="This is a title"
 					message="This is a custom message"
 					icon="customize"
-					shouldDisplay={ () => true }
+					shouldDisplay={ stubTrue }
 					compact
 				/>
 			</div>
 		</div>
 	);
 };
-
-UpgradeNudgeExample.displayName = 'UpgradeNudge';
 
 export default UpgradeNudgeExample;
