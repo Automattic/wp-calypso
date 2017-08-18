@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
+import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, groupBy, includes, isEmpty, isNull, map } from 'lodash';
@@ -98,6 +99,15 @@ class ActivityLog extends Component {
 			date: date.utc().toISOString(),
 			direction,
 		} );
+	};
+
+	handlePeriodChangeBottom = ( ...args ) => {
+		scrollTo( {
+			x: 0,
+			y: 0,
+			duration: 250,
+		} );
+		this.handlePeriodChange( ...args );
 	};
 
 	handleRequestRestore = ( requestedRestoreTimestamp, from ) => {
@@ -282,7 +292,7 @@ class ActivityLog extends Component {
 		];
 	}
 
-	renderMonthNavigation() {
+	renderMonthNavigation( position ) {
 		const { moment, slug, startDate } = this.props;
 		const startOfMonth = moment.utc( startDate ).startOf( 'month' );
 		const query = {
@@ -292,7 +302,9 @@ class ActivityLog extends Component {
 		return (
 			<StatsPeriodNavigation
 				date={ startOfMonth }
-				onPeriodChange={ this.handlePeriodChange }
+				onPeriodChange={
+					position === 'bottom' ? this.handlePeriodChangeBottom : this.handlePeriodChange
+				}
 				period="month"
 				url={ `/stats/activity/${ slug }` }
 			>
@@ -327,6 +339,7 @@ class ActivityLog extends Component {
 				{ this.renderBanner() }
 				{ ! isRewindActive && !! isPressable && <ActivityLogRewindToggle siteId={ siteId } /> }
 				{ this.renderLogs() }
+				{ this.renderMonthNavigation( 'bottom' ) }
 
 				<ActivityLogConfirmDialog
 					applySiteOffset={ applySiteOffset }
