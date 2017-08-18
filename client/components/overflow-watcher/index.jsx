@@ -4,6 +4,7 @@
  */
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
+import { get } from 'lodash';
 
 const OverflowWatcher = Comp =>
 	class OverflowWatcherComponent extends Component {
@@ -30,7 +31,7 @@ const OverflowWatcher = Comp =>
 		}
 
 		storeRef = node => {
-			this.sizeNode = node.refs.overflowNode || node;
+			this.sizeNode = get( node, [ 'refs', 'overflowNode' ], node );
 		};
 
 		checkSize = () => {
