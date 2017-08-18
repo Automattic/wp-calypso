@@ -5,7 +5,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,7 +13,7 @@ import { bindActionCreators } from 'redux';
 import QueryPreferences from 'components/data/query-preferences';
 import { savePreference, setPreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
-import { ColorSchemes } from './constants';
+import getColorSchemesData from './constants';
 import FormRadiosBar from 'components/forms/form-radios-bar';
 
 class ColorSchemePicker extends PureComponent {
@@ -27,9 +27,11 @@ class ColorSchemePicker extends PureComponent {
 
 	handleColorSchemeSelection = event => {
 		const { temporarySelection, onSelection, saveColorSchemePreference } = this.props;
-		const addSelection = handleFunction => handleFunction( event.currentTarget.value );
-		temporarySelection && addSelection( onSelection );
-		addSelection( saveColorSchemePreference );
+		const { value } = event.currentTarget;
+		if ( temporarySelection ) {
+			onSelection( value );
+		}
+		saveColorSchemePreference( value, temporarySelection );
 	};
 
 	render() {
@@ -37,15 +39,20 @@ class ColorSchemePicker extends PureComponent {
 			<div className="color-scheme-picker">
 				<QueryPreferences />
 				<FormRadiosBar
-					isThumbnail={ true }
+					isThumbnail
 					checked={ this.props.colorSchemePreference }
 					onChange={ this.handleColorSchemeSelection }
-					items={ ColorSchemes }
+					items={ getColorSchemesData( translate ) }
 				/>
 			</div>
 		);
 	}
 }
+
+const saveColorSchemePreference = ( preference, temporarySelection ) =>
+	temporarySelection
+		? setPreference( 'colorScheme', preference )
+		: savePreference( 'colorScheme', preference );
 
 export default connect(
 	state => {
@@ -53,16 +60,5 @@ export default connect(
 			colorSchemePreference: getPreference( state, 'colorScheme' ),
 		};
 	},
-	( dispatch, ownProps ) =>
-		bindActionCreators(
-			{
-				saveColorSchemePreference: colorSchemePreference => {
-					if ( ownProps.temporarySelection ) {
-						return setPreference( 'colorScheme', colorSchemePreference );
-					}
-					return savePreference( 'colorScheme', colorSchemePreference );
-				},
-			},
-			dispatch
-		)
+	{ saveColorSchemePreference }
 )( ColorSchemePicker );
