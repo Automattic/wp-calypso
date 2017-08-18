@@ -6,13 +6,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import AutoDirection from 'components/auto-direction';
 import classNames from 'classnames';
-export default class PostCommentContent extends React.Component {
+import { localize } from 'i18n-calypso';
+
+/**
+ * Internal Dependencies
+ */
+import OverflowWatcher from 'components/overflow-watcher';
+
+class PostCommentContent extends React.Component {
 	static propTypes = {
 		content: PropTypes.string.isRequired,
 		isPlaceholder: PropTypes.bool,
 		className: PropTypes.string,
 		onMoreClicked: PropTypes.func,
-		showMore: PropTypes.bool,
+		hideMore: PropTypes.bool,
 	};
 
 	render() {
@@ -31,18 +38,19 @@ export default class PostCommentContent extends React.Component {
 				</div>
 			);
 		}
-
 		/*eslint-disable react/no-danger*/
 		return (
 			<AutoDirection>
 				<div className={ classNames( 'comments__comment-content-wrapper', this.props.className ) }>
 					<div
 						className="comments__comment-content"
+						ref="overflowNode"
 						dangerouslySetInnerHTML={ { __html: this.props.content } }
 					/>
-					{ this.props.showMore &&
+					{ this.props.overflowY &&
+						! this.props.hideMore &&
 						<span className="comments__comment-read-more" onClick={ this.props.onMoreClicked }>
-							Read More
+							{ this.props.translate( 'Read More' ) }
 						</span> }
 				</div>
 			</AutoDirection>
@@ -50,3 +58,5 @@ export default class PostCommentContent extends React.Component {
 		/*eslint-enable react/no-danger*/
 	}
 }
+
+export default localize( OverflowWatcher( PostCommentContent ) );

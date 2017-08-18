@@ -3,7 +3,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { findDOMNode } from 'react-dom';
 import PropTypes from 'prop-types';
 import { get, noop, some, values, omit } from 'lodash';
 import { connect } from 'react-redux';
@@ -34,59 +33,6 @@ export const POST_COMMENT_DISPLAY_TYPES = {
 	singleLine: 'is-single-line',
 	excerpt: 'is-excerpt',
 	full: 'is-full',
-};
-
-const OverflowWatcher = Comp => {
-	return class OverflowWatcherComponent extends Component {
-		state = {
-			overflowX: false,
-			ovewflowY: false,
-		};
-
-		handleResize = () => {
-			this.checkSize();
-		};
-
-		componentDidMount() {
-			window.addEventListener( 'resize', this.handleResize );
-			this.checkSize();
-		}
-
-		componentDidUpdate() {
-			this.checkSize();
-		}
-
-		componentWillUnmount() {
-			window.removeEventListener( this.handleResize );
-		}
-
-		storeRef = node => {
-			this.sizeNode = node.contentNode;
-		};
-
-		checkSize = () => {
-			if ( ! this.sizeNode ) {
-				this.setState( {
-					overflowX: false,
-					overflowY: false,
-				} );
-			}
-
-			const domNode = findDOMNode( this.sizeNode );
-			const overflowX = domNode.scrollWidth > domNode.clientWidth + 4;
-			const overflowY = domNode.scrollHeight > domNode.clientHeight + 4;
-			if ( this.state.overflowX !== overflowX ) {
-				this.setState( { overflowX } );
-			}
-			if ( this.state.overflowY !== overflowY ) {
-				this.setState( { overflowY } );
-			}
-		};
-
-		render() {
-			return <Comp ref={ this.storeRef } { ...this.props } { ...this.state } />;
-		}
-	};
 };
 
 class PostComment extends Component {
@@ -344,8 +290,8 @@ class PostComment extends Component {
 						isPlaceholder={ comment.isPlaceholder }
 						className={ displayType }
 						ref={ this.handleContentRef }
-						onMoreClick={ this.handleReadMoreClicked }
-						showMore={ this.props.overflowY && displayType !== POST_COMMENT_DISPLAY_TYPES.full }
+						onMoreClicked={ this.handleReadMoreClicked }
+						hideMore={ displayType === POST_COMMENT_DISPLAY_TYPES.full }
 					/> }
 
 				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
@@ -379,4 +325,4 @@ class PostComment extends Component {
 
 export default connect( state => ( {
 	currentUser: getCurrentUser( state ),
-} ) )( OverflowWatcher( PostComment ) );
+} ) )( PostComment );
