@@ -192,6 +192,12 @@
 	}
 }
 
+.payments__method-edit-header {
+	font-size: 18px;
+	justify-content: space-between;
+	padding: 0 0 16px 0;
+}
+
 .payments__method-edit-fields {
 	padding: 16px;
 	border-top: 1px solid $border-ultra-light-gray;

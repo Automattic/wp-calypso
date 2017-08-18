@@ -67,6 +67,19 @@ class PaymentMethodStripe extends Component {
 	};
 
 	////////////////////////////////////////////////////////////////////////////
+	// Lifecycle sorcery
+
+	constructor( props ) {
+		super( props );
+		this.state = {
+			createSelected: true,
+			hadKeysAtStart: this.hasKeys( props ),
+			userRequestedKeyFlow: false,
+			userRequestedConnectFlow: false,
+		};
+	}
+
+	////////////////////////////////////////////////////////////////////////////
 	// Misc helpers
 
 	onEditFieldHandler = ( e ) => {
@@ -91,13 +104,41 @@ class PaymentMethodStripe extends Component {
 		return ( ! isEmpty( prop.value.trim() ) );
 	}
 
-	hasKeys = () => {
+	hasKeys = ( props ) => {
+		if ( ! props ) {
+			props = this.props;
+		}
+
 		const apiKeyList = [ 'publishable_key', 'secret_key', 'test_publishable_key', 'test_secret_key' ];
 		if ( some( pick( this.props.method.settings, apiKeyList ), prop => this.hasNonTrivialStringValue( prop ) ) ) {
 			return true;
 		}
 
 		return false;
+	}
+
+	////////////////////////////////////////////////////////////////////////////
+	// Heading
+
+	renderHeading = () => {
+		const { stripeConnectUserAccountID, translate } = this.props;
+
+		// If we are not connected AND had no keys at mount display
+		// Take credit card payments with Stripe
+		if ( ! stripeConnectUserAccountID && ! this.state.hadKeysAtStart ) {
+			return (
+				<div className="payments__method-edit-header">
+					{ translate( 'Take credit card payments with Stripe' ) }
+				</div>
+			);
+		}
+
+		// Otherwise, display Manage Stripe
+		return (
+			<div className="payments__method-edit-header">
+				{ translate( 'Manage Stripe' ) }
+			</div>
+		);
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -114,6 +155,7 @@ class PaymentMethodStripe extends Component {
 	possiblyRenderSetupPrompt = () => {
 		const { stripeConnectUserAccountID, translate } = this.props;
 
+		// If we don't have the new connect UX enabled yet, keep the legacy prompt instead
 		if ( ! config.isEnabled( 'woocommerce/extension-settings-stripe-connect-flows' ) ) {
 			return (
 				<Notice showDismiss={ false } text={ translate( 'To use Stripe you need to register an account' ) }>
@@ -135,6 +177,12 @@ class PaymentMethodStripe extends Component {
 
 		// Did the user ask for the key based flow? If so, do not display connect prompt
 		if ( this.state.userRequestedKeyFlow ) {
+			return null;
+		}
+
+		// Did we have keys when we started? If so, do not display the connect prompt
+		// unless the user explicitly requested the connect flow
+		if ( this.state.hadKeysAtStart && ! this.state.userRequestedConnectFlow ) {
 			return null;
 		}
 
@@ -336,10 +384,11 @@ class PaymentMethodStripe extends Component {
 		this.setState(
 			{ userRequestedKeyFlow: false, userRequestedConnectFlow: true }
 		);
-		this.props.onEditField( 'secret_key', '' );
-		this.props.onEditField( 'publishable_key', '' );
-		this.props.onEditField( 'test_secret_key', '' );
-		this.props.onEditField( 'test_publishable_key', '' );
+		// TODO - let's not do this if we don't have to:
+		//this.props.onEditField( 'secret_key', '' );
+		//this.props.onEditField( 'publishable_key', '' );
+		//this.props.onEditField( 'test_secret_key', '' );
+		//this.props.onEditField( 'test_publishable_key', '' );
 	}
 
 	onDone = ( e ) => {
@@ -388,6 +437,7 @@ class PaymentMethodStripe extends Component {
 				additionalClassNames="payments__dialog woocommerce"
 				buttons={ this.getButtons() }
 				isVisible>
+				{ this.renderHeading() }
 				{ this.possiblyRenderSetupPrompt() }
 				{ this.possiblyRenderModePrompt() }
 				{ this.possiblyRenderKeyFields() }
