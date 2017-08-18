@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
+import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, groupBy, includes, isEmpty, isNull, map } from 'lodash';
@@ -101,7 +102,11 @@ class ActivityLog extends Component {
 	};
 
 	handlePeriodChangeBottom = ( ...args ) => {
-		window.scrollTo( 0, 0 );
+		scrollTo( {
+			x: 0,
+			y: 0,
+			duration: 250,
+		} );
 		this.handlePeriodChange( ...args );
 	};
 
