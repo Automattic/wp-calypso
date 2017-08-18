@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -26,7 +27,6 @@ import { getStatus } from '../state/status/selectors';
 class WPSuperCache extends Component {
 	static propTypes = {
 		status: PropTypes.object.isRequired,
-		site: PropTypes.object,
 		siteId: PropTypes.number,
 		tab: PropTypes.string,
 	};
@@ -56,7 +56,6 @@ class WPSuperCache extends Component {
 
 	render() {
 		const {
-			site,
 			siteId,
 			status: { cache_disabled: cacheDisabled },
 			tab,
@@ -78,7 +77,7 @@ class WPSuperCache extends Component {
 					text={ translate( 'Read Only Mode. Configuration cannot be changed.' ) } />
 				}
 
-				<Navigation activeTab={ tab } site={ site } />
+				<Navigation activeTab={ tab } siteId={ siteId } />
 				{ this.renderTab( !! cacheDisabled ) }
 			</Main>
 		);
@@ -91,7 +90,7 @@ const connectComponent = connect(
 
 		return {
 			status: getStatus( state, siteId ),
-			siteId,
+			siteId
 		};
 	}
 );
