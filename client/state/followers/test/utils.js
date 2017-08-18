@@ -13,20 +13,13 @@ import {
 
 describe( 'utils', () => {
 	describe( '#getSerializedQuery()', () => {
-		it( 'should alphabetize parameters', () => {
-			const query = getSerializedQuery( {
-				z: 1,
-				a: 2
-			} );
-			expect( query ).to.eql( 'a=2&z=1' );
-		} );
 		it( 'should exclude default values', () => {
 			const query = getSerializedQuery( {
 				page: 4,
 				max: 20,
 				siteId: 0
 			} );
-			expect( query ).to.eql( 'siteId=0' );
+			expect( query ).to.eql( getSerializedQuery( { siteId: 0 } ) );
 		} );
 	} );
 	describe( '#normalizeFollower()', () => {
