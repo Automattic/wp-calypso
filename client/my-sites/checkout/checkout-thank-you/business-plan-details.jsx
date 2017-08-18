@@ -42,9 +42,10 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 					icon="customize"
 					title={ i18n.translate( 'Try a New Theme' ) }
 					description={ i18n.translate(
-						'You\'ve now got access to every premium theme, at no extra cost - that\'s hundreds of new options. '
+						'You\'ve now got access to every premium theme, at no extra cost - that\'s hundreds of new options. ' +
+						'Give one a try!'
 					) }
-					buttonText={ i18n.translate( 'Give one a try!' ) }
+					buttonText={ i18n.translate( 'Browse premium themes' ) }
 					href={ '/themes/' + selectedSite.slug } />
 			}
 
