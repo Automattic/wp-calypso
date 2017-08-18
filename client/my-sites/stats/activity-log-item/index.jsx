@@ -257,7 +257,7 @@ class ActivityLogItem extends Component {
 				>
 					<PopoverMenuItem
 						disabled={ disableRestore }
-						icon="undo"
+						icon="history"
 						onClick={ this.handleClickRestore }
 					>
 						{ translate( 'Rewind to this point' ) }
