@@ -42,15 +42,46 @@
 	margin-right: -16px;
 	border-top: 1px solid lighten( $gray, 30% );
 	display: flex;
+	position: relative;
+
+	&.is-checked {
+		background: lighten( $gray, 35% );
+
+		.dashboard__setup-task-label {
+			h2,
+			p {
+				color: $gray;
+			}
+		}
+	}
+
+	&:before {
+		content: "";
+		display: block;
+		position: absolute;
+		top: 0;
+		left: 27px;
+		bottom: 0;
+		width: 1px;
+		background: lighten( $gray, 30% );
+	}
 
 	@include breakpoint( ">480px" ) {
 		margin-left: -24px;
 		margin-right: -24px;
 		padding: 24px;
+
+		&:before {
+			left: 36px;
+		}
 	}
 
 	@include breakpoint( ">960px" ) {
 		align-items: center;
+
+		&:before {
+			left: 48px;
+		}
 	}
 
 	.dashboard__setup-task-status:not(.dashboard__setup-task-status .gridicon){
@@ -59,18 +90,19 @@
 	}
 
 	.dashboard__setup-task-status:empty {
-		background:  lighten( $alert-green, 35% );
-		border:  1px solid lighten( $alert-green, 20% );
+		background:  lighten( $gray, 30% );
+		border: 6px solid $white;
+		box-sizing: border-box;
 	}
 
 	.dashboard__setup-task-status {
 		background:  $alert-green;
-		border:  1px solid darken( $alert-green, 10% );
 		height: 24px;
 		text-align: center;
 		width: 24px;
 		flex-shrink: 0;
 		border-radius: 100%;
+		z-index: 3;
 		margin-right: 24px;
 		margin-top: 2px;
 
@@ -110,7 +142,7 @@
 		}
 
 		p {
-			color: $gray;
+			color: $gray-text-min;
 			font-size: 14px;
 			margin-bottom: 12px;
 		}

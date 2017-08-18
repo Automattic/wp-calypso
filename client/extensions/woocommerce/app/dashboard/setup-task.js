@@ -93,9 +93,8 @@ class SetupTask extends Component {
 
 	render = () => {
 		const { actions, checked, explanation, label } = this.props;
-
 		return (
-			<div className="dashboard__setup-task">
+			<div className={ checked ? 'dashboard__setup-task is-checked' : 'dashboard__setup-task' }>
 				<div className="dashboard__setup-task-status">
 					{ checked ? <Gridicon icon="checkmark" size={ 36 } /> : null }
 				</div>
