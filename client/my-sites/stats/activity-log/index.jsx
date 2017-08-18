@@ -100,6 +100,11 @@ class ActivityLog extends Component {
 		} );
 	};
 
+	handlePeriodChangeBottom = ( ...args ) => {
+		window.scrollTo( 0, 0 );
+		this.handlePeriodChange( ...args );
+	};
+
 	handleRequestRestore = ( requestedRestoreTimestamp, from ) => {
 		this.props.recordTracksEvent( 'calypso_activitylog_restore_request', {
 			from,
@@ -282,7 +287,7 @@ class ActivityLog extends Component {
 		];
 	}
 
-	renderMonthNavigation() {
+	renderMonthNavigation( position ) {
 		const { moment, slug, startDate } = this.props;
 		const startOfMonth = moment.utc( startDate ).startOf( 'month' );
 		const query = {
@@ -292,7 +297,9 @@ class ActivityLog extends Component {
 		return (
 			<StatsPeriodNavigation
 				date={ startOfMonth }
-				onPeriodChange={ this.handlePeriodChange }
+				onPeriodChange={
+					position === 'bottom' ? this.handlePeriodChangeBottom : this.handlePeriodChange
+				}
 				period="month"
 				url={ `/stats/activity/${ slug }` }
 			>
@@ -327,7 +334,7 @@ class ActivityLog extends Component {
 				{ this.renderBanner() }
 				{ ! isRewindActive && !! isPressable && <ActivityLogRewindToggle siteId={ siteId } /> }
 				{ this.renderLogs() }
-				{ this.renderMonthNavigation() }
+				{ this.renderMonthNavigation( 'bottom' ) }
 
 				<ActivityLogConfirmDialog
 					applySiteOffset={ applySiteOffset }
