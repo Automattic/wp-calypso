@@ -162,13 +162,15 @@ p.jpo-site-type__description {
 			margin-top: 1rem;
 
 			@include breakpoint( "<480px" ) {
-				background: none;
-				font-size: 1.1em;
-				border: 0;
-				padding: 0;
-				text-transform: none;
-				margin: 0;
-				line-height: 1.1em;
+				&:not(.is-primary) {
+					background: none;
+					font-size: 1.1em;
+					border: 0;
+					padding: 0;
+					text-transform: none;
+					margin: 0;
+					line-height: 1.1em;
+				}
 			}
 		}
 	}
