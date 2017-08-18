@@ -107,5 +107,23 @@ export default {
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
+
+	socialLogin( context ) {
+		const SocialLoginComponent = require( 'me/social-login' );
+		const basePath = context.path;
+
+		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Social Login' );
+
+		renderWithReduxStore(
+			React.createElement( SocialLoginComponent,
+				{
+					userSettings: userSettings,
+					path: basePath
+				}
+			),
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
 };
