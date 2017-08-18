@@ -6,6 +6,7 @@ import activity from './activity';
 import automatedTransfer from './automated-transfer';
 import blogStickers from './blog-stickers';
 import comments from './comments';
+import commentsTree from './comments-tree';
 import media from './media';
 import plugins from './plugins';
 import posts from './posts';
@@ -16,6 +17,7 @@ export default mergeHandlers(
 	automatedTransfer,
 	blogStickers,
 	comments,
+	commentsTree,
 	media,
 	plugins,
 	posts,
