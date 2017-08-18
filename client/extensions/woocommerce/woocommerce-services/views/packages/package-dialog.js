@@ -50,9 +50,12 @@ const AddPackageDialog = ( props ) => {
 	} = packageData;
 
 	const customPackages = packages.custom;
+	const isEditing = 'edit' === mode;
+	const isAddingCustom = 'add-custom' === mode;
+	const isAddingPredefined = 'add-predefined' === mode;
 
 	const onSave = () => {
-		if ( 'add-predefined' === mode ) {
+		if ( isAddingPredefined ) {
 			savePredefinedPackages( siteId );
 			return;
 		}
@@ -91,15 +94,14 @@ const AddPackageDialog = ( props ) => {
 		setAddMode( siteId, option.value );
 	};
 
-	const heading = 'edit' === mode ? translate( 'Edit package' ) : translate( 'Add a package' );
-	const showSegmentedControl = 'add-custom' === mode || 'add-predefined' === mode;
-	const showEdit = 'add-custom' === mode || 'edit' === mode;
-	const showPredefined = 'add-predefined' === mode;
+	const heading = isEditing ? translate( 'Edit package' ) : translate( 'Add a package' );
+	const showSegmentedControl = isAddingCustom || isAddingPredefined;
+	const showEdit = isAddingCustom || isEditing;
+	const showPredefined = isAddingPredefined;
 	let doneButtonLabel;
-	if ( 'add-custom' === mode ||
-		( 'add-predefined' === mode && 0 === predefinedPackagesSummary.removed ) ) {
+	if ( isAddingCustom || ( isAddingPredefined && 0 === predefinedPackagesSummary.removed ) ) {
 		doneButtonLabel = translate( 'Add package', 'Add packages', {
-			count: 'add-custom' === mode ? 1 : predefinedPackagesSummary.added
+			count: isAddingCustom ? 1 : predefinedPackagesSummary.added
 		} );
 	} else {
 		doneButtonLabel = translate( 'Done' );
@@ -114,7 +116,7 @@ const AddPackageDialog = ( props ) => {
 		</FormButton>,
 	];
 
-	if ( 'edit' === mode ) {
+	if ( isEditing ) {
 		buttons.unshift( {
 			action: 'delete',
 			label: <span>{ translate( '{{icon/}} Delete this package', { components: {
