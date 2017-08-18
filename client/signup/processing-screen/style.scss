@@ -379,12 +379,16 @@
 	fill: $gray-dark;
 	margin-right: 10px;
 	align-self: center;
+	flex: 0 0 24px;
 }
 .signup-pricessing__address-field {
 	flex: 1;
 	background: $white;
 	margin: 0 0 0 5px;
 	padding: 8px;
+	box-sizing: border-box;
+	width: 100%;
+	overflow: auto;
 }
 .signup-pricessing__address-field.is-placeholder:after {
 	content: 'placeholder.wordpress.com';
