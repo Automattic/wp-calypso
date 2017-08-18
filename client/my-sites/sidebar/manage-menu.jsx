@@ -106,8 +106,7 @@ class ManageMenu extends PureComponent {
 			items.push( {
 				name: 'comments',
 				label: this.props.translate( 'Comments' ),
-				// TODO: replace with `moderate_comments` as soon as it's available from the endpoint
-				capability: 'edit_others_posts',
+				capability: 'moderate_comments',
 				queryable: true,
 				config: 'comments/management',
 				link: '/comments',
