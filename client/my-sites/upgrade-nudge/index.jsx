@@ -34,6 +34,7 @@ class UpgradeNudge extends React.Component {
 		feature: PropTypes.oneOf( [ false, ...getValidFeatureKeys() ] ),
 		shouldDisplay: PropTypes.func,
 		site: PropTypes.object,
+		translate: PropTypes.func,
 	};
 
 	static defaultProps = {
