@@ -135,6 +135,32 @@
 	}
 }
 
+.jpo-homepage__choice-link {
+	padding-right: 40px;
+	display: block;
+	box-sizing: border-box;
+
+	&:after {
+		content: '';
+		display: block;
+		width: 8px; //Match the size of the cta copy
+		height: 8px; //Match the size of the cta copy
+		position: absolute;
+		top: 20px;
+		right: 15px;
+		border-top: 2px solid lighten( $gray, 20% );
+		border-right: 2px solid lighten( $gray, 20% );
+		transform: rotate(45deg);
+	}
+
+	@include breakpoint( ">480px" ) {
+		padding-right: 0;
+		&:after {
+			display: none;
+		}
+	}
+}
+
 .jpo-homepage__choice-copy {
 	border-top: 1px solid rgba(200, 215, 225, 0.5);
 

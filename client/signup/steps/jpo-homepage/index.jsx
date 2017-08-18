@@ -61,7 +61,7 @@ const JPOHomepageStep = React.createClass( {
 							'is-selected': 'news' === get( this.props.signupDependencies, 'jpoHomepage', '' )
 						} ) }
 						>
-						<a className="jpo-homepage__select-news" href="#" onClick={ this.onSelectNews }>
+						<a className="jpo-homepage__select-news jpo-homepage__choice-link" href="#" onClick={ this.onSelectNews }>
 							<div className="jpo-homepage__image">
 								<NewsGraphic />
 							</div>
@@ -80,7 +80,7 @@ const JPOHomepageStep = React.createClass( {
 							'is-selected': 'static' === get( this.props.signupDependencies, 'jpoHomepage', '' )
 						} ) }
 						>
-						<a className="jpo-homepage__select-static" href="#" onClick={ this.onSelectStatic }>
+						<a className="jpo-homepage__select-static jpo-homepage__choice-link" href="#" onClick={ this.onSelectStatic }>
 
 							<div className="jpo-homepage__image">
 								<StaticGraphic />
