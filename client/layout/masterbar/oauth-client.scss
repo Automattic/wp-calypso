@@ -147,6 +147,7 @@
 
 	button {
 		float: none;
+		margin-left: 0;
 		max-width: 300px;
 	}
 
@@ -194,8 +195,16 @@
 		border: 1px solid #d3d3d3;
 		border-radius: 5px;
 		box-sizing: border-box;
-		padding: 20px 100px;
+		padding: 20px 16px;
 		width: 100%;
+
+		@include breakpoint( '>480px' ) {
+			padding: 20px 24px;
+		}
+
+		@include breakpoint( '>660px' ) {
+			padding: 20px 100px;
+		}
 	}
 
 	.card {
