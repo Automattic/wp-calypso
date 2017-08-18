@@ -165,24 +165,28 @@ class PaymentMethodStripe extends Component {
 		}
 
 		// Do we have any API keys? If so, do not display connect prompt
-		if ( this.hasKeys() ) {
+		// unless the user specifically asked for it
+		if ( this.hasKeys() && ! this.state.userRequestedConnectFlow ) {
+			debug( 'skipping connect prompt since we have keys' );
 			return null;
 		}
 
 		// Do we have a Stripe Connect User ID already? If so, do not display connect prompt
 		if ( stripeConnectUserAccountID ) {
-			debug( 'we have a stripe connect user account id, skipping setup prompt' );
+			debug( 'skipping connect prompt since we have a connect user account id' );
 			return null;
 		}
 
 		// Did the user ask for the key based flow? If so, do not display connect prompt
 		if ( this.state.userRequestedKeyFlow ) {
+			debug( 'skipping connect prompt since user requested key flow' );
 			return null;
 		}
 
 		// Did we have keys when we started? If so, do not display the connect prompt
 		// unless the user explicitly requested the connect flow
 		if ( this.state.hadKeysAtStart && ! this.state.userRequestedConnectFlow ) {
+			debug( 'skipping connect prompt since we had keys at start and the user did not request the connect flow ' );
 			return null;
 		}
 
@@ -313,7 +317,6 @@ class PaymentMethodStripe extends Component {
 		// 1) we have a connected AND activated account
 		// OR 2) if we don't have an account but we do have at least some keys
 		// OR 3) if the user has requested key entry mode explicitly
-
 		let okToShow = false;
 
 		if ( stripeConnectUserAccountActivated && stripeConnectUserAccountID ) {
@@ -326,6 +329,11 @@ class PaymentMethodStripe extends Component {
 
 		if ( this.state.userRequestedKeyFlow ) {
 			okToShow = true;
+		}
+
+		// But, if the user has requested connect flow - don't show these fields
+		if ( this.state.userRequestedConnectFlow ) {
+			okToShow = false;
 		}
 
 		if ( ! okToShow ) {
@@ -391,6 +399,10 @@ class PaymentMethodStripe extends Component {
 		//this.props.onEditField( 'test_publishable_key', '' );
 	}
 
+	onConnect = () => {
+		// Not yet implemented
+	}
+
 	onDone = ( e ) => {
 		if ( hasStripeValidCredentials( this.props.method ) ) {
 			this.props.onDone( e );
@@ -403,17 +415,46 @@ class PaymentMethodStripe extends Component {
 		const { onCancel, stripeConnectUserAccountID, translate } = this.props;
 		const buttons = [];
 
-		// See if we need to add any special link to the buttons in the dialog footer
-		if ( ! stripeConnectUserAccountID && ! this.hasKeys() ) {
-			// If we don't have an account AND we don't have keys, give the user a means to request key flow
+		let showKeyFlowLink = false;
+		let showConnectFlowLink = false;
+
+		// If we don't have an account, we didn't have keys when we started, and
+		// we don't have keys now, give the user a means to request key flow
+		if ( ! stripeConnectUserAccountID && ! this.hasKeys() && ! this.state.hadKeysAtStart ) {
+			showKeyFlowLink = true;
+		}
+
+		// If we have keys, OR are in key flow, give the user a means to request connect flow
+		if ( this.hasKeys() || this.state.userRequestedKeyFlow ) {
+			showConnectFlowLink = true;
+		}
+
+		// If we don't have keys now, but we did when we started, the user might be
+		// interested in trying connect flow, so give the user a means to
+		// switch to connect flow
+		if ( ! this.hasKeys() && this.state.hadKeysAtStart ) {
+			showConnectFlowLink = true;
+		}
+
+		// Sanity check - if we are already in key flow, don't show the key flow link
+		if ( this.state.userRequestedKeyFlow ) {
+			showKeyFlowLink = false;
+		}
+
+		// Sanity check - if we are already in connect flow, don't show the connect flow link
+		if ( this.state.userRequestedConnectFlow ) {
+			showConnectFlowLink = false;
+		}
+
+		// OK, make it so
+		if ( showKeyFlowLink ) {
 			buttons.push( {
 				action: 'switch',
 				label: <span>{ translate( 'I want to enter my own keys' ) }</span>,
 				onClick: this.onUserRequestsKeyFlow,
 				additionalClassNames: 'payments__method-stripe-force-flow is-borderless'
 			} );
-		} else if ( this.hasKeys() || this.state.userRequestedKeyFlow ) {
-			// If we have keys, OR are in key flow, give the user a means to request connect flow
+		} else if ( showConnectFlowLink ) {
 			buttons.push( {
 				action: 'switch',
 				label: <span>{ translate( 'I want to use Stripe Connect instead' ) }</span>,
@@ -422,8 +463,27 @@ class PaymentMethodStripe extends Component {
 			} );
 		}
 
+		// We always give the user a Cancel button
 		buttons.push( { action: 'cancel', label: translate( 'Cancel' ), onClick: onCancel } );
-		buttons.push( { action: 'save', label: translate( 'Done' ), onClick: this.onDone, isPrimary: true } );
+
+		// Figure out if we should show a Connect button or a Done button
+		let showConnectButton = false;
+
+		// No account, no keys, not in key flow? Give them a Connect button
+		if ( ! stripeConnectUserAccountID && ! this.hasKeys() && ! this.state.userRequestedKeyFlow ) {
+			showConnectButton = true;
+		}
+
+		// Did the user request connect flow explicitly? Give them a Connect button
+		if ( this.state.userRequestedConnectFlow ) {
+			showConnectButton = true;
+		}
+
+		if ( showConnectButton ) {
+			buttons.push( { action: 'connect', label: translate( 'Connect' ), onClick: this.onConnect, isPrimary: true } );
+		} else {
+			buttons.push( { action: 'save', label: translate( 'Done' ), onClick: this.onDone, isPrimary: true } );
+		}
 
 		return buttons;
 	}
