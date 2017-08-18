@@ -5,7 +5,7 @@ import { translate } from 'i18n-calypso';
 
 export const Tabs = {
 	EASY: {
-		label: 'easy',
+		label: translate( 'Easy' ),
 		slug: '',
 	},
 	ADVANCED: {
