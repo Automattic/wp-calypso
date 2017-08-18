@@ -24,6 +24,15 @@ const user = userModule();
 let hasStartedFetchingScripts = false,
 	hasFinishedFetchingScripts = false;
 
+// Retargeting events are fired once every `retargetingPeriod` seconds.
+const retargetingPeriod = 60 * 60 * 24;
+
+// Last time the retarget() function effectively fired (Unix time in seconds).
+let lastRetargetTime = 0;
+
+// Last time the recordPageViewInFloodlight() function effectively fired (Unix time in seconds).
+let lastFloodlightPageViewTime = 0;
+
 /**
  * Constants
  */
@@ -290,6 +299,12 @@ function retarget() {
 	if ( ! hasFinishedFetchingScripts ) {
 		return;
 	}
+
+	const nowTimestamp = Date.now() / 1000;
+	if ( nowTimestamp < lastRetargetTime + retargetingPeriod ) {
+		return;
+	}
+	lastRetargetTime = nowTimestamp;
 
 	debug( 'Retargeting' );
 
@@ -701,6 +716,12 @@ function recordPageViewInFloodlight( urlPath ) {
 	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
+
+	const nowTimestamp = Date.now() / 1000;
+	if ( nowTimestamp < lastFloodlightPageViewTime + retargetingPeriod ) {
+		return;
+	}
+	lastFloodlightPageViewTime = nowTimestamp;
 
 	const sessionId = floodlightSessionId();
 
