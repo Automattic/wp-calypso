@@ -22,13 +22,18 @@
 
 	.dashboard__setup-header-subtitle {
 		color: $gray;
-		margin: 0 auto 32px;
-		max-width: 450px;
+		margin: 0 auto 24px;
+		max-width: 400px;
+	}
+	
+	.button {
+		margin-bottom: 8px;
 	}
 }
 
 .dashboard__setup-confirm .dashboard__setup-header-subtitle {
 	color: $gray-dark;
+	max-width: 490px;
 }
 
 .dashboard__setup-task {
@@ -44,15 +49,25 @@
 		padding: 24px 32px;
 		align-items: center;
 	}
+	
+	.dashboard__setup-task-status:not(.dashboard__setup-task-status .gridicon){
+		background-color: black;
+		color: black;
+	}
+	
+	.dashboard__setup-task-status:empty {
+		background:  lighten( $alert-green, 35% );
+		border:  1px solid lighten( $alert-green, 20% );
+	}
 
 	.dashboard__setup-task-status {
-		background:  lighten( $gray, 30% );
-		border:  1px solid lighten( $gray, 20% );
+		background:  $alert-green;
+		border:  1px solid darken( $alert-green, 10% );
 		height: 24px;
 		text-align: center;
 		width: 24px;
 		flex-shrink: 0;
-		border-radius: 4px;
+		border-radius: 100%;
 		margin-right: 24px;
 		margin-top: 2px;
 
@@ -66,6 +81,7 @@
 			height: 18px;
 			width: 18px;
 			padding: 3px;
+			color: $white;
 
 			@include breakpoint( ">960px" ) {
 				padding: 6px;
@@ -83,6 +99,8 @@
 	}
 
 	.dashboard__setup-task-label {
+		flex: 2;
+		
 		h2 {
 			color: $gray-text;
 			font-size: 20px;
