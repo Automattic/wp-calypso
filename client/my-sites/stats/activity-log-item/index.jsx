@@ -5,8 +5,11 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import {
+	get,
+	includes,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +20,10 @@ import ActivityTitle from './activity-title';
 import EllipsisMenu from 'components/ellipsis-menu';
 import FoldableCard from 'components/foldable-card';
 import PopoverMenuItem from 'components/popover/menu-item';
+import PopoverMenuSeparator from 'components/popover/menu-separator';
+import Post from 'my-sites/posts/post';
+import QueryActivityObject from './query-activity-object';
+import { getSitePost } from 'state/posts/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:activity-log:item' );
@@ -192,15 +199,28 @@ class ActivityLogItem extends Component {
 	// FIXME: Just for demonstration purposes
 	renderDescription() {
 		const {
+			applySiteOffset,
 			log,
 			moment,
+			postObject,
 			translate,
-			applySiteOffset,
 		} = this.props;
 		const {
 			name,
 			ts_utc,
 		} = log;
+
+		if (
+			log.group === 'post' &&
+			'post' === get( postObject, 'type' )
+		) {
+			return (
+				<div>
+					<Post post={ postObject } />
+					<div className="activity-log-item__id">ID { ts_utc }</div>
+				</div>
+			);
+		}
 
 		return (
 			<div>
@@ -242,27 +262,63 @@ class ActivityLogItem extends Component {
 		const {
 			disableRestore,
 			hideRestore,
+			log,
+			postObject,
 			translate,
 		} = this.props;
 
-		if ( hideRestore ) {
-			return null;
-		}
+		const rewindMenuItem = hideRestore
+			? null
+			: (
+				<PopoverMenuItem
+					disabled={ disableRestore }
+					icon="history"
+					onClick={ this.handleClickRestore }
+				>
+					{ translate( 'Rewind to this point' ) }
+				</PopoverMenuItem>
+			);
 
-		return (
-			<div className="activity-log-item__action">
+		let menu = ( rewindMenuItem &&
+			<EllipsisMenu
+				onClick={ stopPropagation }
+				position="bottom right"
+			>
+				{ rewindMenuItem }
+			</EllipsisMenu>
+		);
+
+		// FIXME(sirreal): Different object support different actions and need to be linked to
+		// different state and dispatchable actions. We'll probably need sub-components here to
+		// handle different cases well. I'm debating whether ActivityLogItem should be rendered by
+		// different components at a higher level.
+		if (
+			log.group === 'post' &&
+			postObject &&
+			includes( [ 'page', 'post' ], postObject.type ) &&
+			postObject.URL &&
+			includes( [ 'publish' ], postObject.status )
+		) {
+			menu = (
 				<EllipsisMenu
 					onClick={ stopPropagation }
 					position="bottom right"
 				>
 					<PopoverMenuItem
-						disabled={ disableRestore }
-						icon="undo"
-						onClick={ this.handleClickRestore }
+						icon="external"
+						href={ postObject.URL }
 					>
-						{ translate( 'Rewind to this point' ) }
+						{ postObject.title }
 					</PopoverMenuItem>
+					{ rewindMenuItem && <PopoverMenuSeparator key="rewindSeparator" /> }
+					{ rewindMenuItem }
 				</EllipsisMenu>
+			);
+		}
+
+		return (
+			<div className="activity-log-item__action">
+				{ menu }
 			</div>
 		);
 	}
@@ -285,6 +341,7 @@ class ActivityLogItem extends Component {
 		const {
 			className,
 			log,
+			siteId,
 		} = this.props;
 		const {
 			group,
@@ -293,9 +350,11 @@ class ActivityLogItem extends Component {
 		} = log;
 
 		const classes = classNames( 'activity-log-item', className );
+		const summary = this.renderSummary();
 
 		return (
 			<div className={ classes } >
+				<QueryActivityObject group={ group } object={ object } siteId={ siteId } />
 				<div className="activity-log-item__type">
 					{ this.renderTime() }
 					<ActivityIcon group={ group } name={ name } object={ object } />
@@ -303,10 +362,10 @@ class ActivityLogItem extends Component {
 				<FoldableCard
 					className="activity-log-item__card"
 					clickableHeader
-					expandedSummary={ this.renderSummary() }
+					expandedSummary={ summary }
 					header={ this.renderHeader() }
 					onOpen={ this.handleOpen }
-					summary={ this.renderSummary() }
+					summary={ summary }
 				>
 					{ this.renderDescription() }
 				</FoldableCard>
@@ -315,6 +374,9 @@ class ActivityLogItem extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent: recordTracksEventAction,
-} )( localize( ActivityLogItem ) );
+export default connect(
+	( state, { log, siteId } ) => ( {
+		postObject: getSitePost( state, siteId, get( log, [ 'object', 'post', 'id' ], null ) ),
+	} ),
+	{ recordTracksEvent: recordTracksEventAction }
+)( localize( ActivityLogItem ) );
