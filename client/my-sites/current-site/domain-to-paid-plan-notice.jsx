@@ -25,15 +25,15 @@ const eventProperties = { cta_name: 'domain-to-paid-sidebar' };
 export class DomainToPaidPlanNotice extends Component {
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
-	}
+	};
 
 	static defaultProps = {
 		translate: noop,
-	}
+	};
 
 	onClick = () => {
 		this.props.recordTracksEvent( clickEventName, eventProperties );
-	}
+	};
 
 	render() {
 		const { eligible, site, translate } = this.props;
@@ -43,11 +43,19 @@ export class DomainToPaidPlanNotice extends Component {
 		}
 
 		return (
-			<Notice isCompact status="is-success" icon="info-outline">
-				{ translate( 'Upgrade your site and save.' ) }
+			<Notice
+				icon="info-outline"
+				isCompact
+				status="is-success"
+				showDismiss={ false }
+				text={ translate( 'Upgrade your site and save.' ) }
+			>
 				<NoticeAction onClick={ this.onClick } href={ `/plans/my-plan/${ site.slug }` }>
 					{ translate( 'Go' ) }
-					<TrackComponentView eventName={ impressionEventName } eventProperties={ eventProperties } />
+					<TrackComponentView
+						eventName={ impressionEventName }
+						eventProperties={ eventProperties }
+					/>
 				</NoticeAction>
 			</Notice>
 		);
