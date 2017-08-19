@@ -14,7 +14,7 @@ Just import the functions from here instead of directly from `lodash` and everyt
 The main problem with mocking named exports is that they are, by design, immutable.
 A module importing a named export cannot change that named export, which is what mocking attempts to do
 In this new module we export a single object instead of separate named exports.
-When importing this owrks the same way…
+When importing this works the same way…
 
 ```js
 import { uniqueId } from 'lib/impure-lodash';
