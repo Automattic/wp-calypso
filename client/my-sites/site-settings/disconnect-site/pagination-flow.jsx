@@ -6,44 +6,35 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Gridicon from 'gridicons';
+import Main from 'components/main';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 class PaginationFlow extends Component {
-	verifySiteIsJetpack() {
-		if ( this.props.siteIsJetpack === false ) {
-			this.redirectToGeneral();
-		}
-	}
-
-	redirectToGeneral = () => {
+	handleClick = () => {
 		const { siteSlug } = this.props;
-		page( '/settings/general/' + siteSlug );
-	};
 
-	clickHandler = () => {
-		this.redirectToGeneral();
+		if ( ! siteSlug ) {
+			return null;
+		}
+		//placeholder for redirection to the last screen of the flow
+		//when the Survey is skipped
+		page( '/settings/general/' + siteSlug );
 	};
 
 	render() {
 		const { translate } = this.props;
 		return (
-			<div className="disconnect-site__pagination main">
-				<Button
-					compact
-					borderless
-					className="disconnect-site__pagination skip"
-					onClick={ this.clickHandler }
-				>
-					<Gridicon icon="arrow-right" size={ 18 } />
+			<Main className="disconnect-site__pagination main">
+				<Button compact borderless onClick={ this.handleClick }>
 					{ translate( 'Skip Survey' ) }
+					<Gridicon icon="arrow-right" size={ 18 } />
 				</Button>
-			</div>
+			</Main>
 		);
 	}
 }
