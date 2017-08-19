@@ -13,7 +13,7 @@ function generateUniqueSiteUrl( prefix ) {
 	return `${ prefix }${ uuidWithoutHyphens() }`;
 }
 
-const rebrandCitiesPrefix = 'site';
+const rebrandCitiesPrefix = 'rebrandcitiessite';
 
 function generateUniqueRebrandCitiesSiteUrl() {
 	return generateUniqueSiteUrl( rebrandCitiesPrefix );
