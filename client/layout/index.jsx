@@ -131,6 +131,8 @@ Layout = React.createClass( {
 	render: function() {
 		const sectionClass = classnames(
 				'layout',
+				'color-scheme',
+				`is-${ this.props.colorSchemePreference }`,
 				`is-group-${ this.props.section.group }`,
 				`is-section-${ this.props.section.name }`,
 				`focus-${ this.props.currentLayoutFocus }`,
@@ -138,7 +140,6 @@ Layout = React.createClass( {
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
 				{ 'wp-singletree-layout': !! this.props.primary },
 				{ 'has-chat': this.props.chatIsOpen },
-				`is-${ this.props.colorSchemePreference }-theme`,
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
