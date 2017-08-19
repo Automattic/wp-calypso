@@ -1,0 +1,34 @@
+// ==========================================================================
+// Custom properties mixin
+//
+// Mixins for using custom properties and providing fallbacks
+//
+// Usage:
+// @include custom-property( color, --text-color, $text-color );
+// @include custom-property-from-map( color, --text-color, $text-color );
+// @include theme( color, --text-color );
+// @include theme-multiple(
+//   ('color': --text-color, 'background': --bg-color, 'border-color': --border-color);
+// )
+// ==========================================================================
+
+@mixin custom-property( $property, $custom-property, $fallback ) {
+	#{ $property }: $fallback;
+	#{ $property }: var( $custom-property, $fallback );
+}
+
+@mixin custom-property-from-map( $property, $custom-property, $map, $keys... ) {
+	#{ $property }: map-deep-get( $map, $keys... );
+	#{ $property }: var( $custom-property, map-deep-get( $map, $keys... ) );
+}
+
+// custom mixins for theming with custom properties based on $color-schemes map (see _themes.scss)
+@mixin theme( $property, $custom-property ) {
+	@include custom-property-from-map( $property, $custom-property, $color-schemes, 'default', $custom-property );
+}
+
+@mixin theme-multiple ($theme-properties) {
+	@each $property, $custom-property in $theme-properties {
+		@include theme( $property, $custom-property );
+	}
+}

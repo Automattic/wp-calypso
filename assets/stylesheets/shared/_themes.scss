@@ -1,0 +1,97 @@
+// ==========================================================================
+// Themes
+//
+// Theming variables and color scheme definitions
+//
+// 1.0 Theme variables
+// 2.0 Color scheme definitions
+// 3.0 Theming classes
+//
+// Usage:
+//
+// Add a new theme variable:
+// I.) Add a new theme variable to section 1.0 of this file
+// II.) Add new custom property matching the theme variable name to $color-schemes > default
+// III.) Add the same custom property to each theme in $color-schemes
+//
+// Add a new theme:
+// I.) Add a new block to $color-schemes by copying $color-schemes > default
+// II.) Change name of new color scheme to desired name for the new theme
+// III.) Change color values assigned to the custom properties of the new theme
+// ==========================================================================
+
+/**
+ * 1.0 Theme variables
+ *
+ * Declare theme variables and assign default colors
+ */
+
+// Layout
+$masterbar-color:                  $white;
+$masterbar-bg-color:               $blue-wordpress;
+$masterbar-border-color:           darken( $masterbar-bg-color, 4% );
+$masterbar-item-active-bg-color:   darken( $masterbar-bg-color, 17% );
+$masterbar-item-hover-bg-color:    lighten( $masterbar-bg-color, 5% );
+$masterbar-item-new-color:         $blue-wordpress;
+
+$sidebar-bg-color:                 $gray-lighten-30;
+$sidebar-text-color:               $gray-dark;
+$sidebar-selected-color:           $gray-text-min;
+
+/**
+ * 2.0 Color scheme definitions
+ *
+ * Assign color variables to custom properties
+ * Note: theme variable names have to match custom property names in 'default' theme
+ */
+
+$color-schemes: (
+	default: (
+		'--masterbar-color':                    $masterbar-color,
+		'--masterbar-bg-color':                 $masterbar-bg-color,
+		'--masterbar-border-color':             $masterbar-border-color,
+		'--masterbar-item-active-bg-color':     $masterbar-item-active-bg-color,
+		'--masterbar-item-hover-bg-color':      $masterbar-item-hover-bg-color,
+		'--masterbar-item-new-color':           $masterbar-item-new-color,
+	),
+	light: (
+		'--masterbar-color':                    $gray-text,
+		'--masterbar-bg-color':                 $gray-lighten-20,
+		'--masterbar-border-color':             $gray-lighten-10,
+		'--masterbar-item-active-bg-color':     $gray-lighten-10,
+		'--masterbar-item-hover-bg-color':      $gray-lighten-30,
+		'--masterbar-item-new-color':           $gray-text,
+	),
+	dark: (
+		'--masterbar-color':                    $masterbar-color,
+		'--masterbar-bg-color':                 $gray-dark,
+		'--masterbar-border-color':             $gray-darken-10,
+		'--masterbar-item-active-bg-color':     $gray-text-min,
+		'--masterbar-item-hover-bg-color':      $gray-darken-10,
+		'--masterbar-item-new-color':           $masterbar-item-new-color,
+	)
+);
+
+/**
+ * 3.0 Theming classes
+ *
+ * Assign values for themes at :root level
+ * This enables us to change the theme via a single class
+ */
+
+:root {
+	@each $color-scheme, $color-scheme-values in $color-schemes {
+		@if $color-scheme == 'default' {
+			@each $custom-property, $sass-variable in map-get( $color-schemes, 'default' ) {
+				#{ $custom-property } :  $sass-variable;
+			}
+		}
+		@else {
+			&.is-#{$color-scheme}-theme {
+				@each $custom-property, $sass-variable in map-get( $color-schemes, $color-scheme ) {
+					#{ $custom-property } :  $sass-variable;
+				}
+			}
+		}
+	}
+}

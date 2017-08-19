@@ -3,9 +3,14 @@ $autobar-height: 20px;
 
 // The WordPress.com Masterbar
 .masterbar {
-	background: $masterbar-color;
-	border-bottom: 1px solid darken( $masterbar-color, 4% );
-	color: $white;
+	border-bottom: 1px solid;
+	@include theme-multiple(
+		(
+			'background': --masterbar-bg-color,
+			'border-color': --masterbar-border-color,
+			'color': --masterbar-color,
+		)
+	);
 	font-size: 16px;
 	display: flex;
 	height: $masterbar-height;
@@ -38,7 +43,7 @@ $autobar-height: 20px;
 	display: flex;
 		align-items: center;
 	position: relative;
-	color: $white;
+	@include theme( color, --masterbar-color );
 	font-size: 14px;
 	height: $masterbar-height;
 	line-height: $masterbar-height;
@@ -48,7 +53,7 @@ $autobar-height: 20px;
 	transition: all 150ms ease-in;
 
 	&:visited {
-		color: $white;
+		@include theme( color, --masterbar-color );
 	}
 
 	&[href] {
@@ -56,7 +61,7 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__item-content {
-		color: $white;
+		@include theme( color, --masterbar-color );
 	}
 
 	.gridicon + .masterbar__item-content {
@@ -65,13 +70,13 @@ $autobar-height: 20px;
 
 	&:hover,
 	&:focus {
-		background: lighten( $masterbar-color, 5% );
-		color: $white;
+		@include theme( background, --masterbar-item-hover-bg-color );
+		@include theme( color, --masterbar-color );
 		outline: 0;
 	}
 
 	&.is-active {
-		background: darken( $masterbar-color, 17% );
+		@include theme( background, --masterbar-item-active-bg-color );
 	}
 
 	.is-support-user &.is-active {
@@ -140,13 +145,13 @@ $autobar-height: 20px;
 .masterbar__item-new {
 	background: $white;
 	border-radius: 3px;
-	color: $blue-wordpress;
+	@include theme( color, --masterbar-item-new-color );
 	height: 36px;
 	margin: 5px 8px;
 	transition: all 0.2s ease-out;
 
 	&:visited {
-		color: $blue-wordpress;
+		@include theme( color, --masterbar-item-new-color );
 	}
 
 	&.is-active {
@@ -156,11 +161,11 @@ $autobar-height: 20px;
 	&:hover,
 	&:focus {
 		background: $gray-light;
-		color: $blue-wordpress;
+		@include theme( color, --masterbar-item-new-color );
 	}
 
 	.masterbar__item-content {
-		color: $blue-wordpress;
+		@include theme( color, --masterbar-item-new-color );
 		display: none;
 
 		@include breakpoint( ">960px" ) {
@@ -182,7 +187,7 @@ $autobar-height: 20px;
 
 	// active state when editing
 	.is-group-editor & {
-		background: darken( $masterbar-color, 17% );
+		background: darken( $masterbar-bg-color, 17% );
 		color: $white;
 	}
 
@@ -192,7 +197,7 @@ $autobar-height: 20px;
 	}
 
 	.is-group-editor &:hover {
-		background: darken( $masterbar-color, 13% );
+		background: darken( $masterbar-bg-color, 13% );
 	}
 
 }
@@ -237,7 +242,7 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__notifications-bubble {
-		border: solid 2px $masterbar-color;
+		border: solid 2px $masterbar-bg-color;
 		border-radius: 50%;
 		display: none;
 		font-size: 8px;
@@ -259,11 +264,11 @@ $autobar-height: 20px;
 	}
 
 	&:hover .masterbar__notifications-bubble {
-		border-color: lighten( $masterbar-color, 5% );
+		border-color: lighten( $masterbar-bg-color, 5% );
 	}
 
 	&.is-active .masterbar__notifications-bubble {
-		border-color: darken( $masterbar-color, 10% );
+		border-color: darken( $masterbar-bg-color, 10% );
 	}
 
 	&.has-unread .masterbar__notifications-bubble {
@@ -358,8 +363,8 @@ $autobar-height: 20px;
 	}
 
 	.is-group-editor & {
-		background: darken( $masterbar-color, 12% );
-		border-left: 1px solid darken( $masterbar-color, 5% );
+		background: darken( $masterbar-bg-color, 12% );
+		border-left: 1px solid darken( $masterbar-bg-color, 5% );
 
 		.count {
 			color: $gray-light;
@@ -367,7 +372,7 @@ $autobar-height: 20px;
 	}
 
 	.is-group-editor &:hover {
-		background: darken( $masterbar-color, 17% );
+		background: darken( $masterbar-bg-color, 17% );
 
 		.count {
 			color: $white;

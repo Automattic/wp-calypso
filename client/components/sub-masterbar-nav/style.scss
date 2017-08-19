@@ -3,7 +3,7 @@
 	display: flex;
 	flex-direction: column;
 	padding: 56px 20px 28px;
-	background-color: $masterbar-color;
+	background-color: $masterbar-bg-color;
 
 	&:not(.is-collapsed) .sub-masterbar-nav__select {
 		background-color: $blue-dark;
@@ -89,7 +89,7 @@
 
 	&:hover,
  	&:focus {
-		background: lighten( $masterbar-color, 5% );
+		background: lighten( $masterbar-bg-color, 5% );
 		color: $white;
 		outline: 0;
 		transition: all 200ms ease-out;

@@ -1,0 +1,20 @@
+
+// ==========================================================================
+// Map deep get
+//
+// Allows us to get values from nested maps.
+//
+// Usage:
+// map-deep-get( $map, $keys... );
+// ==========================================================================
+
+@function map-deep-get( $map, $keys... ) {
+	@each $key in $keys {
+		@if not map-has-key( $map, $key) {
+			@warn "No item found for `#{$key}` of `[#{ $keys }]` in provided map. Property omitted.";
+			@return map-get( $map, $key );
+		}
+		$map: map-get( $map, $key );
+	}
+	@return $map;
+}
