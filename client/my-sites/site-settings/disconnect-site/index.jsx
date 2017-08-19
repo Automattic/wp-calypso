@@ -3,10 +3,8 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
-import page from 'page';
-
 /**
  * Internal dependencies
  */
@@ -15,33 +13,14 @@ import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import Main from 'components/main';
 import PaginationFlow from './pagination-flow';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import redirectNonJetpackToGeneral from 'my-sites/site-settings/redirect-to-general';
 
 class DisconnectSite extends Component {
-	componentDidMount() {
-		this.verifySiteIsJetpack();
-	}
-
-	componentDidUpdate() {
-		this.verifySiteIsJetpack();
-	}
-
-	verifySiteIsJetpack() {
-		if ( this.props.siteIsJetpack === false ) {
-			this.redirectToGeneral();
-		}
-	}
-
-	redirectToGeneral = () => {
-		const { siteSlug } = this.props;
-		page( '/settings/general/' + siteSlug );
-	};
-
 	render() {
 		const { translate } = this.props;
+
 		return (
-			<Main className="disconnect-site why site-settings">
+			<Main className="disconnect-site site-settings">
 				<DocumentHead title={ translate( 'Site Settings' ) } />
 				<FormattedHeader
 					headerText={ translate( 'Disconnect Site' ) }
@@ -49,16 +28,11 @@ class DisconnectSite extends Component {
 						'Tell us why you want to disconnect your site from Wordpress.com.'
 					) }
 				/>
-				<div className="disconnect-site__card">
-					<Card> </Card>
-				</div>
+				<Card className="disconnect-site__card"> </Card>
 				<PaginationFlow />
 			</Main>
 		);
 	}
 }
 
-export default connect( state => ( {
-	siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
-	siteSlug: getSelectedSiteSlug( state ),
-} ) )( localize( DisconnectSite ) );
+export default flowRight( localize, redirectNonJetpackToGeneral )( DisconnectSite );
