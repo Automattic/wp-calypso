@@ -4,13 +4,13 @@
  * External dependencies
  */
 
-import { get, some } from 'lodash';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { isMainSiteOf } from 'state/selectors';
+import { getSitesItems, isMainSiteOf } from 'state/selectors';
 
 /**
  * Returns true if site with id equal to siteId is a connected secondary network site and false otherwise
@@ -22,6 +22,6 @@ import { isMainSiteOf } from 'state/selectors';
  * @return {Boolean}             Whether site with id equal to siteId is a connected secondary network site
  */
 export default createSelector( ( state, siteId ) => {
-	const siteIds = Object.keys( get( state, 'sites.items', {} ) );
+	const siteIds = Object.keys( getSitesItems( state ) );
 	return some( siteIds, mainSiteId => isMainSiteOf( state, mainSiteId, siteId ) );
-}, state => state.sites.items );
+}, getSitesItems );
