@@ -1,4 +1,3 @@
-
 //default color scheme
 :root {
 	--masterbar-color: $white;
@@ -19,7 +18,6 @@
 		--masterbar-item-active-background: lighten( $gray, 10% );
 		--masterbar-item-new-color: $gray-text;
 	}
-
 	&.is-dark {
 		--masterbar-color: $white;
 		--masterbar-background-color: $gray-dark;

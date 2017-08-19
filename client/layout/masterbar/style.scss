@@ -3,9 +3,9 @@ $autobar-height: 20px;
 
 // The WordPress.com Masterbar
 .masterbar {
-	background: var(--masterbar-background-color);
-	border-bottom: 1px solid var(--masterbar-border-color);
-	color: var(--masterbar-color);
+	background: var( --masterbar-background-color );
+	border-bottom: 1px solid var( --masterbar-border-color );
+	color: var( --masterbar-color );
 	font-size: 16px;
 	display: flex;
 	height: $masterbar-height;
@@ -38,7 +38,7 @@ $autobar-height: 20px;
 	display: flex;
 		align-items: center;
 	position: relative;
-	color: var(--masterbar-color);
+	color: var( --masterbar-color );
 	font-size: 14px;
 	height: $masterbar-height;
 	line-height: $masterbar-height;
@@ -48,7 +48,7 @@ $autobar-height: 20px;
 	transition: all 150ms ease-in;
 
 	&:visited {
-		color: var(--masterbar-color);
+		color: var( --masterbar-color );
 	}
 
 	&[href] {
@@ -56,7 +56,7 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__item-content {
-		color: var(--masterbar-color);
+		color: var( --masterbar-color );
 	}
 
 	.gridicon + .masterbar__item-content {
@@ -65,13 +65,13 @@ $autobar-height: 20px;
 
 	&:hover,
 	&:focus {
-		background: var(--masterbar-item-hover-background);
-		color: var(--masterbar-color);
+		background: var( --masterbar-item-hover-background );
+		color: var( --masterbar-color );
 		outline: 0;
 	}
 
 	&.is-active {
-		background: var(--masterbar-item-active-background);
+		background: var( --masterbar-item-active-background );
 	}
 
 	.is-support-user &.is-active {
@@ -140,13 +140,13 @@ $autobar-height: 20px;
 .masterbar__item-new {
 	background: $white;
 	border-radius: 3px;
-	color: var(--masterbar-item-new-color);
+	color: var( --masterbar-item-new-color );
 	height: 36px;
 	margin: 5px 8px;
 	transition: all 0.2s ease-out;
 
 	&:visited {
-		color: var(--masterbar-item-new-color);
+		color: var( --masterbar-item-new-color );
 	}
 
 	&.is-active {
@@ -156,11 +156,11 @@ $autobar-height: 20px;
 	&:hover,
 	&:focus {
 		background: $gray-light;
-		color: var(--masterbar-item-new-color);
+		color: var( --masterbar-item-new-color );
 	}
 
 	.masterbar__item-content {
-		color: var(--masterbar-item-new-color);
+		color: var( --masterbar-item-new-color );
 		display: none;
 
 		@include breakpoint( ">960px" ) {
