@@ -24,7 +24,7 @@ import {
 import { getPurchase, isDataLoading, goToManagePurchase, recordPageView } from '../utils';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import { hasPrivacyProtection, isRefundable } from 'lib/purchases';
-import { isRequestingSites } from 'state/sites/selectors';
+import { hasLoadedSites } from 'state/selectors';
 import Main from 'components/main';
 import notices from 'notices';
 import Notice from 'components/notice';
@@ -227,7 +227,7 @@ class CancelPrivacyProtection extends Component {
 export default connect(
 	( state, props ) => ( {
 		error: getPurchasesError( state ),
-		hasLoadedSites: ! isRequestingSites( state ),
+		hasLoadedSites: hasLoadedSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
 		selectedSite: getSelectedSiteSelector( state ),
