@@ -86,6 +86,19 @@ export class MySitesSidebar extends Component {
 		}
 	};
 
+	onViewSiteClick = ( event ) => {
+		const { site } = this.props;
+		analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site' );
+
+		if ( site.is_previewable && ! event.metaKey && ! event.ctrlKey ) {
+			return this.onNavigate();
+		}
+		if ( window && site.URL ) {
+			event.preventDefault();
+			window.open( site.URL );
+		}
+	};
+
 	itemLinkClass = ( paths, existingClasses ) => {
 		var classSet = {};
 
@@ -162,7 +175,7 @@ export class MySitesSidebar extends Component {
 				label={ this.props.translate( 'View Site' ) }
 				className={ this.itemLinkClass( [ '/view' ], 'preview' ) }
 				link={ isPreviewable ? '/view' + this.props.siteSuffix : site.URL }
-				onNavigate={ this.onNavigate }
+				onNavigate={ this.onViewSiteClick }
 				icon="computer"
 				preloadSectionName="preview"
 			/>
