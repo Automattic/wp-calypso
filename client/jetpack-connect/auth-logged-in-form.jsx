@@ -46,7 +46,7 @@ class LoggedInForm extends Component {
 		calypsoStartedConnection: PropTypes.bool,
 		goBackToWpAdmin: PropTypes.func.isRequired,
 		isAlreadyOnSitesList: PropTypes.bool,
-		isFetchingSites: PropTypes.bool,
+		hasLoadedSites: PropTypes.bool,
 		isFetchingAuthorizationSite: PropTypes.bool,
 		isSSO: PropTypes.bool,
 		isWCS: PropTypes.bool,
@@ -207,7 +207,7 @@ class LoggedInForm extends Component {
 		} = this.props.jetpackConnectAuthorize;
 
 		if ( ! this.props.isAlreadyOnSitesList &&
-			! this.props.isFetchingSites,
+			this.props.hasLoadedSites,
 			queryObject.already_authorized ) {
 			this.props.recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
 			return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
@@ -287,7 +287,7 @@ class LoggedInForm extends Component {
 
 	renderNotices() {
 		const { authorizeError, queryObject, isAuthorizing, authorizeSuccess, userAlreadyConnected } = this.props.jetpackConnectAuthorize;
-		if ( queryObject.already_authorized && ! this.props.isFetchingSites && ! this.props.isAlreadyOnSitesList ) {
+		if ( queryObject.already_authorized && this.props.hasLoadedSites && ! this.props.isAlreadyOnSitesList ) {
 			// For users who start their journey at `wordpress.com/jetpack/connect` or similar flows, we will discourage
 			// additional users from linking. Although it is possible to link multiple users with Jetpack, the `jetpack/connect`
 			// flows will be reserved for brand new connections.
@@ -341,7 +341,7 @@ class LoggedInForm extends Component {
 		} = this.props.jetpackConnectAuthorize;
 
 		if ( ! this.props.isAlreadyOnSitesList &&
-			! this.props.isFetchingSites &&
+			this.props.hasLoadedSites &&
 			queryObject.already_authorized ) {
 			return translate( 'Go back to your site' );
 		}
