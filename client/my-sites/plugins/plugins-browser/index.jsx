@@ -30,14 +30,10 @@ import {
 	canCurrentUser,
 	getSelectedOrAllSitesJetpackCanManage,
 	hasJetpackSites,
+	hasLoadedSites,
 } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	getSitePlan,
-	isJetpackSite,
-	isRequestingSites,
-	canJetpackSiteManage,
-} from 'state/sites/selectors';
+import { getSitePlan, isJetpackSite, canJetpackSiteManage } from 'state/sites/selectors';
 import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
 import HeaderButton from 'components/header-button';
@@ -494,7 +490,7 @@ const PluginsBrowser = createReactClass( {
 	},
 
 	render() {
-		if ( ! this.props.isRequestingSites && this.props.noPermissionsError ) {
+		if ( this.props.hasLoadedSites && this.props.noPermissionsError ) {
 			return (
 				<NoPermissionsError
 					title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) }
@@ -537,7 +533,7 @@ export default connect(
 			jetpackManageError:
 				!! isJetpackSite( state, selectedSiteId ) &&
 				! canJetpackSiteManage( state, selectedSiteId ),
-			isRequestingSites: isRequestingSites( state ),
+			hasLoadedSites: hasLoadedSites( state ),
 			noPermissionsError:
 				!! selectedSiteId && ! canCurrentUser( state, selectedSiteId, 'manage_options' ),
 			selectedSite: getSelectedSite( state ),
