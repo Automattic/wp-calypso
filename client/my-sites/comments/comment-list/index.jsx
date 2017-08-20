@@ -120,8 +120,9 @@ export class CommentList extends Component {
 	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
 
 	isSelectedAll = () => {
-		const visibleComments = this.getCommentsPage( this.getComments(), this.state.page );
-		return visibleComments.length === this.state.selectedComments.length;
+		const { page, selectedComments } = this.state;
+		const visibleComments = this.getCommentsPage( this.getComments(), page );
+		return selectedComments.length && ( selectedComments.length === visibleComments.length );
 	};
 
 	removeFromPersistedComments = commentId => this.setState(
