@@ -11,7 +11,7 @@ import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import { fetchOAuth2ClientData } from 'state/login/oauth2/actions';
 
-const enchanceContextWithWithLogin = context => {
+const enhanceContextWithLogin = context => {
 	const {
 		lang,
 		path,
@@ -38,11 +38,11 @@ export default {
 		if ( client_id ) {
 			context.store.dispatch( fetchOAuth2ClientData( Number( client_id ) ) )
 				.then( () => {
-					enchanceContextWithWithLogin( context );
+					enhanceContextWithLogin( context );
 					next();
 				} );
 		} else {
-			enchanceContextWithWithLogin( context );
+			enhanceContextWithLogin( context );
 			next();
 		}
 	},

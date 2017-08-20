@@ -687,7 +687,7 @@ describe( 'utils', () => {
 	describe.only( '#cachingActionCreatorFactory', () => {
 		let passThrough;
 		let dispatch;
-		let successfullWork;
+		let successfulWork;
 		let failingWork;
 		let loadingActionCreator;
 		let successActionCreator;
@@ -701,7 +701,7 @@ describe( 'utils', () => {
 			passThrough = pass => pass;
 
 			dispatch = spy( passThrough );
-			successfullWork = spy( () => Promise.resolve( 'success_data' ) );
+			successfulWork = spy( () => Promise.resolve( 'success_data' ) );
 			failingWork = spy( () => Promise.reject( 'error_data' ) );
 
 			loadingActionCreator = spy( () => dispatch( { type: 'loading' } ) );
@@ -715,7 +715,7 @@ describe( 'utils', () => {
 
 		it( 'should call apropriate action creators on success', () => {
 			const actionCreator = cachingActionCreatorFactory(
-				successfullWork,
+				successfulWork,
 				connectedLoadingActionCreator,
 				connectedSuccessActionCreator,
 				connectedFailureActionCreator
@@ -726,7 +726,6 @@ describe( 'utils', () => {
 
 			return dispatchResult.then( () => {
 				expect( successActionCreator ).to.be.calledWith( 'success_data' );
-				//console.log( 'spy', failureActionCreator.getCall( 0 ).args[ 0 ] );
 				expect( failureActionCreator ).not.to.be.called;
 			} );
 		} );
@@ -750,7 +749,7 @@ describe( 'utils', () => {
 
 		it( 'should cache same parameters successful call', () => {
 			const actionCreator = cachingActionCreatorFactory(
-				successfullWork,
+				successfulWork,
 				connectedLoadingActionCreator,
 				connectedSuccessActionCreator,
 				connectedFailureActionCreator
@@ -759,7 +758,7 @@ describe( 'utils', () => {
 			const firstCall = actionCreator( 123 )( dispatch );
 			const secondCall = firstCall.then( () => actionCreator( 123 )( dispatch ) );
 
-			return secondCall.then( () => expect( successfullWork ).to.be.calledOnce );
+			return secondCall.then( () => expect( successfulWork ).to.be.calledOnce );
 		} );
 
 		it( 'should not cache same parameters failed call', () => {
