@@ -434,7 +434,7 @@ export const withoutPersistence = reducer => ( state, action ) => {
  *	},
  *);
  *
- * @param {Function} work a worker function that returns the promise ( param1, param2, ... ) => Promise
+ * @param {Function} worker a worker function that returns the promise ( param1, param2, ... ) => Promise
  * @param {Function} loadingActionCreator an action creator for before the work is performed of the following signature:
  * 					dispatch => ( param1, param2, ... ) => dispatch( ... ),
  * @param {Function} successActionCreator an action creator for the success case of the work performed of the following signature:
@@ -448,7 +448,7 @@ export const withoutPersistence = reducer => ( state, action ) => {
  * 					( param1, param2, ... ) => dispatch => Promise
  */
 export const cachingActionCreatorFactory = (
-	work,
+	worker,
 	loadingActionCreator,
 	successActionCreator,
 	failureActionCreator,
@@ -465,9 +465,9 @@ export const cachingActionCreatorFactory = (
 
 		const cacheKey = parametersHashFunction( params );
 		const cachedValue = cache.get( cacheKey );
-		const workPromise = cachedValue ? Promise.resolve( cachedValue ) : work( ...params );
+		const resultPromise = cachedValue ? Promise.resolve( cachedValue ) : worker( ...params );
 
-		return workPromise.then( result => {
+		return resultPromise.then( result => {
 			cache.set( cacheKey, result );
 			return successActionCreator( dispatch )( result );
 		}, failureActionCreator( dispatch ) ); // we don't cache failures
