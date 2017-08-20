@@ -1,28 +1,25 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	property = require( 'lodash/property' ),
-	sortBy = require( 'lodash/sortBy' );
+import React from 'react';
+import { connect } from 'react-redux';
+import property from 'lodash/property';
+import sortBy from 'lodash/sortBy';
 
 /**
  * Internal dependencies
  */
-var NextStepsBox = require( './next-steps-box' ),
-	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	steps = require( './steps' ),
-	analytics = require( 'lib/analytics' ),
-	productsValues = require( 'lib/products-values' ),
-	sites = require( 'lib/sites-list' )();
+import NextStepsBox from './next-steps-box';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import observe from 'lib/mixins/data-observe';
+import steps from './steps';
+import analytics from 'lib/analytics';
+import productsValues from 'lib/products-values';
+import { getSites } from 'state/selectors';
 
-module.exports = React.createClass( {
+export const NextSteps = React.createClass( {
 
-	mixins: [ observe( 'trophiesData', 'sites' ) ],
-
-	getDefaultProps: function() {
-		return { sites: sites };
-	},
+	mixins: [ observe( 'trophiesData' ) ],
 
 	userState: {},
 
@@ -122,7 +119,7 @@ module.exports = React.createClass( {
 	},
 
 	newestSite: function() {
-		return sortBy( this.props.sites.get(), property( 'ID' ) ).pop();
+		return sortBy( this.props.sites, property( 'ID' ) ).pop();
 	},
 
 	outroMessage: function() {
@@ -148,7 +145,7 @@ module.exports = React.createClass( {
 	},
 
 	userHasPurchasedAPlan: function() {
-		return this.props.sites.get().some( function( site ) {
+		return this.props.sites.some( function( site ) {
 			return productsValues.isPlan( site.plan );
 		} );
 	},
@@ -193,3 +190,9 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state ) => {
+	return {
+		sites: getSites( state ),
+	};
+} )( NextSteps );
