@@ -296,7 +296,9 @@ export class CommentList extends Component {
 		this.props.successNotice( message, noticeOptions );
 	}
 
-	toggleBulkEdit = () => this.setState( ( { isBulkEdit } ) => ( { isBulkEdit: ! isBulkEdit } ) );
+	toggleBulkEdit = () => {
+		this.setState( ( { isBulkEdit } ) => ( { isBulkEdit: ! isBulkEdit } ) );
+	}
 
 	toggleCommentLike = comment => {
 		const { commentId, isLiked, postId, status } = comment;
