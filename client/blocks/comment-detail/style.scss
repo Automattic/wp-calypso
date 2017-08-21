@@ -114,11 +114,20 @@
 		}
 	}
 
+	.comment-detail__action-collapse .gridicon {
+		transform: rotate( 180deg );
+		transition: transform .15s cubic-bezier(0.175, .885, .32, 1.275), color .20s ease-in;
+	}
+
 	&.is-preview .comment-detail__action-collapse {
 		flex: none;
 		margin-top: -6px;
 		text-align: center;
 		width: 36px;
+
+		.gridicon {
+			transform: rotate( 0deg );
+		}
 	}
 
 	&:not( .is-preview ) .button.is-borderless {

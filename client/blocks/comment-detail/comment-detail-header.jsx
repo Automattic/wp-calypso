@@ -108,7 +108,7 @@ export const CommentDetailHeader = ( {
 					className="comment-detail__action-collapse"
 					onClick={ isExpanded ? toggleExpanded : noop }
 				>
-					<Gridicon icon="cross" />
+					<Gridicon icon="chevron-down" />
 				</Button>
 			}
 		</div>
