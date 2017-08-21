@@ -10,7 +10,8 @@ import { getSites } from '../';
 
 const currentUserState = {
 	currentUser: {
-		id: 12345678
+		id: 12345678,
+		capabilities: {},
 	},
 	users: {
 		items: {

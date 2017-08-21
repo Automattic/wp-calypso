@@ -58,6 +58,7 @@ import {
 	hasDefaultSiteTitle,
 	siteSupportsJetpackSettingsUi
 } from '../selectors';
+import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	const createStateWithItems = items => deepFreeze( {
@@ -109,6 +110,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if the site is not known', () => {
 			const site = getSite( {
+				...userState,
 				sites: {
 					items: {}
 				}
@@ -119,6 +121,7 @@ describe( 'selectors', () => {
 
 		it( 'should return a normalized site with computed attributes', () => {
 			const site = getSite( {
+				...userState,
 				sites: {
 					items: {
 						2916284: {
@@ -155,6 +158,7 @@ describe( 'selectors', () => {
 
 		it( 'should return a normalized site with correct slug when sites with collisions are passed in attributes', () => {
 			const site = getSite( {
+				...userState,
 				sites: {
 					items: {
 						2916284: {
@@ -273,6 +277,7 @@ describe( 'selectors', () => {
 	describe( '#isSingleUserSite()', () => {
 		it( 'should return null if the site is not known', () => {
 			const singleUserSite = isSingleUserSite( {
+				...userState,
 				sites: {
 					items: {}
 				}
@@ -283,6 +288,7 @@ describe( 'selectors', () => {
 
 		it( 'it should return true if the site is a single user site', () => {
 			const singleUserSite = isSingleUserSite( {
+				...userState,
 				sites: {
 					items: {
 						77203074: { ID: 77203074, URL: 'https://example.wordpress.com', single_user_site: true }
@@ -298,6 +304,7 @@ describe( 'selectors', () => {
 
 		it( 'it should return false if the site is not a single user site', () => {
 			const singleUserSite = isSingleUserSite( {
+				...userState,
 				sites: {
 					items: {
 						77203074: { ID: 77203074, URL: 'https://example.wordpress.com', single_user_site: false }

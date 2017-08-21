@@ -50,7 +50,7 @@ describe( 'middleware', () => {
 		let connection;
 		let dispatch, getState;
 		const uninitializedState = deepFreeze( {
-			currentUser: { id: 1 },
+			currentUser: { id: 1, capabilities: {} },
 			happychat: { connectionStatus: 'uninitialized' },
 			users: { items: { 1: {} } },
 			help: { selectedSiteId: 2647731 },
@@ -163,7 +163,7 @@ describe( 'middleware', () => {
 		// without errors. It may be worth pulling each of these helpers out into their
 		// own modules, so that we can stub them and simplify our tests.
 		const uninitializedState = deepFreeze( {
-			currentUser: { id: 1 },
+			currentUser: { id: 1, capabilities: {} },
 			happychat: { connectionStatus: 'uninitialized' },
 			users: { items: { 1: {} } },
 			help: { selectedSiteId: 2647731 },
@@ -271,6 +271,7 @@ describe( 'middleware', () => {
 				},
 				currentUser: {
 					locale: 'en',
+					capabilities: {}
 				},
 				sites: {
 					items: {
@@ -290,6 +291,7 @@ describe( 'middleware', () => {
 			const state = {
 				currentUser: {
 					locale: 'en',
+					capabilities: {}
 				},
 				sites: {
 					items: {

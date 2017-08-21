@@ -27,6 +27,7 @@ import {
 	getGeoLocation,
 	getGroups,
 } from '../selectors';
+import { userState } from 'state/selectors/test/fixtures/user-state';
 import {
 	HAPPYCHAT_GROUP_WPCOM,
 	HAPPYCHAT_GROUP_JPOP
@@ -289,6 +290,7 @@ describe( 'selectors', () => {
 		it( 'should return default group for no sites', () => {
 			const siteId = 1;
 			const state = {
+				...userState,
 				sites: {
 					items: {}
 				}
@@ -300,6 +302,7 @@ describe( 'selectors', () => {
 		it( 'should return default group for no siteId', () => {
 			const siteId = undefined;
 			const state = {
+				...userState,
 				sites: {
 					items: {
 						1: {}
@@ -313,6 +316,7 @@ describe( 'selectors', () => {
 		it( 'should return JPOP group for jetpack paid sites', () => {
 			const siteId = 1;
 			const state = {
+				...userState,
 				currentUser: {
 					id: 1,
 					capabilities: {
@@ -340,6 +344,7 @@ describe( 'selectors', () => {
 		it( 'should return WPCOM for AT sites group for jetpack site', () => {
 			const siteId = 1;
 			const state = {
+				...userState,
 				currentUser: {
 					id: 1,
 					capabilities: {
