@@ -5,6 +5,7 @@ import React from 'react';
 import {
 	deburr,
 	endsWith,
+	includes,
 	isEqual,
 	keys,
 	omit,
@@ -390,12 +391,19 @@ class EditContactInfoFormCard extends React.Component {
 
 	getField( Component, props ) {
 		const { name } = props;
+		const { whoisUnmodifiableContactFields } = this.props.selectedDomain;
+
+		const disabledForTld = includes( whoisUnmodifiableContactFields, name );
 
 		return (
 			<Component
 				{ ...props }
 				additionalClasses="edit-contact-info__form-field"
-				disabled={ this.state.formSubmitting || formState.isFieldDisabled( this.state.form, name ) }
+				disabled={
+					this.state.formSubmitting ||
+					disabledForTld ||
+					formState.isFieldDisabled( this.state.form, name )
+				}
 				isError={ formState.isFieldInvalid( this.state.form, name ) }
 				value={ formState.getFieldValue( this.state.form, name ) }
 				onChange={ this.onChange } />

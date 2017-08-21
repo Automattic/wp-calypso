@@ -1,7 +1,14 @@
 /**
  * External dependencies
  */
-import { isEmpty, find, values } from 'lodash';
+import {
+	castArray,
+	isEmpty,
+	find,
+	kebabCase,
+	map,
+	values,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -53,7 +60,27 @@ function getDomainNameFromReceiptOrCart( receipt, cart ) {
 	return null;
 }
 
+/**
+ * Fix mis-alignment names for one or more whois contact fields used on the
+ * front and back ends.
+ *
+ * @param  {String|[String]} wpcomFieldNames - The wpcom name for a whois field.
+ * @return {String} The corresponding calypso field name(s).
+ */
+function calypsoifyWhoisFieldNames( wpcomFieldNames ) {
+	const explicitConversions = {
+		country: 'country-code',
+		org_name: 'organization',
+	};
+
+	return map(
+		castArray( wpcomFieldNames ),
+		name => explicitConversions[ name ] || kebabCase( name )
+	);
+}
+
 export {
 	getDomainNameFromReceiptOrCart,
 	getDomainType,
+	calypsoifyWhoisFieldNames,
 };

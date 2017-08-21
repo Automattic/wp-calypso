@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getDomainType } from 'lib/domains/utils';
+import { getDomainType, calypsoifyWhoisFieldNames } from 'lib/domains/utils';
 
 export const createSiteDomainObject = domain => {
 	return {
@@ -38,5 +38,6 @@ export const createSiteDomainObject = domain => {
 		subscriptionId: domain.subscription_id,
 		transferLockOnWhoisUpdateOptional: Boolean( domain.transfer_lock_on_whois_update_optional ),
 		type: getDomainType( domain ),
+		whoisUnmodifiableContactFields: Array( calypsoifyWhoisFieldNames( domain.whois_unmodifiable_contact_fields ) ),
 	};
 };
