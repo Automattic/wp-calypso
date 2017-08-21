@@ -104,6 +104,10 @@ class GoogleLoginButton extends Component {
 	handleClick( event ) {
 		event.preventDefault();
 
+		if ( this.state.isDisabled ) {
+			return;
+		}
+
 		this.props.onClick( event );
 
 		if ( this.state.error ) {
@@ -117,12 +121,10 @@ class GoogleLoginButton extends Component {
 
 		const { responseHandler } = this.props;
 
-		// Handle click async if the library is not loaded yet
-		// the popup might be blocked by the browser in that case
-		// options are documented here:
+		// Options are documented here:
 		// https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiauth2signinoptions
-		this.initialize()
-			.then( gapi => gapi.auth2.getAuthInstance().signIn( { prompt: 'select_account' } ).then( responseHandler ) )
+		Promise.resolve( window.gapi.auth2.getAuthInstance().signIn( { prompt: 'select_account' } ) )
+			.then( responseHandler )
 			.catch( error => {
 				this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
 					social_account_type: 'google',
