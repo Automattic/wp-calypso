@@ -10,7 +10,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
+import { getCurrencyObject } from 'lib/format-currency';
 import CompactCard from 'components/card/compact';
 import EllipsisMenu from 'components/ellipsis-menu';
 import FormRadio from 'components/forms/form-radio';
@@ -33,6 +33,11 @@ class ProductListItem extends Component {
 	handleRadioChange = () => this.props.onSelectedChange( this.props.paymentId );
 	handleEditClick = () => this.props.onEditClick( this.props.paymentId );
 	handleTrashClick = () => this.props.onTrashClick( this.props.paymentId );
+
+	formatPrice( price, currency = 'USD' ) {
+		const { integer, fraction } = getCurrencyObject( price, currency );
+		return `${ integer }${ fraction } ${ currency }`;
+	}
 
 	render() {
 		const {
@@ -61,7 +66,7 @@ class ProductListItem extends Component {
 						{ title }
 					</div>
 					<div>
-						{ formatCurrency( price, currency ) }
+						{ this.formatPrice( price, currency ) }
 					</div>
 				</label>
 				<ProductImage siteId={ siteId } imageId={ featuredImageId } />
