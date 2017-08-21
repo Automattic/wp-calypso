@@ -879,10 +879,10 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000715"
+      "version": "1.0.30000716"
     },
     "caniuse-lite": {
-      "version": "1.0.30000715"
+      "version": "1.0.30000716"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -1683,7 +1683,7 @@
       }
     },
     "es5-ext": {
-      "version": "0.10.27"
+      "version": "0.10.29"
     },
     "es6-error": {
       "version": "4.0.2"
@@ -2161,7 +2161,7 @@
       "dev": true
     },
     "flow-parser": {
-      "version": "0.53.0",
+      "version": "0.53.1",
       "dev": true
     },
     "flux": {
@@ -5414,7 +5414,7 @@
       "version": "7.0.2",
       "dependencies": {
         "hoist-non-react-statics": {
-          "version": "2.2.2"
+          "version": "2.3.0"
         },
         "lodash": {
           "version": "4.17.4"
@@ -5453,7 +5453,7 @@
       "version": "0.11.0"
     },
     "regenerator-transform": {
-      "version": "0.10.0"
+      "version": "0.10.1"
     },
     "regex-cache": {
       "version": "0.4.3"
