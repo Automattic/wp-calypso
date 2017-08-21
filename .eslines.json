@@ -1,12 +1,15 @@
 {
   "branches": {
-    "default": [ "downgrade-unmodified-lines" ],
+    "default": [ "downgrade-unmodified-lines", "filter-when-format" ],
     "master": [ "filter-parsing-errors" ]
   },
   "processors": {
     "downgrade-unmodified-lines": {
       "remote": "origin/master",
       "rulesNotToDowngrade": [ "no-unused-vars" ]
+    },
+    "filter-when-format": {
+      "rulesToIgnore": [ "indent" ]
     }
   }
 }
