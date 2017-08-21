@@ -15,7 +15,7 @@ import titlecase from 'to-title-case';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { savePreference } from 'state/preferences/actions';
-import { getSite, isJetpackSite } from 'state/sites/selectors';
+import { getSite, isJetpackSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -165,7 +165,6 @@ module.exports = {
 		let date;
 		let chartTab;
 		let period;
-		let siteOffset = 0;
 		let numPeriodAgo = 0;
 		const basePath = route.sectionify( context.path );
 		let baseAnalyticsPath;
@@ -188,10 +187,8 @@ module.exports = {
 				context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 			}
 
-			if ( currentSite && 'object' === typeof currentSite.options && 'undefined' !== typeof currentSite.options.gmt_offset ) {
-				siteOffset = currentSite.options.gmt_offset;
-			}
-			const momentSiteZone = i18n.moment().utcOffset( siteOffset );
+			const gmtOffset = getSiteOption( context.store.getState(), siteId, 'gmt_offset' );
+			const momentSiteZone = i18n.moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
 			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
 				date = i18n.moment( queryOptions.startDate ).locale( 'en' );
 				numPeriodAgo = getNumPeriodAgo( momentSiteZone, date, activeFilter.period );
@@ -268,8 +265,9 @@ module.exports = {
 		} else if ( ! activeFilter || -1 === validModules.indexOf( context.params.module ) ) {
 			next();
 		} else {
-			if ( 'object' === typeof( site.options ) && 'undefined' !== typeof( site.options.gmt_offset ) ) {
-				momentSiteZone = i18n.moment().utcOffset( site.options.gmt_offset );
+			const gmtOffset = getSiteOption( context.store.getState(), siteId, 'gmt_offset' );
+			if ( Number.isFinite( gmtOffset ) ) {
+				momentSiteZone = i18n.moment().utcOffset( gmtOffset );
 			}
 			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
 				date = i18n.moment( queryOptions.startDate );
