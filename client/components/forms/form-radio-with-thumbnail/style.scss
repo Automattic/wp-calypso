@@ -7,6 +7,11 @@
 	background-size: cover;
 	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
 		0 1px 2px lighten( $gray, 30% );
+	transition: all 100ms ease-in-out;
+
+	&:hover {
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
+	}
 }
 
 .form-radio-with-thumbnail .form-label {
