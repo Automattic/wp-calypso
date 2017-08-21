@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/assign' ),
-	partialRight = require( 'lodash/partialRight' ),
-	flowRight = require( 'lodash/flowRight' ),
-	flow = require( 'lodash/flow' );
+import { assign, flow, flowRight, partialRight } from 'lodash';
 
 /**
  * Internal dependencies

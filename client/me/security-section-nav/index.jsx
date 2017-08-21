@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
+import { find } from 'lodash';
 var React = require( 'react' ),
-	i18n = require( 'i18n-calypso' ),
-	find = require( 'lodash/find' );
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies

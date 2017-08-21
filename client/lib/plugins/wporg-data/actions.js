@@ -8,9 +8,9 @@ import debugFactory from 'debug';
  */
 import Dispatcher from 'dispatcher';
 import wporg from 'lib/wporg';
-import { debounce } from 'lodash';
 import utils from 'lib/plugins/utils';
 import CuratedPlugins from 'lib/plugins/wporg-data/curated.json';
+import { debounce } from 'lib/impure-lodash';
 
 /**
  * Constants

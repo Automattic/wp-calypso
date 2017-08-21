@@ -1,10 +1,9 @@
 /**
- * External Dependencies
+ * External dependencies
  */
+import { filter, map } from 'lodash';
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	filter = require( 'lodash/filter' ),
-	map = require( 'lodash/map' ),
 	classNames = require( 'classnames' );
 
 /**

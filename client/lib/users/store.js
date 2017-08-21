@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:users:store' ),
-	omit = require( 'lodash/omit' ),
-	find = require( 'lodash/find' ),
-	endsWith = require( 'lodash/endsWith' );
+import { endsWith, find, omit } from 'lodash';
+const debug = require( 'debug' )( 'calypso:users:store' );
 
 /**
  * Internal dependencies

@@ -48,6 +48,12 @@ describe( 'MediaActions', function() {
 	useMockery();
 
 	before( function() {
+		mockery.registerMock( 'lib/impure-lodash', {
+			// In the browser, our DUMMY_UPLOAD will be an instanceof
+			// window.File, but File is not provided by jsdom
+			isPlainObject: obj => DUMMY_UPLOAD !== obj && isPlainObject( obj ),
+			uniqueId: () => 'media-1',
+		} );
 		mockery.registerMock( './library-selected-store', {
 			getAll: function() {
 				return [ DUMMY_ITEM ];
@@ -83,18 +89,6 @@ describe( 'MediaActions', function() {
 					uploadExternalMedia: mediaAddExternal
 				} ),
 			} ),
-		} );
-		mockery.registerMock( 'lodash/uniqueId', function() {
-			return 'media-1';
-		} );
-		mockery.registerMock( 'lodash/isPlainObject', function( obj ) {
-			// In the browser, our DUMMY_UPLOAD will be an instanceof
-			// window.File, but File is not provided by jsdom
-			if ( obj === DUMMY_UPLOAD ) {
-				return false;
-			}
-
-			return isPlainObject( obj );
 		} );
 
 		Dispatcher = require( 'dispatcher' );

@@ -2,8 +2,7 @@
  * External dependencies
  */
 
-var findIndex = require( 'lodash/findIndex' ),
-	some = require( 'lodash/some' );
+import { findIndex, some } from 'lodash';
 
 /**
  * Given a node within a tree, return the node's parent or the tree

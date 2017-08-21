@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { compact, isEqual, uniqueId, filter } from 'lodash';
+import { compact, isEqual, filter, uniqueId } from 'lodash';
 import { createReducer } from 'state/utils';
 
 /**

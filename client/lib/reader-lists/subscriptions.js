@@ -1,12 +1,14 @@
 // Reader List Store
 
-// External Dependencies
-var Dispatcher = require( 'dispatcher' ),
-	find = require( 'lodash/find' ),
-	reject = require( 'lodash/reject' ),
-	isEqual = require( 'lodash/isEqual' );
+/**
+ * External dependencies
+ */
+import { find, isEqual, reject } from 'lodash';
+const Dispatcher = require( 'dispatcher' );
 
-// Internal Dependencies
+/**
+ * Internal dependencies
+ */
 var emitter = require( 'lib/mixins/emitter' ),
 	ListStore = require( './lists' );
 

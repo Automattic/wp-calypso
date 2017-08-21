@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
+const lodash = require( 'lodash' );
+const camelCase = lodash.camelCase;
+const forEach = lodash.forEach;
 const fs = require( 'fs' );
 const path = require( 'path' );
 const express = require( 'express' );
 const Fuse = require( 'fuse.js' );
 const doctrine = require( 'doctrine' );
-const camelCase = require( 'lodash/camelCase' );
-const forEach = require( 'lodash/forEach' );
 
 /**
  * Constants

@@ -12,7 +12,7 @@ import mockery from 'mockery';
 import JetpackSite from 'lib/site/jetpack';
 import useMockery from 'test/helpers/use-mockery';
 
-const UNIQUEID = 'media-1';
+const UNIQUEID = 'media-13';
 const DUMMY_FILENAME = 'test.jpg';
 const DUMMY_FILE_BLOB = {
 	fileContents: {
@@ -54,8 +54,8 @@ describe( 'MediaUtils', function() {
 	useMockery();
 
 	before( () => {
-		mockery.registerMock( 'lodash/uniqueId', function() {
-			return UNIQUEID;
+		mockery.registerMock( 'lib/impure-lodash', {
+			uniqueId: () => UNIQUEID,
 		} );
 
 		MediaUtils = require( '../utils' );

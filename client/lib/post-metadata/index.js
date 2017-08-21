@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var find = require( 'lodash/find' );
+import { find } from 'lodash';
 
 /**
  * Module variables
