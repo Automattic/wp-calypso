@@ -29,6 +29,34 @@ export const getProductFormValues = state => getFormValues( REDUX_FORM_NAME )( s
 export const isProductFormValid = state => isValid( REDUX_FORM_NAME )( state );
 export const isProductFormDirty = state => isDirty( REDUX_FORM_NAME )( state );
 
+// https://developer.paypal.com/docs/integration/direct/rest/currency-codes/
+const SUPPORTED_CURRENCY_LIST = [
+	'USD',
+	'EUR',
+	'AUD',
+	'BRL',
+	'CAD',
+	'CZK',
+	'DKK',
+	'HKD',
+	'HUF',
+	'ILS',
+	'JPY',
+	'MYR',
+	'MXN',
+	'TWD',
+	'NZD',
+	'NOK',
+	'PHP',
+	'PLN',
+	'GBP',
+	'RUB',
+	'SGD',
+	'SEK',
+	'CHF',
+	'THB',
+];
+
 // based on https://stackoverflow.com/a/10454560/59752
 function decimalPlaces( number ) {
 	const match = ( '' + number ).match( /(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/ );
@@ -95,7 +123,7 @@ const validate = ( values, props ) => {
 // to transform the props from `{ price: { input, meta }, currency: { input, meta } }` that
 // `Fields` is receiving to `{ input, meta }` that `Field` expects.
 const renderPriceField = ( { price, currency, ...props } ) => {
-	const { symbol, precision } = getCurrencyDefaults( currency.input.value );
+	const { precision } = getCurrencyDefaults( currency.input.value );
 	// Tune the placeholder to the precision value: 0 -> '0', 1 -> '0.0', 2 -> '0.00'
 	const placeholder = precision > 0 ? padEnd( '0.', precision + 2, '0' ) : '0';
 	return (
@@ -103,7 +131,9 @@ const renderPriceField = ( { price, currency, ...props } ) => {
 			inputComponent={ FormCurrencyInput }
 			{ ...price }
 			{ ...props }
-			currencySymbolPrefix={ symbol }
+			currencySymbolPrefix={ currency.input.value }
+			onCurrencyChange={ currency.input.onChange }
+			currencyList={ SUPPORTED_CURRENCY_LIST }
 			placeholder={ placeholder }
 		/>
 	);
