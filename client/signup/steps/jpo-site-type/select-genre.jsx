@@ -40,7 +40,7 @@ class SelectGenre extends React.Component {
 								<BlogGraphic />
 							</div>
 							<div className="jpo-site-type__choice-copy">
-								<Button onClick={ this.props.onSelectBlog }>
+								<Button className="jpo-site-type__cta" onClick={ this.props.onSelectBlog }>
 									{ translate( 'Start with a blog' ) }
 								</Button>
 								<p className="jpo-site-type__description">
@@ -57,7 +57,7 @@ class SelectGenre extends React.Component {
 								<WebsiteGraphic />
 							</div>
 							<div className="jpo-site-type__choice-copy">
-								<Button onClick={ this.props.onSelectWebsite }>
+								<Button className="jpo-site-type__cta" onClick={ this.props.onSelectWebsite }>
 									{ translate( 'Start with a website' ) }
 								</Button>
 								<p className="jpo-site-type__description">
@@ -74,7 +74,7 @@ class SelectGenre extends React.Component {
 								<PortfolioGraphic />
 							</div>
 							<div className="jpo-site-type__choice-copy">
-								<Button onClick={ this.props.onSelectPortfolio }>
+								<Button className="jpo-site-type__cta" onClick={ this.props.onSelectPortfolio }>
 									{ translate( 'Start with a portfolio' ) }
 								</Button>
 								<p className="jpo-site-type__description">
@@ -91,7 +91,7 @@ class SelectGenre extends React.Component {
 								<StoreGraphic />
 							</div>
 							<div className="jpo-site-type__choice-copy">
-								<Button onClick={ this.props.onSelectStore }>
+								<Button className="jpo-site-type__cta" onClick={ this.props.onSelectStore }>
 									{ translate( 'Start with an online store' ) }
 								</Button>
 								<p className="jpo-site-type__description">
