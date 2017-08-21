@@ -10,6 +10,7 @@ import { pick } from 'lodash';
  */
 import * as selectors from '../selectors';
 import { akismet, helloDolly, jetpack } from './fixtures/plugins';
+import { userState } from 'state/selectors/test/fixtures/user-state';
 import {
 	INSTALL_PLUGIN,
 	DEACTIVATE_PLUGIN,
@@ -73,7 +74,8 @@ const state = deepFreeze( {
 				name: 'Two Site'
 			}
 		}
-	}
+	},
+	...userState,
 } );
 
 describe( 'Installed plugin selectors', function() {
