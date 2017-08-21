@@ -10,7 +10,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { getEditorPath } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { getSite, getSiteTitle } from 'state/sites/selectors';
 import SiteIcon from 'blocks/site-icon';
@@ -21,7 +23,7 @@ import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 
-function PostItem( { translate, globalId, post, site, editUrl, siteTitle, className, compact } ) {
+function PostItem( { translate, globalId, post, site, editUrl, siteTitle, isAllSitesModeSelected, className, compact } ) {
 	const title = post ? post.title : null;
 	const classes = classnames( 'post-item', className, {
 		'is-untitled': ! title,
@@ -33,10 +35,13 @@ function PostItem( { translate, globalId, post, site, editUrl, siteTitle, classN
 		<Card compact className={ classes }>
 			<div className="post-item__detail">
 				<div className="post-item__title-meta">
-					<div>
-						<SiteIcon size={ 16 } site={ site } />
-						{ siteTitle }
-					</div>
+					{ config.isEnabled( 'posts/post-type-list' ) &&
+					isAllSitesModeSelected &&
+						<div>
+							<SiteIcon size={ 16 } site={ site } />
+							{ siteTitle }
+						</div>
+					}
 					<h1 className="post-item__title">
 						<a href={ editUrl } className="post-item__title-link">
 							{ title || translate( 'Untitled' ) }
@@ -61,6 +66,7 @@ PostItem.propTypes = {
 	post: PropTypes.object,
 	site: PropTypes.object,
 	siteTitle: PropTypes.string,
+	isAllSitesModeSelected: PropTypes.bool,
 	className: PropTypes.string,
 	compact: PropTypes.bool
 };
@@ -77,6 +83,7 @@ export default connect( ( state, ownProps ) => {
 		post,
 		site: getSite( state, siteId ),
 		siteTitle: getSiteTitle( state, siteId ),
+		isAllSitesModeSelected: getSelectedSiteId( state ) === null,
 		editUrl: getEditorPath( state, siteId, post.ID ),
 	};
 } )( localize( PostItem ) );
