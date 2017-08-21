@@ -35,7 +35,8 @@ import PhoneInput from 'components/phone-input';
 /**
  * Internal dependencies
  */
-var countriesList = require( 'lib/countries-list' ).forSms();
+const countriesList = require( 'lib/countries-list' ).forSms();
+const currencyList = Object.keys( require( 'lib/format-currency/currencies' ).CURRENCIES );
 
 class FormFields extends React.PureComponent {
 	static displayName = 'FormFields'; // Needed for devdocs/design
@@ -45,6 +46,7 @@ class FormFields extends React.PureComponent {
 		toggled: false,
 		compactToggled: false,
 		phoneInput: { countryCode: 'US', value: '' },
+		currencyInput: { currency: 'USD', value: '' },
 	};
 
 	handleRadioChange = event => {
@@ -65,6 +67,20 @@ class FormFields extends React.PureComponent {
 
 	handlePhoneInputChange = data => {
 		this.setState( { phoneInput: data } );
+	};
+
+	handleCurrencyChange = event => {
+		const { value: currency } = event.currentTarget;
+		this.setState( state => ( {
+			currencyInput: { ...state.currencyInput, currency }
+		} ) );
+	};
+
+	handlePriceChange = event => {
+		const { value } = event.currentTarget;
+		this.setState( state => ( {
+			currencyInput: { ...state.currencyInput, value }
+		} ) );
 	};
 
 	render() {
@@ -307,6 +323,20 @@ class FormFields extends React.PureComponent {
 							isError
 						/>
 						<FormInputValidation isError text="The price is invalid." />
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="currency_input_editable">Editable Form Currency Input</FormLabel>
+						<FormCurrencyInput
+							name="currency_input_editable"
+							id="currency_input_editable"
+							value={ this.state.currencyInput.value }
+							onChange={ this.handlePriceChange }
+							currencySymbolPrefix={ this.state.currencyInput.currency }
+							onCurrencyChange={ this.handleCurrencyChange }
+							currencyList={ currencyList }
+							placeholder="Placeholder text..."
+						/>
 					</FormFieldset>
 
 					<FormFieldset>
