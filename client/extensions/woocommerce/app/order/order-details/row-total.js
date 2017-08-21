@@ -9,13 +9,13 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import formatCurrency from 'lib/format-currency';
+import { getOrderTotalTax } from 'woocommerce/lib/order-taxes';
 
 class OrderTotalRow extends Component {
 	static propTypes = {
 		order: PropTypes.shape( {
 			currency: PropTypes.string.isRequired,
 			total: PropTypes.string.isRequired,
-			total_tax: PropTypes.string.isRequired,
 		} ),
 		showTax: PropTypes.bool,
 	}
@@ -26,9 +26,10 @@ class OrderTotalRow extends Component {
 			return null;
 		}
 
+		const taxValue = getOrderTotalTax( order );
 		const tax = (
 			<div className="order-details__totals-tax">
-				{ formatCurrency( order.total_tax, order.currency ) }
+				{ formatCurrency( taxValue, order.currency ) }
 			</div>
 		);
 

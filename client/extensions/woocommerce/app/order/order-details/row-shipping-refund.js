@@ -27,6 +27,7 @@ class OrderShippingRefundRow extends Component {
 			shippingTotal,
 			translate
 		} = this.props;
+		const total = Math.round( shippingTotal * 100 ) / 100;
 
 		return (
 			<div className="order-details__total-shipping-refund">
@@ -36,7 +37,7 @@ class OrderShippingRefundRow extends Component {
 						name="shipping_total"
 						onChange={ onChange }
 						currency={ currency }
-						value={ shippingTotal } />
+						value={ total } />
 				</div>
 			</div>
 		);
