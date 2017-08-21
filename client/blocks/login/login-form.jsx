@@ -19,6 +19,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import { getOAuth2ClientData } from 'state/login/oauth2/selectors';
 import { loginUser, formUpdate } from 'state/login/actions';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -46,6 +47,7 @@ export class LoginForm extends Component {
 		socialAccountLinkService: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		isFormDisabled: PropTypes.bool,
+		oauth2ClientData: PropTypes.object,
 	};
 
 	state = {
@@ -152,6 +154,7 @@ export class LoginForm extends Component {
 
 		const { requestError } = this.props;
 		const linkingSocialUser = this.props.socialAccountIsLinking;
+		const isOauthLogin = !! this.props.oauth2ClientData;
 
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
@@ -254,6 +257,18 @@ export class LoginForm extends Component {
 							{ this.props.translate( 'Log In' ) }
 						</FormsButton>
 					</div>
+
+					{ isOauthLogin && (
+						<div className="login__form-signup-link">
+							{ this.props.translate( 'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
+								{
+									components: {
+										signupLink: <a href={ config( 'signup_url' ) } />,
+									}
+								}
+							) }
+						</div>
+					) }
 				</Card>
 				{ config.isEnabled( 'signup/social' ) && (
 					<Card className="login__form-social">
@@ -278,7 +293,8 @@ export default connect(
 		socialAccountIsLinking: getSocialAccountIsLinking( state ),
 		socialAccountLinkEmail: getSocialAccountLinkEmail( state ),
 		socialAccountLinkService: getSocialAccountLinkService( state ),
-		isLoggedIn: Boolean( getCurrentUserId( state ) )
+		isLoggedIn: Boolean( getCurrentUserId( state ) ),
+		oauth2ClientData: getOAuth2ClientData( state ),
 	} ),
 	{
 		formUpdate,

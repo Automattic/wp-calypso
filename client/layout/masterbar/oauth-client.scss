@@ -147,6 +147,7 @@
 
 	button {
 		float: none;
+		margin-left: 0;
 		max-width: 300px;
 	}
 
@@ -186,13 +187,28 @@
 	}
 
 	.wp-login__main.main {
+		max-width: 778px;
+	}
+
+	$woo-form-whitespace: 16px;
+	$woo-form-whitespace-480: 24px;
+	$woo-form-whitespace-660: 100px;
+
+	.wp-login__container {
 		background: #fff;
 		border: 1px solid #d3d3d3;
-    	border-radius: 5px;
-    	box-sizing: border-box;
-		max-width: 778px;
-		padding: 20px 100px;
+		border-radius: 5px;
+		box-sizing: border-box;
+		padding: 20px $woo-form-whitespace;
 		width: 100%;
+
+		@include breakpoint( '>480px' ) {
+			padding: 20px $woo-form-whitespace-480;
+		}
+
+		@include breakpoint( '>660px' ) {
+			padding: 20px $woo-form-whitespace-660;
+		}
 	}
 
 	.card {
@@ -206,10 +222,36 @@
 		font-weight: normal;
 	}
 
+	.login__form-signup-link {
+		font-size: 15px;
+	}
+
+	.login__form-social {
+		border-top: 1px solid #e6e6e6;
+		margin: 10px -16px 0;
+		padding-top: 30px;
+		width: calc( 100% + ( $woo-form-whitespace * 2 ) );
+
+		@include breakpoint( '>480px' ) {
+			margin: 10px -24px 0;
+			width: calc( 100% + ( $woo-form-whitespace-480 * 2 ) );
+		}
+
+		@include breakpoint( '>660px' ) {
+			margin: 20px -100px 0;
+			width: calc( 100% + ( $woo-form-whitespace-660 * 2 ) );
+		}
+	}
+
+	.wp-login__links {
+		margin-top: 20px;
+	}
+
 	.wp-login__links a {
 		border: none;
 		font-size: 16px;
 		font-weight: normal;
+		line-height: 3em;
 		text-align: center;
 	}
 }
