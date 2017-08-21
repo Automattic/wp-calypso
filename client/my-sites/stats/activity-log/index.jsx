@@ -146,17 +146,16 @@ class ActivityLog extends Component {
 	};
 
 	/**
-	 * Creates a function that will offset a moment by the site
-	 * timezone or gmt offset. Use the resulting function wherever
-	 * log times need to be formatted for display to ensure all times
-	 * are displayed as site times.
+	 * Adjust a moment by the site timezone or gmt offset. Use the resulting function wherever log
+	 * times need to be formatted for display to ensure all times are displayed as site times.
 	 *
-	 * @returns {function} func that takes a moment and returns moment offset by site timezone or offset
+	 * @param   {object} moment Moment to adjust.
+	 * @returns {object}        Moment adjusted for site timezone or gmtOffset.
 	 */
-	getSiteOffsetFunc() {
+	applySiteOffset = moment => {
 		const { timezone, gmtOffset } = this.props;
-		return moment => adjustMoment( { timezone, gmtOffset, moment } );
-	}
+		return adjustMoment( { timezone, gmtOffset, moment } );
+	};
 
 	isRestoreInProgress() {
 		return includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) );
@@ -247,8 +246,6 @@ class ActivityLog extends Component {
 
 		const disableRestore = this.isRestoreInProgress();
 
-		const applySiteOffset = this.getSiteOffsetFunc();
-
 		if ( isEmpty( logs ) ) {
 			return (
 				<EmptyContent
@@ -260,10 +257,12 @@ class ActivityLog extends Component {
 		}
 
 		const logsGroupedByDay = map(
-			groupBy( logs, log => applySiteOffset( moment.utc( log.ts_utc ) ).endOf( 'day' ).valueOf() ),
+			groupBy( logs, log =>
+				this.applySiteOffset( moment.utc( log.ts_utc ) ).endOf( 'day' ).valueOf()
+			),
 			( daily_logs, tsEndOfSiteDay ) =>
 				<ActivityLogDay
-					applySiteOffset={ applySiteOffset }
+					applySiteOffset={ this.applySiteOffset }
 					disableRestore={ disableRestore }
 					hideRestore={ ! isPressable }
 					isRewindActive={ isRewindActive }
@@ -309,10 +308,9 @@ class ActivityLog extends Component {
 	render() {
 		const { isPressable, isRewindActive, moment, siteId, siteTitle, slug, startDate } = this.props;
 		const { requestedRestoreTimestamp, showRestoreConfirmDialog } = this.state;
-		const applySiteOffset = this.getSiteOffsetFunc();
 
-		const queryStart = applySiteOffset( moment.utc( startDate ) ).startOf( 'month' ).valueOf();
-		const queryEnd = applySiteOffset( moment.utc( startDate ) ).endOf( 'month' ).valueOf();
+		const queryStart = this.applySiteOffset( moment.utc( startDate ) ).startOf( 'month' ).valueOf();
+		const queryEnd = this.applySiteOffset( moment.utc( startDate ) ).endOf( 'month' ).valueOf();
 
 		return (
 			<Main wideLayout>
@@ -335,7 +333,7 @@ class ActivityLog extends Component {
 				{ this.renderMonthNavigation( 'bottom' ) }
 
 				<ActivityLogConfirmDialog
-					applySiteOffset={ applySiteOffset }
+					applySiteOffset={ this.applySiteOffset }
 					isVisible={ showRestoreConfirmDialog }
 					siteTitle={ siteTitle }
 					timestamp={ requestedRestoreTimestamp }
