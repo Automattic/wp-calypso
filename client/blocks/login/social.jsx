@@ -128,7 +128,7 @@ class SocialLoginForm extends Component {
 					<WpcomLoginForm
 						log={ this.props.username }
 						authorization={ 'Bearer ' + this.props.bearerToken }
-						redirectTo="/start"
+						redirectTo={ this.props.redirectTo || '/start' }
 					/>
 				) }
 			</div>
