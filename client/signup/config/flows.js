@@ -229,7 +229,7 @@ const flows = {
 	wpcc: {
 		steps: [ 'oauth2-user' ],
 		destination: function( dependencies ) {
-			return dependencies.client_id;
+			return dependencies.oauth2_client_id;
 		},
 		description: 'WordPress.com Connect signup flow',
 		lastModified: '2017-04-03',
