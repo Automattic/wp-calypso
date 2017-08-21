@@ -1,3 +1,4 @@
+/** @format */
 /**
  * These are the parameters kept in metadata (custom fields)
  */
@@ -5,7 +6,7 @@ export const metadataSchema = {
 	currency: { type: 'string', metaKey: 'spay_currency' },
 	price: { type: 'string', metaKey: 'spay_price' },
 	multiple: { type: 'boolean', metaKey: 'spay_multiple' },
-	status: { type: 'number', metaKey: 'spay_status' },
+	status: { type: 'string', metaKey: 'spay_status' },
 	email: { type: 'string', metaKey: 'spay_email' },
 	formatted_price: { type: 'string', metaKey: 'spay_formatted_price' },
 };
@@ -16,21 +17,23 @@ export const metadataSchema = {
  */
 const productSchema = {
 	type: 'object',
-	properties: Object.assign(
-		{
-			title: { type: 'string' },
-			description: { type: 'string' },
-			ID: { type: 'number' },
-		},
-		metadataSchema
-	)
+	properties: {
+		title: { type: 'string' },
+		description: { type: 'string' },
+		ID: { type: 'number' },
+		...metadataSchema,
+	},
 };
 
 const productListSchema = {
 	type: 'object',
 	patternProperties: {
-		'^\\d+$': productSchema,
+		'^\\d+$': {
+			type: 'array',
+			items: productSchema,
+		},
 	},
+	additionalProperties: false,
 };
 
 /**
