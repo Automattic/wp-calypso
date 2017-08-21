@@ -2,23 +2,16 @@ $follow-button-gray-disabled: lighten( $gray, 20% );
 
 .follow-button,
 button.follow-button {
-
-	&:focus {
-		box-shadow: none;
-	}
+	border: 0;
+	padding: 0;
 
 	.gridicon__follow {
-		opacity: 1;
+		fill: $blue-medium;
 		pointer-events: auto;
 	}
 
-	.gridicon__following {
-		display: none;
-		pointer-events: auto;
-	}
-
-	&::-moz-focus-inner {
-		border: 0;
+	.follow-button__label {
+		color: $blue-medium;
 	}
 
 	&:hover {
@@ -29,11 +22,46 @@ button.follow-button {
 		}
 	}
 
-	@include breakpoint( "<660px" ) {
-		padding: 7px 8px 9px 14px;
+	&:focus {
+		box-shadow: none;
 	}
 
-	// Menu Items with Icons
+	// Hides Following icon by default
+	.gridicon__following {
+		display: none;
+		pointer-events: none;
+	}
+
+	&.is-following {
+
+		.gridicon__following {
+			display: inline-block;
+			fill: $alert-green;
+			pointer-events: auto;
+		}
+
+		.follow-button__label {
+			color: $alert-green;
+		}
+
+		// Hides Follow icon if already following
+		.gridicon__follow {
+			display: none;
+			pointer-events: none;
+		}
+
+		&:hover {
+			color: $alert-green;
+
+			.gridicon__following {
+				fill: $alert-green;
+			}
+		}
+	}
+
+	.gridicon__following {
+		pointer-events: none;
+	}
 
 	.gridicon {
 		height: 18px;
@@ -42,57 +70,15 @@ button.follow-button {
 		width: 18px;
 	}
 
-	.gridicon__following {
-		opacity: 0;
-		pointer-events: none;
-	}
-
-	.gridicon__unfollow {
-
-		.gridicon__follow {
-			opacity: 0;
-			pointer-events: none;
-		}
-
-		.gridicon__following {
-			opacity: 1;
-			pointer-events: auto;
-		}
-	}
-
-	&.is-following {
-		color: $alert-green;
-
-		.gridicon {
-			fill: $alert-green;
-		}
-
-		.gridicon__follow {
-			display: none;
-			pointer-events: none;
-		}
-
-		.gridicon__following {
-			display: inline-block;
-			opacity: 1;
-			pointer-events: auto;
-		}
-
-		&:hover {
-			color: $alert-green;
-
-			.gridicon {
-				fill: $alert-green;
-			}
-		}
-	}
-
 	&.is-disabled {
+		@include no-select();
 		color: $follow-button-gray-disabled;
 		border-color: $follow-button-gray-disabled;
 		pointer-events: none;
 
-		@include no-select();
+		.follow-button__label {
+			color: $follow-button-gray-disabled;
+		}
 
 		.gridicon {
 			fill: $follow-button-gray-disabled;
@@ -114,6 +100,7 @@ button.follow-button {
 }
 
 .follow-button__label {
+
 	@include breakpoint( "<660px" ) {
 		display: none;
 	}
