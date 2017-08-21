@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -12,7 +13,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class DomainSuggestionsExample extends React.Component {
 	static propTypes = {
-		mapDomainUrl: React.PropTypes.string.isRequired
+		mapDomainUrl: PropTypes.string.isRequired
 	};
 
 	render() {

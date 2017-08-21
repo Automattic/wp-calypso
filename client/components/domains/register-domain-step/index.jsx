@@ -167,6 +167,8 @@ class RegisterDomainStep extends React.Component {
 
 			this.setState( state );
 		}
+
+		this._isMounted = false;
 	}
 
 	componentDidMount() {
@@ -174,6 +176,8 @@ class RegisterDomainStep extends React.Component {
 			this.onSearch( this.state.lastQuery );
 		}
 		this.props.searchFormView( this.props.analyticsSection );
+
+		this._isMounted = true;
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -365,7 +369,7 @@ class RegisterDomainStep extends React.Component {
 				}
 			],
 			( error, result ) => {
-				if ( ! this.state.loadingResults || domain !== this.state.lastDomainSearched || ! this.isMounted() ) {
+				if ( ! this.state.loadingResults || domain !== this.state.lastDomainSearched || ! this._isMounted ) {
 					// this callback is irrelevant now, a newer search has been made or the results were cleared OR
 					// domain registration was not available and component is unmounted
 					return;
