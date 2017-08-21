@@ -1,10 +1,10 @@
+/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { keys, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,25 +16,25 @@ export default class extends React.Component {
 
 	static propTypes = {
 		noWrap: PropTypes.bool,
-		prefix: PropTypes.string,
-		suffix: PropTypes.string,
+		prefix: PropTypes.node,
+		suffix: PropTypes.node,
 	};
 
 	render() {
+		const { noWrap, prefix, suffix, ...rest } = this.props;
+
 		return (
-			<div
-				className={ classNames( 'form-text-input-with-affixes', { 'no-wrap': this.props.noWrap } ) }
-			>
-				{ this.props.prefix &&
+			<div className={ classNames( 'form-text-input-with-affixes', { 'no-wrap': noWrap } ) }>
+				{ prefix &&
 					<span className="form-text-input-with-affixes__prefix">
-						{ this.props.prefix }
+						{ prefix }
 					</span> }
 
-				<FormTextInput { ...omit( this.props, keys( this.constructor.propTypes ) ) } />
+				<FormTextInput { ...rest } />
 
-				{ this.props.suffix &&
+				{ suffix &&
 					<span className="form-text-input-with-affixes__suffix">
-						{ this.props.suffix }
+						{ suffix }
 					</span> }
 			</div>
 		);
