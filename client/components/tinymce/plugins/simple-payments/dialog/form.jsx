@@ -57,6 +57,33 @@ const SUPPORTED_CURRENCY_LIST = [
 	'THB',
 ];
 
+const VISUAL_CURRENCY_LIST = {
+	USD: 'USD $',
+	EUR: 'EUR €',
+	AUD: 'AUD $',
+	BRL: 'BRL R$',
+	CAD: 'CAD $',
+	CZK: 'CZK Kč',
+	DKK: 'DKK kr',
+	HKD: 'HKD $',
+	HUF: 'HUF Ft',
+	ILS: 'ILS ₪',
+	JPY: 'JPY ¥',
+	MYR: 'MYR RM',
+	MXN: 'MXN $',
+	TWD: 'TWD NT$',
+	NZD: 'NZD $',
+	NOK: 'NOK kr',
+	PHP: 'PHP ₱',
+	PLN: 'PLN zł',
+	GBP: 'GBP £',
+	RUB: 'RUB ₽',
+	SGD: 'SGD $',
+	SEK: 'SEK kr',
+	CHF: 'CHF',
+	THB: 'THB ฿',
+};
+
 // based on https://stackoverflow.com/a/10454560/59752
 function decimalPlaces( number ) {
 	const match = ( '' + number ).match( /(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/ );
@@ -134,6 +161,7 @@ const renderPriceField = ( { price, currency, ...props } ) => {
 			currencySymbolPrefix={ currency.input.value }
 			onCurrencyChange={ currency.input.onChange }
 			currencyList={ SUPPORTED_CURRENCY_LIST }
+			visualCurrencyList={ VISUAL_CURRENCY_LIST }
 			placeholder={ placeholder }
 		/>
 	);

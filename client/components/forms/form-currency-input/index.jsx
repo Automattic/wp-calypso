@@ -11,7 +11,7 @@ import classNames from 'classnames';
  */
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
-function renderAffix( currencyValue, onCurrencyChange, currencyList ) {
+function renderAffix( currencyValue, onCurrencyChange, currencyList, visualCurrencyList ) {
 	// If the currency value is not defined, don't render this affix at all
 	if ( ! currencyValue ) {
 		return null;
@@ -26,7 +26,7 @@ function renderAffix( currencyValue, onCurrencyChange, currencyList ) {
 	// For an editable currency, display a <select> overlay
 	return (
 		<span className="form-currency-input__affix">
-			{ currencyValue }
+			{ ( visualCurrencyList && visualCurrencyList[ currencyValue ] ) || currencyValue }
 			<select
 				className="form-currency-input__select"
 				value={ currencyValue }
@@ -34,7 +34,7 @@ function renderAffix( currencyValue, onCurrencyChange, currencyList ) {
 			>
 				{ currencyList.map( code =>
 					<option key={ code } value={ code }>
-						{ code }
+						{ ( visualCurrencyList && visualCurrencyList[ code ] ) || code }
 					</option>
 				) }
 			</select>
@@ -48,12 +48,23 @@ function FormCurrencyInput( {
 	currencySymbolSuffix,
 	onCurrencyChange,
 	currencyList,
+	visualCurrencyList,
 	placeholder = '0.00',
 	...props
 } ) {
 	const classes = classNames( 'form-currency-input', className );
-	const prefix = renderAffix( currencySymbolPrefix, onCurrencyChange, currencyList );
-	const suffix = renderAffix( currencySymbolSuffix, onCurrencyChange, currencyList );
+	const prefix = renderAffix(
+		currencySymbolPrefix,
+		onCurrencyChange,
+		currencyList,
+		visualCurrencyList
+	);
+	const suffix = renderAffix(
+		currencySymbolSuffix,
+		onCurrencyChange,
+		currencyList,
+		visualCurrencyList
+	);
 
 	return (
 		<FormTextInputWithAffixes
@@ -72,6 +83,7 @@ FormCurrencyInput.propTypes = {
 	currencySymbolSuffix: PropTypes.string,
 	onCurrencyChange: PropTypes.func,
 	currencyList: PropTypes.array,
+	visualCurrencyList: PropTypes.object,
 };
 
 export default FormCurrencyInput;
