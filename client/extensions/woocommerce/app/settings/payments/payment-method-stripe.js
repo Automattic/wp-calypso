@@ -480,7 +480,8 @@ class PaymentMethodStripe extends Component {
 		}
 
 		if ( showConnectButton ) {
-			buttons.push( { action: 'connect', label: translate( 'Connect' ), onClick: this.onConnect, isPrimary: true } );
+			// TODO - enable this button in a subsequent PR
+			buttons.push( { action: 'connect', disabled: true, label: translate( 'Connect' ), onClick: this.onConnect, isPrimary: true } );
 		} else {
 			buttons.push( { action: 'save', label: translate( 'Done' ), onClick: this.onDone, isPrimary: true } );
 		}
