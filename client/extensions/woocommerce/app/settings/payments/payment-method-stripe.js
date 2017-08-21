@@ -23,6 +23,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import StripeConnectAccount from './payment-method-stripe-connect-account';
 import StripeConnectPrompt from './payment-method-stripe-connect-prompt';
 import TestLiveToggle from 'woocommerce/components/test-live-toggle';
 
@@ -45,6 +46,15 @@ class PaymentMethodStripe extends Component {
 	}
 
 	static propTypes = {
+		stripeConnectAccount: PropTypes.shape( {
+			connectedUserID: PropTypes.string,
+			displayName: PropTypes.string,
+			email: PropTypes.string,
+			firstName: PropTypes.string,
+			isActivated: PropTypes.bool,
+			lastName: PropTypes.string,
+			logo: PropTypes.string,
+		} ),
 		method: PropTypes.shape( {
 			settings: PropTypes.shape( {
 				apple_pay: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
@@ -62,8 +72,20 @@ class PaymentMethodStripe extends Component {
 		site: PropTypes.shape( {
 			domain: PropTypes.string.isRequired,
 		} ),
-		stripeConnectUserAccountActivated: PropTypes.bool,
-		stripeConnectUserAccountID: PropTypes.string,
+	};
+
+	////////////////////////////////////////////////////////////////////////////
+	// Temporary - will be removed in subsequent PR
+	static defaultProps = {
+		stripeConnectAccount: {
+			connectedUserID: 'acct_14qyt6Alijdnw0EA', // e.g. acct_14qyt6Alijdnw0EA
+			displayName: 'The Bar Company', // e.g. The Bar Company
+			email: 'foo@bar.com', // e.g. foo@bar.com
+			firstName: 'Foo',
+			isActivated: false,
+			lastName: 'Bar',
+			logo: 'https://allendav.files.wordpress.com/2017/08/foo.png',
+		}
 	};
 
 	////////////////////////////////////////////////////////////////////////////
@@ -121,11 +143,12 @@ class PaymentMethodStripe extends Component {
 	// Heading
 
 	renderHeading = () => {
-		const { stripeConnectUserAccountID, translate } = this.props;
+		const { stripeConnectAccount, translate } = this.props;
+		const { connectedUserID } = stripeConnectAccount;
 
 		// If we are not connected AND had no keys at mount display
 		// Take credit card payments with Stripe
-		if ( ! stripeConnectUserAccountID && ! this.state.hadKeysAtStart ) {
+		if ( ! connectedUserID && ! this.state.hadKeysAtStart ) {
 			return (
 				<div className="payments__method-edit-header">
 					{ translate( 'Take credit card payments with Stripe' ) }
@@ -153,7 +176,8 @@ class PaymentMethodStripe extends Component {
 	}
 
 	possiblyRenderSetupPrompt = () => {
-		const { stripeConnectUserAccountID, translate } = this.props;
+		const { stripeConnectAccount, translate } = this.props;
+		const { connectedUserID } = stripeConnectAccount;
 
 		// If we don't have the new connect UX enabled yet, keep the legacy prompt instead
 		if ( ! config.isEnabled( 'woocommerce/extension-settings-stripe-connect-flows' ) ) {
@@ -172,7 +196,7 @@ class PaymentMethodStripe extends Component {
 		}
 
 		// Do we have a Stripe Connect User ID already? If so, do not display connect prompt
-		if ( stripeConnectUserAccountID ) {
+		if ( connectedUserID ) {
 			debug( 'skipping connect prompt since we have a connect user account id' );
 			return null;
 		}
@@ -200,6 +224,24 @@ class PaymentMethodStripe extends Component {
 	}
 
 	////////////////////////////////////////////////////////////////////////////
+	// Stripe Connect Account details (if any)
+
+	possiblyRenderConnectAccount = () => {
+		const { stripeConnectAccount } = this.props;
+
+		// No account ID? Bail
+		if ( ! stripeConnectAccount.connectedUserID ) {
+			return null;
+		}
+
+		return (
+			<StripeConnectAccount
+				stripeConnectAccount={ stripeConnectAccount }
+			/>
+		);
+	}
+
+	////////////////////////////////////////////////////////////////////////////
 	// Live vs Test Mode
 
 	onSelectLive = () => {
@@ -211,10 +253,11 @@ class PaymentMethodStripe extends Component {
 	}
 
 	possiblyRenderModePrompt = () => {
-		const { method, stripeConnectUserAccountID } = this.props;
+		const { method, stripeConnectAccount } = this.props;
+		const { connectedUserID } = stripeConnectAccount;
 
 		// Do we have a connected account? Don't bother showing this control
-		if ( stripeConnectUserAccountID ) {
+		if ( connectedUserID ) {
 			return null;
 		}
 
@@ -243,10 +286,11 @@ class PaymentMethodStripe extends Component {
 	// Key Fields
 
 	possiblyRenderKeyFields = () => {
-		const { method, stripeConnectUserAccountID, translate } = this.props;
+		const { method, stripeConnectAccount, translate } = this.props;
+		const { connectedUserID } = stripeConnectAccount;
 
 		// Do we have a connected account? Don't bother showing keys
-		if ( stripeConnectUserAccountID ) {
+		if ( connectedUserID ) {
 			return null;
 		}
 
@@ -321,7 +365,8 @@ class PaymentMethodStripe extends Component {
 	}
 
 	possiblyRenderMoreSettings = () => {
-		const { method, stripeConnectUserAccountActivated, stripeConnectUserAccountID, translate } = this.props;
+		const { method, stripeConnectAccount, translate } = this.props;
+		const { isActivated, connectedUserID } = stripeConnectAccount;
 
 		// Show these controls if
 		// 1) we have a connected AND activated account
@@ -329,11 +374,11 @@ class PaymentMethodStripe extends Component {
 		// OR 3) if the user has requested key entry mode explicitly
 		let okToShow = false;
 
-		if ( stripeConnectUserAccountActivated && stripeConnectUserAccountID ) {
+		if ( isActivated && connectedUserID ) {
 			okToShow = true;
 		}
 
-		if ( ! stripeConnectUserAccountID && this.hasKeys() ) {
+		if ( ! connectedUserID && this.hasKeys() ) {
 			okToShow = true;
 		}
 
@@ -402,11 +447,6 @@ class PaymentMethodStripe extends Component {
 		this.setState(
 			{ userRequestedKeyFlow: false, userRequestedConnectFlow: true }
 		);
-		// TODO - let's not do this if we don't have to:
-		//this.props.onEditField( 'secret_key', '' );
-		//this.props.onEditField( 'publishable_key', '' );
-		//this.props.onEditField( 'test_secret_key', '' );
-		//this.props.onEditField( 'test_publishable_key', '' );
 	}
 
 	onConnect = () => {
@@ -422,7 +462,9 @@ class PaymentMethodStripe extends Component {
 	}
 
 	getButtons = () => {
-		const { onCancel, stripeConnectUserAccountID, translate } = this.props;
+		const { onCancel, stripeConnectAccount, translate } = this.props;
+		const { connectedUserID } = stripeConnectAccount;
+
 		const buttons = [];
 
 		let showKeyFlowLink = false;
@@ -430,7 +472,7 @@ class PaymentMethodStripe extends Component {
 
 		// If we don't have an account, we didn't have keys when we started, and
 		// we don't have keys now, give the user a means to request key flow
-		if ( ! stripeConnectUserAccountID && ! this.hasKeys() && ! this.state.hadKeysAtStart ) {
+		if ( ! connectedUserID && ! this.hasKeys() && ! this.state.hadKeysAtStart ) {
 			showKeyFlowLink = true;
 		}
 
@@ -480,7 +522,7 @@ class PaymentMethodStripe extends Component {
 		let showConnectButton = false;
 
 		// No account, no keys, not in key flow? Give them a Connect button
-		if ( ! stripeConnectUserAccountID && ! this.hasKeys() && ! this.state.userRequestedKeyFlow ) {
+		if ( ! connectedUserID && ! this.hasKeys() && ! this.state.userRequestedKeyFlow ) {
 			showConnectButton = true;
 		}
 
@@ -510,6 +552,7 @@ class PaymentMethodStripe extends Component {
 				isVisible>
 				{ this.renderHeading() }
 				{ this.possiblyRenderSetupPrompt() }
+				{ this.possiblyRenderConnectAccount() }
 				{ this.possiblyRenderModePrompt() }
 				{ this.possiblyRenderKeyFields() }
 				{ this.possiblyRenderMoreSettings() }

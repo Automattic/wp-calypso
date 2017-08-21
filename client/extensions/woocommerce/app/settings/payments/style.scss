@@ -282,3 +282,78 @@
 		margin-bottom: 16px;
 	}
 }
+
+.payments__stripe-connect-account {
+	.payments__stripe-connect-account-heading {
+		font-size: 14px;
+		font-weight: 600;
+		margin-bottom: 8px;
+	}
+
+	.payments__stripe-connect-account-body {
+		display: flex;
+		margin-bottom: 16px;
+
+		.payments__stripe-connect-account-logo-container {
+			align-items: center;
+			border: 1px solid $gray-light;
+			display: flex;
+			height: 42px;
+			justify-content: center;
+			margin-right: 12px;
+			width: 42px;
+
+			.payments__stripe-connect-account-logo {
+				max-height: 40px;
+				max-width: 40px;
+			}
+		}
+
+		.payments__stripe-connect-account-details {
+			display: flex;
+			flex-direction: column;
+
+			.payments__stripe-connect-account-name {
+				font-weight: 400;
+				margin-right: 4px;
+			}
+
+			.payments__stripe-connect-account-email {
+				color: $gray-text-min;
+			}
+
+			.payments__stripe-connect-account-status {
+				border-radius: 3px;
+				color: $white;
+				font-size: 11px;
+				font-weight: 200;
+				margin-right: 10px;
+				padding: 4px 10px 4px 6px;
+
+				&.account-activated {
+					background-color: $alert-green;
+					&:before {
+						@include noticon( '\f418', 16px );
+						vertical-align: bottom;
+						padding-bottom: 2px;
+					}
+				}
+
+				&.account-not-activated {
+					background-color: $alert-yellow;
+					&:before {
+						@include noticon( '\f414', 14px );
+						vertical-align: bottom;
+						padding-bottom: 2px;
+						padding-right: 2px;
+					}
+				}
+			}
+
+			.payments__stripe-connect-account-disconnect {
+				font-size: 12px;
+			}
+		}
+	}
+
+}
