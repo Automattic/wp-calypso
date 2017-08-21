@@ -75,6 +75,7 @@ export const deleteCache = ( siteId, deleteAll, deleteExpired ) => {
 			.then( () => {
 				dispatch( {
 					type: WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
+					deleteExpired,
 					siteId,
 				} );
 			} )
