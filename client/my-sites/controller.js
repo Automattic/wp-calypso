@@ -55,7 +55,7 @@ import {
 	domainManagementRedirectSettings,
 	domainManagementTransfer,
 	domainManagementTransferOut,
-	domainManagementTransferToAnotherUser
+	domainManagementTransferToOtherSite,
 } from 'my-sites/domains/paths';
 import SitesComponent from 'my-sites/sites';
 import { isATEnabled } from 'lib/automated-transfer';
@@ -178,7 +178,7 @@ function isPathAllowedForDomainOnlySite( path, domainName ) {
 		domainManagementRedirectSettings,
 		domainManagementTransfer,
 		domainManagementTransferOut,
-		domainManagementTransferToAnotherUser
+		domainManagementTransferToOtherSite
 	].map( pathFactory => pathFactory( domainName, domainName ) );
 
 	const otherPaths = [
