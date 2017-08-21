@@ -5,6 +5,7 @@
  * External dependencies
  */
 import React from 'react';
+// eslint-disable-next-line wpcalypso/import-no-redux-combine-reducers
 import { combineReducers, createStore } from 'redux';
 import classNames from 'classnames';
 import { find, includes, startsWith, identity } from 'lodash';
@@ -97,6 +98,7 @@ const STATUS_TEXTS = {
 };
 
 const RELOAD_REQUIRED_ELEMENT = (
+	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 	<div className="webpack-build-monitor is-warning">Need to refresh</div>
 );
 
