@@ -23,6 +23,7 @@ import MainComponent from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginSections from 'my-sites/plugins/plugin-sections';
+import PluginSectionsCustom from 'my-sites/plugins/plugin-sections/custom';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -387,7 +388,11 @@ const SinglePlugin = React.createClass( {
 						}
 						isInstalling={ installing }
 						allowedActions={ allowedPluginActions } />
-					{ plugin.wporg && <PluginSections plugin={ plugin } isWpcom={ isWpcom } /> }
+					{
+						plugin.wporg
+							? <PluginSections plugin={ plugin } isWpcom={ isWpcom } />
+							: <PluginSectionsCustom plugin={ plugin } />
+					}
 					{ this.renderSitesList( plugin ) }
 				</div>
 			</MainComponent>
