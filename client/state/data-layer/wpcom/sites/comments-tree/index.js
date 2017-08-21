@@ -17,7 +17,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { getRawSite } from 'state/sites/selectors';
 
-const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
+export const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 	const { siteId, status = 'unapproved' } = action.query;
 
 	dispatch(
@@ -25,7 +25,7 @@ const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 			{
 				method: 'GET',
 				path: `/sites/${ siteId }/comments-tree`,
-				apiNamespace: 'wpcom/v2',
+				apiVersion: '1',
 				query: {
 					status: ( 'unapproved' === status ) ? 'pending' : status,
 				},
@@ -35,9 +35,9 @@ const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 	);
 };
 
-const addCommentsTree = ( { dispatch }, { query }, data ) => {
+export const addCommentsTree = ( { dispatch }, { query }, data ) => {
 	const { siteId, status } = query;
-	const commentsTree = data[ 1 ];
+	const { comments_tree: commentsTree } = data;
 
 	const tree = map( commentsTree, comment => ( {
 		commentId: comment[ 0 ],
@@ -54,7 +54,7 @@ const addCommentsTree = ( { dispatch }, { query }, data ) => {
 	} );
 };
 
-const announceFailure = ( { dispatch, getState }, { query } ) => {
+export const announceFailure = ( { dispatch, getState }, { query } ) => {
 	const { siteId } = query;
 	const site = getRawSite( getState(), siteId );
 
