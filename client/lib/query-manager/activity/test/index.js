@@ -128,4 +128,14 @@ describe( 'ActivityQueryManager', () => {
 			} );
 		} );
 	} );
+
+	describe( '#compare()', () => {
+		it( 'should sort by timestamp descending', () => {
+			const sortFunc = manager.compare.bind( manager, {} );
+			expect( [ { ts_utc: 1 }, { ts_utc: 2 } ].sort( sortFunc ) ).to.eql( [
+				{ ts_utc: 2 },
+				{ ts_utc: 1 },
+			] );
+		} );
+	} );
 } );

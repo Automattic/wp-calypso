@@ -21,6 +21,19 @@ export default class ActivityQueryManager extends QueryManager {
 	}
 
 	/**
+	 * Sort descending order, defaulting to end of list if unknown.
+	 *
+	 * @param  {Object} query Query object (unused).
+	 * @param  {Object} itemA First item
+	 * @param  {Object} itemB Second item
+	 * @return {Number}       0 if equal, less than 0 if itemA is first,
+	 *                        greater than 0 if itemB is first.
+	 */
+	compare( query, { ts_utc: tsA }, { ts_utc: tsB } ) {
+		return tsB - tsA;
+	}
+
+	/**
 	 * Returns true if the item matches the given query, or false otherwise.
 	 *
 	 * @param  {Object}  query Query object
