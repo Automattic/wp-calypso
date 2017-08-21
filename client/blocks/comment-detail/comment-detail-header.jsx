@@ -74,12 +74,12 @@ export const CommentDetailHeader = ( {
 			className={ classNames( 'comment-detail__header', 'is-preview', { 'is-bulk-edit': isBulkEdit } ) }
 			onClick={ isBulkEdit ? toggleSelected : toggleExpanded }
 		>
-			{ isBulkEdit &&
-				<label className="comment-detail__checkbox">
-					<FormCheckbox checked={ commentIsSelected } onChange={ noop } />
-				</label>
-			}
 			<div className="comment-detail__author-preview">
+				{ isBulkEdit &&
+					<label className="comment-detail__checkbox">
+						<FormCheckbox checked={ commentIsSelected } onChange={ noop } />
+					</label>
+				}
 				<Gravatar user={ author } />
 				<div className="comment-detail__author-info">
 					<div className="comment-detail__author-info-element">
