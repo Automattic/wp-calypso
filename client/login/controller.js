@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -34,6 +35,11 @@ const enhanceContextWithLogin = context => {
 export default {
 	login( context, next ) {
 		const { query: { client_id } } = context;
+
+		if ( 'en' === context.params.lang ) {
+			page.redirect( path.replace( /\/en\/?$/, '' ) );
+			return;
+		}
 
 		if ( client_id ) {
 			context.store.dispatch( fetchOAuth2ClientData( Number( client_id ) ) )
