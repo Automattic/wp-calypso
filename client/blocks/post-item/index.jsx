@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
+import { getSiteTitle } from 'state/sites/selectors';
 import Card from 'components/card';
 import PostRelativeTime from 'blocks/post-relative-time';
 import PostStatus from 'blocks/post-status';
@@ -19,7 +20,7 @@ import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 
-function PostItem( { translate, globalId, post, editUrl, className, compact } ) {
+function PostItem( { translate, globalId, post, editUrl, siteTitle, className, compact } ) {
 	const title = post ? post.title : null;
 	const classes = classnames( 'post-item', className, {
 		'is-untitled': ! title,
@@ -65,6 +66,7 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		post,
-		editUrl: getEditorPath( state, post.site_ID, post.ID )
+		editUrl: getEditorPath( state, post.site_ID, post.ID ),
+		siteTitle: getSiteTitle( state, post.site_ID ),
 	};
 } )( localize( PostItem ) );
