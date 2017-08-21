@@ -55,6 +55,7 @@ describe( 'assembler', () => {
 			subscriptionId: undefined,
 			type: domainTypes.SITE_REDIRECT,
 			transferLockOnWhoisUpdateOptional: undefined,
+			whoisUpdateUnmodifiableFields: undefined,
 			hasZone: undefined,
 			pointsToWpcom: undefined
 		},
