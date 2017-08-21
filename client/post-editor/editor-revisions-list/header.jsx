@@ -13,8 +13,8 @@ import Button from 'components/button';
 const EditorRevisionsListHeader = ( { loadRevision, selectedRevisionId, translate } ) => (
 	<div className="editor-revisions-list__header">
 		<Button
+			compact
 			className="editor-revisions-list__load-revision"
-			compact={ true }
 			disabled={ selectedRevisionId === null }
 			onClick={ loadRevision }
 		>
