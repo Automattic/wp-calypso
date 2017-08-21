@@ -78,12 +78,20 @@
 	display: flex;
 	flex-flow: row nowrap;
 
+	.comment-detail__header-content {
+		display: flex;
+		flex-wrap: nowrap;
+		width: calc( 100% - 36px );
+	}
+
 	&.is-preview {
 		cursor: pointer;
 		padding: 12px 8px;
 
 		@include breakpoint( "<960px" ) {
-			flex-wrap: wrap;
+			.comment-detail__header-content {
+				flex-wrap: wrap;
+			}
 		}
 	}
 
@@ -103,7 +111,14 @@
 		}
 	}
 
-	.button.is-borderless {
+	&.is-preview .comment-detail__action-collapse {
+		flex: none;
+		margin-top: -6px;
+		text-align: center;
+		width: 36px;
+	}
+
+	&:not( .is-preview ) .button.is-borderless {
 		padding: 12px 8px;
 
 		.gridicon {
