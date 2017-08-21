@@ -48,6 +48,7 @@ export class EditPostStatus extends Component {
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
 		setNestedSidebar: PropTypes.func,
+		selectRevision: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -182,6 +183,7 @@ export class EditPostStatus extends Component {
 					revisions={ this.props.post && this.props.post.revisions }
 					adminUrl={ adminUrl }
 					setNestedSidebar={ this.props.setNestedSidebar }
+					selectRevision={ this.props.selectRevision }
 				/>
 			</div>
 		);

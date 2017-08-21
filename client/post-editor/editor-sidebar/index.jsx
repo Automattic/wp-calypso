@@ -94,6 +94,7 @@ export default class EditorSidebar extends Component {
 						isPostPrivate={ isPostPrivate }
 						confirmationSidebarStatus={ confirmationSidebarStatus }
 						setNestedSidebar={ setNestedSidebar }
+						selectRevision={ selectRevision }
 					/>
 				</SidebarRegion>
 				<SidebarRegion className="editor-sidebar__nested-region">

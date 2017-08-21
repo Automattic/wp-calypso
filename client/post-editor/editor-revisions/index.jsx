@@ -14,6 +14,7 @@ import { NESTED_SIDEBAR_REVISIONS } from 'post-editor/editor-sidebar/constants';
 
 class EditorRevisions extends Component {
 	showRevisionsNestedSidebar = () => {
+		this.props.selectRevision( null );
 		this.props.setNestedSidebar( NESTED_SIDEBAR_REVISIONS );
 	}
 
@@ -70,7 +71,8 @@ EditorRevisions.propTypes = {
 	adminUrl: PropTypes.string,
 	revisions: PropTypes.array,
 	translate: PropTypes.func,
-	setNestedSidebar: PropTypes.func,
+	setNestedSidebar: PropTypes.func.isRequired,
+	selectRevision: PropTypes.func.isRequired,
 };
 
 export default localize( EditorRevisions );

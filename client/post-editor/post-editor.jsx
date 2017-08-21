@@ -264,13 +264,6 @@ export const PostEditor = React.createClass( {
 	},
 
 	setNestedSidebar: function( nestedSidebar ) {
-		if (
-			this.state.nestedSidebar === NESTED_SIDEBAR_REVISIONS &&
-			this.state.nestedSidebar !== nestedSidebar
-		) {
-			this.selectRevision( null );
-		}
-
 		this.setState( { nestedSidebar } );
 	},
 
