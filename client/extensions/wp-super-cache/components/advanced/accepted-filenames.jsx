@@ -133,10 +133,14 @@ class AcceptedFilenames extends Component {
 							{ this.renderToggle( 'single', translate( 'Single Posts (is_single)' ) ) }
 							{ this.renderToggle( 'pages', translate( 'Pages (is_page)' ) ) }
 							{ this.renderToggle( 'frontpage', translate( 'Front Page (is_front_page)' ) ) }
-							{ this.renderToggle( 'home', translate( 'Home (is_home)' ) ) }
+							<div className="wp-super-cache__nested-page-types">
+								{ this.renderToggle( 'home', translate( 'Home (is_home)' ) ) }
+							</div>
 							{ this.renderToggle( 'archives', translate( 'Archives (is_archive)' ) ) }
-							{ this.renderToggle( 'tag', translate( 'Tags (is_tag)' ) ) }
-							{ this.renderToggle( 'category', translate( 'Category (is_category)' ) ) }
+							<div className="wp-super-cache__nested-page-types">
+								{ this.renderToggle( 'tag', translate( 'Tags (is_tag)' ) ) }
+								{ this.renderToggle( 'category', translate( 'Category (is_category)' ) ) }
+							</div>
 							{ this.renderToggle( 'feed', translate( 'Feeds (is_feed)' ) ) }
 							{ this.renderToggle( 'search', translate( 'Search Pages (is_search)' ) ) }
 							{ this.renderToggle( 'author', translate( 'Author Pages (is_author)' ) ) }
