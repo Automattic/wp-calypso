@@ -23,26 +23,26 @@ class Intro extends Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Setup Wizard Introduction' ) } />
+				<SectionHeader label={ translate( 'Welcome to the Setup Wizard!' ) } />
 				<Card>
 					<p>
 						{ translate(
-							'Thanks for installing {{em}}WP Job Manager{{/em}}!',
+							'Thanks for installing {{em}}WP Job Manager{{/em}}! Let\'s get your site ready to accept job listings.',
 							{ components: { em: <em /> } }
 						) }
 					</p>
 
 					<p>
 						{ translate(
-							'This setup wizard will help you get started by creating the pages for job submission, ' +
-							'job management, and listing your jobs.'
+							'This setup wizard will walk you through the process of creating pages for job submissions, ' +
+							'management, and listings.'
 						) }
 					</p>
 
 					<p>
 						{ translate(
-							'If you want to skip the wizard and setup the pages and shortcodes yourself manually, ' +
-							'the process is still relatively simple. Refer to the {{docs}}documentation{{/docs}} for help.',
+							'If you\'d prefer to skip this and set up your pages manually, our {{docs}}documentation{{/docs}} ' +
+							'will walk you through each step.',
 							{
 								components: {
 									docs: (
