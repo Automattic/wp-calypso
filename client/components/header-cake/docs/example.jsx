@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -14,10 +13,8 @@ import HeaderCake from 'components/header-cake';
  */
 const noop = function() {};
 
-module.exports = React.createClass( {
-	displayName: 'Headers',
-
-	mixins: [ PureRenderMixin ],
+export default class extends React.PureComponent {
+    static displayName = 'Headers';
 
 	render() {
 		return (
@@ -32,4 +29,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
