@@ -66,7 +66,7 @@ const JPOHomepageStep = React.createClass( {
 								<NewsGraphic />
 							</div>
 							<div className="jpo-homepage__choice-copy">
-								<Button onClick={ this.onSelectNews }>
+								<Button className="jpo-homepage__cta" onClick={ this.onSelectNews }>
 									{ translate( 'Recent news or updates' ) }
 								</Button>
 								<div className="jpo-homepage__description">
@@ -86,7 +86,7 @@ const JPOHomepageStep = React.createClass( {
 								<StaticGraphic />
 							</div>
 							<div className="jpo-homepage__choice-copy">
-								<Button onClick={ this.onSelectStatic }>
+								<Button className="jpo-homepage__cta" onClick={ this.onSelectStatic }>
 									{ translate( 'A static welcome page' ) }
 								</Button>
 								<div className="jpo-homepage__description">

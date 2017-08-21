@@ -17,7 +17,7 @@
 		text-align: center;
 		padding: 0;
 
-		@media (max-width: 480px) {
+		@include breakpoint( "<480px" ) {
 		width: 100%;
 		text-align: left;
 		}
@@ -34,11 +34,32 @@
 		}
 
 		.button {
-			font-size: 1.5rem;
+			font-size: 1.25rem;
 			margin-bottom: 1rem;
 			color: $blue-wordpress;
-			padding: 7px;
 			line-height: 1;
+
+			@include breakpoint( ">480px" ) {
+				padding: 7px;
+			}
+
+			@include breakpoint( "<480px" ) {
+				margin-bottom: 0;
+				font-size:1.5rem;
+				padding: 0;
+			}
+
+			.jpo-homepage__cta {
+				@include breakpoint( ">480px" ) {
+					background: none;
+					font-size: 1.1em;
+					border: 0;
+					padding: 0;
+					text-transform: none;
+					margin: 0;
+					line-height: 1.1em;
+				}
+			}
 		}
 	}
 
@@ -52,10 +73,10 @@
 		margin-right: 2%;
 	}
     
-    @media (max-width: 480px) {
+    @include breakpoint( "<480px" ) {
 		margin-right: 10px;
 		width: 100%;
-   		text-align: left;
+		text-align: left;
 	}
 }
 
