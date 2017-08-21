@@ -206,7 +206,7 @@ p.jpo-site-type__description {
 			color: $blue-dark;
 		}
 
-		.jpo-site-type__choice-link:after {
+		.jpo-site-type__choice-link {
 			border-top-color: $blue-dark;
 			border-right-color: $blue-dark;
 		}
@@ -283,5 +283,13 @@ p.jpo-site-type__description {
 		&:after {
 			display: none;
 		}
+	}
+}
+
+.jpo-site-type__image {
+	display: none;
+
+	@include breakpoint( ">480px" ) {
+		display: block;
 	}
 }
