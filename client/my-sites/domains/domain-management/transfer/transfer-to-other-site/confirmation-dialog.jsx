@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import {
@@ -16,12 +17,12 @@ import Dialog from 'components/dialog';
 
 class TransferConfirmationDialog extends React.PureComponent {
 	static propTypes = {
-		isVisible: React.PropTypes.bool.isRequired,
-		targetSiteId: React.PropTypes.string.isRequired,
-		disableDialogButtons: React.PropTypes.bool.isRequired,
-		domainName: React.PropTypes.string.isRequired,
-		onConfirmTransfer: React.PropTypes.func.isRequired,
-		onClose: React.PropTypes.func.isRequired,
+		isVisible: PropTypes.bool.isRequired,
+		targetSiteId: PropTypes.number.isRequired,
+		disableDialogButtons: PropTypes.bool.isRequired,
+		domainName: PropTypes.string.isRequired,
+		onConfirmTransfer: PropTypes.func.isRequired,
+		onClose: PropTypes.func.isRequired,
 	};
 
 	onConfirm = ( closeDialog ) => {

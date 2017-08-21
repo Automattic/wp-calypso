@@ -95,7 +95,7 @@ const CheckoutThankYou = React.createClass( {
 		selectedSite: PropTypes.oneOfType( [
 			PropTypes.bool,
 			PropTypes.object
-		] ).isRequired
+		] )
 	},
 
 	componentDidMount() {
@@ -246,6 +246,7 @@ const CheckoutThankYou = React.createClass( {
 
 		// Rebrand Cities thanks page
 		if (
+			this.props.selectedSite &&
 			isRebrandCitiesSiteUrl( this.props.selectedSite.slug ) &&
 			PLAN_BUSINESS === this.props.selectedSite.plan.product_slug
 		) {
