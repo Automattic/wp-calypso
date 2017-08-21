@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, flowRight } from 'lodash';
+import { find, flowRight, toArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,7 +33,7 @@ const RecentPostsDropdown = ( {
 		onSelect( find( recentPosts, { slug } ) );
 	};
 
-	const options = recentPosts
+	const options = toArray( recentPosts )
 		.filter( ( { slug } ) => ! find( ignored, { slug } ) )
 		.map( ( { slug, title } ) => ( { label: title, value: slug } ) );
 
