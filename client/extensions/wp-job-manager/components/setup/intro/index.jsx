@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import ExternalLink from 'components/external-link';
 import SectionHeader from 'components/section-header';
 
@@ -24,7 +24,7 @@ class Intro extends Component {
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Welcome to the Setup Wizard!' ) } />
-				<Card>
+				<CompactCard>
 					<p>
 						{ translate(
 							'Thanks for installing {{em}}WP Job Manager{{/em}}! Let\'s get your site ready to accept job listings.',
@@ -56,10 +56,19 @@ class Intro extends Component {
 							}
 						) }
 					</p>
-					<Button compact>
-						{ translate( 'Skip setup. I will set up the plugin manually' ) }
+				</CompactCard>
+
+				<CompactCard>
+					<a
+						className="intro__skip-setup"
+						href="#">
+						{ translate( 'Skip setup. I will set up the plugin manually.' ) }
+					</a>
+					<Button primary
+						className="intro__continue">
+						{ translate( 'Continue' ) }
 					</Button>
-				</Card>
+				</CompactCard>
 			</div>
 		);
 	}
