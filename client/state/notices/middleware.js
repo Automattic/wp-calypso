@@ -212,11 +212,17 @@ const onSiteDelete = ( dispatch, { siteId }, getState ) => dispatch(
 	} ), { duration: 5000, id: 'site-delete' } )
 );
 
-const onSiteDeleteReceive = ( dispatch, { siteId }, getState ) => dispatch(
-	successNotice( translate( '%(siteDomain)s has been deleted.', {
-		args: { siteDomain: getSiteDomain( getState(), siteId ) }
-	} ), { duration: 5000, id: 'site-delete' } )
-);
+const onSiteDeleteReceive = ( dispatch, { siteId, silent }, getState ) => {
+	if ( silent ) {
+		return;
+	}
+
+	return dispatch(
+		successNotice( translate( '%(siteDomain)s has been deleted.', {
+			args: { siteDomain: getSiteDomain( getState(), siteId ) }
+		} ), { duration: 5000, id: 'site-delete' } )
+	);
+};
 
 const onSiteDeleteFailure = ( dispatch, { error } ) => {
 	if ( error.error === 'active-subscriptions' ) {
