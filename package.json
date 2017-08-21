@@ -92,6 +92,7 @@
     "jquery": "1.11.3",
     "js-sha1": "0.4.1",
     "json-loader": "0.5.4",
+    "json-stable-stringify": "1.0.1",
     "key-mirror": "1.0.1",
     "keymaster": "1.6.2",
     "localforage": "1.4.3",

@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
+import deterministicStringify from 'json-stable-stringify';
 import sha1 from 'js-sha1';
 import qs from 'querystring';
-import deterministicStringify from 'lib/deterministic-stringify';
-
 
 /**
  * Internal dependencies

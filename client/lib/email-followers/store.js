@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { omit } from 'lodash';
+import deterministicStringify from 'json-stable-stringify';
 const debug = require( 'debug' )( 'calypso:email-followers-store' );
 
 /**
@@ -9,7 +10,6 @@ const debug = require( 'debug' )( 'calypso:email-followers-store' );
  */
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
-import deterministicStringify from 'lib/deterministic-stringify';
 
 const _fetchingFollowersByNamespace = {}, // store fetching state (boolean)
 	_followersBySite = {}, // store user objects

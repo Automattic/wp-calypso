@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import deterministicStringify from 'json-stable-stringify';
 import { endsWith, find, omit } from 'lodash';
 const debug = require( 'debug' )( 'calypso:users:store' );
 
@@ -8,8 +9,7 @@ const debug = require( 'debug' )( 'calypso:users:store' );
  * Internal dependencies
  */
 var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	deterministicStringify = require( 'lib/deterministic-stringify' );
+	emitter = require( 'lib/mixins/emitter' );
 
 var _fetchingUsersByNamespace = {},        // store fetching state (boolean)
 	_fetchingUpdatedUsersByNamespace = {}, // store fetching state (boolean)
