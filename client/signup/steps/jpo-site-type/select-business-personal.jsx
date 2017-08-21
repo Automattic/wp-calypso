@@ -38,7 +38,7 @@ class SelectBusinessPersonal extends React.Component {
 								<PersonalGraphic />
 							</div>
 							<div className="jpo-site-type__choice-copy">
-								<Button onClick={ this.props.onSelectPersonal }>
+								<Button className="jpo-site-type__cta" onClick={ this.props.onSelectPersonal }>
 									{ translate( 'Personal site' ) }
 								</Button>
 							</div>
@@ -52,7 +52,7 @@ class SelectBusinessPersonal extends React.Component {
 								<BusinessGraphic />
 							</div>
 							<div className="jpo-site-type__choice-copy">
-								<Button onClick={ this.props.onSelectBusiness }>
+								<Button className="jpo-site-type__cta" onClick={ this.props.onSelectBusiness }>
 									{ translate( 'Business site' ) }
 								</Button>
 							</div>
