@@ -74,6 +74,10 @@ export class LoginLinks extends React.Component {
 
 		if ( oauth2ClientData ) {
 			url = oauth2ClientData.url;
+			if ( ! url ) {
+				return null;
+			}
+
 			message = translate( 'Back to %(clientTitle)s', {
 				args: {
 					clientTitle: oauth2ClientData.title
