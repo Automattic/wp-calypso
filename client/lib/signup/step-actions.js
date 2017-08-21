@@ -317,7 +317,7 @@ module.exports = {
 					nux_q_site_type: surveySiteType,
 					nux_q_question_primary: surveyVertical,
 					jetpack_redirect: queryArgs.jetpackRedirect,
-					oauth2_redirect: queryArgs.oauth2_redirect,
+					oauth2_client_id: queryArgs.oauth2_client_id,
 				}
 			), ( error, response ) => {
 				const errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
