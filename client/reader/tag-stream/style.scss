@@ -7,6 +7,11 @@
 	}
 }
 
+.tag-stream__header-follow {
+	display: flex;
+	justify-content: flex-end;
+}
+
 .tag-stream__header .follow-button {
 
 	@include breakpoint( "<660px" ) {
@@ -91,7 +96,6 @@
 }
 
 // Back button in Tag streams
-
 .is-reader-page .card.header-cake {
 	background: none;
 	box-shadow: none;
