@@ -69,15 +69,14 @@ export const CommentDetailHeader = ( {
 				/>
 			}
 
-			{ ! isExpanded && isBulkEdit &&
-				<label className="comment-detail__checkbox">
-					<FormCheckbox checked={ commentIsSelected } onChange={ noop } />
-				</label>
-			}
-
 			{ ! isExpanded &&
 				<div className="comment-detail__header-content">
 					<div className="comment-detail__author-preview">
+						{ isBulkEdit &&
+							<label className="comment-detail__checkbox">
+								<FormCheckbox checked={ commentIsSelected } onChange={ noop } />
+							</label>
+						}
 						<Gravatar user={ author } />
 						<div className="comment-detail__author-info">
 							<div className="comment-detail__author-info-element">
@@ -103,13 +102,15 @@ export const CommentDetailHeader = ( {
 				</div>
 			}
 
-			<Button
-				borderless
-				className="comment-detail__action-collapse"
-				onClick={ isExpanded ? toggleExpanded : noop }
-			>
-				<Gridicon icon="cross" />
-			</Button>
+			{ ! isBulkEdit &&
+				<Button
+					borderless
+					className="comment-detail__action-collapse"
+					onClick={ isExpanded ? toggleExpanded : noop }
+				>
+					<Gridicon icon="cross" />
+				</Button>
+			}
 		</div>
 	);
 };

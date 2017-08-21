@@ -96,14 +96,17 @@
 	}
 
 	&.is-bulk-edit {
+		.comment-detail__header-content {
+			width: 100%;
+		}
+
 		.comment-detail__checkbox {
-			padding-left: 8px;
+			padding-right: 12px;
 			.form-checkbox {
 				margin: 0;
 			}
 		}
 		.comment-detail__author-preview {
-			padding: 0 12px;
 			.external-link:hover,
 			.external-link:focus {
 				outline: none;
