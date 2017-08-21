@@ -170,11 +170,10 @@ function fetchReduxSite( siteSlug, { dispatch, getState }, callback ) {
 		return;
 	}
 
-	// Have to manually call the thunk in order to access the promise on which
-	// to call `then`.
+	// Have to pass a function to be called when sites return with success
 	debug( 'fetchReduxSite: requesting all sites', siteSlug );
-	requestSites()( dispatch ).then( () =>
-		fetchReduxSite( siteSlug, { dispatch, getState }, callback ) );
+	dispatch( requestSites( () =>
+		fetchReduxSite( siteSlug, { dispatch, getState }, callback ) ) );
 }
 
 function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
