@@ -196,6 +196,7 @@ class RegisterDomainStep extends React.Component {
 
 	render() {
 		const queryObject = getQueryObject( this.props );
+
 		return (
 			<div className="register-domain-step">
 					<div className="register-domain-step__search">
