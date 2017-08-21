@@ -5,9 +5,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import createFragment from 'react-addons-create-fragment';
 import { groupBy, head, mapValues, noop, values } from 'lodash';
-import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import page from 'page';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -79,28 +79,28 @@ class MediaLibraryContent extends React.Component {
 					status = 'is-warning';
 					upgradeNudgeName = 'plan-media-storage-error-video';
 					upgradeNudgeFeature = 'video-upload';
-					message = this.translate(
-						'%d file could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.',
-						'%d files could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.',
+					message = this.props.translate(
+						'%d file could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.', // eslint-disable-line max-len
+						'%d files could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.', // eslint-disable-line max-len
 						i18nOptions
 					);
 					break;
 				case MediaValidationErrors.FILE_TYPE_UNSUPPORTED:
-					message = this.translate(
+					message = this.props.translate(
 						'%d file could not be uploaded because the file type is not supported.',
 						'%d files could not be uploaded because their file types are unsupported.',
 						i18nOptions
 					);
 					break;
 				case MediaValidationErrors.UPLOAD_VIA_URL_404:
-					message = this.translate(
+					message = this.props.translate(
 						'%d file could not be uploaded because no image exists at the specified URL.',
 						'%d files could not be uploaded because no images exist at the specified URLs',
 						i18nOptions
 					);
 					break;
 				case MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE:
-					message = this.translate(
+					message = this.props.translate(
 						'%d file could not be uploaded because it exceeds the maximum upload size.',
 						'%d files could not be uploaded because they exceed the maximum upload size.',
 						i18nOptions
@@ -109,7 +109,7 @@ class MediaLibraryContent extends React.Component {
 				case MediaValidationErrors.NOT_ENOUGH_SPACE:
 					upgradeNudgeName = 'plan-media-storage-error';
 					upgradeNudgeFeature = 'extra-storage';
-					message = this.translate(
+					message = this.props.translate(
 						'%d file could not be uploaded because there is not enough space left.',
 						'%d files could not be uploaded because there is not enough space left.',
 						i18nOptions
@@ -118,18 +118,18 @@ class MediaLibraryContent extends React.Component {
 				case MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT:
 					upgradeNudgeName = 'plan-media-storage-error';
 					upgradeNudgeFeature = 'extra-storage';
-					message = this.translate(
+					message = this.props.translate(
 						'%d file could not be uploaded because you have reached your plan storage limit.',
 						'%d files could not be uploaded because you have reached your plan storage limit.',
 						i18nOptions
 					);
 					break;
 				case MediaValidationErrors.SERVICE_FAILED:
-					message = translate( 'We are unable to retrieve your full media library.' );
+					message = this.props.translate( 'We are unable to retrieve your full media library.' );
 					tryAgain = true;
 					break;
 				default:
-					message = this.translate(
+					message = this.props.translate(
 						'%d file could not be uploaded because an error occurred while uploading.',
 						'%d files could not be uploaded because errors occurred while uploading.',
 						i18nOptions
@@ -151,7 +151,7 @@ class MediaLibraryContent extends React.Component {
 	renderTryAgain() {
 		return (
 			<NoticeAction onClick={ this.retryList }>
-				{ translate( 'Retry' ) }
+				{ this.props.translate( 'Retry' ) }
 			</NoticeAction>
 		);
 	}
@@ -174,7 +174,7 @@ class MediaLibraryContent extends React.Component {
 				external={ true }
 				href={ upgradeNudgeFeature ? `/plans/compare/${ this.props.siteSlug }?feature=${ upgradeNudgeFeature }` : `/plans/${ this.props.siteSlug }` }
 				onClick={ this.recordPlansNavigation.bind( this, 'calypso_upgrade_nudge_cta_click', eventProperties ) }>
-				{ this.translate( 'Upgrade Plan' ) }
+				{ this.props.translate( 'Upgrade Plan' ) }
 				<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
 			</NoticeAction>
 		);
@@ -191,7 +191,7 @@ class MediaLibraryContent extends React.Component {
 	}
 
 	renderExternalMedia() {
-		const connectMessage = translate(
+		const connectMessage = this.props.translate(
 			'To show Photos from Google, you need to connect your Google account.'
 		);
 
@@ -304,4 +304,4 @@ class MediaLibraryContent extends React.Component {
 export default connect( ( state, ownProps ) => ( {
 	siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
 	isRequesting: isKeyringConnectionsFetching( state ),
-} ), null, null, { pure: false } )( MediaLibraryContent );
+} ), null, null, { pure: false } )( localize( MediaLibraryContent ) );
