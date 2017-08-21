@@ -74,7 +74,7 @@ export class UserStep extends Component {
 	submit = ( data ) => {
 		const dependencies = {};
 		if ( this.props.oauth2Signup ) {
-			dependencies.oauth2_redirect = data.queryArgs.oauth2_redirect;
+			dependencies.oauth2_client_id = data.queryArgs.oauth2_client_id;
 		}
 
 		SignupActions.submitSignupStep( {
@@ -92,7 +92,7 @@ export class UserStep extends Component {
 			jetpackRedirect: get( this.props, 'queryObject.jetpack_redirect' )
 		};
 
-		queryArgs.oauth2_redirect = get( this.props, 'queryObject.oauth2_redirect' );
+		queryArgs.oauth2_client_id = get( this.props, 'queryObject.oauth2_client_id' );
 
 		const formWithoutPassword = {
 			...form,
