@@ -511,7 +511,7 @@ export const PostEditor = React.createClass( {
 
 	restoreAutosave: function() {
 		this.setState( { showAutosaveDialog: false } );
-		this.restoreRevision( this.state.post.meta.data.autosave );
+		this.restoreRevision( get( this.state, 'post.meta.data.autosave' ) );
 	},
 
 	restoreRevision: function( revision ) {
