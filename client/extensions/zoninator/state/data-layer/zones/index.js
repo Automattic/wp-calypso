@@ -49,7 +49,7 @@ export const createZone = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const announceZoneSaved = ( { dispatch }, { form, siteId }, next, { data } ) => {
+export const announceZoneSaved = ( dispatch, { form, siteId }, data ) => {
 	dispatch( stopSubmit( form ) );
 	dispatch( updateZone( siteId, data ) );
 	dispatch( successNotice(
@@ -58,11 +58,11 @@ export const announceZoneSaved = ( { dispatch }, { form, siteId }, next, { data 
 	) );
 };
 
-export const announceZoneCreated = ( { dispatch, getState }, action, next, response ) => {
+export const announceZoneCreated = ( { dispatch, getState }, action, response ) => {
 	const { siteId } = action;
 
 	page( `/extensions/zoninator/${ getSiteSlug( getState(), siteId ) }` );
-	announceZoneSaved( { dispatch }, action, next, response );
+	announceZoneSaved( dispatch, action, response.data );
 };
 
 export const announceFailure = ( { dispatch }, { form } ) => {

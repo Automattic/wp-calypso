@@ -157,7 +157,7 @@ describe( '#announceZoneSaved()', () => {
 			form: 'form',
 		};
 
-		announceZoneSaved( { dispatch }, action, null, { data: zone } );
+		announceZoneSaved( dispatch, action, zone );
 
 		expect( dispatch ).to.have.been.calledWith( stopSave( 'form' ) );
 	} );
@@ -170,7 +170,7 @@ describe( '#announceZoneSaved()', () => {
 			form: 'form',
 		};
 
-		announceZoneSaved( { dispatch }, action, null, { data: zone } );
+		announceZoneSaved( dispatch, action, zone );
 
 		expect( dispatch ).to.have.been.calledWith( updateZone( 123456, zone ) );
 	} );
@@ -183,7 +183,7 @@ describe( '#announceZoneSaved()', () => {
 			form: 'form',
 		};
 
-		announceZoneSaved( { dispatch }, action, null, { data: zone } );
+		announceZoneSaved( dispatch, action, zone );
 
 		expect( dispatch ).to.have.been.calledWith( successNotice(
 			translate( 'Zone saved!' ),
