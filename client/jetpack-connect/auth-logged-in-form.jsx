@@ -161,6 +161,8 @@ class LoggedInForm extends Component {
 		if ( 'jpo' === queryObject.from || this.props.isSSO || this.props.isWCS ) {
 			debug( 'Going back to WP Admin.', 'Connection initiated via: ', queryObject.from, 'SSO found:', this.props.isSSO );
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+		} else if ( queryObject.onboarding && '1' === queryObject.onboarding ) {
+			page.redirect( '/start/jetpack-onboarding/jpo-summary' );
 		} else {
 			page.redirect( this.getRedirectionTarget() );
 		}

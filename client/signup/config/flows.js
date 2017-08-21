@@ -262,7 +262,7 @@ if ( config.isEnabled( 'signup/social' ) ) {
 
 if ( config.isEnabled( 'jetpack/onboarding' ) ) {
 	flows[ 'jetpack-onboarding' ] = {
-		steps: [ 'jpo-site-title', 'jpo-site-type', 'jpo-homepage', 'jpo-contact-form', 'jpo-summary' ],
+		steps: [ 'jpo-site-title', 'jpo-site-type', 'jpo-homepage', 'jpo-contact-form', 'jpo-connect', 'jpo-summary' ],
 		destination: getJetpackSiteDestination,
 		description: 'Configure a JPO site.',
 		lastModified: '2017-07-14'

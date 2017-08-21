@@ -21,6 +21,7 @@ import JPOSiteTypeComponent from 'signup/steps/jpo-site-type';
 import JPOHomepageComponent from 'signup/steps/jpo-homepage';
 import JPOContactFormComponent from 'signup/steps/jpo-contact-form';
 import JPOSummaryComponent from 'signup/steps/jpo-summary';
+import JPOConnectComponent from 'signup/steps/jpo-connect';
 
 export default {
 	'design-type': DesignTypeComponent,
@@ -34,6 +35,7 @@ export default {
 	'jpo-homepage': JPOHomepageComponent,
 	'jpo-contact-form': JPOContactFormComponent,
 	'jpo-summary': JPOSummaryComponent,
+	'jpo-connect': JPOConnectComponent,
 	'get-dot-blog-plans': GetDotBlogPlansStepComponent,
 	'get-dot-blog-themes': ThemeSelectionComponent,
 	plans: PlansStepComponent,

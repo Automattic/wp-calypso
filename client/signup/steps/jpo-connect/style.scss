@@ -1,0 +1,36 @@
+.jpo__summary-wrapper {
+	text-align: center;
+}
+
+.jpo__summary-col-header {
+	font-weight: bold;
+	margin-bottom: 3rem;
+}
+
+.jpo__summary-wrapper table {
+	max-width: 640px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.jpo__summary-wrapper table tr td {
+	width: 50%;
+	text-align: left;
+}
+
+.jpo__summary-wrapper table tr td ul {
+	list-style-type: none;
+	margin-left: 0;
+}
+
+.jpo__summary-wrapper table tr td ul li {
+	margin-top: 2rem;
+}
+
+.jpo-summary__completed-onboarding {
+	color: $gray;
+}
+
+.jpo-summary__more-onboarding {
+	color: $blue-medium;
+}
