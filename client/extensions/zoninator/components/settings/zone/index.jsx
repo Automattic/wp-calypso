@@ -36,7 +36,9 @@ class Zone extends Component {
 
 		return (
 			<div>
-				<HeaderCake backHref={ `${ settingsPath }/${ siteSlug }` }>
+				<HeaderCake
+					backHref={ `${ settingsPath }/${ siteSlug }` }
+					actionButton={ <Button compact primary scary>{ translate( 'Delete' ) }</Button> } >
 					{ translate( 'Edit zone' ) }
 				</HeaderCake>
 
@@ -70,10 +72,6 @@ class Zone extends Component {
 						</Card>
 					</FormSection>
 				</form>
-
-				<SectionHeader label={ translate( 'Delete zone' ) }>
-					<Button primary compact scary>{ translate( 'Delete' ) }</Button>
-				</SectionHeader>
 			</div>
 		);
 	}
