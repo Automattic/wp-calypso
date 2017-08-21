@@ -38,5 +38,6 @@ export const createSiteDomainObject = domain => {
 		subscriptionId: domain.subscription_id,
 		transferLockOnWhoisUpdateOptional: Boolean( domain.transfer_lock_on_whois_update_optional ),
 		type: getDomainType( domain ),
+		whoisUpdateUnmodifiableFields: domain.whois_update_unmodifiable_fields,
 	};
 };

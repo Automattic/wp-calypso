@@ -53,6 +53,7 @@ export const DOMAIN_PRIMARY = {
 	subscriptionId: SUBSCRIPTION_ID_FIRST,
 	type: 'MAPPED',
 	transferLockOnWhoisUpdateOptional: true,
+	whoisUpdateUnmodifiableFields: [],
 	isWPCOMDomain: false
 };
 
@@ -92,6 +93,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	subscriptionId: SUBSCRIPTION_ID_SECOND,
 	type: 'WPCOM',
 	transferLockOnWhoisUpdateOptional: false,
+	whoisUpdateUnmodifiableFields: [ 'first_name', 'last_name' ],
 	isWPCOMDomain: true
 };
 
@@ -132,6 +134,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	subscription_id: SUBSCRIPTION_ID_FIRST,
 	type: 'mapping',
 	transfer_lock_on_whois_update_optional: true,
+	whois_update_unmodifiable_fields: [],
 	wpcom_domain: false
 };
 
@@ -167,6 +170,7 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	registration_date: '',
 	subscription_id: SUBSCRIPTION_ID_SECOND,
 	type: 'wpcom',
+	whois_update_unmodifiable_fields: [ 'first_name', 'last_name' ],
 	wpcom_domain: true
 };
 
