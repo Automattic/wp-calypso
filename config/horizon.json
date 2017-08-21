@@ -92,7 +92,7 @@
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
 		"signup/domain-first-flow": true,
-		"signup/social": true,
+		"signup/social": false,
 		"simple-payments": true,
 		"support-user": true,
 		"sync-handler": true,
