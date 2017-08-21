@@ -223,6 +223,11 @@ class PaymentMethodStripe extends Component {
 			return null;
 		}
 
+		// No keys AND the user didn't request key flow? Don't show these fields
+		if ( ! this.hasKeys() && ! this.state.userRequestedKeyFlow ) {
+			return null;
+		}
+
 		return (
 			<FormFieldset className="payments__method-edit-field-container">
 				<TestLiveToggle
@@ -247,6 +252,11 @@ class PaymentMethodStripe extends Component {
 
 		// Did the user request connect flow? Don't bother showing this control
 		if ( this.state.userRequestedConnectFlow ) {
+			return null;
+		}
+
+		// No keys AND the user didn't request key flow? Don't show these fields
+		if ( ! this.hasKeys() && ! this.state.userRequestedKeyFlow ) {
 			return null;
 		}
 
