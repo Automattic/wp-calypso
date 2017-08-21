@@ -2,13 +2,10 @@
  * External dependencies
  */
 import config from 'config';
-import debugFactory from 'debug';
 import React, { Component } from 'react';
 import { isEmpty, isString, pick, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
-const debug = debugFactory( 'calypso:allendav' );
 
 /**
  * Internal dependencies
@@ -72,20 +69,6 @@ class PaymentMethodStripe extends Component {
 		site: PropTypes.shape( {
 			domain: PropTypes.string.isRequired,
 		} ),
-	};
-
-	////////////////////////////////////////////////////////////////////////////
-	// Temporary - will be removed in subsequent PR
-	static defaultProps = {
-		stripeConnectAccount: {
-			connectedUserID: 'acct_14qyt6Alijdnw0EA', // e.g. acct_14qyt6Alijdnw0EA
-			displayName: 'The Bar Company', // e.g. The Bar Company
-			email: 'foo@bar.com', // e.g. foo@bar.com
-			firstName: 'Foo',
-			isActivated: false,
-			lastName: 'Bar',
-			logo: 'https://allendav.files.wordpress.com/2017/08/foo.png',
-		}
 	};
 
 	////////////////////////////////////////////////////////////////////////////
@@ -191,26 +174,22 @@ class PaymentMethodStripe extends Component {
 		// Do we have any API keys? If so, do not display connect prompt
 		// unless the user specifically asked for it
 		if ( this.hasKeys() && ! this.state.userRequestedConnectFlow ) {
-			debug( 'skipping connect prompt since we have keys' );
 			return null;
 		}
 
 		// Do we have a Stripe Connect User ID already? If so, do not display connect prompt
 		if ( connectedUserID ) {
-			debug( 'skipping connect prompt since we have a connect user account id' );
 			return null;
 		}
 
 		// Did the user ask for the key based flow? If so, do not display connect prompt
 		if ( this.state.userRequestedKeyFlow ) {
-			debug( 'skipping connect prompt since user requested key flow' );
 			return null;
 		}
 
 		// Did we have keys when we started? If so, do not display the connect prompt
 		// unless the user explicitly requested the connect flow
 		if ( this.state.hadKeysAtStart && ! this.state.userRequestedConnectFlow ) {
-			debug( 'skipping connect prompt since we had keys at start and the user did not request the connect flow ' );
 			return null;
 		}
 
