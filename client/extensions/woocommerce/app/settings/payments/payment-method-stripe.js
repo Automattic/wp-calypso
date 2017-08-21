@@ -72,6 +72,20 @@ class PaymentMethodStripe extends Component {
 	};
 
 	////////////////////////////////////////////////////////////////////////////
+	// Temporary - will be removed in subsequent PR
+	static defaultProps = {
+		stripeConnectAccount: {
+			connectedUserID: '', // e.g. acct_14qyt6Alijdnw0EA
+			displayName: '',
+			email: '',
+			firstName: '',
+			isActivated: false,
+			lastName: '',
+			logo: '',
+		}
+	};
+
+	////////////////////////////////////////////////////////////////////////////
 	// Lifecycle sorcery
 
 	constructor( props ) {
