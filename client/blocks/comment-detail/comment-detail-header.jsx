@@ -42,14 +42,6 @@ export const CommentDetailHeader = ( {
 	if ( isExpanded ) {
 		return (
 			<div className="comment-detail__header">
-				<Button
-					borderless
-					className="comment-detail__action-collapse"
-					onClick={ toggleExpanded }
-				>
-					<Gridicon icon="cross" />
-				</Button>
-
 				<CommentDetailActions
 					edit={ edit }
 					commentIsLiked={ commentIsLiked }
@@ -60,6 +52,13 @@ export const CommentDetailHeader = ( {
 					toggleSpam={ toggleSpam }
 					toggleTrash={ toggleTrash }
 				/>
+				<Button
+					borderless
+					className="comment-detail__action-collapse"
+					onClick={ toggleExpanded }
+				>
+					<Gridicon icon="cross" />
+				</Button>
 			</div>
 		);
 	}

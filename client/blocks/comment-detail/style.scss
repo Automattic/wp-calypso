@@ -113,8 +113,8 @@
 
 		&.comment-detail__action-collapse {
 			flex-grow: 1;
-			padding-left: 12px;
-			text-align: left;
+			padding-right: 12px;
+			text-align: right;
 		}
 	}
 
@@ -189,7 +189,7 @@
 
 .comment-detail__actions {
 	color: $gray;
-	padding-right: 4px;
+	padding-left: 4px;
 	user-select: none;
 
 	.button.is-borderless {
