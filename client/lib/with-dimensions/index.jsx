@@ -6,6 +6,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'lodash';
 
+const OVERFLOW_BUFFER = 4; // fairly arbitrary. feel free to tweak
+
 /**
  * withDimensions is a Hoc that hands down a width and height prop of how much available space there is for it to consume.
  * withDimensions assumes that you care about the space at the dom location of the component, but you may also pass
@@ -33,8 +35,8 @@ export default EnhancedComponent =>
 			if ( domElement ) {
 				const dimensions = domElement.getClientRects()[ 0 ];
 				const { width, height } = dimensions;
-				const overflowX = domElement.scrollWidth > domElement.clientWidth;
-				const overflowY = domElement.scrollHeight > domElement.clientHeight;
+				const overflowX = domElement.scrollWidth > domElement.clientWidth + OVERFLOW_BUFFER;
+				const overflowY = domElement.scrollHeight > domElement.clientHeight + OVERFLOW_BUFFER;
 
 				this.setState( { width, height, overflowX, overflowY } );
 			}
