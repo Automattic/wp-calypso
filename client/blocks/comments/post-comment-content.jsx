@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import OverflowWatcher from 'components/overflow-watcher';
+import withDimensions from 'lib/with-dimensions';
 
 class PostCommentContent extends React.Component {
 	static propTypes = {
@@ -44,7 +44,7 @@ class PostCommentContent extends React.Component {
 				<div className={ classNames( 'comments__comment-content-wrapper', this.props.className ) }>
 					<div
 						className="comments__comment-content"
-						ref="overflowNode"
+						ref={ this.props.setWithDimensionsRef }
 						dangerouslySetInnerHTML={ { __html: this.props.content } }
 					/>
 					{ this.props.overflowY &&
@@ -59,4 +59,4 @@ class PostCommentContent extends React.Component {
 	}
 }
 
-export default localize( OverflowWatcher( PostCommentContent ) );
+export default localize( withDimensions( PostCommentContent ) );
