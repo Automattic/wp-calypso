@@ -2,6 +2,24 @@
 	-webkit-appearance: none;
 }
 
+.form-currency-input__affix {
+	display: flex;
+	align-items: center;
+}
+
+.form-currency-input__select-icon {
+	color: $gray;
+	margin-left: 6px;
+	align-self: center;
+}
+
+.form-text-input-with-affixes__prefix,
+.form-text-input-with-affixes__suffix {
+	&:hover .form-currency-input__select-icon {
+		color: darken( $gray, 20% );
+	}
+}
+
 .form-currency-input__select {
 	position: absolute;
 	top: 0;
