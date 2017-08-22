@@ -20,7 +20,10 @@ const requestStatus = ( state = {}, action ) => {
 
 		return {
 			...state,
-			[ getActionKey( requestAction ) ]: getRequestStatus( requestAction ),
+			[ getActionKey( requestAction ) ]: {
+				status: getRequestStatus( requestAction ),
+				lastUpdated: Date.now(),
+			},
 		};
 	}
 	return state;
