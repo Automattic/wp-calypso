@@ -1,4 +1,10 @@
 /**
+ * External dependencies
+ */
+
+import page from 'page';
+
+/**
  * Internal dependencies
  */
 import config from 'config';
@@ -29,6 +35,11 @@ export default router => {
 	}
 
 	if ( config.isEnabled( 'login/wp-login' ) ) {
+		router(
+			'/log-in/en', () => {
+				page.redirect( '/log-in' );
+			}
+		);
 		router(
 			[
 				'/log-in/:twoFactorAuthType(authenticator|backup|sms|push)/:lang?',
