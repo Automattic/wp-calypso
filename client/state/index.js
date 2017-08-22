@@ -68,6 +68,7 @@ import users from './users/reducer';
 import userDevices from './user-devices/reducer';
 import userSettings from './user-settings/reducer';
 import wordads from './wordads/reducer';
+import dataLayer from './data-layer/reducer';
 import config from 'config';
 
 /**
@@ -88,6 +89,7 @@ const reducers = {
 	componentsUsageStats,
 	countryStates,
 	currentUser,
+	dataLayer,
 	documentHead,
 	domains,
 	extensions,
