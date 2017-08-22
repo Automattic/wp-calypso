@@ -10,6 +10,7 @@ import i18n from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
+import { isEnabled } from 'config';
 import { isBusiness } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
 
@@ -47,6 +48,18 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 					) }
 					buttonText={ i18n.translate( 'Browse premium themes' ) }
 					href={ '/themes/' + selectedSite.slug } />
+			}
+
+			{ ! selectedFeature && isEnabled( 'manage/plugins/upload' ) &&
+				<PurchaseDetail
+					icon="plugins"
+					title={ i18n.translate( 'Add a Plugin' ) }
+					description={ i18n.translate(
+						'Search and add plugins right from your dashboard, or upload a plugin ' +
+						'from your computer with a drag-and-drop interface.'
+					) }
+					buttonText={ i18n.translate( 'Upload a plugin now' ) }
+					href={ '/plugins/upload/' + selectedSite.slug } />
 			}
 
 			<PurchaseDetail
