@@ -18,13 +18,13 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 const Development = ( { isSaving, site, translate, className } ) => {
 	const breadcrumbs = [
 		( <a href={ getLink( '/store/:site/', site ) }>{ translate( 'Settings' ) }</a> ),
-		( <span>{ translate( 'Development' ) }</span> ),
+		( <span>{ translate( 'Email' ) }</span> ),
 	];
 
 	const	onSave = () => { };
 
 	return (
-		<Main className={ classNames( 'development', className ) }>
+		<Main className={ classNames( 'email', className ) }>
 			<ActionHeader breadcrumbs={ breadcrumbs }>
 				<Button
 					primary
@@ -34,7 +34,7 @@ const Development = ( { isSaving, site, translate, className } ) => {
 					{ translate( 'Save' ) }
 				</Button>
 			</ActionHeader>
-			<SettingsNavigation activeSection="development" />
+			<SettingsNavigation activeSection="email" />
 		</Main>
 	);
 };

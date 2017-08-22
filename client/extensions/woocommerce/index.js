@@ -23,7 +23,7 @@ import ProductCreate from './app/products/product-create';
 import ProductUpdate from './app/products/product-update';
 import Dashboard from './app/dashboard';
 import SettingsPayments from './app/settings/payments';
-import Development from './app/settings/development';
+import SettingsEmail from './app/settings/email';
 import SettingsTaxes from './app/settings/taxes';
 import Shipping from './app/settings/shipping';
 import ShippingZone from './app/settings/shipping/shipping-zone';
@@ -108,10 +108,10 @@ const getStorePages = () => {
 			path: '/store/settings/taxes/:site',
 		},
 		{
-			container: Development,
-			configKey: 'woocommerce/extension-settings-development',
-			documentTitle: translate( 'Development' ),
-			path: '/store/settings/development/:site',
+			container: SettingsEmail,
+			configKey: 'woocommerce/extension-settings-email',
+			documentTitle: translate( 'Email' ),
+			path: '/store/settings/email/:site',
 		},
 	];
 };
