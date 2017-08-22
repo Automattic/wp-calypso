@@ -4,7 +4,6 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -45,11 +44,7 @@ export default connect(
 	state => ( {
 		hasJetpackSites: hasJetpackSites( state ),
 	} ),
-	dispatch =>
-		bindActionCreators(
-			{
-				recordTracksEvent,
-			},
-			dispatch
-		)
+	{
+		recordTracksEvent,
+	}
 )( localize( SiteSelectorAddSite ) );
