@@ -28,15 +28,15 @@ const SetupWizard = ( {
 		[ Steps.INTRO ]: Intro,
 		[ Steps.PAGE_SETUP ]: PageSetup,
 	};
+	const mainClassName = 'wp-job-manager__setup';
 
 	return (
-		<Main>
+		<Main className={ mainClassName }>
 			<DocumentHead title={ translate( 'Setup' ) } />
 			<Wizard
 				basePath={ `/extensions/wp-job-manager/setup/${ slug }` }
 				components={ components }
-				forwardText={ translate( 'Continue' ) }
-				hideNavigation={ stepName !== Steps.INTRO }
+				hideNavigation={ true }
 				steps={ steps }
 				stepName={ stepName } />
 		</Main>
