@@ -95,7 +95,7 @@ class JetpackConnectAuthorizeForm extends Component {
 		return (
 			<Main className="jetpack-connect__main-error">
 				<EmptyContent
-					illustration="/calypso/images/drake/drake-whoops.svg"
+					illustration="/calypso/images/illustrations/whoops.svg"
 					title={ this.props.translate(
 						'Oops, this URL should not be accessed directly'
 					) }

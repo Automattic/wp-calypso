@@ -67,8 +67,7 @@ class PurchasesList extends Component {
 						) }
 						action={ this.props.translate( 'Upgrade Now' ) }
 						actionURL={ '/plans' }
-						illustration={ '/calypso/images/drake/drake-whoops.svg' }
-						isCompact
+						illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 					/>
 				</CompactCard>
 			);
