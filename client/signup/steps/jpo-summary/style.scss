@@ -4,18 +4,33 @@
 
 .jpo__summary-col-header {
 	font-weight: bold;
-	margin-bottom: 3rem;
 }
 
 .jpo__summary-wrapper table {
-	max-width: 640px;
-	margin-left: auto;
-	margin-right: auto;
+	max-width: 480px;
+
+	@include breakpoint( "<480px" ) {
+		width: 100%;
+		margin: 0 10px;
+	}
+
+	@include breakpoint( ">480px" ) {
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+.jpo__summary-wrapper table td {
+	margin-right: 16px;
 }
 
 .jpo__summary-wrapper table tr td {
 	width: 50%;
 	text-align: left;
+
+	@include breakpoint( "<480px" ) {
+		padding: 10px;
+	}
 }
 
 .jpo__summary-wrapper table tr td ul {
@@ -31,6 +46,16 @@
 	color: $gray;
 }
 
+.jpo-summary__item-checkmark {
+	color: $gray;
+	float: left;
+	padding: 5px 5px 5px 0;
+}
+
 .jpo-summary__more-onboarding {
 	color: $blue-medium;
+}
+
+a span {
+	overflow: hidden;
 }
