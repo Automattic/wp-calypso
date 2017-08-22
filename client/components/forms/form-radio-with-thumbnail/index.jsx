@@ -11,22 +11,19 @@ import classnames from 'classnames';
  */
 import FormRadio from 'components/forms/form-radio';
 import FormLabel from 'components/forms/form-label';
-import cssSafeUrl from 'lib/css-safe-url';
 
 const FormRadioWithThumbnail = ( { label, thumbnail, ...otherProps } ) => {
 	const { cssClass, cssColor, imageUrl } = thumbnail;
-	const styles = {
-		backgroundColor: cssColor,
-		backgroundImage: imageUrl ? 'url(' + cssSafeUrl( imageUrl ) + ')' : '',
-	};
 
 	return (
 		<div className="form-radio-with-thumbnail">
 			<FormLabel>
 				<div
 					className={ classnames( 'form-radio-with-thumbnail__thumbnail', cssClass ) }
-					style={ styles }
-				/>
+					style={ { backgroundColor: cssColor } }
+				>
+					{ imageUrl && <img src={ imageUrl } alt={ label } /> }
+				</div>
 				<FormRadio { ...otherProps } />
 				<span>
 					{ label }
