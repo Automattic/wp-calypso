@@ -14,13 +14,13 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENT_REQUEST,
 	COMMENTS_ERROR,
+	COMMENTS_TREE_SITE_ADD,
 } from 'state/action-types';
 import { local } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import replies from './replies';
 import likes from './likes';
-import trees from './comment-tree';
 import { errorNotice, removeNotice } from 'state/notices/actions';
 import { getRawSite } from 'state/sites/selectors';
 import { getSiteComment } from 'state/selectors';
@@ -92,7 +92,7 @@ export const requestComment = ( store, action ) => {
 	);
 };
 
-export const receiveCommentSuccess = ( store, action, next, response ) => {
+export const receiveCommentSuccess = ( store, action, response ) => {
 	const { siteId } = action;
 	const postId = response && response.post && response.post.ID;
 	store.dispatch( {
@@ -138,13 +138,17 @@ export const receiveCommentError = ( { dispatch, getState }, { siteId, commentId
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
 export const fetchCommentsList = ( { dispatch }, action ) => {
-	const { query } = action;
-
-	if ( ! query || 'site' !== query.listType ) {
+	if ( 'site' !== get( action, 'query.listType' ) ) {
 		return;
 	}
 
-	const { siteId, status = 'unapproved', type = 'comment' } = query;
+	const { siteId, status = 'unapproved', type = 'comment' } = action.query;
+
+	const query = {
+		...omit( action.query, [ 'listType', 'siteId' ] ),
+		status,
+		type,
+	};
 
 	dispatch(
 		http(
@@ -152,17 +156,28 @@ export const fetchCommentsList = ( { dispatch }, action ) => {
 				method: 'GET',
 				path: `/sites/${ siteId }/comments`,
 				apiVersion: '1.1',
-				query: {
-					status,
-					type,
-				},
+				query,
 			},
 			action,
 		),
 	);
 };
 
-export const addComments = ( { dispatch }, { query: { siteId } }, next, { comments } ) => {
+export const addComments = ( { dispatch }, { query: { siteId, status } }, { comments } ) => {
+	// Initialize the comments tree to let CommentList know if a tree is actually loaded and empty.
+	// This is needed as a workaround for Jetpack sites populating their comments trees
+	// via `fetchCommentsList` instead of `fetchCommentsTreeForSite`.
+	// @see https://github.com/Automattic/wp-calypso/pull/16997#discussion_r132161699
+	if ( 0 === comments.length ) {
+		dispatch( {
+			type: COMMENTS_TREE_SITE_ADD,
+			siteId,
+			status,
+			tree: [],
+		} );
+		return;
+	}
+
 	const byPost = groupBy( comments, ( { post: { ID } } ) => ID );
 
 	forEach( byPost, ( postComments, postId ) =>
@@ -193,4 +208,4 @@ export const fetchHandler = {
 	[ COMMENT_REQUEST ]: [ dispatchRequest( requestComment, receiveCommentSuccess, receiveCommentError ) ],
 };
 
-export default mergeHandlers( fetchHandler, replies, likes, trees );
+export default mergeHandlers( fetchHandler, replies, likes );

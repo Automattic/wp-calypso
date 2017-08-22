@@ -3,8 +3,7 @@
  */
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import head from 'lodash/head';
-import values from 'lodash/values';
+import { head, values } from 'lodash';
 const debug = require( 'debug' )( 'calypso:validate-fieldset' ); // eslint-disable-line no-unused-vars
 
 /**

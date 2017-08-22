@@ -1,40 +1,48 @@
 .woocommerce {
 	flex-grow: 1;
 
-	@import 'app/products/products-list';
-	@import 'app/products/product-form';
-	@import 'app/settings/payments/style';
-	@import 'components/action-header/style';
-	@import 'components/address-view/style';
-	@import 'components/bulk-select/style';
-	@import 'components/compact-tinymce/style';
-	@import 'components/extended-header/style';
-	@import 'components/form-click-to-edit-input/style';
-	@import 'components/form-dimensions-input/style';
-	@import 'components/filtered-list/style';
-	@import 'components/process-orders-widget/style';
-	@import 'components/product-image-uploader/style';
-	@import 'app/settings/shipping/style';
-	@import 'app/settings/taxes/style';
-	@import 'components/list/style';
-	@import 'components/location-flag/style';
-	@import 'components/table/style';
 	@import 'app/dashboard/style';
 	@import 'app/order/style';
+	@import 'app/order/order-created/style';
+	@import 'app/order/order-customer/style';
+	@import 'app/order/order-details/style';
+	@import 'app/order/order-fulfillment/style';
+	@import 'app/order/order-notes/style';
+	@import 'app/order/order-refund/style';
 	@import 'app/orders/style';
-	@import 'components/order-status/style';
-	@import 'components/basic-widget/style';
-	@import 'components/share-widget/style';
-	@import 'components/reading-widget/style';
-	@import 'components/widget-group/style';
-	@import 'components/sparkline/style';
-	@import 'components/store-address/style';
-	@import 'components/delta/style';
+	@import 'app/settings/payments/style';
+	@import 'app/products/product-form';
+	@import 'app/products/products-list';
+	@import 'app/settings/shipping/style';
+	@import 'app/settings/taxes/style';
 	@import 'app/store-stats/store-stats-chart/style';
 	@import 'app/store-stats/store-stats-module/style';
 	@import 'app/store-stats/store-stats-navigation/style';
 	@import 'app/store-stats/store-stats-widget-list/style';
 	@import 'app/store-stats/style';
+
+	@import 'components/action-header/style';
+	@import 'components/address-view/style';
+	@import 'components/basic-widget/style';
+	@import 'components/bulk-select/style';
+	@import 'components/compact-tinymce/style';
+	@import 'components/delta/style';
+	@import 'components/extended-header/style';
+	@import 'components/filtered-list/style';
+	@import 'components/form-click-to-edit-input/style';
+	@import 'components/form-dimensions-input/style';
+	@import 'components/list/style';
+	@import 'components/location-flag/style';
+	@import 'components/order-status/style';
+	@import 'components/process-orders-widget/style';
+	@import 'components/product-image-uploader/style';
+	@import 'components/reading-widget/style';
+	@import 'components/share-widget/style';
+	@import 'components/sparkline/style';
+	@import 'components/store-address/style';
+	@import 'components/table/style';
+	@import 'components/widget-group/style';
+
 	@import 'woocommerce-services/style';
 
 	.components__action-header {
@@ -95,10 +103,6 @@
 .store-sidebar__sidebar {
 	display: block;
 
-	.site {
-		padding: 6px 0;
-	}
-
 	.store-sidebar__ground-control {
 		align-items: center;
 		border-bottom: 1px solid darken( $sidebar-bg-color, 10% );
@@ -117,7 +121,7 @@
 		border-left: 1px solid darken( $sidebar-bg-color, 10% );
 		display: inline-block;
 		flex-grow: 1;
-		min-height: 58px;
+		min-height: 46px;
 	}
 
 	.sidebar__menu {
@@ -179,7 +183,7 @@
 			a {
 				position: fixed;
 				z-index: 1;
-				margin-top: 10px;
+				margin-top: 4px;
 				background: transparent;
 				border: none;
 			}

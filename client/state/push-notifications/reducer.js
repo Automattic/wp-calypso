@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import omit from 'lodash/omit';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies

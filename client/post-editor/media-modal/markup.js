@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
+import { assign } from 'lodash';
 var ReactDomServer = require( 'react-dom/server' ),
 	React = require( 'react' ),
-	assign = require( 'lodash/assign' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -153,7 +153,10 @@ Markup = {
 				alt: media.alt || media.title,
 				width: isFinite( width ) ? width : null,
 				height: isFinite( height ) ? height : null,
-				className: classNames( 'align' + options.align, 'size-' + options.size, 'wp-image-' + media.ID )
+				className: classNames( 'align' + options.align, 'size-' + options.size, 'wp-image-' + media.ID ),
+				// make data-istransient a boolean att https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attribute
+				// it is false if it doesn't exist
+				'data-istransient': media.transient ? 'istransient' : null
 			} );
 
 			let markup = ReactDomServer.renderToStaticMarkup( img );

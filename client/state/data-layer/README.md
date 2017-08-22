@@ -56,15 +56,16 @@ Instead the components should be able to request that they require such data and
 
 ## Implementation
 
-The data layer _intercepts_ Redux actions.
-Once it has performed its behavior, this action will be dropped entirely from the dispatch path unless explicitly forwarded to the next middleware or dispatched again.
-This is to prevent two middlewares which can both supply a given request from fighting with each other or duplicating the request; consequently it allows for prioritization of data-fetching needs by means of ordering how the middleware are arranged in the chain.
-For example, we could start polling from the WP-API for posts but leave all other requests up to the WordPress.com API.
-Note that we can still allow multiple functions within the same middleware to handle the same action.
-The WordPress.com API middleware demonstrates this in building a tree of handlers which can all respond to given action types.
+The data layer _responds to_ Redux actions.
+Once it has performed its behavior, the original action will continue along the dispatch path to the next middleware in the chain.
+We can create multiple "handler" functions for the same action type and they will be triggered in the order they are registered when that action type dispatches.
+The WordPress.com API middleware demonstrates this in building a tree of handlers which can all respond to given data requests.
 
-Each middleware intercepts given Redux actions and will correspondingly dispatch new follow-up actions to actually handle their requests.
-The functions that compose to form the middleware _can_ and in most cases _will_ closely resemble what was previously written in `redux-thunk` actions.
+Each middleware handler can dispatch new follow-up actions to respond in some way to the original action.
+For example, they will often dispatch a new HTTP request.
+The functions that compose to form the middleware _can_ and in most cases _will_ closely resemble what was previously written in `redux-thunk` actions but in this system they will be controllable.
+That is, they are descriptions of what we want to happen which get interpreted by the data layer and possibly altered as it creates a plan to fulfill all the requests.
+It's hard to convey how much more useful it is to treat actions and [effects as data](https://www.youtube.com/watch?v=6EdXaWfoslc) rather than actually doing them<sup><a href="http://degoes.net/articles/modern-fp">1</a></sup>.
 
 The middleware should be pieced together from multiple handler functions in a logical way which encourages modularity and isolation of responsibilities.
 The data layer provides `mergeHandlers()` as a utility to support this.
@@ -78,15 +79,15 @@ The handlers are functions which take two arguments and whose return value, if a
 The type of a handler follows:
 
 ```js
-// middlewareHandler :: ReduxStore -> ReduxAction -> BypassingDispatcher -> Any
-const myHandler = ( store, action, next ) => { … }
+// middlewareHandler :: ReduxStore -> ReduxAction -> Any
+const myHandler = ( store, action ) => { … }
 ```
 
 Note that the Redux store incorporates four methods, two of which are likely to be used here.
-Also note that there is a distinction between the store's dispatcher and `next` passed in as input arguments.
 When dispatching through the store's `dispatch` function the action will start at the beginning of the entire middleware chain.
-When using `next` there will be data-layer-specific meta information added to the action which will cause all further data-layer middleware in the chain to ignore the action and pass it along untouched.
-This `next` dispatcher exists to prevent triggering endless loops inside the middleware, such as issuing an action from the middleware handler which then triggers the same handler again, which reissues a new action, etc…
+Sometimes we need to bypass the data layer so that we don't create endless loops of action dispatches.
+In these cases we can import the `local()` function which will cause the action to do just that: bypass the data layer.
+
 
 ```js
 const {
@@ -105,47 +106,53 @@ Let's look at a full example:
  * state/data-layer/wpcom/splines/index.js
  *
  * Requests splines and reticulations from API
- * and feeds the responses back into Calypso
+ *
+ * Because this uses the HTTP actions it will
+ * automatically prevent sending two or more at the
+ * same time while we're waiting for a response to
+ * come back in and it will also automatically
+ * retry if it fails (up to a certain point where
+ * it will give up and launch the failure handler)
  */
-
-const requestSplines = ( { dispatch }, action ) => {
-	wpcom
-		.splines( action.splineId )
-		.then( splines => dispatch( addSplines( splines ) ) )
-		.catch( handleErrors )
+const fetchSplines = ( { dispatch }, action ) => {
+	dispatch( http( {
+		method: 'GET',
+		apiVersion: 'v1.1',
+		path: '/splines',
+		query: {
+			site_id: action.siteId,
+		}
+	}, action ) );
 };
 
-const invalidateExisting = ( { dispatch } ) => {
-	…
+/**
+ * Take spline data from API request and inject into state
+ *
+ * If the data is invalid we can abort and announce the failure
+ */
+const addSplines = ( store, action, responseData ) => {
+	const splines = fromApi( responseData );
+	
+	if ( ! splines ) {
+		return announceFailure( store, action );
+	}
+	
+	splines.forEach( spline => dispatch( addSpline( action.siteId, spline ) ) );
 };
 
-const requestReticulations = ( store, { splineSet } ) =>
-	requestSplines( store, { type: REQUEST_SPLINES, setId: splineSet } );
+/**
+ * Notify customer that we failed to get splines for site
+ *
+ * @TODO: Explain why and provide better alternatives
+ */
+const announceFailure( { dispatch, getState }, action, error ) => {
+	const siteName = getSiteName( getState(), action.siteId );
 
-const syncChanges = ( { dispatch, getState }, action, next ) => {
-	const oldSpline = getSpline( getState(), action.spline.id );
-
-	wpcom
-		.saveSpline( action.spline )
-		.then( noop ) // no need to respond if successful
-		.catch( () => {
-			// the request failed; give up and reset the
-			// spline to the former state; bypass all
-			// further data-layer middleware by using
-			// next() instead of dispatch()
-			next( reticulateSpline( oldSpline ) );
-		} );
-
-	// pass along action to reducers
-	// and bypass all further
-	// data-layer middleware
-	next( action );
+	dispatch( createError( `Could not retrieve the splines for ${ siteName }. Please try again.` ) );
 };
 
 export default {
-	[ REQUEST_RETICULATIONS ]: [ requestReticulations ],
-	[ REQUEST_SPLINES ]: [ invalidateExisting, requestSplines ],
-	[ RETICULATE_SPLINE ]: [ syncChanges ],
+	[ SPLINES_REQUEST ]: [ dispatchRequest( fetchSplines, addSplines, announceFailure ) ],
 }
 
 // middlware.js
@@ -169,7 +176,7 @@ In some cases it might be appropriate for a certain middleware to only handle on
 The data middleware is the gateway which performs the mapping between what is natural in Calypso/JavaScript and what is natural on the other side of the data requests.
 This is the place to couple files and functions to the structure of the associated system.
 
-For example, the WordPress.com API middleware mirrors the WordPress.com API and its files should thus mirror the API's structure. The file which handles requests to the `/sites/[ siteID ]/posts` endpoint should live at `state/data-layer/wpcom/sites/posts/index.js` and the file which handles requests to the `/me` endpoint should live at `state/data-layer/wpcom/me/index.js`.
+For example, the WordPress.com API middleware mirrors the WordPress.com API and its **files should thus mirror the API's structure**. The file which handles requests to the `/sites/[ siteID ]/posts` endpoint should live at `state/data-layer/wpcom/sites/posts/index.js` and the file which handles requests to the `/me` endpoint should live at `state/data-layer/wpcom/me/index.js`.
 Each file should be responsible for a single WordPress.com endpoint, and if multiple endpoints need to be polled in response to some Redux action, then we should have one file for each endpoint and both will listen for that same action.
 
 The key principle in this directory is to match the appropriate structures and norms of each possible data provider.

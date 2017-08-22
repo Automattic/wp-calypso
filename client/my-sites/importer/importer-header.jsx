@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-import includes from 'lodash/includes';
+import { flowRight, includes } from 'lodash';
 import SocialLogo from 'social-logos';
 
 /**
@@ -12,7 +12,6 @@ import SocialLogo from 'social-logos';
 import Button from 'components/forms/form-button';
 import { appStates } from 'state/imports/constants';
 import { cancelImport, resetImport, startImport } from 'lib/importer/actions';
-import flowRight from 'lodash/flowRight';
 import { connectDispatcher } from './dispatcher-converter';
 
 /**

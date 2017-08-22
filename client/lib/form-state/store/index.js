@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import isFunction from 'lodash/isFunction';
-import reduce from 'lodash/reduce';
+import { isFunction, reduce } from 'lodash';
 
 /**
  * Internal dependencies

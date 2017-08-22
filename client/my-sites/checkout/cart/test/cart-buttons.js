@@ -4,7 +4,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import identity from 'lodash/identity';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies

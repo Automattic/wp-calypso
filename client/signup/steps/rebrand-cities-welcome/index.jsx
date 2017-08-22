@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import generateUniqueSiteUrl from './generate-unique-site-url';
+import { generateUniqueRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 
 class RebrandCitiesWelcomeStep extends Component {
 	handleSubmit = ( event ) => {
@@ -22,15 +22,13 @@ class RebrandCitiesWelcomeStep extends Component {
 			translate,
 		} = this.props;
 
-		const siteUrl = generateUniqueSiteUrl( 'site' );
-
 		SignupActions.submitSignupStep(
 			{
 				isPurchasingItem: false,
 				processingMessage: translate( 'Setting up your site' ),
+				siteUrl: generateUniqueRebrandCitiesSiteUrl(),
 				stepName,
 				stepSectionName,
-				siteUrl,
 			}
 		);
 

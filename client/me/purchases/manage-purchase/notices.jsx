@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
 import {
+	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
 	getName,
 	isExpired,
@@ -80,9 +81,19 @@ class PurchaseNotice extends Component {
 	}
 
 	renderRenewNoticeAction( onClick ) {
-		const { translate } = this.props;
+		const purchase = getPurchase( this.props );
+		const { editCardDetailsPath, translate } = this.props;
+
 		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! getSelectedSite( this.props ) ) {
 			return null;
+		}
+
+		if ( ! canExplicitRenew( purchase ) ) {
+			return (
+				<NoticeAction href={ editCardDetailsPath }>
+					{ translate( 'Enable Auto Renew' ) }
+				</NoticeAction>
+			);
 		}
 
 		return (

@@ -34,7 +34,7 @@ export function requestUnfollow( store, action ) {
  */
 export const fromApi = apiResponse => apiResponse.removed_tag;
 
-export function receiveUnfollowTag( store, action, next, apiResponse ) {
+export function receiveUnfollowTag( store, action, apiResponse ) {
 	if ( apiResponse.subscribed ) {
 		receiveError( store, action );
 		return;
@@ -47,7 +47,7 @@ export function receiveUnfollowTag( store, action, next, apiResponse ) {
 	);
 }
 
-export function receiveError( store, action, next, error ) {
+export function receiveError( store, action, error ) {
 	const errorText = translate( 'Could not unfollow tag: %(tag)s', {
 		args: { tag: action.payload.slug },
 	} );

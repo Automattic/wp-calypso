@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import page from 'page';
-import get from 'lodash/get';
+import { get } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**

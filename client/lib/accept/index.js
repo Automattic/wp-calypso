@@ -9,7 +9,7 @@ var ReactDom = require( 'react-dom' ),
  */
 var AcceptDialog = require( './dialog' );
 
-module.exports = function( message, callback, confirmButtonText, cancelButtonText ) {
+module.exports = function( message, callback, confirmButtonText, cancelButtonText, options ) {
 	var wrapper = document.createElement( 'div' );
 	document.body.appendChild( wrapper );
 
@@ -31,6 +31,7 @@ module.exports = function( message, callback, confirmButtonText, cancelButtonTex
 			onClose: onClose,
 			confirmButtonText: confirmButtonText,
 			cancelButtonText: cancelButtonText,
+			options
 		} ),
 		wrapper
 	);

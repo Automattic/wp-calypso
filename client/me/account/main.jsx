@@ -45,6 +45,7 @@ import Main from 'components/main';
 import SitesDropdown from 'components/sites-dropdown';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLanguage } from 'lib/i18n-utils';
+import { isRequestingMissingSites } from 'state/selectors';
 
 import _user from 'lib/user';
 
@@ -410,7 +411,7 @@ const Account = React.createClass( {
 	},
 
 	renderPrimarySite() {
-		const { translate } = this.props;
+		const { requestingMissingSites, translate } = this.props;
 
 		if ( ! user.get().visible_site_count ) {
 			return (
@@ -429,7 +430,7 @@ const Account = React.createClass( {
 		return (
 			<SitesDropdown
 				key={ primarySiteId }
-				isPlaceholder={ ! primarySiteId }
+				isPlaceholder={ ! primarySiteId || requestingMissingSites }
 				selectedSiteId={ primarySiteId }
 				onSiteSelect={ this.onSiteSelect }
 			/>
@@ -708,7 +709,9 @@ const Account = React.createClass( {
 
 export default compose(
 	connect(
-		null,
+		( state ) => ( {
+			requestingMissingSites: isRequestingMissingSites( state ),
+		} ),
 		dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch ),
 	),
 	localize,

@@ -7,32 +7,15 @@
 	}
 }
 
+.tag-stream__header-follow {
+	display: flex;
+	justify-content: flex-end;
+}
+
 .tag-stream__header .follow-button {
-	padding: 0;
-	position: relative;
-		top: 2px;
 
 	@include breakpoint( "<660px" ) {
-		margin: 12px 10px 0 0;
-	}
-
-	.gridicon {
-		fill: $blue-medium;
-	}
-
-	.follow-button__label {
-		color: $blue-medium;
-	}
-
-	&.is-following {
-
-		.gridicon {
-			fill: $alert-green;
-		}
-
-		.follow-button__label {
-			color: $alert-green;
-		}
+		margin: 12px 0 0 15px;
 	}
 }
 
@@ -113,7 +96,6 @@
 }
 
 // Back button in Tag streams
-
 .is-reader-page .card.header-cake {
 	background: none;
 	box-shadow: none;

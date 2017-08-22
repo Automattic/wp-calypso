@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import page from 'page';
-import includes from 'lodash/includes';
+import { includes } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**

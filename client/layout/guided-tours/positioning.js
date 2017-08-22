@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import startsWith from 'lodash/startsWith';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies

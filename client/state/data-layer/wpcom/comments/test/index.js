@@ -111,7 +111,7 @@ describe( 'wpcom-api', () => {
 					found: -1,
 				};
 
-				addComments( { dispatch }, action, null, data );
+				addComments( { dispatch }, action, data );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith( {
@@ -135,7 +135,7 @@ describe( 'wpcom-api', () => {
 					found: 2,
 				};
 
-				addComments( { dispatch }, action, null, data );
+				addComments( { dispatch }, action, data );
 
 				expect( dispatch ).to.have.been.calledTwice;
 				expect( dispatch ).to.have.been.calledWith( {

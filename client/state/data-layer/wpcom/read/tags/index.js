@@ -33,7 +33,7 @@ export function requestTags( store, action ) {
 	);
 }
 
-export function receiveTagsSuccess( store, action, next, apiResponse ) {
+export function receiveTagsSuccess( store, action, apiResponse ) {
 	let tags = fromApi( apiResponse );
 	if ( ! apiResponse || ( ! apiResponse.tag && ! apiResponse.tags ) ) {
 		receiveTagsError( store, action );
@@ -53,7 +53,7 @@ export function receiveTagsSuccess( store, action, next, apiResponse ) {
 	);
 }
 
-export function receiveTagsError( store, action, next, error ) {
+export function receiveTagsError( store, action, error ) {
 	const errorText =
 		action.payload && action.payload.slug
 			? translate( 'Could not load tag, try refreshing the page' )

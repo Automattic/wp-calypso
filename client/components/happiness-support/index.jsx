@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import sample from 'lodash/sample';
+import { sample } from 'lodash';
 
 /**
  * Internal dependencies

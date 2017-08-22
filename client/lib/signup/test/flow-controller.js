@@ -2,8 +2,7 @@
  * External dependencies
  */
 import assert from 'assert';
-import defer from 'lodash/defer';
-import ary from 'lodash/ary';
+import { ary, defer } from 'lodash';
 
 /**
  * Internal dependencies

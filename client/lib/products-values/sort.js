@@ -1,11 +1,7 @@
 /**
  * External dependencies
  */
-import difference from 'lodash/difference';
-import flatten from 'lodash/flatten';
-import groupBy from 'lodash/groupBy';
-import toPairs from 'lodash/toPairs';
-import sortBy from 'lodash/sortBy';
+import { difference, flatten, groupBy, sortBy, toPairs } from 'lodash';
 
 /**
  * Internal dependencies

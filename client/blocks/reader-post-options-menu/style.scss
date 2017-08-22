@@ -24,12 +24,17 @@
 .reader-post-options-menu__popover {
 
 	.popover__menu .follow-button {
+		color: $blue-medium;
 		padding: 9px 16px;
 
 		.gridicon {
 			position: absolute;
 				left: 17px;
 				top: 12px;
+
+			&:hover {
+				fill: $white;
+			}
 		}
 
 		&:hover,
@@ -40,23 +45,14 @@
 			.gridicon {
 				fill: $white;
 			}
-		}
 
-		&.is-following {
-
-			&:hover,
-			&:focus {
+			.follow-button__label {
 				color: $white;
-				background: $alert-green;
-
-				.gridicon {
-					fill: $white;
-				}
 			}
 		}
 	}
 
-	.popover__menu .follow-button__label {
+	.follow-button__label {
 		display: inline-block;
 		margin-left: 26px;
 	}

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import reject from 'lodash/reject';
+import { reject } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';

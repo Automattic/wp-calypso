@@ -120,6 +120,7 @@ class PreviewMain extends React.Component {
 			const action = (
 				<Button primary icon href={ site.URL } target="_blank">
 					{ translate( 'Open' ) }
+					{ ' ' }
 					<Gridicon icon="external" />
 				</Button>
 			);

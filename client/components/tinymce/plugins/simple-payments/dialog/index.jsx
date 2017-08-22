@@ -4,15 +4,17 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, isNumber, pick, noop } from 'lodash';
+import { find, isNumber, pick, noop, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSimplePayments } from 'state/selectors';
 import QuerySimplePayments from 'components/data/query-simple-payments';
@@ -23,8 +25,7 @@ import Notice from 'components/notice';
 import Navigation from './navigation';
 import ProductForm, { getProductFormValues, isProductFormValid, isProductFormDirty } from './form';
 import ProductList from './list';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getCurrencyDefaults } from 'lib/format-currency';
+import { getCurrentUserCurrencyCode, getCurrentUserEmail } from 'state/current-user/selectors';
 import wpcom from 'lib/wp';
 import accept from 'lib/accept';
 import {
@@ -35,25 +36,20 @@ import {
 	receiveUpdateProduct,
 	receiveDeleteProduct,
 } from 'state/simple-payments/product-list/actions';
-import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
+import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import TrackComponentView from 'lib/analytics/track-component-view';
+import { recordTracksEvent } from 'state/analytics/actions';
+import EmptyContent from 'components/empty-content';
+import Banner from 'components/banner';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
 
-// Selector to get the form values, insert the missing field, and convert it to
-// a custom post data structure ready to be passed to `wpcom` API.
-const productFormToCustomPost = state => {
-	const currencyCode = getCurrentUserCurrencyCode( state );
-	const formValues = getProductFormValues( state );
-
-	if ( currencyCode ) {
-		formValues.currency = currencyCode;
-	}
-
-	return productToCustomPost( formValues );
-};
+// Selector to get the form values and convert them to a custom post data structure
+// ready to be passed to `wpcom` API.
+const productFormToCustomPost = state => productToCustomPost( getProductFormValues( state ) );
 
 // Thunk action creator to create a new button
 const createPaymentButton = siteId => ( dispatch, getState ) => {
@@ -103,9 +99,9 @@ class SimplePaymentsDialog extends Component {
 		title: '',
 		description: '',
 		price: '',
+		currency: 'USD',
 		multiple: false,
 		email: '',
-		currency: 'USD',
 		featuredImageId: null,
 	};
 
@@ -159,27 +155,62 @@ class SimplePaymentsDialog extends Component {
 	// or the default values for a new one.
 	getInitialFormFields( paymentId ) {
 		const { initialFields } = this.constructor;
+		const { paymentButtons, currencyCode, currentUserEmail } = this.props;
 
 		if ( isNumber( paymentId ) ) {
-			const editedPayment = find( this.props.paymentButtons, p => p.ID === paymentId );
+			const editedPayment = find( paymentButtons, p => p.ID === paymentId );
 			if ( editedPayment ) {
 				// Pick only the fields supported by the form -- drop the rest
 				return pick( editedPayment, Object.keys( initialFields ) );
 			}
 		}
 
-		return initialFields;
+		const initialCurrency = currencyCode || 'USD';
+		const initialEmail = get( paymentButtons, '0.email', currentUserEmail );
+
+		return { ...initialFields, currency: initialCurrency, email: initialEmail };
 	}
 
 	isDirectEdit() {
 		return isNumber( this.props.editPaymentId );
 	}
 
+	checkUnsavedForm() {
+		const formIsUnsaved = this.state.activeTab === 'form' && this.props.formIsDirty;
+
+		if ( ! formIsUnsaved ) {
+			// No need to check anything, resolve to `accepted = true` right away.
+			return Promise.resolve( true );
+		}
+
+		// ask for confirmation
+		return new Promise( resolve => {
+			const { translate } = this.props;
+			accept(
+				translate( 'Wait! You have unsaved changes. Do you really want to discard them?' ),
+				resolve,
+				translate( 'Discard' ),
+				null,
+				{
+					isScary: true,
+				}
+			);
+		} );
+	}
+
+	handleDialogClose = () => {
+		// If there is a form that needs to be saved, ask for confirmation first.
+		// If not confirmed, the transition will be cancelled -- dialog remains opened.
+		this.checkUnsavedForm().then( accepted => accepted && this.props.onClose() );
+	};
+
 	handleChangeTabs = activeTab => {
 		if ( activeTab === 'form' ) {
 			this.showButtonForm( null );
 		} else {
-			this.showButtonList();
+			// If there is a form that needs to be saved, ask for confirmation first.
+			// If not confirmed, the transition will be cancelled -- tab is not switched.
+			this.checkUnsavedForm().then( accepted => accepted && this.showButtonList() );
 		}
 	};
 
@@ -213,11 +244,23 @@ class SimplePaymentsDialog extends Component {
 		if ( activeTab === 'list' ) {
 			productId = Promise.resolve( this.state.selectedPaymentId );
 		} else {
-			productId = dispatch( createPaymentButton( siteId ) ).then( newProduct => newProduct.ID );
+			productId = dispatch( createPaymentButton( siteId ) ).then( newProduct => {
+				dispatch(
+					recordTracksEvent( 'calypso_simple_payments_button_create', {
+						price: newProduct.price,
+						currency: newProduct.currency,
+						id: newProduct.ID,
+					} )
+				);
+				return newProduct.ID;
+			} );
 		}
 
 		productId
-			.then( id => this.props.onInsert( { id } ) )
+			.then( id => {
+				this.props.onInsert( { id } );
+				dispatch( recordTracksEvent( 'calypso_simple_payments_button_insert', { id } ) );
+			} )
 			.catch( () => this.showError( translate( 'The payment button could not be inserted.' ) ) )
 			.then( () => this.setIsSubmitting( false ) );
 	};
@@ -228,86 +271,96 @@ class SimplePaymentsDialog extends Component {
 		const { siteId, dispatch, translate } = this.props;
 		const { editedPaymentId } = this.state;
 
+		// On successful update, finish the edit (by going back to list or closing the dialog).
+		// On save error, show error notice and keep the form displayed.
 		dispatch( updatePaymentButton( siteId, editedPaymentId ) )
-			.then( () => {
-				// On successful update, either go back to list or close the dialog.
-				// On save error, keep the form displayed, i.e., do nothing here.
-				if ( this.isDirectEdit() ) {
-					// after changes are saved, close the dialog...
-					this.props.onClose();
-				} else {
-					// ...or return to the list
-					this.showButtonList();
-				}
-			} )
+			.then( this.handleFormClose )
 			.catch( () => this.showError( translate( 'The payment button could not be updated.' ) ) )
 			.then( () => this.setIsSubmitting( false ) );
+	};
+
+	// After the form edit is finished (either sucessfully saved or cancelled), go back where
+	// we came from: either back to the list, or close the modal.
+	handleFormClose = () => {
+		if ( this.isDirectEdit() ) {
+			this.props.onClose();
+		} else {
+			this.showButtonList();
+		}
 	};
 
 	handleTrash = paymentId => {
 		const { translate } = this.props;
 		const areYouSure = translate(
-			'Are you sure you want to permanently delete this payment button?'
+			'Are you sure you want to delete this item? It will be disabled and removed from all locations where it currently appears.'
 		);
-		accept( areYouSure, accepted => {
-			if ( ! accepted ) {
-				return;
+		accept(
+			areYouSure,
+			accepted => {
+				if ( ! accepted ) {
+					return;
+				}
+
+				this.setIsSubmitting( true );
+
+				const { siteId, dispatch } = this.props;
+
+				dispatch( recordTracksEvent( 'calypso_simple_payments_button_delete', { id: paymentId } ) );
+				dispatch( trashPaymentButton( siteId, paymentId ) )
+					.catch( () => this.showError( translate( 'The payment button could not be deleted.' ) ) )
+					.then( () => this.setIsSubmitting( false ) );
+			},
+			translate( 'Delete' ),
+			null,
+			{
+				isScary: true,
 			}
-
-			this.setIsSubmitting( true );
-
-			const { siteId, dispatch } = this.props;
-
-			dispatch( trashPaymentButton( siteId, paymentId ) )
-				.catch( () => this.showError( translate( 'The payment button could not be deleted.' ) ) )
-				.then( () => this.setIsSubmitting( false ) );
-		} );
+		);
 	};
 
 	getActionButtons() {
-		const { formCanBeSubmitted, onClose, translate } = this.props;
-		const { activeTab, isSubmitting } = this.state;
+		const { formIsValid, formIsDirty, translate } = this.props;
+		const { activeTab, editedPaymentId, isSubmitting } = this.state;
 
-		const buttons = [
-			<Button onClick={ onClose } disabled={ isSubmitting }>
-				{ translate( 'Cancel' ) }
-			</Button>,
-		];
+		const formCanBeSubmitted = formIsValid && formIsDirty;
 
-		// When editing an existing payment, show "Save" button. Otherwise, show "Insert"
-		const showSave = activeTab === 'form' && isNumber( this.state.editedPaymentId );
-		if ( showSave ) {
-			buttons.push(
-				<Button
-					onClick={ this.handleSave }
-					busy={ isSubmitting }
-					disabled={ isSubmitting || ! formCanBeSubmitted }
-					primary
-				>
-					{ translate( 'Save' ) }
-				</Button>
-			);
+		let cancelHandler, finishHandler, finishDisabled, finishLabel;
+		if ( activeTab === 'form' && isNumber( editedPaymentId ) ) {
+			// When editing an existing payment, show:
+			// - "Cancel" buttons that drops the changes and navigates back to where we came from
+			// - "Done" button that saves the changes and navigates.
+			cancelHandler = this.handleFormClose;
+			finishHandler = this.handleSave;
+			finishDisabled = ! formCanBeSubmitted;
+			finishLabel = translate( 'Done' );
 		} else {
-			const insertDisabled =
+			// Otherwise, when inserting, show:
+			// - "Cancel" button that closes the dialog
+			// - "Insert" button that inserts a shortcode and then closes the dialog
+			cancelHandler = this.props.onClose;
+			finishHandler = this.handleInsert;
+			finishDisabled =
 				( activeTab === 'form' && ! formCanBeSubmitted ) ||
 				( activeTab === 'list' && this.state.selectedPaymentId === null );
-
-			buttons.push(
-				<Button
-					onClick={ this.handleInsert }
-					busy={ isSubmitting }
-					disabled={ isSubmitting || insertDisabled }
-					primary
-				>
-					{ translate( 'Insert' ) }
-				</Button>
-			);
+			finishLabel = translate( 'Insert' );
 		}
 
-		return buttons;
+		return [
+			<Button onClick={ cancelHandler } disabled={ isSubmitting }>
+				{ translate( 'Cancel' ) }
+			</Button>,
+			<Button
+				onClick={ finishHandler }
+				busy={ isSubmitting }
+				disabled={ isSubmitting || finishDisabled }
+				primary
+			>
+				{ isSubmitting ? translate( 'Saving…' ) : finishLabel }
+			</Button>,
+		];
 	}
 
-	renderEmptyDialog( content ) {
+	renderEmptyDialog( content, disableNavigation = false ) {
 		const { onClose, translate, showDialog } = this.props;
 		return (
 			<Dialog
@@ -320,7 +373,9 @@ class SimplePaymentsDialog extends Component {
 				] }
 				additionalClassNames="editor-simple-payments-modal"
 			>
-				<Navigation activeTab={ 'list' } paymentButtons={ [] } onChangeTabs={ noop } />
+				<TrackComponentView eventName="calypso_simple_payments_dialog_view" />
+				{ ! disableNavigation &&
+					<Navigation activeTab={ 'list' } paymentButtons={ [] } onChangeTabs={ noop } /> }
 				{ content }
 			</Dialog>
 		);
@@ -333,8 +388,8 @@ class SimplePaymentsDialog extends Component {
 	render() {
 		const {
 			showDialog,
-			onClose,
 			siteId,
+			siteSlug,
 			paymentButtons,
 			currencyCode,
 			isJetpackNotSupported,
@@ -352,43 +407,57 @@ class SimplePaymentsDialog extends Component {
 
 		if ( ! shouldQuerySitePlans && isJetpackNotSupported ) {
 			return this.renderEmptyDialog(
-				<Notice
-					status="is-error"
-					text={ translate( 'Please upgrade to Jetpack 5.2 to use Simple Payments feature' ) }
-					onDismissClick={ onClose }
-				/>
+				<EmptyContent
+					className="upgrade-jetpack"
+					illustration="/calypso/images/illustrations/illustration-jetpack.svg"
+					title={ translate( 'Upgrade Jetpack to use Simple Payments' ) }
+					illustrationWidth={ 600 }
+					action={
+						<Banner
+							icon="star"
+							title={ translate( 'Upgrade your Jetpack!' ) }
+							description={ translate( 'Simple Payments requires Jetpack version 5.2 or later.' ) }
+							feature={ FEATURE_SIMPLE_PAYMENTS }
+							plan={ PLAN_PREMIUM }
+							href={ '../../plugins/jetpack/' + siteSlug }
+						/>
+					}
+				/>,
+				true
 			);
 		}
 
 		if ( ! shouldQuerySitePlans && ! planHasSimplePaymentsFeature ) {
 			return this.renderEmptyDialog(
-				<div className="editor-simple-payments-modal__nudge-wrapper">
-					<div className="editor-simple-payments-modal__nudge-title">
-						{ translate( 'Insert payment button' ) }
-					</div>
-					<div className="editor-simple-payments-modal__nudge-subtitle">
-						{ translate( 'To insert Payment Button to your site, upgrade your plan.' ) }
-					</div>
-					<UpgradeNudge
-						className="editor-simple-payments-modal__nudge-nudge"
-						title={ translate( 'Upgrade to a Premium Plan!' ) }
-						message={ translate(
-							'And get simple payments, advanced social media, your own domain, and more.'
-						) }
-						feature={ FEATURE_SIMPLE_PAYMENTS }
-						shouldDisplay={ this.returnTrue }
-					/>
-				</div>
+				<EmptyContent
+					illustration="/calypso/images/illustrations/type-e-Commerce.svg"
+					illustrationWidth={ 300 }
+					title={ translate( 'Want to add a payment button to your site?' ) }
+					action={
+						<UpgradeNudge
+							className="editor-simple-payments-modal__nudge-nudge"
+							title={ translate( 'Upgrade your plan!' ) }
+							message={ translate(
+								'Get simple payments, advanced social media tools, your own domain, and more.'
+							) }
+							feature={ FEATURE_SIMPLE_PAYMENTS }
+							event="editor_simple_payments_modal_nudge"
+							shouldDisplay={ this.returnTrue }
+						/>
+					}
+				/>,
+				true
 			);
 		}
 
 		return (
 			<Dialog
 				isVisible={ showDialog }
-				onClose={ onClose }
+				onClose={ this.handleDialogClose }
 				buttons={ this.getActionButtons() }
 				additionalClassNames="editor-simple-payments-modal"
 			>
+				<TrackComponentView eventName="calypso_simple_payments_dialog_view" />
 				<QuerySimplePayments siteId={ siteId } />
 
 				{ ( ! currencyCode || shouldQuerySitePlans ) && <QuerySitePlans siteId={ siteId } /> }
@@ -402,11 +471,7 @@ class SimplePaymentsDialog extends Component {
 				{ errorMessage &&
 					<Notice status="is-error" text={ errorMessage } onDismissClick={ this.dismissError } /> }
 				{ activeTab === 'form'
-					? <ProductForm
-							initialValues={ initialFormValues }
-							currencyDefaults={ getCurrencyDefaults( currencyCode ) }
-							showError={ this.showError }
-						/>
+					? <ProductForm initialValues={ initialFormValues } showError={ this.showError } />
 					: <ProductList
 							siteId={ siteId }
 							paymentButtons={ paymentButtons }
@@ -427,12 +492,15 @@ export default connect( ( state, { siteId } ) => {
 
 	return {
 		siteId,
+		siteSlug: getSiteSlug( state, siteId ),
 		paymentButtons: getSimplePayments( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		shouldQuerySitePlans: getSitePlanSlug( state, siteId ) === null,
 		isJetpackNotSupported:
 			isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' ),
 		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
-		formCanBeSubmitted: isProductFormValid( state ) && isProductFormDirty( state ),
+		formIsValid: isProductFormValid( state ),
+		formIsDirty: isProductFormDirty( state ),
+		currentUserEmail: getCurrentUserEmail( state ),
 	};
 } )( localize( SimplePaymentsDialog ) );

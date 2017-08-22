@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import assign from 'lodash/assign';
-import includes from 'lodash/includes';
+import { assign, includes } from 'lodash';
 
 /**
  * Internal dependencies

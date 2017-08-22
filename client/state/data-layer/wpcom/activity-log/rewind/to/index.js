@@ -31,7 +31,7 @@ const requestRestore = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const receiveRestoreSuccess = ( { dispatch }, { siteId, timestamp }, next, apiData ) => {
+export const receiveRestoreSuccess = ( { dispatch }, { siteId, timestamp }, apiData ) => {
 	const { restoreId } = fromApi( apiData );
 	if ( restoreId ) {
 		debug( 'Request restore success, restore id:', restoreId );
@@ -50,7 +50,7 @@ export const receiveRestoreSuccess = ( { dispatch }, { siteId, timestamp }, next
 	}
 };
 
-export const receiveRestoreError = ( { dispatch }, { siteId, timestamp }, next, error ) => {
+export const receiveRestoreError = ( { dispatch }, { siteId, timestamp }, error ) => {
 	debug( 'Request restore fail', error );
 	dispatch( rewindRestoreUpdateError(
 		siteId,

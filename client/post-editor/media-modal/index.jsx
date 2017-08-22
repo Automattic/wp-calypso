@@ -2,8 +2,8 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-
 import { connect } from 'react-redux';
 import {
 	findIndex,
@@ -17,6 +17,7 @@ import {
 	isEmpty,
 	identity,
 	includes,
+	uniqueId,
 } from 'lodash';
 
 /**
@@ -46,39 +47,42 @@ import VideoEditor from 'blocks/video-editor';
 import MediaModalDetail from './detail';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 
-function areMediaActionsDisabled( modalView, mediaItems ) {
-	return some( mediaItems, item =>
-		MediaUtils.isItemBeingUploaded( item ) && (
-			// Transients can't be handled by the editor if they are being
-			// uploaded via an external URL
-			! MediaUtils.isTransientPreviewable( item ) ||
-			MediaUtils.getMimePrefix( item ) !== 'image' ||
-			ModalViews.GALLERY === modalView
-		)
-	);
+function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
+	return ! isParentReady( mediaItems ) ||
+		some( mediaItems, item =>
+			MediaUtils.isItemBeingUploaded( item ) && (
+				// Transients can't be handled by the editor if they are being
+				// uploaded via an external URL
+				MediaUtils.getMimePrefix( item ) !== 'image' ||
+				! MediaUtils.isTransientPreviewable( item ) ||
+				modalView === ModalViews.GALLERY
+			)
+		);
 }
 
 export class EditorMediaModal extends Component {
 	static propTypes = {
-		visible: React.PropTypes.bool,
-		mediaLibrarySelectedItems: React.PropTypes.arrayOf( React.PropTypes.object ),
-		onClose: React.PropTypes.func,
-		site: React.PropTypes.object,
-		siteId: React.PropTypes.number,
-		labels: React.PropTypes.object,
-		single: React.PropTypes.bool,
-		defaultFilter: React.PropTypes.string,
-		enabledFilters: React.PropTypes.arrayOf( React.PropTypes.string ),
-		view: React.PropTypes.oneOf( values( ModalViews ) ),
-		setView: React.PropTypes.func,
-		resetView: React.PropTypes.func,
-		postId: React.PropTypes.number,
+		visible: PropTypes.bool,
+		mediaLibrarySelectedItems: PropTypes.arrayOf( PropTypes.object ),
+		onClose: PropTypes.func,
+		isParentReady: PropTypes.func,
+		site: PropTypes.object,
+		siteId: PropTypes.number,
+		labels: PropTypes.object,
+		single: PropTypes.bool,
+		defaultFilter: PropTypes.string,
+		enabledFilters: PropTypes.arrayOf( PropTypes.string ),
+		view: PropTypes.oneOf( values( ModalViews ) ),
+		setView: PropTypes.func,
+		resetView: PropTypes.func,
+		postId: PropTypes.number,
 	};
 
 	static defaultProps = {
 		visible: false,
 		mediaLibrarySelectedItems: Object.freeze( [] ),
 		onClose: noop,
+		isParentReady: () => true,
 		labels: Object.freeze( {} ),
 		setView: noop,
 		resetView: noop,
@@ -142,20 +146,22 @@ export class EditorMediaModal extends Component {
 	confirmSelection = () => {
 		const { view, mediaLibrarySelectedItems } = this.props;
 
-		if ( areMediaActionsDisabled( view, mediaLibrarySelectedItems ) ) {
+		if ( areMediaActionsDisabled( view, mediaLibrarySelectedItems, this.props.isParentReady ) ) {
 			return;
 		}
 
-		const value = mediaLibrarySelectedItems.length
+		if ( mediaLibrarySelectedItems.length && this.state.source !== '' ) {
+			const itemsWithTransientId = mediaLibrarySelectedItems.map(
+				( item ) => Object.assign( {}, item, { ID: uniqueId( 'media-' ) } )
+			);
+			this.copyExternal( itemsWithTransientId, this.state.source );
+		} else {
+			const value = mediaLibrarySelectedItems.length
 			? {
 				type: ModalViews.GALLERY === view ? 'gallery' : 'media',
 				items: mediaLibrarySelectedItems,
 				settings: this.state.gallerySettings
 			} : undefined;
-
-		if ( value && this.state.source !== '' ) {
-			this.copyExternal( mediaLibrarySelectedItems, this.state.source );
-		} else {
 			this.props.onClose( value );
 		}
 	};
@@ -195,21 +201,26 @@ export class EditorMediaModal extends Component {
 	};
 
 	deleteMedia = () => {
+		const { view, mediaLibrarySelectedItems, translate } = this.props;
 		let selectedCount;
 
-		if ( ModalViews.DETAIL === this.props.view ) {
+		if ( ModalViews.DETAIL === view ) {
 			selectedCount = 1;
 		} else {
-			selectedCount = this.props.mediaLibrarySelectedItems.length;
+			selectedCount = mediaLibrarySelectedItems.length;
 		}
 
-		const confirmMessage = this.props.translate(
-			'Are you sure you want to permanently delete this item?',
-			'Are you sure you want to permanently delete these items?',
+		const confirmMessage = translate(
+			'Are you sure you want to delete this item? ' +
+			'It will be permanently removed from all other locations where it currently appears.',
+			'Are you sure you want to delete these items? ' +
+			'They will be permanently removed from all other locations where they currently appear.',
 			{ count: selectedCount }
 		);
 
-		accept( confirmMessage, this.confirmDeleteMedia );
+		accept( confirmMessage, this.confirmDeleteMedia, translate( 'Delete' ), null, {
+			isScary: true
+		} );
 	};
 
 	onAddMedia = () => {
@@ -361,6 +372,11 @@ export class EditorMediaModal extends Component {
 		} );
 	};
 
+	onSourceChange = source => {
+		MediaActions.sourceChanged( this.props.site.ID );
+		this.setState( { source, search: undefined } );
+	};
+
 	onClose = () => {
 		this.props.onClose();
 	};
@@ -403,7 +419,7 @@ export class EditorMediaModal extends Component {
 		}
 
 		const selectedItems = this.props.mediaLibrarySelectedItems;
-		const isDisabled = areMediaActionsDisabled( this.props.view, selectedItems );
+		const isDisabled = areMediaActionsDisabled( this.props.view, selectedItems, this.props.isParentReady );
 		const buttons = [
 			{
 				action: 'cancel',
@@ -414,7 +430,7 @@ export class EditorMediaModal extends Component {
 		if ( this.state.source !== '' ) {
 			buttons.push( {
 				action: 'confirm',
-				label: this.props.labels.confirm || this.props.translate( 'Copy to media library' ),
+				label: this.props.translate( 'Copy to media library' ),
 				isPrimary: true,
 				disabled: isDisabled || 0 === selectedItems.length,
 				onClick: this.confirmSelection
@@ -519,6 +535,7 @@ export class EditorMediaModal extends Component {
 						onAddAndEditImage={ this.onAddAndEditImage }
 						onFilterChange={ this.onFilterChange }
 						onScaleChange={ this.onScaleChange }
+						onSourceChange={ this.onSourceChange }
 						onSearch={ this.onSearch }
 						onEditItem={ this.editItem }
 						fullScreenDropZone={ false }

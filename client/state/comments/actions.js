@@ -56,6 +56,17 @@ export function requestPostComments( {
 	};
 }
 
+/**
+ * Creates an action that request a list of comments for a given query.
+ * Except the two query properties descibed here, this function accepts all query parameters
+ * listed in the API docs:
+ * @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
+ *
+ * @param {Object} query API call parameters
+ * @param {String} query.listType Type of list to return (required as 'site')
+ * @param {Number} query.siteId Site identifier
+ * @returns {Object} Action that requests a comment list
+ */
 export const requestCommentsList = query => ( {
 	type: COMMENTS_LIST_REQUEST,
 	query,
@@ -79,13 +90,16 @@ export const requestCommentsTreeForSite = query => ( {
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
  * @param {Number|String} commentId comment or comment placeholder identifier
+ * @param {Object} options Action options
+ * @param {Boolean} options.showSuccessNotice Announce the delete success with a notice (default: true)
  * @returns {Object} action that deletes a comment
  */
-export const deleteComment = ( siteId, postId, commentId ) => ( {
+export const deleteComment = ( siteId, postId, commentId, options = { showSuccessNotice: true } ) => ( {
 	type: COMMENTS_DELETE,
 	siteId,
 	postId,
 	commentId,
+	options,
 } );
 
 /***

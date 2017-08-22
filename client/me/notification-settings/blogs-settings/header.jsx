@@ -4,8 +4,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import Immutable from 'immutable';
-import zip from 'lodash/zip';
-import includes from 'lodash/includes';
+import { includes, zip } from 'lodash';
 
 /**
  * Internal dependencies

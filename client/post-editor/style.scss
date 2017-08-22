@@ -247,3 +247,11 @@
 		max-height: 400px;
 	}
 }
+
+.post-editor__inner-content {
+	display: none;
+
+	&.is-shown {
+		display: block;
+	}
+}

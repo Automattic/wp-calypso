@@ -11,6 +11,7 @@ export const createSiteDomainObject = domain => {
 		canSetAsPrimary: Boolean( domain.can_set_as_primary ),
 		currentUserCanManage: Boolean( domain.current_user_can_manage ),
 		domain: String( domain.domain ),
+		domainLockingAvailable: Boolean( domain.domain_locking_available ),
 		expired: Boolean( domain.expired ),
 		expiry: ! domain.expiry ? null : String( domain.expiry ),
 		expirySoon: Boolean( domain.expiry_soon ),
@@ -37,5 +38,6 @@ export const createSiteDomainObject = domain => {
 		subscriptionId: domain.subscription_id,
 		transferLockOnWhoisUpdateOptional: Boolean( domain.transfer_lock_on_whois_update_optional ),
 		type: getDomainType( domain ),
+		whoisUpdateUnmodifiableFields: domain.whois_update_unmodifiable_fields,
 	};
 };

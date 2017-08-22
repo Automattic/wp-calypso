@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import React from 'react';
-import omit from 'lodash/omit';
+import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**

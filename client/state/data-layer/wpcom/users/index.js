@@ -53,10 +53,9 @@ export const fetchUsers = ( { dispatch }, action ) => {
  *
  * @param {Function} dispatch Redux dispatcher
  * @param {Object} action Redux action
- * @param {Function} next dispatches to next middleware in chain
  * @param {Array} users raw data from post revisions API
  */
-export const receiveSuccess = ( { dispatch }, action, next, users ) => {
+export const receiveSuccess = ( { dispatch }, action, users ) => {
 	const { page = 1, perPage = DEFAULT_PER_PAGE } = action;
 	const normalizedUsers = map( users, normalizeUser );
 

@@ -12,12 +12,14 @@ import page from 'page';
 import { addQueryArgs } from 'lib/url';
 import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import { isEnabled } from 'config';
+import safeProtocolUrl from 'lib/safe-protocol-url';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'gridicons';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { recordPageView, recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { login } from 'lib/paths';
+import { getOAuth2ClientData } from 'state/login/oauth2/selectors';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
@@ -29,6 +31,7 @@ export class LoginLinks extends React.Component {
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
+		oauth2ClientData: PropTypes.object,
 	};
 
 	recordBackToWpcomLinkClick = () => {
@@ -60,16 +63,37 @@ export class LoginLinks extends React.Component {
 		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
 	};
 
-	renderBackToWpcomLink() {
+	renderBackLink() {
+		const {
+			locale,
+			oauth2ClientData,
+			translate,
+		} = this.props;
+
+		let url = addLocaleToWpcomUrl( 'https://wordpress.com', locale );
+		let message = translate( 'Back to WordPress.com' );
+
+		if ( oauth2ClientData ) {
+			url = safeProtocolUrl( oauth2ClientData.url );
+			if ( ! url || url === 'http:' ) {
+				return null;
+			}
+
+			message = translate( 'Back to %(clientTitle)s', {
+				args: {
+					clientTitle: oauth2ClientData.title
+				}
+			} );
+		}
 		return (
 			<a
-				href={ addLocaleToWpcomUrl( 'https://wordpress.com', this.props.locale ) }
+				href={ url }
 				key="return-to-wpcom-link"
 				onClick={ this.recordBackToWpcomLinkClick }
 				rel="external"
 			>
 				<Gridicon icon="arrow-left" size={ 18 } />
-				{ this.props.translate( 'Back to WordPress.com' ) }
+				{ message }
 			</a>
 		);
 	}
@@ -139,19 +163,20 @@ export class LoginLinks extends React.Component {
 
 	render() {
 		return (
-			<div className="wp-login__footer">
+			<div className="wp-login__links">
 				{ this.renderLostPhoneLink() }
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
-				{ this.renderBackToWpcomLink() }
+				{ this.renderBackLink() }
 			</div>
 		);
 	}
 }
 
 const mapState = ( state ) => ( {
-	isLoggedIn: Boolean( getCurrentUserId( state ) )
+	isLoggedIn: Boolean( getCurrentUserId( state ) ),
+	oauth2ClientData: getOAuth2ClientData( state ),
 } );
 
 const mapDispatch = {

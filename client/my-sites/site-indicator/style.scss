@@ -114,6 +114,7 @@
 	.button.is-borderless.is-scary,
 	.site-indicator__action-button {
 		border-bottom: 1px solid rgba( 255, 255, 255, 0.6 );
+		border-radius: 0;
 		color: $white;
 		text-decoration: none;
 	}

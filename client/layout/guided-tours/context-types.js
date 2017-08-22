@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { PropTypes } from 'react';
+import PropTypes from 'prop-types';
 
 export default Object.freeze( {
 	branching: PropTypes.object.isRequired,

@@ -7,17 +7,13 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
-import camelCase from 'lodash/camelCase';
+import { camelCase, forOwn, kebabCase, mapKeys, values } from 'lodash';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import CreditCardFormFields from 'components/credit-card-form-fields';
 import CountriesList from 'lib/countries-list';
 import FormButton from 'components/forms/form-button';
 import formState from 'lib/form-state';
-import forOwn from 'lodash/forOwn';
-import kebabCase from 'lodash/kebabCase';
-import mapKeys from 'lodash/mapKeys';
-import values from 'lodash/values';
 import notices from 'notices';
 import { validateCardDetails } from 'lib/credit-card-details';
 import ValidationErrorList from 'notices/validation-error-list';

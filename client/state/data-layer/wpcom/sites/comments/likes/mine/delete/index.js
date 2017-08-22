@@ -28,7 +28,6 @@ export const unlikeComment = ( { dispatch }, action ) => {
 export const updateCommentLikes = (
 	{ dispatch },
 	{ siteId, postId, commentId },
-	next,
 	{ like_count },
 ) =>
 	dispatch(

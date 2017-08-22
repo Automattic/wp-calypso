@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import React, { PropTypes } from 'react';
 import { startCase } from 'lodash';
 import { connect } from 'react-redux';
@@ -12,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import DocumentHead from 'components/data/document-head';
 import LoginLinks from './login-links';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import { getOAuth2ClientData } from 'state/login/oauth2/selectors';
 import Main from 'components/main';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoginBlock from 'blocks/login';
@@ -22,8 +24,10 @@ import PrivateSite from './private-site';
 
 export class Login extends React.Component {
 	static propTypes = {
+		clientId: PropTypes.string,
 		isLoggedIn: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
+		oauth2ClientData: PropTypes.object,
 		path: PropTypes.string.isRequired,
 		privateSite: PropTypes.bool,
 		recordPageView: PropTypes.func.isRequired,
@@ -76,16 +80,54 @@ export class Login extends React.Component {
 	}
 
 	renderFooter() {
+		const { translate } = this.props;
+		const isOauthLogin = !! this.props.oauth2ClientData;
 		return (
-			<div className="wp-login__jetpack-footer">
-				<img src="/calypso/images/jetpack/powered-by-jetpack.svg" alt="Powered by Jetpack" />
+			<div
+				className={ classNames( 'wp-login__footer', {
+					'wp-login__footer--oauth': isOauthLogin,
+					'wp-login__footer--jetpack': ! isOauthLogin,
+				} ) }
+			>
+				{ isOauthLogin ? (
+					<div className="wp-login__footer-links">
+						<a
+							href="https://wordpress.com/about/"
+							rel="noopener noreferrer"
+							target="_blank"
+							title={ translate( 'About' ) }
+						>
+							{ translate( 'About' ) }
+						</a>
+						<a
+							href="https://automattic.com/privacy/"
+							rel="noopener noreferrer"
+							target="_blank"
+							title={ translate( 'Privacy' ) }
+						>
+							{ translate( 'Privacy' ) }
+						</a>
+						<a
+							href="https://wordpress.com/tos/"
+							rel="noopener noreferrer"
+							target="_blank"
+							title={ translate( 'Terms of Service' ) }
+						>
+							{ translate( 'Terms of Service' ) }
+						</a>
+					</div>
+				) : (
+					<img src="/calypso/images/jetpack/powered-by-jetpack.svg" alt="Powered by Jetpack" />
+				) }
 			</div>
 		);
 	}
 
 	renderContent() {
 		const {
+			clientId,
 			isLoggedIn,
+			oauth2ClientData,
 			privateSite,
 			socialConnect,
 			twoFactorAuthType,
@@ -102,6 +144,8 @@ export class Login extends React.Component {
 				twoFactorAuthType={ twoFactorAuthType }
 				socialConnect={ socialConnect }
 				privateSite={ privateSite }
+				clientId={ clientId }
+				oauth2ClientData={ oauth2ClientData }
 			/>
 		);
 	}
@@ -146,7 +190,8 @@ export class Login extends React.Component {
 
 export default connect(
 	( state ) => ( {
-		isLoggedIn: Boolean( getCurrentUserId( state ) )
+		isLoggedIn: Boolean( getCurrentUserId( state ) ),
+		oauth2ClientData: getOAuth2ClientData( state ),
 	} ),
 	{
 		recordPageView,

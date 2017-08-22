@@ -158,37 +158,10 @@
 	}
 }
 
-.reader-subscription-list-item .follow-button {
-	border: 0;
-	padding: 0;
+.reader-subscription-list-item .follow-button .gridicon {
 
-	.gridicon {
-		fill: $blue-medium;
-
-		@include breakpoint( "<660px" ) {
-			left: 3px;
-		}
-	}
-
-	.follow-button__label {
-		color: $blue-medium;
-	}
-
-	&.is-following {
-
-		.gridicon {
-			fill: $alert-green;
-		}
-
-		.follow-button__label {
-			color: $alert-green;
-		}
-	}
-}
-
-.reader-subscription-list-item .follow-button__label {
-	@include breakpoint( "<660px" ) {
-		display: none;
+ 	@include breakpoint( "<660px" ) {
+		left: 3px;
 	}
 }
 

@@ -252,7 +252,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Plugins' ) }
-				className={ this.itemLinkClass( '/plugins', 'plugins' ) }
+				className={ this.itemLinkClass( [ '/extensions', '/plugins' ], 'plugins' ) }
 				link={ pluginsLink }
 				onNavigate={ this.onNavigate }
 				icon="plugins"
@@ -353,7 +353,8 @@ export class MySitesSidebar extends Component {
 		const { currentUser, canUserManageOptions, isJetpack, site, siteSuffix, translate } = this.props;
 		const storeLink = '/store' + siteSuffix;
 		const showStoreLink = config.isEnabled( 'woocommerce/extension-dashboard' ) &&
-			site && isJetpack && canUserManageOptions && this.props.isSiteAutomatedTransfer;
+			site && isJetpack && canUserManageOptions &&
+			( config.isEnabled( 'woocommerce/store-on-non-atomic-sites' ) || this.props.isSiteAutomatedTransfer );
 
 		if ( ! showStoreLink ) {
 			return null;

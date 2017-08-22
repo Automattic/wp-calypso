@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import uniqBy from 'lodash/uniqBy';
+import { uniqBy } from 'lodash';
 
 /**
  * Internal Dependencies

@@ -93,19 +93,12 @@
 	}
 
 	.reader-feed-header__follow-button .follow-button {
-		padding: 0;
 
 		@include breakpoint( ">960px" ) {
 			margin-left: 20px;
-			margin-right: 0;
-		}
-
-		.gridicon {
-			fill: $blue-medium;
 		}
 
 		.follow-button__label {
-			color: $blue-medium;
 
 			@include breakpoint( "<660px" ) {
 				display: inline-block;
@@ -113,17 +106,6 @@
 
 			@include breakpoint( "<480px" ) {
 				display: none;
-			}
-		}
-
-		&.is-following {
-
-			.gridicon {
-				fill: $alert-green;
-			}
-
-			.follow-button__label {
-				color: $alert-green;
 			}
 		}
 	}

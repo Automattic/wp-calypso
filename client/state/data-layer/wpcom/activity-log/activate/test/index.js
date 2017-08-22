@@ -31,7 +31,7 @@ describe( 'activateSucceeded', () => {
 describe( 'activateFailed', () => {
 	it( 'should dispatch rewind activate failed action', () => {
 		const dispatch = sinon.spy();
-		activateFailed( { dispatch }, { siteId }, null, { message: 'some problem' } );
+		activateFailed( { dispatch }, { siteId }, { message: 'some problem' } );
 		expect( dispatch ).to.have.been.calledWith(
 			rewindActivateFailure( siteId )
 		);
@@ -39,7 +39,7 @@ describe( 'activateFailed', () => {
 
 	it( 'should dispatch an error notice', () => {
 		const dispatch = sinon.spy();
-		activateFailed( { dispatch }, { siteId }, null, { message: 'some problem' } );
+		activateFailed( { dispatch }, { siteId }, { message: 'some problem' } );
 		expect( dispatch ).to.have.been.calledWith( sinon.match( {
 			notice: {
 				status: 'is-error',

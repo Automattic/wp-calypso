@@ -108,6 +108,22 @@ describe( '#fetchPostRevisions', () => {
 			},
 		}, action ) );
 	} );
+
+	it( 'should dispatch HTTP request to page revisions endpoint', () => {
+		const action = requestPostRevisions( 12345678, 10, 'page' );
+		const dispatch = sinon.spy();
+
+		fetchPostRevisions( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.calledOnce;
+		expect( dispatch ).to.have.been.calledWith( http( {
+			method: 'GET',
+			path: '/sites/12345678/pages/10/revisions',
+			query: {
+				apiNamespace: 'wp/v2',
+			},
+		}, action ) );
+	} );
 } );
 
 describe( '#receiveSuccess', () => {
@@ -115,7 +131,7 @@ describe( '#receiveSuccess', () => {
 		const action = requestPostRevisions( 12345678, 10 );
 		const dispatch = sinon.spy();
 
-		receiveSuccess( { dispatch }, action, null, successfulPostRevisionsResponse );
+		receiveSuccess( { dispatch }, action, successfulPostRevisionsResponse );
 
 		const expectedRevisions = cloneDeep( normalizedPostRevisions );
 		forEach( expectedRevisions, revision => {
@@ -134,7 +150,7 @@ describe( '#receiveError', () => {
 		const dispatch = sinon.spy();
 		const rawError = new Error( 'Foo Bar' );
 
-		receiveError( { dispatch }, action, null, rawError );
+		receiveError( { dispatch }, action, rawError );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( receivePostRevisionsFailure( 12345678, 10, rawError ) );

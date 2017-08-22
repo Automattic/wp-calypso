@@ -10,6 +10,7 @@ import { combineReducers, createReducer } from 'state/utils';
 
 import { statsSchema } from './schema';
 import {
+	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
 	WP_SUPER_CACHE_DELETE_FILE,
 	WP_SUPER_CACHE_DELETE_FILE_FAILURE,
 	WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
@@ -55,6 +56,34 @@ const deleting = createReducer( {}, {
  */
 const items = createReducer( {}, {
 	[ WP_SUPER_CACHE_GENERATE_STATS_SUCCESS ]: ( state, { siteId, stats } ) => ( { ...state, [ siteId ]: stats } ),
+	[ WP_SUPER_CACHE_DELETE_CACHE_SUCCESS ]: ( state, { siteId, deleteExpired } ) => {
+		let emptyCache = {
+			expired: 0,
+			expired_list: {},
+		};
+
+		if ( ! deleteExpired ) {
+			emptyCache = {
+				...emptyCache,
+				cached: 0,
+				cached_list: {},
+			};
+		}
+
+		return {
+			...state,
+			[ siteId ]: {
+				supercache: {
+					...state[ siteId ].supercache,
+					...emptyCache,
+				},
+				wpcache: {
+					...state[ siteId ].wpcache,
+					...emptyCache,
+				},
+			}
+		};
+	},
 	[ WP_SUPER_CACHE_DELETE_FILE_SUCCESS ]: ( state, { siteId, url, isSupercache, isCached } ) => {
 		const cacheType = isSupercache ? 'supercache' : 'wpcache';
 		const listType = isCached ? 'cached_list' : 'expired_list';

@@ -38,7 +38,7 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.foldable-card.card.is-expanded { //original rule has this specificity
-		margin-bottom: 0;
+		margin: 0;
 	}
 
 	.foldable-card.is-expanded .foldable-card__content { //original rule has this specificity

@@ -11,11 +11,12 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_INCREMENT,
 } from 'state/action-types';
+import { local } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { errorNotice } from 'state/notices/actions';
 
-/***
+/**
  * Creates a placeholder comment for a given text and postId
  * We need placehodler id to be unique in the context of siteId, postId for that specific user,
  * date milliseconds will do for that purpose.
@@ -37,7 +38,7 @@ export const createPlaceholderComment = ( commentText, postId, parentCommentId )
 	placeholderState: 'PENDING'
 } );
 
-/***
+/**
  * Creates a placeholder comment for a given text and postId
  * We need placehodler id to be unique in the context of siteId, postId for that specific user,
  * date milliseconds will do for that purpose.
@@ -74,24 +75,23 @@ export const dispatchNewCommentRequest = ( dispatch, action, path ) => {
 	} ) );
 };
 
-/***
+/**
  * updates the placeholder comments with server values
  *
  * @param {Function} dispatch redux dispatcher
  * @param {Object}   action   redux action
- * @param {Function} next     dispatches to next middleware in chain
  * @param {Object}   comment  updated comment from the request response
  */
-export const updatePlaceholderComment = ( { dispatch }, { siteId, postId, parentCommentId, placeholderId }, next, comment ) => {
+export const updatePlaceholderComment = ( { dispatch }, { siteId, postId, parentCommentId, placeholderId }, comment ) => {
 	// remove placeholder from state
-	dispatch( { type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId } );
+	dispatch( local( { type: COMMENTS_DELETE, siteId, postId, commentId: placeholderId } ) );
 	// add new comment to state with updated values from server
 	dispatch( { type: COMMENTS_RECEIVE, siteId, postId, comments: [ comment ], skipSort: !! parentCommentId } );
 	// increment comments count
 	dispatch( { type: COMMENTS_COUNT_INCREMENT, siteId, postId } );
 };
 
-/***
+/**
  * dispatches a error notice if creating a new comment request failed
  *
  * @param {Function} dispatch redux dispatcher

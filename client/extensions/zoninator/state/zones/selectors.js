@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, values } from 'lodash';
 
 const getZonesState = ( state ) => state.extensions.zoninator.zones;
 
@@ -23,4 +23,4 @@ export const isRequestingZones = ( state, siteId ) =>
  * @return {Array}         Zones
  */
 export const getZones = ( state, siteId ) =>
-	get( getZonesState( state ), [ 'items', siteId ], [] );
+	values( get( getZonesState( state ), [ 'items', siteId ], {} ) );

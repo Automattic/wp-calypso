@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { flowRight, get, isEmpty, pick } from 'lodash';
 
@@ -10,6 +11,7 @@ import { flowRight, get, isEmpty, pick } from 'lodash';
  */
 import Button from 'components/button';
 import CacheStats from './cache-stats';
+import QueryStats from '../data/query-stats';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
@@ -85,6 +87,7 @@ class ContentsTab extends Component {
 			isGenerating,
 			isMultisite,
 			isReadOnly,
+			siteId,
 			stats,
 			translate,
 		} = this.props;
@@ -94,6 +97,7 @@ class ContentsTab extends Component {
 
 		return (
 			<div>
+				<QueryStats siteId={ siteId } />
 				<SectionHeader label={ translate( 'Cache Contents' ) } />
 				<Card compact>
 					<div>

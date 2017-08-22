@@ -27,7 +27,7 @@ export function requestCommentEmailSubscription( { dispatch }, action ) {
 	);
 }
 
-export function receiveCommentEmailSubscription( store, action, next, response ) {
+export function receiveCommentEmailSubscription( store, action, response ) {
 	// validate that it worked
 	const subscribed = !! ( response && response.subscribed );
 	if ( ! subscribed ) {

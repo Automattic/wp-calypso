@@ -2,9 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import isEmpty from 'lodash/isEmpty';
-import includes from 'lodash/includes';
-import map from 'lodash/map';
+import { includes, isEmpty, map } from 'lodash';
 const debug = require( 'debug' )( 'calypso:steps:site' ); // eslint-disable-line no-unused-vars
 /**
  * Internal dependencies

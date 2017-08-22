@@ -65,7 +65,7 @@ export function requestPage( store, action ) {
 
 const MAX_PAGES_TO_FETCH = MAX_ITEMS / ITEMS_PER_PAGE;
 
-export function receivePage( store, action, next, apiResponse ) {
+export function receivePage( store, action, apiResponse ) {
 	if ( ! isValidApiResponse( apiResponse ) ) {
 		receiveError( store );
 		return;

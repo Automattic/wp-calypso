@@ -32,7 +32,7 @@ export function requestPostEmailSubscription( { dispatch }, action ) {
 	);
 }
 
-export function receivePostEmailSubscription( store, action, next, response ) {
+export function receivePostEmailSubscription( store, action, response ) {
 	// validate that it worked
 	const subscribed = !! ( response && response.subscribed );
 	if ( ! subscribed ) {

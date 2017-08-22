@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import pickBy from 'lodash/pickBy';
+import { pickBy } from 'lodash';
 
 /**
  * Internal dependencies

@@ -1,0 +1,32 @@
+.order-customer {
+	.order-customer__billing-details,
+	.order-customer__shipping-details {
+		margin-bottom: 16px;
+		color: $gray-text-min;
+		font-size: 12px;
+		text-transform: uppercase;
+	}
+	
+	.order-customer__shipping-details {
+		margin-top: 32px;
+	}
+
+	h4 {
+		font-weight: bold;
+	}
+
+	.order-customer__shipping {
+		.order__shipping-address {
+			margin-bottom: 0;
+		}
+	}
+
+	.order-customer__billing-address,
+	.order-customer__shipping-address {
+		margin-bottom: 1.5em;
+
+		p {
+			margin-bottom: 0;
+		}
+	}
+}

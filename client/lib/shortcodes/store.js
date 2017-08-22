@@ -2,8 +2,7 @@
  * External dependencies
  */
 import { ReduceStore } from 'flux/utils';
-import pickBy from 'lodash/pickBy';
-import intersection from 'lodash/intersection';
+import { intersection, pickBy } from 'lodash';
 
 /**
  * Internal dependencies

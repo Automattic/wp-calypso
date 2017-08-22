@@ -3,9 +3,8 @@
  * External Dependencies
  */
 import React, { Component } from 'react';
-import map from 'lodash/map';
+import { identity, map } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
 
 /**
  * Internal Dependencies

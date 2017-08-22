@@ -7,7 +7,7 @@ import classnames from 'classnames';
 import { omit } from 'lodash';
 
 /**
- * External Dependencies
+ * Internal Dependencies
  */
 import Popover from 'components/popover';
 

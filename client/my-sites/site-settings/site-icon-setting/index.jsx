@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { uniqueId, head, partial, partialRight, isEqual, flow, compact, includes } from 'lodash';
+import { head, partial, partialRight, isEqual, flow, compact, includes, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -215,6 +215,10 @@ class SiteIconSetting extends Component {
 		asyncRequire( 'post-editor/media-modal' );
 	}
 
+	isParentReady( selectedMedia ) {
+		return ! selectedMedia.some( item => item.external );
+	}
+
 	render() {
 		const { isJetpack, isPrivate, iconUrl, customizerUrl, generalOptionsUrl, siteSupportsImageEditor } = this.props;
 		const { isModalVisible, hasToggledModal, isEditingSiteIcon } = this.state;
@@ -293,6 +297,7 @@ class SiteIconSetting extends Component {
 							) }
 							siteId={ siteId }
 							onClose={ this.editSelectedMedia }
+							isParentReady={ this.isParentReady }
 							enabledFilters={ [ 'images' ] }
 							{ ...( isEditingSiteIcon ? {
 								imageEditorProps: {

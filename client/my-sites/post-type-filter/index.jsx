@@ -3,9 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import reduce from 'lodash/reduce';
-import find from 'lodash/find';
-import includes from 'lodash/includes';
+import { find, includes, reduce } from 'lodash';
 
 /**
  * Internal dependencies

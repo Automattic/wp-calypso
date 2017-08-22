@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import intersection from 'lodash/intersection';
+import { intersection } from 'lodash';
 import debugFactory from 'debug';
 
 /**

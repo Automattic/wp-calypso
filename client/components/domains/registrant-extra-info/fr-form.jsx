@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { defaults, noop } from 'lodash';
+import { defaults, get, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 
@@ -19,14 +19,12 @@ import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
+let defaultRegistrantType;
 
 // If we set a field to null, react decides it's uncontrolled and complains
 // and we don't particularly want to make the parent remember all our fields
 // so we use these values to plug missing.
 const emptyValues = {
-	countryOfBirth: '',
-	placeOfBirth: '',
-	postalCodeOfBirth: '',
 	registrantVatId: '',
 	sirenSiret: '',
 	trademarkNumber: '',
@@ -34,25 +32,24 @@ const emptyValues = {
 
 class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
-		countriesList: PropTypes.object.isRequired,
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
 	}
 
 	static defaultProps = {
-		countriesList: { data: [] },
 		isVisible: true,
 		onSubmit: noop,
 	}
 
 	componentWillMount() {
 		// We're pushing props out into the global state here because:
-		// 1) We want to use these values if the user immediately hits submit
+		// 1) We want to use these values if the user navigates unexpectedly then returns
 		// 2) We want to use the tld specific forms to manage the tld specific
 		//    fields so we can keep them together in one place
+		defaultRegistrantType = this.props.contactDetails.organization ? 'organization' : 'individual';
+
 		this.props.updateContactDetailsCache( { extra: {
-			registrantType: this.props.contactDetails.organization ? 'organization' : 'individual',
-			countryOfBirth: this.props.contactDetails.countryCode || 'FR'
+			registrantType: defaultRegistrantType
 		} } );
 	}
 
@@ -65,7 +62,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 	render() {
 		const translate = this.props.translate;
-		const registrantType = this.props.contactDetails.extra.registrantType;
+		const registrantType = get( this.props.contactDetails, 'extra.registrantType', defaultRegistrantType );
 		return (
 			<form className="registrant-extra-info__form">
 				<p className="registrant-extra-info__form-desciption">

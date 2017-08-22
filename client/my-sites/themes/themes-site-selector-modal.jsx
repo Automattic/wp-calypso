@@ -4,9 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
-import defer from 'lodash/defer';
-import omit from 'lodash/omit';
-import mapValues from 'lodash/mapValues';
+import { defer, mapValues, omit } from 'lodash';
 
 /**
  * Internal dependencies

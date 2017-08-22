@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
@@ -54,7 +55,7 @@ class App extends Component {
 
 		if ( 'wpcalypso' !== config( 'env_id' ) && 'development' !== config( 'env_id' ) ) {
 			// Show stats page for non Atomic sites for now
-			if ( ! isAtomicSite ) {
+			if ( ! isAtomicSite && ! config.isEnabled( 'woocommerce/store-on-non-atomic-sites' ) ) {
 				this.redirect();
 				return null;
 			}

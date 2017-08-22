@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	isFunction = require( 'lodash/isFunction' );
 import debug from 'debug';
+import { isFunction } from 'lodash';
+const React = require( 'react' );
 
 /**
  * Internal dependencies

@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
+import { property, sortBy } from 'lodash';
 var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
-	classnames = require( 'classnames' ),
-	property = require( 'lodash/property' ),
-	sortBy = require( 'lodash/sortBy' );
+	classnames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -168,6 +167,7 @@ Layout = React.createClass( {
 					isActive={ translator.isActivated() } />
 				{ this.renderPreview() }
 				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
+				{ 'development' === process.env.NODE_ENV && <AsyncLoad require="components/webpack-build-monitor" /> }
 				<AppBanner />
 			</div>
 		);

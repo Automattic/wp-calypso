@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import assign from 'lodash/assign';
+import { assign, flowRight, pick } from 'lodash';
+
 import i18n from 'i18n-calypso';
-import pick from 'lodash/pick';
-import flowRight from 'lodash/flowRight';
 import Dispatcher from 'dispatcher';
 import { action as upgradesActionTypes } from 'lib/upgrades/constants';
 import debugFactory from 'debug';

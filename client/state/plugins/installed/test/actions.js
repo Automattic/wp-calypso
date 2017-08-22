@@ -95,7 +95,8 @@ describe( 'actions', () => {
 			return Promise.all( responses ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGINS_RECEIVE,
-					siteId: 2916284
+					siteId: 2916284,
+					data: [ akismet, helloDolly, jetpack ]
 				} );
 			} );
 		} );
@@ -106,7 +107,6 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGINS_REQUEST_SUCCESS,
 					siteId: 2916284,
-					data: [ akismet, helloDolly, jetpack ]
 				} );
 			} );
 		} );

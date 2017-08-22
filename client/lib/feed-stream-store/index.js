@@ -1,8 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
-import { forEach, map, random, startsWith } from 'lodash';
-
+import { filter, find, forEach, isEqual, map, random, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -13,6 +13,7 @@ import PagedStream from './paged-stream';
 import FeedStreamCache from './feed-stream-cache';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
+import { keyToString, keysAreEqual } from './post-key';
 
 const wpcomUndoc = wpcom.undocumented();
 
@@ -58,7 +59,7 @@ const conversationsKeyMaker = ( function() {
 	const baseMaker = buildNamedKeyMaker( 'last_comment_date_gmt' );
 	return function keyMaker( post ) {
 		const key = baseMaker( post );
-		key.comments = map( post.comments, 'ID' );
+		key.comments = map( post.comments, 'ID' ).reverse();
 		return key;
 	};
 } )();
@@ -69,6 +70,27 @@ function conversationsPager( params ) {
 	delete params.before;
 	delete params.after;
 	params.page_handle = this.lastPageHandle;
+}
+
+function filterConversationsPosts( posts ) {
+	// turn the new ones into post keys
+	const newPosts = map( posts, this.keyMaker );
+	return filter( newPosts, post => {
+		// only keep things that we don't have or things that have new comments
+		if ( ! this.postById.has( keyToString( post ) ) ) {
+			return true; // new new
+		}
+		const existingPost = find( this.postKeys, postKey => keysAreEqual( postKey, post ) );
+		if ( ! existingPost ) {
+			// this should never happen
+			return true;
+		}
+
+		if ( isEqual( existingPost.comments, post.comments ) ) {
+			return false;
+		}
+		return true;
+	} );
 }
 
 function addMetaToNextPageFetch( params ) {
@@ -327,6 +349,8 @@ export default function feedStoreFactory( storeId ) {
 			onGapFetch: limitSiteParamsForConversations,
 			dateProperty: 'last_comment_date_gmt',
 		} );
+		// monkey patching is the best patching
+		store.filterNewPosts = filterConversationsPosts;
 	} else if ( storeId === 'conversations-a8c' ) {
 		store = new FeedStream( {
 			id: storeId,
@@ -337,6 +361,9 @@ export default function feedStoreFactory( storeId ) {
 			onGapFetch: limitSiteParamsForConversations,
 			dateProperty: 'last_comment_date_gmt',
 		} );
+
+		// monkey patching is the best patching
+		store.filterNewPosts = filterConversationsPosts;
 	} else if ( storeId === 'a8c' ) {
 		store = new FeedStream( {
 			id: storeId,

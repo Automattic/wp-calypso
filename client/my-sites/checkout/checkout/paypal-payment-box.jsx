@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import { some } from 'lodash';
 import classnames from 'classnames';
-var assign = require( 'lodash/assign' ),
-	React = require( 'react' );
+import { assign, some } from 'lodash';
+const React = require( 'react' );
 
 /**
  * Internal dependencies

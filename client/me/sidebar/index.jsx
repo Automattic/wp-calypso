@@ -51,9 +51,13 @@ const MeSidebar = React.createClass( {
 		}
 
 		if ( config.isEnabled( 'login/wp-login' ) ) {
-			this.props.logoutUser( redirect ).then( ( { redirect_to } ) => {
-				user.clear( () => location.href = redirect_to || '/' );
-			} );
+			this.props.logoutUser( redirect )
+				.then(
+					( { redirect_to } ) => user.clear( () => location.href = redirect_to || '/' ),
+					// The logout endpoint might fail if the nonce has expired.
+					// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
+					() => userUtilities.logout( redirect )
+				);
 		} else {
 			userUtilities.logout( redirect );
 		}
@@ -65,9 +69,10 @@ const MeSidebar = React.createClass( {
 		const { context } = this.props;
 		const filterMap = {
 			'/me': 'profile',
-			'/me/security/two-step': 'security',
-			'/me/security/connected-applications': 'security',
 			'/me/security/account-recovery': 'security',
+			'/me/security/connected-applications': 'security',
+			'/me/security/social-login': 'security',
+			'/me/security/two-step': 'security',
 			'/me/notifications/comments': 'notifications',
 			'/me/notifications/updates': 'notifications',
 			'/me/notifications/subscriptions': 'notifications',

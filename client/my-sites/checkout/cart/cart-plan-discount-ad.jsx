@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import find from 'lodash/find';
+import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 

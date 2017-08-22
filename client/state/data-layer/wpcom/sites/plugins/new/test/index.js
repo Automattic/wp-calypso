@@ -58,7 +58,7 @@ describe( 'uploadPlugin', () => {
 describe( 'uploadComplete', () => {
 	it( 'should dispatch plugin upload complete action', () => {
 		const dispatch = sinon.spy();
-		uploadComplete( { dispatch }, { siteId }, null, SUCCESS_RESPONSE );
+		uploadComplete( { dispatch }, { siteId }, SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
 			completePluginUpload( siteId, pluginId )
 		);
@@ -66,7 +66,7 @@ describe( 'uploadComplete', () => {
 
 	it( 'should dispatch plugin install request success', () => {
 		const dispatch = sinon.spy();
-		uploadComplete( { dispatch }, { siteId }, null, SUCCESS_RESPONSE );
+		uploadComplete( { dispatch }, { siteId }, SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith( {
 			type: PLUGIN_INSTALL_REQUEST_SUCCESS,
 			siteId,
@@ -79,7 +79,7 @@ describe( 'uploadComplete', () => {
 describe( 'receiveError', () => {
 	it( 'should dispatch plugin upload error', () => {
 		const dispatch = sinon.spy();
-		receiveError( { dispatch }, { siteId }, null, ERROR_RESPONSE );
+		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
 			pluginUploadError( siteId, ERROR_RESPONSE )
 		);
@@ -89,7 +89,7 @@ describe( 'receiveError', () => {
 describe( 'updateUploadProgress', () => {
 	it( 'should dispatch plugin upload progress update', () => {
 		const dispatch = sinon.spy();
-		updateUploadProgress( { dispatch }, { siteId }, null, { loaded: 200, total: 400 } );
+		updateUploadProgress( { dispatch }, { siteId }, { loaded: 200, total: 400 } );
 		expect( dispatch ).to.have.been.calledWith(
 			updatePluginUploadProgress( siteId, 50 )
 		);

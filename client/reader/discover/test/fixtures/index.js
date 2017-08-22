@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'lodash';
 
 export const discoverSiteId = 53424024;
 
