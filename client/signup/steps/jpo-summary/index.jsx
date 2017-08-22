@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import get from 'lodash/get';
@@ -14,6 +15,8 @@ import StepWrapper from 'signup/step-wrapper';
 import Button from 'components/button';
 import { translate } from 'i18n-calypso';
 import { setJPOSummary } from 'state/signup/steps/jpo-summary/actions';
+import { updateSettings } from 'state/jetpack/settings/actions';
+import { isUpdatingJetpackSettings } from 'state/selectors';
 
 class JPOSummaryStep extends React.Component {
 
@@ -23,45 +26,69 @@ class JPOSummaryStep extends React.Component {
 		positionInFlow: PropTypes.number,
 		setJPOSummary: PropTypes.func.isRequired,
 		signupProgress: PropTypes.array,
-		stepName: PropTypes.string
+		stepName: PropTypes.string,
+		signupDependencies: PropTypes.shape( {
+			jpoSiteTitle: PropTypes.shape( {
+				siteTitle: PropTypes.string,
+				siteDescription: PropTypes.string
+			} ),
+			jpoSiteType: PropTypes.shape( {
+				genre: PropTypes.string,
+				businessPersonal: PropTypes.string,
+				businessName: PropTypes.string,
+				businessAddress: PropTypes.string,
+				businessCity: PropTypes.string,
+				businessState: PropTypes.string,
+				businessZipCode: PropTypes.string,
+			} ),
+			jpoHomepage: PropTypes.string,
+			jpoContactForm: PropTypes.bool,
+			jpoConnect: PropTypes.object.isRequired
+		} ).isRequired,
+		isSavingSettings: PropTypes.bool
 	};
 
 	constructor( props ) {
 		super( props );
-		this.getFormattedPayload = this.getFormattedPayload.bind( this );
+		this.state = {
+			written: false
+		};
+		this.getOnboardingChoices = this.getOnboardingChoices.bind( this );
 		this.completeOnboarding = this.completeOnboarding.bind( this );
 		this.renderStepContent = this.renderStepContent.bind( this );
 	}
 
-	getFormattedPayload() {
-		const payload = this.props.signupProgress;
+	getOnboardingChoices() {
+		const data = this.props.signupDependencies;
 		return {
-			siteTitle: get( payload[ 0 ], [ 'jpoSiteTitle', 'siteTitle' ], '' ),
-			siteDescription: get( payload[ 0 ], [ 'jpoSiteTitle', 'siteDescription' ], '' ),
-			businessPersonal: get( payload[ 1 ], [ 'jpoSiteType', 'businessPersonal' ], '' ),
-			genre: get( payload[ 1 ], [ 'jpoSiteType', 'genre' ], '' ),
-			businessName: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'businessName' ], '' ),
-			businessAddress: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'streetAddress' ], '' ),
-			businessCity: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'city' ], '' ),
-			businessState: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'state' ], '' ),
-			businessZipCode: get( payload[ 1 ], [ 'jpoSiteType', 'addressInfo', 'zipCode' ], '' ),
-			homepageFormat: get( payload[ 2 ], 'jpoHomepage', '' ),
-			addContactForm: get( payload[ 3 ], 'jpoContactForm', '' )
+			onboarding: {
+				siteTitle: get( data, [ 'jpoSiteTitle', 'siteTitle' ], '' ),
+				siteDescription: get( data, [ 'jpoSiteTitle', 'siteDescription' ], '' ),
+
+				genre: get( data, [ 'jpoSiteType', 'genre' ], '' ),
+				businessPersonal: get( data, [ 'jpoSiteType', 'businessPersonal' ], '' ),
+				businessName: get( data, [ 'jpoSiteType', 'addressInfo', 'businessName' ], '' ),
+				businessAddress: get( data, [ 'jpoSiteType', 'addressInfo', 'streetAddress' ], '' ),
+				businessCity: get( data, [ 'jpoSiteType', 'addressInfo', 'city' ], '' ),
+				businessState: get( data, [ 'jpoSiteType', 'addressInfo', 'state' ], '' ),
+				businessZipCode: get( data, [ 'jpoSiteType', 'addressInfo', 'zipCode' ], '' ),
+
+				homepageFormat: get( data, 'jpoHomepage', '' ),
+
+				addContactForm: get( data, 'jpoContactForm', false )
+			}
 		};
 	}
 
 	completeOnboarding() {
-		// Get the payload and original JPC url
-		const payload = this.getFormattedPayload();
+		this.setState( {
+			written: true
+		} );
 
-		// Flag the flow as complete for use in JPC
-		localStorage.setItem( 'jpoFlowComplete', '1' );
-
-		// Store the payload in localStorage for use after Jetpack is connected
-		localStorage.setItem( 'jpoPayload', JSON.stringify( payload ) );
-
-		// Redirect to the original JPC URL
-		page.redirect( '/jetpack/connect/plans/' + get( this.props.signupDependencies, [ 'jpoConnect', 'siteSlug' ] ) );
+		this.props.updateSettings(
+			get( this.props.signupDependencies, [ 'jpoConnect', 'queryObject', 'client_id' ], -1 ),
+			this.getOnboardingChoices()
+		);
 	}
 
 	renderStepContent() {
@@ -171,12 +198,26 @@ class JPOSummaryStep extends React.Component {
 				<div>
 					<Button primary onClick={ this.completeOnboarding }>
 						{
-							translate( 'Visit your site' )
+							this.props.isSavingSettings
+								? translate( 'Saving…' )
+								: translate( 'Save and finish' )
 						}
 					</Button>
 				</div>
 			</div>
 		);
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.state.written && ! nextProps.isSavingSettings ) {
+			page.redirect( '/jetpack/connect/plans/' + get( this.props.signupDependencies, [ 'jpoConnect', 'siteSlug' ] ) );
+			return false;
+		}
+		return true;
+	}
+
+	shouldComponentUpdate( nextProps, nextState ) {
+		return nextProps.isSavingSettings && nextState.written;
 	}
 
 	render() {
@@ -199,7 +240,7 @@ class JPOSummaryStep extends React.Component {
 					fallbackSubHeaderText={ subHeaderText }
 					signupProgress={ this.props.signupProgress }
 					stepContent={ this.renderStepContent() }
-					goToNextStep={ false }
+					shouldHideNavButtons={ true }
 				/>
 			</div>
 		);
@@ -207,6 +248,14 @@ class JPOSummaryStep extends React.Component {
 }
 
 export default connect(
-	null,
-	{ setJPOSummary }
+	state => {
+		const siteId = parseInt( get( state.signup.dependencyStore, [ 'jpoConnect', 'queryObject', 'client_id' ], -1 ) );
+		return {
+			isSavingSettings: isUpdatingJetpackSettings( state, siteId )
+		};
+	},
+	{
+		setJPOSummary,
+		updateSettings
+	}
 )( JPOSummaryStep );
