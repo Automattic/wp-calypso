@@ -44,7 +44,7 @@ export const handleActivityLogRequest = ( { dispatch }, action ) => {
 	dispatch(
 		http(
 			{
-				apiVersion: '1',
+				apiNamespace: 'wpcom/v2',
 				method: 'GET',
 				path: `/sites/${ siteId }/activity`,
 				query,
