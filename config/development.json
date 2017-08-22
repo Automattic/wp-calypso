@@ -42,7 +42,7 @@
 		"comments/moderation-tools-in-posts": true,
 		"comments/management": true,
 		"comments/management/all-list": false,
-		"manage/comments/bulk-actions": false,
+		"manage/comments/bulk-actions": true,
 		"css-hot-reload": true,
 		"desktop-promo": true,
 		"devdocs": true,

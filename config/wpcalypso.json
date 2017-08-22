@@ -19,7 +19,7 @@
 		"apple-pay": true,
 		"comments/management": true,
 		"comments/management/all-list": false,
-		"manage/comments/bulk-actions": false,
+		"manage/comments/bulk-actions": true,
 		"catch-js-errors": true,
 		"code-splitting": true,
 		"desktop-promo": true,
