@@ -8,40 +8,41 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Steps } from '../constants';
 import Button from 'components/button';
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import ExternalLink from 'components/external-link';
 import SectionHeader from 'components/section-header';
 
 class Intro extends Component {
-	skipSetup = () => this.props.goToStep( Steps.CONFIRMATION );
+	static propTypes = {
+		translate: PropTypes.func.isRequired,
+	};
 
 	render() {
 		const { translate } = this.props;
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Setup Wizard Introduction' ) } />
-				<Card>
+				<SectionHeader label={ translate( 'Welcome to the Setup Wizard!' ) } />
+				<CompactCard>
 					<p>
 						{ translate(
-							'Thanks for installing {{em}}WP Job Manager{{/em}}!',
+							'Thanks for installing {{em}}WP Job Manager{{/em}}! Let\'s get your site ready to accept job listings.',
 							{ components: { em: <em /> } }
 						) }
 					</p>
 
 					<p>
 						{ translate(
-							'This setup wizard will help you get started by creating the pages for job submission, ' +
-							'job management, and listing your jobs.'
+							'This setup wizard will walk you through the process of creating pages for job submissions, ' +
+							'management, and listings.'
 						) }
 					</p>
 
 					<p>
 						{ translate(
-							'If you want to skip the wizard and setup the pages and shortcodes yourself manually, ' +
-							'the process is still relatively simple. Refer to the {{docs}}documentation{{/docs}} for help.',
+							'If you\'d prefer to skip this and set up your pages manually, our {{docs}}documentation{{/docs}} ' +
+							'will walk you through each step.',
 							{
 								components: {
 									docs: (
@@ -55,19 +56,22 @@ class Intro extends Component {
 							}
 						) }
 					</p>
-					<Button compact
-						onClick={ this.skipSetup }>
-						{ translate( 'Skip setup. I will set up the plugin manually' ) }
+				</CompactCard>
+
+				<CompactCard>
+					<a
+						className="intro__skip-setup"
+						href="#">
+						{ translate( 'Skip setup. I will set up the plugin manually.' ) }
+					</a>
+					<Button primary
+						className="intro__continue">
+						{ translate( 'Continue' ) }
 					</Button>
-				</Card>
+				</CompactCard>
 			</div>
 		);
 	}
 }
-
-Intro.propTypes = {
-	goToStep: PropTypes.func.isRequired,
-	translate: PropTypes.func.isRequired,
-};
 
 export default localize( Intro );
