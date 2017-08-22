@@ -5,6 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -27,6 +28,7 @@ function renderAffix( currencyValue, onCurrencyChange, currencyList, visualCurre
 	return (
 		<span className="form-currency-input__affix">
 			{ ( visualCurrencyList && visualCurrencyList[ currencyValue ] ) || currencyValue }
+			<Gridicon icon="chevron-down" size={ 18 } className="form-currency-input__select-icon" />
 			<select
 				className="form-currency-input__select"
 				value={ currencyValue }
