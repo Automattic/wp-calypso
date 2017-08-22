@@ -30,9 +30,9 @@ class LoggedOutForm extends Component {
 		jetpackConnectAuthorize: PropTypes.shape( {
 			bearerToken: PropTypes.string,
 			isAuthorizing: PropTypes.bool,
-			queryObject: PropTypes.object,
+			queryObject: PropTypes.object.isRequired,
 			userData: PropTypes.object,
-		} ),
+		} ).isRequired,
 		locale: PropTypes.string,
 		path: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -43,7 +43,7 @@ class LoggedOutForm extends Component {
 	}
 
 	getRedirectAfterLoginUrl() {
-		const queryObject = get( this.props, 'jetpackConnectAuthorize.queryObject', {} );
+		const { queryObject } = this.props.jetpackConnectAuthorize;
 		return addQueryArgs( queryObject, window.location.href );
 	}
 
@@ -57,23 +57,21 @@ class LoggedOutForm extends Component {
 	}
 
 	renderLoginUser() {
-		if ( this.props.jetpackConnectAuthorize ) {
-			const { userData, bearerToken } = this.props.jetpackConnectAuthorize;
+		const { userData, bearerToken } = this.props.jetpackConnectAuthorize;
 
-			return (
-				<WpcomLoginForm
-					log={ userData.username }
-					authorization={ 'Bearer ' + bearerToken }
-					redirectTo={ this.getRedirectAfterLoginUrl() } />
-			);
-		}
+		return (
+			<WpcomLoginForm
+				log={ userData.username }
+				authorization={ 'Bearer ' + bearerToken }
+				redirectTo={ this.getRedirectAfterLoginUrl() } />
+		);
 	}
 
 	renderFormHeader() {
 		const { translate, isAlreadyOnSitesList } = this.props;
 		const headerText = translate( 'Create your account' );
 		const subHeaderText = translate( 'You are moments away from connecting your site.' );
-		const queryObject = get( this.props, 'jetpackConnectAuthorize.queryObject', {} );
+		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const siteCard = versionCompare( queryObject.jp_version, '4.0.3', '>' )
 			? <SiteCard queryObject={ queryObject } isAlreadyOnSitesList={ isAlreadyOnSitesList } />
 			: null;
@@ -112,6 +110,7 @@ class LoggedOutForm extends Component {
 			isAuthorizing,
 			userData,
 		} = this.props.jetpackConnectAuthorize;
+
 		return (
 			<div>
 				{ this.renderLocaleSuggestions() }
