@@ -5,8 +5,7 @@
  * External dependencies
  */
 import React from 'react';
-// eslint-disable-next-line wpcalypso/import-no-redux-combine-reducers
-import { combineReducers, createStore } from 'redux';
+import { createStore } from 'redux';
 import classNames from 'classnames';
 import { find, includes, startsWith, identity } from 'lodash';
 
@@ -14,6 +13,7 @@ import { find, includes, startsWith, identity } from 'lodash';
  * Internal dependencies
  */
 import Spinner from 'components/spinner';
+import { combineReducers } from 'state/utils';
 
 // Action dispatched by wrapped console
 const CONSOLE_MESSAGE = 'CONSOLE_MESSAGE';
