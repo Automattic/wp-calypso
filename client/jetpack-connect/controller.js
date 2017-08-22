@@ -94,6 +94,15 @@ export default {
 					localStorage.setItem( 'jpoConnectUrl', context.path );
 				}
 
+				// Save query object
+				if ( ! isEmpty( context.query ) && context.query.redirect_uri ) {
+					debug( 'set initial query object in JPO', context.query );
+					context.store.dispatch( {
+						type: JETPACK_CONNECT_QUERY_SET,
+						queryObject: context.query
+					} );
+				}
+
 				// Do the redirect
 				return page.redirect( '/start/jetpack-onboarding/' );
 				/**

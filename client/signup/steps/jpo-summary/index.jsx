@@ -53,7 +53,6 @@ class JPOSummaryStep extends React.Component {
 	completeOnboarding() {
 		// Get the payload and original JPC url
 		const payload = this.getFormattedPayload();
-		const jetpackConnectUrl = localStorage.getItem( 'jpoConnectUrl' );
 
 		// Flag the flow as complete for use in JPC
 		localStorage.setItem( 'jpoFlowComplete', '1' );
@@ -62,7 +61,7 @@ class JPOSummaryStep extends React.Component {
 		localStorage.setItem( 'jpoPayload', JSON.stringify( payload ) );
 
 		// Redirect to the original JPC URL
-		page.redirect( jetpackConnectUrl );
+		page.redirect( '/jetpack/connect/plans/' + get( this.props.signupDependencies, [ 'jpoConnect', 'siteSlug' ] ) );
 	}
 
 	renderStepContent() {
