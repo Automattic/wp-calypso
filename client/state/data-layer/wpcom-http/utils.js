@@ -4,6 +4,12 @@
 import { get, noop } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import { TRACK_REQUEST } from 'state/action-types';
+import { local } from 'state/data-layer/utils';
+
+/**
  * Returns response data from an HTTP request success action if available
  *
  * @param {Object} action may contain HTTP response data
@@ -42,6 +48,23 @@ export const getHeaders = action => get( action, 'meta.dataLayer.headers', null 
  */
 export const getProgress = action => get( action, 'meta.dataLayer.progress', null );
 
+export const trackRequest = action => local( {
+	type: TRACK_REQUEST,
+	requestAction: action,
+} );
+
+export const getRequestStatus = action => {
+	if ( getError( action ) ) {
+		return 'failure';
+	}
+
+	if ( getData( action ) ) {
+		return 'success';
+	}
+
+	return 'pending';
+};
+
 /**
  * Dispatches to appropriate function based on HTTP request meta
  *
@@ -74,6 +97,8 @@ export const getProgress = action => get( action, 'meta.dataLayer.progress', nul
  * @returns {?*} please ignore return values, they are undefined
  */
 export const dispatchRequest = ( initiator, onSuccess, onError, onProgress = noop ) => ( store, action ) => {
+	store.dispatch( trackRequest( action ) );
+
 	const error = getError( action );
 	if ( error ) {
 		return onError( store, action, error );
