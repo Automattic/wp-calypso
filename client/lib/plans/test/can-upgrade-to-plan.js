@@ -23,11 +23,11 @@ import {
 } from '../constants';
 
 describe( 'canUpgradeToPlan', () => {
-	it( 'should return true from lower-tier plans to higher-tier plans', () => {
-		const makeSite = product_slug => ( {
-			plan: { product_slug },
-		} );
+	const makeSite = product_slug => ( {
+		plan: { product_slug },
+	} );
 
+	it( 'should return true from lower-tier plans to higher-tier plans', () => {
 		[
 			[ PLAN_FREE, PLAN_PERSONAL ],
 			[ PLAN_PERSONAL, PLAN_PREMIUM ],
@@ -42,10 +42,6 @@ describe( 'canUpgradeToPlan', () => {
 	} );
 
 	it( 'should return true from monthly plans to yearly plans', () => {
-		const makeSite = product_slug => ( {
-			plan: { product_slug },
-		} );
-
 		[
 			[ PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_JETPACK_PERSONAL ],
 			[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PREMIUM ],
@@ -57,10 +53,6 @@ describe( 'canUpgradeToPlan', () => {
 	} );
 
 	it( 'should return false from yearly plans to monthly plans', () => {
-		const makeSite = product_slug => ( {
-			plan: { product_slug },
-		} );
-
 		[
 			[ PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ],
 			[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ],
@@ -72,10 +64,6 @@ describe( 'canUpgradeToPlan', () => {
 	} );
 
 	it( 'should return false from high-tier plans to lower-tier plans', () => {
-		const makeSite = product_slug => ( {
-			plan: { product_slug },
-		} );
-
 		[
 			[ PLAN_PERSONAL, PLAN_FREE ],
 			[ PLAN_PREMIUM, PLAN_PERSONAL ],
@@ -90,7 +78,7 @@ describe( 'canUpgradeToPlan', () => {
 	} );
 
 	it( 'should return true from high-tier expired plans to lower-tier plans', () => {
-		const makeSite = ( product_slug, isJetpack, isAtomic ) => ( {
+		const makeComplexSite = ( product_slug, isJetpack, isAtomic ) => ( {
 			jetpack: isJetpack || isAtomic,
 			options: {
 				is_automated_transfer: isAtomic,
@@ -109,8 +97,9 @@ describe( 'canUpgradeToPlan', () => {
 			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PREMIUM, true, false ],
 		].forEach(
 			( [ planOwned, planToPurchase, isJetpack, isAtomic ] ) =>
-				expect( canUpgradeToPlan( planToPurchase, makeSite( planOwned, isJetpack, isAtomic ) ) ).to
-					.be.true
+				expect(
+					canUpgradeToPlan( planToPurchase, makeComplexSite( planOwned, isJetpack, isAtomic ) )
+				).to.be.true
 		);
 	} );
 } );
