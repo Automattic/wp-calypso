@@ -114,15 +114,13 @@
 		}
 	}
 
-	.comment-detail__action-collapse {
-		.gridicon {
-			fill: $gray;
-			transform: rotate( 180deg );
-			transition: transform .15s cubic-bezier(0.175, .885, .32, 1.275), color .20s ease-in;
-		}
-		&:hover .gridicon {
-			fill: $blue-medium;
-		}
+	.comment-detail__action-collapse .gridicon {
+		fill: $gray;
+		transform: rotate( 180deg );
+		transition: transform .15s cubic-bezier(0.175, .885, .32, 1.275), color .20s ease-in;
+	}
+	.comment-detail__action-collapse:hover .gridicon {
+		fill: $blue-medium;
 	}
 
 	&.is-preview {
