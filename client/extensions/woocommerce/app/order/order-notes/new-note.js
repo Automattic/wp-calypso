@@ -63,13 +63,13 @@ class CreateOrderNote extends Component {
 						onChange={ this.setNote }
 					/>
 				</FormFieldSet>
-				<FormFieldSet className="order-notes__new-note-type">
+				<div className="order-notes__new-note-type">
 					<FormSelect onChange={ this.setType } value={ this.state.type }>
 						<option value={ 'internal' }>{ translate( 'Private Note' ) }</option>
 						<option value={ 'email' }>{ translate( 'Send to Customer' ) }</option>
 					</FormSelect>
-				</FormFieldSet>
-				<Button primary onClick={ this.saveNote }>{ translate( 'Add Note' ) }</Button>
+					<Button primary onClick={ this.saveNote }>{ translate( 'Add Note' ) }</Button>
+				</div>
 			</div>
 		);
 	}

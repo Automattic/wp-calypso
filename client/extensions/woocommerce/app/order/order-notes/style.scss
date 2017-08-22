@@ -80,3 +80,28 @@
 		margin: 8px 8px 0 0;
 	}
 }
+
+.order-notes__new-note-content {
+	margin: 0 -24px 20px;
+	padding-top: 8px;
+	border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+
+	.form-label {
+		padding: 0 24px;
+		margin-bottom: 8px;
+	}
+
+	.form-textarea {
+		padding: 8px 24px;
+		border-color: transparentize( lighten( $gray, 20% ), .5 );
+		border-left: none;
+		border-right: none;
+		resize: vertical;
+	}
+}
+
+.order-notes__new-note-type {
+	.button {
+		float: right;
+	}
+}
