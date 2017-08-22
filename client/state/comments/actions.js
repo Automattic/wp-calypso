@@ -185,15 +185,15 @@ export const changeCommentStatus = ( siteId, postId, commentId, status ) => ( {
  * @param {Number} siteId Site identifier
  * @param {Number} postId Post identifier
  * @param {Number} commentId Comment identifier
- * @param {Object} commentData New comment data
+ * @param {Object} comment New comment data
  * @returns {Object} Action that edits a comment
  */
-export const editComment = ( siteId, postId, commentId, commentData ) => ( {
+export const editComment = ( siteId, postId, commentId, comment ) => ( {
 	type: COMMENTS_EDIT,
 	siteId,
 	postId,
 	commentId,
-	commentData,
+	comment,
 } );
 
 export const expandComments = ( { siteId, commentIds, postId, displayType } ) => ( {

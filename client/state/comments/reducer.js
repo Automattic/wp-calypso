@@ -72,10 +72,10 @@ export function items( state = {}, action ) {
 				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { status } ) ),
 			};
 		case COMMENTS_EDIT:
-			const { commentData } = action;
+			const { comment } = action;
 			return {
 				...state,
-				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, commentData ) ),
+				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, comment ) ),
 			};
 		case COMMENTS_RECEIVE:
 			const { skipSort, comments } = action;
