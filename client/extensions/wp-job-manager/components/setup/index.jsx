@@ -25,8 +25,8 @@ const SetupWizard = ( {
 } ) => {
 	const steps = [ Steps.INTRO, Steps.PAGE_SETUP ];
 	const components = {
-		[ Steps.INTRO ]: Intro,
-		[ Steps.PAGE_SETUP ]: PageSetup,
+		[ Steps.INTRO ]: <Intro />,
+		[ Steps.PAGE_SETUP ]: <PageSetup />
 	};
 	const mainClassName = 'wp-job-manager__setup';
 
