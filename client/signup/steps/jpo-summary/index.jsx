@@ -69,8 +69,8 @@ class JPOSummaryStep extends React.Component {
 		const connectionToJetpackComplete = true;
 
 		const checkMark = <Gridicon
-			className="plan-features__item-checkmark"
-			size={ 18 }
+			className="jpo-summary__item-checkmark"
+			size={ 12 }
 			icon="checkmark"
 			/>;
 
@@ -107,27 +107,27 @@ class JPOSummaryStep extends React.Component {
 								<ul className="jpo-summary__completed-onboarding">
 									{
 										jpoSiteTitle
-											? <li>{ checkMark } { translate( 'Site Title & Description' ) }</li>
+											? <li>{ checkMark } <span>{ translate( 'Site Title & Description' ) }</span></li>
 											: null
 									}
 									{
 										jpoSiteType
-											? <li>{ checkMark } { translate( 'Type of Site' ) }</li>
+											? <li>{ checkMark } <span>{ translate( 'Type of Site' ) }</span></li>
 											: null
 									}
 									{
 										jpoHomepage
-											? <li>{ checkMark } { translate( 'Type of Homepage' ) }</li>
+											? <li>{ checkMark } <span>{ translate( 'Type of Homepage' ) }</span></li>
 											: null
 									}
 									{
 										jpoContactForm
-											? <li>{ checkMark } { translate( 'Contact Us Form' ) }</li>
+											? <li>{ checkMark } <span>{ translate( 'Contact Us Form' ) }</span></li>
 											: null
 									}
 									{
 										connectionToJetpackComplete
-											? <li>{ checkMark } { translate( 'Connection to Jetpack' ) }</li>
+											? <li>{ checkMark } <span>{ translate( 'Jetpack Connection' ) }</span></li>
 											: null
 									}
 								</ul>
@@ -135,7 +135,7 @@ class JPOSummaryStep extends React.Component {
 							<td>
 								<div className="jpo__summary-col-header jpo-summary__col-header">
 									{
-										translate( 'Configure more of your site:' )
+										translate( 'Continue your site setup:' )
 									}
 								</div>
 								<ul className="jpo-summary__more-onboarding">
@@ -159,11 +159,11 @@ class JPOSummaryStep extends React.Component {
 											? null
 											: <li><a href={ `${ pathPrefix }jpo-contact-form` }>{ translate( 'Contact Us Form' ) }</a></li>
 									}
-									{ ! connectionToJetpackComplete ? <li>{ translate( 'Connection to Jetpack' ) }</li> : null }
-									<li>{ translate( 'Choose a Theme' ) }</li>
-									<li>{ translate( 'Add a Site Address' ) }</li>
-									<li>{ translate( 'Add a Store' ) }</li>
-									<li>{ translate( 'Start a Blog' ) }</li>
+									{ ! connectionToJetpackComplete ? <li>{ translate( 'Jetpack Connection' ) }</li> : null }
+									<li><a href="#">{ translate( 'Choose a Theme' ) }</a></li>
+									<li><a href="#">{ translate( 'Add a Site Address' ) }</a></li>
+									<li><a href="#">{ translate( 'Add a Store' ) }</a></li>
+									<li><a href="#">{ translate( 'Start a Blog' ) }</a></li>
 								</ul>
 							</td>
 						</tr>
@@ -172,7 +172,7 @@ class JPOSummaryStep extends React.Component {
 				<div>
 					<Button primary onClick={ this.completeOnboarding }>
 						{
-							translate( 'Complete Onboarding' )
+							translate( 'Visit your site' )
 						}
 					</Button>
 				</div>
@@ -185,7 +185,7 @@ class JPOSummaryStep extends React.Component {
 			args: get( this.props.signupProgress[ 0 ], [ 'jpoSiteTitle', 'siteTitle' ], false ) || translate( 'your new site' )
 		} );
 		const subHeaderText = translate(
-			'You enabled Jetpack and unlocked dozens of website-bolstering features. Continue preparing your site below.'
+			'You have unlocked dozens of website-bolstering features with Jetpack. Continue preparing your site below.'
 		);
 
 		return (
