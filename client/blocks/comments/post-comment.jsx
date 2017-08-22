@@ -196,10 +196,6 @@ class PostComment extends Component {
 				</strong>;
 	};
 
-	handleContentRef = node => {
-		this.contentNode = node;
-	};
-
 	render() {
 		const { commentsTree, commentId, depth, maxDepth } = this.props;
 		const comment = get( commentsTree, [ commentId, 'data' ] );
@@ -289,7 +285,6 @@ class PostComment extends Component {
 						content={ comment.content }
 						isPlaceholder={ comment.isPlaceholder }
 						className={ displayType }
-						ref={ this.handleContentRef }
 						onMoreClicked={ this.handleReadMoreClicked }
 						hideMore={ displayType === POST_COMMENT_DISPLAY_TYPES.full }
 					/> }
