@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { get, noop } from 'lodash';
+import schemaValidator from 'is-my-json-valid';
+import { get, identity, noop } from 'lodash';
 
 /**
  * Returns response data from an HTTP request success action if available
@@ -42,11 +43,23 @@ export const getHeaders = action => get( action, 'meta.dataLayer.headers', null 
  */
 export const getProgress = action => get( action, 'meta.dataLayer.progress', null );
 
+export const makeParser = ( schema, schemaOptions = {}, transformer = identity ) => {
+	const options = Object.assign( { verbose: true }, schemaOptions );
+	const validator = schemaValidator( schema, options );
+	const filter = schemaValidator.filter( schema );
+
+	return responseData => validator( responseData )
+		? [ true, transformer( filter( responseData ) ) ]
+		: [ false, validator.errors ];
+};
+
 /**
  * @type Object default dispatchRequest options
+ * @property {Function} fromApi validates and transforms API response data
  * @property {Function} onProgress called on progress events
  */
 const defaultOptions = {
+	fromApi: data => [ true, data ],
 	onProgress: noop,
 };
 
@@ -83,7 +96,10 @@ const defaultOptions = {
  * @returns {?*} please ignore return values, they are undefined
  */
 export const dispatchRequest = ( initiator, onSuccess, onError, options ) => ( store, action ) => {
-	const { onProgress } = Object.assign( defaultOptions, options );
+	const {
+		fromApi,
+		onProgress,
+	} = { ...defaultOptions, ...options };
 
 	const error = getError( action );
 	if ( error ) {
@@ -92,7 +108,11 @@ export const dispatchRequest = ( initiator, onSuccess, onError, options ) => ( s
 
 	const data = getData( action );
 	if ( data ) {
-		return onSuccess( store, action, data );
+		const [ isValid, response ] = fromApi( data );
+
+		return isValid
+			? onSuccess( store, action, response )
+			: onError( store, action, response );
 	}
 
 	const progress = getProgress( action );
