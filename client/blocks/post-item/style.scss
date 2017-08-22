@@ -19,6 +19,27 @@
 
 .post-item__title-meta {
 	padding: 6px 0;
+
+	&.site-is-visible {
+		padding: 0;
+	}
+}
+
+.post-item__site {
+	display: flex;
+}
+
+.post-item__site .site-icon {
+	margin-right: 6px;
+}
+
+.post-item__site-title {
+	display: inline;
+	margin: 0;
+	line-height: 16px;
+	vertical-align: middle;
+	font-size: 13px;
+	color: $gray-dark;
 }
 
 .post-item__title {
@@ -81,6 +102,10 @@ a.post-item__title-link {
 		display: inline;
 		font-size: 13px;
 		margin: 0;
+	}
+
+	.post-item__site-title {
+		font-size: 11px;
 	}
 
 	.post-actions-ellipsis-menu {
