@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, isEmpty, last, noop } from 'lodash';
+import { filter, includes, isEmpty, last, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -21,7 +21,7 @@ function onKeydown( event ) {
 }
 
 function isInput( element ) {
-	return -1 !== [ 'INPUT', 'TEXTAREA' ].indexOf( element.nodeName );
+	return includes( [ 'INPUT', 'TEXTAREA' ], element.nodeName );
 }
 
 function addKeydownListener() {
