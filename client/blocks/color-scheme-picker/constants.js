@@ -6,21 +6,21 @@ export default function( translate ) {
 			label: translate( 'Default' ),
 			value: 'default',
 			thumbnail: {
-				cssClass: 'is-default-theme',
+				cssClass: 'is-default',
 			},
 		},
 		{
 			label: translate( 'Light' ),
 			value: 'light',
 			thumbnail: {
-				cssClass: 'is-light-theme',
+				cssClass: 'is-light',
 			},
 		},
 		{
 			label: translate( 'Dark' ),
 			value: 'dark',
 			thumbnail: {
-				cssClass: 'is-dark-theme',
+				cssClass: 'is-dark',
 			},
 		},
 	];
