@@ -18,12 +18,6 @@ import { abtest } from 'lib/abtest';
 import { hasJetpackSites } from 'state/selectors';
 
 class SiteSelectorAddSite extends Component {
-	constructor() {
-		super();
-
-		this.recordAddNewSite = this.recordAddNewSite.bind( this );
-	}
-
 	getAddNewSiteUrl() {
 		if ( this.props.hasJetpackSites || abtest( 'newSiteWithJetpack' ) === 'showNewJetpackSite' ) {
 			return '/jetpack/new/?ref=calypso-selector';
@@ -31,9 +25,9 @@ class SiteSelectorAddSite extends Component {
 		return config( 'signup_url' ) + '?ref=calypso-selector';
 	}
 
-	recordAddNewSite() {
+	recordAddNewSite = () => {
 		this.props.recordTracksEvent( 'calypso_add_new_wordpress_click' );
-	}
+	};
 
 	render() {
 		const { translate } = this.props;
