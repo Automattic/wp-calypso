@@ -23,6 +23,7 @@ const DUMMY_MEDIA = [
 	{ ID: 100, date: '2015-06-19T11:36:09-04:00', mime_type: 'image/jpeg' },
 	{ ID: 200, date: '2015-06-19T09:36:09-04:00', mime_type: 'image/jpeg' }
 ];
+const DUMMY_VIDEO_MEDIA = [ { ID: 100, date: '2015-06-19T11:36:09-04:00', mime_type: 'video/mp4' } ];
 const EMPTY_COMPONENT = React.createClass( {
 	render: function() {
 		return <div />;
@@ -179,7 +180,7 @@ describe( 'EditorMediaModal', function() {
 		expect( buttons ).to.be.undefined;
 	} );
 
-	it( 'should show a insert button when viewing external media', () => {
+	it( 'should show an insert button when viewing external media (no selection)', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -194,7 +195,7 @@ describe( 'EditorMediaModal', function() {
 		expect( buttons[ 1 ].label ).to.be.equals( 'Insert' );
 	} );
 
-	it( 'should show a insert button when 1 external media is selected', () => {
+	it( 'should show a insert button when 1 external image is selected', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -208,6 +209,22 @@ describe( 'EditorMediaModal', function() {
 
 		expect( buttons.length ).to.be.equals( 2 );
 		expect( buttons[ 1 ].label ).to.be.equals( 'Insert' );
+	} );
+
+	it( 'should show a copy button when 1 external video is selected', () => {
+		const tree = shallow(
+			<EditorMediaModal
+				site={ DUMMY_SITE }
+				view={ ModalViews.DETAIL }
+				mediaLibrarySelectedItems={ DUMMY_VIDEO_MEDIA }
+				setView={ spy } />
+		).instance();
+
+		tree.setState( { source: 'external' } );
+		const buttons = tree.getModalButtons();
+
+		expect( buttons.length ).to.be.equals( 2 );
+		expect( buttons[ 1 ].label ).to.be.equals( 'Copy to media library' );
 	} );
 
 	it( 'should show a copy button when 2 or more external media are selected', () => {
@@ -302,7 +319,7 @@ describe( 'EditorMediaModal', function() {
 			} );
 		} );
 
-		it( 'should copy external media and insert it in the editor if 1 media is selected and button is pressed', done => {
+		it( 'should copy external media and insert it in the editor if 1 image is selected and button is pressed', done => {
 			const SINGLE_ITEM_MEDIA = DUMMY_MEDIA.slice( 0, 1 );
 			const tree = shallow(
 				<EditorMediaModal
@@ -320,6 +337,30 @@ describe( 'EditorMediaModal', function() {
 			// by using uniqueId, which increments its value within the same session.
 			const transientItems = [
 				Object.assign( {}, SINGLE_ITEM_MEDIA[ 0 ], { ID: 'media-3', 'transient': true } )
+			];
+			process.nextTick( () => {
+				expect( onClose ).to.have.been.calledWith( transientItems, 'external' );
+				done();
+			} );
+		} );
+
+		it( 'should copy external after loading WordPress library if 1 video is selected and button is pressed', done => {
+			const tree = shallow(
+				<EditorMediaModal
+					site={ DUMMY_SITE }
+					mediaLibrarySelectedItems={ DUMMY_VIDEO_MEDIA }
+					view={ ModalViews.DETAIL }
+					setView={ spy } />
+			).instance();
+
+			tree.setState( { source: 'external' } );
+			tree.copyExternalAfterLoadingWordPressLibrary = onClose;
+			tree.confirmSelection();
+
+			// EditorMediaModal will generate transient ID for the media selected
+			// by using uniqueId, which increments its value within the same session.
+			const transientItems = [
+				Object.assign( {}, DUMMY_VIDEO_MEDIA[ 0 ], { ID: 'media-4', 'transient': true } )
 			];
 			process.nextTick( () => {
 				expect( onClose ).to.have.been.calledWith( transientItems, 'external' );

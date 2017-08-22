@@ -177,7 +177,7 @@ export class EditorMediaModal extends Component {
 			const itemsWithTransientId = mediaLibrarySelectedItems.map(
 				( item ) => Object.assign( {}, item, { ID: uniqueId( 'media-' ), 'transient': true } )
 			);
-			if ( mediaLibrarySelectedItems.length === 1 ) {
+			if ( itemsWithTransientId.length === 1 && MediaUtils.getMimePrefix( itemsWithTransientId[ 0 ] ) === 'image' ) {
 				this.copyExternal( itemsWithTransientId, this.state.source );
 				this.props.onClose( {
 					type: 'media',
@@ -440,10 +440,19 @@ export class EditorMediaModal extends Component {
 			}
 		];
 
+		const getConfirmButtonLabelForExternal = ( ) => {
+			let label = this.props.translate( 'Insert' );
+			if ( selectedItems.length > 1 ||
+				( selectedItems.length === 1 && MediaUtils.getMimePrefix( selectedItems[ 0 ] ) !== 'image' ) ) {
+				label = this.props.translate( 'Copy to media library' );
+			}
+			return label;
+		};
+
 		if ( this.state.source !== '' ) {
 			buttons.push( {
 				action: 'confirm',
-				label: selectedItems.length > 1 ? this.props.translate( 'Copy to media library' ) : this.props.translate( 'Insert' ),
+				label: getConfirmButtonLabelForExternal(),
 				isPrimary: true,
 				disabled: isDisabled || 0 === selectedItems.length,
 				onClick: this.confirmSelection
