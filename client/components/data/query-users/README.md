@@ -1,11 +1,11 @@
 Query Users
-================
+===========
 
 `<QueryUsers />` is a React component used to request users data.
 
 ## Usage
 
-Render the component, passing `siteId` and `usersId`. It does not accept any children, nor does it render any element to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
+Render the component, passing `siteId` and `userIds`. It does not accept any children, nor does it render any element to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```jsx
 import React from 'react';
@@ -16,7 +16,7 @@ export default function Users( { users } ) {
 		<div>
 			<QueryUsers
 				siteId={ 12345678 }
-				usersId={ usersId }
+				userIds={ userIds }
 			/>
 			<div>{ users }</div>
 		</div>
@@ -36,7 +36,7 @@ export default function Users( { users } ) {
 The site ID for which we request post revisions.
 
 
-### `usersId`
+### `userIds`
 
 <table>
 	<tr><th>Type</th><td>Array[Number]</td></tr>

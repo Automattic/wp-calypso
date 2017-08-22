@@ -12,13 +12,19 @@ import shallowEqual from 'react-pure-render/shallowEqual';
 import { requestUsers } from 'state/users/actions';
 
 class QueryUsers extends Component {
+	static propTypes = {
+		requestUsers: PropTypes.func,
+		siteId: PropTypes.number,
+		userIds: PropTypes.arrayOf( PropTypes.number ),
+	}
+
 	componentWillMount() {
 		this.request();
 	}
 
 	componentDidUpdate( prevProps ) {
 		if (
-			shallowEqual( this.props.usersId, prevProps.usersId ) &&
+			shallowEqual( this.props.userIds, prevProps.userIds ) &&
 			this.props.siteId === prevProps.siteId
 		) {
 			return;
@@ -28,19 +34,13 @@ class QueryUsers extends Component {
 	}
 
 	request() {
-		this.props.requestUsers( this.props.siteId, this.props.usersId );
+		this.props.requestUsers( this.props.siteId, this.props.userIds );
 	}
 
 	render() {
 		return null;
 	}
 }
-
-QueryUsers.propTypes = {
-	requestUsers: PropTypes.func,
-	siteId: PropTypes.number,
-	usersId: PropTypes.arrayOf( PropTypes.number ),
-};
 
 export default connect(
 	() => ( {} ),

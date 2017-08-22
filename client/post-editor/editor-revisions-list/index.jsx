@@ -26,7 +26,7 @@ import { isWithinBreakpoint } from 'lib/viewport';
 
 class EditorRevisionsList extends PureComponent {
 	static propTypes = {
-		authorsId: PropTypes.array.isRequired,
+		authorsIds: PropTypes.array.isRequired,
 		loadRevision: PropTypes.func.isRequired,
 		postId: PropTypes.number,
 		revisions: PropTypes.array.isRequired,
@@ -74,7 +74,7 @@ class EditorRevisionsList extends PureComponent {
 				/>
 				<QueryUsers
 					siteId={ this.props.siteId }
-					usersId={ this.props.authorsId }
+					userIds={ this.props.authorsIds }
 				/>
 				<EditorRevisionsListHeader
 					loadRevision={ this.loadRevision }
@@ -107,7 +107,7 @@ export default connect(
 		const postId = getEditorPostId( state );
 		const type = getEditedPostValue( state, siteId, postId, 'type' );
 		return {
-			authorsId: getPostRevisionsAuthorsId( state, siteId, postId ),
+			authorsIds: getPostRevisionsAuthorsId( state, siteId, postId ),
 			postId,
 			revisions: getPostRevisions( state, siteId, postId, 'display' ),
 			selectedRevision: getPostRevision(
