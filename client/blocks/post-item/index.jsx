@@ -25,21 +25,25 @@ import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 
 function PostItem( { translate, globalId, post, site, editUrl, siteTitle, isAllSitesModeSelected, className, compact } ) {
 	const title = post ? post.title : null;
-	const classes = classnames( 'post-item', className, {
+	const postItemClasses = classnames( 'post-item', className, {
 		'is-untitled': ! title,
 		'is-mini': compact,
 		'is-placeholder': ! globalId
 	} );
 
+	const isSiteVisible = config.isEnabled( 'posts/post-type-list' ) && isAllSitesModeSelected;
+	const titleMetaClasses = classnames( 'post-item__title-meta', { 'site-is-visible': isSiteVisible } );
+
 	return (
-		<Card compact className={ classes }>
+		<Card compact className={ postItemClasses }>
 			<div className="post-item__detail">
-				<div className="post-item__title-meta">
-					{ config.isEnabled( 'posts/post-type-list' ) &&
-					isAllSitesModeSelected &&
-						<div>
+				<div className={ titleMetaClasses }>
+					{ isSiteVisible &&
+						<div className="post-item__site">
 							<SiteIcon size={ 16 } site={ site } />
-							{ siteTitle }
+							<div className="post-item__site-title">
+								{ siteTitle }
+							</div>
 						</div>
 					}
 					<h1 className="post-item__title">
