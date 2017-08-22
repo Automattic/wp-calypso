@@ -1,12 +1,12 @@
 .color-scheme-picker .form-radio-with-thumbnail__thumbnail {
 	height: 80px;
-	background-image: url( '/calypso/images/color-schemes/theme-default.png' );
+	background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-default.svg' );
 
-	&.is-light-theme {
-		background-image: url( '/calypso/images/color-schemes/theme-light.png' );
+	&.is-light {
+		background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-light.svg' );
 	}
 
-	&.is-dark-theme {
-		background-image: url( '/calypso/images/color-schemes/theme-dark.png' );
+	&.is-dark {
+		background-image: url( '/calypso/images/color-schemes/color-scheme-thumbnail-dark.svg' );
 	}
 }
