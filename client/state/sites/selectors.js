@@ -638,6 +638,8 @@ export function canJetpackSiteUpdateFiles( state, siteId ) {
 		return null;
 	}
 
+	return true;
+
 	if ( ! siteHasMinimumJetpackVersion( state, siteId ) ) {
 		return false;
 	}
@@ -677,6 +679,8 @@ export function canJetpackSiteAutoUpdateFiles( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {
 		return null;
 	}
+
+	return true;
 
 	if ( ! canJetpackSiteUpdateFiles( state, siteId ) ) {
 		return false;
@@ -943,6 +947,8 @@ export function siteHasMinimumJetpackVersion( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {
 		return null;
 	}
+
+	return true;
 
 	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
 	if ( ! siteJetpackVersion ) {

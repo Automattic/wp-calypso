@@ -62,6 +62,8 @@ export default {
 		if ( ! site ) {
 			return false;
 		}
+
+		return true;
 		if ( ! site.hasMinimumJetpackVersion ) {
 			return false;
 		}
@@ -89,6 +91,8 @@ export default {
 		if ( ! this.canUpdateFiles( site ) ) {
 			return false;
 		}
+
+		return true;
 
 		if ( site.options.file_mod_disabled &&
 			-1 < site.options.file_mod_disabled.indexOf( 'automatic_updater_disabled' ) ) {

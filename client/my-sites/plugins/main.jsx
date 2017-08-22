@@ -406,7 +406,7 @@ const PluginsMain = React.createClass( {
 			);
 		}
 
-		if ( this.props.selectedSiteIsJetpack && ! this.props.canSelectedJetpackSiteManage ) {
+		if ( false ) {
 			return (
 				<Main>
 					{ this.renderDocumentHead() }

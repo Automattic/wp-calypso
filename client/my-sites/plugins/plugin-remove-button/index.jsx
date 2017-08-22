@@ -83,7 +83,7 @@ module.exports = React.createClass( {
 			} );
 		}
 
-		if ( ! this.props.site.canUpdateFiles && this.props.site.options.file_mod_disabled ) {
+		if ( false ) {
 			const reasons = utils.getSiteFileModDisableReason( this.props.site, 'modifyFiles' );
 			const html = [];
 

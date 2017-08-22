@@ -97,7 +97,7 @@ export class PluginInstallButton extends Component {
 			} );
 		}
 
-		if ( ! selectedSite.canUpdateFiles && selectedSite.options.file_mod_disabled ) {
+		if ( false ) {
 			const reasons = utils.getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
 			const html = [];
 
