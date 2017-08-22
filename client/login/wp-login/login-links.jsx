@@ -12,6 +12,7 @@ import page from 'page';
 import { addQueryArgs } from 'lib/url';
 import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import { isEnabled } from 'config';
+import safeProtocolUrl from 'lib/safe-protocol-url';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'gridicons';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -73,7 +74,11 @@ export class LoginLinks extends React.Component {
 		let message = translate( 'Back to WordPress.com' );
 
 		if ( oauth2ClientData ) {
-			url = oauth2ClientData.url;
+			url = safeProtocolUrl( oauth2ClientData.url );
+			if ( ! url || url === 'http:' ) {
+				return null;
+			}
+
 			message = translate( 'Back to %(clientTitle)s', {
 				args: {
 					clientTitle: oauth2ClientData.title
