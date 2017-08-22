@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -49,7 +49,7 @@ class PageSetup extends Component {
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Page Setup' ) } />
-				<Card>
+				<CompactCard>
 					<p>
 						{ translate(
 							'{{em}}WP Job Manager{{/em}} includes {{shortcodes}}shortcodes{{/shortcodes}} which can ' +
@@ -141,16 +141,21 @@ class PageSetup extends Component {
 									) }
 								</FormSettingExplanation>
 							</FormFieldset>
-
-							<Button compact primary>
-								{ translate( 'Create selected pages' ) }
-							</Button>
-							<Button compact>
-								{ translate( 'Skip this step' ) }
-							</Button>
 						</form>
 					</div>
-				</Card>
+				</CompactCard>
+
+				<CompactCard>
+					<a
+						className="page-setup__skip"
+						href="#">
+						{ translate( 'Skip this step' ) }
+					</a>
+					<Button primary
+						className="page-setup__create-pages">
+						{ translate( 'Create selected pages' ) }
+					</Button>
+				</CompactCard>
 			</div>
 		);
 	}

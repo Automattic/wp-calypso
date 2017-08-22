@@ -1,4 +1,5 @@
-.wp-job-manager__setup .intro__skip-setup {
+.wp-job-manager__setup .intro__skip-setup,
+.wp-job-manager__setup .page-setup__skip {
 	color: $blue-medium;
 	display: block;
 	font-size: 13px;
@@ -10,7 +11,8 @@
 	}
 }
 
-.wp-job-manager__setup .intro__continue {
+.wp-job-manager__setup .intro__continue,
+.wp-job-manager__setup .page-setup__create-pages {
 	margin-top: 10px;
 
 	@include breakpoint( "<660px" ) {
