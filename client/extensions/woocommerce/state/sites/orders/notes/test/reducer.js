@@ -86,7 +86,7 @@ describe( 'reducer', () => {
 				type: WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
 				siteId: 123,
 				orderId: 45,
-				notes,
+				note,
 			};
 			const originalState = deepFreeze( { 45: true } );
 			const newState = isSaving( originalState, action );
@@ -136,6 +136,18 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( { ...originalState, 3: note } );
 		} );
 
+		it( 'should add the created note to the note list', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
+				siteId: 123,
+				orderId: 50,
+				note,
+			};
+			const originalState = deepFreeze( keyBy( notes, 'id' ) );
+			const newState = items( originalState, action );
+			expect( newState ).to.eql( { ...originalState, 3: note } );
+		} );
+
 		it( 'should do nothing on a failure', () => {
 			const action = {
 				type: WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,
@@ -149,7 +161,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'queries', () => {
+	describe( 'orders', () => {
 		it( 'should have no change by default', () => {
 			const newState = orders( undefined, {} );
 			expect( newState ).to.eql( {} );
@@ -176,6 +188,18 @@ describe( 'reducer', () => {
 			const originalState = deepFreeze( { 45: [ 1, 2 ] } );
 			const newState = orders( originalState, action );
 			expect( newState ).to.eql( { ...originalState, 50: [ 3 ] } );
+		} );
+
+		it( 'should add the created note to order\'s note list', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
+				siteId: 123,
+				orderId: 45,
+				note,
+			};
+			const originalState = deepFreeze( { 45: [ 1, 2 ] } );
+			const newState = orders( originalState, action );
+			expect( newState ).to.eql( { 45: [ 1, 2, 3 ] } );
 		} );
 
 		it( 'should do nothing on a failure', () => {
