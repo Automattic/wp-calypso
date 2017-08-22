@@ -19,11 +19,11 @@
 
 		a {
 			color: #c9eaf5;
-			border-bottom: 1px #c9eaf5 solid;
+			border-bottom: 1px solid #c9eaf5;
 
 			&:hover {
 				color: $white;
-				border-bottom: 1px $white solid;
+				border-bottom: 1px solid $white;
 			}
 		}
 	}
@@ -38,15 +38,15 @@
 	background: url( '/calypso/images/reader/reader-intro-background-light-blue.svg' ) #7fd3f1 no-repeat 100% 20px;
 
 	.following__intro-copy {
-		color: #045182;
+		color: $blue-dark;
 
 		a {
-			color: #1785be;
-			border-bottom: 1px #1785be solid;
+			color: 	$blue-wordpress;
+			border-bottom: 1px solid $blue-wordpress;
 
 			&:hover {
-				color: $white;
-				border-bottom: 1px $white solid;
+				color: $blue-dark;
+				border-bottom: 1px solid $blue-dark;
 			}
 		}
 	}
@@ -69,8 +69,8 @@
 			border-bottom: 1px #1785be solid;
 
 			&:hover {
-				color: $white;
-				border-bottom: 1px $white solid;
+				color: $blue-medium;
+				border-bottom: 1px solid $blue-medium;
 			}
 		}
 	}
