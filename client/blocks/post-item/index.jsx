@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { isEnabled } from 'config';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
@@ -31,7 +31,7 @@ function PostItem( { translate, globalId, post, site, editUrl, siteTitle, isAllS
 		'is-placeholder': ! globalId
 	} );
 
-	const isSiteVisible = config.isEnabled( 'posts/post-type-list' ) && isAllSitesModeSelected;
+	const isSiteVisible = isEnabled( 'posts/post-type-list' ) && isAllSitesModeSelected;
 	const titleMetaClasses = classnames( 'post-item__title-meta', { 'site-is-visible': isSiteVisible } );
 
 	return (
