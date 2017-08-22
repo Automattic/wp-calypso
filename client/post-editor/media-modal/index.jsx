@@ -47,16 +47,17 @@ import VideoEditor from 'blocks/video-editor';
 import MediaModalDetail from './detail';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 
-function areMediaActionsDisabled( modalView, mediaItems ) {
-	return some( mediaItems, item =>
-		MediaUtils.isItemBeingUploaded( item ) && (
-			// Transients can't be handled by the editor if they are being
-			// uploaded via an external URL
-			( ! MediaUtils.isTransientPreviewable( item ) ||
-			MediaUtils.getMimePrefix( item ) !== 'image' || modalView === ModalViews.GALLERY ||
-			item.external )
-		)
-	);
+function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
+	return ! isParentReady( mediaItems ) ||
+		some( mediaItems, item =>
+			MediaUtils.isItemBeingUploaded( item ) && (
+				// Transients can't be handled by the editor if they are being
+				// uploaded via an external URL
+				MediaUtils.getMimePrefix( item ) !== 'image' ||
+				! MediaUtils.isTransientPreviewable( item ) ||
+				modalView === ModalViews.GALLERY
+			)
+		);
 }
 
 export class EditorMediaModal extends Component {
@@ -64,6 +65,7 @@ export class EditorMediaModal extends Component {
 		visible: PropTypes.bool,
 		mediaLibrarySelectedItems: PropTypes.arrayOf( PropTypes.object ),
 		onClose: PropTypes.func,
+		isParentReady: PropTypes.func,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		labels: PropTypes.object,
@@ -80,6 +82,7 @@ export class EditorMediaModal extends Component {
 		visible: false,
 		mediaLibrarySelectedItems: Object.freeze( [] ),
 		onClose: noop,
+		isParentReady: () => true,
 		labels: Object.freeze( {} ),
 		setView: noop,
 		resetView: noop,
@@ -143,7 +146,7 @@ export class EditorMediaModal extends Component {
 	confirmSelection = () => {
 		const { view, mediaLibrarySelectedItems } = this.props;
 
-		if ( areMediaActionsDisabled( view, mediaLibrarySelectedItems ) ) {
+		if ( areMediaActionsDisabled( view, mediaLibrarySelectedItems, this.props.isParentReady ) ) {
 			return;
 		}
 
@@ -416,7 +419,7 @@ export class EditorMediaModal extends Component {
 		}
 
 		const selectedItems = this.props.mediaLibrarySelectedItems;
-		const isDisabled = areMediaActionsDisabled( this.props.view, selectedItems );
+		const isDisabled = areMediaActionsDisabled( this.props.view, selectedItems, this.props.isParentReady );
 		const buttons = [
 			{
 				action: 'cancel',

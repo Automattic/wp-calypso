@@ -215,6 +215,10 @@ class SiteIconSetting extends Component {
 		asyncRequire( 'post-editor/media-modal' );
 	}
 
+	isParentReady( selectedMedia ) {
+		return ! selectedMedia.some( item => item.external );
+	}
+
 	render() {
 		const { isJetpack, isPrivate, iconUrl, customizerUrl, generalOptionsUrl, siteSupportsImageEditor } = this.props;
 		const { isModalVisible, hasToggledModal, isEditingSiteIcon } = this.state;
@@ -293,6 +297,7 @@ class SiteIconSetting extends Component {
 							) }
 							siteId={ siteId }
 							onClose={ this.editSelectedMedia }
+							isParentReady={ this.isParentReady }
 							enabledFilters={ [ 'images' ] }
 							{ ...( isEditingSiteIcon ? {
 								imageEditorProps: {
