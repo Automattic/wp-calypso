@@ -127,6 +127,56 @@ describe( 'ActivityQueryManager', () => {
 				expect( isMatch ).to.be.true;
 			} );
 		} );
+
+		context( 'date range query', () => {
+			it( 'should return true if activity is within a range of dates', () => {
+				const isMatch = manager.matches(
+					{
+						dateEnd: DEFAULT_ACTIVITY_TS + 1,
+						dateStart: DEFAULT_ACTIVITY_TS - 1,
+					},
+					DEFAULT_ACTIVITY
+				);
+
+				expect( isMatch ).to.be.true;
+			} );
+
+			it( 'should return false if activity is before a range of dates', () => {
+				const isMatch = manager.matches(
+					{
+						dateEnd: DEFAULT_ACTIVITY_TS + 2,
+						dateStart: DEFAULT_ACTIVITY_TS + 1,
+					},
+					DEFAULT_ACTIVITY
+				);
+
+				expect( isMatch ).to.be.false;
+			} );
+
+			it( 'should return false if activity is after a range of dates', () => {
+				const isMatch = manager.matches(
+					{
+						dateEnd: DEFAULT_ACTIVITY_TS - 1,
+						dateStart: DEFAULT_ACTIVITY_TS - 2,
+					},
+					DEFAULT_ACTIVITY
+				);
+
+				expect( isMatch ).to.be.false;
+			} );
+
+			it( 'should be impossible to match if dateStart is after dateEnd', () => {
+				const isMatch = manager.matches(
+					{
+						dateEnd: DEFAULT_ACTIVITY_TS - 1,
+						dateStart: DEFAULT_ACTIVITY_TS + 1,
+					},
+					DEFAULT_ACTIVITY
+				);
+
+				expect( isMatch ).to.be.false;
+			} );
+		} );
 	} );
 
 	describe( '#compare()', () => {
