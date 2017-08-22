@@ -47,7 +47,7 @@ class AcceptedFilenames extends Component {
 
 		return (
 			<FormToggle
-				checked={ !! pages && !! pages[ fieldName ] }
+				checked={ get( pages, fieldName, false ) }
 				disabled={ isRequesting || isSaving || isReadOnly || ! get( pages, parent, true ) }
 				onChange={ this.handleToggle( fieldName ) }>
 				<span>
