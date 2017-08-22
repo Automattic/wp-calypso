@@ -13,7 +13,7 @@ import get from 'lodash/get';
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import { setJPOConnect } from 'state/signup/steps/jpo-connect/actions';
+import { setJpoConnect } from 'state/signup/steps/jpo-connect/actions';
 import LoggedInForm from 'jetpack-connect/auth-logged-in-form';
 import {
 	getAuthorizationData,
@@ -37,7 +37,7 @@ class JPOConnectStep extends React.Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		setJPOConnect: PropTypes.func.isRequired,
+		setJpoConnect: PropTypes.func.isRequired,
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 
@@ -78,7 +78,7 @@ class JPOConnectStep extends React.Component {
 
 	submitStep( jpoConnect ) {
 		jpoConnect.siteSlug = this.props.siteSlug;
-		this.props.setJPOConnect( jpoConnect );
+		this.props.setJpoConnect( jpoConnect );
 
 		SignupActions.submitSignupStep( {
 			processingMessage: translate( 'Starting Jetpack engine!' ),
@@ -157,7 +157,7 @@ export default connect(
 		};
 	},
 	{
-		setJPOConnect,
+		setJpoConnect,
 		authorize,
 		goBackToWpAdmin,
 		retryAuth,
