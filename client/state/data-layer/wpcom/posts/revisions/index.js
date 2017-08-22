@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { flow, forEach, map, mapKeys, mapValues, omit, pick } from 'lodash';
+import { flow, forEach, get, map, mapKeys, mapValues, omit, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -69,9 +69,10 @@ export const receiveSuccess = ( { dispatch }, { siteId, postId }, revisions ) =>
 	const normalizedRevisions = map( revisions, normalizeRevision );
 
 	forEach( normalizedRevisions, ( revision, index ) => {
-		revision.changes = index === normalizedRevisions.length - 1
-			? { added: 0, removed: 0 }
-			: countDiffWords( diffWords( normalizedRevisions[ index + 1 ].content, revision.content ) );
+		revision.changes = countDiffWords( diffWords(
+			get( normalizedRevisions, [ index + 1, 'content' ], '' ),
+			revision.content
+		) );
 	} );
 
 	dispatch( receivePostRevisionsSuccess( siteId, postId ) );
