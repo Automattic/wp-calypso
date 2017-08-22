@@ -134,6 +134,11 @@ export default {
 		providesDependencies: [ 'jpoContactForm' ],
 	},
 
+	'jpo-connect': {
+		stepName: 'jpo-connect',
+		providesDependencies: [ 'jpoConnect' ],
+	},
+
 	'jpo-summary': {
 		stepName: 'jpo-summary',
 		providesDependencies: [ 'jpoSummary' ],
