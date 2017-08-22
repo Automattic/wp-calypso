@@ -372,17 +372,17 @@ UndocumentedMe.prototype.deletePurchase = function( purchaseId, fn ) {
  * @param {string} service - Social service associated with token, e.g. google.
  * @param {string} access_token - OAuth2 Token returned from service.
  * @param {string} id_token - (Optional) OpenID Connect Token returned from service.
- * @param {string} redirectTo - The URL to redirect to after connecting.
+ * @param {string} redirect_to - The URL to redirect to after connecting.
  * @param {Function} fn - callback
  *
  * @return {Promise} A promise for the request
  */
-UndocumentedMe.prototype.socialConnect = function( { service, access_token, id_token, redirectTo }, fn ) {
+UndocumentedMe.prototype.socialConnect = function( { service, access_token, id_token, redirect_to }, fn ) {
 	const body = {
 		service,
 		access_token,
 		id_token,
-		redirectTo,
+		redirect_to,
 
 		// This API call is restricted to these OAuth keys
 		client_id: config( 'wpcom_signup_id' ),

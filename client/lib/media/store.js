@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
-var values = require( 'lodash/values' );
+import { values } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { isItemBeingUploaded } from 'lib/media/utils';
 var Dispatcher = require( 'dispatcher' ),
 	emitter = require( 'lib/mixins/emitter' ),
 	MediaValidationStore = require( './validation-store' );
-
-import { isItemBeingUploaded } from 'lib/media/utils';
 
 /**
  * Module variables

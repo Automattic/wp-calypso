@@ -1,23 +1,12 @@
 .editor-revisions {
 	color: $gray-text;
+	cursor: pointer;
 	display: block;
 	font-size: 13px;
 	margin: 0 0 -16px;
 	padding: 16px 0;
-
-	&:visited {
-		color: $gray-text;
-	}
-
-	&:hover,
-	&:focus {
-		color: $gray-dark;
-		outline: none;
-
-		.gridicon {
-			color: $gray-dark;
-		}
-	}
+	text-align: left;
+	width: calc(100% + 32px);
 
 	.gridicon {
 		color: $gray-text;

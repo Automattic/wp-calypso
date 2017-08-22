@@ -1,7 +1,7 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-var throttle = require( 'lodash/throttle' );
+import { throttle } from 'lodash';
 
 /**
  * A mixin that listens for window::resize events and informs a component

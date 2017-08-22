@@ -223,8 +223,12 @@ const Signup = React.createClass( {
 		}
 	},
 
-	handleLogin( dependencies, destination ) {
+	handleLogin( dependencies, destination, event ) {
 		const userIsLoggedIn = Boolean( user.get() );
+
+		if ( event && event.redirectTo ) {
+			destination = event.redirectTo;
+		}
 
 		if ( userIsLoggedIn ) {
 			// deferred in case the user is logged in and the redirect triggers a dispatch
@@ -428,6 +432,8 @@ const Signup = React.createClass( {
 						steps={ this.state.progress }
 						user={ this.state.user }
 						loginHandler={ this.state.loginHandler }
+						signupDependencies={ this.props.signupDependencies }
+						flow = { this.props.flowName }
 					/>
 					: <CurrentComponent
 						path={ this.props.path }

@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
+import { assign, filter, find } from 'lodash';
 var React = require( 'react' ),
-	filter = require( 'lodash/filter' ),
-	assign = require( 'lodash/assign' ),
-	find = require( 'lodash/find' ),
 	classNames = require( 'classnames' );
 
 /**

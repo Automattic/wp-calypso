@@ -25,7 +25,10 @@ import {
 	SOCIAL_CONNECT_ACCOUNT_REQUEST,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
+	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
 	ROUTE_SET,
+	USER_RECEIVE,
 } from 'state/action-types';
 import reducer, {
 	isRequesting,
@@ -36,6 +39,8 @@ import reducer, {
 	requestSuccess,
 	twoFactorAuth,
 	twoFactorAuthRequestError,
+	socialAccount,
+	socialAccountLink,
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -50,10 +55,12 @@ describe( 'reducer', () => {
 			'requestNotice',
 			'requestSuccess',
 			'socialAccount',
+			'socialAccountLink',
 			'twoFactorAuth',
 			'isRequestingTwoFactorAuth',
 			'twoFactorAuthRequestError',
 			'twoFactorAuthPushPoll',
+			'oauth2',
 		] );
 	} );
 
@@ -483,6 +490,14 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
+		it( 'should set twoFactorAuth to null value if a social request is initiated', () => {
+			const state = twoFactorAuth( undefined, {
+				type: SOCIAL_LOGIN_REQUEST,
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
 		it( 'should set twoFactorAuth to the response value if a request was successful', () => {
 			const data = {
 				result: true,
@@ -501,6 +516,29 @@ describe( 'reducer', () => {
 		it( 'should set twoFactorAuth to null value if a request is unsuccessful', () => {
 			const state = twoFactorAuth( null, {
 				type: LOGIN_REQUEST_FAILURE,
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should set twoFactorAuth to the response value if a social request was successful', () => {
+			const data = {
+				result: true,
+				two_step_id: 12345678,
+				two_step_nonce: 'abcdefgh1234',
+			};
+			const state = twoFactorAuth( null, {
+				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
+				data,
+				rememberMe: true
+			} );
+
+			expect( state ).to.eql( { ...data } );
+		} );
+
+		it( 'should set twoFactorAuth to null value if a social request is unsuccessful', () => {
+			const state = twoFactorAuth( null, {
+				type: SOCIAL_LOGIN_REQUEST_FAILURE,
 			} );
 
 			expect( state ).to.be.null;
@@ -580,6 +618,112 @@ describe( 'reducer', () => {
 				two_step_id: 12345678,
 				two_step_nonce_sms: 'foo'
 			} );
+		} );
+	} );
+
+	describe( 'socialAccount', () => {
+		it( 'should store error from create account failure', () => {
+			const error = { message: 'Bad', code: 'this_is_a_test' };
+			const service = 'google';
+			const token = '123';
+
+			const state = socialAccount( {}, {
+				type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+				error,
+				service,
+				token,
+			} );
+
+			expect( state.createError ).to.eql( error );
+		} );
+
+		it( 'default value for create error should be null', () => {
+			expect( socialAccount( undefined, { type: 'does not matter' } ).createError ).to.be.null;
+		} );
+
+		it( 'should reset create error on create success', () => {
+			const state = {
+				createError: { message: 'error' }
+			};
+
+			const newState = socialAccount(
+				state,
+				{
+					type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
+					data: { username: 'test', bearerToken: '123' }
+				}
+			);
+
+			expect( newState.createError ).to.be.null;
+		} );
+
+		it( 'should reset create error when user is received', () => {
+			const state = { createError: {} };
+
+			const newState = socialAccount(
+				state,
+				{
+					type: USER_RECEIVE,
+				}
+			);
+
+			expect( newState.createError ).to.be.null;
+		} );
+
+		it( 'should reset create error when login is performed', () => {
+			const state = { createError: {} };
+
+			const newState = socialAccount(	state, { type: LOGIN_REQUEST, } );
+
+			expect( newState.createError ).to.be.null;
+		} );
+	} );
+
+	describe( 'socialAccountLink', () => {
+		it( 'should set linking mode on user_exists create error', () => {
+			const error = { message: 'Bad', code: 'user_exists', email: 'hello@test.com' };
+			const authInfo = { id_token: '123', access_token: '123', service: 'google' };
+
+			const state = socialAccountLink( {}, {
+				type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+				error,
+				authInfo
+			} );
+
+			expect( state ).to.eql( {
+				isLinking: true,
+				authInfo,
+				email: error.email
+			} );
+		} );
+
+		it( 'should reset linking mode on create success', () => {
+			const state = {
+				createError: { message: 'error' }
+			};
+
+			const newState = socialAccountLink(
+				state,
+				{
+					type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
+					data: { username: 'test', bearerToken: '123' }
+				}
+			);
+
+			expect( newState ).to.to.eql( { isLinking: false } );
+		} );
+
+		it( 'should reset linking mode when user is received', () => {
+			const state = { createError: {} };
+
+			const newState = socialAccountLink(
+				state,
+				{
+					type: USER_RECEIVE,
+				}
+			);
+
+			expect( newState ).to.to.eql( { isLinking: false } );
 		} );
 	} );
 } );

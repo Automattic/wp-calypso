@@ -1,5 +1,7 @@
-var clone = require( 'lodash/clone' ),
-	noop = require( 'lodash/noop' );
+/**
+ * External dependencies
+ */
+import { clone, noop } from 'lodash';
 
 function fakeNormalize( post, transforms, callback ) {
 	callback( null, clone( post ) );

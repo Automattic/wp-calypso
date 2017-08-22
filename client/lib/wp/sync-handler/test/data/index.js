@@ -6,12 +6,12 @@ import { RECORDS_LIST_KEY } from '../../constants';
 /**
  * Keys -- these have been pre-generated using generateKey and generatePageSeriesKey
  */
-export const postListKey = 'sync-record-c8234aa4facc43d9bf2a2ef4037c595200f282f2';
-export const postListNextPageKey = 'sync-record-e1e623dc2933ed96ead4b0508b053660cd4542c3';
+export const postListKey = 'sync-record-8545d21d82beef8dbda3a4fdb65ba46df49095b3';
+export const postListNextPageKey = 'sync-record-0dbda4d37a524b7e03baedfd803821556e623b8f';
 export const postListDifferentSiteKey = 'sync-record-47c8614e439761ed4406915f31bc16b06ce5181e';
 export const postListWithSearchKey = 'sync-record-5c73482c2934a7f40601935c92e734748026fe70';
 
-export const postListPageSeriesKey = 'sync-record-c8234aa4facc43d9bf2a2ef4037c595200f282f2';
+export const postListPageSeriesKey = 'sync-record-8545d21d82beef8dbda3a4fdb65ba46df49095b3';
 export const postListDifferentPageSeriesKey = 'sync-record-5c73482c2934a7f40601935c92e734748026fe70';
 
 /*

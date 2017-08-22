@@ -14,6 +14,7 @@ import PostActionsEllipsisMenuPublish from './publish';
 import PostActionsEllipsisMenuTrash from './trash';
 import PostActionsEllipsisMenuView from './view';
 import PostActionsEllipsisMenuRestore from './restore';
+import PostActionsEllipsisMenuDuplicate from './duplicate';
 
 export default function PostActionsEllipsisMenu( { globalId, includeDefaultActions, children } ) {
 	let actions = [];
@@ -25,6 +26,7 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 			<PostActionsEllipsisMenuStats key="stats" />,
 			<PostActionsEllipsisMenuPublish key="publish" />,
 			<PostActionsEllipsisMenuRestore key="restore" />,
+			<PostActionsEllipsisMenuDuplicate key="duplicate" />,
 			<PostActionsEllipsisMenuTrash key="trash" />
 		);
 	}

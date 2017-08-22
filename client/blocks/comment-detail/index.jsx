@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -42,11 +43,11 @@ const getCommentStatusAction = ( { commentId, commentIsLiked, commentStatus, pos
 export class CommentDetail extends Component {
 	static propTypes = {
 		authorAvatarUrl: PropTypes.string,
-		authorDisplayName: PropTypes.string,
 		authorEmail: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.string ] ),
 		authorId: PropTypes.number,
 		authorIp: PropTypes.string,
 		authorIsBlocked: PropTypes.bool,
+		authorName: PropTypes.string,
 		authorUrl: PropTypes.string,
 		authorUsername: PropTypes.string,
 		commentContent: PropTypes.string,
@@ -131,10 +132,7 @@ export class CommentDetail extends Component {
 
 	toggleLike = () => this.props.toggleCommentLike( getCommentStatusAction( this.props ) );
 
-	toggleSelected = () => {
-		const { commentId, toggleCommentSelected } = this.props;
-		toggleCommentSelected( commentId );
-	}
+	toggleSelected = () => this.props.toggleCommentSelected( getCommentStatusAction( this.props ) );
 
 	toggleSpam = () => {
 		const { commentStatus, setCommentStatus } = this.props;
@@ -173,9 +171,9 @@ export class CommentDetail extends Component {
 	render() {
 		const {
 			authorAvatarUrl,
-			authorDisplayName,
 			authorEmail,
 			authorIp,
+			authorName,
 			authorUrl,
 			authorUsername,
 			commentContent,
@@ -197,9 +195,11 @@ export class CommentDetail extends Component {
 			repliedToComment,
 			replyComment,
 			siteId,
+			translate,
 		} = this.props;
 
 		const postUrl = `/read/blogs/${ siteId }/posts/${ postId }`;
+		const authorDisplayName = authorName || translate( 'Anonymous' );
 
 		const {
 			authorIsBlocked,
@@ -311,11 +311,11 @@ const mapStateToProps = ( state, ownProps ) => {
 
 	return ( {
 		authorAvatarUrl: get( comment, 'author.avatar_URL' ),
-		authorDisplayName: get( comment, 'author.name' ),
 		authorEmail: get( comment, 'author.email' ),
 		authorId: get( comment, 'author.ID' ),
 		authorIp: get( comment, 'author.ip' ), // TODO: not available in the current data structure
 		authorIsBlocked: get( comment, 'author.isBlocked' ), // TODO: not available in the current data structure
+		authorName: get( comment, 'author.name' ),
 		authorUrl: get( comment, 'author.URL', '' ),
 		authorUsername: get( comment, 'author.nice_name' ),
 		commentContent: get( comment, 'content' ),

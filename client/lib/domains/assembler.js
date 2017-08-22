@@ -21,6 +21,7 @@ function createDomainObjects( dataTransferObject ) {
 		return {
 			autoRenewalMoment: domain.auto_renewal_date && i18n.moment( domain.auto_renewal_date ),
 			currentUserCanManage: domain.current_user_can_manage,
+			domainLockingAvailable: domain.domain_locking_available,
 			expirationMoment: domain.expiry && i18n.moment( domain.expiry ),
 			expired: domain.expired,
 			expirySoon: domain.expiry_soon,
@@ -43,6 +44,7 @@ function createDomainObjects( dataTransferObject ) {
 			subscriptionId: domain.subscription_id,
 			transferLockOnWhoisUpdateOptional: domain.transfer_lock_on_whois_update_optional,
 			type: getDomainType( domain ),
+			whoisUpdateUnmodifiableFields: domain.whois_update_unmodifiable_fields,
 		};
 	} );
 

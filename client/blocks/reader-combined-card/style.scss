@@ -70,7 +70,7 @@
 	}
 
 	&::after {
-		@include long-content-fade( $size: 5% );
+		@include long-content-fade( $size: 35px );
 		height: 16px * 1.4;
 	}
 }

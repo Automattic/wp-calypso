@@ -77,7 +77,8 @@ describe( 'EditorMediaModal', function() {
 		).instance();
 		tree.deleteMedia();
 
-		expect( accept ).to.have.been.calledWith( 'Are you sure you want to permanently delete this item?' );
+		expect( accept ).to.have.been.calledWith( 'Are you sure you want to delete this item? ' +
+			'It will be permanently removed from all other locations where it currently appears.' );
 		process.nextTick( function() {
 			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
 			done();
@@ -90,7 +91,8 @@ describe( 'EditorMediaModal', function() {
 		).instance();
 		tree.deleteMedia();
 
-		expect( accept ).to.have.been.calledWith( 'Are you sure you want to permanently delete these items?' );
+		expect( accept ).to.have.been.calledWith( 'Are you sure you want to delete these items? ' +
+			'They will be permanently removed from all other locations where they currently appear.' );
 		process.nextTick( function() {
 			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA );
 			done();
@@ -106,7 +108,8 @@ describe( 'EditorMediaModal', function() {
 		).instance();
 		tree.deleteMedia();
 
-		expect( accept ).to.have.been.calledWith( 'Are you sure you want to permanently delete this item?' );
+		expect( accept ).to.have.been.calledWith( 'Are you sure you want to delete this item? ' +
+			'It will be permanently removed from all other locations where it currently appears.' );
 		process.nextTick( function() {
 			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
 			done();
@@ -119,7 +122,8 @@ describe( 'EditorMediaModal', function() {
 		).instance();
 		tree.deleteMedia();
 
-		expect( accept ).to.have.been.calledWith( 'Are you sure you want to permanently delete this item?' );
+		expect( accept ).to.have.been.calledWith( 'Are you sure you want to delete this item? ' +
+			'It will be permanently removed from all other locations where it currently appears.' );
 		process.nextTick( function() {
 			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA[ 0 ] );
 			done();
@@ -254,8 +258,14 @@ describe( 'EditorMediaModal', function() {
 			tree.copyExternal = onClose;
 			tree.confirmSelection();
 
+			// EditorMediaModal will generate transient ID for the media selected
+			// by using uniqueId, which increments its value within the same session.
+			const transientItems = [
+				Object.assign( {}, DUMMY_MEDIA[ 0 ], { ID: 'media-1' } ),
+				Object.assign( {}, DUMMY_MEDIA[ 1 ], { ID: 'media-2' } )
+			];
 			process.nextTick( () => {
-				expect( onClose ).to.have.been.calledWith( DUMMY_MEDIA, 'external' );
+				expect( onClose ).to.have.been.calledWith( transientItems, 'external' );
 				done();
 			} );
 		} );

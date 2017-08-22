@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { noop, isFunction } from 'lodash';
 import page from 'page';
-import shallowCompare from 'react-addons-shallow-compare';
 import { v4 as uuid } from 'uuid';
 import addQueryArgs from 'lib/route/add-query-args';
 
@@ -24,7 +24,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 const debug = debugModule( 'calypso:web-preview' );
 
-export class WebPreviewContent extends Component {
+export class WebPreviewContent extends PureComponent {
 	previewId = uuid();
 	_hasTouch = false;
 
@@ -58,10 +58,6 @@ export class WebPreviewContent extends Component {
 
 	componentWillUnmount() {
 		window.removeEventListener( 'message', this.handleMessage );
-	}
-
-	shouldComponentUpdate( nextProps, nextState ) {
-		return shallowCompare( this, nextProps, nextState );
 	}
 
 	componentDidUpdate( prevProps ) {

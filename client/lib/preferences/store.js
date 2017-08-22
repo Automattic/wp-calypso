@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var forOwn = require( 'lodash/forOwn' );
+import { forOwn } from 'lodash';
 
 /**
  * Internal dependencies

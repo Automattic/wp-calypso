@@ -36,7 +36,7 @@ class ErrorNotice extends Component {
 		) {
 			window.scrollTo( 0, 0 );
 		}
-	}
+	};
 
 	getCreateAccountError() {
 		const { createAccountError } = this.props;
@@ -62,10 +62,10 @@ class ErrorNotice extends Component {
 		}
 
 		/*
-		 * The existing_wpcom_user error is caught in SocialLoginForm.
+		 * The user_exists error is caught in SocialLoginForm.
 		 * The relevant messages are displayed inline in LoginForm.
 		*/
-		if ( error.code === 'existing_wpcom_user' ) {
+		if ( error.code === 'user_exists' ) {
 			return null;
 		}
 

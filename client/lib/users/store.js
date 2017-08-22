@@ -1,17 +1,15 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:users:store' ),
-	omit = require( 'lodash/omit' ),
-	find = require( 'lodash/find' ),
-	endsWith = require( 'lodash/endsWith' );
+import deterministicStringify from 'json-stable-stringify';
+import { endsWith, find, omit } from 'lodash';
+const debug = require( 'debug' )( 'calypso:users:store' );
 
 /**
  * Internal dependencies
  */
 var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	deterministicStringify = require( 'lib/deterministic-stringify' );
+	emitter = require( 'lib/mixins/emitter' );
 
 var _fetchingUsersByNamespace = {},        // store fetching state (boolean)
 	_fetchingUpdatedUsersByNamespace = {}, // store fetching state (boolean)

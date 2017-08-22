@@ -1,13 +1,8 @@
 /**
  * External dependencies
  */
-var pick = require( 'lodash/pick' ),
-	assign = require( 'lodash/assign' ),
-	map = require( 'lodash/map' ),
-	filter = require( 'lodash/filter' ),
-	transform = require( 'lodash/transform' ),
-	sortBy = require( 'lodash/sortBy' ),
-	sanitizeHtml = require( 'sanitize-html' );
+import { assign, filter, map, pick, sortBy, transform } from 'lodash';
+const sanitizeHtml = require( 'sanitize-html' );
 
 /**
  * Internal dependencies
@@ -145,6 +140,28 @@ PluginUtils = {
 		} );
 	},
 
+	sanitizeSectionContent: ( content ) => {
+		return sanitizeHtml( content, {
+			allowedTags: [ 'h4', 'h5', 'h6', 'blockquote', 'code', 'b', 'i', 'em', 'strong', 'a', 'p', 'img', 'ul', 'ol', 'li' ],
+			allowedAttributes: { a: [ 'href', 'target', 'rel' ], img: [ 'src' ] },
+			allowedSchemes: [ 'http', 'https' ],
+			transformTags: {
+				h1: 'h3',
+				h2: 'h3',
+				a: ( tagName, attribs ) => {
+					return {
+						tagName: 'a',
+						attribs: {
+							...pick( attribs, [ 'href' ] ),
+							target: '_blank',
+							rel: 'external noopener noreferrer'
+						}
+					};
+				}
+			}
+		} );
+	},
+
 	normalizePluginData: function( plugin, pluginData ) {
 		plugin = this.whiteListPluginData( assign( plugin, pluginData ) );
 
@@ -164,25 +181,7 @@ PluginUtils = {
 				case 'sections':
 					let cleanItem = {};
 					for ( let sectionKey of Object.keys( item ) ) {
-						cleanItem[ sectionKey ] = sanitizeHtml( item[ sectionKey ], {
-							allowedTags: [ 'h4', 'h5', 'h6', 'blockquote', 'code', 'b', 'i', 'em', 'strong', 'a', 'p', 'img', 'ul', 'ol', 'li' ],
-							allowedAttributes: { a: [ 'href', 'target', 'rel' ], img: [ 'src' ] },
-							allowedSchemes: [ 'http', 'https' ],
-							transformTags: {
-								h1: 'h3',
-								h2: 'h3',
-								a: function( tagName, attribs ) {
-									return {
-										tagName: 'a',
-										attribs: {
-											...pick( attribs, [ 'href' ] ),
-											target: '_blank',
-											rel: 'external noopener noreferrer'
-										}
-									};
-								}
-							}
-						} );
+						cleanItem[ sectionKey ] = PluginUtils.sanitizeSectionContent( item[ sectionKey ] );
 					}
 					returnData.sections = cleanItem;
 					returnData.screenshots = cleanItem.screenshots ? PluginUtils.extractScreenshots( cleanItem.screenshots ) : null;

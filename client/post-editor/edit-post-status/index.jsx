@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -46,6 +47,8 @@ export class EditPostStatus extends Component {
 		status: PropTypes.string,
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
+		setNestedSidebar: PropTypes.func,
+		selectRevision: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -179,6 +182,8 @@ export class EditPostStatus extends Component {
 				<Revisions
 					revisions={ this.props.post && this.props.post.revisions }
 					adminUrl={ adminUrl }
+					setNestedSidebar={ this.props.setNestedSidebar }
+					selectRevision={ this.props.selectRevision }
 				/>
 			</div>
 		);

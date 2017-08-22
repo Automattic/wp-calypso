@@ -47,7 +47,7 @@ describe( '#updateZonesList', () => {
 		const dispatch = sinon.spy();
 		const action = requestZones( 123456 );
 
-		updateZonesList( { dispatch }, action, null, apiResponse );
+		updateZonesList( { dispatch }, action, apiResponse );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( updateZones( 123456, [

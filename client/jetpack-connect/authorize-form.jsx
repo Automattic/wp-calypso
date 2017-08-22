@@ -55,8 +55,9 @@ class JetpackConnectAuthorizeForm extends Component {
 			queryObject: PropTypes.shape( {
 				client_id: PropTypes.string,
 				from: PropTypes.string,
-			} ).isRequired,
-		} ).isRequired,
+			} ),
+		} ),
+		preSelectedSite: PropTypes.string,
 		recordTracksEvent: PropTypes.func,
 		requestHasExpiredSecretError: PropTypes.func,
 		requestHasXmlrpcError: PropTypes.func,
@@ -108,18 +109,19 @@ class JetpackConnectAuthorizeForm extends Component {
 		);
 	}
 
+
 	renderForm() {
 		return (
 			( this.props.user )
 				? <LoggedInForm
 					{ ...this.props }
-					isSSO={ this.isSSO() }
-					isWCS={ this.isWCS() }
+					isSSO={ ! this.props.preSelectedSite && this.isSSO() }
+					isWCS={ ! this.props.preSelectedSite && this.isWCS() }
 				/>
 				: <LoggedOutForm
 					{ ...this.props }
-					isSSO={ this.isSSO() }
-					isWCS={ this.isWCS() }
+					isSSO={ ! this.props.preSelectedSite && this.isSSO() }
+					isWCS={ ! this.props.preSelectedSite && this.isWCS() }
 				/>
 		);
 	}
@@ -127,14 +129,9 @@ class JetpackConnectAuthorizeForm extends Component {
 	render() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 
-		if ( typeof queryObject === 'undefined' ) {
+		if ( ! this.props.preSelectedSite && typeof queryObject === 'undefined' ) {
 			return this.renderNoQueryArgsError();
 		}
-
-		if ( queryObject && queryObject.already_authorized && ! this.props.isAlreadyOnSitesList ) {
-			this.renderForm();
-		}
-
 		return (
 			<MainWrapper>
 				<div className="jetpack-connect__authorize-form">

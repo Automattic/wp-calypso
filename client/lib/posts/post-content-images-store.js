@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-var isEqual = require( 'lodash/isEqual' ),
-	pick = require( 'lodash/pick' );
+import { isEqual, pick } from 'lodash';
 
 /**
  * Internal dependencies

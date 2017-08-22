@@ -42,7 +42,7 @@
 		"comments/moderation-tools-in-posts": true,
 		"comments/management": true,
 		"comments/management/all-list": false,
-		"manage/comments/bulk-actions": false,
+		"manage/comments/bulk-actions": true,
 		"css-hot-reload": true,
 		"desktop-promo": true,
 		"devdocs": true,
@@ -122,7 +122,7 @@
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
 		"post-editor/media-advanced": false,
-		"post-editor/video-editor": true,
+		"post-editor/revisions": true,
 		"posts/post-type-list": false,
 		"press-this": true,
 		"publicize-preview": true,
@@ -148,6 +148,7 @@
 		"settings/theme-setup": true,
 		"signup/domain-first-flow": true,
 		"signup/social": true,
+		"signup/social-management": true,
 		"simple-payments": true,
 		"standalone-site-preview": true,
 		"support-user": true,
@@ -172,6 +173,7 @@
 		"woocommerce/extension-settings-shipping": true,
 		"woocommerce/extension-settings-tax": true,
 		"woocommerce/extension-wcservices": true,
+		"woocommerce/store-on-non-atomic-sites": false,
 		"wpcom-user-bootstrap": false
 	}
 }

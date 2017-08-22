@@ -28,11 +28,23 @@ import { selectSiteId } from 'state/help/actions';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import wpcomLib from 'lib/wp';
 import HelpResults from 'me/help/help-results';
+import {
+	bumpStat,
+	recordTracksEvent,
+	composeAnalytics,
+} from 'state/analytics/actions';
 
 /**
  * Module variables
  */
 const wpcom = wpcomLib.undocumented();
+
+const trackSibylClick = ( event, helpLink ) => composeAnalytics(
+	bumpStat( 'sibyl_question_clicks', helpLink.id ),
+	recordTracksEvent( 'calypso_sibyl_question_click', {
+		question_id: helpLink.id
+	} )
+);
 
 export const HelpContactForm = React.createClass( {
 	mixins: [ LinkedStateMixin, PureRenderMixin ],
@@ -292,6 +304,7 @@ export const HelpContactForm = React.createClass( {
 					header={ translate( 'Do you want the answer to any of these questions?' ) }
 					helpLinks={ this.state.qanda }
 					iconTypeDescription="book"
+					onClick={ this.props.trackSibylClick }
 				/>
 
 				<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>{ buttonLabel }</FormButton>
@@ -305,7 +318,8 @@ const mapStateToProps = ( state ) => ( {
 } );
 
 const mapDispatchToProps = {
-	onChangeSite: selectSiteId
+	onChangeSite: selectSiteId,
+	trackSibylClick
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpContactForm ) );

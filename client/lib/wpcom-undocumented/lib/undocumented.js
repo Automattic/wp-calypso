@@ -1,15 +1,9 @@
 /**
- * External dependencies.
+ * External dependencies
  */
+import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
 var debug = require( 'debug' )( 'calypso:wpcom-undocumented:undocumented' ),
-	isPlainObject = require( 'lodash/isPlainObject' ),
-	clone = require( 'lodash/clone' ),
-	omit = require( 'lodash/omit' ),
-	camelCase = require( 'lodash/camelCase' ),
-	snakeCase = require( 'lodash/snakeCase' ),
-	pick = require( 'lodash/pick' ),
-	url = require( 'url' ),
-	reject = require( 'lodash/reject' );
+	url = require( 'url' );
 
 /**
  * Internal dependencies.
@@ -1849,7 +1843,7 @@ Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {
 };
 
 Undocumented.prototype.requestTransferCode = function( options, fn ) {
-	var { domainName, unlock, disablePrivacy } = options,
+	const { domainName, unlock, disablePrivacy } = options,
 		data = {
 			domainStatus: JSON.stringify( {
 				command: 'send-code',
@@ -1863,13 +1857,14 @@ Undocumented.prototype.requestTransferCode = function( options, fn ) {
 	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
 };
 
-Undocumented.prototype.enableDomainLocking = function( { domainName, enablePrivacy, declineTransfer }, fn ) {
-	var data = {
+Undocumented.prototype.cancelTransferRequest = function( { domainName, enablePrivacy, declineTransfer, lockDomain }, fn ) {
+	const data = {
 		domainStatus: JSON.stringify( {
-			command: 'lock-domain',
+			command: 'cancel-transfer-request',
 			payload: {
 				enable_privacy: enablePrivacy,
-				decline_transfer: declineTransfer
+				decline_transfer: declineTransfer,
+				lock_domain: lockDomain,
 			}
 		} )
 	};
@@ -2429,6 +2424,16 @@ Undocumented.prototype.dismissNPSSurvey = function( surveyName, fn ) {
  */
 Undocumented.prototype.checkNPSSurveyEligibility = function( fn ) {
 	return this.wpcom.req.get( { path: '/nps' }, { apiVersion: '1.2' }, {}, fn );
+};
+
+/**
+ * Get OAuth2 Client data for a given client ID
+ * @param {string}     clientId       The client ID
+ * @param {Function}   fn             The callback function
+ * @returns {Promise}  A promise
+ */
+Undocumented.prototype.oauth2ClientId = function( clientId, fn ) {
+	return this.wpcom.req.get( `/oauth2-client-data/${ clientId }`, { apiNamespace: 'wpcom/v2' }, fn );
 };
 
 /**

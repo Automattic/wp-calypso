@@ -78,6 +78,16 @@ export const isNewUser = state => {
 };
 
 /**
+ * Returns true if the user is NOT considered "new" (less than a week since registration)
+ *
+ * @param {Object} state Global state tree
+ * @return {Boolean} True if user is NOT new, false otherwise
+ */
+export const isNotNewUser = state => {
+	return ! isNewUser( state );
+};
+
+/**
  * Returns a selector that tests if the user is older than a given time
  *
  * @param {Number} age Number of milliseconds

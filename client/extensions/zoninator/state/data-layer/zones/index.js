@@ -21,7 +21,7 @@ export const requestZonesList = ( { dispatch }, action ) => {
 export const requestZonesError = ( { dispatch }, { siteId } ) =>
 	dispatch( requestError( siteId ) );
 
-export const updateZonesList = ( { dispatch }, { siteId }, next, { data } ) =>
+export const updateZonesList = ( { dispatch }, { siteId }, { data } ) =>
 	dispatch( updateZones( siteId, data ) );
 
 const dispatchFetchZonesRequest = dispatchRequest( requestZonesList, updateZonesList, requestZonesError );

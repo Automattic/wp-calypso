@@ -1,4 +1,7 @@
-var toArray = require( 'lodash/toArray' );
+/**
+ * External dependencies
+ */
+import { toArray } from 'lodash';
 
 function FakeWPCOM() {
 	if ( ! ( this instanceof FakeWPCOM ) ) {

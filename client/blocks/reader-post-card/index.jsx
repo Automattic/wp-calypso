@@ -204,6 +204,7 @@ class ReaderPostCard extends React.Component {
 					title={ title }
 					isDiscover={ isDiscover }
 					postByline={ postByline }
+					commentIds={ postKey.comments }
 				/>
 			);
 		} else if ( isPhotoPost ) {

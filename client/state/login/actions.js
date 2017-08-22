@@ -2,7 +2,7 @@
  * External dependencies
  */
 import request from 'superagent';
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -108,6 +108,7 @@ const getErrorFromWPCOMError = ( wpcomError ) => ( {
 	message: wpcomError.message,
 	code: wpcomError.error,
 	field: 'global',
+	...omit( wpcomError, [ 'error', 'message', 'field' ] )
 } );
 
 /**
@@ -239,8 +240,19 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 		.then( ( response ) => {
 			dispatch( {
 				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
-				redirectTo: get( response, 'body.data.redirect_to' ),
+				data: get( response, 'body.data' )
 			} );
+
+			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
+				dispatch( {
+					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+					notice: {
+						message: getSMSMessageFromResponse( response ),
+						status: 'is-success'
+					},
+					twoStepNonce: get( response, 'body.data.two_step_nonce_sms' )
+				} );
+			}
 		} )
 		.catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
@@ -249,7 +261,8 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 			dispatch( {
 				type: SOCIAL_LOGIN_REQUEST_FAILURE,
 				error,
-				authInfo: socialInfo
+				authInfo: socialInfo,
+				data: get( httpError, 'response.body.data' ),
 			} );
 
 			return Promise.reject( error );
@@ -311,10 +324,10 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 		},
 	} );
 
-	return wpcom.undocumented().me().socialConnect( { ...socialInfo, redirectTo } ).then( wpcomResponse => {
+	return wpcom.undocumented().me().socialConnect( { ...socialInfo, redirect_to: redirectTo } ).then( wpcomResponse => {
 		dispatch( {
 			type: SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
-			redirectTo: wpcomResponse.redirect_to,
+			redirect_to: wpcomResponse.redirect_to,
 		} );
 	}, wpcomError => {
 		const error = getErrorFromWPCOMError( wpcomError );
@@ -327,6 +340,12 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 		return Promise.reject( error );
 	} );
 };
+
+export const createSocialUserFailed = ( socialInfo, error ) => ( {
+	type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
+	authInfo: socialInfo,
+	error: error.field ? error : getErrorFromWPCOMError( error )
+} );
 
 /**
  * Sends a two factor authentication recovery code to the 2FA user

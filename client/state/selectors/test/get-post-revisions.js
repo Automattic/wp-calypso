@@ -129,4 +129,74 @@ describe( 'getPostRevisions', () => {
 			}
 		] );
 	} );
+
+	it( 'should normalize all revisions', () => {
+		expect( getPostRevisions( {
+			posts: {
+				revisions: {
+					revisions: {
+						12345678: {
+							10: {
+								11: {
+									id: 11,
+									title: '&acute;',
+								},
+								12: {
+									id: 12,
+									title: '&grave;',
+								}
+							},
+						},
+					},
+				},
+			},
+			users: {
+				items: {},
+			},
+		}, 12345678, 10, 'editing' ) ).to.eql( [
+			{
+				id: 11,
+				title: '´',
+			},
+			{
+				id: 12,
+				title: '`',
+			}
+		] );
+	} );
+
+	it( 'should order revisions by date (recent first)', () => {
+		expect( getPostRevisions( {
+			posts: {
+				revisions: {
+					revisions: {
+						12345678: {
+							10: {
+								12: {
+									id: 12,
+									date: '2017-07-07T12:44:00Z',
+								},
+								11: {
+									id: 11,
+									date: '2017-07-06T12:44:00Z',
+								},
+							},
+						},
+					},
+				},
+			},
+			users: {
+				items: {},
+			},
+		}, 12345678, 10 ) ).to.eql( [
+			{
+				id: 12,
+				date: '2017-07-07T12:44:00Z',
+			},
+			{
+				id: 11,
+				date: '2017-07-06T12:44:00Z',
+			}
+		] );
+	} );
 } );

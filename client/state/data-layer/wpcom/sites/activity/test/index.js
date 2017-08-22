@@ -115,9 +115,7 @@ describe( 'handleActivityLogRequest', () => {
 			apiVersion: '1',
 			method: 'GET',
 			path: `/sites/${ SITE_ID }/activity`,
-			query: {
-				number: 1000,
-			},
+			query: {},
 		}, action ) );
 	} );
 

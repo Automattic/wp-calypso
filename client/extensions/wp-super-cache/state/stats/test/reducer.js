@@ -9,6 +9,7 @@ import deepFreeze from 'deep-freeze';
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
+	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
 	WP_SUPER_CACHE_DELETE_FILE,
 	WP_SUPER_CACHE_DELETE_FILE_FAILURE,
 	WP_SUPER_CACHE_DELETE_FILE_SUCCESS,
@@ -301,6 +302,119 @@ describe( 'reducer', () => {
 				} );
 
 				expect( state.items ).to.eql( {} );
+			} );
+		} );
+
+		describe( 'WP_SUPER_CACHE_DELETE_CACHE_SUCCESS', () => {
+			const previousState = deepFreeze( {
+				items: {
+					[ primarySiteId ]: {
+						supercache: {
+							cached: 2,
+							cached_list: {
+								'wordpress.com/supercache/cached-file': {
+									files: 2,
+									lower_age: 5500,
+									upper_age: 10000,
+								}
+							},
+							expired: 4,
+							expired_list: {
+								'wordpress.com/supercache/expired-file': {
+									files: 4,
+									lower_age: 535937,
+									upper_age: 538273,
+								}
+							},
+							fsize: 58272,
+						},
+						wpcache: {
+							cached: 3,
+							cached_list: {
+								'wordpress.com/cached-file': {
+									files: 3,
+									lower_age: 5500,
+									upper_age: 10000,
+								}
+							},
+							expired: 1,
+							expired_list: {
+								'wordpress.com/expired-file': {
+									files: 1,
+									lower_age: 535937,
+									upper_age: 538273,
+								}
+							},
+							fsize: 58272,
+						}
+					}
+				}
+			} );
+
+			it( 'should clear cache and supercache expired count and files list on expired cache clear', () => {
+				const state = reducer( previousState, {
+					type: WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
+					siteId: primarySiteId,
+					deleteExpired: true,
+				} );
+
+				expect( state.items ).to.eql( {
+					[ primarySiteId ]: {
+						supercache: {
+							cached: 2,
+							cached_list: {
+								'wordpress.com/supercache/cached-file': {
+									files: 2,
+									lower_age: 5500,
+									upper_age: 10000,
+								}
+							},
+							expired: 0,
+							expired_list: {},
+							fsize: 58272,
+						},
+						wpcache: {
+							cached: 3,
+							cached_list: {
+								'wordpress.com/cached-file': {
+									files: 3,
+									lower_age: 5500,
+									upper_age: 10000,
+								}
+							},
+							expired: 0,
+							expired_list: {},
+							fsize: 58272,
+						}
+					}
+				} );
+			} );
+
+			it( 'should clear cache and supercache cached and expired count and files list on cache clear', () => {
+				const state = reducer( previousState, {
+					type: WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
+					siteId: primarySiteId,
+					deleteExpired: false,
+				} );
+
+				expect( state.items ).to.eql( {
+					[ primarySiteId ]: {
+						supercache: {
+							cached: 0,
+							cached_list: {},
+							expired: 0,
+							expired_list: {},
+							fsize: 58272,
+						},
+						wpcache: {
+							cached: 0,
+							cached_list: {},
+							expired: 0,
+							expired_list: {},
+							fsize: 58272,
+						}
+					}
+				} );
 			} );
 		} );
 

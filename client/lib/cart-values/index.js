@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
+import { extend } from 'lodash';
 var update = require( 'react-addons-update' ),
 	i18n = require( 'i18n-calypso' ),
-	extend = require( 'lodash/extend' ),
 	config = require( 'config' );
 
 /**

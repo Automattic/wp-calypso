@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	assign = require( 'lodash/assign' ),
-	isEqual = require( 'lodash/isEqual' );
+import { assign, isEqual } from 'lodash';
+const React = require( 'react' );
 
 /**
  * Internal dependencies

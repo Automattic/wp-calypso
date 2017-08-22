@@ -311,8 +311,8 @@ export function fetchPlugins( siteIds ) {
 			dispatch( { ...defaultAction, type: PLUGINS_REQUEST } );
 
 			const receivePluginsDispatchSuccess = ( data ) => {
-				dispatch( { ...defaultAction, type: PLUGINS_RECEIVE } );
-				dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS, data: data.plugins } );
+				dispatch( { ...defaultAction, type: PLUGINS_RECEIVE, data: data.plugins } );
+				dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS } );
 
 				data.plugins.map( plugin => {
 					if ( plugin.update && plugin.autoupdate ) {
@@ -322,7 +322,6 @@ export function fetchPlugins( siteIds ) {
 			};
 
 			const receivePluginsDispatchFail = ( error ) => {
-				dispatch( { ...defaultAction, type: PLUGINS_RECEIVE } );
 				dispatch( { ...defaultAction, type: PLUGINS_REQUEST_FAILURE, error } );
 			};
 

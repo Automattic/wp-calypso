@@ -7,11 +7,11 @@ This component is a wrapper around the default form text input that adds support
 
 ### `prefix`
 
-A text to be inserted at the beginning of the input.
+Markup to be inserted at the beginning of the input.
 
 ### `suffix`
 
-A text to be appended at the end of the input.
+Markup to be appended at the end of the input.
 
 ### `noWrap`
 

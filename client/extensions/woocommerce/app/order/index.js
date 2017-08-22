@@ -16,8 +16,9 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { isOrderUpdating, getOrder } from 'woocommerce/state/sites/orders/selectors';
 import Main from 'components/main';
-import OrderCustomerInfo from './order-customer-info';
+import OrderCustomer from './order-customer';
 import OrderDetails from './order-details';
+import OrderNotes from './order-notes';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 
 class Order extends Component {
@@ -71,7 +72,8 @@ class Order extends Component {
 
 				<div className="order__container">
 					<OrderDetails order={ order } onUpdate={ this.onUpdate } site={ site } />
-					<OrderCustomerInfo order={ order } />
+					<OrderNotes orderId={ order.id } siteId={ site.ID } />
+					<OrderCustomer order={ order } />
 				</div>
 			</Main>
 		);

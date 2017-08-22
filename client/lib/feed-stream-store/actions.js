@@ -114,6 +114,20 @@ export function receivePage( id, error, data ) {
 }
 
 export function receiveUpdates( id, error, data ) {
+	if ( ! error && data && data.posts ) {
+		forEach( data.posts, post => {
+			if ( post.comments ) {
+				// conversations!
+				reduxDispatch( {
+					type: COMMENTS_RECEIVE,
+					siteId: post.site_ID,
+					postId: post.ID,
+					comments: post.comments,
+				} );
+			}
+		} );
+	}
+
 	Dispatcher.handleServerAction( {
 		type: ActionType.RECEIVE_UPDATES,
 		id,

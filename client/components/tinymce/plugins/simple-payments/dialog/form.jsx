@@ -5,23 +5,22 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { reduxForm, Field, getFormValues, isValid, isDirty } from 'redux-form';
+import { reduxForm, Field, Fields, getFormValues, isValid, isDirty } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import emailValidator from 'email-validator';
-import { flowRight as compose, memoize } from 'lodash';
+import { flowRight as compose, padEnd } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
+import ExternalLink from 'components/external-link';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormInputValidation from 'components/forms/form-input-validation';
+import ReduxFormFieldset, { RenderFieldset } from 'components/redux-forms/redux-form-fieldset';
 import UploadImage from 'blocks/upload-image';
+import { getCurrencyDefaults } from 'lib/format-currency';
 
 const REDUX_FORM_NAME = 'simplePaymentsForm';
 
@@ -29,6 +28,61 @@ const REDUX_FORM_NAME = 'simplePaymentsForm';
 export const getProductFormValues = state => getFormValues( REDUX_FORM_NAME )( state );
 export const isProductFormValid = state => isValid( REDUX_FORM_NAME )( state );
 export const isProductFormDirty = state => isDirty( REDUX_FORM_NAME )( state );
+
+// https://developer.paypal.com/docs/integration/direct/rest/currency-codes/
+const SUPPORTED_CURRENCY_LIST = [
+	'USD',
+	'EUR',
+	'AUD',
+	'BRL',
+	'CAD',
+	'CZK',
+	'DKK',
+	'HKD',
+	'HUF',
+	'ILS',
+	'JPY',
+	'MYR',
+	'MXN',
+	'TWD',
+	'NZD',
+	'NOK',
+	'PHP',
+	'PLN',
+	'GBP',
+	'RUB',
+	'SGD',
+	'SEK',
+	'CHF',
+	'THB',
+];
+
+const VISUAL_CURRENCY_LIST = {
+	USD: 'USD $',
+	EUR: 'EUR €',
+	AUD: 'AUD $',
+	BRL: 'BRL R$',
+	CAD: 'CAD $',
+	CZK: 'CZK Kč',
+	DKK: 'DKK kr',
+	HKD: 'HKD $',
+	HUF: 'HUF Ft',
+	ILS: 'ILS ₪',
+	JPY: 'JPY ¥',
+	MYR: 'MYR RM',
+	MXN: 'MXN $',
+	TWD: 'TWD NT$',
+	NZD: 'NZD $',
+	NOK: 'NOK kr',
+	PHP: 'PHP ₱',
+	PLN: 'PLN zł',
+	GBP: 'GBP £',
+	RUB: 'RUB ₽',
+	SGD: 'SGD $',
+	SEK: 'SEK kr',
+	CHF: 'CHF',
+	THB: 'THB ฿',
+};
 
 // based on https://stackoverflow.com/a/10454560/59752
 function decimalPlaces( number ) {
@@ -42,8 +96,8 @@ function decimalPlaces( number ) {
 // Validation function for the form
 const validate = ( values, props ) => {
 	// The translate function was passed as a prop to the `reduxForm()` wrapped component
-	const { currencyDefaults, translate } = props;
-	const precision = currencyDefaults ? currencyDefaults.precision : 2;
+	const { translate } = props;
+	const { precision } = getCurrencyDefaults( values.currency );
 	const errors = {};
 
 	if ( ! values.title ) {
@@ -84,34 +138,38 @@ const validate = ( values, props ) => {
 		} );
 	}
 
+	if ( values.featuredImageId && values.featuredImageId === 'uploading' ) {
+		errors.featuredImageId = 'uploading';
+	}
+
 	return errors;
 };
 
-// Render a `FormFieldset` with given `redux-form` values, parametrized by the input
-// field component type. Memoize the result to prevent creating a new component on
-// every render call.
-const renderField = memoize(
-	FieldComponent => ( { input, meta, label, explanation, ...props } ) => {
-		const isError = !! ( meta.touched && meta.error );
-
-		return (
-			<FormFieldset>
-				<FormLabel htmlFor={ input.name }>
-					{ label }
-				</FormLabel>
-				<FieldComponent id={ input.name } isError={ isError } { ...input } { ...props } />
-				{ isError && <FormInputValidation isError text={ meta.error } /> }
-				{ explanation &&
-					<FormSettingExplanation>
-						{ explanation }
-					</FormSettingExplanation> }
-			</FormFieldset>
-		);
-	}
-);
+// The 'price' input displays data from two fields: `price` and `currency`. That's why we
+// render it using the `Fields` component instead of `Field`. We need this rendering wrapper
+// to transform the props from `{ price: { input, meta }, currency: { input, meta } }` that
+// `Fields` is receiving to `{ input, meta }` that `Field` expects.
+const renderPriceField = ( { price, currency, ...props } ) => {
+	const { precision } = getCurrencyDefaults( currency.input.value );
+	// Tune the placeholder to the precision value: 0 -> '0', 1 -> '0.0', 2 -> '0.00'
+	const placeholder = precision > 0 ? padEnd( '0.', precision + 2, '0' ) : '0';
+	return (
+		<RenderFieldset
+			inputComponent={ FormCurrencyInput }
+			{ ...price }
+			{ ...props }
+			currencySymbolPrefix={ currency.input.value }
+			onCurrencyChange={ currency.input.onChange }
+			currencyList={ SUPPORTED_CURRENCY_LIST }
+			visualCurrencyList={ VISUAL_CURRENCY_LIST }
+			placeholder={ placeholder }
+		/>
+	);
+};
 
 // helper to render UploadImage as a form field
 class UploadImageField extends Component {
+	handleImageEditorDone = () => this.props.input.onChange( 'uploading' );
 	handleImageUploadDone = uploadedImage => this.props.input.onChange( uploadedImage.ID );
 	handleImageRemove = () => this.props.input.onChange( null );
 
@@ -119,6 +177,7 @@ class UploadImageField extends Component {
 		return (
 			<UploadImage
 				defaultImage={ this.props.input.value }
+				onImageEditorDone={ this.handleImageEditorDone }
 				onImageUploadDone={ this.handleImageUploadDone }
 				onImageRemove={ this.handleImageRemove }
 				onError={ this.props.onError }
@@ -131,7 +190,7 @@ class ProductForm extends Component {
 	handleUploadImageError = ( errorCode, errorMessage ) => this.props.showError( errorMessage );
 
 	render() {
-		const { translate, currencyDefaults } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<form className="editor-simple-payments-modal__form">
@@ -141,35 +200,39 @@ class ProductForm extends Component {
 					component={ UploadImageField }
 				/>
 				<div className="editor-simple-payments-modal__form-fields">
-					<Field
+					<ReduxFormFieldset
 						name="title"
 						label={ translate( 'What are you selling?' ) }
 						placeholder={ translate( 'Product name' ) }
-						component={ renderField( FormTextInput ) }
+						component={ FormTextInput }
 					/>
-					<Field
+					<ReduxFormFieldset
 						name="description"
 						label={ translate( 'Description' ) }
-						component={ renderField( FormTextarea ) }
+						component={ FormTextarea }
 					/>
-					<Field
-						name="price"
+					<Fields
+						names={ [ 'price', 'currency' ] }
 						label={ translate( 'Price' ) }
-						currencySymbolPrefix={ currencyDefaults.symbol }
-						placeholder="0.00"
-						component={ renderField( FormCurrencyInput ) }
+						component={ renderPriceField }
 					/>
-					<Field name="multiple" type="checkbox" component={ renderField( CompactFormToggle ) }>
+					<ReduxFormFieldset name="multiple" type="checkbox" component={ CompactFormToggle }>
 						{ translate( 'Allow people to buy more than one item at a time.' ) }
-					</Field>
-					<Field
+					</ReduxFormFieldset>
+					<ReduxFormFieldset
 						name="email"
 						label={ translate( 'Email' ) }
 						explanation={ translate(
 							'This is where PayPal will send your money.' +
-								" To claim a payment, you'll need a PayPal account connected to a bank account."
+								" To claim a payment, you'll need a {{paypalLink}}PayPal account{{/paypalLink}}" +
+								' connected to a bank account.',
+							{
+								components: {
+									paypalLink: <ExternalLink href="https://paypal.com" target="_blank" />,
+								},
+							}
 						) }
-						component={ renderField( FormTextInput ) }
+						component={ FormTextInput }
 					/>
 				</div>
 			</form>

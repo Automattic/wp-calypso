@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-var filter = require( 'lodash/filter' ),
-	last = require( 'lodash/last' );
+import { filter, last } from 'lodash';
 
 var components = [];
 

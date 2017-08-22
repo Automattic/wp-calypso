@@ -339,9 +339,9 @@ class RequiredPluginsInstallView extends Component {
 					imageWidth={ 160 }
 					title={ translate( 'Have something to sell?' ) }
 					subtitle={ translate(
-						'If you\'re located in the {{strong}}United States{{/strong}} ' +
-						'or {{strong}}Canada{{/strong}}, you can now add a store to sell your physical ' +
-						'products right on your site!',
+						'If you\'re in the {{strong}}United States{{/strong}} ' +
+						'or {{strong}}Canada{{/strong}}, you can sell your products right on ' +
+						'your site and ship them to customers in a snap!',
 						{
 							components: { strong: <strong /> }
 						}
@@ -386,7 +386,7 @@ class RequiredPluginsInstallView extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	const sitePlugins = site ? getPlugins( state, [ site ] ) : [];
+	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
 
 	return {
 		site,

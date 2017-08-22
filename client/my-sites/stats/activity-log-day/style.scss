@@ -35,11 +35,24 @@
 }
 
 .activity-log-day__events {
-	text-transform: uppercase;
 	font-size: 12px;
 	color: $gray;
 }
 
-.activity-log-day__rewind-button {
-	text-transform: uppercase;
+.activity-log-day__placeholder {
+	@extend .activity-log-day;
+
+	.activity-log-day__day,
+	.activity-log-day__events {
+		@include placeholder();
+	}
+
+	.activity-log-day__day {
+		width: 12em;
+	}
+
+	.activity-log-day__events {
+		width: 10em;
+		margin-top: .2em;
+	}
 }

@@ -76,3 +76,34 @@
 		fill: darken( $alert-purple, 10 );
 	}
 }
+
+.plan-thank-you-card.checkout-thank-you__rebrand-cities {
+	.thank-you-card__main-icon {
+		width: 100%;
+		max-width: 200px;
+	}
+
+	.thank-you-card {
+		background: $white;
+		color: $gray-dark;
+	}
+
+	.thank-you-card__header {
+		background: $blue-medium;
+		color: $white;
+	}
+
+	.thank-you-card__price {
+		color: lighten( $gray, 30% );
+	}
+
+	.thank-you-card__description {
+		width: auto;
+	}
+
+	.thank-you-card__button {
+		background: $gray-dark;
+		color: $white;
+		border: 0;
+	}
+}

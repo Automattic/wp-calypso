@@ -24,7 +24,11 @@ module.exports = React.createClass( {
 		return (
 			<div className="help-results">
 				<SectionHeader label={ this.props.header }/>
-				{ this.props.helpLinks.map( helpLink => <HelpResult key={ helpLink.link } helpLink={ helpLink } iconTypeDescription={ this.props.iconTypeDescription } /> ) }
+				{ this.props.helpLinks.map( helpLink =>
+					<HelpResult
+						key={ helpLink.link } helpLink={ helpLink } iconTypeDescription={ this.props.iconTypeDescription }
+						onClick={ this.props.onClick } /> )
+				}
 				<a href={ this.props.searchLink } target="__blank">
 					<CompactCard className="help-results__footer">
 						<span className="help-results__footer-text">

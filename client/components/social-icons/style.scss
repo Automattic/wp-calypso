@@ -1,0 +1,10 @@
+.social-icons {
+	margin-top: -2px;
+	vertical-align: middle;
+}
+
+.social-icons--disabled {
+	path {
+		fill: lighten( $gray, 30% );
+	}
+}
