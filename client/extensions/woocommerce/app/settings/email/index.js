@@ -15,7 +15,7 @@ import Button from 'components/button';
 import SettingsNavigation from '../navigation';
 import { getLink } from 'woocommerce/lib/nav-utils';
 
-const Development = ( { isSaving, site, translate, className } ) => {
+const Email = ( { isSaving, site, translate, className } ) => {
 	const breadcrumbs = [
 		( <a href={ getLink( '/store/:site/', site ) }>{ translate( 'Settings' ) }</a> ),
 		( <span>{ translate( 'Email' ) }</span> ),
@@ -39,8 +39,8 @@ const Development = ( { isSaving, site, translate, className } ) => {
 	);
 };
 
-Development.propTypes = {
+Email.propTypes = {
 	className: PropTypes.string
 };
 
-export default localize( Development );
+export default localize( Email );
