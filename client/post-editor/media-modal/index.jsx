@@ -452,7 +452,7 @@ export class EditorMediaModal extends Component {
 		if ( this.state.source !== '' ) {
 			buttons.push( {
 				action: 'confirm',
-				label: getConfirmButtonLabelForExternal(),
+				label: this.props.labels.confirm || getConfirmButtonLabelForExternal(),
 				isPrimary: true,
 				disabled: isDisabled || 0 === selectedItems.length,
 				onClick: this.confirmSelection
