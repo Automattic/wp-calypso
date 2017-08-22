@@ -78,24 +78,35 @@
 	display: flex;
 	flex-flow: row nowrap;
 
+	.comment-detail__header-content {
+		display: flex;
+		flex-wrap: nowrap;
+		width: calc( 100% - 36px );
+	}
+
 	&.is-preview {
 		cursor: pointer;
 		padding: 12px 8px;
 
 		@include breakpoint( "<960px" ) {
-			flex-wrap: wrap;
+			.comment-detail__header-content {
+				flex-wrap: wrap;
+			}
 		}
 	}
 
 	&.is-bulk-edit {
+		.comment-detail__header-content {
+			width: 100%;
+		}
+
 		.comment-detail__checkbox {
-			padding-left: 8px;
+			padding-right: 12px;
 			.form-checkbox {
 				margin: 0;
 			}
 		}
 		.comment-detail__author-preview {
-			padding: 0 12px;
 			.external-link:hover,
 			.external-link:focus {
 				outline: none;
@@ -103,7 +114,32 @@
 		}
 	}
 
-	.button.is-borderless {
+	.comment-detail__action-collapse .gridicon {
+		fill: $gray;
+		transform: rotate( 180deg );
+		transition: transform .15s cubic-bezier(0.175, .885, .32, 1.275), color .20s ease-in;
+	}
+	.comment-detail__action-collapse:hover .gridicon {
+		fill: $blue-medium;
+	}
+
+	&.is-preview {
+		&:hover .comment-detail__action-collapse .gridicon {
+			fill: $blue-medium;
+		}
+		.comment-detail__action-collapse {
+			flex: none;
+			margin-top: -6px;
+			text-align: center;
+			width: 36px;
+
+			.gridicon {
+				transform: rotate( 0deg );
+			}
+		}
+	}
+
+	&:not( .is-preview ) .button.is-borderless {
 		padding: 12px 8px;
 
 		.gridicon {
@@ -113,8 +149,8 @@
 
 		&.comment-detail__action-collapse {
 			flex-grow: 1;
-			padding-left: 12px;
-			text-align: left;
+			padding-right: 12px;
+			text-align: right;
 		}
 	}
 
@@ -189,7 +225,7 @@
 
 .comment-detail__actions {
 	color: $gray;
-	padding-right: 4px;
+	padding-left: 4px;
 	user-select: none;
 
 	.button.is-borderless {
