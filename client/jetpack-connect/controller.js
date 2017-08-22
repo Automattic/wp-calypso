@@ -145,8 +145,6 @@ export default {
 				path={ context.path }
 				interval={ interval }
 				locale={ locale }
-				preSelectedSite={ context.query.preSelectedSite || null }
-				selectedPlan={ context.query.selectedPlan || null }
 			/>,
 			document.getElementById( 'primary' ),
 			context.store
@@ -195,7 +193,6 @@ export default {
 				interval={ context.params.interval }
 				basePlansPath={ '/jetpack/connect/store' }
 				url={ context.query.site }
-				preSelectedSite={ context.query.preSelectedSite }
 			/>,
 			document.getElementById( 'primary' ),
 			context.store
