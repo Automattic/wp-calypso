@@ -21,11 +21,6 @@ class SiteSelectorAddSite extends Component {
 	constructor() {
 		super();
 
-		this.state = {
-			showPopoverMenu: false,
-			popoverPosition: 'top',
-		};
-
 		this.recordAddNewSite = this.recordAddNewSite.bind( this );
 	}
 
