@@ -152,7 +152,8 @@ class PageSetup extends Component {
 						{ translate( 'Skip this step' ) }
 					</a>
 					<Button primary
-						className="page-setup__create-pages">
+						className="page-setup__create-pages"
+						disabled={ ! postJob && ! dashboard && ! jobs }>
 						{ translate( 'Create selected pages' ) }
 					</Button>
 				</CompactCard>
