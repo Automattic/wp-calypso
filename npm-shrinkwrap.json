@@ -1853,7 +1853,7 @@
           "dev": true
         },
         "cli-width": {
-          "version": "2.1.0",
+          "version": "2.2.0",
           "dev": true
         },
         "doctrine": {
@@ -5208,7 +5208,7 @@
           "dev": true
         },
         "cli-width": {
-          "version": "2.1.0",
+          "version": "2.2.0",
           "dev": true
         },
         "doctrine": {
@@ -7023,7 +7023,7 @@
       "version": "4.0.5"
     },
     "wpcom-xhr-request": {
-      "version": "1.1.0"
+      "version": "1.1.1"
     },
     "wrap-ansi": {
       "version": "2.1.0"
