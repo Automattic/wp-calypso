@@ -72,6 +72,7 @@ export getPostLikes from './get-post-likes';
 export getPostRevision from './get-post-revision';
 export getPostRevisionChanges from './get-post-revision-changes';
 export getPostRevisions from './get-post-revisions';
+export getPostRevisionsAuthorsId from './get-post-revisions-authors-id';
 export getPostSharePublishedActions from './get-post-share-published-actions';
 export getPostShareScheduledActions from './get-post-share-scheduled-actions';
 export getPrimarySiteId from './get-primary-site-id';
