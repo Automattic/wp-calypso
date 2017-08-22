@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { reduxForm, Field, Fields, getFormValues, isValid, isDirty } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import emailValidator from 'email-validator';
-import { flowRight as compose, padEnd } from 'lodash';
+import { flowRight as compose, padEnd, trimEnd } from 'lodash';
 
 /**
  * Internal dependencies
@@ -57,32 +57,13 @@ const SUPPORTED_CURRENCY_LIST = [
 	'THB',
 ];
 
-const VISUAL_CURRENCY_LIST = {
-	USD: 'USD $',
-	EUR: 'EUR €',
-	AUD: 'AUD $',
-	BRL: 'BRL R$',
-	CAD: 'CAD $',
-	CZK: 'CZK Kč',
-	DKK: 'DKK kr',
-	HKD: 'HKD $',
-	HUF: 'HUF Ft',
-	ILS: 'ILS ₪',
-	JPY: 'JPY ¥',
-	MYR: 'MYR RM',
-	MXN: 'MXN $',
-	TWD: 'TWD NT$',
-	NZD: 'NZD $',
-	NOK: 'NOK kr',
-	PHP: 'PHP ₱',
-	PLN: 'PLN zł',
-	GBP: 'GBP £',
-	RUB: 'RUB ₽',
-	SGD: 'SGD $',
-	SEK: 'SEK kr',
-	CHF: 'CHF',
-	THB: 'THB ฿',
-};
+const VISUAL_CURRENCY_LIST = SUPPORTED_CURRENCY_LIST.map( code => {
+	const { symbol } = getCurrencyDefaults( code );
+	// if symbol is equal to the code (e.g., 'CHF' === 'CHF'), don't duplicate it.
+	// trim the dot at the end, e.g., 'kr.' becomes 'kr'
+	const label = symbol === code ? code : `${ code } ${ trimEnd( symbol, '.' ) }`;
+	return { code, label };
+} );
 
 // based on https://stackoverflow.com/a/10454560/59752
 function decimalPlaces( number ) {
@@ -160,8 +141,7 @@ const renderPriceField = ( { price, currency, ...props } ) => {
 			{ ...props }
 			currencySymbolPrefix={ currency.input.value }
 			onCurrencyChange={ currency.input.onChange }
-			currencyList={ SUPPORTED_CURRENCY_LIST }
-			visualCurrencyList={ VISUAL_CURRENCY_LIST }
+			currencyList={ VISUAL_CURRENCY_LIST }
 			placeholder={ placeholder }
 		/>
 	);

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { mapValues } from 'lodash';
+import { entries } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,9 +37,12 @@ import PhoneInput from 'components/phone-input';
  * Internal dependencies
  */
 const countriesList = require( 'lib/countries-list' ).forSms();
-const currencies = require( 'lib/format-currency/currencies' ).CURRENCIES
-const currencyList = Object.keys( currencies );
-const visualCurrencyList = mapValues( currencies, ( currency, key ) => `${ key } ${ currency.symbol }` );
+const { CURRENCIES } = require( 'lib/format-currency/currencies' );
+const currencyList = entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
+const visualCurrencyList = entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {
+	code,
+	label: `${ code } ${ symbol }`
+} ) );
 
 class FormFields extends React.PureComponent {
 	static displayName = 'FormFields'; // Needed for devdocs/design
@@ -351,8 +354,7 @@ class FormFields extends React.PureComponent {
 							onChange={ this.handlePriceChange }
 							currencySymbolPrefix={ this.state.currencyInput.currency }
 							onCurrencyChange={ this.handleCurrencyChange }
-							currencyList={ currencyList }
-							visualCurrencyList={ visualCurrencyList }
+							currencyList={ visualCurrencyList }
 							placeholder="Placeholder text..."
 						/>
 					</FormFieldset>
