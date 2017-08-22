@@ -45,8 +45,9 @@
 
 			@include breakpoint( "<480px" ) {
 				margin-bottom: 0;
-				font-size:1.5rem;
+				font-size: 1.5rem;
 				padding: 0;
+				border-style: none;
 			}
 
 			.jpo-homepage__cta {

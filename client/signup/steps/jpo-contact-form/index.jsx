@@ -49,21 +49,25 @@ const JPOContactFormStep = React.createClass( {
 	renderStepContent() {
 		return (
 			<div className="jpo__contact-form-wrapper">
-				<a className="jpo-homepage__select-news" href="#" onClick={ this.onSelect }>
-					<Card>
-						<ContactUsGraphic />
-						<Button onClick={ this.onSelect }>
-							{
-								translate( 'Add a contact form' )
-							}
-						</Button>
-						<div className="jpo__contact-form-description">
-							{
-								translate( 'Not sure? You can skip this step and add a contact form later.' )
-							}
+				<Card className="jpo-contact-form__choice">
+					<a className="jpo-contact-form__select-news jpo-contact-form__choice-link" href="#" onClick={ this.onSelect }>
+						<div className="jpo-contact-form__image">
+							<ContactUsGraphic />
 						</div>
-					</Card>
-				</a>
+						<div className="jpo-contact-form__choice-copy">
+							<Button className="jpo-contact-form__cta" onClick={ this.onSelect }>
+								{
+								translate( 'Add a contact form' )
+								}
+							</Button>
+							<div className="jpo-contact-form__description">
+								{
+								translate( 'Not sure? You can skip this step and add a contact form later.' )
+								}
+							</div>
+						</div>
+					</a>
+				</Card>
 			</div>
 		);
 	},
