@@ -23,8 +23,8 @@ import {
 } from '../constants';
 
 describe( 'canUpgradeToPlan', () => {
-	const makeSite = product_slug => ( {
-		plan: { product_slug },
+	const makeSite = productSlug => ( {
+		plan: { product_slug: productSlug },
 	} );
 
 	it( 'should return true from lower-tier plans to higher-tier plans', () => {
@@ -78,13 +78,13 @@ describe( 'canUpgradeToPlan', () => {
 	} );
 
 	it( 'should return true from high-tier expired plans to lower-tier plans', () => {
-		const makeComplexSite = ( product_slug, isJetpack, isAtomic ) => ( {
+		const makeComplexSite = ( productSlug, isJetpack, isAtomic ) => ( {
 			jetpack: isJetpack || isAtomic,
 			options: {
 				is_automated_transfer: isAtomic,
 			},
 			plan: {
-				product_slug,
+				product_slug: productSlug,
 				expired: true,
 			},
 		} );
