@@ -212,12 +212,13 @@ const controller = {
 	plugin( context ) {
 		const siteUrl = route.getSiteFragment( context.path );
 
+		// If the "plugin" part of the route is actually a site, browse the plugins for that site instead.
 		if (
 			siteUrl &&
 			context.params.plugin &&
 			context.params.plugin === siteUrl.toString()
 		) {
-			controller.plugins( 'all', context );
+			controller.browsePlugins( context );
 			return;
 		}
 
@@ -244,10 +245,10 @@ const controller = {
 
 			if ( redirectToPlugins ) {
 				if ( context.params && context.params.site_id ) {
-					page.redirect( `/plugins/${ context.params.site_id }` );
+					page.redirect( `/plugins/manage/${ context.params.site_id }` );
 					return;
 				}
-				page.redirect( '/plugins' );
+				page.redirect( '/plugins/manage' );
 				return;
 			}
 		}
