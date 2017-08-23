@@ -12,7 +12,7 @@ import { decodeEntities as decode } from 'lib/formatting';
 import safeImageURL from 'lib/safe-image-url';
 
 export default function decodeEntities( post ) {
-	forEach( [ 'excerpt', 'title', 'site_name' ], function( prop ) {
+	forEach( [ 'content', 'excerpt', 'title', 'site_name' ], function( prop ) {
 		if ( post[ prop ] ) {
 			post[ prop ] = decode( post[ prop ] );
 		}
