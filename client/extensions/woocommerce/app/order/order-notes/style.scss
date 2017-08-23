@@ -109,6 +109,11 @@
 		border-color: $white;
 		resize: vertical;
 		display: block;
+		font-size: 14px;
+
+		&::placeholder {
+			color: $gray-text-min;
+		}
 
 		&:focus {
 			border-color: $blue-wordpress;
