@@ -57,6 +57,7 @@ class RequiredPluginsInstallView extends Component {
 			return;
 		}
 
+		// Proceed at rate of approximately 60 fps
 		this.updateTimer = window.setInterval( () => {
 			this.updateEngine();
 		}, 17 );
@@ -99,12 +100,14 @@ class RequiredPluginsInstallView extends Component {
 		}
 
 		if ( waitingForPluginListFromSite ) {
-			if ( workingOn !== 'WAITING_FOR_PLUGIN_LIST_FROM_SITE' ) {
-				this.setState( {
-					message: translate( 'Waiting for plugin list from site' ),
-					workingOn: 'WAITING_FOR_PLUGIN_LIST_FROM_SITE',
-				} );
+			if ( workingOn === 'WAITING_FOR_PLUGIN_LIST_FROM_SITE' ) {
+				return;
 			}
+
+			this.setState( {
+				message: translate( 'Waiting for plugin list from site' ),
+				workingOn: 'WAITING_FOR_PLUGIN_LIST_FROM_SITE',
+			} );
 			return;
 		}
 
@@ -126,12 +129,14 @@ class RequiredPluginsInstallView extends Component {
 			}
 		}
 		if ( ! pluginDataLoaded ) {
-			if ( workingOn !== 'LOAD_PLUGIN_DATA' ) {
-				this.setState( {
-					message: translate( 'Loading plugin data' ),
-					workingOn: 'LOAD_PLUGIN_DATA',
-				} );
+			if ( workingOn === 'LOAD_PLUGIN_DATA' ) {
+				return;
 			}
+
+			this.setState( {
+				message: translate( 'Loading plugin data' ),
+				workingOn: 'LOAD_PLUGIN_DATA',
+			} );
 			return;
 		}
 
