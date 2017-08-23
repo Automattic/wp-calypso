@@ -12,6 +12,16 @@
 
 	.dialog__action-buttons {
 		overflow: visible;
+
+		.button {
+			&.is-borderless {
+				color: $blue-wordpress;
+
+				&:hover {
+					color: $link-highlight;
+				}
+			}
+		}
 	}
 }
 
