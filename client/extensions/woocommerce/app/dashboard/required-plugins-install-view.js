@@ -59,7 +59,7 @@ class RequiredPluginsInstallView extends Component {
 
 		this.updateTimer = window.setInterval( () => {
 			this.updateEngine();
-		}, 1000 );
+		}, 17 );
 	}
 
 	destroyUpdateTimer = () => {
@@ -83,6 +83,7 @@ class RequiredPluginsInstallView extends Component {
 
 	doInitialization = () => {
 		const { site, sitePlugins, translate, wporg } = this.props;
+		const { workingOn } = this.state;
 
 		if ( ! site ) {
 			return;
@@ -98,10 +99,13 @@ class RequiredPluginsInstallView extends Component {
 		}
 
 		if ( waitingForPluginListFromSite ) {
-			this.setState( {
-				message: translate( 'Waiting for plugin list from site' ),
-				progress: 0,
-			} );
+			if ( workingOn !== 'WAITING_FOR_PLUGIN_LIST_FROM_SITE' ) {
+				this.setState( {
+					message: translate( 'Waiting for plugin list from site' ),
+					progress: 0,
+					workingOn: 'WAITING_FOR_PLUGIN_LIST_FROM_SITE',
+				} );
+			}
 			return;
 		}
 
@@ -123,10 +127,13 @@ class RequiredPluginsInstallView extends Component {
 			}
 		}
 		if ( ! pluginDataLoaded ) {
-			this.setState( {
-				message: translate( 'Loading plugin data' ),
-				progress: 0,
-			} );
+			if ( workingOn !== 'LOAD_PLUGIN_DATA' ) {
+				this.setState( {
+					message: translate( 'Loading plugin data' ),
+					progress: 0,
+					workingOn: 'LOAD_PLUGIN_DATA',
+				} );
+			}
 			return;
 		}
 
@@ -149,6 +156,7 @@ class RequiredPluginsInstallView extends Component {
 				progress: 25,
 				toActivate,
 				toInstall,
+				workingOn: '',
 			} );
 			return;
 		}
@@ -159,6 +167,7 @@ class RequiredPluginsInstallView extends Component {
 				message: '',
 				progress: 50,
 				toActivate,
+				workingOn: '',
 			} );
 			return;
 		}
