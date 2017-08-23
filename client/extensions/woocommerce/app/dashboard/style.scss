@@ -49,7 +49,7 @@
 
 		.dashboard__setup-task-label {
 			h2 {
-				color: $gray-text-min;
+				color: darken( $gray, 25% );
 				margin-bottom: 6px;
 
 				@include breakpoint( ">960px" ) {
