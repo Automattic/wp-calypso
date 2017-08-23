@@ -218,7 +218,7 @@ UserSettings.prototype.getSetting = function( settingName ) {
 	// If we haven't fetched settings, or if the setting doesn't exist return null
 	if ( this.settings && 'undefined' !== typeof get( this.settings, settingName ) ) {
 		setting =
-			'undefined' !== typeof get( this.unsavedSettings, settingName )
+			this.isSettingUnsaved( settingName )
 				? get( this.unsavedSettings, settingName )
 				: get( this.settings, settingName );
 	}
@@ -265,7 +265,7 @@ UserSettings.prototype.isSettingUnsaved = function( settingName ) {
 
 UserSettings.prototype.removeUnsavedSetting = function( settingName ) {
 
-	if ( has( this.unsavedSettings, settingName ) ) {
+	if ( this.isSettingUnsaved( settingName ) ) {
 		deleteUnsavedSetting( this.unsavedSettings, settingName );
 
 		this.emit( 'change' );
