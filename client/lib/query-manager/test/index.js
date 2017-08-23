@@ -16,7 +16,6 @@ describe( 'QueryManager', () => {
 
 	beforeEach( () => {
 		manager = new QueryManager();
-		sandbox.create();
 	} );
 
 	afterEach( () => {

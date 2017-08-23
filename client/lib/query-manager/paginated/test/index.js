@@ -26,7 +26,6 @@ describe( 'PaginatedQueryManager', () => {
 
 	beforeEach( () => {
 		manager = new PaginatedQueryManager();
-		sandbox.create();
 		sandbox.stub( PaginatedQueryManager.prototype, 'compare', ( query, a, b ) => a.ID - b.ID );
 	} );
 
