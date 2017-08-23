@@ -950,3 +950,33 @@
 	padding-bottom: 1em;
 	text-align: center;
 }
+
+.checkout__privacy-protection-radio {
+	&.card {
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+.checkout__privacy-protection-radio-buttons {
+	margin-top: 30px;
+}
+
+.checkout__privacy-protection-radio-button {
+	display: flex;
+}
+
+.checkout__privacy-protection-radio-text {
+	font-weight: normal;
+	margin: 0 0 0 10px;
+}
+
+.checkout__privacy-protection-radio-text-description {
+	color: $gray;
+}
+
+.checkout__privacy-protection-radio-price-text {
+	color: $blue-wordpress;
+	margin: 4px 0 0 10px;
+	font-size: 15px;
+}

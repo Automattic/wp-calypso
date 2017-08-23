@@ -45,6 +45,7 @@ import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.jsx'
 import wp from 'lib/wp';
 import ExtraInfoForm, { tldsWithAdditionalDetailsForms } from 'components/domains/registrant-extra-info';
 import config from 'config';
+import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented(),
@@ -78,6 +79,7 @@ export class DomainDetailsForm extends PureComponent {
 		this.state = {
 			form: null,
 			isDialogVisible: false,
+			privacyRadio: this.allDomainRegistrationsHavePrivacy() ? 'private' : 'public',
 			submissionCount: 0,
 			phoneCountryCode: 'US',
 			steps,
@@ -281,11 +283,14 @@ export class DomainDetailsForm extends PureComponent {
 				fields={ this.state.form }
 				isChecked={ this.allDomainRegistrationsHavePrivacy() }
 				onCheckboxChange={ this.handleCheckboxChange }
+				radioSelect={ this.state.privacyRadio }
+				onRadioSelect={ this.handleRadioChange }
 				onDialogClose={ this.closeDialog }
 				onDialogOpen={ this.openDialog }
 				onDialogSelect={ this.handlePrivacyDialogSelect }
 				isDialogVisible={ this.state.isDialogVisible }
-				productsList={ this.props.productsList } />
+				productsList={ this.props.productsList }
+			/>
 		);
 	}
 
@@ -417,6 +422,11 @@ export class DomainDetailsForm extends PureComponent {
 		this.setPrivacyProtectionSubscriptions( ! this.allDomainRegistrationsHavePrivacy() );
 	}
 
+	handleRadioChange = ( enable ) => {
+		this.setState( { privacyRadio: enable ? 'private' : 'public' } );
+		this.setPrivacyProtectionSubscriptions( enable );
+	};
+
 	closeDialog = () => {
 		this.setState( { isDialogVisible: false } );
 	}
@@ -447,14 +457,15 @@ export class DomainDetailsForm extends PureComponent {
 			}
 
 			if ( this.allDomainRegistrationsSupportPrivacy() &&
-				! this.allDomainRegistrationsHavePrivacy() ) {
+				! this.allDomainRegistrationsHavePrivacy() &&
+				abtest( 'privacyNoPopup' ) !== 'nopopup' ) {
 				this.openDialog();
 				return;
 			}
 
 			this.finish();
 		} );
-	}
+	};
 
 	recordSubmit() {
 		const errors = formState.getErrorMessages( this.state.form ),
