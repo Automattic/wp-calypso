@@ -21,6 +21,11 @@
 	&.is-error {
 		background: $alert-red;
 	}
+
+	> a {
+		cursor: pointer;
+		color: $white;
+	}
 }
 
 .webpack-build-monitor__spinner {

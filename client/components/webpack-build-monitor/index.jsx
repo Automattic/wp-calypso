@@ -7,13 +7,15 @@
 import React from 'react';
 import { createStore } from 'redux';
 import classNames from 'classnames';
-import { find, includes, startsWith, identity } from 'lodash';
+import { find, identity, includes, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Spinner from 'components/spinner';
 import { combineReducers } from 'state/utils';
+
+const refreshPage = () => window.location.reload();
 
 // Action dispatched by wrapped console
 const CONSOLE_MESSAGE = 'CONSOLE_MESSAGE';
@@ -99,7 +101,9 @@ const STATUS_TEXTS = {
 
 const RELOAD_REQUIRED_ELEMENT = (
 	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-	<div className="webpack-build-monitor is-warning">Need to refresh</div>
+	<div className="webpack-build-monitor is-warning">
+		<a onClick={ refreshPage }>Need to refresh</a>
+	</div>
 );
 
 class WebpackBuildMonitor extends React.Component {
@@ -139,7 +143,11 @@ class WebpackBuildMonitor extends React.Component {
 			<div className={ classnames }>
 				{ includes( [ BUILDING_BOTH, BUILDING_CSS, BUILDING_JS ], buildStatus ) &&
 					<Spinner size={ 11 } className="webpack-build-monitor__spinner" /> }
-				{ text }
+				{ reloadRequired
+					? <a onClick={ refreshPage }>
+							{ text }
+						</a>
+					: text }
 			</div>
 		);
 	}
