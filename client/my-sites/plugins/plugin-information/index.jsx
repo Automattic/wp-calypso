@@ -11,12 +11,13 @@ import { get, isEmpty } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
+import Card from 'components/card';
 import ExternalLink from 'components/external-link';
 import Version from 'components/version';
 import PluginRatings from 'my-sites/plugins/plugin-ratings/';
+import { getExtensionSettingsPath } from 'my-sites/plugins/util';
 import versionCompare from 'lib/version-compare';
 import analytics from 'lib/analytics';
-import Card from 'components/card';
 
 export default React.createClass( {
 	_WPORG_PLUGINS_URL: 'wordpress.org/plugins/',
@@ -150,6 +151,11 @@ export default React.createClass( {
 	},
 
 	getDefaultActionLinks( plugin ) {
+		if ( getExtensionSettingsPath( plugin ) ) {
+			// We have a Calypso UI for this plugin, so let's hide the wp-admin action links.
+			return null;
+		}
+
 		let adminUrl = get( this.props, 'site.options.admin_url' );
 		const pluginSlug = get( plugin, 'slug' );
 
