@@ -8,6 +8,7 @@ import {
 	startSubmit as startSave,
 	stopSubmit as stopSave,
 } from 'redux-form';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,6 +29,7 @@ import {
 	updateZone,
 	updateZones
 } from 'zoninator/state/zones/actions';
+import { fromApi } from '../utils';
 
 const apiResponse = {
 	data: [
@@ -73,13 +75,13 @@ describe( '#updateZonesList()', () => {
 		updateZonesList( { dispatch }, action, apiResponse );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( updateZones( 123456, [
+		expect( dispatch ).to.have.been.calledWith( updateZones( 123456, map( [
 			{
 				name: 'Test zone',
 				slug: 'test-zone',
 				description: 'A test zone.',
 			}
-		] ) );
+		], fromApi ) ) );
 	} );
 } );
 
@@ -172,7 +174,7 @@ describe( '#announceZoneSaved()', () => {
 
 		announceZoneSaved( dispatch, action, zone );
 
-		expect( dispatch ).to.have.been.calledWith( updateZone( 123456, zone ) );
+		expect( dispatch ).to.have.been.calledWith( updateZone( 123456, fromApi( zone ) ) );
 	} );
 
 	it( 'should dispatch `successNotice`', () => {

@@ -102,20 +102,20 @@ describe( 'reducer', () => {
 
 	describe( 'items()', () => {
 		const primaryZone = {
-			term_id: 1,
+			id: 1,
 			name: 'Test zone',
 			description: 'A test zone',
 			slug: 'test-zone',
 		};
 		const secondaryZone = {
-			term_id: 2,
+			id: 2,
 			name: 'Test zone 2',
 			description: 'Another test zone',
 		};
 
 		const previousState = deepFreeze( {
 			[ primarySiteId ]: {
-				[ primaryZone.term_id ]: primaryZone,
+				[ primaryZone.id ]: primaryZone,
 			},
 		} );
 
@@ -130,13 +130,13 @@ describe( 'reducer', () => {
 				type: ZONINATOR_UPDATE_ZONES,
 				siteId: primarySiteId,
 				data: {
-					[ primaryZone.term_id ]: primaryZone,
+					[ primaryZone.id ]: primaryZone,
 				},
 			} );
 
 			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: {
-					[ primaryZone.term_id ]: primaryZone,
+					[ primaryZone.id ]: primaryZone,
 				},
 			} );
 		} );
@@ -146,16 +146,16 @@ describe( 'reducer', () => {
 				type: ZONINATOR_UPDATE_ZONES,
 				siteId: secondarySiteId,
 				data: {
-					[ secondaryZone.term_id ]: secondaryZone,
+					[ secondaryZone.id ]: secondaryZone,
 				},
 			} );
 
 			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: {
-					[ primaryZone.term_id ]: primaryZone,
+					[ primaryZone.id ]: primaryZone,
 				},
 				[ secondarySiteId ]: {
-					[ secondaryZone.term_id ]: secondaryZone,
+					[ secondaryZone.id ]: secondaryZone,
 				},
 			} );
 		} );
@@ -165,13 +165,13 @@ describe( 'reducer', () => {
 				type: ZONINATOR_UPDATE_ZONES,
 				siteId: primarySiteId,
 				data: {
-					[ secondaryZone.term_id ]: secondaryZone,
+					[ secondaryZone.id ]: secondaryZone,
 				},
 			} );
 
 			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: {
-					[ secondaryZone.term_id ]: secondaryZone,
+					[ secondaryZone.id ]: secondaryZone,
 				},
 			} );
 		} );
@@ -180,13 +180,13 @@ describe( 'reducer', () => {
 			const state = items( undefined, {
 				type: ZONINATOR_UPDATE_ZONE,
 				siteId: primarySiteId,
-				zoneId: primaryZone.term_id,
+				zoneId: primaryZone.id,
 				data: primaryZone,
 			} );
 
 			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: {
-					[ primaryZone.term_id ]: primaryZone,
+					[ primaryZone.id ]: primaryZone,
 				},
 			} );
 		} );
@@ -195,21 +195,21 @@ describe( 'reducer', () => {
 			const state = items( previousState, {
 				type: ZONINATOR_UPDATE_ZONE,
 				siteId: primarySiteId,
-				zoneId: secondaryZone.term_id,
+				zoneId: secondaryZone.id,
 				data: secondaryZone,
 			} );
 
 			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: {
-					[ primaryZone.term_id ]: primaryZone,
-					[ secondaryZone.term_id ]: secondaryZone,
+					[ primaryZone.id ]: primaryZone,
+					[ secondaryZone.id ]: secondaryZone,
 				},
 			} );
 		} );
 
 		it( 'should update zones of the same site and zone ID', () => {
 			const updatedZone = {
-				term_id: primaryZone.term_id,
+				id: primaryZone.id,
 				name: 'Updated zone',
 				slug: 'updated-zone',
 				description: 'This zone has been updated.',
@@ -218,13 +218,13 @@ describe( 'reducer', () => {
 			const state = items( previousState, {
 				type: ZONINATOR_UPDATE_ZONE,
 				siteId: primarySiteId,
-				zoneId: updatedZone.term_id,
+				zoneId: updatedZone.id,
 				data: updatedZone,
 			} );
 
 			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: {
-					[ primaryZone.term_id ]: updatedZone,
+					[ primaryZone.id ]: updatedZone,
 				},
 			} );
 		} );
@@ -236,7 +236,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: {
-					[ primaryZone.term_id ]: primaryZone,
+					[ primaryZone.id ]: primaryZone,
 				},
 			} );
 		} );
@@ -248,7 +248,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: {
-					[ primaryZone.term_id ]: primaryZone,
+					[ primaryZone.id ]: primaryZone,
 				}
 			} );
 		} );

@@ -25,12 +25,12 @@ describe( 'actions', () => {
 	const siteId = 123456;
 	const zones = {
 		1: {
-			term_id: 1,
+			id: 1,
 			name: 'Foo',
 			description: 'A test zone.',
 		},
 		2: {
-			term_id: 2,
+			id: 2,
 			name: 'Bar',
 			description: 'Another zone.',
 		},
