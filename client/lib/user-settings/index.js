@@ -216,7 +216,7 @@ UserSettings.prototype.getSetting = function( settingName ) {
 	var setting = null;
 
 	// If we haven't fetched settings, or if the setting doesn't exist return null
-	if ( this.settings && 'undefined' !== typeof get( this.settings, settingName ) ) {
+	if ( has( this.settings, settingName ) ) {
 		setting =
 			this.isSettingUnsaved( settingName )
 				? get( this.unsavedSettings, settingName )
