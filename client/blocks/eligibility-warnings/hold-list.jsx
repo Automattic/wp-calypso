@@ -54,7 +54,7 @@ function getHoldMessages( siteSlug, translate ) {
 			title: translate( 'Domain not using WordPress.com name servers' ),
 			description: translate( 'Your domain must use WordPress.com name servers to support custom code. ' +
 			'Follow step 2 in "add domain mapping" to resolve this.' ),
-			supportUrl: 'https://en.support.wordpress.com/domains/map-existing-domain/',
+			supportUrl: 'https://support.wordpress.com/domains/map-existing-domain/',
 		},
 		NOT_RESOLVING_TO_WPCOM: {
 			title: translate( 'Domain not pointing to WordPress.com servers' ),
