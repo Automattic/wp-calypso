@@ -22,11 +22,16 @@ describe( 'PaginatedQueryManager', () => {
 
 	useSandbox( ( _sandbox ) => {
 		sandbox = _sandbox;
-		sandbox.stub( PaginatedQueryManager.prototype, 'compare', ( query, a, b ) => a.ID - b.ID );
 	} );
 
 	beforeEach( () => {
 		manager = new PaginatedQueryManager();
+		sandbox.create();
+		sandbox.stub( PaginatedQueryManager.prototype, 'compare', ( query, a, b ) => a.ID - b.ID );
+	} );
+
+	afterEach( () => {
+		sandbox.restore();
 	} );
 
 	describe( '.hasQueryPaginationKeys()', () => {
@@ -217,7 +222,7 @@ describe( 'PaginatedQueryManager', () => {
 			manager = manager.receive( [ { ID: 144 }, { ID: 152 } ], { query: { search: 'title', number: 2 }, found: 6 } );
 			manager = manager.receive( [ { ID: 160 }, { ID: 168 } ], { query: { search: 'title', number: 2, page: 2 } } );
 			manager = manager.receive( [ { ID: 176 }, { ID: 184 } ], { query: { search: 'title', number: 2, page: 3 } } );
-			sandbox.stub( manager, 'matches' ).returns( false );
+			sandbox.stub( PaginatedQueryManager, 'matches' ).returns( false );
 			manager = manager.receive( { ID: 160, changed: true } );
 
 			expect( manager.getFound( { search: 'title' } ) ).to.equal( 5 );
