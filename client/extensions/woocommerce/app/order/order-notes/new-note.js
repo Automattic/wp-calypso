@@ -13,9 +13,11 @@ import PropTypes from 'prop-types';
 import Button from 'components/button';
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import FormFieldSet from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormSelect from 'components/forms/form-select';
 import { isOrderNoteSaving } from 'woocommerce/state/sites/orders/notes/selectors';
+import ScreenReaderText from 'components/screen-reader-text';
 
 class CreateOrderNote extends Component {
 	static propTypes = {
@@ -59,6 +61,7 @@ class CreateOrderNote extends Component {
 		return (
 			<div className="order-notes__new-note">
 				<FormFieldSet className="order-notes__new-note-content">
+					<ScreenReaderText><FormLabel htmlFor="note">{ translate( 'Add a note' ) }</FormLabel></ScreenReaderText>
 					<FormTextarea
 						id="note"
 						value={ this.state.note }
