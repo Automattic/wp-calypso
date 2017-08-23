@@ -265,7 +265,10 @@ export class LoginForm extends Component {
 					</div>
 
 					{ isOauthLogin && (
-						<div className="login__form-signup-link">
+						<div className={ classNames( {
+							'login__form-signup-link': true,
+							disabled: ! this.props.oauth2ClientData.signupUrl
+						} ) }>
 							{ this.props.translate( 'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
 								{
 									components: {
