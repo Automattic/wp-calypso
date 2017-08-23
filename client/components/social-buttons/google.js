@@ -123,7 +123,7 @@ class GoogleLoginButton extends Component {
 
 		// Options are documented here:
 		// https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiauth2signinoptions
-		Promise.resolve( window.gapi.auth2.getAuthInstance().signIn( { prompt: 'select_account' } ) )
+		window.gapi.auth2.getAuthInstance().signIn( { prompt: 'select_account' } )
 			.then( responseHandler )
 			.catch( error => {
 				this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
