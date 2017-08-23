@@ -432,7 +432,7 @@ class PluginMeta extends Component {
 	render() {
 		const {
 			selectedSite,
-			plugin: pluginProp,
+			plugin: orgPlugin,
 			isPlaceholder,
 			sites,
 			atEnabled,
@@ -445,8 +445,7 @@ class PluginMeta extends Component {
 			'has-site': !! selectedSite,
 			'is-placeholder': !! isPlaceholder
 		} );
-		const selectedSitePlugin = get( sites, '[0].plugin', pluginProp );
-		const plugin = selectedSite ? selectedSitePlugin : pluginProp;
+		const plugin = selectedSite ? get( sites, '[0].plugin', orgPlugin ) : orgPlugin;
 		const path = ( ! selectedSite || plugin.active ) && this.getExtensionSettingsPath( plugin );
 
 		return (
