@@ -7,6 +7,7 @@ import { get, includes, pick, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
+import fromApi from './from-api';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { ACTIVITY_LOG_REQUEST } from 'state/action-types';
@@ -53,9 +54,6 @@ export const handleActivityLogRequest = ( { dispatch }, action ) => {
 		)
 	);
 };
-
-// FIXME: Implement fromApi
-const fromApi = ( { activities } ) => activities;
 
 export const receiveActivityLog = ( { dispatch }, { siteId }, data ) => {
 	dispatch( activityLogUpdate( siteId, fromApi( data ) ) );

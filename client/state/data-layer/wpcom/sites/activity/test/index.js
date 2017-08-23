@@ -20,32 +20,42 @@ import {
 const SITE_ID = 77203074;
 
 const SUCCESS_RESPONSE = deepFreeze( {
-	activities: [
+	items: [
 		{
-			ts_site: 1496692768557,
-			type: 'jetpack-audit',
-			action_trigger: 'publicize_save_published_action',
-			lag: 0,
-			jetpack_version: '5.0-alpha',
-			ts_utc: 1496692768557,
-			action: 'publicized',
-			es_retention: 'long',
-			group: 'post',
-			blog_id: 77203074,
-			hdfs_retention: 'long',
+			'@context': 'https://www.w3.org/ns/activitystreams',
+			summary: 'Jane Doe updated post I wrote a new post!',
+			name: 'post__updated',
 			actor: {
-				displayname: 'User',
-				external_id: 1,
-				login: 'user',
+				type: 'Person',
+				name: 'Jane Doe',
+				role: 'administrator',
+				external_user_id: 1,
+				wpcom_user_id: 12345,
+				icon: {
+					type: 'Image',
+					url: 'https://secure.gravatar.com/avatar/0?s=96&d=mm&r=g',
+					width: 96,
+					height: 96,
+				},
 			},
-			ts_sent_action: 1496692768557,
-			name: 'post__publicized',
-			site_id: 2,
-			error_code: '',
-			ts_recieved_action: 1496692768557,
+			type: 'Updated',
+			object: {
+				type: 'Article',
+				name: 'I wrote a new post!',
+				object_id: 100,
+				object_type: 'post',
+				object_status: 'publish',
+			},
+			published: '2014-09-14T00:30:00+02:00',
+			generator: {
+				jetpack_version: 5.3,
+				blog_id: 123456,
+			},
+			gridicon: 'posts',
+			activity_id: 'foobarbaz',
 		},
 	],
-	found: 1,
+	totalItems: 1,
 } );
 
 const ERROR_RESPONSE = deepFreeze( {
