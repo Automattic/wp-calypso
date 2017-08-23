@@ -16,6 +16,11 @@ describe( 'QueryManager', () => {
 
 	beforeEach( () => {
 		manager = new QueryManager();
+		sandbox.create();
+	} );
+
+	afterEach( () => {
+		sandbox.restore();
 	} );
 
 	describe( '#constructor()', () => {
@@ -74,11 +79,11 @@ describe( 'QueryManager', () => {
 
 	describe( '#matches()', () => {
 		it( 'should return false if item is not truthy', () => {
-			expect( manager.matches() ).to.be.false;
+			expect( QueryManager.matches() ).to.be.false;
 		} );
 
 		it( 'should return true if item is truthy', () => {
-			expect( manager.matches( {}, {} ) ).to.be.true;
+			expect( QueryManager.matches( {}, {} ) ).to.be.true;
 		} );
 	} );
 
@@ -331,7 +336,7 @@ describe( 'QueryManager', () => {
 
 		it( 'should remove a tracked query item when it no longer matches', () => {
 			manager = manager.receive( { ID: 144 }, { query: {} } );
-			sandbox.stub( manager, 'matches' ).returns( false );
+			sandbox.stub( QueryManager, 'matches' ).returns( false );
 			const newManager = manager.receive( { ID: 144, changed: true } );
 
 			expect( manager.getItems() ).to.eql( [ { ID: 144 } ] );
@@ -419,7 +424,7 @@ describe( 'QueryManager', () => {
 
 		it( 'should decrement found count if removing an unmatched item', () => {
 			manager = manager.receive( { ID: 144 }, { query: {}, found: 1 } );
-			sandbox.stub( manager, 'matches' ).returns( false );
+			sandbox.stub( QueryManager, 'matches' ).returns( false );
 			const newManager = manager.receive( { ID: 144, changed: true } );
 
 			expect( manager.getFound( {} ) ).to.equal( 1 );
