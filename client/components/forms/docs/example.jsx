@@ -36,8 +36,10 @@ import PhoneInput from 'components/phone-input';
 /**
  * Internal dependencies
  */
-const countriesList = require( 'lib/countries-list' ).forSms();
-const { CURRENCIES } = require( 'lib/format-currency/currencies' );
+import { forSms } from 'lib/countries-list';
+import { CURRENCIES } from 'lib/format-currency/currencies';
+
+const countriesList = forSms();
 const currencyList = entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
 const visualCurrencyList = entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {
 	code,
