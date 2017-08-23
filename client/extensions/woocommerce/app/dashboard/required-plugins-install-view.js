@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { find, size } from 'lodash';
+import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -36,10 +36,10 @@ class RequiredPluginsInstallView extends Component {
 		this.state = {
 			engineState: 'CONFIRMING',
 			message: '',
-			progress: 0,
 			toActivate: [],
 			toInstall: [],
 			workingOn: '',
+			stepIndex: 0,
 		};
 		this.updateTimer = false;
 	}
@@ -57,9 +57,10 @@ class RequiredPluginsInstallView extends Component {
 			return;
 		}
 
+		// Proceed at rate of approximately 60 fps
 		this.updateTimer = window.setInterval( () => {
 			this.updateEngine();
-		}, 1000 );
+		}, 17 );
 	}
 
 	destroyUpdateTimer = () => {
@@ -83,6 +84,7 @@ class RequiredPluginsInstallView extends Component {
 
 	doInitialization = () => {
 		const { site, sitePlugins, translate, wporg } = this.props;
+		const { workingOn } = this.state;
 
 		if ( ! site ) {
 			return;
@@ -98,9 +100,13 @@ class RequiredPluginsInstallView extends Component {
 		}
 
 		if ( waitingForPluginListFromSite ) {
+			if ( workingOn === 'WAITING_FOR_PLUGIN_LIST_FROM_SITE' ) {
+				return;
+			}
+
 			this.setState( {
 				message: translate( 'Waiting for plugin list from site' ),
-				progress: 0,
+				workingOn: 'WAITING_FOR_PLUGIN_LIST_FROM_SITE',
 			} );
 			return;
 		}
@@ -123,22 +129,29 @@ class RequiredPluginsInstallView extends Component {
 			}
 		}
 		if ( ! pluginDataLoaded ) {
+			if ( workingOn === 'LOAD_PLUGIN_DATA' ) {
+				return;
+			}
+
 			this.setState( {
 				message: translate( 'Loading plugin data' ),
-				progress: 0,
+				workingOn: 'LOAD_PLUGIN_DATA',
 			} );
 			return;
 		}
 
 		const toInstall = [];
 		const toActivate = [];
+		let numTotalSteps = 0;
 		for ( const requiredPluginSlug in requiredPlugins ) {
 			const pluginFound = find( sitePlugins, { slug: requiredPluginSlug } );
 			if ( ! pluginFound ) {
 				toInstall.push( requiredPluginSlug );
 				toActivate.push( requiredPluginSlug );
+				numTotalSteps++;
 			} else if ( ! pluginFound.active ) {
 				toActivate.push( requiredPluginSlug );
+				numTotalSteps++;
 			}
 		}
 
@@ -146,9 +159,10 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				engineState: 'INSTALLING',
 				message: '',
-				progress: 25,
 				toActivate,
 				toInstall,
+				workingOn: '',
+				numTotalSteps,
 			} );
 			return;
 		}
@@ -157,8 +171,9 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				engineState: 'ACTIVATING',
 				message: '',
-				progress: 50,
 				toActivate,
+				workingOn: '',
+				numTotalSteps,
 			} );
 			return;
 		}
@@ -182,7 +197,6 @@ class RequiredPluginsInstallView extends Component {
 				this.setState( {
 					engineState: 'ACTIVATING',
 					message: '',
-					progress: 50,
 				} );
 				return;
 			}
@@ -213,6 +227,7 @@ class RequiredPluginsInstallView extends Component {
 		if ( pluginFound ) {
 			this.setState( {
 				workingOn: '',
+				stepIndex: this.state.stepIndex + 1,
 			} );
 		}
 	}
@@ -230,7 +245,6 @@ class RequiredPluginsInstallView extends Component {
 				this.setState( {
 					engineState: 'DONESUCCESS',
 					message: '',
-					progress: 100,
 				} );
 				return;
 			}
@@ -266,6 +280,7 @@ class RequiredPluginsInstallView extends Component {
 		if ( pluginFound && pluginFound.active ) {
 			this.setState( {
 				workingOn: '',
+				stepIndex: this.state.stepIndex + 1,
 			} );
 		}
 	}
@@ -277,7 +292,6 @@ class RequiredPluginsInstallView extends Component {
 		this.setState( {
 			engineState: 'IDLE',
 			message: translate( 'All required plugins are installed and activated' ),
-			progress: 100,
 		} );
 	}
 
@@ -299,26 +313,13 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	getProgress = () => {
-		const { engineState, toActivate, toInstall } = this.state;
-
-		const requiredPluginsCount = size( this.getRequiredPluginsList() );
-		const installedPluginsCount = requiredPluginsCount - toInstall.length;
-		const activatedPluginsCount = requiredPluginsCount - toActivate.length;
-		const perPluginProgress = 25 / requiredPluginsCount;
+		const { engineState, stepIndex, numTotalSteps } = this.state;
 
 		if ( 'INITIALIZING' === engineState ) {
 			return 0;
 		}
 
-		if ( 'INSTALLING' === engineState ) {
-			return 25 + installedPluginsCount * perPluginProgress;
-		}
-
-		if ( 'ACTIVATING' === engineState ) {
-			return 50 + activatedPluginsCount * perPluginProgress;
-		}
-
-		return 100;
+		return ( stepIndex + 1 ) / ( numTotalSteps + 1 ) * 100;
 	}
 
 	startSetup = () => {
