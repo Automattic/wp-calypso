@@ -19,7 +19,8 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getOAuth2ClientData } from 'state/login/oauth2/selectors';
+import { fetchOAuth2SignupUrl } from 'state/login/oauth2/actions';
+import { getOAuth2ClientData, } from 'state/login/oauth2/selectors';
 import { loginUser, formUpdate } from 'state/login/actions';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -35,6 +36,7 @@ import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
+		fetchOAuth2SignupUrl: PropTypes.func.isRequired,
 		formUpdate: PropTypes.func.isRequired,
 		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
@@ -58,6 +60,10 @@ export class LoginForm extends Component {
 	};
 
 	componentDidMount() {
+		if ( this.props.redirectTo ) {
+			this.props.fetchOAuth2SignupUrl( this.props.redirectTo );
+		}
+
 		this.setState( { isDisabledWhileLoading: false }, () => { // eslint-disable-line react/no-did-mount-set-state
 			this.usernameOrEmail.focus();
 		} );
@@ -263,7 +269,7 @@ export class LoginForm extends Component {
 							{ this.props.translate( 'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
 								{
 									components: {
-										signupLink: <a href={ config( 'signup_url' ) } />,
+										signupLink: <a href={ this.props.oauth2ClientData.signupUrl } />,
 									}
 								}
 							) }
@@ -300,5 +306,6 @@ export default connect(
 		formUpdate,
 		loginUser,
 		recordTracksEvent,
+		fetchOAuth2SignupUrl,
 	}
 )( localize( LoginForm ) );

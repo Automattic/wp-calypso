@@ -2437,6 +2437,16 @@ Undocumented.prototype.oauth2ClientId = function( clientId, fn ) {
 };
 
 /**
+ * Get OAuth2 client signup url from redirectTo parameter
+ * @param {string}     redirectTo     The redirect to paramter
+ * @param {Function}   fn             The callback function
+ * @returns {Promise}  A promise
+ */
+Undocumented.prototype.oauth2SignupUrl = function( redirectTo, fn ) {
+	return this.wpcom.req.get( `/oauth2/signup-url/${ encodeURIComponent( redirectTo ) }`, { apiNamespace: 'wpcom/v2' }, fn );
+};
+
+/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;

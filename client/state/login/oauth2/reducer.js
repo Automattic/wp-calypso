@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { startsWith } from 'lodash';
+import qs from 'qs';
 
 /**
  * Internal dependencies
@@ -10,6 +11,7 @@ import { combineReducers, createReducer } from 'state/utils';
 import {
 	ROUTE_SET,
 	OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
+	OAUTH2_CLIENT_SIGNUP_URL_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 export const initialClientsData = {
@@ -71,11 +73,30 @@ export const initialClientsData = {
 	},
 };
 
+const getClientIdFromSignupUrl = ( signupUrl ) => {
+	const urlParts = signupUrl.split( '?' );
+	const queryString = urlParts[ 1 ];
+
+	const params = qs.parse( queryString );
+	const oauth2Redirect = params.oauth2_redirect;
+	const oauth2RedirectParts = oauth2Redirect.split( '?' );
+	const oauth2RedirectQueryString = oauth2RedirectParts[ 1 ];
+	const oauth2RedirectParams = qs.parse( oauth2RedirectQueryString );
+
+	// qs.parse( qs.parse( signupUrl.split( '?' )[ 1 ] ).oauth2_redirect.split( '?' )[ 1 ] ).client_id;
+	return oauth2RedirectParams.client_id;
+};
+
 export const clients = createReducer( initialClientsData, {
 	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => {
 		const newData = Object.assign( {}, state[ data.id ], data );
 		return Object.assign( {}, state, { [ data.id ]: newData } );
-	}
+	},
+	[ OAUTH2_CLIENT_SIGNUP_URL_REQUEST_SUCCESS ]: ( state, { signupUrl } ) => {
+		const clientId = getClientIdFromSignupUrl( signupUrl );
+		const newData = Object.assign( {}, state[ clientId ], { signupUrl } );
+		return Object.assign( {}, state, { [ clientId ]: newData } );
+	},
 } );
 
 export const currentClientId = createReducer( null, {
