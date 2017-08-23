@@ -35,7 +35,6 @@ class RequiredPluginsInstallView extends Component {
 		super( props );
 		this.state = {
 			engineState: 'CONFIRMING',
-			progress: 0,
 			toActivate: [],
 			toInstall: [],
 			workingOn: '',
@@ -106,7 +105,6 @@ class RequiredPluginsInstallView extends Component {
 
 			this.setState( {
 				workingOn: 'WAITING_FOR_PLUGIN_LIST_FROM_SITE',
-				progress: 0,
 			} );
 			return;
 		}
@@ -135,7 +133,6 @@ class RequiredPluginsInstallView extends Component {
 
 			this.setState( {
 				workingOn: 'LOAD_PLUGIN_DATA',
-				progress: 0,
 			} );
 			return;
 		}
@@ -158,7 +155,6 @@ class RequiredPluginsInstallView extends Component {
 		if ( toInstall.length ) {
 			this.setState( {
 				engineState: 'INSTALLING',
-				progress: 25,
 				toActivate,
 				toInstall,
 				workingOn: '',
@@ -170,7 +166,6 @@ class RequiredPluginsInstallView extends Component {
 		if ( toActivate.length ) {
 			this.setState( {
 				engineState: 'ACTIVATING',
-				progress: 50,
 				toActivate,
 				workingOn: '',
 				numTotalSteps,
@@ -194,7 +189,6 @@ class RequiredPluginsInstallView extends Component {
 			if ( 0 === toInstall.length ) {
 				this.setState( {
 					engineState: 'ACTIVATING',
-					progress: 50,
 				} );
 				return;
 			}
@@ -240,7 +234,6 @@ class RequiredPluginsInstallView extends Component {
 			if ( 0 === toActivate.length ) {
 				this.setState( {
 					engineState: 'DONESUCCESS',
-					progress: 100,
 				} );
 				return;
 			}
@@ -286,7 +279,6 @@ class RequiredPluginsInstallView extends Component {
 
 		this.setState( {
 			engineState: 'IDLE',
-			progress: 100,
 		} );
 	}
 
