@@ -72,4 +72,5 @@ export default function() {
 	page( '/jetpack/sso/:siteId?/:ssoNonce?', controller.sso );
 	page( '/jetpack/sso/*', controller.sso );
 	page( '/jetpack/new', controller.newSite );
+	page( '/jetpack/new/*', controller.notFoundError );
 }
