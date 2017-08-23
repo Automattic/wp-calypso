@@ -113,11 +113,16 @@ class SetupTasks extends Component {
 			{
 				checked: hasProducts,
 				explanation: translate( 'Start by adding the first product to your\u00a0store.' ),
-				label: translate( 'Add a product' ),
+				label: hasProducts && (
+					( 1 === getTotalProducts() ) && (
+						translate( 'Product added' )
+					) || translate( 'Products added' )
+				) || translate( 'Add a product' ),
+
 				show: true,
 				actions: [
 					{
-						label: 'Add a product',
+						label: translate( 'Add a product' ),
 						path: getLink( '/store/product/:site', site ),
 						analyticsProp: 'add-product',
 					}
@@ -126,7 +131,9 @@ class SetupTasks extends Component {
 			{
 				checked: shippingIsSetUp,
 				explanation: translate( 'We\'ve set up shipping based on your store location.' ),
-				label: translate( 'Review shipping' ),
+				label: shippingIsSetUp && (
+					translate( 'Shipping is set up' )
+				) || translate( 'Review shipping' ),
 				show: this.state.showShippingTask,
 				actions: [
 					{
@@ -139,7 +146,9 @@ class SetupTasks extends Component {
 			{
 				checked: paymentsAreSetUp,
 				explanation: translate( 'Choose how you would like your customers to pay you.' ),
-				label: translate( 'Set up payments' ),
+				label: paymentsAreSetUp && (
+					translate( 'Payments are set up' )
+				) || translate( 'Review payments' ),
 				show: true,
 				actions: [
 					{
@@ -154,7 +163,9 @@ class SetupTasks extends Component {
 			{
 				checked: taxesAreSetUp,
 				explanation: translate( 'We\'ve set up automatic tax calculations for you.' ),
-				label: translate( 'Review taxes' ),
+				label: taxesAreSetUp && (
+					translate( 'Taxes are set up' )
+				) || translate( 'Review taxes' ),
 				show: true,
 				actions: [
 					{
