@@ -18,7 +18,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import ReduxFormFieldset, { RenderFieldset } from 'components/redux-forms/redux-form-fieldset';
+import ReduxFormFieldset, { FieldsetRenderer } from 'components/redux-forms/redux-form-fieldset';
 import UploadImage from 'blocks/upload-image';
 import { getCurrencyDefaults } from 'lib/format-currency';
 
@@ -154,7 +154,7 @@ const renderPriceField = ( { price, currency, ...props } ) => {
 	// Tune the placeholder to the precision value: 0 -> '0', 1 -> '0.0', 2 -> '0.00'
 	const placeholder = precision > 0 ? padEnd( '0.', precision + 2, '0' ) : '0';
 	return (
-		<RenderFieldset
+		<FieldsetRenderer
 			inputComponent={ FormCurrencyInput }
 			{ ...price }
 			{ ...props }
