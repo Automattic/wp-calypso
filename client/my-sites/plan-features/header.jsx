@@ -40,10 +40,10 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 class PlanFeaturesHeader extends Component {
 
 	render() {
-		const { isInSignupTest } = this.props;
+		const { isInSignup } = this.props;
 		let content = this.renderPlansHeader();
 
-		if ( isInSignupTest ) {
+		if ( isInSignup ) {
 			content = this.renderSignupHeader();
 		}
 
@@ -128,7 +128,7 @@ class PlanFeaturesHeader extends Component {
 			translate,
 			isSiteAT,
 			hideMonthly,
-			isInSignupTest
+			isInSignup
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
@@ -137,7 +137,7 @@ class PlanFeaturesHeader extends Component {
 			'is-placeholder': isPlaceholder
 		} );
 
-		if ( isInSignupTest ) {
+		if ( isInSignup ) {
 			return (
 				<span>
 					<span>{ billingTimeFrame }</span>
@@ -236,10 +236,10 @@ class PlanFeaturesHeader extends Component {
 			isPlaceholder,
 			relatedMonthlyPlan,
 			site,
-			isInSignupTest
+			isInSignup
 		} = this.props;
 
-		if ( isPlaceholder && ! isInSignupTest ) {
+		if ( isPlaceholder && ! isInSignup ) {
 			const isJetpackSite = !! site.jetpack;
 			const classes = classNames( 'is-placeholder', {
 				'plan-features__price': ! isJetpackSite,
@@ -257,13 +257,13 @@ class PlanFeaturesHeader extends Component {
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ rawPrice }
-						isInSignupTest={ isInSignupTest }
+						isInSignup={ isInSignup }
 						original
 					/>
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ discountPrice }
-						isInSignupTest={ isInSignupTest }
+						isInSignup={ isInSignup }
 						discounted
 					/>
 				</span>
@@ -277,13 +277,13 @@ class PlanFeaturesHeader extends Component {
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ originalPrice }
-						isInSignupTest={ isInSignupTest }
+						isInSignup={ isInSignup }
 						original
 					/>
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ rawPrice }
-						isInSignupTest={ isInSignupTest }
+						isInSignup={ isInSignup }
 						discounted
 					/>
 				</span>
@@ -294,7 +294,7 @@ class PlanFeaturesHeader extends Component {
 			<PlanPrice
 				currencyCode={ currencyCode }
 				rawPrice={ rawPrice }
-				isInSignupTest={ isInSignupTest }
+				isInSignup={ isInSignup }
 			/>
 		);
 	}

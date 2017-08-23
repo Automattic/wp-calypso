@@ -18,7 +18,7 @@ export default class PlanPrice extends Component {
 			original,
 			discounted,
 			className,
-			isInSignupTest,
+			isInSignup,
 		} = this.props;
 
 		if ( ! currencyCode || ( rawPrice !== 0 && ! rawPrice ) ) {
@@ -30,7 +30,7 @@ export default class PlanPrice extends Component {
 			'is-discounted': discounted
 		} );
 
-		if ( isInSignupTest ) {
+		if ( isInSignup ) {
 			return (
 				<span className={ classes }>{ price.symbol }{ price.integer }{ rawPrice > 0 && price.fraction }</span>
 			);
