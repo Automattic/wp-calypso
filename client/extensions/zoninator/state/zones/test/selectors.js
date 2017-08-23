@@ -85,7 +85,7 @@ describe( 'selectors', () => {
 	describe( 'getZones()', () => {
 		const primaryZones = {
 			1: {
-				term_id: 1,
+				id: 1,
 				name: 'Foo',
 				description: 'A test zone.',
 			},

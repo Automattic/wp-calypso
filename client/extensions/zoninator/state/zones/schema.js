@@ -7,7 +7,7 @@ export const itemsSchema = {
 			patternProperties: {
 				'^\\d+$': {
 					type: 'object',
-					term_id: { type: 'integer' },
+					id: { type: 'integer' },
 					name: { type: 'string' },
 					slug: { type: 'string' },
 					description: { type: 'string' },
