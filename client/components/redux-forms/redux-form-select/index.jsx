@@ -12,9 +12,9 @@ import { Field } from 'redux-form';
 import FormSelect from 'components/forms/form-select';
 
 // eslint-disable-next-line no-unused-vars
-const RenderSelect = ( { input, meta, ...props } ) => <FormSelect { ...input } { ...props } />;
+const SelectRenderer = ( { input, meta, ...props } ) => <FormSelect { ...input } { ...props } />;
 
-const ReduxFormSelect = props => <Field component={ RenderSelect } { ...props } />;
+const ReduxFormSelect = props => <Field component={ SelectRenderer } { ...props } />;
 
 ReduxFormSelect.propTypes = {
 	name: PropTypes.string.isRequired,
