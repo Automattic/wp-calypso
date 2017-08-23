@@ -78,6 +78,7 @@ class PlanFeaturesHeader extends Component {
 					<h4 className="plan-features__header-title">{ title }</h4>
 					{ this.getPlanFeaturesPrices() }
 					{ this.getBillingTimeframe() }
+					{ this.getRenewOrExpiry() }
 				</div>
 			</header>
 		);
@@ -115,6 +116,31 @@ class PlanFeaturesHeader extends Component {
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
 				</div>
+			</div>
+		);
+	}
+
+	getRenewOrExpiry() {
+		const {
+			currentSitePlan,
+			translate,
+		} = this.props;
+
+		if ( ! this.isPlanCurrent() ) {
+			return null;
+		}
+
+		// &nbsp;
+		let renewOrExpiryText = ' ';
+		if ( currentSitePlan && currentSitePlan.autoRenew && currentSitePlan.autoRenewDateMoment ) {
+			renewOrExpiryText = translate( 'Renews on' ) + ' ' + currentSitePlan.autoRenewDateMoment.format( 'LL' );
+		} else if ( currentSitePlan && currentSitePlan.userFacingExpiryMoment ) {
+			renewOrExpiryText = translate( 'Expires on' ) + ' ' + currentSitePlan.userFacingExpiryMoment.format( 'LL' );
+		}
+
+		return (
+			<div className="plan-features__renew-or-expiry">
+				{ renewOrExpiryText }
 			</div>
 		);
 	}
@@ -178,6 +204,10 @@ class PlanFeaturesHeader extends Component {
 			hideMonthly,
 			currentSitePlan,
 		} = this.props;
+
+		if ( this.isPlanCurrent() ) {
+			return null;
+		}
 
 		if ( hideMonthly ||
 			! rawPrice ||
