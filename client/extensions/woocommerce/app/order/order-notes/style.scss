@@ -91,9 +91,13 @@
 }
 
 .order-notes__new-note-content {
-	margin: 0 -24px 20px;
-	padding-top: 8px;
-	border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+	margin: 0 -15px 16px;
+	border: 1px solid $border-ultra-light-gray;
+	border-width: 1px 0;
+
+	@include breakpoint( ">480px" ) {
+		margin: 0 -24px 24px;
+	}
 
 	.form-label {
 		padding: 0 24px;
@@ -101,11 +105,18 @@
 	}
 
 	.form-textarea {
-		padding: 8px 24px;
-		border-color: transparentize( lighten( $gray, 20% ), .5 );
-		border-left: none;
-		border-right: none;
+		padding: 16px;
+		border-color: $white;
 		resize: vertical;
+		display: block;
+
+		&:focus {
+			border-color: $blue-wordpress;
+		}
+
+		@include breakpoint( ">480px" ) {
+			padding: 16px 24px;
+		}
 	}
 }
 
