@@ -235,7 +235,7 @@ UserSettings.prototype.getSetting = function( settingName ) {
  * @return {Boolean} updating successful response
  */
 UserSettings.prototype.updateSetting = function( settingName, value ) {
-	if ( this.settings && 'undefined' !== typeof get( this.settings, settingName ) ) {
+	if ( has( this.settings, settingName ) ) {
 		set( this.unsavedSettings, settingName, value );
 
 		/*
