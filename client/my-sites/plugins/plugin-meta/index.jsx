@@ -5,10 +5,9 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
-import { find, get, includes, some } from 'lodash';
+import { get, includes, some } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
-import sectionsModule from 'sections';
 
 /**
  * Internal dependencies
@@ -32,6 +31,7 @@ import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginInformation from 'my-sites/plugins/plugin-information';
 import WpcomPluginInstallButton from 'my-sites/plugins-wpcom/plugin-install-button';
 import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer';
+import { getExtensionSettingsPath } from 'my-sites/plugins/util';
 import { userCan } from 'lib/site/utils';
 import Banner from 'components/banner';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
@@ -414,19 +414,6 @@ class PluginMeta extends Component {
 		analytics.ga.recordEvent( 'Plugins', 'Clicked Update All Sites Plugin', 'Plugin Name', this.props.pluginSlug );
 	}
 
-	getExtensionSettingsPath( plugin ) {
-		const pluginSlug = get( plugin, 'slug', '' );
-		const sections = sectionsModule.get();
-		const section = find( sections, ( value => value.name === pluginSlug ) );
-		const env = get( section, 'envId', [] );
-
-		if ( ! includes( env, config( 'env_id' ) ) ) {
-			return;
-		}
-
-		return get( section, 'settings_path' );
-	}
-
 	render() {
 		const cardClasses = classNames( 'plugin-meta__information', {
 			'has-button': this.hasOrgInstallButton(),
@@ -437,7 +424,7 @@ class PluginMeta extends Component {
 		const plugin = this.props.selectedSite && this.props.sites[ 0 ] && this.props.sites[ 0 ].plugin
 			? this.props.sites[ 0 ].plugin
 			: this.props.plugin;
-		const path = ( ! this.props.selectedSite || plugin.active ) && this.getExtensionSettingsPath( plugin );
+		const path = ( ! this.props.selectedSite || plugin.active ) && getExtensionSettingsPath( plugin );
 
 		return (
 			<div className="plugin-meta">
