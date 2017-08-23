@@ -15,7 +15,7 @@ import QueryManager from 'lib/query-manager';
 export default class ActivityQueryManager extends QueryManager {
 	constructor( data, options ) {
 		super( data, {
-			itemKey: 'ts_utc',
+			itemKey: 'activityId',
 			...options,
 		} );
 	}
@@ -29,8 +29,8 @@ export default class ActivityQueryManager extends QueryManager {
 	 * @return {Number}       0 if equal, less than 0 if itemA is first,
 	 *                        greater than 0 if itemB is first.
 	 */
-	compare( query, { ts_utc: tsA }, { ts_utc: tsB } ) {
-		return tsB - tsA;
+	compare( query, { published: pubA }, { published: pubB } ) {
+		return Date.parse( pubB ) - Date.parse( pubA );
 	}
 
 	/**
@@ -61,8 +61,8 @@ export default class ActivityQueryManager extends QueryManager {
 	 * @param  {Object}  item  Item to consider
 	 * @return {Boolean}       Whether item matches query.dateStart
 	 */
-	static matchDateStart( query, { ts_utc } ) {
-		return get( query, 'dateStart', -Infinity ) <= ts_utc;
+	static matchDateStart( query, { published } ) {
+		return get( query, 'dateStart', -Infinity ) <= Date.parse( published );
 	}
 
 	/**
@@ -72,7 +72,7 @@ export default class ActivityQueryManager extends QueryManager {
 	 * @param  {Object}  item  Item to consider
 	 * @return {Boolean}       Whether item matches query.dateEnd
 	 */
-	static matchDateEnd( query, { ts_utc } ) {
-		return ts_utc <= get( query, 'dateEnd', Infinity );
+	static matchDateEnd( query, { published } ) {
+		return Date.parse( published ) <= get( query, 'dateEnd', Infinity );
 	}
 }

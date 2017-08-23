@@ -12,43 +12,13 @@ import ActivityQueryManager from '..';
 /**
  * Module constants
  */
-const DEFAULT_ACTIVITY_TS = 1410647400000; // "2014-09-14T00:30:00+02:00"
+const DEFAULT_ACTIVITY_PUBLISHED = '2014-09-14T00:30:00+02:00';
+const DEFAULT_ACTIVITY_TS = Date.parse( DEFAULT_ACTIVITY_PUBLISHED );
 
+// TODO: Update with wpcom/v2 style activity stream data
 const DEFAULT_ACTIVITY = {
-	action: 'update_available',
-	action_trigger: 'jetpack_update_plugins_change',
-	actor: {
-		avatar_url: 'https://www.gravatar.com/avatar/0?d=mm',
-		display_name: "User's display name",
-		external_user_id: 1,
-		is_ajax: false,
-		is_cron: false,
-		is_rest: true,
-		is_wp_admin: false,
-		is_wp_rest: false,
-		is_xmlrpc: true,
-		login: 'site-user',
-		translated_role: 'administrator',
-		user_email: 'user@example.com',
-		user_roles: 'administrator',
-		wpcom_user_id: 123456,
-	},
-	blog_id: 123456,
-	group: 'plugin',
-	jetpack_version: '5.3-alpha',
-	name: 'plugin__update_available',
-	object: {
-		plugin: [
-			{
-				name: 'Jetpack by WordPress.com',
-				slug: 'jetpack-dev/jetpack.php',
-				version: '5.3-beta-12478-27f866d-master',
-			},
-		],
-	},
-	site_id: 2,
-	ts_utc: DEFAULT_ACTIVITY_TS,
-	type: 'jetpack-audit',
+	activityId: 'foobarbaz',
+	published: DEFAULT_ACTIVITY_PUBLISHED,
 };
 
 describe( 'ActivityQueryManager', () => {
@@ -182,9 +152,20 @@ describe( 'ActivityQueryManager', () => {
 	describe( '#compare()', () => {
 		it( 'should sort by timestamp descending', () => {
 			const sortFunc = manager.compare.bind( manager, {} );
-			expect( [ { ts_utc: 1 }, { ts_utc: 2 } ].sort( sortFunc ) ).to.eql( [
-				{ ts_utc: 2 },
-				{ ts_utc: 1 },
+			const activityA = { activityId: 'a', published: new Date( 100000 ).toISOString() };
+			const activityB = { activityId: 'b', published: new Date( 200000 ).toISOString() };
+
+			expect( [ activityA, activityB ].sort( sortFunc ) ).to.eql( [ activityB, activityA ] );
+		} );
+
+		it( 'should include simultaneous events (in any order, sort is unstable)', () => {
+			const sortFunc = manager.compare.bind( manager, {} );
+			const activityA = { activityId: 'a', published: new Date( 100000 ).toISOString() };
+			const activityB = { activityId: 'b', published: new Date( 100000 ).toISOString() };
+
+			expect( [ activityA, activityB ].sort( sortFunc ) ).to.include.members( [
+				activityA,
+				activityB,
 			] );
 		} );
 	} );
