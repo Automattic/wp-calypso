@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -9,11 +10,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	handleActivityLogRequest,
-	receiveActivityLogError,
-	receiveActivityLog,
-} from '..';
+import { handleActivityLogRequest, receiveActivityLogError, receiveActivityLog } from '..';
 import {
 	activityLogError,
 	activityLogRequest,
@@ -39,13 +36,13 @@ const SUCCESS_RESPONSE = deepFreeze( {
 			actor: {
 				displayname: 'User',
 				external_id: 1,
-				login: 'user'
+				login: 'user',
 			},
 			ts_sent_action: 1496692768557,
 			name: 'post__publicized',
 			site_id: 2,
 			error_code: '',
-			ts_recieved_action: 1496692768557
+			ts_recieved_action: 1496692768557,
 		},
 	],
 	found: 1,
@@ -53,7 +50,7 @@ const SUCCESS_RESPONSE = deepFreeze( {
 
 const ERROR_RESPONSE = deepFreeze( {
 	error: 'unknown_blog',
-	message: 'Unknown blog'
+	message: 'Unknown blog',
 } );
 
 describe( 'receiveActivityLog', () => {
@@ -77,13 +74,13 @@ describe( 'receiveActivityLog', () => {
 					actor: {
 						displayname: 'User',
 						external_id: 1,
-						login: 'user'
+						login: 'user',
 					},
 					ts_sent_action: 1496692768557,
 					name: 'post__publicized',
 					site_id: 2,
 					error_code: '',
-					ts_recieved_action: 1496692768557
+					ts_recieved_action: 1496692768557,
 				},
 			] )
 		);
@@ -97,7 +94,7 @@ describe( 'receiveActivityLogError', () => {
 		expect( dispatch ).to.have.been.calledWith(
 			activityLogError( SITE_ID, {
 				error: 'unknown_blog',
-				message: 'Unknown blog'
+				message: 'Unknown blog',
 			} )
 		);
 	} );
@@ -111,12 +108,17 @@ describe( 'handleActivityLogRequest', () => {
 		handleActivityLogRequest( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( http( {
-			apiVersion: '1',
-			method: 'GET',
-			path: `/sites/${ SITE_ID }/activity`,
-			query: {},
-		}, action ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					apiVersion: '1',
+					method: 'GET',
+					path: `/sites/${ SITE_ID }/activity`,
+					query: {},
+				},
+				action
+			)
+		);
 	} );
 
 	it( 'should dispatch HTTP action with provided parameters', () => {
@@ -132,17 +134,22 @@ describe( 'handleActivityLogRequest', () => {
 		handleActivityLogRequest( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( http( {
-			apiVersion: '1',
-			method: 'GET',
-			path: `/sites/${ SITE_ID }/activity`,
-			query: {
-				date_end: 1500300000000,
-				date_start: 1500000000000,
-				group: 'post',
-				name: 'post__published',
-				number: 10,
-			},
-		}, action ) );
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					apiVersion: '1',
+					method: 'GET',
+					path: `/sites/${ SITE_ID }/activity`,
+					query: {
+						date_end: 1500300000000,
+						date_start: 1500000000000,
+						group: 'post',
+						name: 'post__published',
+						number: 10,
+					},
+				},
+				action
+			)
+		);
 	} );
 } );
