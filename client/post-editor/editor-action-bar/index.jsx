@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 
@@ -22,14 +23,14 @@ import { getEditedPost } from 'state/posts/selectors';
 class EditorActionBar extends Component {
 
 	static propTypes = {
-		isNew: React.PropTypes.bool,
-		onPrivatePublish: React.PropTypes.func,
-		post: React.PropTypes.object,
-		savedPost: React.PropTypes.object,
-		site: React.PropTypes.object,
-		type: React.PropTypes.string,
-		isPostPrivate: React.PropTypes.bool,
-		postAuthor: React.PropTypes.object,
+		isNew: PropTypes.bool,
+		onPrivatePublish: PropTypes.func,
+		post: PropTypes.object,
+		savedPost: PropTypes.object,
+		site: PropTypes.object,
+		type: PropTypes.string,
+		isPostPrivate: PropTypes.bool,
+		postAuthor: PropTypes.object,
 	};
 
 	state = {
