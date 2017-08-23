@@ -153,7 +153,7 @@ let InviteAcceptLoggedOut = React.createClass( {
 		return (
 			<div>
 				<SignupForm
-					getRedirectToAfterLoginUrl={ window.location.href }
+					redirectToAfterLoginUrl={ window.location.href }
 					disabled={ this.state.submitting }
 					formHeader={ this.renderFormHeader() }
 					submitting={ this.state.submitting }
