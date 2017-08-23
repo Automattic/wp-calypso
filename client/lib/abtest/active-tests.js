@@ -80,10 +80,9 @@ module.exports = {
 		datestamp: '20170801',
 		allowExistingUsers: true,
 		variations: {
-			showPublishConfirmation: 5,
-			noPublishConfirmation: 95,
+			showPublishConfirmation: 1,
 		},
-		defaultVariation: 'noPublishConfirmation',
+		defaultVariation: 'showPublishConfirmation',
 	},
 	readerIntroIllustration: {
 		datestamp: '20170718',
