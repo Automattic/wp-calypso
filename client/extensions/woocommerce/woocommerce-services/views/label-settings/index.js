@@ -15,7 +15,6 @@ import { isBoolean } from 'lodash';
 import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormToggle from 'components/forms/form-toggle';
-import Notice from 'components/notice';
 import LabelSettings from './label-settings';
 import {
 	fetchSettings,
@@ -45,7 +44,7 @@ class AccountSettingsRootView extends Component {
 	render() {
 		const { formData, formMeta, storeOptions, siteId, translate } = this.props;
 
-		if ( ! formMeta ) {
+		if ( ! formMeta || ( ! formMeta.isFetching && ! formMeta.can_manage_payments ) ) {
 			return null;
 		}
 		const setValue = ( key, value ) => ( this.props.setFormDataValue( siteId, key, value ) );
@@ -57,19 +56,6 @@ class AccountSettingsRootView extends Component {
 					<p>
 						{ translate( 'Unable to get your settings. Please refresh the page to try again.' ) }
 					</p>
-				);
-			}
-
-			if ( ! formMeta.isFetching && ! formMeta.can_manage_payments ) {
-				return (
-					<Notice showDismiss={ false } isCompact={ true }>
-						{ translate( 'Only the plan owner, %(name)s (%(login)s), can manage shipping label settings.', {
-							args: {
-								name: formMeta.master_user_name,
-								login: formMeta.master_user_login,
-							},
-						} ) }
-					</Notice>
 				);
 			}
 
@@ -87,9 +73,8 @@ class AccountSettingsRootView extends Component {
 		};
 
 		//hide the toggle when the enabled flag is not present (older version of WCS) and respect the setting otherwise.
-		const renderToggle = formData && isBoolean( formData.enabled ) && formMeta.can_manage_payments;
+		const renderToggle = formData && isBoolean( formData.enabled );
 		const hidden = formData && isBoolean( formData.enabled ) && ! formData.enabled;
-
 
 		return (
 			<div>
