@@ -135,8 +135,21 @@ export const HelpContactForm = React.createClass( {
 
 	doQandASearch() {
 		const query = this.state.subject + ' ' + this.state.message;
+		const areSameQuestions = ( existingQuestions, newQuestions ) => {
+			const existingIDs = existingQuestions.map( question => question.id );
+			existingIDs.sort();
+			const newIDs = newQuestions.map( question => question.id );
+			newIDs.sort();
+			return existingIDs.toString() === newIDs.toString();
+		};
 		wpcom.getQandA( query, config( 'happychat_support_blog' ) )
-			.then( qanda => this.setState( { qanda, sibylClicked: false } ) )
+			.then( qanda => this.setState( {
+				qanda,
+				// only keep sibylClicked true if the user is seeing the same set of questions
+				// we don't want to track "questions -> question click -> different questions -> support click",
+				// so we need to set sibylClicked to false here if the questions have changed
+				sibylClicked: this.state.sibylClicked && areSameQuestions( this.state.qanda, qanda )
+			} ) )
 			.catch( () => this.setState( { qanda: [], sibylClicked: false } ) );
 	},
 
