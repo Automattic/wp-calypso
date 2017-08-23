@@ -161,7 +161,11 @@ class PlanFeaturesHeader extends Component {
 			);
 		}
 
-		return null;
+		return (
+			<p className={ timeframeClasses }>
+				{ billingTimeFrame }
+			</p>
+		);
 	}
 
 	isPlanCurrent() {
