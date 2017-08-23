@@ -83,7 +83,6 @@ const getClientIdFromSignupUrl = ( signupUrl ) => {
 	const oauth2RedirectQueryString = oauth2RedirectParts[ 1 ];
 	const oauth2RedirectParams = qs.parse( oauth2RedirectQueryString );
 
-	// qs.parse( qs.parse( signupUrl.split( '?' )[ 1 ] ).oauth2_redirect.split( '?' )[ 1 ] ).client_id;
 	return oauth2RedirectParams.client_id;
 };
 
