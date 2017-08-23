@@ -114,7 +114,7 @@ class SetupTasks extends Component {
 				checked: hasProducts,
 				explanation: translate( 'Start by adding the first product to your\u00a0store.' ),
 				label: hasProducts && (
-					( 1 === getTotalProducts() ) && (
+					( 1 === getTotalProducts ) && (
 						translate( 'Product added' )
 					) || translate( 'Products added' )
 				) || translate( 'Add a product' ),
