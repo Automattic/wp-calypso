@@ -13,10 +13,13 @@ import { find, includes, startsWith, identity } from 'lodash';
  * Internal dependencies
  */
 import Spinner from 'components/spinner';
+import { combineReducers } from 'state/utils';
+
+// Action dispatched by wrapped console
+const CONSOLE_MESSAGE = 'CONSOLE_MESSAGE';
 
 const CONNECTED = 'CONNECTED';
 const DISCONNECTED = 'DISCONNECTED';
-const NEEDS_RELOAD = 'NEEDS_RELOAD';
 const BUILDING_CSS = 'BUILDING_CSS';
 const BUILDING_JS = 'BUILDING_JS';
 const BUILDING_BOTH = 'BUILDING_BOTH';
@@ -24,7 +27,7 @@ const ERROR = 'ERROR';
 const IDLE = 'IDLE';
 
 const doneBuilding = typeDone => state => {
-	if ( state === ERROR || state === NEEDS_RELOAD ) {
+	if ( state === ERROR ) {
 		return state;
 	} else if ( state === BUILDING_BOTH ) {
 		return typeDone === BUILDING_JS ? BUILDING_CSS : BUILDING_JS;
@@ -44,12 +47,10 @@ const MESSAGE_STATUS_MAP = {
 	'[WDS] Nothing changed.': doneBuilding( BUILDING_JS ),
 	'Reloading CSS: ': doneBuilding( BUILDING_CSS ),
 	'[HMR] bundle rebuilt in': doneBuilding( BUILDING_JS ),
-	"[HMR] The following modules couldn't be hot updated": () => NEEDS_RELOAD,
 };
 
-const reducer = ( state = IDLE, { type, message } ) => {
-	// only listen for WebpackBuildMessages and also never change from a NEEDS_RELOAD state
-	if ( type !== 'WebpackBuildMessage' || state === NEEDS_RELOAD ) {
+const buildStatusReducer = ( state = IDLE, { type, message } ) => {
+	if ( type !== CONSOLE_MESSAGE ) {
 		return state;
 	}
 
@@ -60,10 +61,27 @@ const reducer = ( state = IDLE, { type, message } ) => {
 	return getNextState( state );
 };
 
-const store = createStore( reducer );
+const reloadReducer = ( state = false, { type, message } ) => {
+	if ( type !== CONSOLE_MESSAGE || state ) {
+		return state;
+	}
+
+	if ( startsWith( message, "[HMR] The following modules couldn't be hot updated" ) ) {
+		return true;
+	}
+
+	return state;
+};
+
+const store = createStore(
+	combineReducers( {
+		buildStatus: buildStatusReducer,
+		reloadRequired: reloadReducer,
+	} )
+);
 
 const wrapConsole = fn => ( message, ...args ) => {
-	store.dispatch( { type: 'WebpackBuildMessage', message } );
+	store.dispatch( { type: CONSOLE_MESSAGE, message } );
 	fn.call( window, message, ...args );
 };
 
@@ -73,21 +91,28 @@ console.log = wrapConsole( console.log );
 
 const STATUS_TEXTS = {
 	[ DISCONNECTED ]: 'Dev Server disconnected',
-	[ NEEDS_RELOAD ]: 'Need to refresh',
 	[ ERROR ]: 'Build error',
 	[ BUILDING_JS ]: 'Rebuilding Javascript',
 	[ BUILDING_CSS ]: 'Rebuilding CSS',
 	[ BUILDING_BOTH ]: 'Rebuilding JS and CSS',
 };
 
+const RELOAD_REQUIRED_ELEMENT = (
+	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+	<div className="webpack-build-monitor is-warning">Need to refresh</div>
+);
+
 class WebpackBuildMonitor extends React.Component {
-	state = { status: IDLE };
+	state = {
+		buildStatus: IDLE,
+		reloadRequired: false,
+	};
 
 	componentDidMount() {
 		this.unsubscribe = store.subscribe( () => {
 			const status = store.getState();
 			if ( status !== this.state.status ) {
-				this.setState( { status: store.getState() } );
+				this.setState( store.getState() );
 			}
 		} );
 	}
@@ -97,21 +122,22 @@ class WebpackBuildMonitor extends React.Component {
 	}
 
 	render() {
-		const { status } = this.state;
+		const { buildStatus, reloadRequired } = this.state;
 
-		const text = STATUS_TEXTS[ status ];
-
-		if ( status === IDLE || ! text ) {
-			return null;
+		if ( buildStatus === IDLE ) {
+			return reloadRequired && RELOAD_REQUIRED_ELEMENT;
 		}
+
+		const text = STATUS_TEXTS[ buildStatus ] || '';
 
 		const classnames = classNames( 'webpack-build-monitor', {
 			'is-error': status === ERROR || status === DISCONNECTED,
+			'is-warning': reloadRequired,
 		} );
 
 		return (
 			<div className={ classnames }>
-				{ includes( [ BUILDING_BOTH, BUILDING_CSS, BUILDING_JS ], status ) &&
+				{ includes( [ BUILDING_BOTH, BUILDING_CSS, BUILDING_JS ], buildStatus ) &&
 					<Spinner size={ 11 } className="webpack-build-monitor__spinner" /> }
 				{ text }
 			</div>
