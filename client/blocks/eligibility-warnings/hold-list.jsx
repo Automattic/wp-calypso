@@ -51,24 +51,28 @@ function getHoldMessages( siteSlug, translate ) {
 			supportUrl: 'https://support.wordpress.com/domains/',
 		},
 		NO_WPCOM_NAMESERVERS: {
-			title: translate( 'No WordPress.com name servers' ),
-			description: translate( 'Use WordPress.com name servers on your custom domain to resolve.' ),
-			supportUrl: 'https://support.wordpress.com/domain-helper/',
+			title: translate( 'Domain not using WordPress.com name servers' ),
+			description: translate( 'Your domain must use WordPress.com name servers to support custom code. ' +
+			'Follow step 2 in "add domain mapping" to resolve this.' ),
+			supportUrl: 'https://en.support.wordpress.com/domains/map-existing-domain/',
 		},
 		NOT_RESOLVING_TO_WPCOM: {
-			title: translate( 'Primary domain not pointing to WordPress.com servers' ),
-			description: translate( 'Point your primary domain to WordPress.com servers to resolve.' ),
-			supportUrl: 'https://support.wordpress.com/domain-helper/',
+			title: translate( 'Domain not pointing to WordPress.com servers' ),
+			description: translate( 'We cannot manage your site because your domain is not pointing to WordPress.com servers. ' +
+			'Follow the instructions to reset your domain A records to resolve this.' ),
+			supportUrl: 'https://support.wordpress.com/move-domain/setting-custom-a-records/',
 		},
 		NO_SSL_CERTIFICATE: {
-			title: translate( "Primary domain doesn't have a valid SSL certificate" ),
+			title: translate( 'We are setting up a security certificate for your domain' ),
 			description: translate(
-				'Please try again in a few minutes: you will be able to proceed once we finish setting up your security settings.'
+				'Your domain must have a security certificate to allow custom code. We are processing your security certificate now. ' +
+				'Please come back in a few minutes to try again.'
 			),
 		},
 		EMAIL_UNVERIFIED: {
 			title: translate( 'Unconfirmed email' ),
 			description: translate(
+				'You must have verified your email address with WordPress.com to install custom code. ' +
 				'Please check your email to confirm your address.'
 			),
 		},
