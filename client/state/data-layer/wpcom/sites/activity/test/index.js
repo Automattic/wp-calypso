@@ -111,7 +111,7 @@ describe( 'handleActivityLogRequest', () => {
 		expect( dispatch ).to.have.been.calledWith(
 			http(
 				{
-					apiVersion: '1',
+					apiNamespace: 'wpcom/v2',
 					method: 'GET',
 					path: `/sites/${ SITE_ID }/activity`,
 					query: {},
@@ -137,7 +137,7 @@ describe( 'handleActivityLogRequest', () => {
 		expect( dispatch ).to.have.been.calledWith(
 			http(
 				{
-					apiVersion: '1',
+					apiNamespace: 'wpcom/v2',
 					method: 'GET',
 					path: `/sites/${ SITE_ID }/activity`,
 					query: {
