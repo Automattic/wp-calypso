@@ -29,6 +29,7 @@ export default router => {
 	}
 
 	if ( config.isEnabled( 'login/wp-login' ) ) {
+		router( '/log-in/en', '/log-in' );
 		router(
 			[
 				'/log-in/:twoFactorAuthType(authenticator|backup|sms|push)/:lang?',
