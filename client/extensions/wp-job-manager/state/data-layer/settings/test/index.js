@@ -104,7 +104,7 @@ describe( '#updateExtensionSettings', () => {
 		const action = fetchSettings( 12345678 );
 		const dispatch = sinon.spy();
 
-		updateExtensionSettings( { dispatch }, action, null, apiResponse );
+		updateExtensionSettings( { dispatch }, action, apiResponse );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( updateSettings( 12345678, transformedData ) );
@@ -161,7 +161,7 @@ describe( '#announceSuccess()', () => {
 	it( 'should dispatch `stopSave`', () => {
 		const dispatch = sinon.spy();
 
-		announceSuccess( { dispatch }, saveAction, null, apiResponse );
+		announceSuccess( { dispatch }, saveAction, apiResponse );
 
 		expect( dispatch ).to.have.been.calledWith( stopSave( 'my-form' ) );
 	} );
@@ -169,7 +169,7 @@ describe( '#announceSuccess()', () => {
 	it( 'should dispatch `initialize`', () => {
 		const dispatch = sinon.spy();
 
-		announceSuccess( { dispatch }, saveAction, null, apiResponse );
+		announceSuccess( { dispatch }, saveAction, apiResponse );
 
 		expect( dispatch ).to.have.been.calledWith( initialize( 'my-form', transformedData ) );
 	} );
@@ -177,7 +177,7 @@ describe( '#announceSuccess()', () => {
 	it( 'should dispatch `updateSettings`', () => {
 		const dispatch = sinon.spy();
 
-		announceSuccess( { dispatch }, saveAction, null, apiResponse );
+		announceSuccess( { dispatch }, saveAction, apiResponse );
 
 		expect( dispatch ).to.have.been.calledWith( updateSettings( 101010, transformedData ) );
 	} );
@@ -185,7 +185,7 @@ describe( '#announceSuccess()', () => {
 	it( 'should dispatch `successNotice`', () => {
 		const dispatch = sinon.spy();
 
-		announceSuccess( { dispatch }, saveAction, null, apiResponse );
+		announceSuccess( { dispatch }, saveAction, apiResponse );
 
 		expect( dispatch ).to.have.been.calledWith( successNotice( translate(
 			'Settings saved!' ),
