@@ -154,7 +154,7 @@ export default {
 			oauth2Signup: true
 		},
 		providesToken: true,
-		providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id' ]
+		providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ]
 	},
 
 	'get-dot-blog-plans': {

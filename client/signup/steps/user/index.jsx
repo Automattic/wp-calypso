@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity, omit, get } from 'lodash';
+import { identity, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -73,8 +73,10 @@ export class UserStep extends Component {
 
 	submit = ( data ) => {
 		const dependencies = {};
+
 		if ( this.props.oauth2Signup ) {
 			dependencies.oauth2_client_id = data.queryArgs.oauth2_client_id;
+			dependencies.oauth2_redirect = data.queryArgs.oauth2_redirect;
 		}
 
 		SignupActions.submitSignupStep( {
@@ -88,12 +90,6 @@ export class UserStep extends Component {
 	};
 
 	submitForm = ( form, userData, analyticsData ) => {
-		const queryArgs = {
-			jetpackRedirect: get( this.props, 'queryObject.jetpack_redirect' )
-		};
-
-		queryArgs.oauth2_client_id = get( this.props, 'queryObject.oauth2_client_id' );
-
 		const formWithoutPassword = {
 			...form,
 			password: {
@@ -107,7 +103,7 @@ export class UserStep extends Component {
 		this.submit( {
 			userData,
 			form: formWithoutPassword,
-			queryArgs
+			queryArgs: this.props.queryObject || {},
 		} );
 	};
 
@@ -136,6 +132,10 @@ export class UserStep extends Component {
 	}
 
 	getRedirectToAfterLoginUrl() {
+		if ( this.props.oauth2Signup && this.props.queryObject.oauth2_redirect ) {
+			return this.props.queryObject.oauth2_redirect;
+		}
+
 		const stepAfterRedirect = signupUtils.getNextStepName( this.props.flowName, this.props.stepName ) ||
 			signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName );
 		return this.originUrl() + signupUtils.getStepUrl(
@@ -167,7 +167,7 @@ export class UserStep extends Component {
 		return (
 			<SignupForm
 				{ ...omit( this.props, [ 'translate' ] ) }
-				getRedirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
+				redirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
 				disabled={ this.userCreationStarted() }
 				submitting={ this.userCreationStarted() }
 				save={ this.save }
@@ -198,7 +198,7 @@ export class UserStep extends Component {
 
 export default connect(
 	( state ) => ( {
-		suggestedUsername: getSuggestedUsername( state )
+		suggestedUsername: getSuggestedUsername( state ),
 	} ),
 	{
 		recordTracksEvent
