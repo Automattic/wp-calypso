@@ -152,4 +152,30 @@ describe( 'handleActivityLogRequest', () => {
 			)
 		);
 	} );
+
+	it( 'should handle camelCase parameters', () => {
+		const action = activityLogRequest( SITE_ID, {
+			dateEnd: 1500300000000,
+			dateStart: 1500000000000,
+		} );
+		const dispatch = sinon.spy();
+
+		handleActivityLogRequest( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.calledOnce;
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					apiNamespace: 'wpcom/v2',
+					method: 'GET',
+					path: `/sites/${ SITE_ID }/activity`,
+					query: {
+						date_end: 1500300000000,
+						date_start: 1500000000000,
+					},
+				},
+				action
+			)
+		);
+	} );
 } );
