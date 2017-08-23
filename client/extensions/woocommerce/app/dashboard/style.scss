@@ -179,6 +179,14 @@
 				@include breakpoint( ">960px" ) {
 					margin: 2px 0 2px 8px;
 				}
+
+				&.is-borderless {
+					color: $blue-wordpress;
+
+					&:hover {
+						color: $link-highlight;
+					}
+				}
 			}
 		}
 
