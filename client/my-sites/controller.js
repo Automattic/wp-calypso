@@ -119,7 +119,8 @@ function renderEmptySites( context ) {
 function renderNoVisibleSites( context ) {
 	const EmptyContentComponent = require( 'components/empty-content' );
 	const currentUser = user.get();
-	const hiddenSites = currentUser.site_count - currentUser.visible_site_count;
+	const visibleSiteCount = getVisibleSites( context.store.getState() ).length;
+	const hiddenSites = currentUser.site_count - visibleSiteCount;
 	const signup_url = config( 'signup_url' );
 
 	removeSidebar( context );
@@ -198,26 +199,27 @@ function isPathAllowedForDomainOnlySite( path, domainName ) {
 
 function onSelectedSiteAvailable( context ) {
 	const { getState } = getStore( context );
-	const selectedSite = getSelectedSite( getState() );
+	const state = getState();
+	const selectedSite = getSelectedSite( state );
 
 	// Currently, sites are only made available in Redux state by the receive
 	// here (i.e. only selected sites). If a site is already known in state,
 	// avoid receiving since we risk overriding changes made more recently.
-	if ( ! getSite( getState(), selectedSite.ID ) ) {
+	if ( ! getSite( state, selectedSite.ID ) ) {
 		context.store.dispatch( receiveSite( selectedSite ) );
 	}
 
 	context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
 
-	if ( isDomainOnlySite( getState(), selectedSite.ID ) &&
+	if ( isDomainOnlySite( state, selectedSite.ID ) &&
 		! isPathAllowedForDomainOnlySite( context.pathname, selectedSite.slug ) ) {
 		renderSelectedSiteIsDomainOnly( context, selectedSite );
 		return false;
 	}
 
 	// Update recent sites preference
-	if ( hasReceivedRemotePreferences( getState() ) ) {
-		const recentSites = getPreference( getState(), 'recentSites' );
+	if ( hasReceivedRemotePreferences( state ) ) {
+		const recentSites = getPreference( state, 'recentSites' );
 		if ( selectedSite.ID !== recentSites[ 0 ] ) {
 			context.store.dispatch( savePreference( 'recentSites', uniq( [
 				selectedSite.ID,
@@ -269,10 +271,12 @@ module.exports = {
 		const siteFragment = context.params.site || route.getSiteFragment( context.path );
 		const basePath = route.sectionify( context.path, siteFragment );
 		const currentUser = user.get();
-		const hasOneSite = currentUser.visible_site_count === 1;
+		const state = getState();
+		const visibleSiteCount = getVisibleSites( state ).length;
+		const hasOneSite = visibleSiteCount === 1;
 		const allSitesPath = route.sectionify( context.path, siteFragment );
-		const primaryId = getPrimarySiteId( getState() );
-		const primary = getSite( getState(), primaryId ) || '';
+		const primaryId = getPrimarySiteId( state );
+		const primary = getSite( state, primaryId ) || '';
 
 		const redirectToPrimary = () => {
 			let redirectPath = `${ context.pathname }/${ primary.slug }`;
@@ -289,7 +293,7 @@ module.exports = {
 			return analytics.pageView.record( basePath, sitesPageTitleForAnalytics + ' > No Sites' );
 		}
 
-		if ( currentUser && currentUser.visible_site_count === 0 ) {
+		if ( currentUser && visibleSiteCount === 0 ) {
 			renderNoVisibleSites( context );
 			return analytics
 				.pageView
@@ -301,10 +305,10 @@ module.exports = {
 			return next();
 		}
 
-		// If the user has only one site, redirect to the single site
-		// context instead of rendering the all-site views.
-		if ( hasOneSite && ! siteFragment ) {
-			const hasInitialized = getSites( getState() ).length;
+		// If the user has only one site, redirect to the single site if there is a primary
+		// site instead of rendering the all-site views.
+		if ( hasOneSite && ! siteFragment && primary ) {
+			const hasInitialized = getSites( state ).length;
 			if ( hasInitialized ) {
 				redirectToPrimary();
 				return;
@@ -321,7 +325,7 @@ module.exports = {
 			return next();
 		}
 
-		const siteId = getSiteId( getState(), siteFragment );
+		const siteId = getSiteId( state, siteFragment );
 		if ( siteId ) {
 			dispatch( setSelectedSiteId( siteId ) );
 			const selectionComplete = onSelectedSiteAvailable( context );
@@ -334,7 +338,7 @@ module.exports = {
 		} else {
 			// if sites has fresh data and siteId is invalid
 			// redirect to allSitesPath
-			if ( ! isRequestingSites( getState() ) ) {
+			if ( ! isRequestingSites( state ) ) {
 				return page.redirect( allSitesPath );
 			}
 
@@ -342,14 +346,14 @@ module.exports = {
 			let freshSiteId;
 			const selectOnSitesChange = () => {
 				// if sites have loaded, but siteId is invalid, redirect to allSitesPath
-				freshSiteId = getSiteId( getState(), siteFragment );
+				freshSiteId = getSiteId( state, siteFragment );
 				dispatch( setSelectedSiteId( freshSiteId ) );
-				if ( getSite( getState(), freshSiteId ) ) {
+				if ( getSite( state, freshSiteId ) ) {
 					onSelectedSiteAvailable( context );
 					if ( waitingNotice ) {
 						notices.removeNotice( waitingNotice );
 					}
-				} else if ( ( currentUser.visible_site_count !== getVisibleSites( getState() ).length ) ) {
+				} else if ( ( currentUser.visible_site_count !== visibleSiteCount ) ) {
 					waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), { showDismiss: false } );
 					dispatch( {
 						type: SITES_ONCE_CHANGED,
