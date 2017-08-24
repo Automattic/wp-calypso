@@ -26,9 +26,16 @@ import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 
 class PostItem extends React.Component {
 
+	inAllSitesModeWithMultipleUsers() {
+		return this.props.isAllSitesModeSelected && ! this.props.allSitesSingleUser;
+	}
+
+	inSingleSiteModeWithMultipleUsers() {
+		return ! this.props.isAllSitesModeSelected && ! this.props.singleUserSite;
+	}
+
 	render() {
-		const { translate, globalId, post, site, editUrl, className, compact } = this.props;
-		const { siteTitle, isAllSitesModeSelected, allSitesSingleUser, singleUserSite } = this.props;
+		const { translate, globalId, post, site, editUrl, className, compact, siteTitle, isAllSitesModeSelected } = this.props;
 
 		const title = post ? post.title : null;
 		const postItemClasses = classnames( 'post-item', className, {
@@ -40,37 +47,33 @@ class PostItem extends React.Component {
 		const isSiteVisible = isEnabled( 'posts/post-type-list' ) && isAllSitesModeSelected;
 		const titleMetaClasses = classnames( 'post-item__title-meta', { 'site-is-visible': isSiteVisible } );
 
-		const isAuthorVisible = (
-				( isAllSitesModeSelected && ! allSitesSingleUser ) ||
-				( ! isAllSitesModeSelected && ! singleUserSite )
-			) &&
-			post && post.author &&
-			isEnabled( 'posts/post-type-list' );
+		const isAuthorVisible = ( this.inAllSitesModeWithMultipleUsers() || this.inSingleSiteModeWithMultipleUsers() ) &&
+			post && post.author && isEnabled( 'posts/post-type-list' );
 
 		return (
 			<Card compact className={ postItemClasses }>
 				<div className="post-item__detail">
 					<div className={ titleMetaClasses }>
 						<div className="post-item__info">
-							{isSiteVisible &&
-							<div className="post-item__site">
-								<SiteIcon size={ 16 } site={ site } />
-								<div className="post-item__site-title">
-									{siteTitle}
+							{ isSiteVisible &&
+								<div className="post-item__site">
+									<SiteIcon size={ 16 } site={ site } />
+									<div className="post-item__site-title">
+										{ siteTitle }
+									</div>
 								</div>
-							</div>
 							}
-							{isAuthorVisible &&
-							<div className="post-item__author">
-								<div className="post-item__author-name">
-									{post.author.name}
+							{ isAuthorVisible &&
+								<div className="post-item__author">
+									<div className="post-item__author-name">
+										{ post.author.name }
+									</div>
 								</div>
-							</div>
 							}
 						</div>
 						<h1 className="post-item__title">
 							<a href={ editUrl } className="post-item__title-link">
-								{title || translate( 'Untitled' )}
+								{ title || translate( 'Untitled' ) }
 							</a>
 						</h1>
 						<div className="post-item__meta">
