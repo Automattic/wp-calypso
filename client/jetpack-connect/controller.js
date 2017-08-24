@@ -18,7 +18,7 @@ import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
 import JetpackConnectAuthorizeForm from './authorize-form';
 import { setSection } from 'state/ui/actions';
-import { renderWithReduxStore, renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
 import userFactory from 'lib/user';
 import jetpackSSOForm from './sso';
@@ -29,7 +29,6 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import PlansLanding from './plans-landing';
-import EmptyContent from 'components/empty-content';
 
 /**
  * Module variables
@@ -252,16 +251,5 @@ export default {
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	},
-
-	notFoundError( context, next ) {
-		const emptyContent = (
-			<EmptyContent
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-				title={ translate( 'Uh oh. Page not found.' ) }
-				line={ translate( 'Sorry, the page you were looking for doesn\'t exist or has been moved.' ) } />
-		);
-		renderPage( context, emptyContent );
-		next();
 	},
 };
