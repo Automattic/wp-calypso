@@ -69,6 +69,21 @@ class CurrentPlan extends Component {
 				' its professional features.' );
 		}
 
+		if ( plan === PLAN_JETPACK_PERSONAL || plan === PLAN_JETPACK_PERSONAL_MONTHLY ) {
+			tagLine = translate( 'Your data is being securely backed up and you have access to priority' +
+				' support.' );
+		}
+
+		if ( plan === PLAN_JETPACK_PREMIUM || plan === PLAN_JETPACK_PREMIUM_MONTHLY ) {
+			tagLine = translate( 'Your site is being secured and you have access to marketing tools and' +
+				' priority support.' );
+		}
+
+		if ( plan === PLAN_JETPACK_BUSINESS || plan === PLAN_JETPACK_BUSINESS_MONTHLY ) {
+			tagLine = translate( 'You have full access to premium themes, marketing tools, and' +
+				' priority support.' );
+		}
+
 		return {
 			title: title,
 			tagLine: tagLine
