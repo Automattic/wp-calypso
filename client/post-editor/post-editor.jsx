@@ -1094,8 +1094,7 @@ export const PostEditor = React.createClass( {
 				bookMarkEnd,
 				textArea.value.slice( htmlModeCursorEndPosition ),
 			].join( '' );
-		}
-		else {
+		} else {
 			// // TODO detect if you're not in a tag to not break things
 			textArea.value = [
 				textArea.value.slice( 0, htmlModeCursorStartPosition ),
@@ -1119,25 +1118,67 @@ export const PostEditor = React.createClass( {
 
 		if ( ! endNode ) {
 			ed.target.selection.select( startNode );
-			//startNode.parentNode.removeChild( startNode );
-		}
-		else {
+		} else {
 			const sel = document.createRange();
 			sel.setStart( startNode, 0 );
 			sel.setEnd( endNode, 0 );
 
 			ed.target.selection.setRng( sel );
+			endNode.parentNode.removeChild( endNode );
 		}
+
+		// TODO: Scroll to cursor position?
+		startNode.parentNode.removeChild( startNode );
 
 		ed.target.off( 'SetContent', this.focusHTMLBookmarkInVisualEditor );
 	},
 
+	findBookmarkedPosition: function( editor ) {
+		const bookmark = editor.selection.getBookmark();
+		const bookmarkID = bookmark.id;
+
+		// the raw content contains the bookmarks
+		const rawContent = editor.getContent( { format: 'raw' } ).replace( /<\/?p>/g, '' );
+
+		const startRegex = new RegExp(
+			'<span[^>]*data-mce-type="bookmark"\\s*id="' + bookmarkID + '_start"[^>]+>[^<]*<\\/span>'
+		);
+
+		const endRegex = new RegExp(
+			'<span[^>]*data-mce-type="bookmark"\\s*id="' + bookmarkID + '_end"[^>]+>[^<]*<\\/span>'
+		);
+
+		const startMatch = rawContent.match( startRegex );
+		if ( ! startMatch ) {
+			return null;
+		}
+
+		const selection = {
+			start: startMatch.index,
+		};
+
+		const endMatch = rawContent.match( endRegex );
+		if ( ! endMatch ) {
+			return selection;
+		}
+
+		// We need to adjust the end position to discard the length of the range start marker
+		selection.end = endMatch.index - startMatch[ 0 ].length;
+
+		debugger;
+
+		return selection;
+	},
+
 	switchEditorMode: function( mode ) {
-		console.log( 'SWITCHING EDITOR TO ', mode );
 		const content = this.editor.getContent();
 
-		//debugger;
 		if ( mode === 'html' ) {
+			// get selection range
+
+			// getNode.outerHTML for single node
+			const selectionRange = this.findBookmarkedPosition( this.editor._editor );
+
 			this.editor.setEditorContent( content );
 
 			if ( this.state.selectedText ) {
@@ -1145,6 +1186,8 @@ export const PostEditor = React.createClass( {
 				// This resets the word count if it exists
 				this.copySelectedText();
 			}
+
+			this.editor.setSelection( selectionRange );
 		} else if ( mode === 'tinymce' ) {
 			this.addHTMLBookmarkInTextAreaContent();
 			this.editor._editor.on( 'SetContent', this.focusHTMLBookmarkInVisualEditor );

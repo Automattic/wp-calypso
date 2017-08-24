@@ -195,7 +195,8 @@ module.exports = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			content: ''
+			content: '',
+			selection: null,
 		};
 	},
 
@@ -393,14 +394,19 @@ module.exports = React.createClass( {
 			const textNode = ReactDom.findDOMNode( this.refs.text );
 
 			// Collapse selection to avoid scrolling to the bottom of the textarea
-			//textNode.setSelectionRange( 0, 0 );
+			console.error( 'SELECTING: ', this.state.selection );
+			if ( this.state.selection ) {
+				this.selectTextInTextArea( this.state.selection );
+			} else {
+				textNode.setSelectionRange( 0, 0 );
+			}
 
 			// Browser is not Internet Explorer 11
 			if ( 11 !== tinymce.Env.ie ) {
-			//	textNode.focus();
+				textNode.focus();
 			}
 		} else if ( this._editor ) {
-			//this._editor.focus();
+			this._editor.focus();
 		}
 	},
 
@@ -449,6 +455,29 @@ module.exports = React.createClass( {
 		}
 
 		this.setTextAreaContent( content );
+	},
+
+	setSelection: function( selection ) {
+		this.setState( {
+			selection
+		} );
+	},
+
+	selectTextInTextArea: function( selection ) {
+		// only valid in the text area mode and if we have selection
+		if ( ! selection ) {
+			return;
+		}
+
+		const textNode = ReactDom.findDOMNode( this.refs.text );
+
+		const start = selection.start;
+		const end = selection.end ? selection.end : selection.start;
+		// Collapse selection to avoid scrolling to the bottom of the textarea
+		textNode.setSelectionRange( start, end );
+
+		// clear out the selection from the state
+		this.setState( { selection: null } );
 	},
 
 	onTextAreaChange: function( event ) {
