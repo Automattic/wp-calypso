@@ -236,9 +236,10 @@ const Signup = React.createClass( {
 			}.bind( this ) );
 		}
 
-		if ( ! userIsLoggedIn && config.isEnabled( 'oauth' ) ) {
+		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || this.props.stepName === 'oauth2-user' ) ) {
 			oauthToken.setToken( dependencies.bearer_token );
 			window.location.href = destination;
+			return;
 		}
 
 		if ( ! userIsLoggedIn && ! config.isEnabled( 'oauth' ) ) {
