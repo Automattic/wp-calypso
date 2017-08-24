@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import get from 'lodash/get';
+import extend from 'lodash/extend';
 import page from 'page';
 
 /**
@@ -60,7 +61,7 @@ class JPOSummaryStep extends React.Component {
 
 	getOnboardingChoices() {
 		const data = this.props.signupDependencies;
-		return {
+		let sendToJetpack = {
 			onboarding: {
 				siteTitle: get( data, [ 'jpoSiteTitle', 'siteTitle' ], '' ),
 				siteDescription: get( data, [ 'jpoSiteTitle', 'siteDescription' ], '' ),
@@ -68,11 +69,11 @@ class JPOSummaryStep extends React.Component {
 				genre: get( data, [ 'jpoSiteType', 'genre' ], '' ),
 				businessPersonal: get( data, [ 'jpoSiteType', 'businessPersonal' ], '' ),
 				businessInfo: {
-					businessName: get( data, [ 'jpoSiteType', 'addressInfo', 'businessName' ], '' ),
-					businessAddress: get( data, [ 'jpoSiteType', 'addressInfo', 'streetAddress' ], '' ),
-					businessCity: get( data, [ 'jpoSiteType', 'addressInfo', 'city' ], '' ),
-					businessState: get( data, [ 'jpoSiteType', 'addressInfo', 'state' ], '' ),
-					businessZipCode: get( data, [ 'jpoSiteType', 'addressInfo', 'zipCode' ], '' ),
+					businessName: get( data, [ 'jpoSiteType', 'businessName' ], '' ),
+					businessAddress: get( data, [ 'jpoSiteType', 'streetAddress' ], '' ),
+					businessCity: get( data, [ 'jpoSiteType', 'city' ], '' ),
+					businessState: get( data, [ 'jpoSiteType', 'state' ], '' ),
+					businessZipCode: get( data, [ 'jpoSiteType', 'zipCode' ], '' ),
 				},
 
 				homepageFormat: get( data, 'jpoHomepage', '' ),
@@ -80,6 +81,31 @@ class JPOSummaryStep extends React.Component {
 				addContactForm: get( data, 'jpoContactForm', false )
 			}
 		};
+
+		switch ( sendToJetpack.onboarding.genre ) {
+			case 'portfolio':
+				sendToJetpack = extend( {}, sendToJetpack, {
+					'custom-content-types': true,
+					jetpack_portfolio: true
+				} );
+				break;
+
+			case 'website':
+			case 'store':
+				sendToJetpack = extend( {}, sendToJetpack, {
+					'custom-content-types': true,
+					jetpack_testimonial: true
+				} );
+				break;
+		}
+
+		if ( sendToJetpack.onboarding.addContactForm ) {
+			sendToJetpack = extend( {}, sendToJetpack, {
+				'contact-form': true
+			} );
+		}
+
+		return sendToJetpack;
 	}
 
 	completeOnboarding() {
