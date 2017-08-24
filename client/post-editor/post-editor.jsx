@@ -1108,7 +1108,6 @@ export const PostEditor = React.createClass( {
 	},
 
 	focusHTMLBookmarkInVisualEditor: function( ed ) {
-		console.log( 'CONTENT SET' );
 		const startNode = ed.target.getDoc().getElementById( 'mce_SELREST_start' );
 		const endNode = ed.target.getDoc().getElementById( 'mce_SELREST_end' );
 
@@ -1146,14 +1145,8 @@ export const PostEditor = React.createClass( {
 				// This resets the word count if it exists
 				this.copySelectedText();
 			}
-		}
-		else if ( mode === 'tinymce' ) {
-			console.log( 'BEFORE SET CONTENT' );
-			//debugger;
+		} else if ( mode === 'tinymce' ) {
 			this.addHTMLBookmarkInTextAreaContent();
-			this.editor._editor.on( 'BeforeSetContent', ( ed ) => {
-				console.log( 'EVENT CONTENT: ', ed.content )
-			} );
 			this.editor._editor.on( 'SetContent', this.focusHTMLBookmarkInVisualEditor );
 		}
 
@@ -1162,17 +1155,17 @@ export const PostEditor = React.createClass( {
 		// Defer actions until next available tick to avoid
 		// dispatching inside a dispatch which can happen if for example the
 		// title field is focused when toggling the editor.
-		// this._switchEditorTimeout = setTimeout( function() {
-		// 	// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		// 	actions.edit( { content: content } );
-		//
-		// 	if ( mode === 'html' ) {
-		// 		// Set raw content directly to avoid race conditions
-		// 		actions.editRawContent( content );
-		// 	} else {
-		// 		this.saveRawContent();
-		// 	}
-		// }.bind( this ), 0 );
+		this._switchEditorTimeout = setTimeout( function() {
+			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+			actions.edit( { content: content } );
+
+			if ( mode === 'html' ) {
+				// Set raw content directly to avoid race conditions
+				actions.editRawContent( content );
+			} else {
+				this.saveRawContent();
+			}
+		}.bind( this ), 0 );
 	}
 
 } );
