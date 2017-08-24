@@ -150,10 +150,20 @@ export default React.createClass( {
 		return {};
 	},
 
-	getDefaultActionLinks( plugin ) {
+	getActionLinks( plugin ) {
+		if ( ! get( plugin, 'active' ) ) {
+			return null;
+		}
+
 		if ( getExtensionSettingsPath( plugin ) ) {
 			// We have a Calypso UI for this plugin, so let's hide the wp-admin action links.
 			return null;
+		}
+
+		const actionLinks = get( plugin, 'action_links' );
+
+		if ( ! isEmpty( actionLinks ) ) {
+			return actionLinks;
 		}
 
 		let adminUrl = get( this.props, 'site.options.admin_url' );
@@ -217,11 +227,7 @@ export default React.createClass( {
 		} );
 
 		const { plugin } = this.props;
-		let actionLinks = get( plugin, 'action_links' );
-
-		if ( get( plugin, 'active' ) && isEmpty( actionLinks ) ) {
-			actionLinks = this.getDefaultActionLinks( plugin );
-		}
+		const actionLinks = this.getActionLinks( plugin );
 
 		return (
 			<Card className="plugin-information">
