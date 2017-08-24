@@ -67,11 +67,13 @@ class JPOSummaryStep extends React.Component {
 
 				genre: get( data, [ 'jpoSiteType', 'genre' ], '' ),
 				businessPersonal: get( data, [ 'jpoSiteType', 'businessPersonal' ], '' ),
-				businessName: get( data, [ 'jpoSiteType', 'addressInfo', 'businessName' ], '' ),
-				businessAddress: get( data, [ 'jpoSiteType', 'addressInfo', 'streetAddress' ], '' ),
-				businessCity: get( data, [ 'jpoSiteType', 'addressInfo', 'city' ], '' ),
-				businessState: get( data, [ 'jpoSiteType', 'addressInfo', 'state' ], '' ),
-				businessZipCode: get( data, [ 'jpoSiteType', 'addressInfo', 'zipCode' ], '' ),
+				businessInfo: {
+					businessName: get( data, [ 'jpoSiteType', 'addressInfo', 'businessName' ], '' ),
+					businessAddress: get( data, [ 'jpoSiteType', 'addressInfo', 'streetAddress' ], '' ),
+					businessCity: get( data, [ 'jpoSiteType', 'addressInfo', 'city' ], '' ),
+					businessState: get( data, [ 'jpoSiteType', 'addressInfo', 'state' ], '' ),
+					businessZipCode: get( data, [ 'jpoSiteType', 'addressInfo', 'zipCode' ], '' ),
+				},
 
 				homepageFormat: get( data, 'jpoHomepage', '' ),
 
