@@ -491,6 +491,11 @@ class PaymentMethodStripe extends Component {
 			showConnectFlowLink = false;
 		}
 
+		// Sanity check - if we already are connected, don't show the connect flow link
+		if ( connectedUserID ) {
+			showConnectFlowLink = false;
+		}
+
 		// OK, make it so
 		if ( showKeyFlowLink ) {
 			buttons.push( {
