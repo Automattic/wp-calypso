@@ -156,6 +156,7 @@ const JPOSiteTitleStep = React.createClass( {
 					signupProgress={ this.props.signupProgress }
 					stepContent={ this.renderStepContent() }
 					goToNextStep={ this.skipStep }
+					shouldHideNavButtons={ true }
 				/>
 			</div>
 		);
