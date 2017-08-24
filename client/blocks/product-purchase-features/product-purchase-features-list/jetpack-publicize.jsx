@@ -16,7 +16,7 @@ export default localize( ( { translate } ) => {
 				icon="comment"
 				title={ translate( 'Marketing Automation' ) }
 				description={ translate(
-					'Schedule Tweets, Facebook posts, and other social posts in advance. ' +
+					'Schedule tweets, Facebook posts, and other social posts in advance. ' +
 					'No limits.'
 				) }
 			/>
