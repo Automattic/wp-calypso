@@ -1,4 +1,4 @@
-.search-autocomplete {
+.zoninator__search-autocomplete {
   &.has-highlight {
     box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
   }
@@ -8,12 +8,12 @@
   }
 }
 
-.search-autocomplete__card {
+.zoninator__search-autocomplete__card {
   padding: 11px 24px 10px;
   min-height: 48px;
 }
 
-.search-autocomplete__suggestions {
+.zoninator__search-autocomplete__suggestions {
   position: absolute;
   width: 100%;
   display: flex;
@@ -23,7 +23,7 @@
   z-index: 10;
 }
 
-.search-autocomplete__suggestion {
+.zoninator__search-autocomplete__suggestion {
   display: flex;
   padding: 10px 10px;
   background: $white;
@@ -35,5 +35,11 @@
   &.has-highlight {
     background-color: $blue-medium;
     color: $white;
+  }
+}
+
+.zoninator__search-autocomplete__text {
+  &.is-emphasized {
+    font-weight: bold;
   }
 }

@@ -33,53 +33,44 @@ class SearchAutocomplete extends Component {
 			return;
 		}
 
-		this.setState( () => ( {
+		this.setState( {
 			search: term || '',
-		} ) );
+		} );
 	}
 
 	registerSuggestions = ( suggestions ) => {
 		this.suggestions = suggestions ? suggestions.getWrappedInstance() : null;
 	}
 
-	handleKeyDown = ( event ) => {
-		this.suggestions.handleKeyEvent( event );
-	}
+	handleSearchClose = () => this.setState( { search: '', searchIsOpen: false } );
 
-	select = ( item ) => {
+	handleSearchOpen = () => this.setState( { searchIsOpen: true } );
+
+	handleKeyDown = event => this.suggestions.handleKeyEvent( event );
+
+	handleSelect = ( item ) => {
 		this.refs.search.clear();
 		this.props.onSelect( item );
-	}
-
-	handleSearchClose = () => {
-		this.setState( () => ( {
-			search: '',
-			searchIsOpen: false,
-		} ) );
-	}
-
-	handleSearchOpen = () => {
-		this.setState( () => ( {
-			searchIsOpen: true,
-		} ) );
 	}
 
 	render() {
 		const { ignored, translate } = this.props;
 
-		const searchAutocompleteClass = classNames( 'search-autocomplete', {
+		const searchAutocompleteClass = classNames( 'zoninator__search-autocomplete', {
 			'has-highlight': this.state.searchIsOpen,
 		} );
+		const cardClass = 'zoninator__search-autocomplete__card';
 
 		return (
 			<div className={ searchAutocompleteClass }>
-				<Card className="search-autocomplete__card">
+				<Card className={ cardClass }>
 					{ this.props.children }
 
 					<Search
 						pinned
 						fitsContainer
 						delaySearch
+						disableAutocorrect
 						ref="search"
 						onSearch={ this.handleSearch }
 						onSearchOpen={ this.handleSearchOpen }
@@ -90,7 +81,7 @@ class SearchAutocomplete extends Component {
 						ref={ this.registerSuggestions }
 						searchTerm={ this.state.search }
 						ignored={ ignored }
-						suggest={ this.select } />
+						suggest={ this.handleSelect } />
 				</Card>
 			</div>
 		);

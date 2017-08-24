@@ -49,10 +49,12 @@ class PostsList extends Component {
 		const posts = fields.getAll() || [];
 		const showPosts = posts.length > 0;
 
+		const explanationTextClass = 'zoninator__zone__text';
+
 		return (
 			<div>
 				<FormFieldset>
-					<p className="zone__text">
+					<p className={ explanationTextClass }>
 						{ translate(
 							'Add content to the zone by using search or by selecting it from the recent posts list below.'
 						) }
@@ -64,9 +66,9 @@ class PostsList extends Component {
 
 				{
 					showPosts && <FormFieldset>
-						<p className="zone__text">
+						<p className={ explanationTextClass }>
 							{ translate(
-								'You can reorder the zone\'s conent by dragging it to a different location on the list.'
+								'You can reorder the zone\'s content by dragging it to a different location on the list.'
 							) }
 						</p>
 						<SortableList direction="vertical" onChange={ this.changePostOrder( fields ) }>

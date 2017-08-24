@@ -11,7 +11,7 @@ class SuggestionItem extends Component {
 		post: PropTypes.shape( {
 			slug: PropTypes.string.isRequired,
 			title: PropTypes.string.isRequired,
-		} ),
+		} ).isRequired,
 		hasHighlight: PropTypes.bool,
 		searchTerm: PropTypes.string,
 		onMouseDown: PropTypes.func,
@@ -23,41 +23,43 @@ class SuggestionItem extends Component {
 		searchTerm: '',
 	};
 
+	/**
+	 * Highlights the matching parts of the string.
+	 * @param  {string} text            Text.
+	 * @param  {string} highlightedText The text to be matched.
+	 * @return {element}                A React element including the highlighted text.
+	 */
 	createTextWithHighlight( text, highlightedText ) {
 		const re = new RegExp( '(' + highlightedText + ')', 'gi' );
 		const parts = text.split( re );
-		const token = parts.map( ( part, i ) => {
+
+		return parts.map( ( part, i ) => {
 			const key = text + i;
 			const lowercasePart = part.toLowerCase();
-			if ( lowercasePart === highlightedText ) {
-				return <span key={ key } className="search-autocomplete__text is-emphasized" >{ part }</span>;
-			}
-			return <span key={ key } className="search-autocomplete__text" >{ part }</span>;
-		} );
+			const spanClass = classNames( 'zoninator__search-autocomplete__text', {
+				'is-emphasized': lowercasePart === highlightedText,
+			} );
 
-		return token;
+			return <span key={ key } className={ spanClass } >{ part }</span>;
+		} );
 	}
 
 	handleMouseDown = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 
-		if ( this.props.onMouseDown ) {
-			this.props.onMouseDown( this.props.post.slug );
-		}
+		this.props.onMouseDown && this.props.onMouseDown( this.props.post.slug );
 	}
 
 	handleMouseOver = () => {
-		if ( this.props.onMouseOver ) {
-			this.props.onMouseOver( this.props.post.slug );
-		}
+		this.props.onMouseOver && this.props.onMouseOver( this.props.post.slug );
 	}
 
 	render() {
 		const { hasHighlight, post, searchTerm } = this.props;
 
 		const className = classNames(
-			'search-autocomplete__suggestion',
+			'zoninator__search-autocomplete__suggestion',
 			{ 'has-highlight': hasHighlight }
 		);
 

@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { find, findIndex } from 'lodash';
+import { find, findIndex, first, isEqual, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +20,8 @@ class Suggestions extends Component {
 		suggest: PropTypes.func.isRequired,
 		searchTerm: PropTypes.string,
 		suggestions: PropTypes.array,
+		ignored: PropTypes.array,
+		siteId: PropTypes.number,
 	}
 
 	static defaultProps = {
@@ -28,29 +30,43 @@ class Suggestions extends Component {
 	}
 
 	state = {
+		suggestions: [],
 		suggestionPosition: 0,
 		currentSuggestion: null,
 	}
 
-	countSuggestions() {
-		return this.props.suggestions ? this.props.suggestions.length : 0;
+	componentWillReceiveProps( nextProps ) {
+		if (
+			isEqual( nextProps.suggestions, this.props.suggestions ) &&
+			isEqual( nextProps.ignored, this.ignored )
+		) {
+			return;
+		}
+
+		const suggestions = this.filterSuggestions( nextProps.suggestions, nextProps.ignored );
+
+		this.setState( {
+			suggestions,
+			suggestionPosition: 0,
+			currentSuggestion: first( suggestions ),
+		} );
 	}
 
-	filterSuggestions() {
-		if ( ! this.countSuggestions() ) {
+	filterSuggestions( suggestions, ignored ) {
+		if ( ! suggestions ) {
 			return [];
 		}
 
-		const results = this.props.suggestions.filter( ( { slug } ) => ! find( this.props.ignored, { slug } ) );
-
-		return results;
+		return suggestions.filter( ( { slug } ) => ! find( ignored, { slug } ) );
 	}
 
-	getSuggestionForPosition( position ) {
-		return this.props.suggestions[ position ];
-	}
+	countSuggestions = () => this.state.suggestions.length;
 
-	incPosition() {
+	getPositionForSuggestion = slug => findIndex( this.state.suggestions, { slug: slug } );
+
+	getSuggestionForPosition = position => this.state.suggestions[ position ];
+
+	increasePosition() {
 		const position = ( this.state.suggestionPosition + 1 ) % this.countSuggestions();
 		this.setState( {
 			suggestionPosition: position,
@@ -58,62 +74,48 @@ class Suggestions extends Component {
 		} );
 	}
 
-	decPosition() {
-		const position = this.state.suggestionPosition - 1;
-		this.setState( {
-			suggestionPosition: position < 0 ? this.countSuggestions() - 1 : position,
-			currentSuggestion: this.getSuggestionForPosition( position ),
-		} );
-	}
-
-	handleKeyEvent = ( event ) => {
-		if ( this.countSuggestions() === 0 ) {
-			return false;
-		}
-
-		switch ( event.key ) {
-			case 'ArrowDown':
-				this.incPosition();
-				event.preventDefault();
-				break;
-
-			case 'ArrowUp':
-				this.decPosition();
-				event.preventDefault();
-				break;
-
-			case 'Enter':
-				if ( !! this.state.currentSuggestion ) {
-					this.props.suggest( this.state.currentSuggestion );
-					return true;
-				}
-				break;
-		}
-
-		return false;
-	}
-
-	handleMouseDown = ( slug ) => {
-		const position = findIndex( this.props.suggestions, { slug: slug } );
-		this.props.suggest( this.getSuggestionForPosition( position ) );
-	}
-
-	handleMouseOver = ( slug ) => {
-		const position = findIndex( this.props.suggestions, { slug: slug } );
+	decreasePosition() {
+		const position = ( this.countSuggestions() + this.state.suggestionPosition - 1 ) % this.countSuggestions();
 		this.setState( {
 			suggestionPosition: position,
 			currentSuggestion: this.getSuggestionForPosition( position ),
 		} );
 	}
 
-	renderSuggestion = ( post, idx ) => (
-		<SuggestionItem
-			key={ idx }
-			hasHighlight={ idx === this.state.suggestionPosition }
-			onMouseDown={ this.onMouseDown }
-			onMouseOver={ this.onMouseOver }
-			post={ post } />
-	)
+	handleKeyEvent = ( event ) => {
+		if ( this.countSuggestions() === 0 ) {
+			return;
+		}
+
+		switch ( event.key ) {
+			case 'ArrowDown':
+				this.increasePosition();
+				event.preventDefault();
+				break;
+
+			case 'ArrowUp':
+				this.decreasePosition();
+				event.preventDefault();
+				break;
+
+			case 'Enter':
+				this.state.currentSuggestion && this.props.suggest( this.state.currentSuggestion );
+				break;
+		}
+	}
+
+	handleMouseDown = ( slug ) => {
+		const position = this.getPositionForSuggestion( slug );
+		this.props.suggest( this.getSuggestionForPosition( position ) );
+	}
+
+	handleMouseOver = ( slug ) => {
+		const position = this.getPositionForSuggestion( slug );
+		this.setState( {
+			suggestionPosition: position,
+			currentSuggestion: this.getSuggestionForPosition( position ),
+		} );
+	}
 
 	render() {
 		const {
@@ -126,6 +128,7 @@ class Suggestions extends Component {
 		}
 
 		const showSuggestions = this.countSuggestions() > 0;
+		const suggestionsClass = 'zoninator__search-autocomplete__suggestions';
 
 		return (
 			<div>
@@ -133,8 +136,16 @@ class Suggestions extends Component {
 
 				{
 					showSuggestions &&
-					<div className="search-autocomplete__suggestions">
-						{ this.filterSuggestions().map( this.renderSuggestion ) }
+					<div className={ suggestionsClass }>
+						{ map( this.state.suggestions, ( post, idx ) => (
+							<SuggestionItem
+								key={ idx }
+								hasHighlight={ idx === this.state.suggestionPosition }
+								searchTerm={ searchTerm }
+								onMouseDown={ this.handleMouseDown }
+								onMouseOver={ this.handleMouseOver }
+								post={ post } />
+						) ) }
 					</div>
 				}
 			</div>
@@ -146,7 +157,7 @@ const mapStateToProps = ( state, { searchTerm } ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		siteId: siteId,
+		siteId,
 		suggestions: getSitePostsForQuery( state, siteId, { search: searchTerm } ),
 	};
 };

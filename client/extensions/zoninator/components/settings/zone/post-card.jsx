@@ -33,8 +33,10 @@ class PostCard extends Component {
 			}
 		} = this.props;
 
+		const postCardClass = 'zoninator__zone__list-item';
+
 		return (
-			<SectionHeader key={ slug } label={ title } className="zone__list-item">
+			<SectionHeader key={ slug } label={ title } className={ postCardClass }>
 				<Button
 					compact
 					onMouseDown={ this.handleMouseDown }

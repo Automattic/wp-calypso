@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -20,52 +20,56 @@ const recentPostsQuery = {
 	number: 10,
 };
 
-const RecentPostsDropdown = ( {
-	siteId,
-	recentPosts,
-	ignored,
-	onSelect,
-	translate,
-} ) => {
-	const handleSelect = option => {
+class RecentPostsDropdown extends PureComponent {
+	static propTypes = {
+		ignored: PropTypes.array,
+		onSelect: PropTypes.func.isRequired,
+		recentPosts: PropTypes.array,
+		siteId: PropTypes.number,
+		translate: PropTypes.func,
+	}
+
+	static defaultProps = {
+		recentPosts: [],
+		ignored: [],
+	}
+
+	handleSelect = option => {
+		const { onSelect, recentPosts } = this.props;
 		const slug = option.value;
 
 		onSelect( find( recentPosts, { slug } ) );
-	};
+	}
 
-	const options = toArray( recentPosts )
-		.filter( ( { slug } ) => ! find( ignored, { slug } ) )
-		.map( ( { slug, title } ) => ( { label: title, value: slug } ) );
+	render() {
+		const { ignored, recentPosts, siteId, translate } = this.props;
 
-	return (
-		<div>
-			<QueryPosts siteId={ siteId } query={ recentPostsQuery } />
+		const className = 'zoninator__recent-posts-dropdown';
 
-			<SelectDropdown
-				compact
-				selectedText={ translate( 'Recent posts' ) }
-				options={ options }
-				onSelect={ handleSelect } />
-		</div>
-	);
-};
+		// getSitePostsForQuery can return null, hence the need to ensure recentPosts is an array.
+		const options = toArray( recentPosts )
+			.filter( ( { slug } ) => ! find( ignored, { slug } ) )
+			.map( ( { slug, title } ) => ( { label: title, value: slug } ) );
 
-RecentPostsDropdown.PropTypes = {
-	onSelect: PropTypes.function,
-	recentPosts: PropTypes.array,
-	ignored: PropTypes.array,
-};
+		return (
+			<div className={ className }>
+				<QueryPosts siteId={ siteId } query={ recentPostsQuery } />
 
-RecentPostsDropdown.defaultProps = {
-	recentPosts: [],
-	ignored: [],
-};
+				<SelectDropdown
+					compact
+					selectedText={ translate( 'Recent posts' ) }
+					options={ options }
+					onSelect={ this.handleSelect } />
+			</div>
+		);
+	}
+}
 
 const connectComponent = connect( state => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		siteId: siteId,
+		siteId,
 		recentPosts: getSitePostsForQuery( state, siteId, recentPostsQuery ),
 	};
 } );
