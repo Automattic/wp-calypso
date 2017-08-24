@@ -12,6 +12,7 @@ import { truncate, includes, startsWith, some } from 'lodash';
 /**
  * Internal Dependencies
  */
+import withDimensions from 'lib/with-dimensions';
 
 class PostCommentContent extends React.Component {
 	static propTypes = {
@@ -42,7 +43,8 @@ class PostCommentContent extends React.Component {
 		}
 
 		const idealNumLines = this.props.className === 'is-single-line' ? 1 : 3;
-		const charactersPerLine = 80; // avg chars per line
+		const charactersPerPixel = 0.11;
+		const charactersPerLine = charactersPerPixel * this.props.width; // avg chars per line
 		const charsToDisplay = charactersPerLine * idealNumLines;
 		let charsSoFar = 0;
 		let actualCharIndex = content.length;
@@ -59,13 +61,13 @@ class PostCommentContent extends React.Component {
 				const nextbatch = content.substring( actualCharIndex, actualCharIndex + 6 );
 				if ( startsWith( nextbatch, '\n' ) ) {
 					actualCharIndex += 1;
-					charsSoFar += 80;
+					charsSoFar += charactersPerLine;
 				} else if ( startsWith( nextbatch, '<br/>' ) ) {
 					actualCharIndex += 4;
-					charsSoFar += 80;
+					charsSoFar += charactersPerLine;
 				} else if ( startsWith( nextbatch, '<br>' ) ) {
 					actualCharIndex += 3;
-					charsSoFar += 80;
+					charsSoFar += charactersPerLine;
 				} else {
 					charsSoFar++;
 				}
@@ -76,7 +78,11 @@ class PostCommentContent extends React.Component {
 		}
 
 		const htmlContent = includes( [ 'is-single-line', 'is-excerpt' ], this.props.className )
-			? truncate( this.props.content, { length: actualCharIndex, separator: / / } )
+			? truncate( this.props.content, {
+				length: actualCharIndex,
+				separator: / /,
+				omission: ' ... ',
+			} )
 			: this.props.content;
 
 		const showReadMore = ! hideMore && content.length > actualCharIndex;
@@ -102,4 +108,4 @@ class PostCommentContent extends React.Component {
 	}
 }
 
-export default localize( PostCommentContent );
+export default localize( withDimensions( PostCommentContent ) );
