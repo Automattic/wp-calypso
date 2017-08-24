@@ -2,14 +2,19 @@
  * External dependencies
  */
 import React from 'react';
+import { parse as parseUrl } from 'url';
+import qs from 'qs';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import EmptyContent from 'components/empty-content';
 import WPLogin from './wp-login';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import { fetchOAuth2ClientData } from 'state/login/oauth2/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const enhanceContextWithLogin = context => {
 	const {
@@ -33,9 +38,22 @@ const enhanceContextWithLogin = context => {
 
 export default {
 	login( context, next ) {
-		const { query: { client_id } } = context;
+		const { query: { client_id, redirect_to } } = context;
 
 		if ( client_id ) {
+			const parsedRedirectUrl = parseUrl( redirect_to );
+			const redirectQueryString = qs.parse( parsedRedirectUrl.query );
+			if ( client_id !== redirectQueryString.client_id ) {
+				recordTracksEvent( 'calypso_login_phishing_attempt', context.query );
+				context.primary = (
+					<EmptyContent
+						title={ translate( 'Something went wrong' ) }
+						line={ translate( "It looks like there's a problem" ) } />
+				);
+
+				next();
+			}
+
 			context.store.dispatch( fetchOAuth2ClientData( Number( client_id ) ) )
 				.then( () => {
 					enhanceContextWithLogin( context );
