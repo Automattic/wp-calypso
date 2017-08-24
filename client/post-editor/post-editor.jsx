@@ -554,6 +554,7 @@ export const PostEditor = React.createClass( {
 				// incorrect post type in URL
 				page.redirect( utils.getEditURL( post, site ) );
 			}
+			//debugger;
 			this.setState( postEditState, function() {
 				if ( this.editor && ( didLoad || this.state.isLoadingRevision ) ) {
 					this.editor.setEditorContent( this.state.post.content, { initial: true } );
@@ -1054,9 +1055,89 @@ export const PostEditor = React.createClass( {
 		return editorMode;
 	},
 
+	addHTMLBookmarkInTextAreaContent: function() {
+		const textArea = this.editor._editor.getElement();
+
+		const htmlModeCursorStartPosition = textArea.selectionStart;
+		const htmlModeCursorEndPosition = textArea.selectionEnd;
+
+		let mode = 'single';
+		if ( htmlModeCursorStartPosition !== htmlModeCursorEndPosition ) {
+			mode = 'range';
+		}
+
+		const bookMarkStart = '<span ' +
+			'data-mce-type="bookmark"	' +
+			'id="mce_SELREST_start" ' +
+			'data-mce-style="overflow:hidden;line-height:0px" ' +
+			'style="overflow:hidden;line-height:0px"' +
+			'>' +
+			'&#65279;' +
+			'</span>';
+
+		let bookMarkEnd = null;
+		if ( mode === 'range' ) {
+			bookMarkEnd = '<span ' +
+				'data-mce-type="bookmark"	' +
+				'id="mce_SELREST_end" ' +
+				'data-mce-style="overflow:hidden;line-height:0px" ' +
+				'style="overflow:hidden;line-height:0px"' +
+				'>' +
+				'&#65279;' +
+				'</span>';
+
+			// // TODO detect if you're not in a tag to not break things
+			textArea.value = [
+				textArea.value.slice( 0, htmlModeCursorStartPosition ),
+				bookMarkStart,
+				textArea.value.slice( htmlModeCursorStartPosition, htmlModeCursorEndPosition ),
+				bookMarkEnd,
+				textArea.value.slice( htmlModeCursorEndPosition ),
+			].join( '' );
+		}
+		else {
+			// // TODO detect if you're not in a tag to not break things
+			textArea.value = [
+				textArea.value.slice( 0, htmlModeCursorStartPosition ),
+				bookMarkStart,
+				textArea.value.slice( htmlModeCursorStartPosition )
+			].join( '' );
+		}
+
+		this.editor.onTextAreaChange( { target: { value: textArea.value } } );
+	},
+
+	focusHTMLBookmarkInVisualEditor: function( ed ) {
+		console.log( 'CONTENT SET' );
+		const startNode = ed.target.getDoc().getElementById( 'mce_SELREST_start' );
+		const endNode = ed.target.getDoc().getElementById( 'mce_SELREST_end' );
+
+		if ( ! startNode ) {
+			return;
+		}
+
+		ed.target.focus();
+
+		if ( ! endNode ) {
+			ed.target.selection.select( startNode );
+			//startNode.parentNode.removeChild( startNode );
+		}
+		else {
+			const sel = document.createRange();
+			sel.setStart( startNode, 0 );
+			sel.setEnd( endNode, 0 );
+
+			ed.target.selection.setRng( sel );
+		}
+
+		ed.target.off( 'SetContent', this.focusHTMLBookmarkInVisualEditor );
+	},
+
 	switchEditorMode: function( mode ) {
+		console.log( 'SWITCHING EDITOR TO ', mode );
 		const content = this.editor.getContent();
 
+		//debugger;
 		if ( mode === 'html' ) {
 			this.editor.setEditorContent( content );
 
@@ -1065,6 +1146,15 @@ export const PostEditor = React.createClass( {
 				// This resets the word count if it exists
 				this.copySelectedText();
 			}
+		}
+		else if ( mode === 'tinymce' ) {
+			console.log( 'BEFORE SET CONTENT' );
+			//debugger;
+			this.addHTMLBookmarkInTextAreaContent();
+			this.editor._editor.on( 'BeforeSetContent', ( ed ) => {
+				console.log( 'EVENT CONTENT: ', ed.content )
+			} );
+			this.editor._editor.on( 'SetContent', this.focusHTMLBookmarkInVisualEditor );
 		}
 
 		this.props.setEditorModePreference( mode );
