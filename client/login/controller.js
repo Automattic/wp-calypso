@@ -4,12 +4,10 @@
 import React from 'react';
 import { parse as parseUrl } from 'url';
 import qs from 'qs';
-import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
 import WPLogin from './wp-login';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
@@ -36,22 +34,13 @@ const enhanceContextWithLogin = context => {
 	);
 };
 
-const showErrorForBadOAuthQueryStringParameters = context => {
-	context.primary = (
-		<EmptyContent
-			title={ translate( 'Something went wrong' ) }
-			line={ translate( "It looks like there's a problem" ) } />
-	);
-};
-
 export default {
 	login( context, next ) {
 		const { query: { client_id, redirect_to } } = context;
 
 		if ( client_id ) {
 			if ( ! redirect_to ) {
-				showErrorForBadOAuthQueryStringParameters( context );
-				next();
+				return next( new Error( 'The `redirect_to` query parameter is missing.' ) );
 			}
 
 			const parsedRedirectUrl = parseUrl( redirect_to );
@@ -59,8 +48,7 @@ export default {
 
 			if ( client_id !== redirectQueryString.client_id ) {
 				recordTracksEvent( 'calypso_login_phishing_attempt', context.query );
-				showErrorForBadOAuthQueryStringParameters( context );
-				next();
+				return next( new Error( 'The `redirect_to` query parameter is invalid with the given `client_id`.' ) );
 			}
 
 			context.store.dispatch( fetchOAuth2ClientData( Number( client_id ) ) )
