@@ -7,16 +7,11 @@ import PropTypes from 'prop-types';
 import AutoDirection from 'components/auto-direction';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { truncate, get } from 'lodash';
+import { truncate, includes, startsWith, some } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-
-const CHAR_LIMITS = {
-	'is-single-line': 30,
-	'is-excerpt': 90,
-};
 
 class PostCommentContent extends React.Component {
 	static propTypes = {
@@ -28,6 +23,8 @@ class PostCommentContent extends React.Component {
 	};
 
 	render() {
+		const { hideMore } = this.props;
+		let { content } = this.props;
 		// Don't trust comment content unless it was provided by the API
 		if ( this.props.isPlaceholder ) {
 			return (
@@ -44,11 +41,45 @@ class PostCommentContent extends React.Component {
 			);
 		}
 
-		const trimAmount = get( CHAR_LIMITS, this.props.className, Infinity );
-		const showReadMore = ! this.props.hideMore && this.props.content.length > trimAmount;
-		console.error( trimAmount, showReadMore );
+		const idealNumLines = this.props.className === 'is-single-line' ? 1 : 3;
+		const charactersPerLine = 80; // avg chars per line
+		const charsToDisplay = charactersPerLine * idealNumLines;
+		let charsSoFar = 0;
+		let actualCharIndex = content.length;
+		const newLines = [ '<br>', '<br/>', '\n' ];
 
-		const htmlContent = showReadMore ? truncate( this.props.content, trimAmount ) : this.props.content;
+		if ( some( newLines, newLine => includes( content, newLine ) ) ) {
+			actualCharIndex = 0;
+			content = content
+				.replace( '<br>', ' <br>' )
+				.replace( '<br/>', ' <br/>' )
+				.replace( '\n', ' \n' );
+
+			while ( charsSoFar < charsToDisplay ) {
+				const nextbatch = content.substring( actualCharIndex, actualCharIndex + 6 );
+				if ( startsWith( nextbatch, '\n' ) ) {
+					actualCharIndex += 1;
+					charsSoFar += 80;
+				} else if ( startsWith( nextbatch, '<br/>' ) ) {
+					actualCharIndex += 4;
+					charsSoFar += 80;
+				} else if ( startsWith( nextbatch, '<br>' ) ) {
+					actualCharIndex += 3;
+					charsSoFar += 80;
+				} else {
+					charsSoFar++;
+				}
+				actualCharIndex += 1;
+			}
+		} else {
+			actualCharIndex = charsToDisplay;
+		}
+
+		const htmlContent = includes( [ 'is-single-line', 'is-excerpt' ], this.props.className )
+			? truncate( this.props.content, { length: actualCharIndex, separator: / / } )
+			: this.props.content;
+
+		const showReadMore = ! hideMore && content.length > actualCharIndex;
 
 		/*eslint-disable react/no-danger*/
 		return (
@@ -60,7 +91,6 @@ class PostCommentContent extends React.Component {
 					/>
 					{ showReadMore &&
 						<span>
-							<span className="comments__comment-read-more-ellipsis">...</span>
 							<span className="comments__comment-read-more" onClick={ this.props.onMoreClicked }>
 								{ this.props.translate( 'Read More' ) }
 							</span>
