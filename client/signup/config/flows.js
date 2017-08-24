@@ -232,7 +232,7 @@ const flows = {
 			return dependencies.oauth2_redirect || '/';
 		},
 		description: 'WordPress.com Connect signup flow',
-		lastModified: '2017-04-03',
+		lastModified: '2017-08-24',
 		disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
 		autoContinue: true,
 	}
