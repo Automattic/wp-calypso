@@ -339,20 +339,23 @@ const Signup = React.createClass( {
 
 					const designType = this.props.signupDependencies && this.props.signupDependencies.designType;
 
-					if ( designType ) {
-						const themeSlugWithRepo = ( ( type ) => {
-							switch ( type ) {
-								case 'blog': return 'pub/independent-publisher-2';
-								case 'grid': return 'pub/altofocus';
-								case 'page': return 'pub/dara';
-								default: return 'pub/twentyseventeen';
-							}
-						} ).call( this, designType );
+					let themeSlugWithRepo = 'pub/twentyseventeen';
 
-						SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], { themeSlugWithRepo } );
-
-						return page( utils.getStepUrl( this.props.flowName, nextStepName, nextStepSection, this.props.locale ) );
+					switch ( designType ) {
+						case 'blog':
+							themeSlugWithRepo = 'pub/independent-publisher-2';
+							break;
+						case 'grid':
+							themeSlugWithRepo = 'pub/altofocus';
+							break;
+						case 'page':
+							themeSlugWithRepo = 'pub/dara';
+							break;
 					}
+
+					SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], { themeSlugWithRepo } );
+
+					return page( utils.getStepUrl( this.props.flowName, nextStepName, nextStepSection, this.props.locale ) );
 				}
 				page( utils.getStepUrl( this.props.flowName, stepName, stepSectionName, this.props.locale ) );
 			} else if ( this.isEveryStepSubmitted() ) {
