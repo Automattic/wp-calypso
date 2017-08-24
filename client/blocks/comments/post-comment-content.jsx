@@ -7,11 +7,16 @@ import PropTypes from 'prop-types';
 import AutoDirection from 'components/auto-direction';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { truncate, get } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import withDimensions from 'lib/with-dimensions';
+
+const CHAR_LIMITS = {
+	'is-single-line': 30,
+	'is-excerpt': 90,
+};
 
 class PostCommentContent extends React.Component {
 	static propTypes = {
@@ -38,19 +43,27 @@ class PostCommentContent extends React.Component {
 				</div>
 			);
 		}
+
+		const trimAmount = get( CHAR_LIMITS, this.props.className, Infinity );
+		const showReadMore = ! this.props.hideMore && this.props.content.length > trimAmount;
+		console.error( trimAmount, showReadMore );
+
+		const htmlContent = showReadMore ? truncate( this.props.content, trimAmount ) : this.props.content;
+
 		/*eslint-disable react/no-danger*/
 		return (
 			<AutoDirection>
 				<div className={ classNames( 'comments__comment-content-wrapper', this.props.className ) }>
-					<div
+					<span
 						className="comments__comment-content"
-						ref={ this.props.setWithDimensionsRef }
-						dangerouslySetInnerHTML={ { __html: this.props.content } }
+						dangerouslySetInnerHTML={ { __html: htmlContent } }
 					/>
-					{ this.props.overflowY &&
-						! this.props.hideMore &&
-						<span className="comments__comment-read-more" onClick={ this.props.onMoreClicked }>
-							{ this.props.translate( 'Read More' ) }
+					{ showReadMore &&
+						<span>
+							<span className="comments__comment-read-more-ellipsis">...</span>
+							<span className="comments__comment-read-more" onClick={ this.props.onMoreClicked }>
+								{ this.props.translate( 'Read More' ) }
+							</span>
 						</span> }
 				</div>
 			</AutoDirection>
@@ -59,4 +72,4 @@ class PostCommentContent extends React.Component {
 	}
 }
 
-export default localize( withDimensions( PostCommentContent ) );
+export default localize( PostCommentContent );
