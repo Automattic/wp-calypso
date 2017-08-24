@@ -68,7 +68,6 @@ class PlansFeaturesMain extends Component {
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
 						basePlansPath={ basePlansPath }
-						intervalType={ intervalType }
 						site={ site }
 						domainName={ domainName }
 						displayJetpackPlans = { displayJetpackPlans }
@@ -96,7 +95,6 @@ class PlansFeaturesMain extends Component {
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
 						basePlansPath={ basePlansPath }
-						intervalType={ intervalType }
 						site={ site }
 						domainName={ domainName }
 						displayJetpackPlans = { displayJetpackPlans }
@@ -124,7 +122,6 @@ class PlansFeaturesMain extends Component {
 					isLandingPage={ isLandingPage }
 					basePlansPath={ basePlansPath }
 					selectedFeature={ selectedFeature }
-					intervalType={ intervalType }
 					site={ site }
 					domainName={ domainName }
 					displayJetpackPlans = { displayJetpackPlans }
@@ -377,7 +374,7 @@ class PlansFeaturesMain extends Component {
 
 		return (
 			<div className="plans-features-main">
-				{ ( displayJetpackPlans && isInSignup ) ? this.getIntervalTypeToggle() : null }
+				{ displayJetpackPlans ? this.getIntervalTypeToggle() : null }
 				<QueryPlans />
 				<QuerySitePlans siteId={ get( site, 'ID' ) } />
 				{ this.getPlanFeatures() }

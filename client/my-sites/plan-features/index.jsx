@@ -148,7 +148,7 @@ class PlanFeatures extends Component {
 
 	renderMobileView() {
 		const {
-			canPurchase, translate, planProperties, isInSignup, isLandingPage, intervalType, site, basePlansPath
+			canPurchase, translate, planProperties, isInSignup, isLandingPage, site, basePlansPath
 		} = this.props;
 
 		// move any free plan to last place in mobile view
@@ -196,7 +196,6 @@ class PlanFeatures extends Component {
 						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
 						hideMonthly={ hideMonthly }
 						isPlaceholder={ isPlaceholder }
-						intervalType={ intervalType }
 						site={ site }
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
@@ -240,7 +239,6 @@ class PlanFeatures extends Component {
 	renderPlanHeaders() {
 		const {
 			planProperties,
-			intervalType,
 			site,
 			basePlansPath,
 			isInSignup,
@@ -296,7 +294,6 @@ class PlanFeatures extends Component {
 						discountPrice={ discountPrice }
 						billingTimeFrame={ billingTimeFrame }
 						isPlaceholder={ isPlaceholder }
-						intervalType={ intervalType }
 						site={ site }
 						hideMonthly={ hideMonthly }
 						basePlansPath={ basePlansPath }
@@ -510,7 +507,6 @@ PlanFeatures.propTypes = {
 	isInSignup: PropTypes.bool,
 	basePlansPath: PropTypes.string,
 	selectedFeature: PropTypes.string,
-	intervalType: PropTypes.string,
 	site: PropTypes.object,
 	displayJetpackPlans: PropTypes.bool,
 };
@@ -519,7 +515,6 @@ PlanFeatures.defaultProps = {
 	onUpgradeClick: noop,
 	isInSignup: false,
 	basePlansPath: null,
-	intervalType: 'yearly',
 	site: {},
 	displayJetpackPlans: false,
 };
