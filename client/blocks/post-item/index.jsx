@@ -29,7 +29,6 @@ import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellips
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 
 class PostItem extends React.Component {
-
 	static defaultProps = {
 		onHeightChange: noop,
 	};
@@ -37,18 +36,51 @@ class PostItem extends React.Component {
 	constructor() {
 		super( ...arguments );
 
-		this.handleHeightChange = this.handleHeightChange.bind( this );
-
 		this.state = {
 			nodeHeight: 0,
 		};
+
+		this.hasVariableHeightContent = false;
 	}
 
 	componentDidUpdate() {
-		this.handleHeightChange();
+		if ( this.hasVariableHeightContent ) {
+			if ( ! this.observer ) {
+				this.connectMutationObserver();
+				this.handleHeightChange();
+			}
+		} else {
+			if ( this.observer ) {
+				this.disconnectMutationObserver();
+				this.handleHeightChange();
+			}
+		}
 	}
 
-	handleHeightChange() {
+	componentWillUnmount() {
+		this.disconnectMutationObserver();
+	}
+
+	connectMutationObserver() {
+		if ( this.observer ) {
+			return;
+		}
+		this.observer = new window.MutationObserver( this.handleHeightChange );
+		this.observer.observe( findDOMNode( this ), {
+			childList: true,
+			subtree: true,
+		} );
+	}
+
+	disconnectMutationObserver() {
+		if ( ! this.observer ) {
+			return;
+		}
+		this.observer.disconnect();
+		delete this.observer;
+	}
+
+	handleHeightChange = () => {
 		const domNode = findDOMNode( this );
 		const nodeHeight = domNode && domNode.clientHeight;
 
@@ -58,16 +90,28 @@ class PostItem extends React.Component {
 		}
 	}
 
-	componentDidMount() {
-		this.handleHeightChange();
-	}
-
-	componentDidUpdate() {
-		this.handleHeightChange();
-	}
-
 	hideCurrentSharePanel = () => {
 		this.props.hideSharePanel( this.props.globalId );
+	}
+
+	renderVariableHeightContent() {
+		const {
+			post,
+			isCurrentSharePanelOpen,
+		} = this.props;
+
+		if ( ! post || ! isCurrentSharePanelOpen ) {
+			return null;
+		}
+
+		return (
+			<PostShare
+				post={ post }
+				siteId={ post.site_ID }
+				showClose={ true }
+				onClose={ this.hideCurrentSharePanel }
+			/>
+		);
 	}
 
 	render() {
@@ -80,12 +124,10 @@ class PostItem extends React.Component {
 			isAllSitesModeSelected,
 			compact,
 			editUrl,
-			isCurrentSharePanelOpen,
 			translate,
 		} = this.props;
 
 		const title = post ? post.title : null;
-		const siteId = post ? post.site_ID : null;
 
 		const postItemClasses = classnames( 'post-item', className, {
 			'is-untitled': ! title,
@@ -100,6 +142,9 @@ class PostItem extends React.Component {
 		const titleMetaClasses = classnames( 'post-item__title-meta', {
 			'site-is-visible': isSiteVisible
 		} );
+
+		const variableHeightContent = this.renderVariableHeightContent();
+		this.hasVariableHeightContent = !! variableHeightContent;
 
 		return (
 			<div>
@@ -129,14 +174,7 @@ class PostItem extends React.Component {
 					<PostTypeListPostThumbnail globalId={ globalId } />
 					<PostActionsEllipsisMenu globalId={ globalId } />
 				</Card>
-				{ post && isCurrentSharePanelOpen && (
-					<PostShare
-						post={ post }
-						siteId={ siteId }
-						showClose={ true }
-						onClose={ this.hideCurrentSharePanel }
-					/>
-				) }
+				{ variableHeightContent }
 			</div>
 		);
 	}
