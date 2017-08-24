@@ -24,61 +24,67 @@ import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 
-function PostItem( { translate, globalId, post, site, editUrl, siteTitle, isAllSitesModeSelected, allSitesSingleUser, singleUserSite, className, compact } ) {
-	const title = post ? post.title : null;
-	const postItemClasses = classnames( 'post-item', className, {
-		'is-untitled': ! title,
-		'is-mini': compact,
-		'is-placeholder': ! globalId
-	} );
+class PostItem extends React.Component {
 
-	const isSiteVisible = isEnabled( 'posts/post-type-list' ) && isAllSitesModeSelected;
-	const titleMetaClasses = classnames( 'post-item__title-meta', { 'site-is-visible': isSiteVisible } );
+	render() {
+		const { translate, globalId, post, site, editUrl, className, compact } = this.props;
+		const { siteTitle, isAllSitesModeSelected, allSitesSingleUser, singleUserSite } = this.props;
 
-	const isAuthorVisible = (
-		( isAllSitesModeSelected && ! allSitesSingleUser ) ||
-		( ! isAllSitesModeSelected && ! singleUserSite )
-		) &&
-		post && post.author &&
-		isEnabled( 'posts/post-type-list' );
+		const title = post ? post.title : null;
+		const postItemClasses = classnames( 'post-item', className, {
+			'is-untitled': ! title,
+			'is-mini': compact,
+			'is-placeholder': ! globalId
+		} );
 
-	return (
-		<Card compact className={ postItemClasses }>
-			<div className="post-item__detail">
-				<div className={ titleMetaClasses }>
-					<div className="post-item__info">
-						{ isSiteVisible &&
+		const isSiteVisible = isEnabled( 'posts/post-type-list' ) && isAllSitesModeSelected;
+		const titleMetaClasses = classnames( 'post-item__title-meta', { 'site-is-visible': isSiteVisible } );
+
+		const isAuthorVisible = (
+				( isAllSitesModeSelected && ! allSitesSingleUser ) ||
+				( ! isAllSitesModeSelected && ! singleUserSite )
+			) &&
+			post && post.author &&
+			isEnabled( 'posts/post-type-list' );
+
+		return (
+			<Card compact className={ postItemClasses }>
+				<div className="post-item__detail">
+					<div className={ titleMetaClasses }>
+						<div className="post-item__info">
+							{isSiteVisible &&
 							<div className="post-item__site">
 								<SiteIcon size={ 16 } site={ site } />
 								<div className="post-item__site-title">
-									{ siteTitle }
+									{siteTitle}
 								</div>
 							</div>
-						}
-						{ isAuthorVisible &&
-						<div className="post-item__author">
-							<div className="post-item__author-name">
-								{ post.author.name }
+							}
+							{isAuthorVisible &&
+							<div className="post-item__author">
+								<div className="post-item__author-name">
+									{post.author.name}
+								</div>
 							</div>
+							}
 						</div>
-						}
-					</div>
-					<h1 className="post-item__title">
-						<a href={ editUrl } className="post-item__title-link">
-							{ title || translate( 'Untitled' ) }
-						</a>
-					</h1>
-					<div className="post-item__meta">
-						<PostRelativeTime globalId={ globalId } />
-						<PostStatus globalId={ globalId } />
-						<PostTypePostAuthor globalId={ globalId } />
+						<h1 className="post-item__title">
+							<a href={ editUrl } className="post-item__title-link">
+								{title || translate( 'Untitled' )}
+							</a>
+						</h1>
+						<div className="post-item__meta">
+							<PostRelativeTime globalId={ globalId } />
+							<PostStatus globalId={ globalId } />
+							<PostTypePostAuthor globalId={ globalId } />
+						</div>
 					</div>
 				</div>
-			</div>
-			<PostTypeListPostThumbnail globalId={ globalId } />
-			<PostActionsEllipsisMenu globalId={ globalId } />
-		</Card>
-	);
+				<PostTypeListPostThumbnail globalId={ globalId } />
+				<PostActionsEllipsisMenu globalId={ globalId } />
+			</Card>
+		);
+	}
 }
 
 PostItem.propTypes = {
