@@ -166,6 +166,8 @@ export class LoginForm extends Component {
 
 		if ( isOauthLogin ) {
 			signupUrl = '/start/wpcc?' + qs.stringify( { oauth2_client_id: oauth2ClientData.id, oauth2_redirect: redirectTo } );
+			// TODO remove the following line when WPCC signup is ready
+			signupUrl = oauth2ClientData.signupUrl;
 		}
 
 		return (
