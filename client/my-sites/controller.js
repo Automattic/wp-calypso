@@ -267,10 +267,10 @@ module.exports = {
 	siteSelection( context, next ) {
 		const { getState, dispatch } = getStore( context );
 		const siteFragment = context.params.site || route.getSiteFragment( context.path );
-		const basePath = route.sectionify( context.path );
+		const basePath = route.sectionify( context.path, siteFragment );
 		const currentUser = user.get();
 		const hasOneSite = currentUser.visible_site_count === 1;
-		const allSitesPath = route.sectionify( context.path );
+		const allSitesPath = route.sectionify( context.path, siteFragment );
 		const primaryId = getPrimarySiteId( getState() );
 		const primary = getSite( getState(), primaryId ) || '';
 
