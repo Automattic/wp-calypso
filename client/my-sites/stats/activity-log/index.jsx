@@ -32,6 +32,7 @@ import StatsFirstView from '../stats-first-view';
 import StatsNavigation from '../stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
+import JetpackColophon from 'components/jetpack-colophon';
 import { adjustMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
@@ -340,6 +341,7 @@ class ActivityLog extends Component {
 					onClose={ this.handleRestoreDialogClose }
 					onConfirm={ this.handleRestoreDialogConfirm }
 				/>
+				<JetpackColophon />
 			</Main>
 		);
 	}

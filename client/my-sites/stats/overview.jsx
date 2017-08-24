@@ -17,6 +17,7 @@ import StatsNavigation from './stats-navigation';
 import Main from 'components/main';
 import StatsFirstView from './stats-first-view';
 import QuerySites from 'components/data/query-sites';
+import JetpackColophon from 'components/jetpack-colophon';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getVisibleSites } from 'state/selectors';
 
@@ -95,6 +96,7 @@ class StatsOverview extends Component {
 				<SidebarNavigation />
 				<StatsNavigation section={ period } />
 				{ sites.length !== 0 ? sitesList : this.placeholders() }
+				<JetpackColophon />
 			</Main>
 		);
 	}

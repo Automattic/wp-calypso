@@ -25,6 +25,7 @@ import StatsFirstView from '../stats-first-view';
 import SectionHeader from 'components/section-header';
 import StatsViews from '../stats-views';
 import Followers from '../stats-followers';
+import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
@@ -85,6 +86,7 @@ const StatsInsights = ( props ) => {
 					</div>
 				</div>
 			</div>
+			<JetpackColophon />
 		</Main>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
