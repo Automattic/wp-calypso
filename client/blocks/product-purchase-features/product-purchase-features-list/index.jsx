@@ -22,6 +22,7 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY
 } from 'lib/plans/constants';
 import FindNewTheme from './find-new-theme';
+import UploadPlugins from './upload-plugins';
 import AdvertisingRemoved from './advertising-removed';
 import GoogleVouchers from './google-vouchers';
 import CustomizeTheme from './customize-theme';
@@ -34,6 +35,7 @@ import JetpackAntiSpam from './jetpack-anti-spam';
 import JetpackBackupSecurity from './jetpack-backup-security';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
 import JetpackWordPressCom from './jetpack-wordpress-com';
+import { isEnabled } from 'config';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -102,6 +104,12 @@ class ProductPurchaseFeaturesList extends Component {
 				selectedSite={ selectedSite }
 				key="findNewThemeFeature"
 			/>,
+			isEnabled( 'manage/plugins/upload' )
+				? <UploadPlugins
+					selectedSite={ selectedSite }
+					key="uploadPluginsFeature"
+				/>
+				: null,
 			isWordadsInstantActivationEligible( selectedSite )
 				? <MonetizeSite
 					selectedSite={ selectedSite }
