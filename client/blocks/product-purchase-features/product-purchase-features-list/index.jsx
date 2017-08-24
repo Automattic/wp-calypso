@@ -32,6 +32,7 @@ import BusinessOnboarding from './business-onboarding';
 import CustomDomain from './custom-domain';
 import GoogleAnalyticsStats from './google-analytics-stats';
 import JetpackAntiSpam from './jetpack-anti-spam';
+import JetpackPublicize from './jetpack-publicize';
 import JetpackVideo from './jetpack-video';
 import JetpackBackupSecurity from './jetpack-backup-security';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
@@ -205,6 +206,9 @@ class ProductPurchaseFeaturesList extends Component {
 			<JetpackAntiSpam
 				key="jetpackAntiSpam"
 			/>,
+			<JetpackPublicize
+				key="jetpackPublicize"
+			/>,
 			<JetpackVideo
 				key="jetpackVideo"
 			/>,
@@ -265,6 +269,9 @@ class ProductPurchaseFeaturesList extends Component {
 			/>,
 			<JetpackAntiSpam
 				key="jetpackAntiSpam"
+			/>,
+			<JetpackPublicize
+				key="jetpackPublicize"
 			/>,
 			<JetpackVideo
 				key="jetpackVideo"
