@@ -24,7 +24,7 @@ export default localize( ( { selectedSite, translate } ) => {
 						}
 					}
 				) }
-				buttonText={ translate( 'Configure Auto Updates' ) }
+				buttonText={ translate( 'Configure auto updates' ) }
 				href={ `/plugins/${ selectedSite.slug }` }
 			/>
 		</div>
