@@ -6,6 +6,11 @@ import { EventEmitter } from 'events';
 import config from 'config';
 import { v4 as uuid } from 'uuid';
 
+/**
+ * Internal dependencies
+ */
+import { HAPPYCHAT_MESSAGE_TYPES } from 'state/happychat/constants';
+
 /*
  * Happychat client connection for Socket.IO
  */
@@ -74,8 +79,8 @@ class Connection extends EventEmitter {
 			socket => socket.emit( 'message', {
 				text: message,
 				id: uuid(),
-				type: 'customer-event',
-				meta: { forOperator: true, event_type: 'customer-event' }
+				type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_EVENT,
+				meta: { forOperator: true, event_type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_EVENT }
 			} ),
 			e => debug( 'failed to send message', e )
 		);
@@ -98,8 +103,8 @@ class Connection extends EventEmitter {
 			socket => socket.emit( 'message', {
 				text: message,
 				id: uuid(),
-				type: 'log',
-				meta: { forOperator: true, event_type: 'log' }
+				type: HAPPYCHAT_MESSAGE_TYPES.LOG,
+				meta: { forOperator: true, event_type: HAPPYCHAT_MESSAGE_TYPES.LOG }
 			} ),
 			e => debug( 'failed to send message', e )
 		);
@@ -112,9 +117,9 @@ class Connection extends EventEmitter {
 	sendInfo( info ) {
 		this.openSocket.then(
 			socket => socket.emit( 'message', {
-				type: 'customer-info',
 				id: uuid(),
 				meta: { ...info, forOperator: true },
+				type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_EVENT,
 			} ),
 			e => debug( 'failed to send message', e )
 		);

@@ -183,8 +183,9 @@ export const sendInfo = ( connection, { getState }, action ) => {
 	const info = {
 		howCanWeHelp,
 		howYouFeel,
-		site,
-		localDateTime: moment().format( 'h:mm:ss a, MMMM Do YYYY' ),
+		siteId: site.ID,
+		siteUrl: site.URL,
+		localDateTime: moment().format( 'h:mm a, MMMM Do YYYY' ),
 	};
 
 	// add screen size
@@ -211,7 +212,7 @@ export const sendInfo = ( connection, { getState }, action ) => {
 	//  add geo location
 	const state = getState();
 	const geoLocation = getGeoLocation( state );
-	if ( null !== geoLocation ) {
+	if ( geoLocation ) {
 		info.geoLocation = geoLocation;
 	}
 
