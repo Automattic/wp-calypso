@@ -293,6 +293,9 @@ export const PLANS_LIST = {
 				}
 			} );
 		},
+		getTagline: () => i18n.translate(
+			'Learn more about everything included with Business and take advantage of its professional features.'
+		),
 		getFeatures: () => compact( [ // pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_JETPACK_ESSENTIAL,
@@ -389,6 +392,9 @@ export const PLANS_LIST = {
 				'Automated backups and malware scanning, expert priority ' +
 				'support, marketing automation, and more.'
 		),
+		getTagline: () => i18n.translate(
+			'Your site is being secured and you have access to marketing tools and priority support.'
+		),
 		getFeatures: () => compact( [  // pay attention to ordering, shared features should align on /plan page
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
@@ -430,6 +436,9 @@ export const PLANS_LIST = {
 		getDescription: () => i18n.translate(
 				'Automated backups and malware scanning, expert priority ' +
 				'support, marketing automation, and more.'
+		),
+		getTagline: () => i18n.translate(
+			'Your site is being secured and you have access to marketing tools and priority support.'
 		),
 		getFeatures: () => compact( [  // pay attention to ordering, shared features should align on /plan page
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -473,6 +482,9 @@ export const PLANS_LIST = {
 				'Security essentials for every WordPress site including ' +
 				'automated backups and priority support.'
 		),
+		getTagline: () => i18n.translate(
+			'Your data is being securely backed up and you have access to priority support.'
+		),
 		getFeatures: () => [  // pay attention to ordering, shared features should align on /plan page
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
@@ -509,6 +521,9 @@ export const PLANS_LIST = {
 		getDescription: () => i18n.translate(
 				'Security essentials for every WordPress site including ' +
 				'automated backups and priority support.'
+		),
+		getTagline: () => i18n.translate(
+			'Your data is being securely backed up and you have access to priority support.'
 		),
 		getFeatures: () => [  // pay attention to ordering, shared features should align on /plan page
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -552,6 +567,9 @@ export const PLANS_LIST = {
 		getDescription: () => i18n.translate(
 			'WordPress sites from start to finish: unlimited premium ' +
 			'themes, business class security, and marketing automation.'
+		),
+		getTagline: () => i18n.translate(
+			'You have full access to premium themes, marketing tools, and priority support.'
 		),
 		getFeatures: () => compact( [  // pay attention to ordering, shared features should align on /plan page
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -604,6 +622,9 @@ export const PLANS_LIST = {
 		getDescription: () => i18n.translate(
 			'WordPress sites from start to finish: unlimited premium ' +
 			'themes, business class security, and marketing automation.'
+		),
+		getTagline: () => i18n.translate(
+			'You have full access to premium themes, marketing tools, and priority support.'
 		),
 		getFeatures: () => compact( [  // pay attention to ordering, shared features should align on /plan page
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
