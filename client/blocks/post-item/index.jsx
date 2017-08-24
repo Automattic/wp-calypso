@@ -14,7 +14,7 @@ import { isEnabled } from 'config';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
-import { getSite, getSiteTitle } from 'state/sites/selectors';
+import { getSite, getSiteTitle, isSingleUserSite } from 'state/sites/selectors';
 import { areAllSitesSingleUser } from 'state/selectors';
 import SiteIcon from 'blocks/site-icon';
 import Card from 'components/card';
@@ -24,7 +24,7 @@ import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 
-function PostItem( { translate, globalId, post, site, editUrl, siteTitle, isAllSitesModeSelected, allSitesSingleUser, className, compact } ) {
+function PostItem( { translate, globalId, post, site, editUrl, siteTitle, isAllSitesModeSelected, allSitesSingleUser, singleUserSite, className, compact } ) {
 	const title = post ? post.title : null;
 	const postItemClasses = classnames( 'post-item', className, {
 		'is-untitled': ! title,
@@ -73,6 +73,7 @@ PostItem.propTypes = {
 	siteTitle: PropTypes.string,
 	isAllSitesModeSelected: PropTypes.bool,
 	allSitesSingleUser: PropTypes.bool,
+	singleUserSite: PropTypes.bool,
 	className: PropTypes.string,
 	compact: PropTypes.bool
 };
@@ -91,6 +92,7 @@ export default connect( ( state, ownProps ) => {
 		siteTitle: getSiteTitle( state, siteId ),
 		isAllSitesModeSelected: getSelectedSiteId( state ) === null,
 		allSitesSingleUser: areAllSitesSingleUser( state ),
+		singleUserSite: isSingleUserSite( state, siteId ),
 		editUrl: getEditorPath( state, siteId, post.ID ),
 	};
 } )( localize( PostItem ) );
