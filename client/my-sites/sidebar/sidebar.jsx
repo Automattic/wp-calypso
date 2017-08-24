@@ -225,20 +225,8 @@ export class MySitesSidebar extends Component {
 	}
 
 	plugins() {
-		const { site } = this.props;
-		const addPluginsLink = '/plugins/browse' + this.props.siteSuffix;
-		let pluginsLink = '/plugins' + this.props.siteSuffix;
-
-		// TODO: we can probably rip this out
-		if ( ! config.isEnabled( 'manage/plugins' ) ) {
-			if ( ! site ) {
-				return null;
-			}
-
-			if ( site.options ) {
-				pluginsLink = site.options.admin_url + 'plugins.php';
-			}
-		}
+		const pluginsLink = '/plugins' + this.props.siteSuffix;
+		const managePluginsLink = '/plugins/manage' + this.props.siteSuffix;
 
 		// checks for manage plugins capability across all sites
 		if ( ! this.props.canManagePlugins ) {
@@ -250,6 +238,12 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		const manageButton = this.props.isJetpack
+			? <SidebarButton href={ managePluginsLink }>
+					{ this.props.translate( 'Manage' ) }
+				</SidebarButton>
+			: null;
+
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Plugins' ) }
@@ -259,9 +253,7 @@ export class MySitesSidebar extends Component {
 				icon="plugins"
 				preloadSectionName="plugins"
 			>
-				<SidebarButton href={ addPluginsLink }>
-					{ this.props.translate( 'Add' ) }
-				</SidebarButton>
+				{ manageButton }
 			</SidebarItem>
 		);
 	}
