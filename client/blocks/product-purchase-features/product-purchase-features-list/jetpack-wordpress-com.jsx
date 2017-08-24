@@ -14,17 +14,17 @@ export default localize( ( { selectedSite, translate } ) => {
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon="plugins"
-				title={ translate( 'Get the most from WordPress.com' ) }
+				title={ translate( 'Automatic Updates' ) }
 				description={ translate(
-					'Enable plugin auto-updates, browse your stats, try the improved WordPress.com editor, ' +
-					'{{a}}Download WordPress.com apps{{/a}}.',
+					'Keep your plugins securely updated and manage your site from ' +
+					'{{a}}mobile apps{{/a}}.',
 					{
 						components: {
 							a: <a href="https://apps.wordpress.com/" />
 						}
 					}
 				) }
-				buttonText={ translate( 'Turn on autoupdates' ) }
+				buttonText={ translate( 'Configure Auto Updates' ) }
 				href={ `/plugins/${ selectedSite.slug }` }
 			/>
 		</div>
