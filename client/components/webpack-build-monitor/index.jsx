@@ -7,7 +7,7 @@
 import React from 'react';
 import { createStore } from 'redux';
 import classNames from 'classnames';
-import { find, includes, startsWith, identity } from 'lodash';
+import { find, includes, startsWith, identity, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -111,7 +111,7 @@ class WebpackBuildMonitor extends React.Component {
 	componentDidMount() {
 		this.unsubscribe = store.subscribe( () => {
 			const status = store.getState();
-			if ( status !== this.state.status ) {
+			if ( ! isEqual( status, this.state ) ) {
 				this.setState( store.getState() );
 			}
 		} );
