@@ -24,15 +24,6 @@ import ProductPurchaseFeaturesList from 'blocks/product-purchase-features/produc
 import CurrentPlanHeader from './header';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
-import {
-	PLAN_BUSINESS,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PERSONAL_MONTHLY
-} from 'lib/plans/constants';
 import { getPlan } from 'lib/plans';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
@@ -70,27 +61,9 @@ class CurrentPlan extends Component {
 				}
 			} );
 
-		let tagLine = translate( 'Unlock the full potential of your site with all the features included in your plan.' );
-
-		if ( plan === PLAN_BUSINESS ) {
-			tagLine = translate( 'Learn more about everything included with Business and take advantage of' +
-				' its professional features.' );
-		}
-
-		if ( plan === PLAN_JETPACK_PERSONAL || plan === PLAN_JETPACK_PERSONAL_MONTHLY ) {
-			tagLine = translate( 'Your data is being securely backed up and you have access to priority' +
-				' support.' );
-		}
-
-		if ( plan === PLAN_JETPACK_PREMIUM || plan === PLAN_JETPACK_PREMIUM_MONTHLY ) {
-			tagLine = translate( 'Your site is being secured and you have access to marketing tools and' +
-				' priority support.' );
-		}
-
-		if ( plan === PLAN_JETPACK_BUSINESS || plan === PLAN_JETPACK_BUSINESS_MONTHLY ) {
-			tagLine = translate( 'You have full access to premium themes, marketing tools, and' +
-				' priority support.' );
-		}
+		const tagLine = planConstObj.getTagline
+			? planConstObj.getTagline()
+			: translate( 'Unlock the full potential of your site with all the features included in your plan.' );
 
 		return {
 			title: title,
