@@ -119,7 +119,7 @@ class Connection extends EventEmitter {
 			socket => socket.emit( 'message', {
 				id: uuid(),
 				meta: { ...info, forOperator: true },
-				type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_EVENT,
+				type: HAPPYCHAT_MESSAGE_TYPES.CUSTOMER_INFO,
 			} ),
 			e => debug( 'failed to send message', e )
 		);
