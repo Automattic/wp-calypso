@@ -82,7 +82,14 @@ class PostItem extends React.Component {
 
 	handleHeightChange = () => {
 		const domNode = findDOMNode( this );
-		const nodeHeight = domNode && domNode.clientHeight;
+		if ( ! domNode ) {
+			return;
+		}
+
+		const style = window.getComputedStyle( domNode );
+		const nodeHeight = domNode.clientHeight +
+			parseInt( style.marginTop, 10 ) +
+			parseInt( style.marginBottom, 10 );
 
 		if ( nodeHeight && nodeHeight !== this.state.nodeHeight ) {
 			this.setState( { nodeHeight } );

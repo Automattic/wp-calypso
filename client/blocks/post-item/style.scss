@@ -1,3 +1,11 @@
+.post-item {
+	// The padding here ensures that margins of child elements are included
+	// within the height of this element, and the margin cancels the padding.
+	// See https://stackoverflow.com/a/28121477
+	padding: 1px 0;
+	margin: -1px 0;
+}
+
 .card.post-item__card /* for specificity */ {
 	display: flex;
 	justify-content: space-between;
