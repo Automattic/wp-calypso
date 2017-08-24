@@ -3,6 +3,7 @@
  */
 import { startsWith } from 'lodash';
 import qs from 'qs';
+import url from 'url';
 
 /**
  * Internal dependencies
@@ -73,15 +74,24 @@ export const initialClientsData = {
 	},
 };
 
-const getClientIdFromSignupUrl = ( signupUrl ) => {
-	const urlParts = signupUrl.split( '?' );
-	const queryString = urlParts[ 1 ];
+const getQueryStringParamsFromUrl = uri => {
+	if ( typeof uri !== 'string' ) {
+		return null;
+	}
 
-	const params = qs.parse( queryString );
-	const oauth2Redirect = params.oauth2_redirect;
-	const oauth2RedirectParts = oauth2Redirect.split( '?' );
-	const oauth2RedirectQueryString = oauth2RedirectParts[ 1 ];
-	const oauth2RedirectParams = qs.parse( oauth2RedirectQueryString );
+	const { query } = url.parse( uri );
+
+	if ( ! query ) {
+		return null;
+	}
+
+	return qs.parse( query );
+};
+
+const getClientIdFromSignupUrl = signupUrl => {
+	const signupUrlParams = getQueryStringParamsFromUrl( signupUrl );
+	const oauth2RedirectUrl = signupUrlParams && signupUrlParams.oauth2_redirect;
+	const oauth2RedirectParams = getQueryStringParamsFromUrl( oauth2RedirectUrl );
 
 	return oauth2RedirectParams.client_id;
 };
@@ -93,6 +103,11 @@ export const clients = createReducer( initialClientsData, {
 	},
 	[ OAUTH2_CLIENT_SIGNUP_URL_REQUEST_SUCCESS ]: ( state, { signupUrl } ) => {
 		const clientId = getClientIdFromSignupUrl( signupUrl );
+
+		if ( ! clientId ) {
+			return state;
+		}
+
 		const newData = Object.assign( {}, state[ clientId ], { signupUrl } );
 		return Object.assign( {}, state, { [ clientId ]: newData } );
 	},
