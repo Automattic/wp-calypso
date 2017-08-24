@@ -37,6 +37,8 @@ const setupContextMiddleware = reduxStore => {
 	page( '*', ( context, next ) => {
 		const parsed = url.parse( location.href, true );
 
+		// Decode the pathname by default (now disabled in page.js)
+		context.pathname = decodeURIComponent( context.pathname );
 		context.store = reduxStore;
 
 		// Break routing and do full load for logout link in /me
