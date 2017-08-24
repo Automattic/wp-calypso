@@ -8,7 +8,6 @@ import {
 	startSubmit as startSave,
 	stopSubmit as stopSave,
 } from 'redux-form';
-import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,6 +33,7 @@ import { fromApi } from '../utils';
 const apiResponse = {
 	data: [
 		{
+			term_id: 23,
 			name: 'Test zone',
 			slug: 'test-zone',
 			description: 'A test zone.',
@@ -75,13 +75,9 @@ describe( '#updateZonesList()', () => {
 		updateZonesList( { dispatch }, action, apiResponse );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( updateZones( 123456, map( [
-			{
-				name: 'Test zone',
-				slug: 'test-zone',
-				description: 'A test zone.',
-			}
-		], fromApi ) ) );
+		expect( dispatch ).to.have.been.calledWith( updateZones( 123456, {
+			23: fromApi( apiResponse.data[ 0 ] ),
+		}, fromApi ) );
 	} );
 } );
 

@@ -4,7 +4,7 @@
 import page from 'page';
 import { translate } from 'i18n-calypso';
 import { startSubmit, stopSubmit } from 'redux-form';
-import { map } from 'lodash';
+import { reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,7 +33,15 @@ export const requestZonesError = ( { dispatch }, { siteId } ) =>
 	dispatch( requestError( siteId ) );
 
 export const updateZonesList = ( { dispatch }, { siteId }, { data } ) =>
-	dispatch( updateZones( siteId, map( data, fromApi ) ) );
+	dispatch( updateZones( siteId, reduce(
+		data,
+		( zones, rawZone ) => {
+			const zone = fromApi( rawZone );
+			zones[ zone.id ] = zone;
+			return zones;
+		},
+		{},
+	) ) );
 
 export const createZone = ( { dispatch }, action ) => {
 	const { data, form, siteId } = action;
