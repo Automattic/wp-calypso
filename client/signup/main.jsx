@@ -350,9 +350,9 @@ const Signup = React.createClass( {
 						} ).call( this, designType );
 
 						SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], { themeSlugWithRepo } );
-					}
 
-					return page( utils.getStepUrl( this.props.flowName, nextStepName, nextStepSection, this.props.locale ) );
+						return page( utils.getStepUrl( this.props.flowName, nextStepName, nextStepSection, this.props.locale ) );
+					}
 				}
 				page( utils.getStepUrl( this.props.flowName, stepName, stepSectionName, this.props.locale ) );
 			} else if ( this.isEveryStepSubmitted() ) {
