@@ -153,8 +153,12 @@ class PostItem extends React.Component {
 		const variableHeightContent = this.renderVariableHeightContent();
 		this.hasVariableHeightContent = !! variableHeightContent;
 
+		const rootClasses = classnames( 'post-item', {
+			'is-expanded': this.hasVariableHeightContent,
+		} );
+
 		return (
-			<div className="post-item">
+			<div className={ rootClasses }>
 				<Card compact className={ cardClasses }>
 					<div className="post-item__detail">
 						<div className={ titleMetaClasses }>

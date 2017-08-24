@@ -4,6 +4,10 @@
 	// See https://stackoverflow.com/a/28121477
 	padding: 1px 0;
 	margin: -1px 0;
+
+	&.is-expanded {
+		margin: 11px 0;
+	}
 }
 
 .card.post-item__card /* for specificity */ {
