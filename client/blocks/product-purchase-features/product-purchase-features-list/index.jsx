@@ -32,6 +32,7 @@ import BusinessOnboarding from './business-onboarding';
 import CustomDomain from './custom-domain';
 import GoogleAnalyticsStats from './google-analytics-stats';
 import JetpackAntiSpam from './jetpack-anti-spam';
+import JetpackVideo from './jetpack-video';
 import JetpackBackupSecurity from './jetpack-backup-security';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
 import JetpackWordPressCom from './jetpack-wordpress-com';
@@ -200,6 +201,9 @@ class ProductPurchaseFeaturesList extends Component {
 			<JetpackAntiSpam
 				key="jetpackAntiSpam"
 			/>,
+			<JetpackVideo
+				key="jetpackVideo"
+			/>,
 			<JetpackWordPressCom
 				selectedSite={ selectedSite }
 				key="jetpackWordPressCom"
@@ -241,6 +245,9 @@ class ProductPurchaseFeaturesList extends Component {
 			/>,
 			<JetpackAntiSpam
 				key="jetpackAntiSpam"
+			/>,
+			<JetpackVideo
+				key="jetpackVideo"
 			/>,
 			<JetpackWordPressCom
 				selectedSite={ selectedSite }
