@@ -194,7 +194,14 @@
 	$woo-form-whitespace-480: 24px;
 	$woo-form-whitespace-660: 100px;
 
-	.wp-login__container {
+	.card {
+		box-shadow: none;
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.wp-login__container,
+	.step-wrapper {
 		background: #fff;
 		border: 1px solid #d3d3d3;
 		border-radius: 5px;
@@ -211,12 +218,15 @@
 		}
 	}
 
-	.card {
-		box-shadow: none;
-		padding-left: 0;
-		padding-right: 0;
+	.step-wrapper {
+		margin-bottom: 50px;
 	}
 
+	.logged-out-form {
+		max-width: 100%;
+	}
+
+	.logged-out-form label,
 	.login__form-userdata label {
 		font-size: 16px;
 		font-weight: normal;
@@ -252,6 +262,17 @@
 		font-size: 16px;
 		font-weight: normal;
 		line-height: 3em;
+		text-align: center;
+	}
+
+	/* Signup styles */
+	.signup__step {
+		background: #e6e6e6;
+	}
+
+	.logged-out-form__footer {
+		background: none;
+		border: none;
 		text-align: center;
 	}
 }
