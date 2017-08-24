@@ -44,16 +44,16 @@ class PostItem extends React.Component {
 	}
 
 	componentDidUpdate() {
-		if ( this.hasVariableHeightContent ) {
-			if ( ! this.observer ) {
-				this.connectMutationObserver();
-				this.handleHeightChange();
-			}
-		} else {
-			if ( this.observer ) {
-				this.disconnectMutationObserver();
-				this.handleHeightChange();
-			}
+		if ( this.hasVariableHeightContent && ! this.observer ) {
+			// Post item has expanded content but didn't previously.  Watch for
+			// further height changes and update current height.
+			this.connectMutationObserver();
+			this.handleHeightChange();
+		} else if ( ! this.hasVariableHeightContent && this.observer ) {
+			// Post item had expanded content previously but not any more.
+			// Stop watching for height changes and update current height.
+			this.disconnectMutationObserver();
+			this.handleHeightChange();
 		}
 	}
 
