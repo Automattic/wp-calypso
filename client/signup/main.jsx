@@ -330,7 +330,32 @@ const Signup = React.createClass( {
 		// redirect the user to the next step
 		scrollPromise.then( () => {
 			if ( ! this.isEveryStepSubmitted() ) {
-				page( utils.getStepUrl( this.props.flowName, stepName, stepSectionName, this.props.locale ) );
+				if ( 'skip' === abtest( 'skipThemesSelectionModal' ) && 'themes' === stepName ) {
+					const flowSteps = flows.getFlow( this.props.flowName, stepName ).steps;
+					const currentStepIndex = indexOf( flowSteps, stepName );
+					const nextStepName = flowSteps[ currentStepIndex + 1 ];
+					const nextProgressItem = this.state.progress[ currentStepIndex + 1 ];
+					const nextStepSection = nextProgressItem && nextProgressItem.stepSectionName || '';
+
+					const designType = this.props.signupDependencies && this.props.signupDependencies.designType;
+
+					if ( designType ) {
+						const themeSlugWithRepo = ( ( type ) => {
+							switch ( type ) {
+								case 'blog': return 'pub/independent-publisher-2';
+								case 'grid': return 'pub/altofocus';
+								case 'page': return 'pub/dara';
+								default: return 'pub/twentyseventeen';
+							}
+						} ).call( this, designType );
+
+						SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], { themeSlugWithRepo } );
+					}
+
+					page( utils.getStepUrl( this.props.flowName, nextStepName, nextStepSection, this.props.locale ) );
+				} else {
+					page( utils.getStepUrl( this.props.flowName, stepName, stepSectionName, this.props.locale ) );
+				}
 			} else if ( this.isEveryStepSubmitted() ) {
 				this.goToFirstInvalidStep();
 			}
@@ -342,11 +367,6 @@ const Signup = React.createClass( {
 
 		let currentStepIndex = indexOf( flowSteps, this.props.stepName );
 		let nextStepName = flowSteps[ currentStepIndex + 1 ];
-
-		if ( abtest( 'skipThemesSelectionModal' ) === 'skip' && 'themes' === nextStepName ) {
-			currentStepIndex++;
-			nextStepName = flowSteps[ currentStepIndex + 1 ];
-		}
 
 		const nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
 			nextStepSection = nextProgressItem && nextProgressItem.stepSectionName || '';

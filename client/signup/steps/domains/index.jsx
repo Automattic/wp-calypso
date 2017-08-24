@@ -22,7 +22,6 @@ import analyticsMixin from 'lib/mixins/analytics';
 import signupUtils from 'signup/utils';
 import { getUsernameSuggestion } from 'lib/signup/step-actions';
 import { recordAddDomainButtonClick, recordAddDomainButtonClickInMapDomain } from 'state/domains/actions';
-import { abtest } from 'lib/abtest';
 
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
@@ -59,17 +58,6 @@ const DomainsStep = React.createClass( {
 
 	getInitialState: function() {
 		return { products: productsList.get() };
-	},
-
-	componentWillMount: function() {
-		if ( abtest( 'skipThemesSelectionModal' ) === 'skip' ) {
-			const designType = this.props.signupDependencies && this.props.signupDependencies.designType;
-			if ( designType ) {
-				SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], {
-					themeSlugWithRepo: SignupActions.getThemeForDesignType( designType )
-				} );
-			}
-		}
 	},
 
 	componentDidMount: function() {

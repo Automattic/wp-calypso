@@ -59,19 +59,6 @@ const SignupActions = {
 		} );
 	},
 
-	getThemeForDesignType( designType ) {
-		switch ( designType ) {
-			case 'blog':
-				return 'pub/independent-publisher-2';
-			case 'grid':
-				return 'pub/altofocus';
-			case 'page':
-				return 'pub/dara';
-			default:
-				return 'pub/twentyseventeen';
-		}
-	},
-
 	/**
 	 * Action for providing dependencies not associated with a step.
 	 *
