@@ -129,7 +129,7 @@ class PostItem extends React.Component {
 
 		const title = post ? post.title : null;
 
-		const postItemClasses = classnames( 'post-item', className, {
+		const cardClasses = classnames( 'post-item__card', className, {
 			'is-untitled': ! title,
 			'is-mini': compact,
 			'is-placeholder': ! globalId
@@ -147,8 +147,8 @@ class PostItem extends React.Component {
 		this.hasVariableHeightContent = !! variableHeightContent;
 
 		return (
-			<div>
-				<Card compact className={ postItemClasses }>
+			<div className="post-item">
+				<Card compact className={ cardClasses }>
 					<div className="post-item__detail">
 						<div className={ titleMetaClasses }>
 							{ isSiteVisible && (
