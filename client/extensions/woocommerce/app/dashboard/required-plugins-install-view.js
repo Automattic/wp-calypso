@@ -35,7 +35,6 @@ class RequiredPluginsInstallView extends Component {
 		super( props );
 		this.state = {
 			engineState: 'CONFIRMING',
-			message: '',
 			toActivate: [],
 			toInstall: [],
 			workingOn: '',
@@ -83,7 +82,7 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	doInitialization = () => {
-		const { site, sitePlugins, translate, wporg } = this.props;
+		const { site, sitePlugins, wporg } = this.props;
 		const { workingOn } = this.state;
 
 		if ( ! site ) {
@@ -105,7 +104,6 @@ class RequiredPluginsInstallView extends Component {
 			}
 
 			this.setState( {
-				message: translate( 'Waiting for plugin list from site' ),
 				workingOn: 'WAITING_FOR_PLUGIN_LIST_FROM_SITE',
 			} );
 			return;
@@ -134,7 +132,6 @@ class RequiredPluginsInstallView extends Component {
 			}
 
 			this.setState( {
-				message: translate( 'Loading plugin data' ),
 				workingOn: 'LOAD_PLUGIN_DATA',
 			} );
 			return;
@@ -158,7 +155,6 @@ class RequiredPluginsInstallView extends Component {
 		if ( toInstall.length ) {
 			this.setState( {
 				engineState: 'INSTALLING',
-				message: '',
 				toActivate,
 				toInstall,
 				workingOn: '',
@@ -170,7 +166,6 @@ class RequiredPluginsInstallView extends Component {
 		if ( toActivate.length ) {
 			this.setState( {
 				engineState: 'ACTIVATING',
-				message: '',
 				toActivate,
 				workingOn: '',
 				numTotalSteps,
@@ -180,13 +175,11 @@ class RequiredPluginsInstallView extends Component {
 
 		this.setState( {
 			engineState: 'DONESUCCESS',
-			message: '',
 		} );
 	}
 
 	doInstallation = () => {
-		const { site, sitePlugins, translate, wporg } = this.props;
-		const requiredPlugins = this.getRequiredPluginsList();
+		const { site, sitePlugins, wporg } = this.props;
 
 		// If we are working on nothing presently, get the next thing to install and install it
 		if ( 0 === this.state.workingOn.length ) {
@@ -196,7 +189,6 @@ class RequiredPluginsInstallView extends Component {
 			if ( 0 === toInstall.length ) {
 				this.setState( {
 					engineState: 'ACTIVATING',
-					message: '',
 				} );
 				return;
 			}
@@ -215,7 +207,6 @@ class RequiredPluginsInstallView extends Component {
 			}
 
 			this.setState( {
-				message: translate( 'Installing %(plugin)s', { args: { plugin: requiredPlugins[ workingOn ] } } ),
 				toInstall,
 				workingOn,
 			} );
@@ -233,8 +224,7 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	doActivation = () => {
-		const { site, sitePlugins, translate } = this.props;
-		const requiredPlugins = this.getRequiredPluginsList();
+		const { site, sitePlugins } = this.props;
 
 		// If we are working on nothing presently, get the next thing to activate and activate it
 		if ( 0 === this.state.workingOn.length ) {
@@ -244,7 +234,6 @@ class RequiredPluginsInstallView extends Component {
 			if ( 0 === toActivate.length ) {
 				this.setState( {
 					engineState: 'DONESUCCESS',
-					message: '',
 				} );
 				return;
 			}
@@ -268,7 +257,6 @@ class RequiredPluginsInstallView extends Component {
 			this.props.activatePlugin( site.ID, pluginToActivate );
 
 			this.setState( {
-				message: translate( 'Activating %(plugin)s', { args: { plugin: requiredPlugins[ workingOn ] } } ),
 				toActivate,
 				workingOn,
 			} );
@@ -286,12 +274,11 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	doneSuccess = () => {
-		const { site, translate } = this.props;
+		const { site } = this.props;
 		this.props.setFinishedInstallOfRequiredPlugins( site.ID, true );
 
 		this.setState( {
 			engineState: 'IDLE',
-			message: translate( 'All required plugins are installed and activated' ),
 		} );
 	}
 
@@ -376,9 +363,6 @@ class RequiredPluginsInstallView extends Component {
 					subtitle={ translate( 'Give us a minute and we\'ll move right along.' ) }
 				>
 					<ProgressBar value={ progress } isPulsing />
-					<p>
-						{ this.state.message }
-					</p>
 				</SetupHeader>
 			</div>
 		);
