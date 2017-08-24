@@ -7,7 +7,7 @@ import qs from 'qs';
 /**
  * Internal dependencies
  */
-import { serverRender } from 'render';
+import { serverRender, serverRenderError } from 'render';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 
@@ -23,12 +23,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 				( err, req, res, next ) => {
 					route( err, req.context, next );
 				},
-				// We need 4 args so Express knows this is an error-handling middleware
-				// TODO: Ideally, there'd be a dedicated serverRenderError middleware in server/render
-				( err, req, res, next ) => { // eslint-disable-line no-unused-vars
-					req.error = err;
-					serverRender( req, res.status( err.status ) );
-				}
+				serverRenderError
 			);
 		} else {
 			expressApp.get(
@@ -39,7 +34,8 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 					setRouteMiddleware,
 					...middlewares
 				),
-				serverRender
+				serverRender,
+				serverRenderError
 			);
 		}
 	};
