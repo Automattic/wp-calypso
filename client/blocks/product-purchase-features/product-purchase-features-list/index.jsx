@@ -195,6 +195,10 @@ class ProductPurchaseFeaturesList extends Component {
 		const {	selectedSite } = this.props;
 
 		return [
+			<MonetizeSite
+				selectedSite={ selectedSite }
+				key="monetizeSiteFeature"
+			/>,
 			<JetpackBackupSecurity
 				key="jetpackBackupSecurity"
 			/>,
