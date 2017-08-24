@@ -236,7 +236,7 @@ const Signup = React.createClass( {
 			}.bind( this ) );
 		}
 
-		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || this.props.stepName === 'oauth2-user' ) ) {
+		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || dependencies.oauth2_client_id ) ) {
 			oauthToken.setToken( dependencies.bearer_token );
 			window.location.href = destination;
 			return;
