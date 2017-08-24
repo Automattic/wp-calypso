@@ -4,6 +4,7 @@
 import React from 'react';
 import { parse as parseUrl } from 'url';
 import qs from 'qs';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -46,8 +47,8 @@ export default {
 				recordTracksEvent( 'calypso_login_phishing_attempt', context.query );
 				context.primary = (
 					<EmptyContent
-						title="Something went wrong"
-						line="It looks like there's a problem" />
+						title={ translate( 'Something went wrong' ) }
+						line={ translate( "It looks like there's a problem" ) } />
 				);
 
 				next();
