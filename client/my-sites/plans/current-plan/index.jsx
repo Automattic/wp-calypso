@@ -24,7 +24,7 @@ import ProductPurchaseFeaturesList from 'blocks/product-purchase-features/produc
 import CurrentPlanHeader from './header';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { PLAN_BUSINESS, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_PERSONAL_MONTHLY } from 'lib/plans/constants';
 import { getPlan } from 'lib/plans';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
