@@ -93,6 +93,7 @@ class PostItem extends React.Component {
 PostItem.propTypes = {
 	translate: PropTypes.func,
 	globalId: PropTypes.string,
+	editUrl: PropTypes.string,
 	post: PropTypes.object,
 	site: PropTypes.object,
 	siteTitle: PropTypes.string,
