@@ -35,6 +35,13 @@ function PostItem( { translate, globalId, post, site, editUrl, siteTitle, isAllS
 	const isSiteVisible = isEnabled( 'posts/post-type-list' ) && isAllSitesModeSelected;
 	const titleMetaClasses = classnames( 'post-item__title-meta', { 'site-is-visible': isSiteVisible } );
 
+	const isAuthorVisible = (
+		( isAllSitesModeSelected && ! allSitesSingleUser ) ||
+		( ! isAllSitesModeSelected && ! singleUserSite )
+		) &&
+		post && post.author &&
+		isEnabled( 'posts/post-type-list' );
+
 	return (
 		<Card compact className={ postItemClasses }>
 			<div className="post-item__detail">
@@ -46,6 +53,13 @@ function PostItem( { translate, globalId, post, site, editUrl, siteTitle, isAllS
 								{ siteTitle }
 							</div>
 						</div>
+					}
+					{ isAuthorVisible &&
+					<div className="post-item__author">
+						<div className="post-item__author-name">
+							{ post.author.name }
+						</div>
+					</div>
 					}
 					<h1 className="post-item__title">
 						<a href={ editUrl } className="post-item__title-link">

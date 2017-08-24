@@ -42,6 +42,14 @@
 	color: $gray-dark;
 }
 
+.post-item__author-name {
+	margin: 0;
+	line-height: 16px;
+	vertical-align: middle;
+	font-size: 13px;
+	color: $gray-text-min;
+}
+
 .post-item__title {
 	@extend %content-font;
 	margin-bottom: 2px;
