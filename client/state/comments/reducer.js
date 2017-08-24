@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -17,9 +18,14 @@ import {
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
 	COMMENTS_TREE_SITE_ADD,
+	READER_EXPAND_COMMENT,
 } from '../action-types';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
-import { PLACEHOLDER_STATE, NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
+import {
+	PLACEHOLDER_STATE,
+	NUMBER_OF_COMMENTS_PER_FETCH,
+	POST_COMMENT_DISPLAY_TYPES,
+} from './constants';
 import trees from './trees/reducer';
 
 const getCommentDate = ( { date } ) => new Date( date );
@@ -92,7 +98,7 @@ export function items( state = {}, action ) {
 				...state,
 				[ stateKey ]: map(
 					state[ stateKey ],
-					updateComment( commentId, { i_like: true, like_count } ),
+					updateComment( commentId, { i_like: true, like_count } )
 				),
 			};
 		case COMMENTS_UNLIKE:
@@ -100,7 +106,7 @@ export function items( state = {}, action ) {
 				...state,
 				[ stateKey ]: map(
 					state[ stateKey ],
-					updateComment( commentId, { i_like: false, like_count } ),
+					updateComment( commentId, { i_like: false, like_count } )
 				),
 			};
 		case COMMENTS_ERROR:
@@ -112,7 +118,7 @@ export function items( state = {}, action ) {
 					updateComment( commentId, {
 						placeholderState: PLACEHOLDER_STATE.ERROR,
 						placeholderError: error,
-					} ),
+					} )
 				),
 			};
 	}
@@ -169,7 +175,7 @@ export const fetchStatus = createReducer(
 				? state
 				: { ...state, [ stateKey ]: nextState };
 		},
-	},
+	}
 );
 
 /***
@@ -189,7 +195,21 @@ export const totalCommentsCount = createReducer(
 			const key = getStateKey( action.siteId, action.postId );
 			return { ...state, [ key ]: state[ key ] + 1 };
 		},
+	}
+);
+
+export const commentExpansion = createReducer(
+	{
+		[ READER_EXPAND_COMMENT ]: ( state, action ) => {
+			const { siteId, commentId } = action.payload;
+			const stateKey = getStateKey( siteId, commentId );
+			return {
+				...state,
+				[ stateKey ]: POST_COMMENT_DISPLAY_TYPES.full,
+			};
+		},
 	},
+	{}
 );
 
 /**
@@ -210,7 +230,7 @@ export const errors = createReducer(
 				[ key ]: { error: true },
 			};
 		},
-	},
+	}
 );
 
 export const treesInitializedReducer = ( state = {}, action ) => {
@@ -220,7 +240,10 @@ export const treesInitializedReducer = ( state = {}, action ) => {
 	return state;
 };
 
-export const treesInitialized = keyedReducer( 'siteId', keyedReducer( 'status', treesInitializedReducer ) );
+export const treesInitialized = keyedReducer(
+	'siteId',
+	keyedReducer( 'status', treesInitializedReducer )
+);
 
 export default combineReducers( {
 	items,

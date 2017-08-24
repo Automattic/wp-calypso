@@ -22,18 +22,11 @@ import { getStreamUrl } from 'reader/route';
 import PostCommentContent from './post-comment-content';
 import PostCommentForm from './form';
 import CommentEditForm from './comment-edit-form';
-import { PLACEHOLDER_STATE } from 'state/comments/constants';
+import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import { decodeEntities } from 'lib/formatting';
 import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback.jsx';
 import CommentActions from './comment-actions';
-
-// values conveniently also correspond to css classNames to apply
-export const POST_COMMENT_DISPLAY_TYPES = {
-	singleLine: 'is-single-line',
-	excerpt: 'is-excerpt',
-	full: 'is-full',
-};
 
 class PostComment extends Component {
 	static propTypes = {
