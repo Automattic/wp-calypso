@@ -21,8 +21,9 @@ class EditorConfirmationSidebarHeader extends PureComponent {
 
 	renderPublishHeader() {
 		const { post, postTypeLabel, translate } = this.props;
+		const postType = get( post, 'type', 'post' );
 
-		switch ( post.type ) {
+		switch ( postType ) {
 			case 'post':
 				return (
 					<div className="editor-confirmation-sidebar__header">
@@ -80,8 +81,9 @@ class EditorConfirmationSidebarHeader extends PureComponent {
 
 	renderScheduleHeader() {
 		const { post, postTypeLabel, translate } = this.props;
+		const postType = get( post, 'type', 'post' );
 
-		switch ( post.type ) {
+		switch ( postType ) {
 			case 'post':
 				return (
 					<div className="editor-confirmation-sidebar__header">
