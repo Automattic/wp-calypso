@@ -35,11 +35,15 @@
 
 .post-item__site-title {
 	display: inline;
-	margin: 0;
+	margin-right: 15px;
 	line-height: 16px;
 	vertical-align: middle;
 	font-size: 13px;
 	color: $gray-dark;
+}
+
+.post-item__info {
+	display: flex;
 }
 
 .post-item__author-name {

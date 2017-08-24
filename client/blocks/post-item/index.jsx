@@ -46,21 +46,23 @@ function PostItem( { translate, globalId, post, site, editUrl, siteTitle, isAllS
 		<Card compact className={ postItemClasses }>
 			<div className="post-item__detail">
 				<div className={ titleMetaClasses }>
-					{ isSiteVisible &&
-						<div className="post-item__site">
-							<SiteIcon size={ 16 } site={ site } />
-							<div className="post-item__site-title">
-								{ siteTitle }
+					<div className="post-item__info">
+						{ isSiteVisible &&
+							<div className="post-item__site">
+								<SiteIcon size={ 16 } site={ site } />
+								<div className="post-item__site-title">
+									{ siteTitle }
+								</div>
+							</div>
+						}
+						{ isAuthorVisible &&
+						<div className="post-item__author">
+							<div className="post-item__author-name">
+								{ post.author.name }
 							</div>
 						</div>
-					}
-					{ isAuthorVisible &&
-					<div className="post-item__author">
-						<div className="post-item__author-name">
-							{ post.author.name }
-						</div>
+						}
 					</div>
-					}
 					<h1 className="post-item__title">
 						<a href={ editUrl } className="post-item__title-link">
 							{ title || translate( 'Untitled' ) }
