@@ -36,21 +36,30 @@ const enhanceContextWithLogin = context => {
 	);
 };
 
+const showErrorForBadOAuthQueryStringParameters = context => {
+	context.primary = (
+		<EmptyContent
+			title={ translate( 'Something went wrong' ) }
+			line={ translate( "It looks like there's a problem" ) } />
+	);
+};
+
 export default {
 	login( context, next ) {
 		const { query: { client_id, redirect_to } } = context;
 
 		if ( client_id ) {
+			if ( ! redirect_to ) {
+				showErrorForBadOAuthQueryStringParameters( context );
+				next();
+			}
+
 			const parsedRedirectUrl = parseUrl( redirect_to );
 			const redirectQueryString = qs.parse( parsedRedirectUrl.query );
+
 			if ( client_id !== redirectQueryString.client_id ) {
 				recordTracksEvent( 'calypso_login_phishing_attempt', context.query );
-				context.primary = (
-					<EmptyContent
-						title={ translate( 'Something went wrong' ) }
-						line={ translate( "It looks like there's a problem" ) } />
-				);
-
+				showErrorForBadOAuthQueryStringParameters( context );
 				next();
 			}
 
