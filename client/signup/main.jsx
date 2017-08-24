@@ -331,11 +331,11 @@ const Signup = React.createClass( {
 		scrollPromise.then( () => {
 			if ( ! this.isEveryStepSubmitted() ) {
 				if ( 'skip' === abtest( 'skipThemesSelectionModal' ) && 'themes' === stepName ) {
-					const flowSteps = flows.getFlow( this.props.flowName, stepName ).steps,
-						currentStepIndex = indexOf( flowSteps, stepName ),
-						nextStepName = flowSteps[ currentStepIndex + 1 ],
-						nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
-						nextStepSection = nextProgressItem && nextProgressItem.stepSectionName || '';
+					const flowSteps = flows.getFlow( this.props.flowName, stepName ).steps;
+					const currentStepIndex = indexOf( flowSteps, stepName );
+					const nextStepName = flowSteps[ currentStepIndex + 1 ];
+					const nextProgressItem = this.state.progress[ currentStepIndex + 1 ];
+					const nextStepSection = nextProgressItem && nextProgressItem.stepSectionName || '';
 
 					const designType = this.props.signupDependencies && this.props.signupDependencies.designType;
 
