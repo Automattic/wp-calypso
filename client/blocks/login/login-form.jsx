@@ -20,7 +20,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { fetchOAuth2SignupUrl } from 'state/login/oauth2/actions';
-import { getOAuth2ClientData, } from 'state/login/oauth2/selectors';
+import { getOAuth2ClientData } from 'state/login/oauth2/selectors';
 import { loginUser, formUpdate } from 'state/login/actions';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -158,9 +158,9 @@ export class LoginForm extends Component {
 			isDisabled.disabled = true;
 		}
 
-		const { requestError } = this.props;
+		const { requestError, oauth2ClientData } = this.props;
 		const linkingSocialUser = this.props.socialAccountIsLinking;
-		const isOauthLogin = !! this.props.oauth2ClientData;
+		const isOauthLogin = !! oauth2ClientData;
 
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
@@ -265,14 +265,13 @@ export class LoginForm extends Component {
 					</div>
 
 					{ isOauthLogin && (
-						<div className={ classNames( {
-							'login__form-signup-link': true,
-							disabled: ! this.props.oauth2ClientData.signupUrl
+						<div className={ classNames( 'login__form-signup-link', {
+							disabled: ! oauth2ClientData.signupUrl
 						} ) }>
 							{ this.props.translate( 'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
 								{
 									components: {
-										signupLink: <a href={ this.props.oauth2ClientData.signupUrl } />,
+										signupLink: <a href={ oauth2ClientData.signupUrl } />,
 									}
 								}
 							) }

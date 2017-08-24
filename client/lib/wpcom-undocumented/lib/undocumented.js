@@ -2443,7 +2443,11 @@ Undocumented.prototype.oauth2ClientId = function( clientId, fn ) {
  * @returns {Promise}  A promise
  */
 Undocumented.prototype.oauth2SignupUrl = function( redirectTo, fn ) {
-	return this.wpcom.req.get( `/oauth2/signup-url/${ encodeURIComponent( redirectTo ) }`, { apiNamespace: 'wpcom/v2' }, fn );
+	return this.wpcom.req.get(
+		`/oauth2/signup-url/${ encodeURIComponent( redirectTo ) }`,
+		{ apiNamespace: 'wpcom/v2' },
+		fn
+	);
 };
 
 /**
