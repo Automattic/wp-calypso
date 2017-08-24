@@ -5,20 +5,11 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	margin: 0;
 }
 
-// For the bottom margin here, use padding on the wrapper element instead,
-// because margins at the end of an element are excluded from height
-// calculation using clientHeight.
-$placeholder-margin: 24px;
-
 .post-share__wrapper {
 	animation: appear .3s ease-in-out;
 	border-top: $section-border;
 	margin: 0;
 	position: relative;
-
-	&.is-placeholder {
-		padding-bottom: $placeholder-margin;
-	}
 }
 
 .post-share__wrapper .notice {
@@ -50,8 +41,7 @@ $placeholder-margin: 24px;
 
 .post-share__placeholder {
 	@include placeholder;
-	margin-left: $placeholder-margin;
-	// margin-bottom: $placeholder-margin; // See note above
+	margin: 0 0 24px 24px;
 	width: 300px;
 	height: 80px;
 }
