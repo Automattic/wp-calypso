@@ -365,8 +365,8 @@ const Signup = React.createClass( {
 	goToNextStep() {
 		const flowSteps = flows.getFlow( this.props.flowName, this.props.stepName ).steps;
 
-		let currentStepIndex = indexOf( flowSteps, this.props.stepName );
-		let nextStepName = flowSteps[ currentStepIndex + 1 ];
+		const currentStepIndex = indexOf( flowSteps, this.props.stepName );
+		const nextStepName = flowSteps[ currentStepIndex + 1 ];
 
 		const nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
 			nextStepSection = nextProgressItem && nextProgressItem.stepSectionName || '';
