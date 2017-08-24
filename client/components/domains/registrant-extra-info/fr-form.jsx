@@ -17,7 +17,8 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
-import FormTextInput from 'components/forms/form-text-input';
+import { Input } from 'my-sites/domains/components/form';
+import validateContactDetails from './fr-validate-contact-details';
 
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 let defaultRegistrantType;
@@ -67,7 +68,9 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 	render() {
 		const translate = this.props.translate;
-		const registrantType = get( this.props.contactDetails, 'extra.registrantType', defaultRegistrantType );
+		const { contactDetails } = this.props;
+		const registrantType = get( contactDetails, 'extra.registrantType', defaultRegistrantType );
+
 		return (
 			<form className="registrant-extra-info__form">
 				<p className="registrant-extra-info__form-desciption">
@@ -106,12 +109,15 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 	renderOrganizationFields() {
 		const translate = this.props.translate;
-		const { extra } = this.props.contactDetails;
+		const { contactDetails } = this.props;
+		const { extra } = contactDetails;
 		const {
 			registrantVatId,
 			sirenSiret,
 			trademarkNumber
 		} = defaults( {}, extra, emptyValues );
+
+		const validationErrors = get( validateContactDetails( contactDetails ), 'extra', {} );
 
 		return (
 			<div>
@@ -121,13 +127,19 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						{ translate( 'VAT Number' ) }
 						{ this.renderOptional() }
 					</FormLabel>
-					<FormTextInput
-						id="registrantVatId"
+					<Input
+						name="registrantVatId"
 						value={ registrantVatId }
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
 						placeholder={ translate( 'ex. XX123456789' ) }
+						isError={ Boolean( validationErrors.registrantVatId ) }
+						errorMessage={ validationErrors.registrantVatId &&
+							translate( 'The VAT Number field is a pattern ' +
+								'of letters and numbers that depends on the ' +
+								'country, but it always includes a 2 letter country code' )
+						}
 						onChange={ this.handleChangeEvent } />
 				</FormFieldset>
 
@@ -137,9 +149,10 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						{ translate( 'SIREN or SIRET Number' ) }
 						{ this.renderOptional() }
 					</FormLabel>
-					<FormTextInput
-						id="sirenSiret"
+					<Input
+						name="sirenSiret"
 						value={ sirenSiret }
+						type="number"
 						placeholder={
 							translate( 'ex. 123 456 789 or 123 456 789 01234',
 								{ comment: 'ex is short for "example". The numbers are examples of the EU VAT format' }
@@ -148,6 +161,10 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
+						isError={ Boolean( validationErrors.sirenSiret ) }
+						errorMessage={ validationErrors.sirenSiret &&
+							translate( 'The SIREN/SIRET field must be either a 9 digit SIREN number, or a 14 digit SIRET number' )
+						}
 						onChange={ this.handleChangeEvent } />
 				</FormFieldset>
 
@@ -157,8 +174,8 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						{ translate( 'EU Trademark Number' ) }
 						{ this.renderOptional() }
 					</FormLabel>
-					<FormTextInput
-						id="trademarkNumber"
+					<Input
+						name="trademarkNumber"
 						value={ trademarkNumber }
 						type="number"
 						autoCapitalize="off"
