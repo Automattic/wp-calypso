@@ -42,6 +42,12 @@ class PostItem extends React.Component {
 
 	componentDidMount() {
 		this.manageMutationObserver();
+		if ( this.props.wrapTitle ) {
+			// Wait for repaint, which may include wrapping the title onto
+			// multiple lines, then update height if needed
+			window.requestAnimationFrame( this.handleHeightChange );
+			// TODO Attach resize listener (or better in PostTypeList)
+		}
 	}
 
 	componentDidUpdate() {
@@ -137,6 +143,8 @@ class PostItem extends React.Component {
 			compact,
 			editUrl,
 			translate,
+			largeTitle,
+			wrapTitle,
 		} = this.props;
 
 		const title = post ? post.title : null;
@@ -144,7 +152,9 @@ class PostItem extends React.Component {
 		const cardClasses = classnames( 'post-item__card', className, {
 			'is-untitled': ! title,
 			'is-mini': compact,
-			'is-placeholder': ! globalId
+			'is-placeholder': ! globalId,
+			'has-large-title': largeTitle,
+			'has-wrapped-title': wrapTitle,
 		} );
 
 		const isSiteVisible = (
@@ -211,6 +221,8 @@ PostItem.propTypes = {
 	onHeightChange: PropTypes.func,
 	isCurrentSharePanelOpen: PropTypes.bool,
 	hideSharePanel: PropTypes.func,
+	largeTitle: PropTypes.bool,
+	wrapTitle: PropTypes.bool,
 };
 
 export default connect( ( state, { globalId } ) => {

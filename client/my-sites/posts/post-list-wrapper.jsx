@@ -49,7 +49,11 @@ class PostListWrapper extends React.Component {
 					category={ this.props.category }
 					tag={ this.props.tag }
 				>
-					<PostTypeList query={ query } />
+					<PostTypeList
+						query={ query }
+						largeTitles={ true }
+						wrapTitles={ true }
+					/>
 				</PostListFetcher>
 			</div>
 		);
