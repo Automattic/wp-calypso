@@ -22,14 +22,14 @@ export const requestFeed = ( siteId, zoneId ) => ( {
 /**
  * Returns an action object to indicate that a feed should be updated.
  *
- * @param  {Number} siteId Site ID
- * @param  {Number} zoneId Zone ID
- * @param  {Object} data   Feed
- * @return {Object}        Action object
+ * @param  {Number} siteId  Site ID
+ * @param  {Number} zoneId  Zone ID
+ * @param  {Object} postIds Feed post IDs
+ * @return {Object}         Action object
  */
-export const updateFeed = ( siteId, zoneId, data ) => ( {
+export const updateFeed = ( siteId, zoneId, postIds ) => ( {
 	type: ZONINATOR_UPDATE_FEED,
 	siteId,
 	zoneId,
-	data,
+	postIds,
 } );

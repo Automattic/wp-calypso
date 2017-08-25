@@ -33,7 +33,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.deep.equal( {
 				type: ZONINATOR_UPDATE_FEED,
-				data: feed,
+				postIds: feed,
 				siteId,
 				zoneId,
 			} );

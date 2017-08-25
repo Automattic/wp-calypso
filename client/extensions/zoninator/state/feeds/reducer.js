@@ -1,17 +1,13 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 import { ZONINATOR_UPDATE_FEED } from '../action-types';
 
-export const items = createReducer( {}, {
-	[ ZONINATOR_UPDATE_FEED ]: ( state, { siteId, zoneId, data } ) => ( {
-		...state,
-		[ siteId ]: {
-			...state[ siteId ],
-			[ zoneId ]: data,
-		},
-	} ),
+const feed = createReducer( {}, {
+	[ ZONINATOR_UPDATE_FEED ]: ( state, { postIds } ) => postIds,
 } );
+
+export const items = keyedReducer( 'siteId', keyedReducer( 'zoneId', feed ) );
 
 export default combineReducers( { items } );
