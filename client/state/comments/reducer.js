@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { isUndefined, orderBy, has, map, unionBy, reject, isEqual, get } from 'lodash';
+import { isUndefined, orderBy, has, map, unionBy, reject, isEqual, get, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,19 +18,16 @@ import {
 	COMMENTS_LIKE,
 	COMMENTS_UNLIKE,
 	COMMENTS_TREE_SITE_ADD,
-	READER_EXPAND_COMMENT,
+	READER_EXPAND_COMMENTS,
+	READER_VIEW_COMMENT,
 } from '../action-types';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
-import {
-	PLACEHOLDER_STATE,
-	NUMBER_OF_COMMENTS_PER_FETCH,
-	POST_COMMENT_DISPLAY_TYPES,
-} from './constants';
+import { PLACEHOLDER_STATE, NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 import trees from './trees/reducer';
 
 const getCommentDate = ( { date } ) => new Date( date );
 
-export const getStateKey = ( siteId, postId ) => `${ siteId }-${ postId }`;
+export const getStateKey = ( siteId, id ) => `${ siteId }-${ id }`;
 
 export const deconstructStateKey = key => {
 	const [ siteId, postId ] = key.split( '-' );
@@ -126,6 +123,8 @@ export function items( state = {}, action ) {
 	return state;
 }
 
+items.hasCustomPersistence = true;
+
 export const fetchStatusInitialState = {
 	before: true,
 	after: true,
@@ -198,18 +197,58 @@ export const totalCommentsCount = createReducer(
 	}
 );
 
-export const commentExpansion = createReducer(
+export const commentWatermarkSchema = {
+	type: 'object',
+	patternProperties: {
+		//be careful to escape regexes properly
+		'd+-d+': { type: 'object' },
+	},
+};
+
+/**
+ *  For each post on each site, contains the last scene comment in convo tool
+ */
+export const watermark = createReducer(
+	{},
 	{
-		[ READER_EXPAND_COMMENT ]: ( state, action ) => {
-			const { siteId, commentId } = action.payload;
-			const stateKey = getStateKey( siteId, commentId );
+		[ READER_VIEW_COMMENT ]: ( state, action ) => {
+			const { siteId, postId, date, commentId } = action.payload;
+			const stateKey = getStateKey( siteId, postId );
+
+			if ( state[ stateKey ] && new Date( state[ stateKey ].date ) > new Date( date ) ) {
+				return state;
+			}
+
 			return {
 				...state,
-				[ stateKey ]: POST_COMMENT_DISPLAY_TYPES.full,
+				[ stateKey ]: { date, commentId },
 			};
 		},
 	},
-	{}
+	commentWatermarkSchema
+);
+
+export const expansions = createReducer(
+	{},
+	{
+		[ READER_EXPAND_COMMENTS ]: ( state, action ) => {
+			const { siteId, postId, commentIds, displayType } = action.payload;
+			const stateKey = getStateKey( siteId, postId );
+			const newVal = reduce(
+				commentIds,
+				( accum, id ) => {
+					accum[ id ] = displayType;
+					return accum;
+				},
+				{}
+			);
+
+			return {
+				...state,
+				[ stateKey ]: Object.assign( {}, state[ stateKey ], newVal ),
+			};
+		},
+	}
 );
 
 /**
@@ -246,10 +285,12 @@ export const treesInitialized = keyedReducer(
 );
 
 export default combineReducers( {
+	expansions,
 	items,
 	fetchStatus,
 	errors,
 	totalCommentsCount,
 	trees,
 	treesInitialized,
+	watermark,
 } );

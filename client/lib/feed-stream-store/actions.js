@@ -95,12 +95,12 @@ export function receivePage( id, error, data ) {
 			}
 			if ( post.comments ) {
 				// conversations!
-				reduxDispatch( {
-					type: COMMENTS_RECEIVE,
-					siteId: post.site_ID,
-					postId: post.ID,
-					comments: post.comments,
-				} );
+				// reduxDispatch( {
+				// 	type: COMMENTS_RECEIVE,
+				// 	siteId: post.site_ID,
+				// 	postId: post.ID,
+				// 	comments: post.comments,
+				// } );
 			}
 		} );
 	}

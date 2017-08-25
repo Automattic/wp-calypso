@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { get, noop, some, values, omit } from 'lodash';
+import { get, noop, some, values, omit, map } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -27,6 +27,8 @@ import { decodeEntities } from 'lib/formatting';
 import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback.jsx';
 import CommentActions from './comment-actions';
+import ConversationCaterpillar from 'blocks/conversation-caterpillar';
+import { viewComment } from 'state/comments/actions';
 
 class PostComment extends Component {
 	static propTypes = {
@@ -56,13 +58,36 @@ class PostComment extends Component {
 		maxChildrenToShow: 5,
 		onCommentSubmit: noop,
 		showNestingReplyArrow: false,
-		displayType: POST_COMMENT_DISPLAY_TYPES.full,
+		displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
 	};
 
 	state = {
 		showReplies: false,
 		showFull: false,
 	};
+
+	reportCommentView = ( props = this.props ) => {
+		const { commentId, post, toShow } = props;
+		const { site_ID: siteId, ID: postId } = post;
+		const comment = get( this.props.commentsTree, [ commentId, 'data' ], {} );
+
+		if ( comment && toShow && toShow[ commentId ] ) {
+			props.viewComment( { commentId, siteId, postId, date: comment.date } );
+		}
+	};
+
+	componentDidMount() {
+		this.reportCommentView();
+	}
+	componentWillUpdate( nextProps ) {
+		if (
+			!! this.props.commentsTree[ this.props.commentId ] &&
+			( this.props.commentId !== nextProps.commentId ||
+				! this.props.commentsTree[ this.props.commentId ] )
+		) {
+			this.reportCommentView( nextProps );
+		}
+	}
 
 	handleReadMoreClicked = () => this.setState( { showFull: true } );
 
@@ -123,7 +148,7 @@ class PostComment extends Component {
 
 		return (
 			<div>
-				{ !! replyVisibilityText
+				{ !! replyVisibilityText && ! this.props.showCaterpillar
 					? <button
 							className="comments__view-replies-btn"
 							onClick={ this.handleToggleRepliesClick }
@@ -131,7 +156,7 @@ class PostComment extends Component {
 							<Gridicon icon="reply" size={ 18 } /> { replyVisibilityText }
 						</button>
 					: null }
-				{ showReplies
+				{ showReplies || this.props.showCaterpillar
 					? <ol className="comments__list">
 							{ commentChildrenIds.map( childId =>
 								<PostComment
@@ -189,12 +214,37 @@ class PostComment extends Component {
 				</strong>;
 	};
 
+	renderCaterpillar = () => {
+		const { showCaterpillar, commentsTree } = this.props;
+		const commentChildrenIds = get( commentsTree, [ this.props.commentId, 'children' ] );
+
+		const actuallyShowCaterpillar = showCaterpillar && commentChildrenIds.length > 0;
+		if ( ! actuallyShowCaterpillar || true ) {
+			return null;
+		}
+		const children = map( commentChildrenIds, id => commentsTree[ id ] );
+		return <ConversationCaterpillar comments={ children } />;
+	};
+
 	render() {
-		const { commentsTree, commentId, depth, maxDepth } = this.props;
+		const { commentsTree, commentId, depth, maxDepth, toShow } = this.props;
 		const comment = get( commentsTree, [ commentId, 'data' ] );
-		const displayType = this.state.showFull
-			? POST_COMMENT_DISPLAY_TYPES.full
-			: this.props.displayType;
+
+		if ( ! comment ) {
+			return null;
+		}
+		if ( toShow && ! toShow[ commentId ] ) {
+			return (
+				<div>
+					{ this.renderRepliesList() }
+				</div>
+			);
+		}
+
+		const displayType =
+			this.state.showFull || ! this.props.showCaterpillar
+				? POST_COMMENT_DISPLAY_TYPES.full
+				: this.props.displayType;
 
 		// todo: connect this constants to the state (new selector)
 		const haveReplyWithError = some(
@@ -305,12 +355,16 @@ class PostComment extends Component {
 				/>
 
 				{ haveReplyWithError ? null : this.renderCommentForm() }
+				{ this.renderCaterpillar() }
 				{ this.renderRepliesList() }
 			</li>
 		);
 	}
 }
 
-export default connect( state => ( {
-	currentUser: getCurrentUser( state ),
-} ) )( PostComment );
+export default connect(
+	state => ( {
+		currentUser: getCurrentUser( state ),
+	} ),
+	{ viewComment }
+)( PostComment );
