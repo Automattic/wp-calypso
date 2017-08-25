@@ -57,7 +57,11 @@ const INITIAL_SUGGESTION_QUANTITY = 2;
 const searchVendor = 'domainsbot';
 const fetchAlgo = searchVendor + '/v1';
 
+let searchQueue = [];
+let searchStackTimer = null;
+let lastSearchTimestamp = null;
 let searchCount = 0;
+let recordSearchFormSubmitWithDispatch;
 
 let initialState;
 
@@ -72,6 +76,41 @@ function getQueryObject( props ) {
 		includeSubdomain: props.includeWordPressDotCom,
 		surveyVertical: props.surveyVertical,
 	};
+}
+
+function processSearchStatQueue() {
+	const queue = searchQueue.slice();
+	window.clearTimeout( searchStackTimer );
+	searchStackTimer = null;
+	searchQueue = [];
+
+	outerLoop:
+		for ( let i = 0; i < queue.length; i++ ) {
+			for ( let k = i + 1; k < queue.length; k++ ) {
+				if ( startsWith( queue[ k ].query, queue[ i ].query ) ) {
+					continue outerLoop;
+				}
+			}
+			reportSearchStats( queue[ i ] );
+		}
+}
+
+function reportSearchStats( { query, section, timestamp } ) {
+	let timeDiffFromLastSearchInSeconds = 0;
+	if ( lastSearchTimestamp ) {
+		timeDiffFromLastSearchInSeconds = Math.floor( ( timestamp - lastSearchTimestamp ) / 1000 );
+	}
+	lastSearchTimestamp = timestamp;
+	searchCount++;
+	recordSearchFormSubmitWithDispatch( query, section, timeDiffFromLastSearchInSeconds, searchCount, searchVendor );
+}
+
+function enqueueSearchStatReport( search ) {
+	searchQueue.push( Object.assign( {}, search, { timestamp: Date.now() } ) );
+	if ( searchStackTimer ) {
+		window.clearTimeout( searchStackTimer );
+	}
+	searchStackTimer = window.setTimeout( processSearchStatQueue, 10000 );
 }
 
 class RegisterDomainStep extends React.Component {
@@ -117,6 +156,8 @@ class RegisterDomainStep extends React.Component {
 			searchResults: null,
 		};
 		this.state = initialState;
+
+		recordSearchFormSubmitWithDispatch = this.props.recordSearchFormSubmit;
 	}
 
 	getNewRailcarSeed() {
@@ -288,8 +329,7 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
-		this.props.recordSearchFormSubmit( searchQuery, this.props.analyticsSection, searchCount, searchVendor );
-		searchCount++;
+		enqueueSearchStatReport( { query: searchQuery, section: this.props.analyticsSection } );
 
 		this.setState( {
 			lastDomainSearched: domain,
@@ -572,7 +612,7 @@ const recordMapDomainButtonClick = ( section ) => composeAnalytics(
 	),
 );
 
-const recordSearchFormSubmit = ( searchBoxValue, section, count, vendor ) => composeAnalytics(
+const recordSearchFormSubmit = ( searchBoxValue, section, timeDiffFromLastSearch, count, vendor ) => composeAnalytics(
 	recordGoogleEvent(
 		'Domain Search',
 		'Submitted Search Form',
@@ -583,6 +623,7 @@ const recordSearchFormSubmit = ( searchBoxValue, section, count, vendor ) => com
 		'calypso_domain_search',
 		{
 			search_box_value: searchBoxValue,
+			seconds_from_last_search: timeDiffFromLastSearch,
 			search_count: count,
 			search_vendor: vendor,
 			section
