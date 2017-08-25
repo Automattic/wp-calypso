@@ -19,6 +19,7 @@ import VideoPlayDetails from '../stats-video-details';
 import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
 import QueryMedia from 'components/data/query-media';
+import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getMediaItem } from 'state/selectors';
 
@@ -199,6 +200,7 @@ class StatsSummary extends Component {
 					</HeaderCake>
 					{ summaryViews }
 				</div>
+				<JetpackColophon />
 			</Main>
 		);
 	}
