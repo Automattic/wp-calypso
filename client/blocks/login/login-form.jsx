@@ -20,8 +20,8 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { fetchOAuth2SignupUrl } from 'state/login/oauth2/actions';
-import { getOAuth2ClientData } from 'state/login/oauth2/selectors';
+import { fetchOAuth2SignupUrl } from 'state/ui/oauth2-clients/actions';
+import { getOAuth2ClientData } from 'state/ui/oauth2-clients/selectors';
 import { loginUser, formUpdate } from 'state/login/actions';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -167,7 +167,7 @@ export class LoginForm extends Component {
 		if ( isOauthLogin ) {
 			signupUrl = '/start/wpcc?' + qs.stringify( { oauth2_client_id: oauth2ClientData.id, oauth2_redirect: redirectTo } );
 			// TODO remove the following line when WPCC signup is ready
-			signupUrl = oauth2ClientData.signupUrl;
+			//signupUrl = oauth2ClientData.signupUrl;
 		}
 
 		return (

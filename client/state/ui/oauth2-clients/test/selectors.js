@@ -21,8 +21,8 @@ describe( 'selectors', () => {
 
 		it( 'should return the oauth2 client information if there is one', () => {
 			const clientData = getOAuth2ClientData( {
-				login: {
-					oauth2: {
+				ui: {
+					oauth2Clients: {
 						clients: {
 							1: {
 								id: 1,
@@ -54,8 +54,8 @@ describe( 'selectors', () => {
 
 		it( 'should return false if there is no current oauth2 client set', () => {
 			const showOAuth2 = showOAuth2Layout( {
-				login: {
-					oauth2: {
+				ui: {
+					oauth2Clients: {
 						clients: {
 							1: {
 								id: 1,
@@ -74,8 +74,8 @@ describe( 'selectors', () => {
 
 		it( 'should return true if there is a current client id set', () => {
 			const showOAuth2 = showOAuth2Layout( {
-				login: {
-					oauth2: {
+				ui: {
+					oauth2Clients: {
 						clients: {
 							1: {
 								id: 1,

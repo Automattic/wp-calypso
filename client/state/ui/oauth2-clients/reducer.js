@@ -115,7 +115,15 @@ export const clients = createReducer( initialClientsData, {
 
 export const currentClientId = createReducer( null, {
 	[ ROUTE_SET ]: ( state, { path, query } ) => {
-		return ( startsWith( path, '/log-in' ) || startsWith( path, '/start' ) ) && query.client_id || null;
+		if ( startsWith( path, '/log-in' ) ) {
+			return query.client_id;
+		}
+
+		if ( startsWith( path, '/start/wpcc' ) ) {
+			return query.oauth2_client_id;
+		}
+
+		return null;
 	}
 } );
 

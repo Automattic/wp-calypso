@@ -15,6 +15,7 @@ import dropZone from './drop-zone/reducer';
 import guidedTour from './guided-tours/reducer';
 import queryArguments from './query-arguments/reducer';
 import reader from './reader/reducer';
+import oauth2Clients from './oauth2-clients/reducer';
 import olark from './olark/reducer';
 import actionLog from './action-log/reducer';
 import layoutFocus from './layout-focus/reducer';
@@ -101,6 +102,7 @@ const reducer = combineReducers( {
 	guidedTour,
 	editor,
 	reader,
+	oauth2Clients,
 	olark,
 	preview,
 	actionLog,

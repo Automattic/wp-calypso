@@ -10,13 +10,13 @@ import { get } from 'lodash';
  * @return {Object}          OAuth2 client data
  */
 export const getOAuth2ClientData = ( state ) => {
-	const currentClientId = get( state, 'login.oauth2.currentClientId', null );
+	const currentClientId = get( state, 'ui.oauth2Clients.currentClientId', null );
 
 	if ( ! currentClientId ) {
 		return null;
 	}
 
-	return get( state, 'login.oauth2.clients', {} )[ currentClientId ];
+	return get( state, 'ui.oauth2Clients.clients', {} )[ currentClientId ];
 };
 
 /***
@@ -25,4 +25,4 @@ export const getOAuth2ClientData = ( state ) => {
  * @param  {Object}   state  Global state tree
  * @return {Boolean}         Whether the OAuth2 layout should be used.
  */
-export const showOAuth2Layout = ( state ) => !! get( state, 'login.oauth2.currentClientId', null );
+export const showOAuth2Layout = ( state ) => !! get( state, 'ui.oauth2Clients.currentClientId', null );

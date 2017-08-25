@@ -19,7 +19,7 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { recordPageView, recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { login } from 'lib/paths';
-import { getOAuth2ClientData } from 'state/login/oauth2/selectors';
+import { getOAuth2ClientData } from 'state/ui/oauth2-clients/selectors';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {

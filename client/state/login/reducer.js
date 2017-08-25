@@ -8,7 +8,6 @@ import { get, isEmpty, omit } from 'lodash';
  */
 import { combineReducers, createReducer } from 'state/utils';
 import magicLogin from './magic-login/reducer';
-import oauth2 from './oauth2/reducer';
 import {
 	LOGIN_FORM_UPDATE,
 	LOGIN_REQUEST,
@@ -231,5 +230,4 @@ export default combineReducers( {
 	twoFactorAuthPushPoll,
 	socialAccount,
 	socialAccountLink,
-	oauth2,
 } );
