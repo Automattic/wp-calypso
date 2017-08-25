@@ -394,7 +394,6 @@ module.exports = React.createClass( {
 			const textNode = ReactDom.findDOMNode( this.refs.text );
 
 			// Collapse selection to avoid scrolling to the bottom of the textarea
-			console.error( 'SELECTING: ', this.state.selection );
 			if ( this.state.selection ) {
 				this.selectTextInTextArea( this.state.selection );
 			} else {
