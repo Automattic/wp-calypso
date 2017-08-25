@@ -41,6 +41,7 @@ describe( 'reducer', () => {
 			'themeSetup',
 			'npsSurveyNotice',
 			'isNotificationsOpen',
+			'postTypeList',
 		] );
 	} );
 

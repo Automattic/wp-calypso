@@ -1,4 +1,16 @@
-.card.post-item {
+.post-item {
+	// The padding here ensures that margins of child elements are included
+	// within the height of this element, and the margin cancels the padding.
+	// See https://stackoverflow.com/a/28121477
+	padding: 1px 0;
+	margin: -1px 0;
+
+	&.is-expanded {
+		margin: 11px 0;
+	}
+}
+
+.card.post-item__card /* for specificity */ {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -56,12 +68,12 @@ a.post-item__title-link {
 		color: darken( $gray, 20% );
 	}
 
-	.post-item.is-untitled & {
+	.post-item__card.is-untitled & {
 		color: $gray;
 		font-style: italic;
 	}
 
-	.post-item.is-placeholder & {
+	.post-item__card.is-placeholder & {
 		@include placeholder;
 	}
 }
@@ -91,7 +103,7 @@ a.post-item__title-link {
 	margin-right: 6px;
 }
 
-.post-item.is-mini.card.is-compact {
+.post-item__card.is-mini.is-compact {
 	padding: 8px 16px;
 
 	.post-item__meta {
