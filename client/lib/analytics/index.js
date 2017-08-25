@@ -205,7 +205,12 @@ const analytics = {
 
 			if ( _superProps ) {
 				_dispatch && _dispatch( { type: ANALYTICS_SUPER_PROPS_UPDATE } );
-				superProperties = _superProps.getAll( _selectedSite, _siteCount );
+				// HACK: _selectedSite should only be used if path contains `:site`.
+				// This hack is enabled only for `calypso_page_view` event but may need to be expanded
+				// if other events require same special handling.
+				const hasPathWithSite = eventProperties.path && eventProperties.path.indexOf( ':site' ) !== -1;
+				const useSelectedSite = hasPathWithSite || eventName !== 'calypso_page_view';
+				superProperties = _superProps.getAll( useSelectedSite ? _selectedSite : null, _siteCount );
 				eventProperties = assign( {}, eventProperties, superProperties ); // assign to a new object so we don't modify the argument
 			}
 
