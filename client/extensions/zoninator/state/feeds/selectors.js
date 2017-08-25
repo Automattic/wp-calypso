@@ -3,7 +3,7 @@
  */
 import { get } from 'lodash';
 
-const getFeedsState = ( state ) => state.extensions.zoninator.feeds;
+const getFeedsState = ( state ) => get( state, 'extensions.zoninator.feeds', {} );
 
 /**
  * Returns the posts feed for the specified site and zone ID.
