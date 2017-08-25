@@ -116,7 +116,7 @@ class LoggedOutForm extends Component {
 				{ this.renderLocaleSuggestions() }
 				{ this.renderFormHeader() }
 				<SignupForm
-					redirectToAfterLoginUrl={ this.getRedirectAfterLoginUrl() }
+					getRedirectToAfterLoginUrl={ this.getRedirectAfterLoginUrl() }
 					disabled={ isAuthorizing }
 					submitting={ isAuthorizing }
 					submitForm={ this.handleSubmitSignup }

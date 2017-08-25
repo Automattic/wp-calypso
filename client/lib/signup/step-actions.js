@@ -309,7 +309,6 @@ module.exports = {
 				}
 			} );
 		} else {
-			const isOauth2Flow = !! queryArgs.oauth2_client_id;
 			wpcom.undocumented().usersNew( assign(
 				{}, userData, {
 					ab_test_variations: getSavedVariations(),
@@ -317,14 +316,8 @@ module.exports = {
 					signup_flow_name: flowName,
 					nux_q_site_type: surveySiteType,
 					nux_q_question_primary: surveyVertical,
-					// url sent in the confirmation email
-					jetpack_redirect: queryArgs.jetpack_redirect,
-				}, isOauth2Flow ? {
-					oauth2_client_id: queryArgs.oauth2_client_id,
-					// url of the WordPress.com authorize page for this OAuth2 client
-					// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
-					oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
-				} : null
+					jetpack_redirect: queryArgs.jetpackRedirect
+				}
 			), ( error, response ) => {
 				const errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
 					bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
@@ -335,7 +328,7 @@ module.exports = {
 					analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
 				}
 
-				callback( errors, assign( {}, { username: userData.username, oauth2_redirect: queryArgs.oauth2_redirect }, bearerToken ) );
+				callback( errors, assign( {}, { username: userData.username }, bearerToken ) );
 			} );
 		}
 	},

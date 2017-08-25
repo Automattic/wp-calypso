@@ -57,7 +57,7 @@ class SignupForm extends Component {
 		email: PropTypes.string,
 		footerLink: PropTypes.node,
 		formHeader: PropTypes.node,
-		redirectToAfterLoginUrl: PropTypes.string.isRequired,
+		getRedirectToAfterLoginUrl: PropTypes.string.isRequired,
 		goToNextStep: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
 		isSocialSignupEnabled: PropTypes.bool,
@@ -151,7 +151,7 @@ class SignupForm extends Component {
 			page(
 				login( {
 					isNative: config.isEnabled( 'login/native-login-links' ),
-					redirectTo: this.props.redirectToAfterLoginUrl,
+					redirectTo: this.props.getRedirectToAfterLoginUrl,
 				} )
 			);
 		}
@@ -332,7 +332,7 @@ class SignupForm extends Component {
 
 		let link = login( {
 			isNative: config.isEnabled( 'login/native-login-links' ),
-			redirectTo: this.props.redirectToAfterLoginUrl
+			redirectTo: this.props.getRedirectToAfterLoginUrl
 		} );
 
 		return map( messages, ( message, error_code ) => {
@@ -528,7 +528,7 @@ class SignupForm extends Component {
 		}
 
 		const logInUrl = config.isEnabled( 'login/native-login-links' )
-			? login( { isNative: true, redirectTo: this.props.redirectToAfterLoginUrl } )
+			? login( { isNative: true } )
 			: this.localizeUrlWithSubdomain( config( 'login_url' ) );
 
 		return (
