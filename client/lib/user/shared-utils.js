@@ -57,7 +57,8 @@ module.exports = {
 				'primary_blog',
 				'primary_blog_url',
 				'meta',
-				'is_new_reader'
+				'is_new_reader',
+				'social_signup_service',
 			],
 			decodeWhitelist = [
 				'display_name',
