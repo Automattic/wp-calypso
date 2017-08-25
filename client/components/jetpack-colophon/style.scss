@@ -1,0 +1,20 @@
+.jetpack-colophon {
+	margin-top: 40px;
+	text-align: center;
+	color: $gray-text-min;
+
+	.jetpack-logo {
+		display: inline-block;
+		fill: currentColor;
+	}
+	@include breakpoint( "<660px" ) {
+		margin-bottom: 24px;
+	}
+}
+
+.jetpack-colophon__power {
+	display: inline-block;
+	margin-top: 1px;
+  margin-right: 8px;
+	vertical-align: top;
+}
