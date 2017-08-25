@@ -161,7 +161,8 @@ const analytics = {
 	// pageView is a wrapper for pageview events across Tracks and GA
 	pageView: {
 		record: function( urlPath, pageTitle ) {
-			// add delay to avoid stale `_dl` (browserdocumentlocation) in recorded calypso_page_view event details
+			// add delay to avoid stale `_dl` in recorded calypso_page_view event details
+			// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript
 			setTimeout( () => {
 				mostRecentUrlPath = urlPath;
 				analytics.tracks.recordPageView( urlPath );
