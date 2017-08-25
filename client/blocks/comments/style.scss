@@ -404,6 +404,7 @@ a.comments__comment-username {
 .comments__comment-content {
 	@extend %content-font;
 	font-size: 15px;
+	line-height: 1.56;
 	word-break: break-word;
 
 	p {
@@ -428,6 +429,7 @@ a.comments__comment-username {
 	list-style: none;
 	color: $gray;
 	font-size: 14px;
+	margin-top: -5px;
 
 	button {
 		display: inline-block;
