@@ -31,7 +31,7 @@ Markup = {
 	get: function( site, media, options ) {
 		var mimePrefix;
 
-		if ( ! media ) {
+		if ( ! media || media.hasOwnProperty( 'status' ) ) {
 			return '';
 		}
 
