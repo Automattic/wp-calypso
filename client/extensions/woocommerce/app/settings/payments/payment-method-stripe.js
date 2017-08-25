@@ -35,13 +35,6 @@ export function hasStripeValidCredentials( method ) {
 
 class PaymentMethodStripe extends Component {
 
-	state = {
-		createSelected: false,
-		missingFieldsNotice: false,
-		userRequestedKeyFlow: false,
-		userRequestedConnectFlow: false,
-	}
-
 	static propTypes = {
 		stripeConnectAccount: PropTypes.shape( {
 			connectedUserID: PropTypes.string,
@@ -93,6 +86,7 @@ class PaymentMethodStripe extends Component {
 		this.state = {
 			createSelected: true,
 			hadKeysAtStart: this.hasKeys( props ),
+			missingFieldsNotice: false,
 			userRequestedKeyFlow: false,
 			userRequestedConnectFlow: false,
 		};
@@ -235,7 +229,7 @@ class PaymentMethodStripe extends Component {
 	}
 
 	////////////////////////////////////////////////////////////////////////////
-	// Live vs Test Mode
+	// Live vs Test Mode and API Key Fields
 
 	onSelectLive = () => {
 		this.props.onEditField( 'testmode', 'no' );
@@ -245,8 +239,8 @@ class PaymentMethodStripe extends Component {
 		this.props.onEditField( 'testmode', 'yes' );
 	}
 
-	possiblyRenderModePrompt = () => {
-		const { method, stripeConnectAccount } = this.props;
+	possiblyRenderModePromptAndKeyFields = () => {
+		const { method, stripeConnectAccount, translate } = this.props;
 		const { connectedUserID } = stripeConnectAccount;
 
 		// Do we have a connected account? Don't bother showing this control
@@ -259,41 +253,9 @@ class PaymentMethodStripe extends Component {
 			return null;
 		}
 
-		// No keys AND the user didn't request key flow? Don't show these fields
-		if ( ! this.hasKeys() && ! this.state.userRequestedKeyFlow ) {
-			return null;
-		}
-
-		return (
-			<FormFieldset className="payments__method-edit-field-container">
-				<TestLiveToggle
-					isTestMode={ 'yes' === method.settings.testmode.value }
-					onSelectLive={ this.onSelectLive }
-					onSelectTest={ this.onSelectTest }
-				/>
-			</FormFieldset>
-		);
-	}
-
-	////////////////////////////////////////////////////////////////////////////
-	// Key Fields
-
-	possiblyRenderKeyFields = () => {
-		const { method, stripeConnectAccount, translate } = this.props;
-		const { connectedUserID } = stripeConnectAccount;
-
-		// Do we have a connected account? Don't bother showing keys
-		if ( connectedUserID ) {
-			return null;
-		}
-
-		// Did the user request connect flow? Don't bother showing this control
-		if ( this.state.userRequestedConnectFlow ) {
-			return null;
-		}
-
-		// No keys AND the user didn't request key flow? Don't show these fields
-		if ( ! this.hasKeys() && ! this.state.userRequestedKeyFlow ) {
+		// Didn't have keys at start, don't have keys now AND
+		// the user didn't request key flow? Don't show these fields
+		if ( ! this.state.hadKeysAtStart && ! this.hasKeys() && ! this.state.userRequestedKeyFlow ) {
 			return null;
 		}
 
@@ -332,11 +294,20 @@ class PaymentMethodStripe extends Component {
 		}
 
 		return (
-			<APIKeysView
-				highlightEmptyFields={ this.state.missingFieldsNotice }
-				keys={ keys }
-				onEdit={ this.onEditFieldHandler }
-			/>
+			<div>
+				<FormFieldset className="payments__method-edit-field-container">
+					<TestLiveToggle
+						isTestMode={ 'yes' === method.settings.testmode.value }
+						onSelectLive={ this.onSelectLive }
+						onSelectTest={ this.onSelectTest }
+					/>
+				</FormFieldset>
+				<APIKeysView
+					highlightEmptyFields={ this.state.missingFieldsNotice }
+					keys={ keys }
+					onEdit={ this.onEditFieldHandler }
+				/>
+			</div>
 		);
 	}
 
@@ -363,7 +334,7 @@ class PaymentMethodStripe extends Component {
 
 		// Show these controls if
 		// 1) we have a connected AND activated account
-		// OR 2) if we don't have an account but we do have at least some keys
+		// OR 2) if we don't have an account but we do have (or had) at least some keys
 		// OR 3) if the user has requested key entry mode explicitly
 		let okToShow = false;
 
@@ -371,7 +342,7 @@ class PaymentMethodStripe extends Component {
 			okToShow = true;
 		}
 
-		if ( ! connectedUserID && this.hasKeys() ) {
+		if ( ! connectedUserID && ( this.hasKeys() || this.state.hadKeysAtStart ) ) {
 			okToShow = true;
 		}
 
@@ -455,7 +426,7 @@ class PaymentMethodStripe extends Component {
 	}
 
 	getButtons = () => {
-		const { onCancel, stripeConnectAccount, translate } = this.props;
+		const { method, onCancel, stripeConnectAccount, translate } = this.props;
 		const { connectedUserID } = stripeConnectAccount;
 
 		const buttons = [];
@@ -517,24 +488,35 @@ class PaymentMethodStripe extends Component {
 		buttons.push( { action: 'cancel', label: translate( 'Cancel' ), onClick: onCancel } );
 
 		// Figure out if we should show a Connect button or a Done button
-		let showConnectButton = false;
+		let isConnectButton = false;
+		let isDisabled = false;
 
-		// No account, no keys, not in key flow? Give them a Connect button
-		if ( ! connectedUserID && ! this.hasKeys() && ! this.state.userRequestedKeyFlow ) {
-			showConnectButton = true;
+		// No account?
+		if ( ! connectedUserID ) {
+			// No keys at start, no keys now and user didn't force key flow?
+			if ( ! this.state.hadKeysAtStart && ! this.hasKeys() && ! this.state.userRequestedKeyFlow ) {
+				// Give them a Connect button
+				isConnectButton = true;
+				isDisabled = true; // TODO - enable this in a subsequent PR to allow connection
+			} else {
+				// Give them a Done button, but enabled based on validity of key fields
+				isDisabled = ! hasStripeValidCredentials( method );
+			}
 		}
 
 		// Did the user request connect flow explicitly? Give them a Connect button
 		if ( this.state.userRequestedConnectFlow ) {
-			showConnectButton = true;
+			isConnectButton = true;
+			isDisabled = true; // TODO - enable this in a subsequent PR to allow connection
 		}
 
-		if ( showConnectButton ) {
-			// TODO - enable this button in a subsequent PR
-			buttons.push( { action: 'connect', disabled: true, label: translate( 'Connect' ), onClick: this.onConnect, isPrimary: true } );
-		} else {
-			buttons.push( { action: 'save', label: translate( 'Done' ), onClick: this.onDone, isPrimary: true } );
-		}
+		buttons.push( {
+			action: isConnectButton ? 'connect' : 'save',
+			disabled: isDisabled,
+			label: isConnectButton ? translate( 'Connect' ) : translate( 'Done' ),
+			onClick: isConnectButton ? this.onConnect : this.onDone,
+			isPrimary: true
+		} );
 
 		return buttons;
 	}
@@ -551,8 +533,7 @@ class PaymentMethodStripe extends Component {
 				{ this.renderHeading() }
 				{ this.possiblyRenderSetupPrompt() }
 				{ this.possiblyRenderConnectAccount() }
-				{ this.possiblyRenderModePrompt() }
-				{ this.possiblyRenderKeyFields() }
+				{ this.possiblyRenderModePromptAndKeyFields() }
 				{ this.possiblyRenderMoreSettings() }
 			</Dialog>
 		);
