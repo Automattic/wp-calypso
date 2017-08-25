@@ -959,11 +959,16 @@
 }
 
 .checkout__privacy-protection-radio-buttons {
-	margin-top: 30px;
+	margin-top: 20px;
 }
 
 .checkout__privacy-protection-radio-button {
 	display: flex;
+	margin-bottom: 15px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
 }
 
 .checkout__privacy-protection-radio-text {
@@ -972,7 +977,7 @@
 }
 
 .checkout__privacy-protection-radio-text-description {
-	color: $gray;
+	color: darken( $gray, 20% );
 }
 
 .checkout__privacy-protection-radio-price-text {

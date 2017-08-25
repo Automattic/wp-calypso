@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import { cartItems } from 'lib/cart-values';
 import PrivacyProtectionDialog from './privacy-protection-dialog';
 import Card from 'components/card';
+import SectionHeader from 'components/section-header';
 import { abtest } from 'lib/abtest';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -124,6 +125,7 @@ class PrivacyProtection extends Component {
 
 		return (
 			<div>
+				<SectionHeader className="checkout__privacy-protection-header" label = { translate( 'Privacy Protection' ) } />
 				<Card className="checkout__privacy-protection-radio">
 					<div>
 						{ translate(
