@@ -30,7 +30,6 @@ import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 
 class PostItem extends React.Component {
-
 	static defaultProps = {
 		onHeightChange: noop,
 	};
@@ -168,7 +167,7 @@ class PostItem extends React.Component {
 			post && post.author && isEnabled( 'posts/post-type-list' );
 
 		const titleMetaClasses = classnames( 'post-item__title-meta', {
-			'site-is-visible': isSiteVisible || isAuthorVisible
+			'is-site-visible': isSiteVisible || isAuthorVisible
 		} );
 
 		const variableHeightContent = this.renderVariableHeightContent();
