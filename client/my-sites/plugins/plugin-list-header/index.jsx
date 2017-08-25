@@ -104,6 +104,10 @@ export class PluginsListHeader extends PureComponent {
 		analytics.ga.recordEvent( 'Plugins', 'Clicked Add New Plugins' );
 	}
 
+	onUploadLinkClick = () => {
+		analytics.ga.recordEvent( 'Plugins', 'Clicked Plugin Upload Link' );
+	}
+
 	unselectOrSelectAll = () => {
 		const { plugins, selected } = this.props;
 		const someSelected = selected.length > 0;
@@ -162,6 +166,7 @@ export class PluginsListHeader extends PureComponent {
 					</Button>
 				</ButtonGroup>
 			);
+
 			const browserUrl = '/plugins/browse' + ( this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '' );
 
 			rightSideButtons.push(
@@ -182,6 +187,23 @@ export class PluginsListHeader extends PureComponent {
 							position="bottom">
 							{ translate( 'Browse all plugins', { context: 'button tooltip' } ) }
 						</Tooltip>
+					</Button>
+				</ButtonGroup>
+			);
+
+			const uploadUrl = '/plugins/upload' + ( this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '' );
+
+			rightSideButtons.push(
+				<ButtonGroup key="plugin-list-header__buttons-upload">
+					<Button
+						compact
+						href={ uploadUrl }
+						onClick={ this.onUploadLinkClick }
+						className="plugin-list-header__upload-button"
+						aria-label={ translate( 'Upload plugin', { context: 'button label' } ) }
+					>
+						<Gridicon icon="cloud-upload" size={ 18 } />
+						{ translate( 'Upload plugin' ) }
 					</Button>
 				</ButtonGroup>
 			);
