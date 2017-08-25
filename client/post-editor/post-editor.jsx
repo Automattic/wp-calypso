@@ -1133,41 +1133,132 @@ export const PostEditor = React.createClass( {
 		ed.target.off( 'SetContent', this.focusHTMLBookmarkInVisualEditor );
 	},
 
+	/**
+	 * Finds the current selection position in the Visual editor.
+	 *
+	 * It uses some black magic raw JS magic. Not for the faint-hearted.
+	 *
+	 * @param {Object} editor The editor where we must find the selection
+	 * @returns {null | Object} The selection range position in the editor
+	 */
 	findBookmarkedPosition: function( editor ) {
-		const bookmark = editor.selection.getBookmark();
-		const bookmarkID = bookmark.id;
+		// Get the TinyMCE `window` reference, since we need to access the raw selection.
+		const TinyMCEWIndow = editor.getWin();
 
-		// the raw content contains the bookmarks
-		const rawContent = editor.getContent( { format: 'raw' } ).replace( /<\/?p>/g, '' );
+		const selection = TinyMCEWIndow.getSelection();
+
+		if ( selection.rangeCount <= 0 ) {
+			// no selection, no need to continue.
+			return;
+		}
+
+		/**
+		 * The ID is used to avoid replacing user generated content, that may coincide with the
+		 * format specified below.
+		 * @type {string}
+		 */
+		const selectionID = 'SELRES_' + Math.random();
+
+		/**
+		 * Create two marker elements that will be used to mark the start and the end of the range.
+		 *
+		 * The elements have hardcoded style that makes them invisible. This is done to avoid seeing
+		 * random content flickering in the editor when switching between modes.
+		 */
+		const startElement = document.createElement( 'span' );
+		startElement.className = 'mce_SELRES_start';
+		startElement.style = 'display:inline-block;width:0;overflow:hidden;line-height:0px';
+		startElement.innerHTML = selectionID;
+
+		const endElement = document.createElement( 'span' );
+		endElement.className = 'mce_SELRES_end';
+		endElement.style = 'display:inline-block;width:0;overflow:hidden;line-height:0px';
+		endElement.innerHTML = selectionID;
+
+		/**
+		 * Black magic start.
+		 *
+		 * Inspired by https://stackoverflow.com/a/17497803/153310
+		 *
+		 * Why do it this way and not with TinyMCE's bookmarks?
+		 *
+		 * TinyMCE's bookmarks are very nice when working with selections and positions, BUT
+		 * there is no way to determine the precise position of the bookmark when switching modes, since
+		 * TinyMCE does some serialization of the content, to fix things like shortcodes, run plugins, prettify
+		 * HTML code and so on. In this process, the bookmark markup gets lost.
+		 *
+		 * If we decide to hook right after the bookmark is added, we can see where the bookmark is in the raw HTML
+		 * in TinyMCE. Unfortunately this state is before the serialization, so any visual markup in the content will
+		 * throw off the positioning.
+		 *
+		 * To avoid this, we insert two custom `span`s that will serve as the markers at the beginning and end of the
+		 * selection.
+		 *
+		 * Why not use TinyMCE's selection API or the DOM API to wrap the contents? Because if we do that, this creates
+		 * a new node, which is inserted in the dom. Now this will be fine, if we worked with fixed selections to
+		 * full nodes. Unfortunately in our case, the user can select whatever they like, which means that the
+		 * selection may start in the middle of one node and end in the middle of a completely different one. If we
+		 * wrap the selection in another node, this will create artifacts in the content.
+		 *
+		 * Using the method below, we insert the custom `span` nodes at the start and at the end of the selection.
+		 * This helps us not break the content and also gives us the option to work with multi-node selections without
+		 * breaking the markup.
+		 */
+		const range = selection.getRangeAt( 0 );
+		const startNode = range.startContainer;
+		const startOffset = range.startOffset;
+		const boundaryRange = range.cloneRange();
+
+		boundaryRange.collapse( false );
+		boundaryRange.insertNode( endElement );
+		boundaryRange.setStart( startNode, startOffset );
+		boundaryRange.collapse( true );
+		boundaryRange.insertNode( startElement );
+
+		range.setStartAfter( startElement );
+		range.setEndBefore( endElement );
+		selection.removeAllRanges();
+		selection.addRange( range );
+
+		/**
+		 * Now the editor's content has the start/end nodes.
+		 *
+		 * Unfortunately the content goes through some more changes after this step, before it gets inserted
+		 * in the `textarea`. This means that we have to do some minor cleanup on our own here.
+		 */
+		const content = editor.getContent()
+			.replace( /(\[\/[^\]]+\]\s*)<p>/g, '$1\n\n' ) // fix short codes
+			.replace( /<p>/g, '' ) // remove `<p>`s, as they don't play any role
+			.replace( /<\/p>/g, '\n\n' ); // replace `</p>` with two new lines.
 
 		const startRegex = new RegExp(
-			'<span[^>]*data-mce-type="bookmark"\\s*id="' + bookmarkID + '_start"[^>]+>[^<]*<\\/span>'
+			'<span[^>]*\\s*class="mce_SELRES_start"[^>]+>\\s*' + selectionID + '[^<]*<\\/span>'
 		);
 
 		const endRegex = new RegExp(
-			'<span[^>]*data-mce-type="bookmark"\\s*id="' + bookmarkID + '_end"[^>]+>[^<]*<\\/span>'
+			'<span[^>]*\\s*class="mce_SELRES_end"[^>]+>\\s*' + selectionID + '[^<]*<\\/span>'
 		);
 
-		const startMatch = rawContent.match( startRegex );
+		// Find the `_start` node
+		const startMatch = content.match( startRegex );
 		if ( ! startMatch ) {
 			return null;
 		}
 
-		const selection = {
+		const selectionRange = {
 			start: startMatch.index,
 		};
 
-		const endMatch = rawContent.match( endRegex );
+		// Find the `_end` node
+		const endMatch = content.match( endRegex );
 		if ( ! endMatch ) {
 			return selection;
 		}
 
 		// We need to adjust the end position to discard the length of the range start marker
-		selection.end = endMatch.index - startMatch[ 0 ].length;
+		selectionRange.end = endMatch.index - startMatch[ 0 ].length;
 
-		debugger;
-
-		return selection;
+		return selectionRange;
 	},
 
 	switchEditorMode: function( mode ) {
