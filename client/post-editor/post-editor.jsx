@@ -1055,11 +1055,50 @@ export const PostEditor = React.createClass( {
 		return editorMode;
 	},
 
+	isCursorInATag: function( content, cursorPosition ) {
+		const lastLtPos = content.lastIndexOf( '<', cursorPosition );
+		const lastGtPos = content.lastIndexOf( '>', cursorPosition );
+
+		if ( lastLtPos > lastGtPos ) {
+			// inside a tag that was opened, but not closed
+
+			// find what the tag is
+			const tagContent = content.substr( lastLtPos );
+			const tagMatch = tagContent.match( /<\s*(\/)?(\w+)/ );
+			if ( ! tagMatch ) {
+				return null;
+			}
+
+			const tagType = tagMatch[ 2 ];
+			const closingGt = tagContent.indexOf( '>' );
+			const isClosingTag = ! ! tagMatch[ 1 ];
+
+			return {
+				ltPos: lastLtPos,
+				gtPos: lastLtPos + closingGt + 1, // offset by one to get the position _after_ the character,
+				tagType,
+				isClosingTag,
+			};
+		}
+		return null;
+	},
+
 	addHTMLBookmarkInTextAreaContent: function() {
 		const textArea = this.editor._editor.getElement();
 
-		const htmlModeCursorStartPosition = textArea.selectionStart;
-		const htmlModeCursorEndPosition = textArea.selectionEnd;
+		let htmlModeCursorStartPosition = textArea.selectionStart;
+		let htmlModeCursorEndPosition = textArea.selectionEnd;
+
+		// check if the cursor is in a tag and if so, adjust it
+		const isCursorStartInTag = this.isCursorInATag( textArea.value, htmlModeCursorStartPosition );
+		if ( isCursorStartInTag ) {
+			htmlModeCursorStartPosition = isCursorStartInTag.ltPos;
+		}
+
+		const isCursorEndInTag = this.isCursorInATag( textArea.value, htmlModeCursorEndPosition );
+		if ( isCursorEndInTag ) {
+			htmlModeCursorEndPosition = isCursorEndInTag.gtPos;
+		}
 
 		let mode = 'single';
 		if ( htmlModeCursorStartPosition !== htmlModeCursorEndPosition ) {
@@ -1095,7 +1134,6 @@ export const PostEditor = React.createClass( {
 				textArea.value.slice( htmlModeCursorEndPosition ),
 			].join( '' );
 		} else {
-			// // TODO detect if you're not in a tag to not break things
 			textArea.value = [
 				textArea.value.slice( 0, htmlModeCursorStartPosition ),
 				bookMarkStart,
@@ -1265,9 +1303,6 @@ export const PostEditor = React.createClass( {
 		const content = this.editor.getContent();
 
 		if ( mode === 'html' ) {
-			// get selection range
-
-			// getNode.outerHTML for single node
 			const selectionRange = this.findBookmarkedPosition( this.editor._editor );
 
 			this.editor.setEditorContent( content );
