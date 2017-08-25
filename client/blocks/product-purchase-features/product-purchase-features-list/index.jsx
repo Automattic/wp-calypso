@@ -195,6 +195,10 @@ class ProductPurchaseFeaturesList extends Component {
 		const {	selectedSite } = this.props;
 
 		return [
+			<MonetizeSite
+				selectedSite={ selectedSite }
+				key="monetizeSiteFeature"
+			/>,
 			<JetpackBackupSecurity
 				key="jetpackBackupSecurity"
 			/>,
@@ -240,8 +244,24 @@ class ProductPurchaseFeaturesList extends Component {
 		const {	selectedSite } = this.props;
 
 		return [
+			<BusinessOnboarding
+				key="businessOnboarding"
+				onClick={ this.props.recordBusinessOnboardingClick }
+			/>,
+			<FindNewTheme
+				selectedSite={ selectedSite }
+				key="findNewThemeFeature"
+			/>,
 			<JetpackBackupSecurity
 				key="jetpackBackupSecurity"
+			/>,
+			<MonetizeSite
+				selectedSite={ selectedSite }
+				key="monetizeSiteFeature"
+			/>,
+			<GoogleAnalyticsStats
+				selectedSite={ selectedSite }
+				key="googleAnalyticsStatsFeature"
 			/>,
 			<JetpackAntiSpam
 				key="jetpackAntiSpam"
