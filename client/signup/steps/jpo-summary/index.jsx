@@ -115,7 +115,8 @@ class JPOSummaryStep extends React.Component {
 
 		this.props.updateSettings(
 			get( this.props.signupDependencies, [ 'jpoConnect', 'queryObject', 'client_id' ], -1 ),
-			this.getOnboardingChoices()
+			this.getOnboardingChoices(),
+			false // don't sanitize settings
 		);
 	}
 
