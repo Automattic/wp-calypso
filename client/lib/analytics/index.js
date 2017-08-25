@@ -161,10 +161,13 @@ const analytics = {
 	// pageView is a wrapper for pageview events across Tracks and GA
 	pageView: {
 		record: function( urlPath, pageTitle ) {
-			mostRecentUrlPath = urlPath;
-			analytics.tracks.recordPageView( urlPath );
-			analytics.ga.recordPageView( urlPath, pageTitle );
-			analytics.emit( 'page-view', urlPath, pageTitle );
+			// add delay to avoid stale `_dl` (browserdocumentlocation) in recorded calypso_page_view event details
+			setTimeout( () => {
+				mostRecentUrlPath = urlPath;
+				analytics.tracks.recordPageView( urlPath );
+				analytics.ga.recordPageView( urlPath, pageTitle );
+				analytics.emit( 'page-view', urlPath, pageTitle );
+			}, 0 );
 		}
 	},
 
