@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Field } from 'redux-form';
 
 /**
@@ -10,15 +12,10 @@ import { Field } from 'redux-form';
 import FormTextarea from 'components/forms/form-textarea';
 
 // eslint-disable-next-line no-unused-vars
-const RenderTextarea = ( { input, meta, type, ...otherProps } ) => {
-	return (
-		<FormTextarea { ...input } { ...otherProps } />
-	);
-};
+const TextareaRenderer = ( { input, meta, ...props } ) =>
+	<FormTextarea { ...input } { ...props } />;
 
-const ReduxFormTextarea = ( props ) => (
-	<Field component={ RenderTextarea } type="text" { ...props } />
-);
+const ReduxFormTextarea = props => <Field component={ TextareaRenderer } { ...props } />;
 
 ReduxFormTextarea.propTypes = {
 	name: PropTypes.string.isRequired,

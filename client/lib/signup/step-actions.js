@@ -286,7 +286,7 @@ module.exports = {
 		SignupCart.addToCart( siteId, newCartItems, error => callback( error, { cartItem, privacyItem } ) );
 	},
 
-	createAccount( callback, dependencies, { userData, flowName, queryArgs, service, access_token, id_token }, reduxStore ) {
+	createAccount( callback, dependencies, { userData, flowName, queryArgs, service, access_token, id_token, oauth2Signup }, reduxStore ) {
 		const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 		const surveySiteType = getSurveySiteType( reduxStore.getState() ).trim();
 
@@ -316,8 +316,14 @@ module.exports = {
 					signup_flow_name: flowName,
 					nux_q_site_type: surveySiteType,
 					nux_q_question_primary: surveyVertical,
-					jetpack_redirect: queryArgs.jetpackRedirect
-				}
+					// url sent in the confirmation email
+					jetpack_redirect: queryArgs.jetpack_redirect,
+				}, oauth2Signup ? {
+					oauth2_client_id: queryArgs.oauth2_client_id,
+					// url of the WordPress.com authorize page for this OAuth2 client
+					// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
+					oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
+				} : null
 			), ( error, response ) => {
 				const errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
 					bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
@@ -328,7 +334,16 @@ module.exports = {
 					analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
 				}
 
-				callback( errors, assign( {}, { username: userData.username }, bearerToken ) );
+				const providedDependencies = assign( {}, { username: userData.username }, bearerToken );
+
+				if ( oauth2Signup ) {
+					assign( providedDependencies, {
+						oauth2_client_id: queryArgs.oauth2_client_id,
+						oauth2_redirect: queryArgs.oauth2_redirect,
+					} );
+				}
+
+				callback( errors, providedDependencies );
 			} );
 		}
 	},

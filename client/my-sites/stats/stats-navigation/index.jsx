@@ -19,7 +19,6 @@ import SegmentedControl from 'components/segmented-control';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import { isPluginActive } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { UNITS as StoreStatsTabs } from 'extensions/woocommerce/app/store-stats/constants';
 import config from 'config';
 
 const StatsNavigation = props => {
@@ -37,7 +36,7 @@ const StatsNavigation = props => {
 	let statsControl;
 
 	if ( isStore ) {
-		const validSection = includes( Object.keys( StoreStatsTabs ), section ) ? section : 'day';
+		const validSection = includes( [ 'day', 'week', 'month', 'year' ], section ) ? section : 'day';
 		statsControl = (
 			<SegmentedControl
 				className="stats-navigation__control is-store"

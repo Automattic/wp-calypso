@@ -225,6 +225,17 @@ const flows = {
 		description: 'Used by `get.blog` users that connect their site to WordPress.com',
 		lastModified: '2016-11-14'
 	},
+
+	wpcc: {
+		steps: [ 'oauth2-user' ],
+		destination: function( dependencies ) {
+			return dependencies.oauth2_redirect || '/';
+		},
+		description: 'WordPress.com Connect signup flow',
+		lastModified: '2017-08-24',
+		disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
+		autoContinue: true,
+	}
 };
 
 if ( config.isEnabled( 'signup/domain-first-flow' ) ) {

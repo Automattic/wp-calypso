@@ -1,10 +1,14 @@
 /**
  * External dependencies
  */
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React, { Component, PropTypes } from 'react';
+import {
+	get,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,11 +30,15 @@ class CartPlanAd extends Component {
 
 	shouldDisplayAd = () => {
 		const { cart, isDomainOnly, selectedSite } = this.props;
+		const domainRegistrations = cartItems.getDomainRegistrations( cart );
+		const isDomainPremium = domainRegistrations.length === 1 && get( domainRegistrations[ 0 ], 'extra.premium', false );
 
 		return ! isDomainOnly &&
 			cart.hasLoadedFromServer &&
+			! cart.hasPendingServerUpdates &&
 			! cartItems.hasDomainCredit( cart ) &&
-			cartItems.getDomainRegistrations( cart ).length === 1 &&
+			domainRegistrations.length === 1 &&
+			! isDomainPremium &&
 			selectedSite &&
 			selectedSite.plan &&
 			! isPlan( selectedSite.plan );

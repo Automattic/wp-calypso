@@ -212,7 +212,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 		redirectUrl = login( {
 			isNative: config.isEnabled( 'login/native-login-links' ),
-			redirect_to: protocol + '://' + config( 'hostname' ) + req.originalUrl
+			redirectTo: protocol + '://' + config( 'hostname' ) + req.originalUrl
 		} );
 
 		// if we don't have a wordpress cookie, we know the user needs to

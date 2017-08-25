@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
 import { get, includes, uniq, upperFirst } from 'lodash';
 
 /**
@@ -145,11 +144,11 @@ const SinglePlugin = React.createClass( {
 			( this.props.prevQuerystring ? '?' + this.props.prevQuerystring : '' );
 	},
 
-	goBack() {
+	backHref() {
 		if ( this.props.prevPath ) {
-			return page( this.getPreviousListUrl() );
+			return this.getPreviousListUrl();
 		}
-		return page( '/plugins/' + ( this.props.siteUrl || '' ) );
+		return '/plugins/' + ( this.props.siteUrl || '' );
 	},
 
 	displayHeader() {
@@ -157,7 +156,7 @@ const SinglePlugin = React.createClass( {
 		return (
 			<HeaderCake
 				isCompact={ true }
-				onClick={ this.goBack }
+				backHref={ this.backHref() }
 				onBackArrowClick={ recordEvent } />
 		);
 	},

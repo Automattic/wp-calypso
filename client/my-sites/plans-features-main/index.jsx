@@ -32,17 +32,8 @@ import purchasesPaths from 'me/purchases/paths';
 import { plansLink } from 'lib/plans';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
-import { abtest } from 'lib/abtest';
 
 class PlansFeaturesMain extends Component {
-	isInSignupTest() {
-		const {
-			isInSignup
-		} = this.props;
-
-		return ( ( isInSignup ) && ( abtest( 'signupPlansCopyChanges' ) === 'modified' ) );
-	}
-
 	getPlanFeatures() {
 		const {
 			site,
@@ -77,10 +68,8 @@ class PlansFeaturesMain extends Component {
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
 						basePlansPath={ basePlansPath }
-						intervalType={ intervalType }
 						site={ site }
 						domainName={ domainName }
-						isInSignupTest = { this.isInSignupTest() }
 						displayJetpackPlans = { displayJetpackPlans }
 					/>
 				</div>
@@ -106,10 +95,8 @@ class PlansFeaturesMain extends Component {
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
 						basePlansPath={ basePlansPath }
-						intervalType={ intervalType }
 						site={ site }
 						domainName={ domainName }
-						isInSignupTest = { this.isInSignupTest() }
 						displayJetpackPlans = { displayJetpackPlans }
 					/>
 				</div>
@@ -135,10 +122,8 @@ class PlansFeaturesMain extends Component {
 					isLandingPage={ isLandingPage }
 					basePlansPath={ basePlansPath }
 					selectedFeature={ selectedFeature }
-					intervalType={ intervalType }
 					site={ site }
 					domainName={ domainName }
-					isInSignupTest = { this.isInSignupTest() }
 					displayJetpackPlans = { displayJetpackPlans }
 				/>
 			</div>
@@ -383,13 +368,13 @@ class PlansFeaturesMain extends Component {
 				: this.getFAQ( site );
 		let faqs = null;
 
-		if ( ! this.isInSignupTest() || ( displayJetpackPlans && ! isInSignup ) ) {
+		if ( ! isInSignup ) {
 			faqs = renderFAQ();
 		}
 
 		return (
 			<div className="plans-features-main">
-				{ ( displayJetpackPlans && this.isInSignupTest() ) ? this.getIntervalTypeToggle() : null }
+				{ displayJetpackPlans ? this.getIntervalTypeToggle() : null }
 				<QueryPlans />
 				<QuerySitePlans siteId={ get( site, 'ID' ) } />
 				{ this.getPlanFeatures() }

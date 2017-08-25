@@ -1,4 +1,4 @@
-// @format
+/** @format */
 /**
  * External Dependencies
  */

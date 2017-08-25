@@ -11,12 +11,13 @@ import { get, isEmpty } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
+import Card from 'components/card';
 import ExternalLink from 'components/external-link';
 import Version from 'components/version';
 import PluginRatings from 'my-sites/plugins/plugin-ratings/';
+import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import versionCompare from 'lib/version-compare';
 import analytics from 'lib/analytics';
-import Card from 'components/card';
 
 export default React.createClass( {
 	_WPORG_PLUGINS_URL: 'wordpress.org/plugins/',
@@ -149,7 +150,22 @@ export default React.createClass( {
 		return {};
 	},
 
-	getDefaultActionLinks( plugin ) {
+	getActionLinks( plugin ) {
+		if ( ! get( plugin, 'active' ) ) {
+			return null;
+		}
+
+		if ( getExtensionSettingsPath( plugin ) ) {
+			// We have a Calypso UI for this plugin, so let's hide the wp-admin action links.
+			return null;
+		}
+
+		const actionLinks = get( plugin, 'action_links' );
+
+		if ( ! isEmpty( actionLinks ) ) {
+			return actionLinks;
+		}
+
 		let adminUrl = get( this.props, 'site.options.admin_url' );
 		const pluginSlug = get( plugin, 'slug' );
 
@@ -211,11 +227,7 @@ export default React.createClass( {
 		} );
 
 		const { plugin } = this.props;
-		let actionLinks = get( plugin, 'action_links' );
-
-		if ( get( plugin, 'active' ) && isEmpty( actionLinks ) ) {
-			actionLinks = this.getDefaultActionLinks( plugin );
-		}
+		const actionLinks = this.getActionLinks( plugin );
 
 		return (
 			<Card className="plugin-information">

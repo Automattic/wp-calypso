@@ -19,7 +19,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
  * It accepts props that are compatible with what Redux Form `Field` passes down to renderers.
  * See the `Field` documentation for info about the props.
  */
-export const RenderFieldset = ( {
+export const FieldsetRenderer = ( {
 	inputComponent: InputComponent,
 	input,
 	meta,
@@ -50,7 +50,7 @@ export const RenderFieldset = ( {
  *   <ReduxFormFieldset name="firstName" label="First Name" component={ FormTextInput } />
  */
 const ReduxFormFieldset = ( { component, ...props } ) =>
-	<Field component={ RenderFieldset } inputComponent={ component } { ...props } />;
+	<Field component={ FieldsetRenderer } inputComponent={ component } { ...props } />;
 
 ReduxFormFieldset.propTypes = {
 	name: PropTypes.string.isRequired, // name of the Redux Form field to connect to

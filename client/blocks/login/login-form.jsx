@@ -6,6 +6,7 @@ import { defer } from 'lodash';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import qs from 'qs';
 
 /**
  * Internal dependencies
@@ -19,6 +20,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import { fetchOAuth2SignupUrl } from 'state/login/oauth2/actions';
 import { getOAuth2ClientData } from 'state/login/oauth2/selectors';
 import { loginUser, formUpdate } from 'state/login/actions';
 import { preventWidows } from 'lib/formatting';
@@ -35,6 +37,7 @@ import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
+		fetchOAuth2SignupUrl: PropTypes.func.isRequired,
 		formUpdate: PropTypes.func.isRequired,
 		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
@@ -58,6 +61,10 @@ export class LoginForm extends Component {
 	};
 
 	componentDidMount() {
+		if ( this.props.redirectTo ) {
+			this.props.fetchOAuth2SignupUrl( this.props.redirectTo );
+		}
+
 		this.setState( { isDisabledWhileLoading: false }, () => { // eslint-disable-line react/no-did-mount-set-state
 			this.usernameOrEmail.focus();
 		} );
@@ -152,9 +159,16 @@ export class LoginForm extends Component {
 			isDisabled.disabled = true;
 		}
 
-		const { requestError } = this.props;
+		const { requestError, redirectTo, oauth2ClientData } = this.props;
 		const linkingSocialUser = this.props.socialAccountIsLinking;
-		const isOauthLogin = !! this.props.oauth2ClientData;
+		const isOauthLogin = !! oauth2ClientData;
+		let signupUrl = config( 'signup_url' );
+
+		if ( isOauthLogin ) {
+			signupUrl = '/start/wpcc?' + qs.stringify( { oauth2_client_id: oauth2ClientData.id, oauth2_redirect: redirectTo } );
+			// TODO remove the following line when WPCC signup is ready
+			signupUrl = oauth2ClientData.signupUrl;
+		}
 
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
@@ -259,11 +273,13 @@ export class LoginForm extends Component {
 					</div>
 
 					{ isOauthLogin && (
-						<div className="login__form-signup-link">
+						<div className={ classNames( 'login__form-signup-link', {
+							disabled: ! oauth2ClientData.signupUrl
+						} ) }>
 							{ this.props.translate( 'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
 								{
 									components: {
-										signupLink: <a href={ config( 'signup_url' ) } />,
+										signupLink: <a href={ signupUrl } />,
 									}
 								}
 							) }
@@ -300,5 +316,6 @@ export default connect(
 		formUpdate,
 		loginUser,
 		recordTracksEvent,
+		fetchOAuth2SignupUrl,
 	}
 )( localize( LoginForm ) );

@@ -25,3 +25,11 @@ The id of the site
 ### `disabled`
 
 If it's true, the form elements of the component will be disabled such as buttons, input fields, etc.
+
+### `showClose`
+
+If it's true, the component will show a close button at the top right.
+
+### `onClose`
+
+A callback that will be triggered when the close button is clicked.
