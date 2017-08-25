@@ -335,7 +335,16 @@ module.exports = {
 					analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
 				}
 
-				callback( errors, assign( {}, { username: userData.username, oauth2_redirect: queryArgs.oauth2_redirect }, bearerToken ) );
+				const providedDependencies = assign( {}, { username: userData.username }, bearerToken );
+
+				if ( isOauth2Flow ) {
+					assign( providedDependencies, {
+						oauth2_client_id: queryArgs.oauth2_client_id,
+						oauth2_redirect: queryArgs.oauth2_redirect,
+					} );
+				}
+
+				callback( errors, providedDependencies );
 			} );
 		}
 	},
