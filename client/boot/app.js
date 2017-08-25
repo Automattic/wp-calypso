@@ -42,7 +42,7 @@ const boot = currentUser => {
 		setupMiddlewares( currentUser, reduxStore );
 		invoke( project, 'setupMiddlewares', currentUser, reduxStore );
 		detectHistoryNavigation.start();
-		page.start();
+		page.start( { decodeURLComponents: false } );
 	} );
 };
 
