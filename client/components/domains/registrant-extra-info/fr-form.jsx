@@ -67,8 +67,10 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	}
 
 	render() {
-		const translate = this.props.translate;
-		const { contactDetails } = this.props;
+		const {
+			contactDetails,
+			translate
+		} = this.props;
 		const registrantType = get( contactDetails, 'extra.registrantType', defaultRegistrantType );
 
 		return (
@@ -108,14 +110,15 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	}
 
 	renderOrganizationFields() {
-		const translate = this.props.translate;
-		const { contactDetails } = this.props;
-		const { extra } = contactDetails;
+		const {
+			contactDetails,
+			translate
+		} = this.props;
 		const {
 			registrantVatId,
 			sirenSiret,
 			trademarkNumber
-		} = defaults( {}, extra, emptyValues );
+		} = defaults( {}, contactDetails.extra, emptyValues );
 
 		const validationErrors = get( validateContactDetails( contactDetails ), 'extra', {} );
 
