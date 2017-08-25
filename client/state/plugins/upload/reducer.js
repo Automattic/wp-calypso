@@ -43,6 +43,7 @@ export const inProgress = keyedReducer( 'siteId', createReducer( {}, {
 	[ PLUGIN_UPLOAD_COMPLETE ]: () => false,
 	[ PLUGIN_UPLOAD_ERROR ]: () => false,
 	[ PLUGIN_UPLOAD_CLEAR ]: () => false,
+	[ AUTOMATED_TRANSFER_STATUS_SET ]: ( state, { status } ) => status !== 'complete',
 } ) );
 
 export default combineReducers( {
