@@ -8,6 +8,7 @@ import {
 } from 'state/utils';
 
 import {
+	AUTOMATED_TRANSFER_STATUS_SET,
 	PLUGIN_UPLOAD,
 	PLUGIN_UPLOAD_CLEAR,
 	PLUGIN_UPLOAD_COMPLETE,
@@ -20,6 +21,7 @@ export const uploadedPluginId = keyedReducer( 'siteId', createReducer( {}, {
 	[ PLUGIN_UPLOAD_COMPLETE ]: ( state, { pluginId } ) => pluginId,
 	[ PLUGIN_UPLOAD_CLEAR ]: () => null,
 	[ PLUGIN_UPLOAD_ERROR ]: () => null,
+	[ AUTOMATED_TRANSFER_STATUS_SET ]: ( state, { uploadedPluginId: pluginId } ) => pluginId,
 } ) );
 
 export const uploadError = keyedReducer( 'siteId', createReducer( {}, {
