@@ -58,6 +58,10 @@ class PostItem extends React.Component {
 		this.disconnectMutationObserver();
 	}
 
+	setDomNode = node => {
+		this.node = node;
+	}
+
 	manageMutationObserver() {
 		if ( this.hasVariableHeightContent && ! this.observer ) {
 			// Post item has expanded content but didn't previously (or is
@@ -175,7 +179,7 @@ class PostItem extends React.Component {
 		return (
 			<div
 				className={ rootClasses }
-				ref={ node => this.node = node }
+				ref={ this.setDomNode }
 			>
 				<Card compact className={ cardClasses }>
 					<div className="post-item__detail">

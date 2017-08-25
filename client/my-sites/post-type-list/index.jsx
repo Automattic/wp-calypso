@@ -62,7 +62,7 @@ class PostTypeList extends Component {
 		};
 	}
 
-	componentWillMount( props ) {
+	componentWillMount() {
 		// NOTE: Assumes that this property does not change for a given
 		// instance of this component
 		this.defaultPostRowHeight = this.props.largeTitles
