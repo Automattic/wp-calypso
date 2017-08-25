@@ -72,17 +72,19 @@ export class UserStep extends Component {
 	};
 
 	submit = ( data ) => {
+		const { flowName, stepName, oauth2Signup, translate } = this.props;
 		const dependencies = {};
 
-		if ( this.props.oauth2Signup ) {
+		if ( oauth2Signup ) {
 			dependencies.oauth2_client_id = data.queryArgs.oauth2_client_id;
 			dependencies.oauth2_redirect = data.queryArgs.oauth2_redirect;
 		}
 
 		SignupActions.submitSignupStep( {
-			processingMessage: this.props.translate( 'Creating your account' ),
-			flowName: this.props.flowName,
-			stepName: this.props.stepName,
+			processingMessage: translate( 'Creating your account' ),
+			flowName,
+			stepName,
+			oauth2Signup,
 			...data
 		}, null, dependencies );
 
