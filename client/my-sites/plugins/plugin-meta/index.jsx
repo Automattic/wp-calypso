@@ -428,27 +428,34 @@ class PluginMeta extends Component {
 	}
 
 	render() {
+		const {
+			selectedSite,
+			plugin: orgPlugin,
+			isPlaceholder,
+			sites,
+			atEnabled,
+			slug,
+			translate,
+			isMock,
+		} = this.props;
 		const cardClasses = classNames( 'plugin-meta__information', {
 			'has-button': this.hasOrgInstallButton(),
-			'has-site': !! this.props.selectedSite,
-			'is-placeholder': !! this.props.isPlaceholder
+			'has-site': !! selectedSite,
+			'is-placeholder': !! isPlaceholder
 		} );
-
-		const plugin = this.props.selectedSite && this.props.sites[ 0 ] && this.props.sites[ 0 ].plugin
-			? this.props.sites[ 0 ].plugin
-			: this.props.plugin;
-		const path = ( ! this.props.selectedSite || plugin.active ) && this.getExtensionSettingsPath( plugin );
+		const plugin = selectedSite ? get( sites, '[0].plugin', orgPlugin ) : orgPlugin;
+		const path = ( ! selectedSite || plugin.active ) && this.getExtensionSettingsPath( plugin );
 
 		return (
 			<div className="plugin-meta">
-				{ this.props.atEnabled && this.props.selectedSite &&
-					<QueryEligibility siteId={ this.props.selectedSite.ID } />
+				{ atEnabled && selectedSite &&
+					<QueryEligibility siteId={ selectedSite.ID } />
 				}
 				<Card>
 					{ this.displayBanner() }
 					<div className={ cardClasses } >
 						<div className="plugin-meta__detail">
-							<PluginIcon image={ this.props.plugin && this.props.plugin.icon } isPlaceholder={ this.props.isPlaceholder } />
+							<PluginIcon image={ plugin && plugin.icon } isPlaceholder={ isPlaceholder } />
 							{ this.renderName() }
 							<div className="plugin-meta__meta">
 								{ this.renderAuthorUrl() }
@@ -461,36 +468,36 @@ class PluginMeta extends Component {
 				{ path &&
 					<CompactCard
 						className="plugin-meta__settings-link"
-						href={ addSiteFragment( path, this.props.slug ) }>
-						{ this.props.translate( 'Edit plugin settings' ) }
+						href={ addSiteFragment( path, slug ) }>
+						{ translate( 'Edit plugin settings' ) }
 					</CompactCard>
 				}
 
-				{ ! this.props.isMock && get( this.props.selectedSite, 'jetpack' ) &&
+				{ ! isMock && get( selectedSite, 'jetpack' ) &&
 					<PluginInformation
-						plugin={ this.props.plugin }
-						isPlaceholder={ this.props.isPlaceholder }
-						site={ this.props.selectedSite }
+						plugin={ plugin }
+						isPlaceholder={ isPlaceholder }
+						site={ selectedSite }
 						pluginVersion={ plugin && plugin.version }
-						siteVersion={ this.props.selectedSite && this.props.selectedSite.options.software_version }
+						siteVersion={ selectedSite && selectedSite.options.software_version }
 						hasUpdate={ this.getAvailableNewVersions().length > 0 }
 					/>
 				}
 
-				{ this.props.atEnabled &&
+				{ atEnabled &&
 					this.maybeDisplayUnsupportedNotice()
 				}
 
-				{ this.props.atEnabled && this.hasBusinessPlan() && ! get( this.props.selectedSite, 'jetpack' ) &&
-					<PluginAutomatedTransfer plugin={ this.props.plugin } />
+				{ atEnabled && this.hasBusinessPlan() && ! get( selectedSite, 'jetpack' ) &&
+					<PluginAutomatedTransfer plugin={ plugin } />
 				}
 
-				{ ( this.props.selectedSite &&
-					get( this.props.selectedSite, 'jetpack' ) || this.hasBusinessPlan() || this.isWpcomPreinstalled() ) &&
+				{ ( selectedSite &&
+					get( selectedSite, 'jetpack' ) || this.hasBusinessPlan() || this.isWpcomPreinstalled() ) &&
 					<div style={ { marginBottom: 16 } } />
 				}
 
-				{ this.props.selectedSite && ! get( this.props.selectedSite, 'jetpack' ) &&
+				{ selectedSite && ! get( selectedSite, 'jetpack' ) &&
 					! this.hasBusinessPlan() &&
 					! this.isWpcomPreinstalled() &&
 					<div className="plugin-meta__upgrade_nudge">
@@ -498,7 +505,7 @@ class PluginMeta extends Component {
 							feature={ FEATURE_UPLOAD_PLUGINS }
 							event={ 'calypso_plugin_detail_page_upgrade_nudge' }
 							plan={ PLAN_BUSINESS }
-							title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
+							title={ translate( 'Upgrade to the Business plan to install plugins.' ) }
 						/>
 					</div>
 				}
