@@ -5,11 +5,11 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { throttle } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import ObserveWindowSizeMixin from 'lib/mixins/observe-window-resize';
 import Button from 'components/button';
 import viewport from 'lib/viewport';
 
@@ -22,10 +22,7 @@ const HIDE_BACK_CRITERIA = {
 };
 
 export default React.createClass( {
-
 	displayName: 'HeaderCakeBack',
-
-	mixins: [ ObserveWindowSizeMixin ],
 
 	propTypes: {
 		onClick: PropTypes.func,
@@ -39,6 +36,19 @@ export default React.createClass( {
 			spacer: false,
 			disabled: false
 		};
+	},
+
+	componentDidMount() {
+		this.resizeThrottled = throttle( this.handleWindowResize, 100 );
+		window.addEventListener( 'resize', this.resizeThrottled );
+	},
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.resizeThrottled );
+	},
+
+	handleWindowResize() {
+		this.forceUpdate();
 	},
 
 	hideText( text ) {
@@ -69,10 +79,6 @@ export default React.createClass( {
 				{ ! this.hideText( text ) && text }
 			</Button>
 		);
-	},
-
-	onWindowResize() {
-		this.forceUpdate();
 	}
 
 } );
