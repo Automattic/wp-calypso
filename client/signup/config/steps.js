@@ -122,7 +122,7 @@ export default {
 		props: {
 			isDomainOnly: false
 		},
-		dependencies: [ 'themeSlugWithRepo' ],
+		dependencies: [ 'designType', 'themeSlugWithRepo' ],
 		delayApiRequestUntilComplete: true
 	},
 
