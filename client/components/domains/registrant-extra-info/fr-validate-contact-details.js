@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, reduce, set } from 'lodash';
+import { reduce, update } from 'lodash';
 import validatorFactory from 'is-my-json-valid';
 import debugFactory from 'debug';
 
@@ -23,15 +23,13 @@ export default function validateContactDetails( contactDetails ) {
 
 	return reduce(
 		validate.errors,
-		( acc, { field, message } ) => {
+		( accumulatedErrors, { field, message } ) => {
 			// Drop 'data.' prefix
 			const path = String( field ).split( '.' ).slice( 1 );
 
-			return set(
-				acc,
-				path,
-				[ ...get( acc, path, [] ), message ]
-			);
+			const appendThisMessage = ( before ) => [ ...( before || [] ), message ];
+
+			return update( accumulatedErrors, path, appendThisMessage );
 		},
 		{}
 	);
