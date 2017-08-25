@@ -1,0 +1,9 @@
+{
+    "autoprefixer": {
+        "browsers": "last 2 versions, > 1%, Safari >= 8, iOS >= 8, Firefox ESR, Opera 12.1"
+    },
+    "postcss-custom-properties": {
+        "preserve": "true",
+        "warnings": "false"
+    }
+}
