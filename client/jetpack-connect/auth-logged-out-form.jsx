@@ -116,12 +116,12 @@ class LoggedOutForm extends Component {
 				{ this.renderLocaleSuggestions() }
 				{ this.renderFormHeader() }
 				<SignupForm
-					getRedirectToAfterLoginUrl={ this.getRedirectAfterLoginUrl() }
 					disabled={ isAuthorizing }
+					footerLink={ this.renderFooterLink() }
 					submitting={ isAuthorizing }
 					submitForm={ this.handleSubmitSignup }
 					submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
-					footerLink={ this.renderFooterLink() }
+					redirectToAfterLoginUrl={ this.getRedirectAfterLoginUrl() }
 					suggestedUsername={ get( userData, 'username', '' ) }
 				/>
 				{ userData && this.renderLoginUser() }
