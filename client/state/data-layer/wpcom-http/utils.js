@@ -46,7 +46,9 @@ export const getProgress = action => get( action, 'meta.dataLayer.progress', nul
 export const makeParser = ( schema, schemaOptions = {}, transformer = identity ) => {
 	const options = Object.assign( { verbose: true }, schemaOptions );
 	const validator = schemaValidator( schema, options );
-	const filter = schemaValidator.filter( schema );
+
+	// filter out unwanted properties even though we may have let them slip past validation
+	const filter = schemaValidator.filter( { ...schema, additionalProperties: false } );
 
 	return responseData => validator( responseData )
 		? [ true, transformer( filter( responseData ) ) ]
@@ -86,12 +88,13 @@ const defaultOptions = {
  *   onSuccess  :: ReduxStore -> Action -> Dispatcher -> ResponseData
  *   onError    :: ReduxStore -> Action -> Dispatcher -> ErrorData
  *   onProgress :: ReduxStore -> Action -> Dispatcher -> ProgressData
+ *   fromApi    :: ResponseData -> [ Boolean, Data ]
  *
  * @param {Function} initiator called if action lacks response meta; should create HTTP request
  * @param {Function} onSuccess called if the action meta includes response data
  * @param {Function} onError called if the action meta includes error data
  * @param {Object} options configures additional dispatching behaviors
- + @param {Function} [options.middleware] runs before the dispatch itself
+ + @param {Function} [options.fromApi] maps between API data and Calypso data
  + @param {Function} [options.onProgress] called on progress events when uploading
  * @returns {?*} please ignore return values, they are undefined
  */
