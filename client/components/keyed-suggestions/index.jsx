@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
 	has,
 	noop,
@@ -25,18 +26,18 @@ function SuggestionsButtonAll( props ) {
 	}
 
 	return <span
-		className="suggestions__category-show-all"
+		className="keyed-suggestions__category-show-all"
 		onClick={ click }>
 		{ props.label }
 	</span>;
 }
 
-class Suggestions extends React.Component {
+class KeyedSuggestions extends React.Component {
 
 	static propTypes = {
-		suggest: React.PropTypes.func,
-		terms: React.PropTypes.object,
-		input: React.PropTypes.string,
+		suggest: PropTypes.func,
+		terms: PropTypes.object,
+		input: PropTypes.string,
 	}
 
 	static defaultProps = {
@@ -252,9 +253,9 @@ class Suggestions extends React.Component {
 			const key = text + i;
 			const lowercasePart = part.toLowerCase();
 			if ( lowercasePart === highlightedText ) {
-				return <span key={ key } className="suggestions__value-emphasis" >{ part }</span>;
+				return <span key={ key } className="keyed-suggestions__value-emphasis" >{ part }</span>;
 			}
-			return <span key={ key } className="suggestions__value-normal" >{ part }</span>;
+			return <span key={ key } className="keyed-suggestions__value-normal" >{ part }</span>;
 		} );
 
 		return token;
@@ -282,9 +283,9 @@ class Suggestions extends React.Component {
 			const total = Object.keys( this.props.terms[ key ] ).length.toString();
 			//Add header
 			rendered.push(
-				<div className="suggestions__category" key={ key }>
-					<span className="suggestions__category-name">{ key }</span>
-					<span className="suggestions__category-counter">
+				<div className="keyed-suggestions__category" key={ key }>
+					<span className="keyed-suggestions__category-name">{ key }</span>
+					<span className="keyed-suggestions__category-counter">
 						{ i18n.translate( '%(filtered)s of %(total)s', {
 							args: { filtered, total }
 						} ) }
@@ -306,15 +307,15 @@ class Suggestions extends React.Component {
 			rendered.push( suggestions[ key ].map( ( value, i ) => {
 				const taxonomyName = terms[ key ][ value ].name;
 				const hasHighlight = ( noOfSuggestions + i ) === this.state.suggestionPosition;
-				const className = classNames( 'suggestions__value', { 'has-highlight': hasHighlight } );
+				const className = classNames( 'keyed-suggestions__value', { 'has-highlight': hasHighlight } );
 				return (
 					<span className={ className } onMouseDown={ this.onMouseDown } onMouseOver={ this.onMouseOver } key={ key + '_' + i }>
-						<span className="suggestions__value-category">{ key + ':' + value + ' '}</span>
-						<span className="suggestions__value-label-wigh-highlight">
+						<span className="keyed-suggestions__value-category">{ key + ':' + value + ' '}</span>
+						<span className="keyed-suggestions__value-label-wigh-highlight">
 							{ this.createTextWithHighlight( taxonomyName, this.state.filterTerm ) }
 						</span>
 						{ terms[ key ][ value ].description !== '' &&
-							<span className="suggestions__value-description">{ terms[ key ][ value ].description }</span>
+							<span className="keyed-suggestions__value-description">{ terms[ key ][ value ].description }</span>
 						}
 					</span>
 				);
@@ -323,15 +324,15 @@ class Suggestions extends React.Component {
 			noOfSuggestions += suggestions[ key ].length;
 		}
 
-		return <div className="suggestions__suggestions">{ rendered }</div>;
+		return <div className="keyed-suggestions__suggestions">{ rendered }</div>;
 	}
 
 	render() {
 		return (
-			<div className="suggestions">{ this.createSuggestions( this.state.suggestions ) }</div>
+			<div className="keyed-suggestions">{ this.createSuggestions( this.state.suggestions ) }</div>
 		);
 	}
 
 }
 
-export default Suggestions;
+export default KeyedSuggestions;
