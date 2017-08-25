@@ -16,7 +16,7 @@ import { isEnabled } from 'config';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
-import { isSingleUserSite, getSite, getSiteTitle } from 'state/sites/selectors';
+import { isSingleUserSite } from 'state/sites/selectors';
 import { areAllSitesSingleUser } from 'state/selectors';
 import { isSharePanelOpen } from 'state/ui/post-type-list/selectors';
 import { hideSharePanel } from 'state/ui/post-type-list/actions';
@@ -145,8 +145,6 @@ class PostItem extends React.Component {
 			className,
 			post,
 			globalId,
-			site,
-			siteTitle,
 			isAllSitesModeSelected,
 			compact,
 			editUrl,
