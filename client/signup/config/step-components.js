@@ -41,4 +41,5 @@ export default {
 	'themes-site-selected': ThemeSelectionComponent,
 	user: UserSignupComponent,
 	'user-social': UserSignupComponent,
+	'oauth2-user': UserSignupComponent
 };

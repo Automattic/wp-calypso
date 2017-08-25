@@ -21,7 +21,7 @@ export class SignupProcessingScreen extends Component {
 		hasCartItems: PropTypes.bool.isRequired,
 		loginHandler: PropTypes.func,
 		steps: PropTypes.array.isRequired,
-		user: PropTypes.object,
+		user: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		signupProgress: PropTypes.array,
 		flow: PropTypes.string,
 	};
