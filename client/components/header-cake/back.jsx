@@ -35,6 +35,10 @@ class HeaderCakeBack extends Component {
 		disabled: false,
 	};
 
+	state = {
+		windowWidth: viewport.getWindowInnerWidth(),
+	};
+
 	componentDidMount() {
 		this.resizeThrottled = throttle( this.handleWindowResize, 100 );
 		window.addEventListener( 'resize', this.resizeThrottled );
@@ -44,17 +48,17 @@ class HeaderCakeBack extends Component {
 		window.removeEventListener( 'resize', this.resizeThrottled );
 	}
 
-	handleWindowResize() {
-		//this.forceUpdate();
+	handleWindowResize = () => {
+		this.setState( {
+			windowWidth: viewport.getWindowInnerWidth(),
+		} );
 	}
 
 	hideText( text ) {
-		const windowWidth = viewport.getWindowInnerWidth();
-
 		if (
-			windowWidth <= HIDE_BACK_CRITERIA.windowWidth &&
+			this.state.windowWidth <= HIDE_BACK_CRITERIA.windowWidth &&
 			text.length >= HIDE_BACK_CRITERIA.characterLength ||
-			windowWidth <= 300
+			this.state.windowWidth <= 300
 		) {
 			return true;
 		}
