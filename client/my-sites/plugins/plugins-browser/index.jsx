@@ -123,11 +123,11 @@ const PluginsBrowser = React.createClass( {
 	translateCategory( category ) {
 		switch ( category ) {
 			case 'new':
-				return this.translate( 'New', { context: 'Category description for the plugin browser.' } );
+				return this.props.translate( 'New', { context: 'Category description for the plugin browser.' } );
 			case 'popular':
-				return this.translate( 'Popular', { context: 'Category description for the plugin browser.' } );
+				return this.props.translate( 'Popular', { context: 'Category description for the plugin browser.' } );
 			case 'featured':
-				return this.translate( 'Featured', { context: 'Category description for the plugin browser.' } );
+				return this.props.translate( 'Featured', { context: 'Category description for the plugin browser.' } );
 		}
 	},
 
@@ -147,7 +147,7 @@ const PluginsBrowser = React.createClass( {
 	getSearchListView( searchTerm ) {
 		const isFetching = this.state.fullLists.search ? !! this.state.fullLists.search.fetching : true;
 		if ( this.getPluginsFullList( 'search' ).length > 0 || isFetching ) {
-			const searchTitle = this.props.searchTitle || this.translate( 'Results for: %(searchTerm)s', {
+			const searchTitle = this.props.searchTitle || this.props.translate( 'Results for: %(searchTerm)s', {
 				textOnly: true,
 				args: {
 					searchTerm
@@ -164,7 +164,7 @@ const PluginsBrowser = React.createClass( {
 		return (
 			<NoResults
 				text={
-					this.translate( 'No plugins match your search for {{searchTerm/}}.', {
+					this.props.translate( 'No plugins match your search for {{searchTerm/}}.', {
 						textOnly: true,
 						components: { searchTerm: <em>{ searchTerm }</em> }
 					} )
@@ -222,31 +222,31 @@ const PluginsBrowser = React.createClass( {
 
 	getNavigationBar() {
 		const site = this.props.site ? '/' + this.props.site : '';
-		return <SectionNav selectedText={ this.translate( 'Category', { context: 'Category of plugins to be filtered by' } ) }>
+		return <SectionNav selectedText={ this.props.translate( 'Category', { context: 'Category of plugins to be filtered by' } ) }>
 			<NavTabs label="Category">
 				<NavItem
 					path={ '/plugins/browse' + site }
 					selected={ false }
 				>
-					{ this.translate( 'All', { context: 'Filter all plugins' } ) }
+					{ this.props.translate( 'All', { context: 'Filter all plugins' } ) }
 				</NavItem>
 				<NavItem
 					path={ '/plugins/browse/featured' + site }
 					selected={ this.props.path === ( '/plugins/browse/featured' + site ) }
 				>
-					{ this.translate( 'Featured', { context: 'Filter featured plugins' } ) }
+					{ this.props.translate( 'Featured', { context: 'Filter featured plugins' } ) }
 				</NavItem>
 				<NavItem
 					path={ '/plugins/browse/popular' + site }
 					selected={ this.props.path === ( '/plugins/browse/popular' + site ) }
 				>
-					{ this.translate( 'Popular', { context: 'Filter popular plugins' } ) }
+					{ this.props.translate( 'Popular', { context: 'Filter popular plugins' } ) }
 				</NavItem>
 				<NavItem
 					path={ '/plugins/browse/new' + site }
 					selected={ this.props.path === ( '/plugins/browse/new' + site ) }
 				>
-					{ this.translate( 'New', { context: 'Filter new plugins' } ) }
+					{ this.props.translate( 'New', { context: 'Filter new plugins' } ) }
 				</NavItem>
 			</NavTabs>
 			{ this.getSearchBox( true ) }
@@ -273,12 +273,12 @@ const PluginsBrowser = React.createClass( {
 		return <PluginsBrowserList
 			plugins={ this.getPluginsShortList( 'popular' ) }
 			listName={ 'Plugins' }
-			title={ this.translate( 'Popular Plugins' ) }
+			title={ this.props.translate( 'Popular Plugins' ) }
 			size={ 12 } />;
 	},
 
 	renderDocumentHead() {
-		return <DocumentHead title={ this.translate( 'Plugin Browser', { textOnly: true } ) } />;
+		return <DocumentHead title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />;
 	},
 
 	renderJetpackManageError() {
@@ -290,7 +290,7 @@ const PluginsBrowser = React.createClass( {
 				<SidebarNavigation />
 				<JetpackManageErrorPage
 					template="optInManage"
-					title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
+					title={ this.props.translate( 'Looking to manage this site\'s plugins?' ) }
 					siteId={ selectedSiteId }
 					section="plugins"
 					illustration="/calypso/images/jetpack/jetpack-manage.svg"
