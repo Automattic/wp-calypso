@@ -15,7 +15,7 @@ import Card from 'components/card';
 import ExternalLink from 'components/external-link';
 import Version from 'components/version';
 import PluginRatings from 'my-sites/plugins/plugin-ratings/';
-import { getExtensionSettingsPath } from 'my-sites/plugins/util';
+import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import versionCompare from 'lib/version-compare';
 import analytics from 'lib/analytics';
 
