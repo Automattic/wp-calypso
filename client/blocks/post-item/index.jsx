@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { findDOMNode } from 'react-dom';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -36,10 +35,8 @@ class PostItem extends React.Component {
 	constructor() {
 		super( ...arguments );
 
-		this.state = {
-			nodeHeight: 0,
-		};
-
+		this.node = null;
+		this.nodeHeight = 0;
 		this.hasVariableHeightContent = false;
 	}
 
@@ -71,11 +68,11 @@ class PostItem extends React.Component {
 	}
 
 	connectMutationObserver() {
-		if ( this.observer ) {
+		if ( this.observer || ! this.node ) {
 			return;
 		}
 		this.observer = new window.MutationObserver( this.handleHeightChange );
-		this.observer.observe( findDOMNode( this ), {
+		this.observer.observe( this.node, {
 			childList: true,
 			subtree: true,
 		} );
@@ -90,18 +87,17 @@ class PostItem extends React.Component {
 	}
 
 	handleHeightChange = () => {
-		const domNode = findDOMNode( this );
-		if ( ! domNode ) {
+		if ( ! this.node ) {
 			return;
 		}
 
-		const style = window.getComputedStyle( domNode );
-		const nodeHeight = domNode.clientHeight +
+		const style = window.getComputedStyle( this.node );
+		const nodeHeight = this.node.clientHeight +
 			parseInt( style.marginTop, 10 ) +
 			parseInt( style.marginBottom, 10 );
 
-		if ( nodeHeight && nodeHeight !== this.state.nodeHeight ) {
-			this.setState( { nodeHeight } );
+		if ( nodeHeight && nodeHeight !== this.nodeHeight ) {
+			this.nodeHeight = nodeHeight;
 			this.props.onHeightChange( { nodeHeight, globalId: this.props.globalId } );
 		}
 	}
@@ -167,7 +163,10 @@ class PostItem extends React.Component {
 		} );
 
 		return (
-			<div className={ rootClasses }>
+			<div
+				className={ rootClasses }
+				ref={ node => this.node = node }
+			>
 				<Card compact className={ cardClasses }>
 					<div className="post-item__detail">
 						<div className={ titleMetaClasses }>
