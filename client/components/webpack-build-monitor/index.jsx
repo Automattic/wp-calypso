@@ -81,7 +81,7 @@ const store = createStore(
 );
 
 const wrapConsole = fn => ( message, ...args ) => {
-	store.dispatch( { type: CONSOLE_MESSAGE, message } );
+	new Promise().then( () => store.dispatch( { type: CONSOLE_MESSAGE, message } ) );
 	fn.call( window, message, ...args );
 };
 
