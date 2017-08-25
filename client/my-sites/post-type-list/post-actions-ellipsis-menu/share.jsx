@@ -14,6 +14,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { mc } from 'lib/analytics';
 import { getPost } from 'state/posts/selectors';
 import { toggleSharePanel } from 'state/ui/post-type-list/actions';
+import { isPublicizeEnabled } from 'state/selectors';
 import config from 'config';
 
 class PostActionsEllipsisMenuShare extends Component {
@@ -37,8 +38,12 @@ class PostActionsEllipsisMenuShare extends Component {
 	}
 
 	render() {
-		const { translate, status } = this.props;
-		if ( ! config.isEnabled( 'posts/post-type-list' ) || ! includes( [ 'publish' ], status ) ) {
+		const { translate, status, isPublicizeEnabled: isPublicizeEnabledForSite } = this.props;
+		if (
+			! config.isEnabled( 'posts/post-type-list' ) ||
+			! includes( [ 'publish' ], status ) ||
+			! isPublicizeEnabledForSite
+		) {
 			return null;
 		}
 
@@ -59,6 +64,7 @@ export default connect(
 
 		return {
 			status: post.status,
+			isPublicizeEnabled: isPublicizeEnabled( state, post.site_ID, post.type ),
 		};
 	}, {
 		toggleSharePanel,
