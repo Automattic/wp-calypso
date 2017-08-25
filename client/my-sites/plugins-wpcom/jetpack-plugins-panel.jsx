@@ -29,6 +29,7 @@ import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 import jetpackPlugins from './jetpack-plugins';
 import Tooltip from 'components/tooltip';
+import { isEnabled } from 'config';
 
 const filterGroup = category => group => {
 	if ( category && category !== 'all' ) {
@@ -193,16 +194,20 @@ class JetpackPluginsPanel extends Component {
 						</Button>
 					</ButtonGroup>
 
-					<ButtonGroup key="plugin-list-header__buttons-upload">
-						<Button
-							compact
-							href={ uploadUrl }
-							aria-label={ translate( 'Upload plugin', { context: 'button label' } ) }
-						>
-							<Gridicon icon="cloud-upload" size={ 18 } />
-							{ translate( 'Upload plugin' ) }
-						</Button>
-					</ButtonGroup>
+					{
+						isEnabled( 'manage/plugins/upload' ) && (
+							<ButtonGroup key="plugin-list-header__buttons-upload">
+								<Button
+									compact
+									href={ uploadUrl }
+									aria-label={ translate( 'Upload plugin', { context: 'button label' } ) }
+								>
+									<Gridicon icon="cloud-upload" size={ 18 } />
+									{ translate( 'Upload plugin' ) }
+								</Button>
+							</ButtonGroup>
+						)
+					}
 				</SectionHeader>
 
 				<CompactCard className="plugins-wpcom__jetpack-main-plugin plugins-wpcom__jetpack-plugin-item">

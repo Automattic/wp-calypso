@@ -20,6 +20,7 @@ import DropdownSeparator from 'components/select-dropdown/separator';
 import BulkSelect from 'components/bulk-select';
 import Tooltip from 'components/tooltip';
 import analytics from 'lib/analytics';
+import { isEnabled } from 'config';
 
 // Constants help determine if the action bar should be a dropdown
 const MAX_ACTIONBAR_HEIGHT = 57;
@@ -191,22 +192,23 @@ export class PluginsListHeader extends PureComponent {
 				</ButtonGroup>
 			);
 
-			const uploadUrl = '/plugins/upload' + ( this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '' );
+			if ( isEnabled( 'manage/plugins/upload' ) ) {
+				const uploadUrl = '/plugins/upload' + ( this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '' );
 
-			rightSideButtons.push(
-				<ButtonGroup key="plugin-list-header__buttons-upload">
-					<Button
-						compact
-						href={ uploadUrl }
-						onClick={ this.onUploadLinkClick }
-						className="plugin-list-header__upload-button"
-						aria-label={ translate( 'Upload plugin', { context: 'button label' } ) }
-					>
-						<Gridicon icon="cloud-upload" size={ 18 } />
-						{ translate( 'Upload plugin' ) }
-					</Button>
-				</ButtonGroup>
-			);
+				rightSideButtons.push(
+					<ButtonGroup key="plugin-list-header__buttons-upload">
+						<Button
+							compact
+							href={ uploadUrl }
+							onClick={ this.onUploadLinkClick }
+							aria-label={ translate( 'Upload plugin', { context: 'button label' } ) }
+						>
+							<Gridicon icon="cloud-upload" size={ 18 } />
+							{ translate( 'Upload plugin' ) }
+						</Button>
+					</ButtonGroup>
+				);
+			}
 		} else {
 			const updateButton = (
 				<Button
