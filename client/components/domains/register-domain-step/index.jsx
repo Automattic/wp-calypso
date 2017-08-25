@@ -59,6 +59,8 @@ const fetchAlgo = searchVendor + '/v1';
 
 let searchCount = 0;
 
+let initialState;
+
 function getQueryObject( props ) {
 	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
 		return null;
@@ -105,7 +107,7 @@ class RegisterDomainStep extends React.Component {
 
 		const suggestion = this.props.suggestion ? getFixedDomainSearch( this.props.suggestion ) : '';
 
-		this.state = {
+		initialState = {
 			clickedExampleSuggestion: false,
 			lastQuery: suggestion,
 			lastDomainSearched: null,
@@ -114,6 +116,7 @@ class RegisterDomainStep extends React.Component {
 			notice: null,
 			searchResults: null,
 		};
+		this.state = initialState;
 	}
 
 	getNewRailcarSeed() {
@@ -126,7 +129,7 @@ class RegisterDomainStep extends React.Component {
 	componentWillReceiveProps( nextProps ) {
 		// Reset state on site change
 		if ( nextProps.selectedSite && nextProps.selectedSite.slug !== ( this.props.selectedSite || {} ).slug ) {
-			this.setState( this.getInitialState() );
+			this.setState( initialState );
 		}
 
 		if ( this.props.defaultSuggestionsError === nextProps.defaultSuggestionsError ||
@@ -171,11 +174,15 @@ class RegisterDomainStep extends React.Component {
 		this._isMounted = false;
 	}
 
+	componentWillUnmount() {
+		this._isMounted = false;
+	}
+
 	componentDidMount() {
 		if ( this.state.lastQuery ) {
 			this.onSearch( this.state.lastQuery );
 		}
-		this.props.searchFormView( this.props.analyticsSection );
+		this.props.recordSearchFormView( this.props.analyticsSection );
 
 		this._isMounted = true;
 	}
@@ -281,7 +288,7 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
-		this.props.searchFormSubmit( searchQuery, this.props.analyticsSection, searchCount, searchVendor );
+		this.props.recordSearchFormSubmit( searchQuery, this.props.analyticsSection, searchCount, searchVendor );
 		searchCount++;
 
 		this.setState( {
@@ -316,7 +323,7 @@ class RegisterDomainStep extends React.Component {
 							this.showValidationErrorMessage( domain, status );
 						}
 
-						this.props.domainAvailabilityReceive( domain, status, timeDiff, this.props.analyticsSection );
+						this.props.recordDomainAvailabilityReceive( domain, status, timeDiff, this.props.analyticsSection );
 
 						this.props.onDomainsAvailabilityChange( true );
 						callback( null, isDomainAvailable ? result : null );
@@ -338,7 +345,7 @@ class RegisterDomainStep extends React.Component {
 						const timeDiff = Date.now() - timestamp;
 						const analyticsResults = domainSuggestions.map( suggestion => suggestion.domain_name );
 
-						this.props.searchResultsReceive(
+						this.props.recordSearchResultsReceive(
 							domain,
 							analyticsResults,
 							timeDiff,
@@ -358,7 +365,7 @@ class RegisterDomainStep extends React.Component {
 						}
 
 						const analyticsResults = [ error.code || error.error || 'ERROR' + ( error.statusCode || '' ) ];
-						this.props.searchResultsReceive(
+						this.props.recordSearchResultsReceive(
 							domain,
 							analyticsResults,
 							timeDiff,
@@ -543,7 +550,7 @@ class RegisterDomainStep extends React.Component {
 	goToMapDomainStep = ( event ) => {
 		event.preventDefault();
 
-		this.props.mapDomainButtonClick( this.props.analyticsSection );
+		this.props.recordMapDomainButtonClick( this.props.analyticsSection );
 
 		page( this.getMapDomainUrl() );
 	};
@@ -554,7 +561,7 @@ class RegisterDomainStep extends React.Component {
 	}
 }
 
-const mapDomainButtonClick = ( section ) => composeAnalytics(
+const recordMapDomainButtonClick = ( section ) => composeAnalytics(
 	recordGoogleEvent(
 		'Domain Search',
 		'Clicked "Map it" Button'
@@ -565,7 +572,7 @@ const mapDomainButtonClick = ( section ) => composeAnalytics(
 	),
 );
 
-const searchFormSubmit = ( searchBoxValue, section, count, vendor ) => composeAnalytics(
+const recordSearchFormSubmit = ( searchBoxValue, section, count, vendor ) => composeAnalytics(
 	recordGoogleEvent(
 		'Domain Search',
 		'Submitted Search Form',
@@ -583,7 +590,7 @@ const searchFormSubmit = ( searchBoxValue, section, count, vendor ) => composeAn
 	),
 );
 
-const searchFormView = ( section ) => composeAnalytics(
+const recordSearchFormView = ( section ) => composeAnalytics(
 	recordGoogleEvent(
 		'Domain Search',
 		'Landed on Search'
@@ -594,7 +601,7 @@ const searchFormView = ( section ) => composeAnalytics(
 	),
 );
 
-const searchResultsReceive = ( searchQuery, searchResults, responseTimeInMs, resultCount, section ) => composeAnalytics(
+const recordSearchResultsReceive = ( searchQuery, searchResults, responseTimeInMs, resultCount, section ) => composeAnalytics(
 	recordGoogleEvent(
 		'Domain Search',
 		'Receive Results',
@@ -613,7 +620,7 @@ const searchResultsReceive = ( searchQuery, searchResults, responseTimeInMs, res
 	),
 );
 
-const domainAvailabilityReceive = ( searchQuery, availableStatus, responseTimeInMs, section ) => composeAnalytics(
+const recordDomainAvailabilityReceive = ( searchQuery, availableStatus, responseTimeInMs, section ) => composeAnalytics(
 	recordGoogleEvent(
 		'Domain Search',
 		'Domain Availability Result',
@@ -641,10 +648,10 @@ export default connect(
 		};
 	},
 	{
-		domainAvailabilityReceive,
-		mapDomainButtonClick,
-		searchFormSubmit,
-		searchFormView,
-		searchResultsReceive,
+		recordDomainAvailabilityReceive,
+		recordMapDomainButtonClick,
+		recordSearchFormSubmit,
+		recordSearchFormView,
+		recordSearchResultsReceive,
 	}
 )( localize( RegisterDomainStep ) );
