@@ -21,7 +21,7 @@ export default {
 	themes: {
 		stepName: 'themes',
 		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'themeSlugWithRepo' ]
+		providesDependencies: [ 'themeSlugWithRepo', 'designType' ]
 	},
 
 	'portfolio-themes': {
@@ -30,7 +30,7 @@ export default {
 			designType: 'grid'
 		},
 		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'themeSlugWithRepo' ]
+		providesDependencies: [ 'themeSlugWithRepo', 'designType' ]
 	},
 
 	// `themes` does not update the theme for an existing site as we normally
@@ -39,7 +39,7 @@ export default {
 	'themes-site-selected': {
 		stepName: 'themes-site-selected',
 		dependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
-		providesDependencies: [ 'themeSlugWithRepo' ],
+		providesDependencies: [ 'themeSlugWithRepo', 'designType' ],
 		apiRequestFunction: stepActions.setThemeOnSite,
 		props: {
 			headerText: i18n.translate( 'Choose a theme for your new site.' ),
@@ -160,7 +160,7 @@ export default {
 			designType: 'blog'
 		},
 		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'themeSlugWithRepo' ]
+		providesDependencies: [ 'themeSlugWithRepo', 'designType' ]
 	},
 
 	// Currently, these two steps explicitly submit other steps to skip them, and

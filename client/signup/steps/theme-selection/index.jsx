@@ -47,17 +47,22 @@ class ThemeSelectionStep extends Component {
 			processingMessage: this.props.translate( 'Adding your theme' ),
 			repoSlug
 		}, null, {
-			themeSlugWithRepo: repoSlug
+			themeSlugWithRepo: repoSlug,
+			designType: this.getDesignType()
 		} );
 
 		this.props.goToNextStep();
 	};
 
+	getDesignType() {
+		return this.props.designType || this.props.signupDependencies.designType;
+	}
+
 	renderThemesList() {
 		return (
 			<SignupThemesList
 				surveyQuestion={ this.props.chosenSurveyVertical }
-				designType={ this.props.designType || this.props.signupDependencies.designType }
+				designType={ this.getDesignType() }
 				handleScreenshotClick={ this.pickTheme }
 			/>
 		);
