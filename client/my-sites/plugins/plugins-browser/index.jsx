@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import DocumentHead from 'components/data/document-head';
 import Search from 'components/search';
-import SearchCard from 'components/search-card';
 import SectionNav from 'components/section-nav';
 import MainComponent from 'components/main';
 import NavTabs from 'components/section-nav/tabs';
@@ -23,7 +22,6 @@ import PluginsActions from 'lib/plugins/wporg-data/actions';
 import URLSearch from 'lib/mixins/url-search';
 import infiniteScroll from 'lib/mixins/infinite-scroll';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import { hasTouch } from 'lib/touch-detect';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -195,29 +193,17 @@ const PluginsBrowser = React.createClass( {
 		);
 	},
 
-	getSearchBox( pinned ) {
-		if ( pinned ) {
-			return (
-				<Search
-					pinned
-					fitsContainer
-					onSearch={ this.doSearch }
-					initialValue={ this.props.search }
-					placeholder={ this.translate( 'Search Plugins' ) }
-					delaySearch={ true }
-					analyticsGroup="PluginsBrowser" />
-			);
-		}
-
+	getSearchBox() {
 		return (
-			<SearchCard
-				autoFocus={ ! hasTouch() }
+			<Search
+				pinned
+				fitsContainer
 				onSearch={ this.doSearch }
 				initialValue={ this.props.search }
-				placeholder={ this.translate( 'Search Plugins' ) }
+				placeholder={ this.props.translate( 'Search Plugins' ) }
 				delaySearch={ true }
 				analyticsGroup="PluginsBrowser" />
-		);
+			);
 	},
 
 	getNavigationBar() {
@@ -249,7 +235,7 @@ const PluginsBrowser = React.createClass( {
 					{ this.props.translate( 'New', { context: 'Filter new plugins' } ) }
 				</NavItem>
 			</NavTabs>
-			{ this.getSearchBox( true ) }
+			{ this.getSearchBox() }
 		</SectionNav>;
 	},
 
@@ -262,10 +248,26 @@ const PluginsBrowser = React.createClass( {
 			return;
 		}
 
+		const site = this.props.site ? '/' + this.props.site : '';
+		const suggestedSearches = [
+			this.props.translate( 'Engagement', { context: 'Plugins suggested search term' } ),
+			this.props.translate( 'Security', { context: 'Plugins suggested search term' } ),
+			this.props.translate( 'Appearance', { context: 'Plugins suggested search term' } ),
+			this.props.translate( 'Writing', { context: 'Plugins suggested search term' } ),
+		];
+		// TODO: The Search does not get the search text when a suggested term is clicked
+		// TODO: do we still need any of the CSS in plugins-browser__main-header? It breaks the layout when the search field is open.
 		return (
-			<div className="plugins-browser__main-header">
-				{ this.getSearchBox( false ) }
-			</div>
+			<SectionNav selectedText={ this.props.translate( 'Suggested Searches', { context: 'Suggested searches for plugins' } ) }>
+				<NavTabs label="Suggested Searches">
+					{ suggestedSearches.map( term =>
+						<NavItem key={ term } onClick={ this.handleSuggestedSearch( term ) }>
+							{ term }
+						</NavItem>
+					) }
+				</NavTabs>
+				{ this.getSearchBox() }
+			</SectionNav>
 		);
 	},
 
