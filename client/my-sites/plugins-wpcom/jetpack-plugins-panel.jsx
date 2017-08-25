@@ -151,6 +151,7 @@ class JetpackPluginsPanel extends Component {
 			.filter( group => group.plugins.length > 0 );
 
 		const browserUrl = [ '/plugins/browse', this.props.siteSlug ].join( '/' );
+		const uploadUrl = '/plugins/upload' + ( this.props.siteSlug ? '/' + this.props.siteSlug : '' );
 
 		return (
 			<div className="plugins-wpcom__jetpack-plugins-panel">
@@ -189,6 +190,17 @@ class JetpackPluginsPanel extends Component {
 								position="bottom">
 								{ translate( 'Browse all plugins' ) }
 							</Tooltip>
+						</Button>
+					</ButtonGroup>
+
+					<ButtonGroup key="plugin-list-header__buttons-upload">
+						<Button
+							compact
+							href={ uploadUrl }
+							aria-label={ translate( 'Upload plugin', { context: 'button label' } ) }
+						>
+							<Gridicon icon="cloud-upload" size={ 18 } />
+							{ translate( 'Upload plugin' ) }
 						</Button>
 					</ButtonGroup>
 				</SectionHeader>
