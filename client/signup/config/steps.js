@@ -147,16 +147,6 @@ export default {
 		providesDependencies: [ 'bearer_token', 'username' ]
 	},
 
-	'oauth2-user': {
-		stepName: 'oauth2-user',
-		apiRequestFunction: stepActions.createAccount,
-		props: {
-			oauth2Signup: true
-		},
-		providesToken: true,
-		providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ]
-	},
-
 	'get-dot-blog-plans': {
 		apiRequestFunction: stepActions.createSiteWithCart,
 		stepName: 'get-dot-blog-plans',
