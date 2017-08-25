@@ -151,7 +151,6 @@
 .reader-full-post__story {
 	max-width: 720px;
 	font-size: 17px;
-	line-height: 28px;
 
 	@include breakpoint( "<480px" ) {
 		font-size: 15px;
@@ -165,6 +164,7 @@
 
 .reader-full-post__story-content {
 	color: $gray-dark;
+	line-height: 28px;
 }
 
 .reader-full-post__story-content img {
