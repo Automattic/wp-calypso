@@ -71,7 +71,7 @@ export default React.createClass( {
 					value: existingCreds.kpub
 				},
 				uploadPath: {
-					value: existingCreds.upload_path
+					value: existingCreds.abspath
 				},
 			}
 		} );
@@ -103,7 +103,7 @@ export default React.createClass( {
 				state.activityLog.rewindStatus[ siteId ].credentials[ connectionType ].credentials.pass = event.target.value;
 				break;
 			case 'uploadPath':
-				state.activityLog.rewindStatus[ siteId ].credentials[ connectionType ].credentials.upload_path = event.target.value;
+				state.activityLog.rewindStatus[ siteId ].credentials[ connectionType ].credentials.abspath = event.target.value;
 				break;
 		}
 
@@ -262,7 +262,7 @@ export default React.createClass( {
 									onChange={ this.handleChangeEvent }
 									name="uploadPath"
 									placeholder="/var/www/yoursite.com/"
-									value={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', connectionType, 'credentials', 'upload_path' ], '' ) }
+									value={ get( state, [ 'activityLog', 'rewindStatus', siteId, 'credentials', connectionType, 'credentials', 'abspath' ], '' ) }
 									readOnly={ isPressable }
 								/>
 							</td>
