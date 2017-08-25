@@ -167,7 +167,7 @@ class PostItem extends React.Component {
 			post && post.author && isEnabled( 'posts/post-type-list' );
 
 		const titleMetaClasses = classnames( 'post-item__title-meta', {
-			'is-site-visible': isSiteVisible || isAuthorVisible
+			'is-post-item-info-visible': isSiteVisible || isAuthorVisible
 		} );
 
 		const variableHeightContent = this.renderVariableHeightContent();
