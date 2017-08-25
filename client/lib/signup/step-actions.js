@@ -286,7 +286,7 @@ module.exports = {
 		SignupCart.addToCart( siteId, newCartItems, error => callback( error, { cartItem, privacyItem } ) );
 	},
 
-	createAccount( callback, dependencies, { userData, flowName, queryArgs, service, access_token, id_token }, reduxStore ) {
+	createAccount( callback, dependencies, { userData, flowName, queryArgs, service, access_token, id_token, oauth2Signup }, reduxStore ) {
 		const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 		const surveySiteType = getSurveySiteType( reduxStore.getState() ).trim();
 
@@ -309,7 +309,6 @@ module.exports = {
 				}
 			} );
 		} else {
-			const isOauth2Flow = !! queryArgs.oauth2_client_id;
 			wpcom.undocumented().usersNew( assign(
 				{}, userData, {
 					ab_test_variations: getSavedVariations(),
@@ -319,7 +318,7 @@ module.exports = {
 					nux_q_question_primary: surveyVertical,
 					// url sent in the confirmation email
 					jetpack_redirect: queryArgs.jetpack_redirect,
-				}, isOauth2Flow ? {
+				}, oauth2Signup ? {
 					oauth2_client_id: queryArgs.oauth2_client_id,
 					// url of the WordPress.com authorize page for this OAuth2 client
 					// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
@@ -337,7 +336,7 @@ module.exports = {
 
 				const providedDependencies = assign( {}, { username: userData.username }, bearerToken );
 
-				if ( isOauth2Flow ) {
+				if ( oauth2Signup ) {
 					assign( providedDependencies, {
 						oauth2_client_id: queryArgs.oauth2_client_id,
 						oauth2_redirect: queryArgs.oauth2_redirect,
