@@ -63,8 +63,6 @@ let lastSearchTimestamp = null;
 let searchCount = 0;
 let recordSearchFormSubmitWithDispatch;
 
-let initialState;
-
 function getQueryObject( props ) {
 	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
 		return null;
@@ -144,9 +142,15 @@ class RegisterDomainStep extends React.Component {
 	constructor( props ) {
 		super( props );
 
+		this.state = this.getState();
+
+		recordSearchFormSubmitWithDispatch = this.props.recordSearchFormSubmit;
+	}
+
+	getState() {
 		const suggestion = this.props.suggestion ? getFixedDomainSearch( this.props.suggestion ) : '';
 
-		initialState = {
+		return {
 			clickedExampleSuggestion: false,
 			lastQuery: suggestion,
 			lastDomainSearched: null,
@@ -155,9 +159,6 @@ class RegisterDomainStep extends React.Component {
 			notice: null,
 			searchResults: null,
 		};
-		this.state = initialState;
-
-		recordSearchFormSubmitWithDispatch = this.props.recordSearchFormSubmit;
 	}
 
 	getNewRailcarSeed() {
@@ -170,7 +171,7 @@ class RegisterDomainStep extends React.Component {
 	componentWillReceiveProps( nextProps ) {
 		// Reset state on site change
 		if ( nextProps.selectedSite && nextProps.selectedSite.slug !== ( this.props.selectedSite || {} ).slug ) {
-			this.setState( initialState );
+			this.setState( this.getState() );
 		}
 
 		if ( this.props.defaultSuggestionsError === nextProps.defaultSuggestionsError ||
