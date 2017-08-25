@@ -40,6 +40,14 @@ const PluginsBrowser = React.createClass( {
 
 	mixins: [ infiniteScroll( 'fetchNextPagePlugins' ), URLSearch ],
 
+	reinitializeSearch() {
+		this.WrappedSearch = props => <Search { ...props } />;
+	},
+
+	componentWillMount() {
+		this.reinitializeSearch();
+	},
+
 	componentDidMount() {
 		PluginsListStore.on( 'change', this.refreshLists );
 		this.props.sites.on( 'change', this.refreshLists );
@@ -194,8 +202,10 @@ const PluginsBrowser = React.createClass( {
 	},
 
 	getSearchBox() {
+		const { WrappedSearch } = this;
+
 		return (
-			<Search
+			<WrappedSearch
 				pinned
 				fitsContainer
 				onSearch={ this.doSearch }
@@ -239,6 +249,13 @@ const PluginsBrowser = React.createClass( {
 		</SectionNav>;
 	},
 
+	handleSuggestedSearch( term ) {
+		return () => {
+			this.reinitializeSearch();
+			this.doSearch( term );
+		};
+	},
+
 	getPageHeaderView() {
 		if ( this.props.category ) {
 			return this.getNavigationBar();
@@ -248,15 +265,13 @@ const PluginsBrowser = React.createClass( {
 			return;
 		}
 
-		const site = this.props.site ? '/' + this.props.site : '';
 		const suggestedSearches = [
 			this.props.translate( 'Engagement', { context: 'Plugins suggested search term' } ),
 			this.props.translate( 'Security', { context: 'Plugins suggested search term' } ),
 			this.props.translate( 'Appearance', { context: 'Plugins suggested search term' } ),
 			this.props.translate( 'Writing', { context: 'Plugins suggested search term' } ),
 		];
-		// TODO: The Search does not get the search text when a suggested term is clicked
-		// TODO: do we still need any of the CSS in plugins-browser__main-header? It breaks the layout when the search field is open.
+
 		return (
 			<SectionNav selectedText={ this.props.translate( 'Suggested Searches', { context: 'Suggested searches for plugins' } ) }>
 				<NavTabs label="Suggested Searches">
