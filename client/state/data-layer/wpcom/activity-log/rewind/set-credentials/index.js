@@ -19,7 +19,7 @@ const requestSetCredentials = ( { dispatch }, action ) => {
 	dispatch( http( {
 		apiVersion: 1,
 		method: 'POST',
-		path: `/activity-log/$( action.siteId }/rewind/set-credentials`,
+		path: `/activity-log/${ action.siteId }/rewind/update-credentials/$( action.role }`,
 		body: {
 			credentials: action.credentials
 		}

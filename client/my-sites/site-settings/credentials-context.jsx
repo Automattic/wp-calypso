@@ -89,6 +89,10 @@ export default React.createClass( {
 			connectionType
 		} = this.props;
 
+		if ( 'undefined' === typeof state.activityLog.rewindStatus[ siteId ].credentials[ connectionType ].credentials ) {
+			state.activityLog.rewindStatus[ siteId ].credentials[ connectionType ].credentials = {};
+		}
+
 		switch ( event.target.name ) {
 			case 'serverAddress':
 				state.activityLog.rewindStatus[ siteId ].credentials[ connectionType ].credentials.host = event.target.value;
@@ -122,7 +126,8 @@ export default React.createClass( {
 			serverPort: formState.getFieldValue( this.state.form, 'serverPort' ),
 			username: formState.getFieldValue( this.state.form, 'username' ),
 			password: formState.getFieldValue( this.state.form, 'password' ),
-			uploadPath: formState.getFieldValue( this.state.form, 'uploadPath' )
+			uploadPath: formState.getFieldValue( this.state.form, 'uploadPath' ),
+			role: 'main-' + this.props.connectionType,
 		};
 	},
 
