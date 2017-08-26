@@ -104,6 +104,16 @@ export default {
 		providesDependencies: [ 'siteTitle' ]
 	},
 
+	'site-type': {
+		stepName: 'site-type',
+		providesDependencies: [ 'siteType' ],
+		props: {
+			setSiteType: function( siteType ) {
+				console.log("Got site type ".siteType);
+			}
+		}
+	},
+
 	test: {
 		stepName: 'test'
 	},
