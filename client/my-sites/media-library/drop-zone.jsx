@@ -38,7 +38,7 @@ export default class extends React.Component {
 		}
 
 		MediaActions.clearValidationErrors( this.props.site.ID );
-		MediaActions.add( this.props.site.ID, files );
+		MediaActions.add( this.props.site, files );
 		this.props.onAddMedia();
 
 		if ( this.props.trackStats ) {

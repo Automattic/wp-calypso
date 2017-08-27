@@ -13,7 +13,6 @@ import { map } from 'lodash';
  * Internal dependencies
  */
 import MediaUtils from '../utils';
-import JetpackSite from 'lib/site/jetpack';
 
 jest.mock( 'lib/impure-lodash', () => ( {
 	uniqueId: () => 'media-13',
@@ -359,14 +358,14 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( 'should return true for versions of Jetpack where option is not synced', () => {
-			var isSupported = MediaUtils.isSupportedFileTypeForSite(
+			const isSupported = MediaUtils.isSupportedFileTypeForSite(
 				{ extension: 'exe' },
-				new JetpackSite( {
+				{
 					jetpack: true,
 					options: {
 						jetpack_version: '3.8.0',
 					},
-				} )
+				}
 			);
 
 			expect( isSupported ).to.be.true;
@@ -394,14 +393,14 @@ describe( 'MediaUtils', () => {
 				max_upload_size: 1024,
 			},
 		};
-		const jetpackSite = new JetpackSite( {
+		const jetpackSite = {
 			jetpack: true,
-			modules: [ 'videopress' ],
 			options: {
 				jetpack_version: '4.5',
 				max_upload_size: 1024,
+				active_modules: [ 'videopress' ],
 			},
-		} );
+		};
 
 		test( 'should return null if the provided `bytes` are not numeric', () => {
 			expect( MediaUtils.isExceedingSiteMaxUploadSize( {}, site ) ).to.be.null;
@@ -436,14 +435,14 @@ describe( 'MediaUtils', () => {
 		test( 'should not return null if a video is being uploaded for a pre-4.5 Jetpack site with VideoPress enabled', () => {
 			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize(
 				{ size: 1024, mime_type: 'video/mp4' },
-				new JetpackSite( {
+				{
 					jetpack: true,
-					modules: [ 'videopress' ],
 					options: {
 						jetpack_version: '3.8.1',
 						max_upload_size: 1024,
+						active_modules: [ 'videopress' ],
 					},
-				} )
+				}
 			);
 
 			expect( isAcceptableSize ).to.not.be.null;
@@ -461,13 +460,13 @@ describe( 'MediaUtils', () => {
 		test( 'should not return null if a video is being uploaded for a Jetpack site with VideoPress disabled', () => {
 			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize(
 				{ size: 1024, mime_type: 'video/mp4' },
-				new JetpackSite( {
+				{
 					jetpack: true,
 					options: {
 						jetpack_version: '4.5',
 						max_upload_size: 1024,
 					},
-				} )
+				}
 			);
 
 			expect( isAcceptableSize ).to.not.be.null;

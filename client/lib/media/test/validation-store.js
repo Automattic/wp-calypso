@@ -14,6 +14,7 @@ jest.mock( 'lib/sites-list', () => () => ( {
 		},
 	} ),
 } ) );
+import { site } from './fixtures/site';
 
 /**
  * Module variables
@@ -66,6 +67,7 @@ describe( 'MediaValidationStore', () => {
 					type: 'CREATE_MEDIA_ITEM',
 					siteId: DUMMY_SITE_ID,
 					data: DUMMY_MEDIA_OBJECT,
+					site,
 				},
 				action
 			),
@@ -104,13 +106,13 @@ describe( 'MediaValidationStore', () => {
 		} );
 
 		test( 'should have no effect for a valid file', () => {
-			validateItem( DUMMY_SITE_ID, Object.assign( {}, DUMMY_MEDIA_OBJECT, { extension: 'gif' } ) );
+			validateItem( site, Object.assign( {}, DUMMY_MEDIA_OBJECT, { extension: 'gif' } ) );
 
 			expect( MediaValidationStore._errors ).to.eql( {} );
 		} );
 
 		test( 'should set an error array for an invalid file', () => {
-			validateItem( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
+			validateItem( site, DUMMY_MEDIA_OBJECT );
 
 			expect( MediaValidationStore._errors ).to.eql( {
 				[ DUMMY_SITE_ID ]: {
@@ -121,7 +123,7 @@ describe( 'MediaValidationStore', () => {
 
 		test( 'should set an error array for a file exceeding acceptable size', () => {
 			validateItem(
-				DUMMY_SITE_ID,
+				site,
 				Object.assign( {}, DUMMY_MEDIA_OBJECT, { size: 2048, extension: 'gif' } )
 			);
 
@@ -133,7 +135,7 @@ describe( 'MediaValidationStore', () => {
 		} );
 
 		test( 'should accumulate multiple validation errors', () => {
-			validateItem( DUMMY_SITE_ID, Object.assign( {}, DUMMY_MEDIA_OBJECT, { size: 2048 } ) );
+			validateItem( site, Object.assign( {}, DUMMY_MEDIA_OBJECT, { size: 2048 } ) );
 
 			expect( MediaValidationStore._errors ).to.eql( {
 				[ DUMMY_SITE_ID ]: {
@@ -327,6 +329,7 @@ describe( 'MediaValidationStore', () => {
 				type: 'CREATE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
 				data: DUMMY_MEDIA_OBJECT,
+				site,
 			};
 
 			handler( { action } );
@@ -340,7 +343,9 @@ describe( 'MediaValidationStore', () => {
 			var action = {
 				type: 'CREATE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
+
 				data: DUMMY_MEDIA_OBJECT,
+				site,
 			};
 
 			handler( {
@@ -348,6 +353,7 @@ describe( 'MediaValidationStore', () => {
 					type: 'CREATE_MEDIA_ITEM',
 					siteId: DUMMY_SITE_ID,
 					data: assign( {}, DUMMY_MEDIA_OBJECT, { ID: 101 } ),
+					site,
 				},
 			} );
 

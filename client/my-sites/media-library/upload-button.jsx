@@ -43,7 +43,7 @@ export default class extends React.Component {
 	uploadFiles = event => {
 		if ( event.target.files && this.props.site ) {
 			MediaActions.clearValidationErrors( this.props.site.ID );
-			MediaActions.add( this.props.site.ID, event.target.files );
+			MediaActions.add( this.props.site, event.target.files );
 		}
 
 		ReactDom.findDOMNode( this.refs.form ).reset();
