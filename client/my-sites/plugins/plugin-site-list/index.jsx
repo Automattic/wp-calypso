@@ -4,7 +4,8 @@
 import classNames from 'classnames';
 import { compact } from 'lodash';
 import { connect } from 'react-redux';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
