@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -135,12 +135,12 @@ class ActivityLogItem extends Component {
 			action,
 			name,
 		} = this.props.log;
-		const actor = get( this.props, [ 'log', 'actor' ] );
 		const object = get( this.props, [ 'log', 'object' ] );
+		const { log } = this.props;
 
 		return (
 			<div className="activity-log-item__card-header">
-				<ActivityActor actor={ actor } />
+				<ActivityActor { ...pick( log, [ 'actorAvatarUrl', 'actorName', 'actorRole' ] ) } />
 				<ActivityTitle
 					action={ action }
 					actor={ actor }
