@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { get, startsWith } from 'lodash';
