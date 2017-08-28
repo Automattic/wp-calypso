@@ -31,8 +31,18 @@ describe( 'reducer', () => {
 			const siteId = 12345;
 			const data = deepFreeze( [
 				{
-					ts_utc: 1502108367646,
-					name: 'user__failed_login_attempt',
+					activityDate: '2017-08-27T00:00:59+00:00',
+					activityGroup: 'plugin',
+					activityIcon: 'plugins',
+					activityId: 'foobarbas',
+					activityName: 'plugin__updated',
+					activityTitle: 'Jetpack by WordPress.com plugin was updated to version 5.3',
+					activityTs: 1503792059000,
+					actorAvatarUrl: 'https://secure.gravatar.com/avatar/0?s=96&d=mm&r=g',
+					actorName: 'User display name',
+					actorRemoteId: 1,
+					actorRole: 'administrator',
+					actorWpcomId: 123456,
 				},
 			] );
 			const state = logItemsReducer( undefined, {
@@ -50,8 +60,18 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				12345: [
 					{
-						ts_utc: 1502108367646,
-						name: 'user__failed_login_attempt',
+						activityDate: '2017-08-27T00:00:59+00:00',
+						activityGroup: 'plugin',
+						activityIcon: 'plugins',
+						activityId: 'foobarbas',
+						activityName: 'plugin__updated',
+						activityTitle: 'Jetpack by WordPress.com plugin was updated to version 5.3',
+						activityTs: 1503792059000,
+						actorAvatarUrl: 'https://secure.gravatar.com/avatar/0?s=96&d=mm&r=g',
+						actorName: 'User display name',
+						actorRemoteId: 1,
+						actorRole: 'administrator',
+						actorWpcomId: 123456,
 					},
 				],
 			} );
@@ -64,8 +84,18 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				12345: [
 					{
-						ts_utc: 1502108367646,
-						name: 'user__failed_login_attempt',
+						activityDate: '2017-08-27T00:00:59+00:00',
+						activityGroup: 'plugin',
+						activityIcon: 'plugins',
+						activityId: 'foobarbas',
+						activityName: 'plugin__updated',
+						activityTitle: 'Jetpack by WordPress.com plugin was updated to version 5.3',
+						activityTs: 1503792059000,
+						actorAvatarUrl: 'https://secure.gravatar.com/avatar/0?s=96&d=mm&r=g',
+						actorName: 'User display name',
+						actorRemoteId: 1,
+						actorRole: 'administrator',
+						actorWpcomId: 123456,
 					},
 				],
 			} );
@@ -79,7 +109,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				12345: [
 					{
-						name: 'user__failed_login_attempt',
+						activityName: 'Not a known Activity name.',
 					},
 				],
 			} );
