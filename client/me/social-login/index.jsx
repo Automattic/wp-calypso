@@ -21,7 +21,12 @@ import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { connectSocialUser, disconnectSocialUser } from 'state/login/actions';
+import { isRequesting, getRequestError } from 'state/login/selectors';
 import GoogleIcon from 'components/social-icons/google';
+import userFactory from 'lib/user';
+
+const user = userFactory();
 
 class SocialLogin extends Component {
 	static displayName = 'SocialLogin';
@@ -41,8 +46,8 @@ class SocialLogin extends Component {
 		debug( this.constructor.displayName + ' React component is unmounting.' );
 	}
 
-	toggleSocialConnection = () => {
-		// TODO: update social connection on the server
+	toggleSocialConnection = ( serviceName ) => {
+		this.props.disconnectSocialUser( serviceName ).then( () => user.fetch() );
 	};
 
 	renderContent() {
@@ -62,6 +67,8 @@ class SocialLogin extends Component {
 
 	renderSocialConnection() {
 		const { isUserConnectedToGoogle, isUpdatingSocialConnection, translate } = this.props;
+		// TODO: refactor into a new component SocialLoginConnection
+		const toggleGoogleConnection = this.toggleSocialConnection.bind( this, 'google' );
 
 		return (
 			<CompactCard>
@@ -78,7 +85,7 @@ class SocialLogin extends Component {
 							compact={ true }
 							disabled={ isUpdatingSocialConnection }
 							isPrimary={ ! isUserConnectedToGoogle }
-							onClick={ this.toggleSocialConnection }>
+							onClick={ toggleGoogleConnection }>
 							{ isUserConnectedToGoogle ? translate( 'Disconnect' ) : translate( 'Connect' ) }
 						</FormButton>
 					</div>
@@ -111,7 +118,12 @@ export default connect(
 
 		return {
 			isUserConnectedToGoogle: user && user.social_signup_service === 'google',
-			isUpdatingSocialConnection: false,
+			isUpdatingSocialConnection: isRequesting( state ),
+			errorUpdatingSocialConnection: getRequestError( state ),
 		};
+	},
+	{
+		connectSocialUser,
+		disconnectSocialUser,
 	}
 )( localize( SocialLogin ) );

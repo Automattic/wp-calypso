@@ -10,6 +10,9 @@
 	align-items: center;
 	flex: 2 1;
 	margin-right: 5px;
+	h3 {
+		text-transform: capitalize;
+	}
 }
 .security-social-login-connection__header-icon {
 	height: 30px;
