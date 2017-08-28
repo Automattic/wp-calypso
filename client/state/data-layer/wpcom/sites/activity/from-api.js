@@ -2,14 +2,28 @@
 /**
  * External dependencies
  */
-import { concat, flow, get, has, includes, overEvery, partial, partialRight, reduce } from 'lodash';
+import {
+	concat,
+	flow,
+	get,
+	has,
+	head,
+	includes,
+	overEvery,
+	partial,
+	partialRight,
+	reduce,
+	split,
+} from 'lodash';
 
 /**
  * Module constants
  */
 export const ACTIVITY_REQUIRED_PROPS = [ 'activity_id', 'name', 'published', 'summary' ];
-
 export const ACTIVITY_WHITELIST = [ 'post__updated' ];
+
+export const DEFAULT_GRAVATAR_URL = 'https://www.gravatar.com/avatar/0';
+export const DEFAULT_GRIDICON = 'info-outline';
 
 /**
  * Transforms API response into array of activities
@@ -58,5 +72,31 @@ export function itemsReducer( validProcessedItems, item ) {
  * @return {object}       Processed Activity item ready for use in UI
  */
 export function processItem( item ) {
-	return item;
+	return {
+		...processItemBase( item ),
+	};
+}
+
+export function processItemActor( item ) {
+	return {
+		actorAvatarUrl: get( item, [ 'actor', 'icon', 'url' ], DEFAULT_GRAVATAR_URL ),
+		actorName: get( item, [ 'actor', 'name' ], '' ),
+		actorRemoteId: get( item, [ 'actor', 'external_user_id' ], 0 ),
+		actorRole: get( item, [ 'actor', 'role' ], '' ),
+		actorWpcomId: get( item, [ 'actor', 'wpcom_user_id' ], 0 ),
+	};
+}
+
+export function processItemBase( item ) {
+	const published = get( item, 'published' );
+	return {
+		...processItemActor( item ),
+		activityDate: published,
+		activityGroup: head( split( get( item, 'name' ), '__', 1 ) ),
+		activityIcon: get( item, 'gridicon', DEFAULT_GRIDICON ),
+		activityId: get( item, 'activity_id' ),
+		activityName: get( item, 'name' ),
+		activityTitle: get( item, 'summary', '' ),
+		activityTs: Date.parse( published ),
+	};
 }

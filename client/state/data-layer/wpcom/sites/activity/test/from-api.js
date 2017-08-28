@@ -126,7 +126,22 @@ describe( 'fromApi', () => {
 
 	context( 'processItem', () => {
 		it( 'should process an item', () => {
-			expect( processItem( VALID_API_ITEM ) ).to.eql( VALID_API_ITEM );
+			expect( processItem( VALID_API_ITEM ) ).to.be
+				.an( 'object' )
+				.that.has.keys( [
+					'activityDate',
+					'activityGroup',
+					'activityIcon',
+					'activityId',
+					'activityName',
+					'activityTitle',
+					'activityTs',
+					'actorAvatarUrl',
+					'actorName',
+					'actorRemoteId',
+					'actorRole',
+					'actorWpcomId',
+				] );
 		} );
 	} );
 } );
