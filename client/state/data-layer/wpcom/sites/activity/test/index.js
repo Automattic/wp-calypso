@@ -9,20 +9,17 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { ACTIVITY_LOG_UPDATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { handleActivityLogRequest, receiveActivityLogError, receiveActivityLog } from '..';
-import {
-	activityLogError,
-	activityLogRequest,
-	activityLogUpdate,
-} from 'state/activity-log/actions';
+import { activityLogError, activityLogRequest } from 'state/activity-log/actions';
 
 const SITE_ID = 77203074;
 
 const SUCCESS_RESPONSE = deepFreeze( {
-	items: [
+	'@context': 'https://www.w3.org/ns/activitystreams',
+	orderedItems: [
 		{
-			'@context': 'https://www.w3.org/ns/activitystreams',
 			summary: 'Jane Doe updated post I wrote a new post!',
 			name: 'post__updated',
 			actor: {
@@ -55,7 +52,9 @@ const SUCCESS_RESPONSE = deepFreeze( {
 			activity_id: 'foobarbaz',
 		},
 	],
+	summary: 'Activity log',
 	totalItems: 1,
+	type: 'OrderedCollection',
 } );
 
 const ERROR_RESPONSE = deepFreeze( {
@@ -67,33 +66,11 @@ describe( 'receiveActivityLog', () => {
 	it( 'should dispatch activity log update action', () => {
 		const dispatch = sinon.spy();
 		receiveActivityLog( { dispatch }, { siteId: SITE_ID }, SUCCESS_RESPONSE );
-		expect( dispatch ).to.have.been.calledWithMatch(
-			activityLogUpdate( SITE_ID, [
-				{
-					ts_site: 1496692768557,
-					type: 'jetpack-audit',
-					action_trigger: 'publicize_save_published_action',
-					lag: 0,
-					jetpack_version: '5.0-alpha',
-					ts_utc: 1496692768557,
-					action: 'publicized',
-					es_retention: 'long',
-					group: 'post',
-					blog_id: 77203074,
-					hdfs_retention: 'long',
-					actor: {
-						displayname: 'User',
-						external_id: 1,
-						login: 'user',
-					},
-					ts_sent_action: 1496692768557,
-					name: 'post__publicized',
-					site_id: 2,
-					error_code: '',
-					ts_recieved_action: 1496692768557,
-				},
-			] )
-		);
+		expect( dispatch ).to.have.been.called.once;
+		expect( dispatch.args[ 0 ][ 0 ] ).to.be
+			.an( 'object' )
+			.that.has.keys( [ 'type', 'siteId', 'data' ] )
+			.that.has.property( 'type', ACTIVITY_LOG_UPDATE );
 	} );
 } );
 
