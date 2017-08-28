@@ -97,6 +97,7 @@ function createSiteWithCart( callback, dependencies, {
 			// step object itself depending on if the theme is provided in a
 			// query. See `getThemeSlug` in `DomainsStep`.
 			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
+			designType: dependencies.designType,
 			vertical: surveyVertical || undefined,
 		},
 		validate: false,
