@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import { debounce, intersection, difference, includes } from 'lodash';
@@ -25,6 +26,15 @@ import { getThemeFilters, getThemeFilterToTermTable } from 'state/selectors';
 const preferredOrderOfTaxonomies = [ 'feature', 'layout', 'column', 'subject', 'style' ];
 
 class ThemesMagicSearchCard extends React.Component {
+
+	static propTypes = {
+		showTierThemesControl: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		showTierThemesControl: true
+	};
+
 	constructor( props ) {
 		super( props );
 
@@ -228,7 +238,7 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 
 	render() {
-		const { translate, filters } = this.props;
+		const { translate, filters, showTierThemesControl } = this.props;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 
 		const tiers = [
@@ -294,7 +304,7 @@ class ThemesMagicSearchCard extends React.Component {
 							</div>
 						}
 						{
-							isPremiumThemesEnabled &&
+							( isPremiumThemesEnabled && showTierThemesControl ) &&
 								<SegmentedControl
 									initialSelected={ this.props.tier }
 									options={ tiers }
