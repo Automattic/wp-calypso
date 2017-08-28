@@ -23,7 +23,7 @@ class ConversationCaterpillarComponent extends React.Component {
 	static propTypes = {
 		blogId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,
-		parentCommentId: PropTypes.number.isRequired,
+		parentCommentId: PropTypes.number,
 		isRoot: PropTypes.bool,
 
 		// connected props

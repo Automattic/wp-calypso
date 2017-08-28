@@ -151,7 +151,7 @@ export const getRootNeedsCaterpillar = ( state, siteId, postId ) =>
 export const getPostOldestCommentDate = createSelector( ( state, siteId, postId ) => {
 	const items = getPostCommentItems( state, siteId, postId );
 	return items && last( items ) ? new Date( get( last( items ), 'date' ) ) : undefined;
-}, getPostCommentItems );
+}, state => state.comments.items );
 
 /***
  * Get newest comment date for a given post
@@ -192,7 +192,7 @@ export const getPostCommentsTree = createSelector(
 			children: map( filter( items, { parent: false } ), 'ID' ).reverse(),
 		};
 	},
-	getPostCommentItems
+	state => [ state.comments.items ]
 );
 
 export const commentsFetchingStatus = ( state, siteId, postId, commentTotal = 0 ) => {

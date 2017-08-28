@@ -248,6 +248,19 @@ export const expansions = createReducer(
 				[ stateKey ]: Object.assign( {}, state[ stateKey ], newVal ),
 			};
 		},
+		[ READER_VIEW_COMMENT ]: ( state, action ) => {
+			const { siteId, postId, commentId } = action.payload;
+			const stateKey = getStateKey( siteId, postId );
+
+			if ( has( state, `${ stateKey }.${ commentId }` ) ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ stateKey ]: Object.assign( {}, state[ stateKey ], { [ commentId ]: 'is-excerpt' } ),
+			};
+		},
 	}
 );
 
