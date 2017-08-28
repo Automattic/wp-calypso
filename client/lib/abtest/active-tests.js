@@ -114,13 +114,4 @@ module.exports = {
 		defaultVariation: 'original',
 		allowExistingUsers: true,
 	},
-	privacyNoPopup: {
-		datestamp: '20170828',
-		variations: {
-			original: 50,
-			nopopup: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-	},
 };
