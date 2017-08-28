@@ -116,14 +116,14 @@ export const clients = createReducer( initialClientsData, {
 export const currentClientId = createReducer( null, {
 	[ ROUTE_SET ]: ( state, { path, query } ) => {
 		if ( startsWith( path, '/log-in' ) ) {
-			return query.client_id;
+			return query.client_id || state;
 		}
 
 		if ( startsWith( path, '/start/wpcc' ) ) {
-			return query.oauth2_client_id;
+			return query.oauth2_client_id || state;
 		}
 
-		return null;
+		return state;
 	}
 } );
 

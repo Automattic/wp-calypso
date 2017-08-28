@@ -42,6 +42,7 @@ describe( 'reducer', () => {
 			'npsSurveyNotice',
 			'isNotificationsOpen',
 			'postTypeList',
+			'oauth2Clients'
 		] );
 	} );
 
