@@ -45,7 +45,8 @@ class PostItem extends React.Component {
 		if ( this.props.wrapTitle ) {
 			// Wait for repaint, which may include wrapping the title onto
 			// multiple lines, then update height if needed
-			window.requestAnimationFrame( this.handleHeightChange );
+			// `requestAnimationFrame` is not enough here...
+			window.setTimeout( this.handleHeightChange );
 			// TODO Attach resize listener (or better in PostTypeList)
 		}
 	}
