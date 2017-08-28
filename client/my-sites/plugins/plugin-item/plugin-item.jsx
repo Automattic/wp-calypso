@@ -10,7 +10,6 @@ import { localize, moment } from 'i18n-calypso';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Card from 'components/card';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginsActions from 'lib/plugins/actions';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
@@ -196,7 +195,7 @@ class PluginItem extends Component {
 		}
 		if ( this.props.isAutoManaged ) {
 			return (
-				<div className="plugin-item__last_updated">
+				<div className="plugin-item__last-updated">
 					{ translate( '%(pluginName)s is automatically managed on this site', { args: { pluginName: pluginData.name } } ) }
 				</div>
 			);
@@ -208,7 +207,7 @@ class PluginItem extends Component {
 
 		if ( pluginData.last_updated ) {
 			return (
-				<div className="plugin-item__last_updated">
+				<div className="plugin-item__last-updated">
 					{ translate( 'Last updated %(ago)s', { args: { ago: this.ago( pluginData.last_updated ) } } ) }
 				</div>
 			);
@@ -267,11 +266,16 @@ class PluginItem extends Component {
 
 	renderPlaceholder() {
 		return (
-			<CompactCard className="plugin-item is-placeholder ">
-				<PluginIcon isPlaceholder={ true } />
-				<div className="plugin-item__title is-placeholder"></div>
-				<div className="plugin-item__meta is-placeholder"></div>
-			</CompactCard>
+			<div className="plugin-item__wrapper">
+				<CompactCard className="plugin-item is-placeholder">
+					<div className="plugin-item__link">
+						<PluginIcon isPlaceholder />
+						<div className="plugin-item__info">
+							<div className="plugin-item__title is-placeholder"></div>
+						</div>
+					</div>
+				</CompactCard>
+			</div>
 		);
 	}
 
@@ -344,11 +348,10 @@ class PluginItem extends Component {
 			);
 		}
 
-		const CardType = this.props.isCompact ? CompactCard : Card;
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div>
-				<CardType className="plugin-item">
+			<div className="plugin-item__wrapper">
+				<CompactCard className="plugin-item">
 					{ ! this.props.isSelectable
 						? null
 						: <input className="plugin-item__checkbox"
@@ -360,11 +363,13 @@ class PluginItem extends Component {
 					}
 					<a href={ this.props.pluginLink } onClick={ this.onItemClick } className="plugin-item__link">
 						<PluginIcon image={ plugin.icon } />
-						{ pluginTitle }
-						{ this.pluginMeta( plugin ) }
+						<div className="plugin-item__info">
+							{ pluginTitle }
+							{ this.pluginMeta( plugin ) }
+						</div>
 					</a>
 					{ this.props.selectedSite ? this.renderActions() : this.renderSiteCount() }
-				</CardType>
+				</CompactCard>
 				{ errorNotices }
 			</div>
 		);
