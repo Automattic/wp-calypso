@@ -258,16 +258,16 @@ class ActivityLog extends Component {
 
 		const logsGroupedByDay = map(
 			groupBy( logs, log =>
-				this.applySiteOffset( moment.utc( log.ts_utc ) ).endOf( 'day' ).valueOf()
+				this.applySiteOffset( moment.utc( log.activityTs ) ).endOf( 'day' ).valueOf()
 			),
-			( daily_logs, tsEndOfSiteDay ) =>
+			( dailyLogs, tsEndOfSiteDay ) =>
 				<ActivityLogDay
 					applySiteOffset={ this.applySiteOffset }
 					disableRestore={ disableRestore }
 					hideRestore={ ! isPressable }
 					isRewindActive={ isRewindActive }
 					key={ tsEndOfSiteDay }
-					logs={ daily_logs }
+					logs={ dailyLogs }
 					requestRestore={ this.handleRequestRestore }
 					siteId={ siteId }
 					tsEndOfSiteDay={ +tsEndOfSiteDay }

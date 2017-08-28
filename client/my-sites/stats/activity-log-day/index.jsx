@@ -155,12 +155,12 @@ class ActivityLogDay extends Component {
 					onOpen={ this.trackOpenDay }
 					summary={ this.getRewindButton( 'primary' ) }
 				>
-					{ logs.map( ( log, index ) => (
+					{ logs.map( ( log ) => (
 						<ActivityLogItem
 							applySiteOffset={ applySiteOffset }
 							disableRestore={ disableRestore }
 							hideRestore={ hideRestore }
-							key={ index }
+							key={ log.activityId }
 							log={ log }
 							requestRestore={ requestRestore }
 							siteId={ siteId }

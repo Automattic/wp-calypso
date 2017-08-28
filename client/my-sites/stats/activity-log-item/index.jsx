@@ -166,7 +166,7 @@ class ActivityLogItem extends Component {
 			log,
 			requestRestore,
 		} = this.props;
-		requestRestore( log.ts_utc, 'item' );
+		requestRestore( log.activityTs, 'item' );
 	};
 
 	handleOpen = () => {
@@ -177,7 +177,7 @@ class ActivityLogItem extends Component {
 		const {
 			group,
 			name,
-			ts_utc,
+			activityTs,
 		} = log;
 
 		debug( 'opened log', log );
@@ -185,7 +185,7 @@ class ActivityLogItem extends Component {
 		recordTracksEvent( 'calypso_activitylog_item_expand', {
 			group,
 			name,
-			timestamp: ts_utc,
+			timestamp: activityTs,
 		} );
 	};
 
@@ -199,7 +199,7 @@ class ActivityLogItem extends Component {
 		} = this.props;
 		const {
 			name,
-			ts_utc,
+			activityTs,
 		} = log;
 
 		return (
@@ -207,12 +207,12 @@ class ActivityLogItem extends Component {
 				<div>
 					{ translate( 'An event "%(eventName)s" occurred at %(date)s', {
 						args: {
-							date: applySiteOffset( moment.utc( ts_utc ) ).format( 'LLL' ),
+							date: applySiteOffset( moment.utc( activityTs ) ).format( 'LLL' ),
 							eventName: name,
 						}
 					} ) }
 				</div>
-				<div className="activity-log-item__id">ID { ts_utc }</div>
+				<div className="activity-log-item__id">ID { activityTs }</div>
 			</div>
 		);
 	}
@@ -276,7 +276,7 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div className="activity-log-item__time">
-				{ applySiteOffset( moment.utc( log.ts_utc ) ).format( 'LT' ) }
+				{ applySiteOffset( moment.utc( log.activityTs ) ).format( 'LT' ) }
 			</div>
 		);
 	}
