@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { noop } from 'lodash';
+import { noop, kebabCase } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -45,6 +45,10 @@ export default class Accordion extends Component {
 		this.props.onToggle( isExpanded );
 	};
 
+	_e2eAccordionType = () => (
+		kebabCase( this.props.title )
+	);
+
 	render() {
 		const { className, icon, title, subtitle, status, children } = this.props;
 		const classes = classNames( 'accordion', className, {
@@ -55,7 +59,7 @@ export default class Accordion extends Component {
 		} );
 
 		return (
-			<div className={ classes }>
+			<div className={ classes } data-e2e-accordion-type={ this._e2eAccordionType() }>
 				<header className="accordion__header">
 					<button type="button" onClick={ this.toggleExpanded } className="accordion__toggle">
 						{ icon && <span className="accordion__icon">{ icon }</span> }
