@@ -950,38 +950,3 @@
 	padding-bottom: 1em;
 	text-align: center;
 }
-
-.checkout__privacy-protection-radio {
-	&.card {
-		display: flex;
-		flex-direction: column;
-	}
-}
-
-.checkout__privacy-protection-radio-buttons {
-	margin-top: 20px;
-}
-
-.checkout__privacy-protection-radio-button {
-	display: flex;
-	margin-bottom: 15px;
-
-	&:last-child {
-		margin-bottom: 0;
-	}
-}
-
-.checkout__privacy-protection-radio-text {
-	font-weight: normal;
-	margin: 0 0 0 10px;
-}
-
-.checkout__privacy-protection-radio-text-description {
-	color: darken( $gray, 20% );
-}
-
-.checkout__privacy-protection-radio-price-text {
-	color: $blue-wordpress;
-	margin: 4px 0 0 10px;
-	font-size: 15px;
-}
