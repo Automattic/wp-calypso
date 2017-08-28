@@ -9,7 +9,7 @@ import { map } from 'lodash';
 /***
  * Internal dependencies
  */
-import PostComment from 'blocks/comments/post-comment';
+import PostComment, { POST_COMMENT_DISPLAY_TYPES } from 'blocks/comments/post-comment';
 import { getPostCommentsTree } from 'state/comments/selectors';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 
@@ -41,6 +41,7 @@ export class ConversationCommentList extends React.Component {
 								commentId={ commentId }
 								maxChildrenToShow={ 0 }
 								post={ post }
+								displayType={ POST_COMMENT_DISPLAY_TYPES.excerpt }
 							/>
 						);
 					} ) }
