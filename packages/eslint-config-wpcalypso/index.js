@@ -13,7 +13,7 @@ module.exports = {
 		'array-bracket-spacing': [ 2, 'always' ],
 		'brace-style': [ 2, '1tbs' ],
 		camelcase: 2,
-		'comma-dangle': 0,
+		'comma-dangle': [ 2, 'always-multiline' ],
 		'comma-spacing': 2,
 		'comma-style': 2,
 		'computed-property-spacing': [ 2, 'always' ],
