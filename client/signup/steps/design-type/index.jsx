@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, memoize, transform } from 'lodash';
+import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -121,6 +122,11 @@ export class DesignTypeStep extends Component {
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
 
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
+
+		if ( abtest( 'skipThemesSelectionModal' ) === 'skip' ) {
+			SignupActions.setThemeForDesignType( designType );
+		}
+
 		this.props.goToNextStep();
 	}
 }

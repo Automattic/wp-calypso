@@ -29,7 +29,6 @@ const user = userModule();
 import analytics from 'lib/analytics';
 import SignupProcessingScreen from 'signup/processing-screen';
 import utils from './utils';
-import { abtest } from 'lib/abtest';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import * as oauthToken from 'lib/oauth-token';
@@ -330,33 +329,6 @@ const Signup = React.createClass( {
 		// redirect the user to the next step
 		scrollPromise.then( () => {
 			if ( ! this.isEveryStepSubmitted() ) {
-				if ( 'skip' === abtest( 'skipThemesSelectionModal' ) && 'themes' === stepName ) {
-					const flowSteps = flows.getFlow( this.props.flowName, stepName ).steps;
-					const currentStepIndex = indexOf( flowSteps, stepName );
-					const nextStepName = flowSteps[ currentStepIndex + 1 ];
-					const nextProgressItem = this.state.progress[ currentStepIndex + 1 ];
-					const nextStepSection = nextProgressItem && nextProgressItem.stepSectionName || '';
-
-					const designType = this.props.signupDependencies && this.props.signupDependencies.designType;
-
-					let themeSlugWithRepo = 'pub/twentyseventeen';
-
-					switch ( designType ) {
-						case 'blog':
-							themeSlugWithRepo = 'pub/independent-publisher-2';
-							break;
-						case 'grid':
-							themeSlugWithRepo = 'pub/altofocus';
-							break;
-						case 'page':
-							themeSlugWithRepo = 'pub/dara';
-							break;
-					}
-
-					SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], { themeSlugWithRepo } );
-
-					return page( utils.getStepUrl( this.props.flowName, nextStepName, nextStepSection, this.props.locale ) );
-				}
 				page( utils.getStepUrl( this.props.flowName, stepName, stepSectionName, this.props.locale ) );
 			} else if ( this.isEveryStepSubmitted() ) {
 				this.goToFirstInvalidStep();

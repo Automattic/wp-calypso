@@ -69,6 +69,23 @@ const SignupActions = {
 			type: 'PROVIDE_SIGNUP_DEPENDENCIES',
 			providedDependencies
 		} );
+	},
+
+	setThemeForDesignType( designType ) {
+		let themeSlugWithRepo = 'pub/twentyseventeen';
+		switch ( designType ) {
+			case 'blog':
+				themeSlugWithRepo = 'pub/independent-publisher-2';
+				break;
+			case 'grid':
+				themeSlugWithRepo = 'pub/altofocus';
+				break;
+			case 'page':
+				themeSlugWithRepo = 'pub/dara';
+				break;
+		}
+
+		this.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], { themeSlugWithRepo } );
 	}
 };
 
