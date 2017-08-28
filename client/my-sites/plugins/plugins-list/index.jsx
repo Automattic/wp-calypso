@@ -18,6 +18,7 @@ import PluginsActions from 'lib/plugins/actions';
 import PluginsListHeader from 'my-sites/plugins/plugin-list-header';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginNotices from 'lib/plugins/notices';
+import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
@@ -421,7 +422,7 @@ export const PluginsList = React.createClass( {
 
 	// Renders
 	render() {
-		const itemListClasses = classNames( 'list-cards-compact', 'plugins-list', {
+		const itemListClasses = classNames( 'plugins-list__elements', {
 			'is-bulk-editing': this.state.bulkManagementActive
 		} );
 
@@ -435,9 +436,9 @@ export const PluginsList = React.createClass( {
 						label={ this.props.header }
 						className="plugins-list__section-actions is-placeholder"
 					/>
-					<div className={ itemListClasses }>{ this.renderPlaceholders() }</div>
+					<Card className={ itemListClasses }>{ this.renderPlaceholders() }</Card>
 				</div>
-				);
+			);
 		}
 
 		if ( isEmpty( this.props.plugins ) ) {
@@ -465,9 +466,9 @@ export const PluginsList = React.createClass( {
 					haveActiveSelected={ this.props.plugins.some( this.filterSelection.active.bind( this ) ) }
 					haveInactiveSelected={ this.props.plugins.some( this.filterSelection.inactive.bind( this ) ) }
 					haveUpdatesSelected= { this.props.plugins.some( this.filterSelection.updates.bind( this ) ) } />
-				<div className={ itemListClasses }>
+				<Card className={ itemListClasses }>
 					{ this.orderPluginsByUpdates( this.props.plugins ).map( this.renderPlugin ) }
-				</div>
+				</Card>
 			</div>
 		);
 	},
@@ -493,7 +494,7 @@ export const PluginsList = React.createClass( {
 		} );
 	},
 
-	renderPlugin( plugin, index ) {
+	renderPlugin( plugin ) {
 		const selectThisPlugin = this.togglePlugin.bind( this, plugin );
 		const allowedPluginActions = this.getAllowedPluginActions( plugin );
 		const isSelectable = this.state.bulkManagementActive && ( allowedPluginActions.autoupdate || allowedPluginActions.activation );
@@ -513,13 +514,12 @@ export const PluginsList = React.createClass( {
 				selectedSite={ this.props.selectedSite }
 				pluginLink={ '/plugins/' + encodeURIComponent( plugin.slug ) + this.siteSuffix() }
 				allowedActions = { allowedPluginActions }
-				isCompact={ index !== this.props.pluginUpdateCount - 1 }
 				isAutoManaged = { ! allowedPluginActions.autoupdate } />
 		);
 	},
 
 	renderPlaceholders() {
-		const placeholderCount = 16;
+		const placeholderCount = 18;
 		return range( placeholderCount ).map( i => <PluginItem key={ 'placeholder-' + i } /> );
 	}
 } );

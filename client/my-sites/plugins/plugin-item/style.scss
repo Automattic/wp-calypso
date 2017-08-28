@@ -1,8 +1,10 @@
 .plugin-item.card {
 	padding: 0;
+	margin: 0;
+	box-shadow: none;
 
 	.is-bulk-editing & {
-		padding-left: 24px;
+		padding-left: 16px;
 	}
 
 	& ~ .notice.is-error {
@@ -31,11 +33,10 @@
 .plugin-item {
 	position: relative;
 	display: flex;
+	flex-direction: column;
 	overflow: hidden; // lazy clearfix
-
-	@include breakpoint( '<480px' ) {
-		flex-wrap: wrap;
-	}
+	width: 100%;
+	height: 100%;
 
 	&.disabled {
 		opacity: 0.5;
@@ -44,25 +45,19 @@
 }
 
 .plugin-item__link,
-.plugin-item__disabled,
-.plugin-item.is-placeholder {
+.plugin-item__disabled {
 	display: block;
 	flex-grow: 1;
 	padding: 16px;
 	overflow: hidden; // lazy clearfix
 	cursor: pointer;
-
-	@include breakpoint( '<480px' ) {
-		flex-basis: 100%;
-	}
-	@include breakpoint( '>660px' ) {
-		padding: 24px;
-	}
 }
 
 .plugin-item__link {
+	display: flex;
+
 	.is-bulk-editing & {
-		padding-left: 40px;
+		padding-left: 32px;
 	}
 }
 
@@ -99,33 +94,24 @@
 }
 
 
-// Wraps plugin title and secondary info in bulk edit mode
+// Wraps plugin title and secondary info
 .plugin-item__info {
-	margin-left: 32px;
-
-	@include breakpoint( '>480px' ) {
-		margin-left: 40px;
-	}
+	flex: auto;
+	min-width: 0;
 }
 
 // Plugin title
 .plugin-item__title {
 	color: $gray-dark;
 	display: block;
-	font-size: 14px;
+	font-size: 15px;
 	line-height: 21px;
 	font-weight: 600;
 	overflow: hidden;
 	text-align: left;
 	text-overflow: ellipsis;
-	white-space: pre;
+	white-space: nowrap;
 
-	@include breakpoint( '>480px' ) {
-		font-size: 24px;
-		line-height: 32px;
-		font-weight: 700;
-		font-family: $serif;
-	}
 	@include breakpoint( '<480px') {
 		&[data-warnings="1"] {
 			padding-right: 32px;
@@ -136,20 +122,7 @@
 	}
 
 	&.is-placeholder {
-		width: 56%;
-		background-color: lighten( $gray, 30% );
-		animation: loading-fade 1.6s ease-in-out infinite;
-
-		&:before {
-			content: ' ';
-		}
-	}
-	.bulk-editing & {
-		margin-top: -4px;
-
-		@include breakpoint( '>480px' ) {
-			margin-top: -6px;
-		}
+		@include placeholder();
 	}
 }
 
@@ -165,18 +138,15 @@
 .plugin-item__count,
 .plugin-item__actions {
 	padding: 16px;
-	flex-grow: 1;
-	flex-shrink: 0;
-	align-self: center;
+	padding-top: 0;
+	margin-top: -6px;
+	flex: none;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
 
-	@include breakpoint( '>480px' ) {
-		flex-grow: 0;
-		text-align: right;
-	}
-
-	@include breakpoint( '>660px' ) {
-		padding-right: 24px;
-		padding-left: 24px;
+	.is-bulk-editing & {
+		padding-left: 32px;
 	}
 }
 
@@ -197,13 +167,90 @@
 	display: none;
 
 	@include breakpoint( '>480px' ) {
-		display: block;
+		display: flex;
 	}
 }
 
-.plugin-item__last_updated {
+.plugin-item__last-updated {
 	color: $gray;
 	font-size: 12px;
 	line-height: 1;
 	padding: 6px 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.plugin-item {
+	.plugin-icon {
+		flex: none;
+		margin-right: 16px;
+	}
+
+	.plugin-action {
+		margin-top: 6px;
+
+		& .form-toggle__switch {
+			float: left;
+		}
+
+		.form-toggle__label-content {
+			margin-left: 0;
+			margin-right: 12px;
+		}
+
+		.plugin-action__label {
+			margin-right: 0;
+			margin-left: 8px;
+		}
+
+		.plugin-activate-toggle__link {
+			margin-left: 8px;
+		}
+
+		.plugin-activate-toggle__icon {
+			float: left;
+			margin: 0;
+		}
+	}
+}
+
+.plugin-item__wrapper {
+	box-sizing: border-box;
+	border: 0 solid lighten( $gray, 30% );
+
+	@include breakpoint( ">1040px" ) {
+		width: 33.33%;
+
+		border-right-width: 1px;
+
+		&:nth-child( 3n ) {
+			border-right-width: 0;
+		}
+
+		&:nth-last-child( n + 4 ) {
+			border-bottom-width: 1px;
+		}
+
+		// Provider proper bottom borders in the second-last row when the number
+		// of items is not multiple of 3.
+		&:nth-child( 3n ) {
+			&:nth-last-child( 3 ),
+			&:nth-last-child( 2 ) {
+				border-bottom-width: 1px;
+			}
+		}
+
+		&:nth-child( 3n - 1 ):nth-last-child( 3 ) {
+			border-bottom-width: 1px;
+		}
+	}
+
+	@include breakpoint( "<1040px" ) {
+		width: 100%;
+
+		&:nth-last-child( n + 2 ) {
+			border-bottom-width: 1px;
+		}
+	}
 }

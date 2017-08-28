@@ -1,3 +1,9 @@
 .plugins-list {
 	margin-bottom: 16px;
 }
+
+.plugins-list__elements {
+	display: flex;
+	flex-flow: row wrap;
+	padding: 0;
+}
