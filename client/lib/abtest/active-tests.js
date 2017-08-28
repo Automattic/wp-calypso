@@ -115,7 +115,7 @@ module.exports = {
 		allowExistingUsers: true,
 	},
 	privacyNoPopup: {
-		datestamp: '20170828',
+		datestamp: '20170829',
 		variations: {
 			original: 50,
 			nopopup: 50,
