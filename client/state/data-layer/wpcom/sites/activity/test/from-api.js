@@ -11,7 +11,6 @@ import { omit } from 'lodash';
  */
 import fromApi, {
 	ACTIVITY_REQUIRED_PROPS,
-	ACTIVITY_WHITELIST,
 	processItem,
 	itemsReducer,
 	validateItem,
@@ -92,38 +91,6 @@ describe( 'fromApi', () => {
 		} );
 	} );
 
-	context( 'validateItem', () => {
-		ACTIVITY_REQUIRED_PROPS.forEach( property => {
-			it( `should return false if required property is missing (${ property })`, () => {
-				expect( validateItem( omit( VALID_API_ITEM, property ) ) ).to.be.false;
-			} );
-		} );
-
-		it( 'should return false if name is not whitelisted', () => {
-			expect(
-				validateItem( {
-					...VALID_API_ITEM,
-					name: 'NOT_A_WHITELISTED_NAME',
-				} )
-			).to.be.false;
-		} );
-
-		it( 'should return true if all conditions are met', () => {
-			expect( validateItem( VALID_API_ITEM ) ).to.be.true;
-		} );
-
-		ACTIVITY_WHITELIST.forEach( name => {
-			it( `should return true for whitelisted names (${ name })`, () => {
-				expect(
-					validateItem( {
-						...VALID_API_ITEM,
-						name,
-					} )
-				).to.be.true;
-			} );
-		} );
-	} );
-
 	context( 'processItem', () => {
 		it( 'should process an item', () => {
 			expect( processItem( VALID_API_ITEM ) ).to.be
@@ -142,6 +109,18 @@ describe( 'fromApi', () => {
 					'actorRole',
 					'actorWpcomId',
 				] );
+		} );
+	} );
+
+	context( 'validateItem', () => {
+		ACTIVITY_REQUIRED_PROPS.forEach( property => {
+			it( `should return false if required property is missing (${ property })`, () => {
+				expect( validateItem( omit( VALID_API_ITEM, property ) ) ).to.be.false;
+			} );
+		} );
+
+		it( 'should return true if all conditions are met', () => {
+			expect( validateItem( VALID_API_ITEM ) ).to.be.true;
 		} );
 	} );
 } );

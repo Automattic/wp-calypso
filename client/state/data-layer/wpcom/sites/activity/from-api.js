@@ -4,11 +4,10 @@
  */
 import {
 	concat,
-	flow,
 	get,
 	has,
 	head,
-	includes,
+	map,
 	overEvery,
 	partial,
 	partialRight,
@@ -20,7 +19,6 @@ import {
  * Module constants
  */
 export const ACTIVITY_REQUIRED_PROPS = [ 'activity_id', 'name', 'published', 'summary' ];
-export const ACTIVITY_WHITELIST = [ 'post__updated' ];
 
 export const DEFAULT_GRAVATAR_URL = 'https://www.gravatar.com/avatar/0';
 export const DEFAULT_GRIDICON = 'info-outline';
@@ -42,12 +40,9 @@ export default function fromApi( { orderedItems = [] } ) {
  * @param  {object}  item Activity item
  * @return {boolean}      True if the item appears to be valid, otherwise false.
  */
-export const validateItem = overEvery( [
-	partialRight( has, 'activity_id' ),
-	partialRight( has, 'published' ),
-	partialRight( has, 'summary' ),
-	flow( partialRight( get, 'name', null ), partial( includes, ACTIVITY_WHITELIST ) ),
-] );
+export const validateItem = overEvery(
+	map( ACTIVITY_REQUIRED_PROPS, partial( partialRight, has ) )
+);
 
 /**
  * Reducer which recieves an array of processed items and an item to process and returns a new array
