@@ -56,7 +56,9 @@ describe( 'validateContactDetails', function() {
 						{ extra: { sirenSiret } }
 					);
 
-					expect( validateContactDetails( testDetails ) ).to.eql( {} );
+					const result = validateContactDetails( testDetails );
+					expect( result, `expected to accept '${ sirenSiret }'` )
+						.to.eql( {} );
 				}
 			);
 		} );
@@ -77,7 +79,8 @@ describe( 'validateContactDetails', function() {
 						{ extra: { sirenSiret } }
 					);
 
-					expect( validateContactDetails( testDetails ) )
+					const result = validateContactDetails( testDetails );
+					expect( result, `expected to reject '${ sirenSiret }'` )
 						.to.have.property( 'extra' )
 						.with.property( 'sirenSiret' );
 				}
@@ -136,7 +139,9 @@ describe( 'validateContactDetails', function() {
 						contactDetails,
 						{ extra: { registrantVatId } }
 					);
-					expect( validateContactDetails( testDetails ) )
+
+					const result = validateContactDetails( testDetails );
+					expect( result, `expected to accept '${ registrantVatId }'` )
 						.to.eql( {} );
 				}
 			);
@@ -150,7 +155,9 @@ describe( 'validateContactDetails', function() {
 						contactDetails,
 						{ extra: { registrantVatId } }
 					);
-					expect( validateContactDetails( testDetails ) )
+
+					const result = validateContactDetails( testDetails );
+					expect( result, `expected to reject '${ registrantVatId }'` )
 						.to.have.property( 'extra' )
 						.with.property( 'registrantVatId' );
 				}
