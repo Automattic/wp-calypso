@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import DocumentHead from 'components/data/document-head';
 import LoginLinks from './login-links';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getOAuth2ClientData } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import Main from 'components/main';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoginBlock from 'blocks/login';
@@ -28,7 +28,7 @@ export class Login extends React.Component {
 		clientId: PropTypes.string,
 		isLoggedIn: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
-		oauth2ClientData: PropTypes.object,
+		oauth2Client: PropTypes.object,
 		path: PropTypes.string.isRequired,
 		privateSite: PropTypes.bool,
 		recordPageView: PropTypes.func.isRequired,
@@ -82,7 +82,7 @@ export class Login extends React.Component {
 
 	renderFooter() {
 		const { translate } = this.props;
-		const isOauthLogin = !! this.props.oauth2ClientData;
+		const isOauthLogin = !! this.props.oauth2Client;
 		return (
 			<div
 				className={ classNames( 'wp-login__footer', {
@@ -128,7 +128,7 @@ export class Login extends React.Component {
 		const {
 			clientId,
 			isLoggedIn,
-			oauth2ClientData,
+			oauth2Client,
 			privateSite,
 			socialConnect,
 			twoFactorAuthType,
@@ -146,7 +146,7 @@ export class Login extends React.Component {
 				socialConnect={ socialConnect }
 				privateSite={ privateSite }
 				clientId={ clientId }
-				oauth2ClientData={ oauth2ClientData }
+				oauth2Client={ oauth2Client }
 			/>
 		);
 	}
@@ -192,7 +192,7 @@ export class Login extends React.Component {
 export default connect(
 	( state ) => ( {
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
-		oauth2ClientData: getOAuth2ClientData( state ),
+		oauth2Client: getCurrentOAuth2Client( state ),
 	} ),
 	{
 		recordPageView,

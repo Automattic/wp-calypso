@@ -21,8 +21,8 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { fetchOAuth2SignupUrl } from 'state/ui/oauth2-clients/actions';
-import { getOAuth2ClientData } from 'state/ui/oauth2-clients/selectors';
+import { fetchOAuth2SignupUrl } from 'state/oauth2-clients/actions';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { loginUser, formUpdate } from 'state/login/actions';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -51,7 +51,7 @@ export class LoginForm extends Component {
 		socialAccountLinkService: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		isFormDisabled: PropTypes.bool,
-		oauth2ClientData: PropTypes.object,
+		oauth2Client: PropTypes.object,
 	};
 
 	state = {
@@ -160,19 +160,19 @@ export class LoginForm extends Component {
 			isDisabled.disabled = true;
 		}
 
-		const { requestError, redirectTo, oauth2ClientData } = this.props;
+		const { requestError, redirectTo, oauth2Client } = this.props;
 		const linkingSocialUser = this.props.socialAccountIsLinking;
-		const isOauthLogin = !! oauth2ClientData;
+		const isOauthLogin = !! oauth2Client;
 		let signupUrl = config( 'signup_url' );
 
 		if ( isOauthLogin ) {
 			if ( config.isEnabled( 'signup/wpcc' ) ) {
 				signupUrl = '/start/wpcc?' + qs.stringify( {
-					oauth2_client_id: oauth2ClientData.id,
+					oauth2_client_id: oauth2Client.id,
 					oauth2_redirect: redirectTo
 				} );
 			} else {
-				signupUrl = oauth2ClientData.signupUrl;
+				signupUrl = oauth2Client.signupUrl;
 			}
 		}
 
@@ -280,7 +280,7 @@ export class LoginForm extends Component {
 
 					{ isOauthLogin && (
 						<div className={ classNames( 'login__form-signup-link', {
-							disabled: ! oauth2ClientData.signupUrl
+							disabled: ! oauth2Client.signupUrl
 						} ) }>
 							{ this.props.translate( 'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
 								{
@@ -316,7 +316,7 @@ export default connect(
 		socialAccountLinkEmail: getSocialAccountLinkEmail( state ),
 		socialAccountLinkService: getSocialAccountLinkService( state ),
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
-		oauth2ClientData: getOAuth2ClientData( state ),
+		oauth2Client: getCurrentOAuth2Client( state ),
 	} ),
 	{
 		formUpdate,

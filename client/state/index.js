@@ -37,6 +37,7 @@ import login from './login/reducer';
 import media from './media/reducer';
 import notices from './notices/reducer';
 import npsSurvey from './nps-survey/reducer';
+import oauth2Clients from './oauth2-clients/reducer';
 import pageTemplates from './page-templates/reducer';
 import plans from './plans/reducer';
 import plugins from './plugins/reducer';
@@ -104,6 +105,7 @@ const reducers = {
 	media,
 	notices,
 	npsSurvey,
+	oauth2Clients,
 	pageTemplates,
 	plugins,
 	plans,

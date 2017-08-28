@@ -22,7 +22,7 @@ import {
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
 } from 'state/login/selectors';
-import { getOAuth2ClientData } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
@@ -36,7 +36,7 @@ const user = userFactory();
 
 class Login extends Component {
 	static propTypes = {
-		oauth2ClientData: PropTypes.object,
+		oauth2Client: PropTypes.object,
 		privateSite: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
@@ -116,7 +116,7 @@ class Login extends Component {
 
 	renderHeader() {
 		const {
-			oauth2ClientData,
+			oauth2Client,
 			privateSite,
 			socialConnect,
 			translate,
@@ -138,13 +138,13 @@ class Login extends Component {
 			} );
 		} else if ( privateSite ) {
 			headerText = translate( 'This is a private WordPress.com site.' );
-		} else if ( oauth2ClientData ) {
+		} else if ( oauth2Client ) {
 			headerText = translate( 'Howdy! Log in to %(clientTitle)s with your WordPress.com account.', {
 				args: {
-					clientTitle: oauth2ClientData.title
+					clientTitle: oauth2Client.title
 				}
 			} );
-			if ( oauth2ClientData.name === 'woo' ) {
+			if ( oauth2Client.name === 'woo' ) {
 				preHeader = (
 					<Gridicon icon="my-sites" size={ 72 } />
 				);
@@ -252,7 +252,7 @@ export default connect(
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
-		oauth2ClientData: getOAuth2ClientData( state ),
+		oauth2Client: getCurrentOAuth2Client( state ),
 		isLinking: getSocialAccountIsLinking( state ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 	} ), {

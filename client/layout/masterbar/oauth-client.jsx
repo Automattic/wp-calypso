@@ -10,20 +10,20 @@ import PropTypes from 'prop-types';
  */
 import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
 
-const OauthClientMasterbar = ( { oauth2ClientData } ) => (
+const OauthClientMasterbar = ( { oauth2Client } ) => (
 	<header className="masterbar masterbar__oauth-client">
 		<nav>
 			<ul className="masterbar__oauth-client-main-nav">
 				<li className="masterbar__oauth-client-current">
 					<a className="masterbar__oauth-client-logo">
 						<img
-							src={ oauth2ClientData.img_url }
-							width={ oauth2ClientData.img_width }
-							height={ oauth2ClientData.img_height } />
+							src={ oauth2Client.img_url }
+							width={ oauth2Client.img_width }
+							height={ oauth2Client.img_height } />
 					</a>
 				</li>
 			</ul>
-			{ oauth2ClientData.name === 'woo' ? (
+			{ oauth2Client.name === 'woo' ? (
 				<li className="masterbar__oauth-client-close">
 					<a href="https://woocommerce.com">Cancel <span>X</span></a>
 				</li>
@@ -47,7 +47,7 @@ const OauthClientMasterbar = ( { oauth2ClientData } ) => (
 
 OauthClientMasterbar.displayName = 'OauthClientMasterbar';
 OauthClientMasterbar.propTypes = {
-	oauth2ClientData: PropTypes.object,
+	oauth2Client: PropTypes.object,
 };
 
 export default OauthClientMasterbar;
