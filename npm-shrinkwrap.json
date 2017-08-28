@@ -606,7 +606,7 @@
       "version": "1.6.0",
       "dependencies": {
         "browserslist": {
-          "version": "2.3.3"
+          "version": "2.4.0"
         },
         "semver": {
           "version": "5.4.1"
@@ -1827,9 +1827,7 @@
       "dev": true
     },
     "eslines": {
-      "version": "0.0.13",
-      "from": "git://github.com/automattic/eslines.git#0f2c44e2cea0b29e38e5c03f897904645f708c50",
-      "resolved": "git://github.com/automattic/eslines.git#0f2c44e2cea0b29e38e5c03f897904645f708c50",
+      "version": "1.0.0",
       "dev": true,
       "dependencies": {
         "fast-levenshtein": {
@@ -1889,9 +1887,7 @@
       "dev": true
     },
     "eslint-eslines": {
-      "version": "0.0.3",
-      "from": "git://github.com/automattic/eslint-eslines.git#e76547a2aae9e7bdf3bf86666391df483af41edd",
-      "resolved": "git://github.com/automattic/eslint-eslines.git#e76547a2aae9e7bdf3bf86666391df483af41edd",
+      "version": "0.0.4",
       "dev": true
     },
     "eslint-plugin-react": {
@@ -2230,7 +2226,7 @@
       "version": "1.0.11"
     },
     "function-bind": {
-      "version": "1.1.0"
+      "version": "1.1.1"
     },
     "fuse.js": {
       "version": "2.6.1"
@@ -2614,7 +2610,7 @@
       "version": "1.1.8"
     },
     "ignore": {
-      "version": "3.3.3",
+      "version": "3.3.4",
       "dev": true
     },
     "immediate": {
@@ -2886,7 +2882,7 @@
       }
     },
     "istanbul-api": {
-      "version": "1.1.12",
+      "version": "1.1.13",
       "dev": true,
       "dependencies": {
         "async": {
@@ -2936,7 +2932,7 @@
       }
     },
     "istanbul-reports": {
-      "version": "1.1.1",
+      "version": "1.1.2",
       "dev": true
     },
     "iterall": {
@@ -4481,7 +4477,7 @@
           "dev": true
         },
         "postcss": {
-          "version": "6.0.9",
+          "version": "6.0.10",
           "dev": true
         },
         "source-map": {
@@ -4565,7 +4561,7 @@
           "dev": true
         },
         "postcss": {
-          "version": "6.0.9",
+          "version": "6.0.10",
           "dev": true,
           "dependencies": {
             "ansi-styles": {
