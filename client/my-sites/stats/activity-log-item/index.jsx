@@ -191,11 +191,6 @@ class ActivityLogItem extends Component {
 			className,
 			log,
 		} = this.props;
-		const {
-			group,
-			name,
-			object,
-		} = log;
 
 		const classes = classNames( 'activity-log-item', className );
 
@@ -203,7 +198,7 @@ class ActivityLogItem extends Component {
 			<div className={ classes } >
 				<div className="activity-log-item__type">
 					{ this.renderTime() }
-					<ActivityIcon group={ group } name={ name } object={ object } />
+					<ActivityIcon { ...pick( log, [ 'activityName', 'activityIcon' ] ) } />
 				</div>
 				<FoldableCard
 					className="activity-log-item__card"
