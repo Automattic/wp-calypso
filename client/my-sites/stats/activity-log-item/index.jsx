@@ -18,6 +18,7 @@ import EllipsisMenu from 'components/ellipsis-menu';
 import FoldableCard from 'components/foldable-card';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import { ACTIVITY_WHITELIST } from 'state/data-layer/wpcom/sites/activity/from-api';
 
 const debug = debugFactory( 'calypso:activity-log:item' );
 
@@ -32,7 +33,9 @@ class ActivityLogItem extends Component {
 		siteId: PropTypes.number.isRequired,
 
 		log: PropTypes.shape( {
-			group: PropTypes.oneOf( [
+			// Base
+			activityDate: PropTypes.string.isRequired,
+			activityGroup: PropTypes.oneOf( [
 				'attachment',
 				'comment',
 				'core',
@@ -45,112 +48,22 @@ class ActivityLogItem extends Component {
 				'user',
 				'widget',
 			] ).isRequired,
-			name: PropTypes.string.isRequired,
-			ts_utc: PropTypes.number.isRequired,
+			activityIcon: PropTypes.string.isRequired,
+			activityId: PropTypes.string.isRequired,
+			activityName: PropTypes.oneOf( ACTIVITY_WHITELIST ).isRequired,
+			activityTitle: PropTypes.string.isRequired,
+			activityTs: PropTypes.number.isRequired,
 
-			actor: PropTypes.shape( {
-				display_name: PropTypes.string,
-				login: PropTypes.string,
-				translated_role: PropTypes.string,
-				user_email: PropTypes.string,
-				user_roles: PropTypes.string,
-				wpcom_user_id: PropTypes.number,
-				avatar_url: PropTypes.string,
-			} ),
-
-			object: PropTypes.shape( {
-				attachment: PropTypes.shape( {
-					mime_type: PropTypes.string,
-					id: PropTypes.number.isRequired,
-					title: PropTypes.string.isRequired,
-					url: PropTypes.shape( {
-						host: PropTypes.string.isRequired,
-						url: PropTypes.string.isRequired,
-						host_reversed: PropTypes.string.isRequired,
-					} ).isRequired,
-				} ),
-
-				comment: PropTypes.shape( {
-					approved: PropTypes.bool.isRequired,
-					id: PropTypes.number.isRequired,
-				} ),
-
-				core: PropTypes.shape( {
-					new_version: PropTypes.string,
-					old_version: PropTypes.string,
-				} ),
-
-				error: PropTypes.shape( {
-					error_code: PropTypes.string,
-					error_message: PropTypes.string,
-				} ),
-
-				menu: PropTypes.shape( {
-					id: PropTypes.number,
-					name: PropTypes.string,
-				} ),
-
-				plugin: PropTypes.oneOfType( [
-					PropTypes.shape( {
-						name: PropTypes.string,
-						previous_version: PropTypes.string,
-						slug: PropTypes.string,
-						version: PropTypes.string,
-					} ),
-					PropTypes.arrayOf(
-						PropTypes.shape( {
-							name: PropTypes.string,
-							previous_version: PropTypes.string,
-							slug: PropTypes.string,
-							version: PropTypes.string,
-						} ),
-					),
-				] ),
-
-				post: PropTypes.shape( {
-					id: PropTypes.number.isRequired,
-					status: PropTypes.string.isRequired,
-					type: PropTypes.string,
-					title: PropTypes.string,
-				} ),
-
-				term: PropTypes.shape( {
-					id: PropTypes.number.isRequired,
-					title: PropTypes.string.isRequired,
-					type: PropTypes.string.isRequired,
-				} ),
-
-				theme: PropTypes.oneOfType( [
-					PropTypes.arrayOf(
-						PropTypes.shape( {
-							name: PropTypes.string,
-							slug: PropTypes.string,
-							uri: PropTypes.string,
-							version: PropTypes.string,
-						} )
-					),
-					PropTypes.shape( {
-						name: PropTypes.string,
-						slug: PropTypes.string,
-						uri: PropTypes.string,
-						version: PropTypes.string,
-					} ),
-				] ),
-
-				user: PropTypes.shape( {
-					display_name: PropTypes.string,
-					external_user_id: PropTypes.string,
-					login: PropTypes.string,
-					wpcom_user_id: PropTypes.number,
-				} ),
-
-				widget: PropTypes.shape( {
-					id: PropTypes.number,
-					name: PropTypes.string,
-					sidebar: PropTypes.string,
-				} ),
-			} ),
+			// Actor
+			actorAvatarUrl: PropTypes.string.isRequired,
+			actorName: PropTypes.string.isRequired,
+			actorRemoteId: PropTypes.number.isRequired,
+			actorRole: PropTypes.string.isRequired,
+			actorWpcomId: PropTypes.number.isRequired,
 		} ).isRequired,
+
+		// connect
+		recordTracksEvent: PropTypes.func.isRequired,
 
 		// localize
 		moment: PropTypes.func.isRequired,
