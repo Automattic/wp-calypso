@@ -9,14 +9,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import { getPost } from 'state/posts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite, getSiteTitle } from 'state/sites/selectors';
 import SiteIcon from 'blocks/site-icon';
 
-function PostTypeSiteInfo( { site, siteTitle, isAllSitesModeSelected } ) {
-	if ( ! isEnabled( 'posts/post-type-list' ) || ! site || ! isAllSitesModeSelected ) {
+function PostTypeSiteInfo( { site, siteTitle } ) {
+	if ( ! site ) {
 		return null;
 	}
 
@@ -34,7 +32,6 @@ PostTypeSiteInfo.propTypes = {
 	globalId: PropTypes.string,
 	site: PropTypes.object,
 	siteTitle: PropTypes.string,
-	isAllSitesModeSelected: PropTypes.bool,
 };
 
 export default connect( ( state, ownProps ) => {
@@ -44,6 +41,5 @@ export default connect( ( state, ownProps ) => {
 	return {
 		site: siteId ? getSite( state, siteId ) : null,
 		siteTitle: siteId ? getSiteTitle( state, siteId ) : null,
-		isAllSitesModeSelected: getSelectedSiteId( state ) === null,
 	};
 } )( localize( PostTypeSiteInfo ) );

@@ -10,17 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import { getPost } from 'state/posts/selectors';
-import { isSingleUserSite } from 'state/sites/selectors';
-import { areAllSitesSingleUser } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 
-function PostTypePostAuthor( { singleUserSite, isAllSitesModeSelected, allSitesSingleUser, name } ) {
-	if ( ! isEnabled( 'posts/post-type-list' ) ||
-		! name ||
-		( isAllSitesModeSelected && allSitesSingleUser ) ||
-		( ! isAllSitesModeSelected && singleUserSite ) ) {
+function PostTypePostAuthor( { name } ) {
+	if ( ! name ) {
 		return null;
 	}
 
@@ -35,24 +28,13 @@ function PostTypePostAuthor( { singleUserSite, isAllSitesModeSelected, allSitesS
 
 PostTypePostAuthor.propTypes = {
 	globalId: PropTypes.string,
-	singleUserSite: PropTypes.bool,
-	isAllSitesModeSelected: PropTypes.bool,
-	allSitesSingleUser: PropTypes.bool,
 	name: PropTypes.string
 };
 
 export default connect( ( state, ownProps ) => {
 	const post = getPost( state, ownProps.globalId );
 
-	let singleUserSite;
-	if ( post ) {
-		singleUserSite = isSingleUserSite( state, post.site_ID );
-	}
-
 	return {
-		singleUserSite,
 		name: get( post, [ 'author', 'name' ] ),
-		isAllSitesModeSelected: getSelectedSiteId( state ) === null,
-		allSitesSingleUser: areAllSitesSingleUser( state ),
 	};
 } )( localize( PostTypePostAuthor ) );

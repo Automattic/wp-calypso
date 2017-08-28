@@ -183,8 +183,8 @@ class PostItem extends React.Component {
 					<div className="post-item__detail">
 						<div className={ titleMetaClasses }>
 							<div className="post-item__info">
-								<PostTypeSiteInfo globalId={ globalId } />
-								<PostTypePostAuthor globalId={ globalId } />
+								{ isSiteInfoVisible && <PostTypeSiteInfo globalId={ globalId } /> }
+								{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
 							</div>
 							<h1 className="post-item__title">
 								<a href={ editUrl } className="post-item__title-link">
