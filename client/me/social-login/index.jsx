@@ -11,6 +11,7 @@ const debug = debugFactory( 'calypso:me:security:social-login' );
 /**
  * Internal dependencies
  */
+import config from 'config';
 import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import DocumentHead from 'components/data/document-head';
@@ -24,6 +25,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { connectSocialUser, disconnectSocialUser } from 'state/login/actions';
 import { isRequesting, getRequestError } from 'state/login/selectors';
 import GoogleIcon from 'components/social-icons/google';
+import GoogleLoginButton from 'components/social-buttons/google';
 import userFactory from 'lib/user';
 
 const user = userFactory();
@@ -46,8 +48,22 @@ class SocialLogin extends Component {
 		debug( this.constructor.displayName + ' React component is unmounting.' );
 	}
 
-	toggleSocialConnection = ( serviceName ) => {
-		this.props.disconnectSocialUser( serviceName ).then( () => user.fetch() );
+	disconnectFromGoogle = () => {
+		this.props.disconnectSocialUser( 'google' ).then( () => user.fetch() );
+	};
+
+	handleGoogleResponse = ( response ) => {
+		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
+			return;
+		}
+
+		const socialInfo = {
+			service: 'google',
+			access_token: response.Zi.access_token,
+			id_token: response.Zi.id_token,
+		};
+
+		return this.props.connectSocialUser( socialInfo ).then( () => user.fetch() );
 	};
 
 	renderContent() {
@@ -60,15 +76,14 @@ class SocialLogin extends Component {
 					{ translate( 'You’ll be able to log in faster by linking your WordPress.com account with your ' +
 						'social networks. We’ll never post without your permission.' ) }
 				</CompactCard>
-				{ this.renderSocialConnection() }
+				{ this.renderGoogleConnection() }
 			</div>
 		);
 	}
 
-	renderSocialConnection() {
+	renderGoogleConnection() {
 		const { isUserConnectedToGoogle, isUpdatingSocialConnection, translate } = this.props;
-		// TODO: refactor into a new component SocialLoginConnection
-		const toggleGoogleConnection = this.toggleSocialConnection.bind( this, 'google' );
+		const buttonLabel = isUserConnectedToGoogle ? translate( 'Disconnect' ) : translate( 'Connect' );
 
 		return (
 			<CompactCard>
@@ -81,13 +96,27 @@ class SocialLogin extends Component {
 					</div>
 
 					<div className="security-social-login-connection__header-action">
-						<FormButton
-							compact={ true }
-							disabled={ isUpdatingSocialConnection }
-							isPrimary={ ! isUserConnectedToGoogle }
-							onClick={ toggleGoogleConnection }>
-							{ isUserConnectedToGoogle ? translate( 'Disconnect' ) : translate( 'Connect' ) }
-						</FormButton>
+						{
+							isUserConnectedToGoogle
+								? <FormButton
+									compact={ true }
+									disabled={ isUpdatingSocialConnection }
+									isPrimary={ false }
+									onClick={ this.disconnectFromGoogle }>
+									{ buttonLabel }
+								</FormButton>
+								: <GoogleLoginButton
+									clientId={ config( 'google_oauth_client_id' ) }
+									responseHandler={ this.handleGoogleResponse } >
+									<FormButton
+										compact={ true }
+										disabled={ isUpdatingSocialConnection }
+										isPrimary={ true }
+										onClick={ this.disconnectFromGoogle }>
+										{ buttonLabel }
+									</FormButton>
+								</GoogleLoginButton>
+						}
 					</div>
 				</div>
 			</CompactCard>
