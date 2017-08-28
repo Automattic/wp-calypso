@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 /**
@@ -13,7 +14,7 @@ export default React.createClass( {
 	displayName: 'JetpackColophon',
 
 	propTypes: {
-		className: React.PropTypes.string,
+		className: PropTypes.string,
 	},
 
 	render: function() {
