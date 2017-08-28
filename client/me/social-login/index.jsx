@@ -143,10 +143,10 @@ class SocialLogin extends Component {
 
 export default connect(
 	( state ) => {
-		const user = getCurrentUser( state );
+		const currentUser = getCurrentUser( state );
 
 		return {
-			isUserConnectedToGoogle: user && user.social_signup_service === 'google',
+			isUserConnectedToGoogle: currentUser && currentUser.social_signup_service === 'google',
 			isUpdatingSocialConnection: isRequesting( state ),
 			errorUpdatingSocialConnection: getRequestError( state ),
 		};
