@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
-import { get, pick } from 'lodash';
+import { pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityActor from './activity-actor';
 import ActivityIcon from './activity-icon';
-import ActivityTitle from './activity-title';
 import EllipsisMenu from 'components/ellipsis-menu';
 import FoldableCard from 'components/foldable-card';
 import PopoverMenuItem from 'components/popover/menu-item';
@@ -131,22 +130,14 @@ class ActivityLogItem extends Component {
 	}
 
 	renderHeader() {
-		const {
-			action,
-			name,
-		} = this.props.log;
-		const object = get( this.props, [ 'log', 'object' ] );
 		const { log } = this.props;
 
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor { ...pick( log, [ 'actorAvatarUrl', 'actorName', 'actorRole' ] ) } />
-				<ActivityTitle
-					action={ action }
-					actor={ actor }
-					name={ name }
-					object={ object }
-				/>
+				<div className="activity-log-item__title">
+					{ log.activityTitle }
+				</div>
 			</div>
 		);
 	}
