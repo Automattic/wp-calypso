@@ -2,7 +2,8 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { startCase } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
