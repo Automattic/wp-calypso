@@ -131,10 +131,7 @@ export const getHiddenCommentsForPost = createSelector(
 		const expanded = getExpansionsForPost( state, siteId, postId );
 		return pickBy( comments, comment => ! get( expanded, comment.ID ) );
 	},
-	( state, siteId, postId ) => [
-		getExpansionsForPost( state, siteId, postId ),
-		getPostCommentItems( state, siteId, postId ),
-	]
+	state => [ state.comments.items, state.comments.expansions ]
 );
 
 export const getRootNeedsCaterpillar = ( state, siteId, postId ) =>
@@ -151,7 +148,7 @@ export const getRootNeedsCaterpillar = ( state, siteId, postId ) =>
 export const getPostOldestCommentDate = createSelector( ( state, siteId, postId ) => {
 	const items = getPostCommentItems( state, siteId, postId );
 	return items && last( items ) ? new Date( get( last( items ), 'date' ) ) : undefined;
-}, state => state.comments.items );
+}, state => [ state.comments.items ] );
 
 /***
  * Get newest comment date for a given post

@@ -4,7 +4,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { map, get, last, uniqBy, size, filter, takeRight } from 'lodash';
+import { map, get, last, uniqBy, size, filter, takeRight, compact } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /***
@@ -35,9 +35,13 @@ class ConversationCaterpillarComponent extends React.Component {
 	};
 
 	handleTickle = () => {
-		const { comments, hiddenComments, blogId, postId } = this.props;
+		const { comments, hiddenComments, blogId, postId, parentCommentId } = this.props;
+		const filteredComments = parentCommentId
+			? filter( comments, c => c.parent && c.parent.ID === parentCommentId )
+			: comments;
+
 		const commentsToExpand = takeRight(
-			filter( comments, comment => hiddenComments[ comment.ID ] ),
+			filter( filteredComments, comment => hiddenComments[ comment.ID ] ),
 			10
 		);
 		this.props.expandComments( {
@@ -46,11 +50,20 @@ class ConversationCaterpillarComponent extends React.Component {
 			commentIds: map( commentsToExpand, 'ID' ),
 			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
 		} );
+		this.props.expandComments( {
+			siteId: blogId,
+			postId,
+			commentIds: compact( map( commentsToExpand, c => get( c, 'parent.ID', null ) ) ),
+			displayType: POST_COMMENT_DISPLAY_TYPES.singleLine,
+		} );
 	};
 
 	render() {
-		const { comments, translate, hiddenComments } = this.props;
-		const expandableComments = filter( comments, comment => hiddenComments[ comment.ID ] );
+		const { comments, translate, hiddenComments, parentCommentId } = this.props;
+		const filteredComments = parentCommentId
+			? filter( comments, c => c.parent && c.parent.ID === parentCommentId )
+			: comments;
+		const expandableComments = filter( filteredComments, comment => hiddenComments[ comment.ID ] );
 		const commentCount = size( expandableComments );
 
 		// Only display authors with a gravatar, and only display each author once

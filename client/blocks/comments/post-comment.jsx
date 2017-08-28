@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { get, noop, some, values, omit, map } from 'lodash';
+import { get, noop, some, values, omit } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -112,11 +112,13 @@ class PostComment extends Component {
 	};
 
 	renderRepliesList() {
+		const { toShow, depth, commentId } = this.props;
 		const commentChildrenIds = get( this.props.commentsTree, [ this.props.commentId, 'children' ] );
 		// Hide children if more than maxChildrenToShow, but not if replying
 		const exceedsMaxChildrenToShow =
 			commentChildrenIds && commentChildrenIds.length < this.props.maxChildrenToShow;
 		const showReplies = this.state.showReplies || exceedsMaxChildrenToShow;
+		const childDepth = ! toShow || ( toShow && toShow[ commentId ] ) ? depth + 1 : depth;
 
 		// No children to show
 		if ( ! commentChildrenIds || commentChildrenIds.length < 1 ) {
@@ -161,7 +163,7 @@ class PostComment extends Component {
 							{ commentChildrenIds.map( childId =>
 								<PostComment
 									{ ...omit( this.props, 'displayType' ) }
-									depth={ this.props.depth + 1 }
+									depth={ childDepth }
 									key={ childId }
 									commentId={ childId }
 								/>
@@ -173,7 +175,7 @@ class PostComment extends Component {
 	}
 
 	renderCommentForm() {
-		if ( this.props.activeReplyCommentID !== this.props.commentId ) {
+		if ( this.props.activeReplyCommentId !== this.props.commentId ) {
 			return null;
 		}
 
@@ -181,7 +183,7 @@ class PostComment extends Component {
 			<PostCommentForm
 				ref="postCommentForm"
 				post={ this.props.post }
-				parentCommentID={ this.props.commentId }
+				parentCommentId={ this.props.commentId }
 				commentText={ this.props.commentText }
 				onUpdateCommentText={ this.props.onUpdateCommentText }
 				onCommentSubmit={ this.props.onCommentSubmit }
@@ -215,20 +217,31 @@ class PostComment extends Component {
 	};
 
 	renderCaterpillar = () => {
-		const { showCaterpillar, commentsTree } = this.props;
-		const commentChildrenIds = get( commentsTree, [ this.props.commentId, 'children' ] );
+		const { showCaterpillar, commentsTree, toShow, post, commentId } = this.props;
+		const childrenIds = get( commentsTree, [ this.props.commentId, 'children' ] );
 
-		const actuallyShowCaterpillar = showCaterpillar && commentChildrenIds.length > 0;
-		if ( ! actuallyShowCaterpillar || true ) {
+		const actuallyShowCaterpillar = showCaterpillar && some( childrenIds, id => ! toShow[ id ] );
+
+		if ( ! actuallyShowCaterpillar ) {
 			return null;
 		}
-		const children = map( commentChildrenIds, id => commentsTree[ id ] );
-		return <ConversationCaterpillar comments={ children } />;
+		return (
+			<ConversationCaterpillar
+				blogId={ post.site_ID }
+				postId={ post.ID }
+				parentCommentId={ commentId }
+			/>
+		);
 	};
 
 	render() {
 		const { commentsTree, commentId, depth, maxDepth, toShow } = this.props;
 		const comment = get( commentsTree, [ commentId, 'data' ] );
+		const isPingbackOrTrackback = comment.type === 'trackback' || comment.type === 'pingback';
+
+		if ( this.props.hidePingbacksAndTrackbacks && isPingbackOrTrackback ) {
+			return null;
+		}
 
 		if ( ! comment ) {
 			return null;
@@ -267,7 +280,7 @@ class PostComment extends Component {
 		}
 
 		// Trackback / Pingback
-		if ( comment.type === 'trackback' || comment.type === 'pingback' ) {
+		if ( isPingbackOrTrackback ) {
 			return <PostTrackback { ...this.props } />;
 		}
 
@@ -346,7 +359,7 @@ class PostComment extends Component {
 					comment={ comment }
 					showModerationTools={ this.props.showModerationTools }
 					activeEditCommentId={ this.props.activeEditCommentId }
-					activeReplyCommentID={ this.props.activeReplyCommentID }
+					activeReplyCommentId={ this.props.activeReplyCommentId }
 					commentId={ this.props.commentId }
 					editComment={ this.props.onEditCommentClick }
 					editCommentCancel={ this.props.onEditCommentCancel }

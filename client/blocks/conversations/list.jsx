@@ -16,17 +16,24 @@ import {
 	getAllCommentSinceLatestViewed,
 	getRootNeedsCaterpillar,
 	getExpansionsForPost,
+	getHiddenCommentsForPost,
 } from 'state/comments/selectors';
 import { requestPostComments } from 'state/comments/actions';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
-
-export class ConversationCommentList extends React.Component {
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import PostCommentForm from 'blocks/comments/form';
+export class ConversationCommentList extends React.PureComponent {
 	static propTypes = {
 		post: PropTypes.object.isRequired, // required by PostComment
 	};
 
 	static defaultProps = {
 		showCaterpillar: true,
+	};
+
+	state = {
+		activeReplyCommentId: null,
+		activeEditCommentId: null,
 	};
 
 	reqMoreComments = ( props = this.props ) => {
@@ -49,14 +56,30 @@ export class ConversationCommentList extends React.Component {
 	// this.reqMoreComments( nextProps );
 	// }
 
-	shouldComponentUpdate( nextProps ) {
-		const prevProps = this.props;
-		return (
-			prevProps.hiddenComments !== nextProps.hiddenComments ||
-			prevProps.expansions !== nextProps.expansions ||
-			prevProps.newComments !== nextProps.newComments
-		);
-	}
+	resetActiveReplyComment = () => this.setState( { activeReplyCommentId: null } );
+	onEditCommentClick = commentId => this.setState( { activeEditCommentId: commentId } );
+	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
+	onUpdateCommentText = commentText => this.setState( { commentText: commentText } );
+
+	onReplyClick = commentId => {
+		this.setState( { activeReplyCommentId: commentId } );
+		recordAction( 'comment_reply_click' );
+		recordGaEvent( 'Clicked Reply to Comment' );
+		recordTrack( 'calypso_reader_comment_reply_click', {
+			blog_id: this.props.post.site_ID,
+			comment_id: commentId,
+		} );
+	};
+
+	onReplyCancel = () => {
+		recordAction( 'comment_reply_cancel_click' );
+		recordGaEvent( 'Clicked Cancel Reply to Comment' );
+		recordTrack( 'calypso_reader_comment_reply_cancel_click', {
+			blog_id: this.props.post.site_ID,
+			comment_id: this.state.activeReplyCommentId,
+		} );
+		this.resetActiveReplyComment();
+	};
 
 	render() {
 		const {
@@ -71,16 +94,18 @@ export class ConversationCommentList extends React.Component {
 		} = this.props;
 
 		const toShow = { ...newComments, ...expansions };
+
 		return (
 			<div className="conversations__comment-list">
 				{ showCaterpillar &&
 					needsCaterpillar &&
-					<ConversationCaterpillar isRoot blogId={ blogId } postId={ postId } /> }
+					<ConversationCaterpillar blogId={ blogId } postId={ postId } /> }
 				<ul className="conversations__comment-list-ul">
 					{ map( commentsTree.children, commentId => {
 						return (
 							<PostComment
 								showNestingReplyArrow
+								hidePingbacksAndTrackbacks
 								commentsTree={ commentsTree }
 								key={ commentId }
 								commentId={ commentId }
@@ -88,10 +113,27 @@ export class ConversationCommentList extends React.Component {
 								post={ post }
 								showCaterpillar={ showCaterpillar }
 								toShow={ toShow }
-								maxDepth={ 1 }
+								maxDepth={ 2 }
+								onReplyClick={ this.onReplyClick }
+								onReplyCancel={ this.onReplyCancel }
+								activeReplyCommentId={ this.state.activeReplyCommentId }
+								onEditCommentClick={ this.onEditCommentClick }
+								onEditCommentCancel={ this.onEditCommentCancel }
+								activeEditCommentId={ this.state.activeEditCommentId }
+								onUpdateCommentText={ this.onUpdateCommentText }
+								onCommentSubmit={ this.resetActiveReplyComment }
+								commentText={ this.state.commentText }
 							/>
 						);
 					} ) }
+					{ ! this.state.activeReplyCommentId &&
+						<PostCommentForm
+							ref="postCommentForm"
+							post={ post }
+							parentCommentId={ null }
+							commentText={ this.state.commentText }
+							onUpdateCommentText={ this.onUpdateCommentText }
+						/> }
 				</ul>
 			</div>
 		);
@@ -112,6 +154,7 @@ const ConnectedConversationCommentList = connect(
 			newComments: getAllCommentSinceLatestViewed( state, blogId, postId ),
 			needsCaterpillar: getRootNeedsCaterpillar( state, blogId, postId ),
 			expansions: getExpansionsForPost( state, blogId, postId ),
+			hiddenComments: getHiddenCommentsForPost( state, blogId, postId ),
 		};
 	},
 	{ requestPostComments }
