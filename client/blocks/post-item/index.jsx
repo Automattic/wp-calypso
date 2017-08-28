@@ -158,7 +158,7 @@ class PostItem extends React.Component {
 			'is-placeholder': ! globalId
 		} );
 
-		const isSiteVisible = (
+		const isSiteInfoVisible = (
 			isEnabled( 'posts/post-type-list' ) &&
 			isAllSitesModeSelected
 		);
@@ -167,7 +167,7 @@ class PostItem extends React.Component {
 			post && post.author && isEnabled( 'posts/post-type-list' );
 
 		const titleMetaClasses = classnames( 'post-item__title-meta', {
-			'is-post-item-info-visible': isSiteVisible || isAuthorVisible
+			'is-post-item-info-visible': isSiteInfoVisible || isAuthorVisible
 		} );
 
 		const variableHeightContent = this.renderVariableHeightContent();
