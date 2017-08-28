@@ -81,7 +81,7 @@ const store = createStore(
 );
 
 const wrapConsole = fn => ( message, ...args ) => {
-	new Promise().then( () => store.dispatch( { type: CONSOLE_MESSAGE, message } ) );
+	Promise.resolve().then( () => store.dispatch( { type: CONSOLE_MESSAGE, message } ) );
 	fn.call( window, message, ...args );
 };
 
@@ -102,7 +102,7 @@ const RELOAD_REQUIRED_ELEMENT = (
 	<div className="webpack-build-monitor is-warning">Need to refresh</div>
 );
 
-class WebpackBuildMonitor extends React.Component {
+class WebpackBuildMonitor extends React.PureComponent {
 	state = {
 		buildStatus: IDLE,
 		reloadRequired: false,
@@ -110,9 +110,9 @@ class WebpackBuildMonitor extends React.Component {
 
 	componentDidMount() {
 		this.unsubscribe = store.subscribe( () => {
-			const status = store.getState();
-			if ( ! isEqual( status, this.state ) ) {
-				this.setState( store.getState() );
+			const state = store.getState();
+			if ( state !== this.state ) {
+				this.setState( state );
 			}
 		} );
 	}
