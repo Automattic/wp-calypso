@@ -119,26 +119,27 @@ const PluginsMain = React.createClass( {
 	},
 
 	getFilters() {
+		const { translate } = this.props;
 		const siteFilter = this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '';
 
 		return [
 			{
-				title: this.translate( 'All', { context: 'Filter label for plugins list' } ),
+				title: translate( 'All', { context: 'Filter label for plugins list' } ),
 				path: '/plugins' + siteFilter,
 				id: 'all'
 			},
 			{
-				title: this.translate( 'Active', { context: 'Filter label for plugins list' } ),
+				title: translate( 'Active', { context: 'Filter label for plugins list' } ),
 				path: '/plugins/active' + siteFilter,
 				id: 'active'
 			},
 			{
-				title: this.translate( 'Inactive', { context: 'Filter label for plugins list' } ),
+				title: translate( 'Inactive', { context: 'Filter label for plugins list' } ),
 				path: '/plugins/inactive' + siteFilter,
 				id: 'inactive'
 			},
 			{
-				title: this.translate( 'Updates', { context: 'Filter label for plugins list' } ),
+				title: translate( 'Updates', { context: 'Filter label for plugins list' } ),
 				path: '/plugins/updates' + siteFilter,
 				id: 'updates'
 			}
@@ -159,59 +160,62 @@ const PluginsMain = React.createClass( {
 	},
 
 	getSearchPlaceholder() {
+		const { translate } = this.props;
+
 		switch ( this.props.filter ) {
 			case 'active':
-				return this.translate( 'Search All…', { textOnly: true } );
+				return translate( 'Search All…', { textOnly: true } );
 
 			case 'inactive':
-				return this.translate( 'Search Inactive…', { textOnly: true } );
+				return translate( 'Search Inactive…', { textOnly: true } );
 
 			case 'updates':
-				return this.translate( 'Search Updates…', { textOnly: true } );
+				return translate( 'Search Updates…', { textOnly: true } );
 
 			case 'all':
-				return this.translate( 'Search All…', { textOnly: true } );
+				return translate( 'Search All…', { textOnly: true } );
 		}
 	},
 
 	getEmptyContentUpdateData() {
+		const { translate } = this.props;
 		const emptyContentData = { illustration: '/calypso/images/illustrations/illustration-ok.svg' },
 			{ selectedSite } = this.props;
 
 		if ( selectedSite ) {
-			emptyContentData.title = this.translate( 'All plugins on %(siteName)s are {{span}}up to date.{{/span}}', {
+			emptyContentData.title = translate( 'All plugins on %(siteName)s are {{span}}up to date.{{/span}}', {
 				textOnly: true,
 				args: { siteName: selectedSite.title },
 				components: { span: <span className="plugins__plugin-list-state" /> },
 				comment: 'The span tags prevents single words from showing on a single line.'
 			} );
 		} else {
-			emptyContentData.title = this.translate( 'All plugins are up to date.', { textOnly: true } );
+			emptyContentData.title = translate( 'All plugins are up to date.', { textOnly: true } );
 		}
 
 		if ( this.getUpdatesTabVisibility() ) {
 			return emptyContentData;
 		}
 
-		emptyContentData.action = this.translate( 'All Plugins', { textOnly: true } );
+		emptyContentData.action = translate( 'All Plugins', { textOnly: true } );
 
 		if ( selectedSite ) {
 			emptyContentData.actionURL = '/plugins/' + selectedSite.slug;
 			if ( this.props.selectedSiteIsJetpack ) {
 				emptyContentData.illustration = '/calypso/images/illustrations/illustration-jetpack.svg';
-				emptyContentData.title = this.translate( 'Plugins can\'t be updated on %(siteName)s.', {
+				emptyContentData.title = translate( 'Plugins can\'t be updated on %(siteName)s.', {
 					textOnly: true,
 					args: { siteName: selectedSite.title }
 				} );
 			} else {
 				// buisness plan sites
-				emptyContentData.title = this.translate( 'Plugins are updated automatically on %(siteName)s.', {
+				emptyContentData.title = translate( 'Plugins are updated automatically on %(siteName)s.', {
 					textOnly: true,
 					args: { siteName: selectedSite.title }
 				} );
 			}
 		} else {
-			emptyContentData.title = this.translate( 'No updates are available.', { textOnly: true } );
+			emptyContentData.title = translate( 'No updates are available.', { textOnly: true } );
 			emptyContentData.illustration = '/calypso/images/illustrations/illustration-empty-results.svg';
 			emptyContentData.actionURL = '/plugins';
 		}
@@ -220,14 +224,15 @@ const PluginsMain = React.createClass( {
 	},
 
 	getEmptyContentData() {
+		const { translate } = this.props;
 		let emptyContentData = { illustration: '/calypso/images/illustrations/illustration-empty-results.svg', };
 
 		switch ( this.props.filter ) {
 			case 'active':
-				emptyContentData.title = this.translate( 'No plugins are active.', { textOnly: true } );
+				emptyContentData.title = translate( 'No plugins are active.', { textOnly: true } );
 				break;
 			case 'inactive':
-				emptyContentData.title = this.translate( 'No plugins are inactive.', { textOnly: true } );
+				emptyContentData.title = translate( 'No plugins are inactive.', { textOnly: true } );
 				break;
 			case 'updates':
 				emptyContentData = this.getEmptyContentUpdateData();
@@ -258,7 +263,7 @@ const PluginsMain = React.createClass( {
 	},
 
 	renderDocumentHead() {
-		return <DocumentHead title={ this.translate( 'Plugins', { textOnly: true } ) } />;
+		return <DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 	},
 
 	renderPluginsContent() {
@@ -267,7 +272,7 @@ const PluginsMain = React.createClass( {
 
 		if ( isEmpty( plugins ) && ! this.isFetchingPlugins() ) {
 			if ( this.props.search ) {
-				const searchTitle = this.translate( 'Suggested plugins for: %(searchQuery)s', {
+				const searchTitle = this.props.translate( 'Suggested plugins for: %(searchQuery)s', {
 					textOnly: true,
 					args: {
 						searchQuery: this.props.search
@@ -297,7 +302,7 @@ const PluginsMain = React.createClass( {
 		return (
 			<div className="plugins__lists">
 				<PluginsList
-					header={ this.translate( 'Plugins' ) }
+					header={ this.props.translate( 'Plugins' ) }
 					plugins={ plugins }
 					sites={ this.props.sites }
 					pluginUpdateCount={ this.state.pluginUpdateCount }
@@ -373,7 +378,7 @@ const PluginsMain = React.createClass( {
 					<JetpackManageErrorPage
 						template="optInManage"
 						siteId={ selectedSiteId }
-						title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
+						title={ this.props.translate( 'Looking to manage this site\'s plugins?' ) }
 						section="plugins"
 						featureExample={ this.getMockPluginItems() } />
 				</Main>
