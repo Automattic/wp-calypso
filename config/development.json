@@ -149,6 +149,7 @@
 		"signup/domain-first-flow": true,
 		"signup/social": true,
 		"signup/social-management": true,
+		"signup/wpcc": true,
 		"simple-payments": true,
 		"standalone-site-preview": true,
 		"support-user": true,
