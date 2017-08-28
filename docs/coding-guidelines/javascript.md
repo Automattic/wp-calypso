@@ -313,21 +313,19 @@ if ( undefOrNull == null ) {
 
 ## Type Checks
 
-These are the preferred ways of checking the type of an object:
+When checking the type of a value, use one of the following utilities from [Lodash](https://lodash.com/):
 
-- String: `typeof object === 'string'`
-- Number: `typeof object === 'number'`
-- Boolean: `typeof object === 'boolean'`
-- Object: `typeof object === 'object'`
-- null: `object === null`
-- undefined: `object === undefined` or for globals `typeof window.someGlobal === 'undefined'`
+- String: [`isString( value )`](https://lodash.com/docs/4.17.4#isString)
+- Number: [`isNumber( value )`](https://lodash.com/docs/4.17.4#isNumber)
+- Boolean: [`isBoolean( value )`](https://lodash.com/docs/4.17.4#isBoolean)
+- Object: [`isPlainObject( value )`](https://lodash.com/docs/4.17.4#isPlainObject)
+- null: [`isNull( value )`](https://lodash.com/docs/4.17.4#isNull)
+- undefined: [`isUndefined( value )`](https://lodash.com/docs/4.17.4#isUndefined)
+- undefined or null (either): [`isNil( value )`](https://lodash.com/docs/4.17.4#isNil)
 
-However, you don't generally have to know the type of an object. Prefer testing
-the object's existence and shape over its type.
+Note that we don't we [`isObject`](https://lodash.com/docs/4.17.4#isObject) to check that a value is an object. This is because non-plain-object types ( arrays, regexes and others) test as true for this check.
 
-`typeof object === 'object'` can be misleading, as non-plain-object types test
-as true for this check (e.g. Arrays). If you need to test whether a variable is
-a plain object, consider using [Lodash's `_.isPlainObject`](https://lodash.com/docs/#isPlainObject)
+Though these are the recommended type checks, you generally don't have to know the type of an object. Instead, prefer testing the object's existence and shape over its type.
 
 ## Existence and Shape Checks
 
