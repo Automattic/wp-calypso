@@ -77,6 +77,7 @@ import ScreenReaderTextExample from 'components/screen-reader-text/docs/example'
 import PaginationExample from 'components/pagination/docs/example';
 import ListEnd from 'components/list-end/docs/example';
 import Wizard from 'components/wizard/docs/example';
+import Suggestions from 'components/suggestions/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -169,6 +170,7 @@ let DesignAssets = React.createClass( {
 					<Spinner searchKeywords="loading" />
 					<SpinnerButton searchKeywords="loading input submit" />
 					<SpinnerLine searchKeywords="loading" />
+					<Suggestions />
 					<Timezone />
 					<TokenFields />
 					<VerticalMenu />
