@@ -200,10 +200,10 @@ class JetpackPluginsPanel extends Component {
 								<Button
 									compact
 									href={ uploadUrl }
-									aria-label={ translate( 'Upload plugin', { context: 'button label' } ) }
+									aria-label={ translate( 'Upload Plugin' ) }
 								>
 									<Gridicon icon="cloud-upload" size={ 18 } />
-									{ translate( 'Upload plugin' ) }
+									{ translate( 'Upload Plugin' ) }
 								</Button>
 							</ButtonGroup>
 						)

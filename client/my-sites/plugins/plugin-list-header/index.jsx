@@ -201,10 +201,10 @@ export class PluginsListHeader extends PureComponent {
 							compact
 							href={ uploadUrl }
 							onClick={ this.onUploadLinkClick }
-							aria-label={ translate( 'Upload plugin', { context: 'button label' } ) }
+							aria-label={ translate( 'Upload Plugin' ) }
 						>
 							<Gridicon icon="cloud-upload" size={ 18 } />
-							{ translate( 'Upload plugin' ) }
+							{ translate( 'Upload Plugin' ) }
 						</Button>
 					</ButtonGroup>
 				);
