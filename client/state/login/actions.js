@@ -26,6 +26,9 @@ import {
 	SOCIAL_CONNECT_ACCOUNT_REQUEST,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
+	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -334,6 +337,37 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 
 		dispatch( {
 			type: SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
+			error,
+		} );
+
+		return Promise.reject( error );
+	} );
+};
+
+/**
+ * Attempt to disconnect the current account with a social service
+ *
+ * @param  {String}    socialServce    The external social service name.
+ * @return {Function}               Action thunk to trigger the login process.
+ */
+export const disconnectSocialUser = ( socialServce ) => dispatch => {
+	dispatch( {
+		type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
+		notice: {
+			message: translate( 'Creating your account' )
+		},
+	} );
+
+	return wpcom.undocumented().me().socialDisconnect( socialServce ).then( wpcomResponse => {
+		dispatch( {
+			type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
+			redirect_to: wpcomResponse.redirect_to,
+		} );
+	}, wpcomError => {
+		const error = getErrorFromWPCOMError( wpcomError );
+
+		dispatch( {
+			type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
 			error,
 		} );
 
