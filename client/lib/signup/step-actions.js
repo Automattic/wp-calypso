@@ -53,7 +53,7 @@ function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		};
 
 		const domainChoiceCart = [ domainItem ];
-		if ( abtest( 'privacyNoPopup' ) === 'nopopup' ) {
+		if ( domainItem && abtest( 'privacyNoPopup' ) === 'nopopup' ) {
 			domainChoiceCart.push(
 				cartItems.domainPrivacyProtection( {
 					domain: domainItem.meta,
@@ -132,7 +132,7 @@ function createSiteWithCart( callback, dependencies, {
 		};
 		const addToCartAndProceed = () => {
 			let privacyItem = null;
-			if ( abtest( 'privacyNoPopup' ) === 'nopopup' ) {
+			if ( domainItem && abtest( 'privacyNoPopup' ) === 'nopopup' ) {
 				privacyItem = cartItems.domainPrivacyProtection( {
 					domain: domainItem.meta,
 					source: 'signup'
