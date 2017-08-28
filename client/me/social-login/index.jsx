@@ -87,15 +87,15 @@ class SocialLogin extends Component {
 
 		return (
 			<CompactCard>
-				<div className="security-social-login-connection__header">
-					<div className="security-account-recovery-contact__header-info">
-						<div className="security-social-login-connection__header-icon">
+				<div className="social-login__header">
+					<div className="social-login__header-info">
+						<div className="social-login__header-icon">
 							<GoogleIcon width="30" height="30" />
 						</div>
 						<h3>Google</h3>
 					</div>
 
-					<div className="security-social-login-connection__header-action">
+					<div className="social-login__header-action">
 						{
 							isUserConnectedToGoogle
 								? <FormButton

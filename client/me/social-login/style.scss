@@ -1,11 +1,11 @@
-.security-social-login-connection__header {
+.social-login__header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	position: relative;
 	box-sizing: border-box;
 }
-.security-account-recovery-contact__header-info {
+.social-login__header-info {
 	display: flex;
 	align-items: center;
 	flex: 2 1;
@@ -14,13 +14,13 @@
 		text-transform: capitalize;
 	}
 }
-.security-social-login-connection__header-icon {
+.social-login__header-icon {
 	height: 30px;
 	width: 30px;
 	margin-left: 0;
 	margin-right: 12px;
 }
-.security-social-login-connection__header-action {
+.social-login__header-action {
 	display: flex;
 	align-items: center;
 	flex: 1 1;
