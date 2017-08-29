@@ -123,28 +123,6 @@ class PrivacyProtection extends Component {
 		const { translate } = this.props;
 		const numberOfDomainRegistrations = domainRegistrations.length;
 		const hasOneFreePrivacy = this.hasDomainPartOfPlan() && numberOfDomainRegistrations === 1;
-		const priceText = [ (
-			<span className={ classnames( 'checkout__privacy-protection-radio-price-text', { 'free-with-plan': hasOneFreePrivacy } ) }>
-				{
-					translate(
-						'%(cost)s/year',
-						'%(cost)s per domain/year',
-						{
-							args: { cost: this.getPrivacyProtectionCost() },
-							count: numberOfDomainRegistrations
-						}
-					)
-				}
-			</span>
-		) ];
-
-		if ( hasOneFreePrivacy ) {
-			priceText.push(
-				<span className="checkout__privacy-protection-free-text">
-					{ translate( 'Free with your plan' ) }
-				</span>
-			);
-		}
 
 		return (
 			<div>
@@ -185,7 +163,30 @@ class PrivacyProtection extends Component {
 											)
 										}
 									</span>
-									{ priceText }
+									<span
+										className={
+											classnames(
+												'checkout__privacy-protection-radio-price-text',
+												{ 'free-with-plan': hasOneFreePrivacy }
+											)
+										}
+									>
+										{
+											translate(
+												'%(cost)s/year',
+												'%(cost)s per domain/year',
+												{
+													args: { cost: this.getPrivacyProtectionCost() },
+													count: numberOfDomainRegistrations
+												}
+											)
+										}
+									</span>
+									{ hasOneFreePrivacy && (
+										<span className="checkout__privacy-protection-free-text">
+											{ translate( 'Free with your plan' ) }
+										</span>
+									) }
 									<br />
 									<span className="checkout__privacy-protection-radio-text-description">
 									{
