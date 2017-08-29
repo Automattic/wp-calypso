@@ -1118,8 +1118,6 @@ export const PostEditor = React.createClass( {
 			? 'range'
 			: 'single';
 
-		const bookMarkStart = this.getCursorMarkerSpan( 'start' );
-
 		let selectedText = null;
 
 		if ( mode === 'range' ) {
@@ -1132,10 +1130,10 @@ export const PostEditor = React.createClass( {
 		}
 
 		textArea.value = [
-			textArea.value.slice( 0, htmlModeCursorStartPosition ),
-			bookMarkStart,
-			selectedText,
-			textArea.value.slice( htmlModeCursorEndPosition )
+			textArea.value.slice( 0, htmlModeCursorStartPosition ), // text until the cursor/selection position
+			this.getCursorMarkerSpan( 'start' ), 					// cursor/selection start marker
+			selectedText, 											// selected text with end cursor/position marker
+			textArea.value.slice( htmlModeCursorEndPosition )		// text from last cursor/selection position to end
 		].join( '' );
 
 		this.editor.onTextAreaChange( { target: { value: textArea.value } } );
