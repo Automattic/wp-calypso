@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +16,7 @@ export const toAuthor = ( { avatar_URL, email, ID, name } ) => {
 		{ kind: 'anonymous' },
 		avatar_URL && { avatar: avatar_URL },
 		email && { email },
-		name && { displayName: name },
+		name && { displayName: name }
 	);
 };
 
@@ -30,7 +31,7 @@ export const toWpcomUser = author =>
 			primary_blog_url: author.URL,
 			username: author.login,
 		},
-		a => !! a,
+		a => !! a
 	);
 
 export const validStatusValues = {
@@ -67,10 +68,10 @@ export const fromApi = ( siteId, data ) => {
 						postId: parseInt( data.post.ID, 10 ),
 						siteId,
 						status: validStatusValues[ data.status ],
-					},
+					}
 				),
 			},
-			data.author.ID > 0 && { user: toWpcomUser( data.author ) },
+			data.author.ID > 0 && { user: toWpcomUser( data.author ) }
 		);
 	} catch ( e ) {
 		return {
