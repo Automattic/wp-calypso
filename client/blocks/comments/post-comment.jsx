@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { get, noop, some, values, omit } from 'lodash';
 import { connect } from 'react-redux';
@@ -29,8 +29,9 @@ import PostTrackback from './post-trackback.jsx';
 import CommentActions from './comment-actions';
 import Emojify from 'components/emojify';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
+import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 
-class PostComment extends Component {
+class PostComment extends React.PureComponent {
 	static propTypes = {
 		commentsTree: PropTypes.object.isRequired,
 		commentId: PropTypes.oneOfType( [
@@ -45,6 +46,8 @@ class PostComment extends Component {
 		maxDepth: PropTypes.number,
 		showNestingReplyArrow: PropTypes.bool,
 		displayType: PropTypes.oneOf( values( POST_COMMENT_DISPLAY_TYPES ) ),
+		toShow: PropTypes.object, // if provided, hide comments not specified in this object
+		enableCaterpillar: PropTypes.bool,
 
 		// connect()ed props:
 		currentUser: PropTypes.object.isRequired,
@@ -88,12 +91,30 @@ class PostComment extends Component {
 		} );
 	};
 
+	shouldRenderCaterpillar = () => {
+		const { enableCaterpillar, commentsTree, toShow } = this.props;
+		const childrenIds = get( commentsTree, [ this.props.commentId, 'children' ] );
+
+		// not this is a bug that it only goes one child deep
+		return enableCaterpillar && toShow && some( childrenIds, id => ! toShow[ id ] );
+	};
+
 	renderRepliesList() {
-		const commentChildrenIds = get( this.props.commentsTree, [ this.props.commentId, 'children' ] );
+		const {
+			toShow,
+			depth,
+			commentId,
+			commentsTree,
+			maxChildrenToShow,
+			enableCaterpillar,
+		} = this.props;
+
+		const commentChildrenIds = get( commentsTree, [ commentId, 'children' ] );
 		// Hide children if more than maxChildrenToShow, but not if replying
 		const exceedsMaxChildrenToShow =
-			commentChildrenIds && commentChildrenIds.length < this.props.maxChildrenToShow;
-		const showReplies = this.state.showReplies || exceedsMaxChildrenToShow;
+			commentChildrenIds && commentChildrenIds.length < maxChildrenToShow;
+		const showReplies = this.state.showReplies || exceedsMaxChildrenToShow || enableCaterpillar;
+		const childDepth = ! toShow || toShow[ commentId ] ? depth + 1 : depth;
 
 		// No children to show
 		if ( ! commentChildrenIds || commentChildrenIds.length < 1 ) {
@@ -138,7 +159,7 @@ class PostComment extends Component {
 							{ commentChildrenIds.map( childId =>
 								<PostComment
 									{ ...omit( this.props, 'displayType' ) }
-									depth={ this.props.depth + 1 }
+									depth={ childDepth }
 									key={ childId }
 									commentId={ childId }
 								/>
@@ -196,11 +217,34 @@ class PostComment extends Component {
 	};
 
 	render() {
-		const { commentsTree, commentId, depth, maxDepth } = this.props;
+		const {
+			commentsTree,
+			commentId,
+			depth,
+			enableCaterpillar,
+			maxDepth,
+			post,
+			toShow,
+		} = this.props;
+
 		const comment = get( commentsTree, [ commentId, 'data' ] );
-		const displayType = this.state.showFull
-			? POST_COMMENT_DISPLAY_TYPES.full
-			: this.props.displayType;
+		const isPingbackOrTrackback = comment.type === 'trackback' || comment.type === 'pingback';
+
+		if ( ! comment || ( this.props.hidePingbacksAndTrackbacks && isPingbackOrTrackback ) ) {
+			return null;
+		} else if ( toShow && ! toShow[ commentId ] ) {
+			// this comment should be hidden so just render children
+			return (
+				<div>
+					{ this.renderRepliesList() }
+				</div>
+			);
+		}
+
+		const displayType =
+			this.state.showFull || ! enableCaterpillar
+				? POST_COMMENT_DISPLAY_TYPES.full
+				: this.props.displayType;
 
 		// todo: connect this constants to the state (new selector)
 		const haveReplyWithError = some(
@@ -223,7 +267,7 @@ class PostComment extends Component {
 		}
 
 		// Trackback / Pingback
-		if ( comment.type === 'trackback' || comment.type === 'pingback' ) {
+		if ( isPingbackOrTrackback ) {
 			return <PostTrackback { ...this.props } />;
 		}
 
@@ -311,6 +355,12 @@ class PostComment extends Component {
 				/>
 
 				{ haveReplyWithError ? null : this.renderCommentForm() }
+				{ this.shouldRenderCaterpillar() &&
+					<ConversationCaterpillar
+						blogId={ post.site_ID }
+						postId={ post.ID }
+						parentCommentId={ commentId }
+					/> }
 				{ this.renderRepliesList() }
 			</li>
 		);

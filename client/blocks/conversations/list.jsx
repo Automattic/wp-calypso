@@ -5,16 +5,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map } from 'lodash';
+import { map, zipObject, fill, size } from 'lodash';
 
 /***
  * Internal dependencies
  */
 import PostComment from 'blocks/comments/post-comment';
-import { getPostCommentsTree } from 'state/comments/selectors';
+import {
+	commentsFetchingStatus,
+	getPostCommentsTree,
+	getExpansionsForPost,
+	getHiddenCommentsForPost,
+} from 'state/comments/selectors';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import PostCommentForm from 'blocks/comments/form';
+import { requestPostComments } from 'state/comments/actions';
 
 export class ConversationCommentList extends React.Component {
 	static propTypes = {
@@ -23,7 +29,7 @@ export class ConversationCommentList extends React.Component {
 	};
 
 	static defaultProps = {
-		showCaterpillar: false,
+		enableCaterpillar: true,
 	};
 
 	state = {
@@ -56,25 +62,42 @@ export class ConversationCommentList extends React.Component {
 		this.resetActiveReplyComment();
 	};
 
-	render() {
-		const { commentIds, commentsTree, post, showCaterpillar } = this.props;
-		if ( ! commentIds ) {
-			return null;
+	reqMoreComments = ( props = this.props ) => {
+		const { siteId, postId, enableCaterpillar } = props;
+
+		const { haveEarlierCommentsToFetch, haveLaterCommentsToFetch } = props.commentsFetchingStatus;
+
+		if ( enableCaterpillar && ( haveEarlierCommentsToFetch || haveLaterCommentsToFetch ) ) {
+			props.requestPostComments( { siteId, postId } );
 		}
+	};
+
+	componentDidMount() {
+		this.reqMoreComments();
+	}
+
+	render() {
+		const { commentIds, commentsTree, post, expansions } = this.props;
+		const startingExpanded = zipObject( commentIds, fill( Array( commentIds.length ), true ) );
+		const toShow = { ...startingExpanded, ...expansions };
+		const showCaterpillar = size( toShow ) < post.discussion.comment_count;
 
 		return (
 			<div className="conversations__comment-list">
 				<ul className="conversations__comment-list-ul">
-					{ map( commentIds, commentId => {
+					{ showCaterpillar &&
+						<ConversationCaterpillar blogId={ post.site_ID } postId={ post.ID } /> }
+					{ map( commentsTree.children, commentId => {
 						return (
 							<PostComment
 								showNestingReplyArrow
+								enableCaterpillar
+								post={ post }
 								commentsTree={ commentsTree }
 								key={ commentId }
 								commentId={ commentId }
-								maxChildrenToShow={ 0 }
 								maxDepth={ 2 }
-								post={ post }
+								toShow={ toShow }
 								onReplyClick={ this.onReplyClick }
 								onReplyCancel={ this.onReplyCancel }
 								activeReplyCommentId={ this.state.activeReplyCommentId }
@@ -96,19 +119,26 @@ export class ConversationCommentList extends React.Component {
 							onUpdateCommentText={ this.onUpdateCommentText }
 						/> }
 				</ul>
-				{ showCaterpillar &&
-					<ConversationCaterpillar blogId={ post.site_ID } postId={ post.ID } /> }
 			</div>
 		);
 	}
 }
 
-const ConnectedConversationCommentList = connect( ( state, ownProps ) => {
-	const { site_ID: siteId, ID: postId } = ownProps.post;
+const ConnectedConversationCommentList = connect(
+	( state, ownProps ) => {
+		const { site_ID: siteId, ID: postId, discussion } = ownProps.post;
 
-	return {
-		commentsTree: getPostCommentsTree( state, siteId, postId, 'all' ),
-	};
-} )( ConversationCommentList );
+		return {
+			siteId,
+			postId,
+			commentsTree: getPostCommentsTree( state, siteId, postId, 'all' ),
+			commentsFetchingStatus:
+				commentsFetchingStatus( state, siteId, postId, discussion.comment_count ) || {},
+			expansions: getExpansionsForPost( state, siteId, postId ),
+			hiddenComments: getHiddenCommentsForPost( state, siteId, postId ),
+		};
+	},
+	{ requestPostComments }
+)( ConversationCommentList );
 
 export default ConnectedConversationCommentList;
