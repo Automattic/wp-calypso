@@ -554,7 +554,6 @@ export const PostEditor = React.createClass( {
 				// incorrect post type in URL
 				page.redirect( utils.getEditURL( post, site ) );
 			}
-			//debugger;
 			this.setState( postEditState, function() {
 				if ( this.editor && ( didLoad || this.state.isLoadingRevision ) ) {
 					this.editor.setEditorContent( this.state.post.content, { initial: true } );
