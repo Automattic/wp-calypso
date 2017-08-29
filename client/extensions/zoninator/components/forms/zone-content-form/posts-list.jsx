@@ -8,11 +8,11 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
+import FormFieldset from 'components/forms/form-fieldset';
+import SortableList from 'components/forms/sortable-list';
 import PostCard from './post-card';
 import RecentPostsDropdown from '../../recent-posts-dropdown';
 import SearchAutocomplete from './../../search-autocomplete';
-import FormFieldset from 'components/forms/form-fieldset';
-import SortableList from 'components/forms/sortable-list';
 
 class PostsList extends Component {
 

@@ -4,26 +4,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
-import { FieldArray, FormSection, reduxForm } from 'redux-form';
+import { flowRight, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import PostsList from './posts-list';
 import Button from 'components/button';
-import Card from 'components/card';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
 import HeaderCake from 'components/header-cake';
-import ReduxFormTextarea from 'components/redux-forms/redux-form-textarea';
-import ReduxFormTextInput from 'components/redux-forms/redux-form-text-input';
-import SectionHeader from 'components/section-header';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import ZoneDetailsForm from '../../forms/zone-details-form';
+import ZoneContentForm from '../../forms/zone-content-form';
 import { settingsPath } from '../../../app/util';
-
-const form = 'extensions.zoninator.editZone';
 
 class Zone extends Component {
 
@@ -32,7 +23,7 @@ class Zone extends Component {
 	}
 
 	render() {
-		const { siteSlug, translate } = this.props;
+		const { siteId, siteSlug, translate } = this.props;
 
 		return (
 			<div>
@@ -42,52 +33,20 @@ class Zone extends Component {
 					{ translate( 'Edit zone' ) }
 				</HeaderCake>
 
-				<form onSubmit={ this.onFormSubmit }>
-					<FormSection name="details">
-						<SectionHeader label={ translate( 'Zone label' ) }>
-							<FormButton compact />
-						</SectionHeader>
-						<Card>
-							<FormFieldset>
-								<FormLabel htmlFor="zoneName">{ translate( 'Zone name' ) }</FormLabel>
-								<ReduxFormTextInput name="zoneName" />
-							</FormFieldset>
+				<ZoneDetailsForm label={ translate( 'Zone label' ) } siteId={ siteId } onSubmit={ noop } />
 
-							<FormFieldset>
-								<FormLabel htmlFor="zoneDescription">{ translate( 'Zone description' ) }</FormLabel>
-								<ReduxFormTextarea name="zoneDescription" />
-							</FormFieldset>
-						</Card>
-					</FormSection>
-
-					<FormSection name="content">
-						<SectionHeader label={ translate( 'Zone content' ) }>
-							<FormButton compact />
-						</SectionHeader>
-						<Card>
-							<FieldArray
-								rerenderOnEveryChange
-								name="posts"
-								component={ PostsList } />
-						</Card>
-					</FormSection>
-				</form>
+				<ZoneContentForm label={ translate( 'Zone content' ) } siteId={ siteId } onSubmit={ noop } />
 			</div>
 		);
 	}
 }
 
 const connectComponent = connect( state => ( {
+	siteId: getSelectedSiteId( state ),
 	siteSlug: getSelectedSiteSlug( state ),
 } ) );
-
-const createReduxForm = reduxForm( {
-	enableReinitialize: true,
-	form,
-} );
 
 export default flowRight(
 	connectComponent,
 	localize,
-	createReduxForm,
 )( Zone );
