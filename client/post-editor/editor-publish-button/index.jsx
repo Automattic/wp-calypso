@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { abtest } from 'lib/abtest';
 import { recordEvent } from 'lib/posts/stats';
 import postUtils from 'lib/posts/utils';
