@@ -1083,6 +1083,19 @@ export const PostEditor = React.createClass( {
 		return null;
 	},
 
+	getCursorMarkerSpan: function( type ) {
+		const tagType = type ? type : 'start';
+
+		return '<span ' +
+			'data-mce-type="bookmark"	' +
+			'id="mce_SELREST_' + tagType + '" ' +
+			'data-mce-style="overflow:hidden;line-height:0px" ' +
+			'style="overflow:hidden;line-height:0px"' +
+			'>' +
+			'&#65279;' +
+			'</span>';
+	},
+
 	addHTMLBookmarkInTextAreaContent: function() {
 		const textArea = this.editor._editor.getElement();
 
@@ -1105,41 +1118,25 @@ export const PostEditor = React.createClass( {
 			? 'range'
 			: 'single';
 
-		const bookMarkStart = '<span ' +
-			'data-mce-type="bookmark"	' +
-			'id="mce_SELREST_start" ' +
-			'data-mce-style="overflow:hidden;line-height:0px" ' +
-			'style="overflow:hidden;line-height:0px"' +
-			'>' +
-			'&#65279;' +
-			'</span>';
+		const bookMarkStart = this.getCursorMarkerSpan( 'start' );
 
-		let bookMarkEnd = null;
+		let selectedText = null;
+
 		if ( mode === 'range' ) {
-			bookMarkEnd = '<span ' +
-				'data-mce-type="bookmark"	' +
-				'id="mce_SELREST_end" ' +
-				'data-mce-style="overflow:hidden;line-height:0px" ' +
-				'style="overflow:hidden;line-height:0px"' +
-				'>' +
-				'&#65279;' +
-				'</span>';
+			const bookMarkEnd = this.getCursorMarkerSpan( 'end' );
 
-			// // TODO detect if you're not in a tag to not break things
-			textArea.value = [
-				textArea.value.slice( 0, htmlModeCursorStartPosition ),
-				bookMarkStart,
+			selectedText = [
 				textArea.value.slice( htmlModeCursorStartPosition, htmlModeCursorEndPosition ),
 				bookMarkEnd,
-				textArea.value.slice( htmlModeCursorEndPosition ),
-			].join( '' );
-		} else {
-			textArea.value = [
-				textArea.value.slice( 0, htmlModeCursorStartPosition ),
-				bookMarkStart,
-				textArea.value.slice( htmlModeCursorStartPosition )
 			].join( '' );
 		}
+
+		textArea.value = [
+			textArea.value.slice( 0, htmlModeCursorStartPosition ),
+			bookMarkStart,
+			selectedText,
+			textArea.value.slice( htmlModeCursorEndPosition )
+		].join( '' );
 
 		this.editor.onTextAreaChange( { target: { value: textArea.value } } );
 	},
