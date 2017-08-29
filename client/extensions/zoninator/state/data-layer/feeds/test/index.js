@@ -26,6 +26,16 @@ const apiResponse = [
 	{ ID: 3 },
 ];
 
+const getState = () => ( {
+	extensions: { zoninator: { zones: { items: {
+		[ dummyAction.siteId ]: {
+			[ dummyAction.zoneId ]: {
+				name: 'Test zone',
+			},
+		},
+	} } } },
+} );
+
 describe( '#requestZoneFeed()', () => {
 	it( 'should dispatch a HTTP request to the feed endpoint', () => {
 		const dispatch = sinon.spy();
@@ -54,11 +64,14 @@ describe( '#requestZoneFeedError()', () => {
 	it( 'should dispatch `errorNotice`', () => {
 		const dispatch = sinon.spy();
 
-		requestZoneFeedError( { dispatch }, dummyAction );
+		requestZoneFeedError( { dispatch, getState }, dummyAction );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith( errorNotice(
-			translate( 'There was a problem while fetching the zone post feed.' ),
+			translate(
+				'Could not fetch the posts feed for %(name)s. Please try again.',
+				{ args: { name: 'Test zone' } },
+			),
 			{ id: 'zoninator-request-feed' },
 		) );
 	} );

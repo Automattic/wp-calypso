@@ -11,6 +11,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice } from 'state/notices/actions';
 import { fromApi } from './util';
 import { updateFeed } from '../../feeds/actions';
+import { getZone } from '../../zones/selectors';
 import { ZONINATOR_REQUEST_FEED } from 'zoninator/state/action-types';
 
 const requestFeedNotice = 'zoninator-request-feed';
@@ -28,11 +29,17 @@ export const requestZoneFeed = ( { dispatch }, action ) => {
 	}, action ) );
 };
 
-export const requestZoneFeedError = ( { dispatch } ) =>
+export const requestZoneFeedError = ( { dispatch, getState }, { siteId, zoneId } ) => {
+	const { name } = getZone( getState(), siteId, zoneId );
+
 	dispatch( errorNotice(
-		translate( 'There was a problem while fetching the zone post feed.' ),
+		translate(
+			'Could not fetch the posts feed for %(name)s. Please try again.',
+			{ args: { name } },
+		),
 		{ id: requestFeedNotice },
 	) );
+};
 
 export const updateZoneFeed = ( { dispatch }, { siteId, zoneId }, { data } ) =>
 	dispatch( updateFeed( siteId, zoneId, fromApi( data ) ) );
