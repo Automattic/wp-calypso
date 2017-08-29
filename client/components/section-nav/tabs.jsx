@@ -45,7 +45,7 @@ class NavTabs extends Component {
 		window.addEventListener( 'resize', this.debouncedAfterResize );
 	}
 
-	componentWillReceiveProps() {
+	componentDidUpdate() {
 		this.setDropdown();
 	}
 
@@ -104,7 +104,7 @@ class NavTabs extends Component {
 			totalWidth += tabWidth;
 		}.bind( this ) );
 
-		this.tabsWidth = totalWidth;
+		this.tabsWidth = Math.max( totalWidth, this.tabsWidth || 0 );
 	};
 
 	getDropdown = () => {
@@ -141,9 +141,7 @@ class NavTabs extends Component {
 
 			navGroupWidth = this.refs.navGroup.offsetWidth;
 
-			if ( ! this.tabsWidth ) {
-				this.getTabWidths();
-			}
+			this.getTabWidths();
 
 			if ( navGroupWidth <= this.tabsWidth && ! this.state.isDropdown ) {
 				this.setState( {

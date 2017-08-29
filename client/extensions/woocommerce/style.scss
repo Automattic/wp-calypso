@@ -20,7 +20,6 @@
 	@import 'app/settings/taxes/style';
 	@import 'app/store-stats/store-stats-chart/style';
 	@import 'app/store-stats/store-stats-module/style';
-	@import 'app/store-stats/store-stats-navigation/style';
 	@import 'app/store-stats/store-stats-widget-list/style';
 	@import 'app/store-stats/style';
 
@@ -83,6 +82,13 @@
 		border: 1px solid lighten( $gray, 20% );
 	}
 
+	@include breakpoint( ">660px" ) {
+		&.store-stats {
+			.stats-navigation .section-nav {
+				margin-top: 0;
+			}
+		}
+	}
 }
 
 .is-section-woocommerce {
